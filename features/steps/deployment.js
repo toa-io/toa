@@ -4,7 +4,8 @@ const assert = require('node:assert')
 const { join } = require('node:path')
 const { diff } = require('jest-diff')
 
-const { load, parse } = require('@toa.io/yaml')
+const { readFile } = require('node:fs/promises')
+const { load: parse } = require('js-yaml')
 const { match } = require('@toa.io/generic')
 
 const extract = require('./.deployment')
@@ -73,7 +74,7 @@ Then('exported {helm-artifact} should not contain:',
 const contains = async (cwd, artifact, text, expectation = true) => {
   const filename = artifact + '.yaml'
   const path = join(cwd, 'deployment', filename)
-  const contents = await load(path)
+  const contents = parse(await readFile(path, 'utf8'))
   const expected = parse(text)
 
   const matches = match(contents, expected)

@@ -1,7 +1,8 @@
 'use strict'
 
 const { generate } = require('randomstring')
-const { load } = require('@toa.io/yaml')
+const { readFileSync } = require('node:fs')
+const { load: parseYAML } = require('js-yaml')
 const { resolve } = require('path')
 
 // noinspection JSCheckFunctionSignatures
@@ -20,7 +21,7 @@ const schemas = {
     type: 'object',
     properties: {
       input: { type: 'null' },
-      query: load.sync(resolve(__dirname, '../../src/contract/schemas/query.yaml')),
+      query: parseYAML(readFileSync(resolve(__dirname, '../../src/contract/schemas/query.yaml'), 'utf8')),
       authentic: { type: 'boolean' }
     },
     additionalProperties: true

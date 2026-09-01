@@ -1,4 +1,0 @@
-array:
-  - 'hello'
-  - <assign: './b.yaml'
-  - null

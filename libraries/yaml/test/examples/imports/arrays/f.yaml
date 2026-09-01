@@ -1,4 +1,0 @@
-root:
-  array:
-    - item:
-        <assign: './b.yaml'

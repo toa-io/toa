@@ -2,7 +2,7 @@
 
 const { join } = require('node:path')
 const { writeFile: write } = require('node:fs/promises')
-const { dump } = require('@toa.io/yaml')
+const jsyaml = require('js-yaml')
 const fs = require('fs-extra')
 
 const { merge, declare, describe } = require('./.deployment')
@@ -92,3 +92,7 @@ function addVariables (list, variables, used = new Set()) {
 const TEMPLATES = join(__dirname, 'chart/templates')
 
 exports.Deployment = Deployment
+
+function dump (object) {
+  return jsyaml.dump(object, { noRefs: true, lineWidth: -1 })
+}

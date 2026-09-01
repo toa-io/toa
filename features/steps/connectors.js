@@ -5,7 +5,7 @@ const { When, Then } = require('@cucumber/cucumber')
 const { diff } = require('jest-diff')
 const { exceptions } = require('@toa.io/core')
 const { transpose, match } = require('@toa.io/generic')
-const { parse } = require('@toa.io/yaml')
+const { load: parse } = require('js-yaml')
 
 const { cli } = require('./.connectors/cli')
 const stage = require('./.workspace/components')

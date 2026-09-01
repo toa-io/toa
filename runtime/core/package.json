@@ -22,7 +22,7 @@
   "dependencies": {
     "@rsql/parser": "1.2.4",
     "@toa.io/generic": "1.0.0-alpha.254",
-    "@toa.io/yaml": "1.0.0-alpha.254",
+    "js-yaml": "4.3.1",
     "openspan": "1.0.0-alpha.270",
     "uuid": "11.1.1"
   },

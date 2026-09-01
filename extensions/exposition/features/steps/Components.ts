@@ -3,7 +3,7 @@ import { after, binding, given } from 'cucumber-tsflow'
 import * as boot from '@toa.io/boot'
 import { timeout } from '@toa.io/generic'
 import { type Connector } from '@toa.io/core'
-import { parse } from '@toa.io/yaml'
+import { load as parse } from 'js-yaml'
 import { Workspace } from './Workspace'
 import { components as map } from './map'
 

@@ -1,7 +1,7 @@
 'use strict'
 
 const { Given, After, Before } = require('@cucumber/cucumber')
-const { parse } = require('@toa.io/yaml')
+const { load: parse } = require('js-yaml')
 
 Given('an environment variable {token} is set to {string}',
   setEnv)

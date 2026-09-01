@@ -2,7 +2,8 @@
 
 const { join, relative } = require('node:path')
 const glob = require('fast-glob')
-const yaml = require('@toa.io/yaml')
+const { readFileSync } = require('node:fs')
+const jsyaml = require('js-yaml')
 
 /**
  * @param {string} path
@@ -20,7 +21,7 @@ const readDirectory = (path) => {
  * @returns {object}
  */
 const load = (root) => (path) => {
-  const schema = yaml.load.sync(path)
+  const schema = jsyaml.load(readFileSync(path, 'utf8'))
   const id = calculateID(root, path)
 
   return { id, schema }

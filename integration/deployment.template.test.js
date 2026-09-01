@@ -7,7 +7,7 @@ const { generate } = require('randomstring')
 
 const { deployment: { Factory } } = require('@toa.io/operations')
 const { sample } = require('@toa.io/generic')
-const { split } = require('@toa.io/yaml')
+const { loadAll: split } = require('js-yaml')
 
 const fixtures = require('./deployment.template.fixtures')
 

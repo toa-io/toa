@@ -1,8 +1,8 @@
 'use strict'
 
 const { defined } = require('@toa.io/generic')
-const { statSync } = require('node:fs')
-const yaml = require('@toa.io/yaml')
+const { readFileSync, statSync } = require('node:fs')
+const jsyaml = require('js-yaml')
 const { create, is, ajv } = require('./validator')
 const { debug } = require('node:util')
 const betterAjvErrors = require('better-ajv-errors').default
@@ -115,7 +115,7 @@ class Schema {
 
 const schema = (cos, options) => {
   if (typeof cos === 'string' && isFile(cos))
-    cos = yaml.load.sync(cos)
+    cos = jsyaml.load(readFileSync(cos, 'utf8'))
 
   const schema = cos
   const validate = create(schema, options)

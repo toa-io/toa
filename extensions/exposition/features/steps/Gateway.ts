@@ -1,7 +1,7 @@
 import { after, afterAll, binding, given } from 'cucumber-tsflow'
 import * as boot from '@toa.io/boot'
 import { type Connector } from '@toa.io/core'
-import { parse } from '@toa.io/yaml'
+import { load as parse } from 'js-yaml'
 import { timeout } from '@toa.io/generic'
 import { Factory } from '../../source'
 import * as syntax from '../../source/RTD/syntax'
