@@ -44,8 +44,24 @@ It reaches the runtime as `TOA_ATOMICITY_REDIS`, space-separated for a list.
 `TOA_ATOMICITY_INTERVAL` overrides the registration interval, which is 10 seconds by default —
 ten to thirty seconds suits most groups, and it wants stability rather than speed.
 
-Without it nothing is owned and `slots` answers `null`. That is not a failure mode to work around
-but the answer itself: whoever asks must be able to stand down.
+## Availability
+
+**One address is one server.** Its availability is whatever the address points at — a service, a
+sentinel-backed endpoint, a managed one — and the client reconnects to it for as long as it takes.
+
+**Several addresses are a cluster**, not a list of alternatives. A group's keys carry a hash tag,
+so all of them land in one slot and the two keys a registration touches are never cross-slot; the
+client routes to whichever node holds them and re-discovers the topology when it moves.
+
+**Unreachable reads exactly like unconfigured.** Nothing is owned, `slots` answers `null`, and
+whoever asked stands down. Connecting is therefore not awaited and a failure to connect is not an
+error: a process that could not start because coordination was down would be the opposite of
+standing down. A Redis that comes up later is picked up on its own, with nothing restarted.
+
+That is the whole of the fault tolerance here, and it is deliberate. There is no quorum and no
+failover between instances, because there is nothing to fail over *to*: what this hands out is an
+exclusive claim, and a claim that two stores could disagree about would be worse than no claim at
+all. Losing the store loses the claim, which is the safe direction.
 
 ## Invariant
 

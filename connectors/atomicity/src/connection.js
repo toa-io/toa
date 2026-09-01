@@ -1,6 +1,6 @@
 'use strict'
 
-const { Redis } = require('ioredis')
+const { Redis, Cluster } = require('ioredis')
 const { console } = require('openspan')
 const { Connector } = require('@toa.io/core')
 
@@ -17,18 +17,37 @@ class Connection extends Connector {
 
     if (urls.length === 0) return
 
-    // one node is enough: a group's counters live in one slot
-    this.redis = new Redis(urls[0], { lazyConnect: true, enableReadyCheck: true })
+    /*
+     * More than one address is a cluster, not a list of alternatives: a group's keys carry a
+     * hash tag, so they never go cross-slot, and the client routes to whichever node holds
+     * them. One address is one server — its own availability is whatever it points at, a
+     * service, a sentinel-backed endpoint or a managed one.
+     */
+    this.redis = urls.length === 1
+      ? new Redis(urls[0], OPTIONS)
+      : new Cluster(urls, { redisOptions: OPTIONS })
 
-    await this.redis.connect()
+    /*
+     * Connecting is not awaited, and a failure to connect is not an error here. Coordination
+     * that cannot be reached must read exactly as coordination that was never configured —
+     * nothing is owned, and whoever asked stands down — and a process that could not start
+     * because of it would be the opposite of that. The client retries on its own, so a Redis
+     * that comes up later is picked up without anything being restarted.
+     */
+    // ioredis leaves `message` empty on a refused connection, where the code is the whole story
+    this.redis.on('error', (error) =>
+      console.warn('Atomicity is unreachable, so nothing is owned',
+        { error: error.code ?? error.message }))
 
-    console.info('Atomicity connected to redis', { host: this.redis.options.host })
+    console.info('Atomicity connecting to redis', { nodes: urls.length })
   }
 
   async close () {
     this.redis?.disconnect()
   }
 }
+
+const OPTIONS = { enableReadyCheck: true }
 
 function resolve () {
   const value = process.env[VARIABLE]

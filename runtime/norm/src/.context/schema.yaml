@@ -69,7 +69,8 @@ properties:
     description: >
       Where replicas agree on who owns what, exclusively. System infrastructure rather than a
       per-component resource: it holds interval counters and nothing else, one small key per
-      group. Absent, nothing is owned and whoever asked stands down.
+      group. One address is one server; several are the nodes of a cluster, not alternatives.
+      Absent or unreachable, nothing is owned and whoever asked stands down.
     oneOf:
       - type: string
       - type: array
