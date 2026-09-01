@@ -1,5 +1,4 @@
 import { type Dependency, type Variable } from '@toa.io/operations'
-import { encode, decode } from '@toa.io/generic'
 import { resolveRecord, naming } from '@toa.io/pointer'
 import { type Locator } from '@toa.io/core'
 import { type AnnotationRecord } from '@toa.io/pointer/transpiled/Deployment'
@@ -26,7 +25,7 @@ export function resolveURIs (locator: Locator): string[] {
   if (value === undefined)
     throw new Error(`Environment variable ${VARIABLE} is not specified`)
 
-  const map = decode<URIMap>(value)
+  const map = JSON.parse(value) as URIMap
   const record = resolveRecord(map, locator.id)
 
   return parseRecord(record)
@@ -34,7 +33,7 @@ export function resolveURIs (locator: Locator): string[] {
 
 function createVariables (context: Context): Variable[] {
   const variables: Variable[] = []
-  const uris = encode(context)
+  const uris = JSON.stringify(context)
 
   const contextVariable: Variable = {
     name: VARIABLE,

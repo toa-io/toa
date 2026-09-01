@@ -1,4 +1,3 @@
-import { encode } from '@toa.io/generic'
 import { options } from './annotation'
 import { components } from './Composition'
 import { ENV, UI_PATH, UI_PORT } from './const'
@@ -40,6 +39,6 @@ export function deployment (_: Instances<unknown>, annotation?: Annotation): Dep
 
   return {
     services: [service],
-    variables: { global: [{ name: ENV, value: encode(opts) }] }
+    variables: { global: [{ name: ENV, value: JSON.stringify(opts) }] }
   }
 }

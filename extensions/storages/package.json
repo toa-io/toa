@@ -30,7 +30,6 @@
   "dependencies": {
     "@aws-sdk/client-s3": "3.1107.0",
     "@aws-sdk/lib-storage": "3.1107.0",
-    "@toa.io/generic": "1.0.0-alpha.254",
     "@toa.io/schemas": "1.0.0-alpha.270",
     "cloudinary": "2.9.0",
     "negotiator": "0.6.3",

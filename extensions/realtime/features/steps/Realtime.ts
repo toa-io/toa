@@ -1,5 +1,4 @@
 import * as boot from '@toa.io/boot'
-import { encode } from '@toa.io/generic'
 import { type Connector } from '@toa.io/core'
 import { after, binding } from 'cucumber-tsflow'
 import { Factory } from '../../source'
@@ -30,7 +29,7 @@ export class Realtime {
     if (this.connected)
       return
 
-    process.env.TOA_REALTIME = encode(this.routes)
+    process.env.TOA_REALTIME = JSON.stringify(this.routes)
 
     this.connected = true
 

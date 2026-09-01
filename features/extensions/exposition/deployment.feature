@@ -27,7 +27,7 @@ Feature: Exposition deployment
         - name: exposition-gateway
           variables:
           - name: TOA_CONFIGURATION_IDENTITY_TOKENS
-            value: eyJrZXkwIjoic2VjcmV0LmtleS4wIn0=
+            value: '{"key0":"secret.key.0"}'
       """
 
   Scenario: Deploying database pointer
@@ -69,5 +69,5 @@ Feature: Exposition deployment
         - name: exposition-gateway
           variables:
           - name: TOA_EXPOSITION_PROPERTIES
-            value: "eyJhdXRob3JpdGllcyI6eyJhIjoiYXBpLmEuZGV2IiwiYiI6ImFwaS5iLmRldiJ9LCJkZWJ1ZyI6dHJ1ZX0="
+            value: '{"authorities":{"a":"api.a.dev","b":"api.b.dev"},"debug":true}'
       """

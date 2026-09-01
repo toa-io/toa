@@ -45,7 +45,7 @@ Feature: Introspection deployment
       compositions:
         - variables:
           - name: TOA_INTROSPECTION
-            value: eyJzYW1wbGVzIjpmYWxzZSwiaW50ZXJ2YWwiOjMwMCwidGhyZXNob2xkIjoxMDI0LCJ1aSI6dHJ1ZX0=
+            value: '{"samples":false,"interval":300,"threshold":1024,"ui":true}'
       """
 
   Scenario: Enabling samples
@@ -60,7 +60,7 @@ Feature: Introspection deployment
       compositions:
         - variables:
           - name: TOA_INTROSPECTION
-            value: eyJzYW1wbGVzIjp0cnVlLCJpbnRlcnZhbCI6MzAwLCJ0aHJlc2hvbGQiOjEwMjQsInVpIjp0cnVlfQ==
+            value: '{"samples":true,"interval":300,"threshold":1024,"ui":true}'
       """
 
   Scenario: Disabling introspection

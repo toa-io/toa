@@ -52,7 +52,7 @@ Feature: Configuration Extension
         - name: configuration-base
           variables:
             - name: TOA_CONFIGURATION_CONFIGURATION_BASE
-              value: eyJmb28iOiJvayJ9
+              value: '{"foo":"ok"}'
       """
 
   Scenario: Secret values deployment
@@ -71,7 +71,7 @@ Feature: Configuration Extension
         - name: configuration-base
           variables:
             - name: TOA_CONFIGURATION_CONFIGURATION_BASE
-              value: eyJmb28iOiIkRk9PX1ZBTFVFIiwiYmFyIjoiJEJBUl9WQUxVRSJ9
+              value: '{"foo":"$FOO_VALUE","bar":"$BAR_VALUE"}'
             - name: TOA_CONFIGURATION__FOO_VALUE
               secret:
                 name: toa-configuration
@@ -99,7 +99,7 @@ Feature: Configuration Extension
         - name: configuration-array
           variables:
             - name: TOA_CONFIGURATION_CONFIGURATION_ARRAY
-              value: eyJncmVldGluZ3MiOlt7ImEiOiIkQSIsImIiOiIkQiJ9XX0=
+              value: '{"greetings":[{"a":"$A","b":"$B"}]}'
             - name: TOA_CONFIGURATION__A
               secret:
                 name: toa-configuration

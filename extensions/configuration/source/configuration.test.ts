@@ -1,4 +1,3 @@
-import { encode } from '@toa.io/generic'
 import { Locator } from '@toa.io/core'
 import { generate } from 'randomstring'
 import { get } from './configuration'
@@ -79,7 +78,7 @@ it('should validate', async () => {
 })
 
 function set (value: object | string, key = locator.uppercase): void {
-  const string = typeof value === 'string' ? value : encode(value)
+  const string = typeof value === 'string' ? value : JSON.stringify(value)
   const name = 'TOA_CONFIGURATION_' + key
 
   process.env[name] = string

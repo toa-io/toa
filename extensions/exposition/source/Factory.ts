@@ -1,7 +1,6 @@
 import assert from 'node:assert'
 import { createHash } from 'node:crypto'
 import { console, traces, type LevelName, type TracesOptions } from 'openspan'
-import { decode } from '@toa.io/generic'
 import { Tenant } from './Tenant'
 import { Gateway } from './Gateway'
 import { Remotes } from './Remotes'
@@ -46,7 +45,7 @@ export class Factory implements extensions.Factory {
 
     configureLogs()
 
-    const options = decode<http.Options>(process.env.TOA_EXPOSITION_PROPERTIES)
+    const options = JSON.parse(process.env.TOA_EXPOSITION_PROPERTIES) as http.Options
     const broadcast: Broadcast = this.boot.bindings.broadcast(CHANNEL)
     const server = http.Server.create({ ...options })
     const remotes = new Remotes(this.boot)
@@ -76,13 +75,13 @@ const TRACES_ENV = 'TOA_TELEMETRY_TRACES'
 function configureLogs (): void {
   const globEnv = process.env[LOGS_PREFIX]
   const level: LevelName = process.env.TOA_DEV === '1' ? 'trace' : 'info'
-  const options = globEnv === undefined ? { level } : decode<{ level?: LevelName }>(globEnv)
+  const options = globEnv === undefined ? { level } : JSON.parse(globEnv) as { level?: LevelName }
 
   console.configure({ level: options.level ?? level })
 
   const tracesEnv = process.env[TRACES_ENV]
 
-  traces(tracesEnv === undefined ? development() : decode<TracesOptions>(tracesEnv))
+  traces(tracesEnv === undefined ? development() : JSON.parse(tracesEnv) as TracesOptions)
 }
 
 /**

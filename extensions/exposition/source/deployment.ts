@@ -1,6 +1,5 @@
 import assert from 'node:assert'
 import { type Dependency, type Service } from '@toa.io/operations'
-import { encode } from '@toa.io/generic'
 import { type Annotation } from './Annotation'
 import * as schemas from './schemas'
 import { shortcuts } from './Directive'
@@ -35,7 +34,7 @@ export function deployment (_: unknown, annotation?: Annotation): Dependency {
 
     service.variables!.push({
       name: 'TOA_EXPOSITION',
-      value: encode(tree)
+      value: JSON.stringify(tree)
     })
   }
 
@@ -57,13 +56,13 @@ export function deployment (_: unknown, annotation?: Annotation): Dependency {
 
   service.variables!.push({
     name: 'TOA_EXPOSITION_PROPERTIES',
-    value: encode(properties)
+    value: JSON.stringify(properties)
   })
 
   // Nested identity composition shares this process; gateway already exposes /.ready.
   service.variables!.push({
     name: 'TOA_TELEMETRY_READY',
-    value: encode(false)
+    value: JSON.stringify(false)
   })
 
   return { services: [service] }

@@ -1,9 +1,9 @@
-import { decode, merge } from '@toa.io/generic'
+import { merge } from '@toa.io/generic'
 import { syntax } from './RTD'
 
 export function resolve (): syntax.Node {
   const value = process.env.TOA_EXPOSITION
-  const root = value !== undefined ? decode<syntax.Node>(value) : syntax.createNode()
+  const root = value !== undefined ? JSON.parse(value) as syntax.Node : syntax.createNode()
 
   merge(root, PREDEFINED)
 

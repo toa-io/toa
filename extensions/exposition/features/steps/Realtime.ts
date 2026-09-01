@@ -3,7 +3,7 @@ import * as assert from 'node:assert'
 import { after, binding, given, afterAll, then } from 'cucumber-tsflow'
 import { Factory } from '@toa.io/extensions.realtime'
 import * as boot from '@toa.io/boot'
-import { encode, match } from '@toa.io/generic'
+import { match } from '@toa.io/generic'
 import { parse } from '@toa.io/yaml'
 import { Agent } from '@toa.io/agent'
 import { Parameters } from './Parameters'
@@ -35,7 +35,7 @@ export class Realtime {
     for (const [event, property] of Object.entries(annotation))
       routes.push({ event, properties: [property] })
 
-    process.env.TOA_REALTIME = encode(routes)
+    process.env.TOA_REALTIME = JSON.stringify(routes)
 
     const factory = new Factory(boot)
 

@@ -31,7 +31,7 @@ Feature: Telemetry
 
   # no TRACE entries are expected in the output, while logs still carry trace_id
   Scenario: Tracing an invocation with sampling disabled
-    Given an encoded environment variable `TOA_TELEMETRY_TRACES` is set to:
+    Given an environment variable `TOA_TELEMETRY_TRACES` is set to:
       """yaml
       sample: 0
       """
@@ -49,7 +49,7 @@ Feature: Telemetry
   # requires tempo (docker compose up tempo)
   # open http://localhost:3000 (Explore > Tempo) to see the trace
   Scenario: Exporting traces over OTLP
-    Given an encoded environment variable `TOA_TELEMETRY_TRACES` is set to:
+    Given an environment variable `TOA_TELEMETRY_TRACES` is set to:
       """yaml
       exporters:
         console: ~
@@ -99,7 +99,7 @@ Feature: Telemetry
       """
 
   Scenario: Logs env
-    Given an encoded environment variable `TOA_TELEMETRY_LOGS` is set to:
+    Given an environment variable `TOA_TELEMETRY_LOGS` is set to:
       """yaml
       level: info
       """
@@ -118,7 +118,7 @@ Feature: Telemetry
       """
 
   Scenario: Logs env override
-    Given an encoded environment variable `TOA_TELEMETRY_LOGS_DEFAULT_TELEMETRY` is set to:
+    Given an environment variable `TOA_TELEMETRY_LOGS_DEFAULT_TELEMETRY` is set to:
       """yaml
       level: warn
       """
@@ -151,7 +151,7 @@ Feature: Telemetry
         - name: default-telemetry
           variables:
             - name: TOA_TELEMETRY_LOGS
-              value: eyJsZXZlbCI6ImluZm8ifQ==
+              value: '{"level":"info"}'
       """
 
   Scenario: Logs annotations override
@@ -171,9 +171,9 @@ Feature: Telemetry
         - name: default-telemetry
           variables:
             - name: TOA_TELEMETRY_LOGS
-              value: eyJsZXZlbCI6ImluZm8ifQ==
+              value: '{"level":"info"}'
             - name: TOA_TELEMETRY_LOGS_DEFAULT_TELEMETRY
-              value: eyJsZXZlbCI6Indhcm4ifQ==
+              value: '{"level":"warn"}'
       """
 
   Scenario: Logs without annotations
@@ -215,7 +215,7 @@ Feature: Telemetry
         - name: default-telemetry
           variables:
             - name: TOA_TELEMETRY_READY
-              value: ZmFsc2U=
+              value: 'false'
       """
 
   Scenario: Composition becomes ready

@@ -1,7 +1,6 @@
 import { Readable } from 'node:stream'
 import { console } from 'openspan'
 import { Connector } from '@toa.io/core'
-import { decode } from '@toa.io/generic'
 import { Receiver } from './Receiver'
 import type { Route } from './extension'
 import type { Bootloader } from './Factory'
@@ -21,7 +20,7 @@ export class Routes extends Connector {
     if (process.env.TOA_REALTIME === undefined)
       throw new Error('TOA_REALTIME is not defined')
 
-    return decode<Route[]>(process.env.TOA_REALTIME)
+    return JSON.parse(process.env.TOA_REALTIME) as Route[]
   }
 
   public override async open (): Promise<void> {

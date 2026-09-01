@@ -13,7 +13,7 @@ Feature: Realtime extension
         - name: realtime-streams
           variables:
           - name: TOA_REALTIME
-            value: W3siZXZlbnQiOiJtb25nby5vbmUuY3JlYXRlZCIsInByb3BlcnRpZXMiOlsiaWQiXX1d
+            value: '[{"event":"mongo.one.created","properties":["id"]}]'
           components:
             - realtime-streams
       """
@@ -28,7 +28,7 @@ Feature: Realtime extension
         - name: realtime-streams
           variables:
           - name: TOA_REALTIME
-            value: W3siZXZlbnQiOiJyZWFsdGltZS5zdHJlYW1lci5jcmVhdGVkIiwicHJvcGVydGllcyI6WyJzdHJlYW1lciJdfSx7ImV2ZW50IjoicmVhbHRpbWUuc3RyZWFtZXIuZGVsZXRlZCIsInByb3BlcnRpZXMiOlsiaWQiLCJzdHJlYW1lciJdfV0=
+            value: '[{"event":"realtime.streamer.created","properties":["streamer"]},{"event":"realtime.streamer.deleted","properties":["id","streamer"]}]'
           - name: TOA_STASH_REALTIME_STREAMS
             value: redis://localhost
           components:
