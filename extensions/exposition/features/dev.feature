@@ -74,7 +74,7 @@ Feature: Dev
     Then the following reply is sent:
       """
       204 No Content
-      access-control-allow-headers: accept, authorization, content-type, if-match, if-none-match, faulty
+      access-control-allow-headers: accept, authorization, content-type, faulty, if-match, if-none-match
       """
     When the following request is received:
       """

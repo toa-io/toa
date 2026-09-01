@@ -2,11 +2,11 @@ import * as codes from 'http-status-codes'
 import type { IncomingHttpHeaders } from 'undici/types/header'
 import type { Dispatcher } from 'undici'
 
-export async function response (response: Dispatcher.ResponseData): Promise<string> {
+export async function response (response: Dispatcher.ResponseData, body?: string): Promise<string> {
   const statusText = codes.getReasonPhrase(response.statusCode) ?? 'Unknown'
   const statusLine = `${response.statusCode} ${statusText}\n`
   const headerLines = stringifyHeaders(response.headers) + '\n'
-  const responseText = await response.body.text()
+  const responseText = body ?? await response.body.text()
 
   return statusLine + headerLines + responseText
 }

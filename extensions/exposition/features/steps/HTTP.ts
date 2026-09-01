@@ -13,7 +13,6 @@ import type { Readable } from 'node:stream'
 @binding([Gateway, Parameters, Captures])
 export class HTTP extends http.Agent {
   private readonly gateway: Gateway
-  private fetched: Response | null = null
 
   public constructor (gateway: Gateway, parameters: Parameters, captures: Captures) {
     super(parameters.origin, captures)
@@ -24,7 +23,7 @@ export class HTTP extends http.Agent {
   public override async request (input: string): Promise<any> {
     await this.gateway.start()
 
-    this.fetched = await super.request(input)
+    await super.request(input)
   }
 
   @then('the following reply is sent:')
@@ -34,10 +33,9 @@ export class HTTP extends http.Agent {
 
   @then('response body contains {word}-encoded value:')
   public async bodyIs (format: string, yaml: string): Promise<void> {
-    assert.ok(this.fetched !== null, 'Response is null')
+    assert.ok(this.bytes !== null, 'Response body is not available')
 
-    const buf = await this.fetched.arrayBuffer()
-    const value = encoders[format]?.(buf as unknown as Buffer)
+    const value = encoders[format]?.(this.bytes)
     const expected = YAML.load(yaml)
 
     assert.deepEqual(value, expected, 'Values are not equal')

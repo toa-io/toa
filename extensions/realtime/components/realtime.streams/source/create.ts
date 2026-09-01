@@ -19,8 +19,11 @@ export class Effect implements Operation {
   public unmount (): void {
     this.logs.info('Destroying streams', { count: this.streams.size })
 
+    // closed, not destroyed: destroying a stream that is still piped to a response
+    // makes end-of-stream report a premature close, which reaches no one and takes
+    // the process down.
     for (const stream of this.streams.values())
-      stream.destroy()
+      stream.close()
   }
 
   public async execute (input: Input): Promise<Readable> {

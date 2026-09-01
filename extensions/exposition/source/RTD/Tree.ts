@@ -59,7 +59,10 @@ export class Tree {
       endpoints: this.endpoints,
       directives: {
         factory: this.directives,
-        stack: this.root.directives ?? []
+        // A merged branch is mounted under the root, so it inherits the root's
+        // directives. The trunk is the root: createNode adds them itself, and
+        // seeding them here too would apply every one of them twice.
+        stack: node === this.root ? [] : this.root.directives ?? []
       },
       path: label(extension),
       extension

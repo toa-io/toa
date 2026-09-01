@@ -84,7 +84,7 @@ Feature: HTTP context mapping
     Then the following reply is sent:
       """
       204 No Content
-      access-control-allow-headers: accept, accept-language, authorization, content-type, foo, if-match, if-none-match, origin
+      access-control-allow-headers: accept, accept-language, authorization, content-type, foo, if-match, if-none-match
       """
 
   Scenario: Mapping the value of an arbitrary header

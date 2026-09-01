@@ -19,8 +19,8 @@ Feature: Response
     Then the following reply is sent:
       """
       200 OK
+      vary: origin, accept
       content-type: application/json
-      vary: accept
 
       {"hello":"world"}
       """
@@ -33,8 +33,8 @@ Feature: Response
     Then the following reply is sent:
       """
       200 OK
+      vary: origin, accept
       content-type: application/yaml
-      vary: accept
 
       hello: world
       """
@@ -48,8 +48,8 @@ Feature: Response
     Then the following reply is sent:
       """
       200 OK
+      vary: origin, accept
       content-type: application/json
-      vary: accept
 
       {"hello":"world"}
       """

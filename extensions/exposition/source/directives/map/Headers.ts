@@ -3,6 +3,13 @@ import { cors } from '../cors'
 import { Mapping } from './Mapping'
 import type { Input } from '../../io'
 
+/**
+ * Forbidden request header names: the browser sets them itself and a script cannot
+ * list them in `Access-Control-Request-Headers`, so there is nothing to advertise
+ * or vary on. The value is still read, it just never reaches CORS.
+ */
+const FORBIDDEN = new Set(['host', 'origin'])
+
 export class Headers extends Mapping<Record<string, string>> {
   private readonly headers: string[]
 
@@ -14,7 +21,7 @@ export class Headers extends Mapping<Record<string, string>> {
 
     super(map)
 
-    this.headers = Object.values(map).filter((header) => header !== 'host')
+    this.headers = Object.values(map).filter((header) => !FORBIDDEN.has(header))
     this.headers.forEach((header) => cors.allow(header))
   }
 
