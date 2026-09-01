@@ -32,6 +32,15 @@ export class Database {
                 : str
       }
 
+      /*
+       * A record that has never been written carries no timestamps, and the entity stamps
+       * the ones it is missing as it is read — with the time it was read. The same row then
+       * enumerates differently on every request, which is a moving `etag` and a collection
+       * that is never unmodified.
+       */
+      document._created ??= Date.now()
+      document._updated ??= document._created
+
       documents.push(document)
     }
 
