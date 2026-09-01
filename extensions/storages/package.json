@@ -24,15 +24,15 @@
     "test": "jest",
     "transpile": "npx tsc"
   },
-  "peerDependencies": {
-    "dotenv": "*"
+  "devDependencies": {
+    "dotenv": "17.4.2"
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "3.1107.0",
-    "@aws-sdk/lib-storage": "3.1107.0",
+    "@aws-sdk/client-s3": "3.1123.0",
+    "@aws-sdk/lib-storage": "3.1123.0",
     "@toa.io/schemas": "1.0.0-alpha.270",
-    "cloudinary": "2.9.0",
-    "negotiator": "0.6.3",
+    "cloudinary": "2.11.0",
+    "negotiator": "1.1.0",
     "openspan": "1.0.0-alpha.270"
   },
   "gitHead": "2ab75e1fd23f2e64720a60b8562dda606aa723ee"
