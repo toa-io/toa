@@ -1,7 +1,7 @@
 'use strict'
 
 const { Redlock } = require('@sesamecare-oss/redlock')
-const { Redis, Cluster } = require('ioredis')
+const { Redis } = require('ioredis')
 const { console } = require('openspan')
 const { Connector } = require('@toa.io/core')
 const { Meter } = require('./meter')
@@ -21,24 +21,16 @@ class Connection extends Connector {
   redlock
 
   async open () {
-    const urls = resolve()
+    const url = resolve()
 
-    if (urls.length === 0) {
+    if (url === undefined) {
       console.warn('Atomicity is not configured, so nothing is owned and nothing is metered. ' +
         'Set TOA_ATOMICITY_REDIS.')
 
       return
     }
 
-    /*
-     * More than one address is a cluster, which is a matter of fitting into a deployment
-     * rather than of scale: there is nothing here to shard, but a cluster cannot be reached
-     * with a plain client, and one that already exists is what an operator has to point at.
-     * A group's keys carry a hash tag, so they never go cross-slot.
-     */
-    this.redis = urls.length === 1
-      ? new Redis(urls[0], OPTIONS)
-      : new Cluster(urls, { redisOptions: OPTIONS })
+    this.redis = new Redis(url, OPTIONS)
 
     /*
      * Connecting is not awaited, and a failure to connect is not an error here. Coordination
@@ -56,14 +48,15 @@ class Connection extends Connector {
     this.meter = new Meter(this.redis)
 
     /*
-     * One client, where Redlock is written for several independent masters. There are none
-     * to have here: a list of addresses is one cluster, where a key lives on one master and
-     * the others would refuse it, so a quorum of them could never be reached. What the
-     * library is used for is the acquisition itself.
+     * One client, where Redlock is written for a quorum of independent masters. A quorum
+     * would need a second and a third Redis that the rest of this connector cannot use —
+     * a registry counts replicas on one key and a meter accumulates on one key, and both
+     * would split across masters. What the library is used for is the acquisition: a safe
+     * release, a lease extended for as long as the routine runs, and retries.
      */
     this.redlock = new Redlock([this.redis], { retryCount: -1 })
 
-    console.info('Atomicity connecting to redis', { nodes: urls.length })
+    console.info('Atomicity connecting to redis', { host: this.redis.options.host })
   }
 
   async close () {
@@ -84,9 +77,9 @@ function resolve () {
 
   // an empty value is atomicity turned off, where an absent one in development is the
   // local Redis — as everything else in development resolves
-  if (value === undefined) return process.env.TOA_DEV === '1' ? [DEV] : []
+  if (value === undefined) return process.env.TOA_DEV === '1' ? DEV : undefined
 
-  return value.split(' ').filter((url) => url !== '')
+  return value === '' ? undefined : value
 }
 
 let instance

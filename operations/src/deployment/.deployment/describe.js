@@ -25,7 +25,7 @@ const describe = (context, compositions, dependency, image) => {
   if (atomicity?.redis !== undefined)
     dependency.variables.global.push({
       name: 'TOA_ATOMICITY_REDIS',
-      value: Array.isArray(atomicity.redis) ? atomicity.redis.join(' ') : atomicity.redis
+      value: atomicity.redis
     })
 
   if (atomicity?.interval !== undefined)

@@ -38,8 +38,10 @@ takes, and a lease is extended for as long as the routine runs.
 await context.atom.lock('the ledger', async () => { … })
 ```
 
-Uses [redlock](https://github.com/mike-marcacci/node-redlock) against one client, so it is mutual
-exclusion rather than a quorum of independent masters.
+Uses [redlock](https://github.com/mike-marcacci/node-redlock) against one Redis, not a quorum of
+independent masters. Mutual exclusion holds while that Redis holds the key: a restart that loses it,
+or a failover to a replica that has not received it, can leave two holders. Entity writes do not
+rest on this — they have `_version` — so it is a lock for the work, not for correctness.
 
 ## Outside a component
 
@@ -58,7 +60,7 @@ Requires Redis.
 ```yaml
 # context.toa.yaml
 atomicity:
-  redis: redis://redis.example.com    # a string, or a list of cluster nodes
+  redis: redis://redis.example.com    # one address
   interval: 5000                      # how often a replica registers, milliseconds
 ```
 

@@ -98,15 +98,14 @@ class Atom extends Connector {
   }
 
   /**
-   * Keys belong to the group and are hash-tagged with it, so two groups using the same name do
-   * not meet and a batch never goes cross-slot on a cluster.
+   * Keys belong to the group, so two groups using the same name do not meet.
    *
    * @private
    */
   #keys (kind, keys) {
     if (typeof keys === 'string') keys = [keys]
 
-    return keys.map((key) => `{${this.#name}}:${kind}:${key}`)
+    return keys.map((key) => `${this.#name}:${kind}:${key}`)
   }
 
   async open () {

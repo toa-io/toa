@@ -74,13 +74,8 @@ properties:
     additionalProperties: false
     properties:
       redis:
-        description: One address, or the nodes of a cluster.
-        oneOf:
-          - type: string
-          - type: array
-            minItems: 1
-            items:
-              type: string
+        description: One address.
+        type: string
       interval:
         description: >
           How often a replica registers, in milliseconds. It has to comfortably exceed a round
