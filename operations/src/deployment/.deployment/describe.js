@@ -4,6 +4,7 @@ const desc = require('./.describe')
 const { addVariables } = require('./.describe/variables')
 const { addMounts } = require('./.describe/mounts')
 const { resources } = require('./.describe/resources')
+const { events } = require('./.describe/events')
 
 const describe = (context, compositions, dependency, image) => {
   const { services } = dependency
@@ -62,6 +63,8 @@ const describe = (context, compositions, dependency, image) => {
       name: 'TOA_OUTBOX_RETENTION',
       value: String(outbox.retention)
     })
+
+  events(context, dependency)
 
   const credentials = context.registry?.credentials
 

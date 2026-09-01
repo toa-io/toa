@@ -27,11 +27,12 @@ class Client extends Connector {
   collection
 
   /**
-   * The outbox rows of this component. Created eagerly beside the entity collection, because
-   * a transaction cannot create a collection and an index build cannot run inside one.
+   * The outbox rows of this component, absent unless something consumes its events. Created
+   * eagerly beside the entity collection, because a transaction cannot create a collection and
+   * an index build cannot run inside one.
    *
    * @public
-   * @type {import('mongodb').Collection}
+   * @type {import('mongodb').Collection | undefined}
    */
   outbox
 
@@ -63,13 +64,21 @@ class Client extends Connector {
   key
 
   /**
-   * @param {Locator} locator
+   * @private
+   * @type {boolean}
    */
-  constructor (locator) {
+  publishes
+
+  /**
+   * @param {Locator} locator
+   * @param {boolean} [publishes] whether this component publishes anything
+   */
+  constructor (locator, publishes = false) {
     super()
 
     this.locator = locator
     this.name = locator.lowercase
+    this.publishes = publishes
   }
 
   /**
@@ -95,10 +104,12 @@ class Client extends Connector {
     const db = this.instance.client.db(dbname)
 
     this.collection = await collection(db, this.name)
-    this.outbox = await collection(db, this.name + OUTBOX)
     this.transactional = await transactional(db)
 
-    if (!this.transactional)
+    if (!this.publishes) return
+
+    if (this.transactional) this.outbox = await collection(db, this.name + OUTBOX)
+    else
       console.warn('MongoDB is not a replica set; events are emitted inline, without an outbox',
         { collection: this.name })
   }

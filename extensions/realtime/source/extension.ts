@@ -38,7 +38,7 @@ export function deployment (instances: Instances<Declaration>, annotation?: Decl
     }]
   }
 
-  return { services: [service] }
+  return { services: [service], events: routes.map((route) => route.event) }
 }
 
 export function parse (declaration: Declaration): Route[] {

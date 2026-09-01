@@ -6,8 +6,11 @@ path, and what fails to publish is recovered from the database.
 ## When it applies
 
 Wherever the storage can commit a row atomically with the entity: MongoDB on a replica set or a
-sharded cluster. A standalone `mongod` publishes inline and says so at startup. A component with
-no declared events takes no transaction.
+sharded cluster. A standalone `mongod` publishes inline and says so at startup.
+
+Only for a component whose events something consumes. A component none of whose events are
+consumed takes no transaction, and its `{collection}_outbox` is never created. See
+[events](/documentation/component/declaration.md#events).
 
 ```yaml
 # context.toa.yaml
@@ -140,6 +143,7 @@ Two indexes: `{ lane, pending }` over unpublished rows, and a TTL index over the
 | `TOA_OUTBOX_DEFER=1` | Skip immediate publication; only the pump delivers. Announced at startup. |
 | `TOA_OUTBOX_INTERVAL` | The cycle in milliseconds, from `outbox.interval`. `gap` follows from it. The feature suite runs at 100 ms. |
 | `TOA_OUTBOX_BATCH` | Rows one read brings back, from `outbox.batch`. |
+| `TOA_EVENTS_<NS>_<NAME>` | The component's events that something consumes, space-separated. Absent, every event is published. |
 | `TOA_ATOMICITY_INTERVAL` | The registration interval, from `atomicity.interval`. The feature suite runs at 150 ms. |
 
 Seeding a row directly is the post-crash state, which is how `features/events/outbox.feature`

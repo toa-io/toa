@@ -116,6 +116,14 @@ properties:
           made it out has no expiry and is never reaped.
         type: integer
         minimum: 0
+  events:
+    description: >
+      Events of this context that are consumed outside it. An event is otherwise published only
+      where something in the context receives it.
+    type: array
+    items:
+      type: string
+      pattern: ^[a-zA-Z][a-zA-Z0-9]*\.[a-zA-Z][a-zA-Z0-9]*\.[a-zA-Z][a-zA-Z0-9]*$
   mono:
     type: object
     additionalProperties: false

@@ -1,5 +1,22 @@
 # Component Declaration
 
+## Events
+
+An event is published where something consumes it: a receiver of another component of the context,
+a [realtime](/extensions/realtime) route, or an entry in the context's `events`.
+
+```yaml
+# context.toa.yaml
+events:
+  - store.orders.created   # consumed outside this context
+```
+
+An event nothing consumes has no exchange and no [outbox](/documentation/outbox.md) row, and a
+component none of whose events are consumed has no outbox at all.
+
+Deployment states this per component in `TOA_EVENTS_<NS>_<NAME>`. Without a deployment — a local
+run, `toa mono`, a composition booted in a test — every event is published.
+
 ## Receivers
 
 Receivers are bound to event labels using the `receivers` declaration section.

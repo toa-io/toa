@@ -14,7 +14,10 @@ class Storage extends Connector {
   #collection
   #entity
 
-  /** @type {Outbox | undefined} absent when the deployment cannot run transactions */
+  /**
+   * @type {Outbox | undefined} absent when nothing consumes this component's events, or when
+   * the deployment cannot run transactions
+   */
   #outbox
 
   /** @type {Map<string, object>} span options per driver method */
@@ -45,7 +48,7 @@ class Storage extends Connector {
   async open () {
     this.#collection = this.#client.collection
 
-    if (this.#client.transactional)
+    if (this.#client.outbox !== undefined)
       this.#outbox = new Outbox(this.#client.outbox)
 
     this.#spans.clear()

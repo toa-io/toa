@@ -16,8 +16,9 @@ Given('the {component} database contains:',
     await using(id, async (collection, outbox) => {
       await collection.deleteMany({})
 
-      // rows left behind would be swept into the next scenario
-      await outbox.deleteMany({})
+      // dropped, not emptied: the collection is created at boot, and one left behind by an
+      // earlier scenario would read as one this scenario's boot created
+      await outbox.drop().catch(() => undefined)
 
       if (documents.length > 0)
         await collection.insertMany(documents)
@@ -63,6 +64,20 @@ Then('the {component} outbox holds {int} unpublished row(s)',
   async function (id, count) {
     await using(id, async (_, outbox) =>
       assert.strictEqual(await outbox.countDocuments({ published: false }), count))
+  })
+
+Then('the {component} outbox collection does not exist',
+  /**
+   * The collection is created at boot beside the entity's, so its absence is the assertion
+   * that nothing was set up to publish.
+   */
+  async function (id) {
+    await using(id, async (_, outbox, db) => {
+      const found = await db.listCollections({ name: outbox.collectionName }).toArray()
+
+      assert.strictEqual(found.length, 0,
+        `outbox collection '${outbox.collectionName}' exists`)
+    })
   })
 
 Then('the {component} outbox row carries an origin',
@@ -131,7 +146,7 @@ async function using (id, fn) {
   const db = client.db('toa-dev')
 
   try {
-    await fn(db.collection(collname), db.collection(collname + '_outbox'))
+    await fn(db.collection(collname), db.collection(collname + '_outbox'), db)
   } finally {
     await client.close()
   }

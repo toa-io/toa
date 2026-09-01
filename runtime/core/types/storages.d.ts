@@ -44,8 +44,13 @@ declare namespace toa.core {
       table (database: string, locator: Locator, schema: Object, reset?: boolean): Promise<string>
     }
 
+    interface Options {
+      /** whether this component publishes anything, and so needs an outbox */
+      outbox?: boolean
+    }
+
     interface Factory {
-      storage (locator: Locator, properties?: object): Storage
+      storage (locator: Locator, properties?: object, options?: Options): Storage
 
       migration? (driver?: string): Migration
     }

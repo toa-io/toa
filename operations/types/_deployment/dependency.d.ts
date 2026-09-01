@@ -50,6 +50,7 @@ declare namespace toa.deployment {
       services?: Service[] // dependency.Service
       proxies?: Proxy[]
       variables?: Variables
+      events?: string[]
     }
 
   }
@@ -59,6 +60,7 @@ declare namespace toa.deployment {
     services?: _service.Service[] // deployment.Service
     proxies?: dependency.Proxy[]
     variables?: dependency.Variables
+    events?: string[]
   }
 
 }

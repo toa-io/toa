@@ -155,6 +155,34 @@ Feature: Transactional outbox
     Then the reply is received
     And the `proto.plain` outbox is empty
 
+  Scenario: Nothing consumes the component's events
+    # what the deployment says when no receiver, no realtime route and no context declaration
+    # names an event of this component
+    Given an environment variable `TOA_EVENTS_MONGO_OUTBOX` is set to ""
+    And I compose components:
+      | mongo.outbox |
+      | mongo.sink   |
+    When I call `mongo.outbox.transit` with:
+      """yaml
+      input:
+        foo: 1
+        bar: world
+      query:
+        id: 6b93e57cc0e14fce95c4496c21086781
+      """
+    Then the reply is received
+    And I wait 0.3 second
+    And I call `mongo.sink.observe` with:
+      """yaml
+      query:
+        id: 6b93e57cc0e14fce95c4496c21086781
+      """
+    Then the reply is received:
+      """yaml
+      count: 0
+      """
+    And the `mongo.outbox` outbox collection does not exist
+
   Scenario: Without atomicity nothing is read
     Given an environment variable `TOA_ATOMICITY_REDIS` is set to ""
     And the `mongo.outbox` outbox contains:
