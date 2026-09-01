@@ -43,19 +43,8 @@ atomicity: redis://redis.example.com    # a string, or a list of cluster nodes
 `TOA_ATOMICITY_REDIS` at runtime, space-separated for a list. One client per process, shared by
 every atom in it.
 
-Several addresses are a cluster. Nothing here needs sharding, but a deployment that already runs
-one has no standalone instance to point at, and a cluster cannot be reached with a plain client.
-
-A cluster does not spread a group, though: its keys share a hash tag and so live in one slot, on
-one master. Lose that master and the cluster promotes its replica, after which the group carries
-on; lose it with no replica and that group owns nothing until the slot is back, while groups on
-other nodes are unaffected. Either way what a lost node costs is standing down.
-
-There is no quorum over independent stores: an exclusive answer that two of them could disagree
-about would be worse than no answer.
-
-Connecting is not awaited and a failure to connect is not an error — unreachable reads exactly
-like unconfigured, and a Redis that comes up later is picked up on its own.
+Redis being down is not an error here. Connecting is not awaited, so it cannot fail a start, and
+while it is unreachable nothing is owned and callers stand down. It is picked up again on its own.
 
 ## Diagnostics
 
