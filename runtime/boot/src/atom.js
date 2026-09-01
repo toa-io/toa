@@ -29,6 +29,7 @@ class Aspect extends Connector {
     switch (method) {
       case 'slots': return this.#atom.slots(...args)
       case 'meter': return this.#atom.meter(...args)
+      case 'lock': return this.#atom.lock(...args)
       default: throw new Error(`Atom aspect has no '${method}' method`)
     }
   }

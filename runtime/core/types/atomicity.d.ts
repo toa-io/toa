@@ -30,6 +30,14 @@ declare namespace toa.core {
        * Rejects where there is nothing to arbitrate through.
        */
       meter (keys: string[], deltas: number[]): Promise<number[]>
+
+      /**
+       * Runs `routine` holding `keys`, and while it holds them no other replica of the group
+       * does. Waits for as long as it takes to acquire them.
+       *
+       * Rejects where there is nothing to arbitrate through.
+       */
+      lock<T> (keys: string | string[], routine: () => Promise<T>): Promise<T>
     }
 
     interface Factory {

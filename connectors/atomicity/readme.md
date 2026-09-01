@@ -29,6 +29,18 @@ const [debt] = await context.atom.meter(['sam'], [1000])
 
 Debt drains a millisecond a millisecond, on Redis' clock. Keys belong to the group.
 
+## Locking
+
+`routine` runs while no other replica of the group holds `keys`. Acquiring waits for as long as it
+takes, and a lease is extended for as long as the routine runs.
+
+```javascript
+await context.atom.lock('the ledger', async () => { … })
+```
+
+Uses [redlock](https://github.com/mike-marcacci/node-redlock) against one client, so it is mutual
+exclusion rather than a quorum of independent masters.
+
 ## Outside a component
 
 ```javascript

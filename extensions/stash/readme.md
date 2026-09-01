@@ -1,7 +1,6 @@
 # Toa Stash
 
-Shared cache and distributed lock manager on top of [ioredis](https://github.com/redis/ioredis)
-and [redlock](https://github.com/mike-marcacci/node-redlock).
+Shared cache on top of [ioredis](https://github.com/redis/ioredis).
 
 ## Shared cache
 
@@ -26,18 +25,6 @@ Keys are component-scoped, meaning that the underlying Redis keys are `namespace
 starting from third.
 
 Values are encoded using [msgpack](https://msgpack.org).
-
-## Distributed lock manager
-
-`async lock<T>(id: string | string[], routine: async? () => T): T`
-
-Executes `routine` once a lock is successfully acquired. Lock ID is component-scoped.
-
-```javascript
-async function computation (input, context) {
-  await context.stash.lock('lock id', () => console.log('Lock acquired'))
-}
-```
 
 ## Manifest
 

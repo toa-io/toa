@@ -32,3 +32,29 @@ Feature: Atom aspect
       debt: 60000
       adds: true
       """
+
+  # Both calls read the counter, yield, and write it back. Unheld, both would read the same
+  # value and answer 1.
+  Scenario: Holding a lock
+    Given I compose `atom` component
+    When I call `default.atom.locks` with:
+      """yaml
+      input: {}
+      """
+    Then the reply is received:
+      """yaml
+      [1, 2]
+      """
+
+  # The routine runs for a whole lease, so the lock is held only if it is extended.
+  Scenario: Holding a lock across a lease
+    Given I compose `atom` component
+    When I call `default.atom.locks` with:
+      """yaml
+      input:
+        delay: 5000
+      """
+    Then the reply is received:
+      """yaml
+      [1, 2]
+      """

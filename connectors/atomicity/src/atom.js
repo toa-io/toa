@@ -4,8 +4,8 @@ const { console } = require('openspan')
 const { Connector } = require('@toa.io/core')
 
 /**
- * What one group of replicas decides together, in one place: which of them owns what, and what
- * they have spent between them.
+ * What one group of replicas decides together, in one place: which of them owns what, what they
+ * have spent between them, and which of them holds a name while it works.
  *
  * @implements {toa.core.atomicity.Atom}
  */
@@ -67,9 +67,6 @@ class Atom extends Connector {
    * and reads back where the group stands, so a replica reports only what it has spent and
    * still throttles on what all of them have.
    *
-   * Keys belong to the group and are hash-tagged with it, so two groups metering the same name
-   * do not meet and a batch never goes cross-slot on a cluster.
-   *
    * @param {string[]} keys
    * @param {number[]} deltas
    * @returns {Promise<number[]>}
@@ -80,7 +77,36 @@ class Atom extends Connector {
     if (meter === undefined)
       throw new Error('Metering requires atomicity. Set TOA_ATOMICITY_REDIS.')
 
-    return meter.meter(keys.map((key) => `{${this.#name}}:meter:${key}`), deltas)
+    return meter.meter(this.#keys('meter', keys), deltas)
+  }
+
+  /**
+   * Runs `routine` holding `keys`, and while it holds them no other replica of the group does.
+   * Waits for as long as it takes to acquire them.
+   *
+   * @param {string | string[]} keys
+   * @param {() => Promise<any>} routine
+   * @returns {Promise<any>}
+   */
+  async lock (keys, routine) {
+    const redlock = this.#connection.redlock
+
+    if (redlock === undefined)
+      throw new Error('Locking requires atomicity. Set TOA_ATOMICITY_REDIS.')
+
+    return redlock.using(this.#keys('lock', keys), LEASE, routine)
+  }
+
+  /**
+   * Keys belong to the group and are hash-tagged with it, so two groups using the same name do
+   * not meet and a batch never goes cross-slot on a cluster.
+   *
+   * @private
+   */
+  #keys (kind, keys) {
+    if (typeof keys === 'string') keys = [keys]
+
+    return keys.map((key) => `{${this.#name}}:${kind}:${key}`)
   }
 
   async open () {
@@ -133,5 +159,8 @@ function override () {
 }
 
 const INTERVAL = 5000
+
+/** how long a lock is held before it has to be extended, in milliseconds */
+const LEASE = 5000
 
 exports.Atom = Atom

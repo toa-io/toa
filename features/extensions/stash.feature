@@ -52,37 +52,6 @@ Feature: Stash extension
       1
       """
 
-  Scenario: Using DLM
-    Given I compose `stash` component
-    When I call `default.stash.set` with:
-      """yaml
-      input: 0
-      """
-    And I call `default.stash.locks` with:
-      """yaml
-      input: {}
-      """
-    Then the reply is received:
-      """yaml
-      [1, 2]
-      """
-
-  Scenario: Using DLM with delay
-    Given I compose `stash` component
-    When I call `default.stash.set` with:
-      """yaml
-      input: 0
-      """
-    And I call `default.stash.locks` with:
-      """yaml
-      input:
-        delay: 5000
-      """
-    Then the reply is received:
-      """yaml
-      [1, 2]
-      """
-
   Scenario: Deployment
     Given I have a component `stash`
     And I have a context with:

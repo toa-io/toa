@@ -5,6 +5,15 @@ operations:
     input:
       total*: number
     output: [number]
+  locks:
+    input:
+      delay: 0
+    output: [number]
+  plus:
+    input:
+      delay: 0
+      key*: string
+    output: number
   meter:
     input:
       name*: string

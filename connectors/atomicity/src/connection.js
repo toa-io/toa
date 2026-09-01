@@ -1,5 +1,6 @@
 'use strict'
 
+const { Redlock } = require('@sesamecare-oss/redlock')
 const { Redis, Cluster } = require('ioredis')
 const { console } = require('openspan')
 const { Connector } = require('@toa.io/core')
@@ -15,6 +16,9 @@ class Connection extends Connector {
 
   /** @type {Meter} */
   meter
+
+  /** @type {Redlock} */
+  redlock
 
   async open () {
     const urls = resolve()
@@ -51,6 +55,14 @@ class Connection extends Connector {
     // one script per process, whatever the groups sharing this client meter under
     this.meter = new Meter(this.redis)
 
+    /*
+     * One client, where Redlock is written for several independent masters. There are none
+     * to have here: a list of addresses is one cluster, where a key lives on one master and
+     * the others would refuse it, so a quorum of them could never be reached. What the
+     * library is used for is the acquisition itself.
+     */
+    this.redlock = new Redlock([this.redis], { retryCount: -1 })
+
     console.info('Atomicity connecting to redis', { nodes: urls.length })
   }
 
@@ -61,6 +73,7 @@ class Connection extends Connector {
     // and a client that has been disconnected would fail every command put to it
     this.redis = undefined
     this.meter = undefined
+    this.redlock = undefined
   }
 }
 

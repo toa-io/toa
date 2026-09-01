@@ -5,7 +5,7 @@ import { resolve } from '@toa.io/pointer'
 import { ID } from './extension'
 
 export class Connection extends Connector {
-  public readonly redises: Redis[] = []
+  public redis: Redis | null = null
   public readonly locator: Locator
 
   public constructor (locator: Locator) {
@@ -25,35 +25,31 @@ export class Connection extends Connector {
       replyMapping: 'resp3'
     }
 
-    const urls = await this.resolveURLs()
+    this.redis = new Redis(await this.resolveURL(), options)
 
-    for (const url of urls)
-      this.redises.push(new Redis(url, options))
+    await this.redis.connect()
 
-    const connecting = this.redises.map(this.connectNode.bind(this))
-
-    await Promise.all(connecting)
-
-    console.info('Stash is running')
+    console.info('Stash connected to redis', { host: this.redis.options.host })
   }
 
   protected override async close (): Promise<void> {
-    for (const redis of this.redises)
-      redis.disconnect()
+    this.redis?.disconnect()
+    this.redis = null
 
     console.info('Stash shutdown complete')
   }
 
-  private async connectNode (redis: Redis): Promise<void> {
-    await redis.connect()
-
-    console.info('Stash connected to redis', { host: redis.options.host })
-  }
-
-  private async resolveURLs (): Promise<string[]> {
+  private async resolveURL (): Promise<string> {
     if (process.env.TOA_DEV === '1')
-      return ['redis://localhost']
-    else
-      return resolve(ID, this.locator.id)
+      return 'redis://localhost'
+
+    const urls = resolve(ID, this.locator.id)
+
+    // several addresses used to be independent masters for the lock manager, which the atom
+    // aspect holds now. A cache is one Redis, and the rest have never been read from
+    if (urls.length > 1)
+      console.warn('Stash takes the first of several addresses', { count: urls.length })
+
+    return urls[0]
   }
 }

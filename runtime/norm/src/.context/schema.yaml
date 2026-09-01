@@ -67,8 +67,9 @@ properties:
       required: [name, components]
   atomicity:
     description: >
-      Where replicas agree on who owns what. Absent or unreachable, nothing is owned and
-      whoever asked stands down.
+      Where the replicas of a component decide together: who owns what, what they have spent
+      between them, and which of them holds a name while it works. Absent or unreachable,
+      nothing is owned and whoever asked stands down; metering and locking are refused.
     type: object
     additionalProperties: false
     properties:
