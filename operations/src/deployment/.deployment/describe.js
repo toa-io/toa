@@ -22,10 +22,16 @@ const describe = (context, compositions, dependency, image) => {
 
   const atomicity = context.atomicity
 
-  if (atomicity !== undefined)
+  if (atomicity?.redis !== undefined)
     dependency.variables.global.push({
       name: 'TOA_ATOMICITY_REDIS',
-      value: Array.isArray(atomicity) ? atomicity.join(' ') : atomicity
+      value: Array.isArray(atomicity.redis) ? atomicity.redis.join(' ') : atomicity.redis
+    })
+
+  if (atomicity?.interval !== undefined)
+    dependency.variables.global.push({
+      name: 'TOA_ATOMICITY_INTERVAL',
+      value: String(atomicity.interval)
     })
 
   const outbox = context.outbox

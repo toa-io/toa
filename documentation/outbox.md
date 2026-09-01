@@ -35,15 +35,15 @@ existed. A component with no declared events has no outbox and takes no transact
 
 ```yaml
 # context.toa.yaml
-atomicity: redis://redis.example.com   # who owns what; see below
+atomicity:
+  redis: redis://redis.example.com     # who owns what; see below
 outbox:
   interval: 5000                       # the cycle, in milliseconds
   retention: 86400                     # seconds a published row is kept as a change log
 ```
 
-Every field is optional, and each reaches the runtime as one environment variable —
-`TOA_ATOMICITY_REDIS`, `TOA_OUTBOX_INTERVAL`, `TOA_OUTBOX_RETENTION`. What `atomicity` is for, and
-what happens without it, is [below](#partitioning).
+Every field is optional. What `atomicity` is for, and what happens without it, is
+[below](#partitioning).
 
 ## How it works
 
@@ -115,7 +115,8 @@ How that is arrived at is the connector's business, not the outbox's.
 
 ```yaml
 # context.toa.yaml
-atomicity: redis://redis.example.com    # a string, or a list for a cluster
+atomicity:
+  redis: redis://redis.example.com    # a string, or a list for a cluster
 ```
 
 **While a replica does not know its lanes, its sweep is suspended.** The cycle keeps running and

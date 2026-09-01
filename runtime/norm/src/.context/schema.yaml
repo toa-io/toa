@@ -67,16 +67,28 @@ properties:
       required: [name, components]
   atomicity:
     description: >
-      Where replicas agree on who owns what, exclusively. System infrastructure rather than a
-      per-component resource: it holds interval counters and nothing else, one small key per
-      group. One address is one server; several are the nodes of a cluster, not alternatives.
-      Absent or unreachable, nothing is owned and whoever asked stands down.
-    oneOf:
-      - type: string
-      - type: array
-        minItems: 1
-        items:
-          type: string
+      Where replicas agree on who owns what. Absent or unreachable, nothing is owned and
+      whoever asked stands down.
+    type: object
+    additionalProperties: false
+    properties:
+      redis:
+        description: One address, or the nodes of a cluster.
+        oneOf:
+          - type: string
+          - type: array
+            minItems: 1
+            items:
+              type: string
+      interval:
+        description: >
+          How often a replica registers, in milliseconds. It has to comfortably exceed a round
+          trip to Redis and the jitter around it, and nothing is owned until two consecutive
+          intervals have agreed — so this is also how long a replica owns nothing after it
+          joins, restarts or stalls.
+        type: integer
+        minimum: 100
+    required: [redis]
   outbox:
     type: object
     additionalProperties: false

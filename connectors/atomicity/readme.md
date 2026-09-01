@@ -28,8 +28,7 @@ while this replica owns nothing — at startup, during a rollout, or while Redis
 and a caller has to be able to stand down rather than assume.
 
 The scheme is [n-and-i](https://github.com/temich/nandi)'s. Nothing is owned for the first couple
-of intervals after a replica joins, restarts or stalls. `TOA_ATOMICITY_INTERVAL` sets the
-interval, 10 seconds by default.
+of intervals after a replica joins, restarts or stalls.
 
 ## Configuration
 
@@ -37,13 +36,10 @@ Requires Redis.
 
 ```yaml
 # context.toa.yaml
-atomicity: redis://redis.example.com    # a string, or a list of cluster nodes
+atomicity:
+  redis: redis://redis.example.com    # a string, or a list of cluster nodes
+  interval: 5000                      # how often a replica registers, milliseconds
 ```
 
-`TOA_ATOMICITY_REDIS` at runtime, space-separated for a list. One client per process, shared by
-every atom in it, and an unreachable Redis does not fail a start.
-
-## Diagnostics
-
-Reported through the runtime's console, forked with the group, so every line carries
-`context.group`.
+One client per process, shared by every atom in it, and an unreachable Redis does not fail a
+start.

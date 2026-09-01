@@ -100,11 +100,8 @@ class Atom extends Connector {
     })
 
     // the loop yields when ownership changes, which is exactly when work has to be handed over
-    for await (const { i, n } of loop) {
+    for await (const { i, n } of loop)
       this.#assignment = i === null ? null : { i, n }
-
-      this.#console.info('Slots assigned', this.#assignment ?? { i: null })
-    }
   }
 }
 
@@ -114,6 +111,6 @@ function override () {
   return Number.isNaN(value) || value <= 0 ? undefined : value
 }
 
-const INTERVAL = 10_000
+const INTERVAL = 5000
 
 exports.Atom = Atom
