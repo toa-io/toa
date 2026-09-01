@@ -76,6 +76,45 @@ Feature: Custom tokens
       200 OK
       """
 
+  Scenario: Issuing a token for another identity
+    Given the `identity.basic` database contains:
+      | _id                              | authority | username  | password                                                     |
+      | efe3a65ebbee47ed95a73edd911ea328 | nex       | developer | $2b$10$ZRSKkgZoGnrcTNA5w5eCcu3pxDzdTduhteVYXcp56AaNcilNkwJ.O |
+      | e8e4f9c2a68d419b861403d71fabc915 | nex       | user      | $2b$10$Frszmrmsz9iwSXzBbRRMKeDVKsNxozkrLNSsN.SnVC.KPxLtQr/bK |
+    And the `identity.roles` database contains:
+      | _id                              | identity                         | role                      |
+      | 9c4702490ff84f2a9e1b1da2ab64bdd4 | efe3a65ebbee47ed95a73edd911ea328 | system:identity:tokens    |
+    When the following request is received:
+      """
+      POST /identity/tokens/e8e4f9c2a68d419b861403d71fabc915/ HTTP/1.1
+      host: nex.toa.io
+      authorization: Basic ZGV2ZWxvcGVyOnNlY3JldA==
+      content-type: application/yaml
+      accept: application/yaml
+
+      label: On behalf
+      lifetime: 600
+      """
+    Then the following reply is sent:
+      """
+      201 Created
+
+      token: ${{ token }}
+      """
+    When the following request is received:
+      """
+      GET /identity/ HTTP/1.1
+      host: nex.toa.io
+      authorization: Token ${{ token }}
+      accept: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+
+      id: e8e4f9c2a68d419b861403d71fabc915
+      """
+
   Scenario: Token with restricted scopes
     When the following request is received:
       """
