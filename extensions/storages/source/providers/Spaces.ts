@@ -19,10 +19,6 @@ export class Spaces extends S3 {
       bucket: options.space,
       region: options.region,
       endpoint: `https://${options.region}.digitaloceanspaces.com`
-    }, secrets, {
-      // Spaces rejects the checksums the SDK adds to every request by default
-      requestChecksumCalculation: 'WHEN_REQUIRED',
-      responseChecksumValidation: 'WHEN_REQUIRED'
-    })
+    }, secrets)
   }
 }
