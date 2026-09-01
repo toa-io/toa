@@ -1,7 +1,4 @@
 services:
-  verdaccio:
-    image: verdaccio/verdaccio:5.10.2
-    ports: ["4873:4873"]
   rabbitmq:
     image: rabbitmq:3.10.0-management
     ports:
@@ -70,9 +67,6 @@ services:
       - "6377:6379"
     healthcheck:
       test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
-  http-echo:
-    image: ealen/echo-server:0.8.12
-    ports: ["8888:80"]
   localstack:
     image: localstack/localstack
     ports:
