@@ -2,7 +2,7 @@
 
 const { expand } = require('@toa.io/concise')
 const { defined } = require('@toa.io/generic')
-const { file } = require('@toa.io/filesystem')
+const { statSync } = require('node:fs')
 const yaml = require('@toa.io/yaml')
 const { create, is, ajv } = require('./validator')
 const { debug } = require('node:util')
@@ -115,7 +115,7 @@ class Schema {
 }
 
 const schema = (cos, options) => {
-  if (typeof cos === 'string' && file.is.sync(cos))
+  if (typeof cos === 'string' && isFile(cos))
     cos = yaml.load.sync(cos)
 
   const schema = expand(cos, is)
@@ -132,6 +132,18 @@ const schema = (cos, options) => {
   }
 
   return new Schema(validate, compileOptional, compileMatch)
+}
+
+/**
+ * @param {string} path
+ * @returns {boolean}
+ */
+const isFile = (path) => {
+  try {
+    return statSync(path).isFile()
+  } catch {
+    return false
+  }
 }
 
 exports.Schema = Schema

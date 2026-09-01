@@ -3,7 +3,7 @@
 const { console: output } = require('openspan')
 const boot = require('@toa.io/boot')
 const { shortcuts } = require('@toa.io/norm')
-const { directory: { find } } = require('@toa.io/filesystem')
+const { find } = require('@toa.io/generic')
 const { version } = require('@toa.io/runtime')
 const { graceful } = require('./lib/graceful')
 

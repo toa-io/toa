@@ -27,7 +27,6 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@toa.io/filesystem": "1.0.0-alpha.254",
     "@toa.io/generic": "1.0.0-alpha.254",
     "@toa.io/norm": "1.0.0-alpha.270",
     "@toa.io/yaml": "1.0.0-alpha.254",

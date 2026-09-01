@@ -4,7 +4,7 @@ const { spawn, exec } = require('node:child_process')
 const { promisify } = require('node:util')
 
 const { promex } = require('@toa.io/generic')
-const { file: { dot } } = require('@toa.io/filesystem')
+const { findUp } = require('find-up')
 
 const execute = promisify(exec)
 
@@ -15,7 +15,7 @@ const execute = promisify(exec)
  * @return {Promise<void>}
  */
 async function run (repository, command, envFile) {
-  if (envFile === undefined) envFile = await dot('env')
+  if (envFile === undefined) envFile = await findUp('.env')
 
   const envArgs = envFile === undefined ? [] : ['--env-file', envFile]
 

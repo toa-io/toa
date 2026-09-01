@@ -2,6 +2,15 @@
 
 const { dirname, join, basename } = require('node:path')
 
+/**
+ * Returns the directory of the package referenced by `reference`,
+ * resolved against `base` and the runtime.
+ *
+ * @param {string} reference
+ * @param {string} base
+ * @param {string} [indicator]
+ * @return {string}
+ */
 const find = (reference, base, indicator = 'package.json') => {
   const runtime = dirname(require.resolve('@toa.io/runtime'))
   const paths = [base, runtime]

@@ -26,7 +26,6 @@
   "dependencies": {
     "@toa.io/boot": "1.0.0-alpha.270",
     "@toa.io/core": "1.0.0-alpha.270",
-    "@toa.io/filesystem": "1.0.0-alpha.254",
     "@toa.io/generic": "1.0.0-alpha.254",
     "@toa.io/norm": "1.0.0-alpha.270",
     "@toa.io/schemas": "1.0.0-alpha.270",

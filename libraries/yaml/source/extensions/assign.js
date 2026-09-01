@@ -2,7 +2,7 @@
 
 const { resolve, dirname } = require('node:path')
 const { traverse, add, plain } = require('@toa.io/generic')
-const { file } = require('@toa.io/filesystem')
+const glob = require('fast-glob')
 
 /** @type {toa.yaml.extension} */
 const assign = (object, path, yaml) => {
@@ -30,7 +30,7 @@ function extend (node, path, yaml) {
   const basepath = dirname(path)
   const reference = resolve(basepath, node['<assign'])
   const [pattern, fragment] = reference.split('#')
-  const files = file.glob.sync(pattern).filter((file) => file !== path)
+  const files = glob.sync(pattern, GLOB).filter((file) => file !== path)
 
   if (files.length === 0) throw new Error(`No files matching pattern '${pattern}'`)
 
@@ -56,5 +56,8 @@ function extract (object, fragment) {
 
   return cursor
 }
+
+
+const GLOB = { onlyFiles: true, absolute: true }
 
 exports.assign = assign

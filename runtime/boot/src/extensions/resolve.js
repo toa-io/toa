@@ -1,6 +1,6 @@
 'use strict'
 
-const { directory: { find } } = require('@toa.io/filesystem')
+const { find } = require('@toa.io/generic')
 const boot = require('../..')
 
 const { instances } = require('./instances')

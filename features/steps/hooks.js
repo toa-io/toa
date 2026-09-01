@@ -1,7 +1,9 @@
 'use strict'
 
 const stage = require('@toa.io/userland/stage')
-const { directory } = require('@toa.io/filesystem')
+const { mkdtemp } = require('node:fs/promises')
+const { join } = require('node:path')
+const { tmpdir } = require('node:os')
 const { Before, BeforeAll, After } = require('@cucumber/cucumber')
 
 BeforeAll(() => {
@@ -22,7 +24,7 @@ Before(
    * @this {toa.features.Context}
    */
   async function() {
-    this.cwd = await directory.temp()
+    this.cwd = await mkdtemp(join(tmpdir(), Math.random().toString(36).slice(2)))
     this.containers = {}
   })
 

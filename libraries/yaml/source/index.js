@@ -1,7 +1,8 @@
 'use strict'
 
 const yaml = require('js-yaml')
-const { file: { read, write } } = require('@toa.io/filesystem')
+const { readFile, writeFile } = require('node:fs/promises')
+const { readFileSync } = require('node:fs')
 const { overwrite } = require('@toa.io/generic')
 const extensions = require('./extensions')
 
@@ -10,7 +11,7 @@ const extensions = require('./extensions')
  * @returns {Promise<object>}
  */
 const load = async (path) => {
-  const contents = await read(path)
+  const contents = await readFile(path, 'utf8')
 
   return parse(contents, path)
 }
@@ -20,7 +21,7 @@ const load = async (path) => {
  * @returns {Promise<object[]>}
  */
 load.all = async (path) => {
-  const contents = await read(path)
+  const contents = await readFile(path, 'utf8')
   const objects = split(contents)
 
   return objects.map((object) => process(object, path))
@@ -31,7 +32,7 @@ load.all = async (path) => {
  * @returns {object}
  */
 load.sync = (path) => {
-  const contents = read.sync(path)
+  const contents = readFileSync(path, 'utf8')
 
   return parse(contents, path)
 }
@@ -44,7 +45,7 @@ load.sync = (path) => {
 const save = async (object, path) => {
   const contents = dump(object)
 
-  await write(path, contents)
+  await writeFile(path, contents, 'utf8')
 }
 
 /**

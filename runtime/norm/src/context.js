@@ -2,7 +2,7 @@
 
 const { resolve } = require('node:path')
 const { convolve } = require('@toa.io/generic')
-const { directory: { glob } } = require('@toa.io/filesystem')
+const glob = require('fast-glob')
 const { load } = require('@toa.io/yaml')
 
 const { component } = require('./component')
@@ -28,7 +28,7 @@ const context = async (root, environment = process.env.TOA_ENV) => {
 
   validate(context)
 
-  const paths = await glob(resolve(root, COMPONENTS))
+  const paths = await glob(resolve(root, COMPONENTS), GLOB)
 
   context.components = await Promise.all(paths.map(component))
   context.dependencies = await dependencies(context)
@@ -41,5 +41,8 @@ const context = async (root, environment = process.env.TOA_ENV) => {
 
 const CONTEXT = 'context.toa.yaml'
 const COMPONENTS = 'components/*'
+
+
+const GLOB = { onlyDirectories: true, absolute: true }
 
 exports.context = context

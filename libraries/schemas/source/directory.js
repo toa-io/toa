@@ -1,7 +1,7 @@
 'use strict'
 
 const { join, relative } = require('node:path')
-const { file } = require('@toa.io/filesystem')
+const glob = require('fast-glob')
 const yaml = require('@toa.io/yaml')
 
 /**
@@ -10,7 +10,7 @@ const yaml = require('@toa.io/yaml')
  */
 const readDirectory = (path) => {
   const pattern = join(path, '**', '*' + EXTENSION)
-  const files = file.glob.sync(pattern)
+  const files = glob.sync(pattern, GLOB)
 
   return files.map(load(path))
 }
@@ -38,5 +38,7 @@ const calculateID = (root, path) => {
 }
 
 const EXTENSION = '.cos.yaml'
+
+const GLOB = { onlyFiles: true, absolute: true }
 
 exports.readDirectory = readDirectory
