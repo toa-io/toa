@@ -1,0 +1,14 @@
+name: atom
+
+operations:
+  slots:
+    input:
+      total*: number
+    output: [number]
+  meter:
+    input:
+      name*: string
+      delta*: number
+    output:
+      debt*: number
+      adds*: boolean

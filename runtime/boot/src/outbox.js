@@ -15,8 +15,6 @@ const boot = require('./index')
 const outbox = (manifest, storage, emission) => {
   if (emission === undefined) return
 
-  // whether rows are durable at all is the storage's answer, and it is only known once it is
-  // open — so the partition is built here and connected there
   return new Outbox(emission, storage, boot.atomicity(manifest.locator.id), {})
 }
 

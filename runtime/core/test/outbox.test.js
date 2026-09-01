@@ -27,7 +27,7 @@ beforeEach(() => {
     }
   }
 
-  atom = { slots: jest.fn(() => [0]), connect: jest.fn(), disconnect: jest.fn() }
+  atom = { slots: jest.fn(() => [0]), link: jest.fn() }
   outbox = new Outbox(emission, storage, atom, { interval: 1000, batch: BATCH })
 })
 

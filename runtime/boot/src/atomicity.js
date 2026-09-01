@@ -1,21 +1,15 @@
 'use strict'
 
+const { Factory } = require('@toa.io/atomicity')
+
 /**
- * Exclusive ownership of a slot within a group, where there is anything to coordinate through.
- * Without it nothing is owned, and whoever asked stands down — see the connector's readme.
+ * What the replicas of one group decide together. Every component has one, whether or not there
+ * is anything to coordinate through: without a Redis nothing is owned and nothing is metered —
+ * see the connector's readme.
  *
  * @param {string} group
+ * @returns {toa.core.atomicity.Atom}
  */
-const atomicity = (group) => {
-  if (process.env[VARIABLE] === undefined || process.env[VARIABLE] === '')
-    return
-
-  const { Factory } = require(MODULE)
-
-  return new Factory().atom(group)
-}
-
-const VARIABLE = 'TOA_ATOMICITY_REDIS'
-const MODULE = '@toa.io/atomicity'
+const atomicity = (group) => new Factory().atom(group)
 
 exports.atomicity = atomicity

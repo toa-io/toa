@@ -51,14 +51,9 @@ class Outbox extends Connector {
     this.#defer = process.env.TOA_OUTBOX_DEFER === '1'
 
     this.depends(emission)
+    this.depends(atom)
 
     if (storage !== undefined) this.depends(storage)
-
-    /*
-     * The atom is deliberately not a dependency. Whether rows are durable at all is only known
-     * once the storage is open, and coordinating the pump of a storage that cannot commit a
-     * row would open a connection to accomplish nothing.
-     */
   }
 
   /** whether the storage can commit a row atomically with the entity */
@@ -103,15 +98,8 @@ class Outbox extends Connector {
   async open () {
     if (!this.durable) return
 
-    await this.#atom?.connect()
-
     if (this.#defer)
       console.warn('Outbox immediate publication is deferred; events are published by the pump only')
-
-    if (this.#atom === undefined)
-      console.warn('Outbox has no atomicity, so its pump reads nothing: rows are written ' +
-        'and published, but what fails to publish waits until lanes can be claimed. ' +
-        'Set TOA_ATOMICITY_REDIS.')
 
     this.#timer = setInterval(() => this.#tick(), this.#interval)
     this.#timer.unref()
@@ -121,10 +109,6 @@ class Outbox extends Connector {
     this.#closing = true
 
     if (this.#timer !== undefined) clearInterval(this.#timer)
-
-    // stop reading before draining: a cycle that started would publish into a broker
-    // connection that is about to go
-    await this.#atom?.disconnect()
 
     await this.#drain()
     await this.#mark()
@@ -230,7 +214,7 @@ class Outbox extends Connector {
    * @param {string} [after] the last id of the page before, so a page is never read twice
    */
   async #read (after) {
-    const lanes = this.#atom?.slots(LANES) ?? null
+    const lanes = this.#atom.slots(LANES)
 
     if (lanes === null || lanes.length === 0) return []
 
@@ -271,7 +255,7 @@ class Outbox extends Connector {
    * @private
    */
   #lane () {
-    const owned = this.#atom?.slots(LANES) ?? null
+    const owned = this.#atom.slots(LANES)
 
     return owned === null || owned.length === 0
       ? Math.floor(Math.random() * LANES)
