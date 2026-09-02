@@ -202,6 +202,9 @@ const DEFAULT_PROPERTIES: Partial<http.Options> = {
 // the identity components boot inside the gateway, and without a variable each would wait
 // for the values service, which these features do not run
 const DEFAULT_CONFIGURATION: Record<string, object> = {
+  // a component declaring configuration waits for `configuration.values`, which these
+  // features do not run; the variable is the local override that stands in for it
+  'realtime.streams': {},
   'identity.basic': {},
   'identity.federation': {},
   'identity.otp': {},
