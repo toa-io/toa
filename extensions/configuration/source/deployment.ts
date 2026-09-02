@@ -1,6 +1,5 @@
 import assert from 'node:assert'
 import { type Dependency, type Variable, type Variables } from '@toa.io/operations'
-import { encode } from '@toa.io/generic'
 import { type Manifest } from './manifest'
 import * as validators from './schemas'
 import type { context } from '@toa.io/norm'
@@ -18,7 +17,7 @@ export function deployment (instances: Instance[], annotation: Annotation = {}):
 
     variables[instance.locator.label] = [{
       name: PREFIX + instance.locator.uppercase,
-      value: encode(values)
+      value: JSON.stringify(values)
     }]
 
     const secrets = createSecrets(values)

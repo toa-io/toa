@@ -21,6 +21,9 @@ Use its features to test.
 export class Agent {
   public readonly origin?: string
   public response: string = ''
+
+  /** The last response body, as received. A binary body does not survive `response`. */
+  public bytes: Buffer | null = null
   public readonly captures: Captures
   public pending = new Set<http.IncomingMessage>()
 
@@ -38,7 +41,8 @@ export class Agent {
   public async request (input: string): Promise<any> {
     const response = await this.fetch(input)
 
-    this.response = await parser.response(response)
+    this.bytes = Buffer.from(await response.body.arrayBuffer())
+    this.response = await parser.response(response, this.bytes.toString())
   }
 
   public async parts (input: string): Promise<ReturnType<typeof meros>> {

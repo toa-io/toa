@@ -1,6 +1,0 @@
-type: object
-properties:
-  provider:
-    const: mem
-required: [provider]
-additionalProperties: false

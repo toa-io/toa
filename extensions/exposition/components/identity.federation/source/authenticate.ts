@@ -1,4 +1,3 @@
-import { Err } from 'error-value'
 import { newid } from '@toa.io/generic'
 import { resolve } from './lib'
 import type { JWTPayload } from 'jose'
@@ -35,7 +34,9 @@ export async function effect ({ scheme, authority, credentials }: Input, context
   return { identity: { id: credential.identity, claims } }
 }
 
-const ERR_NOT_FOUND = new Err('NOT_FOUND')
+const ERR_NOT_FOUND = new (class NotFoundError extends Error {
+  public readonly code = 'NOT_FOUND'
+})()
 
 interface Input {
   scheme: Scheme

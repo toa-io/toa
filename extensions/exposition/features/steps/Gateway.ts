@@ -1,8 +1,8 @@
 import { after, afterAll, binding, given } from 'cucumber-tsflow'
 import * as boot from '@toa.io/boot'
 import { type Connector } from '@toa.io/core'
-import { parse } from '@toa.io/yaml'
-import { encode, timeout } from '@toa.io/generic'
+import { load as parse } from 'js-yaml'
+import { timeout } from '@toa.io/generic'
 import { Factory } from '../../source'
 import * as syntax from '../../source/RTD/syntax'
 import { shortcuts } from '../../source/Directive'
@@ -17,12 +17,12 @@ export class Gateway {
 
   @given('the annotation:')
   public async annotate (yaml: string): Promise<void> {
-    const annotation = parse(yaml)
+    const annotation = parse(yaml) as Partial<http.Options> & { '/'?: object }
 
-    if ('/' in annotation) {
+    if (annotation['/'] !== undefined) {
       const tree = syntax.parse(annotation['/'], shortcuts)
 
-      process.env.TOA_EXPOSITION = encode(tree)
+      process.env.TOA_EXPOSITION = JSON.stringify(tree)
     }
 
     const { debug, authorities } = annotation
@@ -34,7 +34,7 @@ export class Gateway {
     if (authorities !== undefined)
       properties.authorities = authorities
 
-    process.env.TOA_EXPOSITION_PROPERTIES = encode(properties)
+    process.env.TOA_EXPOSITION_PROPERTIES = JSON.stringify(properties)
 
     await Gateway.stop()
 
@@ -58,8 +58,8 @@ export class Gateway {
       tree.routes.push(...node.routes)
     }
 
-    process.env.TOA_EXPOSITION = encode(tree)
-    process.env.TOA_EXPOSITION_PROPERTIES = encode(DEFAULT_PROPERTIES)
+    process.env.TOA_EXPOSITION = JSON.stringify(tree)
+    process.env.TOA_EXPOSITION_PROPERTIES = JSON.stringify(DEFAULT_PROPERTIES)
 
     await Gateway.stop()
 
@@ -71,10 +71,10 @@ export class Gateway {
     const [name, namespace = 'default'] = id.split('.').reverse()
     const key = `TOA_CONFIGURATION_${namespace.toUpperCase()}_${name.toUpperCase()}`
     const def = DEFAULT_CONFIGURATION[id] ?? {}
-    const patch: object = parse(yaml)
+    const patch = parse(yaml) as object
     const configuration = Object.assign({}, def, patch)
 
-    process.env[key] = encode(configuration)
+    process.env[key] = JSON.stringify(configuration)
 
     await Gateway.stop()
 
@@ -96,7 +96,7 @@ export class Gateway {
       return
 
     process.env.TOA_EXPOSITION ??= DEFAULT_TREE
-    process.env.TOA_EXPOSITION_PROPERTIES ??= encode(DEFAULT_PROPERTIES)
+    process.env.TOA_EXPOSITION_PROPERTIES ??= JSON.stringify(DEFAULT_PROPERTIES)
 
     this.writeConfiguration()
 
@@ -136,14 +136,14 @@ export class Gateway {
       const [name, namespace = 'default'] = id.split('.').reverse()
       const key = `TOA_CONFIGURATION_${namespace.toUpperCase()}_${name.toUpperCase()}`
 
-      process.env[key] ??= encode(configuration)
+      process.env[key] ??= JSON.stringify(configuration)
     }
   }
 }
 
 const EXPOSITION = '@toa.io/extensions.exposition'
 
-const DEFAULT_TREE = encode({
+const DEFAULT_TREE = JSON.stringify({
   routes: [],
   methods: [],
   directives: [

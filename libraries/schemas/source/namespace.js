@@ -1,7 +1,6 @@
 'use strict'
 
 const { reduce } = require('@toa.io/generic')
-const { expand } = require('@toa.io/concise')
 
 const { Schema } = require('./schema')
 const { ajv, is } = require('./validator')
@@ -39,7 +38,7 @@ const namespace = (path) => {
 }
 
 function transform (entry) {
-  const schema = expand(entry.schema, is)
+  const schema = entry.schema
 
   schema.$id ??= entry.id
 

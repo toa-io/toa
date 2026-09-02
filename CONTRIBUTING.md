@@ -14,6 +14,8 @@ $ npm run setup:mongo               # once, generates the replica set keyfile
 $ docker compose up -d
 ```
 
+Without them a scenario hangs at `Starting composition` and prints no error.
+
 ### Transpiling
 
 Components run from their transpiled, git-ignored `operations` directories. After changing anything

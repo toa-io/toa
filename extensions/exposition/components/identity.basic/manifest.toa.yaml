@@ -4,9 +4,18 @@ name: basic
 entity:
   associated: true
   schema:
-    authority*: string
-    username*: string
-    password*: string
+    properties:
+      authority:
+        type: string
+      username:
+        type: string
+      password:
+        type: string
+    type: object
+    required:
+      - authority
+      - username
+      - password
   unique:
     authority_username: [authority, username]
   index:
@@ -18,9 +27,14 @@ operations:
   transit:
     concurrency: retry
     input:
-      username: string
-      password: string
-      authority: string
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+        authority:
+          type: string
+      type: object
     errors: &transit.errors
       - PRINCIPAL_LOCKED
       - INVALID_USERNAME
@@ -30,33 +44,77 @@ operations:
     forward: transit
     query: false
     input:
-      authority*: string
-      username*: string
-      password*: string
+      properties:
+        authority:
+          type: string
+        username:
+          type: string
+        password:
+          type: string
+      type: object
+      required:
+        - authority
+        - username
+        - password
     errors: *transit.errors
   add:
     input:
-      id*: string
-      authority*: string
-      username*: string
-      password*: string
+      properties:
+        id:
+          type: string
+        authority:
+          type: string
+        username:
+          type: string
+        password:
+          type: string
+      type: object
+      required:
+        - id
+        - authority
+        - username
+        - password
     errors: *transit.errors
   incept:
     input:
-      authority*: string
-      id*: string
-      credentials*: string
+      properties:
+        authority:
+          type: string
+        id:
+          type: string
+        credentials:
+          type: string
+      type: object
+      required:
+        - authority
+        - id
+        - credentials
     output:
-      id: string
+      properties:
+        id:
+          type: string
+      type: object
     errors:
       - INVALID_CREDENTIALS
   authenticate:
     input:
-      authority*: string
-      credentials*: string
+      properties:
+        authority:
+          type: string
+        credentials:
+          type: string
+      type: object
+      required:
+        - authority
+        - credentials
     output:
-      identity:
-        id: string
+      properties:
+        identity:
+          properties:
+            id:
+              type: string
+          type: object
+      type: object
     errors:
       - NOT_FOUND
       - PASSWORD_MISMATCH
@@ -69,11 +127,19 @@ operations:
           minLength: 1
       required:
         - username
-    output: null
+    output:
+      {}
   info:
     input:
-      authority*: string
-      identity*: string
+      properties:
+        authority:
+          type: string
+        identity:
+          type: string
+      type: object
+      required:
+        - authority
+        - identity
     output:
       type: object
       nullable: true
@@ -81,11 +147,19 @@ operations:
       properties:
         username:
           type: string
-      required: [username]
+      required:
+        - username
   delete:
     input:
-      authority*: string
-      identity*: string
+      properties:
+        authority:
+          type: string
+        identity:
+          type: string
+      type: object
+      required:
+        - authority
+        - identity
 
 configuration:
   schema:
@@ -96,19 +170,21 @@ configuration:
         default: 10
       pepper:
         type: string
-        default: ""
+        default: ''
       principal:
         type: string
       username:
         type: array
         items:
           type: string
-        default: ["^.{1,128}$"]
+        default:
+          - ^.{1,128}$
       password:
         type: array
         items:
           type: string
-        default: ["^.{8,32}$"]
+        default:
+          - ^.{8,32}$
 
 exposition:
   isolated: true

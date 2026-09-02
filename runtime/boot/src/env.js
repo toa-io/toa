@@ -1,9 +1,9 @@
 'use strict'
 
-const { file } = require('@toa.io/filesystem')
+const findUp = require('find-up')
 
 async function setup () {
-  const path = await file.dot('env')
+  const path = await findUp('.env')
 
   if (path !== undefined) require('dotenv').config({ path })
 }

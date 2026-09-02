@@ -10,7 +10,9 @@ operations:
           type: string
         identity:
           type: string
-      required: [authority, identity]
+      required:
+        - authority
+        - identity
     output:
       type: object
       properties:
@@ -21,30 +23,49 @@ operations:
           properties:
             username:
               type: string
-          required: [username]
+          required:
+            - username
         federation:
           type: array
           items:
             type: object
             additionalProperties: false
             properties:
-              id: { type: string }
-              iss: { type: string }
-              _created: { type: number }
-            required: [id, iss, _created]
+              id:
+                type: string
+              iss:
+                type: string
+              _created:
+                type: number
+            required:
+              - id
+              - iss
+              - _created
         passkeys:
           type: array
           items:
             type: object
             additionalProperties: false
             properties:
-              id: { type: string }
-              aid: { type: string }
-              synced: { type: boolean }
-              label: { type: string }
-              _created: { type: number }
-            required: [id, aid, synced, _created]
-      required: [basic, federation, passkeys]
+              id:
+                type: string
+              aid:
+                type: string
+              synced:
+                type: boolean
+              label:
+                type: string
+              _created:
+                type: number
+            required:
+              - id
+              - aid
+              - synced
+              - _created
+      required:
+        - basic
+        - federation
+        - passkeys
 
 exposition:
   /:identity:

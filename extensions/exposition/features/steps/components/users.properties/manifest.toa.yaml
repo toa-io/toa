@@ -3,11 +3,21 @@ name: properties
 
 entity:
   schema:
-    newbie: false
+    properties:
+      newbie:
+        type: boolean
+        default: false
+    type: object
   associated: true
 
 operations:
   transit:
     concurrency: retry
     input:
-      newbie*: .
+      properties:
+        newbie:
+          type: string
+          default: .
+      type: object
+      required:
+        - newbie

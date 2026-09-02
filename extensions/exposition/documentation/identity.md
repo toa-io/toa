@@ -181,7 +181,10 @@ name: users
 
 entity:
   schema:
-    name: string
+    type: object
+    properties:
+      name:
+        type: string
 
 exposition:
   /:

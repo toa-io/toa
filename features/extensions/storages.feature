@@ -1,7 +1,7 @@
 Feature: Storages Extension
 
   Scenario: Adding a file
-    Given an encoded environment variable `TOA_STORAGES` is set to:
+    Given an environment variable `TOA_STORAGES` is set to:
       """yaml
       dummy:
         provider: tmp
@@ -22,7 +22,7 @@ Feature: Storages Extension
       """
 
   Scenario: Adding a file to S3
-    Given an encoded environment variable `TOA_STORAGES` is set to:
+    Given an environment variable `TOA_STORAGES` is set to:
       """yaml
       dummy:
         provider: s3
@@ -48,7 +48,7 @@ Feature: Storages Extension
       """
 
   Scenario: Accessing undefined storage
-    Given an encoded environment variable `TOA_STORAGES` is set to:
+    Given an environment variable `TOA_STORAGES` is set to:
       """yaml
       dummy:
         provider: tmp
@@ -82,11 +82,11 @@ Feature: Storages Extension
         - name: default-storage
           variables:
             - name: TOA_STORAGES
-              value: eyJ0bXAiOnsicHJvdmlkZXIiOiJ0bXAiLCJkaXJlY3RvcnkiOiJ3aGF0ZXZlciJ9fQ==
+              value: '{"tmp":{"provider":"tmp","directory":"whatever"}}'
       """
 
   Scenario: Running 'test:' provider with secrets
-    Given an encoded environment variable `TOA_STORAGES` is set to:
+    Given an environment variable `TOA_STORAGES` is set to:
       """yaml
       dummy:
         provider: test
@@ -112,7 +112,7 @@ Feature: Storages Extension
         - name: default-storage
           variables:
             - name: TOA_STORAGES
-              value: eyJ0bXAiOnsicHJvdmlkZXIiOiJ0ZXN0IiwiZGlyZWN0b3J5IjoidGVzdCJ9fQ==
+              value: '{"tmp":{"provider":"test","directory":"test"}}'
             - name: TOA_STORAGES_TMP_USERNAME
               secret:
                 name: toa-storages-tmp
@@ -139,7 +139,7 @@ Feature: Storages Extension
         - name: default-storage
           variables:
           - name: TOA_STORAGES
-            value: eyJ0bXAiOnsicHJvdmlkZXIiOiJzMyIsImJ1Y2tldCI6InRlc3QifX0=
+            value: '{"tmp":{"provider":"s3","bucket":"test"}}'
           - name: TOA_STORAGES_TMP_ACCESS_KEY_ID
             secret:
               name: toa-storages-tmp

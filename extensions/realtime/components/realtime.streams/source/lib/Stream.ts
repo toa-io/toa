@@ -4,6 +4,7 @@ export class Stream extends Readable {
   public events = new EventEmitter()
 
   private interval: NodeJS.Timeout | null = null
+  private ended = false
 
   public constructor () {
     super(objectMode)
@@ -24,7 +25,21 @@ export class Stream extends Readable {
     super._destroy(error, callback)
   }
 
+  /** Ends the stream: whoever reads it gets EOF rather than a broken pipe. */
+  public close (): void {
+    this.ended = true
+
+    if (this.interval !== null) {
+      clearInterval(this.interval)
+      this.interval = null
+    }
+
+    this.push(null)
+  }
+
   public heartbeat (stream: Readable = this): boolean {
+    if (this.ended) return false
+
     const resume = stream.push('heartbeat ' + Date.now())
 
     if (!resume && this.interval !== null) {

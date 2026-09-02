@@ -1,7 +1,8 @@
 import { join } from 'node:path'
 import { tmpdir, devNull } from 'node:os'
-import { mkdtemp, cp } from 'node:fs/promises'
-import * as yaml from '@toa.io/yaml'
+import { mkdtemp, cp, readFile, writeFile } from 'node:fs/promises'
+import { load, dump } from 'js-yaml'
+import { overwrite } from '@toa.io/generic'
 
 export class Workspace {
   private root: string = devNull
@@ -35,6 +36,10 @@ export class Workspace {
   private async patchManifest (target: string, patch: object): Promise<void> {
     const path = join(target, 'manifest.toa.yaml')
 
-    await yaml.patch(path, patch)
+    const manifest = load(await readFile(path, 'utf8')) as object
+
+    overwrite(manifest, patch)
+
+    await writeFile(path, dump(manifest, { noRefs: true, lineWidth: -1 }), 'utf8')
   }
 }

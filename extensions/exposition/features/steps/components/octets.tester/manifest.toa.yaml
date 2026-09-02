@@ -6,13 +6,27 @@ storages: octets
 operations:
   foo: &operation
     input:
-      authority*: string
-      identity: string
-      storage*: string
-      path*: string
-      entry*: object
-      parameters: object
-      steps: object
+      properties:
+        identity:
+          type: string
+        parameters:
+          type: object
+        steps:
+          type: object
+        authority:
+          type: string
+        storage:
+          type: string
+        path:
+          type: string
+        entry:
+          type: object
+      type: object
+      required:
+        - authority
+        - storage
+        - path
+        - entry
   bar: *operation
   baz: *operation
   err: *operation
@@ -25,18 +39,33 @@ operations:
   identity: *operation
   redirect:
     input:
-      authority*: string
-      path*: string
-      parameters: <string>
+      properties:
+        parameters:
+          type: object
+          patternProperties:
+            ^.+$:
+              type: string
+        authority:
+          type: string
+        path:
+          type: string
+      type: object
+      required:
+        - authority
+        - path
     output:
       type: object
       properties:
-        url: string
+        url:
+          type: string
         options:
           type: object
           properties:
-            method: string
-            headers: object
-            body: string
+            method:
+              type: string
+            headers:
+              type: object
+            body:
+              type: string
       required:
         - url

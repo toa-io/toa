@@ -4,9 +4,13 @@ name: a
 entity:
   schema:
     properties:
-      title: string
-      length: integer
-    required: [title]
+      title:
+        type: string
+      length:
+        type: integer
+    required:
+      - title
+    type: object
   associated: true
 
 operations:
@@ -14,8 +18,14 @@ operations:
     forward: transit
     query: false
     input:
-      title: .
-      length: .
+      properties:
+        title:
+          type: string
+          default: .
+        length:
+          type: string
+          default: .
+      type: object
 
 extensions:
   exposition:

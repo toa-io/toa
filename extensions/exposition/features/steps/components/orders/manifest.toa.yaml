@@ -2,14 +2,31 @@ name: orders
 
 entity:
   schema:
-    title: string
-    volume: number
-    price?: number
+    properties:
+      title:
+        type: string
+      volume:
+        type: number
+      price:
+        type: number
+    type: object
+    required:
+      - title
+      - volume
 
 operations:
   create:
     concurrency: retry
     query: false
     input:
-      title*: .
-      volume*: .
+      properties:
+        title:
+          type: string
+          default: .
+        volume:
+          type: string
+          default: .
+      type: object
+      required:
+        - title
+        - volume

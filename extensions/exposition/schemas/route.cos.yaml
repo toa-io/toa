@@ -1,2 +1,6 @@
-path: string
-node: ref:node
+properties:
+  path:
+    type: string
+  node:
+    $ref: node
+type: object

@@ -1,5 +1,4 @@
 import { verifyRegistrationResponse, type RegistrationResponseJSON } from '@simplewebauthn/server'
-import { Err } from 'error-value'
 import type { Operation } from '@toa.io/types'
 import type { Context, Passkey } from './types'
 
@@ -66,8 +65,13 @@ export class Transition implements Operation {
   }
 }
 
-const ERR_FAILED = new Err('FAILED')
-const ERR_INVALID = new Err('INVALID')
+const ERR_FAILED = new (class FailedError extends Error {
+  public readonly code = 'FAILED'
+})()
+
+const ERR_INVALID = new (class InvalidError extends Error {
+  public readonly code = 'INVALID'
+})()
 
 export interface Input extends RegistrationResponseJSON {
   authority: string

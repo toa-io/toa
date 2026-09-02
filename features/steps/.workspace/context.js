@@ -2,7 +2,9 @@
 
 const { join } = require('node:path')
 
-const { save, load, parse } = require('@toa.io/yaml')
+const { readFile, writeFile } = require('node:fs/promises')
+const { readFileSync } = require('node:fs')
+const { load: parse, dump } = require('js-yaml')
 
 /**
  * @param {string} directory
@@ -29,7 +31,7 @@ const template = async (directory, additions) => {
  */
 const remove = async (directory, key) => {
   const path = join(directory, FILENAME)
-  const context = await load(path)
+  const context = parse(await readFile(path, 'utf8'))
 
   delete context[key]
 
@@ -37,7 +39,16 @@ const remove = async (directory, key) => {
 }
 
 const FILENAME = 'context.toa.yaml'
-const TEMPLATE = load.sync(join(__dirname, FILENAME))
+const TEMPLATE = parse(readFileSync(join(__dirname, FILENAME), 'utf8'))
 
 exports.template = template
 exports.remove = remove
+
+/**
+ * @param {object} object
+ * @param {string} path
+ * @return {Promise<void>}
+ */
+async function save (object, path) {
+  await writeFile(path, dump(object, { noRefs: true, lineWidth: -1 }), 'utf8')
+}

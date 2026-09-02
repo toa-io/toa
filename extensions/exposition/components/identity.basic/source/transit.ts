@@ -1,5 +1,4 @@
 import { genSalt, hash } from 'bcryptjs'
-import { Err } from 'error-value'
 import type { Maybe, Operation } from '@toa.io/types'
 import type { Context, Entity, TransitInput, IdOutput } from './types'
 
@@ -65,9 +64,24 @@ function invalid (value: string, expressions: RegExp[]): boolean {
   return expressions.some((expression) => !expression.test(value))
 }
 
-const ERR_PRINCIPAL_LOCKED = new Err('PRINCIPAL_LOCKED', 'Principal username cannot be changed')
-const ERR_INVALID_USERNAME = new Err('INVALID_USERNAME', 'Username is not meeting the requirements')
-const ERR_INVALID_PASSWORD = new Err('INVALID_PASSWORD', 'Password is not meeting the requirements')
-const ERR_EXISTS = new Err('EXISTS', 'Basic credentials already exist')
+const ERR_PRINCIPAL_LOCKED = new (class PrincipalLockedError extends Error {
+  public readonly code = 'PRINCIPAL_LOCKED'
+  public override readonly message = 'Principal username cannot be changed'
+})()
+
+const ERR_INVALID_USERNAME = new (class InvalidUsernameError extends Error {
+  public readonly code = 'INVALID_USERNAME'
+  public override readonly message = 'Username is not meeting the requirements'
+})()
+
+const ERR_INVALID_PASSWORD = new (class InvalidPasswordError extends Error {
+  public readonly code = 'INVALID_PASSWORD'
+  public override readonly message = 'Password is not meeting the requirements'
+})()
+
+const ERR_EXISTS = new (class ExistsError extends Error {
+  public readonly code = 'EXISTS'
+  public override readonly message = 'Basic credentials already exist'
+})()
 
 type Tokens = Context['remote']['identity']['tokens']

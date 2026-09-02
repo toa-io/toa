@@ -28,6 +28,8 @@ export function memo<T> (fn: T): T
 
 export function newid (): string
 
+export function find (reference: string, base: string, indicator?: string): string
+
 export function match (candidate: any, reference: any): boolean
 
 export { promex } from './promex'

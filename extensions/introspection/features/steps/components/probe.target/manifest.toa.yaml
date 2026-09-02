@@ -4,16 +4,23 @@ name: target
 entity:
   storage: null
   schema:
-    counted:
-      type: integer
-      default: 0
+    properties:
+      counted:
+        type: integer
+        default: 0
+    type: object
 
 operations:
   compute:
     input:
-      a: number
-      b: number
-    output: number
+      properties:
+        a:
+          type: number
+        b:
+          type: number
+      type: object
+    output:
+      type: number
   count:
     concurrency: retry
     input:

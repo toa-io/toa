@@ -1,7 +1,6 @@
 import * as http from 'node:http'
 import { console } from 'openspan'
 import { Connector } from '@toa.io/core'
-import { decode } from '@toa.io/generic'
 
 export class Ready extends Connector {
   public readonly name = 'ready'
@@ -122,7 +121,7 @@ export function resolveOptions (): ReadyOptions | null {
   if (env === undefined)
     return { ...DEFAULTS }
 
-  const decoded = decode(env) as ReadyConfig
+  const decoded = JSON.parse(env) as ReadyConfig
 
   if (decoded === false || decoded.enabled === false)
     return null

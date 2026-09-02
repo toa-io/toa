@@ -8,14 +8,22 @@ name: nodes
 entity:
   associated: true
   schema:
-    namespace*: string
-    component*: string
-    version: string
-    entity: ~
-    operations: ~
-    events: ~
-    receivers: ~
-    extensions: ~
+    properties:
+      version:
+        type: string
+      entity: {}
+      operations: {}
+      events: {}
+      receivers: {}
+      extensions: {}
+      namespace:
+        type: string
+      component:
+        type: string
+    type: object
+    required:
+      - namespace
+      - component
 
 operations:
   # a mass transition: the scope is inferred from the algorithm's `objects` parameter
@@ -26,7 +34,8 @@ operations:
       properties:
         nodes:
           type: object
-      required: [nodes]
+      required:
+        - nodes
 
 # the map must not describe itself
 introspection: false

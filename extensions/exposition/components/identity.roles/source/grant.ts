@@ -1,4 +1,3 @@
-import { Err } from 'error-value'
 import type { Entity } from './lib/Entity'
 
 export async function transition (input: Input, object: Entity): Promise<Entity | Error> {
@@ -20,7 +19,9 @@ function within (role: string, scopes: string[]): boolean {
   return scopes.some((scope) => role === scope || role.startsWith(scope + ':'))
 }
 
-const ERR_INACCESSIBLE_SCOPE = new Err('INACCESSIBLE_SCOPE')
+const ERR_INACCESSIBLE_SCOPE = new (class InaccessibleScopeError extends Error {
+  public readonly code = 'INACCESSIBLE_SCOPE'
+})()
 
 export interface Input {
   identity: string

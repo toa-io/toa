@@ -36,40 +36,94 @@ operations:
   transit:
     concurrency: retry
     input:
-      authority*: string
-      iss*: string
-      sub*: string
-      identity*: string
+      properties:
+        authority:
+          type: string
+        iss:
+          type: string
+        sub:
+          type: string
+        identity:
+          type: string
+      type: object
+      required:
+        - authority
+        - iss
+        - sub
+        - identity
   create:
     input:
-      scheme*: [bearer, code]
-      authority*: string
-      credentials*: string
-      id*: string
+      properties:
+        scheme:
+          type: string
+          enum:
+            - bearer
+            - code
+        authority:
+          type: string
+        credentials:
+          type: string
+        id:
+          type: string
+      type: object
+      required:
+        - scheme
+        - authority
+        - credentials
+        - id
     errors:
       - EXISTS
   incept:
     input:
-      scheme*: [bearer, code]
-      authority*: string
-      credentials*: string
-      id*: string
+      properties:
+        scheme:
+          type: string
+          enum:
+            - bearer
+            - code
+        authority:
+          type: string
+        credentials:
+          type: string
+        id:
+          type: string
+      type: object
+      required:
+        - scheme
+        - authority
+        - credentials
+        - id
     output:
-      id: string
+      properties:
+        id:
+          type: string
+      type: object
     errors:
       - EXISTS
   authenticate:
     input:
-      scheme*: [bearer, code]
-      authority*: string
-      credentials*: string
+      properties:
+        scheme:
+          type: string
+          enum:
+            - bearer
+            - code
+        authority:
+          type: string
+        credentials:
+          type: string
+      type: object
+      required:
+        - scheme
+        - authority
+        - credentials
     output:
       properties:
         identity:
           properties:
             id:
               type: string
-            claims: &claims
+            claims:
               properties:
                 iss:
                   type: string
@@ -81,23 +135,55 @@ operations:
               required:
                 - iss
                 - sub
+              type: object
           required:
             - id
             - claims
+          type: object
+      type: object
     errors:
       - ERR_NOT_FOUND
   decode:
-    input: string
-    output: *claims
+    input:
+      type: string
+    output:
+      properties:
+        iss:
+          type: string
+        aud:
+          type: string
+        sub:
+          type: string
+      additionalProperties: true
+      required:
+        - iss
+        - sub
+      type: object
   list:
     input:
-      authority*: string
-      identity*: string
+      properties:
+        authority:
+          type: string
+        identity:
+          type: string
+      type: object
+      required:
+        - authority
+        - identity
   delete:
     input:
-      authority*: string
-      identity*: string
-      credential*: string
+      properties:
+        authority:
+          type: string
+        identity:
+          type: string
+        credential:
+          type: string
+      type: object
+      required:
+        - authority
+        - identity
+        - credential
 
 configuration:
   schema:
@@ -119,17 +205,23 @@ configuration:
               anyOf:
                 - type: string
                 - type: array
-                  items: { type: string }
+                  items:
+                    type: string
                   uniqueItems: true
                   minItems: 1
             signature:
               properties:
-                iss: { type: string }
-                kid: { type: string }
+                iss:
+                  type: string
+                kid:
+                  type: string
                 key:
                   description: PKCS8 private key in PEM form
                   type: string
-              required: [iss, kid, key]
+              required:
+                - iss
+                - kid
+                - key
             secret:
               description: Client secret for the Identity Provider. Required for Authorization Code Flow.
               type: string

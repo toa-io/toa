@@ -3,9 +3,19 @@ name: roles
 
 entity:
   schema:
-    identity*: /[a-z0-9]{32}/
-    role*: /^[a-zA-Z0-9]{0,32}(:[a-zA-Z0-9]{0,32}){0,8}$/
-    grantor: string
+    properties:
+      grantor:
+        type: string
+      identity:
+        type: string
+        pattern: '[a-z0-9]{32}'
+      role:
+        type: string
+        pattern: ^[a-zA-Z0-9]{0,32}(:[a-zA-Z0-9]{0,32}){0,8}$
+    type: object
+    required:
+      - identity
+      - role
   unique:
     role: [identity, role]
 
@@ -13,18 +23,39 @@ operations:
   grant:
     query: false
     input:
-      identity*: .
-      role*: .
-      grantor:
-        id: string
-        roles: [string]
+      properties:
+        grantor:
+          properties:
+            id:
+              type: string
+            roles:
+              type: array
+              items:
+                type: string
+          type: object
+        identity:
+          type: string
+          default: .
+        role:
+          type: string
+          default: .
+      type: object
+      required:
+        - identity
+        - role
     errors:
       - INACCESSIBLE_SCOPE
   list:
-    output: [string]
+    output:
+      type: array
+      items:
+        type: string
   principal:
     input:
-      id: string
+      properties:
+        id:
+          type: string
+      type: object
 
 receivers:
   identity.basic.principal: principal

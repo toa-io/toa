@@ -3,9 +3,11 @@ namespace: state
 
 operations:
   set:
-    input: number
+    input:
+      type: number
   get:
-    output: number
+    output:
+      type: number
 
 receivers:
   somewhere.something.happened:

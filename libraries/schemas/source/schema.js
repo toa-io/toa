@@ -1,9 +1,8 @@
 'use strict'
 
-const { expand } = require('@toa.io/concise')
 const { defined } = require('@toa.io/generic')
-const { file } = require('@toa.io/filesystem')
-const yaml = require('@toa.io/yaml')
+const { readFileSync, statSync } = require('node:fs')
+const jsyaml = require('js-yaml')
 const { create, is, ajv } = require('./validator')
 const { debug } = require('node:util')
 const betterAjvErrors = require('better-ajv-errors').default
@@ -115,10 +114,10 @@ class Schema {
 }
 
 const schema = (cos, options) => {
-  if (typeof cos === 'string' && file.is.sync(cos))
-    cos = yaml.load.sync(cos)
+  if (typeof cos === 'string' && isFile(cos))
+    cos = jsyaml.load(readFileSync(cos, 'utf8'))
 
-  const schema = expand(cos, is)
+  const schema = cos
   const validate = create(schema, options)
 
   let compileOptional
@@ -132,6 +131,18 @@ const schema = (cos, options) => {
   }
 
   return new Schema(validate, compileOptional, compileMatch)
+}
+
+/**
+ * @param {string} path
+ * @returns {boolean}
+ */
+const isFile = (path) => {
+  try {
+    return statSync(path).isFile()
+  } catch {
+    return false
+  }
 }
 
 exports.Schema = Schema

@@ -8,10 +8,10 @@ properties:
     maxLength: 63
   region:
     type: string
-  prefix:
-    type: string
   endpoint:
     type: string
     format: uri
-required: [provider, bucket]
+required:
+  - provider
+  - bucket
 additionalProperties: false

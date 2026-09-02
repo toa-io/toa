@@ -27,7 +27,9 @@ entity:
       foo:
         type: integer
         default: 0
-    required: [id]
+    required:
+      - id
+    type: object
 
 operations:
   write:
@@ -38,4 +40,5 @@ operations:
       properties:
         foo:
           type: integer
-      required: [foo]
+      required:
+        - foo

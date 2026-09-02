@@ -1,4 +1,3 @@
-import { encode } from '@toa.io/generic'
 import { components } from './Composition'
 import type { Dependency, Instances, Resources, Service } from '@toa.io/operations'
 
@@ -34,7 +33,7 @@ export function deployment (instances: Instances<Declaration>, annotation?: Decl
     resources,
     variables: [{
       name: 'TOA_REALTIME',
-      value: encode(routes)
+      value: JSON.stringify(routes)
     }]
   }
 

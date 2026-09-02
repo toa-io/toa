@@ -18,7 +18,9 @@ entity:
         type: integer
         nullable: true
         default: null
-    required: [id]
+    required:
+      - id
+    type: object
 
 operations:
   transit:

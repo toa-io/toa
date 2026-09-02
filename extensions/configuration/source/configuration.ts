@@ -1,5 +1,5 @@
 import { type Locator } from '@toa.io/core'
-import { decode, add } from '@toa.io/generic'
+import { add } from '@toa.io/generic'
 import * as schemas from '@toa.io/schemas'
 import { PREFIX, SECRET_RX } from './deployment'
 import { type Manifest } from './manifest'
@@ -27,7 +27,7 @@ function getConfiguration (suffix: string): Node {
   if (string === undefined)
     return {}
   else
-    return decode(string)
+    return JSON.parse(string)
 }
 
 function substituteSecrets (configuration: Node): void {

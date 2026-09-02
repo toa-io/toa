@@ -2,9 +2,22 @@ name: pots
 
 entity:
   schema:
-    title: string(64)
-    volume: number(0, 1000]
-    temperature?: number(0, 300]
+    properties:
+      title:
+        type: string
+        maxLength: 64
+      volume:
+        type: number
+        exclusiveMinimum: 0
+        maximum: 1000
+      temperature:
+        type: number
+        exclusiveMinimum: 0
+        maximum: 300
+    type: object
+    required:
+      - title
+      - volume
   index:
     text:
       title: text
@@ -14,27 +27,68 @@ operations:
     query: false
     forward: transit
     input:
-      title*: .
-      volume*: .
-      temperature: .
+      properties:
+        temperature:
+          type: string
+          default: .
+        title:
+          type: string
+          default: .
+        volume:
+          type: string
+          default: .
+      type: object
+      required:
+        - title
+        - volume
     errors:
       - NO_WAY
       - WONT_CREATE
   transit:
     concurrency: retry
     input:
-      title: .
-      volume: .
-      temperature: .
+      properties:
+        title:
+          type: string
+          default: .
+        volume:
+          type: string
+          default: .
+        temperature:
+          type: string
+          default: .
+      type: object
   observe:
     output:
-      id: string
-      title: string
-      volume: number
-      temperature: number
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        volume:
+          type: number
+        temperature:
+          type: number
+      type: object
   enumerate:
     output:
-      - id: .
-        title: .
-        volume: .
-        temperature?: .
+      type: array
+      items:
+        properties:
+          id:
+            type: string
+            default: .
+          title:
+            type: string
+            default: .
+          volume:
+            type: string
+            default: .
+          temperature:
+            type: string
+            default: .
+        type: object
+        required:
+          - id
+          - title
+          - volume

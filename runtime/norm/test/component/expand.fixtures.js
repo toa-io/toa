@@ -4,8 +4,9 @@ const source = {
   path: __dirname, // `version` hashes the component directory
   entity: {
     schema: {
+      type: 'object',
       properties: {
-        foo: 'string'
+        foo: { type: 'string' }
       }
     },
     storage: 'mongodb'
@@ -16,26 +17,30 @@ const source = {
       bridge: 'node',
       bindings: ['amqp'],
       input: {
+        type: 'object',
         properties: {
-          foo: 'integer',
+          foo: { type: 'integer' },
           bar: {
             type: 'array',
             items: {
+              type: 'object',
               properties: {
-                baz: 'string'
+                baz: { type: 'string' }
               }
             }
           }
         }
       },
       output: {
+        type: 'object',
         properties: {
-          foo: 'integer',
+          foo: { type: 'integer' },
           bar: {
             type: 'array',
             items: {
+              type: 'object',
               properties: {
-                baz: 'string'
+                baz: { type: 'string' }
               }
             }
           }

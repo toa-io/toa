@@ -2,7 +2,8 @@ name: echo
 
 operations:
   foo:
-    output: string
+    output:
+      type: string
 
 exposition:
   /: [foo, bar]

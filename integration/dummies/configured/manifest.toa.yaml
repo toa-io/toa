@@ -4,22 +4,34 @@ name: configured
 entity:
   storage: ~
   schema:
-    foo:
-      type: string
-      default: 0
-    bar: string
+    properties:
+      foo:
+        type: string
+        default: 0
+      bar:
+        type: string
+    type: object
 
 operations:
   transit:
     concurrency: retry
     output:
-      id: .
-      foo: string
+      properties:
+        id:
+          type: string
+          default: .
+        foo:
+          type: string
+      type: object
   underlay:
     concurrency: retry
     output:
-      foo: string
-      sum: number
+      properties:
+        foo:
+          type: string
+        sum:
+          type: number
+      type: object
 
 configuration:
   schema:
@@ -31,6 +43,10 @@ configuration:
       bar:
         type: object
         properties:
-          a: { type: integer }
-          b: { type: integer }
-        default: { a: 1, b: 2 }
+          a:
+            type: integer
+          b:
+            type: integer
+        default:
+          a: 1
+          b: 2

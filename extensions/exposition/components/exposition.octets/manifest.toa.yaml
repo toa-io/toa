@@ -7,12 +7,21 @@ operations:
   put:
     bindings: ~
     input:
-      storage*: string
-      request*: ~
-      location: string
-      accept: string
-      limit: number
-      trust: ~ # array of strings or regular expressions
+      properties:
+        location:
+          type: string
+        accept:
+          type: string
+        limit:
+          type: number
+        trust: {}
+        storage:
+          type: string
+        request: {}
+      type: object
+      required:
+        - storage
+        - request
     errors:
       - LOCATION_UNTRUSTED
       - LOCATION_LENGTH
@@ -21,9 +30,18 @@ operations:
   get: &simple
     bindings: ~
     input:
-      storage*: string
-      path*: string
-      range: string
-      agent: string
+      properties:
+        range:
+          type: string
+        agent:
+          type: string
+        storage:
+          type: string
+        path:
+          type: string
+      type: object
+      required:
+        - storage
+        - path
   head: *simple
   delete: *simple

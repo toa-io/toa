@@ -5,9 +5,26 @@ operations:
   format:
     bridge: '@toa.io/bridges.bash'
     input:
-      name*: string
-      greeting: Hello
+      properties:
+        greeting:
+          type: string
+          default: Hello
+        name:
+          type: string
+      type: object
+      required:
+        - name
   greet:
     input:
-      name*: string
-      language*: [en, fr]
+      properties:
+        name:
+          type: string
+        language:
+          type: string
+          enum:
+            - en
+            - fr
+      type: object
+      required:
+        - name
+        - language

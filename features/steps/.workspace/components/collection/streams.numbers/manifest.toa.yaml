@@ -4,4 +4,7 @@ name: numbers
 operations:
   generate:
     input:
-      limit: number
+      properties:
+        limit:
+          type: number
+      type: object

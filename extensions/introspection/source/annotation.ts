@@ -1,4 +1,3 @@
-import { decode } from '@toa.io/generic'
 import { DEFAULT_INTERVAL, DEFAULT_THRESHOLD, DENIED, ENV } from './const'
 import type { Resources } from '@toa.io/operations'
 
@@ -54,7 +53,7 @@ export function environment (): Options | null {
   if (value === undefined)
     return null
 
-  return decode<Options>(value)
+  return JSON.parse(value) as Options
 }
 
 export function component (declaration: Declaration | null | undefined): Declaration {

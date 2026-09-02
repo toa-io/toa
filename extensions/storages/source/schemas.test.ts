@@ -13,8 +13,10 @@ const ok = {
     provider: 's3',
     bucket: 'my-bucket'
   },
-  d: {
-    provider: 'mem'
+  e: {
+    provider: 'spaces',
+    space: 'my-space',
+    region: 'nyc3'
   }
 }
 
@@ -43,8 +45,8 @@ const oh = [
   },
   {
     whatever: {
-      provider: 'mem',
-      extra: true
+      provider: 'spaces',
+      space: 'my-space'
     }
   }
 ]

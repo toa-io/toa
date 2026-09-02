@@ -2,15 +2,30 @@ name: users
 
 entity:
   schema:
-    name: string
+    properties:
+      name:
+        type: string
+    type: object
 
 operations:
   transit:
     concurrency: retry
     input:
-      name*: .
+      properties:
+        name:
+          type: string
+          default: .
+      type: object
+      required:
+        - name
   create:
     concurrency: retry
     query: false
     input:
-      name*: .
+      properties:
+        name:
+          type: string
+          default: .
+      type: object
+      required:
+        - name

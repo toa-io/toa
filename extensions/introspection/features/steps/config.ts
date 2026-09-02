@@ -1,5 +1,4 @@
 import { setDefaultTimeout } from '@cucumber/cucumber'
-import { encode } from '@toa.io/generic'
 
 process.env.TOA_DEV = '1'
 
@@ -8,7 +7,7 @@ process.env.TOA_DEV = '1'
  * factories per process — so the context level of the annotation is fixed for
  * a whole run. `npm run features` therefore makes a pass per configuration.
  */
-process.env.TOA_INTROSPECTION = encode({
+process.env.TOA_INTROSPECTION = JSON.stringify({
   samples: process.env.TOA_INTROSPECTION_SAMPLES === '1',
   interval: Number(process.env.TOA_INTROSPECTION_INTERVAL ?? 1),
   threshold: 64,

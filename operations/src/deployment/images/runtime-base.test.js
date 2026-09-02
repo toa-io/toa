@@ -1,8 +1,8 @@
 'use strict'
 
 const { join } = require('node:path')
-const { readFile } = require('node:fs/promises')
-const { directory } = require('@toa.io/filesystem')
+const { mkdtemp, readFile } = require('node:fs/promises')
+const { tmpdir } = require('node:os')
 
 const { Image, RUNTIME_IMAGE } = require('./image')
 
@@ -41,7 +41,7 @@ describe('runtime base image', () => {
   let root
 
   beforeEach(async () => {
-    root = await directory.temp('toa-runtime-base-test')
+    root = await mkdtemp(join(tmpdir(), 'toa-runtime-base-test'))
   })
 
   it('should default build.image to version-pinned GHCR runtime image', async () => {

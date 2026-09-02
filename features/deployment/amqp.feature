@@ -18,7 +18,7 @@ Feature: AMQP deployment
         - name: external-consumer
           variables:
             - name: TOA_AMQP_CONTEXT
-              value: eyIuIjpbImFtcXA6Ly9sb2NhbGhvc3QiXX0=
+              value: '{".":["amqp://localhost"]}'
             - name: TOA_AMQP_CONTEXT__USERNAME
               secret:
                 name: toa-amqp-context.default

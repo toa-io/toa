@@ -111,6 +111,6 @@ Feature: Octets metadata
     Then the following reply is sent:
       """
       204 No Content
-      access-control-allow-headers: accept, authorization, content-attributes, content-location, content-type, if-match, if-none-match, origin
+      access-control-allow-headers: accept, authorization, content-attributes, content-location, content-type, if-match, if-none-match
       access-control-allow-origin: https://example.com
       """

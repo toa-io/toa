@@ -4,26 +4,43 @@ name: a
 entity:
   schema:
     properties:
-      title: string
-      length: integer
-    required: [title]
+      title:
+        type: string
+      length:
+        type: integer
+    required:
+      - title
+    type: object
   associated: true
 
 operations:
   transit:
     concurrency: retry
     input:
-      title: .
-    output: undefined
+      properties:
+        title:
+          type: string
+          default: .
+      type: object
+    output:
+      {}
   create:
     forward: transit
     query: false
     input:
-      title: .
-      length: .
-    output: undefined
+      properties:
+        title:
+          type: string
+          default: .
+        length:
+          type: string
+          default: .
+      type: object
+    output:
+      {}
   observe:
-    output: undefined
+    output:
+      {}
 
 receivers:
   messages.created: transit

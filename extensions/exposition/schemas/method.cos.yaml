@@ -1,9 +1,21 @@
-verb: /^(GET|HEAD|POST|PUT|PATCH|DELETE|LOCK|UNLOCK)$/
-mapping:
-  namespace: string
-  component: string
-  endpoint: string
-  query:
-    $ref: query
-  ...: false
-directives: [ref:directive]
+properties:
+  verb:
+    type: string
+    pattern: ^(GET|HEAD|POST|PUT|PATCH|DELETE|LOCK|UNLOCK)$
+  mapping:
+    properties:
+      namespace:
+        type: string
+      component:
+        type: string
+      endpoint:
+        type: string
+      query:
+        $ref: query
+    additionalProperties: false
+    type: object
+  directives:
+    type: array
+    items:
+      $ref: directive
+type: object

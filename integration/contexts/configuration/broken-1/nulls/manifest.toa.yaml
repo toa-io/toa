@@ -4,10 +4,13 @@ name: nulls
 entity:
   storage: ~
   schema:
-    foo:
-      type: integer
-      default: 0
-    bar: string
+    properties:
+      foo:
+        type: integer
+        default: 0
+      bar:
+        type: string
+    type: object
 
 operations:
   transit:

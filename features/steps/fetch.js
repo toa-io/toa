@@ -4,7 +4,7 @@ const assert = require('node:assert')
 const http = require('node:http')
 const { Given, Then, After } = require('@cucumber/cucumber')
 const { consoleExporter, exporting } = require('openspan')
-const { parse } = require('@toa.io/yaml')
+const { load: parse } = require('js-yaml')
 
 Given('an HTTP endpoint responds with statuses {string}',
   /**

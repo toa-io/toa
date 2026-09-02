@@ -2,8 +2,9 @@
 
 const { join } = require('node:path')
 
-const { load: yaml } = require('@toa.io/yaml')
-const { directory: { find } } = require('@toa.io/filesystem')
+const { readFile } = require('node:fs/promises')
+const jsyaml = require('js-yaml')
+const { find } = require('@toa.io/generic')
 const { Locator } = require('@toa.io/core')
 
 const {
@@ -33,7 +34,7 @@ const load = async (path, base, proto = false) => {
   if (base !== undefined) path = find(path, base, MANIFEST)
 
   const file = join(path, MANIFEST)
-  const manifest = await yaml(file) ?? {}
+  const manifest = await read(file) ?? {}
 
   manifest.path = path
 
@@ -57,3 +58,16 @@ const load = async (path, base, proto = false) => {
 const MANIFEST = 'manifest.toa.yaml'
 
 exports.component = component
+
+/**
+ * Reads a YAML file, resolving anchors into distinct objects so that
+ * mutating one node cannot reach another.
+ *
+ * @param {string} path
+ * @return {Promise<object>}
+ */
+async function read (path) {
+  const object = jsyaml.load(await readFile(path, 'utf8'))
+
+  return jsyaml.load(jsyaml.dump(object, { noRefs: true, lineWidth: -1 }))
+}

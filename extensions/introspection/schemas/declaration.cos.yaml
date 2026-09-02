@@ -1,2 +1,5 @@
 # manifest.toa.yaml introspection declaration
-samples: boolean
+properties:
+  samples:
+    type: boolean
+type: object

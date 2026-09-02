@@ -2,12 +2,16 @@ name: echo
 
 operations:
   signal:
-    output: string
+    output:
+      type: string
   get:
-    output: string
+    output:
+      type: string
   resolve:
-    input: string
-    output: string
+    input:
+      type: string
+    output:
+      type: string
 
 configuration:
   schema:

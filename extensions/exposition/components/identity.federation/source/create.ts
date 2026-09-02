@@ -1,4 +1,3 @@
-import { Err } from 'error-value'
 import { resolve } from './lib'
 import type { Context, Entity, Scheme } from './types'
 
@@ -36,4 +35,7 @@ export interface Input {
   id: string
 }
 
-const ERR_EXISTS = new Err('EXISTS', 'Federation credentials are associated with another Identity')
+const ERR_EXISTS = new (class ExistsError extends Error {
+  public readonly code = 'EXISTS'
+  public override readonly message = 'Federation credentials are associated with another Identity'
+})()

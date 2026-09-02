@@ -7,7 +7,7 @@ const { stdin: input, stdout: output } = require('node:process')
 const dotenv = require('dotenv')
 const { V3 } = require('paseto')
 const { deployment: { Factory } } = require('@toa.io/operations')
-const { file } = require('@toa.io/filesystem')
+const { readFile, writeFile } = require('node:fs/promises')
 const { context: find } = require('../util/find')
 
 async function env (argv) {
@@ -41,11 +41,13 @@ async function env (argv) {
  * @returns {Record<string, string>}
  */
 async function read (path) {
-  const exists = await file.is(path)
+  let contents
 
-  if (!exists) return {}
-
-  const contents = await file.read(path)
+  try {
+    contents = await readFile(path, 'utf8')
+  } catch {
+    return {}
+  }
 
   return dotenv.parse(contents)
 }
@@ -58,7 +60,7 @@ async function read (path) {
 async function write (path, values) {
   const contents = values.reduce((lines, { name, value }) => lines + `${name}=${value ?? ''}\n`, '')
 
-  await file.write(path, contents)
+  await writeFile(path, contents, 'utf8')
 }
 
 /**

@@ -1,15 +1,20 @@
 definitions:
-  component: &component
+  component:
     anyOf:
       - type: string
-        enum: [ip, path, route, identity]
+        enum:
+          - ip
+          - path
+          - route
+          - identity
       - type: object
         properties:
           segment:
             type: string
-        required: [segment]
+        required:
+          - segment
         additionalProperties: false
-  condition: &condition
+  condition:
     type: object
     properties:
       status:
@@ -18,15 +23,49 @@ type: object
 properties:
   key:
     anyOf:
-      - *component
+      - anyOf:
+          - type: string
+            enum:
+              - ip
+              - path
+              - route
+              - identity
+          - type: object
+            properties:
+              segment:
+                type: string
+            required:
+              - segment
+            additionalProperties: false
       - type: array
-        items: *component
+        items:
+          anyOf:
+            - type: string
+              enum:
+                - ip
+                - path
+                - route
+                - identity
+            - type: object
+              properties:
+                segment:
+                  type: string
+              required:
+                - segment
+              additionalProperties: false
         minItems: 1
   condition:
     anyOf:
-      - *condition
+      - type: object
+        properties:
+          status:
+            type: number
       - type: array
-        items: *condition
+        items:
+          type: object
+          properties:
+            status:
+              type: number
         minItems: 1
   requests:
     type: integer

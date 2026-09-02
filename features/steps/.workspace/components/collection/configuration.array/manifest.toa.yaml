@@ -3,8 +3,13 @@ name: array
 
 operations:
   greet:
-    input: [0, 1]
-    output: string
+    input:
+      type: number
+      enum:
+        - 0
+        - 1
+    output:
+      type: string
 
 configuration:
   schema:
@@ -15,9 +20,13 @@ configuration:
         items:
           type: object
           properties:
-            a: string
-            b: string
-          required: [a, b]
+            a:
+              type: string
+            b:
+              type: string
+          required:
+            - a
+            - b
         default:
           - a: good
             b: day

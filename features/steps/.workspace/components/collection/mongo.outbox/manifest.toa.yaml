@@ -4,22 +4,40 @@ namespace: mongo
 entity:
   storage: mongodb
   schema:
-    foo:
-      type: integer
-      default: 0
-    bar: string
+    properties:
+      foo:
+        type: integer
+        default: 0
+      bar:
+        type: string
+    type: object
 
 operations:
   transit:
     concurrency: retry
     input:
-      foo: .
-      bar: .
+      properties:
+        foo:
+          type: string
+          default: .
+        bar:
+          type: string
+          default: .
+      type: object
   assign:
     input:
-      foo: .
-      bar: .
+      properties:
+        foo:
+          type: string
+          default: .
+        bar:
+          type: string
+          default: .
+      type: object
   bump:
     concurrency: retry
     input:
-      inc: integer
+      properties:
+        inc:
+          type: integer
+      type: object

@@ -5,18 +5,29 @@ operations:
     input:
       type: object
       properties:
-        method: string
+        method:
+          type: string
         retry:
           type: object
           properties:
-            attempts: number
+            attempts:
+              type: number
             expected:
               type: array
-              items: number
-            delay: number
-            factor: number
-          required: [attempts]
-      required: [method]
+              items:
+                type: number
+            delay:
+              type: number
+            factor:
+              type: number
+          required:
+            - attempts
+      required:
+        - method
     output:
-      status: number
-      attempt: number
+      properties:
+        status:
+          type: number
+        attempt:
+          type: number
+      type: object

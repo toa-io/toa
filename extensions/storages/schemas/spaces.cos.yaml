@@ -1,0 +1,16 @@
+type: object
+properties:
+  provider:
+    const: spaces
+  space:
+    type: string
+    minLength: 3
+    maxLength: 63
+  region:
+    type: string
+    minLength: 1
+required:
+  - provider
+  - space
+  - region
+additionalProperties: false

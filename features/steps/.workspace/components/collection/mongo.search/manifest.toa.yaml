@@ -9,7 +9,9 @@ entity:
         type: string
       bar:
         type: string
-    required: [foo, bar]
+    required:
+      - foo
+      - bar
   index:
     search:
       foo: text

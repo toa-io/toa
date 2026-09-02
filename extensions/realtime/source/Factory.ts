@@ -11,10 +11,9 @@ export class Factory implements extensions.Factory {
   }
 
   public service (): Realtime {
-    const discovery = this.discovery()
     const routes = new Routes(this.boot)
     const composition = new Composition(this.boot)
-    const realtime = new Realtime(routes, discovery)
+    const realtime = new Realtime(routes, async () => await this.discovery())
 
     realtime.depends(routes)
     realtime.depends(composition)

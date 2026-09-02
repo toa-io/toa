@@ -4,14 +4,25 @@ name: streams
 operations:
   create:
     input:
-      key: string
-      token: string
+      properties:
+        key:
+          type: string
+        token:
+          type: string
+      type: object
   push:
     bindings: ~ # only for internal use
     input:
-      key*: string
-      event*: string
-      data: ~
+      properties:
+        data: {}
+        key:
+          type: string
+        event:
+          type: string
+      type: object
+      required:
+        - key
+        - event
 
 configuration:
   schema:
@@ -22,6 +33,7 @@ configuration:
       expire:
         type: number
         default: 300
+    type: object
 
 state: ~
 stash: ~

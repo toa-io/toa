@@ -1,2 +1,6 @@
-qux: [number]
-
+properties:
+  qux:
+    type: array
+    items:
+      type: number
+type: object

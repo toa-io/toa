@@ -19,7 +19,7 @@
     "@sesamecare-oss/redlock": "1.4.0",
     "@toa.io/core": "1.0.0-alpha.272",
     "ioredis": "6.0.0",
-    "n-and-i": "0.3.0",
+    "n-and-i": "0.3.2",
     "openspan": "1.0.0-alpha.272"
   },
   "scripts": {

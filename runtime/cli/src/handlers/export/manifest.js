@@ -2,7 +2,7 @@
 
 const jsonpath = require('jsonpath')
 const { component } = require('@toa.io/norm')
-const yaml = require('@toa.io/yaml')
+const jsyaml = require('js-yaml')
 
 const { components: find } = require('../../util/find')
 
@@ -19,7 +19,7 @@ const print = async (argv) => {
   if (argv.error !== true) {
     const result = argv.output === 'json'
       ? JSON.stringify(manifest, null, 2)
-      : yaml.dump(manifest)
+      : jsyaml.dump(manifest, { noRefs: true, lineWidth: -1 })
 
     console.log(result)
   }

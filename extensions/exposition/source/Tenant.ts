@@ -7,11 +7,11 @@ import type { Branch } from './Branch'
 
 export class Tenant extends Connector {
   private readonly broadcast: Broadcast
-  private readonly branch: Branch
+  private readonly branch: Omit<Branch, 'timestamp'>
   private started = 0
   private stopped = false
 
-  public constructor (broadcast: Broadcast, branch: Branch) {
+  public constructor (broadcast: Broadcast, branch: Omit<Branch, 'timestamp'>) {
     super()
 
     this.broadcast = broadcast
@@ -58,7 +58,7 @@ export class Tenant extends Connector {
     if (this.stopped)
       return
 
-    await this.broadcast.transmit('expose', this.branch)
+    await this.broadcast.transmit('expose', { ...this.branch, timestamp: this.started })
   }
 }
 

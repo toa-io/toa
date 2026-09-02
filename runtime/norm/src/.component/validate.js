@@ -2,10 +2,11 @@
 
 const path = require('node:path')
 
-const { load } = require('@toa.io/yaml')
+const { readFileSync } = require('node:fs')
+const { load: parseYAML } = require('js-yaml')
 const schemas = require('@toa.io/schemas')
 
-const object = load.sync(path.resolve(__dirname, 'schema.yaml'))
+const object = parseYAML(readFileSync(path.resolve(__dirname, 'schema.yaml'), 'utf8'))
 const schema = schemas.schema(object)
 
 const validate = (manifest) => {

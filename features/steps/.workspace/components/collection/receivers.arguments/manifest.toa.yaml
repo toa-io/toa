@@ -5,4 +5,5 @@ receivers:
 
 operations:
   log:
-    input: string
+    input:
+      type: string

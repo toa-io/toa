@@ -26,12 +26,11 @@
   "dependencies": {
     "@toa.io/boot": "1.0.0-alpha.272",
     "@toa.io/core": "1.0.0-alpha.272",
-    "@toa.io/filesystem": "1.0.0-alpha.272",
     "@toa.io/generic": "1.0.0-alpha.272",
     "@toa.io/norm": "1.0.0-alpha.272",
     "@toa.io/schemas": "1.0.0-alpha.272",
     "@toa.io/storages.null": "0.22.0",
-    "@toa.io/yaml": "1.0.0-alpha.272"
+    "js-yaml": "4.3.1"
   },
   "gitHead": "61c8e74a336385265767e9fd37d49128cb51b17f"
 }

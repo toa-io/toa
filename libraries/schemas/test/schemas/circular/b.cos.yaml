@@ -1,3 +1,9 @@
-bar:
-  a: ref:a
-  value: string
+properties:
+  bar:
+    properties:
+      a:
+        $ref: a
+      value:
+        type: string
+    type: object
+type: object

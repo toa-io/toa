@@ -20,16 +20,16 @@ Feature: Web Authentication
       201 Created
 
       challenge: ${{ challenge }}
-      identity: ${{ identity.id }}
       timeout: 60000
-      authenticatorSelection:
-        requireResidentKey: true
-        residentKey: required
+      identity: ${{ identity.id }}
       pubKeyCredParams:
         - type: public-key
           alg: -7
         - type: public-key
           alg: -257
+      authenticatorSelection:
+        residentKey: required
+        requireResidentKey: true
       """
 
   Scenario: Create a challenge to create a passkey to new identity
@@ -53,14 +53,14 @@ Feature: Web Authentication
       authorization: Token ${{ token }}
 
       challenge: ${{ challenge }}
-      identity: ${{ identity }}
       timeout: 60000
-      authenticatorSelection:
-        requireResidentKey: true
-        residentKey: required
+      identity: ${{ identity }}
       pubKeyCredParams:
         - type: public-key
           alg: -7
         - type: public-key
           alg: -257
+      authenticatorSelection:
+        residentKey: required
+        requireResidentKey: true
       """

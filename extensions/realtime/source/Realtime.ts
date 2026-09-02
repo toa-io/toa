@@ -4,10 +4,10 @@ import { type Routes } from './Routes'
 import type { Push } from './Receiver'
 
 export class Realtime extends Connector {
-  private readonly discovery: Promise<Component>
+  private readonly discovery: () => Promise<Component>
   private streams: Component | null = null
 
-  public constructor (routes: Routes, discovery: Promise<Component>) {
+  public constructor (routes: Routes, discovery: () => Promise<Component>) {
     super()
 
     this.discovery = discovery
@@ -16,7 +16,10 @@ export class Realtime extends Connector {
   }
 
   protected override async open (): Promise<void> {
-    this.streams = await this.discovery
+    // the lookup belongs here, not in the constructor: dependencies connect before
+    // open, so the composition that serves realtime.streams is up to answer it. Asked
+    // any earlier the lookup goes unanswered, and it waits without a bound.
+    this.streams = await this.discovery()
     this.depends(this.streams)
 
     await this.streams.connect()

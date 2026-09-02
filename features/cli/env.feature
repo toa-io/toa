@@ -20,7 +20,7 @@ Feature: Export local deployment environment variables
     Then the environment contains:
       """
       TOA_ENV=some
-      TOA_AMQP_CONTEXT=eyIuIjpbImFtcXA6Ly93aGF0ZXZlciJdfQ==
+      TOA_AMQP_CONTEXT={".":["amqp://whatever"]}
       TOA_AMQP_CONTEXT__USERNAME=
       TOA_AMQP_CONTEXT__PASSWORD=
       """

@@ -1,7 +1,7 @@
 'use strict'
 
 const { basename, resolve } = require('path')
-const { file: { glob } } = require('@toa.io/filesystem')
+const glob = require('fast-glob')
 
 const operation = (root, name) => load(root, OPERATIONS_DIRECTORY, name)
 const event = (root, name) => load(root, EVENTS_DIRECTORY, name)
@@ -10,7 +10,7 @@ const guard = (root, name) => load(root, GUARDS_DIRECTORY, name)
 
 const scan = (directory) => async (root) => {
   const pattern = resolve(root, directory, '*' + EXTENSION)
-  const modules = await glob(pattern)
+  const modules = await glob(pattern, GLOB)
 
   return modules.map((module) => [basename(module, EXTENSION), require(module)])
 }
@@ -23,6 +23,9 @@ const RECEIVERS_DIRECTORY = 'receivers'
 const OPERATIONS_DIRECTORY = 'operations'
 const GUARDS_DIRECTORY = 'guards'
 const RC_DIRECTORY = 'rc'
+
+
+const GLOB = { onlyFiles: true, absolute: true }
 
 exports.operation = operation
 exports.event = event

@@ -5,9 +5,23 @@ storages: tmp
 operations:
   put:
     input:
-      storage*: string
-      path*: string
+      properties:
+        storage:
+          type: string
+        path:
+          type: string
+      type: object
+      required:
+        - storage
+        - path
   get:
     input:
-      storage*: string
-      path*: string
+      properties:
+        storage:
+          type: string
+        path:
+          type: string
+      type: object
+      required:
+        - storage
+        - path

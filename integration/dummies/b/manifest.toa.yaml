@@ -9,8 +9,11 @@ entity:
       length:
         type: integer
         maximum: 10
-      description: string
-    required: [length]
+      description:
+        type: string
+    required:
+      - length
+    type: object
 
 receivers:
   dummies.a.happened: transit

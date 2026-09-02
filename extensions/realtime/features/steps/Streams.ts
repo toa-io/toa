@@ -2,7 +2,7 @@ import * as assert from 'node:assert'
 import { setTimeout } from 'node:timers/promises'
 import { after, binding, given, then } from 'cucumber-tsflow'
 import { match } from '@toa.io/generic'
-import { parse } from '@toa.io/yaml'
+import { load as parse } from 'js-yaml'
 import * as stage from '@toa.io/userland/stage'
 import { Realtime } from './Realtime'
 import type { Readable } from 'node:stream'
@@ -33,7 +33,7 @@ export class Streams {
   public async received (key: string, yaml: string): Promise<void> {
     await setTimeout(100)
 
-    const expected = parse<object>(yaml)
+    const expected = parse(yaml) as object
 
     for (const event of this.events[key])
       if (match(event, expected))

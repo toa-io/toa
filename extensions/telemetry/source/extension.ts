@@ -1,6 +1,5 @@
 import assert from 'node:assert'
 import { console, traces } from 'openspan'
-import { decode, encode } from '@toa.io/generic'
 import { Logs } from './Logs'
 import { Span } from './Span'
 import {
@@ -23,14 +22,14 @@ export class Factory implements extensions.Factory {
     const globEnv = process.env[LOGS_PREFIX]
     const level = process.env.TOA_DEV === '1' ? 'trace' : 'info'
 
-    this.logsOptions = globEnv === undefined ? { level } : decode(globEnv)
+    this.logsOptions = globEnv === undefined ? { level } : JSON.parse(globEnv)
     this.logsOptions.level ??= level
 
     console.configure({ level: this.logsOptions.level })
 
     const tracesEnv = process.env[TRACES_ENV]
 
-    traces(tracesEnv === undefined ? development() : decode(tracesEnv))
+    traces(tracesEnv === undefined ? development() : JSON.parse(tracesEnv) as TracesOptions)
 
     this.ready = Ready.create()
   }
@@ -64,7 +63,7 @@ export class Factory implements extensions.Factory {
 
   private createLogs (locator: Locator): extensions.Aspect {
     const overEnv = process.env[`${LOGS_PREFIX}_${locator.uppercase}`]
-    const override = overEnv !== undefined ? decode(overEnv) : undefined
+    const override = overEnv !== undefined ? JSON.parse(overEnv) : undefined
 
     const { level } = Object.assign({}, this.logsOptions, override)
 
@@ -99,12 +98,12 @@ export function deployment (_: unknown, annotation?: Annotation): Dependency {
   const ready = normalizeAnnotation(annotation?.ready)
 
   if (ready === false) {
-    variables.global.push({ name: READY_ENV, value: encode(false) })
+    variables.global.push({ name: READY_ENV, value: JSON.stringify(false) })
 
     return { variables, probe: false }
   }
 
-  variables.global.push({ name: READY_ENV, value: encode(ready) })
+  variables.global.push({ name: READY_ENV, value: JSON.stringify(ready) })
 
   const probe: Probe = {
     path: ready.path ?? DEFAULT_ANNOTATION.path,
@@ -119,7 +118,7 @@ function addLogsVariables (annotation: LogsAnnotation, variables: Variables): vo
   const global = { level }
 
   if (level !== undefined)
-    variables.global.push({ name: LOGS_PREFIX, value: encode(global) })
+    variables.global.push({ name: LOGS_PREFIX, value: JSON.stringify(global) })
 
   for (const [id, override] of Object.entries(components)) {
     const [namespace, name] = id.split('.')
@@ -127,7 +126,7 @@ function addLogsVariables (annotation: LogsAnnotation, variables: Variables): vo
 
     variables.global.push({
       name: `${LOGS_PREFIX}_${namespace.toUpperCase()}_${name.toUpperCase()}`,
-      value: encode(value)
+      value: JSON.stringify(value)
     })
   }
 }
@@ -147,7 +146,7 @@ function addTracesVariables (annotation: TracesAnnotation, variables: Variables)
     assert.ok(typeof exporters.otlp.endpoint === 'string',
       'telemetry.traces.exporters.otlp.endpoint is required')
 
-  variables.global.push({ name: TRACES_ENV, value: encode({ sample, rate, exporters }) })
+  variables.global.push({ name: TRACES_ENV, value: JSON.stringify({ sample, rate, exporters }) })
 }
 
 interface Annotation {

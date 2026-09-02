@@ -1,1 +1,4 @@
-foo: number
+properties:
+  foo:
+    type: number
+type: object

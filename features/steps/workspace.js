@@ -5,7 +5,7 @@ const { join } = require('node:path')
 const dotenv = require('dotenv')
 const { diff } = require('jest-diff')
 const { subtract } = require('@toa.io/generic')
-const { file } = require('@toa.io/filesystem')
+const { readFile, writeFile } = require('node:fs/promises')
 const components = require('./.workspace/components')
 const context = require('./.workspace/context')
 
@@ -64,7 +64,7 @@ Then('the environment contains:',
   async function(search) {
     const searchLines = search.split('\n')
     const path = join(this.cwd, ENV_FILE)
-    const contents = await file.read(path)
+    const contents = await readFile(path, 'utf8')
     const existingLines = contents.split('\n')
     const diffLines = subtract(searchLines, existingLines)
 
@@ -81,7 +81,7 @@ Then('the environment variable {word} starts with {string}',
    */
   async function (name, prefix) {
     const path = join(this.cwd, ENV_FILE)
-    const contents = await file.read(path)
+    const contents = await readFile(path, 'utf8')
     const vars = dotenv.parse(contents)
 
     assert.equal(typeof vars[name], 'string', `Environment variable ${name} is not set`)
@@ -122,14 +122,14 @@ After(function() {
 
 async function updateEnv (update, envFile) {
   const path = join(this.cwd, envFile)
-  const contents = await file.read(path)
+  const contents = await readFile(path, 'utf8')
   const oldVars = dotenv.parse(contents)
   const newVars = dotenv.parse(update)
   const merged = { ...oldVars, ...newVars }
   const envLines = Object.entries(merged).map(([key, value]) => `${key}=${value}`)
   const mergedLines = envLines.join('\n')
 
-  await file.write(path, mergedLines)
+  await writeFile(path, mergedLines, 'utf8')
 }
 
 const ENV_FILE = '.env'

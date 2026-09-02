@@ -1,6 +1,5 @@
 import { compare } from 'bcryptjs'
 import { type Query, type Maybe } from '@toa.io/types'
-import { Err } from 'error-value'
 import { type Context } from './types'
 
 export async function computation (input: Input, context: Context): Promise<Maybe<Output>> {
@@ -27,8 +26,13 @@ export async function computation (input: Input, context: Context): Promise<Mayb
     return ERR_PASSWORD_MISMATCH
 }
 
-const ERR_NOT_FOUND = new Err('NOT_FOUND')
-const ERR_PASSWORD_MISMATCH = new Err('PASSWORD_MISMATCH')
+const ERR_NOT_FOUND = new (class NotFoundError extends Error {
+  public readonly code = 'NOT_FOUND'
+})()
+
+const ERR_PASSWORD_MISMATCH = new (class PasswordMismatchError extends Error {
+  public readonly code = 'PASSWORD_MISMATCH'
+})()
 
 interface Input {
   authority: string

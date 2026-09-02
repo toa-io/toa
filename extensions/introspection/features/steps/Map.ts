@@ -4,7 +4,7 @@ import { readdirSync } from 'node:fs'
 import { setTimeout } from 'node:timers/promises'
 import { MongoClient } from 'mongodb'
 import { after, before, binding, then, when } from 'cucumber-tsflow'
-import { parse } from '@toa.io/yaml'
+import { load as parse } from 'js-yaml'
 import { match } from '@toa.io/generic'
 import * as boot from '@toa.io/boot'
 import * as stage from '@toa.io/userland/stage'
@@ -19,7 +19,7 @@ export class Map {
 
   @when('the `{word}` is called with:')
   public async call (endpoint: string, yaml: string): Promise<void> {
-    const request = parse<Request>(yaml)
+    const request = parse(yaml) as Request
     const [operation, component, namespace = 'default'] = endpoint.split('.').reverse()
 
     // an operation may throw, and that is exactly what one of the scenarios is about
@@ -28,22 +28,22 @@ export class Map {
 
   @then('the map contains a node:')
   public async node (yaml: string): Promise<void> {
-    await this.eventually('introspection.nodes', parse(yaml))
+    await this.eventually('introspection.nodes', parse(yaml) as object)
   }
 
   @then('the map contains an edge:')
   public async edge (yaml: string): Promise<void> {
-    await this.eventually('introspection.edges', parse(yaml))
+    await this.eventually('introspection.edges', parse(yaml) as object)
   }
 
   @then('the map contains no node:')
   public async noNode (yaml: string): Promise<void> {
-    await this.never('introspection.nodes', parse(yaml))
+    await this.never('introspection.nodes', parse(yaml) as object)
   }
 
   @then('the map contains no edge:')
   public async noEdge (yaml: string): Promise<void> {
-    await this.never('introspection.edges', parse(yaml))
+    await this.never('introspection.edges', parse(yaml) as object)
   }
 
   @when('the components are stopped')

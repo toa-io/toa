@@ -1,2 +1,5 @@
-meta: boolean
-_: true
+properties:
+  meta:
+    type: boolean
+nullable: true
+type: object

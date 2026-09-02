@@ -1,9 +1,19 @@
-id: string
-criteria: string
-search: string
-sample: number
-sort: string
-omit: number
-limit: number
-version: number
-...: false
+properties:
+  id:
+    type: string
+  criteria:
+    type: string
+  search:
+    type: string
+  sample:
+    type: number
+  sort:
+    type: string
+  omit:
+    type: number
+  limit:
+    type: number
+  version:
+    type: number
+additionalProperties: false
+type: object

@@ -11,7 +11,6 @@ import type { Parameter } from '../../RTD'
 import type { Unit, Location } from './workflows'
 import type { Entry } from '@toa.io/extensions.storages'
 import type { Remotes } from '../../Remotes'
-import type { Err } from 'error-value'
 import type { Component } from '@toa.io/core'
 import type { Output } from '../../io'
 import type { Input } from './types'
@@ -73,7 +72,7 @@ export class Put extends Directive {
     const entry = await this.storage.invoke<Entry>('put', request)
 
     return match<Output>(entry,
-      Error, (error: Err) => this.throw(error),
+      Error, (error: CodedError) => this.throw(error),
       () => this.reply(input, storage, entry, parameters))
   }
 
@@ -104,7 +103,7 @@ export class Put extends Directive {
     return stream
   }
 
-  private throw (error: Err): never {
+  private throw (error: CodedError): never {
     throw match(error.code,
       'NOT_ACCEPTABLE', () => new http.UnsupportedMediaType(),
       'TYPE_MISMATCH', () => new http.BadRequest(),
@@ -135,4 +134,8 @@ interface StoreRequest {
     trust?: Array<string | RegExp>
     attributes?: Record<string, string>
   }
+}
+
+interface CodedError extends Error {
+  code: string
 }

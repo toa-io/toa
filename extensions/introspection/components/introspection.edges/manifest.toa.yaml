@@ -12,9 +12,11 @@ name: edges
 entity:
   associated: true
   schema:
-    src: ~
-    dst: ~
-    sample: ~
+    properties:
+      src: {}
+      dst: {}
+      sample: {}
+    type: object
 
 operations:
   # a mass transition: the scope is inferred from the algorithm's `objects` parameter
@@ -25,7 +27,8 @@ operations:
       properties:
         edges:
           type: object
-      required: [edges]
+      required:
+        - edges
 
 # the map must not describe itself
 introspection: false

@@ -29,7 +29,6 @@
     "@babel/parser": "7.24.7",
     "@toa.io/core": "1.0.0-alpha.272",
     "@toa.io/extensions.fetch": "1.0.0-alpha.272",
-    "@toa.io/filesystem": "1.0.0-alpha.272",
     "@toa.io/generic": "1.0.0-alpha.272",
     "fast-glob": "3.2.7",
     "matchacho": "0.3.5"

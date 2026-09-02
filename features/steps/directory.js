@@ -2,7 +2,8 @@
 
 const assert = require('node:assert')
 const { resolve } = require('node:path')
-const { directory, file } = require('@toa.io/filesystem')
+const { readFile } = require('node:fs/promises')
+const glob = require('fast-glob')
 const { Given, Then } = require('@cucumber/cucumber')
 
 Given('my working directory is {path}',
@@ -54,11 +55,11 @@ Then('the file {path} contains line starting with {string}',
  */
 async function read (relative) {
   const pattern = resolve(this.cwd, relative)
-  const paths = await file.glob(pattern)
+  const paths = await glob(pattern, FILES)
 
   check(paths)
 
-  return file.lines(paths[0])
+  return (await readFile(paths[0], 'utf8')).split('\n')
 }
 
 /**
@@ -68,7 +69,7 @@ async function read (relative) {
  */
 async function pattern (cwd, path) {
   const pattern = resolve(cwd, path)
-  const paths = await directory.glob(pattern)
+  const paths = await glob(pattern, DIRECTORIES)
 
   check(paths)
 
@@ -94,3 +95,6 @@ const toa = (path) => {
 }
 
 const ROOT = resolve(__dirname, '../../')
+
+const FILES = { onlyFiles: true, absolute: true }
+const DIRECTORIES = { onlyDirectories: true, absolute: true }

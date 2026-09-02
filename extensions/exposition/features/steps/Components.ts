@@ -3,19 +3,22 @@ import { after, binding, given } from 'cucumber-tsflow'
 import * as boot from '@toa.io/boot'
 import { timeout } from '@toa.io/generic'
 import { type Connector } from '@toa.io/core'
-import { parse } from '@toa.io/yaml'
+import { load as parse } from 'js-yaml'
+import { Gateway } from './Gateway'
 import { Workspace } from './Workspace'
 import { components as map } from './map'
 
 const MAP = 'introspection'
 
-@binding([Workspace])
+@binding([Workspace, Gateway])
 export class Components {
   private readonly workspace: Workspace
+  private readonly gateway: Gateway
   private compositions: Record<string, Connector> = {}
 
-  public constructor (workspace: Workspace) {
+  public constructor (workspace: Workspace, gateway: Gateway) {
     this.workspace = workspace
+    this.gateway = gateway
   }
 
   @given('the `{word}` is running')
@@ -25,7 +28,7 @@ export class Components {
 
   @given('the `{word}` is running with the following manifest:')
   public async patchAndRun (name: string, yaml: string): Promise<void> {
-    const manifest = parse(yaml)
+    const manifest = parse(yaml) as object
 
     await this.runComponent(name, manifest)
   }
@@ -58,6 +61,11 @@ export class Components {
 
   private async runComponent (name: string, manifest?: object): Promise<void> {
     assert.ok(!(name in this.compositions), `Composition '${name}' is already running`)
+
+    // the gateway first: a component announces itself when it opens, and that only
+    // reaches a gateway that is already listening. Started the other way round, the
+    // component waits for a knock, which the request that follows does not.
+    await this.gateway.start()
 
     const path = await this.workspace.addComponent(name, manifest)
 

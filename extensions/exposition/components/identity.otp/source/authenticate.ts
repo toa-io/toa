@@ -1,4 +1,3 @@
-import { Err } from 'error-value'
 import type { Context } from './lib'
 
 export async function effect (input: Input, context: Context): Promise<Output | Error> {
@@ -32,9 +31,17 @@ export async function effect (input: Input, context: Context): Promise<Output | 
   return { identity: { id } }
 }
 
-const ERR_INVALID_CREDENTIALS = new Err('INVALID_CREDENTIALS')
-const ERR_EXPIRED = new Err('EXPIRED')
-const ERR_NOT_FOUND = new Err('NOT_FOUND')
+const ERR_INVALID_CREDENTIALS = new (class InvalidCredentialsError extends Error {
+  public readonly code = 'INVALID_CREDENTIALS'
+})()
+
+const ERR_EXPIRED = new (class ExpiredError extends Error {
+  public readonly code = 'EXPIRED'
+})()
+
+const ERR_NOT_FOUND = new (class NotFoundError extends Error {
+  public readonly code = 'NOT_FOUND'
+})()
 
 interface Input {
   authority: string
