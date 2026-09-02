@@ -65,8 +65,10 @@ it('should keep asking until served', async () => {
   await client.connect()
 
   const fetching = client.fetch('a.one', 'e1')
+  const deadline = Date.now() + 1000
 
-  await timeout(25)
+  while (remote.invoke.mock.calls.length < 2 && Date.now() < deadline)
+    await timeout(5)
 
   expect(remote.invoke.mock.calls.length).toBeGreaterThanOrEqual(2)
 
