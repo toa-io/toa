@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.275](https://github.com/toa-io/toa/compare/v1.0.0-alpha.274...v1.0.0-alpha.275) (2026-09-02)
+
+
+### Bug Fixes
+
+* **configuration:** ship the component's code and the built page ([6ffe988](https://github.com/toa-io/toa/commit/6ffe988a9e67025c114e74ba94665b28a2cafaa1))
+* **introspection:** draw a band to the width of the map ([b70650b](https://github.com/toa-io/toa/commit/b70650b0c91ac49945e887b30d1953836814226b))
+* **introspection:** keep a sideways scroll off the browser's back gesture ([419e012](https://github.com/toa-io/toa/commit/419e012ce093bcd0429dc93fe457bbd964cfc11c))
+
+
+### Features
+
+* **ui:** give both consoles a favicon ([27d3881](https://github.com/toa-io/toa/commit/27d3881eda10e59dc4c9c5ef38c2a58b71e1448d))
+* **ui:** leave signing out to its icon ([a82fbab](https://github.com/toa-io/toa/commit/a82fbab513706436254348a5e35115dc3721873f))
+
+
+
+
+
 # [1.0.0-alpha.274](https://github.com/toa-io/toa/compare/v1.0.0-alpha.273...v1.0.0-alpha.274) (2026-09-02)
 
 
