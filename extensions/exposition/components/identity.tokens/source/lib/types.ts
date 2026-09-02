@@ -1,4 +1,4 @@
-import type { Call, Maybe, Observation, telemetry } from '@toa.io/types'
+import type { Call, Maybe, Observation, Secret, telemetry } from '@toa.io/types'
 
 export interface Context {
   local: {
@@ -31,7 +31,8 @@ export interface Configuration {
   }
 }
 
-export interface ConfiguredKey extends Pick<Key, 'id' | 'key'> {
+export interface ConfiguredKey extends Pick<Key, 'id'> {
+  key: Secret
   format?: 'jwe' | 'paseto'
 }
 

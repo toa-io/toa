@@ -13,7 +13,7 @@ export class Effect implements Operation {
     if (key === undefined)
       throw new TypeError('At least one JWE key must be configured')
 
-    this.key = key
+    this.key = { id: key.id, key: key.key.unwrap() }
     this.lifetime = context.configuration.lifetime * 1000
   }
 

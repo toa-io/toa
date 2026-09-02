@@ -18,7 +18,7 @@ Feature: Exposition deployment
       """yaml
       configuration:
         identity.tokens:
-          key0: secret.key.0
+          key0: $KEY0
       """
     When I export deployment
     Then exported values should contain:
@@ -26,8 +26,13 @@ Feature: Exposition deployment
       services:
         - name: exposition-gateway
           variables:
-          - name: TOA_CONFIGURATION_IDENTITY_TOKENS
-            value: '{"key0":"secret.key.0"}'
+          - name: TOA_CONFIGURATION__KEY0
+            secret:
+              name: toa-configuration
+              key: KEY0
+        - name: configuration-values
+          variables:
+          - name: TOA_CONFIGURATION_VALUES
       """
 
   Scenario: Deploying database pointer

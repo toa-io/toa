@@ -90,3 +90,19 @@ Feature: Reading the introspection map
       """
       403 Forbidden
       """
+
+  Scenario: The map does not take the application's root directives
+    Given the annotation of the introspection map under:
+      """yaml
+      /:
+        auth:anonymous: true
+      """
+    When the following request is received:
+      """
+      GET /introspection/nodes/ HTTP/1.1
+      host: nex.toa.io
+      """
+    Then the following reply is sent:
+      """
+      401 Unauthorized
+      """

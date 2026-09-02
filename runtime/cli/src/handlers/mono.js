@@ -36,29 +36,39 @@ async function mono (argv) {
 }
 
 /**
+ * The services of the extensions the components reference. A service hosts components of
+ * its own, and those reference extensions too — the identity components inside the gateway
+ * wait for the values service — so what a running service hosts is looked into as well.
+ *
  * @param {string[]} paths
  * @return {Promise<toa.core.Connector[]>}
  */
 async function createServices (paths) {
   const references = new Set()
-
-  for (const path of paths) {
-    const manifest = await component(path)
-
-    for (const reference of Object.keys(manifest.extensions ?? {}))
-      references.add(reference)
-  }
-
   const services = []
+  const pending = [...paths]
 
-  for (const reference of references) {
-    const { Factory } = require(reference)
+  while (pending.length > 0) {
+    const manifest = await component(pending.shift())
 
-    if (typeof Factory?.prototype.service !== 'function') continue
+    for (const reference of Object.keys(manifest.extensions ?? {})) {
+      if (references.has(reference)) continue
 
-    const service = new Factory(boot).service()
+      references.add(reference)
 
-    if (service !== null) services.push(service)
+      const { Factory, components } = require(reference)
+
+      if (typeof Factory?.prototype.service !== 'function') continue
+
+      const service = new Factory(boot).service()
+
+      // an extension that is off in this environment hosts nothing here either
+      if (service === null) continue
+
+      services.push(service)
+
+      if (components !== undefined) pending.push(...components().paths)
+    }
   }
 
   return services

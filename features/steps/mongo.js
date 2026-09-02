@@ -25,6 +25,17 @@ Given('the {component} database contains:',
     })
   })
 
+Given('the {component} database is empty',
+  /**
+   * @param {string} id
+   */
+  async function (id) {
+    await using(id, async (collection, outbox) => {
+      await collection.deleteMany({})
+      await outbox.drop().catch(() => undefined)
+    })
+  })
+
 Given('the {component} outbox contains:',
   /**
    * Seeding a row directly is the post-crash state: the entity was written, the event was

@@ -27,7 +27,7 @@ export class Computation implements Operation {
     for (const { id, key, format } of context.configuration.keys) {
       const branch = format === 'paseto' ? this.legacy : this.keys
 
-      branch[id] = { key }
+      branch[id] = { key: key.unwrap() }
     }
   }
 

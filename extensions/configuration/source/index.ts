@@ -1,3 +1,4 @@
 export { manifest } from './manifest'
-export { deployment } from './deployment'
+export { deployment, describe } from './deployment'
+export { components } from './Composition'
 export { Factory } from './Factory'

@@ -335,7 +335,11 @@ Feature: Identity Federation
       trust:
         - iss: http://localhost:44444
           aud: nex
-          secret: secret
+          secret: $IDP_SECRET
+      """
+    And the configuration secrets:
+      """yaml
+      IDP_SECRET: secret
       """
     And auth code for Alice is issued for https://web.toa.io/callback/
     When the following request is received:
@@ -362,12 +366,16 @@ Feature: Identity Federation
           signature:
             iss: io.toa.nex.id
             kid: key-id
-            key: |
-              -----BEGIN PRIVATE KEY-----
-              MIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQg9x9DatwH0GZHSCo9
-              TMHTVXyeY0YQ8qb73jHV2v4MsyehRANCAAQwaYlna2hSV3G/RIlNLV41lg8Pm4Kf
-              HfCuKKiw3BIJTnSArAMJLSy1vYwSIMHz720mkmWTrWuQkkjvkDpZxfRv
-              -----END PRIVATE KEY-----
+            key: $IDP_KEY
+      """
+    And the configuration secrets:
+      """yaml
+      IDP_KEY: |
+        -----BEGIN PRIVATE KEY-----
+        MIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQg9x9DatwH0GZHSCo9
+        TMHTVXyeY0YQ8qb73jHV2v4MsyehRANCAAQwaYlna2hSV3G/RIlNLV41lg8Pm4Kf
+        HfCuKKiw3BIJTnSArAMJLSy1vYwSIMHz720mkmWTrWuQkkjvkDpZxfRv
+        -----END PRIVATE KEY-----
       """
     And auth code for Bob is issued for https://web.toa.io/callback/
     When the following request is received:
