@@ -28,7 +28,7 @@ export class Components {
 
   @given('the `{word}` is running with the following manifest:')
   public async patchAndRun (name: string, yaml: string): Promise<void> {
-    const manifest = parse(yaml)
+    const manifest = parse(yaml) as object
 
     await this.runComponent(name, manifest)
   }

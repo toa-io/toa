@@ -33,7 +33,7 @@ export class Streams {
   public async received (key: string, yaml: string): Promise<void> {
     await setTimeout(100)
 
-    const expected = parse<object>(yaml)
+    const expected = parse(yaml) as object
 
     for (const event of this.events[key])
       if (match(event, expected))

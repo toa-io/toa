@@ -19,7 +19,7 @@ export class Components {
 
   @given('the `{word}` component is running with routes:')
   public async run (component: string, yaml: string): Promise<void> {
-    const declaration = parse<Declaration>(yaml)
+    const declaration = parse(yaml) as Declaration
     const [name, namespace = 'default'] = component.split('.').reverse()
     const routes = parseRoutes(declaration)
 
@@ -32,7 +32,7 @@ export class Components {
 
   @when('the `{word}` is called with:')
   public async call (endpoint: string, yaml: string): Promise<void> {
-    const request = parse<Request>(yaml)
+    const request = parse(yaml) as Request
     const [operation, component, namespace = 'default'] = endpoint.split('.').reverse()
     const id = `${namespace}.${component}`
 

@@ -29,7 +29,7 @@ export class Realtime {
   public async start (yaml: string): Promise<void> {
     await Realtime.stop()
 
-    const annotation = parse(yaml)
+    const annotation = parse(yaml) as Record<string, string>
     const routes = []
 
     for (const [event, property] of Object.entries(annotation))

@@ -17,9 +17,9 @@ export class Gateway {
 
   @given('the annotation:')
   public async annotate (yaml: string): Promise<void> {
-    const annotation = parse(yaml)
+    const annotation = parse(yaml) as Partial<http.Options> & { '/'?: object }
 
-    if ('/' in annotation) {
+    if (annotation['/'] !== undefined) {
       const tree = syntax.parse(annotation['/'], shortcuts)
 
       process.env.TOA_EXPOSITION = JSON.stringify(tree)
@@ -71,7 +71,7 @@ export class Gateway {
     const [name, namespace = 'default'] = id.split('.').reverse()
     const key = `TOA_CONFIGURATION_${namespace.toUpperCase()}_${name.toUpperCase()}`
     const def = DEFAULT_CONFIGURATION[id] ?? {}
-    const patch: object = parse(yaml)
+    const patch = parse(yaml) as object
     const configuration = Object.assign({}, def, patch)
 
     process.env[key] = JSON.stringify(configuration)
