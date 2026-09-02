@@ -83,6 +83,9 @@ export class Gateway {
     const patch = parse(yaml) as object
     const configuration = Object.assign({}, def, patch)
 
+    // scenario-scoped, as the secrets it may refer to are: a configuration left behind
+    // outlives the secrets it points at, and the next scenario cannot resolve them
+    this.written.push(key)
     process.env[key] = JSON.stringify(configuration)
 
     await Gateway.stop()
