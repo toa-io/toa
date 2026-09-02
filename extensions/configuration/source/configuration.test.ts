@@ -1,6 +1,7 @@
 import { Locator } from '@toa.io/core'
 import { generate } from 'randomstring'
 import { fit, local, overridden } from './configuration'
+import { Secret } from './Secret'
 import { type Manifest } from './manifest'
 
 let locator: Locator
@@ -52,7 +53,19 @@ describe('local', () => {
     set({ foo: '$BAR' })
     set('bar', '_BAR')
 
-    expect(local(locator, manifest)).toStrictEqual({ foo: 'bar' })
+    const { foo } = local(locator, manifest)
+
+    expect(foo).toBeInstanceOf(Secret)
+    expect((foo as Secret).unwrap()).toStrictEqual('bar')
+    expect(String(foo)).toStrictEqual('<REDACTED>')
+  })
+
+  it('should substitute secrets in defaults', async () => {
+    manifest.defaults = { foo: '$BAR' }
+
+    set('bar', '_BAR')
+
+    expect((local(locator, manifest).foo as Secret).unwrap()).toStrictEqual('bar')
   })
 
   it('should use defaults', async () => {
@@ -100,8 +113,10 @@ describe('fit', () => {
     set('secret', '_FOO')
 
     const raw = { foo: '$FOO' }
+    const values = fit(raw, manifest)
 
-    expect(fit(raw, manifest)).toStrictEqual({ foo: 'secret', bar: 1 })
+    expect((values.foo as Secret).unwrap()).toStrictEqual('secret')
+    expect(values.bar).toStrictEqual(1)
     expect(raw).toStrictEqual({ foo: '$FOO' }) // untouched
   })
 

@@ -158,6 +158,20 @@ A secret is substituted in the component's process, from the variable
 `TOA_CONFIGURATION__<NAME>` deployed to it. The values service holds and returns the
 reference.
 
+In the component, a secret is a `Secret` object: `unwrap()` returns the string, while
+`toString()`, JSON and `util.inspect` give `<REDACTED>`. `unwrap` from `@toa.io/generic`
+returns a plain string as it is and unwraps a secret, for a value that may be either.
+
+```javascript
+const { unwrap } = require('@toa.io/generic')
+
+function transition (input, entity, context) {
+  const key = unwrap(context.configuration.apiKey)
+
+  // ...
+}
+```
+
 ## Values
 
 Configuration values are held by the `configuration.values` component, deployed as the
@@ -195,8 +209,8 @@ The configuration of a component for an epoch is:
   deployed epoch. The configuration must satisfy the schema. Errors: `UNKNOWN_COMPONENT`,
   `INVALID_CONFIGURATION`.
 
-Creating a configuration publishes the `configuration.values.created` event with
-`{ component, epoch }`.
+Creating a configuration publishes the `configuration.values.created` event with the
+object as stored.
 
 ### Resources
 
@@ -224,9 +238,9 @@ function transition (input, entity, context) {
 ```
 
 On start, a component requests its configuration for its epoch from the values service and
-waits until there is one, reporting every fifth attempt. Secrets are substituted, and the
-schema is applied. After a configuration is created, the running component receives the new
-value.
+waits until there is one, reporting every fifth attempt. The schema is applied, and secrets
+are substituted. After a configuration is created, the running component receives the new
+object and takes it when its `_created` is later than that of the value it holds.
 
 ### Local override
 

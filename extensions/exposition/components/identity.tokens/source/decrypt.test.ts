@@ -1,8 +1,10 @@
 import { generate } from 'randomstring'
+import { unwrap } from '@toa.io/generic'
 import { V3 } from 'paseto'
 import { Effect as Encrypt } from './encrypt'
 import { Computation as Decrypt } from './decrypt'
 import { type Configuration, type Context, type Identity } from './lib'
+import type { Secret } from '@toa.io/types'
 
 let configuration: Configuration
 let context: Context
@@ -16,8 +18,9 @@ beforeEach(() => {
   configuration = {
     keys: [
       { id: 'key0', key: 'sTxL6qVOadKkUJwh3FveU53XgTEo3Sdfg7k2FfiIKfs' },
-      { id: 'key1', key: '5I0iSKw3yfBkQ4AXfA8eR-tWR0Q1dpn4x3bPrPzHkP0' },
-      { id: 'legacy0', key: 'k3.local.m28p8SrbS467t-2IUjQuSOqmjvi24TbXhyjAW_dOrog', format: 'paseto' },
+      // a deployment gives keys as secrets, and those come as objects
+      { id: 'key1', key: secret('5I0iSKw3yfBkQ4AXfA8eR-tWR0Q1dpn4x3bPrPzHkP0') },
+      { id: 'legacy0', key: secret('k3.local.m28p8SrbS467t-2IUjQuSOqmjvi24TbXhyjAW_dOrog'), format: 'paseto' },
       { id: 'legacy1', key: 'k3.local.-498jfWenrZH-Dqw3-zQJih_hKzDgBgUMfe37OCqSOA', format: 'paseto' }
     ],
     lifetime: 1000,
@@ -77,7 +80,7 @@ it('should decrypt with key1', async () => {
 it('should decrypt legacy PASETO and require refresh', async () => {
   const identity: Identity = { id: generate(), roles: [] }
 
-  const token = await V3.encrypt({ iss: authority, identity }, configuration.keys[2].key, {
+  const token = await V3.encrypt({ iss: authority, identity }, unwrap(configuration.keys[2].key), {
     footer: { kid: 'legacy0' }
   })
 
@@ -96,7 +99,7 @@ it('should separate JWE and PASETO keys with the same id by format', async () =>
 
   const identity: Identity = { id: generate(), roles: [] }
 
-  const token = await V3.encrypt({ iss: authority, identity }, configuration.keys[2].key, {
+  const token = await V3.encrypt({ iss: authority, identity }, unwrap(configuration.keys[2].key), {
     footer: { kid: 'key0' }
   })
 
@@ -125,7 +128,7 @@ it('should reject JWE with an unknown key', async () => {
   const token = await encrypt.execute({
     authority,
     identity: { id: generate(), roles: [] },
-    key: { id: 'missing', key: configuration.keys[0].key, label: 'missing' }
+    key: { id: 'missing', key: unwrap(configuration.keys[0].key), label: 'missing' }
   })
 
   if (token instanceof Error)
@@ -133,3 +136,7 @@ it('should reject JWE with an unknown key', async () => {
 
   await expect(decrypt.execute(token)).resolves.toMatchObject({ code: 'INVALID_KEY' })
 })
+
+function secret (value: string): Secret {
+  return { unwrap: () => value }
+}

@@ -2,6 +2,7 @@ import { type Locator } from '@toa.io/core'
 import { add } from '@toa.io/generic'
 import * as schemas from '@toa.io/schemas'
 import { PREFIX, SECRET_RX } from './const'
+import { Secret } from './Secret'
 import type { Schema } from '@toa.io/schemas'
 import type { Manifest } from './manifest'
 
@@ -14,23 +15,20 @@ export function overridden (locator: Locator): boolean {
 export function local (locator: Locator, manifest: Manifest): Node {
   const values = read(locator.uppercase)
 
-  substituteSecrets(values)
-
   if (manifest.defaults !== undefined)
     add(values, manifest.defaults)
 
-  validate(values, manifest)
-
-  return values
+  return fit(values, manifest)
 }
 
-/** A value as the service holds it: secrets substituted, schema applied. */
+/** A copy of the value with the schema applied and the secrets substituted. */
 export function fit (raw: object, manifest: Manifest): Node {
   // a copy of the caller's, and one of this realm: what came over the wire is JSON anyway
   const values = JSON.parse(JSON.stringify(raw)) as Node
 
-  substituteSecrets(values)
+  // the schema sees the references, which are the strings it declares
   validate(values, manifest)
+  substituteSecrets(values)
 
   return values
 }
@@ -64,7 +62,7 @@ function substituteSecrets (configuration: Node): void {
 
     const name = match.groups?.variable
 
-    configuration[key] = getSecret(name!)
+    configuration[key] = new Secret(getSecret(name!))
   }
 }
 

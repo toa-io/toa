@@ -1,4 +1,4 @@
-import { type Call, type Maybe, type Observation, type Query, type Transition } from '@toa.io/types'
+import { type Call, type Maybe, type Observation, type Query, type Secret, type Transition } from '@toa.io/types'
 
 export interface Context {
   local: {
@@ -16,7 +16,7 @@ export interface Context {
   }
   configuration: {
     readonly rounds: number
-    readonly pepper: string
+    readonly pepper: string | Secret
     readonly principal?: string
     readonly username: string[]
     readonly password: string[]

@@ -1,3 +1,4 @@
+import { unwrap } from '@toa.io/generic'
 import { V3 } from 'paseto'
 import { LRUCache } from 'lru-cache'
 import { jweKey } from './lib'
@@ -27,7 +28,7 @@ export class Computation implements Operation {
     for (const { id, key, format } of context.configuration.keys) {
       const branch = format === 'paseto' ? this.legacy : this.keys
 
-      branch[id] = { key }
+      branch[id] = { key: unwrap(key) }
     }
   }
 
