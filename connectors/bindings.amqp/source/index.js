@@ -1,4 +1,4 @@
-import { deployment } from './deployment'
+import { deployment } from './deployment.js'
 import { Factory } from './factory.js'
 
 /** @type {toa.core.bindings.Properties} */

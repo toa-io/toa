@@ -1,7 +1,11 @@
+import { createRequire } from 'node:module'
 import { join, dirname } from 'node:path'
 
 import { Image } from './image.js'
 import fs from 'fs-extra'
+
+// a service is named the way a package is, and its directory is where it lives
+const require = createRequire(import.meta.url)
 
 class Service extends Image {
   dockerfile = join(import.meta.dirname, 'service.Dockerfile')

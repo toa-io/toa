@@ -24,8 +24,8 @@ export class Factory implements extensions.Factory {
     this.boot = boot
   }
 
-  public tenant (locator: Locator, node: syntax.Node): Connector {
-    const broadcast: Broadcast = this.boot.bindings.broadcast(CHANNEL, locator.id)
+  public async tenant (locator: Locator, node: syntax.Node): Promise<Connector> {
+    const broadcast: Broadcast = await this.boot.bindings.broadcast(CHANNEL, locator.id)
     const hash = createHash('sha256').update(JSON.stringify(node)).digest('hex')
 
     // no timestamp: the tenant stamps each announcement with its own start time
@@ -40,14 +40,14 @@ export class Factory implements extensions.Factory {
     return new Tenant(broadcast, branch)
   }
 
-  public service (): Connector | null {
+  public async service (): Promise<Connector | null> {
     assert.ok(process.env.TOA_EXPOSITION_PROPERTIES,
       'TOA_EXPOSITION_PROPERTIES is undefined')
 
     configureLogs()
 
     const options = JSON.parse(process.env.TOA_EXPOSITION_PROPERTIES) as http.Options
-    const broadcast: Broadcast = this.boot.bindings.broadcast(CHANNEL)
+    const broadcast: Broadcast = await this.boot.bindings.broadcast(CHANNEL)
     const server = http.Server.create({ ...options })
     const remotes = new Remotes(this.boot)
     const node = root.resolve()

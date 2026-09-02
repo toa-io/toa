@@ -17,10 +17,14 @@
     "url": "https://github.com/toa-io/toa/issues"
   },
   "workspaces": [
+    "libraries/*",
+    "extensions/telemetry",
+    "extensions/fetch",
+    "extensions/stash",
+    "extensions/storages",
     "runtime/*",
     "connectors/*",
     "extensions/*",
-    "libraries/*",
     "operations",
     "userland",
     "types"
@@ -54,6 +58,7 @@
     "execa": "10.0.1",
     "fast-glob": "3.3.3",
     "husky": "9.1.7",
+    "jest-diff": "30.5.1",
     "js-yaml": "5.4.1",
     "knex": "3.3.0",
     "lerna": "10.0.1",
@@ -81,7 +86,7 @@
     "setup:mongo": "openssl rand -base64 756 > ./.mongo-keyfile && chmod 400 ./.mongo-keyfile",
     "ci": "rm -f package-lock.json && rm -rf node_modules && npm exec --workspaces -c \"rm -rf node_modules transpiled\" && npm i",
     "transpile": "npm run transpile --workspaces --if-present",
-    "retranspile": "npm exec --workspaces -c \"rm -rf transpiled\" && npm run transpile",
+    "retranspile": "npm exec --workspaces -c \"rm -rf transpiled tsconfig.tsbuildinfo\" && npm run transpile",
     "compose": "docker compose rm -f -s -v && docker compose up -d",
     "format": "oxfmt",
     "format:check": "oxfmt --check"

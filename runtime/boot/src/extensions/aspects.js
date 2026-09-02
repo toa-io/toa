@@ -1,4 +1,4 @@
-import { resolve } from './resolve.js'
+import { instance } from './resolve.js'
 
 /**
  * @param {toa.norm.Component} manifest
@@ -10,7 +10,7 @@ const aspects = (manifest) => {
   if (manifest.extensions === undefined) return aspects
 
   for (const [name, declaration] of Object.entries(manifest.extensions)) {
-    const factory = resolve(name, manifest.path)
+    const factory = instance(name, manifest.path)
 
     if (factory.aspect === undefined) continue
 

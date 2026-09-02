@@ -1,5 +1,6 @@
 import { component as load } from '../../component.js'
 import { load as loadDependency } from './load.js'
+
 const extensions = async (context) => {
   const extensions = {}
   const components = context.components?.slice() ?? []
@@ -32,7 +33,7 @@ async function extractExtensionComponents (components, extensions, annotations) 
 
       extensions[reference] = []
 
-      const { metadata, module: mod } = loadDependency(reference)
+      const { metadata, module: mod } = await loadDependency(reference)
 
       if (mod.components === undefined) continue
 

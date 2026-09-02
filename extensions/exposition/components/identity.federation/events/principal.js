@@ -1,7 +1,7 @@
 // @ts-check
 /**
- * @param {{ state: import('../source/types').Entity }} event
- * @param {import('../source/types').Context} context
+ * @param {{ state: import('../source/types/index.js').Entity }} event
+ * @param {import('../source/types/index.js').Context} context
  * @returns boolean
  */
 export const condition = function (event, context) {
@@ -13,7 +13,7 @@ export const condition = function (event, context) {
 }
 
 /**
- * @param {{ state: import('../source/types').Entity }} event
+ * @param {{ state: import('../source/types/index.js').Entity }} event
  */
 export const payload = function (event) {
   return { identity: event.state.identity }

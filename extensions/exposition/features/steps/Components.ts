@@ -1,3 +1,4 @@
+import { createRequire } from 'node:module'
 import * as assert from 'node:assert'
 import { dirname, join } from 'node:path'
 import { after, binding, given } from 'cucumber-tsflow'
@@ -8,6 +9,8 @@ import { load as parse } from 'js-yaml'
 import { Gateway } from './Gateway.js'
 import { Workspace } from './Workspace.js'
 import { components as map } from './map.js'
+
+const require = createRequire(import.meta.url)
 
 const MAP = 'introspection'
 const VALUES = 'configuration'

@@ -11,13 +11,13 @@ const component = async (manifest) => {
 }
 
 const create = async (manifest, locator) => {
-  boot.extensions.load(manifest)
+  await boot.extensions.load(manifest)
 
   // the storage is told whether there will be an outbox, so the events come first
   const events = boot.events(manifest)
-  const storage = boot.storage(manifest, events !== undefined)
+  const storage = await boot.storage(manifest, events !== undefined)
   const context = await boot.context(manifest)
-  const emission = boot.emission(events, locator, context)
+  const emission = await boot.emission(events, locator, context)
   const outbox = boot.outbox(manifest, storage, emission)
 
   let state

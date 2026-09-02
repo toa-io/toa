@@ -17,7 +17,7 @@ const discovery = async () => {
 }
 
 const lookup = async (locator) => {
-  const call = boot.call(locator, ENDPOINT, { bindings: BINDINGS })
+  const call = await boot.call(locator, ENDPOINT, { bindings: BINDINGS })
 
   await call.connect()
 
@@ -27,7 +27,7 @@ const lookup = async (locator) => {
 const expose = async (manifest) => {
   const exposition = new Exposition(manifest.locator, manifest)
   const operations = { [ENDPOINT]: { bindings: BINDINGS } }
-  const { local, other } = boot.bindings.produce(exposition, operations)
+  const { local, other } = await boot.bindings.produce(exposition, operations)
   const producers = local.concat(other)
 
   await Promise.all(producers.map((producer) => producer.connect()))

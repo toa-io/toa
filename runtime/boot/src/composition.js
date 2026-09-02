@@ -27,8 +27,8 @@ async function composition (paths, options) {
       const components = await span('create components',
         async () => await Promise.all(manifests.map(boot.component)))
 
-      const groups = components.map((component, index) =>
-        boot.bindings.produce(component, manifests[index].operations))
+      const groups = await Promise.all(components.map(async (component, index) =>
+        await boot.bindings.produce(component, manifests[index].operations)))
 
       const receivers = await span('create receivers',
         async () => await Promise.all(components.map((component, index) =>

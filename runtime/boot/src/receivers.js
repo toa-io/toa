@@ -18,12 +18,14 @@ const receivers = async (manifest, component) => {
     // the origin of the calls this receiver makes to its local operation
     const origin = { namespace: source.namespace, component: source.name, event }
 
-    const bridge = definition.bridge !== undefined ? boot.bridge.receiver(definition.bridge, manifest.path, label) : undefined
+    const bridge = definition.bridge !== undefined
+      ? await boot.bridge.receiver(definition.bridge, manifest.path, label)
+      : undefined
     const receiver = new Receiver({ ...definition, label, destination, origin }, local, bridge)
     const decorator = extensions.receiver(receiver, manifest.locator)
 
     const transport = definition.binding ?? await resolveBinding(locator, label)
-    const binding = boot.bindings.receive(transport, source, label, manifest.locator.id, decorator)
+    const binding = await boot.bindings.receive(transport, source, label, manifest.locator.id, decorator)
 
     binding.depends(component)
     receivers.push(binding)

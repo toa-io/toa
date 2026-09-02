@@ -6,11 +6,12 @@ import * as _bindings from './bindings.js'
 import { Manifest } from '@toa.io/norm'
 
 export interface Factory {
-  tenant? (locator: _core.Locator, manifest: object, component: Manifest): _core.Connector
+  tenant? (locator: _core.Locator, manifest: object, component: Manifest):
+  _core.Connector | Promise<_core.Connector>
 
   aspect? (locator: _core.Locator, manifest: object | null): Aspect | Aspect[]
 
-  service? (name?: string): _core.Connector | null
+  service? (name?: string): _core.Connector | null | Promise<_core.Connector | null>
 
   component? (component: _component.Component): _component.Component
 

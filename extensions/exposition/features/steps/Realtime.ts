@@ -39,7 +39,7 @@ export class Realtime {
 
     const factory = new Factory(boot)
 
-    Realtime.instance = factory.service()
+    Realtime.instance = await factory.service()
 
     void Realtime.instance.connect()
   }
