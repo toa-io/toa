@@ -26,7 +26,7 @@
     "@toa.io/norm": "1.0.0-alpha.274",
     "@toa.io/schemas": "1.0.0-alpha.274",
     "clone-deep": "4.0.1",
-    "dotenv": "16.1.1",
+    "dotenv": "17.4.2",
     "find-up": "5.0.0",
     "openspan": "1.0.0-alpha.272"
   },

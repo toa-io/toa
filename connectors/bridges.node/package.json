@@ -30,8 +30,7 @@
     "@toa.io/core": "1.0.0-alpha.273",
     "@toa.io/extensions.fetch": "1.0.0-alpha.273",
     "@toa.io/generic": "1.0.0-alpha.273",
-    "fast-glob": "3.2.7",
-    "matchacho": "0.3.5"
+    "fast-glob": "3.3.3"
   },
   "devDependencies": {
     "clone-deep": "4.0.1"

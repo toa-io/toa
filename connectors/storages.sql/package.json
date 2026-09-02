@@ -23,7 +23,7 @@
     "@toa.io/core": "1.0.0-alpha.273",
     "@toa.io/generic": "1.0.0-alpha.273",
     "@toa.io/pointer": "1.0.0-alpha.274",
-    "knex": "2.4.2",
+    "knex": "3.1.0",
     "openspan": "1.0.0-alpha.272",
     "pg": "8.9.0"
   },

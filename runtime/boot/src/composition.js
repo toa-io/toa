@@ -2,7 +2,7 @@
 
 const { console } = require('openspan')
 const { Composition } = require('@toa.io/core')
-const { version } = require('@toa.io/runtime/package.json')
+const { version } = require('@toa.io/runtime')
 
 const boot = require('./index')
 const { span } = require('./span')
