@@ -3,6 +3,30 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.272](https://github.com/toa-io/toa/compare/v1.0.0-alpha.271...v1.0.0-alpha.272) (2026-09-01)
+
+
+* refactor(atomicity)!: rename the connector and free it of the outbox ([21f1a41](https://github.com/toa-io/toa/commit/21f1a41aceafcfd35c7620014062fe46b54afa95))
+
+
+### Features
+
+* **partitions.redis:** split the outbox sweep across replicas ([ca27b45](https://github.com/toa-io/toa/commit/ca27b45fdaa508171b1851bbc14c60db67f3e4b3))
+
+
+### BREAKING CHANGES
+
+* `@toa.io/partitions.redis` is now `@toa.io/atomicity`, and its
+`lanes(total)` is `slots(total)`. Redis is declared as `atomicity` in the context
+rather than `outbox.redis`, and read from `TOA_ATOMICITY_REDIS`.
+`TOA_OUTBOX_PARTITION_INTERVAL` is `TOA_ATOMICITY_INTERVAL`.
+
+Co-Authored-By: Claude Opus 5 <noreply@anthropic.com>
+
+
+
+
+
 # [1.0.0-alpha.271](https://github.com/toa-io/toa/compare/v1.0.0-alpha.270...v1.0.0-alpha.271) (2026-08-31)
 
 **Note:** Version bump only for package @toa.io/runtime

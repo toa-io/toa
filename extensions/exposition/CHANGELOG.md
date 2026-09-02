@@ -3,6 +3,32 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.272](https://github.com/toa-io/toa/compare/v1.0.0-alpha.271...v1.0.0-alpha.272) (2026-09-01)
+
+
+### Bug Fixes
+
+* **core:** stop the reply contract from relaxing the declaration ([6222893](https://github.com/toa-io/toa/commit/622289326630b94deff93499d6a851bfaa57c69a))
+* **exposition:** close the query string, and tell it about sample ([ba82e61](https://github.com/toa-io/toa/commit/ba82e617f9d6e18b2c01ee68661407a781952443))
+* **exposition:** stop a tenant announcing on its way out ([e1926fe](https://github.com/toa-io/toa/commit/e1926fe53186d9044c502e84f5894b6fbce88011))
+* **exposition:** stop the throttling ticker before what it calls goes down ([f770740](https://github.com/toa-io/toa/commit/f770740a8359762b10cd456bc64e259415f7ef75))
+
+
+* refactor(exposition)!: meter through the atom ([aa9c8f1](https://github.com/toa-io/toa/commit/aa9c8f16de3f4d315b14c49ff0b4f203053ede2c))
+
+
+### BREAKING CHANGES
+
+* `context.stash.meter` is gone; meter through `context.atom` instead.
+A deployment that declared a stash for `exposition.stash` can drop it, and needs
+`atomicity.redis` set for throttling to reconcile.
+
+Co-Authored-By: Claude Opus 5 <noreply@anthropic.com>
+
+
+
+
+
 # [1.0.0-alpha.271](https://github.com/toa-io/toa/compare/v1.0.0-alpha.270...v1.0.0-alpha.271) (2026-08-31)
 
 

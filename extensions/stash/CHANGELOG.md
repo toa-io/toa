@@ -3,6 +3,29 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.272](https://github.com/toa-io/toa/compare/v1.0.0-alpha.271...v1.0.0-alpha.272) (2026-09-01)
+
+
+* refactor(atomicity)!: take the lock manager from the stash ([4fd91eb](https://github.com/toa-io/toa/commit/4fd91eb2fdb68f7b87aaf16d182794bbc567ba57))
+* refactor(exposition)!: meter through the atom ([aa9c8f1](https://github.com/toa-io/toa/commit/aa9c8f16de3f4d315b14c49ff0b4f203053ede2c))
+
+
+### BREAKING CHANGES
+
+* `context.stash.lock` is gone; lock through `context.atom` instead.
+A stash pointer resolving to several addresses now uses the first.
+
+Co-Authored-By: Claude Opus 5 <noreply@anthropic.com>
+* `context.stash.meter` is gone; meter through `context.atom` instead.
+A deployment that declared a stash for `exposition.stash` can drop it, and needs
+`atomicity.redis` set for throttling to reconcile.
+
+Co-Authored-By: Claude Opus 5 <noreply@anthropic.com>
+
+
+
+
+
 # [1.0.0-alpha.270](https://github.com/toa-io/toa/compare/v1.0.0-alpha.269...v1.0.0-alpha.270) (2026-08-31)
 
 
