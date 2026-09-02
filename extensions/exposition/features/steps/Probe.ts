@@ -1,5 +1,5 @@
 import assert from 'node:assert'
-import { Agent } from 'undici'
+import { Agent, request } from 'undici'
 import { after, binding, then, when } from 'cucumber-tsflow'
 import { PATH, PROBE } from '../../source/HTTP'
 
@@ -11,12 +11,12 @@ export class Probe {
 
   @when('the ready probe is requested')
   public async request (): Promise<void> {
-    const response = await fetch(`http://127.0.0.1:${PROBE}${PATH}`, { dispatcher: this.agent })
+    const response = await request(`http://127.0.0.1:${PROBE}${PATH}`, { dispatcher: this.agent })
 
-    this.status = response.status
-    this.headers = Object.fromEntries(response.headers.entries())
+    this.status = response.statusCode
+    this.headers = response.headers as Record<string, string>
 
-    await response.arrayBuffer()
+    await response.body.dump()
   }
 
   @then('the ready probe answers {int}')

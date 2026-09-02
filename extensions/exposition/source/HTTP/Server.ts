@@ -139,6 +139,10 @@ export class Server extends Connector {
       return
     }
 
+    // directives and components read `host`; HTTP/2 sends `:authority` instead, and what a
+    // component sees must not depend on the protocol the request arrived over
+    request.headers.host ??= host
+
     const url = parse(request, host)
 
     if (url instanceof Error) {
