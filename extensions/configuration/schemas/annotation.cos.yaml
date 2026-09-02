@@ -1,4 +1,29 @@
-type: object
-patternProperties:
-  ^.+$:
+# context.toa.yaml configuration annotation
+#
+# Every key names a component and holds that component's values, except `resources`, which
+# is the values service's own: it deploys like any other and has to state what it may take.
+# A component actually named `resources` is written with its namespace, `default.resources`
+# — the bare form is only shorthand for that.
+properties:
+  resources:
+    # `null` deploys the service without any, which every deployment has to state one way
+    # or the other — see `migrations/263.md`.
     type: object
+    nullable: true
+    properties:
+      cpu:
+        type: array
+        items:
+          type: string
+        minItems: 2
+        maxItems: 2
+      memory:
+        type: array
+        items:
+          type: string
+        minItems: 2
+        maxItems: 2
+patternProperties:
+  ^(?!resources$).+$:
+    type: object
+type: object

@@ -132,6 +132,20 @@ configuration:
 The annotated object is deployed as the defaults of the component for its epoch, in place of
 the manifest `defaults`.
 
+Every key names a component except `resources`, which is the values service's own: it deploys
+like any other and states what it may take. A component actually named `resources` is written
+with its namespace, `default.resources` — the bare form is only shorthand for that.
+
+```yaml
+# context.toa.yaml
+configuration:
+  resources:
+    cpu: [200m, 1000m]
+    memory: [200Mi, 500Mi]
+  dummies.dummy:
+    foo: bye
+```
+
 ## Secrets
 
 Configuration values which are uppercase strings prefixed with `$` are considered as secrets.

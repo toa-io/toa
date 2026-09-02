@@ -224,6 +224,34 @@ Feature: Configuration Extension
       """
     And I disconnect
 
+  Scenario: The values service states what it may take
+    The annotation is a map of components, so the one option the service has of its own
+    is reserved: `resources` is the service's, not a component of that name.
+
+    Given I have a component `configuration.base`
+    And I have a context with:
+      """yaml
+      configuration:
+        resources:
+          cpu: [200m, 1000m]
+          memory: [200Mi, 500Mi]
+        configuration.base:
+          foo: ok
+      """
+    When I export deployment
+    Then exported values should contain:
+      """yaml
+      services:
+        - name: configuration-values
+          resources:
+            cpu:
+              - 200m
+              - 1000m
+            memory:
+              - 200Mi
+              - 500Mi
+      """
+
   Scenario: Deployment
     Given I have a component `configuration.base`
     And I have a context with:

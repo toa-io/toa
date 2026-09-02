@@ -1,5 +1,5 @@
 import assert from 'node:assert'
-import { type Dependency, type Service, type Variable, type Variables } from '@toa.io/operations'
+import { type Dependency, type Resources, type Service, type Variable, type Variables } from '@toa.io/operations'
 import { components } from './Composition'
 import { EVENT, PREFIX, SECRET_RX, UI_PATH, UI_PORT, VALUES } from './const'
 import { epoch } from './epoch'
@@ -8,7 +8,9 @@ import type { Manifest } from './manifest'
 import type { context } from '@toa.io/norm'
 
 export function deployment (instances: Instance[], annotation: Annotation = {}): Dependency {
-  annotation = prepare(annotation, instances)
+  const { resources, values } = split(annotation)
+
+  annotation = prepare(values, instances)
 
   const variables: Variables = {}
 
@@ -29,6 +31,7 @@ export function deployment (instances: Instance[], annotation: Annotation = {}):
     name: 'values',
     version: require('../package.json').version,
     components: components().labels,
+    resources,
     // the service that holds the values also serves the page that reads them
     port: UI_PORT,
     ingress: { path: UI_PATH },
@@ -43,7 +46,7 @@ export function deployment (instances: Instance[], annotation: Annotation = {}):
 
 /** What the values service is given: the epoch, the schema and the defaults of every component. */
 export function describe (instances: Instance[], annotation: Annotation = {}): Values {
-  annotation = prepare(annotation, instances)
+  annotation = prepare(split(annotation).values, instances)
 
   const values: Values = {}
 
@@ -86,10 +89,24 @@ function createSecrets (values: object): Variable[] {
   return secrets
 }
 
-/** Validated, keyed by full component ids, and checked against the components that ask. */
-function prepare (annotation: Annotation, instances: Instance[]): Annotation {
+/**
+ * The service's own resources, and the component values that are the rest of the annotation.
+ *
+ * Every key here names a component, so the one option the service has of its own needs a
+ * name that cannot be mistaken for one. `resources` is reserved: a component actually
+ * called that is written with its namespace, `default.resources`, which is what an id is
+ * anyway — the bare form is the shorthand.
+ */
+function split (annotation: Annotation): { resources?: Resources, values: Annotation } {
   validators.annotation.validate(annotation)
 
+  const { resources, ...values } = annotation as Annotation & { resources?: Resources }
+
+  return { resources, values }
+}
+
+/** Validated, keyed by full component ids, and checked against the components that ask. */
+function prepare (annotation: Annotation, instances: Instance[]): Annotation {
   const normalized: Annotation = {}
   const requested = instances.map((instance) => instance.locator.id)
 
@@ -105,7 +122,7 @@ function prepare (annotation: Annotation, instances: Instance[]): Annotation {
   return normalized
 }
 
-export type Annotation = Record<string, object>
+export type Annotation = Record<string, any>
 export type Instance = context.Dependency<Manifest>
 export type Values = Record<string, Entry>
 
