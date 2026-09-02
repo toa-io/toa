@@ -237,7 +237,7 @@ export class Gateway extends Connector {
         // rebuilding an identical branch would only tear down its live endpoints
         case 'refresh':
           this.tree.refresh(exposed.nodes)
-          console.debug('Branch refreshed', attributes)
+          console.trace('Branch refreshed', attributes)
 
           return
 
