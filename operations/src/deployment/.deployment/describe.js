@@ -132,6 +132,10 @@ function unit (context, dependency) {
     if (service.port !== undefined)
       (mono.backends ??= []).push({ port: service.port, path: service.ingress?.path ?? '/' })
 
+    // one Service fronts every backend, so its annotations are the union
+    if (service.annotations !== undefined)
+      mono.annotations = Object.assign(mono.annotations ?? {}, service.annotations)
+
     if (service.ingress !== undefined) {
       const { path, hosts, ...ingress } = service.ingress
 

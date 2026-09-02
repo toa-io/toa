@@ -191,7 +191,9 @@ const DEFAULT_TREE = JSON.stringify({
 const DEFAULT_PROPERTIES: Partial<http.Options> = {
   authorities: {
     nex: 'nex.toa.io'
-  }
+  },
+  // `npm run features:h2c` runs the whole suite over cleartext HTTP/2
+  protocol: process.env.TOA_EXPOSITION_PROTOCOL === 'h2c' ? 'h2c' : 'h1'
 }
 
 // the identity components boot inside the gateway, and without a variable each would wait

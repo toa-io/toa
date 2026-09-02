@@ -2,36 +2,42 @@ import assert from 'node:assert'
 import fs from 'node:fs'
 import os from 'node:os'
 import * as http from 'node:http'
+import * as http2 from 'node:http2'
 import { once } from 'node:events'
 import { setTimeout } from 'node:timers/promises'
 import { console, current, decide, decode, run, type SpanContext } from 'openspan'
 import { Connector } from '@toa.io/core'
 import { type OutgoingMessage, write } from './messages'
 import { ClientError, Exception } from './exceptions'
-import { Context, type IncomingMessage } from './Context'
+import { Context } from './Context'
+import { PROBE, Probe } from './Probe'
+import type { IncomingMessage, Protocol, ServerResponse } from './types'
 
 export class Server extends Connector {
-  private readonly server: http.Server = http.createServer()
+  private readonly server: http.Server | http2.Http2Server
   private readonly properties: Properties
   private readonly authorities: Record<string, string>
+
+  /** Tracked for the drain: `Http2Server` has no `closeIdleConnections`. */
+  private readonly sessions = new Set<http2.ServerHttp2Session>()
+
+  private readonly probe: Probe
+
   private process?: Processor
-  private ready: boolean = false
-  private startedAt: number = 0
 
   private constructor (properties: Properties) {
     super()
 
     this.properties = properties
     this.authorities = Object.fromEntries(Object.entries(properties.authorities).map(([key, value]) => [value, key]))
+    this.server = instantiate(properties.protocol)
+    this.probe = new Probe(properties.probe)
 
-    this.server.on('request', (req, res) => this.listener(req, res))
+    this.server.on('request', (req, res) =>
+      this.listener(req as unknown as IncomingMessage, res as unknown as ServerResponse))
 
-    this.server.on('clientError', (error, socket) => {
-      console.warn('Client connection error', error)
-
-      if (socket.writable) socket.end('HTTP/1.1 400 Bad Request\r\n\r\n')
-      else socket.destroy()
-    })
+    if (properties.protocol === 'h1') this.h1(this.server as http.Server)
+    else this.h2(this.server as http2.Http2Server)
   }
 
   public static create (options: Options): Server {
@@ -45,24 +51,30 @@ export class Server extends Connector {
   }
 
   protected override async open (): Promise<void> {
-    this.startedAt = Date.now()
+    // answers 503 from here; the gateway's dependencies have settled by the time `open` runs
+    await this.probe.listen()
+
     this.server.listen(this.properties.port)
 
     await once(this.server, 'listening')
 
     console.info('HTTP Server is listening')
 
-    this.ready = true
+    this.probe.complete()
 
     console.info('Ready')
-    process.send?.('ready')
   }
 
   protected override async close (): Promise<void> {
-    this.ready = false
+    await this.probe.close()
 
     this.server.close()
-    this.server.closeIdleConnections()
+
+    // GOAWAY lets in-flight streams finish; `Http2Server` has no `closeIdleConnections`
+    if (this.properties.protocol === 'h1')
+      (this.server as http.Server).closeIdleConnections()
+    else
+      for (const session of this.sessions) session.close()
 
     console.info('Stopped accepting new connections')
 
@@ -72,12 +84,41 @@ export class Server extends Connector {
       setTimeout(this.properties.drain, undefined, { ref: false })
     ])
 
-    this.server.closeAllConnections()
+    if (this.properties.protocol === 'h1')
+      (this.server as http.Server).closeAllConnections()
+    else
+      for (const session of this.sessions) session.destroy()
 
     console.info('Stopped')
   }
 
-  private listener (request: http.IncomingMessage, response: http.ServerResponse): void {
+  /** A malformed HTTP/1.1 request has no framing to answer in, so the status line is written by hand. */
+  private h1 (server: http.Server): void {
+    server.on('clientError', (error, socket) => {
+      console.warn('Client connection error', error)
+
+      if (socket.writable) socket.end('HTTP/1.1 400 Bad Request\r\n\r\n')
+      else socket.destroy()
+    })
+  }
+
+  /** HTTP/2 has no `clientError`: failures surface per session, per stream, or per frame. */
+  private h2 (server: http2.Http2Server): void {
+    server.on('session', (session) => {
+      this.sessions.add(session)
+      session.on('close', () => this.sessions.delete(session))
+    })
+
+    server.on('sessionError', (error) => console.warn('Session error', error))
+    server.on('streamError', (error) => console.warn('Stream error', error))
+
+    server.on('unknownProtocol', (socket) => {
+      console.warn('Unknown protocol')
+      socket.destroy()
+    })
+  }
+
+  private listener (request: IncomingMessage, response: ServerResponse): void {
     request.once('error', (error) => {
       console.warn('Request error', errorAttributes(request, error))
 
@@ -85,14 +126,20 @@ export class Server extends Connector {
         response.destroy()
     })
 
-    request.socket.once('error', (error) => {
-      console.warn('Socket error', errorAttributes(request, error))
+    // no listener on `request.socket`: under HTTP/2 it is the session's socket, shared by
+    // every concurrent stream, and removing listeners on it would strip the siblings'
 
-      if (!response.writableEnded)
-        response.destroy()
-    })
+    const host = authorityOf(request)
 
-    const url = parse(request)
+    if (host === undefined) {
+      console.warn('Request without an authority', errorAttributes(request, new Error('No authority')))
+
+      response.writeHead(400).end()
+
+      return
+    }
+
+    const url = parse(request, host)
 
     if (url instanceof Error) {
       console.warn('Invalid request', errorAttributes(request, url))
@@ -108,21 +155,8 @@ export class Server extends Connector {
       return
     }
 
-    if (request.url === '/.ready') {
-      if (this.ready)
-        response.writeHead(200, { 'cache-control': 'no-store' }).end()
-      else {
-        const remaining = (Math.ceil((Date.now() - this.startedAt) / 1000)).toString()
-
-        response.writeHead(503, { 'retry-after': remaining }).end()
-      }
-
-      return
-    }
-
     assert(this.process !== undefined, 'Request processor is not attached')
 
-    const host = request.headers.host!
     const authority = this.authorities[host] ?? host
 
     // if the request carries no trace context, the trace starts here
@@ -141,8 +175,8 @@ export class Server extends Connector {
   }
 
   // eslint-disable-next-line max-params
-  private async serve (request: http.IncomingMessage,
-    response: http.ServerResponse,
+  private async serve (request: IncomingMessage,
+    response: ServerResponse,
     authority: string,
     url: URL): Promise<void> {
     await console.span({
@@ -153,19 +187,16 @@ export class Server extends Connector {
     }, async () => {
       response.setHeader('ray', current()!.traceId)
 
-      const context = new Context(authority, request as IncomingMessage, this.properties, url)
+      const context = new Context(authority, request, this.properties, url)
 
       await this.process!(context)
         .then(this.success(context, response))
         .catch(this.fail(context, response))
-        .finally(() => {
-          request.removeAllListeners('error')
-          request.socket.removeAllListeners('error')
-        })
+        .finally(() => request.removeAllListeners('error'))
     })
   }
 
-  private success (context: Context, response: http.ServerResponse) {
+  private success (context: Context, response: ServerResponse) {
     return async (message: OutgoingMessage) => {
       let status = message.status
 
@@ -185,10 +216,12 @@ export class Server extends Connector {
     }
   }
 
-  private fail (context: Context, response: http.ServerResponse) {
+  private fail (context: Context, response: ServerResponse) {
     return async (exception: Error) => {
       try {
-        if (!context.request.complete)
+        // Over HTTP/2 the reply is followed by RST_STREAM(NO_ERROR), which tells the client
+        // to stop sending without discarding the response — so the body is never read.
+        if (!context.request.complete && this.properties.protocol === 'h1')
           await adam(context.request)
 
         const status = exception instanceof Exception ? exception.status : 500
@@ -232,17 +265,36 @@ export class Server extends Connector {
   }
 }
 
+function instantiate (protocol: Protocol): http.Server | http2.Http2Server {
+  if (protocol === 'h1')
+    return http.createServer()
+
+  return http2.createServer({
+    // realtime pins one stream per subscription, and they all share a session
+    maxSessionMemory: SESSION_MEMORY,
+    settings: { initialWindowSize: WINDOW }
+  })
+}
+
+/**
+ * The authority the request is addressed to. HTTP/2 carries it in `:authority` and omits
+ * `host` entirely, so reading `host` alone would leave every HTTP/2 request unattributed.
+ */
+function authorityOf (request: IncomingMessage): string | undefined {
+  return request.headers[':authority'] ?? request.headers.host
+}
+
 /** Parsing the URL is how a request is validated, so the `Context` is handed the result. */
-function parse (request: http.IncomingMessage): URL | Error {
+function parse (request: IncomingMessage, authority: string): URL | Error {
   try {
-    return new URL(request.url!, `https://${request.headers.host}`)
+    return new URL(request.url, `https://${authority}`)
   } catch (error) {
     return error as Error
   }
 }
 
 // https://github.com/whatwg/fetch/issues/1254
-async function adam (request: http.IncomingMessage): Promise<void> {
+async function adam (request: IncomingMessage): Promise<void> {
   const devnull = fs.createWriteStream(os.devNull)
 
   devnull.on('error', () => undefined)
@@ -251,10 +303,10 @@ async function adam (request: http.IncomingMessage): Promise<void> {
   await once(request, 'end')
 }
 
-function errorAttributes (request: http.IncomingMessage, error: Error & any): RequestErrorAttributes {
+function errorAttributes (request: IncomingMessage, error: Error & any): RequestErrorAttributes {
   const attributes: RequestErrorAttributes = {
-    path: request.url!,
-    method: request.method!,
+    path: request.url,
+    method: request.method,
     name: error.name
   }
 
@@ -269,12 +321,13 @@ function errorAttributes (request: http.IncomingMessage, error: Error & any): Re
 
 export const PORT = 8000
 
-/**
- * The initial delay of the readiness probe. The server does not sleep for it: whoever
- * probes is the one that waits, and doing it here as well only delayed the process twice.
- */
-export const DELAY = 3 // seconds
 export const DRAIN = 10 // seconds
+
+/** Megabytes a single HTTP/2 session may hold, over Node's default of 10. */
+const SESSION_MEMORY = 128
+
+/** Per-stream flow control window. The default 64 KiB throttles in proportion to RTT. */
+const WINDOW = 1024 * 1024
 
 /**
  * Extracts the remote trace context from the request headers.
@@ -282,7 +335,7 @@ export const DRAIN = 10 // seconds
  * The `ray` header adopts the trace by ID only and does not bypass sampling:
  * the sampling decision is made by the server.
  */
-function trace (headers: http.IncomingHttpHeaders): SpanContext | null {
+function trace (headers: IncomingMessage['headers']): SpanContext | null {
   if (typeof headers.traceparent === 'string')
     return decode(headers.traceparent)
 
@@ -300,7 +353,9 @@ const DEFAULTS: Omit<Properties, 'authorities'> = {
   methods: new Set<string>(['OPTIONS', 'GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'DELETE', 'LOCK', 'UNLOCK']),
   debug: false,
   port: PORT,
-  drain: DRAIN * 1000
+  drain: DRAIN * 1000,
+  protocol: 'h1',
+  probe: PROBE
 }
 
 interface Properties {
@@ -309,6 +364,10 @@ interface Properties {
   debug: boolean
   port: number
   drain: number
+  protocol: Protocol
+
+  /** Port of the readiness probe, which is HTTP/1.1 whatever the gateway serves. */
+  probe: number
 }
 
 export type Options = { authorities: Properties['authorities'] } & {

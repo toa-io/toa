@@ -188,19 +188,12 @@ exposition:
 
 ## Ready probe
 
-The gateway serves `GET /.ready` on port `8000` for Kubernetes startup/readiness probes.
+The gateway serves `GET /.ready` on port `8001`, not on the port it serves traffic on, and
+telemetry's probe is disabled in its process.
 
-It returns `200` only after:
-
-1. The in-process identity composition has connected
-2. Initial route discovery has settled
-3. The HTTP server is listening
-
-Before listen, probes get connection refused; after listen but before ready, `503`.
-When ready, the process also sends `process.send('ready')` (for PM2 `wait_ready`).
-
-The nested identity composition shares this process. Deployment disables telemetry's port-`8001`
-probe (`TOA_TELEMETRY_READY=false`) so only the gateway `/.ready` is used.
+It answers `200` only after the in-process identity composition has connected, initial route
+discovery has settled, and the HTTP server is listening. Before that it answers `503` with a
+`retry-after`. When ready, the process also sends `process.send('ready')` for PM2 `wait_ready`.
 
 See also [telemetry ready probe](../telemetry/readme.md#ready-probe).
 

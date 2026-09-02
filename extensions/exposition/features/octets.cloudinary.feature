@@ -144,7 +144,10 @@ Feature: Octets with Cloudinary storage
       """
       200 OK
       content-type: video/mp4
-      transfer-encoding: chunked
+      """
+    And the reply does not contain:
+      """
+      content-length
       """
 
     # after a while, Cloudinary returns a content-length response
@@ -169,7 +172,10 @@ Feature: Octets with Cloudinary storage
       """
       200 OK
       content-type: video/mp4
-      transfer-encoding: chunked
+      """
+    And the reply does not contain:
+      """
+      content-length
       """
 
     When the following request is received:

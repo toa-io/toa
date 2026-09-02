@@ -5,7 +5,7 @@ import { console } from 'openspan'
 import { formats } from './formats'
 import { BadRequest, NotAcceptable, UnsupportedMediaType } from './exceptions'
 import type { Context } from './Context'
-import type * as http from 'node:http'
+import type { ServerResponse } from './types'
 
 const server = `Exposition/${require('../../package.json').version}` +
   ((process.env.TOA_CONTEXT === undefined ? '' : ` ${process.env.TOA_CONTEXT}`) +
@@ -13,7 +13,7 @@ const server = `Exposition/${require('../../package.json').version}` +
 
 const pending = new Map<string, PendingStream>()
 
-export async function write (context: Context, response: http.ServerResponse, message: OutgoingMessage): Promise<void> {
+export async function write (context: Context, response: ServerResponse, message: OutgoingMessage): Promise<void> {
   for (const transform of context.pipelines.response)
     await transform(message)
 
@@ -65,7 +65,7 @@ export async function read (context: Context): Promise<any> {
   }
 }
 
-function send (message: OutgoingMessage, context: Context, response: http.ServerResponse): void {
+function send (message: OutgoingMessage, context: Context, response: ServerResponse): void {
   if (message.body === undefined || message.body === null) {
     // a HEAD reply carries no body but must still report the length a GET would
     // have returned, so a length already set by a directive is left alone
@@ -85,11 +85,10 @@ function send (message: OutgoingMessage, context: Context, response: http.Server
   if (message.etag === true && conditional(context, response, buf))
     return
 
-  response
-    .setHeader('content-type', context.encoder.type)
-    .setHeader('content-length', buf.length.toString())
-    .appendHeader('vary', 'accept')
-    .end(buf)
+  response.setHeader('content-type', context.encoder.type)
+  response.setHeader('content-length', buf.length.toString())
+  response.appendHeader('vary', 'accept')
+  response.end(buf)
 }
 
 /**
@@ -98,7 +97,7 @@ function send (message: OutgoingMessage, context: Context, response: http.Server
  * than from a serialization of its own, so it identifies the representation — which is
  * what `vary` says.
  */
-function conditional (context: Context, response: http.ServerResponse, buf: Buffer): boolean {
+function conditional (context: Context, response: ServerResponse, buf: Buffer): boolean {
   const etag = `"${createHash('sha256').update(buf).digest('hex')}"`
 
   response.setHeader('etag', etag)
@@ -106,9 +105,8 @@ function conditional (context: Context, response: http.ServerResponse, buf: Buff
   if (context.request.headers['if-none-match'] !== etag)
     return false
 
-  response
-    .setHeader('content-length', '0')
-    .appendHeader('vary', 'accept')
+  response.setHeader('content-length', '0')
+  response.appendHeader('vary', 'accept')
 
   response.statusCode = 304
   response.end()
@@ -116,7 +114,7 @@ function conditional (context: Context, response: http.ServerResponse, buf: Buff
   return true
 }
 
-function stream (message: OutgoingMessage, context: Context, response: http.ServerResponse): void {
+function stream (message: OutgoingMessage, context: Context, response: ServerResponse): void {
   const encoded = message.headers !== undefined && message.headers.has('content-type')
 
   if (encoded)
@@ -133,7 +131,7 @@ function stream (message: OutgoingMessage, context: Context, response: http.Serv
     debugStream(context, response)
 }
 
-export function multipart (message: OutgoingMessage, context: Context, response: http.ServerResponse): void {
+export function multipart (message: OutgoingMessage, context: Context, response: ServerResponse): void {
   if (context.encoder === null)
     throw new NotAcceptable()
 
@@ -173,7 +171,7 @@ const PENDING_DEBUG_INTERVAL = 30000
 
 let pendingInterval: NodeJS.Timeout | null = null
 
-function debugStream (context: Context, response: http.ServerResponse): void {
+function debugStream (context: Context, response: ServerResponse): void {
   const ctx = { method: context.request.method, path: context.url.pathname }
 
   console.debug('Stream opened', ctx)
