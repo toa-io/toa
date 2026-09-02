@@ -4,6 +4,7 @@ import { timeout } from '@toa.io/generic'
 import { Effect as Encrypt } from './encrypt'
 import { Computation as Decrypt } from './decrypt'
 import { type Context, type Identity } from './lib'
+import type { Secret } from '@toa.io/types'
 
 let encrypt: Encrypt
 let decrypt: Decrypt
@@ -18,8 +19,8 @@ const authority = generate()
 beforeEach(() => {
   context.configuration = {
     keys: [
-      { id: 'key0', key: 'sTxL6qVOadKkUJwh3FveU53XgTEo3Sdfg7k2FfiIKfs' },
-      { id: 'legacy0', key: 'k3.local.m28p8SrbS467t-2IUjQuSOqmjvi24TbXhyjAW_dOrog', format: 'paseto' }
+      { id: 'key0', key: secret('sTxL6qVOadKkUJwh3FveU53XgTEo3Sdfg7k2FfiIKfs') },
+      { id: 'legacy0', key: secret('k3.local.m28p8SrbS467t-2IUjQuSOqmjvi24TbXhyjAW_dOrog'), format: 'paseto' }
     ],
     lifetime: 1,
     refresh: 2,
@@ -39,12 +40,12 @@ beforeEach(() => {
 it('should use the first encryption key as active and expose its id as kid', async () => {
   context.configuration.keys.unshift({
     id: 'legacy-first',
-    key: 'k3.local.m28p8SrbS467t-2IUjQuSOqmjvi24TbXhyjAW_dOrog',
+    key: secret('k3.local.m28p8SrbS467t-2IUjQuSOqmjvi24TbXhyjAW_dOrog'),
     format: 'paseto'
   })
   context.configuration.keys.push({
     id: 'key1',
-    key: '5I0iSKw3yfBkQ4AXfA8eR-tWR0Q1dpn4x3bPrPzHkP0'
+    key: secret('5I0iSKw3yfBkQ4AXfA8eR-tWR0Q1dpn4x3bPrPzHkP0')
   })
 
   encrypt.mount(context)
@@ -119,3 +120,7 @@ it('should encrypt without lifetime INSECURE', async () => {
 
   expect(decrypted.identity).toMatchObject(identity)
 })
+
+function secret (value: string): Secret {
+  return { unwrap: () => value }
+}

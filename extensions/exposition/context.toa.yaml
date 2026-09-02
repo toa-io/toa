@@ -10,9 +10,9 @@ configuration:
   identity.tokens:
     keys:
       - id: key0
-        key: sTxL6qVOadKkUJwh3FveU53XgTEo3Sdfg7k2FfiIKfs
+        key: $IDENTITY_TOKENS_ENCRYPTION_KEY0
       - id: legacy0
-        key: k3.local.pIZT8-9Fa6U_QtfQHOSStfGtmyzPINyKQq2Xk-hd7vA
+        key: $IDENTITY_TOKENS_KEY0
         format: paseto
 
   identity.federation:

@@ -57,3 +57,11 @@ Profiles set `failFast`, so a run stops at the first failed scenario.
 ## Tests
 
 `integration/` is obsolete. Do not add or change tests there. New coverage belongs in Cucumber features.
+
+## Userspace
+
+Component code depends on no Toa package: nothing under `@toa.io/*` is required or imported
+by an operation, an event, a receiver or a guard. Everything a component needs is on `context`;
+a configuration secret, for one, is read as `context.configuration.apiKey.unwrap()`.
+
+The components an extension ships are Toa's own, and may use its packages.

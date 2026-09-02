@@ -32,7 +32,7 @@ export interface Configuration {
 }
 
 export interface ConfiguredKey extends Pick<Key, 'id'> {
-  key: string | Secret
+  key: Secret
   format?: 'jwe' | 'paseto'
 }
 

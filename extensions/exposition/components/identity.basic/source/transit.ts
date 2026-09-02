@@ -1,4 +1,3 @@
-import { unwrap } from '@toa.io/generic'
 import { genSalt, hash } from 'bcryptjs'
 import type { Maybe, Operation } from '@toa.io/types'
 import type { Context, Entity, TransitInput, IdOutput } from './types'
@@ -13,7 +12,7 @@ export class Transition implements Operation {
 
   public mount (context: Context): void {
     this.rounds = context.configuration.rounds
-    this.pepper = unwrap(context.configuration.pepper)
+    this.pepper = context.configuration.pepper?.unwrap() ?? ''
     this.principal = context.configuration.principal
     this.tokens = context.remote.identity.tokens
 

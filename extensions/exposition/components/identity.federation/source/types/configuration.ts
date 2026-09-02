@@ -9,11 +9,11 @@ export interface Configuration {
 export interface Trust {
   iss: string
   aud?: string | [string, ...string[]]
-  secret?: string | Secret
+  secret?: Secret
   signature?: {
     iss: string
     kid: string
-    key: string | Secret
+    key: Secret
   }
 }
 

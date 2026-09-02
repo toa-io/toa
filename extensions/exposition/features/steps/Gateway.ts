@@ -14,6 +14,7 @@ let instance: Connector | null = null
 @binding()
 export class Gateway {
   private default: boolean = true
+  private written: string[] = []
 
   @given('the annotation:')
   public async annotate (yaml: string): Promise<void> {
@@ -89,6 +90,21 @@ export class Gateway {
     this.default = false
   }
 
+  /** The secrets a scenario's configuration refers to. */
+  @given('the configuration secrets:')
+  public async secrets (yaml: string): Promise<void> {
+    const secrets = parse(yaml) as Record<string, string>
+
+    for (const [name, value] of Object.entries(secrets)) {
+      this.written.push(SECRET + name)
+      process.env[SECRET + name] = value
+    }
+
+    await Gateway.stop()
+
+    this.default = false
+  }
+
   @given('the branch TTL is {float} second(s)')
   public async setBranchTTL (seconds: number): Promise<void> {
     process.env.__TESTING_EXPOSITION_BRANCH_TTL = String(seconds * 1000)
@@ -124,6 +140,11 @@ export class Gateway {
   public async cleanup (): Promise<void> {
     delete process.env.__TESTING_EXPOSITION_BRANCH_TTL
 
+    for (const key of this.written)
+      delete process.env[key]
+
+    this.written = []
+
     if (this.default)
       return
 
@@ -146,10 +167,14 @@ export class Gateway {
 
       process.env[key] ??= JSON.stringify(configuration)
     }
+
+    for (const [name, value] of Object.entries(DEFAULT_SECRETS))
+      process.env[SECRET + name] ??= value
   }
 }
 
 const EXPOSITION = '@toa.io/extensions.exposition'
+const SECRET = 'TOA_CONFIGURATION__'
 
 const DEFAULT_TREE = JSON.stringify({
   routes: [],
@@ -178,15 +203,14 @@ const DEFAULT_CONFIGURATION: Record<string, object> = {
   'identity.passkeys': {},
   'identity.tokens': {
     keys: [
-      {
-        id: 'key0',
-        key: 'sTxL6qVOadKkUJwh3FveU53XgTEo3Sdfg7k2FfiIKfs'
-      },
-      {
-        id: 'legacy0',
-        key: 'k3.local.pIZT8-9Fa6U_QtfQHOSStfGtmyzPINyKQq2Xk-hd7vA',
-        format: 'paseto'
-      }
+      { id: 'key0', key: '$IDENTITY_TOKENS_KEY0' },
+      { id: 'legacy0', key: '$IDENTITY_TOKENS_LEGACY0', format: 'paseto' }
     ]
   }
+}
+
+// a secret is given as a reference, and comes to the component as an object
+const DEFAULT_SECRETS: Record<string, string> = {
+  IDENTITY_TOKENS_KEY0: 'sTxL6qVOadKkUJwh3FveU53XgTEo3Sdfg7k2FfiIKfs',
+  IDENTITY_TOKENS_LEGACY0: 'k3.local.pIZT8-9Fa6U_QtfQHOSStfGtmyzPINyKQq2Xk-hd7vA'
 }

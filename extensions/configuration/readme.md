@@ -159,18 +159,18 @@ A secret is substituted in the component's process, from the variable
 reference.
 
 In the component, a secret is a `Secret` object: `unwrap()` returns the string, while
-`toString()`, JSON and `util.inspect` give `<REDACTED>`. `unwrap` from `@toa.io/generic`
-returns a plain string as it is and unwraps a secret, for a value that may be either.
+`toString()`, JSON and `util.inspect` give `<REDACTED>`.
 
 ```javascript
-const { unwrap } = require('@toa.io/generic')
-
 function transition (input, entity, context) {
-  const key = unwrap(context.configuration.apiKey)
+  const key = context.configuration.apiKey.unwrap()
 
   // ...
 }
 ```
+
+A value a component reads as a secret is given as a reference: a plain string in its place
+has no `unwrap`.
 
 ## Values
 
@@ -205,6 +205,8 @@ The configuration of a component for an epoch is:
   is the deployed one when omitted.
 - `fetch([{ component, epoch }])`: the same for several pairs at once, as
   `[{ component, epoch, configuration }]`.
+- `list()`: every component's configuration for its deployed epoch, by component name, as
+  `[{ component, epoch, configuration }]`.
 - `create({ component, configuration, originator })`: a new object for the component's
   deployed epoch. The configuration must satisfy the schema. Errors: `UNKNOWN_COMPONENT`,
   `INVALID_CONFIGURATION`.
@@ -216,10 +218,15 @@ object as stored.
 
 | Method | Path                                  | Role                          |
 |--------|---------------------------------------|-------------------------------|
+| `GET`  | `/configuration/values/`              | `system:configuration:get`    |
 | `GET`  | `/configuration/values/:component/`   | `system:configuration:get`    |
 | `POST` | `/configuration/values/:component/`   | `system:configuration:create` |
 
-`GET` returns the configuration for the deployed epoch, `404` when there is none.
+`GET /configuration/values/` lists every component's configuration for its deployed epoch, by
+component name, as `[{ component, epoch, configuration }]`.
+
+`GET /configuration/values/:component/` returns the configuration for the deployed epoch,
+`404` when there is none.
 
 `POST` takes `{ configuration }`, records the Identity as the `originator`, and returns
 `{ id, epoch }`. A configuration not satisfying the schema, or an unknown component, is

@@ -1,4 +1,3 @@
-import { unwrap } from '@toa.io/generic'
 import { compare } from 'bcryptjs'
 import { type Query, type Maybe } from '@toa.io/types'
 import { type Context } from './types'
@@ -18,7 +17,7 @@ export async function computation (input: Input, context: Context): Promise<Mayb
   if (credentials === null)
     return ERR_NOT_FOUND
 
-  const spicy = password + unwrap(context.configuration.pepper)
+  const spicy = password + (context.configuration.pepper?.unwrap() ?? '')
   const match = await compare(spicy, credentials.password)
 
   if (match)

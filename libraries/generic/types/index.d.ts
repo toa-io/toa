@@ -28,8 +28,6 @@ export function memo<T> (fn: T): T
 
 export function newid (): string
 
-export function unwrap<T> (value: T | { unwrap: () => T }): T
-
 export function find (reference: string, base: string, indicator?: string): string
 
 export function match (candidate: any, reference: any): boolean

@@ -1,4 +1,3 @@
-import { unwrap } from '@toa.io/generic'
 import { load } from './jose'
 import { createRemoteJWKSet, discover } from './discovery'
 import * as errors from './errors'
@@ -30,7 +29,7 @@ export async function exchange (credentials: string, ctx: Ctx): Promise<Payload 
 
   // array actually is not expected here, but it is a valid format
   const aud = Array.isArray(trusted.aud) ? trusted.aud[0] : trusted.aud
-  const secret = trusted.secret === undefined ? await sign(trusted) : unwrap(trusted.secret)
+  const secret = trusted.secret === undefined ? await sign(trusted) : trusted.secret.unwrap()
   const params = new URLSearchParams()
 
   params.append('grant_type', 'authorization_code')
@@ -96,7 +95,7 @@ async function sign (trust: Trust): Promise<string> {
   const signature = trust.signature!
   const aud = Array.isArray(trust.aud) ? trust.aud[0] : trust.aud!
   const now = Math.floor(Date.now() / 1000)
-  const key = await jose.importPKCS8(unwrap(signature.key), 'ES256')
+  const key = await jose.importPKCS8(signature.key.unwrap(), 'ES256')
 
   return await new jose.SignJWT({})
     .setProtectedHeader({ alg: 'ES256', kid: signature.kid })

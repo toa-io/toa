@@ -1,4 +1,3 @@
-import { unwrap } from '@toa.io/generic'
 import { jweKey } from './lib'
 import { load } from './lib/jose'
 import type { Operation, Maybe } from '@toa.io/types'
@@ -14,7 +13,7 @@ export class Effect implements Operation {
     if (key === undefined)
       throw new TypeError('At least one JWE key must be configured')
 
-    this.key = { id: key.id, key: unwrap(key.key) }
+    this.key = { id: key.id, key: key.key.unwrap() }
     this.lifetime = context.configuration.lifetime * 1000
   }
 
