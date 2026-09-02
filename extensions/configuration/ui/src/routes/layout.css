@@ -160,6 +160,10 @@
   body {
     touch-action: pan-y;
     user-select: none;
+
+    /* the map takes the wheel to pan itself, and a page that cannot scroll sideways
+       hands a horizontal one to the browser, which reads it as a swipe back */
+    overscroll-behavior: none;
   }
 }
 
