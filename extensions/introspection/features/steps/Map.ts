@@ -7,6 +7,7 @@ import { after, before, binding, then, when } from 'cucumber-tsflow'
 import { load as parse } from 'js-yaml'
 import { match } from '@toa.io/generic'
 import * as boot from '@toa.io/boot'
+import { Locator } from '@toa.io/core'
 import * as stage from '@toa.io/userland/stage'
 import { Factory } from '../../source'
 import type { Component, Connector, Request } from '@toa.io/core'
@@ -16,6 +17,7 @@ export class Map {
   private service: Connector | null = null
   private composition: Connector | null = null
   private remotes: Record<string, Component> = {}
+  private unidentified: Component | null = null
 
   @when('the `{word}` is called with:')
   public async call (endpoint: string, yaml: string): Promise<void> {
@@ -24,6 +26,21 @@ export class Map {
 
     // an operation may throw, and that is exactly what one of the scenarios is about
     await this.invoke(`${namespace}.${component}`, operation, request).catch(() => undefined)
+  }
+
+  /**
+   * The stage names itself as the caller, as every entry point does; a call that names
+   * nobody is made past it, straight through a remote of its own.
+   */
+  @when('the `{word}` is called by an unidentified caller with:')
+  public async callUnidentified (endpoint: string, yaml: string): Promise<void> {
+    const request = parse(yaml) as Request
+    const [operation, component, namespace = 'default'] = endpoint.split('.').reverse()
+
+    this.unidentified ??= await boot.remote(new Locator(component, namespace))
+
+    await this.unidentified.connect()
+    await this.unidentified.invoke(operation, request).catch(() => undefined)
   }
 
   @then('the map contains a node:')
@@ -71,12 +88,14 @@ export class Map {
   public async shutdown (): Promise<void> {
     this.remotes = {}
 
+    await this.unidentified?.disconnect()
     await this.composition?.disconnect()
     await stage.shutdown()
     await this.service?.disconnect()
 
     this.composition = null
     this.service = null
+    this.unidentified = null
   }
 
   private async invoke (id: string, operation: string, request: Request): Promise<unknown> {

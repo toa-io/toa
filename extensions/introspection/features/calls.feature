@@ -67,7 +67,7 @@ Feature: Call edges
       """
 
   Scenario: A call from an unidentified caller
-    When the `probe.target.compute` is called with:
+    When the `probe.target.compute` is called by an unidentified caller with:
       """yaml
       input:
         a: 1
