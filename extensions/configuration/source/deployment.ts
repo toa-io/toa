@@ -1,11 +1,16 @@
 import assert from 'node:assert'
-import { type Dependency, type Variable, type Variables } from '@toa.io/operations'
-import { type Manifest } from './manifest'
+import { type Dependency, type Resources, type Service, type Variable, type Variables } from '@toa.io/operations'
+import { components } from './Composition'
+import { EVENT, PREFIX, SECRET_RX, UI_PATH, UI_PORT, VALUES } from './const'
+import { epoch } from './epoch'
 import * as validators from './schemas'
+import type { Manifest } from './manifest'
 import type { context } from '@toa.io/norm'
 
 export function deployment (instances: Instance[], annotation: Annotation = {}): Dependency {
-  validate(annotation, instances)
+  const { resources, values } = split(annotation)
+
+  annotation = prepare(values, instances)
 
   const variables: Variables = {}
 
@@ -15,17 +20,44 @@ export function deployment (instances: Instance[], annotation: Annotation = {}):
     if (values === undefined)
       continue
 
-    variables[instance.locator.label] = [{
-      name: PREFIX + instance.locator.uppercase,
-      value: JSON.stringify(values)
-    }]
-
     const secrets = createSecrets(values)
 
-    variables[instance.locator.label].push(...secrets)
+    if (secrets.length > 0)
+      variables[instance.locator.label] = secrets
   }
 
-  return { variables }
+  const service: Service = {
+    group: 'configuration',
+    name: 'values',
+    version: require('../package.json').version,
+    components: components().labels,
+    resources,
+    // the service that holds the values also serves the page that reads them
+    port: UI_PORT,
+    ingress: { path: UI_PATH },
+    variables: [{
+      name: VALUES,
+      value: JSON.stringify(describe(instances, annotation))
+    }]
+  }
+
+  return { services: [service], variables, events: [EVENT] }
+}
+
+/** What the values service is given: the epoch, the schema and the defaults of every component. */
+export function describe (instances: Instance[], annotation: Annotation = {}): Values {
+  annotation = prepare(split(annotation).values, instances)
+
+  const values: Values = {}
+
+  for (const { locator, manifest } of instances)
+    values[locator.id] = {
+      epoch: epoch(manifest.schema),
+      schema: manifest.schema,
+      defaults: annotation[locator.id] ?? manifest.defaults
+    }
+
+  return values
 }
 
 function createSecrets (values: object): Variable[] {
@@ -57,27 +89,45 @@ function createSecrets (values: object): Variable[] {
   return secrets
 }
 
-function validate (annotation: Annotation, instances: Instance[]): void {
+/**
+ * The service's own resources, and the component values that are the rest of the annotation.
+ *
+ * Every key here names a component, so the one option the service has of its own needs a
+ * name that cannot be mistaken for one. `resources` is reserved: a component actually
+ * called that is written with its namespace, `default.resources`, which is what an id is
+ * anyway — the bare form is the shorthand.
+ */
+function split (annotation: Annotation): { resources?: Resources, values: Annotation } {
   validators.annotation.validate(annotation)
 
+  const { resources, ...values } = annotation as Annotation & { resources?: Resources }
+
+  return { resources, values }
+}
+
+/** Validated, keyed by full component ids, and checked against the components that ask. */
+function prepare (annotation: Annotation, instances: Instance[]): Annotation {
+  const normalized: Annotation = {}
   const requested = instances.map((instance) => instance.locator.id)
 
-  for (let id of Object.keys(annotation)) {
-    if (!id.includes('.')) {
-      const newid = 'default.' + id
-
-      annotation[newid] = annotation[id]
-      delete annotation[id]
-      id = newid
-    }
+  for (const [key, values] of Object.entries(annotation)) {
+    const id = key.includes('.') ? key : 'default.' + key
 
     assert.ok(requested.includes(id),
       `Component '${id}' does not request configuration or does not exist.`)
+
+    normalized[id] = values
   }
+
+  return normalized
 }
 
-export const SECRET_RX = /^\$(?<variable>[A-Z0-9_]{1,32})$/
-export const PREFIX = 'TOA_CONFIGURATION_'
-
-export type Annotation = Record<string, object>
+export type Annotation = Record<string, any>
 export type Instance = context.Dependency<Manifest>
+export type Values = Record<string, Entry>
+
+export interface Entry {
+  epoch: string
+  schema: object
+  defaults?: object
+}

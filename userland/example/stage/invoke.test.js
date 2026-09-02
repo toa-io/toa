@@ -10,6 +10,8 @@ let component
 
 beforeAll(async () => {
   process.env.TOA_DEV = '1'
+  process.env.TOA_CONFIGURATION_DEFAULT_ECHO = '{}'
+  process.env.TOA_CONFIGURATION_TEA_POTS = '{}'
 
   const path = resolve(root, 'math.calculations')
 

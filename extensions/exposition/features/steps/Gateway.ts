@@ -14,6 +14,7 @@ let instance: Connector | null = null
 @binding()
 export class Gateway {
   private default: boolean = true
+  private written: string[] = []
 
   @given('the annotation:')
   public async annotate (yaml: string): Promise<void> {
@@ -47,7 +48,15 @@ export class Gateway {
    */
   @given('the annotation of the introspection map')
   public async annotateMap (): Promise<void> {
-    const tree: syntax.Node = { routes: [], methods: [], directives: [] }
+    await this.annotateMapUnder()
+  }
+
+  /** The same routes under a root of the scenario's own: what an application declares around the map. */
+  @given('the annotation of the introspection map under:')
+  public async annotateMapUnder (yaml?: string): Promise<void> {
+    const tree: syntax.Node = yaml === undefined
+      ? { routes: [], methods: [], directives: [] }
+      : syntax.parse((parse(yaml) as { '/': object })['/'], shortcuts)
 
     for (const manifest of await manifests()) {
       const node = manifest.extensions?.[EXPOSITION] as syntax.Node | undefined
@@ -75,6 +84,21 @@ export class Gateway {
     const configuration = Object.assign({}, def, patch)
 
     process.env[key] = JSON.stringify(configuration)
+
+    await Gateway.stop()
+
+    this.default = false
+  }
+
+  /** The secrets a scenario's configuration refers to. */
+  @given('the configuration secrets:')
+  public async secrets (yaml: string): Promise<void> {
+    const secrets = parse(yaml) as Record<string, string>
+
+    for (const [name, value] of Object.entries(secrets)) {
+      this.written.push(SECRET + name)
+      process.env[SECRET + name] = value
+    }
 
     await Gateway.stop()
 
@@ -116,6 +140,11 @@ export class Gateway {
   public async cleanup (): Promise<void> {
     delete process.env.__TESTING_EXPOSITION_BRANCH_TTL
 
+    for (const key of this.written)
+      delete process.env[key]
+
+    this.written = []
+
     if (this.default)
       return
 
@@ -138,10 +167,14 @@ export class Gateway {
 
       process.env[key] ??= JSON.stringify(configuration)
     }
+
+    for (const [name, value] of Object.entries(DEFAULT_SECRETS))
+      process.env[SECRET + name] ??= value
   }
 }
 
 const EXPOSITION = '@toa.io/extensions.exposition'
+const SECRET = 'TOA_CONFIGURATION__'
 
 const DEFAULT_TREE = JSON.stringify({
   routes: [],
@@ -161,18 +194,23 @@ const DEFAULT_PROPERTIES: Partial<http.Options> = {
   }
 }
 
+// the identity components boot inside the gateway, and without a variable each would wait
+// for the values service, which these features do not run
 const DEFAULT_CONFIGURATION: Record<string, object> = {
+  'identity.basic': {},
+  'identity.federation': {},
+  'identity.otp': {},
+  'identity.passkeys': {},
   'identity.tokens': {
     keys: [
-      {
-        id: 'key0',
-        key: 'sTxL6qVOadKkUJwh3FveU53XgTEo3Sdfg7k2FfiIKfs'
-      },
-      {
-        id: 'legacy0',
-        key: 'k3.local.pIZT8-9Fa6U_QtfQHOSStfGtmyzPINyKQq2Xk-hd7vA',
-        format: 'paseto'
-      }
+      { id: 'key0', key: '$IDENTITY_TOKENS_KEY0' },
+      { id: 'legacy0', key: '$IDENTITY_TOKENS_LEGACY0', format: 'paseto' }
     ]
   }
+}
+
+// a secret is given as a reference, and comes to the component as an object
+const DEFAULT_SECRETS: Record<string, string> = {
+  IDENTITY_TOKENS_KEY0: 'sTxL6qVOadKkUJwh3FveU53XgTEo3Sdfg7k2FfiIKfs',
+  IDENTITY_TOKENS_LEGACY0: 'k3.local.pIZT8-9Fa6U_QtfQHOSStfGtmyzPINyKQq2Xk-hd7vA'
 }

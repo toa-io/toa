@@ -1,0 +1,21 @@
+values:
+  empty: No component declares configuration.
+  nomatch: No results match the filter.
+value:
+  none: This component has no configuration.
+  secret: Secret
+  count:
+    - one: "{n} value"
+      other: "{n} values"
+  title: Configuration
+create:
+  action: Edit
+  title: Edit configuration
+  editor: Configuration
+  submit: Update
+  cancel: Cancel
+  malformed: This is not valid YAML.
+  failed: The configuration could not be created.
+space:
+  user: Userspace
+  system: System

@@ -1,6 +1,7 @@
 import { generate } from 'randomstring'
 import { Computation as Authenticate } from './authenticate'
 import type { Configuration, Context, DecryptOutput, Identity } from './lib'
+import type { Secret } from '@toa.io/types'
 
 let configuration: Configuration
 let context: Context
@@ -13,8 +14,8 @@ const authority = generate()
 beforeEach(() => {
   configuration = {
     keys: [
-      { id: 'key0', key: 'sTxL6qVOadKkUJwh3FveU53XgTEo3Sdfg7k2FfiIKfs' },
-      { id: 'legacy0', key: 'k3.local.m28p8SrbS467t-2IUjQuSOqmjvi24TbXhyjAW_dOrog', format: 'paseto' }
+      { id: 'key0', key: secret('sTxL6qVOadKkUJwh3FveU53XgTEo3Sdfg7k2FfiIKfs') },
+      { id: 'legacy0', key: secret('k3.local.m28p8SrbS467t-2IUjQuSOqmjvi24TbXhyjAW_dOrog'), format: 'paseto' }
     ],
     lifetime: 2592000,
     refresh: 600,
@@ -68,3 +69,7 @@ it.each([true, false])('should return stale: %s',
 
     expect(result).toEqual({ identity, refresh })
   })
+
+function secret (value: string): Secret {
+  return { unwrap: () => value }
+}

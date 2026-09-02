@@ -169,8 +169,8 @@ configuration:
         type: integer
         default: 10
       pepper:
+        description: Hashing pepper, a secret
         type: string
-        default: ''
       principal:
         type: string
       username:

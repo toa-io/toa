@@ -3,7 +3,8 @@ Feature: Node algorithm implementation syntaxes
   Algorithms output configuration value.
 
   Scenario Outline: Run <type> with <syntax> syntax
-    Given I boot `node.syntaxes` component
+    Given an environment variable `TOA_CONFIGURATION_NODE_SYNTAXES` is set to '{}'
+    And I boot `node.syntaxes` component
     When I invoke `<type><syntax>` with:
       """yaml
       query: {}
@@ -26,7 +27,8 @@ Feature: Node algorithm implementation syntaxes
       | Factory  | assignment  |
 
   Scenario Outline: Run <type> with <syntax> syntax
-    Given I boot `node.syntaxes` component
+    Given an environment variable `TOA_CONFIGURATION_NODE_SYNTAXES` is set to '{}'
+    And I boot `node.syntaxes` component
     When I invoke `<type><syntax>`
     And I disconnect
     Then the reply is received:

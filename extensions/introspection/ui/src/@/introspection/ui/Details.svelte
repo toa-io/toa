@@ -1,11 +1,14 @@
 <script lang="ts">
+  import { ChevronRight } from '@lucide/svelte'
+  import { configuration } from '$config'
+  import { identify } from './ui'
   import { dict } from './intl'
   import Section from './Section.svelte'
   import Schema from './Schema.svelte'
   import Receiver from './Receiver.svelte'
   import Operation from './Operation.svelte'
   import Event from './Event.svelte'
-  import type { Props } from './Details'
+  import { CONFIGURATION, type Props } from './Details'
 
   const { node, class: className }: Props = $props()
 </script>
@@ -49,7 +52,21 @@
   {#if node.extensions.length > 0}
     <Section title={$dict.node.extensions(node.extensions.length)} class="gap-1" collapsible>
       {#each node.extensions as extension (extension)}
-        <span class="text-muted-foreground">{extension}</span>
+        {#if extension === CONFIGURATION}
+          <!-- the one extension with a page of its own: what a component is configured
+               with is read next door, not here -->
+          <a
+            id="node-configuration-link"
+            href={configuration(identify(node))}
+            class="text-muted-foreground hover:text-foreground flex w-fit items-center gap-1
+              transition-colors"
+          >
+            {extension}
+            <ChevronRight class="size-3.5 shrink-0 opacity-60" />
+          </a>
+        {:else}
+          <span class="text-muted-foreground">{extension}</span>
+        {/if}
       {/each}
     </Section>
   {/if}

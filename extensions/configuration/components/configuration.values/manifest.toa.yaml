@@ -1,0 +1,158 @@
+namespace: configuration
+name: values
+
+# One document per configuration created. Documents are immutable: a change is a new
+# document, and the latest one for a component and an epoch is the last created.
+# What every component's epoch, schema and defaults are, the service is told on
+# deployment (`TOA_CONFIGURATION_VALUES`). A created object is published as the
+# prototype's `created` event.
+
+entity:
+  schema:
+    type: object
+    properties:
+      component:
+        type: string
+      epoch:
+        type: string
+      configuration:
+        type: object
+      originator:
+        type: string
+    required:
+      - component
+      - epoch
+      - configuration
+      - originator
+  index:
+    lookup:
+      component: asc
+      epoch: asc
+      _created: desc
+
+operations:
+  # the latest configuration of a component: created, else deployed defaults, else none
+  get:
+    query: false
+    input:
+      type: object
+      properties:
+        component:
+          type: string
+        epoch:
+          type: string
+      required:
+        - component
+    # the value and the schema it is checked against, so a caller can show and check it
+    output:
+      type: object
+      nullable: true
+      properties:
+        configuration:
+          type: object
+        schema:
+          type: object
+        epoch:
+          type: string
+      required:
+        - configuration
+        - epoch
+  # the same for many at once, as the aspects of one process ask
+  fetch:
+    query: false
+    input:
+      type: array
+      items:
+        type: object
+        properties:
+          component:
+            type: string
+          epoch:
+            type: string
+        required:
+          - component
+          - epoch
+    output:
+      type: array
+      items:
+        type: object
+        properties:
+          component:
+            type: string
+          epoch:
+            type: string
+          configuration:
+            type: object
+            nullable: true
+          created:
+            type: integer
+        required:
+          - component
+          - epoch
+          - configuration
+          - created
+  # every component's configuration for its deployed epoch, by component name
+  list:
+    query: false
+    output:
+      type: array
+      items:
+        type: object
+        properties:
+          component:
+            type: string
+          epoch:
+            type: string
+          schema:
+            type: object
+          configuration:
+            type: object
+        required:
+          - component
+          - epoch
+          - schema
+          - configuration
+  create:
+    query: false
+    input:
+      type: object
+      properties:
+        component:
+          type: string
+        configuration:
+          type: object
+        originator:
+          type: object
+          properties:
+            id:
+              type: string
+          required:
+            - id
+      required:
+        - component
+        - configuration
+        - originator
+    errors:
+      - UNKNOWN_COMPONENT
+      - INVALID_CONFIGURATION
+
+exposition:
+  isolated: true
+  /:
+    GET:
+      io:output: true
+      auth:role: system:configuration:get
+      endpoint: list
+  /:component:
+    map:segments:
+      component: component
+    GET:
+      io:output: true
+      auth:role: system:configuration:get
+      endpoint: get
+    POST:
+      io:output: [id, epoch]
+      auth:rule:
+        role: system:configuration:create
+        delegate: originator
+      endpoint: create

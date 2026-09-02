@@ -30,6 +30,25 @@ export const origin = (() => {
   return local(hostname) ? `${protocol}//${hostname}:${GATEWAY_PORT}` : origin
 })()
 
+/**
+ * The configuration UI's port. A constant of the runtime, like the gateway's; this bundle
+ * cannot import it either.
+ */
+const CONFIGURATION_PORT = 8003
+
+/**
+ * Where a component's configuration is read. Deployed, both pages sit behind the same
+ * ingress and the path alone is right; locally each console has its own port.
+ */
+export function configuration(id: string): string {
+  if (typeof window === 'undefined') return ''
+
+  const { protocol, hostname } = window.location
+  const origin = local(hostname) ? `${protocol}//${hostname}:${CONFIGURATION_PORT}` : ''
+
+  return `${origin}/.configuration/${id}/`
+}
+
 export const sleep: [number, number] | undefined = (() => {
   const sleep = import.meta.env.VITE_DEV_SLEEP
 

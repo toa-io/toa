@@ -77,7 +77,7 @@
     "test": "npm run lint && npm run typecheck && npm run test:unit",
     "typecheck": "tsc -p tsconfig.features.json",
     "test:unit": "NODE_OPTIONS=--experimental-vm-modules jest --roots runtime connectors extensions operations libraries features userland",
-    "test:stage": "jest --roots userland/example/stage --testPathIgnorePatterns .*/transpiled/",
+    "test:stage": "NODE_OPTIONS=--experimental-vm-modules jest --roots userland/example/stage --testPathIgnorePatterns .*/transpiled/",
     "test:integration": "jest --roots integration --runInBand --testTimeout 180000",
     "features": "cucumber-js -t 'not @skip' && npm run features --workspaces --if-present",
     "test:all": "npm run test && npm run test:integration && npm run test:stage && npm run features",
@@ -110,7 +110,8 @@
     "testPathIgnorePatterns": [
       ".*/transpiled/",
       "<rootDir>/userland/example/stage",
-      "<rootDir>/extensions/introspection/ui"
+      "<rootDir>/extensions/introspection/ui",
+      "<rootDir>/extensions/configuration/ui"
     ],
     "bail": true
   }

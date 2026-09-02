@@ -12,7 +12,7 @@ export class Transition implements Operation {
 
   public mount (context: Context): void {
     this.rounds = context.configuration.rounds
-    this.pepper = context.configuration.pepper
+    this.pepper = context.configuration.pepper?.unwrap() ?? ''
     this.principal = context.configuration.principal
     this.tokens = context.remote.identity.tokens
 

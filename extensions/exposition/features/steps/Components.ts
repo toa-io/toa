@@ -1,4 +1,5 @@
 import * as assert from 'node:assert'
+import { dirname, join } from 'node:path'
 import { after, binding, given } from 'cucumber-tsflow'
 import * as boot from '@toa.io/boot'
 import { timeout } from '@toa.io/generic'
@@ -9,6 +10,7 @@ import { Workspace } from './Workspace'
 import { components as map } from './map'
 
 const MAP = 'introspection'
+const VALUES = 'configuration'
 
 @binding([Workspace, Gateway])
 export class Components {
@@ -44,6 +46,25 @@ export class Components {
     await timeout(50) // discovery
   }
 
+  /** The values component, as the configuration extension ships it; the service hosts it alone. */
+  @given('the configuration values are running')
+  public async runValues (): Promise<void> {
+    assert.ok(!(VALUES in this.compositions), `Composition '${VALUES}' is already running`)
+
+    await this.gateway.start()
+
+    this.compositions[VALUES] = await boot.composition([values()])
+
+    await this.compositions[VALUES].connect()
+    await timeout(50) // discovery
+  }
+
+  /** What the deployment would tell the values service, as the scenario needs it. */
+  @given('the configuration values are deployed:')
+  public deployValues (yaml: string): void {
+    process.env.TOA_CONFIGURATION_VALUES = JSON.stringify(parse(yaml))
+  }
+
   @given('the `{word}` is stopped')
   public async stop (name: string): Promise<void> {
     assert.ok(name in this.compositions, `Composition '${name}' is not running`)
@@ -57,6 +78,8 @@ export class Components {
     const promises = Object.values(this.compositions).map((composition) => composition.disconnect())
 
     await Promise.all(promises)
+
+    delete process.env.TOA_CONFIGURATION_VALUES
   }
 
   private async runComponent (name: string, manifest?: object): Promise<void> {
@@ -74,4 +97,10 @@ export class Components {
     await this.compositions[name].connect()
     await timeout(50) // discovery
   }
+}
+
+function values (): string {
+  const root = dirname(require.resolve('@toa.io/extensions.configuration/package.json'))
+
+  return join(root, 'components', 'configuration.values')
 }

@@ -1,0 +1,19 @@
+namespace: configuration
+name: secrets
+
+operations:
+  echo:
+    output:
+      type: object
+  reveal:
+    output:
+      type: string
+
+configuration:
+  schema:
+    type: object
+    properties:
+      a:
+        type: integer
+      b:
+        type: string

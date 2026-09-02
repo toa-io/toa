@@ -17,16 +17,23 @@
     "access": "public"
   },
   "scripts": {
-    "transpile": "tsc"
+    "transpile": "tsc && tsc -p ./components/configuration.values",
+    "build:ui": "npm --prefix ui ci && npm --prefix ui run build",
+    "prepack": "npm run build:ui",
+    "features": "npx cucumber-js"
   },
   "jest": {
     "preset": "ts-jest",
-    "testEnvironment": "node"
+    "testEnvironment": "node",
+    "testPathIgnorePatterns": [
+      "<rootDir>/ui"
+    ]
   },
   "gitHead": "61c8e74a336385265767e9fd37d49128cb51b17f",
   "dependencies": {
     "@toa.io/core": "1.0.0-alpha.273",
     "@toa.io/generic": "1.0.0-alpha.273",
-    "@toa.io/schemas": "1.0.0-alpha.273"
+    "@toa.io/schemas": "1.0.0-alpha.273",
+    "openspan": "1.0.0-alpha.272"
   }
 }

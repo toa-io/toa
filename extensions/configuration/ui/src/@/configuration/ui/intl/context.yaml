@@ -1,0 +1,51 @@
+context: Mount 'configuration' context
+inputs:
+  values:
+    empty:
+      input: No component declares configuration.
+      context: shown when the application has no configured components at all
+    nomatch:
+      input: No results match the filter.
+      context: shown when the filter leaves the list empty
+  value:
+    none:
+      input: This component has no configuration.
+      context: shown on a component's screen when the service holds no configuration for it
+    secret:
+      input: Secret
+      context: "stands in place of a value that is a secret and is never shown; a noun, capitalized as a label"
+    count:
+      input: value
+      context: how many top-level values a component's configuration holds, shown on its row in the list
+    title:
+      input: Configuration
+      context: heading over the component's current configuration
+  create:
+    action:
+      input: Edit
+      context: "button that opens the dialog for changing a component's configuration. A change is stored as a new immutable object, but the reader edits what is there, so the word is the reader's, not the service's"
+    title:
+      input: Edit configuration
+      context: title of that dialog
+    editor:
+      input: Configuration
+      context: accessible name of the text area holding the configuration as YAML
+    submit:
+      input: Update
+      context: button that sends the edited configuration
+    cancel:
+      input: Cancel
+      context: button that closes the dialog without creating anything
+    malformed:
+      input: This is not valid YAML.
+      context: shown under the editor when the text cannot be parsed
+    failed:
+      input: The configuration could not be created.
+      context: shown when the service refused the request
+  space:
+    user:
+      input: Userspace
+      context: heading over the components the application itself declares
+    system:
+      input: System
+      context: heading over the components the runtime provides, such as identity
