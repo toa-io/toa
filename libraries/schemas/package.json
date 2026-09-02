@@ -25,11 +25,11 @@
   "types": "types/index.d.ts",
   "dependencies": {
     "@toa.io/generic": "1.0.0-alpha.273",
-    "ajv": "8.18.0",
-    "ajv-formats": "2.1.1",
-    "better-ajv-errors": "1.2.0",
-    "fast-glob": "3.2.12",
-    "js-yaml": "4.3.1"
+    "ajv": "8.20.0",
+    "ajv-formats": "3.0.1",
+    "better-ajv-errors": "2.0.3",
+    "fast-glob": "3.3.3",
+    "js-yaml": "5.4.1"
   },
   "gitHead": "61c8e74a336385265767e9fd37d49128cb51b17f"
 }
