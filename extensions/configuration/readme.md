@@ -49,22 +49,28 @@ configuration:
 $ toa conceal configuration BAZ_VALUE=$ecr3t
 ```
 
+### Change at runtime
+
+```http
+POST /configuration/values/dummies.dummy/ HTTP/1.1
+authorization: Token ...
+content-type: application/yaml
+
+configuration:
+  foo: quux
+  bar: 2
+```
+
 ---
-
-## Problem Definition
-
-- Components should be runnable in different deployment environments.
-- Some algorithm's parameters should be deployed secretly.
-- Components should be reusable in different contexts.
 
 ## Manifest
 
-Component's configuration is declared using `configuration` manifest,
-containing `schema` and optionnaly `defaults` properties.
+Component's configuration is declared using the `configuration` manifest, containing `schema`
+and optionally `defaults` properties.
 
 ### Schema
 
-Configuration schema is declared with [JSONSchema](https://json-schema.org).
+Configuration schema is declared with [JSON Schema](https://json-schema.org).
 
 ```yaml
 # manifest.toa.yaml
@@ -73,34 +79,18 @@ namespace: dummies
 
 configuration:
   schema:
-    foo: string
-    bar: number
-```
-
-> Introducing non-backward compatible changes to a configuration schema will result in a loss of
-> compatibility with existing contexts and deployment environments.
-> Therefore, configuration schema changes are subject to component versioning.
-
-If `configuration` object doesn't contain property `schema`, then it is considered to be schema.
-
-```yaml
-# manifest.toa.yaml
-name: dummy
-namespace: dummies
-
-configuration:
-  type: object
-  properties:
-    foo:
-      type: string
-    bar:
-      type: number
+    type: object
+    properties:
+      foo:
+        type: string
+      bar:
+        type: number
 ```
 
 ### Defaults
 
-The default configuration value can be provided using the `defaults` property, which should conform
-to the configuration schema.
+The default configuration value can be provided using the `defaults` property, which should
+conform to the configuration schema.
 
 ```yaml
 # manifest.toa.yaml
@@ -120,6 +110,12 @@ configuration:
     bar: 0
 ```
 
+### Epoch
+
+The configuration epoch of a component is the SHA-256 of its configuration schema, as
+canonical JSON. A configuration object belongs to the epoch of the schema it was validated
+against. A schema change is a new epoch.
+
 ## Annotation
 
 A component's configuration can be overridden using the configuration context annotation.
@@ -133,9 +129,12 @@ configuration:
     bar@staging: 2
 ```
 
+The annotated object is deployed as the defaults of the component for its epoch, in place of
+the manifest `defaults`.
+
 ## Secrets
 
-Configuration annotation top-level values which are uppercase strings prefixed with `$` considered as secrets.
+Configuration values which are uppercase strings prefixed with `$` are considered as secrets.
 
 ```yaml
 # context.toa.yaml
@@ -155,14 +154,86 @@ Deployed kubernetes secret's name is predefined as `configuration`.
 $ toa conceal configuration STRIPE_API_KEY=xxxxxxxx
 ```
 
+A secret is substituted in the component's process, from the variable
+`TOA_CONFIGURATION__<NAME>` deployed to it. The values service holds and returns the
+reference.
+
+## Values
+
+Configuration values are held by the `configuration.values` component, deployed as the
+`configuration-values` service. The service is deployed with the variable
+`TOA_CONFIGURATION_VALUES`: the epoch, the schema and the defaults of every component
+declaring configuration.
+
+```json
+{
+  "dummies.dummy": {
+    "epoch": "3f2a…",
+    "schema": { "type": "object", "properties": { "foo": { "type": "string" } } },
+    "defaults": { "foo": "bye" }
+  }
+}
+```
+
+Configuration objects are immutable. Creating a configuration is creating a new object for
+the component's current epoch; the latest object for a component and an epoch is the last
+created one. Each object records its `originator`.
+
+The configuration of a component for an epoch is:
+
+1. The latest object created for the component and the epoch;
+2. Otherwise, the deployed defaults, if the epoch is the deployed one;
+3. Otherwise, none.
+
+### Operations
+
+- `get({ component, epoch? })`: the configuration, or `null` when there is none. The epoch
+  is the deployed one when omitted.
+- `fetch([{ component, epoch }])`: the same for several pairs at once, as
+  `[{ component, epoch, configuration }]`.
+- `create({ component, configuration, originator })`: a new object for the component's
+  deployed epoch. The configuration must satisfy the schema. Errors: `UNKNOWN_COMPONENT`,
+  `INVALID_CONFIGURATION`.
+
+Creating a configuration publishes the `configuration.values.created` event with
+`{ component, epoch }`.
+
+### Resources
+
+| Method | Path                                  | Role                          |
+|--------|---------------------------------------|-------------------------------|
+| `GET`  | `/configuration/values/:component/`   | `system:configuration:get`    |
+| `POST` | `/configuration/values/:component/`   | `system:configuration:create` |
+
+`GET` returns the configuration for the deployed epoch, `404` when there is none.
+
+`POST` takes `{ configuration }`, records the Identity as the `originator`, and returns
+`{ id, epoch }`. A configuration not satisfying the schema, or an unknown component, is
+`422`.
+
 ## Aspect
 
 Component's configuration values are available as a well-known Aspect `configuration`.
 
 ```javascript
 function transition (input, entity, context) {
-  const foo = context.configiuration.foo
+  const foo = context.configuration.foo
 
   // ...
 }
+```
+
+On start, a component requests its configuration for its epoch from the values service and
+waits until there is one, reporting every fifth attempt. Secrets are substituted, and the
+schema is applied. After a configuration is created, the running component receives the new
+value.
+
+### Local override
+
+When the variable `TOA_CONFIGURATION_<NAMESPACE>_<NAME>` is set, the component's
+configuration is the variable's value with the manifest `defaults` and the schema applied,
+and the values service is not used.
+
+```shell
+$ TOA_CONFIGURATION_DUMMIES_DUMMY='{"foo":"local"}' toa run components/dummy
 ```

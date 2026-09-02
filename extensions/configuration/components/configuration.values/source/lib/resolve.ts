@@ -1,0 +1,47 @@
+import { entry } from './map'
+
+/**
+ * The latest configuration created for the component and the epoch; the deployed
+ * defaults when none was; `null` when the epoch is not the one deployed.
+ */
+export async function resolve (context: Context, component: string, epoch?: string): Promise<object | null> {
+  const known = entry(component)
+
+  epoch ??= known?.epoch
+
+  if (epoch === undefined)
+    return null
+
+  // one query per pair, so that a component's latest is never behind another's newer ones
+  const query: Query = {
+    criteria: `component=="${component}";epoch=="${epoch}"`,
+    sort: ['_created:desc'],
+    limit: 1
+  }
+
+  const objects = await context.local.enumerate({ query })
+
+  if (objects.length > 0)
+    return objects[0].configuration
+
+  if (known !== undefined && known.epoch === epoch)
+    return known.defaults ?? {}
+
+  return null
+}
+
+export interface Context {
+  local: {
+    enumerate: (request: { query: Query }) => Promise<Stored[]>
+  }
+}
+
+interface Query {
+  criteria: string
+  sort: string[]
+  limit: number
+}
+
+interface Stored {
+  configuration: object
+}

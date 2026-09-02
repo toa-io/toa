@@ -17,7 +17,7 @@
     "access": "public"
   },
   "scripts": {
-    "transpile": "tsc"
+    "transpile": "tsc && tsc -p ./components/configuration.values"
   },
   "jest": {
     "preset": "ts-jest",
@@ -27,6 +27,7 @@
   "dependencies": {
     "@toa.io/core": "1.0.0-alpha.273",
     "@toa.io/generic": "1.0.0-alpha.273",
-    "@toa.io/schemas": "1.0.0-alpha.273"
+    "@toa.io/schemas": "1.0.0-alpha.273",
+    "openspan": "1.0.0-alpha.272"
   }
 }

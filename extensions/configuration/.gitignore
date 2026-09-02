@@ -1,0 +1,3 @@
+# The values component is TypeScript and its operations are transpiled into this
+# directory, so it is generated.
+components/configuration.values/operations/

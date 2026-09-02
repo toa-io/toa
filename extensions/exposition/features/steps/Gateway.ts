@@ -47,7 +47,15 @@ export class Gateway {
    */
   @given('the annotation of the introspection map')
   public async annotateMap (): Promise<void> {
-    const tree: syntax.Node = { routes: [], methods: [], directives: [] }
+    await this.annotateMapUnder()
+  }
+
+  /** The same routes under a root of the scenario's own: what an application declares around the map. */
+  @given('the annotation of the introspection map under:')
+  public async annotateMapUnder (yaml?: string): Promise<void> {
+    const tree: syntax.Node = yaml === undefined
+      ? { routes: [], methods: [], directives: [] }
+      : syntax.parse((parse(yaml) as { '/': object })['/'], shortcuts)
 
     for (const manifest of await manifests()) {
       const node = manifest.extensions?.[EXPOSITION] as syntax.Node | undefined
@@ -161,7 +169,13 @@ const DEFAULT_PROPERTIES: Partial<http.Options> = {
   }
 }
 
+// the identity components boot inside the gateway, and without a variable each would wait
+// for the values service, which these features do not run
 const DEFAULT_CONFIGURATION: Record<string, object> = {
+  'identity.basic': {},
+  'identity.federation': {},
+  'identity.otp': {},
+  'identity.passkeys': {},
   'identity.tokens': {
     keys: [
       {
