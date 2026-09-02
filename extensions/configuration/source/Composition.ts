@@ -20,7 +20,14 @@ export class Composition extends Connector {
     await composition.connect()
 
     this.depends(composition)
-    this.depends(new UI(UI_PORT))
+
+    // connected here rather than declared as a dependency: dependencies are connected
+    // before `open` runs, so one added from inside it would never be
+    const ui = new UI(UI_PORT)
+
+    await ui.connect()
+
+    this.depends(ui)
   }
 }
 
