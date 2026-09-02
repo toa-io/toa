@@ -88,7 +88,6 @@ const operations = {
   result: {
     prototype: {
       prototype: null,
-      path: expect.any(String),
       operations: {
         add: {
           bridge: 'a'

@@ -1,3 +1,6 @@
+import { describe, it } from 'node:test'
+import assert from 'node:assert/strict'
+
 import { parse } from './parse.js'
 
 describe('routes', () => {
@@ -9,9 +12,9 @@ describe('routes', () => {
 
     const node = parse(declaration)
 
-    expect(node.routes).toHaveLength(2)
-    expect(node.routes[0].path).toBe('/')
-    expect(node.routes[1].path).toBe('/foo')
+    assert.strictEqual(node.routes.length, 2)
+    assert.strictEqual(node.routes[0].path, '/')
+    assert.strictEqual(node.routes[1].path, '/foo')
   })
 
   it('should parse nested routes', async () => {
@@ -25,9 +28,9 @@ describe('routes', () => {
     const node = parse(declaration)
     const root = node.routes[0].node
 
-    expect(root.routes).toHaveLength(2)
-    expect(root.routes[0].path).toBe('/foo')
-    expect(root.routes[1].path).toBe('/bar')
+    assert.strictEqual(root.routes.length, 2)
+    assert.strictEqual(root.routes[0].path, '/foo')
+    assert.strictEqual(root.routes[1].path, '/bar')
   })
 })
 
@@ -44,9 +47,9 @@ describe('methods', () => {
     const node = parse(declaration)
     const root = node.routes[0].node
 
-    expect(root.methods).toHaveLength(1)
-    expect(root.methods[0].verb).toBe('GET')
-    expect(root.methods[0].mapping).toMatchObject({ endpoint: 'observe' })
+    assert.strictEqual(root.methods.length, 1)
+    assert.strictEqual(root.methods[0].verb, 'GET')
+    assert.partialDeepStrictEqual(root.methods[0].mapping, { endpoint: 'observe' })
   })
 
   it('should parse endpoint shortcut', async () => {
@@ -59,9 +62,9 @@ describe('methods', () => {
     const node = parse(declaration)
     const root = node.routes[0].node
 
-    expect(root.methods).toHaveLength(1)
-    expect(root.methods[0].verb).toBe('GET')
-    expect(root.methods[0].mapping).toMatchObject({ endpoint: 'observe' })
+    assert.strictEqual(root.methods.length, 1)
+    assert.strictEqual(root.methods[0].verb, 'GET')
+    assert.partialDeepStrictEqual(root.methods[0].mapping, { endpoint: 'observe' })
   })
 
   it('should parse fq endpoint', async () => {
@@ -74,10 +77,10 @@ describe('methods', () => {
     const node = parse(declaration)
     const root = node.routes[0].node
 
-    expect(root.methods).toHaveLength(1)
-    expect(root.methods[0].verb).toBe('GET')
+    assert.strictEqual(root.methods.length, 1)
+    assert.strictEqual(root.methods[0].verb, 'GET')
 
-    expect(root.methods[0].mapping).toMatchObject({
+    assert.partialDeepStrictEqual(root.methods[0].mapping, {
       namespace: 'dummies',
       component: 'dummy',
       endpoint: 'observe'
@@ -94,10 +97,10 @@ describe('methods', () => {
     const node = parse(declaration)
     const root = node.routes[0].node
 
-    expect(root.methods).toHaveLength(1)
-    expect(root.methods[0].verb).toBe('GET')
+    assert.strictEqual(root.methods.length, 1)
+    assert.strictEqual(root.methods[0].verb, 'GET')
 
-    expect(root.methods[0].mapping).toMatchObject({
+    assert.partialDeepStrictEqual(root.methods[0].mapping, {
       namespace: 'default',
       component: 'dummy',
       endpoint: 'observe'
@@ -117,8 +120,7 @@ describe('methods', () => {
     const node = parse(declaration)
     const root = node.routes[0].node
 
-    expect(root.methods[0].directives)
-      .toStrictEqual([{ family: 'auth', name: 'incept', value: 'id' }])
+    assert.deepStrictEqual(root.methods[0].directives, [{ family: 'auth', name: 'incept', value: 'id' }])
   })
 })
 
@@ -137,10 +139,10 @@ describe('directives', () => {
     const node = parse(declaration, shortcuts)
     const root = node.routes[0].node
 
-    expect(root.directives).toHaveLength(1)
-    expect(root.directives[0].family).toBe('dev')
-    expect(root.directives[0].name).toBe('foo')
-    expect(root.directives[0].value).toBe('baz')
+    assert.strictEqual(root.directives.length, 1)
+    assert.strictEqual(root.directives[0].family, 'dev')
+    assert.strictEqual(root.directives[0].name, 'foo')
+    assert.strictEqual(root.directives[0].value, 'baz')
   })
 })
 
@@ -148,7 +150,7 @@ describe('validation', () => {
   it('should throw on unknown key', async () => {
     const declaration = { hello: 'world' }
 
-    expect(() => parse(declaration)).toThrow('RTD parse error: unknown key \'hello\'')
+    assert.throws(() => parse(declaration), (error: any) => /RTD parse error: unknown key 'hello'/.test(error.message))
   })
 
   it('should throw on invalid mapping', async () => {
@@ -161,7 +163,7 @@ describe('validation', () => {
       }
     }
 
-    expect(() => parse(declaration)).toThrow('/methods/0/mapping')
+    assert.throws(() => parse(declaration), (error: any) => /\/methods\/0\/mapping/.test(error.message))
   })
 })
 
@@ -181,7 +183,7 @@ it('should expand ranges', async () => {
   const node = parse(declaration)
   const query = node.routes[0].node.methods[0].mapping?.query
 
-  expect(query).toMatchObject({
+  assert.partialDeepStrictEqual(query, {
     omit: { value: 3, range: [3, 3] },
     limit: { value: 2, range: [2, 2] }
   })

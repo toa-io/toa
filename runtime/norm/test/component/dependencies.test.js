@@ -1,12 +1,15 @@
 'use strict'
 
+const { describe, it, beforeEach } = require('node:test')
+const assert = require('node:assert/strict')
+
 const { resolve } = require('node:path')
 const { dependencies } = require('../../src/.component')
 
 const NORM = resolve(__dirname, '../../')
 
 it('should be', async () => {
-  expect(dependencies).toBeInstanceOf(Function)
+  assert.ok(dependencies instanceof Function)
 })
 
 /** @type {toa.norm.Component} */
@@ -16,16 +19,17 @@ beforeEach(() => {
   component = /** @type {toa.norm.Component} */ { path: __dirname }
 })
 
-describe.each(/** @type {[string, string][]} */ [
+for (const [_, reference] of [
   ['package id', '@toa.io/norm'],
   ['relative path', '../../']
-])('%s', (_, reference) => {
+])
+   describe(`${_}`, () => {
   it('should resolve storage', async () => {
     component.entity = { storage: reference, schema: {} }
 
     dependencies(component)
 
-    expect(component.entity.storage).toStrictEqual(NORM)
+    assert.deepStrictEqual(component.entity.storage, NORM)
   })
 })
 
@@ -34,5 +38,5 @@ it('should resolve toa packages', async () => {
 
   dependencies(component)
 
-  expect(component.entity.storage).toBeDefined()
+  assert.notStrictEqual(component.entity.storage, undefined)
 })

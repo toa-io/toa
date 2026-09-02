@@ -1,0 +1,21 @@
+import { FileSystem } from './FileSystem.js';
+import { S3 } from './S3.js';
+import { Spaces } from './Spaces.js';
+import { Cloudinary } from './Cloudinary.js';
+import { Temporary } from './Temporary.js';
+import { Test } from './Test.js';
+export declare const providers: {
+    readonly s3: typeof S3;
+    readonly spaces: typeof Spaces;
+    readonly cloudinary: typeof Cloudinary;
+    readonly fs: typeof FileSystem;
+    readonly tmp: typeof Temporary;
+    readonly test: typeof Test;
+};
+export type { Declaration } from './Declaration.js';
+export type { S3Options } from './S3.js';
+export type { SpacesOptions } from './Spaces.js';
+export type { CloudinaryOptions } from './Cloudinary.js';
+export type { FileSystemOptions } from './FileSystem.js';
+export type { TemporaryOptions } from './Temporary.js';
+export type { FileSystem, S3, Spaces, Cloudinary, Temporary };

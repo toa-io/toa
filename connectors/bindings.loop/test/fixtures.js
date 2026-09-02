@@ -1,5 +1,7 @@
 'use strict'
 
+const { mock } = require('node:test')
+
 const { generate } = require('randomstring')
 
 const component = {
@@ -17,7 +19,7 @@ const component = {
       }
     ]
   },
-  invoke: jest.fn(async () => generate()),
+  invoke: mock.fn(async () => generate()),
   link: () => null,
   connect: () => null,
   disconnect: () => null
@@ -29,7 +31,7 @@ const exposition = {
   locator: {
     id: 'foo.bar'
   },
-  invoke: jest.fn(async () => generate())
+  invoke: mock.fn(async () => generate())
 }
 
 exports.component = component

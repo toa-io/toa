@@ -1,5 +1,7 @@
 'use strict'
 
+const { mock } = require('node:test')
+
 const { generate } = require('randomstring')
 
 const definition = /** @type {toa.norm.component.Receiver} */ {
@@ -10,13 +12,13 @@ const definition = /** @type {toa.norm.component.Receiver} */ {
 
 const local = /** @type {toa.core.Component} */ {
   locator: { id: 'default.dummy' },
-  invoke: jest.fn()
+  invoke: mock.fn()
 }
 
 // noinspection JSCheckFunctionSignatures
 const bridge = /** @type {toa.core.bridges.Event} */ {
-  condition: jest.fn(async (payload) => !(payload.reject === true)),
-  request: jest.fn(async () => ({ input: generate() }))
+  condition: mock.fn(async (payload) => !(payload.reject === true)),
+  request: mock.fn(async () => ({ input: generate() }))
 }
 
 exports.definition = definition

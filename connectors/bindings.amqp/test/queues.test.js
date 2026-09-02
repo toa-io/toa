@@ -1,5 +1,8 @@
 'use strict'
 
+const { it, beforeEach } = require('node:test')
+const assert = require('node:assert/strict')
+
 const { generate } = require('randomstring')
 
 const { name } = require('../source/queues')
@@ -17,13 +20,13 @@ beforeEach(() => {
 })
 
 it('should be', async () => {
-  expect(name).toBeInstanceOf(Function)
+  assert.ok(name instanceof Function)
 })
 
 it('should name a queue', async () => {
   const queue = name(locator, endpoint)
 
-  expect(queue).toStrictEqual(`${locator.namespace}.${locator.name}.${endpoint}`)
+  assert.deepStrictEqual(queue, `${locator.namespace}.${locator.name}.${endpoint}`)
 })
 
 it('should name a queue with nameless locator', async () => {
@@ -31,5 +34,5 @@ it('should name a queue with nameless locator', async () => {
 
   const queue = name(locator, endpoint)
 
-  expect(queue).toStrictEqual(`${locator.namespace}.${endpoint}`)
+  assert.deepStrictEqual(queue, `${locator.namespace}.${endpoint}`)
 })

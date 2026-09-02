@@ -1,10 +1,13 @@
 'use strict'
 
+const { describe, it, beforeEach, mock } = require('node:test')
+const assert = require('node:assert/strict')
+
 const { Query } = require('../src/query')
 const fixtures = require('./query.fixtures')
 
 beforeEach(() => {
-  jest.clearAllMocks()
+  resetCalls()
 })
 
 describe('criteria', () => {
@@ -12,14 +15,14 @@ describe('criteria', () => {
     const instance = new Query(fixtures.samples.simple.properties)
     const query = instance.parse({})
 
-    expect(query.criteria).toBeUndefined()
+    assert.strictEqual(query.criteria, undefined)
   })
 
   it('should parse criteria', () => {
     const instance = new Query(fixtures.samples.simple.properties)
     const query = instance.parse(fixtures.samples.simple.query)
 
-    expect(query.criteria).toEqual(fixtures.samples.simple.parsed.criteria)
+    assert.deepStrictEqual(query.criteria, fixtures.samples.simple.parsed.criteria)
   })
 
   it('should keep a parsed criteria', () => {
@@ -28,35 +31,35 @@ describe('criteria', () => {
     const first = instance.parse(fixtures.samples.simple.query).criteria
     const second = instance.parse(fixtures.samples.simple.query).criteria
 
-    expect(second).toBe(first)
+    assert.strictEqual(second, first)
   })
 
   it('should not keep an invalid criteria', () => {
     const instance = new Query(fixtures.samples.simple.properties)
     const query = { criteria: 'nonexistent==1' }
 
-    expect(() => instance.parse(query)).toThrow()
-    expect(() => instance.parse(query)).toThrow()
+    assert.throws(() => instance.parse(query))
+    assert.throws(() => instance.parse(query))
   })
 
   it('should parse criteria with type coercion', () => {
     const instance = new Query(fixtures.samples.extended.properties)
     const query = instance.parse(fixtures.samples.extended.query)
 
-    expect(query.criteria).toEqual(fixtures.samples.extended.parsed.criteria)
+    assert.deepStrictEqual(query.criteria, fixtures.samples.extended.parsed.criteria)
   })
 
   it('should throw on unknown properties', () => {
     const instance = new Query(fixtures.samples.simple.properties)
 
-    expect(() => instance.parse({ criteria: 'lastname==Johnson' })).toThrow(/not defined/)
+    assert.throws(() => instance.parse({ criteria: 'lastname==Johnson' }), (error) => /not defined/.test(error.message))
   })
 
   it('should parse id', () => {
     const instance = new Query(fixtures.samples.id.properties)
     const query = instance.parse({ ...fixtures.samples.id.query })
 
-    expect(query).toStrictEqual(fixtures.samples.id.parsed)
+    assert.deepStrictEqual(query, fixtures.samples.id.parsed)
   })
 })
 
@@ -66,7 +69,7 @@ describe('options', () => {
   it('should not throw if no options', () => {
     const query = instance.parse({})
 
-    expect(query.options).toBeUndefined()
+    assert.strictEqual(query.options, undefined)
   })
 
   describe('omit, limit', () => {
@@ -74,7 +77,7 @@ describe('options', () => {
       const input = { omit: 1, limit: 1 }
       const query = instance.parse(input)
 
-      expect(query.options).toStrictEqual(input)
+      assert.deepStrictEqual(query.options, input)
     })
   })
 
@@ -83,13 +86,13 @@ describe('options', () => {
       const sort = ['a', 'b:desc', 'c']
       const query = instance.parse({ sort })
 
-      expect(query.options.sort).toStrictEqual([['a', 'asc'], ['b', 'desc'], ['c', 'asc']])
+      assert.deepStrictEqual(query.options.sort, [['a', 'asc'], ['b', 'desc'], ['c', 'asc']])
     })
 
     it('should throw on unknown properties', () => {
       const sort = ['d:asc']
 
-      expect(() => instance.parse({ sort })).toThrow(/not defined/)
+      assert.throws(() => instance.parse({ sort }), (error) => /not defined/.test(error.message))
     })
   })
 
@@ -97,7 +100,17 @@ describe('options', () => {
     it('should throw on unknown properties', () => {
       const projection = ['a', 'b', 'c', 'd']
 
-      expect(() => instance.parse({ projection })).toThrow(/not defined/)
+      assert.throws(() => instance.parse({ projection }), (error) => /not defined/.test(error.message))
     })
   })
 })
+
+function resetCalls (target = [assert, fixtures], seen = new Set()) {
+  if (target === null || typeof target !== 'object' || seen.has(target)) return
+
+  seen.add(target)
+
+  for (const value of Object.values(target))
+    if (typeof value === 'function' && value.mock !== undefined) value.mock.resetCalls()
+    else resetCalls(value, seen)
+}

@@ -1,4 +1,6 @@
-import assert from 'node:assert'
+import { it, beforeEach } from 'node:test'
+import assert from 'node:assert/strict'
+
 import { generate } from 'randomstring'
 import { timeout } from '@toa.io/generic'
 import { Effect as Encrypt } from './encrypt.js'
@@ -60,7 +62,7 @@ it('should use the first encryption key as active and expose its id as kid', asy
 
   const header = JSON.parse(Buffer.from(encrypted.split('.')[0], 'base64url').toString())
 
-  expect(header).toMatchObject({ kid: 'key0', alg: 'dir', enc: 'A256GCM' })
+  assert.partialDeepStrictEqual(header, { kid: 'key0', alg: 'dir', enc: 'A256GCM' })
 })
 
 it('should encrypt with configured lifetime by default', async () => {
@@ -74,11 +76,12 @@ it('should encrypt with configured lifetime by default', async () => {
   if (encrypted instanceof Error)
     throw encrypted
 
-  await expect(decrypt.execute(encrypted)).resolves.toMatchObject({ iss: authority, identity })
+  await assert.partialDeepStrictEqual(await decrypt.execute(encrypted), { iss: authority, identity })
 
   await timeout(context.configuration.lifetime * 1000)
 
-  await expect(decrypt.execute(encrypted)).resolves.toMatchObject({ code: 'INVALID_TOKEN' })
+  const thrown: any = await decrypt.execute(encrypted)
+        assert.deepStrictEqual(thrown.code, 'INVALID_TOKEN')
 })
 
 it('should encrypt with given lifetime', async () => {
@@ -94,11 +97,12 @@ it('should encrypt with given lifetime', async () => {
   if (encrypted instanceof Error)
     throw encrypted
 
-  await expect(decrypt.execute(encrypted)).resolves.toMatchObject({ iss: authority, identity })
+  await assert.partialDeepStrictEqual(await decrypt.execute(encrypted), { iss: authority, identity })
 
   await timeout(lifetime * 1000)
 
-  await expect(decrypt.execute(encrypted)).resolves.toMatchObject({ code: 'INVALID_TOKEN' })
+  const thrown: any = await decrypt.execute(encrypted)
+        assert.deepStrictEqual(thrown.code, 'INVALID_TOKEN')
 })
 
 it('should encrypt without lifetime INSECURE', async () => {
@@ -118,7 +122,7 @@ it('should encrypt without lifetime INSECURE', async () => {
 
   assert.ok(!(decrypted instanceof Error))
 
-  expect(decrypted.identity).toMatchObject(identity)
+  assert.partialDeepStrictEqual(decrypted.identity, identity)
 })
 
 function secret (value: string): Secret {

@@ -1,19 +1,22 @@
 'use strict'
 
+const { describe, it } = require('node:test')
+const assert = require('node:assert/strict')
+
 const { generate } = require('randomstring')
 const { join } = require('node:path')
 
 const schemas = require('../')
 
 it('should be', async () => {
-  expect(schemas.schema).toBeDefined()
+  assert.notStrictEqual(schemas.schema, undefined)
 })
 
 it('should expose schema id', async () => {
   const $id = generate()
   const schema = schemas.schema({ $id })
 
-  expect(schema.id).toStrictEqual($id)
+  assert.deepStrictEqual(schema.id, $id)
 })
 
 describe('fit', () => {
@@ -21,15 +24,15 @@ describe('fit', () => {
     const schema = schemas.schema({ type: 'integer' })
     const error = schema.fit(5)
 
-    expect(error).toStrictEqual(null)
+    assert.deepStrictEqual(error, null)
   })
 
   it('should return error', async () => {
     const schema = schemas.schema({ type: 'integer' })
     const error = schema.fit({ not: 'ok' })
 
-    expect(error).not.toStrictEqual(null)
-    expect(error.message).toContain('must be integer')
+    assert.notDeepStrictEqual(error, null)
+    assert.ok(error.message.includes('must be integer'))
   })
 
   it('should set defaults', () => {
@@ -42,7 +45,7 @@ describe('fit', () => {
 
     schema.fit(value)
 
-    expect(value.foo).toStrictEqual(def)
+    assert.deepStrictEqual(value.foo, def)
   })
 
   it('should coerce types', async () => {
@@ -55,7 +58,7 @@ describe('fit', () => {
 
     schema.fit(value)
 
-    expect(value.foo).toStrictEqual('1')
+    assert.deepStrictEqual(value.foo, '1')
   })
 
   it('should not delete arrays that belongs to Daria', () => {
@@ -75,23 +78,22 @@ describe('fit', () => {
     const o = {}
     const error = schema.fit(o)
 
-    expect(error).toStrictEqual(null)
-    expect(o.arr).toStrictEqual(['foo'])
+    assert.deepStrictEqual(error, null)
+    assert.deepStrictEqual(o.arr, ['foo'])
 
     o.arr = ['bar']
 
     const error2 = schema.fit(o)
 
-    expect(error2).toStrictEqual(null)
-    expect(o.arr).toStrictEqual(['bar'])
+    assert.deepStrictEqual(error2, null)
+    assert.deepStrictEqual(o.arr, ['bar'])
   })
 
 })
 
 describe('validate', () => {
   it('should throw Exception', async () => {
-    expect.assertions(1)
-
+    
     const schema = schemas.schema({
       type: 'object',
       properties: { foo: { type: 'string' } }
@@ -102,7 +104,7 @@ describe('validate', () => {
     try {
       schema.validate(value)
     } catch (exception) {
-      expect(exception).toBeInstanceOf(TypeError)
+      assert.ok(exception instanceof TypeError)
     }
   })
 
@@ -118,7 +120,7 @@ describe('validate', () => {
 
     const value = { foo: 'http://toa.io' }
 
-    expect(() => schema.validate(value)).not.toThrow()
+    assert.doesNotThrow(() => schema.validate(value))
   })
 })
 
@@ -127,6 +129,6 @@ describe('file', () => {
     const path = join(__dirname, 'schemas/one.cos.yaml')
     const schema = schemas.schema(path)
 
-    expect(() => schema.validate({ foo: 5 })).not.toThrow()
+    assert.doesNotThrow(() => schema.validate({ foo: 5 }))
   })
 })

@@ -1,15 +1,17 @@
 'use strict'
 
+const { mock } = require('node:test')
+
 const { generate } = require('randomstring')
 
 // noinspection JSCheckFunctionSignatures
 const transmission = {
-  request: jest.fn((request) => ({ [request.invalid ? 'exception' : 'output']: generate() })),
-  link: jest.fn()
+  request: mock.fn((request) => ({ [request.invalid ? 'exception' : 'output']: generate() })),
+  link: mock.fn()
 }
 
 const contract = {
-  fit: jest.fn(() => null)
+  fit: mock.fn(() => null)
 }
 
 const request = () => ({

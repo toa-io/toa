@@ -48,7 +48,7 @@ export class Sleep implements Directive {
         throw new Error()
 
       return pair
-    } catch (error) {
+    } catch {
       throw new BadRequest('Invalid sleep duration value')
     }
   }

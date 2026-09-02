@@ -1,5 +1,8 @@
 'use strict'
 
+const { describe, it, before, beforeEach } = require('node:test')
+const assert = require('node:assert/strict')
+
 const clone = require('clone-deep')
 
 const { validate } = require('../../src/.context')
@@ -7,8 +10,8 @@ const fixtures = require('./validate.fixtures')
 
 let context
 
-beforeAll(() => {
-  expect(() => validate(fixtures.context)).not.toThrow()
+before(() => {
+  assert.doesNotThrow(() => validate(fixtures.context))
 })
 
 beforeEach(() => {
@@ -18,23 +21,23 @@ beforeEach(() => {
 describe('runtime', () => {
   it('should require', () => {
     delete context.runtime
-    expect(() => validate(context)).toThrow(/required/)
+    assert.throws(() => validate(context), (error) => /required/.test(error.message))
   })
 
   it('should require registry to match uri format', () => {
     context.runtime.registry = 'not-a-uri'
-    expect(() => validate(context)).toThrow(/must match format/)
+    assert.throws(() => validate(context), (error) => /must match format/.test(error.message))
 
     context.runtime.registry = 'http://localhost'
-    expect(() => validate(context)).not.toThrow()
+    assert.doesNotThrow(() => validate(context))
   })
 
   it('should require proxy to match uri format', () => {
     context.runtime.proxy = 'not-a-uri'
-    expect(() => validate(context)).toThrow(/must match format/)
+    assert.throws(() => validate(context), (error) => /must match format/.test(error.message))
 
     context.runtime.proxy = 'http://localhost'
-    expect(() => validate(context)).not.toThrow()
+    assert.doesNotThrow(() => validate(context))
   })
 })
 
@@ -42,7 +45,7 @@ describe('registry', () => {
   it('should require', () => {
     delete context.registry
 
-    expect(() => validate(context)).toThrow(/required property 'registry'/)
+    assert.throws(() => validate(context), (error) => /required property 'registry'/.test(error.message))
   })
 
   it('should set default platforms', () => {
@@ -50,25 +53,25 @@ describe('registry', () => {
 
     validate(context)
 
-    expect(context.registry.platforms).toBeInstanceOf(Array)
-    expect(context.registry.platforms).toStrictEqual(['linux/amd64', 'linux/arm/v7', 'linux/arm64'])
+    assert.ok(context.registry.platforms instanceof Array)
+    assert.deepStrictEqual(context.registry.platforms, ['linux/amd64', 'linux/arm/v7', 'linux/arm64'])
   })
 })
 
 it('should require name as label', () => {
   delete context.name
-  expect(() => validate(context)).toThrow(/required/)
+  assert.throws(() => validate(context), (error) => /required/.test(error.message))
 
   context.name = 'foo bar'
-  expect(() => validate(context)).toThrow(/pattern/)
+  assert.throws(() => validate(context), (error) => /pattern/.test(error.message))
 
   context.name = 'foo-bar'
-  expect(() => validate(context)).not.toThrow(/pattern/)
+  assert.doesNotThrow(() => validate(context))
 })
 
 it('should require registry url', () => {
   delete context.registry
-  expect(() => validate(context)).toThrow(/required/)
+  assert.throws(() => validate(context), (error) => /required/.test(error.message))
 })
 
 it('should allow mono replicas and resources', () => {
@@ -80,5 +83,5 @@ it('should allow mono replicas and resources', () => {
     }
   }
 
-  expect(() => validate(context)).not.toThrow()
+  assert.doesNotThrow(() => validate(context))
 })

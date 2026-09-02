@@ -1,17 +1,21 @@
 'use strict'
 
+const { it, mock: mocking } = require('node:test')
+const assert = require('node:assert/strict')
+const { isDeepStrictEqual } = require('node:util')
+
 const { generate } = require('randomstring')
 
 const mock = {
   boot: require('./boot.mock')
 }
 
-jest.mock('@toa.io/boot', () => mock.boot)
+mocking.module('@toa.io/boot', { namedExports: mock.boot })
 
 const stage = require('../')
 
 it('should be', () => {
-  expect(stage.manifest).toBeDefined()
+  assert.notStrictEqual(stage.manifest, undefined)
 })
 
 it('should boot manifest', async () => {
@@ -19,6 +23,6 @@ it('should boot manifest', async () => {
 
   const manifest = await stage.manifest(path)
 
-  expect(mock.boot.manifest).toHaveBeenCalledWith(path)
-  expect(manifest).toStrictEqual(await mock.boot.manifest.mock.results[0].value)
+  assert.ok(mock.boot.manifest.mock.calls.some((call) => call.arguments.length === 1 && isDeepStrictEqual(call.arguments[0], path)))
+  assert.deepStrictEqual(manifest, await mock.boot.manifest.mock.calls[0].result)
 })

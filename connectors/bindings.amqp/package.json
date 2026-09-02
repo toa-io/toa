@@ -26,12 +26,5 @@
   "scripts": {
     "transpile": "tsc"
   },
-  "jest": {
-    "preset": "ts-jest",
-    "testEnvironment": "node",
-    "moduleNameMapper": {
-      "^(\\.{1,2}/.*)\\.js$": "$1"
-    }
-  },
   "gitHead": "61c8e74a336385265767e9fd37d49128cb51b17f"
 }

@@ -23,13 +23,6 @@
   },
   "main": "transpiled/index.js",
   "types": "transpiled/index.d.ts",
-  "jest": {
-    "preset": "ts-jest",
-    "testEnvironment": "node",
-    "moduleNameMapper": {
-      "^(\\.{1,2}/.*)\\.js$": "$1"
-    }
-  },
   "scripts": {
     "transpile": "tsc"
   },

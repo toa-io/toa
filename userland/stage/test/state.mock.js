@@ -1,8 +1,11 @@
 'use strict'
 
-const original = jest.requireActual('../src/state')
+const { mock } = require('node:test')
 
-const reset = jest.fn(() => original.state.reset())
+// this module defines the replacement, so it still sees the real one
+const original = require('../src/state')
+
+const reset = mock.fn(() => original.state.reset())
 const state = { ...original.state, reset }
 
 module.exports = { state }

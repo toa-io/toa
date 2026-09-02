@@ -1,11 +1,15 @@
 'use strict'
 
+const { it, beforeEach, afterEach, mock } = require('node:test')
+const assert = require('node:assert/strict')
+const { isDeepStrictEqual } = require('node:util')
+
 const { console } = require('openspan')
 const { Connector } = require('../src/connector')
 const { Discovery } = require('../src/discovery')
 
 class Lookup extends Connector {
-  invoke = jest.fn(async () => ({ operations: {} }))
+  invoke = mock.fn(async () => ({ operations: {} }))
 }
 
 /** @type {Lookup} */
@@ -14,15 +18,15 @@ let lookup
 /** @type {Discovery} */
 let discovery
 
-/** @type {jest.SpyInstance} */
+/** @type {import('node:test').Mock<any>} */
 let warn
 
 const locator = { id: 'dummies.one' }
 
 beforeEach(async () => {
-  jest.useFakeTimers()
+  mock.timers.enable()
 
-  warn = jest.spyOn(console, 'warn').mockImplementation(() => undefined)
+  warn = mock.method(console, 'warn', () => undefined)
   lookup = new Lookup()
   discovery = new Discovery(async () => lookup)
 
@@ -30,27 +34,33 @@ beforeEach(async () => {
 })
 
 afterEach(() => {
-  warn.mockRestore()
-  jest.useRealTimers()
+  warn.mock.restore()
+  mock.timers.reset()
 })
 
 it('should not warn if a lookup is answered', async () => {
   await discovery.lookup(locator)
 
-  jest.advanceTimersByTime(60_000)
+  mock.timers.tick(60_000)
 
-  expect(warn).not.toHaveBeenCalled()
+  assert.strictEqual(warn.mock.callCount(), 0)
 })
 
 it('should keep warning while a lookup is unanswered', async () => {
-  lookup.invoke.mockImplementation(() => new Promise(() => undefined))
+  lookup.invoke.mock.mockImplementation(() => new Promise(() => undefined))
 
   void discovery.lookup(locator)
 
-  await jest.advanceTimersByTimeAsync(12_000)
+  // the interval is set after the lookup is resolved, so it has to exist
+  // before time is advanced
+  await new Promise((resolve) => process.nextTick(resolve))
 
-  expect(warn).toHaveBeenCalledTimes(2)
+  // node:test moves the clock before running the callbacks it releases, so the
+  // elapsed time each warning reports is only right when time advances by steps
+  mock.timers.tick(5_000)
+  mock.timers.tick(5_000)
 
-  expect(warn).toHaveBeenLastCalledWith('Waiting for lookup response',
-    { component: locator.id, waiting: 10 })
+  assert.strictEqual(warn.mock.callCount(), 2)
+
+  assert.ok(((call) => call.arguments.length === 2 && isDeepStrictEqual(call.arguments[0], 'Waiting for lookup response') && isDeepStrictEqual(call.arguments[1], { component: locator.id, waiting: 10 }))(warn.mock.calls.at(-1) ?? { arguments: [] }))
 })

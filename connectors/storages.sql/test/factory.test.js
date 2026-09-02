@@ -1,5 +1,8 @@
 'use strict'
 
+const { it, beforeEach } = require('node:test')
+const assert = require('node:assert/strict')
+
 const { generate } = require('randomstring')
 const { Locator } = require('@toa.io/core')
 
@@ -15,7 +18,7 @@ beforeEach(() => {
 })
 
 it('should be', () => {
-  expect(Factory).toBeDefined()
+  assert.notStrictEqual(Factory, undefined)
 })
 
 it('should create storage', () => {
@@ -30,12 +33,12 @@ it('should create storage', () => {
 
   delete process.env.TOA_DEV
 
-  expect(storage).toBeDefined()
-  expect(storage).toBeInstanceOf(Storage)
+  assert.notStrictEqual(storage, undefined)
+  assert.ok(storage instanceof Storage)
 })
 
 it('should create migration', () => {
   const migration = factory.migration('pg')
 
-  expect(migration).toBeInstanceOf(Migration)
+  assert.ok(migration instanceof Migration)
 })

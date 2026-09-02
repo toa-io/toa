@@ -1,5 +1,8 @@
 'use strict'
 
+const { it, beforeEach, mock } = require('node:test')
+const assert = require('node:assert/strict')
+
 const { retry, RetryError, timeout, random } = require('../source')
 
 /** @type {toa.generic.retry.Options} */
@@ -13,7 +16,7 @@ it('should return', async () => {
   const value = random()
   const result = await retry(() => value)
 
-  expect(result).toBe(value)
+  assert.strictEqual(result, value)
 })
 
 it('should retry', async () => {
@@ -27,7 +30,7 @@ it('should retry', async () => {
     return 'ok' + attempt
   }, options)
 
-  expect(result).toBe('ok5')
+  assert.strictEqual(result, 'ok5')
 })
 
 it('should retry async', async () => {
@@ -44,14 +47,13 @@ it('should retry async', async () => {
     return 'ok' + attempt
   }, options)
 
-  expect(result).toBe('ok5')
+  assert.strictEqual(result, 'ok5')
 })
 
 it('should throw on failed retries', async () => {
   options.retries = random(10)
 
-  await expect(() => retry((retry) => retry(), options))
-    .rejects.toThrow(new RegExp(`Retry failed after ${options.retries} attempts`))
+  await assert.rejects(() => retry((retry) => retry(), options), new RegExp(`Retry failed after ${options.retries} attempts`))
 })
 
 it('should delay attempts', async () => {
@@ -66,7 +68,7 @@ it('should delay attempts', async () => {
 
   const end = +new Date()
 
-  expect(end - start > 470).toBe(true)
+  assert.strictEqual(end - start > 470, true)
   // FIXME: it may take longer on CI
   // expect(end - start < 500).toBe(true)
 })
@@ -75,8 +77,8 @@ it('should retry given times', async () => {
   const retries = random(10)
 
   // noinspection JSCheckFunctionSignatures
-  const fn = jest.fn((retry) => retry())
+  const fn = mock.fn((retry) => retry())
 
-  await expect(retry(fn, { retries, base: 0 })).rejects.toThrow(RetryError)
-  expect(fn).toHaveBeenCalledTimes(retries + 1)
+  await assert.rejects(retry(fn, { retries, base: 0 }), RetryError)
+  assert.strictEqual(fn.mock.callCount(), retries + 1)
 })

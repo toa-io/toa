@@ -1,3 +1,6 @@
+import { it, mock } from 'node:test'
+import assert from 'node:assert/strict'
+
 import { Tree } from './Tree.js'
 import type { EndpointsFactory } from '../Endpoint.js'
 import type { DirectiveFactory } from './Directives.js'
@@ -11,7 +14,7 @@ const directives = {
     settle: async () => undefined,
     dispose: () => undefined
   }),
-  dispose: jest.fn()
+  dispose: mock.fn()
 } as unknown as DirectiveFactory
 
 const root: syntax.Node = {
@@ -38,41 +41,41 @@ const pots: syntax.Node = {
 it('should extend expiration without rebuilding the branch', () => {
   process.env.__TESTING_EXPOSITION_BRANCH_TTL = '1000'
 
-  const now = jest.spyOn(Date, 'now').mockReturnValue(10_000)
+  const now = mock.method(Date, 'now', () => 10_000)
   const tree = new Tree(root, endpoints, directives)
   const nodes = tree.merge(pots, { namespace: 'default', component: 'pots' })
   const match = tree.match('/pots/')
 
-  expect(match).not.toBeNull()
+  assert.notStrictEqual(match, null)
 
-  now.mockReturnValue(10_900)
+  now.mock.mockImplementation(() => 10_900)
   tree.refresh(nodes)
 
-  now.mockReturnValue(11_500)
+  now.mock.mockImplementation(() => 11_500)
 
   const refreshed = tree.match('/pots/')
 
-  expect(refreshed).not.toBeNull()
-  expect(refreshed?.node).toBe(match?.node)
+  assert.notStrictEqual(refreshed, null)
+  assert.strictEqual(refreshed?.node, match?.node)
 
-  now.mockRestore()
+  now.mock.restore()
   delete process.env.__TESTING_EXPOSITION_BRANCH_TTL
 })
 
 it('should ignore expired nodes during match', () => {
   process.env.__TESTING_EXPOSITION_BRANCH_TTL = '1000'
 
-  const now = jest.spyOn(Date, 'now').mockReturnValue(10_000)
+  const now = mock.method(Date, 'now', () => 10_000)
   const tree = new Tree(root, endpoints, directives)
 
   tree.merge(pots, { namespace: 'default', component: 'pots' })
 
-  expect(tree.match('/pots/')).not.toBeNull()
+  assert.notStrictEqual(tree.match('/pots/'), null)
 
-  now.mockReturnValue(11_000)
+  now.mock.mockImplementation(() => 11_000)
 
-  expect(tree.match('/pots/')).toBeNull()
+  assert.strictEqual(tree.match('/pots/'), null)
 
-  now.mockRestore()
+  now.mock.restore()
   delete process.env.__TESTING_EXPOSITION_BRANCH_TTL
 })

@@ -1,5 +1,9 @@
 'use strict'
 
+const { it, beforeEach, mock } = require('node:test')
+const assert = require('node:assert/strict')
+const { isDeepStrictEqual } = require('node:util')
+
 const { generate } = require('randomstring')
 
 const fixtures = require('./client.fixtures')
@@ -10,7 +14,7 @@ let connection
 let client
 
 beforeEach(async () => {
-  jest.clearAllMocks()
+  resetCalls()
 
   connection = /** @type {toa.sql.Connection} */ fixtures.connection
 
@@ -20,11 +24,11 @@ beforeEach(async () => {
 })
 
 it('should be', () => {
-  expect(Client).toBeDefined()
+  assert.notStrictEqual(Client, undefined)
 })
 
 it('should depend on connection', () => {
-  expect(connection.link).toHaveBeenCalledWith(client)
+  assert.ok(connection.link.mock.calls.some((call) => call.arguments.length === 1 && isDeepStrictEqual(call.arguments[0], client)))
 })
 
 it('should insert', async () => {
@@ -32,7 +36,7 @@ it('should insert', async () => {
 
   await client.insert(object)
 
-  expect(connection.insert).toHaveBeenCalledWith(connection.table, [object])
+  assert.ok(connection.insert.mock.calls.some((call) => call.arguments.length === 2 && isDeepStrictEqual(call.arguments[0], connection.table) && isDeepStrictEqual(call.arguments[1], [object])))
 })
 
 it('should batch insert', async () => {
@@ -40,7 +44,7 @@ it('should batch insert', async () => {
   const b = generate()
   const c = generate()
 
-  connection.insert.mockImplementationOnce(() => new Promise(
+  connection.insert.mock.mockImplementationOnce(() => new Promise(
     (resolve) => setImmediate(() => resolve(true))
   ))
 
@@ -50,9 +54,9 @@ it('should batch insert', async () => {
     client.insert(c)
   ])
 
-  expect(connection.insert).toHaveBeenCalledTimes(2)
-  expect(connection.insert).toHaveBeenNthCalledWith(1, connection.table, [a])
-  expect(connection.insert).toHaveBeenNthCalledWith(2, connection.table, [b, c])
+  assert.strictEqual(connection.insert.mock.callCount(), 2)
+  assert.ok(((call) => call.arguments.length === 2 && isDeepStrictEqual(call.arguments[0], connection.table) && isDeepStrictEqual(call.arguments[1], [a]))(connection.insert.mock.calls[1 - 1] ?? { arguments: [] }))
+  assert.ok(((call) => call.arguments.length === 2 && isDeepStrictEqual(call.arguments[0], connection.table) && isDeepStrictEqual(call.arguments[1], [b, c]))(connection.insert.mock.calls[2 - 1] ?? { arguments: [] }))
 })
 
 it('should update', async () => {
@@ -61,5 +65,15 @@ it('should update', async () => {
 
   await client.update(criteria, object)
 
-  expect(connection.update).toHaveBeenCalledWith(connection.table, criteria, object)
+  assert.ok(connection.update.mock.calls.some((call) => call.arguments.length === 3 && isDeepStrictEqual(call.arguments[0], connection.table) && isDeepStrictEqual(call.arguments[1], criteria) && isDeepStrictEqual(call.arguments[2], object)))
 })
+
+function resetCalls (target = [assert, fixtures], seen = new Set()) {
+  if (target === null || typeof target !== 'object' || seen.has(target)) return
+
+  seen.add(target)
+
+  for (const value of Object.values(target))
+    if (typeof value === 'function' && value.mock !== undefined) value.mock.resetCalls()
+    else resetCalls(value, seen)
+}

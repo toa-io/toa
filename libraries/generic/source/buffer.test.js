@@ -1,12 +1,15 @@
 'use strict'
 
+const { it } = require('node:test')
+const assert = require('node:assert/strict')
+
 const { Readable } = require('node:stream')
 const { generate } = require('randomstring')
 
 const { buffer } = require('../')
 
 it('should be', async () => {
-  expect(buffer).toBeInstanceOf(Function)
+  assert.ok(buffer instanceof Function)
 })
 
 it('should buffer', async () => {
@@ -14,5 +17,5 @@ it('should buffer', async () => {
   const stream = Readable.from(input)
   const output = await buffer(stream)
 
-  expect(output).toStrictEqual(input)
+  assert.deepStrictEqual(output, input)
 })

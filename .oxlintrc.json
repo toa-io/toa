@@ -1,0 +1,41 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["import", "typescript"],
+  "categories": {
+    "correctness": "error",
+    "suspicious": "warn"
+  },
+  "ignorePatterns": [
+    "**/*.js",
+    ".migration",
+    "**/*.d.ts",
+    "**/transpiled",
+    "**/operations",
+    "extensions/introspection/ui",
+    "extensions/configuration/ui",
+    "extensions/*/features/site"
+  ],
+  "rules": {
+    "curly": ["warn", "multi"],
+    "eqeqeq": ["error", "always", { "null": "always" }],
+    "func-style": ["error", "declaration"],
+    "max-depth": ["warn", 2],
+    "max-params": "error",
+    "no-warning-comments": "error",
+    "import/no-default-export": "error",
+    "typescript/consistent-type-imports": ["error", { "fixStyle": "separate-type-imports" }],
+    "typescript/explicit-member-accessibility": "error",
+    "typescript/no-non-null-assertion": "off"
+  },
+  "overrides": [
+    {
+      "files": ["**/*.test.ts", "**/test/**", "**/features/**"],
+      "rules": {
+        "func-style": "off",
+        "max-depth": "off",
+        "max-params": "off",
+        "typescript/explicit-member-accessibility": "off"
+      }
+    }
+  ]
+}

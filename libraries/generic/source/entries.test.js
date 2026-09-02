@@ -1,11 +1,14 @@
 'use strict'
 
+const { it } = require('node:test')
+const assert = require('node:assert/strict')
+
 const { generate } = require('randomstring')
 
 const { entries } = require('../')
 
 it('should be', async () => {
-  expect(entries).toBeInstanceOf(Function)
+  assert.ok(entries instanceof Function)
 })
 
 it('should return entries', async () => {
@@ -13,7 +16,7 @@ it('should return entries', async () => {
   const expected = Object.entries(object)
   const output = entries(object)
 
-  expect(output).toStrictEqual(expected)
+  assert.deepStrictEqual(output, expected)
 })
 
 it('should return symbols', async () => {
@@ -23,5 +26,5 @@ it('should return symbols', async () => {
   const object = { [key]: generate(), [sym]: value }
   const output = entries(object)
 
-  expect(output).toStrictEqual([[key, object[key]], [sym, value]])
+  assert.deepStrictEqual(output, [[key, object[key]], [sym, value]])
 })

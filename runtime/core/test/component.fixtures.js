@@ -1,8 +1,10 @@
 'use strict'
 
+const { mock } = require('node:test')
+
 const randomstring = require('randomstring')
 
-const invocation = () => jest.fn(() => randomstring.generate())
+const invocation = () => mock.fn(() => randomstring.generate())
 
 const invocations = {
   foo: {

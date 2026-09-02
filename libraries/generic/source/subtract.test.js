@@ -1,9 +1,12 @@
 'use strict'
 
+const { it } = require('node:test')
+const assert = require('node:assert/strict')
+
 const { subtract } = require('../')
 
 it('should be', () => {
-  expect(subtract).toBeDefined()
+  assert.notStrictEqual(subtract, undefined)
 })
 
 it('should subtract arrays', () => {
@@ -11,7 +14,7 @@ it('should subtract arrays', () => {
   const b = [2]
   const diff = subtract(a, b)
 
-  expect(diff).toStrictEqual([1, 3])
+  assert.deepStrictEqual(diff, [1, 3])
 })
 
 it('should subtract superset', async () => {
@@ -19,7 +22,7 @@ it('should subtract superset', async () => {
   const b = [1, 2]
   const diff = subtract(a, b)
 
-  expect(diff).toStrictEqual([])
+  assert.deepStrictEqual(diff, [])
 })
 
 it('should subtract sets', () => {
@@ -27,7 +30,7 @@ it('should subtract sets', () => {
   const b = new Set([2])
   const diff = subtract(a, b)
 
-  expect(diff).toStrictEqual(new Set([1, 3]))
+  assert.deepStrictEqual(diff, new Set([1, 3]))
 })
 
 it('should subtract array from set', () => {
@@ -35,7 +38,7 @@ it('should subtract array from set', () => {
   const b = [2]
   const diff = subtract(a, b)
 
-  expect(diff).toStrictEqual(new Set([1, 3]))
+  assert.deepStrictEqual(diff, new Set([1, 3]))
 })
 
 it('should subtract set from array', () => {
@@ -43,5 +46,5 @@ it('should subtract set from array', () => {
   const b = new Set([2])
   const diff = subtract(a, b)
 
-  expect(diff).toStrictEqual([1, 3])
+  assert.deepStrictEqual(diff, [1, 3])
 })

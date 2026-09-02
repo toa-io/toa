@@ -1,10 +1,13 @@
 'use strict'
 
+const { it, before } = require('node:test')
+const assert = require('node:assert/strict')
+
 const { resolve } = require('node:path')
 const define = require('../src/define')
 
 it('should be', () => {
-  expect(define.operations).toBeDefined()
+  assert.notStrictEqual(define.operations, undefined)
 })
 
 const DUMMIES = resolve(__dirname, 'dummies')
@@ -15,22 +18,22 @@ const root = find('one')
 /** @type {toa.node.define.algorithms.List} */
 let operations
 
-beforeAll(async () => {
+before(async () => {
   operations = await define.operations(root)
 })
 
 it('should define', () => {
-  expect(operations).toBeDefined()
+  assert.notStrictEqual(operations, undefined)
 })
 
 it('should find function operations', () => {
-  expect(operations.fn).toBeDefined()
+  assert.notStrictEqual(operations.fn, undefined)
 })
 
 it('should find class operations', () => {
-  expect(operations.cls).toBeDefined()
+  assert.notStrictEqual(operations.cls, undefined)
 })
 
 it('should find factory operations', () => {
-  expect(operations.fct).toBeDefined()
+  assert.notStrictEqual(operations.fct, undefined)
 })

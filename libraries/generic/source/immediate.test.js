@@ -1,9 +1,12 @@
 'use strict'
 
+const { it } = require('node:test')
+const assert = require('node:assert/strict')
+
 const { immediate } = require('../')
 
 it('should be', async () => {
-  expect(immediate).toBeDefined()
+  assert.notStrictEqual(immediate, undefined)
 })
 
 it('should run immediately', async () => {
@@ -19,12 +22,12 @@ it('should run immediately', async () => {
   }
 
   setImmediate(async () => {
-    expect(a).toStrictEqual(true)
-    expect(b).toStrictEqual(false)
+    assert.deepStrictEqual(a, true)
+    assert.deepStrictEqual(b, false)
 
     await immediate()
 
-    expect(b).toStrictEqual(true)
+    assert.deepStrictEqual(b, true)
   })
 
   await func()

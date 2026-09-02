@@ -1,27 +1,31 @@
 'use strict'
 
-jest.mock('comq', () => ({ assert: jest.fn() }))
+const { describe, it, beforeEach, mock } = require('node:test')
+const assert = require('node:assert/strict')
 
-/** @type {jest.MockedObject<comq.IO>} */
+mock.module('comq', { namedExports: ({ assert: mock.fn() }) })
+
+/** @type {comq.IO} */
 let io
 
 beforeEach(() => {
-  // the connector diagnoses a set of brokers once per process
-  jest.resetModules()
+  // the connector diagnoses a set of brokers once per process, so each
+  // scenario needs a module that has not seen one yet
+  delete require.cache[require.resolve('../source/communication')]
 
   io = {
-    diagnose: jest.fn(),
-    seal: jest.fn(),
-    close: jest.fn(),
-    reply: jest.fn(),
-    request: jest.fn(),
-    emit: jest.fn(),
-    consume: jest.fn(),
-    process: jest.fn(),
-    enqueue: jest.fn()
+    diagnose: mock.fn(),
+    seal: mock.fn(),
+    close: mock.fn(),
+    reply: mock.fn(),
+    request: mock.fn(),
+    emit: mock.fn(),
+    consume: mock.fn(),
+    process: mock.fn(),
+    enqueue: mock.fn()
   }
 
-  require('comq').assert.mockResolvedValue(io)
+  require('comq').assert.mock.mockImplementation(async () => io)
 })
 
 /**
@@ -48,14 +52,14 @@ async function connect (references) {
 it('should diagnose the connection', async () => {
   await connect(['amqp://broker'])
 
-  const events = io.diagnose.mock.calls.map(([event]) => event)
+  const events = io.diagnose.mock.calls.map(({ arguments: [event] }) => event)
 
-  expect(events).toContain('close')
-  expect(events).toContain('return')
-  expect(events).toContain('error')
-  expect(events).toContain('lost')
-  expect(events).toContain('reconnect')
-  expect(events).toContain('exhausted')
+  assert.ok(events.includes('close'))
+  assert.ok(events.includes('return'))
+  assert.ok(events.includes('error'))
+  assert.ok(events.includes('lost'))
+  assert.ok(events.includes('reconnect'))
+  assert.ok(events.includes('exhausted'))
 })
 
 it('should diagnose the shared connection once', async () => {
@@ -68,7 +72,7 @@ it('should diagnose the shared connection once', async () => {
   await connect(references)
   await connect(references)
 
-  expect(io.diagnose).toHaveBeenCalledTimes(once)
+  assert.strictEqual(io.diagnose.mock.callCount(), once)
 })
 
 it('should diagnose each set of brokers', async () => {
@@ -78,7 +82,7 @@ it('should diagnose each set of brokers', async () => {
 
   await connect(['amqp://another'])
 
-  expect(io.diagnose).toHaveBeenCalledTimes(once * 2)
+  assert.strictEqual(io.diagnose.mock.callCount(), once * 2)
 })
 
 // otherwise a set of brokers goes unreported for the rest of the process
@@ -90,7 +94,7 @@ it('should hand the diagnosing over when the one doing it goes', async () => {
   await first.disconnect()
   await connect(references)
 
-  expect(io.diagnose).toHaveBeenCalledTimes(once * 2)
+  assert.strictEqual(io.diagnose.mock.callCount(), once * 2)
 })
 
 describe('sealing', () => {
@@ -99,11 +103,11 @@ describe('sealing', () => {
 
     await instance.seal()
 
-    expect(instance.sealed).toBe(true)
+    assert.strictEqual(instance.sealed, true)
 
-    await expect(instance.reply('queue', () => undefined)).rejects.toThrow(/sealed/)
-    await expect(instance.process('queue', () => undefined)).rejects.toThrow(/sealed/)
-    await expect(instance.consume('exchange', 'group', () => undefined)).rejects.toThrow(/sealed/)
+    await assert.rejects(instance.reply('queue', () => undefined), (error) => /sealed/.test(error.message))
+    await assert.rejects(instance.process('queue', () => undefined), (error) => /sealed/.test(error.message))
+    await assert.rejects(instance.consume('exchange', 'group', () => undefined), (error) => /sealed/.test(error.message))
   })
 
   // sealing stops consuming, not publishing
@@ -112,18 +116,18 @@ describe('sealing', () => {
 
     await instance.seal()
 
-    await expect(instance.emit('exchange', 'message')).resolves.not.toThrow()
-    await expect(instance.enqueue('queue', 'message')).resolves.not.toThrow()
-    await expect(instance.request('queue', 'request')).resolves.not.toThrow()
+    await assert.doesNotReject(instance.emit('exchange', 'message'))
+    await assert.doesNotReject(instance.enqueue('queue', 'message'))
+    await assert.doesNotReject(instance.request('queue', 'request'))
   })
 })
 
 it('should tell whoever holds it that it is going', async () => {
-  const evict = jest.fn()
+  const evict = mock.fn()
   const instance = communication(['amqp://broker'], evict)
 
   await instance.connect()
   await instance.disconnect()
 
-  expect(evict).toHaveBeenCalled()
+  assert.ok(evict.mock.callCount() > 0)
 })

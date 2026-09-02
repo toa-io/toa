@@ -1,3 +1,6 @@
+import { it } from 'node:test'
+import assert from 'node:assert/strict'
+
 import { Locator } from '@toa.io/core'
 import { type Annotation, type Instance, deployment, describe as map } from './deployment.js'
 import { epoch } from './epoch.js'
@@ -19,12 +22,11 @@ function instance (name: string, defaults?: Record<string, unknown>): Instance {
 it('should validate annotation', async () => {
   const wrongType = 'not ok' as unknown as Annotation
 
-  expect(() => deployment([], wrongType)).toThrow('object')
+  assert.throws(() => deployment([], wrongType), (error: any) => /object/.test(error.message))
 })
 
 it('should reject unknown components', async () => {
-  expect(() => deployment([instance('base')], { 'configuration.nope': {} }))
-    .toThrow("Component 'configuration.nope' does not request configuration")
+  assert.throws(() => deployment([instance('base')], { 'configuration.nope': {} }), (error: any) => /Component 'configuration\.nope' does not request configuration/.test(error.message))
 })
 
 it('should deploy the values service with the map', async () => {
@@ -33,26 +35,26 @@ it('should deploy the values service with the map', async () => {
 
   const dependency = deployment(instances, annotation)
 
-  expect(dependency.events).toStrictEqual([EVENT])
-  expect(dependency.services).toHaveLength(1)
+  assert.deepStrictEqual(dependency.events, [EVENT])
+  assert.strictEqual(dependency.services?.length, 1)
 
   const service = dependency.services![0]
 
-  expect(service.group).toStrictEqual('configuration')
-  expect(service.name).toStrictEqual('values')
-  expect(service.components).toStrictEqual(['configuration-values'])
+  assert.deepStrictEqual(service.group, 'configuration')
+  assert.deepStrictEqual(service.name, 'values')
+  assert.deepStrictEqual(service.components, ['configuration-values'])
 
   const variable = service.variables!.find((variable) => variable.name === VALUES)
 
-  expect(variable).toBeDefined()
-  expect(JSON.parse(variable!.value!)).toStrictEqual(map(instances, annotation))
+  assert.notStrictEqual(variable, undefined)
+  assert.deepStrictEqual(JSON.parse(variable!.value!), map(instances, annotation))
 })
 
 it('should describe every component', async () => {
   const instances = [instance('base', { foo: 'hello' }), instance('other')]
   const values = map(instances, { 'configuration.other': { foo: 'set' } })
 
-  expect(values).toStrictEqual({
+  assert.deepStrictEqual(values, {
     'configuration.base': { epoch: epoch(schema), schema, defaults: { foo: 'hello' } },
     'configuration.other': { epoch: epoch(schema), schema, defaults: { foo: 'set' } }
   })
@@ -61,19 +63,19 @@ it('should describe every component', async () => {
 it('should prefer the context over the manifest defaults', async () => {
   const values = map([instance('base', { foo: 'hello' })], { 'configuration.base': { foo: 'bye' } })
 
-  expect(values['configuration.base'].defaults).toStrictEqual({ foo: 'bye' })
+  assert.deepStrictEqual(values['configuration.base'].defaults, { foo: 'bye' })
 })
 
 it('should not map values to the component', async () => {
   const dependency = deployment([instance('base')], { 'configuration.base': { foo: 'set' } })
 
-  expect(dependency.variables).toStrictEqual({})
+  assert.deepStrictEqual(dependency.variables, {})
 })
 
 it('should map secrets to the component', async () => {
   const dependency = deployment([instance('base')], { 'configuration.base': { key: '$KEY' } })
 
-  expect(dependency.variables).toStrictEqual({
+  assert.deepStrictEqual(dependency.variables, {
     'configuration-base': [{
       name: 'TOA_CONFIGURATION__KEY',
       secret: { name: 'toa-configuration', key: 'KEY' }
@@ -81,6 +83,5 @@ it('should map secrets to the component', async () => {
   })
 
   // the service holds the reference, not the secret
-  expect(map([instance('base')], { 'configuration.base': { key: '$KEY' } })['configuration.base'].defaults)
-    .toStrictEqual({ key: '$KEY' })
+  assert.deepStrictEqual(map([instance('base')], { 'configuration.base': { key: '$KEY' } })['configuration.base'].defaults, { key: '$KEY' })
 })

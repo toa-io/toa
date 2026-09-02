@@ -1,5 +1,8 @@
 'use strict'
 
+const { describe, it, beforeEach } = require('node:test')
+const assert = require('node:assert/strict')
+
 const { join } = require('node:path')
 const { mkdtemp, readFile } = require('node:fs/promises')
 const { tmpdir } = require('node:os')
@@ -51,8 +54,8 @@ describe('runtime base image', () => {
     const path = await image.prepare(root)
     const dockerfile = await readFile(join(path, 'Dockerfile'), 'utf8')
 
-    expect(dockerfile).toContain(`FROM ${RUNTIME_IMAGE}:1.0.0-alpha.232`)
-    expect(dockerfile).not.toMatch(/npm i -g @toa\.io\/runtime/)
+    assert.ok(dockerfile.includes(`FROM ${RUNTIME_IMAGE}:1.0.0-alpha.232`))
+    assert.doesNotMatch(dockerfile, /npm i -g @toa\.io\/runtime/)
   })
 
   it('should not install runtime in service Dockerfile template', async () => {
@@ -62,8 +65,8 @@ describe('runtime base image', () => {
     const path = await image.prepare(root)
     const dockerfile = await readFile(join(path, 'Dockerfile'), 'utf8')
 
-    expect(dockerfile).toContain(`FROM ${RUNTIME_IMAGE}:1.0.0-alpha.99`)
-    expect(dockerfile).not.toMatch(/npm i -g @toa\.io\/runtime/)
+    assert.ok(dockerfile.includes(`FROM ${RUNTIME_IMAGE}:1.0.0-alpha.99`))
+    assert.doesNotMatch(dockerfile, /npm i -g @toa\.io\/runtime/)
   })
 
   it('should allow registry.build.image override', async () => {
@@ -74,8 +77,8 @@ describe('runtime base image', () => {
     const path = await image.prepare(root)
     const dockerfile = await readFile(join(path, 'Dockerfile'), 'utf8')
 
-    expect(dockerfile).toContain('FROM node:24.14.0-alpine3.22')
-    expect(dockerfile).not.toContain(RUNTIME_IMAGE)
+    assert.ok(dockerfile.includes('FROM node:24.14.0-alpine3.22'))
+    assert.ok(!(dockerfile.includes(RUNTIME_IMAGE)))
   })
 
   it('should allow composition.image override via base', async () => {
@@ -85,6 +88,6 @@ describe('runtime base image', () => {
     const path = await image.prepare(root)
     const dockerfile = await readFile(join(path, 'Dockerfile'), 'utf8')
 
-    expect(dockerfile).toContain('FROM custom.example/base:1')
+    assert.ok(dockerfile.includes('FROM custom.example/base:1'))
   })
 })

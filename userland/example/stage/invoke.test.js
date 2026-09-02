@@ -1,5 +1,8 @@
 'use strict'
 
+const { it, before, after } = require('node:test')
+const assert = require('node:assert/strict')
+
 const { resolve } = require('node:path')
 const stage = require('@toa.io/userland/stage')
 
@@ -8,7 +11,7 @@ const root = resolve(__dirname, '../components')
 /** @type {toa.core.Component} */
 let component
 
-beforeAll(async () => {
+before(async () => {
   process.env.TOA_DEV = '1'
   process.env.TOA_CONFIGURATION_DEFAULT_ECHO = '{}'
   process.env.TOA_CONFIGURATION_TEA_POTS = '{}'
@@ -18,7 +21,7 @@ beforeAll(async () => {
   component = await stage.component(path)
 })
 
-afterAll(async () => {
+after(async () => {
   await stage.shutdown()
 
   delete process.env.TOA_DEV
@@ -30,6 +33,6 @@ it('should invoke', async () => {
 
   const reply = await component.invoke('add', { input: { a, b } })
 
-  expect(reply.exception).toBeUndefined()
-  expect(reply.output).toStrictEqual(a + b)
+  assert.strictEqual(reply.exception, undefined)
+  assert.deepStrictEqual(reply.output, a + b)
 })

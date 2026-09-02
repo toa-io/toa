@@ -1,5 +1,8 @@
 'use strict'
 
+const { it } = require('node:test')
+const assert = require('node:assert/strict')
+
 const { seal } = require('../source/seal')
 
 it('should seal', () => {
@@ -7,7 +10,7 @@ it('should seal', () => {
 
   seal(object)
 
-  expect(() => (object.bar = 'foo')).toThrow(/not extensible/)
+  assert.throws(() => (object.bar = 'foo'), (error) => /not extensible/.test(error.message))
 })
 
 it('should deep seal', () => {
@@ -15,17 +18,17 @@ it('should deep seal', () => {
 
   seal(object)
 
-  expect(() => (object.foo.baz = 'foo')).toThrow(/not extensible/)
+  assert.throws(() => (object.foo.baz = 'foo'), (error) => /not extensible/.test(error.message))
 })
 
 it('should not throw on null or undefined', () => {
-  expect(() => seal(null)).not.toThrow()
-  expect(() => seal(undefined)).not.toThrow()
+  assert.doesNotThrow(() => seal(null))
+  assert.doesNotThrow(() => seal(undefined))
 })
 
 it('should return frozen object', () => {
   const object = { foo: 'bar' }
   const result = seal(object)
 
-  expect(result).toBe(object)
+  assert.strictEqual(result, object)
 })

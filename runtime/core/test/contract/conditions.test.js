@@ -1,5 +1,9 @@
 'use strict'
 
+const { it, beforeEach } = require('node:test')
+const assert = require('node:assert/strict')
+const { isDeepStrictEqual } = require('node:util')
+
 const { generate } = require('randomstring')
 
 const { Contract } = require('../../src/contract/contract')
@@ -16,11 +20,11 @@ it('should fit value', () => {
 
   contract.fit(value)
 
-  expect(fixtures.schema.fit).toHaveBeenCalledWith(value)
+  assert.ok(fixtures.schema.fit.mock.calls.some((call) => call.arguments.length === 1 && isDeepStrictEqual(call.arguments[0], value)))
 })
 
 it('should throw on invalid value', () => {
   const value = { invalid: true }
 
-  expect(() => contract.fit(value)).toThrow()
+  assert.throws(() => contract.fit(value))
 })

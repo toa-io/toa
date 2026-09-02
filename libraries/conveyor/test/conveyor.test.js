@@ -1,5 +1,9 @@
 'use strict'
 
+const { it, beforeEach, mock } = require('node:test')
+const assert = require('node:assert/strict')
+const { isDeepStrictEqual } = require('node:util')
+
 const { generate } = require('randomstring')
 const { random } = require('@toa.io/generic')
 
@@ -7,7 +11,7 @@ const { ProcessorException } = require('../source/exceptions')
 const { Conveyor } = require('../source')
 
 it('should be', () => {
-  expect(Conveyor).toBeDefined()
+  assert.notStrictEqual(Conveyor, undefined)
 })
 
 let processor
@@ -15,8 +19,13 @@ let processor
 /** @type {toa.conveyor.Conveyor<number, string>} */
 let conveyor
 
+// node:test replaces an implementation for one nominated call rather than
+// queueing, so each deferral says which invocation it stands for
+let queued = 0
+
 beforeEach(() => {
-  processor = jest.fn(() => new Promise(() => {}))
+  queued = 0
+  processor = mock.fn(() => new Promise(() => {}))
   conveyor = new Conveyor(processor)
 })
 
@@ -28,7 +37,7 @@ it('should return response', async () => {
 
   complete(result)
 
-  await expect(promise).resolves.toStrictEqual(result)
+  await assert.deepStrictEqual(await promise, result)
 })
 
 it('should buffer units while processing', async () => {
@@ -55,16 +64,16 @@ it('should buffer units while processing', async () => {
   const result = results.shift()
   const promise = promises.shift()
 
-  expect(processor).toHaveBeenCalledTimes(1)
-  expect(processor).toHaveBeenNthCalledWith(1, [unit])
+  assert.strictEqual(processor.mock.callCount(), 1)
+  assert.ok(((call) => call.arguments.length === 1 && isDeepStrictEqual(call.arguments[0], [unit]))(processor.mock.calls[1 - 1] ?? { arguments: [] }))
 
   first(result)
 
-  await expect(promise).resolves.toStrictEqual(result)
+  await assert.deepStrictEqual(await promise, result)
 
   // second process
-  expect(processor).toHaveBeenCalledTimes(2)
-  expect(processor).toHaveBeenNthCalledWith(2, units)
+  assert.strictEqual(processor.mock.callCount(), 2)
+  assert.ok(((call) => call.arguments.length === 1 && isDeepStrictEqual(call.arguments[0], units))(processor.mock.calls[2 - 1] ?? { arguments: [] }))
 
   second(results)
 
@@ -73,7 +82,7 @@ it('should buffer units while processing', async () => {
     const result = results[i]
     const value = await promise
 
-    expect(value).toStrictEqual(result)
+    assert.deepStrictEqual(value, result)
   }
 })
 
@@ -98,13 +107,13 @@ it('should throw if amount of results doesn\'t match amount of units', async () 
 
   second([generate()])
 
-  await expect(Promise.all(promises)).rejects.toThrow(ProcessorException)
+  await assert.rejects(Promise.all(promises), ProcessorException)
 })
 
 const once = () => {
   let complete
 
-  processor.mockImplementationOnce(() => new Promise((resolve) => (complete = resolve)))
+  processor.mock.mockImplementationOnce(() => new Promise((resolve) => (complete = resolve)), queued++)
 
   return (result) => complete(result)
 }

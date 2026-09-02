@@ -1,5 +1,8 @@
 'use strict'
 
+const { it } = require('node:test')
+const assert = require('node:assert/strict')
+
 const { performance } = require('perf_hooks')
 
 const { timeout } = require('../source/timeout')
@@ -12,5 +15,5 @@ it('should wait', async () => {
 
   const end = performance.now()
 
-  expect(Math.ceil(end - start)).toBeGreaterThanOrEqual(ms)
+  assert.ok(Math.ceil(end - start) >= ms)
 })

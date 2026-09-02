@@ -1,3 +1,6 @@
+import { describe, it, beforeEach, afterEach } from 'node:test'
+import assert from 'node:assert/strict'
+
 import { create, current, decide, decode, encode, run, sampling } from './tracing.js'
 import { exporting } from './exporters.js'
 import type * as tracing from './tracing.js'
@@ -18,26 +21,26 @@ describe('create', () => {
   it('should create root context', () => {
     const context = create()
 
-    expect(context.traceId).toMatch(/^[\da-f]{32}$/)
-    expect(context.spanId).toMatch(/^[\da-f]{16}$/)
-    expect(context.parentId).toBeUndefined()
-    expect(context.sampled).toBe(true)
+    assert.match(context.traceId as string, /^[\da-f]{32}$/)
+    assert.match(context.spanId as string, /^[\da-f]{16}$/)
+    assert.strictEqual(context.parentId, undefined)
+    assert.strictEqual(context.sampled, true)
   })
 
   it('should create child context', () => {
     const parent = create()
     const child = create(parent)
 
-    expect(child.traceId).toBe(parent.traceId)
-    expect(child.spanId).not.toBe(parent.spanId)
-    expect(child.parentId).toBe(parent.spanId)
+    assert.strictEqual(child.traceId, parent.traceId)
+    assert.notStrictEqual(child.spanId, parent.spanId)
+    assert.strictEqual(child.parentId, parent.spanId)
   })
 
   it('should inherit sampled flag', () => {
     const parent = { ...create(), sampled: false }
     const child = create(parent)
 
-    expect(child.sampled).toBe(false)
+    assert.strictEqual(child.sampled, false)
   })
 })
 
@@ -46,29 +49,29 @@ describe('sampling', () => {
     exporting([])
 
     for (let i = 0; i < 10; i++)
-      expect(decide()).toBe(false)
+      assert.strictEqual(decide(), false)
   })
 
   it('should sample once an exporter is configured', () => {
     exporting([])
 
-    expect(decide()).toBe(false)
+    assert.strictEqual(decide(), false)
 
     exporting([exporter])
 
-    expect(decide()).toBe(true)
+    assert.strictEqual(decide(), true)
   })
 
   it('should sample all traces by default', () => {
     for (let i = 0; i < 10; i++)
-      expect(decide()).toBe(true)
+      assert.strictEqual(decide(), true)
   })
 
   it('should not sample when sample is 0', () => {
     sampling({ sample: 0 })
 
     for (let i = 0; i < 10; i++)
-      expect(create().sampled).toBe(false)
+      assert.strictEqual(create().sampled, false)
   })
 
   it('should not re-decide for children', () => {
@@ -76,7 +79,7 @@ describe('sampling', () => {
 
     const parent = { ...create(), sampled: true }
 
-    expect(create(parent).sampled).toBe(true)
+    assert.strictEqual(create(parent).sampled, true)
   })
 
   it('should limit the rate of recorded traces', () => {
@@ -84,7 +87,7 @@ describe('sampling', () => {
 
     const decisions = Array.from({ length: 10 }, () => create().sampled)
 
-    expect(decisions.filter(Boolean).length).toBe(2)
+    assert.strictEqual(decisions.filter(Boolean).length, 2)
   })
 
   it('should refill the bucket over time', async () => {
@@ -92,18 +95,18 @@ describe('sampling', () => {
 
     while (decide());
 
-    expect(decide()).toBe(false)
+    assert.strictEqual(decide(), false)
 
     await new Promise((resolve) => setTimeout(resolve, 30))
 
-    expect(decide()).toBe(true)
+    assert.strictEqual(decide(), true)
   })
 
   it('should allow at least one trace for fractional rate', () => {
     sampling({ rate: 0.1 })
 
-    expect(decide()).toBe(true)
-    expect(decide()).toBe(false)
+    assert.strictEqual(decide(), true)
+    assert.strictEqual(decide(), false)
   })
 })
 
@@ -112,7 +115,7 @@ describe('traceparent', () => {
     const context = create()
     const decoded = decode(encode(context))
 
-    expect(decoded).toMatchObject({
+    assert.partialDeepStrictEqual(decoded, {
       traceId: context.traceId,
       spanId: context.spanId,
       sampled: true
@@ -122,19 +125,20 @@ describe('traceparent', () => {
   it('should encode sampled flag', () => {
     const context = { ...create(), sampled: false }
 
-    expect(encode(context)).toMatch(/-00$/)
-    expect(decode(encode(context))?.sampled).toBe(false)
+    assert.match(encode(context), /-00$/)
+    assert.strictEqual(decode(encode(context))?.sampled, false)
   })
 
-  it.each([
+  for (const [_, header] of [
     ['garbage', 'garbage'],
     ['wrong version', '01-4bf92f3577b34da6a3ce929d0e0e4736-00f067aa0ba902b7-01'],
     ['short trace id', '00-4bf92f3577b34da6-00f067aa0ba902b7-01'],
     ['uppercase hex', '00-4BF92F3577B34DA6A3CE929D0E0E4736-00f067aa0ba902b7-01'],
     ['zero trace id', '00-00000000000000000000000000000000-00f067aa0ba902b7-01'],
     ['zero span id', '00-4bf92f3577b34da6a3ce929d0e0e4736-0000000000000000-01']
-  ])('should reject %s', (_, header) => {
-    expect(decode(header)).toBeNull()
+  ])
+     it(`should reject ${_}`, () => {
+    assert.strictEqual(decode(header), null)
   })
 })
 
@@ -142,29 +146,27 @@ describe('module copies', () => {
   // a process may load several copies of the module (the package installed more than once)
   let copy: typeof tracing
 
-  beforeEach(() => {
-    jest.isolateModules(() => {
-      copy = require('./tracing.js')
-    })
+  beforeEach(async () => {
+    copy = await import('./tracing.js')
   })
 
   it('should share the context', () => {
     const context = create()
 
-    run(context, () => expect(copy.current()).toBe(context))
+    run(context, () => assert.strictEqual(copy.current(), context))
   })
 
   it('should share the sampling configuration', () => {
     copy.sampling({ sample: 0 })
 
-    expect(decide()).toBe(false)
+    assert.strictEqual(decide(), false)
   })
 
   it('should share the rate limit', () => {
     copy.sampling({ rate: 1 })
 
-    expect(decide()).toBe(true)
-    expect(copy.decide()).toBe(false)
+    assert.strictEqual(decide(), true)
+    assert.strictEqual(copy.decide(), false)
   })
 })
 
@@ -172,11 +174,11 @@ describe('run', () => {
   it('should expose context within callback', () => {
     const context = create()
 
-    expect(current()).toBeUndefined()
+    assert.strictEqual(current(), undefined)
 
-    run(context, () => expect(current()).toBe(context))
+    run(context, () => assert.strictEqual(current(), context))
 
-    expect(current()).toBeUndefined()
+    assert.strictEqual(current(), undefined)
   })
 
   it('should isolate concurrent chains', async () => {
@@ -191,6 +193,6 @@ describe('run', () => {
 
     await Promise.all([chain('a'), chain('b'), chain('c')])
 
-    expect(seen.sort()).toEqual(['a:a', 'b:b', 'c:c'])
+    assert.deepStrictEqual(seen.sort(), ['a:a', 'b:b', 'c:c'])
   })
 })

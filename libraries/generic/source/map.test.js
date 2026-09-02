@@ -1,9 +1,12 @@
 'use strict'
 
+const { it } = require('node:test')
+const assert = require('node:assert/strict')
+
 const { map } = require('./')
 
 it('should be', async () => {
-  expect(map).toBeInstanceOf(Function)
+  assert.ok(map instanceof Function)
 })
 
 it('should replace key-value pair', async () => {
@@ -14,7 +17,7 @@ it('should replace key-value pair', async () => {
   const input = { foo: 'bar' }
   const output = map(input, transform)
 
-  expect(output).toStrictEqual({ foo1: 'bar1' })
+  assert.deepStrictEqual(output, { foo1: 'bar1' })
 })
 
 it('should replace nested key-value', async () => {
@@ -25,7 +28,7 @@ it('should replace nested key-value', async () => {
   const input = { foo: { bar: 'hello' } }
   const output = map(input, transform)
 
-  expect(output).toStrictEqual({ foo: { baz: 'hello world' } })
+  assert.deepStrictEqual(output, { foo: { baz: 'hello world' } })
 })
 
 it('should keep unmodified keys', async () => {
@@ -36,7 +39,7 @@ it('should keep unmodified keys', async () => {
   const input = { foo: 'value', bar: 'baz' }
   const output = map(input, transform)
 
-  expect(output).toStrictEqual({ foo: 'replaced', bar: 'baz' })
+  assert.deepStrictEqual(output, { foo: 'replaced', bar: 'baz' })
 })
 
 it('should transform values', async () => {
@@ -47,7 +50,7 @@ it('should transform values', async () => {
   const input = { foo: { bar: 'hello' } }
   const output = map(input, transform)
 
-  expect(output).toStrictEqual({ foo: { bar: 'hello world' } })
+  assert.deepStrictEqual(output, { foo: { bar: 'hello world' } })
 })
 
 it('should transform values of object type', async () => {
@@ -58,5 +61,5 @@ it('should transform values of object type', async () => {
   const input = { foo: { bar: 'hello' } }
   const output = map(input, transform)
 
-  expect(output).toStrictEqual({ foo: { baz: 'bye' } })
+  assert.deepStrictEqual(output, { foo: { baz: 'bye' } })
 })

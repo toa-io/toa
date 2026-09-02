@@ -1,10 +1,13 @@
 'use strict'
 
+const { describe, it, beforeEach, mock } = require('node:test')
+const assert = require('node:assert/strict')
+
 const { Entity } = require('../../src/entities/entity')
 const fixtures = require('./entity.fixtures')
 
 beforeEach(() => {
-  jest.clearAllMocks()
+  resetCalls()
 })
 
 describe('argument', () => {
@@ -12,15 +15,15 @@ describe('argument', () => {
     const state = fixtures.state()
     const entity = new Entity(fixtures.schema, state)
 
-    expect(entity.get()).toEqual(state)
+    assert.deepStrictEqual(entity.get(), state)
   })
 
   it('should snapshot the record it may commit', () => {
     const record = fixtures.state()
     const entity = new Entity(fixtures.schema, record)
 
-    expect(entity.get()).not.toBe(record)
-    expect(entity.event().origin).toBe(record)
+    assert.notStrictEqual(entity.get(), record)
+    assert.strictEqual(entity.event().origin, record)
   })
 })
 
@@ -30,20 +33,20 @@ describe('read-only', () => {
     const entity = new Entity(fixtures.schema, record, undefined, false)
 
     // no pre-image to diff against, hence no copy of it
-    expect(entity.get()).toBe(record)
+    assert.strictEqual(entity.get(), record)
   })
 
   it('should still report a tombstone', () => {
     const record = { ...fixtures.state(), _deleted: Date.now() }
     const entity = new Entity(fixtures.schema, record, undefined, false)
 
-    expect(entity.deleted).toBe(true)
+    assert.strictEqual(entity.deleted, true)
   })
 
   it('should refuse to be modified', () => {
     const entity = new Entity(fixtures.schema, fixtures.state(), undefined, false)
 
-    expect(() => entity.set(entity.get())).toThrow('read-only')
+    assert.throws(() => entity.set(entity.get()), (error) => /read-only/.test(error.message))
   })
 })
 
@@ -56,9 +59,9 @@ describe('tombstone', () => {
     state.foo = 'revived'
     entity.set(state)
 
-    expect(entity.get()._deleted).toBeNull()
-    expect(entity.deleted).toBe(false)
-    expect(entity.event().state._deleted).toBeNull()
+    assert.strictEqual(entity.get()._deleted, null)
+    assert.strictEqual(entity.deleted, false)
+    assert.strictEqual(entity.event().state._deleted, null)
   })
 
   it('should keep tombstone written by transition', () => {
@@ -70,8 +73,8 @@ describe('tombstone', () => {
     state._deleted = timestamp
     entity.set(state)
 
-    expect(entity.get()._deleted).toBe(timestamp)
-    expect(entity.deleted).toBe(true)
+    assert.strictEqual(entity.get()._deleted, timestamp)
+    assert.strictEqual(entity.deleted, true)
   })
 })
 
@@ -85,8 +88,18 @@ it('should provide event', () => {
 
   const event = entity.event()
 
-  expect(event).toEqual(expect.objectContaining({ state, origin }))
-  expect(event.state.foo).toBe('new value')
-  expect(event.state._version).toBe(1)
-  expect(event.origin.foo).not.toBe('new value')
+  assert.partialDeepStrictEqual(event, { state, origin })
+  assert.strictEqual(event.state.foo, 'new value')
+  assert.strictEqual(event.state._version, 1)
+  assert.notStrictEqual(event.origin.foo, 'new value')
 })
+
+function resetCalls (target = [assert, fixtures], seen = new Set()) {
+  if (target === null || typeof target !== 'object' || seen.has(target)) return
+
+  seen.add(target)
+
+  for (const value of Object.values(target))
+    if (typeof value === 'function' && value.mock !== undefined) value.mock.resetCalls()
+    else resetCalls(value, seen)
+}

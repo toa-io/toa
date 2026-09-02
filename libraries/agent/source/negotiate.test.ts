@@ -1,3 +1,6 @@
+import { it } from 'node:test'
+import assert from 'node:assert/strict'
+
 import { negotiate } from './negotiate.js'
 
 it('should return acceptable', async () => {
@@ -5,7 +8,7 @@ it('should return acceptable', async () => {
   const available = ['application/xml', 'text/html']
   const result = negotiate(accept, available)
 
-  expect(result).toBe('text/html')
+  assert.strictEqual(result, 'text/html')
 })
 
 it('should return null if not acceptable', async () => {
@@ -13,5 +16,5 @@ it('should return null if not acceptable', async () => {
   const available = ['application/json']
   const result = negotiate(accept, available)
 
-  expect(result).toBe(null)
+  assert.strictEqual(result, null)
 })

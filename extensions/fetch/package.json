@@ -22,12 +22,5 @@
   "dependencies": {
     "@toa.io/core": "1.0.0-alpha.273",
     "openspan": "1.0.0-alpha.272"
-  },
-  "jest": {
-    "preset": "ts-jest",
-    "testEnvironment": "node",
-    "moduleNameMapper": {
-      "^(\\.{1,2}/.*)\\.js$": "$1"
-    }
   }
 }

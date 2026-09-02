@@ -1,12 +1,16 @@
 'use strict'
 
+const { it, beforeEach, mock } = require('node:test')
+const assert = require('node:assert/strict')
+const { isDeepStrictEqual } = require('node:util')
+
 const { generate } = require('randomstring')
 const { promex } = require('../')
 
 const { track } = require('../')
 
 it('should be', async () => {
-  expect(track).toBeDefined()
+  assert.notStrictEqual(track, undefined)
 })
 
 /** @type {toa.generic.Promex} */
@@ -15,16 +19,16 @@ let done
 /** @type {toa.generic.Promex} */
 let undone
 
-const method1 = /** @type {jest.MockedFn<(a: string, b: string) => Promise>} */
-  jest.fn(async function () {
+const method1 = /** @type {import('node:test').Mock<(a: string, b: string) => Promise>} */
+  mock.fn(async function () {
     // should execute in context
-    expect(this.ok).toStrictEqual(1)
+    assert.deepStrictEqual(this.ok, 1)
 
     return done
   })
 
-const method2 = /** @type {jest.MockedFn<(a: string, b: string) => Promise>} */
-  jest.fn(async function () { return undone })
+const method2 = /** @type {import('node:test').Mock<(a: string, b: string) => Promise>} */
+  mock.fn(async function () { return undone })
 
 class Test {
   ok = 1
@@ -36,7 +40,7 @@ class Test {
 let test
 
 beforeEach(() => {
-  jest.clearAllMocks()
+  resetCalls()
 
   done = promex()
   undone = promex()
@@ -44,7 +48,7 @@ beforeEach(() => {
 })
 
 it('should return function', async () => {
-  expect(test.do).toBeInstanceOf(Function)
+  assert.ok(test.do instanceof Function)
 })
 
 it('should execute method', async () => {
@@ -56,21 +60,20 @@ it('should execute method', async () => {
 
   const output = await test.do(...args)
 
-  expect(method1).toHaveBeenCalledWith(...args)
-  expect(output).toStrictEqual(result)
+  assert.ok(method1.mock.calls.some((call) => isDeepStrictEqual(call.arguments, [...args])))
+  assert.deepStrictEqual(output, result)
 })
 
 it('should track method execution', async () => {
-  expect.assertions(2)
-
+  
   setImmediate(async () => {
     setImmediate(() => {
       done.resolve()
 
-      expect(finished).toStrictEqual(false)
+      assert.deepStrictEqual(finished, false)
 
       setImmediate(() => {
-        expect(finished).toStrictEqual(true)
+        assert.deepStrictEqual(finished, true)
       })
     })
 
@@ -85,19 +88,19 @@ it('should track method execution', async () => {
 })
 
 it('should track multiple methods', async () => {
-  expect.assertions(3 + 1) // + method1
+   // + method1
 
   setImmediate(async () => {
     setImmediate(() => {
       done.resolve()
 
-      expect(finished).toStrictEqual(false)
+      assert.deepStrictEqual(finished, false)
 
       setImmediate(() => {
         undone.resolve()
 
-        expect(finished).toStrictEqual(false)
-        setImmediate(() => expect(finished).toStrictEqual(true))
+        assert.deepStrictEqual(finished, false)
+        setImmediate(() => assert.deepStrictEqual(finished, true))
       })
     })
 
@@ -116,8 +119,7 @@ it('should resolve if methods haven\'t been called', async () => {
 })
 
 it('should handle exceptions', async () => {
-  expect.assertions(2)
-
+  
   const exception = new Error(generate())
 
   class Bad {
@@ -129,8 +131,18 @@ it('should handle exceptions', async () => {
   try {
     await b.do()
   } catch (e) {
-    expect(e).toStrictEqual(exception)
+    assert.deepStrictEqual(e, exception)
   }
 
-  await expect(track(b)).resolves.not.toThrow()
+  await assert.doesNotReject(track(b))
 })
+
+function resetCalls (target = [assert, method1, method2], seen = new Set()) {
+  if (target === null || typeof target !== 'object' || seen.has(target)) return
+
+  seen.add(target)
+
+  for (const value of Object.values(target))
+    if (typeof value === 'function' && value.mock !== undefined) value.mock.resetCalls()
+    else resetCalls(value, seen)
+}

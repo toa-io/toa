@@ -1,5 +1,8 @@
 'use strict'
 
+const { it } = require('node:test')
+const assert = require('node:assert/strict')
+
 const { generate } = require('randomstring')
 const { hash } = require('../source')
 
@@ -10,7 +13,7 @@ it('should hash', () => {
   const hash2 = hash(str)
   const hash3 = hash(generate())
 
-  expect(typeof hash1).toBe('string')
-  expect(hash1).toEqual(hash2)
-  expect(hash1).not.toEqual(hash3)
+  assert.strictEqual(typeof hash1, 'string')
+  assert.deepStrictEqual(hash1, hash2)
+  assert.notDeepStrictEqual(hash1, hash3)
 })

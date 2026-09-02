@@ -1,9 +1,12 @@
 'use strict'
 
+const { it, beforeEach } = require('node:test')
+const assert = require('node:assert/strict')
+
 const { Factory } = require('../')
 
 it('should be', async () => {
-  expect(Factory).toBeInstanceOf(Function)
+  assert.ok(Factory instanceof Function)
 })
 
 /** @type {Factory} */
@@ -14,5 +17,5 @@ beforeEach(() => {
 })
 
 it('should implement aspect()', async () => {
-  expect(factory.aspect).toBeInstanceOf(Function)
+  assert.ok(factory.aspect instanceof Function)
 })

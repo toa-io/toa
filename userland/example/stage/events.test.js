@@ -1,5 +1,8 @@
 'use strict'
 
+const { it, before, after } = require('node:test')
+const assert = require('node:assert/strict')
+
 const { resolve } = require('node:path')
 const boot = require('@toa.io/boot')
 const { Connector, Locator } = require('@toa.io/core')
@@ -12,7 +15,7 @@ let remote
 let emitter
 let consumer
 
-beforeAll(async () => {
+before(async () => {
   process.env.TOA_DEV = '1'
   process.env.TOA_CONFIGURATION_TEA_POTS = '{}'
 
@@ -31,7 +34,7 @@ beforeAll(async () => {
   await emitter.connect()
 })
 
-afterAll(async () => {
+after(async () => {
   await consumer?.disconnect()
   await emitter.disconnect()
   await stage.shutdown()
@@ -59,7 +62,7 @@ it('should receive event', async () => {
     reply = await remote.invoke('observe', request)
   } while (reply.booked !== true && Date.now() < deadline)
 
-  expect(reply.booked).toStrictEqual(true)
+  assert.deepStrictEqual(reply.booked, true)
 })
 
 it('should emit event', async () => {
@@ -76,7 +79,7 @@ it('should emit event', async () => {
 
   const payload = await received
 
-  expect(payload.material).toStrictEqual(material)
+  assert.deepStrictEqual(payload.material, material)
 })
 
 /** What the event consumer hands deliveries to. */

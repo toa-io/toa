@@ -1,5 +1,7 @@
 'use strict'
 
+const { mock } = require('node:test')
+
 const { generate } = require('randomstring')
 
 const definition = {
@@ -9,12 +11,12 @@ const definition = {
 
 // noinspection JSCheckFunctionSignatures
 const bridge = {
-  condition: jest.fn(async (origin) => !origin.falsy),
-  payload: jest.fn(async () => ({ [generate()]: generate() }))
+  condition: mock.fn(async (origin) => !origin.falsy),
+  payload: mock.fn(async () => ({ [generate()]: generate() }))
 }
 
 const binding = {
-  emit: jest.fn()
+  emit: mock.fn()
 }
 
 const event = {

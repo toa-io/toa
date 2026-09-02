@@ -1,5 +1,9 @@
 'use strict'
 
+const { it, beforeEach, mock: mocking } = require('node:test')
+const assert = require('node:assert/strict')
+const { isDeepStrictEqual } = require('node:util')
+
 const { generate } = require('randomstring')
 const { Connector } = require('@toa.io/core')
 
@@ -8,12 +12,12 @@ const mock = {
   queues: require('./queues.mock')
 }
 
-jest.mock('../source/queues', () => mock.queues)
+mocking.module('../source/queues', { namedExports: mock.queues })
 
 const { Consumer } = require('../source/consumer')
 
 it('should be', async () => {
-  expect(Consumer).toBeDefined()
+  assert.notStrictEqual(Consumer, undefined)
 })
 
 const comm = mock.communication()
@@ -24,17 +28,17 @@ const endpoint = generate()
 let consumer
 
 beforeEach(() => {
-  jest.clearAllMocks()
+  resetCalls()
 
   consumer = new Consumer(comm, locator, endpoint)
 })
 
 it('should be instance of Connector', async () => {
-  expect(consumer).toBeInstanceOf(Connector)
+  assert.ok(consumer instanceof Connector)
 })
 
 it('should depend on communication', async () => {
-  expect(comm.link).toHaveBeenCalledWith(consumer)
+  assert.ok(comm.link.mock.calls.some((call) => call.arguments.length === 1 && isDeepStrictEqual(call.arguments[0], consumer)))
 })
 
 it('should send request', async () => {
@@ -42,10 +46,20 @@ it('should send request', async () => {
 
   const reply = await consumer.request(request)
 
-  expect(mock.queues.name).toHaveBeenCalledWith(locator, endpoint)
+  assert.ok(mock.queues.name.mock.calls.some((call) => call.arguments.length === 2 && isDeepStrictEqual(call.arguments[0], locator) && isDeepStrictEqual(call.arguments[1], endpoint)))
 
-  const queue = mock.queues.name.mock.results[0].value
+  const queue = mock.queues.name.mock.calls[0].result
 
-  expect(comm.request).toHaveBeenCalledWith(queue, request)
-  expect(reply).toStrictEqual(await comm.request.mock.results[0].value)
+  assert.ok(comm.request.mock.calls.some((call) => call.arguments.length === 2 && isDeepStrictEqual(call.arguments[0], queue) && isDeepStrictEqual(call.arguments[1], request)))
+  assert.deepStrictEqual(reply, await comm.request.mock.calls[0].result)
 })
+
+function resetCalls (target = [assert, mock, comm, locator, endpoint], seen = new Set()) {
+  if (target === null || typeof target !== 'object' || seen.has(target)) return
+
+  seen.add(target)
+
+  for (const value of Object.values(target))
+    if (typeof value === 'function' && value.mock !== undefined) value.mock.resetCalls()
+    else resetCalls(value, seen)
+}

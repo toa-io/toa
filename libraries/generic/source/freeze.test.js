@@ -1,5 +1,8 @@
 'use strict'
 
+const { it } = require('node:test')
+const assert = require('node:assert/strict')
+
 const { freeze } = require('../source/freeze')
 
 it('should freeze', () => {
@@ -7,8 +10,8 @@ it('should freeze', () => {
 
   freeze(object)
 
-  expect(() => (object.foo = 'baz')).toThrow(/read only property/)
-  expect(() => (object.bar = 'foo')).toThrow(/not extensible/)
+  assert.throws(() => (object.foo = 'baz'), (error) => /read only property/.test(error.message))
+  assert.throws(() => (object.bar = 'foo'), (error) => /not extensible/.test(error.message))
 })
 
 it('should deep freeze', () => {
@@ -16,22 +19,22 @@ it('should deep freeze', () => {
 
   freeze(object)
 
-  expect(() => (object.foo.bar = 'foo')).toThrow(/read only property/)
-  expect(() => (object.foo.baz = 'foo')).toThrow(/not extensible/)
+  assert.throws(() => (object.foo.bar = 'foo'), (error) => /read only property/.test(error.message))
+  assert.throws(() => (object.foo.baz = 'foo'), (error) => /not extensible/.test(error.message))
 })
 
 it('should not throw on null or undefined', () => {
-  expect(() => freeze(null)).not.toThrow()
-  expect(() => freeze(undefined)).not.toThrow()
+  assert.doesNotThrow(() => freeze(null))
+  assert.doesNotThrow(() => freeze(undefined))
 })
 
 it('should return frozen object', () => {
   const object = { foo: 'bar' }
   const result = freeze(object)
 
-  expect(result).toBe(object)
+  assert.strictEqual(result, object)
 })
 
 it('should return scalar values', () => {
-  expect(freeze(1)).toBe(1)
+  assert.strictEqual(freeze(1), 1)
 })

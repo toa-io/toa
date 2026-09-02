@@ -16,15 +16,8 @@
   "publishConfig": {
     "access": "public"
   },
-  "jest": {
-    "preset": "ts-jest",
-    "testEnvironment": "node",
-    "moduleNameMapper": {
-      "^(\\.{1,2}/.*)\\.js$": "$1"
-    }
-  },
   "scripts": {
-    "test": "jest",
+    "test": "echo \"Error: run tests from root\" && exit 1",
     "transpile": "npx tsc"
   },
   "devDependencies": {

@@ -1,5 +1,8 @@
 'use strict'
 
+const { it, beforeEach } = require('node:test')
+const assert = require('node:assert/strict')
+
 const clone = require('clone-deep')
 const { generate } = require('randomstring')
 
@@ -17,8 +20,8 @@ it('should resolve local version', () => {
 
   normalize(context)
 
-  expect(context.runtime).not.toEqual('.')
-  expect(context.runtime.version).toEqual(require('@toa.io/runtime').version)
+  assert.notDeepStrictEqual(context.runtime, '.')
+  assert.deepStrictEqual(context.runtime.version, require('@toa.io/runtime').version)
 })
 
 it('should expand registry', () => {
@@ -28,7 +31,7 @@ it('should expand registry', () => {
 
   normalize(context)
 
-  expect(context.registry).toEqual({
+  assert.deepStrictEqual(context.registry, {
     base
   })
 })

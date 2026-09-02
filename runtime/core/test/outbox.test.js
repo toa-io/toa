@@ -1,5 +1,8 @@
 'use strict'
 
+const { it, beforeEach, afterEach, mock } = require('node:test')
+const assert = require('node:assert/strict')
+
 const { Outbox } = require('../src/outbox')
 
 let emission, storage, atom, outbox
@@ -14,101 +17,107 @@ const page = (from, count) =>
   }))
 
 beforeEach(() => {
-  jest.clearAllMocks()
-  jest.useFakeTimers()
+  resetCalls()
+  mock.timers.enable()
 
-  emission = { emit: jest.fn(async () => undefined), link: jest.fn() }
+  emission = { emit: mock.fn(async () => undefined), link: mock.fn() }
 
   storage = {
-    link: jest.fn(),
+    link: mock.fn(),
     outbox: {
-      pending: jest.fn(async () => []),
-      settle: jest.fn(async () => undefined)
+      pending: mock.fn(async () => []),
+      settle: mock.fn(async () => undefined)
     }
   }
 
-  atom = { slots: jest.fn(() => [0]), link: jest.fn() }
+  atom = { slots: mock.fn(() => [0]), link: mock.fn() }
   outbox = new Outbox(emission, storage, atom, { interval: 1000, batch: BATCH })
 })
 
 afterEach(() => {
-  jest.useRealTimers()
+  mock.timers.reset()
 })
 
 /** one cycle, and everything it awaited */
 const cycle = async () => {
-  jest.advanceTimersByTime(1000)
+  mock.timers.tick(1000)
 
   for (let i = 0; i < 20; i++) await Promise.resolve()
 }
 
 it('should read nothing more when the first page is short', async () => {
-  storage.outbox.pending.mockResolvedValueOnce(page(0, 3))
+  storage.outbox.pending.mock.mockImplementationOnce(async () => page(0, 3))
 
   await outbox.open()
   await cycle()
 
-  expect(storage.outbox.pending).toHaveBeenCalledTimes(1)
-  expect(emission.emit).toHaveBeenCalledTimes(3)
+  assert.strictEqual(storage.outbox.pending.mock.callCount(), 1)
+  assert.strictEqual(emission.emit.mock.callCount(), 3)
 })
 
 it('should keep reading while a page comes back full', async () => {
-  storage.outbox.pending
-    .mockResolvedValueOnce(page(0, BATCH))
-    .mockResolvedValueOnce(page(BATCH, BATCH))
-    .mockResolvedValueOnce(page(2 * BATCH, 5))
+  storage.outbox.pending.mock.mockImplementationOnce(async () => page(0, BATCH), storage.outbox.pending.mock.callCount())
+  storage.outbox.pending.mock.mockImplementationOnce(async () => page(BATCH, BATCH), storage.outbox.pending.mock.callCount() + 1)
+  storage.outbox.pending.mock.mockImplementationOnce(async () => page(2 * BATCH, 5), storage.outbox.pending.mock.callCount() + 2)
 
   await outbox.open()
   await cycle()
 
-  expect(storage.outbox.pending).toHaveBeenCalledTimes(3)
-  expect(emission.emit).toHaveBeenCalledTimes(2 * BATCH + 5)
+  assert.strictEqual(storage.outbox.pending.mock.callCount(), 3)
+  assert.strictEqual(emission.emit.mock.callCount(), 2 * BATCH + 5)
 })
 
 it('should continue each page from the id the one before ended on', async () => {
-  storage.outbox.pending
-    .mockResolvedValueOnce(page(0, BATCH))
-    .mockResolvedValueOnce(page(BATCH, 1))
+  storage.outbox.pending.mock.mockImplementationOnce(async () => page(0, BATCH), storage.outbox.pending.mock.callCount())
+  storage.outbox.pending.mock.mockImplementationOnce(async () => page(BATCH, 1), storage.outbox.pending.mock.callCount() + 1)
 
   await outbox.open()
   await cycle()
 
   const [, second] = storage.outbox.pending.mock.calls
 
-  expect(storage.outbox.pending.mock.calls[0][3]).toBeUndefined()
-  expect(second[3]).toStrictEqual(String(BATCH - 1).padStart(4, '0'))
+  assert.strictEqual(storage.outbox.pending.mock.calls[0].arguments[3], undefined)
+  assert.deepStrictEqual(second.arguments[3], String(BATCH - 1).padStart(4, '0'))
 })
 
 it('should mark what it published, once, after the last page', async () => {
-  storage.outbox.pending
-    .mockResolvedValueOnce(page(0, BATCH))
-    .mockResolvedValueOnce(page(BATCH, 2))
+  storage.outbox.pending.mock.mockImplementationOnce(async () => page(0, BATCH), storage.outbox.pending.mock.callCount())
+  storage.outbox.pending.mock.mockImplementationOnce(async () => page(BATCH, 2), storage.outbox.pending.mock.callCount() + 1)
 
   await outbox.open()
   await cycle()
 
-  expect(storage.outbox.settle).toHaveBeenCalledTimes(1)
-  expect(storage.outbox.settle.mock.calls[0][0]).toHaveLength(BATCH + 2)
+  assert.strictEqual(storage.outbox.settle.mock.callCount(), 1)
+  assert.strictEqual(storage.outbox.settle.mock.calls[0].arguments[0].length, BATCH + 2)
 })
 
 it('should not publish a row it has published and not yet marked', async () => {
-  storage.outbox.settle.mockRejectedValueOnce(new Error('mongo is out'))
-  storage.outbox.pending
-    .mockResolvedValueOnce(page(0, 2))
-    .mockResolvedValueOnce(page(0, 2))
+  storage.outbox.settle.mock.mockImplementationOnce(async () => { throw new Error('mongo is out') })
+  storage.outbox.pending.mock.mockImplementationOnce(async () => page(0, 2), storage.outbox.pending.mock.callCount())
+  storage.outbox.pending.mock.mockImplementationOnce(async () => page(0, 2), storage.outbox.pending.mock.callCount() + 1)
 
   await outbox.open()
   await cycle()
   await cycle()
 
-  expect(emission.emit).toHaveBeenCalledTimes(2)
+  assert.strictEqual(emission.emit.mock.callCount(), 2)
 })
 
 it('should read nothing while it owns no slots', async () => {
-  atom.slots.mockReturnValue(null)
+  atom.slots.mock.mockImplementation(() => null)
 
   await outbox.open()
   await cycle()
 
-  expect(storage.outbox.pending).not.toHaveBeenCalled()
+  assert.strictEqual(storage.outbox.pending.mock.callCount(), 0)
 })
+
+function resetCalls (target = [assert, BATCH, page, cycle], seen = new Set()) {
+  if (target === null || typeof target !== 'object' || seen.has(target)) return
+
+  seen.add(target)
+
+  for (const value of Object.values(target))
+    if (typeof value === 'function' && value.mock !== undefined) value.mock.resetCalls()
+    else resetCalls(value, seen)
+}

@@ -1,3 +1,6 @@
+import { it, beforeEach, mock } from 'node:test'
+import assert from 'node:assert/strict'
+
 import { generate } from 'randomstring'
 import { V3 } from 'paseto'
 import { Effect as Encrypt } from './encrypt.js'
@@ -10,7 +13,7 @@ let context: Context
 let encrypt: Encrypt
 let decrypt: Decrypt
 
-const remote = { identity: { keys: { observe: jest.fn(async () => null) } } }
+const remote = { identity: { keys: { observe: mock.fn(async () => null) } } }
 const authority = generate()
 
 beforeEach(() => {
@@ -50,7 +53,7 @@ it('should decrypt', async () => {
 
   const decrypted = await decrypt.execute(reply)
 
-  expect(decrypted).toMatchObject({ iss: authority, identity, refresh: false })
+  assert.partialDeepStrictEqual(decrypted, { iss: authority, identity, refresh: false })
 })
 
 it('should decrypt with key1', async () => {
@@ -73,7 +76,7 @@ it('should decrypt with key1', async () => {
 
   const decrypted = await decrypt.execute(encrypted)
 
-  expect(decrypted).toMatchObject({ identity, refresh: true })
+  assert.partialDeepStrictEqual(decrypted, { identity, refresh: true })
 })
 
 it('should decrypt legacy PASETO and require refresh', async () => {
@@ -83,7 +86,7 @@ it('should decrypt legacy PASETO and require refresh', async () => {
     footer: { kid: 'legacy0' }
   })
 
-  await expect(decrypt.execute(token)).resolves.toMatchObject({
+  await assert.partialDeepStrictEqual(await decrypt.execute(token), {
     iss: authority,
     identity,
     refresh: true
@@ -102,7 +105,7 @@ it('should separate JWE and PASETO keys with the same id by format', async () =>
     footer: { kid: 'key0' }
   })
 
-  await expect(decrypt.execute(token)).resolves.toMatchObject({ identity, refresh: true })
+  await assert.partialDeepStrictEqual(await decrypt.execute(token), { identity, refresh: true })
 })
 
 it('should reject a tampered JWE', async () => {
@@ -120,7 +123,8 @@ it('should reject a tampered JWE', async () => {
 
   const tampered = parts.join('.')
 
-  await expect(decrypt.execute(tampered)).resolves.toMatchObject({ code: 'INVALID_TOKEN' })
+  const thrown: any = await decrypt.execute(tampered)
+        assert.deepStrictEqual(thrown.code, 'INVALID_TOKEN')
 })
 
 it('should reject JWE with an unknown key', async () => {
@@ -133,7 +137,8 @@ it('should reject JWE with an unknown key', async () => {
   if (token instanceof Error)
     throw token
 
-  await expect(decrypt.execute(token)).resolves.toMatchObject({ code: 'INVALID_KEY' })
+  const thrown: any = await decrypt.execute(token)
+        assert.deepStrictEqual(thrown.code, 'INVALID_KEY')
 })
 
 function secret (value: string): Secret {

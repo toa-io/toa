@@ -1,26 +1,29 @@
 'use strict'
 
+const { it } = require('node:test')
+const assert = require('node:assert/strict')
+
 const { match } = require('../')
 
 it('should exist', () => {
-  expect(match).toBeDefined()
+  assert.notStrictEqual(match, undefined)
 })
 
 it('should match values', () => {
-  expect(match(1, 1)).toStrictEqual(true)
-  expect(match('foo', 'foo')).toStrictEqual(true)
-  expect(match(1, 2)).toStrictEqual(false)
-  expect(match(1, '1')).toStrictEqual(false)
+  assert.deepStrictEqual(match(1, 1), true)
+  assert.deepStrictEqual(match('foo', 'foo'), true)
+  assert.deepStrictEqual(match(1, 2), false)
+  assert.deepStrictEqual(match(1, '1'), false)
 })
 
 it('should match arrays', () => {
-  expect(match([1, 2], [1, 2])).toStrictEqual(true)
-  expect(match([1, 2, 3], [2, 1])).toStrictEqual(true)
-  expect(match([1, 2, 3], [2, 1, 4])).toStrictEqual(false)
+  assert.deepStrictEqual(match([1, 2], [1, 2]), true)
+  assert.deepStrictEqual(match([1, 2, 3], [2, 1]), true)
+  assert.deepStrictEqual(match([1, 2, 3], [2, 1, 4]), false)
 })
 
 it('should not throw on type mismatch', () => {
-  expect(match(1, [1, 2])).toStrictEqual(false)
+  assert.deepStrictEqual(match(1, [1, 2]), false)
 })
 
 it('should match objects', () => {
@@ -33,22 +36,22 @@ it('should match objects', () => {
     }
   }
 
-  expect(match(reference, { foo: 'bar' })).toStrictEqual(true)
-  expect(match(reference, { qux: { val: 'text' } })).toStrictEqual(true)
-  expect(match(reference, { qux: { val: 'whatever' } })).toStrictEqual(false)
-  expect(match(reference, { qux: { arr: [1, 2] } })).toStrictEqual(true)
-  expect(match(reference, { qux: { arr: [2, 5] } })).toStrictEqual(false)
-  expect(match(reference, {
+  assert.deepStrictEqual(match(reference, { foo: 'bar' }), true)
+  assert.deepStrictEqual(match(reference, { qux: { val: 'text' } }), true)
+  assert.deepStrictEqual(match(reference, { qux: { val: 'whatever' } }), false)
+  assert.deepStrictEqual(match(reference, { qux: { arr: [1, 2] } }), true)
+  assert.deepStrictEqual(match(reference, { qux: { arr: [2, 5] } }), false)
+  assert.deepStrictEqual(match(reference, {
     foo: 'bar',
     bar: 1
-  })).toStrictEqual(false)
+  }), false)
 })
 
 it('should not throw on nulls', () => {
-  expect(match(null, null)).toStrictEqual(true)
-  expect(match(null, [1, 2])).toStrictEqual(false)
-  expect(match(null, { foo: 'bar' })).toStrictEqual(false)
-  expect(match([1, 2], null)).toStrictEqual(false)
+  assert.deepStrictEqual(match(null, null), true)
+  assert.deepStrictEqual(match(null, [1, 2]), false)
+  assert.deepStrictEqual(match(null, { foo: 'bar' }), false)
+  assert.deepStrictEqual(match([1, 2], null), false)
 })
 
 it('should match array items in objects', async () => {
@@ -59,5 +62,5 @@ it('should match array items in objects', async () => {
     ]
   }
 
-  expect(match(reference, { foo: [{ bar: 2 }] })).toStrictEqual(true)
+  assert.deepStrictEqual(match(reference, { foo: [{ bar: 2 }] }), true)
 })

@@ -1,5 +1,8 @@
 'use strict'
 
+const { describe, it, beforeEach } = require('node:test')
+const assert = require('node:assert/strict')
+
 const clone = require('clone-deep')
 
 const fixtures = require('./collapse.fixtures')
@@ -18,7 +21,7 @@ it('should ignore locator', () => {
 
   collapse(manifest, prototype)
 
-  expect(manifest).toStrictEqual(source)
+  assert.deepStrictEqual(manifest, source)
 })
 
 it('should remove prototype property', () => {
@@ -26,7 +29,7 @@ it('should remove prototype property', () => {
 
   collapse(manifest, {})
 
-  expect(manifest).toStrictEqual({})
+  assert.deepStrictEqual(manifest, {})
 })
 
 describe('entity', () => {
@@ -34,7 +37,7 @@ describe('entity', () => {
     const manifest = clone(samples.entity.manifest)
 
     collapse(manifest, samples.entity.prototype)
-    expect(manifest).toStrictEqual(samples.entity.result)
+    assert.deepStrictEqual(manifest, samples.entity.result)
   })
 })
 
@@ -44,12 +47,12 @@ it('should ignore bindings', () => {
   const manifest = clone(source)
 
   collapse(manifest, prototype)
-  expect(manifest).toStrictEqual(source)
+  assert.deepStrictEqual(manifest, source)
 
   delete manifest.bindings
 
   collapse(manifest, prototype)
-  expect(manifest).toStrictEqual({})
+  assert.deepStrictEqual(manifest, {})
 })
 
 it('should merge operations', () => {
@@ -57,5 +60,11 @@ it('should merge operations', () => {
   const prototype = clone(samples.operations.prototype)
 
   collapse(manifest, prototype, '/somewhere')
-  expect(manifest).toStrictEqual(samples.operations.result)
+
+  // the prototype's path is generated, so it is checked apart from the shape
+  assert.strictEqual(typeof manifest.prototype.path, 'string')
+
+  const { path, ...rest } = manifest.prototype
+
+  assert.deepStrictEqual({ ...manifest, prototype: rest }, samples.operations.result)
 })

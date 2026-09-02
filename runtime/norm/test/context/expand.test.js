@@ -1,5 +1,8 @@
 'use strict'
 
+const { describe, it, beforeEach } = require('node:test')
+const assert = require('node:assert/strict')
+
 const clone = require('clone-deep')
 const { generate } = require('randomstring')
 
@@ -17,7 +20,7 @@ describe('annotations', () => {
   it('should not throw without annotations', () => {
     delete context.annotations
 
-    expect(() => expand(context)).not.toThrow()
+    assert.doesNotThrow(() => expand(context))
   })
 
   it('should expand known annotations', () => {
@@ -28,7 +31,7 @@ describe('annotations', () => {
 
     expand(context)
 
-    expect(context.annotations).toStrictEqual(fixtures.context.annotations)
+    assert.deepStrictEqual(context.annotations, fixtures.context.annotations)
   })
 
   it('should recognize annotations', () => {
@@ -36,6 +39,6 @@ describe('annotations', () => {
 
     expand(context)
 
-    expect(context.annotations['@toa.io/storages.mongodb']).toBeDefined()
+    assert.notStrictEqual(context.annotations['@toa.io/storages.mongodb'], undefined)
   })
 })

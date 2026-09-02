@@ -1,5 +1,8 @@
 'use strict'
 
+const { it, beforeEach } = require('node:test')
+const assert = require('node:assert/strict')
+
 const clone = require('clone-deep')
 const { generate } = require('randomstring')
 
@@ -20,7 +23,7 @@ beforeEach(() => {
 })
 
 it('should export', () => {
-  expect(traverse).toBeInstanceOf(Function)
+  assert.ok(traverse instanceof Function)
 })
 
 it('should mutate all object type properties', () => {
@@ -34,7 +37,7 @@ it('should mutate all object type properties', () => {
 
   traverse(object, mutate)
 
-  expect(object).toStrictEqual({
+  assert.deepStrictEqual(object, {
     a: {
       b: {
         c, seen: 1
@@ -55,8 +58,8 @@ it('should mutate structure', () => {
 
   const mutated = traverse(object, mutate)
 
-  expect(mutated).toStrictEqual({ a: { c: origin.a.b.c } })
-  expect(object).toStrictEqual({ a: { c: origin.a.b.c } })
+  assert.deepStrictEqual(mutated, { a: { c: origin.a.b.c } })
+  assert.deepStrictEqual(object, { a: { c: origin.a.b.c } })
 })
 
 it('should not visit arrays', () => {
@@ -72,7 +75,7 @@ it('should not visit arrays', () => {
 
   traverse(object, visit)
 
-  expect(count).toStrictEqual(3)
+  assert.deepStrictEqual(count, 3)
 })
 
 it('should visit mutated arrays', async () => {
@@ -80,5 +83,5 @@ it('should visit mutated arrays', async () => {
 
   const visit = (node) => [node]
 
-  expect(() => traverse(object, visit)).not.toThrow()
+  assert.doesNotThrow(() => traverse(object, visit))
 })

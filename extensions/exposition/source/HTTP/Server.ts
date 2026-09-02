@@ -224,7 +224,7 @@ export class Server extends Connector {
         if (!response.writableEnded)
           try {
             response.writeHead(500).end()
-          } catch (e) {
+          } catch {
             // Nothing more we can do
           }
       }

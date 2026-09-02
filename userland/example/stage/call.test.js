@@ -1,5 +1,8 @@
 'use strict'
 
+const { it, before, after } = require('node:test')
+const assert = require('node:assert/strict')
+
 const { resolve } = require('node:path')
 const { exceptions: { RequestContractException } } = require('@toa.io/core')
 const stage = require('@toa.io/userland/stage')
@@ -9,7 +12,7 @@ const root = resolve(__dirname, '../components')
 let echo
 let math
 
-beforeAll(async () => {
+before(async () => {
   process.env.TOA_DEV = '1'
   process.env.TOA_CONFIGURATION_DEFAULT_ECHO = '{}'
   process.env.TOA_CONFIGURATION_TEA_POTS = '{}'
@@ -22,7 +25,7 @@ beforeAll(async () => {
   math = await stage.remote('math.calculations')
 })
 
-afterAll(async () => {
+after(async () => {
   await stage.shutdown()
 
   delete process.env.TOA_DEV
@@ -31,13 +34,12 @@ afterAll(async () => {
 it('should call endpoint', async () => {
   const reply = await echo.invoke('signal', {})
 
-  expect(reply).toStrictEqual('quack')
+  assert.deepStrictEqual(reply, 'quack')
 })
 
 it('should throw on invalid input', async () => {
   const a = 'not a number'
   const b = 'neither'
 
-  await expect(math.invoke('add', { input: { a, b } }))
-    .rejects.toBeInstanceOf(RequestContractException)
+  await assert.rejects(math.invoke('add', { input: { a, b } }), (error) => { assert.ok(error instanceof RequestContractException); return true })
 })

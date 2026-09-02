@@ -1,3 +1,6 @@
+import { it } from 'node:test'
+import assert from 'node:assert/strict'
+
 import * as schemas from './schemas.js'
 
 const ok = {
@@ -52,9 +55,10 @@ const oh = [
 ]
 
 it('should pass', () => {
-  expect(() => schemas.annotation.validate(ok)).not.toThrow()
+  assert.doesNotThrow(() => schemas.annotation.validate(ok))
 })
 
-it.each(oh)('should fail', (value) => {
-  expect(() => schemas.annotation.validate(value)).toThrow()
+for (const value of oh)
+   it('should fail', () => {
+  assert.throws(() => schemas.annotation.validate(value))
 })

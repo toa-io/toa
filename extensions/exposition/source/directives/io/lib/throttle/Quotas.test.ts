@@ -1,3 +1,6 @@
+import { describe, it, beforeEach } from 'node:test'
+import assert from 'node:assert/strict'
+
 import { setTimeout } from 'node:timers/promises'
 import { Quotas } from './Quotas.js'
 import type { Batch } from './Sync.js'
@@ -21,15 +24,15 @@ describe('common', () => {
   })
 
   it('should admit a burst of the whole budget', () => {
-    expect(quotas.check(context, [])).toBe(0)
-    expect(quotas.check(context, [])).toBe(0)
+    assert.strictEqual(quotas.check(context, []), 0)
+    assert.strictEqual(quotas.check(context, []), 0)
   })
 
   it('should refuse past the budget', () => {
     quotas.check(context, [])
     quotas.check(context, [])
 
-    expect(quotas.check(context, [])).toBeGreaterThan(0)
+    assert.ok(quotas.check(context, []) > 0)
   })
 
   it('should not charge what it refuses', async () => {
@@ -42,19 +45,19 @@ describe('common', () => {
     // all it takes to be admitted again however hard the key is hammered
     await timeout(configuration.interval / configuration.requests)
 
-    expect(quotas.check(context, [])).toBe(0)
+    assert.strictEqual(quotas.check(context, []), 0)
   })
 
   it('should earn the budget back over the interval', async () => {
     quotas.check(context, [])
     quotas.check(context, [])
 
-    expect(quotas.check(context, [])).toBeGreaterThan(0)
+    assert.ok(quotas.check(context, []) > 0)
 
     await timeout(configuration.interval)
 
-    expect(quotas.check(context, [])).toBe(0)
-    expect(quotas.check(context, [])).toBe(0)
+    assert.strictEqual(quotas.check(context, []), 0)
+    assert.strictEqual(quotas.check(context, []), 0)
   })
 })
 
@@ -67,7 +70,7 @@ describe('retry', () => {
     quotas.check(context, [])
     quotas.check(context, [])
 
-    expect(quotas.check(context, [])).toBe(5)
+    assert.strictEqual(quotas.check(context, []), 5)
   })
 
   it('should never answer zero when it refuses', () => {
@@ -78,7 +81,7 @@ describe('retry', () => {
       quotas.check(context, [])
 
     // an emission here is a tenth of a second, and `Retry-After` counts in whole ones
-    expect(quotas.check(context, [])).toBe(1)
+    assert.strictEqual(quotas.check(context, []), 1)
   })
 })
 
@@ -94,9 +97,9 @@ describe('group', () => {
 
     const batch = flush()
 
-    expect(batch).toHaveLength(1)
-    expect(batch[0].delta).toBe(configuration.interval / configuration.requests)
-    expect(batch[0].quotas).toBe(quotas)
+    assert.strictEqual(batch.length, 1)
+    assert.strictEqual(batch[0].delta, configuration.interval / configuration.requests)
+    assert.strictEqual(batch[0].quotas, quotas)
   })
 
   it('should refuse on what the group has spent, not on what this process has', () => {
@@ -107,7 +110,7 @@ describe('group', () => {
     // one request here, but the group is already at capacity
     quotas.settled(batch[0], configuration.interval, Date.now())
 
-    expect(quotas.check(context, [])).toBeGreaterThan(0)
+    assert.ok(quotas.check(context, []) > 0)
   })
 
   it('should not refuse below the capacity', () => {
@@ -117,7 +120,7 @@ describe('group', () => {
 
     quotas.settled(batch[0], 0, Date.now())
 
-    expect(quotas.check(context, [])).toBe(0)
+    assert.strictEqual(quotas.check(context, []), 0)
   })
 
   it('should clear what was reported, and keep what was charged since', () => {
@@ -128,7 +131,7 @@ describe('group', () => {
     quotas.check(context, [])
     quotas.settled(batch[0], 0, Date.now())
 
-    expect(flush()[0].delta).toBe(configuration.interval / configuration.requests)
+    assert.strictEqual(flush()[0].delta, configuration.interval / configuration.requests)
   })
 
   it('should keep what it could not report', () => {
@@ -137,7 +140,7 @@ describe('group', () => {
     const first = flush()
 
     // no `settled`, as a tick that cannot reach Redis leaves the debt to the next one
-    expect(flush()[0].delta).toBe(first[0].delta)
+    assert.strictEqual(flush()[0].delta, first[0].delta)
   })
 
   it('should take a debt for a key it has already dropped', () => {
@@ -150,7 +153,7 @@ describe('group', () => {
 
     quotas.settled({ ...batch[0], delta: 0 }, configuration.interval, Date.now())
 
-    expect(quotas.check(context, [])).toBeGreaterThan(0)
+    assert.ok(quotas.check(context, []) > 0)
   })
 
   it('should name keys so that quotas with different budgets never share one', () => {
@@ -161,8 +164,8 @@ describe('group', () => {
 
     const batch = flush(Date.now(), quotas, other)
 
-    expect(batch[0].key).toBe(batch[1].key)
-    expect(quotas.name(batch[0].key)).not.toBe(other.name(batch[1].key))
+    assert.strictEqual(batch[0].key, batch[1].key)
+    assert.notStrictEqual(quotas.name(batch[0].key), other.name(batch[1].key))
   })
 })
 
@@ -181,15 +184,15 @@ describe('sweeping', () => {
     quotas.settled(batch[0], 0, Date.now())
 
     // once the debt has drained, a key says no more than an absent one
-    expect(flush(Date.now() + configuration.interval)).toHaveLength(0)
-    expect(flush(Date.now() + configuration.interval)).toHaveLength(0)
-    expect(quotas.check(context, [])).toBe(0)
+    assert.strictEqual(flush(Date.now() + configuration.interval).length, 0)
+    assert.strictEqual(flush(Date.now() + configuration.interval).length, 0)
+    assert.strictEqual(quotas.check(context, []), 0)
   })
 
   it('should keep a key that still owes something', () => {
     quotas.check(context, [])
 
-    expect(flush(Date.now() + configuration.interval)).toHaveLength(1)
+    assert.strictEqual(flush(Date.now() + configuration.interval).length, 1)
   })
 })
 
@@ -206,8 +209,8 @@ describe('path', () => {
     quotas.check(one, [])
     quotas.check(one, [])
 
-    expect(quotas.check(one, [])).toBeGreaterThan(0)
-    expect(quotas.check(two, [])).toBe(0)
+    assert.ok(quotas.check(one, []) > 0)
+    assert.strictEqual(quotas.check(two, []), 0)
   })
 })
 
@@ -224,8 +227,8 @@ describe('ip', () => {
     quotas.check(one, [])
     quotas.check(one, [])
 
-    expect(quotas.check(one, [])).toBeGreaterThan(0)
-    expect(quotas.check(two, [])).toBe(0)
+    assert.ok(quotas.check(one, []) > 0)
+    assert.strictEqual(quotas.check(two, []), 0)
   })
 })
 
@@ -240,8 +243,8 @@ describe('route', () => {
     quotas.check(two, [])
 
     // two paths, one route, one quota — which is the whole difference from `path`
-    expect(flush()).toHaveLength(1)
-    expect(quotas.check(one, [])).toBeGreaterThan(0)
+    assert.strictEqual(flush().length, 1)
+    assert.ok(quotas.check(one, []) > 0)
   })
 
   it('should have separate quotas per route', () => {
@@ -255,7 +258,7 @@ describe('route', () => {
 
     const batch = flush(Date.now(), users, posts)
 
-    expect(batch[0].key).not.toBe(batch[1].key)
+    assert.notStrictEqual(batch[0].key, batch[1].key)
   })
 })
 
@@ -273,8 +276,8 @@ describe('segment', () => {
     quotas.check(context, one)
     quotas.check(context, one)
 
-    expect(quotas.check(context, one)).toBeGreaterThan(0)
-    expect(quotas.check(context, two)).toBe(0)
+    assert.ok(quotas.check(context, one) > 0)
+    assert.strictEqual(quotas.check(context, two), 0)
   })
 })
 
@@ -291,8 +294,8 @@ describe('identity', () => {
     quotas.check(one, [])
     quotas.check(one, [])
 
-    expect(quotas.check(one, [])).toBeGreaterThan(0)
-    expect(quotas.check(two, [])).toBe(0)
+    assert.ok(quotas.check(one, []) > 0)
+    assert.strictEqual(quotas.check(two, []), 0)
   })
 
   it('should put every anonymous request in one quota', () => {
@@ -302,8 +305,8 @@ describe('identity', () => {
     quotas.check(one, [])
     quotas.check(two, [])
 
-    expect(quotas.check(one, [])).toBeGreaterThan(0)
-    expect(quotas.check(two, [])).toBeGreaterThan(0)
+    assert.ok(quotas.check(one, []) > 0)
+    assert.ok(quotas.check(two, []) > 0)
   })
 })
 
@@ -320,15 +323,15 @@ describe('status', () => {
     quotas.check(context, [])
 
     // only the response tells whether a request counts, so checking cannot charge
-    expect(flush()).toHaveLength(0)
+    assert.strictEqual(flush().length, 0)
   })
 
   it('should not charge what the condition rejects', () => {
     quotas.check(context, [])
     quotas.use(context, output)
 
-    expect(flush()).toHaveLength(0)
-    expect(quotas.check(context, [])).toBe(0)
+    assert.strictEqual(flush().length, 0)
+    assert.strictEqual(quotas.check(context, []), 0)
   })
 
   it('should charge what the condition accepts', () => {
@@ -337,7 +340,7 @@ describe('status', () => {
       quotas.use(context, { status: 404 })
     }
 
-    expect(quotas.check(context, [])).toBeGreaterThan(0)
+    assert.ok(quotas.check(context, []) > 0)
   })
 
   it('should charge the key checking saw, which settling cannot recompute', () => {
@@ -356,7 +359,7 @@ describe('status', () => {
 
     // settling is handed no parameters, so recomputing there would hash an empty
     // segment both times and the two requests would charge one key
-    expect(flush()).toHaveLength(2)
+    assert.strictEqual(flush().length, 2)
   })
 })
 

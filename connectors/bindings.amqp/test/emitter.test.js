@@ -1,5 +1,9 @@
 'use strict'
 
+const { it, beforeEach, mock: mocking } = require('node:test')
+const assert = require('node:assert/strict')
+const { isDeepStrictEqual } = require('node:util')
+
 // region setup
 
 const { generate } = require('randomstring')
@@ -10,12 +14,12 @@ const mock = {
   queues: require('./queues.mock')
 }
 
-jest.mock('../source/queues', () => mock.queues)
+mocking.module('../source/queues', { namedExports: mock.queues })
 
 const { Emitter } = require('../source/emitter')
 
 it('should be', async () => {
-  expect(Emitter).toBeDefined()
+  assert.notStrictEqual(Emitter, undefined)
 })
 
 const comm = mock.communication()
@@ -26,7 +30,7 @@ const label = generate()
 let emitter
 
 beforeEach(() => {
-  jest.clearAllMocks()
+  resetCalls()
 
   emitter = new Emitter(comm, locator, label)
 })
@@ -34,11 +38,11 @@ beforeEach(() => {
 // endregion
 
 it('should be instance of Connector', async () => {
-  expect(emitter).toBeInstanceOf(Connector)
+  assert.ok(emitter instanceof Connector)
 })
 
 it('should depend on communication', async () => {
-  expect(comm.link).toHaveBeenCalledWith(emitter)
+  assert.ok(comm.link.mock.calls.some((call) => call.arguments.length === 1 && isDeepStrictEqual(call.arguments[0], emitter)))
 })
 
 it('should emit', async () => {
@@ -46,13 +50,13 @@ it('should emit', async () => {
 
   await emitter.emit(message)
 
-  expect(mock.queues.name).toHaveBeenCalledWith(locator, label)
+  assert.ok(mock.queues.name.mock.calls.some((call) => call.arguments.length === 2 && isDeepStrictEqual(call.arguments[0], locator) && isDeepStrictEqual(call.arguments[1], label)))
 
-  const exchange = mock.queues.name.mock.results[0].value
-  const args = comm.emit.mock.calls[0]
+  const exchange = mock.queues.name.mock.calls[0].result
+  const { arguments: args } = comm.emit.mock.calls[0]
 
-  expect(args[0]).toStrictEqual(exchange)
-  expect(args[1]).toStrictEqual(message)
+  assert.deepStrictEqual(args[0], exchange)
+  assert.deepStrictEqual(args[1], message)
 })
 
 it('should set authored header', async () => {
@@ -60,5 +64,15 @@ it('should set authored header', async () => {
 
   await emitter.emit(message)
 
-  expect(comm.emit.mock.calls[0][2]).toMatchObject({ headers: { 'toa.io/amqp': '0' } })
+  assert.partialDeepStrictEqual(comm.emit.mock.calls[0].arguments[2], { headers: { 'toa.io/amqp': '0' } })
 })
+
+function resetCalls (target = [assert, mock, comm, locator, label], seen = new Set()) {
+  if (target === null || typeof target !== 'object' || seen.has(target)) return
+
+  seen.add(target)
+
+  for (const value of Object.values(target))
+    if (typeof value === 'function' && value.mock !== undefined) value.mock.resetCalls()
+    else resetCalls(value, seen)
+}

@@ -1,5 +1,7 @@
 'use strict'
 
+const { mock } = require('node:test')
+
 const { generate } = require('randomstring')
 const { readFileSync } = require('node:fs')
 const { load: parseYAML } = require('js-yaml')
@@ -7,11 +9,11 @@ const { resolve } = require('path')
 
 // noinspection JSCheckFunctionSignatures
 const schema = {
-  fit: jest.fn((input) => (input.invalid ? { message: generate() } : null))
+  fit: mock.fn((input) => (input.invalid ? { message: generate() } : null))
 }
 
 const query = {
-  parse: jest.fn(() => ({ [generate()]: generate() }))
+  parse: mock.fn(() => ({ [generate()]: generate() }))
 }
 
 const declaration = {}

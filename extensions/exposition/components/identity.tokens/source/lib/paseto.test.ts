@@ -1,3 +1,5 @@
+import { it } from 'node:test'
+
 import { V3 } from 'paseto'
 
 it('should be ok', async () => {

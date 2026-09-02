@@ -1,9 +1,13 @@
 'use strict'
 
+const { it } = require('node:test')
+const assert = require('node:assert/strict')
+const { isDeepStrictEqual } = require('node:util')
+
 const { shards } = require('../')
 
 it('should be', async () => {
-  expect(shards).toBeInstanceOf(Function)
+  assert.ok(shards instanceof Function)
 })
 
 it('should expand shards', async () => {
@@ -17,14 +21,14 @@ it('should expand shards', async () => {
     'amqp://host3.domain.com/?test=1'
   ]
 
-  expect(output.length).toStrictEqual(expected.length)
-  expect(output).toStrictEqual(expect.arrayContaining(expected))
+  assert.deepStrictEqual(output.length, expected.length)
+  assert.ok(expected.every((item) => output.some((candidate) => isDeepStrictEqual(candidate, item))))
 })
 
 it('should return input if no range specified', async () => {
   const input = 'he{0}llo'
   const output = shards(input)
 
-  expect(output.length).toStrictEqual(1)
-  expect(output[0]).toStrictEqual(input)
+  assert.deepStrictEqual(output.length, 1)
+  assert.deepStrictEqual(output[0], input)
 })

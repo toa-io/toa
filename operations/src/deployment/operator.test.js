@@ -1,10 +1,13 @@
 'use strict'
 
+const { describe, it, beforeEach, mock } = require('node:test')
+const assert = require('node:assert/strict')
+
 const { Operator } = require('../../src/deployment/operator')
 const { generate } = require('randomstring')
 
 it('should be', async () => {
-  expect(Operator).toBeInstanceOf(Function)
+  assert.ok(Operator instanceof Function)
 })
 
 /** @type {toa.deployment.Operator} */
@@ -25,7 +28,7 @@ describe('env', () => {
   it('should be', async () => {
     operator = new Operator(deployment, registry)
 
-    expect(operator.variables).toBeInstanceOf(Function)
+    assert.ok(operator.variables instanceof Function)
   })
 
   it('should return variables', async () => {
@@ -33,12 +36,12 @@ describe('env', () => {
 
     deployment.variables =
       /** @type {typeof toa.deployment.Operator.variables} */
-      jest.fn(() => variables)
+      mock.fn(() => variables)
 
     operator = new Operator(deployment, registry)
 
     const output = operator.variables()
 
-    expect(output).toStrictEqual(variables)
+    assert.deepStrictEqual(output, variables)
   })
 })

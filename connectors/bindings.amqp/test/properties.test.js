@@ -1,7 +1,10 @@
 'use strict'
 
+const { it } = require('node:test')
+const assert = require('node:assert/strict')
+
 const { properties } = require('../')
 
 it('should export properties', async () => {
-  expect(properties).toStrictEqual({ async: true })
+  assert.deepStrictEqual(properties, { async: true })
 })

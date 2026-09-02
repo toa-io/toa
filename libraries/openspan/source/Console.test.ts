@@ -1,3 +1,6 @@
+import { describe, it, beforeEach, afterEach, mock } from 'node:test'
+import assert from 'node:assert/strict'
+
 import { console, Console, consoleExporter, create, current, exporting, run, sampling } from './index.js'
 import type { Channel } from './Console.js'
 
@@ -10,10 +13,10 @@ let instance: Console
 
 const streams: any = {
   stdout: {
-    write: jest.fn()
+    write: mock.fn()
   },
   stderr: {
-    write: jest.fn()
+    write: mock.fn()
   }
 }
 
@@ -25,25 +28,25 @@ const context = {
 const channels = ['trace', 'debug', 'info', 'warn', 'error'] as Channel[]
 
 beforeEach(() => {
-  jest.clearAllMocks()
+  resetCalls()
 
   instance = new Console({ streams, context })
 })
 
 it('should be', async () => {
-  expect(instance).toBeDefined()
+  assert.notStrictEqual(instance, undefined)
 })
 
-describe.each(channels)('%s',
-  (severity) => {
+for (const severity of channels)
+   describe(`${severity}`, () => {
     const channel = severity === 'error' ? streams.stderr : streams.stdout
 
     it('should write', () => {
       instance[severity]('hello')
 
-      expect(channel.write).toHaveBeenCalled()
+      assert.ok(channel.write.mock.callCount() > 0)
 
-      expect(pop(channel)).toMatchObject({
+      assert.partialDeepStrictEqual(pop(channel), {
         severity: severity.toUpperCase(),
         message: 'hello'
       })
@@ -52,16 +55,15 @@ describe.each(channels)('%s',
     it('should format message', () => {
       instance[severity]('hello world')
 
-      expect(pop(channel)).toMatchObject({
-        time: expect.any(String),
-        message: 'hello world'
-      })
+      const subject = pop(channel)
+      assert.partialDeepStrictEqual(subject, { message: 'hello world' })
+      assert.strictEqual(typeof subject['time'], 'string')
     })
 
     it('should add context', () => {
       instance[severity]('hello')
 
-      expect(pop(channel)).toMatchObject({
+      assert.partialDeepStrictEqual(pop(channel), {
         context
       })
     })
@@ -74,7 +76,7 @@ describe.each(channels)('%s',
 
       instance[severity]('hello world', attributes)
 
-      expect(pop(channel)).toMatchObject({ attributes })
+      assert.partialDeepStrictEqual(pop(channel), { attributes })
     })
   })
 
@@ -83,8 +85,8 @@ it('should not print below given level', () => {
   instance.info('a')
   instance.error('b')
 
-  expect(pop(streams.stdout)).toBeUndefined()
-  expect(pop(streams.stderr)).toBeDefined()
+  assert.strictEqual(pop(streams.stdout), undefined)
+  assert.notStrictEqual(pop(streams.stderr), undefined)
 })
 
 it('should consider log() as debug()', async () => {
@@ -92,19 +94,17 @@ it('should consider log() as debug()', async () => {
 
   const entry = pop(streams.stdout)
 
-  expect(entry).toMatchObject({ severity: 'DEBUG' })
+  assert.partialDeepStrictEqual(entry, { severity: 'DEBUG' })
 })
 
-it('should share the singleton between module copies', () => {
-  jest.isolateModules(() => {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const copy = require('./Console.js')
+it('should share the singleton between module copies', async () => {
+  const copy = await import('./Console.js')
 
-    expect(copy.console).toBe(console)
-  })
+  assert.strictEqual(copy.console, console)
 })
 
-describe.each(channels)('console instance (%s)', (channel) => {
+for (const channel of channels)
+   describe(`console instance (${channel})`, () => {
   it('should print message', () => {
     console[channel]('Hello')
   })
@@ -119,7 +119,7 @@ it('should fork', async () => {
 
   con.debug('hello')
 
-  expect(pop(streams.stdout)).toMatchObject({
+  assert.partialDeepStrictEqual(pop(streams.stdout), {
     context: { foo: 'bar', baz: 42, bar: 'foo' }
   })
 })
@@ -129,8 +129,8 @@ it('should not log undefined attributes', async () => {
 
   const entry = pop(streams.stdout)
 
-  expect('attributes' in entry).toBe(false)
-  expect(entry.message).toBe('hello')
+  assert.strictEqual('attributes' in entry, false)
+  assert.strictEqual(entry.message, 'hello')
 })
 
 it('should log empty objects', () => {
@@ -151,12 +151,12 @@ it('should serialize Error with stack', () => {
 
   const entry = pop(streams.stderr)
 
-  expect(entry.attributes).toMatchObject({
+  assert.partialDeepStrictEqual(entry.attributes, {
     message: 'oops',
     code: 'E_TEST'
   })
 
-  expect(entry.attributes.stack).toContain('Error: oops')
+  assert.ok(entry.attributes.stack.includes('Error: oops'))
 })
 
 it('should serialize Error cause chain', () => {
@@ -167,9 +167,9 @@ it('should serialize Error cause chain', () => {
 
   const entry = pop(streams.stderr)
 
-  expect(entry.attributes.message).toBe('wrapper')
-  expect(entry.attributes.cause.message).toBe('root')
-  expect(entry.attributes.cause.stack).toContain('Error: root')
+  assert.strictEqual(entry.attributes.message, 'wrapper')
+  assert.strictEqual(entry.attributes.cause.message, 'root')
+  assert.ok(entry.attributes.cause.stack.includes('Error: root'))
 })
 
 it('should serialize non-Error cause', () => {
@@ -179,7 +179,7 @@ it('should serialize non-Error cause', () => {
 
   const entry = pop(streams.stderr)
 
-  expect(entry.attributes.cause).toBe('just a string')
+  assert.strictEqual(entry.attributes.cause, 'just a string')
 })
 
 it('should log null', () => {
@@ -192,7 +192,7 @@ describe('tracing', () => {
 
     run(context, () => instance.info('hello'))
 
-    expect(pop(streams.stdout)).toMatchObject({
+    assert.partialDeepStrictEqual(pop(streams.stdout), {
       trace_id: context.traceId,
       span_id: context.spanId
     })
@@ -203,8 +203,8 @@ describe('tracing', () => {
 
     const entry = pop(streams.stdout)
 
-    expect('trace_id' in entry).toBe(false)
-    expect('span_id' in entry).toBe(false)
+    assert.strictEqual('trace_id' in entry, false)
+    assert.strictEqual('span_id' in entry, false)
   })
 })
 
@@ -217,7 +217,7 @@ describe('span', () => {
   it('should return task result', async () => {
     const result = await instance.span('task', () => 42)
 
-    expect(result).toBe(42)
+    assert.strictEqual(result, 42)
   })
 
   it('should not open a span within an unsampled trace', async () => {
@@ -226,8 +226,8 @@ describe('span', () => {
     const inner = await run(context, async () => await instance.span('work', () => current()))
 
     // the context in scope is reused rather than replaced, so there is nothing to propagate
-    expect(inner).toBe(context)
-    expect(streams.stdout.write).not.toHaveBeenCalled()
+    assert.strictEqual(inner, context)
+    assert.strictEqual(streams.stdout.write.mock.callCount(), 0)
   })
 
   it('should still run the task when nothing consumes spans', async () => {
@@ -236,8 +236,8 @@ describe('span', () => {
     const context = { ...create(), sampled: false }
     const result = await run(context, async () => await instance.span('work', () => 42))
 
-    expect(result).toBe(42)
-    expect(streams.stdout.write).not.toHaveBeenCalled()
+    assert.strictEqual(result, 42)
+    assert.strictEqual(streams.stdout.write.mock.callCount(), 0)
   })
 
   it('should write span entry with duration', async () => {
@@ -245,22 +245,19 @@ describe('span', () => {
 
     const entry = pop(streams.stdout)
 
-    expect(entry).toMatchObject({
-      severity: 'TRACE',
-      message: 'fetch',
-      trace_id: expect.stringMatching(/^[\da-f]{32}$/),
-      span_id: expect.stringMatching(/^[\da-f]{16}$/),
-      duration: expect.any(Number)
-    })
+    assert.partialDeepStrictEqual(entry, { severity: 'TRACE', message: 'fetch' })
+    assert.match(entry['trace_id'], /^[\da-f]{32}$/)
+    assert.match(entry['span_id'], /^[\da-f]{16}$/)
+    assert.strictEqual(typeof entry['duration'], 'number')
 
-    expect(entry.duration).toBeGreaterThanOrEqual(5)
-    expect('status' in entry).toBe(false)
+    assert.ok(entry.duration >= 5)
+    assert.strictEqual('status' in entry, false)
   })
 
   it('should write attributes', async () => {
     await instance.span('fetch', { url: 'example.com' }, () => null)
 
-    expect(pop(streams.stdout)).toMatchObject({
+    assert.partialDeepStrictEqual(pop(streams.stdout), {
       attributes: { url: 'example.com' }
     })
   })
@@ -271,23 +268,23 @@ describe('span', () => {
     })
 
     const inner = pop(streams.stdout)
-    const outer = JSON.parse(streams.stdout.write.mock.calls[1][0].toString())
+    const outer = JSON.parse(streams.stdout.write.mock.calls[1].arguments[0].toString())
 
-    expect(inner.message).toBe('inner')
-    expect(outer.message).toBe('outer')
-    expect(inner.trace_id).toBe(outer.trace_id)
-    expect(inner.parent_id).toBe(outer.span_id)
+    assert.strictEqual(inner.message, 'inner')
+    assert.strictEqual(outer.message, 'outer')
+    assert.strictEqual(inner.trace_id, outer.trace_id)
+    assert.strictEqual(inner.parent_id, outer.span_id)
   })
 
   it('should link logs to the span', async () => {
     await instance.span('work', () => instance.info('step'))
 
     const log = pop(streams.stdout)
-    const span = JSON.parse(streams.stdout.write.mock.calls[1][0].toString())
+    const span = JSON.parse(streams.stdout.write.mock.calls[1].arguments[0].toString())
 
-    expect(log.message).toBe('step')
-    expect(log.trace_id).toBe(span.trace_id)
-    expect(log.span_id).toBe(span.span_id)
+    assert.strictEqual(log.message, 'step')
+    assert.strictEqual(log.trace_id, span.trace_id)
+    assert.strictEqual(log.span_id, span.span_id)
   })
 
   it('should continue current trace', async () => {
@@ -295,7 +292,7 @@ describe('span', () => {
 
     await run(context, async () => await instance.span('work', () => null))
 
-    expect(pop(streams.stdout)).toMatchObject({
+    assert.partialDeepStrictEqual(pop(streams.stdout), {
       trace_id: context.traceId,
       parent_id: context.spanId
     })
@@ -304,20 +301,17 @@ describe('span', () => {
   it('should rethrow and mark status on failure', async () => {
     const oops = new Error('oops')
 
-    await expect(instance.span('work', () => Promise.reject(oops))).rejects.toThrow(oops)
+    await assert.rejects(instance.span('work', () => Promise.reject(oops)), oops)
 
-    expect(pop(streams.stdout)).toMatchObject({
-      severity: 'TRACE',
-      message: 'work',
-      status: 'error',
-      duration: expect.any(Number)
-    })
+    const subject = pop(streams.stdout)
+    assert.partialDeepStrictEqual(subject, { severity: 'TRACE', message: 'work', status: 'error' })
+    assert.strictEqual(typeof subject['duration'], 'number')
   })
 
   it('should write span kind', async () => {
     await instance.span({ name: 'handle', kind: 'server' }, () => null)
 
-    expect(pop(streams.stdout)).toMatchObject({ kind: 'server' })
+    assert.partialDeepStrictEqual(pop(streams.stdout), { kind: 'server' })
   })
 
   it('should omit internal kind', async () => {
@@ -325,7 +319,7 @@ describe('span', () => {
 
     const entry = pop(streams.stdout)
 
-    expect('kind' in entry).toBe(false)
+    assert.strictEqual('kind' in entry, false)
   })
 
   it('should suppress span entries above trace level', async () => {
@@ -333,8 +327,8 @@ describe('span', () => {
 
     const result = await instance.span('quiet', () => 'done')
 
-    expect(result).toBe('done')
-    expect(pop(streams.stdout)).toBeUndefined()
+    assert.strictEqual(result, 'done')
+    assert.strictEqual(pop(streams.stdout), undefined)
   })
 
   it('should not write span entries of unsampled traces', async () => {
@@ -342,8 +336,8 @@ describe('span', () => {
 
     const result = await instance.span('unsampled', () => 'done')
 
-    expect(result).toBe('done')
-    expect(pop(streams.stdout)).toBeUndefined()
+    assert.strictEqual(result, 'done')
+    assert.strictEqual(pop(streams.stdout), undefined)
   })
 
   it('should stamp trace_id into logs of unsampled traces', async () => {
@@ -353,16 +347,26 @@ describe('span', () => {
 
     const log = pop(streams.stdout)
 
-    expect(log.message).toBe('step')
-    expect(log.trace_id).toMatch(/^[\da-f]{32}$/)
+    assert.strictEqual(log.message, 'step')
+    assert.match(log.trace_id, /^[\da-f]{32}$/)
   })
 })
 
 function pop (channel: any): any {
-  const buffer = channel.write.mock.calls[0]?.[0] as Buffer
+  const buffer = channel.write.mock.calls[0]?.arguments[0] as Buffer
 
   if (buffer === undefined)
     return undefined
 
   return JSON.parse(buffer.toString())
+}
+
+function resetCalls (target = [streams, context, channels], seen = new Set()) {
+  if (target === null || typeof target !== 'object' || seen.has(target)) return
+
+  seen.add(target)
+
+  for (const value of Object.values(target))
+    if (typeof value === 'function' && value.mock !== undefined) value.mock.resetCalls()
+    else resetCalls(value, seen)
 }

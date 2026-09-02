@@ -1,42 +1,46 @@
 'use strict'
 
+const { it, mock } = require('node:test')
+const assert = require('node:assert/strict')
+const { isDeepStrictEqual } = require('node:util')
+
 const randomstring = require('randomstring')
 const { generate } = require('../')
 
 it('should be', async () => {
-  expect(generate).toBeInstanceOf(Function)
+  assert.ok(generate instanceof Function)
 })
 
 let object
 
 it('should call generator', async () => {
-  const generator = /** @type {jest.MockedFn} */ jest.fn(() => randomstring.generate())
+  const generator = /** @type {import('node:test').Mock<any>} */ mock.fn(() => randomstring.generate())
 
   object = generate(generator)
 
   const prop = randomstring.generate()
   const value = object[prop]
 
-  expect(generator).toHaveBeenCalled()
-  expect(value).toStrictEqual(generator.mock.results[0].value)
+  assert.ok(generator.mock.callCount() > 0)
+  assert.deepStrictEqual(value, generator.mock.calls[0].result)
 })
 
 it('should pass segments', async () => {
-  const generator = /** @type {jest.MockedFn} */ jest.fn()
+  const generator = /** @type {import('node:test').Mock<any>} */ mock.fn()
 
-  generator.mockImplementationOnce(() => ({}))
-  generator.mockImplementationOnce(() => 1)
+  generator.mock.mockImplementationOnce(() => ({}), generator.mock.callCount())
+  generator.mock.mockImplementationOnce(() => 1, generator.mock.callCount() + 1)
   object = generate(generator)
 
   const value = object.a.b
 
-  expect(generator).toHaveBeenCalledTimes(2)
-  expect(generator).toHaveBeenNthCalledWith(2, ['a', 'b'])
-  expect(value).toStrictEqual(generator.mock.results[1].value)
+  assert.strictEqual(generator.mock.callCount(), 2)
+  assert.ok(((call) => call.arguments.length === 1 && isDeepStrictEqual(call.arguments[0], ['a', 'b']))(generator.mock.calls[2 - 1] ?? { arguments: [] }))
+  assert.deepStrictEqual(value, generator.mock.calls[1].result)
 })
 
 it('should pass value', async () => {
-  const generator = /** @type {jest.MockedFn} */ jest.fn(() => undefined)
+  const generator = /** @type {import('node:test').Mock<any>} */ mock.fn(() => undefined)
 
   object = generate(generator)
 
@@ -45,35 +49,35 @@ it('should pass value', async () => {
 
   object[prop] = value
 
-  expect(generator).toHaveBeenCalledWith([prop], value)
+  assert.ok(generator.mock.calls.some((call) => call.arguments.length === 2 && isDeepStrictEqual(call.arguments[0], [prop]) && isDeepStrictEqual(call.arguments[1], value)))
 })
 
 it('should pass segments and value', async () => {
-  const generator = /** @type {jest.MockedFn} */ jest.fn()
+  const generator = /** @type {import('node:test').Mock<any>} */ mock.fn()
   const value = randomstring.generate()
 
-  generator.mockImplementationOnce(() => ({}))
+  generator.mock.mockImplementationOnce(() => ({}))
   object = generate(generator)
 
   object.a.b = value
 
-  expect(generator).toHaveBeenCalledWith(['a', 'b'], value)
+  assert.ok(generator.mock.calls.some((call) => call.arguments.length === 2 && isDeepStrictEqual(call.arguments[0], ['a', 'b']) && isDeepStrictEqual(call.arguments[1], value)))
 })
 
 it('should pass segments repeatedly', async () => {
-  const generator = /** @type {jest.MockedFn} */ jest.fn(() => ({}))
+  const generator = /** @type {import('node:test').Mock<any>} */ mock.fn(() => ({}))
   const value = randomstring.generate()
 
   object = generate(generator)
   object.a.b = value
 
-  expect(generator).toHaveBeenNthCalledWith(1, ['a'])
-  expect(generator).toHaveBeenNthCalledWith(2, ['a', 'b'], value)
+  assert.ok(((call) => call.arguments.length === 1 && isDeepStrictEqual(call.arguments[0], ['a']))(generator.mock.calls[1 - 1] ?? { arguments: [] }))
+  assert.ok(((call) => call.arguments.length === 2 && isDeepStrictEqual(call.arguments[0], ['a', 'b']) && isDeepStrictEqual(call.arguments[1], value))(generator.mock.calls[2 - 1] ?? { arguments: [] }))
 
   object.a.b = value
 
-  expect(generator).toHaveBeenNthCalledWith(3, ['a'])
-  expect(generator).toHaveBeenNthCalledWith(4, ['a', 'b'], value)
+  assert.ok(((call) => call.arguments.length === 1 && isDeepStrictEqual(call.arguments[0], ['a']))(generator.mock.calls[3 - 1] ?? { arguments: [] }))
+  assert.ok(((call) => call.arguments.length === 2 && isDeepStrictEqual(call.arguments[0], ['a', 'b']) && isDeepStrictEqual(call.arguments[1], value))(generator.mock.calls[4 - 1] ?? { arguments: [] }))
 })
 
 it('should apply methods with the context', async () => {
@@ -84,27 +88,28 @@ it('should apply methods with the context', async () => {
   const size = object.a.size
   const values = object.a.values()
 
-  expect(size).toStrictEqual(0)
-  expect(Array.from(values)).toStrictEqual([])
+  assert.deepStrictEqual(size, 0)
+  assert.deepStrictEqual(Array.from(values), [])
 })
 
-it.each([
+for (const [_, Type] of [
   ['Array', Array], ['Set', Set], ['Map', Map], ['Uint8Array', Uint8Array], ['null', null]
-])('should not proxy %s', async (_, Type) => {
-  const generator = /** @type {jest.MockedFn} */ jest.fn(() => Type?.constructor ? new Type() : Type)
+])
+   it(`should not proxy ${_}`, async () => {
+  const generator = /** @type {import('node:test').Mock<any>} */ mock.fn(() => Type?.constructor ? new Type() : Type)
 
   object = generate(generator)
 
-  expect(object.a?.foo).toBeUndefined()
+  assert.strictEqual(object.a?.foo, undefined)
 })
 
 it('should not proxy primitive values', async () => {
-  const generator = /** @type {jest.MockedFn} */ jest.fn(() => 1)
+  const generator = /** @type {import('node:test').Mock<any>} */ mock.fn(() => 1)
 
   object = generate(generator)
 
-  expect(typeof object.a).toStrictEqual('number')
-  expect(object.a?.foo).toBeUndefined()
+  assert.deepStrictEqual(typeof object.a, 'number')
+  assert.strictEqual(object.a?.foo, undefined)
 })
 
 it('should preserve methods length', async () => {
@@ -114,5 +119,5 @@ it('should preserve methods length', async () => {
 
   const set = object.foo
 
-  expect(set.has.length).toStrictEqual(new Set().has.length)
+  assert.deepStrictEqual(set.has.length, new Set().has.length)
 })

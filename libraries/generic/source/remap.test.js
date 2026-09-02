@@ -1,5 +1,8 @@
 'use strict'
 
+const { it } = require('node:test')
+const assert = require('node:assert/strict')
+
 const { remap } = require('../source/remap')
 
 it('should remap values', () => {
@@ -7,7 +10,7 @@ it('should remap values', () => {
 
   const result = remap(object, (value) => value + 1)
 
-  expect(result).toStrictEqual({ a: 2, b: 3 })
+  assert.deepStrictEqual(result, { a: 2, b: 3 })
 })
 
 it('should not modify argument', () => {
@@ -15,7 +18,7 @@ it('should not modify argument', () => {
 
   remap(object, (value) => value + 1)
 
-  expect(object).toStrictEqual({ a: 1, b: 2 })
+  assert.deepStrictEqual(object, { a: 1, b: 2 })
 })
 
 it('should pass key argument', () => {
@@ -23,5 +26,5 @@ it('should pass key argument', () => {
 
   const result = remap(object, (value, key) => key === 'b' ? value + 1 : value)
 
-  expect(result).toStrictEqual({ a: 1, b: 3 })
+  assert.deepStrictEqual(result, { a: 1, b: 3 })
 })

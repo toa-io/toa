@@ -1,29 +1,31 @@
 'use strict'
 
+const { mock } = require('node:test')
+
 const { generate } = require('randomstring')
 
 const storage = {
   name: 'dummy',
-  get: jest.fn(() => ({ id: generate() })),
-  find: jest.fn(() => ([{ id: generate() }])),
-  add: jest.fn(() => true),
-  set: jest.fn(() => true),
-  store: jest.fn(() => true),
-  massStore: jest.fn(() => true),
-  upsert: jest.fn(() => ({ id: generate() })),
-  ensure: jest.fn((query, properties, state) => state)
+  get: mock.fn(() => ({ id: generate() })),
+  find: mock.fn(() => ([{ id: generate() }])),
+  add: mock.fn(() => true),
+  set: mock.fn(() => true),
+  store: mock.fn(() => true),
+  massStore: mock.fn(() => true),
+  upsert: mock.fn(() => ({ id: generate() })),
+  ensure: mock.fn((query, properties, state) => state)
 }
 
 const factory = {
-  object: jest.fn(() => ({ [generate()]: generate() })),
-  objects: jest.fn(() => ({ [generate()]: generate() }))
+  object: mock.fn(() => ({ [generate()]: generate() })),
+  objects: mock.fn(() => ({ [generate()]: generate() }))
 }
 
 const query = generate()
 
 const entity = {
-  get: jest.fn(() => ({ [generate()]: generate() })),
-  event: jest.fn(() => ({ state: { [generate()]: generate() } }))
+  get: mock.fn(() => ({ [generate()]: generate() })),
+  event: mock.fn(() => ({ state: { [generate()]: generate() } }))
 }
 
 const initial = {
@@ -32,13 +34,13 @@ const initial = {
 
 const unchanged = {
   ...entity,
-  event: jest.fn(() => ({ state: { [generate()]: generate() } }))
+  event: mock.fn(() => ({ state: { [generate()]: generate() } }))
 }
 
 // a legacy outbox: no storage capability, so `publish` emits inline
 const outbox = {
-  row: jest.fn((event) => ({ id: generate(), lane: 0, published: false, pending: 0, event })),
-  publish: jest.fn()
+  row: mock.fn((event) => ({ id: generate(), lane: 0, published: false, pending: 0, event })),
+  publish: mock.fn()
 }
 
 exports.storage = storage

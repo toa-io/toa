@@ -1,5 +1,8 @@
 'use strict'
 
+const { it } = require('node:test')
+const assert = require('node:assert/strict')
+
 const { services } = require('./services')
 
 const service = (extra = {}) => ({ group: 'group', name: 'group-one', version: '0', ...extra })
@@ -9,7 +12,7 @@ it('should leave a service without an ingress alone', () => {
 
   services(list, {}, undefined, { hosts: ['api.dev'] })
 
-  expect(list[0].ingress).toBeUndefined()
+  assert.strictEqual(list[0].ingress, undefined)
 })
 
 /*
@@ -21,7 +24,7 @@ it('should supply hosts, class and annotations from the context', () => {
 
   services(list, {}, undefined, { hosts: ['api.dev'], class: 'alb', annotations: { a: 'b' } })
 
-  expect(list[0].ingress).toStrictEqual({
+  assert.deepStrictEqual(list[0].ingress, {
     path: '/.introspection',
     hosts: ['api.dev'],
     class: 'alb',
@@ -34,8 +37,8 @@ it('should keep what the service declared itself', () => {
 
   services(list, {}, undefined, { hosts: ['api.dev'], class: 'alb' })
 
-  expect(list[0].ingress.hosts).toStrictEqual(['own.dev'])
-  expect(list[0].ingress.class).toStrictEqual('alb')
+  assert.deepStrictEqual(list[0].ingress.hosts, ['own.dev'])
+  assert.deepStrictEqual(list[0].ingress.class, 'alb')
 })
 
 it('should ignore properties the service left undefined', () => {
@@ -43,19 +46,17 @@ it('should ignore properties the service left undefined', () => {
 
   services(list, {}, undefined, { hosts: ['api.dev'], class: 'alb' })
 
-  expect(list[0].ingress.class).toStrictEqual('alb')
+  assert.deepStrictEqual(list[0].ingress.class, 'alb')
 })
 
 it('should reject an ingress with nowhere to land', () => {
   const list = [service({ port: 8002, ingress: { path: '/.introspection' } })]
 
-  expect(() => services(list, {}, undefined, undefined))
-    .toThrow("Service 'group-one' declares an ingress, but no hosts are defined")
+  assert.throws(() => services(list, {}, undefined, undefined), (error) => /Service 'group-one' declares an ingress, but no hosts are defined/.test(error.message))
 })
 
 it('should reject an ingress without a port', () => {
   const list = [service({ ingress: { path: '/.introspection' } })]
 
-  expect(() => services(list, {}, undefined, { hosts: ['api.dev'] }))
-    .toThrow("Service 'group-one' declares an ingress, but no port")
+  assert.throws(() => services(list, {}, undefined, { hosts: ['api.dev'] }), (error) => /Service 'group-one' declares an ingress, but no port/.test(error.message))
 })

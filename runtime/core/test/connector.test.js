@@ -1,5 +1,8 @@
 'use strict'
 
+const { describe, it, beforeEach } = require('node:test')
+const assert = require('node:assert/strict')
+
 const { timeout } = require('@toa.io/generic')
 
 const fixtures = require('./connector.fixtures')
@@ -19,14 +22,14 @@ describe('callbacks', () => {
 
   it('should call connection', async () => {
     await a.connect()
-    expect(sequence).toEqual(['+a'])
+    assert.deepStrictEqual(sequence, ['+a'])
   })
 
   it('should call disconnection', async () => {
     await a.connect()
     await a.disconnect()
 
-    expect(sequence.indexOf('+a')).toBeLessThan(sequence.indexOf('-a'))
+    assert.ok(sequence.indexOf('+a') < sequence.indexOf('-a'))
   })
 
   it('should reconnect', async () => {
@@ -34,7 +37,7 @@ describe('callbacks', () => {
     await a.reconnect()
     await a.reconnect()
 
-    expect(sequence).toEqual(['+a', '-a', '*a', '+a', '-a', '*a', '+a'])
+    assert.deepStrictEqual(sequence, ['+a', '-a', '*a', '+a', '-a', '*a', '+a'])
   })
 })
 
@@ -57,9 +60,9 @@ describe('dependencies', () => {
 
     await a.connect()
 
-    expect(sequence.indexOf('+c')).toBeLessThan(sequence.indexOf('+b'))
-    expect(sequence.indexOf('+b')).toBeLessThan(sequence.indexOf('+a'))
-    expect(sequence.indexOf('+d')).toBeLessThan(sequence.indexOf('+a'))
+    assert.ok(sequence.indexOf('+c') < sequence.indexOf('+b'))
+    assert.ok(sequence.indexOf('+b') < sequence.indexOf('+a'))
+    assert.ok(sequence.indexOf('+d') < sequence.indexOf('+a'))
   })
 
   it('should wait array of connectors', async () => {
@@ -69,10 +72,10 @@ describe('dependencies', () => {
 
     await a.connect()
 
-    expect(sequence.indexOf('+c')).toBeLessThan(sequence.indexOf('+b'))
-    expect(sequence.indexOf('+c')).toBeLessThan(sequence.indexOf('+d'))
-    expect(sequence.indexOf('+b')).toBeLessThan(sequence.indexOf('+a'))
-    expect(sequence.indexOf('+d')).toBeLessThan(sequence.indexOf('+a'))
+    assert.ok(sequence.indexOf('+c') < sequence.indexOf('+b'))
+    assert.ok(sequence.indexOf('+c') < sequence.indexOf('+d'))
+    assert.ok(sequence.indexOf('+b') < sequence.indexOf('+a'))
+    assert.ok(sequence.indexOf('+d') < sequence.indexOf('+a'))
   })
 
   it('should wait array(1) of connectors', async () => {
@@ -81,12 +84,12 @@ describe('dependencies', () => {
 
     await a.connect()
 
-    expect(sequence.indexOf('+c')).toBeLessThan(sequence.indexOf('+b'))
-    expect(sequence.indexOf('+b')).toBeLessThan(sequence.indexOf('+a'))
+    assert.ok(sequence.indexOf('+c') < sequence.indexOf('+b'))
+    assert.ok(sequence.indexOf('+b') < sequence.indexOf('+a'))
   })
 
   it('should throw on empty array', async () => {
-    expect(() => a.depends([])).toThrow(/must not be empty/)
+    assert.throws(() => a.depends([]), (error) => /must not be empty/.test(error.message))
   })
 
   it('should await 2-way dependencies', async () => {
@@ -95,12 +98,12 @@ describe('dependencies', () => {
 
     await a.connect()
 
-    expect(sequence.indexOf('+b')).toBeLessThan(sequence.indexOf('+a'))
-    expect(sequence.indexOf('+c')).toBeLessThan(sequence.indexOf('+a'))
-    expect(sequence.indexOf('+d')).toBeLessThan(sequence.indexOf('+a'))
+    assert.ok(sequence.indexOf('+b') < sequence.indexOf('+a'))
+    assert.ok(sequence.indexOf('+c') < sequence.indexOf('+a'))
+    assert.ok(sequence.indexOf('+d') < sequence.indexOf('+a'))
 
-    expect(sequence.indexOf('+b')).toBeLessThan(sequence.indexOf('+d'))
-    expect(sequence.indexOf('+c')).toBeLessThan(sequence.indexOf('+d'))
+    assert.ok(sequence.indexOf('+b') < sequence.indexOf('+d'))
+    assert.ok(sequence.indexOf('+c') < sequence.indexOf('+d'))
   })
 
   it('should disconnect before dependencies', async () => {
@@ -110,9 +113,9 @@ describe('dependencies', () => {
     await a.connect()
     await a.disconnect()
 
-    expect(sequence.indexOf('-a')).toBeLessThan(sequence.indexOf('-b'))
-    expect(sequence.indexOf('-b')).toBeLessThan(sequence.indexOf('-c'))
-    expect(sequence.indexOf('-b')).toBeLessThan(sequence.indexOf('-d'))
+    assert.ok(sequence.indexOf('-a') < sequence.indexOf('-b'))
+    assert.ok(sequence.indexOf('-b') < sequence.indexOf('-c'))
+    assert.ok(sequence.indexOf('-b') < sequence.indexOf('-d'))
   })
 
   it('should call disconnected', async () => {
@@ -121,10 +124,10 @@ describe('dependencies', () => {
 
     await a.disconnect()
 
-    expect(sequence.indexOf('*c')).toBeLessThan(sequence.indexOf('*b'))
-    expect(sequence.indexOf('*b')).toBeLessThan(sequence.indexOf('*a'))
-    expect(sequence.indexOf('*d')).toBeLessThan(sequence.indexOf('*b'))
-    expect(sequence.indexOf('*a')).toBe(sequence.length - 1)
+    assert.ok(sequence.indexOf('*c') < sequence.indexOf('*b'))
+    assert.ok(sequence.indexOf('*b') < sequence.indexOf('*a'))
+    assert.ok(sequence.indexOf('*d') < sequence.indexOf('*b'))
+    assert.strictEqual(sequence.indexOf('*a'), sequence.length - 1)
   })
 
   it('should disconnect if no parents left', async () => {
@@ -134,19 +137,19 @@ describe('dependencies', () => {
     await a.connect()
     await b.connect()
 
-    expect(sequence).toEqual(['+c', '+a', '+b'])
+    assert.deepStrictEqual(sequence, ['+c', '+a', '+b'])
 
     await a.disconnect()
 
-    expect(sequence).toEqual(['+c', '+a', '+b', '-a', '*a'])
+    assert.deepStrictEqual(sequence, ['+c', '+a', '+b', '-a', '*a'])
 
     await b.disconnect()
 
-    expect(sequence).toEqual(['+c', '+a', '+b', '-a', '*a', '-b', '-c', '*c', '*b'])
+    assert.deepStrictEqual(sequence, ['+c', '+a', '+b', '-a', '*a', '-b', '-c', '*c', '*b'])
   })
 
   it('should throw if depends not on Connector', async () => {
-    expect(() => a.depends({})).toThrow()
+    assert.throws(() => a.depends({}))
   })
 
   it('should disconnect while still connecting', async () => {
@@ -159,11 +162,11 @@ describe('dependencies', () => {
     while (b.connected !== true) await timeout(1)
 
     // `a` never connects, and disconnecting must not wait for it to
-    expect(a.connected).toStrictEqual(false)
+    assert.deepStrictEqual(a.connected, false)
 
     await a.disconnect()
 
-    expect(sequence).toEqual(['+b', '-b', '*b', '*a'])
+    assert.deepStrictEqual(sequence, ['+b', '-b', '*b', '*a'])
   })
 
   describe('errors', () => {
@@ -176,21 +179,21 @@ describe('dependencies', () => {
     it('should disconnect on fail', async () => {
       f.depends(b).depends(c)
 
-      await expect(f.connect()).rejects.toThrow('FailingConnector')
-      expect(sequence).toEqual(['+c', '+b', '-b', '-c', '*c', '*b'])
+      await assert.rejects(f.connect(), (error) => /FailingConnector/.test(error.message))
+      assert.deepStrictEqual(sequence, ['+c', '+b', '-b', '-c', '*c', '*b'])
     })
 
     it('should interrupt connection chain', async () => {
       a.depends(f).depends(c)
       f.depends(d)
 
-      await expect(a.connect()).rejects.toThrow('FailingConnector')
+      await assert.rejects(a.connect(), (error) => /FailingConnector/.test(error.message))
 
-      expect(sequence.indexOf('+c')).toBeLessThan(sequence.indexOf('-c'))
-      expect(sequence.indexOf('+d')).toBeLessThan(sequence.indexOf('-d'))
+      assert.ok(sequence.indexOf('+c') < sequence.indexOf('-c'))
+      assert.ok(sequence.indexOf('+d') < sequence.indexOf('-d'))
 
-      expect(sequence.indexOf('+a')).toBe(-1)
-      expect(sequence.indexOf('-a')).toBe(-1)
+      assert.strictEqual(sequence.indexOf('+a'), -1)
+      assert.strictEqual(sequence.indexOf('-a'), -1)
     })
   })
 })

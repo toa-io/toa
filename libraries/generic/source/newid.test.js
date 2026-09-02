@@ -1,10 +1,13 @@
 'use strict'
 
+const { it } = require('node:test')
+const assert = require('node:assert/strict')
+
 const { newid } = require('../source')
 
 it('should return id', () => {
   const id = newid()
 
-  expect(id).toStrictEqual(expect.any(String))
-  expect(id.length).toBe(32)
+  assert.strictEqual(typeof id, 'string')
+  assert.strictEqual(id.length, 32)
 })

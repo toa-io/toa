@@ -1,3 +1,6 @@
+import { it, beforeEach } from 'node:test'
+import assert from 'node:assert/strict'
+
 /* eslint-disable no-template-curly-in-string */
 
 import { Agent } from './Agent.js'
@@ -22,14 +25,14 @@ it('should match lines in order with headers in between', () => {
     '      id: ${{ identity.id }}\n' +
     '    '
 
-  expect(() => agent.responseIncludes(expected)).not.toThrow()
+  assert.doesNotThrow(() => agent.responseIncludes(expected))
 
-  expect(agent.captures.get('identity.token')).toBe('v3.local.eziy')
-  expect(agent.captures.get('identity.id')).toBe('abc-123')
+  assert.strictEqual(agent.captures.get('identity.token'), 'v3.local.eziy')
+  assert.strictEqual(agent.captures.get('identity.id'), 'abc-123')
 })
 
 it('should not match lines out of order', () => {
   agent.response = 'line 1\nline 2'
 
-  expect(() => agent.responseIncludes('line 2\nline 1')).toThrow(/missing 'line 1'/)
+  assert.throws(() => agent.responseIncludes('line 2\nline 1'), (error: any) => /missing 'line 1'/.test(error.message))
 })

@@ -1,5 +1,8 @@
 'use strict'
 
+const { describe, it, beforeEach } = require('node:test')
+const assert = require('node:assert/strict')
+
 const fixtures = require('./image.fixtures')
 const { generate } = require('randomstring')
 
@@ -13,11 +16,11 @@ beforeEach(() => {
 it('should assign url', () => {
   instance.tag()
 
-  expect(instance.reference).toEqual(`${fixtures.registry.base}/${fixtures.scope}/${fixtures.name}:${fixtures.version}`)
+  assert.deepStrictEqual(instance.reference, `${fixtures.registry.base}/${fixtures.scope}/${fixtures.name}:${fixtures.version}`)
 })
 
 describe('prepare', () => {
   it('should throw error if no dockerfile specified', async () => {
-    await expect(instance.prepare(generate())).rejects.toThrow(/Dockerfile isn't specified/)
+    await assert.rejects(instance.prepare(generate()), (error) => /Dockerfile isn't specified/.test(error.message))
   })
 })

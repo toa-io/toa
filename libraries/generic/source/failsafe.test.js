@@ -1,20 +1,24 @@
 'use strict'
 
+const { describe, it, beforeEach, mock } = require('node:test')
+const assert = require('node:assert/strict')
+const { isDeepStrictEqual } = require('node:util')
+
 const { generate } = require('randomstring')
 const { failsafe } = require('../')
 
 it('should be', async () => {
-  expect(failsafe).toBeDefined()
+  assert.notStrictEqual(failsafe, undefined)
 })
 
 beforeEach(() => {
-  jest.clearAllMocks()
+  resetCalls()
 })
 
-const fn = /** @type {jest.MockedFunction} */
-  jest.fn(async () => generate())
-const recover = /** @type {jest.MockedFunction<(...args: any[]) => Promise<any>>} */
-  jest.fn(async () => true)
+const fn = /** @type {import('node:test').Mock<any>} */
+  mock.fn(async () => generate())
+const recover = /** @type {import('node:test').Mock<(...args: any[]) => Promise<any>>} */
+  mock.fn(async () => true)
 
 class FailsafeTest {
   doWithRecovery = failsafe(this, this.#recover, async (...args) => {
@@ -34,25 +38,26 @@ class FailsafeTest {
 let instance
 
 beforeEach(() => {
-  jest.clearAllMocks()
+  resetCalls()
 
   instance = new FailsafeTest()
 })
 
-describe.each([
+for (const [_, method] of [
   ['with', 'doWithRecovery'],
   ['without', 'doWithoutRecovery']
-])('%s recovery', (_, method) => {
+])
+   describe(`${_} recovery`, () => {
   it('should run fn', async () => {
     await instance[method]()
 
-    expect(fn).toHaveBeenCalled()
+    assert.ok(fn.mock.callCount() > 0)
   })
 
   it('should return value', async () => {
     const value = await instance[method]()
 
-    expect(value).toStrictEqual(await fn.mock.results[0].value)
+    assert.deepStrictEqual(value, await fn.mock.calls[0].result)
   })
 
   it('should pass arguments', async () => {
@@ -60,44 +65,44 @@ describe.each([
 
     await instance[method](...args)
 
-    expect(fn).toHaveBeenCalledWith(...args)
+    assert.ok(fn.mock.calls.some((call) => isDeepStrictEqual(call.arguments, [...args])))
   })
 
   it('should call again', async () => {
-    fn.mockImplementationOnce(async () => { throw new Error() })
+    fn.mock.mockImplementationOnce(async () => { throw new Error() })
 
     await instance[method]()
 
-    expect(fn).toHaveBeenCalledTimes(2)
+    assert.strictEqual(fn.mock.callCount(), 2)
   })
 })
 
 describe('recovery function', () => {
   it('should recover on exception', async () => {
-    fn.mockImplementationOnce(async () => { throw new Error() })
+    fn.mock.mockImplementationOnce(async () => { throw new Error() })
 
     const value = await instance.doWithRecovery()
 
-    expect(value).toStrictEqual(await fn.mock.results[1].value)
+    assert.deepStrictEqual(value, await fn.mock.calls[1].result)
   })
 
   it('should throw on recovery failure', async () => {
     const exception = generate()
 
-    fn.mockImplementationOnce(async () => { throw exception })
-    recover.mockImplementationOnce(async () => false)
+    fn.mock.mockImplementationOnce(async () => { throw exception })
+    recover.mock.mockImplementationOnce(async () => false)
 
-    await expect(instance.doWithRecovery()).rejects.toStrictEqual(exception)
+    await assert.rejects(instance.doWithRecovery(), (error) => { assert.deepStrictEqual(error, exception); return true })
   })
 
   it('should pass exception to recover', async () => {
     const exception = generate()
 
-    fn.mockImplementationOnce(async () => { throw exception })
+    fn.mock.mockImplementationOnce(async () => { throw exception })
 
     await instance.doWithRecovery()
 
-    expect(recover).toHaveBeenCalledWith(exception)
+    assert.ok(recover.mock.calls.some((call) => call.arguments.length === 1 && isDeepStrictEqual(call.arguments[0], exception)))
   })
 
   it('should call recover within context', async () => {
@@ -107,13 +112,13 @@ describe('recovery function', () => {
       do = failsafe(this, this.recover, fn)
 
       recover () {
-        expect(this.foo).toStrictEqual(1)
+        assert.deepStrictEqual(this.foo, 1)
       }
     }
 
     const instance = new Test()
 
-    fn.mockImplementationOnce(() => { throw new Error() })
+    fn.mock.mockImplementationOnce(() => { throw new Error() })
 
     instance.do()
   })
@@ -125,9 +130,19 @@ describe('disable', () => {
 
     failsafe.disable(instance.doWithRecovery, instance.doWithoutRecovery)
 
-    fn.mockImplementation(async () => { throw exception })
+    fn.mock.mockImplementation(async () => { throw exception })
 
-    await expect(instance.doWithRecovery()).rejects.toStrictEqual(exception)
-    await expect(instance.doWithoutRecovery()).rejects.toStrictEqual(exception)
+    await assert.rejects(instance.doWithRecovery(), (error) => { assert.deepStrictEqual(error, exception); return true })
+    await assert.rejects(instance.doWithoutRecovery(), (error) => { assert.deepStrictEqual(error, exception); return true })
   })
 })
+
+function resetCalls (target = [assert, fn, recover], seen = new Set()) {
+  if (target === null || typeof target !== 'object' || seen.has(target)) return
+
+  seen.add(target)
+
+  for (const value of Object.values(target))
+    if (typeof value === 'function' && value.mock !== undefined) value.mock.resetCalls()
+    else resetCalls(value, seen)
+}

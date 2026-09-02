@@ -1,5 +1,8 @@
 'use strict'
 
+const { it, beforeEach } = require('node:test')
+const assert = require('node:assert/strict')
+
 const clone = require('clone-deep')
 const { generate } = require('randomstring')
 
@@ -15,7 +18,7 @@ beforeEach(() => {
 it('should keep original properties', () => {
   source = convolve(source)
 
-  expect(source).toStrictEqual(fixtures.origin)
+  assert.deepStrictEqual(source, fixtures.origin)
 })
 
 it('should remove tagged values if no discriminator is given', () => {
@@ -25,8 +28,8 @@ it('should remove tagged values if no discriminator is given', () => {
 
   source = convolve(source)
 
-  expect(source['foo@' + discriminator]).toBeUndefined()
-  expect(source.foo).toStrictEqual(fixtures.origin.foo)
+  assert.strictEqual(source['foo@' + discriminator], undefined)
+  assert.deepStrictEqual(source.foo, fixtures.origin.foo)
 })
 
 it('should determine values', () => {
@@ -39,11 +42,11 @@ it('should determine values', () => {
 
   source = convolve(source, discriminator)
 
-  expect(source['foo@' + discriminator]).toBeUndefined()
-  expect(source.foo).toStrictEqual(foo)
+  assert.strictEqual(source['foo@' + discriminator], undefined)
+  assert.deepStrictEqual(source.foo, foo)
 
-  expect(source.bar['baz@' + discriminator]).toBeUndefined()
-  expect(source.bar.baz).toStrictEqual(baz)
+  assert.strictEqual(source.bar['baz@' + discriminator], undefined)
+  assert.deepStrictEqual(source.bar.baz, baz)
 })
 
 it('should handle arrays', () => {
@@ -54,7 +57,7 @@ it('should handle arrays', () => {
 
   source = convolve(source, discriminator)
 
-  expect(source.quu[0].foo).toStrictEqual(foo)
+  assert.deepStrictEqual(source.quu[0].foo, foo)
 })
 
 it('should determine nested tagged values', () => {
@@ -68,9 +71,9 @@ it('should determine nested tagged values', () => {
 
   source = convolve(source, discriminator)
 
-  expect(source['bar@' + discriminator]).toBeUndefined()
-  expect(source.bar.baz).toStrictEqual(baz)
-  expect(Object.keys(source.bar)).toStrictEqual(['baz'])
+  assert.strictEqual(source['bar@' + discriminator], undefined)
+  assert.deepStrictEqual(source.bar.baz, baz)
+  assert.deepStrictEqual(Object.keys(source.bar), ['baz'])
 })
 
 it('should modify argument', () => {
@@ -80,8 +83,8 @@ it('should modify argument', () => {
 
   convolve(source)
 
-  expect(source['foo@' + discriminator]).toBeUndefined()
-  expect(source.foo).toStrictEqual(fixtures.origin.foo)
+  assert.strictEqual(source['foo@' + discriminator], undefined)
+  assert.deepStrictEqual(source.foo, fixtures.origin.foo)
 })
 
 it('should not affect properties staring with @', () => {
@@ -91,7 +94,7 @@ it('should not affect properties staring with @', () => {
 
   convolve(source)
 
-  expect(source['@property']).toStrictEqual(value)
+  assert.deepStrictEqual(source['@property'], value)
 })
 
 it('should not throw on nulls', () => {
@@ -99,5 +102,5 @@ it('should not throw on nulls', () => {
 
   source[property] = null
 
-  expect(() => convolve(source)).not.toThrow()
+  assert.doesNotThrow(() => convolve(source))
 })

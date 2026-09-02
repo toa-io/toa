@@ -1,11 +1,16 @@
+import { it, beforeEach, afterEach, mock } from 'node:test'
+import type { Mock } from 'node:test'
+import assert from 'node:assert/strict'
+import { isDeepStrictEqual } from 'node:util'
+
 import { Ready } from './Ready.js'
 
-let send: jest.Mock
+let send: Mock<any>
 let original: typeof process.send
 
 beforeEach(() => {
   original = process.send
-  send = jest.fn()
+  send = mock.fn()
   process.send = send as unknown as typeof process.send
 })
 
@@ -19,7 +24,7 @@ it('should signal readiness', async () => {
   await ready.connect()
   await ready.complete()
 
-  expect(send).toHaveBeenCalledWith('ready')
+  assert.ok(send.mock.calls.some((call: any) => call.arguments.length === 1 && isDeepStrictEqual(call.arguments[0], 'ready')))
 
   await ready.disconnect()
 })
@@ -35,7 +40,7 @@ it('should signal readiness when the probe port is taken', async () => {
 
   await second.complete()
 
-  expect(send).toHaveBeenCalledWith('ready')
+  assert.ok(send.mock.calls.some((call: any) => call.arguments.length === 1 && isDeepStrictEqual(call.arguments[0], 'ready')))
 
   await first.disconnect()
   await second.disconnect()

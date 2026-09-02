@@ -1,49 +1,54 @@
-import assert from 'node:assert'
+import { describe, it, beforeEach, mock } from 'node:test'
+import assert from 'node:assert/strict'
+
 import { generate } from 'randomstring'
 import { DirectivesFactory } from './Directive.js'
 import type { syntax, DirectiveFamily } from './RTD/index.js'
 import type { Remotes } from './Remotes.js'
 import type { Context } from './HTTP/index.js'
 
-const families: Array<jest.MockedObjectDeep<DirectiveFamily>> = [
+const sequence: string[] = []
+
+const families: Array<DirectiveFamily> = [
   {
     name: 'foo',
     mandatory: true,
-    create: jest.fn((_0: any, _1: any, _2: any) => generate() as any),
-    arrange: jest.fn(),
-    preflight: jest.fn(),
-    settle: jest.fn(),
-    dispose: jest.fn()
+    create: mock.fn((_0: any, _1: any, _2: any) => generate() as any),
+    arrange: mock.fn(),
+    preflight: mock.fn(() => { sequence.push('foo'); return null }),
+    settle: mock.fn(),
+    dispose: mock.fn()
   },
   {
     name: 'qux',
     mandatory: true,
-    create: jest.fn((_0: any, _1: any, _2: any) => generate() as any),
-    arrange: jest.fn(),
-    preflight: jest.fn(),
-    settle: jest.fn(),
-    dispose: jest.fn()
+    create: mock.fn((_0: any, _1: any, _2: any) => generate() as any),
+    arrange: mock.fn(),
+    preflight: mock.fn(() => { sequence.push('qux'); return null }),
+    settle: mock.fn(),
+    dispose: mock.fn()
   },
   {
     name: 'bar',
     mandatory: false,
-    create: jest.fn((_0: string, _1: any, _2: any) => generate() as any),
-    arrange: jest.fn(),
-    preflight: jest.fn(),
-    settle: jest.fn(),
-    dispose: jest.fn()
+    create: mock.fn((_0: string, _1: any, _2: any) => generate() as any),
+    arrange: mock.fn(),
+    preflight: mock.fn(() => { sequence.push('bar'); return null }),
+    settle: mock.fn(),
+    dispose: mock.fn()
   }
 ]
 
 let factory: DirectivesFactory
 
 beforeEach(() => {
-  jest.clearAllMocks()
+  resetCalls()
+  sequence.length = 0
 
   for (const family of families) {
     assert.ok(family.preflight !== undefined)
 
-    family.preflight.mockImplementation(() => null)
+    family.preflight.mock.mockImplementation(() => { sequence.push(family.name); return null })
   }
 
   factory = new DirectivesFactory(families, {} as unknown as Remotes)
@@ -68,8 +73,8 @@ it('should create directive', async () => {
   for (const declaration of declarations) {
     const family = families.find(({ name }) => name === declaration.family)!
 
-    expect(family.create.mock.calls[0][0]).toBe(declaration.name)
-    expect(family.create.mock.calls[0][1]).toBe(declaration.value)
+    assert.strictEqual(family.create.mock.calls[0].arguments[0], declaration.name)
+    assert.strictEqual(family.create.mock.calls[0].arguments[1], declaration.value)
   }
 })
 
@@ -78,7 +83,7 @@ it('should pass the route to the families', async () => {
 
   factory.create([{ family: 'foo', name: generate(), value: generate() }], route)
 
-  expect(families[0].create.mock.calls[0][3]).toBe(route)
+  assert.strictEqual(families[0].create.mock.calls[0].arguments[3], route)
 })
 
 it('should throw error if directive family is not found', async () => {
@@ -88,8 +93,8 @@ it('should throw error if directive family is not found', async () => {
     value: generate()
   }
 
-  expect(() => factory.create([declaration]))
-    .toThrow(`Directive family '${declaration.family}' is not found`)
+  assert.throws(() => factory.create([declaration]),
+    (error: Error) => error.message.includes(`Directive family '${declaration.family}' is not found`))
 })
 
 it('should apply directive', async () => {
@@ -101,14 +106,14 @@ it('should apply directive', async () => {
 
   const directives = factory.create([declaration])
   const request = generate() as unknown as Context
-  const directive = families[0].create.mock.results[0].value
+  const directive = families[0].create.mock.calls[0].result
 
   await directives.preflight(request, [])
 
   assert.ok(families[0].preflight !== undefined)
 
-  expect(families[0].preflight.mock.calls[0][0]).toStrictEqual([directive])
-  expect(families[0].preflight.mock.calls[0][1]).toEqual(request)
+  assert.deepStrictEqual(families[0].preflight.mock.calls[0].arguments[0], [directive])
+  assert.deepStrictEqual(families[0].preflight.mock.calls[0].arguments[1], request)
 })
 
 it('should apply mandatory families', async () => {
@@ -117,16 +122,13 @@ it('should apply mandatory families', async () => {
 
   await directives.preflight(request, [])
 
-  expect(families[0].preflight).toHaveBeenCalled()
+  assert.ok(families[0].preflight.mock.callCount() > 0)
 })
 
 describe('order', () => {
+  // the order the families actually ran, as each preflight recorded it
   function order (): string[] {
-    return families
-      .filter(({ preflight }) => preflight!.mock.calls.length > 0)
-      .sort((a, b) => a.preflight!.mock.invocationCallOrder[0] -
-        b.preflight!.mock.invocationCallOrder[0])
-      .map(({ name }) => name)
+    return sequence
   }
 
   it('should run mandatory families in their own order, whatever a manifest says', async () => {
@@ -138,7 +140,7 @@ describe('order', () => {
 
     await directives.preflight(generate() as unknown as Context, [])
 
-    expect(order()).toStrictEqual(['foo', 'qux'])
+    assert.deepStrictEqual(order(), ['foo', 'qux'])
   })
 
   it('should run a mandatory family before a declared one it is not declared with',
@@ -151,7 +153,7 @@ describe('order', () => {
 
       await directives.preflight(generate() as unknown as Context, [])
 
-      expect(order()).toStrictEqual(['foo', 'qux'])
+      assert.deepStrictEqual(order(), ['foo', 'qux'])
     })
 
   it('should run mandatory families before the rest', async () => {
@@ -162,6 +164,16 @@ describe('order', () => {
 
     await directives.preflight(generate() as unknown as Context, [])
 
-    expect(order()).toStrictEqual(['foo', 'qux', 'bar'])
+    assert.deepStrictEqual(order(), ['foo', 'qux', 'bar'])
   })
 })
+
+function resetCalls (target = [families], seen = new Set()) {
+  if (target === null || typeof target !== 'object' || seen.has(target)) return
+
+  seen.add(target)
+
+  for (const value of Object.values(target))
+    if (typeof value === 'function' && value.mock !== undefined) value.mock.resetCalls()
+    else resetCalls(value, seen)
+}

@@ -1,17 +1,20 @@
 'use strict'
 
+const { it, mock: mocking } = require('node:test')
+const assert = require('node:assert/strict')
+
 const { generate } = require('randomstring')
 
 const mock = {
   boot: require('./boot.mock')
 }
 
-jest.mock('@toa.io/boot', () => mock.boot)
+mocking.module('@toa.io/boot', { namedExports: mock.boot })
 
 const stage = require('../')
 
 it('should be', () => {
-  expect(stage.remote).toBeDefined()
+  assert.notStrictEqual(stage.remote, undefined)
 })
 
 it('should connect remote', async () => {
@@ -21,12 +24,12 @@ it('should connect remote', async () => {
 
   const remote = await stage.remote(id)
 
-  expect(mock.boot.remote).toHaveBeenCalled()
-  expect(remote).toStrictEqual(await mock.boot.remote.mock.results[0].value)
-  expect(remote.connect).toHaveBeenCalled()
+  assert.ok(mock.boot.remote.mock.callCount() > 0)
+  assert.deepStrictEqual(remote, await mock.boot.remote.mock.calls[0].result)
+  assert.ok(remote.connect.mock.callCount() > 0)
 
-  const locator = mock.boot.remote.mock.calls[0][0]
+  const locator = mock.boot.remote.mock.calls[0].arguments[0]
 
-  expect(locator).toBeDefined()
-  expect(locator).toMatchObject({ name, namespace })
+  assert.notStrictEqual(locator, undefined)
+  assert.partialDeepStrictEqual(locator, { name, namespace })
 })

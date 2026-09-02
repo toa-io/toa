@@ -1,5 +1,9 @@
 'use strict'
 
+const { describe, it, beforeEach, mock: mocking } = require('node:test')
+const assert = require('node:assert/strict')
+const { isDeepStrictEqual } = require('node:util')
+
 const { generate } = require('randomstring')
 const { Connector } = require('@toa.io/core')
 
@@ -8,71 +12,71 @@ const mock = {
   queues: require('./queues.mock')
 }
 
-jest.mock('../source/queues', () => mock.queues)
+mocking.module('../source/queues', { namedExports: mock.queues })
 
 const { Receiver } = require('../source/receiver')
 
 it('should be', async () => {
-  expect(Receiver).toBeDefined()
+  assert.notStrictEqual(Receiver, undefined)
 })
 
-/** @type {jest.MockedObject<toa.amqp.Communication>} */
+/** @type {toa.amqp.Communication} */
 const comm = mock.communication()
 
 const exchange = generate()
 const group = generate()
 
-const processor = /** @type {jest.MockedObject<toa.core.Receiver>} */ {
-  connect: jest.fn(async () => undefined),
-  disconnect: jest.fn(async () => undefined),
-  link: jest.fn(),
-  receive: jest.fn(async () => undefined)
+const processor = /** @type {toa.core.Receiver} */ {
+  connect: mocking.fn(async () => undefined),
+  disconnect: mocking.fn(async () => undefined),
+  link: mocking.fn(),
+  receive: mocking.fn(async () => undefined)
 }
 
 /** @type {Receiver} */
 let receiver
 
 beforeEach(() => {
-  jest.clearAllMocks()
+  resetCalls()
 
   receiver = new Receiver(comm, exchange, group, processor)
 })
 
 it('should be instance of Connector', async () => {
-  expect(receiver).toBeInstanceOf(Connector)
+  assert.ok(receiver instanceof Connector)
 })
 
 it('should depend on communication', async () => {
-  expect(comm.link).toHaveBeenCalledWith(receiver)
+  assert.ok(comm.link.mock.calls.some((call) => call.arguments.length === 1 && isDeepStrictEqual(call.arguments[0], receiver)))
 })
 
 it('should consume events', async () => {
   await receiver.open()
 
-  expect(comm.consume).toHaveBeenCalledWith(exchange, group, expect.any(Function))
+  assert.ok(comm.consume.mock.calls.some((call) => call.arguments.length === 3 && isDeepStrictEqual(call.arguments[0], exchange) && isDeepStrictEqual(call.arguments[1], group) && typeof call.arguments[2] === 'function'))
 
-  const callback = comm.consume.mock.calls[0][2]
+  const callback = comm.consume.mock.calls[0].arguments[2]
   const payload = generate()
   const message = { payload }
   const properties = { headers: { 'toa.io/amqp': '0' } }
 
   await callback(message, properties)
 
-  expect(processor.receive).toHaveBeenCalledWith(message)
+  assert.ok(processor.receive.mock.calls.some((call) => call.arguments.length === 1 && isDeepStrictEqual(call.arguments[0], message)))
 })
 
 it('should consume foreign events', async () => {
   await receiver.open()
 
-  expect(comm.consume).toHaveBeenCalledWith(exchange, group, expect.any(Function))
+  assert.ok(comm.consume.mock.calls.some((call) => call.arguments.length === 3 && isDeepStrictEqual(call.arguments[0], exchange) && isDeepStrictEqual(call.arguments[1], group) && typeof call.arguments[2] === 'function'))
 
-  const callback = comm.consume.mock.calls[0][2]
+  const callback = comm.consume.mock.calls[0].arguments[2]
   const message = generate()
   const properties = { headers: {} }
 
   await callback(message, properties)
 
-  expect(processor.receive).toHaveBeenCalledWith({ payload: message })
+  assert.ok(processor.receive.mock.calls.some((call) => call.arguments.length === 1 && isDeepStrictEqual(call.arguments[0], { payload: message })))
 })
 
 describe('closing', () => {
@@ -80,7 +84,7 @@ describe('closing', () => {
     await receiver.connect()
     await receiver.disconnect()
 
-    expect(comm.seal).toHaveBeenCalled()
+    assert.ok(comm.seal.mock.callCount() > 0)
   })
 
   // sealing cancels the consumer but does not recall what has already been dispatched,
@@ -89,37 +93,46 @@ describe('closing', () => {
     let complete
     let closed = false
 
-    processor.receive.mockImplementationOnce(async () =>
+    processor.receive.mock.mockImplementationOnce(async () =>
       await new Promise((resolve) => { complete = resolve }))
 
     await receiver.connect()
 
-    const callback = comm.consume.mock.calls[0][2]
+    const callback = comm.consume.mock.calls[0].arguments[2]
     const delivery = callback({ payload: generate() }, { headers: { 'toa.io/amqp': '0' } })
     const closing = receiver.disconnect().then(() => { closed = true })
 
     await new Promise((resolve) => setImmediate(resolve))
 
-    expect(closed).toBe(false)
+    assert.strictEqual(closed, false)
 
     complete()
 
     await delivery
     await closing
 
-    expect(closed).toBe(true)
+    assert.strictEqual(closed, true)
   })
 
   it('should not be held by a delivery that failed', async () => {
-    processor.receive.mockImplementationOnce(async () => { throw new Error('nope') })
+    processor.receive.mock.mockImplementationOnce(async () => { throw new Error('nope') })
 
     await receiver.connect()
 
-    const callback = comm.consume.mock.calls[0][2]
+    const callback = comm.consume.mock.calls[0].arguments[2]
 
-    await expect(callback({ payload: generate() }, { headers: { 'toa.io/amqp': '0' } }))
-      .rejects.toThrow('nope')
+    await assert.rejects(callback({ payload: generate() }, { headers: { 'toa.io/amqp': '0' } }), (error) => /nope/.test(error.message))
 
-    await expect(receiver.disconnect()).resolves.not.toThrow()
+    await assert.doesNotReject(receiver.disconnect())
   })
 })
+
+function resetCalls (target = [assert, mock, comm, exchange, group, processor], seen = new Set()) {
+  if (target === null || typeof target !== 'object' || seen.has(target)) return
+
+  seen.add(target)
+
+  for (const value of Object.values(target))
+    if (typeof value === 'function' && value.mock !== undefined) value.mock.resetCalls()
+    else resetCalls(value, seen)
+}

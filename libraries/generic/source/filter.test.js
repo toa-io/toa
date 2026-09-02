@@ -1,10 +1,13 @@
 'use strict'
 
+const { it } = require('node:test')
+const assert = require('node:assert/strict')
+
 const { filter } = require('../')
 const { immediate } = require('./immediate')
 
 it('should be', async () => {
-  expect(filter).toBeInstanceOf(Function)
+  assert.ok(filter instanceof Function)
 })
 
 it('should filter', async () => {
@@ -16,5 +19,5 @@ it('should filter', async () => {
   const array = ['a', 'b']
   const output = await filter(array, test)
 
-  expect(output).toStrictEqual(['b'])
+  assert.deepStrictEqual(output, ['b'])
 })

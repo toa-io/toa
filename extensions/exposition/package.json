@@ -22,7 +22,7 @@
     "@toa.io/generic": "1.0.0-alpha.273",
     "@toa.io/schemas": "1.0.0-alpha.274",
     "bcryptjs": "3.0.3",
-    "content-type": "2.1.0",
+    "content-type": "3.0.0",
     "jose": "6.2.10",
     "js-yaml": "5.4.1",
     "lru-cache": "11.5.2",
@@ -34,7 +34,7 @@
     "paseto": "3.1.4"
   },
   "scripts": {
-    "test": "NODE_OPTIONS=--experimental-vm-modules jest",
+    "test": "echo \"Error: run tests from root\" && exit 1",
     "transpile": "tsc && npm run transpile:bans && npm run transpile:basic && npm run transpile:tokens && npm run transpile:roles && npm run transpile:federation && npm run transpile:credentials && npm run transpile:keys && npm run transpile:passkeys && npm run transpile:otp",
     "transpile:bans": "tsc -p ./components/identity.bans",
     "transpile:basic": "tsc -p ./components/identity.basic",
@@ -52,17 +52,7 @@
   "devDependencies": {
     "@toa.io/extensions.storages": "*",
     "@types/cors": "2.8.19",
-    "@types/negotiator": "0.6.5",
-    "jest-esbuild": "0.4.0"
-  },
-  "jest": {
-    "transform": {
-      "^.+\\.ts$": "jest-esbuild"
-    },
-    "testEnvironment": "node",
-    "moduleNameMapper": {
-      "^(\\.{1,2}/.*)\\.js$": "$1"
-    }
+    "@types/negotiator": "0.6.5"
   },
   "gitHead": "2ab75e1fd23f2e64720a60b8562dda606aa723ee"
 }

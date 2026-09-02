@@ -1,21 +1,25 @@
 'use strict'
 
+const { describe, it, beforeEach, mock } = require('node:test')
+const assert = require('node:assert/strict')
+const { isDeepStrictEqual } = require('node:util')
+
 const { generate } = require('randomstring')
 const { timeout } = require('../source')
 
 const { lazy } = require('../source')
 
 it('should be', async () => {
-  expect(lazy).toBeDefined()
+  assert.notStrictEqual(lazy, undefined)
 })
 
 // noinspection JSValidateTypes
-/** @type {jest.MockedFn<(...args: any[]) => Promise<void>>} */
-const action = jest.fn(async () => undefined)
+/** @type {import('node:test').Mock<(...args: any[]) => Promise<void>>} */
+const action = mock.fn(async () => undefined)
 
 // noinspection JSValidateTypes
-/** @type {jest.MockedFn<(...args: any[]) => Promise<void>>} */
-const initialize = jest.fn(async () => undefined)
+/** @type {import('node:test').Mock<(...args: any[]) => Promise<void>>} */
+const initialize = mock.fn(async () => undefined)
 
 const value = generate()
 
@@ -41,7 +45,7 @@ class LazyInitialized {
 let instance
 
 beforeEach(() => {
-  jest.clearAllMocks()
+  resetCalls()
 
   instance = new LazyInitialized()
 })
@@ -49,7 +53,7 @@ beforeEach(() => {
 it('should call initializer before action', async () => {
   await instance.action()
 
-  expect(instance.log).toStrictEqual(['initializer', 'action'])
+  assert.deepStrictEqual(instance.log, ['initializer', 'action'])
 })
 
 it('should pass arguments to action', async () => {
@@ -57,28 +61,28 @@ it('should pass arguments to action', async () => {
 
   await instance.action(...args)
 
-  expect(action).toHaveBeenCalledWith(...args)
+  assert.ok(action.mock.calls.some((call) => isDeepStrictEqual(call.arguments, [...args])))
 })
 
 it('should return value', async () => {
   const output = await instance.action()
 
-  expect(output).toStrictEqual(value)
+  assert.deepStrictEqual(output, value)
 })
 
 it('should call initializer once', async () => {
   await instance.action()
   await instance.action()
 
-  expect(initialize).toHaveBeenCalledTimes(1)
-  expect(instance.log).toStrictEqual(['initializer', 'action', 'action'])
+  assert.strictEqual(initialize.mock.callCount(), 1)
+  assert.deepStrictEqual(instance.log, ['initializer', 'action', 'action'])
 })
 
 it('should call initializer once on concurrent calls', async () => {
   await Promise.all([instance.action(), instance.action()])
 
-  expect(initialize).toHaveBeenCalledTimes(1)
-  expect(instance.log).toStrictEqual(['initializer', 'action', 'action'])
+  assert.strictEqual(initialize.mock.callCount(), 1)
+  assert.deepStrictEqual(instance.log, ['initializer', 'action', 'action'])
 })
 
 it('should call initializer once per instance', async () => {
@@ -87,12 +91,12 @@ it('should call initializer once per instance', async () => {
   await instance.action()
   await instance2.action()
 
-  expect(initialize).toHaveBeenCalledTimes(2)
+  assert.strictEqual(initialize.mock.callCount(), 2)
 })
 
 // noinspection JSValidateTypes
-/** @type {jest.MockedFn<(...args: any[]) => Promise<void>>} */
-const initialize2 = jest.fn(async () => undefined)
+/** @type {import('node:test').Mock<(...args: any[]) => Promise<void>>} */
+const initialize2 = mock.fn(async () => undefined)
 
 class InitializerSet {
   action = lazy(this, [this.#initialize1, this.#initialize2], this.#action)
@@ -115,8 +119,8 @@ it('should run list of initializers', async () => {
 
   await instance.action()
 
-  expect(initialize).toHaveBeenCalled()
-  expect(initialize2).toHaveBeenCalled()
+  assert.ok(initialize.mock.callCount() > 0)
+  assert.ok(initialize2.mock.callCount() > 0)
 })
 
 class InitializerIntersection {
@@ -142,26 +146,26 @@ class InitializerIntersection {
 }
 
 it('should call intersecting initializers once', async () => {
-  jest.clearAllMocks()
+  resetCalls()
 
   const instance = new InitializerIntersection()
 
   await instance.do()
   await instance.undo()
 
-  expect(initialize).toHaveBeenCalledTimes(1)
-  expect(initialize2).toHaveBeenCalledTimes(1)
+  assert.strictEqual(initialize.mock.callCount(), 1)
+  assert.strictEqual(initialize2.mock.callCount(), 1)
 })
 
 it('should call intersecting concurrent initializers once', async () => {
-  jest.clearAllMocks()
+  resetCalls()
 
   const instance = new InitializerIntersection()
 
   await Promise.all([instance.do(), instance.undo()])
 
-  expect(initialize).toHaveBeenCalledTimes(1)
-  expect(initialize2).toHaveBeenCalledTimes(1)
+  assert.strictEqual(initialize.mock.callCount(), 1)
+  assert.strictEqual(initialize2.mock.callCount(), 1)
 })
 
 class InitializersWithArguments {
@@ -179,27 +183,27 @@ class InitializersWithArguments {
 }
 
 it('should pass arguments to initializers if expected', async () => {
-  jest.clearAllMocks()
+  resetCalls()
 
   const instance = new InitializersWithArguments()
 
   await instance.do(1, 2, 3)
 
-  expect(initialize).toHaveBeenCalledTimes(1)
+  assert.strictEqual(initialize.mock.callCount(), 1)
 
-  const args = initialize.mock.calls[0][0]
+  const args = initialize.mock.calls[0].arguments[0]
 
-  expect(args.length).toStrictEqual(0)
+  assert.deepStrictEqual(args.length, 0)
 
-  expect(initialize2).toHaveBeenCalledTimes(1)
+  assert.strictEqual(initialize2.mock.callCount(), 1)
 
-  const args2 = initialize2.mock.calls[0][0]
+  const args2 = initialize2.mock.calls[0].arguments[0]
 
-  expect(args2.length).toStrictEqual(2)
+  assert.deepStrictEqual(args2.length, 2)
 })
 
 it('should call conditions with different argument values', async () => {
-  jest.clearAllMocks()
+  resetCalls()
 
   const instance = new InitializersWithArguments()
 
@@ -207,8 +211,8 @@ it('should call conditions with different argument values', async () => {
   await instance.do(1, 2)
   await instance.do(2, 2)
 
-  expect(initialize).toHaveBeenCalledTimes(1)
-  expect(initialize2).toHaveBeenCalledTimes(2)
+  assert.strictEqual(initialize.mock.callCount(), 1)
+  assert.strictEqual(initialize2.mock.callCount(), 2)
 })
 
 class OrderedInitializers {
@@ -231,11 +235,11 @@ it('should call initializers sequentially', async () => {
 
   await instance.do()
 
-  expect(instance.log).toStrictEqual([1, 2])
+  assert.deepStrictEqual(instance.log, [1, 2])
 })
 
 it('should override argument values', async () => {
-  const method = /** @type {Function} */ jest.fn()
+  const method = /** @type {Function} */ mock.fn()
 
   class Test {
     do = lazy(this, this.#update, method)
@@ -251,11 +255,11 @@ it('should override argument values', async () => {
 
   await test.do(foo, bar)
 
-  expect(method).toHaveBeenCalledWith(foo + ' updated', bar + ' updated')
+  assert.ok(method.mock.calls.some((call) => call.arguments.length === 2 && isDeepStrictEqual(call.arguments[0], foo + ' updated') && isDeepStrictEqual(call.arguments[1], bar + ' updated')))
 })
 
 it('should partially override argument values', async () => {
-  const method = /** @type {Function} */ jest.fn()
+  const method = /** @type {Function} */ mock.fn()
 
   class Test {
     do = lazy(this, this.#update, method)
@@ -271,12 +275,12 @@ it('should partially override argument values', async () => {
 
   await test.do(foo, bar)
 
-  expect(method).toHaveBeenCalledWith(foo + ' updated', bar)
+  assert.ok(method.mock.calls.some((call) => call.arguments.length === 2 && isDeepStrictEqual(call.arguments[0], foo + ' updated') && isDeepStrictEqual(call.arguments[1], bar)))
 })
 
 describe('reset', () => {
   it('should be', async () => {
-    expect(lazy.reset).toBeDefined()
+    assert.notStrictEqual(lazy.reset, undefined)
   })
 
   it('should reset initialization', async () => {
@@ -285,15 +289,25 @@ describe('reset', () => {
     await instance.do()
     await instance.undo()
 
-    expect(initialize).toHaveBeenCalledTimes(1)
-    expect(initialize2).toHaveBeenCalledTimes(1)
+    assert.strictEqual(initialize.mock.callCount(), 1)
+    assert.strictEqual(initialize2.mock.callCount(), 1)
 
     lazy.reset(instance)
 
     await instance.do()
     await instance.undo()
 
-    expect(initialize).toHaveBeenCalledTimes(2)
-    expect(initialize2).toHaveBeenCalledTimes(2)
+    assert.strictEqual(initialize.mock.callCount(), 2)
+    assert.strictEqual(initialize2.mock.callCount(), 2)
   })
 })
+
+function resetCalls (target = [assert, action, initialize, value, initialize2], seen = new Set()) {
+  if (target === null || typeof target !== 'object' || seen.has(target)) return
+
+  seen.add(target)
+
+  for (const value of Object.values(target))
+    if (typeof value === 'function' && value.mock !== undefined) value.mock.resetCalls()
+    else resetCalls(value, seen)
+}

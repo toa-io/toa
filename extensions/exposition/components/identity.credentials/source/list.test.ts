@@ -1,3 +1,7 @@
+import { it, mock } from 'node:test'
+import assert from 'node:assert/strict'
+import { isDeepStrictEqual } from 'node:util'
+
 import { Computation } from './list.js'
 
 it('aggregates only public credential properties', async () => {
@@ -8,10 +12,10 @@ it('aggregates only public credential properties', async () => {
     remote: {
       identity: {
         basic: {
-          info: jest.fn(async () => ({ username: 'user@example.com' }))
+          info: mock.fn(async () => ({ username: 'user@example.com' }))
         },
         federation: {
-          list: jest.fn(async () => [{
+          list: mock.fn(async () => [{
             id: 'federation',
             iss: 'https://accounts.google.com',
             sub: 'secret-subject',
@@ -19,7 +23,7 @@ it('aggregates only public credential properties', async () => {
           }])
         },
         passkeys: {
-          list: jest.fn(async () => [{
+          list: mock.fn(async () => [{
             id: 'passkey',
             aid: 'aaguid',
             synced: true,
@@ -35,13 +39,13 @@ it('aggregates only public credential properties', async () => {
 
   operation.mount(context)
 
-  await expect(operation.execute(input)).resolves.toEqual({
+  await assert.deepStrictEqual(await operation.execute(input), {
     basic: { username: 'user@example.com' },
     federation: [{ id: 'federation', iss: 'https://accounts.google.com', _created: 1 }],
     passkeys: [{ id: 'passkey', aid: 'aaguid', synced: true, label: 'Phone', _created: 2 }]
   })
 
-  expect(context.remote.identity.basic.info).toHaveBeenCalledWith({ input })
-  expect(context.remote.identity.federation.list).toHaveBeenCalledWith({ input })
-  expect(context.remote.identity.passkeys.list).toHaveBeenCalledWith({ input })
+  assert.ok(context.remote.identity.basic.info.mock.calls.some((call: any) => call.arguments.length === 1 && isDeepStrictEqual(call.arguments[0], { input })))
+  assert.ok(context.remote.identity.federation.list.mock.calls.some((call: any) => call.arguments.length === 1 && isDeepStrictEqual(call.arguments[0], { input })))
+  assert.ok(context.remote.identity.passkeys.list.mock.calls.some((call: any) => call.arguments.length === 1 && isDeepStrictEqual(call.arguments[0], { input })))
 })

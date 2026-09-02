@@ -1,3 +1,6 @@
+import { describe, it } from 'node:test'
+import assert from 'node:assert/strict'
+
 import { normalize } from './annotation.js'
 
 describe('normalize', () => {
@@ -5,8 +8,7 @@ describe('normalize', () => {
     const declaration = 'amqp://rmq{0-2}.example.com'
     const annotation = normalize(declaration)
 
-    expect(annotation)
-      .toStrictEqual({
+    assert.deepStrictEqual(annotation, {
         '.': [
           'amqp://rmq0.example.com',
           'amqp://rmq1.example.com',
@@ -22,8 +24,7 @@ describe('normalize', () => {
 
     const annotation = normalize(declaration)
 
-    expect(annotation)
-      .toStrictEqual({
+    assert.deepStrictEqual(annotation, {
         foo: [
           'amqp://rmq.example.com',
           'amqp://rmq0.example.com',
@@ -38,29 +39,25 @@ describe('validation', () => {
   it('should pass', async () => {
     const declaration = 'http://localhost'
 
-    expect(() => normalize(declaration))
-      .not.toThrow()
+    assert.doesNotThrow(() => normalize(declaration))
   })
 
   it('should throw if non-uri', async () => {
     const declaration = 'non uri'
 
-    expect(() => normalize(declaration))
-      .toThrow('must match format')
+    assert.throws(() => normalize(declaration), (error: any) => /must match format/.test(error.message))
   })
 
-  it.each(['user:pass', 'user', ':pass'])('should throw if uri has credentials',
-    async (credentials) => {
+  for (const credentials of ['user:pass', 'user', ':pass'])
+     it('should throw if uri has credentials', async () => {
       const declaration = `http://${credentials}@localhost`
 
-      expect(() => normalize(declaration))
-        .toThrow('must not contain credentials')
+      assert.throws(() => normalize(declaration), (error: any) => /must not contain credentials/.test(error.message))
     })
 
   it('should throw if key is not deployable', async () => {
     const declaration = { 'foo bar': 'http://localhost' }
 
-    expect(() => normalize(declaration))
-      .toThrow('not expected')
+    assert.throws(() => normalize(declaration), (error: any) => /not expected/.test(error.message))
   })
 })

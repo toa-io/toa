@@ -1,23 +1,25 @@
 'use strict'
 
+const { mock } = require('node:test')
+
 const { generate } = require('randomstring')
 
 /**
- * @return {jest.MockedObject<toa.amqp.Communication>}
+ * @return {toa.amqp.Communication}
  */
 const communication = () => (
-  /** @type {jest.MockedObject<toa.amqp.Communication>} */ {
-    connect: jest.fn(async () => undefined),
-    disconnect: jest.fn(async () => undefined),
-    request: jest.fn(async () => generate()),
-    reply: jest.fn(async () => undefined),
-    emit: jest.fn(async () => undefined),
-    consume: jest.fn(async () => undefined),
-    enqueue: jest.fn(async () => undefined),
-    process: jest.fn(async () => undefined),
-    seal: jest.fn(async () => undefined),
+  /** @type {toa.amqp.Communication} */ {
+    connect: mock.fn(async () => undefined),
+    disconnect: mock.fn(async () => undefined),
+    request: mock.fn(async () => generate()),
+    reply: mock.fn(async () => undefined),
+    emit: mock.fn(async () => undefined),
+    consume: mock.fn(async () => undefined),
+    enqueue: mock.fn(async () => undefined),
+    process: mock.fn(async () => undefined),
+    seal: mock.fn(async () => undefined),
 
-    link: jest.fn()
+    link: mock.fn()
   }
 )
 

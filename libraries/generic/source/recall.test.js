@@ -1,42 +1,46 @@
 'use strict'
 
+const { it, beforeEach, mock } = require('node:test')
+const assert = require('node:assert/strict')
+const { isDeepStrictEqual } = require('node:util')
+
 const { generate } = require('randomstring')
 const { recall } = require('../')
 
 it('should be', async () => {
-  expect(recall).toBeDefined()
+  assert.notStrictEqual(recall, undefined)
 })
 
 const context = { foo: generate() }
 
-/** @type {jest.MockedFn<(...args: any[]) => any>} */
+/** @type {import('node:test').Mock<(...args: any[]) => any>} */
 let method
 
 beforeEach(() => {
-  jest.clearAllMocks()
+  resetCalls()
 
-  method = /** @type {jest.MockedFn<(...args: any[]) => any>} */
-    jest.fn(function () { return this.foo })
+  method = /** @type {import('node:test').Mock<(...args: any[]) => any>} */
+    mock.fn(function () { return this.foo })
 })
 
 it('should return function', async () => {
   const func = recall(context, method)
 
-  expect(func).toBeInstanceOf(Function)
+  assert.ok(func instanceof Function)
 })
 
 it('should return result', async () => {
   const func = recall(context, method)
   const output = await func()
 
-  expect(output).toStrictEqual(await method.mock.results[0].value)
+  assert.deepStrictEqual(output, await method.mock.calls[0].result)
 })
 
 it('should call method within the context', async () => {
   const func = recall(context, method)
   const output = await func()
 
-  expect(output).toStrictEqual(context.foo)
+  assert.deepStrictEqual(output, context.foo)
 })
 
 it('should pass arguments', async () => {
@@ -45,7 +49,7 @@ it('should pass arguments', async () => {
 
   await func(...args)
 
-  expect(method).toHaveBeenCalledWith(...args)
+  assert.ok(method.mock.calls.some((call) => isDeepStrictEqual(call.arguments, [...args])))
 })
 
 it('should re-call', async () => {
@@ -56,25 +60,24 @@ it('should re-call', async () => {
   await func(...args1)
   await func(...args2)
 
-  method.mockClear()
+  method.mock.resetCalls()
 
-  expect(method).not.toHaveBeenCalled()
+  assert.strictEqual(method.mock.callCount(), 0)
 
   await recall(context)
 
-  expect(method).toHaveBeenCalledWith(...args1)
-  expect(method).toHaveBeenCalledWith(...args2)
+  assert.ok(method.mock.calls.some((call) => isDeepStrictEqual(call.arguments, [...args1])))
+  assert.ok(method.mock.calls.some((call) => isDeepStrictEqual(call.arguments, [...args2])))
 })
 
 it('should not trow on empty re-call', async () => {
-  await expect(recall(context)).resolves.not.toThrow()
+  await assert.doesNotReject(recall(context))
 })
 
 it('should not re-call those thrown exceptions', async () => {
-  expect.assertions(2)
-
-  method.mockImplementationOnce(async () => 1)
-  method.mockImplementationOnce(async () => { throw new Error() })
+  
+  method.mock.mockImplementationOnce(async () => 1, method.mock.callCount())
+  method.mock.mockImplementationOnce(async () => { throw new Error() }, method.mock.callCount() + 1)
 
   const func = recall(context, method)
 
@@ -83,10 +86,20 @@ it('should not re-call those thrown exceptions', async () => {
   try {
     await func()
   } catch (e) {
-    expect(e).toBeDefined()
+    assert.notStrictEqual(e, undefined)
   }
 
   await recall(context)
 
-  expect(method).toHaveBeenCalledTimes(3)
+  assert.strictEqual(method.mock.callCount(), 3)
 })
+
+function resetCalls (target = [assert, context], seen = new Set()) {
+  if (target === null || typeof target !== 'object' || seen.has(target)) return
+
+  seen.add(target)
+
+  for (const value of Object.values(target))
+    if (typeof value === 'function' && value.mock !== undefined) value.mock.resetCalls()
+    else resetCalls(value, seen)
+}

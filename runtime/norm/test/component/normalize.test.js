@@ -1,4 +1,7 @@
 'use strict'
+const { describe, it, beforeEach } = require('node:test')
+const assert = require('node:assert/strict')
+
 const clone = require('clone-deep')
 
 const { normalize, extensions } = require('../../src/.component')
@@ -14,7 +17,7 @@ describe('operations', () => {
   it('should set default bindings', () => {
     normalize(manifest)
 
-    expect(manifest.operations.add.bindings).toStrictEqual(manifest.bindings)
+    assert.deepStrictEqual(manifest.operations.add.bindings, manifest.bindings)
   })
 })
 
@@ -22,8 +25,8 @@ describe('extensions', () => {
   it('should add predefined extensions', () => {
     extensions(manifest)
 
-    expect(manifest.extensions['@toa.io/extensions.telemetry']).toBeNull()
-    expect(manifest.extensions['@toa.io/extensions.fetch']).toBeNull()
+    assert.strictEqual(manifest.extensions['@toa.io/extensions.telemetry'], null)
+    assert.strictEqual(manifest.extensions['@toa.io/extensions.fetch'], null)
   })
 
   it('should add predefined extensions without explicit declarations', () => {
@@ -31,7 +34,7 @@ describe('extensions', () => {
 
     extensions(manifest)
 
-    expect(manifest.extensions).toStrictEqual({
+    assert.deepStrictEqual(manifest.extensions, {
       '@toa.io/extensions.telemetry': null,
       '@toa.io/extensions.fetch': null,
       '@toa.io/extensions.introspection': {}
@@ -47,7 +50,7 @@ describe('receivers', () => {
 
     normalize(manifest)
 
-    expect(manifest.receivers).toStrictEqual({
+    assert.deepStrictEqual(manifest.receivers, {
       'default.messages.created': 'add'
     })
   })
@@ -64,7 +67,7 @@ describe('receivers', () => {
 
     normalize(manifest)
 
-    expect(manifest.receivers).toStrictEqual({
+    assert.deepStrictEqual(manifest.receivers, {
       'messages.created': receiver
     })
   })
