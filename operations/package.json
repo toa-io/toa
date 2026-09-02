@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/operations",
-  "version": "1.0.0-alpha.272",
+  "version": "1.0.0-alpha.273",
   "description": "Toa Deployment",
   "homepage": "https://toa.io",
   "author": {
@@ -27,8 +27,8 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@toa.io/generic": "1.0.0-alpha.272",
-    "@toa.io/norm": "1.0.0-alpha.272",
+    "@toa.io/generic": "1.0.0-alpha.273",
+    "@toa.io/norm": "1.0.0-alpha.273",
     "execa": "5.1.1",
     "fs-extra": "11.1.1",
     "js-yaml": "4.3.1"

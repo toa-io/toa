@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/extensions.introspection",
-  "version": "1.0.0-alpha.272",
+  "version": "1.0.0-alpha.273",
   "description": "Toa Introspection",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
@@ -17,9 +17,9 @@
     "access": "public"
   },
   "dependencies": {
-    "@toa.io/core": "1.0.0-alpha.272",
-    "@toa.io/generic": "1.0.0-alpha.272",
-    "@toa.io/schemas": "1.0.0-alpha.272",
+    "@toa.io/core": "1.0.0-alpha.273",
+    "@toa.io/generic": "1.0.0-alpha.273",
+    "@toa.io/schemas": "1.0.0-alpha.273",
     "openspan": "1.0.0-alpha.272"
   },
   "scripts": {

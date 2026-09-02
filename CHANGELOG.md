@@ -3,6 +3,26 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.273](https://github.com/toa-io/toa/compare/v1.0.0-alpha.272...v1.0.0-alpha.273) (2026-09-02)
+
+
+### Bug Fixes
+
+* **exposition:** green the feature suite ([67c25ad](https://github.com/toa-io/toa/commit/67c25ad627db3b3779b09405c5a3c319ecd47722))
+* **exposition:** keep a departing tenant from taking a branch back ([64a4eaf](https://github.com/toa-io/toa/commit/64a4eafc9122fabba7b59bf7d559a9d4ef36f773))
+* **exposition:** remove redundant inputs ([34763e4](https://github.com/toa-io/toa/commit/34763e417c93c4eecc5f96879a68c2b68bd6b8a8))
+* **exposition:** report a refreshed branch at trace ([4f170ef](https://github.com/toa-io/toa/commit/4f170ef529a04755b22494789407305f11ce395e))
+* **realtime:** green the feature suite ([6b4650b](https://github.com/toa-io/toa/commit/6b4650bad9e1d53dabd0b7775966694bdb05f236))
+
+
+### Features
+
+* **storages:** provider for DigitalOcean Spaces ([44ed14b](https://github.com/toa-io/toa/commit/44ed14b0bd796a35c9a7f9beef54ca4d5f8e8e07))
+
+
+
+
+
 # [1.0.0-alpha.272](https://github.com/toa-io/toa/compare/v1.0.0-alpha.271...v1.0.0-alpha.272) (2026-09-01)
 
 
