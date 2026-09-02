@@ -63,9 +63,13 @@
     <!-- named, so the chrome stays put while the screen under it changes: what is not
          named is the page, and the page is what a view transition moves -->
     <header class="flex items-center gap-4 px-4 py-3" style="view-transition-name: chrome">
-      <h1 class="hidden text-lg font-medium md:block">{meta.title}</h1>
+      <!-- the sides take equal space, which is what leaves the filter in the middle. No
+           `min-w-0` here: the side may not shrink under what it holds, or the tabs would
+           run out from under it and across the filter. The title gives way instead. -->
+      <div class="flex flex-1 items-center gap-4">
+        <h1 class="hidden min-w-0 truncate text-lg font-medium md:block">{meta.title}</h1>
 
-      <nav class="flex gap-1">
+        <nav class="flex shrink-0 gap-1">
         {#each tabs as tab (tab.id)}
           {@const active = tab.href === inside}
 
@@ -83,9 +87,10 @@
             <span class="hidden md:inline">{tab.label}</span>
           </a>
         {/each}
-      </nav>
+        </nav>
+      </div>
 
-      <div class="relative w-full max-w-64 min-w-0">
+      <div class="relative w-full max-w-64 min-w-0 shrink">
         <Search
           class="text-muted-foreground pointer-events-none absolute start-2.5 top-1/2 size-3.5 -translate-y-1/2"
         />
@@ -103,17 +108,19 @@
         <Kbd class="absolute end-2 top-1/2 hidden -translate-y-1/2 md:inline-flex">{apple ? '⌘K' : 'Ctrl K'}</Kbd>
       </div>
 
-      <!-- the label is the first thing to go when the header runs out of room -->
-      <Button
-        id="iam-logout-button"
-        variant="ghost"
-        aria-label={$dict.nav.signout}
-        class="ms-auto"
-        onclick={logout}
-      >
-        <LogOut />
-        <span class="hidden md:inline">{$dict.nav.signout}</span>
-      </Button>
+      <!-- no `min-w-0` either: the button holds its ground and the filter gives way -->
+      <div class="flex flex-1 justify-end">
+        <!-- the label is the first thing to go when the header runs out of room -->
+        <Button
+          id="iam-logout-button"
+          variant="ghost"
+          aria-label={$dict.nav.signout}
+          onclick={logout}
+        >
+          <LogOut />
+          <span class="hidden md:inline">{$dict.nav.signout}</span>
+        </Button>
+      </div>
     </header>
 
     <main class="min-h-0 flex-1">
