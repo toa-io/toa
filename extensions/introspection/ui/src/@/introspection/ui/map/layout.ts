@@ -97,7 +97,14 @@ export function grid(graph: Graph, view: Size, columns = 4): Grid {
     top += Math.ceil(group.of.length / columns) * step.y
   }
 
-  services.forEach((service, i) => positions.set(service.id, { x: i * step.x, y: top }))
+  // wrapped into the same columns the cards use: a row of its own that ran past them
+  // would widen the map, and the bands are drawn to the width of what the map holds
+  services.forEach((service, i) =>
+    positions.set(service.id, {
+      x: (i % columns) * step.x,
+      y: top + Math.floor(i / columns) * (SERVICE.height + CARD.row),
+    }),
+  )
 
   // to the end of the widest row the map turned out to have, so both lines agree
   const width = [...positions.values()].reduce((widest, at) => Math.max(widest, at.x), 0) + CARD.width
