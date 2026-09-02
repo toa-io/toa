@@ -65,3 +65,16 @@ by an operation, an event, a receiver or a guard. Everything a component needs i
 a configuration secret, for one, is read as `context.configuration.apiKey.unwrap()`.
 
 The components an extension ships are Toa's own, and may use its packages.
+
+## Publishing
+
+npm packs by `.npmignore` where a package has one, and by `.gitignore` where it does not. Build
+output is git-ignored — a component's `operations`, what a `ui` builds — so a package without
+`.npmignore` publishes its manifests without the code beside them.
+
+Every extension that transpiles components or builds a page carries one. What a package would
+publish is read before releasing it:
+
+```shell
+$ npm pack --dry-run                # from the package directory
+```
