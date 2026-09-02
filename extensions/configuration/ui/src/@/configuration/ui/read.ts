@@ -95,3 +95,8 @@ function write(value: unknown): string {
 export function secret(value: unknown): boolean {
   return typeof value === 'string' && SECRET.test(value)
 }
+
+/** Whether a configuration holds a secret anywhere in it, however deep. */
+export function holds(value: unknown): boolean {
+  return read(value).some((line) => line.secret)
+}

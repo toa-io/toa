@@ -1,5 +1,5 @@
 import { it, expect } from 'vitest'
-import { read } from './read'
+import { holds, read } from './read'
 
 it('should read scalars', () => {
   expect(read({ foo: 'hello', num: 0, on: true, none: null })).toEqual([
@@ -64,4 +64,12 @@ it('should not take a lowercase or unprefixed name for a secret', () => {
     { depth: 0, key: 'word', value: '$lower', secret: false },
     { depth: 0, key: 'plain', value: 'NAME', secret: false },
   ])
+})
+
+it('should say whether a configuration holds a secret', () => {
+  expect(holds({ foo: 'plain' })).toBe(false)
+  expect(holds({ apiKey: '$STRIPE_API_KEY' })).toBe(true)
+  expect(holds({ nested: { deep: { key: '$KEY0' } } })).toBe(true)
+  expect(holds({ keys: [{ key: '$KEY0' }] })).toBe(true)
+  expect(holds({})).toBe(false)
 })
