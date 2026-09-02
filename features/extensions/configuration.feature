@@ -167,6 +167,47 @@ Feature: Configuration Extension
       null
       """
 
+  Scenario: Secrets are objects, and stay redacted
+    Given an environment variable `TOA_CONFIGURATION__SECRET_B` is set to 'hidden'
+    And the configuration of `configuration.secrets` is deployed with:
+      """yaml
+      a: 1
+      b: $SECRET_B
+      """
+    And the `configuration` service is staged
+    And the `configuration.values` database is empty
+    # composed, not booted: a call through the broker finds a component a composition exposes
+    And I compose `configuration.secrets` component
+    When I call `configuration.secrets.echo`
+    Then the reply is received:
+      """yaml
+      a: 1
+      b: <REDACTED>
+      """
+    When I call `configuration.secrets.reveal`
+    Then the reply is received:
+      """yaml
+      hidden
+      """
+
+  Scenario: Listing configurations
+    Given the configuration of `configuration.base` is deployed with:
+      """yaml
+      foo: deployed
+      """
+    And the configuration of `configuration.array` is deployed
+    And the `configuration` service is staged
+    And the `configuration.values` database is empty
+    When I call `configuration.values.list`
+    Then the reply is received:
+      """yaml
+      - component: configuration.array
+        configuration: {}
+      - component: configuration.base
+        configuration:
+          foo: deployed
+      """
+
   Scenario: Local override
     Given an environment variable `TOA_CONFIGURATION_CONFIGURATION_BASE` is set to:
       """yaml

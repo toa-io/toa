@@ -191,7 +191,9 @@ Then('the reply is received:',
       assert.equal(this.reply.length, expected.length, diff(expected, this.reply))
     }
 
-    const matches = match(this.reply, expected)
+    // a call within the process hands the reply over as it is, while one across a
+    // process boundary gets it encoded — a secret, for one, is `<REDACTED>` there
+    const matches = match(this.reply, expected) || match(encoded(this.reply), expected)
 
     assert.equal(matches, true, diff(expected, this.reply))
   })
@@ -308,6 +310,13 @@ Then('the {label} explained is:',
 
     assert.equal(matches, true, diff(expected, explanation))
   })
+
+/** The reply as a caller across a process boundary receives it. */
+function encoded (reply) {
+  return reply !== null && typeof reply === 'object' && !(reply instanceof Error)
+    ? JSON.parse(JSON.stringify(reply))
+    : reply
+}
 
 /**
  * @param {string} endpoint
