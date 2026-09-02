@@ -41,7 +41,7 @@ function checkCredentials (uri: string): void {
       'Please refer to the "Credentials" section of the documentation for more information.')
 }
 
-const path = resolve(__dirname, '../schemas/urimap.cos.yaml')
+const path = resolve(import.meta.dirname, '../schemas/urimap.cos.yaml')
 const schema: Schema<URIMap> = schemas.schema(path)
 
 export type Declaration = string | string[] | Record<string, string | string[]> | undefined

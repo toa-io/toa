@@ -1,7 +1,5 @@
-'use strict'
-
-const { extract } = require('./extract')
-const syntaxes = require('./syntaxes')
+import { extract } from './extract.js'
+import * as syntaxes from './syntaxes/index.js'
 
 /**
  * @param {Object} module
@@ -16,4 +14,4 @@ const define = (module) => {
   return syntaxes[descriptor.syntax].define(descriptor)
 }
 
-exports.define = define
+export { define }

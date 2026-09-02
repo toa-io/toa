@@ -1,3 +1,1 @@
-'use strict'
-
-exports.create = (Class) => new Class()
+export const create = (Class) => new Class()

@@ -5,4 +5,4 @@ function transition (input, object) {
   return object
 }
 
-exports.transition = transition
+export { transition }

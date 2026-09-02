@@ -1,15 +1,8 @@
-'use strict'
+import { complete } from './complete.js'
+import { dependencies } from './dependencies.js'
+import { dereference } from './dereference.js'
+import { expand } from './expand.js'
+import { normalize } from './normalize.js'
+import { validate } from './validate.js'
 
-const { complete } = require('./complete')
-const { dependencies } = require('./dependencies')
-const { dereference } = require('./dereference')
-const { expand } = require('./expand')
-const { normalize } = require('./normalize')
-const { validate } = require('./validate')
-
-exports.complete = complete
-exports.dependencies = dependencies
-exports.dereference = dereference
-exports.expand = expand
-exports.normalize = normalize
-exports.validate = validate
+export { complete, dependencies, dereference, expand, normalize, validate }

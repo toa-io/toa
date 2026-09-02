@@ -1,7 +1,7 @@
-'use strict'
+import { contract } from '@toa.io/core'
+import * as schemas from '@toa.io/schemas'
 
-const { contract: { Request, Reply } } = require('@toa.io/core')
-const schemas = require('@toa.io/schemas')
+const { Request, Reply } = contract
 
 const request = (definition, entity) => {
   const request = Request.schema(definition, entity)
@@ -17,5 +17,4 @@ const reply = (output, errors) => {
   return new Reply(schema)
 }
 
-exports.request = request
-exports.reply = reply
+export { request, reply }

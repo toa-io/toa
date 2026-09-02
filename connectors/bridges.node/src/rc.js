@@ -1,6 +1,4 @@
-'use strict'
-
-const { Connector } = require('@toa.io/core')
+import { Connector } from '@toa.io/core'
 
 /**
  * A set of run commands sharing a lifecycle moment
@@ -46,5 +44,4 @@ class Teardown extends Commands {
   }
 }
 
-exports.Phase = Phase
-exports.Teardown = Teardown
+export { Phase, Teardown }

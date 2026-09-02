@@ -1,9 +1,7 @@
-'use strict'
+import { it } from 'node:test'
+import assert from 'node:assert/strict'
 
-const { it } = require('node:test')
-const assert = require('node:assert/strict')
-
-const { concat } = require('../source/concat')
+import { concat } from '../source/concat.js'
 
 it('should concat strings', () => {
   assert.strictEqual(concat('/', 'ref'), '/ref')

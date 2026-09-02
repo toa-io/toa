@@ -1,10 +1,8 @@
-'use strict'
+import { it } from 'node:test'
+import assert from 'node:assert/strict'
 
-const { it } = require('node:test')
-const assert = require('node:assert/strict')
-
-const fixtures = require('./criteria.fixtures')
-const { criteria } = require('../../src/translate/criteria')
+import * as fixtures from './criteria.fixtures.js'
+import { criteria } from '../../src/translate/criteria.js'
 
 it('should translate', () => {
   const result = criteria(fixtures.ast)

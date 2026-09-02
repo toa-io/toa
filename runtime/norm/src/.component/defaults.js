@@ -1,6 +1,4 @@
-'use strict'
-
-const { hash } = require('@toa.io/generic')
+import { hash } from '@toa.io/generic'
 
 // these defaults are required before validation
 const defaults = (manifest, proto) => {
@@ -35,4 +33,4 @@ function nameAfterDir (manifest) {
   manifest.namespace = namespace
 }
 
-exports.defaults = defaults
+export { defaults }

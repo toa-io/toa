@@ -1,5 +1,3 @@
-'use strict'
-
 const freeze = (value) => {
   if ((typeof value === 'object' && value !== null) || typeof value === 'function') {
     Object.freeze(value)
@@ -9,4 +7,4 @@ const freeze = (value) => {
   return value
 }
 
-exports.freeze = freeze
+export { freeze }

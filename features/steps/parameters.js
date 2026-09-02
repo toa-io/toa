@@ -1,6 +1,4 @@
-'use strict'
-
-const { defineParameterType, setDefaultTimeout } = require('@cucumber/cucumber')
+import { defineParameterType, setDefaultTimeout } from '@cucumber/cucumber'
 
 defineParameterType({
   name: 'path',

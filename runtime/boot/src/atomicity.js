@@ -1,6 +1,4 @@
-'use strict'
-
-const { Factory } = require('@toa.io/atomicity')
+import { Factory } from '@toa.io/atomicity'
 
 /**
  * What the replicas of one group decide together. Every component has one, whether or not there
@@ -12,4 +10,4 @@ const { Factory } = require('@toa.io/atomicity')
  */
 const atomicity = (group) => new Factory().atom(group)
 
-exports.atomicity = atomicity
+export { atomicity }

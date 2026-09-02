@@ -1,7 +1,5 @@
-'use strict'
-
-const { Atom } = require('./atom')
-const { connection } = require('./connection')
+import { Atom } from './atom.js'
+import { connection } from './connection.js'
 
 class Factory {
   /**
@@ -36,4 +34,4 @@ function atom (group, options) {
   return atom
 }
 
-exports.Factory = Factory
+export { Factory }

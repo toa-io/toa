@@ -1,55 +1,32 @@
-const { Assignment } = require('./assignment')
-const { Call } = require('./call')
-const { Cascade } = require('./cascade')
-const { Composition } = require('./composition')
-const { Connector } = require('./connector')
-const { Context } = require('./context')
-const { Discovery } = require('./discovery')
-const { Effect } = require('./effect')
-const { Emission } = require('./emission')
-const { Event } = require('./event')
-const { Exposition } = require('./exposition')
-const { Locator } = require('./locator')
-const { Observation } = require('./observation')
-const { Outbox } = require('./outbox')
-const { Operation } = require('./operation')
-const { Query } = require('./query')
-const { Receiver } = require('./receiver')
-const { Reflection } = require('./reflection')
-const { Remote } = require('./remote')
-const { Component } = require('./component')
-const { State } = require('./state')
-const { Transition } = require('./transition')
-const { Transmission } = require('./transmission')
-const { Unmanaged } = require('./unmanaged')
-const { Guard } = require('./guard')
+import * as entities from './entities/index.js'
+import * as exceptions from './exceptions.js'
+import * as contract from './contract/index.js'
+import { Assignment } from './assignment.js'
+import { Call } from './call.js'
+import { Cascade } from './cascade.js'
+import { Composition } from './composition.js'
+import { Connector } from './connector.js'
+import { Context } from './context.js'
+import { Discovery } from './discovery.js'
+import { Effect } from './effect.js'
+import { Emission } from './emission.js'
+import { Event } from './event.js'
+import { Exposition } from './exposition.js'
+import { Locator } from './locator.js'
+import { Observation } from './observation.js'
+import { Outbox } from './outbox/index.js'
+import { Operation } from './operation.js'
+import { Query } from './query.js'
+import { Receiver } from './receiver.js'
+import { Reflection } from './reflection.js'
+import { Remote } from './remote.js'
+import { Component } from './component.js'
+import { State } from './state.js'
+import { Transition } from './transition.js'
+import { Transmission } from './transmission.js'
+import { Unmanaged } from './unmanaged.js'
+import { Guard } from './guard.js'
 
-exports.entities = require('./entities')
-exports.exceptions = require('./exceptions')
-exports.contract = require('./contract')
+export { Assignment, Call, Cascade, Component, Composition, Connector, Context, Discovery, Effect, Emission, Event, Exposition, Locator, Observation, Outbox, Operation, Query, Receiver, Reflection, Remote, State, Transition, Transmission, Unmanaged, Guard }
 
-exports.Assignment = Assignment
-exports.Call = Call
-exports.Cascade = Cascade
-exports.Component = Component
-exports.Composition = Composition
-exports.Connector = Connector
-exports.Context = Context
-exports.Discovery = Discovery
-exports.Effect = Effect
-exports.Emission = Emission
-exports.Event = Event
-exports.Exposition = Exposition
-exports.Locator = Locator
-exports.Observation = Observation
-exports.Outbox = Outbox
-exports.Operation = Operation
-exports.Query = Query
-exports.Receiver = Receiver
-exports.Reflection = Reflection
-exports.Remote = Remote
-exports.State = State
-exports.Transition = Transition
-exports.Transmission = Transmission
-exports.Unmanaged = Unmanaged
-exports.Guard = Guard
+export { entities, exceptions, contract }

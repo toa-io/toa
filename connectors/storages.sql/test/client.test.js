@@ -1,13 +1,11 @@
-'use strict'
+import { it, beforeEach, mock } from 'node:test'
+import assert from 'node:assert/strict'
+import { isDeepStrictEqual } from 'node:util'
 
-const { it, beforeEach, mock } = require('node:test')
-const assert = require('node:assert/strict')
-const { isDeepStrictEqual } = require('node:util')
+import { generate } from 'randomstring'
 
-const { generate } = require('randomstring')
-
-const fixtures = require('./client.fixtures')
-const { Client } = require('../src/client')
+import * as fixtures from './client.fixtures.js'
+import { Client } from '../src/client.js'
 
 let connection
 

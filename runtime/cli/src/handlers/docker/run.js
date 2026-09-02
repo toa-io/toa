@@ -1,10 +1,8 @@
-'use strict'
+import { spawn, exec } from 'node:child_process'
+import { promisify } from 'node:util'
 
-const { spawn, exec } = require('node:child_process')
-const { promisify } = require('node:util')
-
-const { promex } = require('@toa.io/generic')
-const { findUp } = require('find-up')
+import { promex } from '@toa.io/generic'
+import { findUp } from 'find-up'
 
 const execute = promisify(exec)
 
@@ -36,4 +34,4 @@ async function run (repository, command, envFile) {
   await execute(`docker rmi --force ${id}`)
 }
 
-exports.run = run
+export { run }

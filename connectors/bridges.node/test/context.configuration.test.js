@@ -1,10 +1,8 @@
-'use strict'
+import { it, beforeEach, mock } from 'node:test'
+import assert from 'node:assert/strict'
 
-const { it, beforeEach, mock } = require('node:test')
-const assert = require('node:assert/strict')
-
-const fixtures = require('./context.configuration.fixtures')
-const { Context } = require('../src/context')
+import * as fixtures from './context.configuration.fixtures.js'
+import { Context } from '../src/context.js'
 
 let context
 

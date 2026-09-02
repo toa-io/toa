@@ -1,6 +1,4 @@
-'use strict'
-
-const { generate } = require('randomstring')
+import { generate } from 'randomstring'
 
 const entity = {
   manifest: {
@@ -130,4 +128,4 @@ const remotes = {
   }
 }
 
-exports.samples = { entity, operations, remotes }
+export const samples = { entity, operations, remotes }

@@ -1,6 +1,4 @@
-'use strict'
-
-const { Computation } = require('./computationClass')
+import { Computation } from './computationClass.js'
 
 /**
  * @implements {toa.node.algorithms.Factory}
@@ -17,4 +15,4 @@ class ComputationFactory {
   }
 }
 
-exports.ComputationFactory = ComputationFactory
+export { ComputationFactory }

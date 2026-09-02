@@ -1,5 +1,3 @@
-'use strict'
-
 /** @type {toa.generic.Defined} */
 const defined = (object) => {
   for (const [key, value] of Object.entries(object)) {
@@ -9,4 +7,4 @@ const defined = (object) => {
   return object
 }
 
-exports.defined = defined
+export { defined }

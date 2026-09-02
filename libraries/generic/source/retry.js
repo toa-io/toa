@@ -1,6 +1,4 @@
-'use strict'
-
-const { timeout } = require('./timeout')
+import { timeout } from './timeout.js'
 
 /**
  * @type {toa.generic.Retry}
@@ -37,6 +35,7 @@ const DEFAULTS = {
   dispersion: 0.1
 }
 
-exports.retry = retry
-exports.retry.Error = RetryError
-exports.RetryError = RetryError
+
+retry.Error = RetryError
+
+export { retry, RetryError }

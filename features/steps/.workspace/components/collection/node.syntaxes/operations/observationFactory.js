@@ -1,6 +1,4 @@
-'use strict'
-
-const { Observation } = require('./observationClass')
+import { Observation } from './observationClass.js'
 
 /**
  * @implements {toa.node.algorithms.Factory}
@@ -17,4 +15,4 @@ class ObjectObservationFactory {
   }
 }
 
-exports.ObjectObservationFactory = ObjectObservationFactory
+export { ObjectObservationFactory }

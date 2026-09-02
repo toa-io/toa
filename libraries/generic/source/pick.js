@@ -1,5 +1,3 @@
-'use strict'
-
 /**
  * @param {object} source
  * @param {string[]} properties
@@ -13,4 +11,4 @@ function pick (source, properties) {
   }, {})
 }
 
-exports.pick = pick
+export { pick }

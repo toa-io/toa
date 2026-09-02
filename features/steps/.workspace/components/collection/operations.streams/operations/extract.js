@@ -1,5 +1,3 @@
-'use strict'
-
-exports.effect = (_, stream) => {
+export const effect = (_, stream) => {
   return stream
 }

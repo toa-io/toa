@@ -1,5 +1,3 @@
-'use strict'
-
 /**
  * @param {any} reference
  * @param {any} candidate
@@ -40,4 +38,4 @@ function objects (candidate, reference) {
   return true
 }
 
-exports.match = match
+export { match }

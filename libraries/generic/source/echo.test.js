@@ -1,12 +1,10 @@
-'use strict'
-
-const { it } = require('node:test')
-const assert = require('node:assert/strict')
+import { it } from 'node:test'
+import assert from 'node:assert/strict'
 
 /* eslint-disable no-template-curly-in-string */
 
-const { generate } = require('randomstring')
-const { echo } = require('../')
+import { generate } from 'randomstring'
+import { echo } from '../source/index.js'
 
 it('should be', async () => {
   assert.ok(echo instanceof Function)

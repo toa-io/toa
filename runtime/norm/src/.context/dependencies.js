@@ -1,6 +1,4 @@
-'use strict'
-
-const { connectors, extensions, resolve } = require('./.dependencies')
+import { connectors, extensions, resolve } from './.dependencies/index.js'
 
 const dependencies = async (context) => {
   const { extensions: e, components } = await extensions(context)
@@ -10,4 +8,4 @@ const dependencies = async (context) => {
   return resolve(references, context.annotations)
 }
 
-exports.dependencies = dependencies
+export { dependencies }

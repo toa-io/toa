@@ -1,11 +1,9 @@
-'use strict'
+import { it, beforeEach } from 'node:test'
+import assert from 'node:assert/strict'
 
-const { it, beforeEach } = require('node:test')
-const assert = require('node:assert/strict')
+import { generate } from 'randomstring'
 
-const { generate } = require('randomstring')
-
-const { name } = require('../source/queues')
+import { name } from '../source/queues.js'
 
 /** @type {toa.core.Locator} */
 let locator

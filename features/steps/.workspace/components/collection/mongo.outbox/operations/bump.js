@@ -1,5 +1,3 @@
-'use strict'
-
 function transition (input, object) {
   object.foo += input.inc
   object._trailers.inc = input.inc
@@ -7,4 +5,4 @@ function transition (input, object) {
   return object
 }
 
-exports.transition = transition
+export { transition }

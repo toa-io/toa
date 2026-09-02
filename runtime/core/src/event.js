@@ -1,7 +1,5 @@
-'use strict'
-
-const { console, current, encode } = require('openspan')
-const { Connector } = require('./connector')
+import { console, current, encode } from 'openspan'
+import { Connector } from './connector.js'
 
 /**
  * @implements {toa.core.Event}
@@ -55,4 +53,4 @@ class Event extends Connector {
   }
 }
 
-exports.Event = Event
+export { Event }

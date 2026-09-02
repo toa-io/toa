@@ -1,7 +1,5 @@
-'use strict'
-
-const { Connector } = require('@toa.io/core')
-const { Conveyor } = require('@toa.io/conveyor')
+import { Connector } from '@toa.io/core'
+import { Conveyor } from '@toa.io/conveyor'
 
 class Client extends Connector {
   /** @type {string} */
@@ -38,4 +36,4 @@ class Client extends Connector {
   }
 }
 
-exports.Client = Client
+export { Client }

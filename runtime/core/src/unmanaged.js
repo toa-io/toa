@@ -1,6 +1,4 @@
-'use strict'
-
-const { Operation } = require('./operation')
+import { Operation } from './operation.js'
 
 class Unmanaged extends Operation {
   acquire (context) {
@@ -8,4 +6,4 @@ class Unmanaged extends Operation {
   }
 }
 
-exports.Unmanaged = Unmanaged
+export { Unmanaged }

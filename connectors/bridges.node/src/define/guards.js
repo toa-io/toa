@@ -1,6 +1,4 @@
-'use strict'
-
-const load = require('../load')
+import * as load from '../load.js'
 
 const guard = async (root, label) => {
   const module = await load.guard(root, label)
@@ -18,5 +16,4 @@ const guards = async (root) => {
   return Object.fromEntries(guards.map(([name, module]) => [name, {}]))
 }
 
-exports.guard = guard
-exports.guards = guards
+export { guard, guards }

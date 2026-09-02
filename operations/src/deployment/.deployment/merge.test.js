@@ -1,9 +1,7 @@
-'use strict'
+import { describe, it } from 'node:test'
+import assert from 'node:assert/strict'
 
-const { describe, it } = require('node:test')
-const assert = require('node:assert/strict')
-
-const { merge } = require('./merge')
+import { merge } from './merge.js'
 
 const service = (name, extra = {}) => ({ group: 'group', name, version: '0', ...extra })
 

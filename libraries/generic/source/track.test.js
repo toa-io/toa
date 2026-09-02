@@ -1,13 +1,11 @@
-'use strict'
+import { it, beforeEach, mock } from 'node:test'
+import assert from 'node:assert/strict'
+import { isDeepStrictEqual } from 'node:util'
 
-const { it, beforeEach, mock } = require('node:test')
-const assert = require('node:assert/strict')
-const { isDeepStrictEqual } = require('node:util')
+import { generate } from 'randomstring'
+import { promex } from '../source/index.js'
 
-const { generate } = require('randomstring')
-const { promex } = require('../')
-
-const { track } = require('../')
+import { track } from '../source/index.js'
 
 it('should be', async () => {
   assert.notStrictEqual(track, undefined)
@@ -115,7 +113,7 @@ it('should track multiple methods', async () => {
 })
 
 it('should resolve if methods haven\'t been called', async () => {
-  await track(this)
+  await track({})
 })
 
 it('should handle exceptions', async () => {

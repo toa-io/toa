@@ -1,6 +1,4 @@
-'use strict'
-
-const { secrets } = require('../../handlers/export/secrets')
+import { secrets } from '../../handlers/export/secrets.js'
 
 const builder = (yargs) => {
   yargs
@@ -17,7 +15,7 @@ const builder = (yargs) => {
     })
 }
 
-exports.command = ['secrets <environment>']
-exports.desc = 'Export deployment secrets'
-exports.builder = builder
-exports.handler = secrets
+export const command = ['secrets <environment>']
+export const desc = 'Export deployment secrets'
+
+export { builder, secrets as handler }

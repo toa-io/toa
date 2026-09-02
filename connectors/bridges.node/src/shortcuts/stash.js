@@ -1,6 +1,4 @@
-'use strict'
-
-const { underlay } = require('@toa.io/generic')
+import { underlay } from '@toa.io/generic'
 
 /** @type {toa.node.shortcut} */
 function stash (context, aspect) {
@@ -14,4 +12,4 @@ function stash (context, aspect) {
   })
 }
 
-exports.stash = stash
+export { stash }

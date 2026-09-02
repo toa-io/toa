@@ -1,7 +1,5 @@
-'use strict'
-
-const parser = require('@babel/parser')
-const syntaxes = require('./syntaxes')
+import * as parser from '@babel/parser'
+import * as syntaxes from './syntaxes/index.js'
 
 /**
  * @param {Object} module
@@ -29,15 +27,30 @@ const extract = (module) => {
 }
 
 /**
+ * A module namespace enumerates its exports in sorted order rather than the order
+ * they were written, so which one is meant has to be unambiguous.
+ *
  * @param {Object} module
  * @returns [string, Function]
  */
 const find = (module) => {
-  for (const [key, value] of Object.entries(module)) {
-    if (typeof value === 'function') return [key, value]
+  const functions = Object.entries(module)
+    .filter(([key, value]) => typeof value === 'function' && key !== '__esModule')
+
+  if (functions.length === 0) return null
+  if (functions.length === 1) {
+    const [name, func] = functions[0]
+
+    // `export default function transition` says its name in the function itself
+    return name === 'default' ? [func.name, func] : functions[0]
   }
 
-  return null
+  const named = functions.filter(([key]) => key !== 'default')
+
+  if (named.length === 1) return named[0]
+
+  throw new Error('A module must export one algorithm, and this one exports ' +
+    named.map(([key]) => `'${key}'`).join(', '))
 }
 
 /**
@@ -50,4 +63,4 @@ const parse = (func) => {
   return file.program.body[0]
 }
 
-exports.extract = extract
+export { extract }

@@ -1,11 +1,9 @@
-'use strict'
+import { it, beforeEach, mock } from 'node:test'
+import assert from 'node:assert/strict'
+import { isDeepStrictEqual } from 'node:util'
 
-const { it, beforeEach, mock } = require('node:test')
-const assert = require('node:assert/strict')
-const { isDeepStrictEqual } = require('node:util')
-
-const { generate } = require('randomstring')
-const { recall } = require('../')
+import { generate } from 'randomstring'
+import { recall } from '../source/index.js'
 
 it('should be', async () => {
   assert.notStrictEqual(recall, undefined)

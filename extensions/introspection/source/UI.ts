@@ -173,7 +173,7 @@ function isFile (file: string): boolean {
 }
 
 /** Where `npm run build:ui` puts the page, from both `source` and `transpiled`. */
-const SITE = path.resolve(__dirname, '..', 'ui', 'dist')
+const SITE = path.resolve(import.meta.dirname, '..', 'ui', 'dist')
 
 /** Assets under this prefix carry their build hash in the name. */
 const IMMUTABLE = path.join('_app', 'immutable')

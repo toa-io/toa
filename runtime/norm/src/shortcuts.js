@@ -1,6 +1,4 @@
-'use strict'
-
-const { empty, merge } = require('@toa.io/generic')
+import { empty, merge } from '@toa.io/generic'
 
 /**
  * Resolves shortcuts
@@ -54,6 +52,4 @@ const SHORTCUTS = {
   introspection: '@toa.io/extensions.introspection'
 }
 
-exports.recognize = recognize
-exports.resolve = resolve
-exports.SHORTCUTS = SHORTCUTS
+export { recognize, resolve, SHORTCUTS }

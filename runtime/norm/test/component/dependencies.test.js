@@ -1,12 +1,10 @@
-'use strict'
+import { describe, it, beforeEach } from 'node:test'
+import assert from 'node:assert/strict'
 
-const { describe, it, beforeEach } = require('node:test')
-const assert = require('node:assert/strict')
+import { resolve } from 'node:path'
+import { dependencies } from '../../src/.component/index.js'
 
-const { resolve } = require('node:path')
-const { dependencies } = require('../../src/.component')
-
-const NORM = resolve(__dirname, '../../')
+const NORM = resolve(import.meta.dirname, '../../')
 
 it('should be', async () => {
   assert.ok(dependencies instanceof Function)
@@ -16,7 +14,7 @@ it('should be', async () => {
 let component
 
 beforeEach(() => {
-  component = /** @type {toa.norm.Component} */ { path: __dirname }
+  component = /** @type {toa.norm.Component} */ { path: import.meta.dirname }
 })
 
 for (const [_, reference] of [

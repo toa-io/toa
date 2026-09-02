@@ -1,5 +1,3 @@
-'use strict'
-
 class Factory {
   /**
    *
@@ -20,9 +18,9 @@ class Factory {
   }
 }
 
-exports.Factory = Factory
 
-exports.deployment = (_, value) => {
+
+export const deployment = (_, value) => {
   return {
     variables: {
       global: [{
@@ -32,3 +30,5 @@ exports.deployment = (_, value) => {
     }
   }
 }
+
+export { Factory }

@@ -1,25 +1,26 @@
-'use strict'
+import { LOOP } from './constants.js'
+import { factory } from './factory.js'
 
-const { LOOP } = require('./constants')
-const { factory } = require('./factory')
-
-const produce = (component, operations) => {
+const produce = async (component, operations) => {
   const local = []
   const other = []
 
-  group(operations, (binding, endpoints) => {
-    const producer = factory(binding).producer(component.locator, endpoints, component)
+  for (const [binding, endpoints] of group(operations)) {
+    const made = await factory(binding)
+    const producer = made.producer(component.locator, endpoints, component)
+    const { properties } = await import(binding)
 
-    if (require(binding).properties.local === true)
+    if (properties.local === true)
       local.push(producer)
     else
       other.push(producer)
-  })
+  }
 
   return { local, other }
 }
 
-const group = (operations, callback) => {
+/** The endpoints each binding carries, as entries. */
+const group = (operations) => {
   const map = {}
 
   if (operations !== undefined)
@@ -36,8 +37,7 @@ const group = (operations, callback) => {
       }
     }
 
-  for (const [binding, endpoints] of Object.entries(map))
-    callback(binding, endpoints)
+  return Object.entries(map)
 }
 
-exports.produce = produce
+export { produce }

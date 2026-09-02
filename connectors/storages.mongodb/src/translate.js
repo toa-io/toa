@@ -1,6 +1,7 @@
-'use strict'
+import * as _criteria from './translate/criteria.js'
+import * as _options from './translate/options.js'
 
-const parse = { ...require('./translate/criteria'), ...require('./translate/options') }
+const parse = { ..._criteria, ..._options }
 
 /**
  * @param {toa.core.storages.Query} query
@@ -28,4 +29,4 @@ const translate = (query) => {
   return result
 }
 
-exports.translate = translate
+export { translate }

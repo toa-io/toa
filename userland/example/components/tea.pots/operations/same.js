@@ -1,5 +1,3 @@
-'use strict'
-
 async function computation (input, context) {
   const criteria = `material==${input}`
   const query = { criteria, limit }
@@ -10,4 +8,4 @@ async function computation (input, context) {
 
 const limit = 10
 
-exports.computation = computation
+export { computation }

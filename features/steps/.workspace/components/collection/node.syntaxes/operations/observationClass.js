@@ -1,5 +1,3 @@
-'use strict'
-
 class Observation {
   #foo
 
@@ -12,4 +10,4 @@ class Observation {
   }
 }
 
-exports.Observation = Observation
+export { Observation }

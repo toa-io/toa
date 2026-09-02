@@ -1,5 +1,3 @@
-'use strict'
-
 /**
  * @typedef {(name: string, property: Object) => string} Ref
  */
@@ -11,4 +9,4 @@ const refs = {
   'https://schemas.toa.io/0.0.0/definitions#/definitions/id': id
 }
 
-exports.refs = refs
+export { refs }

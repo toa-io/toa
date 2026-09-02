@@ -1,5 +1,3 @@
-'use strict'
-
-exports.transition = (input, object) => {
+export const transition = (input, object) => {
   object.inc = input.inc
 }

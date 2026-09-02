@@ -1,8 +1,6 @@
-'use strict'
-
-const { console } = require('openspan')
-const { Connector } = require('../connector')
-const { newid } = require('../entities/newid')
+import { console } from 'openspan'
+import { Connector } from '../connector.js'
+import { newid } from '../entities/newid.js'
 
 /**
  * Owns the intent to publish. A row is built before the write so that the storage can commit
@@ -297,5 +295,4 @@ const DRAIN = 10_000
 const INFLIGHT = 1000
 const PUBLISHED = 10_000
 
-exports.Outbox = Outbox
-exports.LANES = LANES
+export { Outbox, LANES }

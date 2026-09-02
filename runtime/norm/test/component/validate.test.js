@@ -1,12 +1,10 @@
-'use strict'
+import { describe, it, beforeEach } from 'node:test'
+import assert from 'node:assert/strict'
 
-const { describe, it, beforeEach } = require('node:test')
-const assert = require('node:assert/strict')
+import clone from 'clone-deep'
 
-const clone = require('clone-deep')
-
-const { validate } = require('../../src/.component')
-const fixtures = require('./validate.fixtures')
+import { validate } from '../../src/.component/index.js'
+import * as fixtures from './validate.fixtures.js'
 
 let manifest
 
@@ -14,166 +12,166 @@ beforeEach(() => {
   manifest = clone(fixtures.ok)
 })
 
-it('should be ok', () => {
-  assert.doesNotThrow(() => validate(manifest))
+it('should be ok', async () => {
+  await assert.doesNotReject(validate(manifest))
 })
 
-it('should provide error', () => {
+it('should provide error', async () => {
   manifest.foo = 'bar'
 
-  assert.throws(() => validate(manifest))
+  await assert.rejects(validate(manifest))
 })
 
-it('should not have additional properties', () => {
+it('should not have additional properties', async () => {
   manifest.foo = 'bar'
 
-  assert.throws(() => validate(manifest))
+  await assert.rejects(validate(manifest))
 })
 
 describe('namespace', () => {
-  it('should match token pattern', () => {
+  it('should match token pattern', async () => {
     manifest.namespace = '1'
-    assert.throws(() => validate(manifest), (error) => /must match pattern/.test(error.message))
+    await assert.rejects(validate(manifest), (error) => /must match pattern/.test(error.message))
 
     manifest.namespace = 'foo_'
-    assert.throws(() => validate(manifest), (error) => /must match pattern/.test(error.message))
+    await assert.rejects(validate(manifest), (error) => /must match pattern/.test(error.message))
 
     manifest.namespace = 'foo_bar'
-    assert.throws(() => validate(manifest), (error) => /must match pattern/.test(error.message))
+    await assert.rejects(validate(manifest), (error) => /must match pattern/.test(error.message))
 
     manifest.namespace = 'foo-'
-    assert.throws(() => validate(manifest), (error) => /must match pattern/.test(error.message))
+    await assert.rejects(validate(manifest), (error) => /must match pattern/.test(error.message))
 
     manifest.namespace = 'foo-bar'
-    assert.throws(() => validate(manifest), (error) => /must match pattern/.test(error.message))
+    await assert.rejects(validate(manifest), (error) => /must match pattern/.test(error.message))
 
     manifest.namespace = 'FooBar12'
-    assert.doesNotThrow(() => validate(manifest))
+    await assert.doesNotReject(validate(manifest))
   })
 
-  it('should forbid \'system\' namespace', () => {
+  it('should forbid \'system\' namespace', async () => {
     manifest.namespace = 'system'
-    assert.throws(() => validate(manifest), (error) => /must NOT be valid/.test(error.message))
+    await assert.rejects(validate(manifest), (error) => /must NOT be valid/.test(error.message))
   })
 
   it('should set `default` namespace', async () => {
     delete manifest.namespace
 
-    assert.doesNotThrow(() => validate(manifest))
+    await assert.doesNotReject(validate(manifest))
     assert.deepStrictEqual(manifest.namespace, 'default')
   })
 })
 
 describe('name', () => {
-  it('should be optional', () => {
+  it('should be optional', async () => {
     delete manifest.name
-    assert.doesNotThrow(() => validate(manifest))
+    await assert.doesNotReject(validate(manifest))
   })
 })
 
 describe('entity', () => {
-  it('should be optional', () => {
+  it('should be optional', async () => {
     delete manifest.entity
-    assert.doesNotThrow(() => validate(manifest))
+    await assert.doesNotReject(validate(manifest))
   })
 
-  it('should be object', () => {
+  it('should be object', async () => {
     manifest.entity = 'foo'
-    assert.throws(() => validate(manifest), (error) => /must be object/.test(error.message))
+    await assert.rejects(validate(manifest), (error) => /must be object/.test(error.message))
   })
 
-  it('should not have additional properties', () => {
+  it('should not have additional properties', async () => {
     manifest.entity.foo = 'bar'
-    assert.throws(() => validate(manifest))
+    await assert.rejects(validate(manifest))
   })
 
   describe('schema', () => {
-    it('should be required', () => {
+    it('should be required', async () => {
       delete manifest.entity.schema
-      assert.throws(() => validate(manifest))
+      await assert.rejects(validate(manifest))
     })
 
-    it('should be JSON schema object', () => {
+    it('should be JSON schema object', async () => {
       manifest.entity.schema = { properties: { foo: 'bar' } }
-      assert.throws(() => validate(manifest))
+      await assert.rejects(validate(manifest))
     })
 
-    it('should be JSON schema object of type object', () => {
+    it('should be JSON schema object of type object', async () => {
       manifest.entity.schema = { type: 'integer' }
-      assert.throws(() => validate(manifest), (error) => /must be equal to constant/.test(error.message))
+      await assert.rejects(validate(manifest), (error) => /must be equal to constant/.test(error.message))
 
       manifest.entity.schema = {}
       validate(manifest)
       assert.strictEqual(manifest.entity.schema.type, 'object')
     })
 
-    it('should have property names matching token pattern', () => {
+    it('should have property names matching token pattern', async () => {
       manifest.entity.schema.properties._foo = { type: 'string' }
-      assert.throws(() => validate(manifest), (error) => /pattern/.test(error.message))
+      await assert.rejects(validate(manifest), (error) => /pattern/.test(error.message))
     })
 
-    it('should allow default id', () => {
+    it('should allow default id', async () => {
       manifest.entity.schema.properties.id = {
         type: 'string',
         pattern: '^[a-fA-F0-9]+$'
       }
-      assert.doesNotThrow(() => validate(manifest))
+      await assert.doesNotReject(validate(manifest))
     })
   })
 
   describe('associated', () => {
-    it('should provide default', () => {
-      assert.doesNotThrow(() => validate(manifest))
+    it('should provide default', async () => {
+      await assert.doesNotReject(validate(manifest))
       assert.strictEqual(manifest.entity.associated, false)
     })
   })
 })
 
 describe('bindings', () => {
-  it('should be array of unique strings', () => {
+  it('should be array of unique strings', async () => {
     manifest.bindings = 'oops'
-    assert.throws(() => validate(manifest), (error) => /must be array/.test(error.message))
+    await assert.rejects(validate(manifest), (error) => /must be array/.test(error.message))
 
     manifest.bindings = ['oops', 'oops']
-    assert.throws(() => validate(manifest), (error) => /duplicate items/.test(error.message))
+    await assert.rejects(validate(manifest), (error) => /duplicate items/.test(error.message))
 
     manifest.bindings = ['oops', {}]
-    assert.throws(() => validate(manifest), (error) => /must be string/.test(error.message))
+    await assert.rejects(validate(manifest), (error) => /must be string/.test(error.message))
   })
 
-  it('should forbid explicit loop', () => {
+  it('should forbid explicit loop', async () => {
     manifest.bindings = ['@toa.io/bindings.loop']
-    assert.throws(() => validate(manifest), (error) => /must NOT be valid/.test(error.message))
+    await assert.rejects(validate(manifest), (error) => /must NOT be valid/.test(error.message))
   })
 })
 
 describe('operations', () => {
-  it('should be object', () => {
+  it('should be object', async () => {
     manifest.operations.get = 'bar'
-    assert.throws(() => validate(manifest), (error) => /must be object/.test(error.message))
+    await assert.rejects(validate(manifest), (error) => /must be object/.test(error.message))
   })
 
-  it('should not have additional properties', () => {
+  it('should not have additional properties', async () => {
     manifest.operations.get.foo = 'bar'
-    assert.throws(() => validate(manifest))
+    await assert.rejects(validate(manifest))
   })
 
-  it('should have type (transition or observation)', () => {
+  it('should have type (transition or observation)', async () => {
     delete manifest.operations.get.type
-    assert.throws(() => validate(manifest))
+    await assert.rejects(validate(manifest))
 
     manifest.operations.get.type = 'foo'
-    assert.throws(() => validate(manifest), (error) => /one of the allowed values/.test(error.message))
+    await assert.rejects(validate(manifest), (error) => /one of the allowed values/.test(error.message))
   })
 
-  it('should forbid explicit loop', () => {
+  it('should forbid explicit loop', async () => {
     manifest.operations.get.bindings = ['@toa.io/bindings.loop']
-    assert.throws(() => validate(manifest), (error) => /must NOT be valid/.test(error.message))
+    await assert.rejects(validate(manifest), (error) => /must NOT be valid/.test(error.message))
   })
 
-  it('should forbid query: false for observations', () => {
+  it('should forbid query: false for observations', async () => {
     manifest.operations.get.query = false
-    assert.throws(() => validate(manifest), (error) => /must NOT be valid/.test(error.message))
+    await assert.rejects(validate(manifest), (error) => /must NOT be valid/.test(error.message))
   })
 
   for (const [_, operation] of [
@@ -186,77 +184,77 @@ describe('operations', () => {
   })
 
   describe('scope', () => {
-    it('should have scope', () => {
+    it('should have scope', async () => {
       delete manifest.operations.get.scope
-      assert.throws(() => validate(manifest), (error) => /required property/.test(error.message))
+      await assert.rejects(validate(manifest), (error) => /required property/.test(error.message))
     })
 
-    it('should allow only entity or set for observations', () => {
+    it('should allow only entity or set for observations', async () => {
       manifest.operations.get.scope = 'changeset'
-      assert.throws(() => validate(manifest), (error) => /allowed values/.test(error.message))
+      await assert.rejects(validate(manifest), (error) => /allowed values/.test(error.message))
     })
 
-    it('should allow only entity for transitions', () => {
+    it('should allow only entity for transitions', async () => {
       manifest.operations.add.scope = 'changeset'
-      assert.throws(() => validate(manifest), (error) => /allowed values/.test(error.message))
+      await assert.rejects(validate(manifest), (error) => /allowed values/.test(error.message))
 
       manifest.operations.add.scope = 'set'
-      assert.throws(() => validate(manifest), (error) => /allowed values/.test(error.message))
+      await assert.rejects(validate(manifest), (error) => /allowed values/.test(error.message))
     })
 
-    it('should allow only changeset for assignments', () => {
+    it('should allow only changeset for assignments', async () => {
       manifest.operations.set.scope = 'changeset'
-      assert.doesNotThrow(() => validate(manifest))
+      await assert.doesNotReject(validate(manifest))
 
       manifest.operations.set.scope = 'set'
-      assert.throws(() => validate(manifest), (error) => /allowed values/.test(error.message))
+      await assert.rejects(validate(manifest), (error) => /allowed values/.test(error.message))
     })
   })
 
   describe('concurrency', () => {
-    it('should be required for transitions', () => {
+    it('should be required for transitions', async () => {
       delete manifest.operations.add.concurrency
-      assert.throws(() => validate(manifest), (error) => /required property/.test(error.message))
+      await assert.rejects(validate(manifest), (error) => /required property/.test(error.message))
     })
 
-    it('should throw for observations, assignments', () => {
+    it('should throw for observations, assignments', async () => {
       manifest.operations.get.concurrency = 'none'
-      assert.throws(() => validate(manifest))
+      await assert.rejects(validate(manifest))
       delete manifest.operations.get.concurrency
 
       manifest.operations.set.concurrency = 'none'
-      assert.throws(() => validate(manifest))
+      await assert.rejects(validate(manifest))
     })
   })
 
   describe('input, output', () => {
-    it('should be schema', () => {
+    it('should be schema', async () => {
       manifest.operations.get.input = { properties: { foo: 'bar' } }
-      assert.throws(() => validate(manifest))
+      await assert.rejects(validate(manifest))
 
       delete manifest.operations.get.input
       manifest.operations.get.output = { properties: { foo: 'bar' } }
-      assert.throws(() => validate(manifest))
+      await assert.rejects(validate(manifest))
     })
   })
 })
 
 describe('receivers', () => {
-  it('should throw if transition points to undefined operation', () => {
+  it('should throw if transition points to undefined operation', async () => {
     manifest.receivers['foo.bar.happened'].operation = 'notExists'
 
-    assert.throws(() => validate(manifest), (error) => /refers to undefined operation/.test(error.message))
+    await assert.rejects(validate(manifest), (error) => /refers to undefined operation/.test(error.message))
   })
 
-  it('should throw if transition points to observation', () => {
+  it('should throw if transition points to observation', async () => {
     manifest.receivers['foo.bar.happened'].operation = 'get'
 
-    assert.throws(() => validate(manifest), (error) => /of the allowed types/.test(error.message))
+    await assert.rejects(validate(manifest), (error) => /of the allowed types/.test(error.message))
   })
 
   it('should throw if source has a name `context`', async () => {
     manifest.receivers['foo.bar.happened'].source = 'context'
 
-    assert.throws(() => validate(manifest), (error) => /must NOT be valid/.test(error.message))
+    await assert.rejects(validate(manifest), (error) => /must NOT be valid/.test(error.message))
   })
 })

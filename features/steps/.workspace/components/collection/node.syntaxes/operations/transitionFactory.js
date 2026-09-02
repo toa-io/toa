@@ -1,6 +1,4 @@
-'use strict'
-
-const { Transition } = require('./transitionClass')
+import { Transition } from './transitionClass.js'
 
 /**
  * @implements {toa.node.algorithms.Factory}
@@ -17,4 +15,4 @@ class ObjectTransitionFactory {
   }
 }
 
-exports.ObjectTransitionFactory = ObjectTransitionFactory
+export { ObjectTransitionFactory }

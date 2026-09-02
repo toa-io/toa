@@ -1,11 +1,9 @@
-'use strict'
+import { console } from 'openspan'
+import { Composition } from '@toa.io/core'
+import { version } from '@toa.io/runtime'
 
-const { console } = require('openspan')
-const { Composition } = require('@toa.io/core')
-const { version } = require('@toa.io/runtime')
-
-const boot = require('./index')
-const { span } = require('./span')
+import * as boot from './index.js'
+import { span } from './span.js'
 
 async function composition (paths, options) {
   options = Object.assign({}, options)
@@ -90,4 +88,4 @@ async function composition (paths, options) {
   })
 }
 
-exports.composition = composition
+export { composition }

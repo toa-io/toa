@@ -1,10 +1,8 @@
-'use strict'
+import { it } from 'node:test'
+import assert from 'node:assert/strict'
 
-const { it } = require('node:test')
-const assert = require('node:assert/strict')
-
-const { filter } = require('../')
-const { immediate } = require('./immediate')
+import { filter } from '../source/index.js'
+import { immediate } from './immediate.js'
 
 it('should be', async () => {
   assert.ok(filter instanceof Function)

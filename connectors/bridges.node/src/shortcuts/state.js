@@ -1,6 +1,4 @@
-'use strict'
-
-const { generate } = require('@toa.io/generic')
+import { generate } from '@toa.io/generic'
 
 /** @type {toa.node.shortcut} */
 function state (context, aspect) {
@@ -51,4 +49,4 @@ function build (segs, value) {
   return object
 }
 
-exports.state = state
+export { state }

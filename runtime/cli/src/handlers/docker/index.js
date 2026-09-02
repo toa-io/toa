@@ -1,9 +1,5 @@
-'use strict'
+import { build } from './build.js'
+import { command } from './command.js'
+import { run } from './run.js'
 
-const { build } = require('./build')
-const { command } = require('./command')
-const { run } = require('./run')
-
-exports.build = build
-exports.command = command
-exports.run = run
+export { build, command, run }

@@ -1,7 +1,7 @@
-'use strict'
+import { deployment } from '@toa.io/operations'
+import { context as find } from '../util/find.js'
 
-const { deployment: { Factory } } = require('@toa.io/operations')
-const { context: find } = require('../util/find')
+const { Factory } = deployment
 
 const push = async (argv) => {
   const path = find(argv.path)
@@ -11,4 +11,4 @@ const push = async (argv) => {
   await registry.push()
 }
 
-exports.push = push
+export { push }

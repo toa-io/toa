@@ -1,6 +1,4 @@
-'use strict'
-
-const { plain } = require('./plain')
+import { plain } from './plain.js'
 
 /**
  * @param {function} generator
@@ -34,4 +32,4 @@ function proxy (value, generator, segments = []) {
   })
 }
 
-exports.generate = generate
+export { generate }

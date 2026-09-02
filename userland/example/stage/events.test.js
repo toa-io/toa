@@ -1,15 +1,13 @@
-'use strict'
+import { it, before, after } from 'node:test'
+import assert from 'node:assert/strict'
 
-const { it, before, after } = require('node:test')
-const assert = require('node:assert/strict')
+import { resolve } from 'node:path'
+import * as boot from '@toa.io/boot'
+import { Connector, Locator } from '@toa.io/core'
+import { timeout } from '@toa.io/generic'
+import * as stage from '@toa.io/userland/stage'
 
-const { resolve } = require('node:path')
-const boot = require('@toa.io/boot')
-const { Connector, Locator } = require('@toa.io/core')
-const { timeout } = require('@toa.io/generic')
-const stage = require('@toa.io/userland/stage')
-
-const root = resolve(__dirname, '../components')
+const root = resolve(import.meta.dirname, '../components')
 
 let remote
 let emitter

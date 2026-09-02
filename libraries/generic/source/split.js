@@ -1,5 +1,3 @@
-'use strict'
-
 /**
  * Split string respecting quotes
  *
@@ -22,4 +20,4 @@ const split = (string) => {
 
 const RX = /[^\s"']+|"([^"]*)"|'([^']*)'/g
 
-exports.split = split
+export { split }

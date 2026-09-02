@@ -1,8 +1,6 @@
-'use strict'
+import { timeout } from '@toa.io/generic'
 
-const { timeout } = require('@toa.io/generic')
-
-const { When } = require('@cucumber/cucumber')
+import { When } from '@cucumber/cucumber'
 
 When('I wait {float} second(s)',
   async function (seconds) {

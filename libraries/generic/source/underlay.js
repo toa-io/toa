@@ -1,5 +1,3 @@
-'use strict'
-
 /**
  * @type {toa.generic.underlay.Constructor}
  */
@@ -28,4 +26,4 @@ const proxy = (func, segments) => {
   })
 }
 
-exports.underlay = underlay
+export { underlay }

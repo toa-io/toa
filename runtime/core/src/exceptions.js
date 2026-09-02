@@ -1,6 +1,4 @@
-'use strict'
-
-const { swap } = require('@toa.io/generic')
+import { swap } from '@toa.io/generic'
 
 const codes = {
   System: 0,
@@ -79,29 +77,60 @@ class EntityGuardException extends ContractException {
 }
 
 // #region exports
-exports.Exception = Exception
-exports.SystemException = SystemException
-exports.RequestContractException = RequestContractException
-exports.ResponseContractException = ResponseContractException
-exports.EntityContractException = EntityContractException
-exports.EntityGuardException = EntityGuardException
 
-for (const [name, code] of Object.entries(codes)) {
+
+
+
+
+
+
+// a module's exports are static, so the ones that follow a code are named rather
+// than generated onto the namespace
+function derive (name) {
   const classname = name + 'Exception'
 
-  if (exports[classname] === undefined) {
-    exports[classname] = class extends Exception {
-      constructor (message, cause) {
-        message = message
-          ? `${classname}: ${message}`
-          : classname
-
-        super(code, message ?? classname, cause)
-      }
+  return class extends Exception {
+    constructor (message, cause) {
+      super(codes[name], message ? `${classname}: ${message}` : classname, cause)
     }
+
+    static name = classname
   }
 }
 
-exports.codes = codes
-exports.names = swap(codes)
+const RequestSyntaxException = derive('RequestSyntax')
+const RequestConflictException = derive('RequestConflict')
+const QuerySyntaxException = derive('QuerySyntax')
+const StateException = derive('State')
+const StateNotFoundException = derive('StateNotFound')
+const StatePreconditionException = derive('StatePrecondition')
+const StateConcurrencyException = derive('StateConcurrency')
+const StateInitializationException = derive('StateInitialization')
+const DuplicateException = derive('Duplicate')
+const CommunicationException = derive('Communication')
+const TransmissionException = derive('Transmission')
+
+export const names = swap(codes)
 // #endregion
+
+export {
+  Exception,
+  SystemException,
+  ContractException,
+  RequestContractException,
+  ResponseContractException,
+  EntityContractException,
+  EntityGuardException,
+  RequestSyntaxException,
+  RequestConflictException,
+  QuerySyntaxException,
+  StateException,
+  StateNotFoundException,
+  StatePreconditionException,
+  StateConcurrencyException,
+  StateInitializationException,
+  DuplicateException,
+  CommunicationException,
+  TransmissionException,
+  codes
+}

@@ -1,9 +1,7 @@
-'use strict'
+import { it } from 'node:test'
+import assert from 'node:assert/strict'
 
-const { it } = require('node:test')
-const assert = require('node:assert/strict')
-
-const { load } = require('../load')
+import { load } from '../load.js'
 
 it('should be', () => {
   assert.notStrictEqual(load, undefined)

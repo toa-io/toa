@@ -1,6 +1,4 @@
-'use strict'
-
-const { console } = require('openspan')
+import { console } from 'openspan'
 
 /**
  * Abstract connections hierarchy
@@ -191,4 +189,4 @@ class Connector {
 const DELAY = 5000
 const TRACE_BOOT = process.env.TOA_BOOT_TRACE === '1'
 
-exports.Connector = Connector
+export { Connector }

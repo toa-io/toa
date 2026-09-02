@@ -1,6 +1,4 @@
-'use strict'
-
-const load = require('../load')
+import * as load from '../load.js'
 
 const events = async (root) => {
   const modules = await load.events(root)
@@ -12,4 +10,4 @@ const definition = (module) => ({
   subjective: module.payload !== undefined
 })
 
-exports.events = events
+export { events }

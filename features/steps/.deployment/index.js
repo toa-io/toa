@@ -1,6 +1,3 @@
-'use strict'
+import { deployment, images } from './deployment.js'
 
-const { deployment, images } = require('./deployment')
-
-exports.deployment = deployment
-exports.images = images
+export { deployment, images }

@@ -1,16 +1,14 @@
-'use strict'
+import { describe, it, beforeEach } from 'node:test'
+import assert from 'node:assert/strict'
 
-const { describe, it, beforeEach } = require('node:test')
-const assert = require('node:assert/strict')
+import { join } from 'node:path'
+import { mkdtemp, readFile } from 'node:fs/promises'
+import { tmpdir } from 'node:os'
 
-const { join } = require('node:path')
-const { mkdtemp, readFile } = require('node:fs/promises')
-const { tmpdir } = require('node:os')
+import { Image, RUNTIME_IMAGE } from './image.js'
 
-const { Image, RUNTIME_IMAGE } = require('./image')
-
-const compositionDockerfile = join(__dirname, 'composition.Dockerfile')
-const serviceDockerfile = join(__dirname, 'service.Dockerfile')
+const compositionDockerfile = join(import.meta.dirname, 'composition.Dockerfile')
+const serviceDockerfile = join(import.meta.dirname, 'service.Dockerfile')
 
 class TestImage extends Image {
   dockerfile

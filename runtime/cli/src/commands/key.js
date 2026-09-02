@@ -1,6 +1,4 @@
-'use strict'
-
-const { key } = require('../handlers/key')
+import { key } from '../handlers/key.js'
 
 const builder = (yargs) => {
   yargs
@@ -18,7 +16,7 @@ const builder = (yargs) => {
     })
 }
 
-exports.command = 'key'
-exports.desc = 'Generate an encryption key'
-exports.builder = builder
-exports.handler = key
+export const command = 'key'
+export const desc = 'Generate an encryption key'
+
+export { builder, key as handler }

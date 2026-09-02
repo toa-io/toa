@@ -1,29 +1,18 @@
-'use strict'
+import { join } from 'node:path'
 
-const { join } = require('node:path')
+import { readFile } from 'node:fs/promises'
+import * as jsyaml from 'js-yaml'
+import { find } from '@toa.io/generic'
+import { Locator } from '@toa.io/core'
 
-const { readFile } = require('node:fs/promises')
-const jsyaml = require('js-yaml')
-const { find } = require('@toa.io/generic')
-const { Locator } = require('@toa.io/core')
-
-const {
-  expand,
-  merge,
-  validate,
-  collapse,
-  dereference,
-  defaults,
-  normalize,
-  extensions
-} = require('./.component')
+import { expand, merge, validate, collapse, dereference, defaults, normalize, extensions } from './.component/index.js'
 
 const component = async (path) => {
   const manifest = await load(path)
 
-  normalize(manifest, path)
-  validate(manifest)
-  extensions(manifest)
+  await normalize(manifest, path)
+  await validate(manifest)
+  await extensions(manifest)
 
   manifest.locator = new Locator(manifest.name, manifest.namespace)
 
@@ -57,7 +46,7 @@ const load = async (path, base, proto = false) => {
 
 const MANIFEST = 'manifest.toa.yaml'
 
-exports.component = component
+
 
 /**
  * Reads a YAML file, resolving anchors into distinct objects so that
@@ -71,3 +60,5 @@ async function read (path) {
 
   return jsyaml.load(jsyaml.dump(object, { noRefs: true, lineWidth: -1 }))
 }
+
+export { component }

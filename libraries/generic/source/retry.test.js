@@ -1,9 +1,7 @@
-'use strict'
+import { it, beforeEach, mock } from 'node:test'
+import assert from 'node:assert/strict'
 
-const { it, beforeEach, mock } = require('node:test')
-const assert = require('node:assert/strict')
-
-const { retry, RetryError, timeout, random } = require('../source')
+import { retry, RetryError, timeout, random } from '../source/index.js'
 
 /** @type {toa.generic.retry.Options} */
 let options

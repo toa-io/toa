@@ -1,8 +1,6 @@
-'use strict'
-
-const { Readable } = require('node:stream')
-const { posix } = require('node:path')
-const { match } = require('matchacho')
+import { Readable } from 'node:stream'
+import { posix } from 'node:path'
+import { match } from 'matchacho'
 
 async function put (input, context) {
   const { storage, request, location, accept, limit, trust } = input
@@ -144,7 +142,9 @@ const ERR_INVALID_ID = new (class InvalidIdError extends Error {
 
 const ID_RX = /^[a-zA-Z0-9-_]{1,32}$/
 
-exports.effect = put
+
 
 /** @typedef {Array<string | RegExp>} Trust */
 /** @typedef {import('node:stream').Readable} Readable */
+
+export { put as effect }

@@ -1,7 +1,4 @@
-'use strict'
+import { define } from './define.js'
+import { extract } from './extract.js'
 
-const { define } = require('./define')
-const { extract } = require('./extract')
-
-exports.define = define
-exports.extract = extract
+export { define, extract }

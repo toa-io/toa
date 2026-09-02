@@ -1,10 +1,8 @@
-'use strict'
+import { it, beforeEach } from 'node:test'
+import assert from 'node:assert/strict'
 
-const { it, beforeEach } = require('node:test')
-const assert = require('node:assert/strict')
-
-const { generate } = require('randomstring')
-const { Reflection, Connector } = require('../')
+import { generate } from 'randomstring'
+import { Reflection, Connector } from '../src/index.js'
 
 it('should export', () => {
   assert.notStrictEqual(Reflection, undefined)

@@ -1,6 +1,4 @@
-'use strict'
-
-const { Aspect } = require('./aspect')
+import { Aspect } from './aspect.js'
 
 /**
  * @implements {toa.core.extensions.Factory}
@@ -11,4 +9,4 @@ class Factory {
   }
 }
 
-exports.Factory = Factory
+export { Factory }

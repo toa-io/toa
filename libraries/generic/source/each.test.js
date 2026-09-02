@@ -1,11 +1,9 @@
-'use strict'
+import { it } from 'node:test'
+import assert from 'node:assert/strict'
+import { isDeepStrictEqual } from 'node:util'
 
-const { it } = require('node:test')
-const assert = require('node:assert/strict')
-const { isDeepStrictEqual } = require('node:util')
-
-const { generate } = require('randomstring')
-const { each, immediate } = require('../')
+import { generate } from 'randomstring'
+import { each, immediate } from '../source/index.js'
 
 it('should be', async () => {
   assert.ok(each instanceof Function)

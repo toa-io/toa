@@ -1,6 +1,4 @@
-'use strict'
-
-const { SystemException } = require("../exceptions")
+import { SystemException } from '../exceptions.js'
 
 class EntitySet {
   #set
@@ -25,4 +23,4 @@ class EntitySet {
   }
 }
 
-exports.EntitySet = EntitySet
+export { EntitySet }

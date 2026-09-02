@@ -1,5 +1,3 @@
-'use strict'
-
 const state = {}
 
 const reset = () => {
@@ -15,4 +13,5 @@ const reset = () => {
 reset()
 
 /** @type {toa.stage.State} */
-exports.state = state
+
+export { state }

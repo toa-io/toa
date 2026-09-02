@@ -1,5 +1,3 @@
-'use strict'
-
 /**
  * @param {toa.norm.Component} component
  * @param {Object} manifest
@@ -7,4 +5,4 @@
  */
 const describe = (component, manifest = undefined) => ({ locator: component.locator, manifest })
 
-exports.describe = describe
+export { describe }

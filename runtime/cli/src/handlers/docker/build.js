@@ -1,10 +1,10 @@
-'use strict'
+import { newid } from '@toa.io/generic'
+import * as norm from '@toa.io/norm'
+import { deployment } from '@toa.io/operations'
 
-const { newid } = require('@toa.io/generic')
-const norm = require('@toa.io/norm')
-const { deployment: { Factory } } = require('@toa.io/operations')
+import * as find from '../../util/find.js'
 
-const find = require('../../util/find')
+const { Factory } = deployment
 
 async function build (contextPath, componentPatterns) {
   const context = await createContext(contextPath, componentPatterns)
@@ -52,4 +52,4 @@ async function loadComponents (paths) {
   return components
 }
 
-exports.build = build
+export { build }

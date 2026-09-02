@@ -1,6 +1,4 @@
-'use strict'
-
-const { merge } = require('@toa.io/generic')
+import { merge } from '@toa.io/generic'
 
 const bridge = async (root, manifest) => {
   await Promise.all([
@@ -58,18 +56,19 @@ const define = async (root, manifest, property) => {
 
 const cache = {}
 
-function req(mod) {
-  cache[mod] ??= require(mod)
+// the promise is what is remembered, so a bridge is loaded once
+function req (mod) {
+  cache[mod] ??= import(mod)
 
   return cache[mod]
 }
 
 const scan = async (bridge, root, property) => {
-  const define = req(bridge).define
+  const { define } = await req(bridge)
 
   if (property in define)
     return define[property](root)
   else return undefined
 }
 
-exports.merge = bridge
+export { bridge as merge }

@@ -1,5 +1,3 @@
-'use strict'
-
 // http://www.cse.yorku.ca/~oz/hash.html
 
 /**
@@ -17,4 +15,4 @@ const hash = (input) => {
   return (hash >>> 0).toString(16)
 }
 
-exports.hash = hash
+export { hash }

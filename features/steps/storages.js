@@ -1,11 +1,9 @@
-'use strict'
+import assert from 'node:assert'
+import knex from 'knex'
 
-const assert = require('node:assert')
-const knex = require('knex')
+import { load } from './.workspace/components/index.js'
 
-const { load } = require('./.workspace/components')
-
-const { After, Given, Then } = require('@cucumber/cucumber')
+import { After, Given, Then } from '@cucumber/cucumber'
 
 Given('I have a {storage} database {word}',
   /**
@@ -27,7 +25,7 @@ Given('I have a {storage} database {word}',
     if (module === undefined)
       throw new Error(`Storage '${storage}' is unknown`)
 
-    const { Factory } = require(module.provider)
+    const { Factory } = await import(module.provider)
     const factory = new Factory()
     const migration = factory.migration(module.driver)
 

@@ -162,7 +162,7 @@ function components (): string[] {
     .map((entry) => resolve(ROOT, entry.name))
 }
 
-const ROOT = resolve(__dirname, 'components')
+const ROOT = resolve(import.meta.dirname, 'components')
 const URL = 'mongodb://developer:secret@localhost:27017'
 const DB = 'toa-dev'
 const DEADLINE = 20_000

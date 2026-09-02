@@ -1,8 +1,6 @@
-'use strict'
+import knex from 'knex'
 
-const knex = require('knex')
-
-const { translate } = require('./.migration/translate')
+import { translate } from './.migration/translate.js'
 
 /**
  * @implements {toa.core.storages.Migration}
@@ -88,4 +86,4 @@ const connection = () => ({
   database: 'postgres'
 })
 
-exports.Migration = Migration
+export { Migration }

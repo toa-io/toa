@@ -1,6 +1,4 @@
-'use strict'
-
-const { mock } = require('node:test')
+import { mock } from 'node:test'
 
 const context = {
   apply: mock.fn(),
@@ -15,4 +13,4 @@ const context = {
   connect: mock.fn()
 }
 
-exports.context = context
+export { context }

@@ -1,12 +1,7 @@
-'use strict'
+import { describe, it } from 'node:test'
+import assert from 'node:assert/strict'
 
-const { describe, it } = require('node:test')
-const assert = require('node:assert/strict')
-
-const {
-  to,
-  from
-} = require('../src/record')
+import { to, from } from '../src/record.js'
 
 describe('to', () => {
   it('should rename id to _id', () => {

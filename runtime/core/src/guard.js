@@ -1,5 +1,3 @@
-'use strict'
-
 class Guard {
   name
   #bridge
@@ -14,4 +12,4 @@ class Guard {
   }
 }
 
-exports.Guard = Guard
+export { Guard }

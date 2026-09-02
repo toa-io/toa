@@ -1,27 +1,27 @@
-'use strict'
+import { pathToFileURL } from 'node:url'
+import { find } from '@toa.io/generic'
+import * as boot from '../../src/index.js'
 
-const { find } = require('@toa.io/generic')
-const boot = require('../..')
-
-const { instances } = require('./instances')
+import { instances } from './instances.js'
 
 /**
  * @param {string} reference
  * @param {string} base
- * @returns {toa.core.extensions.Factory}
+ * @returns {Promise<toa.core.extensions.Factory>}
  */
-const resolve = (reference, base = process.cwd()) => {
+const resolve = async (reference, base = process.cwd()) => {
   const path = find(reference, base)
 
-  if (instances[path] === undefined) instances[path] = create(path)
+  // the promise is what is remembered, so two components cannot each make a factory
+  instances[path] ??= create(path)
 
-  return instances[path]
+  return await instances[path]
 }
 
-const create = (path) => {
-  const { Factory } = require(path)
+const create = async (path) => {
+  const { Factory } = await import(pathToFileURL(path).href)
 
   return new Factory(boot)
 }
 
-exports.resolve = resolve
+export { resolve }

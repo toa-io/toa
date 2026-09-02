@@ -1,20 +1,20 @@
-'use strict'
+import { join } from 'node:path'
+import { randomBytes } from 'node:crypto'
+import readline from 'node:readline/promises'
+import { stdin as input, stdout as output } from 'node:process'
+import dotenv from 'dotenv'
+import { V3 } from 'paseto'
+import { deployment } from '@toa.io/operations'
+import { readFile, writeFile } from 'node:fs/promises'
+import { context as find } from '../util/find.js'
 
-const { join } = require('node:path')
-const { randomBytes } = require('node:crypto')
-const readline = require('node:readline/promises')
-const { stdin: input, stdout: output } = require('node:process')
-const dotenv = require('dotenv')
-const { V3 } = require('paseto')
-const { deployment: { Factory } } = require('@toa.io/operations')
-const { readFile, writeFile } = require('node:fs/promises')
-const { context: find } = require('../util/find')
+const { Factory } = deployment
 
 async function env (argv) {
   const path = find(argv.path)
   const filepath = join(path, argv.as)
   const factory = await Factory.create(path, argv.environment)
-  const operator = factory.operator()
+  const operator = await factory.operator()
   const variables = operator.variables()
   const currentValues = await read(filepath)
 
@@ -205,5 +205,4 @@ const DEV_SECRETS = {
   'toa-configuration/IDENTITY_TOKENS_ENCRYPTION_KEY0': { generate: 'jwe' }
 }
 
-exports.env = env
-exports.promptSecrets = promptSecrets
+export { env, promptSecrets }

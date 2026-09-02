@@ -1,5 +1,3 @@
-'use strict'
-
 class Computation {
   #context
 
@@ -12,4 +10,4 @@ class Computation {
   }
 }
 
-exports.Computation = Computation
+export { Computation }

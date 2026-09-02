@@ -1,13 +1,11 @@
-'use strict'
+import { join } from 'node:path'
+import fs from 'fs-extra'
+import { createHash } from 'node:crypto'
 
-const { join } = require('node:path')
-const fs = require('fs-extra')
-const { createHash } = require('node:crypto')
-
-const { Image } = require('./image')
+import { Image } from './image.js'
 
 class Composition extends Image {
-  dockerfile = join(__dirname, 'composition.Dockerfile')
+  dockerfile = join(import.meta.dirname, 'composition.Dockerfile')
 
   #name
   #image
@@ -71,4 +69,4 @@ class Composition extends Image {
   }
 }
 
-exports.Composition = Composition
+export { Composition }

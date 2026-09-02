@@ -1,6 +1,4 @@
-'use strict'
-
-const { Connector } = require('@toa.io/core')
+import { Connector } from '@toa.io/core'
 
 /**
  * @implements {toa.core.bridges.Receiver}
@@ -18,4 +16,4 @@ class Receiver extends Connector {
   request = async (...args) => this.#receiver.request(...args)
 }
 
-exports.Receiver = Receiver
+export { Receiver }

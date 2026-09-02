@@ -10,4 +10,4 @@ class Computation {
   }
 }
 
-module.exports = { Computation }
+export { Computation }

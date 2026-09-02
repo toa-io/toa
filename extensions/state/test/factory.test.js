@@ -1,9 +1,7 @@
-'use strict'
+import { it, beforeEach } from 'node:test'
+import assert from 'node:assert/strict'
 
-const { it, beforeEach } = require('node:test')
-const assert = require('node:assert/strict')
-
-const { Factory } = require('../')
+import { Factory } from '../source/index.js'
 
 it('should be', async () => {
   assert.ok(Factory instanceof Function)

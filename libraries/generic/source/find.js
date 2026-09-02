@@ -1,6 +1,9 @@
-'use strict'
+import { createRequire } from 'node:module'
+import { dirname, join, basename } from 'node:path'
 
-const { dirname, join, basename } = require('node:path')
+// import.meta.resolve takes no paths, and every reference here is resolved
+// against a base that is not this module
+const require = createRequire(import.meta.url)
 
 /**
  * Returns the directory of the package referenced by `reference`,
@@ -33,4 +36,4 @@ const find = (reference, base, indicator = 'package.json') => {
   }
 }
 
-exports.find = find
+export { find }

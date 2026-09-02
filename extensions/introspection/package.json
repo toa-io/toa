@@ -1,6 +1,7 @@
 {
   "name": "@toa.io/extensions.introspection",
   "version": "1.0.0-alpha.275",
+  "type": "module",
   "description": "Toa Introspection",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",

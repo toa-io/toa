@@ -1,7 +1,4 @@
-'use strict'
+import { refs } from './refs.js'
+import { types } from './types.js'
 
-const { refs } = require('./refs')
-const { types } = require('./types')
-
-exports.refs = refs
-exports.types = types
+export { refs, types }

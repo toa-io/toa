@@ -1,6 +1,4 @@
-'use strict'
-
-const { generate } = require('randomstring')
+import { generate } from 'randomstring'
 
 const origin = {
   foo: generate(),
@@ -10,4 +8,4 @@ const origin = {
   quu: [generate(), generate()]
 }
 
-exports.origin = origin
+export { origin }

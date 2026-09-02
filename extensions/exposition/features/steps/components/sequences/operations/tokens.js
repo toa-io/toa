@@ -1,6 +1,4 @@
-'use strict'
-
-const { randomBytes } = require('node:crypto')
+import { randomBytes } from 'node:crypto'
 
 async function * computation () {
   while (true) {
@@ -13,4 +11,4 @@ function timeout (ms) {
   return new Promise(resolve => setTimeout(resolve, ms))
 }
 
-exports.computation = computation
+export { computation }

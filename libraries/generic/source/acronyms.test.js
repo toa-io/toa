@@ -1,11 +1,9 @@
-const { describe, it } = require('node:test')
-const assert = require('node:assert/strict')
+import { describe, it } from 'node:test'
+import assert from 'node:assert/strict'
 
 // noinspection SpellCheckingInspection
 
-'use strict'
-
-const { acronyms } = require('../')
+import { acronyms } from '../source/index.js'
 
 it('should be', () => {
   assert.notStrictEqual(acronyms, undefined)

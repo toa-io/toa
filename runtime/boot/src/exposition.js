@@ -1,8 +1,6 @@
-'use strict'
+import { Exposition, Locator } from '@toa.io/core'
 
-const { Exposition, Locator } = require('@toa.io/core')
-
-const boot = require('./index')
+import * as boot from './index.js'
 
 const exposition = async (manifest) => {
   const locator = new Locator('', '')
@@ -14,4 +12,4 @@ const exposition = async (manifest) => {
   return producers
 }
 
-exports.exposition = exposition
+export { exposition }

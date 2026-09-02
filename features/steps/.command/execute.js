@@ -1,7 +1,5 @@
-'use strict'
-
-const { spawn } = require('node:child_process')
-const { once } = require('node:events')
+import { spawn } from 'node:child_process'
+import { once } from 'node:events'
 
 /**
  * @param {string} command
@@ -67,4 +65,4 @@ const lines = (string) => {
   return lines
 }
 
-exports.execute = execute
+export { execute }

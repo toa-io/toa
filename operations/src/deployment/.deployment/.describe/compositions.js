@@ -1,7 +1,5 @@
-'use strict'
-
-const { addVariables } = require('./variables')
-const { addMounts } = require('./mounts')
+import { addVariables } from './variables.js'
+import { addMounts } from './mounts.js'
 
 function compositions (compositions, dependency) {
   for (const composition of compositions) {
@@ -13,4 +11,4 @@ function compositions (compositions, dependency) {
   }
 }
 
-exports.compositions = compositions
+export { compositions }

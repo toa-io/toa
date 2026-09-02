@@ -1,5 +1,3 @@
-'use strict'
-
 function addMounts (composition, mounts, keys = composition.components) {
   if (mounts === undefined)
     return
@@ -21,4 +19,4 @@ function addMounts (composition, mounts, keys = composition.components) {
   }
 }
 
-exports.addMounts = addMounts
+export { addMounts }

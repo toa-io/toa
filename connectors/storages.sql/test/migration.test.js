@@ -1,19 +1,17 @@
-'use strict'
+import { describe, it, beforeEach, mock as mocking } from 'node:test'
+import assert from 'node:assert/strict'
+import { isDeepStrictEqual } from 'node:util'
 
-const { describe, it, beforeEach, mock: mocking } = require('node:test')
-const assert = require('node:assert/strict')
-const { isDeepStrictEqual } = require('node:util')
+import { generate } from 'randomstring'
+import { Locator } from '@toa.io/core'
 
-const { generate } = require('randomstring')
-const { Locator } = require('@toa.io/core')
-
-const { knex } = require('./knex.mock')
+import { knex } from './knex.mock.js'
+import * as fixtures from './migration.fixtures.js'
 const mock = { knex }
 
 mocking.module('knex', { defaultExport: mock.knex })
 
-const fixtures = require('./migration.fixtures')
-const { Migration } = require('../src/migration')
+const { Migration } = await import('../src/migration.js')
 
 it('should be', () => {
   assert.notStrictEqual(Migration, undefined)

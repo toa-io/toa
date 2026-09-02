@@ -1,13 +1,7 @@
-'use strict'
+import { dependencies } from './dependencies.js'
+import { components } from './components.js'
+import { compositions } from './compositions.js'
+import { variables } from './variables.js'
+import { services } from './services.js'
 
-const { dependencies } = require('./dependencies')
-const { components } = require('./components')
-const { compositions } = require('./compositions')
-const { variables } = require('./variables')
-const { services } = require('./services')
-
-exports.dependencies = dependencies
-exports.components = components
-exports.compositions = compositions
-exports.variables = variables
-exports.services = services
+export { dependencies, components, compositions, variables, services }

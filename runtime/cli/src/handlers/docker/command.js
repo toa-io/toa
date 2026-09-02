@@ -1,5 +1,3 @@
-'use strict'
-
 /**
  * @param {string} command
  * @param {Record<string, any>} args
@@ -20,4 +18,4 @@ const command = (command, args) => {
   return command + ' ' + argumentLine
 }
 
-exports.command = command
+export { command }

@@ -1,6 +1,4 @@
-'use strict'
-
-const { entries } = require('./entries')
+import { entries } from './entries.js'
 
 // noinspection FunctionWithMoreThanThreeNegationsJS
 const merge = (target, source, options = {}, path = []) => {
@@ -47,6 +45,4 @@ const add = (target, source) => merge(target, source, { ignore: true })
 
 const string = (path) => '/' + path.join('/')
 
-exports.merge = merge
-exports.overwrite = overwrite
-exports.add = add
+export { merge, overwrite, add }

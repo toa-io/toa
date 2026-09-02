@@ -1,5 +1,3 @@
-'use strict'
-
 function encode (input) {
   if (typeof input !== 'string')
     input = JSON.stringify(input)
@@ -20,5 +18,4 @@ function decode (input) {
 /** @type {BufferEncoding} */
 const ENCODING = 'base64'
 
-exports.encode = encode
-exports.decode = decode
+export { encode, decode }

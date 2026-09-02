@@ -1,11 +1,9 @@
-'use strict'
+import { describe, it, before } from 'node:test'
+import assert from 'node:assert/strict'
 
-const { describe, it, before } = require('node:test')
-const assert = require('node:assert/strict')
-
-const { join } = require('node:path')
-const { generate } = require('randomstring')
-const schemas = require('../')
+import { join } from 'node:path'
+import { generate } from 'randomstring'
+import * as schemas from '../source/index.js'
 
 it('should be', async () => {
   assert.notStrictEqual(schemas.namespace, undefined)
@@ -56,7 +54,7 @@ describe('directory', () => {
   let namespace
 
   before(() => {
-    const path = join(__dirname, 'schemas')
+    const path = join(import.meta.dirname, 'schemas')
 
     namespace = schemas.namespace(path)
   })

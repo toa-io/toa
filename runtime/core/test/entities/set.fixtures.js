@@ -1,8 +1,6 @@
-'use strict'
+import { mock } from 'node:test'
 
-const { mock } = require('node:test')
-
-const { generate } = require('randomstring')
+import { generate } from 'randomstring'
 
 const set = [
   { get: mock.fn(() => ({ [generate()]: generate() })) },
@@ -10,4 +8,4 @@ const set = [
   { get: mock.fn(() => ({ [generate()]: generate() })) }
 ]
 
-exports.set = set
+export { set }

@@ -1,8 +1,6 @@
-'use strict'
+import { Context, Locator } from '@toa.io/core'
 
-const { Context, Locator } = require('@toa.io/core')
-
-const boot = require('./index')
+import * as boot from './index.js'
 
 const context = async (manifest) => {
   const local = await boot.remote(manifest.locator, undefined, manifest)
@@ -25,4 +23,4 @@ const context = async (manifest) => {
   return boot.extensions.context(context)
 }
 
-exports.context = context
+export { context }

@@ -1,9 +1,7 @@
-'use strict'
+import { Receiver, Locator } from '@toa.io/core'
 
-const { Receiver, Locator } = require('@toa.io/core')
-
-const boot = require('./index')
-const extensions = require('./extensions')
+import * as boot from './index.js'
+import * as extensions from './extensions/index.js'
 
 const receivers = async (manifest, component) => {
   if (manifest.receivers === undefined) return []
@@ -59,5 +57,4 @@ async function resolveBinding (locator, label) {
   return events[event].binding
 }
 
-exports.receivers = receivers
-exports.receive = receive
+export { receivers, receive }

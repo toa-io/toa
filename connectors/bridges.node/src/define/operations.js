@@ -1,7 +1,5 @@
-'use strict'
-
-const load = require('../load')
-const algorithm = require('./.operations')
+import * as load from '../load.js'
+import * as algorithm from './.operations/index.js'
 
 /** @type {toa.node.define.Algorithms} */
 const operations = async (root) => {
@@ -21,5 +19,4 @@ const operations = async (root) => {
 
 const extract = (module) => algorithm.extract(module)
 
-exports.operations = operations
-exports.extract = extract
+export { operations, extract }

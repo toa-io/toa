@@ -1,8 +1,6 @@
-'use strict'
+import { mock } from 'node:test'
 
-const { mock } = require('node:test')
-
-const { generate } = require('randomstring')
+import { generate } from 'randomstring'
 
 // noinspection JSCheckFunctionSignatures
 const events = [0, 1, 2].map((index) => ({
@@ -14,5 +12,4 @@ const event = {
   state: { [generate()]: generate() }
 }
 
-exports.events = events
-exports.event = event
+export { events, event }

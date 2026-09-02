@@ -1,11 +1,9 @@
-'use strict'
+import { it, mock } from 'node:test'
+import assert from 'node:assert/strict'
 
-const { it, mock } = require('node:test')
-const assert = require('node:assert/strict')
-
-const { repeat } = require('../source/repeat')
-const { generate } = require('randomstring')
-const { random } = require('../source/random')
+import { repeat } from '../source/repeat.js'
+import { generate } from 'randomstring'
+import { random } from '../source/random.js'
 
 it('should repeat', () => {
   const fn = mock.fn()

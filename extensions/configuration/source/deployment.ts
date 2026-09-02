@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs'
 import assert from 'node:assert'
 import { type Dependency, type Resources, type Service, type Variable, type Variables } from '@toa.io/operations'
 import { components } from './Composition.js'
@@ -29,7 +30,7 @@ export function deployment (instances: Instance[], annotation: Annotation = {}):
   const service: Service = {
     group: 'configuration',
     name: 'values',
-    version: require('../package.json').version,
+    version: JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8')).version,
     components: components().labels,
     resources,
     // the service that holds the values also serves the page that reads them

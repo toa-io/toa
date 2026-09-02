@@ -1,7 +1,5 @@
 // noinspection JSValidateTypes
 
-'use strict'
-
 /** @type {toa.node.define.operations.Define} */
 const define = (descriptor) => {
   const match = descriptor.name.match(pattern)
@@ -25,5 +23,4 @@ const test = (statement, name) => {
 
 const pattern = new RegExp('^(?<scope>Objects?|Changeset)?(?<type>Transition|Observation|Assignment|Computation|Effect)Factory$')
 
-exports.define = define
-exports.test = test
+export { define, test }

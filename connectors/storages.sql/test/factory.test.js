@@ -1,14 +1,12 @@
-'use strict'
+import { it, beforeEach } from 'node:test'
+import assert from 'node:assert/strict'
 
-const { it, beforeEach } = require('node:test')
-const assert = require('node:assert/strict')
+import { generate } from 'randomstring'
+import { Locator } from '@toa.io/core'
 
-const { generate } = require('randomstring')
-const { Locator } = require('@toa.io/core')
-
-const { Storage } = require('../src/storage')
-const { Migration } = require('../src/migration')
-const { Factory } = require('../src')
+import { Storage } from '../src/storage.js'
+import { Migration } from '../src/migration.js'
+import { Factory } from '../src/index.js'
 
 /** @type {toa.sql.Factory} */
 let factory

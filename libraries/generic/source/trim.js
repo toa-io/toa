@@ -1,5 +1,3 @@
-'use strict'
-
 /**
  * Removes leading/trailing blank lines, dedents by the first line's padding,
  * and strips trailing whitespace from each line.
@@ -32,4 +30,4 @@ function trim (input) {
     .join('\n')
 }
 
-exports.trim = trim
+export { trim }

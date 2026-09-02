@@ -1,9 +1,7 @@
-'use strict'
+import { join } from 'node:path'
+import * as stage from '@toa.io/userland/stage'
 
-const { join } = require('node:path')
-const stage = require('@toa.io/userland/stage')
-
-const { COLLECTION } = require('./constants')
+import { COLLECTION } from './constants.js'
 
 /**
  * @param {string} reference
@@ -15,4 +13,4 @@ const load = async (reference) => {
   return stage.manifest(path)
 }
 
-exports.load = load
+export { load }

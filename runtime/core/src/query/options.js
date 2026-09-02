@@ -1,6 +1,4 @@
-'use strict'
-
-const { QuerySyntaxException } = require('../exceptions')
+import { QuerySyntaxException } from '../exceptions.js'
 
 const options = (options, properties, system) => {
   if (options.sort !== undefined) options.sort = sort(options.sort, properties)
@@ -38,4 +36,4 @@ const projection = (projection, properties) => {
       projection.push(property)
 }
 
-exports.options = options
+export { options }

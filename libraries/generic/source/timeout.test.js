@@ -1,11 +1,9 @@
-'use strict'
+import { it } from 'node:test'
+import assert from 'node:assert/strict'
 
-const { it } = require('node:test')
-const assert = require('node:assert/strict')
+import { performance } from 'perf_hooks'
 
-const { performance } = require('perf_hooks')
-
-const { timeout } = require('../source/timeout')
+import { timeout } from '../source/timeout.js'
 
 it('should wait', async () => {
   const start = performance.now()

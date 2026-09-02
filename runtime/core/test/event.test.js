@@ -1,14 +1,12 @@
-'use strict'
+import { describe, it, beforeEach, mock } from 'node:test'
+import assert from 'node:assert/strict'
+import { isDeepStrictEqual } from 'node:util'
 
-const { describe, it, beforeEach, mock } = require('node:test')
-const assert = require('node:assert/strict')
-const { isDeepStrictEqual } = require('node:util')
+import clone from 'clone-deep'
 
-const clone = require('clone-deep')
-
-const { Connector } = require('../src/connector')
-const { Event } = require('../src/event')
-const fixtures = require('./event.fixtures')
+import { Connector } from '../src/connector.js'
+import { Event } from '../src/event.js'
+import * as fixtures from './event.fixtures.js'
 
 let event, emit
 

@@ -1,12 +1,10 @@
-'use strict'
+import { describe, it } from 'node:test'
+import assert from 'node:assert/strict'
 
-const { describe, it } = require('node:test')
-const assert = require('node:assert/strict')
+import { generate } from 'randomstring'
+import { join } from 'node:path'
 
-const { generate } = require('randomstring')
-const { join } = require('node:path')
-
-const schemas = require('../')
+import * as schemas from '../source/index.js'
 
 it('should be', async () => {
   assert.notStrictEqual(schemas.schema, undefined)
@@ -126,7 +124,7 @@ describe('validate', () => {
 
 describe('file', () => {
   it('should load schema from a file', async () => {
-    const path = join(__dirname, 'schemas/one.cos.yaml')
+    const path = join(import.meta.dirname, 'schemas/one.cos.yaml')
     const schema = schemas.schema(path)
 
     assert.doesNotThrow(() => schema.validate({ foo: 5 }))

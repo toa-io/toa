@@ -1,5 +1,3 @@
-'use strict'
-
 /** @type {toa.generic.range} */
 const range = (input) => {
   const list = input.split(',')
@@ -27,4 +25,4 @@ function parse (input) {
 
 const SEPARATOR = /-|\.\./
 
-exports.range = range
+export { range }

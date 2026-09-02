@@ -1,13 +1,11 @@
-'use strict'
+import { it, beforeEach } from 'node:test'
+import assert from 'node:assert/strict'
+import { isDeepStrictEqual } from 'node:util'
 
-const { it, beforeEach } = require('node:test')
-const assert = require('node:assert/strict')
-const { isDeepStrictEqual } = require('node:util')
+import { generate } from 'randomstring'
 
-const { generate } = require('randomstring')
-
-const { Contract } = require('../../src/contract/contract')
-const fixtures = require('./contract.fixtures')
+import { Contract } from '../../src/contract/contract.js'
+import * as fixtures from './contract.fixtures.js'
 
 let contract
 

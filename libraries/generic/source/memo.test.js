@@ -1,9 +1,7 @@
-'use strict'
+import { it } from 'node:test'
+import assert from 'node:assert/strict'
 
-const { it } = require('node:test')
-const assert = require('node:assert/strict')
-
-const { memo } = require('./index')
+import { memo } from './index.js'
 
 it('should memoize returned values', async () => {
   let calls = 0

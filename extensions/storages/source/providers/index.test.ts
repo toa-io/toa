@@ -8,8 +8,8 @@ import { providers } from './index.js'
 import type { Constructor } from '../Provider.js'
 import type { Metadata, Stream } from '../Entry.js'
 
-const sample = resolve(__dirname, '../test/sample.jpeg')
-const lenna = resolve(__dirname, '../test/lenna.png')
+const sample = resolve(import.meta.dirname, '../test/sample.jpeg')
+const lenna = resolve(import.meta.dirname, '../test/lenna.png')
 
 const metadata: Metadata = {
   type: 'image/jpeg',
@@ -20,10 +20,11 @@ const metadata: Metadata = {
 }
 
 for (const suite of suites)
-   describe('$provider', () => {
+  // a skipped suite still runs its hooks, and those reach the provider, so what
+  // is skipped is the suite rather than each test in it
+  (suite.run ? describe : describe.skip)(`${suite.provider}`, () => {
   const id = Math.random().toString(36).substring(7)
-  // node:test has no globals; the runner is chosen from the imported one
-  const test = suite.run ? it : it.skip
+  const test = it
   const Provider: Constructor = providers[suite.provider]
   const provider = new Provider(suite.options, suite.secrets)
 

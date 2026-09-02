@@ -1,12 +1,10 @@
-'use strict'
+import { it, beforeEach } from 'node:test'
+import assert from 'node:assert/strict'
 
-const { it, beforeEach } = require('node:test')
-const assert = require('node:assert/strict')
+import clone from 'clone-deep'
+import { generate } from 'randomstring'
 
-const clone = require('clone-deep')
-const { generate } = require('randomstring')
-
-const { traverse } = require('../')
+import { traverse } from '../source/index.js'
 
 const origin = {
   a: {

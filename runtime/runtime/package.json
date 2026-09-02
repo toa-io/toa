@@ -1,6 +1,7 @@
 {
   "name": "@toa.io/runtime",
   "version": "1.0.0-alpha.275",
+  "type": "module",
   "description": "Toa Runtime",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",

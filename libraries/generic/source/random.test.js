@@ -1,9 +1,7 @@
-'use strict'
+import { it } from 'node:test'
+import assert from 'node:assert/strict'
 
-const { it } = require('node:test')
-const assert = require('node:assert/strict')
-
-const { random } = require('../source/random')
+import { random } from '../source/random.js'
 
 it('should be less than or equal to ceil(max)', () => {
   const iterations = 100

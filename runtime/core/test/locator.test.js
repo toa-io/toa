@@ -1,10 +1,8 @@
-'use strict'
+import { describe, it, beforeEach } from 'node:test'
+import assert from 'node:assert/strict'
 
-const { describe, it, beforeEach } = require('node:test')
-const assert = require('node:assert/strict')
-
-const { generate } = require('randomstring')
-const { Locator } = require('../src/locator')
+import { generate } from 'randomstring'
+import { Locator } from '../src/locator.js'
 
 /** @type {string} */
 let name

@@ -65,4 +65,4 @@ function componentPaths (): string[] {
     .map((entry) => resolve(ROOT, entry.name))
 }
 
-const ROOT = resolve(__dirname, 'components')
+const ROOT = resolve(import.meta.dirname, 'components')

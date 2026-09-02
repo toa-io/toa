@@ -1,26 +1,24 @@
-'use strict'
+import { it } from 'node:test'
+import assert from 'node:assert/strict'
 
-const { it } = require('node:test')
-const assert = require('node:assert/strict')
-
-const { join } = require('node:path')
-const { load } = require('../../src/.context/.dependencies/load')
+import { join } from 'node:path'
+import { load } from '../../src/.context/.dependencies/load.js'
 
 it('should be', async () => {
   assert.ok(load instanceof Function)
 })
 
 it('should load module', async () => {
-  const path = join(__dirname, '../../')
-  const { metadata, module } = load(path)
+  const path = join(import.meta.dirname, '../../')
+  const { metadata, module } = await load(path)
 
   assert.deepStrictEqual(metadata.name, '@toa.io/norm')
   assert.ok(module.context instanceof Function)
 })
 
 it('should return null metadata if no package.json', async () => {
-  const path = join(__dirname, '../../src')
-  const { metadata, module } = load(path)
+  const path = join(import.meta.dirname, '../../src')
+  const { metadata, module } = await load(path)
 
   assert.strictEqual(metadata, null)
   assert.ok(module.context instanceof Function)

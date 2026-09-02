@@ -1,6 +1,4 @@
-'use strict'
-
-const clone = require('clone-deep')
+import clone from 'clone-deep'
 
 /**
  * @param id {string}
@@ -54,5 +52,4 @@ expected.compositions = [
   }
 ]
 
-exports.context = context
-exports.expected = expected
+export { context, expected }

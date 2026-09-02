@@ -1,5 +1,3 @@
-'use strict'
-
 /** @type {toa.node.shortcut} */
 function configuration (context, aspect) {
   Object.defineProperty(context, 'configuration', {
@@ -7,4 +5,4 @@ function configuration (context, aspect) {
   })
 }
 
-exports.configuration = configuration
+export { configuration }

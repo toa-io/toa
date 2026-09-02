@@ -1,15 +1,13 @@
-'use strict'
+import { it, before } from 'node:test'
+import assert from 'node:assert/strict'
 
-const { it, before } = require('node:test')
-const assert = require('node:assert/strict')
+import { resolve } from 'node:path'
+import { generate } from 'randomstring'
+import { Connector } from '@toa.io/core'
 
-const { resolve } = require('node:path')
-const { generate } = require('randomstring')
-const { Connector } = require('@toa.io/core')
+import { Factory } from '../src/factory.js'
 
-const { Factory } = require('../src/factory')
-
-const root = resolve(__dirname, 'dummies/one')
+const root = resolve(import.meta.dirname, 'dummies/one')
 
 let factory
 

@@ -1,5 +1,3 @@
-'use strict'
-
 import { setTimeout } from 'node:timers/promises'
 
 async function * effect (_) {
@@ -10,4 +8,4 @@ async function * effect (_) {
   yield 'world'
 }
 
-exports.effect = effect
+export { effect }

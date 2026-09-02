@@ -1,13 +1,7 @@
-'use strict'
+import { remote } from './remote.js'
+import { component } from './component.js'
+import { composition } from './composition.js'
+import { copy } from './copy.js'
+import { load } from './load.js'
 
-const { remote } = require('./remote')
-const { component } = require('./component')
-const { composition } = require('./composition')
-const { copy } = require('./copy')
-const { load } = require('./load')
-
-exports.remote = remote
-exports.component = component
-exports.composition = composition
-exports.copy = copy
-exports.load = load
+export { remote, component, composition, copy, load }

@@ -1,12 +1,11 @@
-'use strict'
-
-const boot = require('@toa.io/boot')
-const { state } = require('./state')
-const { shortcuts } = require('@toa.io/norm')
+import { pathToFileURL } from 'node:url'
+import * as boot from '@toa.io/boot'
+import { state } from './state.js'
+import { shortcuts } from '@toa.io/norm'
 
 const service = async (ref) => {
   const path = shortcuts.resolve(ref)
-  const { Factory } = require(path)
+  const { Factory } = await import(pathToFileURL(path).href)
   const factory = new Factory(boot)
   const service = factory.service()
 
@@ -17,4 +16,4 @@ const service = async (ref) => {
   return service
 }
 
-exports.service = service
+export { service }

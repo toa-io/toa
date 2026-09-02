@@ -1,11 +1,10 @@
-'use strict'
-const { describe, it, beforeEach } = require('node:test')
-const assert = require('node:assert/strict')
+import { describe, it, beforeEach } from 'node:test'
+import assert from 'node:assert/strict'
 
-const clone = require('clone-deep')
+import clone from 'clone-deep'
 
-const { normalize, extensions } = require('../../src/.component')
-const fixtures = require('./normalize.fixtures')
+import { normalize, extensions } from '../../src/.component/index.js'
+import * as fixtures from './normalize.fixtures.js'
 
 let manifest
 
@@ -14,25 +13,25 @@ beforeEach(() => {
 })
 
 describe('operations', () => {
-  it('should set default bindings', () => {
-    normalize(manifest)
+  it('should set default bindings', async () => {
+    await normalize(manifest)
 
     assert.deepStrictEqual(manifest.operations.add.bindings, manifest.bindings)
   })
 })
 
 describe('extensions', () => {
-  it('should add predefined extensions', () => {
-    extensions(manifest)
+  it('should add predefined extensions', async () => {
+    await extensions(manifest)
 
     assert.strictEqual(manifest.extensions['@toa.io/extensions.telemetry'], null)
     assert.strictEqual(manifest.extensions['@toa.io/extensions.fetch'], null)
   })
 
-  it('should add predefined extensions without explicit declarations', () => {
+  it('should add predefined extensions without explicit declarations', async () => {
     delete manifest.extensions
 
-    extensions(manifest)
+    await extensions(manifest)
 
     assert.deepStrictEqual(manifest.extensions, {
       '@toa.io/extensions.telemetry': null,
@@ -48,7 +47,7 @@ describe('receivers', () => {
       'messages.created': 'add'
     }
 
-    normalize(manifest)
+    await normalize(manifest)
 
     assert.deepStrictEqual(manifest.receivers, {
       'default.messages.created': 'add'
@@ -65,7 +64,7 @@ describe('receivers', () => {
       'messages.created': receiver
     }
 
-    normalize(manifest)
+    await normalize(manifest)
 
     assert.deepStrictEqual(manifest.receivers, {
       'messages.created': receiver

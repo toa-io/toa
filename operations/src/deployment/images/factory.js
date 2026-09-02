@@ -1,8 +1,6 @@
-'use strict'
-
-const { Composition } = require('./composition')
-const { Service } = require('./service')
-const { Mono } = require('./mono')
+import { Composition } from './composition.js'
+import { Service } from './service.js'
+import { Mono } from './mono.js'
 
 class Factory {
   /** @type {string} */
@@ -59,4 +57,4 @@ class Factory {
   }
 }
 
-exports.Factory = Factory
+export { Factory }

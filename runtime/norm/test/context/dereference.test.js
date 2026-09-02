@@ -1,12 +1,10 @@
-'use strict'
+import { it, before } from 'node:test'
+import assert from 'node:assert/strict'
 
-const { it, before } = require('node:test')
-const assert = require('node:assert/strict')
+import clone from 'clone-deep'
 
-const clone = require('clone-deep')
-
-const { dereference } = require('../../src/.context')
-const fixtures = require('./dereference.fixtures')
+import { dereference } from '../../src/.context/index.js'
+import * as fixtures from './dereference.fixtures.js'
 
 /** @type {toa.norm.Context} */
 let context

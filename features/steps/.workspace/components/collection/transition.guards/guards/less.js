@@ -1,4 +1,4 @@
-const assert = require('node:assert')
+import assert from 'node:assert'
 
 function guard (state, origin, context) {
   assert(state.id !== undefined && state._version !== undefined, 'state is required')
@@ -8,4 +8,4 @@ function guard (state, origin, context) {
   return state.b > state.a
 }
 
-exports.guard = guard
+export { guard }

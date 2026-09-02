@@ -1,5 +1,3 @@
-'use strict'
-
-exports.request = (payload) => ({
+export const request = (payload) => ({
   input: { description: payload.text }
 })

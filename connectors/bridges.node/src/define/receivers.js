@@ -1,6 +1,4 @@
-'use strict'
-
-const load = require('../load')
+import * as load from '../load.js'
 
 const receiver = async (root, label) => {
   const module = await load.receiver(root, label)
@@ -19,5 +17,4 @@ const definition = (module) => ({
   adaptive: module.request !== undefined
 })
 
-exports.receiver = receiver
-exports.receivers = receivers
+export { receiver, receivers }

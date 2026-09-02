@@ -1,6 +1,4 @@
-'use strict'
-
-const { createVariables } = require('@toa.io/pointer')
+import { createVariables } from '@toa.io/pointer'
 
 const deployment = (instances, annotation) => {
   const requests = instances.map((instance) => createRequest(instance))
@@ -18,5 +16,4 @@ function createRequest (instance) {
 
 const ID = 'mongodb'
 
-exports.ID = ID
-exports.deployment = deployment
+export { ID, deployment }

@@ -1,9 +1,7 @@
-'use strict'
+import { it } from 'node:test'
+import assert from 'node:assert/strict'
 
-const { it } = require('node:test')
-const assert = require('node:assert/strict')
-
-const { immediate } = require('../')
+import { immediate } from '../source/index.js'
 
 it('should be', async () => {
   assert.notStrictEqual(immediate, undefined)

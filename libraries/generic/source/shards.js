@@ -1,6 +1,4 @@
-'use strict'
-
-const { range } = require('./range')
+import { range } from './range.js'
 
 const shards = (input) => {
   const match = input.match(RANGE)
@@ -14,4 +12,4 @@ const shards = (input) => {
 
 const RANGE = /{(?<range>[0-9]{1,8}-[0-9]{1,8})}/
 
-exports.shards = shards
+export { shards }

@@ -1,4 +1,2 @@
-'use strict'
-
-exports.types = ['transition', 'observation', 'assignment', 'computation', 'effect', 'unmanaged']
-exports.scopes = ['object', 'objects', 'changeset', 'stream']
+export const types = ['transition', 'observation', 'assignment', 'computation', 'effect', 'unmanaged']
+export const scopes = ['object', 'objects', 'changeset', 'stream']

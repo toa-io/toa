@@ -1,7 +1,5 @@
-'use strict'
-
 const source = {
-  path: __dirname, // `version` hashes the component directory
+  path: import.meta.dirname, // `version` hashes the component directory
   entity: {
     schema: {
       type: 'object',
@@ -139,5 +137,4 @@ const target = {
   }
 }
 
-exports.source = source
-exports.target = target
+export { source, target }

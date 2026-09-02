@@ -1,9 +1,5 @@
-'use strict'
+import { declare } from './declare.js'
+import { describe } from './describe.js'
+import { merge } from './merge.js'
 
-const { declare } = require('./declare')
-const { describe } = require('./describe')
-const { merge } = require('./merge')
-
-exports.declare = declare
-exports.describe = describe
-exports.merge = merge
+export { declare, describe, merge }

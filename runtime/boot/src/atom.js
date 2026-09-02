@@ -1,8 +1,6 @@
-'use strict'
+import { Connector } from '@toa.io/core'
 
-const { Connector } = require('@toa.io/core')
-
-const boot = require('./index')
+import * as boot from './index.js'
 
 /**
  * The atom as a system aspect. Every component has `context.atom`, with nothing declared in its
@@ -38,4 +36,4 @@ class Aspect extends Connector {
 /** @param {string} group */
 const atom = (group) => new Aspect(boot.atomicity(group))
 
-exports.atom = atom
+export { atom }

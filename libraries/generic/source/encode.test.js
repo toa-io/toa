@@ -1,11 +1,9 @@
-'use strict'
+import { it, beforeEach } from 'node:test'
+import assert from 'node:assert/strict'
 
-const { it, beforeEach } = require('node:test')
-const assert = require('node:assert/strict')
+import { generate } from 'randomstring'
 
-const { generate } = require('randomstring')
-
-const { encode, decode, random } = require('../')
+import { encode, decode, random } from '../source/index.js'
 
 let object
 

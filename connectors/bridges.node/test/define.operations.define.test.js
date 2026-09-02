@@ -1,11 +1,9 @@
-const { describe, it, before } = require('node:test')
-const assert = require('node:assert/strict')
+import { describe, it, before } from 'node:test'
+import assert from 'node:assert/strict'
 
 // noinspection JSUnusedLocalSymbols,JSUnusedGlobalSymbols
 
-'use strict'
-
-const { define } = require('../src/define/.operations')
+import { define } from '../src/define/.operations/index.js'
 
 it('should be', () => {
   assert.notStrictEqual(define, undefined)

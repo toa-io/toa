@@ -1,6 +1,4 @@
-'use strict'
-
-const { recognize } = require('../../shortcuts')
+import { recognize } from '../../shortcuts.js'
 
 function properties (manifest) {
   recognize(SHORTCUTS, manifest, 'properties')
@@ -11,4 +9,4 @@ const SHORTCUTS = {
   queues: '@toa.io/storages.queues'
 }
 
-exports.properties = properties
+export { properties }

@@ -1,8 +1,6 @@
-'use strict'
+import { mock } from 'node:test'
 
-const { mock } = require('node:test')
-
-const { generate } = require('randomstring')
+import { generate } from 'randomstring'
 
 const storage = {
   name: 'dummy',
@@ -43,10 +41,4 @@ const outbox = {
   publish: mock.fn()
 }
 
-exports.storage = storage
-exports.factory = factory
-exports.outbox = outbox
-exports.query = query
-exports.entity = entity
-exports.initial = initial
-exports.unchanged = unchanged
+export { storage, factory, outbox, query, entity, initial, unchanged }

@@ -1,7 +1,5 @@
-'use strict'
-
-const { Connector } = require('@toa.io/core')
-const { name } = require('./queues')
+import { Connector } from '@toa.io/core'
+import { name } from './queues.js'
 
 /**
  * @implements {toa.core.bindings.Consumer}
@@ -35,4 +33,4 @@ class Consumer extends Connector {
   }
 }
 
-exports.Consumer = Consumer
+export { Consumer }

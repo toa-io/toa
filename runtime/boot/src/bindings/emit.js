@@ -1,7 +1,6 @@
-'use strict'
+import { factory } from './factory.js'
 
-const { factory } = require('./factory')
+const emit = async (binding, locator, label) =>
+  (await factory(binding)).emitter(locator, label)
 
-const emit = (binding, locator, label) => factory(binding).emitter(locator, label)
-
-exports.emit = emit
+export { emit }

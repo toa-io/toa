@@ -1,6 +1,4 @@
-'use strict'
-
-const { Connector } = require('@toa.io/core')
+import { Connector } from '@toa.io/core'
 
 /**
  * @implements {toa.core.Storage}
@@ -19,4 +17,4 @@ class Storage extends Connector {
   }
 }
 
-exports.Storage = Storage
+export { Storage }

@@ -1,5 +1,3 @@
-'use strict'
-
 const context = {
   runtime: {
     version: '0.0.0'
@@ -37,4 +35,4 @@ const context = {
   }
 }
 
-exports.context = context
+export { context }

@@ -1,8 +1,6 @@
-'use strict'
+import { Discovery, Exposition } from '@toa.io/core'
 
-const { Discovery, Exposition } = require('@toa.io/core')
-
-const boot = require('./index')
+import * as boot from './index.js'
 
 let promise
 let instance = null
@@ -40,5 +38,4 @@ const expose = async (manifest) => {
 const BINDINGS = ['@toa.io/bindings.amqp']
 const ENDPOINT = '.lookup'
 
-exports.discovery = discovery
-exports.expose = expose
+export { discovery, expose }

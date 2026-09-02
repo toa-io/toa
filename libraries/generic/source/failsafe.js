@@ -1,5 +1,3 @@
-'use strict'
-
 /** @type {toa.generic.failsafe} */
 const failsafe = (context, recover, method = undefined) => {
   // two arguments passed
@@ -27,4 +25,4 @@ failsafe.disable = (...methods) => {
 
 const DISABLED = Symbol('disabled')
 
-exports.failsafe = /** @type {toa.generic.Failsafe} */ failsafe
+export { failsafe }

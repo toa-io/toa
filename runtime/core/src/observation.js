@@ -1,6 +1,4 @@
-'use strict'
-
-const { Operation } = require('./operation')
+import { Operation } from './operation.js'
 
 class Observation extends Operation {
   async run (store) {
@@ -9,4 +7,4 @@ class Observation extends Operation {
   }
 }
 
-exports.Observation = Observation
+export { Observation }

@@ -1,8 +1,6 @@
-'use strict'
+import { mock } from 'node:test'
 
-const { mock } = require('node:test')
-
-const { generate } = require('randomstring')
+import { generate } from 'randomstring'
 
 const component = {
   locator: {
@@ -34,6 +32,4 @@ const exposition = {
   invoke: mock.fn(async () => generate())
 }
 
-exports.component = component
-exports.endpoints = endpoints
-exports.exposition = exposition
+export { component, endpoints, exposition }

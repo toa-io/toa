@@ -1,7 +1,5 @@
-'use strict'
-
-const { Client } = require('./client')
-const { Storage } = require('./storage')
+import { Client } from './client.js'
+import { Storage } from './storage.js'
 
 class Factory {
   storage (locator, entity, options = {}) {
@@ -11,4 +9,4 @@ class Factory {
   }
 }
 
-exports.Factory = Factory
+export { Factory }

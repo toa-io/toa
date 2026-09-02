@@ -1,9 +1,7 @@
-'use strict'
+import { describe, it } from 'node:test'
+import assert from 'node:assert/strict'
 
-const { describe, it } = require('node:test')
-const assert = require('node:assert/strict')
-
-const { translate } = require('../src/translate')
+import { translate } from '../src/translate.js'
 
 describe('options', () => {
   it('should translate omit', () => {

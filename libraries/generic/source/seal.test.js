@@ -1,9 +1,7 @@
-'use strict'
+import { it } from 'node:test'
+import assert from 'node:assert/strict'
 
-const { it } = require('node:test')
-const assert = require('node:assert/strict')
-
-const { seal } = require('../source/seal')
+import { seal } from '../source/seal.js'
 
 it('should seal', () => {
   const object = { foo: 'bar' }

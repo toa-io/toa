@@ -1,13 +1,11 @@
-'use strict'
+import { describe, it, beforeEach } from 'node:test'
+import assert from 'node:assert/strict'
 
-const { describe, it, beforeEach } = require('node:test')
-const assert = require('node:assert/strict')
+import clone from 'clone-deep'
+import { generate } from 'randomstring'
 
-const clone = require('clone-deep')
-const { generate } = require('randomstring')
-
-const { recognize, resolve } = require('../src/shortcuts')
-const fixtures = require('./shortcuts.fixtures')
+import { recognize, resolve } from '../src/shortcuts.js'
+import * as fixtures from './shortcuts.fixtures.js'
 
 let object
 

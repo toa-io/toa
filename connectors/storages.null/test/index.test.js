@@ -1,9 +1,7 @@
-'use strict'
+import { it } from 'node:test'
+import assert from 'node:assert/strict'
 
-const { it } = require('node:test')
-const assert = require('node:assert/strict')
-
-const index = require('../src')
+import * as index from '../src/index.js'
 
 it('should export Factory', () => {
   assert.notStrictEqual(index.Factory, undefined)

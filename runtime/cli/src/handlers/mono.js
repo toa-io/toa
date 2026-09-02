@@ -1,13 +1,12 @@
-'use strict'
+import { pathToFileURL } from 'node:url'
+import { console as output } from 'openspan'
+import { Connector } from '@toa.io/core'
+import * as boot from '@toa.io/boot'
+import { component } from '@toa.io/norm'
+import { version } from '@toa.io/runtime'
 
-const { console: output } = require('openspan')
-const { Connector } = require('@toa.io/core')
-const boot = require('@toa.io/boot')
-const { component } = require('@toa.io/norm')
-const { version } = require('@toa.io/runtime')
-
-const { graceful } = require('./lib/graceful')
-const { components: find } = require('../util/find')
+import { graceful } from './lib/graceful.js'
+import { components as find } from '../util/find.js'
 
 /**
  * @param {Record<string, string | boolean | string[]>} argv
@@ -56,7 +55,7 @@ async function createServices (paths) {
 
       references.add(reference)
 
-      const { Factory, components } = require(reference)
+      const { Factory, components } = await import(pathToFileURL(reference).href)
 
       if (typeof Factory?.prototype.service !== 'function') continue
 
@@ -74,4 +73,4 @@ async function createServices (paths) {
   return services
 }
 
-exports.mono = mono
+export { mono }

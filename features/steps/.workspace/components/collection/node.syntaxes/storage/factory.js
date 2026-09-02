@@ -1,6 +1,4 @@
-'use strict'
-
-const { Storage } = require('./storage')
+import { Storage } from './storage.js'
 
 /**
  * @implements {toa.core.storages.Factory}
@@ -11,4 +9,4 @@ class Factory {
   }
 }
 
-exports.Factory = Factory
+export { Factory }

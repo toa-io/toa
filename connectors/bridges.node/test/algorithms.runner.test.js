@@ -1,13 +1,11 @@
-'use strict'
+import { it, beforeEach, mock } from 'node:test'
+import assert from 'node:assert/strict'
+import { isDeepStrictEqual } from 'node:util'
 
-const { it, beforeEach, mock } = require('node:test')
-const assert = require('node:assert/strict')
-const { isDeepStrictEqual } = require('node:util')
+import { generate } from 'randomstring'
+import { Connector } from '@toa.io/core'
 
-const { generate } = require('randomstring')
-const { Connector } = require('@toa.io/core')
-
-const { Runner } = require('../src/algorithms/runner')
+import { Runner } from '../src/algorithms/runner.js'
 
 it('should be', () => {
   assert.notStrictEqual(Runner, undefined)

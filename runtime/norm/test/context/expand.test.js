@@ -1,13 +1,11 @@
-'use strict'
+import { describe, it, beforeEach } from 'node:test'
+import assert from 'node:assert/strict'
 
-const { describe, it, beforeEach } = require('node:test')
-const assert = require('node:assert/strict')
+import clone from 'clone-deep'
+import { generate } from 'randomstring'
 
-const clone = require('clone-deep')
-const { generate } = require('randomstring')
-
-const { expand } = require('../../src/.context')
-const fixtures = require('./expand.fixtures')
+import { expand } from '../../src/.context/index.js'
+import * as fixtures from './expand.fixtures.js'
 
 /** @type {toa.norm.context.Declaration | object} */
 let context

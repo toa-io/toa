@@ -1,15 +1,15 @@
-'use strict'
+import { context as find } from '../../util/find.js'
+import { deployment } from '@toa.io/operations'
 
-const { context: find } = require('../../util/find')
-const { deployment: { Factory } } = require('@toa.io/operations')
+const { Factory } = deployment
 
 const prepare = async (argv) => {
   const path = find(argv.path)
   const factory = await Factory.create(path, argv.environment, { mono: argv.mono === true })
-  const operator = factory.operator()
+  const operator = await factory.operator()
   const target = await operator.prepare(argv.target)
 
   console.log(target)
 }
 
-exports.prepare = prepare
+export { prepare }

@@ -1,8 +1,6 @@
-'use strict'
+import { mock } from 'node:test'
 
-const { mock } = require('node:test')
-
-const { generate } = require('randomstring')
+import { generate } from 'randomstring'
 
 // noinspection JSCheckFunctionSignatures
 const schema = {
@@ -26,6 +24,4 @@ const failed = () => ({
   fail: true
 })
 
-exports.schema = schema
-exports.state = state
-exports.failed = failed
+export { schema, state, failed }

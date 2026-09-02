@@ -1,9 +1,7 @@
-'use strict'
-
-const { resolve } = require('../../shortcuts')
+import { resolve } from '../../shortcuts.js'
 
 function bridge (manifest) {
   manifest.bridge = resolve(manifest.bridge)
 }
 
-exports.bridge = bridge
+export { bridge }

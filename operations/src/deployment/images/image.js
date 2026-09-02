@@ -1,17 +1,9 @@
-'use strict'
+import { join, posix } from 'node:path'
+import { readFile as read, writeFile as write } from 'node:fs/promises'
+import { createHash } from 'node:crypto'
 
-const {
-  join,
-  posix
-} = require('node:path')
-const {
-  readFile: read,
-  writeFile: write
-} = require('node:fs/promises')
-const { createHash } = require('node:crypto')
-
-const { overwrite } = require('@toa.io/generic')
-const { mkdir } = require('node:fs/promises')
+import { overwrite } from '@toa.io/generic'
+import { mkdir } from 'node:fs/promises'
 
 /**
  * @implements {toa.deployment.images.Image}
@@ -129,5 +121,4 @@ function createArguments (variables) {
 
 const RUNTIME_IMAGE = 'ghcr.io/toa-io/runtime'
 
-exports.Image = Image
-exports.RUNTIME_IMAGE = RUNTIME_IMAGE
+export { Image, RUNTIME_IMAGE }

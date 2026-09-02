@@ -1,6 +1,4 @@
-'use strict'
-
-const { instances } = require('./instances')
+import { instances } from './instances.js'
 
 /**
  * @param {toa.core.Component} component
@@ -16,4 +14,4 @@ const component = (component) => {
   return decorated
 }
 
-exports.component = component
+export { component }

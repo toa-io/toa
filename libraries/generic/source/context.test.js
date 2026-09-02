@@ -1,12 +1,10 @@
-'use strict'
+import { it, beforeEach } from 'node:test'
+import assert from 'node:assert/strict'
 
-const { it, beforeEach } = require('node:test')
-const assert = require('node:assert/strict')
+import { generate } from 'randomstring'
 
-const { generate } = require('randomstring')
-
-const fixtures = require('./.test/context.fixtures')
-const { context, timeout } = require('../')
+import * as fixtures from './.test/context.fixtures.js'
+import { context, timeout } from '../source/index.js'
 
 it('should be', () => {
   assert.notStrictEqual(context, undefined)

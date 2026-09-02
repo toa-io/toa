@@ -1,5 +1,3 @@
-'use strict'
-
 const seal = (value) => {
   if ((typeof value === 'object' && value !== null) || typeof value === 'function') {
     Object.seal(value)
@@ -9,4 +7,4 @@ const seal = (value) => {
   return value
 }
 
-exports.seal = seal
+export { seal }

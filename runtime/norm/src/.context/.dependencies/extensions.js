@@ -1,5 +1,5 @@
-'use strict'
-
+import { component as load } from '../../component.js'
+import { load as loadDependency } from './load.js'
 const extensions = async (context) => {
   const extensions = {}
   const components = context.components?.slice() ?? []
@@ -21,8 +21,6 @@ const extensions = async (context) => {
 }
 
 async function extractExtensionComponents (components, extensions, annotations) {
-  const { component: load } = require('../../component')
-  const { load: loadDependency } = require('./load')
 
   const extracted = []
 
@@ -57,4 +55,4 @@ async function extractExtensionComponents (components, extensions, annotations) 
   return extracted.concat(deeper)
 }
 
-exports.extensions = extensions
+export { extensions }

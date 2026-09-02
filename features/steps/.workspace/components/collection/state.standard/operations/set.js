@@ -1,9 +1,7 @@
-'use strict'
-
-const { CACHE_KEY } = require('./.common/constants')
+import { CACHE_KEY } from './.common/constants.js'
 
 async function effect (input, context) {
   context.aspects.state({ [CACHE_KEY]: input })
 }
 
-exports.effect = effect
+export { effect }

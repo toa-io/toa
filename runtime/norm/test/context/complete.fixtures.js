@@ -1,5 +1,3 @@
-'use strict'
-
 const component = (id) => {
   const [namespace, name] = id.split('.')
 
@@ -54,5 +52,4 @@ const compositions = [
   }
 ]
 
-exports.context = context
-exports.compositions = compositions
+export { context, compositions }

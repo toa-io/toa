@@ -1,16 +1,14 @@
-'use strict'
+import { it, before } from 'node:test'
+import assert from 'node:assert/strict'
 
-const { it, before } = require('node:test')
-const assert = require('node:assert/strict')
-
-const { resolve } = require('node:path')
-const define = require('../src/define')
+import { resolve } from 'node:path'
+import * as define from '../src/define/index.js'
 
 it('should be', () => {
   assert.notStrictEqual(define.operations, undefined)
 })
 
-const DUMMIES = resolve(__dirname, 'dummies')
+const DUMMIES = resolve(import.meta.dirname, 'dummies')
 const find = (component) => resolve(DUMMIES, component)
 
 const root = find('one')

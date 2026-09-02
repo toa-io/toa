@@ -1,15 +1,14 @@
-'use strict'
+import * as schemas from '@toa.io/schemas'
+import { describe, it, beforeEach, mock } from 'node:test'
+import assert from 'node:assert/strict'
+import { isDeepStrictEqual } from 'node:util'
 
-const { describe, it, beforeEach, mock } = require('node:test')
-const assert = require('node:assert/strict')
-const { isDeepStrictEqual } = require('node:util')
+import clone from 'clone-deep'
+import { generate } from 'randomstring'
 
-const clone = require('clone-deep')
-const { generate } = require('randomstring')
-
-const { Request } = require('../../src/contract/request')
-const { Contract } = require('../../src/contract/contract')
-const fixtures = require('./contract.fixtures')
+import { Request } from '../../src/contract/request.js'
+import { Contract } from '../../src/contract/contract.js'
+import * as fixtures from './contract.fixtures.js'
 
 // the base is real; what it was constructed with and told to fit is observable
 const fit = mock.method(Contract.prototype, 'fit', () => undefined)
@@ -114,7 +113,7 @@ describe('schema', () => {
 })
 
 describe('source', () => {
-  const schemas = require('@toa.io/schemas')
+
 
   const compile = (definition, entity) =>
     schemas.schema(Request.schema(definition, entity), { removeAdditional: true })

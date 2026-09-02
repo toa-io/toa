@@ -1,6 +1,4 @@
-'use strict'
-
-const { tags } = require('../../handlers/export/tags')
+import { tags } from '../../handlers/export/tags.js'
 
 const builder = (yargs) => {
   yargs
@@ -22,7 +20,7 @@ const builder = (yargs) => {
     })
 }
 
-exports.command = ['tags <environment>']
-exports.desc = 'Export image tags'
-exports.builder = builder
-exports.handler = tags
+export const command = ['tags <environment>']
+export const desc = 'Export image tags'
+
+export { builder, tags as handler }

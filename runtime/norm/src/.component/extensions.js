@@ -1,11 +1,9 @@
-'use strict'
-
-const { find } = require('@toa.io/generic')
-const { resolve } = require('../shortcuts')
+import { find } from '@toa.io/generic'
+import { resolve } from '../shortcuts.js'
 
 const cache = {}
 
-const extensions = (manifest) => {
+const extensions = async (manifest) => {
   manifest.extensions = Object.assign({}, PREDEFINED, manifest.extensions)
 
   const extensions = manifest.extensions
@@ -16,8 +14,9 @@ const extensions = (manifest) => {
     // relative path
     if (key[0] === '.') key = find(key, manifest.path)
 
-    cache[key] ??= require(key)
-    const extension = cache[key]
+    cache[key] ??= import(key)
+
+    const extension = await cache[key]
 
     if (extension.manifest !== undefined) {
       declaration = extension.manifest(declaration, manifest)
@@ -38,4 +37,4 @@ const PREDEFINED = {
   '@toa.io/extensions.introspection': null
 }
 
-exports.extensions = extensions
+export { extensions }

@@ -1,7 +1,5 @@
-'use strict'
-
-const { Guard } = require('@toa.io/core')
-const boot = require('./index')
+import { Guard } from '@toa.io/core'
+import * as boot from './index.js'
 
 async function guards(manifest, context) {
   if (manifest.guards === undefined)
@@ -20,4 +18,4 @@ async function load(guard, name, context) {
   return await boot.bridge.guard(guard.bridge, guard.path, name, context)
 }
 
-exports.guards = guards
+export { guards }

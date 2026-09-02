@@ -1,14 +1,12 @@
-'use strict'
+import { it, beforeEach, mock } from 'node:test'
+import assert from 'node:assert/strict'
+import { isDeepStrictEqual } from 'node:util'
 
-const { it, beforeEach, mock } = require('node:test')
-const assert = require('node:assert/strict')
-const { isDeepStrictEqual } = require('node:util')
+import { generate } from 'randomstring'
+import { random } from '@toa.io/generic'
 
-const { generate } = require('randomstring')
-const { random } = require('@toa.io/generic')
-
-const { aspect } = require('./.test/mock.aspect')
-const { amqp } = require('./amqp')
+import { aspect } from './.test/mock.aspect.js'
+import { amqp } from './amqp.js'
 
 it('should be', async () => {
   assert.ok(amqp instanceof Function)

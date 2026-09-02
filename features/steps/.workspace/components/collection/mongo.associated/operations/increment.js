@@ -9,4 +9,4 @@ function transition(input, objects) {
   return { total }
 }
 
-module.exports = { transition }
+export { transition }

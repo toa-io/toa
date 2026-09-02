@@ -1,9 +1,7 @@
-'use strict'
+import { describe, it } from 'node:test'
+import assert from 'node:assert/strict'
 
-const { describe, it } = require('node:test')
-const assert = require('node:assert/strict')
-
-const { underlay } = require('../source')
+import { underlay } from '../source/index.js'
 
 describe('segments', () => {
   const instance = underlay((segs) => segs)

@@ -1,5 +1,3 @@
-'use strict'
-
 import { setTimeout } from 'node:timers/promises'
 
 async function err (_) {
@@ -13,4 +11,4 @@ async function err (_) {
   return err
 }
 
-exports.effect = err
+export { err as effect }

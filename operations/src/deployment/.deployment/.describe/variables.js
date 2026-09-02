@@ -1,5 +1,3 @@
-'use strict'
-
 function addVariables (composition, variables, keys = composition.components) {
   composition.variables ??= []
 
@@ -18,4 +16,4 @@ function addVariables (composition, variables, keys = composition.components) {
   }
 }
 
-exports.addVariables = addVariables
+export { addVariables }

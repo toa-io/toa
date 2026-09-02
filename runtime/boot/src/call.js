@@ -1,8 +1,6 @@
-'use strict'
+import { Call, Transmission } from '@toa.io/core'
 
-const { Call, Transmission } = require('@toa.io/core')
-
-const boot = require('./index')
+import * as boot from './index.js'
 
 // eslint-disable-next-line max-params
 const call = (locator, endpoint, definition, entity, source) => {
@@ -13,4 +11,4 @@ const call = (locator, endpoint, definition, entity, source) => {
   return new Call(transmission, contract, source)
 }
 
-exports.call = call
+export { call }

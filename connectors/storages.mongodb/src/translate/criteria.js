@@ -1,6 +1,4 @@
-'use strict'
-
-const { rename } = require('./rename')
+import { rename } from './rename.js'
 
 /**
  * @param {toa.core.storages.ast.Node} node
@@ -53,4 +51,4 @@ TYPES.COMPARISON = (expression) => {
 TYPES.SELECTOR = (expression) => rename(expression.selector)
 TYPES.VALUE = (expression) => expression.value
 
-exports.criteria = criteria
+export { criteria }

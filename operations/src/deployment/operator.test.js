@@ -1,10 +1,8 @@
-'use strict'
+import { describe, it, beforeEach, mock } from 'node:test'
+import assert from 'node:assert/strict'
 
-const { describe, it, beforeEach, mock } = require('node:test')
-const assert = require('node:assert/strict')
-
-const { Operator } = require('../../src/deployment/operator')
-const { generate } = require('randomstring')
+import { Operator } from '../../src/deployment/operator.js'
+import { generate } from 'randomstring'
 
 it('should be', async () => {
   assert.ok(Operator instanceof Function)

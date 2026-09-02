@@ -1,6 +1,4 @@
-'use strict'
-
-const shortcuts = require('../shortcuts')
+import * as shortcuts from '../shortcuts.js'
 
 /**
  * @param {toa.norm.context.Declaration | object} context
@@ -10,4 +8,4 @@ const expand = (context) => {
   shortcuts.recognize(shortcuts.SHORTCUTS, context.annotations)
 }
 
-exports.expand = expand
+export { expand }

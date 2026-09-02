@@ -1,7 +1,5 @@
-'use strict'
-
-const { dirname, resolve } = require('node:path')
-const { findUpSync } = require('find-up')
+import { dirname, resolve } from 'node:path'
+import { findUpSync } from 'find-up'
 
 /**
  * @param {string | string[]} from
@@ -51,5 +49,4 @@ const context = (from, test = false) => find(from, CONTEXT, test)
 const MANIFEST = 'manifest.toa.yaml'
 const CONTEXT = 'context.toa.yaml'
 
-exports.components = components
-exports.context = context
+export { components, context }

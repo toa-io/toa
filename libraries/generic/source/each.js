@@ -1,5 +1,3 @@
-'use strict'
-
 /** @type {toa.generic.Each} */
 const each = async (array, callback) => {
   let i = 0
@@ -38,4 +36,4 @@ async function setAsync (array, i, promise) {
   set(array, i, value)
 }
 
-exports.each = each
+export { each }

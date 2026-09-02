@@ -1,6 +1,4 @@
-'use strict'
-
-const { concat } = require('@toa.io/generic')
+import { concat } from '@toa.io/generic'
 
 /**
  * @implements {toa.core.Locator}
@@ -51,4 +49,4 @@ class Locator {
 
 const DOT = '.'
 
-exports.Locator = Locator
+export { Locator }

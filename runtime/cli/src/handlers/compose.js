@@ -1,13 +1,11 @@
-'use strict'
+import { console as output } from 'openspan'
+import { pick } from '@toa.io/generic'
+import * as boot from '@toa.io/boot'
+import { version } from '@toa.io/runtime'
 
-const { console: output } = require('openspan')
-const { pick } = require('@toa.io/generic')
-const boot = require('@toa.io/boot')
-const { version } = require('@toa.io/runtime')
-
-const docker = require('./docker')
-const { graceful } = require('./lib/graceful')
-const { components: find } = require('../util/find')
+import * as docker from './docker/index.js'
+import { graceful } from './lib/graceful.js'
+import { components as find } from '../util/find.js'
 
 /**
  * @param {Record<string, string | boolean>} argv
@@ -49,4 +47,4 @@ async function dock (argv) {
   await docker.run(repository, command, argv.env)
 }
 
-exports.compose = compose
+export { compose }

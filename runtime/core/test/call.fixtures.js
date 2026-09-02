@@ -1,8 +1,6 @@
-'use strict'
+import { mock } from 'node:test'
 
-const { mock } = require('node:test')
-
-const { generate } = require('randomstring')
+import { generate } from 'randomstring'
 
 // noinspection JSCheckFunctionSignatures
 const transmission = {
@@ -24,6 +22,4 @@ const request = () => ({
   }
 })
 
-exports.transmission = transmission
-exports.contract = contract
-exports.request = request
+export { transmission, contract, request }

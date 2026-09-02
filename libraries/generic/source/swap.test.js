@@ -1,10 +1,8 @@
-'use strict'
+import { it } from 'node:test'
+import assert from 'node:assert/strict'
 
-const { it } = require('node:test')
-const assert = require('node:assert/strict')
-
-const { swap } = require('../')
-const { generate } = require('randomstring')
+import { swap } from '../source/index.js'
+import { generate } from 'randomstring'
 
 it('should be defined', () => {
   assert.notStrictEqual(swap, undefined)

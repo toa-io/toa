@@ -1,5 +1,3 @@
-'use strict'
-
 /**
  * @param {object} object
  * @returns {[string | Symbol, any][]}
@@ -13,4 +11,4 @@ const entries = (object) => {
   return entries
 }
 
-exports.entries = entries
+export { entries }

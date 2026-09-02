@@ -1,5 +1,3 @@
-'use strict'
-
 /** @type {toa.generic.Reduce} */
 const reduce = (items, reducer) => {
   return items.reduce((accumulator, item) => {
@@ -9,4 +7,4 @@ const reduce = (items, reducer) => {
   }, {})
 }
 
-exports.reduce = reduce
+export { reduce }

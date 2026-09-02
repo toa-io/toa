@@ -1,6 +1,4 @@
-'use strict'
-
-const { console, traces } = require('openspan')
+import { console, traces } from 'openspan'
 
 const enabled = process.env.TOA_BOOT_TRACE === '1'
 
@@ -18,4 +16,4 @@ if (enabled) traces({ exporters: { console: {} } })
  */
 const span = async (options, task) => enabled ? console.span(options, task) : task()
 
-exports.span = span
+export { span }

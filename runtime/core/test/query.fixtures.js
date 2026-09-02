@@ -1,5 +1,3 @@
-'use strict'
-
 const samples = {
   simple: {
     query: {
@@ -97,4 +95,4 @@ const samples = {
   }
 }
 
-exports.samples = samples
+export { samples }

@@ -1,13 +1,11 @@
-'use strict'
+import { it, before, after, beforeEach, afterEach, mock } from 'node:test'
+import assert from 'node:assert/strict'
 
-const { it, before, after, beforeEach, afterEach, mock } = require('node:test')
-const assert = require('node:assert/strict')
+import clone from 'clone-deep'
+import { sample } from '@toa.io/generic'
 
-const clone = require('clone-deep')
-const { sample } = require('@toa.io/generic')
-
-const { Factory } = require('../src/factory')
-const fixtures = require('./fixtures')
+import { Factory } from '../src/factory.js'
+import * as fixtures from './fixtures.js'
 
 const factory = new Factory()
 const producer = factory.producer(fixtures.component.locator, fixtures.endpoints, fixtures.component)

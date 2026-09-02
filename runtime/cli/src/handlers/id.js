@@ -1,6 +1,4 @@
-'use strict'
-
-const { newid } = require('@toa.io/generic')
+import { newid } from '@toa.io/generic'
 
 const id = () => {
   const id = newid()
@@ -8,4 +6,4 @@ const id = () => {
   console.log(id)
 }
 
-exports.id = id
+export { id }

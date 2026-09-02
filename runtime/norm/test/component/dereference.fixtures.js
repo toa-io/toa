@@ -1,5 +1,3 @@
-'use strict'
-
 const source = {
   entity: {
     schema: {
@@ -161,5 +159,4 @@ const target = {
   }
 }
 
-exports.source = source
-exports.target = target
+export { source, target }

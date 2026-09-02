@@ -1,13 +1,11 @@
-'use strict'
+import { it, beforeEach } from 'node:test'
+import assert from 'node:assert/strict'
 
-const { it, beforeEach } = require('node:test')
-const assert = require('node:assert/strict')
+import { Connector } from '@toa.io/core'
 
-const { Connector } = require('@toa.io/core')
-
-const { Aspect } = require('../source/aspect')
-const { Factory } = require('../')
-const { generate } = require('randomstring')
+import { Aspect } from '../source/aspect.js'
+import { Factory } from '../source/index.js'
+import { generate } from 'randomstring'
 
 /** @type {Factory} */
 let factory

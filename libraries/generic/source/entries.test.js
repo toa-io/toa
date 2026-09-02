@@ -1,11 +1,9 @@
-'use strict'
+import { it } from 'node:test'
+import assert from 'node:assert/strict'
 
-const { it } = require('node:test')
-const assert = require('node:assert/strict')
+import { generate } from 'randomstring'
 
-const { generate } = require('randomstring')
-
-const { entries } = require('../')
+import { entries } from '../source/index.js'
 
 it('should be', async () => {
   assert.ok(entries instanceof Function)

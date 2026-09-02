@@ -1,8 +1,6 @@
-'use strict'
+import { mock } from 'node:test'
 
-const { mock } = require('node:test')
-
-const { generate } = require('randomstring')
+import { generate } from 'randomstring'
 
 const definition = {
   conditioned: true,
@@ -25,7 +23,4 @@ const event = {
   changeset: { [generate()]: generate() }
 }
 
-exports.bridge = bridge
-exports.binding = binding
-exports.definition = definition
-exports.event = event
+export { bridge, binding, definition, event }

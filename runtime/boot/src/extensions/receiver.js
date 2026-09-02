@@ -1,6 +1,4 @@
-'use strict'
-
-const { instances } = require('./instances')
+import { instances } from './instances.js'
 
 /**
  * @param {toa.core.Receiver} receiver
@@ -18,4 +16,4 @@ const receiver = (receiver, locator) => {
   return decorated
 }
 
-exports.receiver = receiver
+export { receiver }

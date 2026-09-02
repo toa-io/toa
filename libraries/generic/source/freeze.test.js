@@ -1,9 +1,7 @@
-'use strict'
+import { it } from 'node:test'
+import assert from 'node:assert/strict'
 
-const { it } = require('node:test')
-const assert = require('node:assert/strict')
-
-const { freeze } = require('../source/freeze')
+import { freeze } from '../source/freeze.js'
 
 it('should freeze', () => {
   const object = { foo: 'bar' }

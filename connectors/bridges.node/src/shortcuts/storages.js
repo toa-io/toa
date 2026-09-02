@@ -1,6 +1,4 @@
-'use strict'
-
-const { underlay } = require('@toa.io/generic')
+import { underlay } from '@toa.io/generic'
 
 function storages (context, aspect) {
   context.storages = underlay(async (segs, args) => {
@@ -13,4 +11,4 @@ function storages (context, aspect) {
   })
 }
 
-exports.storages = storages
+export { storages }

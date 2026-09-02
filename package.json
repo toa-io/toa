@@ -1,5 +1,6 @@
 {
   "name": "@toa.io/toa",
+  "type": "module",
   "private": true,
   "description": "Microservice operations distributed runtime",
   "homepage": "https://toa.io",

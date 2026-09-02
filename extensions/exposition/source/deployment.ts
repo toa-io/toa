@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs'
 import assert from 'node:assert'
 import { type Dependency, type Service } from '@toa.io/operations'
 import { type Annotation } from './Annotation.js'
@@ -17,7 +18,7 @@ export function deployment (_: unknown, annotation?: Annotation): Dependency {
     group: 'exposition',
     name: 'gateway',
     port: PORT,
-    version: require('../package.json').version,
+    version: JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8')).version,
     variables: [],
     components: labels,
     resources: annotation.resources,

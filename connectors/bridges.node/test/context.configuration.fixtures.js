@@ -1,8 +1,6 @@
-'use strict'
+import { mock } from 'node:test'
 
-const { mock } = require('node:test')
-
-const { generate } = require('randomstring')
+import { generate } from 'randomstring'
 
 const configuration = { foo: { bar: generate() } }
 
@@ -19,5 +17,4 @@ const context = /** @type {toa.core.Context} */ {
   connect: mock.fn()
 }
 
-exports.context = context
-exports.configuration = configuration
+export { context, configuration }

@@ -1,6 +1,4 @@
-'use strict'
-
-const { Connector } = require('./connector')
+import { Connector } from './connector.js'
 
 /**
  * @implements {toa.core.Context}
@@ -58,4 +56,4 @@ class Context extends Connector {
   }
 }
 
-exports.Context = Context
+export { Context }

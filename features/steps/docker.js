@@ -1,8 +1,6 @@
-'use strict'
-
-const { After, When } = require('@cucumber/cucumber')
-const { Wait, GenericContainer } = require('testcontainers')
-const { setTimeout } = require('node:timers/promises')
+import { After, When } from '@cucumber/cucumber'
+import { Wait, GenericContainer } from 'testcontainers'
+import { setTimeout } from 'node:timers/promises'
 
 When('I start docker container {component}',
   /**

@@ -1,6 +1,4 @@
-'use strict'
-
-const { Connector } = require('@toa.io/core')
+import { Connector } from '@toa.io/core'
 
 class Producer extends Connector {
   #binding
@@ -34,4 +32,4 @@ class Producer extends Connector {
   }
 }
 
-exports.Producer = Producer
+export { Producer }

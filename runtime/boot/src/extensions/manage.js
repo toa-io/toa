@@ -1,6 +1,4 @@
-'use strict'
-
-const { instances } = require('./instances')
+import { instances } from './instances.js'
 
 /**
  * @param {toa.core.Connector} composition
@@ -17,4 +15,4 @@ const manage = (composition) => {
   return managed
 }
 
-exports.manage = manage
+export { manage }

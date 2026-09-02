@@ -1,6 +1,4 @@
-'use strict'
-
-const { merge } = require('@toa.io/generic')
+import { merge } from '@toa.io/generic'
 
 const dereference = (manifest) => {
   // schemas
@@ -78,4 +76,4 @@ const forward = (operation, operations) => {
   merge(operation, real)
 }
 
-exports.dereference = dereference
+export { dereference }

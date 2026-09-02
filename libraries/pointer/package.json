@@ -1,6 +1,7 @@
 {
   "name": "@toa.io/pointer",
   "version": "1.0.0-alpha.274",
+  "type": "module",
   "description": "Toa Pointer",
   "homepage": "https://toa.io",
   "author": {

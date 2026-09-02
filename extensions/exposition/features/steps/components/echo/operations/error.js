@@ -1,5 +1,3 @@
-'use strict'
-
 function computation () {
   const err = { code: 'CODE', message: 'message' }
 
@@ -8,4 +6,4 @@ function computation () {
   return err
 }
 
-exports.computation = computation
+export { computation }

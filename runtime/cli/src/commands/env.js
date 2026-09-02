@@ -1,6 +1,4 @@
-'use strict'
-
-const { env } = require('../handlers/env')
+import { env } from '../handlers/env.js'
 
 const builder = (yargs) => {
   yargs
@@ -38,7 +36,7 @@ const builder = (yargs) => {
     })
 }
 
-exports.command = 'env [environment]'
-exports.desc = 'Select environment'
-exports.builder = builder
-exports.handler = env
+export const command = 'env [environment]'
+export const desc = 'Select environment'
+
+export { builder, env as handler }

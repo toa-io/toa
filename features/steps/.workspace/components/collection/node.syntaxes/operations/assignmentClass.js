@@ -1,5 +1,3 @@
-'use strict'
-
 /**
  * @implements {toa.core.bridges.Algorithm}
  */
@@ -17,4 +15,4 @@ class Assignment {
   }
 }
 
-exports.Assignment = Assignment
+export { Assignment }

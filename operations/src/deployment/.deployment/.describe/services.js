@@ -1,6 +1,4 @@
-'use strict'
-
-const { addVariables } = require('./variables')
+import { addVariables } from './variables.js'
 
 function services (services, variables, probe, ingress) {
   for (const service of services) {
@@ -35,4 +33,4 @@ function expose (service, ingress = {}) {
     throw new Error(`Service '${service.name}' declares an ingress, but no port.`)
 }
 
-exports.services = services
+export { services }

@@ -1,9 +1,7 @@
-'use strict'
+import { it } from 'node:test'
+import assert from 'node:assert/strict'
 
-const { it } = require('node:test')
-const assert = require('node:assert/strict')
-
-const { remap } = require('../source/remap')
+import { remap } from '../source/remap.js'
 
 it('should remap values', () => {
   const object = { a: 1, b: 2 }

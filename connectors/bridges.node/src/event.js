@@ -1,6 +1,4 @@
-'use strict'
-
-const { Connector } = require('@toa.io/core')
+import { Connector } from '@toa.io/core'
 
 /**
  * @implements {toa.core.bridges.Event}
@@ -22,4 +20,4 @@ class Event extends Connector {
   payload = async (...args) => this.#event.payload(...args, this.#context)
 }
 
-exports.Event = Event
+export { Event }

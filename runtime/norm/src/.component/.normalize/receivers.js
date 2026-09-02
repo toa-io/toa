@@ -1,5 +1,3 @@
-'use strict'
-
 function receivers (component) {
   if (component.receivers === undefined) return
 
@@ -19,4 +17,4 @@ function receivers (component) {
   }
 }
 
-exports.receivers = receivers
+export { receivers }

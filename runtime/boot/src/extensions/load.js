@@ -1,6 +1,4 @@
-'use strict'
-
-const { resolve } = require('./resolve')
+import { resolve } from './resolve.js'
 
 /**
  * @param {toa.norm.Component} manifest
@@ -13,4 +11,4 @@ const load = (manifest) => {
     resolve(name, manifest.path)
 }
 
-exports.load = load
+export { load }

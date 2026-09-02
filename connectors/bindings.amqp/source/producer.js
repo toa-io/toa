@@ -1,9 +1,7 @@
-'use strict'
+import { Connector } from '@toa.io/core'
+import { console } from 'openspan'
 
-const { Connector } = require('@toa.io/core')
-const { console } = require('openspan')
-
-const { name } = require('./queues')
+import { name } from './queues.js'
 
 class Producer extends Connector {
   /** @type {toa.amqp.Communication} */
@@ -85,4 +83,4 @@ class Producer extends Connector {
   }
 }
 
-exports.Producer = Producer
+export { Producer }

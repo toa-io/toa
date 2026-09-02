@@ -1,5 +1,3 @@
-'use strict'
-
 /**
  * @param {toa.pointer.URIs} uris
  * @returns {void}
@@ -34,4 +32,4 @@ const test = (key, value) => {
   if (key === 'default' && schema !== undefined) error('must not contain schema name')
 }
 
-exports.validate = validate
+export { validate }

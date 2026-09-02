@@ -1,5 +1,3 @@
-'use strict'
-
 async function computation (input, context) {
   let value = input.value
 
@@ -10,4 +8,4 @@ async function computation (input, context) {
   return value
 }
 
-exports.computation = computation
+export { computation }

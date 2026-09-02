@@ -1,5 +1,3 @@
-'use strict'
-
 async function computation (input, context) {
   const numbers = await context.remote.streams.numbers.generate({ input })
 
@@ -10,4 +8,4 @@ async function computation (input, context) {
   return sum
 }
 
-exports.computation = computation
+export { computation }

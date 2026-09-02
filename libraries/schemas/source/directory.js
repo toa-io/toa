@@ -1,9 +1,7 @@
-'use strict'
-
-const { join, relative } = require('node:path')
-const glob = require('fast-glob')
-const { readFileSync } = require('node:fs')
-const jsyaml = require('js-yaml')
+import { join, relative } from 'node:path'
+import glob from 'fast-glob'
+import { readFileSync } from 'node:fs'
+import * as jsyaml from 'js-yaml'
 
 /**
  * @param {string} path
@@ -42,4 +40,4 @@ const EXTENSION = '.cos.yaml'
 
 const GLOB = { onlyFiles: true, absolute: true }
 
-exports.readDirectory = readDirectory
+export { readDirectory }

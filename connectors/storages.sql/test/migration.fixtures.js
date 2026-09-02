@@ -1,5 +1,3 @@
-'use strict'
-
 /* eslint-disable */
 
 const schema = {
@@ -18,4 +16,4 @@ const schema = {
   }, 'required': ['id'], 'definitions': {}, 'type': 'object', 'additionalProperties': false
 }
 
-exports.schema = schema
+export { schema }

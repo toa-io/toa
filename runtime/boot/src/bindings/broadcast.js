@@ -1,7 +1,6 @@
-'use strict'
+import { factory } from './factory.js'
 
-const { factory } = require('./factory')
+const broadcast = async (channel, group, binding = '@toa.io/bindings.amqp') =>
+  (await factory(binding)).broadcast(channel, group)
 
-const broadcast = (channel, group, binding = '@toa.io/bindings.amqp') => factory(binding).broadcast(channel, group)
-
-exports.broadcast = broadcast
+export { broadcast }

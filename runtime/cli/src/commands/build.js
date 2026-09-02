@@ -1,6 +1,4 @@
-'use strict'
-
-const { build } = require('../handlers/build')
+import { build } from '../handlers/build.js'
 
 const builder = (yargs) => {
   yargs
@@ -18,7 +16,7 @@ const builder = (yargs) => {
     })
 }
 
-exports.command = 'build'
-exports.desc = 'Build Docker images'
-exports.builder = builder
-exports.handler = build
+export const command = 'build'
+export const desc = 'Build Docker images'
+
+export { builder, build as handler }

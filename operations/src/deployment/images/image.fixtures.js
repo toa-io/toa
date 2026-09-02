@@ -1,7 +1,5 @@
-'use strict'
-
-const { Image } = require('./image')
-const { generate } = require('randomstring')
+import { Image } from './image.js'
+import { generate } from 'randomstring'
 
 const version = '168b04ff'
 const name = generate()
@@ -29,10 +27,12 @@ const registry = {
   base: 'node:alpine'
 }
 
-exports.scope = generate()
-exports.name = name
-exports.version = 'ba2409fc'
-exports.Class = Class
-exports.runtime = runtime
-exports.registry = registry
-exports.process = process
+export const scope = generate()
+
+// distinct from the module's own `version` above
+const published = 'ba2409fc'
+
+// the fixture stands in for the global process
+const current = process
+
+export { name, Class, runtime, registry, current as process, published as version }

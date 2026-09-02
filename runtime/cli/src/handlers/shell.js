@@ -1,7 +1,5 @@
-'use strict'
-
-const { spawn } = require('node:child_process')
-const { newid } = require('@toa.io/generic')
+import { spawn } from 'node:child_process'
+import { newid } from '@toa.io/generic'
 
 const shell = async (argv) => {
   const rnd = newid().substring(0, 6)
@@ -26,4 +24,4 @@ const shell = async (argv) => {
   await spawn('kubectl', args, { stdio: 'inherit' })
 }
 
-exports.shell = shell
+export { shell }

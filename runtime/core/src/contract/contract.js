@@ -1,6 +1,4 @@
-'use strict'
-
-const { SystemException } = require('../exceptions')
+import { SystemException } from '../exceptions.js'
 
 class Contract {
   schema
@@ -19,4 +17,4 @@ class Contract {
   static Exception = SystemException
 }
 
-exports.Contract = Contract
+export { Contract }

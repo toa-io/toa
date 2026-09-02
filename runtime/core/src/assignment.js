@@ -1,6 +1,4 @@
-'use strict'
-
-const { Operation } = require('./operation')
+import { Operation } from './operation.js'
 
 class Assignment extends Operation {
   async acquire (store) {
@@ -29,4 +27,4 @@ class Assignment extends Operation {
   }
 }
 
-exports.Assignment = Assignment
+export { Assignment }

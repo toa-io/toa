@@ -1,10 +1,8 @@
-'use strict'
+import { reduce } from '@toa.io/generic'
 
-const { reduce } = require('@toa.io/generic')
-
-const { Schema } = require('./schema')
-const { ajv, is } = require('./validator')
-const { readDirectory } = require('./directory')
+import { Schema } from './schema.js'
+import { ajv, is } from './validator.js'
+import { readDirectory } from './directory.js'
 
 class Namespace {
   /** @type {Record<string, toa.schemas.Schema>} */
@@ -45,4 +43,4 @@ function transform (entry) {
   return schema
 }
 
-exports.namespace = namespace
+export { namespace }

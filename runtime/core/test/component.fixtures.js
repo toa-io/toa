@@ -1,8 +1,6 @@
-'use strict'
+import { mock } from 'node:test'
 
-const { mock } = require('node:test')
-
-const randomstring = require('randomstring')
+import randomstring from 'randomstring'
 
 const invocation = () => mock.fn(() => randomstring.generate())
 
@@ -19,5 +17,4 @@ const invocations = {
 
 const locator = {}
 
-exports.invocations = invocations
-exports.locator = locator
+export { invocations, locator }

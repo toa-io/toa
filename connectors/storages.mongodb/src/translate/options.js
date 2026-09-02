@@ -1,6 +1,4 @@
-'use strict'
-
-const { rename } = require('./rename')
+import { rename } from './rename.js'
 
 const options = (options) => {
   const result = {}
@@ -30,4 +28,4 @@ const DIRECTIONS = {
   desc: -1
 }
 
-exports.options = options
+export { options }

@@ -1,6 +1,4 @@
-'use strict'
-
-const { mock } = require('node:test')
+import { mock } from 'node:test'
 
 const chain = () => client
 
@@ -21,4 +19,4 @@ const knex = mock.fn(chain)
 
 knex.result = (value) => (result = value)
 
-exports.knex = knex
+export { knex }

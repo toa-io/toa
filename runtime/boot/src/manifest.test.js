@@ -1,15 +1,12 @@
-'use strict'
+import { it, mock } from 'node:test'
+import assert from 'node:assert/strict'
 
-const { it, mock } = require('node:test')
-const assert = require('node:assert/strict')
+import { generate } from 'randomstring'
 
-const { generate } = require('randomstring')
+mock.module('@toa.io/norm', { namedExports: { component: () => mockComponent() } })
 
-mock.module('@toa.io/norm', { namedExports: ({
-  component: () => mockComponent()
-}) })
+const { manifest } = await import('./manifest.js')
 
-const { manifest } = require('./manifest')
 
 const path = generate()
 

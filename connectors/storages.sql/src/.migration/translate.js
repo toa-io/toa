@@ -1,6 +1,4 @@
-'use strict'
-
-const { refs, types } = require('./.translate')
+import { refs, types } from './.translate/index.js'
 
 /**
  * @param {Object} schema
@@ -21,4 +19,4 @@ const translate = (schema) => {
   return properties.join(', ')
 }
 
-exports.translate = translate
+export { translate }

@@ -1,6 +1,4 @@
-'use strict'
-
-const execa = require('execa')
+import * as execa from 'execa'
 
 /**
  * @implements {toa.operations.Process}
@@ -24,4 +22,4 @@ class Process {
   }
 }
 
-exports.Process = Process
+export { Process }

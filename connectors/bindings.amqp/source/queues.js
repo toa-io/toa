@@ -1,6 +1,4 @@
-'use strict'
-
-const { concat } = require('@toa.io/generic')
+import { concat } from '@toa.io/generic'
 
 /**
  * @param {toa.core.Locator} locator
@@ -10,4 +8,4 @@ const { concat } = require('@toa.io/generic')
 const name = (locator, endpoint) =>
   locator.namespace + '.' + concat(locator.name, '.') + endpoint
 
-exports.name = name
+export { name }

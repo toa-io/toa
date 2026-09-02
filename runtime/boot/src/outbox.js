@@ -1,8 +1,6 @@
-'use strict'
+import { Outbox } from '@toa.io/core'
 
-const { Outbox } = require('@toa.io/core')
-
-const boot = require('./index')
+import * as boot from './index.js'
 
 /**
  * A component with no declared events has nothing to publish and therefore no outbox — the
@@ -18,4 +16,4 @@ const outbox = (manifest, storage, emission) => {
   return new Outbox(emission, storage, boot.atomicity(manifest.locator.id), {})
 }
 
-exports.outbox = outbox
+export { outbox }

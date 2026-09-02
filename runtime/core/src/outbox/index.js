@@ -1,6 +1,3 @@
-'use strict'
+import { Outbox, LANES } from './outbox.js'
 
-const { Outbox, LANES } = require('./outbox')
-
-exports.Outbox = Outbox
-exports.LANES = LANES
+export { Outbox, LANES }

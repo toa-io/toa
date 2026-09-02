@@ -1,5 +1,3 @@
-'use strict'
+import { resolve } from 'node:path'
 
-const { resolve } = require('node:path')
-
-exports.COLLECTION = resolve(__dirname, './collection')
+export const COLLECTION = resolve(import.meta.dirname, './collection')

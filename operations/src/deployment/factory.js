@@ -1,13 +1,17 @@
-'use strict'
+import { readFileSync } from 'node:fs'
+import { join } from 'node:path'
+import { createRequire } from 'node:module'
+import { context as load } from '@toa.io/norm'
+import { Process } from '../process.js'
+import { Operator } from './operator.js'
+import { Factory as ImagesFactory } from './images/index.js'
+import { Deployment } from './deployment.js'
 
-const { context: load } = require('@toa.io/norm')
-const { Process } = require('../process')
-const { Operator } = require('./operator')
-const { Factory: ImagesFactory } = require('./images')
-const { Deployment } = require('./deployment')
-const { Registry } = require('./registry')
-const { Composition } = require('./composition')
-const { Service } = require('./service')
+// a dependency is resolved the way a package is
+const require = createRequire(import.meta.url)
+import { Registry } from './registry.js'
+import { Composition } from './composition.js'
+import { Service } from './service.js'
 
 class Factory {
   #context
@@ -37,11 +41,12 @@ class Factory {
       this.#compositions = context.compositions.map((composition) => this.#composition(composition))
   }
 
-  operator () {
+  async operator () {
     const deployment = new Deployment(
       this.#context,
       this.#compositions,
-      this.#dependencies,
+      // the constructor cannot await, so what it started is settled here
+      await this.#dependencies,
       this.#process,
       this.#image
     )
@@ -59,14 +64,14 @@ class Factory {
     return new Composition(composition, image)
   }
 
-  #getDependencies () {
+  async #getDependencies () {
     /** @type {toa.deployment.Dependency[]} */
     const dependencies = []
 
     if (this.#context.dependencies === undefined) return dependencies
 
     for (const [reference, instances] of Object.entries(this.#context.dependencies)) {
-      const dependency = this.#getDependency(reference, instances)
+      const dependency = await this.#getDependency(reference, instances)
 
       if (dependency !== undefined) dependencies.push(dependency)
     }
@@ -74,9 +79,10 @@ class Factory {
     return dependencies
   }
 
-  #getDependency (path, instances) {
-    const module = require(path)
-    const pkg = require(path + '/package.json')
+  async #getDependency (reference, instances) {
+    // a dependency is named the way a package is, not written as a path
+    const module = await import(reference)
+    const pkg = JSON.parse(readFileSync(require.resolve(join(reference, 'package.json')), 'utf8'))
 
     if (module.deployment === undefined) return
 
@@ -110,4 +116,4 @@ class Factory {
   }
 }
 
-exports.Factory = Factory
+export { Factory }

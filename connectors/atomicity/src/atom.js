@@ -1,7 +1,5 @@
-'use strict'
-
-const { console } = require('openspan')
-const { Connector } = require('@toa.io/core')
+import { console } from 'openspan'
+import { Connector } from '@toa.io/core'
 
 /**
  * What one group of replicas decides together, in one place: which of them owns what, what they
@@ -173,4 +171,4 @@ const SLOTS = 'slots:'
 const METER = 'meter:'
 const LOCK = 'lock:'
 
-exports.Atom = Atom
+export { Atom }

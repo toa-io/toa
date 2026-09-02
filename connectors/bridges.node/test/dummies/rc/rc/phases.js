@@ -12,4 +12,4 @@ async function dispose () {
   calls.push('dispose')
 }
 
-module.exports = { preflight, settle, dispose, calls }
+export { preflight, settle, dispose, calls }

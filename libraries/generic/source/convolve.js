@@ -1,5 +1,3 @@
-'use strict'
-
 /**
  * @param {Object} object
  * @param {string} [discriminator]
@@ -32,4 +30,4 @@ const convolve = (object, discriminator) => {
 
 const MARKER = '@'
 
-exports.convolve = convolve
+export { convolve }

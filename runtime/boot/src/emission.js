@@ -1,9 +1,7 @@
-'use strict'
+import { Emission, Event } from '@toa.io/core'
 
-const { Emission, Event } = require('@toa.io/core')
-
-const boot = require('./index')
-const extensions = require('./extensions')
+import * as boot from './index.js'
+import * as extensions from './extensions/index.js'
 
 const emission = (definitions, locator, context) => {
   if (definitions === undefined) return
@@ -19,4 +17,4 @@ const emission = (definitions, locator, context) => {
   return new Emission(events)
 }
 
-exports.emission = emission
+export { emission }

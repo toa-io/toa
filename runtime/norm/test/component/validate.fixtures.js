@@ -1,5 +1,3 @@
-'use strict'
-
 const ok = {
   namespace: 'foo',
   name: 'bar',
@@ -65,4 +63,4 @@ const ok = {
   }
 }
 
-exports.ok = ok
+export { ok }

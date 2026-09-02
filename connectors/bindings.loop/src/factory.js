@@ -1,7 +1,5 @@
-'use strict'
-
-const { Producer } = require('./producer')
-const { Consumer } = require('./consumer')
+import { Producer } from './producer.js'
+import { Consumer } from './consumer.js'
 
 class Factory {
   #bindings = {}
@@ -15,4 +13,4 @@ class Factory {
   }
 }
 
-exports.Factory = Factory
+export { Factory }

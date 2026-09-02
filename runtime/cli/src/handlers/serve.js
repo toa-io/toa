@@ -1,11 +1,10 @@
-'use strict'
-
-const { console: output } = require('openspan')
-const boot = require('@toa.io/boot')
-const { shortcuts } = require('@toa.io/norm')
-const { find } = require('@toa.io/generic')
-const { version } = require('@toa.io/runtime')
-const { graceful } = require('./lib/graceful')
+import { pathToFileURL } from 'node:url'
+import { console as output } from 'openspan'
+import * as boot from '@toa.io/boot'
+import { shortcuts } from '@toa.io/norm'
+import { find } from '@toa.io/generic'
+import { version } from '@toa.io/runtime'
+import { graceful } from './lib/graceful.js'
 
 const serve = async (argv) => {
   console.log('Runtime', version)
@@ -15,7 +14,7 @@ const serve = async (argv) => {
   const start = async () => {
     const module = find(argv.path, process.cwd())
 
-    const { Factory } = require(module)
+    const { Factory } = await import(pathToFileURL(module).href)
 
     const factory = new Factory(boot)
 
@@ -40,4 +39,4 @@ const serve = async (argv) => {
     await start()
 }
 
-exports.serve = serve
+export { serve }

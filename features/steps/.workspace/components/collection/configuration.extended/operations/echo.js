@@ -1,5 +1,3 @@
-'use strict'
-
 async function computation (_, context) {
   const output = {}
 
@@ -11,4 +9,4 @@ async function computation (_, context) {
   return output
 }
 
-exports.computation = computation
+export { computation }

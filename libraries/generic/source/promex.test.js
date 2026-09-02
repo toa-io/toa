@@ -1,11 +1,9 @@
-'use strict'
+import { describe, it, beforeEach } from 'node:test'
+import assert from 'node:assert/strict'
 
-const { describe, it, beforeEach } = require('node:test')
-const assert = require('node:assert/strict')
+import { generate } from 'randomstring'
 
-const { generate } = require('randomstring')
-
-const { promex } = require('../source')
+import { promex } from '../source/index.js'
 
 it('should be', async () => {
   assert.notStrictEqual(promex, undefined)

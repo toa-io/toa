@@ -1,9 +1,7 @@
-'use strict'
+import { it, beforeEach, afterEach, mock } from 'node:test'
+import assert from 'node:assert/strict'
 
-const { it, beforeEach, afterEach, mock } = require('node:test')
-const assert = require('node:assert/strict')
-
-const { Outbox } = require('../src/outbox')
+import { Outbox } from '../src/outbox/index.js'
 
 let emission, storage, atom, outbox
 

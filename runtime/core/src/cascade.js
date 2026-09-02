@@ -1,6 +1,4 @@
-'use strict'
-
-const { Connector } = require('./connector')
+import { Connector } from './connector.js'
 
 class Cascade extends Connector {
   // #bridges
@@ -35,4 +33,4 @@ class Cascade extends Connector {
   }
 }
 
-exports.Cascade = Cascade
+export { Cascade }

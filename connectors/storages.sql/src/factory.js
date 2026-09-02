@@ -1,9 +1,7 @@
-'use strict'
-
-const { Connection } = require('./connection')
-const { Client } = require('./client')
-const { Storage } = require('./storage')
-const { Migration } = require('./migration')
+import { Connection } from './connection.js'
+import { Client } from './client.js'
+import { Storage } from './storage.js'
+import { Migration } from './migration.js'
 
 class Factory {
   storage (locator) {
@@ -18,4 +16,4 @@ class Factory {
   }
 }
 
-exports.Factory = Factory
+export { Factory }

@@ -1,5 +1,3 @@
-'use strict'
-
 /**
  * Debt shared with every other process metering under the same key.
  *
@@ -80,4 +78,4 @@ end
 return debts
 `
 
-exports.Meter = Meter
+export { Meter }

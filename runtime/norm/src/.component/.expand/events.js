@@ -1,6 +1,4 @@
-'use strict'
-
-const { resolve } = require('../../shortcuts')
+import { resolve } from '../../shortcuts.js'
 
 function events (manifest) {
   if (manifest.events === undefined) return
@@ -11,4 +9,4 @@ function events (manifest) {
   }
 }
 
-exports.events = events
+export { events }

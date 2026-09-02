@@ -1,10 +1,8 @@
-'use strict'
+import assert from 'node:assert'
+import { load as parse, loadAll as split } from 'js-yaml'
+import { match } from '@toa.io/generic'
 
-const assert = require('node:assert')
-const { load: parse, loadAll: split } = require('js-yaml')
-const { match } = require('@toa.io/generic')
-
-const { Then } = require('@cucumber/cucumber')
+import { Then } from '@cucumber/cucumber'
 
 Then('{word} {word} {word} spec should contain:',
   /**

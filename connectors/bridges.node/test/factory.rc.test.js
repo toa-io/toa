@@ -1,15 +1,13 @@
-'use strict'
+import { it, beforeEach } from 'node:test'
+import assert from 'node:assert/strict'
 
-const { it, beforeEach } = require('node:test')
-const assert = require('node:assert/strict')
+import { resolve } from 'node:path'
+import { Connector } from '@toa.io/core'
 
-const { resolve } = require('node:path')
-const { Connector } = require('@toa.io/core')
+import { Factory } from '../src/factory.js'
+import { calls } from './dummies/rc/rc/phases.js'
 
-const { Factory } = require('../src/factory')
-const { calls } = require('./dummies/rc/rc/phases')
-
-const root = resolve(__dirname, 'dummies/rc')
+const root = resolve(import.meta.dirname, 'dummies/rc')
 
 let factory
 let context
@@ -56,7 +54,7 @@ it('should run disposal on disconnection', async () => {
 })
 
 it('should reject an RC exporting no phase', async () => {
-  const promise = factory.rc(resolve(__dirname, 'dummies/rc.none'), context)
+  const promise = factory.rc(resolve(import.meta.dirname, 'dummies/rc.none'), context)
 
   await assert.rejects(promise, (error) => /RC 'empty' must export preflight, settle and\/or dispose/.test(error.message))
 })

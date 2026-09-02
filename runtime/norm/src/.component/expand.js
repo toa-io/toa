@@ -1,15 +1,4 @@
-'use strict'
-
-const {
-  entity,
-  bridge,
-  operations,
-  events,
-  receivers,
-  extensions,
-  properties,
-  version
-} = require('./.expand')
+import { entity, bridge, operations, events, receivers, extensions, properties, version } from './.expand/index.js'
 
 async function expand (manifest) {
   entity(manifest)
@@ -23,4 +12,4 @@ async function expand (manifest) {
   await version(manifest)
 }
 
-exports.expand = expand
+export { expand }

@@ -1,11 +1,9 @@
-'use strict'
+import { it, before } from 'node:test'
+import assert from 'node:assert/strict'
 
-const { it, before } = require('node:test')
-const assert = require('node:assert/strict')
+import { generate } from 'randomstring'
 
-const { generate } = require('randomstring')
-
-const { Storage } = require('../src/storage')
+import { Storage } from '../src/storage.js'
 
 let storage
 

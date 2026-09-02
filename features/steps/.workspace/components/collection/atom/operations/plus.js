@@ -1,5 +1,3 @@
-'use strict'
-
 /** what the lock is proved on: read, yield, write. Unheld, both calls read the same value. */
 const counters = {}
 
@@ -15,4 +13,4 @@ async function effect (input, context) {
   })
 }
 
-exports.effect = effect
+export { effect }

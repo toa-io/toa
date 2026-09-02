@@ -10,7 +10,7 @@ import type {
   TemporaryOptions
 } from '../providers/index.js'
 
-dotenv.config({ path: join(__dirname, '.env') })
+dotenv.config({ path: join(import.meta.dirname, '.env') })
 
 export const suites = [
   {

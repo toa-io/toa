@@ -1,6 +1,4 @@
-'use strict'
-
-const { mock } = require('node:test')
+import { mock } from 'node:test'
 
 // the storage constructs its client, and an arrow function cannot be constructed
 const Client = mock.fn(function () {
@@ -15,4 +13,4 @@ const Client = mock.fn(function () {
   }
 })
 
-exports.Client = Client
+export { Client }

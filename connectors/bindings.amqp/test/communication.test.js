@@ -1,18 +1,17 @@
-'use strict'
+import { describe, it, beforeEach, mock } from 'node:test'
+import assert from 'node:assert/strict'
 
-const { describe, it, beforeEach, mock } = require('node:test')
-const assert = require('node:assert/strict')
+const comq = { assert: mock.fn() }
 
-mock.module('comq', { namedExports: ({ assert: mock.fn() }) })
+mock.module('comq', { namedExports: comq })
 
 /** @type {comq.IO} */
 let io
 
-beforeEach(() => {
-  // the connector diagnoses a set of brokers once per process, so each
-  // scenario needs a module that has not seen one yet
-  delete require.cache[require.resolve('../source/communication')]
+/** @type {typeof import('../source/communication.js').Communication} */
+let Communication
 
+beforeEach(async () => {
   io = {
     diagnose: mock.fn(),
     seal: mock.fn(),
@@ -25,7 +24,11 @@ beforeEach(() => {
     enqueue: mock.fn()
   }
 
-  require('comq').assert.mock.mockImplementation(async () => io)
+  comq.assert.mock.mockImplementation(async () => io)
+
+  // the connector diagnoses a set of brokers once per process, and a module is
+  // evaluated once per specifier, so each scenario asks for a distinct one
+  ;({ Communication } = await import('../source/communication.js?' + Math.random()))
 })
 
 /**
@@ -33,8 +36,6 @@ beforeEach(() => {
  * @param {() => void} [evict]
  */
 function communication (references, evict) {
-  const { Communication } = require('../source/communication')
-
   return new Communication(references, evict)
 }
 

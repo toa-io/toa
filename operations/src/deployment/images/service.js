@@ -1,12 +1,10 @@
-'use strict'
+import { join, dirname } from 'node:path'
 
-const { join, dirname } = require('node:path')
-
-const { Image } = require('./image')
-const fs = require('fs-extra')
+import { Image } from './image.js'
+import fs from 'fs-extra'
 
 class Service extends Image {
-  dockerfile = join(__dirname, 'service.Dockerfile')
+  dockerfile = join(import.meta.dirname, 'service.Dockerfile')
 
   /**
    * Used by Dockerfile
@@ -71,4 +69,4 @@ const find = (reference) => {
   return dirname(require.resolve(join(reference, 'package.json')))
 }
 
-exports.Service = Service
+export { Service }

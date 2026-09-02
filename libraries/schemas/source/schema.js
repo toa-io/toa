@@ -1,11 +1,9 @@
-'use strict'
-
-const { defined } = require('@toa.io/generic')
-const { readFileSync, statSync } = require('node:fs')
-const jsyaml = require('js-yaml')
-const { create, is, ajv } = require('./validator')
-const { debug } = require('node:util')
-const betterAjvErrors = require('better-ajv-errors').default
+import { defined } from '@toa.io/generic'
+import { readFileSync, statSync } from 'node:fs'
+import * as jsyaml from 'js-yaml'
+import { create, is, ajv } from './validator.js'
+import { debug } from 'node:util'
+import betterAjvErrors from 'better-ajv-errors'
 
 class Schema {
   id
@@ -145,5 +143,4 @@ const isFile = (path) => {
   }
 }
 
-exports.Schema = Schema
-exports.schema = schema
+export { Schema, schema }

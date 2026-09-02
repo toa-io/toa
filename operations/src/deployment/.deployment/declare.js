@@ -1,5 +1,3 @@
-'use strict'
-
 /**
  * @param {toa.norm.Context} context
  * @param {toa.deployment.Dependency} dependency
@@ -26,4 +24,4 @@ const DECLARATION = {
   type: 'application'
 }
 
-exports.declare = declare
+export { declare }

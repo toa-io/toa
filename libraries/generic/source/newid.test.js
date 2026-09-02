@@ -1,9 +1,7 @@
-'use strict'
+import { it } from 'node:test'
+import assert from 'node:assert/strict'
 
-const { it } = require('node:test')
-const assert = require('node:assert/strict')
-
-const { newid } = require('../source')
+import { newid } from '../source/index.js'
 
 it('should return id', () => {
   const id = newid()

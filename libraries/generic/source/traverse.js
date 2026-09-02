@@ -1,6 +1,4 @@
-'use strict'
-
-const { plain } = require('./plain')
+import { plain } from './plain.js'
 
 /**
  * @param {object} object
@@ -20,4 +18,4 @@ const traverse = (object, visit) => {
   return visited
 }
 
-exports.traverse = traverse
+export { traverse }

@@ -1,7 +1,5 @@
-'use strict'
-
 async function algorithm (bridge, path, endpoint, context) {
-  const factory = resolve(bridge)
+  const factory = await resolve(bridge)
   const algorithm = await factory.algorithm(path, endpoint, context)
 
   algorithm.depends(context)
@@ -9,12 +7,17 @@ async function algorithm (bridge, path, endpoint, context) {
   return algorithm
 }
 
-const event = (bridge, path, label, context) => resolve(bridge).event(path, label, context)
-const receiver = (bridge, path, label) => resolve(bridge).receiver(path, label)
-const guard = (bridge, path, label, context) => resolve(bridge).guard(path, label, context)
+const event = async (bridge, path, label, context) =>
+  (await resolve(bridge)).event(path, label, context)
+
+const receiver = async (bridge, path, label) =>
+  (await resolve(bridge)).receiver(path, label)
+
+const guard = async (bridge, path, label, context) =>
+  (await resolve(bridge)).guard(path, label, context)
 
 async function rc (bridge, path, context) {
-  const factory = resolve(bridge)
+  const factory = await resolve(bridge)
 
   if (factory.rc === undefined)
     return
@@ -24,18 +27,11 @@ async function rc (bridge, path, context) {
 
 const factories = {}
 
-const resolve = (bridge) => {
-  if (factories[bridge] === undefined) {
-    const { Factory } = require(bridge)
+// the promise is what is remembered, so two boots cannot each make a factory
+const resolve = async (bridge) => {
+  factories[bridge] ??= import(bridge).then(({ Factory }) => new Factory())
 
-    factories[bridge] = new Factory()
-  }
-
-  return factories[bridge]
+  return await factories[bridge]
 }
 
-exports.algorithm = algorithm
-exports.event = event
-exports.receiver = receiver
-exports.guard = guard
-exports.rc = rc
+export { algorithm, event, receiver, guard, rc }

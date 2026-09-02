@@ -1,12 +1,10 @@
-'use strict'
+import { describe, it, beforeEach } from 'node:test'
+import assert from 'node:assert/strict'
 
-const { describe, it, beforeEach } = require('node:test')
-const assert = require('node:assert/strict')
+import clone from 'clone-deep'
 
-const clone = require('clone-deep')
-
-const fixtures = require('./collapse.fixtures')
-const { collapse } = require('../../src/.component')
+import * as fixtures from './collapse.fixtures.js'
+import { collapse } from '../../src/.component/index.js'
 
 let samples
 

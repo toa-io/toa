@@ -1,6 +1,4 @@
-'use strict'
-
-const { recognize } = require('../../shortcuts')
+import { recognize } from '../../shortcuts.js'
 
 function extensions (manifest) {
   recognize(SHORTCUTS, manifest, 'extensions')
@@ -17,4 +15,4 @@ const SHORTCUTS = {
   introspection: '@toa.io/extensions.introspection'
 }
 
-exports.extensions = extensions
+export { extensions }

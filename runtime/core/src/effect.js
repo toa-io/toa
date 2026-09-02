@@ -1,6 +1,4 @@
-'use strict'
-
-const { Observation } = require('./observation')
+import { Observation } from './observation.js'
 
 class Effect extends Observation {
 
@@ -16,4 +14,4 @@ class Effect extends Observation {
 
 }
 
-exports.Effect = Effect
+export { Effect }

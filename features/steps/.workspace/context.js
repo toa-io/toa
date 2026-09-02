@@ -1,10 +1,8 @@
-'use strict'
+import { join } from 'node:path'
 
-const { join } = require('node:path')
-
-const { readFile, writeFile } = require('node:fs/promises')
-const { readFileSync } = require('node:fs')
-const { load: parse, dump } = require('js-yaml')
+import { readFile, writeFile } from 'node:fs/promises'
+import { readFileSync } from 'node:fs'
+import { load as parse, dump } from 'js-yaml'
 
 /**
  * @param {string} directory
@@ -39,10 +37,10 @@ const remove = async (directory, key) => {
 }
 
 const FILENAME = 'context.toa.yaml'
-const TEMPLATE = parse(readFileSync(join(__dirname, FILENAME), 'utf8'))
+const TEMPLATE = parse(readFileSync(join(import.meta.dirname, FILENAME), 'utf8'))
 
-exports.template = template
-exports.remove = remove
+
+
 
 /**
  * @param {object} object
@@ -52,3 +50,5 @@ exports.remove = remove
 async function save (object, path) {
   await writeFile(path, dump(object, { noRefs: true, lineWidth: -1 }), 'utf8')
 }
+
+export { template, remove }

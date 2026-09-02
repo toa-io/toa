@@ -1,5 +1,3 @@
-'use strict'
-
 /**
  * @param {string} input
  * @returns {number}
@@ -50,4 +48,4 @@ const MULTIPLIERS = Object.entries({
 
 const EXPRESSION = /^(\d+(?:.\d+)?)([^\d\W]*)$/
 
-exports.quantity = quantity
+export { quantity }

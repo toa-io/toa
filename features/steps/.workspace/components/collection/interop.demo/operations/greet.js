@@ -1,5 +1,3 @@
-'use strict'
-
 async function computation (input, context) {
   const greeting = GREETINGS[input.language]
 
@@ -18,4 +16,4 @@ const GREETINGS = {
   'fr': 'Bonjour'
 }
 
-exports.computation = computation
+export { computation }

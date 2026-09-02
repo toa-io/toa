@@ -1,5 +1,3 @@
-'use strict'
-
 /**
  * Resolves component IDs within compositions with Component objects
  * @param {toa.norm.Context} context
@@ -28,4 +26,4 @@ const map = (components) => {
   return map
 }
 
-exports.dereference = dereference
+export { dereference }

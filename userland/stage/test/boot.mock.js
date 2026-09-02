@@ -1,8 +1,6 @@
-'use strict'
+import { mock } from 'node:test'
 
-const { mock } = require('node:test')
-
-const { generate } = require('randomstring')
+import { generate } from 'randomstring'
 
 const connector = () => ({
   connect: mock.fn(),
@@ -15,4 +13,4 @@ const component = mock.fn(async () => connector())
 const composition = mock.fn(async () => connector())
 const remote = mock.fn(async () => connector())
 
-module.exports = { manifest, component, composition, remote }
+export { manifest, component, composition, remote }

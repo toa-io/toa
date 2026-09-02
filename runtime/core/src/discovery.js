@@ -1,7 +1,5 @@
-'use strict'
-
-const { console } = require('openspan')
-const { Connector } = require('./connector')
+import { console } from 'openspan'
+import { Connector } from './connector.js'
 
 class Discovery extends Connector {
   #lookup
@@ -47,4 +45,4 @@ class Discovery extends Connector {
 
 const INTERVAL = 5000
 
-exports.Discovery = Discovery
+export { Discovery }

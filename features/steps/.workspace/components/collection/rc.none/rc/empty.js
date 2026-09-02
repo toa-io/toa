@@ -1,1 +1,1 @@
-exports.noop = function () {}
+export const noop = function () {}

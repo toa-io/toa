@@ -1,5 +1,3 @@
-'use strict'
-
 async function computation (input, context) {
   const request = { input }
 
@@ -7,4 +5,4 @@ async function computation (input, context) {
   return context.remote.math.calculations.add(request)
 }
 
-exports.computation = computation
+export { computation }

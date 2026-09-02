@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs'
 import { Readable } from 'node:stream'
 import { createHash } from 'node:crypto'
 import * as contentType from 'content-type'
@@ -7,7 +8,7 @@ import { BadRequest, NotAcceptable, UnsupportedMediaType } from './exceptions.js
 import type { Context } from './Context.js'
 import type * as http from 'node:http'
 
-const server = `Exposition/${require('../../package.json').version}` +
+const server = `Exposition/${JSON.parse(readFileSync(new URL('../../package.json', import.meta.url), 'utf8')).version}` +
   ((process.env.TOA_CONTEXT === undefined ? '' : ` ${process.env.TOA_CONTEXT}`) +
     (process.env.TOA_ENV === undefined ? '' : `/${process.env.TOA_ENV}`))
 

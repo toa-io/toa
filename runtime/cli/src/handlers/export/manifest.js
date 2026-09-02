@@ -1,10 +1,8 @@
-'use strict'
+import jsonpath from 'jsonpath'
+import { component } from '@toa.io/norm'
+import * as jsyaml from 'js-yaml'
 
-const jsonpath = require('jsonpath')
-const { component } = require('@toa.io/norm')
-const jsyaml = require('js-yaml')
-
-const { components: find } = require('../../util/find')
+import { components as find } from '../../util/find.js'
 
 const print = async (argv) => {
   const path = find(argv.path)
@@ -28,4 +26,4 @@ const print = async (argv) => {
   }
 }
 
-exports.manifest = print
+export { print as manifest }

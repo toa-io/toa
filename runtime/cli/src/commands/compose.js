@@ -1,8 +1,6 @@
 // noinspection JSCheckFunctionSignatures
 
-'use strict'
-
-const { compose } = require('../handlers/compose')
+import { compose } from '../handlers/compose.js'
 
 const builder = (yargs) => {
   yargs
@@ -42,7 +40,7 @@ const builder = (yargs) => {
     ])
 }
 
-exports.command = 'compose [paths...]'
-exports.desc = 'Run composition'
-exports.builder = builder
-exports.handler = compose
+export const command = 'compose [paths...]'
+export const desc = 'Run composition'
+
+export { builder, compose as handler }

@@ -1,6 +1,4 @@
-'use strict'
-
-const { console, flush } = require('openspan')
+import { console, flush } from 'openspan'
 
 function graceful (connector) {
   ['SIGTERM', 'SIGINT']
@@ -16,4 +14,4 @@ function graceful (connector) {
     }))
 }
 
-exports.graceful = graceful
+export { graceful }

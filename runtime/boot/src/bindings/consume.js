@@ -1,9 +1,8 @@
-'use strict'
+import { LOOP } from './constants.js'
+import { factory } from './factory.js'
 
-const { LOOP } = require('./constants')
-const { factory } = require('./factory')
+const consume = async (locator, endpoint, bindings) =>
+  await Promise.all([LOOP].concat(bindings).map(async (binding) =>
+    (await factory(binding)).consumer(locator, endpoint)))
 
-const consume = (locator, endpoint, bindings) =>
-  [LOOP].concat(bindings).map((binding) => factory(binding).consumer(locator, endpoint))
-
-exports.consume = consume
+export { consume }

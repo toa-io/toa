@@ -1,6 +1,7 @@
 {
   "name": "@toa.io/userland",
   "version": "1.0.0-alpha.274",
+  "type": "module",
   "description": "Toa development kit",
   "homepage": "https://toa.io",
   "author": {
@@ -22,6 +23,11 @@
     "access": "public"
   },
   "main": "src/index.js",
+  "exports": {
+    ".": "./src/index.js",
+    "./stage": "./stage/src/index.js",
+    "./package.json": "./package.json"
+  },
   "types": "types/index.d.ts",
   "dependencies": {
     "@toa.io/boot": "1.0.0-alpha.274",

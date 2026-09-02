@@ -1,7 +1,5 @@
-'use strict'
-
-const { underlay } = require('@toa.io/generic')
-const assert = require('node:assert')
+import { underlay } from '@toa.io/generic'
+import assert from 'node:assert'
 
 /** @type {toa.node.shortcut} */
 function amqp (context, aspect) {
@@ -14,4 +12,4 @@ function amqp (context, aspect) {
   })
 }
 
-exports.amqp = amqp
+export { amqp }

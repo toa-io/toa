@@ -1,5 +1,3 @@
-'use strict'
-
 function memo (fn) {
   return (...args) => {
     if (fn[symbol] !== undefined) return fn[symbol].result
@@ -14,4 +12,4 @@ function memo (fn) {
 
 const symbol = Symbol('memo')
 
-exports.memo = memo
+export { memo }

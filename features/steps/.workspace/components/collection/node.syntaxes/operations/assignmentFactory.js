@@ -1,6 +1,4 @@
-'use strict'
-
-const { Assignment } = require('./assignmentClass')
+import { Assignment } from './assignmentClass.js'
 
 /**
  * @implements {toa.node.algorithms.Factory}
@@ -17,4 +15,4 @@ class ChangesetAssignmentFactory {
   }
 }
 
-exports.ChangesetAssignmentFactory = ChangesetAssignmentFactory
+export { ChangesetAssignmentFactory }

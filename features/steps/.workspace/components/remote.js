@@ -1,6 +1,4 @@
-'use strict'
-
-const stage = require('@toa.io/userland/stage')
+import * as stage from '@toa.io/userland/stage'
 
 /**
  * @param {string} id
@@ -10,4 +8,4 @@ const remote = async (id) => {
   return stage.remote(id)
 }
 
-exports.remote = remote
+export { remote }

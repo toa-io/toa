@@ -1,6 +1,4 @@
-'use strict'
-
-const { shell } = require('../handlers/shell')
+import { shell } from '../handlers/shell.js'
 
 const builder = (yargs) => {
   yargs
@@ -16,7 +14,7 @@ const builder = (yargs) => {
     ])
 }
 
-exports.command = 'shell [image]'
-exports.desc = 'Run interactive shell from the current Kubernetes context'
-exports.builder = builder
-exports.handler = shell
+export const command = 'shell [image]'
+export const desc = 'Run interactive shell from the current Kubernetes context'
+
+export { builder, shell as handler }

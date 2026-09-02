@@ -1,10 +1,8 @@
-'use strict'
+import { console } from 'openspan'
+import { Remote } from '@toa.io/core'
+import { remap } from '@toa.io/generic'
 
-const { console } = require('openspan')
-const { Remote } = require('@toa.io/core')
-const { remap } = require('@toa.io/generic')
-
-const boot = require('./index')
+import * as boot from './index.js'
 
 /**
  * @param {toa.core.Locator} locator
@@ -35,4 +33,4 @@ const remote = async (locator, source, manifest) => {
   return remote
 }
 
-exports.remote = remote
+export { remote }

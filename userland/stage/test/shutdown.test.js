@@ -1,20 +1,20 @@
-'use strict'
+import { it, beforeEach, mock as mocking } from 'node:test'
+import assert from 'node:assert/strict'
 
-const { it, beforeEach, mock: mocking } = require('node:test')
-const assert = require('node:assert/strict')
-
-const { generate } = require('randomstring')
+import { generate } from 'randomstring'
+import * as _boot from './boot.mock.js'
+import * as _state from './state.mock.js'
 
 const mock = {
-  boot: require('./boot.mock'),
-  state: require('./state.mock')
+  boot: _boot,
+  state: _state
 }
 
 mocking.module('@toa.io/boot', { namedExports: mock.boot })
 mocking.module('../src/state', { namedExports: mock.state })
 
-const { state } = require('../src/state')
-const stage = require('../')
+const { state } = await import('../src/state.js')
+const stage = await import('../src/index.js')
 
 beforeEach(() => {
   resetCalls()

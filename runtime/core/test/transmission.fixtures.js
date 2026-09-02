@@ -1,8 +1,6 @@
-'use strict'
+import { mock } from 'node:test'
 
-const { mock } = require('node:test')
-
-const { generate } = require('randomstring')
+import { generate } from 'randomstring'
 
 const binding = (index) => ({
   request: mock.fn(async (request) => {
@@ -14,4 +12,4 @@ const binding = (index) => ({
 
 const bindings = [0, 1, 2, 3, 4].map(binding)
 
-exports.bindings = bindings
+export { bindings }

@@ -1,11 +1,9 @@
-'use strict'
+import { join } from 'node:path'
+import { writeFile as write } from 'node:fs/promises'
+import * as jsyaml from 'js-yaml'
+import fs from 'fs-extra'
 
-const { join } = require('node:path')
-const { writeFile: write } = require('node:fs/promises')
-const jsyaml = require('js-yaml')
-const fs = require('fs-extra')
-
-const { merge, declare, describe } = require('./.deployment')
+import { merge, declare, describe } from './.deployment/index.js'
 
 class Deployment {
   #chart
@@ -89,10 +87,12 @@ function addVariables (list, variables, used = new Set()) {
   }
 }
 
-const TEMPLATES = join(__dirname, 'chart/templates')
+const TEMPLATES = join(import.meta.dirname, 'chart/templates')
 
-exports.Deployment = Deployment
+
 
 function dump (object) {
   return jsyaml.dump(object, { noRefs: true, lineWidth: -1 })
 }
+
+export { Deployment }

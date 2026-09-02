@@ -1,5 +1,3 @@
-'use strict'
-
 /**
  * The events of this component that something consumes. An event nobody consumes is not
  * published, so it gets no emitter and no exchange, and a component none of whose events are
@@ -26,4 +24,4 @@ const events = (manifest) => {
 
 const VARIABLE = 'TOA_EVENTS_'
 
-exports.events = events
+export { events }

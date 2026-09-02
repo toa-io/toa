@@ -1,12 +1,10 @@
-'use strict'
+import { it, before, after } from 'node:test'
+import assert from 'node:assert/strict'
 
-const { it, before, after } = require('node:test')
-const assert = require('node:assert/strict')
+import { resolve } from 'node:path'
+import * as stage from '@toa.io/userland/stage'
 
-const { resolve } = require('node:path')
-const stage = require('@toa.io/userland/stage')
-
-const root = resolve(__dirname, '../components')
+const root = resolve(import.meta.dirname, '../components')
 
 /** @type {toa.core.Component} */
 let component

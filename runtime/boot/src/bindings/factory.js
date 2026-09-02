@@ -1,15 +1,13 @@
-'use strict'
-
 let instances = {}
 
-const factory = (binding) => {
-  if (instances[binding] === undefined) instances[binding] = new (require(binding).Factory)()
+// the promise is what is remembered, so two components cannot each make a factory
+const factory = async (binding) => {
+  instances[binding] ??= import(binding).then(({ Factory }) => new Factory())
 
-  return instances[binding]
+  return await instances[binding]
 }
 
 // for testing purposes
 const reset = () => (instances = {})
 
-exports.factory = factory
-exports.reset = reset
+export { factory, reset }

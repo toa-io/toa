@@ -1,10 +1,13 @@
-const { join } = require('node:path')
+import { dirname, join } from 'node:path'
+import { fileURLToPath } from 'node:url'
+
+const here = dirname(fileURLToPath(import.meta.url))
 
 // tsx compiles the step definitions; the steps' own tsconfig is what tells esbuild
 // they use legacy decorators, which cucumber-tsflow requires
-process.env.TSX_TSCONFIG_PATH ??= join(__dirname, 'features/steps/tsconfig.json')
+process.env.TSX_TSCONFIG_PATH ??= join(here, 'features/steps/tsconfig.json')
 
-module.exports = {
+export default {
   default: {
     requireModule: ['tsx/cjs'],
     require: ['./features/**/*.ts'],

@@ -1,9 +1,5 @@
-'use strict'
+import { connectors } from './connectors.js'
+import { extensions } from './extensions.js'
+import { resolve } from './resolve.js'
 
-const { connectors } = require('./connectors')
-const { extensions } = require('./extensions')
-const { resolve } = require('./resolve')
-
-exports.connectors = connectors
-exports.extensions = extensions
-exports.resolve = resolve
+export { connectors, extensions, resolve }

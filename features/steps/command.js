@@ -1,11 +1,9 @@
-'use strict'
+import assert from 'node:assert/strict'
+import { timeout } from '@toa.io/generic'
 
-const assert = require('node:assert/strict')
-const { timeout } = require('@toa.io/generic')
+import { execute } from './.command/execute.js'
 
-const { execute } = require('./.command/execute')
-
-const { When, Then } = require('@cucumber/cucumber')
+import { When, Then } from '@cucumber/cucumber'
 
 When('I run {command}',
   /**

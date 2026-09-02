@@ -1,10 +1,8 @@
-'use strict'
-
-const { Redlock } = require('@sesamecare-oss/redlock')
-const { Redis } = require('ioredis')
-const { console } = require('openspan')
-const { Connector } = require('@toa.io/core')
-const { Meter } = require('./meter')
+import { Redlock } from '@sesamecare-oss/redlock'
+import { Redis } from 'ioredis'
+import { console } from 'openspan'
+import { Connector } from '@toa.io/core'
+import { Meter } from './meter.js'
 
 /**
  * One set of clients per process, shared by every atom in it. Each keeps its own keys, so a
@@ -112,7 +110,4 @@ const reset = () => (instance = undefined)
 const VARIABLE = 'TOA_ATOMICITY_REDIS'
 const DEV = 'redis://localhost'
 
-exports.Connection = Connection
-exports.connection = connection
-exports.reset = reset
-exports.VARIABLE = VARIABLE
+export { Connection, connection, reset, VARIABLE }

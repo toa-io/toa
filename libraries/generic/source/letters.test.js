@@ -1,9 +1,7 @@
-'use strict'
+import { describe, it } from 'node:test'
+import assert from 'node:assert/strict'
 
-const { describe, it } = require('node:test')
-const assert = require('node:assert/strict')
-
-const { letters } = require('../')
+import { letters } from '../source/index.js'
 
 describe('up', () => {
   const up = letters.up

@@ -1,8 +1,6 @@
-'use strict'
+import { mock } from 'node:test'
 
-const { mock } = require('node:test')
-
-const { generate } = require('randomstring')
+import { generate } from 'randomstring'
 
 const definition = /** @type {toa.norm.component.Receiver} */ {
   operation: generate(),
@@ -21,6 +19,4 @@ const bridge = /** @type {toa.core.bridges.Event} */ {
   request: mock.fn(async () => ({ input: generate() }))
 }
 
-exports.definition = definition
-exports.local = local
-exports.bridge = bridge
+export { definition, local, bridge }

@@ -4,7 +4,7 @@ import type { Declaration } from './providers/index.js'
 import type { Schema } from '@toa.io/schemas'
 import type { Annotation } from './Annotation.js'
 
-const path = resolve(__dirname, '../schemas')
+const path = resolve(import.meta.dirname, '../schemas')
 const ns = namespace(path)
 
 export const annotation: Schema<Annotation> = ns.schema<Annotation>('annotation')

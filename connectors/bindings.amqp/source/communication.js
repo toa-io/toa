@@ -1,8 +1,6 @@
-'use strict'
-
-const { assert } = require('comq')
-const { Connector } = require('@toa.io/core')
-const { console } = require('openspan')
+import { assert } from 'comq'
+import { Connector } from '@toa.io/core'
+import { console } from 'openspan'
 
 class Communication extends Connector {
   /** @type {string[]} */
@@ -186,4 +184,4 @@ const diagnosed = new Map()
 
 function noop () {}
 
-exports.Communication = Communication
+export { Communication }

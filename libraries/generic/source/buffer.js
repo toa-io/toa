@@ -1,5 +1,3 @@
-'use strict'
-
 async function buffer (stream) {
   const chunks = []
 
@@ -8,4 +6,4 @@ async function buffer (stream) {
   return Buffer.concat(chunks)
 }
 
-exports.buffer = buffer
+export { buffer }

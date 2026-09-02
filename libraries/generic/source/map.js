@@ -1,6 +1,4 @@
-'use strict'
-
-const { plain } = require('./plain')
+import { plain } from './plain.js'
 
 /**
  * @param {object} input
@@ -49,4 +47,4 @@ function keyVal (key, value, transform) {
   return output === undefined ? undefined : output
 }
 
-exports.map = map
+export { map }

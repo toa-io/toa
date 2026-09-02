@@ -1,10 +1,8 @@
-'use strict'
+import { it, beforeEach, mock } from 'node:test'
+import assert from 'node:assert/strict'
+import { isDeepStrictEqual } from 'node:util'
 
-const { it, beforeEach, mock } = require('node:test')
-const assert = require('node:assert/strict')
-const { isDeepStrictEqual } = require('node:util')
-
-const { Connector } = require('../src/connector')
+import { Connector } from '../src/connector.js'
 
 // the fixtures are not connectors, so a dependency is recorded rather than linked
 const depends = mock.method(Connector.prototype, 'depends', () => undefined)
@@ -12,9 +10,9 @@ const depends = mock.method(Connector.prototype, 'depends', () => undefined)
 const dependencies = (instance) => depends.mock.calls
   .filter((call) => call.this === instance)
   .map((call) => call.arguments[0])
-const { Transmission } = require('../src/transmission')
-const { codes } = require('../src/exceptions')
-const fixtures = require('./transmission.fixtures')
+import { Transmission } from '../src/transmission.js'
+import { codes } from '../src/exceptions.js'
+import * as fixtures from './transmission.fixtures.js'
 
 let transmission
 

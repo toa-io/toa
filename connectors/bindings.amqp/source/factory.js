@@ -1,17 +1,15 @@
-'use strict'
+import { Locator } from '@toa.io/core'
 
-const { Locator } = require('@toa.io/core')
+import { Producer } from './producer.js'
+import { Consumer } from './consumer.js'
+import { Emitter } from './emitter.js'
+import { Receiver } from './receiver.js'
+import { Broadcast } from './broadcast.js'
+import * as context from './deployment/context'
+import * as sources from './deployment/sources'
 
-const { Producer } = require('./producer')
-const { Consumer } = require('./consumer')
-const { Emitter } = require('./emitter')
-const { Receiver } = require('./receiver')
-const { Broadcast } = require('./broadcast')
-const context = require('./deployment/context')
-const sources = require('./deployment/sources')
-
-const { SYSTEM } = require('./constants')
-const { Communication } = require('./communication')
+import { SYSTEM } from './constants.js'
+import { Communication } from './communication.js'
 
 class Factory {
   /**
@@ -112,4 +110,4 @@ const ALONE = '\u0000alone:'
 
 const SEPARATOR = '\u0000'
 
-exports.Factory = Factory
+export { Factory }

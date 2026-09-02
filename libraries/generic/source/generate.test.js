@@ -1,11 +1,9 @@
-'use strict'
+import { it, mock } from 'node:test'
+import assert from 'node:assert/strict'
+import { isDeepStrictEqual } from 'node:util'
 
-const { it, mock } = require('node:test')
-const assert = require('node:assert/strict')
-const { isDeepStrictEqual } = require('node:util')
-
-const randomstring = require('randomstring')
-const { generate } = require('../')
+import randomstring from 'randomstring'
+import { generate } from '../source/index.js'
 
 it('should be', async () => {
   assert.ok(generate instanceof Function)

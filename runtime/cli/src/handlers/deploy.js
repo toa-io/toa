@@ -1,7 +1,7 @@
-'use strict'
+import { deployment } from '@toa.io/operations'
+import { context as find } from '../util/find.js'
 
-const { deployment: { Factory } } = require('@toa.io/operations')
-const { context: find } = require('../util/find')
+const { Factory } = deployment
 
 /**
  * @param {toa.cli.deploy.Arguments} argv
@@ -10,7 +10,7 @@ const { context: find } = require('../util/find')
 const deploy = async (argv) => {
   const path = find(argv.path)
   const factory = await Factory.create(path, argv.environment, { mono: argv.mono === true })
-  const operator = factory.operator()
+  const operator = await factory.operator()
 
   if (argv.dry === true) {
     const options = {}
@@ -31,4 +31,4 @@ const deploy = async (argv) => {
   }
 }
 
-exports.deploy = deploy
+export { deploy }

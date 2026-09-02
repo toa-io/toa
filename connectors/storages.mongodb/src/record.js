@@ -1,5 +1,3 @@
-'use strict'
-
 function to (entity) {
   const { id, ...rest } = entity
 
@@ -15,5 +13,4 @@ function from (record) {
   return { id: _id, ...rest }
 }
 
-exports.to = to
-exports.from = from
+export { to, from }

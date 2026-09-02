@@ -1,10 +1,8 @@
-'use strict'
+import { describe, it, beforeEach, mock } from 'node:test'
+import assert from 'node:assert/strict'
 
-const { describe, it, beforeEach, mock } = require('node:test')
-const assert = require('node:assert/strict')
-
-const { Entity } = require('../../src/entities/entity')
-const fixtures = require('./entity.fixtures')
+import { Entity } from '../../src/entities/entity.js'
+import * as fixtures from './entity.fixtures.js'
 
 beforeEach(() => {
   resetCalls()

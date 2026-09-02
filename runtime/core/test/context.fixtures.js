@@ -1,8 +1,6 @@
-'use strict'
+import { mock } from 'node:test'
 
-const { mock } = require('node:test')
-
-const { Connector } = require('../src/connector')
+import { Connector } from '../src/connector.js'
 
 const local = {
   link: mock.fn()
@@ -15,6 +13,4 @@ const discover = mock.fn(() => ({
 
 const aspects = [new Connector(), new Connector()]
 
-exports.local = local
-exports.discover = discover
-exports.aspects = aspects
+export { local, discover, aspects }

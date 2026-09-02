@@ -1,10 +1,8 @@
-'use strict'
-
-const desc = require('./.describe')
-const { addVariables } = require('./.describe/variables')
-const { addMounts } = require('./.describe/mounts')
-const { resources } = require('./.describe/resources')
-const { events } = require('./.describe/events')
+import * as desc from './.describe/index.js'
+import { addVariables } from './.describe/variables.js'
+import { addMounts } from './.describe/mounts.js'
+import { resources } from './.describe/resources.js'
+import { events } from './.describe/events.js'
 
 const describe = (context, compositions, dependency, image) => {
   const { services } = dependency
@@ -155,4 +153,4 @@ function unit (context, dependency) {
   return mono
 }
 
-exports.describe = describe
+export { describe }

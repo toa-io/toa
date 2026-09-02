@@ -1,9 +1,7 @@
-'use strict'
+import { mock } from 'node:test'
 
-const { mock } = require('node:test')
-
-const { generate } = require('randomstring')
+import { generate } from 'randomstring'
 
 const name = mock.fn(() => generate())
 
-exports.name = name
+export { name }

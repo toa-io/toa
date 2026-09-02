@@ -1,6 +1,4 @@
-'use strict'
-
-const { Connector } = require('@toa.io/core')
+import { Connector } from '@toa.io/core'
 
 class Storage extends Connector {
   /** @type {toa.sql.Client} */
@@ -32,4 +30,4 @@ class Storage extends Connector {
   }
 }
 
-exports.Storage = Storage
+export { Storage }

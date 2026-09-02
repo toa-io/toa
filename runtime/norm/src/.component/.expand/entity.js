@@ -1,6 +1,4 @@
-'use strict'
-
-const { resolve } = require('../../shortcuts')
+import { resolve } from '../../shortcuts.js'
 
 function entity (manifest) {
   if (!('entity' in manifest)) return
@@ -8,4 +6,4 @@ function entity (manifest) {
   manifest.entity.storage = resolve(manifest.entity.storage)
 }
 
-exports.entity = entity
+export { entity }

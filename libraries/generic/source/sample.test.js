@@ -1,10 +1,8 @@
-'use strict'
+import { it } from 'node:test'
+import assert from 'node:assert/strict'
 
-const { it } = require('node:test')
-const assert = require('node:assert/strict')
-
-const { generate } = require('randomstring')
-const { sample } = require('../source/sample')
+import { generate } from 'randomstring'
+import { sample } from '../source/sample.js'
 
 const array = [1, 2, 3, 4, 5].map(() => generate())
 

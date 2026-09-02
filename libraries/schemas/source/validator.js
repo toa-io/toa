@@ -1,7 +1,5 @@
-'use strict'
-
-const { default: Ajv } = require('ajv/dist/2019')
-const formats = /** @type {Function} */ require('ajv-formats')
+import { default as Ajv } from 'ajv/dist/2019.js'
+import formats from 'ajv-formats'
 
 /**
  * Compiling a schema is the bulk of the time a composition spends booting, and the same
@@ -103,6 +101,4 @@ const OPTIONS = {
   strictTypes: false // omit warning: missing type "object"
 }
 
-exports.create = create
-exports.is = is
-exports.ajv = ajv
+export { create, is, ajv }

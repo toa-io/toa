@@ -1,11 +1,9 @@
-'use strict'
+import { mock } from 'node:test'
 
-const { mock } = require('node:test')
-
-const { generate } = require('randomstring')
-const { readFileSync } = require('node:fs')
-const { load: parseYAML } = require('js-yaml')
-const { resolve } = require('path')
+import { generate } from 'randomstring'
+import { readFileSync } from 'node:fs'
+import { load as parseYAML } from 'js-yaml'
+import { resolve } from 'path'
 
 // noinspection JSCheckFunctionSignatures
 const schema = {
@@ -23,14 +21,11 @@ const schemas = {
     type: 'object',
     properties: {
       input: { type: 'null' },
-      query: parseYAML(readFileSync(resolve(__dirname, '../../src/contract/schemas/query.yaml'), 'utf8')),
+      query: parseYAML(readFileSync(resolve(import.meta.dirname, '../../src/contract/schemas/query.yaml'), 'utf8')),
       authentic: { type: 'boolean' }
     },
     additionalProperties: true
   }
 }
 
-exports.schema = schema
-exports.query = query
-exports.declaration = declaration
-exports.schemas = schemas
+export { schema, query, declaration, schemas }

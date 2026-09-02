@@ -1,9 +1,7 @@
-'use strict'
+import { join } from 'node:path'
+import fse from 'fs-extra'
 
-const { join } = require('node:path')
-const fse = require('fs-extra')
-
-const { COLLECTION } = require('./constants')
+import { COLLECTION } from './constants.js'
 
 /**
  * @param {string[]} list
@@ -24,4 +22,4 @@ const copy = async (list, to) => {
   }
 }
 
-exports.copy = copy
+export { copy }

@@ -1,10 +1,8 @@
-'use strict'
+import { describe, it, beforeEach } from 'node:test'
+import assert from 'node:assert/strict'
 
-const { describe, it, beforeEach } = require('node:test')
-const assert = require('node:assert/strict')
-
-const fixtures = require('./image.fixtures')
-const { generate } = require('randomstring')
+import * as fixtures from './image.fixtures.js'
+import { generate } from 'randomstring'
 
 /** @type {toa.deployment.images.Image} */
 let instance

@@ -1,5 +1,3 @@
-'use strict'
+import { context } from './validate.fixtures.js'
 
-const { context } = require('./validate.fixtures')
-
-exports.context = context
+export { context }

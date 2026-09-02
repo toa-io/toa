@@ -1,15 +1,13 @@
-'use strict'
+import { describe, it, beforeEach } from 'node:test'
+import assert from 'node:assert/strict'
+import { isDeepStrictEqual } from 'node:util'
 
-const { describe, it, beforeEach } = require('node:test')
-const assert = require('node:assert/strict')
-const { isDeepStrictEqual } = require('node:util')
+import { generate } from 'randomstring'
+import { newid, random } from '@toa.io/generic'
 
-const { generate } = require('randomstring')
-const { newid, random } = require('@toa.io/generic')
+import * as fixtures from './storage.fixtures.js'
 
-const fixtures = require('./storage.fixtures')
-
-const { Storage } = require('../src/storage')
+import { Storage } from '../src/storage.js'
 
 it('should be', () => {
   assert.notStrictEqual(Storage, undefined)

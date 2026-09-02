@@ -1,5 +1,3 @@
-'use strict'
-
 const operations = (component) => {
   if (component.operations === undefined) return
 
@@ -13,4 +11,4 @@ const operations = (component) => {
   }
 }
 
-exports.operations = operations
+export { operations }

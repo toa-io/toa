@@ -1,18 +1,17 @@
-'use strict'
+import { it, beforeEach, mock as mocking } from 'node:test'
+import assert from 'node:assert/strict'
+import { isDeepStrictEqual } from 'node:util'
 
-const { it, beforeEach, mock: mocking } = require('node:test')
-const assert = require('node:assert/strict')
-const { isDeepStrictEqual } = require('node:util')
+import { generate } from 'randomstring'
 
-const { generate } = require('randomstring')
-
-const fixtures = require('./factory.fixtures')
+import * as fixtures from './factory.fixtures.js'
 const mock = fixtures.mock
 
 mocking.module('../../src/entities/entity', { namedExports: ({ Entity: mock.Entity }) })
 mocking.module('../../src/entities/set', { namedExports: ({ EntitySet: mock.EntitySet }) })
 
-const { Factory } = require('../../src/entities/factory')
+const { Factory } = await import('../../src/entities/factory.js')
+
 
 let factory
 

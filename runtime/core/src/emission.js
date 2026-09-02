@@ -1,6 +1,4 @@
-'use strict'
-
-const { Connector } = require('./connector')
+import { Connector } from './connector.js'
 
 class Emission extends Connector {
   #events
@@ -20,4 +18,4 @@ class Emission extends Connector {
   }
 }
 
-exports.Emission = Emission
+export { Emission }

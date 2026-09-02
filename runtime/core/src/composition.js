@@ -1,7 +1,5 @@
-'use strict'
-
-const { console } = require('openspan')
-const { Connector } = require('./connector')
+import { console } from 'openspan'
+import { Connector } from './connector.js'
 
 class Composition extends Connector {
   constructor (expositions, producers, receivers, tenants) {
@@ -22,4 +20,4 @@ class Composition extends Connector {
   }
 }
 
-exports.Composition = Composition
+export { Composition }

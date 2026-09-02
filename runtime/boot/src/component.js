@@ -1,10 +1,8 @@
-'use strict'
+import { Component, Locator, State, entities } from '@toa.io/core'
+import * as schemas from '@toa.io/schemas'
 
-const { Component, Locator, State, entities } = require('@toa.io/core')
-const schemas = require('@toa.io/schemas')
-
-const boot = require('./index')
-const { span } = require('./span')
+import * as boot from './index.js'
+import { span } from './span.js'
 
 const component = async (manifest) => {
   const locator = new Locator(manifest.name, manifest.namespace)
@@ -73,4 +71,4 @@ async function bootOperations (manifest, context, state, preflight) {
   return operations
 }
 
-exports.component = component
+export { component }

@@ -1,7 +1,5 @@
-'use strict'
-
-const { V3 } = require('paseto')
-const { randomBytes } = require('node:crypto')
+import { V3 } from 'paseto'
+import { randomBytes } from 'node:crypto'
 
 async function key (argv) {
   if (!argv.public && argv.format === 'jwe') {
@@ -19,4 +17,4 @@ async function key (argv) {
     console.log(key)
 }
 
-exports.key = key
+export { key }

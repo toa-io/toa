@@ -1,5 +1,3 @@
-'use strict'
-
 /**
  * Tells each component which of its events something consumes. An event nobody consumes gets
  * no emitter, no exchange and no outbox row, and a component none of whose events are consumed
@@ -64,4 +62,4 @@ function collect (components, declared, contributed) {
 
 const VARIABLE = 'TOA_EVENTS_'
 
-exports.events = events
+export { events }

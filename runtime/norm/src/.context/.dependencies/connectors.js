@@ -1,6 +1,4 @@
-'use strict'
-
-const { resolve } = require('node:path')
+import { resolve } from 'node:path'
 
 const connectors = (context, extracted) => {
   const connectors = {}
@@ -48,4 +46,4 @@ const connectors = (context, extracted) => {
   return connectors
 }
 
-exports.connectors = connectors
+export { connectors }

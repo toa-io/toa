@@ -1,5 +1,3 @@
-'use strict'
-
 const bindings = (argv) => {
   if (argv.bindings === 'null') return null
 
@@ -18,4 +16,4 @@ const bindings = (argv) => {
   return bindings
 }
 
-exports.bindings = bindings
+export { bindings }

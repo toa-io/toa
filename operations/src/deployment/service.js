@@ -1,5 +1,3 @@
-'use strict'
-
 class Service {
   constructor (service, image) {
     Object.assign(this, service)
@@ -9,4 +7,4 @@ class Service {
   }
 }
 
-exports.Service = Service
+export { Service }

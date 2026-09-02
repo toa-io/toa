@@ -18,7 +18,7 @@ const storage = new Storage(provider)
 const dir = '/' + randomUUID()
 
 before(async () => {
-  process.chdir(path.join(__dirname, 'test'))
+  process.chdir(path.join(import.meta.dirname, 'test'))
 })
 
 it('should be', async () => {

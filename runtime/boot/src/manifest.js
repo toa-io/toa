@@ -1,12 +1,10 @@
-'use strict'
+import clone from 'clone-deep'
+import { basename } from 'node:path'
+import { merge } from '@toa.io/generic'
+import { component as load } from '@toa.io/norm'
+import { Locator } from '@toa.io/core'
 
-const clone = require('clone-deep')
-const { basename } = require('node:path')
-const { merge } = require('@toa.io/generic')
-const { component: load } = require('@toa.io/norm')
-const { Locator } = require('@toa.io/core')
-
-const { span } = require('./span')
+import { span } from './span.js'
 
 const manifest = async (path, options = {}) => {
   options = merge(clone(options), DEFAULTS)
@@ -21,8 +19,16 @@ const manifest = async (path, options = {}) => {
       }
     }
 
-    const check = (binding) => require(binding).properties?.async === true
-    const asyncBinding = options.bindings.find(check)
+    let asyncBinding
+
+    for (const binding of options.bindings) {
+      const { properties } = await import(binding)
+
+      if (properties?.async === true) {
+        asyncBinding = binding
+        break
+      }
+    }
 
     if (asyncBinding === undefined) throw new Error('Bindings override must contain at least one async binding')
 
@@ -54,4 +60,4 @@ const manifest = async (path, options = {}) => {
 
 const DEFAULTS = {}
 
-exports.manifest = manifest
+export { manifest }

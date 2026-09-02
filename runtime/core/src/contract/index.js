@@ -1,7 +1,4 @@
-'use strict'
+import { Request } from './request.js'
+import { Reply } from './reply.js'
 
-const { Request } = require('./request')
-const { Reply } = require('./reply')
-
-exports.Request = Request
-exports.Reply = Reply
+export { Request, Reply }

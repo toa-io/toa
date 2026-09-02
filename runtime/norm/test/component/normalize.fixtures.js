@@ -1,11 +1,9 @@
-'use strict'
-
-const { generate } = require('randomstring')
+import { generate } from 'randomstring'
 
 const operations = {
   namespace: 'dummies',
   name: 'dummy',
-  path: __dirname,
+  path: import.meta.dirname,
   bindings: ['foo', 'bar'],
   'bindings@local': ['foo'],
   operations: {
@@ -23,4 +21,4 @@ const operations = {
   }
 }
 
-exports.operations = operations
+export { operations }

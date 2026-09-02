@@ -1,8 +1,6 @@
-'use strict'
-
-const assert = require('node:assert')
-const { Given, Then, When } = require('@cucumber/cucumber')
-const { MongoClient } = require('mongodb')
+import assert from 'node:assert'
+import { Given, Then, When } from '@cucumber/cucumber'
+import { MongoClient } from 'mongodb'
 
 Given('the {component} database contains:',
   /**

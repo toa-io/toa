@@ -1,9 +1,5 @@
-'use strict'
+import { schema } from './schema.js'
+import { namespace } from './namespace.js'
+import { is } from './validator.js'
 
-const { schema } = require('./schema')
-const { namespace } = require('./namespace')
-const { is } = require('./validator')
-
-exports.schema = schema
-exports.namespace = namespace
-exports.is = is
+export { schema, namespace, is }

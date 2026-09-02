@@ -1,13 +1,13 @@
-'use strict'
+import { it, before, after } from 'node:test'
+import assert from 'node:assert/strict'
 
-const { it, before, after } = require('node:test')
-const assert = require('node:assert/strict')
+import { resolve } from 'node:path'
+import { exceptions } from '@toa.io/core'
+import * as stage from '@toa.io/userland/stage'
 
-const { resolve } = require('node:path')
-const { exceptions: { RequestContractException } } = require('@toa.io/core')
-const stage = require('@toa.io/userland/stage')
+const { RequestContractException } = exceptions
 
-const root = resolve(__dirname, '../components')
+const root = resolve(import.meta.dirname, '../components')
 
 let echo
 let math

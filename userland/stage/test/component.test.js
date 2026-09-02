@@ -1,18 +1,17 @@
-'use strict'
+import { it, mock as mocking } from 'node:test'
+import assert from 'node:assert/strict'
+import { isDeepStrictEqual } from 'node:util'
 
-const { it, mock: mocking } = require('node:test')
-const assert = require('node:assert/strict')
-const { isDeepStrictEqual } = require('node:util')
-
-const { generate } = require('randomstring')
+import { generate } from 'randomstring'
+import * as _boot from './boot.mock.js'
 
 const mock = {
-  boot: require('./boot.mock')
+  boot: _boot
 }
 
 mocking.module('@toa.io/boot', { namedExports: mock.boot })
 
-const stage = require('../')
+const stage = await import('../src/index.js')
 
 it('should be', () => {
   assert.notStrictEqual(stage.component, undefined)

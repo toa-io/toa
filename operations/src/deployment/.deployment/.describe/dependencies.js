@@ -1,5 +1,3 @@
-'use strict'
-
 /**
  * @param {toa.deployment.dependency.Reference[]} references
  * @returns {*}
@@ -14,5 +12,4 @@ const dependencies = (references) => {
   }, {})
 }
 
-
-exports.dependencies = dependencies
+export { dependencies }

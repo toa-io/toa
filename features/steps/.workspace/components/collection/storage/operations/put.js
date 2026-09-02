@@ -1,13 +1,11 @@
-'use strict'
-
-const { join } = require('node:path')
-const fs = require('node:fs')
+import { join } from 'node:path'
+import fs from 'node:fs'
 
 function effect (input, context) {
-  const path = join(__dirname, 'lenna.ascii')
+  const path = join(import.meta.dirname, 'lenna.ascii')
   const stream = fs.createReadStream(path)
 
   return context.storages[input.storage].put(input.path, stream)
 }
 
-exports.effect = effect
+export { effect }

@@ -1,12 +1,10 @@
-'use strict'
+import { describe, it, before, beforeEach } from 'node:test'
+import assert from 'node:assert/strict'
 
-const { describe, it, before, beforeEach } = require('node:test')
-const assert = require('node:assert/strict')
+import clone from 'clone-deep'
 
-const clone = require('clone-deep')
-
-const { validate } = require('../../src/.context')
-const fixtures = require('./validate.fixtures')
+import { validate } from '../../src/.context/index.js'
+import * as fixtures from './validate.fixtures.js'
 
 let context
 

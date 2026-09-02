@@ -1,8 +1,6 @@
-'use strict'
+import { mock } from 'node:test'
 
-const { mock } = require('node:test')
-
-const { generate } = require('randomstring')
+import { generate } from 'randomstring'
 
 /**
  * @return {toa.amqp.Communication}
@@ -23,4 +21,4 @@ const communication = () => (
   }
 )
 
-exports.communication = communication
+export { communication }

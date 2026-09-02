@@ -1,6 +1,4 @@
-'use strict'
-
-const { Connector } = require('./connector')
+import { Connector } from './connector.js'
 
 /**
  * @implements {toa.core.Reflection}
@@ -25,4 +23,4 @@ class Reflection extends Connector {
   }
 }
 
-exports.Reflection = Reflection
+export { Reflection }

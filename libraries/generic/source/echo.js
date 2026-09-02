@@ -1,5 +1,3 @@
-'use strict'
-
 /**
  * @param {string} input
  * @param {Record<string, string> | string[] | string} [argument]
@@ -33,4 +31,4 @@ function array (input, array) {
 const VARIABLE = /\${([A-Za-z_]{0,32})}/g
 const INDEX = /\{(\d)}/g
 
-exports.echo = echo
+export { echo }

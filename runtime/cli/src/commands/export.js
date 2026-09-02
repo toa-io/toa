@@ -1,9 +1,8 @@
-'use strict'
-
 const builder = (yargs) => yargs
   .commandDir('./export')
   .demandCommand()
 
-exports.command = 'export <artifact>'
-exports.desc = 'Export internal artifacts'
-exports.builder = builder
+export const command = 'export <artifact>'
+export const desc = 'Export internal artifacts'
+
+export { builder }

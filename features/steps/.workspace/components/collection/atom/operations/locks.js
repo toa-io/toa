@@ -1,5 +1,3 @@
-'use strict'
-
 async function effect (input, context) {
   // a key of its own each run, so the counter behind it starts from nothing
   const key = `plusing:${Date.now()}`
@@ -10,4 +8,4 @@ async function effect (input, context) {
   return await Promise.all([one, two])
 }
 
-exports.effect = effect
+export { effect }

@@ -1,20 +1,20 @@
-'use strict'
+import { describe, it, beforeEach, mock as mocking } from 'node:test'
+import assert from 'node:assert/strict'
+import { isDeepStrictEqual } from 'node:util'
 
-const { describe, it, beforeEach, mock: mocking } = require('node:test')
-const assert = require('node:assert/strict')
-const { isDeepStrictEqual } = require('node:util')
-
-const { generate } = require('randomstring')
-const { each } = require('@toa.io/generic')
+import { generate } from 'randomstring'
+import { each } from '@toa.io/generic'
+import * as _communication from './communication.mock.js'
+import * as _queues from './queues.mock.js'
 
 const mock = {
-  communication: require('./communication.mock').communication,
-  queues: require('./queues.mock')
+  communication: _communication.communication,
+  queues: _queues
 }
 
 mocking.module('../source/queues', { namedExports: mock.queues })
 
-const { Producer } = require('../source/producer')
+const { Producer } = await import('../source/producer.js')
 
 it('should be', async () => {
   assert.notStrictEqual(Producer, undefined)

@@ -1,8 +1,6 @@
-'use strict'
+import { mock } from 'node:test'
 
-const { mock } = require('node:test')
-
-const randomstring = require('randomstring')
+import randomstring from 'randomstring'
 
 const schema = { [randomstring.generate()]: randomstring.generate() }
 const storage = { id: mock.fn(() => randomstring.generate()) }
@@ -20,9 +18,13 @@ const Entity = mock.fn(function () {
 
 const EntitySet = mock.fn(function () {})
 
-exports.schema = schema
-exports.storage = storage
-exports.entity = entity
-exports.set = set
-exports.mock = { Entity, EntitySet }
-exports.entities = entities
+
+
+
+
+
+
+// named `mock` for its consumers, which is what node:test calls its own tracker
+const mocks = { Entity, EntitySet }
+
+export { schema, storage, entity, set, entities, mocks as mock }

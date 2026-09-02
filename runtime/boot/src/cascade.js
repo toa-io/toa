@@ -1,8 +1,6 @@
-'use strict'
+import { Cascade } from '@toa.io/core'
 
-const { Cascade } = require('@toa.io/core')
-
-const boot = require('./index')
+import * as boot from './index.js'
 
 async function cascade (manifest, endpoint, definition, context, preflight) {
   const bridges = []
@@ -30,4 +28,4 @@ async function cascade (manifest, endpoint, definition, context, preflight) {
   return new Cascade(bridges, preflight)
 }
 
-exports.cascade = cascade
+export { cascade }

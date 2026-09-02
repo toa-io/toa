@@ -1,8 +1,6 @@
-'use strict'
+import { Connector } from '@toa.io/core'
 
-const { Connector } = require('@toa.io/core')
-
-const { name } = require('./queues')
+import { name } from './queues.js'
 
 /**
  * @implements {toa.core.bindings.Broadcast}
@@ -40,4 +38,4 @@ class Broadcast extends Connector {
   }
 }
 
-exports.Broadcast = Broadcast
+export { Broadcast }

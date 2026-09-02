@@ -1,9 +1,7 @@
-'use strict'
+import * as boot from '@toa.io/boot'
+import { Locator } from '@toa.io/core'
 
-const boot = require('@toa.io/boot')
-const { Locator } = require('@toa.io/core')
-
-const { state } = require('./state')
+import { state } from './state.js'
 
 /** @type {toa.stage.Remote} */
 const remote = async (id) => {
@@ -29,4 +27,4 @@ const remote = async (id) => {
  */
 const SOURCE = { service: 'features' }
 
-exports.remote = remote
+export { remote }

@@ -1,7 +1,5 @@
-'use strict'
-
-const { posix } = require('node:path')
-const workspace = require('./workspace')
+import { posix } from 'node:path'
+import * as workspace from './workspace.js'
 
 /**
  * @implements {toa.deployment.Registry}
@@ -166,4 +164,4 @@ class Registry {
 
 const BUILDER = 'toa'
 
-exports.Registry = Registry
+export { Registry }

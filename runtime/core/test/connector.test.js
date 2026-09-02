@@ -1,11 +1,9 @@
-'use strict'
+import { describe, it, beforeEach } from 'node:test'
+import assert from 'node:assert/strict'
 
-const { describe, it, beforeEach } = require('node:test')
-const assert = require('node:assert/strict')
+import { timeout } from '@toa.io/generic'
 
-const { timeout } = require('@toa.io/generic')
-
-const fixtures = require('./connector.fixtures')
+import * as fixtures from './connector.fixtures.js'
 
 let sequence
 

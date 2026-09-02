@@ -1,5 +1,3 @@
-'use strict'
-
 /**
  * @implements {toa.core.bridges.Algorithm}
  */
@@ -15,4 +13,4 @@ class Transition {
   }
 }
 
-exports.Transition = Transition
+export { Transition }

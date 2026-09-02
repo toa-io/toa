@@ -1,6 +1,4 @@
-'use strict'
-
-const { Given } = require('@cucumber/cucumber')
+import { Given } from '@cucumber/cucumber'
 
 // events emitted while a receiver isn't composed pile up in its durable queue and are
 // delivered in a burst the next time it starts, so a scenario asserting on what the

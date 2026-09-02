@@ -1,4 +1,4 @@
-const uuid = require('uuid')
+import * as uuid from 'uuid'
 
 function newid () {
   const buf = Buffer.alloc(16)
@@ -8,4 +8,4 @@ function newid () {
   return buf.toString('hex')
 }
 
-module.exports = { newid }
+export { newid }

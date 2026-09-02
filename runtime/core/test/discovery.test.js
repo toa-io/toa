@@ -1,12 +1,10 @@
-'use strict'
+import { it, beforeEach, afterEach, mock } from 'node:test'
+import assert from 'node:assert/strict'
+import { isDeepStrictEqual } from 'node:util'
 
-const { it, beforeEach, afterEach, mock } = require('node:test')
-const assert = require('node:assert/strict')
-const { isDeepStrictEqual } = require('node:util')
-
-const { console } = require('openspan')
-const { Connector } = require('../src/connector')
-const { Discovery } = require('../src/discovery')
+import { console } from 'openspan'
+import { Connector } from '../src/connector.js'
+import { Discovery } from '../src/discovery.js'
 
 class Lookup extends Connector {
   invoke = mock.fn(async () => ({ operations: {} }))

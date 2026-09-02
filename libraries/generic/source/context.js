@@ -1,6 +1,4 @@
-'use strict'
-
-const { AsyncLocalStorage } = require('node:async_hooks')
+import { AsyncLocalStorage } from 'node:async_hooks'
 
 /** @type {toa.generic.Context} */
 const context = (id) => {
@@ -30,4 +28,4 @@ class Storage {
   }
 }
 
-exports.context = context
+export { context }

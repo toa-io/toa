@@ -1,13 +1,11 @@
-'use strict'
+import { join } from 'node:path'
+import fs from 'fs-extra'
+import { createHash } from 'node:crypto'
 
-const { join } = require('node:path')
-const fs = require('fs-extra')
-const { createHash } = require('node:crypto')
-
-const { Image } = require('./image')
+import { Image } from './image.js'
 
 class Mono extends Image {
-  dockerfile = join(__dirname, 'mono.Dockerfile')
+  dockerfile = join(import.meta.dirname, 'mono.Dockerfile')
 
   #image
   #components
@@ -68,4 +66,4 @@ class Mono extends Image {
   }
 }
 
-exports.Mono = Mono
+export { Mono }

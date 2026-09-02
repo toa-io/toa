@@ -1,7 +1,5 @@
-'use strict'
-
-const { random, timeout } = require('@toa.io/generic')
-const { Connector } = require('../src/connector')
+import { random, timeout } from '@toa.io/generic'
+import { Connector } from '../src/connector.js'
 
 class TestConnector extends Connector {
   #label
@@ -43,6 +41,4 @@ class StuckConnector extends Connector {
   }
 }
 
-exports.TestConnector = TestConnector
-exports.FailingConnector = FailingConnector
-exports.StuckConnector = StuckConnector
+export { TestConnector, FailingConnector, StuckConnector }

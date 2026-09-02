@@ -1,21 +1,11 @@
-'use strict'
+import { collapse } from './collapse.js'
+import { defaults } from './defaults.js'
+import { dependencies } from './dependencies.js'
+import { dereference } from './dereference.js'
+import { expand } from './expand.js'
+import { merge } from './merge.js'
+import { normalize } from './normalize.js'
+import { validate } from './validate.js'
+import { extensions } from './extensions.js'
 
-const { collapse } = require('./collapse')
-const { defaults } = require('./defaults')
-const { dependencies } = require('./dependencies')
-const { dereference } = require('./dereference')
-const { expand } = require('./expand')
-const { merge } = require('./merge')
-const { normalize } = require('./normalize')
-const { validate } = require('./validate')
-const { extensions } = require('./extensions')
-
-exports.collapse = collapse
-exports.defaults = defaults
-exports.dependencies = dependencies
-exports.dereference = dereference
-exports.expand = expand
-exports.merge = merge
-exports.normalize = normalize
-exports.validate = validate
-exports.extensions = extensions
+export { collapse, defaults, dependencies, dereference, expand, merge, normalize, validate, extensions }

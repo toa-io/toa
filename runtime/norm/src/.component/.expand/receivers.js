@@ -1,6 +1,4 @@
-'use strict'
-
-const { resolve } = require('../../shortcuts')
+import { resolve } from '../../shortcuts.js'
 
 function receivers (manifest) {
   if (manifest.receivers === undefined) return
@@ -13,4 +11,4 @@ function receivers (manifest) {
   }
 }
 
-exports.receivers = receivers
+export { receivers }

@@ -1,6 +1,4 @@
-'use strict'
-
-const { Connector } = require('./connector')
+import { Connector } from './connector.js'
 
 class Exposition extends Connector {
   locator
@@ -25,4 +23,4 @@ const expose = (manifest) => {
   return { namespace, name, entity, operations, events }
 }
 
-exports.Exposition = Exposition
+export { Exposition }

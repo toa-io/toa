@@ -1,5 +1,3 @@
-'use strict'
-
 class ProcessorException extends Error {
   constructor () {
     super()
@@ -8,4 +6,4 @@ class ProcessorException extends Error {
   }
 }
 
-exports.ProcessorException = ProcessorException
+export { ProcessorException }

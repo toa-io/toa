@@ -1,14 +1,12 @@
-'use strict'
+import { it, beforeEach, mock } from 'node:test'
+import assert from 'node:assert/strict'
+import { isDeepStrictEqual } from 'node:util'
 
-const { it, beforeEach, mock } = require('node:test')
-const assert = require('node:assert/strict')
-const { isDeepStrictEqual } = require('node:util')
+import { generate } from 'randomstring'
+import { random } from '@toa.io/generic'
 
-const { generate } = require('randomstring')
-const { random } = require('@toa.io/generic')
-
-const { ProcessorException } = require('../source/exceptions')
-const { Conveyor } = require('../source')
+import { ProcessorException } from '../source/exceptions.js'
+import { Conveyor } from '../source/index.js'
 
 it('should be', () => {
   assert.notStrictEqual(Conveyor, undefined)

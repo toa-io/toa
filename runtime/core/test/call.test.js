@@ -1,11 +1,9 @@
-'use strict'
+import { it, beforeEach, mock } from 'node:test'
+import assert from 'node:assert/strict'
+import { isDeepStrictEqual } from 'node:util'
 
-const { it, beforeEach, mock } = require('node:test')
-const assert = require('node:assert/strict')
-const { isDeepStrictEqual } = require('node:util')
-
-const fixtures = require('./call.fixtures')
-const { Call } = require('../src/call')
+import * as fixtures from './call.fixtures.js'
+import { Call } from '../src/call.js'
 
 let call
 

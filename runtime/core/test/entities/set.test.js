@@ -1,10 +1,8 @@
-'use strict'
+import { it } from 'node:test'
+import assert from 'node:assert/strict'
 
-const { it } = require('node:test')
-const assert = require('node:assert/strict')
-
-const { EntitySet } = require('../../src/entities/set')
-const fixtures = require('./set.fixtures')
+import { EntitySet } from '../../src/entities/set.js'
+import * as fixtures from './set.fixtures.js'
 
 it('should provide state', () => {
   const set = new EntitySet(fixtures.set)

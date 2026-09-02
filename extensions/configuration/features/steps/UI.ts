@@ -16,7 +16,7 @@ export class Site {
 
   @given('the UI is published')
   public async publish (): Promise<void> {
-    this.server = new UI(UI_PORT, resolve(__dirname, '..', 'site'))
+    this.server = new UI(UI_PORT, resolve(import.meta.dirname, '..', 'site'))
 
     await this.server.connect()
   }

@@ -1,12 +1,10 @@
-'use strict'
+import { it, beforeEach, mock } from 'node:test'
+import assert from 'node:assert/strict'
+import { isDeepStrictEqual } from 'node:util'
 
-const { it, beforeEach, mock } = require('node:test')
-const assert = require('node:assert/strict')
-const { isDeepStrictEqual } = require('node:util')
-
-const fixtures = require('./context.state.fixtures')
-const { Context } = require('../src/context')
-const { generate } = require('randomstring')
+import * as fixtures from './context.state.fixtures.js'
+import { Context } from '../src/context.js'
+import { generate } from 'randomstring'
 
 const state = fixtures.context.aspects[0]
 

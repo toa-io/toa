@@ -1,12 +1,10 @@
-'use strict'
+import { it, beforeEach } from 'node:test'
+import assert from 'node:assert/strict'
 
-const { it, beforeEach } = require('node:test')
-const assert = require('node:assert/strict')
+import clone from 'clone-deep'
 
-const clone = require('clone-deep')
-
-const { dereference } = require('../../src/.component')
-const fixtures = require('./dereference.fixtures')
+import { dereference } from '../../src/.component/index.js'
+import * as fixtures from './dereference.fixtures.js'
 
 let source
 

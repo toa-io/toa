@@ -1,8 +1,6 @@
-'use strict'
+import { overwrite } from '@toa.io/generic'
 
-const { overwrite } = require('@toa.io/generic')
-
-const { Connector } = require('@toa.io/core')
+import { Connector } from '@toa.io/core'
 
 /**
  * @implements {toa.core.extensions.Aspect}
@@ -26,4 +24,4 @@ class Aspect extends Connector {
   }
 }
 
-exports.Aspect = Aspect
+export { Aspect }

@@ -48,4 +48,4 @@ interface Components {
   paths: string[]
 }
 
-const ROOT = resolve(__dirname, '../components/')
+const ROOT = resolve(import.meta.dirname, '../components/')

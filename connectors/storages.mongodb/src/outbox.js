@@ -1,6 +1,4 @@
-'use strict'
-
-const { console } = require('openspan')
+import { console } from 'openspan'
 
 /**
  * The outbox rows of one component. Its lifecycle is the Client's, so it is not a Connector.
@@ -126,4 +124,4 @@ function retention () {
 /** seconds a published row is kept as a change log before the TTL monitor reaps it */
 const RETENTION = 86400
 
-exports.Outbox = Outbox
+export { Outbox }

@@ -1,5 +1,3 @@
-'use strict'
-
 /**
  * Completes missing compositions with unused components
  * @param {toa.norm.Context} context
@@ -30,4 +28,4 @@ const complete = (context) => {
   }
 }
 
-exports.complete = complete
+export { complete }

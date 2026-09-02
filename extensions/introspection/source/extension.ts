@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs'
 import { options } from './annotation.js'
 import { components } from './Composition.js'
 import { ENV, UI_PATH, UI_PORT } from './const.js'
@@ -26,7 +27,7 @@ export function deployment (_: Instances<unknown>, annotation?: Annotation): Dep
   const service: Service = {
     group: 'introspection',
     name: 'explorer',
-    version: require('../package.json').version,
+    version: JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8')).version,
     components: components().labels,
     resources: annotation?.resources,
     variables: []

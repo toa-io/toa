@@ -1,6 +1,4 @@
-'use strict'
-
-const { StatePreconditionException, StateNotFoundException } = require('./exceptions')
+import { StatePreconditionException, StateNotFoundException } from './exceptions.js'
 
 class State {
   storage
@@ -139,4 +137,4 @@ class State {
 /** an effect never commits what `ensure` hands it, see `Effect` */
 const NOT_MUTABLE = false
 
-exports.State = State
+export { State }

@@ -1,10 +1,8 @@
-'use strict'
+import { describe, it } from 'node:test'
+import assert from 'node:assert/strict'
 
-const { describe, it } = require('node:test')
-const assert = require('node:assert/strict')
-
-const { merge, overwrite, add } = require('../source')
-const { generate } = require('randomstring')
+import { merge, overwrite, add } from '../source/index.js'
+import { generate } from 'randomstring'
 
 it('should merge arrays', () => {
   const target = [1, 2]

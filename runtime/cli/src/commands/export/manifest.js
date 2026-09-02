@@ -1,6 +1,4 @@
-'use strict'
-
-const { manifest } = require('../../handlers/export/manifest')
+import { manifest } from '../../handlers/export/manifest.js'
 
 const builder = (yargs) => {
   yargs
@@ -32,7 +30,7 @@ const builder = (yargs) => {
     })
 }
 
-exports.command = ['manifest', 'man']
-exports.desc = 'Print manifest'
-exports.builder = builder
-exports.handler = manifest
+export const command = ['manifest', 'man']
+export const desc = 'Print manifest'
+
+export { builder, manifest as handler }

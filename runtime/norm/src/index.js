@@ -1,9 +1,7 @@
-'use strict'
+import * as shortcuts from './shortcuts.js'
+import { context } from './context.js'
+import { component } from './component.js'
 
-const { context } = require('./context')
-const { component } = require('./component')
+export { context, component }
 
-exports.shortcuts = require('./shortcuts')
-
-exports.context = context
-exports.component = component
+export { shortcuts }

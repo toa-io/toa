@@ -1,10 +1,8 @@
-'use strict'
+import { it, mock } from 'node:test'
+import assert from 'node:assert/strict'
+import { isDeepStrictEqual } from 'node:util'
 
-const { it, mock } = require('node:test')
-const assert = require('node:assert/strict')
-const { isDeepStrictEqual } = require('node:util')
-
-const { fetch } = require('../src/shortcuts/fetch')
+import { fetch } from '../src/shortcuts/fetch.js'
 
 it('exposes the fetch aspect as context.fetch', async () => {
   const response = new Response('ok')

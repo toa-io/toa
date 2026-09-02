@@ -1,9 +1,7 @@
-'use strict'
+import { it } from 'node:test'
+import assert from 'node:assert/strict'
 
-const { it } = require('node:test')
-const assert = require('node:assert/strict')
-
-const knex = require('knex')
+import knex from 'knex'
 
 it('should build two queries with one schema', () => {
   const ref = knex({ client: 'pg' }).withSchema('SchemaName')

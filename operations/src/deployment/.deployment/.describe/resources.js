@@ -1,5 +1,3 @@
-'use strict'
-
 /**
  * Every deployment states what it may take. One that states nothing is `BestEffort`: the
  * first evicted under memory pressure and the last given CPU under contention — which on
@@ -34,4 +32,4 @@ function * units (values) {
     yield { deployment: service, subject: `Service '${service.name}'` }
 }
 
-exports.resources = resources
+export { resources }

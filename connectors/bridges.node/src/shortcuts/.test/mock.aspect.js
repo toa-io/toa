@@ -1,11 +1,9 @@
-'use strict'
+import { mock } from 'node:test'
 
-const { mock } = require('node:test')
-
-const { generate } = require('randomstring')
+import { generate } from 'randomstring'
 
 const aspect = {
   invoke: mock.fn(async () => generate)
 }
 
-exports.aspect = aspect
+export { aspect }

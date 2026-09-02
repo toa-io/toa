@@ -1,14 +1,12 @@
-'use strict'
+import { describe, it, beforeEach, mock } from 'node:test'
+import assert from 'node:assert/strict'
+import { isDeepStrictEqual } from 'node:util'
 
-const { describe, it, beforeEach, mock } = require('node:test')
-const assert = require('node:assert/strict')
-const { isDeepStrictEqual } = require('node:util')
+import clone from 'clone-deep'
+import { generate } from 'randomstring'
+import { merge } from '@toa.io/generic'
 
-const clone = require('clone-deep')
-const { generate } = require('randomstring')
-const { merge } = require('@toa.io/generic')
-
-const { Connector } = require('../src/connector')
+import { Connector } from '../src/connector.js'
 
 // the fixtures are not connectors, so a dependency is recorded rather than linked
 const depends = mock.method(Connector.prototype, 'depends', () => undefined)
@@ -17,8 +15,8 @@ const dependencies = (instance) => depends.mock.calls
   .filter((call) => call.this === instance)
   .map((call) => call.arguments[0])
 
-const { Receiver } = require('../src/receiver')
-const fixtures = require('./receiver.fixtures')
+import { Receiver } from '../src/receiver.js'
+import * as fixtures from './receiver.fixtures.js'
 
 /** @type {toa.core.Receiver} */
 let receiver

@@ -1,6 +1,4 @@
-'use strict'
-
-const { instances } = require('./instances')
+import { instances } from './instances.js'
 
 /**
  * @param {toa.core.Storage} storage
@@ -16,4 +14,4 @@ const storage = (storage) => {
   return decorated
 }
 
-exports.storage = storage
+export { storage }
