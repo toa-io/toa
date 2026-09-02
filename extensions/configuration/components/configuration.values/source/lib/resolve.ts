@@ -4,7 +4,7 @@ import { entry } from './map'
  * The latest configuration created for the component and the epoch; the deployed
  * defaults when none was; `null` when the epoch is not the one deployed.
  */
-export async function resolve (context: Context, component: string, epoch?: string): Promise<object | null> {
+export async function resolve (context: Context, component: string, epoch?: string): Promise<Value | null> {
   const known = entry(component)
 
   epoch ??= known?.epoch
@@ -22,12 +22,18 @@ export async function resolve (context: Context, component: string, epoch?: stri
   const objects = await context.local.enumerate({ query })
 
   if (objects.length > 0)
-    return objects[0].configuration
+    return { configuration: objects[0].configuration, created: objects[0]._created }
 
   if (known !== undefined && known.epoch === epoch)
-    return known.defaults ?? {}
+    return { configuration: known.defaults ?? {}, created: 0 }
 
   return null
+}
+
+/** A configuration and when it was created; `0` for the deployed defaults. */
+export interface Value {
+  configuration: object
+  created: number
 }
 
 export interface Context {
@@ -44,4 +50,5 @@ interface Query {
 
 interface Stored {
   configuration: object
+  _created: number
 }

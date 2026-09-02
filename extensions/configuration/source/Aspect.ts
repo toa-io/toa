@@ -2,7 +2,7 @@ import { console } from 'openspan'
 import { Connector, type Locator, type extensions } from '@toa.io/core'
 import { fit, local, type Node } from './configuration'
 import { epoch } from './epoch'
-import type { Client } from './Client'
+import type { Client, Value } from './Client'
 import type { Manifest } from './manifest'
 
 export class Aspect extends Connector implements extensions.Aspect {
@@ -13,6 +13,7 @@ export class Aspect extends Connector implements extensions.Aspect {
   private readonly client: Client | null
   private readonly epoch: string
   private value: Node = {}
+  private created = 0
 
   /**
    * Without a client the value is local: the variable, the defaults and the schema.
@@ -47,9 +48,10 @@ export class Aspect extends Connector implements extensions.Aspect {
       return
     }
 
-    const raw = await this.client.fetch(this.locator.id, this.epoch)
+    const { configuration, created } = await this.client.fetch(this.locator.id, this.epoch)
 
-    this.value = fit(raw!, this.manifest)
+    this.value = fit(configuration, this.manifest)
+    this.created = created
     this.client.subscribe(this.locator.id, this.epoch, this.listener)
   }
 
@@ -57,14 +59,19 @@ export class Aspect extends Connector implements extensions.Aspect {
     this.client?.unsubscribe(this.locator.id, this.epoch, this.listener)
   }
 
-  private readonly listener = (raw: object): void => {
-    try {
-      this.value = fit(raw, this.manifest)
+  private readonly listener = ({ configuration, created }: Value): void => {
+    // deliveries may repeat or cross: only what is newer than the held value replaces it
+    if (created <= this.created)
+      return
 
-      console.info('Configuration updated', { component: this.locator.id })
+    try {
+      this.value = fit(configuration, this.manifest)
+      this.created = created
+
+      console.info('Configuration updated', { component: this.locator.id, created })
     } catch (error) {
-      // the service validated it against the schema of its epoch, so this is drift between the two
-      console.error('Configuration update rejected', { component: this.locator.id, error })
+      // the service validated it against the schema of its epoch, so the two schemas differ
+      console.error('Configuration value does not match the schema', { component: this.locator.id, error })
     }
   }
 }

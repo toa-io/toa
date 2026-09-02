@@ -6,7 +6,8 @@ import type { Bootloader } from './Factory'
 
 /**
  * One per process: one remote to the values service and one subscription to its events,
- * shared by every Aspect. What the Aspects ask for is collected and sent as one call.
+ * shared by every Aspect. What the Aspects ask for is collected and sent as one call;
+ * what the service creates afterwards is handed to whoever subscribed.
  */
 export class Client extends Connector {
   /** Disconnected once, a connector keeps what it depended on, so a gone client is not reused. */
@@ -29,11 +30,8 @@ export class Client extends Connector {
     this.options = { ...DEFAULTS, ...options }
   }
 
-  /**
-   * The configuration of a component for an epoch. Resolves once the service has one;
-   * with `wait` off, resolves with `null` as soon as the service says it has none.
-   */
-  public async fetch (component: string, epoch: string, wait = true): Promise<object | null> {
+  /** The configuration of a component for an epoch, once the service has one. */
+  public async fetch (component: string, epoch: string): Promise<Value> {
     const key = id(component, epoch)
 
     let entry = this.pending.get(key)
@@ -43,8 +41,8 @@ export class Client extends Connector {
       this.pending.set(key, entry)
     }
 
-    const promise = new Promise<object | null>((resolve) => {
-      entry!.waiters.push({ resolve, wait })
+    const promise = new Promise<Value>((resolve) => {
+      entry!.waiters.push(resolve)
     })
 
     if (this.flushing)
@@ -74,10 +72,7 @@ export class Client extends Connector {
     this.depends(this.remote)
     await this.remote.connect()
 
-    const subscription = new Subscription((payload) => {
-      void this.refresh(payload)
-    })
-
+    const subscription = new Subscription(this.deliver.bind(this))
     const consumer = await this.boot.receive(EVENT, subscription)
 
     this.depends(consumer)
@@ -144,38 +139,23 @@ export class Client extends Connector {
       this.schedule(this.backoff())
   }
 
+  /** Those the service has served are told; the rest stay for the next round. */
   private settle (output: Fetched[]): void {
-    for (const { component, epoch, configuration } of output) {
+    for (const { component, epoch, configuration, created } of output) {
+      if (configuration === null)
+        continue
+
       const key = id(component, epoch)
       const entry = this.pending.get(key)
 
       if (entry === undefined)
         continue
 
-      if (configuration === null)
-        this.postpone(key, entry)
-      else
-        this.deliver(key, entry, configuration)
-    }
-  }
-
-  /** Those who would not wait are told, the rest stay for the next round. */
-  private postpone (key: string, entry: Pending): void {
-    entry.waiters = entry.waiters.filter(({ resolve, wait }) => {
-      if (!wait) resolve(null)
-
-      return wait
-    })
-
-    if (entry.waiters.length === 0)
       this.pending.delete(key)
-  }
 
-  private deliver (key: string, entry: Pending, configuration: object): void {
-    this.pending.delete(key)
-
-    for (const { resolve } of entry.waiters)
-      resolve(configuration)
+      for (const resolve of entry.waiters)
+        resolve({ configuration, created })
+    }
   }
 
   private report (batch: Pending[]): void {
@@ -199,30 +179,25 @@ export class Client extends Connector {
     return Math.min(this.options.base * Math.pow(FACTOR, this.round), this.options.max)
   }
 
-  private async refresh ({ component, epoch }: Created): Promise<void> {
-    const listeners = this.listeners.get(id(component, epoch))
+  /** A created object goes to the subscribers of its component and epoch, as it is. */
+  private deliver (created: Created): void {
+    const listeners = this.listeners.get(id(created.component, created.epoch))
 
-    if (listeners === undefined || listeners.size === 0)
+    if (listeners === undefined)
       return
 
-    const configuration = await this.fetch(component, epoch, false)
-
-    if (configuration === null) {
-      console.warn('Configuration is no longer served', { component, epoch })
-
-      return
-    }
+    const value: Value = { configuration: created.configuration, created: created._created }
 
     for (const listener of listeners)
-      listener(configuration)
+      listener(value)
   }
 }
 
 /** What the event consumer hands deliveries to. */
 class Subscription extends Connector {
-  private readonly handler: (payload: Created) => void
+  private readonly handler: (created: Created) => void
 
-  public constructor (handler: (payload: Created) => void) {
+  public constructor (handler: (created: Created) => void) {
     super()
 
     this.handler = handler
@@ -253,22 +228,31 @@ export interface Options {
   warn: number
 }
 
+/** A configuration and when it was created; `0` for the deployed defaults. */
+export interface Value {
+  configuration: object
+  created: number
+}
+
+export interface Fetched {
+  component: string
+  epoch: string
+  configuration: object | null
+  created: number
+}
+
+/** The `configuration.values.created` payload: the object as stored. */
 export interface Created {
   component: string
   epoch: string
+  configuration: object
+  _created: number
 }
 
-export interface Fetched extends Created {
-  configuration: object | null
-}
+export type Listener = (value: Value) => void
 
-export type Listener = (configuration: object) => void
-
-interface Pending extends Created {
-  waiters: Waiter[]
-}
-
-interface Waiter {
-  resolve: (configuration: object | null) => void
-  wait: boolean
+interface Pending {
+  component: string
+  epoch: string
+  waiters: Array<(value: Value) => void>
 }

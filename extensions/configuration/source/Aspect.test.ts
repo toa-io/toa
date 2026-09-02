@@ -5,7 +5,7 @@ import type { Client, Listener } from './Client'
 import type { Manifest } from './manifest'
 
 class Fake extends Connector {
-  public readonly fetch = jest.fn(async () => ({ foo: 'served' }))
+  public readonly fetch = jest.fn(async () => ({ configuration: { foo: 'served' }, created: 5 }))
   public readonly subscribe = jest.fn()
   public readonly unsubscribe = jest.fn()
 }
@@ -65,14 +65,25 @@ it('should fetch from the client and follow it', async () => {
 
   const listener = client.subscribe.mock.calls[0][2] as Listener
 
-  listener({ foo: 'updated' })
+  listener({ configuration: { foo: 'updated' }, created: 6 })
+
+  expect(aspect.invoke(['foo'])).toStrictEqual('updated')
+
+  // what is not newer than the held value is left alone
+  listener({ configuration: { foo: 'stale' }, created: 6 })
+  listener({ configuration: { foo: 'older' }, created: 4 })
 
   expect(aspect.invoke(['foo'])).toStrictEqual('updated')
 
   // a value that does not fit keeps the previous one
-  listener({ foo: { nested: true } })
+  listener({ configuration: { foo: { nested: true } }, created: 7 })
 
   expect(aspect.invoke(['foo'])).toStrictEqual('updated')
+
+  // and the one after it still applies
+  listener({ configuration: { foo: 'latest' }, created: 8 })
+
+  expect(aspect.invoke(['foo'])).toStrictEqual('latest')
 
   await aspect.disconnect()
 

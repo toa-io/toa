@@ -4,7 +4,8 @@ name: values
 # One document per configuration created. Documents are immutable: a change is a new
 # document, and the latest one for a component and an epoch is the last created.
 # What every component's epoch, schema and defaults are, the service is told on
-# deployment (`TOA_CONFIGURATION_VALUES`).
+# deployment (`TOA_CONFIGURATION_VALUES`). A created object is published as the
+# prototype's `created` event.
 
 entity:
   schema:
@@ -72,10 +73,13 @@ operations:
           configuration:
             type: object
             nullable: true
+          created:
+            type: integer
         required:
           - component
           - epoch
           - configuration
+          - created
   create:
     query: false
     input:

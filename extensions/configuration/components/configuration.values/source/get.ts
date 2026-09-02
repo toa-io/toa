@@ -1,7 +1,9 @@
 import { resolve, type Context } from './lib/resolve'
 
 export async function computation (input: Input, context: Context): Promise<object | null> {
-  return await resolve(context, input.component, input.epoch)
+  const value = await resolve(context, input.component, input.epoch)
+
+  return value === null ? null : value.configuration
 }
 
 interface Input {
