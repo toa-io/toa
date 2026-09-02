@@ -41,6 +41,7 @@ operations:
 introspection: false
 
 exposition:
+  isolated: true
   /:
     auth:role: system:introspection
 
