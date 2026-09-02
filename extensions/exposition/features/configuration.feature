@@ -50,6 +50,36 @@ Feature: Configuration values
       foo: deployed
       """
 
+  Scenario: Listing the configurations
+    When the following request is received:
+      """
+      GET /configuration/values/ HTTP/1.1
+      host: nex.toa.io
+      authorization: Basic dXNlcjoxMjM0NQ==
+      accept: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      content-type: application/yaml
+
+      - component: dummies.dummy
+        epoch: e1
+        configuration:
+          foo: deployed
+      """
+
+  Scenario: Listing without the role
+    When the following request is received:
+      """
+      GET /configuration/values/ HTTP/1.1
+      host: nex.toa.io
+      """
+    Then the following reply is sent:
+      """
+      401 Unauthorized
+      """
+
   Scenario: Reading without the role
     When the following request is received:
       """

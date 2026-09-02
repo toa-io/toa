@@ -80,6 +80,24 @@ operations:
           - epoch
           - configuration
           - created
+  # every component's configuration for its deployed epoch, by component name
+  list:
+    query: false
+    output:
+      type: array
+      items:
+        type: object
+        properties:
+          component:
+            type: string
+          epoch:
+            type: string
+          configuration:
+            type: object
+        required:
+          - component
+          - epoch
+          - configuration
   create:
     query: false
     input:
@@ -106,6 +124,11 @@ operations:
 
 exposition:
   isolated: true
+  /:
+    GET:
+      io:output: true
+      auth:role: system:configuration:get
+      endpoint: list
   /:component:
     map:segments:
       component: component

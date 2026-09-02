@@ -1,4 +1,4 @@
-import { VARIABLE, entry } from './map'
+import { VARIABLE, components, entry } from './map'
 
 afterEach(() => {
   delete process.env[VARIABLE]
@@ -25,4 +25,10 @@ it('should follow the variable', () => {
   process.env[VARIABLE] = JSON.stringify({ 'a.b': { epoch: 'e2', schema: {} } })
 
   expect(entry('a.b')?.epoch).toStrictEqual('e2')
+})
+
+it('should list the components by name', () => {
+  process.env[VARIABLE] = JSON.stringify({ 'b.two': { epoch: 'e', schema: {} }, 'a.one': { epoch: 'e', schema: {} } })
+
+  expect(components()).toStrictEqual(['a.one', 'b.two'])
 })
