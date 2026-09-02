@@ -7,7 +7,6 @@ value:
   count:
     - one: "{n} value"
       other: "{n} values"
-  epoch: epoch
   title: Configuration
 create:
   action: Edit

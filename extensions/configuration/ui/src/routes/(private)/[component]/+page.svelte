@@ -59,8 +59,9 @@
     {#snippet awaited(configuration)}
       <Value value={configuration.configuration} />
 
-      <p class="text-muted-foreground mt-2 font-mono text-xs">
-        {$dict.value.epoch}
+      <!-- the hash names the schema the value was checked against; it needs no label, and
+           centred it reads as a footer to the value above rather than a line of its own -->
+      <p class="text-muted-foreground mt-2 text-center font-mono text-xs">
         {configuration.epoch}
       </p>
     {/snippet}

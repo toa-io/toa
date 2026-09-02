@@ -13,7 +13,6 @@ export type Dictionary = {
         none: string
         secret: string
         count: (value: number) => string
-        epoch: string
         title: string
       }
       create: {

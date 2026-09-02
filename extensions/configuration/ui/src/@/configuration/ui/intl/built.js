@@ -19,7 +19,6 @@ export const dictionaries = {
 
       return (table[rule] ?? table.other).replace(/{n}/g, new Intl.NumberFormat(locale).format(count));
     },
-      "epoch": "epoch",
       "title": "Configuration"
     },
     "create": {

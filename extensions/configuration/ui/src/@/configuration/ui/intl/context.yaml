@@ -17,9 +17,6 @@ inputs:
     count:
       input: value
       context: how many top-level values a component's configuration holds, shown on its row in the list
-    epoch:
-      input: epoch
-      context: inline field label in a technical inspector, lowercase, no sentence case
     title:
       input: Configuration
       context: heading over the component's current configuration
