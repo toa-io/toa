@@ -9,9 +9,17 @@
   import { apple } from '$lib/tools'
   import { dict } from '$lib/intl'
   import { meta } from '$config'
+  import { page } from '$app/state'
+  import { base } from '$app/paths'
   import { onNavigate } from '$app/navigation'
 
   const { children } = $props()
+
+  /**
+   * The title leads back to the list. Every address ends in a slash, so the way up is the
+   * address itself on the list and one level up on a component's screen.
+   */
+  const home = $derived(page.url.pathname === base + '/' ? '.' : '..')
 
   // a filter is about the screen it was typed on, and the next screen is not that one
   onNavigate(() => query.set(''))
@@ -49,7 +57,11 @@
            the title is gone and this side is empty: it takes no space either, so the filter
            starts at the edge rather than floating with nothing to sit between. -->
       <div class="hidden flex-1 items-center gap-4 md:flex">
-        <h1 class="min-w-0 truncate text-lg font-medium">{meta.title}</h1>
+        <h1 class="min-w-0 truncate text-lg font-medium">
+          <a id="nav-home-link" href={home} class="hover:text-muted-foreground transition-colors"
+            >{meta.title}</a
+          >
+        </h1>
       </div>
 
       <div class="relative w-full max-w-64 min-w-0 shrink">
