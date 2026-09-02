@@ -1,0 +1,6 @@
+native: English
+locale: en-US
+dir: ltr
+nav:
+  signout: Sign out
+  filter: Filter components

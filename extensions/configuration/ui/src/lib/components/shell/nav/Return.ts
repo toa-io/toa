@@ -1,0 +1,15 @@
+import type { ClassValue } from 'svelte/elements'
+import type { Snippet } from 'svelte'
+
+export interface Props {
+  href?: string
+  class?: ClassValue
+  children?: Snippet
+}
+
+export interface Return {
+  id: string
+  href: string
+  class?: ClassValue
+  children?: Snippet
+}

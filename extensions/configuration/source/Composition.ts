@@ -1,6 +1,8 @@
 import { readdirSync, type Dirent } from 'node:fs'
 import { resolve } from 'node:path'
 import { Connector } from '@toa.io/core'
+import { UI_PORT } from './const'
+import { UI } from './UI'
 import type { Bootloader } from './Factory'
 
 /** Hosts the values component in the service process. */
@@ -18,6 +20,7 @@ export class Composition extends Connector {
     await composition.connect()
 
     this.depends(composition)
+    this.depends(new UI(UI_PORT))
   }
 }
 

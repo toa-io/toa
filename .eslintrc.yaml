@@ -91,3 +91,4 @@ ignorePatterns:
   - "*.d.ts"
   - "*.js"
   - "extensions/introspection/ui" # its own project, with its own flat config
+  - "extensions/configuration/ui" # its own project, with its own flat config

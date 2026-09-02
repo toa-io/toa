@@ -1,0 +1,23 @@
+values:
+  empty: No component declares configuration.
+  nomatch: No results match the filter.
+value:
+  none: This component has no configuration.
+  secret: Secret
+  count:
+    - one: "{n} value"
+      other: "{n} values"
+  epoch: epoch
+  title: Configuration
+create:
+  action: New
+  title: New configuration
+  description: A configuration is never changed. Creating one replaces the whole of it, so what is left out here is left out of the component.
+  editor: Configuration
+  submit: Create
+  cancel: Cancel
+  malformed: This is not valid YAML.
+  failed: The configuration could not be created.
+space:
+  user: Userspace
+  system: System

@@ -1,7 +1,7 @@
 import assert from 'node:assert'
 import { type Dependency, type Service, type Variable, type Variables } from '@toa.io/operations'
 import { components } from './Composition'
-import { EVENT, PREFIX, SECRET_RX, VALUES } from './const'
+import { EVENT, PREFIX, SECRET_RX, UI_PATH, UI_PORT, VALUES } from './const'
 import { epoch } from './epoch'
 import * as validators from './schemas'
 import type { Manifest } from './manifest'
@@ -29,6 +29,9 @@ export function deployment (instances: Instance[], annotation: Annotation = {}):
     name: 'values',
     version: require('../package.json').version,
     components: components().labels,
+    // the service that holds the values also serves the page that reads them
+    port: UI_PORT,
+    ingress: { path: UI_PATH },
     variables: [{
       name: VALUES,
       value: JSON.stringify(describe(instances, annotation))
