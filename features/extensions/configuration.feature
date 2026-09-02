@@ -155,7 +155,10 @@ Feature: Configuration Extension
       """
     Then the reply is received:
       """yaml
-      foo: deployed
+      configuration:
+        foo: deployed
+      schema:
+        type: object
       """
     When I call `configuration.values.get` with:
       """yaml

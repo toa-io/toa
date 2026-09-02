@@ -47,7 +47,17 @@ Feature: Configuration values
       200 OK
       content-type: application/yaml
 
-      foo: deployed
+      configuration:
+        foo: deployed
+      schema:
+        type: object
+        properties:
+          foo:
+            type: string
+          bar:
+            type: string
+            default: world
+      epoch: e1
       """
 
   Scenario: Listing the configurations
@@ -65,6 +75,14 @@ Feature: Configuration values
 
       - component: dummies.dummy
         epoch: e1
+        schema:
+          type: object
+          properties:
+            foo:
+              type: string
+            bar:
+              type: string
+              default: world
         configuration:
           foo: deployed
       """
@@ -134,8 +152,10 @@ Feature: Configuration values
       200 OK
       content-type: application/yaml
 
-      foo: created
-      bar: world
+      configuration:
+        foo: created
+        bar: world
+      epoch: e1
       """
 
   Scenario: Creating configuration without the role

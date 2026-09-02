@@ -201,12 +201,13 @@ The configuration of a component for an epoch is:
 
 ### Operations
 
-- `get({ component, epoch? })`: the configuration, or `null` when there is none. The epoch
-  is the deployed one when omitted.
+- `get({ component, epoch? })`: the configuration with the schema it is checked against, as
+  `{ configuration, schema, epoch }`, or `null` when there is none. The epoch is the deployed
+  one when omitted; an epoch the deployment does not know has no `schema`.
 - `fetch([{ component, epoch }])`: the same for several pairs at once, as
   `[{ component, epoch, configuration }]`.
 - `list()`: every component's configuration for its deployed epoch, by component name, as
-  `[{ component, epoch, configuration }]`.
+  `[{ component, epoch, schema, configuration }]`.
 - `create({ component, configuration, originator })`: a new object for the component's
   deployed epoch. The configuration must satisfy the schema. Errors: `UNKNOWN_COMPONENT`,
   `INVALID_CONFIGURATION`.
@@ -223,14 +224,23 @@ object as stored.
 | `POST` | `/configuration/values/:component/`   | `system:configuration:create` |
 
 `GET /configuration/values/` lists every component's configuration for its deployed epoch, by
-component name, as `[{ component, epoch, configuration }]`.
+component name, as `[{ component, epoch, schema, configuration }]`.
 
-`GET /configuration/values/:component/` returns the configuration for the deployed epoch,
-`404` when there is none.
+`GET /configuration/values/:component/` returns `{ configuration, schema, epoch }` for the
+deployed epoch, `404` when there is none.
 
 `POST` takes `{ configuration }`, records the Identity as the `originator`, and returns
 `{ id, epoch }`. A configuration not satisfying the schema, or an unknown component, is
 `422`.
+
+## UI
+
+The values service serves a page listing the configured components and creating
+configurations, mounted at `/.configuration` on port `8003`. Reading it needs the
+`system:configuration:get` role, creating needs `system:configuration:create`.
+
+The page is always published: unlike the introspection annotation, the configuration
+annotation is the per-component values map and has nowhere to carry a switch.
 
 ## Aspect
 

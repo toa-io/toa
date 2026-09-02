@@ -43,9 +43,20 @@ operations:
           type: string
       required:
         - component
+    # the value and the schema it is checked against, so a caller can show and check it
     output:
       type: object
       nullable: true
+      properties:
+        configuration:
+          type: object
+        schema:
+          type: object
+        epoch:
+          type: string
+      required:
+        - configuration
+        - epoch
   # the same for many at once, as the aspects of one process ask
   fetch:
     query: false
@@ -92,11 +103,14 @@ operations:
             type: string
           epoch:
             type: string
+          schema:
+            type: object
           configuration:
             type: object
         required:
           - component
           - epoch
+          - schema
           - configuration
   create:
     query: false
