@@ -1,7 +1,6 @@
 <script lang="ts">
   import { untrack } from 'svelte'
   import { Textarea } from '$ui/textarea'
-  import { Label } from '$ui/label'
   import { Button } from '$ui/button'
   import { onsubmit as handler } from '$lib/tools'
   import { dict } from './intl'
@@ -32,20 +31,22 @@
 </script>
 
 <form onsubmit={handler(submit)} class={['flex flex-col gap-3', className]}>
-  <Label for="configuration-value-input">{$dict.create.editor}</Label>
-
+  <!-- the dialog's title says what this is; the field carries the name for a reader
+       that cannot see the title -->
   <Textarea
     id="configuration-value-input"
+    aria-label={$dict.create.editor}
     bind:value={text}
     spellcheck={false}
     autocapitalize="off"
     aria-invalid={errors.length > 0}
     aria-describedby={errors.length > 0 ? 'configuration-errors' : undefined}
-    class="min-h-64 font-mono text-xs"
+    class="field-sizing-fixed h-[min(55vh,32rem)] min-h-48 font-mono text-xs"
   />
 
-  <!-- the room is held whether or not anything is wrong, so the dialog does not jump -->
-  <div id="configuration-errors" class="text-destructive min-h-8 font-mono text-xs">
+  <!-- no room is held for it: an empty band under the editor reads as a gap, and the
+       dialog is centred, so what it costs when something is wrong is half a line -->
+  <div id="configuration-errors" class="text-destructive empty:hidden font-mono text-xs">
     {#each errors as error, at (at)}
       <div>{error}</div>
     {/each}

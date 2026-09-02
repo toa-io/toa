@@ -23,11 +23,10 @@ export const dictionaries = {
       "title": "Configuration"
     },
     "create": {
-      "action": "New",
-      "title": "New configuration",
-      "description": "A configuration is never changed. Creating one replaces the whole of it, so what is left out here is left out of the component.",
+      "action": "Edit",
+      "title": "Edit configuration",
       "editor": "Configuration",
-      "submit": "Create",
+      "submit": "Update",
       "cancel": "Cancel",
       "malformed": "This is not valid YAML.",
       "failed": "The configuration could not be created."

@@ -25,20 +25,17 @@ inputs:
       context: heading over the component's current configuration
   create:
     action:
-      input: New
-      context: button that opens the dialog creating a configuration
+      input: Edit
+      context: "button that opens the dialog for changing a component's configuration. A change is stored as a new immutable object, but the reader edits what is there, so the word is the reader's, not the service's"
     title:
-      input: New configuration
+      input: Edit configuration
       context: title of that dialog
-    description:
-      input: A configuration is never changed. Creating one replaces the whole of it, so what is left out here is left out of the component.
-      context: warns the reader that the editor's content becomes the entire new configuration
     editor:
       input: Configuration
       context: accessible name of the text area holding the configuration as YAML
     submit:
-      input: Create
-      context: button that sends the configuration
+      input: Update
+      context: button that sends the edited configuration
     cancel:
       input: Cancel
       context: button that closes the dialog without creating anything

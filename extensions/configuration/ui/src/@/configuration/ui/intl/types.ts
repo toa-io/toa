@@ -19,7 +19,6 @@ export type Dictionary = {
       create: {
         action: string
         title: string
-        description: string
         editor: string
         submit: string
         cancel: string

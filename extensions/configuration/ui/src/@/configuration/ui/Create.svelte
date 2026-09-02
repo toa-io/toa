@@ -1,6 +1,6 @@
 <script lang="ts">
   import { dump } from 'js-yaml'
-  import { Plus } from '@lucide/svelte'
+  import { Pencil } from '@lucide/svelte'
   import { create } from '@/configuration'
   import { buttonVariants } from '$ui/button'
   import * as Dialog from '$ui/alert-dialog'
@@ -30,17 +30,22 @@
 
 <Dialog.Root bind:open>
   <Dialog.Trigger
-    id="configuration-new-button"
+    id="configuration-edit-button"
     class={buttonVariants({ variant: 'outline', size: 'sm' })}
   >
-    <Plus />
+    <Pencil />
     {$dict.create.action}
   </Dialog.Trigger>
 
-  <Dialog.Content class="sm:max-w-2xl">
+  <!-- the width goes through the same `data-size` variant the component styles itself with:
+       a plain `sm:max-w-*` loses to it on specificity, and tailwind-merge, seeing a different
+       variant, keeps both. An editor takes the room the screen has rather than a fixed step. -->
+  <Dialog.Content
+    class="data-[size=default]:max-w-[calc(100vw-2rem)]
+      data-[size=default]:sm:max-w-[min(90vw,72rem)]"
+  >
     <Dialog.Header>
       <Dialog.Title>{$dict.create.title}</Dialog.Title>
-      <Dialog.Description>{$dict.create.description}</Dialog.Description>
     </Dialog.Header>
 
     <!-- keyed on the text the dialog opened with, so a reopened dialog is not the one
