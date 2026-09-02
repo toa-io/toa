@@ -1,9 +1,9 @@
 import assert from 'node:assert'
 import { generate } from 'randomstring'
 import { timeout } from '@toa.io/generic'
-import { Effect as Encrypt } from './encrypt'
-import { Computation as Decrypt } from './decrypt'
-import { type Context, type Identity } from './lib'
+import { Effect as Encrypt } from './encrypt.js'
+import { Computation as Decrypt } from './decrypt.js'
+import { type Context, type Identity } from './lib/index.js'
 import type { Secret } from '@toa.io/types'
 
 let encrypt: Encrypt

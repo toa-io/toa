@@ -1,8 +1,8 @@
 import { Locator } from '@toa.io/core'
 import { generate } from 'randomstring'
-import { fit, local, overridden } from './configuration'
-import { Secret } from './Secret'
-import { type Manifest } from './manifest'
+import { fit, local, overridden } from './configuration.js'
+import { Secret } from './Secret.js'
+import { type Manifest } from './manifest.js'
 
 let locator: Locator
 let manifest: Manifest

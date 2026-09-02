@@ -1,4 +1,4 @@
-import { negotiate } from './negotiate'
+import { negotiate } from './negotiate.js'
 
 it('should return acceptable', async () => {
   const accept = 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp'

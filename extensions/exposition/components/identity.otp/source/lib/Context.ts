@@ -1,5 +1,5 @@
 import type { Call, Observation, Stash, telemetry } from '@toa.io/types'
-import type { Entity } from './Entity'
+import type { Entity } from './Entity.js'
 
 export interface Context {
   stash: Stash

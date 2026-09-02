@@ -1,4 +1,4 @@
-import * as _core from './connector'
+import * as _core from './connector.js'
 
 declare namespace toa.core {
 

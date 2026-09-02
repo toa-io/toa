@@ -1,8 +1,8 @@
 import { Connector, type Locator, type Message, type Receiver } from '@toa.io/core'
 import { timeout } from '@toa.io/generic'
-import { Client, type Fetched } from './Client'
-import { EVENT } from './const'
-import type { Bootloader } from './Factory'
+import { Client, type Fetched } from './Client.js'
+import { EVENT } from './const.js'
+import type { Bootloader } from './Factory.js'
 
 class Remote extends Connector {
   public readonly invoke = jest.fn(async (_endpoint: string, request: { input: Array<{ component: string, epoch: string }> }) =>

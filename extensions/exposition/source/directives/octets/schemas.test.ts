@@ -1,4 +1,4 @@
-import * as schemas from './schemas'
+import * as schemas from './schemas.js'
 
 describe('workflow', () => {
   const ok = [

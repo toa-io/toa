@@ -3,12 +3,12 @@ import * as streamConsumers from 'node:stream/consumers'
 import { once } from 'node:events'
 import { generate } from 'randomstring'
 import * as msgpack from 'msgpackr'
-import { multipart, read, type OutgoingMessage } from './messages'
-import { BadRequest, UnsupportedMediaType } from './exceptions'
-import { formats } from './formats'
-import { Timing } from './Timing'
+import { multipart, read, type OutgoingMessage } from './messages.js'
+import { BadRequest, UnsupportedMediaType } from './exceptions.js'
+import { formats } from './formats/index.js'
+import { Timing } from './Timing.js'
 import type * as http from 'node:http'
-import type { Context } from './Context'
+import type { Context } from './Context.js'
 
 beforeEach(() => {
   jest.clearAllMocks()

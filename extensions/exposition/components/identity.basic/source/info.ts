@@ -1,4 +1,4 @@
-import type { Context, Entity } from './types'
+import type { Context, Entity } from './types.js'
 
 export async function effect ({ authority, identity }: Input, context: Context): Promise<Output | null> {
   const object = await context.local.observe({ query: { id: identity } })

@@ -1,9 +1,9 @@
-import { Console, record } from './Console'
-import { current } from './tracing'
-import { consoleExporter, exporters, exporting, flush, recording } from './exporters'
-import { Otlp } from './Otlp'
-import { traces } from './traces'
-import type { Exporter, Span } from './exporters'
+import { Console, record } from './Console.js'
+import { current } from './tracing.js'
+import { consoleExporter, exporters, exporting, flush, recording } from './exporters.js'
+import { Otlp } from './Otlp.js'
+import { traces } from './traces.js'
+import type { Exporter, Span } from './exporters.js'
 
 afterEach(() => {
   traces()
@@ -43,7 +43,7 @@ describe('traces', () => {
     let copy!: { exporting: typeof exporting, exporters: typeof exporters }
 
     jest.isolateModules(() => {
-      copy = require('./exporters')
+      copy = require('./exporters.js')
     })
 
     const exporter: Exporter = { export: () => undefined }

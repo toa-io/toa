@@ -1,7 +1,7 @@
 import { generate } from 'randomstring'
-import { createVariables } from './createVariables'
+import { createVariables } from './createVariables.js'
 import type { Variable, Variables } from '@toa.io/operations'
-import type { Request } from './Deployment'
+import type { Request } from './Deployment.js'
 
 it('should create from selector', async () => {
   const id = generate()

@@ -1,4 +1,4 @@
-import type { Context } from './types'
+import type { Context } from './types.js'
 
 export async function computation (input: Input, context: Context): Promise<void | null | Error> {
   const username = Buffer.from(input.username, 'base64url').toString()

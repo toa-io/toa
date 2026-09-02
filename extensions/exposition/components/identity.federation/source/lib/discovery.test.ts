@@ -1,6 +1,6 @@
-import { createRemoteJWKSet, discover } from './discovery'
-import { load } from './jose'
-import type { Fetch } from '../types/context'
+import { createRemoteJWKSet, discover } from './discovery.js'
+import { load } from './jose.js'
+import type { Fetch } from '../types/context.js'
 
 it('discovers an issuer using the component fetch', async () => {
   const iss = `https://${Math.random().toString(36).slice(2)}.example.com`

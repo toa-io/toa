@@ -1,5 +1,5 @@
 import { generate } from 'randomstring'
-import { normalize } from './annotation'
+import { normalize } from './annotation.js'
 
 it('should expand string', async () => {
   const declaration = uri()

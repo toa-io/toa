@@ -1,7 +1,7 @@
-export { Factory } from './Factory'
-export { manifest } from './manifest'
-export { components } from './Composition'
-export * from './extension'
+export { Factory } from './Factory.js'
+export { manifest } from './manifest.js'
+export { components } from './Composition.js'
+export * from './extension.js'
 
-export type { Annotation, Declaration, Options, Settings } from './annotation'
-export type * from './model'
+export type { Annotation, Declaration, Options, Settings } from './annotation.js'
+export type * from './model.js'

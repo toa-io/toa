@@ -5,8 +5,8 @@ import { load as parse } from 'js-yaml'
 import * as stage from '@toa.io/userland/stage'
 import { type Component, type Request } from '@toa.io/core'
 import { timeout } from '@toa.io/generic'
-import { parse as parseRoutes, type Declaration } from '../../source/extension'
-import { Realtime } from './Realtime'
+import { parse as parseRoutes, type Declaration } from '../../source/extension.js'
+import { Realtime } from './Realtime.js'
 
 @binding([Realtime])
 export class Components {

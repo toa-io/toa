@@ -1,5 +1,5 @@
 import { bridges } from '@toa.io/core'
-import * as _context from './context'
+import * as _context from './context.js'
 import * as _core from '@toa.io/core'
 
 declare namespace toa.node {

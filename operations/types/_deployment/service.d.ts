@@ -1,4 +1,4 @@
-import type * as _deployment from './deployment'
+import type * as _deployment from './deployment.js'
 
 declare namespace toa.deployment {
 

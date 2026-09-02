@@ -1,8 +1,8 @@
-import { options } from './annotation'
-import { components } from './Composition'
-import { ENV, UI_PATH, UI_PORT } from './const'
-import * as schemas from './schemas'
-import type { Annotation } from './annotation'
+import { options } from './annotation.js'
+import { components } from './Composition.js'
+import { ENV, UI_PATH, UI_PORT } from './const.js'
+import * as schemas from './schemas.js'
+import type { Annotation } from './annotation.js'
 import type { Dependency, Instances, Service } from '@toa.io/operations'
 
 export const standalone = true

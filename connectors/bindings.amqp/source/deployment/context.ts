@@ -2,7 +2,7 @@ import { type Dependency, type Variable } from '@toa.io/operations'
 import { resolveRecord, naming } from '@toa.io/pointer'
 import { type Locator } from '@toa.io/core'
 import { type AnnotationRecord } from '@toa.io/pointer/transpiled/Deployment'
-import { type Annotation } from './annotation'
+import { type Annotation } from './annotation.js'
 import type { URIMap } from '@toa.io/pointer'
 
 export function createDependency (context: Context): Dependency {

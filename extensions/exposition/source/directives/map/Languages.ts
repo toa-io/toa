@@ -1,5 +1,5 @@
 import assert from 'node:assert'
-import { Property } from './Properties'
+import { Property } from './Properties.js'
 
 export class Languages extends Property<'languages'> {
   public constructor (value: string[]) {

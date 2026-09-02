@@ -1,5 +1,5 @@
-import { decide } from './Branch'
-import type { Branch, Exposed } from './Branch'
+import { decide } from './Branch.js'
+import type { Branch, Exposed } from './Branch.js'
 
 function branch (version: string, timestamp: number): Branch {
   return {

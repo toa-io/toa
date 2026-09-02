@@ -1,8 +1,8 @@
 import { setTimeout } from 'node:timers/promises'
-import { Quotas } from './Quotas'
-import type { Batch } from './Sync'
-import type { Configuration } from './Configuration'
-import type { Input as Context, Output } from '../../../../io'
+import { Quotas } from './Quotas.js'
+import type { Batch } from './Sync.js'
+import type { Configuration } from './Configuration.js'
+import type { Input as Context, Output } from '../../../../io.js'
 
 let quotas: Quotas
 let configuration: Configuration

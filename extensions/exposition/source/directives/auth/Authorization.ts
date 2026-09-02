@@ -2,25 +2,25 @@ import assert from 'node:assert'
 import { match } from 'matchacho'
 import { console } from 'openspan'
 import { Minimatch } from 'minimatch'
-import * as http from '../../HTTP'
-import { Anonymous } from './Anonymous'
-import { Id } from './Id'
-import { Role } from './Role'
-import { Rule } from './Rule'
-import { Incept } from './Incept'
-import { Assert } from './Assert'
-import { Echo } from './Echo'
-import { Scheme } from './Scheme'
-import { Delegate } from './Delegate'
-import { Federation } from './Federation'
-import { Anyone } from './Anyone'
-import { Input, type Declaration } from './Input'
-import { split } from './split'
-import { PRIMARY, PROVIDERS } from './schemes'
-import type { Output } from '../../io'
+import * as http from '../../HTTP/index.js'
+import { Anonymous } from './Anonymous.js'
+import { Id } from './Id.js'
+import { Role } from './Role.js'
+import { Rule } from './Rule.js'
+import { Incept } from './Incept.js'
+import { Assert } from './Assert.js'
+import { Echo } from './Echo.js'
+import { Scheme } from './Scheme.js'
+import { Delegate } from './Delegate.js'
+import { Federation } from './Federation.js'
+import { Anyone } from './Anyone.js'
+import { Input, type Declaration } from './Input.js'
+import { split } from './split.js'
+import { PRIMARY, PROVIDERS } from './schemes.js'
+import type { Output } from '../../io.js'
 import type { Component } from '@toa.io/core'
-import type { Remotes } from '../../Remotes'
-import type { Parameter, DirectiveFamily } from '../../RTD'
+import type { Remotes } from '../../Remotes.js'
+import type { Parameter, DirectiveFamily } from '../../RTD/index.js'
 import type {
   AuthenticationResult,
   Ban,
@@ -31,7 +31,7 @@ import type {
   Context,
   Remote,
   Schemes
-} from './types'
+} from './types.js'
 
 export class Authorization implements DirectiveFamily<Directive, Extension> {
   public readonly depends: string[] = ['Vary']

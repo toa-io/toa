@@ -1,8 +1,8 @@
 import { Connector, Locator } from '@toa.io/core'
 import { generate } from 'randomstring'
-import { Aspect } from './Aspect'
-import type { Client, Listener } from './Client'
-import type { Manifest } from './manifest'
+import { Aspect } from './Aspect.js'
+import type { Client, Listener } from './Client.js'
+import type { Manifest } from './manifest.js'
 
 class Fake extends Connector {
   public readonly fetch = jest.fn(async () => ({ configuration: { foo: 'served' }, created: 5 }))

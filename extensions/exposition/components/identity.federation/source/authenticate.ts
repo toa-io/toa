@@ -1,8 +1,8 @@
 import { newid } from '@toa.io/generic'
-import { resolve } from './lib'
+import { resolve } from './lib/index.js'
 import type { JWTPayload } from 'jose'
 import type { Maybe } from '@toa.io/types'
-import type { Context, Scheme } from './types'
+import type { Context, Scheme } from './types/index.js'
 
 export async function effect ({ scheme, authority, credentials }: Input, context: Context): Promise<Maybe<Output>> {
   context.logs.debug('Authenticating', { scheme, authority, credentials })

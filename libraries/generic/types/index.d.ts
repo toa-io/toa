@@ -32,7 +32,7 @@ export function find (reference: string, base: string, indicator?: string): stri
 
 export function match (candidate: any, reference: any): boolean
 
-export { promex } from './promex'
-export { merge, add, overwrite } from './merge'
-export { map } from './map'
-export * as letters from './letters'
+export { promex } from './promex.js'
+export { merge, add, overwrite } from './merge.js'
+export { map } from './map.js'
+export * as letters from './letters.js'

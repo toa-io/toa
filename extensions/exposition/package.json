@@ -17,7 +17,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@simplewebauthn/server": "13.3.3",
+    "@simplewebauthn/server": "14.0.0",
     "@toa.io/core": "1.0.0-alpha.273",
     "@toa.io/generic": "1.0.0-alpha.273",
     "@toa.io/schemas": "1.0.0-alpha.274",
@@ -59,7 +59,10 @@
     "transform": {
       "^.+\\.ts$": "jest-esbuild"
     },
-    "testEnvironment": "node"
+    "testEnvironment": "node",
+    "moduleNameMapper": {
+      "^(\\.{1,2}/.*)\\.js$": "$1"
+    }
   },
   "gitHead": "2ab75e1fd23f2e64720a60b8562dda606aa723ee"
 }

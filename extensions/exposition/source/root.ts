@@ -1,5 +1,5 @@
 import { merge } from '@toa.io/generic'
-import { syntax } from './RTD'
+import { syntax } from './RTD/index.js'
 
 export function resolve (): syntax.Node {
   const value = process.env.TOA_EXPOSITION

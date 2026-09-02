@@ -1,4 +1,4 @@
-import { VARIABLE, components, entry } from './map'
+import { VARIABLE, components, entry } from './map.js'
 
 afterEach(() => {
   delete process.env[VARIABLE]

@@ -1,7 +1,7 @@
 import assert from 'node:assert'
-import { parse, type Node, type Method, type Query } from './RTD/syntax'
-import { shortcuts } from './Directive'
-import * as schemas from './schemas'
+import { parse, type Node, type Method, type Query } from './RTD/syntax/index.js'
+import { shortcuts } from './Directive.js'
+import * as schemas from './schemas.js'
 import type { Manifest } from '@toa.io/norm'
 
 export function manifest (declaration: object, manifest: Manifest): Node {

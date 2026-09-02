@@ -1,4 +1,4 @@
-import { Ready } from './Ready'
+import { Ready } from './Ready.js'
 
 let send: jest.Mock
 let original: typeof process.send

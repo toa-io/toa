@@ -1,6 +1,6 @@
-import type { Request, Reply } from './request'
-import type { Context } from './context'
-import type { Connector } from './connector'
+import type { Request, Reply } from './request.js'
+import type { Context } from './context.js'
+import type { Connector } from './connector.js'
 
 export interface Algorithm {
   mount: (context?: Context) => Promise<void>

@@ -1,5 +1,5 @@
-import type * as io from '../../io'
-import type { Identity } from '../auth/types' // meh
+import type * as io from '../../io.js'
+import type { Identity } from '../auth/types.js' // meh
 
 export interface Extension {
   identity?: Identity

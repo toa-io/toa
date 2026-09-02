@@ -1,6 +1,6 @@
 import * as undici from 'undici'
-import * as parser from './parse'
-import type { HTTPRequest } from './parse/request'
+import * as parser from './parse/index.js'
+import type { HTTPRequest } from './parse/request.js'
 
 const pools = new Map<string, undici.Pool>()
 

@@ -1,4 +1,4 @@
-import { epoch } from './epoch'
+import { epoch } from './epoch.js'
 
 it('should be a sha256 hex', () => {
   expect(epoch({ type: 'object' })).toMatch(/^[a-f0-9]{64}$/)

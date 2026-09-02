@@ -1,5 +1,5 @@
-import * as _message from './message'
-import * as _connector from './connector'
+import * as _message from './message.js'
+import * as _connector from './connector.js'
 
 declare namespace toa.core {
 

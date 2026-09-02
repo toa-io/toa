@@ -6,9 +6,9 @@ import { once } from 'node:events'
 import { setTimeout } from 'node:timers/promises'
 import { console, current, decide, decode, run, type SpanContext } from 'openspan'
 import { Connector } from '@toa.io/core'
-import { type OutgoingMessage, write } from './messages'
-import { ClientError, Exception } from './exceptions'
-import { Context, type IncomingMessage } from './Context'
+import { type OutgoingMessage, write } from './messages.js'
+import { ClientError, Exception } from './exceptions.js'
+import { Context, type IncomingMessage } from './Context.js'
 
 export class Server extends Connector {
   private readonly server: http.Server = http.createServer()

@@ -2,8 +2,8 @@ import assert from 'node:assert'
 import * as http from 'node:http'
 import { resolve } from 'node:path'
 import { after, binding, given, then, when } from 'cucumber-tsflow'
-import { UI } from '../../source/UI'
-import { UI_PORT } from '../../source/const'
+import { UI } from '../../source/UI.js'
+import { UI_PORT } from '../../source/const.js'
 
 /**
  * The scenarios are about the server, not about the page: it is pointed at a fixture

@@ -1,8 +1,8 @@
-import { components } from './Composition'
+import { components } from './Composition.js'
 import type { Dependency, Instances, Resources, Service } from '@toa.io/operations'
 
 export const standalone = true
-export { components } from './Composition'
+export { components } from './Composition.js'
 
 export function deployment (instances: Instances<Declaration>, annotation?: Declaration & Annotation): Dependency {
   const routes = []

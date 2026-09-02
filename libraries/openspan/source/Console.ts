@@ -1,7 +1,7 @@
-import { create, current, run } from './tracing'
-import { exporters } from './exporters'
-import type { Span } from './exporters'
-import type { SpanContext } from './tracing'
+import { create, current, run } from './tracing.js'
+import { exporters } from './exporters.js'
+import type { Span } from './exporters.js'
+import type { SpanContext } from './tracing.js'
 
 export class Console {
   public readonly trace = this.channel('trace')

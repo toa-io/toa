@@ -1,6 +1,6 @@
 import { generate } from 'randomstring'
-import { Computation as Authenticate } from './authenticate'
-import type { Configuration, Context, DecryptOutput, Identity } from './lib'
+import { Computation as Authenticate } from './authenticate.js'
+import type { Configuration, Context, DecryptOutput, Identity } from './lib/index.js'
 import type { Secret } from '@toa.io/types'
 
 let configuration: Configuration

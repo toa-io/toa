@@ -1,15 +1,15 @@
 import { Readable } from 'node:stream'
 import assert from 'node:assert'
 import { match } from 'matchacho'
-import { NotFound } from '../../HTTP'
-import type { Directive } from './types'
+import { NotFound } from '../../HTTP/index.js'
+import type { Directive } from './types.js'
 import type { ReadableStream } from 'node:stream/web'
-import type { Remotes } from '../../Remotes'
+import type { Remotes } from '../../Remotes.js'
 import type { Maybe } from '@toa.io/types'
 import type { Component } from '@toa.io/core'
-import type { Output } from '../../io'
-import type { Input } from '../octets/types'
-import type { Parameter } from '../../RTD'
+import type { Output } from '../../io.js'
+import type { Input } from '../octets/types.js'
+import type { Parameter } from '../../RTD/index.js'
 
 export class Fetch implements Directive {
   private readonly connecting: Promise<Component>

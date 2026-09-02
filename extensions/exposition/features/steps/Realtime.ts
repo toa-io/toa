@@ -6,9 +6,9 @@ import * as boot from '@toa.io/boot'
 import { match } from '@toa.io/generic'
 import { load as parse } from 'js-yaml'
 import { Agent } from '@toa.io/agent'
-import { Parameters } from './Parameters'
-import { Gateway } from './Gateway'
-import { Captures } from './Captures'
+import { Parameters } from './Parameters.js'
+import { Gateway } from './Gateway.js'
+import { Captures } from './Captures.js'
 import type { Connector } from '@toa.io/core'
 
 @binding([Gateway, Parameters, Captures])

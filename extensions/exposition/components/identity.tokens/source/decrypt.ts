@@ -1,9 +1,9 @@
 import { V3 } from 'paseto'
 import { LRUCache } from 'lru-cache'
-import { jweKey } from './lib'
-import { load } from './lib/jose'
+import { jweKey } from './lib/index.js'
+import { load } from './lib/jose.js'
 import type { Maybe, Operation } from '@toa.io/types'
-import type { Context, Claims, DecryptOutput, JWEClaims } from './lib'
+import type { Context, Claims, DecryptOutput, JWEClaims } from './lib/index.js'
 
 export class Computation implements Operation {
   private readonly keys: Record<string, Key> = {}

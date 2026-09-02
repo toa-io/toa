@@ -1,7 +1,7 @@
 import { Operation } from '@toa.io/norm/types'
 import { Node, Statement } from '@babel/types'
-import * as _context from './context'
-import * as _algorithm from './algorithms'
+import * as _context from './context.js'
+import * as _algorithm from './algorithms.js'
 
 declare namespace toa.node.define{
 

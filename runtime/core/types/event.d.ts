@@ -1,4 +1,4 @@
-import * as _state from './state'
+import * as _state from './state.js'
 
 declare namespace toa.core {
 

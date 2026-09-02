@@ -1,4 +1,4 @@
-import { computation } from './list'
+import { computation } from './list.js'
 
 it('lists indexed credentials', async () => {
   const current = { id: 'credential', authority: 'nex', identity: 'identity', iss: 'apple', sub: '1', _created: 2 }

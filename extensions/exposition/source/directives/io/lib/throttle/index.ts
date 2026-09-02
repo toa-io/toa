@@ -1,3 +1,3 @@
-export { Quotas } from './Quotas'
-export { Sync } from './Sync'
-export { parse, type Configuration, type Declaration } from './Configuration'
+export { Quotas } from './Quotas.js'
+export { Sync } from './Sync.js'
+export { parse, type Configuration, type Declaration } from './Configuration.js'

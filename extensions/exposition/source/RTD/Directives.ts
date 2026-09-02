@@ -1,7 +1,7 @@
-import type { Parameter } from './Match'
-import type * as syntax from './syntax'
-import type { Context, OutgoingMessage } from '../HTTP'
-import type { Output } from '../io'
+import type { Parameter } from './Match.js'
+import type * as syntax from './syntax/index.js'
+import type { Context, OutgoingMessage } from '../HTTP/index.js'
+import type { Output } from '../io.js'
 
 export interface Directives {
   preflight: (context: Context, parameters: Parameter[]) => Promise<Output>

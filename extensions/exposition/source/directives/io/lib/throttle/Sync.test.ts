@@ -1,8 +1,8 @@
-import { Sync } from './Sync'
-import { Quotas } from './Quotas'
+import { Sync } from './Sync.js'
+import { Quotas } from './Quotas.js'
 import type { Remote } from '@toa.io/core'
-import type { Configuration } from './Configuration'
-import type { Input as Context } from '../../../../io'
+import type { Configuration } from './Configuration.js'
+import type { Input as Context } from '../../../../io.js'
 
 let sync: Sync
 let invocations: Input[]

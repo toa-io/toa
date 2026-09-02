@@ -20,7 +20,7 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@rsql/parser": "1.2.4",
+    "@rsql/parser": "1.6.0",
     "@toa.io/generic": "1.0.0-alpha.273",
     "js-yaml": "5.4.1",
     "openspan": "1.0.0-alpha.272",

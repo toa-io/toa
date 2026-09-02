@@ -1,7 +1,7 @@
 import type { JWTPayload } from 'jose'
 import type { Call, Observation, Query, telemetry, Transition } from '@toa.io/types'
-import type { Entity } from './entity'
-import type { Configuration } from './configuration'
+import type { Entity } from './entity.js'
+import type { Configuration } from './configuration.js'
 
 export interface Context {
   fetch: Fetch

@@ -1,4 +1,4 @@
-import { type Manifest, manifest } from './manifest'
+import { type Manifest, manifest } from './manifest.js'
 
 it('should validate', async () => {
   const additional = { schema: {}, foo: 'bar' } as unknown as Manifest

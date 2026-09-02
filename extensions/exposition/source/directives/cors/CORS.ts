@@ -1,5 +1,5 @@
-import type { Input, Output } from '../../io'
-import type { Interceptor } from '../../Interception'
+import type { Input, Output } from '../../io.js'
+import type { Interceptor } from '../../Interception.js'
 
 /** What is allowed before any directive asks for more. */
 const REQUEST_HEADERS = [

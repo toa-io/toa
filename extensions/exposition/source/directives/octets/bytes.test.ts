@@ -1,4 +1,4 @@
-import { toBytes } from './bytes'
+import { toBytes } from './bytes.js'
 
 it('should parse bytes', async () => {
   expect(toBytes('10')).toBe(10)

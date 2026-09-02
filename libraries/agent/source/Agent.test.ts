@@ -1,6 +1,6 @@
 /* eslint-disable no-template-curly-in-string */
 
-import { Agent } from './Agent'
+import { Agent } from './Agent.js'
 
 let agent: Agent
 

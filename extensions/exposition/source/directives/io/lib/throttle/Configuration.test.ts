@@ -1,4 +1,4 @@
-import { parse, type Configuration } from './Configuration'
+import { parse, type Configuration } from './Configuration.js'
 
 const rest: Omit<Configuration, 'key' | 'condition'> = {
   interval: 1,

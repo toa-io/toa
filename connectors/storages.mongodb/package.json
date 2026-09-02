@@ -23,7 +23,7 @@
     "@toa.io/core": "1.0.0-alpha.273",
     "@toa.io/generic": "1.0.0-alpha.273",
     "@toa.io/pointer": "1.0.0-alpha.274",
-    "mongodb": "7.2.0",
+    "mongodb": "7.6.0",
     "openspan": "1.0.0-alpha.272",
     "saslprep": "1.0.3"
   },

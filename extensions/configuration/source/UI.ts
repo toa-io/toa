@@ -3,7 +3,7 @@ import * as http from 'node:http'
 import * as path from 'node:path'
 import { Connector } from '@toa.io/core'
 import { console } from 'openspan'
-import { UI_PATH } from './const'
+import { UI_PATH } from './const.js'
 
 /**
  * Serves the configuration UI: the directory `ui` builds, and nothing else.

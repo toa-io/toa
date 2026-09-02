@@ -1,7 +1,7 @@
 import { Locator } from '@toa.io/core'
-import { type Annotation, type Instance, deployment, describe as map } from './deployment'
-import { epoch } from './epoch'
-import { EVENT, VALUES } from './const'
+import { type Annotation, type Instance, deployment, describe as map } from './deployment.js'
+import { epoch } from './epoch.js'
+import { EVENT, VALUES } from './const.js'
 
 const schema = {
   type: 'object',

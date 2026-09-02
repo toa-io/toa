@@ -1,12 +1,12 @@
 import { Readable } from 'node:stream'
 import { console } from 'openspan'
-import { Mapping } from './Mapping'
-import * as http from './HTTP'
-import type { Introspection, Schema } from './Introspection'
+import { Mapping } from './Mapping.js'
+import * as http from './HTTP/index.js'
+import type { Introspection, Schema } from './Introspection.js'
 import type { Remote } from '@toa.io/core'
-import type { Remotes } from './Remotes'
-import type { Context } from './Context'
-import type * as RTD from './RTD'
+import type { Remotes } from './Remotes.js'
+import type { Context } from './Context.js'
+import type * as RTD from './RTD/index.js'
 
 export class Endpoint implements RTD.Endpoint {
   private readonly endpoint: string

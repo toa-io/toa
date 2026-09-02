@@ -1,8 +1,8 @@
 import assert from 'node:assert'
-import { ServiceUnavailable } from '../../HTTP'
-import { cors } from '../cors'
-import type { Output } from '../../io'
-import type { Directive } from './types'
+import { ServiceUnavailable } from '../../HTTP/index.js'
+import { cors } from '../cors/index.js'
+import type { Output } from '../../io.js'
+import type { Directive } from './types.js'
 
 export class Faulty implements Directive {
   private static readonly warned = false

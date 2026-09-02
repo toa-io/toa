@@ -1,11 +1,11 @@
 import fs from 'node:fs/promises'
 import { createReadStream } from 'node:fs'
 import { dirname, join } from 'node:path'
-import { Provider } from '../Provider'
-import { ERR_NOT_FOUND } from '../errors'
+import { Provider } from '../Provider.js'
+import { ERR_NOT_FOUND } from '../errors.js'
 import type { Readable } from 'node:stream'
 import type { Maybe } from '@toa.io/types'
-import type { Metadata, Stream } from '../Entry'
+import type { Metadata, Stream } from '../Entry.js'
 
 export interface FileSystemOptions {
   path: string

@@ -5,9 +5,9 @@ import { binding, then, when } from 'cucumber-tsflow'
 import * as http from '@toa.io/agent'
 import * as msgpack from 'msgpackr'
 import * as YAML from 'js-yaml'
-import { Captures } from './Captures'
-import { Parameters } from './Parameters'
-import { Gateway } from './Gateway'
+import { Captures } from './Captures.js'
+import { Parameters } from './Parameters.js'
+import { Gateway } from './Gateway.js'
 import type { Readable } from 'node:stream'
 
 @binding([Gateway, Parameters, Captures])

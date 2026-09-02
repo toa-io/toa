@@ -1,4 +1,4 @@
-import type { Remote, Scheme } from './types'
+import type { Remote, Scheme } from './types.js'
 
 export const PROVIDERS: Record<Scheme, Remote> = {
   basic: 'basic',

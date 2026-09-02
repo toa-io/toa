@@ -9,7 +9,7 @@ import { match } from '@toa.io/generic'
 import * as boot from '@toa.io/boot'
 import { Locator } from '@toa.io/core'
 import * as stage from '@toa.io/userland/stage'
-import { Factory } from '../../source'
+import { Factory } from '../../source/index.js'
 import type { Component, Connector, Request } from '@toa.io/core'
 
 @binding()

@@ -1,4 +1,4 @@
-import { normalize } from './annotation'
+import { normalize } from './annotation.js'
 
 describe('normalize', () => {
   it('should expand default shards', async () => {

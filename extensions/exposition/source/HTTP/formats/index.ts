@@ -1,7 +1,7 @@
-import * as json from './json'
-import * as yaml from './yaml'
-import * as msgpack from './msgpack'
-import * as text from './text'
+import * as json from './json.js'
+import * as yaml from './yaml.js'
+import * as msgpack from './msgpack.js'
+import * as text from './text.js'
 
 export const formats: Record<string, Format> = {
   [json.type]: json,

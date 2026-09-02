@@ -1,8 +1,8 @@
-import { BadRequest } from '../../HTTP'
-import * as schemas from './schemas'
-import type { Message } from './Message'
-import type { Directive } from './Directive'
-import type { Input as Context } from '../../io'
+import { BadRequest } from '../../HTTP/index.js'
+import * as schemas from './schemas.js'
+import type { Message } from './Message.js'
+import type { Directive } from './Directive.js'
+import type { Input as Context } from '../../io.js'
 
 export class Input implements Directive {
   private readonly allowed: Set<string>

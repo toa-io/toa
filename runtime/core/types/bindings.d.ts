@@ -1,4 +1,4 @@
-import * as _core from './index'
+import * as _core from './index.js'
 
 declare namespace toa.core.bindings {
 

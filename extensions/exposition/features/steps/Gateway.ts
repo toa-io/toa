@@ -3,11 +3,11 @@ import * as boot from '@toa.io/boot'
 import { type Connector } from '@toa.io/core'
 import { load as parse } from 'js-yaml'
 import { timeout } from '@toa.io/generic'
-import { Factory } from '../../source'
-import * as syntax from '../../source/RTD/syntax'
-import { shortcuts } from '../../source/Directive'
-import { manifests } from './map'
-import type * as http from '../../source/HTTP'
+import { Factory } from '../../source/index.js'
+import * as syntax from '../../source/RTD/syntax/index.js'
+import { shortcuts } from '../../source/Directive.js'
+import { manifests } from './map.js'
+import type * as http from '../../source/HTTP/index.js'
 
 let instance: Connector | null = null
 

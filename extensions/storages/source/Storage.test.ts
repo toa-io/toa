@@ -3,11 +3,11 @@ import { buffer } from 'node:stream/consumers'
 import { createReadStream } from 'node:fs'
 import path from 'node:path'
 import assert from 'node:assert'
-import { Storage } from './Storage'
-import { suites } from './test/util'
-import { providers } from './providers'
-import type { Entry, Metadata, Stream } from './Entry'
-import type { Constructor } from './Provider'
+import { Storage } from './Storage.js'
+import { suites } from './test/util.js'
+import { providers } from './providers/index.js'
+import type { Entry, Metadata, Stream } from './Entry.js'
+import type { Constructor } from './Provider.js'
 
 jest.setTimeout(15_000)
 

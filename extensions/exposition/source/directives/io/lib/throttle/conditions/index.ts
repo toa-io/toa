@@ -1,6 +1,6 @@
-import { Status } from './Status'
-import type { KeyConditionMethod } from '../Configuration'
-import type { Condition } from './Condition'
+import { Status } from './Status.js'
+import type { KeyConditionMethod } from '../Configuration.js'
+import type { Condition } from './Condition.js'
 
 type Constructor<T> = new (options: unknown) => T
 

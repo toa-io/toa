@@ -1,4 +1,4 @@
-import { encode } from './yaml'
+import { encode } from './yaml.js'
 
 it('encodes error values as their public properties', () => {
   const value = new (class InvalidUsernameError extends Error {

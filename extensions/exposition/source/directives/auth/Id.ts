@@ -1,5 +1,5 @@
-import { type Parameter } from '../../RTD'
-import { type Directive, type Identity } from './types'
+import { type Parameter } from '../../RTD/index.js'
+import { type Directive, type Identity } from './types.js'
 
 export class Id implements Directive {
   private readonly parameter: string

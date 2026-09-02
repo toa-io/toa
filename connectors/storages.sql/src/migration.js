@@ -18,7 +18,7 @@ class Migration {
    * @param {string} client
    */
   constructor (client) {
-    this.#client = knex({ client, connection })
+    this.#client = knex({ client, connection: connection() })
     this.#driver = client
   }
 
@@ -63,7 +63,7 @@ class Migration {
   async #reconnect (database) {
     await this.disconnect()
 
-    const config = { client: this.#driver, connection: { ...connection, database } }
+    const config = { client: this.#driver, connection: { ...connection(), database } }
 
     this.#client = knex(config)
   }
@@ -80,10 +80,12 @@ class Migration {
   }
 }
 
-const connection = {
+// knex hides the password behind a non-enumerable property of the settings it is given,
+// so a shared object loses it the first time anything copies it
+const connection = () => ({
   user: 'developer',
   password: 'secret',
   database: 'postgres'
-}
+})
 
 exports.Migration = Migration

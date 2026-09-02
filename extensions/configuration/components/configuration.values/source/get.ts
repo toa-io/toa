@@ -1,5 +1,5 @@
-import { entry } from './lib/map'
-import { resolve, type Context } from './lib/resolve'
+import { entry } from './lib/map.js'
+import { resolve, type Context } from './lib/resolve.js'
 
 /**
  * The latest configuration of a component, with the schema it is checked against. The

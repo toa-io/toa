@@ -1,5 +1,5 @@
 import * as schemas from '@toa.io/schemas'
-import { entry } from './lib/map'
+import { entry } from './lib/map.js'
 import type { Schema } from '@toa.io/schemas'
 
 export async function transition (input: Input, object: Entity): Promise<Entity | Error> {

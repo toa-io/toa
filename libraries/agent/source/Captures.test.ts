@@ -1,7 +1,7 @@
 /* eslint-disable no-template-curly-in-string */
 
-import { Captures } from './Captures'
-import type { Functions } from './functions'
+import { Captures } from './Captures.js'
+import type { Functions } from './functions/index.js'
 
 let captures: Captures
 

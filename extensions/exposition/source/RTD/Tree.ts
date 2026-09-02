@@ -1,11 +1,11 @@
-import { branchTTL, createNode } from './factory'
-import { fragment } from './segment'
-import type { Node } from './Node'
-import type { Match } from './Match'
-import type { Context } from './Context'
-import type { DirectiveFactory } from './Directives'
-import type { EndpointsFactory } from './Endpoint'
-import type * as syntax from './syntax'
+import { branchTTL, createNode } from './factory.js'
+import { fragment } from './segment.js'
+import type { Node } from './Node.js'
+import type { Match } from './Match.js'
+import type { Context } from './Context.js'
+import type { DirectiveFactory } from './Directives.js'
+import type { EndpointsFactory } from './Endpoint.js'
+import type * as syntax from './syntax/index.js'
 
 export class Tree {
   private readonly root: syntax.Node

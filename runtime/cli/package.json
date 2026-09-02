@@ -33,7 +33,7 @@
     "jsonpath": "1.3.0",
     "openspan": "1.0.0-alpha.272",
     "paseto": "3.1.4",
-    "yargs": "18.0.0"
+    "yargs": "18.1.0"
   },
   "gitHead": "61c8e74a336385265767e9fd37d49128cb51b17f"
 }

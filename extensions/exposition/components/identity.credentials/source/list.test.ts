@@ -1,4 +1,4 @@
-import { Computation } from './list'
+import { Computation } from './list.js'
 
 it('aggregates only public credential properties', async () => {
   const operation = new Computation()

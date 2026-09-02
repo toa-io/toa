@@ -1,8 +1,8 @@
 import assert from 'node:assert'
-import { Mapping } from './Mapping'
+import { Mapping } from './Mapping.js'
 import type { Component } from '@toa.io/core'
-import type { Remotes } from '../../Remotes'
-import type { Input } from '../../io'
+import type { Remotes } from '../../Remotes.js'
+import type { Input } from '../../io.js'
 
 export class Claims extends Mapping<Record<string, string>> {
   private readonly discovery!: Promise<Component>

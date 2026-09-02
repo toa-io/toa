@@ -1,4 +1,4 @@
-import type { Input, Node } from './lib/types'
+import type { Input, Node } from './lib/types.js'
 
 /**
  * Records the components described by a collector since its last flush.

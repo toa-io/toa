@@ -1,10 +1,10 @@
 import { type Locator } from '@toa.io/core'
 import { add } from '@toa.io/generic'
 import * as schemas from '@toa.io/schemas'
-import { PREFIX, SECRET_RX } from './const'
-import { Secret } from './Secret'
+import { PREFIX, SECRET_RX } from './const.js'
+import { Secret } from './Secret.js'
 import type { Schema } from '@toa.io/schemas'
-import type { Manifest } from './manifest'
+import type { Manifest } from './manifest.js'
 
 /** The variable is set, so the values service is not consulted. */
 export function overridden (locator: Locator): boolean {

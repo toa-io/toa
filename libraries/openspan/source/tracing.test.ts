@@ -1,6 +1,6 @@
-import { create, current, decide, decode, encode, run, sampling } from './tracing'
-import { exporting } from './exporters'
-import type * as tracing from './tracing'
+import { create, current, decide, decode, encode, run, sampling } from './tracing.js'
+import { exporting } from './exporters.js'
+import type * as tracing from './tracing.js'
 
 const exporter = { export: () => undefined }
 
@@ -144,7 +144,7 @@ describe('module copies', () => {
 
   beforeEach(() => {
     jest.isolateModules(() => {
-      copy = require('./tracing')
+      copy = require('./tracing.js')
     })
   })
 

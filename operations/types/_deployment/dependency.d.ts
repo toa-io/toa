@@ -1,4 +1,4 @@
-import * as _service from './service'
+import * as _service from './service.js'
 import { dependencies } from '@toa.io/norm/types/context'
 
 declare namespace toa.deployment {

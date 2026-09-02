@@ -1,10 +1,10 @@
 import assert from 'node:assert'
 import { createReadStream } from 'node:fs'
 import { resolve } from 'node:path'
-import { suites } from '../test/util'
-import { providers } from './index'
-import type { Constructor } from '../Provider'
-import type { Metadata, Stream } from '../Entry'
+import { suites } from '../test/util.js'
+import { providers } from './index.js'
+import type { Constructor } from '../Provider.js'
+import type { Metadata, Stream } from '../Entry.js'
 
 const sample = resolve(__dirname, '../test/sample.jpeg')
 const lenna = resolve(__dirname, '../test/lenna.png')

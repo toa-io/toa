@@ -1,10 +1,10 @@
-import { Stub } from './Stub'
-import { Throw } from './Throw'
-import { Sleep } from './Sleep'
-import { Faulty } from './Faulty'
-import { type Directive } from './types'
-import type { Input, Output } from '../../io'
-import type { DirectiveFamily } from '../../RTD'
+import { Stub } from './Stub.js'
+import { Throw } from './Throw.js'
+import { Sleep } from './Sleep.js'
+import { Faulty } from './Faulty.js'
+import { type Directive } from './types.js'
+import type { Input, Output } from '../../io.js'
+import type { DirectiveFamily } from '../../RTD/index.js'
 
 export class Development implements DirectiveFamily<Directive> {
   public readonly name: string = 'dev'

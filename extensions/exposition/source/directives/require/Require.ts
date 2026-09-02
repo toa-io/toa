@@ -1,8 +1,8 @@
 import assert from 'node:assert'
-import { Headers } from './Headers'
-import type { Input } from '../../io'
-import type { Directive } from './Directive'
-import type { DirectiveFamily } from '../../RTD'
+import { Headers } from './Headers.js'
+import type { Input } from '../../io.js'
+import type { Directive } from './Directive.js'
+import type { DirectiveFamily } from '../../RTD/index.js'
 
 export class Require implements DirectiveFamily {
   public readonly name = 'require'

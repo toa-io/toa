@@ -1,6 +1,6 @@
 import type * as _norm from '@toa.io/norm/types'
-import type * as _dependency from './dependency'
-import type * as _image from './images/image'
+import type * as _dependency from './dependency.js'
+import type * as _image from './images/image.js'
 
 declare namespace toa.deployment {
 

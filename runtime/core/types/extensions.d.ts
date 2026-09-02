@@ -1,8 +1,8 @@
-import * as _core from './index'
-import * as _component from './component'
-import * as _context from './context'
-import * as _storages from './storages'
-import * as _bindings from './bindings'
+import * as _core from './index.js'
+import * as _component from './component.js'
+import * as _context from './context.js'
+import * as _storages from './storages.js'
+import * as _bindings from './bindings.js'
 import { Manifest } from '@toa.io/norm'
 
 export interface Factory {

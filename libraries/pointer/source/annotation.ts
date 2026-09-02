@@ -2,7 +2,7 @@ import { resolve } from 'node:path'
 import * as schemas from '@toa.io/schemas'
 import { shards } from '@toa.io/generic'
 import type { Schema } from '@toa.io/schemas'
-import type { URIMap } from './Deployment'
+import type { URIMap } from './Deployment.js'
 
 export function normalize (declaration: Declaration): URIMap {
   const map: URIMap = {}

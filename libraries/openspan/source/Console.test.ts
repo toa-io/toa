@@ -1,5 +1,5 @@
-import { console, Console, consoleExporter, create, current, exporting, run, sampling } from './'
-import type { Channel } from './Console'
+import { console, Console, consoleExporter, create, current, exporting, run, sampling } from './index.js'
+import type { Channel } from './Console.js'
 
 afterEach(() => {
   sampling()
@@ -98,7 +98,7 @@ it('should consider log() as debug()', async () => {
 it('should share the singleton between module copies', () => {
   jest.isolateModules(() => {
     // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const copy = require('./Console')
+    const copy = require('./Console.js')
 
     expect(copy.console).toBe(console)
   })

@@ -1,7 +1,7 @@
 import { verifyAuthenticationResponse } from '@simplewebauthn/server'
 import type { AuthenticationResponseJSON, WebAuthnCredential } from '@simplewebauthn/server'
 import type { Operation } from '@toa.io/types'
-import type { Context, Passkey } from './types'
+import type { Context, Passkey } from './types/index.js'
 
 export class Transition implements Operation {
   private stash!: Context['stash']

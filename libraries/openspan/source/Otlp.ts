@@ -1,8 +1,8 @@
 import * as http from 'node:http'
 import * as https from 'node:https'
-import { console } from './Console'
-import type { Kind } from './Console'
-import type { Exporter, Span } from './exporters'
+import { console } from './Console.js'
+import type { Kind } from './Console.js'
+import type { Exporter, Span } from './exporters.js'
 
 /**
  * Exports spans to an OTLP/HTTP endpoint (JSON encoding).

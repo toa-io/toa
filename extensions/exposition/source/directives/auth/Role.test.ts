@@ -1,8 +1,8 @@
 import { type Component } from '@toa.io/core'
 import { generate } from 'randomstring'
-import { Role } from './Role'
-import { type Identity } from './types'
-import type { Parameter } from '../../RTD'
+import { Role } from './Role.js'
+import { type Identity } from './types.js'
+import type { Parameter } from '../../RTD/index.js'
 
 const remote = {
   invoke: jest.fn()

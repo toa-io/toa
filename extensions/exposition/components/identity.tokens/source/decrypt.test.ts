@@ -1,8 +1,8 @@
 import { generate } from 'randomstring'
 import { V3 } from 'paseto'
-import { Effect as Encrypt } from './encrypt'
-import { Computation as Decrypt } from './decrypt'
-import { type Configuration, type Context, type Identity } from './lib'
+import { Effect as Encrypt } from './encrypt.js'
+import { Computation as Decrypt } from './decrypt.js'
+import { type Configuration, type Context, type Identity } from './lib/index.js'
 import type { Secret } from '@toa.io/types'
 
 let configuration: Configuration

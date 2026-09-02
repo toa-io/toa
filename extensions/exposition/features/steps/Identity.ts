@@ -1,8 +1,8 @@
 import { binding, given } from 'cucumber-tsflow'
 import * as http from '@toa.io/agent'
-import { Parameters } from './Parameters'
-import { Captures } from './Captures'
-import { Gateway } from './Gateway'
+import { Parameters } from './Parameters.js'
+import { Captures } from './Captures.js'
+import { Gateway } from './Gateway.js'
 
 @binding([Gateway, Parameters, Captures])
 export class Identity {

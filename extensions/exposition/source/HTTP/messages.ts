@@ -2,9 +2,9 @@ import { Readable } from 'node:stream'
 import { createHash } from 'node:crypto'
 import * as contentType from 'content-type'
 import { console } from 'openspan'
-import { formats } from './formats'
-import { BadRequest, NotAcceptable, UnsupportedMediaType } from './exceptions'
-import type { Context } from './Context'
+import { formats } from './formats/index.js'
+import { BadRequest, NotAcceptable, UnsupportedMediaType } from './exceptions.js'
+import type { Context } from './Context.js'
 import type * as http from 'node:http'
 
 const server = `Exposition/${require('../../package.json').version}` +

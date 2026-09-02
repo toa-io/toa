@@ -1,9 +1,9 @@
 import { type Connector, type Locator, type extensions } from '@toa.io/core'
-import { Aspect } from './Aspect'
-import { Client } from './Client'
-import { Composition } from './Composition'
-import { overridden } from './configuration'
-import type { Manifest } from './manifest'
+import { Aspect } from './Aspect.js'
+import { Client } from './Client.js'
+import { Composition } from './Composition.js'
+import { overridden } from './configuration.js'
+import type { Manifest } from './manifest.js'
 
 export class Factory implements extensions.Factory {
   private readonly boot: Bootloader

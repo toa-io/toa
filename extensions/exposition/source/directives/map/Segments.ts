@@ -1,6 +1,6 @@
 import assert from 'node:assert'
-import { Mapping } from './Mapping'
-import type { Parameter } from '../../RTD'
+import { Mapping } from './Mapping.js'
+import type { Parameter } from '../../RTD/index.js'
 
 export class Segments extends Mapping<Record<string, string>> {
   public constructor (map: Record<string, string>) {

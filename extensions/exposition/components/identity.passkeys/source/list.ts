@@ -1,5 +1,5 @@
-import { MAX_KEYS } from './lib/const'
-import type { Context, Passkey } from './types'
+import { MAX_KEYS } from './lib/const.js'
+import type { Context, Passkey } from './types/index.js'
 
 export async function computation ({ authority, identity }: Input, context: Context): Promise<Passkey[]> {
   return await context.local.enumerate({

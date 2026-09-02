@@ -1,6 +1,6 @@
 import { Locator } from '@toa.io/core'
 import { consoleExporter, exporting } from 'openspan'
-import { Aspect } from './Aspect'
+import { Aspect } from './Aspect.js'
 import type { Span } from 'openspan'
 
 const nativeFetch = globalThis.fetch

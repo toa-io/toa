@@ -1,8 +1,8 @@
 import { readdirSync, type Dirent } from 'node:fs'
 import { resolve } from 'node:path'
 import { Connector } from '@toa.io/core'
-import { type Bootloader } from './Factory'
-import type { Annotation } from './annotation'
+import { type Bootloader } from './Factory.js'
+import type { Annotation } from './annotation.js'
 
 /** Hosts the introspection components in the explorer process. */
 export class Composition extends Connector {

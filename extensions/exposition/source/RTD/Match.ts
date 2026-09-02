@@ -1,4 +1,4 @@
-import { type Node } from './Node'
+import { type Node } from './Node.js'
 
 export interface Match {
   node: Node

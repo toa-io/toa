@@ -1,4 +1,4 @@
-import { segment, fragment } from './segment'
+import { segment, fragment } from './segment.js'
 
 it('should return segments', async () => {
   const segments = segment('/foo/bar/')

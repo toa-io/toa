@@ -1,7 +1,7 @@
-import { Tree } from './Tree'
-import type { EndpointsFactory } from '../Endpoint'
-import type { DirectiveFactory } from './Directives'
-import type * as syntax from './syntax'
+import { Tree } from './Tree.js'
+import type { EndpointsFactory } from '../Endpoint.js'
+import type { DirectiveFactory } from './Directives.js'
+import type * as syntax from './syntax/index.js'
 
 const endpoints = {} as unknown as EndpointsFactory
 

@@ -1,5 +1,11 @@
+const { join } = require('node:path')
+
+// tsx compiles the step definitions; the steps' own tsconfig is what tells esbuild
+// they use legacy decorators, which cucumber-tsflow requires
+process.env.TSX_TSCONFIG_PATH ??= join(__dirname, 'extensions/exposition/features/steps/tsconfig.json')
+
 const common = {
-  requireModule: ['ts-node/register/transpile-only'],
+  requireModule: ['tsx/cjs'],
   failFast: true
 }
 

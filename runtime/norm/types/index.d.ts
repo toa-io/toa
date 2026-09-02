@@ -1,4 +1,4 @@
-export * as context from './context'
-export * as component from './component'
+export * as context from './context.js'
+export * as component from './component.js'
 
-export { Manifest } from './component'
+export { Manifest } from './component.js'

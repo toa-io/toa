@@ -1,5 +1,5 @@
 import { inspect } from 'node:util'
-import { REDACTED, Secret } from './Secret'
+import { REDACTED, Secret } from './Secret.js'
 
 const secret = new Secret('s3cret')
 

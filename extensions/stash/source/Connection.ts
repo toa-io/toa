@@ -2,7 +2,7 @@ import { Redis, type RedisOptions } from 'ioredis'
 import { console } from 'openspan'
 import { Connector, type Locator } from '@toa.io/core'
 import { resolve } from '@toa.io/pointer'
-import { ID } from './extension'
+import { ID } from './extension.js'
 
 export class Connection extends Connector {
   public redis: Redis | null = null

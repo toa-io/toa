@@ -1,8 +1,8 @@
 import * as boot from '@toa.io/boot'
 import { type Connector } from '@toa.io/core'
 import { after, binding } from 'cucumber-tsflow'
-import { Factory } from '../../source'
-import type { Route } from '../../source/extension'
+import { Factory } from '../../source/index.js'
+import type { Route } from '../../source/extension.js'
 
 @binding()
 export class Realtime {

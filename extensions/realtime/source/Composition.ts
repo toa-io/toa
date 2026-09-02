@@ -1,7 +1,7 @@
 import { readdirSync, type Dirent } from 'node:fs'
 import { resolve } from 'node:path'
 import { Connector } from '@toa.io/core'
-import { type Bootloader } from './Factory'
+import { type Bootloader } from './Factory.js'
 
 export class Composition extends Connector {
   private readonly boot: Bootloader

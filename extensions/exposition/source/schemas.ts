@@ -1,9 +1,9 @@
 import { resolve } from 'node:path'
 import schemas from '@toa.io/schemas'
-import type { Query } from './HTTP'
-import type { Node } from './RTD'
+import type { Query } from './HTTP/index.js'
+import type { Node } from './RTD/index.js'
 import type { Schema } from '@toa.io/schemas'
-import type { Annotation } from './Annotation'
+import type { Annotation } from './Annotation.js'
 
 const path = resolve(__dirname, '../schemas')
 const namespace = schemas.namespace(path)

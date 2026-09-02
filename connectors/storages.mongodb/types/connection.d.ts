@@ -10,7 +10,7 @@ import type {
 } from 'mongodb'
 
 import type { Connector } from '@toa.io/core'
-import type { Record } from './record'
+import type { Record } from './record.js'
 
 declare namespace toa.mongodb{
 

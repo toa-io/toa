@@ -1,9 +1,9 @@
 import assert from 'node:assert'
 import { generate } from 'randomstring'
-import { DirectivesFactory } from './Directive'
-import type { syntax, DirectiveFamily } from './RTD'
-import type { Remotes } from './Remotes'
-import type { Context } from './HTTP'
+import { DirectivesFactory } from './Directive.js'
+import type { syntax, DirectiveFamily } from './RTD/index.js'
+import type { Remotes } from './Remotes.js'
+import type { Context } from './HTTP/index.js'
 
 const families: Array<jest.MockedObjectDeep<DirectiveFamily>> = [
   {

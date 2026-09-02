@@ -1,8 +1,8 @@
 import * as http from 'node:http'
-import { console } from './Console'
-import { Otlp } from './Otlp'
+import { console } from './Console.js'
+import { Otlp } from './Otlp.js'
 import type { AddressInfo } from 'node:net'
-import type { Span } from './exporters'
+import type { Span } from './exporters.js'
 
 interface Request {
   method?: string

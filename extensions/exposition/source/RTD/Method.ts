@@ -1,6 +1,6 @@
-import type { Parameter } from './Match'
-import type { Endpoint } from './Endpoint'
-import type { Directives } from './Directives'
+import type { Parameter } from './Match.js'
+import type { Endpoint } from './Endpoint.js'
+import type { Directives } from './Directives.js'
 
 export class Method {
   public readonly endpoint: Endpoint | null

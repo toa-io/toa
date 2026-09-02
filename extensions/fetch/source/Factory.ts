@@ -1,4 +1,4 @@
-import { Aspect } from './Aspect'
+import { Aspect } from './Aspect.js'
 import type { Locator, extensions } from '@toa.io/core'
 
 export class Factory implements extensions.Factory {

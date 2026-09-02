@@ -22,7 +22,10 @@
   },
   "jest": {
     "preset": "ts-jest",
-    "testEnvironment": "node"
+    "testEnvironment": "node",
+    "moduleNameMapper": {
+      "^(\\.{1,2}/.*)\\.js$": "$1"
+    }
   },
   "scripts": {
     "transpile": "npx tsc && npx tsc -p ./components/realtime.streams",

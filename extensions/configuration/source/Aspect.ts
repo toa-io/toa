@@ -1,9 +1,9 @@
 import { console } from 'openspan'
 import { Connector, type Locator, type extensions } from '@toa.io/core'
-import { fit, local, type Node } from './configuration'
-import { epoch } from './epoch'
-import type { Client, Value } from './Client'
-import type { Manifest } from './manifest'
+import { fit, local, type Node } from './configuration.js'
+import { epoch } from './epoch.js'
+import type { Client, Value } from './Client.js'
+import type { Manifest } from './manifest.js'
 
 export class Aspect extends Connector implements extensions.Aspect {
   public readonly name = 'configuration'

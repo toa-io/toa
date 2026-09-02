@@ -1,7 +1,7 @@
 import { generate } from 'randomstring'
 import { Connector } from '@toa.io/core'
-import { Remotes } from './Remotes'
-import type { Bootloader } from './Factory'
+import { Remotes } from './Remotes.js'
+import type { Bootloader } from './Factory.js'
 import type { Locator, Source } from '@toa.io/core'
 
 jest.mock('@toa.io/boot', () => ({

@@ -1,4 +1,4 @@
-import type { Input, Output } from './io'
+import type { Input, Output } from './io.js'
 
 export class Interception implements Interceptor {
   private readonly interceptors: Interceptor[]

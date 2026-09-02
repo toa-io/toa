@@ -1,6 +1,6 @@
-import { Forbidden } from '../../HTTP'
-import type { Parameter } from '../../RTD'
-import type { Context, Directive, Identity, Create } from './types'
+import { Forbidden } from '../../HTTP/index.js'
+import type { Parameter } from '../../RTD/index.js'
+import type { Context, Directive, Identity, Create } from './types.js'
 
 export class Input implements Directive {
   public priority = 0
