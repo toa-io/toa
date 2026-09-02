@@ -59,6 +59,14 @@ Feature: Publishing the UI
     And the "content-type" header is "text/javascript; charset=utf-8"
     And the "cache-control" header is "public, max-age=31536000, immutable"
 
+  Scenario: An icon is held, but not forever
+    It is named for what it is rather than for its content, so it is asked about again.
+
+    Given the UI is published
+    When "/.configuration/favicon.ico" is requested
+    Then the status is 200
+    And the "cache-control" header is "public, max-age=86400"
+
   Scenario: The page itself is never cached
     Given the UI is published
     When "/.configuration/" is requested

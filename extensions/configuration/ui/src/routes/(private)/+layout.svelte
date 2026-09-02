@@ -86,15 +86,16 @@
 
       <!-- no `min-w-0` either: the button holds its ground and the filter gives way -->
       <div class="flex flex-1 justify-end">
-        <!-- the label is the first thing to go when the header runs out of room -->
+        <!-- the icon alone, and coloured for what it does: the word only repeated it -->
         <Button
           id="iam-logout-button"
           variant="ghost"
+          size="icon"
           aria-label={$dict.nav.signout}
+          class="text-destructive hover:text-destructive"
           onclick={logout}
         >
           <LogOut />
-          <span class="hidden md:inline">{$dict.nav.signout}</span>
         </Button>
       </div>
     </header>

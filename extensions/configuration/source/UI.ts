@@ -150,7 +150,7 @@ export class UI extends Connector {
     response.writeHead(200, {
       'content-type': TYPES[path.extname(file)] ?? 'application/octet-stream',
       'content-length': stats.size,
-      'cache-control': file.startsWith(path.join(this.root, IMMUTABLE)) ? FOREVER : 'no-cache'
+      'cache-control': caching(path.relative(this.root, file))
     })
 
     if (request.method === 'HEAD')
@@ -178,6 +178,21 @@ const SITE = path.resolve(__dirname, '..', 'ui', 'dist')
 /** Assets under this prefix carry their build hash in the name. */
 const IMMUTABLE = path.join('_app', 'immutable')
 const FOREVER = 'public, max-age=31536000, immutable'
+
+/** The icons: named without a hash, so they are re-read, but rarely. */
+const ICONS = new Set(['favicon.ico', 'favicon-96x96.png', 'apple-touch-icon.png'])
+const DAY = 'public, max-age=86400'
+
+/**
+ * How long what is served may be held. The page is never cached — it names the assets,
+ * and their names carry the build. An icon is named for what it is rather than for its
+ * content, so it is asked about again, but not on every page load.
+ */
+function caching (relative: string): string {
+  if (relative.startsWith(IMMUTABLE)) return FOREVER
+
+  return ICONS.has(relative) ? DAY : 'no-cache'
+}
 
 const TYPES: Record<string, string> = {
   '.css': 'text/css; charset=utf-8',
