@@ -6,8 +6,6 @@
     "suspicious": "warn"
   },
   "ignorePatterns": [
-    "**/*.js",
-    ".migration",
     "**/*.d.ts",
     "**/transpiled",
     "**/operations",
@@ -16,18 +14,23 @@
     "extensions/*/features/site"
   ],
   "rules": {
-    "curly": ["warn", "multi"],
     "eqeqeq": ["error", "always", { "null": "always" }],
-    "func-style": ["error", "declaration"],
-    "max-depth": ["warn", 2],
-    "max-params": "error",
-    "no-warning-comments": "error",
-    "import/no-default-export": "error",
-    "typescript/consistent-type-imports": ["error", { "fixStyle": "separate-type-imports" }],
-    "typescript/explicit-member-accessibility": "error",
-    "typescript/no-non-null-assertion": "off"
+    "no-warning-comments": "error"
   },
   "overrides": [
+    {
+      "files": ["**/*.ts"],
+      "rules": {
+        "curly": ["warn", "multi"],
+        "func-style": ["error", "declaration"],
+        "max-depth": ["warn", 2],
+        "max-params": "error",
+        "import/no-default-export": "error",
+        "typescript/consistent-type-imports": ["error", { "fixStyle": "separate-type-imports" }],
+        "typescript/explicit-member-accessibility": "error",
+        "typescript/no-non-null-assertion": "off"
+      }
+    },
     {
       "files": ["**/*.test.ts", "**/test/**", "**/features/**"],
       "rules": {
