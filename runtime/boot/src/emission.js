@@ -1,22 +1,18 @@
-'use strict'
+import { Emission, Event } from '@toa.io/core'
 
-const { Emission, Event } = require('@toa.io/core')
+import * as boot from './index.js'
+import * as extensions from './extensions/index.js'
 
-const boot = require('./index')
-const extensions = require('./extensions')
-
-const emission = (definitions, locator, context) => {
+export const emission = async (definitions, locator, context) => {
   if (definitions === undefined) return
 
-  const events = Object.entries(definitions).map(([label, definition]) => {
-    const emitter = boot.bindings.emit(definition.binding, locator, label)
+  const events = await Promise.all(Object.entries(definitions).map(async ([label, definition]) => {
+    const emitter = await boot.bindings.emit(definition.binding, locator, label)
     const decorator = extensions.emitter(emitter, label, locator)
-    const bridge = boot.bridge.event(definition.bridge, definition.path, label, context)
+    const bridge = await boot.bridge.event(definition.bridge, definition.path, label, context)
 
     return new Event({ ...definition, label: `${locator.id}.${label}` }, decorator, bridge)
-  })
+  }))
 
   return new Emission(events)
 }
-
-exports.emission = emission

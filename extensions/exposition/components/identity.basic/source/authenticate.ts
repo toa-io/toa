@@ -1,6 +1,6 @@
 import { compare } from 'bcryptjs'
 import { type Query, type Maybe } from '@toa.io/types'
-import { type Context } from './types'
+import { type Context } from './types.js'
 
 export async function computation (input: Input, context: Context): Promise<Maybe<Output>> {
   const [username, password] = Buffer

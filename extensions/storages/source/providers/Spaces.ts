@@ -1,5 +1,5 @@
-import { S3 } from './S3'
-import type { Secret, Secrets } from '../Secrets'
+import { S3 } from './S3.js'
+import type { Secret, Secrets } from '../Secrets.js'
 
 export interface SpacesOptions {
   space: string

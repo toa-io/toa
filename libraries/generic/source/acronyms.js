@@ -1,7 +1,5 @@
-'use strict'
-
 /** @type {toa.generic.acronyms.Camelcase} */
-const camelcase = (string, length = 2) => {
+export const camelcase = (string, length = 2) => {
   const parts = string.split(/(?=[A-Z])/).map((word) => shrink(word, length))
 
   return parts.join('')
@@ -15,5 +13,3 @@ const camelcase = (string, length = 2) => {
 const shrink = (word, length) => {
   return word.substring(0, length)
 }
-
-exports.camelcase = camelcase

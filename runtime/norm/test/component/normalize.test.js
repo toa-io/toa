@@ -1,8 +1,10 @@
-'use strict'
-const clone = require('clone-deep')
+import { describe, it, beforeEach } from 'node:test'
+import assert from 'node:assert/strict'
 
-const { normalize, extensions } = require('../../src/.component')
-const fixtures = require('./normalize.fixtures')
+import clone from 'clone-deep'
+
+import { normalize, extensions } from '../../src/.component/index.js'
+import * as fixtures from './normalize.fixtures.js'
 
 let manifest
 
@@ -11,27 +13,27 @@ beforeEach(() => {
 })
 
 describe('operations', () => {
-  it('should set default bindings', () => {
-    normalize(manifest)
+  it('should set default bindings', async () => {
+    await normalize(manifest)
 
-    expect(manifest.operations.add.bindings).toStrictEqual(manifest.bindings)
+    assert.deepStrictEqual(manifest.operations.add.bindings, manifest.bindings)
   })
 })
 
 describe('extensions', () => {
-  it('should add predefined extensions', () => {
-    extensions(manifest)
+  it('should add predefined extensions', async () => {
+    await extensions(manifest)
 
-    expect(manifest.extensions['@toa.io/extensions.telemetry']).toBeNull()
-    expect(manifest.extensions['@toa.io/extensions.fetch']).toBeNull()
+    assert.strictEqual(manifest.extensions['@toa.io/extensions.telemetry'], null)
+    assert.strictEqual(manifest.extensions['@toa.io/extensions.fetch'], null)
   })
 
-  it('should add predefined extensions without explicit declarations', () => {
+  it('should add predefined extensions without explicit declarations', async () => {
     delete manifest.extensions
 
-    extensions(manifest)
+    await extensions(manifest)
 
-    expect(manifest.extensions).toStrictEqual({
+    assert.deepStrictEqual(manifest.extensions, {
       '@toa.io/extensions.telemetry': null,
       '@toa.io/extensions.fetch': null,
       '@toa.io/extensions.introspection': {}
@@ -45,9 +47,9 @@ describe('receivers', () => {
       'messages.created': 'add'
     }
 
-    normalize(manifest)
+    await normalize(manifest)
 
-    expect(manifest.receivers).toStrictEqual({
+    assert.deepStrictEqual(manifest.receivers, {
       'default.messages.created': 'add'
     })
   })
@@ -62,9 +64,9 @@ describe('receivers', () => {
       'messages.created': receiver
     }
 
-    normalize(manifest)
+    await normalize(manifest)
 
-    expect(manifest.receivers).toStrictEqual({
+    assert.deepStrictEqual(manifest.receivers, {
       'messages.created': receiver
     })
   })

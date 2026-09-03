@@ -1,15 +1,18 @@
-import { type Manifest, manifest } from './manifest'
+import { it } from 'node:test'
+import assert from 'node:assert/strict'
+
+import { type Manifest, manifest } from './manifest.js'
 
 it('should validate', async () => {
   const additional = { schema: {}, foo: 'bar' } as unknown as Manifest
 
-  expect(() => {
+  assert.throws(() => {
     manifest(additional)
-  }).toThrow('not expected')
+  }, (error: any) => /not expected/.test(error.message))
 
   const wrongType = { schema: 'not ok' } as unknown as Manifest
 
-  expect(() => {
+  assert.throws(() => {
     manifest(wrongType)
-  }).toThrow('object')
+  }, (error: any) => /object/.test(error.message))
 })

@@ -1,10 +1,11 @@
-'use strict'
+import { describe, it, beforeEach } from 'node:test'
+import assert from 'node:assert/strict'
 
-const clone = require('clone-deep')
-const { generate } = require('randomstring')
+import clone from 'clone-deep'
+import { generate } from 'randomstring'
 
-const { expand } = require('../../src/.context')
-const fixtures = require('./expand.fixtures')
+import { expand } from '../../src/.context/index.js'
+import * as fixtures from './expand.fixtures.js'
 
 /** @type {toa.norm.context.Declaration | object} */
 let context
@@ -17,7 +18,7 @@ describe('annotations', () => {
   it('should not throw without annotations', () => {
     delete context.annotations
 
-    expect(() => expand(context)).not.toThrow()
+    assert.doesNotThrow(() => expand(context))
   })
 
   it('should expand known annotations', () => {
@@ -28,7 +29,7 @@ describe('annotations', () => {
 
     expand(context)
 
-    expect(context.annotations).toStrictEqual(fixtures.context.annotations)
+    assert.deepStrictEqual(context.annotations, fixtures.context.annotations)
   })
 
   it('should recognize annotations', () => {
@@ -36,6 +37,6 @@ describe('annotations', () => {
 
     expand(context)
 
-    expect(context.annotations['@toa.io/storages.mongodb']).toBeDefined()
+    assert.notStrictEqual(context.annotations['@toa.io/storages.mongodb'], undefined)
   })
 })

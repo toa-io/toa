@@ -1,12 +1,15 @@
 import * as assert from 'node:assert'
 import { setTimeout } from 'node:timers/promises'
-import { after, binding, given, then } from 'cucumber-tsflow'
+import tsflow from 'cucumber-tsflow'
+
 import { match } from '@toa.io/generic'
 import { load as parse } from 'js-yaml'
 import * as stage from '@toa.io/userland/stage'
-import { Realtime } from './Realtime'
+import { Realtime } from './Realtime.js'
 import type { Readable } from 'node:stream'
 import type { Component } from '@toa.io/core'
+
+const { after, binding, given, then } = tsflow
 
 @binding([Realtime])
 export class Streams {

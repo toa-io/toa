@@ -1,5 +1,5 @@
 import { console } from 'openspan'
-import type { Quotas } from './Quotas'
+import type { Quotas } from './Quotas.js'
 import type { Remote } from '@toa.io/core'
 
 /**

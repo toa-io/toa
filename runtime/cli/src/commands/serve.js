@@ -1,6 +1,4 @@
-'use strict'
-
-const { serve } = require('../handlers/serve')
+import { serve } from '../handlers/serve.js'
 
 const builder = (yargs) => {
   yargs
@@ -12,7 +10,7 @@ const builder = (yargs) => {
     })
 }
 
-exports.command = 'serve [path]'
-exports.desc = 'Run an extension service'
-exports.builder = builder
-exports.handler = serve
+export const command = 'serve [path]'
+export const desc = 'Run an extension service'
+
+export { builder, serve as handler }

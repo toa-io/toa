@@ -1,12 +1,10 @@
-'use strict'
+import * as boot from '@toa.io/boot'
+import { Locator } from '@toa.io/core'
 
-const boot = require('@toa.io/boot')
-const { Locator } = require('@toa.io/core')
-
-const { state } = require('./state')
+import { state } from './state.js'
 
 /** @type {toa.stage.Remote} */
-const remote = async (id) => {
+export const remote = async (id) => {
   const segments = id.split('.')
 
   if (segments.length === 1) segments.unshift('default')
@@ -28,5 +26,3 @@ const remote = async (id) => {
  * `unknown` on the application's map.
  */
 const SOURCE = { service: 'features' }
-
-exports.remote = remote

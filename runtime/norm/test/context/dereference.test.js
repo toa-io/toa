@@ -1,24 +1,25 @@
-'use strict'
+import { it, before } from 'node:test'
+import assert from 'node:assert/strict'
 
-const clone = require('clone-deep')
+import clone from 'clone-deep'
 
-const { dereference } = require('../../src/.context')
-const fixtures = require('./dereference.fixtures')
+import { dereference } from '../../src/.context/index.js'
+import * as fixtures from './dereference.fixtures.js'
 
 /** @type {toa.norm.Context} */
 let context
 
-beforeAll(() => {
+before(() => {
   context = clone(fixtures.context)
   dereference(context)
 })
 
 it('should dereference', () => {
-  expect(context).toEqual(expect.objectContaining(fixtures.expected))
+  assert.partialDeepStrictEqual(context, fixtures.expected)
 })
 
 it('should not throw on empty compositions', () => {
   context.compositions = undefined
 
-  expect(() => dereference(context)).not.toThrow()
+  assert.doesNotThrow(() => dereference(context))
 })

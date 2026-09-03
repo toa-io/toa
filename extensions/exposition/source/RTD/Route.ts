@@ -1,6 +1,6 @@
-import { type Segment } from './segment'
-import { type Match, type Parameter } from './Match'
-import type { Node } from './Node'
+import { type Segment } from './segment.js'
+import { type Match, type Parameter } from './Match.js'
+import type { Node } from './Node.js'
 
 export class Route {
   public readonly root: boolean

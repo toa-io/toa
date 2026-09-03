@@ -1,4 +1,4 @@
-import type { Entity } from './lib/Entity'
+import type { Entity } from './lib/Entity.js'
 
 export async function transition (input: Input, object: Entity): Promise<Entity | Error> {
   if (input.grantor === undefined)

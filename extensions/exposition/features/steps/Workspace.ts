@@ -22,7 +22,7 @@ export class Workspace {
 
   @Workspace.exists
   public async addComponent (name: string, patch?: object): Promise<string> {
-    const source = join(__dirname, 'components', name)
+    const source = join(import.meta.dirname, 'components', name)
     const target = join(this.root, name)
 
     await cp(source, target, { force: true, recursive: true })

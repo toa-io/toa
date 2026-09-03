@@ -1,6 +1,6 @@
 import assert from 'node:assert'
-import type { Input, Output } from '../../../../../io'
-import type { Condition } from './Condition'
+import type { Input, Output } from '../../../../../io.js'
+import type { Condition } from './Condition.js'
 
 export class Status implements Condition {
   private readonly status: number

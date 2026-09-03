@@ -1,5 +1,3 @@
-'use strict'
-
 /**
  * Removes leading/trailing blank lines, dedents by the first line's padding,
  * and strips trailing whitespace from each line.
@@ -7,7 +5,7 @@
  * @param {string} input
  * @return {string}
  */
-function trim (input) {
+export function trim (input) {
   const lines = input.split('\n')
 
   while (lines.length > 0 && lines[0].trim() === '')
@@ -31,5 +29,3 @@ function trim (input) {
     })
     .join('\n')
 }
-
-exports.trim = trim

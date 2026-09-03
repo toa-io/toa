@@ -1,13 +1,19 @@
+import { createRequire } from 'node:module'
 import * as assert from 'node:assert'
 import { dirname, join } from 'node:path'
-import { after, binding, given } from 'cucumber-tsflow'
+import tsflow from 'cucumber-tsflow'
+
 import * as boot from '@toa.io/boot'
 import { timeout } from '@toa.io/generic'
 import { type Connector } from '@toa.io/core'
 import { load as parse } from 'js-yaml'
-import { Gateway } from './Gateway'
-import { Workspace } from './Workspace'
-import { components as map } from './map'
+import { Gateway } from './Gateway.js'
+import { Workspace } from './Workspace.js'
+import { components as map } from './map.js'
+
+const { after, binding, given } = tsflow
+
+const require = createRequire(import.meta.url)
 
 const MAP = 'introspection'
 const VALUES = 'configuration'

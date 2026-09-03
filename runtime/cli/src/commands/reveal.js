@@ -1,6 +1,4 @@
-'use strict'
-
-const { reveal } = require('../handlers/reveal')
+import { reveal } from '../handlers/reveal.js'
 
 const builder = (yargs) => {
   yargs
@@ -9,7 +7,7 @@ const builder = (yargs) => {
     })
 }
 
-exports.command = 'reveal <secret>'
-exports.desc = 'Print keys and values of a secret'
-exports.builder = builder
-exports.handler = reveal
+export const command = 'reveal <secret>'
+export const desc = 'Print keys and values of a secret'
+
+export { builder, reveal as handler }

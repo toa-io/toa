@@ -1,7 +1,7 @@
-import { type Context } from './Context'
-import type * as http from '../HTTP'
-import type * as syntax from './syntax'
-import type * as RTD from './index'
+import { type Context } from './Context.js'
+import type * as http from '../HTTP/index.js'
+import type * as syntax from './syntax/index.js'
+import type * as RTD from './index.js'
 
 export interface Endpoint {
   call: (context: http.Context, parameters: RTD.Parameter[]) => Promise<http.OutgoingMessage>

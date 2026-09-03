@@ -1,10 +1,8 @@
-'use strict'
+import { spawn, exec } from 'node:child_process'
+import { promisify } from 'node:util'
 
-const { spawn, exec } = require('node:child_process')
-const { promisify } = require('node:util')
-
-const { promex } = require('@toa.io/generic')
-const { findUp } = require('find-up')
+import { promex } from '@toa.io/generic'
+import { findUp } from '@toa.io/generic'
 
 const execute = promisify(exec)
 
@@ -14,8 +12,8 @@ const execute = promisify(exec)
  * @param {string} [envFile]
  * @return {Promise<void>}
  */
-async function run (repository, command, envFile) {
-  if (envFile === undefined) envFile = await findUp('.env')
+export async function run (repository, command, envFile) {
+  if (envFile === undefined) envFile = findUp('.env')
 
   const envArgs = envFile === undefined ? [] : ['--env-file', envFile]
 
@@ -35,5 +33,3 @@ async function run (repository, command, envFile) {
 
   await execute(`docker rmi --force ${id}`)
 }
-
-exports.run = run

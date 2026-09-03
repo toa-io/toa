@@ -1,41 +1,40 @@
-'use strict'
+import { it, mock } from 'node:test'
+import assert from 'node:assert/strict'
 
-const { repeat } = require('../source/repeat')
-const { generate } = require('randomstring')
-const { random } = require('../source/random')
+import { repeat } from '../source/repeat.js'
+import { generate } from 'randomstring'
+import { random } from '../source/random.js'
 
 it('should repeat', () => {
-  const fn = jest.fn()
+  const fn = mock.fn()
 
   repeat(fn, 10)
 
-  expect(fn).toHaveBeenCalledTimes(10)
+  assert.strictEqual(fn.mock.callCount(), 10)
 })
 
 it('should return results', () => {
   const times = random(10)
 
-  expect.assertions(times)
-
-  const fn = jest.fn(() => generate())
+  
+  const fn = mock.fn(() => generate())
   const results = repeat(fn, times)
 
-  fn.mock.results.map((result, i) => expect(results[i]).toBe(result.value))
+  fn.mock.calls.map((call, i) => assert.strictEqual(results[i], call.result))
 })
 
 it('should return promises', async () => {
   const times = 10
 
-  expect.assertions(times + 1)
-
-  const fn = jest.fn(async () => generate())
+  
+  const fn = mock.fn(async () => generate())
   const promise = repeat(fn, times)
 
-  expect(promise).toBeInstanceOf(Promise)
+  assert.ok(promise instanceof Promise)
 
   const results = await promise
 
-  for (let i = 0; i < fn.mock.results.length; i++) {
-    expect(results[i]).toBe(await fn.mock.results[i].value)
+  for (let i = 0; i < fn.mock.calls.length; i++) {
+    assert.strictEqual(results[i], await fn.mock.calls[i].result)
   }
 })

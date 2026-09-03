@@ -1,9 +1,7 @@
-'use strict'
+import assert from 'node:assert'
+import { Component } from './component.js'
 
-const assert = require('node:assert')
-const { Component } = require('./component')
-
-class Remote extends Component {
+export class Remote extends Component {
   kind = 'client'
 
   explain (endpoint) {
@@ -14,5 +12,3 @@ class Remote extends Component {
     return this.operations[endpoint].explain()
   }
 }
-
-exports.Remote = Remote

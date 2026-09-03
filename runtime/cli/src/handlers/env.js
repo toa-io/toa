@@ -1,20 +1,20 @@
-'use strict'
+import { join } from 'node:path'
+import { randomBytes } from 'node:crypto'
+import readline from 'node:readline/promises'
+import { stdin as input, stdout as output } from 'node:process'
+import dotenv from 'dotenv'
+import { ExportKeyFactory, GenerateKeyFactory } from 'paseto/v3/local'
+import { deployment } from '@toa.io/operations'
+import { readFile, writeFile } from 'node:fs/promises'
+import { context as find } from '../util/find.js'
 
-const { join } = require('node:path')
-const { randomBytes } = require('node:crypto')
-const readline = require('node:readline/promises')
-const { stdin: input, stdout: output } = require('node:process')
-const dotenv = require('dotenv')
-const { V3 } = require('paseto')
-const { deployment: { Factory } } = require('@toa.io/operations')
-const { readFile, writeFile } = require('node:fs/promises')
-const { context: find } = require('../util/find')
+const { Factory } = deployment
 
-async function env (argv) {
+export async function env (argv) {
   const path = find(argv.path)
   const filepath = join(path, argv.as)
   const factory = await Factory.create(path, argv.environment)
-  const operator = factory.operator()
+  const operator = await factory.operator()
   const variables = operator.variables()
   const currentValues = await read(filepath)
 
@@ -79,7 +79,7 @@ function merge (variables, current) {
   })
 }
 
-async function promptSecrets (variables) {
+export async function promptSecrets (variables) {
   const rl = readline.createInterface({ input, output })
   const secrets = {}
 
@@ -144,7 +144,7 @@ async function resolveDevSecret (key) {
     return randomBytes(32).toString('base64url')
 
   if (source.generate === true || source.generate === 'paseto')
-    return /** @type {string} */ (await V3.generateKey('local', { format: 'paserk' }))
+    return await ExportKeyFactory().run(await GenerateKeyFactory().run({ extractable: true }))
 
   throw new Error(`Unknown dev secret source for ${key}`)
 }
@@ -204,6 +204,3 @@ const DEV_SECRETS = {
   'toa-configuration/IDENTITY_TOKENS_KEY0': { generate: 'paseto' },
   'toa-configuration/IDENTITY_TOKENS_ENCRYPTION_KEY0': { generate: 'jwe' }
 }
-
-exports.env = env
-exports.promptSecrets = promptSecrets

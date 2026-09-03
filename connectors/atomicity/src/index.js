@@ -1,7 +1,2 @@
-'use strict'
-
-const { Factory } = require('./factory')
-const { VARIABLE } = require('./connection')
-
-exports.Factory = Factory
-exports.VARIABLE = VARIABLE
+export { Factory } from './factory.js'
+export { VARIABLE } from './connection.js'

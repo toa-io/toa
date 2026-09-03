@@ -1,8 +1,8 @@
-import { Keys } from './Keys'
-import type { Batch } from './Sync'
-import type { Configuration } from './Configuration'
-import type { Parameter } from '../../../../RTD'
-import type { Input as Context, Output } from '../../../../io'
+import { Keys } from './Keys.js'
+import type { Batch } from './Sync.js'
+import type { Configuration } from './Configuration.js'
+import type { Parameter } from '../../../../RTD/index.js'
+import type { Input as Context, Output } from '../../../../io.js'
 
 /**
  * A quota per key, metered by GCRA, decided in this process and shared with the others.

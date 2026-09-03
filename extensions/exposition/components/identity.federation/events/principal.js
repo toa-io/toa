@@ -1,12 +1,10 @@
 // @ts-check
-'use strict'
-
 /**
- * @param {{ state: import('../source/types').Entity }} event
- * @param {import('../source/types').Context} context
+ * @param {{ state: import('../source/types/index.js').Entity }} event
+ * @param {import('../source/types/index.js').Context} context
  * @returns boolean
  */
-exports.condition = function (event, context) {
+export const condition = function (event, context) {
   return (
     context.configuration.principal !== undefined &&
     event.state.sub === context.configuration.principal.sub &&
@@ -15,8 +13,8 @@ exports.condition = function (event, context) {
 }
 
 /**
- * @param {{ state: import('../source/types').Entity }} event
+ * @param {{ state: import('../source/types/index.js').Entity }} event
  */
-exports.payload = function (event) {
+export const payload = function (event) {
   return { identity: event.state.identity }
 }

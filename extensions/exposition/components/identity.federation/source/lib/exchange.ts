@@ -1,9 +1,9 @@
-import { load } from './jose'
-import { createRemoteJWKSet, discover } from './discovery'
-import * as errors from './errors'
-import type { Trust } from '../types'
-import type { Ctx } from './Ctx'
-import type { Payload } from './Payload'
+import { load } from './jose.js'
+import { createRemoteJWKSet, discover } from './discovery.js'
+import * as errors from './errors.js'
+import type { Trust } from '../types/index.js'
+import type { Ctx } from './Ctx.js'
+import type { Payload } from './Payload.js'
 
 export async function exchange (credentials: string, ctx: Ctx): Promise<Payload | Error> {
   const jose = await load()

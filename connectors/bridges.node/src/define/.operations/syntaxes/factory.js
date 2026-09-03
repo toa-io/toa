@@ -1,9 +1,7 @@
 // noinspection JSValidateTypes
 
-'use strict'
-
 /** @type {toa.node.define.operations.Define} */
-const define = (descriptor) => {
+export const define = (descriptor) => {
   const match = descriptor.name.match(pattern)
 
   /** @type {toa.node.define.operations.Definition} */
@@ -16,7 +14,7 @@ const define = (descriptor) => {
 }
 
 /** @type {toa.node.define.operations.Test} */
-const test = (statement, name) => {
+export const test = (statement, name) => {
   const declaration = statement.type === 'ClassDeclaration'
   const match = name.match(pattern) !== null
 
@@ -24,6 +22,3 @@ const test = (statement, name) => {
 }
 
 const pattern = new RegExp('^(?<scope>Objects?|Changeset)?(?<type>Transition|Observation|Assignment|Computation|Effect)Factory$')
-
-exports.define = define
-exports.test = test

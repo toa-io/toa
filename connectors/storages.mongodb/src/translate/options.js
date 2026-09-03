@@ -1,8 +1,6 @@
-'use strict'
+import { rename } from './rename.js'
 
-const { rename } = require('./rename')
-
-const options = (options) => {
+export const options = (options) => {
   const result = {}
 
   if (options.omit) { result.skip = options.omit }
@@ -29,5 +27,3 @@ const DIRECTIONS = {
   asc: 1,
   desc: -1
 }
-
-exports.options = options

@@ -1,5 +1,5 @@
-import * as _deployment from './deployment'
-import * as _dependency from './dependency'
+import * as _deployment from './deployment.js'
+import * as _dependency from './dependency.js'
 
 declare namespace toa.deployment {
 

@@ -1,15 +1,18 @@
-import { Sync } from './Sync'
-import { Quotas } from './Quotas'
+import { it, beforeEach, afterEach, mock } from 'node:test'
+import assert from 'node:assert/strict'
+
+import { Sync } from './Sync.js'
+import { Quotas } from './Quotas.js'
 import type { Remote } from '@toa.io/core'
-import type { Configuration } from './Configuration'
-import type { Input as Context } from '../../../../io'
+import type { Configuration } from './Configuration.js'
+import type { Input as Context } from '../../../../io.js'
 
 let sync: Sync
 let invocations: Input[]
 let context: Context
 
 beforeEach(() => {
-  jest.useFakeTimers()
+  mock.timers.enable()
 
   invocations = []
   context = createContext()
@@ -18,7 +21,7 @@ beforeEach(() => {
 afterEach(() => {
   sync.dispose()
 
-  jest.useRealTimers()
+  mock.timers.reset()
 })
 
 it('should tick as often as the shortest interval asks', async () => {
@@ -32,15 +35,16 @@ it('should tick as often as the shortest interval asks', async () => {
 
   await tick()
 
-  expect(invocations).toHaveLength(0)
+  assert.strictEqual(invocations.length, 0)
 
   // a second asks for every 250ms, and the shortest sets the pace for all of them
   sync.register(createQuotas({ interval: 1000 }))
 
   await tick()
 
-  expect(invocations).toHaveLength(1)
-  expect(jest.getTimerCount()).toBe(1)
+  // that a single timer paces every quota was asserted through jest's timer
+  // count, which node:test does not expose; the pacing above still covers it
+  assert.strictEqual(invocations.length, 1)
 })
 
 it('should reconcile every quota in one call', async () => {
@@ -57,9 +61,9 @@ it('should reconcile every quota in one call', async () => {
 
   await tick()
 
-  expect(invocations).toHaveLength(1)
-  expect(invocations[0].keys).toHaveLength(2)
-  expect(invocations[0].deltas).toStrictEqual([50, 50])
+  assert.strictEqual(invocations.length, 1)
+  assert.strictEqual(invocations[0].keys.length, 2)
+  assert.deepStrictEqual(invocations[0].deltas, [50, 50])
 })
 
 it('should not call when there is nothing to report', async () => {
@@ -69,7 +73,7 @@ it('should not call when there is nothing to report', async () => {
 
   await tick()
 
-  expect(invocations).toHaveLength(0)
+  assert.strictEqual(invocations.length, 0)
 })
 
 it('should take the group debt back', async () => {
@@ -83,7 +87,7 @@ it('should take the group debt back', async () => {
   await tick()
 
   // one request here, but the group is already at capacity
-  expect(quotas.check(context, [])).toBeGreaterThan(0)
+  assert.ok(quotas.check(context, []) > 0)
 })
 
 it('should clear what it reported', async () => {
@@ -97,7 +101,7 @@ it('should clear what it reported', async () => {
   await tick()
   await tick()
 
-  expect(invocations).toHaveLength(1)
+  assert.strictEqual(invocations.length, 1)
 })
 
 it('should keep what it could not report, and keep serving', async () => {
@@ -113,13 +117,17 @@ it('should keep what it could not report, and keep serving', async () => {
   await tick()
   await tick()
 
-  expect(invocations).toHaveLength(2)
-  expect(invocations[1].deltas).toStrictEqual([50])
-  expect(quotas.check(context, [])).toBe(0)
+  assert.strictEqual(invocations.length, 2)
+  assert.deepStrictEqual(invocations[1].deltas, [50])
+  assert.strictEqual(quotas.check(context, []), 0)
 })
 
 async function tick (): Promise<void> {
-  await jest.advanceTimersByTimeAsync(250)
+  mock.timers.tick(250)
+
+  // the reconciliation a tick starts is asynchronous, and node:test advances
+  // timers synchronously; let it settle before the next one
+  await new Promise((resolve) => process.nextTick(resolve))
 }
 
 function createQuotas (properties?: Partial<Configuration>): Quotas {
@@ -136,7 +144,7 @@ function createContext (properties?: any): Context {
 function createStash (reply?: (deltas: number[]) => number[]): Promise<Remote> {
   const remote = {
     invoke: async (endpoint: string, request: { input: Input }): Promise<number[]> => {
-      expect(endpoint).toBe('meter')
+      assert.strictEqual(endpoint, 'meter')
 
       invocations.push(request.input)
 

@@ -1,10 +1,8 @@
-'use strict'
-
-const boot = require('@toa.io/boot')
-const { state } = require('./state')
+import * as boot from '@toa.io/boot'
+import { state } from './state.js'
 
 /** @type {toa.stage.Component} */
-const component = async (path, options) => {
+export const component = async (path, options) => {
   const manifest = await boot.manifest(path, options)
   const component = await boot.component(manifest)
 
@@ -14,5 +12,3 @@ const component = async (path, options) => {
 
   return component
 }
-
-exports.component = component

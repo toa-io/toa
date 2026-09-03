@@ -1,23 +1,14 @@
-'use strict'
+import { resolve } from 'node:path'
+import { convolve } from '@toa.io/generic'
+import glob from 'fast-glob'
+import { readFile } from 'node:fs/promises'
+import { yaml as jsyaml } from '@toa.io/generic'
 
-const { resolve } = require('node:path')
-const { convolve } = require('@toa.io/generic')
-const glob = require('fast-glob')
-const { readFile } = require('node:fs/promises')
-const jsyaml = require('js-yaml')
+import { component } from './component.js'
 
-const { component } = require('./component')
+import { dependencies, normalize, complete, dereference, expand, validate } from './.context/index.js'
 
-const {
-  dependencies,
-  normalize,
-  complete,
-  dereference,
-  expand,
-  validate
-} = require('./.context')
-
-const context = async (root, environment = process.env.TOA_ENV) => {
+export const context = async (root, environment = process.env.TOA_ENV) => {
   const path = resolve(root, CONTEXT)
   const context = /** @type {toa.norm.Context} */ await read(path)
 
@@ -46,7 +37,7 @@ const COMPONENTS = 'components/*'
 
 const GLOB = { onlyDirectories: true, absolute: true }
 
-exports.context = context
+
 
 /**
  * Reads a YAML file, resolving anchors into distinct objects so that

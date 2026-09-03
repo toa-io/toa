@@ -1,14 +1,14 @@
 import assert from 'node:assert'
 import { console } from 'openspan'
-import { providers } from './providers'
-import { Storage, type Storages } from './Storage'
-import { Aspect } from './Aspect'
-import { ENV_PREFIX } from './deployment'
-import { validateAnnotation } from './Annotation'
-import type { Constructor } from './Provider'
-import type { Declaration } from './providers'
-import type { Annotation } from './Annotation'
-import type { Secrets } from './Secrets'
+import { providers } from './providers/index.js'
+import { Storage, type Storages } from './Storage.js'
+import { Aspect } from './Aspect.js'
+import { ENV_PREFIX } from './deployment.js'
+import { validateAnnotation } from './Annotation.js'
+import type { Constructor } from './Provider.js'
+import type { Declaration } from './providers/index.js'
+import type { Annotation } from './Annotation.js'
+import type { Secrets } from './Secrets.js'
 
 export class Factory {
   private readonly annotation: Annotation

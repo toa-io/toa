@@ -1,5 +1,5 @@
-import type * as _operator from './operator'
-import * as _registry from './registry'
+import type * as _operator from './operator.js'
+import * as _registry from './registry.js'
 
 declare namespace toa.deployment {
 

@@ -1,12 +1,10 @@
-'use strict'
-
-function to (entity) {
+export function to (entity) {
   const { id, ...rest } = entity
 
   return /** @type {toa.mongodb.Record} */ { _id: id, ...rest }
 }
 
-function from (record) {
+export function from (record) {
   if (record === undefined || record === null)
     return null
 
@@ -14,6 +12,3 @@ function from (record) {
 
   return { id: _id, ...rest }
 }
-
-exports.to = to
-exports.from = from

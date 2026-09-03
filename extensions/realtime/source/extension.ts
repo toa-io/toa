@@ -1,8 +1,9 @@
-import { components } from './Composition'
+import { readFileSync } from 'node:fs'
+import { components } from './Composition.js'
 import type { Dependency, Instances, Resources, Service } from '@toa.io/operations'
 
 export const standalone = true
-export { components } from './Composition'
+export { components } from './Composition.js'
 
 export function deployment (instances: Instances<Declaration>, annotation?: Declaration & Annotation): Dependency {
   const routes = []
@@ -28,7 +29,7 @@ export function deployment (instances: Instances<Declaration>, annotation?: Decl
     group: 'realtime',
     name: 'streams',
 
-    version: require('../package.json').version,
+    version: JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8')).version,
     components: labels,
     resources,
     variables: [{

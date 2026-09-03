@@ -1,13 +1,11 @@
-'use strict'
+import { join } from 'node:path'
+import { writeFile as write } from 'node:fs/promises'
+import { yaml as jsyaml } from '@toa.io/generic'
+import fs from 'fs-extra'
 
-const { join } = require('node:path')
-const { writeFile: write } = require('node:fs/promises')
-const jsyaml = require('js-yaml')
-const fs = require('fs-extra')
+import { merge, declare, describe } from './.deployment/index.js'
 
-const { merge, declare, describe } = require('./.deployment')
-
-class Deployment {
+export class Deployment {
   #chart
   #values
   #process
@@ -89,10 +87,11 @@ function addVariables (list, variables, used = new Set()) {
   }
 }
 
-const TEMPLATES = join(__dirname, 'chart/templates')
+const TEMPLATES = join(import.meta.dirname, 'chart/templates')
 
-exports.Deployment = Deployment
+
 
 function dump (object) {
-  return jsyaml.dump(object, { noRefs: true, lineWidth: -1 })
+  // js-yaml writes plain objects only, and the values carry locators and images
+  return jsyaml.dump(JSON.parse(JSON.stringify(object)), { noRefs: true, lineWidth: -1 })
 }

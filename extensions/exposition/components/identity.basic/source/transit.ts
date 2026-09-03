@@ -1,6 +1,6 @@
 import { genSalt, hash } from 'bcryptjs'
 import type { Maybe, Operation } from '@toa.io/types'
-import type { Context, Entity, TransitInput, IdOutput } from './types'
+import type { Context, Entity, TransitInput, IdOutput } from './types.js'
 
 export class Transition implements Operation {
   private rounds: number = 10

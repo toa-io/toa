@@ -1,3 +1,1 @@
-'use strict'
-
-exports.deployment = require('./deployment')
+export * as deployment from './deployment/index.js'

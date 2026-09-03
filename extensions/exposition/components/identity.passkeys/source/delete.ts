@@ -1,4 +1,4 @@
-import type { Context } from './types'
+import type { Context } from './types/index.js'
 
 export async function effect ({ authority, identity, id }: Input, context: Context): Promise<void | null> {
   return await context.local.terminate({

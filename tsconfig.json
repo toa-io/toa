@@ -1,9 +1,10 @@
 {
   "compilerOptions": {
     "outDir": "/dev/null",
-    "module": "commonjs",
-    "moduleResolution": "node",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
     "target": "ESNext",
+    "types": ["node"],
     "sourceMap": true,
     "declaration": true,
     "esModuleInterop": true,

@@ -1,6 +1,6 @@
-import type * as _composition from './composition'
-import type * as _service from './service'
-import type * as _dependency from './dependency'
+import type * as _composition from './composition.js'
+import type * as _service from './service.js'
+import type * as _dependency from './dependency.js'
 
 declare namespace toa.deployment {
 

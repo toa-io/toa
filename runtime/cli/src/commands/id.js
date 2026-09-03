@@ -1,7 +1,6 @@
-'use strict'
+import { id } from '../handlers/id.js'
 
-const { id } = require('../handlers/id')
+export const command = 'id'
+export const desc = false
 
-exports.command = 'id'
-exports.desc = false
-exports.handler = id
+export { id as handler }

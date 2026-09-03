@@ -1,16 +1,14 @@
-'use strict'
+import assert from 'node:assert'
+import { join } from 'node:path'
+import { diff } from 'jest-diff'
 
-const assert = require('node:assert')
-const { join } = require('node:path')
-const { diff } = require('jest-diff')
+import { readFile } from 'node:fs/promises'
+import { load as parse } from 'js-yaml'
+import { match } from '@toa.io/generic'
 
-const { readFile } = require('node:fs/promises')
-const { load: parse } = require('js-yaml')
-const { match } = require('@toa.io/generic')
+import * as extract from './.deployment/index.js'
 
-const extract = require('./.deployment')
-
-const { When, Then } = require('@cucumber/cucumber')
+import { When, Then } from '@cucumber/cucumber'
 
 When('I export deployment',
   function () {

@@ -1,9 +1,10 @@
-'use strict'
+import { it } from 'node:test'
+import assert from 'node:assert/strict'
 
-const { defined } = require('../')
+import { defined } from '../source/index.js'
 
 it('should be', () => {
-  expect(defined).toBeDefined()
+  assert.notStrictEqual(defined, undefined)
 })
 
 it('should remove undefined', () => {
@@ -11,12 +12,12 @@ it('should remove undefined', () => {
 
   defined(object)
 
-  expect(object).toStrictEqual({ a: 1 })
+  assert.deepStrictEqual(object, { a: 1 })
 })
 
 it('should return result', () => {
   const input = { a: 1, b: undefined }
   const output = defined(input)
 
-  expect(output).toStrictEqual({ a: 1 })
+  assert.deepStrictEqual(output, { a: 1 })
 })

@@ -1,17 +1,15 @@
-'use strict'
+import { console } from 'openspan'
+import { Remote } from '@toa.io/core'
+import { remap } from '@toa.io/generic'
 
-const { console } = require('openspan')
-const { Remote } = require('@toa.io/core')
-const { remap } = require('@toa.io/generic')
-
-const boot = require('./index')
+import * as boot from './index.js'
 
 /**
  * @param {toa.core.Locator} locator
  * @param {toa.core.Source} [source] the origin stamped on every call made through this remote
  * @param {toa.norm.Component} [manifest] skips discovery when the manifest is already known
  */
-const remote = async (locator, source, manifest) => {
+export const remote = async (locator, source, manifest) => {
   let discovery
 
   if (manifest === undefined) {
@@ -21,10 +19,11 @@ const remote = async (locator, source, manifest) => {
     manifest = await discovery.lookup(locator)
   }
 
+  // a call binds its consumers, which are loaded rather than required
   const calls = manifest.operations === undefined
     ? {}
-    : remap(manifest.operations,
-      (definition, endpoint) => boot.call(locator, endpoint, definition, manifest.entity, source))
+    : await settle(remap(manifest.operations,
+      (definition, endpoint) => boot.call(locator, endpoint, definition, manifest.entity, source)))
 
   const remote = new Remote(locator, calls)
 
@@ -35,4 +34,10 @@ const remote = async (locator, source, manifest) => {
   return remote
 }
 
-exports.remote = remote
+/** An object whose values are promises, as an object of what they resolve to. */
+async function settle (object) {
+  const entries = Object.entries(object)
+  const values = await Promise.all(entries.map(([, promise]) => promise))
+
+  return Object.fromEntries(entries.map(([key], index) => [key, values[index]]))
+}

@@ -1,6 +1,6 @@
 import assert from 'node:assert'
-import { Directive } from './Directive'
-import type { Output } from '../../io'
+import { Directive } from './Directive.js'
+import type { Output } from '../../io.js'
 
 export class Context extends Directive {
   public readonly targeted = false

@@ -1,9 +1,7 @@
-'use strict'
+import { Producer } from './producer.js'
+import { Consumer } from './consumer.js'
 
-const { Producer } = require('./producer')
-const { Consumer } = require('./consumer')
-
-class Factory {
+export class Factory {
   #bindings = {}
 
   producer (locator, endpoints, producer) {
@@ -14,5 +12,3 @@ class Factory {
     return new Consumer(this.#bindings, locator, endpoint)
   }
 }
-
-exports.Factory = Factory

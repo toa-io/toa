@@ -1,12 +1,8 @@
-'use strict'
-
-const boot = require('@toa.io/boot')
+import * as boot from '@toa.io/boot'
 
 /**
  * @type {toa.stage.Manifest}
  */
-const manifest = async (path) => {
+export const manifest = async (path) => {
   return boot.manifest(path)
 }
-
-exports.manifest = manifest

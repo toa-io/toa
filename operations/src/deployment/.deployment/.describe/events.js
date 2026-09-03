@@ -1,5 +1,3 @@
-'use strict'
-
 /**
  * Tells each component which of its events something consumes. An event nobody consumes gets
  * no emitter, no exchange and no outbox row, and a component none of whose events are consumed
@@ -11,7 +9,7 @@
  * @param {toa.norm.Context} context
  * @param {toa.deployment.Dependency} dependency
  */
-function events (context, dependency) {
+export function events (context, dependency) {
   const components = deployed(context)
   const consumed = collect(components, context.events, dependency.events)
 
@@ -63,5 +61,3 @@ function collect (components, declared, contributed) {
 }
 
 const VARIABLE = 'TOA_EVENTS_'
-
-exports.events = events

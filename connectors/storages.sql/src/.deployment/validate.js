@@ -1,10 +1,8 @@
-'use strict'
-
 /**
  * @param {toa.pointer.URIs} uris
  * @returns {void}
  */
-const validate = (uris) => {
+export const validate = (uris) => {
   if (uris === undefined || uris === null) throw new Error('SQL annotation is required')
 
   if (typeof uris !== 'string' && typeof uris !== 'object') {
@@ -33,5 +31,3 @@ const test = (key, value) => {
   if (common && table !== undefined) error('must not contain table name')
   if (key === 'default' && schema !== undefined) error('must not contain schema name')
 }
-
-exports.validate = validate

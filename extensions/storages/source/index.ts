@@ -1,7 +1,7 @@
-export { Factory } from './Factory'
-export { deployment } from './deployment'
-export { manifest } from './manifest'
+export { Factory } from './Factory.js'
+export { deployment } from './deployment.js'
+export { manifest } from './manifest.js'
 
-export type { Entry, Stream } from './Entry'
-export type { Storage } from './Storage'
-export type * from './providers'
+export type { Entry, Stream } from './Entry.js'
+export type { Storage } from './Storage.js'
+export type * from './providers/index.js'

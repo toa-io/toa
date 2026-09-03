@@ -1,5 +1,3 @@
-'use strict'
-
-exports.transition = (_, object) => {
+export const transition = (_, object) => {
   object.count++
 }

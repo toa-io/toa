@@ -1,12 +1,14 @@
-'use strict'
+import { it, beforeEach, mock } from 'node:test'
+import assert from 'node:assert/strict'
+import { isDeepStrictEqual } from 'node:util'
 
-const { generate } = require('randomstring')
-const { Connector } = require('@toa.io/core')
+import { generate } from 'randomstring'
+import { Connector } from '@toa.io/core'
 
-const { Runner } = require('../src/algorithms/runner')
+import { Runner } from '../src/algorithms/runner.js'
 
 it('should be', () => {
-  expect(Runner).toBeDefined()
+  assert.notStrictEqual(Runner, undefined)
 })
 
 const context = /** @type {toa.node.Context} */ new Connector()
@@ -22,7 +24,7 @@ beforeEach(() => {
 })
 
 it('should be instance of Connector', async () => {
-  expect(runner).toBeInstanceOf(Connector)
+  assert.ok(runner instanceof Connector)
 })
 
 it('should return output', async () => {
@@ -38,17 +40,17 @@ it('should return output', async () => {
 
     const reply = await runner.execute()
 
-    expect(reply.output).toStrictEqual(value)
+    assert.deepStrictEqual(reply.output, value)
   }
 })
 
 it('should mount', async () => {
   const execute = () => undefined
-  const mount = jest.fn(() => undefined)
+  const mount = mock.fn(() => undefined)
   const algorithm = /** @type {toa.node.Algorithm} */ { execute, mount }
   const runner = new Runner(algorithm, context)
 
   await runner.connect()
 
-  expect(mount).toHaveBeenCalledWith(context)
+  assert.ok(mount.mock.calls.some((call) => call.arguments.length === 1 && isDeepStrictEqual(call.arguments[0], context)))
 })

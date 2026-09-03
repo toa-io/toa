@@ -1,12 +1,10 @@
-'use strict'
-
-const { rename } = require('./rename')
+import { rename } from './rename.js'
 
 /**
  * @param {toa.core.storages.ast.Node} node
  * @returns {import('mongodb').Filter}
  */
-const criteria = (node) => {
+export const criteria = (node) => {
   if (TYPES[node.type] === undefined) throw new Error(`AST parse error: unknown node type '${node.type}'`)
 
   return TYPES[node.type](node)
@@ -52,5 +50,3 @@ TYPES.COMPARISON = (expression) => {
 
 TYPES.SELECTOR = (expression) => rename(expression.selector)
 TYPES.VALUE = (expression) => expression.value
-
-exports.criteria = criteria

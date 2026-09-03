@@ -1,10 +1,10 @@
 import { Connector, Locator } from '@toa.io/core'
 import { console } from 'openspan'
-import { EDGES, MAX_EDGES, NAMESPACE, NODES } from './const'
-import * as keys from './keys'
-import type { Bootloader } from './Factory'
-import type { Options } from './annotation'
-import type { Edge, Node } from './model'
+import { EDGES, MAX_EDGES, NAMESPACE, NODES } from './const.js'
+import * as keys from './keys.js'
+import type { Bootloader } from './Factory.js'
+import type { Options } from './annotation.js'
+import type { Edge, Node } from './model.js'
 import type { Remote } from '@toa.io/core'
 
 /**

@@ -1,19 +1,13 @@
-'use strict'
+import assert from 'node:assert'
+import { join } from 'node:path'
+import dotenv from 'dotenv'
+import { diff } from 'jest-diff'
+import { subtract } from '@toa.io/generic'
+import { readFile, writeFile } from 'node:fs/promises'
+import * as components from './.workspace/components/index.js'
+import * as context from './.workspace/context.js'
 
-const assert = require('node:assert')
-const { join } = require('node:path')
-const dotenv = require('dotenv')
-const { diff } = require('jest-diff')
-const { subtract } = require('@toa.io/generic')
-const { readFile, writeFile } = require('node:fs/promises')
-const components = require('./.workspace/components')
-const context = require('./.workspace/context')
-
-const {
-  Given,
-  Then,
-  After
-} = require('@cucumber/cucumber')
+import { Given, Then, After } from '@cucumber/cucumber'
 
 Given('I have a component {component}',
   async function(component) {

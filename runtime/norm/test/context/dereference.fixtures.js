@@ -1,6 +1,4 @@
-'use strict'
-
-const clone = require('clone-deep')
+import clone from 'clone-deep'
 
 /**
  * @param id {string}
@@ -22,7 +20,7 @@ const component = (id) => {
   }
 }
 
-const context = {
+export const context = {
   name: 'test',
   description: 'context fixture',
   version: '0.0.0',
@@ -41,7 +39,7 @@ const context = {
   ]
 }
 
-const expected = clone(context)
+export const expected = clone(context)
 
 expected.compositions = [
   {
@@ -53,6 +51,3 @@ expected.compositions = [
     components: [component('d.c'), component('a.b')]
   }
 ]
-
-exports.context = context
-exports.expected = expected

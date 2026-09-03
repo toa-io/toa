@@ -1,4 +1,4 @@
-import type { AddInput, Context, IdOutput } from './types'
+import type { AddInput, Context, IdOutput } from './types.js'
 import type { Maybe } from '@toa.io/types'
 
 export async function effect (input: AddInput, context: Context): Promise<Maybe<IdOutput>> {

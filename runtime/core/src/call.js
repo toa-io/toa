@@ -1,10 +1,8 @@
-'use strict'
+import { Readable } from 'node:stream'
+import { current, encode } from 'openspan'
+import { Connector } from './connector.js'
 
-const { Readable } = require('node:stream')
-const { current, encode } = require('openspan')
-const { Connector } = require('./connector')
-
-class Call extends Connector {
+export class Call extends Connector {
   #transmitter
   #contract
   #source
@@ -58,7 +56,7 @@ class Call extends Connector {
   }
 }
 
-exports.Call = Call
+
 
 // the remote error as a value: every property it carries, and nothing else enumerable
 class RemoteError extends Error {

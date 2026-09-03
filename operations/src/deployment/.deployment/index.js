@@ -1,9 +1,3 @@
-'use strict'
-
-const { declare } = require('./declare')
-const { describe } = require('./describe')
-const { merge } = require('./merge')
-
-exports.declare = declare
-exports.describe = describe
-exports.merge = merge
+export { declare } from './declare.js'
+export { describe } from './describe.js'
+export { merge } from './merge.js'

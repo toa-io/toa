@@ -1,11 +1,11 @@
 import assert from 'node:assert'
 import Negotiator from 'negotiator'
-import { cors } from '../cors'
-import { Mapping } from './Mapping'
-import { Languages } from './Languages'
-import type { Input } from '../../io'
-import type { Parameter } from '../../RTD'
-import type { Directive } from './Directive'
+import { cors } from '../cors/index.js'
+import { Mapping } from './Mapping.js'
+import { Languages } from './Languages.js'
+import type { Input } from '../../io.js'
+import type { Parameter } from '../../RTD/index.js'
+import type { Directive } from './Directive.js'
 
 export class Language extends Mapping<string> {
   private languages: string[] | null = null

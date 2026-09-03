@@ -1,16 +1,14 @@
-'use strict'
+import { join } from 'node:path'
 
-const { join } = require('node:path')
-
-const { readFile, writeFile } = require('node:fs/promises')
-const { readFileSync } = require('node:fs')
-const { load: parse, dump } = require('js-yaml')
+import { readFile, writeFile } from 'node:fs/promises'
+import { readFileSync } from 'node:fs'
+import { load as parse, dump } from 'js-yaml'
 
 /**
  * @param {string} directory
  * @param {string} [additions]
  */
-const template = async (directory, additions) => {
+export const template = async (directory, additions) => {
   const path = join(directory, FILENAME)
   const template = structuredClone(TEMPLATE)
 
@@ -29,7 +27,7 @@ const template = async (directory, additions) => {
  * @param {string} directory
  * @param {string} key
  */
-const remove = async (directory, key) => {
+export const remove = async (directory, key) => {
   const path = join(directory, FILENAME)
   const context = parse(await readFile(path, 'utf8'))
 
@@ -39,10 +37,10 @@ const remove = async (directory, key) => {
 }
 
 const FILENAME = 'context.toa.yaml'
-const TEMPLATE = parse(readFileSync(join(__dirname, FILENAME), 'utf8'))
+const TEMPLATE = parse(readFileSync(join(import.meta.dirname, FILENAME), 'utf8'))
 
-exports.template = template
-exports.remove = remove
+
+
 
 /**
  * @param {object} object

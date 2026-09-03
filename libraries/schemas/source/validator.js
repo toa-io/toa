@@ -1,7 +1,5 @@
-'use strict'
-
-const { default: Ajv } = require('ajv/dist/2019')
-const formats = /** @type {Function} */ require('ajv-formats')
+import { default as Ajv } from 'ajv/dist/2019.js'
+import formats from 'ajv-formats'
 
 /**
  * Compiling a schema is the bulk of the time a composition spends booting, and the same
@@ -16,7 +14,7 @@ const formats = /** @type {Function} */ require('ajv-formats')
  * @param {object} [options]
  * @returns {import('ajv').ValidateFunction}
  */
-function create (schema, options) {
+export function create (schema, options) {
   const key = JSON.stringify(schema) + '\u0000' + JSON.stringify(options ?? null)
   const cached = COMPILED.get(key)
 
@@ -73,7 +71,7 @@ const COMPILERS = new Map()
 
 let VALIDATOR
 
-function is (schema) {
+export function is (schema) {
   VALIDATOR ??= ajv()
 
   return VALIDATOR.validateSchema(schema) === true
@@ -88,7 +86,7 @@ const LIMIT = 4096
  * @param {object[]} [schemas]
  * @param {object} [additional]
  */
-function ajv (schemas, override = {}) {
+export function ajv (schemas, override = {}) {
   const options = Object.assign({ schemas }, OPTIONS, override)
   const ajv = new Ajv(options)
 
@@ -102,7 +100,3 @@ const OPTIONS = {
   coerceTypes: true,
   strictTypes: false // omit warning: missing type "object"
 }
-
-exports.create = create
-exports.is = is
-exports.ajv = ajv

@@ -1,3 +1,3 @@
-export * from './pad'
-export * from './types'
-export { jweKey } from './key'
+export * from './pad.js'
+export * from './types.js'
+export { jweKey } from './key.js'

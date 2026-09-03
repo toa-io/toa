@@ -1,6 +1,4 @@
-'use strict'
-
-const samples = {
+export const samples = {
   simple: {
     query: {
       criteria: 'name==Eddie'
@@ -96,5 +94,3 @@ const samples = {
     }
   }
 }
-
-exports.samples = samples

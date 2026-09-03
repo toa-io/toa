@@ -1,10 +1,11 @@
+import { readFileSync } from 'node:fs'
 import assert from 'node:assert'
 import { type Dependency, type Resources, type Service, type Variable, type Variables } from '@toa.io/operations'
-import { components } from './Composition'
-import { EVENT, PREFIX, SECRET_RX, UI_PATH, UI_PORT, VALUES } from './const'
-import { epoch } from './epoch'
-import * as validators from './schemas'
-import type { Manifest } from './manifest'
+import { components } from './Composition.js'
+import { EVENT, PREFIX, SECRET_RX, UI_PATH, UI_PORT, VALUES } from './const.js'
+import { epoch } from './epoch.js'
+import * as validators from './schemas.js'
+import type { Manifest } from './manifest.js'
 import type { context } from '@toa.io/norm'
 
 export function deployment (instances: Instance[], annotation: Annotation = {}): Dependency {
@@ -29,7 +30,7 @@ export function deployment (instances: Instance[], annotation: Annotation = {}):
   const service: Service = {
     group: 'configuration',
     name: 'values',
-    version: require('../package.json').version,
+    version: JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8')).version,
     components: components().labels,
     resources,
     // the service that holds the values also serves the page that reads them

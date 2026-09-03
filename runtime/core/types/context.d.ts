@@ -1,8 +1,8 @@
-import * as _request from './request'
-import { Locator } from './locator'
+import * as _request from './request.js'
+import { Locator } from './locator.js'
 import * as _reply from './reply'
-import * as _extensions from './extensions'
-import * as _connector from './connector'
+import * as _extensions from './extensions.js'
+import * as _connector from './connector.js'
 
 export interface Context extends _connector.Connector{
   aspects: _extensions.Aspect[]

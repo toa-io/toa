@@ -1,13 +1,9 @@
-'use strict'
+import { generate } from 'randomstring'
 
-const { generate } = require('randomstring')
-
-const origin = {
+export const origin = {
   foo: generate(),
   bar: {
     baz: generate()
   },
   quu: [generate(), generate()]
 }
-
-exports.origin = origin

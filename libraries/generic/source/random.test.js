@@ -1,34 +1,33 @@
-'use strict'
+import { it } from 'node:test'
+import assert from 'node:assert/strict'
 
-const { random } = require('../source/random')
+import { random } from '../source/random.js'
 
 it('should be less than or equal to ceil(max)', () => {
   const iterations = 100
 
-  expect.assertions(iterations)
-
+  
   for (let i = iterations; i > 0; i--) {
     const max = Math.ceil(Math.random() * i)
     const value = random(max)
 
-    expect(value).toBeLessThanOrEqual(max)
+    assert.ok(value <= max)
   }
 })
 
 it('should be integer', () => {
   const value = random(10)
 
-  expect(value % 1).toBe(0)
+  assert.strictEqual(value % 1, 0)
 })
 
 it('should be less than 100 by default', () => {
   const iterations = 100
 
-  expect.assertions(iterations)
-
+  
   for (let i = iterations; i > 0; i--) {
     const value = random()
 
-    expect(value).toBeLessThanOrEqual(100)
+    assert.ok(value <= 100)
   }
 })

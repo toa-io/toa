@@ -1,11 +1,9 @@
-'use strict'
+import { Connector } from '@toa.io/core'
+import { underlay } from '@toa.io/generic'
 
-const { Connector } = require('@toa.io/core')
-const { underlay } = require('@toa.io/generic')
+import * as shortcuts from './shortcuts/index.js'
 
-const shortcuts = require('./shortcuts')
-
-class Context extends Connector {
+export class Context extends Connector {
   env
   name
   aspects
@@ -79,5 +77,3 @@ function source (locator, operation) {
 
   return { namespace: locator.namespace, component: locator.name, operation }
 }
-
-exports.Context = Context

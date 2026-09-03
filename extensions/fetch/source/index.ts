@@ -1,2 +1,2 @@
-export { Factory } from './Factory'
-export type { FetchInit, RetryOptions } from './Aspect'
+export { Factory } from './Factory.js'
+export type { FetchInit, RetryOptions } from './Aspect.js'

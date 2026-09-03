@@ -1,8 +1,8 @@
-'use strict'
+import { mock } from 'node:test'
 
-const { generate } = require('randomstring')
+import { generate } from 'randomstring'
 
-const component = {
+export const component = {
   locator: {
     id: 'foo.bar',
     operations: [
@@ -17,21 +17,17 @@ const component = {
       }
     ]
   },
-  invoke: jest.fn(async () => generate()),
+  invoke: mock.fn(async () => generate()),
   link: () => null,
   connect: () => null,
   disconnect: () => null
 }
 
-const endpoints = ['get', 'add', 'discover']
+export const endpoints = ['get', 'add', 'discover']
 
-const exposition = {
+export const exposition = {
   locator: {
     id: 'foo.bar'
   },
-  invoke: jest.fn(async () => generate())
+  invoke: mock.fn(async () => generate())
 }
-
-exports.component = component
-exports.endpoints = endpoints
-exports.exposition = exposition

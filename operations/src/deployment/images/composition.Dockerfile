@@ -13,7 +13,7 @@ COPY --chown=node:node . /composition
 
 # run 'npm i' in each component
 RUN --mount=type=cache,target=/root/.npm \
-  for entry in *; do if [ -f "$entry/package.json" ]; then (cd $entry && npm i --omit=dev); fi; done
+  for entry in *; do if grep -qs '"dependencies"' "$entry/package.json"; then (cd $entry && npm i --omit=dev); fi; done
 
 USER node
 CMD toa compose *

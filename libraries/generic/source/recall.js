@@ -1,7 +1,5 @@
-'use strict'
-
 /** @type {toa.generic.recall} */
-const recall = (context, method = undefined) => {
+export const recall = (context, method = undefined) => {
   if (method === undefined) return replay(context)
   else return recorder(context, method)
 }
@@ -39,5 +37,3 @@ const replay = async (context) => {
 
 const METHODS = Symbol('context methods')
 const CALLS = Symbol('method calls')
-
-exports.recall = recall

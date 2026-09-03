@@ -1,18 +1,13 @@
-'use strict'
+import knex from 'knex'
+import { console } from 'openspan'
+import { Connector } from '@toa.io/core'
+import { resolve } from '@toa.io/pointer'
+import { ID } from './deployment.js'
 
-const knex = require('knex')
-const { console } = require('openspan')
-const { Connector } = require('@toa.io/core')
-const { resolve } = require('@toa.io/pointer')
-const { ID } = require('./deployment')
-
-class Connection extends Connector {
+export class Connection extends Connector {
   table
 
   #locator
-
-  /** @type {string} */
-  #driver
 
   /** @type {import('knex').Knex} */
   #client
@@ -89,5 +84,3 @@ class Connection extends Connector {
     else return await resolve(ID, this.#locator.id)
   }
 }
-
-exports.Connection = Connection

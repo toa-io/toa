@@ -1,18 +1,18 @@
-'use strict'
+import { mock } from 'node:test'
 
-const { generate } = require('randomstring')
+import { generate } from 'randomstring'
 
 // noinspection JSCheckFunctionSignatures
-const transmission = {
-  request: jest.fn((request) => ({ [request.invalid ? 'exception' : 'output']: generate() })),
-  link: jest.fn()
+export const transmission = {
+  request: mock.fn((request) => ({ [request.invalid ? 'exception' : 'output']: generate() })),
+  link: mock.fn()
 }
 
-const contract = {
-  fit: jest.fn(() => null)
+export const contract = {
+  fit: mock.fn(() => null)
 }
 
-const request = () => ({
+export const request = () => ({
   ok: {
     input: { [generate()]: generate() },
     query: { [generate()]: generate() }
@@ -21,7 +21,3 @@ const request = () => ({
     invalid: true
   }
 })
-
-exports.transmission = transmission
-exports.contract = contract
-exports.request = request

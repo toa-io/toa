@@ -1,4 +1,7 @@
-import { request } from './request'
+import { it } from 'node:test'
+import assert from 'node:assert/strict'
+
+import { request } from './request.js'
 
 it('should parse headers', () => {
   const http =
@@ -8,7 +11,7 @@ it('should parse headers', () => {
 
   const result = request(http)
 
-  expect(result.headers.get('host')).toEqual('localhost:3000')
+  assert.deepStrictEqual(result.headers.get('host'), 'localhost:3000')
 })
 
 it('should parse body', () => {
@@ -22,8 +25,8 @@ it('should parse body', () => {
 
   const result = request(http)
 
-  expect(result.body?.toString()).toEqual('hello world')
-  expect(result.headers.get('host')).toEqual('localhost:3000')
+  assert.deepStrictEqual(result.body?.toString(), 'hello world')
+  assert.deepStrictEqual(result.headers.get('host'), 'localhost:3000')
 })
 
 it('should add default host header', () => {
@@ -33,5 +36,5 @@ it('should add default host header', () => {
 
   const result = request(http, 'https://foo.bar')
 
-  expect(result.headers.get('host')).toEqual('foo.bar')
+  assert.deepStrictEqual(result.headers.get('host'), 'foo.bar')
 })

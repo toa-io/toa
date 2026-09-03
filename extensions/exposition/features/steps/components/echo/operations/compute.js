@@ -1,7 +1,3 @@
-'use strict'
-
-function computation (input) {
+export function computation (input) {
   return `Hello ${input.name}`
 }
-
-exports.computation = computation

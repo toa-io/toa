@@ -1,6 +1,4 @@
-'use strict'
-
-class Service {
+export class Service {
   constructor (service, image) {
     Object.assign(this, service)
 
@@ -8,5 +6,3 @@ class Service {
     this.image = image.reference
   }
 }
-
-exports.Service = Service

@@ -1,22 +1,20 @@
-'use strict'
+import { mock } from 'node:test'
 
 const chain = () => client
 
 let result = []
 
 const client = {
-  withSchema: jest.fn(chain),
-  select: jest.fn(() => result),
-  from: jest.fn(chain),
-  where: jest.fn(chain),
-  insert: jest.fn(chain),
-  into: jest.fn(),
-  raw: jest.fn(chain),
-  destroy: jest.fn(chain)
+  withSchema: mock.fn(chain),
+  select: mock.fn(() => result),
+  from: mock.fn(chain),
+  where: mock.fn(chain),
+  insert: mock.fn(chain),
+  into: mock.fn(),
+  raw: mock.fn(chain),
+  destroy: mock.fn(chain)
 }
 
-const knex = jest.fn(chain)
+export const knex = mock.fn(chain)
 
 knex.result = (value) => (result = value)
-
-exports.knex = knex

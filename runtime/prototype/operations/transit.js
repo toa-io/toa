@@ -1,7 +1,5 @@
-'use strict'
-
 function transit (input, object) {
   return Object.assign(object, input)
 }
 
-exports.transition = transit
+export { transit as transition }

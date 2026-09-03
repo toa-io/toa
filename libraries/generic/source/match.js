@@ -1,11 +1,9 @@
-'use strict'
-
 /**
  * @param {any} reference
  * @param {any} candidate
  * @return {boolean}
  */
-const match = (reference, candidate) => {
+export const match = (reference, candidate) => {
   if (typeof candidate !== typeof reference) return false
 
   if (Array.isArray(candidate)) return arrays(reference, candidate)
@@ -39,5 +37,3 @@ function objects (candidate, reference) {
 
   return true
 }
-
-exports.match = match

@@ -1,6 +1,7 @@
 {
   "name": "@toa.io/extensions.introspection",
   "version": "1.0.0-alpha.275",
+  "type": "module",
   "description": "Toa Introspection",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
@@ -26,6 +27,6 @@
     "transpile": "npx tsc && npx tsc -p ./components/introspection.nodes && npx tsc -p ./components/introspection.edges",
     "build:ui": "npm --prefix ui ci && npm --prefix ui run build",
     "prepack": "npm run build:ui",
-    "features": "npx cucumber-js --tags 'not @samples and not @shutdown' && TOA_INTROSPECTION_SAMPLES=1 npx cucumber-js --tags @samples && TOA_INTROSPECTION_INTERVAL=3600 npx cucumber-js --tags @shutdown"
+    "features": "TSX_TSCONFIG_PATH=features/steps/tsconfig.json NODE_OPTIONS=--import=tsx cucumber-js --tags 'not @samples and not @shutdown' && TOA_INTROSPECTION_SAMPLES=1 TSX_TSCONFIG_PATH=features/steps/tsconfig.json NODE_OPTIONS=--import=tsx cucumber-js --tags @samples && TOA_INTROSPECTION_INTERVAL=3600 TSX_TSCONFIG_PATH=features/steps/tsconfig.json NODE_OPTIONS=--import=tsx cucumber-js --tags @shutdown"
   }
 }

@@ -1,9 +1,7 @@
-'use strict'
-
 /**
  * @implements {toa.core.bridges.Algorithm}
  */
-class Effect {
+export class Effect {
   #foo
 
   async mount (context) {
@@ -14,5 +12,3 @@ class Effect {
     return this.#foo
   }
 }
-
-exports.Effect = Effect

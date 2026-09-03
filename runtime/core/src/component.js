@@ -1,10 +1,8 @@
-'use strict'
+import assert from 'node:assert'
+import { console, current, decode, run } from 'openspan'
+import { Connector } from './connector.js'
 
-const assert = require('node:assert')
-const { console, current, decode, run } = require('openspan')
-const { Connector } = require('./connector')
-
-class Component extends Connector {
+export class Component extends Connector {
   locator
 
   /** @protected */
@@ -81,5 +79,3 @@ class Component extends Connector {
     return options
   }
 }
-
-exports.Component = Component

@@ -1,11 +1,4 @@
-'use strict'
-
-const { events } = require('./events')
-const { receivers } = require('./receivers')
-const { operations } = require('./operations')
-const { guards } = require('./guards')
-
-exports.events = events
-exports.receivers = receivers
-exports.operations = operations
-exports.guards = guards
+export { events } from './events.js'
+export { receivers } from './receivers.js'
+export { operations } from './operations.js'
+export { guards } from './guards.js'

@@ -1,6 +1,6 @@
 // noinspection ES6UnusedImports
 
-import { Connector } from './connector'
+import { Connector } from './connector.js'
 
 declare namespace toa.core {
 

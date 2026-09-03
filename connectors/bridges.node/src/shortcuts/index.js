@@ -1,21 +1,9 @@
-'use strict'
-
-const { atom } = require('./atom')
-const { fetch } = require('./fetch')
-const { amqp } = require('./amqp')
-const { configuration } = require('./configuration')
-const { state } = require('./state')
-const { stash } = require('./stash')
-const { storages } = require('./storages')
-const { logs } = require('./logs')
-const { span } = require('./span')
-
-exports.atom = atom
-exports.fetch = fetch
-exports.amqp = amqp
-exports.configuration = configuration
-exports.state = state
-exports.stash = stash
-exports.storages = storages
-exports.logs = logs
-exports.span = span
+export { atom } from './atom.js'
+export { fetch } from './fetch.js'
+export { amqp } from './amqp.js'
+export { configuration } from './configuration.js'
+export { state } from './state.js'
+export { stash } from './stash.js'
+export { storages } from './storages.js'
+export { logs } from './logs.js'
+export { span } from './span.js'

@@ -1,10 +1,11 @@
-'use strict'
+import { describe, it, beforeEach } from 'node:test'
+import assert from 'node:assert/strict'
 
-const clone = require('clone-deep')
-const { generate } = require('randomstring')
+import clone from 'clone-deep'
+import { generate } from 'randomstring'
 
-const { recognize, resolve } = require('../src/shortcuts')
-const fixtures = require('./shortcuts.fixtures')
+import { recognize, resolve } from '../src/shortcuts.js'
+import * as fixtures from './shortcuts.fixtures.js'
 
 let object
 
@@ -14,16 +15,16 @@ beforeEach(() => {
 
 describe('resolve', () => {
   it('should be defined', () => {
-    expect(resolve).toBeDefined()
+    assert.notStrictEqual(resolve, undefined)
   })
 
   it('should resolve', () => {
-    expect(Object.keys(fixtures.SHORTCUTS).length).toBeGreaterThan(0)
+    assert.ok(Object.keys(fixtures.SHORTCUTS).length > 0)
 
     for (const [key, value] of Object.entries(fixtures.SHORTCUTS)) {
       const resolved = resolve(key)
 
-      expect(resolved).toStrictEqual(value)
+      assert.deepStrictEqual(resolved, value)
     }
   })
 })
@@ -32,7 +33,7 @@ describe('recognize', () => {
   it('should not change unknown', () => {
     recognize(fixtures.SHORTCUTS, object)
 
-    expect(object).toStrictEqual(fixtures.object)
+    assert.deepStrictEqual(object, fixtures.object)
   })
 
   it('should resolve known', () => {
@@ -41,8 +42,8 @@ describe('recognize', () => {
     recognize(fixtures.SHORTCUTS, object)
 
     for (const [alias, name] of Object.entries(fixtures.SHORTCUTS)) {
-      expect(object[alias]).toBeUndefined()
-      expect(object[name]).toStrictEqual(known[name])
+      assert.strictEqual(object[alias], undefined)
+      assert.deepStrictEqual(object[name], known[name])
     }
   })
 
@@ -52,9 +53,9 @@ describe('recognize', () => {
 
     recognize(fixtures.SHORTCUTS, object, group)
 
-    expect(object[group]).toStrictEqual(known)
+    assert.deepStrictEqual(object[group], known)
 
-    for (const alias of Object.keys(fixtures.SHORTCUTS)) expect(object[alias]).toBeUndefined()
+    for (const alias of Object.keys(fixtures.SHORTCUTS)) assert.strictEqual(object[alias], undefined)
   })
 
   it('should not overwrite group', () => {
@@ -67,7 +68,7 @@ describe('recognize', () => {
 
     recognize(fixtures.SHORTCUTS, object, group)
 
-    expect(object[group]).toStrictEqual(expect.objectContaining(existing))
+    assert.partialDeepStrictEqual(object[group], existing)
   })
 
   it('should not create empty group', () => {
@@ -75,7 +76,7 @@ describe('recognize', () => {
 
     recognize(object, group)
 
-    expect(object[group]).toBeUndefined()
+    assert.strictEqual(object[group], undefined)
   })
 
   const append = () => {

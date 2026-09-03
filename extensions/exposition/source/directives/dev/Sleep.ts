@@ -1,10 +1,10 @@
 import assert from 'node:assert'
 import { setTimeout } from 'node:timers/promises'
 import { console } from 'openspan'
-import { cors } from '../cors'
-import { BadRequest } from '../../HTTP'
-import type { Directive } from './types'
-import type { Input, Output } from '../../io'
+import { cors } from '../cors/index.js'
+import { BadRequest } from '../../HTTP/index.js'
+import type { Directive } from './types.js'
+import type { Input, Output } from '../../io.js'
 
 export class Sleep implements Directive {
   private static warned = false
@@ -48,7 +48,7 @@ export class Sleep implements Directive {
         throw new Error()
 
       return pair
-    } catch (error) {
+    } catch {
       throw new BadRequest('Invalid sleep duration value')
     }
   }

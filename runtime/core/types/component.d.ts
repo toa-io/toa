@@ -1,7 +1,7 @@
-import { Connector } from './connector'
-import { Locator } from './locator'
-import { Request } from './request'
-import { Operation } from './operations'
+import { Connector } from './connector.js'
+import { Locator } from './locator.js'
+import { Request } from './request.js'
+import { Operation } from './operations.js'
 
 export class Component extends Connector {
   locator: Locator

@@ -1,11 +1,9 @@
-'use strict'
-
-const { ProcessorException } = require('./exceptions')
+import { ProcessorException } from './exceptions.js'
 
 /**
  * @implements {toa.conveyor.Conveyor}
  */
-class Conveyor {
+export class Conveyor {
   /** @type {toa.conveyor.Processor} */
   #processor
 
@@ -80,5 +78,3 @@ const reject = (promises) => {
 
   for (const promise of promises) promise.reject(exception)
 }
-
-exports.Conveyor = Conveyor

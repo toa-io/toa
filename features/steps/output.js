@@ -1,7 +1,6 @@
-'use strict'
-
-const assert = require('node:assert')
-const { Then } = require('@cucumber/cucumber')
+import * as runtime from '@toa.io/runtime'
+import assert from 'node:assert'
+import { Then } from '@cucumber/cucumber'
 
 Then('{word} should be the version',
   /**
@@ -9,7 +8,7 @@ Then('{word} should be the version',
    * @this {toa.features.Context}
    */
   async function(channel) {
-    const { version } = require('@toa.io/runtime')
+    const { version } = runtime
 
     await this.process
 

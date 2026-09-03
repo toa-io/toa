@@ -1,11 +1,9 @@
-'use strict'
+import { Receiver, Locator } from '@toa.io/core'
 
-const { Receiver, Locator } = require('@toa.io/core')
+import * as boot from './index.js'
+import * as extensions from './extensions/index.js'
 
-const boot = require('./index')
-const extensions = require('./extensions')
-
-const receivers = async (manifest, component) => {
+export const receivers = async (manifest, component) => {
   if (manifest.receivers === undefined) return []
 
   const receivers = []
@@ -20,12 +18,14 @@ const receivers = async (manifest, component) => {
     // the origin of the calls this receiver makes to its local operation
     const origin = { namespace: source.namespace, component: source.name, event }
 
-    const bridge = definition.bridge !== undefined ? boot.bridge.receiver(definition.bridge, manifest.path, label) : undefined
+    const bridge = definition.bridge !== undefined
+      ? await boot.bridge.receiver(definition.bridge, manifest.path, label)
+      : undefined
     const receiver = new Receiver({ ...definition, label, destination, origin }, local, bridge)
     const decorator = extensions.receiver(receiver, manifest.locator)
 
     const transport = definition.binding ?? await resolveBinding(locator, label)
-    const binding = boot.bindings.receive(transport, source, label, manifest.locator.id, decorator)
+    const binding = await boot.bindings.receive(transport, source, label, manifest.locator.id, decorator)
 
     binding.depends(component)
     receivers.push(binding)
@@ -34,7 +34,7 @@ const receivers = async (manifest, component) => {
   return receivers
 }
 
-async function receive (label, group, callback) {
+export async function receive (label, group, callback) {
   if (callback === undefined) {
     callback = group
     group = undefined
@@ -43,7 +43,7 @@ async function receive (label, group, callback) {
   const locator = Locator.parse(label)
   const transport = await resolveBinding(locator, label)
 
-  return boot.bindings.receive(transport, locator, label, group, callback)
+  return await boot.bindings.receive(transport, locator, label, group, callback)
 }
 
 /**
@@ -58,6 +58,3 @@ async function resolveBinding (locator, label) {
 
   return events[event].binding
 }
-
-exports.receivers = receivers
-exports.receive = receive

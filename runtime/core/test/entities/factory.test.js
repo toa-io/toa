@@ -1,19 +1,23 @@
-'use strict'
+import { it, beforeEach, mock as mocking } from 'node:test'
+import assert from 'node:assert/strict'
+import { isDeepStrictEqual } from 'node:util'
 
-const { generate } = require('randomstring')
+import { generate } from 'randomstring'
 
-const fixtures = require('./factory.fixtures')
+import * as fixtures from './factory.fixtures.js'
 const mock = fixtures.mock
 
-jest.mock('../../src/entities/entity', () => ({ Entity: mock.Entity }))
-jest.mock('../../src/entities/set', () => ({ EntitySet: mock.EntitySet }))
+mocking.module('../../src/entities/entity', { namedExports: ({ Entity: mock.Entity }) })
+mocking.module('../../src/entities/set', { namedExports: ({ EntitySet: mock.EntitySet }) })
 
-const { Factory } = require('../../src/entities/factory')
+const { Factory } = await import('../../src/entities/factory.js')
+
 
 let factory
 
 beforeEach(async () => {
-  jest.clearAllMocks()
+  resetCalls()
+  fixtures.entities.length = 0
 
   factory = new Factory(fixtures.schema, () => fixtures.storage.id())
 })
@@ -22,29 +26,37 @@ it('should create initial', () => {
   const id = generate()
   const initial = factory.init(id)
 
-  expect(initial).toBeInstanceOf(mock.Entity)
-  expect(initial.constructor).toHaveBeenCalledWith(fixtures.schema, id, expect.any(Function))
+  assert.ok(initial instanceof mock.Entity)
+  assert.ok(mock.Entity.mock.calls.some((call) => call.arguments.length === 3 && isDeepStrictEqual(call.arguments[0], fixtures.schema) && isDeepStrictEqual(call.arguments[1], id) && typeof call.arguments[2] === 'function'))
 })
 
 it('should create instance', () => {
   const object = factory.object(fixtures.entity)
 
-  expect(object).toBeInstanceOf(mock.Entity)
-  expect(object.constructor)
-    .toHaveBeenCalledWith(fixtures.schema, fixtures.entity, expect.any(Function), true)
+  assert.ok(object instanceof mock.Entity)
+  assert.ok(mock.Entity.mock.calls.some((call) => call.arguments.length === 4 && isDeepStrictEqual(call.arguments[0], fixtures.schema) && isDeepStrictEqual(call.arguments[1], fixtures.entity) && typeof call.arguments[2] === 'function' && isDeepStrictEqual(call.arguments[3], true)))
 })
 
 it('should create set', () => {
   const objects = factory.objects(fixtures.set)
 
-  expect(objects).toBeInstanceOf(mock.EntitySet)
+  assert.ok(objects instanceof mock.EntitySet)
 
   const instances = fixtures.set.map((entity, index) => {
-    expect(mock.Entity)
-      .toHaveBeenNthCalledWith(index + 1, fixtures.schema, entity, expect.any(Function), true)
+    assert.ok(((call) => call.arguments.length === 4 && isDeepStrictEqual(call.arguments[0], fixtures.schema) && isDeepStrictEqual(call.arguments[1], entity) && typeof call.arguments[2] === 'function' && isDeepStrictEqual(call.arguments[3], true))(mock.Entity.mock.calls[index + 1 - 1] ?? { arguments: [] }))
 
-    return mock.Entity.mock.instances[index]
+    return fixtures.entities[index]
   })
 
-  expect(objects.constructor).toHaveBeenCalledWith(instances)
+  assert.ok(mock.EntitySet.mock.calls.some((call) => call.arguments.length === 1 && isDeepStrictEqual(call.arguments[0], instances)))
 })
+
+function resetCalls (target = [assert, fixtures, mock], seen = new Set()) {
+  if (target === null || typeof target !== 'object' || seen.has(target)) return
+
+  seen.add(target)
+
+  for (const value of Object.values(target))
+    if (typeof value === 'function' && value.mock !== undefined) value.mock.resetCalls()
+    else resetCalls(value, seen)
+}

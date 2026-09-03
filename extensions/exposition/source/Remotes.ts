@@ -1,5 +1,5 @@
 import { Locator, Connector, type Remote, type Source } from '@toa.io/core'
-import { type Bootloader } from './Factory'
+import { type Bootloader } from './Factory.js'
 
 export class Remotes extends Connector {
   private readonly boot: Bootloader

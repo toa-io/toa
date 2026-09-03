@@ -1,9 +1,7 @@
-'use strict'
+import { mock } from 'node:test'
 
-const { generate } = require('randomstring')
+import { generate } from 'randomstring'
 
-const aspect = {
-  invoke: jest.fn(async () => generate)
+export const aspect = {
+  invoke: mock.fn(async () => generate)
 }
-
-exports.aspect = aspect

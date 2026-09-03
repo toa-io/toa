@@ -1,6 +1,7 @@
 {
   "name": "@toa.io/bindings.loop",
   "version": "1.0.0-alpha.273",
+  "type": "module",
   "description": "Toa Loop Binding",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",

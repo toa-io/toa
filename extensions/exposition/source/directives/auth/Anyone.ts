@@ -1,4 +1,4 @@
-import { type Directive, type Context } from './types'
+import { type Directive, type Context } from './types.js'
 
 export class Anyone implements Directive {
   private readonly allow: boolean

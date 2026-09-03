@@ -1,6 +1,6 @@
-import { type Route } from './Route'
-import { type Methods } from './Method'
-import { type Match, type Parameter } from './Match'
+import { type Route } from './Route.js'
+import { type Methods } from './Method.js'
+import { type Match, type Parameter } from './Match.js'
 
 export class Node {
   public intermediate: boolean

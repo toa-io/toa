@@ -1,10 +1,11 @@
-'use strict'
+import { it } from 'node:test'
+import assert from 'node:assert/strict'
 
-const { swap } = require('../')
-const { generate } = require('randomstring')
+import { swap } from '../source/index.js'
+import { generate } from 'randomstring'
 
 it('should be defined', () => {
-  expect(swap).toBeDefined()
+  assert.notStrictEqual(swap, undefined)
 })
 
 it('should swap', () => {
@@ -14,5 +15,5 @@ it('should swap', () => {
   const object = { [key]: value }
   const result = swap(object)
 
-  expect(result).toStrictEqual({ [value]: key })
+  assert.deepStrictEqual(result, { [value]: key })
 })

@@ -1,10 +1,11 @@
-'use strict'
+import { it, beforeEach } from 'node:test'
+import assert from 'node:assert/strict'
 
-const { Connector } = require('@toa.io/core')
+import { Connector } from '@toa.io/core'
 
-const { Aspect } = require('../source/aspect')
-const { Factory } = require('../')
-const { generate } = require('randomstring')
+import { Aspect } from '../source/aspect.js'
+import { Factory } from '../source/index.js'
+import { generate } from 'randomstring'
 
 /** @type {Factory} */
 let factory
@@ -21,19 +22,19 @@ beforeEach(() => {
 })
 
 it('should be instance of Aspect', async () => {
-  expect(aspect).toBeInstanceOf(Aspect)
+  assert.ok(aspect instanceof Aspect)
 })
 
 it('should extend Connector', async () => {
-  expect(aspect).toBeInstanceOf(Connector)
+  assert.ok(aspect instanceof Connector)
 })
 
 it('should expose name', async () => {
-  expect(aspect.name).toStrictEqual('state')
+  assert.deepStrictEqual(aspect.name, 'state')
 })
 
 it('should implement invoke', async () => {
-  expect(aspect.invoke).toBeDefined()
+  assert.notStrictEqual(aspect.invoke, undefined)
 })
 
 it('should store', async () => {
@@ -43,7 +44,7 @@ it('should store', async () => {
 
   const output = aspect.invoke()
 
-  expect(output).toStrictEqual(value)
+  assert.deepStrictEqual(output, value)
 })
 
 it('should not replace value', async () => {
@@ -55,5 +56,5 @@ it('should not replace value', async () => {
 
   const output = aspect.invoke()
 
-  expect(output).toStrictEqual({ ...value1, ...value2 })
+  assert.deepStrictEqual(output, { ...value1, ...value2 })
 })

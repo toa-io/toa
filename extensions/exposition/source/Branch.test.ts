@@ -1,5 +1,8 @@
-import { decide } from './Branch'
-import type { Branch, Exposed } from './Branch'
+import { it } from 'node:test'
+import assert from 'node:assert/strict'
+
+import { decide } from './Branch.js'
+import type { Branch, Exposed } from './Branch.js'
 
 function branch (version: string, timestamp: number): Branch {
   return {
@@ -17,21 +20,21 @@ function exposed (version: string, timestamp: number): Exposed {
 }
 
 it('should refresh the same version', () => {
-  expect(decide(exposed('a', 1), branch('a', 2))).toStrictEqual('refresh')
+  assert.deepStrictEqual(decide(exposed('a', 1), branch('a', 2)), 'refresh')
 })
 
 it('should refresh the same version announced by an older tenant', () => {
-  expect(decide(exposed('a', 2), branch('a', 1))).toStrictEqual('refresh')
+  assert.deepStrictEqual(decide(exposed('a', 2), branch('a', 1)), 'refresh')
 })
 
 it('should merge a newer tenant', () => {
-  expect(decide(exposed('a', 1), branch('b', 2))).toStrictEqual('merge')
+  assert.deepStrictEqual(decide(exposed('a', 1), branch('b', 2)), 'merge')
 })
 
 it('should not merge a tenant that started earlier', () => {
-  expect(decide(exposed('b', 2), branch('a', 1))).toStrictEqual('superseded')
+  assert.deepStrictEqual(decide(exposed('b', 2), branch('a', 1)), 'superseded')
 })
 
 it('should merge when tenants started at the same time', () => {
-  expect(decide(exposed('a', 1), branch('b', 1))).toStrictEqual('merge')
+  assert.deepStrictEqual(decide(exposed('a', 1), branch('b', 1)), 'merge')
 })

@@ -1,12 +1,10 @@
-'use strict'
-
-const { instances } = require('./instances')
+import { instances } from './instances.js'
 
 /**
  * @param {toa.core.Storage} storage
  * @returns {toa.core.Storage}
  */
-const storage = (storage) => {
+export const storage = (storage) => {
   let decorated = storage
 
   for (const factory of Object.values(instances)) {
@@ -15,5 +13,3 @@ const storage = (storage) => {
 
   return decorated
 }
-
-exports.storage = storage

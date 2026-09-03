@@ -1,11 +1,14 @@
-import { VARIABLE, components, entry } from './map'
+import { it, afterEach } from 'node:test'
+import assert from 'node:assert/strict'
+
+import { VARIABLE, components, entry } from './map.js'
 
 afterEach(() => {
   delete process.env[VARIABLE]
 })
 
 it('should be empty without the variable', () => {
-  expect(entry('a.b')).toBeUndefined()
+  assert.strictEqual(entry('a.b'), undefined)
 })
 
 it('should read the variable', () => {
@@ -13,22 +16,22 @@ it('should read the variable', () => {
 
   process.env[VARIABLE] = JSON.stringify(values)
 
-  expect(entry('a.b')).toStrictEqual(values['a.b'])
-  expect(entry('a.c')).toBeUndefined()
+  assert.deepStrictEqual(entry('a.b'), values['a.b'])
+  assert.strictEqual(entry('a.c'), undefined)
 })
 
 it('should follow the variable', () => {
   process.env[VARIABLE] = JSON.stringify({ 'a.b': { epoch: 'e1', schema: {} } })
 
-  expect(entry('a.b')?.epoch).toStrictEqual('e1')
+  assert.deepStrictEqual(entry('a.b')?.epoch, 'e1')
 
   process.env[VARIABLE] = JSON.stringify({ 'a.b': { epoch: 'e2', schema: {} } })
 
-  expect(entry('a.b')?.epoch).toStrictEqual('e2')
+  assert.deepStrictEqual(entry('a.b')?.epoch, 'e2')
 })
 
 it('should list the components by name', () => {
   process.env[VARIABLE] = JSON.stringify({ 'b.two': { epoch: 'e', schema: {} }, 'a.one': { epoch: 'e', schema: {} } })
 
-  expect(components()).toStrictEqual(['a.one', 'b.two'])
+  assert.deepStrictEqual(components(), ['a.one', 'b.two'])
 })

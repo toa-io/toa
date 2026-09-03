@@ -1,11 +1,12 @@
+import { readFileSync } from 'node:fs'
 import assert from 'node:assert'
 import { type Dependency, type Service } from '@toa.io/operations'
-import { type Annotation } from './Annotation'
-import * as schemas from './schemas'
-import { shortcuts } from './Directive'
-import { components } from './Composition'
-import { parse } from './RTD/syntax'
-import { DELAY, PORT, PROBE } from './HTTP'
+import { type Annotation } from './Annotation.js'
+import * as schemas from './schemas.js'
+import { shortcuts } from './Directive.js'
+import { components } from './Composition.js'
+import { parse } from './RTD/syntax/index.js'
+import { DELAY, PORT, PROBE } from './HTTP/index.js'
 
 export function deployment (_: unknown, annotation?: Annotation): Dependency {
   assert.ok(annotation !== undefined, 'Exposition context annotation is required')
@@ -17,7 +18,7 @@ export function deployment (_: unknown, annotation?: Annotation): Dependency {
     group: 'exposition',
     name: 'gateway',
     port: PORT,
-    version: require('../package.json').version,
+    version: JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8')).version,
     variables: [],
     components: labels,
     resources: annotation.resources,

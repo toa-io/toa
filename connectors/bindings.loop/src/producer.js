@@ -1,8 +1,6 @@
-'use strict'
+import { Connector } from '@toa.io/core'
 
-const { Connector } = require('@toa.io/core')
-
-class Producer extends Connector {
+export class Producer extends Connector {
   #binding
   #endpoints
   #producer
@@ -33,5 +31,3 @@ class Producer extends Connector {
     this.#binding[endpoint] = async (request) => this.#producer.invoke(endpoint, request)
   }
 }
-
-exports.Producer = Producer

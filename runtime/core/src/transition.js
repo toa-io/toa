@@ -1,10 +1,8 @@
-'use strict'
+import { retry } from '@toa.io/generic'
+import { Operation } from './operation.js'
+import { StateConcurrencyException, StateNotFoundException } from './exceptions.js'
 
-const { retry } = require('@toa.io/generic')
-const { Operation } = require('./operation')
-const { StateConcurrencyException, StateNotFoundException } = require('./exceptions')
-
-class Transition extends Operation {
+export class Transition extends Operation {
   /** a transition is the only operation that commits */
   mutable = true
 
@@ -61,5 +59,3 @@ const RETRY = {
   dispersion: 1,
   retries: 32
 }
-
-exports.Transition = Transition

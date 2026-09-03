@@ -1,18 +1,16 @@
-'use strict'
-
-const { resolve } = require('./resolve')
+import { instance } from './resolve.js'
 
 /**
  * @param {toa.norm.Component} manifest
  * @returns {toa.core.extensions.Aspect[]}
  */
-const aspects = (manifest) => {
+export const aspects = (manifest) => {
   const aspects = []
 
   if (manifest.extensions === undefined) return aspects
 
   for (const [name, declaration] of Object.entries(manifest.extensions)) {
-    const factory = resolve(name, manifest.path)
+    const factory = instance(name, manifest.path)
 
     if (factory.aspect === undefined) continue
 
@@ -24,5 +22,3 @@ const aspects = (manifest) => {
 
   return aspects
 }
-
-exports.aspects = aspects

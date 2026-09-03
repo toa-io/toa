@@ -1,6 +1,4 @@
-'use strict'
-
-const { deploy } = require('../handlers/deploy')
+import { deploy } from '../handlers/deploy.js'
 
 const builder = (yargs) => {
   yargs
@@ -47,7 +45,7 @@ const builder = (yargs) => {
     })
 }
 
-exports.command = 'deploy [environment]'
-exports.desc = 'Deploy context'
-exports.builder = builder
-exports.handler = deploy
+export const command = 'deploy [environment]'
+export const desc = 'Deploy context'
+
+export { builder, deploy as handler }

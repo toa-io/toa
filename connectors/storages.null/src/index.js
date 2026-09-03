@@ -1,5 +1,1 @@
-'use strict'
-
-const { Factory } = require('./factory')
-
-exports.Factory = Factory
+export { Factory } from './factory.js'

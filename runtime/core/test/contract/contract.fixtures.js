@@ -1,34 +1,29 @@
-'use strict'
+import { mock } from 'node:test'
 
-const { generate } = require('randomstring')
-const { readFileSync } = require('node:fs')
-const { load: parseYAML } = require('js-yaml')
-const { resolve } = require('path')
+import { generate } from 'randomstring'
+import { readFileSync } from 'node:fs'
+import { load as parseYAML } from 'js-yaml'
+import { resolve } from 'path'
 
 // noinspection JSCheckFunctionSignatures
-const schema = {
-  fit: jest.fn((input) => (input.invalid ? { message: generate() } : null))
+export const schema = {
+  fit: mock.fn((input) => (input.invalid ? { message: generate() } : null))
 }
 
-const query = {
-  parse: jest.fn(() => ({ [generate()]: generate() }))
+export const query = {
+  parse: mock.fn(() => ({ [generate()]: generate() }))
 }
 
-const declaration = {}
+export const declaration = {}
 
-const schemas = {
+export const schemas = {
   request: {
     type: 'object',
     properties: {
       input: { type: 'null' },
-      query: parseYAML(readFileSync(resolve(__dirname, '../../src/contract/schemas/query.yaml'), 'utf8')),
+      query: parseYAML(readFileSync(resolve(import.meta.dirname, '../../src/contract/schemas/query.yaml'), 'utf8')),
       authentic: { type: 'boolean' }
     },
     additionalProperties: true
   }
 }
-
-exports.schema = schema
-exports.query = query
-exports.declaration = declaration
-exports.schemas = schemas

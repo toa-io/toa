@@ -1,8 +1,6 @@
-'use strict'
+import { EntityContractException } from '../exceptions.js'
 
-const { EntityContractException } = require('../exceptions')
-
-class Changeset {
+export class Changeset {
   /** @type {toa.core.Query} */
   query
 
@@ -36,5 +34,3 @@ class Changeset {
     return this.#state
   }
 }
-
-exports.Changeset = Changeset

@@ -1,7 +1,5 @@
-'use strict'
+import { console } from 'openspan'
 
-const { console } = require('openspan')
-
-exports.effect = (input) => {
+export const effect = (input) => {
   console.debug('Received input', input)
 }

@@ -1,16 +1,13 @@
-'use strict'
+import { mock } from 'node:test'
 
-const { generate } = require('randomstring')
+import { generate } from 'randomstring'
 
 // noinspection JSCheckFunctionSignatures
-const events = [0, 1, 2].map((index) => ({
-  emit: jest.fn(async (state) => ({ ...state, event: index }))
+export const events = [0, 1, 2].map((index) => ({
+  emit: mock.fn(async (state) => ({ ...state, event: index }))
 }))
 
-const event = {
+export const event = {
   origin: { [generate()]: generate() },
   state: { [generate()]: generate() }
 }
-
-exports.events = events
-exports.event = event

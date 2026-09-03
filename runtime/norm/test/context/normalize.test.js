@@ -1,10 +1,12 @@
-'use strict'
+import * as runtime from '@toa.io/runtime'
+import { it, beforeEach } from 'node:test'
+import assert from 'node:assert/strict'
 
-const clone = require('clone-deep')
-const { generate } = require('randomstring')
+import clone from 'clone-deep'
+import { generate } from 'randomstring'
 
-const fixtures = require('./normalize.fixtures')
-const { normalize } = require('../../src/.context')
+import * as fixtures from './normalize.fixtures.js'
+import { normalize } from '../../src/.context/index.js'
 
 let context
 
@@ -17,8 +19,8 @@ it('should resolve local version', () => {
 
   normalize(context)
 
-  expect(context.runtime).not.toEqual('.')
-  expect(context.runtime.version).toEqual(require('@toa.io/runtime').version)
+  assert.notDeepStrictEqual(context.runtime, '.')
+  assert.deepStrictEqual(context.runtime.version, runtime.version)
 })
 
 it('should expand registry', () => {
@@ -28,7 +30,7 @@ it('should expand registry', () => {
 
   normalize(context)
 
-  expect(context.registry).toEqual({
+  assert.deepStrictEqual(context.registry, {
     base
   })
 })

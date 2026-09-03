@@ -2,8 +2,8 @@ import { createVariables, resolve, type Request } from '@toa.io/pointer'
 import { type Manifest } from '@toa.io/norm'
 import { type Dependency } from '@toa.io/operations'
 import { type Locator } from '@toa.io/core'
-import { type Instance } from './instance'
-import { type Annotation } from './annotation'
+import { type Instance } from './instance.js'
+import { type Annotation } from './annotation.js'
 
 export function createDependency (sources: Sources, instances: Instance[]): Dependency {
   const requests = []

@@ -1,12 +1,13 @@
-'use strict'
+import { it } from 'node:test'
+import assert from 'node:assert/strict'
 
-const { generate } = require('randomstring')
-const { sample } = require('../source/sample')
+import { generate } from 'randomstring'
+import { sample } from '../source/sample.js'
 
 const array = [1, 2, 3, 4, 5].map(() => generate())
 
 it('should return array element', () => {
   const value = sample(array)
 
-  expect(array.indexOf(value)).not.toBe(-1)
+  assert.notStrictEqual(array.indexOf(value), -1)
 })

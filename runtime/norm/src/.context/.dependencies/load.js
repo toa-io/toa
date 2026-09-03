@@ -1,23 +1,26 @@
-'use strict'
+import { createRequire } from 'node:module'
+import { readFileSync } from 'node:fs'
+import { join } from 'node:path'
+import { pathToFileURL } from 'node:url'
 
-const { join } = require('node:path')
+// import.meta.resolve takes no paths, and a dependency is named rather than
+// written as a path
+const require = createRequire(import.meta.url)
 
 /**
  * @param {string} path
- * @returns {{ metadata: object, module: object }}
+ * @returns {Promise<{ metadata: object, module: object }>}
  */
-function load (path) {
+export async function load (path) {
   const metadata = loadMetadata(path)
-  const module = loadModule(path)
+  const module = await loadModule(path)
 
   return { metadata, module }
 }
 
 function loadMetadata (reference) {
-  reference = join(reference, 'package.json')
-
   try {
-    return require(reference)
+    return JSON.parse(readFileSync(require.resolve(join(reference, 'package.json')), 'utf8'))
   } catch {
     return null
   }
@@ -25,12 +28,10 @@ function loadMetadata (reference) {
 
 /**
  * @param {string} reference
- * @returns {object}
+ * @returns {Promise<object>}
  */
-function loadModule (reference) {
+async function loadModule (reference) {
   const path = require.resolve(reference)
 
-  return require(path)
+  return await import(pathToFileURL(path).href)
 }
-
-exports.load = load

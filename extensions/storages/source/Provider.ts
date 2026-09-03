@@ -1,8 +1,8 @@
 import * as assert from 'node:assert'
-import type { Metadata, Stream } from './Entry'
+import type { Metadata, Stream } from './Entry.js'
 import type { Readable } from 'node:stream'
 import type { Maybe } from '@toa.io/types'
-import type { Secret, Secrets } from './Secrets'
+import type { Secret, Secrets } from './Secrets.js'
 
 export abstract class Provider<Options = unknown> {
   public static readonly SECRETS?: readonly Secret[]

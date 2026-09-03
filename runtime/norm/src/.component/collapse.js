@@ -1,8 +1,6 @@
-'use strict'
+import { merge } from '@toa.io/generic'
 
-const { merge } = require('@toa.io/generic')
-
-const collapse = (manifest, prototype) => {
+export const collapse = (manifest, prototype) => {
   delete manifest.prototype
 
   if (prototype.operations) {
@@ -49,5 +47,3 @@ const collapse = (manifest, prototype) => {
 
   merge(manifest, { entity, events, extensions })
 }
-
-exports.collapse = collapse

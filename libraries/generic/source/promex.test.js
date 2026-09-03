@@ -1,11 +1,12 @@
-'use strict'
+import { describe, it, beforeEach } from 'node:test'
+import assert from 'node:assert/strict'
 
-const { generate } = require('randomstring')
+import { generate } from 'randomstring'
 
-const { promex } = require('../source')
+import { promex } from '../source/index.js'
 
 it('should be', async () => {
-  expect(promex).toBeDefined()
+  assert.notStrictEqual(promex, undefined)
 })
 
 /** @type {toa.generic.Promex} */
@@ -16,11 +17,11 @@ beforeEach(() => {
 })
 
 it('should return promise', async () => {
-  expect(instance).toBeInstanceOf(Promise)
+  assert.ok(instance instanceof Promise)
 })
 
 it('should resolve', async () => {
-  expect(instance.resolve).toBeDefined()
+  assert.notStrictEqual(instance.resolve, undefined)
 
   let a = 1
 
@@ -29,11 +30,11 @@ it('should resolve', async () => {
     instance.resolve()
   })
 
-  expect(a).toStrictEqual(1)
+  assert.deepStrictEqual(a, 1)
 
   await instance
 
-  expect(a).toStrictEqual(2)
+  assert.deepStrictEqual(a, 2)
 })
 
 it('should resolve value', async () => {
@@ -43,20 +44,20 @@ it('should resolve value', async () => {
 
   const resolved = await instance
 
-  expect(resolved).toStrictEqual(value)
+  assert.deepStrictEqual(resolved, value)
 })
 
 it('should reject', async () => {
-  expect(instance.reject).toBeDefined()
+  assert.notStrictEqual(instance.reject, undefined)
 
   setImmediate(() => instance.reject(new Error('test')))
 
-  await expect(instance).rejects.toThrow('test')
+  await assert.rejects(instance, (error) => /test/.test(error.message))
 })
 
 describe('callback', () => {
   it('should be', async () => {
-    expect(instance.callback).toBeDefined()
+    assert.notStrictEqual(instance.callback, undefined)
   })
 
   it('should reject if error in defined', async () => {
@@ -65,7 +66,7 @@ describe('callback', () => {
 
     setImmediate(() => instance.callback(error, result))
 
-    await expect(instance).rejects.toThrow(error)
+    await assert.rejects(instance, error)
   })
 
   it('should resolve to result in no error defined', async () => {
@@ -74,14 +75,15 @@ describe('callback', () => {
 
     setImmediate(() => instance.callback(error, result))
 
-    await expect(instance).resolves.toStrictEqual(result)
+    await assert.deepStrictEqual(await instance, result)
   })
 
-  it.each([undefined, null])('should resolve to result if error is %s', async (error) => {
+  for (const error of [undefined, null])
+     it(`should resolve to result if error is ${error}`, async () => {
     const result = generate()
 
     setImmediate(() => instance.callback(error, result))
 
-    await expect(instance).resolves.toStrictEqual(result)
+    await assert.deepStrictEqual(await instance, result)
   })
 })

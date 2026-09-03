@@ -1,13 +1,11 @@
-'use strict'
+import { resolve } from 'path'
+import { readFileSync } from 'node:fs'
+import { yaml } from '@toa.io/generic'
 
-const { resolve } = require('path')
-const { readFileSync } = require('node:fs')
-const { load: parseYAML } = require('js-yaml')
-
-exports.query = read(resolve(__dirname, './query.yaml'))
-exports.error = read(resolve(__dirname, './error.yaml'))
-exports.source = read(resolve(__dirname, './source.yaml'))
+export const query = read(resolve(import.meta.dirname, './query.yaml'))
+export const error = read(resolve(import.meta.dirname, './error.yaml'))
+export const source = read(resolve(import.meta.dirname, './source.yaml'))
 
 function read (path) {
-  return parseYAML(readFileSync(path, 'utf8'))
+  return yaml.load(readFileSync(path, 'utf8'))
 }

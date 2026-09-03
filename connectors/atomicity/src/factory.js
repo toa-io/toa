@@ -1,9 +1,7 @@
-'use strict'
+import { Atom } from './atom.js'
+import { connection } from './connection.js'
 
-const { Atom } = require('./atom')
-const { connection } = require('./connection')
-
-class Factory {
+export class Factory {
   /**
    * What the replicas of one group decide together. They find each other by `group` and by
    * nothing else, so what shares a name shares a decision.
@@ -35,5 +33,3 @@ function atom (group, options) {
 
   return atom
 }
-
-exports.Factory = Factory

@@ -1,4 +1,4 @@
-import type { Captures } from '../Captures'
+import type { Captures } from '../Captures.js'
 
 export function print (this: Captures, value: string): string {
   console.log(value)

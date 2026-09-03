@@ -1,7 +1,5 @@
-'use strict'
-
-const { dirname, resolve } = require('node:path')
-const { findUpSync } = require('find-up')
+import { dirname, resolve } from 'node:path'
+import { findUp } from '@toa.io/generic'
 
 /**
  * @param {string | string[]} from
@@ -24,7 +22,7 @@ const find = (from, filename, test) => {
   }
 
   const cwd = resolve(process.cwd(), from)
-  const path = findUpSync(filename, { cwd })
+  const path = findUp(filename, { cwd })
 
   if (path === undefined)
     if (test === true) return null
@@ -39,17 +37,14 @@ const find = (from, filename, test) => {
  * @param {boolean} test
  * @return {string | string[] | null}
  */
-const components = (from, test = false) => find(from, MANIFEST, test)
+export const components = (from, test = false) => find(from, MANIFEST, test)
 
 /**
  * @param {string | string[]} from
  * @param {boolean} test
  * @return {string | string[] | null}
  */
-const context = (from, test = false) => find(from, CONTEXT, test)
+export const context = (from, test = false) => find(from, CONTEXT, test)
 
 const MANIFEST = 'manifest.toa.yaml'
 const CONTEXT = 'context.toa.yaml'
-
-exports.components = components
-exports.context = context

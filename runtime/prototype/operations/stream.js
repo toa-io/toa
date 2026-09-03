@@ -1,5 +1,3 @@
-'use strict'
-
-exports.observation = (_, stream) => {
+export const observation = (_, stream) => {
   return stream
 }

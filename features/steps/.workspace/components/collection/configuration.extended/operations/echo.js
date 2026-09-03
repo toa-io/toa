@@ -1,6 +1,4 @@
-'use strict'
-
-async function computation (_, context) {
+export async function computation (_, context) {
   const output = {}
 
   output.foo = context.configuration.foo
@@ -10,5 +8,3 @@ async function computation (_, context) {
 
   return output
 }
-
-exports.computation = computation

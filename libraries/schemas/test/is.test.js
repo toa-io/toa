@@ -1,15 +1,16 @@
-'use strict'
+import { it } from 'node:test'
+import assert from 'node:assert/strict'
 
-const { is } = require('../')
+import { is } from '../source/index.js'
 
 it('should be', async () => {
-  expect(is).toBeDefined()
+  assert.notStrictEqual(is, undefined)
 })
 
 it('should validate', async () => {
   const ok = { type: 'string' }
   const oh = { type: 'fruit' }
 
-  expect(is(ok)).toStrictEqual(true)
-  expect(is(oh)).toStrictEqual(false)
+  assert.deepStrictEqual(is(ok), true)
+  assert.deepStrictEqual(is(oh), false)
 })

@@ -1,13 +1,13 @@
 import assert from 'node:assert'
 import { console } from 'openspan'
-import * as http from '../../HTTP'
-import { split } from './split'
-import { create } from './create'
-import { PROVIDERS, INCEPTION } from './schemes'
-import { Role } from './Role'
+import * as http from '../../HTTP/index.js'
+import { split } from './split.js'
+import { create } from './create.js'
+import { PROVIDERS, INCEPTION } from './schemes.js'
+import { Role } from './Role.js'
 import type { Component } from '@toa.io/core'
 import type { Maybe } from '@toa.io/types'
-import type { Directive, Discovery, Identity, Context, Schemes, Ban } from './types'
+import type { Directive, Discovery, Identity, Context, Schemes, Ban } from './types.js'
 
 export class Incept implements Directive {
   private static readonly schemes: Schemes = {} as unknown as Schemes

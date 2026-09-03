@@ -1,6 +1,7 @@
 {
   "name": "@toa.io/generic",
   "version": "1.0.0-alpha.273",
+  "type": "module",
   "description": "Toa Generic Tools",
   "homepage": "https://toa.io",
   "author": {
@@ -23,5 +24,8 @@
   },
   "main": "source/index.js",
   "types": "types/index.d.ts",
-  "gitHead": "61c8e74a336385265767e9fd37d49128cb51b17f"
+  "gitHead": "61c8e74a336385265767e9fd37d49128cb51b17f",
+  "dependencies": {
+    "js-yaml": "5.4.1"
+  }
 }

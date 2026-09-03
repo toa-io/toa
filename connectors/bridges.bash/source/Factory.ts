@@ -1,6 +1,6 @@
 import { join } from 'node:path'
-import { Algorithm } from './Algorithm'
-import { DIR, EXT } from './const'
+import { Algorithm } from './Algorithm.js'
+import { DIR, EXT } from './const.js'
 import type { bridges } from '@toa.io/core'
 
 export class Factory implements bridges.Factory {

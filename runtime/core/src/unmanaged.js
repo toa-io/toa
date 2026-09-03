@@ -1,11 +1,7 @@
-'use strict'
+import { Operation } from './operation.js'
 
-const { Operation } = require('./operation')
-
-class Unmanaged extends Operation {
+export class Unmanaged extends Operation {
   acquire (context) {
     context.state = this.scope.storage.raw
   }
 }
-
-exports.Unmanaged = Unmanaged

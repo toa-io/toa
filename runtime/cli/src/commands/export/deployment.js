@@ -1,6 +1,4 @@
-'use strict'
-
-const { dump } = require('../../handlers/export/deployment')
+import { dump } from '../../handlers/export/deployment.js'
 
 const builder = (yargs) => {
   yargs
@@ -26,7 +24,7 @@ const builder = (yargs) => {
     })
 }
 
-exports.command = ['deployment <environment> <target>', 'dep']
-exports.desc = 'Export context deployment'
-exports.builder = builder
-exports.handler = dump
+export const command = ['deployment <environment> <target>', 'dep']
+export const desc = 'Export context deployment'
+
+export { builder, dump as handler }

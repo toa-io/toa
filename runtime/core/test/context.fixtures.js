@@ -1,18 +1,14 @@
-'use strict'
+import { mock } from 'node:test'
 
-const { Connector } = require('../src/connector')
+import { Connector } from '../src/connector.js'
 
-const local = {
-  link: jest.fn()
+export const local = {
+  link: mock.fn()
 }
 
-const discover = jest.fn(() => ({
-  invoke: jest.fn(),
-  link: jest.fn()
+export const discover = mock.fn(() => ({
+  invoke: mock.fn(),
+  link: mock.fn()
 }))
 
-const aspects = [new Connector(), new Connector()]
-
-exports.local = local
-exports.discover = discover
-exports.aspects = aspects
+export const aspects = [new Connector(), new Connector()]

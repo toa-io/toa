@@ -1,5 +1,5 @@
-import type * as RTD from './RTD/syntax'
-import type { Node } from './RTD'
+import type * as RTD from './RTD/syntax/index.js'
+import type { Node } from './RTD/index.js'
 
 export interface Branch {
   namespace: string

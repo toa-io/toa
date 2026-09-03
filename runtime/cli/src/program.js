@@ -1,10 +1,9 @@
+import dotenv from 'dotenv'
 // noinspection JSUnresolvedVariable
 
-'use strict'
+import yargs from 'yargs/yargs'
 
-const yargs = require('yargs/yargs')
-
-const { version } = require('@toa.io/runtime')
+import { version } from '@toa.io/runtime'
 
 yargs(process.argv.slice(2))
   .parserConfiguration({
@@ -16,7 +15,7 @@ yargs(process.argv.slice(2))
   .middleware(async (argv) => {
     if (argv.env === undefined) return
 
-    require('dotenv').config({ path: /** @type {string} */ argv.env })
+    dotenv.config({ path: /** @type {string} */ argv.env })
   })
   .fail((msg, err) => {
     const actual = err || new Error(msg)

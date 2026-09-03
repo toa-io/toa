@@ -1,6 +1,7 @@
 {
   "name": "@toa.io/runtime",
   "version": "1.0.0-alpha.276",
+  "type": "module",
   "description": "Toa Runtime",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
@@ -11,7 +12,7 @@
   "bugs": {
     "url": "https://github.com/toa-io/toa/issues"
   },
-  "main": "package.json",
+  "main": "index.js",
   "publishConfig": {
     "access": "public"
   },

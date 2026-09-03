@@ -1,9 +1,7 @@
-'use strict'
-
 /**
  * @implements {toa.core.bridges.Algorithm}
  */
-class Computation {
+export class Computation {
   #context
 
   async mount (context) {
@@ -14,5 +12,3 @@ class Computation {
     return { input, context: this.#context !== undefined }
   }
 }
-
-exports.Computation = Computation

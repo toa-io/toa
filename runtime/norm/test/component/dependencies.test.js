@@ -1,31 +1,33 @@
-'use strict'
+import { describe, it, beforeEach } from 'node:test'
+import assert from 'node:assert/strict'
 
-const { resolve } = require('node:path')
-const { dependencies } = require('../../src/.component')
+import { resolve } from 'node:path'
+import { dependencies } from '../../src/.component/index.js'
 
-const NORM = resolve(__dirname, '../../')
+const NORM = resolve(import.meta.dirname, '../../')
 
 it('should be', async () => {
-  expect(dependencies).toBeInstanceOf(Function)
+  assert.ok(dependencies instanceof Function)
 })
 
 /** @type {toa.norm.Component} */
 let component
 
 beforeEach(() => {
-  component = /** @type {toa.norm.Component} */ { path: __dirname }
+  component = /** @type {toa.norm.Component} */ { path: import.meta.dirname }
 })
 
-describe.each(/** @type {[string, string][]} */ [
+for (const [_, reference] of [
   ['package id', '@toa.io/norm'],
   ['relative path', '../../']
-])('%s', (_, reference) => {
+])
+   describe(`${_}`, () => {
   it('should resolve storage', async () => {
     component.entity = { storage: reference, schema: {} }
 
     dependencies(component)
 
-    expect(component.entity.storage).toStrictEqual(NORM)
+    assert.deepStrictEqual(component.entity.storage, NORM)
   })
 })
 
@@ -34,5 +36,5 @@ it('should resolve toa packages', async () => {
 
   dependencies(component)
 
-  expect(component.entity.storage).toBeDefined()
+  assert.notStrictEqual(component.entity.storage, undefined)
 })

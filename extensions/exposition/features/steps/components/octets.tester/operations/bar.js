@@ -1,5 +1,3 @@
-'use strict'
-
 import { setTimeout } from 'node:timers/promises'
 
 async function bar (input, context) {
@@ -8,4 +6,4 @@ async function bar (input, context) {
   return { bar: 'baz' }
 }
 
-exports.effect = bar
+export { bar as effect }

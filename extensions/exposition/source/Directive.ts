@@ -1,8 +1,8 @@
 import { console, type SpanOptions } from 'openspan'
-import type { Context, OutgoingMessage } from './HTTP'
-import type { Remotes } from './Remotes'
-import type { Output } from './io'
-import type * as RTD from './RTD'
+import type { Context, OutgoingMessage } from './HTTP/index.js'
+import type { Remotes } from './Remotes.js'
+import type { Output } from './io.js'
+import type * as RTD from './RTD/index.js'
 
 export class Directives implements RTD.Directives {
   private readonly sets: RTD.DirectiveSet[]

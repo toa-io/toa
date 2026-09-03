@@ -1,16 +1,14 @@
-'use strict'
+import { mock } from 'node:test'
 
-const context = {
-  apply: jest.fn(),
-  call: jest.fn(),
+export const context = {
+  apply: mock.fn(),
+  call: mock.fn(),
   aspects: [
     {
       name: 'state',
-      invoke: jest.fn()
+      invoke: mock.fn()
     }
   ],
-  link: jest.fn(),
-  connect: jest.fn()
+  link: mock.fn(),
+  connect: mock.fn()
 }
-
-exports.context = context

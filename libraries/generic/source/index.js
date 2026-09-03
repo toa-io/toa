@@ -1,106 +1,56 @@
-'use strict'
-
-const { buffer } = require('./buffer')
-const { concat } = require('./concat')
-const { context } = require('./context')
-const { convolve } = require('./convolve')
-const { defined } = require('./defined')
-const { each } = require('./each')
-const { echo } = require('./echo')
-const { empty } = require('./empty')
-const { encode, decode } = require('./encode')
-const { entries } = require('./entries')
-const { failsafe } = require('./failsafe')
-const { filter } = require('./filter')
-const { find } = require('./find')
-const { flip } = require('./flip')
-const { freeze } = require('./freeze')
-const { hash } = require('./hash')
-const { immediate } = require('./immediate')
-const { lazy } = require('./lazy')
-const { map } = require('./map')
-const { match } = require('./match')
-const { memo } = require('./memo')
-const { merge, overwrite, add } = require('./merge')
-const { newid } = require('./newid')
-const { pick } = require('./pick')
-const { plain } = require('./plain')
-const { primitive } = require('./primitive')
-const { promex } = require('./promex')
-const { generate } = require('./generate')
-const { quantity } = require('./quantity')
-const { random } = require('./random')
-const { range } = require('./range')
-const { recall } = require('./recall')
-const { reduce } = require('./reduce')
-const { remap } = require('./remap')
-const { repeat } = require('./repeat')
-const { retry, RetryError } = require('./retry')
-const { sample } = require('./sample')
-const { seal } = require('./seal')
-const { shards } = require('./shards')
-const { split } = require('./split')
-const { subtract } = require('./subtract')
-const { swap } = require('./swap')
-const { timeout } = require('./timeout')
-const { track } = require('./track')
-const { transpose } = require('./transpose')
-const { traverse } = require('./traverse')
-const { trim } = require('./trim')
-const { underlay } = require('./underlay')
-
-exports.acronyms = require('./acronyms')
-exports.letters = require('./letters')
-
-exports.add = add
-exports.buffer = buffer
-exports.concat = concat
-exports.context = context
-exports.convolve = convolve
-exports.defined = defined
-exports.decode = decode
-exports.each = each
-exports.echo = echo
-exports.empty = empty
-exports.encode = encode
-exports.entries = entries
-exports.failsafe = failsafe
-exports.filter = filter
-exports.find = find
-exports.flip = flip
-exports.freeze = freeze
-exports.hash = hash
-exports.immediate = immediate
-exports.lazy = lazy
-exports.map = map
-exports.match = match
-exports.memo = memo
-exports.merge = merge
-exports.newid = newid
-exports.pick = pick
-exports.plain = plain
-exports.primitive = primitive
-exports.promex = promex
-exports.generate = generate
-exports.quantity = quantity
-exports.overwrite = overwrite
-exports.random = random
-exports.range = range
-exports.recall = recall
-exports.reduce = reduce
-exports.remap = remap
-exports.repeat = repeat
-exports.retry = retry
-exports.RetryError = RetryError
-exports.sample = sample
-exports.seal = seal
-exports.shards = shards
-exports.split = split
-exports.subtract = subtract
-exports.swap = swap
-exports.timeout = timeout
-exports.track = track
-exports.transpose = transpose
-exports.traverse = traverse
-exports.trim = trim
-exports.underlay = underlay
+export { add } from './merge.js'
+export * as yaml from './yaml.js'
+export { buffer } from './buffer.js'
+export { concat } from './concat.js'
+export { context } from './context.js'
+export { convolve } from './convolve.js'
+export { defined } from './defined.js'
+export { decode } from './encode.js'
+export { each } from './each.js'
+export { echo } from './echo.js'
+export { empty } from './empty.js'
+export { encode } from './encode.js'
+export { entries } from './entries.js'
+export { failsafe } from './failsafe.js'
+export { filter } from './filter.js'
+export { find } from './find.js'
+export { findUp } from './findUp.js'
+export { flip } from './flip.js'
+export { freeze } from './freeze.js'
+export { hash } from './hash.js'
+export { immediate } from './immediate.js'
+export { lazy } from './lazy.js'
+export { map } from './map.js'
+export { match } from './match.js'
+export { memo } from './memo.js'
+export { merge } from './merge.js'
+export { newid } from './newid.js'
+export { pick } from './pick.js'
+export { plain } from './plain.js'
+export { primitive } from './primitive.js'
+export { promex } from './promex.js'
+export { generate } from './generate.js'
+export { quantity } from './quantity.js'
+export { overwrite } from './merge.js'
+export { random } from './random.js'
+export { range } from './range.js'
+export { recall } from './recall.js'
+export { reduce } from './reduce.js'
+export { remap } from './remap.js'
+export { repeat } from './repeat.js'
+export { retry } from './retry.js'
+export { RetryError } from './retry.js'
+export { sample } from './sample.js'
+export { seal } from './seal.js'
+export { shards } from './shards.js'
+export { split } from './split.js'
+export { subtract } from './subtract.js'
+export { swap } from './swap.js'
+export { timeout } from './timeout.js'
+export { track } from './track.js'
+export { transpose } from './transpose.js'
+export { traverse } from './traverse.js'
+export { trim } from './trim.js'
+export { underlay } from './underlay.js'
+export * as acronyms from './acronyms.js'
+export * as letters from './letters.js'

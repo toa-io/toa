@@ -1,9 +1,7 @@
-'use strict'
+import { describe, it } from 'node:test'
+import assert from 'node:assert/strict'
 
-const {
-  to,
-  from
-} = require('../src/record')
+import { to, from } from '../src/record.js'
 
 describe('to', () => {
   it('should rename id to _id', () => {
@@ -14,7 +12,7 @@ describe('to', () => {
     }
     const record = to(entity)
 
-    expect(record).toMatchObject({ _id: '1' })
+    assert.partialDeepStrictEqual(record, { _id: '1' })
   })
 
   it('should not modify argument', () => {
@@ -26,7 +24,7 @@ describe('to', () => {
 
     to(entity)
 
-    expect(entity).toStrictEqual({
+    assert.deepStrictEqual(entity, {
       id: '1',
       _version: 0
     })
@@ -42,7 +40,7 @@ describe('from', () => {
     }
     const entity = from(record)
 
-    expect(entity).toStrictEqual({
+    assert.deepStrictEqual(entity, {
       id: '1',
       _version: 0
     })

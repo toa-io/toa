@@ -1,20 +1,20 @@
 import assert from 'node:assert'
 import { createHash } from 'node:crypto'
 import { console, traces, type LevelName, type TracesOptions } from 'openspan'
-import { Tenant } from './Tenant'
-import { Gateway } from './Gateway'
-import { Remotes } from './Remotes'
-import { Tree } from './RTD'
-import { EndpointsFactory } from './Endpoint'
-import { families, interceptors } from './directives'
-import { DirectivesFactory } from './Directive'
-import { Composition } from './Composition'
-import * as root from './root'
-import { Interception } from './Interception'
-import * as http from './HTTP'
-import type { Branch } from './Branch'
-import type { syntax } from './RTD'
-import type { Broadcast } from './Gateway'
+import { Tenant } from './Tenant.js'
+import { Gateway } from './Gateway.js'
+import { Remotes } from './Remotes.js'
+import { Tree } from './RTD/index.js'
+import { EndpointsFactory } from './Endpoint.js'
+import { families, interceptors } from './directives/index.js'
+import { DirectivesFactory } from './Directive.js'
+import { Composition } from './Composition.js'
+import * as root from './root.js'
+import { Interception } from './Interception.js'
+import * as http from './HTTP/index.js'
+import type { Branch } from './Branch.js'
+import type { syntax } from './RTD/index.js'
+import type { Broadcast } from './Gateway.js'
 import type { Connector, Locator, extensions } from '@toa.io/core'
 
 export class Factory implements extensions.Factory {
@@ -24,8 +24,8 @@ export class Factory implements extensions.Factory {
     this.boot = boot
   }
 
-  public tenant (locator: Locator, node: syntax.Node): Connector {
-    const broadcast: Broadcast = this.boot.bindings.broadcast(CHANNEL, locator.id)
+  public async tenant (locator: Locator, node: syntax.Node): Promise<Connector> {
+    const broadcast: Broadcast = await this.boot.bindings.broadcast(CHANNEL, locator.id)
     const hash = createHash('sha256').update(JSON.stringify(node)).digest('hex')
 
     // no timestamp: the tenant stamps each announcement with its own start time
@@ -40,14 +40,14 @@ export class Factory implements extensions.Factory {
     return new Tenant(broadcast, branch)
   }
 
-  public service (): Connector | null {
+  public async service (): Promise<Connector | null> {
     assert.ok(process.env.TOA_EXPOSITION_PROPERTIES,
       'TOA_EXPOSITION_PROPERTIES is undefined')
 
     configureLogs()
 
     const options = JSON.parse(process.env.TOA_EXPOSITION_PROPERTIES) as http.Options
-    const broadcast: Broadcast = this.boot.bindings.broadcast(CHANNEL)
+    const broadcast: Broadcast = await this.boot.bindings.broadcast(CHANNEL)
     const server = http.Server.create({ ...options })
     const remotes = new Remotes(this.boot)
     const node = root.resolve()

@@ -1,5 +1,3 @@
-'use strict'
-
-exports.computation = () => {
+export const computation = () => {
   return 'Hello!'
 }

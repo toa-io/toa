@@ -1,16 +1,14 @@
-'use strict'
+import { mock } from 'node:test'
 
-const { generate } = require('randomstring')
+import { generate } from 'randomstring'
 
-const connection = {
+export const connection = {
   table: generate(),
-  connection: jest.fn(),
-  link: jest.fn(),
-  connect: jest.fn(),
-  disconnect: jest.fn(),
+  connection: mock.fn(),
+  link: mock.fn(),
+  connect: mock.fn(),
+  disconnect: mock.fn(),
 
-  insert: jest.fn(() => true),
-  update: jest.fn(() => true)
+  insert: mock.fn(() => true),
+  update: mock.fn(() => true)
 }
-
-exports.connection = connection

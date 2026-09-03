@@ -1,13 +1,11 @@
-'use strict'
-
-const { console, decode, run } = require('openspan')
-const { add } = require('@toa.io/generic')
-const { Connector } = require('./connector')
+import { console, decode, run } from 'openspan'
+import { add } from '@toa.io/generic'
+import { Connector } from './connector.js'
 
 /**
  * @implements {toa.core.Receiver}
  */
-class Receiver extends Connector {
+export class Receiver extends Connector {
   /** @type {boolean} */
   #conditioned
 
@@ -123,5 +121,3 @@ class Receiver extends Connector {
     return this.#adaptive ? await this.#bridge.request(payload, ...(this.#arguments ?? [])) : { input: payload }
   }
 }
-
-exports.Receiver = Receiver

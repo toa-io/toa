@@ -1,16 +1,16 @@
-'use strict'
+import { mock } from 'node:test'
 
-const { generate } = require('randomstring')
+import { generate } from 'randomstring'
 
 // noinspection JSCheckFunctionSignatures
-const schema = {
-  fit: jest.fn((object) =>
+export const schema = {
+  fit: mock.fn((object) =>
     (object.fail ? { [generate()]: generate() } : null)),
 
-  defaults: jest.fn(() => ({ [generate()]: generate() }))
+  defaults: mock.fn(() => ({ [generate()]: generate() }))
 }
 
-const state = () => ({
+export const state = () => ({
   id: generate(),
   foo: generate(),
   _created: generate(),
@@ -19,11 +19,7 @@ const state = () => ({
   _version: 0
 })
 
-const failed = () => ({
+export const failed = () => ({
   ...state(),
   fail: true
 })
-
-exports.schema = schema
-exports.state = state
-exports.failed = failed

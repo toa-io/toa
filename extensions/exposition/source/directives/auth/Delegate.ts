@@ -1,6 +1,6 @@
-import { BadRequest } from '../../HTTP'
-import { Role } from './Role'
-import type { Context, Directive, Identity } from './types'
+import { BadRequest } from '../../HTTP/index.js'
+import { Role } from './Role.js'
+import type { Context, Directive, Identity } from './types.js'
 import type { Component } from '@toa.io/core'
 
 export class Delegate implements Directive {

@@ -1,16 +1,19 @@
+import { describe, it, beforeEach } from 'node:test'
+import assert from 'node:assert/strict'
+
 import { PassThrough, Readable } from 'node:stream'
 import * as streamConsumers from 'node:stream/consumers'
 import { generate } from 'randomstring'
 import * as msgpack from 'msgpackr'
-import { multipart, read, type OutgoingMessage } from './messages'
-import { BadRequest, UnsupportedMediaType } from './exceptions'
-import { formats } from './formats'
-import { Timing } from './Timing'
+import { multipart, read, type OutgoingMessage } from './messages.js'
+import { BadRequest, UnsupportedMediaType } from './exceptions.js'
+import { formats } from './formats/index.js'
+import { Timing } from './Timing.js'
 import type * as http from 'node:http'
-import type { Context } from './Context'
+import type { Context } from './Context.js'
 
 beforeEach(() => {
-  jest.clearAllMocks()
+  resetCalls()
 })
 
 describe('read', () => {
@@ -22,7 +25,7 @@ describe('read', () => {
     const context = createContext(path, headers, json)
     const output = await read(context)
 
-    expect(output).toStrictEqual(input)
+    assert.deepStrictEqual(output, input)
   })
 
   it('should parse application/yaml', async () => {
@@ -32,7 +35,7 @@ describe('read', () => {
     const request = createContext(path, headers, yaml)
     const value = await read(request)
 
-    expect(value).toStrictEqual({ foo: 1 })
+    assert.deepStrictEqual(value, { foo: 1 })
   })
 
   it('should parse application/mskpack', async () => {
@@ -43,7 +46,7 @@ describe('read', () => {
     const request = createContext(path, headers, msg)
     const output = await read(request)
 
-    expect(output).toStrictEqual(input)
+    assert.deepStrictEqual(output, input)
   })
 
   it('should parse text/plain', async () => {
@@ -53,7 +56,7 @@ describe('read', () => {
     const request = createContext(path, headers, input)
     const output = await read(request)
 
-    expect(output).toStrictEqual(input)
+    assert.deepStrictEqual(output, input)
   })
 
   it('should parse application/json with charset parameter', async () => {
@@ -64,7 +67,7 @@ describe('read', () => {
     const context = createContext(path, headers, json)
     const output = await read(context)
 
-    expect(output).toStrictEqual(input)
+    assert.deepStrictEqual(output, input)
   })
 
   it('should throw on unsupported request media type', async () => {
@@ -72,7 +75,7 @@ describe('read', () => {
     const headers = { 'content-type': 'wtf/' + generate() }
     const request = createContext(path, headers)
 
-    await expect(read(request)).rejects.toThrow(UnsupportedMediaType)
+    await assert.rejects(read(request), UnsupportedMediaType)
   })
 
   it('should throw on malformed content', async () => {
@@ -81,7 +84,7 @@ describe('read', () => {
     const headers = { 'content-type': 'application/json' }
     const request = createContext(path, headers, text)
 
-    await expect(read(request)).rejects.toThrow(BadRequest)
+    await assert.rejects(read(request), BadRequest)
   })
 
   it('should output correct mulitpart format', async () => {
@@ -102,7 +105,7 @@ describe('read', () => {
 
     const result = await streamConsumers.text(framed)
 
-    expect(result).toBe([
+    assert.strictEqual(result, [
       '--cut',
       '',
       'ACK',
@@ -123,7 +126,7 @@ describe('read', () => {
 })
 
 export function createContext (url: string, headers: Record<string, string> = {}, content: string | Buffer = ''):
-jest.MockedObject<Context> {
+Context {
   const data = Buffer.isBuffer(content) ? content : Buffer.from(content)
   const stream = Readable.from(data)
   let consumed = false
@@ -145,5 +148,15 @@ jest.MockedObject<Context> {
     }
   }
 
-  return mock as unknown as jest.MockedObject<Context>
+  return mock as unknown as Context
+}
+
+function resetCalls (target = [], seen = new Set()) {
+  if (target === null || typeof target !== 'object' || seen.has(target)) return
+
+  seen.add(target)
+
+  for (const value of Object.values(target))
+    if (typeof value === 'function' && value.mock !== undefined) value.mock.resetCalls()
+    else resetCalls(value, seen)
 }

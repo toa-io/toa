@@ -1,7 +1,10 @@
+import { describe, it, beforeEach } from 'node:test'
+import assert from 'node:assert/strict'
+
 /* eslint-disable no-template-curly-in-string */
 
-import { Captures } from './Captures'
-import type { Functions } from './functions'
+import { Captures } from './Captures.js'
+import type { Functions } from './functions/index.js'
 
 let captures: Captures
 
@@ -14,7 +17,7 @@ it('should capture parts of the source', () => {
 
   const word = captures.get('word')
 
-  expect(word).toBe('world')
+  assert.strictEqual(word, 'world')
 })
 
 it('should not capture parts of the words', () => {
@@ -22,27 +25,23 @@ it('should not capture parts of the words', () => {
 
   const word = captures.get('word')
 
-  expect(word).toBe(undefined)
+  assert.strictEqual(word, undefined)
 })
 
 it('should substitute multiple times', () => {
   captures.set('word', 'foo')
 
-  expect(captures.capture('hey foo foo', 'hey ${{ word }} ${{ word }}'))
-    .toEqual([])
+  assert.deepStrictEqual(captures.capture('hey foo foo', 'hey ${{ word }} ${{ word }}'), [])
 
-  expect(captures.capture('hey foo bar', 'hey ${{ word }} ${{ word }}'))
-    .toBe(null)
+  assert.strictEqual(captures.capture('hey foo bar', 'hey ${{ word }} ${{ word }}'), null)
 })
 
 it('should substitute parts of the words', () => {
   captures.set('host', 'domain.com')
 
-  expect(captures.capture('foo', 'https://${{ host }}/path'))
-    .toBe(null)
+  assert.strictEqual(captures.capture('foo', 'https://${{ host }}/path'), null)
 
-  expect(captures.capture('https://domain.com/path', 'https://${{ host }}/path'))
-    .toEqual([])
+  assert.deepStrictEqual(captures.capture('https://domain.com/path', 'https://${{ host }}/path'), [])
 })
 
 it('should substitute padded', () => {
@@ -62,20 +61,24 @@ describe('pipelines', () => {
   it('should generate id', () => {
     const result = captures.substitute('hello #{{ id }}')
 
-    expect(result).toMatch(/^hello [a-z0-9]{32}$/)
+    assert.match(result, /^hello [a-z0-9]{32}$/)
   })
 
   it('should set variable', () => {
     const result = captures.substitute('hello #{{ id | set test }}')
 
-    expect(result).toMatch(/^hello [a-z0-9]{32}$/)
-    expect(captures.get('test')).toMatch(/^[a-z0-9]{32}$/)
+    assert.match(result, /^hello [a-z0-9]{32}$/)
+
+    const stored = captures.get('test')
+
+    assert.notStrictEqual(stored, undefined)
+    assert.match(stored as string, /^[a-z0-9]{32}$/)
   })
 
   it('should get variable', () => {
     captures.set('foo', 'world')
 
-    expect(captures.substitute('hello #{{ get foo }}')).toBe('hello world')
+    assert.strictEqual(captures.substitute('hello #{{ get foo }}'), 'hello world')
   })
 
   it('should encode basic credentials', () => {
@@ -84,25 +87,25 @@ describe('pipelines', () => {
 
     const result = captures.substitute('Basic #{{ basic Bubba }}')
 
-    expect(result).toBe('Basic YnViYmE6cGFzc3dvcmQ=')
+    assert.strictEqual(result, 'Basic YnViYmE6cGFzc3dvcmQ=')
   })
 
   it('should generate password', () => {
-    expect(captures.substitute('#{{ password }}')).toMatch(/^.{16}$/)
-    expect(captures.substitute('#{{ password 8 }}')).toMatch(/^.{8}$/)
+    assert.match(captures.substitute('#{{ password }}'), /^.{16}$/)
+    assert.match(captures.substitute('#{{ password 8 }}'), /^.{8}$/)
   })
 
   it('should generate email', () => {
-    expect(captures.substitute('#{{ email }}')).toMatch(/^.*@agent\.test$/)
-    expect(captures.substitute('#{{ email @example.com }}')).toMatch(/^.*@example\.com$/)
+    assert.match(captures.substitute('#{{ email }}'), /^.*@agent\.test$/)
+    assert.match(captures.substitute('#{{ email @example.com }}'), /^.*@example\.com$/)
   })
 
   it('should generate random basic credentials', () => {
     const credentials = captures.substitute('#{{ basic }}')
     const [username, password] = Buffer.from(credentials, 'base64').toString().split(':')
 
-    expect(username).toMatch(/^.*@agent\.test$/)
-    expect(password).toMatch(/^.{16}$/)
+    assert.match(username, /^.*@agent\.test$/)
+    assert.match(password, /^.{16}$/)
   })
 
   it('should substitute now', () => {
@@ -112,8 +115,8 @@ describe('pipelines', () => {
     const nowRx = new RegExp(`hello ${now}\\d{2}`)
     const pastRx = new RegExp(`hello ${past}\\d{2}`)
 
-    expect(captures.substitute('hello #{{ now }}')).toMatch(nowRx)
-    expect(captures.substitute('hello #{{ now -86400000 }}')).toMatch(pastRx)
+    assert.match(captures.substitute('hello #{{ now }}'), nowRx)
+    assert.match(captures.substitute('hello #{{ now -86400000 }}'), pastRx)
   })
 
   it('should convert date to utc string', () => {
@@ -122,15 +125,15 @@ describe('pipelines', () => {
     const nowRx = new RegExp(`hello ${now}:\\d{2} GMT`)
     const pastRx = new RegExp(`hello ${past}:\\d{2} GMT`)
 
-    expect(captures.substitute('hello #{{ utc }}')).toMatch(nowRx)
-    expect(captures.substitute('hello #{{ now | utc }}')).toMatch(nowRx)
-    expect(captures.substitute('hello #{{ now -86400000 | utc }}')).toMatch(pastRx)
+    assert.match(captures.substitute('hello #{{ utc }}'), nowRx)
+    assert.match(captures.substitute('hello #{{ now | utc }}'), nowRx)
+    assert.match(captures.substitute('hello #{{ now -86400000 | utc }}'), pastRx)
   })
 
   it('should convert to timestamp', () => {
     const timestamp = Math.floor(Date.now() / 1000)
 
-    expect(captures.substitute('hello #{{ now | utc | unix }}')).toBe(`hello ${timestamp}`)
+    assert.strictEqual(captures.substitute('hello #{{ now | utc | unix }}'), `hello ${timestamp}`)
   })
 
   it('should print', () => {
@@ -149,6 +152,6 @@ describe('pipelines', () => {
 
     const captures = new Captures(functions)
 
-    expect(captures.substitute('#{{ concat foo bar }}')).toBe('foobar')
+    assert.strictEqual(captures.substitute('#{{ concat foo bar }}'), 'foobar')
   })
 })

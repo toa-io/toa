@@ -1,13 +1,12 @@
-'use strict'
+import { join } from 'node:path'
+import fs from 'fs-extra'
+import { createHash } from 'node:crypto'
 
-const { join } = require('node:path')
-const fs = require('fs-extra')
-const { createHash } = require('node:crypto')
+import { Image } from './image.js'
+import { declare } from './format.js'
 
-const { Image } = require('./image')
-
-class Mono extends Image {
-  dockerfile = join(__dirname, 'mono.Dockerfile')
+export class Mono extends Image {
+  dockerfile = join(import.meta.dirname, 'mono.Dockerfile')
 
   #image
   #components
@@ -61,11 +60,13 @@ class Mono extends Image {
   async prepare (root) {
     const context = await super.prepare(root)
 
-    for (const component of this.#components)
-      await fs.copy(component.path, join(context, component.locator.label))
+    for (const component of this.#components) {
+      const target = join(context, component.locator.label)
+
+      await fs.copy(component.path, target)
+      await declare(component.path, target, component.locator.label)
+    }
 
     return context
   }
 }
-
-exports.Mono = Mono

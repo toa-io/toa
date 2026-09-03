@@ -1,19 +1,20 @@
-'use strict'
+import { it } from 'node:test'
+import assert from 'node:assert/strict'
+import { isDeepStrictEqual } from 'node:util'
 
-const { generate } = require('randomstring')
-const { each, immediate } = require('../')
+import { generate } from 'randomstring'
+import { each, immediate } from '../source/index.js'
 
 it('should be', async () => {
-  expect(each).toBeInstanceOf(Function)
+  assert.ok(each instanceof Function)
 })
 
 it('should iterate', async () => {
   const arr = [generate(), generate()]
 
-  expect.assertions(arr.length)
-
+  
   each(arr, (element, index) => {
-    expect(element).toStrictEqual(arr[index])
+    assert.deepStrictEqual(element, arr[index])
   })
 })
 
@@ -21,12 +22,11 @@ it('should await', async () => {
   /** @type {string[]} */
   const arr = [generate(), generate()]
 
-  expect.assertions(arr.length)
-
+  
   await each(arr, async (element, index) => {
     await immediate()
 
-    expect(element).toStrictEqual(arr[index])
+    assert.deepStrictEqual(element, arr[index])
   })
 })
 
@@ -35,7 +35,7 @@ it('should update values', () => {
 
   each(arr, (n, index) => n + index)
 
-  expect(arr).toStrictEqual(expect.arrayContaining([1, 3, 5]))
+  assert.ok([1, 3, 5].every((item) => arr.some((candidate) => isDeepStrictEqual(candidate, item))))
 })
 
 it('should update partially', () => {
@@ -43,7 +43,7 @@ it('should update partially', () => {
 
   each(arr, (n, index) => { if (index === 1) return 10 })
 
-  expect(arr).toStrictEqual(expect.arrayContaining([1, 10, 3]))
+  assert.ok([1, 10, 3].every((item) => arr.some((candidate) => isDeepStrictEqual(candidate, item))))
 })
 
 it('should update values with async callback', async () => {
@@ -51,5 +51,5 @@ it('should update values with async callback', async () => {
 
   await each(arr, async (n, index) => n + index)
 
-  expect(arr).toStrictEqual(expect.arrayContaining([1, 3, 5]))
+  assert.ok([1, 3, 5].every((item) => arr.some((candidate) => isDeepStrictEqual(candidate, item))))
 })

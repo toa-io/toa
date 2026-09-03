@@ -1,12 +1,12 @@
 import { resolve } from 'node:path'
-import schemas from '@toa.io/schemas'
-import type { Options as GetOptions } from './Get'
-import type { Options as PutOptions } from './Put'
-import type { Options as DeleteOptions } from './Delete'
+import * as schemas from '@toa.io/schemas'
+import type { Options as GetOptions } from './Get.js'
+import type { Options as PutOptions } from './Put.js'
+import type { Options as DeleteOptions } from './Delete.js'
 import type { Schema } from '@toa.io/schemas'
-import type { Unit } from './workflows'
+import type { Unit } from './workflows/index.js'
 
-const path = resolve(__dirname, '../../../schemas/octets')
+const path = resolve(import.meta.dirname, '../../../schemas/octets')
 const namespace = schemas.namespace(path)
 
 export const put: Schema<PutOptions | null> = namespace.schema('put')

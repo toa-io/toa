@@ -1,7 +1,7 @@
 import * as assert from 'node:assert'
-import { providers } from './providers'
-import { validateAnnotation } from './Annotation'
-import type { Annotation } from './Annotation'
+import { providers } from './providers/index.js'
+import { validateAnnotation } from './Annotation.js'
+import type { Annotation } from './Annotation.js'
 import type { Dependency, Variable, Mounts } from '@toa.io/operations'
 import type { context } from '@toa.io/norm'
 

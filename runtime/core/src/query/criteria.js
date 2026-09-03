@@ -1,9 +1,7 @@
-'use strict'
+import { parse } from '@rsql/parser'
+import { QuerySyntaxException } from '../exceptions.js'
 
-const { parse } = require('@rsql/parser')
-const { QuerySyntaxException } = require('../exceptions')
-
-const criteria = (criteria, properties) => {
+export const criteria = (criteria, properties) => {
   let ast
 
   try {
@@ -37,5 +35,3 @@ const COERCE = {
   integer: Number.parseInt,
   boolean: (value) => value === 'true'
 }
-
-exports.criteria = criteria

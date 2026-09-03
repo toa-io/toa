@@ -1,6 +1,7 @@
 {
   "name": "@toa.io/extensions.exposition",
   "version": "1.0.0-alpha.276",
+  "type": "module",
   "description": "Toa Exposition",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
@@ -17,12 +18,12 @@
     "access": "public"
   },
   "dependencies": {
-    "@simplewebauthn/server": "13.3.3",
+    "@simplewebauthn/server": "14.0.0",
     "@toa.io/core": "1.0.0-alpha.273",
     "@toa.io/generic": "1.0.0-alpha.273",
     "@toa.io/schemas": "1.0.0-alpha.274",
     "bcryptjs": "3.0.3",
-    "content-type": "2.1.0",
+    "content-type": "3.0.0",
     "jose": "6.2.10",
     "js-yaml": "5.4.1",
     "lru-cache": "11.5.2",
@@ -31,10 +32,10 @@
     "msgpackr": "2.1.0",
     "negotiator": "1.1.0",
     "openspan": "1.0.0-alpha.272",
-    "paseto": "3.1.4"
+    "paseto": "4.0.0"
   },
   "scripts": {
-    "test": "NODE_OPTIONS=--experimental-vm-modules jest",
+    "test": "echo \"Error: run tests from root\" && exit 1",
     "transpile": "tsc && npm run transpile:bans && npm run transpile:basic && npm run transpile:tokens && npm run transpile:roles && npm run transpile:federation && npm run transpile:credentials && npm run transpile:keys && npm run transpile:passkeys && npm run transpile:otp",
     "transpile:bans": "tsc -p ./components/identity.bans",
     "transpile:basic": "tsc -p ./components/identity.basic",
@@ -45,22 +46,15 @@
     "transpile:keys": "tsc -p ./components/identity.keys",
     "transpile:passkeys": "tsc -p ./components/identity.passkeys",
     "transpile:otp": "tsc -p ./components/identity.otp",
-    "features": "cucumber-js",
-    "features:h2c": "TOA_EXPOSITION_PROTOCOL=h2c TOA_AGENT_PROTOCOL=h2c cucumber-js",
-    "features:security": "cucumber-js --tags @security",
-    "features:octets": "cucumber-js features/octets.*"
+    "features": "TSX_TSCONFIG_PATH=features/steps/tsconfig.json NODE_OPTIONS=--import=tsx cucumber-js",
+    "features:h2c": "TOA_EXPOSITION_PROTOCOL=h2c TOA_AGENT_PROTOCOL=h2c TSX_TSCONFIG_PATH=features/steps/tsconfig.json NODE_OPTIONS=--import=tsx cucumber-js",
+    "features:security": "TSX_TSCONFIG_PATH=features/steps/tsconfig.json NODE_OPTIONS=--import=tsx cucumber-js --tags @security",
+    "features:octets": "TSX_TSCONFIG_PATH=features/steps/tsconfig.json NODE_OPTIONS=--import=tsx cucumber-js features/octets.*"
   },
   "devDependencies": {
     "@toa.io/extensions.storages": "*",
     "@types/cors": "2.8.19",
-    "@types/negotiator": "0.6.5",
-    "jest-esbuild": "0.4.0"
-  },
-  "jest": {
-    "transform": {
-      "^.+\\.ts$": "jest-esbuild"
-    },
-    "testEnvironment": "node"
+    "@types/negotiator": "0.6.5"
   },
   "gitHead": "2ab75e1fd23f2e64720a60b8562dda606aa723ee"
 }

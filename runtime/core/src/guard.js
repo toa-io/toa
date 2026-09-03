@@ -1,6 +1,4 @@
-'use strict'
-
-class Guard {
+export class Guard {
   name
   #bridge
 
@@ -13,5 +11,3 @@ class Guard {
     return this.#bridge.fit(state, origin)
   }
 }
-
-exports.Guard = Guard

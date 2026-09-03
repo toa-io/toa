@@ -1,8 +1,6 @@
-'use strict'
-
-const { console } = require('openspan')
-const { Connector } = require('../connector')
-const { newid } = require('../entities/newid')
+import { console } from 'openspan'
+import { Connector } from '../connector.js'
+import { newid } from '../entities/newid.js'
 
 /**
  * Owns the intent to publish. A row is built before the write so that the storage can commit
@@ -15,7 +13,7 @@ const { newid } = require('../entities/newid')
  * A storage that cannot commit a row atomically has no outbox, and this degrades to the
  * inline emission it replaces.
  */
-class Outbox extends Connector {
+export class Outbox extends Connector {
   #emission
   #storage
   #atom
@@ -278,7 +276,7 @@ const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms).unref())
  * lanes nobody reads any more. It is also the ceiling on replicas of one component, and a
  * power of two so that the common replica counts divide evenly.
  */
-const LANES = 128
+export const LANES = 128
 
 /** one cycle reads, publishes and marks; in steady state it finds nothing to read */
 const INTERVAL = 5000
@@ -296,6 +294,3 @@ const BATCH = 200
 const DRAIN = 10_000
 const INFLIGHT = 1000
 const PUBLISHED = 10_000
-
-exports.Outbox = Outbox
-exports.LANES = LANES

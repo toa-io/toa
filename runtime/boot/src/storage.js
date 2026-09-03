@@ -1,17 +1,20 @@
-'use strict'
+import { createRequire } from 'node:module'
+import { pathToFileURL } from 'node:url'
+import * as extensions from './extensions/index.js'
 
-const { join } = require('node:path')
-const extensions = require('./extensions')
+// import.meta.resolve takes no paths, and the connector is resolved against the
+// component that names it
+const require = createRequire(import.meta.url)
 
 /**
  * @param {toa.norm.Component} manifest
  * @param {boolean} outbox whether this component publishes anything, and so needs a place to
  *   commit it with the entity
  */
-const storage = (manifest, outbox) => {
+export const storage = async (manifest, outbox) => {
   if (manifest.entity === undefined) return
 
-  const Factory = load(manifest)
+  const Factory = await load(manifest)
 
   /** @type {toa.core.storages.Factory} */
   const factory = new Factory()
@@ -20,12 +23,10 @@ const storage = (manifest, outbox) => {
   return extensions.storage(storage)
 }
 
-function load (component) {
+async function load (component) {
   const reference = component.entity.storage
-  const path = require.resolve(reference, { paths: [component.path, __dirname] })
-  const { Factory } = require(path)
+  const path = require.resolve(reference, { paths: [component.path, import.meta.dirname] })
+  const { Factory } = await import(pathToFileURL(path).href)
 
   return Factory
 }
-
-exports.storage = storage

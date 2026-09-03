@@ -1,9 +1,7 @@
-'use strict'
+import { EntityContractException, EntityGuardException } from '../exceptions.js'
+import { newid } from './newid.js'
 
-const { EntityContractException, EntityGuardException } = require('../exceptions')
-const { newid } = require('./newid')
-
-class Entity {
+export class Entity {
   deleted = false
   #schema
   #guards
@@ -119,5 +117,3 @@ class Entity {
     this.#state = value
   }
 }
-
-exports.Entity = Entity

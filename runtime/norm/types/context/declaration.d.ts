@@ -1,4 +1,4 @@
-import { Composition, Registry, Runtime } from '../context'
+import { Composition, Registry, Runtime } from '../context.js'
 
 interface Composition {
   name: string,

@@ -1,11 +1,7 @@
-'use strict'
-
-const { deployment } = require('./deployment')
-const { Factory } = require('./factory')
+import { deployment } from './deployment.js'
+import { Factory } from './factory.js'
 
 /** @type {toa.core.bindings.Properties} */
 const properties = { async: true }
 
-exports.properties = properties
-exports.deployment = deployment
-exports.Factory = Factory
+export { properties, deployment, Factory }

@@ -1,9 +1,7 @@
-'use strict'
-
-const { Given } = require('@cucumber/cucumber')
-const { load: parse } = require('js-yaml')
-const { describe } = require('@toa.io/extensions.configuration')
-const { load } = require('./.workspace/components')
+import { Given } from '@cucumber/cucumber'
+import { load as parse } from 'js-yaml'
+import { describe } from '@toa.io/extensions.configuration'
+import { load } from './.workspace/components/index.js'
 
 Given('the configuration of {component} is deployed',
   /**

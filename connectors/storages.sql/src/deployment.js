@@ -1,10 +1,8 @@
-'use strict'
-
-const { createVariables } = require('@toa.io/pointer')
-const { validate } = require('./.deployment/validate')
+import { createVariables } from '@toa.io/pointer'
+import { validate } from './.deployment/validate.js'
 
 /** @type {toa.deployment.dependency.Constructor} */
-const deployment = (instances, annotation) => {
+export const deployment = (instances, annotation) => {
   validate(annotation)
 
   const requests = instances.map((instance) => createRequest(instance))
@@ -20,7 +18,4 @@ function createRequest (instance) {
   }
 }
 
-const ID = 'sql'
-
-exports.ID = ID
-exports.deployment = deployment
+export const ID = 'sql'

@@ -1,6 +1,4 @@
-'use strict'
-
-const { call } = require('../handlers/call')
+import { call } from '../handlers/call.js'
 
 const builder = (yargs) => {
   yargs
@@ -14,7 +12,7 @@ const builder = (yargs) => {
     })
 }
 
-exports.command = 'call <endpoint> [request]'
-exports.desc = 'Call operation'
-exports.builder = builder
-exports.handler = call
+export const command = 'call <endpoint> [request]'
+export const desc = 'Call operation'
+
+export { builder, call as handler }

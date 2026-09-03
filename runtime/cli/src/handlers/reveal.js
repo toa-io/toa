@@ -1,10 +1,8 @@
-'use strict'
+import { secrets } from '@toa.io/kubernetes'
 
-const { secrets } = require('@toa.io/kubernetes')
+import { PREFIX } from './conceal.js'
 
-const { PREFIX } = require('./conceal')
-
-const reveal = async (argv) => {
+export const reveal = async (argv) => {
   const prefixed = PREFIX + argv.secret
   const data = await secrets.get(prefixed)
 
@@ -16,5 +14,3 @@ const reveal = async (argv) => {
     console.log(line)
   }
 }
-
-exports.reveal = reveal

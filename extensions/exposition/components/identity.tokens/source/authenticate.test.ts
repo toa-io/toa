@@ -1,6 +1,9 @@
+import { it, beforeEach, mock } from 'node:test'
+import assert from 'node:assert/strict'
+
 import { generate } from 'randomstring'
-import { Computation as Authenticate } from './authenticate'
-import type { Configuration, Context, DecryptOutput, Identity } from './lib'
+import { Computation as Authenticate } from './authenticate.js'
+import type { Configuration, Context, DecryptOutput, Identity } from './lib/index.js'
 import type { Secret } from '@toa.io/types'
 
 let configuration: Configuration
@@ -28,8 +31,8 @@ beforeEach(() => {
   context = {
     configuration,
     local: {
-      decrypt: jest.fn(async () => (output)),
-      observe: jest.fn(async () => null)
+      decrypt: mock.fn(async () => (output)),
+      observe: mock.fn(async () => null)
     }
   } as unknown as Context
 
@@ -37,10 +40,11 @@ beforeEach(() => {
   authenticate.mount(context)
 })
 
-it.each([
+for (const [expected, shift] of [
   [true, -50],
   [false, +50]
-])('should mark as stale: %s', async (expected: boolean, shift: number) => {
+])
+   it(`should mark as stale: ${expected}`, async () => {
   const now = Date.now()
   const iat = new Date(now - configuration.refresh * 1000 + shift).toISOString()
   const exp = new Date(now + 1000).toISOString()
@@ -52,11 +56,11 @@ it.each([
     credentials: ''
   })
 
-  expect(result).toEqual({ identity, refresh: expected })
+  assert.deepStrictEqual(result, { identity, refresh: expected })
 })
 
-it.each([true, false])('should return stale: %s',
-  async (refresh) => {
+for (const refresh of [true, false])
+   it(`should return stale: ${refresh}`, async () => {
     const iat = new Date().toISOString()
     const exp = new Date(Date.now() + 1000).toISOString()
 
@@ -67,7 +71,7 @@ it.each([true, false])('should return stale: %s',
       credentials: ''
     })
 
-    expect(result).toEqual({ identity, refresh })
+    assert.deepStrictEqual(result, { identity, refresh })
   })
 
 function secret (value: string): Secret {

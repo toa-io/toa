@@ -1,9 +1,10 @@
-'use strict'
+import { it } from 'node:test'
+import assert from 'node:assert/strict'
 
-const { flip } = require('../')
+import { flip } from '../source/index.js'
 
 it('should be', async () => {
-  expect(flip).toBeDefined()
+  assert.notStrictEqual(flip, undefined)
 })
 
 it('should return true or false', async () => {
@@ -13,7 +14,7 @@ it('should return true or false', async () => {
   for (let i = 0; i < 1000; i++) {
     const output = flip()
 
-    expect(typeof output).toStrictEqual('boolean')
+    assert.deepStrictEqual(typeof output, 'boolean')
 
     if (output) yeps++
     else nopes++
@@ -22,6 +23,6 @@ it('should return true or false', async () => {
   const diff = Math.abs(yeps - nopes)
 
   // eh
-  expect(diff).toBeLessThan(yeps)
-  expect(diff).toBeLessThan(nopes)
+  assert.ok(diff < yeps)
+  assert.ok(diff < nopes)
 })

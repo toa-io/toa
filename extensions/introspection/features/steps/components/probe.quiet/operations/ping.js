@@ -1,7 +1,3 @@
-'use strict'
-
-async function computation (input) {
+export async function computation (input) {
   return input.a
 }
-
-exports.computation = computation

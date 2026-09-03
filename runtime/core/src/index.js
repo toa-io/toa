@@ -1,55 +1,28 @@
-const { Assignment } = require('./assignment')
-const { Call } = require('./call')
-const { Cascade } = require('./cascade')
-const { Composition } = require('./composition')
-const { Connector } = require('./connector')
-const { Context } = require('./context')
-const { Discovery } = require('./discovery')
-const { Effect } = require('./effect')
-const { Emission } = require('./emission')
-const { Event } = require('./event')
-const { Exposition } = require('./exposition')
-const { Locator } = require('./locator')
-const { Observation } = require('./observation')
-const { Outbox } = require('./outbox')
-const { Operation } = require('./operation')
-const { Query } = require('./query')
-const { Receiver } = require('./receiver')
-const { Reflection } = require('./reflection')
-const { Remote } = require('./remote')
-const { Component } = require('./component')
-const { State } = require('./state')
-const { Transition } = require('./transition')
-const { Transmission } = require('./transmission')
-const { Unmanaged } = require('./unmanaged')
-const { Guard } = require('./guard')
-
-exports.entities = require('./entities')
-exports.exceptions = require('./exceptions')
-exports.contract = require('./contract')
-
-exports.Assignment = Assignment
-exports.Call = Call
-exports.Cascade = Cascade
-exports.Component = Component
-exports.Composition = Composition
-exports.Connector = Connector
-exports.Context = Context
-exports.Discovery = Discovery
-exports.Effect = Effect
-exports.Emission = Emission
-exports.Event = Event
-exports.Exposition = Exposition
-exports.Locator = Locator
-exports.Observation = Observation
-exports.Outbox = Outbox
-exports.Operation = Operation
-exports.Query = Query
-exports.Receiver = Receiver
-exports.Reflection = Reflection
-exports.Remote = Remote
-exports.State = State
-exports.Transition = Transition
-exports.Transmission = Transmission
-exports.Unmanaged = Unmanaged
-exports.Guard = Guard
+export { Assignment } from './assignment.js'
+export { Call } from './call.js'
+export { Cascade } from './cascade.js'
+export { Component } from './component.js'
+export { Composition } from './composition.js'
+export { Connector } from './connector.js'
+export { Context } from './context.js'
+export { Discovery } from './discovery.js'
+export { Effect } from './effect.js'
+export { Emission } from './emission.js'
+export { Event } from './event.js'
+export { Exposition } from './exposition.js'
+export { Locator } from './locator.js'
+export { Observation } from './observation.js'
+export { Outbox } from './outbox/index.js'
+export { Operation } from './operation.js'
+export { Query } from './query.js'
+export { Receiver } from './receiver.js'
+export { Reflection } from './reflection.js'
+export { Remote } from './remote.js'
+export { State } from './state.js'
+export { Transition } from './transition.js'
+export { Transmission } from './transmission.js'
+export { Unmanaged } from './unmanaged.js'
+export { Guard } from './guard.js'
+export * as entities from './entities/index.js'
+export * as exceptions from './exceptions.js'
+export * as contract from './contract/index.js'

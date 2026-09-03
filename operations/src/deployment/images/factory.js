@@ -1,10 +1,8 @@
-'use strict'
+import { Composition } from './composition.js'
+import { Service } from './service.js'
+import { Mono } from './mono.js'
 
-const { Composition } = require('./composition')
-const { Service } = require('./service')
-const { Mono } = require('./mono')
-
-class Factory {
+export class Factory {
   /** @type {string} */
   #scope
 
@@ -58,5 +56,3 @@ class Factory {
     return instance
   }
 }
-
-exports.Factory = Factory

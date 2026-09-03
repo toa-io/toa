@@ -5,12 +5,12 @@ import assert from 'node:assert'
 import { Upload } from '@aws-sdk/lib-storage'
 import * as s3 from '@aws-sdk/client-s3'
 import { console } from 'openspan'
-import { Provider } from '../Provider'
-import { ERR_NOT_FOUND } from '../errors'
+import { Provider } from '../Provider.js'
+import { ERR_NOT_FOUND } from '../errors.js'
 import type { ReadableStream } from 'node:stream/web'
 import type { Maybe } from '@toa.io/types'
-import type { Metadata, Stream } from '../Entry'
-import type { Secret, Secrets } from '../Secrets'
+import type { Metadata, Stream } from '../Entry.js'
+import type { Secret, Secrets } from '../Secrets.js'
 
 export interface S3Options {
   bucket: string

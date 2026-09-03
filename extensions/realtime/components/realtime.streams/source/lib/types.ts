@@ -1,5 +1,5 @@
-import { type Stream } from './Stream'
-import { type Stash } from './Stash'
+import { type Stream } from './Stream.js'
+import { type Stash } from './Stash.js'
 
 export interface Context {
   stash: any

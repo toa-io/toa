@@ -1,2 +1,2 @@
-export { Factory } from './Factory'
-export * from './extension'
+export { Factory } from './Factory.js'
+export * from './extension.js'

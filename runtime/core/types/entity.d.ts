@@ -1,5 +1,5 @@
-import * as _event from './event'
-import * as _storages from './storages'
+import * as _event from './event.js'
+import * as _storages from './storages.js'
 
 declare namespace toa.core {
 

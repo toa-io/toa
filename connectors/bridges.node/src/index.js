@@ -1,6 +1,3 @@
-'use strict'
-
-const { Factory } = require('./factory')
-
-exports.define = require('./define')
-exports.Factory = Factory
+import * as define from './define/index.js'
+export { Factory } from './factory.js'
+export { define }

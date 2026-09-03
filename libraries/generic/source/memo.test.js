@@ -1,6 +1,7 @@
-'use strict'
+import { it } from 'node:test'
+import assert from 'node:assert/strict'
 
-const { memo } = require('./index')
+import { memo } from './index.js'
 
 it('should memoize returned values', async () => {
   let calls = 0
@@ -16,7 +17,7 @@ it('should memoize returned values', async () => {
   const r1 = fn()
   const r2 = fn()
 
-  expect(r1).toStrictEqual(1)
-  expect(r2).toStrictEqual(1)
-  expect(calls).toStrictEqual(1)
+  assert.deepStrictEqual(r1, 1)
+  assert.deepStrictEqual(r2, 1)
+  assert.deepStrictEqual(calls, 1)
 })

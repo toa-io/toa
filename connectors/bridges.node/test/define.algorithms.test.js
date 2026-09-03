@@ -1,13 +1,14 @@
-'use strict'
+import { it, before } from 'node:test'
+import assert from 'node:assert/strict'
 
-const { resolve } = require('node:path')
-const define = require('../src/define')
+import { resolve } from 'node:path'
+import * as define from '../src/define/index.js'
 
 it('should be', () => {
-  expect(define.operations).toBeDefined()
+  assert.notStrictEqual(define.operations, undefined)
 })
 
-const DUMMIES = resolve(__dirname, 'dummies')
+const DUMMIES = resolve(import.meta.dirname, 'dummies')
 const find = (component) => resolve(DUMMIES, component)
 
 const root = find('one')
@@ -15,22 +16,22 @@ const root = find('one')
 /** @type {toa.node.define.algorithms.List} */
 let operations
 
-beforeAll(async () => {
+before(async () => {
   operations = await define.operations(root)
 })
 
 it('should define', () => {
-  expect(operations).toBeDefined()
+  assert.notStrictEqual(operations, undefined)
 })
 
 it('should find function operations', () => {
-  expect(operations.fn).toBeDefined()
+  assert.notStrictEqual(operations.fn, undefined)
 })
 
 it('should find class operations', () => {
-  expect(operations.cls).toBeDefined()
+  assert.notStrictEqual(operations.cls, undefined)
 })
 
 it('should find factory operations', () => {
-  expect(operations.fct).toBeDefined()
+  assert.notStrictEqual(operations.fct, undefined)
 })

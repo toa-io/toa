@@ -1,19 +1,17 @@
-'use strict'
+import { Locator } from '@toa.io/core'
 
-const { Locator } = require('@toa.io/core')
+import { Producer } from './producer.js'
+import { Consumer } from './consumer.js'
+import { Emitter } from './emitter.js'
+import { Receiver } from './receiver.js'
+import { Broadcast } from './broadcast.js'
+import * as context from './deployment/context.js'
+import * as sources from './deployment/sources.js'
 
-const { Producer } = require('./producer')
-const { Consumer } = require('./consumer')
-const { Emitter } = require('./emitter')
-const { Receiver } = require('./receiver')
-const { Broadcast } = require('./broadcast')
-const context = require('./deployment/context')
-const sources = require('./deployment/sources')
+import { SYSTEM } from './constants.js'
+import { Communication } from './communication.js'
 
-const { SYSTEM } = require('./constants')
-const { Communication } = require('./communication')
-
-class Factory {
+export class Factory {
   /**
    * The communications in use, by what holds them. An IO opens a channel of its own for
    * requests, for replies and for events, and a connection has some two thousand
@@ -111,5 +109,3 @@ const OUTBOUND = '\u0000outbound'
 const ALONE = '\u0000alone:'
 
 const SEPARATOR = '\u0000'
-
-exports.Factory = Factory

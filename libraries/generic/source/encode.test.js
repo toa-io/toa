@@ -1,8 +1,9 @@
-'use strict'
+import { it, beforeEach } from 'node:test'
+import assert from 'node:assert/strict'
 
-const { generate } = require('randomstring')
+import { generate } from 'randomstring'
 
-const { encode, decode, random } = require('../')
+import { encode, decode, random } from '../source/index.js'
 
 let object
 
@@ -11,21 +12,21 @@ beforeEach(() => {
 })
 
 it('should exist', () => {
-  expect(encode).toBeDefined()
-  expect(decode).toBeDefined()
+  assert.notStrictEqual(encode, undefined)
+  assert.notStrictEqual(decode, undefined)
 })
 
 it('should encode object', () => {
   const string = encode(object)
 
-  expect(typeof string).toStrictEqual('string')
+  assert.deepStrictEqual(typeof string, 'string')
 })
 
 it('should decode object', () => {
   const string = encode(object)
   const decoded = decode(string)
 
-  expect(decoded).toStrictEqual(object)
+  assert.deepStrictEqual(decoded, object)
 })
 
 it('should encode string', () => {
@@ -33,7 +34,7 @@ it('should encode string', () => {
   const encoded = encode(string)
   const decoded = decode(encoded)
 
-  expect(decoded).toStrictEqual(string)
+  assert.deepStrictEqual(decoded, string)
 })
 
 it('should encode number', () => {
@@ -41,5 +42,5 @@ it('should encode number', () => {
   const encoded = encode(number)
   const decoded = decode(encoded)
 
-  expect(decoded).toStrictEqual(number)
+  assert.deepStrictEqual(decoded, number)
 })

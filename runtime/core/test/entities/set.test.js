@@ -1,12 +1,13 @@
-'use strict'
+import { it } from 'node:test'
+import assert from 'node:assert/strict'
 
-const { EntitySet } = require('../../src/entities/set')
-const fixtures = require('./set.fixtures')
+import { EntitySet } from '../../src/entities/set.js'
+import * as fixtures from './set.fixtures.js'
 
 it('should provide state', () => {
   const set = new EntitySet(fixtures.set)
   const state = set.get()
-  const expected = fixtures.set.map((entity) => entity.get.mock.results[0].value)
+  const expected = fixtures.set.map((entity) => entity.get.mock.calls[0].result)
 
-  expect(state).toStrictEqual(expected)
+  assert.deepStrictEqual(state, expected)
 })

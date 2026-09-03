@@ -1,14 +1,10 @@
-'use strict'
+import { Client } from './client.js'
+import { Storage } from './storage.js'
 
-const { Client } = require('./client')
-const { Storage } = require('./storage')
-
-class Factory {
+export class Factory {
   storage (locator, entity, options = {}) {
     const client = new Client(locator, options.outbox === true)
 
     return new Storage(client, entity)
   }
 }
-
-exports.Factory = Factory

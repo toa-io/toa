@@ -1,5 +1,3 @@
-'use strict'
-
 /**
  * The events of this component that something consumes. An event nobody consumes is not
  * published, so it gets no emitter and no exchange, and a component none of whose events are
@@ -11,7 +9,7 @@
  * @param {toa.norm.Component} manifest
  * @returns {toa.norm.Events | undefined}
  */
-const events = (manifest) => {
+export const events = (manifest) => {
   if (manifest.events === undefined) return
 
   const value = process.env[VARIABLE + manifest.locator.uppercase]
@@ -25,5 +23,3 @@ const events = (manifest) => {
 }
 
 const VARIABLE = 'TOA_EVENTS_'
-
-exports.events = events

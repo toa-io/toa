@@ -2,7 +2,7 @@ import { join } from 'node:path'
 import * as dotenv from 'dotenv'
 import { setDefaultTimeout } from '@cucumber/cucumber'
 
-dotenv.config({ path: join(__dirname, '.env') })
+dotenv.config({ path: join(import.meta.dirname, '.env') })
 
 export class Parameters {
   public readonly origin: string

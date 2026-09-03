@@ -1,6 +1,6 @@
-import { component } from './annotation'
-import * as schemas from './schemas'
-import type { Declaration } from './annotation'
+import { component } from './annotation.js'
+import * as schemas from './schemas.js'
+import type { Declaration } from './annotation.js'
 
 /**
  * The component level of the annotation.

@@ -1,8 +1,9 @@
-'use strict'
+import { it } from 'node:test'
+import assert from 'node:assert/strict'
 
-const { performance } = require('perf_hooks')
+import { performance } from 'perf_hooks'
 
-const { timeout } = require('../source/timeout')
+import { timeout } from '../source/timeout.js'
 
 it('should wait', async () => {
   const start = performance.now()
@@ -12,5 +13,5 @@ it('should wait', async () => {
 
   const end = performance.now()
 
-  expect(Math.ceil(end - start)).toBeGreaterThanOrEqual(ms)
+  assert.ok(Math.ceil(end - start) >= ms)
 })

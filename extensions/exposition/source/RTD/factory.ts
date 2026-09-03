@@ -1,10 +1,10 @@
-import { BRANCH_TTL } from '../const'
-import { Node, type Properties } from './Node'
-import { Route } from './Route'
-import { segment } from './segment'
-import { Method, type Methods } from './Method'
-import type { Context } from './Context'
-import type * as syntax from './syntax'
+import { BRANCH_TTL } from '../const.js'
+import { Node, type Properties } from './Node.js'
+import { Route } from './Route.js'
+import { segment } from './segment.js'
+import { Method, type Methods } from './Method.js'
+import type { Context } from './Context.js'
+import type * as syntax from './syntax/index.js'
 
 export function createNode (node: syntax.Node, context: Context): Node {
   if (node.isolated === true)

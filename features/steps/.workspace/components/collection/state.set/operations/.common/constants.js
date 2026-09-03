@@ -1,3 +1,1 @@
-'use strict'
-
-exports.CACHE_KEY = Symbol('cache key')
+export const CACHE_KEY = Symbol('cache key')

@@ -1,6 +1,4 @@
-'use strict'
-
-const state = {}
+export const state = {}
 
 const reset = () => {
   Object.assign(state, {
@@ -15,4 +13,3 @@ const reset = () => {
 reset()
 
 /** @type {toa.stage.State} */
-exports.state = state

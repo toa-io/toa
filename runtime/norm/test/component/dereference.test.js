@@ -1,9 +1,10 @@
-'use strict'
+import { it, beforeEach } from 'node:test'
+import assert from 'node:assert/strict'
 
-const clone = require('clone-deep')
+import clone from 'clone-deep'
 
-const { dereference } = require('../../src/.component')
-const fixtures = require('./dereference.fixtures')
+import { dereference } from '../../src/.component/index.js'
+import * as fixtures from './dereference.fixtures.js'
 
 let source
 
@@ -14,18 +15,18 @@ beforeEach(() => {
 it('should dereference', () => {
   dereference(source)
 
-  expect(source).toStrictEqual(fixtures.target)
+  assert.deepStrictEqual(source, fixtures.target)
 })
 
 it('should throw on invalid schema reference', () => {
   source.operations.transit.output.properties.baz = { type: 'string', default: '.' }
-  expect(() => dereference(source)).toThrow(/is not defined/)
+  assert.throws(() => dereference(source), (error) => /is not defined/.test(error.message))
 
   source.operations.transit.output.properties.baz = { type: 'string', default: '.baz' }
-  expect(() => dereference(source)).toThrow(/is not defined/)
+  assert.throws(() => dereference(source), (error) => /is not defined/.test(error.message))
 })
 
 it('should throw on invalid forwarding', () => {
   source.operations.create.forward = 'foo'
-  expect(() => dereference(source)).toThrow(/is not defined/)
+  assert.throws(() => dereference(source), (error) => /is not defined/.test(error.message))
 })
