@@ -1,13 +1,16 @@
 import { compare } from 'bcryptjs'
 import { quote } from '@toa.io/generic'
 import { type Query, type Maybe } from '@toa.io/types'
+import { split } from './lib/credentials.js'
 import { type Context } from './types.js'
 
 export async function computation (input: Input, context: Context): Promise<Maybe<Output>> {
-  const [username, password] = Buffer
-    .from(input.credentials, 'base64')
-    .toString()
-    .split(':')
+  const pair = split(input.credentials)
+
+  if (pair === null)
+    return ERR_NOT_FOUND
+
+  const [username, password] = pair
 
   const query: Query = {
     criteria: `authority==${quote(input.authority)};username==${quote(username)}`

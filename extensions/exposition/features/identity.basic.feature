@@ -588,3 +588,35 @@ Feature: Basic authentication
 
       id: ${{ identity.id }}
       """
+
+  Scenario: Password containing colons
+    When the following request is received:
+      """
+      POST /identity/basic/ HTTP/1.1
+      host: nex.toa.io
+      accept: application/yaml
+      content-type: application/yaml
+
+      username: colon
+      password: pa:ss:word
+      """
+    Then the following reply is sent:
+      """
+      201 Created
+
+      id: ${{ id }}
+      """
+    # colon:pa:ss:word
+    When the following request is received:
+      """
+      GET /identity/ HTTP/1.1
+      host: nex.toa.io
+      authorization: Basic Y29sb246cGE6c3M6d29yZA==
+      accept: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+
+      id: ${{ id }}
+      """
