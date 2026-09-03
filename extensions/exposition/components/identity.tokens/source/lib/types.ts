@@ -98,4 +98,5 @@ export interface Key {
 
 export interface CustomKey extends Key {
   identity: string
+  revokedAt?: number
 }

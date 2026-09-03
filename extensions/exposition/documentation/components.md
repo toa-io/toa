@@ -222,9 +222,10 @@ token: <token>
 
 ### Custom token invalidation
 
-Custom tokens can be invalidated by deleting the secret key used to issue them.
-This can be done by the Identity that issued the token or by an Identity with
-the `system:identity:keys` role.
+A custom token is invalidated through its secret key. The key is revoked, and every token issued
+with it is refused, when the Identity is [banned](#banned-identities) or its
+[Basic credentials](#basic-credentials) are modified. The key can also be deleted by the Identity
+that issued the token or by an Identity with the `system:identity:keys` role.
 
 ```
 DELETE /identity/keys/<identity>/<key.id>/
@@ -240,9 +241,10 @@ GET /identity/keys/<identity>/
 authorization: ...
 ```
 
-The listing returns `id`, `label`, optional `expires`, and `_created`. Deletion prevents new cache
-lookups from finding the key. A runtime that already cached it can continue accepting the token for
-up to `identity.tokens.cache.ttl` milliseconds (10 minutes by default).
+The listing returns `id`, `label`, optional `expires`, `revokedAt` where the key is revoked, and
+`_created`. Revocation and deletion prevent new cache lookups from finding a usable key. A runtime
+that already cached it can continue accepting the token for up to `identity.tokens.cache.ttl`
+milliseconds (10 minutes by default).
 
 Both listing and deletion require credentials of the owning Identity or the
 `system:identity:keys` role. Key creation is internal to `identity.tokens`; there is no public
@@ -312,6 +314,7 @@ All currently issued tokens of an Identity are revoked when:
 2. Identity is [banned](#banned-identities).
 
 Token revocation takes effect once the `refresh` period of the currently issued tokens has expired.
+[Custom tokens](#custom-tokens) are revoked through their keys, within `cache.ttl`.
 
 ### Secret rotation
 

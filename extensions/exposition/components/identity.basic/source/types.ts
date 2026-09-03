@@ -12,6 +12,9 @@ export interface Context {
       tokens: {
         revoke: Call<void, IdentityTokensRevokeInput>
       }
+      keys: {
+        revoke: Call<void, IdentityKeysRevokeInput>
+      }
     }
   }
   configuration: {
@@ -59,4 +62,8 @@ export interface IdOutput {
 
 interface IdentityTokensRevokeInput {
   query: Query
+}
+
+interface IdentityKeysRevokeInput {
+  identity: string
 }

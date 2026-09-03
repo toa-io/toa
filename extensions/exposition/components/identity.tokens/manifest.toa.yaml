@@ -79,6 +79,7 @@ operations:
       - INVALID_TOKEN
       - INVALID_KEY
       - FORGED_KEY
+      - REVOKED_KEY
   authenticate:
     input:
       properties:

@@ -7,6 +7,7 @@ export class Transition implements Operation {
   private pepper: string = ''
   private principal?: Principal
   private tokens: Tokens = undefined as unknown as Tokens
+  private keys: Keys = undefined as unknown as Keys
   private usernameRx: RegExp[] = []
   private passwordRx: RegExp[] = []
 
@@ -15,6 +16,7 @@ export class Transition implements Operation {
     this.pepper = context.configuration.pepper?.unwrap() ?? ''
     this.principal = context.configuration.principal
     this.tokens = context.remote.identity.tokens
+    this.keys = context.remote.identity.keys
 
     this.usernameRx = toRx(context.configuration.username)
     this.passwordRx = toRx(context.configuration.password)
@@ -34,7 +36,10 @@ export class Transition implements Operation {
       if (input.inception === true)
         return ERR_EXISTS
 
-      await this.tokens.revoke({ query: { id: object.id } })
+      await Promise.all([
+        this.tokens.revoke({ query: { id: object.id } }),
+        this.keys.revoke({ input: { identity: object.id } })
+      ])
     } else
       object.authority = input.authority
 
@@ -91,3 +96,4 @@ const ERR_EXISTS = new (class ExistsError extends Error {
 })()
 
 type Tokens = Context['remote']['identity']['tokens']
+type Keys = Context['remote']['identity']['keys']

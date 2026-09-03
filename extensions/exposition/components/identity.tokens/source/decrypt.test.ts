@@ -121,6 +121,23 @@ it('should separate JWE and PASETO keys with the same id by format', async () =>
   await assert.partialDeepStrictEqual(await decrypt.execute(token), { identity, refresh: true })
 })
 
+it('should reject a token under a revoked key', async () => {
+  const identity: Identity = { id: generate(), roles: [] }
+  const key = { id: generate(), key: '5I0iSKw3yfBkQ4AXfA8eR-tWR0Q1dpn4x3bPrPzHkP0', label: 'revoked' }
+
+  remote.identity.keys.observe = mock.fn(async ({ query }: { query: { id: string } }) =>
+    query.id === key.id ? { ...key, identity: identity.id, revokedAt: Date.now() } : null) as any
+
+  const encrypted = await encrypt.execute({ authority, identity, lifetime: 0, key })
+
+  if (encrypted instanceof Error)
+    throw encrypted
+
+  const thrown: any = await decrypt.execute(encrypted)
+
+  assert.deepStrictEqual(thrown.code, 'REVOKED_KEY')
+})
+
 it('should reject a tampered JWE', async () => {
   const token = await encrypt.execute({
     authority,

@@ -55,6 +55,9 @@ export class Computation implements Operation {
     if (key.identity !== undefined && claims.identity.id !== key.identity)
       return ERR_FORGED_KEY
 
+    if (key.revokedAt !== undefined)
+      return ERR_REVOKED_KEY
+
     return {
       iss: claims.iss,
       iat: claims.iat,
@@ -162,6 +165,7 @@ const decryptLocal = DecryptFactory().run
 interface Key {
   key: string
   identity?: string
+  revokedAt?: number
 }
 
 interface KeyEntry {
@@ -178,4 +182,8 @@ const ERR_INVALID_KEY = new (class InvalidKeyError extends Error {
 
 const ERR_FORGED_KEY = new (class ForgedKeyError extends Error {
   public readonly code = 'FORGED_KEY'
+})()
+
+const ERR_REVOKED_KEY = new (class RevokedKeyError extends Error {
+  public readonly code = 'REVOKED_KEY'
 })()

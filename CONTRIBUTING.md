@@ -128,3 +128,11 @@ publish is read before releasing it:
 ```shell
 $ npm pack --dry-run                # from the package directory
 ```
+
+## Exposition
+
+The gateway does no I/O of its own on the request path: a request costs the call to its endpoint.
+What authentication and authorization need is read from the token, or from a cache with a bounded
+lifetime — a custom key once per `identity.tokens.cache.ttl`, a revocation once per
+`identity.tokens.refresh`. A check that needs storage is written as an event that changes what a
+token is decrypted with, or as a claim, never as a read per request.
