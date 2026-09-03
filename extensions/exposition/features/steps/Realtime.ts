@@ -40,7 +40,7 @@ export class Realtime {
 
     process.env.TOA_REALTIME = JSON.stringify(routes)
 
-    const factory = new Factory(boot)
+    const factory = new Factory(boot.host())
 
     Realtime.instance = await factory.service()
 

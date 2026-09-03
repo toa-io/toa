@@ -2,7 +2,7 @@ import { console } from 'openspan'
 import { Connector, Locator } from '@toa.io/core'
 import { EVENT, SOURCE } from './const.js'
 import type { Message, Remote } from '@toa.io/core'
-import type { Bootloader } from './Factory.js'
+import type { Host } from './Factory.js'
 
 /**
  * One per process: one remote to the values service and one subscription to its events,
@@ -13,7 +13,7 @@ export class Client extends Connector {
   /** Disconnected once, a connector keeps what it depended on, so a gone client is not reused. */
   public disposed = false
 
-  private readonly boot: Bootloader
+  private readonly host: Host
   private readonly options: Options
   private readonly pending = new Map<string, Pending>()
   private readonly listeners = new Map<string, Set<Listener>>()
@@ -23,10 +23,10 @@ export class Client extends Connector {
   private fresh = false
   private round = 0
 
-  public constructor (boot: Bootloader, options: Partial<Options> = {}) {
+  public constructor (host: Host, options: Partial<Options> = {}) {
     super()
 
-    this.boot = boot
+    this.host = host
     this.options = { ...DEFAULTS, ...options }
   }
 
@@ -67,13 +67,13 @@ export class Client extends Connector {
   }
 
   protected override async open (): Promise<void> {
-    this.remote = await this.boot.remote(LOCATOR, SOURCE)
+    this.remote = await this.host.remote(LOCATOR, SOURCE)
 
     this.depends(this.remote)
     await this.remote.connect()
 
     const subscription = new Subscription(this.deliver.bind(this))
-    const consumer = await this.boot.receive(EVENT, subscription)
+    const consumer = await this.host.receive(EVENT, subscription)
 
     this.depends(consumer)
     await consumer.connect()

@@ -1,19 +1,19 @@
 import { readdirSync, type Dirent } from 'node:fs'
 import { resolve } from 'node:path'
 import { Connector } from '@toa.io/core'
-import { type Bootloader } from './Factory.js'
+import { type Host } from './Factory.js'
 
 export class Composition extends Connector {
-  private readonly boot: Bootloader
+  private readonly host: Host
 
-  public constructor (boot: Bootloader) {
+  public constructor (host: Host) {
     super()
-    this.boot = boot
+    this.host = host
   }
 
   protected override async open (): Promise<void> {
     const paths = find()
-    const composition = await this.boot.composition(paths)
+    const composition = await this.host.composition(paths)
 
     await composition.connect()
 

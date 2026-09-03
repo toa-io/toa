@@ -63,7 +63,7 @@ async function createServices (paths) {
 
       if (typeof Factory?.prototype.service !== 'function') continue
 
-      const service = await new Factory(boot).service()
+      const service = await new Factory(boot.host()).service()
 
       // an extension that is off in this environment hosts nothing here either
       if (service === null) continue

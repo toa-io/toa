@@ -1,6 +1,7 @@
 import { console, type SpanOptions } from 'openspan'
 import type { Context, OutgoingMessage } from './HTTP/index.js'
 import type { Remotes } from './Remotes.js'
+import type { Host } from './Factory.js'
 import type { Output } from './io.js'
 import type * as RTD from './RTD/index.js'
 
@@ -64,8 +65,9 @@ export class DirectivesFactory implements RTD.DirectiveFactory {
   private readonly mandatory: string[] = []
   private readonly instances: Directives[] = []
 
-  public constructor (families: RTD.DirectiveFamily[], remotes: Remotes) {
+  public constructor (families: RTD.DirectiveFamily[], remotes: Remotes, host: Host) {
     for (const family of families) {
+      family.mount?.(host)
       this.families[family.name] = family
 
       if (family.mandatory)

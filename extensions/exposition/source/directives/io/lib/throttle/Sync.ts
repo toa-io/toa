@@ -1,6 +1,6 @@
 import { console } from 'openspan'
 import type { Quotas } from './Quotas.js'
-import type { Remote } from '@toa.io/core'
+import type { atomicity } from '@toa.io/core'
 
 /**
  * Reconciles every quota of the process with the other gateways, on one tick.
@@ -11,16 +11,15 @@ import type { Remote } from '@toa.io/core'
  * the debt the whole group has reached, which the quotas then decide on locally.
  */
 export class Sync {
-  private readonly atom: Promise<Remote>
+  private readonly atom: atomicity.Atom
   private readonly quotas: Quotas[] = []
-  private remote: Remote | null = null
   private timer: NodeJS.Timeout | null = null
   private period = Infinity
 
   /** Ticks do not overlap: a slow round trip delays reconciling, it does not double it. */
   private reconciling = false
 
-  public constructor (atom: Promise<Remote>) {
+  public constructor (atom: atomicity.Atom) {
     this.atom = atom
   }
 
@@ -74,12 +73,10 @@ export class Sync {
 
   private async reconcile (batch: Batch[]): Promise<void> {
     try {
-      this.remote ??= await this.atom
-
       const keys = batch.map((entry) => entry.quotas.name(entry.key))
       const deltas = batch.map((entry) => entry.delta)
 
-      const debts = await this.remote.invoke<number[]>('meter', { input: { keys, deltas } })
+      const debts = await this.atom.meter(keys, deltas)
       const now = Date.now()
 
       for (let i = 0; i < batch.length; i++)

@@ -130,7 +130,7 @@ export class Gateway {
 
     this.writeConfiguration()
 
-    const factory = new Factory(boot)
+    const factory = new Factory(boot.host())
     const service = await factory.service()
 
     if (service === null)

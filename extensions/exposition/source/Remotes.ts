@@ -1,13 +1,13 @@
 import { Locator, Connector, type Remote, type Source } from '@toa.io/core'
-import { type Bootloader } from './Factory.js'
+import { type Host } from './Factory.js'
 
 export class Remotes extends Connector {
-  private readonly boot: Bootloader
+  private readonly host: Host
   private readonly cache: Record<string, Promise<Remote>> = {}
 
-  public constructor (boot: Bootloader) {
+  public constructor (host: Host) {
     super()
-    this.boot = boot
+    this.host = host
   }
 
   public async discover (namespace: string, name: string, version: string = 'local'): Promise<Remote> {
@@ -21,7 +21,7 @@ export class Remotes extends Connector {
 
   private async locate (locator: Locator): Promise<Remote> {
     // the gateway is the origin of every call it forwards
-    const remote = await this.boot.remote(locator, SOURCE)
+    const remote = await this.host.remote(locator, SOURCE)
 
     this.depends(remote)
 
