@@ -333,3 +333,36 @@ Feature: Custom tokens
       """
       403 Forbidden
       """
+
+  Scenario: Permissions apply to the path the request is routed by
+    When the following request is received:
+      """
+      POST /identity/tokens/efe3a65ebbee47ed95a73edd911ea328/ HTTP/1.1
+      host: nex.toa.io
+      authorization: Basic ZGV2ZWxvcGVyOnNlY3JldA==
+      accept: application/yaml
+      content-type: application/yaml
+
+      label: Public notes token
+      lifetime: 0
+      permissions:
+        /notes/public/: [GET]
+      """
+    Then the following reply is sent:
+      """
+      201 Created
+
+      token: ${{ token }}
+      """
+
+    # the query string is not part of the path
+    When the following request is received:
+      """
+      GET /notes/public/?page=2 HTTP/1.1
+      host: nex.toa.io
+      authorization: Token ${{ token }}
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      """

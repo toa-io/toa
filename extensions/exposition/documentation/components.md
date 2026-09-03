@@ -214,6 +214,8 @@ token: <token>
 - `permissions`: Issued token will have permissions to access only specified resources and methods.
   Supports [glob patterns](https://www.gnu.org/software/bash/manual/html_node/Pattern-Matching.html)
   and a wildcard method.
+  Patterns are matched against the request path as it is routed: normalized, without the query
+  string.
 
 > `roles` and `permissions` are additional restrictions applied on top of the Identity’s inherent
 > privileges.

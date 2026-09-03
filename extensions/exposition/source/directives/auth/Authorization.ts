@@ -163,10 +163,8 @@ export class Authorization implements DirectiveFamily<Directive, Extension> {
     if (permissions === undefined)
       return true
 
-    return Object.entries(permissions).some(([pattern, methods]) => {
-      return methods.some((method) => method === '*' || method === context.request.method) &&
-        glob(pattern).match(context.request.url)
-    })
+    // the route is matched on the normalized path, so the permission is too
+    return permits(permissions, context.request.method, context.url.pathname)
   }
 
   private async banned (identity: Identity): Promise<boolean> {
@@ -176,6 +174,13 @@ export class Authorization implements DirectiveFamily<Directive, Extension> {
 
     return ban.banned
   }
+}
+
+/** Whether the permissions admit the method on the path the request is routed by. */
+export function permits (permissions: Record<string, string[]>, method: string, pathname: string): boolean {
+  return Object.entries(permissions).some(([pattern, methods]) =>
+    methods.some((allowed) => allowed === '*' || allowed === method) &&
+    glob(pattern).match(pathname))
 }
 
 /**
