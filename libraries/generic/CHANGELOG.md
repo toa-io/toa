@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.278](https://github.com/toa-io/toa/compare/v1.0.0-alpha.277...v1.0.0-alpha.278) (2026-09-03)
+
+### Bug Fixes
+
+* **generic:** leave writing YAML to js-yaml's own schema ([650aa8f](https://github.com/toa-io/toa/commit/650aa8f0e9734ea236c575ee2e5675c31e8ad485))
+
+
 # [1.0.0-alpha.277](https://github.com/toa-io/toa/compare/v1.0.0-alpha.276...v1.0.0-alpha.277) (2026-09-03)
 
 ### Bug Fixes
