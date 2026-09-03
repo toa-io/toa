@@ -18,3 +18,9 @@ export const PRIMARY: Scheme = 'token'
 export function provider (scheme: string): Remote | undefined {
   return Object.hasOwn(PROVIDERS, scheme) ? PROVIDERS[scheme as Scheme] : undefined
 }
+
+/**
+ * The rejection of credentials that are verifiable and owned by no identity: the one
+ * inception goes ahead with.
+ */
+export const UNKNOWN = 'NOT_FOUND'

@@ -88,7 +88,7 @@ Feature: Basic authentication
       200 OK
       """
 
-    # username is taken
+    # username is taken: a wrong password for existing credentials is refused before the call
     When the following request is received:
       """
       POST /users/ HTTP/1.1
@@ -101,7 +101,7 @@ Feature: Basic authentication
       """
     Then the following reply is sent:
       """
-      409 Conflict
+      401 Unauthorized
       """
 
     # credentials already exists

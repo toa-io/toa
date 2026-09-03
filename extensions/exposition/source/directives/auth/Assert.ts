@@ -25,6 +25,9 @@ export class Assert implements Directive {
       throw new http.Unauthorized()
 
     if (identity === null) {
+      if (!Incept.acceptable(context))
+        throw new http.Unauthorized()
+
       context.identity = await Incept.incept(context, newid())
 
       context.pipelines.response.push((response) => {

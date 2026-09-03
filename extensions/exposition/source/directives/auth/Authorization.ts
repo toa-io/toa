@@ -68,7 +68,7 @@ export class Authorization implements DirectiveFamily<Directive, Extension> {
   public async preflight (directives: Directive[],
     context: Context,
     parameters: Parameter[]): Promise<Output> {
-    context.identity = await this.resolve(context.authority, context.request.headers.authorization)
+    context.identity = await this.resolve(context)
 
     for (const directive of directives) {
       const allow = await directive.authorize(context.identity, context, parameters)
@@ -122,7 +122,10 @@ export class Authorization implements DirectiveFamily<Directive, Extension> {
     response.headers.set('cache-control', 'no-store')
   }
 
-  private async resolve (authority: string, authorization: string | undefined): Promise<Identity | null> {
+  private async resolve (context: Context): Promise<Identity | null> {
+    const { authority } = context
+    const { authorization } = context.request.headers
+
     if (authorization === undefined)
       return null
 
@@ -145,8 +148,11 @@ export class Authorization implements DirectiveFamily<Directive, Extension> {
     if (result instanceof Error) {
       const code: string | unknown = (result as unknown as { code: string }).code
 
-      if (typeof code === 'string')
+      if (typeof code === 'string') {
         console.info('Authentication failed', { code })
+
+        context.rejection = code
+      }
 
       return null
     }

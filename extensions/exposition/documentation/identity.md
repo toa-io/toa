@@ -227,6 +227,11 @@ Identity `2428c31ecb6e4a51a24ef52f0c4181b9` are created.
 
 Inception is supported for `Basic` and `Bearer` authentication schemes.
 
+Inception goes ahead when the request carries no credentials, or credentials the scheme verified
+and no Identity owns, which its `authenticate` operation reports as `NOT_FOUND`. Credentials
+rejected for any other reason, a wrong password for one, are answered with `401 Unauthorized`
+before the endpoint is called.
+
 ## Identity assertion
 
 `auth:assert` directive is used to ensure that given credentials are associated with an existing

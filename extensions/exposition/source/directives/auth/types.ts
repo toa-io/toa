@@ -28,6 +28,9 @@ export interface Identity {
 
 export interface Extension {
   identity: Identity | null
+
+  /** the error code the presented credentials were rejected with, when they were */
+  rejection?: string
 }
 
 export interface Ban {
