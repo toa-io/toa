@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/runtime",
-  "version": "1.0.0-alpha.278",
+  "version": "1.0.0-alpha.279",
   "type": "module",
   "description": "Toa Runtime",
   "author": "temich <tema.gurtovoy@gmail.com>",
@@ -47,7 +47,7 @@
     "@toa.io/storages.mongodb": "1.0.0-alpha.278",
     "@toa.io/storages.null": "1.0.0-alpha.278",
     "@toa.io/storages.sql": "1.0.0-alpha.278",
-    "@toa.io/userland": "1.0.0-alpha.278",
+    "@toa.io/userland": "1.0.0-alpha.279",
     "openspan": "1.0.0-alpha.277"
   },
   "gitHead": "2ab75e1fd23f2e64720a60b8562dda606aa723ee",

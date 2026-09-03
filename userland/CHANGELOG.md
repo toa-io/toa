@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.279](https://github.com/toa-io/toa/compare/v1.0.0-alpha.278...v1.0.0-alpha.279) (2026-09-03)
+
+### Bug Fixes
+
+* **userland:** let a TypeScript consumer find the declarations of `stage` ([c108cb5](https://github.com/toa-io/toa/commit/c108cb545d62204339b924f47f3863b8c40831d3))
+
+
 # [1.0.0-alpha.278](https://github.com/toa-io/toa/compare/v1.0.0-alpha.277...v1.0.0-alpha.278) (2026-09-03)
 
 **Note:** Version bump only for package @toa.io/userland
