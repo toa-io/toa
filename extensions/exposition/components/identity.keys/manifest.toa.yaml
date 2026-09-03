@@ -66,6 +66,7 @@ operations:
 receivers:
   identity.bans.created: revoke
   identity.bans.updated: revoke
+  identity.roles.deleted: revoke
 
 exposition:
   /:identity:

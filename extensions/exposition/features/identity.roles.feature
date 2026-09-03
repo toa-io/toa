@@ -450,3 +450,80 @@ Feature: Roles management
       """
       403 Forbidden
       """
+
+  Scenario: Revoking a role revokes custom tokens
+    # root:secret
+    # user:pass
+    Given the `identity.basic` database contains:
+      | _id                              | authority | username | password                                                     |
+      | 72cf9b0ab0ac4ab2b8036e4e940ddcae | nex       | root     | $2b$10$Qq/qnyyU5wjrbDXyWok14OnqAZv/z.pLhz.UddatjI6eHU/rFof4i |
+      | 4344518184ad44228baffce7a44fd0b1 | nex       | user     | $2b$10$JoiAQUS7tzobDAFIDBWhWeEIJv933dQetyjRzSmfQGaJE5ZlJbmYy |
+    And the `identity.roles` database contains:
+      | _id                              | identity                         | role                  |
+      | 9c4702490ff84f2a9e1b1da2ab64bdd4 | 72cf9b0ab0ac4ab2b8036e4e940ddcae | system:identity:roles |
+      | 30c969e05ff6437097ed5f07fc52358e | 4344518184ad44228baffce7a44fd0b1 | foo:bar               |
+    And the `identity.keys` database is empty
+    And the `identity.tokens` configuration:
+      """yaml
+      cache:
+        ttl: 1
+      """
+    And the annotation:
+      """yaml
+      /:
+        io:output: true
+        auth:role: foo:bar
+        GET:
+          dev:stub:
+            access: granted!
+      """
+    When the following request is received:
+      """
+      POST /identity/tokens/4344518184ad44228baffce7a44fd0b1/ HTTP/1.1
+      host: nex.toa.io
+      authorization: Basic dXNlcjpwYXNz
+      accept: application/yaml
+      content-type: application/yaml
+
+      label: Forever token
+      lifetime: 0
+      """
+    Then the following reply is sent:
+      """
+      201 Created
+
+      token: ${{ token }}
+      """
+    When the following request is received:
+      """
+      GET / HTTP/1.1
+      host: nex.toa.io
+      authorization: Token ${{ token }}
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      """
+    When the following request is received:
+      # root revokes the role
+      """
+      DELETE /identity/roles/4344518184ad44228baffce7a44fd0b1/foo:bar/ HTTP/1.1
+      host: nex.toa.io
+      authorization: Basic cm9vdDpzZWNyZXQ=
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      """
+    # the key is revoked eventually, and the runtime forgets it after `cache.ttl`
+    Then after 2 seconds
+    When the following request is received:
+      """
+      GET / HTTP/1.1
+      host: nex.toa.io
+      authorization: Token ${{ token }}
+      """
+    Then the following reply is sent:
+      """
+      401 Unauthorized
+      """

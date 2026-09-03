@@ -223,9 +223,10 @@ token: <token>
 ### Custom token invalidation
 
 A custom token is invalidated through its secret key. The key is revoked, and every token issued
-with it is refused, when the Identity is [banned](#banned-identities) or its
-[Basic credentials](#basic-credentials) are modified. The key can also be deleted by the Identity
-that issued the token or by an Identity with the `system:identity:keys` role.
+with it is refused, when the Identity is [banned](#banned-identities), its
+[Basic credentials](#basic-credentials) are modified, or one of its [roles](#roles) is revoked.
+The key can also be deleted by the Identity that issued the token or by an Identity with the
+`system:identity:keys` role.
 
 ```
 DELETE /identity/keys/<identity>/<key.id>/
@@ -291,6 +292,9 @@ This essentially means that if the client uses the token at least once every `li
 will always have a valid token to authenticate with.
 Also, token revocation or changing roles of an Identity will take effect once the `refresh` period
 of the currently issued tokens has expired.
+
+A change of what an Identity may do reaches every credential it holds: a token issued by the
+gateway within `refresh`, a [custom token](#custom-tokens) within `cache.ttl`.
 
 Adjusting these two values is a delicate trade-off between security, performance and client
 convenience.
@@ -409,7 +413,8 @@ Role Scopes (see [Role Hierarchies](access.md#hierarchies)).
 `DELETE` Revoke a role of an Identity. The `system:identity:roles` role is required.
 
 A Token carries the roles it was issued with; a change reaches its holder when the token is
-[refreshed](#token-rotation).
+[refreshed](#token-rotation). Revoking a role also revokes the [custom tokens](#custom-tokens) of
+the Identity, which are issued again with the roles it has left.
 
 ## Banned Identities
 
