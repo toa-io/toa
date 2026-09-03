@@ -142,8 +142,8 @@ function secret (value: string): Secret {
 }
 
 async function paseto (key: string, claims: object, kid: string): Promise<string> {
-  const secret = await ImportKeyFactory().run(key as `k3.local.${string}`)
+  const imported = await ImportKeyFactory().run(key as `k3.local.${string}`)
 
-  return await EncryptFactory().run(secret, claims,
+  return await EncryptFactory().run(imported, claims,
     { footer: new TextEncoder().encode(JSON.stringify({ kid })) })
 }
