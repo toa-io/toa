@@ -13,5 +13,5 @@ export interface Directive {
 export interface Constructor {
   validate: (value: unknown) => void
 
-  new (value: any, sync: Sync, route: string, header?: string): Directive
+  new (value: any, sync: Sync, route: string): Directive
 }

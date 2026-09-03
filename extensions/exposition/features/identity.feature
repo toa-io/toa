@@ -113,8 +113,8 @@ Feature: Identity resource
   Scenario: Failing authentication repeatedly
     Given the annotation:
       """yaml
-      authentication:
-        header: x-real-ip
+      ip: x-real-ip
+      bouncer:
         attempts: 2
         interval: 60
       """
@@ -165,8 +165,8 @@ Feature: Identity resource
   Scenario: Failing authentication behind a trusted proxy
     Given the annotation:
       """yaml
-      authentication:
-        header: x-real-ip
+      ip: x-real-ip
+      bouncer:
         attempts: 1
         interval: 60
       """

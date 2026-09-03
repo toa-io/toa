@@ -219,24 +219,11 @@ describe('ip', () => {
     configuration = createConfiguration({ key: [{ method: 'ip' }] })
   })
 
-  it('should key on the connection by default', () => {
+  it('should key on the address the context resolved', () => {
     quotas = Quotas.create(configuration)
 
-    const one = createContext({ request: { headers: { 'x-forwarded-for': '1.1.1.1' }, socket: { remoteAddress: '9.9.9.9' } } })
-    const two = createContext({ request: { headers: { 'x-forwarded-for': '2.2.2.2' }, socket: { remoteAddress: '9.9.9.9' } } })
-
-    quotas.check(one, [])
-    quotas.check(one, [])
-
-    // the header the client wrote is not what tells the two apart
-    assert.ok(quotas.check(two, []) > 0)
-  })
-
-  it('should key on the named header, by its last value', () => {
-    quotas = Quotas.create(configuration, '', 'x-forwarded-for')
-
-    const one = createContext({ request: { headers: { 'x-forwarded-for': '8.8.8.8, 1.1.1.1' }, socket: {} } })
-    const two = createContext({ request: { headers: { 'x-forwarded-for': '8.8.8.8, 2.2.2.2' }, socket: {} } })
+    const one = createContext({ ip: '1.1.1.1' })
+    const two = createContext({ ip: '2.2.2.2' })
 
     quotas.check(one, [])
     quotas.check(one, [])

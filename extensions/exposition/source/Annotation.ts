@@ -18,15 +18,15 @@ export interface Annotation {
 
   debug?: boolean
 
+  /** The header the client address is read from; the connection's without one. See `ip.md`. */
+  ip?: string
+
   /** Failed authentications an address may make; none are metered unless set. See `identity.md`. */
-  authentication?: Authentication
+  bouncer?: Bouncer
   '/'?: object // parsed and validated by RTD.syntax.parse
 }
 
-export interface Authentication {
-  /** the header the client address is read from, the one the edge in front sets */
-  header: string
-
+export interface Bouncer {
   /** what an address may fail at once, 20 by default */
   attempts?: number
 

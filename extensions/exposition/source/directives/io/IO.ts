@@ -8,21 +8,18 @@ import type { Remotes } from '../../Remotes.js'
 import type { Constructor, Directive } from './Directive.js'
 import { ATOM_GROUP } from '../../const.js'
 import type { extensions } from '@toa.io/core'
-import type { Options } from '../../HTTP/index.js'
 
 export class IO implements DirectiveFamily<Directive> {
   public readonly name = 'io'
   public readonly mandatory = true
 
   private host!: extensions.Host
-  private header?: string
 
   /** Throttling reconciles through the atom of the gateways, one for every directive. */
   private sync: Sync | null = null
 
-  public mount (host: extensions.Host, options: Options): void {
+  public mount (host: extensions.Host): void {
     this.host = host
-    this.header = options.authentication?.header
   }
 
   // eslint-disable-next-line max-params
@@ -37,7 +34,7 @@ export class IO implements DirectiveFamily<Directive> {
     if (name === 'throttle')
       this.sync ??= new Sync(this.host.atom(ATOM_GROUP))
 
-    return new Directive(value, this.sync!, route, this.header)
+    return new Directive(value, this.sync!, route)
   }
 
   public preflight (directives: Directive[], context: http.Context,

@@ -34,20 +34,18 @@ properties:
             type: string
   debug:
     type: boolean
-  authentication:
+  ip:
+    type: string
+    minLength: 1
+  bouncer:
     type: object
     properties:
-      header:
-        type: string
-        minLength: 1
       attempts:
         type: integer
         minimum: 1
       interval:
         type: integer
         minimum: 1
-    required:
-      - header
     additionalProperties: false
   protocol:
     type: string

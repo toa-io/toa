@@ -55,9 +55,9 @@ export class Quotas {
       : `${options.name}:`
   }
 
-  public static create (configuration: Configuration, route: string = '', header?: string): Quotas {
+  public static create (configuration: Configuration, route: string = ''): Quotas {
     const { requests, interval, condition } = configuration
-    const keys = Keys.create(configuration.key, condition, route, header)
+    const keys = Keys.create(configuration.key, condition, route)
 
     return new this({ keys, requests, interval, conditional: condition !== undefined })
   }

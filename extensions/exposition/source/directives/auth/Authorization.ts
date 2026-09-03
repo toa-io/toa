@@ -56,16 +56,16 @@ export class Authorization implements DirectiveFamily<Directive, Extension> {
     this.sync = null
     this.meter = null
 
-    const authentication = options.authentication
+    const bouncer = options.bouncer
 
     // keyed by address, which is the deployment's to name, so off until it is set
-    if (authentication === undefined)
+    if (bouncer === undefined)
       return
 
     this.meter = new Quotas({
-      keys: Keys.create([{ method: 'ip' }], undefined, '', authentication.header),
-      requests: authentication.attempts ?? ATTEMPTS,
-      interval: (authentication.interval ?? INTERVAL) * 1000,
+      keys: Keys.create([{ method: 'ip' }]),
+      requests: bouncer.attempts ?? ATTEMPTS,
+      interval: (bouncer.interval ?? INTERVAL) * 1000,
       conditional: true, // charged on a rejection, not on a check
       name: METER
     })

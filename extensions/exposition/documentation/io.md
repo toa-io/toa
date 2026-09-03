@@ -97,15 +97,8 @@ and reports what it could not the next time it gets through.
 What a request is metered against. Give one, or a list — a list keys on the combination, so
 `[route, ip]` meters each address separately on each route.
 
-- `ip` — the client address: the connection's, or the value of the header the exposition
-  annotation names under `authentication`. See
-  [failed authentications](identity.md#failed-authentications) for why it is a header and which one.
-
-  ```yaml
-  exposition:
-    authentication:
-      header: cf-connecting-ip
-  ```
+- `ip` — the client address, as the request context resolved it. See [Client address](ip.md) for
+  where it is read from and why.
 - `path` — the path the request came in on, `/users/1`.
 - `route` — the route as declared, `/users/:id`. Every path matching the route shares one budget,
   which `path` cannot do: keyed on `path`, walking ids is a way around the limit.

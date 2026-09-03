@@ -8,9 +8,8 @@ import type { Directive } from './Directive.js'
 export class Throttle implements Directive {
   private readonly quotas: Quotas
 
-  // eslint-disable-next-line max-params
-  public constructor (declaration: Declaration, sync: Sync, route: string, header?: string) {
-    this.quotas = Quotas.create(parse(declaration), route, header)
+  public constructor (declaration: Declaration, sync: Sync, route: string) {
+    this.quotas = Quotas.create(parse(declaration), route)
 
     sync.register(this.quotas)
   }

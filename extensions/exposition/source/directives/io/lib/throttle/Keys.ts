@@ -16,11 +16,10 @@ export class Keys {
     this.conditions = conditions
   }
 
-  // eslint-disable-next-line max-params
   public static create (componentRules: KeyComponent[], conditionRules?: KeyCondition[],
-    route: string = '', header?: string): Keys {
+    route: string = ''): Keys {
     const components = componentRules.map((rule) =>
-      new Components[rule.method](rule.options, route, header))
+      new Components[rule.method](rule.options, route))
 
     const conditions = conditionRules?.map((rule) => new Conditions[rule.method](rule.options))
 

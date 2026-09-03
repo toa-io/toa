@@ -62,29 +62,20 @@ See [`identity.tokens` component](components.md#local-tokens).
 Credentials that are rejected can be metered per client address, whatever the scheme. An address
 may fail `attempts` at once and earns them back at `attempts` per `interval` seconds; a request
 carrying credentials from an address with nothing left is answered `429 Too Many Requests` with
-`Retry-After`. Nothing is metered unless the exposition annotation says so; `attempts` and
-`interval` default to 20 and 60, `header` is required.
+`Retry-After`. Nothing is metered unless the exposition annotation carries `bouncer`;
+`attempts` and `interval` default to 20 and 60. The address is the one the request context
+resolved, see [Client address](ip.md): behind a load balancer `ip` must name the header the edge
+sets, or every client shares one budget.
 
 ```yaml
 # context.toa.yaml
 
 exposition:
-  authentication:
-    header: cf-connecting-ip
+  ip: cf-connecting-ip
+  bouncer:
     attempts: 20
     interval: 60
 ```
-
-`header` names where the client address is read from. In production the gateway sits behind a
-load balancer, an ingress or a CDN: the connection it accepts comes from that machine, so every
-client shares one address and nothing tells them apart. The edge is the one that saw the client
-connect, and it writes the client's address into a header of its own, `CF-Connecting-IP`,
-`X-Real-IP` or `X-Forwarded-For`, depending on the infrastructure. A client may send any of these
-headers too, so the gateway trusts none of them on its own: the deployment names the one its edge
-overwrites, and where the header holds a list, the last value is the one the edge appended.
-A request without the header is keyed by its connection, which is right for a gateway that
-clients reach directly and useless behind a balancer. The same header serves the `ip` key of
-[`io:throttle`](io.md#key-components).
 
 The count is shared by the gateway replicas through
 [atomicity](../../../connectors/atomicity/readme.md) and decided in each process; nothing is read on

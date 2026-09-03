@@ -12,7 +12,7 @@ import { ClientError, Exception } from './exceptions.js'
 import { Context } from './Context.js'
 import { PROBE, Probe } from './Probe.js'
 import type { IncomingMessage, Protocol, ServerResponse } from './types.js'
-import type { Authentication } from '../Annotation.js'
+import type { Bouncer } from '../Annotation.js'
 
 export class Server extends Connector {
   private readonly server: http.Server | http2.Http2Server
@@ -380,8 +380,11 @@ interface Properties {
   /** Port of the readiness probe, which is HTTP/1.1 whatever the gateway serves. */
   probe: number
 
+  /** The header the client address is read from; the connection's address without one. */
+  ip?: string
+
   /** Failed authentications an address may make; none are metered unless set. */
-  authentication?: Authentication
+  bouncer?: Bouncer
 }
 
 export type Options = { authorities: Properties['authorities'] } & {
