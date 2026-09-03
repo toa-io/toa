@@ -54,9 +54,29 @@ The `Token` is the **primary** authentication scheme.
 If request originators use an alternative authentication scheme, they will receive a response
 containing `Token` credentials and will be required to switch to the `Token` scheme for any
 subsequent requests.
-Continued use of other authentication schemes will result in temporary blocking of requests.
 
 See [`identity.tokens` component](components.md#local-tokens).
+
+### Failed authentications
+
+Credentials that are rejected are metered per client address, whatever the scheme. An address may
+fail `attempts` at once and earns them back at `attempts` per `interval` seconds; a request carrying
+credentials from an address with nothing left is answered `429 Too Many Requests` with
+`Retry-After`. The meter is set in the exposition annotation, defaults to 20 attempts per 60
+seconds, and `null` turns it off.
+
+```yaml
+# context.toa.yaml
+
+exposition:
+  credentials:
+    attempts: 20
+    interval: 60
+```
+
+The count is shared by the gateway replicas through
+[atomicity](../../../connectors/atomicity/readme.md) and decided in each process; nothing is read on
+the request path.
 
 ### Bearer scheme
 

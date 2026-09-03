@@ -17,10 +17,15 @@ import { Anyone } from './Anyone.js'
 import { Input, type Declaration } from './Input.js'
 import { split } from './split.js'
 import { PRIMARY, provider as providerOf } from './schemes.js'
+import { ATOM_GROUP } from '../../const.js'
+import { Quotas, Sync } from '../io/lib/throttle/index.js'
+import { Keys } from '../io/lib/throttle/Keys.js'
 import type { Output } from '../../io.js'
 import type { Component } from '@toa.io/core'
 import type { Remotes } from '../../Remotes.js'
 import type { Parameter, DirectiveFamily } from '../../RTD/index.js'
+import type { Host } from '../../Factory.js'
+import type { Credentials } from '../../Annotation.js'
 import type {
   AuthenticationResult,
   Ban,
@@ -42,6 +47,36 @@ export class Authorization implements DirectiveFamily<Directive, Extension> {
   private readonly discovery = {} as unknown as Discovery
   private tokens: Component | null = null
   private bans: Component | null = null
+
+  /** Failed authentications per address, reconciled with the other gateways. */
+  private meter: Quotas | null = null
+  private sync: Sync | null = null
+
+  public mount (host: Host, options: http.Options): void {
+    this.sync?.dispose()
+    this.sync = null
+    this.meter = null
+
+    const credentials = options.credentials === undefined ? CREDENTIALS : options.credentials
+
+    if (credentials === null)
+      return
+
+    this.meter = new Quotas({
+      keys: Keys.create([{ method: 'ip' }]),
+      requests: credentials.attempts,
+      interval: credentials.interval * 1000,
+      conditional: true, // charged on a rejection, not on a check
+      name: METER
+    })
+
+    this.sync = new Sync(host.atom(ATOM_GROUP))
+    this.sync.register(this.meter)
+  }
+
+  public dispose (): void {
+    this.sync?.dispose()
+  }
 
   public create (name: string, value: any, remotes: Remotes): Directive {
     assert.ok(name in constructors,
@@ -129,6 +164,11 @@ export class Authorization implements DirectiveFamily<Directive, Extension> {
     if (authorization === undefined)
       return null
 
+    const retry = this.meter?.check(context, NONE) ?? 0
+
+    if (retry > 0)
+      throw new http.TooManyRequests(retry)
+
     const [scheme, credentials] = split(authorization)
     const provider = providerOf(scheme)
 
@@ -153,6 +193,8 @@ export class Authorization implements DirectiveFamily<Directive, Extension> {
 
         context.rejection = code
       }
+
+      this.meter?.use(context, null)
 
       return null
     }
@@ -212,6 +254,14 @@ function glob (pattern: string): Minimatch {
 
   return compiled
 }
+
+/** What an address may fail at once, and the seconds it takes to earn them back. */
+const CREDENTIALS: Credentials = { attempts: 20, interval: 60 }
+
+/** The meter's name in the atom: `atom:exposition:meter:credentials:<address>`. */
+const METER = 'credentials'
+
+const NONE: Parameter[] = []
 
 const GLOBS = new Map<string, Minimatch>()
 const GLOBS_LIMIT = 1024

@@ -29,11 +29,14 @@ export class Gateway {
       process.env.TOA_EXPOSITION = JSON.stringify(tree)
     }
 
-    const { debug, authorities } = annotation
+    const { debug, authorities, credentials } = annotation
     const properties = Object.assign({}, DEFAULT_PROPERTIES)
 
     if (debug !== undefined)
       properties.debug = debug
+
+    if (credentials !== undefined)
+      properties.credentials = credentials
 
     if (authorities !== undefined)
       properties.authorities = authorities

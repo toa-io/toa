@@ -17,5 +17,16 @@ export interface Annotation {
   service?: { annotations?: Record<string, string> }
 
   debug?: boolean
+
+  /** Failed authentications an address may make; `null` meters none. See `identity.md`. */
+  credentials?: Credentials | null
   '/'?: object // parsed and validated by RTD.syntax.parse
+}
+
+export interface Credentials {
+  /** what an address may fail at once */
+  attempts: number
+
+  /** seconds it takes to earn them back */
+  interval: number
 }

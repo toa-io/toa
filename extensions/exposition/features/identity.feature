@@ -109,3 +109,54 @@ Feature: Identity resource
       """
       401 Unauthorized
       """
+
+  Scenario: Failing authentication repeatedly
+    Given the annotation:
+      """yaml
+      credentials:
+        attempts: 2
+        interval: 60
+      """
+    # developer:wrong
+    When the following request is received:
+      """
+      GET /identity/ HTTP/1.1
+      host: nex.toa.io
+      authorization: Basic ZGV2ZWxvcGVyOndyb25n
+      """
+    Then the following reply is sent:
+      """
+      401 Unauthorized
+      """
+    When the following request is received:
+      """
+      GET /identity/ HTTP/1.1
+      host: nex.toa.io
+      authorization: Basic ZGV2ZWxvcGVyOndyb25n
+      """
+    Then the following reply is sent:
+      """
+      401 Unauthorized
+      """
+    # the address has spent its attempts, and earns one back in interval / attempts seconds
+    When the following request is received:
+      """
+      GET /identity/ HTTP/1.1
+      host: nex.toa.io
+      authorization: Basic ZGV2ZWxvcGVyOndyb25n
+      """
+    Then the following reply is sent:
+      """
+      429 Too Many Requests
+      retry-after: 30
+      """
+    # a request without credentials is not metered
+    When the following request is received:
+      """
+      GET /identity/ HTTP/1.1
+      host: nex.toa.io
+      """
+    Then the following reply is sent:
+      """
+      201 Created
+      """

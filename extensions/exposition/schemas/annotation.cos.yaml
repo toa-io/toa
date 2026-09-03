@@ -34,6 +34,20 @@ properties:
             type: string
   debug:
     type: boolean
+  credentials:
+    type: object
+    nullable: true
+    properties:
+      attempts:
+        type: integer
+        minimum: 1
+      interval:
+        type: integer
+        minimum: 1
+    required:
+      - attempts
+      - interval
+    additionalProperties: false
   protocol:
     type: string
     enum: [h1, h2c]

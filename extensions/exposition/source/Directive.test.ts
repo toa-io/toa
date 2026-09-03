@@ -52,7 +52,8 @@ beforeEach(() => {
     family.preflight.mock.mockImplementation(() => { sequence.push(family.name); return null })
   }
 
-  factory = new DirectivesFactory(families, {} as unknown as Remotes, {} as unknown as Host)
+  factory = new DirectivesFactory(families, {} as unknown as Remotes, {} as unknown as Host,
+    { authorities: {} })
 })
 
 it('should create directive', async () => {

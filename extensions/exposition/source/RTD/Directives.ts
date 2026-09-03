@@ -1,6 +1,6 @@
 import type { Parameter } from './Match.js'
 import type * as syntax from './syntax/index.js'
-import type { Context, OutgoingMessage } from '../HTTP/index.js'
+import type { Context, OutgoingMessage, Options } from '../HTTP/index.js'
 import type { Output } from '../io.js'
 import type { extensions } from '@toa.io/core'
 
@@ -31,8 +31,11 @@ export interface DirectiveFamily<TDirective = any, TExtension = any> {
 
   create: (name: string, ...rest: any[]) => TDirective
 
-  /** Called once per gateway with what the host provides, before any directive is created. */
-  mount?: (host: Host) => void
+  /**
+   * Called once per gateway with what the host provides and how the gateway is configured,
+   * before any directive is created.
+   */
+  mount?: (host: Host, options: Options) => void
 
   /**
    * Puts the directives of one route in the order they must run in. Called once, when

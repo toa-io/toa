@@ -53,7 +53,7 @@ export class Factory implements extensions.Factory {
     const remotes = new Remotes(this.host)
     const node = root.resolve()
     const methods = new EndpointsFactory(remotes)
-    const directives = new DirectivesFactory(families, remotes, this.host)
+    const directives = new DirectivesFactory(families, remotes, this.host, options)
     const interception = new Interception(interceptors)
     const tree = new Tree(node, methods, directives)
 

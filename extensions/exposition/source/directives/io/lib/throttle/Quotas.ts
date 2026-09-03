@@ -50,7 +50,9 @@ export class Quotas {
     this.period = period(options.interval)
 
     // a key means one budget, so quotas that do not share one must not share a key
-    this.prefix = `t:${options.requests}:${options.interval}:`
+    this.prefix = options.name === undefined
+      ? `t:${options.requests}:${options.interval}:`
+      : `${options.name}:`
   }
 
   public static create (configuration: Configuration, route: string = ''): Quotas {
@@ -175,9 +177,12 @@ interface Entry {
   debt: number
 }
 
-interface Options {
+export interface Options {
   keys: Keys
   requests: number
   interval: number
   conditional: boolean
+
+  /** what the keys are reported under, in place of the budget they carry */
+  name?: string
 }
