@@ -103,8 +103,12 @@ export class Authorization implements DirectiveFamily<Directive, Extension> {
     if (await this.banned(identity))
       throw new http.Unauthorized()
 
-    // Role directive may have already set the value
-    identity.roles ??= await Role.get(identity, this.discovery.roles)
+    // a token carries the roles it was issued with, and the refresh is where they are read again;
+    // any other scheme has just read them, unless a Role directive already did
+    if (identity.scheme === PRIMARY)
+      identity.roles = await Role.get(identity, this.discovery.roles)
+    else
+      identity.roles ??= await Role.get(identity, this.discovery.roles)
     this.tokens ??= await this.discovery.tokens
 
     const token = await this.tokens.invoke<string>('encrypt', {

@@ -314,3 +314,139 @@ Feature: Roles management
       """
       500 Internal Server Error
       """
+
+  Scenario: Role changes reach a Token holder at refresh
+    # root:secret
+    # user:pass
+    Given the `identity.basic` database contains:
+      | _id                              | authority | username | password                                                     |
+      | 72cf9b0ab0ac4ab2b8036e4e940ddcae | nex       | root     | $2b$10$Qq/qnyyU5wjrbDXyWok14OnqAZv/z.pLhz.UddatjI6eHU/rFof4i |
+      | 4344518184ad44228baffce7a44fd0b1 | nex       | user     | $2b$10$JoiAQUS7tzobDAFIDBWhWeEIJv933dQetyjRzSmfQGaJE5ZlJbmYy |
+    And the `identity.roles` database contains:
+      | _id                              | identity                         | role                  |
+      | 9c4702490ff84f2a9e1b1da2ab64bdd4 | 72cf9b0ab0ac4ab2b8036e4e940ddcae | system:identity:roles |
+    And the `identity.tokens` configuration:
+      """yaml
+      refresh: 1
+      """
+    And the annotation:
+      """yaml
+      /:
+        io:output: true
+        auth:role: foo:bar
+        GET:
+          dev:stub:
+            access: granted!
+      """
+    When the following request is received:
+      """
+      GET /identity/ HTTP/1.1
+      host: nex.toa.io
+      authorization: Basic dXNlcjpwYXNz
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      authorization: Token ${{ token }}
+      """
+    When the following request is received:
+      # root grants a role to the user
+      """
+      POST /identity/roles/4344518184ad44228baffce7a44fd0b1/ HTTP/1.1
+      host: nex.toa.io
+      authorization: Basic cm9vdDpzZWNyZXQ=
+      content-type: application/yaml
+
+      role: foo:bar
+      """
+    Then the following reply is sent:
+      """
+      201 Created
+      """
+    # the token was issued before the grant
+    When the following request is received:
+      """
+      GET / HTTP/1.1
+      host: nex.toa.io
+      authorization: Token ${{ token }}
+      """
+    Then the following reply is sent:
+      """
+      403 Forbidden
+      """
+    Then after 1 second
+    When the following request is received:
+      """
+      GET /identity/ HTTP/1.1
+      host: nex.toa.io
+      authorization: Token ${{ token }}
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      authorization: Token ${{ granted }}
+      """
+    When the following request is received:
+      """
+      GET / HTTP/1.1
+      host: nex.toa.io
+      authorization: Token ${{ granted }}
+      accept: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+
+      access: granted!
+      """
+    When the following request is received:
+      # root revokes the role
+      """
+      DELETE /identity/roles/4344518184ad44228baffce7a44fd0b1/foo:bar/ HTTP/1.1
+      host: nex.toa.io
+      authorization: Basic cm9vdDpzZWNyZXQ=
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      """
+    Then after 1 second
+    When the following request is received:
+      """
+      GET /identity/ HTTP/1.1
+      host: nex.toa.io
+      authorization: Token ${{ granted }}
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      authorization: Token ${{ revoked }}
+      """
+    When the following request is received:
+      """
+      GET / HTTP/1.1
+      host: nex.toa.io
+      authorization: Token ${{ revoked }}
+      """
+    Then the following reply is sent:
+      """
+      403 Forbidden
+      """
+
+  Scenario: Revoking a role without `system:identity:roles`
+    Given the `identity.basic` database contains:
+      | _id                              | authority | username | password                                                     |
+      | 4344518184ad44228baffce7a44fd0b1 | nex       | user     | $2b$10$JoiAQUS7tzobDAFIDBWhWeEIJv933dQetyjRzSmfQGaJE5ZlJbmYy |
+    And the `identity.roles` database contains:
+      | _id                              | identity                         | role    |
+      | 30c969e05ff6437097ed5f07fc52358e | 4344518184ad44228baffce7a44fd0b1 | foo:bar |
+    When the following request is received:
+      """
+      DELETE /identity/roles/4344518184ad44228baffce7a44fd0b1/foo:bar/ HTTP/1.1
+      host: nex.toa.io
+      authorization: Basic dXNlcjpwYXNz
+      """
+    Then the following reply is sent:
+      """
+      403 Forbidden
+      """

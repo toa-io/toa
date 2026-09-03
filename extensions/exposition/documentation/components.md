@@ -404,6 +404,13 @@ To assign arbitrary roles, the `system:identity:roles` role is required.
 An Identity having `system:identity:roles:delegation` role can delegate roles within its own
 Role Scopes (see [Role Hierarchies](access.md#hierarchies)).
 
+### `/identity/roles/:id/:role/`
+
+`DELETE` Revoke a role of an Identity. The `system:identity:roles` role is required.
+
+A Token carries the roles it was issued with; a change reaches its holder when the token is
+[refreshed](#token-rotation).
+
 ## Banned Identities
 
 The `identity.bans` component manages banned identities.
