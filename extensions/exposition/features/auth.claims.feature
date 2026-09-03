@@ -9,6 +9,7 @@ Feature: Federated identity authentication
       """yaml
       trust:
         - iss: http://localhost:44444
+          aud: test
       """
 
   Scenario: Full claim

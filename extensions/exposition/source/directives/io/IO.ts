@@ -6,13 +6,21 @@ import type * as http from '../../HTTP/index.js'
 import type { Parameter, DirectiveFamily } from '../../RTD/index.js'
 import type { Remotes } from '../../Remotes.js'
 import type { Constructor, Directive } from './Directive.js'
+import { ATOM_GROUP } from '../../const.js'
+import type { extensions } from '@toa.io/core'
 
 export class IO implements DirectiveFamily<Directive> {
   public readonly name = 'io'
   public readonly mandatory = true
 
-  /** Throttling reconciles through a component, because only a component has an atom aspect. */
+  private host!: extensions.Host
+
+  /** Throttling reconciles through the atom of the gateways, one for every directive. */
   private sync: Sync | null = null
+
+  public mount (host: extensions.Host): void {
+    this.host = host
+  }
 
   // eslint-disable-next-line max-params
   public create (name: string, value: unknown, remotes: Remotes, route: string): Directive {
@@ -23,9 +31,8 @@ export class IO implements DirectiveFamily<Directive> {
 
     Directive.validate(value)
 
-    // discovering boots the component, so nothing is discovered until something throttles
     if (name === 'throttle')
-      this.sync ??= new Sync(remotes.discover('exposition', 'atom'))
+      this.sync ??= new Sync(this.host.atom(ATOM_GROUP))
 
     return new Directive(value, this.sync!, route)
   }

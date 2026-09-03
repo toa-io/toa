@@ -1,40 +1,31 @@
+import { Warning } from '../Warning.js'
 import type { Context } from '../../../../../HTTP/index.js'
 import type { Component } from './Component.js'
 
+/**
+ * The client address, as the request context resolved it; see `documentation/ip.md`.
+ *
+ * A request without one cannot be keyed, so it is let through, and whoever keys on the
+ * address says so — once in a while rather than on every request, because the cause is
+ * the deployment, not the request.
+ */
 export class IP implements Component {
-  public get (context: Context): string {
-    return this.xff(context) ?? context.request.socket.remoteAddress ?? ''
+  private readonly warning: Warning
+
+  public constructor (options: unknown, route: string) {
+    const subject = typeof options === 'string' ? options : throttle(route)
+
+    this.warning = new Warning(`${subject} is not in effect: the request has no ip`)
   }
 
-  private xff (context: Context): string | undefined {
-    const xff = context.request.headers['x-forwarded-for']
+  public get (context: Context): string | undefined {
+    if (context.ip === undefined)
+      this.warning.emit()
 
-    if (xff === undefined || typeof xff === 'string')
-      return xff
-
-    let ip
-
-    for (const value of xff) {
-      ip = value.trim()
-
-      if (!local(ip))
-        return ip
-    }
-
-    return ip // last otherwise
+    return context.ip
   }
 }
 
-function local (ip: string): boolean {
-  return (
-    ip === 'unknown' ||
-    ip === '' ||
-    ip === '127.0.0.1' ||
-    ip === '::1' ||
-    ip.startsWith('10.') ||
-    ip.startsWith('192.168.') ||
-    ip.match(/^172\.(1[6-9]|2[0-9]|3[0-1])\./) !== null ||
-    ip.startsWith('fd') ||
-    ip.startsWith('fe80:')
-  )
+function throttle (route: string): string {
+  return route === '' ? 'Throttle' : `Throttle of ${route}`
 }

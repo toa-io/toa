@@ -1,3 +1,4 @@
+import { quote } from '@toa.io/generic'
 import { resolve } from './lib/index.js'
 import type { Context, Entity, Scheme } from './types/index.js'
 
@@ -10,7 +11,10 @@ export async function effect (input: Input, context: Context): Promise<Entity | 
   const { iss, sub } = claims
 
   const existent = await context.local.observe({
-    query: { criteria: `authority==${input.authority};iss==${iss};sub==${sub}`, deleted: true }
+    query: {
+      criteria: `authority==${quote(input.authority)};iss==${quote(iss)};sub==${quote(sub)}`,
+      deleted: true
+    }
   })
 
   const record = { authority: input.authority, iss, sub, identity: input.id }

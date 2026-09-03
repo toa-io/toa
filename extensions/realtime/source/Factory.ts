@@ -4,15 +4,15 @@ import { Composition } from './Composition.js'
 import { Routes } from './Routes.js'
 
 export class Factory implements extensions.Factory {
-  private readonly boot: Bootloader
+  private readonly host: Host
 
-  public constructor (boot: Bootloader) {
-    this.boot = boot
+  public constructor (host: Host) {
+    this.host = host
   }
 
   public service (): Realtime {
-    const routes = new Routes(this.boot)
-    const composition = new Composition(this.boot)
+    const routes = new Routes(this.host)
+    const composition = new Composition(this.host)
     const realtime = new Realtime(routes, async () => await this.discovery())
 
     realtime.depends(routes)
@@ -24,9 +24,8 @@ export class Factory implements extensions.Factory {
   private async discovery (): Promise<Component> {
     const locator = new Locator('streams', 'realtime')
 
-    return await this.boot.remote(locator, { service: 'realtime' })
+    return await this.host.remote(locator, { service: 'realtime' })
   }
 }
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
-export type Bootloader = typeof import('@toa.io/boot')
+export type Host = extensions.Host

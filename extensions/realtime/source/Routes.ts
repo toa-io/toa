@@ -3,17 +3,17 @@ import { console } from 'openspan'
 import { Connector } from '@toa.io/core'
 import { Receiver } from './Receiver.js'
 import type { Route } from './extension.js'
-import type { Bootloader } from './Factory.js'
+import type { Host } from './Factory.js'
 
 export class Routes extends Connector {
   public events = new Events()
 
-  private readonly boot: Bootloader
+  private readonly host: Host
 
-  public constructor (boot: Bootloader) {
+  public constructor (host: Host) {
     super()
 
-    this.boot = boot
+    this.host = host
   }
 
   private static read (): Route[] {
@@ -28,7 +28,7 @@ export class Routes extends Connector {
     const creating = []
 
     for (const { event, properties, expose } of routes) {
-      const consumer = this.boot.receive(event, new Receiver({ event, properties, stream: this.events, expose }))
+      const consumer = this.host.receive(event, new Receiver({ event, properties, stream: this.events, expose }))
 
       creating.push(consumer)
     }

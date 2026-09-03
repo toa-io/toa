@@ -1,6 +1,7 @@
 import { Readable } from 'node:stream'
 import { console } from 'openspan'
 import { Mapping } from './Mapping.js'
+import { redact } from './redact.js'
 import * as http from './HTTP/index.js'
 import type { Introspection, Schema } from './Introspection.js'
 import type { Remote } from '@toa.io/core'
@@ -29,11 +30,12 @@ export class Endpoint implements RTD.Endpoint {
 
     const endpoint = this.remote.locator.id + '.' + this.endpoint
 
-    console.debug('Calling operation', { endpoint, request })
+    console.debug('Calling operation', { endpoint, request: redact(request) })
 
     const reply = await this.remote.invoke(this.endpoint, request)
 
-    console.debug('Received reply', { endpoint, reply: reply instanceof Readable ? '[Readable stream]' : reply })
+    console.debug('Received reply',
+      { endpoint, reply: reply instanceof Readable ? '[Readable stream]' : redact(reply) })
 
     if (reply instanceof Error)
       throw new http.UnprocessableEntity(reply)

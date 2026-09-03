@@ -1,12 +1,13 @@
 import { genSalt, hash } from 'bcryptjs'
 import type { Maybe, Operation } from '@toa.io/types'
-import type { Context, Entity, TransitInput, IdOutput } from './types.js'
+import type { Context, Entity, Principal, TransitInput, IdOutput } from './types.js'
 
 export class Transition implements Operation {
   private rounds: number = 10
   private pepper: string = ''
-  private principal?: string
+  private principal?: Principal
   private tokens: Tokens = undefined as unknown as Tokens
+  private keys: Keys = undefined as unknown as Keys
   private usernameRx: RegExp[] = []
   private passwordRx: RegExp[] = []
 
@@ -15,9 +16,16 @@ export class Transition implements Operation {
     this.pepper = context.configuration.pepper?.unwrap() ?? ''
     this.principal = context.configuration.principal
     this.tokens = context.remote.identity.tokens
+    this.keys = context.remote.identity.keys
 
     this.usernameRx = toRx(context.configuration.username)
     this.passwordRx = toRx(context.configuration.password)
+  }
+
+  private locked (object: Entity): boolean {
+    return this.principal !== undefined &&
+      object.authority === this.principal.authority &&
+      object.username === this.principal.username
   }
 
   public async execute (input: TransitInput, object: Entity): Promise<Maybe<IdOutput>> {
@@ -28,12 +36,15 @@ export class Transition implements Operation {
       if (input.inception === true)
         return ERR_EXISTS
 
-      await this.tokens.revoke({ query: { id: object.id } })
+      await Promise.all([
+        this.tokens.revoke({ query: { id: object.id } }),
+        this.keys.revoke({ input: { identity: object.id } })
+      ])
     } else
       object.authority = input.authority
 
     if (input.username !== undefined) {
-      if (existent && object.username === this.principal)
+      if (existent && this.locked(object))
         return ERR_PRINCIPAL_LOCKED
 
       if (invalid(input.username, this.usernameRx))
@@ -85,3 +96,4 @@ const ERR_EXISTS = new (class ExistsError extends Error {
 })()
 
 type Tokens = Context['remote']['identity']['tokens']
+type Keys = Context['remote']['identity']['keys']

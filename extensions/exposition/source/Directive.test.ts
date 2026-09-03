@@ -5,6 +5,7 @@ import { generate } from 'randomstring'
 import { DirectivesFactory } from './Directive.js'
 import type { syntax, DirectiveFamily } from './RTD/index.js'
 import type { Remotes } from './Remotes.js'
+import type { Host } from './Factory.js'
 import type { Context } from './HTTP/index.js'
 
 const sequence: string[] = []
@@ -51,7 +52,8 @@ beforeEach(() => {
     family.preflight.mock.mockImplementation(() => { sequence.push(family.name); return null })
   }
 
-  factory = new DirectivesFactory(families, {} as unknown as Remotes)
+  factory = new DirectivesFactory(families, {} as unknown as Remotes, {} as unknown as Host,
+    { authorities: {} })
 })
 
 it('should create directive', async () => {

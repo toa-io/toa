@@ -99,3 +99,44 @@ Feature: OTP authentication
 
       id: ${{ bob.id }}
       """
+
+  Scenario: Guessing OTP codes
+    Given the `identity.otp` configuration:
+      """yaml
+      lifetime: 60
+      attempts: 2
+      """
+    And the Gateway is running
+    And OTP for `alice` in `nex` authority is issued
+    # alice:wrong
+    When the following request is received:
+      """
+      GET /identity/ HTTP/1.1
+      host: nex.toa.io
+      authorization: OTP YWxpY2U6d3Jvbmc=
+      """
+    Then the following reply is sent:
+      """
+      401 Unauthorized
+      """
+    When the following request is received:
+      """
+      GET /identity/ HTTP/1.1
+      host: nex.toa.io
+      authorization: OTP YWxpY2U6d3Jvbmc=
+      """
+    Then the following reply is sent:
+      """
+      401 Unauthorized
+      """
+    # the attempts are spent, the code itself is refused
+    When the following request is received:
+      """
+      GET /identity/ HTTP/1.1
+      host: nex.toa.io
+      authorization: OTP ${{ alice.otp }}
+      """
+    Then the following reply is sent:
+      """
+      401 Unauthorized
+      """

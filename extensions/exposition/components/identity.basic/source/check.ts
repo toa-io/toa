@@ -1,10 +1,11 @@
+import { quote } from '@toa.io/generic'
 import type { Context } from './types.js'
 
 export async function computation (input: Input, context: Context): Promise<void | null | Error> {
   const username = Buffer.from(input.username, 'base64url').toString()
 
   const found = await context.local.observe({
-    query: { criteria: `authority==${input.authority};username=='${username}'` }
+    query: { criteria: `authority==${quote(input.authority)};username==${quote(username)}` }
   })
 
   if (found instanceof Error)

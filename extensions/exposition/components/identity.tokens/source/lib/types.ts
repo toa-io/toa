@@ -71,6 +71,9 @@ export interface DecryptOutput {
   exp?: string
   identity: Identity
   refresh: boolean
+
+  /** encrypted with a key of its own, see `issue` */
+  custom: boolean
 }
 
 export interface Claims {
@@ -95,4 +98,5 @@ export interface Key {
 
 export interface CustomKey extends Key {
   identity: string
+  revokedAt?: number
 }

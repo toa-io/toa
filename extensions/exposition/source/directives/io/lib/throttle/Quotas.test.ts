@@ -217,18 +217,28 @@ describe('path', () => {
 describe('ip', () => {
   beforeEach(() => {
     configuration = createConfiguration({ key: [{ method: 'ip' }] })
-    quotas = Quotas.create(configuration)
   })
 
-  it('should have separate quotas', () => {
-    const one = createContext({ request: { headers: { 'x-forwarded-for': '1.1.1.1' } } })
-    const two = createContext({ request: { headers: { 'x-forwarded-for': '2.2.2.2' } } })
+  it('should key on the address the context resolved', () => {
+    quotas = Quotas.create(configuration)
+
+    const one = createContext({ ip: '1.1.1.1' })
+    const two = createContext({ ip: '2.2.2.2' })
 
     quotas.check(one, [])
     quotas.check(one, [])
 
     assert.ok(quotas.check(one, []) > 0)
     assert.strictEqual(quotas.check(two, []), 0)
+  })
+
+  it('should let a request without an address through', () => {
+    quotas = Quotas.create(configuration)
+
+    const context = createContext({})
+
+    for (let i = 0; i < 5; i++)
+      assert.strictEqual(quotas.check(context, []), 0)
   })
 })
 

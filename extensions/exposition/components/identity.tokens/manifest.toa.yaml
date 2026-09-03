@@ -70,6 +70,8 @@ operations:
           type: string
         exp:
           type: string
+        custom:
+          type: boolean
         refresh:
           type: boolean
       type: object
@@ -77,6 +79,7 @@ operations:
       - INVALID_TOKEN
       - INVALID_KEY
       - FORGED_KEY
+      - REVOKED_KEY
   authenticate:
     input:
       properties:

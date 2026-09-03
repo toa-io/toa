@@ -32,7 +32,7 @@ export class Realtime {
     process.env.TOA_REALTIME = JSON.stringify(this.routes)
 
     this.connected = true
-    this.service = await new Factory(boot).service()
+    this.service = await new Factory(boot.host()).service()
 
     await this.service.connect()
   }

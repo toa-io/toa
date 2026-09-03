@@ -16,11 +16,15 @@ import { Federation } from './Federation.js'
 import { Anyone } from './Anyone.js'
 import { Input, type Declaration } from './Input.js'
 import { split } from './split.js'
-import { PRIMARY, PROVIDERS } from './schemes.js'
+import { PRIMARY, provider as providerOf } from './schemes.js'
+import { ATOM_GROUP } from '../../const.js'
+import { Quotas, Sync } from '../io/lib/throttle/index.js'
+import { Keys } from '../io/lib/throttle/Keys.js'
 import type { Output } from '../../io.js'
 import type { Component } from '@toa.io/core'
 import type { Remotes } from '../../Remotes.js'
 import type { Parameter, DirectiveFamily } from '../../RTD/index.js'
+import type { Host } from '../../Factory.js'
 import type {
   AuthenticationResult,
   Ban,
@@ -42,6 +46,37 @@ export class Authorization implements DirectiveFamily<Directive, Extension> {
   private readonly discovery = {} as unknown as Discovery
   private tokens: Component | null = null
   private bans: Component | null = null
+
+  /** Failed authentications per address, reconciled with the other gateways. */
+  private meter: Quotas | null = null
+  private sync: Sync | null = null
+
+  public mount (host: Host, options: http.Options): void {
+    this.sync?.dispose()
+    this.sync = null
+    this.meter = null
+
+    const bouncer = options.bouncer
+
+    // keyed by address, which is the deployment's to name, so off until it is set
+    if (bouncer === undefined)
+      return
+
+    this.meter = new Quotas({
+      keys: Keys.create([{ method: 'ip', options: BOUNCER }]),
+      requests: bouncer.attempts ?? ATTEMPTS,
+      interval: (bouncer.interval ?? INTERVAL) * 1000,
+      conditional: true, // charged on a rejection, not on a check
+      name: METER
+    })
+
+    this.sync = new Sync(host.atom(ATOM_GROUP))
+    this.sync.register(this.meter)
+  }
+
+  public dispose (): void {
+    this.sync?.dispose()
+  }
 
   public create (name: string, value: any, remotes: Remotes): Directive {
     assert.ok(name in constructors,
@@ -68,7 +103,7 @@ export class Authorization implements DirectiveFamily<Directive, Extension> {
   public async preflight (directives: Directive[],
     context: Context,
     parameters: Parameter[]): Promise<Output> {
-    context.identity = await this.resolve(context.authority, context.request.headers.authorization)
+    context.identity = await this.resolve(context)
 
     for (const directive of directives) {
       const allow = await directive.authorize(context.identity, context, parameters)
@@ -103,8 +138,12 @@ export class Authorization implements DirectiveFamily<Directive, Extension> {
     if (await this.banned(identity))
       throw new http.Unauthorized()
 
-    // Role directive may have already set the value
-    identity.roles ??= await Role.get(identity, this.discovery.roles)
+    // a token carries the roles it was issued with, and the refresh is where they are read again;
+    // any other scheme has just read them, unless a Role directive already did
+    if (identity.scheme === PRIMARY)
+      identity.roles = await Role.get(identity, this.discovery.roles)
+    else
+      identity.roles ??= await Role.get(identity, this.discovery.roles)
     this.tokens ??= await this.discovery.tokens
 
     const token = await this.tokens.invoke<string>('encrypt', {
@@ -118,12 +157,20 @@ export class Authorization implements DirectiveFamily<Directive, Extension> {
     response.headers.set('cache-control', 'no-store')
   }
 
-  private async resolve (authority: string, authorization: string | undefined): Promise<Identity | null> {
+  private async resolve (context: Context): Promise<Identity | null> {
+    const { authority } = context
+    const { authorization } = context.request.headers
+
     if (authorization === undefined)
       return null
 
+    const retry = this.meter?.check(context, NONE) ?? 0
+
+    if (retry > 0)
+      throw new http.TooManyRequests(retry)
+
     const [scheme, credentials] = split(authorization)
-    const provider = PROVIDERS[scheme]
+    const provider = providerOf(scheme)
 
     if (provider === undefined)
       throw new http.Unauthorized(`Unknown authentication scheme '${scheme}'`)
@@ -141,8 +188,13 @@ export class Authorization implements DirectiveFamily<Directive, Extension> {
     if (result instanceof Error) {
       const code: string | unknown = (result as unknown as { code: string }).code
 
-      if (typeof code === 'string')
+      if (typeof code === 'string') {
         console.info('Authentication failed', { code })
+
+        context.rejection = code
+      }
+
+      this.meter?.use(context, null)
 
       return null
     }
@@ -163,10 +215,8 @@ export class Authorization implements DirectiveFamily<Directive, Extension> {
     if (permissions === undefined)
       return true
 
-    return Object.entries(permissions).some(([pattern, methods]) => {
-      return methods.some((method) => method === '*' || method === context.request.method) &&
-        glob(pattern).match(context.request.url)
-    })
+    // the route is matched on the normalized path, so the permission is too
+    return permits(permissions, context.request.method, context.url.pathname)
   }
 
   private async banned (identity: Identity): Promise<boolean> {
@@ -176,6 +226,13 @@ export class Authorization implements DirectiveFamily<Directive, Extension> {
 
     return ban.banned
   }
+}
+
+/** Whether the permissions admit the method on the path the request is routed by. */
+export function permits (permissions: Record<string, string[]>, method: string, pathname: string): boolean {
+  return Object.entries(permissions).some(([pattern, methods]) =>
+    methods.some((allowed) => allowed === '*' || allowed === method) &&
+    glob(pattern).match(pathname))
 }
 
 /**
@@ -197,6 +254,18 @@ function glob (pattern: string): Minimatch {
 
   return compiled
 }
+
+/** What an address may fail at once, and the seconds it takes to earn them back. */
+const ATTEMPTS = 20
+const INTERVAL = 60
+
+/** Who is speaking when a request cannot be keyed. */
+const BOUNCER = 'Authentication bouncer'
+
+/** The meter's name in the atom: `atom:exposition:meter:credentials:<address>`. */
+const METER = 'credentials'
+
+const NONE: Parameter[] = []
 
 const GLOBS = new Map<string, Minimatch>()
 const GLOBS_LIMIT = 1024

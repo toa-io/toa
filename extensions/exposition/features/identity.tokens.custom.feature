@@ -283,3 +283,148 @@ Feature: Custom tokens
       """
       401 Unauthorized
       """
+
+  Scenario: Custom token is not refreshed
+    Given the `identity.tokens` configuration:
+      """yaml
+      refresh: 1
+      """
+    When the following request is received:
+      """
+      POST /identity/tokens/efe3a65ebbee47ed95a73edd911ea328/ HTTP/1.1
+      host: nex.toa.io
+      authorization: Basic ZGV2ZWxvcGVyOnNlY3JldA==
+      accept: application/yaml
+      content-type: application/yaml
+
+      label: Restricted token
+      lifetime: 600
+      permissions:
+        /notes/: [GET]
+      """
+    Then the following reply is sent:
+      """
+      201 Created
+
+      token: ${{ token }}
+      """
+    And after 1 second
+    When the following request is received:
+      """
+      GET /notes/ HTTP/1.1
+      host: nex.toa.io
+      authorization: Token ${{ token }}
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      """
+    And the reply does not contain:
+      """
+      authorization: Token
+      """
+    When the following request is received:
+      """
+      GET /notes/public/ HTTP/1.1
+      host: nex.toa.io
+      authorization: Token ${{ token }}
+      """
+    Then the following reply is sent:
+      """
+      403 Forbidden
+      """
+
+  Scenario: Permissions apply to the path the request is routed by
+    When the following request is received:
+      """
+      POST /identity/tokens/efe3a65ebbee47ed95a73edd911ea328/ HTTP/1.1
+      host: nex.toa.io
+      authorization: Basic ZGV2ZWxvcGVyOnNlY3JldA==
+      accept: application/yaml
+      content-type: application/yaml
+
+      label: Public notes token
+      lifetime: 0
+      permissions:
+        /notes/public/: [GET]
+      """
+    Then the following reply is sent:
+      """
+      201 Created
+
+      token: ${{ token }}
+      """
+
+    # the query string is not part of the path
+    When the following request is received:
+      """
+      GET /notes/public/?page=2 HTTP/1.1
+      host: nex.toa.io
+      authorization: Token ${{ token }}
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      """
+
+  Scenario: Changing the password revokes custom tokens
+    Given the `identity.basic` database contains:
+      | _id                              | _version | authority | username  | password                                                     |
+      | efe3a65ebbee47ed95a73edd911ea328 | 1        | nex       | developer | $2b$10$ZRSKkgZoGnrcTNA5w5eCcu3pxDzdTduhteVYXcp56AaNcilNkwJ.O |
+    And the `identity.tokens` configuration:
+      """yaml
+      cache:
+        ttl: 1
+      """
+    When the following request is received:
+      """
+      POST /identity/tokens/efe3a65ebbee47ed95a73edd911ea328/ HTTP/1.1
+      host: nex.toa.io
+      authorization: Basic ZGV2ZWxvcGVyOnNlY3JldA==
+      accept: application/yaml
+      content-type: application/yaml
+
+      label: Forever token
+      lifetime: 0
+      """
+    Then the following reply is sent:
+      """
+      201 Created
+
+      token: ${{ token }}
+      """
+    When the following request is received:
+      """
+      GET /identity/ HTTP/1.1
+      host: nex.toa.io
+      authorization: Token ${{ token }}
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      """
+    When the following request is received:
+      """
+      PATCH /identity/basic/efe3a65ebbee47ed95a73edd911ea328/ HTTP/1.1
+      host: nex.toa.io
+      authorization: Basic ZGV2ZWxvcGVyOnNlY3JldA==
+      content-type: application/yaml
+
+      password: new-secret
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      """
+    # the runtime forgets the key after `cache.ttl`
+    Then after 1.5 seconds
+    When the following request is received:
+      """
+      GET /identity/ HTTP/1.1
+      host: nex.toa.io
+      authorization: Token ${{ token }}
+      """
+    Then the following reply is sent:
+      """
+      401 Unauthorized
+      """

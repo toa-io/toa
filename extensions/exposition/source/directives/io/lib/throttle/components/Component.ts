@@ -2,5 +2,6 @@ import type { Parameter } from '../../../../../RTD/index.js'
 import type { Input as Context } from '../../../../../io.js'
 
 export interface Component {
-  get: (context: Context, parameters: Parameter[]) => string
+  /** what to key on, or nothing when the request cannot be keyed by this component */
+  get: (context: Context, parameters: Parameter[]) => string | undefined
 }

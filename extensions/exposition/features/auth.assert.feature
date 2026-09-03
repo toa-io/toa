@@ -41,7 +41,7 @@ Feature: Identity assertion
       authorization: Token ${{ user.token }}
       """
 
-    # invalid credentials
+    # wrong password for the credentials just created
     When the following request is received:
       """
       GET /echo/ HTTP/1.1
@@ -51,7 +51,5 @@ Feature: Identity assertion
       """
     Then the following reply is sent:
       """
-      422 Unprocessable Entity
-
-      code: INVALID_PASSWORD
+      401 Unauthorized
       """

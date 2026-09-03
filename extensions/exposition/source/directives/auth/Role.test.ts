@@ -36,7 +36,7 @@ it('should return false if not matched', async () => {
 
   assert.ok(remote.invoke.mock.calls.some((call: any) => call.arguments.length === 2 && isDeepStrictEqual(call.arguments[0], 'list') && isDeepStrictEqual(call.arguments[1], {
       query: {
-        criteria: `identity==${identity.id}`,
+        criteria: `identity=="${identity.id}"`,
         limit: 1024
       }
     })))

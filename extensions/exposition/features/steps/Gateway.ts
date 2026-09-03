@@ -29,11 +29,17 @@ export class Gateway {
       process.env.TOA_EXPOSITION = JSON.stringify(tree)
     }
 
-    const { debug, authorities } = annotation
+    const { debug, authorities, bouncer, ip } = annotation
     const properties = Object.assign({}, DEFAULT_PROPERTIES)
 
     if (debug !== undefined)
       properties.debug = debug
+
+    if (bouncer !== undefined)
+      properties.bouncer = bouncer
+
+    if (ip !== undefined)
+      properties.ip = ip
 
     if (authorities !== undefined)
       properties.authorities = authorities
@@ -130,7 +136,7 @@ export class Gateway {
 
     this.writeConfiguration()
 
-    const factory = new Factory(boot)
+    const factory = new Factory(boot.host())
     const service = await factory.service()
 
     if (service === null)

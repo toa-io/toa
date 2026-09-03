@@ -6,7 +6,7 @@ import { Connector, type Locator, type Message, type Receiver } from '@toa.io/co
 import { timeout } from '@toa.io/generic'
 import { Client, type Fetched } from './Client.js'
 import { EVENT } from './const.js'
-import type { Bootloader } from './Factory.js'
+import type { Host } from './Factory.js'
 
 class Remote extends Connector {
   public readonly invoke = mock.fn(async (_endpoint: string, request: { input: Array<{ component: string, epoch: string }> }) =>
@@ -21,14 +21,14 @@ class Remote extends Connector {
 
 let remote: Remote
 let receiver: Receiver | null
-let boot: Bootloader
+let host: Host
 let client: Client
 
 beforeEach(() => {
   remote = new Remote()
   receiver = null
 
-  boot = {
+  host = {
     remote: mock.fn(async (locator: Locator) => {
       assert.deepStrictEqual(locator.id, 'configuration.values')
 
@@ -41,9 +41,9 @@ beforeEach(() => {
 
       return new Connector()
     })
-  } as unknown as Bootloader
+  } as unknown as Host
 
-  client = new Client(boot, { base: 10, max: 20, warn: 2 })
+  client = new Client(host, { base: 10, max: 20, warn: 2 })
 })
 
 afterEach(async () => {

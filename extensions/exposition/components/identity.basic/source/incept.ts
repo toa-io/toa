@@ -1,14 +1,14 @@
+import { split } from './lib/credentials.js'
 import type { Context } from './types.js'
 import type { Maybe } from '@toa.io/types'
 
 export async function effect (input: Input, context: Context): Promise<Maybe<Output>> {
-  const [username, password] = Buffer
-    .from(input.credentials, 'base64')
-    .toString()
-    .split(':')
+  const pair = split(input.credentials)
 
-  if (typeof password !== 'string')
+  if (pair === null)
     return INVALID_CREDENTIALS
+
+  const [username, password] = pair
 
   const request = {
     input: {

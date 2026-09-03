@@ -75,3 +75,7 @@ exposition:
       io:output: true # array of strings
       auth:id: identity
       endpoint: list
+    /:role:
+      DELETE:
+        io:output: false
+        endpoint: terminate

@@ -125,6 +125,21 @@ it('should encrypt without lifetime INSECURE', async () => {
   assert.partialDeepStrictEqual(decrypted.identity, identity)
 })
 
+it('should keep the identity permissions when none are given', async () => {
+  const permissions = { '/notes/': ['GET'] }
+  const identity: Identity = { id: generate(), roles: [], permissions }
+
+  const encrypted = await encrypt.execute({ authority, identity, lifetime: 100 })
+
+  if (encrypted instanceof Error)
+    throw encrypted
+
+  const decrypted = await decrypt.execute(encrypted)
+
+  assert.ok(!(decrypted instanceof Error))
+  assert.deepStrictEqual(decrypted.identity.permissions, permissions)
+})
+
 function secret (value: string): Secret {
   return { unwrap: () => value }
 }

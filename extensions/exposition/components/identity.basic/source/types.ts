@@ -12,15 +12,23 @@ export interface Context {
       tokens: {
         revoke: Call<void, IdentityTokensRevokeInput>
       }
+      keys: {
+        revoke: Call<void, IdentityKeysRevokeInput>
+      }
     }
   }
   configuration: {
     readonly rounds: number
     readonly pepper?: Secret
-    readonly principal?: string
+    readonly principal?: Principal
     readonly username: string[]
     readonly password: string[]
   }
+}
+
+export interface Principal {
+  authority: string
+  username: string
 }
 
 export interface Entity {
@@ -54,4 +62,8 @@ export interface IdOutput {
 
 interface IdentityTokensRevokeInput {
   query: Query
+}
+
+interface IdentityKeysRevokeInput {
+  identity: string
 }

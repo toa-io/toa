@@ -53,7 +53,24 @@ it('should decrypt', async () => {
 
   const decrypted = await decrypt.execute(reply)
 
-  assert.partialDeepStrictEqual(decrypted, { iss: authority, identity, refresh: false })
+  assert.partialDeepStrictEqual(decrypted, { iss: authority, identity, refresh: false, custom: false })
+})
+
+it('should mark a token encrypted with a custom key', async () => {
+  const identity: Identity = { id: generate(), roles: [] }
+  const key = { id: generate(), key: '5I0iSKw3yfBkQ4AXfA8eR-tWR0Q1dpn4x3bPrPzHkP0', label: 'custom' }
+
+  remote.identity.keys.observe = mock.fn(async ({ query }: { query: { id: string } }) =>
+    query.id === key.id ? { ...key, identity: identity.id } : null) as any
+
+  const encrypted = await encrypt.execute({ authority, identity, lifetime: 100, key })
+
+  if (encrypted instanceof Error)
+    throw encrypted
+
+  const decrypted = await decrypt.execute(encrypted)
+
+  assert.partialDeepStrictEqual(decrypted, { identity, refresh: false, custom: true })
 })
 
 it('should decrypt with key1', async () => {
@@ -102,6 +119,23 @@ it('should separate JWE and PASETO keys with the same id by format', async () =>
   const token = await paseto(configuration.keys[2].key.unwrap(), { iss: authority, identity }, 'key0')
 
   await assert.partialDeepStrictEqual(await decrypt.execute(token), { identity, refresh: true })
+})
+
+it('should reject a token under a revoked key', async () => {
+  const identity: Identity = { id: generate(), roles: [] }
+  const key = { id: generate(), key: '5I0iSKw3yfBkQ4AXfA8eR-tWR0Q1dpn4x3bPrPzHkP0', label: 'revoked' }
+
+  remote.identity.keys.observe = mock.fn(async ({ query }: { query: { id: string } }) =>
+    query.id === key.id ? { ...key, identity: identity.id, revokedAt: Date.now() } : null) as any
+
+  const encrypted = await encrypt.execute({ authority, identity, lifetime: 0, key })
+
+  if (encrypted instanceof Error)
+    throw encrypted
+
+  const thrown: any = await decrypt.execute(encrypted)
+
+  assert.deepStrictEqual(thrown.code, 'REVOKED_KEY')
 })
 
 it('should reject a tampered JWE', async () => {

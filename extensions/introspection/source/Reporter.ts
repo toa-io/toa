@@ -2,7 +2,7 @@ import { Connector, Locator } from '@toa.io/core'
 import { console } from 'openspan'
 import { EDGES, MAX_EDGES, NAMESPACE, NODES } from './const.js'
 import * as keys from './keys.js'
-import type { Bootloader } from './Factory.js'
+import type { Host } from './Factory.js'
 import type { Options } from './annotation.js'
 import type { Edge, Node } from './model.js'
 import type { Remote } from '@toa.io/core'
@@ -17,7 +17,7 @@ import type { Remote } from '@toa.io/core'
  * when it has to choose it gives up on the data rather than on the application.
  */
 export class Reporter extends Connector {
-  private readonly boot: Bootloader
+  private readonly host: Host
   private readonly options: Options
   private readonly nodes = new Map<string, Node>()
   private readonly edges = new Map<string, Edge>()
@@ -30,10 +30,10 @@ export class Reporter extends Connector {
   private acquiring = false
   private dropped = 0
 
-  public constructor (boot: Bootloader, options: Options) {
+  public constructor (host: Host, options: Options) {
     super()
 
-    this.boot = boot
+    this.host = host
     this.options = options
   }
 
@@ -198,7 +198,7 @@ export class Reporter extends Connector {
 
   private async reach (): Promise<void> {
     await Promise.all([NODES, EDGES].map(async (name) => {
-      const remote = await this.boot.remote(new Locator(name, NAMESPACE))
+      const remote = await this.host.remote(new Locator(name, NAMESPACE))
 
       this.depends(remote)
 

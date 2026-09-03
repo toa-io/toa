@@ -6,11 +6,11 @@ import { overridden } from './configuration.js'
 import type { Manifest } from './manifest.js'
 
 export class Factory implements extensions.Factory {
-  private readonly boot: Bootloader
+  private readonly host: Host
   private client: Client | null = null
 
-  public constructor (boot: Bootloader) {
-    this.boot = boot
+  public constructor (host: Host) {
+    this.host = host
   }
 
   public aspect (locator: Locator, manifest: Manifest): extensions.Aspect {
@@ -20,16 +20,15 @@ export class Factory implements extensions.Factory {
   }
 
   public service (): Connector {
-    return new Composition(this.boot)
+    return new Composition(this.host)
   }
 
   private shared (): Client {
     if (this.client === null || this.client.disposed)
-      this.client = new Client(this.boot)
+      this.client = new Client(this.host)
 
     return this.client
   }
 }
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
-export type Bootloader = typeof import('@toa.io/boot')
+export type Host = extensions.Host

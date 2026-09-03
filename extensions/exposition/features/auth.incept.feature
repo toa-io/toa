@@ -118,3 +118,49 @@ Feature: Identity inception
       id: ${{ identity.id }}
       foo: bar
       """
+
+  Scenario: Inception with a wrong password for existing credentials
+    Given the `identity.basic` database contains:
+      | _id                              | authority | username  | password                                                     | _version |
+      | efe3a65ebbee47ed95a73edd911ea328 | nex       | developer | $2b$10$ZRSKkgZoGnrcTNA5w5eCcu3pxDzdTduhteVYXcp56AaNcilNkwJ.O | 1        |
+    And the `users` is running with the following manifest:
+      """yaml
+      exposition:
+        /:
+          POST:
+            io:input: [name]
+            io:output: true
+            incept: id
+            query: ~
+            endpoint: transit
+      """
+    # developer:wrong
+    When the following request is received:
+      """
+      POST /users/ HTTP/1.1
+      host: nex.toa.io
+      authorization: Basic ZGV2ZWxvcGVyOndyb25n
+      accept: application/yaml
+      content-type: application/yaml
+
+      name: Bill Smith
+      """
+    Then the following reply is sent:
+      """
+      401 Unauthorized
+      """
+    # a token that does not decrypt
+    When the following request is received:
+      """
+      POST /users/ HTTP/1.1
+      host: nex.toa.io
+      authorization: Token garbage
+      accept: application/yaml
+      content-type: application/yaml
+
+      name: Bill Smith
+      """
+    Then the following reply is sent:
+      """
+      401 Unauthorized
+      """
