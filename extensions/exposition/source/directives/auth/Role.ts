@@ -1,4 +1,5 @@
 import assert from 'node:assert'
+import { quote } from '@toa.io/generic'
 import { type Component, type Query } from '@toa.io/core'
 import { type Directive, type Identity } from './types.js'
 import type { Parameter } from '../../RTD/index.js'
@@ -19,7 +20,7 @@ export class Role implements Directive {
     this.remote ??= await discovery
 
     const query: Query = {
-      criteria: `identity==${identity.id}`,
+      criteria: `identity==${quote(identity.id)}`,
       limit: 1024
     }
 

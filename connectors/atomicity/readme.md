@@ -86,5 +86,5 @@ and two tolerate none at all.
 One set of clients per process, shared by every atom in it, and an unreachable Redis does not fail
 a start.
 
-A key names what it is for and whose it is: `slots:{group}:…`, `meter:<group>:<key>`,
-`lock:<group>:<key>`.
+Keys nest by whose they are, then by what they are for: `atom:<group>:slots:{group}…`,
+`atom:<group>:meter:<key>`, `atom:<group>:lock:<key>`.

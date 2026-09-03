@@ -34,6 +34,19 @@ properties:
             type: string
   debug:
     type: boolean
+  ip:
+    type: string
+    minLength: 1
+  bouncer:
+    type: object
+    properties:
+      attempts:
+        type: integer
+        minimum: 1
+      interval:
+        type: integer
+        minimum: 1
+    additionalProperties: false
   protocol:
     type: string
     enum: [h1, h2c]
@@ -46,3 +59,6 @@ properties:
 type: object
 required:
   - authorities
+dependencies:
+  bouncer:
+    - ip

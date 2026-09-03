@@ -172,7 +172,17 @@ configuration:
         description: Hashing pepper, a secret
         type: string
       principal:
-        type: string
+        description: Basic credentials whose Identity is granted the `system` role
+        type: object
+        properties:
+          authority:
+            type: string
+          username:
+            type: string
+        required:
+          - authority
+          - username
+        additionalProperties: false
       username:
         type: array
         items:

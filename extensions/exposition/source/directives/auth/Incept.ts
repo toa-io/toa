@@ -3,7 +3,7 @@ import { console } from 'openspan'
 import * as http from '../../HTTP/index.js'
 import { split } from './split.js'
 import { create } from './create.js'
-import { PROVIDERS, INCEPTION } from './schemes.js'
+import { INCEPTION, UNKNOWN, provider as providerOf } from './schemes.js'
 import { Role } from './Role.js'
 import type { Component } from '@toa.io/core'
 import type { Maybe } from '@toa.io/types'
@@ -26,7 +26,7 @@ export class Incept implements Directive {
 
   public static async incept (context: Context, id: string): Promise<Identity> {
     const [scheme, credentials] = split(context.request.headers.authorization!)
-    const provider = PROVIDERS[scheme]
+    const provider = providerOf(scheme)
 
     if (provider === undefined)
       throw new http.BadRequest('Authentication scheme is not supported')
@@ -61,8 +61,13 @@ export class Incept implements Directive {
     return identity
   }
 
-  public authorize (identity: Identity | null): boolean {
-    return identity === null
+  /** Credentials that were rejected for any reason but being unknown are not incepted. */
+  public static acceptable (context: Context): boolean {
+    return context.request.headers.authorization === undefined || context.rejection === UNKNOWN
+  }
+
+  public authorize (identity: Identity | null, context: Context): boolean {
+    return identity === null && Incept.acceptable(context)
   }
 
   public reply (context: Context): http.OutgoingMessage | null {

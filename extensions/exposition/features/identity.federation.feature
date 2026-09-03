@@ -10,6 +10,7 @@ Feature: Identity Federation
       """yaml
       trust:
         - iss: http://localhost:44444
+          aud: test
       """
     And the IDP token for User is issued
     When the following request is received:
@@ -75,6 +76,7 @@ Feature: Identity Federation
       """yaml
       trust:
         - iss: http://localhost:44444
+          aud: test
       assert: false
       """
     Given the `users` is running with the following manifest:
@@ -170,7 +172,9 @@ Feature: Identity Federation
       """yaml
       trust:
         - iss: http://localhost:44444
+          aud: test
       principal:
+        authority: nex
         iss: http://localhost:44444
         sub: root
       """
@@ -218,6 +222,7 @@ Feature: Identity Federation
       """yaml
       trust:
         - iss: http://localhost:44444
+          aud: test
       """
     And the `identity.basic` database is empty
 

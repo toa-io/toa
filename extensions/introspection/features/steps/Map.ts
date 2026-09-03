@@ -77,7 +77,7 @@ export class Map {
   public async run (): Promise<void> {
     await clean()
 
-    this.service = (await new Factory(boot).service())!
+    this.service = (await new Factory(boot.host()).service())!
 
     await this.service.connect()
 

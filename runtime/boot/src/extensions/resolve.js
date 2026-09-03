@@ -48,5 +48,5 @@ export const instance = (reference, base = process.cwd()) => {
 const create = async (path) => {
   const { Factory } = await import(pathToFileURL(require.resolve(path)).href)
 
-  return new Factory(boot)
+  return new Factory(boot.host())
 }

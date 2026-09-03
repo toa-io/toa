@@ -12,6 +12,7 @@ import { ClientError, Exception } from './exceptions.js'
 import { Context } from './Context.js'
 import { PROBE, Probe } from './Probe.js'
 import type { IncomingMessage, Protocol, ServerResponse } from './types.js'
+import type { Bouncer } from '../Annotation.js'
 
 export class Server extends Connector {
   private readonly server: http.Server | http2.Http2Server
@@ -129,10 +130,10 @@ export class Server extends Connector {
     // no listener on `request.socket`: under HTTP/2 it is the session's socket, shared by
     // every concurrent stream, and removing listeners on it would strip the siblings'
 
-    const host = authorityOf(request)
+    const host = authorityOf(request)?.toLowerCase()
 
-    if (host === undefined) {
-      console.warn('Request without an authority', errorAttributes(request, new Error('No authority')))
+    if (host === undefined || !HOST.test(host)) {
+      console.warn('Request without a valid authority', errorAttributes(request, new Error('Invalid authority')))
 
       response.writeHead(400).end()
 
@@ -350,6 +351,12 @@ function trace (headers: IncomingMessage['headers']): SpanContext | null {
   return null
 }
 
+/**
+ * A host name with an optional port, or a bracketed IPv6 literal. The URL parser admits
+ * `,` `;` `=` `(` `)` and quotes in a host, and the authority is written into criteria.
+ */
+const HOST = /^(?:[a-z0-9.-]{1,253}|\[[0-9a-f:.]{2,45}\])(?::\d{1,5})?$/
+
 const RAY = /^[\da-f]{32}$/i
 const ZERO_RAY = '0'.repeat(32)
 
@@ -372,6 +379,12 @@ interface Properties {
 
   /** Port of the readiness probe, which is HTTP/1.1 whatever the gateway serves. */
   probe: number
+
+  /** The header the client address is read from; the connection's address without one. */
+  ip?: string
+
+  /** Failed authentications an address may make; none are metered unless set. */
+  bouncer?: Bouncer
 }
 
 export type Options = { authorities: Properties['authorities'] } & {

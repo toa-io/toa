@@ -19,3 +19,5 @@ export async function receive<T = any> (
 ): Promise<core.Connector>
 
 type Receiver = { receive: (message: core.Message<T>) => void | Promise<void> }
+
+export function host (): core.extensions.Host

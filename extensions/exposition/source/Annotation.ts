@@ -17,5 +17,19 @@ export interface Annotation {
   service?: { annotations?: Record<string, string> }
 
   debug?: boolean
+
+  /** The header the client address is read from; the connection's without one. See `ip.md`. */
+  ip?: string
+
+  /** Failed authentications an address may make; none are metered unless set. See `identity.md`. */
+  bouncer?: Bouncer
   '/'?: object // parsed and validated by RTD.syntax.parse
+}
+
+export interface Bouncer {
+  /** what an address may fail at once, 20 by default */
+  attempts?: number
+
+  /** seconds it takes to earn them back, 60 by default */
+  interval?: number
 }

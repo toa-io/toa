@@ -10,6 +10,7 @@ import { families, interceptors } from './directives/index.js'
 import { DirectivesFactory } from './Directive.js'
 import { Composition } from './Composition.js'
 import * as root from './root.js'
+import { ATOM_GROUP } from './const.js'
 import { Interception } from './Interception.js'
 import * as http from './HTTP/index.js'
 import type { Branch } from './Branch.js'
@@ -18,14 +19,14 @@ import type { Broadcast } from './Gateway.js'
 import type { Connector, Locator, extensions } from '@toa.io/core'
 
 export class Factory implements extensions.Factory {
-  private readonly boot: Bootloader
+  private readonly host: Host
 
-  public constructor (boot: Bootloader) {
-    this.boot = boot
+  public constructor (host: Host) {
+    this.host = host
   }
 
   public async tenant (locator: Locator, node: syntax.Node): Promise<Connector> {
-    const broadcast: Broadcast = await this.boot.bindings.broadcast(CHANNEL, locator.id)
+    const broadcast: Broadcast = await this.host.broadcast(CHANNEL, locator.id)
     const hash = createHash('sha256').update(JSON.stringify(node)).digest('hex')
 
     // no timestamp: the tenant stamps each announcement with its own start time
@@ -47,20 +48,22 @@ export class Factory implements extensions.Factory {
     configureLogs()
 
     const options = JSON.parse(process.env.TOA_EXPOSITION_PROPERTIES) as http.Options
-    const broadcast: Broadcast = await this.boot.bindings.broadcast(CHANNEL)
+    const broadcast: Broadcast = await this.host.broadcast(CHANNEL)
     const server = http.Server.create({ ...options })
-    const remotes = new Remotes(this.boot)
+    const remotes = new Remotes(this.host)
     const node = root.resolve()
     const methods = new EndpointsFactory(remotes)
-    const directives = new DirectivesFactory(families, remotes)
+    const directives = new DirectivesFactory(families, remotes, this.host, options)
     const interception = new Interception(interceptors)
     const tree = new Tree(node, methods, directives)
 
-    const composition = new Composition(this.boot)
+    const composition = new Composition(this.host)
     const gateway = new Gateway(broadcast, tree, interception)
 
     gateway.depends(remotes)
     gateway.depends(composition)
+    // what the directives meter through; one atom per process, connected once
+    gateway.depends(this.host.atom(ATOM_GROUP))
 
     server.attach(gateway.process.bind(gateway))
     server.depends(gateway)
@@ -101,4 +104,4 @@ function development (): TracesOptions {
 }
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
-export type Bootloader = typeof import('@toa.io/boot')
+export type Host = extensions.Host

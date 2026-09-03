@@ -23,7 +23,7 @@ export class Receiver extends Connector {
     this.stream = stream
   }
 
-  public receive (message: Message<Record<string, string>>): void {
+  public async receive (message: Message<Record<string, string>>): Promise<void> {
     // the push continues the trace from the producer
     const telemetry = message.telemetry === undefined ? null : decode(message.telemetry)
 

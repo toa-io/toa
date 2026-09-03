@@ -19,7 +19,7 @@ export const serve = async (argv) => {
 
     const { Factory } = await import(pathToFileURL(require.resolve(module)).href)
 
-    const factory = new Factory(boot)
+    const factory = new Factory(boot.host())
 
     if (factory.service === undefined) throw new Error(`Service is not implemented by ${argv.path}`)
 

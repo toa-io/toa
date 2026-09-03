@@ -5,6 +5,7 @@ import { console } from 'openspan'
 import { Timing } from './Timing.js'
 import { type Format, formats, types } from './formats/index.js'
 import { read } from './messages.js'
+import { address } from './address.js'
 import type { OutgoingMessage } from './messages.js'
 import type { IncomingMessage } from './types.js'
 
@@ -12,6 +13,9 @@ export class Context {
   public readonly id: string
   public readonly authority: string
   public readonly request: IncomingMessage
+
+  /** the client address, read as the deployment says; none otherwise, see `documentation/ip.md` */
+  public readonly ip: string | undefined
   public readonly url: URL
   public readonly subtype: string | null = null
   public readonly encoder: Format | null = null
@@ -30,6 +34,7 @@ export class Context {
     url: URL) {
     this.authority = authority
     this.request = request
+    this.ip = address(request, properties.ip)
 
     this.id = crypto.randomUUID()
     // parsed by the server, which had to parse it anyway to know the request is valid
@@ -80,12 +85,14 @@ export class Context {
     const headers = { ...request.headers }
 
     if (headers.authorization !== undefined)
-      // only scheme
-      headers.authorization = headers.authorization.slice(0, headers.authorization.indexOf(' '))
+      headers.authorization = SCHEME.exec(headers.authorization)?.[1] ?? '[malformed]'
 
     console.debug('Received request', { method: request.method, url: request.url, headers })
   }
 }
+
+/** The scheme of an `authorization` header; the value after it is a credential. */
+const SCHEME = /^(\w{1,32})(?: |$)/
 
 interface Pipelines {
   body: Array<(input: unknown) => unknown>
@@ -94,6 +101,9 @@ interface Pipelines {
 
 interface Properties {
   debug: boolean
+
+  /** the header the client address is read from; the connection's without one */
+  ip?: string
 }
 
 /**

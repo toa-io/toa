@@ -54,9 +54,32 @@ The `Token` is the **primary** authentication scheme.
 If request originators use an alternative authentication scheme, they will receive a response
 containing `Token` credentials and will be required to switch to the `Token` scheme for any
 subsequent requests.
-Continued use of other authentication schemes will result in temporary blocking of requests.
 
 See [`identity.tokens` component](components.md#local-tokens).
+
+### Failed authentications
+
+Credentials that are rejected can be metered per client address, whatever the scheme. An address
+may fail `attempts` at once and earns them back at `attempts` per `interval` seconds; a request
+carrying credentials from an address with nothing left is answered `429 Too Many Requests` with
+`Retry-After`. Nothing is metered unless the exposition annotation carries `bouncer`;
+`attempts` and `interval` default to 20 and 60. The address is the one the request context
+resolved, see [Client address](ip.md): `bouncer` requires `ip`, in the same environment, and a
+request without an address is not metered.
+
+```yaml
+# context.toa.yaml
+
+exposition:
+  ip: cf-connecting-ip
+  bouncer:
+    attempts: 20
+    interval: 60
+```
+
+The count is shared by the gateway replicas through
+[atomicity](../../../connectors/atomicity/readme.md) and decided in each process; nothing is read on
+the request path.
 
 ### Bearer scheme
 
@@ -85,13 +108,15 @@ configuration:
         aud: <APPLE_CLIENT_ID>
         secret: <APPLE_CLIENT_SECRET> # enables Authorization Code Flow
     principal:
+      authority: example
       iss: https://accounts.google.com
       sub: 4218230498234
     assert: true
 ```
 
-`principal` specifies the values of the `iss` and `sub` claims of an Identity that will be granted
-with a `system` role.
+`principal` specifies the authority and the values of the `iss` and `sub` claims of an Identity
+that will be granted with a `system` role. The same subject in another authority is ordinary
+credentials.
 
 `assert` indicates whether the Identity should be implicitly created when valid credentials for a
 non-existent Identity are provided (default `true`).
@@ -113,8 +138,8 @@ iss: code issuer
 for: redirect URI
 ```
 
-Trust configuration for the issuer requires `aud` and either `secret` or `signature`
-values to enable the Authorization Code Flow.
+Trust configuration for the issuer requires either `secret` or `signature`
+to enable the Authorization Code Flow.
 
 > If `aud` is an array, the first value is used.
 
@@ -159,13 +184,15 @@ GET /identity/ HTTP/1.1
 authentication: OTP dXNlcm5hbWU6MTIzNDU2
 ```
 
-OTP expiration time can be configured using the `identity.otp` configuration.
+OTP expiration time and the number of failed attempts a username is allowed within it can be
+configured using the `identity.otp` configuration.
 
 ```yaml
 # context.toa.yaml
 configuration:
   identity.otp:
     lifetime: 60 # seconds
+    attempts: 5
 ```
 
 ## Identity inception
@@ -222,6 +249,11 @@ Identity `2428c31ecb6e4a51a24ef52f0c4181b9` are created.
 > without any associated entity.
 
 Inception is supported for `Basic` and `Bearer` authentication schemes.
+
+Inception goes ahead when the request carries no credentials, or credentials the scheme verified
+and no Identity owns, which its `authenticate` operation reports as `NOT_FOUND`. Credentials
+rejected for any other reason, a wrong password for one, are answered with `401 Unauthorized`
+before the endpoint is called.
 
 ## Identity assertion
 

@@ -49,7 +49,7 @@ for (const [expected, shift] of [
   const iat = new Date(now - configuration.refresh * 1000 + shift).toISOString()
   const exp = new Date(now + 1000).toISOString()
 
-  output = { iss: authority, identity, exp, iat, refresh: false }
+  output = { iss: authority, identity, exp, iat, refresh: false, custom: false }
 
   const result = await authenticate.execute({
     authority,
@@ -64,7 +64,7 @@ for (const refresh of [true, false])
     const iat = new Date().toISOString()
     const exp = new Date(Date.now() + 1000).toISOString()
 
-    output = { iss: authority, identity, exp, iat, refresh }
+    output = { iss: authority, identity, exp, iat, refresh, custom: false }
 
     const result = await authenticate.execute({
       authority,
@@ -73,6 +73,30 @@ for (const refresh of [true, false])
 
     assert.deepStrictEqual(result, { identity, refresh })
   })
+
+it('should not refresh an aged custom token', async () => {
+  const iat = new Date(Date.now() - configuration.refresh * 1000 - 50).toISOString()
+  const exp = new Date(Date.now() + 1000).toISOString()
+
+  output = { iss: authority, identity, exp, iat, refresh: false, custom: true }
+
+  const result = await authenticate.execute({ authority, credentials: '' })
+
+  assert.deepStrictEqual(result, { identity, refresh: false })
+})
+
+it('should check revocation of an aged custom token', async () => {
+  const iat = new Date(Date.now() - configuration.refresh * 1000 - 50).toISOString()
+  const exp = new Date(Date.now() + 1000).toISOString()
+
+  output = { iss: authority, identity, exp, iat, refresh: false, custom: true }
+  context.local.observe = mock.fn(async () => ({ revokedAt: Date.now() })) as unknown as Context['local']['observe']
+  authenticate.mount(context)
+
+  const result: any = await authenticate.execute({ authority, credentials: '' })
+
+  assert.deepStrictEqual(result.code, 'TOKEN_REVOKED')
+})
 
 function secret (value: string): Secret {
   return { unwrap: () => value }

@@ -24,16 +24,17 @@ export class Computation implements Operation {
     const identity = claims.identity
     const iat = new Date(claims.iat).getTime()
     const transient = claims.exp !== undefined
-    const stale = transient && (iat + this.refresh < Date.now())
+    const aged = transient && (iat + this.refresh < Date.now())
 
-    if (stale) {
+    if (aged) {
       const revocation = await this.observe({ query: { id: identity.id } })
 
       if (revocation?.revokedAt !== undefined && iat < revocation.revokedAt)
         return ERR_TOKEN_REVOKED
     }
 
-    const refresh = stale || claims.refresh
+    // a custom token is invalidated by deleting its key, not replaced
+    const refresh = (aged && !claims.custom) || claims.refresh
 
     return {
       identity,

@@ -70,6 +70,7 @@ operations:
     errors:
       - INVALID_CREDENTIALS
       - EXPIRED
+      - TOO_MANY_ATTEMPTS
       - NOT_FOUND
 
 configuration:
@@ -81,6 +82,11 @@ configuration:
         minimum: 1
         maximum: 3600
         default: 300
+      attempts:
+        description: Failed authentication attempts allowed per username within `lifetime`
+        type: integer
+        minimum: 1
+        default: 5
     type: object
 
 stash: ~

@@ -8,7 +8,7 @@ export interface Configuration {
 
 export interface Trust {
   iss: string
-  aud?: string | [string, ...string[]]
+  aud: string | [string, ...string[]]
   secret?: Secret
   signature?: {
     iss: string
@@ -18,6 +18,7 @@ export interface Trust {
 }
 
 interface Principal {
+  authority: string
   iss: string
   sub: string
 }

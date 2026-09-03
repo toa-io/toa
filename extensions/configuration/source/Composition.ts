@@ -3,19 +3,19 @@ import { resolve } from 'node:path'
 import { Connector } from '@toa.io/core'
 import { UI_PORT } from './const.js'
 import { UI } from './UI.js'
-import type { Bootloader } from './Factory.js'
+import type { Host } from './Factory.js'
 
 /** Hosts the values component in the service process. */
 export class Composition extends Connector {
-  private readonly boot: Bootloader
+  private readonly host: Host
 
-  public constructor (boot: Bootloader) {
+  public constructor (host: Host) {
     super()
-    this.boot = boot
+    this.host = host
   }
 
   protected override async open (): Promise<void> {
-    const composition = await this.boot.composition(components().paths)
+    const composition = await this.host.composition(components().paths)
 
     await composition.connect()
 

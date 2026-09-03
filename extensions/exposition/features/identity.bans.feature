@@ -135,3 +135,66 @@ Feature: Bans
       """
       401 Unauthorized
       """
+
+  Scenario: Banning an Identity revokes its custom tokens
+    Given the `identity.roles` database contains:
+      | _id                              | identity                         | role                 |
+      | 775a648d054e4ce1a65f8f17e5b51803 | efe3a65ebbee47ed95a73edd911ea328 | system:identity:bans |
+    And the `identity.keys` database is empty
+    And the `identity.tokens` configuration:
+      """yaml
+      cache:
+        ttl: 1
+      """
+    When the following request is received:
+      """
+      POST /identity/tokens/e8e4f9c2a68d419b861403d71fabc915/ HTTP/1.1
+      host: nex.toa.io
+      authorization: Basic dXNlcjoxMjM0NQ==
+      accept: application/yaml
+      content-type: application/yaml
+
+      label: Forever token
+      lifetime: 0
+      """
+    Then the following reply is sent:
+      """
+      201 Created
+
+      token: ${{ token }}
+      """
+    When the following request is received:
+      """
+      GET /identity/ HTTP/1.1
+      host: nex.toa.io
+      authorization: Token ${{ token }}
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      """
+    When the following request is received:
+      """
+      PUT /identity/bans/e8e4f9c2a68d419b861403d71fabc915/ HTTP/1.1
+      host: nex.toa.io
+      authorization: Basic ZGV2ZWxvcGVyOnNlY3JldA==
+      content-type: application/yaml
+
+      banned: true
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      """
+    # the key is revoked eventually, and the runtime forgets it after `cache.ttl`
+    Then after 2 seconds
+    When the following request is received:
+      """
+      GET /identity/ HTTP/1.1
+      host: nex.toa.io
+      authorization: Token ${{ token }}
+      """
+    Then the following reply is sent:
+      """
+      401 Unauthorized
+      """

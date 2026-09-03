@@ -136,6 +136,8 @@ exposition:
 | `class`       | Ingress class.                                                                                                    |
 | `annotations` | Ingress annotations.                                                                                              |
 | `debug`       | Output server errors. Default `false`.                                                                            |
+| `ip`          | Header the client address is read from. See [Client address](documentation/ip.md).                              |
+| `bouncer`     | Meter of failed authentications per address. See [Identity authentication](documentation/identity.md#failed-authentications). |
 
 ### Observability
 
@@ -201,6 +203,7 @@ See also [telemetry ready probe](../telemetry/readme.md#ready-probe) and
 ## See Also
 
 - [Protocol support](documentation/protocol.md)
+- [Client address](documentation/ip.md)
 - [Resource Tree Definition](documentation/tree.md)
 - [Identity authentication](documentation/identity.md)
 - [Access authorization](documentation/access.md)

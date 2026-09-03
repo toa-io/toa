@@ -14,6 +14,8 @@ entity:
         maxLength: 64
       expires:
         type: number
+      revokedAt:
+        type: integer
     required:
       - identity
       - key
@@ -50,13 +52,28 @@ operations:
         - id
         - key
       type: object
+  revoke:
+    input:
+      properties:
+        identity:
+          type: string
+      required:
+        - identity
+      type: object
+  disable:
+    concurrency: retry
+
+receivers:
+  identity.bans.created: revoke
+  identity.bans.updated: revoke
+  identity.roles.deleted: revoke
 
 exposition:
   /:identity:
     auth:id: identity
     auth:role: system:identity:keys
     GET:
-      io:output: [id, label, expires, _created]
+      io:output: [id, label, expires, revokedAt, _created]
       query:
         sort: _created:desc
       endpoint: enumerate

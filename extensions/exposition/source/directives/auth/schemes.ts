@@ -10,3 +10,17 @@ export const PROVIDERS: Record<Scheme, Remote> = {
 
 export const INCEPTION: Remote[] = ['basic', 'federation']
 export const PRIMARY: Scheme = 'token'
+
+/**
+ * The provider of a scheme, or nothing for a scheme that is not one — including a name a
+ * plain object answers on its own, like `constructor`.
+ */
+export function provider (scheme: string): Remote | undefined {
+  return Object.hasOwn(PROVIDERS, scheme) ? PROVIDERS[scheme as Scheme] : undefined
+}
+
+/**
+ * The rejection of credentials that are verifiable and owned by no identity: the one
+ * inception goes ahead with.
+ */
+export const UNKNOWN = 'NOT_FOUND'

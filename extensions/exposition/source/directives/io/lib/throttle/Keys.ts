@@ -26,11 +26,18 @@ export class Keys {
     return new this(components, conditions)
   }
 
-  public get (context: Context, parameters: Parameter[] = NONE): string {
+  /** The key of the request, or nothing when a component cannot key it. */
+  public get (context: Context, parameters: Parameter[] = NONE): string | undefined {
     const hash = createHash('sha256')
 
-    for (const component of this.components)
-      hash.update(component.get(context, parameters))
+    for (const component of this.components) {
+      const part = component.get(context, parameters)
+
+      if (part === undefined)
+        return
+
+      hash.update(part)
+    }
 
     return hash.digest('hex')
   }

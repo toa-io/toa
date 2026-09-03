@@ -1,3 +1,4 @@
+import { quote } from '@toa.io/generic'
 import type { Maybe, Operation } from '@toa.io/types'
 import type { Context, Identity } from './lib/index.js'
 
@@ -31,7 +32,7 @@ export class Effect implements Operation {
 
     const roles = await this.roles.list({
       query: {
-        criteria: `identity==${input.identity}`,
+        criteria: `identity==${quote(input.identity)}`,
         limit: 1024
       }
     })

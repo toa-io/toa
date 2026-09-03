@@ -57,12 +57,14 @@ This issue is addressed by using the `principal` key in the configuration:
 
 configuration:
   identity.basic:
-    principal: root
+    principal:
+      authority: example
+      username: root
 ```
 
-The value of the `principal` key corresponds to the `username` of the basic credentials. Once these
-credentials are
-created, the associated Identity will be assigned the `system` Role.
+`principal` names the authority and the `username` of the basic credentials. Once these
+credentials are created in that authority, the associated Identity is assigned the `system` Role.
+The same username in another authority is ordinary credentials.
 
 Once created, the username of the principal cannot be modified.
 
@@ -212,15 +214,19 @@ token: <token>
 - `permissions`: Issued token will have permissions to access only specified resources and methods.
   Supports [glob patterns](https://www.gnu.org/software/bash/manual/html_node/Pattern-Matching.html)
   and a wildcard method.
+  Patterns are matched against the request path as it is routed: normalized, without the query
+  string.
 
 > `roles` and `permissions` are additional restrictions applied on top of the Identity’s inherent
 > privileges.
 
 ### Custom token invalidation
 
-Custom tokens can be invalidated by deleting the secret key used to issue them.
-This can be done by the Identity that issued the token or by an Identity with
-the `system:identity:keys` role.
+A custom token is invalidated through its secret key. The key is revoked, and every token issued
+with it is refused, when the Identity is [banned](#banned-identities), its
+[Basic credentials](#basic-credentials) are modified, or one of its [roles](#roles) is revoked.
+The key can also be deleted by the Identity that issued the token or by an Identity with the
+`system:identity:keys` role.
 
 ```
 DELETE /identity/keys/<identity>/<key.id>/
@@ -236,9 +242,10 @@ GET /identity/keys/<identity>/
 authorization: ...
 ```
 
-The listing returns `id`, `label`, optional `expires`, and `_created`. Deletion prevents new cache
-lookups from finding the key. A runtime that already cached it can continue accepting the token for
-up to `identity.tokens.cache.ttl` milliseconds (10 minutes by default).
+The listing returns `id`, `label`, optional `expires`, `revokedAt` where the key is revoked, and
+`_created`. Revocation and deletion prevent new cache lookups from finding a usable key. A runtime
+that already cached it can continue accepting the token for up to `identity.tokens.cache.ttl`
+milliseconds (10 minutes by default).
 
 Both listing and deletion require credentials of the owning Identity or the
 `system:identity:keys` role. Key creation is internal to `identity.tokens`; there is no public
@@ -286,6 +293,9 @@ will always have a valid token to authenticate with.
 Also, token revocation or changing roles of an Identity will take effect once the `refresh` period
 of the currently issued tokens has expired.
 
+A change of what an Identity may do reaches every credential it holds: a token issued by the
+gateway within `refresh`, a [custom token](#custom-tokens) within `cache.ttl`.
+
 Adjusting these two values is a delicate trade-off between security, performance and client
 convenience.
 
@@ -308,6 +318,7 @@ All currently issued tokens of an Identity are revoked when:
 2. Identity is [banned](#banned-identities).
 
 Token revocation takes effect once the `refresh` period of the currently issued tokens has expired.
+[Custom tokens](#custom-tokens) are revoked through their keys, within `cache.ttl`.
 
 ### Secret rotation
 
@@ -395,7 +406,16 @@ role: string
 To assign arbitrary roles, the `system:identity:roles` role is required.
 
 An Identity having `system:identity:roles:delegation` role can delegate roles within its own
-Role Scopes (see [Role Hierarchies](access.md#hierarchies)).
+Role Scopes (see [Role Hierarchies](access.md#hierarchies)), except roles within the
+`system:identity:roles` scope: the right to delegate is not delegated.
+
+### `/identity/roles/:id/:role/`
+
+`DELETE` Revoke a role of an Identity. The `system:identity:roles` role is required.
+
+A Token carries the roles it was issued with; a change reaches its holder when the token is
+[refreshed](#token-rotation). Revoking a role also revokes the [custom tokens](#custom-tokens) of
+the Identity, which are issued again with the roles it has left.
 
 ## Banned Identities
 

@@ -7,14 +7,28 @@ export async function effect (input: Input, context: Context): Promise<Output | 
   if (code === undefined)
     return ERR_INVALID_CREDENTIALS
 
+  const attempts = `${authority}:${username}:attempts`
+  const attempt = await context.stash.incr(attempts)
+
+  if (attempt === 1)
+    await context.stash.expire(attempts, context.configuration.lifetime)
+
+  if (attempt > context.configuration.attempts) {
+    context.logs.debug('OTP attempts exceeded', { authority, username, attempt })
+
+    return ERR_TOO_MANY_ATTEMPTS
+  }
+
   const key = `${authority}:${username}:${code}`
   const n = await context.stash.del(key)
 
   if (n === 0) {
-    context.logs.debug('OTP code not found', { key })
+    context.logs.debug('OTP code not found', { authority, username, attempt })
 
     return ERR_EXPIRED
   }
+
+  await context.stash.del(attempts)
 
   const entry = await context.local.ensure({
     entity: {
@@ -37,6 +51,10 @@ const ERR_INVALID_CREDENTIALS = new (class InvalidCredentialsError extends Error
 
 const ERR_EXPIRED = new (class ExpiredError extends Error {
   public readonly code = 'EXPIRED'
+})()
+
+const ERR_TOO_MANY_ATTEMPTS = new (class TooManyAttemptsError extends Error {
+  public readonly code = 'TOO_MANY_ATTEMPTS'
 })()
 
 const ERR_NOT_FOUND = new (class NotFoundError extends Error {

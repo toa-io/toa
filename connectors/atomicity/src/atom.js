@@ -96,15 +96,16 @@ export class Atom extends Connector {
   }
 
   /**
-   * A key names what it is for and whose it is, in that order, so that a name used for a lock
-   * and for a meter is two keys, and two groups using the same name do not meet either.
+   * A key names whose it is and then what it is for, under the one namespace every atom
+   * shares, so that a name used for a lock and for a meter is two keys, and two groups using
+   * the same name do not meet either.
    *
    * @private
    */
   #keys (kind, keys) {
     if (typeof keys === 'string') keys = [keys]
 
-    return keys.map((key) => `${kind}${this.#name}:${key}`)
+    return keys.map((key) => `${ATOM}:${this.#name}:${kind}:${key}`)
   }
 
   async open () {
@@ -138,7 +139,7 @@ export class Atom extends Connector {
 
     const loop = discover({
       redis,
-      prefix: SLOTS,
+      prefix: `${ATOM}:${this.#name}:${SLOTS}:`,
       name: this.#name,
       interval: this.#interval,
       signal: this.#abort.signal,
@@ -167,6 +168,8 @@ const LEASE = 5000
  * three different things, so nothing but this keeps a group's lock on a name apart from its
  * meter on the same name.
  */
-const SLOTS = 'slots:'
-const METER = 'meter:'
-const LOCK = 'lock:'
+/** Every key of every atom lives under one namespace, then under its group, then its kind. */
+const ATOM = 'atom'
+const SLOTS = 'slots'
+const METER = 'meter'
+const LOCK = 'lock'

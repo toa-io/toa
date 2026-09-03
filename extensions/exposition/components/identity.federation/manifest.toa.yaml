@@ -201,7 +201,7 @@ configuration:
               type: string
               format: uri
             aud:
-              description: Acceptable `aud` value(s). Required for Authorization Code Flow.
+              description: Acceptable `aud` value(s)
               anyOf:
                 - type: string
                 - type: array
@@ -227,18 +227,22 @@ configuration:
               type: string
           required:
             - iss
+            - aud
         default: []
       principal:
         title: Principal
         description: Subject that will be assigned the `system` Role
         type: object
         properties:
+          authority:
+            type: string
           iss:
             type: string
             format: uri
           sub:
             type: string
         required:
+          - authority
           - iss
           - sub
         additionalProperties: false

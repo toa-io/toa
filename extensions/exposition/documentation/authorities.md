@@ -35,6 +35,9 @@ exposition:
 If the value of the `authority` pseudo-header is not present in the `authorities` definition,
 then the value is embedded as is.
 
+The value is lowercased before the lookup. A value that is not a host name or a bracketed IPv6
+literal, each with an optional port, is answered with `400 Bad Request`.
+
 ## Identity
 
 Credentials stored or issued by the [authentication system](identity.md) are associated with an

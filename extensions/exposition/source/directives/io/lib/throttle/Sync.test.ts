@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 
 import { Sync } from './Sync.js'
 import { Quotas } from './Quotas.js'
-import type { Remote } from '@toa.io/core'
+import type { atomicity } from '@toa.io/core'
 import type { Configuration } from './Configuration.js'
 import type { Input as Context } from '../../../../io.js'
 
@@ -141,18 +141,16 @@ function createContext (properties?: any): Context {
     properties) as unknown as Context
 }
 
-function createStash (reply?: (deltas: number[]) => number[]): Promise<Remote> {
-  const remote = {
-    invoke: async (endpoint: string, request: { input: Input }): Promise<number[]> => {
-      assert.strictEqual(endpoint, 'meter')
+function createStash (reply?: (deltas: number[]) => number[]): atomicity.Atom {
+  const atom = {
+    meter: async (keys: string[], deltas: number[]): Promise<number[]> => {
+      invocations.push({ keys, deltas })
 
-      invocations.push(request.input)
-
-      return reply === undefined ? request.input.deltas : reply(request.input.deltas)
+      return reply === undefined ? deltas : reply(deltas)
     }
   }
 
-  return Promise.resolve(remote as unknown as Remote)
+  return atom as unknown as atomicity.Atom
 }
 
 interface Input {

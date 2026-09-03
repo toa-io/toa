@@ -1,11 +1,11 @@
-import { newid } from '@toa.io/generic'
+import { newid, quote } from '@toa.io/generic'
 import { resolve } from './lib/index.js'
 import type { JWTPayload } from 'jose'
 import type { Maybe } from '@toa.io/types'
 import type { Context, Scheme } from './types/index.js'
 
 export async function effect ({ scheme, authority, credentials }: Input, context: Context): Promise<Maybe<Output>> {
-  context.logs.debug('Authenticating', { scheme, authority, credentials })
+  context.logs.debug('Authenticating', { scheme, authority })
 
   const claims = await resolve(scheme, credentials, context)
 
@@ -16,7 +16,7 @@ export async function effect ({ scheme, authority, credentials }: Input, context
 
   context.logs.debug('Token claims', claims)
 
-  const query = { criteria: `authority==${authority};iss==${iss};sub==${sub}` }
+  const query = { criteria: `authority==${quote(authority)};iss==${quote(iss)};sub==${quote(sub)}` }
 
   const credential = context.configuration.assert !== false
     ? await context.local.ensure({

@@ -10,5 +10,6 @@ export interface Context {
   }
   configuration: {
     lifetime: number
+    attempts: number
   }
 }
