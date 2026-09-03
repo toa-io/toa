@@ -98,7 +98,11 @@ export class Probe {
   }
 }
 
-export const PROBE = 8001
+/**
+ * Reserved for this probe. `8001` is the Telemetry readiness probe's, and `toa export` refuses a
+ * port claimed twice — `toa mono` and a local run put every service in one process.
+ */
+export const PROBE = 8004
 export const PATH = '/.ready'
 
 /**

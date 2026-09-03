@@ -188,14 +188,15 @@ exposition:
 
 ## Ready probe
 
-The gateway serves `GET /.ready` on port `8001`, not on the port it serves traffic on, and
+The gateway serves `GET /.ready` on port `8004`, not on the port it serves traffic on, and
 telemetry's probe is disabled in its process.
 
 It answers `200` only after the in-process identity composition has connected, initial route
 discovery has settled, and the HTTP server is listening. Before that it answers `503` with a
 `retry-after`. When ready, the process also sends `process.send('ready')` for PM2 `wait_ready`.
 
-See also [telemetry ready probe](../telemetry/readme.md#ready-probe).
+See also [telemetry ready probe](../telemetry/readme.md#ready-probe) and
+[reserved ports](../../documentation/ports.md).
 
 ## See Also
 
