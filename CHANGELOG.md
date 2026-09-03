@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.280](https://github.com/toa-io/toa/compare/v1.0.0-alpha.279...v1.0.0-alpha.280) (2026-09-03)
+
+### Bug Fixes
+
+* **deps:** update cookie in UI lockfiles ([d32106b](https://github.com/toa-io/toa/commit/d32106be40728156e82858f37b4d04163d1e1652))
+* **operations:** call execa, not the module it lives in ([9fe87d5](https://github.com/toa-io/toa/commit/9fe87d54cc02f7ec18e325c85882ff174acbe8ab))
+
+
 # [1.0.0-alpha.279](https://github.com/toa-io/toa/compare/v1.0.0-alpha.278...v1.0.0-alpha.279) (2026-09-03)
 
 ### Bug Fixes

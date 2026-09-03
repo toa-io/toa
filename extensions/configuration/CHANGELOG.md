@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.280](https://github.com/toa-io/toa/compare/v1.0.0-alpha.279...v1.0.0-alpha.280) (2026-09-03)
+
+### Bug Fixes
+
+* **deps:** update cookie in UI lockfiles ([d32106b](https://github.com/toa-io/toa/commit/d32106be40728156e82858f37b4d04163d1e1652))
+
+
 # [1.0.0-alpha.278](https://github.com/toa-io/toa/compare/v1.0.0-alpha.277...v1.0.0-alpha.278) (2026-09-03)
 
 **Note:** Version bump only for package @toa.io/extensions.configuration
