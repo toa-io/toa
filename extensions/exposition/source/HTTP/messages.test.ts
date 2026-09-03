@@ -1,6 +1,5 @@
 import { PassThrough, Readable } from 'node:stream'
 import * as streamConsumers from 'node:stream/consumers'
-import { once } from 'node:events'
 import { generate } from 'randomstring'
 import * as msgpack from 'msgpackr'
 import { multipart, read, type OutgoingMessage } from './messages'
@@ -99,11 +98,9 @@ describe('read', () => {
     const context = { encoder: formats['text/plain'] } as unknown as Context
     const message = { body: Readable.from(['Hello', 'New', 'World']) } as unknown as OutgoingMessage
 
-    multipart(message, context, response as unknown as http.ServerResponse)
+    const framed = multipart(message, context, response as unknown as http.ServerResponse)
 
-    await once(message.body, 'end')
-
-    const result = await streamConsumers.text(response)
+    const result = await streamConsumers.text(framed)
 
     expect(result).toBe([
       '--cut',
