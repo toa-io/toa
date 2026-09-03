@@ -36,4 +36,10 @@ describe('dump', () => {
   it('should round trip', () => {
     assert.deepStrictEqual(load(dump({ a: 1, b: [2, 3] })), { a: 1, b: [2, 3] })
   })
+
+  it('should quote a scalar another YAML version would not read as a string', () => {
+    // reading under the 1.2 core does not need the quotes; whoever reads this document may
+    assert.strictEqual(dump({ code: 'NO', ok: 'yes', at: 'on' }),
+      "code: 'NO'\nok: 'yes'\nat: 'on'\n")
+  })
 })
