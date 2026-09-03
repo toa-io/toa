@@ -161,13 +161,15 @@ GET /identity/ HTTP/1.1
 authentication: OTP dXNlcm5hbWU6MTIzNDU2
 ```
 
-OTP expiration time can be configured using the `identity.otp` configuration.
+OTP expiration time and the number of failed attempts a username is allowed within it can be
+configured using the `identity.otp` configuration.
 
 ```yaml
 # context.toa.yaml
 configuration:
   identity.otp:
     lifetime: 60 # seconds
+    attempts: 5
 ```
 
 ## Identity inception
