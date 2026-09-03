@@ -83,6 +83,9 @@ export class Gateway {
     const patch = parse(yaml) as object
     const configuration = Object.assign({}, def, patch)
 
+    // scenario-scoped, as the secrets it may refer to are: a configuration left behind
+    // outlives the secrets it points at, and the next scenario cannot resolve them
+    this.written.push(key)
     process.env[key] = JSON.stringify(configuration)
 
     await Gateway.stop()
@@ -191,12 +194,17 @@ const DEFAULT_TREE = JSON.stringify({
 const DEFAULT_PROPERTIES: Partial<http.Options> = {
   authorities: {
     nex: 'nex.toa.io'
-  }
+  },
+  // `npm run features:h2c` runs the whole suite over cleartext HTTP/2
+  protocol: process.env.TOA_EXPOSITION_PROTOCOL === 'h2c' ? 'h2c' : 'h1'
 }
 
 // the identity components boot inside the gateway, and without a variable each would wait
 // for the values service, which these features do not run
 const DEFAULT_CONFIGURATION: Record<string, object> = {
+  // a component declaring configuration waits for `configuration.values`, which these
+  // features do not run; the variable is the local override that stands in for it
+  'realtime.streams': {},
   'identity.basic': {},
   'identity.federation': {},
   'identity.otp': {},

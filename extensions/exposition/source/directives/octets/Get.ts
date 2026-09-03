@@ -64,9 +64,9 @@ export class Get extends Directive {
     if (entry.range !== undefined)
       headers.set('content-range', entry.range)
 
-    if (entry.size === null)
-      headers.set('transfer-encoding', 'chunked')
-    else
+    // an absent content-length is what says the length is unknown; naming the encoding
+    // is redundant over HTTP/1.1 and forbidden over HTTP/2
+    if (entry.size !== null)
       headers.set('content-length', entry.size.toString())
 
     return {

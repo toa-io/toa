@@ -43,6 +43,13 @@ $ npx cucumber-js features/identity.basic.feature   # one file
 $ npx cucumber-js --name 'Changing the password'    # one scenario
 ```
 
+The exposition suite also runs over cleartext HTTP/2, booting the gateway and pointing the
+agent at it on that protocol:
+
+```shell
+$ npm run features:h2c
+```
+
 Root `cucumber.js` also defines profiles. A profile that sets `paths` makes Cucumber append
 command-line paths instead of replacing them — passing a file there runs the whole suite as well.
 Select by name instead:

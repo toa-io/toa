@@ -122,7 +122,7 @@ function prepare (annotation: Annotation, instances: Instance[]): Annotation {
   return normalized
 }
 
-export type Annotation = Record<string, any>
+export type Annotation = Record<string, object>
 export type Instance = context.Dependency<Manifest>
 export type Values = Record<string, Entry>
 

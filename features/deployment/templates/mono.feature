@@ -92,7 +92,7 @@ Feature: Mono deployment
       startupProbe:
         httpGet:
           path: /.ready
-          port: 8000
+          port: 8004
       """
 
   Scenario: Every service keeps its own path and port in mono

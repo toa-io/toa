@@ -46,6 +46,7 @@
     "transpile:passkeys": "tsc -p ./components/identity.passkeys",
     "transpile:otp": "tsc -p ./components/identity.otp",
     "features": "cucumber-js",
+    "features:h2c": "TOA_EXPOSITION_PROTOCOL=h2c TOA_AGENT_PROTOCOL=h2c cucumber-js",
     "features:security": "cucumber-js --tags @security",
     "features:octets": "cucumber-js features/octets.*"
   },
