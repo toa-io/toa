@@ -1,4 +1,5 @@
-import { after, afterAll, binding, given } from 'cucumber-tsflow'
+import tsflow from 'cucumber-tsflow'
+
 import * as boot from '@toa.io/boot'
 import { type Connector } from '@toa.io/core'
 import { load as parse } from 'js-yaml'
@@ -8,6 +9,8 @@ import * as syntax from '../../source/RTD/syntax/index.js'
 import { shortcuts } from '../../source/Directive.js'
 import { manifests } from './map.js'
 import type * as http from '../../source/HTTP/index.js'
+
+const { after, afterAll, binding, given } = tsflow
 
 let instance: Connector | null = null
 

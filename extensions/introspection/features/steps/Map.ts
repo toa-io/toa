@@ -3,7 +3,8 @@ import { resolve } from 'node:path'
 import { readdirSync } from 'node:fs'
 import { setTimeout } from 'node:timers/promises'
 import { MongoClient } from 'mongodb'
-import { after, before, binding, then, when } from 'cucumber-tsflow'
+import tsflow from 'cucumber-tsflow'
+
 import { load as parse } from 'js-yaml'
 import { match } from '@toa.io/generic'
 import * as boot from '@toa.io/boot'
@@ -11,6 +12,8 @@ import { Locator } from '@toa.io/core'
 import * as stage from '@toa.io/userland/stage'
 import { Factory } from '../../source/index.js'
 import type { Component, Connector, Request } from '@toa.io/core'
+
+const { after, before, binding, then, when } = tsflow
 
 @binding()
 export class Map {

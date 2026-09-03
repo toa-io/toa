@@ -1,5 +1,7 @@
 import * as http from '@toa.io/agent'
-import { binding } from 'cucumber-tsflow'
+import tsflow from 'cucumber-tsflow'
+
+const { binding } = tsflow
 
 @binding()
 export class Captures extends http.Captures {

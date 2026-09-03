@@ -46,7 +46,7 @@
     "transpile:keys": "tsc -p ./components/identity.keys",
     "transpile:passkeys": "tsc -p ./components/identity.passkeys",
     "transpile:otp": "tsc -p ./components/identity.otp",
-    "features": "cucumber-js",
+    "features": "TSX_TSCONFIG_PATH=features/steps/tsconfig.json NODE_OPTIONS=--import=tsx cucumber-js",
     "features:security": "cucumber-js --tags @security",
     "features:octets": "cucumber-js features/octets.*"
   },

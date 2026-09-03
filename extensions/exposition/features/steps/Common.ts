@@ -1,5 +1,8 @@
-import { binding, given } from 'cucumber-tsflow'
+import tsflow from 'cucumber-tsflow'
+
 import { timeout } from '@toa.io/generic'
+
+const { binding, given } = tsflow
 
 @binding()
 export class Common {

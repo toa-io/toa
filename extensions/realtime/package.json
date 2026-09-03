@@ -23,6 +23,6 @@
   },
   "scripts": {
     "transpile": "npx tsc && npx tsc -p ./components/realtime.streams",
-    "features": "npx cucumber-js"
+    "features": "TSX_TSCONFIG_PATH=features/steps/tsconfig.json NODE_OPTIONS=--import=tsx cucumber-js"
   }
 }

@@ -21,7 +21,7 @@
     "transpile": "tsc && tsc -p ./components/configuration.values",
     "build:ui": "npm --prefix ui ci && npm --prefix ui run build",
     "prepack": "npm run build:ui",
-    "features": "npx cucumber-js"
+    "features": "TSX_TSCONFIG_PATH=features/steps/tsconfig.json NODE_OPTIONS=--import=tsx cucumber-js"
   },
   "gitHead": "61c8e74a336385265767e9fd37d49128cb51b17f",
   "dependencies": {

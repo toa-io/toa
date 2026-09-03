@@ -1,6 +1,7 @@
 import { EventEmitter, once } from 'node:events'
 import * as assert from 'node:assert'
-import { after, binding, given, afterAll, then } from 'cucumber-tsflow'
+import tsflow from 'cucumber-tsflow'
+
 import { Factory } from '@toa.io/extensions.realtime'
 import * as boot from '@toa.io/boot'
 import { match } from '@toa.io/generic'
@@ -10,6 +11,8 @@ import { Parameters } from './Parameters.js'
 import { Gateway } from './Gateway.js'
 import { Captures } from './Captures.js'
 import type { Connector } from '@toa.io/core'
+
+const { after, binding, given, afterAll, then } = tsflow
 
 @binding([Gateway, Parameters, Captures])
 export class Realtime {
