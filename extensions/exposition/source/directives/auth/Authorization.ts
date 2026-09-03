@@ -16,7 +16,7 @@ import { Federation } from './Federation.js'
 import { Anyone } from './Anyone.js'
 import { Input, type Declaration } from './Input.js'
 import { split } from './split.js'
-import { PRIMARY, PROVIDERS } from './schemes.js'
+import { PRIMARY, provider as providerOf } from './schemes.js'
 import type { Output } from '../../io.js'
 import type { Component } from '@toa.io/core'
 import type { Remotes } from '../../Remotes.js'
@@ -127,7 +127,7 @@ export class Authorization implements DirectiveFamily<Directive, Extension> {
       return null
 
     const [scheme, credentials] = split(authorization)
-    const provider = PROVIDERS[scheme]
+    const provider = providerOf(scheme)
 
     if (provider === undefined)
       throw new http.Unauthorized(`Unknown authentication scheme '${scheme}'`)

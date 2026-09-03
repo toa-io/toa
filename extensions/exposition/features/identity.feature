@@ -87,3 +87,25 @@ Feature: Identity resource
       """
       401 Unauthorized
       """
+
+  Scenario: Authenticating with a scheme named after an object property
+    When the following request is received:
+      """
+      GET /identity/ HTTP/1.1
+      host: nex.toa.io
+      authorization: Constructor abc
+      """
+    Then the following reply is sent:
+      """
+      401 Unauthorized
+      """
+    When the following request is received:
+      """
+      GET /identity/ HTTP/1.1
+      host: nex.toa.io
+      authorization: __proto__ abc
+      """
+    Then the following reply is sent:
+      """
+      401 Unauthorized
+      """
