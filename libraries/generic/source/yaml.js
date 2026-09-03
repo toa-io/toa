@@ -1,16 +1,15 @@
-import { CORE_SCHEMA, boolYaml11Tag, load as read, dump as write, mergeTag } from 'js-yaml'
+import { CORE_SCHEMA, load as read, dump as write, mergeTag } from 'js-yaml'
 
 /**
- * `<<` is a YAML 1.1 type, and 1.2 left it out of the core schema along with the rest of the
- * 1.1 type repository, so js-yaml stopped resolving it by default in version 5 — the key is
- * read as a key rather than merged. A manifest states it, so the tag is put back.
+ * YAML 1.2 removed the `<<` merge key along with the rest of the 1.1 type library, and js-yaml
+ * follows the spec author's recommendation in reading a document under the 1.2 core schema. It
+ * left no replacement, though, and a manifest merges one mapping into another — so the tag goes
+ * back, and nothing else does.
  *
- * `yes`, `no`, `on` and `off` are 1.1 booleans, and are put back with it.
- *
- * The whole 1.1 schema is not, because its integers come with it: `0755` is octal there and
- * `1:30` is ninety.
+ * The 1.1 booleans stay gone: `yes`, `no`, `on` and `off` are strings, as 1.2 states, and what
+ * they were shorthand for is written `true` and `false`.
  */
-const SCHEMA = CORE_SCHEMA.withTags(mergeTag, boolYaml11Tag)
+const SCHEMA = CORE_SCHEMA.withTags(mergeTag)
 
 /**
  * @param {string} text

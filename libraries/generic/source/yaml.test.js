@@ -16,9 +16,14 @@ describe('load', () => {
     assert.deepStrictEqual(object.two, { max: 10 })
   })
 
-  it('should read yes, no, on and off as booleans', () => {
+  it('should read yes, no, on and off as strings', () => {
+    // YAML 1.2: only true and false are booleans
     assert.deepStrictEqual(load('a: yes\nb: no\nc: on\nd: off\n'),
-      { a: true, b: false, c: true, d: false })
+      { a: 'yes', b: 'no', c: 'on', d: 'off' })
+  })
+
+  it('should read true and false as booleans', () => {
+    assert.deepStrictEqual(load('a: true\nb: false\n'), { a: true, b: false })
   })
 
   it('should leave a zero-padded number in base ten', () => {
