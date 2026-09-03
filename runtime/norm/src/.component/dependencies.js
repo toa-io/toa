@@ -8,7 +8,7 @@ const require = createRequire(import.meta.url)
 /**
  * @param {toa.norm.Component} component
  */
-const dependencies = (component) => {
+export const dependencies = (component) => {
   if ('entity' in component) component.entity.storage = resolve(component.path, component.entity.storage)
 }
 
@@ -28,5 +28,3 @@ function resolve (root, reference) {
 
   return dirname(path)
 }
-
-export { dependencies }

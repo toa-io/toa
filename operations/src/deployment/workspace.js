@@ -7,7 +7,7 @@ import { tmpdir } from 'node:os'
  * @param {string} [path]
  * @return {Promise<string>}
  */
-async function create (type, path) {
+export async function create (type, path) {
   if (path === undefined) return await mkdtemp(join(tmpdir(), 'toa-' + type))
 
   path = resolve(path)
@@ -20,5 +20,3 @@ async function create (type, path) {
 
   return path
 }
-
-export { create }

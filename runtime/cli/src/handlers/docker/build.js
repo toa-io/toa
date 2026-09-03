@@ -6,7 +6,7 @@ import * as find from '../../util/find.js'
 
 const { Factory } = deployment
 
-async function build (contextPath, componentPatterns) {
+export async function build (contextPath, componentPatterns) {
   const context = await createContext(contextPath, componentPatterns)
   const factory = new Factory(context)
   const registry = factory.registry()
@@ -51,5 +51,3 @@ async function loadComponents (paths) {
 
   return components
 }
-
-export { build }

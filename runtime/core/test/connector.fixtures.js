@@ -1,7 +1,7 @@
 import { random, timeout } from '@toa.io/generic'
 import { Connector } from '../src/connector.js'
 
-class TestConnector extends Connector {
+export class TestConnector extends Connector {
   #label
   #seq
 
@@ -27,7 +27,7 @@ class TestConnector extends Connector {
   }
 }
 
-class FailingConnector extends Connector {
+export class FailingConnector extends Connector {
   async open () {
     await timeout(random(10))
     throw new Error('FailingConnector')
@@ -35,10 +35,8 @@ class FailingConnector extends Connector {
 }
 
 /** Stands for a connector waiting for something that never arrives. */
-class StuckConnector extends Connector {
+export class StuckConnector extends Connector {
   async open () {
     return new Promise(() => undefined)
   }
 }
-
-export { TestConnector, FailingConnector, StuckConnector }

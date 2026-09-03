@@ -4,6 +4,4 @@ import { mock } from 'node:test'
 import * as original from '../src/state.js'
 
 const reset = mock.fn(() => original.state.reset())
-const state = { ...original.state, reset }
-
-export { state }
+export const state = { ...original.state, reset }

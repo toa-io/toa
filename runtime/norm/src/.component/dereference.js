@@ -1,6 +1,6 @@
 import { merge } from '@toa.io/generic'
 
-const dereference = (manifest) => {
+export const dereference = (manifest) => {
   // schemas
   const resolver = createResolver(manifest.entity?.schema?.properties)
 
@@ -75,5 +75,3 @@ const forward = (operation, operations) => {
 
   merge(operation, real)
 }
-
-export { dereference }

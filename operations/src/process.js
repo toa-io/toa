@@ -3,7 +3,7 @@ import * as execa from 'execa'
 /**
  * @implements {toa.operations.Process}
  */
-class Process {
+export class Process {
   async execute (cmd, args, options = {}) {
     console.log('toa>', cmd, args.join(' '))
 
@@ -21,5 +21,3 @@ class Process {
     return result.stdout
   }
 }
-
-export { Process }

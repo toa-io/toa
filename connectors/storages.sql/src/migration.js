@@ -5,7 +5,7 @@ import { translate } from './.migration/translate.js'
 /**
  * @implements {toa.core.storages.Migration}
  */
-class Migration {
+export class Migration {
   /** @type {string} */
   #driver
 
@@ -85,5 +85,3 @@ const connection = () => ({
   password: 'secret',
   database: 'postgres'
 })
-
-export { Migration }

@@ -4,7 +4,7 @@ import * as options from './query/options.js'
 
 const parse = { ...criteria, ...options }
 
-class Query {
+export class Query {
   #properties
   #system
 
@@ -68,5 +68,3 @@ class Query {
 }
 
 const LIMIT = 1024
-
-export { Query }

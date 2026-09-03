@@ -2,7 +2,7 @@
  * @param {object} object
  * @returns {[string | Symbol, any][]}
  */
-const entries = (object) => {
+export const entries = (object) => {
   /** @type {[string | Symbol, any][]} */
   const entries = Object.entries(object)
 
@@ -10,5 +10,3 @@ const entries = (object) => {
 
   return entries
 }
-
-export { entries }

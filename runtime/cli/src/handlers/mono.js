@@ -15,7 +15,7 @@ const require = createRequire(import.meta.url)
  * @param {Record<string, string | boolean | string[]>} argv
  * @return {Promise<void>}
  */
-async function mono (argv) {
+export async function mono (argv) {
   console.log('Runtime', version)
 
   const paths = find(argv.paths)
@@ -76,5 +76,3 @@ async function createServices (paths) {
 
   return services
 }
-
-export { mono }

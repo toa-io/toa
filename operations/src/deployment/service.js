@@ -1,4 +1,4 @@
-class Service {
+export class Service {
   constructor (service, image) {
     Object.assign(this, service)
 
@@ -6,5 +6,3 @@ class Service {
     this.image = image.reference
   }
 }
-
-export { Service }

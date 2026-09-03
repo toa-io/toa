@@ -1,4 +1,4 @@
-class Factory {
+export class Factory {
   /**
    *
    * @returns {toa.core.Connector}
@@ -30,5 +30,3 @@ export const deployment = (_, value) => {
     }
   }
 }
-
-export { Factory }

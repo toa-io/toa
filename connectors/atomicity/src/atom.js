@@ -7,7 +7,7 @@ import { Connector } from '@toa.io/core'
  *
  * @implements {toa.core.atomicity.Atom}
  */
-class Atom extends Connector {
+export class Atom extends Connector {
   #connection
   #name
   #interval
@@ -170,5 +170,3 @@ const LEASE = 5000
 const SLOTS = 'slots:'
 const METER = 'meter:'
 const LOCK = 'lock:'
-
-export { Atom }

@@ -19,7 +19,7 @@ const loading = {}
  * @param {string} base
  * @returns {Promise<toa.core.extensions.Factory>}
  */
-const resolve = async (reference, base = process.cwd()) => {
+export const resolve = async (reference, base = process.cwd()) => {
   const path = find(reference, base)
 
   loading[path] ??= create(path)
@@ -37,7 +37,7 @@ const resolve = async (reference, base = process.cwd()) => {
  * @param {string} base
  * @returns {toa.core.extensions.Factory}
  */
-const instance = (reference, base = process.cwd()) => {
+export const instance = (reference, base = process.cwd()) => {
   const factory = instances[find(reference, base)]
 
   if (factory === undefined) throw new Error(`Extension '${reference}' is not loaded`)
@@ -50,5 +50,3 @@ const create = async (path) => {
 
   return new Factory(boot)
 }
-
-export { resolve, instance }

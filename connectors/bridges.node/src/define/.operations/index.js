@@ -1,4 +1,2 @@
-import { define } from './define.js'
-import { extract } from './extract.js'
-
-export { define, extract }
+export { define } from './define.js'
+export { extract } from './extract.js'

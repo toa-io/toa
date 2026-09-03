@@ -1,6 +1,6 @@
 import { Observation } from './observation.js'
 
-class Effect extends Observation {
+export class Effect extends Observation {
 
   async acquire (store) {
     const { query, entity, input } = store.request
@@ -13,5 +13,3 @@ class Effect extends Observation {
   }
 
 }
-
-export { Effect }

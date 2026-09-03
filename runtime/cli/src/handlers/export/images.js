@@ -3,7 +3,7 @@ import { deployment } from '@toa.io/operations'
 
 const { Factory } = deployment
 
-const prepare = async (argv) => {
+export const prepare = async (argv) => {
   const path = find(argv.path)
   const factory = await Factory.create(path, argv.environment, { mono: argv.mono === true })
   const operator = await factory.operator()
@@ -11,5 +11,3 @@ const prepare = async (argv) => {
 
   console.log(target)
 }
-
-export { prepare }

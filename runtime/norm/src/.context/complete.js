@@ -3,7 +3,7 @@
  * @param {toa.norm.Context} context
  * @returns {void}
  */
-const complete = (context) => {
+export const complete = (context) => {
   /** @type {Set<string>} */
   const composed = new Set()
 
@@ -27,5 +27,3 @@ const complete = (context) => {
     context.compositions.push({ name, components: [component] })
   }
 }
-
-export { complete }

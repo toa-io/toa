@@ -8,7 +8,7 @@
  * Deploying without any is a decision rather than an omission, and it is spelled
  * `resources: null` — at either place.
  */
-function resources (context, values) {
+export function resources (context, values) {
   for (const unit of units(values)) {
     // `null` is an answer and `undefined` is not one, so the fallback reads only the latter
     if (unit.deployment.resources === undefined)
@@ -31,5 +31,3 @@ function * units (values) {
   for (const service of values.services ?? [])
     yield { deployment: service, subject: `Service '${service.name}'` }
 }
-
-export { resources }

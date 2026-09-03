@@ -4,7 +4,7 @@ import { Connector } from '@toa.io/core'
 import { resolve } from '@toa.io/pointer'
 import { ID } from './deployment.js'
 
-class Connection extends Connector {
+export class Connection extends Connector {
   table
 
   #locator
@@ -84,5 +84,3 @@ class Connection extends Connector {
     else return await resolve(ID, this.#locator.id)
   }
 }
-
-export { Connection }

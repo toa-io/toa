@@ -4,7 +4,7 @@ import { Connector } from './connector.js'
 /**
  * @implements {toa.core.Event}
  */
-class Event extends Connector {
+export class Event extends Connector {
   /** @type {toa.core.bindings.Emitter} */
   #emitter
   #bridge
@@ -52,5 +52,3 @@ class Event extends Connector {
     }
   }
 }
-
-export { Event }

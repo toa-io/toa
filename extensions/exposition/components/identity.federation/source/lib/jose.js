@@ -1,3 +1,1 @@
-const load = async () => await import('jose')
-
-export { load }
+export const load = async () => await import('jose')

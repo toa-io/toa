@@ -1,4 +1,4 @@
-const repeat = (fn, times) => {
+export const repeat = (fn, times) => {
   const results = []
 
   let promise = false
@@ -13,5 +13,3 @@ const repeat = (fn, times) => {
 
   return promise ? Promise.all(results) : results
 }
-
-export { repeat }

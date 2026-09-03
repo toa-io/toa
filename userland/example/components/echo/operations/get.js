@@ -1,5 +1,3 @@
-async function computation (_, context) {
+export async function computation (_, context) {
   return context.state.value
 }
-
-export { computation }

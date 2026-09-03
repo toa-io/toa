@@ -4,7 +4,7 @@ import * as schemas from '@toa.io/schemas'
 import * as boot from './index.js'
 import { span } from './span.js'
 
-const component = async (manifest) => {
+export const component = async (manifest) => {
   const locator = new Locator(manifest.name, manifest.namespace)
 
   return span(`component ${locator.id}`, () => create(manifest, locator))
@@ -70,5 +70,3 @@ async function bootOperations (manifest, context, state, preflight) {
 
   return operations
 }
-
-export { component }

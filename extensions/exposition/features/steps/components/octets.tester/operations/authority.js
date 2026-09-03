@@ -1,5 +1,3 @@
-function computation (input) {
+export function computation (input) {
   return input.authority
 }
-
-export { computation }

@@ -2,7 +2,7 @@
  * @param {any[]} array
  * @param {(any) => Promise<boolean>} test
  */
-async function filter (array, test) {
+export async function filter (array, test) {
   const output = []
   const testing = []
 
@@ -16,5 +16,3 @@ async function filter (array, test) {
 
   return output
 }
-
-export { filter }

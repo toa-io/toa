@@ -1,4 +1,4 @@
-const events = async (component) => {
+export const events = async (component) => {
   if (component.events === undefined) return
 
   const binding = await asynchronous(component.bindings)
@@ -18,5 +18,3 @@ async function asynchronous (bindings) {
 
   return undefined
 }
-
-export { events }

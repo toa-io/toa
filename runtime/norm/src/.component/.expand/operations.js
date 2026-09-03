@@ -1,6 +1,6 @@
 import { resolve } from '../../shortcuts.js'
 
-function operations (manifest) {
+export function operations (manifest) {
   if (manifest.operations === undefined) return
 
   for (const operation of Object.values(manifest.operations)) {
@@ -11,5 +11,3 @@ function operations (manifest) {
     }
   }
 }
-
-export { operations }

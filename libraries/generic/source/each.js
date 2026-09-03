@@ -1,5 +1,5 @@
 /** @type {toa.generic.Each} */
-const each = async (array, callback) => {
+export const each = async (array, callback) => {
   let i = 0
   const promises = []
 
@@ -35,5 +35,3 @@ async function setAsync (array, i, promise) {
 
   set(array, i, value)
 }
-
-export { each }

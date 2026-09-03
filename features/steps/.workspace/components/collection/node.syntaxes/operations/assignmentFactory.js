@@ -3,7 +3,7 @@ import { Assignment } from './assignmentClass.js'
 /**
  * @implements {toa.node.algorithms.Factory}
  */
-class ChangesetAssignmentFactory {
+export class ChangesetAssignmentFactory {
   #context
 
   constructor (context) {
@@ -14,5 +14,3 @@ class ChangesetAssignmentFactory {
     return new Assignment()
   }
 }
-
-export { ChangesetAssignmentFactory }

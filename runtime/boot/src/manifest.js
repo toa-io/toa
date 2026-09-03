@@ -6,7 +6,7 @@ import { Locator } from '@toa.io/core'
 
 import { span } from './span.js'
 
-const manifest = async (path, options = {}) => {
+export const manifest = async (path, options = {}) => {
   options = merge(clone(options), DEFAULTS)
 
   const manifest = await span({ name: `manifest ${basename(path)}`, attributes: { path } },
@@ -59,5 +59,3 @@ const manifest = async (path, options = {}) => {
 }
 
 const DEFAULTS = {}
-
-export { manifest }

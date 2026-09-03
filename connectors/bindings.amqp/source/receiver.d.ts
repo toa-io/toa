@@ -1,6 +1,5 @@
-export { Receiver };
 import { Connector } from '@toa.io/core';
-declare class Receiver extends Connector {
+export declare class Receiver extends Connector {
     #private;
     constructor(comm: any, label: any, group: any, receiver: any);
     open(): Promise<void>;

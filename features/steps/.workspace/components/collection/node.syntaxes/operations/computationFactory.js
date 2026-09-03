@@ -3,7 +3,7 @@ import { Computation } from './computationClass.js'
 /**
  * @implements {toa.node.algorithms.Factory}
  */
-class ComputationFactory {
+export class ComputationFactory {
   #context
 
   constructor (context) {
@@ -14,5 +14,3 @@ class ComputationFactory {
     return new Computation()
   }
 }
-
-export { ComputationFactory }

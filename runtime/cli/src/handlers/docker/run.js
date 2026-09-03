@@ -12,7 +12,7 @@ const execute = promisify(exec)
  * @param {string} [envFile]
  * @return {Promise<void>}
  */
-async function run (repository, command, envFile) {
+export async function run (repository, command, envFile) {
   if (envFile === undefined) envFile = await findUp('.env')
 
   const envArgs = envFile === undefined ? [] : ['--env-file', envFile]
@@ -33,5 +33,3 @@ async function run (repository, command, envFile) {
 
   await execute(`docker rmi --force ${id}`)
 }
-
-export { run }

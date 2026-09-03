@@ -1,4 +1,4 @@
-const source = {
+export const source = {
   entity: {
     schema: {
       properties: {
@@ -64,7 +64,7 @@ const source = {
   }
 }
 
-const target = {
+export const target = {
   entity: {
     schema: {
       properties: {
@@ -158,5 +158,3 @@ const target = {
     }
   }
 }
-
-export { source, target }

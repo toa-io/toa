@@ -1,4 +1,2 @@
-import { deployment } from './deployment.js'
-import { Factory } from './factory.js'
-
-export { deployment, Factory }
+export { deployment } from './deployment.js'
+export { Factory } from './factory.js'

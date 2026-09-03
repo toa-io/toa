@@ -7,7 +7,7 @@ const { Factory } = deployment
  * @param {{ path: string, target: string, environment: string }} argv
  * @returns {Promise<void>}
  */
-const secrets = async (argv) => {
+export const secrets = async (argv) => {
   const path = find(argv.path)
   const factory = await Factory.create(path, argv.environment)
   const operator = await factory.operator()
@@ -36,5 +36,3 @@ const secrets = async (argv) => {
       console.log('  ' + key + (optional ? ' (optional)' : ''))
   }
 }
-
-export { secrets }

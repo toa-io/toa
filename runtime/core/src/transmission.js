@@ -1,7 +1,7 @@
 import { Connector } from './connector.js'
 import { TransmissionException } from './exceptions.js'
 
-class Transmission extends Connector {
+export class Transmission extends Connector {
   #bindings
 
   constructor (bindings) {
@@ -36,5 +36,3 @@ class Transmission extends Connector {
     return reply
   }
 }
-
-export { Transmission }

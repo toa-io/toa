@@ -1,6 +1,6 @@
 import { swap } from '@toa.io/generic'
 
-const codes = {
+export const codes = {
   System: 0,
 
   Contract: 200,
@@ -26,7 +26,7 @@ const codes = {
 /**
  * @implements {toa.core.Exception}
  */
-class Exception {
+export class Exception {
   code
   message
 
@@ -39,7 +39,7 @@ class Exception {
   }
 }
 
-class SystemException extends Exception {
+export class SystemException extends Exception {
   stack
 
   constructor (error) {
@@ -49,7 +49,7 @@ class SystemException extends Exception {
   }
 }
 
-class ContractException extends Exception {
+export class ContractException extends Exception {
   constructor (code, error, cause) {
     super(code || codes.Contract, typeof error === 'string' ? error : error?.message, cause)
 
@@ -60,19 +60,19 @@ class ContractException extends Exception {
   }
 }
 
-class RequestContractException extends ContractException {
+export class RequestContractException extends ContractException {
   constructor (error, cause) { super(codes.RequestContract, error, cause) }
 }
 
-class ResponseContractException extends ContractException {
+export class ResponseContractException extends ContractException {
   constructor (error, cause) { super(codes.ResponseContract, error, cause) }
 }
 
-class EntityContractException extends ContractException {
+export class EntityContractException extends ContractException {
   constructor (error, cause) { super(codes.EntityContract, error, cause) }
 }
 
-class EntityGuardException extends ContractException {
+export class EntityGuardException extends ContractException {
   constructor (name, cause) { super(codes.EntityGuard, name, cause) }
 }
 
@@ -98,39 +98,17 @@ function derive (name) {
   }
 }
 
-const RequestSyntaxException = derive('RequestSyntax')
-const RequestConflictException = derive('RequestConflict')
-const QuerySyntaxException = derive('QuerySyntax')
-const StateException = derive('State')
-const StateNotFoundException = derive('StateNotFound')
-const StatePreconditionException = derive('StatePrecondition')
-const StateConcurrencyException = derive('StateConcurrency')
-const StateInitializationException = derive('StateInitialization')
-const DuplicateException = derive('Duplicate')
-const CommunicationException = derive('Communication')
-const TransmissionException = derive('Transmission')
+export const RequestSyntaxException = derive('RequestSyntax')
+export const RequestConflictException = derive('RequestConflict')
+export const QuerySyntaxException = derive('QuerySyntax')
+export const StateException = derive('State')
+export const StateNotFoundException = derive('StateNotFound')
+export const StatePreconditionException = derive('StatePrecondition')
+export const StateConcurrencyException = derive('StateConcurrency')
+export const StateInitializationException = derive('StateInitialization')
+export const DuplicateException = derive('Duplicate')
+export const CommunicationException = derive('Communication')
+export const TransmissionException = derive('Transmission')
 
 export const names = swap(codes)
 // #endregion
-
-export {
-  Exception,
-  SystemException,
-  ContractException,
-  RequestContractException,
-  ResponseContractException,
-  EntityContractException,
-  EntityGuardException,
-  RequestSyntaxException,
-  RequestConflictException,
-  QuerySyntaxException,
-  StateException,
-  StateNotFoundException,
-  StatePreconditionException,
-  StateConcurrencyException,
-  StateInitializationException,
-  DuplicateException,
-  CommunicationException,
-  TransmissionException,
-  codes
-}

@@ -8,7 +8,7 @@ import { component } from './component.js'
 
 import { dependencies, normalize, complete, dereference, expand, validate } from './.context/index.js'
 
-const context = async (root, environment = process.env.TOA_ENV) => {
+export const context = async (root, environment = process.env.TOA_ENV) => {
   const path = resolve(root, CONTEXT)
   const context = /** @type {toa.norm.Context} */ await read(path)
 
@@ -51,5 +51,3 @@ async function read (path) {
 
   return jsyaml.load(jsyaml.dump(object, { noRefs: true, lineWidth: -1 }))
 }
-
-export { context }

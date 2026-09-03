@@ -2,7 +2,7 @@ import assert from 'node:assert'
 import { console, current, decode, run } from 'openspan'
 import { Connector } from './connector.js'
 
-class Component extends Connector {
+export class Component extends Connector {
   locator
 
   /** @protected */
@@ -79,5 +79,3 @@ class Component extends Connector {
     return options
   }
 }
-
-export { Component }

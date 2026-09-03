@@ -5,7 +5,7 @@ import { name } from './queues.js'
 /**
  * @implements {toa.core.bindings.Broadcast}
  */
-class Broadcast extends Connector {
+export class Broadcast extends Connector {
   /** @type {toa.amqp.Communication} */
   #comm
 
@@ -37,5 +37,3 @@ class Broadcast extends Connector {
     await this.#comm.consume(exchange, this.#group, callback)
   }
 }
-
-export { Broadcast }

@@ -1,6 +1,6 @@
 import { console, flush } from 'openspan'
 
-function graceful (connector) {
+export function graceful (connector) {
   ['SIGTERM', 'SIGINT']
     .forEach(signal => process.once(signal, async () => {
       console.info('Shutting down', { signal })
@@ -13,5 +13,3 @@ function graceful (connector) {
       process.exit(0)
     }))
 }
-
-export { graceful }

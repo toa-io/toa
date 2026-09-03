@@ -1,7 +1,7 @@
 import { component as load } from '../../component.js'
 import { load as loadDependency } from './load.js'
 
-const extensions = async (context) => {
+export const extensions = async (context) => {
   const extensions = {}
   const components = context.components?.slice() ?? []
   const extracted = await extractExtensionComponents(components, extensions, context.annotations)
@@ -55,5 +55,3 @@ async function extractExtensionComponents (components, extensions, annotations) 
 
   return extracted.concat(deeper)
 }
-
-export { extensions }

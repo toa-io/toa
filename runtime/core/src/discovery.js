@@ -1,7 +1,7 @@
 import { console } from 'openspan'
 import { Connector } from './connector.js'
 
-class Discovery extends Connector {
+export class Discovery extends Connector {
   #lookup
   #lookups
 
@@ -44,5 +44,3 @@ class Discovery extends Connector {
 }
 
 const INTERVAL = 5000
-
-export { Discovery }

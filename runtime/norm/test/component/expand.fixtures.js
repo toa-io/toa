@@ -1,4 +1,4 @@
-const source = {
+export const source = {
   path: import.meta.dirname, // `version` hashes the component directory
   entity: {
     schema: {
@@ -62,7 +62,7 @@ const source = {
   }
 }
 
-const target = {
+export const target = {
   entity: {
     schema: {
       type: 'object',
@@ -136,5 +136,3 @@ const target = {
     }
   }
 }
-
-export { source, target }

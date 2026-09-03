@@ -4,7 +4,7 @@ import { console } from 'openspan'
  * Abstract connections hierarchy
  * @implements {toa.core.Connector}
  */
-class Connector {
+export class Connector {
   /** @type {Array<Connector>} */
   #dependencies = []
 
@@ -188,5 +188,3 @@ class Connector {
 
 const DELAY = 5000
 const TRACE_BOOT = process.env.TOA_BOOT_TRACE === '1'
-
-export { Connector }

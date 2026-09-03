@@ -9,7 +9,7 @@
  * // returns { foo: 'baz' }
  * convolve({ foo: 'bar', 'foo@staging': 'baz' }, 'staging')
  */
-const convolve = (object, discriminator) => {
+export const convolve = (object, discriminator) => {
   if (typeof object !== 'object' || object === null) return object
 
   for (let [key, value] of Object.entries(object)) {
@@ -29,5 +29,3 @@ const convolve = (object, discriminator) => {
 }
 
 const MARKER = '@'
-
-export { convolve }

@@ -1,7 +1,7 @@
 import { Connector } from '@toa.io/core'
 import { Conveyor } from '@toa.io/conveyor'
 
-class Client extends Connector {
+export class Client extends Connector {
   /** @type {string} */
   #table
 
@@ -35,5 +35,3 @@ class Client extends Connector {
     return this.#connection.update(this.#table, criteria, object)
   }
 }
-
-export { Client }

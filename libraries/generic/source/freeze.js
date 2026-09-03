@@ -1,4 +1,4 @@
-const freeze = (value) => {
+export const freeze = (value) => {
   if ((typeof value === 'object' && value !== null) || typeof value === 'function') {
     Object.freeze(value)
     Object.getOwnPropertyNames(value).forEach(key => freeze(value[key]))
@@ -6,5 +6,3 @@ const freeze = (value) => {
 
   return value
 }
-
-export { freeze }

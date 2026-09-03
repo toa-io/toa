@@ -1,4 +1,4 @@
-function receivers (component) {
+export function receivers (component) {
   if (component.receivers === undefined) return
 
   const receivers = component.receivers
@@ -16,5 +16,3 @@ function receivers (component) {
     receivers[newKey] = value
   }
 }
-
-export { receivers }

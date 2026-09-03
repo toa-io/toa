@@ -1,4 +1,4 @@
-class Computation {
+export class Computation {
   #context
 
   async mount (context) {
@@ -9,5 +9,3 @@ class Computation {
     return this.#context.configuration.signal
   }
 }
-
-export { Computation }

@@ -1,7 +1,5 @@
-import { remote } from './remote.js'
-import { component } from './component.js'
-import { composition } from './composition.js'
-import { copy } from './copy.js'
-import { load } from './load.js'
-
-export { remote, component, composition, copy, load }
+export { remote } from './remote.js'
+export { component } from './component.js'
+export { composition } from './composition.js'
+export { copy } from './copy.js'
+export { load } from './load.js'

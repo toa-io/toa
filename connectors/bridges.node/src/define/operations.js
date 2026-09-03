@@ -2,7 +2,7 @@ import * as load from '../load.js'
 import * as algorithm from './.operations/index.js'
 
 /** @type {toa.node.define.Algorithms} */
-const operations = async (root) => {
+export const operations = async (root) => {
   const modules = await load.operations(root)
 
   /** @type {toa.node.define.algorithms.List} */
@@ -17,6 +17,4 @@ const operations = async (root) => {
   return algorithms
 }
 
-const extract = (module) => algorithm.extract(module)
-
-export { operations, extract }
+export const extract = (module) => algorithm.extract(module)

@@ -1,6 +1,6 @@
 import { resolve } from 'node:path'
 
-const connectors = (context, extracted) => {
+export const connectors = (context, extracted) => {
   const connectors = {}
 
   const components = (context.components === undefined
@@ -45,5 +45,3 @@ const connectors = (context, extracted) => {
 
   return connectors
 }
-
-export { connectors }

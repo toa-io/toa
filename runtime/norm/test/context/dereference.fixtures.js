@@ -20,7 +20,7 @@ const component = (id) => {
   }
 }
 
-const context = {
+export const context = {
   name: 'test',
   description: 'context fixture',
   version: '0.0.0',
@@ -39,7 +39,7 @@ const context = {
   ]
 }
 
-const expected = clone(context)
+export const expected = clone(context)
 
 expected.compositions = [
   {
@@ -51,5 +51,3 @@ expected.compositions = [
     components: [component('d.c'), component('a.b')]
   }
 ]
-
-export { context, expected }

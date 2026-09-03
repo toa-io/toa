@@ -15,8 +15,6 @@ const client = {
   destroy: mock.fn(chain)
 }
 
-const knex = mock.fn(chain)
+export const knex = mock.fn(chain)
 
 knex.result = (value) => (result = value)
-
-export { knex }

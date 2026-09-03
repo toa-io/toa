@@ -1,6 +1,6 @@
 import { Operation } from './operation.js'
 
-class Assignment extends Operation {
+export class Assignment extends Operation {
   async acquire (store) {
     store.scope = this.scope.changeset(store.request.query)
     store.state = store.scope.get()
@@ -26,5 +26,3 @@ class Assignment extends Operation {
     }
   }
 }
-
-export { Assignment }

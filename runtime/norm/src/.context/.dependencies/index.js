@@ -1,5 +1,3 @@
-import { connectors } from './connectors.js'
-import { extensions } from './extensions.js'
-import { resolve } from './resolve.js'
-
-export { connectors, extensions, resolve }
+export { connectors } from './connectors.js'
+export { extensions } from './extensions.js'
+export { resolve } from './resolve.js'

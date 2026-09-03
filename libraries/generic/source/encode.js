@@ -1,11 +1,11 @@
-function encode (input) {
+export function encode (input) {
   if (typeof input !== 'string')
     input = JSON.stringify(input)
 
   return Buffer.from(input).toString(ENCODING)
 }
 
-function decode (input) {
+export function decode (input) {
   const string = Buffer.from(input, ENCODING).toString()
 
   try {
@@ -17,5 +17,3 @@ function decode (input) {
 
 /** @type {BufferEncoding} */
 const ENCODING = 'base64'
-
-export { encode, decode }

@@ -1,6 +1,6 @@
 import { SystemException } from '../exceptions.js'
 
-class Contract {
+export class Contract {
   schema
 
   constructor (schema) {
@@ -16,5 +16,3 @@ class Contract {
 
   static Exception = SystemException
 }
-
-export { Contract }

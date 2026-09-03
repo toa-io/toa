@@ -3,7 +3,7 @@ import { Connector } from './connector.js'
 /**
  * @implements {toa.core.Reflection}
  */
-class Reflection extends Connector {
+export class Reflection extends Connector {
   /** @type {toa.core.reflection.Source} */
   #source
 
@@ -22,5 +22,3 @@ class Reflection extends Connector {
     this.value = await this.#source()
   }
 }
-
-export { Reflection }

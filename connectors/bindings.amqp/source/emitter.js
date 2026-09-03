@@ -6,7 +6,7 @@ import { name } from './queues.js'
 /**
  * @implements {toa.core.bindings.Emitter}
  */
-class Emitter extends Connector {
+export class Emitter extends Connector {
   /** @type {string} */
   #exchange
 
@@ -30,5 +30,3 @@ class Emitter extends Connector {
 }
 
 const PROPERTIES = { headers: { 'toa.io/amqp': '0' } }
-
-export { Emitter }

@@ -3,7 +3,7 @@
  * @param {toa.deployment.Dependency} dependency
  * @returns {toa.deployment.Declaration}
  */
-const declare = (context, dependency) => {
+export const declare = (context, dependency) => {
   const { references } = dependency
   const { name, description, version } = context
 
@@ -23,5 +23,3 @@ const DECLARATION = {
   apiVersion: 'v2',
   type: 'application'
 }
-
-export { declare }

@@ -3,7 +3,7 @@ import { Connector } from './connector.js'
 /**
  * @implements {toa.core.Context}
  */
-class Context extends Connector {
+export class Context extends Connector {
   env
   name
   aspects
@@ -55,5 +55,3 @@ class Context extends Connector {
     return remote
   }
 }
-
-export { Context }

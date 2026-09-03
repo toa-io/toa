@@ -1,6 +1,6 @@
 import { addVariables } from './variables.js'
 
-function services (services, variables, probe, ingress) {
+export function services (services, variables, probe, ingress) {
   for (const service of services) {
     addVariables(service, variables)
 
@@ -32,5 +32,3 @@ function expose (service, ingress = {}) {
   if (service.port === undefined)
     throw new Error(`Service '${service.name}' declares an ingress, but no port.`)
 }
-
-export { services }

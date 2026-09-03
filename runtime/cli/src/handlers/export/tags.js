@@ -7,7 +7,7 @@ const { Factory } = deployment
  * @param {{ path: string, target: string, environment: string }} argv
  * @returns {Promise<void>}
  */
-const tags = async (argv) => {
+export const tags = async (argv) => {
   const path = find(argv.path)
   const factory = await Factory.create(path, argv.environment, { mono: argv.mono === true })
   const operator = await factory.operator()
@@ -16,5 +16,3 @@ const tags = async (argv) => {
   for (const tag of tags)
     console.log(tag)
 }
-
-export { tags }

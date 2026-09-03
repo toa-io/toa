@@ -1,7 +1,7 @@
 import { generate } from '@toa.io/generic'
 
 /** @type {toa.node.shortcut} */
-function state (context, aspect) {
+export function state (context, aspect) {
   context.state = generate((segs, value) => {
     if (value === undefined) return get(aspect, segs)
     else set(aspect, segs, value)
@@ -48,5 +48,3 @@ function build (segs, value) {
 
   return object
 }
-
-export { state }

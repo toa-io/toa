@@ -1,6 +1,6 @@
 import { Effect } from './effectClass.js'
 
-class EffectFactory {
+export class EffectFactory {
   #context
 
   constructor (context) {
@@ -11,5 +11,3 @@ class EffectFactory {
     return new Effect()
   }
 }
-
-export { EffectFactory }

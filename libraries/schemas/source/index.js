@@ -1,5 +1,3 @@
-import { schema } from './schema.js'
-import { namespace } from './namespace.js'
-import { is } from './validator.js'
-
-export { schema, namespace, is }
+export { schema } from './schema.js'
+export { namespace } from './namespace.js'
+export { is } from './validator.js'

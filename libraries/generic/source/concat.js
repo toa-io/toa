@@ -1,4 +1,2 @@
 /** @type {toa.generic.Concat} */
-const concat = (...args) => (args.findIndex(arg => arg === undefined || arg === null) === -1) ? args.join('') : ''
-
-export { concat }
+export const concat = (...args) => (args.findIndex(arg => arg === undefined || arg === null) === -1) ? args.join('') : ''

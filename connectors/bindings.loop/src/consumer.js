@@ -1,6 +1,6 @@
 import { Connector } from '@toa.io/core'
 
-class Consumer extends Connector {
+export class Consumer extends Connector {
   #bindings
   #locator
   #endpoint
@@ -20,5 +20,3 @@ class Consumer extends Connector {
     else return invoke(request)
   }
 }
-
-export { Consumer }

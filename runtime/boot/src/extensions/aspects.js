@@ -4,7 +4,7 @@ import { instance } from './resolve.js'
  * @param {toa.norm.Component} manifest
  * @returns {toa.core.extensions.Aspect[]}
  */
-const aspects = (manifest) => {
+export const aspects = (manifest) => {
   const aspects = []
 
   if (manifest.extensions === undefined) return aspects
@@ -22,5 +22,3 @@ const aspects = (manifest) => {
 
   return aspects
 }
-
-export { aspects }

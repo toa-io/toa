@@ -2,7 +2,7 @@ import { Readable } from 'node:stream'
 import { current, encode } from 'openspan'
 import { Connector } from './connector.js'
 
-class Call extends Connector {
+export class Call extends Connector {
   #transmitter
   #contract
   #source
@@ -66,5 +66,3 @@ class RemoteError extends Error {
     Object.assign(this, error)
   }
 }
-
-export { Call }

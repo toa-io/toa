@@ -3,7 +3,7 @@ import { Receiver, Locator } from '@toa.io/core'
 import * as boot from './index.js'
 import * as extensions from './extensions/index.js'
 
-const receivers = async (manifest, component) => {
+export const receivers = async (manifest, component) => {
   if (manifest.receivers === undefined) return []
 
   const receivers = []
@@ -34,7 +34,7 @@ const receivers = async (manifest, component) => {
   return receivers
 }
 
-async function receive (label, group, callback) {
+export async function receive (label, group, callback) {
   if (callback === undefined) {
     callback = group
     group = undefined
@@ -58,5 +58,3 @@ async function resolveBinding (locator, label) {
 
   return events[event].binding
 }
-
-export { receivers, receive }

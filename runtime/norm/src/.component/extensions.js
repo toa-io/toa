@@ -3,7 +3,7 @@ import { resolve } from '../shortcuts.js'
 
 const cache = {}
 
-const extensions = async (manifest) => {
+export const extensions = async (manifest) => {
   manifest.extensions = Object.assign({}, PREDEFINED, manifest.extensions)
 
   const extensions = manifest.extensions
@@ -36,5 +36,3 @@ const PREDEFINED = {
   '@toa.io/extensions.fetch': null,
   '@toa.io/extensions.introspection': null
 }
-
-export { extensions }

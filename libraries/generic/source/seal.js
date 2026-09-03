@@ -1,4 +1,4 @@
-const seal = (value) => {
+export const seal = (value) => {
   if ((typeof value === 'object' && value !== null) || typeof value === 'function') {
     Object.seal(value)
     Object.getOwnPropertyNames(value).forEach(key => seal(value[key]))
@@ -6,5 +6,3 @@ const seal = (value) => {
 
   return value
 }
-
-export { seal }

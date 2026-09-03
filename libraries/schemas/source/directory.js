@@ -7,7 +7,7 @@ import * as jsyaml from 'js-yaml'
  * @param {string} path
  * @returns {object[]}
  */
-const readDirectory = (path) => {
+export const readDirectory = (path) => {
   const pattern = join(path, '**', '*' + EXTENSION)
   const files = glob.sync(pattern, GLOB)
 
@@ -39,5 +39,3 @@ const calculateID = (root, path) => {
 const EXTENSION = '.cos.yaml'
 
 const GLOB = { onlyFiles: true, absolute: true }
-
-export { readDirectory }

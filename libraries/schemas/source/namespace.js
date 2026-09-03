@@ -24,7 +24,7 @@ class Namespace {
   }
 }
 
-const namespace = (path) => {
+export const namespace = (path) => {
   const entries = typeof path === 'string' ? readDirectory(path) : path.map((schema) => ({ schema }))
   const schemas = entries.map(transform)
   const validator = ajv(schemas)
@@ -42,5 +42,3 @@ function transform (entry) {
 
   return schema
 }
-
-export { namespace }

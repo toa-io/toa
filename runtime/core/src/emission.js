@@ -1,6 +1,6 @@
 import { Connector } from './connector.js'
 
-class Emission extends Connector {
+export class Emission extends Connector {
   #events
 
   constructor (events) {
@@ -17,5 +17,3 @@ class Emission extends Connector {
     await Promise.all(emission)
   }
 }
-
-export { Emission }

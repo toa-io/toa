@@ -4,7 +4,7 @@ import * as workspace from './workspace.js'
 /**
  * @implements {toa.deployment.Registry}
  */
-class Registry {
+export class Registry {
   #scope
 
   #registry
@@ -163,5 +163,3 @@ class Registry {
 }
 
 const BUILDER = 'toa'
-
-export { Registry }

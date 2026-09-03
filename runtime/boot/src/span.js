@@ -14,6 +14,4 @@ if (enabled) traces({ exporters: { console: {} } })
  * @param {() => Promise<any>} task
  * @returns {Promise<any>}
  */
-const span = async (options, task) => enabled ? console.span(options, task) : task()
-
-export { span }
+export const span = async (options, task) => enabled ? console.span(options, task) : task()

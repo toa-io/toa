@@ -1,7 +1,5 @@
 import { resolve } from '../../shortcuts.js'
 
-function bridge (manifest) {
+export function bridge (manifest) {
   manifest.bridge = resolve(manifest.bridge)
 }
-
-export { bridge }

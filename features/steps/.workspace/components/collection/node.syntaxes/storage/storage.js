@@ -4,7 +4,7 @@ import { newid } from '@toa.io/generic'
 /**
  * @implements {toa.core.Storage}
  */
-class Storage extends Connector {
+export class Storage extends Connector {
   async get (_) {
     return { id: newid(), _version: 1 }
   }
@@ -17,5 +17,3 @@ class Storage extends Connector {
     return { id: newid(), _version: 1 }
   }
 }
-
-export { Storage }

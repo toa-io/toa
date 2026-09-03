@@ -5,7 +5,7 @@ import { to, from } from './record.js'
 import { Outbox } from './outbox.js'
 import { ReturnDocument } from 'mongodb'
 
-class Storage extends Connector {
+export class Storage extends Connector {
   #client
 
   /** @type {import('mongodb').Collection} */
@@ -498,5 +498,3 @@ async function retriable (error, attempt) {
 }
 
 const LAST_ATTEMPT = 9
-
-export { Storage }

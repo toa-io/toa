@@ -2,7 +2,7 @@
  * @param {toa.deployment.Composition[]} compositions
  * @returns {string[]}
  */
-const components = (compositions) => {
+export const components = (compositions) => {
   /** @type {Set<string>} */
   const components = new Set()
 
@@ -14,5 +14,3 @@ const components = (compositions) => {
 
   return Array.from(components)
 }
-
-export { components }

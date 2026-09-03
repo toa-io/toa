@@ -5,7 +5,7 @@ import { createHash } from 'node:crypto'
 import { Image } from './image.js'
 import { declare } from './format.js'
 
-class Mono extends Image {
+export class Mono extends Image {
   dockerfile = join(import.meta.dirname, 'mono.Dockerfile')
 
   #image
@@ -70,5 +70,3 @@ class Mono extends Image {
     return context
   }
 }
-
-export { Mono }

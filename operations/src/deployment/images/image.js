@@ -9,7 +9,7 @@ import { mkdir } from 'node:fs/promises'
  * @implements {toa.deployment.images.Image}
  * @abstract
  */
-class Image {
+export class Image {
   context
   reference
   dockerfile
@@ -119,6 +119,4 @@ function createArguments (variables) {
   return args.join('\n')
 }
 
-const RUNTIME_IMAGE = 'ghcr.io/toa-io/runtime'
-
-export { Image, RUNTIME_IMAGE }
+export const RUNTIME_IMAGE = 'ghcr.io/toa-io/runtime'

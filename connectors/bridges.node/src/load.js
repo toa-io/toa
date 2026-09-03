@@ -2,10 +2,10 @@ import { basename, extname, resolve } from 'node:path'
 import { pathToFileURL } from 'node:url'
 import glob from 'fast-glob'
 
-const operation = (root, name) => load(root, OPERATIONS_DIRECTORY, name)
-const event = (root, name) => load(root, EVENTS_DIRECTORY, name)
-const receiver = (root, name) => load(root, RECEIVERS_DIRECTORY, name)
-const guard = (root, name) => load(root, GUARDS_DIRECTORY, name)
+export const operation = (root, name) => load(root, OPERATIONS_DIRECTORY, name)
+export const event = (root, name) => load(root, EVENTS_DIRECTORY, name)
+export const receiver = (root, name) => load(root, RECEIVERS_DIRECTORY, name)
+export const guard = (root, name) => load(root, GUARDS_DIRECTORY, name)
 
 const scan = (directory) => async (root) => {
   const modules = await find(root, directory)
@@ -63,5 +63,3 @@ export const events = scan(EVENTS_DIRECTORY)
 export const receivers = scan(RECEIVERS_DIRECTORY)
 export const guards = scan(GUARDS_DIRECTORY)
 export const rcs = scan(RC_DIRECTORY)
-
-export { operation, event, receiver, guard }

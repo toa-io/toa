@@ -1,4 +1,4 @@
-async function computation (input, context) {
+export async function computation (input, context) {
   const {
     a,
     b
@@ -6,5 +6,3 @@ async function computation (input, context) {
 
   return `${a} ${b}`
 }
-
-export { computation }

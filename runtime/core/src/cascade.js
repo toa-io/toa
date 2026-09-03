@@ -1,6 +1,6 @@
 import { Connector } from './connector.js'
 
-class Cascade extends Connector {
+export class Cascade extends Connector {
   // #bridges
   #last
 
@@ -32,5 +32,3 @@ class Cascade extends Connector {
     return this.#last.execute(...args)
   }
 }
-
-export { Cascade }

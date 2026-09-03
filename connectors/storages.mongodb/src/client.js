@@ -15,7 +15,7 @@ import { MongoClient } from 'mongodb'
  */
 const INSTANCES = {}
 
-class Client extends Connector {
+export class Client extends Connector {
   name
 
   /**
@@ -232,5 +232,3 @@ const OPTIONS = {
 
 const ALREADY_EXISTS = 48
 const OUTBOX = '_outbox'
-
-export { Client }

@@ -1,4 +1,4 @@
-function addVariables (composition, variables, keys = composition.components) {
+export function addVariables (composition, variables, keys = composition.components) {
   composition.variables ??= []
 
   const used = new Set(composition.variables.map((variable) => variable.name))
@@ -15,5 +15,3 @@ function addVariables (composition, variables, keys = composition.components) {
     }
   }
 }
-
-export { addVariables }

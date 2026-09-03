@@ -4,7 +4,7 @@ import { resolve } from './resolve.js'
  * @param {toa.norm.Component} manifest
  * @returns {toa.core.Connector[]}
  */
-const tenants = async (manifest) => {
+export const tenants = async (manifest) => {
   const tenants = []
 
   if (manifest.extensions === undefined) return tenants
@@ -21,5 +21,3 @@ const tenants = async (manifest) => {
 
   return tenants
 }
-
-export { tenants }

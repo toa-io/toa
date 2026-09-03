@@ -14,7 +14,7 @@ import { dirname, join, parse } from 'node:path'
  * @param {string} target where it was copied
  * @param {string} name
  */
-async function declare (source, target, name) {
+export async function declare (source, target, name) {
   if (existsSync(join(target, MANIFEST))) return
 
   await writeFile(join(target, MANIFEST),
@@ -28,7 +28,7 @@ async function declare (source, target, name) {
  * @param {string} directory
  * @returns {'module' | 'commonjs'}
  */
-function format (directory) {
+export function format (directory) {
   const { root } = parse(directory)
 
   let current = directory
@@ -46,5 +46,3 @@ function format (directory) {
 }
 
 const MANIFEST = 'package.json'
-
-export { declare, format }

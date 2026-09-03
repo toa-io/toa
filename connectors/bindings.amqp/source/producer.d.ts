@@ -1,6 +1,5 @@
-export { Producer };
 import { Connector } from '@toa.io/core';
-declare class Producer extends Connector {
+export declare class Producer extends Connector {
     #private;
     constructor(comm: any, locator: any, endpoints: any, component: any);
     open(): Promise<void>;

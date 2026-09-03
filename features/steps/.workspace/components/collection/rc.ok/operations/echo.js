@@ -1,4 +1,4 @@
-class Computation {
+export class Computation {
   ok
 
   mount (ctx) {
@@ -9,5 +9,3 @@ class Computation {
     return this.ok
   }
 }
-
-export { Computation }

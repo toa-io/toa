@@ -1,7 +1,7 @@
 import { EntityContractException, EntityGuardException } from '../exceptions.js'
 import { newid } from './newid.js'
 
-class Entity {
+export class Entity {
   deleted = false
   #schema
   #guards
@@ -117,5 +117,3 @@ class Entity {
     this.#state = value
   }
 }
-
-export { Entity }

@@ -7,7 +7,7 @@ import { shortcuts } from '@toa.io/norm'
 // a shortcut resolves to a package name, which is not a path
 const require = createRequire(import.meta.url)
 
-const service = async (ref) => {
+export const service = async (ref) => {
   const path = shortcuts.resolve(ref)
   const { Factory } = await import(pathToFileURL(require.resolve(path)).href)
   const factory = new Factory(boot)
@@ -19,5 +19,3 @@ const service = async (ref) => {
 
   return service
 }
-
-export { service }

@@ -1,6 +1,6 @@
 import { generate } from 'randomstring'
 
-const operations = {
+export const operations = {
   namespace: 'dummies',
   name: 'dummy',
   path: import.meta.dirname,
@@ -20,5 +20,3 @@ const operations = {
     }
   }
 }
-
-export { operations }

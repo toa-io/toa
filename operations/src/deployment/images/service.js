@@ -7,7 +7,7 @@ import fs from 'fs-extra'
 // a service is named the way a package is, and its directory is where it lives
 const require = createRequire(import.meta.url)
 
-class Service extends Image {
+export class Service extends Image {
   dockerfile = join(import.meta.dirname, 'service.Dockerfile')
 
   /**
@@ -72,5 +72,3 @@ class Service extends Image {
 const find = (reference) => {
   return dirname(require.resolve(join(reference, 'package.json')))
 }
-
-export { Service }

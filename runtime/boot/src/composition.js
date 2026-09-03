@@ -5,7 +5,7 @@ import { version } from '@toa.io/runtime'
 import * as boot from './index.js'
 import { span } from './span.js'
 
-async function composition (paths, options) {
+export async function composition (paths, options) {
   options = Object.assign({}, options)
 
   return span('boot composition', async () => {
@@ -87,5 +87,3 @@ async function composition (paths, options) {
     }
   })
 }
-
-export { composition }

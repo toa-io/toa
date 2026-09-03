@@ -34,6 +34,4 @@ class Aspect extends Connector {
 }
 
 /** @param {string} group */
-const atom = (group) => new Aspect(boot.atomicity(group))
-
-export { atom }
+export const atom = (group) => new Aspect(boot.atomicity(group))

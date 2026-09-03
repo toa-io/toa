@@ -4,7 +4,7 @@
  * @param {...string} [substitutions]
  * @returns {string}
  */
-function echo (input, argument = process.env, ...substitutions) {
+export function echo (input, argument = process.env, ...substitutions) {
   if (typeof argument === 'string') return array(input, [argument, ...substitutions])
   else if (Array.isArray(argument)) return array(input, argument)
   else return object(input, /** @type {Record<string, string>} */ argument)
@@ -30,5 +30,3 @@ function array (input, array) {
 
 const VARIABLE = /\${([A-Za-z_]{0,32})}/g
 const INDEX = /\{(\d)}/g
-
-export { echo }

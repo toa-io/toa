@@ -7,7 +7,7 @@ const parse = { ..._criteria, ..._options }
  * @param {toa.core.storages.Query} query
  * @returns {{criteria: Object, options: Object}}
  */
-const translate = (query) => {
+export const translate = (query) => {
   const result = {
     criteria: query?.criteria === undefined ? {} : parse.criteria(query.criteria),
     options: query?.options === undefined ? {} : parse.options(query.options),
@@ -28,5 +28,3 @@ const translate = (query) => {
 
   return result
 }
-
-export { translate }

@@ -2,7 +2,7 @@ import { Exposition, Locator } from '@toa.io/core'
 
 import * as boot from './index.js'
 
-const exposition = async (manifest) => {
+export const exposition = async (manifest) => {
   const locator = new Locator('', '')
   const exposition = new Exposition(locator, manifest)
   const producers = boot.bindings.expose(exposition)
@@ -11,5 +11,3 @@ const exposition = async (manifest) => {
 
   return producers
 }
-
-export { exposition }

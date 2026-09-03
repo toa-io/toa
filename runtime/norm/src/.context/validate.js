@@ -8,8 +8,6 @@ const path = resolve(import.meta.dirname, 'schema.yaml')
 const object = parseYAML(readFileSync(path, 'utf8'))
 const schema = schemas.schema(object)
 
-const validate = (context) => {
+export const validate = (context) => {
   schema.validate(context)
 }
-
-export { validate }

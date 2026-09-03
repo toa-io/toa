@@ -5,7 +5,7 @@ import { dirname, join } from 'node:path'
 /**
  * @param {string} name
  */
-const cli = async (name) => {
+export const cli = async (name) => {
   const path = join(ROOT, name)
   const module = await import(pathToFileURL(path).href)
 
@@ -14,5 +14,3 @@ const cli = async (name) => {
 
 const require = createRequire(import.meta.url)
 const ROOT = join(dirname(require.resolve('@toa.io/cli')), 'handlers')
-
-export { cli }

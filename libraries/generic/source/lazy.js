@@ -1,5 +1,5 @@
 /** @type {toa.generic.lazy} */
-const lazy = (context, initializers, method) => {
+export const lazy = (context, initializers, method) => {
   if (context[LOCK] === undefined) context[LOCK] = Symbol('methods locking key')
   if (!Array.isArray(initializers)) initializers = [initializers]
 
@@ -73,5 +73,3 @@ const reset = (context) => {
 const LOCK = Symbol('context locking key')
 
 lazy.reset = reset
-
-export { lazy }

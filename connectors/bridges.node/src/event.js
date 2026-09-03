@@ -3,7 +3,7 @@ import { Connector } from '@toa.io/core'
 /**
  * @implements {toa.core.bridges.Event}
  */
-class Event extends Connector {
+export class Event extends Connector {
   #event
   #context
 
@@ -19,5 +19,3 @@ class Event extends Connector {
   condition = async (...args) => this.#event.condition(...args, this.#context)
   payload = async (...args) => this.#event.payload(...args, this.#context)
 }
-
-export { Event }

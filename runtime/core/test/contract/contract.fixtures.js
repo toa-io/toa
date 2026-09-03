@@ -6,17 +6,17 @@ import { load as parseYAML } from 'js-yaml'
 import { resolve } from 'path'
 
 // noinspection JSCheckFunctionSignatures
-const schema = {
+export const schema = {
   fit: mock.fn((input) => (input.invalid ? { message: generate() } : null))
 }
 
-const query = {
+export const query = {
   parse: mock.fn(() => ({ [generate()]: generate() }))
 }
 
-const declaration = {}
+export const declaration = {}
 
-const schemas = {
+export const schemas = {
   request: {
     type: 'object',
     properties: {
@@ -27,5 +27,3 @@ const schemas = {
     additionalProperties: true
   }
 }
-
-export { schema, query, declaration, schemas }

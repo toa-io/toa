@@ -1,7 +1,7 @@
 import { Atom } from './atom.js'
 import { connection } from './connection.js'
 
-class Factory {
+export class Factory {
   /**
    * What the replicas of one group decide together. They find each other by `group` and by
    * nothing else, so what shares a name shares a decision.
@@ -33,5 +33,3 @@ function atom (group, options) {
 
   return atom
 }
-
-export { Factory }

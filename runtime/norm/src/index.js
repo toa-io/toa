@@ -1,7 +1,3 @@
-import * as shortcuts from './shortcuts.js'
-import { context } from './context.js'
-import { component } from './component.js'
-
-export { context, component }
-
-export { shortcuts }
+export { context } from './context.js'
+export { component } from './component.js'
+export * as shortcuts from './shortcuts.js'

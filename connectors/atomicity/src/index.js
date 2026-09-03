@@ -1,4 +1,2 @@
-import { Factory } from './factory.js'
-import { VARIABLE } from './connection.js'
-
-export { Factory, VARIABLE }
+export { Factory } from './factory.js'
+export { VARIABLE } from './connection.js'

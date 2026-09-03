@@ -1,5 +1,3 @@
-function effect (input) {
+export function effect (input) {
   return `Hello ${input.name}`
 }
-
-export { effect }

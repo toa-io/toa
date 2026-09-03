@@ -14,7 +14,7 @@ const component = (id) => {
   }
 }
 
-const context = {
+export const context = {
   runtime: '0.0.0',
   name: 'test',
   description: 'context fixture',
@@ -40,7 +40,7 @@ const context = {
 }
 
 /** @type {Array<toa.norm.context.Composition>} */
-const compositions = [
+export const compositions = [
   ...context.compositions,
   {
     name: 'd-a',
@@ -51,5 +51,3 @@ const compositions = [
     components: [component('d.b')]
   }
 ]
-
-export { context, compositions }

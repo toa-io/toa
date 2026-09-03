@@ -14,7 +14,7 @@ import formats from 'ajv-formats'
  * @param {object} [options]
  * @returns {import('ajv').ValidateFunction}
  */
-function create (schema, options) {
+export function create (schema, options) {
   const key = JSON.stringify(schema) + '\u0000' + JSON.stringify(options ?? null)
   const cached = COMPILED.get(key)
 
@@ -71,7 +71,7 @@ const COMPILERS = new Map()
 
 let VALIDATOR
 
-function is (schema) {
+export function is (schema) {
   VALIDATOR ??= ajv()
 
   return VALIDATOR.validateSchema(schema) === true
@@ -86,7 +86,7 @@ const LIMIT = 4096
  * @param {object[]} [schemas]
  * @param {object} [additional]
  */
-function ajv (schemas, override = {}) {
+export function ajv (schemas, override = {}) {
   const options = Object.assign({ schemas }, OPTIONS, override)
   const ajv = new Ajv(options)
 
@@ -100,5 +100,3 @@ const OPTIONS = {
   coerceTypes: true,
   strictTypes: false // omit warning: missing type "object"
 }
-
-export { create, is, ajv }

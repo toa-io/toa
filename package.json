@@ -80,7 +80,7 @@
     "features": "cucumber-js -t 'not @skip' && npm run features --workspaces --if-present",
     "test:all": "npm run test && npm run test:stage && npm run features",
     "lint": "oxlint",
-    "lint:diff": "files=$(git diff --cached --name-only --diff-filter=d -- '*.ts'); [ -z \"$files\" ] || oxlint $files",
+    "lint:diff": "files=$(git diff --cached --name-only --diff-filter=d -- '*.ts' ':!*.d.ts'); [ -z \"$files\" ] || oxlint $files",
     "version:local": "lerna version --conventional-prerelease --preid local --no-commit-hooks --no-changelog --yes --no-git-tag-version && git commit -am 'chore: local bump' --no-verify",
     "publish:alpha": "npx lerna publish --conventional-prerelease --preid alpha --dist-tag alpha --no-commit-hooks --no-changelog --yes --message \"ci: %s\" --sign-git-commit",
     "setup:mongo": "openssl rand -base64 756 > ./.mongo-keyfile && chmod 400 ./.mongo-keyfile",

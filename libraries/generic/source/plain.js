@@ -2,8 +2,6 @@
  * @param {any} candidate
  * @return {boolean}
  */
-function plain (candidate) {
+export function plain (candidate) {
   return candidate?.constructor.name === 'Object'
 }
-
-export { plain }

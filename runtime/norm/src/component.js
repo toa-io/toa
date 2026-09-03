@@ -7,7 +7,7 @@ import { Locator } from '@toa.io/core'
 
 import { expand, merge, validate, collapse, dereference, defaults, normalize, extensions } from './.component/index.js'
 
-const component = async (path) => {
+export const component = async (path) => {
   const manifest = await load(path)
 
   await normalize(manifest, path)
@@ -60,5 +60,3 @@ async function read (path) {
 
   return jsyaml.load(jsyaml.dump(object, { noRefs: true, lineWidth: -1 }))
 }
-
-export { component }

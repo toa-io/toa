@@ -1,7 +1,7 @@
 import { Connector } from '@toa.io/core'
 import { console } from 'openspan'
 
-class Receiver extends Connector {
+export class Receiver extends Connector {
   /** @type {string | undefined} */
   #exchange
 
@@ -76,5 +76,3 @@ class Receiver extends Connector {
     }
   }
 }
-
-export { Receiver }

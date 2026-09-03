@@ -2,7 +2,7 @@ import { Context, Locator } from '@toa.io/core'
 
 import * as boot from './index.js'
 
-const context = async (manifest) => {
+export const context = async (manifest) => {
   const local = await boot.remote(manifest.locator, undefined, manifest)
   const aspects = boot.extensions.aspects(manifest)
 
@@ -22,5 +22,3 @@ const context = async (manifest) => {
 
   return boot.extensions.context(context)
 }
-
-export { context }

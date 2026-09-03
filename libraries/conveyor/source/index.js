@@ -1,3 +1,1 @@
-import { Conveyor } from './conveyor.js'
-
-export { Conveyor }
+export { Conveyor } from './conveyor.js'

@@ -1,7 +1,7 @@
 import { mock } from 'node:test'
 
 // the storage constructs its client, and an arrow function cannot be constructed
-const Client = mock.fn(function () {
+export const Client = mock.fn(function () {
   return {
     connection: mock.fn(),
     link: mock.fn(),
@@ -12,5 +12,3 @@ const Client = mock.fn(function () {
     update: mock.fn(() => false)
   }
 })
-
-export { Client }

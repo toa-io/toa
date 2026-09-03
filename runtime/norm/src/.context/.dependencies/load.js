@@ -11,7 +11,7 @@ const require = createRequire(import.meta.url)
  * @param {string} path
  * @returns {Promise<{ metadata: object, module: object }>}
  */
-async function load (path) {
+export async function load (path) {
   const metadata = loadMetadata(path)
   const module = await loadModule(path)
 
@@ -35,5 +35,3 @@ async function loadModule (reference) {
 
   return await import(pathToFileURL(path).href)
 }
-
-export { load }

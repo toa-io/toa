@@ -10,6 +10,4 @@ const binding = (index) => ({
   })
 })
 
-const bindings = [0, 1, 2, 3, 4].map(binding)
-
-export { bindings }
+export const bindings = [0, 1, 2, 3, 4].map(binding)

@@ -7,7 +7,7 @@ import * as schemas from '@toa.io/schemas'
 const object = parseYAML(readFileSync(path.resolve(import.meta.dirname, 'schema.yaml'), 'utf8'))
 const schema = schemas.schema(object)
 
-const validate = async (manifest) => {
+export const validate = async (manifest) => {
   const error = schema.fit(manifest)
 
   if (error) throw error
@@ -39,5 +39,3 @@ const receivers = (manifest) => {
 }
 
 const TYPES = new Set(['transition', 'assignment', 'effect', 'unmanaged'])
-
-export { validate }

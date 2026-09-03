@@ -1,4 +1,4 @@
-const ok = {
+export const ok = {
   namespace: 'foo',
   name: 'bar',
   entity: {
@@ -62,5 +62,3 @@ const ok = {
     }
   }
 }
-
-export { ok }

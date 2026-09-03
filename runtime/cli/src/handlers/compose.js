@@ -11,7 +11,7 @@ import { components as find } from '../util/find.js'
  * @param {Record<string, string | boolean>} argv
  * @return {Promise<void>}
  */
-async function compose (argv) {
+export async function compose (argv) {
   console.log('Runtime', version)
 
   if (argv.dock === true) return dock(argv)
@@ -46,5 +46,3 @@ async function dock (argv) {
 
   await docker.run(repository, command, argv.env)
 }
-
-export { compose }

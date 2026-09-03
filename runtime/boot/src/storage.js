@@ -11,7 +11,7 @@ const require = createRequire(import.meta.url)
  * @param {boolean} outbox whether this component publishes anything, and so needs a place to
  *   commit it with the entity
  */
-const storage = async (manifest, outbox) => {
+export const storage = async (manifest, outbox) => {
   if (manifest.entity === undefined) return
 
   const Factory = await load(manifest)
@@ -30,5 +30,3 @@ async function load (component) {
 
   return Factory
 }
-
-export { storage }

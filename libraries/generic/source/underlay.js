@@ -1,7 +1,7 @@
 /**
  * @type {toa.generic.underlay.Constructor}
  */
-const underlay = (func) => proxy(func)
+export const underlay = (func) => proxy(func)
 
 /**
  * @param {toa.generic.underlay.Callback} func
@@ -25,5 +25,3 @@ const proxy = (func, segments) => {
     }
   })
 }
-
-export { underlay }

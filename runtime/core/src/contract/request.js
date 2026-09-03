@@ -2,7 +2,7 @@ import * as schemas from './schemas/index.js'
 import { RequestContractException } from '../exceptions.js'
 import { Contract } from './contract.js'
 
-class Request extends Contract {
+export class Request extends Contract {
   /** @readonly */
   discovery = {}
 
@@ -75,5 +75,3 @@ class Request extends Contract {
     return schema
   }
 }
-
-export { Request }

@@ -1,6 +1,6 @@
 import { generate } from 'randomstring'
 
-const context = {
+export const context = {
   runtime: {
     version: '0.0.0'
   },
@@ -25,5 +25,3 @@ const context = {
     }
   }
 }
-
-export { context }

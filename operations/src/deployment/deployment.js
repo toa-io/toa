@@ -5,7 +5,7 @@ import fs from 'fs-extra'
 
 import { merge, declare, describe } from './.deployment/index.js'
 
-class Deployment {
+export class Deployment {
   #chart
   #values
   #process
@@ -95,5 +95,3 @@ function dump (object) {
   // js-yaml writes plain objects only, and the values carry locators and images
   return jsyaml.dump(JSON.parse(JSON.stringify(object)), { noRefs: true, lineWidth: -1 })
 }
-
-export { Deployment }

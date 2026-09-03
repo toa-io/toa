@@ -1,4 +1,4 @@
-function transition(input, objects) {
+export function transition(input, objects) {
   let total = 0
 
   for (const object of objects) {
@@ -8,5 +8,3 @@ function transition(input, objects) {
 
   return { total }
 }
-
-export { transition }

@@ -1,6 +1,6 @@
 import { recognize } from '../../shortcuts.js'
 
-function properties (manifest) {
+export function properties (manifest) {
   recognize(SHORTCUTS, manifest, 'properties')
   recognize(SHORTCUTS, manifest.properties)
 }
@@ -8,5 +8,3 @@ function properties (manifest) {
 const SHORTCUTS = {
   queues: '@toa.io/storages.queues'
 }
-
-export { properties }

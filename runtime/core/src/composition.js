@@ -1,7 +1,7 @@
 import { console } from 'openspan'
 import { Connector } from './connector.js'
 
-class Composition extends Connector {
+export class Composition extends Connector {
   constructor (expositions, producers, receivers, tenants) {
     super()
 
@@ -19,5 +19,3 @@ class Composition extends Connector {
     console.info('Composition shutdown complete')
   }
 }
-
-export { Composition }

@@ -3,14 +3,14 @@ import { mock } from 'node:test'
 import { generate } from 'randomstring'
 
 // noinspection JSCheckFunctionSignatures
-const schema = {
+export const schema = {
   fit: mock.fn((object) =>
     (object.fail ? { [generate()]: generate() } : null)),
 
   defaults: mock.fn(() => ({ [generate()]: generate() }))
 }
 
-const state = () => ({
+export const state = () => ({
   id: generate(),
   foo: generate(),
   _created: generate(),
@@ -19,9 +19,7 @@ const state = () => ({
   _version: 0
 })
 
-const failed = () => ({
+export const failed = () => ({
   ...state(),
   fail: true
 })
-
-export { schema, state, failed }

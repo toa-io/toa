@@ -5,7 +5,7 @@ import * as syntaxes from './syntaxes/index.js'
  * @param {Object} module
  * @returns {toa.node.define.operations.Definition}
  */
-const define = (module) => {
+export const define = (module) => {
   const descriptor = extract(module)
 
   if (descriptor === null)
@@ -13,5 +13,3 @@ const define = (module) => {
 
   return syntaxes[descriptor.syntax].define(descriptor)
 }
-
-export { define }

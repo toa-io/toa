@@ -1,8 +1,6 @@
-import { complete } from './complete.js'
-import { dependencies } from './dependencies.js'
-import { dereference } from './dereference.js'
-import { expand } from './expand.js'
-import { normalize } from './normalize.js'
-import { validate } from './validate.js'
-
-export { complete, dependencies, dereference, expand, normalize, validate }
+export { complete } from './complete.js'
+export { dependencies } from './dependencies.js'
+export { dereference } from './dereference.js'
+export { expand } from './expand.js'
+export { normalize } from './normalize.js'
+export { validate } from './validate.js'

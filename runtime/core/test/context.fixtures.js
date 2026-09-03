@@ -2,15 +2,13 @@ import { mock } from 'node:test'
 
 import { Connector } from '../src/connector.js'
 
-const local = {
+export const local = {
   link: mock.fn()
 }
 
-const discover = mock.fn(() => ({
+export const discover = mock.fn(() => ({
   invoke: mock.fn(),
   link: mock.fn()
 }))
 
-const aspects = [new Connector(), new Connector()]
-
-export { local, discover, aspects }
+export const aspects = [new Connector(), new Connector()]

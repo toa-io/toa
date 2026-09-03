@@ -5,7 +5,7 @@ import * as syntaxes from './syntaxes/index.js'
  * @param {Object} module
  * @returns {toa.node.define.algorithms.Descriptor}
  */
-const extract = (module) => {
+export const extract = (module) => {
   const entry = find(module)
 
   if (entry === null)
@@ -63,5 +63,3 @@ const parse = (func) => {
 
   return file.program.body[0]
 }
-
-export { extract }

@@ -7,7 +7,7 @@ const { Factory } = deployment
  * @param {toa.cli.deploy.Arguments} argv
  * @returns {Promise<void>}
  */
-const deploy = async (argv) => {
+export const deploy = async (argv) => {
   const path = find(argv.path)
   const factory = await Factory.create(path, argv.environment, { mono: argv.mono === true })
   const operator = await factory.operator()
@@ -30,5 +30,3 @@ const deploy = async (argv) => {
     await operator.install(options)
   }
 }
-
-export { deploy }

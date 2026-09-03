@@ -9,7 +9,7 @@
  * @param {toa.norm.Context} context
  * @param {toa.deployment.Dependency} dependency
  */
-function events (context, dependency) {
+export function events (context, dependency) {
   const components = deployed(context)
   const consumed = collect(components, context.events, dependency.events)
 
@@ -61,5 +61,3 @@ function collect (components, declared, contributed) {
 }
 
 const VARIABLE = 'TOA_EVENTS_'
-
-export { events }

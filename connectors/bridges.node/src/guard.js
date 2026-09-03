@@ -1,4 +1,4 @@
-class Guard {
+export class Guard {
   #guard
   #context
 
@@ -11,5 +11,3 @@ class Guard {
     return this.#guard.guard(state, origin, this.#context)
   }
 }
-
-export { Guard }

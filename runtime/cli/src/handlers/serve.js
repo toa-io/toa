@@ -9,7 +9,7 @@ import { graceful } from './lib/graceful.js'
 
 const require = createRequire(import.meta.url)
 
-const serve = async (argv) => {
+export const serve = async (argv) => {
   console.log('Runtime', version)
 
   argv.path = shortcuts.resolve(argv.path)
@@ -41,5 +41,3 @@ const serve = async (argv) => {
   else
     await start()
 }
-
-export { serve }

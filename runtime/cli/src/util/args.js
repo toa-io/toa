@@ -1,4 +1,4 @@
-const bindings = (argv) => {
+export const bindings = (argv) => {
   if (argv.bindings === 'null') return null
 
   let bindings
@@ -15,5 +15,3 @@ const bindings = (argv) => {
 
   return bindings
 }
-
-export { bindings }

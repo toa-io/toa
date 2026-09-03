@@ -3,7 +3,7 @@ import { Client } from './client.js'
 import { Storage } from './storage.js'
 import { Migration } from './migration.js'
 
-class Factory {
+export class Factory {
   storage (locator) {
     const connection = new Connection(locator)
     const client = new Client(connection)
@@ -15,5 +15,3 @@ class Factory {
     return new Migration(driver)
   }
 }
-
-export { Factory }

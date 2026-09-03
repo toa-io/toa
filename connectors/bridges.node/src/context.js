@@ -3,7 +3,7 @@ import { underlay } from '@toa.io/generic'
 
 import * as shortcuts from './shortcuts/index.js'
 
-class Context extends Connector {
+export class Context extends Connector {
   env
   name
   aspects
@@ -77,5 +77,3 @@ function source (locator, operation) {
 
   return { namespace: locator.namespace, component: locator.name, operation }
 }
-
-export { Context }

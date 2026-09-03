@@ -1,4 +1,4 @@
-class Observation {
+export class Observation {
   #foo
 
   async mount (context) {
@@ -9,5 +9,3 @@ class Observation {
     return this.#foo
   }
 }
-
-export { Observation }

@@ -5,7 +5,7 @@ import * as func from './function.js'
 const { capitalize } = letters
 
 /** @type {toa.node.define.operations.Define} */
-const define = (descriptor) => {
+export const define = (descriptor) => {
   const declaration = /** @type {import('@babel/types').ClassDeclaration} */ descriptor.statement
 
   descriptor.name = descriptor.name.toLowerCase()
@@ -15,7 +15,7 @@ const define = (descriptor) => {
 }
 
 /** @type {toa.node.define.operations.Test} */
-const test = (statement, name) => {
+export const test = (statement, name) => {
   const declaration = statement.type === 'ClassDeclaration'
   const known = names.includes(name)
 
@@ -37,5 +37,3 @@ const method = (statement, name) => {
 }
 
 const names = types.map((type) => capitalize(type))
-
-export { define, test }

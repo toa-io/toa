@@ -2,7 +2,7 @@ import * as schemas from './schemas/index.js'
 import { Contract } from './contract.js'
 import { ResponseContractException } from '../exceptions.js'
 
-class Reply extends Contract {
+export class Reply extends Contract {
   static Exception = ResponseContractException
 
   static schema (output, errors) {
@@ -44,5 +44,3 @@ class Reply extends Contract {
     return schema
   }
 }
-
-export { Reply }

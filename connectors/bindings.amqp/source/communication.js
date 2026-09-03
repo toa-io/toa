@@ -2,7 +2,7 @@ import { assert } from 'comq'
 import { Connector } from '@toa.io/core'
 import { console } from 'openspan'
 
-class Communication extends Connector {
+export class Communication extends Connector {
   /** @type {string[]} */
   #references
 
@@ -183,5 +183,3 @@ class Communication extends Connector {
 const diagnosed = new Map()
 
 function noop () {}
-
-export { Communication }

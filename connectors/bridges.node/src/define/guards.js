@@ -1,6 +1,6 @@
 import * as load from '../load.js'
 
-const guard = async (root, label) => {
+export const guard = async (root, label) => {
   const module = await load.guard(root, label)
 
   if (module.guard === undefined)
@@ -9,11 +9,9 @@ const guard = async (root, label) => {
   return module.guard
 }
 
-const guards = async (root) => {
+export const guards = async (root) => {
   const modules = await load.guards(root)
   const guards = modules.filter(([, module]) => module.guard !== undefined)
 
   return Object.fromEntries(guards.map(([name, module]) => [name, {}]))
 }
-
-export { guard, guards }

@@ -1,7 +1,7 @@
 import { addVariables } from './variables.js'
 import { addMounts } from './mounts.js'
 
-function compositions (compositions, dependency) {
+export function compositions (compositions, dependency) {
   for (const composition of compositions) {
     addVariables(composition, dependency.variables)
     addMounts(composition, dependency.mounts)
@@ -10,5 +10,3 @@ function compositions (compositions, dependency) {
       composition.probe ??= dependency.probe
   }
 }
-
-export { compositions }

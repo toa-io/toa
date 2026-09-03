@@ -6,7 +6,7 @@ import { once } from 'node:events'
  * @param {import('child_process').SpawnOptions} [options]
  * @this {toa.features.Context}
  */
-async function execute (command, options = {}) {
+export async function execute (command, options = {}) {
   options.cwd = this.cwd
 
   // the command leads its own process group, so aborting it takes the program along;
@@ -68,5 +68,3 @@ const lines = (string) => {
 
   return lines
 }
-
-export { execute }

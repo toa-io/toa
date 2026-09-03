@@ -1,5 +1,5 @@
 /** @type {toa.generic.track} */
-const track = (context, method = undefined) => {
+export const track = (context, method = undefined) => {
   if (method === undefined) return promises(context)
 
   context[KEY] ??= new Set()
@@ -31,5 +31,3 @@ const promises = (context) => {
 const KEY = Symbol('context tracking key')
 
 const noop = () => undefined
-
-export { track }

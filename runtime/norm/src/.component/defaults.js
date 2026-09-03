@@ -1,7 +1,7 @@
 import { hash } from '@toa.io/generic'
 
 // these defaults are required before validation
-const defaults = (manifest, proto) => {
+export const defaults = (manifest, proto) => {
   if (manifest.name === undefined)
     if (proto) manifest.name = protoName(manifest)
     else nameAfterDir(manifest)
@@ -32,5 +32,3 @@ function nameAfterDir (manifest) {
   manifest.name = name
   manifest.namespace = namespace
 }
-
-export { defaults }

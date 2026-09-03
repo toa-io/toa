@@ -4,7 +4,7 @@ import { name } from './queues.js'
 /**
  * @implements {toa.core.bindings.Consumer}
  */
-class Consumer extends Connector {
+export class Consumer extends Connector {
   /** @type {string} */
   #queue
 
@@ -32,5 +32,3 @@ class Consumer extends Connector {
     await this.#comm.enqueue(this.#tasksQueue, request)
   }
 }
-
-export { Consumer }

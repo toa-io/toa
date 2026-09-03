@@ -1,7 +1,5 @@
 import { randomUUID } from 'node:crypto'
 
-const newid = () => {
+export const newid = () => {
   return randomUUID().replace(/-/g, '')
 }
-
-export { newid }

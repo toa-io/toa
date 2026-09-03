@@ -3,7 +3,7 @@ import { plain } from './plain.js'
 /**
  * @param {function} generator
  */
-function generate (generator) {
+export function generate (generator) {
   return proxy({}, generator)
 }
 
@@ -31,5 +31,3 @@ function proxy (value, generator, segments = []) {
     }
   })
 }
-
-export { generate }

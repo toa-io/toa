@@ -27,7 +27,7 @@ class Commands extends Connector {
 /**
  * A startup phase: `preflight` and `settle`
  */
-class Phase extends Commands {
+export class Phase extends Commands {
   async open () {
     await this.run()
   }
@@ -38,10 +38,8 @@ class Phase extends Commands {
  * is released here. It runs on disconnection, before the context it depends on is
  * disconnected, so the component can still reach its remotes while releasing.
  */
-class Teardown extends Commands {
+export class Teardown extends Commands {
   async close () {
     await this.run()
   }
 }
-
-export { Phase, Teardown }

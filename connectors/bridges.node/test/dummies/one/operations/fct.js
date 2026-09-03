@@ -3,7 +3,7 @@ import { Transition } from './cls.js'
 /**
  * @implements {toa.node.algorithms.Factory}
  */
-class ObjectTransitionFactory {
+export class ObjectTransitionFactory {
   #context
 
   constructor (context) {
@@ -14,5 +14,3 @@ class ObjectTransitionFactory {
     return new Transition(this.#context)
   }
 }
-
-export { ObjectTransitionFactory }

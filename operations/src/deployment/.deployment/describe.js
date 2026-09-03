@@ -4,7 +4,7 @@ import { addMounts } from './.describe/mounts.js'
 import { resources } from './.describe/resources.js'
 import { events } from './.describe/events.js'
 
-const describe = (context, compositions, dependency, image) => {
+export const describe = (context, compositions, dependency, image) => {
   const { services } = dependency
 
   dependency.variables.global ??= []
@@ -156,5 +156,3 @@ function unit (context, dependency) {
 
   return mono
 }
-
-export { describe }

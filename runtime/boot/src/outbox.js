@@ -10,10 +10,8 @@ import * as boot from './index.js'
  * @param {toa.core.Storage} [storage]
  * @param {toa.core.Emission} [emission]
  */
-const outbox = (manifest, storage, emission) => {
+export const outbox = (manifest, storage, emission) => {
   if (emission === undefined) return
 
   return new Outbox(emission, storage, boot.atomicity(manifest.locator.id), {})
 }
-
-export { outbox }

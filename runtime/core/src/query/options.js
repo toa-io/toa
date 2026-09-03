@@ -1,6 +1,6 @@
 import { QuerySyntaxException } from '../exceptions.js'
 
-const options = (options, properties, system) => {
+export const options = (options, properties, system) => {
   if (options.sort !== undefined) options.sort = sort(options.sort, properties)
 
   if (options.projection !== undefined) projection(options.projection, properties)
@@ -35,5 +35,3 @@ const projection = (projection, properties) => {
     if (!projection.includes(property))
       projection.push(property)
 }
-
-export { options }

@@ -13,7 +13,7 @@ import * as functions from './algorithms/function.js'
 // a closed set, so the graph stays analysable
 const SYNTAXES = { class: classes, factory: factories, function: functions }
 
-class Factory {
+export class Factory {
   async algorithm (root, name, context) {
     const module = await load.operation(root, name)
     const ctx = new Context(context, name)
@@ -91,5 +91,3 @@ async function runner (module, context) {
 }
 
 const DEFAULT = 'default.'
-
-export { Factory }

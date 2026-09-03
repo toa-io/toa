@@ -5,7 +5,7 @@ import { plain } from './plain.js'
  * @param {(node: object) => object} visit
  * @returns {object}
  */
-const traverse = (object, visit) => {
+export const traverse = (object, visit) => {
   if (!plain(object)) return object
 
   let visited = visit(object)
@@ -17,5 +17,3 @@ const traverse = (object, visit) => {
 
   return visited
 }
-
-export { traverse }

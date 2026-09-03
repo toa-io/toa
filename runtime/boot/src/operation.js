@@ -2,7 +2,7 @@ import { Transition, Observation, Assignment, Operation, Query, Effect, Unmanage
 
 import * as boot from './index.js'
 
-async function operation (manifest, endpoint, definition, context, scope, preflight) {
+export async function operation (manifest, endpoint, definition, context, scope, preflight) {
   const cascade = await boot.cascade(manifest, endpoint, definition, context, preflight)
   const reply = boot.contract.reply(definition.output, definition.error)
   const input = definition.input
@@ -26,5 +26,3 @@ const TYPES = {
   effect: Effect,
   unmanaged: Unmanaged
 }
-
-export { operation }

@@ -1,6 +1,6 @@
 /* eslint-disable */
 
-const schema = {
+export const schema = {
   'properties': {
     'foo': {
       'type': 'integer', 'default': 0, 'definitions': {}
@@ -15,5 +15,3 @@ const schema = {
     }
   }, 'required': ['id'], 'definitions': {}, 'type': 'object', 'additionalProperties': false
 }
-
-export { schema }

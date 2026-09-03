@@ -5,8 +5,6 @@
 /** @type {Ref} */
 const id = (name) => `${name} char(32) primary key`
 
-const refs = {
+export const refs = {
   'https://schemas.toa.io/0.0.0/definitions#/definitions/id': id
 }
-
-export { refs }

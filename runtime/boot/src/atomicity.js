@@ -8,6 +8,4 @@ import { Factory } from '@toa.io/atomicity'
  * @param {string} group
  * @returns {toa.core.atomicity.Atom}
  */
-const atomicity = (group) => new Factory().atom(group)
-
-export { atomicity }
+export const atomicity = (group) => new Factory().atom(group)

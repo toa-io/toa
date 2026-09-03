@@ -1,4 +1,4 @@
-const operations = (component) => {
+export const operations = (component) => {
   if (component.operations === undefined) return
 
   for (const [endpoint, operation] of Object.entries(component.operations)) {
@@ -10,5 +10,3 @@ const operations = (component) => {
     if (operation.virtual === true) delete component.operations[endpoint]
   }
 }
-
-export { operations }

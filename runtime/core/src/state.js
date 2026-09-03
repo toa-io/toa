@@ -1,6 +1,6 @@
 import { StatePreconditionException, StateNotFoundException } from './exceptions.js'
 
-class State {
+export class State {
   storage
 
   #associated
@@ -136,5 +136,3 @@ class State {
 
 /** an effect never commits what `ensure` hands it, see `Effect` */
 const NOT_MUTABLE = false
-
-export { State }

@@ -6,7 +6,7 @@ const { Factory } = operations.deployment
 /**
  * @param {string} [environment]
  */
-async function deployment (environment = undefined, options = {}) {
+export async function deployment (environment = undefined, options = {}) {
   const context = this.cwd
   const target = join(this.cwd, 'deployment')
   const factory = await Factory.create(context, environment, options)
@@ -15,7 +15,7 @@ async function deployment (environment = undefined, options = {}) {
   await operator.export(target)
 }
 
-async function images () {
+export async function images () {
   const context = this.cwd
   const target = join(this.cwd, 'images')
   const factory = await Factory.create(context)
@@ -23,5 +23,3 @@ async function images () {
 
   await registry.prepare(target)
 }
-
-export { deployment, images }

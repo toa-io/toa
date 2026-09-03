@@ -1,4 +1,4 @@
-function addMounts (composition, mounts, keys = composition.components) {
+export function addMounts (composition, mounts, keys = composition.components) {
   if (mounts === undefined)
     return
 
@@ -18,5 +18,3 @@ function addMounts (composition, mounts, keys = composition.components) {
     }
   }
 }
-
-export { addMounts }

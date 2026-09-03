@@ -3,7 +3,7 @@ import { console } from 'openspan'
 
 import { name } from './queues.js'
 
-class Producer extends Connector {
+export class Producer extends Connector {
   /** @type {toa.amqp.Communication} */
   #comm
 
@@ -82,5 +82,3 @@ class Producer extends Connector {
     }
   }
 }
-
-export { Producer }

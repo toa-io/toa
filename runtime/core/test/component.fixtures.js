@@ -4,7 +4,7 @@ import randomstring from 'randomstring'
 
 const invocation = () => mock.fn(() => randomstring.generate())
 
-const invocations = {
+export const invocations = {
   foo: {
     invoke: invocation('foo'),
     link: () => null
@@ -15,6 +15,4 @@ const invocations = {
   }
 }
 
-const locator = {}
-
-export { invocations, locator }
+export const locator = {}

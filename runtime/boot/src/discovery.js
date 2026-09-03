@@ -5,7 +5,7 @@ import * as boot from './index.js'
 let promise
 let instance = null
 
-const discovery = async () => {
+export const discovery = async () => {
   if (instance === null) {
     instance = new Discovery(lookup)
     promise = instance.connect()
@@ -24,7 +24,7 @@ const lookup = async (locator) => {
   return call
 }
 
-const expose = async (manifest) => {
+export const expose = async (manifest) => {
   const exposition = new Exposition(manifest.locator, manifest)
   const operations = { [ENDPOINT]: { bindings: BINDINGS } }
   const { local, other } = await boot.bindings.produce(exposition, operations)
@@ -37,5 +37,3 @@ const expose = async (manifest) => {
 
 const BINDINGS = ['@toa.io/bindings.amqp']
 const ENDPOINT = '.lookup'
-
-export { discovery, expose }

@@ -8,7 +8,7 @@ import { Meter } from './meter.js'
  * One set of clients per process, shared by every atom in it. Each keeps its own keys, so a
  * composition of five components opens one connection between them however much they decide.
  */
-class Connection extends Connector {
+export class Connection extends Connector {
   /**
    * The one the registry and the meter use. Both count on a single key — replicas per interval,
    * debt per name — and a key spread over several servers would be several answers.
@@ -102,12 +102,10 @@ function resolve () {
 let instance
 
 /** the connection every atom of the process shares */
-const connection = () => (instance ??= new Connection())
+export const connection = () => (instance ??= new Connection())
 
 /** @internal for tests */
-const reset = () => (instance = undefined)
+export const reset = () => (instance = undefined)
 
-const VARIABLE = 'TOA_ATOMICITY_REDIS'
+export const VARIABLE = 'TOA_ATOMICITY_REDIS'
 const DEV = 'redis://localhost'
-
-export { Connection, connection, reset, VARIABLE }

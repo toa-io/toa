@@ -14,7 +14,7 @@ const require = createRequire(import.meta.url)
  * @param {string} [indicator]
  * @return {string}
  */
-const find = (reference, base, indicator = 'package.json') => {
+export const find = (reference, base, indicator = 'package.json') => {
   const runtime = dirname(require.resolve('@toa.io/runtime'))
   const paths = [base, runtime]
   const filename = basename(reference)
@@ -35,5 +35,3 @@ const find = (reference, base, indicator = 'package.json') => {
     return dirname(require.resolve(request, { paths }))
   }
 }
-
-export { find }

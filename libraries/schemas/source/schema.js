@@ -5,7 +5,7 @@ import { create, is, ajv } from './validator.js'
 import { debug } from 'node:util'
 import betterAjvErrors from 'better-ajv-errors'
 
-class Schema {
+export class Schema {
   id
 
   /** @type {import('ajv').ValidateFunction} */
@@ -111,7 +111,7 @@ class Schema {
   }
 }
 
-const schema = (cos, options) => {
+export const schema = (cos, options) => {
   if (typeof cos === 'string' && isFile(cos))
     cos = jsyaml.load(readFileSync(cos, 'utf8'))
 
@@ -142,5 +142,3 @@ const isFile = (path) => {
     return false
   }
 }
-
-export { Schema, schema }

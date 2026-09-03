@@ -1,7 +1,7 @@
 /**
  * @implements {toa.node.Algorithm}
  */
-class Transition {
+export class Transition {
   #context
 
   async mount (context) {
@@ -12,5 +12,3 @@ class Transition {
     return { input, state: object, context: this.#context !== undefined }
   }
 }
-
-export { Transition }

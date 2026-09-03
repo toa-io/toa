@@ -5,7 +5,7 @@ import { promptSecrets } from './env.js'
 
 const { Factory } = deployment
 
-const conceal = async (argv) => {
+export const conceal = async (argv) => {
   if (argv.interactive) await concealValues(argv)
   else await concealValue(argv)
 }
@@ -56,6 +56,4 @@ function groupValues (values) {
   return secrets
 }
 
-const PREFIX = 'toa-'
-
-export { conceal, PREFIX }
+export const PREFIX = 'toa-'

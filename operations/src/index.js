@@ -1,4 +1,1 @@
-import * as deployment from './deployment/index.js'
-
-
-export { deployment }
+export * as deployment from './deployment/index.js'

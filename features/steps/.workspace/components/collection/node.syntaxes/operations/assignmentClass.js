@@ -1,7 +1,7 @@
 /**
  * @implements {toa.core.bridges.Algorithm}
  */
-class Assignment {
+export class Assignment {
   #foo
 
   async mount (context) {
@@ -14,5 +14,3 @@ class Assignment {
     return foo
   }
 }
-
-export { Assignment }

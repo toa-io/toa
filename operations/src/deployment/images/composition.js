@@ -5,7 +5,7 @@ import { createHash } from 'node:crypto'
 import { Image } from './image.js'
 import { declare } from './format.js'
 
-class Composition extends Image {
+export class Composition extends Image {
   dockerfile = join(import.meta.dirname, 'composition.Dockerfile')
 
   #name
@@ -72,5 +72,3 @@ class Composition extends Image {
     return context
   }
 }
-
-export { Composition }

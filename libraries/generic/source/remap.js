@@ -4,7 +4,5 @@
  * @param {(value: any, key?: string) => any} callback
  * @returns {T}
  */
-const remap = (object, callback) =>
+export const remap = (object, callback) =>
   Object.fromEntries(Object.entries(object).map(([key, value]) => [key, callback(value, key)]))
-
-export { remap }

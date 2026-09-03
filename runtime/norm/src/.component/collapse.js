@@ -1,6 +1,6 @@
 import { merge } from '@toa.io/generic'
 
-const collapse = (manifest, prototype) => {
+export const collapse = (manifest, prototype) => {
   delete manifest.prototype
 
   if (prototype.operations) {
@@ -47,5 +47,3 @@ const collapse = (manifest, prototype) => {
 
   merge(manifest, { entity, events, extensions })
 }
-
-export { collapse }

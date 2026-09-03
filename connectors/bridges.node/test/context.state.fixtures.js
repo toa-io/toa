@@ -1,6 +1,6 @@
 import { mock } from 'node:test'
 
-const context = {
+export const context = {
   apply: mock.fn(),
   call: mock.fn(),
   aspects: [
@@ -12,5 +12,3 @@ const context = {
   link: mock.fn(),
   connect: mock.fn()
 }
-
-export { context }

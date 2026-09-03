@@ -1,3 +1,1 @@
-import { Outbox, LANES } from './outbox.js'
-
-export { Outbox, LANES }
+export { Outbox, LANES } from './outbox.js'

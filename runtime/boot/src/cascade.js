@@ -2,7 +2,7 @@ import { Cascade } from '@toa.io/core'
 
 import * as boot from './index.js'
 
-async function cascade (manifest, endpoint, definition, context, preflight) {
+export async function cascade (manifest, endpoint, definition, context, preflight) {
   const bridges = []
 
   if (definition.forward) endpoint = definition.forward
@@ -27,5 +27,3 @@ async function cascade (manifest, endpoint, definition, context, preflight) {
 
   return new Cascade(bridges, preflight)
 }
-
-export { cascade }

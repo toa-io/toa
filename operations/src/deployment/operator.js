@@ -1,6 +1,6 @@
 import * as workspace from './workspace.js'
 
-class Operator {
+export class Operator {
   /** @type {toa.deployment.Deployment} */
   #deployment
 
@@ -56,5 +56,3 @@ class Operator {
 
 /** @type {toa.deployment.installation.Options} */
 const OPTIONS = { wait: false }
-
-export { Operator }

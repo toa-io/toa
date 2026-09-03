@@ -3,7 +3,7 @@ import * as boot from '@toa.io/boot'
 import * as jsyaml from 'js-yaml'
 import { Locator } from '@toa.io/core'
 
-async function call (argv) {
+export async function call (argv) {
   const [operation, component, namespace = 'default'] = argv.endpoint.split('.').reverse()
   const locator = new Locator(component, namespace)
   const request = argv.request ? jsyaml.load(argv.request) : {}
@@ -32,5 +32,3 @@ async function call (argv) {
 }
 
 const SOURCE = { service: 'cli' }
-
-export { call }

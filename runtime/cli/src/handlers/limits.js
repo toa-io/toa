@@ -4,7 +4,7 @@ kubectl get pods -o=custom-columns='NAME:.metadata.name,CPU_REQUEST:.spec.contai
 
 import { spawn } from 'node:child_process'
 
-const limits = async (argv) => {
+export const limits = async (argv) => {
   const args = [
     'get',
     'pods',
@@ -13,5 +13,3 @@ const limits = async (argv) => {
 
   await spawn('kubectl', args, { stdio: 'inherit' })
 }
-
-export { limits }

@@ -5,7 +5,7 @@ import { Connector } from './connector.js'
 /**
  * @implements {toa.core.Receiver}
  */
-class Receiver extends Connector {
+export class Receiver extends Connector {
   /** @type {boolean} */
   #conditioned
 
@@ -121,5 +121,3 @@ class Receiver extends Connector {
     return this.#adaptive ? await this.#bridge.request(payload, ...(this.#arguments ?? [])) : { input: payload }
   }
 }
-
-export { Receiver }

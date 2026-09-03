@@ -1,6 +1,6 @@
 import { load } from './load.js'
 
-const resolve = async (references, annotations) => {
+export const resolve = async (references, annotations) => {
   const dependencies = {}
 
   for (const [dependency, components] of Object.entries(references)) {
@@ -45,5 +45,3 @@ async function optional (reference) {
     return null
   }
 }
-
-export { resolve }

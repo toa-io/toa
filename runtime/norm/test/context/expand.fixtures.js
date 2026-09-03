@@ -1,3 +1,1 @@
-import { context } from './validate.fixtures.js'
-
-export { context }
+export { context } from './validate.fixtures.js'

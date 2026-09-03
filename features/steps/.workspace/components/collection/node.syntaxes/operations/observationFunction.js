@@ -1,5 +1,3 @@
-async function observation (input, object, context) {
+export async function observation (input, object, context) {
   return context.configuration.foo
 }
-
-export { observation }

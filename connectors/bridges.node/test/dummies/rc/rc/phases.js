@@ -1,15 +1,13 @@
-const calls = []
+export const calls = []
 
-async function preflight () {
+export async function preflight () {
   calls.push('preflight')
 }
 
-async function settle () {
+export async function settle () {
   calls.push('settle')
 }
 
-async function dispose () {
+export async function dispose () {
   calls.push('dispose')
 }
-
-export { preflight, settle, dispose, calls }

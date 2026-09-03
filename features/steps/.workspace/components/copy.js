@@ -8,7 +8,7 @@ import { COLLECTION } from './constants.js'
  * @param {string} to
  * @returns {Promise<void>}
  */
-const copy = async (list, to) => {
+export const copy = async (list, to) => {
   for (const component of list) {
     const source = join(COLLECTION, component)
     const target = join(to, 'components', component)
@@ -21,5 +21,3 @@ const copy = async (list, to) => {
     await fse.copy(source, target)
   }
 }
-
-export { copy }

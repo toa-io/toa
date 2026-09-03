@@ -2,7 +2,7 @@
  * @param {string} input
  * @returns {number}
  */
-const quantity = (input) => {
+export const quantity = (input) => {
   const match = input.match(EXPRESSION)
 
   if (match === null) throw new Error(`'${input}' doesn't look like a quantity of something`)
@@ -47,5 +47,3 @@ const MULTIPLIERS = Object.entries({
 })
 
 const EXPRESSION = /^(\d+(?:.\d+)?)([^\d\W]*)$/
-
-export { quantity }

@@ -1,4 +1,4 @@
-async function computation (input, context) {
+export async function computation (input, context) {
   const output = {}
 
   output.foo = context.configuration.foo
@@ -9,5 +9,3 @@ async function computation (input, context) {
 
   return output
 }
-
-export { computation }

@@ -11,7 +11,7 @@ import * as sources from './deployment/sources.js'
 import { SYSTEM } from './constants.js'
 import { Communication } from './communication.js'
 
-class Factory {
+export class Factory {
   /**
    * The communications in use, by what holds them. An IO opens a channel of its own for
    * requests, for replies and for events, and a connection has some two thousand
@@ -109,5 +109,3 @@ const OUTBOUND = '\u0000outbound'
 const ALONE = '\u0000alone:'
 
 const SEPARATOR = '\u0000'
-
-export { Factory }

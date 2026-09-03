@@ -1,10 +1,9 @@
-export { Factory };
 import { Producer } from './producer';
 import { Consumer } from './consumer';
 import { Emitter } from './emitter';
 import { Receiver } from './receiver';
 import { Broadcast } from './broadcast';
-declare class Factory {
+export declare class Factory {
     #private;
     producer(locator: any, endpoints: any, component: any): Producer;
     consumer(locator: any, endpoint: any): Consumer;

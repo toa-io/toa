@@ -1,7 +1,7 @@
 import assert from 'node:assert'
 import { Component } from './component.js'
 
-class Remote extends Component {
+export class Remote extends Component {
   kind = 'client'
 
   explain (endpoint) {
@@ -12,5 +12,3 @@ class Remote extends Component {
     return this.operations[endpoint].explain()
   }
 }
-
-export { Remote }

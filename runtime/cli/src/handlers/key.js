@@ -1,7 +1,7 @@
 import { V3 } from 'paseto'
 import { randomBytes } from 'node:crypto'
 
-async function key (argv) {
+export async function key (argv) {
   if (!argv.public && argv.format === 'jwe') {
     console.log(randomBytes(32).toString('base64url'))
     return
@@ -16,5 +16,3 @@ async function key (argv) {
   } else
     console.log(key)
 }
-
-export { key }

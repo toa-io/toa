@@ -1,7 +1,7 @@
 import { LOOP } from './constants.js'
 import { factory } from './factory.js'
 
-const produce = async (component, operations) => {
+export const produce = async (component, operations) => {
   const local = []
   const other = []
 
@@ -39,5 +39,3 @@ const group = (operations) => {
 
   return Object.entries(map)
 }
-
-export { produce }

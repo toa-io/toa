@@ -2,7 +2,7 @@ import { Composition } from './composition.js'
 import { Service } from './service.js'
 import { Mono } from './mono.js'
 
-class Factory {
+export class Factory {
   /** @type {string} */
   #scope
 
@@ -56,5 +56,3 @@ class Factory {
     return instance
   }
 }
-
-export { Factory }

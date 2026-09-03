@@ -1,5 +1,3 @@
-function computation () {
+export function computation () {
   return 'Hello'
 }
-
-export { computation }

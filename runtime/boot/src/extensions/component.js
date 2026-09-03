@@ -4,7 +4,7 @@ import { instances } from './instances.js'
  * @param {toa.core.Component} component
  * @returns {toa.core.Component}
  */
-const component = (component) => {
+export const component = (component) => {
   let decorated = component
 
   for (const factory of Object.values(instances)) {
@@ -13,5 +13,3 @@ const component = (component) => {
 
   return decorated
 }
-
-export { component }

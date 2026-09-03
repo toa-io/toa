@@ -2,7 +2,7 @@
  * @param {string} command
  * @param {Record<string, any>} args
  */
-const command = (command, args) => {
+export const command = (command, args) => {
   const options = []
 
   for (const [name, value] of Object.entries(args)) {
@@ -17,5 +17,3 @@ const command = (command, args) => {
 
   return command + ' ' + argumentLine
 }
-
-export { command }

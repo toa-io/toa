@@ -9,7 +9,7 @@ import * as boot from './index.js'
  * @param {toa.core.Source} [source] the origin stamped on every call made through this remote
  * @param {toa.norm.Component} [manifest] skips discovery when the manifest is already known
  */
-const remote = async (locator, source, manifest) => {
+export const remote = async (locator, source, manifest) => {
   let discovery
 
   if (manifest === undefined) {
@@ -41,5 +41,3 @@ async function settle (object) {
 
   return Object.fromEntries(entries.map(([key], index) => [key, values[index]]))
 }
-
-export { remote }

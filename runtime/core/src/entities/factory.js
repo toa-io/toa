@@ -3,7 +3,7 @@ import { Entity } from './entity.js'
 import { EntitySet } from './set.js'
 import { Changeset } from './changeset.js'
 
-class Factory {
+export class Factory {
   #schema
   #guards
 
@@ -38,5 +38,3 @@ class Factory {
     return new Changeset(this.#schema, query)
   }
 }
-
-export { Factory }

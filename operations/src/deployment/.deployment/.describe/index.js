@@ -1,6 +1,4 @@
-import { dependencies } from './dependencies.js'
-import { components } from './components.js'
-import { compositions } from './compositions.js'
-import { services } from './services.js'
-
-export { dependencies, components, compositions, services }
+export { dependencies } from './dependencies.js'
+export { components } from './components.js'
+export { compositions } from './compositions.js'
+export { services } from './services.js'

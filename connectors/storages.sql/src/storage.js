@@ -1,6 +1,6 @@
 import { Connector } from '@toa.io/core'
 
-class Storage extends Connector {
+export class Storage extends Connector {
   /** @type {toa.sql.Client} */
   #client
 
@@ -29,5 +29,3 @@ class Storage extends Connector {
     return this.#client.update(criteria, { ...entity })
   }
 }
-
-export { Storage }

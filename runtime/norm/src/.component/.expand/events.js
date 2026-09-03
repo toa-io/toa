@@ -1,6 +1,6 @@
 import { resolve } from '../../shortcuts.js'
 
-function events (manifest) {
+export function events (manifest) {
   if (manifest.events === undefined) return
 
   for (const event of Object.values(manifest.events)) {
@@ -8,5 +8,3 @@ function events (manifest) {
     if (event.bridge !== undefined) event.bridge = resolve(event.bridge)
   }
 }
-
-export { events }

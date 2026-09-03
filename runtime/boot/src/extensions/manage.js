@@ -4,7 +4,7 @@ import { instances } from './instances.js'
  * @param {toa.core.Connector} composition
  * @returns {toa.core.Connector}
  */
-const manage = (composition) => {
+export const manage = (composition) => {
   let managed = composition
 
   for (const factory of Object.values(instances)) {
@@ -14,5 +14,3 @@ const manage = (composition) => {
 
   return managed
 }
-
-export { manage }

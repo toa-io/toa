@@ -14,7 +14,7 @@ import { Registry } from './registry.js'
 import { Composition } from './composition.js'
 import { Service } from './service.js'
 
-class Factory {
+export class Factory {
   #context
   #mono
   #compositions
@@ -117,5 +117,3 @@ class Factory {
     return new Factory(context, options)
   }
 }
-
-export { Factory }

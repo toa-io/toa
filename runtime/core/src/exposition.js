@@ -1,6 +1,6 @@
 import { Connector } from './connector.js'
 
-class Exposition extends Connector {
+export class Exposition extends Connector {
   locator
 
   #exposition
@@ -22,5 +22,3 @@ const expose = (manifest) => {
 
   return { namespace, name, entity, operations, events }
 }
-
-export { Exposition }

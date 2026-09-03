@@ -5,7 +5,7 @@ import { Connector } from '@toa.io/core'
 /**
  * @implements {toa.core.extensions.Aspect}
  */
-class Aspect extends Connector {
+export class Aspect extends Connector {
   name = 'state'
 
   /** @type {object} */
@@ -23,5 +23,3 @@ class Aspect extends Connector {
     overwrite(this.#value, value)
   }
 }
-
-export { Aspect }

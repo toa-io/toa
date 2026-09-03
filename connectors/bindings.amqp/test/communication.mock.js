@@ -5,7 +5,7 @@ import { generate } from 'randomstring'
 /**
  * @return {toa.amqp.Communication}
  */
-const communication = () => (
+export const communication = () => (
   /** @type {toa.amqp.Communication} */ {
     connect: mock.fn(async () => undefined),
     disconnect: mock.fn(async () => undefined),
@@ -20,5 +20,3 @@ const communication = () => (
     link: mock.fn()
   }
 )
-
-export { communication }

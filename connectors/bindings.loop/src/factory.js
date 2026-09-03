@@ -1,7 +1,7 @@
 import { Producer } from './producer.js'
 import { Consumer } from './consumer.js'
 
-class Factory {
+export class Factory {
   #bindings = {}
 
   producer (locator, endpoints, producer) {
@@ -12,5 +12,3 @@ class Factory {
     return new Consumer(this.#bindings, locator, endpoint)
   }
 }
-
-export { Factory }

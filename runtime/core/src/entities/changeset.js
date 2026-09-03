@@ -1,6 +1,6 @@
 import { EntityContractException } from '../exceptions.js'
 
-class Changeset {
+export class Changeset {
   /** @type {toa.core.Query} */
   query
 
@@ -34,5 +34,3 @@ class Changeset {
     return this.#state
   }
 }
-
-export { Changeset }

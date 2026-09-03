@@ -2,7 +2,7 @@ import { join } from 'node:path'
 import { createHash } from 'node:crypto'
 import fs from 'node:fs/promises'
 
-async function version (manifest) {
+export async function version (manifest) {
   manifest.version ??= await hash(manifest.path)
 }
 
@@ -55,5 +55,3 @@ async function digest (path) {
 }
 
 const EXCLUDED = new Set(['node_modules', '.git'])
-
-export { version }

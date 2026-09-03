@@ -1,6 +1,5 @@
-export { Communication };
 import { Connector } from '@toa.io/core';
-declare class Communication extends Connector {
+export declare class Communication extends Connector {
     #private;
     /**
      * @param {string[]} references the brokers this communication is held over

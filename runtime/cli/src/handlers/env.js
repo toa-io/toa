@@ -10,7 +10,7 @@ import { context as find } from '../util/find.js'
 
 const { Factory } = deployment
 
-async function env (argv) {
+export async function env (argv) {
   const path = find(argv.path)
   const filepath = join(path, argv.as)
   const factory = await Factory.create(path, argv.environment)
@@ -79,7 +79,7 @@ function merge (variables, current) {
   })
 }
 
-async function promptSecrets (variables) {
+export async function promptSecrets (variables) {
   const rl = readline.createInterface({ input, output })
   const secrets = {}
 
@@ -204,5 +204,3 @@ const DEV_SECRETS = {
   'toa-configuration/IDENTITY_TOKENS_KEY0': { generate: 'paseto' },
   'toa-configuration/IDENTITY_TOKENS_ENCRYPTION_KEY0': { generate: 'jwe' }
 }
-
-export { env, promptSecrets }

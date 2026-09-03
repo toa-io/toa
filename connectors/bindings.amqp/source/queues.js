@@ -5,7 +5,5 @@ import { concat } from '@toa.io/generic'
  * @param {string} endpoint
  * @returns {string}
  */
-const name = (locator, endpoint) =>
+export const name = (locator, endpoint) =>
   locator.namespace + '.' + concat(locator.name, '.') + endpoint
-
-export { name }

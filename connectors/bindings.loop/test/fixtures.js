@@ -2,7 +2,7 @@ import { mock } from 'node:test'
 
 import { generate } from 'randomstring'
 
-const component = {
+export const component = {
   locator: {
     id: 'foo.bar',
     operations: [
@@ -23,13 +23,11 @@ const component = {
   disconnect: () => null
 }
 
-const endpoints = ['get', 'add', 'discover']
+export const endpoints = ['get', 'add', 'discover']
 
-const exposition = {
+export const exposition = {
   locator: {
     id: 'foo.bar'
   },
   invoke: mock.fn(async () => generate())
 }
-
-export { component, endpoints, exposition }

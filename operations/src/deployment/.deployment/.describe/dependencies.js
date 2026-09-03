@@ -2,7 +2,7 @@
  * @param {toa.deployment.dependency.Reference[]} references
  * @returns {*}
  */
-const dependencies = (references) => {
+export const dependencies = (references) => {
   return references?.reduce((map, reference) => {
     const { name, alias, values } = reference
 
@@ -11,5 +11,3 @@ const dependencies = (references) => {
     return map
   }, {})
 }
-
-export { dependencies }

@@ -1,6 +1,6 @@
 import { resolve } from '../../shortcuts.js'
 
-function receivers (manifest) {
+export function receivers (manifest) {
   if (manifest.receivers === undefined) return
 
   for (const [locator, receiver] of Object.entries(manifest.receivers)) {
@@ -10,5 +10,3 @@ function receivers (manifest) {
     if (receiver.bridge !== undefined) receiver.bridge = resolve(receiver.bridge)
   }
 }
-
-export { receivers }

@@ -8,7 +8,7 @@ import { load as parse, dump } from 'js-yaml'
  * @param {string} directory
  * @param {string} [additions]
  */
-const template = async (directory, additions) => {
+export const template = async (directory, additions) => {
   const path = join(directory, FILENAME)
   const template = structuredClone(TEMPLATE)
 
@@ -27,7 +27,7 @@ const template = async (directory, additions) => {
  * @param {string} directory
  * @param {string} key
  */
-const remove = async (directory, key) => {
+export const remove = async (directory, key) => {
   const path = join(directory, FILENAME)
   const context = parse(await readFile(path, 'utf8'))
 
@@ -50,5 +50,3 @@ const TEMPLATE = parse(readFileSync(join(import.meta.dirname, FILENAME), 'utf8')
 async function save (object, path) {
   await writeFile(path, dump(object, { noRefs: true, lineWidth: -1 }), 'utf8')
 }
-
-export { template, remove }
