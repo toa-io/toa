@@ -41,7 +41,7 @@
     "minimatch@^9": {
       "brace-expansion": "2.1.4"
     },
-    "uuid": "11.1.1"
+    "uuid": "14.0.2"
   },
   "bin": {
     "toa": "runtime/runtime/bin/toa"
@@ -86,7 +86,7 @@
     "setup:mongo": "openssl rand -base64 756 > ./.mongo-keyfile && chmod 400 ./.mongo-keyfile",
     "ci": "rm -f package-lock.json && rm -rf node_modules && npm exec --workspaces -c \"rm -rf node_modules transpiled\" && npm i",
     "transpile": "npm run transpile --workspaces --if-present",
-    "retranspile": "npm exec --workspaces -c \"rm -rf transpiled tsconfig.tsbuildinfo\" && npm run transpile",
+    "retranspile": "npm exec --workspaces -c \"rm -rf transpiled\" && find . -name tsconfig.tsbuildinfo -not -path '*/node_modules/*' -delete && npm run transpile",
     "compose": "docker compose rm -f -s -v && docker compose up -d",
     "format": "oxfmt",
     "format:check": "oxfmt --check"

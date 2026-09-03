@@ -1,5 +1,7 @@
-import { V3 } from 'paseto'
 import { randomBytes } from 'node:crypto'
+import { ExportKeyFactory, GenerateKeyFactory } from 'paseto/v3/local'
+import { ExportPublicKeyFactory, ExportSecretKeyFactory, GenerateKeyPairFactory }
+  from 'paseto/v3/public'
 
 export async function key (argv) {
   if (!argv.public && argv.format === 'jwe') {
@@ -7,12 +9,14 @@ export async function key (argv) {
     return
   }
 
-  const purpose = argv.public ? 'public' : 'local'
-  const key = await V3.generateKey(purpose, { format: 'paserk' })
-
   if (argv.public) {
-    console.log(key.secretKey)
-    console.log(key.publicKey)
-  } else
-    console.log(key)
+    const pair = await GenerateKeyPairFactory().run({ extractable: true })
+
+    console.log(await ExportSecretKeyFactory().run(pair.secretKey))
+    console.log(await ExportPublicKeyFactory().run(pair.publicKey))
+  } else {
+    const local = await GenerateKeyFactory().run({ extractable: true })
+
+    console.log(await ExportKeyFactory().run(local))
+  }
 }

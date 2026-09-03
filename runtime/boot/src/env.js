@@ -1,5 +1,5 @@
 import dotenv from 'dotenv'
-import findUp from 'find-up'
+import { findUp } from 'find-up'
 
 async function setup () {
   const path = await findUp('.env')

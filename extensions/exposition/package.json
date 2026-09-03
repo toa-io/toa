@@ -32,7 +32,7 @@
     "msgpackr": "2.1.0",
     "negotiator": "1.1.0",
     "openspan": "1.0.0-alpha.272",
-    "paseto": "3.1.4"
+    "paseto": "4.0.0"
   },
   "scripts": {
     "test": "echo \"Error: run tests from root\" && exit 1",

@@ -3,7 +3,7 @@ import { randomBytes } from 'node:crypto'
 import readline from 'node:readline/promises'
 import { stdin as input, stdout as output } from 'node:process'
 import dotenv from 'dotenv'
-import { V3 } from 'paseto'
+import { ExportKeyFactory, GenerateKeyFactory } from 'paseto/v3/local'
 import { deployment } from '@toa.io/operations'
 import { readFile, writeFile } from 'node:fs/promises'
 import { context as find } from '../util/find.js'
@@ -144,7 +144,7 @@ async function resolveDevSecret (key) {
     return randomBytes(32).toString('base64url')
 
   if (source.generate === true || source.generate === 'paseto')
-    return /** @type {string} */ (await V3.generateKey('local', { format: 'paserk' }))
+    return await ExportKeyFactory().run(await GenerateKeyFactory().run({ extractable: true }))
 
   throw new Error(`Unknown dev secret source for ${key}`)
 }

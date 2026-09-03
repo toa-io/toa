@@ -28,7 +28,7 @@
     "@toa.io/schemas": "1.0.0-alpha.274",
     "clone-deep": "4.0.1",
     "dotenv": "17.4.2",
-    "find-up": "5.0.0",
+    "find-up": "8.0.0",
     "openspan": "1.0.0-alpha.272"
   },
   "gitHead": "61c8e74a336385265767e9fd37d49128cb51b17f"

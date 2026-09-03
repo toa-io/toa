@@ -2,7 +2,7 @@ import { it, beforeEach, mock } from 'node:test'
 import assert from 'node:assert/strict'
 
 import { generate } from 'randomstring'
-import { V3 } from 'paseto'
+import { EncryptFactory, ImportKeyFactory } from 'paseto/v3/local'
 import { Effect as Encrypt } from './encrypt.js'
 import { Computation as Decrypt } from './decrypt.js'
 import { type Configuration, type Context, type Identity } from './lib/index.js'
@@ -82,9 +82,7 @@ it('should decrypt with key1', async () => {
 it('should decrypt legacy PASETO and require refresh', async () => {
   const identity: Identity = { id: generate(), roles: [] }
 
-  const token = await V3.encrypt({ iss: authority, identity }, configuration.keys[2].key.unwrap(), {
-    footer: { kid: 'legacy0' }
-  })
+  const token = await paseto(configuration.keys[2].key.unwrap(), { iss: authority, identity }, 'legacy0')
 
   await assert.partialDeepStrictEqual(await decrypt.execute(token), {
     iss: authority,
@@ -101,9 +99,7 @@ it('should separate JWE and PASETO keys with the same id by format', async () =>
 
   const identity: Identity = { id: generate(), roles: [] }
 
-  const token = await V3.encrypt({ iss: authority, identity }, configuration.keys[2].key.unwrap(), {
-    footer: { kid: 'key0' }
-  })
+  const token = await paseto(configuration.keys[2].key.unwrap(), { iss: authority, identity }, 'key0')
 
   await assert.partialDeepStrictEqual(await decrypt.execute(token), { identity, refresh: true })
 })
@@ -143,4 +139,11 @@ it('should reject JWE with an unknown key', async () => {
 
 function secret (value: string): Secret {
   return { unwrap: () => value }
+}
+
+async function paseto (key: string, claims: object, kid: string): Promise<string> {
+  const secret = await ImportKeyFactory().run(key as `k3.local.${string}`)
+
+  return await EncryptFactory().run(secret, claims,
+    { footer: new TextEncoder().encode(JSON.stringify({ kid })) })
 }
