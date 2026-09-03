@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/types",
-  "version": "1.0.0-alpha.274",
+  "version": "1.0.0-alpha.277",
   "type": "module",
   "description": "Toa Types for Node.js",
   "author": "temich <tema.gurtovoy@gmail.com>",

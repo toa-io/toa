@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/extensions.fetch",
-  "version": "1.0.0-alpha.273",
+  "version": "1.0.0-alpha.277",
   "type": "module",
   "description": "Toa Fetch extension",
   "author": "temich <tema.gurtovoy@gmail.com>",
@@ -21,7 +21,7 @@
     "transpile": "tsc"
   },
   "dependencies": {
-    "@toa.io/core": "1.0.0-alpha.273",
-    "openspan": "1.0.0-alpha.272"
+    "@toa.io/core": "1.0.0-alpha.277",
+    "openspan": "1.0.0-alpha.277"
   }
 }

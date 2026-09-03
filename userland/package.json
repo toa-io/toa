@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/userland",
-  "version": "1.0.0-alpha.274",
+  "version": "1.0.0-alpha.277",
   "type": "module",
   "description": "Toa development kit",
   "homepage": "https://toa.io",
@@ -30,11 +30,11 @@
   },
   "types": "types/index.d.ts",
   "dependencies": {
-    "@toa.io/boot": "1.0.0-alpha.274",
-    "@toa.io/core": "1.0.0-alpha.273",
-    "@toa.io/generic": "1.0.0-alpha.273",
-    "@toa.io/norm": "1.0.0-alpha.274",
-    "@toa.io/schemas": "1.0.0-alpha.274",
+    "@toa.io/boot": "1.0.0-alpha.277",
+    "@toa.io/core": "1.0.0-alpha.277",
+    "@toa.io/generic": "1.0.0-alpha.277",
+    "@toa.io/norm": "1.0.0-alpha.277",
+    "@toa.io/schemas": "1.0.0-alpha.277",
     "@toa.io/storages.null": "0.22.0",
     "js-yaml": "5.4.1"
   },

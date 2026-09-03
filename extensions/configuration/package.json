@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/extensions.configuration",
-  "version": "1.0.0-alpha.276",
+  "version": "1.0.0-alpha.277",
   "type": "module",
   "description": "Toa Configuration",
   "author": "temich <tema.gurtovoy@gmail.com>",
@@ -25,9 +25,9 @@
   },
   "gitHead": "61c8e74a336385265767e9fd37d49128cb51b17f",
   "dependencies": {
-    "@toa.io/core": "1.0.0-alpha.273",
-    "@toa.io/generic": "1.0.0-alpha.273",
-    "@toa.io/schemas": "1.0.0-alpha.274",
-    "openspan": "1.0.0-alpha.272"
+    "@toa.io/core": "1.0.0-alpha.277",
+    "@toa.io/generic": "1.0.0-alpha.277",
+    "@toa.io/schemas": "1.0.0-alpha.277",
+    "openspan": "1.0.0-alpha.277"
   }
 }
