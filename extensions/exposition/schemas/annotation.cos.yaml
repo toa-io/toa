@@ -59,3 +59,6 @@ properties:
 type: object
 required:
   - authorities
+dependencies:
+  bouncer:
+    - ip
