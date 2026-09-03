@@ -69,6 +69,30 @@ See also:
 - [Content-Type: multipart](https://learn.microsoft.com/en-us/previous-versions/office/developer/exchange-server-2010/aa493937(v=exchg.140))
   at Microsoft
 
+## HTTP version
+
+The gateway serves HTTP/1.1 by default. `protocol: h2c` serves cleartext HTTP/2 instead.
+
+```yaml
+exposition:
+  protocol: h2c
+  service:
+    annotations:
+      projectcontour.io/upstream-protocol.h2c: "8000"
+```
+
+`h2c` requires an ingress controller that proxies cleartext HTTP/2 upstream, and the
+annotation that controller reads to do so. Contour, Traefik and Envoy-based controllers
+proxy it; ingress-nginx does not. A cleartext HTTP/2 server answers nothing else on the
+same port: there is no ALPN to negotiate with, so a controller that speaks HTTP/1.1 upstream
+reaches nothing.
+
+Under `h2c` a request refused before its body is read is answered and then cancelled with
+`RST_STREAM(NO_ERROR)`. The reply arrives; the upload stops where it is. A client streaming
+a request body sees that body cancelled — in Node, `ERR_STREAM_PREMATURE_CLOSE` on the stream
+it passed, which throws if nothing handles it. A real failure shows in the reply, or in the
+request rejecting because no reply came. A buffered body is unaffected.
+
 ## CORS
 
 [CORS](https://www.w3.org/TR/2020/SPSD-cors-20200602/) is supported,

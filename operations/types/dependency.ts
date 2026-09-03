@@ -7,6 +7,8 @@ export interface Service {
   version: string
   port?: number
   ingress?: Ingress
+  /** Annotations for the Service itself, as opposed to `ingress.annotations`. */
+  annotations?: object
   resources?: Resources
   variables?: Variable[]
   components?: string[]

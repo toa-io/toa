@@ -1,5 +1,5 @@
 import { performance } from 'node:perf_hooks'
-import type { ServerResponse } from 'node:http'
+import type { ServerResponse } from './types'
 
 export class Timing {
   private readonly start = performance.now()

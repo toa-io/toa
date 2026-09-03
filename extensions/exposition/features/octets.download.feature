@@ -18,6 +18,8 @@ Feature: Download external resources
               meta: true
       """
 
+    Given the length of `https://avatars.githubusercontent.com/u/92763022?s=48&v=4` is captured as `length`
+
     When the following request is received:
       """
       POST / HTTP/1.1
@@ -43,7 +45,7 @@ Feature: Download external resources
     Then the following reply is sent:
       """
       200 OK
-      content-length: 1288
+      content-length: ${{ length }}
       content-type: image/png
       etag: "${{ checksum }}"
       """

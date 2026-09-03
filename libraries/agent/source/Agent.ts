@@ -1,15 +1,19 @@
 import * as http from 'node:http'
 import * as https from 'node:https'
+import * as http2 from 'node:http2'
 import * as assert from 'node:assert'
+import { once } from 'node:events'
 import { buffer } from 'node:stream/consumers'
 import { trim } from '@toa.io/generic'
 import * as undici from 'undici'
 import { meros } from 'meros/node'
 import * as protocol from './index.js'
-import { parse, request } from './request.js'
+import { dispatcher, parse, request } from './request.js'
+import { PROTOCOL } from './protocol.js'
 import * as parser from './parse/index.js'
 import { Captures } from './Captures.js'
 import type { Readable } from 'stream'
+import type { HTTPRequest } from './parse/request.js'
 
 /*
 It is extracted from the Exposition.
@@ -25,7 +29,7 @@ export class Agent {
   /** The last response body, as received. A binary body does not survive `response`. */
   public bytes: Buffer | null = null
   public readonly captures: Captures
-  public pending = new Set<http.IncomingMessage>()
+  public pending = new Set<Readable & { destroy: () => void }>()
 
   public constructor (origin?: string, captures: Captures = new Captures()) {
     this.origin = origin
@@ -54,29 +58,21 @@ export class Agent {
     for (const [key, value] of req.headers)
       headers[key] = value
 
-    const protocol = new URL(req.url).protocol === 'https:' ? https : http
+    const { stream, status } = PROTOCOL === 'h2c'
+      ? await this.h2c(req, headers)
+      : await this.h1(req, headers)
 
-    const response = await new Promise<http.IncomingMessage>((resolve, reject) => {
-      const request = protocol.request(req.url, {
-        method: req.method,
-        headers
-      }, (response) => resolve(response))
+    if (status !== 200 && status !== 201) {
+      stream.destroy()
 
-      request.on('error', reject)
-      request.end(req.body)
-    })
-
-    if (response.statusCode !== 200 && response.statusCode !== 201) {
-      response.destroy()
-
-      assert.fail(`Request failed with status ${response.statusCode}: ${req.url}`)
+      assert.fail(`Request failed with status ${status}: ${req.url}`)
     }
 
-    this.pending.add(response)
-    response.on('end', () => this.pending.delete(response))
-    response.on('error', () => this.pending.delete(response))
+    this.pending.add(stream)
+    stream.on('end', () => this.pending.delete(stream))
+    stream.on('error', () => this.pending.delete(stream))
 
-    return await meros(response)
+    return await meros(stream as unknown as http.IncomingMessage)
   }
 
   public abort (): void {
@@ -142,10 +138,16 @@ export class Agent {
 
     const href = new URL(url, this.origin).href
 
+    // Over h2c a refused upload is answered and then RST_STREAM(NO_ERROR)'d, which destroys
+    // the body we were sending. Unhandled, that `'error'` would throw. It is not a failure on
+    // its own: a real one either shows in the reply or makes `undici.request` reject.
+    stream.on('error', () => undefined)
+
     const options = {
       method,
       headers,
-      body: stream
+      body: stream,
+      dispatcher: dispatcher(new URL(href).origin)
     }
 
     try {
@@ -168,6 +170,51 @@ export class Agent {
     this.responseIncludes(expected)
   }
 
+  private async h1 (req: HTTPRequest, headers: Record<string, string>): Promise<Reply> {
+    const transport = new URL(req.url).protocol === 'https:' ? https : http
+
+    const response = await new Promise<http.IncomingMessage>((resolve, reject) => {
+      const request = transport.request(req.url, {
+        method: req.method,
+        headers
+      }, (response) => resolve(response))
+
+      request.on('error', reject)
+      request.end(req.body)
+    })
+
+    return { stream: response, status: response.statusCode }
+  }
+
+  private async h2c (req: HTTPRequest, headers: Record<string, string>): Promise<Reply> {
+    const url = new URL(req.url)
+
+    // HTTP/2 carries the authority as a pseudo-header; `host` alongside it is forbidden
+    const { host, ...rest } = headers
+    const session = http2.connect(url.origin)
+
+    session.on('error', () => undefined)
+
+    const stream = session.request({
+      ...rest,
+      [http2.constants.HTTP2_HEADER_METHOD]: req.method,
+      [http2.constants.HTTP2_HEADER_PATH]: url.pathname + url.search,
+      [http2.constants.HTTP2_HEADER_AUTHORITY]: host ?? url.host
+    })
+
+    stream.end(req.body)
+
+    const [reply] = await once(stream, 'response') as [http2.IncomingHttpHeaders]
+
+    // `meros` reads the boundary off `.headers`, which a client stream does not carry
+    Object.assign(stream, { headers: reply })
+
+    // the session exists for this one stream; nothing else keeps the process from exiting
+    stream.on('close', () => session.close())
+
+    return { stream, status: reply[http2.constants.HTTP2_HEADER_STATUS] as unknown as number }
+  }
+
   private normalize (input: string): string {
     const substituted = this.captures.substitute(input)
     let [headers, body] = trim(substituted).split('\n\n')
@@ -184,3 +231,8 @@ export class Agent {
 const MAX_DIFF_LENGTH = 4096
 
 const DECLARES_LENGTH = /^content-length:/im
+
+interface Reply {
+  stream: Readable & { destroy: () => void }
+  status: number | undefined
+}

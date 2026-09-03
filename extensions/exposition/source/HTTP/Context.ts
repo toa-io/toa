@@ -6,7 +6,7 @@ import { Timing } from './Timing.js'
 import { type Format, formats, types } from './formats/index.js'
 import { read } from './messages.js'
 import type { OutgoingMessage } from './messages.js'
-import type * as http from 'node:http'
+import type { IncomingMessage } from './types.js'
 
 export class Context {
   public readonly id: string
@@ -85,11 +85,6 @@ export class Context {
 
     console.debug('Received request', { method: request.method, url: request.url, headers })
   }
-}
-
-export interface IncomingMessage extends http.IncomingMessage {
-  url: string
-  method: string
 }
 
 interface Pipelines {

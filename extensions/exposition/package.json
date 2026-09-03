@@ -47,8 +47,9 @@
     "transpile:passkeys": "tsc -p ./components/identity.passkeys",
     "transpile:otp": "tsc -p ./components/identity.otp",
     "features": "TSX_TSCONFIG_PATH=features/steps/tsconfig.json NODE_OPTIONS=--import=tsx cucumber-js",
-    "features:security": "cucumber-js --tags @security",
-    "features:octets": "cucumber-js features/octets.*"
+    "features:h2c": "TOA_EXPOSITION_PROTOCOL=h2c TOA_AGENT_PROTOCOL=h2c TSX_TSCONFIG_PATH=features/steps/tsconfig.json NODE_OPTIONS=--import=tsx cucumber-js",
+    "features:security": "TSX_TSCONFIG_PATH=features/steps/tsconfig.json NODE_OPTIONS=--import=tsx cucumber-js --tags @security",
+    "features:octets": "TSX_TSCONFIG_PATH=features/steps/tsconfig.json NODE_OPTIONS=--import=tsx cucumber-js features/octets.*"
   },
   "devDependencies": {
     "@toa.io/extensions.storages": "*",

@@ -24,8 +24,19 @@ properties:
     patternProperties:
       ^.+$:
         type: string
+  service:
+    type: object
+    properties:
+      annotations:
+        type: object
+        patternProperties:
+          ^.+$:
+            type: string
   debug:
     type: boolean
+  protocol:
+    type: string
+    enum: [h1, h2c]
   /: {}
   authorities:
     type: object

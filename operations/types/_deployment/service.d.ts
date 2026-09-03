@@ -11,6 +11,9 @@ declare namespace toa.deployment {
   interface Service extends _deployment.Deployable {
     port: number
     ingress?: Ingress
+
+    /** Annotations for the Service itself, as opposed to `ingress.annotations`. */
+    annotations?: object
   }
 
 }

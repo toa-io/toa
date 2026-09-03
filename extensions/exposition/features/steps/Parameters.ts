@@ -16,6 +16,10 @@ setDefaultTimeout(60 * 1000)
 
 process.env.TOA_DEV = '1'
 
+// the gateway answers for itself, as it does in a deployment: telemetry's probe tracks the
+// nested composition, which connects before route discovery settles
+process.env.TOA_TELEMETRY_READY ??= JSON.stringify(false)
+
 // export traces to the local Tempo (`docker compose up tempo grafana`),
 // unavailability of the endpoint is harmless
 process.env.TOA_TELEMETRY_TRACES ??= JSON.stringify({
