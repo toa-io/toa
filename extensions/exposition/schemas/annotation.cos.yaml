@@ -34,9 +34,17 @@ properties:
             type: string
   debug:
     type: boolean
+  address:
+    type: object
+    properties:
+      header:
+        type: string
+        minLength: 1
+    required:
+      - header
+    additionalProperties: false
   credentials:
     type: object
-    nullable: true
     properties:
       attempts:
         type: integer

@@ -64,6 +64,9 @@ export function deployment (_: unknown, annotation?: Annotation): Dependency {
   if (annotation.credentials !== undefined)
     properties.credentials = annotation.credentials
 
+  if (annotation.address !== undefined)
+    properties.address = annotation.address
+
   service.variables!.push({
     name: 'TOA_EXPOSITION_PROPERTIES',
     value: JSON.stringify(properties)
@@ -80,4 +83,4 @@ export function deployment (_: unknown, annotation?: Annotation): Dependency {
   return { services: [service] }
 }
 
-type Properties = Pick<Annotation, 'authorities' | 'debug' | 'protocol' | 'credentials'>
+type Properties = Pick<Annotation, 'authorities' | 'debug' | 'protocol' | 'credentials' | 'address'>

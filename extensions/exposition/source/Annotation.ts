@@ -18,9 +18,17 @@ export interface Annotation {
 
   debug?: boolean
 
-  /** Failed authentications an address may make; `null` meters none. See `identity.md`. */
-  credentials?: Credentials | null
+  /** Failed authentications an address may make; none are metered unless set. See `identity.md`. */
+  credentials?: Credentials
+
+  /** Where the client address is read from; the connection's, unless a header is named. */
+  address?: Address
   '/'?: object // parsed and validated by RTD.syntax.parse
+}
+
+export interface Address {
+  /** A header a trusted proxy in front of the gateway sets, `cf-connecting-ip` for one. */
+  header: string
 }
 
 export interface Credentials {

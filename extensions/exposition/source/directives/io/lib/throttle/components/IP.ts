@@ -1,40 +1,35 @@
 import type { Context } from '../../../../../HTTP/index.js'
+import type { Address } from '../../../../../Annotation.js'
 import type { Component } from './Component.js'
 
+/**
+ * The client address: the connection's, or the value a trusted proxy in front of the gateway
+ * writes into the header the deployment names. Of a header holding a list, the last value is
+ * the one that proxy appended.
+ */
 export class IP implements Component {
+  private readonly header?: string
+
+  public constructor (_: unknown, __: string, address?: Address) {
+    this.header = address?.header?.toLowerCase()
+  }
+
   public get (context: Context): string {
-    return this.xff(context) ?? context.request.socket.remoteAddress ?? ''
+    return this.named(context) ?? context.request.socket.remoteAddress ?? ''
   }
 
-  private xff (context: Context): string | undefined {
-    const xff = context.request.headers['x-forwarded-for']
+  private named (context: Context): string | undefined {
+    if (this.header === undefined)
+      return
 
-    if (xff === undefined || typeof xff === 'string')
-      return xff
+    const value = context.request.headers[this.header]
+    const raw = Array.isArray(value) ? value[value.length - 1] : value
 
-    let ip
+    if (raw === undefined)
+      return
 
-    for (const value of xff) {
-      ip = value.trim()
+    const last = raw.slice(raw.lastIndexOf(',') + 1).trim()
 
-      if (!local(ip))
-        return ip
-    }
-
-    return ip // last otherwise
+    return last === '' ? undefined : last
   }
-}
-
-function local (ip: string): boolean {
-  return (
-    ip === 'unknown' ||
-    ip === '' ||
-    ip === '127.0.0.1' ||
-    ip === '::1' ||
-    ip.startsWith('10.') ||
-    ip.startsWith('192.168.') ||
-    ip.match(/^172\.(1[6-9]|2[0-9]|3[0-1])\./) !== null ||
-    ip.startsWith('fd') ||
-    ip.startsWith('fe80:')
-  )
 }

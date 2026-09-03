@@ -5,8 +5,9 @@ import { Identity } from './Identity.js'
 import { Segment } from './Segment.js'
 import type { KeyComponentMethod } from '../Configuration.js'
 import type { Component } from './Component.js'
+import type { Address } from '../../../../../Annotation.js'
 
-type Constructor<T> = new (options: unknown, route: string) => T
+type Constructor<T> = new (options: unknown, route: string, address?: Address) => T
 
 export const Components: Record<KeyComponentMethod, Constructor<Component>> = {
   ip: IP,

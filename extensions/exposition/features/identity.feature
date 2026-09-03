@@ -160,3 +160,48 @@ Feature: Identity resource
       """
       201 Created
       """
+
+  Scenario: Failing authentication behind a trusted proxy
+    Given the annotation:
+      """yaml
+      credentials:
+        attempts: 1
+        interval: 60
+      address:
+        header: x-real-ip
+      """
+    # developer:wrong
+    When the following request is received:
+      """
+      GET /identity/ HTTP/1.1
+      host: nex.toa.io
+      x-real-ip: 203.0.113.1
+      authorization: Basic ZGV2ZWxvcGVyOndyb25n
+      """
+    Then the following reply is sent:
+      """
+      401 Unauthorized
+      """
+    When the following request is received:
+      """
+      GET /identity/ HTTP/1.1
+      host: nex.toa.io
+      x-real-ip: 203.0.113.1
+      authorization: Basic ZGV2ZWxvcGVyOndyb25n
+      """
+    Then the following reply is sent:
+      """
+      429 Too Many Requests
+      """
+    # another address, as the proxy reports it
+    When the following request is received:
+      """
+      GET /identity/ HTTP/1.1
+      host: nex.toa.io
+      x-real-ip: 203.0.113.2
+      authorization: Basic ZGV2ZWxvcGVyOndyb25n
+      """
+    Then the following reply is sent:
+      """
+      401 Unauthorized
+      """

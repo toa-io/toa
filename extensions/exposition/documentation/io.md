@@ -97,8 +97,15 @@ and reports what it could not the next time it gets through.
 What a request is metered against. Give one, or a list — a list keys on the combination, so
 `[route, ip]` meters each address separately on each route.
 
-- `ip` — the client address, read from `X-Forwarded-For` where it is set and not private,
-  and from the connection otherwise.
+- `ip` — the client address. The connection's, unless the exposition annotation names the header
+  a trusted proxy in front of the gateway sets; of a header holding a list, the last value is the
+  one that proxy appended. A header the client can write is not trusted by default.
+
+  ```yaml
+  exposition:
+    address:
+      header: cf-connecting-ip
+  ```
 - `path` — the path the request came in on, `/users/1`.
 - `route` — the route as declared, `/users/:id`. Every path matching the route shares one budget,
   which `path` cannot do: keyed on `path`, walking ids is a way around the limit.

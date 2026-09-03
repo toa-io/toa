@@ -59,11 +59,12 @@ See [`identity.tokens` component](components.md#local-tokens).
 
 ### Failed authentications
 
-Credentials that are rejected are metered per client address, whatever the scheme. An address may
-fail `attempts` at once and earns them back at `attempts` per `interval` seconds; a request carrying
-credentials from an address with nothing left is answered `429 Too Many Requests` with
-`Retry-After`. The meter is set in the exposition annotation, defaults to 20 attempts per 60
-seconds, and `null` turns it off.
+Credentials that are rejected can be metered per client address, whatever the scheme. An address
+may fail `attempts` at once and earns them back at `attempts` per `interval` seconds; a request
+carrying credentials from an address with nothing left is answered `429 Too Many Requests` with
+`Retry-After`. Nothing is metered unless the exposition annotation says so. The address is the
+connection's unless the annotation names the header a trusted proxy sets, see
+[`ip`](io.md#key-components); behind a load balancer the header is what tells clients apart.
 
 ```yaml
 # context.toa.yaml
@@ -72,6 +73,8 @@ exposition:
   credentials:
     attempts: 20
     interval: 60
+  address:
+    header: cf-connecting-ip
 ```
 
 The count is shared by the gateway replicas through

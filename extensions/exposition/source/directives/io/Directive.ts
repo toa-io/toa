@@ -1,4 +1,5 @@
 import type { Sync } from './lib/throttle/index.js'
+import type { Address } from '../../Annotation.js'
 import type { Parameter } from '../../RTD/index.js'
 import type { Input as Context } from '../../io.js'
 import type * as http from '../../HTTP/index.js'
@@ -13,5 +14,5 @@ export interface Directive {
 export interface Constructor {
   validate: (value: unknown) => void
 
-  new (value: any, sync: Sync, route: string): Directive
+  new (value: any, sync: Sync, route: string, address?: Address): Directive
 }

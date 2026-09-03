@@ -1,6 +1,7 @@
 import { Keys } from './Keys.js'
 import type { Batch } from './Sync.js'
 import type { Configuration } from './Configuration.js'
+import type { Address } from '../../../../Annotation.js'
 import type { Parameter } from '../../../../RTD/index.js'
 import type { Input as Context, Output } from '../../../../io.js'
 
@@ -55,9 +56,9 @@ export class Quotas {
       : `${options.name}:`
   }
 
-  public static create (configuration: Configuration, route: string = ''): Quotas {
+  public static create (configuration: Configuration, route: string = '', address?: Address): Quotas {
     const { requests, interval, condition } = configuration
-    const keys = Keys.create(configuration.key, condition, route)
+    const keys = Keys.create(configuration.key, condition, route, address)
 
     return new this({ keys, requests, interval, conditional: condition !== undefined })
   }

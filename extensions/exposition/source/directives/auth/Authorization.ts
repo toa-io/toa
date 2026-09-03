@@ -25,7 +25,6 @@ import type { Component } from '@toa.io/core'
 import type { Remotes } from '../../Remotes.js'
 import type { Parameter, DirectiveFamily } from '../../RTD/index.js'
 import type { Host } from '../../Factory.js'
-import type { Credentials } from '../../Annotation.js'
 import type {
   AuthenticationResult,
   Ban,
@@ -57,13 +56,14 @@ export class Authorization implements DirectiveFamily<Directive, Extension> {
     this.sync = null
     this.meter = null
 
-    const credentials = options.credentials === undefined ? CREDENTIALS : options.credentials
+    const credentials = options.credentials
 
-    if (credentials === null)
+    // keyed by address, which is the deployment's to name, so off until it is set
+    if (credentials === undefined)
       return
 
     this.meter = new Quotas({
-      keys: Keys.create([{ method: 'ip' }]),
+      keys: Keys.create([{ method: 'ip' }], undefined, '', options.address),
       requests: credentials.attempts,
       interval: credentials.interval * 1000,
       conditional: true, // charged on a rejection, not on a check
@@ -254,9 +254,6 @@ function glob (pattern: string): Minimatch {
 
   return compiled
 }
-
-/** What an address may fail at once, and the seconds it takes to earn them back. */
-const CREDENTIALS: Credentials = { attempts: 20, interval: 60 }
 
 /** The meter's name in the atom: `atom:exposition:meter:credentials:<address>`. */
 const METER = 'credentials'
