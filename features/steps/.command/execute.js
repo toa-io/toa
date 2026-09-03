@@ -32,10 +32,14 @@ async function execute (command, options = {}) {
     console.error(`Command '${command}' exited with code ${code}\n${stderr}`)
 
   this.stdout = stdout.trim()
-  this.stderr = stderr.trim()
+  // node warns about experimental APIs a dependency reaches for; that is the
+  // runtime speaking, not the program under test
+  this.stderr = stderr.split('\n').filter((line) => !EXPERIMENTAL.test(line)).join('\n').trim()
   this.stdoutLines = lines(this.stdout)
   this.stderrLines = lines(this.stderr)
 }
+
+const EXPERIMENTAL = /ExperimentalWarning|--trace-warnings/
 
 /**
  * @param {import('child_process').ChildProcess} child

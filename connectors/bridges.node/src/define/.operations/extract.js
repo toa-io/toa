@@ -58,7 +58,8 @@ const find = (module) => {
  * @returns {import('@babel/types').Statement}
  */
 const parse = (func) => {
-  const file = parser.parse(func.toString())
+  // an operation is a module, and may say so with import.meta
+  const file = parser.parse(func.toString(), { sourceType: 'module' })
 
   return file.program.body[0]
 }

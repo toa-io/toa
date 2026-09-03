@@ -43,7 +43,7 @@ async function receive (label, group, callback) {
   const locator = Locator.parse(label)
   const transport = await resolveBinding(locator, label)
 
-  return boot.bindings.receive(transport, locator, label, group, callback)
+  return await boot.bindings.receive(transport, locator, label, group, callback)
 }
 
 /**

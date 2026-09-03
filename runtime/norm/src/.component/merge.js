@@ -18,7 +18,7 @@ const define = async (root, manifest, property) => {
       if (item.bridge === undefined || item.bridge === manifest.bridge) continue // default bridge later
 
       const bridge = item.bridge || manifest.bridge
-      const define = req(bridge).define
+      const { define } = await req(bridge)
       const definition = await define[singular](root, endpoint)
 
       merge(item, definition)

@@ -92,7 +92,8 @@ const TEMPLATES = join(import.meta.dirname, 'chart/templates')
 
 
 function dump (object) {
-  return jsyaml.dump(object, { noRefs: true, lineWidth: -1 })
+  // js-yaml writes plain objects only, and the values carry locators and images
+  return jsyaml.dump(JSON.parse(JSON.stringify(object)), { noRefs: true, lineWidth: -1 })
 }
 
 export { Deployment }

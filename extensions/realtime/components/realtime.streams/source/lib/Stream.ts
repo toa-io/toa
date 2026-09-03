@@ -1,4 +1,5 @@
-import { EventEmitter, Readable } from 'node:stream'
+import { EventEmitter } from 'node:events'
+import { Readable } from 'node:stream'
 
 export class Stream extends Readable {
   public events = new EventEmitter()

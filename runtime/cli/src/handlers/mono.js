@@ -1,3 +1,4 @@
+import { createRequire } from 'node:module'
 import { pathToFileURL } from 'node:url'
 import { console as output } from 'openspan'
 import { Connector } from '@toa.io/core'
@@ -7,6 +8,8 @@ import { version } from '@toa.io/runtime'
 
 import { graceful } from './lib/graceful.js'
 import { components as find } from '../util/find.js'
+
+const require = createRequire(import.meta.url)
 
 /**
  * @param {Record<string, string | boolean | string[]>} argv
@@ -55,7 +58,8 @@ async function createServices (paths) {
 
       references.add(reference)
 
-      const { Factory, components } = await import(pathToFileURL(reference).href)
+      // an extension is named the way a package is, and a module is loaded by file
+      const { Factory, components } = await import(pathToFileURL(require.resolve(reference)).href)
 
       if (typeof Factory?.prototype.service !== 'function') continue
 

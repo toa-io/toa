@@ -27,7 +27,7 @@ before(async () => {
   remote = await stage.remote('tea.pots')
 
   // what `store.orders` would emit, sent the way it would send it
-  emitter = boot.bindings.emit(AMQP, new Locator('orders', 'store'), 'created')
+  emitter = await boot.bindings.emit(AMQP, new Locator('orders', 'store'), 'created')
 
   await emitter.connect()
 })

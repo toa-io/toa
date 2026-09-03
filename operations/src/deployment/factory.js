@@ -1,6 +1,7 @@
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { createRequire } from 'node:module'
+import { pathToFileURL } from 'node:url'
 import { context as load } from '@toa.io/norm'
 import { Process } from '../process.js'
 import { Operator } from './operator.js'
@@ -80,8 +81,9 @@ class Factory {
   }
 
   async #getDependency (reference, instances) {
-    // a dependency is named the way a package is, not written as a path
-    const module = await import(reference)
+    // a dependency may be named the way a package is or written as a directory,
+    // and a module is loaded by file
+    const module = await import(pathToFileURL(require.resolve(reference)).href)
     const pkg = JSON.parse(readFileSync(require.resolve(join(reference, 'package.json')), 'utf8'))
 
     if (module.deployment === undefined) return
