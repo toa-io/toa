@@ -1,9 +1,10 @@
 import { readFileSync } from 'node:fs'
 import { Readable } from 'node:stream'
+import { pipeline } from 'node:stream/promises'
 import { createHash } from 'node:crypto'
 import * as contentType from 'content-type'
 import { console } from 'openspan'
-import { formats } from './formats/index.js'
+import { type Format, formats } from './formats/index.js'
 import { BadRequest, NotAcceptable, UnsupportedMediaType } from './exceptions.js'
 import type { Context } from './Context.js'
 import type { ServerResponse } from './types.js'
@@ -117,22 +118,26 @@ function conditional (context: Context, response: ServerResponse, buf: Buffer): 
 
 function stream (message: OutgoingMessage, context: Context, response: ServerResponse): void {
   const encoded = message.headers !== undefined && message.headers.has('content-type')
+  const source: Readable = encoded ? message.body : multipart(message, context, response)
 
-  if (encoded)
-    message.body.pipe(response)
-  else
-    multipart(message, context, response)
-
-  message.body.on('error', (exception: Error) => {
-    console.warn('Message stream error', { path: context.url.pathname, exception })
-    response.end()
-  })
+  // not awaited: a reply that streams is written long after the request is answered, and a
+  // realtime subscription outlives the span the reply was produced in
+  //
+  // `pipeline` carries an error to every stage and destroys them. `pipe` leaves the stages it
+  // built behind, and an `error` on a stream nobody listens to is an uncaught exception.
+  pipeline(source, response)
+    .catch((exception: Error) =>
+      console.warn('Message stream error', { path: context.url.pathname, exception }))
 
   if (context.debug)
     debugStream(context, response)
 }
 
-export function multipart (message: OutgoingMessage, context: Context, response: ServerResponse): void {
+/**
+ * Frames an object stream as `multipart/*`: an `ACK` part, the parts themselves, then `FIN`.
+ * The body is a `Readable`; `write` reached here by testing it.
+ */
+export function multipart (message: OutgoingMessage, context: Context, response: ServerResponse): Readable {
   if (context.encoder === null)
     throw new NotAcceptable()
 
@@ -140,27 +145,20 @@ export function multipart (message: OutgoingMessage, context: Context, response:
 
   response.setHeader('content-type', `${encoder.multipart}; boundary=${BOUNDARY}`)
 
-  response.write(Buffer.concat([
-    CUT,
-    CRLF,
-    encoder.encode('ACK'),
-    CRLF,
-    CUT
-  ]))
+  return Readable.from(frames(message.body as Readable, encoder))
+}
 
-  message.body
-    .map((part: unknown) => Buffer.concat([
+async function * frames (body: Readable, encoder: Format): AsyncGenerator<Buffer> {
+  yield Buffer.concat([CUT, CRLF, encoder.encode('ACK'), CRLF, CUT])
+
+  for await (const part of body)
+    yield Buffer.concat([
       CRLF /* indicates no boundary headers */,
       encoder.encode(part),
       CRLF,
-      CUT]))
-    .on('end', () => response.end(Buffer.concat([
-      CRLF,
-      encoder.encode('FIN'),
-      CRLF,
-      FINALCUT
-    ])))
-    .pipe(response)
+      CUT])
+
+  yield Buffer.concat([CRLF, encoder.encode('FIN'), CRLF, FINALCUT])
 }
 
 const BOUNDARY = 'cut'

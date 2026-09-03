@@ -158,7 +158,7 @@ Feature: Service Deployment
       startupProbe:
         httpGet:
           path: /.ready
-          port: 8001
+          port: 8004
         initialDelaySeconds: 3
         periodSeconds: 2
         timeoutSeconds: 3
@@ -166,7 +166,7 @@ Feature: Service Deployment
       readinessProbe:
         httpGet:
           path: /.ready
-          port: 8001
+          port: 8004
         periodSeconds: 10
         timeoutSeconds: 3
         failureThreshold: 3

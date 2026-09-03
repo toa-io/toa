@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.276](https://github.com/toa-io/toa/compare/v1.0.0-alpha.275...v1.0.0-alpha.276) (2026-09-03)
+
+
+### Bug Fixes
+
+* **exposition:** give a component `host` over HTTP/2 ([7635142](https://github.com/toa-io/toa/commit/7635142fccdd3a755b76c6b2de670bfee6da2d19))
+* **exposition:** move the readiness probe off the Telemetry port ([4be9385](https://github.com/toa-io/toa/commit/4be93850f7eec65ded03a0a3ba3090003e40cb5c))
+
+
+
+
+
 # [1.0.0-alpha.274](https://github.com/toa-io/toa/compare/v1.0.0-alpha.273...v1.0.0-alpha.274) (2026-09-02)
 
 
