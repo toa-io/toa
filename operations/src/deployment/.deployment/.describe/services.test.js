@@ -59,3 +59,4 @@ it('should reject an ingress without a port', () => {
   expect(() => services(list, {}, undefined, { hosts: ['api.dev'] }))
     .toThrow("Service 'group-one' declares an ingress, but no port")
 })
+

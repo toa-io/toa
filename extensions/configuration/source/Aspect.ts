@@ -53,6 +53,9 @@ export class Aspect extends Connector implements extensions.Aspect {
     this.value = fit(configuration, this.manifest)
     this.created = created
     this.client.subscribe(this.locator.id, this.epoch, this.listener)
+
+    console.info('Configuration resolved',
+      { component: this.locator.id, epoch: this.epoch, created })
   }
 
   protected override async close (): Promise<void> {
@@ -68,10 +71,12 @@ export class Aspect extends Connector implements extensions.Aspect {
       this.value = fit(configuration, this.manifest)
       this.created = created
 
-      console.info('Configuration updated', { component: this.locator.id, created })
+      console.info('Configuration updated',
+        { component: this.locator.id, epoch: this.epoch, created })
     } catch (error) {
       // the service validated it against the schema of its epoch, so the two schemas differ
-      console.error('Configuration value does not match the schema', { component: this.locator.id, error })
+      console.error('Configuration value does not match the schema',
+        { component: this.locator.id, epoch: this.epoch, error })
     }
   }
 }

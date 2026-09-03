@@ -5,7 +5,7 @@ import * as schemas from './schemas'
 import { shortcuts } from './Directive'
 import { components } from './Composition'
 import { parse } from './RTD/syntax'
-import { DELAY, PORT } from './HTTP'
+import { DELAY, PORT, PROBE } from './HTTP'
 
 export function deployment (_: unknown, annotation?: Annotation): Dependency {
   assert.ok(annotation !== undefined, 'Exposition context annotation is required')
@@ -24,7 +24,7 @@ export function deployment (_: unknown, annotation?: Annotation): Dependency {
     ingress: { path: '/', hosts: [] },
     probe: {
       path: '/.ready',
-      port: PORT,
+      port: PROBE,
       delay: DELAY
     }
   }
@@ -49,17 +49,25 @@ export function deployment (_: unknown, annotation?: Annotation): Dependency {
   if (annotation.annotations !== undefined)
     service.ingress!.annotations = annotation.annotations
 
+  if (annotation.service?.annotations !== undefined)
+    service.annotations = annotation.service.annotations
+
   const properties: Properties = { authorities }
 
   if (debug === true)
     properties.debug = true
+
+  if (annotation.protocol !== undefined)
+    properties.protocol = annotation.protocol
 
   service.variables!.push({
     name: 'TOA_EXPOSITION_PROPERTIES',
     value: JSON.stringify(properties)
   })
 
-  // Nested identity composition shares this process; gateway already exposes /.ready.
+  // The identity composition nested in this process connects before route discovery settles,
+  // so telemetry's probe — which tracks that composition — would report ready too early.
+  // The gateway answers for itself, on the same port telemetry would have used.
   service.variables!.push({
     name: 'TOA_TELEMETRY_READY',
     value: JSON.stringify(false)
@@ -68,4 +76,4 @@ export function deployment (_: unknown, annotation?: Annotation): Dependency {
   return { services: [service] }
 }
 
-type Properties = Pick<Annotation, 'authorities' | 'debug'>
+type Properties = Pick<Annotation, 'authorities' | 'debug' | 'protocol'>

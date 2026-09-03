@@ -1,8 +1,25 @@
 import * as undici from 'undici'
 import * as parser from './parse'
+import { PROTOCOL } from './protocol'
 import type { HTTPRequest } from './parse/request'
 
-const pools = new Map<string, undici.Pool>()
+const dispatchers = new Map<string, undici.Dispatcher>()
+
+/**
+ * One dispatcher per origin. Over `h2c` every request is a stream on a single connection,
+ * so there is nothing to pool.
+ */
+export function dispatcher (origin: string): undici.Dispatcher {
+  let existing = dispatchers.get(origin)
+
+  if (existing === undefined) {
+    existing = PROTOCOL === 'h2c' ? new undici.H2CClient(origin) : new undici.Pool(origin)
+
+    dispatchers.set(origin, existing)
+  }
+
+  return existing
+}
 
 export async function request (http: string, options: Options = {}): Promise<undici.Dispatcher.ResponseData> {
   const { base, ...requestOptions } = options
@@ -12,12 +29,7 @@ export async function request (http: string, options: Options = {}): Promise<und
   if (origin === undefined)
     throw new Error('Invalid Host header')
 
-  if (!pools.has(origin))
-    pools.set(origin, new undici.Pool(origin))
-
-  const pool = pools.get(origin)!
-
-  return await pool.request({
+  return await dispatcher(origin).request({
     ...requestOptions,
     path: pathname + search,
     method,
