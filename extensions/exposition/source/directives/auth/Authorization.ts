@@ -56,16 +56,16 @@ export class Authorization implements DirectiveFamily<Directive, Extension> {
     this.sync = null
     this.meter = null
 
-    const credentials = options.credentials
+    const authentication = options.authentication
 
     // keyed by address, which is the deployment's to name, so off until it is set
-    if (credentials === undefined)
+    if (authentication === undefined)
       return
 
     this.meter = new Quotas({
-      keys: Keys.create([{ method: 'ip' }], undefined, '', options.address),
-      requests: credentials.attempts,
-      interval: credentials.interval * 1000,
+      keys: Keys.create([{ method: 'ip' }], undefined, '', authentication.header),
+      requests: authentication.attempts ?? ATTEMPTS,
+      interval: (authentication.interval ?? INTERVAL) * 1000,
       conditional: true, // charged on a rejection, not on a check
       name: METER
     })
@@ -254,6 +254,10 @@ function glob (pattern: string): Minimatch {
 
   return compiled
 }
+
+/** What an address may fail at once, and the seconds it takes to earn them back. */
+const ATTEMPTS = 20
+const INTERVAL = 60
 
 /** The meter's name in the atom: `atom:exposition:meter:credentials:<address>`. */
 const METER = 'credentials'

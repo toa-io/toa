@@ -97,13 +97,13 @@ and reports what it could not the next time it gets through.
 What a request is metered against. Give one, or a list — a list keys on the combination, so
 `[route, ip]` meters each address separately on each route.
 
-- `ip` — the client address. The connection's, unless the exposition annotation names the header
-  a trusted proxy in front of the gateway sets; of a header holding a list, the last value is the
-  one that proxy appended. A header the client can write is not trusted by default.
+- `ip` — the client address: the connection's, or the value of the header the exposition
+  annotation names under `authentication`. See
+  [failed authentications](identity.md#failed-authentications) for why it is a header and which one.
 
   ```yaml
   exposition:
-    address:
+    authentication:
       header: cf-connecting-ip
   ```
 - `path` — the path the request came in on, `/users/1`.

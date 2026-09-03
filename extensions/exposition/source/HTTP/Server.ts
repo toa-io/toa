@@ -12,7 +12,7 @@ import { ClientError, Exception } from './exceptions.js'
 import { Context } from './Context.js'
 import { PROBE, Probe } from './Probe.js'
 import type { IncomingMessage, Protocol, ServerResponse } from './types.js'
-import type { Address, Credentials } from '../Annotation.js'
+import type { Authentication } from '../Annotation.js'
 
 export class Server extends Connector {
   private readonly server: http.Server | http2.Http2Server
@@ -381,10 +381,7 @@ interface Properties {
   probe: number
 
   /** Failed authentications an address may make; none are metered unless set. */
-  credentials?: Credentials
-
-  /** Where the client address is read from; the connection's, unless a header is named. */
-  address?: Address
+  authentication?: Authentication
 }
 
 export type Options = { authorities: Properties['authorities'] } & {

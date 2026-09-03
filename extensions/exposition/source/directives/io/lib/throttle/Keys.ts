@@ -2,7 +2,6 @@ import { createHash } from 'node:crypto'
 import { Components, type Component } from './components/index.js'
 import { Conditions, type Condition } from './conditions/index.js'
 import type { KeyComponent, KeyCondition } from './Configuration.js'
-import type { Address } from '../../../../Annotation.js'
 import type { Parameter } from '../../../../RTD/index.js'
 import type { Input as Context, Output } from '../../../../io.js'
 
@@ -19,9 +18,9 @@ export class Keys {
 
   // eslint-disable-next-line max-params
   public static create (componentRules: KeyComponent[], conditionRules?: KeyCondition[],
-    route: string = '', address?: Address): Keys {
+    route: string = '', header?: string): Keys {
     const components = componentRules.map((rule) =>
-      new Components[rule.method](rule.options, route, address))
+      new Components[rule.method](rule.options, route, header))
 
     const conditions = conditionRules?.map((rule) => new Conditions[rule.method](rule.options))
 

@@ -113,11 +113,12 @@ Feature: Identity resource
   Scenario: Failing authentication repeatedly
     Given the annotation:
       """yaml
-      credentials:
+      authentication:
+        header: x-real-ip
         attempts: 2
         interval: 60
       """
-    # developer:wrong
+    # developer:wrong, from the connection: the proxy header is not sent
     When the following request is received:
       """
       GET /identity/ HTTP/1.1
@@ -164,11 +165,10 @@ Feature: Identity resource
   Scenario: Failing authentication behind a trusted proxy
     Given the annotation:
       """yaml
-      credentials:
+      authentication:
+        header: x-real-ip
         attempts: 1
         interval: 60
-      address:
-        header: x-real-ip
       """
     # developer:wrong
     When the following request is received:

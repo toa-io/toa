@@ -19,22 +19,17 @@ export interface Annotation {
   debug?: boolean
 
   /** Failed authentications an address may make; none are metered unless set. See `identity.md`. */
-  credentials?: Credentials
-
-  /** Where the client address is read from; the connection's, unless a header is named. */
-  address?: Address
+  authentication?: Authentication
   '/'?: object // parsed and validated by RTD.syntax.parse
 }
 
-export interface Address {
-  /** A header a trusted proxy in front of the gateway sets, `cf-connecting-ip` for one. */
+export interface Authentication {
+  /** the header the client address is read from, the one the edge in front sets */
   header: string
-}
 
-export interface Credentials {
-  /** what an address may fail at once */
-  attempts: number
+  /** what an address may fail at once, 20 by default */
+  attempts?: number
 
-  /** seconds it takes to earn them back */
-  interval: number
+  /** seconds it takes to earn them back, 60 by default */
+  interval?: number
 }

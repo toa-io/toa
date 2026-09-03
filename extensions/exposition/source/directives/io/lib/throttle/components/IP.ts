@@ -1,5 +1,4 @@
 import type { Context } from '../../../../../HTTP/index.js'
-import type { Address } from '../../../../../Annotation.js'
 import type { Component } from './Component.js'
 
 /**
@@ -10,8 +9,8 @@ import type { Component } from './Component.js'
 export class IP implements Component {
   private readonly header?: string
 
-  public constructor (_: unknown, __: string, address?: Address) {
-    this.header = address?.header?.toLowerCase()
+  public constructor (_: unknown, __: string, header?: string) {
+    this.header = header?.toLowerCase()
   }
 
   public get (context: Context): string {

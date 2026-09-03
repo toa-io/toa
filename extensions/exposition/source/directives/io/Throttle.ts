@@ -4,14 +4,13 @@ import { parse, Quotas, type Declaration, type Sync } from './lib/throttle/index
 import type * as http from '../../HTTP/index.js'
 import type { Parameter } from '../../RTD/index.js'
 import type { Directive } from './Directive.js'
-import type { Address } from '../../Annotation.js'
 
 export class Throttle implements Directive {
   private readonly quotas: Quotas
 
   // eslint-disable-next-line max-params
-  public constructor (declaration: Declaration, sync: Sync, route: string, address?: Address) {
-    this.quotas = Quotas.create(parse(declaration), route, address)
+  public constructor (declaration: Declaration, sync: Sync, route: string, header?: string) {
+    this.quotas = Quotas.create(parse(declaration), route, header)
 
     sync.register(this.quotas)
   }

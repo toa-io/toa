@@ -233,7 +233,7 @@ describe('ip', () => {
   })
 
   it('should key on the named header, by its last value', () => {
-    quotas = Quotas.create(configuration, '', { header: 'x-forwarded-for' })
+    quotas = Quotas.create(configuration, '', 'x-forwarded-for')
 
     const one = createContext({ request: { headers: { 'x-forwarded-for': '8.8.8.8, 1.1.1.1' }, socket: {} } })
     const two = createContext({ request: { headers: { 'x-forwarded-for': '8.8.8.8, 2.2.2.2' }, socket: {} } })
