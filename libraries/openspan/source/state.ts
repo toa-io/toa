@@ -1,6 +1,6 @@
 import { AsyncLocalStorage } from 'node:async_hooks'
-import type { SpanContext } from './tracing'
-import type { Exporter } from './exporters'
+import type { SpanContext } from './tracing.js'
+import type { Exporter } from './exporters.js'
 
 /**
  * A process may load several copies of this module (e.g. a service with its own

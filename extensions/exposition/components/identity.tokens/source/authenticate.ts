@@ -1,5 +1,5 @@
 import type { Maybe, Operation } from '@toa.io/types'
-import type { AuthenticateInput, AuthenticateOutput, Context } from './lib'
+import type { AuthenticateInput, AuthenticateOutput, Context } from './lib/index.js'
 
 export class Computation implements Operation {
   private refresh: number = 0

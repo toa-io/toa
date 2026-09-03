@@ -1,14 +1,12 @@
-'use strict'
+import assert from 'node:assert'
+import { When, Then } from '@cucumber/cucumber'
+import { diff } from 'jest-diff'
+import { exceptions } from '@toa.io/core'
+import { transpose, match } from '@toa.io/generic'
+import { load as parse } from 'js-yaml'
 
-const assert = require('node:assert')
-const { When, Then } = require('@cucumber/cucumber')
-const { diff } = require('jest-diff')
-const { exceptions } = require('@toa.io/core')
-const { transpose, match } = require('@toa.io/generic')
-const { load: parse } = require('js-yaml')
-
-const { cli } = require('./.connectors/cli')
-const stage = require('./.workspace/components')
+import { cli } from './.connectors/cli.js'
+import * as stage from './.workspace/components/index.js'
 
 When('I debug command {word}',
   /**
@@ -17,7 +15,7 @@ When('I debug command {word}',
    * @this {toa.features.Context}
    */
   async function(name, inputs) {
-    const handler = cli(name)
+    const handler = await cli(name)
     const argv = Object.fromEntries(inputs.raw())
 
     this.connector = await handler(argv)

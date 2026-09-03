@@ -1,11 +1,9 @@
-'use strict'
-
-const { timeout } = require('./timeout')
+import { timeout } from './timeout.js'
 
 /**
  * @type {toa.generic.Retry}
  */
-const retry = async (func, options = {}, attempt = 0) => {
+export const retry = async (func, options = {}, attempt = 0) => {
   if (attempt === 0) options = Object.assign({}, DEFAULTS, options)
 
   let inner
@@ -26,7 +24,7 @@ const retry = async (func, options = {}, attempt = 0) => {
   return inner === undefined ? outer : await inner
 }
 
-class RetryError extends Error {}
+export class RetryError extends Error {}
 
 /** @type {toa.generic.retry.Options} */
 const DEFAULTS = {
@@ -37,6 +35,5 @@ const DEFAULTS = {
   dispersion: 0.1
 }
 
-exports.retry = retry
-exports.retry.Error = RetryError
-exports.RetryError = RetryError
+
+retry.Error = RetryError

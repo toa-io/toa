@@ -1,6 +1,4 @@
-'use strict'
-
-class Factory {
+export class Factory {
   /**
    *
    * @returns {toa.core.Connector}
@@ -20,9 +18,9 @@ class Factory {
   }
 }
 
-exports.Factory = Factory
 
-exports.deployment = (_, value) => {
+
+export const deployment = (_, value) => {
   return {
     variables: {
       global: [{

@@ -1,4 +1,7 @@
-import * as schemas from './schemas'
+import { describe, it } from 'node:test'
+import assert from 'node:assert/strict'
+
+import * as schemas from './schemas.js'
 
 describe('workflow', () => {
   const ok = [
@@ -11,11 +14,13 @@ describe('workflow', () => {
     { echo: 'hello world', ok: { not: 'ok' } }
   ]
 
-  it.each(ok)('should be valid', (workflow) => {
-    expect(() => schemas.workflow.validate(workflow)).not.toThrow()
+  for (const workflow of ok)
+     it('should be valid', () => {
+    assert.doesNotThrow(() => schemas.workflow.validate(workflow))
   })
 
-  it.each(oh)('should not be valid', (workflow) => {
-    expect(() => schemas.workflow.validate(workflow)).toThrow()
+  for (const workflow of oh)
+     it('should not be valid', () => {
+    assert.throws(() => schemas.workflow.validate(workflow))
   })
 })

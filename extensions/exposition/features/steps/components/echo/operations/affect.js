@@ -1,7 +1,3 @@
-'use strict'
-
-function effect (input) {
+export function effect (input) {
   return `Hello ${input.name}`
 }
-
-exports.effect = effect

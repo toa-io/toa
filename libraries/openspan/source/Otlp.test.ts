@@ -1,8 +1,12 @@
+import { it, before, after, beforeEach, mock } from 'node:test'
+import assert from 'node:assert/strict'
+import { isDeepStrictEqual } from 'node:util'
+
 import * as http from 'node:http'
-import { console } from './Console'
-import { Otlp } from './Otlp'
+import { console } from './Console.js'
+import { Otlp } from './Otlp.js'
 import type { AddressInfo } from 'node:net'
-import type { Span } from './exporters'
+import type { Span } from './exporters.js'
 
 interface Request {
   method?: string
@@ -19,7 +23,7 @@ let endpoint: string
 // an endpoint nothing listens on
 const refused = 'http://localhost:1'
 
-beforeAll(async () => {
+before(async () => {
   server = http.createServer((request, response) => {
     let body = ''
 
@@ -36,7 +40,7 @@ beforeAll(async () => {
   endpoint = `http://127.0.0.1:${(server.address() as AddressInfo).port}`
 })
 
-afterAll(async () => {
+after(async () => {
   server.closeAllConnections()
 
   await new Promise<void>((resolve) => server.close(() => resolve()))
@@ -66,12 +70,9 @@ it('should post spans to the endpoint', async () => {
   exporter.export(span)
   await exporter.flush()
 
-  expect(requests).toHaveLength(1)
-  expect(requests[0]).toMatchObject({
-    method: 'POST',
-    url: '/v1/traces',
-    headers: expect.objectContaining({ 'content-type': 'application/json' })
-  })
+  assert.strictEqual(requests.length, 1)
+  assert.partialDeepStrictEqual(requests[0], { method: 'POST', url: '/v1/traces' })
+  assert.strictEqual(requests[0].headers['content-type'], 'application/json')
 })
 
 it('should encode spans as OTLP JSON', async () => {
@@ -84,12 +85,10 @@ it('should encode spans as OTLP JSON', async () => {
   const resource = body.resourceSpans[0]
   const encoded = resource.scopeSpans[0].spans[0]
 
-  expect(resource.resource.attributes).toContainEqual({
-    key: 'service.name',
-    value: { stringValue: 'my-service' }
-  })
+  assert.ok(resource.resource.attributes.some((attribute: any) =>
+    isDeepStrictEqual(attribute, { key: 'service.name', value: { stringValue: 'my-service' } })))
 
-  expect(encoded).toMatchObject({
+  assert.partialDeepStrictEqual(encoded, {
     traceId: span.traceId,
     spanId: span.spanId,
     parentSpanId: span.parentId,
@@ -100,13 +99,13 @@ it('should encode spans as OTLP JSON', async () => {
     status: { code: 2 }
   })
 
-  expect(encoded.attributes).toEqual(expect.arrayContaining([
+  assert.ok([
     { key: 'component', value: { stringValue: 'pots' } },
     { key: 'method', value: { stringValue: 'GET' } },
     { key: 'attempt', value: { intValue: '2' } },
     { key: 'ratio', value: { doubleValue: 0.5 } },
     { key: 'ok', value: { boolValue: true } }
-  ]))
+  ].every((item: any) => encoded.attributes.some((candidate: any) => isDeepStrictEqual(candidate, item))))
 })
 
 it('should batch spans', async () => {
@@ -116,11 +115,11 @@ it('should batch spans', async () => {
   exporter.export({ ...span, name: 'second' })
   await exporter.flush()
 
-  expect(requests).toHaveLength(1)
+  assert.strictEqual(requests.length, 1)
 
   const body = JSON.parse(requests[0].body)
 
-  expect(body.resourceSpans[0].scopeSpans[0].spans).toHaveLength(2)
+  assert.strictEqual(body.resourceSpans[0].scopeSpans[0].spans.length, 2)
 })
 
 it('should group spans by service', async () => {
@@ -133,16 +132,16 @@ it('should group spans by service', async () => {
 
   const body = JSON.parse(requests[0].body)
 
-  expect(body.resourceSpans).toHaveLength(2)
+  assert.strictEqual(body.resourceSpans.length, 2)
 
   const services = body.resourceSpans.map((resource: any) =>
     resource.resource.attributes.find((attribute: any) => attribute.key === 'service.name').value.stringValue)
 
-  expect(services).toEqual(expect.arrayContaining(['orders', 'fallback']))
+  assert.ok(['orders', 'fallback'].every((item: any) => services.some((candidate: any) => isDeepStrictEqual(candidate, item))))
 
   const orders = body.resourceSpans[services.indexOf('orders')]
 
-  expect(orders.scopeSpans[0].spans).toHaveLength(2)
+  assert.strictEqual(orders.scopeSpans[0].spans.length, 2)
 })
 
 it('should send custom headers', async () => {
@@ -151,7 +150,7 @@ it('should send custom headers', async () => {
   exporter.export(span)
   await exporter.flush()
 
-  expect(requests[0].headers).toMatchObject({ authorization: 'Bearer token' })
+  assert.partialDeepStrictEqual(requests[0].headers, { authorization: 'Bearer token' })
 })
 
 it('should not fail on export errors', async () => {
@@ -159,7 +158,7 @@ it('should not fail on export errors', async () => {
 
   exporter.export(span)
 
-  await expect(exporter.flush()).resolves.toBeUndefined()
+  await assert.strictEqual(await exporter.flush(), undefined)
 })
 
 it('should not fail on serialization errors and keep exporting', async () => {
@@ -170,13 +169,13 @@ it('should not fail on serialization errors and keep exporting', async () => {
 
   exporter.export({ ...span, attributes: { circular } })
 
-  await expect(exporter.flush()).resolves.toBeUndefined()
-  expect(requests).toHaveLength(0)
+  await assert.strictEqual(await exporter.flush(), undefined)
+  assert.strictEqual(requests.length, 0)
 
   exporter.export(span)
 
-  await expect(exporter.flush()).resolves.toBeUndefined()
-  expect(requests).toHaveLength(1)
+  await assert.strictEqual(await exporter.flush(), undefined)
+  assert.strictEqual(requests.length, 1)
 })
 
 it('should bound a request by the timeout', async () => {
@@ -187,7 +186,7 @@ it('should bound a request by the timeout', async () => {
   exporter.export(span)
 
   // hangs indefinitely unless the request is destroyed
-  await expect(exporter.flush()).resolves.toBeUndefined()
+  await assert.strictEqual(await exporter.flush(), undefined)
 })
 
 it('should drop spans while the endpoint is unavailable', async () => {
@@ -198,16 +197,16 @@ it('should drop spans while the endpoint is unavailable', async () => {
   exporter.export(span)
   await exporter.flush()
 
-  expect(requests).toHaveLength(1)
+  assert.strictEqual(requests.length, 1)
 
   exporter.export({ ...span, name: 'second' })
   await exporter.flush()
 
-  expect(requests).toHaveLength(1)
+  assert.strictEqual(requests.length, 1)
 })
 
 it('should warn once while the endpoint is unavailable', async () => {
-  const warn = jest.spyOn(console, 'warn').mockImplementation(() => undefined)
+  const warn = mock.method(console, 'warn', () => undefined)
 
   respond = (response) => response.writeHead(503).end()
 
@@ -220,10 +219,10 @@ it('should warn once while the endpoint is unavailable', async () => {
   exporter.export({ ...span, name: 'second' })
   await exporter.flush()
 
-  expect(requests).toHaveLength(2)
-  expect(warn).toHaveBeenCalledTimes(1)
+  assert.strictEqual(requests.length, 2)
+  assert.strictEqual(warn.mock.callCount(), 1)
 
-  warn.mockRestore()
+  warn.mock.restore()
 })
 
 it('should resume exporting when the endpoint recovers', async () => {
@@ -239,9 +238,9 @@ it('should resume exporting when the endpoint recovers', async () => {
   exporter.export({ ...span, name: 'second' })
   await exporter.flush()
 
-  expect(requests).toHaveLength(2)
+  assert.strictEqual(requests.length, 2)
 
   const body = JSON.parse(requests[1].body)
 
-  expect(body.resourceSpans[0].scopeSpans[0].spans[0].name).toBe('second')
+  assert.strictEqual(body.resourceSpans[0].scopeSpans[0].spans[0].name, 'second')
 })

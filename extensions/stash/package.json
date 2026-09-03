@@ -1,6 +1,7 @@
 {
   "name": "@toa.io/extensions.stash",
   "version": "1.0.0-alpha.274",
+  "type": "module",
   "description": "Toa Stash",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
@@ -24,10 +25,6 @@
   },
   "scripts": {
     "transpile": "tsc"
-  },
-  "jest": {
-    "preset": "ts-jest",
-    "testEnvironment": "node"
   },
   "gitHead": "61c8e74a336385265767e9fd37d49128cb51b17f"
 }

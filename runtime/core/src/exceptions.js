@@ -1,8 +1,6 @@
-'use strict'
+import { swap } from '@toa.io/generic'
 
-const { swap } = require('@toa.io/generic')
-
-const codes = {
+export const codes = {
   System: 0,
 
   Contract: 200,
@@ -28,7 +26,7 @@ const codes = {
 /**
  * @implements {toa.core.Exception}
  */
-class Exception {
+export class Exception {
   code
   message
 
@@ -41,7 +39,7 @@ class Exception {
   }
 }
 
-class SystemException extends Exception {
+export class SystemException extends Exception {
   stack
 
   constructor (error) {
@@ -51,7 +49,7 @@ class SystemException extends Exception {
   }
 }
 
-class ContractException extends Exception {
+export class ContractException extends Exception {
   constructor (code, error, cause) {
     super(code || codes.Contract, typeof error === 'string' ? error : error?.message, cause)
 
@@ -62,46 +60,55 @@ class ContractException extends Exception {
   }
 }
 
-class RequestContractException extends ContractException {
+export class RequestContractException extends ContractException {
   constructor (error, cause) { super(codes.RequestContract, error, cause) }
 }
 
-class ResponseContractException extends ContractException {
+export class ResponseContractException extends ContractException {
   constructor (error, cause) { super(codes.ResponseContract, error, cause) }
 }
 
-class EntityContractException extends ContractException {
+export class EntityContractException extends ContractException {
   constructor (error, cause) { super(codes.EntityContract, error, cause) }
 }
 
-class EntityGuardException extends ContractException {
+export class EntityGuardException extends ContractException {
   constructor (name, cause) { super(codes.EntityGuard, name, cause) }
 }
 
 // #region exports
-exports.Exception = Exception
-exports.SystemException = SystemException
-exports.RequestContractException = RequestContractException
-exports.ResponseContractException = ResponseContractException
-exports.EntityContractException = EntityContractException
-exports.EntityGuardException = EntityGuardException
 
-for (const [name, code] of Object.entries(codes)) {
+
+
+
+
+
+
+// a module's exports are static, so the ones that follow a code are named rather
+// than generated onto the namespace
+function derive (name) {
   const classname = name + 'Exception'
 
-  if (exports[classname] === undefined) {
-    exports[classname] = class extends Exception {
-      constructor (message, cause) {
-        message = message
-          ? `${classname}: ${message}`
-          : classname
-
-        super(code, message ?? classname, cause)
-      }
+  return class extends Exception {
+    constructor (message, cause) {
+      super(codes[name], message ? `${classname}: ${message}` : classname, cause)
     }
+
+    static name = classname
   }
 }
 
-exports.codes = codes
-exports.names = swap(codes)
+export const RequestSyntaxException = derive('RequestSyntax')
+export const RequestConflictException = derive('RequestConflict')
+export const QuerySyntaxException = derive('QuerySyntax')
+export const StateException = derive('State')
+export const StateNotFoundException = derive('StateNotFound')
+export const StatePreconditionException = derive('StatePrecondition')
+export const StateConcurrencyException = derive('StateConcurrency')
+export const StateInitializationException = derive('StateInitialization')
+export const DuplicateException = derive('Duplicate')
+export const CommunicationException = derive('Communication')
+export const TransmissionException = derive('Transmission')
+
+export const names = swap(codes)
 // #endregion

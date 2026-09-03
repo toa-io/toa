@@ -1,12 +1,10 @@
-'use strict'
+import { load } from './load.js'
 
-const { load } = require('./load')
-
-const resolve = (references, annotations) => {
+export const resolve = async (references, annotations) => {
   const dependencies = {}
 
   for (const [dependency, components] of Object.entries(references)) {
-    const { metadata, module } = load(dependency)
+    const { metadata, module } = await load(dependency)
     const id = metadata.name
 
     const instances = components.map((component) => ({
@@ -28,7 +26,7 @@ const resolve = (references, annotations) => {
     if (dependency in dependencies) continue
 
     // an annotation may be keyed by a dependency id rather than by a module reference
-    const module = optional(dependency)
+    const module = await optional(dependency)
 
     if (module?.standalone === true) dependencies[dependency] = []
   }
@@ -40,12 +38,10 @@ const resolve = (references, annotations) => {
  * @param {string} reference
  * @returns {object | null}
  */
-function optional (reference) {
+async function optional (reference) {
   try {
-    return load(reference).module
+    return (await load(reference)).module
   } catch {
     return null
   }
 }
-
-exports.resolve = resolve

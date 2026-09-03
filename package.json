@@ -1,5 +1,6 @@
 {
   "name": "@toa.io/toa",
+  "type": "module",
   "private": true,
   "description": "Microservice operations distributed runtime",
   "homepage": "https://toa.io",
@@ -16,10 +17,14 @@
     "url": "https://github.com/toa-io/toa/issues"
   },
   "workspaces": [
+    "libraries/*",
+    "extensions/telemetry",
+    "extensions/fetch",
+    "extensions/stash",
+    "extensions/storages",
     "runtime/*",
     "connectors/*",
     "extensions/*",
-    "libraries/*",
     "operations",
     "userland",
     "types"
@@ -29,90 +34,61 @@
   },
   "overrides": {
     "js-yaml@^3": "3.15.1",
-    "js-yaml@^4": "4.3.1",
+    "js-yaml@^4": "4.3.2",
     "brace-expansion@^1": "1.1.18",
     "brace-expansion@^2": "2.1.4",
     "brace-expansion@^5": "5.0.9",
     "minimatch@^9": {
       "brace-expansion": "2.1.4"
     },
-    "uuid": "11.1.1"
+    "uuid": "14.0.2"
   },
   "bin": {
     "toa": "runtime/runtime/bin/toa"
   },
   "devDependencies": {
-    "@commitlint/cli": "19.4.1",
-    "@commitlint/config-conventional": "16.2.4",
-    "@cucumber/cucumber": "11.3.0",
-    "@types/jest": "30.0.0",
-    "@types/js-yaml": "4.0.9",
-    "@types/node": "24.12.0",
-    "@types/randomstring": "1.1.12",
+    "@commitlint/cli": "21.2.2",
+    "@commitlint/config-conventional": "21.2.2",
+    "@cucumber/cucumber": "12.9.0",
+    "@types/node": "26.4.1",
+    "@types/randomstring": "1.3.0",
     "clone-deep": "4.0.1",
-    "cucumber-tsflow": "4.5.2",
-    "dotenv": "17.2.2",
-    "eslint": "8.57.1",
-    "eslint-config-prettier": "9.1.2",
-    "eslint-config-standard-with-typescript": "43.0.1",
-    "eslint-plugin-import": "2.32.0",
-    "execa": "5.1.1",
-    "fast-glob": "3.2.12",
+    "cucumber-tsflow": "4.6.1",
+    "dotenv": "17.4.2",
+    "execa": "10.0.1",
+    "fast-glob": "3.3.3",
     "husky": "9.1.7",
-    "jest": "30.1.3",
-    "jest-diff": "30.1.2",
-    "js-yaml": "4.3.1",
-    "knex": "3.1.0",
-    "lerna": "9.0.7",
-    "mongodb": "7.1.0",
+    "jest-diff": "30.5.1",
+    "js-yaml": "5.4.1",
+    "knex": "3.3.0",
+    "lerna": "10.0.1",
+    "mongodb": "7.6.0",
+    "oxfmt": "0.66.0",
+    "oxlint": "1.81.0",
     "randomstring": "1.3.1",
-    "testcontainers": "11.5.1",
-    "ts-jest": "29.4.1",
-    "ts-node": "10.9.2",
-    "typescript": "5.3.3"
+    "testcontainers": "12.1.0",
+    "tsx": "4.23.13",
+    "typescript": "7.0.2"
   },
   "scripts": {
     "prepare": "husky || true",
-    "install": "npm run transpile",
+    "postinstall": "npm run transpile",
     "test": "npm run lint && npm run typecheck && npm run test:unit",
     "typecheck": "tsc -p tsconfig.features.json",
-    "test:unit": "NODE_OPTIONS=--experimental-vm-modules jest --roots runtime connectors extensions operations libraries features userland",
-    "test:stage": "NODE_OPTIONS=--experimental-vm-modules jest --roots userland/example/stage --testPathIgnorePatterns .*/transpiled/",
-    "test:integration": "jest --roots integration --runInBand --testTimeout 180000",
+    "test:unit": "node --import tsx --test --experimental-test-module-mocks 'libraries/*/source/**/*.test.ts' 'libraries/*/source/**/*.test.js' 'libraries/*/test/**/*.test.js' 'runtime/*/test/**/*.test.js' 'runtime/*/source/**/*.test.ts' 'connectors/*/test/**/*.test.js' 'connectors/*/source/**/*.test.ts' 'connectors/*/src/**/*.test.js' 'extensions/*/source/**/*.test.ts' 'extensions/*/components/**/source/**/*.test.ts' 'operations/src/**/*.test.js' 'userland/stage/test/**/*.test.js' 'features/**/*.test.js'",
+    "test:stage": "node --import tsx --test --experimental-test-module-mocks 'userland/example/stage/**/*.test.js'",
     "features": "cucumber-js -t 'not @skip' && npm run features --workspaces --if-present",
-    "test:all": "npm run test && npm run test:integration && npm run test:stage && npm run features",
-    "lint": "eslint .",
-    "lint:diff": "files=$(git diff --cached --name-only --diff-filter=d -- '*.ts'); [ -z \"$files\" ] || ESLINT_USE_FLAT_CONFIG=false eslint $files",
+    "test:all": "npm run test && npm run test:stage && npm run features",
+    "lint": "oxlint",
+    "lint:diff": "files=$(git diff --cached --name-only --diff-filter=d -- '*.ts' ':!*.d.ts'); [ -z \"$files\" ] || oxlint $files",
     "version:local": "lerna version --conventional-prerelease --preid local --no-commit-hooks --no-changelog --yes --no-git-tag-version && git commit -am 'chore: local bump' --no-verify",
     "publish:alpha": "npx lerna publish --conventional-prerelease --preid alpha --dist-tag alpha --no-commit-hooks --no-changelog --yes --message \"ci: %s\" --sign-git-commit",
     "setup:mongo": "openssl rand -base64 756 > ./.mongo-keyfile && chmod 400 ./.mongo-keyfile",
     "ci": "rm -f package-lock.json && rm -rf node_modules && npm exec --workspaces -c \"rm -rf node_modules transpiled\" && npm i",
-    "transpile": "lerna run transpile",
-    "retranspile": "npm exec --workspaces -c \"rm -rf transpiled\" && npm run transpile",
-    "compose": "docker compose rm -f -s -v && docker compose up -d"
-  },
-  "jest": {
-    "preset": "ts-jest",
-    "testEnvironment": "node",
-    "roots": [
-      "<rootDir>/runtime",
-      "<rootDir>/connectors",
-      "<rootDir>/extensions",
-      "<rootDir>/operations",
-      "<rootDir>/libraries",
-      "<rootDir>/integration",
-      "<rootDir>/features",
-      "<rootDir>/userland"
-    ],
-    "testMatch": [
-      "**/(*.)+(test).(js|ts)"
-    ],
-    "testPathIgnorePatterns": [
-      ".*/transpiled/",
-      "<rootDir>/userland/example/stage",
-      "<rootDir>/extensions/introspection/ui",
-      "<rootDir>/extensions/configuration/ui"
-    ],
-    "bail": true
+    "transpile": "npm run transpile --workspaces --if-present",
+    "retranspile": "npm exec --workspaces -c \"rm -rf transpiled\" && find . -name tsconfig.tsbuildinfo -not -path '*/node_modules/*' -delete && npm run transpile",
+    "compose": "docker compose rm -f -s -v && docker compose up -d",
+    "format": "oxfmt",
+    "format:check": "oxfmt --check"
   }
 }

@@ -1,5 +1,3 @@
-'use strict'
-
 /**
  * Debt shared with every other process metering under the same key.
  *
@@ -14,7 +12,7 @@
  * A whole batch is metered by one script, because the callers are rate limiters and
  * the number of keys they watch is the number of clients they are watching for.
  */
-class Meter {
+export class Meter {
   #redis
 
   constructor (redis) {
@@ -79,5 +77,3 @@ end
 
 return debts
 `
-
-exports.Meter = Meter

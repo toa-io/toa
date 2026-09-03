@@ -1,4 +1,7 @@
-import { parse, type Configuration } from './Configuration'
+import { it } from 'node:test'
+import assert from 'node:assert/strict'
+
+import { parse, type Configuration } from './Configuration.js'
 
 const rest: Omit<Configuration, 'key' | 'condition'> = {
   interval: 1,
@@ -14,12 +17,12 @@ it('should convert key', () => {
     ]
   }
 
-  expect(parse({ key: 'ip', ...rest })).toMatchObject(result)
-  expect(parse({ key: ['ip'], ...rest })).toMatchObject(result)
+  assert.partialDeepStrictEqual(parse({ key: 'ip', ...rest }), result)
+  assert.partialDeepStrictEqual(parse({ key: ['ip'], ...rest }), result)
 })
 
 it('should convert condition', () => {
-  expect(parse({ key: ['ip', 'path'], condition: { status: '404' }, ...rest })).toMatchObject({
+  assert.partialDeepStrictEqual(parse({ key: ['ip', 'path'], condition: { status: '404' }, ...rest }), {
     condition: [
       {
         method: 'status',
@@ -28,7 +31,7 @@ it('should convert condition', () => {
     ]
   })
 
-  expect(parse({ key: 'ip', condition: { status: '404' }, ...rest })).toMatchObject({
+  assert.partialDeepStrictEqual(parse({ key: 'ip', condition: { status: '404' }, ...rest }), {
     condition: [
       {
         method: 'status',
@@ -39,7 +42,7 @@ it('should convert condition', () => {
 })
 
 it('should convert a key component that takes an argument', () => {
-  expect(parse({ key: { segment: 'id' }, ...rest })).toMatchObject({
+  assert.partialDeepStrictEqual(parse({ key: { segment: 'id' }, ...rest }), {
     key: [
       {
         method: 'segment',
@@ -50,7 +53,7 @@ it('should convert a key component that takes an argument', () => {
 })
 
 it('should convert a mixed key', () => {
-  expect(parse({ key: ['route', { segment: 'id' }, 'identity'], ...rest })).toMatchObject({
+  assert.partialDeepStrictEqual(parse({ key: ['route', { segment: 'id' }, 'identity'], ...rest }), {
     key: [
       { method: 'route' },
       { method: 'segment', options: 'id' },

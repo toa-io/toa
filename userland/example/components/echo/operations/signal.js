@@ -1,6 +1,4 @@
-'use strict'
-
-class Computation {
+export class Computation {
   #context
 
   async mount (context) {
@@ -11,5 +9,3 @@ class Computation {
     return this.#context.configuration.signal
   }
 }
-
-exports.Computation = Computation

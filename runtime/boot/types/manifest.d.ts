@@ -1,5 +1,5 @@
 import * as _norm from '@toa.io/norm/types'
-import * as _composition from './composition'
+import * as _composition from './composition.js'
 
 declare namespace toa.boot {
 

@@ -1,6 +1,7 @@
 {
   "name": "@toa.io/bridges.bash",
   "version": "1.0.0-alpha.273",
+  "type": "module",
   "description": "Toa Bash Bridge",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
@@ -18,10 +19,6 @@
   "types": "transpiled/index.d.ts",
   "scripts": {
     "transpile": "tsc"
-  },
-  "jest": {
-    "preset": "ts-jest",
-    "testEnvironment": "node"
   },
   "dependencies": {
     "@toa.io/core": "1.0.0-alpha.273"

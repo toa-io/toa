@@ -1,7 +1,3 @@
-'use strict'
-
-function computation (input) {
+export function computation (input) {
   return JSON.parse(input.buf)
 }
-
-exports.computation = computation

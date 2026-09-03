@@ -1,12 +1,13 @@
-'use strict'
+import { it, beforeEach } from 'node:test'
+import assert from 'node:assert/strict'
 
-const { resolve } = require('node:path')
-const { Connector } = require('@toa.io/core')
+import { resolve } from 'node:path'
+import { Connector } from '@toa.io/core'
 
-const { Factory } = require('../src/factory')
-const { calls } = require('./dummies/rc/rc/phases')
+import { Factory } from '../src/factory.js'
+import { calls } from './dummies/rc/rc/phases.js'
 
-const root = resolve(__dirname, 'dummies/rc')
+const root = resolve(import.meta.dirname, 'dummies/rc')
 
 let factory
 let context
@@ -21,9 +22,9 @@ beforeEach(() => {
 it('should create a connector per exported phase', async () => {
   const phases = await factory.rc(root, context)
 
-  expect(phases.preflight).toBeDefined()
-  expect(phases.settle).toBeDefined()
-  expect(phases.dispose).toBeDefined()
+  assert.notStrictEqual(phases.preflight, undefined)
+  assert.notStrictEqual(phases.settle, undefined)
+  assert.notStrictEqual(phases.dispose, undefined)
 })
 
 it('should run startup phases on connection', async () => {
@@ -32,7 +33,7 @@ it('should run startup phases on connection', async () => {
   await phases.preflight.connect()
   await phases.settle.connect()
 
-  expect(calls).toStrictEqual(['preflight', 'settle'])
+  assert.deepStrictEqual(calls, ['preflight', 'settle'])
 })
 
 it('should not run disposal on connection', async () => {
@@ -40,7 +41,7 @@ it('should not run disposal on connection', async () => {
 
   await phases.dispose.connect()
 
-  expect(calls).toStrictEqual([])
+  assert.deepStrictEqual(calls, [])
 })
 
 it('should run disposal on disconnection', async () => {
@@ -49,12 +50,11 @@ it('should run disposal on disconnection', async () => {
   await phases.dispose.connect()
   await phases.dispose.disconnect()
 
-  expect(calls).toStrictEqual(['dispose'])
+  assert.deepStrictEqual(calls, ['dispose'])
 })
 
 it('should reject an RC exporting no phase', async () => {
-  const promise = factory.rc(resolve(__dirname, 'dummies/rc.none'), context)
+  const promise = factory.rc(resolve(import.meta.dirname, 'dummies/rc.none'), context)
 
-  await expect(promise).rejects
-    .toThrow("RC 'empty' must export preflight, settle and/or dispose")
+  await assert.rejects(promise, (error) => /RC 'empty' must export preflight, settle and\/or dispose/.test(error.message))
 })

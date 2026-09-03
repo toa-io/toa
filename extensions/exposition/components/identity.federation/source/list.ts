@@ -1,4 +1,4 @@
-import type { Context, Entity } from './types'
+import type { Context, Entity } from './types/index.js'
 
 export async function computation ({ authority, identity }: Input, context: Context): Promise<Entity[]> {
   return await context.local.enumerate({

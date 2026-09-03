@@ -1,9 +1,7 @@
-'use strict'
-
-const { types, scopes } = require('./constants')
+import { types, scopes } from './constants.js'
 
 /** @type {toa.node.define.operations.Define} */
-const define = (descriptor) => {
+export const define = (descriptor) => {
   const { statement, name } = descriptor
   const node = statement.type === 'ExpressionStatement' ? statement.expression : statement
 
@@ -21,7 +19,7 @@ const define = (descriptor) => {
 }
 
 /** @type {toa.node.define.operations.Test} */
-const test = (statement, type) => {
+export const test = (statement, type) => {
   const node = statement.type === 'ExpressionStatement' ? statement.expression : statement
   const func = nodes.includes(node.type)
   const known = types.includes(type)
@@ -40,6 +38,3 @@ function scope (name) {
 }
 
 const nodes = ['FunctionDeclaration', 'ArrowFunctionExpression', 'ClassMethod']
-
-exports.define = define
-exports.test = test

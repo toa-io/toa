@@ -1,11 +1,7 @@
-'use strict'
+import { events, operations, receivers } from './.normalize/index.js'
 
-const { events, operations, receivers } = require('./.normalize')
-
-const normalize = (component) => {
+export const normalize = async (component) => {
   operations(component)
-  events(component)
+  await events(component)
   receivers(component)
 }
-
-exports.normalize = normalize

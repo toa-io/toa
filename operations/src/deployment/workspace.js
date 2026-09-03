@@ -1,15 +1,13 @@
-'use strict'
-
-const { mkdir, mkdtemp, readdir } = require('node:fs/promises')
-const { join, resolve } = require('node:path')
-const { tmpdir } = require('node:os')
+import { mkdir, mkdtemp, readdir } from 'node:fs/promises'
+import { join, resolve } from 'node:path'
+import { tmpdir } from 'node:os'
 
 /**
  * @param {string} type
  * @param {string} [path]
  * @return {Promise<string>}
  */
-async function create (type, path) {
+export async function create (type, path) {
   if (path === undefined) return await mkdtemp(join(tmpdir(), 'toa-' + type))
 
   path = resolve(path)
@@ -22,5 +20,3 @@ async function create (type, path) {
 
   return path
 }
-
-exports.create = create

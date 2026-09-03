@@ -1,6 +1,6 @@
-import { Manifest } from './component'
+import { Manifest } from './component.js'
 import { Locator } from '@toa.io/core'
-import type { Declaration } from './context/declaration'
+import type { Declaration } from './context/declaration.js'
 
 interface Runtime{
   version: string

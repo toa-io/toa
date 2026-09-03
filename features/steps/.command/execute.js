@@ -1,14 +1,12 @@
-'use strict'
-
-const { spawn } = require('node:child_process')
-const { once } = require('node:events')
+import { spawn } from 'node:child_process'
+import { once } from 'node:events'
 
 /**
  * @param {string} command
  * @param {import('child_process').SpawnOptions} [options]
  * @this {toa.features.Context}
  */
-async function execute (command, options = {}) {
+export async function execute (command, options = {}) {
   options.cwd = this.cwd
 
   // the command leads its own process group, so aborting it takes the program along;
@@ -34,10 +32,14 @@ async function execute (command, options = {}) {
     console.error(`Command '${command}' exited with code ${code}\n${stderr}`)
 
   this.stdout = stdout.trim()
-  this.stderr = stderr.trim()
+  // node warns about experimental APIs a dependency reaches for; that is the
+  // runtime speaking, not the program under test
+  this.stderr = stderr.split('\n').filter((line) => !EXPERIMENTAL.test(line)).join('\n').trim()
   this.stdoutLines = lines(this.stdout)
   this.stderrLines = lines(this.stderr)
 }
+
+const EXPERIMENTAL = /ExperimentalWarning|--trace-warnings/
 
 /**
  * @param {import('child_process').ChildProcess} child
@@ -66,5 +68,3 @@ const lines = (string) => {
 
   return lines
 }
-
-exports.execute = execute

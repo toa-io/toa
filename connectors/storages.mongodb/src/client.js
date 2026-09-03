@@ -1,23 +1,21 @@
-'use strict'
-
 /**
  * @typedef {import('mongodb').MongoClient} MongoClient
  * @typedef {{ count: number, client: MongoClient }} Instance
  * @typedef {import('@toa.io/core').Locator} Locator
  */
 
-const { console } = require('openspan')
-const { Connector } = require('@toa.io/core')
-const { resolve } = require('@toa.io/pointer')
-const { ID } = require('./deployment')
-const { MongoClient } = require('mongodb')
+import { console } from 'openspan'
+import { Connector } from '@toa.io/core'
+import { resolve } from '@toa.io/pointer'
+import { ID } from './deployment.js'
+import { MongoClient } from 'mongodb'
 
 /**
  * @type {Record<string, Promise<Instance>>}
  */
 const INSTANCES = {}
 
-class Client extends Connector {
+export class Client extends Connector {
   name
 
   /**
@@ -234,5 +232,3 @@ const OPTIONS = {
 
 const ALREADY_EXISTS = 48
 const OUTBOX = '_outbox'
-
-exports.Client = Client

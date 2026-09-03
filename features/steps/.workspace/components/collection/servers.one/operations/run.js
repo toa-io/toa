@@ -1,7 +1,5 @@
-'use strict'
-
-const http = require('node:http')
-const { once } = require('node:events')
+import http from 'node:http'
+import { once } from 'node:events'
 
 export class Computation {
   server

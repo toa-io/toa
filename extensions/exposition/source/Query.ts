@@ -1,10 +1,10 @@
 import assert from 'node:assert'
-import * as http from './HTTP'
-import { type Parameter } from './RTD'
-import * as schemas from './schemas'
-import { queryable } from './Mapping'
-import type { Introspection, Schema } from './Introspection'
-import type * as syntax from './RTD/syntax'
+import * as http from './HTTP/index.js'
+import { type Parameter } from './RTD/index.js'
+import * as schemas from './schemas.js'
+import { queryable } from './Mapping.js'
+import type { Introspection, Schema } from './Introspection.js'
+import type * as syntax from './RTD/syntax/index.js'
 import type * as core from '@toa.io/core'
 
 export class Query {

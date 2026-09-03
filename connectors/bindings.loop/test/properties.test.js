@@ -1,7 +1,8 @@
-'use strict'
+import { it } from 'node:test'
+import assert from 'node:assert/strict'
 
-const { properties } = require('../')
+import { properties } from '../src/index.js'
 
 it('should export properties', async () => {
-  expect(properties).toStrictEqual({ async: false, local: true })
+  assert.deepStrictEqual(properties, { async: false, local: true })
 })

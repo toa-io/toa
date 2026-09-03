@@ -1,20 +1,21 @@
-'use strict'
+import { describe, it, beforeEach, mock } from 'node:test'
+import assert from 'node:assert/strict'
 
-const fixtures = require('./context.fixtures')
-const { Context } = require('../src/context')
+import * as fixtures from './context.fixtures.js'
+import { Context } from '../src/context.js'
 
 /** @type {toa.core.Context} */
 let context
 
 beforeEach(() => {
-  jest.clearAllMocks()
+  resetCalls()
 
   context = new Context(fixtures.local, fixtures.discover, fixtures.aspects)
 })
 
 it('should expose aspects', () => {
-  expect(context.aspects).toBeDefined()
-  expect(context.aspects).toStrictEqual(fixtures.aspects)
+  assert.notStrictEqual(context.aspects, undefined)
+  assert.deepStrictEqual(context.aspects, fixtures.aspects)
 })
 
 describe('call', () => {
@@ -24,6 +25,16 @@ describe('call', () => {
     await context.call('a', 'b', 'c', request)
     await context.call('a', 'b', 'c', request)
 
-    expect(fixtures.discover).toHaveBeenCalledTimes(1)
+    assert.strictEqual(fixtures.discover.mock.callCount(), 1)
   })
 })
+
+function resetCalls (target = [assert, fixtures], seen = new Set()) {
+  if (target === null || typeof target !== 'object' || seen.has(target)) return
+
+  seen.add(target)
+
+  for (const value of Object.values(target))
+    if (typeof value === 'function' && value.mock !== undefined) value.mock.resetCalls()
+    else resetCalls(value, seen)
+}

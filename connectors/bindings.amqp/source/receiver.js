@@ -1,9 +1,7 @@
-'use strict'
+import { Connector } from '@toa.io/core'
+import { console } from 'openspan'
 
-const { Connector } = require('@toa.io/core')
-const { console } = require('openspan')
-
-class Receiver extends Connector {
+export class Receiver extends Connector {
   /** @type {string | undefined} */
   #exchange
 
@@ -78,5 +76,3 @@ class Receiver extends Connector {
     }
   }
 }
-
-exports.Receiver = Receiver

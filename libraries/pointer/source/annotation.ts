@@ -2,7 +2,7 @@ import { resolve } from 'node:path'
 import * as schemas from '@toa.io/schemas'
 import { shards } from '@toa.io/generic'
 import type { Schema } from '@toa.io/schemas'
-import type { URIMap } from './Deployment'
+import type { URIMap } from './Deployment.js'
 
 export function normalize (declaration: Declaration): URIMap {
   const map: URIMap = {}
@@ -41,7 +41,7 @@ function checkCredentials (uri: string): void {
       'Please refer to the "Credentials" section of the documentation for more information.')
 }
 
-const path = resolve(__dirname, '../schemas/urimap.cos.yaml')
+const path = resolve(import.meta.dirname, '../schemas/urimap.cos.yaml')
 const schema: Schema<URIMap> = schemas.schema(path)
 
 export type Declaration = string | string[] | Record<string, string | string[]> | undefined

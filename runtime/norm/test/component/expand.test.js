@@ -1,9 +1,10 @@
-'use strict'
+import { it, beforeEach } from 'node:test'
+import assert from 'node:assert/strict'
 
-const clone = require('clone-deep')
+import clone from 'clone-deep'
 
-const { expand } = require('../../src/.component')
-const fixtures = require('./expand.fixtures')
+import { expand } from '../../src/.component/index.js'
+import * as fixtures from './expand.fixtures.js'
 
 let source
 
@@ -13,13 +14,13 @@ beforeEach(() => {
 
 it('should expand', async () => {
   await expand(source)
-  expect(source).toMatchObject(fixtures.target)
+  assert.partialDeepStrictEqual(source, fixtures.target)
 })
 
 it('should derive version from the component contents', async () => {
   await expand(source)
 
-  expect(source.version).toMatch(/^[0-9a-f]{8}$/)
+  assert.match(source.version, /^[0-9a-f]{8}$/)
 })
 
 it('should keep declared version', async () => {
@@ -27,7 +28,7 @@ it('should keep declared version', async () => {
 
   await expand(source)
 
-  expect(source.version).toStrictEqual('1.0.0')
+  assert.deepStrictEqual(source.version, '1.0.0')
 })
 
 it('should recognize storages.queues', async () => {
@@ -37,6 +38,6 @@ it('should recognize storages.queues', async () => {
 
   await expand(source)
 
-  expect(source.queues).toBeUndefined()
-  expect(source.properties['@toa.io/storages.queues']).toMatchObject(queues)
+  assert.strictEqual(source.queues, undefined)
+  assert.partialDeepStrictEqual(source.properties['@toa.io/storages.queues'], queues)
 })

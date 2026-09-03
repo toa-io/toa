@@ -1,2 +1,2 @@
-export { Factory } from './Factory'
-export * as define from './define'
+export { Factory } from './Factory.js'
+export * as define from './define.js'

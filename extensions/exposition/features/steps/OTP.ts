@@ -1,8 +1,11 @@
 import * as assert from 'node:assert'
-import { binding, given } from 'cucumber-tsflow'
+import tsflow from 'cucumber-tsflow'
+
 import * as boot from '@toa.io/boot'
 import { Locator, type Remote } from '@toa.io/core'
-import { Captures } from './Captures'
+import { Captures } from './Captures.js'
+
+const { binding, given } = tsflow
 
 @binding([Captures])
 export class OTP {

@@ -1,6 +1,7 @@
 {
   "name": "@toa.io/schemas",
   "version": "1.0.0-alpha.274",
+  "type": "module",
   "description": "Toa Schemas",
   "homepage": "https://toa.io",
   "author": {

@@ -1,5 +1,5 @@
-import { state } from './state'
-import type { Console, Entry, Kind } from './Console'
+import { state } from './state.js'
+import type { Console, Entry, Kind } from './Console.js'
 
 /**
  * Writes spans as TRACE log entries using the emitting console, respecting its log level.

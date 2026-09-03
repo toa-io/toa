@@ -1,10 +1,8 @@
-'use strict'
-
-const stage = require('@toa.io/userland/stage')
-const { mkdtemp } = require('node:fs/promises')
-const { join } = require('node:path')
-const { tmpdir } = require('node:os')
-const { Before, BeforeAll, After } = require('@cucumber/cucumber')
+import * as stage from '@toa.io/userland/stage'
+import { mkdtemp } from 'node:fs/promises'
+import { join } from 'node:path'
+import { tmpdir } from 'node:os'
+import { Before, BeforeAll, After } from '@cucumber/cucumber'
 
 BeforeAll(() => {
   process.env.TOA_DEV = '1'

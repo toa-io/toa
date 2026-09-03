@@ -1,16 +1,17 @@
-'use strict'
+import { it } from 'node:test'
+import assert from 'node:assert/strict'
 
-const { generate } = require('randomstring')
+import { generate } from 'randomstring'
 
-const { pick } = require('../')
+import { pick } from '../source/index.js'
 
 it('should be', async () => {
-  expect(pick).toBeInstanceOf(Function)
+  assert.ok(pick instanceof Function)
 })
 
 it('should pick properties', async () => {
   const source = { a: generate(), b: generate() }
   const output = pick(source, ['b'])
 
-  expect(output).toStrictEqual({ b: source.b })
+  assert.deepStrictEqual(output, { b: source.b })
 })

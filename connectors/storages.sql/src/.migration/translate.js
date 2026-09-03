@@ -1,12 +1,10 @@
-'use strict'
-
-const { refs, types } = require('./.translate')
+import { refs, types } from './.translate/index.js'
 
 /**
  * @param {Object} schema
  * @returns {string}
  */
-const translate = (schema) => {
+export const translate = (schema) => {
   const properties = []
 
   for (const [name, property] of Object.entries(schema.properties)) {
@@ -20,5 +18,3 @@ const translate = (schema) => {
 
   return properties.join(', ')
 }
-
-exports.translate = translate

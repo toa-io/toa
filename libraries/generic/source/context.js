@@ -1,9 +1,7 @@
-'use strict'
-
-const { AsyncLocalStorage } = require('node:async_hooks')
+import { AsyncLocalStorage } from 'node:async_hooks'
 
 /** @type {toa.generic.Context} */
-const context = (id) => {
+export const context = (id) => {
   if (instances[id] === undefined) instances[id] = new Storage()
 
   return instances[id]
@@ -29,5 +27,3 @@ class Storage {
     return this.#storage.getStore()
   }
 }
-
-exports.context = context

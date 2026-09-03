@@ -1,1 +1,1 @@
-export type { Context } from './Context'
+export type { Context } from './Context.js'

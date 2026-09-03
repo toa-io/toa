@@ -4,10 +4,13 @@ import * as http from 'node:http'
 import * as assert from 'node:assert'
 import * as util from 'node:util'
 import { buffer } from 'node:stream/consumers'
-import { binding, given, afterAll } from 'cucumber-tsflow'
-import { Captures } from './Captures'
+import tsflow from 'cucumber-tsflow'
+
+import { Captures } from './Captures.js'
 
 import type { AddressInfo } from 'node:net'
+
+const { binding, given, afterAll } = tsflow
 
 @binding([Captures])
 export class IDP {

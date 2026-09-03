@@ -1,7 +1,7 @@
 import assert from 'node:assert'
 import { type Component, type Query } from '@toa.io/core'
-import { type Directive, type Identity } from './types'
-import type { Parameter } from '../../RTD'
+import { type Directive, type Identity } from './types.js'
+import type { Parameter } from '../../RTD/index.js'
 
 export class Role implements Directive {
   public static remote: Component | null = null

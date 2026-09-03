@@ -1,7 +1,4 @@
-'use strict'
+import { factory } from './factory.js'
 
-const { factory } = require('./factory')
-
-const receive = (binding, locator, label, group, receiver) => factory(binding).receiver(locator, label, group, receiver)
-
-exports.receive = receive
+export const receive = async (binding, locator, label, group, receiver) =>
+  (await factory(binding)).receiver(locator, label, group, receiver)

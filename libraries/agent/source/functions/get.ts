@@ -1,4 +1,4 @@
-import type { Captures } from '../Captures'
+import type { Captures } from '../Captures.js'
 
 export function get (this: Captures, _: unknown, key: string): string {
   const value = this.get(key)

@@ -1,13 +1,11 @@
-'use strict'
+import { defined } from '@toa.io/generic'
+import { readFileSync, statSync } from 'node:fs'
+import { yaml as jsyaml } from '@toa.io/generic'
+import { create, is, ajv } from './validator.js'
+import { debug } from 'node:util'
+import betterAjvErrors from 'better-ajv-errors'
 
-const { defined } = require('@toa.io/generic')
-const { readFileSync, statSync } = require('node:fs')
-const jsyaml = require('js-yaml')
-const { create, is, ajv } = require('./validator')
-const { debug } = require('node:util')
-const betterAjvErrors = require('better-ajv-errors').default
-
-class Schema {
+export class Schema {
   id
 
   /** @type {import('ajv').ValidateFunction} */
@@ -113,7 +111,7 @@ class Schema {
   }
 }
 
-const schema = (cos, options) => {
+export const schema = (cos, options) => {
   if (typeof cos === 'string' && isFile(cos))
     cos = jsyaml.load(readFileSync(cos, 'utf8'))
 
@@ -144,6 +142,3 @@ const isFile = (path) => {
     return false
   }
 }
-
-exports.Schema = Schema
-exports.schema = schema

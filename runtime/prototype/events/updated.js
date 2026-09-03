@@ -1,3 +1,1 @@
-'use strict'
-
-exports.condition = (event) => event.origin !== null
+export const condition = (event) => event.origin !== null

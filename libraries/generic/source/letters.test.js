@@ -1,19 +1,20 @@
-'use strict'
+import { describe, it } from 'node:test'
+import assert from 'node:assert/strict'
 
-const { letters } = require('../')
+import { letters } from '../source/index.js'
 
 describe('up', () => {
   const up = letters.up
 
   it('should be', () => {
-    expect(up).toBeInstanceOf(Function)
+    assert.ok(up instanceof Function)
   })
 
   it('should uppercase', () => {
     const lower = 'foo-bar-baz'
     const upper = up(lower)
 
-    expect(upper).toStrictEqual('FOO_BAR_BAZ')
+    assert.deepStrictEqual(upper, 'FOO_BAR_BAZ')
   })
 })
 
@@ -21,14 +22,14 @@ describe('down', () => {
   const down = letters.down
 
   it('should be', () => {
-    expect(down).toBeInstanceOf(Function)
+    assert.ok(down instanceof Function)
   })
 
   it('should uppercase', () => {
     const upper = 'FOO_BAR_BAZ'
     const lower = down(upper)
 
-    expect(lower).toStrictEqual('foo-bar-baz')
+    assert.deepStrictEqual(lower, 'foo-bar-baz')
   })
 })
 
@@ -36,7 +37,7 @@ describe('capitalize', () => {
   const capitalize = letters.capitalize
 
   it('should be', () => {
-    expect(capitalize).toBeDefined()
+    assert.notStrictEqual(capitalize, undefined)
   })
 
   it('should capitalize', () => {
@@ -44,6 +45,6 @@ describe('capitalize', () => {
     const capitalized = 'User name'
     const output = capitalize(input)
 
-    expect(output).toStrictEqual(capitalized)
+    assert.deepStrictEqual(output, capitalized)
   })
 })

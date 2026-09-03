@@ -1,5 +1,5 @@
-import { Temporary, type TemporaryOptions } from './Temporary'
-import type { Secret } from '../Secrets'
+import { Temporary, type TemporaryOptions } from './Temporary.js'
+import type { Secret } from '../Secrets.js'
 
 export class Test extends Temporary {
   public static override readonly SECRETS: readonly Secret[] = [

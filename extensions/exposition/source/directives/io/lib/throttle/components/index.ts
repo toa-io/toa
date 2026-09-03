@@ -1,10 +1,10 @@
-import { Path } from './Path'
-import { IP } from './IP'
-import { Route } from './Route'
-import { Identity } from './Identity'
-import { Segment } from './Segment'
-import type { KeyComponentMethod } from '../Configuration'
-import type { Component } from './Component'
+import { Path } from './Path.js'
+import { IP } from './IP.js'
+import { Route } from './Route.js'
+import { Identity } from './Identity.js'
+import { Segment } from './Segment.js'
+import type { KeyComponentMethod } from '../Configuration.js'
+import type { Component } from './Component.js'
 
 type Constructor<T> = new (options: unknown, route: string) => T
 

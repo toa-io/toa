@@ -1,12 +1,12 @@
-'use strict'
+import { it, mock } from 'node:test'
+import assert from 'node:assert/strict'
 
-const { generate } = require('randomstring')
+import { generate } from 'randomstring'
 
-jest.mock('@toa.io/norm', () => ({
-  component: () => mockComponent()
-}))
+mock.module('@toa.io/norm', { namedExports: { component: () => mockComponent() } })
 
-const { manifest } = require('./manifest')
+const { manifest } = await import('./manifest.js')
+
 
 const path = generate()
 
@@ -15,7 +15,7 @@ it('should not modify options', async () => {
 
   await manifest(path, options)
 
-  expect(options.extensions.length).toStrictEqual(2)
+  assert.deepStrictEqual(options.extensions.length, 2)
 })
 
 function mockComponent () {

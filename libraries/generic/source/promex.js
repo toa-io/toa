@@ -1,6 +1,4 @@
-'use strict'
-
-const promex = () => {
+export const promex = () => {
   let ok
   let oh
 
@@ -23,5 +21,3 @@ const promex = () => {
 
   return Object.assign(promise, exposition)
 }
-
-exports.promex = promex

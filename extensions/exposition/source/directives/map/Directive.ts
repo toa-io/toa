@@ -1,4 +1,4 @@
-import type { Mapping } from './Mapping'
-import type { Property } from './Properties'
+import type { Mapping } from './Mapping.js'
+import type { Property } from './Properties.js'
 
 export type Directive = Mapping | Property

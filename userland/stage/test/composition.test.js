@@ -1,27 +1,29 @@
-'use strict'
+import { it, mock as mocking } from 'node:test'
+import assert from 'node:assert/strict'
 
-const { generate } = require('randomstring')
+import { generate } from 'randomstring'
+import * as _boot from './boot.mock.js'
 
 const mock = {
-  boot: require('./boot.mock')
+  boot: _boot
 }
 
-jest.mock('@toa.io/boot', () => mock.boot)
+mocking.module('@toa.io/boot', { namedExports: mock.boot })
 
-const stage = require('../')
+const stage = await import('../src/index.js')
 
 const paths = [generate(), generate()]
 
 it('should be', () => {
-  expect(stage.composition).toBeDefined()
+  assert.notStrictEqual(stage.composition, undefined)
 })
 
 it('should boot composition', async () => {
   await stage.composition(paths)
 
-  expect(mock.boot.composition.mock.calls[0][0]).toStrictEqual(paths)
+  assert.deepStrictEqual(mock.boot.composition.mock.calls[0].arguments[0], paths)
 
-  const composition = await mock.boot.composition.mock.results[0].value
+  const composition = await mock.boot.composition.mock.calls[0].result
 
-  expect(composition.connect).toHaveBeenCalled()
+  assert.ok(composition.connect.mock.callCount() > 0)
 })

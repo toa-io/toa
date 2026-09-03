@@ -1,10 +1,8 @@
-'use strict'
-
-const assert = require('node:assert')
-const { resolve } = require('node:path')
-const { readFile } = require('node:fs/promises')
-const glob = require('fast-glob')
-const { Given, Then } = require('@cucumber/cucumber')
+import assert from 'node:assert'
+import { resolve } from 'node:path'
+import { readFile } from 'node:fs/promises'
+import glob from 'fast-glob'
+import { Given, Then } from '@cucumber/cucumber'
 
 Given('my working directory is {path}',
   /**
@@ -94,7 +92,7 @@ const toa = (path) => {
   return resolve(ROOT, relative)
 }
 
-const ROOT = resolve(__dirname, '../../')
+const ROOT = resolve(import.meta.dirname, '../../')
 
 const FILES = { onlyFiles: true, absolute: true }
 const DIRECTORIES = { onlyDirectories: true, absolute: true }

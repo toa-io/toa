@@ -1,14 +1,15 @@
+import { readFileSync } from 'node:fs'
 import { Readable } from 'node:stream'
 import { pipeline } from 'node:stream/promises'
 import { createHash } from 'node:crypto'
 import * as contentType from 'content-type'
 import { console } from 'openspan'
-import { type Format, formats } from './formats'
-import { BadRequest, NotAcceptable, UnsupportedMediaType } from './exceptions'
-import type { Context } from './Context'
-import type { ServerResponse } from './types'
+import { type Format, formats } from './formats/index.js'
+import { BadRequest, NotAcceptable, UnsupportedMediaType } from './exceptions.js'
+import type { Context } from './Context.js'
+import type { ServerResponse } from './types.js'
 
-const server = `Exposition/${require('../../package.json').version}` +
+const server = `Exposition/${JSON.parse(readFileSync(new URL('../../package.json', import.meta.url), 'utf8')).version}` +
   ((process.env.TOA_CONTEXT === undefined ? '' : ` ${process.env.TOA_CONTEXT}`) +
     (process.env.TOA_ENV === undefined ? '' : `/${process.env.TOA_ENV}`))
 

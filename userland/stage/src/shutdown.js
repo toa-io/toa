@@ -1,9 +1,7 @@
-'use strict'
-
-const { state } = require('./state')
+import { state } from './state.js'
 
 /** @type {toa.stage.Shutdown} */
-const shutdown = async () => {
+export const shutdown = async () => {
   const components = state.components.map((component) => component.disconnect())
   const compositions = state.compositions.map((composition) => composition.disconnect())
   const services = state.services.map((service) => service.disconnect())
@@ -14,5 +12,3 @@ const shutdown = async () => {
 
   state.reset()
 }
-
-exports.shutdown = shutdown

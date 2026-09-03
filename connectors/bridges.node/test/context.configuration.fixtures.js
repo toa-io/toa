@@ -1,21 +1,18 @@
-'use strict'
+import { mock } from 'node:test'
 
-const { generate } = require('randomstring')
+import { generate } from 'randomstring'
 
-const configuration = { foo: { bar: generate() } }
+export const configuration = { foo: { bar: generate() } }
 
-const context = /** @type {toa.core.Context} */ {
-  apply: jest.fn(),
-  call: jest.fn(),
+export const context = /** @type {toa.core.Context} */ {
+  apply: mock.fn(),
+  call: mock.fn(),
   aspects: [
     {
       name: 'configuration',
-      invoke: jest.fn(() => configuration)
+      invoke: mock.fn(() => configuration)
     }
   ],
-  link: jest.fn(),
-  connect: jest.fn()
+  link: mock.fn(),
+  connect: mock.fn()
 }
-
-exports.context = context
-exports.configuration = configuration

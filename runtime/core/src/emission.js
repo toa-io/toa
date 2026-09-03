@@ -1,8 +1,6 @@
-'use strict'
+import { Connector } from './connector.js'
 
-const { Connector } = require('./connector')
-
-class Emission extends Connector {
+export class Emission extends Connector {
   #events
 
   constructor (events) {
@@ -19,5 +17,3 @@ class Emission extends Connector {
     await Promise.all(emission)
   }
 }
-
-exports.Emission = Emission

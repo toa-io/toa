@@ -1,6 +1,4 @@
-'use strict'
-
-const merge = (dependencies) => {
+export const merge = (dependencies) => {
   /** @type {toa.deployment.dependency.Reference[]} */
   const references = []
 
@@ -74,5 +72,3 @@ const append = (merged, variables) => {
     merged[component].push(...vars)
   }
 }
-
-exports.merge = merge

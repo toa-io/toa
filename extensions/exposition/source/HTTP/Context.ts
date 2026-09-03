@@ -2,11 +2,11 @@ import crypto from 'node:crypto'
 import { buffer } from 'node:stream/consumers'
 import Negotiator from 'negotiator'
 import { console } from 'openspan'
-import { Timing } from './Timing'
-import { type Format, formats, types } from './formats'
-import { read } from './messages'
-import type { OutgoingMessage } from './messages'
-import type { IncomingMessage } from './types'
+import { Timing } from './Timing.js'
+import { type Format, formats, types } from './formats/index.js'
+import { read } from './messages.js'
+import type { OutgoingMessage } from './messages.js'
+import type { IncomingMessage } from './types.js'
 
 export class Context {
   public readonly id: string

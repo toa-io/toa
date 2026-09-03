@@ -1,0 +1,75 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": [
+    "import",
+    "typescript"
+  ],
+  "categories": {
+    "correctness": "error",
+    "suspicious": "warn"
+  },
+  "ignorePatterns": [
+    "**/*.d.ts",
+    "**/transpiled",
+    "**/operations",
+    "extensions/introspection/ui",
+    "extensions/configuration/ui",
+    "extensions/*/features/site"
+  ],
+  "rules": {
+    "eqeqeq": [
+      "error",
+      "always",
+      {
+        "null": "ignore"
+      }
+    ],
+    "import/namespace": "warn",
+    "no-unused-vars": "warn"
+  },
+  "overrides": [
+    {
+      "files": [
+        "**/*.ts"
+      ],
+      "rules": {
+        "curly": [
+          "warn",
+          "multi"
+        ],
+        "func-style": [
+          "error",
+          "declaration"
+        ],
+        "max-depth": [
+          "warn",
+          2
+        ],
+        "max-params": "error",
+        "import/no-default-export": "error",
+        "typescript/consistent-type-imports": [
+          "error",
+          {
+            "fixStyle": "separate-type-imports"
+          }
+        ],
+        "typescript/explicit-member-accessibility": "error",
+        "typescript/no-non-null-assertion": "off",
+        "no-warning-comments": "error"
+      }
+    },
+    {
+      "files": [
+        "**/*.test.ts",
+        "**/test/**",
+        "**/features/**"
+      ],
+      "rules": {
+        "func-style": "off",
+        "max-depth": "off",
+        "max-params": "off",
+        "typescript/explicit-member-accessibility": "off"
+      }
+    }
+  ]
+}

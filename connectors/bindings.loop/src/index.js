@@ -1,6 +1,3 @@
-'use strict'
+export const properties = { async: false, local: true }
 
-const { Factory } = require('./factory')
-
-exports.Factory = Factory
-exports.properties = { async: false, local: true }
+export { Factory } from './factory.js'

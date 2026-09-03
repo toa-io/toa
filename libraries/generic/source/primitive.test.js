@@ -1,18 +1,20 @@
-'use strict'
+import { it } from 'node:test'
+import assert from 'node:assert/strict'
 
-const { primitive } = require('../source')
+import { primitive } from '../source/index.js'
 
 it('should be', async () => {
-  expect(primitive).toBeDefined()
+  assert.notStrictEqual(primitive, undefined)
 })
 
-it.each([
+for (const [type, value] of [
   ['undefined', undefined],
   ['boolean', true],
   ['number', 0],
   ['string', 'ok'],
   ['symbol', Symbol('ok')],
   ['bigint', 1n]
-])('should return true for %s', async (type, value) => {
-  expect(primitive(value)).toStrictEqual(true)
+])
+   it(`should return true for ${type}`, async () => {
+  assert.deepStrictEqual(primitive(value), true)
 })

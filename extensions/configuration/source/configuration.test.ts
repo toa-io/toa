@@ -1,8 +1,11 @@
+import { describe, it, beforeEach, afterEach } from 'node:test'
+import assert from 'node:assert/strict'
+
 import { Locator } from '@toa.io/core'
 import { generate } from 'randomstring'
-import { fit, local, overridden } from './configuration'
-import { Secret } from './Secret'
-import { type Manifest } from './manifest'
+import { fit, local, overridden } from './configuration.js'
+import { Secret } from './Secret.js'
+import { type Manifest } from './manifest.js'
 
 let locator: Locator
 let manifest: Manifest
@@ -26,13 +29,13 @@ afterEach(() => {
 
 describe('overridden', () => {
   it('should be false without the variable', async () => {
-    expect(overridden(locator)).toStrictEqual(false)
+    assert.deepStrictEqual(overridden(locator), false)
   })
 
   it('should be true with the variable', async () => {
     set({})
 
-    expect(overridden(locator)).toStrictEqual(true)
+    assert.deepStrictEqual(overridden(locator), true)
   })
 })
 
@@ -42,11 +45,11 @@ describe('local', () => {
 
     set(value)
 
-    expect(local(locator, manifest)).toStrictEqual(value)
+    assert.deepStrictEqual(local(locator, manifest), value)
   })
 
   it('should return empty object if no value set', async () => {
-    expect(local(locator, manifest)).toStrictEqual({})
+    assert.deepStrictEqual(local(locator, manifest), {})
   })
 
   it('should substitute secrets', async () => {
@@ -55,9 +58,9 @@ describe('local', () => {
 
     const { foo } = local(locator, manifest)
 
-    expect(foo).toBeInstanceOf(Secret)
-    expect((foo as Secret).unwrap()).toStrictEqual('bar')
-    expect(String(foo)).toStrictEqual('<REDACTED>')
+    assert.ok(foo instanceof Secret)
+    assert.deepStrictEqual((foo as Secret).unwrap(), 'bar')
+    assert.deepStrictEqual(String(foo), '<REDACTED>')
   })
 
   it('should substitute secrets in defaults', async () => {
@@ -65,7 +68,7 @@ describe('local', () => {
 
     set('bar', '_BAR')
 
-    expect((local(locator, manifest).foo as Secret).unwrap()).toStrictEqual('bar')
+    assert.deepStrictEqual((local(locator, manifest).foo as Secret).unwrap(), 'bar')
   })
 
   it('should use defaults', async () => {
@@ -82,7 +85,7 @@ describe('local', () => {
 
     set({ bar: [2], baz: 'foo' })
 
-    expect(local(locator, manifest)).toStrictEqual({ foo: 'bar', bar: [2], baz: 'foo' })
+    assert.deepStrictEqual(local(locator, manifest), { foo: 'bar', bar: [2], baz: 'foo' })
   })
 
   it('should validate', async () => {
@@ -96,7 +99,7 @@ describe('local', () => {
 
     set({ bar: 5 })
 
-    expect(local(locator, manifest)).toStrictEqual({ foo: 'hello', bar: 5 })
+    assert.deepStrictEqual(local(locator, manifest), { foo: 'hello', bar: 5 })
   })
 })
 
@@ -115,19 +118,19 @@ describe('fit', () => {
     const raw = { foo: '$FOO' }
     const values = fit(raw, manifest)
 
-    expect((values.foo as Secret).unwrap()).toStrictEqual('secret')
-    expect(values.bar).toStrictEqual(1)
-    expect(raw).toStrictEqual({ foo: '$FOO' }) // untouched
+    assert.deepStrictEqual((values.foo as Secret).unwrap(), 'secret')
+    assert.deepStrictEqual(values.bar, 1)
+    assert.deepStrictEqual(raw, { foo: '$FOO' }) // untouched
   })
 
   it('should not apply the manifest defaults', async () => {
     manifest.defaults = { foo: 'hello' }
 
-    expect(fit({}, manifest)).toStrictEqual({})
+    assert.deepStrictEqual(fit({}, manifest), {})
   })
 
   it('should throw on a value not fitting the schema', async () => {
-    expect(() => fit({ foo: { nested: true } }, manifest)).toThrow()
+    assert.throws(() => fit({ foo: { nested: true } }, manifest))
   })
 })
 

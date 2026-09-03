@@ -1,7 +1,7 @@
 import { type Component, type extensions, Locator } from '@toa.io/core'
-import { Realtime } from './Realtime'
-import { Composition } from './Composition'
-import { Routes } from './Routes'
+import { Realtime } from './Realtime.js'
+import { Composition } from './Composition.js'
+import { Routes } from './Routes.js'
 
 export class Factory implements extensions.Factory {
   private readonly boot: Bootloader

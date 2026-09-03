@@ -1,11 +1,11 @@
-'use strict'
+import { letters } from '@toa.io/generic'
+import { types } from './constants.js'
+import * as func from './function.js'
 
-const { letters: { capitalize } } = require('@toa.io/generic')
-const { types } = require('./constants')
-const func = require('./function')
+const { capitalize } = letters
 
 /** @type {toa.node.define.operations.Define} */
-const define = (descriptor) => {
+export const define = (descriptor) => {
   const declaration = /** @type {import('@babel/types').ClassDeclaration} */ descriptor.statement
 
   descriptor.name = descriptor.name.toLowerCase()
@@ -15,7 +15,7 @@ const define = (descriptor) => {
 }
 
 /** @type {toa.node.define.operations.Test} */
-const test = (statement, name) => {
+export const test = (statement, name) => {
   const declaration = statement.type === 'ClassDeclaration'
   const known = names.includes(name)
 
@@ -37,6 +37,3 @@ const method = (statement, name) => {
 }
 
 const names = types.map((type) => capitalize(type))
-
-exports.define = define
-exports.test = test

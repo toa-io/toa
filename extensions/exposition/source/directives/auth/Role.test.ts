@@ -1,17 +1,21 @@
+import { it, beforeEach, mock } from 'node:test'
+import assert from 'node:assert/strict'
+import { isDeepStrictEqual } from 'node:util'
+
 import { type Component } from '@toa.io/core'
 import { generate } from 'randomstring'
-import { Role } from './Role'
-import { type Identity } from './types'
-import type { Parameter } from '../../RTD'
+import { Role } from './Role.js'
+import { type Identity } from './types.js'
+import type { Parameter } from '../../RTD/index.js'
 
 const remote = {
-  invoke: jest.fn()
-} as unknown as jest.MockedObject<Component>
+  invoke: mock.fn()
+} as unknown as Component
 
 const discovery = Promise.resolve(remote)
 
 beforeEach(() => {
-  jest.clearAllMocks()
+  resetCalls()
 })
 
 it('should return false if not matched', async () => {
@@ -24,43 +28,42 @@ it('should return false if not matched', async () => {
     refresh: false
   }
 
-  remote.invoke.mockResolvedValueOnce(['guest'])
+  remote.invoke.mock.mockImplementationOnce(async () => ['guest'])
 
   const result = await directive.authorize(identity, undefined, [])
 
-  expect(result).toBe(false)
+  assert.strictEqual(result, false)
 
-  expect(remote.invoke)
-    .toHaveBeenCalledWith('list', {
+  assert.ok(remote.invoke.mock.calls.some((call: any) => call.arguments.length === 2 && isDeepStrictEqual(call.arguments[0], 'list') && isDeepStrictEqual(call.arguments[1], {
       query: {
         criteria: `identity==${identity.id}`,
         limit: 1024
       }
-    })
+    })))
 })
 
 it('should return true on exact match', async () => {
   const result = await match(['admin', 'user'], ['user'])
 
-  expect(result).toBe(true)
+  assert.strictEqual(result, true)
 })
 
 it('should return true on scope match', async () => {
   const result = await match(['system:identity:roles'], ['system'])
 
-  expect(result).toBe(true)
+  assert.strictEqual(result, true)
 })
 
 it('should return false on scope mismatch', async () => {
   const result = await match(['system:identity'], ['system:identity:roles'])
 
-  expect(result).toBe(false)
+  assert.strictEqual(result, false)
 })
 
 it('should return false on non-scope substring match', async () => {
   const result = await match(['system:identity'], ['system:iden'])
 
-  expect(result).toBe(false)
+  assert.strictEqual(result, false)
 })
 
 it('should return true on match with parameters', async () => {
@@ -70,7 +73,7 @@ it('should return true on match with parameters', async () => {
       value: '29e54ae1'
     }])
 
-  expect(result).toBe(true)
+  assert.strictEqual(result, true)
 })
 
 it('should return true on match with parameters', async () => {
@@ -80,7 +83,7 @@ it('should return true on match with parameters', async () => {
       value: '29e54ae1'
     }])
 
-  expect(result).toBe(true)
+  assert.strictEqual(result, true)
 })
 
 it('should return false on mismatch with parameters', async () => {
@@ -90,7 +93,7 @@ it('should return false on mismatch with parameters', async () => {
       value: '88584c9b'
     }])
 
-  expect(result).toBe(false)
+  assert.strictEqual(result, false)
 })
 
 async function match (expected: string[], actual: string[], parameters: Parameter[] = []): Promise<boolean> {
@@ -102,7 +105,17 @@ async function match (expected: string[], actual: string[], parameters: Paramete
     refresh: false
   }
 
-  remote.invoke.mockResolvedValueOnce(actual)
+  remote.invoke.mock.mockImplementationOnce(async () => actual)
 
   return await directive.authorize(identity, undefined, parameters)
+}
+
+function resetCalls (target = [remote, discovery], seen = new Set()) {
+  if (target === null || typeof target !== 'object' || seen.has(target)) return
+
+  seen.add(target)
+
+  for (const value of Object.values(target))
+    if (typeof value === 'function' && value.mock !== undefined) value.mock.resetCalls()
+    else resetCalls(value, seen)
 }

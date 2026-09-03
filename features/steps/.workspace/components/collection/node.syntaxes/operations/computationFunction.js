@@ -1,7 +1,3 @@
-'use strict'
-
-async function computation (input, context) {
+export async function computation (input, context) {
   return context.configuration.foo
 }
-
-exports.computation = computation

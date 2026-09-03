@@ -1,9 +1,10 @@
-'use strict'
+import { it } from 'node:test'
+import assert from 'node:assert/strict'
 
-const { reduce } = require('../source')
+import { reduce } from '../source/index.js'
 
 it('should be', async () => {
-  expect(reduce).toBeDefined()
+  assert.notStrictEqual(reduce, undefined)
 })
 
 it('should reduce to object', async () => {
@@ -11,5 +12,5 @@ it('should reduce to object', async () => {
   const reducer = (acc, item) => (acc.a = acc.a === undefined ? item : acc.a + item)
   const result = reduce(items, reducer)
 
-  expect(result.a).toStrictEqual(6)
+  assert.deepStrictEqual(result.a, 6)
 })

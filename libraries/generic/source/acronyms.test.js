@@ -1,30 +1,31 @@
+import { describe, it } from 'node:test'
+import assert from 'node:assert/strict'
+
 // noinspection SpellCheckingInspection
 
-'use strict'
-
-const { acronyms } = require('../')
+import { acronyms } from '../source/index.js'
 
 it('should be', () => {
-  expect(acronyms).toBeDefined()
+  assert.notStrictEqual(acronyms, undefined)
 })
 
 describe('camelcase', () => {
   const camelcase = acronyms.camelcase
 
   it('should be', () => {
-    expect(camelcase).toBeDefined()
+    assert.notStrictEqual(camelcase, undefined)
   })
 
   it('should return acronym', () => {
-    expect(camelcase('Something')).toStrictEqual('So')
-    expect(camelcase('SomethingElse')).toStrictEqual('SoEl')
+    assert.deepStrictEqual(camelcase('Something'), 'So')
+    assert.deepStrictEqual(camelcase('SomethingElse'), 'SoEl')
   })
 
   it('should return with given part length', () => {
-    expect(camelcase('SomethingElse', 3)).toStrictEqual('SomEls')
+    assert.deepStrictEqual(camelcase('SomethingElse', 3), 'SomEls')
   })
 
   it('should handle too short', () => {
-    expect(camelcase('SomethingElse', 5)).toStrictEqual('SometElse')
+    assert.deepStrictEqual(camelcase('SomethingElse', 5), 'SometElse')
   })
 })

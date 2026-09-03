@@ -1,8 +1,6 @@
-'use strict'
+import { console, flush } from 'openspan'
 
-const { console, flush } = require('openspan')
-
-function graceful (connector) {
+export function graceful (connector) {
   ['SIGTERM', 'SIGINT']
     .forEach(signal => process.once(signal, async () => {
       console.info('Shutting down', { signal })
@@ -15,5 +13,3 @@ function graceful (connector) {
       process.exit(0)
     }))
 }
-
-exports.graceful = graceful

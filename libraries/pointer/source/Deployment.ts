@@ -1,5 +1,5 @@
-import { nameVariable, nameSecret } from './naming'
-import { resolveRecord } from './resolve'
+import { nameVariable, nameSecret } from './naming.js'
+import { resolveRecord } from './resolve.js'
 import type { Variables, Variable } from '@toa.io/operations'
 
 export class Deployment {

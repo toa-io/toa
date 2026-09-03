@@ -1,10 +1,8 @@
-'use strict'
+import jsonpath from 'jsonpath'
+import { component } from '@toa.io/norm'
+import { yaml as jsyaml } from '@toa.io/generic'
 
-const jsonpath = require('jsonpath')
-const { component } = require('@toa.io/norm')
-const jsyaml = require('js-yaml')
-
-const { components: find } = require('../../util/find')
+import { components as find } from '../../util/find.js'
 
 const print = async (argv) => {
   const path = find(argv.path)
@@ -17,12 +15,15 @@ const print = async (argv) => {
     manifest = jsonpath.value(manifest, argv.jsonpath)
 
   if (argv.error !== true) {
+    // js-yaml writes plain objects only, and a manifest carries a Locator
+    const plain = JSON.parse(JSON.stringify(manifest))
+
     const result = argv.output === 'json'
-      ? JSON.stringify(manifest, null, 2)
-      : jsyaml.dump(manifest, { noRefs: true, lineWidth: -1 })
+      ? JSON.stringify(plain, null, 2)
+      : jsyaml.dump(plain, { noRefs: true, lineWidth: -1 })
 
     console.log(result)
   }
 }
 
-exports.manifest = print
+export { print as manifest }

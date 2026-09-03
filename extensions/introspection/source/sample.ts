@@ -1,6 +1,6 @@
 import { Readable } from 'node:stream'
-import { REDACTED, SAMPLE_LIMIT } from './const'
-import type { Outcome, Sample } from './model'
+import { REDACTED, SAMPLE_LIMIT } from './const.js'
+import type { Outcome, Sample } from './model.js'
 
 /**
  * Captures the payload of a call. Only reached when both the context and the

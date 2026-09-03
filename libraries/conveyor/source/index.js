@@ -1,5 +1,1 @@
-'use strict'
-
-const { Conveyor } = require('./conveyor')
-
-exports.Conveyor = Conveyor
+export { Conveyor } from './conveyor.js'

@@ -1,13 +1,14 @@
-'use strict'
+import { mock } from 'node:test'
 
-const Client = jest.fn().mockImplementation(() => ({
-  connection: jest.fn(),
-  link: jest.fn(),
-  connect: jest.fn(),
-  disconnect: jest.fn(),
+// the storage constructs its client, and an arrow function cannot be constructed
+export const Client = mock.fn(function () {
+  return {
+    connection: mock.fn(),
+    link: mock.fn(),
+    connect: mock.fn(),
+    disconnect: mock.fn(),
 
-  insert: jest.fn(() => true),
-  update: jest.fn(() => false)
-}))
-
-exports.Client = Client
+    insert: mock.fn(() => true),
+    update: mock.fn(() => false)
+  }
+})

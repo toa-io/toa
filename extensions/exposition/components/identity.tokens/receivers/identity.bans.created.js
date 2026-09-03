@@ -1,3 +1,1 @@
-'use strict'
-
-exports.request = (payload) => ({ query: { id: payload.id } })
+export const request = (payload) => ({ query: { id: payload.id } })

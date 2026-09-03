@@ -1,5 +1,5 @@
-import { resolve } from './lib'
-import type { Context, Entity, Scheme } from './types'
+import { resolve } from './lib/index.js'
+import type { Context, Entity, Scheme } from './types/index.js'
 
 export async function effect (input: Input, context: Context): Promise<Entity | Error> {
   const claims = await resolve(input.scheme, input.credentials, context)

@@ -1,12 +1,15 @@
 import { resolve } from 'node:path'
 import { readdirSync } from 'node:fs'
-import { after, before, binding, given, when } from 'cucumber-tsflow'
+import tsflow from 'cucumber-tsflow'
+
 import { load as parse } from 'js-yaml'
 import * as stage from '@toa.io/userland/stage'
 import { type Component, type Request } from '@toa.io/core'
 import { timeout } from '@toa.io/generic'
-import { parse as parseRoutes, type Declaration } from '../../source/extension'
-import { Realtime } from './Realtime'
+import { parse as parseRoutes, type Declaration } from '../../source/extension.js'
+import { Realtime } from './Realtime.js'
+
+const { after, before, binding, given, when } = tsflow
 
 @binding([Realtime])
 export class Components {
@@ -65,4 +68,4 @@ function componentPaths (): string[] {
     .map((entry) => resolve(ROOT, entry.name))
 }
 
-const ROOT = resolve(__dirname, 'components')
+const ROOT = resolve(import.meta.dirname, 'components')

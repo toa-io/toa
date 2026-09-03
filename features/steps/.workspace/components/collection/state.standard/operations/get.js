@@ -1,9 +1,5 @@
-'use strict'
+import { CACHE_KEY } from './.common/constants.js'
 
-const { CACHE_KEY } = require('./.common/constants')
-
-async function computation (_, context) {
+export async function computation (_, context) {
   return context.aspects.state()[CACHE_KEY]
 }
-
-exports.computation = computation

@@ -1,5 +1,3 @@
-function computation(_, context) {
+export function computation(_, context) {
   return { env: context.env, context: context.name }
 }
-
-module.exports = { computation }

@@ -1,6 +1,4 @@
-'use strict'
-
-const ast = {
+export const ast = {
   left: {
     type: 'SELECTOR',
     selector: 'id'
@@ -13,9 +11,6 @@ const ast = {
   }
 }
 
-const criteria = {
+export const criteria = {
   _id: { $eq: 100500 }
 }
-
-exports.ast = ast
-exports.criteria = criteria

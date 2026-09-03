@@ -1,12 +1,8 @@
-'use strict'
+import { context } from '../index.js'
 
-const { context } = require('../')
-
-const increment = async (id) => {
+export const increment = async (id) => {
   const storage = context(id)
   const value = storage.get()
 
   value.n++
 }
-
-exports.increment = increment

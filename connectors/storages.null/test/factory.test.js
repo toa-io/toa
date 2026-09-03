@@ -1,16 +1,17 @@
-'use strict'
+import { it, before } from 'node:test'
+import assert from 'node:assert/strict'
 
-const { Factory } = require('../src/factory')
-const { Storage } = require('../src/storage')
+import { Factory } from '../src/factory.js'
+import { Storage } from '../src/storage.js'
 
 let factory
 
-beforeAll(() => {
+before(() => {
   factory = new Factory()
 })
 
 it('should create storage', () => {
   const storage = factory.storage()
 
-  expect(storage).toBeInstanceOf(Storage)
+  assert.ok(storage instanceof Storage)
 })

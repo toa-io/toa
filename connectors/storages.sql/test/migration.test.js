@@ -1,18 +1,20 @@
-'use strict'
+import { describe, it, beforeEach, mock as mocking } from 'node:test'
+import assert from 'node:assert/strict'
+import { isDeepStrictEqual } from 'node:util'
 
-const { generate } = require('randomstring')
-const { Locator } = require('@toa.io/core')
+import { generate } from 'randomstring'
+import { Locator } from '@toa.io/core'
 
-const { knex } = require('./knex.mock')
+import { knex } from './knex.mock.js'
+import * as fixtures from './migration.fixtures.js'
 const mock = { knex }
 
-jest.mock('knex', () => mock.knex)
+mocking.module('knex', { defaultExport: mock.knex })
 
-const fixtures = require('./migration.fixtures')
-const { Migration } = require('../src/migration')
+const { Migration } = await import('../src/migration.js')
 
 it('should be', () => {
-  expect(Migration).toBeDefined()
+  assert.notStrictEqual(Migration, undefined)
 })
 
 /** @type {toa.core.storages.Migration} */
@@ -30,39 +32,39 @@ const connection = {
 }
 
 beforeEach(() => {
-  jest.clearAllMocks()
+  resetCalls()
 
   migration = new Migration(driver)
-  expect(knex).toHaveBeenCalledWith({ client: driver, connection })
+  assert.ok(knex.mock.calls.some((call) => call.arguments.length === 1 && isDeepStrictEqual(call.arguments[0], { client: driver, connection })))
 
-  sql = knex.mock.results[0].value
-  expect(sql).toBeDefined()
+  sql = knex.mock.calls[0].result
+  assert.notStrictEqual(sql, undefined)
 })
 
 describe('database', () => {
   it('should be', () => {
-    expect(migration.database).toBeDefined()
+    assert.notStrictEqual(migration.database, undefined)
   })
 
   it('should create database', async () => {
     await migration.database(database)
 
-    expect(sql.raw).toHaveBeenCalledWith(`create database ${database}`)
+    assert.ok(sql.raw.mock.calls.some((call) => call.arguments.length === 1 && isDeepStrictEqual(call.arguments[0], `create database ${database}`)))
   })
 
   it('should reconnect to created database', async () => {
-    jest.clearAllMocks()
+    resetCalls()
 
     await migration.database(database)
 
     const reconnect = { ...connection, database }
 
-    expect(sql.destroy).toHaveBeenCalled()
-    expect(knex).toHaveBeenCalledWith({ client: driver, connection: reconnect })
+    assert.ok(sql.destroy.mock.callCount() > 0)
+    assert.ok(knex.mock.calls.some((call) => call.arguments.length === 1 && isDeepStrictEqual(call.arguments[0], { client: driver, connection: reconnect })))
   })
 
   it('should not throw if already exists', async () => {
-    sql.raw.mockImplementationOnce(() => {
+    sql.raw.mock.mockImplementationOnce(() => {
       const e = new Error()
 
       // https://www.postgresql.org/docs/current/errcodes-appendix.html
@@ -71,13 +73,13 @@ describe('database', () => {
       throw e
     })
 
-    await expect(migration.database(database)).resolves.not.toThrow()
+    await assert.doesNotReject(migration.database(database))
   })
 })
 
 describe('table', () => {
   it('should be', () => {
-    expect(migration.table).toBeDefined()
+    assert.notStrictEqual(migration.table, undefined)
   })
 
   /** @type {toa.core.Locator} */
@@ -103,21 +105,21 @@ describe('table', () => {
       'bar varchar'
     ]
 
-    expect(sql.raw).toHaveBeenCalledWith(`create schema ${locator.namespace}`)
+    assert.ok(sql.raw.mock.calls.some((call) => call.arguments.length === 1 && isDeepStrictEqual(call.arguments[0], `create schema ${locator.namespace}`)))
 
     for (const piece of pieces) {
-      expect(sql.raw).toHaveBeenCalledWith(expect.stringContaining(piece))
+      assert.ok(sql.raw.mock.calls.some((call) => call.arguments.length === 1 && call.arguments[0].includes(piece)))
     }
   })
 
   it('should return table name', async () => {
     const output = await call()
 
-    expect(output).toStrictEqual(`${locator.namespace}.${locator.name}`)
+    assert.deepStrictEqual(output, `${locator.namespace}.${locator.name}`)
   })
 
   it('should not throw if schema exists', async () => {
-    sql.raw.mockImplementationOnce(() => {
+    sql.raw.mock.mockImplementationOnce(() => {
       const error = new Error()
 
       error.code = '42P06'
@@ -125,35 +127,33 @@ describe('table', () => {
       throw error
     })
 
-    await expect(call()).resolves.not.toThrow()
+    await assert.doesNotReject(call())
 
-    expect(sql.raw).toHaveBeenCalledWith(
-      expect.stringContaining(`create table ${locator.namespace}.${locator.name}`)
-    )
+    assert.ok(sql.raw.mock.calls.some((call) => call.arguments.length === 1 && call.arguments[0].includes(`create table ${locator.namespace}.${locator.name}`)))
   })
 
   it('should not throw if table exists', async () => {
-    sql.raw.mockImplementationOnce(() => null)
-    sql.raw.mockImplementationOnce(() => {
+    sql.raw.mock.mockImplementationOnce(() => null, sql.raw.mock.callCount())
+    sql.raw.mock.mockImplementationOnce(() => {
       const error = new Error()
 
       error.code = '42P07'
 
       throw error
-    })
+    }, sql.raw.mock.callCount() + 1)
 
-    await expect(call()).resolves.not.toThrow()
+    await assert.doesNotReject(call())
   })
 
   it('should reset table', async () => {
     await call(true)
 
-    expect(sql.raw).toHaveBeenCalledWith(`drop table ${locator.namespace}.${locator.name}`)
+    assert.ok(sql.raw.mock.calls.some((call) => call.arguments.length === 1 && isDeepStrictEqual(call.arguments[0], `drop table ${locator.namespace}.${locator.name}`)))
   })
 
   it('should not throw if reset while table or schema not exists', async () => {
     const check = async (code) => {
-      sql.raw.mockImplementationOnce(() => {
+      sql.raw.mock.mockImplementationOnce(() => {
         const error = new Error()
 
         error.code = code
@@ -161,10 +161,20 @@ describe('table', () => {
         throw error
       })
 
-      await expect(call(true)).resolves.not.toThrow()
+      await assert.doesNotReject(call(true))
     }
 
     await check('42P01')
     await check('3F000')
   })
 })
+
+function resetCalls (target = [assert, mock, fixtures, driver, database, connection], seen = new Set()) {
+  if (target === null || typeof target !== 'object' || seen.has(target)) return
+
+  seen.add(target)
+
+  for (const value of Object.values(target))
+    if (typeof value === 'function' && value.mock !== undefined) value.mock.resetCalls()
+    else resetCalls(value, seen)
+}

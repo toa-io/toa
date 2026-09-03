@@ -1,8 +1,6 @@
-'use strict'
+import { resolve } from '../../shortcuts.js'
 
-const { resolve } = require('../../shortcuts')
-
-function operations (manifest) {
+export function operations (manifest) {
   if (manifest.operations === undefined) return
 
   for (const operation of Object.values(manifest.operations)) {
@@ -13,5 +11,3 @@ function operations (manifest) {
     }
   }
 }
-
-exports.operations = operations

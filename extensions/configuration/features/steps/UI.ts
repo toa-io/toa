@@ -1,9 +1,12 @@
 import assert from 'node:assert'
 import * as http from 'node:http'
 import { resolve } from 'node:path'
-import { after, binding, given, then, when } from 'cucumber-tsflow'
-import { UI } from '../../source/UI'
-import { UI_PORT } from '../../source/const'
+import tsflow from 'cucumber-tsflow'
+
+import { UI } from '../../source/UI.js'
+import { UI_PORT } from '../../source/const.js'
+
+const { after, binding, given, then, when } = tsflow
 
 /**
  * The scenarios are about the server, not about the page: it is pointed at a fixture
@@ -16,7 +19,7 @@ export class Site {
 
   @given('the UI is published')
   public async publish (): Promise<void> {
-    this.server = new UI(UI_PORT, resolve(__dirname, '..', 'site'))
+    this.server = new UI(UI_PORT, resolve(import.meta.dirname, '..', 'site'))
 
     await this.server.connect()
   }

@@ -7,11 +7,11 @@ import { once } from 'node:events'
 import { setTimeout } from 'node:timers/promises'
 import { console, current, decide, decode, run, type SpanContext } from 'openspan'
 import { Connector } from '@toa.io/core'
-import { type OutgoingMessage, write } from './messages'
-import { ClientError, Exception } from './exceptions'
-import { Context } from './Context'
-import { PROBE, Probe } from './Probe'
-import type { IncomingMessage, Protocol, ServerResponse } from './types'
+import { type OutgoingMessage, write } from './messages.js'
+import { ClientError, Exception } from './exceptions.js'
+import { Context } from './Context.js'
+import { PROBE, Probe } from './Probe.js'
+import type { IncomingMessage, Protocol, ServerResponse } from './types.js'
 
 export class Server extends Connector {
   private readonly server: http.Server | http2.Http2Server
@@ -261,7 +261,7 @@ export class Server extends Connector {
         if (!response.writableEnded)
           try {
             response.writeHead(500).end()
-          } catch (e) {
+          } catch {
             // Nothing more we can do
           }
       }

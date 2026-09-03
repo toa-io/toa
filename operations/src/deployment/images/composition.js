@@ -1,13 +1,12 @@
-'use strict'
+import { join } from 'node:path'
+import fs from 'fs-extra'
+import { createHash } from 'node:crypto'
 
-const { join } = require('node:path')
-const fs = require('fs-extra')
-const { createHash } = require('node:crypto')
+import { Image } from './image.js'
+import { declare } from './format.js'
 
-const { Image } = require('./image')
-
-class Composition extends Image {
-  dockerfile = join(__dirname, 'composition.Dockerfile')
+export class Composition extends Image {
+  dockerfile = join(import.meta.dirname, 'composition.Dockerfile')
 
   #name
   #image
@@ -64,11 +63,12 @@ class Composition extends Image {
     const context = await super.prepare(root)
 
     for (const component of this.#components) {
-      await fs.copy(component.path, join(context, component.locator.label))
+      const target = join(context, component.locator.label)
+
+      await fs.copy(component.path, target)
+      await declare(component.path, target, component.locator.label)
     }
 
     return context
   }
 }
-
-exports.Composition = Composition

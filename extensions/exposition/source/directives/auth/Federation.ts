@@ -1,6 +1,6 @@
 import assert from 'node:assert'
-import type { Directive, Identity, Context } from './types'
-import type { Parameter } from '../../RTD'
+import type { Directive, Identity, Context } from './types.js'
+import type { Parameter } from '../../RTD/index.js'
 
 export class Federation implements Directive {
   private readonly matchers: Array<[keyof Claims, Matcher]>

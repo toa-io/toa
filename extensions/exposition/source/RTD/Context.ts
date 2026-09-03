@@ -1,6 +1,6 @@
-import { type DirectiveFactory } from './Directives'
-import { type EndpointsFactory } from './Endpoint'
-import type { Directive } from './syntax'
+import { type DirectiveFactory } from './Directives.js'
+import { type EndpointsFactory } from './Endpoint.js'
+import type { Directive } from './syntax/index.js'
 
 export interface Context<TExtension = any> {
   readonly protected: boolean

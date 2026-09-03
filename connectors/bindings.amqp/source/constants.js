@@ -1,3 +1,1 @@
-'use strict'
-
-exports.SYSTEM = 'system'
+export const SYSTEM = 'system'

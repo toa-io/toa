@@ -1,5 +1,5 @@
-import type { Output } from '../../io'
-import type { Directive } from './types'
+import type { Output } from '../../io.js'
+import type { Directive } from './types.js'
 
 export class Throw implements Directive {
   private readonly message: string

@@ -1,5 +1,5 @@
-import * as _entity from './entity'
-import * as _storages from './storages'
+import * as _entity from './entity.js'
+import * as _storages from './storages.js'
 
 declare namespace toa.core {
 

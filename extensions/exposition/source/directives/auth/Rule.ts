@@ -1,5 +1,5 @@
-import { type Parameter } from '../../RTD'
-import type { Context, Directive, Identity, Create } from './types'
+import { type Parameter } from '../../RTD/index.js'
+import type { Context, Directive, Identity, Create } from './types.js'
 
 export class Rule implements Directive {
   private readonly directives: Directive[] = []

@@ -1,21 +1,21 @@
-'use strict'
+import { join } from 'node:path'
+import * as operations from '@toa.io/operations'
 
-const { join } = require('node:path')
-const { deployment: { Factory } } = require('@toa.io/operations')
+const { Factory } = operations.deployment
 
 /**
  * @param {string} [environment]
  */
-async function deployment (environment = undefined, options = {}) {
+export async function deployment (environment = undefined, options = {}) {
   const context = this.cwd
   const target = join(this.cwd, 'deployment')
   const factory = await Factory.create(context, environment, options)
-  const operator = factory.operator()
+  const operator = await factory.operator()
 
   await operator.export(target)
 }
 
-async function images () {
+export async function images () {
   const context = this.cwd
   const target = join(this.cwd, 'images')
   const factory = await Factory.create(context)
@@ -23,6 +23,3 @@ async function images () {
 
   await registry.prepare(target)
 }
-
-exports.deployment = deployment
-exports.images = images

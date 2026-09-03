@@ -1,5 +1,3 @@
-'use strict'
-
 function redirect (input) {
   return input.parameters.type in urls ? { url: urls[input.parameters.type] } : new Error()
 }
@@ -9,4 +7,4 @@ const urls = {
   'img': 'https://www.w3.org/assets/logos/w3c/w3c-no-bars.svg'
 }
 
-exports.computation = redirect
+export { redirect as computation }

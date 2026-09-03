@@ -1,7 +1,11 @@
+import { it } from 'node:test'
+import assert from 'node:assert/strict'
+import { isDeepStrictEqual } from 'node:util'
+
 import { generate } from 'randomstring'
-import { createVariables } from './createVariables'
+import { createVariables } from './createVariables.js'
 import type { Variable, Variables } from '@toa.io/operations'
-import type { Request } from './Deployment'
+import type { Request } from './Deployment.js'
 
 it('should create from selector', async () => {
   const id = generate()
@@ -17,8 +21,7 @@ it('should create from selector', async () => {
     }]
   }
 
-  expect(variables)
-    .toStrictEqual(expectation)
+  assert.deepStrictEqual(variables, expectation)
 })
 
 it('should create from partial match', async () => {
@@ -40,8 +43,7 @@ it('should create from partial match', async () => {
     }]
   }
 
-  expect(variables)
-    .toStrictEqual(expectation)
+  assert.deepStrictEqual(variables, expectation)
 })
 
 it('should create from default', async () => {
@@ -58,8 +60,7 @@ it('should create from default', async () => {
     }]
   }
 
-  expect(variables)
-    .toStrictEqual(expectation)
+  assert.deepStrictEqual(variables, expectation)
 })
 
 it('should create from array', async () => {
@@ -77,8 +78,7 @@ it('should create from array', async () => {
     }]
   }
 
-  expect(variables)
-    .toStrictEqual(expectation)
+  assert.deepStrictEqual(variables, expectation)
 })
 
 it('should create from default array', async () => {
@@ -96,8 +96,7 @@ it('should create from default array', async () => {
     }]
   }
 
-  expect(variables)
-    .toStrictEqual(expectation)
+  assert.deepStrictEqual(variables, expectation)
 })
 
 it('should throw if selector cannot be resolved', async () => {
@@ -106,8 +105,7 @@ it('should throw if selector cannot be resolved', async () => {
   const annotation = {}
   const request: Request = { group: generate(), selectors: [selector] }
 
-  expect(() => createVariables(id, annotation, [request]))
-    .toThrow('cannot be resolved.')
+  assert.throws(() => createVariables(id, annotation, [request]), (error: any) => /cannot be resolved\./.test(error.message))
 })
 
 it('should create credential secrets for annotation keys', async () => {
@@ -135,20 +133,17 @@ it('should create credential secrets for annotation keys', async () => {
   const secrets2 = createExpectedSecrets(id, namespace, selector2)
   const secrets3 = createExpectedSecrets(id, '.', selector3)
 
-  const expectation: Variables = {
-    [group]: expect.arrayContaining([
-      ...secrets1,
-      ...secrets2,
-      ...secrets3
-    ])
-  }
+  const expected = [...secrets1, ...secrets2, ...secrets3]
 
-  expect(variables).toStrictEqual(expectation)
+  // the group holds every expected secret, in whatever order it built them
+  for (const secret of expected)
+    assert.ok(variables[group].some((one: any) => isDeepStrictEqual(one, secret)))
 })
 
-it.each([
+for (const protocol of [
   'http:', 'redis:'
-])('should not create credetial secrets for %s', async (protocol) => {
+])
+   it(`should not create credetial secrets for ${protocol}`, async () => {
   const id = generate()
   const selector = generate()
   const annotation = { [selector]: uri(protocol) }
@@ -156,7 +151,7 @@ it.each([
   const variables = createVariables(id, annotation, [request])
 
   for (const variable of variables[request.group])
-    expect(variable.secret).toBeUndefined()
+    assert.strictEqual(variable.secret, undefined)
 })
 
 function uri (protocol = 'http:'): string {

@@ -1,15 +1,13 @@
-'use strict'
+import { mock } from 'node:test'
 
-const { generate } = require('randomstring')
+import { generate } from 'randomstring'
 
 const binding = (index) => ({
-  request: jest.fn(async (request) => {
+  request: mock.fn(async (request) => {
     if (request?.pick !== undefined && request.pick !== index) return false
 
     return { output: generate() }
   })
 })
 
-const bindings = [0, 1, 2, 3, 4].map(binding)
-
-exports.bindings = bindings
+export const bindings = [0, 1, 2, 3, 4].map(binding)

@@ -1,7 +1,3 @@
-'use strict'
-
-function computation () {
+export function computation () {
   return 'Hello'
 }
-
-exports.computation = computation

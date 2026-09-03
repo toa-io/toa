@@ -1,48 +1,31 @@
-'use strict'
+// the environment is read at module scope elsewhere, so it is loaded first
+import './env.js'
 
-require('./env')
+import * as bindings from './bindings/index.js'
+import * as bridge from './bridge.js'
+import * as contract from './contract.js'
+import * as discovery from './discovery.js'
+import * as extensions from './extensions/index.js'
 
-const { call } = require('./call')
-const { cascade } = require('./cascade')
-const { component } = require('./component')
-const { composition } = require('./composition')
-const { context } = require('./context')
-const { emission } = require('./emission')
-const { events } = require('./events')
-const { outbox } = require('./outbox')
-const { atomicity } = require('./atomicity')
-const { atom } = require('./atom')
-const { exposition } = require('./exposition')
-const { manifest } = require('./manifest')
-const { operation } = require('./operation')
-const { receivers, receive } = require('./receivers')
-const { remote } = require('./remote')
-const { storage } = require('./storage')
-const { guards } = require('./guards')
-const { rc } = require('./rc')
+import { call } from './call.js'
+import { cascade } from './cascade.js'
+import { component } from './component.js'
+import { composition } from './composition.js'
+import { context } from './context.js'
+import { emission } from './emission.js'
+import { events } from './events.js'
+import { outbox } from './outbox.js'
+import { atomicity } from './atomicity.js'
+import { atom } from './atom.js'
+import { exposition } from './exposition.js'
+import { manifest } from './manifest.js'
+import { operation } from './operation.js'
+import { receivers, receive } from './receivers.js'
+import { remote } from './remote.js'
+import { storage } from './storage.js'
+import { guards } from './guards.js'
+import { rc } from './rc.js'
 
-exports.bindings = require('./bindings')
-exports.bridge = require('./bridge')
-exports.contract = require('./contract')
-exports.discovery = require('./discovery')
-exports.extensions = require('./extensions')
+export { call, cascade, component, composition, context, emission, events, outbox, atomicity, atom, exposition, manifest, operation, receivers, receive, remote, storage, guards, rc }
 
-exports.call = call
-exports.cascade = cascade
-exports.component = component
-exports.composition = composition
-exports.context = context
-exports.emission = emission
-exports.events = events
-exports.outbox = outbox
-exports.atomicity = atomicity
-exports.atom = atom
-exports.exposition = exposition
-exports.manifest = manifest
-exports.operation = operation
-exports.receivers = receivers
-exports.receive = receive
-exports.remote = remote
-exports.storage = storage
-exports.guards = guards
-exports.rc = rc
+export { bindings, bridge, contract, discovery, extensions }

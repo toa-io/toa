@@ -1,6 +1,4 @@
-'use strict'
-
-function logs (context, aspect) {
+export function logs (context, aspect) {
   function invoke (severity) {
     return (message, attributes) => aspect.invoke(context.operation, severity, message, attributes)
   }
@@ -15,5 +13,3 @@ function logs (context, aspect) {
 }
 
 const CHANNELS = ['trace', 'debug', 'info', 'warn', 'error']
-
-exports.logs = logs

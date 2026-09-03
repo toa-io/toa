@@ -1,7 +1,5 @@
-'use strict'
+import { mock } from 'node:test'
 
-const { generate } = require('randomstring')
+import { generate } from 'randomstring'
 
-const name = jest.fn(() => generate())
-
-exports.name = name
+export const name = mock.fn(() => generate())

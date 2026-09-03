@@ -1,9 +1,11 @@
-'use strict'
+import { it } from 'node:test'
+import assert from 'node:assert/strict'
+import { isDeepStrictEqual } from 'node:util'
 
-const { random, range } = require('../')
+import { random, range } from '../source/index.js'
 
 it('should be', async () => {
-  expect(range).toBeInstanceOf(Function)
+  assert.ok(range instanceof Function)
 })
 
 it('should expand ranges', async () => {
@@ -45,7 +47,7 @@ it('should expand enumerations with ranges', async () => {
 })
 
 it('should throw on garbage input', async () => {
-  expect(() => range('hello')).toThrow('Invalid input format')
+  assert.throws(() => range('hello'), (error) => /Invalid input format/.test(error.message))
 })
 
 function gen (min, max) {
@@ -57,6 +59,6 @@ function gen (min, max) {
 }
 
 function same (a, b) {
-  expect(a.length).toStrictEqual(b.length)
-  expect(a).toStrictEqual(expect.arrayContaining(b))
+  assert.deepStrictEqual(a.length, b.length)
+  assert.ok(b.every((item) => a.some((candidate) => isDeepStrictEqual(candidate, item))))
 }

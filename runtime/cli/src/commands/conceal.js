@@ -1,6 +1,4 @@
-'use strict'
-
-const { conceal } = require('../handlers/conceal')
+import { conceal } from '../handlers/conceal.js'
 
 const builder = (yargs) => {
   yargs
@@ -46,7 +44,7 @@ const builder = (yargs) => {
     ])
 }
 
-exports.command = 'conceal [secret] [key-values...]'
-exports.desc = 'Deploy a secret'
-exports.builder = builder
-exports.handler = conceal
+export const command = 'conceal [secret] [key-values...]'
+export const desc = 'Deploy a secret'
+
+export { builder, conceal as handler }

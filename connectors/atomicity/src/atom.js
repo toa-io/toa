@@ -1,7 +1,5 @@
-'use strict'
-
-const { console } = require('openspan')
-const { Connector } = require('@toa.io/core')
+import { console } from 'openspan'
+import { Connector } from '@toa.io/core'
 
 /**
  * What one group of replicas decides together, in one place: which of them owns what, what they
@@ -9,7 +7,7 @@ const { Connector } = require('@toa.io/core')
  *
  * @implements {toa.core.atomicity.Atom}
  */
-class Atom extends Connector {
+export class Atom extends Connector {
   #connection
   #name
   #interval
@@ -172,5 +170,3 @@ const LEASE = 5000
 const SLOTS = 'slots:'
 const METER = 'meter:'
 const LOCK = 'lock:'
-
-exports.Atom = Atom

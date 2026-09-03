@@ -1,9 +1,7 @@
-'use strict'
+import { Connector } from './connector.js'
+import { TransmissionException } from './exceptions.js'
 
-const { Connector } = require('./connector')
-const { TransmissionException } = require('./exceptions')
-
-class Transmission extends Connector {
+export class Transmission extends Connector {
   #bindings
 
   constructor (bindings) {
@@ -38,5 +36,3 @@ class Transmission extends Connector {
     return reply
   }
 }
-
-exports.Transmission = Transmission

@@ -1,5 +1,1 @@
-'use strict'
-
-const load = async () => await import('jose')
-
-exports.load = load
+export const load = async () => await import('jose')

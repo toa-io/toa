@@ -1,13 +1,15 @@
-import assert from 'node:assert'
+import { describe, it, before, after } from 'node:test'
+import assert from 'node:assert/strict'
+
 import { createReadStream } from 'node:fs'
 import { resolve } from 'node:path'
-import { suites } from '../test/util'
-import { providers } from './index'
-import type { Constructor } from '../Provider'
-import type { Metadata, Stream } from '../Entry'
+import { suites } from '../test/util.js'
+import { providers } from './index.js'
+import type { Constructor } from '../Provider.js'
+import type { Metadata, Stream } from '../Entry.js'
 
-const sample = resolve(__dirname, '../test/sample.jpeg')
-const lenna = resolve(__dirname, '../test/lenna.png')
+const sample = resolve(import.meta.dirname, '../test/sample.jpeg')
+const lenna = resolve(import.meta.dirname, '../test/lenna.png')
 
 const metadata: Metadata = {
   type: 'image/jpeg',
@@ -17,30 +19,33 @@ const metadata: Metadata = {
   attributes: {}
 }
 
-describe.each(suites)('$provider', (suite) => {
+for (const suite of suites)
+  // a skipped suite still runs its hooks, and those reach the provider, so what
+  // is skipped is the suite rather than each test in it
+  (suite.run ? describe : describe.skip)(`${suite.provider}`, () => {
   const id = Math.random().toString(36).substring(7)
-  const it = suite.run ? global.it : global.it.skip
+  const test = it
   const Provider: Constructor = providers[suite.provider]
   const provider = new Provider(suite.options, suite.secrets)
 
   describe('put, get, head', () => {
     let entry: Stream
 
-    beforeAll(async () => {
+    before(async () => {
       await provider.put(id, createReadStream(sample))
       await provider.commit(id, metadata)
 
       entry = await provider.get(id) as Stream
     })
 
-    afterAll(() => entry.stream.destroy())
+    after(() => entry.stream.destroy())
 
-    it('should create metadata', async () => {
-      expect(entry.size).toEqual(metadata.size)
+    test('should create metadata', async () => {
+      assert.deepStrictEqual(entry.size, metadata.size)
     })
 
     if (suite.provider !== 'cloudinary')
-      it('should store attributes', async () => {
+      test('should store attributes', async () => {
         const path = '/path/to/file'
 
         await provider.put(path, createReadStream(sample))
@@ -48,12 +53,12 @@ describe.each(suites)('$provider', (suite) => {
 
         const entry = await provider.get(path) as Stream
 
-        expect(entry.attributes).toEqual({ foo: 'bar' })
+        assert.deepStrictEqual(entry.attributes, { foo: 'bar' })
 
         entry.stream.destroy()
       })
 
-    it('should overwrite', async () => {
+    test('should overwrite', async () => {
       const path = Math.random().toString(36).substring(7)
 
       await provider.put(path, createReadStream(sample))
@@ -62,8 +67,7 @@ describe.each(suites)('$provider', (suite) => {
       if (suite.provider === 'cloudinary')
         await new Promise((resolve) => setTimeout(resolve, 5_000))
 
-      await expect(provider.put(path, createReadStream(lenna)))
-        .resolves.not.toThrow()
+      await assert.doesNotReject(provider.put(path, createReadStream(lenna)))
 
       const meta = { ...metadata, size: 473831 } // lenna size
 
@@ -74,50 +78,51 @@ describe.each(suites)('$provider', (suite) => {
 
       const overwritten = await provider.get(path) as Stream
 
-      expect(overwritten.size).toEqual(meta.size)
+      assert.deepStrictEqual(overwritten.size, meta.size)
 
       overwritten.stream.destroy()
     })
 
-    it('should return error if not found', async () => {
+    test('should return error if not found', async () => {
       const error = await provider.get(Math.random().toString(36).substring(7)) as any
 
-      expect(error).toBeInstanceOf(Error)
-      expect(error.code).toBe('NOT_FOUND')
+      assert.ok(error instanceof Error)
+      assert.strictEqual(error.code, 'NOT_FOUND')
     })
 
-    it('should return entry', async () => {
+    test('should return entry', async () => {
       const entry = await provider.head(id)
 
       assert.ok(!(entry instanceof Error))
 
-      expect(entry.size).toEqual(metadata.size)
+      assert.deepStrictEqual(entry.size, metadata.size)
     })
   })
 
   describe('delete', () => {
     const path = '/path/to/' + Math.random().toString(36).substring(7)
 
-    it('should remove file', async () => {
+    test('should remove file', async () => {
       await provider.put(path, createReadStream(sample))
       await provider.commit(path, metadata)
       await provider.delete(path)
 
       const error = await provider.get(path) as any
 
-      expect(error).toBeInstanceOf(Error)
-      expect(error.code).toBe('NOT_FOUND')
+      assert.ok(error instanceof Error)
+      assert.strictEqual(error.code, 'NOT_FOUND')
     })
 
-    it('should not return error if not found', async () => {
+    test('should not return error if not found', async () => {
       const empty = await provider.delete(Math.random().toString(36).substring(7))
 
-      expect(empty).toBeUndefined()
+      assert.strictEqual(empty, undefined)
     })
   })
 
   describe('move', () => {
-    it.each([true, false])('should move (commit: %s)', async (committed) => {
+    for (const committed of [true, false])
+      test(`should move (commit: ${committed})`, async () => {
       const from = Math.random().toString(36).substring(7)
       const to = Math.random().toString(36).substring(7)
 
@@ -133,20 +138,19 @@ describe.each(suites)('$provider', (suite) => {
 
       const error = await provider.get(from) as any
 
-      expect(error).toBeInstanceOf(Error)
+      assert.ok(error instanceof Error)
 
       const entry = await provider.get(to) as Stream
 
-      expect(entry.stream).toBeDefined()
+      assert.notStrictEqual(entry.stream, undefined)
     })
 
-    it('should return error if not found', async () => {
+    test('should return error if not found', async () => {
       const error = await provider.move(Math.random().toString(36).substring(7), 'whatever') as any
 
-      expect(error).toBeInstanceOf(Error)
-      expect(error.code).toBe('NOT_FOUND')
+      assert.ok(error instanceof Error)
+      assert.strictEqual(error.code, 'NOT_FOUND')
     })
   })
 })
 
-jest.setTimeout(30_000)

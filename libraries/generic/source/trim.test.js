@@ -1,21 +1,22 @@
-'use strict'
+import { it } from 'node:test'
+import assert from 'node:assert/strict'
 
-const { trim } = require('../')
+import { trim } from '../source/index.js'
 
 it('should be', async () => {
-  expect(trim).toBeInstanceOf(Function)
+  assert.ok(trim instanceof Function)
 })
 
 it('should trim input', async () => {
   const trimmed = trim('\nline one\nline two\n\t \t\n')
 
-  expect(trimmed).toStrictEqual('line one\nline two')
+  assert.deepStrictEqual(trimmed, 'line one\nline two')
 })
 
 it('should trim by first line padding', async () => {
   const trimmed = trim('  line one\n  line two')
 
-  expect(trimmed).toStrictEqual('line one\nline two')
+  assert.deepStrictEqual(trimmed, 'line one\nline two')
 })
 
 it('should preserve relative indentation', async () => {
@@ -25,7 +26,7 @@ it('should preserve relative indentation', async () => {
           model: fast
   `)
 
-  expect(trimmed).toStrictEqual(`agents:
+  assert.deepStrictEqual(trimmed, `agents:
   - provider: cursor
     model: fast`)
 })
@@ -33,11 +34,11 @@ it('should preserve relative indentation', async () => {
 it('should trim tabs by first line padding', async () => {
   const trimmed = trim('\tline one\n\tline two\n\t\tindented')
 
-  expect(trimmed).toStrictEqual('line one\nline two\n\tindented')
+  assert.deepStrictEqual(trimmed, 'line one\nline two\n\tindented')
 })
 
 it('should trim trailing spaces', async () => {
   const trimmed = trim('  line one \n  line two  ')
 
-  expect(trimmed).toStrictEqual('line one\nline two')
+  assert.deepStrictEqual(trimmed, 'line one\nline two')
 })

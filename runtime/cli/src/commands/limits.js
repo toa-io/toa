@@ -1,7 +1,6 @@
-'use strict'
+import { limits } from '../handlers/limits.js'
 
-const { limits } = require('../handlers/limits')
+export const command = 'limits'
+export const desc = 'Get resource limits for all pods in the current Kubernetes context'
 
-exports.command = 'limits'
-exports.desc = 'Get resource limits for all pods in the current Kubernetes context'
-exports.handler = limits
+export { limits as handler }

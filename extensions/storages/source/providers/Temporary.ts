@@ -1,6 +1,6 @@
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
-import { FileSystem } from './FileSystem'
+import { FileSystem } from './FileSystem.js'
 
 export interface TemporaryOptions {
   directory: string

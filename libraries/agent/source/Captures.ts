@@ -1,6 +1,6 @@
 import * as assert from 'node:assert'
-import { functions } from './functions'
-import type { Functions } from './functions'
+import { functions } from './functions/index.js'
+import type { Functions } from './functions/index.js'
 
 export class Captures extends Map<string, string> {
   private readonly functions: Functions | undefined

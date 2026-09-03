@@ -1,11 +1,9 @@
-'use strict'
-
-const { concat } = require('@toa.io/generic')
+import { concat } from '@toa.io/generic'
 
 /**
  * @implements {toa.core.Locator}
  */
-class Locator {
+export class Locator {
   name
   namespace
 
@@ -50,5 +48,3 @@ class Locator {
 }
 
 const DOT = '.'
-
-exports.Locator = Locator

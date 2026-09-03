@@ -1,10 +1,8 @@
-'use strict'
+import { Connector } from './connector.js'
+import { SystemException, RequestContractException } from './exceptions.js'
+import { Readable } from 'node:stream'
 
-const { Connector } = require('./connector')
-const { SystemException, RequestContractException } = require('./exceptions')
-const { Readable } = require('node:stream')
-
-class Operation extends Connector {
+export class Operation extends Connector {
   scope
 
   /**
@@ -95,5 +93,3 @@ class Operation extends Connector {
     return this.scope[this.#scope](query, this.mutable)
   }
 }
-
-exports.Operation = Operation

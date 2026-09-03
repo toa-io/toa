@@ -1,7 +1,8 @@
-'use strict'
+import { describe, it, beforeEach } from 'node:test'
+import assert from 'node:assert/strict'
 
-const { generate } = require('randomstring')
-const { Locator } = require('../src/locator')
+import { generate } from 'randomstring'
+import { Locator } from '../src/locator.js'
 
 /** @type {string} */
 let name
@@ -20,37 +21,37 @@ beforeEach(() => {
 })
 
 it('should expose name and namespace', () => {
-  expect(locator.name).toStrictEqual(name)
-  expect(locator.namespace).toStrictEqual(namespace)
+  assert.deepStrictEqual(locator.name, name)
+  assert.deepStrictEqual(locator.namespace, namespace)
 })
 
 it('should expose id, label', () => {
   const id = locator.namespace + '.' + locator.name
   const label = locator.namespace.toLowerCase() + '-' + locator.name.toLowerCase()
 
-  expect(locator.id).toStrictEqual(id)
-  expect(locator.label).toStrictEqual(label)
+  assert.deepStrictEqual(locator.id, id)
+  assert.deepStrictEqual(locator.label, label)
 })
 
 it('should expose uppercase', () => {
-  expect(locator.uppercase).toStrictEqual((locator.namespace + '_' + locator.name).toUpperCase())
+  assert.deepStrictEqual(locator.uppercase, (locator.namespace + '_' + locator.name).toUpperCase())
 })
 
 it('should throw if name is undefined', () => {
-  expect(() => new Locator(undefined, namespace)).toThrow(TypeError)
+  assert.throws(() => new Locator(undefined, namespace), TypeError)
 
   // noinspection JSCheckFunctionSignatures
-  expect(() => new Locator()).toThrow(TypeError)
+  assert.throws(() => new Locator(), TypeError)
 })
 
 it('should expose host', () => {
-  expect(locator.hostname()).toStrictEqual((namespace + '-' + name).toLowerCase())
+  assert.deepStrictEqual(locator.hostname(), (namespace + '-' + name).toLowerCase())
 })
 
 it('should expose host with given prefix', () => {
   const prefix = generate()
 
-  expect(locator.hostname(prefix)).toStrictEqual((prefix + '-' + namespace + '-' + name).toLowerCase())
+  assert.deepStrictEqual(locator.hostname(prefix), (prefix + '-' + namespace + '-' + name).toLowerCase())
 })
 
 describe('global', () => {
@@ -61,28 +62,28 @@ describe('global', () => {
   it('should not throw', () => undefined)
 
   it('should expose id', () => {
-    expect(locator.id).toStrictEqual(name)
+    assert.deepStrictEqual(locator.id, name)
   })
 
   it('should expose label', () => {
-    expect(locator.label).toStrictEqual(name.toLowerCase())
+    assert.deepStrictEqual(locator.label, name.toLowerCase())
   })
 
   it('should expose uppercase', () => {
-    expect(locator.uppercase).toStrictEqual(name.toUpperCase())
+    assert.deepStrictEqual(locator.uppercase, name.toUpperCase())
   })
 
   it('should expose hostname', () => {
     const type = generate()
 
-    expect(locator.hostname(type)).toStrictEqual((type + '-' + name).toLowerCase())
-    expect(locator.hostname()).toStrictEqual(name.toLowerCase())
+    assert.deepStrictEqual(locator.hostname(type), (type + '-' + name).toLowerCase())
+    assert.deepStrictEqual(locator.hostname(), name.toLowerCase())
   })
 })
 
 describe('parse', () => {
   it('should be', async () => {
-    expect(Locator.parse).toBeInstanceOf(Function)
+    assert.ok(Locator.parse instanceof Function)
   })
 
   const namespace = generate()
@@ -92,22 +93,22 @@ describe('parse', () => {
   it('should parse id', async () => {
     const locator = Locator.parse(id)
 
-    expect(locator.namespace).toStrictEqual(namespace)
-    expect(locator.name).toStrictEqual(name)
+    assert.deepStrictEqual(locator.namespace, namespace)
+    assert.deepStrictEqual(locator.name, name)
   })
 
   it('should parse endpoint', async () => {
     const endpoint = `${id}.${generate()}`
     const locator = Locator.parse(endpoint)
 
-    expect(locator.namespace).toStrictEqual(namespace)
-    expect(locator.name).toStrictEqual(name)
+    assert.deepStrictEqual(locator.namespace, namespace)
+    assert.deepStrictEqual(locator.name, name)
   })
 
   it('should parse token as global', async () => {
     const locator = Locator.parse(name)
 
-    expect(locator.namespace).toBeUndefined()
-    expect(locator.name).toStrictEqual(name)
+    assert.strictEqual(locator.namespace, undefined)
+    assert.deepStrictEqual(locator.name, name)
   })
 })

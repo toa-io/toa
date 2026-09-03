@@ -1,9 +1,7 @@
-'use strict'
+import { Readable } from 'node:stream'
+import { Connector } from '@toa.io/core'
 
-const { Readable } = require('node:stream')
-const { Connector } = require('@toa.io/core')
-
-class Runner extends Connector {
+export class Runner extends Connector {
   /** @type {toa.node.Algorithm} */
   #algorithm
 
@@ -50,5 +48,3 @@ function isGenerator (object) {
     (constructor === 'AsyncGeneratorFunction' ||
       constructor === 'GeneratorFunction')
 }
-
-exports.Runner = Runner

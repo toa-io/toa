@@ -1,6 +1,6 @@
 import type { telemetry } from '@toa.io/types'
-import type { Trust } from '../types'
-import type { Fetch } from '../types/context'
+import type { Trust } from '../types/index.js'
+import type { Fetch } from '../types/context.js'
 
 export interface Ctx {
   trust: Trust[]

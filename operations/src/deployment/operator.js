@@ -1,8 +1,6 @@
-'use strict'
+import * as workspace from './workspace.js'
 
-const workspace = require('./workspace')
-
-class Operator {
+export class Operator {
   /** @type {toa.deployment.Deployment} */
   #deployment
 
@@ -58,5 +56,3 @@ class Operator {
 
 /** @type {toa.deployment.installation.Options} */
 const OPTIONS = { wait: false }
-
-exports.Operator = Operator

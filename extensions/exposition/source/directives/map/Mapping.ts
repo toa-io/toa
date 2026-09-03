@@ -1,7 +1,7 @@
-import type { Remotes } from '../../Remotes'
-import type { Directive } from './Directive'
-import type { Input } from '../../io'
-import type { Parameter } from '../../RTD'
+import type { Remotes } from '../../Remotes.js'
+import type { Directive } from './Directive.js'
+import type { Input } from '../../io.js'
+import type { Parameter } from '../../RTD/index.js'
 
 export abstract class Mapping<T = unknown> {
   protected value: T

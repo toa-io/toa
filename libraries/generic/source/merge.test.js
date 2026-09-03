@@ -1,7 +1,8 @@
-'use strict'
+import { describe, it } from 'node:test'
+import assert from 'node:assert/strict'
 
-const { merge, overwrite, add } = require('../source')
-const { generate } = require('randomstring')
+import { merge, overwrite, add } from '../source/index.js'
+import { generate } from 'randomstring'
 
 it('should merge arrays', () => {
   const target = [1, 2]
@@ -9,7 +10,7 @@ it('should merge arrays', () => {
 
   merge(target, source)
 
-  expect(target).toStrictEqual([1, 2, 3, 4])
+  assert.deepStrictEqual(target, [1, 2, 3, 4])
 })
 
 it('should merge properties', () => {
@@ -18,7 +19,7 @@ it('should merge properties', () => {
 
   merge(target, source)
 
-  expect(target).toStrictEqual({ a: 1, foo: { a: 1, b: ['foo', 'bar', 'baz'], c: 3 }, d: 4 })
+  assert.deepStrictEqual(target, { a: 1, foo: { a: 1, b: ['foo', 'bar', 'baz'], c: 3 }, d: 4 })
 })
 
 it('should return target', () => {
@@ -27,30 +28,26 @@ it('should return target', () => {
 
   const result = merge(target, source)
 
-  expect(result).toBe(target)
+  assert.strictEqual(result, target)
 })
 
 it('should throw TypeError on non-objects', () => {
-  expect(() => merge(1, 2)).toThrow(TypeError)
-  expect(() => merge({}, 2)).toThrow(TypeError)
+  assert.throws(() => merge(1, 2), TypeError)
+  assert.throws(() => merge({}, 2), TypeError)
 
-  expect(() => merge({ a: { b: null } }, { a: { b: 'test' } }))
-    .toThrow()
+  assert.throws(() => merge({ a: { b: null } }, { a: { b: 'test' } }))
 
-  expect(() => merge({ a: { b: null } }, 1))
-    .toThrow()
+  assert.throws(() => merge({ a: { b: null } }, 1))
 
-  expect(() => merge({ a: { b: 'a' } }, { a: { b: 1 } }))
-    .toThrow()
+  assert.throws(() => merge({ a: { b: 'a' } }, { a: { b: 1 } }))
 })
 
 it('should throw on conflict', () => {
-  expect(() => merge({ a: 1 }, { a: 2 })).toThrow(/conflict/)
+  assert.throws(() => merge({ a: 1 }, { a: 2 }), (error) => /conflict/.test(error.message))
 })
 
 it('should throw with conflict path', () => {
-  expect(() => merge({ a: { b: { c: 1 } } }, { a: { b: { c: 2 } } }))
-    .toThrow(/\/a\/b\/c/)
+  assert.throws(() => merge({ a: { b: { c: 1 } } }, { a: { b: { c: 2 } } }), (error) => /\/a\/b\/c/.test(error.message))
 })
 
 it('should ignore undefined source', () => {
@@ -58,10 +55,10 @@ it('should ignore undefined source', () => {
   const source = { a: undefined }
 
   merge(target, source)
-  expect(target).toStrictEqual({ a: 1 })
+  assert.deepStrictEqual(target, { a: 1 })
 
   merge(target, undefined)
-  expect(target).toStrictEqual({ a: 1 })
+  assert.deepStrictEqual(target, { a: 1 })
 })
 
 it('should ignore undefined target', () => {
@@ -69,16 +66,16 @@ it('should ignore undefined target', () => {
   const source = { a: 1 }
 
   merge(target, source)
-  expect(target).toStrictEqual({ a: 1 })
+  assert.deepStrictEqual(target, { a: 1 })
 
   const result = merge(undefined, source)
-  expect(result).toStrictEqual({ a: 1 })
+  assert.deepStrictEqual(result, { a: 1 })
 })
 
 it('should ignore undefined arguments', () => {
   const result = merge(undefined, undefined)
 
-  expect(result).toStrictEqual({})
+  assert.deepStrictEqual(result, {})
 })
 
 it('should merge symbol properties', async () => {
@@ -89,7 +86,7 @@ it('should merge symbol properties', async () => {
 
   merge(target, source)
 
-  expect(target).toStrictEqual(source)
+  assert.deepStrictEqual(target, source)
 })
 
 describe('options', () => {
@@ -102,7 +99,7 @@ describe('options', () => {
 
       merge(a, b, options)
 
-      expect(a).toStrictEqual({ a: 1, b: 1, c: [1, 2] })
+      assert.deepStrictEqual(a, { a: 1, b: 1, c: [1, 2] })
     })
   })
 
@@ -115,7 +112,7 @@ describe('options', () => {
 
       merge(a, b, options)
 
-      expect(a).toStrictEqual({ a: 2, b: 1, c: 1, d: [3, 4] })
+      assert.deepStrictEqual(a, { a: 2, b: 1, c: 1, d: [3, 4] })
     })
 
     it('should overwrite primitive with object', () => {
@@ -124,7 +121,7 @@ describe('options', () => {
 
       merge(a, b, options)
 
-      expect(a.a).toStrictEqual(b.a)
+      assert.deepStrictEqual(a.a, b.a)
     })
 
     it('should overwrite primitive with array', () => {
@@ -133,14 +130,14 @@ describe('options', () => {
 
       merge(a, b, options)
 
-      expect(a.a).toStrictEqual(b.a)
+      assert.deepStrictEqual(a.a, b.a)
     })
   })
 })
 
 describe('overwrite', () => {
   it('should be', async () => {
-    expect(overwrite).toBeDefined()
+    assert.notStrictEqual(overwrite, undefined)
   })
 
   it('should overwrite properties', async () => {
@@ -150,14 +147,14 @@ describe('overwrite', () => {
 
     const output = overwrite(target, source)
 
-    expect(output).toStrictEqual(expected)
-    expect(target).toStrictEqual(expected)
+    assert.deepStrictEqual(output, expected)
+    assert.deepStrictEqual(target, expected)
   })
 })
 
 describe('add', () => {
   it('should be', async () => {
-    expect(add).toBeDefined()
+    assert.notStrictEqual(add, undefined)
   })
 
   it('should add new properties', async () => {
@@ -167,7 +164,7 @@ describe('add', () => {
 
     const output = add(target, source)
 
-    expect(output).toStrictEqual(expected)
-    expect(target).toStrictEqual(expected)
+    assert.deepStrictEqual(output, expected)
+    assert.deepStrictEqual(target, expected)
   })
 })

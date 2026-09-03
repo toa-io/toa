@@ -1,10 +1,11 @@
-'use strict'
+import { it, beforeEach } from 'node:test'
+import assert from 'node:assert/strict'
 
-const { generate } = require('randomstring')
-const { Reflection, Connector } = require('../')
+import { generate } from 'randomstring'
+import { Reflection, Connector } from '../src/index.js'
 
 it('should export', () => {
-  expect(Reflection).toBeDefined()
+  assert.notStrictEqual(Reflection, undefined)
 })
 
 /** @type {toa.core.Reflection<string>} */
@@ -20,11 +21,11 @@ beforeEach(() => {
 })
 
 it('should be a Connector', () => {
-  expect(reflection).toBeInstanceOf(Connector)
+  assert.ok(reflection instanceof Connector)
 })
 
 it('should reflect', async () => {
   await reflection.connect()
 
-  expect(reflection.value).toStrictEqual(value)
+  assert.deepStrictEqual(reflection.value, value)
 })

@@ -1,5 +1,3 @@
-'use strict'
-
 /**
  * @implements {toa.node.Algorithm}
  */
@@ -28,6 +26,4 @@ class Func {
 }
 
 /** @type {toa.node.define.algorithms.Constructor} */
-const create = (func) => new Func(func)
-
-exports.create = create
+export const create = (func) => new Func(func)

@@ -1,9 +1,7 @@
-'use strict'
+import { Connector } from '@toa.io/core'
+import { Conveyor } from '@toa.io/conveyor'
 
-const { Connector } = require('@toa.io/core')
-const { Conveyor } = require('@toa.io/conveyor')
-
-class Client extends Connector {
+export class Client extends Connector {
   /** @type {string} */
   #table
 
@@ -37,5 +35,3 @@ class Client extends Connector {
     return this.#connection.update(this.#table, criteria, object)
   }
 }
-
-exports.Client = Client

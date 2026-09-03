@@ -1,12 +1,10 @@
-'use strict'
-
 /**
  * Split string respecting quotes
  *
  * @param {string} string
  * @returns {string[]}
  */
-const split = (string) => {
+export const split = (string) => {
   const array = []
 
   let match
@@ -21,5 +19,3 @@ const split = (string) => {
 }
 
 const RX = /[^\s"']+|"([^"]*)"|'([^']*)'/g
-
-exports.split = split

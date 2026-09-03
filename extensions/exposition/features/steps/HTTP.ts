@@ -1,14 +1,17 @@
 import * as assert from 'node:assert'
 import * as fs from 'node:fs'
 import * as path from 'node:path'
-import { binding, then, when } from 'cucumber-tsflow'
+import tsflow from 'cucumber-tsflow'
+
 import * as http from '@toa.io/agent'
 import * as msgpack from 'msgpackr'
 import * as YAML from 'js-yaml'
-import { Captures } from './Captures'
-import { Parameters } from './Parameters'
-import { Gateway } from './Gateway'
+import { Captures } from './Captures.js'
+import { Parameters } from './Parameters.js'
+import { Gateway } from './Gateway.js'
 import type { Readable } from 'node:stream'
+
+const { binding, then, when } = tsflow
 
 @binding([Gateway, Parameters, Captures])
 export class HTTP extends http.Agent {
@@ -85,7 +88,7 @@ export class HTTP extends http.Agent {
   }
 }
 
-const FILES_DIR = path.resolve(__dirname, '../../../storages/source/test')
+const FILES_DIR = path.resolve(import.meta.dirname, '../../../storages/source/test')
 
 function open (filename: string): Readable {
   return fs.createReadStream(path.join(FILES_DIR, filename))

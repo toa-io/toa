@@ -1,5 +1,9 @@
+import { createRequire } from 'node:module'
+import * as norm from '@toa.io/norm'
 import { dirname, join } from 'node:path'
 import type { Manifest } from '@toa.io/norm'
+
+const require = createRequire(import.meta.url)
 
 const PACKAGE = '@toa.io/extensions.introspection'
 const COMPONENTS = ['introspection.nodes', 'introspection.edges']
@@ -16,7 +20,7 @@ export function components (): string[] {
 
 /** `norm` declares `component` as a namespace of types; the runtime export is a function. */
 export async function manifests (): Promise<Manifest[]> {
-  const { component } = require('@toa.io/norm') as Norm
+  const { component } = norm as unknown as Norm
 
   return await Promise.all(components().map(async (path) => await component(path)))
 }

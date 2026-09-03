@@ -1,5 +1,5 @@
-import * as _state from './state'
-import * as _atomicity from './atomicity'
+import * as _state from './state.js'
+import * as _atomicity from './atomicity.js'
 
 declare namespace toa.core {
 

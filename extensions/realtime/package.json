@@ -1,6 +1,7 @@
 {
   "name": "@toa.io/extensions.realtime",
   "version": "1.0.0-alpha.274",
+  "type": "module",
   "description": "Toa Realtime",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
@@ -20,12 +21,8 @@
     "@toa.io/core": "1.0.0-alpha.273",
     "openspan": "1.0.0-alpha.272"
   },
-  "jest": {
-    "preset": "ts-jest",
-    "testEnvironment": "node"
-  },
   "scripts": {
     "transpile": "npx tsc && npx tsc -p ./components/realtime.streams",
-    "features": "npx cucumber-js"
+    "features": "TSX_TSCONFIG_PATH=features/steps/tsconfig.json NODE_OPTIONS=--import=tsx cucumber-js"
   }
 }

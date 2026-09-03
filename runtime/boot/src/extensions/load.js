@@ -1,16 +1,12 @@
-'use strict'
-
-const { resolve } = require('./resolve')
+import { resolve } from './resolve.js'
 
 /**
  * @param {toa.norm.Component} manifest
  */
-const load = (manifest) => {
+export const load = async (manifest) => {
   if (manifest.extensions === undefined)
     return
 
-  for (const name of Object.keys(manifest.extensions))
-    resolve(name, manifest.path)
+  await Promise.all(Object.keys(manifest.extensions)
+    .map(async (name) => await resolve(name, manifest.path)))
 }
-
-exports.load = load

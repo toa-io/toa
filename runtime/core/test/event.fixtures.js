@@ -1,29 +1,24 @@
-'use strict'
+import { mock } from 'node:test'
 
-const { generate } = require('randomstring')
+import { generate } from 'randomstring'
 
-const definition = {
+export const definition = {
   conditioned: true,
   subjective: true
 }
 
 // noinspection JSCheckFunctionSignatures
-const bridge = {
-  condition: jest.fn(async (origin) => !origin.falsy),
-  payload: jest.fn(async () => ({ [generate()]: generate() }))
+export const bridge = {
+  condition: mock.fn(async (origin) => !origin.falsy),
+  payload: mock.fn(async () => ({ [generate()]: generate() }))
 }
 
-const binding = {
-  emit: jest.fn()
+export const binding = {
+  emit: mock.fn()
 }
 
-const event = {
+export const event = {
   origin: { [generate()]: generate() },
   state: { [generate()]: generate() },
   changeset: { [generate()]: generate() }
 }
-
-exports.bridge = bridge
-exports.binding = binding
-exports.definition = definition
-exports.event = event

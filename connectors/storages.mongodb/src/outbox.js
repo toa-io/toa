@@ -1,6 +1,4 @@
-'use strict'
-
-const { console } = require('openspan')
+import { console } from 'openspan'
 
 /**
  * The outbox rows of one component. Its lifecycle is the Client's, so it is not a Connector.
@@ -8,7 +6,7 @@ const { console } = require('openspan')
  * Core owns what a row means — its id, its lane and when it becomes due. This only writes
  * them, reads back what is due, and marks what has been published.
  */
-class Outbox {
+export class Outbox {
   /** @type {import('mongodb').Collection} */
   #collection
 
@@ -125,5 +123,3 @@ function retention () {
 
 /** seconds a published row is kept as a change log before the TTL monitor reaps it */
 const RETENTION = 86400
-
-exports.Outbox = Outbox

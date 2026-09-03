@@ -1,9 +1,12 @@
-import { Console, record } from './Console'
-import { current } from './tracing'
-import { consoleExporter, exporters, exporting, flush, recording } from './exporters'
-import { Otlp } from './Otlp'
-import { traces } from './traces'
-import type { Exporter, Span } from './exporters'
+import { describe, it, beforeEach, afterEach, mock } from 'node:test'
+import assert from 'node:assert/strict'
+
+import { Console, record } from './Console.js'
+import { current } from './tracing.js'
+import { consoleExporter, exporters, exporting, flush, recording } from './exporters.js'
+import { Otlp } from './Otlp.js'
+import { traces } from './traces.js'
+import type { Exporter, Span } from './exporters.js'
 
 afterEach(() => {
   traces()
@@ -13,66 +16,64 @@ describe('traces', () => {
   it('should default to no exporters', () => {
     traces()
 
-    expect(exporters()).toHaveLength(0)
-    expect(recording()).toBe(false)
+    assert.strictEqual(exporters().length, 0)
+    assert.strictEqual(recording(), false)
   })
 
   it('should opt into the console exporter', () => {
     traces({ exporters: { console: {} } })
 
-    expect(exporters()).toEqual([consoleExporter])
-    expect(recording()).toBe(true)
+    assert.deepStrictEqual(exporters(), [consoleExporter])
+    assert.strictEqual(recording(), true)
   })
 
   it('should create configured exporters', () => {
     traces({ exporters: { console: null, otlp: { endpoint: 'http://localhost:4318' } } })
 
-    expect(exporters()[0]).toBe(consoleExporter)
-    expect(exporters()[1]).toBeInstanceOf(Otlp)
+    assert.strictEqual(exporters()[0], consoleExporter)
+    assert.ok(exporters()[1] instanceof Otlp)
   })
 
   it('should disable the console exporter when not listed', () => {
     traces({ exporters: { otlp: { endpoint: 'http://localhost:4318' } } })
 
-    expect(exporters()).toHaveLength(1)
-    expect(exporters()[0]).toBeInstanceOf(Otlp)
+    assert.strictEqual(exporters().length, 1)
+    assert.ok(exporters()[0] instanceof Otlp)
   })
 
-  it('should share exporters between module copies', () => {
+  it('should share exporters between module copies', async () => {
     // a process may load several copies of the module (the package installed more than once)
     let copy!: { exporting: typeof exporting, exporters: typeof exporters }
 
-    jest.isolateModules(() => {
-      copy = require('./exporters')
-    })
+    copy = await import('./exporters.js')
 
     const exporter: Exporter = { export: () => undefined }
 
     copy.exporting([exporter])
 
-    expect(exporters()).toEqual([exporter])
+    assert.deepStrictEqual(exporters(), [exporter])
   })
 
   it('should flush exporters', async () => {
-    const flusher = jest.fn(async () => undefined)
+    const flusher = mock.fn(async () => undefined)
     const exporter: Exporter = { export: () => undefined, flush: flusher }
 
     exporting([exporter, consoleExporter]) // consoleExporter has no flush
 
     await flush()
 
-    expect(flusher).toHaveBeenCalled()
+    assert.ok(flusher.mock.callCount() > 0)
   })
 })
 
 describe('export', () => {
   const streams: any = {
-    stdout: { write: jest.fn() },
-    stderr: { write: jest.fn() }
+    stdout: { write: mock.fn() },
+    stderr: { write: mock.fn() }
   }
 
   beforeEach(() => {
-    streams.stdout.write.mockClear()
+    streams.stdout.write.mock.resetCalls()
   })
 
   it('should pass spans to exporters', async () => {
@@ -85,20 +86,15 @@ describe('export', () => {
 
     await instance.span({ name: 'work', kind: 'server', attributes: { foo: 1 } }, () => null)
 
-    expect(seen).toHaveLength(1)
+    assert.strictEqual(seen.length, 1)
 
-    expect(seen[0]).toMatchObject({
-      name: 'work',
-      kind: 'server',
-      attributes: { foo: 1 },
-      scope: { component: 'pots' },
-      traceId: expect.stringMatching(/^[\da-f]{32}$/),
-      spanId: expect.stringMatching(/^[\da-f]{16}$/),
-      time: expect.any(Number),
-      duration: expect.any(Number)
-    })
+    assert.partialDeepStrictEqual(seen[0], { name: 'work', kind: 'server', attributes: { foo: 1 }, scope: { component: 'pots' } })
+    assert.match(seen[0]['traceId'], /^[\da-f]{32}$/)
+    assert.match(seen[0]['spanId'], /^[\da-f]{16}$/)
+    assert.strictEqual(typeof seen[0]['time'], 'number')
+    assert.strictEqual(typeof seen[0]['duration'], 'number')
 
-    expect(streams.stdout.write).not.toHaveBeenCalled()
+    assert.strictEqual(streams.stdout.write.mock.callCount(), 0)
   })
 
   it('should attribute spans to a service', async () => {
@@ -114,7 +110,7 @@ describe('export', () => {
       await instance.span({ name: 'overridden', service: 'orders' }, () => null)
     })
 
-    expect(seen.map((span) => [span.name, span.service])).toEqual([
+    assert.deepStrictEqual(seen.map((span) => [span.name, span.service]), [
       ['inherited', 'exposition'],
       ['overridden', 'orders'],
       ['request', 'exposition']
@@ -133,12 +129,12 @@ describe('export', () => {
       current()!.status = 'error'
     })
 
-    expect(seen[0].status).toBe('error')
+    assert.strictEqual(seen[0].status, 'error')
   })
 
   it('should fan out to multiple exporters', async () => {
-    const first = { export: jest.fn() }
-    const second = { export: jest.fn() }
+    const first = { export: mock.fn() }
+    const second = { export: mock.fn() }
 
     exporting([first, second])
 
@@ -146,8 +142,8 @@ describe('export', () => {
 
     await instance.span('work', () => null)
 
-    expect(first.export).toHaveBeenCalledTimes(1)
-    expect(second.export).toHaveBeenCalledTimes(1)
+    assert.strictEqual(first.export.mock.callCount(), 1)
+    assert.strictEqual(second.export.mock.callCount(), 1)
   })
 
   it('should record externally completed spans', () => {
@@ -167,11 +163,11 @@ describe('export', () => {
 
     record(span)
 
-    expect(seen).toEqual([span])
+    assert.deepStrictEqual(seen, [span])
   })
 
   it('should not export unsampled spans', async () => {
-    const exporter = { export: jest.fn() }
+    const exporter = { export: mock.fn() }
 
     exporting([exporter])
     traces({ sample: 0, exporters: {} })
@@ -181,6 +177,6 @@ describe('export', () => {
 
     await instance.span('work', () => null)
 
-    expect(exporter.export).not.toHaveBeenCalled()
+    assert.strictEqual(exporter.export.mock.callCount(), 0)
   })
 })

@@ -1,7 +1,2 @@
-'use strict'
-
-const { deployment } = require('./deployment')
-const { Factory } = require('./factory')
-
-exports.deployment = deployment
-exports.Factory = Factory
+export { deployment } from './deployment.js'
+export { Factory } from './factory.js'

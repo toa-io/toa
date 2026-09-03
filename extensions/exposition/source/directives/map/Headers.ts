@@ -1,7 +1,7 @@
 import assert from 'node:assert'
-import { cors } from '../cors'
-import { Mapping } from './Mapping'
-import type { Input } from '../../io'
+import { cors } from '../cors/index.js'
+import { Mapping } from './Mapping.js'
+import type { Input } from '../../io.js'
 
 /**
  * Forbidden request header names: the browser sets them itself and a script cannot

@@ -1,6 +1,6 @@
 import assert from 'node:assert'
-import { Mapping } from './Mapping'
-import type { Input } from '../../io'
+import { Mapping } from './Mapping.js'
+import type { Input } from '../../io.js'
 
 export class BufferMapping extends Mapping<string> {
   public constructor (property: string) {

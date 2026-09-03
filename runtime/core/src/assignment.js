@@ -1,8 +1,6 @@
-'use strict'
+import { Operation } from './operation.js'
 
-const { Operation } = require('./operation')
-
-class Assignment extends Operation {
+export class Assignment extends Operation {
   async acquire (store) {
     store.scope = this.scope.changeset(store.request.query)
     store.state = store.scope.get()
@@ -28,5 +26,3 @@ class Assignment extends Operation {
     }
   }
 }
-
-exports.Assignment = Assignment

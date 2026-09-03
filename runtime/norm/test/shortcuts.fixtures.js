@@ -1,14 +1,9 @@
-'use strict'
+import { generate } from 'randomstring'
+import { random } from '@toa.io/generic'
 
-const { generate } = require('randomstring')
-const { random } = require('@toa.io/generic')
-
-const SHORTCUTS = {
+export const SHORTCUTS = {
   amqp: '@toa.io/bindings.amqp',
   mongodb: '@toa.io/storages.mongodb'
 }
 
-const object = { foo: random(), bar: { baz: generate() } }
-
-exports.object = object
-exports.SHORTCUTS = SHORTCUTS
+export const object = { foo: random(), bar: { baz: generate() } }

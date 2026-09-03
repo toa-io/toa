@@ -1,10 +1,8 @@
-'use strict'
+import * as schemas from './schemas/index.js'
+import { Contract } from './contract.js'
+import { ResponseContractException } from '../exceptions.js'
 
-const schemas = require('./schemas')
-const { Contract } = require('./contract')
-const { ResponseContractException } = require('../exceptions')
-
-class Reply extends Contract {
+export class Reply extends Contract {
   static Exception = ResponseContractException
 
   static schema (output, errors) {
@@ -46,5 +44,3 @@ class Reply extends Contract {
     return schema
   }
 }
-
-exports.Reply = Reply

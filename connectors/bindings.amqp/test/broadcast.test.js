@@ -1,21 +1,25 @@
-'use strict'
+import { it, beforeEach, mock as mocking } from 'node:test'
+import assert from 'node:assert/strict'
+import { isDeepStrictEqual } from 'node:util'
 
 // region setup
 
-const { generate } = require('randomstring')
-const { Connector } = require('@toa.io/core')
+import { generate } from 'randomstring'
+import { Connector } from '@toa.io/core'
+import * as _communication from './communication.mock.js'
+import * as _queues from './queues.mock.js'
 
 const mock = {
-  communication: require('./communication.mock').communication,
-  queues: require('./queues.mock')
+  communication: _communication.communication,
+  queues: _queues
 }
 
-jest.mock('../source/queues', () => mock.queues)
+mocking.module('../source/queues', { namedExports: mock.queues })
 
-const { Broadcast } = require('../source/broadcast')
+const { Broadcast } = await import('../source/broadcast.js')
 
 it('should be', async () => {
-  expect(Broadcast).toBeDefined()
+  assert.notStrictEqual(Broadcast, undefined)
 })
 
 const comm = mock.communication()
@@ -26,7 +30,7 @@ const group = generate()
 let broadcast
 
 beforeEach(() => {
-  jest.clearAllMocks()
+  resetCalls()
 
   broadcast = new Broadcast(comm, locator, group)
 })
@@ -34,11 +38,11 @@ beforeEach(() => {
 // endregion
 
 it('should be instance of Connector', async () => {
-  expect(broadcast).toBeInstanceOf(Connector)
+  assert.ok(broadcast instanceof Connector)
 })
 
 it('should depend on communication', async () => {
-  expect(comm.link).toHaveBeenCalledWith(broadcast)
+  assert.ok(comm.link.mock.calls.some((call) => call.arguments.length === 1 && isDeepStrictEqual(call.arguments[0], broadcast)))
 })
 
 it('should transmit', async () => {
@@ -47,39 +51,49 @@ it('should transmit', async () => {
 
   await broadcast.transmit(label, message)
 
-  expect(mock.queues.name).toHaveBeenCalledWith(locator, label)
+  assert.ok(mock.queues.name.mock.calls.some((call) => call.arguments.length === 2 && isDeepStrictEqual(call.arguments[0], locator) && isDeepStrictEqual(call.arguments[1], label)))
 
-  const exchange = mock.queues.name.mock.results[0].value
+  const exchange = mock.queues.name.mock.calls[0].result
 
-  expect(comm.emit).toHaveBeenCalledWith(exchange, message, {
+  assert.ok(comm.emit.mock.calls.some((call) => call.arguments.length === 3 && isDeepStrictEqual(call.arguments[0], exchange) && isDeepStrictEqual(call.arguments[1], message) && isDeepStrictEqual(call.arguments[2], {
     'deliveryMode': 1
-  })
+  })))
 })
 
 it('should receive', async () => {
   const label = generate()
-  const process = jest.fn(async () => undefined)
+  const process = mocking.fn(async () => undefined)
 
   await broadcast.receive(label, process)
 
-  expect(mock.queues.name).toHaveBeenCalledWith(locator, label)
+  assert.ok(mock.queues.name.mock.calls.some((call) => call.arguments.length === 2 && isDeepStrictEqual(call.arguments[0], locator) && isDeepStrictEqual(call.arguments[1], label)))
 
-  const exchange = mock.queues.name.mock.results[0].value
+  const exchange = mock.queues.name.mock.calls[0].result
 
-  expect(comm.consume).toHaveBeenCalledWith(exchange, group, expect.any(Function))
+  assert.ok(comm.consume.mock.calls.some((call) => call.arguments.length === 3 && isDeepStrictEqual(call.arguments[0], exchange) && isDeepStrictEqual(call.arguments[1], group) && typeof call.arguments[2] === 'function'))
 })
 
 it('should consume exclusively if group is not provided', async () => {
-  jest.clearAllMocks()
+  resetCalls()
 
   broadcast = new Broadcast(comm, locator)
 
   const label = generate()
-  const process = jest.fn(async () => undefined)
+  const process = mocking.fn(async () => undefined)
 
   await broadcast.receive(label, process)
 
-  const group = comm.consume.mock.calls[0][1]
+  const group = comm.consume.mock.calls[0].arguments[1]
 
-  expect(group).toBeUndefined()
+  assert.strictEqual(group, undefined)
 })
+
+function resetCalls (target = [assert, mock, comm, locator, group], seen = new Set()) {
+  if (target === null || typeof target !== 'object' || seen.has(target)) return
+
+  seen.add(target)
+
+  for (const value of Object.values(target))
+    if (typeof value === 'function' && value.mock !== undefined) value.mock.resetCalls()
+    else resetCalls(value, seen)
+}

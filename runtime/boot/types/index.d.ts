@@ -1,7 +1,7 @@
 import * as core from '@toa.io/core'
-import * as composition from './composition'
+import * as composition from './composition.js'
 
-export * as bindings from './bindings'
+export * as bindings from './bindings.js'
 
 export async function composition (paths: string[], options?: composition.Options): Promise<core.Connector>
 

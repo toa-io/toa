@@ -1,26 +1,27 @@
-'use strict'
+import { it, before } from 'node:test'
+import assert from 'node:assert/strict'
 
-const { generate } = require('randomstring')
+import { generate } from 'randomstring'
 
-const { Storage } = require('../src/storage')
+import { Storage } from '../src/storage.js'
 
 let storage
 
-beforeAll(() => {
+before(() => {
   storage = new Storage()
 })
 
 it('should get null', async () => {
   const result = await storage.get()
 
-  expect(result).toBeNull()
+  assert.strictEqual(result, null)
 })
 
 it('should add', async () => {
   const object = { id: generate() }
   const result = await storage.add(object)
 
-  expect(result).toStrictEqual(true)
+  assert.deepStrictEqual(result, true)
 })
 
 it('should not really add', async () => {
@@ -30,7 +31,7 @@ it('should not really add', async () => {
 
   const result = await storage.get({ query: { id: object.id } })
 
-  expect(result).toBeNull()
+  assert.strictEqual(result, null)
 })
 
 it('should store', async () => {
@@ -38,5 +39,5 @@ it('should store', async () => {
 
   const result = await storage.store(object)
 
-  expect(result).toStrictEqual(true)
+  assert.deepStrictEqual(result, true)
 })

@@ -1,6 +1,7 @@
 {
   "name": "@toa.io/norm",
   "version": "1.0.0-alpha.274",
+  "type": "module",
   "description": "Toa declarations normalization and validation",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
@@ -23,8 +24,8 @@
     "@toa.io/core": "1.0.0-alpha.273",
     "@toa.io/generic": "1.0.0-alpha.273",
     "@toa.io/schemas": "1.0.0-alpha.274",
-    "fast-glob": "3.2.12",
-    "js-yaml": "4.3.1"
+    "fast-glob": "3.3.3",
+    "js-yaml": "5.4.1"
   },
   "gitHead": "61c8e74a336385265767e9fd37d49128cb51b17f"
 }

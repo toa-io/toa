@@ -1,8 +1,6 @@
-'use strict'
+import { SystemException } from '../exceptions.js'
 
-const { SystemException } = require("../exceptions")
-
-class EntitySet {
+export class EntitySet {
   #set
 
   constructor (set) {
@@ -24,5 +22,3 @@ class EntitySet {
     return this.#set.map((entity) => entity.event(input))
   }
 }
-
-exports.EntitySet = EntitySet

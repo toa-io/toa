@@ -1,6 +1,7 @@
 {
   "name": "@toa.io/extensions.fetch",
   "version": "1.0.0-alpha.273",
+  "type": "module",
   "description": "Toa Fetch extension",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
@@ -22,9 +23,5 @@
   "dependencies": {
     "@toa.io/core": "1.0.0-alpha.273",
     "openspan": "1.0.0-alpha.272"
-  },
-  "jest": {
-    "preset": "ts-jest",
-    "testEnvironment": "node"
   }
 }

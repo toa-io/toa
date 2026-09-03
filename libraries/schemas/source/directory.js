@@ -1,15 +1,13 @@
-'use strict'
-
-const { join, relative } = require('node:path')
-const glob = require('fast-glob')
-const { readFileSync } = require('node:fs')
-const jsyaml = require('js-yaml')
+import { join, relative } from 'node:path'
+import glob from 'fast-glob'
+import { readFileSync } from 'node:fs'
+import { yaml as jsyaml } from '@toa.io/generic'
 
 /**
  * @param {string} path
  * @returns {object[]}
  */
-const readDirectory = (path) => {
+export const readDirectory = (path) => {
   const pattern = join(path, '**', '*' + EXTENSION)
   const files = glob.sync(pattern, GLOB)
 
@@ -41,5 +39,3 @@ const calculateID = (root, path) => {
 const EXTENSION = '.cos.yaml'
 
 const GLOB = { onlyFiles: true, absolute: true }
-
-exports.readDirectory = readDirectory

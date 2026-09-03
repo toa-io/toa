@@ -1,13 +1,11 @@
-'use strict'
+import { console } from 'openspan'
+import { Composition } from '@toa.io/core'
+import { version } from '@toa.io/runtime'
 
-const { console } = require('openspan')
-const { Composition } = require('@toa.io/core')
-const { version } = require('@toa.io/runtime/package.json')
+import * as boot from './index.js'
+import { span } from './span.js'
 
-const boot = require('./index')
-const { span } = require('./span')
-
-async function composition (paths, options) {
+export async function composition (paths, options) {
   options = Object.assign({}, options)
 
   return span('boot composition', async () => {
@@ -29,8 +27,8 @@ async function composition (paths, options) {
       const components = await span('create components',
         async () => await Promise.all(manifests.map(boot.component)))
 
-      const groups = components.map((component, index) =>
-        boot.bindings.produce(component, manifests[index].operations))
+      const groups = await Promise.all(components.map(async (component, index) =>
+        await boot.bindings.produce(component, manifests[index].operations)))
 
       const receivers = await span('create receivers',
         async () => await Promise.all(components.map((component, index) =>
@@ -89,5 +87,3 @@ async function composition (paths, options) {
     }
   })
 }
-
-exports.composition = composition

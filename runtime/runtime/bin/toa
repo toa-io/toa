@@ -1,17 +1,14 @@
 #!/usr/bin/env node
-'use strict'
+
+// the file has no extension, so its format is the package's: a module
 
 if (process.argv.includes('--wtf')) {
-  const wtf = require('wtfnode')
-
-  function wtfdump () {
-    wtf.dump()
-  }
+  const wtf = await import('wtfnode')
 
   console.debug('wtf enabled')
 
   // dump each 30 seconds
-  setInterval(wtfdump, 10000)
+  setInterval(() => wtf.default.dump(), 10000)
 }
 
-require('@toa.io/cli')
+await import('@toa.io/cli')

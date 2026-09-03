@@ -1,12 +1,13 @@
-'use strict'
+import { it, before } from 'node:test'
+import assert from 'node:assert/strict'
 
-const { resolve } = require('node:path')
-const { generate } = require('randomstring')
-const { Connector } = require('@toa.io/core')
+import { resolve } from 'node:path'
+import { generate } from 'randomstring'
+import { Connector } from '@toa.io/core'
 
-const { Factory } = require('../src/factory')
+import { Factory } from '../src/factory.js'
 
-const root = resolve(__dirname, 'dummies/one')
+const root = resolve(import.meta.dirname, 'dummies/one')
 
 let factory
 
@@ -16,28 +17,28 @@ const state = generate()
 
 context.aspects = []
 
-beforeAll(() => {
+before(() => {
   factory = new Factory()
 })
 
 it('should be', () => {
-  expect(factory.algorithm).toBeDefined()
+  assert.notStrictEqual(factory.algorithm, undefined)
 })
 
 for (const sample of ['fn', 'cls', 'fct']) {
   it(`should create '${sample}' operation`, async () => {
     const algorithm = await factory.algorithm(root, sample, context)
 
-    expect(algorithm).toBeDefined()
+    assert.notStrictEqual(algorithm, undefined)
 
     await algorithm.connect()
 
     const promise = algorithm.execute(input, state)
 
-    await expect(promise).resolves.not.toThrow()
+    await assert.doesNotReject(promise)
 
     const response = await promise
 
-    expect(response.output).toStrictEqual({ input, state, context: true })
+    assert.deepStrictEqual(response.output, { input, state, context: true })
   })
 }

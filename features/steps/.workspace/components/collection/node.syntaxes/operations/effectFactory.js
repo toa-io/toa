@@ -1,8 +1,6 @@
-'use strict'
+import { Effect } from './effectClass.js'
 
-const { Effect } = require('./effectClass')
-
-class EffectFactory {
+export class EffectFactory {
   #context
 
   constructor (context) {
@@ -13,5 +11,3 @@ class EffectFactory {
     return new Effect()
   }
 }
-
-exports.EffectFactory = EffectFactory

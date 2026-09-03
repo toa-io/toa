@@ -1,6 +1,6 @@
-export { manifest } from './manifest'
-export { deployment } from './deployment'
-export { components } from './Composition'
-export { Factory } from './Factory'
+export { manifest } from './manifest.js'
+export { deployment } from './deployment.js'
+export { components } from './Composition.js'
+export { Factory } from './Factory.js'
 
-export type { Remotes } from './Remotes'
+export type { Remotes } from './Remotes.js'

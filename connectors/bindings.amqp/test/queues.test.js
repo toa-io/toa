@@ -1,8 +1,9 @@
-'use strict'
+import { it, beforeEach } from 'node:test'
+import assert from 'node:assert/strict'
 
-const { generate } = require('randomstring')
+import { generate } from 'randomstring'
 
-const { name } = require('../source/queues')
+import { name } from '../source/queues.js'
 
 /** @type {toa.core.Locator} */
 let locator
@@ -17,13 +18,13 @@ beforeEach(() => {
 })
 
 it('should be', async () => {
-  expect(name).toBeInstanceOf(Function)
+  assert.ok(name instanceof Function)
 })
 
 it('should name a queue', async () => {
   const queue = name(locator, endpoint)
 
-  expect(queue).toStrictEqual(`${locator.namespace}.${locator.name}.${endpoint}`)
+  assert.deepStrictEqual(queue, `${locator.namespace}.${locator.name}.${endpoint}`)
 })
 
 it('should name a queue with nameless locator', async () => {
@@ -31,5 +32,5 @@ it('should name a queue with nameless locator', async () => {
 
   const queue = name(locator, endpoint)
 
-  expect(queue).toStrictEqual(`${locator.namespace}.${endpoint}`)
+  assert.deepStrictEqual(queue, `${locator.namespace}.${endpoint}`)
 })

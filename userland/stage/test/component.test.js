@@ -1,25 +1,31 @@
-'use strict'
+import { it, mock as mocking } from 'node:test'
+import assert from 'node:assert/strict'
+import { isDeepStrictEqual } from 'node:util'
 
-const { generate } = require('randomstring')
+import { generate } from 'randomstring'
+import * as _boot from './boot.mock.js'
 
 const mock = {
-  boot: require('./boot.mock')
+  boot: _boot
 }
 
-jest.mock('@toa.io/boot', () => mock.boot)
+mocking.module('@toa.io/boot', { namedExports: mock.boot })
 
-const stage = require('../')
+const stage = await import('../src/index.js')
 
 it('should be', () => {
-  expect(stage.component).toBeDefined()
+  assert.notStrictEqual(stage.component, undefined)
 })
 
 it('should boot component', async () => {
   const path = generate()
   const component = await stage.component(path)
 
-  expect(mock.boot.manifest.mock.calls[0][0]).toStrictEqual(path)
-  expect(mock.boot.component).toHaveBeenCalledWith(await mock.boot.manifest.mock.results[0].value)
-  expect(component).toStrictEqual(await mock.boot.component.mock.results[0].value)
-  expect(component.connect).toHaveBeenCalled()
+  assert.deepStrictEqual(mock.boot.manifest.mock.calls[0].arguments[0], path)
+  const manifest = await mock.boot.manifest.mock.calls[0].result
+
+  assert.ok(mock.boot.component.mock.calls.some((call) =>
+    call.arguments.length === 1 && isDeepStrictEqual(call.arguments[0], manifest)))
+  assert.deepStrictEqual(component, await mock.boot.component.mock.calls[0].result)
+  assert.ok(component.connect.mock.callCount() > 0)
 })

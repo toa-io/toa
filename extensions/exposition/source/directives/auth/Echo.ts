@@ -1,6 +1,6 @@
-import { create } from './create'
-import type { OutgoingMessage } from '../../HTTP'
-import type { Directive, Identity, Context } from './types'
+import { create } from './create.js'
+import type { OutgoingMessage } from '../../HTTP/index.js'
+import type { Directive, Identity, Context } from './types.js'
 
 export class Echo implements Directive {
   public authorize (identity: Identity | null, context: Context): boolean {

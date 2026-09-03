@@ -1,5 +1,5 @@
 import * as codes from 'http-status-codes'
-import type { IncomingHttpHeaders } from 'undici/types/header'
+import type { IncomingHttpHeaders } from 'node:http'
 import type { Dispatcher } from 'undici'
 
 export async function response (response: Dispatcher.ResponseData, body?: string): Promise<string> {

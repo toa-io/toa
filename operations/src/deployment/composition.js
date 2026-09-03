@@ -1,6 +1,4 @@
-'use strict'
-
-class Composition {
+export class Composition {
   name
   image
   /** @type {string[]} */
@@ -15,5 +13,3 @@ class Composition {
 }
 
 const component = (component) => component.locator.label
-
-exports.Composition = Composition

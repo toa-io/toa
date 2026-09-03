@@ -1,6 +1,4 @@
-'use strict'
-
-const { push } = require('../handlers/push')
+import { push } from '../handlers/push.js'
 
 const builder = (yargs) => {
   yargs
@@ -13,7 +11,7 @@ const builder = (yargs) => {
     })
 }
 
-exports.command = 'push'
-exports.desc = 'Build and push Docker images'
-exports.builder = builder
-exports.handler = push
+export const command = 'push'
+export const desc = 'Build and push Docker images'
+
+export { builder, push as handler }

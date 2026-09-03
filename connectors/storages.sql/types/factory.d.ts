@@ -2,7 +2,7 @@
 
 import type { Locator } from '@toa.io/core'
 import type { Factory } from '@toa.io/core/types/storages'
-import type { Storage } from './storage'
+import type { Storage } from './storage.js'
 
 type Base = Factory
 

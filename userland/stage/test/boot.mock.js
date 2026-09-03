@@ -1,16 +1,14 @@
-'use strict'
+import { mock } from 'node:test'
 
-const { generate } = require('randomstring')
+import { generate } from 'randomstring'
 
 const connector = () => ({
-  connect: jest.fn(),
-  disconnect: jest.fn(),
-  link: jest.fn()
+  connect: mock.fn(),
+  disconnect: mock.fn(),
+  link: mock.fn()
 })
 
-const manifest = jest.fn(async () => generate())
-const component = jest.fn(async () => connector())
-const composition = jest.fn(async () => connector())
-const remote = jest.fn(async () => connector())
-
-module.exports = { manifest, component, composition, remote }
+export const manifest = mock.fn(async () => generate())
+export const component = mock.fn(async () => connector())
+export const composition = mock.fn(async () => connector())
+export const remote = mock.fn(async () => connector())

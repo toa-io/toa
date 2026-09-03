@@ -1,7 +1,5 @@
-'use strict'
-
-const assert = require('node:assert')
-const { When, Then } = require('@cucumber/cucumber')
+import assert from 'node:assert'
+import { When, Then } from '@cucumber/cucumber'
 
 const PORT = 8001
 const PATH = '/.ready'

@@ -1,8 +1,6 @@
-const { writeFile } = require('node:fs/promises')
-const { resolve } = require('node:path')
+import { writeFile } from 'node:fs/promises'
+import { resolve } from 'node:path'
 
-async function dispose () {
+export async function dispose () {
   await writeFile(resolve(process.cwd(), 'disposed'), 'ok\n')
 }
-
-module.exports = { dispose }

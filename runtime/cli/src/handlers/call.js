@@ -1,11 +1,9 @@
-'use strict'
+import { Readable } from 'node:stream'
+import * as boot from '@toa.io/boot'
+import { yaml as jsyaml } from '@toa.io/generic'
+import { Locator } from '@toa.io/core'
 
-const { Readable } = require('node:stream')
-const boot = require('@toa.io/boot')
-const jsyaml = require('js-yaml')
-const { Locator } = require('@toa.io/core')
-
-async function call (argv) {
+export async function call (argv) {
   const [operation, component, namespace = 'default'] = argv.endpoint.split('.').reverse()
   const locator = new Locator(component, namespace)
   const request = argv.request ? jsyaml.load(argv.request) : {}
@@ -34,5 +32,3 @@ async function call (argv) {
 }
 
 const SOURCE = { service: 'cli' }
-
-exports.call = call

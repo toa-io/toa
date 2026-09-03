@@ -1,9 +1,9 @@
-import { V3 } from 'paseto'
+import { DecryptFactory, ImportKeyFactory } from 'paseto/v3/local'
 import { LRUCache } from 'lru-cache'
-import { jweKey } from './lib'
-import { load } from './lib/jose'
+import { jweKey } from './lib/index.js'
+import { load } from './lib/jose.js'
 import type { Maybe, Operation } from '@toa.io/types'
-import type { Context, Claims, DecryptOutput, JWEClaims } from './lib'
+import type { Context, Claims, DecryptOutput, JWEClaims } from './lib/index.js'
 
 export class Computation implements Operation {
   private readonly keys: Record<string, Key> = {}
@@ -118,7 +118,11 @@ export class Computation implements Operation {
 
 async function decryptPaseto (token: string, key: string): Promise<Maybe<Claims>> {
   try {
-    return await V3.decrypt<Claims>(token, key)
+    const secret = await importKey(key as `k3.local.${string}`)
+    // paseto 3 read a token that never expires; these are tokens already in the wild
+    const { claims } = await decryptLocal(secret, token, { allowNonExpiring: true })
+
+    return claims as unknown as Claims
   } catch {
     return ERR_INVALID_TOKEN
   }
@@ -150,6 +154,9 @@ async function decryptJWE (token: string, key: string): Promise<Maybe<Claims>> {
     return ERR_INVALID_TOKEN
   }
 }
+
+const importKey = ImportKeyFactory().run
+const decryptLocal = DecryptFactory().run
 
 interface Key {
   key: string

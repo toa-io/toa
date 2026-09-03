@@ -1,7 +1,5 @@
-'use strict'
-
 function assign (input, changeset) {
   Object.assign(changeset, input)
 }
 
-exports.assignment = assign
+export { assign as assignment }

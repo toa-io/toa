@@ -1,11 +1,12 @@
-'use strict'
+import { it } from 'node:test'
+import assert from 'node:assert/strict'
 
-const { concat } = require('../source/concat')
+import { concat } from '../source/concat.js'
 
 it('should concat strings', () => {
-  expect(concat('/', 'ref')).toBe('/ref')
+  assert.strictEqual(concat('/', 'ref'), '/ref')
 })
 
 it('should return empty string if one of arguments is undefined', () => {
-  expect(concat(undefined, '.')).toBe('')
+  assert.strictEqual(concat(undefined, '.'), '')
 })

@@ -1,6 +1,4 @@
-'use strict'
-
-const { prepare } = require('../../handlers/export/images')
+import { prepare } from '../../handlers/export/images.js'
 
 const builder = (yargs) => {
   yargs
@@ -22,7 +20,7 @@ const builder = (yargs) => {
     })
 }
 
-exports.command = ['images <target>', 'img']
-exports.desc = 'Export docker image sources'
-exports.builder = builder
-exports.handler = prepare
+export const command = ['images <target>', 'img']
+export const desc = 'Export docker image sources'
+
+export { builder, prepare as handler }

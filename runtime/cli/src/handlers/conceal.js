@@ -1,11 +1,11 @@
-'use strict'
+import { deployment } from '@toa.io/operations'
+import { secrets } from '@toa.io/kubernetes'
+import { context as find } from '../util/find.js'
+import { promptSecrets } from './env.js'
 
-const { deployment: { Factory } } = require('@toa.io/operations')
-const { secrets } = require('@toa.io/kubernetes')
-const { context: find } = require('../util/find')
-const { promptSecrets } = require('./env')
+const { Factory } = deployment
 
-const conceal = async (argv) => {
+export const conceal = async (argv) => {
   if (argv.interactive) await concealValues(argv)
   else await concealValue(argv)
 }
@@ -29,7 +29,7 @@ async function concealValue (argv) {
 async function concealValues (argv) {
   const path = find(argv.path)
   const factory = await Factory.create(path, argv.environment)
-  const operator = factory.operator()
+  const operator = await factory.operator()
   const variables = operator.variables()
   const values = await promptSecrets(variables)
   const groups = groupValues(values)
@@ -56,7 +56,4 @@ function groupValues (values) {
   return secrets
 }
 
-const PREFIX = 'toa-'
-
-exports.conceal = conceal
-exports.PREFIX = PREFIX
+export const PREFIX = 'toa-'

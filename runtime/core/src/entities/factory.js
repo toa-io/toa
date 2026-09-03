@@ -1,11 +1,9 @@
-'use strict'
+import { newid } from './newid.js'
+import { Entity } from './entity.js'
+import { EntitySet } from './set.js'
+import { Changeset } from './changeset.js'
 
-const { newid } = require('./newid')
-const { Entity } = require('./entity')
-const { EntitySet } = require('./set')
-const { Changeset } = require('./changeset')
-
-class Factory {
+export class Factory {
   #schema
   #guards
 
@@ -40,5 +38,3 @@ class Factory {
     return new Changeset(this.#schema, query)
   }
 }
-
-exports.Factory = Factory

@@ -1,17 +1,19 @@
-'use strict'
+import { it, mock as mocking } from 'node:test'
+import assert from 'node:assert/strict'
 
-const { generate } = require('randomstring')
+import { generate } from 'randomstring'
+import * as _boot from './boot.mock.js'
 
 const mock = {
-  boot: require('./boot.mock')
+  boot: _boot
 }
 
-jest.mock('@toa.io/boot', () => mock.boot)
+mocking.module('@toa.io/boot', { namedExports: mock.boot })
 
-const stage = require('../')
+const stage = await import('../src/index.js')
 
 it('should be', () => {
-  expect(stage.remote).toBeDefined()
+  assert.notStrictEqual(stage.remote, undefined)
 })
 
 it('should connect remote', async () => {
@@ -21,12 +23,12 @@ it('should connect remote', async () => {
 
   const remote = await stage.remote(id)
 
-  expect(mock.boot.remote).toHaveBeenCalled()
-  expect(remote).toStrictEqual(await mock.boot.remote.mock.results[0].value)
-  expect(remote.connect).toHaveBeenCalled()
+  assert.ok(mock.boot.remote.mock.callCount() > 0)
+  assert.deepStrictEqual(remote, await mock.boot.remote.mock.calls[0].result)
+  assert.ok(remote.connect.mock.callCount() > 0)
 
-  const locator = mock.boot.remote.mock.calls[0][0]
+  const locator = mock.boot.remote.mock.calls[0].arguments[0]
 
-  expect(locator).toBeDefined()
-  expect(locator).toMatchObject({ name, namespace })
+  assert.notStrictEqual(locator, undefined)
+  assert.partialDeepStrictEqual(locator, { name, namespace })
 })

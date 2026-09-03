@@ -1,6 +1,4 @@
-'use strict'
-
-async function computation (input, context) {
+export async function computation (input, context) {
   let value = input.value
 
   for (let i = 0; i < input.times; i++) {
@@ -9,5 +7,3 @@ async function computation (input, context) {
 
   return value
 }
-
-exports.computation = computation

@@ -1,26 +1,26 @@
-'use strict'
+import path from 'node:path'
 
-const path = require('node:path')
+import { readFileSync } from 'node:fs'
+import { yaml } from '@toa.io/generic'
+import * as schemas from '@toa.io/schemas'
 
-const { readFileSync } = require('node:fs')
-const { load: parseYAML } = require('js-yaml')
-const schemas = require('@toa.io/schemas')
-
-const object = parseYAML(readFileSync(path.resolve(__dirname, 'schema.yaml'), 'utf8'))
+const object = yaml.load(readFileSync(path.resolve(import.meta.dirname, 'schema.yaml'), 'utf8'))
 const schema = schemas.schema(object)
 
-const validate = (manifest) => {
+export const validate = async (manifest) => {
   const error = schema.fit(manifest)
 
   if (error) throw error
 
-  if (manifest.events !== undefined) events(manifest)
+  if (manifest.events !== undefined) await events(manifest)
   if (manifest.receivers !== undefined) receivers(manifest)
 }
 
-const events = (manifest) => {
+const events = async (manifest) => {
   for (const [label, event] of Object.entries(manifest.events)) {
-    if (require(event.binding).properties.async !== true) {
+    const { properties } = await import(event.binding)
+
+    if (properties.async !== true) {
       throw new Error(`Event '${label}' binding '${event.binding}' is not async`)
     }
   }
@@ -39,5 +39,3 @@ const receivers = (manifest) => {
 }
 
 const TYPES = new Set(['transition', 'assignment', 'effect', 'unmanaged'])
-
-exports.validate = validate

@@ -1,4 +1,4 @@
-import { DEFAULT_INTERVAL, DEFAULT_THRESHOLD, DENIED, ENV } from './const'
+import { DEFAULT_INTERVAL, DEFAULT_THRESHOLD, DENIED, ENV } from './const.js'
 import type { Resources } from '@toa.io/operations'
 
 /** `context.toa.yaml` */

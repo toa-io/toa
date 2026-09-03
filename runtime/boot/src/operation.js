@@ -1,18 +1,8 @@
-'use strict'
+import { Transition, Observation, Assignment, Operation, Query, Effect, Unmanaged } from '@toa.io/core'
 
-const {
-  Transition,
-  Observation,
-  Assignment,
-  Operation,
-  Query,
-  Effect,
-  Unmanaged
-} = require('@toa.io/core')
+import * as boot from './index.js'
 
-const boot = require('./index')
-
-async function operation (manifest, endpoint, definition, context, scope, preflight) {
+export async function operation (manifest, endpoint, definition, context, scope, preflight) {
   const cascade = await boot.cascade(manifest, endpoint, definition, context, preflight)
   const reply = boot.contract.reply(definition.output, definition.error)
   const input = definition.input
@@ -36,5 +26,3 @@ const TYPES = {
   effect: Effect,
   unmanaged: Unmanaged
 }
-
-exports.operation = operation

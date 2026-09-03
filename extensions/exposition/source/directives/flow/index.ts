@@ -1,3 +1,3 @@
-import { Flow } from './Flow'
+import { Flow } from './Flow.js'
 
 export const flow = new Flow()

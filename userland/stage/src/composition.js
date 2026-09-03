@@ -1,15 +1,11 @@
-'use strict'
-
-const boot = require('@toa.io/boot')
-const { state } = require('./state')
+import * as boot from '@toa.io/boot'
+import { state } from './state.js'
 
 /** @type {toa.stage.Composition} */
-const composition = async (paths, options) => {
+export const composition = async (paths, options) => {
   const composition = await boot.composition(paths, options)
 
   await composition.connect()
 
   state.compositions.push(composition)
 }
-
-exports.composition = composition

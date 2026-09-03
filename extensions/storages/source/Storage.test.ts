@@ -1,15 +1,15 @@
+import { describe, it, before, beforeEach } from 'node:test'
+import assert from 'node:assert/strict'
+
 import { randomUUID } from 'node:crypto'
 import { buffer } from 'node:stream/consumers'
 import { createReadStream } from 'node:fs'
 import path from 'node:path'
-import assert from 'node:assert'
-import { Storage } from './Storage'
-import { suites } from './test/util'
-import { providers } from './providers'
-import type { Entry, Metadata, Stream } from './Entry'
-import type { Constructor } from './Provider'
-
-jest.setTimeout(15_000)
+import { Storage } from './Storage.js'
+import { suites } from './test/util.js'
+import { providers } from './providers/index.js'
+import type { Entry, Stream } from './Entry.js'
+import type { Constructor } from './Provider.js'
 
 const suite = suites[0]
 const Provider: Constructor = providers[suite.provider]
@@ -17,19 +17,19 @@ const provider = new Provider(suite.options, suite.secrets)
 const storage = new Storage(provider)
 const dir = '/' + randomUUID()
 
-beforeAll(async () => {
-  process.chdir(path.join(__dirname, 'test'))
+before(async () => {
+  process.chdir(path.join(import.meta.dirname, 'test'))
 })
 
 it('should be', async () => {
-  expect(storage).toBeInstanceOf(Storage)
+  assert.ok(storage instanceof Storage)
 })
 
 it('should return error if entry is not found', async () => {
   const result = await storage.get('not-found')
 
-  expect(result).toBeInstanceOf(Error)
-  expect(result).toMatchObject({ code: 'NOT_FOUND' })
+  assert.ok(result instanceof Error)
+  assert.deepStrictEqual(result.code, 'NOT_FOUND')
 })
 
 describe('put', () => {
@@ -48,43 +48,43 @@ describe('put', () => {
   })
 
   it('should not return error', async () => {
-    expect(lenna).not.toBeInstanceOf(Error)
+    assert.ok(!(lenna instanceof Error))
   })
 
   it('should return entry id', async () => {
-    expect(lenna.id).toBeDefined()
-    expect(lenna.id).toHaveLength(32)
+    assert.notStrictEqual(lenna.id, undefined)
+    assert.strictEqual(lenna.id.length, 32)
   })
 
   it('should detect file type', async () => {
-    expect(lenna).toHaveProperty('type', 'image/png')
+    assert.deepStrictEqual(lenna['type'], 'image/png')
   })
 
   it('should count size', async () => {
-    expect(lenna).toHaveProperty('size', 473831)
+    assert.deepStrictEqual(lenna['size'], 473831)
   })
 
   it('should return entry', async () => {
-    expect(lenna).toMatchObject({
+    assert.partialDeepStrictEqual(lenna, {
       id: lenna.id,
       type: 'image/png',
       size: 473831,
       checksum: lenna.checksum,
-      created: expect.any(String),
       attributes: {}
-    } satisfies Entry)
+    })
+    assert.strictEqual(typeof lenna.created, 'string')
   })
 
   it('should create metadata', async () => {
     const entry = await storage.head(path) as Entry
 
-    expect(entry).toMatchObject({
+    assert.partialDeepStrictEqual(entry, {
       type: 'image/png',
       size: 473831,
       checksum: lenna.checksum,
-      created: expect.any(String),
       attributes: {}
-    } satisfies Metadata)
+    })
+    assert.strictEqual(typeof entry.created, 'string')
   })
 
   it('should set timestamp', async () => {
@@ -92,8 +92,8 @@ describe('put', () => {
     const entry = await storage.get(path) as Stream
     const created = new Date(entry.created).getTime()
 
-    expect(created).toBeLessThanOrEqual(now)
-    expect(created).toBeGreaterThanOrEqual(startCreation)
+    assert.ok(created <= now)
+    assert.ok(created >= startCreation)
   })
 
   it('should store with given id', async () => {
@@ -102,14 +102,14 @@ describe('put', () => {
 
     const entry = await storage.put(dir, stream, { id }) as Entry
 
-    expect(entry.id).toBe(id)
+    assert.strictEqual(entry.id, id)
 
     const check = await storage.head(`${dir}/${id}`)
 
     if (check instanceof Error)
       throw check
 
-    expect(check.id).toBe(id)
+    assert.strictEqual(check.id, id)
   })
 })
 
@@ -130,32 +130,32 @@ describe('get, head', () => {
     const stored = await buffer(entry.stream)
     const buf = await buffer(createReadStream('lenna.png'))
 
-    expect(stored.compare(new Uint8Array(buf.buffer))).toBe(0)
+    assert.strictEqual(stored.compare(new Uint8Array(buf.buffer)), 0)
   })
 
   it('should get entry', async () => {
     const entry = await storage.head(path) as Entry
 
-    expect(entry.id).toBe(lenna.id)
+    assert.strictEqual(entry.id, lenna.id)
   })
 
   if (suite.provider === 'cloudinary') {
     it('should return cloudinary url', async () => {
       const entry = await storage.head(`${path}.jpeg`) as Entry
 
-      expect(entry.attributes.url).toMatch(/^https:\/\//)
+      assert.match(entry.attributes.url, /^https:\/\//)
     })
 
     it('should support conditions', async () => {
       const entry = await storage.head(`${path}.vertical.jpeg`) as Entry
 
-      expect(entry.attributes.url.includes('/if_w_gt_h/a_90/if_end/')).toBe(true)
+      assert.strictEqual(entry.attributes.url.includes('/if_w_gt_h/a_90/if_end/'), true)
     })
 
     it('should return entry id when requested with extensions', async () => {
       const entry = await storage.head(`${path}.jpeg`) as Entry
 
-      expect(entry.id).toBe(lenna.id)
+      assert.strictEqual(entry.id, lenna.id)
     })
   }
 })
@@ -178,47 +178,47 @@ describe('delete', () => {
 
     const result = await storage.get(`${dir}/${lenna.id}`)
 
-    expect(result).toBeInstanceOf(Error)
-    expect(result).toHaveProperty('code', 'NOT_FOUND')
+    assert.ok(result instanceof Error)
+    assert.deepStrictEqual(result['code'], 'NOT_FOUND')
   })
 
   it('should not return error', async () => {
     const result = await storage.delete(dir)
 
-    expect(result).toBeUndefined()
+    assert.strictEqual(result, undefined)
   })
 })
 
 describe('signatures', () => {
-  it.each(['jpeg', 'gif', 'webp', 'heic', 'jxl', 'avif'])('should detect image/%s',
-    async (type) => {
+  for (const type of ['jpeg', 'gif', 'webp', 'heic', 'jxl', 'avif'])
+    it(`should detect image/${type}`, async () => {
       const stream = createReadStream('sample.' + type)
       const entry = await storage.put(dir, stream) as Entry
 
-      expect(entry).toHaveProperty('type', 'image/' + type)
+      assert.deepStrictEqual(entry['type'], 'image/' + type)
     })
 
-  it.each(['avi'])('should detect video/%s',
-    async (type) => {
+  for (const type of ['avi'])
+     it(`should detect video/${type}`, async () => {
       const stream = createReadStream('sample.' + type)
       const entry = await storage.put(dir, stream) as Entry
 
-      expect(entry).toHaveProperty('type', 'video/' + type)
+      assert.deepStrictEqual(entry['type'], 'video/' + type)
     })
 
-  it.each(['wav'])('should detect audio/%s',
-    async (type) => {
+  for (const type of ['wav'])
+     it(`should detect audio/${type}`, async () => {
       const stream = createReadStream('sample.' + type)
       const entry = (await storage.put(dir, stream)) as Entry
 
-      expect(entry).toHaveProperty('type', 'audio/' + type)
+      assert.deepStrictEqual(entry['type'], 'audio/' + type)
     })
 
   it('should be ok with Arny', async () => {
     const stream = createReadStream('arny.jpg')
     const entry = (await storage.put(dir, stream)) as Entry
 
-    expect(entry).toHaveProperty('type', 'image/jpeg')
+    assert.deepStrictEqual(entry['type'], 'image/jpeg')
   })
 })
 
@@ -227,8 +227,8 @@ it('should return error if type doesn\'t match', async () => {
 
   const result = await storage.put(dir, stream, { claim: 'image/png' })
 
-  expect(result).toBeInstanceOf(Error)
-  expect(result).toHaveProperty('code', 'TYPE_MISMATCH')
+  assert.ok(result instanceof Error)
+  assert.deepStrictEqual(result['code'], 'TYPE_MISMATCH')
 })
 
 it('should trust unknown types', async () => {
@@ -236,8 +236,8 @@ it('should trust unknown types', async () => {
 
   const result = await storage.put(dir, stream, { claim: 'text/plain' })
 
-  expect(result).not.toBeInstanceOf(Error)
-  expect(result).toHaveProperty('type', 'text/plain')
+  assert.ok(!(result instanceof Error))
+  assert.deepStrictEqual(result['type'], 'text/plain')
 })
 
 it('should return error if type is identifiable', async () => {
@@ -245,8 +245,8 @@ it('should return error if type is identifiable', async () => {
 
   const result = await storage.put(dir, stream, { claim: 'image/jpeg' })
 
-  expect(result).toBeInstanceOf(Error)
-  expect(result).toHaveProperty('code', 'TYPE_MISMATCH')
+  assert.ok(result instanceof Error)
+  assert.deepStrictEqual(result['code'], 'TYPE_MISMATCH')
 })
 
 it('should not return error if type application/octet-stream', async () => {
@@ -254,8 +254,8 @@ it('should not return error if type application/octet-stream', async () => {
 
   const result = await storage.put(dir, stream, { claim: 'application/octet-stream' })
 
-  expect(result).not.toBeInstanceOf(Error)
-  expect(result).toHaveProperty('type', 'image/jpeg')
+  assert.ok(!(result instanceof Error))
+  assert.deepStrictEqual(result['type'], 'image/jpeg')
 })
 
 it('should return error if type is not acceptable', async () => {
@@ -263,8 +263,8 @@ it('should return error if type is not acceptable', async () => {
 
   const result = await storage.put(dir, stream, { accept: 'image/png' })
 
-  expect(result).toBeInstanceOf(Error)
-  expect(result).toHaveProperty('code', 'NOT_ACCEPTABLE')
+  assert.ok(result instanceof Error)
+  assert.deepStrictEqual(result['code'], 'NOT_ACCEPTABLE')
 })
 
 it('should accept wildcard types', async () => {
@@ -272,27 +272,27 @@ it('should accept wildcard types', async () => {
 
   const result = await storage.put(dir, stream, { accept: 'image/*' })
 
-  expect(result).not.toBeInstanceOf(Error)
-  expect(result).toHaveProperty('type', 'image/jpeg')
+  assert.ok(!(result instanceof Error))
+  assert.deepStrictEqual(result['type'], 'image/jpeg')
 })
 
 it('should handle root entries', async () => {
   const stream = createReadStream('sample.jpeg')
   const result = await storage.put('/', stream) as Entry
 
-  expect(result).not.toBeInstanceOf(Error)
+  assert.ok(!(result instanceof Error))
 
   const stored = await storage.get(result.id)
 
-  expect(stored).not.toBeInstanceOf(Error)
+  assert.ok(!(stored instanceof Error))
 })
 
 it('should return error of stream size limit exceeded', async () => {
   const stream = createReadStream('sample.jpeg')
   const result = await storage.put(dir, stream, { limit: 1024 })
 
-  expect(result).toBeInstanceOf(Error)
-  expect(result).toHaveProperty('code', 'LIMIT_EXCEEDED')
+  assert.ok(result instanceof Error)
+  assert.deepStrictEqual(result['code'], 'LIMIT_EXCEEDED')
 })
 
 if (suite.provider !== 'cloudinary')
@@ -307,11 +307,11 @@ if (suite.provider !== 'cloudinary')
 
     assert.ok(!(entry instanceof Error))
 
-    expect(entry.attributes.origin).toBe(origin)
+    assert.strictEqual(entry.attributes.origin, origin)
   })
 
 it('should expose path', () => {
   const path = storage.path()
 
-  expect(typeof path === 'string' || path === null)
+  assert.ok(typeof path === 'string' || path === null)
 })

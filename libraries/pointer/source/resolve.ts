@@ -1,5 +1,5 @@
-import { nameVariable } from './naming'
-import { type AnnotationRecord, type URIMap } from './Deployment'
+import { nameVariable } from './naming.js'
+import { type AnnotationRecord, type URIMap } from './Deployment.js'
 
 export function resolve (id: string, selector: string): string[] {
   const variable = nameVariable(id, selector)

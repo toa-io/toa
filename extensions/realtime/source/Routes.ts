@@ -1,9 +1,9 @@
 import { Readable } from 'node:stream'
 import { console } from 'openspan'
 import { Connector } from '@toa.io/core'
-import { Receiver } from './Receiver'
-import type { Route } from './extension'
-import type { Bootloader } from './Factory'
+import { Receiver } from './Receiver.js'
+import type { Route } from './extension.js'
+import type { Bootloader } from './Factory.js'
 
 export class Routes extends Connector {
   public events = new Events()

@@ -1,8 +1,8 @@
 import { console } from 'openspan'
 import { Connector, Locator } from '@toa.io/core'
-import { EVENT, SOURCE } from './const'
+import { EVENT, SOURCE } from './const.js'
 import type { Message, Remote } from '@toa.io/core'
-import type { Bootloader } from './Factory'
+import type { Bootloader } from './Factory.js'
 
 /**
  * One per process: one remote to the values service and one subscription to its events,

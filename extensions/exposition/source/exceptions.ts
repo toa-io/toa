@@ -1,7 +1,7 @@
 import { match } from 'matchacho'
 import { console } from 'openspan'
-import * as http from './HTTP'
-import { Exception as HTTPException } from './HTTP'
+import * as http from './HTTP/index.js'
+import { Exception as HTTPException } from './HTTP/index.js'
 import type { Exception } from '@toa.io/core'
 
 export function rethrow (exception: Exception | HTTPException): void {

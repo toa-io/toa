@@ -1,6 +1,6 @@
 import * as fs from 'node:fs/promises'
 import { join, extname } from 'node:path'
-import { DIR, EXT } from './const'
+import { DIR, EXT } from './const.js'
 import type { component } from '@toa.io/norm'
 
 export async function operations (root: string): Promise<component.Operations> {

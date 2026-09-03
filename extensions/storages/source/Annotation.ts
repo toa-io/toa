@@ -1,7 +1,7 @@
 import assert from 'node:assert'
-import { providers } from './providers'
-import * as schemas from './schemas'
-import type { Declaration } from './providers'
+import { providers } from './providers/index.js'
+import * as schemas from './schemas.js'
+import type { Declaration } from './providers/index.js'
 import type { Schema } from '@toa.io/schemas'
 
 export type Annotation = Record<string, Declaration>

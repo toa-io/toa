@@ -1,9 +1,7 @@
-'use strict'
-
-const { entries } = require('./entries')
+import { entries } from './entries.js'
 
 // noinspection FunctionWithMoreThanThreeNegationsJS
-const merge = (target, source, options = {}, path = []) => {
+export const merge = (target, source, options = {}, path = []) => {
   if (target === undefined) target = {}
   if (source === undefined) source = {}
 
@@ -42,11 +40,7 @@ const merge = (target, source, options = {}, path = []) => {
   return target
 }
 
-const overwrite = (target, source) => merge(target, source, { overwrite: true })
-const add = (target, source) => merge(target, source, { ignore: true })
+export const overwrite = (target, source) => merge(target, source, { overwrite: true })
+export const add = (target, source) => merge(target, source, { ignore: true })
 
 const string = (path) => '/' + path.join('/')
-
-exports.merge = merge
-exports.overwrite = overwrite
-exports.add = add

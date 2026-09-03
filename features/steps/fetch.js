@@ -1,10 +1,8 @@
-'use strict'
-
-const assert = require('node:assert')
-const http = require('node:http')
-const { Given, Then, After } = require('@cucumber/cucumber')
-const { consoleExporter, exporting } = require('openspan')
-const { load: parse } = require('js-yaml')
+import assert from 'node:assert'
+import http from 'node:http'
+import { Given, Then, After } from '@cucumber/cucumber'
+import { consoleExporter, exporting } from 'openspan'
+import { load as parse } from 'js-yaml'
 
 Given('an HTTP endpoint responds with statuses {string}',
   /**

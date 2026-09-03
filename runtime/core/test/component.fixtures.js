@@ -1,10 +1,10 @@
-'use strict'
+import { mock } from 'node:test'
 
-const randomstring = require('randomstring')
+import randomstring from 'randomstring'
 
-const invocation = () => jest.fn(() => randomstring.generate())
+const invocation = () => mock.fn(() => randomstring.generate())
 
-const invocations = {
+export const invocations = {
   foo: {
     invoke: invocation('foo'),
     link: () => null
@@ -15,7 +15,4 @@ const invocations = {
   }
 }
 
-const locator = {}
-
-exports.invocations = invocations
-exports.locator = locator
+export const locator = {}

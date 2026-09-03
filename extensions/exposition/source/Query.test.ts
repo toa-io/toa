@@ -1,5 +1,8 @@
-import { Query } from './Query'
-import { type Parameter, type syntax } from './RTD'
+import { it } from 'node:test'
+import assert from 'node:assert/strict'
+
+import { Query } from './Query.js'
+import { type Parameter, type syntax } from './RTD/index.js'
 
 it('should combine request criteria', async () => {
   const query: syntax.Query = {
@@ -16,7 +19,7 @@ it('should combine request criteria', async () => {
   const instance = new Query(query)
   const result = instance.fit({ criteria: 'qux==4' }, parameters)
 
-  expect(result.query!.criteria).toStrictEqual('(bar==2;baz==3);(foo==1);(qux==4)')
+  assert.deepStrictEqual(result.query!.criteria, '(bar==2;baz==3);(foo==1);(qux==4)')
 })
 
 it('should set id parameter as query.id', async () => {
@@ -32,6 +35,6 @@ it('should set id parameter as query.id', async () => {
   const instance = new Query(query)
   const result = instance.fit({}, parameters)
 
-  expect(result.query!.criteria).toBeUndefined()
-  expect(result.query!.id).toStrictEqual(id)
+  assert.strictEqual(result.query!.criteria, undefined)
+  assert.deepStrictEqual(result.query!.id, id)
 })

@@ -1,9 +1,3 @@
-'use strict'
-
-const { build } = require('./build')
-const { command } = require('./command')
-const { run } = require('./run')
-
-exports.build = build
-exports.command = command
-exports.run = run
+export { build } from './build.js'
+export { command } from './command.js'
+export { run } from './run.js'

@@ -1,6 +1,4 @@
-'use strict'
-
-const { mono } = require('../handlers/mono')
+import { mono } from '../handlers/mono.js'
 
 const builder = (yargs) => {
   yargs
@@ -17,7 +15,7 @@ const builder = (yargs) => {
     })
 }
 
-exports.command = 'mono [paths...]'
-exports.desc = 'Run composition and services'
-exports.builder = builder
-exports.handler = mono
+export const command = 'mono [paths...]'
+export const desc = 'Run composition and services'
+
+export { builder, mono as handler }

@@ -1,11 +1,9 @@
-'use strict'
-
-const { Computation } = require('./cls')
+import { Computation } from './cls.js'
 
 /**
  * @implements {toa.node.algorithms.Factory}
  */
-class ComputationFactory {
+export class ComputationFactory {
   #context
 
   constructor (context) {
@@ -16,5 +14,3 @@ class ComputationFactory {
     return new Computation()
   }
 }
-
-exports.ComputationFactory = ComputationFactory

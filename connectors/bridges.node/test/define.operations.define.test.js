@@ -1,11 +1,12 @@
+import { describe, it, before } from 'node:test'
+import assert from 'node:assert/strict'
+
 // noinspection JSUnusedLocalSymbols,JSUnusedGlobalSymbols
 
-'use strict'
-
-const { define } = require('../src/define/.operations')
+import { define } from '../src/define/.operations/index.js'
 
 it('should be', () => {
-  expect(define).toBeDefined()
+  assert.notStrictEqual(define, undefined)
 })
 
 /** @type {toa.node.define.operations.Definition} */
@@ -15,7 +16,7 @@ it('should throw if function does not match conventions', () => {
   const append = () => null
   const module = { append }
 
-  expect(() => define(module)).toThrow('does not match conventions')
+  assert.throws(() => define(module), (error) => /does not match conventions/.test(error.message))
 })
 
 it('should throw if class does not match conventions', () => {
@@ -23,14 +24,14 @@ it('should throw if class does not match conventions', () => {
 
   const module = { Foo }
 
-  expect(() => define(module)).toThrow('does not match conventions')
+  assert.throws(() => define(module), (error) => /does not match conventions/.test(error.message))
 })
 
 it('should return null if no function exported', () => {
   const foo = 'bar'
   const module = { foo }
 
-  expect(define(module)).toBeNull()
+  assert.strictEqual(define(module), null)
 })
 
 describe('function', () => {
@@ -40,7 +41,7 @@ describe('function', () => {
     const module = { transition }
     const definition = define(module)
 
-    expect(definition).toMatchObject({ type: 'transition', scope: 'object' })
+    assert.partialDeepStrictEqual(definition, { type: 'transition', scope: 'object' })
   })
 
   it('should parse observation declaration', () => {
@@ -49,7 +50,7 @@ describe('function', () => {
     const module = { observation }
     const definition = define(module)
 
-    expect(definition).toMatchObject({ type: 'observation', scope: 'object' })
+    assert.partialDeepStrictEqual(definition, { type: 'observation', scope: 'object' })
   })
 
   it('should parse assignment declaration', () => {
@@ -58,7 +59,7 @@ describe('function', () => {
     const module = { assignment }
     const definition = define(module)
 
-    expect(definition).toMatchObject({ type: 'assignment', scope: 'changeset' })
+    assert.partialDeepStrictEqual(definition, { type: 'assignment', scope: 'changeset' })
   })
 
   it('should parse computation declaration', () => {
@@ -67,7 +68,7 @@ describe('function', () => {
     const module = { computation }
     const definition = define(module)
 
-    expect(definition).toMatchObject({ type: 'computation', scope: 'none' })
+    assert.partialDeepStrictEqual(definition, { type: 'computation', scope: 'none' })
   })
 
   it('should parse effect declaration', () => {
@@ -76,7 +77,7 @@ describe('function', () => {
     const module = { effect }
     const definition = define(module)
 
-    expect(definition).toMatchObject({ type: 'effect', scope: 'none' })
+    assert.partialDeepStrictEqual(definition, { type: 'effect', scope: 'none' })
   })
 
   it('should parse expression', () => {
@@ -84,7 +85,7 @@ describe('function', () => {
     const module = { observation }
     const definition = define(module)
 
-    expect(definition).toMatchObject({ type: 'observation', scope: 'objects' })
+    assert.partialDeepStrictEqual(definition, { type: 'observation', scope: 'objects' })
   })
 
   it('should parse scope changeset', () => {
@@ -92,7 +93,7 @@ describe('function', () => {
     const module = { assignment }
     const definition = define(module)
 
-    expect(definition.scope).toStrictEqual('changeset')
+    assert.deepStrictEqual(definition.scope, 'changeset')
   })
 
   it('should not define unknown scope', () => {
@@ -100,7 +101,7 @@ describe('function', () => {
     const module = { assignment }
     const definition = define(module)
 
-    expect(definition.scope).toStrictEqual(undefined)
+    assert.deepStrictEqual(definition.scope, undefined)
   })
 
   it('should not define unknown scope', async () => {
@@ -108,7 +109,7 @@ describe('function', () => {
     const module = { observation }
     const definition = define(module)
 
-    expect(definition.scope).toBeUndefined()
+    assert.strictEqual(definition.scope, undefined)
   })
 
   it('should define null input', async () => {
@@ -116,7 +117,7 @@ describe('function', () => {
     const module = { observation }
     const definition = define(module)
 
-    expect(definition.input).toStrictEqual(null)
+    assert.deepStrictEqual(definition.input, null)
   })
 })
 
@@ -127,16 +128,16 @@ describe('class', () => {
 
   const module = { Transition }
 
-  beforeAll(() => {
+  before(() => {
     definition = define(module)
   })
 
   it('should define type', () => {
-    expect(definition.type).toStrictEqual('transition')
+    assert.deepStrictEqual(definition.type, 'transition')
   })
 
   it('should define scope', () => {
-    expect(definition.scope).toStrictEqual('object')
+    assert.deepStrictEqual(definition.scope, 'object')
   })
 
   it('should find execute method', () => {
@@ -149,7 +150,7 @@ describe('class', () => {
     const module = { Assignment }
     const definition = define(module)
 
-    expect(definition).toMatchObject({ type: 'assignment', scope: 'object' })
+    assert.partialDeepStrictEqual(definition, { type: 'assignment', scope: 'object' })
   })
 
   it('should throw if no execute method found', () => {
@@ -157,7 +158,7 @@ describe('class', () => {
 
     const module = { Observation }
 
-    expect(() => define(module)).toThrow('Method \'execute\' not found')
+    assert.throws(() => define(module), (error) => /Method 'execute' not found/.test(error.message))
   })
 
   it('should throw if function is not a class', () => {
@@ -165,7 +166,7 @@ describe('class', () => {
 
     const module = { Transition }
 
-    expect(() => define(module)).toThrow('does not match conventions')
+    assert.throws(() => define(module), (error) => /does not match conventions/.test(error.message))
   })
 
   it('should define none scope', async () => {
@@ -176,7 +177,7 @@ describe('class', () => {
     const module = { Observation }
     const definition = define(module)
 
-    expect(definition.scope).toBe('none')
+    assert.strictEqual(definition.scope, 'none')
   })
 
   it('should define null input', async () => {
@@ -187,7 +188,7 @@ describe('class', () => {
     const module = { Observation }
     const definition = define(module)
 
-    expect(definition.input).toStrictEqual(null)
+    assert.deepStrictEqual(definition.input, null)
   })
 
   it('should parse Computation', async () => {
@@ -198,7 +199,7 @@ describe('class', () => {
     const module = { Computation }
     const definition = define(module)
 
-    expect(definition.type).toStrictEqual('computation')
+    assert.deepStrictEqual(definition.type, 'computation')
   })
 
   it('should parse Effect', async () => {
@@ -209,7 +210,7 @@ describe('class', () => {
     const module = { Effect }
     const definition = define(module)
 
-    expect(definition.type).toStrictEqual('effect')
+    assert.deepStrictEqual(definition.type, 'effect')
   })
 })
 
@@ -220,16 +221,16 @@ describe('factory', () => {
 
   const module = { ObjectTransitionFactory }
 
-  beforeAll(() => {
+  before(() => {
     definition = define(module)
   })
 
   it('should define type', () => {
-    expect(definition.type).toStrictEqual('transition')
+    assert.deepStrictEqual(definition.type, 'transition')
   })
 
   it('should define scope', () => {
-    expect(definition.scope).toStrictEqual('object')
+    assert.deepStrictEqual(definition.scope, 'object')
   })
 
   it('should throw if not follows convention', async () => {
@@ -239,7 +240,7 @@ describe('factory', () => {
 
     const module = { NoneObservationFactory }
 
-    expect(() => define(module)).toThrow('does not match conventions')
+    assert.throws(() => define(module), (error) => /does not match conventions/.test(error.message))
   })
 
   it('should parse ComputationFactory', () => {
@@ -249,7 +250,7 @@ describe('factory', () => {
     const module = { ComputationFactory }
     const definition = define(module)
 
-    expect(definition.type).toStrictEqual('computation')
+    assert.deepStrictEqual(definition.type, 'computation')
   })
 
   it('should parse EffectFactory', () => {
@@ -259,6 +260,6 @@ describe('factory', () => {
     const module = { EffectFactory }
     const definition = define(module)
 
-    expect(definition.type).toStrictEqual('effect')
+    assert.deepStrictEqual(definition.type, 'effect')
   })
 })

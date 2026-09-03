@@ -1,11 +1,9 @@
-'use strict'
-
-const { Observation } = require('./observationClass')
+import { Observation } from './observationClass.js'
 
 /**
  * @implements {toa.node.algorithms.Factory}
  */
-class ObjectObservationFactory {
+export class ObjectObservationFactory {
   #context
 
   constructor (context) {
@@ -16,5 +14,3 @@ class ObjectObservationFactory {
     return new Observation()
   }
 }
-
-exports.ObjectObservationFactory = ObjectObservationFactory

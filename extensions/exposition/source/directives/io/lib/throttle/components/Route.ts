@@ -1,4 +1,4 @@
-import type { Component } from './Component'
+import type { Component } from './Component.js'
 
 /**
  * The route as declared — `/users/:id` — rather than the path a request came in on.

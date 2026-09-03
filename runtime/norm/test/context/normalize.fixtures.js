@@ -1,8 +1,6 @@
-'use strict'
+import { generate } from 'randomstring'
 
-const { generate } = require('randomstring')
-
-const context = {
+export const context = {
   runtime: {
     version: '0.0.0'
   },
@@ -27,5 +25,3 @@ const context = {
     }
   }
 }
-
-exports.context = context

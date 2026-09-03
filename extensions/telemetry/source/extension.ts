@@ -1,15 +1,15 @@
 import assert from 'node:assert'
 import { console, traces } from 'openspan'
-import { Logs } from './Logs'
-import { Span } from './Span'
+import { Logs } from './Logs.js'
+import { Span } from './Span.js'
 import {
   DEFAULT_ANNOTATION,
   normalizeAnnotation,
   Ready,
   READY_ENV,
   type ReadyAnnotation
-} from './Ready'
-import type { LogsOptions } from './Logs'
+} from './Ready.js'
+import type { LogsOptions } from './Logs.js'
 import type { Connector, Locator, extensions } from '@toa.io/core'
 import type { Dependency, Probe, Variables } from '@toa.io/operations'
 import type { ExportersConfig, LevelName, TracesOptions } from 'openspan'

@@ -1,32 +1,35 @@
-import { segment, fragment } from './segment'
+import { it } from 'node:test'
+import assert from 'node:assert/strict'
+
+import { segment, fragment } from './segment.js'
 
 it('should return segments', async () => {
   const segments = segment('/foo/bar/')
 
-  expect(segments).toHaveLength(2)
-  expect(segments[0].fragment).toBe('foo')
-  expect(segments[1].fragment).toBe('bar')
+  assert.strictEqual(segments.length, 2)
+  assert.strictEqual(segments[0].fragment, 'foo')
+  assert.strictEqual(segments[1].fragment, 'bar')
 })
 
 it('should parse placeholders', async () => {
   const segments = segment('/foo/:id/')
 
-  expect(segments).toHaveLength(2)
-  expect(segments[0].fragment).toBe('foo')
-  expect(segments[1].fragment).toBeNull()
+  assert.strictEqual(segments.length, 2)
+  assert.strictEqual(segments[0].fragment, 'foo')
+  assert.strictEqual(segments[1].fragment, null)
 
   // helping typescript
   if (segments[1].fragment !== null) throw new Error('?')
 
-  expect(segments[1].placeholder).toBe('id')
+  assert.strictEqual(segments[1].placeholder, 'id')
 })
 
 it('should handle root path', async () => {
-  expect(segment('/')).toStrictEqual([])
+  assert.deepStrictEqual(segment('/'), [])
 })
 
 it('should split', async () => {
   const parts = fragment('/foo/bar/')
 
-  expect(parts).toStrictEqual(['foo', 'bar'])
+  assert.deepStrictEqual(parts, ['foo', 'bar'])
 })

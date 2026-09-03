@@ -1,6 +1,7 @@
 {
   "name": "@toa.io/core",
   "version": "1.0.0-alpha.273",
+  "type": "module",
   "description": "Toa Core",
   "author": "temich <tema.gurtovoy@gmail.com>",
   "homepage": "https://github.com/toa-io/toa#readme",
@@ -20,11 +21,11 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@rsql/parser": "1.2.4",
+    "@rsql/parser": "1.6.0",
     "@toa.io/generic": "1.0.0-alpha.273",
-    "js-yaml": "4.3.1",
+    "js-yaml": "5.4.1",
     "openspan": "1.0.0-alpha.272",
-    "uuid": "11.1.1"
+    "uuid": "14.0.2"
   },
   "gitHead": "61c8e74a336385265767e9fd37d49128cb51b17f"
 }

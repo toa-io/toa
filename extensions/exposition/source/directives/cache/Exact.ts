@@ -1,4 +1,4 @@
-import { Control } from './Control'
+import { Control } from './Control.js'
 
 export class Exact extends Control {
   protected override resolve (): string {

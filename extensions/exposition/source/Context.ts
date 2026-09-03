@@ -1,4 +1,4 @@
-import type * as RTD from './RTD'
+import type * as RTD from './RTD/index.js'
 
 // the trunk is built from the context annotation and belongs to no branch,
 // thus its endpoints must be fully qualified and are not versioned

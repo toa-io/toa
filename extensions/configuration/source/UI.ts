@@ -3,7 +3,7 @@ import * as http from 'node:http'
 import * as path from 'node:path'
 import { Connector } from '@toa.io/core'
 import { console } from 'openspan'
-import { UI_PATH } from './const'
+import { UI_PATH } from './const.js'
 
 /**
  * Serves the configuration UI: the directory `ui` builds, and nothing else.
@@ -173,7 +173,7 @@ function isFile (file: string): boolean {
 }
 
 /** Where `npm run build:ui` puts the page, from both `source` and `transpiled`. */
-const SITE = path.resolve(__dirname, '..', 'ui', 'dist')
+const SITE = path.resolve(import.meta.dirname, '..', 'ui', 'dist')
 
 /** Assets under this prefix carry their build hash in the name. */
 const IMMUTABLE = path.join('_app', 'immutable')

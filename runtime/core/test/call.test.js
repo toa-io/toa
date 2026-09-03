@@ -1,18 +1,20 @@
-'use strict'
+import { it, beforeEach, mock } from 'node:test'
+import assert from 'node:assert/strict'
+import { isDeepStrictEqual } from 'node:util'
 
-const fixtures = require('./call.fixtures')
-const { Call } = require('../src/call')
+import * as fixtures from './call.fixtures.js'
+import { Call } from '../src/call.js'
 
 let call
 
 beforeEach(() => {
-  jest.clearAllMocks()
+  resetCalls()
 
   call = new Call(fixtures.transmission, fixtures.contract)
 })
 
 it('should depend on transmission', () => {
-  expect(fixtures.transmission.link).toHaveBeenLastCalledWith(call)
+  assert.ok(((invocation) => invocation.arguments.length === 1 && isDeepStrictEqual(invocation.arguments[0], call))(fixtures.transmission.link.mock.calls.at(-1) ?? { arguments: [] }))
 })
 
 it('should call transmission', async () => {
@@ -20,7 +22,7 @@ it('should call transmission', async () => {
 
   await call.invoke(request)
 
-  expect(fixtures.transmission.request).toHaveBeenCalledWith(request)
+  assert.ok(fixtures.transmission.request.mock.calls.some((invocation) => invocation.arguments.length === 1 && isDeepStrictEqual(invocation.arguments[0], request)))
 })
 
 it('should fit request', async () => {
@@ -28,7 +30,7 @@ it('should fit request', async () => {
 
   await call.invoke(request)
 
-  expect(fixtures.contract.fit).toHaveBeenLastCalledWith(request)
+  assert.ok(((invocation) => invocation.arguments.length === 1 && isDeepStrictEqual(invocation.arguments[0], request))(fixtures.contract.fit.mock.calls.at(-1) ?? { arguments: [] }))
 })
 
 it('should return reply', async () => {
@@ -36,11 +38,21 @@ it('should return reply', async () => {
 
   const reply = await call.invoke(request)
 
-  expect(reply).toStrictEqual(fixtures.transmission.request.mock.results[0].value.output)
+  assert.deepStrictEqual(reply, fixtures.transmission.request.mock.calls[0].result.output)
 })
 
 it('should throw received exceptions', async () => {
   const request = fixtures.request().bad
 
-  await expect(call.invoke(request)).rejects.toBeDefined()
+  await assert.rejects(call.invoke(request), (error) => { assert.notStrictEqual(error, undefined); return true })
 })
+
+function resetCalls (target = [assert, fixtures], seen = new Set()) {
+  if (target === null || typeof target !== 'object' || seen.has(target)) return
+
+  seen.add(target)
+
+  for (const value of Object.values(target))
+    if (typeof value === 'function' && value.mock !== undefined) value.mock.resetCalls()
+    else resetCalls(value, seen)
+}

@@ -1,6 +1,4 @@
-'use strict'
-
-const { instances } = require('./instances')
+import { instances } from './instances.js'
 
 /**
  * @param {toa.core.bindings.Emitter} emitter
@@ -8,7 +6,7 @@ const { instances } = require('./instances')
  * @param {toa.core.Locator} locator
  * @returns {toa.core.bindings.Emitter}
  */
-const emitter = (emitter, label, locator) => {
+export const emitter = (emitter, label, locator) => {
   let decorated = emitter
 
   for (const factory of Object.values(instances)) {
@@ -17,5 +15,3 @@ const emitter = (emitter, label, locator) => {
 
   return decorated
 }
-
-exports.emitter = emitter

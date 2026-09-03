@@ -1,3 +1,1 @@
-'use strict'
-
-exports.LOOP = '@toa.io/bindings.loop'
+export const LOOP = '@toa.io/bindings.loop'

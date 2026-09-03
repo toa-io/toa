@@ -1,12 +1,10 @@
-'use strict'
-
-const { plain } = require('./plain')
+import { plain } from './plain.js'
 
 /**
  * @param {object} input
  * @param {toa.generic.map.transform} transform
  */
-function map (input, transform) {
+export function map (input, transform) {
   const result = {}
 
   for (const [key, value] of Object.entries(input)) {
@@ -48,5 +46,3 @@ function keyVal (key, value, transform) {
 
   return output === undefined ? undefined : output
 }
-
-exports.map = map

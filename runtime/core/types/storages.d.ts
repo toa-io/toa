@@ -1,8 +1,8 @@
 // noinspection ES6UnusedImports
 
-import { Locator } from './locator'
-import { Connector } from './connector'
-import * as outbox from './outbox'
+import { Locator } from './locator.js'
+import { Connector } from './connector.js'
+import * as outbox from './outbox.js'
 
 declare namespace toa.core {
 

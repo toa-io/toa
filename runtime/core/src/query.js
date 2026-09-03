@@ -1,9 +1,10 @@
-'use strict'
+import { empty } from '@toa.io/generic'
+import * as criteria from './query/criteria.js'
+import * as options from './query/options.js'
 
-const { empty } = require('@toa.io/generic')
-const parse = { ...require('./query/criteria'), ...require('./query/options') }
+const parse = { ...criteria, ...options }
 
-class Query {
+export class Query {
   #properties
   #system
 
@@ -67,5 +68,3 @@ class Query {
 }
 
 const LIMIT = 1024
-
-exports.Query = Query

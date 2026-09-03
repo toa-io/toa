@@ -1,7 +1,9 @@
 import * as assert from 'node:assert'
-import { binding, given } from 'cucumber-tsflow'
+import tsflow from 'cucumber-tsflow'
 import { timeout } from '@toa.io/generic'
-import { Captures } from './Captures'
+import { Captures } from './Captures.js'
+
+const { binding, given } = tsflow
 
 @binding([Captures])
 export class Common {

@@ -1,6 +1,6 @@
 import { randomFillSync } from 'node:crypto'
-import { state } from './state'
-import { recording } from './exporters'
+import { state } from './state.js'
+import { recording } from './exporters.js'
 
 export function run<T> (context: SpanContext, fn: () => T): T {
   return state.storage.run(context, fn)

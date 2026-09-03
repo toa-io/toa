@@ -1,9 +1,5 @@
-'use strict'
+import { randomUUID } from 'node:crypto'
 
-const { randomUUID } = require('node:crypto')
-
-const newid = () => {
+export const newid = () => {
   return randomUUID().replace(/-/g, '')
 }
-
-exports.newid = newid

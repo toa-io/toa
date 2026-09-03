@@ -1,11 +1,15 @@
+import { it, beforeEach, afterEach, mock } from 'node:test'
+import assert from 'node:assert/strict'
+import { isDeepStrictEqual } from 'node:util'
+
 import { Connector, type Locator, type Message, type Receiver } from '@toa.io/core'
 import { timeout } from '@toa.io/generic'
-import { Client, type Fetched } from './Client'
-import { EVENT } from './const'
-import type { Bootloader } from './Factory'
+import { Client, type Fetched } from './Client.js'
+import { EVENT } from './const.js'
+import type { Bootloader } from './Factory.js'
 
 class Remote extends Connector {
-  public readonly invoke = jest.fn(async (_endpoint: string, request: { input: Array<{ component: string, epoch: string }> }) =>
+  public readonly invoke = mock.fn(async (_endpoint: string, request: { input: Array<{ component: string, epoch: string }> }) =>
     request.input.map((pair): Fetched => ({
       ...pair,
       configuration: this.values[pair.component] ?? null,
@@ -25,13 +29,13 @@ beforeEach(() => {
   receiver = null
 
   boot = {
-    remote: jest.fn(async (locator: Locator) => {
-      expect(locator.id).toStrictEqual('configuration.values')
+    remote: mock.fn(async (locator: Locator) => {
+      assert.deepStrictEqual(locator.id, 'configuration.values')
 
       return remote
     }),
-    receive: jest.fn(async (label: string, consumer: Receiver) => {
-      expect(label).toStrictEqual(EVENT)
+    receive: mock.fn(async (label: string, consumer: Receiver) => {
+      assert.deepStrictEqual(label, EVENT)
 
       receiver = consumer
 
@@ -53,10 +57,10 @@ it('should send the requests of one tick as one call', async () => {
 
   const [one, two] = await Promise.all([client.fetch('a.one', 'e1'), client.fetch('a.two', 'e2')])
 
-  expect(one).toStrictEqual({ configuration: { foo: 1 }, created: 7 })
-  expect(two).toStrictEqual({ configuration: { foo: 2 }, created: 7 })
-  expect(remote.invoke).toHaveBeenCalledTimes(1)
-  expect(remote.invoke.mock.calls[0][1]).toStrictEqual({
+  assert.deepStrictEqual(one, { configuration: { foo: 1 }, created: 7 })
+  assert.deepStrictEqual(two, { configuration: { foo: 2 }, created: 7 })
+  assert.strictEqual(remote.invoke.mock.callCount(), 1)
+  assert.deepStrictEqual(remote.invoke.mock.calls[0].arguments[1], {
     input: [{ component: 'a.one', epoch: 'e1' }, { component: 'a.two', epoch: 'e2' }]
   })
 })
@@ -70,18 +74,18 @@ it('should keep asking until served', async () => {
   while (remote.invoke.mock.calls.length < 2 && Date.now() < deadline)
     await timeout(5)
 
-  expect(remote.invoke.mock.calls.length).toBeGreaterThanOrEqual(2)
+  assert.ok(remote.invoke.mock.calls.length >= 2)
 
   remote.values = { 'a.one': { foo: 1 } }
 
-  expect((await fetching).configuration).toStrictEqual({ foo: 1 })
+  assert.deepStrictEqual((await fetching).configuration, { foo: 1 })
 })
 
 it('should hand a created object to its subscribers', async () => {
   await client.connect()
 
-  const listener = jest.fn()
-  const other = jest.fn()
+  const listener = mock.fn()
+  const other = mock.fn()
 
   client.subscribe('a.one', 'e1', listener)
   client.subscribe('a.one', 'e0', other)
@@ -90,9 +94,9 @@ it('should hand a created object to its subscribers', async () => {
     payload: { component: 'a.one', epoch: 'e1', configuration: { foo: 2 }, _created: 12 }
   } satisfies Message)
 
-  expect(listener).toHaveBeenCalledWith({ configuration: { foo: 2 }, created: 12 })
-  expect(other).not.toHaveBeenCalled()
-  expect(remote.invoke).not.toHaveBeenCalled()
+  assert.ok(listener.mock.calls.some((call: any) => call.arguments.length === 1 && isDeepStrictEqual(call.arguments[0], { configuration: { foo: 2 }, created: 12 })))
+  assert.strictEqual(other.mock.callCount(), 0)
+  assert.strictEqual(remote.invoke.mock.callCount(), 0)
 
   client.unsubscribe('a.one', 'e1', listener)
 
@@ -100,5 +104,5 @@ it('should hand a created object to its subscribers', async () => {
     payload: { component: 'a.one', epoch: 'e1', configuration: { foo: 3 }, _created: 13 }
   } satisfies Message)
 
-  expect(listener).toHaveBeenCalledTimes(1)
+  assert.strictEqual(listener.mock.callCount(), 1)
 })

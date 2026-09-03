@@ -1,13 +1,15 @@
-'use strict'
+import { createRequire } from 'node:module'
+import { pathToFileURL } from 'node:url'
+import { console as output } from 'openspan'
+import * as boot from '@toa.io/boot'
+import { shortcuts } from '@toa.io/norm'
+import { find } from '@toa.io/generic'
+import { version } from '@toa.io/runtime'
+import { graceful } from './lib/graceful.js'
 
-const { console: output } = require('openspan')
-const boot = require('@toa.io/boot')
-const { shortcuts } = require('@toa.io/norm')
-const { find } = require('@toa.io/generic')
-const { version } = require('@toa.io/runtime')
-const { graceful } = require('./lib/graceful')
+const require = createRequire(import.meta.url)
 
-const serve = async (argv) => {
+export const serve = async (argv) => {
   console.log('Runtime', version)
 
   argv.path = shortcuts.resolve(argv.path)
@@ -15,13 +17,13 @@ const serve = async (argv) => {
   const start = async () => {
     const module = find(argv.path, process.cwd())
 
-    const { Factory } = require(module)
+    const { Factory } = await import(pathToFileURL(require.resolve(module)).href)
 
     const factory = new Factory(boot)
 
     if (factory.service === undefined) throw new Error(`Service is not implemented by ${argv.path}`)
 
-    const service = factory.service()
+    const service = await factory.service()
 
     // an extension that is off in this environment has nothing to run, and said so
     if (service === null)
@@ -39,5 +41,3 @@ const serve = async (argv) => {
   else
     await start()
 }
-
-exports.serve = serve

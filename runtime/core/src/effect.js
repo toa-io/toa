@@ -1,8 +1,6 @@
-'use strict'
+import { Observation } from './observation.js'
 
-const { Observation } = require('./observation')
-
-class Effect extends Observation {
+export class Effect extends Observation {
 
   async acquire (store) {
     const { query, entity, input } = store.request
@@ -15,5 +13,3 @@ class Effect extends Observation {
   }
 
 }
-
-exports.Effect = Effect

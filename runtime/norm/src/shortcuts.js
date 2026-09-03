@@ -1,6 +1,4 @@
-'use strict'
-
-const { empty, merge } = require('@toa.io/generic')
+import { empty, merge } from '@toa.io/generic'
 
 /**
  * Resolves shortcuts
@@ -8,7 +6,7 @@ const { empty, merge } = require('@toa.io/generic')
  * @param {string} token
  * @returns {string}
  */
-const resolve = (token) => {
+export const resolve = (token) => {
   if (token in SHORTCUTS) return SHORTCUTS[token]
   else return token
 }
@@ -20,7 +18,7 @@ const resolve = (token) => {
  * @param {Object} object
  * @param {string} [group]
  */
-const recognize = (shortcuts, object, group) => {
+export const recognize = (shortcuts, object, group) => {
   if (object === undefined) return
 
   const target = group === undefined ? object : {}
@@ -38,7 +36,7 @@ const recognize = (shortcuts, object, group) => {
   if (group !== undefined && !empty(target)) object[group] = merge(object[group], target)
 }
 
-const SHORTCUTS = {
+export const SHORTCUTS = {
   amqp: '@toa.io/bindings.amqp',
   node: '@toa.io/bridges.node',
   bash: '@toa.io/bridges.bash',
@@ -53,7 +51,3 @@ const SHORTCUTS = {
   telemetry: '@toa.io/extensions.telemetry',
   introspection: '@toa.io/extensions.introspection'
 }
-
-exports.recognize = recognize
-exports.resolve = resolve
-exports.SHORTCUTS = SHORTCUTS

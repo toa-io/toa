@@ -1,4 +1,4 @@
-import type { Edge, Input } from './lib/types'
+import type { Edge, Input } from './lib/types.js'
 
 /**
  * Records the calls observed by a collector since its last flush.

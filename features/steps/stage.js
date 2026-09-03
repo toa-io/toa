@@ -1,7 +1,5 @@
-'use strict'
-
-const { Given, Then } = require('@cucumber/cucumber')
-const { serve, shutdown } = require('@toa.io/userland/stage')
+import { Given, Then } from '@cucumber/cucumber'
+import { serve, shutdown } from '@toa.io/userland/stage'
 
 Given('the {token} service is staged',
   /**

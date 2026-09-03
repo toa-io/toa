@@ -1,19 +1,8 @@
-'use strict'
-
-const { bridge } = require('./bridge')
-const { entity } = require('./entity')
-const { events } = require('./events')
-const { extensions } = require('./extensions')
-const { operations } = require('./operations')
-const { properties } = require('./properties')
-const { receivers } = require('./receivers')
-const { version } = require('./version')
-
-exports.bridge = bridge
-exports.entity = entity
-exports.events = events
-exports.extensions = extensions
-exports.operations = operations
-exports.properties = properties
-exports.receivers = receivers
-exports.version = version
+export { bridge } from './bridge.js'
+export { entity } from './entity.js'
+export { events } from './events.js'
+export { extensions } from './extensions.js'
+export { operations } from './operations.js'
+export { properties } from './properties.js'
+export { receivers } from './receivers.js'
+export { version } from './version.js'

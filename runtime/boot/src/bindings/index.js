@@ -1,13 +1,5 @@
-'use strict'
-
-const { broadcast } = require('./broadcast')
-const { consume } = require('./consume')
-const { emit } = require('./emit')
-const { produce } = require('./produce')
-const { receive } = require('./receive')
-
-exports.broadcast = broadcast
-exports.consume = consume
-exports.emit = emit
-exports.produce = produce
-exports.receive = receive
+export { broadcast } from './broadcast.js'
+export { consume } from './consume.js'
+export { emit } from './emit.js'
+export { produce } from './produce.js'
+export { receive } from './receive.js'

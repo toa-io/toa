@@ -1,14 +1,16 @@
-'use strict'
+import { describe, it, beforeEach } from 'node:test'
+import assert from 'node:assert/strict'
+import { isDeepStrictEqual } from 'node:util'
 
-const { generate } = require('randomstring')
-const { newid, random } = require('@toa.io/generic')
+import { generate } from 'randomstring'
+import { newid, random } from '@toa.io/generic'
 
-const fixtures = require('./storage.fixtures')
+import * as fixtures from './storage.fixtures.js'
 
-const { Storage } = require('../src/storage')
+import { Storage } from '../src/storage.js'
 
 it('should be', () => {
-  expect(Storage).toBeDefined()
+  assert.notStrictEqual(Storage, undefined)
 })
 
 /** @type {toa.sql.Client} */
@@ -25,7 +27,7 @@ beforeEach(async () => {
 })
 
 it('should depend on connection', () => {
-  expect(client.link).toHaveBeenCalledWith(storage)
+  assert.ok(client.link.mock.calls.some((call) => call.arguments.length === 1 && isDeepStrictEqual(call.arguments[0], storage)))
 })
 
 describe('store', () => {
@@ -35,8 +37,8 @@ describe('store', () => {
 
     const result = await storage.store(entity)
 
-    expect(client.insert).toHaveBeenCalledWith(entity)
-    expect(result).toStrictEqual(true)
+    assert.ok(client.insert.mock.calls.some((call) => call.arguments.length === 1 && isDeepStrictEqual(call.arguments[0], entity)))
+    assert.deepStrictEqual(result, true)
   })
 
   it('should update existing entity', async () => {
@@ -47,7 +49,7 @@ describe('store', () => {
 
     const criteria = { id: entity.id, _version: entity._version - 1 }
 
-    expect(client.update).toHaveBeenCalledWith(criteria, entity)
-    expect(result).toStrictEqual(false)
+    assert.ok(client.update.mock.calls.some((call) => call.arguments.length === 2 && isDeepStrictEqual(call.arguments[0], criteria) && isDeepStrictEqual(call.arguments[1], entity)))
+    assert.deepStrictEqual(result, false)
   })
 })

@@ -1,14 +1,12 @@
-'use strict'
+import { Connector } from '@toa.io/core'
+import { console } from 'openspan'
 
-const { Connector } = require('@toa.io/core')
-const { console } = require('openspan')
-
-const { name } = require('./queues')
+import { name } from './queues.js'
 
 /**
  * @implements {toa.core.bindings.Emitter}
  */
-class Emitter extends Connector {
+export class Emitter extends Connector {
   /** @type {string} */
   #exchange
 
@@ -32,5 +30,3 @@ class Emitter extends Connector {
 }
 
 const PROPERTIES = { headers: { 'toa.io/amqp': '0' } }
-
-exports.Emitter = Emitter

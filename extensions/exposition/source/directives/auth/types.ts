@@ -1,8 +1,8 @@
 import { type Component } from '@toa.io/core'
 import { type Maybe } from '@toa.io/types'
-import { type Parameter } from '../../RTD'
-import type * as http from '../../HTTP'
-import type * as io from '../../io'
+import { type Parameter } from '../../RTD/index.js'
+import type * as http from '../../HTTP/index.js'
+import type * as io from '../../io.js'
 
 export interface Directive {
   priority?: number
