@@ -6,8 +6,9 @@ A port is claimed by one service only. `toa export` fails when two claim the sam
 Port 8001 is claimed by both the readiness probe and the readiness probe of 'exposition-gateway'
 ```
 
-In Kubernetes these are separate pods and would not collide, but `toa mono` and a local run put
-every service in one process.
+A workload that runs services puts them in one process — `mono`, a composition that declares
+them, a local run — so within one a port is claimed once. Services in separate pods share
+nothing, and two compositions may each bind the same port.
 
 | Port   | Claimed by                                    |
 |--------|-----------------------------------------------|

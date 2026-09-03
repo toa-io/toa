@@ -1,4 +1,5 @@
 {{- range .Values.services }}
+{{- if not .workload }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -17,11 +18,12 @@ spec:
       maxSurge: 50%
   selector:
     matchLabels:
-      toa.io/service: extension-{{ .name }}
+      toa/service: extension-{{ .name }}
   template:
     metadata:
       labels:
-        toa.io/service: extension-{{ .name }}
+        toa/service: extension-{{ .name }}
+        toa/service-{{ .name }}: "1"
     spec:
       containers:
         - name: extension-{{ .name }}
@@ -81,7 +83,8 @@ spec:
           whenUnsatisfiable: ScheduleAnyway
           labelSelector:
             matchLabels:
-              toa.io/service: extension-{{ .name }}
+              toa/service: extension-{{ .name }}
+{{- end }}
 {{- if .port }}
 ---
 apiVersion: v1
@@ -95,7 +98,7 @@ metadata:
 spec:
   type: ClusterIP
   selector:
-    toa.io/service: extension-{{ .name }}
+    toa/service-{{ .name }}: "1"
   ports:
     - name: port-{{ .port }}
       protocol: TCP

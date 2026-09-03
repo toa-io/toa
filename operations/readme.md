@@ -1,5 +1,23 @@
 # Toa Operations
 
+## Compositions
+
+A composition is deployed as one pod. Beside its components it may run extension services,
+which are otherwise each deployed on their own:
+
+```yaml
+# context.toa.yaml
+
+compositions:
+  - name: edge
+    components:
+      - todos.tasks
+    services:
+      - exposition
+```
+
+See [compositions](../documentation/compositions.md).
+
 ## Context
 
 ### Container Registry

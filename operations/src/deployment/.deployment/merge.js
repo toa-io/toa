@@ -35,28 +35,43 @@ export const merge = (dependencies) => {
 }
 
 /**
- * In Kubernetes these are separate pods, but `toa mono` and a local run put every
- * service in one process — so a port may be claimed once and only once.
+ * A workload that hosts services puts them in one process — `mono`, a composition that
+ * declares them, a local run — so within one a port may be claimed once and only once.
+ * A service deploying on its own is a pod of its own, and shares a port with nobody.
  */
 const reserve = (services, probe) => {
-  const claimed = new Map()
-
-  if (probe !== undefined && probe !== false)
-    claimed.set(probe.port, 'the readiness probe')
+  /** @type {Map<string, Map<number, string>>} */
+  const workloads = new Map()
 
   for (const service of services)
-    for (const [port, claimant] of ports(service)) {
-      const conflicting = claimed.get(port)
+    // a service several compositions run binds its ports in each of their pods
+    for (const workload of service.workload ?? [service.name]) {
+      let claimed = workloads.get(workload)
 
-      if (conflicting !== undefined)
-        throw new Error(`Port ${port} is claimed by both ${conflicting} and ${claimant}`)
+      if (claimed === undefined) {
+        claimed = new Map()
 
-      claimed.set(port, claimant)
+        if (probe !== undefined && probe !== false)
+          claimed.set(probe.port, 'the readiness probe')
+
+        workloads.set(workload, claimed)
+      }
+
+      for (const [port, claimant] of ports(service)) {
+        const conflicting = claimed.get(port)
+
+        if (conflicting !== undefined)
+          throw new Error(`Port ${port} is claimed by both ${conflicting} and ${claimant}` +
+            (service.workload === undefined ? '' : ` in '${workload}'`))
+
+        claimed.set(port, claimant)
+      }
     }
 }
 
 function * ports (service) {
-  const name = `'${service.group}-${service.name}'`
+  // every service reaching here is named the way it is deployed, `<group>-<name>`
+  const name = `'${service.name}'`
 
   if (service.port !== undefined)
     yield [service.port, name]

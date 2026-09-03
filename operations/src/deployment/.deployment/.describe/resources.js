@@ -28,6 +28,11 @@ function * units (values) {
   for (const composition of values.compositions ?? [])
     yield { deployment: composition, subject: `Composition '${composition.name}'` }
 
-  for (const service of values.services ?? [])
+  for (const service of values.services ?? []) {
+    // a service a composition runs has no deployment of its own to size; the composition
+    // it runs in states what the pod may take
+    if (service.workload !== undefined) continue
+
     yield { deployment: service, subject: `Service '${service.name}'` }
+  }
 }

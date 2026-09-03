@@ -8,9 +8,12 @@ export const command = (command, args) => {
   for (const [name, value] of Object.entries(args)) {
     if (value === undefined) continue
 
-    options.push('--' + name)
+    // an option that takes several values is repeated, rather than joined into one
+    for (const item of Array.isArray(value) ? value : [value]) {
+      options.push('--' + name)
 
-    if (typeof value !== 'boolean') options.push(`"${value}"`)
+      if (typeof item !== 'boolean') options.push(`"${item}"`)
+    }
   }
 
   const argumentLine = options.join(' ')
