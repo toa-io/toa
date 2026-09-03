@@ -77,6 +77,34 @@ $ node --import tsx --test 'runtime/core/test/**/*.test.js'
 A suite that replaces a module needs `--experimental-test-module-mocks`, which `test:unit`
 passes.
 
+## Exports
+
+A declaration carries `export` where it is written, and a barrel re-exports through
+`export ... from`:
+
+```javascript
+function component (manifest) { }
+
+export { component }
+```
+
+```javascript
+export function component (manifest) { }
+```
+
+```javascript
+import { Factory } from './factory.js'
+
+export { Factory }
+```
+
+```javascript
+export { Factory } from './factory.js'
+```
+
+An alias is the exception, because the exported name is the declaration: an operation module
+states its type by the name it exports, as in `export { meter as computation }`.
+
 ## Userspace
 
 Component code depends on no Toa package: nothing under `@toa.io/*` is imported by an operation,
