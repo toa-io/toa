@@ -10,13 +10,6 @@ function services (services, variables, probe, ingress) {
       delete service.probe
     else if (service.probe === undefined && probe !== undefined && probe !== false)
       service.probe = probe
-    else if (service.probe === undefined && probe === false && service.ingress !== undefined)
-      // Kubernetes routes to a pod it believes ready. A service that answers an ingress and
-      // has no probe is reported ready before it can serve, and an omission would look like
-      // a decision — so state it: `probe: false` says the service is meant to run without one.
-      throw new Error(`Service '${service.name}' would deploy without a readiness probe: ` +
-        'it declares none, and the probe that would supply one is disabled. Enable the ' +
-        "telemetry ready probe, or declare `probe: false` on the service to run without one.")
 
     if (service.ingress !== undefined)
       expose(service, ingress)
