@@ -42,8 +42,7 @@ export async function exchange (credentials: string, ctx: Ctx): Promise<Payload 
     iss,
     aud,
     for: redirect,
-    auth: trusted.secret === undefined ? 'signature' : 'secret',
-    code
+    auth: trusted.secret === undefined ? 'signature' : 'secret'
   })
 
   const response = await ctx.fetch(configuration.token_endpoint, {

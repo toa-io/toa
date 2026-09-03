@@ -80,12 +80,14 @@ export class Context {
     const headers = { ...request.headers }
 
     if (headers.authorization !== undefined)
-      // only scheme
-      headers.authorization = headers.authorization.slice(0, headers.authorization.indexOf(' '))
+      headers.authorization = SCHEME.exec(headers.authorization)?.[1] ?? '[malformed]'
 
     console.debug('Received request', { method: request.method, url: request.url, headers })
   }
 }
+
+/** The scheme of an `authorization` header; the value after it is a credential. */
+const SCHEME = /^(\w{1,32})(?: |$)/
 
 interface Pipelines {
   body: Array<(input: unknown) => unknown>

@@ -5,7 +5,7 @@ import type { Maybe } from '@toa.io/types'
 import type { Context, Scheme } from './types/index.js'
 
 export async function effect ({ scheme, authority, credentials }: Input, context: Context): Promise<Maybe<Output>> {
-  context.logs.debug('Authenticating', { scheme, authority, credentials })
+  context.logs.debug('Authenticating', { scheme, authority })
 
   const claims = await resolve(scheme, credentials, context)
 
