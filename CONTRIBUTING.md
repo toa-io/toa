@@ -136,3 +136,6 @@ What authentication and authorization need is read from the token, or from a cac
 lifetime — a custom key once per `identity.tokens.cache.ttl`, a revocation once per
 `identity.tokens.refresh`. A check that needs storage is written as an event that changes what a
 token is decrypted with, or as a claim, never as a read per request.
+
+Credentials travel in the `authorization` header. Toa does not support cookies and will not;
+nothing reads or sets one.
