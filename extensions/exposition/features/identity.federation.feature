@@ -171,6 +171,7 @@ Feature: Identity Federation
       trust:
         - iss: http://localhost:44444
       principal:
+        authority: nex
         iss: http://localhost:44444
         sub: root
       """

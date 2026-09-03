@@ -17,10 +17,15 @@ export interface Context {
   configuration: {
     readonly rounds: number
     readonly pepper?: Secret
-    readonly principal?: string
+    readonly principal?: Principal
     readonly username: string[]
     readonly password: string[]
   }
+}
+
+export interface Principal {
+  authority: string
+  username: string
 }
 
 export interface Entity {

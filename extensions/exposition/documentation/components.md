@@ -57,12 +57,14 @@ This issue is addressed by using the `principal` key in the configuration:
 
 configuration:
   identity.basic:
-    principal: root
+    principal:
+      authority: example
+      username: root
 ```
 
-The value of the `principal` key corresponds to the `username` of the basic credentials. Once these
-credentials are
-created, the associated Identity will be assigned the `system` Role.
+`principal` names the authority and the `username` of the basic credentials. Once these
+credentials are created in that authority, the associated Identity is assigned the `system` Role.
+The same username in another authority is ordinary credentials.
 
 Once created, the username of the principal cannot be modified.
 

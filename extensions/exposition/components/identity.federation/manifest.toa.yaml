@@ -233,12 +233,15 @@ configuration:
         description: Subject that will be assigned the `system` Role
         type: object
         properties:
+          authority:
+            type: string
           iss:
             type: string
             format: uri
           sub:
             type: string
         required:
+          - authority
           - iss
           - sub
         additionalProperties: false

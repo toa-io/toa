@@ -246,7 +246,9 @@ Feature: Basic authentication
   Scenario: Granting a `system` role to a Principal
     Given the `identity.basic` configuration:
       """yaml
-      principal: root
+      principal:
+        authority: nex
+        username: root
       """
     And the annotation:
       """yaml
@@ -319,6 +321,64 @@ Feature: Basic authentication
 
       code: PRINCIPAL_LOCKED
       message: Principal username cannot be changed
+      """
+
+  Scenario: Principal username in another authority is ordinary credentials
+    Given the `identity.basic` configuration:
+      """yaml
+      principal:
+        authority: nex
+        username: root
+      """
+    And the annotation:
+      """yaml
+      /:
+        io:output: true
+        GET:
+          auth:role: system:stub
+          dev:stub:
+            access: granted!
+      """
+    When the following request is received:
+      """
+      POST /identity/basic/ HTTP/1.1
+      host: the.other.com
+      accept: application/yaml
+      content-type: application/yaml
+
+      username: root
+      password: secret#1234
+      """
+    Then the following reply is sent:
+      """
+      201 Created
+
+      id: ${{ id }}
+      """
+    Then after 0.1 seconds
+    When the following request is received:
+      """
+      GET /identity/roles/${{ id }}/ HTTP/1.1
+      host: the.other.com
+      authorization: Basic cm9vdDpzZWNyZXQjMTIzNA==
+      accept: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+
+      []
+      """
+    When the following request is received:
+      """
+      GET / HTTP/1.1
+      host: the.other.com
+      authorization: Basic cm9vdDpzZWNyZXQjMTIzNA==
+      accept: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      403 Forbidden
       """
 
   Scenario: Creating an Identity using inception with existing credentials

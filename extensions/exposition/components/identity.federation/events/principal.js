@@ -7,6 +7,7 @@
 export const condition = function (event, context) {
   return (
     context.configuration.principal !== undefined &&
+    event.state.authority === context.configuration.principal.authority &&
     event.state.sub === context.configuration.principal.sub &&
     event.state.iss === context.configuration.principal.iss
   )

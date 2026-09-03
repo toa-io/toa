@@ -85,13 +85,15 @@ configuration:
         aud: <APPLE_CLIENT_ID>
         secret: <APPLE_CLIENT_SECRET> # enables Authorization Code Flow
     principal:
+      authority: example
       iss: https://accounts.google.com
       sub: 4218230498234
     assert: true
 ```
 
-`principal` specifies the values of the `iss` and `sub` claims of an Identity that will be granted
-with a `system` role.
+`principal` specifies the authority and the values of the `iss` and `sub` claims of an Identity
+that will be granted with a `system` role. The same subject in another authority is ordinary
+credentials.
 
 `assert` indicates whether the Identity should be implicitly created when valid credentials for a
 non-existent Identity are provided (default `true`).

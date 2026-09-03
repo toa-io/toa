@@ -1,11 +1,11 @@
 import { genSalt, hash } from 'bcryptjs'
 import type { Maybe, Operation } from '@toa.io/types'
-import type { Context, Entity, TransitInput, IdOutput } from './types.js'
+import type { Context, Entity, Principal, TransitInput, IdOutput } from './types.js'
 
 export class Transition implements Operation {
   private rounds: number = 10
   private pepper: string = ''
-  private principal?: string
+  private principal?: Principal
   private tokens: Tokens = undefined as unknown as Tokens
   private usernameRx: RegExp[] = []
   private passwordRx: RegExp[] = []
@@ -18,6 +18,12 @@ export class Transition implements Operation {
 
     this.usernameRx = toRx(context.configuration.username)
     this.passwordRx = toRx(context.configuration.password)
+  }
+
+  private locked (object: Entity): boolean {
+    return this.principal !== undefined &&
+      object.authority === this.principal.authority &&
+      object.username === this.principal.username
   }
 
   public async execute (input: TransitInput, object: Entity): Promise<Maybe<IdOutput>> {
@@ -33,7 +39,7 @@ export class Transition implements Operation {
       object.authority = input.authority
 
     if (input.username !== undefined) {
-      if (existent && object.username === this.principal)
+      if (existent && this.locked(object))
         return ERR_PRINCIPAL_LOCKED
 
       if (invalid(input.username, this.usernameRx))

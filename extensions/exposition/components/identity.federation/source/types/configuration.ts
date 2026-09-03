@@ -18,6 +18,7 @@ export interface Trust {
 }
 
 interface Principal {
+  authority: string
   iss: string
   sub: string
 }
