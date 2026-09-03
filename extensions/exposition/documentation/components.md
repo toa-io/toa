@@ -406,7 +406,8 @@ role: string
 To assign arbitrary roles, the `system:identity:roles` role is required.
 
 An Identity having `system:identity:roles:delegation` role can delegate roles within its own
-Role Scopes (see [Role Hierarchies](access.md#hierarchies)).
+Role Scopes (see [Role Hierarchies](access.md#hierarchies)), except roles within the
+`system:identity:roles` scope: the right to delegate is not delegated.
 
 ### `/identity/roles/:id/:role/`
 
