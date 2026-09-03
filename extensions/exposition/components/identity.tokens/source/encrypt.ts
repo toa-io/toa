@@ -30,8 +30,10 @@ export class Effect implements Operation {
       roles: input.scopes ?? input.identity.roles
     }
 
-    if (input.permissions !== undefined)
-      identity.permissions = input.permissions
+    const permissions = input.permissions ?? input.identity.permissions
+
+    if (permissions !== undefined)
+      identity.permissions = permissions
 
     const key = input.key ?? this.key
 

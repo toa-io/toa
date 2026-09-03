@@ -70,6 +70,8 @@ operations:
           type: string
         exp:
           type: string
+        custom:
+          type: boolean
         refresh:
           type: boolean
       type: object

@@ -60,7 +60,8 @@ export class Computation implements Operation {
       iat: claims.iat,
       exp: claims.exp,
       identity: claims.identity,
-      refresh: legacy || (kid !== this.latest && key.identity === undefined)
+      refresh: legacy || (kid !== this.latest && key.identity === undefined),
+      custom: key.identity !== undefined
     }
   }
 

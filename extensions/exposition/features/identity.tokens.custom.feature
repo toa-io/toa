@@ -283,3 +283,53 @@ Feature: Custom tokens
       """
       401 Unauthorized
       """
+
+  Scenario: Custom token is not refreshed
+    Given the `identity.tokens` configuration:
+      """yaml
+      refresh: 1
+      """
+    When the following request is received:
+      """
+      POST /identity/tokens/efe3a65ebbee47ed95a73edd911ea328/ HTTP/1.1
+      host: nex.toa.io
+      authorization: Basic ZGV2ZWxvcGVyOnNlY3JldA==
+      accept: application/yaml
+      content-type: application/yaml
+
+      label: Restricted token
+      lifetime: 600
+      permissions:
+        /notes/: [GET]
+      """
+    Then the following reply is sent:
+      """
+      201 Created
+
+      token: ${{ token }}
+      """
+    And after 1 second
+    When the following request is received:
+      """
+      GET /notes/ HTTP/1.1
+      host: nex.toa.io
+      authorization: Token ${{ token }}
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      """
+    And the reply does not contain:
+      """
+      authorization: Token
+      """
+    When the following request is received:
+      """
+      GET /notes/public/ HTTP/1.1
+      host: nex.toa.io
+      authorization: Token ${{ token }}
+      """
+    Then the following reply is sent:
+      """
+      403 Forbidden
+      """
