@@ -1,6 +1,6 @@
 import { Readable } from 'node:stream'
 import * as boot from '@toa.io/boot'
-import * as jsyaml from 'js-yaml'
+import { yaml as jsyaml } from '@toa.io/generic'
 import { Locator } from '@toa.io/core'
 
 export async function call (argv) {

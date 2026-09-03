@@ -1,6 +1,6 @@
 import { join } from 'node:path'
 import { writeFile as write } from 'node:fs/promises'
-import * as jsyaml from 'js-yaml'
+import { yaml as jsyaml } from '@toa.io/generic'
 import fs from 'fs-extra'
 
 import { merge, declare, describe } from './.deployment/index.js'

@@ -2,7 +2,7 @@ import { spawn, exec } from 'node:child_process'
 import { promisify } from 'node:util'
 
 import { promex } from '@toa.io/generic'
-import { findUp } from 'find-up'
+import { findUp } from '@toa.io/generic'
 
 const execute = promisify(exec)
 
@@ -13,7 +13,7 @@ const execute = promisify(exec)
  * @return {Promise<void>}
  */
 export async function run (repository, command, envFile) {
-  if (envFile === undefined) envFile = await findUp('.env')
+  if (envFile === undefined) envFile = findUp('.env')
 
   const envArgs = envFile === undefined ? [] : ['--env-file', envFile]
 

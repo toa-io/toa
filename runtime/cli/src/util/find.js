@@ -1,5 +1,5 @@
 import { dirname, resolve } from 'node:path'
-import { findUpSync } from 'find-up'
+import { findUp } from '@toa.io/generic'
 
 /**
  * @param {string | string[]} from
@@ -22,7 +22,7 @@ const find = (from, filename, test) => {
   }
 
   const cwd = resolve(process.cwd(), from)
-  const path = findUpSync(filename, { cwd })
+  const path = findUp(filename, { cwd })
 
   if (path === undefined)
     if (test === true) return null

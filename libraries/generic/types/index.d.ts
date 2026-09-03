@@ -36,3 +36,10 @@ export { promex } from './promex.js'
 export { merge, add, overwrite } from './merge.js'
 export { map } from './map.js'
 export * as letters from './letters.js'
+
+export namespace yaml {
+  function load (text: string, options?: object): any
+  function dump (value: any, options?: object): string
+}
+
+export function findUp (name: string, options?: { cwd?: string }): string | undefined

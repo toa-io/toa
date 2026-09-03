@@ -1,7 +1,7 @@
 import { join } from 'node:path'
 
 import { readFile } from 'node:fs/promises'
-import * as jsyaml from 'js-yaml'
+import { yaml as jsyaml } from '@toa.io/generic'
 import { find } from '@toa.io/generic'
 import { Locator } from '@toa.io/core'
 

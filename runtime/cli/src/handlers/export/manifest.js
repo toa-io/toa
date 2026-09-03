@@ -1,6 +1,6 @@
 import jsonpath from 'jsonpath'
 import { component } from '@toa.io/norm'
-import * as jsyaml from 'js-yaml'
+import { yaml as jsyaml } from '@toa.io/generic'
 
 import { components as find } from '../../util/find.js'
 

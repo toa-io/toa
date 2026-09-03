@@ -1,4 +1,4 @@
-import * as yaml from 'js-yaml'
+import { yaml } from '@toa.io/generic'
 
 export const type = 'application/yaml'
 export const multipart = 'multipart/yaml'

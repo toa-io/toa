@@ -1,10 +1,10 @@
 import path from 'node:path'
 
 import { readFileSync } from 'node:fs'
-import { load as parseYAML } from 'js-yaml'
+import { yaml } from '@toa.io/generic'
 import * as schemas from '@toa.io/schemas'
 
-const object = parseYAML(readFileSync(path.resolve(import.meta.dirname, 'schema.yaml'), 'utf8'))
+const object = yaml.load(readFileSync(path.resolve(import.meta.dirname, 'schema.yaml'), 'utf8'))
 const schema = schemas.schema(object)
 
 export const validate = async (manifest) => {

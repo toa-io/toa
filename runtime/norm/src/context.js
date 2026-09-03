@@ -2,7 +2,7 @@ import { resolve } from 'node:path'
 import { convolve } from '@toa.io/generic'
 import glob from 'fast-glob'
 import { readFile } from 'node:fs/promises'
-import * as jsyaml from 'js-yaml'
+import { yaml as jsyaml } from '@toa.io/generic'
 
 import { component } from './component.js'
 

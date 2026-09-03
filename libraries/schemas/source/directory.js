@@ -1,7 +1,7 @@
 import { join, relative } from 'node:path'
 import glob from 'fast-glob'
 import { readFileSync } from 'node:fs'
-import * as jsyaml from 'js-yaml'
+import { yaml as jsyaml } from '@toa.io/generic'
 
 /**
  * @param {string} path
