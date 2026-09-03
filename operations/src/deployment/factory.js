@@ -153,14 +153,14 @@ const MONO = 'mono'
  * @returns {Map<string, string[]>}
  */
 function claims (context) {
-  const claims = new Map()
+  const map = new Map()
 
   for (const composition of context.compositions ?? [])
     for (const reference of composition.services ?? []) {
-      if (!claims.has(reference)) claims.set(reference, [])
+      if (!map.has(reference)) map.set(reference, [])
 
-      claims.get(reference).push(composition.name)
+      map.get(reference).push(composition.name)
     }
 
-  return claims
+  return map
 }
