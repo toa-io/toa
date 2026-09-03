@@ -129,10 +129,10 @@ export class Server extends Connector {
     // no listener on `request.socket`: under HTTP/2 it is the session's socket, shared by
     // every concurrent stream, and removing listeners on it would strip the siblings'
 
-    const host = authorityOf(request)
+    const host = authorityOf(request)?.toLowerCase()
 
-    if (host === undefined) {
-      console.warn('Request without an authority', errorAttributes(request, new Error('No authority')))
+    if (host === undefined || !HOST.test(host)) {
+      console.warn('Request without a valid authority', errorAttributes(request, new Error('Invalid authority')))
 
       response.writeHead(400).end()
 
@@ -349,6 +349,12 @@ function trace (headers: IncomingMessage['headers']): SpanContext | null {
 
   return null
 }
+
+/**
+ * A host name with an optional port, or a bracketed IPv6 literal. The URL parser admits
+ * `,` `;` `=` `(` `)` and quotes in a host, and the authority is written into criteria.
+ */
+const HOST = /^(?:[a-z0-9.-]{1,253}|\[[0-9a-f:.]{2,45}\])(?::\d{1,5})?$/
 
 const RAY = /^[\da-f]{32}$/i
 const ZERO_RAY = '0'.repeat(32)
