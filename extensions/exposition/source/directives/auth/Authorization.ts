@@ -63,7 +63,7 @@ export class Authorization implements DirectiveFamily<Directive, Extension> {
       return
 
     this.meter = new Quotas({
-      keys: Keys.create([{ method: 'ip' }]),
+      keys: Keys.create([{ method: 'ip', options: BOUNCER }]),
       requests: bouncer.attempts ?? ATTEMPTS,
       interval: (bouncer.interval ?? INTERVAL) * 1000,
       conditional: true, // charged on a rejection, not on a check
@@ -258,6 +258,9 @@ function glob (pattern: string): Minimatch {
 /** What an address may fail at once, and the seconds it takes to earn them back. */
 const ATTEMPTS = 20
 const INTERVAL = 60
+
+/** Who is speaking when a request cannot be keyed. */
+const BOUNCER = 'Authentication bouncer'
 
 /** The meter's name in the atom: `atom:exposition:meter:credentials:<address>`. */
 const METER = 'credentials'

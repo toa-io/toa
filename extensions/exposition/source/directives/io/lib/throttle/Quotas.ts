@@ -72,6 +72,10 @@ export class Quotas {
   public check (context: Context, parameters: Parameter[]): number {
     const key = this.keys.get(context, parameters)
 
+    // a request that cannot be keyed is not metered
+    if (key === undefined)
+      return 0
+
     this.keyed.set(context, key)
 
     const now = Date.now()
@@ -95,6 +99,10 @@ export class Quotas {
 
     // preflight always runs first, and a request it refuses never reaches settle
     const key = this.keyed.get(input) ?? this.keys.get(input)
+
+    if (key === undefined)
+      return
+
     const now = Date.now()
     const entry = this.entries.get(key)
     const tat = Math.max(entry?.tat ?? now, now)

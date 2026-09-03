@@ -64,8 +64,7 @@ may fail `attempts` at once and earns them back at `attempts` per `interval` sec
 carrying credentials from an address with nothing left is answered `429 Too Many Requests` with
 `Retry-After`. Nothing is metered unless the exposition annotation carries `bouncer`;
 `attempts` and `interval` default to 20 and 60. The address is the one the request context
-resolved, see [Client address](ip.md): behind a load balancer `ip` must name the header the edge
-sets, or every client shares one budget.
+resolved, see [Client address](ip.md); a request without one is not metered.
 
 ```yaml
 # context.toa.yaml

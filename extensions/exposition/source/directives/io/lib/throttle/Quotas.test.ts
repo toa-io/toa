@@ -231,6 +231,15 @@ describe('ip', () => {
     assert.ok(quotas.check(one, []) > 0)
     assert.strictEqual(quotas.check(two, []), 0)
   })
+
+  it('should let a request without an address through', () => {
+    quotas = Quotas.create(configuration)
+
+    const context = createContext({})
+
+    for (let i = 0; i < 5; i++)
+      assert.strictEqual(quotas.check(context, []), 0)
+  })
 })
 
 describe('route', () => {

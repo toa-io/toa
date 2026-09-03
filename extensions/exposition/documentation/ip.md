@@ -19,5 +19,6 @@ and it writes the client's address into a header of its own, `CF-Connecting-IP`,
 the gateway trusts none of them on its own: the deployment names the one its edge overwrites, and
 where the header holds a list, the last value is the one the edge appended.
 
-Without `ip`, and for a request that does not carry the header, the address is the connection's,
-which is right for a gateway that clients reach directly and useless behind a balancer.
+The connection's address is never used. Without `ip`, or for a request that does not carry the
+header, the request has no address: the bouncer and a throttle keyed on `ip` let it through and
+say so in the log, once per hundred seconds rather than once per request.

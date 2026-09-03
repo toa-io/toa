@@ -118,11 +118,12 @@ Feature: Identity resource
         attempts: 2
         interval: 60
       """
-    # developer:wrong, from the connection: the proxy header is not sent
+    # developer:wrong
     When the following request is received:
       """
       GET /identity/ HTTP/1.1
       host: nex.toa.io
+      x-real-ip: 203.0.113.9
       authorization: Basic ZGV2ZWxvcGVyOndyb25n
       """
     Then the following reply is sent:
@@ -133,6 +134,7 @@ Feature: Identity resource
       """
       GET /identity/ HTTP/1.1
       host: nex.toa.io
+      x-real-ip: 203.0.113.9
       authorization: Basic ZGV2ZWxvcGVyOndyb25n
       """
     Then the following reply is sent:
@@ -144,6 +146,7 @@ Feature: Identity resource
       """
       GET /identity/ HTTP/1.1
       host: nex.toa.io
+      x-real-ip: 203.0.113.9
       authorization: Basic ZGV2ZWxvcGVyOndyb25n
       """
     Then the following reply is sent:
@@ -199,6 +202,36 @@ Feature: Identity resource
       GET /identity/ HTTP/1.1
       host: nex.toa.io
       x-real-ip: 203.0.113.2
+      authorization: Basic ZGV2ZWxvcGVyOndyb25n
+      """
+    Then the following reply is sent:
+      """
+      401 Unauthorized
+      """
+
+  Scenario: Failing authentication without a client address
+    Given the annotation:
+      """yaml
+      ip: x-real-ip
+      bouncer:
+        attempts: 1
+        interval: 60
+      """
+    # the header the address is read from is not sent, so nothing is metered
+    When the following request is received:
+      """
+      GET /identity/ HTTP/1.1
+      host: nex.toa.io
+      authorization: Basic ZGV2ZWxvcGVyOndyb25n
+      """
+    Then the following reply is sent:
+      """
+      401 Unauthorized
+      """
+    When the following request is received:
+      """
+      GET /identity/ HTTP/1.1
+      host: nex.toa.io
       authorization: Basic ZGV2ZWxvcGVyOndyb25n
       """
     Then the following reply is sent:

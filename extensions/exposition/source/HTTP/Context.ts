@@ -14,8 +14,8 @@ export class Context {
   public readonly authority: string
   public readonly request: IncomingMessage
 
-  /** the client address, as the deployment says it is read; see `documentation/ip.md` */
-  public readonly ip: string
+  /** the client address, read as the deployment says; none otherwise, see `documentation/ip.md` */
+  public readonly ip: string | undefined
   public readonly url: URL
   public readonly subtype: string | null = null
   public readonly encoder: Format | null = null
