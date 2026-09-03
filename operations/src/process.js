@@ -1,4 +1,4 @@
-import * as execa from 'execa'
+import { execa } from 'execa'
 
 /**
  * @implements {toa.operations.Process}
@@ -7,7 +7,6 @@ export class Process {
   async execute (cmd, args, options = {}) {
     console.log('toa>', cmd, args.join(' '))
 
-    /** @type {execa.ExecaReturnValue<import('stream').Stream>} */
     const command = execa(cmd, args)
 
     if (options.silently !== true) {
@@ -15,7 +14,6 @@ export class Process {
       command.stderr.pipe(process.stderr)
     }
 
-    /** @type {execa.ExecaReturnValue<string>} */
     const result = await command
 
     return result.stdout
