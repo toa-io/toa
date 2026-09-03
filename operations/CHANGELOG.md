@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.276](https://github.com/toa-io/toa/compare/v1.0.0-alpha.275...v1.0.0-alpha.276) (2026-09-03)
+
+
+### Bug Fixes
+
+* **operations:** let a deployment state that it has no probe ([477b483](https://github.com/toa-io/toa/commit/477b483560cf2464d486a78e432f8e9b47f011dd))
+
+
+
+
+
 # [1.0.0-alpha.274](https://github.com/toa-io/toa/compare/v1.0.0-alpha.273...v1.0.0-alpha.274) (2026-09-02)
 
 **Note:** Version bump only for package @toa.io/operations

@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.276](https://github.com/toa-io/toa/compare/v1.0.0-alpha.275...v1.0.0-alpha.276) (2026-09-03)
+
+
+### Features
+
+* **configuration:** log the epoch a value was resolved under ([ff51ff6](https://github.com/toa-io/toa/commit/ff51ff629592159eeac562059ceb944f193ad7e8))
+
+
+
+
+
 # [1.0.0-alpha.275](https://github.com/toa-io/toa/compare/v1.0.0-alpha.274...v1.0.0-alpha.275) (2026-09-02)
 
 
