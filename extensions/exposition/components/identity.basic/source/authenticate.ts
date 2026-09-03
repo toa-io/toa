@@ -1,4 +1,5 @@
 import { compare } from 'bcryptjs'
+import { quote } from '@toa.io/generic'
 import { type Query, type Maybe } from '@toa.io/types'
 import { type Context } from './types.js'
 
@@ -8,7 +9,9 @@ export async function computation (input: Input, context: Context): Promise<Mayb
     .toString()
     .split(':')
 
-  const query: Query = { criteria: `authority==${input.authority};username=='${username}'` }
+  const query: Query = {
+    criteria: `authority==${quote(input.authority)};username==${quote(username)}`
+  }
   const credentials = await context.local.observe({ query })
 
   if (credentials instanceof Error)

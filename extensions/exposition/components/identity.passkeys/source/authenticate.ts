@@ -1,3 +1,4 @@
+import { quote } from '@toa.io/generic'
 import type { Context } from './types/index.js'
 import type { AuthenticationResponseJSON } from '@simplewebauthn/server'
 import type { Operation } from '@toa.io/types'
@@ -16,7 +17,7 @@ export class Effect implements Operation {
 
     const identity = await this.use({
       query: {
-        criteria: `authority=="${authority}";kid=="${response.id}"`
+        criteria: `authority==${quote(authority)};kid==${quote(response.id)}`
       },
       input: response
     })

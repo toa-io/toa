@@ -16,7 +16,7 @@ it('lists indexed credentials', async () => {
   await assert.deepStrictEqual(await computation({ authority: 'nex', identity: 'identity' }, context as never), [current])
   assert.ok(context.local.enumerate.mock.calls.some((call: any) => call.arguments.length === 1 && isDeepStrictEqual(call.arguments[0], {
     query: {
-      criteria: 'authority==nex;identity==identity',
+      criteria: 'authority=="nex";identity=="identity"',
       projection: ['iss'],
       sort: ['_created:desc'],
       limit: 100

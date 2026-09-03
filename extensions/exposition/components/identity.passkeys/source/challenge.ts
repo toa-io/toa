@@ -1,5 +1,5 @@
 import { randomBytes } from 'node:crypto'
-import { newid } from '@toa.io/generic'
+import { newid, quote } from '@toa.io/generic'
 import { MAX_KEYS } from './lib/const.js'
 import type { Operation } from '@toa.io/types'
 import type { Context } from './types/index.js'
@@ -46,11 +46,11 @@ export class Effect implements Operation {
     if (type === 'creation')
       options.identity = identity ?? newid()
 
-    const keys = identity === undefined
+    const keys = identity === undefined || identity === null
       ? []
       : await this.enumerate({
         query: {
-          criteria: `identity==${identity}`,
+          criteria: `identity==${quote(identity)}`,
           projection: ['kid', 'transports'],
           limit: MAX_KEYS
         }

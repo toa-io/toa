@@ -1,4 +1,5 @@
 import assert from 'node:assert'
+import { quote } from '@toa.io/generic'
 import * as http from './HTTP/index.js'
 import { type Parameter } from './RTD/index.js'
 import * as schemas from './schemas.js'
@@ -132,8 +133,9 @@ export class Query {
     }
 
     if (parameters.length > 0) {
+      // a segment may carry `,` `;` `(` `)` `=`, which is criteria grammar when unquoted
       const criteria = parameters
-        .map(({ name, value }) => `${name}==${value}`)
+        .map(({ name, value }) => `${name}==${quote(value)}`)
         .join(';')
 
       groups.push({ criteria, operator: this.prepend })

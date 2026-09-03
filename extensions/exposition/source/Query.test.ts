@@ -19,7 +19,21 @@ it('should combine request criteria', async () => {
   const instance = new Query(query)
   const result = instance.fit({ criteria: 'qux==4' }, parameters)
 
-  assert.deepStrictEqual(result.query!.criteria, '(bar==2;baz==3);(foo==1);(qux==4)')
+  assert.deepStrictEqual(result.query!.criteria, '(bar=="2";baz=="3");(foo==1);(qux==4)')
+})
+
+it('should quote parameter values', async () => {
+  const query: syntax.Query = {
+    omit: { range: [0, 1] },
+    limit: { range: [0, 1] }
+  }
+
+  const parameters: Parameter[] = [{ name: 'user', value: 'me"),(user=="victim' }]
+
+  const instance = new Query(query)
+  const result = instance.fit({}, parameters)
+
+  assert.deepStrictEqual(result.query!.criteria, '(user=="me\\"),(user==\\"victim")')
 })
 
 it('should set id parameter as query.id', async () => {
