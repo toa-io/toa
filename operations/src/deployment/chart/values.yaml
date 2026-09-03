@@ -25,11 +25,23 @@ compositions:
     replicas: 3
     components:
       - users-users
+    # the extensions whose services this composition runs in its own pod
+    services:
+      - '@toa.io/extensions.exposition'
+    # each of those, as its own Service selects it
+    hosted:
+      - exposition-gateway
+    # the ports they bind
+    backends:
+      - port: 8000
+        path: /
 components:
   - todos-tasks
   - todos-stats
   - users-users
 services:
+  # a service a composition runs carries `workload`, and gets no deployment of its own —
+  # its Service and Ingress stay, and select that composition's pods
   - name: resources-gateway
     image: localhost:5000/resources-gateway:0.0.0
     port: 8000

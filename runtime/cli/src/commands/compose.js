@@ -26,6 +26,12 @@ const builder = (yargs) => {
       desc: 'Path to the Context (used with --dock)',
       default: '.'
     })
+    .option('service', {
+      group: 'Command options:',
+      type: 'string',
+      desc: 'Extension service to run in this composition, by shortcut or package reference'
+    })
+    .array('service')
     .option('bindings', {
       group: 'Command options:',
       type: 'string',
@@ -36,7 +42,8 @@ const builder = (yargs) => {
       ['$0 compose ./component'],
       ['$0 compose ./first ./second'],
       ['$0 compose ./components/**/'],
-      ['$0 compose ./a/**/ ./b/**/']
+      ['$0 compose ./a/**/ ./b/**/'],
+      ['$0 compose ./components/**/ --service exposition']
     ])
 }
 

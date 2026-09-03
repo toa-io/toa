@@ -83,3 +83,26 @@ it('should allow mono replicas and resources', () => {
 
   assert.doesNotThrow(() => validate(context))
 })
+
+describe('compositions', () => {
+  it('should allow services', () => {
+    context.compositions[0].services = ['@toa.io/extensions.exposition']
+
+    assert.doesNotThrow(() => validate(context))
+  })
+
+  it('should require services to be a non-empty array of strings', () => {
+    context.compositions[0].services = []
+    assert.throws(() => validate(context), (error) => /fewer than 1 items/.test(error.message))
+
+    context.compositions[0].services = 'exposition'
+    assert.throws(() => validate(context), (error) => /must be array/.test(error.message))
+  })
+
+  it('should reject an unknown property', () => {
+    context.compositions[0].compoments = ['a.b']
+
+    assert.throws(() => validate(context),
+      (error) => /Property compoments is not expected to be here/.test(error.message))
+  })
+})

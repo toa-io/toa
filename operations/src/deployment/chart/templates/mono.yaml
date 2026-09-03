@@ -14,13 +14,13 @@ spec:
       maxSurge: 50%
   selector:
     matchLabels:
-      toa.io/composition: mono
+      toa/composition: mono
   template:
     metadata:
       labels:
-        toa.io/composition: mono
+        toa/composition: mono
         {{- range .components }}
-        {{ . }}: "1"
+        toa/component-{{ . }}: "1"
         {{- end }}
     spec:
       containers:
@@ -109,7 +109,7 @@ spec:
           whenUnsatisfiable: ScheduleAnyway
           labelSelector:
             matchLabels:
-              toa.io/composition: mono
+              toa/composition: mono
 {{- if .backends }}
 ---
 apiVersion: v1
@@ -123,7 +123,7 @@ metadata:
 spec:
   type: ClusterIP
   selector:
-    toa.io/composition: mono
+    toa/composition: mono
   ports:
     {{- range .backends }}
     - name: port-{{ .port }}

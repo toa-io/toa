@@ -40,3 +40,28 @@ describe('annotations', () => {
     assert.notStrictEqual(context.annotations['@toa.io/storages.mongodb'], undefined)
   })
 })
+
+describe('composition services', () => {
+  it('should resolve shortcuts', () => {
+    context.compositions[0].services = ['exposition', 'configuration']
+
+    expand(context)
+
+    assert.deepStrictEqual(context.compositions[0].services,
+      ['@toa.io/extensions.exposition', '@toa.io/extensions.configuration'])
+  })
+
+  it('should leave a package reference alone', () => {
+    context.compositions[0].services = ['@acme/extension']
+
+    expand(context)
+
+    assert.deepStrictEqual(context.compositions[0].services, ['@acme/extension'])
+  })
+
+  it('should not throw without compositions', () => {
+    delete context.compositions
+
+    assert.doesNotThrow(() => expand(context))
+  })
+})

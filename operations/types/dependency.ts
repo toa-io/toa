@@ -13,6 +13,9 @@ export interface Service {
   variables?: Variable[]
   components?: string[]
   probe?: Probe | false
+  /** The workloads running this service, when compositions declared it instead of letting
+   *  it deploy on its own. Set by the deployment, never by an extension. */
+  workload?: string[]
 }
 
 export interface Variable {

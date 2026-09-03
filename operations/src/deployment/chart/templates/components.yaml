@@ -6,7 +6,7 @@ metadata:
 spec:
   type: ClusterIP
   selector:
-    {{ . }}: "1"
+    toa/component-{{ . }}: "1"
   ports:
     - name: http-binding
       protocol: TCP

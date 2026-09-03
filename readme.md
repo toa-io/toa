@@ -87,6 +87,8 @@ Non-scattered documentation is coming some time later.
 ### Operations
 
 - Standardized containerization
+- [Compositions](/documentation/compositions.md): the components, and the extension services,
+  deployed as one pod
 - Resource management
 - Environment variables
 - Standalone infrastructure configuration

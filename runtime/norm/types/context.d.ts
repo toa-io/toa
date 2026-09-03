@@ -20,7 +20,8 @@ interface Registry{
 
 interface Composition{
   name: string,
-  components: _component.Component[]
+  components: Manifest[]
+  services?: string[]
 }
 
 export interface Dependency<T = undefined>{
@@ -34,7 +35,7 @@ interface Context extends Declaration{
   environment?: string
   registry?: Registry
   compositions?: Composition[]
-  components?: _component.Component[]
+  components?: Manifest[]
   dependencies?: Record<string, Dependency[]>
 }
 

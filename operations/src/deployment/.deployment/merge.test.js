@@ -3,7 +3,8 @@ import assert from 'node:assert/strict'
 
 import { merge } from './merge.js'
 
-const service = (name, extra = {}) => ({ group: 'group', name, version: '0', ...extra })
+// a service is named the way it is deployed by the time it reaches `merge`
+const service = (name, extra = {}) => ({ group: 'group', name: `group-${name}`, version: '0', ...extra })
 
 it('should merge services of all dependencies', () => {
   const merged = merge([
@@ -15,17 +16,46 @@ it('should merge services of all dependencies', () => {
 })
 
 /*
- * In Kubernetes these are separate pods, but `toa mono` and a local run put every
- * service in one process.
+ * A workload that hosts services puts them in one process, so a port is claimed once
+ * within one. Services in separate pods share nothing.
  */
 describe('port reservation', () => {
-  it('should reject two services claiming one port', () => {
+  const hosted = (name, extra = {}) => service(name, { workload: ['mono'], ...extra })
+
+  it('should reject two services of one workload claiming one port', () => {
+    const dependencies = [
+      { services: [hosted('one', { port: 8000 })] },
+      { services: [hosted('two', { port: 8000 })] }
+    ]
+
+    assert.throws(() => merge(dependencies), (error) => /Port 8000 is claimed by both 'group-one' and 'group-two' in 'mono'/.test(error.message))
+  })
+
+  it('should allow two workloads to claim one port', () => {
+    const dependencies = [
+      { services: [service('one', { port: 8000, workload: ['edge'] })] },
+      { services: [service('two', { port: 8000, workload: ['inner'] })] }
+    ]
+
+    assert.doesNotThrow(() => merge(dependencies))
+  })
+
+  it('should reserve the ports of a service in every workload running it', () => {
+    const dependencies = [
+      { services: [service('one', { port: 8000, workload: ['edge', 'inner'] })] },
+      { services: [service('two', { port: 8000, workload: ['inner'] })] }
+    ]
+
+    assert.throws(() => merge(dependencies), (error) => /Port 8000 is claimed by both 'group-one' and 'group-two' in 'inner'/.test(error.message))
+  })
+
+  it('should allow two services deployed on their own to claim one port', () => {
     const dependencies = [
       { services: [service('one', { port: 8000 })] },
       { services: [service('two', { port: 8000 })] }
     ]
 
-    assert.throws(() => merge(dependencies), (error) => /Port 8000 is claimed by both 'group-one' and 'group-two'/.test(error.message))
+    assert.doesNotThrow(() => merge(dependencies))
   })
 
   it('should reject a service claiming the port of the readiness probe', () => {
@@ -37,13 +67,13 @@ describe('port reservation', () => {
     assert.throws(() => merge(dependencies), (error) => /Port 8001 is claimed by both the readiness probe and 'group-one'/.test(error.message))
   })
 
-  it('should reject a probe claiming the port of another service', () => {
+  it('should reject a probe claiming the port of another service of the workload', () => {
     const dependencies = [
-      { services: [service('one', { port: 8000 })] },
-      { services: [service('two', { port: 8002, probe: { path: '/.ready', port: 8000 } })] }
+      { services: [hosted('one', { port: 8000 })] },
+      { services: [hosted('two', { port: 8002, probe: { path: '/.ready', port: 8000 } })] }
     ]
 
-    assert.throws(() => merge(dependencies), (error) => /Port 8000 is claimed by both 'group-one' and the readiness probe of 'group-two'/.test(error.message))
+    assert.throws(() => merge(dependencies), (error) => /Port 8000 is claimed by both 'group-one' and the readiness probe of 'group-two' in 'mono'/.test(error.message))
   })
 
   it('should allow a service to probe its own port', () => {

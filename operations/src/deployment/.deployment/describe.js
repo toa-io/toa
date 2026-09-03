@@ -3,6 +3,7 @@ import { addVariables } from './.describe/variables.js'
 import { addMounts } from './.describe/mounts.js'
 import { resources } from './.describe/resources.js'
 import { events } from './.describe/events.js'
+import { fold } from './.describe/fold.js'
 
 export const describe = (context, compositions, dependency, image) => {
   const { services } = dependency
@@ -120,16 +121,11 @@ function unit (context, dependency) {
   addVariables(mono, variables, Object.keys(variables))
   addMounts(mono, dependency.mounts, Object.keys(mounts))
 
+  fold(mono, dependency.services ?? [], dependency)
+
+  // mono is the one workload that fronts every service it runs under a single name,
+  // so it inherits how they are reached as well as what they run
   for (const service of dependency.services ?? []) {
-    if (service.variables !== undefined)
-      for (const variable of service.variables)
-        if (!mono.variables.some((item) => item.name === variable.name))
-          mono.variables.push(variable)
-
-    // every declared port is bound by the single mono process, none is primary
-    if (service.port !== undefined)
-      (mono.backends ??= []).push({ port: service.port, path: service.ingress?.path ?? '/' })
-
     // one Service fronts every backend, so its annotations are the union
     if (service.annotations !== undefined)
       mono.annotations = Object.assign(mono.annotations ?? {}, service.annotations)
@@ -143,16 +139,7 @@ function unit (context, dependency) {
       if (hosts !== undefined)
         mono.ingress.hosts = [...new Set([...(mono.ingress.hosts ?? []), ...hosts])]
     }
-
-    if (service.probe !== undefined && service.probe !== false)
-      mono.probe = service.probe
   }
-
-  if (mono.probe === undefined && dependency.probe !== undefined && dependency.probe !== false)
-    mono.probe = dependency.probe
-
-  // the more specific prefix must come first, whatever the controller's tie-break
-  mono.backends?.sort((a, b) => b.path.length - a.path.length)
 
   return mono
 }
