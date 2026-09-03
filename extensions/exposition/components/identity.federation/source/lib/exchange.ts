@@ -68,8 +68,9 @@ export async function exchange (credentials: string, ctx: Ctx): Promise<Payload 
   const jwks = await createRemoteJWKSet(iss, ctx.fetch)
 
   const { payload } = await jose.jwtVerify(tokens.id_token, jwks, {
+    issuer: iss,
     audience: trusted.aud,
-    issuer: iss
+    requiredClaims: ['exp']
   })
 
   return payload as Payload

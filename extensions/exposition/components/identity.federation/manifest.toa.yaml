@@ -201,7 +201,7 @@ configuration:
               type: string
               format: uri
             aud:
-              description: Acceptable `aud` value(s). Required for Authorization Code Flow.
+              description: Acceptable `aud` value(s)
               anyOf:
                 - type: string
                 - type: array
@@ -227,6 +227,7 @@ configuration:
               type: string
           required:
             - iss
+            - aud
         default: []
       principal:
         title: Principal

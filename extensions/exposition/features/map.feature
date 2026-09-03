@@ -235,6 +235,7 @@ Feature: HTTP context mapping
       """yaml
       trust:
         - iss: http://localhost:44444
+          aud: test
       """
     And the `echo` is running with the following manifest:
       """yaml
@@ -269,6 +270,7 @@ Feature: HTTP context mapping
       """yaml
       trust:
         - iss: http://localhost:44444
+          aud: test
       assert: false
       """
     And the `pots` is running with the following manifest:

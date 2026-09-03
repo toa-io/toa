@@ -21,7 +21,11 @@ export async function decode (token: string, ctx: Ctx): Promise<Payload | Error>
 
   const jwks = await createRemoteJWKSet(iss, ctx.fetch)
 
-  const { payload } = await jose.jwtVerify(token, jwks, { audience: trusted.aud })
+  const { payload } = await jose.jwtVerify(token, jwks, {
+    issuer: iss,
+    audience: trusted.aud,
+    requiredClaims: ['exp']
+  })
 
   return payload as Payload
 }

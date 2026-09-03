@@ -115,8 +115,8 @@ iss: code issuer
 for: redirect URI
 ```
 
-Trust configuration for the issuer requires `aud` and either `secret` or `signature`
-values to enable the Authorization Code Flow.
+Trust configuration for the issuer requires either `secret` or `signature`
+to enable the Authorization Code Flow.
 
 > If `aud` is an array, the first value is used.
 
