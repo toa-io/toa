@@ -25,7 +25,10 @@
   "main": "src/index.js",
   "exports": {
     ".": "./src/index.js",
-    "./stage": "./stage/src/index.js",
+    "./stage": {
+      "types": "./stage/types/index.d.ts",
+      "default": "./stage/src/index.js"
+    },
     "./package.json": "./package.json"
   },
   "types": "types/index.d.ts",
