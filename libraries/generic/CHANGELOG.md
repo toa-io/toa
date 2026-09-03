@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.282](https://github.com/toa-io/toa/compare/v1.0.0-alpha.281...v1.0.0-alpha.282) (2026-09-03)
+
+### Bug Fixes
+
+* **exposition:** quote criteria values built from requests ([af3bf79](https://github.com/toa-io/toa/commit/af3bf794d8668a45a4390ad16ffa04aa4fe078e8))
+
+
 # [1.0.0-alpha.278](https://github.com/toa-io/toa/compare/v1.0.0-alpha.277...v1.0.0-alpha.278) (2026-09-03)
 
 ### Bug Fixes

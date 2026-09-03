@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/atomicity",
-  "version": "1.0.0-alpha.278",
+  "version": "1.0.0-alpha.282",
   "type": "module",
   "description": "Toa Atomicity Connector",
   "author": "temich <tema.gurtovoy@gmail.com>",
@@ -18,7 +18,7 @@
   },
   "dependencies": {
     "@sesamecare-oss/redlock": "1.4.0",
-    "@toa.io/core": "1.0.0-alpha.278",
+    "@toa.io/core": "1.0.0-alpha.282",
     "ioredis": "6.0.0",
     "n-and-i": "0.3.2",
     "openspan": "1.0.0-alpha.277"

@@ -3,6 +3,37 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.282](https://github.com/toa-io/toa/compare/v1.0.0-alpha.281...v1.0.0-alpha.282) (2026-09-03)
+
+### Bug Fixes
+
+* **exposition:** bouncer requires ip ([d470494](https://github.com/toa-io/toa/commit/d470494fdb42372a434d945205e93e27bca8880b))
+* **exposition:** bound OTP guessing ([44b5a6a](https://github.com/toa-io/toa/commit/44b5a6a1f743cca4bd80b0b7e9f9691af83fb2ab))
+* **exposition:** do not delegate the right to delegate ([cf1f83f](https://github.com/toa-io/toa/commit/cf1f83f6bb1051b8b399c632bb81f08a2fd9fb14))
+* **exposition:** keep credentials out of the logs ([17a5529](https://github.com/toa-io/toa/commit/17a55296ec530b6f3c3a1d4e746499e52ef1c126))
+* **exposition:** leave custom tokens unrefreshed ([ebec3d5](https://github.com/toa-io/toa/commit/ebec3d5ea421e8c780f7c7afd781c588851ef8fa))
+* **exposition:** match token permissions on the routed path ([6c888f5](https://github.com/toa-io/toa/commit/6c888f5e51a379c0cdf46e8e3b3b0fa406328de6))
+* **exposition:** name the client address header in the authentication annotation ([433ca3a](https://github.com/toa-io/toa/commit/433ca3ae19bc2c68fa26f6205e559ea7e652fcb9))
+* **exposition:** never key on the connection address ([ad719af](https://github.com/toa-io/toa/commit/ad719afb89455a9cbdb97f144928b233aababb73))
+* **exposition:** quote criteria values built from requests ([af3bf79](https://github.com/toa-io/toa/commit/af3bf794d8668a45a4390ad16ffa04aa4fe078e8))
+* **exposition:** read roles again when a token is refreshed ([96c59ca](https://github.com/toa-io/toa/commit/96c59cae39a1b023e6b2b05720ea0682d4c746ad))
+* **exposition:** read the client address from a header the deployment names ([216c2d8](https://github.com/toa-io/toa/commit/216c2d8f21bdb67c7d4387708c80f806f1c72360))
+* **exposition:** refuse rejected credentials before inception ([48e76a8](https://github.com/toa-io/toa/commit/48e76a8f421b95492d256b5c7a9ca61f71f0d7fd))
+* **exposition:** require the audience of a trusted issuer ([0d13604](https://github.com/toa-io/toa/commit/0d13604e3707ed2fcac01500beb27d992314c549))
+* **exposition:** resolve an authentication scheme by its own name only ([ae116d1](https://github.com/toa-io/toa/commit/ae116d1813fc1e5a42b5263daedb752703eb08f0))
+* **exposition:** resolve the client address once, into the request context ([2f36347](https://github.com/toa-io/toa/commit/2f36347d948bab0c421ff63105312549fffc660a))
+* **exposition:** revoke custom tokens through their keys ([359d882](https://github.com/toa-io/toa/commit/359d8825315fce010ea8ac3700d2778b48362f72))
+* **exposition:** revoke custom tokens when a role is revoked ([191a0c6](https://github.com/toa-io/toa/commit/191a0c603ef53dcab5ccd005dd7296d9c9bfaa0b))
+* **exposition:** scope the principal to an authority ([98a0d36](https://github.com/toa-io/toa/commit/98a0d36267523eb1a1aa58742744cd39a21e94e9))
+* **exposition:** split Basic credentials at the first colon ([596e5dc](https://github.com/toa-io/toa/commit/596e5dc2e6e589007dc7914374e1592ecc71c997))
+* **exposition:** validate the request authority ([68686c9](https://github.com/toa-io/toa/commit/68686c9340effb148532607caa1abbaaa5dc0519))
+
+### Features
+
+* **core:** a Host for extensions ([6315eac](https://github.com/toa-io/toa/commit/6315eac1e9fb05be472272de06385c54ad5934ce))
+* **exposition:** meter failed authentications per address ([98b07d3](https://github.com/toa-io/toa/commit/98b07d307815ee4a2a0f30f189cbcfc9d78a4d62))
+
+
 # [1.0.0-alpha.278](https://github.com/toa-io/toa/compare/v1.0.0-alpha.277...v1.0.0-alpha.278) (2026-09-03)
 
 **Note:** Version bump only for package @toa.io/extensions.exposition

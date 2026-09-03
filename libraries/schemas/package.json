@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/schemas",
-  "version": "1.0.0-alpha.278",
+  "version": "1.0.0-alpha.282",
   "type": "module",
   "description": "Toa Schemas",
   "homepage": "https://toa.io",
@@ -25,7 +25,7 @@
   "main": "source/index.js",
   "types": "types/index.d.ts",
   "dependencies": {
-    "@toa.io/generic": "1.0.0-alpha.278",
+    "@toa.io/generic": "1.0.0-alpha.282",
     "ajv": "8.20.0",
     "ajv-formats": "3.0.1",
     "better-ajv-errors": "2.0.3",
