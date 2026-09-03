@@ -3,6 +3,7 @@ import fs from 'fs-extra'
 import { createHash } from 'node:crypto'
 
 import { Image } from './image.js'
+import { declare } from './format.js'
 
 class Mono extends Image {
   dockerfile = join(import.meta.dirname, 'mono.Dockerfile')
@@ -59,8 +60,12 @@ class Mono extends Image {
   async prepare (root) {
     const context = await super.prepare(root)
 
-    for (const component of this.#components)
-      await fs.copy(component.path, join(context, component.locator.label))
+    for (const component of this.#components) {
+      const target = join(context, component.locator.label)
+
+      await fs.copy(component.path, target)
+      await declare(component.path, target, component.locator.label)
+    }
 
     return context
   }

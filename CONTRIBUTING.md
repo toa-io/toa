@@ -39,8 +39,13 @@ From a workspace that has a `features` script (`extensions/exposition`, `extensi
 
 ```shell
 $ npm run features                                  # all scenarios in that workspace
-$ npx cucumber-js features/identity.basic.feature   # one file
-$ npx cucumber-js --name 'Changing the password'    # one scenario
+```
+
+A single file or scenario needs the loader the `features` script carries:
+
+```shell
+$ TSX_TSCONFIG_PATH=features/steps/tsconfig.json NODE_OPTIONS=--import=tsx \
+    npx cucumber-js features/identity.basic.feature
 ```
 
 The exposition suite also runs over cleartext HTTP/2, booting the gateway and pointing the
@@ -50,25 +55,35 @@ agent at it on that protocol:
 $ npm run features:h2c
 ```
 
-Root `cucumber.js` also defines profiles. A profile that sets `paths` makes Cucumber append
-command-line paths instead of replacing them — passing a file there runs the whole suite as well.
-Select by name instead:
+A workspace's suite is run from that workspace, which is where its configuration and its
+loader are:
 
 ```shell
-$ npx cucumber-js -p exposition
-$ npx cucumber-js -p exposition --name 'Changing the password'
+$ npm run features -w @toa.io/extensions.exposition
 ```
 
-Profiles set `failFast`, so a run stops at the first failed scenario.
+`cucumber.mjs` states one profile — a configuration written as a module exports the profile
+itself, not a map of them — and it sets `failFast`, so a run stops at the first failed scenario.
 
 ## Tests
 
-`integration/` is obsolete. Do not add or change tests there. New coverage belongs in Cucumber features.
+Unit tests run on `node:test`, through `tsx`:
+
+```shell
+$ npm run test:unit
+$ node --import tsx --test 'runtime/core/test/**/*.test.js'
+```
+
+A suite that replaces a module needs `--experimental-test-module-mocks`, which `test:unit`
+passes.
 
 ## Userspace
 
-Component code depends on no Toa package: nothing under `@toa.io/*` is required or imported
-by an operation, an event, a receiver or a guard. Everything a component needs is on `context`;
+Component code depends on no Toa package: nothing under `@toa.io/*` is imported by an operation,
+an event, a receiver or a guard. A component may be written as an ES module or a CommonJS one; a
+component that is a module says so in a `package.json` beside its manifest.
+
+Everything a component needs is on `context`;
 a configuration secret, for one, is read as `context.configuration.apiKey.unwrap()`.
 
 The components an extension ships are Toa's own, and may use its packages.

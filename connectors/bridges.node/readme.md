@@ -1,12 +1,12 @@
 # Node.js Bridge
 
-> Currently, Node.js bridge only
-> supports [CommonJS modules](https://nodejs.org/api/modules.html#modules-commonjs-modules).
+> A component may be written as an ES module or a CommonJS one. A component that is a module
+> states so in a `package.json` beside its manifest, or names its files `.mjs`.
 
 ## Algorithm Definition
 
-Operation's algorithms are defined as CommonJS modules in under `operations` directory in the
-component root. Algorithm module must export a function which is Algorithm Function, Class or
+Operation's algorithms are defined as modules under the `operations` directory in the component
+root. An algorithm module must export one function, which is an Algorithm Function, Class or
 Factory. Module file name without extension is an operation name (endpoint).
 
 ### Function
@@ -20,7 +20,7 @@ function transition (input, object, context) {
   return { foo: 'bar' }
 }
 
-exports.transition = transition
+export { transition }
 ```
 
 Exported function's name defines operation `type` property, thus must be one of:
@@ -60,7 +60,7 @@ class Transition {
   }
 }
 
-exports.Transition = Transition
+export { Transition }
 ```
 
 Exported class name must be one of: `Transition`, `Observation`, or `Assignment`, as it defines
@@ -77,7 +77,7 @@ class ObjectTransitionFactory {
   }
 }
 
-exports.ObjectTransitionFactory = ObjectTransitionFactory
+export { ObjectTransitionFactory }
 ```
 
 Exported class name must follow the pattern: `{Subject}{Type}Factory`, where `Subject` and `Type`
@@ -108,7 +108,7 @@ async function dispose (context) {
   await release(context.state.providers)
 }
 
-module.exports = { preflight, dispose }
+export { preflight, dispose }
 ```
 
 | Phase       | When                                                                            |

@@ -1,7 +1,7 @@
 import assert from 'node:assert'
 import { Agent, request } from 'undici'
 import { after, binding, then, when } from 'cucumber-tsflow'
-import { PATH, PROBE } from '../../source/HTTP'
+import { PATH, PROBE } from '../../source/HTTP/index.js'
 
 @binding()
 export class Probe {

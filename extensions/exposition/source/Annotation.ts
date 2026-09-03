@@ -1,5 +1,5 @@
 import type { Resources } from '@toa.io/operations'
-import type { Protocol } from './HTTP'
+import type { Protocol } from './HTTP/index.js'
 
 export interface Annotation {
   authorities: Record<string, string>
