@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.281](https://github.com/toa-io/toa/compare/v1.0.0-alpha.280...v1.0.0-alpha.281) (2026-09-03)
+
+### Bug Fixes
+
+* **deps:** state the cookie bump where npm can resolve it ([11fcdf8](https://github.com/toa-io/toa/commit/11fcdf874ee33107901b5c06435ab10fba64870f))
+
+
 # [1.0.0-alpha.280](https://github.com/toa-io/toa/compare/v1.0.0-alpha.279...v1.0.0-alpha.280) (2026-09-03)
 
 ### Bug Fixes
