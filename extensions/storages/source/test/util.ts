@@ -92,8 +92,8 @@ export const suites = [
       ]
     },
     secrets: {
-      CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY ?? '',
-      CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET ?? ''
+      API_KEY: process.env.CLOUDINARY_API_KEY ?? '',
+      API_SECRET: process.env.CLOUDINARY_API_SECRET ?? ''
     }
   }
   // add more providers here, use `run` as a condition to run the test

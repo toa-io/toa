@@ -203,8 +203,8 @@ then an error is returned.
 
 Secrets:
 
-- `CLOUDINARY_API_KEY`
-- `CLOUDINARY_API_SECRET`
+- `API_KEY`
+- `API_SECRET`
 
 ### Filesystem
 
