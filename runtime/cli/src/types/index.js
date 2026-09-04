@@ -1,7 +1,7 @@
-import { basename, join } from 'node:path'
-import { existsSync } from 'node:fs'
+import { basename, dirname, join, relative, sep } from 'node:path'
+import { existsSync, readFileSync } from 'node:fs'
 import { mkdir, readFile, writeFile } from 'node:fs/promises'
-import { context as normalize } from '@toa.io/norm'
+import { component as load, context as normalize } from '@toa.io/norm'
 
 import { component } from './component.js'
 import { module as contextModule } from './context.js'
@@ -34,10 +34,18 @@ export async function types (root, environment) {
     referenced.push({ manifest, from: specifier })
   }
 
-  // one an extension contributes: it lives in node_modules, so its Component is written here
-  await mkdir(join(directory, REMOTE), { recursive: true })
-
+  // one an extension contributes ships its own types, and is referenced where they are
   for (const manifest of contributed) {
+    const shipped = published(manifest)
+
+    if (shipped !== undefined) {
+      referenced.push({ manifest, from: shipped })
+      continue
+    }
+
+    // an extension that ships none: its Component is written here instead
+    await mkdir(join(directory, REMOTE), { recursive: true })
+
     const file = manifest.locator.id + '.ts'
 
     await writeFile(join(directory, REMOTE, file), component(manifest), 'utf8')
@@ -49,6 +57,26 @@ export async function types (root, environment) {
   written.push(...await surface(directory, contextModule(context, referenced)))
 
   await declare(directory, module, 'index.ts')
+
+  return written
+}
+
+/**
+ * The types of components that belong to no Context of their own — the ones Toa and its
+ * extensions ship. They are called, never written against a `remote` that is knowable here,
+ * so what is written is what the manifest states and nothing more.
+ *
+ * @param {string[]} paths
+ * @returns {Promise<string[]>}
+ */
+export async function components (paths) {
+  const written = []
+
+  for (const path of paths) {
+    const manifest = await load(path)
+
+    written.push(...await surface(join(path, TYPES), component(manifest)))
+  }
 
   return written
 }
@@ -84,6 +112,38 @@ const OWN = `export * from './toa.js'
 
 // What a manifest does not state belongs here, and every run keeps it.
 `
+
+/**
+ * Where a component's own package publishes its types, as the specifier that reaches them.
+ * `undefined` where the package ships none — an extension built before they were generated.
+ *
+ * @param {toa.norm.Component} manifest
+ * @returns {string | undefined}
+ */
+function published (manifest) {
+  if (!existsSync(join(manifest.path, TYPES, 'index.ts'))) return undefined
+
+  let directory = manifest.path
+
+  // the package the component belongs to, and where it sits inside it
+  while (directory !== dirname(directory)) {
+    const file = join(directory, 'package.json')
+
+    if (existsSync(file)) {
+      const { name } = JSON.parse(readFileSync(file, 'utf8'))
+
+      if (name === undefined) return undefined
+
+      const inside = relative(directory, manifest.path).split(sep).join('/')
+
+      return `${name}/${inside}/${TYPES}/index.js`
+    }
+
+    directory = dirname(directory)
+  }
+
+  return undefined
+}
 
 /**
  * The components the Context resolves that it does not itself declare — what its extensions

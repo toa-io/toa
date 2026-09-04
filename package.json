@@ -85,6 +85,8 @@
     "publish:alpha": "npx lerna publish --conventional-prerelease --preid alpha --dist-tag alpha --no-commit-hooks --no-changelog --yes --message \"ci: %s\" --sign-git-commit",
     "setup:mongo": "openssl rand -base64 756 > ./.mongo-keyfile && chmod 400 ./.mongo-keyfile",
     "ci": "rm -f package-lock.json && rm -rf node_modules && npm exec --workspaces -c \"rm -rf node_modules transpiled\" && npm i",
+    "types": "node runtime/runtime/bin/toa types -q -c 'runtime/prototype' 'extensions/*/components/*'",
+    "pretranspile": "npm run types",
     "transpile": "npm run transpile --workspaces --if-present",
     "retranspile": "npm exec --workspaces -c \"rm -rf transpiled\" && find . -name tsconfig.tsbuildinfo -not -path '*/node_modules/*' -delete && npm run transpile",
     "compose": "docker compose rm -f -s -v && docker compose up -d",

@@ -1,0 +1,46 @@
+// Written by `toa types`. Every run rewrites it.
+// What a manifest does not state belongs in a file of your own.
+
+import type { Query, RemoteError } from '@toa.io/core'
+import type { Readable } from 'node:stream'
+
+export interface Entity {
+  authority: string
+  username: string
+  identity?: string
+  id: string
+  _version?: number
+  _created?: number
+  _updated?: number
+  _deleted?: number | null
+}
+
+export type IssueInput = {
+  authority: string
+  username: string
+  identity?: string
+  /** OTP expiration time in seconds */
+  lifetime?: number
+}
+
+export type AuthenticateInput = {
+  authority: string
+  credentials: string
+}
+
+export type AuthenticateOutput = {
+  identity?: {
+    id?: string
+  }
+}
+
+export interface Component {
+  issue: (request: { input: IssueInput, task?: boolean }) => Promise<unknown>
+  authenticate: (request: { input: AuthenticateInput, task?: boolean }) => Promise<AuthenticateOutput | RemoteError<"INVALID_CREDENTIALS" | "EXPIRED" | "TOO_MANY_ATTEMPTS" | "NOT_FOUND">>
+  assign: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<void>
+  ensure: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Entity>
+  enumerate: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Entity[]>
+  observe: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Entity | null>
+  stream: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Readable>
+  terminate: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<void>
+}

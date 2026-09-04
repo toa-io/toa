@@ -15,6 +15,13 @@ const builder = (yargs) => {
       type: 'string',
       desc: 'Environment the Context is read for'
     })
+    .option('components', {
+      alias: 'c',
+      group: 'Command options:',
+      type: 'string',
+      desc: 'Paths to components that belong to no Context, instead of reading one'
+    })
+    .array('components')
     .option('quiet', {
       alias: 'q',
       group: 'Command options:',
@@ -23,7 +30,8 @@ const builder = (yargs) => {
     })
     .example([
       ['$0 types'],
-      ['$0 types -p ./application']
+      ['$0 types -p ./application'],
+      ['$0 types -c ./components/*']
     ])
 }
 
