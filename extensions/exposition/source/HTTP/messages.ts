@@ -201,6 +201,13 @@ export interface OutgoingMessage {
 
   /** tag the response with a hash of the encoded body, see `conditional` */
   etag?: boolean
+
+  /**
+   * Built by the gateway rather than returned by an operation, as a request is `authentic`
+   * when it was made by one: what is in it is the gateway's own, and the checks that answer
+   * for what an operation returns have nothing to say about it.
+   */
+  authentic?: boolean
 }
 
 export interface Query {
