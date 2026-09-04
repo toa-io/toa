@@ -231,6 +231,7 @@ exposition:
         requests: 10
         interval: 3600
       io:status: status
+      cache:exact: no-store
       endpoint: register
     /:id:
       GET:

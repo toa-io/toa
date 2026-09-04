@@ -23,14 +23,23 @@ export class Cache implements DirectiveFamily<Directive> {
   }
 
   public async settle (directives: Directive[], context: AuthenticatedContext, response: http.OutgoingMessage): Promise<void> {
+    const directive = directives[0]
+
+    response.headers ??= new Headers()
+
+    // `cache:exact` sets what it is given, whatever the method: whether a reply may be
+    // stored at all is not a question about the method's cacheability, and a token
+    // endpoint answers a POST it must not have kept
+    if (directive instanceof Exact) {
+      directive.set(context, response.headers)
+
+      return
+    }
+
     const method = context.request.method
 
     if (method !== 'GET' && method !== 'HEAD')
       return
-
-    const directive = directives[0]
-
-    response.headers ??= new Headers()
 
     if (directive === undefined) {
       if (context.identity !== null && !Control.disabled(response.headers)) {

@@ -35,6 +35,7 @@ Feature: Client registration
     Then the following reply is sent:
       """
       201 Created
+      cache-control: no-store
 
       client_id: ${{ client }}
       client_name: Claude
@@ -101,6 +102,7 @@ Feature: Client registration
     Then the following reply is sent:
       """
       400 Bad Request
+      cache-control: no-store
 
       error: invalid_redirect_uri
       """
