@@ -3,6 +3,9 @@
 > A component may be written as an ES module or a CommonJS one. A component that is a module
 > states so in a `package.json` beside its manifest, or names its files `.mjs`.
 
+> A module may be written in JavaScript or in [TypeScript](#typescript). Node reads a `.ts` as it
+> is, so a component runs from what it was written as.
+
 ## Algorithm Definition
 
 Operation's algorithms are defined as modules under the `operations` directory in the component
@@ -126,3 +129,108 @@ Anything a component leaves open holds the process: a `toa compose` exits when t
 released, and a feature suite that boots a composition in its own process does the same. Background
 work a component starts and does not await — a stream it drives, a client it keeps — belongs in
 `dispose`.
+
+## TypeScript
+
+An operation, an event, a receiver, a guard or a run command may be a `.ts`. Node erases the types
+and compiles nothing else, so there is no build step, no output directory and no loader — the file
+beside the manifest is the file that runs.
+
+```typescript
+// operations/create.ts
+
+import type { Context, CreateInput } from '../types/index.d.ts'
+
+function transition (input: CreateInput, object: Entity, context: Context) {
+  // ...
+
+  return { foo: 'bar' }
+}
+
+export { transition }
+```
+
+The name a module exports still says what it is, and the second parameter still says the scope;
+the annotations are gone by the time either is read.
+
+### A relative import carries the extension of the file that exists
+
+Node rewrites no specifier. What is imported is what is on disk:
+
+```typescript
+import { credentials } from './lib/credentials.js'
+```
+
+```typescript
+import { credentials } from './lib/credentials.ts'
+```
+
+This is the opposite of the rule for a package that is transpiled, where an import names the file
+the compiler will emit.
+
+### A type is imported with `import type`
+
+Node keeps an import that is not marked as one, and then resolves it at runtime — so
+`import { type Context }` leaves an import behind and fails on a module that only ever had types.
+`import type` is erased whole, which is also what keeps a component's own types off its runtime
+graph: nothing under `@toa.io/*` is loaded by a component.
+
+```typescript
+import { type Context } from '../types/index.d.ts'
+```
+
+```typescript
+import type { Context } from '../types/index.d.ts'
+```
+
+`toa types` writes those types: `types/toa.d.ts` from the manifest, rewritten every run, and
+`types/index.d.ts`, written once and left alone, which is where what no manifest states belongs.
+
+### The syntax has to be erasable
+
+An `enum`, a `namespace` and a parameter property are not annotations — they emit code, and Node
+refuses them:
+
+```
+operations/create.ts: TypeScript enum is not supported in strip-only mode. Types are erased,
+never compiled, so a component is written in erasable syntax only — no enum, no namespace, no
+parameter property.
+```
+
+A component that is typechecked can be told to refuse them first, which is what these three
+options are for — one per rule above:
+
+```json
+{
+  "compilerOptions": {
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "target": "esnext",
+    "types": ["node"],
+    "strict": true,
+    "noEmit": true,
+    "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": true,
+    "erasableSyntaxOnly": true
+  },
+  "include": ["operations", "events", "receivers", "guards", "rc", "types"]
+}
+```
+
+### One name is one module
+
+A directory the bridge reads is a namespace, and the file name is the endpoint. Two files that
+resolve to one name are refused rather than ranked:
+
+```
+Component at '/app/components/orders' has more than one operations/create: create.js and create.ts
+```
+
+A file in `operations` is an operation, so shared code lives somewhere the bridge does not read —
+a `lib` beside them, not among them.
+
+### What a package ships is transpiled
+
+Node does not erase types under `node_modules`. A component an application writes is read from
+where the application put it, and may be TypeScript; a component a package ships is read from
+inside the installed package, and is transpiled before it is published.
