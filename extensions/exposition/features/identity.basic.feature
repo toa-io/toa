@@ -323,6 +323,50 @@ Feature: Basic authentication
       message: Principal username cannot be changed
       """
 
+  Scenario: A Principal incepted by its own credentials holds the role at once
+    Given the `identity.basic` database is empty
+    And the `identity.basic` configuration:
+      """yaml
+      principal:
+        authority: nex
+        username: root
+      """
+    And the annotation:
+      """yaml
+      /:
+        io:output: true
+        GET:
+          auth:role: system:stub
+          dev:stub:
+            access: granted!
+      """
+    # the token the inception replies with carries the roles the Identity has by then
+    When the following request is received:
+      """
+      POST /identity/ HTTP/1.1
+      host: nex.toa.io
+      authorization: Basic cm9vdDpzZWNyZXQjMTIzNA==
+      accept: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      201 Created
+      authorization: Token ${{ token }}
+      """
+    When the following request is received:
+      """
+      GET / HTTP/1.1
+      host: nex.toa.io
+      authorization: Token ${{ token }}
+      accept: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+
+      access: granted!
+      """
+
   Scenario: Principal username in another authority is ordinary credentials
     Given the `identity.basic` configuration:
       """yaml

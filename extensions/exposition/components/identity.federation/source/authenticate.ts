@@ -1,5 +1,5 @@
 import { newid, quote } from '@toa.io/generic'
-import { resolve } from './lib/index.js'
+import { principal, resolve } from './lib/index.js'
 import type { JWTPayload } from 'jose'
 import type { Maybe } from '@toa.io/core'
 import type { Context, Scheme } from './types/index.js'
@@ -18,10 +18,12 @@ export async function effect ({ scheme, authority, credentials }: Input, context
 
   const query = { criteria: `authority==${quote(authority)};iss==${quote(iss)};sub==${quote(sub)}` }
 
+  const asserted = newid()
+
   const credential = context.configuration.assert !== false
     ? await context.local.ensure({
       query,
-      entity: { authority, iss, sub, identity: newid() }
+      entity: { authority, iss, sub, identity: asserted }
     })
     : await context.local.observe({ query })
 
@@ -30,6 +32,10 @@ export async function effect ({ scheme, authority, credentials }: Input, context
 
   if (credential instanceof Error)
     return credential
+
+  // the Identity this call has just created is the only one whose Role is not granted yet
+  if (credential.identity === asserted)
+    await principal(credential, context)
 
   return { identity: { id: credential.identity, claims } }
 }

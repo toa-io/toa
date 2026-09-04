@@ -19,6 +19,9 @@ export interface Context {
       tokens: {
         revoke: Call<void, IdentityTokensRevokeInput>
       }
+      roles: {
+        principal: Call<void, { id: string }>
+      }
     }
   }
   logs: Logs
