@@ -18,7 +18,8 @@
   },
   "gitHead": "61c8e74a336385265767e9fd37d49128cb51b17f",
   "dependencies": {
-    "@toa.io/extensions.stash": "1.0.0-alpha.282",
-    "@toa.io/userland": "1.0.0-alpha.282"
+    "@toa.io/core": "1.0.0-alpha.282",
+    "@toa.io/extensions.configuration": "1.0.0-alpha.282",
+    "@toa.io/extensions.stash": "1.0.0-alpha.282"
   }
 }

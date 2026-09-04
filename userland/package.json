@@ -24,18 +24,13 @@
   },
   "main": "src/index.js",
   "exports": {
-    ".": {
-      "types": "./types/index.d.ts",
-      "default": "./src/index.js"
-    },
-    "./types": "./types/index.d.ts",
+    ".": "./src/index.js",
     "./stage": {
       "types": "./stage/types/index.d.ts",
       "default": "./stage/src/index.js"
     },
     "./package.json": "./package.json"
   },
-  "types": "types/index.d.ts",
   "dependencies": {
     "@toa.io/boot": "1.0.0-alpha.282",
     "@toa.io/core": "1.0.0-alpha.282",

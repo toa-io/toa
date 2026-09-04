@@ -40,7 +40,7 @@ const CONTRIBUTIONS = {
 
     // a secret is what the schema says it is, not what the deployed value happens to look like
     if (JSON.stringify(declaration.schema).includes('"secret"'))
-      importing('@toa.io/userland/types', 'Secret')
+      importing('@toa.io/extensions.configuration', 'Secret')
 
     return { name: 'configuration', type: emit(declaration.schema) }
   },

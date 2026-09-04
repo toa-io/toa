@@ -5,12 +5,12 @@ declare namespace toa.core {
 
   namespace transition {
 
-    type Event = {
+    type Event<State = Object, Trailers = Object> = {
       /** the pre-image; null when the entity did not exist before */
-      origin: Object | null
-      state: Object
+      origin: State | null
+      state: State
       /** out-of-band values an algorithm wrote into `state._trailers`; must be serializable */
-      trailers?: Object
+      trailers?: Trailers
       input?: Object
     }
 
@@ -35,4 +35,4 @@ declare namespace toa.core {
 }
 
 export type State = toa.core.State
-export type Event = toa.core.transition.Event
+export type Event<State = Object, Trailers = Object> = toa.core.transition.Event<State, Trailers>

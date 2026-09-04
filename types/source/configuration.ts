@@ -1,1 +1,1 @@
-export type { Secret } from '@toa.io/userland/types'
+export type { Secret } from '@toa.io/extensions.configuration'
