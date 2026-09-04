@@ -31,7 +31,7 @@ export class Map implements DirectiveFamily {
       })
   }
 
-  public async preflight (directives: Directive[], context: Input, parameters: Parameter[]): Promise<Output> {
+  public async precall (directives: Directive[], context: Input, parameters: Parameter[]): Promise<Output> {
     const properties = {}
 
     for (const directive of directives)

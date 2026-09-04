@@ -10,7 +10,7 @@ const endpoints = {} as unknown as EndpointsFactory
 
 const directives = {
   create: () => ({
-    preflight: async () => null,
+    precall: async () => null,
     settle: async () => undefined,
     dispose: () => undefined
   }),

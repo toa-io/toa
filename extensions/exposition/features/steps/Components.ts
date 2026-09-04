@@ -4,7 +4,6 @@ import { dirname, join } from 'node:path'
 import tsflow from 'cucumber-tsflow'
 
 import * as boot from '@toa.io/boot'
-import { timeout } from '@toa.io/generic'
 import { type Connector } from '@toa.io/core'
 import { load as parse } from 'js-yaml'
 import { Gateway } from './Gateway.js'
@@ -49,7 +48,6 @@ export class Components {
     this.compositions[MAP] = await boot.composition(map())
 
     await this.compositions[MAP].connect()
-    await timeout(50) // discovery
   }
 
   /** The values component, as the configuration extension ships it; the service hosts it alone. */
@@ -62,7 +60,6 @@ export class Components {
     this.compositions[VALUES] = await boot.composition([values()])
 
     await this.compositions[VALUES].connect()
-    await timeout(50) // discovery
   }
 
   /** What the deployment would tell the values service, as the scenario needs it. */
@@ -101,7 +98,6 @@ export class Components {
     this.compositions[name] = await boot.composition([path])
 
     await this.compositions[name].connect()
-    await timeout(50) // discovery
   }
 }
 

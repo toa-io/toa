@@ -4,7 +4,7 @@ import tsflow from 'cucumber-tsflow'
 
 import { Factory } from '@toa.io/extensions.realtime'
 import * as boot from '@toa.io/boot'
-import { match, timeout } from '@toa.io/generic'
+import { match } from '@toa.io/generic'
 import { load as parse } from 'js-yaml'
 import { Agent } from '@toa.io/agent'
 import { Parameters } from './Parameters.js'
@@ -55,8 +55,6 @@ export class Realtime {
 
     const id = await this.createIdentity(name)
 
-    await this.awaitRoute(id)
-
     const parts = await this.agent.parts(`
       GET /realtime/streams/\${{ ${name}.id }}/ HTTP/1.1
       authorization: Token \${{ ${name}.token }}
@@ -103,33 +101,6 @@ export class Realtime {
 
     this.instance = null
     process.env.TOA_REALTIME = undefined
-  }
-
-  /**
-   * The route the realtime service announces reaches the gateway over a broadcast, and a gateway
-   * an earlier scenario left running is past the pause its own start takes for discovery. The
-   * request waits for the branch; without it the scenario reads the 404 that precedes it.
-   */
-  private async awaitRoute (id: string): Promise<void> {
-    const deadline = Date.now() + ROUTE_TIMEOUT
-
-    while (Date.now() < deadline) {
-      // a method the route does not define, because GET streams and would not answer: a route
-      // that is there replies 405, one that is not replies 404
-      const response = await this.agent.fetch(`
-        PATCH /realtime/streams/${id}/ HTTP/1.1
-        host: nex.toa.io
-      `)
-
-      await response.body.dump()
-
-      if (response.statusCode !== 404)
-        return
-
-      await timeout(25)
-    }
-
-    assert.fail(`The realtime route has not been discovered in ${ROUTE_TIMEOUT} ms`)
   }
 
   private async createIdentity (name: string): Promise<string> {
@@ -184,4 +155,3 @@ export class Realtime {
   }
 }
 
-const ROUTE_TIMEOUT = 5000

@@ -14,9 +14,9 @@ export class Require implements DirectiveFamily {
     return new directives[name](value)
   }
 
-  public preflight (instances: Directive[], context: Input): null {
+  public precall (instances: Directive[], context: Input): null {
     for (const instance of instances)
-      instance.preflight(context)
+      instance.precall(context)
 
     return null
   }

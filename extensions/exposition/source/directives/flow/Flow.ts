@@ -18,7 +18,7 @@ export class Flow implements DirectiveFamily<Directive> {
     return new Class(value, remotes)
   }
 
-  public async preflight (directives: Directive[], input: Input, parameters: Parameter[]): Promise<Output> {
+  public async precall (directives: Directive[], input: Input, parameters: Parameter[]): Promise<Output> {
     for (const directive of directives) {
       if (directive.attach !== undefined)
         directive.attach(input)

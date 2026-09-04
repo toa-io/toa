@@ -12,7 +12,7 @@ export class Headers implements Directive {
     this.headers = headers
   }
 
-  public preflight (context: Input): void {
+  public precall (context: Input): void {
     for (const header of this.headers)
       if (context.request.headers[header] === undefined)
         throw new BadRequest(`Header required: ${header}`)

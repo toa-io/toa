@@ -15,7 +15,7 @@ export class Input implements Directive {
     schemas.input.validate<Permissions>(permissions, 'Incorrect \'io:input\' format')
   }
 
-  public preflight (context: Context): void {
+  public precall (context: Context): void {
     // Restrictions are on what the client sent, so the check goes to the front of the
     // pipeline whatever order the families ran in: `auth:delegate` embeds the identity
     // and `map:*` assigns mapped properties, and those additions are the server's own,

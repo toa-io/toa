@@ -26,6 +26,9 @@ export interface Annotation {
 
   /** The authorization server this context exposes; none is exposed without it. */
   oauth?: OAuth
+
+  /** JSON-RPC at `/.rpc`; none is served without it. See `documentation/rpc.md`. */
+  rpc?: RPC
   '/'?: object // parsed and validated by RTD.syntax.parse
 }
 
@@ -47,6 +50,14 @@ export interface OAuth {
 
   /** Dynamic Client Registration, off unless opened. */
   registration?: 'open' | 'closed'
+}
+
+export interface RPC {
+  /**
+   * Calls one request may carry, 32 by default. One request is one authentication and one
+   * reply however many calls it makes, so what a caller may ask for at once is bounded.
+   */
+  batch?: number
 }
 
 export interface Bouncer {

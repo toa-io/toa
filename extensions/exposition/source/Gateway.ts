@@ -3,10 +3,12 @@ import { setTimeout } from 'node:timers/promises'
 import { console } from 'openspan'
 import { type bindings, Connector } from '@toa.io/core'
 import * as http from './HTTP/index.js'
+import { RPC } from './const.js'
 import { rethrow } from './exceptions.js'
 import { decide } from './Branch.js'
 import type { Interception } from './Interception.js'
-import type { Method, Node, Parameter, Tree, Match } from './RTD/index.js'
+import type { Dispatcher } from './RPC/index.js'
+import type { DirectiveFactory, Method, Node, Parameter, Tree, Match } from './RTD/index.js'
 import type { Label } from './discovery.js'
 import type { Branch, Exposed } from './Branch.js'
 
@@ -14,6 +16,10 @@ export class Gateway extends Connector {
   private readonly broadcast: Broadcast
   private readonly tree: Tree
   private readonly interceptor: Interception
+  private readonly directives: DirectiveFactory
+
+  /** JSON-RPC is served only where the annotation asked for it. */
+  private readonly dispatcher: Dispatcher | null
   private readonly branches = new Map<string, Exposed>()
   private lastMerge = 0
   private widestGap = 0
@@ -21,12 +27,16 @@ export class Gateway extends Connector {
   private stopped = false
   private resolveFirstMerge: (() => void) | null = null
 
-  public constructor (broadcast: Broadcast, tree: Tree, interception: Interception) {
+  // eslint-disable-next-line max-params
+  public constructor (broadcast: Broadcast, tree: Tree, interception: Interception,
+    directives: DirectiveFactory, dispatcher: Dispatcher | null) {
     super()
 
     this.broadcast = broadcast
     this.tree = tree
     this.interceptor = interception
+    this.directives = directives
+    this.dispatcher = dispatcher
 
     this.depends(broadcast)
   }
@@ -38,6 +48,27 @@ export class Gateway extends Connector {
     if (interception !== null)
       return interception
 
+    // request-scoped, before anything is routed: this is where a credential is read
+    await context.timing.capture('preflight',
+      this.directives.preflight(context)).catch(rethrow)
+
+    const response = this.dispatcher !== null && context.url.pathname === RPC
+      ? await context.timing.capture('rpc',
+        this.dispatcher.dispatch(context, async (call) => await this.route(call)))
+      : await this.route(context)
+
+    // request-scoped, on whatever is going back: this is where a credential is re-issued
+    await context.timing.capture('depart',
+      this.directives.depart(context, response)).catch(rethrow)
+
+    return response
+  }
+
+  /**
+   * One call: everything that needs a node. A request makes one of these, and a request
+   * that carries several calls makes one per call.
+   */
+  private async route (context: http.Context): Promise<http.OutgoingMessage> {
     const { node, parameters } = this.match(context)
 
     if (context.request.method === 'OPTIONS')
@@ -53,8 +84,8 @@ export class Gateway extends Connector {
 
     const method = node.methods[verb]
 
-    const interruption = await context.timing.capture('preflight',
-      method.directives.preflight(context, parameters)).catch(rethrow)
+    const interruption = await context.timing.capture('precall',
+      method.directives.precall(context, parameters)).catch(rethrow)
 
     const response = interruption ??
       await context.timing.capture('call', this.call(method, context, parameters))
