@@ -52,7 +52,7 @@ operations:
     output:
       type: string
     errors:
-      - ERR_INACCESSIBLE_SCOPE
+      - INACCESSIBLE_SCOPE
   decrypt:
     input:
       type: string
@@ -145,7 +145,7 @@ operations:
           type: string
       type: object
     errors:
-      - ERR_INACCESSIBLE_SCOPE
+      - INACCESSIBLE_SCOPE
   revoke:
     concurrency: retry
 
