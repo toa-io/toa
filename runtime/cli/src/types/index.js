@@ -1,4 +1,5 @@
 import { basename, join } from 'node:path'
+import { existsSync } from 'node:fs'
 import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import { context as normalize } from '@toa.io/norm'
 
@@ -25,14 +26,12 @@ export async function types (root, environment) {
 
   // a component of the application: its types go beside it, and it is reached by its package
   for (const manifest of own.values()) {
-    const path = join(manifest.path, 'types.ts')
     const specifier = SCOPE + '/' + basename(manifest.path)
 
-    await writeFile(path, component(manifest, module), 'utf8')
-    await declare(manifest.path, specifier)
+    written.push(...await surface(join(manifest.path, TYPES), component(manifest, module)))
+    await declare(manifest.path, specifier, join(TYPES, 'index.ts'))
 
     referenced.push({ manifest, from: specifier })
-    written.push(path)
   }
 
   // one an extension contributes: it lives in node_modules, so its Component is written here
@@ -47,15 +46,44 @@ export async function types (root, environment) {
     written.push(join(directory, REMOTE, file))
   }
 
-  const index = join(directory, 'index.ts')
+  written.push(...await surface(directory, contextModule(context, referenced)))
 
-  await writeFile(index, contextModule(context, referenced), 'utf8')
   await declare(directory, module, 'index.ts')
-
-  written.push(index)
 
   return written
 }
+
+/**
+ * A component's types: what Toa writes from the manifest, and the module the component itself
+ * owns. The second is written once and never again — it is where what no manifest states
+ * belongs, and where a component written in TypeScript imports its own types from.
+ *
+ * @param {string} directory the `types` directory to write into
+ * @param {string} generated
+ * @returns {Promise<string[]>}
+ */
+async function surface (directory, generated) {
+  const toa = join(directory, 'toa.ts')
+  const index = join(directory, 'index.ts')
+
+  await mkdir(directory, { recursive: true })
+  await writeFile(toa, generated, 'utf8')
+
+  const written = [toa]
+
+  if (!existsSync(index)) {
+    await writeFile(index, OWN, 'utf8')
+    written.push(index)
+  }
+
+  return written
+}
+
+/** What a component's own type module says before the component says anything. */
+const OWN = `export * from './toa.js'
+
+// What a manifest does not state belongs here, and every run keeps it.
+`
 
 /**
  * The components the Context resolves that it does not itself declare — what its extensions
