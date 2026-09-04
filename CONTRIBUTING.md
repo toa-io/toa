@@ -16,6 +16,12 @@ $ docker compose up -d
 
 Without them a scenario hangs at `Starting composition` and prints no error.
 
+The deployment scenarios render a chart, so `helm` has to be on the `PATH`; without it the
+command produces nothing and the scenario reads an empty `stdout`.
+
+The Cloudinary scenarios upload to a real account, which no compose file can stand up. They are
+skipped unless `features/steps/.env` names one — see `.env.example` beside it.
+
 ### Transpiling
 
 Components run from their transpiled, git-ignored `operations` directories. After changing anything

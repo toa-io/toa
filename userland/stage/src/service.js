@@ -10,7 +10,7 @@ const require = createRequire(import.meta.url)
 export const service = async (ref) => {
   const path = shortcuts.resolve(ref)
   const { Factory } = await import(pathToFileURL(require.resolve(path)).href)
-  const factory = new Factory(boot)
+  const factory = new Factory(boot.host())
   const service = await factory.service()
 
   await service.connect()
