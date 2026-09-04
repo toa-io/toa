@@ -103,6 +103,7 @@ operations:
           type: boolean
       type: object
     errors:
+      - UNRECOGNIZED
       - AUTHORITY_MISMATCH
       - TOKEN_REVOKED
   issue:
