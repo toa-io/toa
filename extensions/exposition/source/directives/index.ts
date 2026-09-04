@@ -7,8 +7,9 @@ import { io } from './io/index.js'
 import { map } from './map/index.js'
 import { req } from './require/index.js'
 import { flow } from './flow/index.js'
+import { discovery } from './oauth/index.js'
 import type { DirectiveFamily } from '../RTD/index.js'
 import type { Interceptor } from '../Interception.js'
 
 export const families: DirectiveFamily[] = [authorization, io, cache, map, req, flow, octets, dev]
-export const interceptors: Interceptor[] = [cors]
+export const interceptors: Interceptor[] = [cors, discovery]

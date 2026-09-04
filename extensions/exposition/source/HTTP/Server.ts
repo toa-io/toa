@@ -12,7 +12,7 @@ import { ClientError, Exception } from './exceptions.js'
 import { Context } from './Context.js'
 import { PROBE, Probe } from './Probe.js'
 import type { IncomingMessage, Protocol, ServerResponse } from './types.js'
-import type { Bouncer } from '../Annotation.js'
+import type { Bouncer, OAuth } from '../Annotation.js'
 
 export class Server extends Connector {
   private readonly server: http.Server | http2.Http2Server
@@ -385,6 +385,9 @@ interface Properties {
 
   /** Failed authentications an address may make; none are metered unless set. */
   bouncer?: Bouncer
+
+  /** The authorization server this context exposes; none is exposed without it. */
+  oauth?: OAuth
 }
 
 export type Options = { authorities: Properties['authorities'] } & {
