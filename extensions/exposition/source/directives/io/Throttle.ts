@@ -18,7 +18,7 @@ export class Throttle implements Directive {
     schemas.throttle.validate(declaration, 'Incorrect \'io:throttle\' format')
   }
 
-  public preflight (context: http.Context, parameters: Parameter[]): void {
+  public precall (context: http.Context, parameters: Parameter[]): void {
     const retry = this.quotas.check(context, parameters)
 
     if (retry > 0)

@@ -29,7 +29,7 @@ export class Output implements Directive {
     schemas.output.validate(permissions, 'Incorrect \'io:output\' format')
   }
 
-  public preflight (context: Context): void {
+  public precall (context: Context): void {
     context.pipelines.response.push(this.restriction(context))
   }
 

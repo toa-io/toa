@@ -14,28 +14,28 @@ export class Directives implements RTD.Directives {
   public constructor (sets: RTD.DirectiveSet[]) {
     this.sets = sets
     this.spans = sets.map((set) => ({
-      preflight: options(set, 'preflight'),
+      precall: options(set, 'precall'),
       settle: options(set, 'settle')
     }))
   }
 
-  public async preflight (context: Context, parameters: RTD.Parameter[]): Promise<Output> {
+  public async precall (context: Context, parameters: RTD.Parameter[]): Promise<Output> {
     let output = null
 
     for (let i = 0; i < this.sets.length; i++) {
       const set = this.sets[i]
 
-      if (set.family.preflight === undefined)
+      if (set.family.precall === undefined)
         continue
 
-      const out = await console.span(this.spans[i].preflight,
-        async () => await set.family.preflight!(set.directives, context, parameters))
+      const out = await console.span(this.spans[i].precall,
+        async () => await set.family.precall!(set.directives, context, parameters))
 
       if (out === null)
         continue
 
       if (output !== null)
-        throw new Error('Multiple preflight directives responded')
+        throw new Error('Multiple precall directives responded')
       else
         output = out
     }
@@ -65,6 +65,9 @@ export class DirectivesFactory implements RTD.DirectiveFactory {
   private readonly mandatory: string[] = []
   private readonly instances: Directives[] = []
 
+  /** The request-scoped stages, in registration order, with the spans they run in. */
+  private readonly stages: Stage[] = []
+
   // eslint-disable-next-line max-params
   public constructor (families: RTD.DirectiveFamily[], remotes: Remotes, host: Host,
     options: Options) {
@@ -74,9 +77,34 @@ export class DirectivesFactory implements RTD.DirectiveFactory {
 
       if (family.mandatory)
         this.mandatory.push(family.name)
+
+      this.stages.push({
+        family,
+        preflight: { name: `${family.name} preflight` },
+        depart: { name: `${family.name} depart` }
+      })
     }
 
     this.remotes = remotes
+  }
+
+  /**
+   * Request-scoped, before anything is routed, so no directives are passed: a family
+   * answers here only for what it does on its own behalf.
+   */
+  public async preflight (context: Context): Promise<void> {
+    for (const stage of this.stages)
+      if (stage.family.preflight !== undefined)
+        await console.span(stage.preflight,
+          async () => { await stage.family.preflight!(context) })
+  }
+
+  /** Request-scoped, on the message going back. */
+  public async depart (context: Context, response: OutgoingMessage): Promise<void> {
+    for (const stage of this.stages)
+      if (stage.family.depart !== undefined)
+        await console.span(stage.depart,
+          async () => { await stage.family.depart!(context, response) })
   }
 
   public create (declarations: RTD.syntax.Directive[], route: string = ''): Directives {
@@ -146,7 +174,7 @@ export class DirectivesFactory implements RTD.DirectiveFactory {
   }
 }
 
-function options (set: RTD.DirectiveSet, stage: 'preflight' | 'settle'): SpanOptions {
+function options (set: RTD.DirectiveSet, stage: 'precall' | 'settle'): SpanOptions {
   const options: SpanOptions = { name: `${set.family.name} ${stage}` }
 
   if (set.names !== undefined && set.names.length > 0)
@@ -156,8 +184,14 @@ function options (set: RTD.DirectiveSet, stage: 'preflight' | 'settle'): SpanOpt
 }
 
 interface Spans {
-  preflight: SpanOptions
+  precall: SpanOptions
   settle: SpanOptions
+}
+
+interface Stage {
+  family: RTD.DirectiveFamily
+  preflight: SpanOptions
+  depart: SpanOptions
 }
 
 export const shortcuts: RTD.syntax.Shortcuts = new Map([

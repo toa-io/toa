@@ -47,7 +47,7 @@ it('should have a reply it named the status of restricted, whatever that status 
     const ctx = context()
     const output = new Output(['code', 'error'])
 
-    output.preflight(ctx, [])
+    output.precall(ctx, [])
 
     const response: OutgoingMessage = {
       body: { status: stated, code: 'SplxlO', error: 'invalid_grant', secret: 'x' }
@@ -67,7 +67,7 @@ it('should leave a failure the gateway built alone, on such a route too', () => 
   const ctx = context()
   const output = new Output(['code'])
 
-  output.preflight(ctx, [])
+  output.precall(ctx, [])
 
   // what `Server.fail` builds out of an exception, on a route that also declares `io:status`
   const response: OutgoingMessage = {

@@ -23,7 +23,7 @@ export class Status implements Directive {
     assert.ok(typeof value === 'string', '`io:status` must be a string')
   }
 
-  public preflight (): void {
+  public precall (): void {
     // nothing to do until the operation has answered
   }
 

@@ -18,7 +18,7 @@ export class Cache implements DirectiveFamily<Directive> {
     return new Class(value)
   }
 
-  public preflight (): Output {
+  public precall (): Output {
     return null
   }
 

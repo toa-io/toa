@@ -100,11 +100,18 @@ export class Authorization implements DirectiveFamily<Directive, Extension> {
     directives.sort((a, b) => (a.priority ?? 1) - (b.priority ?? 1))
   }
 
-  public async preflight (directives: Directive[],
+  /**
+   * Authentication: who the credential names, if one is presented. A credential belongs to
+   * the request, so it is read once however many calls the request carries.
+   */
+  public async preflight (context: Context): Promise<void> {
+    context.identity = await this.resolve(context)
+  }
+
+  /** Authorization: whether that identity may make this call, which every call asks anew. */
+  public async precall (directives: Directive[],
     context: Context,
     parameters: Parameter[]): Promise<Output> {
-    context.identity = await this.resolve(context)
-
     for (const directive of directives) {
       const allow = await directive.authorize(context.identity, context, parameters)
 
@@ -126,7 +133,13 @@ export class Authorization implements DirectiveFamily<Directive, Extension> {
     response: http.OutgoingMessage): Promise<void> {
     await Promise.all(directives.map(async (directive) =>
       directive.settle?.(context, response)))
+  }
 
+  /**
+   * Re-issuing a credential, and refusing a ban, are the request's business: the header
+   * carries one token however many calls were made, and a ban refuses all of them.
+   */
+  public async depart (context: Context, response: http.OutgoingMessage): Promise<void> {
     const identity = context.identity
 
     if (identity === null)

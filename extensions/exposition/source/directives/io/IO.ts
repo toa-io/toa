@@ -38,18 +38,18 @@ export class IO implements DirectiveFamily<Directive> {
     return new Directive(value, this.sync!, route)
   }
 
-  public preflight (directives: Directive[], context: http.Context,
+  public precall (directives: Directive[], context: http.Context,
     parameters: Parameter[]): null {
     let restricted = false
 
     for (const directive of directives) {
       restricted ||= directive instanceof Output
 
-      directive.preflight(context, parameters)
+      directive.precall(context, parameters)
     }
 
     if (!restricted)
-      DENIAL.preflight(context, parameters)
+      DENIAL.precall(context, parameters)
 
     return null
   }

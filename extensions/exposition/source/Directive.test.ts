@@ -16,7 +16,7 @@ const families: Array<DirectiveFamily> = [
     mandatory: true,
     create: mock.fn((_0: any, _1: any, _2: any) => generate() as any),
     arrange: mock.fn(),
-    preflight: mock.fn(() => { sequence.push('foo'); return null }),
+    precall: mock.fn(() => { sequence.push('foo'); return null }),
     settle: mock.fn(),
     dispose: mock.fn()
   },
@@ -25,7 +25,7 @@ const families: Array<DirectiveFamily> = [
     mandatory: true,
     create: mock.fn((_0: any, _1: any, _2: any) => generate() as any),
     arrange: mock.fn(),
-    preflight: mock.fn(() => { sequence.push('qux'); return null }),
+    precall: mock.fn(() => { sequence.push('qux'); return null }),
     settle: mock.fn(),
     dispose: mock.fn()
   },
@@ -34,7 +34,7 @@ const families: Array<DirectiveFamily> = [
     mandatory: false,
     create: mock.fn((_0: string, _1: any, _2: any) => generate() as any),
     arrange: mock.fn(),
-    preflight: mock.fn(() => { sequence.push('bar'); return null }),
+    precall: mock.fn(() => { sequence.push('bar'); return null }),
     settle: mock.fn(),
     dispose: mock.fn()
   }
@@ -47,9 +47,9 @@ beforeEach(() => {
   sequence.length = 0
 
   for (const family of families) {
-    assert.ok(family.preflight !== undefined)
+    assert.ok(family.precall !== undefined)
 
-    family.preflight.mock.mockImplementation(() => { sequence.push(family.name); return null })
+    family.precall.mock.mockImplementation(() => { sequence.push(family.name); return null })
   }
 
   factory = new DirectivesFactory(families, {} as unknown as Remotes, {} as unknown as Host,
@@ -110,25 +110,25 @@ it('should apply directive', async () => {
   const request = generate() as unknown as Context
   const directive = families[0].create.mock.calls[0].result
 
-  await directives.preflight(request, [])
+  await directives.precall(request, [])
 
-  assert.ok(families[0].preflight !== undefined)
+  assert.ok(families[0].precall !== undefined)
 
-  assert.deepStrictEqual(families[0].preflight.mock.calls[0].arguments[0], [directive])
-  assert.deepStrictEqual(families[0].preflight.mock.calls[0].arguments[1], request)
+  assert.deepStrictEqual(families[0].precall.mock.calls[0].arguments[0], [directive])
+  assert.deepStrictEqual(families[0].precall.mock.calls[0].arguments[1], request)
 })
 
 it('should apply mandatory families', async () => {
   const directives = factory.create([])
   const request = generate() as unknown as Context
 
-  await directives.preflight(request, [])
+  await directives.precall(request, [])
 
-  assert.ok(families[0].preflight.mock.callCount() > 0)
+  assert.ok(families[0].precall.mock.callCount() > 0)
 })
 
 describe('order', () => {
-  // the order the families actually ran, as each preflight recorded it
+  // the order the families actually ran, as each precall recorded it
   function order (): string[] {
     return sequence
   }
@@ -140,7 +140,7 @@ describe('order', () => {
       { family: 'foo', name: generate(), value: generate() }
     ])
 
-    await directives.preflight(generate() as unknown as Context, [])
+    await directives.precall(generate() as unknown as Context, [])
 
     assert.deepStrictEqual(order(), ['foo', 'qux'])
   })
@@ -153,7 +153,7 @@ describe('order', () => {
         { family: 'qux', name: generate(), value: generate() }
       ])
 
-      await directives.preflight(generate() as unknown as Context, [])
+      await directives.precall(generate() as unknown as Context, [])
 
       assert.deepStrictEqual(order(), ['foo', 'qux'])
     })
@@ -164,7 +164,7 @@ describe('order', () => {
       { family: 'qux', name: generate(), value: generate() }
     ])
 
-    await directives.preflight(generate() as unknown as Context, [])
+    await directives.precall(generate() as unknown as Context, [])
 
     assert.deepStrictEqual(order(), ['foo', 'qux', 'bar'])
   })

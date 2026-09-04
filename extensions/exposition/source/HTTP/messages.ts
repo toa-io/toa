@@ -15,9 +15,18 @@ const server = `Exposition/${JSON.parse(readFileSync(new URL('../../package.json
 
 const pending = new Map<string, PendingStream>()
 
-export async function write (context: Context, response: ServerResponse, message: OutgoingMessage): Promise<void> {
+/**
+ * Applies what the request accumulated in `pipelines.response` — an `io:output` restriction,
+ * a `vary` a `map` directive owes. Separate from `write` because a message is not always
+ * written: one call of several produces a value the reply is assembled from.
+ */
+export async function shape (context: Context, message: OutgoingMessage): Promise<void> {
   for (const transform of context.pipelines.response)
     await transform(message)
+}
+
+export async function write (context: Context, response: ServerResponse, message: OutgoingMessage): Promise<void> {
+  await shape(context, message)
 
   if (message?.status !== undefined)
     response.statusCode = message.status
