@@ -35,6 +35,10 @@ export class Effect implements Operation {
       return invalid('invalid_request', 'The redirect is not one this client may receive a code at')
 
     const scope = input.scope ?? []
+
+    // recorded on the grant and carried to the token endpoint, and restricting nothing yet:
+    // a token carries the rights of the identity that consented, over every path it may
+    // reach. What binds it is a `permissions` argument in `exchange`, see documentation/oauth.md
     const resource = input.resource ?? []
 
     const grant = await this.context.local.transit({

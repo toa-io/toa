@@ -33,6 +33,9 @@ export class Effect implements Operation {
     if (code === null || !this.redeemable(code, input))
       return invalid('invalid_grant', 'The authorization code is not redeemable')
 
+    // `permissions` would bind the token to `code.resource` — `{'/mcp/**': ['*']}` for a
+    // resource at `/mcp/`, which `permits()` reads on every request. Left unset: the token
+    // carries the rights of the identity that consented, see documentation/oauth.md#audience
     const issued = await this.context.remote.identity.tokens.issue({
       input: {
         authority,

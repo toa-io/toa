@@ -21,10 +21,12 @@ exposition:
 <dd>Required. The absolute URL of the consent page. The application serves it; see
 <a href="consent.md">Consent</a>.</dd>
 <dt><code>resources</code></dt>
-<dd>Paths a token may be restricted to. Each is advertised as a protected resource.</dd>
+<dd>Paths advertised as protected resources, each with a document of its own and named by the
+challenge a request to it is refused with. A token is not yet bound to one, see
+<a href="#audience">Audience</a>.</dd>
 <dt><code>scopes</code></dt>
-<dd>What a client may ask for. Each is a <a href="access.md#roles">role</a>, or a scope within
-one.</dd>
+<dd>Advertised as what a client may ask for. Each is a <a href="access.md#roles">role</a>, or a
+scope within one.</dd>
 <dt><code>registration</code></dt>
 <dd><code>open</code> advertises the registration endpoint, <code>closed</code> does not.
 Defaults to <code>closed</code>.</dd>
@@ -153,6 +155,22 @@ An access token is a token of the identity that consented, carrying the
 [roles](access.md#roles) that identity holds, or the subset the client asked for as `scope`. It is
 presented as `Bearer`, which `identity.federation` also answers to — see
 [Bearer scheme](identity.md#bearer-scheme).
+
+A `scope` a client asks for is not checked against `scopes_supported`: it is granted if the
+consenting identity holds it, and refused as `invalid_scope` otherwise. What is advertised says
+what an application means to offer, not what the server will refuse.
+
+## Audience
+
+`resource` ([RFC 8707](https://www.rfc-editor.org/rfc/rfc8707)) is accepted at both endpoints and
+recorded on the grant. **It does not yet restrict the token.** An access token carries the rights
+of the identity that consented, over every path that identity may reach, whichever resource it was
+asked for.
+
+Restricting it is a `permissions` argument at the `identity.tokens.issue` call in
+`identity.grants.exchange` — `{'/mcp/**': ['*']}` for a resource at `/mcp/` — enforced by
+`permits()`, which is already what reads a token's permissions on every request. It waits on the
+resource that will check the audience itself.
 
 ## References
 
