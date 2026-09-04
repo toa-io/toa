@@ -24,12 +24,20 @@ skipped unless `features/steps/.env` names one — see `.env.example` beside it.
 
 ### Transpiling
 
-Components run from their transpiled, git-ignored `operations` directories. After changing anything
-under a component `source`, retranspile — or the run silently uses the previous build:
+The components Toa ships run from their transpiled, git-ignored `operations` directories, because
+Node does not erase types under `node_modules` and they are read from there once installed. An
+application's own component is not transpiled — see the [Node bridge](./connectors/bridges.node/readme.md).
+After changing anything under a component `source`, retranspile — or the run silently uses the
+previous build:
 
 ```shell
 $ npm run transpile                 # the workspace and every component
 ```
+
+An `operations` directory holds modules and nothing else: the bridge reads every file in it as one
+and names the endpoint after the file, so a declaration or a test left there becomes an endpoint.
+What building a component means is stated once, in `tsconfig.component.json`, which every
+component's own configuration extends.
 
 ### Running
 
@@ -114,8 +122,13 @@ states its type by the name it exports, as in `export { meter as computation }`.
 ## Userspace
 
 Component code depends on no Toa package: nothing under `@toa.io/*` is imported by an operation,
-an event, a receiver or a guard. A component may be written as an ES module or a CommonJS one; a
+an event, a receiver or a guard. A type is the exception, and only as `import type`, which is
+erased before anything runs. A component may be written as an ES module or a CommonJS one; a
 component that is a module says so in a `package.json` beside its manifest.
+
+A module may be written in TypeScript. Node erases the types and compiles nothing else, so a `.ts`
+runs with no build step and no loader — and what it cannot erase, it refuses. The rules that
+follow from that are in the [Node bridge readme](./connectors/bridges.node/readme.md).
 
 Everything a component needs is on `context`;
 a configuration secret, for one, is read as `context.configuration.apiKey.unwrap()`.
