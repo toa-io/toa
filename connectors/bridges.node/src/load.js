@@ -14,11 +14,29 @@ const scan = (directory) => async (root) => {
     async ([name, path]) => [name, await read(path)]))
 }
 
-/** A component's modules by name, whatever extension each was written with. */
+/**
+ * A component's modules by name, whatever extension each was written with.
+ *
+ * Two files that resolve to one name are a conflict rather than a race: which of them a scan
+ * reached first is not something a component may depend on.
+ */
 async function find (root, directory) {
   const paths = await glob(resolve(root, directory, '*' + EXTENSIONS), GLOB)
+  const modules = new Map()
 
-  return new Map(paths.map((path) => [basename(path, extname(path)), path]))
+  // sorted, so the two files a conflict names are the same two on every machine
+  for (const path of paths.sort()) {
+    const name = basename(path, extname(path))
+    const found = modules.get(name)
+
+    if (found !== undefined)
+      throw new Error(`Component at '${root}' has more than one ${directory}/${name}: ` +
+        `${basename(found)} and ${basename(path)}`)
+
+    modules.set(name, path)
+  }
+
+  return modules
 }
 
 async function load (root, directory, name) {
@@ -35,9 +53,28 @@ async function load (root, directory, name) {
  * A component may be written as either kind of module. Importing a CommonJS one
  * gives its `module.exports` as the default, alongside whatever named exports
  * Node can see, so what a module means is the same either way.
+ *
+ * TypeScript is read by Node itself, which erases the types and compiles nothing else. What it
+ * refuses is named here, because its own message says neither which file it was reading nor
+ * what to write instead.
  */
 async function read (path) {
-  const namespace = await import(pathToFileURL(path).href)
+  let namespace
+
+  try {
+    namespace = await import(pathToFileURL(path).href)
+  } catch (error) {
+    if (error.code === ERASABLE)
+      throw new Error(`${path}: ${error.message}. Types are erased, never compiled, so a ` +
+        'component is written in erasable syntax only — no enum, no namespace, no parameter ' +
+        'property.', { cause: error })
+
+    if (error.code === PACKAGED)
+      throw new Error(`${path}: Node does not erase types under 'node_modules'. A component ` +
+        'a package ships is transpiled before it is published.', { cause: error })
+
+    throw error
+  }
 
   return shape(namespace)
 }
@@ -49,7 +86,9 @@ function shape (namespace) {
   return named.length === 0 && namespace.default !== undefined ? namespace.default : namespace
 }
 
-const EXTENSIONS = '.{js,mjs,cjs}'
+const EXTENSIONS = '.{js,mjs,cjs,ts}'
+const ERASABLE = 'ERR_UNSUPPORTED_TYPESCRIPT_SYNTAX'
+const PACKAGED = 'ERR_UNSUPPORTED_NODE_MODULES_TYPE_STRIPPING'
 const EVENTS_DIRECTORY = 'events'
 const RECEIVERS_DIRECTORY = 'receivers'
 const OPERATIONS_DIRECTORY = 'operations'
