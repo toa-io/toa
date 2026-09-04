@@ -14,12 +14,12 @@ import type {
   UploadApiOptions
 } from 'cloudinary'
 
-export type CloudinarySecrets = Secrets<'API_KEY' | 'API_SECRET'>
+export type CloudinarySecrets = Secrets<'CLOUDINARY_API_KEY' | 'CLOUDINARY_API_SECRET'>
 
 export class Cloudinary extends Provider<CloudinaryOptions> {
   public static override readonly SECRETS: readonly Secret[] = [
-    { name: 'API_KEY' },
-    { name: 'API_SECRET' }
+    { name: 'CLOUDINARY_API_KEY' },
+    { name: 'CLOUDINARY_API_SECRET' }
   ]
 
   private readonly type: StorageType
@@ -56,8 +56,8 @@ export class Cloudinary extends Provider<CloudinaryOptions> {
 
     this.config = {
       cloud_name: options.environment,
-      api_key: secrets!.API_KEY,
-      api_secret: secrets!.API_SECRET
+      api_key: secrets!.CLOUDINARY_API_KEY,
+      api_secret: secrets!.CLOUDINARY_API_SECRET
     }
 
     this.prefix = options.prefix ?? '/'
