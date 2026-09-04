@@ -80,6 +80,10 @@ properties:
     required:
       - authorize
     additionalProperties: false
+  rpc:
+    description: JSON-RPC at `/.rpc`; writing it is what turns the endpoint on
+    type: object
+    additionalProperties: false
   /: {}
   authorities:
     type: object

@@ -3,9 +3,11 @@ import { setTimeout } from 'node:timers/promises'
 import { console } from 'openspan'
 import { type bindings, Connector } from '@toa.io/core'
 import * as http from './HTTP/index.js'
+import { RPC } from './const.js'
 import { rethrow } from './exceptions.js'
 import { decide } from './Branch.js'
 import type { Interception } from './Interception.js'
+import type { Dispatcher } from './RPC/index.js'
 import type { DirectiveFactory, Method, Node, Parameter, Tree, Match } from './RTD/index.js'
 import type { Label } from './discovery.js'
 import type { Branch, Exposed } from './Branch.js'
@@ -15,6 +17,9 @@ export class Gateway extends Connector {
   private readonly tree: Tree
   private readonly interceptor: Interception
   private readonly directives: DirectiveFactory
+
+  /** JSON-RPC is served only where the annotation asked for it. */
+  private readonly dispatcher: Dispatcher | null
   private readonly branches = new Map<string, Exposed>()
   private lastMerge = 0
   private widestGap = 0
@@ -24,13 +29,14 @@ export class Gateway extends Connector {
 
   // eslint-disable-next-line max-params
   public constructor (broadcast: Broadcast, tree: Tree, interception: Interception,
-    directives: DirectiveFactory) {
+    directives: DirectiveFactory, dispatcher: Dispatcher | null) {
     super()
 
     this.broadcast = broadcast
     this.tree = tree
     this.interceptor = interception
     this.directives = directives
+    this.dispatcher = dispatcher
 
     this.depends(broadcast)
   }
@@ -46,7 +52,10 @@ export class Gateway extends Connector {
     await context.timing.capture('preflight',
       this.directives.preflight(context)).catch(rethrow)
 
-    const response = await this.route(context)
+    const response = this.dispatcher !== null && context.url.pathname === RPC
+      ? await context.timing.capture('rpc',
+        this.dispatcher.dispatch(context, async (call) => await this.route(call)))
+      : await this.route(context)
 
     // request-scoped, on whatever is going back: this is where a credential is re-issued
     await context.timing.capture('depart',

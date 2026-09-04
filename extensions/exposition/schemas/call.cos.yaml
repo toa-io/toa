@@ -1,0 +1,18 @@
+description: One JSON-RPC call, as the envelope carries it
+properties:
+  jsonrpc:
+    const: '2.0'
+  method:
+    type: string
+    minLength: 1
+  params:
+    description: By name only, because `io:input` validates an object
+    type: object
+  id:
+    description: Absent makes the call a notification, which answers nothing
+    type: [string, number]
+required:
+  - jsonrpc
+  - method
+additionalProperties: false
+type: object

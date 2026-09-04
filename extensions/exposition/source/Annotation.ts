@@ -26,6 +26,9 @@ export interface Annotation {
 
   /** The authorization server this context exposes; none is exposed without it. */
   oauth?: OAuth
+
+  /** JSON-RPC at `/.rpc`; none is served without it. See `documentation/rpc.md`. */
+  rpc?: RPC
   '/'?: object // parsed and validated by RTD.syntax.parse
 }
 
@@ -48,6 +51,9 @@ export interface OAuth {
   /** Dynamic Client Registration, off unless opened. */
   registration?: 'open' | 'closed'
 }
+
+/** Nothing to configure yet: writing it is what turns the endpoint on. */
+export interface RPC {}
 
 export interface Bouncer {
   /** what an address may fail at once, 20 by default */

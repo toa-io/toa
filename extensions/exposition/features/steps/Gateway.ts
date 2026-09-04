@@ -29,7 +29,7 @@ export class Gateway {
       process.env.TOA_EXPOSITION = JSON.stringify(tree)
     }
 
-    const { debug, authorities, bouncer, ip, oauth } = annotation
+    const { debug, authorities, bouncer, ip, oauth, rpc } = annotation
     const properties = Object.assign({}, DEFAULT_PROPERTIES)
 
     if (debug !== undefined)
@@ -46,6 +46,9 @@ export class Gateway {
 
     if (oauth !== undefined)
       properties.oauth = oauth
+
+    if (rpc !== undefined)
+      properties.rpc = rpc
 
     process.env.TOA_EXPOSITION_PROPERTIES = JSON.stringify(properties)
 
