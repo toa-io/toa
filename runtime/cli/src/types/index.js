@@ -158,7 +158,7 @@ async function surface (directory, generated) {
 }
 
 /** What a component's own type module says before the component says anything. */
-const OWN = `export * from './toa.js'
+const OWN = `export * from './toa.d.ts'
 
 // What a manifest does not state belongs here, and every run keeps it.
 `
