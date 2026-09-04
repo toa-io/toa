@@ -2,6 +2,7 @@
 // What a manifest does not state belongs in a file of your own.
 
 import type { Query, RemoteError } from '@toa.io/core'
+import type { Secret } from '@toa.io/extensions.configuration'
 import type { Readable } from 'node:stream'
 
 export interface Entity {
@@ -23,7 +24,8 @@ export type EncryptInput = {
   }
   authority: string
   identity: {
-    id?: string
+    id: string
+    roles: string[]
     [key: string]: unknown
   }
 }
@@ -33,15 +35,17 @@ export type EncryptOutput = string
 export type DecryptInput = string
 
 export type DecryptOutput = {
-  authority?: string
-  identity?: {
-    id?: string
+  /** The authority the token names as its issuer */
+  iss: string
+  identity: {
+    id: string
+    roles: string[]
     [key: string]: unknown
   }
-  iat?: string
+  iat: string
   exp?: string
-  custom?: boolean
-  refresh?: boolean
+  custom: boolean
+  refresh: boolean
 }
 
 export type AuthenticateInput = {
@@ -50,11 +54,12 @@ export type AuthenticateInput = {
 }
 
 export type AuthenticateOutput = {
-  identity?: {
-    id?: string
+  identity: {
+    id: string
+    roles: string[]
     [key: string]: unknown
   }
-  refresh?: boolean
+  refresh: boolean
 }
 
 export type IssueInput = {
@@ -67,9 +72,9 @@ export type IssueInput = {
 }
 
 export type IssueOutput = {
-  kid?: string
+  kid: string
   exp?: number
-  token?: string
+  token: string
 }
 
 export interface Component {
@@ -89,16 +94,16 @@ export interface Component {
 export interface Configuration {
   keys: Array<{
     id: string
-    key: string
+    key: Secret
     format?: "jwe" | "paseto"
   }>
   /** Token expiration time in seconds (default 30 days) */
-  lifetime?: number
+  lifetime: number
   /** Token refresh time in seconds (default 10 minutes) */
-  refresh?: number
+  refresh: number
   /** Custom token keys LRU cache configuration */
-  cache?: {
-    max?: number
-    ttl?: number
+  cache: {
+    max: number
+    ttl: number
   }
 }

@@ -5,9 +5,26 @@ import type { Query } from '@toa.io/core'
 import type { Readable } from 'node:stream'
 
 export interface Entity {
-  src?: unknown
-  dst?: unknown
-  sample?: unknown
+  /** What caused the call — another operation, an event, or a service */
+  src: {
+    namespace?: string
+    component?: string
+    operation?: string
+    event?: string
+    service?: string
+  }
+  /** What was called */
+  dst: {
+    namespace: string
+    component: string
+    operation: string
+  }
+  /** The last call observed on this edge */
+  sample?: {
+    at: number
+    input?: unknown
+    outcome: string
+  }
   id: string
   _version?: number
   _created?: number
@@ -16,7 +33,29 @@ export interface Entity {
 }
 
 export type MergeInput = {
-  edges: Record<string, unknown>
+  /** What each replica observed since its last flush, by edge id */
+  edges: Record<string, {
+    /** What caused the call — another operation, an event, or a service */
+    src: {
+      namespace?: string
+      component?: string
+      operation?: string
+      event?: string
+      service?: string
+    }
+    /** What was called */
+    dst: {
+      namespace: string
+      component: string
+      operation: string
+    }
+    /** The last call observed on this edge */
+    sample?: {
+      at: number
+      input?: unknown
+      outcome: string
+    }
+  }>
 }
 
 export interface Component {

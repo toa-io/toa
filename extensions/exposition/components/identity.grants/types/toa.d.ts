@@ -98,7 +98,7 @@ export interface Component {
 
 export interface Configuration {
   /** Seconds an authorization code may be redeemed within */
-  lifetime?: number
+  lifetime: number
   /** Seconds an access token is valid for; 0 is until it is revoked */
-  token?: number
+  token: number
 }

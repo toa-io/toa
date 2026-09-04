@@ -20,6 +20,6 @@ export interface Component {
 }
 
 export interface Configuration {
-  maxlen?: number
-  expire?: number
+  maxlen: number
+  expire: number
 }

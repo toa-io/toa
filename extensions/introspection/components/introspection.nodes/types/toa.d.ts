@@ -21,7 +21,17 @@ export interface Entity {
 }
 
 export type MergeInput = {
-  nodes: Record<string, unknown>
+  /** What each announced component describes of itself, by its id */
+  nodes: Record<string, {
+    version?: string
+    entity?: unknown
+    operations?: unknown
+    events?: unknown
+    receivers?: unknown
+    extensions?: unknown
+    namespace: string
+    component: string
+  }>
 }
 
 export interface Component {
