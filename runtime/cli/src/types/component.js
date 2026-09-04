@@ -1,5 +1,4 @@
 import { emit, stated } from './schema.js'
-import { contributions } from './extensions.js'
 import { BANNER, capitalize, collector, imports } from './lib.js'
 
 /**
@@ -9,9 +8,12 @@ import { BANNER, capitalize, collector, imports } from './lib.js'
  * @param {string} [module] what the Context is imported from. A component an extension
  *   contributes gets none: it is only ever called, never written against, and its sources are
  *   not ours to write beside.
+ * @param {{ types: Record<string, string>, imports: Record<string, Set<string>> }} [contributed]
+ *   what this component's extensions put on its context, and what is left of it once the
+ *   Context every component shares has taken what they all have
  * @returns {string}
  */
-export function component (manifest, module) {
+export function component (manifest, module, contributed = { types: {}, imports: {} }) {
   const { importing, required } = collector()
   const blocks = []
   const entity = manifest.entity === undefined ? 'unknown' : 'Entity'
@@ -34,7 +36,7 @@ export function component (manifest, module) {
   }
 
   blocks.push(calls(endpoints, entity, importing))
-  blocks.push(...context(manifest, module, importing))
+  blocks.push(...context(contributed, module, importing))
 
   if (module !== undefined) {
     if (manifest.guards !== undefined) {
@@ -74,8 +76,8 @@ function calls (endpoints, entity, importing) {
 }
 
 /** The Context this component's own code is given: the base, plus what its extensions add. */
-function context (manifest, module, importing) {
-  const { types, imports: needed } = contributions(manifest.extensions)
+function context (contributed, module, importing) {
+  const { types, imports: needed } = contributed
 
   const blocks = []
 

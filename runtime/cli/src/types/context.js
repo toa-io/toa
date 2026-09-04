@@ -6,31 +6,35 @@ import { BANNER, collector, imports } from './lib.js'
  * @param {toa.norm.Context} context
  * @param {Array<{ manifest: toa.norm.Component, from: string }>} components every component
  *   the context resolves, the ones its extensions contribute included
+ * @param {{ types: Record<string, string>, imports: Record<string, Set<string>> }} [shared]
+ *   what every component of the Context has on its context
  * @returns {string}
  */
-export function module (context, components) {
+export function module (context, components, shared = { types: {}, imports: {} }) {
   const { importing, required } = collector()
 
-  importing('@toa.io/extensions.telemetry', 'Logs')
-  importing('@toa.io/extensions.fetch', 'FetchInit')
+  for (const [from, names] of Object.entries(shared.imports)) importing(from, ...names)
 
   for (const { manifest, from } of components)
     importing(from, `Component as ${alias(manifest.locator)}`)
+
+  const common = Object.keys(shared.types)
+    .map((key) => `  ${key}: ${shared.types[key]}`)
+    .join('\n')
 
   const blocks = [
     `/**
  * What every component of '${context.name}' is given.
  *
- * \`logs\` and \`fetch\` are here rather than per component: telemetry and fetch are declared
- * for every component whether or not it asks for them.
+ * What an extension puts here rather than on one component is what every component of this
+ * Context declares — telemetry and fetch, which are declared for all of them.
  */
 export interface Context<Local> {
   env: string
   name: string
   local: Local
   remote: Remote
-  logs: Logs
-  fetch: (input: string | URL | Request, init?: FetchInit) => Promise<Response>
+${common}
 }`,
     remote(components)
   ]

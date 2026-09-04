@@ -1,71 +1,55 @@
-/**
- * What each extension puts on a component's context.
- *
- * A placeholder. An extension states this itself once it exports a contribution, at which
- * point this file is deleted rather than extended — it holds the same keys the bridge already
- * hardcodes in `bridges.node/src/shortcuts`.
- */
-
 import { emit } from './schema.js'
 
 /**
+ * What each extension puts on a component's context, as the extension states it.
+ *
+ * An extension that contributes nothing exports nothing, and one that does is asked with the
+ * declaration the component wrote — which is how `storages: [assets]` becomes a record of the
+ * two it names, and a configuration schema becomes the type a component reads.
+ *
  * @param {Record<string, object | null>} extensions a component's normalized extensions
- * @returns {{ keys: string[], types: Record<string, string>, imports: Record<string, Set<string>> }}
+ * @returns {Promise<{ types: Record<string, string>, imports: Record<string, Set<string>> }>}
  */
-export function contributions (extensions = {}) {
+export async function contributions (extensions = {}) {
   const types = {}
   const imports = {}
 
-  const importing = (module, ...names) => {
-    imports[module] ??= new Set()
-    names.forEach((name) => imports[module].add(name))
-  }
-
   for (const [reference, declaration] of Object.entries(extensions)) {
-    const contribute = CONTRIBUTIONS[reference]
+    for (const contribution of await state(reference, declaration)) {
+      types[contribution.name] = contribution.schema === undefined
+        ? contribution.type ?? 'unknown'
+        : emit(contribution.schema)
 
-    if (contribute === undefined) continue
-
-    const contribution = contribute(declaration, importing)
-
-    if (contribution !== undefined) types[contribution.name] = contribution.type
+      for (const [module, names] of Object.entries(contribution.imports ?? {})) {
+        imports[module] ??= new Set()
+        names.forEach((name) => imports[module].add(name))
+      }
+    }
   }
 
-  return { keys: Object.keys(types), types, imports }
+  return { types, imports }
 }
 
-const CONTRIBUTIONS = {
-  '@toa.io/extensions.configuration': (declaration, importing) => {
-    if (declaration?.schema === undefined) return undefined
+/**
+ * @param {string} reference
+ * @param {object | null} declaration
+ * @returns {Promise<toa.core.extensions.Contribution[]>}
+ */
+async function state (reference, declaration) {
+  let extension
 
-    // a secret is what the schema says it is, not what the deployed value happens to look like
-    if (JSON.stringify(declaration.schema).includes('"secret"'))
-      importing('@toa.io/extensions.configuration', 'Secret')
+  try {
+    extension = await import(reference)
+  } catch {
+    // an extension that cannot be loaded is one this application does not install
+    return []
+  }
 
-    return { name: 'configuration', type: emit(declaration.schema) }
-  },
+  if (typeof extension.context !== 'function') return []
 
-  '@toa.io/extensions.storages': (declaration, importing) => {
-    if (!Array.isArray(declaration) || declaration.length === 0) return undefined
+  const contributed = extension.context(declaration)
 
-    importing('@toa.io/extensions.storages', 'Storage')
+  if (contributed === undefined || contributed === null) return []
 
-    const names = declaration.map((name) => JSON.stringify(name)).join(' | ')
-
-    return { name: 'storages', type: `Record<${names}, Storage>` }
-  },
-
-  '@toa.io/extensions.stash': (_, importing) => {
-    importing('@toa.io/extensions.stash', 'Stash')
-
-    return { name: 'stash', type: 'Stash' }
-  },
-
-  // telemetry and fetch are declared for every component, so `logs` and `fetch` are on the
-  // Context every component shares rather than here
-
-  '@toa.io/extensions.state': () =>
-    // the shape is whatever the component keeps there, and nothing declares it
-    ({ name: 'state', type: 'Record<string, any>' }),
-
+  return Array.isArray(contributed) ? contributed : [contributed]
 }

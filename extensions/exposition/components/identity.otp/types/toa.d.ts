@@ -2,7 +2,9 @@
 // What a manifest does not state belongs in a file of your own.
 
 import type { Query, RemoteError } from '@toa.io/core'
+import type { FetchInit } from '@toa.io/extensions.fetch'
 import type { Stash } from '@toa.io/extensions.stash'
+import type { Logs, Span } from '@toa.io/extensions.telemetry'
 import type { Readable } from 'node:stream'
 
 export interface Entity {

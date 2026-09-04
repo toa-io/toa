@@ -4,6 +4,7 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import { component as load, context as normalize } from '@toa.io/norm'
 
 import { component } from './component.js'
+import { contributions } from './extensions.js'
 import { module as contextModule } from './context.js'
 
 /**
@@ -24,11 +25,22 @@ export async function types (root, environment) {
 
   const referenced = []
 
+  // what each component's extensions put on its context, and what all of them have in common
+  const puts = new Map()
+
+  for (const manifest of own.values())
+    puts.set(manifest, await contributions(manifest.extensions))
+
+  const shared = common([...puts.values()])
+
   // a component of the application: its types go beside it, and it is reached by its package
   for (const manifest of own.values()) {
     const specifier = SCOPE + '/' + basename(manifest.path)
+    const rest = remainder(puts.get(manifest), shared)
 
-    written.push(...await surface(join(manifest.path, TYPES), component(manifest, module)))
+    written.push(...await surface(join(manifest.path, TYPES),
+      component(manifest, module, rest)))
+
     await declare(manifest.path, specifier, join(TYPES, 'index.d.ts'))
 
     referenced.push({ manifest, from: specifier })
@@ -54,7 +66,7 @@ export async function types (root, environment) {
     written.push(join(directory, REMOTE, file))
   }
 
-  written.push(...await surface(directory, contextModule(context, referenced)))
+  written.push(...await surface(directory, contextModule(context, referenced, shared)))
 
   await declare(directory, module, 'index.d.ts')
 
@@ -75,10 +87,48 @@ export async function components (paths) {
   for (const path of paths) {
     const manifest = await load(path)
 
-    written.push(...await surface(join(path, TYPES), component(manifest)))
+    written.push(...await surface(join(path, TYPES),
+      component(manifest, undefined, await contributions(manifest.extensions))))
   }
 
   return written
+}
+
+/**
+ * What every one of them has, by the key and the type they agree on. An extension declared for
+ * every component belongs on the Context they share rather than on each of them.
+ *
+ * @param {Array<{ types: Record<string, string>, imports: Record<string, Set<string>> }>} all
+ */
+function common (all) {
+  const types = {}
+  const imports = {}
+
+  if (all.length === 0) return { types, imports }
+
+  for (const [key, type] of Object.entries(all[0].types))
+    if (all.every((one) => one.types[key] === type)) types[key] = type
+
+  for (const one of all)
+    for (const [module, names] of Object.entries(one.imports))
+      for (const name of names)
+        // only what the shared types name is imported by the shared module
+        if (Object.values(types).some((type) => type.includes(name.split(' as ')[0]))) {
+          imports[module] ??= new Set()
+          imports[module].add(name)
+        }
+
+  return { types, imports }
+}
+
+/** What a component has of its own, once the shared Context has taken what they all have. */
+function remainder (one, shared) {
+  const types = {}
+
+  for (const [key, type] of Object.entries(one.types))
+    if (shared.types[key] === undefined) types[key] = type
+
+  return { types, imports: one.imports }
 }
 
 /**
