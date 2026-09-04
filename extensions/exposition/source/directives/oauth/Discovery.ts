@@ -14,24 +14,28 @@ import type { Interceptor } from '../../Interception.js'
  * refused a document that has to be public.
  */
 export class Discovery implements Interceptor {
-  private authorities: Record<string, Documents> = {}
+  /**
+   * A map, because the key is the request's authority and an unconfigured host is passed
+   * through as itself: `Host: constructor` names something a plain object answers on its own.
+   */
+  private readonly authorities = new Map<string, Documents>()
 
   public mount (options: http.Options): void {
-    this.authorities = {}
+    this.authorities.clear()
 
     if (options.oauth === undefined)
       return
 
     for (const [authority, host] of Object.entries(options.authorities))
-      this.authorities[authority] = documents(origin(host), options.oauth)
+      this.authorities.set(authority, documents(origin(host), options.oauth))
   }
 
   public reset (): void {
-    this.authorities = {}
+    this.authorities.clear()
   }
 
   public intercept (input: Input): Output {
-    const known = this.authorities[input.authority]
+    const known = this.authorities.get(input.authority)
 
     if (known === undefined)
       return null

@@ -129,6 +129,18 @@ Feature: Authorization server discovery
       www-authenticate: Bearer resource_metadata="https://nex.toa.io/.well-known/oauth-protected-resource/mcp", scope="app:notes"
       """
 
+  Scenario: A host named after a property a plain object answers on its own
+    When the following request is received:
+      """
+      GET /.well-known/oauth-authorization-server HTTP/1.1
+      host: constructor
+      accept: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      404 Not Found
+      """
+
   Scenario: An authorization server nobody annotated is not discovered
     Given the annotation:
       """yaml
