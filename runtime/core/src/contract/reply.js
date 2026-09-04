@@ -1,4 +1,3 @@
-import * as schemas from './schemas/index.js'
 import { Contract } from './contract.js'
 import { ResponseContractException } from '../exceptions.js'
 
@@ -25,21 +24,25 @@ export class Reply extends Contract {
       schema.properties.output = output
     }
 
-    if (errors !== undefined)
-      schema.properties.error = {
-        type: 'object',
-        properties: {
-          code: {
-            enum: errors
+    /*
+     * An error a caller is meant to handle is one the operation states. Where none are
+     * stated, an error is not a reply this operation makes — it is a mistake, and the
+     * contract says so rather than passing an undeclared code on to whoever called.
+     */
+    schema.properties.error = errors === undefined
+      ? false
+      : {
+          type: 'object',
+          properties: {
+            code: {
+              enum: errors
+            },
+            message: {
+              type: 'string'
+            }
           },
-          message: {
-            type: 'string'
-          }
-        },
-        required: ['code']
-      }
-    else
-      schema.properties.error = schemas.error
+          required: ['code']
+        }
 
     return schema
   }

@@ -47,6 +47,25 @@ export interface Factory {
   receiver? (receiver: _core.Receiver, locator: _core.Locator): _core.Receiver
 }
 
+/**
+ * What an extension puts on a component's context, as the extension states it. How it is
+ * presented there is the bridge's — a bash bridge has no context to put anything on — and
+ * what is declared here is the key and what it holds.
+ */
+export interface Contribution {
+  /** the key on the context */
+  name: string
+
+  /** what the key holds, as TypeScript */
+  type?: string
+
+  /** what `type` names, by the module it comes from */
+  imports?: Record<string, string[]>
+
+  /** a JSON Schema to read the type from instead, where a component states one */
+  schema?: object
+}
+
 export interface Aspect extends _core.Connector {
   name: string
 

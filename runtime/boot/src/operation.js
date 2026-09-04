@@ -4,7 +4,7 @@ import * as boot from './index.js'
 
 export async function operation (manifest, endpoint, definition, context, scope, preflight) {
   const cascade = await boot.cascade(manifest, endpoint, definition, context, preflight)
-  const reply = boot.contract.reply(definition.output, definition.error)
+  const reply = boot.contract.reply(definition.output, definition.errors)
   const input = definition.input
   const request = boot.contract.request({ input }, manifest.entity)
   const contracts = { reply, request }

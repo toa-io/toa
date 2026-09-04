@@ -1,4 +1,4 @@
-import type { Edge, Input } from './lib/types.js'
+import type { Entity, MergeInput } from '../types/index.js'
 
 /**
  * Records the calls observed by a collector since its last flush.
@@ -7,7 +7,7 @@ import type { Edge, Input } from './lib/types.js'
  * and the matching edge under `edges[id]`. Unknown edges are initialized by the
  * runtime, since the entity is `associated`.
  */
-export function transition (input: Input, objects: Edge[]): Edge[] {
+export function transition (input: MergeInput, objects: Entity[]): Entity[] {
   for (const edge of objects) {
     const observed = input.edges[edge.id]
 

@@ -1,4 +1,4 @@
-import type { Input, Node } from './lib/types.js'
+import type { Entity, MergeInput } from '../types/index.js'
 
 /**
  * Records the components described by a collector since its last flush.
@@ -7,7 +7,7 @@ import type { Input, Node } from './lib/types.js'
  * and the matching description under `nodes[id]`. Unknown nodes are initialized
  * by the runtime, since the entity is `associated`.
  */
-export function transition (input: Input, objects: Node[]): Node[] {
+export function transition (input: MergeInput, objects: Entity[]): Entity[] {
   for (const node of objects) {
     const described = input.nodes[node.id]
 

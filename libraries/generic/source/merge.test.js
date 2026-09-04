@@ -168,3 +168,30 @@ describe('add', () => {
     assert.deepStrictEqual(target, expected)
   })
 })
+
+it('should not repeat what both arrays hold', () => {
+  const target = ['id', 'title']
+  const source = ['id']
+
+  merge(target, source)
+
+  assert.deepStrictEqual(target, ['id', 'title'])
+})
+
+it('should keep objects that only look alike', () => {
+  const target = [{ a: 1 }]
+  const source = [{ a: 1 }]
+
+  merge(target, source)
+
+  assert.deepStrictEqual(target, [{ a: 1 }, { a: 1 }])
+})
+
+it('should not repeat what a nested array holds', () => {
+  const target = { entity: { required: ['id', 'title'] } }
+  const source = { entity: { required: ['id'] } }
+
+  merge(target, source)
+
+  assert.deepStrictEqual(target, { entity: { required: ['id', 'title'] } })
+})

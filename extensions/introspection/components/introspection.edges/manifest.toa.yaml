@@ -12,10 +12,33 @@ name: edges
 entity:
   associated: true
   schema:
-    properties:
-      src: {}
-      dst: {}
-      sample: {}
+    properties: &observed
+      src:
+        description: What caused the call — another operation, an event, or a service
+        type: object
+        properties:
+          namespace: { type: string }
+          component: { type: string }
+          operation: { type: string }
+          event: { type: string }
+          service: { type: string }
+      dst:
+        description: What was called
+        type: object
+        required: [namespace, component, operation]
+        properties:
+          namespace: { type: string }
+          component: { type: string }
+          operation: { type: string }
+      sample:
+        description: The last call observed on this edge
+        type: object
+        required: [at, outcome]
+        properties:
+          at: { type: integer }
+          input: {}
+          outcome: { type: string }
+    required: [src, dst]
     type: object
 
 operations:
@@ -26,7 +49,12 @@ operations:
       type: object
       properties:
         edges:
+          description: What each replica observed since its last flush, by edge id
           type: object
+          additionalProperties:
+            type: object
+            properties: *observed
+            required: [src, dst]
       required:
         - edges
 

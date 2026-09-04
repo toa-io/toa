@@ -54,3 +54,5 @@ operations:
       properties:
         buf:
           type: string
+  error:
+    errors: [CODE]

@@ -1,0 +1,38 @@
+name: contract
+namespace: reply
+
+operations:
+  fit:
+    output:
+      type: object
+      properties:
+        value:
+          type: string
+      required: [value]
+  unfit:
+    output:
+      type: object
+      properties:
+        value:
+          type: string
+      required: [value]
+  coerced:
+    output:
+      type: object
+      properties:
+        value:
+          type: string
+      required: [value]
+  declared:
+    output:
+      type: object
+    errors:
+      - KNOWN
+  undeclared:
+    output:
+      type: object
+    errors:
+      - KNOWN
+  silent:
+    output:
+      type: object

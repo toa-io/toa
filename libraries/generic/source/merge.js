@@ -14,7 +14,17 @@ export const merge = (target, source, options = {}, path = []) => {
     if (options.overwrite === true) {
       target.length = 0
       target.push(...source)
-    } else if (options.ignore !== true) target.push(...source)
+    } else if (options.ignore !== true)
+      /*
+       * What both sides say is said once. These are lists of what a thing is made of —
+       * the properties a record requires, the bindings a component speaks, the errors an
+       * operation returns — and a prototype naming what a component already named is the
+       * same requirement twice, not two of them.
+       *
+       * Objects are compared by identity, so lists of them concatenate as before: two
+       * that look alike are still two.
+       */
+      target.push(...source.filter((value) => !target.includes(value)))
   } else if (typeof source === 'object' && typeof target === 'object') {
     for (const [name, value] of entries(source)) {
       path.push(name)

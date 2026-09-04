@@ -7,6 +7,10 @@ import { Before, BeforeAll, After } from '@cucumber/cucumber'
 BeforeAll(() => {
   process.env.TOA_DEV = '1'
 
+  // a reply is checked against what the operation declares, so the suite runs Toa under the
+  // contract it asks applications to keep
+  process.env.TOA_ENV ??= 'local'
+
   // the outbox pumps on a tick; at the default five seconds a scenario would
   // end before it ran
   process.env.TOA_OUTBOX_INTERVAL ??= '100'

@@ -175,6 +175,7 @@ operations:
         - identity
 
   revoke:
+    output: { type: 'null' }
     concurrency: retry
     input:
       type: object
@@ -204,6 +205,8 @@ configuration:
         type: integer
         minimum: 0
         default: 2592000
+    # both have defaults, so the component reads them without checking
+    required: [lifetime, token]
 
 stash: ~
 

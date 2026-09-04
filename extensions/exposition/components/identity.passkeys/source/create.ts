@@ -1,5 +1,5 @@
 import { verifyRegistrationResponse, type RegistrationResponseJSON } from '@simplewebauthn/server'
-import type { Operation } from '@toa.io/types'
+import type { Operation } from '@toa.io/bridges.node'
 import type { Context, Passkey } from './types/index.js'
 
 // https://github.com/MasterKale/SimpleWebAuthn/blob/master/packages/server/src/registration/verifyRegistrationResponse.ts#L51

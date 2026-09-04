@@ -5,6 +5,7 @@ storages: octets
 
 operations:
   foo: &operation
+    errors: [ERROR, NOT_FOUND]
     input:
       properties:
         identity:
@@ -38,6 +39,7 @@ operations:
   authority: *operation
   identity: *operation
   redirect:
+    errors: [ERROR]
     input:
       properties:
         parameters:

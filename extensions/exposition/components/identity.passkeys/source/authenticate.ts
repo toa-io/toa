@@ -1,7 +1,7 @@
 import { quote } from '@toa.io/generic'
 import type { Context } from './types/index.js'
 import type { AuthenticationResponseJSON } from '@simplewebauthn/server'
-import type { Operation } from '@toa.io/types'
+import type { Operation } from '@toa.io/bridges.node'
 
 export class Effect implements Operation {
   private use!: Context['local']['use']

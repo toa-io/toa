@@ -1,5 +1,5 @@
 import { createHash, randomBytes } from 'node:crypto'
-import type { Code, Context } from './types.js'
+import type { Code, Context } from '../../types/index.js'
 
 /**
  * An authorization code is a bearer credential that lives for seconds. It is held under a

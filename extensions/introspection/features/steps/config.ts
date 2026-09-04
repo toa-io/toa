@@ -2,6 +2,10 @@ import { setDefaultTimeout } from '@cucumber/cucumber'
 
 process.env.TOA_DEV = '1'
 
+// a reply is checked against what the operation declares, so the suite runs Toa under the
+// contract it asks applications to keep
+process.env.TOA_ENV ??= 'local'
+
 /*
  * The extension factory reads the environment once, and the bootloader caches
  * factories per process — so the context level of the annotation is fixed for

@@ -1,7 +1,7 @@
-import type { AddInput, Context, IdOutput } from './types.js'
-import type { Maybe } from '@toa.io/types'
+import type { AddInput, Context, TransitOutput } from '../types/index.js'
+import type { Maybe } from '@toa.io/core'
 
-export async function effect (input: AddInput, context: Context): Promise<Maybe<IdOutput>> {
+export async function effect (input: AddInput, context: Context): Promise<Maybe<TransitOutput>> {
   return await context.local.transit({
     input: {
       authority: input.authority,

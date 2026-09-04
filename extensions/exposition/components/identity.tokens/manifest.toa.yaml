@@ -40,9 +40,14 @@ operations:
         authority:
           type: string
         identity:
+          required: [id, roles]
           properties:
             id:
               type: string
+            roles:
+              type: array
+              items:
+                type: string
           additionalProperties: true
           type: object
       type: object
@@ -57,13 +62,20 @@ operations:
     input:
       type: string
     output:
+      required: [iss, iat, identity, refresh, custom]
       properties:
-        authority:
+        iss:
+          description: The authority the token names as its issuer
           type: string
         identity:
+          required: [id, roles]
           properties:
             id:
               type: string
+            roles:
+              type: array
+              items:
+                type: string
           additionalProperties: true
           type: object
         iat:
@@ -92,11 +104,17 @@ operations:
         - authority
         - credentials
     output:
+      required: [identity, refresh]
       properties:
         identity:
+          required: [id, roles]
           properties:
             id:
               type: string
+            roles:
+              type: array
+              items:
+                type: string
           additionalProperties: true
           type: object
         refresh:
@@ -106,6 +124,11 @@ operations:
       - UNRECOGNIZED
       - AUTHORITY_MISMATCH
       - TOKEN_REVOKED
+      # what `decrypt` refuses with, passed on
+      - INVALID_TOKEN
+      - INVALID_KEY
+      - FORGED_KEY
+      - REVOKED_KEY
   issue:
     input:
       type: object
@@ -136,6 +159,7 @@ operations:
         - identity
         - label
     output:
+      required: [kid, token]
       properties:
         kid:
           type: string
@@ -147,6 +171,7 @@ operations:
     errors:
       - INACCESSIBLE_SCOPE
   revoke:
+    output: { type: 'null' }
     concurrency: retry
 
 receivers:
@@ -173,6 +198,7 @@ configuration:
               minLength: 1
             key:
               type: string
+              format: secret
             format:
               type: string
               enum:
@@ -201,8 +227,12 @@ configuration:
             type: integer
             default: 600000
         default: {}
+        required: [max, ttl]
     required:
       - keys
+      - lifetime
+      - refresh
+      - cache
 
 exposition:
   /:identity:

@@ -1,4 +1,5 @@
-import type { Call, Operation } from '@toa.io/types'
+import type { Call } from '@toa.io/core'
+import type { Operation } from '@toa.io/bridges.node'
 
 export class Computation implements Operation {
   private basic: Basic = undefined as unknown as Basic

@@ -92,6 +92,13 @@ export function ajv (schemas, override = {}) {
 
   formats(ajv)
 
+  /*
+   * What a value is, not what it looks like: a string declared this way reaches userland as a
+   * `Secret` rather than a string. The value validated here is still what was written — the
+   * reference to the variable — so the format constrains nothing.
+   */
+  ajv.addFormat('secret', () => true)
+
   return ajv
 }
 

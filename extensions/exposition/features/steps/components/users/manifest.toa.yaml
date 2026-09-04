@@ -21,6 +21,7 @@ operations:
   create:
     concurrency: retry
     query: false
+    errors: [0]
     input:
       properties:
         name:
