@@ -45,6 +45,9 @@ export interface RemoteError<Code extends string = string> extends Error {
   code: Code
 }
 
+/** What an operation returns where it may refuse: the value, or the error it refused with. */
+export type Maybe<T> = T | Error
+
 export interface Reply {
   output?: any
   error?: object
