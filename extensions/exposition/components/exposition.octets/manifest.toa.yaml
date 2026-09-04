@@ -27,8 +27,19 @@ operations:
       - LOCATION_LENGTH
       - LOCATION_UNAVAILABLE
       - INVALID_ID
+      # what the storage refuses with, passed on
+      - NOT_FOUND
+      - LIMIT_EXCEEDED
+      - NOT_ACCEPTABLE
+      - TYPE_MISMATCH
   get: &simple
     bindings: ~
+    # what the storage refuses with, passed on
+    errors:
+      - NOT_FOUND
+      - LIMIT_EXCEEDED
+      - NOT_ACCEPTABLE
+      - TYPE_MISMATCH
     input:
       properties:
         range:

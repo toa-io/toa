@@ -1,8 +1,10 @@
-import { Composition, Registry, Runtime } from '../context.js'
+import { Registry, Runtime } from '../context.js'
 
+/** A composition as declared, before its members are resolved. */
 interface Composition {
   name: string,
   components: string[]
+  services?: string[]
 }
 
 export interface Resources {

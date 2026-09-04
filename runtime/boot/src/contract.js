@@ -12,7 +12,10 @@ export const request = (definition, entity) => {
 
 export const reply = (output, errors) => {
   const reply = Reply.schema(output, errors)
-  const schema = schemas.schema(reply)
+
+  // a reply is read, not shaped: what the operation returned is what the caller gets,
+  // and a value that only fits once coerced does not fit
+  const schema = schemas.schema(reply, { coerceTypes: false, useDefaults: false })
 
   return new Reply(schema)
 }

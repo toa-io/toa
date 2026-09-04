@@ -18,6 +18,8 @@ Run composition.
 <dd>
 <code>paths</code> Glob patterns to look for components.<br/>
 <code>--kill</code> Shutdown composition after it's started<br/>
+<code>--service</code> Extension service to run in this composition, by shortcut or package
+reference. Repeat for several.<br/>
 <code>--dock</code> Run in Docker using current <code>.env</code>.<br/>
 <code>--context</code> Path to the Context root (default <code>.</code>).<br/>
 <code>--bindnings</code> Override bindings (obsolete).
@@ -25,6 +27,45 @@ Run composition.
 </dl>
 
 > Note that your `localhost` it is accessible from a container as `host.docker.internal`.
+
+`--service` starts the named extension services in the composition process, beside its
+components:
+
+```shell
+$ toa compose ./components/* --service exposition --service configuration
+```
+
+The list is exact — unlike `mono`, nothing is discovered. A service the named ones talk to
+answers over the network in a deployment; in one process it is named too, or nothing answers
+it. Absent `--service`, the list is read from `TOA_SERVICES`, whitespace-separated, which is
+what a deployment sets from a composition's `services`.
+
+### types
+
+Generate types for a Context and every component in it.
+
+<dl>
+<dt><code>toa types</code></dt>
+<dd>
+<code>--path</code> Path to the Context root (default <code>.</code>).<br/>
+<code>--environment</code> Environment the Context is read for.<br/>
+<code>--quiet</code> Print nothing.
+</dd>
+</dl>
+
+Written are `types/` beside `context.toa.yaml` and a `types.ts` beside every component's
+manifest. Both are Toa's: every run rewrites them, and each carries the `package.json` naming
+it — `@components/<directory>` for a component, the Context's own `name` for the Context.
+
+What a manifest does not state is not generated. An operation declaring no `output` returns
+`unknown`, unless it is one Toa itself provides — the prototype's algorithms return the scope
+they are given. An alias for something a schema does describe belongs in a file of your own:
+
+```typescript
+import type { Entity } from '@components/activities'
+
+type Plugin = Entity['plugins'][number]
+```
 
 ### mono
 

@@ -1,5 +1,6 @@
 import { quote } from '@toa.io/generic'
-import type { Maybe, Operation } from '@toa.io/types'
+import type { Maybe } from '@toa.io/core'
+import type { Operation } from '@toa.io/bridges.node'
 import type { Context, Identity } from './lib/index.js'
 
 export class Effect implements Operation {
@@ -12,7 +13,8 @@ export class Effect implements Operation {
     this.keys = context.remote.identity.keys
     this.roles = context.remote.identity.roles
     this.encrypt = context.local.encrypt
-    this.lifetime = context.configuration.lifetime * 1000
+    // seconds, as `input.lifetime` and `encrypt` both are
+    this.lifetime = context.configuration.lifetime
   }
 
   public async execute (input: Input): Promise<Maybe<Output>> {

@@ -4,7 +4,7 @@ import { pipeline } from 'node:stream/promises'
 import { createHash } from 'node:crypto'
 import * as contentType from 'content-type'
 import { console } from 'openspan'
-import { type Format, formats } from './formats/index.js'
+import { type Format, decoders } from './formats/index.js'
 import { BadRequest, NotAcceptable, UnsupportedMediaType } from './exceptions.js'
 import type { Context } from './Context.js'
 import type { ServerResponse } from './types.js'
@@ -49,10 +49,10 @@ export async function read (context: Context): Promise<any> {
 
   const { type, parameters } = contentType.parse(header)
 
-  if (!(type in formats))
+  if (!(type in decoders))
     throw new UnsupportedMediaType()
 
-  const format = formats[type]
+  const format = decoders[type]
   const buf = await context.buffer()
 
   try {
@@ -201,6 +201,13 @@ export interface OutgoingMessage {
 
   /** tag the response with a hash of the encoded body, see `conditional` */
   etag?: boolean
+
+  /**
+   * Built by the gateway rather than returned by an operation, as a request is `authentic`
+   * when it was made by one: what is in it is the gateway's own, and the checks that answer
+   * for what an operation returns have nothing to say about it.
+   */
+  authentic?: boolean
 }
 
 export interface Query {

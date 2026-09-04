@@ -2,7 +2,9 @@ import { addVariables } from './variables.js'
 
 export function services (services, variables, probe, ingress) {
   for (const service of services) {
-    addVariables(service, variables)
+    // one a composition runs has no deployment of its own to carry them; the composition
+    // it runs in states them, and repeating them here is dead weight in the values
+    if (service.workload === undefined) addVariables(service, variables)
 
     if (service.probe === false)
       delete service.probe

@@ -1,8 +1,9 @@
 import { DecryptFactory, ImportKeyFactory } from 'paseto/v3/local'
 import { LRUCache } from 'lru-cache'
-import { jweKey } from './lib/index.js'
+import { form, jweKey } from './lib/index.js'
 import { load } from './lib/jose.js'
-import type { Maybe, Operation } from '@toa.io/types'
+import type { Maybe } from '@toa.io/core'
+import type { Operation } from '@toa.io/bridges.node'
 import type { Context, Claims, DecryptOutput, JWEClaims } from './lib/index.js'
 
 export class Computation implements Operation {
@@ -32,7 +33,7 @@ export class Computation implements Operation {
   }
 
   public async execute (token: string): Promise<Maybe<DecryptOutput>> {
-    const legacy = token.startsWith('v3.local.')
+    const legacy = form(token) === 'paseto'
     const kid = legacy ? this.pasetoKid(token) : await this.jweKid(token)
 
     if (kid instanceof Error)

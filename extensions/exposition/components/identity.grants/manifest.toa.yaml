@@ -1,0 +1,245 @@
+namespace: identity
+name: grants
+
+# What a user allowed a client to do on their behalf. The authorization code is not here:
+# it is single-use and lives seconds, so it is held in the stash and redeemed atomically.
+entity:
+  associated: true
+  schema:
+    type: object
+    properties:
+      authority:
+        type: string
+      identity:
+        type: string
+      client:
+        type: string
+      scope:
+        type: array
+        items:
+          type: string
+      resource:
+        type: array
+        items:
+          type: string
+      kid:
+        description: The identity.keys record backing the access token, revoked with the grant
+        type: string
+      revokedAt:
+        type: integer
+    required:
+      - authority
+      - identity
+      - client
+  index:
+    identity:
+      authority: asc
+      identity: asc
+
+operations:
+  transit:
+    concurrency: retry
+    input:
+      type: object
+      properties:
+        authority:
+          type: string
+        identity:
+          type: string
+        client:
+          type: string
+        scope:
+          type: array
+          items:
+            type: string
+        resource:
+          type: array
+          items:
+            type: string
+        kid:
+          type: string
+      required:
+        - authority
+        - identity
+        - client
+
+  authorize:
+    query: false
+    input:
+      type: object
+      properties:
+        authority:
+          type: string
+        identity:
+          type: string
+        client:
+          type: string
+          maxLength: 2048
+        redirect:
+          type: string
+          maxLength: 2048
+        challenge:
+          description: PKCE code challenge, S256 of the verifier
+          type: string
+          minLength: 43
+          maxLength: 128
+        method:
+          type: string
+        scope:
+          type: array
+          items:
+            type: string
+        resource:
+          type: array
+          items:
+            type: string
+            maxLength: 2048
+      required:
+        - authority
+        - identity
+        - client
+        - redirect
+        - challenge
+        - method
+    output:
+      type: object
+      properties:
+        status:
+          description: Read and removed by `io:status`
+          type: number
+        code:
+          type: string
+        expires_in:
+          type: number
+        error:
+          type: string
+        error_description:
+          type: string
+
+  exchange:
+    query: false
+    input:
+      type: object
+      properties:
+        authority:
+          type: string
+        grant_type:
+          type: string
+        code:
+          type: string
+          maxLength: 512
+        code_verifier:
+          type: string
+          minLength: 43
+          maxLength: 128
+        redirect_uri:
+          type: string
+          maxLength: 2048
+        client_id:
+          type: string
+          maxLength: 2048
+        resource:
+          description: A form repeats a name to say a list, so either shape arrives
+          type: [string, array]
+      required:
+        - authority
+        - grant_type
+    output:
+      type: object
+      properties:
+        status:
+          type: number
+        access_token:
+          type: string
+        token_type:
+          type: string
+        expires_in:
+          type: number
+        scope:
+          type: string
+        error:
+          type: string
+        error_description:
+          type: string
+
+  list:
+    input:
+      type: object
+      properties:
+        authority:
+          type: string
+        identity:
+          type: string
+      required:
+        - authority
+        - identity
+
+  revoke:
+    output: { type: 'null' }
+    concurrency: retry
+    input:
+      type: object
+      properties:
+        authority:
+          type: string
+        identity:
+          type: string
+      required:
+        - authority
+        - identity
+    errors:
+      - NOT_FOUND
+
+configuration:
+  schema:
+    type: object
+    properties:
+      lifetime:
+        description: Seconds an authorization code may be redeemed within
+        type: integer
+        minimum: 1
+        maximum: 600
+        default: 60
+      token:
+        description: Seconds an access token is valid for; 0 is until it is revoked
+        type: integer
+        minimum: 0
+        default: 2592000
+    # both have defaults, so the component reads them without checking
+    required: [lifetime, token]
+
+stash: ~
+
+exposition:
+  isolated: true
+  /:
+    POST:
+      anonymous: true
+      map:authority: authority
+      io:input: [grant_type, code, code_verifier, redirect_uri, client_id, resource]
+      io:output: true
+      io:status: status
+      io:throttle:
+        key: ip
+        requests: 60
+        interval: 60
+      cache:exact: no-store
+      endpoint: exchange
+    /:identity:
+      auth:id: identity
+      map:authority: authority
+      map:segments:
+        identity: identity
+      GET:
+        io:output: [id, client, scope, resource, _created]
+        endpoint: list
+      POST:
+        io:input: [client, redirect, challenge, method, scope, resource]
+        io:output: [code, expires_in, error, error_description]
+        io:status: status
+        cache:exact: no-store
+        endpoint: authorize
+      /:id:
+        DELETE:
+          io:output: false
+          endpoint: revoke

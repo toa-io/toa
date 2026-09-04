@@ -22,9 +22,6 @@ export class Control implements Directive {
   }
 
   public set (context: AuthenticatedContext, headers: Headers): void {
-    if (!['GET', 'HEAD', 'OPTIONS'].includes(context.request.method))
-      return
-
     this.control ??= this.resolve(context)
 
     if (Control.disabled(headers))

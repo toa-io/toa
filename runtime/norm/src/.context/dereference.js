@@ -8,7 +8,14 @@ export const dereference = (context) => {
 
   if (context.compositions !== undefined) {
     for (const composition of context.compositions) {
-      composition.components = composition.components.map((id) => components[id])
+      composition.components = composition.components.map((id) => {
+        const component = components[id]
+
+        if (component === undefined)
+          throw new Error(`Composition '${composition.name}' lists an unknown component '${id}'.`)
+
+        return component
+      })
     }
   }
 }

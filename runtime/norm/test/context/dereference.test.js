@@ -23,3 +23,12 @@ it('should not throw on empty compositions', () => {
 
   assert.doesNotThrow(() => dereference(context))
 })
+
+it('should throw on an unknown component', () => {
+  const broken = clone(fixtures.context)
+
+  broken.compositions[1].components.push('nope.here')
+
+  assert.throws(() => dereference(broken),
+    { message: "Composition 'bar' lists an unknown component 'nope.here'." })
+})

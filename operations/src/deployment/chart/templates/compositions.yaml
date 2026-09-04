@@ -10,13 +10,16 @@ spec:
   progressDeadlineSeconds: 900
   selector:
     matchLabels:
-      toa.io/composition: {{ .name }}
+      toa/composition: {{ .name }}
   template:
     metadata:
       labels:
-        toa.io/composition: {{ .name }}
+        toa/composition: {{ .name }}
         {{- range .components }}
-        {{ . }}: "1"
+        toa/component-{{ . }}: "1"
+        {{- end }}
+        {{- range .hosted }}
+        toa/service-{{ . }}: "1"
         {{- end }}
     spec:
       containers:
@@ -41,15 +44,26 @@ spec:
               {{- end }}
             {{- end }}
           {{- end }}          
-          {{- if .variables }}
+          {{- if or .variables .services }}
           env:
+            {{- if .services }}
+            - name: TOA_SERVICES
+              value: {{ join " " .services | quote }}
+            {{- end }}
             {{- range .variables }}
             {{- include "env.var" . | indent 12 }}
             {{- end }}
           {{- end }}
-          {{- if .probe }}
+          {{- if or .backends .probe }}
           ports:
+            {{- range .backends }}
+            - containerPort: {{ .port }}
+            {{- end }}
+            {{- if .probe }}
             - containerPort: {{ .probe.port }}
+            {{- end }}
+          {{- end }}
+          {{- if .probe }}
           startupProbe:
             httpGet:
               path: {{ .probe.path }}
@@ -98,6 +112,6 @@ spec:
           whenUnsatisfiable: ScheduleAnyway
           labelSelector:
             matchLabels:
-              toa.io/composition: {{ .name }}
+              toa/composition: {{ .name }}
 ---
 {{- end }}

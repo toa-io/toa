@@ -4,7 +4,7 @@ import assert from 'node:assert/strict'
 import { generate } from 'randomstring'
 import { Computation as Authenticate } from './authenticate.js'
 import type { Configuration, Context, DecryptOutput, Identity } from './lib/index.js'
-import type { Secret } from '@toa.io/types'
+import type { Secret } from '@toa.io/extensions.configuration'
 
 let configuration: Configuration
 let context: Context
@@ -13,6 +13,9 @@ let authenticate: Authenticate
 
 const identity: Identity = { id: generate(), roles: [] }
 const authority = generate()
+
+/** Compact JWE shape: `authenticate` reads it before decrypting, and `decrypt` is mocked. */
+const credentials = 'header.key.iv.ciphertext.tag'
 
 beforeEach(() => {
   configuration = {
@@ -53,7 +56,7 @@ for (const [expected, shift] of [
 
   const result = await authenticate.execute({
     authority,
-    credentials: ''
+    credentials
   })
 
   assert.deepStrictEqual(result, { identity, refresh: expected })
@@ -68,7 +71,7 @@ for (const refresh of [true, false])
 
     const result = await authenticate.execute({
       authority,
-      credentials: ''
+      credentials
     })
 
     assert.deepStrictEqual(result, { identity, refresh })
@@ -80,7 +83,7 @@ it('should not refresh an aged custom token', async () => {
 
   output = { iss: authority, identity, exp, iat, refresh: false, custom: true }
 
-  const result = await authenticate.execute({ authority, credentials: '' })
+  const result = await authenticate.execute({ authority, credentials })
 
   assert.deepStrictEqual(result, { identity, refresh: false })
 })
@@ -93,7 +96,7 @@ it('should check revocation of an aged custom token', async () => {
   context.local.observe = mock.fn(async () => ({ revokedAt: Date.now() })) as unknown as Context['local']['observe']
   authenticate.mount(context)
 
-  const result: any = await authenticate.execute({ authority, credentials: '' })
+  const result: any = await authenticate.execute({ authority, credentials })
 
   assert.deepStrictEqual(result.code, 'TOKEN_REVOKED')
 })

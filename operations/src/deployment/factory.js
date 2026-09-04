@@ -23,6 +23,12 @@ export class Factory {
   #process
   #image
 
+  /** Which compositions run a given extension's service, rather than deploying it on its
+   *  own. A service is stateless and already runs several replicas, so several compositions
+   *  running one are replicas of it, behind the one Service that selects them all.
+   *  @type {Map<string, string[]>} */
+  #claims
+
   constructor (context, options = {}) {
     this.#context = context
     this.#mono = options.mono === true
@@ -31,6 +37,7 @@ export class Factory {
     const imagesFactory = new ImagesFactory(context.name, context.runtime, context.registry)
 
     this.#registry = new Registry(context.name, context.registry, imagesFactory, this.#process)
+    this.#claims = claims(context)
     this.#dependencies = this.#getDependencies()
     this.#compositions = []
 
@@ -71,11 +78,25 @@ export class Factory {
 
     if (this.#context.dependencies === undefined) return dependencies
 
+    /** the claimed references that turned out to contribute a service */
+    const contributing = new Set()
+
     for (const [reference, instances] of Object.entries(this.#context.dependencies)) {
       const dependency = await this.#getDependency(reference, instances)
 
-      if (dependency !== undefined) dependencies.push(dependency)
+      if (dependency === undefined) continue
+
+      if (dependency.services?.length > 0) contributing.add(reference)
+
+      dependencies.push(dependency)
     }
+
+    // this is the first point where every `deployment()` has run, so it is the first
+    // point where a reference that yields nothing can be told from one that yields a service
+    for (const [reference, compositions] of this.#claims)
+      if (!contributing.has(reference))
+        throw new Error(`Composition '${compositions[0]}' lists '${reference}', ` +
+          'which contributes no service.')
 
     return dependencies
   }
@@ -93,9 +114,16 @@ export class Factory {
     /** @type {toa.deployment.dependency.Declaration} */
     const dependency = module.deployment(instances, annotation)
 
+    // mono claims every service, including one an extension added since this context was
+    // written, so its claim is the wildcard rather than a list
+    const workload = this.#mono ? [MONO] : this.#claims.get(reference)
+
     /** @type {toa.deployment.Service[]} */
     const services = dependency.services?.map((service) =>
-      this.#mono ? service : this.#service(reference, service))
+      workload === undefined
+        ? this.#service(reference, service)   // its own deployment, its own image
+        // named the way `Service` would name it, since it skips that wrapper
+        : { ...service, name: `${service.group}-${service.name}`, workload })
 
     return { ...dependency, services }
   }
@@ -116,4 +144,23 @@ export class Factory {
 
     return new Factory(context, options)
   }
+}
+
+const MONO = 'mono'
+
+/**
+ * @param {toa.norm.Context} context
+ * @returns {Map<string, string[]>}
+ */
+function claims (context) {
+  const map = new Map()
+
+  for (const composition of context.compositions ?? [])
+    for (const reference of composition.services ?? []) {
+      if (!map.has(reference)) map.set(reference, [])
+
+      map.get(reference).push(composition.name)
+    }
+
+  return map
 }

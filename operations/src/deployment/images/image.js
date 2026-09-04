@@ -38,13 +38,19 @@ export class Image {
     this.reference = posix.join(this.#registry.base ?? '', this.#scope, `${this.name}:${tag}`)
   }
 
-  get name () {}
+  /** @returns {string | undefined} */
+  get name () { return undefined }
 
-  get version () {}
+  /** @returns {string | undefined} */
+  get version () { return undefined }
 
-  get base () {}
+  /** The image to build `FROM`. Undefined takes the runtime's, which is what a service does.
+   *  @returns {string | undefined} */
+  get base () { return undefined }
 
-  get run () {}
+  /** Build commands to add. Undefined adds none, which is what a service does.
+   *  @returns {string | undefined} */
+  get run () { return undefined }
 
   async prepare (root) {
     if (this.dockerfile === undefined) throw new Error('Dockerfile isn\'t specified')

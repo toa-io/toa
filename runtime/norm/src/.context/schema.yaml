@@ -50,6 +50,7 @@ properties:
     minItems: 1
     items:
       type: object
+      additionalProperties: false
       properties:
         name:
           type: string
@@ -62,6 +63,16 @@ properties:
           items:
             type: string
             pattern: ^([a-zA-Z]+([_a-zA-Z0-9]*[a-zA-Z0-9]+)?)(\.([a-zA-Z]+([_a-zA-Z0-9]*[a-zA-Z0-9]+)?))$
+        services:
+          description: >
+            Extension services this composition runs in its own pod, named by shortcut or
+            package reference, rather than each as its own deployment. A service listed here
+            keeps its own Service and Ingress; what changes is the pod they select.
+          type: array
+          minItems: 1
+          items:
+            type: string
+            minLength: 1
         resources:
           $ref: '#/definitions/resources'
       required: [name, components]

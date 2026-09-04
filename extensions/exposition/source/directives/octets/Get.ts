@@ -1,7 +1,7 @@
 import { Forbidden, NotFound } from '../../HTTP/index.js'
 import * as schemas from './schemas.js'
 import { Directive } from './Directive.js'
-import type { Maybe } from '@toa.io/types'
+import type { Maybe } from '@toa.io/core'
 import type { Entry, Stream } from '@toa.io/extensions.storages'
 import type { Component } from '@toa.io/core'
 import type { Output } from '../../io.js'

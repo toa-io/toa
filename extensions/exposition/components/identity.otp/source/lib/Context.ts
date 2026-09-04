@@ -1,9 +1,11 @@
-import type { Call, Observation, Stash, telemetry } from '@toa.io/types'
+import type { Call, Observation } from '@toa.io/core'
+import type { Stash } from '@toa.io/extensions.stash'
+import type { Logs } from '@toa.io/extensions.telemetry'
 import type { Entity } from './Entity.js'
 
 export interface Context {
   stash: Stash
-  logs: telemetry.Logs
+  logs: Logs
   local: {
     observe: Observation<Entity>
     ensure: Call<Entity>

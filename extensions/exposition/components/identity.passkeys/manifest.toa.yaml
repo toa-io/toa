@@ -69,6 +69,7 @@ operations:
         - authority
   create:
     query: false
+    errors: [FAILED, INVALID]
     input:
       type: object
       properties:
@@ -131,6 +132,7 @@ operations:
   use:
     concurrency: retry
     query: true
+    errors: [FAILED, INVALID]
     input:
       type: object
       properties:
@@ -160,6 +162,7 @@ operations:
         - id
         - response
   authenticate:
+    errors: [MISS]
     input:
       type: object
       properties:

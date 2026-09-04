@@ -23,7 +23,30 @@ export interface Annotation {
 
   /** Failed authentications an address may make; none are metered unless set. See `identity.md`. */
   bouncer?: Bouncer
+
+  /** The authorization server this context exposes; none is exposed without it. */
+  oauth?: OAuth
   '/'?: object // parsed and validated by RTD.syntax.parse
+}
+
+export interface OAuth {
+  /**
+   * Where a client sends the user to consent. The one endpoint of the flow that needs a
+   * person, and so the one this extension does not serve: an application builds it.
+   */
+  authorize: string
+
+  /** Paths a token may be restricted to, each advertised as a protected resource. */
+  resources?: string[]
+
+  /** What a client may ask for. Each is a role, or a scope within one. */
+  scopes?: string[]
+
+  /** Origins whose Client ID Metadata Documents may be read. None are without it. */
+  trust?: string[]
+
+  /** Dynamic Client Registration, off unless opened. */
+  registration?: 'open' | 'closed'
 }
 
 export interface Bouncer {

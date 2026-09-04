@@ -11,7 +11,7 @@
   "ignorePatterns": [
     "**/*.d.ts",
     "**/transpiled",
-    "**/operations",
+    "*/**/operations",
     "extensions/introspection/ui",
     "extensions/configuration/ui",
     "extensions/*/features/site"

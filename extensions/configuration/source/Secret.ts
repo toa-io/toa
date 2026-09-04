@@ -1,8 +1,11 @@
 import { inspect } from 'node:util'
-import type { Secret as Contract } from '@toa.io/types'
 
-/** A configuration value that must not leak: a string only to whoever asks for it. */
-export class Secret implements Contract {
+/**
+ * A configuration value that must not leak: a string only to whoever asks for it.
+ *
+ * This is what a value declared `format: secret` is on a component's context.
+ */
+export class Secret {
   readonly #value: string
 
   public constructor (value: string) {

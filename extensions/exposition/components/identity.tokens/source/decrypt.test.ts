@@ -6,7 +6,7 @@ import { EncryptFactory, ImportKeyFactory } from 'paseto/v3/local'
 import { Effect as Encrypt } from './encrypt.js'
 import { Computation as Decrypt } from './decrypt.js'
 import { type Configuration, type Context, type Identity } from './lib/index.js'
-import type { Secret } from '@toa.io/types'
+import type { Secret } from '@toa.io/extensions.configuration'
 
 let configuration: Configuration
 let context: Context

@@ -1,5 +1,5 @@
 import type { Entity } from './lib/Entity.js'
-import type { Call } from '@toa.io/types'
+import type { Call } from '@toa.io/core'
 import type { Input as GrantInput } from './grant.js'
 
 export async function effect (input: Identity, context: Context): Promise<void> {

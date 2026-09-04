@@ -29,3 +29,13 @@ declare namespace toa.node {
 
 export type Algorithm = toa.node.Algorithm
 export type func = toa.node.algorithms.func
+
+/**
+ * What an operation module exports when it is written as a class: this bridge is what
+ * mounts one and runs it.
+ */
+export interface Operation<Input = any, Output = any> {
+  mount?: (context: any) => void | Promise<void>
+  unmount?: () => void | Promise<void>
+  execute: (input: Input, scope: any) => Promise<Output>
+}

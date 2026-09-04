@@ -8,7 +8,7 @@ name: nodes
 entity:
   associated: true
   schema:
-    properties:
+    properties: &described
       version:
         type: string
       entity: {}
@@ -33,7 +33,12 @@ operations:
       type: object
       properties:
         nodes:
+          description: What each announced component describes of itself, by its id
           type: object
+          additionalProperties:
+            type: object
+            properties: *described
+            required: [namespace, component]
       required:
         - nodes
 

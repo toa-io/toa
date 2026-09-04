@@ -73,6 +73,18 @@ operations:
         - id
     errors:
       - EXISTS
+      # what resolving the credential refuses with, passed on
+      - TOKEN
+      - TRUST
+      - RESPONSE
+      - CONFIG
+      - NO_TOKEN
+      - ISS
+      - SUB
+      - EXP
+      - REPLAY
+      - CODE_NOT_ENABLED
+      - CODE_SCHEMA
   incept:
     input:
       properties:
@@ -100,6 +112,18 @@ operations:
       type: object
     errors:
       - EXISTS
+      # what resolving the credential refuses with, passed on
+      - TOKEN
+      - TRUST
+      - RESPONSE
+      - CONFIG
+      - NO_TOKEN
+      - ISS
+      - SUB
+      - EXP
+      - REPLAY
+      - CODE_NOT_ENABLED
+      - CODE_SCHEMA
   authenticate:
     input:
       properties:
@@ -142,7 +166,19 @@ operations:
           type: object
       type: object
     errors:
-      - ERR_NOT_FOUND
+      - NOT_FOUND
+      # what resolving the credential refuses with, passed on
+      - TOKEN
+      - TRUST
+      - RESPONSE
+      - CONFIG
+      - NO_TOKEN
+      - ISS
+      - SUB
+      - EXP
+      - REPLAY
+      - CODE_NOT_ENABLED
+      - CODE_SCHEMA
   decode:
     input:
       type: string

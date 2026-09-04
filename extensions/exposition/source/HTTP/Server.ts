@@ -12,12 +12,13 @@ import { ClientError, Exception } from './exceptions.js'
 import { Context } from './Context.js'
 import { PROBE, Probe } from './Probe.js'
 import type { IncomingMessage, Protocol, ServerResponse } from './types.js'
-import type { Bouncer } from '../Annotation.js'
+import type { Bouncer, OAuth } from '../Annotation.js'
 
 export class Server extends Connector {
   private readonly server: http.Server | http2.Http2Server
   private readonly properties: Properties
-  private readonly authorities: Record<string, string>
+  /** Host to authority. A map: a `Host` of `constructor` names what a plain object answers. */
+  private readonly authorities: Map<string, string>
 
   /** Tracked for the drain: `Http2Server` has no `closeIdleConnections`. */
   private readonly sessions = new Set<http2.ServerHttp2Session>()
@@ -30,7 +31,7 @@ export class Server extends Connector {
     super()
 
     this.properties = properties
-    this.authorities = Object.fromEntries(Object.entries(properties.authorities).map(([key, value]) => [value, key]))
+    this.authorities = new Map(Object.entries(properties.authorities).map(([key, value]) => [value, key]))
     this.server = instantiate(properties.protocol)
     this.probe = new Probe(properties.probe)
 
@@ -162,7 +163,7 @@ export class Server extends Connector {
 
     assert(this.process !== undefined, 'Request processor is not attached')
 
-    const authority = this.authorities[host] ?? host
+    const authority = this.authorities.get(host) ?? host
 
     // if the request carries no trace context, the trace starts here
     const remote = trace(request.headers)
@@ -239,7 +240,7 @@ export class Server extends Connector {
         if (!response.writableEnded) {
           response.statusCode = status
 
-          const message: OutgoingMessage = { status: response.statusCode }
+          const message: OutgoingMessage = { status: response.statusCode, authentic: true }
 
           // eslint-disable-next-line max-depth
           if (exception instanceof Exception && exception.headers !== undefined)
@@ -385,6 +386,9 @@ interface Properties {
 
   /** Failed authentications an address may make; none are metered unless set. */
   bouncer?: Bouncer
+
+  /** The authorization server this context exposes; none is exposed without it. */
+  oauth?: OAuth
 }
 
 export type Options = { authorities: Properties['authorities'] } & {

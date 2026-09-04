@@ -1,5 +1,5 @@
 import { type Component } from '@toa.io/core'
-import { type Maybe } from '@toa.io/types'
+import { type Maybe } from '@toa.io/core'
 import { type Parameter } from '../../RTD/index.js'
 import type * as http from '../../HTTP/index.js'
 import type * as io from '../../io.js'
@@ -23,6 +23,9 @@ export interface Identity {
   roles?: string[]
   permissions?: Record<string, string[]>
   scheme: string | null // null for transient identities
+
+  /** The component that verified the credentials; none for a transient identity. */
+  provider?: Remote
   refresh: boolean
 }
 
@@ -43,6 +46,6 @@ export type AuthenticationResult = Maybe<{ identity: Identity, refresh: boolean 
 export type Scheme = 'basic' | 'token' | 'bearer' | 'code' | 'otp'
 export type Remote = 'basic' | 'federation' | 'tokens' | 'roles' | 'bans' | 'otp'
 export type Discovery = Record<Remote, Promise<Component>>
-export type Schemes = Record<Scheme, Component>
+export type Components = Partial<Record<Remote, Component>>
 
 export type Create = (name: string, value: any, ...args: any[]) => Directive

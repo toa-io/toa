@@ -31,7 +31,6 @@
     },
     "./package.json": "./package.json"
   },
-  "types": "types/index.d.ts",
   "dependencies": {
     "@toa.io/boot": "1.0.0-alpha.282",
     "@toa.io/core": "1.0.0-alpha.282",

@@ -11,6 +11,7 @@ operations:
           type: string
       type: object
   push:
+    output: { type: 'null' }
     bindings: ~ # only for internal use
     input:
       properties:
@@ -34,6 +35,8 @@ configuration:
         type: number
         default: 300
     type: object
+    # both have defaults, so the component reads them without checking
+    required: [maxlen, expire]
 
 state: ~
 stash: ~

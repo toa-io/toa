@@ -83,7 +83,9 @@ the request path.
 
 ### Bearer scheme
 
-OpenID tokens issued by trusted providers.
+OpenID tokens issued by trusted providers, and access tokens issued by
+[this authorization server](oauth.md) to OAuth clients. Both are presented the same way, and each
+provider says which credentials are its own; a credential neither claims is refused.
 For more information, refer
 to [OpenID Connect Core 1.0](https://openid.net/specs/openid-connect-core-1_0.html),
 [RFC6750](https://datatracker.ietf.org/doc/html/rfc6750).
