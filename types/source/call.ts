@@ -1,22 +1,12 @@
-export interface Request<Input = unknown, Entity = unknown> {
-  input?: Input
-  query?: Query<Entity>
-  entity?: Entity
-  task?: boolean
-}
+import type { Request } from '@toa.io/userland/types'
 
-export interface Query<Entity = unknown> {
-  id?: string
-  version?: number
-  criteria?: string
-  omit?: number
-  limit?: number
-  sort?: string[]
-  projection?: Array<keyof Entity>
-  deleted?: boolean
-}
+export type { Maybe, Query, RemoteError, Request } from '@toa.io/userland/types'
 
-export type Maybe<T> = T | Error
+/** @deprecated a call resolves to the output, `null`, or a `RemoteError`; see `@toa.io/userland`. */
 export type Call<Output = any, Input = any> = (request: Request<Input>) => Promise<Output>
+
+/** @deprecated see `@toa.io/userland`. */
 export type Observation<Output = any, Input = never, Entity = unknown> = (request: Request<Input, Entity>) => Promise<Output extends unknown[] ? Output : Output | null>
+
+/** @deprecated see `@toa.io/userland`. */
 export type Transition<Output = any, Input = never, Entity = unknown> = (request: Request<Input, Entity>) => Promise<Output | null>

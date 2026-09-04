@@ -24,7 +24,11 @@
   },
   "main": "src/index.js",
   "exports": {
-    ".": "./src/index.js",
+    ".": {
+      "types": "./types/index.d.ts",
+      "default": "./src/index.js"
+    },
+    "./types": "./types/index.d.ts",
     "./stage": {
       "types": "./stage/types/index.d.ts",
       "default": "./stage/src/index.js"
