@@ -3,6 +3,33 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.283](https://github.com/toa-io/toa/compare/v1.0.0-alpha.282...v1.0.0-alpha.283) (2026-09-04)
+
+### Bug Fixes
+
+* **cli:** an assignment hands back the new state, not nothing ([91304e9](https://github.com/toa-io/toa/commit/91304e9e9a3bba5933b7421b7a0ffff0c2e47795))
+* **exposition:** declare error codes as the operations return them ([a9007c0](https://github.com/toa-io/toa/commit/a9007c0dd1b199429af50fb57441281bb19ff971))
+* **exposition:** declare the errors the built-in components return ([27200c3](https://github.com/toa-io/toa/commit/27200c348ab09068d58c52c3e83208cb29cd7290))
+* **exposition:** look up an authority by a key an object does not answer ([cea57f5](https://github.com/toa-io/toa/commit/cea57f5010530b13fd20becfc69f2b243da95544))
+* **exposition:** read the configured token lifetime in seconds ([60486c6](https://github.com/toa-io/toa/commit/60486c6c2d2ba97caa9d01ab755351c99a156806))
+* **exposition:** reject a malformed Bearer rather than failing on it ([2b1a46d](https://github.com/toa-io/toa/commit/2b1a46d5b3d2abb64703b10b1543749baeac7596))
+* **storages:** take `Maybe` from core, not from the deprecated package ([bcaeeb3](https://github.com/toa-io/toa/commit/bcaeeb3c76c89af34e94ff569a210d21b7e87f64))
+
+### Features
+
+* **cli:** a type module is declarations, so it sits beside a component's source ([ca755d9](https://github.com/toa-io/toa/commit/ca755d93d1a04b7697dd0dd12eb59e5b6e2a71d1))
+* **cli:** generate an application's types from its manifests ([195ac94](https://github.com/toa-io/toa/commit/195ac94de0d8c9de995847599511782c399768a5))
+* **cli:** the built-in components ship types generated from their manifests ([bd7db9e](https://github.com/toa-io/toa/commit/bd7db9e88e46c1060223761898932239127f389a))
+* **exposition:** grant a client what a user allowed it ([95ef0cf](https://github.com/toa-io/toa/commit/95ef0cf6bcbb43580710ff9ce3e1d9e33c0f4963))
+* **exposition:** know what an OAuth client is ([5e101c8](https://github.com/toa-io/toa/commit/5e101c865f4bb75c01e7b5c637bfcd41f84c17e4))
+* **exposition:** let an operation state the status of its reply ([427864d](https://github.com/toa-io/toa/commit/427864d88f1c33a762b4b0f33489ad17eb7fb470))
+* **exposition:** let several providers claim one authentication scheme ([514177b](https://github.com/toa-io/toa/commit/514177b546fbd9fafe35c178cb38774f3e2f862a))
+* **exposition:** read a request sent as a form ([02fac86](https://github.com/toa-io/toa/commit/02fac86af392525fa374f16f51f1b3b07365b042))
+* **exposition:** serve OAuth discovery and challenge with it ([418890c](https://github.com/toa-io/toa/commit/418890cb30eb1dd041073a75f971b5820ae40a95))
+* **exposition:** set an exact cache-control whatever the method ([22f939a](https://github.com/toa-io/toa/commit/22f939a7a855d5ae2cfebb517caec98b8ca95de0))
+* **extensions:** an extension declares what it puts on a component's context ([133bc2a](https://github.com/toa-io/toa/commit/133bc2aad1e45a2d4aa68a08a5e44ca48d3b7414))
+
+
 # [1.0.0-alpha.282](https://github.com/toa-io/toa/compare/v1.0.0-alpha.281...v1.0.0-alpha.282) (2026-09-03)
 
 ### Bug Fixes

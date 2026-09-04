@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.283](https://github.com/toa-io/toa/compare/v1.0.0-alpha.282...v1.0.0-alpha.283) (2026-09-04)
+
+### Bug Fixes
+
+* **generic:** a merged list holds once what both sides hold ([b681c25](https://github.com/toa-io/toa/commit/b681c25771ff1b2b6d154aa680251774a7d35ef9))
+
+
 # [1.0.0-alpha.282](https://github.com/toa-io/toa/compare/v1.0.0-alpha.281...v1.0.0-alpha.282) (2026-09-03)
 
 ### Bug Fixes

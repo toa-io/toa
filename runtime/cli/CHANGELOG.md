@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.283](https://github.com/toa-io/toa/compare/v1.0.0-alpha.282...v1.0.0-alpha.283) (2026-09-04)
+
+### Bug Fixes
+
+* **cli:** an assignment hands back the new state, not nothing ([91304e9](https://github.com/toa-io/toa/commit/91304e9e9a3bba5933b7421b7a0ffff0c2e47795))
+
+### Features
+
+* **cli:** a component's types are a directory it shares with Toa ([a314da9](https://github.com/toa-io/toa/commit/a314da9e54d4cb4f7be7516f363cb5a50b075d4c))
+* **cli:** a type module is declarations, so it sits beside a component's source ([ca755d9](https://github.com/toa-io/toa/commit/ca755d93d1a04b7697dd0dd12eb59e5b6e2a71d1))
+* **cli:** generate an application's types from its manifests ([195ac94](https://github.com/toa-io/toa/commit/195ac94de0d8c9de995847599511782c399768a5))
+* **cli:** the built-in components ship types generated from their manifests ([bd7db9e](https://github.com/toa-io/toa/commit/bd7db9e88e46c1060223761898932239127f389a))
+* **extensions:** an extension declares what it puts on a component's context ([133bc2a](https://github.com/toa-io/toa/commit/133bc2aad1e45a2d4aa68a08a5e44ca48d3b7414))
+* **operations:** run extension services inside a composition ([154aced](https://github.com/toa-io/toa/commit/154aced047228a250ac3bab353e09432fcc5a34d))
+
+
 # [1.0.0-alpha.282](https://github.com/toa-io/toa/compare/v1.0.0-alpha.281...v1.0.0-alpha.282) (2026-09-03)
 
 ### Features

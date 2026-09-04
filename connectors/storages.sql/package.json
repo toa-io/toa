@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/storages.sql",
-  "version": "1.0.0-alpha.282",
+  "version": "1.0.0-alpha.283",
   "type": "module",
   "description": "Toa SQL Storage Connector",
   "author": "temich <tema.gurtovoy@gmail.com>",
@@ -20,10 +20,10 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@toa.io/conveyor": "1.0.0-alpha.282",
-    "@toa.io/core": "1.0.0-alpha.282",
-    "@toa.io/generic": "1.0.0-alpha.282",
-    "@toa.io/pointer": "1.0.0-alpha.282",
+    "@toa.io/conveyor": "1.0.0-alpha.283",
+    "@toa.io/core": "1.0.0-alpha.283",
+    "@toa.io/generic": "1.0.0-alpha.283",
+    "@toa.io/pointer": "1.0.0-alpha.283",
     "knex": "3.3.0",
     "openspan": "1.0.0-alpha.277",
     "pg": "8.23.0"

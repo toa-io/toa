@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.283](https://github.com/toa-io/toa/compare/v1.0.0-alpha.282...v1.0.0-alpha.283) (2026-09-04)
+
+### Bug Fixes
+
+* **cli:** an assignment hands back the new state, not nothing ([91304e9](https://github.com/toa-io/toa/commit/91304e9e9a3bba5933b7421b7a0ffff0c2e47795))
+* **exposition:** declare the errors the built-in components return ([27200c3](https://github.com/toa-io/toa/commit/27200c348ab09068d58c52c3e83208cb29cd7290))
+
+### Features
+
+* **cli:** a type module is declarations, so it sits beside a component's source ([ca755d9](https://github.com/toa-io/toa/commit/ca755d93d1a04b7697dd0dd12eb59e5b6e2a71d1))
+* **cli:** the built-in components ship types generated from their manifests ([bd7db9e](https://github.com/toa-io/toa/commit/bd7db9e88e46c1060223761898932239127f389a))
+* **extensions:** an extension declares what it puts on a component's context ([133bc2a](https://github.com/toa-io/toa/commit/133bc2aad1e45a2d4aa68a08a5e44ca48d3b7414))
+
+
 # [1.0.0-alpha.282](https://github.com/toa-io/toa/compare/v1.0.0-alpha.281...v1.0.0-alpha.282) (2026-09-03)
 
 ### Bug Fixes
