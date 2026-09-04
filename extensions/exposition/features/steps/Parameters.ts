@@ -33,14 +33,17 @@ process.env.TOA_TELEMETRY_TRACES ??= JSON.stringify({
   }
 })
 
-process.env.TOA_STORAGES = JSON.stringify({
-  octets: {
-    provider: 'tmp',
-    directory: Math.random().toString(36).substring(2)
-  },
+const environment = process.env.CLOUDINARY_ENVIRONMENT
+
+/**
+ * A storage is built when a component's context is — for every scenario, not only for the ones
+ * that reach for it — and a Cloudinary storage asks for the keys of a real account. A checkout
+ * carries none, so these two are declared only where `features/steps/.env` names an environment.
+ */
+const CLOUDINARY = {
   cloudinary: {
     provider: 'cloudinary',
-    environment: process.env.CLOUDINARY_ENVIRONMENT ?? 'nope',
+    environment,
     type: 'image',
     prefix: 'toa-dev',
     transformations: [
@@ -87,7 +90,7 @@ process.env.TOA_STORAGES = JSON.stringify({
   },
   cloudinary_video: {
     provider: 'cloudinary',
-    environment: process.env.CLOUDINARY_ENVIRONMENT ?? 'nope',
+    environment,
     type: 'video',
     prefix: 'toa-dev',
     eager: [
@@ -117,4 +120,12 @@ process.env.TOA_STORAGES = JSON.stringify({
       }
     ]
   }
+}
+
+process.env.TOA_STORAGES = JSON.stringify({
+  octets: {
+    provider: 'tmp',
+    directory: Math.random().toString(36).substring(2)
+  },
+  ...(environment === undefined ? {} : CLOUDINARY)
 })
