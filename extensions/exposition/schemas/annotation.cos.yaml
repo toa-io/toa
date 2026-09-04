@@ -50,6 +50,36 @@ properties:
   protocol:
     type: string
     enum: [h1, h2c]
+  oauth:
+    type: object
+    properties:
+      authorize:
+        description: The absolute URL of the consent page the application serves
+        type: string
+        pattern: ^https?://
+      resources:
+        description: Paths a token may be restricted to
+        type: array
+        items:
+          type: string
+          pattern: ^/
+      scopes:
+        type: array
+        items:
+          type: string
+      trust:
+        description: Origins whose Client ID Metadata Documents may be read
+        type: array
+        items:
+          type: string
+          pattern: ^https://
+      registration:
+        type: string
+        enum: [open, closed]
+        default: closed
+    required:
+      - authorize
+    additionalProperties: false
   /: {}
   authorities:
     type: object

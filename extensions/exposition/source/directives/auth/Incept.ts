@@ -3,14 +3,14 @@ import { console } from 'openspan'
 import * as http from '../../HTTP/index.js'
 import { split } from './split.js'
 import { create } from './create.js'
-import { INCEPTION, UNKNOWN, provider as providerOf } from './schemes.js'
+import { INCEPTION, UNKNOWN, providers as providersOf } from './schemes.js'
 import { Role } from './Role.js'
 import type { Component } from '@toa.io/core'
 import type { Maybe } from '@toa.io/types'
-import type { Directive, Discovery, Identity, Context, Schemes, Ban } from './types.js'
+import type { Directive, Discovery, Identity, Context, Components, Ban } from './types.js'
 
 export class Incept implements Directive {
-  private static readonly schemes: Schemes = {} as unknown as Schemes
+  private static readonly components: Components = {}
   private static discovery: Discovery
   private static bans: Component | null = null
 
@@ -26,12 +26,17 @@ export class Incept implements Directive {
 
   public static async incept (context: Context, id: string): Promise<Identity> {
     const [scheme, credentials] = split(context.request.headers.authorization!)
-    const provider = providerOf(scheme)
+    const candidates = providersOf(scheme)
 
-    if (provider === undefined)
+    if (candidates === undefined)
       throw new http.BadRequest('Authentication scheme is not supported')
 
-    if (!INCEPTION.includes(provider))
+    // a scheme several providers claim is incepted by the one that incepts; `Bearer`
+    // carries an access token this gateway issued, and an identity cannot be incepted
+    // from a credential it would itself have to exist to hold
+    const provider = candidates.find((candidate) => INCEPTION.includes(candidate))
+
+    if (provider === undefined)
       throw new http.Unauthorized()
 
     Incept.bans ??= await Incept.discovery.bans
@@ -41,9 +46,9 @@ export class Incept implements Directive {
     if (ban.banned)
       throw new http.Unauthorized()
 
-    Incept.schemes[scheme] ??= await Incept.discovery[provider]
+    Incept.components[provider] ??= await Incept.discovery[provider]
 
-    const identity = await Incept.schemes[scheme].invoke<Maybe<Identity>>('incept', {
+    const identity = await Incept.components[provider]!.invoke<Maybe<Identity>>('incept', {
       input: {
         scheme,
         authority: context.authority,

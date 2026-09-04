@@ -29,7 +29,7 @@ export class Gateway {
       process.env.TOA_EXPOSITION = JSON.stringify(tree)
     }
 
-    const { debug, authorities, bouncer, ip } = annotation
+    const { debug, authorities, bouncer, ip, oauth } = annotation
     const properties = Object.assign({}, DEFAULT_PROPERTIES)
 
     if (debug !== undefined)
@@ -43,6 +43,9 @@ export class Gateway {
 
     if (authorities !== undefined)
       properties.authorities = authorities
+
+    if (oauth !== undefined)
+      properties.oauth = oauth
 
     process.env.TOA_EXPOSITION_PROPERTIES = JSON.stringify(properties)
 
@@ -215,6 +218,8 @@ const DEFAULT_CONFIGURATION: Record<string, object> = {
   // features do not run; the variable is the local override that stands in for it
   'realtime.streams': {},
   'identity.basic': {},
+  'identity.clients': {},
+  'identity.grants': {},
   'identity.federation': {},
   'identity.otp': {},
   'identity.passkeys': {},

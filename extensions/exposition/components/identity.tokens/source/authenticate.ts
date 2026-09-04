@@ -1,4 +1,5 @@
 import type { Maybe, Operation } from '@toa.io/types'
+import { form } from './lib/index.js'
 import type { AuthenticateInput, AuthenticateOutput, Context } from './lib/index.js'
 
 export class Computation implements Operation {
@@ -13,6 +14,11 @@ export class Computation implements Operation {
   }
 
   public async execute (input: AuthenticateInput): Promise<Maybe<AuthenticateOutput>> {
+    // `Bearer` is presented by an OpenID id_token too, and the gateway asks each provider
+    // in turn: a credential this component did not issue is declined, not rejected
+    if (form(input.credentials) === null)
+      return ERR_UNRECOGNIZED
+
     const claims = await this.decrypt({ input: input.credentials })
 
     if (claims instanceof Error)
@@ -42,6 +48,10 @@ export class Computation implements Operation {
     }
   }
 }
+
+const ERR_UNRECOGNIZED = new (class UnrecognizedError extends Error {
+  public readonly code = 'UNRECOGNIZED'
+})()
 
 const ERR_AUTHORITY = new (class AuthorityMismatchError extends Error {
   public readonly code = 'AUTHORITY_MISMATCH'

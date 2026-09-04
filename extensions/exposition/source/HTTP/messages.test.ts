@@ -7,7 +7,7 @@ import { generate } from 'randomstring'
 import * as msgpack from 'msgpackr'
 import { multipart, read, type OutgoingMessage } from './messages.js'
 import { BadRequest, UnsupportedMediaType } from './exceptions.js'
-import { formats } from './formats/index.js'
+import { formats, types } from './formats/index.js'
 import { Timing } from './Timing.js'
 import type * as http from 'node:http'
 import type { Context } from './Context.js'
@@ -85,6 +85,30 @@ describe('read', () => {
     const request = createContext(path, headers, text)
 
     await assert.rejects(read(request), BadRequest)
+  })
+
+  it('should parse application/x-www-form-urlencoded', async () => {
+    const headers = { 'content-type': 'application/x-www-form-urlencoded' }
+    const form = 'grant_type=authorization_code&code=SplxlO&scope=a+b'
+    const request = createContext(generate(), headers, form)
+
+    assert.deepStrictEqual(await read(request), {
+      grant_type: 'authorization_code',
+      code: 'SplxlO',
+      scope: 'a b'
+    })
+  })
+
+  it('should read a repeated form name as the list it is', async () => {
+    const headers = { 'content-type': 'application/x-www-form-urlencoded' }
+    const request = createContext(generate(), headers, 'resource=one&resource=two')
+
+    assert.deepStrictEqual(await read(request), { resource: ['one', 'two'] })
+  })
+
+  it('should not offer a form as a reply encoding', () => {
+    assert.ok(!types.includes('application/x-www-form-urlencoded'),
+      'a form is read and never written')
   })
 
   it('should output correct mulitpart format', async () => {

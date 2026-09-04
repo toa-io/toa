@@ -9,6 +9,10 @@ The following media types are supported for both requests and responses:
 - `application/msgpack` using [msgpackr](https://github.com/kriszyp/msgpackr)
 - `text/plain`
 
+A request may also be sent as `application/x-www-form-urlencoded`. A form is read and never
+written, so it is not a format a response is negotiated to. A name repeated in a form is read as
+the list it is.
+
 The response format is determined by content negotiation
 using [negotiator](https://github.com/jshttp/negotiator).
 

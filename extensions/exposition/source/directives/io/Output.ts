@@ -35,7 +35,10 @@ export class Output implements Directive {
 
   private restriction (context: Context) {
     return (message: OutgoingMessage): void => {
-      const error = message.status !== undefined && message.status >= 300
+      // what the gateway built is its own — a code and a message — and a restriction has
+      // nothing to say about it; everything else is a reply the operation returned, and is
+      // restricted whatever status it carries
+      const error = message.authentic === true
       const stream = message.body instanceof Stream
       const none = message.body === undefined || message.body === null
 

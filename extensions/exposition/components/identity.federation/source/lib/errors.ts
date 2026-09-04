@@ -1,3 +1,8 @@
+export const ERR_TOKEN = new (class TokenError extends Error {
+  public readonly code = 'TOKEN'
+  public override readonly message = 'Token is malformed or does not verify'
+})()
+
 export const ERR_TRUST = new (class TrustError extends Error {
   public readonly code = 'TRUST'
   public override readonly message = 'Issuer not trusted'

@@ -138,6 +138,7 @@ exposition:
 | `debug`       | Output server errors. Default `false`.                                                                            |
 | `ip`          | Header the client address is read from. See [Client address](documentation/ip.md).                              |
 | `bouncer`     | Meter of failed authentications per address. See [Identity authentication](documentation/identity.md#failed-authentications). |
+| `oauth`       | Authorization server exposed to OAuth clients. See [OAuth](documentation/oauth.md).                               |
 
 ### Observability
 
@@ -207,6 +208,8 @@ See also [telemetry ready probe](../telemetry/readme.md#ready-probe) and
 - [Resource Tree Definition](documentation/tree.md)
 - [Identity authentication](documentation/identity.md)
 - [Access authorization](documentation/access.md)
+- [OAuth authorization server](documentation/oauth.md)
+- [Consent](documentation/consent.md)
 - [BLOBs](documentation/octets.md)
 - [Components and resources](documentation/components.md)
 - [Caching](documentation/cache.md)

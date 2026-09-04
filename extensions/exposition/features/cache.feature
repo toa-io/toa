@@ -320,3 +320,49 @@ Feature: Caching
       200 OK
       cache-control: private, no-cache
       """
+
+  Scenario: An exact value is set whatever the method
+    Given the annotation:
+      """yaml
+      /:
+        io:output: true
+        /tokens/:
+          anonymous: true
+          cache:exact: no-store
+          POST:
+            dev:stub: issued
+      """
+    When the following request is received:
+      """
+      POST /tokens/ HTTP/1.1
+      host: nex.toa.io
+      accept: text/plain
+      """
+    # whether a reply may be stored is not a question about the method's cacheability
+    Then the following reply is sent:
+      """
+      201 Created
+      cache-control: no-store
+      """
+
+  Scenario: Cacheability is still asked of safe methods only
+    Given the annotation:
+      """yaml
+      /:
+        io:output: true
+        /notes/:
+          anonymous: true
+          cache:control: max-age=60000, public
+          POST:
+            dev:stub: created
+      """
+    When the following request is received:
+      """
+      POST /notes/ HTTP/1.1
+      host: nex.toa.io
+      accept: text/plain
+      """
+    Then the reply does not contain:
+      """
+      cache-control:
+      """

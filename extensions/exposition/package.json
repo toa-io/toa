@@ -36,7 +36,7 @@
   },
   "scripts": {
     "test": "echo \"Error: run tests from root\" && exit 1",
-    "transpile": "tsc && npm run transpile:bans && npm run transpile:basic && npm run transpile:tokens && npm run transpile:roles && npm run transpile:federation && npm run transpile:credentials && npm run transpile:keys && npm run transpile:passkeys && npm run transpile:otp",
+    "transpile": "tsc && npm run transpile:bans && npm run transpile:basic && npm run transpile:tokens && npm run transpile:roles && npm run transpile:federation && npm run transpile:credentials && npm run transpile:keys && npm run transpile:passkeys && npm run transpile:otp && npm run transpile:clients && npm run transpile:grants",
     "transpile:bans": "tsc -p ./components/identity.bans",
     "transpile:basic": "tsc -p ./components/identity.basic",
     "transpile:tokens": "tsc -p ./components/identity.tokens",
@@ -46,6 +46,8 @@
     "transpile:keys": "tsc -p ./components/identity.keys",
     "transpile:passkeys": "tsc -p ./components/identity.passkeys",
     "transpile:otp": "tsc -p ./components/identity.otp",
+    "transpile:clients": "tsc -p ./components/identity.clients",
+    "transpile:grants": "tsc -p ./components/identity.grants",
     "features": "TSX_TSCONFIG_PATH=features/steps/tsconfig.json NODE_OPTIONS=--import=tsx cucumber-js",
     "features:h2c": "TOA_EXPOSITION_PROTOCOL=h2c TOA_AGENT_PROTOCOL=h2c TSX_TSCONFIG_PATH=features/steps/tsconfig.json NODE_OPTIONS=--import=tsx cucumber-js",
     "features:security": "TSX_TSCONFIG_PATH=features/steps/tsconfig.json NODE_OPTIONS=--import=tsx cucumber-js --tags @security",

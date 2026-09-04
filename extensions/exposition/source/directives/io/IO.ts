@@ -1,6 +1,7 @@
 import { Output } from './Output.js'
 import { Input } from './Input.js'
 import { Throttle } from './Throttle.js'
+import { Status } from './Status.js'
 import { Sync } from './lib/throttle/index.js'
 import type * as http from '../../HTTP/index.js'
 import type { Parameter, DirectiveFamily } from '../../RTD/index.js'
@@ -72,6 +73,7 @@ export class IO implements DirectiveFamily<Directive> {
 const constructors: Record<string, Constructor> = {
   input: Input,
   output: Output,
+  status: Status,
   throttle: Throttle
 }
 

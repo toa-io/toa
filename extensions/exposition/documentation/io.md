@@ -1,7 +1,7 @@
 # I/O restrictions
 
 The Exposition comes with `io` directives to control access to the operation's input and output
-properties.
+properties, and to let an operation state the status of its reply.
 
 ## Input
 
@@ -53,7 +53,41 @@ GET:
   io:output: false
 ```
 
-Output restrictions are not applied to stream responses and errors.
+Output restrictions are not applied to stream responses, nor to a reply the gateway built out of an
+exception — an operation that returns an error is answered with a code and a message of the
+gateway's own, and a list of permitted properties has nothing to say about those. A reply the
+operation returned is restricted whatever status it carries, see [Status](#status).
+
+## Status
+
+The `io:status` optional directive names a property of the reply that carries the status of the
+response. The property is removed from the body.
+
+```yaml
+POST:
+  endpoint: register
+  io:status: status
+  io:output: [client_id, client_name, error, error_description]
+```
+
+```javascript
+return { status: 400, error: 'invalid_redirect_uri' }
+```
+
+```http
+400 Bad Request
+
+error: invalid_redirect_uri
+```
+
+A reply that does not carry the property is answered with the status it would have been. A property
+that is not a number is an error.
+
+This is for an outcome the operation knows and the transport does not — a protocol that states its
+error as a body rather than as a status of its own, or a request that created where it might have
+updated. Such an operation returns no error: both replies are its output, and `io:output` permits
+the properties of both. An operation that does return an error is unaffected — that reply is the
+gateway's, and is not restricted.
 
 ## Throttling
 

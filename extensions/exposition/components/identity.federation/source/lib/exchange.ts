@@ -66,13 +66,17 @@ export async function exchange (credentials: string, ctx: Ctx): Promise<Payload 
 
   const jwks = await createRemoteJWKSet(iss, ctx.fetch)
 
-  const { payload } = await jose.jwtVerify(tokens.id_token, jwks, {
-    issuer: iss,
-    audience: trusted.aud,
-    requiredClaims: ['exp']
-  })
+  try {
+    const { payload } = await jose.jwtVerify(tokens.id_token, jwks, {
+      issuer: iss,
+      audience: trusted.aud,
+      requiredClaims: ['exp']
+    })
 
-  return payload as Payload
+    return payload as Payload
+  } catch {
+    return errors.ERR_TOKEN
+  }
 }
 
 function decode (credentials: string): Properties | Error {
