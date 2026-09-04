@@ -1,5 +1,5 @@
 import { quote } from '@toa.io/generic'
-import type { Call, Observation } from '@toa.io/types'
+import type { Call, Observation } from '@toa.io/core'
 
 export async function effect ({ identity }: Input, context: Context): Promise<void> {
   const keys = await context.local.enumerate({

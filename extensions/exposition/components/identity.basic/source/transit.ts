@@ -1,5 +1,6 @@
 import { genSalt, hash } from 'bcryptjs'
-import type { Maybe, Operation } from '@toa.io/types'
+import type { Maybe } from '@toa.io/core'
+import type { Operation } from '@toa.io/bridges.node'
 import type { Context, Entity, Principal, TransitInput, TransitOutput } from '../types/index.js'
 
 export class Transition implements Operation {

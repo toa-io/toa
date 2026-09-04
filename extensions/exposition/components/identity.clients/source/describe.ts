@@ -1,5 +1,6 @@
 import { ERR_UNKNOWN_CLIENT, permits, read } from './lib/index.js'
-import type { Maybe, Operation } from '@toa.io/types'
+import type { Maybe } from '@toa.io/core'
+import type { Operation } from '@toa.io/bridges.node'
 import type { Client, Context } from './lib/index.js'
 
 /**

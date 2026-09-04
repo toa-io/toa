@@ -7,3 +7,6 @@ export type { Remotes } from './Remotes.js'
 
 // what an operation is written against, rather than the gateway's own
 export type { Claims, Identity } from './userland.js'
+
+// what an octets workflow is given
+export type * as octets from './octets.js'

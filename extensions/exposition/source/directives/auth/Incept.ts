@@ -6,7 +6,7 @@ import { create } from './create.js'
 import { INCEPTION, UNKNOWN, providers as providersOf } from './schemes.js'
 import { Role } from './Role.js'
 import type { Component } from '@toa.io/core'
-import type { Maybe } from '@toa.io/types'
+import type { Maybe } from '@toa.io/core'
 import type { Directive, Discovery, Identity, Context, Components, Ban } from './types.js'
 
 export class Incept implements Directive {

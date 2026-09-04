@@ -1,5 +1,5 @@
 import { type Readable } from 'node:stream'
-import { type Operation } from '@toa.io/types'
+import { type Operation } from '@toa.io/bridges.node'
 import { type Context } from '../types/index.js'
 import { Stream, Stash } from './lib/index.js'
 

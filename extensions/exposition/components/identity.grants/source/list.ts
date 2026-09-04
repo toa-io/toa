@@ -1,5 +1,5 @@
 import { quote } from '@toa.io/generic'
-import type { Operation } from '@toa.io/types'
+import type { Operation } from '@toa.io/bridges.node'
 import type { Context, Entity } from './lib/index.js'
 
 /** What a user has allowed, for a screen that lets them take it back. */

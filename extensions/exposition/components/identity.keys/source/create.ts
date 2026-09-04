@@ -1,5 +1,5 @@
 import { randomBytes } from 'node:crypto'
-import type { Operation } from '@toa.io/types'
+import type { Operation } from '@toa.io/bridges.node'
 
 export class Transition implements Operation {
   public async execute (input: Input, object: Key): Promise<Output> {

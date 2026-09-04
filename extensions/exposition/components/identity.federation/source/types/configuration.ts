@@ -1,4 +1,4 @@
-import type { Secret } from '@toa.io/types'
+import type { Secret } from '@toa.io/extensions.configuration'
 
 export interface Configuration {
   trust: Trust[]

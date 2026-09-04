@@ -1,4 +1,5 @@
-import type { Observation, Stash, Transition } from '@toa.io/types'
+import type { Observation, Transition } from '@toa.io/core'
+import type { Stash } from '@toa.io/extensions.stash'
 import type { Logs } from '@toa.io/extensions.telemetry'
 import type { Configuration } from './Configuration.js'
 import type { Passkey } from './Passkey.js'

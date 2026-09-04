@@ -2,7 +2,8 @@ import { DecryptFactory, ImportKeyFactory } from 'paseto/v3/local'
 import { LRUCache } from 'lru-cache'
 import { form, jweKey } from './lib/index.js'
 import { load } from './lib/jose.js'
-import type { Maybe, Operation } from '@toa.io/types'
+import type { Maybe } from '@toa.io/core'
+import type { Operation } from '@toa.io/bridges.node'
 import type { Context, Claims, DecryptOutput, JWEClaims } from './lib/index.js'
 
 export class Computation implements Operation {

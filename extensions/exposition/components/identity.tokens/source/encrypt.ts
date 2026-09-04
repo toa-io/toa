@@ -1,6 +1,7 @@
 import { jweKey } from './lib/index.js'
 import { load } from './lib/jose.js'
-import type { Operation, Maybe } from '@toa.io/types'
+import type { Operation } from '@toa.io/bridges.node'
+import type { Maybe } from '@toa.io/core'
 import type { Identity, Context, EncryptInput, Key } from './lib/index.js'
 
 export class Effect implements Operation {
