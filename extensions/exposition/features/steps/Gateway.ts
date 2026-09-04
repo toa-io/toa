@@ -219,6 +219,7 @@ const DEFAULT_CONFIGURATION: Record<string, object> = {
   'realtime.streams': {},
   'identity.basic': {},
   'identity.clients': {},
+  'identity.grants': {},
   'identity.federation': {},
   'identity.otp': {},
   'identity.passkeys': {},
