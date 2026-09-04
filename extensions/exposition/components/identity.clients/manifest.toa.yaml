@@ -1,0 +1,242 @@
+namespace: identity
+name: clients
+
+# A registration is addressed by the hash of what it says, so the same metadata is the
+# same client however many times it arrives. `associated` is what lets a transition create
+# the record at an id decided outside the storage.
+entity:
+  associated: true
+  schema:
+    type: object
+    properties:
+      authority:
+        type: string
+      name:
+        description: client_name
+        type: string
+        maxLength: 128
+      uris:
+        description: redirect_uris
+        type: array
+        minItems: 1
+        maxItems: 8
+        items:
+          type: string
+          maxLength: 2048
+      uri:
+        description: client_uri
+        type: string
+        maxLength: 2048
+      logo:
+        description: logo_uri
+        type: string
+        maxLength: 2048
+      scope:
+        type: string
+        maxLength: 512
+      expires:
+        description: When a registration nothing has used is swept
+        type: number
+    required:
+      - authority
+      - uris
+  index:
+    authority:
+      authority: asc
+
+operations:
+  transit:
+    concurrency: retry
+    input:
+      type: object
+      properties:
+        authority:
+          type: string
+        name:
+          type: string
+        uri:
+          type: string
+        logo:
+          type: string
+        scope:
+          type: string
+        uris:
+          type: array
+          items:
+            type: string
+        expires:
+          type: number
+      required:
+        - authority
+        - uris
+
+  register:
+    query: false
+    input:
+      type: object
+      properties:
+        authority:
+          type: string
+        client_name:
+          type: string
+          maxLength: 128
+        client_uri:
+          type: string
+          maxLength: 2048
+        logo_uri:
+          type: string
+          maxLength: 2048
+        redirect_uris:
+          type: array
+          minItems: 1
+          maxItems: 8
+          items:
+            type: string
+            maxLength: 2048
+        scope:
+          type: string
+          maxLength: 512
+        grant_types:
+          type: array
+          items:
+            type: string
+        response_types:
+          type: array
+          items:
+            type: string
+        token_endpoint_auth_method:
+          type: string
+      required:
+        - authority
+        - redirect_uris
+    # RFC 7591 §3.2.2 states a registration error as a body, not as a status of its own
+    output:
+      type: object
+      properties:
+        status:
+          description: Read and removed by `map:status`
+          type: number
+        client_id:
+          type: string
+        client_id_issued_at:
+          type: number
+        client_name:
+          type: string
+        client_uri:
+          type: string
+        logo_uri:
+          type: string
+        redirect_uris:
+          type: array
+          items:
+            type: string
+        grant_types:
+          type: array
+          items:
+            type: string
+        response_types:
+          type: array
+          items:
+            type: string
+        token_endpoint_auth_method:
+          type: string
+        error:
+          type: string
+        error_description:
+          type: string
+
+  describe:
+    query: false
+    input:
+      type: object
+      properties:
+        authority:
+          type: string
+        id:
+          description: client_id, which is an https URL when the client publishes its own metadata
+          type: string
+          maxLength: 2048
+        redirect:
+          description: Asked about together with the client, since only this component may answer it
+          type: string
+          maxLength: 2048
+      required:
+        - authority
+        - id
+    output:
+      type: object
+      properties:
+        client_id:
+          type: string
+        client_name:
+          type: string
+        client_uri:
+          type: string
+        logo_uri:
+          type: string
+        redirect_uris:
+          type: array
+          items:
+            type: string
+        permitted:
+          description: Whether `redirect` is one this client may receive a code at
+          type: boolean
+    errors:
+      - UNKNOWN_CLIENT
+
+configuration:
+  schema:
+    type: object
+    properties:
+      trust:
+        description: Origins whose Client ID Metadata Documents may be read; none are without one
+        type: array
+        items:
+          type: string
+          pattern: ^https://
+        default: []
+      lifetime:
+        description: Seconds a Client ID Metadata Document is held before it is read again
+        type: integer
+        minimum: 1
+        default: 3600
+      ttl:
+        description: Seconds a registration nothing has used is kept
+        type: integer
+        minimum: 1
+        default: 2592000
+      size:
+        description: Bytes of a Client ID Metadata Document that are read
+        type: integer
+        minimum: 1
+        default: 16384
+      timeout:
+        description: Milliseconds a Client ID Metadata Document has to arrive
+        type: integer
+        minimum: 1
+        default: 3000
+
+stash: ~
+
+exposition:
+  isolated: true
+  /:
+    POST:
+      anonymous: true
+      map:authority: authority
+      io:input: [client_name, client_uri, logo_uri, redirect_uris, scope, grant_types, response_types, token_endpoint_auth_method]
+      io:output: true
+      io:throttle:
+        key: ip
+        requests: 10
+        interval: 3600
+      io:status: status
+      endpoint: register
+    /:id:
+      GET:
+        anyone: true
+        map:authority: authority
+        map:segments:
+          id: id
+        io:output: [client_id, client_name, client_uri, logo_uri, redirect_uris]
+        endpoint: describe

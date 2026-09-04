@@ -218,6 +218,7 @@ const DEFAULT_CONFIGURATION: Record<string, object> = {
   // features do not run; the variable is the local override that stands in for it
   'realtime.streams': {},
   'identity.basic': {},
+  'identity.clients': {},
   'identity.federation': {},
   'identity.otp': {},
   'identity.passkeys': {},
