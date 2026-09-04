@@ -4,7 +4,7 @@ import { pipeline } from 'node:stream/promises'
 import { createHash } from 'node:crypto'
 import * as contentType from 'content-type'
 import { console } from 'openspan'
-import { type Format, formats } from './formats/index.js'
+import { type Format, decoders } from './formats/index.js'
 import { BadRequest, NotAcceptable, UnsupportedMediaType } from './exceptions.js'
 import type { Context } from './Context.js'
 import type { ServerResponse } from './types.js'
@@ -49,10 +49,10 @@ export async function read (context: Context): Promise<any> {
 
   const { type, parameters } = contentType.parse(header)
 
-  if (!(type in formats))
+  if (!(type in decoders))
     throw new UnsupportedMediaType()
 
-  const format = formats[type]
+  const format = decoders[type]
   const buf = await context.buffer()
 
   try {
