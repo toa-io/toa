@@ -83,6 +83,11 @@ properties:
   rpc:
     description: JSON-RPC at `/.rpc`; writing it is what turns the endpoint on
     type: object
+    properties:
+      batch:
+        description: Calls one request may carry
+        type: integer
+        minimum: 1
     additionalProperties: false
   /: {}
   authorities:

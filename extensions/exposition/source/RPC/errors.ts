@@ -18,6 +18,7 @@ export const INTERNAL = -32603
  */
 export const FORBIDDEN = -32000
 export const REFUSED = -32001
+export const BATCH_TOO_LARGE = -32002
 
 export function failure (code: number, message: string, data?: unknown): Failure {
   const value: Failure = { code, message }

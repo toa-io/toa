@@ -4,7 +4,8 @@ An application annotates it, and every resource it exposes answers as a procedur
 
 ```yaml
 exposition:
-  rpc: {}
+  rpc:
+    batch: 32
 ```
 
 Without it `/.rpc` is a path like any other, and nothing answers there. The path is fixed:
@@ -68,11 +69,28 @@ and encoded as the request's `accept` asks. A call that returned nothing answers
 A call with no `id` is a notification: it runs and answers nothing, and a request carrying only
 notifications answers `204`.
 
+## Several at once
+
+A request may carry an array of calls instead of one, and answers an array of what they
+answered — shorter than what it was given, where some were notifications.
+
+```json
+[{"jsonrpc": "2.0", "id": 1, "method": "pots/:id#GET", "params": {"id": "a1b2"}},
+ {"jsonrpc": "2.0", "method": "pots/:id#DELETE", "params": {"id": "c3d4"}}]
+```
+
+They run one after another, in the order given. `batch` is how many one request may carry, 32
+where the annotation does not say: a request is one authentication and one reply however many
+calls it makes, so what a caller may ask for at once is bounded.
+
 ## What refuses
 
 The whole request is refused, with a status, when it is not a request this endpoint serves: a
-verb other than `POST` is `405`, an unreadable body is `400`, and anything that is not one call
-is `400`.
+verb other than `POST` is `405`, an unreadable body is `400`, and an array that is empty or
+longer than `batch` is `400`.
+
+A call that is not one — a version it does not state, a method it does not name — is answered
+to nobody: `id` is `null`, because nothing about it is trustworthy enough to answer to.
 
 A credential is the request's, so a call cannot be refused for one: a request that presents
 none where the procedure requires one is `401`, and carries the challenge that says where to
@@ -87,6 +105,7 @@ Everything else a call runs into is a value, at `200`, because the request itsel
 | `-32000` | the identity is not authorized to make this call |
 | `-32001` | the operation refused, its own code in `data.code` |
 | `-32603` | anything the gateway did not mean to answer |
+| `-32002` | the request carries more calls than `batch` |
 
 The first five codes JSON-RPC states mean the same to every client. `-32000` and `-32001` are
 this gateway's, from the block the specification reserves and leaves empty, so

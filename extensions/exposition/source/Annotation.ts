@@ -52,8 +52,13 @@ export interface OAuth {
   registration?: 'open' | 'closed'
 }
 
-/** Nothing to configure yet: writing it is what turns the endpoint on. */
-export interface RPC {}
+export interface RPC {
+  /**
+   * Calls one request may carry, 32 by default. One request is one authentication and one
+   * reply however many calls it makes, so what a caller may ask for at once is bounded.
+   */
+  batch?: number
+}
 
 export interface Bouncer {
   /** what an address may fail at once, 20 by default */

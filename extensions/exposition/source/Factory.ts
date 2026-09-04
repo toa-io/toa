@@ -59,7 +59,7 @@ export class Factory implements extensions.Factory {
     const tree = new Tree(node, methods, directives)
 
     const composition = new Composition(this.host)
-    const dispatcher = options.rpc === undefined ? null : new Dispatcher()
+    const dispatcher = options.rpc === undefined ? null : new Dispatcher(options.rpc)
     const gateway = new Gateway(broadcast, tree, interception, directives, dispatcher)
 
     gateway.depends(remotes)

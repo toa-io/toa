@@ -8,3 +8,6 @@ export const ATOM_GROUP = 'exposition'
  * path an application could choose is a path it could collide with a route of its own.
  */
 export const RPC = '/.rpc'
+
+/** Calls one request may carry where the annotation does not say. */
+export const BATCH = 32

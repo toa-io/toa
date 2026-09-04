@@ -151,7 +151,14 @@ export class Gateway {
     instance = service
 
     await service.connect()
-    await timeout(50) // resource discovery
+
+    /*
+     * The gateway waits for the branches it discovers, but a component's own resources —
+     * a storage, a queue — are still connecting when it answers. Fifty milliseconds was
+     * enough until the composition grew; a scenario that asks too early reads the 404 that
+     * precedes the route.
+     */
+    await timeout(DISCOVERY)
   }
 
   @after()
@@ -205,6 +212,9 @@ const DEFAULT_TREE = JSON.stringify({
     }
   ]
 } satisfies syntax.Node)
+
+/** Milliseconds a composition is given to finish connecting what it needs. */
+const DISCOVERY = 100
 
 const DEFAULT_PROPERTIES: Partial<http.Options> = {
   authorities: {

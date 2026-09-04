@@ -187,7 +187,7 @@ Feature: JSON-RPC
       401 Unauthorized
       """
 
-  Scenario: A batch is not answered yet
+  Scenario: A request may carry several calls
     When the following request is received:
       """
       POST /.rpc HTTP/1.1
@@ -195,11 +195,96 @@ Feature: JSON-RPC
       accept: application/yaml
       content-type: application/json
 
-      [{"jsonrpc": "2.0", "id": 8, "method": "pots#GET", "params": {}}]
+      [{"jsonrpc": "2.0", "id": 8, "method": "pots/:id#GET",
+        "params": {"id": "4c4759e6f9c74da989d64511df42d6f4"}},
+       {"jsonrpc": "2.0", "id": 9, "method": "kettles#GET", "params": {}},
+       {"jsonrpc": "2.0", "method": "pots#POST", "params": {"title": "Pot", "volume": 1}}]
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+
+      - jsonrpc: '2.0'
+        id: 8
+        result:
+          id: 4c4759e6f9c74da989d64511df42d6f4
+          title: First pot
+      - jsonrpc: '2.0'
+        id: 9
+        error:
+          code: -32601
+      """
+
+  Scenario: What a request took is said once, whatever it carried
+    When the following request is received:
+      """
+      POST /.rpc HTTP/1.1
+      host: nex.toa.io
+      accept: application/yaml
+      content-type: application/json
+
+      [{"jsonrpc": "2.0", "id": 13, "method": "pots#GET", "params": {}},
+       {"jsonrpc": "2.0", "id": 14, "method": "pots#GET", "params": {}},
+       {"jsonrpc": "2.0", "id": 15, "method": "pots#GET", "params": {}}]
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      """
+    # the stages of a call are measured per call, and a trace is where they are read
+    And the reply does not contain:
+      """
+      precall
+      """
+
+  Scenario: A request of notifications alone answers nothing
+    When the following request is received:
+      """
+      POST /.rpc HTTP/1.1
+      host: nex.toa.io
+      content-type: application/json
+
+      [{"jsonrpc": "2.0", "method": "pots#POST", "params": {"title": "One", "volume": 1}},
+       {"jsonrpc": "2.0", "method": "pots#POST", "params": {"title": "Two", "volume": 2}}]
+      """
+    Then the following reply is sent:
+      """
+      204 No Content
+      """
+
+  Scenario: A request carries at least one call
+    When the following request is received:
+      """
+      POST /.rpc HTTP/1.1
+      host: nex.toa.io
+      accept: application/yaml
+      content-type: application/json
+
+      []
       """
     Then the following reply is sent:
       """
       400 Bad Request
+
+      jsonrpc: '2.0'
+      id:
+      error:
+        code: -32600
+      """
+
+  Scenario: A call that is not one is answered to nobody
+    When the following request is received:
+      """
+      POST /.rpc HTTP/1.1
+      host: nex.toa.io
+      accept: application/yaml
+      content-type: application/json
+
+      {"jsonrpc": "1.0", "id": 10, "method": "pots#GET"}
+      """
+    Then the following reply is sent:
+      """
+      200 OK
 
       jsonrpc: '2.0'
       id:
@@ -218,6 +303,32 @@ Feature: JSON-RPC
       """
       405 Method Not Allowed
       allow: POST
+      """
+
+  Scenario: What a request may carry at once is bounded
+    Given the annotation:
+      """yaml
+      rpc:
+        batch: 1
+      """
+    When the following request is received:
+      """
+      POST /.rpc HTTP/1.1
+      host: nex.toa.io
+      accept: application/yaml
+      content-type: application/json
+
+      [{"jsonrpc": "2.0", "id": 11, "method": "pots#GET", "params": {}},
+       {"jsonrpc": "2.0", "id": 12, "method": "pots#GET", "params": {}}]
+      """
+    Then the following reply is sent:
+      """
+      400 Bad Request
+
+      jsonrpc: '2.0'
+      id:
+      error:
+        code: -32002
       """
 
   Scenario: Nothing is served where it was not asked for
