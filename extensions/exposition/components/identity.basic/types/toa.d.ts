@@ -73,6 +73,8 @@ export type CheckInput = {
   username: string
 }
 
+export type CheckOutput = null
+
 export type InfoInput = {
   authority: string
   identity: string
@@ -93,15 +95,15 @@ export interface Component {
   add: (request: { input: AddInput, task?: boolean }) => Promise<unknown | RemoteError<"PRINCIPAL_LOCKED" | "INVALID_USERNAME" | "INVALID_PASSWORD" | "EXISTS">>
   incept: (request: { input: InceptInput, task?: boolean }) => Promise<InceptOutput | RemoteError<"INVALID_CREDENTIALS">>
   authenticate: (request: { input: AuthenticateInput, task?: boolean }) => Promise<AuthenticateOutput | RemoteError<"NOT_FOUND" | "PASSWORD_MISMATCH">>
-  check: (request: { input: CheckInput, task?: boolean }) => Promise<unknown>
+  check: (request: { input: CheckInput, task?: boolean }) => Promise<CheckOutput>
   info: (request: { input: InfoInput, task?: boolean }) => Promise<InfoOutput>
   delete: (request: { input: DeleteInput, task?: boolean }) => Promise<unknown>
-  assign: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<void>
+  assign: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Entity>
   ensure: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Entity>
   enumerate: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Entity[]>
   observe: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Entity | null>
   stream: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Readable>
-  terminate: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<void>
+  terminate: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Entity>
 }
 
 export interface Configuration {

@@ -53,6 +53,7 @@ operations:
         - key
       type: object
   revoke:
+    output: { type: 'null' }
     input:
       properties:
         identity:

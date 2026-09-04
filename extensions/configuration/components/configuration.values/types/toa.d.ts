@@ -59,10 +59,10 @@ export interface Component {
   fetch: (request: { input: FetchInput, task?: boolean }) => Promise<FetchOutput>
   list: (request: { input?: null, task?: boolean }) => Promise<ListOutput>
   create: (request: { input: CreateInput, task?: boolean }) => Promise<unknown | RemoteError<"UNKNOWN_COMPONENT" | "INVALID_CONFIGURATION">>
-  assign: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<void>
+  assign: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Entity>
   ensure: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Entity>
   enumerate: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Entity[]>
   observe: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Entity | null>
   stream: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Readable>
-  terminate: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<void>
+  terminate: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Entity>
 }

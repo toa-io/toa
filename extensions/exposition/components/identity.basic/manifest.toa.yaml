@@ -135,8 +135,7 @@ operations:
           minLength: 1
       required:
         - username
-    output:
-      {}
+    output: { type: 'null' }
   info:
     input:
       properties:

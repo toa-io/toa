@@ -128,7 +128,8 @@ function returns (endpoint, operation, manifest, importing) {
   switch (operation.scope) {
     case 'object': return { declared: false, type: entity }
     case 'objects': return { declared: false, type: `${entity}[]` }
-    case 'changeset': return { declared: false, type: 'void' }
+    // an assignment hands back the new state unless the algorithm returned one
+    case 'changeset': return { declared: false, type: entity }
     case 'stream':
       importing('node:stream', 'Readable')
 

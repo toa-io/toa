@@ -84,18 +84,20 @@ export type RevokeInput = {
   identity: string
 }
 
+export type RevokeOutput = null
+
 export interface Component {
   transit: (request: { input: TransitInput, query?: Query<Entity>, task?: boolean }) => Promise<Entity>
   authorize: (request: { input: AuthorizeInput, task?: boolean }) => Promise<AuthorizeOutput>
   exchange: (request: { input: ExchangeInput, task?: boolean }) => Promise<ExchangeOutput>
   list: (request: { input: ListInput, task?: boolean }) => Promise<unknown>
-  revoke: (request: { input: RevokeInput, query?: Query<Entity>, task?: boolean }) => Promise<unknown | RemoteError<"NOT_FOUND">>
-  assign: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<void>
+  revoke: (request: { input: RevokeInput, query?: Query<Entity>, task?: boolean }) => Promise<RevokeOutput | RemoteError<"NOT_FOUND">>
+  assign: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Entity>
   ensure: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Entity>
   enumerate: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Entity[]>
   observe: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Entity | null>
   stream: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Readable>
-  terminate: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<void>
+  terminate: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Entity>
 }
 
 export interface Configuration {

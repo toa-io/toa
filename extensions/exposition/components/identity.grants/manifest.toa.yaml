@@ -175,6 +175,7 @@ operations:
         - identity
 
   revoke:
+    output: { type: 'null' }
     concurrency: retry
     input:
       type: object

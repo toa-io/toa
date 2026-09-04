@@ -16,9 +16,11 @@ export type PushInput = {
   event: string
 }
 
+export type PushOutput = null
+
 export interface Component {
   create: (request: { input: CreateInput, task?: boolean }) => Promise<unknown>
-  push: (request: { input: PushInput, task?: boolean }) => Promise<unknown>
+  push: (request: { input: PushInput, task?: boolean }) => Promise<PushOutput>
 }
 
 export interface Configuration {

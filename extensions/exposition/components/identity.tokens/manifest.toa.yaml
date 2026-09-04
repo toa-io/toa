@@ -171,6 +171,7 @@ operations:
     errors:
       - INACCESSIBLE_SCOPE
   revoke:
+    output: { type: 'null' }
     concurrency: retry
 
 receivers:

@@ -78,18 +78,20 @@ export type IssueOutput = {
   token: string
 }
 
+export type RevokeOutput = null
+
 export interface Component {
   encrypt: (request: { input: EncryptInput, task?: boolean }) => Promise<EncryptOutput | RemoteError<"INACCESSIBLE_SCOPE">>
   decrypt: (request: { input: DecryptInput, task?: boolean }) => Promise<DecryptOutput | RemoteError<"INVALID_TOKEN" | "INVALID_KEY" | "FORGED_KEY" | "REVOKED_KEY">>
   authenticate: (request: { input: AuthenticateInput, task?: boolean }) => Promise<AuthenticateOutput | RemoteError<"UNRECOGNIZED" | "AUTHORITY_MISMATCH" | "TOKEN_REVOKED" | "INVALID_TOKEN" | "INVALID_KEY" | "FORGED_KEY" | "REVOKED_KEY">>
   issue: (request: { input: IssueInput, task?: boolean }) => Promise<IssueOutput | RemoteError<"INACCESSIBLE_SCOPE">>
-  revoke: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<unknown>
-  assign: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<void>
+  revoke: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<RevokeOutput>
+  assign: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Entity>
   ensure: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Entity>
   enumerate: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Entity[]>
   observe: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Entity | null>
   stream: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Readable>
-  terminate: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<void>
+  terminate: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Entity>
 }
 
 export interface Configuration {
