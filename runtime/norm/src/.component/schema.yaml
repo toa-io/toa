@@ -154,9 +154,10 @@ properties:
             $ref: https://json-schema.org/draft/2019-09/schema
             default: {}
           errors:
+            # what a reply may carry as a code: the error schema allows either
             type: array
             items:
-              type: string
+              type: [string, integer]
           query:
             type: boolean
         required: [type, scope, bindings]

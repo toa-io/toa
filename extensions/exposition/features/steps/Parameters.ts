@@ -16,6 +16,10 @@ setDefaultTimeout(60 * 1000)
 
 process.env.TOA_DEV = '1'
 
+// a reply is checked against what the operation declares, so the suite runs Toa under the
+// contract it asks applications to keep
+process.env.TOA_ENV ??= 'local'
+
 // the gateway answers for itself, as it does in a deployment: telemetry's probe tracks the
 // nested composition, which connects before route discovery settles
 process.env.TOA_TELEMETRY_READY ??= JSON.stringify(false)

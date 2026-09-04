@@ -57,7 +57,8 @@ Feature: Reply contract
       """
 
   Scenario: A reply is taken as given where the environment is not local
-    Given I compose `reply.contract` component
+    Given an environment variable `TOA_ENV` is set to "production"
+    And I compose `reply.contract` component
     When I call `reply.contract.unfit`
     Then the reply is received:
       """yaml
@@ -65,7 +66,8 @@ Feature: Reply contract
       """
 
   Scenario: An output of the wrong type is left as it is where the environment is not local
-    Given I compose `reply.contract` component
+    Given an environment variable `TOA_ENV` is set to "production"
+    And I compose `reply.contract` component
     When I call `reply.contract.coerced`
     Then the reply is received:
       """yaml
@@ -73,7 +75,8 @@ Feature: Reply contract
       """
 
   Scenario: An undeclared error passes where the environment is not local
-    Given I compose `reply.contract` component
+    Given an environment variable `TOA_ENV` is set to "production"
+    And I compose `reply.contract` component
     When I call `reply.contract.undeclared`
     Then the error is received:
       """yaml
@@ -81,7 +84,8 @@ Feature: Reply contract
       """
 
   Scenario: An error where none are declared passes where the environment is not local
-    Given I compose `reply.contract` component
+    Given an environment variable `TOA_ENV` is set to "production"
+    And I compose `reply.contract` component
     When I call `reply.contract.silent`
     Then the error is received:
       """yaml
