@@ -1,6 +1,7 @@
 // Written by `toa types`. Every run rewrites it.
 // What a manifest does not state belongs in a file of your own.
 
+import type { Stash } from '@toa.io/extensions.stash'
 
 export type CreateInput = {
   key?: string
@@ -16,4 +17,9 @@ export type PushInput = {
 export interface Component {
   create: (request: { input: CreateInput, task?: boolean }) => Promise<unknown>
   push: (request: { input: PushInput, task?: boolean }) => Promise<unknown>
+}
+
+export interface Configuration {
+  maxlen?: number
+  expire?: number
 }

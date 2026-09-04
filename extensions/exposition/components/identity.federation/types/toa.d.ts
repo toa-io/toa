@@ -2,6 +2,7 @@
 // What a manifest does not state belongs in a file of your own.
 
 import type { Query, RemoteError } from '@toa.io/core'
+import type { Secret } from '@toa.io/extensions.configuration'
 import type { Readable } from 'node:stream'
 
 export interface Entity {
@@ -97,4 +98,28 @@ export interface Component {
   observe: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Entity | null>
   stream: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Readable>
   terminate: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<void>
+}
+
+export interface Configuration {
+  trust?: Array<{
+    /** Allowed values for a token `iss` field */
+    iss: string
+    /** Acceptable `aud` value(s) */
+    aud: string | string[]
+    signature?: {
+      iss: string
+      kid: string
+      /** PKCS8 private key in PEM form */
+      key: string
+    }
+    /** Client secret for the Identity Provider. Required for Authorization Code Flow. */
+    secret?: string
+  }>
+  /** Subject that will be assigned the `system` Role */
+  principal?: {
+    authority: string
+    iss: string
+    sub: string
+  }
+  assert?: boolean
 }

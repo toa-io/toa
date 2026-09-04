@@ -1,5 +1,5 @@
 import { split } from './lib/credentials.js'
-import type { Context } from './types.js'
+import type { Context } from '../types/index.js'
 import type { Maybe } from '@toa.io/types'
 
 export async function effect (input: Input, context: Context): Promise<Maybe<Output>> {

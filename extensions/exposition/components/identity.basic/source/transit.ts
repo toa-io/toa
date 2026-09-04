@@ -1,6 +1,6 @@
 import { genSalt, hash } from 'bcryptjs'
 import type { Maybe, Operation } from '@toa.io/types'
-import type { Context, Entity, Principal, TransitInput, IdOutput } from './types.js'
+import type { Context, Entity, Principal, TransitInput, TransitOutput } from '../types/index.js'
 
 export class Transition implements Operation {
   private rounds: number = 10
@@ -28,7 +28,7 @@ export class Transition implements Operation {
       object.username === this.principal.username
   }
 
-  public async execute (input: TransitInput, object: Entity): Promise<Maybe<IdOutput>> {
+  public async execute (input: TransitInput, object: Entity): Promise<Maybe<TransitOutput>> {
     const deleted = object._deleted !== undefined && object._deleted !== null
     const existent = object._version !== 0 && !deleted
 
@@ -40,7 +40,8 @@ export class Transition implements Operation {
         this.tokens.revoke({ query: { id: object.id } }),
         this.keys.revoke({ input: { identity: object.id } })
       ])
-    } else
+    } else if (input.authority !== undefined)
+      // a record that is new and names no authority is refused by the entity contract
       object.authority = input.authority
 
     if (input.username !== undefined) {

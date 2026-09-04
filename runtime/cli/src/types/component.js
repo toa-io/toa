@@ -34,10 +34,9 @@ export function component (manifest, module) {
   }
 
   blocks.push(calls(endpoints, entity, importing))
+  blocks.push(...context(manifest, module, importing))
 
   if (module !== undefined) {
-    blocks.push(...context(manifest, module, importing))
-
     if (manifest.guards !== undefined) {
       importing('@toa.io/core', 'Guard as GuardOf')
       blocks.push(`export type Guard = GuardOf<${entity}, Context>`)
@@ -78,19 +77,26 @@ function calls (endpoints, entity, importing) {
 function context (manifest, module, importing) {
   const { types, imports: needed } = contributions(manifest.extensions)
 
-  for (const [from, names] of Object.entries(needed)) importing(from, ...names)
-
-  importing(module, 'Context as Base')
-
   const blocks = []
-  const keys = Object.keys(types)
 
   // what a component states of its own configuration is a type it is written against,
   // so it is named rather than left inside the Context
   if (types.configuration !== undefined) {
+    for (const [from, names] of Object.entries(needed)) importing(from, ...names)
+
     blocks.push(`export interface Configuration ${types.configuration}`)
     types.configuration = 'Configuration'
   }
+
+  // a component of no Context of its own has no `remote` that is knowable here, so it
+  // writes its own Context beside these
+  if (module === undefined) return blocks
+
+  for (const [from, names] of Object.entries(needed)) importing(from, ...names)
+
+  importing(module, 'Context as Base')
+
+  const keys = Object.keys(types)
 
   if (keys.length === 0) blocks.push('export type Context = Base<Component>')
   else {

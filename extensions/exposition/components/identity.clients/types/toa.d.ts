@@ -2,6 +2,7 @@
 // What a manifest does not state belongs in a file of your own.
 
 import type { Query, RemoteError } from '@toa.io/core'
+import type { Stash } from '@toa.io/extensions.stash'
 import type { Readable } from 'node:stream'
 
 export interface Entity {
@@ -90,4 +91,17 @@ export interface Component {
   observe: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Entity | null>
   stream: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Readable>
   terminate: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<void>
+}
+
+export interface Configuration {
+  /** Origins whose Client ID Metadata Documents may be read; none are without one */
+  trust?: string[]
+  /** Seconds a Client ID Metadata Document is held before it is read again */
+  lifetime?: number
+  /** Seconds a registration nothing has used is kept */
+  ttl?: number
+  /** Bytes of a Client ID Metadata Document that are read */
+  size?: number
+  /** Milliseconds a Client ID Metadata Document has to arrive */
+  timeout?: number
 }

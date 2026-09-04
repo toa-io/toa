@@ -2,6 +2,7 @@
 // What a manifest does not state belongs in a file of your own.
 
 import type { Query, RemoteError } from '@toa.io/core'
+import type { Secret } from '@toa.io/extensions.configuration'
 import type { Readable } from 'node:stream'
 
 export interface Entity {
@@ -19,12 +20,24 @@ export type TransitInput = {
   username?: string
   password?: string
   authority?: string
+  /** Whether the credentials are being created rather than changed */
+  inception?: boolean
+}
+
+export type TransitOutput = {
+  id: string
 }
 
 export type CreateInput = {
   authority: string
   username: string
   password: string
+  /** Whether the credentials are being created rather than changed */
+  inception?: boolean
+}
+
+export type CreateOutput = {
+  id: string
 }
 
 export type AddInput = {
@@ -74,8 +87,8 @@ export type DeleteInput = {
 }
 
 export interface Component {
-  transit: (request: { input: TransitInput, query?: Query<Entity>, task?: boolean }) => Promise<Entity | RemoteError<"PRINCIPAL_LOCKED" | "INVALID_USERNAME" | "INVALID_PASSWORD" | "EXISTS">>
-  create: (request: { input: CreateInput, task?: boolean }) => Promise<unknown | RemoteError<"PRINCIPAL_LOCKED" | "INVALID_USERNAME" | "INVALID_PASSWORD" | "EXISTS">>
+  transit: (request: { input: TransitInput, query?: Query<Entity>, task?: boolean }) => Promise<TransitOutput | RemoteError<"PRINCIPAL_LOCKED" | "INVALID_USERNAME" | "INVALID_PASSWORD" | "EXISTS">>
+  create: (request: { input: CreateInput, task?: boolean }) => Promise<CreateOutput | RemoteError<"PRINCIPAL_LOCKED" | "INVALID_USERNAME" | "INVALID_PASSWORD" | "EXISTS">>
   add: (request: { input: AddInput, task?: boolean }) => Promise<unknown | RemoteError<"PRINCIPAL_LOCKED" | "INVALID_USERNAME" | "INVALID_PASSWORD" | "EXISTS">>
   incept: (request: { input: InceptInput, task?: boolean }) => Promise<InceptOutput | RemoteError<"INVALID_CREDENTIALS">>
   authenticate: (request: { input: AuthenticateInput, task?: boolean }) => Promise<AuthenticateOutput | RemoteError<"NOT_FOUND" | "PASSWORD_MISMATCH">>
@@ -88,4 +101,17 @@ export interface Component {
   observe: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Entity | null>
   stream: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Readable>
   terminate: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<void>
+}
+
+export interface Configuration {
+  rounds: number
+  /** Hashing pepper, a secret */
+  pepper?: Secret
+  /** Basic credentials whose Identity is granted the `system` role */
+  principal?: {
+    authority: string
+    username: string
+  }
+  username: string[]
+  password: string[]
 }

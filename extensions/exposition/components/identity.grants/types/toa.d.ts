@@ -2,6 +2,7 @@
 // What a manifest does not state belongs in a file of your own.
 
 import type { Query, RemoteError } from '@toa.io/core'
+import type { Stash } from '@toa.io/extensions.stash'
 import type { Readable } from 'node:stream'
 
 export interface Entity {
@@ -93,4 +94,11 @@ export interface Component {
   observe: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Entity | null>
   stream: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Readable>
   terminate: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<void>
+}
+
+export interface Configuration {
+  /** Seconds an authorization code may be redeemed within */
+  lifetime?: number
+  /** Seconds an access token is valid for; 0 is until it is revoked */
+  token?: number
 }

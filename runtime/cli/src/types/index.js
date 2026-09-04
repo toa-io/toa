@@ -29,7 +29,7 @@ export async function types (root, environment) {
     const specifier = SCOPE + '/' + basename(manifest.path)
 
     written.push(...await surface(join(manifest.path, TYPES), component(manifest, module)))
-    await declare(manifest.path, specifier, join(TYPES, 'index.ts'))
+    await declare(manifest.path, specifier, join(TYPES, 'index.d.ts'))
 
     referenced.push({ manifest, from: specifier })
   }
@@ -56,7 +56,7 @@ export async function types (root, environment) {
 
   written.push(...await surface(directory, contextModule(context, referenced)))
 
-  await declare(directory, module, 'index.ts')
+  await declare(directory, module, 'index.d.ts')
 
   return written
 }
@@ -91,8 +91,8 @@ export async function components (paths) {
  * @returns {Promise<string[]>}
  */
 async function surface (directory, generated) {
-  const toa = join(directory, 'toa.ts')
-  const index = join(directory, 'index.ts')
+  const toa = join(directory, 'toa.d.ts')
+  const index = join(directory, 'index.d.ts')
 
   await mkdir(directory, { recursive: true })
   await writeFile(toa, generated, 'utf8')
@@ -121,7 +121,7 @@ const OWN = `export * from './toa.js'
  * @returns {string | undefined}
  */
 function published (manifest) {
-  if (!existsSync(join(manifest.path, TYPES, 'index.ts'))) return undefined
+  if (!existsSync(join(manifest.path, TYPES, 'index.d.ts'))) return undefined
 
   let directory = manifest.path
 

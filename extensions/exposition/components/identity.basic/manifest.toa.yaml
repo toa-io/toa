@@ -26,6 +26,11 @@ entity:
 operations:
   transit:
     concurrency: retry
+    output: &id
+      type: object
+      required: [id]
+      properties:
+        id: { type: string }
     input:
       properties:
         username:
@@ -34,6 +39,9 @@ operations:
           type: string
         authority:
           type: string
+        inception:
+          description: Whether the credentials are being created rather than changed
+          type: boolean
       type: object
     errors: &transit.errors
       - PRINCIPAL_LOCKED
@@ -168,9 +176,11 @@ configuration:
       rounds:
         type: integer
         default: 10
+        minimum: 1
       pepper:
         description: Hashing pepper, a secret
         type: string
+        format: secret
       principal:
         description: Basic credentials whose Identity is granted the `system` role
         type: object
@@ -195,6 +205,8 @@ configuration:
           type: string
         default:
           - ^.{8,32}$
+    # every one of them has a default, so the component reads them without checking
+    required: [rounds, username, password]
 
 exposition:
   isolated: true

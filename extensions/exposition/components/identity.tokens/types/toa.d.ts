@@ -85,3 +85,20 @@ export interface Component {
   stream: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Readable>
   terminate: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<void>
 }
+
+export interface Configuration {
+  keys: Array<{
+    id: string
+    key: string
+    format?: "jwe" | "paseto"
+  }>
+  /** Token expiration time in seconds (default 30 days) */
+  lifetime?: number
+  /** Token refresh time in seconds (default 10 minutes) */
+  refresh?: number
+  /** Custom token keys LRU cache configuration */
+  cache?: {
+    max?: number
+    ttl?: number
+  }
+}

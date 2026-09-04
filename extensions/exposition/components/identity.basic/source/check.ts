@@ -1,5 +1,5 @@
 import { quote } from '@toa.io/generic'
-import type { Context } from './types.js'
+import type { Context } from '../types/index.js'
 
 export async function computation (input: Input, context: Context): Promise<void | null | Error> {
   const username = Buffer.from(input.username, 'base64url').toString()
