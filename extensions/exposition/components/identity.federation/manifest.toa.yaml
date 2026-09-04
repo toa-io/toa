@@ -142,7 +142,8 @@ operations:
           type: object
       type: object
     errors:
-      - ERR_NOT_FOUND
+      - NOT_FOUND
+      - TOKEN
   decode:
     input:
       type: string

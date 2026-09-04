@@ -35,12 +35,21 @@ See [Issuing tokens](components.md#issuing-tokens).
 
 ## `cache:exact`
 
-Same as `cache:control` without implicit modifications.
+Same as `cache:control` without implicit modifications, and set whatever the method.
 
 ```yaml
 /:
   GET:
     cache:exact: public, max-age=60000
+```
+
+`cache:control` and the implicit value are set on `GET` and `HEAD` only. `cache:exact` is set on
+any method, so a reply that must not be stored can say so:
+
+```yaml
+/tokens/:
+  POST:
+    cache:exact: no-store
 ```
 
 ## References

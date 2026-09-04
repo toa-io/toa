@@ -129,6 +129,12 @@ publish is read before releasing it:
 $ npm pack --dry-run                # from the package directory
 ```
 
+## Security
+
+A default denies. What the runtime fetches, accepts or trusts is enumerated in configuration, and an
+empty enumeration admits nothing. A capability that widens what is reachable is off until an
+application turns it on.
+
 ## Exposition
 
 The gateway does no I/O of its own on the request path: a request costs the call to its endpoint.

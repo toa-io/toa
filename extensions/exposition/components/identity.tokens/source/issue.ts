@@ -12,7 +12,8 @@ export class Effect implements Operation {
     this.keys = context.remote.identity.keys
     this.roles = context.remote.identity.roles
     this.encrypt = context.local.encrypt
-    this.lifetime = context.configuration.lifetime * 1000
+    // seconds, as `input.lifetime` and `encrypt` both are
+    this.lifetime = context.configuration.lifetime
   }
 
   public async execute (input: Input): Promise<Maybe<Output>> {

@@ -16,7 +16,7 @@ import { Federation } from './Federation.js'
 import { Anyone } from './Anyone.js'
 import { Input, type Declaration } from './Input.js'
 import { split } from './split.js'
-import { PRIMARY, provider as providerOf } from './schemes.js'
+import { PRIMARY, UNRECOGNIZED, providers as providersOf } from './schemes.js'
 import { ATOM_GROUP } from '../../const.js'
 import { Quotas, Sync } from '../io/lib/throttle/index.js'
 import { Keys } from '../io/lib/throttle/Keys.js'
@@ -34,7 +34,7 @@ import type {
   Identity,
   Context,
   Remote,
-  Schemes
+  Components
 } from './types.js'
 
 export class Authorization implements DirectiveFamily<Directive, Extension> {
@@ -42,7 +42,7 @@ export class Authorization implements DirectiveFamily<Directive, Extension> {
   public readonly name: string = 'auth'
   public readonly mandatory: boolean = true
 
-  private readonly schemes = {} as unknown as Schemes
+  private readonly components: Components = {}
   private readonly discovery = {} as unknown as Discovery
   private tokens: Component | null = null
   private bans: Component | null = null
@@ -132,7 +132,7 @@ export class Authorization implements DirectiveFamily<Directive, Extension> {
     if (identity === null)
       return
 
-    if (identity.scheme === PRIMARY && !identity.refresh)
+    if (identity.provider === PRIMARY && !identity.refresh)
       return
 
     if (await this.banned(identity))
@@ -140,7 +140,7 @@ export class Authorization implements DirectiveFamily<Directive, Extension> {
 
     // a token carries the roles it was issued with, and the refresh is where they are read again;
     // any other scheme has just read them, unless a Role directive already did
-    if (identity.scheme === PRIMARY)
+    if (identity.provider === PRIMARY)
       identity.roles = await Role.get(identity, this.discovery.roles)
     else
       identity.roles ??= await Role.get(identity, this.discovery.roles)
@@ -170,25 +170,40 @@ export class Authorization implements DirectiveFamily<Directive, Extension> {
       throw new http.TooManyRequests(retry)
 
     const [scheme, credentials] = split(authorization)
-    const provider = providerOf(scheme)
+    const candidates = providersOf(scheme)
 
-    if (provider === undefined)
+    if (candidates === undefined)
       throw new http.Unauthorized(`Unknown authentication scheme '${scheme}'`)
 
-    this.schemes[scheme] ??= await this.discovery[provider]
+    let provider: Remote | null = null
+    let result: AuthenticationResult | null = null
 
-    const result = await this.schemes[scheme].invoke<AuthenticationResult>('authenticate', {
-      input: {
-        scheme,
-        authority,
-        credentials
-      }
-    })
+    // the first provider that does not decline has claimed the credentials, and answers
+    // for them: a rejection from one that never recognized them is not the rejection
+    for (const candidate of candidates) {
+      this.components[candidate] ??= await this.discovery[candidate]
 
-    if (result instanceof Error) {
-      const code: string | unknown = (result as unknown as { code: string }).code
+      const answer = await this.components[candidate]!.invoke<AuthenticationResult>('authenticate', {
+        input: {
+          scheme,
+          authority,
+          credentials
+        }
+      })
 
-      if (typeof code === 'string') {
+      if (declined(answer))
+        continue
+
+      provider = candidate
+      result = answer
+
+      break
+    }
+
+    if (result === null || result instanceof Error) {
+      const code = result === null ? UNRECOGNIZED : codeOf(result)
+
+      if (code !== undefined) {
         console.info('Authentication failed', { code })
 
         context.rejection = code
@@ -201,9 +216,10 @@ export class Authorization implements DirectiveFamily<Directive, Extension> {
 
     const identity = result.identity
 
-    if (scheme !== PRIMARY && (await this.banned(identity))) throw new http.Unauthorized()
+    if (provider !== PRIMARY && (await this.banned(identity))) throw new http.Unauthorized()
 
     identity.scheme = scheme
+    identity.provider = provider!
     identity.refresh = result.refresh
 
     return identity
@@ -226,6 +242,17 @@ export class Authorization implements DirectiveFamily<Directive, Extension> {
 
     return ban.banned
   }
+}
+
+/** Whether a provider says the credentials are not of its kind, so the next is asked. */
+function declined (result: AuthenticationResult): boolean {
+  return result instanceof Error && codeOf(result) === UNRECOGNIZED
+}
+
+function codeOf (result: Error): string | undefined {
+  const code: string | unknown = (result as unknown as { code: string }).code
+
+  return typeof code === 'string' ? code : undefined
 }
 
 /** Whether the permissions admit the method on the path the request is routed by. */
