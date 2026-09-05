@@ -117,7 +117,16 @@ export class Gateway extends Connector {
   protected override async open (): Promise<void> {
     await this.discover()
 
-    console.info('Gateway started')
+    // what is served besides the tree, so that turning one on can be seen to have worked
+    const pinned: string[] = []
+
+    if (this.dispatcher !== null)
+      pinned.push(RPC)
+
+    if (this.mcp !== null)
+      pinned.push(MCP)
+
+    console.info('Gateway started', { endpoints: pinned.length === 0 ? 'none' : pinned.join(' ') })
   }
 
   /**
