@@ -1,4 +1,5 @@
 import { type Parameter } from '../../RTD/index.js'
+import type { Introspection } from '../../Introspection.js'
 import type { Context, Directive, Identity, Create } from './types.js'
 
 export class Rule implements Directive {
@@ -21,6 +22,14 @@ export class Rule implements Directive {
     }
 
     return true
+  }
+
+  /** Whatever each of them makes of it, in the order they were declared. */
+  public describe (introspection: Introspection): Introspection {
+    for (const directive of this.directives)
+      introspection = directive.describe?.(introspection) ?? introspection
+
+    return introspection
   }
 
   /** All of them, so one that refuses ends it and one that cannot tell leaves it untold. */

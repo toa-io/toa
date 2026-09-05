@@ -1,5 +1,7 @@
 import { BadRequest } from '../../HTTP/index.js'
+import { take } from '../../Introspection.js'
 import { Role } from './Role.js'
+import type { Introspection } from '../../Introspection.js'
 import type { Context, Directive, Identity } from './types.js'
 import type { Component } from '@toa.io/core'
 
@@ -25,6 +27,13 @@ export class Delegate implements Directive {
   /** It admits whoever there is, and embedding the identity is the request's business. */
   public admits (identity: Identity | null): boolean {
     return identity !== null
+  }
+
+  /** The property it embeds is the identity's, so a caller has nothing to put there. */
+  public describe (introspection: Introspection): Introspection {
+    take(introspection, this.property)
+
+    return introspection
   }
 
   private embed (body: unknown, identity: Identity): Record<string, unknown> {
