@@ -1,7 +1,7 @@
 // Written by `toa types`. Every run rewrites it.
 // What a manifest does not state belongs in a file of your own.
 
-import type { Query } from '@toa.io/core'
+import type { Query } from '@toa.io/core/types'
 
 export interface Entity {
   id: string

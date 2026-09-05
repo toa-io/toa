@@ -1,6 +1,3 @@
-/**
- * @implements {toa.core.bridges.Algorithm}
- */
 export class Computation {
   #foo
 

@@ -5,8 +5,8 @@ import { remap } from '@toa.io/generic'
 import * as boot from './index.js'
 
 /**
- * @param {toa.core.Locator} locator
- * @param {toa.core.Source} [source] the origin stamped on every call made through this remote
+ * @param {import('@toa.io/core').Locator} locator
+ * @param {import('@toa.io/core/types').Source} [source] the origin stamped on every call made through this remote
  * @param {toa.norm.Component} [manifest] skips discovery when the manifest is already known
  */
 export const remote = async (locator, source, manifest) => {

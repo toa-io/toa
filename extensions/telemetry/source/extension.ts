@@ -10,7 +10,8 @@ import {
   type ReadyAnnotation
 } from './Ready.js'
 import type { LogsOptions } from './Logs.js'
-import type { Connector, Locator, extensions } from '@toa.io/core'
+import type { Connector, Locator } from '@toa.io/core'
+import type { extensions } from '@toa.io/core/types'
 import type { Dependency, Probe, Variables } from '@toa.io/operations'
 import type { ExportersConfig, LevelName, TracesOptions } from 'openspan'
 

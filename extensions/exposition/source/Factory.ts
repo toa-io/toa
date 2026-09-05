@@ -18,7 +18,8 @@ import * as http from './HTTP/index.js'
 import type { Branch } from './Branch.js'
 import type { syntax } from './RTD/index.js'
 import type { Broadcast } from './Gateway.js'
-import type { Connector, Locator, extensions } from '@toa.io/core'
+import type { Connector, Locator } from '@toa.io/core'
+import type { extensions } from '@toa.io/core/types'
 
 export class Factory implements extensions.Factory {
   private readonly host: Host
@@ -33,7 +34,8 @@ export class Factory implements extensions.Factory {
 
     // no timestamp: the tenant stamps each announcement with its own start time
     const branch: Omit<Branch, 'timestamp'> = {
-      namespace: locator.namespace,
+      // boot only ever hands a tenant a component's locator, which always has a namespace
+      namespace: locator.namespace!,
       component: locator.name,
       isolated: locator.namespace === 'identity',
       node,

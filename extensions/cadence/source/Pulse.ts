@@ -2,7 +2,8 @@ import { console } from 'openspan'
 import { Connector } from '@toa.io/core'
 import type { Local } from './Local.js'
 import type { SpanOptions } from 'openspan'
-import type { Locator, atomicity } from '@toa.io/core'
+import type { Locator } from '@toa.io/core'
+import type { atomicity } from '@toa.io/core/types'
 
 /**
  * A recurring call to an operation of its own component, on the cadence its manifest states.

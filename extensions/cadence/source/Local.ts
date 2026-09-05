@@ -1,6 +1,7 @@
 import { Connector } from '@toa.io/core'
 import type { Host } from './Factory.js'
-import type { Locator, Remote, Reply, Request } from '@toa.io/core'
+import type { Locator, Remote } from '@toa.io/core'
+import type { Reply, Request } from '@toa.io/core/types'
 
 /**
  * The component a tenant belongs to, as something to call.

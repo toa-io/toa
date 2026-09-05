@@ -4,7 +4,7 @@ import assert from 'node:assert/strict'
 import { Dispatcher } from './Dispatcher.js'
 import { LANES } from './const.js'
 import type { Local } from './Local.js'
-import type { atomicity } from '@toa.io/core'
+import type { atomicity } from '@toa.io/core/types'
 
 type Invoke = (endpoint: string, request: any) => Promise<unknown>
 type Slots = (total: number) => number[] | null

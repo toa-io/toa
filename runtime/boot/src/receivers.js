@@ -47,7 +47,7 @@ export async function receive (label, group, callback) {
 }
 
 /**
- * @param {toa.core.Locator} locator
+ * @param {import('@toa.io/core').Locator} locator
  * @param {string} label
  * @return {Promise<string>}
  */

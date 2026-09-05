@@ -1,9 +1,9 @@
 import { instances } from './instances.js'
 
 /**
- * @param {toa.core.Receiver} receiver
- * @param {toa.core.Locator} locator
- * @returns {toa.core.Receiver}
+ * @param {import('@toa.io/core/types').Receiver} receiver
+ * @param {import('@toa.io/core').Locator} locator
+ * @returns {import('@toa.io/core/types').Receiver}
  */
 export const receiver = (receiver, locator) => {
   let decorated = receiver

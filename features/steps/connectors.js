@@ -27,7 +27,7 @@ When('I boot {component} component',
    * @this {toa.features.Context}
    */
   async function(reference) {
-    this.connector = /** @type {toa.core.Connector} */ await stage.component(reference)
+    this.connector = /** @type {import('@toa.io/core').Connector} */ await stage.component(reference)
   })
 
 When('I compose {component} component',
@@ -318,11 +318,11 @@ function encoded (reply) {
 
 /**
  * @param {string} endpoint
- * @param {toa.core.Request} request
+ * @param {import('@toa.io/core/types').Request} request
  * @returns {Promise<void>}
  */
 async function invoke (endpoint, request = {}) {
-  const component = /** @type {toa.core.Component} */ this.connector
+  const component = /** @type {import('@toa.io/core').Component} */ this.connector
 
   const reply = await component.invoke(endpoint, request)
 
@@ -344,7 +344,7 @@ async function invoke (endpoint, request = {}) {
 
 /**
  * @param {string} endpoint
- * @param {toa.core.Request} request
+ * @param {import('@toa.io/core/types').Request} request
  * @this {toa.features.Context}
  * @return {Promise<void>}
  */

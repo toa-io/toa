@@ -1,5 +1,6 @@
 import { console } from 'openspan'
-import { Connector, type Locator, type extensions } from '@toa.io/core'
+import { Connector, type Locator } from '@toa.io/core'
+import type { extensions } from '@toa.io/core/types'
 import { fit, local, type Node } from './configuration.js'
 import { epoch } from './epoch.js'
 import type { Client, Value } from './Client.js'

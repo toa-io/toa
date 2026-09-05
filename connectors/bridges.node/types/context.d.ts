@@ -1,6 +1,6 @@
 import { Underlay } from '@toa.io/generic/types'
 import { Connector } from '@toa.io/core'
-import { Aspect } from '@toa.io/core/types/extensions'
+import type { extensions } from '@toa.io/core/types'
 import type { FetchInit } from '@toa.io/extensions.fetch'
 
 declare namespace toa.node{
@@ -43,7 +43,7 @@ declare namespace toa.node{
       routine: (signal: AbortSignal, context: unknown) => Promise<T>) => Promise<T>
   }
 
-  type shortcut = (context: Context, aspect: Aspect) => void
+  type shortcut = (context: Context, aspect: extensions.Aspect) => void
 
 }
 

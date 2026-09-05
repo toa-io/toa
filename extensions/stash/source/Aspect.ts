@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-floating-promises */
 import { encode, decode } from 'msgpackr'
 import { console, type SpanOptions } from 'openspan'
-import { Connector, type extensions } from '@toa.io/core'
+import { Connector } from '@toa.io/core'
+import type { extensions } from '@toa.io/core/types'
 import type { Connection } from './Connection.js'
 import type { Redis, ChainableCommander } from 'ioredis'
 

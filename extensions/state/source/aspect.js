@@ -3,7 +3,7 @@ import { overwrite } from '@toa.io/generic'
 import { Connector } from '@toa.io/core'
 
 /**
- * @implements {toa.core.extensions.Aspect}
+ * @implements {import('@toa.io/core/types').extensions.Aspect}
  */
 export class Aspect extends Connector {
   name = 'state'

@@ -1,4 +1,5 @@
-import { type Connector, type Locator, type extensions } from '@toa.io/core'
+import { type Connector, type Locator } from '@toa.io/core'
+import type { extensions } from '@toa.io/core/types'
 import { Aspect } from './Aspect.js'
 import { Client } from './Client.js'
 import { Composition } from './Composition.js'

@@ -1,7 +1,7 @@
 import { describe, it, beforeEach, mock } from 'node:test'
 import assert from 'node:assert/strict'
 
-import { Query } from '../src/query.js'
+import { Query } from '../source/query.js'
 import * as fixtures from './query.fixtures.js'
 
 beforeEach(() => {

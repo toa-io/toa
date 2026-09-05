@@ -1,5 +1,5 @@
 import { identify, spend, verifies } from './lib/index.js'
-import type { Maybe } from '@toa.io/core'
+import type { Maybe } from '@toa.io/core/types'
 import type { Operation } from '@toa.io/bridges.node'
 import type { Code, Context } from './lib/index.js'
 

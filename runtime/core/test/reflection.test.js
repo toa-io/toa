@@ -2,18 +2,18 @@ import { it, beforeEach } from 'node:test'
 import assert from 'node:assert/strict'
 
 import { generate } from 'randomstring'
-import { Reflection, Connector } from '../src/index.js'
+import { Reflection, Connector } from '../source/index.js'
 
 it('should export', () => {
   assert.notStrictEqual(Reflection, undefined)
 })
 
-/** @type {toa.core.Reflection<string>} */
+/** @type {import('@toa.io/core').Reflection<string>} */
 let reflection
 
 const value = generate()
 
-/** @type {toa.core.reflection.Source<string>} */
+/** @type {import('@toa.io/core').ReflectionSource<string>} */
 const source = async () => value
 
 beforeEach(() => {

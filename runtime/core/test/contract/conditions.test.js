@@ -4,7 +4,7 @@ import { isDeepStrictEqual } from 'node:util'
 
 import { generate } from 'randomstring'
 
-import { Contract } from '../../src/contract/contract.js'
+import { Contract } from '../../source/contract/contract.js'
 import * as fixtures from './contract.fixtures.js'
 
 let contract

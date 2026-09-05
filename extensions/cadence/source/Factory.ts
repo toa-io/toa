@@ -6,7 +6,7 @@ import { Dispatcher } from './Dispatcher.js'
 import { Local } from './Local.js'
 import { Pulse } from './Pulse.js'
 import type { Declaration } from './types.js'
-import type { extensions } from '@toa.io/core'
+import type { extensions } from '@toa.io/core/types'
 
 export class Factory implements extensions.Factory {
   private readonly host: Host

@@ -1,7 +1,7 @@
 import { it, beforeEach, afterEach, mock } from 'node:test'
 import assert from 'node:assert/strict'
 
-import { Outbox } from '../src/outbox/index.js'
+import { Outbox } from '../source/outbox/index.js'
 
 let emission, storage, atom, outbox, listeners
 

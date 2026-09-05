@@ -1,6 +1,6 @@
 import { compare } from 'bcryptjs'
 import { quote } from '@toa.io/generic'
-import { type Query, type Maybe } from '@toa.io/core'
+import type { Query, Maybe } from '@toa.io/core/types'
 import { split } from './lib/credentials.js'
 import { type Context } from '../types/index.js'
 

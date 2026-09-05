@@ -5,7 +5,7 @@ import { Connector } from '@toa.io/core'
  * What one group of replicas decides together, in one place: which of them owns what, what they
  * have spent between them, and which of them holds a name while it works.
  *
- * @implements {toa.core.atomicity.Atom}
+ * @implements {import('@toa.io/core/types').atomicity.Atom}
  */
 export class Atom extends Connector {
   #connection

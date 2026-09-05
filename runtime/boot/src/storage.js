@@ -16,7 +16,7 @@ export const storage = async (manifest, outbox) => {
 
   const Factory = await load(manifest)
 
-  /** @type {toa.core.storages.Factory} */
+  /** @type {import('@toa.io/core/types').storages.Factory} */
   const factory = new Factory()
   const storage = factory.storage(manifest.locator, manifest.entity, { outbox })
 

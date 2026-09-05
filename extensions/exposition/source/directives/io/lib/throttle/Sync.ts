@@ -1,6 +1,6 @@
 import { console } from 'openspan'
 import type { Quotas } from './Quotas.js'
-import type { atomicity } from '@toa.io/core'
+import type { atomicity } from '@toa.io/core/types'
 
 /**
  * Reconciles every quota of the process with the other gateways, on one tick.

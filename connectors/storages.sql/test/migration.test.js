@@ -17,7 +17,7 @@ it('should be', () => {
   assert.notStrictEqual(Migration, undefined)
 })
 
-/** @type {toa.core.storages.Migration} */
+/** @type {import('../types/migration.js').Migration} */
 let migration
 
 let sql
@@ -82,7 +82,7 @@ describe('table', () => {
     assert.notStrictEqual(migration.table, undefined)
   })
 
-  /** @type {toa.core.Locator} */
+  /** @type {import('@toa.io/core').Locator} */
   let locator
 
   const call = (reset) => migration.table(database, locator, fixtures.schema, reset)

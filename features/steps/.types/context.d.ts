@@ -1,7 +1,8 @@
 import * as amqp from 'amqplib'
 
-import type { Connector, Reply, Exception } from '@toa.io/core'
-import type { Migration } from '@toa.io/core/types/storages'
+import type { Connector, Exception } from '@toa.io/core'
+import type { Reply } from '@toa.io/core/types'
+import type { Migration } from '@toa.io/storages.sql/types/migration.js'
 import type { StartedTestContainer } from 'testcontainers'
 
 declare namespace toa.features {

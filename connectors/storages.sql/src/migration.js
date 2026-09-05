@@ -3,7 +3,7 @@ import knex from 'knex'
 import { translate } from './.migration/translate.js'
 
 /**
- * @implements {toa.core.storages.Migration}
+ * @implements {import('../types/migration.js').Migration}
  */
 export class Migration {
   /** @type {string} */

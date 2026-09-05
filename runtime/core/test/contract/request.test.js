@@ -6,8 +6,8 @@ import { isDeepStrictEqual } from 'node:util'
 import clone from 'clone-deep'
 import { generate } from 'randomstring'
 
-import { Request } from '../../src/contract/request.js'
-import { Contract } from '../../src/contract/contract.js'
+import { Request } from '../../source/contract/request.js'
+import { Contract } from '../../source/contract/contract.js'
 import * as fixtures from './contract.fixtures.js'
 
 // the base is real; what it was constructed with and told to fit is observable

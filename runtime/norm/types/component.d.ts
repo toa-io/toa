@@ -1,4 +1,5 @@
-import type { Locator, operations } from '@toa.io/core'
+import type { Locator } from '@toa.io/core'
+import type { operations } from '@toa.io/core/types'
 
 type Map = {
   [id: string]: Component

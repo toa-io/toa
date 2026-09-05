@@ -3,8 +3,8 @@ import assert from 'node:assert/strict'
 import { isDeepStrictEqual } from 'node:util'
 
 import { console } from 'openspan'
-import { Connector } from '../src/connector.js'
-import { Discovery } from '../src/discovery.js'
+import { Connector } from '../source/connector.js'
+import { Discovery } from '../source/discovery.js'
 
 class Lookup extends Connector {
   invoke = mock.fn(async () => ({ operations: {} }))

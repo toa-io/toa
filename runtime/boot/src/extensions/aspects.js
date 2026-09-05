@@ -2,7 +2,7 @@ import { instance } from './resolve.js'
 
 /**
  * @param {toa.norm.Component} manifest
- * @returns {toa.core.extensions.Aspect[]}
+ * @returns {import('@toa.io/core/types').extensions.Aspect[]}
  */
 export const aspects = (manifest) => {
   const aspects = []

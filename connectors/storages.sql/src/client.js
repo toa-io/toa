@@ -8,7 +8,7 @@ export class Client extends Connector {
   /** @type {toa.sql.Connection} */
   #connection
 
-  /** @type {toa.conveyor.Conveyor<toa.core.storages.Record, boolean>} */
+  /** @type {toa.conveyor.Conveyor<import('@toa.io/core/types').storages.Record, boolean>} */
   #conveyor
 
   constructor (connection) {

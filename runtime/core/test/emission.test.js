@@ -4,7 +4,7 @@ import { isDeepStrictEqual } from 'node:util'
 
 import clone from 'clone-deep'
 
-import { Connector } from '../src/connector.js'
+import { Connector } from '../source/connector.js'
 
 // the fixtures are not connectors, so a dependency is recorded rather than linked
 const depends = mock.method(Connector.prototype, 'depends', () => undefined)
@@ -12,7 +12,7 @@ const depends = mock.method(Connector.prototype, 'depends', () => undefined)
 const dependencies = (instance) => depends.mock.calls
   .filter((call) => call.this === instance)
   .map((call) => call.arguments[0])
-import { Emission } from '../src/emission.js'
+import { Emission } from '../source/emission.js'
 import * as fixtures from './emission.fixtures.js'
 
 let emission, event

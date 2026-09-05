@@ -11,7 +11,8 @@ import * as boot from '@toa.io/boot'
 import { Locator } from '@toa.io/core'
 import * as stage from '@toa.io/userland/stage'
 import { Factory } from '../../source/index.js'
-import type { Component, Connector, Request } from '@toa.io/core'
+import type { Component, Connector } from '@toa.io/core'
+import type { Request } from '@toa.io/core/types'
 
 const { after, before, binding, then, when } = tsflow
 

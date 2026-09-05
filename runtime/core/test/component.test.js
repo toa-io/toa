@@ -2,8 +2,8 @@ import { describe, it, beforeEach, mock } from 'node:test'
 import assert from 'node:assert/strict'
 import { isDeepStrictEqual } from 'node:util'
 
-import { Component } from '../src/component.js'
-import { codes } from '../src/exceptions.js'
+import { Component } from '../source/component.js'
+import { codes } from '../source/exceptions.js'
 import * as fixtures from './component.fixtures.js'
 import { AssertionError } from 'node:assert'
 

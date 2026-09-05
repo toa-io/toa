@@ -1,7 +1,7 @@
 import { it } from 'node:test'
 import assert from 'node:assert/strict'
 
-import { EntitySet } from '../../src/entities/set.js'
+import { EntitySet } from '../../source/entities/set.js'
 import * as fixtures from './set.fixtures.js'
 
 it('should provide state', () => {

@@ -1,4 +1,4 @@
-import * as _core from '@toa.io/core'
+import type * as _core from '@toa.io/core'
 
 declare namespace toa.stage{
 

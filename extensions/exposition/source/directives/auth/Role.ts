@@ -1,6 +1,7 @@
 import assert from 'node:assert'
 import { quote } from '@toa.io/generic'
-import { type Component, type Query } from '@toa.io/core'
+import { type Component } from '@toa.io/core'
+import type { Query } from '@toa.io/core/types'
 import { type Directive, type Identity } from './types.js'
 import type { Parameter } from '../../RTD/index.js'
 

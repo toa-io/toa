@@ -6,7 +6,7 @@ import * as stage from '@toa.io/userland/stage'
 
 const root = resolve(import.meta.dirname, '../components')
 
-/** @type {toa.core.Component} */
+/** @type {import('@toa.io/core').Component} */
 let component
 
 before(async () => {

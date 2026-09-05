@@ -1,7 +1,8 @@
 import { console } from 'openspan'
 import { Connector, Locator } from '@toa.io/core'
 import { EVENT, SOURCE } from './const.js'
-import type { Message, Remote } from '@toa.io/core'
+import type { Remote } from '@toa.io/core'
+import type { Message } from '@toa.io/core/types'
 import type { Host } from './Factory.js'
 
 /**

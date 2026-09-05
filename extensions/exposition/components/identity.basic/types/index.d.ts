@@ -2,7 +2,7 @@ export * from './toa.d.ts'
 
 // What a manifest does not state belongs here, and every run keeps it.
 
-import type { Query, RemoteError } from '@toa.io/core'
+import type { Query, RemoteError } from '@toa.io/core/types'
 import type { Component, Configuration } from './toa.js'
 
 /** Credentials whose Identity is granted the `system` role. */

@@ -5,7 +5,7 @@ import { to, from } from '../src/record.js'
 
 describe('to', () => {
   it('should rename id to _id', () => {
-    /** @type {toa.core.storages.Record} */
+    /** @type {import('@toa.io/core/types').storages.Record} */
     const entity = {
       id: '1',
       _version: 0
@@ -16,7 +16,7 @@ describe('to', () => {
   })
 
   it('should not modify argument', () => {
-    /** @type {toa.core.storages.Record} */
+    /** @type {import('@toa.io/core/types').storages.Record} */
     const entity = {
       id: '1',
       _version: 0

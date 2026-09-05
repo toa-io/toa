@@ -21,10 +21,10 @@ it('should be', async () => {
 })
 
 const comm = mock.communication()
-const locator = /** @type {toa.core.Locator} */ { name: generate(), namespace: generate() }
+const locator = /** @type {import('@toa.io/core').Locator} */ { name: generate(), namespace: generate() }
 const endpoint = generate()
 
-/** @type {toa.core.bindings.Consumer} */
+/** @type {import('@toa.io/core/types').bindings.Consumer} */
 let consumer
 
 beforeEach(() => {

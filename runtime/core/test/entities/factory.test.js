@@ -7,10 +7,10 @@ import { generate } from 'randomstring'
 import * as fixtures from './factory.fixtures.js'
 const mock = fixtures.mock
 
-mocking.module('../../src/entities/entity', { namedExports: ({ Entity: mock.Entity }) })
-mocking.module('../../src/entities/set', { namedExports: ({ EntitySet: mock.EntitySet }) })
+mocking.module('../../source/entities/entity.js', { namedExports: ({ Entity: mock.Entity }) })
+mocking.module('../../source/entities/set.js', { namedExports: ({ EntitySet: mock.EntitySet }) })
 
-const { Factory } = await import('../../src/entities/factory.js')
+const { Factory } = await import('../../source/entities/factory.js')
 
 
 let factory

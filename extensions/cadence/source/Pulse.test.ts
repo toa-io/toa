@@ -3,7 +3,8 @@ import assert from 'node:assert/strict'
 
 import { Pulse } from './Pulse.js'
 import type { Local } from './Local.js'
-import type { Locator, Request, atomicity } from '@toa.io/core'
+import type { Locator } from '@toa.io/core'
+import type { Request, atomicity } from '@toa.io/core/types'
 
 type Invoke = (endpoint: string, request: Request) => Promise<unknown>
 type Slots = (total: number) => number[] | null

@@ -40,7 +40,7 @@ export function component (manifest, module, contributed = { types: {}, imports:
 
   if (module !== undefined) {
     if (manifest.guards !== undefined) {
-      importing('@toa.io/core', 'Guard as GuardOf')
+      importing('@toa.io/core/types', 'Guard as GuardOf')
       blocks.push(`export type Guard = GuardOf<${entity}, Context>`)
     }
   }
@@ -56,7 +56,7 @@ function calls (endpoints, entity, importing) {
     const request = [stated(operation.input) ? `input: ${name}Input` : 'input?: null']
 
     if (operation.query !== false) {
-      importing('@toa.io/core', 'Query')
+      importing('@toa.io/core/types', 'Query')
 
       // required only where the operation states it is: the contract asks for one
       // when `query: true`, and otherwise takes it or does without
@@ -153,7 +153,7 @@ function resolves (type, operation, importing) {
 
   if (operation.errors === undefined) return `${type}${empty}`
 
-  importing('@toa.io/core', 'RemoteError')
+  importing('@toa.io/core/types', 'RemoteError')
 
   const codes = operation.errors.map((code) => JSON.stringify(code))
 

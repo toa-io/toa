@@ -4,13 +4,13 @@ export function flip (): boolean
 
 export function plain (candidate: any): boolean
 
-export async function timeout (ms: number): Promise<void>
+export function timeout (ms: number): Promise<void>
 
-export async function immediate (): Promise<void>
+export function immediate (): Promise<void>
 
 export function trim (input: string): string
 
-export async function buffer (stream: Readable): Promise<Buffer>
+export function buffer (stream: Readable): Promise<Buffer>
 
 export function traverse (object: object, visit: (node: object) => object): object
 
@@ -45,3 +45,26 @@ export namespace yaml {
 }
 
 export function findUp (name: string, options?: { cwd?: string }): string | undefined
+
+/** Joins the arguments, or answers an empty string where any of them is absent. */
+export function concat (...args: Array<string | undefined | null>): string
+
+export function empty (object: object): boolean
+
+export function swap<T extends Record<string, string | number>> (object: T):
+Record<string, string>
+
+export interface RetryOptions {
+  retries?: number
+  base?: number
+  factor?: number
+  max?: number
+  dispersion?: number
+}
+
+/**
+ * Calls `func` with what re-runs it. A `retry()` the routine returns is another attempt,
+ * spaced by a dispersed exponential interval; running out of attempts throws.
+ */
+export function retry<T> (func: (retry: () => Promise<T>) => Promise<T>,
+  options?: RetryOptions): Promise<T>

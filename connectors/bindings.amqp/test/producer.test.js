@@ -23,10 +23,10 @@ it('should be', async () => {
 /** @type {toa.amqp.Communication} */
 let comm
 
-const locator = /** @type {toa.core.Locator} */ generate()
+const locator = /** @type {import('@toa.io/core').Locator} */ generate()
 const endpoints = [generate(), generate()]
 
-const component = /** @type {toa.core.Component} */ {
+const component = /** @type {import('@toa.io/core').Component} */ {
   connect: mocking.fn(async () => undefined),
   disconnect: mocking.fn(async () => undefined),
   link: mocking.fn(),

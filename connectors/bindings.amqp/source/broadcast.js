@@ -3,13 +3,13 @@ import { Connector } from '@toa.io/core'
 import { name } from './queues.js'
 
 /**
- * @implements {toa.core.bindings.Broadcast}
+ * @implements {import('@toa.io/core/types').bindings.Broadcast}
  */
 export class Broadcast extends Connector {
   /** @type {toa.amqp.Communication} */
   #comm
 
-  /** @type {toa.core.Locator} */
+  /** @type {import('@toa.io/core').Locator} */
   #locator
 
   /** @type {string} */

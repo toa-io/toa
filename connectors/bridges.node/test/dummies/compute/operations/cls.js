@@ -1,5 +1,5 @@
 /**
- * @implements {toa.core.bridges.Algorithm}
+ * @implements {import('@toa.io/core/types').bridges.Algorithm}
  */
 export class Computation {
   #context

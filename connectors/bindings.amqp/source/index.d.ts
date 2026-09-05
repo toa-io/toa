@@ -1,6 +1,6 @@
 export { deployment };
 export { Factory };
-import { deployment } from './deployment';
-import { Factory } from './factory';
-/** @type {toa.core.bindings.Properties} */
-export declare const properties: toa.core.bindings.Properties;
+import { deployment } from './deployment.js';
+import { Factory } from './factory.js';
+import type { bindings } from '@toa.io/core/types';
+export declare const properties: bindings.Properties;

@@ -1,7 +1,7 @@
 import { describe, it, beforeEach, mock } from 'node:test'
 import assert from 'node:assert/strict'
 
-import { Entity } from '../../src/entities/entity.js'
+import { Entity } from '../../source/entities/entity.js'
 import * as fixtures from './entity.fixtures.js'
 
 beforeEach(() => {

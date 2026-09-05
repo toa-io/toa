@@ -10,15 +10,15 @@ import { generate } from 'randomstring'
 /** @type {Factory} */
 let factory
 
-/** @type {toa.core.extensions.Aspect} */
+/** @type {import('@toa.io/core/types').extensions.Aspect} */
 let aspect
 
-const locator = /** @type {toa.core.Locator} */ {}
+const locator = /** @type {import('@toa.io/core').Locator} */ {}
 const declaration = {}
 
 beforeEach(() => {
   factory = new Factory()
-  aspect = /** @type {toa.core.extensions.Aspect} */ factory.aspect(locator, declaration)
+  aspect = /** @type {import('@toa.io/core/types').extensions.Aspect} */ factory.aspect(locator, declaration)
 })
 
 it('should be instance of Aspect', async () => {

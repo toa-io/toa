@@ -1,4 +1,4 @@
-import type { Call, Observation, Transition } from '@toa.io/core'
+import type { Call, Observation, Transition } from '@toa.io/core/types'
 import type { Stash } from '@toa.io/extensions.stash'
 import type { Logs } from '@toa.io/extensions.telemetry'
 import type { Entity } from './Entity.js'

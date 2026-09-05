@@ -1,4 +1,4 @@
-import type { Source } from '@toa.io/core'
+import type { Source } from '@toa.io/core/types'
 
 export type { Source }
 

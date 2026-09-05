@@ -23,10 +23,10 @@ it('should be', async () => {
 })
 
 const comm = mock.communication()
-const locator = /** @type {toa.core.Locator} */ { namespace: generate(), name: generate() }
+const locator = /** @type {import('@toa.io/core').Locator} */ { namespace: generate(), name: generate() }
 const group = generate()
 
-/** @type {toa.core.bindings.Broadcast} */
+/** @type {import('@toa.io/core/types').bindings.Broadcast} */
 let broadcast
 
 beforeEach(() => {

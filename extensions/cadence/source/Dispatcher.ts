@@ -2,7 +2,7 @@ import { console } from 'openspan'
 import { Connector, Locator } from '@toa.io/core'
 import { BATCH, DISCRETENESS, LANES, number } from './const.js'
 import type { Local } from './Local.js'
-import type { atomicity } from '@toa.io/core'
+import type { atomicity } from '@toa.io/core/types'
 
 /**
  * Makes the calls that were put off.

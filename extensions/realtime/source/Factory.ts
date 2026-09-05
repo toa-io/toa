@@ -1,4 +1,5 @@
-import { type Component, type extensions, Locator } from '@toa.io/core'
+import { type Component, Locator } from '@toa.io/core'
+import type { extensions } from '@toa.io/core/types'
 import { Realtime } from './Realtime.js'
 import { Composition } from './Composition.js'
 import { Routes } from './Routes.js'

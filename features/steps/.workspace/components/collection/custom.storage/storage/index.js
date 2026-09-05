@@ -1,7 +1,7 @@
 export class Factory {
   /**
    *
-   * @returns {toa.core.Connector}
+   * @returns {Connector}
    */
   storage () {
     return {

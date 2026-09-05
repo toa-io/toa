@@ -7,7 +7,7 @@ import { queryable } from './Mapping.js'
 import { take } from './Introspection.js'
 import type { Introspection, Schema } from './Introspection.js'
 import type * as syntax from './RTD/syntax/index.js'
-import type * as core from '@toa.io/core'
+import type * as core from '@toa.io/core/types'
 
 export class Query {
   public readonly parameterized: boolean
