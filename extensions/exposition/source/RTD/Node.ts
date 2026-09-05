@@ -1,6 +1,9 @@
 import { type Route } from './Route.js'
-import { type Methods } from './Method.js'
+import { type Method, type Methods } from './Method.js'
 import { type Match, type Parameter } from './Match.js'
+import type { Segment } from './segment.js'
+import type { Context } from '../HTTP/index.js'
+import type { Introspection } from '../Introspection.js'
 
 export class Node {
   public intermediate: boolean
@@ -52,14 +55,35 @@ export class Node {
       this.expiration = expiration
   }
 
-  public async explain (parameters: Parameter[]): Promise<Record<string, unknown>> {
-    const methods: Record<string, unknown> = {}
+  /**
+   * Every method under this node, with the template it answers at.
+   *
+   * An intermediate node is skipped: it is never what a path matches, because its `/` route
+   * answers at the same place and is reached instead. The trunk is the exception `match`
+   * makes for it — `'/'` answers the trunk itself, whatever it holds.
+   */
+  public * walk (segments: Segment[], trunk = false): Generator<Mount> {
+    if (trunk || !this.intermediate)
+      for (const [verb, method] of Object.entries(this.methods))
+        yield { segments, verb, method }
 
-    const explained = Object.entries(this.methods)
-      .map(async ([verb, method]) =>
-        (methods[verb] = await method.explain(parameters)))
+    for (const route of this.routes)
+      yield * route.walk(segments)
+  }
 
-    await Promise.all(explained)
+  /** Every method of this node that this caller may reach, in the order they were declared. */
+  public async explain (context: Context,
+    parameters: Parameter[]): Promise<Record<string, Introspection>> {
+    const entries = Object.entries(this.methods)
+
+    const explained = await Promise.all(entries
+      .map(async ([, method]) => await method.explain(context, parameters)))
+
+    const methods: Record<string, Introspection> = {}
+
+    for (let i = 0; i < entries.length; i++)
+      if (explained[i] !== null)
+        methods[entries[i][0]] = explained[i]!
 
     return methods
   }
@@ -117,6 +141,13 @@ export class Node {
         : a.variables - b.variables // routes with more variables should be matched last
     })
   }
+}
+
+/** A method, and the route template it is reached by. */
+export interface Mount {
+  segments: Segment[]
+  verb: string
+  method: Method
 }
 
 export interface Properties {

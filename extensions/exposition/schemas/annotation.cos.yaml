@@ -89,6 +89,30 @@ properties:
         type: integer
         minimum: 1
     additionalProperties: false
+  mcp:
+    description: MCP at `/.mcp`; writing it is what turns the endpoint on
+    type: object
+    properties:
+      name:
+        description: What the server calls itself
+        type: string
+        minLength: 1
+      instructions:
+        description: What a model is told before it calls anything here
+        type: string
+      origins:
+        description: Browser origins the endpoint answers; none without it
+        type: array
+        items:
+          type: string
+          pattern: ^https?://
+      anonymous:
+        description: Whether the endpoint answers without a credential
+        type: boolean
+        default: false
+    required:
+      - name
+    additionalProperties: false
   /: {}
   authorities:
     type: object

@@ -34,6 +34,12 @@ export function fork (context: http.Context, path: string, verb: string,
   const pipelines: Pipelines = { body: [], response: [] }
 
   return Object.create(context, {
+    /*
+     * A credential refuses an `anonymous` route because it would make the reply
+     * uncacheable. What a procedure answers is not a reply: it is a value in an envelope
+     * this gateway answers `no-store`, and the procedure's own headers are discarded.
+     */
+    procedural: { value: true, enumerable: true },
     url: { value: url, enumerable: true },
     request: { value: request, enumerable: true },
     pipelines: { value: pipelines, enumerable: true },

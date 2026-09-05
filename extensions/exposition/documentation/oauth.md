@@ -11,7 +11,7 @@ exposition:
     local: api.example.com
   oauth:
     authorize: https://app.example.com/oauth/authorize
-    resources: ['/mcp/']
+    resources: ['/.mcp']
     scopes: [app:notes, app:notes:read]
     registration: closed
 ```
@@ -22,7 +22,8 @@ exposition:
 <a href="consent.md">Consent</a>.</dd>
 <dt><code>resources</code></dt>
 <dd>Paths advertised as protected resources, each with a document of its own and named by the
-challenge a request to it is refused with. A token is not yet bound to one, see
+challenge a request to it is refused with. <code>/.mcp</code> is where
+<a href="mcp.md">MCP</a> is served. A token is not yet bound to one, see
 <a href="#audience">Audience</a>.</dd>
 <dt><code>scopes</code></dt>
 <dd>Advertised as what a client may ask for. Each is a <a href="access.md#roles">role</a>, or a
@@ -56,11 +57,11 @@ authorization_response_iss_parameter_supported: true
 
 `/.well-known/oauth-protected-resource` is
 [RFC 9728](https://www.rfc-editor.org/rfc/rfc9728) metadata. Each configured resource has one of
-its own, at the path the well-known segment is followed by: `/mcp/` is read at
-`/.well-known/oauth-protected-resource/mcp`.
+its own, at the path the well-known segment is followed by: `/.mcp` is read at
+`/.well-known/oauth-protected-resource/.mcp`.
 
 ```yaml
-resource: https://api.example.com/mcp
+resource: https://api.example.com/.mcp
 authorization_servers: [https://api.example.com]
 bearer_methods_supported: [header]
 ```
@@ -72,7 +73,7 @@ A reply of `401` carries the challenge that names the document:
 
 ```http
 401 Unauthorized
-www-authenticate: Bearer resource_metadata="https://api.example.com/.well-known/oauth-protected-resource/mcp", scope="app:notes"
+www-authenticate: Bearer resource_metadata="https://api.example.com/.well-known/oauth-protected-resource/.mcp", scope="app:notes"
 ```
 
 ## Clients
@@ -168,7 +169,7 @@ of the identity that consented, over every path that identity may reach, whichev
 asked for.
 
 Restricting it is a `permissions` argument at the `identity.tokens.issue` call in
-`identity.grants.exchange` — `{'/mcp/**': ['*']}` for a resource at `/mcp/` — enforced by
+`identity.grants.exchange` — `{'/.mcp': ['*']}` for a resource at `/.mcp` — enforced by
 `permits()`, which is already what reads a token's permissions on every request. It waits on the
 resource that will check the audience itself.
 

@@ -13,24 +13,35 @@ one an application could choose is one it could collide with a route of its own.
 
 ## The name
 
-A procedure is an RTD method — a node and a verb — and its name is written the way the node
-is declared: the route template with its slashes trimmed, then `#` and the verb.
+A procedure is an RTD method — a node and a verb — and its name is written the way the node is
+declared: the route template, with a variable marked by a leading `_`, and the verb as the last
+segment.
 
 | route | verb | method |
 | --- | --- | --- |
-| `/pots` | `GET` | `pots#GET` |
-| `/pots` | `POST` | `pots#POST` |
-| `/pots/:id` | `GET` | `pots/:id#GET` |
-| `/identity/tokens/:identity` | `POST` | `identity/tokens/:identity#POST` |
-| `/files/**` | `GET` | `files/**#GET` |
-| `/` | `GET` | `#GET` |
+| `/pots` | `GET` | `pots/GET` |
+| `/pots` | `POST` | `pots/POST` |
+| `/pots/:id` | `GET` | `pots/_id/GET` |
+| `/identity/tokens/:identity` | `POST` | `identity/tokens/_identity/POST` |
+| `/files/**` | `GET` | `files/__/GET` |
+| `/` | `GET` | `GET` |
 
-Neither `#` nor `/` occurs in a path segment, so one name states one procedure and no two
-procedures share one. Nothing is declared to make a name: a re-mounted route is a renamed
-procedure, because the name is the address.
+The verb is always the last segment, so `/pots/GET` answering `POST` is `pots/GET/POST` and
+`/pots` answering `GET` is `pots/GET`. Nothing is declared to make a name: a re-mounted route is
+a renamed procedure, because the name is the address.
 
-A route whose segment is `*` has no name — there is nothing to write where the caller cannot
-say what goes there.
+## What has a name
+
+A segment is addressed where it holds only `A-Z`, `a-z`, `0-9` and `-`. `_` is the name's own,
+marking a variable, and `__` the rest of a path.
+
+A route with a segment holding anything else — a `.`, a `_`, a `*`, a variable that is not one
+word — has no name. It is served over HTTP as it always was; what it loses is the address, so
+`/.rpc` cannot call it. Each is said once at startup, naming the route and the segment.
+
+```
+Route cannot be addressed as a procedure  route=/pots/v1.0 segment=v1.0
+```
 
 ## The parameters
 
@@ -40,16 +51,16 @@ A key the template names is a route variable, and is taken by the path. `query` 
 querystring. Whatever is left is the body.
 
 ```json
-{"jsonrpc": "2.0", "id": 1, "method": "pots/:id#GET", "params": {"id": "a1b2"}}
+{"jsonrpc": "2.0", "id": 1, "method": "pots/_id/GET", "params": {"id": "a1b2"}}
 ```
 
 ```json
-{"jsonrpc": "2.0", "id": 2, "method": "pots#POST",
+{"jsonrpc": "2.0", "id": 2, "method": "pots/POST",
  "params": {"title": "Kettle", "volume": 1.7}}
 ```
 
 ```json
-{"jsonrpc": "2.0", "id": 3, "method": "pots#GET",
+{"jsonrpc": "2.0", "id": 3, "method": "pots/GET",
  "params": {"query": {"criteria": "volume=gt=1", "limit": 10}}}
 ```
 
@@ -57,8 +68,9 @@ The querystring has a name of its own because an operation's input is free to ha
 a `limit`, and the two would otherwise be one object. An operation whose input has a property
 named `query` cannot be called with one.
 
-A variable stands for a single segment, so its value may not contain `/`, `?` or `#`. A `**`
-stands for the rest of the path and may contain `/`.
+A variable stands for a single segment, so its value may not contain `/`, `?` or `#`. `__`
+stands for the rest of the path and may contain `/`; its value is read under the name `**`,
+which is what the RTD calls it wherever else it is read.
 
 ## What answers
 
@@ -75,8 +87,8 @@ A request may carry an array of calls instead of one, and answers an array of wh
 answered — shorter than what it was given, where some were notifications.
 
 ```json
-[{"jsonrpc": "2.0", "id": 1, "method": "pots/:id#GET", "params": {"id": "a1b2"}},
- {"jsonrpc": "2.0", "method": "pots/:id#DELETE", "params": {"id": "c3d4"}}]
+[{"jsonrpc": "2.0", "id": 1, "method": "pots/_id/GET", "params": {"id": "a1b2"}},
+ {"jsonrpc": "2.0", "method": "pots/_id/DELETE", "params": {"id": "c3d4"}}]
 ```
 
 They run one after another, in the order given. `batch` is how many one request may carry, 32
@@ -115,8 +127,12 @@ in its manifest, and is what a caller reads.
 ## Authorization
 
 A procedure is authorized as the resource is, against the path and the verb its name states.
-A token restricted to `/pots/:id/` for `GET` authorizes `pots/:id#GET` and nothing else,
+A token restricted to `/pots/:id/` for `GET` authorizes `pots/_id/GET` and nothing else,
 whichever way the call arrives.
+
+[`anonymous`](access.md#anonymous) is the one directive that reads a call differently from a
+request: it admits one whatever the request presented, because what refuses a credentialed request
+is that the reply would not be cacheable, and what a call answers is not a reply.
 
 ## What has no procedure
 

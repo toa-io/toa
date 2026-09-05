@@ -3,11 +3,12 @@ import { setTimeout } from 'node:timers/promises'
 import { console } from 'openspan'
 import { type bindings, Connector } from '@toa.io/core'
 import * as http from './HTTP/index.js'
-import { RPC } from './const.js'
+import { MCP, RPC } from './const.js'
 import { rethrow } from './exceptions.js'
 import { decide } from './Branch.js'
 import type { Interception } from './Interception.js'
 import type { Dispatcher } from './RPC/index.js'
+import type { Server } from './MCP/index.js'
 import type { DirectiveFactory, Method, Node, Parameter, Tree, Match } from './RTD/index.js'
 import type { Label } from './discovery.js'
 import type { Branch, Exposed } from './Branch.js'
@@ -20,6 +21,9 @@ export class Gateway extends Connector {
 
   /** JSON-RPC is served only where the annotation asked for it. */
   private readonly dispatcher: Dispatcher | null
+
+  /** And the same of MCP. */
+  private readonly mcp: Server | null
   private readonly branches = new Map<string, Exposed>()
   private lastMerge = 0
   private widestGap = 0
@@ -29,7 +33,7 @@ export class Gateway extends Connector {
 
   // eslint-disable-next-line max-params
   public constructor (broadcast: Broadcast, tree: Tree, interception: Interception,
-    directives: DirectiveFactory, dispatcher: Dispatcher | null) {
+    directives: DirectiveFactory, dispatcher: Dispatcher | null, mcp: Server | null) {
     super()
 
     this.broadcast = broadcast
@@ -37,6 +41,7 @@ export class Gateway extends Connector {
     this.interceptor = interception
     this.directives = directives
     this.dispatcher = dispatcher
+    this.mcp = mcp
 
     this.depends(broadcast)
   }
@@ -52,16 +57,29 @@ export class Gateway extends Connector {
     await context.timing.capture('preflight',
       this.directives.preflight(context)).catch(rethrow)
 
-    const response = this.dispatcher !== null && context.url.pathname === RPC
-      ? await context.timing.capture('rpc',
-        this.dispatcher.dispatch(context, async (call) => await this.route(call)))
-      : await this.route(context)
+    const response = await this.endpoint(context)
 
     // request-scoped, on whatever is going back: this is where a credential is re-issued
     await context.timing.capture('depart',
       this.directives.depart(context, response)).catch(rethrow)
 
     return response
+  }
+
+  /**
+   * What answers the request: a pinned endpoint that makes calls of its own, or the route
+   * the path names.
+   */
+  private async endpoint (context: http.Context): Promise<http.OutgoingMessage> {
+    const route: http.Processor = async (call) => await this.route(call)
+
+    if (this.dispatcher !== null && context.url.pathname === RPC)
+      return await context.timing.capture('rpc', this.dispatcher.dispatch(context, route))
+
+    if (this.mcp !== null && context.url.pathname === MCP)
+      return await context.timing.capture('mcp', this.mcp.process(context, route))
+
+    return await this.route(context)
   }
 
   /**
@@ -72,7 +90,7 @@ export class Gateway extends Connector {
     const { node, parameters } = this.match(context)
 
     if (context.request.method === 'OPTIONS')
-      return await this.explain(node, parameters)
+      return await this.explain(context, node, parameters)
 
     let verb = context.request.method
 
@@ -99,7 +117,16 @@ export class Gateway extends Connector {
   protected override async open (): Promise<void> {
     await this.discover()
 
-    console.info('Gateway started')
+    // what is served besides the tree, so that turning one on can be seen to have worked
+    const pinned: string[] = []
+
+    if (this.dispatcher !== null)
+      pinned.push(RPC)
+
+    if (this.mcp !== null)
+      pinned.push(MCP)
+
+    console.info('Gateway started', { endpoints: pinned.length === 0 ? 'none' : pinned.join(' ') })
   }
 
   /**
@@ -162,12 +189,16 @@ export class Gateway extends Connector {
       .catch(rethrow) as http.OutgoingMessage
   }
 
-  private async explain (node: Node, parameters: Parameter[]): Promise<http.OutgoingMessage> {
-    const body = await node.explain(parameters)
-    const allow = [...Object.keys(node.methods)].join(', ')
-    const headers = new Headers({ allow })
+  private async explain (context: http.Context, node: Node,
+    parameters: Parameter[]): Promise<http.OutgoingMessage> {
+    const body = await node.explain(context, parameters)
+    const verbs = Object.keys(body)
 
-    return { body, headers }
+    // what a caller may not use is not a resource to them, and describing it would be the leak
+    if (verbs.length === 0 && Object.keys(node.methods).length > 0)
+      throw new http.Forbidden()
+
+    return { body, headers: new Headers({ allow: verbs.join(', ') }) }
   }
 
   private async discover (): Promise<void> {

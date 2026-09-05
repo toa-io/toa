@@ -5,6 +5,7 @@ export class Remote extends Component {
 }
 
 interface Explanation {
+  description?: string
   input: Schema | null
   output: Schema | null
   errors?: string[]

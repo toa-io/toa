@@ -21,6 +21,7 @@ import { ATOM_GROUP } from '../../const.js'
 import { Quotas, Sync } from '../io/lib/throttle/index.js'
 import { Keys } from '../io/lib/throttle/Keys.js'
 import type { Output } from '../../io.js'
+import type { Introspection } from '../../Introspection.js'
 import type { Component } from '@toa.io/core'
 import type { Remotes } from '../../Remotes.js'
 import type { Parameter, DirectiveFamily } from '../../RTD/index.js'
@@ -126,6 +127,51 @@ export class Authorization implements DirectiveFamily<Directive, Extension> {
       throw new http.Unauthorized()
     else
       throw new http.Forbidden()
+  }
+
+  /**
+   * The same disjunction as `precall`, over what can be told without a request. A method no
+   * directive admits, and none is undecided about, is not this caller's to be told about —
+   * `null` takes it out of the answer.
+   *
+   * A permission is matched against a path, and a description is not a request to one, so
+   * `permits` has no say here. The call it describes is still checked, which is where a
+   * token's permissions belong.
+   *
+   * A method that is described is then described by each of them, which is a separate pass:
+   * admission is a disjunction and stops at the first that admits, while what the directives
+   * fill is not any one of them's to state alone.
+   */
+  public async explain (directives: Directive[], context: Context,
+    introspection: Introspection): Promise<Introspection | null> {
+    let untold = false
+    let admitted = false
+
+    for (const directive of directives) {
+      const admits = await directive.admits?.(context.identity, context)
+
+      if (admits === undefined) {
+        untold = true
+
+        continue
+      }
+
+      if (admits) {
+        admitted = true
+
+        break
+      }
+    }
+
+    if (!admitted && !untold)
+      return null
+
+    // whichever of them admitted, a property any of them fills from the identity is filled
+    // from the identity: what a caller sent there would be overwritten or forged
+    for (const directive of directives)
+      introspection = directive.describe?.(introspection) ?? introspection
+
+    return introspection
   }
 
   public async settle (directives: Directive[],

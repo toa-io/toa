@@ -11,14 +11,10 @@ Feature: Authorization server discovery
         nex: nex.toa.io
       oauth:
         authorize: https://app.nex.toa.io/oauth/authorize
-        resources: ['/mcp/']
+        resources: ['/.mcp']
         scopes: [app:notes]
-      /:
-        io:output: true
-        /mcp/**:
-          anyone: true
-          GET:
-            dev:stub: Tools
+      mcp:
+        name: Teapots
       """
 
   Scenario: The authorization server names its endpoints
@@ -64,7 +60,7 @@ Feature: Authorization server discovery
   Scenario: The protected resource is named by the path it is reached at
     When the following request is received:
       """
-      GET /.well-known/oauth-protected-resource/mcp HTTP/1.1
+      GET /.well-known/oauth-protected-resource/.mcp HTTP/1.1
       host: nex.toa.io
       accept: application/yaml
       """
@@ -72,7 +68,7 @@ Feature: Authorization server discovery
       """
       200 OK
 
-      resource: https://nex.toa.io/mcp
+      resource: https://nex.toa.io/.mcp
       authorization_servers:
         - https://nex.toa.io
       bearer_methods_supported:
@@ -119,14 +115,17 @@ Feature: Authorization server discovery
   Scenario: The challenge names the resource the request was refused at
     When the following request is received:
       """
-      GET /mcp/tools/ HTTP/1.1
+      POST /.mcp HTTP/1.1
       host: nex.toa.io
       accept: text/plain
+      content-type: application/json
+
+      {"jsonrpc": "2.0", "id": 1, "method": "tools/list", "params": {}}
       """
     Then the following reply is sent:
       """
       401 Unauthorized
-      www-authenticate: Bearer resource_metadata="https://nex.toa.io/.well-known/oauth-protected-resource/mcp", scope="app:notes"
+      www-authenticate: Bearer resource_metadata="https://nex.toa.io/.well-known/oauth-protected-resource/.mcp", scope="app:notes"
       """
 
   Scenario: A host named after a property a plain object answers on its own

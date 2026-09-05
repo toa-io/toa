@@ -24,6 +24,7 @@ entity:
 
 operations:
   create:
+    description: Put a pot on to brew.
     query: false
     forward: transit
     input:
@@ -71,6 +72,7 @@ operations:
           type: number
       type: object
   enumerate:
+    description: Every pot there is.
     output:
       type: array
       items:

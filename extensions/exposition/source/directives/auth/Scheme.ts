@@ -23,4 +23,9 @@ export class Scheme implements Directive {
 
     return false
   }
+
+  /** It admits nobody: it is there to refuse a scheme, not to authorize one. */
+  public admits (): boolean {
+    return false
+  }
 }

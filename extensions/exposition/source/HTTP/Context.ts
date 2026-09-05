@@ -22,6 +22,13 @@ export class Context {
   public readonly timing: Timing
   public readonly debug: boolean
 
+  /**
+   * Whether this is a procedure a request made, rather than the request. What forks one
+   * says so, and a directive that answers differently to a procedure than to a request
+   * reads it here.
+   */
+  public readonly procedural: boolean = false
+
   public readonly pipelines: Pipelines = {
     body: [],
     response: []

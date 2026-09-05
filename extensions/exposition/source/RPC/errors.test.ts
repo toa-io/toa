@@ -8,8 +8,8 @@ import {
 
 describe('of', () => {
   it('should read a missing route as a missing method', () => {
-    assert.deepEqual(of(new http.NotFound('pots/:id#GET names no verb')),
-      { code: METHOD_NOT_FOUND, message: 'pots/:id#GET names no verb' })
+    assert.deepEqual(of(new http.NotFound('pots/_id/FETCH names no method')),
+      { code: METHOD_NOT_FOUND, message: 'pots/_id/FETCH names no method' })
   })
 
   it('should read a verb the node does not declare as a missing method', () => {

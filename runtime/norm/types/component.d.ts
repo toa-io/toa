@@ -8,6 +8,7 @@ export type Operation = {
   type: operations.type
   scope?: operations.scope
   bindings?: string[]
+  description?: string
   input?: any
   output?: any
   error?: any

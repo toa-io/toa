@@ -43,6 +43,13 @@ Feature: toa types
     When I run `toa types`
     Then the file ./components/reply.contract/types/toa.d.ts contains exact line '  silent: (request: { input?: null, task?: boolean }) => Promise<SilentOutput>'
 
+  Scenario: An operation says what it is
+    Given I have a component `reply.contract`
+    And I have a context
+    And my working directory is ./
+    When I run `toa types`
+    Then the file ./components/reply.contract/types/toa.d.ts contains exact line '  /** What it answers where it has nothing to say. */'
+
   Scenario: An operation returns the errors it declares
     Given I have a component `reply.contract`
     And I have a context

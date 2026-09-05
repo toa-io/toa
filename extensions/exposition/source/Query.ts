@@ -4,6 +4,7 @@ import * as http from './HTTP/index.js'
 import { type Parameter } from './RTD/index.js'
 import * as schemas from './schemas.js'
 import { queryable } from './Mapping.js'
+import { take } from './Introspection.js'
 import type { Introspection, Schema } from './Introspection.js'
 import type * as syntax from './RTD/syntax/index.js'
 import type * as core from '@toa.io/core'
@@ -68,22 +69,43 @@ export class Query {
     }
   }
 
+  /**
+   * What the querystring carries: the parameters this method declares, taken out of the
+   * input because they are not the body's, and what a queryable method accepts besides.
+   *
+   * Only what it actually accepts — a criteria the declaration closes is refused, and so is
+   * a search where none was asked for.
+   */
   public explain (introspection: Introspection): Record<string, Schema> | null {
-    if (this.query?.parameters === undefined || introspection.input?.type !== 'object')
-      return null
-
     let query: Record<string, Schema> | null = null
 
-    for (const parameter of this.query.parameters) {
-      const schema = introspection.input.properties[parameter]
+    if (this.query?.parameters !== undefined)
+      for (const parameter of this.query.parameters) {
+        const schema = take(introspection, parameter)
 
-      if (schema !== undefined) {
+        // eslint-disable-next-line max-depth
+        if (schema === undefined)
+          continue
+
         query ??= {}
         query[parameter] = schema
       }
 
-      delete introspection.input.properties[parameter]
-    }
+    if (!this.queryable)
+      return query
+
+    query ??= {}
+
+    if (!this.closed)
+      query.criteria = keyword('string',
+        'What to match, in RSQL: `state==hot`, `rank=gt=5;name==*tea*`.')
+
+    query.sort = keyword('string', 'What to order by: `rank:desc`, or `rank` for ascending.')
+    query.limit = bounded('How many at once.', this.query.limit!)
+    query.omit = bounded('How many to skip.', this.query.omit!)
+
+    if (this.searchable)
+      query.search = keyword('string', 'What to search the text index for.')
 
     return query
   }
@@ -200,6 +222,24 @@ const WHATEVER = ';'
 interface CriteriaGroup {
   criteria: string
   operator: ',' | ';'
+}
+
+function keyword (type: string, description: string): Schema {
+  return { type, description } as unknown as Schema
+}
+
+function bounded (description: string, bounds: syntax.Range): Schema {
+  const schema: Record<string, unknown> = {
+    type: 'integer',
+    description,
+    minimum: bounds.range[0],
+    maximum: bounds.range[1]
+  }
+
+  if (bounds.value !== undefined)
+    schema.default = bounds.value
+
+  return schema as unknown as Schema
 }
 
 export interface QueryString {

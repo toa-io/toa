@@ -1,5 +1,21 @@
 # Component Declaration
 
+## Operations
+
+An operation may state what it is.
+
+```yaml
+operations:
+  enumerate:
+    description: Every pot that is brewing, newest first.
+    type: observation
+    scope: objects
+```
+
+It is written above the endpoint in the component's generated types, answered by the exposition's
+[`OPTIONS`](/extensions/exposition/documentation/introspection.md), and carried by the
+[introspection map](/extensions/introspection).
+
 ## Events
 
 An event is published where something consumes it: a receiver of another component of the context,

@@ -26,8 +26,17 @@ export class Discovery implements Interceptor {
     if (options.oauth === undefined)
       return
 
+    /*
+     * `https` always: RFC 8414 has an issuer be one, and OAuth 2.1 has every endpoint of an
+     * authorization server be one — the loopback exception is a client's redirect URI, not
+     * a server's address. A gateway served without TLS has no authorization server a client
+     * may use, and naming it `http` would hide that behind documents none should accept.
+     *
+     * The host is the configured one, not the request's, which is the client's to write: a
+     * forged one would have these documents name someone else's token endpoint.
+     */
     for (const [authority, host] of Object.entries(options.authorities))
-      this.authorities.set(authority, documents(origin(host), options.oauth))
+      this.authorities.set(authority, documents(`https://${host}`, options.oauth))
   }
 
   public reset (): void {
@@ -56,21 +65,6 @@ export class Discovery implements Interceptor {
 
     return { body, headers: new Headers({ 'cache-control': 'public, max-age=3600' }) }
   }
-}
-
-/**
- * The absolute URL an authority is reached at. Loopback is served over http and everything
- * else over https: the gateway may sit behind a terminating proxy, so the connection does
- * not say which, and the configured host does. Taken from the configuration rather than
- * from the request's `host`, which is the client's to write.
- */
-function origin (host: string): string {
-  const name = host.split(':')[0]
-
-  const loopback = name === 'localhost' || name === '127.0.0.1' || name === '[::1]' ||
-    name.endsWith('.localhost')
-
-  return `${loopback ? 'http' : 'https'}://${host}`
 }
 
 const UNAUTHORIZED = 401

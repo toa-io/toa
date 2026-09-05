@@ -1,6 +1,8 @@
 import assert from 'node:assert'
 import { Mapping } from './Mapping.js'
+import { take } from '../../Introspection.js'
 import type { Parameter } from '../../RTD/index.js'
+import type { Introspection, Schema } from '../../Introspection.js'
 
 export class Segments extends Mapping<Record<string, string>> {
   public constructor (map: Record<string, string>) {
@@ -10,6 +12,16 @@ export class Segments extends Mapping<Record<string, string>> {
       '`map:segments ` must be an object with string values')
 
     super(map)
+  }
+
+  /** A segment is the caller's, so it moves to the route rather than out of sight. */
+  public override explain (introspection: Introspection): void {
+    for (const property of Object.keys(this.value)) {
+      const schema = take(introspection, property)
+
+      introspection.route ??= {}
+      introspection.route[property] = schema ?? ({ type: 'string' } as unknown as Schema)
+    }
   }
 
   public override properties (_: unknown, parameters: Parameter[]): Record<string, string> {

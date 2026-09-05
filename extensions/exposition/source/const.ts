@@ -11,3 +11,9 @@ export const RPC = '/.rpc'
 
 /** Calls one request may carry where the annotation does not say. */
 export const BATCH = 32
+
+/**
+ * Where the Model Context Protocol is served. Pinned for the reason `/.rpc` is: a path an
+ * application could choose is a path it could collide with a route of its own.
+ */
+export const MCP = '/.mcp'
