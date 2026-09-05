@@ -47,14 +47,14 @@ Feature: Telemetry
       """
 
   # requires tempo (docker compose up tempo)
-  # open http://localhost:3000 (Explore > Tempo) to see the trace
+  # open http://localhost:31080 (Explore > Tempo) to see the trace
   Scenario: Exporting traces over OTLP
     Given an environment variable `TOA_TELEMETRY_TRACES` is set to:
       """yaml
       exporters:
         console: ~
         otlp:
-          endpoint: http://localhost:4318
+          endpoint: http://localhost:31061
       """
     And I boot `telemetry` component
     When I invoke `trace` with:

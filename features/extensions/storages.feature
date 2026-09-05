@@ -27,7 +27,7 @@ Feature: Storages Extension
       dummy:
         provider: s3
         bucket: test-bucket
-        endpoint: http://s3.localhost.localstack.cloud:4566
+        endpoint: http://s3.localhost.localstack.cloud:31050
         region: us-west-1
       """
 
