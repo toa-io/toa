@@ -191,6 +191,19 @@ From then on the workflow publishes it like any other. Do this while adding the 
 releasing: the release that discovers it has already published half the workspace and cannot be
 re-run as it was.
 
+**A failed publish takes the runtime image with it.** Everything after the publish step is skipped,
+so the version bump does not reach `dev` and `ghcr.io/toa-io/runtime:<version>` is never built. The
+packages are on npm and nothing says the release is incomplete until an application's deploy fails
+on `FROM ghcr.io/toa-io/runtime:<version>: not found`. Finishing it is a dispatch of the same
+workflow, which skips versioning, publishes whatever npm is missing, and builds the image:
+
+```shell
+$ gh workflow run release.yaml --ref alpha -f from-package=true -f dist-tag=alpha
+```
+
+The ref matters: the image is tagged with the version in `runtime/runtime/package.json` as that
+tree has it.
+
 ## Security
 
 A default denies. What the runtime fetches, accepts or trusts is enumerated in configuration, and an
