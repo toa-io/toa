@@ -16,19 +16,17 @@ An operation has three phases. Its type determines which of them it needs:
 
 ![The phases of transitions, observations, and assignments](../.assets/operations.png)
 
-The empty positions show phases an operation type does not have. The transaction boundary contains
-all the phases that operate on managed state: a transition retrieves, runs, and commits within it;
-an assignment runs against a changeset and commits it within the same boundary. An observation
-retrieves and runs without opening a transaction because it has nothing to commit.
+The empty positions show phases an operation type does not have. A transition uses all three;
+an observation does not commit; an assignment prepares changes without retrieving state first.
 
 The function expresses the **run** phase. Retrieval and persistence belong to the runtime.
 Changing several fields in the function prepares one state change; it does not save each field
 as a separate write.
 
-**An operation that commits its component's state ends in one transaction, or no committed
-transaction at all.** Its changes are applied together. A business rejection or a failure before
-commit leaves them unapplied. This also holds when a transition changes a group of objects:
-the group is committed as one unit.
+**Commit is one transaction.** All changes prepared during Run are applied together. If Run
+returns a business rejection, Commit does not happen and no transaction is opened. A failure
+during Commit leaves none of the changes applied. This also holds when a transition changes a
+group of objects: the group is committed as one unit.
 
 For example, an operation can change both an order's status and its total. Other calls see the
 committed result with both changes, rather than an intermediate order with only one of them.
@@ -43,9 +41,10 @@ safe: they do not change business state. Transitions and assignments are unsafe 
 phase. An effect is also unsafe because of the interaction it performs, but does not commit the
 state supplied to its function.
 
-The transaction boundary is the operation's own managed state. Calling another operation does
-not bring that operation's changes into the same transaction. A payment already charged by
-billing is not undone if the order's commit fails.
+The transaction contains only the operation's own managed state and the events produced by its
+change. Retrieve and Run happen before it. Calling another operation does not bring that
+operation's changes into the same transaction. A payment already charged by billing is not undone
+if the order's commit fails.
 
 ## The contract
 
