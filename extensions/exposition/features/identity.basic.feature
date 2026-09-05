@@ -132,8 +132,8 @@ Feature: Basic authentication
               access: granted!
       """
     And the `identity.basic` database contains:
-      | _id                              | _version | authority | username  | password                                                     |
-      | efe3a65ebbee47ed95a73edd911ea328 | 1        | nex       | developer | $2b$10$ZRSKkgZoGnrcTNA5w5eCcu3pxDzdTduhteVYXcp56AaNcilNkwJ.O |
+      | _id                              | VERSION | authority | username  | password                                                     |
+      | efe3a65ebbee47ed95a73edd911ea328 | 1       | nex       | developer | $2b$10$ZRSKkgZoGnrcTNA5w5eCcu3pxDzdTduhteVYXcp56AaNcilNkwJ.O |
     When the following request is received:
       """
       PATCH /identity/basic/efe3a65ebbee47ed95a73edd911ea328/ HTTP/1.1
@@ -173,9 +173,9 @@ Feature: Basic authentication
 
   Scenario: Changing other identity's password
     Given the `identity.basic` database contains:
-      | _id                              | authority | username  | password                                                     | _version |
-      | efe3a65ebbee47ed95a73edd911ea328 | nex       | developer | $2b$10$ZRSKkgZoGnrcTNA5w5eCcu3pxDzdTduhteVYXcp56AaNcilNkwJ.O | 1        |
-      | 6c0be50cbfb043acafe69cc7d3895f84 | nex       | attacker  | $2b$10$ZRSKkgZoGnrcTNA5w5eCcu3pxDzdTduhteVYXcp56AaNcilNkwJ.O | 1        |
+      | _id                              | authority | username  | password                                                     | VERSION |
+      | efe3a65ebbee47ed95a73edd911ea328 | nex       | developer | $2b$10$ZRSKkgZoGnrcTNA5w5eCcu3pxDzdTduhteVYXcp56AaNcilNkwJ.O | 1       |
+      | 6c0be50cbfb043acafe69cc7d3895f84 | nex       | attacker  | $2b$10$ZRSKkgZoGnrcTNA5w5eCcu3pxDzdTduhteVYXcp56AaNcilNkwJ.O | 1       |
     When the following request is received:
       """
       PATCH /identity/basic/efe3a65ebbee47ed95a73edd911ea328/ HTTP/1.1
@@ -222,8 +222,8 @@ Feature: Basic authentication
         - ^[^A]{1,16}$  # should not contain 'A'
       """
     And the `identity.basic` database contains:
-      | _id                              | _version | authority | username  | password                                                     |
-      | efe3a65ebbee47ed95a73edd911ea328 | 1        | nex       | developer | $2b$10$ZRSKkgZoGnrcTNA5w5eCcu3pxDzdTduhteVYXcp56AaNcilNkwJ.O |
+      | _id                              | VERSION | authority | username  | password                                                     |
+      | efe3a65ebbee47ed95a73edd911ea328 | 1       | nex       | developer | $2b$10$ZRSKkgZoGnrcTNA5w5eCcu3pxDzdTduhteVYXcp56AaNcilNkwJ.O |
     When the following request is received:
       """
       PATCH /identity/basic/efe3a65ebbee47ed95a73edd911ea328/ HTTP/1.1
@@ -508,8 +508,8 @@ Feature: Basic authentication
 
   Scenario: Check if username is available
     Given the `identity.basic` database contains:
-      | _id                              | authority | username  | password                                                     | _version |
-      | efe3a65ebbee47ed95a73edd911ea328 | nex       | developer | $2b$10$ZRSKkgZoGnrcTNA5w5eCcu3pxDzdTduhteVYXcp56AaNcilNkwJ.O | 1        |
+      | _id                              | authority | username  | password                                                     | VERSION |
+      | efe3a65ebbee47ed95a73edd911ea328 | nex       | developer | $2b$10$ZRSKkgZoGnrcTNA5w5eCcu3pxDzdTduhteVYXcp56AaNcilNkwJ.O | 1       |
     When the following request is received:
       """
       GET /identity/basic/usernames/ZGV2ZWxvcGVy/ HTTP/1.1

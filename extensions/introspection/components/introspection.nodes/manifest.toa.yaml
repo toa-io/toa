@@ -3,7 +3,7 @@ name: nodes
 
 # The static description of an application component: entity, operations, events, receivers.
 # Every replica of a component announces the same id, thus `merge` is an upsert
-# (`associated` initializes a missing object) and re-announcing refreshes `_updated`.
+# (`associated` initializes a missing object) and re-announcing refreshes `UPDATED`.
 
 entity:
   associated: true

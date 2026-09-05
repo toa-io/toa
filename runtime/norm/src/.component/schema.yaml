@@ -83,9 +83,8 @@ properties:
           properties:
             type: object
             propertyNames:
-              oneOf:
-                - $ref: "#/definitions/name"
-                - enum: [_version, _created, _updated, _deleted]
+              # a system property is named like any other, so nothing is enumerated beside them
+              $ref: "#/definitions/name"
       unique:
         type: object
         patternProperties:

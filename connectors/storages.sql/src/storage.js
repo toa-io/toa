@@ -15,7 +15,7 @@ export class Storage extends Connector {
   async store (entity) {
     // the entity carries the version it is being stored with,
     // so the first one it ever has is the one a new row gets
-    if (entity._version === 1) return this.#add(entity)
+    if (entity.VERSION === 1) return this.#add(entity)
     else return this.#update(entity)
   }
 
@@ -24,7 +24,7 @@ export class Storage extends Connector {
   }
 
   async #update (entity) {
-    const criteria = { id: entity.id, _version: entity._version - 1 }
+    const criteria = { id: entity.id, VERSION: entity.VERSION - 1 }
 
     return this.#client.update(criteria, { ...entity })
   }

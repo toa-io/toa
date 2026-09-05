@@ -11,7 +11,7 @@ export const translate = (schema) => {
     let value
 
     if (property.$ref !== undefined) value = refs[property.$ref](name, property)
-    else value = `${name} ${types[property.type](name, property)}`
+    else value = `"${name}" ${types[property.type](name, property)}`
 
     properties.push(value)
   }

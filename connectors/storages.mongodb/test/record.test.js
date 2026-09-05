@@ -8,7 +8,7 @@ describe('to', () => {
     /** @type {import('@toa.io/core/types').storages.Record} */
     const entity = {
       id: '1',
-      _version: 0
+      VERSION: 0
     }
     const record = to(entity)
 
@@ -19,14 +19,14 @@ describe('to', () => {
     /** @type {import('@toa.io/core/types').storages.Record} */
     const entity = {
       id: '1',
-      _version: 0
+      VERSION: 0
     }
 
     to(entity)
 
     assert.deepStrictEqual(entity, {
       id: '1',
-      _version: 0
+      VERSION: 0
     })
   })
 })
@@ -36,13 +36,13 @@ describe('from', () => {
     /** @type {toa.mongodb.Record} */
     const record = {
       _id: '1',
-      _version: 0
+      VERSION: 0
     }
     const entity = from(record)
 
     assert.deepStrictEqual(entity, {
       id: '1',
-      _version: 0
+      VERSION: 0
     })
   })
 })

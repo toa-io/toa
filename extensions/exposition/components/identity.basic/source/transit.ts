@@ -30,8 +30,8 @@ export class Transition implements Operation {
   }
 
   public async execute (input: TransitInput, object: Entity): Promise<Maybe<TransitOutput>> {
-    const deleted = object._deleted !== undefined && object._deleted !== null
-    const existent = object._version !== 0 && !deleted
+    const deleted = object.DELETED !== undefined && object.DELETED !== null
+    const existent = object.VERSION !== 0 && !deleted
 
     if (existent) {
       if (input.inception === true)

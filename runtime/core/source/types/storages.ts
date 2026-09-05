@@ -13,14 +13,14 @@ export interface Node {
   value?: unknown
 }
 
-/** What a storage stores. `id` is the key; everything prefixed `_` is core's. */
+/** What a storage stores. `id` is the key; the upper-cased names are core's. */
 export interface Record {
   id: string
-  _version: number
-  _created?: number
-  _updated?: number
+  VERSION: number
+  CREATED?: number
+  UPDATED?: number
   /** a tombstone's timestamp; `null` on a live record */
-  _deleted?: number | null
+  DELETED?: number | null
   [key: string]: any
 }
 
@@ -30,7 +30,7 @@ export interface Options {
   limit?: number
   /** normalised by `query/options.ts` from `'name:asc'` into pairs */
   sort?: Array<[property: string, direction: string]>
-  /** always includes `_version`, `_created`, `_updated`, `_deleted` */
+  /** always includes `VERSION`, `CREATED`, `UPDATED`, `DELETED` */
   projection?: string[]
   sample?: number
   /** include tombstones; without it an observation answers `null` over one */

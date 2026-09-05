@@ -149,9 +149,9 @@ One `Maybe` from many: tuple when **all** resolve, first `Error`, else `null`. S
 
 Conflict-free update.
 
-T must implement interface Comparable { id: string; _version: number;_deleted?: number | null }
+T must implement interface Comparable { id: string; VERSION: number;DELETED?: number | null }
 
-Merge a versioned item into a `collection` or `value`, respecting `_version`; removes on `_deleted` (unless `delete: false`). For applying server/realtime events.
+Merge a versioned item into a `collection` or `value`, respecting `VERSION`; removes on `DELETED` (unless `delete: false`). For applying server/realtime events.
 
 ```ts
 events.on('todos.sync', (todo) => sync(todos, todo))

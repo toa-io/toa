@@ -92,7 +92,7 @@ it('should hand a created object to its subscribers', async () => {
   client.subscribe('a.one', 'e0', other)
 
   await receiver!.receive({
-    payload: { component: 'a.one', epoch: 'e1', configuration: { foo: 2 }, _created: 12 }
+    payload: { component: 'a.one', epoch: 'e1', configuration: { foo: 2 }, CREATED: 12 }
   } satisfies Message)
 
   assert.ok(listener.mock.calls.some((call: any) => call.arguments.length === 1 && isDeepStrictEqual(call.arguments[0], { configuration: { foo: 2 }, created: 12 })))
@@ -102,7 +102,7 @@ it('should hand a created object to its subscribers', async () => {
   client.unsubscribe('a.one', 'e1', listener)
 
   await receiver!.receive({
-    payload: { component: 'a.one', epoch: 'e1', configuration: { foo: 3 }, _created: 13 }
+    payload: { component: 'a.one', epoch: 'e1', configuration: { foo: 3 }, CREATED: 13 }
   } satisfies Message)
 
   assert.strictEqual(listener.mock.callCount(), 1)

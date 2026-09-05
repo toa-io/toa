@@ -28,7 +28,7 @@ entity:
     lookup:
       component: asc
       epoch: asc
-      _created: desc
+      CREATED: desc
 
 operations:
   # the latest configuration of a component: created, else deployed defaults, else none

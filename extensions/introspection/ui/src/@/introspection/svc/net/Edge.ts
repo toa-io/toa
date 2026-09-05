@@ -4,10 +4,10 @@ export interface Edge {
   src: Origin
   dst: Target
   sample?: Sample
-  _created: number
-  _updated: number
-  _version: number
-  _deleted?: number | null
+  CREATED: number
+  UPDATED: number
+  VERSION: number
+  DELETED?: number | null
 }
 
 /** What caused the call: another operation, an event, or a service outside the map. */

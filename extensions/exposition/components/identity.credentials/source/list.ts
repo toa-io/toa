@@ -22,14 +22,14 @@ export class Computation implements Operation {
       this.passkeys.list(request)
     ])
 
-    const federation = federationObjects.map(({ id, iss, _created }) => ({ id, iss, _created }))
+    const federation = federationObjects.map(({ id, iss, CREATED }) => ({ id, iss, CREATED }))
 
-    const passkeys = passkeyObjects.map(({ id, aid, synced, label, _created }) => ({
+    const passkeys = passkeyObjects.map(({ id, aid, synced, label, CREATED }) => ({
       id,
       aid,
       synced,
       label,
-      _created
+      CREATED
     }))
 
     return { basic, federation, passkeys }
@@ -48,7 +48,7 @@ interface BasicCredential {
 interface FederationCredential {
   id: string
   iss: string
-  _created: number
+  CREATED: number
 }
 
 interface PasskeyCredential {
@@ -56,7 +56,7 @@ interface PasskeyCredential {
   aid: string
   synced: boolean
   label?: string
-  _created: number
+  CREATED: number
 }
 
 interface Output {

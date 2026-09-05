@@ -7,12 +7,12 @@ Feature: Persistent credentials management
       | _id                              | authority | username  | password                                                     |
       | efe3a65ebbee47ed95a73edd911ea328 | nex       | developer | $2b$10$ZRSKkgZoGnrcTNA5w5eCcu3pxDzdTduhteVYXcp56AaNcilNkwJ.O |
     And the `identity.federation` database contains:
-      | _id                              | authority | identity                         | iss                         | sub    | _created |
-      | fed3a65ebbee47ed95a73edd911ea328 | nex       | efe3a65ebbee47ed95a73edd911ea328 | https://accounts.google.com | google | 1000     |
-      | fed3a65ebbee47ed95a73edd911ea329 | nex       | efe3a65ebbee47ed95a73edd911ea328 | https://appleid.apple.com   | apple  | 900      |
+      | _id                              | authority | identity                         | iss                         | sub    | CREATED |
+      | fed3a65ebbee47ed95a73edd911ea328 | nex       | efe3a65ebbee47ed95a73edd911ea328 | https://accounts.google.com | google | 1000    |
+      | fed3a65ebbee47ed95a73edd911ea329 | nex       | efe3a65ebbee47ed95a73edd911ea328 | https://appleid.apple.com   | apple  | 900     |
     And the `identity.passkeys` database contains:
-      | _id                              | authority | identity                         | kid     | aid                                  | synced | key    | counter | label           | _created |
-      | ace3a65ebbee47ed95a73edd911ea328 | nex       | efe3a65ebbee47ed95a73edd911ea328 | key-one | adce0002-35bc-c60a-648b-0b25f1f05503 | true   | cHVibGlj | 0       | Personal iPhone | 2000     |
+      | _id                              | authority | identity                         | kid     | aid                                  | synced | key      | counter | label           | CREATED |
+      | ace3a65ebbee47ed95a73edd911ea328 | nex       | efe3a65ebbee47ed95a73edd911ea328 | key-one | adce0002-35bc-c60a-648b-0b25f1f05503 | true   | cHVibGlj | 0       | Personal iPhone | 2000    |
 
   Scenario: Listing all persistent credentials
     When the following request is received:
@@ -32,16 +32,16 @@ Feature: Persistent credentials management
       federation:
         - id: fed3a65ebbee47ed95a73edd911ea328
           iss: https://accounts.google.com
-          _created: 1000
+          CREATED: 1000
         - id: fed3a65ebbee47ed95a73edd911ea329
           iss: https://appleid.apple.com
-          _created: 900
+          CREATED: 900
       passkeys:
         - id: ace3a65ebbee47ed95a73edd911ea328
           aid: adce0002-35bc-c60a-648b-0b25f1f05503
           synced: true
           label: Personal iPhone
-          _created: 2000
+          CREATED: 2000
       """
 
   Scenario: Deleting credentials through their components
@@ -101,6 +101,6 @@ Feature: Persistent credentials management
       federation:
         - id: fed3a65ebbee47ed95a73edd911ea329
           iss: https://appleid.apple.com
-          _created: 900
+          CREATED: 900
       passkeys: []
       """

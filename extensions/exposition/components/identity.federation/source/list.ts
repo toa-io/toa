@@ -6,7 +6,7 @@ export async function computation ({ authority, identity }: Input, context: Cont
     query: {
       criteria: `authority==${quote(authority)};identity==${quote(identity)}`,
       projection: ['iss'],
-      sort: ['_created:desc'],
+      sort: ['CREATED:desc'],
       limit: 100
     }
   })

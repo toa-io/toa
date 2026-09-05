@@ -16,7 +16,7 @@ export interface Context {
 
 export type Fetch = (input: string | URL | Request, init?: RequestInit) => Promise<Response>
 
-export type TransitInput = Omit<Entity, 'id' | '_created'>
+export type TransitInput = Omit<Entity, 'id' | 'CREATED'>
 
 export interface Configuration {
   /** Origins whose Client ID Metadata Documents may be read. Empty admits nobody. */

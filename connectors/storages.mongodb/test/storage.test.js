@@ -28,13 +28,13 @@ describe('get', () => {
   it('should filter deleted', async () => {
     await storage.get({})
 
-    assert.ok(collection.findOne.mock.calls.some((call) => call.arguments.length === 2 && isDeepStrictEqual(call.arguments[0], { _deleted: null }) && isDeepStrictEqual(call.arguments[1], {})))
+    assert.ok(collection.findOne.mock.calls.some((call) => call.arguments.length === 2 && isDeepStrictEqual(call.arguments[0], { DELETED: null }) && isDeepStrictEqual(call.arguments[1], {})))
   })
 
   it('should filter deleted with sort', async () => {
-    await storage.get({ options: { sort: [['_created', 'desc']] } })
+    await storage.get({ options: { sort: [['CREATED', 'desc']] } })
 
-    assert.ok(collection.findOne.mock.calls.some((call) => call.arguments.length === 2 && isDeepStrictEqual(call.arguments[0], { _deleted: null }) && isDeepStrictEqual(call.arguments[1], { sort: [['_created', -1]] })))
+    assert.ok(collection.findOne.mock.calls.some((call) => call.arguments.length === 2 && isDeepStrictEqual(call.arguments[0], { DELETED: null }) && isDeepStrictEqual(call.arguments[1], { sort: [['CREATED', -1]] })))
   })
 
   it('should not filter deleted if queried by id', async () => {
@@ -56,13 +56,13 @@ describe('stream', () => {
   it('should filter deleted', async () => {
     await storage.stream()
 
-    assert.ok(collection.find.mock.calls.some((call) => call.arguments.length === 2 && isDeepStrictEqual(call.arguments[0], { _deleted: null }) && isDeepStrictEqual(call.arguments[1], {})))
+    assert.ok(collection.find.mock.calls.some((call) => call.arguments.length === 2 && isDeepStrictEqual(call.arguments[0], { DELETED: null }) && isDeepStrictEqual(call.arguments[1], {})))
   })
 
   it('should filter deleted with sort', async () => {
-    await storage.stream({ options: { sort: [['_created', 'desc']] } })
+    await storage.stream({ options: { sort: [['CREATED', 'desc']] } })
 
-    assert.ok(collection.find.mock.calls.some((call) => call.arguments.length === 2 && isDeepStrictEqual(call.arguments[0], { _deleted: null }) && isDeepStrictEqual(call.arguments[1], { sort: [['_created', -1]] })))
+    assert.ok(collection.find.mock.calls.some((call) => call.arguments.length === 2 && isDeepStrictEqual(call.arguments[0], { DELETED: null }) && isDeepStrictEqual(call.arguments[1], { sort: [['CREATED', -1]] })))
   })
 
   it('should not filter deleted if requested', async () => {

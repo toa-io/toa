@@ -10,7 +10,7 @@ export const schema = {
       'system': true,
       '$ref': 'https://schemas.toa.io/0.0.0/definitions#/definitions/id',
       'definitions': {}
-    }, '_version': {
+    }, 'VERSION': {
       'type': 'integer', 'default': 0, 'system': true, 'definitions': {}
     }
   }, 'required': ['id'], 'definitions': {}, 'type': 'object', 'additionalProperties': false

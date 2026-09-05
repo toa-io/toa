@@ -30,7 +30,7 @@ entity:
     list:
       authority: asc
       identity: asc
-      _created: desc
+      CREATED: desc
 
 operations:
   transit:
@@ -295,7 +295,7 @@ exposition:
       POST:
         map:authority: authority
         io:input: [scheme, credentials]
-        io:output: &credential [id, iss, _created]
+        io:output: &credential [id, iss, CREATED]
         endpoint: create
       GET:
         map:authority: authority

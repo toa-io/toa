@@ -271,7 +271,7 @@ function transition (input, entity, context) {
 On start, a component requests its configuration for its epoch from the values service and
 waits until there is one, reporting every fifth attempt. The schema is applied, and secrets
 are substituted. After a configuration is created, the running component receives the new
-object and takes it when its `_created` is later than that of the value it holds.
+object and takes it when its `CREATED` is later than that of the value it holds.
 
 ### Local override
 

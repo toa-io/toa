@@ -20,8 +20,8 @@ Feature: Reading the introspection map
 
   Scenario: Reading the nodes
     Given the `introspection.nodes` database contains:
-      | _id                              | namespace | component | version  | _version | _deleted |
-      | 70e1a6551346c6932657cdb2526df0fa | pots      | tea       | 7bb04bba | 1        | null     |
+      | _id                              | namespace | component | version  | VERSION | DELETED |
+      | 70e1a6551346c6932657cdb2526df0fa | pots      | tea       | 7bb04bba | 1       | null    |
     When the following request is received:
       """
       GET /introspection/nodes/ HTTP/1.1
@@ -42,8 +42,8 @@ Feature: Reading the introspection map
 
   Scenario: Reading one node
     Given the `introspection.nodes` database contains:
-      | _id                              | namespace | component | version  | _version | _deleted |
-      | 70e1a6551346c6932657cdb2526df0fa | pots      | tea       | 7bb04bba | 1        | null     |
+      | _id                              | namespace | component | version  | VERSION | DELETED |
+      | 70e1a6551346c6932657cdb2526df0fa | pots      | tea       | 7bb04bba | 1       | null    |
     When the following request is received:
       """
       GET /introspection/nodes/70e1a6551346c6932657cdb2526df0fa/ HTTP/1.1

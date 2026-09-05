@@ -33,7 +33,7 @@ function projection (projection: string[], properties: Properties): void {
     }
   }
 
-  for (const property of ['_version', '_created', '_updated', '_deleted'])
+  for (const property of ['VERSION', 'CREATED', 'UPDATED', 'DELETED'])
     if (!projection.includes(property))
       projection.push(property)
 }

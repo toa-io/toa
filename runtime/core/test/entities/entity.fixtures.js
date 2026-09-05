@@ -13,10 +13,10 @@ export const schema = {
 export const state = () => ({
   id: generate(),
   foo: generate(),
-  _created: generate(),
-  _updated: generate(),
-  _deleted: generate(),
-  _version: 0
+  CREATED: generate(),
+  UPDATED: generate(),
+  DELETED: generate(),
+  VERSION: 0
 })
 
 export const failed = () => ({

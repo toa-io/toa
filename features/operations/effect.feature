@@ -2,8 +2,8 @@ Feature: Effect
 
   Background:
     Given the `mongo.one` database contains:
-      | _id                              | foo | bar   | _version | _created      |
-      | 72cf9b0ab0ac4ab2b8036e4e940ddcae | 0   | hello | 1        | 1716043244316 |
+      | _id                              | foo | bar   | VERSION | CREATED       |
+      | 72cf9b0ab0ac4ab2b8036e4e940ddcae | 0   | hello | 1       | 1716043244316 |
 
   Scenario: Request with entity
     Given I compose `mongo.one` component
@@ -20,7 +20,7 @@ Feature: Effect
       id: 72cf9b0ab0ac4ab2b8036e4e940ddcae
       foo: 0
       bar: hello
-      _version: 1
+      VERSION: 1
       """
 
     # new entry
@@ -34,5 +34,5 @@ Feature: Effect
       """yaml
       foo: 1
       bar: world
-      _version: 1
+      VERSION: 1
       """

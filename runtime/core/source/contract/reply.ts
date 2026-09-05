@@ -13,7 +13,7 @@ export class Reply extends Contract {
 
     if (output !== undefined) {
       /*
-       * A reply carries more than the operation declares — `_version` and the rest of the
+       * A reply carries more than the operation declares — `VERSION` and the rest of the
        * record's own fields — so what it is validated against is the declaration relaxed.
        * On a copy: the declaration itself is what a component publishes when asked to
        * explain, and relaxing that would publish a contract nobody wrote.

@@ -99,10 +99,10 @@ describe('table', () => {
 
     const pieces = [
       `create table ${locator.namespace}.${locator.name}`,
-      'id char(32) primary key',
-      '_version bigint',
-      'foo bigint',
-      'bar varchar'
+      '"id" char(32) primary key',
+      '"VERSION" bigint',
+      '"foo" bigint',
+      '"bar" varchar'
     ]
 
     assert.ok(sql.raw.mock.calls.some((call) => call.arguments.length === 1 && isDeepStrictEqual(call.arguments[0], `create schema ${locator.namespace}`)))

@@ -4,6 +4,6 @@ export interface Entity {
   iss: string
   sub: string
   identity: string
-  _created: number
-  _deleted?: number | null
+  CREATED: number
+  DELETED?: number | null
 }

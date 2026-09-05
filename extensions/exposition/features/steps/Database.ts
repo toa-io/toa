@@ -41,8 +41,8 @@ export class Database {
        * enumerates differently on every request, which is a moving `etag` and a collection
        * that is never unmodified.
        */
-      document._created ??= Date.now()
-      document._updated ??= document._created
+      document.CREATED ??= Date.now()
+      document.UPDATED ??= document.CREATED
 
       documents.push(document)
     }

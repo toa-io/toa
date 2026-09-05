@@ -82,8 +82,8 @@ Feature: Custom tokens
       | efe3a65ebbee47ed95a73edd911ea328 | nex       | developer | $2b$10$ZRSKkgZoGnrcTNA5w5eCcu3pxDzdTduhteVYXcp56AaNcilNkwJ.O |
       | e8e4f9c2a68d419b861403d71fabc915 | nex       | user      | $2b$10$Frszmrmsz9iwSXzBbRRMKeDVKsNxozkrLNSsN.SnVC.KPxLtQr/bK |
     And the `identity.roles` database contains:
-      | _id                              | identity                         | role                      |
-      | 9c4702490ff84f2a9e1b1da2ab64bdd4 | efe3a65ebbee47ed95a73edd911ea328 | system:identity:tokens    |
+      | _id                              | identity                         | role                   |
+      | 9c4702490ff84f2a9e1b1da2ab64bdd4 | efe3a65ebbee47ed95a73edd911ea328 | system:identity:tokens |
     When the following request is received:
       """
       POST /identity/tokens/e8e4f9c2a68d419b861403d71fabc915/ HTTP/1.1
@@ -258,7 +258,7 @@ Feature: Custom tokens
       200 OK
 
       - id: ${{ kid }}
-        _created: ${{ created }}
+        CREATED: ${{ created }}
         label: One-time token
         expires: ${{ expires }}
       """
@@ -369,8 +369,8 @@ Feature: Custom tokens
 
   Scenario: Changing the password revokes custom tokens
     Given the `identity.basic` database contains:
-      | _id                              | _version | authority | username  | password                                                     |
-      | efe3a65ebbee47ed95a73edd911ea328 | 1        | nex       | developer | $2b$10$ZRSKkgZoGnrcTNA5w5eCcu3pxDzdTduhteVYXcp56AaNcilNkwJ.O |
+      | _id                              | VERSION | authority | username  | password                                                     |
+      | efe3a65ebbee47ed95a73edd911ea328 | 1       | nex       | developer | $2b$10$ZRSKkgZoGnrcTNA5w5eCcu3pxDzdTduhteVYXcp56AaNcilNkwJ.O |
     And the `identity.tokens` configuration:
       """yaml
       cache:

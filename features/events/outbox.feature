@@ -7,11 +7,11 @@ Feature: Transactional outbox
   Background:
     Given the `mongo.sink` event queues are empty
     And the `mongo.outbox` database contains:
-      | _id                              | foo | bar   | _version |
-      | 6b93e57cc0e14fce95c4496c21086781 | 0   | hello | 1        |
+      | _id                              | foo | bar   | VERSION |
+      | 6b93e57cc0e14fce95c4496c21086781 | 0   | hello | 1       |
     And the `mongo.sink` database contains:
-      | _id                              | count | _version |
-      | 6b93e57cc0e14fce95c4496c21086781 | 0     | 1        |
+      | _id                              | count | VERSION |
+      | 6b93e57cc0e14fce95c4496c21086781 | 0     | 1       |
 
   Scenario: A committed transition is published and settled
     Given I compose components:
@@ -68,8 +68,8 @@ Feature: Transactional outbox
     # seeding a row *is* the post-crash state: the entity was written, the event was not sent,
     # and nothing but the pump is left to send it
     Given the `mongo.outbox` outbox contains:
-      | _id                              | lane | pending | event                                                                                                       |
-      | aa11e57cc0e14fce95c4496c21086781 | 0    | 0       | {"trailers":{"inc":9},"state":{"id":"6b93e57cc0e14fce95c4496c21086781","foo":9,"bar":"recovered","_version":2,"_deleted":null}} |
+      | _id                              | lane | pending | event                                                                                                                         |
+      | aa11e57cc0e14fce95c4496c21086781 | 0    | 0       | {"trailers":{"inc":9},"state":{"id":"6b93e57cc0e14fce95c4496c21086781","foo":9,"bar":"recovered","VERSION":2,"DELETED":null}} |
     And I compose components:
       | mongo.outbox |
       | mongo.sink   |
@@ -142,8 +142,8 @@ Feature: Transactional outbox
     # `prototype: null` is the only shape in which a component with an entity declares no
     # events at all, so it is the only way to reach the branch that skips the outbox entirely
     Given the `proto.plain` database contains:
-      | _id                              | foo | _version |
-      | 3c41e57cc0e14fce95c4496c21086781 | 0   | 1        |
+      | _id                              | foo | VERSION |
+      | 3c41e57cc0e14fce95c4496c21086781 | 0   | 1       |
     And I compose `proto.plain` component
     When I call `proto.plain.write` with:
       """yaml
@@ -186,8 +186,8 @@ Feature: Transactional outbox
   Scenario: Without atomicity nothing is read
     Given an environment variable `TOA_ATOMICITY_REDIS` is set to ""
     And the `mongo.outbox` outbox contains:
-      | _id                              | lane | pending | event                                                                                                       |
-      | bb22e57cc0e14fce95c4496c21086781 | 0    | 0       | {"trailers":{"inc":1},"state":{"id":"6b93e57cc0e14fce95c4496c21086781","foo":1,"bar":"stranded","_version":2,"_deleted":null}} |
+      | _id                              | lane | pending | event                                                                                                                        |
+      | bb22e57cc0e14fce95c4496c21086781 | 0    | 0       | {"trailers":{"inc":1},"state":{"id":"6b93e57cc0e14fce95c4496c21086781","foo":1,"bar":"stranded","VERSION":2,"DELETED":null}} |
     And I compose components:
       | mongo.outbox |
       | mongo.sink   |

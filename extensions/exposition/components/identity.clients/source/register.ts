@@ -61,7 +61,7 @@ export class Effect implements Operation {
     return {
       client_id: id,
       // of the record, not of this request: registering again answers what it answered
-      client_id_issued_at: Math.floor((entity._created ?? Date.now()) / 1000),
+      client_id_issued_at: Math.floor((entity.CREATED ?? Date.now()) / 1000),
       client_name: entity.name,
       client_uri: entity.uri,
       logo_uri: entity.logo,

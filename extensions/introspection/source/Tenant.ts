@@ -8,7 +8,7 @@ import type { Node } from './model.js'
  * Announces the static description of a component.
  *
  * Delivery is guaranteed, so the repeat is not about reliability — it keeps
- * `_updated` fresh, which is how a removed component fades off the map.
+ * `UPDATED` fresh, which is how a removed component fades off the map.
  */
 export class Tenant extends Connector {
   private readonly reporter: Reporter
