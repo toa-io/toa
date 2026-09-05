@@ -160,7 +160,6 @@ Feature: Model Context Protocol
       result:
         tools:
           - name: pots/GET
-            description: Every pot there is.
             inputSchema:
               type: object
               properties:
@@ -178,7 +177,6 @@ Feature: Model Context Protocol
             annotations:
               readOnlyHint: true
           - name: pots/POST
-            description: Put a pot on to brew.
             inputSchema:
               type: object
               properties:
@@ -215,6 +213,10 @@ Feature: Model Context Protocol
     And the reply does not contain:
       """
       pots/unpublished/GET
+      """
+    And the reply does not contain:
+      """
+      Every pot there is.
       """
 
   Scenario: A method that is published as nothing is not called by guessing its name

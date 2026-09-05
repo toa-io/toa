@@ -21,7 +21,6 @@ Feature: Introspection
       Allow: GET, POST
 
       GET:
-        description: Every pot there is.
         output:
           type: array
           items:
@@ -46,7 +45,6 @@ Feature: Introspection
               - title
               - volume
       POST:
-        description: Put a pot on to brew.
         input:
           properties:
             temperature:
@@ -68,6 +66,40 @@ Feature: Introspection
         errors:
           - NO_WAY
           - WONT_CREATE
+      """
+
+  Scenario: What a method states it is
+    An operation states what it is for the Introspection to read, and that is not what a
+    resource is: an operation is written without knowledge of any route, and the same one
+    mounted twice is two methods. What a method states is what its route states.
+
+    Given the `pots` is running with the following manifest:
+      """yaml
+      exposition:
+        /:
+          io:output: true
+          GET:
+            mcp:tool: Every pot there is, newest first.
+            endpoint: enumerate
+          POST: create
+      """
+    When the following request is received:
+      """
+      OPTIONS /pots/ HTTP/1.1
+      host: nex.toa.io
+      accept: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      Allow: GET, POST
+
+      GET:
+        description: Every pot there is, newest first.
+      """
+    And the reply does not contain:
+      """
+      Put a pot on to brew.
       """
 
   Scenario: What the directives of the route admit
@@ -95,7 +127,6 @@ Feature: Introspection
       Allow: GET, POST
 
       GET:
-        description: Every pot there is.
         output:
           type: array
           items:
@@ -111,7 +142,6 @@ Feature: Introspection
               - id
               - title
       POST:
-        description: Put a pot on to brew.
         input:
           properties:
             title:
@@ -226,7 +256,6 @@ Feature: Introspection
       Allow: PATCH
 
       PATCH:
-        description: Answers with what it was given.
         route:
           a:
             type: string
@@ -270,7 +299,6 @@ Feature: Introspection
       Allow: PATCH
 
       PATCH:
-        description: Answers with what it was given.
         headers:
           a:
             type: string
@@ -308,7 +336,6 @@ Feature: Introspection
       Allow: PATCH
 
       PATCH:
-        description: Answers with what it was given.
         route:
           a:
             type: string
@@ -345,7 +372,6 @@ Feature: Introspection
       Allow: PATCH
 
       PATCH:
-        description: Answers with what it was given.
         input:
           type: object
           properties:

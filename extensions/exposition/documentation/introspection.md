@@ -8,7 +8,9 @@ every method it may not reach is `403`.
 
 Introspection properties:
 
-- `description` what the operation states it is
+- `description` what the route states this method is, from [`mcp:tool`](mcp.md#what-a-tool-is).
+  The operation states what it is too, and that is not this: it is written without knowledge of
+  any route, and the same operation mounted twice is two methods
 - `route` route parameters, including what `map:segments` names differently
 - `query` query parameters
 - `headers` properties `map:headers` reads from a request header, and which header
@@ -26,7 +28,7 @@ accept: application/yaml
 Allow: GET, POST
 
 GET:
-  description: Every pot there is.
+  description: Every pot there is, newest first.
   route:
     id:
       type: string

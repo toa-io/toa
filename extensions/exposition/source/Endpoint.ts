@@ -86,6 +86,11 @@ export class Endpoint implements RTD.Endpoint {
 
     const operation = structuredClone(await this.remote.explain(this.endpoint))
 
+    // what the operation states it is, is the Introspection's to read and not a resource's:
+    // an operation is written without knowledge of any route, and the same one mounted twice
+    // is two methods. What a method states is what its route states, which `mcp:tool` gives.
+    delete operation.description
+
     let route: Record<string, Schema> | null = null
 
     // a variable the operation names is taken by the path, so it is not the body's to send
@@ -101,11 +106,6 @@ export class Endpoint implements RTD.Endpoint {
 
     const query = this.mapping.explain(operation)
     const introspection: Introspection = {}
-
-    // what the operation is, before what it takes: `Object.assign` below writes it again,
-    // and the key it wrote first is the key that is read first
-    if (operation.description !== undefined)
-      introspection.description = operation.description
 
     if (route !== null)
       introspection.route = route

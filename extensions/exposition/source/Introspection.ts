@@ -1,6 +1,12 @@
 import type { Remote } from '@toa.io/core'
 
 export interface Introspection {
+  /**
+   * What the route states this method is. The operation states what it is too, and that is
+   * not this: an operation is written without knowledge of any route, and a method is an
+   * operation and a route together — the same operation mounted twice is two methods, and
+   * one sentence cannot be true of both. The operation's own is for the Introspection.
+   */
   description?: string
   route?: Record<string, Schema>
   query?: Record<string, Schema>

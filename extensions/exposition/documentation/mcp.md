@@ -45,10 +45,13 @@ A default denies, and a tree holds everything an application serves — its iden
 uploads, the machinery of the authorization flow the model already came through. Publishing all of
 it would spend a model's context on what it has no business calling.
 
-`mcp:tool: true` takes the operation's own description, where it
-[states one](/documentation/component/declaration.md). A string replaces it, for what the operation
-cannot speak to: the same operation mounted on two routes is two tools, and what makes them
-different is the route. `mcp:tool: false` publishes nothing.
+A string is what the tool says it is. `mcp:tool: true` publishes a tool that says nothing, and
+`mcp:tool: false` publishes none.
+
+The operation's own description is not used here, and an operation
+[states one](/documentation/component/declaration.md) for the Introspection to read. It is written
+without knowledge of any route, and a tool is an operation and a route together: the same operation
+mounted twice is two tools, and one sentence cannot be true of both.
 
 A declaration is inherited by everything below it, as every directive is, and the nearer one wins:
 a node publishes its subtree, and a method under it says something of its own, or opts out with
@@ -58,8 +61,7 @@ A route whose name a client [cannot spell](rpc.md#what-has-a-name) is refused wh
 is built, rather than served as a tool that is quietly never listed.
 
 A tool that describes itself with nothing is still a tool, and a model has only its name and its
-schemas to go on. So an application that means a method to be used by a model says what it does,
-in one place or the other.
+schemas to go on. So an application that means a method to be used by a model says what it does.
 
 `tools/list` answers every published method this caller may reach — a method whose directives refuse
 them is not listed, and a route with [no name](rpc.md#what-has-a-name) is not either. `tools/call`
