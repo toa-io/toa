@@ -1,15 +1,19 @@
 # Resource introspection
 
 Any resource can be introspected by sending an `OPTIONS` request to the resource's path.
-The response will contain the resource's input and output schemas for each supported method.
+
+What it answers is what the route's directives leave of what the operation declared, for each
+method the request may reach. A method it may not is not there, nor in `Allow`; a resource whose
+every method it may not reach is `403`.
 
 Introspection properties:
 
 - `description` what the operation states it is
-- `route` route parameters
+- `route` route parameters, including what `map:segments` names differently
 - `query` query parameters
-- `input` input schema
-- `output` output schema
+- `headers` properties `map:headers` reads from a request header, and which header
+- `input` input schema, restricted by `io:input`, without what the gateway fills itself
+- `output` output schema, restricted by `io:output`; absent where the reply is not sent at all
 - `errors` error codes
 
 ```http
@@ -19,7 +23,7 @@ accept: application/yaml
 
 ```http
 200 OK
-Allow: GET, POST, OPTIONS
+Allow: GET, POST
 
 GET:
   description: Every pot there is.

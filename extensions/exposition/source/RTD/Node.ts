@@ -2,6 +2,8 @@ import { type Route } from './Route.js'
 import { type Method, type Methods } from './Method.js'
 import { type Match, type Parameter } from './Match.js'
 import type { Segment } from './segment.js'
+import type { Context } from '../HTTP/index.js'
+import type { Introspection } from '../Introspection.js'
 
 export class Node {
   public intermediate: boolean
@@ -69,14 +71,19 @@ export class Node {
       yield * route.walk(segments)
   }
 
-  public async explain (parameters: Parameter[]): Promise<Record<string, unknown>> {
-    const methods: Record<string, unknown> = {}
+  /** Every method of this node that this caller may reach, in the order they were declared. */
+  public async explain (context: Context,
+    parameters: Parameter[]): Promise<Record<string, Introspection>> {
+    const entries = Object.entries(this.methods)
 
-    const explained = Object.entries(this.methods)
-      .map(async ([verb, method]) =>
-        (methods[verb] = await method.explain(parameters)))
+    const explained = await Promise.all(entries
+      .map(async ([, method]) => await method.explain(context, parameters)))
 
-    await Promise.all(explained)
+    const methods: Record<string, Introspection> = {}
+
+    for (let i = 0; i < entries.length; i++)
+      if (explained[i] !== null)
+        methods[entries[i][0]] = explained[i]!
 
     return methods
   }

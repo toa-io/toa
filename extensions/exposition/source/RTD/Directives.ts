@@ -2,12 +2,16 @@ import type { Parameter } from './Match.js'
 import type * as syntax from './syntax/index.js'
 import type { Context, OutgoingMessage, Options } from '../HTTP/index.js'
 import type { Output } from '../io.js'
+import type { Introspection } from '../Introspection.js'
 import type { extensions } from '@toa.io/core'
 
 type Host = extensions.Host
 
 export interface Directives {
   precall: (context: Context, parameters: Parameter[]) => Promise<Output>
+
+  /** What this route's directives make of what its method says about itself. */
+  explain: (context: Context, introspection: Introspection) => Promise<Introspection | null>
   settle: (context: Context, response: OutgoingMessage) => Promise<void>
   dispose: () => void
 }
@@ -63,6 +67,19 @@ export interface DirectiveFamily<TDirective = any, TExtension = any> {
   precall?: (directives: TDirective[],
     request: Context & TExtension,
     parameters: Parameter[]) => Output | Promise<Output>
+
+  /**
+   * What this family's directives make of what the method says about itself, which is
+   * what `OPTIONS` answers and what a tool is described by. `null` refuses: the method
+   * is not reachable by this caller, and is not described at all.
+   *
+   * There is no request here — no route variable has a value and no body has arrived, which
+   * is why no parameters are passed — so a directive that can only tell from one hands back
+   * what it was given.
+   */
+  explain?: (directives: TDirective[],
+    request: Context & TExtension,
+    introspection: Introspection) => Introspection | null | Promise<Introspection | null>
 
   /** Call-scoped, on the message that call produced. */
   settle?: (directives: TDirective[],

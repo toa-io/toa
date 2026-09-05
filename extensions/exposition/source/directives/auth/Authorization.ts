@@ -21,6 +21,7 @@ import { ATOM_GROUP } from '../../const.js'
 import { Quotas, Sync } from '../io/lib/throttle/index.js'
 import { Keys } from '../io/lib/throttle/Keys.js'
 import type { Output } from '../../io.js'
+import type { Introspection } from '../../Introspection.js'
 import type { Component } from '@toa.io/core'
 import type { Remotes } from '../../Remotes.js'
 import type { Parameter, DirectiveFamily } from '../../RTD/index.js'
@@ -126,6 +127,35 @@ export class Authorization implements DirectiveFamily<Directive, Extension> {
       throw new http.Unauthorized()
     else
       throw new http.Forbidden()
+  }
+
+  /**
+   * The same disjunction as `precall`, over what can be told without a request. A method no
+   * directive admits, and none is undecided about, is not this caller's to be told about —
+   * `null` takes it out of the answer.
+   *
+   * A permission is matched against a path, and a description is not a request to one, so
+   * `permits` has no say here. The call it describes is still checked, which is where a
+   * token's permissions belong.
+   */
+  public async explain (directives: Directive[], context: Context,
+    introspection: Introspection): Promise<Introspection | null> {
+    let untold = false
+
+    for (const directive of directives) {
+      const admits = await directive.admits?.(context.identity, context)
+
+      if (admits === undefined) {
+        untold = true
+
+        continue
+      }
+
+      if (admits)
+        return introspection
+    }
+
+    return untold ? introspection : null
   }
 
   public async settle (directives: Directive[],

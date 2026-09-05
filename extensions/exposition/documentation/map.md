@@ -113,3 +113,11 @@ the names of the claims.
 
 If the claim is not present in the token or the request is not authenticated using
 the [`Bearer` scheme](identity.md#bearer-scheme), the input properties are not set.
+
+## Introspection
+
+A property a mapping fills is not the caller's to send, so [`OPTIONS`](introspection.md) takes it
+out of the input. `map:headers` states it under `headers`, naming the header it is read from, and
+`map:segments` under `route`, named as the property rather than as the segment. The rest —
+`map:claims`, `map:authority`, `map:language`, `map:buffer` — come from the request itself, and a
+caller has nowhere to put one.

@@ -12,4 +12,8 @@ export class Anonymous implements Directive {
       ? false
       : this.allow
   }
+
+  public admits (_: any, context: Context): boolean {
+    return this.authorize(_, context)
+  }
 }

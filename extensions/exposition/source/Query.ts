@@ -4,6 +4,7 @@ import * as http from './HTTP/index.js'
 import { type Parameter } from './RTD/index.js'
 import * as schemas from './schemas.js'
 import { queryable } from './Mapping.js'
+import { take } from './Introspection.js'
 import type { Introspection, Schema } from './Introspection.js'
 import type * as syntax from './RTD/syntax/index.js'
 import type * as core from '@toa.io/core'
@@ -75,14 +76,13 @@ export class Query {
     let query: Record<string, Schema> | null = null
 
     for (const parameter of this.query.parameters) {
-      const schema = introspection.input.properties[parameter]
+      const schema = take(introspection, parameter)
 
-      if (schema !== undefined) {
-        query ??= {}
-        query[parameter] = schema
-      }
+      if (schema === undefined)
+        continue
 
-      delete introspection.input.properties[parameter]
+      query ??= {}
+      query[parameter] = schema
     }
 
     return query

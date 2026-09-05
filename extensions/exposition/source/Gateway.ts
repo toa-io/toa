@@ -72,7 +72,7 @@ export class Gateway extends Connector {
     const { node, parameters } = this.match(context)
 
     if (context.request.method === 'OPTIONS')
-      return await this.explain(node, parameters)
+      return await this.explain(context, node, parameters)
 
     let verb = context.request.method
 
@@ -162,12 +162,16 @@ export class Gateway extends Connector {
       .catch(rethrow) as http.OutgoingMessage
   }
 
-  private async explain (node: Node, parameters: Parameter[]): Promise<http.OutgoingMessage> {
-    const body = await node.explain(parameters)
-    const allow = [...Object.keys(node.methods)].join(', ')
-    const headers = new Headers({ allow })
+  private async explain (context: http.Context, node: Node,
+    parameters: Parameter[]): Promise<http.OutgoingMessage> {
+    const body = await node.explain(context, parameters)
+    const verbs = Object.keys(body)
 
-    return { body, headers }
+    // what a caller may not use is not a resource to them, and describing it would be the leak
+    if (verbs.length === 0 && Object.keys(node.methods).length > 0)
+      throw new http.Forbidden()
+
+    return { body, headers: new Headers({ allow: verbs.join(', ') }) }
   }
 
   private async discover (): Promise<void> {

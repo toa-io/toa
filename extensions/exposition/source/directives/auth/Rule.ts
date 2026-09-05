@@ -22,4 +22,24 @@ export class Rule implements Directive {
 
     return true
   }
+
+  /** All of them, so one that refuses ends it and one that cannot tell leaves it untold. */
+  public async admits (identity: Identity | null, context: Context): Promise<boolean | undefined> {
+    let untold = false
+
+    for (const directive of this.directives) {
+      const admits = await directive.admits?.(identity, context)
+
+      if (admits === undefined) {
+        untold = true
+
+        continue
+      }
+
+      if (!admits)
+        return false
+    }
+
+    return untold ? undefined : true
+  }
 }

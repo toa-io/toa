@@ -22,6 +22,11 @@ export class Delegate implements Directive {
     return true
   }
 
+  /** It admits whoever there is, and embedding the identity is the request's business. */
+  public admits (identity: Identity | null): boolean {
+    return identity !== null
+  }
+
   private embed (body: unknown, identity: Identity): Record<string, unknown> {
     if (body === undefined)
       body = {}

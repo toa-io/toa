@@ -5,7 +5,8 @@ import type { Directive } from './Directive.js'
 import type { Input as Context } from '../../io.js'
 
 export class Input implements Directive {
-  private readonly allowed: Set<string>
+  /** what a client may send, which is therefore what the input schema states */
+  public readonly allowed: Set<string>
 
   public constructor (permissions: Permissions) {
     this.allowed = new Set(permissions)

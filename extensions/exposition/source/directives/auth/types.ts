@@ -13,6 +13,17 @@ export interface Directive {
     parameters: Parameter[]
   ) => boolean | Promise<boolean>
 
+  /**
+   * Whether this admits the identity where that can be told without a request — which is
+   * what describing a method is. `undefined` says it cannot be told: a directive reading a
+   * route variable's value or the body has neither here, and one that is not implemented
+   * says the same by its absence. Nothing here may have an effect on the request.
+   */
+  admits?: (
+    identity: Identity | null,
+    context: Context
+  ) => boolean | undefined | Promise<boolean | undefined>
+
   reply?: (context: Context) => http.OutgoingMessage | null
 
   settle?: (context: Context, response: http.OutgoingMessage) => Promise<void>

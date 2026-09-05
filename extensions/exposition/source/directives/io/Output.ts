@@ -7,10 +7,13 @@ import type { Input as Context } from '../../io.js'
 import type { OutgoingMessage } from '../../HTTP/index.js'
 
 export class Output implements Directive {
-  private readonly disabled: boolean = false
+  /** whether the reply passes whole, which is when the schema is the operation's own */
+  public readonly disabled: boolean = false
+
+  /** what a reply may carry, which is therefore what the output schema states */
+  public readonly allowed: Set<string>
   private readonly omitted: boolean = true
   private readonly permissions: string[] = []
-  private readonly allowed: Set<string>
 
   public constructor (permissions: Permissions) {
     if (typeof permissions === 'boolean')

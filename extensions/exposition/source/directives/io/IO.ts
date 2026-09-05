@@ -1,3 +1,4 @@
+import { restrict } from '../../Introspection.js'
 import { Output } from './Output.js'
 import { Input } from './Input.js'
 import { Throttle } from './Throttle.js'
@@ -7,6 +8,7 @@ import type * as http from '../../HTTP/index.js'
 import type { Parameter, DirectiveFamily } from '../../RTD/index.js'
 import type { Remotes } from '../../Remotes.js'
 import type { Constructor, Directive } from './Directive.js'
+import type { Introspection } from '../../Introspection.js'
 import { ATOM_GROUP } from '../../const.js'
 import type { extensions } from '@toa.io/core'
 
@@ -52,6 +54,33 @@ export class IO implements DirectiveFamily<Directive> {
       DENIAL.precall(context, parameters)
 
     return null
+  }
+
+  /**
+   * What a whitelist admits is what the schema states. Without an `io:output` the reply is
+   * dropped before it is sent, so there is no output to describe at all.
+   */
+  public explain (directives: Directive[], _: http.Context,
+    introspection: Introspection): Introspection {
+    let restricted = false
+
+    for (const directive of directives) {
+      if (directive instanceof Input)
+        introspection.input = restrict(introspection.input, directive.allowed)
+
+      if (!(directive instanceof Output))
+        continue
+
+      restricted = true
+
+      if (!directive.disabled)
+        introspection.output = restrict(introspection.output, directive.allowed)
+    }
+
+    if (!restricted)
+      delete introspection.output
+
+    return introspection
   }
 
   public settle (directives: Directive[], context: http.Context,

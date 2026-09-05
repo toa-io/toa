@@ -10,4 +10,8 @@ export class Anyone implements Directive {
   public authorize (_: any, context: Context): boolean {
     return context.identity !== null && this.allow
   }
+
+  public admits (_: any, context: Context): boolean {
+    return this.authorize(_, context)
+  }
 }

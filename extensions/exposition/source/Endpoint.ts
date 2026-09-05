@@ -1,6 +1,7 @@
 import { Readable } from 'node:stream'
 import { console } from 'openspan'
 import { Mapping } from './Mapping.js'
+import { take } from './Introspection.js'
 import { redact } from './redact.js'
 import * as http from './HTTP/index.js'
 import type { Introspection, Schema } from './Introspection.js'
@@ -14,6 +15,9 @@ export class Endpoint implements RTD.Endpoint {
   private readonly mapping: Mapping
   private readonly discovery: Promise<Remote>
   private remote: Remote | null = null
+
+  /** What the operation says, with what the route takes already split out of it. */
+  private introspection: Introspection | null = null
 
   public constructor (endpoint: string, mapping: Mapping, discovery: Promise<Remote>) {
     this.endpoint = endpoint
@@ -65,24 +69,35 @@ export class Endpoint implements RTD.Endpoint {
   }
 
   public async explain (parameters: RTD.Parameter[]): Promise<Introspection> {
+    this.introspection ??= await this.introspect(parameters)
+
+    // what a directive narrows is this caller's answer, not the next caller's
+    return structuredClone(this.introspection)
+  }
+
+  /**
+   * `Remote.explain` answers the contract's own object, whose `input` is the manifest's by
+   * reference. What follows takes properties out of it, and two routes mounting one endpoint
+   * share one remote — so the copy is what keeps the second from describing what the first
+   * took away.
+   */
+  private async introspect (parameters: RTD.Parameter[]): Promise<Introspection> {
     this.remote ??= await this.discovery
 
-    const operation = await this.remote.explain(this.endpoint)
+    const operation = structuredClone(await this.remote.explain(this.endpoint))
 
     let route: Record<string, Schema> | null = null
 
-    if (operation.input?.type === 'object')
-      for (const parameter of parameters) {
-        const schema = operation.input.properties[parameter.name]
+    // a variable the operation names is taken by the path, so it is not the body's to send
+    for (const parameter of parameters) {
+      const schema = take(operation, parameter.name)
 
-        // eslint-disable-next-line max-depth
-        if (schema !== undefined) {
-          route ??= {}
-          route[parameter.name] = schema
+      if (schema === undefined)
+        continue
 
-          delete operation.input.properties[parameter.name]
-        }
-      }
+      route ??= {}
+      route[parameter.name] = schema
+    }
 
     const query = this.mapping.explain(operation)
     const introspection: Introspection = {}

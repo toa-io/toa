@@ -315,3 +315,10 @@ exposition:
       read:
         anonymous: true
 ```
+
+## Introspection
+
+[`OPTIONS`](introspection.md) answers only the methods this identity may reach, and `403` where it
+may reach none. What is decided from the identity decides here — `anonymous`, `anyone`, `role`,
+`delegate`. `id` reads a route variable's value and `input` a body property, and a description has
+neither, so a method they guard is described rather than withheld.

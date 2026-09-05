@@ -36,6 +36,19 @@ export class Role implements Directive {
     return this.match(identity.roles, parameters)
   }
 
+  /** A role naming a route variable cannot be told from a description, which has no values. */
+  public async admits (identity: Identity | null): Promise<boolean | undefined> {
+    if (this.dynamic)
+      return undefined
+
+    if (identity === null)
+      return false
+
+    identity.roles ??= await Role.get(identity, this.discovery)
+
+    return this.match(identity.roles, [])
+  }
+
   private match (roles: string[], parameters: Parameter[]): boolean {
     const required = this.dynamic ? this.substitute(parameters) : this.roles
 
