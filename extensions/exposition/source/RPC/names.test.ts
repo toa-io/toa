@@ -7,7 +7,7 @@ import { address, name, refusal } from './names.js'
 
 describe('address', () => {
   it('should resolve a name without variables', () => {
-    assert.deepEqual(address('pots/GET', {}),
+    assert.deepEqual(address('pots.GET', {}),
       { path: '/pots/', verb: 'GET', variables: [] })
   })
 
@@ -17,55 +17,55 @@ describe('address', () => {
   })
 
   it('should substitute a variable and report it taken', () => {
-    assert.deepEqual(address('pots/_id/GET', { id: 'a1b2', title: 'Kettle' }),
+    assert.deepEqual(address('pots._id.GET', { id: 'a1b2', title: 'Kettle' }),
       { path: '/pots/a1b2/', verb: 'GET', variables: ['id'] })
   })
 
   it('should substitute every variable', () => {
-    assert.deepEqual(address('users/_user/pots/_id/PATCH', { user: 'bob', id: 'a1b2' }),
+    assert.deepEqual(address('users._user.pots._id.PATCH', { user: 'bob', id: 'a1b2' }),
       { path: '/users/bob/pots/a1b2/', verb: 'PATCH', variables: ['user', 'id'] })
   })
 
   it('should let a tail carry separators', () => {
-    assert.deepEqual(address('files/__/GET', { '**': 'a/b/c' }),
+    assert.deepEqual(address('files.__.GET', { '**': 'a/b/c' }),
       { path: '/files/a/b/c/', verb: 'GET', variables: ['**'] })
   })
 
   it('should not confuse a trailing literal with a verb', () => {
-    assert.deepEqual(address('pots/GET/POST', {}),
+    assert.deepEqual(address('pots.GET.POST', {}),
       { path: '/pots/GET/', verb: 'POST', variables: [] })
   })
 
   it('should refuse a name that states no verb', () => {
-    assert.throws(() => address('pots/_id', { id: 'a1b2' }), http.NotFound)
+    assert.throws(() => address('pots._id', { id: 'a1b2' }), http.NotFound)
   })
 
   it('should refuse a verb no method uses', () => {
-    assert.throws(() => address('pots/FETCH', {}), http.NotFound)
+    assert.throws(() => address('pots.FETCH', {}), http.NotFound)
   })
 
   it('should refuse a segment no name can spell', () => {
-    assert.throws(() => address('pots/v1.0/GET', {}), http.NotFound)
-    assert.throws(() => address('a_b/GET', {}), http.NotFound)
-    assert.throws(() => address('pots//GET', {}), http.NotFound)
+    assert.throws(() => address('pots/v1.GET', {}), http.NotFound)
+    assert.throws(() => address('a_b.GET', {}), http.NotFound)
+    assert.throws(() => address('pots..GET', {}), http.NotFound)
   })
 
   it('should refuse a variable of no name', () => {
-    assert.throws(() => address('pots/_/GET', { '': 'a1b2' }), http.NotFound)
+    assert.throws(() => address('pots._.GET', { '': 'a1b2' }), http.NotFound)
   })
 
   it('should refuse a missing variable', () => {
-    assert.throws(() => address('pots/_id/GET', {}), http.BadRequest)
+    assert.throws(() => address('pots._id.GET', {}), http.BadRequest)
   })
 
   it('should refuse a variable that would divide the path', () => {
-    assert.throws(() => address('pots/_id/GET', { id: 'a/b' }), http.BadRequest)
-    assert.throws(() => address('pots/_id/GET', { id: 'a?b' }), http.BadRequest)
-    assert.throws(() => address('pots/_id/GET', { id: 'a#b' }), http.BadRequest)
+    assert.throws(() => address('pots._id.GET', { id: 'a/b' }), http.BadRequest)
+    assert.throws(() => address('pots._id.GET', { id: 'a?b' }), http.BadRequest)
+    assert.throws(() => address('pots._id.GET', { id: 'a#b' }), http.BadRequest)
   })
 
   it('should refuse a tail that would end the path', () => {
-    assert.throws(() => address('files/__/GET', { '**': 'a?b' }), http.BadRequest)
+    assert.throws(() => address('files.__.GET', { '**': 'a?b' }), http.BadRequest)
   })
 })
 
@@ -75,22 +75,22 @@ describe('name', () => {
   })
 
   it('should name a route', () => {
-    assert.equal(name(segment('/pots'), 'GET'), 'pots/GET')
-    assert.equal(name(segment('/identity/tokens'), 'POST'), 'identity/tokens/POST')
+    assert.equal(name(segment('/pots'), 'GET'), 'pots.GET')
+    assert.equal(name(segment('/identity/tokens'), 'POST'), 'identity.tokens.POST')
   })
 
   it('should mark a variable', () => {
-    assert.equal(name(segment('/pots/:id'), 'GET'), 'pots/_id/GET')
+    assert.equal(name(segment('/pots/:id'), 'GET'), 'pots._id.GET')
     assert.equal(name(segment('/identity/tokens/:identity'), 'POST'),
-      'identity/tokens/_identity/POST')
+      'identity.tokens._identity.POST')
   })
 
   it('should mark a tail', () => {
-    assert.equal(name(segment('/files/**'), 'GET'), 'files/__/GET')
+    assert.equal(name(segment('/files/**'), 'GET'), 'files.__.GET')
   })
 
   it('should keep a hyphen', () => {
-    assert.equal(name(segment('/jpeg-or-png'), 'GET'), 'jpeg-or-png/GET')
+    assert.equal(name(segment('/jpeg-or-png'), 'GET'), 'jpeg-or-png.GET')
   })
 
   it('should name nothing where a segment cannot be spelled', () => {
