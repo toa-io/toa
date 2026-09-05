@@ -5,6 +5,41 @@ calculate a price, or ask billing to make a charge. Its declaration describes th
 its function expresses the business rule. The runtime validates the request, supplies the state
 and context, and persists changes according to the operation's type.
 
+## Retrieve, run, commit
+
+An operation has three phases. Its type determines which of them it needs:
+
+1. **Retrieve** — acquire the state the function will work with: an object, a group of objects,
+   or a stream of objects.
+2. **Run** — execute the business function with input, the supplied state, and context.
+3. **Commit** — validate and persist the changes made by the function.
+
+The function expresses the **run** phase. Retrieval and persistence belong to the runtime.
+Changing several fields in the function prepares one state change; it does not save each field
+as a separate write.
+
+**An operation that commits its component's state ends in one transaction, or no committed
+transaction at all.** Its changes are applied together. A business rejection or a failure before
+commit leaves them unapplied. This also holds when a transition changes a group of objects:
+the group is committed as one unit.
+
+For example, an operation can change both an order's status and its total. Other calls see the
+committed result with both changes, rather than an intermediate order with only one of them.
+The function does not begin, commit, or roll back transactions itself.
+
+Retrieve and commit are optional. An observation retrieves state and runs without committing;
+a computation only runs. A transition retrieves or initializes state, runs, and commits.
+An assignment prepares a changeset without giving the function the current state, then commits it.
+
+This gives operations their **safe** or **unsafe** character. Observations and computations are
+safe: they do not change business state. Transitions and assignments are unsafe and have a commit
+phase. An effect is also unsafe because of the interaction it performs, but does not commit the
+state supplied to its function.
+
+The transaction boundary is the operation's own managed state. Calling another operation does
+not bring that operation's changes into the same transaction. A payment already charged by
+billing is not undone if the order's commit fails.
+
 ## The contract
 
 Consider an operation that discounts a pending order. Its input is a percentage, its output is
@@ -72,16 +107,7 @@ a missing order, or an unexpected failure is an exception rather than a business
 `output` describes the successful reply. During local development the runtime also checks replies
 against the declared output and errors, helping catch an implementation that breaks its contract.
 
-## Retrieve, run, commit
-
-For a transition such as `discount`, a call has three stages:
-
-1. **Retrieve** — obtain the state selected by the query.
-2. **Run** — call the function with input, state, and context.
-3. **Commit** — validate and persist the modified state if the function succeeds.
-
-Returning a business error prevents the state change from being committed. A successful call
-makes the change available to later calls and can produce the component's declared events.
+## Concurrent changes and retries
 
 Another call may change the order between retrieval and commit. With `concurrency: retry`, the
 runtime retrieves the current order and runs the function again. The pending-state check and
@@ -91,9 +117,6 @@ it does not guarantee that the call will eventually succeed.
 The function must be suitable for repeated execution. In particular, charging a payment inside
 this transition could charge it again when the transition retries. Calls to other components
 are not rolled back when this component's commit fails.
-
-The three stages depend on the operation type. Reading a status needs retrieval but no commit;
-calculating a price from input alone needs neither.
 
 ## Choosing an operation type
 
