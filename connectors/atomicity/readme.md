@@ -18,6 +18,26 @@ Returns `null` while this replica owns nothing — at startup, during a rollout,
 
 Uses [n-and-i](https://github.com/temich/nandi).
 
+### Being told
+
+`slots` answers whoever asks. A consumer that asks rarely — once an hour, say — samples one
+moment, and a rollout passing through that moment costs it the whole hour. `onassigned` tells it
+instead.
+
+```javascript
+const off = atom.onassigned((assignment) => { … }) // { i, n } — or null, owning nothing
+```
+
+Called with the assignment this replica holds, and again whenever it changes: one arrived, was
+lost, or the group resized. A change and not a heartbeat — a group that stays as it is never
+calls back. It is called once as it is added, with the assignment as it stands, so a listener
+arriving after the group settled is not left waiting for something that has already happened.
+
+The answer removes the listener. A listener that raises ends the loop it was told through, and
+that loop is what keeps this replica registered — so this replica owns nothing from that moment,
+`slots` answers `null`, and it stands down. What to do about the exception is the runtime's;
+nothing here catches it.
+
 ## Metering
 
 Debt the group has run up under each key, in milliseconds. A call adds its own deltas and answers

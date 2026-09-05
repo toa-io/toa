@@ -23,7 +23,14 @@ const coerce = (node, properties) => {
       throw new QuerySyntaxException(`Criteria selector '${node.left.selector}' is not defined`)
     }
 
-    if (COERCE[property.type] !== undefined) { node.right.value = COERCE[property.type](node.right.value) }
+    const coerce = COERCE[property.type]
+
+    // `=in=` and `=out=` carry a list, and coercing that as one value gives whatever
+    // `parseInt` makes of a comma-separated string
+    if (coerce !== undefined)
+      node.right.value = Array.isArray(node.right.value)
+        ? node.right.value.map((value) => coerce(value))
+        : coerce(node.right.value)
   } else {
     if (node.left !== undefined) coerce(node.left, properties)
     if (node.right !== undefined) coerce(node.right, properties)

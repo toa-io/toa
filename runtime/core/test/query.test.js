@@ -23,6 +23,13 @@ describe('criteria', () => {
     assert.deepStrictEqual(query.criteria, fixtures.samples.simple.parsed.criteria)
   })
 
+  it('should coerce every value of a list', () => {
+    const instance = new Query({ n: { type: 'integer' } })
+    const query = instance.parse({ criteria: 'n=in=(1,2,3)' })
+
+    assert.deepStrictEqual(query.criteria.right.value, [1, 2, 3])
+  })
+
   it('should keep a parsed criteria', () => {
     const instance = new Query(fixtures.samples.simple.properties)
 

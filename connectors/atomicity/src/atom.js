@@ -15,6 +15,9 @@ export class Atom extends Connector {
   /** @type {{ i: number, n: number } | null} */
   #assignment = null
 
+  /** @type {Set<(assignment: { i: number, n: number } | null) => void>} */
+  #listeners = new Set()
+
   /** @type {AbortController} */
   #abort
 
@@ -58,6 +61,29 @@ export class Atom extends Connector {
     for (let slot = i; slot < total; slot += n) owned.push(slot)
 
     return owned
+  }
+
+  /**
+   * Calls `listener` with the assignment this replica holds, and again whenever it changes —
+   * one arrived, was lost, or the group resized. Answers with what removes the listener again.
+   *
+   * A change and not a heartbeat: a group that stays as it is never calls back. It is called
+   * once as it is added, with the claim as it stands, so that a listener arriving after the
+   * group settled is not left waiting for something that has already happened.
+   *
+   * This is what `slots` cannot say. Reading answers a consumer that asks often, where a stale
+   * answer costs one cycle; a consumer that asks rarely needs to be told, or it samples the
+   * one moment a rollout was passing through and stands down for a whole cycle.
+   *
+   * @param listener {(assignment: { i: number, n: number } | null) => void}
+   * @returns {() => void}
+   */
+  onassigned (listener) {
+    this.#listeners.add(listener)
+
+    listener(this.#assignment)
+
+    return () => this.#listeners.delete(listener)
   }
 
   /**
@@ -146,9 +172,22 @@ export class Atom extends Connector {
       console: this.#console
     })
 
-    // the loop yields when ownership changes, which is exactly when work has to be handed over
-    for await (const { i, n } of loop)
-      this.#assignment = i === null ? null : { i, n }
+    try {
+      // the loop yields when ownership changes, which is exactly when work has to be handed over
+      for await (const { i, n } of loop) {
+        this.#assignment = i === null ? null : { i, n }
+
+        for (const listener of this.#listeners) listener(this.#assignment)
+      }
+    } finally {
+      /*
+       * The loop is what keeps this replica registered, so once it has ended — because it was
+       * aborted, or because a listener raised through it — this replica owns nothing. Left as
+       * it was, the last assignment would answer `slots` for as long as the process ran, and
+       * a claim nothing supports is what the whole of this exists to prevent.
+       */
+      this.#assignment = null
+    }
   }
 }
 

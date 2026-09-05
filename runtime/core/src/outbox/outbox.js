@@ -33,6 +33,7 @@ export class Outbox extends Connector {
   #publishing = new Set()
 
   #timer
+  #off
   #pumping = false
   #closing = false
 
@@ -101,10 +102,19 @@ export class Outbox extends Connector {
 
     this.#timer = setInterval(() => this.#tick(), this.#interval)
     this.#timer.unref()
+
+    /*
+     * A lane changing hands is exactly when rows stranded in it become this replica's to
+     * publish, and the cycle would not notice for up to an interval. Being told costs a cycle
+     * that finds nothing in the usual case, where the claim arrives once and never changes.
+     */
+    this.#off = this.#atom.onassigned(() => this.#tick())
   }
 
   async close () {
     this.#closing = true
+
+    this.#off?.()
 
     if (this.#timer !== undefined) clearInterval(this.#timer)
 

@@ -135,6 +135,20 @@ a configuration secret, for one, is read as `context.configuration.apiKey.unwrap
 
 The components an extension ships are Toa's own, and may use its packages.
 
+## Documentation
+
+Documentation says **how to use** a thing, not how it works. What a reader needs is what to
+declare, what to call, what they get back, and what they have to handle themselves. How it
+arrives at that is not theirs to carry.
+
+So a guarantee is written as what it means for the code someone writes — "a missed interval is
+not made up, so select what is still due rather than everything in its share" — and not as the
+mechanism it follows from. Names of what runs inside, the state it keeps, the queries it makes
+and the reasoning behind a decision belong in the code, beside what they explain.
+
+What survives the rule is what a reader acts on: a limit that changes what they write, a setting
+they choose, a failure they will see and have to answer for.
+
 ## Publishing
 
 npm packs by `.npmignore` where a package has one, and by `.gitignore` where it does not. Build
