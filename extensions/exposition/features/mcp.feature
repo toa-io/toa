@@ -200,7 +200,6 @@ Feature: Model Context Protocol
               required:
                 - id
               additionalProperties: false
-          # the same operation as `pots/GET`, and what makes it a different tool is the route
           - name: pots/large/GET
             description: The pots that hold a hundred or more, newest first.
             annotations:
