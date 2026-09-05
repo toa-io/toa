@@ -57,7 +57,7 @@ operations:
 ```
 
 ```typescript
-export async function transition (input: unknown, object: Entity) {
+export async function transition (input, object: Order) {
   object.status = 'approved'
 }
 ```
@@ -251,9 +251,7 @@ Operations provide direct interaction. Events let components integrate without t
 A component declares an event as a condition on its own state change:
 
 ```typescript
-type Change = { origin: Entity | null, state: Entity }
-
-export function condition (event: Change) {
+export function condition (event: Event<Order>) {
   return event.origin?.status !== 'approved' && event.state.status === 'approved'
 }
 ```

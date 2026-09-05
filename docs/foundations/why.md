@@ -34,7 +34,7 @@ Toa splits a service into two parts:
 The order approval above becomes a Toa operation:
 
 ```typescript
-export async function transition (input: unknown, object: Entity) {
+export async function transition (input, object: Order) {
   object.status = 'approved'
 }
 ```
@@ -79,7 +79,7 @@ Toa requires operations to be *genuine*:
 - **Non-exceptional** — errors are returned as values, not thrown for control flow:
 
 ```typescript
-export async function transition (input: unknown, object: Entity) {
+export async function transition (input, object: Order) {
   if (object.status !== 'pending')
     return new Error('ORDER_NOT_PENDING')
 

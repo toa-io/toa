@@ -108,7 +108,7 @@ The implementation exports a single function *named after the operation's type* 
 determines what the runtime does before and after the call:
 
 ```typescript
-export async function transition (input: ApproveInput, object: Entity) {
+export async function transition (input: ApproveInput, object: Order) {
   if (object.status !== 'pending')
     return new Error('NOT_PENDING')
 
@@ -124,14 +124,14 @@ different deals with the runtime:
 
 ```typescript
 // observation: read-only view of the state
-export async function observation (input: unknown, object: Entity) {
+export async function observation (input, object: Order) {
   return object.status
 }
 ```
 
 ```typescript
 // computation: no state at all, pure function of input
-export async function computation (input: { price: number, quantity: number }) {
+export async function computation (input: LineItem) {
   return input.price * input.quantity
 }
 ```
@@ -162,7 +162,7 @@ assert.equal(object.status, 'approved')
 The `context` argument is the only way an operation reaches beyond its input and state:
 
 ```typescript
-export async function transition (input: ApproveInput, object: Entity, context: Context) {
+export async function transition (input: ApproveInput, object: Order, context: Context) {
   // call an operation of this component
   await context.local.status({ query: { id: object.id } })
 
@@ -191,9 +191,7 @@ A component announces its state changes with event files. Each file names an eve
 the condition under which it fires:
 
 ```typescript
-type Change = { origin: Entity | null, state: Entity }
-
-export function condition (event: Change) {
+export function condition (event: Event<Order>) {
   return event.origin?.status !== 'approved' && event.state.status === 'approved'
 }
 ```
@@ -201,10 +199,10 @@ export function condition (event: Change) {
 `event.origin` is the entity before the operation, `event.state` — after. The runtime evaluates
 conditions for committed state changes and emits `shop.orders.approved` when the predicate turns
 true. By default the payload is the new state; add an exported `payload` function to the same
-module to customize it, reusing its `Change` type:
+module to customize it:
 
 ```typescript
-export function payload (event: Change) {
+export function payload (event: Event<Order>) {
   return { id: event.state.id, total: event.state.total }
 }
 ```
@@ -231,7 +229,7 @@ When the payload maps directly to the operation's request, the declaration is al
 Otherwise a translation function in `receivers/` reshapes it:
 
 ```typescript
-export function request (payment: { order: string }) {
+export function request (payment: Payment) {
   return { query: { id: payment.order } }
 }
 ```

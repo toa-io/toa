@@ -26,7 +26,7 @@ and *declares* everything else: data schemas, communication endpoints, HTTP reso
 access policies, storage requirements.
 
 ```typescript
-export async function transition (input: unknown, object: Entity) {
+export async function transition (input, object: Order) {
   object.status = 'approved'
 }
 ```
