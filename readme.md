@@ -52,7 +52,7 @@ Non-scattered documentation is coming some time later.
   - [Throttling](/extensions/exposition/documentation/io.md#throttling): a distributed
     [GCRA](https://en.wikipedia.org/wiki/Generic_cell_rate_algorithm), with no per-request I/O
   - [OAuth 2.1 authorization server](/extensions/exposition/documentation/oauth.md): discovery,
-    dynamic client registration, PKCE, and consent an application serves itself
+    dynamic client registration, PKCE; the consent page is the application's own
   - [JSON-RPC](/extensions/exposition/documentation/rpc.md): every method the tree exposes, called
     as a procedure named after its route
   - [Model Context Protocol](/extensions/exposition/documentation/mcp.md): a method is a tool where
