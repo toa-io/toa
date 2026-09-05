@@ -1,7 +1,8 @@
 import { Connector } from '@toa.io/core'
 import { console } from 'openspan'
 import type { Console, Task } from 'openspan'
-import type { Locator, extensions } from '@toa.io/core'
+import type { Locator } from '@toa.io/core'
+import type { extensions } from '@toa.io/core/types'
 
 export class Span extends Connector implements extensions.Aspect {
   public readonly name = 'span'

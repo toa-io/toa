@@ -1,8 +1,8 @@
 import { instances } from './instances.js'
 
 /**
- * @param {toa.core.Storage} storage
- * @returns {toa.core.Storage}
+ * @param {import('@toa.io/core/types').storages.Storage} storage
+ * @returns {import('@toa.io/core/types').storages.Storage}
  */
 export const storage = (storage) => {
   let decorated = storage

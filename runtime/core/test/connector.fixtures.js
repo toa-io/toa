@@ -1,5 +1,5 @@
 import { random, timeout } from '@toa.io/generic'
-import { Connector } from '../src/connector.js'
+import { Connector } from '../source/connector.js'
 
 export class TestConnector extends Connector {
   #label

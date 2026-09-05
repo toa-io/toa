@@ -4,7 +4,7 @@ import type { Introspection, Schema } from './Introspection.js'
 import type { QueryString } from './Query.js'
 import type * as http from './HTTP/index.js'
 import type * as syntax from './RTD/syntax/index.js'
-import type * as core from '@toa.io/core'
+import type * as core from '@toa.io/core/types'
 
 export abstract class Mapping {
   protected readonly query: Query

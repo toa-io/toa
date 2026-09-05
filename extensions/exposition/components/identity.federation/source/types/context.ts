@@ -1,5 +1,5 @@
 import type { JWTPayload } from 'jose'
-import type { Call, Observation, Query, Transition } from '@toa.io/core'
+import type { Call, Observation, Query, Transition } from '@toa.io/core/types'
 import type { Logs } from '@toa.io/extensions.telemetry'
 import type { Entity } from './entity.js'
 import type { Configuration } from './configuration.js'

@@ -1,5 +1,5 @@
 import { type Component } from '@toa.io/core'
-import { type Maybe } from '@toa.io/core'
+import type { Maybe } from '@toa.io/core/types'
 import { type Parameter } from '../../RTD/index.js'
 import type { Introspection } from '../../Introspection.js'
 import type * as http from '../../HTTP/index.js'

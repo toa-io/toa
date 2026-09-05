@@ -1,13 +1,13 @@
 import { Connector } from '@toa.io/core'
-import { Entity } from '@toa.io/core/types/storages'
+import type { storages } from '@toa.io/core/types'
 
 declare namespace toa.sql{
 
   interface Connection extends Connector{
 
-    insert (table: string, objects: Entity[]): Promise<boolean>
+    insert (table: string, objects: storages.Record[]): Promise<boolean>
 
-    update (table: string, criteria: Object, object: Entity): Promise<boolean>
+    update (table: string, criteria: Object, object: storages.Record): Promise<boolean>
 
   }
 

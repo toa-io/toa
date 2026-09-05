@@ -1,4 +1,4 @@
-import type { Call } from '@toa.io/core'
+import type { Call } from '@toa.io/core/types'
 import type { Operation } from '@toa.io/bridges.node'
 
 export class Computation implements Operation {

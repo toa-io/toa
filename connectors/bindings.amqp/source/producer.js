@@ -7,13 +7,13 @@ export class Producer extends Connector {
   /** @type {toa.amqp.Communication} */
   #comm
 
-  /** @type {toa.core.Locator} */
+  /** @type {import('@toa.io/core').Locator} */
   #locator
 
   /** @type {string[]} */
   #endpoints
 
-  /** @type {toa.core.Component} */
+  /** @type {import('@toa.io/core').Component} */
   #component
 
   /** @type {Set<Promise<any>>} */

@@ -33,7 +33,7 @@ export async function contributions (extensions = {}) {
 /**
  * @param {string} reference
  * @param {object | null} declaration
- * @returns {Promise<toa.core.extensions.Contribution[]>}
+ * @returns {Promise<import('@toa.io/core/types').extensions.Contribution[]>}
  */
 async function state (reference, declaration) {
   let extension

@@ -26,7 +26,7 @@ const comm = mock.communication()
 const exchange = generate()
 const group = generate()
 
-const processor = /** @type {toa.core.Receiver} */ {
+const processor = /** @type {import('@toa.io/core/types').Receiver} */ {
   connect: mocking.fn(async () => undefined),
   disconnect: mocking.fn(async () => undefined),
   link: mocking.fn(),

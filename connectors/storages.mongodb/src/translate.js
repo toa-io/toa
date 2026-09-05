@@ -4,7 +4,7 @@ import * as _options from './translate/options.js'
 const parse = { ..._criteria, ..._options }
 
 /**
- * @param {toa.core.storages.Query} query
+ * @param {import('@toa.io/core/types').storages.Query} query
  * @returns {{criteria: Object, options: Object}}
  */
 export const translate = (query) => {

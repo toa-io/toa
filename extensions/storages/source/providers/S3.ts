@@ -8,7 +8,7 @@ import { console } from 'openspan'
 import { Provider } from '../Provider.js'
 import { ERR_NOT_FOUND } from '../errors.js'
 import type { ReadableStream } from 'node:stream/web'
-import type { Maybe } from '@toa.io/core'
+import type { Maybe } from '@toa.io/core/types'
 import type { Metadata, Stream } from '../Entry.js'
 import type { Secret, Secrets } from '../Secrets.js'
 

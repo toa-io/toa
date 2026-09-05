@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 import { isDeepStrictEqual } from 'node:util'
 
 import * as fixtures from './call.fixtures.js'
-import { Call } from '../src/call.js'
+import { Call } from '../source/call.js'
 
 let call
 

@@ -1,7 +1,7 @@
 import { Connector } from '@toa.io/core'
 
 /**
- * @implements {toa.core.Storage}
+ * @implements {import('@toa.io/core/types').storages.Storage}
  */
 export class Storage extends Connector {
   async get (_) {

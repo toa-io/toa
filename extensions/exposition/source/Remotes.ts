@@ -1,4 +1,5 @@
-import { Locator, Connector, type Remote, type Source } from '@toa.io/core'
+import { Locator, Connector, type Remote } from '@toa.io/core'
+import type { Source } from '@toa.io/core/types'
 import { type Host } from './Factory.js'
 
 export class Remotes extends Connector {

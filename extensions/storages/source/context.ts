@@ -1,4 +1,4 @@
-import type { Contribution } from '@toa.io/core'
+import type { Contribution } from '@toa.io/core/types'
 
 /** What this extension puts on the context of a component that declares it. */
 export function context (declaration: string[]): Contribution | null {

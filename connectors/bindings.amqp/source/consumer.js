@@ -2,7 +2,7 @@ import { Connector } from '@toa.io/core'
 import { name } from './queues.js'
 
 /**
- * @implements {toa.core.bindings.Consumer}
+ * @implements {import('@toa.io/core/types').bindings.Consumer}
  */
 export class Consumer extends Connector {
   /** @type {string} */

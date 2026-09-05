@@ -4,7 +4,7 @@ import { console } from 'openspan'
 import { name } from './queues.js'
 
 /**
- * @implements {toa.core.bindings.Emitter}
+ * @implements {import('@toa.io/core/types').bindings.Emitter}
  */
 export class Emitter extends Connector {
   /** @type {string} */

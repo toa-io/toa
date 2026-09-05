@@ -1,6 +1,7 @@
 import { Connector } from '@toa.io/core'
 import { console, type Console, type SpanOptions } from 'openspan'
-import type { Locator, extensions } from '@toa.io/core'
+import type { Locator } from '@toa.io/core'
+import type { extensions } from '@toa.io/core/types'
 
 export class Aspect extends Connector implements extensions.Aspect {
   public readonly name = 'fetch'

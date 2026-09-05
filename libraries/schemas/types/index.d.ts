@@ -7,5 +7,5 @@ export function schema (cos: any, options?: AjvOptions): Schema
 export function namespace (coses: any[] | string): Namespace
 
 
-export type { Schema } from './schema.js'
+export type { Schema, SchemaError } from './schema.js'
 export type { Namespace } from './namespace.js'

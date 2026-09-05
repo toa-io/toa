@@ -1,9 +1,8 @@
 import { mock } from 'node:test'
 
 import { generate } from 'randomstring'
-import { readFileSync } from 'node:fs'
-import { load as parseYAML } from 'js-yaml'
-import { resolve } from 'path'
+
+import { query as querySchema } from '../../source/contract/schemas.js'
 
 // noinspection JSCheckFunctionSignatures
 export const schema = {
@@ -21,7 +20,7 @@ export const schemas = {
     type: 'object',
     properties: {
       input: { type: 'null' },
-      query: parseYAML(readFileSync(resolve(import.meta.dirname, '../../src/contract/schemas/query.yaml'), 'utf8')),
+      query: querySchema,
       authentic: { type: 'boolean' }
     },
     additionalProperties: true

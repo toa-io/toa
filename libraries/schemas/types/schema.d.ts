@@ -1,30 +1,27 @@
-declare namespace toa.schemas {
-
-  type is = (object: object) => boolean
-
-  namespace constructors {
-
-    type schema = (schema: any) => Schema
-
-  }
-
-  type Error = {
-    message: string
-    keyword: string
-    schema: string
-    property?: string
-    path?: string
-  }
-
+/** What a schema answers where a value does not fit it. */
+export interface SchemaError {
+  message: string
+  keyword: string
+  schema: string
+  property?: string
+  path?: string
 }
 
 export interface Schema<T = any> {
   id: string
 
-  fit (value: unknown): Error | null
+  /** `null` where the value fits, the first error otherwise */
+  fit (value: unknown): SchemaError | null
 
-  validate<T> (value: unknown, message?: string): asserts value is T
+  /** `fit` against the schema with every property optional; throws where none was compiled */
+  fitOptional (value: unknown): SchemaError | null
+
+  /** `fit` against the matching schema; throws where none was compiled */
+  match (value: unknown): SchemaError | null
+
+  validate<V = T> (value: unknown, message?: string): asserts value is V
 }
 
-export type schema = toa.schemas.constructors.schema
-export type is = toa.schemas.is
+export type schema = (schema: any) => Schema
+
+export type is = (object: object) => boolean

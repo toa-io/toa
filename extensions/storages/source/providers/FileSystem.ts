@@ -4,7 +4,7 @@ import { dirname, join } from 'node:path'
 import { Provider } from '../Provider.js'
 import { ERR_NOT_FOUND } from '../errors.js'
 import type { Readable } from 'node:stream'
-import type { Maybe } from '@toa.io/core'
+import type { Maybe } from '@toa.io/core/types'
 import type { Metadata, Stream } from '../Entry.js'
 
 export interface FileSystemOptions {

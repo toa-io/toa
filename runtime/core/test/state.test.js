@@ -2,7 +2,7 @@ import { describe, it, beforeEach, mock } from 'node:test'
 import assert from 'node:assert/strict'
 import { isDeepStrictEqual } from 'node:util'
 
-import { State } from '../src/state.js'
+import { State } from '../source/state.js'
 import * as fixtures from './state.fixtures.js'
 
 let state

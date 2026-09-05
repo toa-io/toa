@@ -11,7 +11,8 @@ import { capture, samplable } from './sample.js'
 import type { Declaration, Options, Settings } from './annotation.js'
 import type { Origin, Outcome, Target } from './model.js'
 import type { Manifest } from '@toa.io/norm'
-import type { Component, Locator, Reply, Request, extensions } from '@toa.io/core'
+import type { Component, Locator } from '@toa.io/core'
+import type { Reply, Request, extensions } from '@toa.io/core/types'
 
 export class Factory implements extensions.Factory {
   private readonly host: Host
@@ -25,7 +26,7 @@ export class Factory implements extensions.Factory {
   }
 
   public tenant (locator: Locator, decl: Declaration | null, manifest: Manifest): Connector {
-    const resolved = settings(locator.namespace, declaration(decl), this.options)
+    const resolved = settings(locator.namespace!, declaration(decl), this.options)
 
     this.settings[locator.id] = resolved
 
@@ -63,7 +64,8 @@ export class Factory implements extensions.Factory {
       } finally {
         // a call that failed is still a connection between two components
         const src: Origin = request?.source ?? UNKNOWN
-        const dst: Target = { namespace: locator.namespace, component: locator.name, operation: endpoint }
+        const dst: Target =
+          { namespace: locator.namespace!, component: locator.name, operation: endpoint }
 
         const sample = resolved.samples && samplable(request?.input)
           ? capture(request?.input, outcome)
@@ -103,7 +105,8 @@ export class Factory implements extensions.Factory {
       return DISABLED
 
     return this.settings[locator.id] ??
-      settings(locator.namespace, {}, this.options === null ? null : { ...this.options, samples: false })
+      settings(locator.namespace!, {},
+        this.options === null ? null : { ...this.options, samples: false })
   }
 
   private collector (): Reporter {

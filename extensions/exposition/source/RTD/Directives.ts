@@ -3,7 +3,7 @@ import type * as syntax from './syntax/index.js'
 import type { Context, OutgoingMessage, Options } from '../HTTP/index.js'
 import type { Output } from '../io.js'
 import type { Introspection } from '../Introspection.js'
-import type { extensions } from '@toa.io/core'
+import type { extensions } from '@toa.io/core/types'
 
 type Host = extensions.Host
 

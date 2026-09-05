@@ -1,6 +1,6 @@
 import { mock } from 'node:test'
 
-import { Connector } from '../src/connector.js'
+import { Connector } from '../source/connector.js'
 
 export const local = {
   link: mock.fn()

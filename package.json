@@ -73,7 +73,7 @@
     "prepare": "husky || true",
     "postinstall": "npm run transpile",
     "test": "npm run lint && npm run typecheck && npm run test:unit",
-    "typecheck": "tsc -p tsconfig.features.json",
+    "typecheck": "tsc -p tsconfig.features.json && tsc -p runtime/core/tsconfig.check.json",
     "test:unit": "node --import tsx --test --experimental-test-module-mocks 'libraries/*/source/**/*.test.ts' 'libraries/*/source/**/*.test.js' 'libraries/*/test/**/*.test.js' 'runtime/*/test/**/*.test.js' 'runtime/*/source/**/*.test.ts' 'connectors/*/test/**/*.test.js' 'connectors/*/source/**/*.test.ts' 'connectors/*/src/**/*.test.js' 'extensions/*/source/**/*.test.ts' 'extensions/*/components/**/source/**/*.test.ts' 'operations/src/**/*.test.js' 'operations/src/**/.*/**/*.test.js' 'userland/stage/test/**/*.test.js' 'features/**/*.test.js'",
     "test:stage": "node --import tsx --test --experimental-test-module-mocks 'userland/example/stage/**/*.test.js'",
     "features": "cucumber-js -t 'not @skip' && npm run features --workspaces --if-present",

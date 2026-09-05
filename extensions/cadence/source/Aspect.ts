@@ -17,7 +17,6 @@ interface Input {
  * handing over the call it should have scheduled loses the call, and there is no way for this
  * to know. Where the semantics allow it, hand the call over first.
  *
- * @implements {toa.core.extensions.Aspect}
  */
 export class Aspect extends Connector {
   public readonly name = 'delay'

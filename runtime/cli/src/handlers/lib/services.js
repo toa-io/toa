@@ -13,7 +13,7 @@ const require = createRequire(import.meta.url)
  * wait for the values service — so what a running service hosts is looked into as well.
  *
  * @param {string[]} paths
- * @return {Promise<toa.core.Connector[]>}
+ * @return {Promise<import('@toa.io/core').Connector[]>}
  */
 export async function discover (paths) {
   const references = new Set()
@@ -52,7 +52,7 @@ export async function discover (paths) {
  * pods reach each other, rather than started here.
  *
  * @param {string[]} references
- * @return {Promise<toa.core.Connector[]>}
+ * @return {Promise<import('@toa.io/core').Connector[]>}
  */
 export async function create (references) {
   const services = []

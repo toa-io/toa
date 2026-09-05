@@ -1,7 +1,7 @@
 import { Connector } from '@toa.io/core'
 
 /**
- * @implements {toa.core.bridges.Event}
+ * @implements {import('@toa.io/core/types').bridges.Event}
  */
 export class Event extends Connector {
   #event

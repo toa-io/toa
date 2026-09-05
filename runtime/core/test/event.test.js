@@ -4,8 +4,8 @@ import { isDeepStrictEqual } from 'node:util'
 
 import clone from 'clone-deep'
 
-import { Connector } from '../src/connector.js'
-import { Event } from '../src/event.js'
+import { Connector } from '../source/connector.js'
+import { Event } from '../source/event.js'
 import * as fixtures from './event.fixtures.js'
 
 let event, emit

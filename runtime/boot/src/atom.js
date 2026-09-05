@@ -6,7 +6,7 @@ import * as boot from './index.js'
  * The atom as a system aspect. Every component has `context.atom`, with nothing declared in its
  * manifest and nothing of its own to configure.
  *
- * @implements {toa.core.extensions.Aspect}
+ * @implements {import('@toa.io/core/types').extensions.Aspect}
  */
 class Aspect extends Connector {
   name = 'atom'

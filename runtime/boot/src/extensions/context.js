@@ -1,8 +1,8 @@
 import { instances } from './instances.js'
 
 /**
- * @param {toa.core.Context} component
- * @returns {toa.core.Context}
+ * @param {import('@toa.io/core').Context} component
+ * @returns {import('@toa.io/core').Context}
  */
 export const context = (component) => {
   let decorated = component

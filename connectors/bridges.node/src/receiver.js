@@ -1,7 +1,7 @@
 import { Connector } from '@toa.io/core'
 
 /**
- * @implements {toa.core.bridges.Receiver}
+ * @implements {import('@toa.io/core/types').bridges.Receiver}
  */
 export class Receiver extends Connector {
   #receiver

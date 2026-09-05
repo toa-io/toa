@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 
 import { Sync } from './Sync.js'
 import { Quotas } from './Quotas.js'
-import type { atomicity } from '@toa.io/core'
+import type { atomicity } from '@toa.io/core/types'
 import type { Configuration } from './Configuration.js'
 import type { Input as Context } from '../../../../io.js'
 

@@ -1,7 +1,7 @@
 import { spawnSync } from 'node:child_process'
 import { userInfo } from 'node:os'
 import { Connector } from '@toa.io/core'
-import type { bridges, Reply } from '@toa.io/core'
+import type { bridges, Reply } from '@toa.io/core/types'
 
 export class Algorithm extends Connector implements bridges.Algorithm {
   private readonly shell: string

@@ -14,7 +14,7 @@ export class Receiver extends Connector {
   /** @type {toa.amqp.Communication} */
   #comm
 
-  /** @type {toa.core.Receiver} */
+  /** @type {import('@toa.io/core/types').Receiver} */
   #receiver
 
   /** @type {Set<Promise<any>>} */

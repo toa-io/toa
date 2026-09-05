@@ -9,7 +9,7 @@ export function state (context, aspect) {
 }
 
 /**
- * @param {toa.core.extensions.Aspect} aspect
+ * @param {import('@toa.io/core/types').extensions.Aspect} aspect
  * @param {string[]} segs
  * @return {any}
  */
@@ -22,7 +22,7 @@ function get (aspect, segs) {
 }
 
 /**
- * @param {toa.core.extensions.Aspect} aspect
+ * @param {import('@toa.io/core/types').extensions.Aspect} aspect
  * @param {string[]} segs
  * @param {any} value
  */

@@ -1,5 +1,6 @@
 import { console, decode, run } from 'openspan'
-import { Connector, type Message } from '@toa.io/core'
+import { Connector } from '@toa.io/core'
+import type { Message } from '@toa.io/core/types'
 import type { SpanContext } from 'openspan'
 import type { Readable } from 'node:stream'
 

@@ -1,7 +1,7 @@
 // Written by `toa types`. Every run rewrites it.
 // What a manifest does not state belongs in a file of your own.
 
-import type { RemoteError } from '@toa.io/core'
+import type { RemoteError } from '@toa.io/core/types'
 
 export type PutInput = {
   location?: string

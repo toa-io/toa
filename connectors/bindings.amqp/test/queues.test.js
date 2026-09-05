@@ -5,13 +5,13 @@ import { generate } from 'randomstring'
 
 import { name } from '../source/queues.js'
 
-/** @type {toa.core.Locator} */
+/** @type {import('@toa.io/core').Locator} */
 let locator
 
 const endpoint = generate()
 
 beforeEach(() => {
-  locator = /** @type {toa.core.Locator} */ {
+  locator = /** @type {import('@toa.io/core').Locator} */ {
     name: generate(),
     namespace: generate()
   }

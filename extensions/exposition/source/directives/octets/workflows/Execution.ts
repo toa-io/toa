@@ -3,7 +3,7 @@ import { console } from 'openspan'
 import type { Unit } from './Workflow.js'
 import type { Remotes } from '../../../Remotes.js'
 import type { Component } from '@toa.io/core'
-import type { Maybe } from '@toa.io/core'
+import type { Maybe } from '@toa.io/core/types'
 import type { Entry } from '@toa.io/extensions.storages'
 
 export class Execution extends Readable {

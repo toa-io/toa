@@ -32,7 +32,7 @@ it('should depend on connection', () => {
 
 describe('store', () => {
   it('should insert new entity', async () => {
-    /** @type {toa.core.storages.Record} */
+    /** @type {import('@toa.io/core/types').storages.Record} */
     const entity = { id: newid(), _version: 1, foo: random(), bar: generate() }
 
     const result = await storage.store(entity)
@@ -42,7 +42,7 @@ describe('store', () => {
   })
 
   it('should update existing entity', async () => {
-    /** @type {toa.core.storages.Record} */
+    /** @type {import('@toa.io/core/types').storages.Record} */
     const entity = { id: newid(), _version: 2, foo: random(), bar: generate() }
 
     const result = await storage.store(entity)

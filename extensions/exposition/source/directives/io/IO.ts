@@ -10,7 +10,7 @@ import type { Remotes } from '../../Remotes.js'
 import type { Constructor, Directive } from './Directive.js'
 import type { Introspection } from '../../Introspection.js'
 import { ATOM_GROUP } from '../../const.js'
-import type { extensions } from '@toa.io/core'
+import type { extensions } from '@toa.io/core/types'
 
 export class IO implements DirectiveFamily<Directive> {
   public readonly name = 'io'

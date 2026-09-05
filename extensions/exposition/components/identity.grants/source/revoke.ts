@@ -1,4 +1,4 @@
-import type { Maybe } from '@toa.io/core'
+import type { Maybe } from '@toa.io/core/types'
 import type { Operation } from '@toa.io/bridges.node'
 import type { Context, Entity } from './lib/index.js'
 

@@ -7,7 +7,7 @@ import type { Input } from './types.js'
 import type { Component } from '@toa.io/core'
 import type { Output } from '../../io.js'
 import type { Remotes } from '../../Remotes.js'
-import type { Maybe } from '@toa.io/core'
+import type { Maybe } from '@toa.io/core/types'
 import type { Entry } from '@toa.io/extensions.storages'
 import type { Parameter } from '../../RTD/index.js'
 

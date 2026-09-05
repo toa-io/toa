@@ -1,4 +1,4 @@
-import type { Source } from '@toa.io/core'
+import type { Source } from '@toa.io/core/types'
 
 /** Per-component variables: the local override and the secrets. */
 export const PREFIX = 'TOA_CONFIGURATION_'

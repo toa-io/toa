@@ -1,7 +1,7 @@
 import { rename } from './rename.js'
 
 /**
- * @param {toa.core.storages.ast.Node} node
+ * @param {import('@toa.io/core/types').storages.Node} node
  * @returns {import('mongodb').Filter}
  */
 export const criteria = (node) => {

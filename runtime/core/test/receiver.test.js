@@ -6,7 +6,7 @@ import clone from 'clone-deep'
 import { generate } from 'randomstring'
 import { merge } from '@toa.io/generic'
 
-import { Connector } from '../src/connector.js'
+import { Connector } from '../source/connector.js'
 
 // the fixtures are not connectors, so a dependency is recorded rather than linked
 const depends = mock.method(Connector.prototype, 'depends', () => undefined)
@@ -15,10 +15,10 @@ const dependencies = (instance) => depends.mock.calls
   .filter((call) => call.this === instance)
   .map((call) => call.arguments[0])
 
-import { Receiver } from '../src/receiver.js'
+import { Receiver } from '../source/receiver.js'
 import * as fixtures from './receiver.fixtures.js'
 
-/** @type {toa.core.Receiver} */
+/** @type {import('@toa.io/core/types').Receiver} */
 let receiver
 
 /** @type {toa.norm.component.Receiver} */

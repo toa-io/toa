@@ -1,5 +1,6 @@
 import assert from 'node:assert'
-import { Connector, type extensions } from '@toa.io/core'
+import { Connector } from '@toa.io/core'
+import type { extensions } from '@toa.io/core/types'
 import { type Storage, type Storages } from './Storage.js'
 
 export class Aspect extends Connector implements extensions.Aspect {
