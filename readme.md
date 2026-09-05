@@ -39,6 +39,10 @@ Non-scattered documentation is coming some time later.
 - [Configuration](/extensions/configuration) with secrets
 - [API Gateway](/extensions/exposition)
   - Resource discovery
+  - [JSON-RPC](/extensions/exposition/documentation/rpc.md): every method the tree exposes, called
+    as a procedure named after its route
+  - [Model Context Protocol](/extensions/exposition/documentation/mcp.md): a method is a tool where
+    it says so, and a model calls it as any other caller does
   - [Identity](extensions/exposition/documentation/identity.md)
     - Basis authentication
     - Identity federation (OIDC)
@@ -46,6 +50,8 @@ Non-scattered documentation is coming some time later.
       - Authorization code flow
     - Passkeys (WebAuthn)
     - OTP authentication
+  - [OAuth 2.1 authorization server](/extensions/exposition/documentation/oauth.md): discovery,
+    dynamic client registration, PKCE, and consent an application serves itself
   - [Access control](extensions/exposition/documentation/access.md)
   - [Cache control](/extensions/exposition/documentation/cache.md)
   - [File uploads](/extensions/exposition/documentation/octets.md), downloads, and processing.
