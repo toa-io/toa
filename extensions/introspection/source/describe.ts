@@ -38,6 +38,7 @@ function operations (manifest: Manifest): Operation[] {
     .map(([endpoint, definition]: [string, any]) => ({
       endpoint,
       type: definition.type,
+      description: definition.description,
       scope: definition.scope,
       query: definition.query,
       input: definition.input ?? null,

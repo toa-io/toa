@@ -21,6 +21,7 @@ Feature: Introspection
       Allow: GET, POST
 
       GET:
+        description: Every pot there is.
         output:
           type: array
           items:
@@ -45,6 +46,7 @@ Feature: Introspection
               - title
               - volume
       POST:
+        description: Put a pot on to brew.
         input:
           properties:
             temperature:
@@ -88,6 +90,7 @@ Feature: Introspection
       Allow: PATCH
 
       PATCH:
+        description: Answers with what it was given.
         route:
           a:
             type: string

@@ -31,6 +31,7 @@ operations:
           type: object
       type: object
   parameters:
+    description: Answers with what it was given.
     input:
       type: object
       properties:

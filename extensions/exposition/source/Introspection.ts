@@ -1,6 +1,7 @@
 import type { Remote } from '@toa.io/core'
 
 export interface Introspection {
+  description?: string
   route?: Record<string, Schema>
   query?: Record<string, Schema>
   input?: Schema

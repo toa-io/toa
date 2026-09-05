@@ -87,6 +87,11 @@ export class Endpoint implements RTD.Endpoint {
     const query = this.mapping.explain(operation)
     const introspection: Introspection = {}
 
+    // what the operation is, before what it takes: `Object.assign` below writes it again,
+    // and the key it wrote first is the key that is read first
+    if (operation.description !== undefined)
+      introspection.description = operation.description
+
     if (route !== null)
       introspection.route = route
 

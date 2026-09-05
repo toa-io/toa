@@ -18,6 +18,7 @@ export interface Target {
 export interface Operation {
   endpoint: string
   type: string
+  description?: string
   scope?: string
   query?: boolean
   input?: object | null

@@ -32,3 +32,20 @@ export function imports (required) {
 
   return lines.length === 0 ? '' : lines.join('\n') + '\n'
 }
+
+/**
+ * A description as the line above whatever it describes. One line however it was written:
+ * a manifest is YAML, where a long sentence is folded, and the folding is not the comment's.
+ *
+ * @param {string | undefined} description
+ * @param {string} [padding]
+ * @returns {string | null}
+ */
+export function comment (description, padding = '') {
+  if (description === undefined)
+    return null
+
+  const text = description.trim().replace(/\s+/g, ' ')
+
+  return text === '' ? null : `${padding}/** ${text} */`
+}

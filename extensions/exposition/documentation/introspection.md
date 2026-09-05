@@ -5,6 +5,7 @@ The response will contain the resource's input and output schemas for each suppo
 
 Introspection properties:
 
+- `description` what the operation states it is
 - `route` route parameters
 - `query` query parameters
 - `input` input schema
@@ -21,6 +22,7 @@ accept: application/yaml
 Allow: GET, POST, OPTIONS
 
 GET:
+  description: Every pot there is.
   route:
     id:
       type: string

@@ -34,5 +34,6 @@ operations:
     errors:
       - KNOWN
   silent:
+    description: What it answers where it has nothing to say.
     output:
       type: object
