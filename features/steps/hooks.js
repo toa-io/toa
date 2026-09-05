@@ -14,6 +14,7 @@ BeforeAll(() => {
   // the outbox pumps on a tick; at the default five seconds a scenario would
   // end before it ran
   process.env.TOA_OUTBOX_INTERVAL ??= '100'
+  process.env.TOA_CADENCE_DISCRETENESS ??= '100'
 
   // a replica reads nothing until it knows which lanes are its own, so recovery is only
   // observable with coordination running; it takes two agreeing intervals to hand out a pair

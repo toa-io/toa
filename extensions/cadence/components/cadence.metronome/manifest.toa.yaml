@@ -1,0 +1,72 @@
+namespace: cadence
+name: metronome
+
+# The extension puts its dispatcher on this component, and nothing else here declares a cadence.
+cadence: ~
+
+entity:
+  schema:
+    type: object
+    properties:
+      lane:
+        description: Which dispatcher takes this row, as the outbox partitions its lanes
+        type: integer
+      due:
+        description: When the call is to be made, in milliseconds since the epoch
+        type: integer
+      expires:
+        description: >
+          After this the call is not made at all. A scan bounds on it, so a call nothing was
+          running to make in time is a row nobody reads, rather than an event anything sees.
+        type: integer
+      endpoint:
+        description: What to call, as `namespace.component.operation`
+        type: string
+      request:
+        description: The request to make, as it was handed over
+        type: object
+    required:
+      - lane
+      - due
+      - expires
+      - endpoint
+  index:
+    due:
+      lane: asc
+      due: asc
+
+# `enumerate` reads what is due and `terminate` cancels one; both come from the prototype.
+operations:
+  delay:
+    query: false
+    input:
+      type: object
+      properties:
+        endpoint:
+          type: string
+          pattern: ^[a-zA-Z][a-zA-Z0-9]*\.[a-zA-Z][a-zA-Z0-9]*\.[a-zA-Z][_a-zA-Z0-9]*$
+        request:
+          type: object
+        interval:
+          description: Milliseconds from now
+          type: integer
+          minimum: 0
+        overdue:
+          description: >
+            Milliseconds the call may be late and still be made, or null for no bound. Stated
+            rather than defaulted: only the caller knows whether a late call is still the right
+            call.
+          type: integer
+          nullable: true
+          minimum: 0
+      required:
+        - endpoint
+        - interval
+        - overdue
+    output:
+      type: string
+
+  settle:
+    query: true
+    # a row may be cancelled while a page of them is being settled
+    concurrency: retry

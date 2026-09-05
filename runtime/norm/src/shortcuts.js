@@ -49,5 +49,6 @@ export const SHORTCUTS = {
   stash: '@toa.io/extensions.stash',
   storages: '@toa.io/extensions.storages',
   telemetry: '@toa.io/extensions.telemetry',
+  cadence: '@toa.io/extensions.cadence',
   introspection: '@toa.io/extensions.introspection'
 }

@@ -27,6 +27,7 @@ The following syntax binds a receiver to the `created` event emitted by the `ord
 the`store` namespace, with the processing operation `transit`:
 
 ```yaml
+# manifest.toa.yaml
 receivers:
   store.orders.created: transit
 ```
@@ -38,6 +39,7 @@ resolved by UI Discovery at startup. Therefore, events emitted by external appli
 support UI Discovery must have a binding declaration.
 
 ```yaml
+# manifest.toa.yaml
 receivers:
   external.orders.created:
     binding: amqp # avoid discovery
@@ -52,6 +54,7 @@ the address of the broker to connect to.
 An arbitrary event label can be bound to a receiver with the following syntax:
 
 ```yaml
+# manifest.toa.yaml
 receivers:
   something_happened:
     binding: amqp
@@ -69,3 +72,34 @@ value corresponding to the Pointer group that must be defined in the Context.
 
 > Declarations conforming the standard event label format implicitly define `source`
 > as `{namespace}.{name}`.
+
+## Cadence
+
+An operation of the component is called on a cadence, with no schedule stored anywhere:
+
+```yaml
+# manifest.toa.yaml
+cadence:
+  sweep:
+    cycle: 86400      # seconds one whole cycle takes
+    intervals: 24     # what it is split into, so one call an hour
+```
+
+The operation receives `{ n, i }` — the number of intervals in the cycle, and which of them this
+call is for. `intervals` defaults to `1`, which is also what the shorthand declares:
+
+```yaml
+# manifest.toa.yaml
+cadence:
+  sweep: 3600         # once an hour
+```
+
+`context.delay`, which hands one call over to be made later, comes with the extension. A
+component that only delays calls names it and states nothing:
+
+```yaml
+# manifest.toa.yaml
+cadence: ~
+```
+
+See [Cadence](/extensions/cadence) for what is and is not guaranteed.

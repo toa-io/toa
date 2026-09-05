@@ -33,6 +33,9 @@ Non-scattered documentation is coming some time later.
   - Built-in implementations
     - MongoDB
     - SQL ([Knex](https://knexjs.org))
+- [Cadence](/extensions/cadence): calls that happen on their own time
+  - a *pulse* calls a component's own operation on a cadence, with no schedule stored anywhere
+  - a *delay* hands one call over to be made later, and answers the id that cancels it
 - [Configuration](/extensions/configuration) with secrets
 - [API Gateway](/extensions/exposition)
   - Resource discovery
