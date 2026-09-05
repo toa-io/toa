@@ -52,7 +52,7 @@ describe('walk', () => {
     ]), endpoints, directives)
 
     assert.deepEqual(names(tree).sort(), [
-      'pots/GET', 'pots/POST', 'pots/_id/DELETE', 'pots/_id/GET'
+      'pots.GET', 'pots.POST', 'pots._id.DELETE', 'pots._id.GET'
     ])
   })
 
@@ -61,14 +61,14 @@ describe('walk', () => {
 
     tree.merge(trunk([node('/pots', ['GET'])]), { namespace: 'default', component: 'pots' })
 
-    assert.deepEqual(names(tree), ['pots/GET'])
+    assert.deepEqual(names(tree), ['pots.GET'])
   })
 
   it('should name a tail', () => {
     const tree = new Tree(trunk([node('/files', [], [node('/**', ['GET'])])]),
       endpoints, directives)
 
-    assert.deepEqual(names(tree), ['files/__/GET'])
+    assert.deepEqual(names(tree), ['files.__.GET'])
   })
 
   it('should skip an intermediate node, whose route answers in its place', () => {
@@ -77,14 +77,14 @@ describe('walk', () => {
       node('/posts', ['PATCH'], [node('/', ['PUT'])])
     ]), endpoints, directives)
 
-    assert.deepEqual(names(tree), ['posts/PUT'])
+    assert.deepEqual(names(tree), ['posts.PUT'])
   })
 
   it('should name nothing where a segment cannot be spelled', () => {
     const tree = new Tree(trunk([node('/v1.0', ['GET']), node('/pots', ['GET'])]),
       endpoints, directives)
 
-    assert.deepEqual(names(tree), ['pots/GET'])
+    assert.deepEqual(names(tree), ['pots.GET'])
   })
 
   it('should name what the tree then matches', () => {

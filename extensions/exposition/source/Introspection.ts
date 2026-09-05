@@ -8,6 +8,9 @@ export interface Introspection {
    * one sentence cannot be true of both. The operation's own is for the Introspection.
    */
   description?: string
+
+  /** what a person is shown where a client lists this method, which a name is not */
+  title?: string
   route?: Record<string, Schema>
   query?: Record<string, Schema>
 
@@ -40,7 +43,7 @@ export function order (introspection: Introspection): Introspection {
   return ordered
 }
 
-const KEYS = ['description', 'route', 'query', 'headers', 'input', 'output', 'errors'] as const
+const KEYS = ['title', 'description', 'route', 'query', 'headers', 'input', 'output', 'errors'] as const
 
 /**
  * The schema of one input property, taken out of it: a property another family fills is

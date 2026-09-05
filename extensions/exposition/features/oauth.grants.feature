@@ -119,7 +119,7 @@ Feature: Authorization code flow
       id: 1
       result:
         tools:
-          - name: pots/GET
+          - name: pots.GET
       """
 
   Scenario: A code is spent once

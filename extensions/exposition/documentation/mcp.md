@@ -37,7 +37,9 @@ A tool is an RTD method that says it is one, named as the [procedure](rpc.md#the
   /hot:
     GET:
       query: { criteria: temperature=gt=80 }
-      mcp:tool: The pots that are too hot to pour.
+      mcp:tool:
+        title: Hot pots
+        description: The pots that are too hot to pour.
       endpoint: enumerate
 ```
 
@@ -47,6 +49,10 @@ it would spend a model's context on what it has no business calling.
 
 The value is what the tool is, and stating it is what publishes it — there is no way to publish one
 that says nothing, because a tool a model cannot read the purpose of is one it cannot choose.
+
+A `title` is what a person is shown where a client lists what it may call. Without one a client has
+only the name, which is an address — `apps._identity._id.repos.POST` — and reads as one. A
+description alone is written as the value; a title beside it is written as a mapping.
 
 An operation [states what it is](/documentation/component/declaration.md) as well, and that is not
 this: it is written without knowledge of any route, and a tool is an operation and a route together.

@@ -162,6 +162,48 @@ publish is read before releasing it:
 $ npm pack --dry-run                # from the package directory
 ```
 
+### A package published for the first time
+
+The workflow authenticates to npm with a trusted publisher — OIDC, no token — and a trusted
+publisher is configured **per package, on a package that already exists**. A package npm has never
+seen has nothing to configure, so the first publish of one fails the whole release:
+
+```
+lerna WARN notice Package failed to publish: @toa.io/extensions.cadence
+lerna ERR! E404 Not found
+```
+
+Every package published before it is published by then, and the version bump does not reach `dev`,
+because the step that forwards it runs only where publishing succeeded. So a new package is
+published by hand, once, before it is ever part of a release:
+
+1. Give it `publishConfig.access: public`. A scoped package is private by default, and npm answers
+   the same `E404` for one it may not create.
+2. Build what it ships — `npm run transpile -w <package>` — and read the tarball with
+   `npm pack --dry-run`, because nothing else checks that a package can boot what it declares.
+3. Publish it from the package directory, as yourself: `npm publish --access public`. Its version
+   is whatever the release before it left in `package.json`; the release that follows bumps it
+   with every other package.
+4. On npmjs.com, open the package, then **Settings → Trusted publisher**, and name this
+   repository, `.github/workflows/release.yaml`, and no environment.
+
+From then on the workflow publishes it like any other. Do this while adding the package, not while
+releasing: the release that discovers it has already published half the workspace and cannot be
+re-run as it was.
+
+**A failed publish takes the runtime image with it.** Everything after the publish step is skipped,
+so the version bump does not reach `dev` and `ghcr.io/toa-io/runtime:<version>` is never built. The
+packages are on npm and nothing says the release is incomplete until an application's deploy fails
+on `FROM ghcr.io/toa-io/runtime:<version>: not found`. Finishing it is a dispatch of the same
+workflow, which skips versioning, publishes whatever npm is missing, and builds the image:
+
+```shell
+$ gh workflow run release.yaml --ref alpha -f from-package=true -f dist-tag=alpha
+```
+
+The ref matters: the image is tagged with the version in `runtime/runtime/package.json` as that
+tree has it.
+
 ## Security
 
 A default denies. What the runtime fetches, accepts or trusts is enumerated in configuration, and an
