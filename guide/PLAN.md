@@ -270,6 +270,13 @@ guide pages that cover it. Nothing is deleted or cut in this task.
 | root `readme.md` Features section | replace with a link to `guide/readme.md` |
 | `CONTRIBUTING.md` Userspace, Security, Exposition sections | keep; they are rules for Toa's own code, restated for application developers where the tables above say so |
 
+## Drafts
+
+`DRAFTS.md` holds text written before the guide, verbatim, each fragment marked with the page it is
+worked into. "The Big Picture" feeds `1-start/01-concepts.md` and `3-application/02-compositions.md`;
+"Eventual consistency" opens `2-components/10-consistency.md`. A fragment is deleted from
+`DRAFTS.md` when its page has it.
+
 ## First pages to write
 
 1. `guide/readme.md` and all ten folder readmes with questions only, so the set is navigable
