@@ -99,7 +99,9 @@ and none is minted, a `Last-Event-ID` is ignored, and `accept` is negotiated as 
 
 Of the modern revision, `MCP-Protocol-Version` and `Mcp-Method` are required, and `Mcp-Name` for a
 `tools/call`; each must say what the body says. `_meta` states the protocol version and the client's
-capabilities. Every result carries `resultType` and names the server in its own `_meta`.
+capabilities. Every result carries `resultType` and names the server in its own `_meta`, and a
+`server/discover` or a `tools/list` carries how long it may be held: half an hour, `public` for the
+first and `private` for the second, which is filtered by the identity that asked.
 
 Neither `listChanged` nor a subscription is declared: both are a stream held open, and this endpoint
 holds none.

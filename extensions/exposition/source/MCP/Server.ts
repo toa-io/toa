@@ -1,4 +1,5 @@
 import { console } from 'openspan'
+import { BRANCH_TTL } from '../const.js'
 import * as http from '../HTTP/index.js'
 import { discovery, type Discovery } from './discover.js'
 import { call, list, type Scope } from './tools.js'
@@ -20,6 +21,7 @@ import {
   PROTOCOL_VERSION,
   SERVER_INFO,
   VERSIONS,
+  type Cache,
   type Message,
   type Params
 } from './types.js'
@@ -103,10 +105,10 @@ export class Server {
 
     switch (message.method) {
       case 'server/discover':
-        return this.complete(this.discovery.modern, modern)
+        return this.complete(this.discovery.modern, modern, DISCOVERY_CACHE)
 
       case 'tools/list':
-        return this.complete({ tools: await list(this.tree, scope.context) }, modern)
+        return this.complete({ tools: await list(this.tree, scope.context) }, modern, TOOLS_CACHE)
 
       case 'tools/call':
         return this.complete(await this.tool(scope, params), modern)
@@ -144,10 +146,13 @@ export class Server {
       async () => await call(scope, named, args as Params))
   }
 
-  /** Every result of the modern revision says what kind it is, and who answered it. */
-  private complete (result: object, modern: boolean): object {
+  /**
+   * Every result of the modern revision says what kind it is, and who answered it. Where the
+   * revision names the operation as one whose result may be held, it says that too, and must.
+   */
+  private complete (result: object, modern: boolean, cache?: Cache): object {
     return modern
-      ? { ...result, resultType: 'complete', _meta: { [SERVER_INFO]: this.serverInfo() } }
+      ? { ...result, ...cache, resultType: 'complete', _meta: { [SERVER_INFO]: this.serverInfo() } }
       : result
   }
 
@@ -266,6 +271,12 @@ function decode (value: string): string {
 
   return Buffer.from(encoded, 'base64').toString('utf8')
 }
+
+/** A tool list is what the tree holds, which stands until a branch of it expires. */
+const TOOLS_CACHE: Cache = { ttlMs: BRANCH_TTL, cacheScope: 'private' }
+
+/** What the annotation says, which is the same for every caller until the application is redeployed. */
+const DISCOVERY_CACHE: Cache = { ttlMs: BRANCH_TTL, cacheScope: 'public' }
 
 const OK = 200
 const ACCEPTED = 202

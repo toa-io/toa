@@ -65,6 +65,8 @@ Feature: Model Context Protocol
         capabilities:
           tools: {}
         instructions: A pot is read by its id.
+        ttlMs: 1800000
+        cacheScope: public
         resultType: complete
       """
 
@@ -178,6 +180,9 @@ Feature: Model Context Protocol
               required:
                 - id
               additionalProperties: false
+        ttlMs: 1800000
+        cacheScope: private
+        resultType: complete
       """
     And the reply does not contain:
       """

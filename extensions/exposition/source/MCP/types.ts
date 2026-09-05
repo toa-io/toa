@@ -40,6 +40,15 @@ export interface Response {
   error?: Failure
 }
 
+/**
+ * How long a complete result may be held, and by whom. `private` is a result that is the
+ * caller's alone — a list `auth` filtered for their identity is not another caller's list.
+ */
+export interface Cache {
+  ttlMs: number
+  cacheScope: 'public' | 'private'
+}
+
 /** What a tool answers with: what a model reads, and the reply itself. */
 export interface Result {
   content: Content[]
