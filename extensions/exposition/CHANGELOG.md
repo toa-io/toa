@@ -3,6 +3,35 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.284](https://github.com/toa-io/toa/compare/v1.0.0-alpha.283...v1.0.0-alpha.284) (2026-09-05)
+
+### Bug Fixes
+
+* **build:** an operations directory holds modules and nothing else ([21a8ca1](https://github.com/toa-io/toa/commit/21a8ca19f1c45aef6cbb443ada0a909d325e76e8))
+* **exposition:** a complete result says how long it may be held ([484613d](https://github.com/toa-io/toa/commit/484613d6fa8b42ad457773d9b3f536513c521853))
+* **exposition:** a Principal holds its Role in the Token that creates it ([250907f](https://github.com/toa-io/toa/commit/250907f091cc7b10e8d5ff9ad8f6893a6334174f))
+* **exposition:** a route parameter is what it means, not how it was spelled ([86bdbdc](https://github.com/toa-io/toa/commit/86bdbdc81f5a707c71876177ae0f33847c9a8b72))
+* **exposition:** a tool says what its query does, not what carries it ([75470ac](https://github.com/toa-io/toa/commit/75470acde4cea101d7dbc14396a455fc6e5f3fde))
+* **exposition:** an issuer is named over https ([3e2e090](https://github.com/toa-io/toa/commit/3e2e09046170a2235ea7ba7f26e8606b23e404f9))
+* **exposition:** what a directive fills from the identity is not the caller's to send ([c7f1658](https://github.com/toa-io/toa/commit/c7f16580a59aa73903a5ff5e11ac1322f94fd877))
+* **exposition:** what a tool call was refused for is the model's to correct ([030750c](https://github.com/toa-io/toa/commit/030750caec46ef888260704f9df1b201a661fffd))
+* **exposition:** what an operation states it is, is not what a method is ([82194f0](https://github.com/toa-io/toa/commit/82194f0dcd68e3699440abf7d0a8976749cee723))
+* run the feature suites on a fresh checkout ([712a03d](https://github.com/toa-io/toa/commit/712a03d37cca40709e919f9cc996a3d67bea2098))
+
+### Features
+
+* an operation states what it is ([b5e2f66](https://github.com/toa-io/toa/commit/b5e2f66c8bf67924e2eaaaa11f283dfb4d810981))
+* **exposition:** a method describes itself through its directives ([a0cb486](https://github.com/toa-io/toa/commit/a0cb48651b5893b5504e0c2f74dac260d23e899f))
+* **exposition:** a method is a tool where it says so ([4948ca1](https://github.com/toa-io/toa/commit/4948ca1248b726800fae305b5b8c2b4016f197af))
+* **exposition:** a procedure is named in what a model can call ([4a34db7](https://github.com/toa-io/toa/commit/4a34db7fea1fc002c4f47a94d7410224e9afb17f))
+* **exposition:** a request may carry several calls ([d277207](https://github.com/toa-io/toa/commit/d27720758ef75874b32a09c207e2036a72f65a88))
+* **exposition:** a resource answers as a procedure ([9f231b7](https://github.com/toa-io/toa/commit/9f231b78b1713ecd3bcdf5f8b531f232d610e6fe))
+* **exposition:** every method is a tool, and a procedure is not a request ([06b6759](https://github.com/toa-io/toa/commit/06b675929318826ef714989dc97c63b0ab85bbef))
+* **exposition:** the gateway says which endpoints it serves ([1a0029b](https://github.com/toa-io/toa/commit/1a0029bc2df3d759dbe2bbee6ffdf9b2a00c411f))
+* **exposition:** the Model Context Protocol ([a31b2e1](https://github.com/toa-io/toa/commit/a31b2e146e7c20372f72a7f176946ed16e269266))
+* **exposition:** what a tool is, is the value that publishes it ([8e77119](https://github.com/toa-io/toa/commit/8e771192cefcb11d0c78ac1cf87d3120f74ce868))
+
+
 # [1.0.0-alpha.283](https://github.com/toa-io/toa/compare/v1.0.0-alpha.282...v1.0.0-alpha.283) (2026-09-04)
 
 ### Bug Fixes

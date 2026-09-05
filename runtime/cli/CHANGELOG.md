@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.284](https://github.com/toa-io/toa/compare/v1.0.0-alpha.283...v1.0.0-alpha.284) (2026-09-05)
+
+### Features
+
+* an operation states what it is ([b5e2f66](https://github.com/toa-io/toa/commit/b5e2f66c8bf67924e2eaaaa11f283dfb4d810981))
+
+
 # [1.0.0-alpha.283](https://github.com/toa-io/toa/compare/v1.0.0-alpha.282...v1.0.0-alpha.283) (2026-09-04)
 
 ### Bug Fixes

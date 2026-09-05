@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.284](https://github.com/toa-io/toa/compare/v1.0.0-alpha.283...v1.0.0-alpha.284) (2026-09-05)
+
+### Bug Fixes
+
+* **core:** a criteria list coerces every value in it ([37f57ee](https://github.com/toa-io/toa/commit/37f57ee8b50907a13722b7a558b881cccf105442))
+
+### Features
+
+* an operation states what it is ([b5e2f66](https://github.com/toa-io/toa/commit/b5e2f66c8bf67924e2eaaaa11f283dfb4d810981))
+* **atomicity:** a replica can be told what it owns, not only ask ([f7b56b9](https://github.com/toa-io/toa/commit/f7b56b99cc43313f3f855df658a80fdc0659689e))
+
+
 # [1.0.0-alpha.283](https://github.com/toa-io/toa/compare/v1.0.0-alpha.282...v1.0.0-alpha.283) (2026-09-04)
 
 ### Bug Fixes
