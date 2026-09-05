@@ -158,8 +158,9 @@ export class Gateway {
     /*
      * The gateway waits for the branches it discovers, but a component's own resources —
      * a storage, a queue — are still connecting when it answers. Fifty milliseconds was
-     * enough until the composition grew; a scenario that asks too early reads the 404 that
-     * precedes the route.
+     * enough until the composition grew, then a hundred; a scenario that asks too early
+     * reads the 404 that precedes the route, which `realtime` was failing on in two runs
+     * of three. It is a sleep and not a poll, so it is raised rather than fixed.
      */
     await timeout(DISCOVERY)
   }
@@ -217,7 +218,7 @@ const DEFAULT_TREE = JSON.stringify({
 } satisfies syntax.Node)
 
 /** Milliseconds a composition is given to finish connecting what it needs. */
-const DISCOVERY = 100
+const DISCOVERY = 500
 
 const DEFAULT_PROPERTIES: Partial<http.Options> = {
   authorities: {
