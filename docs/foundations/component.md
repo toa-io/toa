@@ -70,12 +70,15 @@ persistence, identity, and concurrency control; operations work with the order i
 ## Operations: the unit of logic
 
 Each operation is declared in the manifest and implemented in `operations/<name>.ts`.
-Its declaration describes what it does and the rejections a caller can expect:
+Its declaration describes what it does, the input it accepts, and the rejections a caller can expect:
 
 ```yaml
 operations:
   approve:
     description: Approve a pending order.
+    input:
+      properties:
+        comment: { type: string, maxLength: 256 }
     errors: [NOT_PENDING]
 ```
 
