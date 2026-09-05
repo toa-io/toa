@@ -130,6 +130,11 @@ where the flow starts. A call the identity is not authorized to make is `403` wi
 `error="insufficient_scope"`. Each tool is authorized as the resource it is, against the path and
 the verb its name states.
 
+So a route that is [`anonymous`](access.md#anonymous) and nothing else is no tool: `anonymous`
+admits a caller who presents no credential, and only such a caller, while a client here always
+presents one. Such a method answers `403` and is not listed at all. A tool states who may reach it
+holding a credential — [`anyone`](access.md#anyone), a role, or a rule.
+
 ## What refuses
 
 | | |
