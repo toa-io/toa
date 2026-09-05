@@ -54,6 +54,7 @@ export async function list (tree: Tree, context: http.Context): Promise<Tool[]> 
     // in the order the revision documents one, which is the order it is read in
     const tool: Tool = {
       name: named,
+      ...introspection.title === undefined ? {} : { title: introspection.title },
       ...described === undefined ? {} : { description: described },
       inputSchema: input(introspection, variables.map((variable) => variable.name)),
       ...schema === undefined ? {} : { outputSchema: schema },

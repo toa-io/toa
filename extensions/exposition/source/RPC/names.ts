@@ -7,8 +7,9 @@ import { QUERY, type Params } from './types.js'
  * What a name resolves to: the path the call is made at, and the verb it is made with.
  *
  * A name is the route template with its variables marked and the verb appended as a segment
- * of its own — `pots/_id/GET`. Neither `/` nor a verb can be mistaken for anything else: the
- * verb is always the last segment, and `/` cannot occur inside one.
+ * of its own — `pots._id.GET`. The revision names the characters a tool's name may hold, and
+ * `/` is not among them, so segments are joined by `.` — which a segment cannot hold either,
+ * so nothing in a name can be mistaken for anything else, and the verb is always last.
  */
 export interface Address {
   path: string
@@ -161,7 +162,7 @@ function declared (segment: Segment): string {
   return segment.placeholder === null ? '*' : ':' + segment.placeholder
 }
 
-const SEPARATOR = '/'
+const SEPARATOR = '.'
 const VARIABLE = '_'
 const TAIL = '__'
 

@@ -43,7 +43,7 @@ Feature: JSON-RPC
       accept: application/yaml
       content-type: application/json
 
-      {"jsonrpc": "2.0", "id": 1, "method": "pots/_id/GET",
+      {"jsonrpc": "2.0", "id": 1, "method": "pots._id.GET",
        "params": {"id": "4c4759e6f9c74da989d64511df42d6f4"}}
       """
     Then the following reply is sent:
@@ -67,7 +67,7 @@ Feature: JSON-RPC
       accept: application/yaml
       content-type: application/json
 
-      {"jsonrpc": "2.0", "id": 2, "method": "pots/POST",
+      {"jsonrpc": "2.0", "id": 2, "method": "pots.POST",
        "params": {"title": "Kettle", "volume": 1.7}}
       """
     Then the following reply is sent:
@@ -88,7 +88,7 @@ Feature: JSON-RPC
       accept: application/yaml
       content-type: application/json
 
-      {"jsonrpc": "2.0", "id": 3, "method": "pots/GET",
+      {"jsonrpc": "2.0", "id": 3, "method": "pots.GET",
        "params": {"query": {"limit": 1}}}
       """
     Then the following reply is sent:
@@ -108,7 +108,7 @@ Feature: JSON-RPC
       host: nex.toa.io
       content-type: application/json
 
-      {"jsonrpc": "2.0", "method": "pots/POST", "params": {"title": "Pot", "volume": 1}}
+      {"jsonrpc": "2.0", "method": "pots.POST", "params": {"title": "Pot", "volume": 1}}
       """
     Then the following reply is sent:
       """
@@ -123,7 +123,7 @@ Feature: JSON-RPC
       accept: application/yaml
       content-type: application/json
 
-      {"jsonrpc": "2.0", "id": 4, "method": "kettles/GET", "params": {}}
+      {"jsonrpc": "2.0", "id": 4, "method": "kettles.GET", "params": {}}
       """
     Then the following reply is sent:
       """
@@ -163,7 +163,7 @@ Feature: JSON-RPC
       accept: application/yaml
       content-type: application/json
 
-      {"jsonrpc": "2.0", "id": 17, "method": "pots/GET", "params": {}}
+      {"jsonrpc": "2.0", "id": 17, "method": "pots.GET", "params": {}}
       """
     Then the following reply is sent:
       """
@@ -216,7 +216,7 @@ Feature: JSON-RPC
       accept: application/yaml
       content-type: application/json
 
-      {"jsonrpc": "2.0", "id": 5, "method": "pots/_id/GET", "params": {}}
+      {"jsonrpc": "2.0", "id": 5, "method": "pots._id.GET", "params": {}}
       """
     Then the following reply is sent:
       """
@@ -236,7 +236,7 @@ Feature: JSON-RPC
       accept: application/yaml
       content-type: application/json
 
-      {"jsonrpc": "2.0", "id": 6, "method": "pots/faulty/GET", "params": {}}
+      {"jsonrpc": "2.0", "id": 6, "method": "pots.faulty.GET", "params": {}}
       """
     Then the following reply is sent:
       """
@@ -256,7 +256,7 @@ Feature: JSON-RPC
       accept: application/yaml
       content-type: application/json
 
-      {"jsonrpc": "2.0", "id": 7, "method": "pots/guarded/GET", "params": {}}
+      {"jsonrpc": "2.0", "id": 7, "method": "pots.guarded.GET", "params": {}}
       """
     Then the following reply is sent:
       """
@@ -271,10 +271,10 @@ Feature: JSON-RPC
       accept: application/yaml
       content-type: application/json
 
-      [{"jsonrpc": "2.0", "id": 8, "method": "pots/_id/GET",
+      [{"jsonrpc": "2.0", "id": 8, "method": "pots._id.GET",
         "params": {"id": "4c4759e6f9c74da989d64511df42d6f4"}},
-       {"jsonrpc": "2.0", "id": 9, "method": "kettles/GET", "params": {}},
-       {"jsonrpc": "2.0", "method": "pots/POST", "params": {"title": "Pot", "volume": 1}}]
+       {"jsonrpc": "2.0", "id": 9, "method": "kettles.GET", "params": {}},
+       {"jsonrpc": "2.0", "method": "pots.POST", "params": {"title": "Pot", "volume": 1}}]
       """
     Then the following reply is sent:
       """
@@ -299,9 +299,9 @@ Feature: JSON-RPC
       accept: application/yaml
       content-type: application/json
 
-      [{"jsonrpc": "2.0", "id": 13, "method": "pots/GET", "params": {}},
-       {"jsonrpc": "2.0", "id": 14, "method": "pots/GET", "params": {}},
-       {"jsonrpc": "2.0", "id": 15, "method": "pots/GET", "params": {}}]
+      [{"jsonrpc": "2.0", "id": 13, "method": "pots.GET", "params": {}},
+       {"jsonrpc": "2.0", "id": 14, "method": "pots.GET", "params": {}},
+       {"jsonrpc": "2.0", "id": 15, "method": "pots.GET", "params": {}}]
       """
     Then the following reply is sent:
       """
@@ -320,8 +320,8 @@ Feature: JSON-RPC
       host: nex.toa.io
       content-type: application/json
 
-      [{"jsonrpc": "2.0", "method": "pots/POST", "params": {"title": "One", "volume": 1}},
-       {"jsonrpc": "2.0", "method": "pots/POST", "params": {"title": "Two", "volume": 2}}]
+      [{"jsonrpc": "2.0", "method": "pots.POST", "params": {"title": "One", "volume": 1}},
+       {"jsonrpc": "2.0", "method": "pots.POST", "params": {"title": "Two", "volume": 2}}]
       """
     Then the following reply is sent:
       """
@@ -356,7 +356,7 @@ Feature: JSON-RPC
       accept: application/yaml
       content-type: application/json
 
-      {"jsonrpc": "1.0", "id": 10, "method": "pots/GET"}
+      {"jsonrpc": "1.0", "id": 10, "method": "pots.GET"}
       """
     Then the following reply is sent:
       """
@@ -394,8 +394,8 @@ Feature: JSON-RPC
       accept: application/yaml
       content-type: application/json
 
-      [{"jsonrpc": "2.0", "id": 11, "method": "pots/GET", "params": {}},
-       {"jsonrpc": "2.0", "id": 12, "method": "pots/GET", "params": {}}]
+      [{"jsonrpc": "2.0", "id": 11, "method": "pots.GET", "params": {}},
+       {"jsonrpc": "2.0", "id": 12, "method": "pots.GET", "params": {}}]
       """
     Then the following reply is sent:
       """
@@ -421,7 +421,7 @@ Feature: JSON-RPC
       accept: application/yaml
       content-type: application/json
 
-      {"jsonrpc": "2.0", "id": 9, "method": "pots/GET", "params": {}}
+      {"jsonrpc": "2.0", "id": 9, "method": "pots.GET", "params": {}}
       """
     Then the following reply is sent:
       """

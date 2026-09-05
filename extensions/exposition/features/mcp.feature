@@ -8,7 +8,8 @@ Feature: Model Context Protocol
   says.
 
   What a tool is, is stated on the route and nowhere else. The operation states what it is
-  too, and that is not this: one operation mounted on two routes is two tools.
+  too, and that is not this: one operation mounted on two routes is two tools. A `title`
+  beside the description is what a person is shown where a client lists what it may call.
 
   Two revisions are answered from one endpoint that remembers nothing between requests: the
   modern one, where every request carries its own version and capabilities, and the one
@@ -42,7 +43,9 @@ Feature: Model Context Protocol
             GET:
               query:
                 criteria: volume>=100
-              mcp:tool: The pots that hold a hundred or more, newest first.
+              mcp:tool:
+                title: Large pots
+                description: The pots that hold a hundred or more, newest first.
               endpoint: enumerate
           /unpublished:
             GET: enumerate
@@ -160,7 +163,7 @@ Feature: Model Context Protocol
       id: 2
       result:
         tools:
-          - name: pots/GET
+          - name: pots.GET
             description: All the pots, newest first.
             inputSchema:
               type: object
@@ -178,7 +181,7 @@ Feature: Model Context Protocol
               additionalProperties: false
             annotations:
               readOnlyHint: true
-          - name: pots/POST
+          - name: pots.POST
             description: Start a new pot brewing.
             inputSchema:
               type: object
@@ -192,7 +195,7 @@ Feature: Model Context Protocol
                 - title
                 - volume
               additionalProperties: false
-          - name: pots/_id/GET
+          - name: pots._id.GET
             description: One pot, by its id.
             inputSchema:
               type: object
@@ -202,7 +205,8 @@ Feature: Model Context Protocol
               required:
                 - id
               additionalProperties: false
-          - name: pots/large/GET
+          - name: pots.large.GET
+            title: Large pots
             description: The pots that hold a hundred or more, newest first.
             annotations:
               readOnlyHint: true
@@ -212,11 +216,11 @@ Feature: Model Context Protocol
       """
     And the reply does not contain:
       """
-      pots/guarded/GET
+      pots.guarded.GET
       """
     And the reply does not contain:
       """
-      pots/unpublished/GET
+      pots.unpublished.GET
       """
     And the reply does not contain:
       """
@@ -235,10 +239,10 @@ Feature: Model Context Protocol
       content-type: application/json
       mcp-protocol-version: 2026-07-28
       mcp-method: tools/call
-      mcp-name: pots/unpublished/GET
+      mcp-name: pots.unpublished.GET
 
       {"jsonrpc": "2.0", "id": 30, "method": "tools/call",
-       "params": {"name": "pots/unpublished/GET", "arguments": {},
+       "params": {"name": "pots.unpublished.GET", "arguments": {},
                   "_meta": {"io.modelcontextprotocol/protocolVersion": "2026-07-28",
                             "io.modelcontextprotocol/clientCapabilities": {}}}}
       """
@@ -283,7 +287,7 @@ Feature: Model Context Protocol
       id: 20
       result:
         tools:
-          - name: pots/GET
+          - name: pots.GET
       """
 
   Scenario: A tool takes what the procedure takes
@@ -295,10 +299,10 @@ Feature: Model Context Protocol
       content-type: application/json
       mcp-protocol-version: 2026-07-28
       mcp-method: tools/call
-      mcp-name: pots/_id/GET
+      mcp-name: pots._id.GET
 
       {"jsonrpc": "2.0", "id": 3, "method": "tools/call",
-       "params": {"name": "pots/_id/GET",
+       "params": {"name": "pots._id.GET",
                   "arguments": {"id": "4c4759e6f9c74da989d64511df42d6f4"},
                   "_meta": {"io.modelcontextprotocol/protocolVersion": "2026-07-28",
                             "io.modelcontextprotocol/clientCapabilities": {}}}}
@@ -326,10 +330,10 @@ Feature: Model Context Protocol
       content-type: application/json
       mcp-protocol-version: 2026-07-28
       mcp-method: tools/call
-      mcp-name: pots/POST
+      mcp-name: pots.POST
 
       {"jsonrpc": "2.0", "id": 4, "method": "tools/call",
-       "params": {"name": "pots/POST", "arguments": {"title": "Kettle", "volume": 1.7},
+       "params": {"name": "pots.POST", "arguments": {"title": "Kettle", "volume": 1.7},
                   "_meta": {"io.modelcontextprotocol/protocolVersion": "2026-07-28",
                             "io.modelcontextprotocol/clientCapabilities": {}}}}
       """
@@ -354,10 +358,10 @@ Feature: Model Context Protocol
       content-type: application/json
       mcp-protocol-version: 2026-07-28
       mcp-method: tools/call
-      mcp-name: kettles/GET
+      mcp-name: kettles.GET
 
       {"jsonrpc": "2.0", "id": 5, "method": "tools/call",
-       "params": {"name": "kettles/GET", "arguments": {},
+       "params": {"name": "kettles.GET", "arguments": {},
                   "_meta": {"io.modelcontextprotocol/protocolVersion": "2026-07-28",
                             "io.modelcontextprotocol/clientCapabilities": {}}}}
       """
@@ -403,10 +407,10 @@ Feature: Model Context Protocol
       content-type: application/json
       mcp-protocol-version: 2026-07-28
       mcp-method: tools/call
-      mcp-name: pots/GET
+      mcp-name: pots.GET
 
       {"jsonrpc": "2.0", "id": 7, "method": "tools/call",
-       "params": {"name": "pots/POST", "arguments": {},
+       "params": {"name": "pots.POST", "arguments": {},
                   "_meta": {"io.modelcontextprotocol/protocolVersion": "2026-07-28",
                             "io.modelcontextprotocol/clientCapabilities": {}}}}
       """
@@ -484,7 +488,7 @@ Feature: Model Context Protocol
     named a record that is not the caller's, which it may correct itself by naming another.
     A challenge here would send the client to ask for a scope that would not help.
 
-    # developer:secret, who is not an `admin` and so may not reach `pots/guarded/GET`
+    # developer:secret, who is not an `admin` and so may not reach `pots.guarded.GET`
     Given the `identity.basic` database contains:
       | _id                              | authority | username  | password                                                     |
       | efe3a65ebbee47ed95a73edd911ea328 | nex       | developer | $2b$10$ZRSKkgZoGnrcTNA5w5eCcu3pxDzdTduhteVYXcp56AaNcilNkwJ.O |
@@ -498,10 +502,10 @@ Feature: Model Context Protocol
       content-type: application/json
       mcp-protocol-version: 2026-07-28
       mcp-method: tools/call
-      mcp-name: pots/guarded/GET
+      mcp-name: pots.guarded.GET
 
       {"jsonrpc": "2.0", "id": 31, "method": "tools/call",
-       "params": {"name": "pots/guarded/GET", "arguments": {},
+       "params": {"name": "pots.guarded.GET", "arguments": {},
                   "_meta": {"io.modelcontextprotocol/protocolVersion": "2026-07-28",
                             "io.modelcontextprotocol/clientCapabilities": {}}}}
       """
@@ -531,10 +535,10 @@ Feature: Model Context Protocol
       content-type: application/json
       mcp-protocol-version: 2026-07-28
       mcp-method: tools/call
-      mcp-name: pots/_id/GET
+      mcp-name: pots._id.GET
 
       {"jsonrpc": "2.0", "id": 32, "method": "tools/call",
-       "params": {"name": "pots/_id/GET",
+       "params": {"name": "pots._id.GET",
                   "arguments": {"id": "not-an-id"},
                   "_meta": {"io.modelcontextprotocol/protocolVersion": "2026-07-28",
                             "io.modelcontextprotocol/clientCapabilities": {}}}}
@@ -570,10 +574,10 @@ Feature: Model Context Protocol
       content-type: application/json
       mcp-protocol-version: 2026-07-28
       mcp-method: tools/call
-      mcp-name: echo/GET
+      mcp-name: echo.GET
 
       {"jsonrpc": "2.0", "id": 10, "method": "tools/call",
-       "params": {"name": "echo/GET", "arguments": {},
+       "params": {"name": "echo.GET", "arguments": {},
                   "_meta": {"io.modelcontextprotocol/protocolVersion": "2026-07-28",
                             "io.modelcontextprotocol/clientCapabilities": {}}}}
       """
@@ -612,10 +616,10 @@ Feature: Model Context Protocol
       content-type: application/json
       mcp-protocol-version: 2026-07-28
       mcp-method: tools/call
-      mcp-name: echo/GET
+      mcp-name: echo.GET
 
       {"jsonrpc": "2.0", "id": 11, "method": "tools/call",
-       "params": {"name": "echo/GET", "arguments": {"greeting": "hello"},
+       "params": {"name": "echo.GET", "arguments": {"greeting": "hello"},
                   "_meta": {"io.modelcontextprotocol/protocolVersion": "2026-07-28",
                             "io.modelcontextprotocol/clientCapabilities": {}}}}
       """

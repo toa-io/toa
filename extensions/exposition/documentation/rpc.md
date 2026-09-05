@@ -13,27 +13,31 @@ one an application could choose is one it could collide with a route of its own.
 
 ## The name
 
-A procedure is an RTD method — a node and a verb — and its name is written the way the node is
-declared: the route template, with a variable marked by a leading `_`, and the verb as the last
-segment.
+A procedure is an RTD method — a node and a verb — and its name is the route template with a
+variable marked by a leading `_` and the verb as the last segment, joined by `.`.
+
+The separator is `.` and not `/` because a name is a tool's name too, and
+[MCP](mcp.md) names the characters one may hold: letters, digits, `_`, `-` and `.`. A client that
+receives one outside that set may refuse the tool, and one that accepts it rewrites what it shows
+a model — so what is published has to be spellable as it stands.
 
 | route | verb | method |
 | --- | --- | --- |
-| `/pots` | `GET` | `pots/GET` |
-| `/pots` | `POST` | `pots/POST` |
-| `/pots/:id` | `GET` | `pots/_id/GET` |
-| `/identity/tokens/:identity` | `POST` | `identity/tokens/_identity/POST` |
-| `/files/**` | `GET` | `files/__/GET` |
+| `/pots` | `GET` | `pots.GET` |
+| `/pots` | `POST` | `pots.POST` |
+| `/pots/:id` | `GET` | `pots._id.GET` |
+| `/identity/tokens/:identity` | `POST` | `identity.tokens._identity.POST` |
+| `/files/**` | `GET` | `files.__.GET` |
 | `/` | `GET` | `GET` |
 
-The verb is always the last segment, so `/pots/GET` answering `POST` is `pots/GET/POST` and
-`/pots` answering `GET` is `pots/GET`. Nothing is declared to make a name: a re-mounted route is
+The verb is always the last segment, so `/pots/GET` answering `POST` is `pots.GET.POST` and
+`/pots` answering `GET` is `pots.GET`. Nothing is declared to make a name: a re-mounted route is
 a renamed procedure, because the name is the address.
 
 ## What has a name
 
 A segment is addressed where it holds only `A-Z`, `a-z`, `0-9` and `-`. `_` is the name's own,
-marking a variable, and `__` the rest of a path.
+marking a variable, and `__` the rest of a path; `.` is what divides one segment from the next.
 
 A route with a segment holding anything else — a `.`, a `_`, a `*`, a variable that is not one
 word — has no name. It is served over HTTP as it always was; what it loses is the address, so
@@ -51,16 +55,16 @@ A key the template names is a route variable, and is taken by the path. `query` 
 querystring. Whatever is left is the body.
 
 ```json
-{"jsonrpc": "2.0", "id": 1, "method": "pots/_id/GET", "params": {"id": "a1b2"}}
+{"jsonrpc": "2.0", "id": 1, "method": "pots._id.GET", "params": {"id": "a1b2"}}
 ```
 
 ```json
-{"jsonrpc": "2.0", "id": 2, "method": "pots/POST",
+{"jsonrpc": "2.0", "id": 2, "method": "pots.POST",
  "params": {"title": "Kettle", "volume": 1.7}}
 ```
 
 ```json
-{"jsonrpc": "2.0", "id": 3, "method": "pots/GET",
+{"jsonrpc": "2.0", "id": 3, "method": "pots.GET",
  "params": {"query": {"criteria": "volume=gt=1", "limit": 10}}}
 ```
 
@@ -87,8 +91,8 @@ A request may carry an array of calls instead of one, and answers an array of wh
 answered — shorter than what it was given, where some were notifications.
 
 ```json
-[{"jsonrpc": "2.0", "id": 1, "method": "pots/_id/GET", "params": {"id": "a1b2"}},
- {"jsonrpc": "2.0", "method": "pots/_id/DELETE", "params": {"id": "c3d4"}}]
+[{"jsonrpc": "2.0", "id": 1, "method": "pots._id.GET", "params": {"id": "a1b2"}},
+ {"jsonrpc": "2.0", "method": "pots._id.DELETE", "params": {"id": "c3d4"}}]
 ```
 
 They run one after another, in the order given. `batch` is how many one request may carry, 32
@@ -127,7 +131,7 @@ in its manifest, and is what a caller reads.
 ## Authorization
 
 A procedure is authorized as the resource is, against the path and the verb its name states.
-A token restricted to `/pots/:id/` for `GET` authorizes `pots/_id/GET` and nothing else,
+A token restricted to `/pots/:id/` for `GET` authorizes `pots._id.GET` and nothing else,
 whichever way the call arrives.
 
 [`anonymous`](access.md#anonymous) is the one directive that reads a call differently from a
