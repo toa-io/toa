@@ -26,17 +26,10 @@ and *declares* everything else: data schemas, communication endpoints, HTTP reso
 access policies, storage requirements.
 
 ```typescript
-// operations/approve.ts
-import type { Entity } from '../types/index.d.ts'
-
 export async function transition (input: unknown, object: Entity) {
   object.status = 'approved'
 }
 ```
-
-Examples use TypeScript ES modules. `toa types` generates the imported declarations from the
-application manifests; Node runs the `.ts` files directly. Each component declares
-`"type": "module"` in its `package.json`.
 
 The runtime provides the machinery: it persists state with concurrency control,
 transmits requests and events reliably across processes and protocols, validates messages,

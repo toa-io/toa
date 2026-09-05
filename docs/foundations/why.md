@@ -31,19 +31,13 @@ without touching transport, storage, and serialization code.
 Toa splits a service into two parts:
 
 **Logic** — functions written by the application developer. In Toa they are called *operations*.
-The order approval above is a complete, valid Toa operation:
+The order approval above becomes a Toa operation:
 
 ```typescript
-// operations/approve.ts
-import type { Entity } from '../types/index.d.ts'
-
 export async function transition (input: unknown, object: Entity) {
   object.status = 'approved'
 }
 ```
-
-The examples use TypeScript ES modules, with `"type": "module"` in the component's `package.json`.
-`Entity` is generated from its manifest by `toa types` and imported only as a type.
 
 **Mechanics** — everything else, provided by the runtime and driven by *declarations*.
 The developer declares what the service is, not how it works:
@@ -85,8 +79,6 @@ Toa requires operations to be *genuine*:
 - **Non-exceptional** — errors are returned as values, not thrown for control flow:
 
 ```typescript
-import type { Entity } from '../types/index.d.ts'
-
 export async function transition (input: unknown, object: Entity) {
   if (object.status !== 'pending')
     return new Error('ORDER_NOT_PENDING')

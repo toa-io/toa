@@ -108,9 +108,6 @@ The implementation exports a single function *named after the operation's type* 
 determines what the runtime does before and after the call:
 
 ```typescript
-// operations/approve.ts
-import type { ApproveInput, Entity } from '../types/index.d.ts'
-
 export async function transition (input: ApproveInput, object: Entity) {
   if (object.status !== 'pending')
     return new Error('NOT_PENDING')
@@ -126,27 +123,21 @@ an undeclared code is a contract violation. Other types make
 different deals with the runtime:
 
 ```typescript
-import type { Entity } from '../types/index.d.ts'
-
-// operations/status.ts — observation: read-only view of the state
+// observation: read-only view of the state
 export async function observation (input: unknown, object: Entity) {
   return object.status
 }
 ```
 
 ```typescript
-// operations/total.ts — computation: no state at all, pure function of input
+// computation: no state at all, pure function of input
 export async function computation (input: { price: number, quantity: number }) {
   return input.price * input.quantity
 }
 ```
 
 ```typescript
-// operations/charge.ts — effect: interact through context without owning entity state
-import type { Context } from '../types/index.d.ts'
-
-type ChargeInput = Parameters<Context['remote']['shop']['billing']['charge']>[0]['input']
-
+// effect: interact through context without owning entity state
 export async function effect (input: ChargeInput, context: Context) {
   return context.remote.shop.billing.charge({ input })
 }
@@ -159,20 +150,7 @@ Note what the function signature *lacks*: transport, storage, serialization. An 
 directly callable in a unit test:
 
 ```typescript
-// test/approve.test.ts
-import assert from 'node:assert/strict'
-import { transition } from '../operations/approve.ts'
-import type { Entity } from '../types/index.d.ts'
-
-const object: Entity = {
-  id: '0123456789abcdef0123456789abcdef',
-  _version: 1,
-  _created: 0,
-  _updated: 0,
-  customer: 'fedcba9876543210fedcba9876543210',
-  total: 100,
-  status: 'pending'
-}
+const object = { status: 'pending' }
 
 await transition({}, object)
 
@@ -184,8 +162,6 @@ assert.equal(object.status, 'approved')
 The `context` argument is the only way an operation reaches beyond its input and state:
 
 ```typescript
-import type { ApproveInput, Context, Entity } from '../types/index.d.ts'
-
 export async function transition (input: ApproveInput, object: Entity, context: Context) {
   // call an operation of this component
   await context.local.status({ query: { id: object.id } })
@@ -215,9 +191,6 @@ A component announces its state changes with event files. Each file names an eve
 the condition under which it fires:
 
 ```typescript
-// events/approved.ts
-import type { Entity } from '../types/index.d.ts'
-
 type Change = { origin: Entity | null, state: Entity }
 
 export function condition (event: Change) {
@@ -258,7 +231,6 @@ When the payload maps directly to the operation's request, the declaration is al
 Otherwise a translation function in `receivers/` reshapes it:
 
 ```typescript
-// receivers/payments.completed.ts
 export function request (payment: { order: string }) {
   return { query: { id: payment.order } }
 }
