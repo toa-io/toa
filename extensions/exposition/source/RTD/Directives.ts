@@ -8,6 +8,13 @@ import type { extensions } from '@toa.io/core'
 type Host = extensions.Host
 
 export interface Directives {
+  /**
+   * The directives of one family on this method, or nothing where it declares none of it.
+   * For a consumer of a declaration rather than of a stage: what a method is published as
+   * is stated on the route, and read where the publishing happens.
+   */
+  declared: <T>(family: string) => T[] | undefined
+
   precall: (context: Context, parameters: Parameter[]) => Promise<Output>
 
   /** What this route's directives make of what its method says about itself. */

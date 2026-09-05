@@ -1,9 +1,13 @@
 @security
 Feature: Model Context Protocol
 
-  A tool is a procedure. Nothing is declared to make one, as nothing is declared to make a
-  procedure: what is exposed as a resource is a tool, what it takes and answers is what the
+  A tool is a procedure a method is published as. A method says so with `mcp:tool` and a
+  default denies, because a tree holds everything an application serves and most of it is
+  machinery a model has no business reading. What a tool takes and answers is what the
   method says of itself, and what a caller may do with it is what `auth` says.
+
+  The declaration carries a description where the operation's own cannot serve: one
+  operation mounted on two routes is two tools, and what makes them different is the route.
 
   Two revisions are answered from one endpoint that remembers nothing between requests: the
   modern one, where every request carries its own version and capabilities, and the one
@@ -23,14 +27,29 @@ Feature: Model Context Protocol
       exposition:
         /:
           io:output: [id, title, volume]
-          GET: enumerate
-          POST: create
+          GET:
+            mcp:tool: true
+            endpoint: enumerate
+          POST:
+            mcp:tool: true
+            endpoint: create
           /:id:
-            GET: observe
+            GET:
+              mcp:tool: true
+              endpoint: observe
+          /large:
+            GET:
+              query:
+                criteria: volume>=100
+              mcp:tool: The pots that hold a hundred or more, newest first.
+              endpoint: enumerate
+          /unpublished:
+            GET: enumerate
           /guarded:
             isolated: true
             GET:
               auth:role: admin
+              mcp:tool: true
               endpoint: enumerate
       """
     And the `pots` database contains:
@@ -116,7 +135,8 @@ Feature: Model Context Protocol
       """
 
   Scenario: What the tools are
-    Every method the caller may reach, and the ones they may not are not there.
+    Every method that is published and the caller may reach. One the caller may not, and
+    one that is published as nothing at all, are both absent.
 
     When the following request is received:
       """
@@ -180,6 +200,11 @@ Feature: Model Context Protocol
               required:
                 - id
               additionalProperties: false
+          # the same operation as `pots/GET`, and what makes it a different tool is the route
+          - name: pots/large/GET
+            description: The pots that hold a hundred or more, newest first.
+            annotations:
+              readOnlyHint: true
         ttlMs: 1800000
         cacheScope: private
         resultType: complete
@@ -187,6 +212,39 @@ Feature: Model Context Protocol
     And the reply does not contain:
       """
       pots/guarded/GET
+      """
+    And the reply does not contain:
+      """
+      pots/unpublished/GET
+      """
+
+  Scenario: A method that is published as nothing is not called by guessing its name
+    A route the application did not publish is served over HTTP exactly as before. What it
+    does not have is a name here, and naming it anyway reaches nothing.
+
+    When the following request is received:
+      """
+      POST /.mcp HTTP/1.1
+      host: nex.toa.io
+      accept: application/yaml
+      content-type: application/json
+      mcp-protocol-version: 2026-07-28
+      mcp-method: tools/call
+      mcp-name: pots/unpublished/GET
+
+      {"jsonrpc": "2.0", "id": 30, "method": "tools/call",
+       "params": {"name": "pots/unpublished/GET", "arguments": {},
+                  "_meta": {"io.modelcontextprotocol/protocolVersion": "2026-07-28",
+                            "io.modelcontextprotocol/clientCapabilities": {}}}}
+      """
+    Then the following reply is sent:
+      """
+      404 Not Found
+
+      jsonrpc: '2.0'
+      id: null
+      error:
+        code: -32601
       """
 
   Scenario: A credential does not hide an anonymous tool
@@ -426,6 +484,7 @@ Feature: Model Context Protocol
         /:
           io:output: true
           GET:
+            mcp:tool: true
             endpoint: error
       """
     When the following request is received:
@@ -467,6 +526,7 @@ Feature: Model Context Protocol
         /:
           io:output: true
           GET:
+            mcp:tool: true
             endpoint: echo
       """
     When the following request is received:

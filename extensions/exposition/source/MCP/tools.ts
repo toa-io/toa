@@ -1,19 +1,22 @@
 import * as http from '../HTTP/index.js'
 import { fork } from '../RPC/Context.js'
 import { address, name, split } from '../RPC/names.js'
-import { refusal } from './errors.js'
+import { METHOD_NOT_FOUND, failure, refusal, response } from './errors.js'
 import { annotations, input, output } from './schema.js'
+import { FAMILY, MCP, type Tool as Declaration } from '../directives/mcp/index.js'
 import type { Segment } from '../RTD/segment.js'
 import type { Parameter, Tree } from '../RTD/index.js'
 import type { Params, Result, Tool } from './types.js'
 
 /**
- * Every method this caller may reach, named as the procedure it is.
+ * Every method this caller may reach that is published as a tool, named as the procedure
+ * it is.
  *
- * Nothing is declared to make a tool, as nothing is declared to make a procedure: what is
- * exposed as a resource is a tool, and what a caller may do with it is what `auth` says. The
- * tree is walked once and each method describes itself, which is where that is decided and
- * where `io` and `map` say what may be sent.
+ * A method is a tool where it says so with `mcp:tool`, and a default denies: a tree holds
+ * what an application serves, and most of it is machinery a model has no business reading.
+ * What a caller may then do with one is what `auth` says. The tree is walked once and each
+ * method describes itself, which is where that is decided and where `io` and `map` say what
+ * may be sent.
  *
  * Sorted, because the revision asks for an order a client can cache on.
  */
@@ -29,6 +32,9 @@ export async function list (tree: Tree, context: http.Context): Promise<Tool[]> 
     { procedural: { value: true, enumerable: true } })
 
   for (const { segments, verb, method } of tree.walk()) {
+    if (MCP.published(method.directives.declared<Declaration>(FAMILY)) === null)
+      continue
+
     const named = name(segments, verb)
 
     // a route a name cannot spell is a route nothing addresses, here or at `/.rpc`
@@ -63,8 +69,16 @@ export async function list (tree: Tree, context: http.Context): Promise<Tool[]> 
 /**
  * The call the tool is. Its arguments are the procedure's parameters, taken apart the way a
  * request carries them, and what answers is the same `route` an ordinary request goes to.
+ *
+ * A name that is not a published tool is answered as no tool at all, whether or not a route
+ * would have taken it: what an application did not publish is not reachable here by guessing
+ * its name. What the caller may then do with one that is published is still `auth`'s to say.
  */
 export async function call (scope: Scope, named: string, args: Params): Promise<Result> {
+  if (!published(scope.tree, named))
+    throw new http.NotFound(response(null,
+      failure(METHOD_NOT_FOUND, `'${named}' is not a tool this server publishes`)))
+
   const { path, verb, variables } = address(named, args)
   const { query, input: body } = split(args, variables)
   const clone = fork(scope.context, path, verb, query, body)
@@ -89,6 +103,20 @@ export async function call (scope: Scope, named: string, args: Params): Promise<
 export interface Scope {
   context: http.Context
   route: http.Processor
+  tree: Tree
+}
+
+/**
+ * Whether the tree publishes this name as a tool. What `auth` makes of the caller is not
+ * asked here — the declaration is the route's and does not vary by who is calling, and the
+ * call that follows is authorized as any request to that route is.
+ */
+function published (tree: Tree, named: string): boolean {
+  for (const { segments, verb, method } of tree.walk())
+    if (name(segments, verb) === named)
+      return MCP.published(method.directives.declared<Declaration>(FAMILY)) !== null
+
+  return false
 }
 
 function result (body: unknown): Result {

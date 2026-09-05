@@ -26,6 +26,7 @@ Feature: Authorization code flow
         /pots:
           anyone: true
           GET:
+            mcp:tool: Every pot there is.
             dev:stub: Kettles and teapots.
       """
     When the following request is received:

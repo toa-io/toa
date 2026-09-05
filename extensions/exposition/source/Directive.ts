@@ -21,6 +21,10 @@ export class Directives implements RTD.Directives {
     }))
   }
 
+  public declared<T> (family: string): T[] | undefined {
+    return this.sets.find((set) => set.family.name === family)?.directives as T[] | undefined
+  }
+
   public async precall (context: Context, parameters: RTD.Parameter[]): Promise<Output> {
     let output = null
 
