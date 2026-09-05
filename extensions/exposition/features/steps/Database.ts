@@ -47,10 +47,18 @@ export class Database {
       documents.push(document)
     }
 
+    /*
+     * Replaced rather than inserted: the collections a scenario writes are also written by
+     * the composition it runs, and by whatever a suite before it left behind. An insert that
+     * meets a row of its own id fails the scenario over state that the step is there to
+     * overwrite in the first place.
+     */
     await collection.deleteMany({})
 
     if (documents.length > 0)
-      await collection.insertMany(documents)
+      await collection.bulkWrite(documents.map((document) => ({
+        replaceOne: { filter: { _id: document._id }, replacement: document, upsert: true }
+      })))
   }
 
   @given('the `{word}` database is empty')
@@ -70,12 +78,16 @@ export class Database {
     await this.client.close()
   }
 
-  private collection (id: string): Collection {
+  private collection (id: string): Collection<Document> {
     const [name, namespace = 'default'] = id.split('.').reverse()
     const collection = `${namespace}_${name}`.toLowerCase()
 
-    return Database.client.db('toa-dev').collection(collection)
+    // typed by what a scenario writes, whose `_id` is a string rather than an `ObjectId`
+    return Database.client.db('toa-dev').collection<Document>(collection)
   }
 }
 
-type Document = Record<string, string | number | boolean | null>
+/** A row of a scenario's table. `_id` is named so that the driver takes it for a string. */
+interface Document extends Record<string, string | number | boolean | null | undefined> {
+  _id?: string
+}

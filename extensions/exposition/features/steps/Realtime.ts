@@ -4,7 +4,7 @@ import tsflow from 'cucumber-tsflow'
 
 import { Factory } from '@toa.io/extensions.realtime'
 import * as boot from '@toa.io/boot'
-import { match } from '@toa.io/generic'
+import { match, timeout } from '@toa.io/generic'
 import { load as parse } from 'js-yaml'
 import { Agent } from '@toa.io/agent'
 import { Parameters } from './Parameters.js'
@@ -55,11 +55,7 @@ export class Realtime {
 
     const id = await this.createIdentity(name)
 
-    const parts = await this.agent.parts(`
-      GET /realtime/streams/\${{ ${name}.id }}/ HTTP/1.1
-      authorization: Token \${{ ${name}.token }}
-      accept: application/json
-    `) as AsyncIterable<Uint8Array>
+    const parts = await this.open(name)
 
     void this.consume(id, parts).catch((e) => {
       if (!this.aborted)
@@ -101,6 +97,30 @@ export class Realtime {
 
     this.instance = null
     process.env.TOA_REALTIME = undefined
+  }
+
+  /**
+   * The stream is asked for until the gateway has the route, not once. The realtime service
+   * is started by the step before this one and its `connect` is not awaited there — so the
+   * branch that carries `/realtime/streams` is still being announced while this runs, and
+   * asking too early reads the 404 that precedes the route.
+   */
+  private async open (name: string): Promise<AsyncIterable<Uint8Array>> {
+    const deadline = Date.now() + DISCOVERY
+
+    for (;;)
+      try {
+        return await this.agent.parts(`
+          GET /realtime/streams/\${{ ${name}.id }}/ HTTP/1.1
+          authorization: Token \${{ ${name}.token }}
+          accept: application/json
+        `) as AsyncIterable<Uint8Array>
+      } catch (error) {
+        if (Date.now() > deadline)
+          throw error
+
+        await timeout(POLL)
+      }
   }
 
   private async createIdentity (name: string): Promise<string> {
@@ -155,3 +175,6 @@ export class Realtime {
   }
 }
 
+/** How long the route is waited for, and how often it is asked for. */
+const DISCOVERY = 5000
+const POLL = 50
