@@ -14,10 +14,11 @@ An operation has three phases. Its type determines which of them it needs:
 2. **Run** — execute the business function with input, the supplied state, and context.
 3. **Commit** — validate and persist the changes made by the function.
 
-![The phases of transitions, observations, and assignments](../.assets/operations.png)
+![The phases of transitions, observations, and assignments](../../documentation/.design/operations.jpg)
 
-The empty positions show phases an operation type does not have. A transition uses all three;
-an observation does not commit; an assignment prepares changes without retrieving state first.
+The frame separates the operation from its request and response. The empty positions show phases
+an operation type does not have. A transition uses all three; an observation does not commit;
+an assignment prepares changes without retrieving state first.
 
 The function expresses the **run** phase. Retrieval and persistence belong to the runtime.
 Changing several fields in the function prepares one state change; it does not save each field
