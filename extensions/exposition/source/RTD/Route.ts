@@ -1,6 +1,6 @@
 import { type Segment } from './segment.js'
 import { type Match, type Parameter } from './Match.js'
-import type { Node } from './Node.js'
+import type { Mount, Node } from './Node.js'
 
 export class Route {
   public readonly root: boolean
@@ -44,6 +44,14 @@ export class Route {
       return { node: this.node, parameters }
     else
       return this.matchNested(fragments, parameters)
+  }
+
+  public * walk (prefix: Segment[]): Generator<Mount> {
+    // an expired branch is not matched, so nothing under it is reachable to name
+    if (Date.now() >= this.node.expiration)
+      return
+
+    yield * this.node.walk(prefix.concat(this.segments))
   }
 
   public equals (route: Route): boolean {
