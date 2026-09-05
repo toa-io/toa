@@ -77,8 +77,8 @@ It has service boundaries without imposing a network boundary.
 
 ## Physical architecture: compositions
 
-A composition groups components into a runnable process. It is the unit of deployment and
-scaling, and therefore the physical boundary of a Toa application.
+A composition groups components and, optionally, extension services into a runnable process.
+It is the unit of deployment and scaling, and therefore the physical boundary of a Toa application.
 
 Compositions are declared in the Context:
 
@@ -87,6 +87,7 @@ Compositions are declared in the Context:
 compositions:
   - name: core
     components: [orders, billing, inventory]
+    services: [exposition]
   - name: analytics
     components: [reports]
 ```
@@ -94,6 +95,10 @@ compositions:
 Here, the four logical components become two physical processes. Calls among `orders`, `billing`,
 and `inventory` can stay in memory. Calls to `reports` cross a process boundary through a binding.
 The component interface is identical in both cases.
+
+The `services` declaration places the Exposition gateway alongside the `core` components,
+so they run and scale together. Extension services not assigned to a composition are deployed
+separately.
 
 This grouping is an operational decision. Components may be grouped by traffic, resource usage,
 scaling profile, fault isolation, or deployment cadence. If reporting becomes CPU-heavy, it can be
