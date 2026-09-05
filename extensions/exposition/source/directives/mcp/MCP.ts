@@ -28,6 +28,13 @@ export class MCP implements DirectiveFamily<Tool> {
     introspection: Introspection): Introspection {
     const tool = MCP.published(directives)
 
-    return tool === null ? introspection : { ...introspection, description: tool.description }
+    if (tool === null)
+      return introspection
+
+    return {
+      ...introspection,
+      description: tool.description,
+      ...tool.title === undefined ? {} : { title: tool.title }
+    }
   }
 }

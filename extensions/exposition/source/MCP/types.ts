@@ -66,7 +66,10 @@ export interface Content {
 export interface Tool {
   name: string
 
-  /** what the operation states it is; absent where it states nothing */
+  /** what a person is shown where a client lists this tool; a name is an address */
+  title?: string
+
+  /** what the route states this method is */
   description?: string
   inputSchema: object
   outputSchema?: object
