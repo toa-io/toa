@@ -17,6 +17,8 @@
     "url": "https://github.com/toa-io/toa/issues"
   },
   "workspaces": [
+    "libraries/openspan",
+    "runtime/core",
     "libraries/*",
     "extensions/telemetry",
     "extensions/fetch",

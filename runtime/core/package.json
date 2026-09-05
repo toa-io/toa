@@ -35,6 +35,7 @@
   "dependencies": {
     "@rsql/parser": "1.6.0",
     "@toa.io/generic": "1.0.0-alpha.283",
+    "@toa.io/schemas": "1.0.0-alpha.283",
     "openspan": "1.0.0-alpha.277",
     "uuid": "14.0.2"
   },
