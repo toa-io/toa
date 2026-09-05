@@ -91,8 +91,14 @@ export async function call (scope: Scope, named: string, args: Params): Promise<
 
     return result(message.body)
   } catch (exception) {
-    // what the operation refused with is a value a model reads, not a protocol error
-    if (exception instanceof http.UnprocessableEntity)
+    /*
+     * What the route made of this call is a value a model reads and may correct itself by:
+     * an operation that refused, an argument `io:input` would not take, a record that is
+     * not there, an identity `auth` would not let it act on. A credential is none of those
+     * — that is the client's to fix and not the model's, so it is answered as it is — and
+     * neither is a fault of this server, which is a protocol error and stays one.
+     */
+    if (exception instanceof http.ClientError && !(exception instanceof http.Unauthorized))
       return { content: [{ type: 'text', text: refusal(exception) }], isError: true }
 
     throw exception

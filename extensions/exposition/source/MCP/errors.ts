@@ -46,16 +46,32 @@ export function of (exception: unknown): Failure {
   return failure(INTERNAL, 'Internal error')
 }
 
-/** What the operation refused with, which a model reads and may correct itself by. */
-export function refusal (exception: http.UnprocessableEntity): string {
+/**
+ * What the call was refused with, which a model reads and may correct itself by: what the
+ * operation said, where it said anything, and otherwise what the status means here.
+ */
+export function refusal (exception: http.ClientError): string {
   const body = exception.body
 
   if (typeof body !== 'object' || body === null || typeof body.code !== 'string')
-    return text(exception, 'Refused')
+    return text(exception, REFUSALS[exception.status] ?? 'Refused')
 
   const message = body.message as unknown
 
   return typeof message === 'string' && message !== '' ? message : body.code as string
+}
+
+/**
+ * A refusal a model can act on, where the reply carried no words of its own. `auth` does
+ * not say which of its directives refused, and `auth:id` is what most of them are: a call
+ * naming a record that is not the caller's is the likeliest thing to have gone wrong.
+ */
+const REFUSALS: Record<number, string> = {
+  400: 'The arguments were refused',
+  403: "Not authorized. If an argument names an identity or a record, it may not be the caller's own",
+  404: 'There is nothing at that address',
+  409: 'The record changed while the call was made',
+  429: 'Too many calls'
 }
 
 function text (exception: http.Exception, fallback: string): string {

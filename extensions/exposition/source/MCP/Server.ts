@@ -89,15 +89,6 @@ export class Server {
 
     if ((context as { identity?: unknown }).identity == null)
       throw new http.Unauthorized()
-
-    // the scopes an operation needs are its own, so the challenge names the failure and no more
-    context.pipelines.response.push((message) => {
-      if (message.status !== FORBIDDEN)
-        return
-
-      message.headers ??= new Headers()
-      message.headers.set('www-authenticate', 'Bearer error="insufficient_scope"')
-    })
   }
 
   private async answer (scope: Scope, message: Message, modern: boolean): Promise<unknown> {
@@ -280,6 +271,5 @@ const DISCOVERY_CACHE: Cache = { ttlMs: BRANCH_TTL, cacheScope: 'public' }
 
 const OK = 200
 const ACCEPTED = 202
-const FORBIDDEN = 403
 const SENTINEL = '=?base64?'
 const TERMINATOR = '?='

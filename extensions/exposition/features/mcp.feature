@@ -479,6 +479,76 @@ Feature: Model Context Protocol
       404 Not Found
       """
 
+  Scenario: A tool the caller may not call
+    What `auth` makes of a call is a refusal of the call, not of the credential: the model
+    named a record that is not the caller's, which it may correct itself by naming another.
+    A challenge here would send the client to ask for a scope that would not help.
+
+    # developer:secret, who is not an `admin` and so may not reach `pots/guarded/GET`
+    Given the `identity.basic` database contains:
+      | _id                              | authority | username  | password                                                     |
+      | efe3a65ebbee47ed95a73edd911ea328 | nex       | developer | $2b$10$ZRSKkgZoGnrcTNA5w5eCcu3pxDzdTduhteVYXcp56AaNcilNkwJ.O |
+    And the `identity.bans` database is empty
+    When the following request is received:
+      """
+      POST /.mcp HTTP/1.1
+      host: nex.toa.io
+      authorization: Basic ZGV2ZWxvcGVyOnNlY3JldA==
+      accept: application/yaml
+      content-type: application/json
+      mcp-protocol-version: 2026-07-28
+      mcp-method: tools/call
+      mcp-name: pots/guarded/GET
+
+      {"jsonrpc": "2.0", "id": 31, "method": "tools/call",
+       "params": {"name": "pots/guarded/GET", "arguments": {},
+                  "_meta": {"io.modelcontextprotocol/protocolVersion": "2026-07-28",
+                            "io.modelcontextprotocol/clientCapabilities": {}}}}
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+
+      jsonrpc: '2.0'
+      id: 31
+      result:
+        isError: true
+      """
+    And the reply does not contain:
+      """
+      insufficient_scope
+      """
+
+  Scenario: An argument the schemas would not take
+    What the arguments are refused for is the model's to correct by sending others, so it
+    is a result and not an error of the protocol.
+
+    When the following request is received:
+      """
+      POST /.mcp HTTP/1.1
+      host: nex.toa.io
+      accept: application/yaml
+      content-type: application/json
+      mcp-protocol-version: 2026-07-28
+      mcp-method: tools/call
+      mcp-name: pots/_id/GET
+
+      {"jsonrpc": "2.0", "id": 32, "method": "tools/call",
+       "params": {"name": "pots/_id/GET",
+                  "arguments": {"id": "not-an-id"},
+                  "_meta": {"io.modelcontextprotocol/protocolVersion": "2026-07-28",
+                            "io.modelcontextprotocol/clientCapabilities": {}}}}
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+
+      jsonrpc: '2.0'
+      id: 32
+      result:
+        isError: true
+      """
+
   Scenario: What the operation refused with
     A refusal is a value a model reads and may correct itself by, so it is a result rather
     than an error of the protocol.
