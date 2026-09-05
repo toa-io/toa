@@ -6,18 +6,29 @@ but structurally identical to real-world components.
 ```
 orders/
   manifest.toa.yaml     # declaration: what this component is
+  package.json          # ES module format
+  types/                # declarations, generated with toa types
+    index.d.ts
+    toa.d.ts
   operations/           # logic: one file per operation
-    create.js
-    approve.js
-    status.js
+    create.ts
+    approve.ts
+    status.ts
   events/               # integration: when to announce state changes
-    approved.js
+    approved.ts
   receivers/            # integration: how to react to others
-    payments.completed.js
+    payments.completed.ts
 ```
 
-The manifest declares; the directories implement. Nothing else is required — no package
-boilerplate, no wiring code.
+The manifest declares; the directories implement. These examples use TypeScript ES modules,
+so `package.json` beside the manifest contains:
+
+```json
+{ "type": "module" }
+```
+
+Run `toa types` from the application Context to generate declarations before typechecking.
+Node runs the `.ts` modules directly, with no build step or loader.
 
 ## The manifest
 
@@ -78,8 +89,8 @@ never sees a database.
 
 ## Operations: the unit of logic
 
-Each operation is declared in the manifest and implemented in `operations/<name>.js`
-(or `.mjs`, `.cjs`, or `.ts` with the Node bridge).
+Each operation is declared in the manifest and implemented in `operations/<name>.ts`.
+The Node bridge also supports JavaScript and CommonJS modules.
 The declaration carries the schema of the input and the concurrency strategy:
 
 ```yaml
@@ -96,16 +107,16 @@ operations:
 The implementation exports a single function *named after the operation's type* — the type
 determines what the runtime does before and after the call:
 
-```javascript
-// operations/approve.js
-async function transition (input, object, context) {
+```typescript
+// operations/approve.ts
+import type { ApproveInput, Entity } from '../types/index.d.ts'
+
+export async function transition (input: ApproveInput, object: Entity) {
   if (object.status !== 'pending')
     return new Error('NOT_PENDING')
 
   object.status = 'approved'
 }
-
-module.exports = { transition }
 ```
 
 A `transition` modifies the supplied state; its return value is the reply, not replacement state.
@@ -114,19 +125,29 @@ explicitly if using another parameter name. Expected errors must appear in `erro
 an undeclared code is a contract violation. Other types make
 different deals with the runtime:
 
-```javascript
-// observation: read-only view of the state
-async function observation (input, object) {
+```typescript
+import type { Entity } from '../types/index.d.ts'
+
+// operations/status.ts — observation: read-only view of the state
+export async function observation (input: unknown, object: Entity) {
   return object.status
 }
+```
 
-// computation: no state at all, pure function of input
-async function computation (input) {
+```typescript
+// operations/total.ts — computation: no state at all, pure function of input
+export async function computation (input: { price: number, quantity: number }) {
   return input.price * input.quantity
 }
+```
 
-// effect: interact through context without owning entity state
-async function effect (input, context) {
+```typescript
+// operations/charge.ts — effect: interact through context without owning entity state
+import type { Context } from '../types/index.d.ts'
+
+type ChargeInput = Parameters<Context['remote']['shop']['billing']['charge']>[0]['input']
+
+export async function effect (input: ChargeInput, context: Context) {
   return context.remote.shop.billing.charge({ input })
 }
 ```
@@ -137,20 +158,35 @@ obey — is in [Operations](../concepts/operations.md).
 Note what the function signature *lacks*: transport, storage, serialization. An operation is
 directly callable in a unit test:
 
-```javascript
-const object = { status: 'pending' }
+```typescript
+// test/approve.test.ts
+import assert from 'node:assert/strict'
+import { transition } from '../operations/approve.ts'
+import type { Entity } from '../types/index.d.ts'
 
-await approve.transition({}, object)
+const object: Entity = {
+  id: '0123456789abcdef0123456789abcdef',
+  _version: 1,
+  _created: 0,
+  _updated: 0,
+  customer: 'fedcba9876543210fedcba9876543210',
+  total: 100,
+  status: 'pending'
+}
 
-assert(object.status === 'approved')
+await transition({}, object)
+
+assert.equal(object.status, 'approved')
 ```
 
 ## Context: the door to the world
 
 The `context` argument is the only way an operation reaches beyond its input and state:
 
-```javascript
-async function transition (input, object, context) {
+```typescript
+import type { ApproveInput, Context, Entity } from '../types/index.d.ts'
+
+export async function transition (input: ApproveInput, object: Entity, context: Context) {
   // call an operation of this component
   await context.local.status({ query: { id: object.id } })
 
@@ -178,25 +214,26 @@ Application operations, events, receivers, and guards do not import runtime pack
 A component announces its state changes with event files. Each file names an event and defines
 the condition under which it fires:
 
-```javascript
-// events/approved.js
-function condition (event) {
+```typescript
+// events/approved.ts
+import type { Entity } from '../types/index.d.ts'
+
+type Change = { origin: Entity | null, state: Entity }
+
+export function condition (event: Change) {
   return event.origin?.status !== 'approved' && event.state.status === 'approved'
 }
-
-module.exports = { condition }
 ```
 
 `event.origin` is the entity before the operation, `event.state` — after. The runtime evaluates
 conditions for committed state changes and emits `shop.orders.approved` when the predicate turns
-true. By default the payload is the new state; an optional `payload` function customizes it:
+true. By default the payload is the new state; add an exported `payload` function to the same
+module to customize it, reusing its `Change` type:
 
-```javascript
-function payload (event) {
+```typescript
+export function payload (event: Change) {
   return { id: event.state.id, total: event.state.total }
 }
-
-module.exports = { condition, payload }
 ```
 
 Events are not sent by operations. Operations change state; events are a *declared consequence*
@@ -220,13 +257,11 @@ receivers:
 When the payload maps directly to the operation's request, the declaration is all that is needed.
 Otherwise a translation function in `receivers/` reshapes it:
 
-```javascript
-// receivers/payments.completed.js
-function request (payment) {
+```typescript
+// receivers/payments.completed.ts
+export function request (payment: { order: string }) {
   return { query: { id: payment.order } }
 }
-
-module.exports = { request }
 ```
 
 The receiving component depends only on the event's name and payload — not on the emitter being
