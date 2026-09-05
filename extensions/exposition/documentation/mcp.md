@@ -32,7 +32,7 @@ A tool is an RTD method that says it is one, named as the [procedure](rpc.md#the
 ```yaml
 /pots:
   GET:
-    mcp:tool: true
+    mcp:tool: Every pot there is, newest first.
     endpoint: enumerate
   /hot:
     GET:
@@ -45,23 +45,20 @@ A default denies, and a tree holds everything an application serves — its iden
 uploads, the machinery of the authorization flow the model already came through. Publishing all of
 it would spend a model's context on what it has no business calling.
 
-A string is what the tool says it is. `mcp:tool: true` publishes a tool that says nothing, and
-`mcp:tool: false` publishes none.
+The value is what the tool is, and stating it is what publishes it — there is no way to publish one
+that says nothing, because a tool a model cannot read the purpose of is one it cannot choose.
 
-The operation's own description is not used here, and an operation
-[states one](/documentation/component/declaration.md) for the Introspection to read. It is written
-without knowledge of any route, and a tool is an operation and a route together: the same operation
-mounted twice is two tools, and one sentence cannot be true of both.
+An operation [states what it is](/documentation/component/declaration.md) as well, and that is not
+this: it is written without knowledge of any route, and a tool is an operation and a route together.
+The two routes above are one operation and two tools, and one sentence is not true of both. The
+operation's own is the Introspection's to read, and the gateway does not use it.
 
-A declaration is inherited by everything below it, as every directive is, and the nearer one wins:
-a node publishes its subtree, and a method under it says something of its own, or opts out with
-`false`.
+A declaration is inherited by everything below it, as every directive is, and the nearer one wins.
+Since what it carries is what one method is, it belongs on a method: a node stating one would say
+the same thing of everything under it.
 
 A route whose name a client [cannot spell](rpc.md#what-has-a-name) is refused where the directive
 is built, rather than served as a tool that is quietly never listed.
-
-A tool that describes itself with nothing is still a tool, and a model has only its name and its
-schemas to go on. So an application that means a method to be used by a model says what it does.
 
 `tools/list` answers every published method this caller may reach — a method whose directives refuse
 them is not listed, and a route with [no name](rpc.md#what-has-a-name) is not either. `tools/call`

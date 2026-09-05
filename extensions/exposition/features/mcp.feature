@@ -1,13 +1,14 @@
 @security
 Feature: Model Context Protocol
 
-  A tool is a procedure a method is published as. A method says so with `mcp:tool` and a
-  default denies, because a tree holds everything an application serves and most of it is
-  machinery a model has no business reading. What a tool takes and answers is what the
-  method says of itself, and what a caller may do with it is what `auth` says.
+  A tool is a procedure a method is published as. A method says so with `mcp:tool`, whose
+  value is what the tool is, and a default denies: a tree holds everything an application
+  serves and most of it is machinery a model has no business reading. What a tool takes and
+  answers is what the method says of itself, and what a caller may do with it is what `auth`
+  says.
 
-  The declaration carries a description where the operation's own cannot serve: one
-  operation mounted on two routes is two tools, and what makes them different is the route.
+  What a tool is, is stated on the route and nowhere else. The operation states what it is
+  too, and that is not this: one operation mounted on two routes is two tools.
 
   Two revisions are answered from one endpoint that remembers nothing between requests: the
   modern one, where every request carries its own version and capabilities, and the one
@@ -28,14 +29,14 @@ Feature: Model Context Protocol
         /:
           io:output: [id, title, volume]
           GET:
-            mcp:tool: true
+            mcp:tool: All the pots, newest first.
             endpoint: enumerate
           POST:
-            mcp:tool: true
+            mcp:tool: Start a new pot brewing.
             endpoint: create
           /:id:
             GET:
-              mcp:tool: true
+              mcp:tool: One pot, by its id.
               endpoint: observe
           /large:
             GET:
@@ -49,7 +50,7 @@ Feature: Model Context Protocol
             isolated: true
             GET:
               auth:role: admin
-              mcp:tool: true
+              mcp:tool: Every pot there is, for whoever may see them all.
               endpoint: enumerate
       """
     And the `pots` database contains:
@@ -160,6 +161,7 @@ Feature: Model Context Protocol
       result:
         tools:
           - name: pots/GET
+            description: All the pots, newest first.
             inputSchema:
               type: object
               properties:
@@ -177,6 +179,7 @@ Feature: Model Context Protocol
             annotations:
               readOnlyHint: true
           - name: pots/POST
+            description: Start a new pot brewing.
             inputSchema:
               type: object
               properties:
@@ -190,6 +193,7 @@ Feature: Model Context Protocol
                 - volume
               additionalProperties: false
           - name: pots/_id/GET
+            description: One pot, by its id.
             inputSchema:
               type: object
               properties:
@@ -216,7 +220,7 @@ Feature: Model Context Protocol
       """
     And the reply does not contain:
       """
-      Every pot there is.
+      Put a pot on to brew.
       """
 
   Scenario: A method that is published as nothing is not called by guessing its name
@@ -485,7 +489,7 @@ Feature: Model Context Protocol
         /:
           io:output: true
           GET:
-            mcp:tool: true
+            mcp:tool: Refuses, with what it was given.
             endpoint: error
       """
     When the following request is received:
@@ -527,7 +531,7 @@ Feature: Model Context Protocol
         /:
           io:output: true
           GET:
-            mcp:tool: true
+            mcp:tool: Answers with what it was given.
             endpoint: echo
       """
     When the following request is received:

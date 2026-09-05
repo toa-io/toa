@@ -11,6 +11,11 @@ export class MCP implements DirectiveFamily<Tool> {
   public readonly name = FAMILY
   public readonly mandatory = false
 
+  /** What this method is published as, which is what the nearest declaration says. */
+  public static published (directives: Tool[] | undefined): Tool | null {
+    return directives?.[0] ?? null
+  }
+
   // eslint-disable-next-line max-params
   public create (name: string, value: unknown, _: unknown, route: string): Tool {
     assert.ok(name === 'tool', `Unknown directive: mcp:${name}`)
@@ -18,22 +23,11 @@ export class MCP implements DirectiveFamily<Tool> {
     return new Tool(value, route)
   }
 
-  /** What this method is published as, which is what the nearest declaration says. */
-  public static published (directives: Tool[] | undefined): Tool | null {
-    const nearest = directives?.[0]
-
-    return nearest === undefined || !nearest.published ? null : nearest
-  }
-
-  /**
-   * The nearest declaration wins, which is what an override on a method means against one
-   * inherited from the node above it. A declaration that describes nothing leaves the
-   * operation's own description standing.
-   */
+  /** What the route states this method is, which is the only thing that states it. */
   public explain (directives: Tool[], _: Context,
     introspection: Introspection): Introspection {
-    const description = MCP.published(directives)?.description
+    const tool = MCP.published(directives)
 
-    return description === undefined ? introspection : { ...introspection, description }
+    return tool === null ? introspection : { ...introspection, description: tool.description }
   }
 }
