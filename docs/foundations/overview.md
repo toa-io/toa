@@ -83,7 +83,7 @@ It is the unit of deployment and scaling, and therefore the physical boundary of
 Compositions are declared in the Context:
 
 ```yaml
-# context/compositions.yaml
+# context.toa.yaml
 compositions:
   - name: core
     components: [orders, billing, inventory]
@@ -167,8 +167,8 @@ a property of business code.
 
 ## The Context: application and environment
 
-The Context is the root declaration of an application. It gives the application a name and points
-to its components:
+The Context is the root declaration of an application, written in a single `context.toa.yaml`
+file. It gives the application a name and points to its components:
 
 ```yaml
 # context.toa.yaml
@@ -182,7 +182,7 @@ The Context also contains deployment concerns: compositions, infrastructure addr
 extension configuration, and environment-specific values.
 
 ```yaml
-# context/exposition.yaml
+# context.toa.yaml
 exposition:
   authorities:
     main@local: localhost:8000
@@ -199,11 +199,7 @@ The separation is visible in the project layout:
 
 ```
 application/
-  context.toa.yaml             # application declaration
-  context/
-    compositions.yaml          # physical process boundaries
-    exposition.yaml            # HTTP gateway configuration
-    infrastructure.yaml        # environment infrastructure
+  context.toa.yaml             # application, compositions, extensions, and infrastructure
   components/                  # logical business boundaries
     orders/
       manifest.toa.yaml
