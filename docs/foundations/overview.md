@@ -72,7 +72,7 @@ It has service boundaries without imposing a network boundary.
 
 ## Physical architecture: compositions
 
-A composition groups components and, optionally, extension services into a runnable process.
+A composition groups components and, optionally, runtime services into a runnable process.
 It is the unit of deployment and scaling, and therefore the physical boundary of a Toa application.
 
 Compositions are declared in the Context:
@@ -92,7 +92,7 @@ and `inventory` can stay in memory. Calls to `reports` cross a process boundary 
 The component interface is identical in both cases.
 
 The `services` declaration places the Exposition gateway alongside the `core` components,
-so they run and scale together. Extension services not assigned to a composition are deployed
+so they run and scale together. Runtime services not assigned to a composition are deployed
 separately.
 
 This grouping is an operational decision. Components may be grouped by traffic, resource usage,
@@ -121,7 +121,7 @@ The CLI can discover manifests under `components/*` and boot this shape directly
 toa mono
 ```
 
-Extension services join the process as well. `toa deploy --mono` deploys this arrangement.
+Runtime services join the process as well. `toa deploy --mono` deploys this arrangement.
 
 ### One composition per component: microservice deployment
 
@@ -170,7 +170,7 @@ name: shop
 
 Components live under `components/` in the application source tree.
 
-The same file describes compositions, infrastructure, extension configuration, and values that
+The same file describes compositions, infrastructure, gateway and other runtime settings, and values that
 vary by environment. An application can run locally and in production with different topology
 and configuration while keeping the same component code.
 
@@ -180,7 +180,7 @@ The separation is visible in the project layout:
 
 ```
 application/
-  context.toa.yaml             # application, compositions, extensions, and infrastructure
+  context.toa.yaml             # application, compositions, and infrastructure
   components/                  # logical business boundaries
     orders/
       manifest.toa.yaml
@@ -247,7 +247,7 @@ compositions. Their logical integration does not change when their deployment to
 
 ## The gateway is another physical edge
 
-Components expose internal operations, not HTTP servers. The exposition extension maps external
+Components expose internal operations, not HTTP servers. The Exposition gateway maps external
 resources to those operations:
 
 ```yaml
@@ -272,11 +272,11 @@ of the operation.
 ## Introspection: seeing the resulting system
 
 Location transparency keeps deployment mechanics out of components, but operators still need to
-see the system that those declarations and runtime interactions produce. The introspection
-extension collects that topology and presents it as a graph.
+see the system that those declarations and runtime interactions produce. Introspection
+collects that topology and presents it as a graph.
 
 Its nodes describe components and their declared entities, operations, events, receivers, and
-extension surfaces. Its edges combine declared event relations with calls observed between
+exposed resources. Its edges combine declared event relations with calls observed between
 components and services at runtime. The graph is available through a web UI and an API.
 
 This does not weaken component boundaries. Introspection observes declarations and runtime

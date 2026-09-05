@@ -40,7 +40,7 @@ receivers:             # events it reacts to
 
 configuration: ...     # what can be tuned per deployment
 
-exposition: ...        # extension: HTTP resources
+exposition: ...        # HTTP resources
 ```
 
 The component's full name is `shop.orders`; operations are addressed as
@@ -153,7 +153,7 @@ export async function transition (input: ApproveInput, object: Order, context: C
 ```
 
 The context connects business logic to the rest of the application. Calls use component names;
-configuration and other capabilities are supplied by extensions.
+configuration and other capabilities are supplied by the runtime.
 
 ## Events: announcing changes
 
@@ -219,10 +219,9 @@ configuration:
 Values come from the application Context and are available as `context.configuration`.
 The same operation can use different limits in different environments without changing its code.
 
-## Extensions in the manifest
+## HTTP API
 
-Extensions add their own declaration sections. The most common is `exposition` — HTTP resources
-with authorization and I/O shaping:
+The `exposition` declaration exposes operations as HTTP resources and states who can call them:
 
 ```yaml
 exposition:
@@ -238,10 +237,12 @@ exposition:
 Here, a manager can read an order's status or approve it through HTTP. The operation itself
 contains no routing or authorization code.
 
-Extensions follow this pattern: a component declares a capability, and the runtime provides it.
-Configuration supplies deployment values, Cadence arranges periodic or delayed work, and
-Introspection makes the component visible in the application's topology. Each extension has its
-own chapter; what matters here is that these capabilities fit around the same component model.
+## Other capabilities
+
+A component can also arrange periodic or delayed work with Cadence. Introspection shows its
+place in the application's topology, including its relationships with other components.
+These capabilities follow the same pattern: the application declares what it needs, and the
+runtime provides it around the component's business logic.
 
 ## Why the ignorance matters
 

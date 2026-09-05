@@ -29,3 +29,14 @@ When reviewing a passage, ask what the reader is learning at this point and how 
 supports that understanding. Preserve examples that substantiate a benefit or explain a concept.
 Defer details whose purpose only becomes relevant later. Apply this review across the document,
 not just to the fragment that received feedback.
+
+## Introduce capabilities before their implementation categories
+
+Early chapters introduce what a reader can do with Toa: configure an application, expose an HTTP
+API, schedule work, or inspect how components interact. Organize these explanations around those
+capabilities. Calling them extensions introduces a platform concept the reader does not yet need.
+
+Configuration is itself an extension, so placing a Configuration section beside an Extensions
+section also suggests a distinction that does not exist. Use sections such as Configuration and
+HTTP API instead. Introduce extensions as a mechanism when the reader reaches platform
+extensibility, after they understand the capabilities it provides.
