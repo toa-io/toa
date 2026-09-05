@@ -1,9 +1,20 @@
+# Toa's own development stack.
+#
+# It shares a machine with the applications built on Toa, and every one of those carries the
+# same compose file — on the conventional ports. So nothing here publishes one of those: the
+# whole stack sits in a block of its own, `31000-31099`, and the table that names each port is in
+# CONTRIBUTING.md. A container keeps its own port where it can; MongoDB and LocalStack
+# advertise the address they are reached at, so those two listen on the published port.
+#
+# The block is below the ephemeral range (`net.ipv4.ip_local_port_range`, 32768 by default),
+# so an outgoing connection can never be holding a port when the stack comes up.
+name: toa
 services:
   rabbitmq:
     image: rabbitmq:3.10.0-management
     ports:
-      - "5672:5672"
-      - "15672:15672"
+      - "31010:5672"
+      - "31011:15672"
     healthcheck:
       test: rabbitmq-diagnostics -q ping
       interval: 30s
@@ -24,6 +35,10 @@ services:
       - install -m 400 -o mongodb -g mongodb /etc/mongo-keyfile/keyfile /tmp/keyfile
         && exec docker-entrypoint.sh "$@"
       - --
+    # the port is the published one, not 27017: a replica set advertises the address its
+    # members are reachable at, and a client that connects to a published port is then told
+    # to reconnect to whatever `rs.initiate` recorded. Only a port that means the same inside
+    # the container and out of it survives that round trip.
     command:
       [
         "mongod",
@@ -32,9 +47,11 @@ services:
         "--bind_ip_all",
         "--keyFile",
         "/tmp/keyfile",
+        "--port",
+        "31020",
       ]
     ports:
-      - "27017:27017"
+      - "31020:31020"
     environment:
       MONGO_INITDB_ROOT_USERNAME: developer
       MONGO_INITDB_ROOT_PASSWORD: secret
@@ -42,14 +59,14 @@ services:
       - ./.mongo-keyfile:/etc/mongo-keyfile/keyfile:ro
     healthcheck:
       test: >
-        bash -lc 'mongosh "mongodb://developer:secret@localhost:27017/admin?directConnection=true" --quiet
-        --eval "try{rs.status().ok}catch(e){rs.initiate({_id:\"rs0\",members:[{_id:0,host:\"localhost:27017\"}]});} ; db.runCommand({ping:1}).ok" | grep 1'
+        bash -lc 'mongosh "mongodb://developer:secret@localhost:31020/admin?directConnection=true" --quiet
+        --eval "try{rs.status().ok}catch(e){rs.initiate({_id:\"rs0\",members:[{_id:0,host:\"localhost:31020\"}]});} ; db.runCommand({ping:1}).ok" | grep 1'
       interval: 5s
       timeout: 5s
       retries: 30
   postgres:
     image: postgres:14.4
-    ports: ["5432:5432"]
+    ports: ["31030:5432"]
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -d integration -U developer"]
       interval: 10s
@@ -62,19 +79,19 @@ services:
   redis0:
     image: redis:7.0.11
     ports:
-      - "6379:6379"
+      - "31040:6379"
     healthcheck:
       test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
   redis1:
     image: redis:7.0.11
     ports:
-      - "6378:6379"
+      - "31041:6379"
     healthcheck:
       test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
   redis2:
     image: redis:7.0.11
     ports:
-      - "6377:6379"
+      - "31042:6379"
     healthcheck:
       test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
   localstack:
@@ -83,10 +100,14 @@ services:
     # S3 the storages suite writes to unstarted
     image: localstack/localstack:4.9
     ports:
-      - "127.0.0.1:4566:4566"
-      - "127.0.0.1:4510-4559:4510-4559"
+      - "127.0.0.1:31050:31050"
     environment:
       - DEBUG=1
+      # the gateway is reached at the published port from both sides: `awslocal`,
+      # which the ready hook and the healthcheck run inside the container, addresses
+      # it by `LOCALSTACK_HOST`, and so does the URL S3 answers with
+      - GATEWAY_LISTEN=0.0.0.0:31050
+      - LOCALSTACK_HOST=localhost.localstack.cloud:31050
       - SERVICES=s3
       - ALLOW_NONSTANDARD_REGIONS=1
       - AWS_ACCESS_KEY_ID=developer
@@ -110,8 +131,8 @@ services:
     image: grafana/tempo:3.0.2
     command: ["-config.file=/etc/tempo.yaml"]
     ports:
-      - "3200:3200" # Tempo API
-      - "4318:4318" # OTLP/HTTP
+      - "31060:3200" # Tempo API
+      - "31061:4318" # OTLP/HTTP
     volumes:
       - ./observability/tempo.yaml:/etc/tempo.yaml:ro
   prometheus:
@@ -120,11 +141,11 @@ services:
       - --config.file=/etc/prometheus/prometheus.yml
       - --web.enable-remote-write-receiver
     ports:
-      - "9090:9090"
+      - "31070:9090"
   grafana:
     image: grafana/grafana:13.1.3
     ports:
-      - "3000:3000"
+      - "31080:3000"
     environment:
       GF_AUTH_ANONYMOUS_ENABLED: "true"
       GF_AUTH_ANONYMOUS_ORG_ROLE: Admin

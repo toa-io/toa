@@ -163,9 +163,9 @@ Feature: Mono deployment
       mono:
         variables:
           - name: TOA_STASH_REALTIME_STREAMS
-            value: redis://localhost
+            value: redis://localhost:31040
           - name: TOA_STASH_IDENTITY_OTP
-            value: redis://localhost
+            value: redis://localhost:31040
           - name: TOA_MONGODB_IDENTITY_TOKENS
-            value: mongodb://localhost
+            value: mongodb://localhost:31020
       """

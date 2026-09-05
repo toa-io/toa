@@ -6,9 +6,9 @@ Feature: AMQP binding
     And I have a context with:
       """yaml
       amqp:
-        context: amqp://localhost
+        context: amqp://localhost:31010
         sources:
-          external: amqp://localhost
+          external: amqp://localhost:31010
       """
     When I run `toa env`
     And I update an environment with:

@@ -1,6 +1,6 @@
 import { Connector } from '@toa.io/core'
 import { DISABLED, environment, component as declaration, settings } from './annotation.js'
-import { NAMESPACE, UI_PORT } from './const.js'
+import { NAMESPACE, uiPort } from './const.js'
 import { describe } from './describe.js'
 import { Reporter } from './Reporter.js'
 import { Tenant } from './Tenant.js'
@@ -88,7 +88,7 @@ export class Factory implements extensions.Factory {
     explorer.depends(composition)
 
     if (this.options.ui)
-      explorer.depends(new UI(UI_PORT))
+      explorer.depends(new UI(uiPort()))
 
     return explorer
   }

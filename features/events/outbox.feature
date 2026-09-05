@@ -205,12 +205,12 @@ Feature: Transactional outbox
 
   Scenario: The broker is down at commit, and the event goes out when it returns
     # the failure the outbox exists for: the state change must not be lost with the publish
-    Given an environment variable `TOA_AMQP_CONTEXT` is set to "{\".\":[\"amqp://localhost:5673\"]}"
+    Given an environment variable `TOA_AMQP_CONTEXT` is set to "{\".\":[\"amqp://localhost:31012\"]}"
     And an environment variable `TOA_AMQP_CONTEXT__USERNAME` is set to "developer"
     And an environment variable `TOA_AMQP_CONTEXT__PASSWORD` is set to "secret"
     And an environment variable `TOA_DEV` is set to "0"
     And an environment variable `TOA_CONTEXT` is set to "toa-dev"
-    And an environment variable `TOA_MONGODB_MONGO_OUTBOX` is set to "mongodb://localhost:27017"
+    And an environment variable `TOA_MONGODB_MONGO_OUTBOX` is set to "mongodb://localhost:31020"
     And an environment variable `TOA_MONGODB_MONGO_OUTBOX_USERNAME` is set to "developer"
     And an environment variable `TOA_MONGODB_MONGO_OUTBOX_PASSWORD` is set to "secret"
     When I start docker container `rabbitmq`
@@ -233,10 +233,10 @@ Feature: Transactional outbox
     Given an environment variable `TOA_DEV` is set to "0"
     And an environment variable `TOA_ENV` is set to "local"
     And an environment variable `TOA_CONTEXT` is set to "toa-dev"
-    And an environment variable `TOA_MONGODB_MONGO_OUTBOX` is set to "mongodb://localhost:27018"
+    And an environment variable `TOA_MONGODB_MONGO_OUTBOX` is set to "mongodb://localhost:31021"
     And an environment variable `TOA_MONGODB_MONGO_OUTBOX_USERNAME` is set to "testcontainersuser"
     And an environment variable `TOA_MONGODB_MONGO_OUTBOX_PASSWORD` is set to "secret"
-    And an environment variable `TOA_AMQP_CONTEXT` is set to "{\".\":[\"amqp://localhost\"]}"
+    And an environment variable `TOA_AMQP_CONTEXT` is set to "{\".\":[\"amqp://localhost:31010\"]}"
     And an environment variable `TOA_AMQP_CONTEXT__USERNAME` is set to "developer"
     And an environment variable `TOA_AMQP_CONTEXT__PASSWORD` is set to "secret"
     When I start docker container `mongodb`

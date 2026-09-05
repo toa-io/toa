@@ -59,6 +59,7 @@ Then('the table of {component} must contain rows:',
     const table = this.storage.tables[reference]
 
     const connection = {
+      port: 31030,
       user: 'developer',
       password: 'secret',
       database: this.storage.database

@@ -47,7 +47,7 @@ const containersUpStrategies = {
     return new GenericContainer('rabbitmq:3.10.0-management')
       .withExposedPorts({
         container: 5672,
-        host: 5673
+        host: 31012
       })
       .withEnvironment({
         RABBITMQ_DEFAULT_USER: 'developer',
@@ -61,7 +61,7 @@ const containersUpStrategies = {
     return new GenericContainer('mongo:5.0.8')
       .withExposedPorts({
         container: 27017,
-        host: 27018
+        host: 31021
       })
       .withEnvironment({
         MONGO_INITDB_ROOT_USERNAME: 'testcontainersuser',

@@ -32,9 +32,9 @@ Feature: Introspection deployment
         - name: introspection-explorer
           variables:
           - name: TOA_MONGODB_INTROSPECTION_NODES
-            value: mongodb://localhost
+            value: mongodb://localhost:31020
           - name: TOA_MONGODB_INTROSPECTION_EDGES
-            value: mongodb://localhost
+            value: mongodb://localhost:31020
       """
 
   Scenario: Collection is configured globally

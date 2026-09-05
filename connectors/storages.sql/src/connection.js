@@ -80,7 +80,9 @@ export class Connection extends Connector {
   }
 
   async #resolveURLs () {
-    if (process.env.TOA_DEV === '1') return ['pg://developer:secret@localhost']
+    // Toa's own development stack is not on the conventional ports: the applications built on
+    // Toa are, and they share the machine. See CONTRIBUTING.md.
+    if (process.env.TOA_DEV === '1') return ['pg://developer:secret@localhost:31030']
     else return await resolve(ID, this.#locator.id)
   }
 }

@@ -62,7 +62,7 @@ Feature: Atom aspect
   # Independent servers, which is what the algorithm is written for: the lock is taken on two
   # of the three. The development stack runs exactly that.
   Scenario: Holding a lock on a quorum
-    Given an environment variable `TOA_ATOMICITY_REDIS` is set to "redis://localhost redis://localhost:6378 redis://localhost:6377"
+    Given an environment variable `TOA_ATOMICITY_REDIS` is set to "redis://localhost:31040 redis://localhost:31041 redis://localhost:31042"
     And I compose `atom` component
     When I call `default.atom.locks` with:
       """yaml
@@ -75,7 +75,7 @@ Feature: Atom aspect
 
   # Two tolerate no losses at all, where one address tolerates none and needs one server.
   Scenario: An even number of addresses is refused
-    Given an environment variable `TOA_ATOMICITY_REDIS` is set to "redis://localhost redis://localhost:6378"
+    Given an environment variable `TOA_ATOMICITY_REDIS` is set to "redis://localhost:31040 redis://localhost:31041"
     Then I compose `atom` component and it fails with:
       """
       Atomicity takes an odd number of addresses, 2 given.

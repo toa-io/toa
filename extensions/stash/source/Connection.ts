@@ -40,8 +40,10 @@ export class Connection extends Connector {
   }
 
   private async resolveURL (): Promise<string> {
+    // Toa's own development stack is not on the conventional ports: the applications built on
+    // Toa are, and they share the machine. See CONTRIBUTING.md.
     if (process.env.TOA_DEV === '1')
-      return 'redis://localhost'
+      return 'redis://localhost:31040'
 
     const urls = resolve(ID, this.locator.id)
 

@@ -108,4 +108,8 @@ export const connection = () => (instance ??= new Connection())
 export const reset = () => (instance = undefined)
 
 export const VARIABLE = 'TOA_ATOMICITY_REDIS'
-const DEV = 'redis://localhost'
+/**
+ * Toa's own development stack is not on the conventional ports: the applications built on
+ * Toa are, and they share the machine. See CONTRIBUTING.md.
+ */
+const DEV = 'redis://localhost:31040'

@@ -4,11 +4,18 @@ import { setDefaultTimeout } from '@cucumber/cucumber'
 
 dotenv.config({ path: join(import.meta.dirname, '.env') })
 
+/**
+ * Not `PORT` and `PROBE`, which a deployment serves the gateway on: an application built on
+ * Toa is served on this machine too, and its own gateway holds those. See CONTRIBUTING.md.
+ */
+export const PORT = 31000
+export const PROBE = 31004
+
 export class Parameters {
   public readonly origin: string
 
   public constructor () {
-    this.origin = 'http://127.0.0.1:8000'
+    this.origin = `http://127.0.0.1:${PORT}`
   }
 }
 
@@ -29,7 +36,7 @@ process.env.TOA_TELEMETRY_READY ??= JSON.stringify(false)
 process.env.TOA_TELEMETRY_TRACES ??= JSON.stringify({
   exporters: {
     console: null,
-    otlp: { endpoint: 'http://localhost:4318' }
+    otlp: { endpoint: 'http://localhost:31061' }
   }
 })
 

@@ -6,7 +6,7 @@ Feature: OIDC tokens with authorities
     And the `identity.federation` configuration:
       """yaml
       trust:
-        - iss: http://localhost:44444
+        - iss: http://localhost:31005
           aud: test
       """
 

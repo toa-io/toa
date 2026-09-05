@@ -32,6 +32,10 @@ Feature: toa mono
               key: $IDENTITY_TOKENS_ENCRYPTION_KEY0
       """
     When I run `toa env --dev`
+    And I update an environment with:
+      """
+      TOA_EXPOSITION_PROPERTIES={"authorities":{"local":"localhost"},"port":31000,"probe":31004}
+      """
     And I run `rm context.toa.yaml`
     And I run `toa mono ./components/* --kill`
     Then program should exit with code 0

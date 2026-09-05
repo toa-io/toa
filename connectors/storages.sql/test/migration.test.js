@@ -26,6 +26,7 @@ const driver = generate()
 const database = generate()
 
 const connection = {
+  port: 31030,
   user: 'developer',
   password: 'secret',
   database: 'postgres'

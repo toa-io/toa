@@ -152,7 +152,8 @@ export class IDP {
       }
     })
 
-    server.listen(44444, 'localhost')
+    // in Toa's own block, and out of the ephemeral range an arbitrary port would sit in
+    server.listen(31005, 'localhost')
     await once(server, 'listening')
 
     const address = server.address() as AddressInfo

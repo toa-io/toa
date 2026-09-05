@@ -9,7 +9,7 @@ Feature: Identity Federation
     Given the `identity.federation` configuration:
       """yaml
       trust:
-        - iss: http://localhost:44444
+        - iss: http://localhost:31005
           aud: test
       """
     And the IDP token for User is issued
@@ -68,14 +68,14 @@ Feature: Identity Federation
       200 OK
 
       - id: ${{ User.credential }}
-        iss: http://localhost:44444
+        iss: http://localhost:31005
       """
 
   Scenario: Creating an Identity using inception
     Given the `identity.federation` configuration:
       """yaml
       trust:
-        - iss: http://localhost:44444
+        - iss: http://localhost:31005
           aud: test
       assert: false
       """
@@ -150,7 +150,7 @@ Feature: Identity Federation
       200 OK
 
       - id: ${{ Bill.credential }}
-        iss: http://localhost:44444
+        iss: http://localhost:31005
       """
     And the following request is received:
       # same credentials
@@ -171,11 +171,11 @@ Feature: Identity Federation
     Given the `identity.federation` configuration:
       """yaml
       trust:
-        - iss: http://localhost:44444
+        - iss: http://localhost:31005
           aud: test
       principal:
         authority: nex
-        iss: http://localhost:44444
+        iss: http://localhost:31005
         sub: root
       """
     And the IDP token for root is issued
@@ -218,7 +218,7 @@ Feature: Identity Federation
     Given the `identity.federation` configuration:
       """yaml
       trust:
-        - iss: http://localhost:44444
+        - iss: http://localhost:31005
           aud: test
       """
     And the `identity.basic` database is empty
@@ -260,7 +260,7 @@ Feature: Identity Federation
       201 Created
 
       id: ${{ Bob.credential }}
-      iss: http://localhost:44444
+      iss: http://localhost:31005
       """
     # the created credential is listed as is
     When the following request is received:
@@ -275,7 +275,7 @@ Feature: Identity Federation
       200 OK
 
       - id: ${{ Bob.credential }}
-        iss: http://localhost:44444
+        iss: http://localhost:31005
       """
     And the following request is received:
       """
@@ -335,7 +335,7 @@ Feature: Identity Federation
     Given the `identity.federation` configuration:
       """yaml
       trust:
-        - iss: http://localhost:44444
+        - iss: http://localhost:31005
           aud: nex
           secret: $IDP_SECRET
       """
@@ -363,7 +363,7 @@ Feature: Identity Federation
     Given the `identity.federation` configuration:
       """yaml
       trust:
-        - iss: http://localhost:44444
+        - iss: http://localhost:31005
           aud: nex
           signature:
             iss: io.toa.nex.id

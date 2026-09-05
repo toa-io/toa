@@ -10,6 +10,18 @@ export const EDGES = 'edges'
 export const UI_PATH = '/.introspection'
 export const UI_PORT = 8002
 
+/**
+ * The port the UI is served on. `UI_PORT` is what a deployment publishes and what the chart
+ * renders; the variable is for a machine that runs more than one Toa process — a Toa checkout
+ * beside an application, or two applications — where one of them has to give it up.
+ */
+export const UI_PORT_ENV = 'TOA_INTROSPECTION_UI_PORT'
+export function uiPort (): number {
+  const value = process.env[UI_PORT_ENV]
+
+  return value === undefined ? UI_PORT : Number(value)
+}
+
 export const DEFAULT_INTERVAL = 300
 export const DEFAULT_THRESHOLD = 1024
 

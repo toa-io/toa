@@ -17,8 +17,10 @@ export function createDependency (context: Context): Dependency {
 }
 
 export function resolveURIs (locator: Locator): string[] {
+  // Toa's own development stack is not on the conventional ports: the applications built on
+  // Toa are, and they share the machine. See CONTRIBUTING.md.
   if (process.env.TOA_DEV === '1')
-    return ['amqp://developer:secret@localhost']
+    return ['amqp://developer:secret@localhost:31010']
 
   const value = process.env[VARIABLE]
 

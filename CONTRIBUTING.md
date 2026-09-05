@@ -16,6 +16,50 @@ $ docker compose up -d
 
 Without them a scenario hangs at `Starting composition` and prints no error.
 
+### Ports
+
+An application built on Toa is developed on the same machine, and every one of them carries the
+same compose file — on the conventional ports, with its services on `8000`-`8004`. So none of
+what a Toa checkout binds is conventional: the whole of it sits in `31000`-`31099`, and a
+`31xxx` in `ss -tlnp` is Toa's own and nothing else's.
+
+| port    | what                       | conventionally |
+| ------- | -------------------------- | -------------- |
+| `31000` | exposition gateway         | `8000`         |
+| `31001` | telemetry readiness probe  | `8001`         |
+| `31002` | introspection UI           | `8002`         |
+| `31003` | configuration UI           | `8003`         |
+| `31004` | exposition readiness probe | `8004`         |
+| `31005` | the mock IdP of the exposition suite | —    |
+| `31010` | RabbitMQ                   | `5672`         |
+| `31011` | RabbitMQ management        | `15672`        |
+| `31012` | RabbitMQ, the second broker a scenario starts | — |
+| `31020` | MongoDB                    | `27017`        |
+| `31021` | MongoDB, the standalone a scenario starts | — |
+| `31030` | PostgreSQL                 | `5432`         |
+| `31040` | Redis                      | `6379`         |
+| `31041` | Redis, the second          | `6378`         |
+| `31042` | Redis, the third           | `6377`         |
+| `31050` | LocalStack                 | `4566`         |
+| `31060` | Tempo                      | `3200`         |
+| `31061` | Tempo, OTLP/HTTP           | `4318`         |
+| `31070` | Prometheus                 | `9090`         |
+| `31080` | Grafana                    | `3000`         |
+
+The block is below `net.ipv4.ip_local_port_range`, so an outgoing connection is never already
+holding one of these when the stack comes up.
+
+The ports a deployment uses are the conventional ones and stay that way: `8000` is what the
+chart renders and what an application serves on. What moves is only what a checkout binds
+locally — the compose file, the suites, and the addresses the `TOA_DEV` fallbacks name.
+
+A stack that ran on the conventional ports has a replica set configured for the old address, and
+MongoDB will not start on the new one until that anonymous volume is gone:
+
+```shell
+$ npm run compose                   # recreates the stack, volumes and all
+```
+
 The deployment scenarios render a chart, so `helm` has to be on the `PATH`; without it the
 command produces nothing and the scenario reads an empty `stdout`.
 

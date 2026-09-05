@@ -61,6 +61,10 @@ Feature: toa compose
               key: $IDENTITY_TOKENS_ENCRYPTION_KEY0
       """
     When I run `toa env --dev`
+    And I update an environment with:
+      """
+      TOA_EXPOSITION_PROPERTIES={"authorities":{"local":"localhost"},"port":31000,"probe":31004}
+      """
     And I run `toa compose ./components/* --service exposition --service configuration --service introspection --kill`
     Then program should exit with code 0
     And stdout should contain lines:
@@ -81,6 +85,10 @@ Feature: toa compose
               key: $IDENTITY_TOKENS_ENCRYPTION_KEY0
       """
     When I run `toa env --dev`
+    And I update an environment with:
+      """
+      TOA_EXPOSITION_PROPERTIES={"authorities":{"local":"localhost"},"port":31000,"probe":31004}
+      """
     And an environment variable `TOA_SERVICES` is set to "@toa.io/extensions.exposition @toa.io/extensions.configuration @toa.io/extensions.introspection"
     And I run `toa compose ./components/* --kill`
     Then program should exit with code 0

@@ -81,6 +81,9 @@ export class Migration {
 // knex hides the password behind a non-enumerable property of the settings it is given,
 // so a shared object loses it the first time anything copies it
 const connection = () => ({
+  // Toa's own development stack is not on the conventional ports: the applications built on
+  // Toa are, and they share the machine. See CONTRIBUTING.md.
+  port: 31030,
   user: 'developer',
   password: 'secret',
   database: 'postgres'

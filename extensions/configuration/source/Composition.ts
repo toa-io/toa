@@ -1,7 +1,7 @@
 import { readdirSync, type Dirent } from 'node:fs'
 import { resolve } from 'node:path'
 import { Connector } from '@toa.io/core'
-import { UI_PORT } from './const.js'
+import { uiPort } from './const.js'
 import { UI } from './UI.js'
 import type { Host } from './Factory.js'
 
@@ -23,7 +23,7 @@ export class Composition extends Connector {
 
     // connected here rather than declared as a dependency: dependencies are connected
     // before `open` runs, so one added from inside it would never be
-    const ui = new UI(UI_PORT)
+    const ui = new UI(uiPort())
 
     await ui.connect()
 

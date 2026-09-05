@@ -167,8 +167,10 @@ export class Client extends Connector {
    * @return {Promise<string[]>}
    */
   async resolveURLs () {
+    // Toa's own development stack is not on the conventional ports: the applications built on
+    // Toa are, and they share the machine. See CONTRIBUTING.md.
     if (process.env.TOA_DEV === '1') {
-      return ['mongodb://developer:secret@localhost']
+      return ['mongodb://developer:secret@localhost:31020']
     } else {
       return await resolve(ID, this.locator.id)
     }

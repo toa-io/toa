@@ -4,9 +4,14 @@ import { resolve } from 'node:path'
 import tsflow from 'cucumber-tsflow'
 
 import { UI } from '../../source/UI.js'
-import { UI_PORT } from '../../source/const.js'
 
 const { after, binding, given, then, when } = tsflow
+
+/**
+ * Not `UI_PORT`, which a deployment serves the page on: an application built on Toa is served
+ * on this machine too, and its own explorer holds that one. See CONTRIBUTING.md.
+ */
+const PORT = 31002
 
 /**
  * The scenarios are about the server, not about the page: it is pointed at a fixture
@@ -19,7 +24,7 @@ export class Site {
 
   @given('the UI is published')
   public async publish (): Promise<void> {
-    this.server = new UI(UI_PORT, resolve(import.meta.dirname, '..', 'site'))
+    this.server = new UI(PORT, resolve(import.meta.dirname, '..', 'site'))
 
     await this.server.connect()
   }
@@ -66,7 +71,7 @@ export class Site {
 async function get (path: string): Promise<Response> {
   return await new Promise((resolve, reject) => {
     // `agent: false` — a keep-alive socket outlives the scenario that opened it
-    const request = http.get({ port: UI_PORT, path, agent: false }, (response) => {
+    const request = http.get({ port: PORT, path, agent: false }, (response) => {
       let body = ''
 
       response.setEncoding('utf8')

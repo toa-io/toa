@@ -60,7 +60,7 @@ export class Database {
 
   @beforeAll()
   public static async connect (): Promise<void> {
-    this.client = new MongoClient('mongodb://developer:secret@localhost:27017')
+    this.client = new MongoClient('mongodb://developer:secret@localhost:31020')
 
     await this.client.connect()
   }

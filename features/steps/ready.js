@@ -1,7 +1,9 @@
 import assert from 'node:assert'
 import { When, Then } from '@cucumber/cucumber'
 
-const PORT = 8001
+// the port the suite moves the probe to; 8001, what a deployment declares, is where an
+// application served on this machine has its own, and a probe answers 200 either way
+const PORT = 31001
 const PATH = '/.ready'
 
 When('I request ready probe',

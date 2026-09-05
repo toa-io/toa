@@ -9,25 +9,25 @@ registry:
   base: localhost:5000
   platforms: ~
 
-amqp: amqp://localhost
-amqp@docker: amqp://host.docker.internal
-amqp@broken-runtime: amqp://host.docker.internal
-amqp@broken-build: amqp://host.docker.internal
+amqp: amqp://localhost:31010
+amqp@docker: amqp://host.docker.internal:31010
+amqp@broken-runtime: amqp://host.docker.internal:31010
+amqp@broken-build: amqp://host.docker.internal:31010
 
-mongodb: mongodb://localhost
-mongodb@docker: mongodb://host.docker.internal
-mongodb@broken-runtime: mongodb://host.docker.internal
-mongodb@broken-build: mongodb://host.docker.internal
+mongodb: mongodb://localhost:31020
+mongodb@docker: mongodb://host.docker.internal:31020
+mongodb@broken-runtime: mongodb://host.docker.internal:31020
+mongodb@broken-build: mongodb://host.docker.internal:31020
 
-sql: pg://localhost/developer
-sql@docker: pg://host.docker.internal/developer
-sql@broken-runtime: pg://host.docker.internal/developer
-sql@broken-build: pg://host.docker.internal/developer
+sql: pg://localhost:31030/developer
+sql@docker: pg://host.docker.internal:31030/developer
+sql@broken-runtime: pg://host.docker.internal:31030/developer
+sql@broken-build: pg://host.docker.internal:31030/developer
 
-stash: redis://localhost
-stash@docker: redis://host.docker.internal
-stash@broken-runtime: redis://host.docker.internal
-stash@broken-build: redis://host.docker.internal
+stash: redis://localhost:31040
+stash@docker: redis://host.docker.internal:31040
+stash@broken-runtime: redis://host.docker.internal:31040
+stash@broken-build: redis://host.docker.internal:31040
 
 storages:
   tmp:

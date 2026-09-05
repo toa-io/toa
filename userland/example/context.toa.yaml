@@ -1,5 +1,5 @@
 name: examples
 registry: example
 
-amqp: amqp://localhost
-mongodb: mongodb://localhost
+amqp: amqp://localhost:31010
+mongodb: mongodb://localhost:31020

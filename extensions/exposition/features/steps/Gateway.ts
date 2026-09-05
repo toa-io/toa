@@ -8,6 +8,7 @@ import { Factory } from '../../source/index.js'
 import * as syntax from '../../source/RTD/syntax/index.js'
 import { shortcuts } from '../../source/Directive.js'
 import { manifests } from './map.js'
+import { PORT, PROBE } from './Parameters.js'
 import type * as http from '../../source/HTTP/index.js'
 
 const { after, afterAll, binding, given } = tsflow
@@ -220,6 +221,8 @@ const DEFAULT_PROPERTIES: Partial<http.Options> = {
   authorities: {
     nex: 'nex.toa.io'
   },
+  port: PORT,
+  probe: PROBE,
   // `npm run features:h2c` runs the whole suite over cleartext HTTP/2
   protocol: process.env.TOA_EXPOSITION_PROTOCOL === 'h2c' ? 'h2c' : 'h1'
 }

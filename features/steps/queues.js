@@ -30,5 +30,5 @@ async function request (path, method = 'GET') {
   if (method === 'GET') return response.json()
 }
 
-const MANAGEMENT = 'http://localhost:15672/api'
+const MANAGEMENT = 'http://localhost:31011/api'
 const AUTHORIZATION = 'Basic ' + Buffer.from('developer:secret').toString('base64')
