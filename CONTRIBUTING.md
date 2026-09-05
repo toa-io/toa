@@ -16,14 +16,28 @@ $ docker compose up -d
 
 Without them a scenario hangs at `Starting composition` and prints no error.
 
+The deployment scenarios render a chart, so `helm` has to be on the `PATH`; without it the
+command produces nothing and the scenario reads an empty `stdout`.
+
+The Cloudinary scenarios upload to a real account, which no compose file can stand up. They are
+skipped unless `features/steps/.env` names one — see `.env.example` beside it.
+
 ### Transpiling
 
-Components run from their transpiled, git-ignored `operations` directories. After changing anything
-under a component `source`, retranspile — or the run silently uses the previous build:
+The components Toa ships run from their transpiled, git-ignored `operations` directories, because
+Node does not erase types under `node_modules` and they are read from there once installed. An
+application's own component is not transpiled — see the [Node bridge](./connectors/bridges.node/readme.md).
+After changing anything under a component `source`, retranspile — or the run silently uses the
+previous build:
 
 ```shell
 $ npm run transpile                 # the workspace and every component
 ```
+
+An `operations` directory holds modules and nothing else: the bridge reads every file in it as one
+and names the endpoint after the file, so a declaration or a test left there becomes an endpoint.
+What building a component means is stated once, in `tsconfig.component.json`, which every
+component's own configuration extends.
 
 ### Running
 
@@ -108,13 +122,32 @@ states its type by the name it exports, as in `export { meter as computation }`.
 ## Userspace
 
 Component code depends on no Toa package: nothing under `@toa.io/*` is imported by an operation,
-an event, a receiver or a guard. A component may be written as an ES module or a CommonJS one; a
+an event, a receiver or a guard. A type is the exception, and only as `import type`, which is
+erased before anything runs. A component may be written as an ES module or a CommonJS one; a
 component that is a module says so in a `package.json` beside its manifest.
+
+A module may be written in TypeScript. Node erases the types and compiles nothing else, so a `.ts`
+runs with no build step and no loader — and what it cannot erase, it refuses. The rules that
+follow from that are in the [Node bridge readme](./connectors/bridges.node/readme.md).
 
 Everything a component needs is on `context`;
 a configuration secret, for one, is read as `context.configuration.apiKey.unwrap()`.
 
 The components an extension ships are Toa's own, and may use its packages.
+
+## Documentation
+
+Documentation says **how to use** a thing, not how it works. What a reader needs is what to
+declare, what to call, what they get back, and what they have to handle themselves. How it
+arrives at that is not theirs to carry.
+
+So a guarantee is written as what it means for the code someone writes — "a missed interval is
+not made up, so select what is still due rather than everything in its share" — and not as the
+mechanism it follows from. Names of what runs inside, the state it keeps, the queries it makes
+and the reasoning behind a decision belong in the code, beside what they explain.
+
+What survives the rule is what a reader acts on: a limit that changes what they write, a setting
+they choose, a failure they will see and have to answer for.
 
 ## Publishing
 

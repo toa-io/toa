@@ -19,7 +19,7 @@ export class Development implements DirectiveFamily<Directive> {
     return new Class(value)
   }
 
-  public async preflight (directives: Directive[], input: Input): Promise<Output> {
+  public async precall (directives: Directive[], input: Input): Promise<Output> {
     let output = null
 
     for (const directive of directives) {

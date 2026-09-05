@@ -5,7 +5,8 @@ import type { Directive } from './Directive.js'
 import type { Input as Context } from '../../io.js'
 
 export class Input implements Directive {
-  private readonly allowed: Set<string>
+  /** what a client may send, which is therefore what the input schema states */
+  public readonly allowed: Set<string>
 
   public constructor (permissions: Permissions) {
     this.allowed = new Set(permissions)
@@ -15,7 +16,7 @@ export class Input implements Directive {
     schemas.input.validate<Permissions>(permissions, 'Incorrect \'io:input\' format')
   }
 
-  public preflight (context: Context): void {
+  public precall (context: Context): void {
     // Restrictions are on what the client sent, so the check goes to the front of the
     // pipeline whatever order the families ran in: `auth:delegate` embeds the identity
     // and `map:*` assigns mapped properties, and those additions are the server's own,

@@ -1,0 +1,62 @@
+name: delaying
+
+# nothing to declare beyond naming it: `context.delay` comes with the extension
+cadence: ~
+
+state: ~
+
+operations:
+  later:
+    input:
+      type: object
+      properties:
+        note:
+          type: string
+        delay:
+          type: integer
+      required:
+        - note
+        - delay
+    output:
+      type: string
+  mark:
+    input:
+      type: object
+      properties:
+        note:
+          type: string
+      required:
+        - note
+  vanish:
+    input:
+      type: object
+      properties:
+        note:
+          type: string
+        delay:
+          type: integer
+      required:
+        - note
+        - delay
+    output:
+      type: string
+  ping:
+    input:
+      type: object
+      properties:
+        delay:
+          type: integer
+        overdue:
+          type: integer
+      required:
+        - delay
+    output:
+      type: string
+  pong:
+    input:
+      type: 'null'
+  marks:
+    output:
+      type: array
+      items:
+        type: string

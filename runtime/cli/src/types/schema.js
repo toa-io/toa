@@ -6,6 +6,8 @@
  * `pattern`, `minimum` — shape nothing and are ignored.
  */
 
+import { comment } from './lib.js'
+
 const IDENTIFIER = /^[A-Za-z_$][A-Za-z0-9_$]*$/
 
 /**
@@ -93,8 +95,10 @@ function object (schema, root, depth) {
     const key = IDENTIFIER.test(name) ? name : JSON.stringify(name)
     const optional = required.has(name) ? '' : '?'
 
-    if (property?.description !== undefined)
-      lines.push(`${padding}/** ${property.description.trim().replace(/\s+/g, ' ')} */`)
+    const described = comment(property?.description, padding)
+
+    if (described !== null)
+      lines.push(described)
 
     lines.push(`${padding}${key}${optional}: ${emit(property, root, depth + 1)}`)
   }

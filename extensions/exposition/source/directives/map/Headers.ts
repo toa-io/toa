@@ -1,7 +1,9 @@
 import assert from 'node:assert'
 import { cors } from '../cors/index.js'
 import { Mapping } from './Mapping.js'
+import { take } from '../../Introspection.js'
 import type { Input } from '../../io.js'
+import type { Introspection } from '../../Introspection.js'
 
 /**
  * Forbidden request header names: the browser sets them itself and a script cannot
@@ -23,6 +25,15 @@ export class Headers extends Mapping<Record<string, string>> {
 
     this.headers = Object.values(map).filter((header) => !FORBIDDEN.has(header))
     this.headers.forEach((header) => cors.allow(header))
+  }
+
+  public override explain (introspection: Introspection): void {
+    for (const [property, header] of Object.entries(this.value)) {
+      const schema = take(introspection, property)
+
+      introspection.headers ??= {}
+      introspection.headers[property] = { ...schema, header }
+    }
   }
 
   public properties (context: Input): Record<string, string> {

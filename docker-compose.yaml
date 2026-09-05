@@ -14,6 +14,16 @@ services:
       RABBITMQ_DEFAULT_PASS: secret
   mongodb:
     image: mongo:8.0.16
+    # a bind mount carries the host's ownership, and the keyfile `setup:mongo` writes belongs
+    # to the developer, not to `mongodb` — mongod, which drops to that user, then reads
+    # nothing and exits. The entrypoint copies it in with the owner and the mode mongod
+    # demands, so the host file needs no ownership of its own.
+    entrypoint:
+      - bash
+      - -c
+      - install -m 400 -o mongodb -g mongodb /etc/mongo-keyfile/keyfile /tmp/keyfile
+        && exec docker-entrypoint.sh "$@"
+      - --
     command:
       [
         "mongod",
@@ -21,7 +31,7 @@ services:
         "rs0",
         "--bind_ip_all",
         "--keyFile",
-        "/etc/mongo-keyfile/keyfile",
+        "/tmp/keyfile",
       ]
     ports:
       - "27017:27017"
@@ -68,7 +78,10 @@ services:
     healthcheck:
       test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
   localstack:
-    image: localstack/localstack
+    # pinned: from the calendar-versioned releases on, the image asks for a license and quits
+    # with exit code 55 when `LOCALSTACK_AUTH_TOKEN` is unset, so an untagged pull leaves the
+    # S3 the storages suite writes to unstarted
+    image: localstack/localstack:4.9
     ports:
       - "127.0.0.1:4566:4566"
       - "127.0.0.1:4510-4559:4510-4559"

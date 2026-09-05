@@ -33,6 +33,9 @@ Non-scattered documentation is coming some time later.
   - Built-in implementations
     - MongoDB
     - SQL ([Knex](https://knexjs.org))
+- [Cadence](/extensions/cadence): calls that happen on their own time
+  - a *pulse* calls a component's own operation on a cadence, with no schedule stored anywhere
+  - a *delay* hands one call over to be made later, and answers the id that cancels it
 - [Configuration](/extensions/configuration) with secrets
 - [API Gateway](/extensions/exposition)
   - Resource discovery
@@ -48,6 +51,12 @@ Non-scattered documentation is coming some time later.
   - [File uploads](/extensions/exposition/documentation/octets.md), downloads, and processing.
   - [Throttling](/extensions/exposition/documentation/io.md#throttling): a distributed
     [GCRA](https://en.wikipedia.org/wiki/Generic_cell_rate_algorithm), with no per-request I/O
+  - [OAuth 2.1 authorization server](/extensions/exposition/documentation/oauth.md): discovery,
+    dynamic client registration, PKCE
+  - [JSON-RPC](/extensions/exposition/documentation/rpc.md): every method the tree exposes, called
+    as a procedure named after its route
+  - [Model Context Protocol](/extensions/exposition/documentation/mcp.md): a method is a tool where
+    it says so, and a model calls it as any other caller does
 - [Atomicity](/connectors/atomicity): what the replicas of a component decide together
   - [Partitioning](/connectors/atomicity/readme.md#partitioning): an exclusive claim on one of a
     fixed number of slots

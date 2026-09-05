@@ -66,6 +66,9 @@ configuration:
 credentials are created in that authority, the associated Identity is assigned the `system` Role.
 The same username in another authority is ordinary credentials.
 
+Credentials created by inception are granted the Role before the reply, so the token that reply
+carries already holds it.
+
 Once created, the username of the principal cannot be modified.
 
 ### Resources

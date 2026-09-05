@@ -24,7 +24,7 @@ Feature: toa types
     And the file ./components/dummies.one/types/toa.d.ts contains exact line 'export type Context = Base<Component>'
     And the file ./components/dummies.one/package.json contains exact line '  "name": "@components/dummies.one",'
     And the file ./components/dummies.one/package.json contains exact line '  "types": "types/index.d.ts"'
-    And the file ./components/dummies.one/types/index.d.ts contains exact line 'export * from \'./toa.js\''
+    And the file ./components/dummies.one/types/index.d.ts contains exact line 'export * from \'./toa.d.ts\''
     And the file ./types/toa.d.ts contains exact line 'export interface Remote {'
     And the file ./types/toa.d.ts contains line starting with '    one: '
 
@@ -43,6 +43,13 @@ Feature: toa types
     When I run `toa types`
     Then the file ./components/reply.contract/types/toa.d.ts contains exact line '  silent: (request: { input?: null, task?: boolean }) => Promise<SilentOutput>'
 
+  Scenario: An operation says what it is
+    Given I have a component `reply.contract`
+    And I have a context
+    And my working directory is ./
+    When I run `toa types`
+    Then the file ./components/reply.contract/types/toa.d.ts contains exact line '  /** What it answers where it has nothing to say. */'
+
   Scenario: An operation returns the errors it declares
     Given I have a component `reply.contract`
     And I have a context
@@ -56,4 +63,4 @@ Feature: toa types
     When I run `toa types -c ./components/dummies.one`
     # what it is called from is not knowable here, so no Context is written
     Then the file ./components/dummies.one/types/toa.d.ts contains exact line 'export interface Component {'
-    And the file ./components/dummies.one/types/index.d.ts contains exact line 'export * from \'./toa.js\''
+    And the file ./components/dummies.one/types/index.d.ts contains exact line 'export * from \'./toa.d.ts\''

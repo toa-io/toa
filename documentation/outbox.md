@@ -67,7 +67,9 @@ replicas of one component.
 
 A replica writes into a lane it owns, so what it reads back is its own. Ownership is
 `lane % n === i`, an [`atomicity`](/connectors/atomicity) slot. While a replica owns none it reads
-nothing, and resumes when an assignment arrives.
+nothing, and resumes when an assignment arrives — the pump is told through `onassigned`
+rather than finding out on its next cycle, so a lane changing hands is read at once instead
+of up to an interval later.
 
 ### Timings
 

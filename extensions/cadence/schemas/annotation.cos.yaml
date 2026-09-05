@@ -1,0 +1,9 @@
+# context.toa.yaml cadence annotation
+type: object
+nullable: true
+properties:
+  discreteness:
+    description: Seconds between passes over the calls waiting to be made
+    type: integer
+    minimum: 1
+additionalProperties: false

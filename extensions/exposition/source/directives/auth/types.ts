@@ -1,6 +1,7 @@
 import { type Component } from '@toa.io/core'
 import { type Maybe } from '@toa.io/core'
 import { type Parameter } from '../../RTD/index.js'
+import type { Introspection } from '../../Introspection.js'
 import type * as http from '../../HTTP/index.js'
 import type * as io from '../../io.js'
 
@@ -12,6 +13,26 @@ export interface Directive {
     context: Context,
     parameters: Parameter[]
   ) => boolean | Promise<boolean>
+
+  /**
+   * Whether this admits the identity where that can be told without a request — which is
+   * what describing a method is. `undefined` says it cannot be told: a directive reading a
+   * route variable's value or the body has neither here, and one that is not implemented
+   * says the same by its absence. Nothing here may have an effect on the request.
+   */
+  admits?: (
+    identity: Identity | null,
+    context: Context
+  ) => boolean | undefined | Promise<boolean | undefined>
+
+  /**
+   * What this directive makes of what the method says about itself, which is the reverse of
+   * what it does to a request: a property it fills from the identity is taken out of the
+   * input, because it is not the caller's to send — and a description that offers one invites
+   * a caller to name an identity that is not theirs. Nothing here may have an effect on the
+   * request.
+   */
+  describe?: (introspection: Introspection) => Introspection
 
   reply?: (context: Context) => http.OutgoingMessage | null
 

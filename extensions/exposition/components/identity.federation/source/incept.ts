@@ -1,10 +1,16 @@
 import { effect as create } from './create.js'
+import { principal } from './lib/index.js'
 import type { Context, Scheme } from './types/index.js'
 
 export async function effect (input: Input, context: Context): Promise<Output | Error> {
   const credential = await create(input, context)
 
-  return credential instanceof Error ? credential : { id: credential.identity }
+  if (credential instanceof Error)
+    return credential
+
+  await principal(credential, context)
+
+  return { id: credential.identity }
 }
 
 export interface Input {

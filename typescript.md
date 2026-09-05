@@ -2,6 +2,11 @@
 
 Starting form version `0.20` new features are implemented using TypeScript.
 
+This is how a package in this repository is written, and it is transpiled. A component is not: Node
+reads its `.ts` as it is, so a relative import there carries the extension of the file that exists
+rather than of the file a compiler would emit. See the
+[Node bridge readme](./connectors/bridges.node/readme.md).
+
 To create a new package or migrate an existing one to TypeScript, follow these steps:
 
 - Add `tsconfig.json` with the following contents:

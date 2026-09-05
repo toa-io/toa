@@ -17,6 +17,11 @@ declare namespace toa.node{
     fetch: (input: string | URL | Request, init?: FetchInit) => Promise<Response>
     amqp?: Underlay
     configuration?: object
+    delay?: {
+      (endpoint: string, request: object | null,
+        options: { interval: number, overdue: number | null }): Promise<string>
+      cancel: (id: string) => Promise<void>
+    }
     state?: object
   }
 

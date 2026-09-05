@@ -12,5 +12,6 @@ const SHORTCUTS = {
   state: '@toa.io/extensions.state',
   stash: '@toa.io/extensions.stash',
   storages: '@toa.io/extensions.storages',
+  cadence: '@toa.io/extensions.cadence',
   introspection: '@toa.io/extensions.introspection'
 }

@@ -197,16 +197,13 @@ Feature: Identity Federation
       id: ${{ root.id }}
       """
 
-    Then after 0.2 seconds
-
-    # the role is checked over the id token: a Token carries the roles held when it
-    # was issued, and this one was issued before the grant
+    # the Role is granted before the reply, so the Token that reply carries holds it
     When the following request is received:
       """
       GET /identity/ HTTP/1.1
       host: nex.toa.io
       accept: application/yaml
-      authorization: Bearer ${{ root.id_token }}
+      authorization: Token ${{ root.token }}
       """
     Then the following reply is sent:
       """

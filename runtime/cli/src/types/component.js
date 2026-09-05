@@ -1,5 +1,5 @@
 import { emit, stated } from './schema.js'
-import { BANNER, capitalize, collector, imports } from './lib.js'
+import { BANNER, capitalize, collector, comment, imports } from './lib.js'
 
 /**
  * A component's types, as its `types.ts`.
@@ -67,6 +67,10 @@ function calls (endpoints, entity, importing) {
     request.push('task?: boolean')
 
     const type = output.declared ? `${name}Output` : output.type
+    const described = comment(operation.description, '  ')
+
+    if (described !== null)
+      lines.push(described)
 
     lines.push(`  ${endpoint}: (request: { ${request.join(', ')} }) => ` +
       `Promise<${resolves(type, operation, importing)}>`)

@@ -1,0 +1,40 @@
+name: pulse
+
+state: ~
+
+cadence:
+  tick:
+    cycle: 4
+    intervals: 4
+
+operations:
+  tick:
+    input:
+      type: object
+      properties:
+        n:
+          type: number
+        i:
+          type: number
+      required:
+        - n
+        - i
+  calls:
+    input:
+      type: object
+      properties:
+        least:
+          type: number
+      required:
+        - least
+    output:
+      type: object
+      properties:
+        calls:
+          type: number
+        n:
+          type: number
+        enough:
+          type: boolean
+        consecutive:
+          type: boolean

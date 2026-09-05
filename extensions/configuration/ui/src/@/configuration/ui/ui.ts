@@ -28,7 +28,7 @@ export function split(id: string): { namespace: string; component: string } {
  * list, and it grows when the runtime ships another one. It must keep saying what
  * `SYSTEM` says in the introspection UI.
  */
-const SYSTEM = new Set(['identity', 'exposition', 'realtime', 'introspection', 'configuration'])
+const SYSTEM = new Set(['identity', 'exposition', 'realtime', 'introspection', 'configuration', 'cadence'])
 
 /** Whether a component came with the runtime rather than with the application. */
 export function system(component: string): boolean {

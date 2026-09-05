@@ -41,8 +41,8 @@ export class NotFound extends ClientError {
 }
 
 export class MethodNotAllowed extends ClientError {
-  public constructor () {
-    super(405)
+  public constructor (headers?: Headers) {
+    super(405, undefined, headers)
   }
 }
 

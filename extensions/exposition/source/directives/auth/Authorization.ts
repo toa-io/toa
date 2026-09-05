@@ -21,6 +21,7 @@ import { ATOM_GROUP } from '../../const.js'
 import { Quotas, Sync } from '../io/lib/throttle/index.js'
 import { Keys } from '../io/lib/throttle/Keys.js'
 import type { Output } from '../../io.js'
+import type { Introspection } from '../../Introspection.js'
 import type { Component } from '@toa.io/core'
 import type { Remotes } from '../../Remotes.js'
 import type { Parameter, DirectiveFamily } from '../../RTD/index.js'
@@ -100,11 +101,18 @@ export class Authorization implements DirectiveFamily<Directive, Extension> {
     directives.sort((a, b) => (a.priority ?? 1) - (b.priority ?? 1))
   }
 
-  public async preflight (directives: Directive[],
+  /**
+   * Authentication: who the credential names, if one is presented. A credential belongs to
+   * the request, so it is read once however many calls the request carries.
+   */
+  public async preflight (context: Context): Promise<void> {
+    context.identity = await this.resolve(context)
+  }
+
+  /** Authorization: whether that identity may make this call, which every call asks anew. */
+  public async precall (directives: Directive[],
     context: Context,
     parameters: Parameter[]): Promise<Output> {
-    context.identity = await this.resolve(context)
-
     for (const directive of directives) {
       const allow = await directive.authorize(context.identity, context, parameters)
 
@@ -121,12 +129,63 @@ export class Authorization implements DirectiveFamily<Directive, Extension> {
       throw new http.Forbidden()
   }
 
+  /**
+   * The same disjunction as `precall`, over what can be told without a request. A method no
+   * directive admits, and none is undecided about, is not this caller's to be told about —
+   * `null` takes it out of the answer.
+   *
+   * A permission is matched against a path, and a description is not a request to one, so
+   * `permits` has no say here. The call it describes is still checked, which is where a
+   * token's permissions belong.
+   *
+   * A method that is described is then described by each of them, which is a separate pass:
+   * admission is a disjunction and stops at the first that admits, while what the directives
+   * fill is not any one of them's to state alone.
+   */
+  public async explain (directives: Directive[], context: Context,
+    introspection: Introspection): Promise<Introspection | null> {
+    let untold = false
+    let admitted = false
+
+    for (const directive of directives) {
+      const admits = await directive.admits?.(context.identity, context)
+
+      if (admits === undefined) {
+        untold = true
+
+        continue
+      }
+
+      if (admits) {
+        admitted = true
+
+        break
+      }
+    }
+
+    if (!admitted && !untold)
+      return null
+
+    // whichever of them admitted, a property any of them fills from the identity is filled
+    // from the identity: what a caller sent there would be overwritten or forged
+    for (const directive of directives)
+      introspection = directive.describe?.(introspection) ?? introspection
+
+    return introspection
+  }
+
   public async settle (directives: Directive[],
     context: Context,
     response: http.OutgoingMessage): Promise<void> {
     await Promise.all(directives.map(async (directive) =>
       directive.settle?.(context, response)))
+  }
 
+  /**
+   * Re-issuing a credential, and refusing a ban, are the request's business: the header
+   * carries one token however many calls were made, and a ban refuses all of them.
+   */
+  public async depart (context: Context, response: http.OutgoingMessage): Promise<void> {
     const identity = context.identity
 
     if (identity === null)

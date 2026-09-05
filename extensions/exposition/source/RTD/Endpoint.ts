@@ -2,11 +2,12 @@ import { type Context } from './Context.js'
 import type * as http from '../HTTP/index.js'
 import type * as syntax from './syntax/index.js'
 import type * as RTD from './index.js'
+import type { Introspection } from '../Introspection.js'
 
 export interface Endpoint {
   call: (context: http.Context, parameters: RTD.Parameter[]) => Promise<http.OutgoingMessage>
 
-  explain: (parameters: RTD.Parameter[]) => Promise<unknown>
+  explain: (parameters: RTD.Parameter[]) => Promise<Introspection>
 
   close: () => Promise<void>
 }

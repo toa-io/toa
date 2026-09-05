@@ -44,6 +44,8 @@ export class Realtime {
 
     Realtime.instance = await factory.service()
 
+    // not awaited: the routes connect to the components that produce the events, and this
+    // scenario starts the producer after the service, so the connection settles later
     void Realtime.instance.connect()
   }
 
@@ -152,3 +154,4 @@ export class Realtime {
     }
   }
 }
+

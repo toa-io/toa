@@ -159,3 +159,9 @@ io:throttle:
 
 An address may probe for twenty missing paths at once, and thereafter for one every thirty seconds.
 Requests that find something are served and never counted against it.
+
+## Introspection
+
+What these admit is what [`OPTIONS`](introspection.md) states: `io:input` restricts the input
+schema, `io:output` the output schema, and a method declaring no `io:output` states no output at
+all — nothing of the reply is sent.

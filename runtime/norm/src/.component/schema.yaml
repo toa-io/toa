@@ -148,6 +148,9 @@ properties:
             type: string
           bindings:
             $ref: "#/properties/bindings"
+          description:
+            # what the operation is, for whoever reads it: a generated type, an OPTIONS, a model
+            type: string
           input:
             $ref: https://json-schema.org/draft/2019-09/schema
           output:

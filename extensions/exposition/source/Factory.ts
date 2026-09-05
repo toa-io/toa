@@ -12,6 +12,8 @@ import { Composition } from './Composition.js'
 import * as root from './root.js'
 import { ATOM_GROUP } from './const.js'
 import { Interception } from './Interception.js'
+import { Dispatcher } from './RPC/index.js'
+import { Server as Model } from './MCP/index.js'
 import * as http from './HTTP/index.js'
 import type { Branch } from './Branch.js'
 import type { syntax } from './RTD/index.js'
@@ -58,7 +60,9 @@ export class Factory implements extensions.Factory {
     const tree = new Tree(node, methods, directives)
 
     const composition = new Composition(this.host)
-    const gateway = new Gateway(broadcast, tree, interception)
+    const dispatcher = options.rpc === undefined ? null : new Dispatcher(options.rpc)
+    const mcp = options.mcp === undefined ? null : new Model(options.mcp, tree)
+    const gateway = new Gateway(broadcast, tree, interception, directives, dispatcher, mcp)
 
     gateway.depends(remotes)
     gateway.depends(composition)

@@ -58,5 +58,6 @@ const EXTENSIONS = {
   '@toa.io/extensions.stash': null,
   '@toa.io/extensions.state': null,
   '@toa.io/extensions.telemetry': null,
-  '@toa.io/extensions.fetch': null
+  '@toa.io/extensions.fetch': null,
+  '@toa.io/extensions.cadence': null
 }

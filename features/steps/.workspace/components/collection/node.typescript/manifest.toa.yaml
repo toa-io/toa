@@ -1,0 +1,27 @@
+name: typescript
+namespace: node
+
+operations:
+  echoFunction:
+    input:
+      type: string
+    output:
+      type: string
+  echoClass:
+    input:
+      type: string
+    output:
+      type: string
+  echoFactory:
+    input:
+      type: string
+    output:
+      type: string
+
+configuration:
+  schema:
+    type: object
+    properties:
+      foo:
+        type: string
+        default: bar

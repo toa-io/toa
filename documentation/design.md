@@ -12,6 +12,13 @@
 
 ## Introduction
 
+The runtime aims to make complicated things simple. Every choice exposed to users requires them to
+understand the problem behind it, adding complexity even when the choice itself looks small. The
+runtime therefore makes some decisions on their behalf, including cases where several options are
+reasonable and none is clearly superior. These decisions are not necessarily the only correct ones;
+making them is part of the runtime's responsibility to keep that complexity from becoming the user's
+responsibility.
+
 ## Operations
 
 Operations are execution units, a fundamental building block of the distributed system. Operation's
@@ -74,6 +81,17 @@ async function unmanaged (input, collection, context) {
 
 > Unmanaged operations lack concurrency control, events, object identification, versioning,
 > timestamps and other features provided by the runtime.
+
+**An unmanaged operation reads. It never writes.** Everything the runtime provides is what a
+write depends on, so a write made here is a write without a version to guard it, without the
+timestamps the rest of the system reads, without an identifier the runtime issued, and without
+the event that tells anything it happened. Use a Transition for one object, a Transition over
+`objects` for many, and an Assignment for a changeset.
+
+**Nothing removes a record.** Deletion is a `_deleted` timestamp, which every query filters on,
+so a removed entity stops being found while what it was survives — the prototype's `terminate`
+is that write. A record taken out of the collection takes its history with it, and leaves
+anything that referred to it pointing at nothing.
 
 ### Safety
 

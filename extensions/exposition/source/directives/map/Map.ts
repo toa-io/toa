@@ -12,6 +12,7 @@ import type { Directive } from './Directive.js'
 import type { Properties } from './Properties.js'
 import type { DirectiveFamily, Parameter } from '../../RTD/index.js'
 import type { Input, Output } from '../../io.js'
+import type { Introspection } from '../../Introspection.js'
 import type { Remotes } from '../../Remotes.js'
 
 export class Map implements DirectiveFamily {
@@ -31,7 +32,15 @@ export class Map implements DirectiveFamily {
       })
   }
 
-  public async preflight (directives: Directive[], context: Input, parameters: Parameter[]): Promise<Output> {
+  public explain (directives: Directive[], _: Input, introspection: Introspection): Introspection {
+    for (const directive of directives)
+      if (directive instanceof Mapping)
+        directive.explain(introspection)
+
+    return introspection
+  }
+
+  public async precall (directives: Directive[], context: Input, parameters: Parameter[]): Promise<Output> {
     const properties = {}
 
     for (const directive of directives)

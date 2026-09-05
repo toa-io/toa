@@ -70,6 +70,12 @@ export function deployment (_: unknown, annotation?: Annotation): Dependency {
   if (annotation.oauth !== undefined)
     properties.oauth = annotation.oauth
 
+  if (annotation.rpc !== undefined)
+    properties.rpc = annotation.rpc
+
+  if (annotation.mcp !== undefined)
+    properties.mcp = annotation.mcp
+
   service.variables!.push({
     name: 'TOA_EXPOSITION_PROPERTIES',
     value: JSON.stringify(properties)
@@ -86,4 +92,5 @@ export function deployment (_: unknown, annotation?: Annotation): Dependency {
   return { services: [service] }
 }
 
-type Properties = Pick<Annotation, 'authorities' | 'debug' | 'protocol' | 'bouncer' | 'ip' | 'oauth'>
+type Properties = Pick<Annotation,
+'authorities' | 'debug' | 'protocol' | 'bouncer' | 'ip' | 'oauth' | 'rpc' | 'mcp'>

@@ -71,6 +71,9 @@ Forwarding Route variables are mapped to the forwarded Route variables if they h
 
 ## Methods
 
+Every Method is also addressable as a procedure, where the context annotates
+[JSON-RPC](rpc.md).
+
 Methods are mappings of the HTTP methods to the corresponding operations.
 
 A Method is a key named after the corresponding HTTP method, with a value following the schema

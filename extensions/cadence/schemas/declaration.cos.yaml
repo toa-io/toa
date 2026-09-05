@@ -1,0 +1,21 @@
+# manifest.toa.yaml cadence declaration: the operations called on a cadence
+type: object
+propertyNames:
+  pattern: ^[a-zA-Z]+([_a-zA-Z0-9]*[a-zA-Z0-9]+)?$
+patternProperties:
+  ".*":
+    type: object
+    properties:
+      cycle:
+        description: Seconds one whole cycle takes
+        type: integer
+        minimum: 1
+      intervals:
+        description: >
+          Intervals the cycle is split into. The gap between calls is `cycle / intervals`,
+          and the operation is told which interval it is running for.
+        type: integer
+        minimum: 1
+        default: 1
+    required: [cycle]
+    additionalProperties: false

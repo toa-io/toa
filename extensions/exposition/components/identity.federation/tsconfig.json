@@ -1,8 +1,10 @@
 {
-  "extends": "../../tsconfig.json",
+  "extends": "../../../../tsconfig.component.json",
   "compilerOptions": {
     "outDir": "./operations",
     "rootDir": "./source"
   },
-  "include": ["source"]
+  "include": [
+    "source"
+  ]
 }

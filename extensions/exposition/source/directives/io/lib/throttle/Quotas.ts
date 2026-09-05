@@ -34,7 +34,7 @@ export class Quotas {
   private readonly entries = new Map<string, Entry>()
 
   /**
-   * The key computed at preflight, for settle to charge against.
+   * The key computed at precall, for settle to charge against.
    *
    * `segment` reads the route parameters, which settle is not given, and `identity`
    * can be refreshed between the two — so recomputing there would key a request
@@ -97,7 +97,7 @@ export class Quotas {
     if (!this.conditional || !this.keys.matches(input, output))
       return
 
-    // preflight always runs first, and a request it refuses never reaches settle
+    // precall always runs first, and a request it refuses never reaches settle
     const key = this.keyed.get(input) ?? this.keys.get(input)
 
     if (key === undefined)

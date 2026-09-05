@@ -9,7 +9,7 @@ export class Request extends Contract {
   constructor (schema, definition) {
     super(schema)
 
-    for (const key of ['input', 'output', 'errors'])
+    for (const key of ['description', 'input', 'output', 'errors'])
       if (definition[key] !== undefined)
         this.discovery[key] = definition[key]
   }

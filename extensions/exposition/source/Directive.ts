@@ -3,6 +3,7 @@ import type { Context, OutgoingMessage, Options } from './HTTP/index.js'
 import type { Remotes } from './Remotes.js'
 import type { Host } from './Factory.js'
 import type { Output } from './io.js'
+import type { Introspection } from './Introspection.js'
 import type * as RTD from './RTD/index.js'
 
 export class Directives implements RTD.Directives {
@@ -14,33 +15,65 @@ export class Directives implements RTD.Directives {
   public constructor (sets: RTD.DirectiveSet[]) {
     this.sets = sets
     this.spans = sets.map((set) => ({
-      preflight: options(set, 'preflight'),
-      settle: options(set, 'settle')
+      precall: options(set, 'precall'),
+      settle: options(set, 'settle'),
+      explain: options(set, 'explain')
     }))
   }
 
-  public async preflight (context: Context, parameters: RTD.Parameter[]): Promise<Output> {
+  public declared<T> (family: string): T[] | undefined {
+    return this.sets.find((set) => set.family.name === family)?.directives as T[] | undefined
+  }
+
+  public async precall (context: Context, parameters: RTD.Parameter[]): Promise<Output> {
     let output = null
 
     for (let i = 0; i < this.sets.length; i++) {
       const set = this.sets[i]
 
-      if (set.family.preflight === undefined)
+      if (set.family.precall === undefined)
         continue
 
-      const out = await console.span(this.spans[i].preflight,
-        async () => await set.family.preflight!(set.directives, context, parameters))
+      const out = await console.span(this.spans[i].precall,
+        async () => await set.family.precall!(set.directives, context, parameters))
 
       if (out === null)
         continue
 
       if (output !== null)
-        throw new Error('Multiple preflight directives responded')
+        throw new Error('Multiple precall directives responded')
       else
         output = out
     }
 
     return output
+  }
+
+  /**
+   * What the method says about itself, as its directives leave it. Each family is given
+   * what the one before it returned, and the first to refuse ends it: a method this caller
+   * cannot reach is not described at all.
+   */
+  public async explain (context: Context,
+    introspection: Introspection): Promise<Introspection | null> {
+    let described: Introspection = introspection
+
+    for (let i = 0; i < this.sets.length; i++) {
+      const set = this.sets[i]
+
+      if (set.family.explain === undefined)
+        continue
+
+      const next = await console.span(this.spans[i].explain,
+        async () => await set.family.explain!(set.directives, context, described))
+
+      if (next === null)
+        return null
+
+      described = next
+    }
+
+    return described
   }
 
   public async settle (context: Context, response: OutgoingMessage): Promise<void> {
@@ -65,6 +98,9 @@ export class DirectivesFactory implements RTD.DirectiveFactory {
   private readonly mandatory: string[] = []
   private readonly instances: Directives[] = []
 
+  /** The request-scoped stages, in registration order, with the spans they run in. */
+  private readonly stages: Stage[] = []
+
   // eslint-disable-next-line max-params
   public constructor (families: RTD.DirectiveFamily[], remotes: Remotes, host: Host,
     options: Options) {
@@ -74,9 +110,34 @@ export class DirectivesFactory implements RTD.DirectiveFactory {
 
       if (family.mandatory)
         this.mandatory.push(family.name)
+
+      this.stages.push({
+        family,
+        preflight: { name: `${family.name} preflight` },
+        depart: { name: `${family.name} depart` }
+      })
     }
 
     this.remotes = remotes
+  }
+
+  /**
+   * Request-scoped, before anything is routed, so no directives are passed: a family
+   * answers here only for what it does on its own behalf.
+   */
+  public async preflight (context: Context): Promise<void> {
+    for (const stage of this.stages)
+      if (stage.family.preflight !== undefined)
+        await console.span(stage.preflight,
+          async () => { await stage.family.preflight!(context) })
+  }
+
+  /** Request-scoped, on the message going back. */
+  public async depart (context: Context, response: OutgoingMessage): Promise<void> {
+    for (const stage of this.stages)
+      if (stage.family.depart !== undefined)
+        await console.span(stage.depart,
+          async () => { await stage.family.depart!(context, response) })
   }
 
   public create (declarations: RTD.syntax.Directive[], route: string = ''): Directives {
@@ -146,7 +207,7 @@ export class DirectivesFactory implements RTD.DirectiveFactory {
   }
 }
 
-function options (set: RTD.DirectiveSet, stage: 'preflight' | 'settle'): SpanOptions {
+function options (set: RTD.DirectiveSet, stage: 'precall' | 'settle' | 'explain'): SpanOptions {
   const options: SpanOptions = { name: `${set.family.name} ${stage}` }
 
   if (set.names !== undefined && set.names.length > 0)
@@ -156,8 +217,15 @@ function options (set: RTD.DirectiveSet, stage: 'preflight' | 'settle'): SpanOpt
 }
 
 interface Spans {
-  preflight: SpanOptions
+  precall: SpanOptions
   settle: SpanOptions
+  explain: SpanOptions
+}
+
+interface Stage {
+  family: RTD.DirectiveFamily
+  preflight: SpanOptions
+  depart: SpanOptions
 }
 
 export const shortcuts: RTD.syntax.Shortcuts = new Map([

@@ -61,8 +61,9 @@ export class Incept implements Directive {
       throw new http.UnprocessableEntity(identity)
 
     identity.scheme = scheme
-    identity.roles = []
 
+    // the roles are read where the token is minted: an Identity incepted as the principal
+    // has one already
     return identity
   }
 

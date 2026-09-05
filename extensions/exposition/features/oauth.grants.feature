@@ -17,14 +17,17 @@ Feature: Authorization code flow
         nex: nex.toa.io
       oauth:
         authorize: https://app.nex.toa.io/oauth/authorize
-        resources: ['/mcp/']
+        resources: ['/.mcp']
         registration: open
+      mcp:
+        name: Teapots
       /:
         io:output: true
-        /mcp/**:
+        /pots:
           anyone: true
           GET:
-            dev:stub: Tools
+            mcp:tool: Every pot there is.
+            dev:stub: Kettles and teapots.
       """
     When the following request is received:
       """
@@ -69,14 +72,17 @@ Feature: Authorization code flow
     # nothing yet, and the client is told where to get one
     When the following request is received:
       """
-      GET /mcp/tools/ HTTP/1.1
+      POST /.mcp HTTP/1.1
       host: nex.toa.io
-      accept: text/plain
+      accept: application/yaml
+      content-type: application/json
+
+      {"jsonrpc": "2.0", "id": 1, "method": "tools/list", "params": {}}
       """
     Then the following reply is sent:
       """
       401 Unauthorized
-      www-authenticate: Bearer resource_metadata="https://nex.toa.io/.well-known/oauth-protected-resource/mcp"
+      www-authenticate: Bearer resource_metadata="https://nex.toa.io/.well-known/oauth-protected-resource/.mcp"
       """
     When the following request is received:
       """
@@ -97,16 +103,23 @@ Feature: Authorization code flow
       """
     When the following request is received:
       """
-      GET /mcp/tools/ HTTP/1.1
+      POST /.mcp HTTP/1.1
       host: nex.toa.io
       authorization: Bearer ${{ access_token }}
-      accept: text/plain
+      accept: application/yaml
+      content-type: application/json
+
+      {"jsonrpc": "2.0", "id": 1, "method": "tools/list", "params": {}}
       """
     Then the following reply is sent:
       """
       200 OK
 
-      Tools
+      jsonrpc: '2.0'
+      id: 1
+      result:
+        tools:
+          - name: pots/GET
       """
 
   Scenario: A code is spent once
