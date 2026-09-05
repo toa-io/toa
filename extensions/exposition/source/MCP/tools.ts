@@ -8,42 +8,51 @@ import type { Parameter, Tree } from '../RTD/index.js'
 import type { Params, Result, Tool } from './types.js'
 
 /**
- * Every method this caller may reach that says it is a tool, named as the procedure it is.
+ * Every method this caller may reach, named as the procedure it is.
  *
- * The tree is walked once and each method describes itself, which is where `mcp:tool` says
- * so and where `auth` drops what this caller could only be refused. Sorted, because the
- * revision asks for an order a client can cache on.
+ * Nothing is declared to make a tool, as nothing is declared to make a procedure: what is
+ * exposed as a resource is a tool, and what a caller may do with it is what `auth` says. The
+ * tree is walked once and each method describes itself, which is where that is decided and
+ * where `io` and `map` say what may be sent.
+ *
+ * Sorted, because the revision asks for an order a client can cache on.
  */
 export async function list (tree: Tree, context: http.Context): Promise<Tool[]> {
   const tools: Tool[] = []
 
+  /*
+   * Each method is described as the procedure it would be, not as the request asking. What
+   * refuses a credentialed request at an `anonymous` route does not refuse the call a tool
+   * makes, and a list that says otherwise disagrees with what `tools/call` then does.
+   */
+  const describing: http.Context = Object.create(context,
+    { procedural: { value: true, enumerable: true } })
+
   for (const { segments, verb, method } of tree.walk()) {
     const named = name(segments, verb)
 
+    // a route a name cannot spell is a route nothing addresses, here or at `/.rpc`
     if (named === null)
       continue
 
     const variables = parameters(segments)
-    const introspection = await method.explain(context, variables)
+    const introspection = await method.explain(describing, variables)
 
-    if (introspection?.tool === undefined)
+    if (introspection === null)
       continue
 
-    const tool: Tool = {
-      name: named,
-      description: introspection.tool,
-      inputSchema: input(introspection, variables.map((variable) => variable.name))
-    }
-
+    const described = introspection.description
     const schema = output(introspection)
-
-    if (schema !== undefined)
-      tool.outputSchema = schema
-
     const hints = annotations(verb)
 
-    if (hints !== undefined)
-      tool.annotations = hints
+    // in the order the revision documents one, which is the order it is read in
+    const tool: Tool = {
+      name: named,
+      ...described === undefined ? {} : { description: described },
+      inputSchema: input(introspection, variables.map((variable) => variable.name)),
+      ...schema === undefined ? {} : { outputSchema: schema },
+      ...hints === undefined ? {} : { annotations: hints }
+    }
 
     tools.push(tool)
   }
@@ -59,17 +68,6 @@ export async function call (scope: Scope, named: string, args: Params): Promise<
   const { path, verb, variables } = address(named, args)
   const { query, input: body } = split(args, variables)
   const clone = fork(scope.context, path, verb, query, body)
-
-  // a procedure is not a tool unless it says so, and what is not one is not here to call
-  const match = scope.tree.match(path)
-  const method = match === null ? undefined : match.node.methods[verb]
-
-  const introspection = method === undefined
-    ? null
-    : await method.explain(clone, match!.parameters)
-
-  if (introspection?.tool === undefined)
-    throw new http.NotFound(`'${named}' names no tool`)
 
   try {
     const message = await scope.route(clone)
@@ -87,9 +85,8 @@ export async function call (scope: Scope, named: string, args: Params): Promise<
   }
 }
 
-/** Everything a call needs that is not the call: the tree it is in, and what answers it. */
+/** Everything a call needs that is not the call: the request it is of, and what answers it. */
 export interface Scope {
-  tree: Tree
   context: http.Context
   route: http.Processor
 }

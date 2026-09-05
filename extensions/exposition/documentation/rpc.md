@@ -130,6 +130,10 @@ A procedure is authorized as the resource is, against the path and the verb its 
 A token restricted to `/pots/:id/` for `GET` authorizes `pots/_id/GET` and nothing else,
 whichever way the call arrives.
 
+[`anonymous`](access.md#anonymous) is the one directive that reads a call differently from a
+request: it admits one whatever the request presented, because what refuses a credentialed request
+is that the reply would not be cacheable, and what a call answers is not a reply.
+
 ## What has no procedure
 
 `map:buffer` reads the request, and a call is not the request. A resource that declares it

@@ -56,7 +56,9 @@ export interface Content {
 
 export interface Tool {
   name: string
-  description: string
+
+  /** what the operation states it is; absent where it states nothing */
+  description?: string
   inputSchema: object
   outputSchema?: object
   annotations?: Annotations

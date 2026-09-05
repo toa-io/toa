@@ -24,6 +24,12 @@ responds with an authorization error.
 
 Grants access if its value is `true` and no credentials were provided[^1].
 
+A [procedure](rpc.md) is the exception: it grants access whatever the request presented. The rule
+is about a cacheable reply, and what a procedure answers is not one — it is a value in an envelope
+the gateway answers `no-store`, and the procedure's own headers are discarded. So a request that
+carries a credential reaches an `anonymous` route through `/.rpc` and `/.mcp`, where the same
+request would be refused at the route itself.
+
 [^1]: Credentials in the request make the
 response [non-cacheable](https://datatracker.ietf.org/doc/html/rfc7234#section-3).
 

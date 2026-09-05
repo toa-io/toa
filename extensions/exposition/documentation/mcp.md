@@ -27,24 +27,17 @@ fixed: one an application could choose is one it could collide with a route of i
 
 ## What a tool is
 
-A tool is an RTD method that says it is one, named as the [procedure](rpc.md#the-name) it is.
+A tool is an RTD method, named as the [procedure](rpc.md#the-name) it is. Nothing is declared to
+make one, as nothing is declared to make a procedure: what is exposed as a resource is a tool, and
+what a caller may do with it is what [`auth`](access.md) says.
 
-```yaml
-/pots:
-  GET:
-    endpoint: enumerate
-    mcp:tool: true
-  /hot:
-    GET:
-      endpoint: enumerate
-      query: { criteria: state==hot }
-      mcp:tool: Only the pots that are hot.
-```
+`tools/list` answers every method this caller may reach — a method whose directives refuse them is
+not listed, and a route with [no name](rpc.md#what-has-a-name) is not either.
 
-`true` takes the operation's own [`description`](/documentation/component/declaration.md). A string
-replaces it, for one operation mounted twice where the route is what makes the two different. A
-method whose operation describes itself and which gives no description of its own is refused where
-the tree is built, and so is one on a route that has no name.
+A tool's `description` is the operation's own, where it
+[states one](/documentation/component/declaration.md); a tool that states none is still a tool, and
+a model has only its name and its schemas to go on. So an application that means a method to be
+used by a model says what the operation does.
 
 `annotations` are read from the verb: `GET` and `HEAD` are `readOnlyHint`, `DELETE` is
 `destructiveHint`, `PUT` and `DELETE` are `idempotentHint`.
@@ -130,10 +123,10 @@ where the flow starts. A call the identity is not authorized to make is `403` wi
 `error="insufficient_scope"`. Each tool is authorized as the resource it is, against the path and
 the verb its name states.
 
-So a route that is [`anonymous`](access.md#anonymous) and nothing else is no tool: `anonymous`
-admits a caller who presents no credential, and only such a caller, while a client here always
-presents one. Such a method answers `403` and is not listed at all. A tool states who may reach it
-holding a credential — [`anyone`](access.md#anyone), a role, or a rule.
+A route that is [`anonymous`](access.md#anonymous) is reached here whatever the client presented:
+the rule that refuses a credentialed request is about a cacheable reply, and what a tool answers is
+not one. So a resource that is public over HTTP is a public tool, and nothing in a manifest has to
+say it twice.
 
 ## What refuses
 

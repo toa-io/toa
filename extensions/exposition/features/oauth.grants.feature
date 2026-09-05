@@ -27,7 +27,6 @@ Feature: Authorization code flow
           anyone: true
           GET:
             dev:stub: Kettles and teapots.
-            mcp:tool: What there is to brew in.
       """
     When the following request is received:
       """
@@ -120,7 +119,6 @@ Feature: Authorization code flow
       result:
         tools:
           - name: pots/GET
-            description: What there is to brew in.
       """
 
   Scenario: A code is spent once

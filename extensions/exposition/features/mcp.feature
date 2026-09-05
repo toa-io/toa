@@ -1,8 +1,9 @@
 @security
 Feature: Model Context Protocol
 
-  A tool is a procedure a method says it is. It is called as that method, under the same
-  directives, and what it takes and answers is what the method says of itself.
+  A tool is a procedure. Nothing is declared to make one, as nothing is declared to make a
+  procedure: what is exposed as a resource is a tool, what it takes and answers is what the
+  method says of itself, and what a caller may do with it is what `auth` says.
 
   Two revisions are answered from one endpoint that remembers nothing between requests: the
   modern one, where every request carries its own version and capabilities, and the one
@@ -22,18 +23,14 @@ Feature: Model Context Protocol
       exposition:
         /:
           io:output: [id, title, volume]
-          GET:
-            endpoint: enumerate
-            mcp:tool: true
-          POST:
-            endpoint: create
-            mcp:tool: true
+          GET: enumerate
+          POST: create
           /:id:
+            GET: observe
+          /guarded:
+            isolated: true
             GET:
-              endpoint: observe
-              mcp:tool: One pot, by the id it was given.
-          /quiet:
-            GET:
+              auth:role: admin
               endpoint: enumerate
       """
     And the `pots` database contains:
@@ -117,7 +114,7 @@ Feature: Model Context Protocol
       """
 
   Scenario: What the tools are
-    A method that does not say it is a tool is not one, whatever else it is.
+    Every method the caller may reach, and the ones they may not are not there.
 
     When the following request is received:
       """
@@ -173,7 +170,6 @@ Feature: Model Context Protocol
                 - volume
               additionalProperties: false
           - name: pots/_id/GET
-            description: One pot, by the id it was given.
             inputSchema:
               type: object
               properties:
@@ -185,7 +181,41 @@ Feature: Model Context Protocol
       """
     And the reply does not contain:
       """
-      pots/quiet/GET
+      pots/guarded/GET
+      """
+
+  Scenario: A credential does not hide an anonymous tool
+    A client here always presents one, and what refuses a credentialed request at an
+    `anonymous` route is that the reply would not be cacheable — which a tool's is not.
+
+    # developer:secret
+    Given the `identity.basic` database contains:
+      | _id                              | authority | username  | password                                                     |
+      | efe3a65ebbee47ed95a73edd911ea328 | nex       | developer | $2b$10$ZRSKkgZoGnrcTNA5w5eCcu3pxDzdTduhteVYXcp56AaNcilNkwJ.O |
+    And the `identity.bans` database is empty
+    When the following request is received:
+      """
+      POST /.mcp HTTP/1.1
+      host: nex.toa.io
+      authorization: Basic ZGV2ZWxvcGVyOnNlY3JldA==
+      accept: application/yaml
+      content-type: application/json
+      mcp-protocol-version: 2026-07-28
+      mcp-method: tools/list
+
+      {"jsonrpc": "2.0", "id": 20, "method": "tools/list",
+       "params": {"_meta": {"io.modelcontextprotocol/protocolVersion": "2026-07-28",
+                            "io.modelcontextprotocol/clientCapabilities": {}}}}
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+
+      jsonrpc: '2.0'
+      id: 20
+      result:
+        tools:
+          - name: pots/GET
       """
 
   Scenario: A tool takes what the procedure takes
@@ -246,9 +276,7 @@ Feature: Model Context Protocol
           id:
       """
 
-  Scenario: A name that is no tool
-    A procedure that does not say it is a tool is not reachable here, and neither is one
-    that is no procedure at all.
+  Scenario: A name nothing answers to
 
     When the following request is received:
       """
@@ -258,10 +286,10 @@ Feature: Model Context Protocol
       content-type: application/json
       mcp-protocol-version: 2026-07-28
       mcp-method: tools/call
-      mcp-name: pots/quiet/GET
+      mcp-name: kettles/GET
 
       {"jsonrpc": "2.0", "id": 5, "method": "tools/call",
-       "params": {"name": "pots/quiet/GET", "arguments": {},
+       "params": {"name": "kettles/GET", "arguments": {},
                   "_meta": {"io.modelcontextprotocol/protocolVersion": "2026-07-28",
                             "io.modelcontextprotocol/clientCapabilities": {}}}}
       """
@@ -394,7 +422,6 @@ Feature: Model Context Protocol
           io:output: true
           GET:
             endpoint: error
-            mcp:tool: Refuses, so that what it refuses with can be read.
       """
     When the following request is received:
       """
@@ -436,7 +463,6 @@ Feature: Model Context Protocol
           io:output: true
           GET:
             endpoint: echo
-            mcp:tool: Answers with what it was given.
       """
     When the following request is received:
       """

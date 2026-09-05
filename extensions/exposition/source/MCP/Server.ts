@@ -61,7 +61,7 @@ export class Server {
     if (modern)
       this.mirrored(context, message)
 
-    const result = await this.answer({ tree: this.tree, context, route }, message, modern)
+    const result = await this.answer({ context, route }, message, modern)
 
     // a notification is answered by not answering, and there is nothing here to remember
     if (message.id === undefined)

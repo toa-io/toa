@@ -2,9 +2,6 @@ import type { Remote } from '@toa.io/core'
 
 export interface Introspection {
   description?: string
-
-  /** how a model is told what this does, where the method is offered to one as a tool */
-  tool?: string
   route?: Record<string, Schema>
   query?: Record<string, Schema>
 
@@ -37,8 +34,7 @@ export function order (introspection: Introspection): Introspection {
   return ordered
 }
 
-const KEYS =
-  ['description', 'tool', 'route', 'query', 'headers', 'input', 'output', 'errors'] as const
+const KEYS = ['description', 'route', 'query', 'headers', 'input', 'output', 'errors'] as const
 
 /**
  * The schema of one input property, taken out of it: a property another family fills is

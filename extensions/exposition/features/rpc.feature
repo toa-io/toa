@@ -135,6 +135,46 @@ Feature: JSON-RPC
         code: -32601
       """
 
+  Scenario: A credential does not refuse an anonymous procedure
+    What refuses a credentialed request at an `anonymous` route is that the reply would not
+    be cacheable, and what a procedure answers is not a reply.
+
+    # developer:secret
+    Given the `identity.basic` database contains:
+      | _id                              | authority | username  | password                                                     |
+      | efe3a65ebbee47ed95a73edd911ea328 | nex       | developer | $2b$10$ZRSKkgZoGnrcTNA5w5eCcu3pxDzdTduhteVYXcp56AaNcilNkwJ.O |
+    And the `identity.bans` database is empty
+    When the following request is received:
+      """
+      GET /pots/ HTTP/1.1
+      host: nex.toa.io
+      authorization: Basic ZGV2ZWxvcGVyOnNlY3JldA==
+      accept: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      403 Forbidden
+      """
+    When the following request is received:
+      """
+      POST /.rpc HTTP/1.1
+      host: nex.toa.io
+      authorization: Basic ZGV2ZWxvcGVyOnNlY3JldA==
+      accept: application/yaml
+      content-type: application/json
+
+      {"jsonrpc": "2.0", "id": 17, "method": "pots/GET", "params": {}}
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+
+      jsonrpc: '2.0'
+      id: 17
+      result:
+        - id: 4c4759e6f9c74da989d64511df42d6f4
+      """
+
   Scenario: A route no name can spell
     A segment holding a `.` or a `_` has no name, so nothing addresses it — the resource
     itself is served over HTTP as it always was.
