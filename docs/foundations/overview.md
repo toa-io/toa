@@ -285,15 +285,12 @@ exposition:
 ```
 
 The gateway discovers the declaration and maps `PATCH /orders/:id` to `orders.approve`.
-Declare authorization for the resource as well: a route without a granting policy denies access.
 Authentication, authorization, caching, and input/output mapping surround the same logical
-component contract. Credentials travel in the `authorization` header, not cookies.
+component contract.
 
 The gateway can also expose these resources through [JSON-RPC](../../extensions/exposition/documentation/rpc.md)
-at `/.rpc` and publish selected methods as [MCP tools](../../extensions/exposition/documentation/mcp.md)
-at `/.mcp`. Both require Context annotations; a method becomes a tool only when it declares
-`mcp:tool` with a description. The [OAuth authorization server](../../extensions/exposition/documentation/oauth.md)
-can authorize clients; the application supplies the page where a user signs in and gives consent.
+and [MCP](../../extensions/exposition/documentation/mcp.md), with
+[OAuth](../../extensions/exposition/documentation/oauth.md) support for authorizing clients.
 
 Like a composition boundary, the HTTP boundary is supplied by the runtime. It does not become part
 of the operation.
@@ -306,21 +303,7 @@ extension collects that topology and presents it as a graph.
 
 Its nodes describe components and their declared entities, operations, events, receivers, and
 extension surfaces. Its edges combine declared event relations with calls observed between
-components and services at runtime. Optional call samples can capture inputs and outcomes;
-sampling is off by default and can be prohibited by an individual component.
-
-Introspection is enabled by default. It publishes a protected HTTP API and, unless disabled, a web
-UI at `/.introspection/`; both rely on Exposition. The page is public, but its data requires
-the `system:introspection` role. A Context without Exposition must disable Introspection.
-A Context can tune collection or turn it off:
-
-```yaml
-# context.toa.yaml
-introspection:
-  samples: false
-  interval: 300
-  ui: true
-```
+components and services at runtime. The graph is available through a web UI and an API.
 
 This does not weaken component boundaries. Introspection observes declarations and runtime
 communication from the platform side; business operations do not acquire discovery or telemetry
