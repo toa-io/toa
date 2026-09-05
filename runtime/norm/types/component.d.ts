@@ -36,10 +36,17 @@ type Receiver = {
   source?: string
 }
 
+type Migration = {
+  id: string
+  steps: unknown[]
+}
+
 type Entity = {
   schema: Object
   storage?: string
   associated?: boolean
+  custom?: boolean
+  migrations?: Migration[]
 }
 
 type Declaration = {

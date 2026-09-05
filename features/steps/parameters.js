@@ -42,10 +42,4 @@ defineParameterType({
   transformer: (artifact) => artifact
 })
 
-defineParameterType({
-  name: 'storage',
-  regexp: /PostgreSQL/,
-  transformer: (name) => name
-})
-
 setDefaultTimeout(5 * 60 * 1000)

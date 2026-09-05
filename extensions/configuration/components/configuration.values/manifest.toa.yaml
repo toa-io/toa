@@ -24,11 +24,6 @@ entity:
       - epoch
       - configuration
       - originator
-  index:
-    lookup:
-      component: asc
-      epoch: asc
-      CREATED: desc
 
 operations:
   # the latest configuration of a component: created, else deployed defaults, else none

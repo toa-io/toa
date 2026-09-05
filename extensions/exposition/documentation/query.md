@@ -151,7 +151,9 @@ rank: 5
 
 ## Text search
 
-For entities with `text` indexes, search queries can be enabled using the `search` property.
+For entities with `text` indexes — declared in a
+[migration](/documentation/component/declaration.md#migrations) — search queries can be enabled
+using the `search` property.
 
 ```yaml
 # manifest.toa.yaml

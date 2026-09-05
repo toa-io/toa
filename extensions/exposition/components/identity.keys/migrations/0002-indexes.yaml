@@ -1,0 +1,4 @@
+- index:
+    name: index_identity
+    keys:
+      identity: asc

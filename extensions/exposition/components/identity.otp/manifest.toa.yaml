@@ -21,10 +21,6 @@ entity:
     required:
       - authority
       - username
-  index:
-    username:
-      authority: asc
-      username: asc
 
 operations:
   issue:

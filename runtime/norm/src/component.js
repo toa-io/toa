@@ -5,7 +5,7 @@ import { yaml as jsyaml } from '@toa.io/generic'
 import { find } from '@toa.io/generic'
 import { Locator } from '@toa.io/core'
 
-import { expand, merge, validate, collapse, dereference, defaults, normalize, extensions } from './.component/index.js'
+import { expand, merge, migrations, validate, collapse, dereference, defaults, normalize, extensions } from './.component/index.js'
 
 export const component = async (path) => {
   const manifest = await load(path)
@@ -31,6 +31,7 @@ const load = async (path, base, proto = false) => {
   await expand(manifest)
 
   await merge(path, manifest)
+  await migrations(path, manifest)
 
   if (manifest.prototype !== null) {
     const prototype = await load(manifest.prototype, path, true)

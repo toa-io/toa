@@ -40,9 +40,6 @@ entity:
     required:
       - authority
       - uris
-  index:
-    authority:
-      authority: asc
 
 operations:
   transit:

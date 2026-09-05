@@ -16,8 +16,6 @@ entity:
     required:
       - identity
       - role
-  unique:
-    role: [identity, role]
 
 operations:
   grant:

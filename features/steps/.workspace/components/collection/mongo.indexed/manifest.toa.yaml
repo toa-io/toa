@@ -18,15 +18,6 @@ entity:
     required:
       - name
       - email
-  unique:
-    email: [email]
-    optional: [tag]
-  index:
-    some:
-      birthday: desc
-      weight: asc
-    some_other:
-      name: hash
 
 operations:
   transit:

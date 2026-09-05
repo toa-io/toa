@@ -229,6 +229,10 @@ Component at '/app/components/orders' has more than one operations/create: creat
 A file in `operations` is an operation, so shared code lives somewhere the bridge does not read —
 a `lib` beside them, not among them.
 
+`migrations` is not one of those directories: it holds what a component's storage is to make of
+its structure, read by the runtime rather than by a bridge, and written as YAML or JSON. See
+[Migrations](/documentation/component/declaration.md#migrations).
+
 ### What a package ships is transpiled
 
 Node does not erase types under `node_modules`. A component an application writes is read from

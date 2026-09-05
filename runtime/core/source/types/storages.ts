@@ -89,6 +89,13 @@ export interface Storage extends Connector {
    * in front of it, which is the defect the outbox exists to close.
    */
   readonly outbox?: Outbox
+
+  /**
+   * Whether this storage applies `entity.migrations`. Absent is what a storage that does not
+   * says, and a component declaring migrations against one is refused at boot rather than
+   * starting with a structure nothing has made.
+   */
+  readonly migrates?: boolean
 }
 
 /**
@@ -99,8 +106,14 @@ export interface Entity {
   schema: object
   associated?: boolean
   custom?: boolean
-  unique?: { [name: string]: string[] }
-  index?: { [name: string]: { [property: string]: string } }
+  /** in the order they are applied; what a step is belongs to the storage that reads it */
+  migrations?: Migration[]
+}
+
+/** One file of a component's `migrations` directory, named after it. */
+export interface Migration {
+  id: string
+  steps: unknown[]
 }
 
 export interface StorageOptions {

@@ -1,0 +1,5 @@
+- index:
+    name: index_identity
+    keys:
+      authority: asc
+      identity: asc

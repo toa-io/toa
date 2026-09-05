@@ -1,0 +1,11 @@
+- index:
+    name: index_list
+    keys:
+      authority: asc
+      identity: asc
+      CREATED: desc
+- index:
+    name: index_key
+    keys:
+      authority: asc
+      kid: asc

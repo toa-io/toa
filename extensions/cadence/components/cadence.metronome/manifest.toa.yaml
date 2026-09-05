@@ -30,10 +30,6 @@ entity:
       - due
       - expires
       - endpoint
-  index:
-    due:
-      lane: asc
-      due: asc
 
 # `enumerate` reads what is due and `terminate` cancels one; both come from the prototype.
 operations:

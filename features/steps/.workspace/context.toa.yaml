@@ -19,11 +19,6 @@ mongodb@docker: mongodb://host.docker.internal
 mongodb@broken-runtime: mongodb://host.docker.internal
 mongodb@broken-build: mongodb://host.docker.internal
 
-sql: pg://localhost/developer
-sql@docker: pg://host.docker.internal/developer
-sql@broken-runtime: pg://host.docker.internal/developer
-sql@broken-build: pg://host.docker.internal/developer
-
 stash: redis://localhost
 stash@docker: redis://host.docker.internal
 stash@broken-runtime: redis://host.docker.internal
