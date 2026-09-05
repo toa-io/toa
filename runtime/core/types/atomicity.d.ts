@@ -23,6 +23,20 @@ declare namespace toa.core {
       slots (total: number): number[] | null
 
       /**
+       * Calls `listener` with the assignment this replica holds, and again whenever it
+       * changes — one arrived, was lost, or the group resized. Answers with what removes the
+       * listener again.
+       *
+       * A change and not a heartbeat: a group that stays as it is never calls back. It is
+       * called once as it is added, with the claim as it stands.
+       *
+       * What `slots` cannot say. Reading serves a consumer that asks often, where a stale
+       * answer costs it one cycle; a consumer that asks rarely has to be told, or it samples
+       * the one moment a rollout was passing through and stands down for a whole cycle.
+       */
+      onassigned (listener: (assignment: Assignment | null) => void): () => void
+
+      /**
        * Debt the group has run up under each key, in milliseconds. Every call adds its own
        * deltas and reads back where the group stands, so a replica reports what it alone has
        * spent and still decides on what all of them have.
@@ -45,6 +59,12 @@ declare namespace toa.core {
         routine: (signal: AbortSignal, context: unknown) => Promise<T>): Promise<T>
     }
 
+    /** Which of the group this replica is, and how many of them there are. */
+    interface Assignment {
+      i: number
+      n: number
+    }
+
     interface Factory {
       /** @param group what the replicas deciding together have in common */
       atom (group: string, options?: object): Atom
@@ -55,4 +75,5 @@ declare namespace toa.core {
 }
 
 export type Atom = toa.core.atomicity.Atom
+export type Assignment = toa.core.atomicity.Assignment
 export type Factory = toa.core.atomicity.Factory

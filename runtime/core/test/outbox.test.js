@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 
 import { Outbox } from '../src/outbox/index.js'
 
-let emission, storage, atom, outbox
+let emission, storage, atom, outbox, listeners
 
 const BATCH = 4
 
@@ -28,13 +28,29 @@ beforeEach(() => {
     }
   }
 
-  atom = { slots: mock.fn(() => [0]), link: mock.fn() }
+  listeners = []
+
+  atom = {
+    slots: mock.fn(() => [0]),
+    onassigned: (listener) => {
+      listeners.push(listener)
+      listener({ i: 0, n: 1 })
+
+      return () => { listeners = listeners.filter((one) => one !== listener) }
+    },
+    link: mock.fn()
+  }
   outbox = new Outbox(emission, storage, atom, { interval: 1000, batch: BATCH })
 })
 
 afterEach(() => {
   mock.timers.reset()
 })
+
+/** everything the current turn awaited, without moving the clock */
+const settled = async () => {
+  for (let i = 0; i < 20; i++) await Promise.resolve()
+}
 
 /** one cycle, and everything it awaited */
 const cycle = async () => {
@@ -119,3 +135,34 @@ function resetCalls (target = [assert, BATCH, page, cycle], seen = new Set()) {
     if (typeof value === 'function' && value.mock !== undefined) value.mock.resetCalls()
     else resetCalls(value, seen)
 }
+
+it('should read as soon as a claim arrives, rather than on its next cycle', async () => {
+  atom.slots.mock.mockImplementation(() => null)
+
+  await outbox.open()
+  await settled()
+
+  assert.strictEqual(storage.outbox.pending.mock.callCount(), 0, 'nothing is owned yet')
+
+  atom.slots.mock.mockImplementation(() => [0])
+
+  for (const listener of listeners) listener({ i: 0, n: 1 })
+
+  await settled()
+
+  assert.strictEqual(storage.outbox.pending.mock.callCount(), 1,
+    'the lane is its own now, and the cycle is up to five seconds away')
+})
+
+it('should read the lanes it inherits when the group resizes', async () => {
+  await outbox.open()
+  await settled()
+
+  const before = storage.outbox.pending.mock.callCount()
+
+  for (const listener of listeners) listener({ i: 0, n: 2 })
+
+  await settled()
+
+  assert.strictEqual(storage.outbox.pending.mock.callCount(), before + 1)
+})
