@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.284](https://github.com/toa-io/toa/compare/v1.0.0-alpha.283...v1.0.0-alpha.284) (2026-09-05)
+
+### Bug Fixes
+
+* **build:** an operations directory holds modules and nothing else ([21a8ca1](https://github.com/toa-io/toa/commit/21a8ca19f1c45aef6cbb443ada0a909d325e76e8))
+
+### Features
+
+* **cadence:** calls a component makes to itself, and calls it puts off ([8bbde5f](https://github.com/toa-io/toa/commit/8bbde5fc89e8e5549d5aa2bfcddb1beec0871565))
+
+
 # [1.0.0-alpha.283](https://github.com/toa-io/toa/compare/v1.0.0-alpha.282...v1.0.0-alpha.283) (2026-09-04)
 
 ### Bug Fixes

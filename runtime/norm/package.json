@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/norm",
-  "version": "1.0.0-alpha.283",
+  "version": "1.0.0-alpha.284",
   "type": "module",
   "description": "Toa declarations normalization and validation",
   "author": "temich <tema.gurtovoy@gmail.com>",
@@ -21,7 +21,7 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@toa.io/core": "1.0.0-alpha.283",
+    "@toa.io/core": "1.0.0-alpha.284",
     "@toa.io/generic": "1.0.0-alpha.283",
     "@toa.io/schemas": "1.0.0-alpha.283",
     "fast-glob": "3.3.3",

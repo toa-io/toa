@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/boot",
-  "version": "1.0.0-alpha.283",
+  "version": "1.0.0-alpha.284",
   "type": "module",
   "description": "Toa Boot",
   "author": "temich <tema.gurtovoy@gmail.com>",
@@ -21,10 +21,10 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@toa.io/atomicity": "1.0.0-alpha.283",
-    "@toa.io/core": "1.0.0-alpha.283",
+    "@toa.io/atomicity": "1.0.0-alpha.284",
+    "@toa.io/core": "1.0.0-alpha.284",
     "@toa.io/generic": "1.0.0-alpha.283",
-    "@toa.io/norm": "1.0.0-alpha.283",
+    "@toa.io/norm": "1.0.0-alpha.284",
     "@toa.io/schemas": "1.0.0-alpha.283",
     "clone-deep": "4.0.1",
     "dotenv": "17.4.2",
