@@ -12,6 +12,13 @@
 
 ## Introduction
 
+The runtime aims to make complicated things simple. Every choice exposed to users requires them to
+understand the problem behind it, adding complexity even when the choice itself looks small. The
+runtime therefore makes some decisions on their behalf, including cases where several options are
+reasonable and none is clearly superior. These decisions are not necessarily the only correct ones;
+making them is part of the runtime's responsibility to keep that complexity from becoming the user's
+responsibility.
+
 ## Operations
 
 Operations are execution units, a fundamental building block of the distributed system. Operation's
