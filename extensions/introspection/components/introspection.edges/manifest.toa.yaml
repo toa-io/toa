@@ -7,7 +7,7 @@ name: edges
 # actually happened.
 #
 # Every replica of a component derives the same id for the same edge, so `merge` is
-# an upsert and `_updated` shows when the edge was last observed.
+# an upsert and `UPDATED` shows when the edge was last observed.
 
 entity:
   associated: true

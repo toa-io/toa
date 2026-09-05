@@ -80,7 +80,7 @@ export class Entity {
   }
 
   #blank (id: string): void {
-    this.set({ id, _version: 0 }, OPTIONAL)
+    this.set({ id, VERSION: 0 }, OPTIONAL)
   }
 
   #guard (value: Record): void {
@@ -95,13 +95,13 @@ export class Entity {
     }
   }
 
-  // deletion is only expressed as a new _deleted timestamp,
+  // deletion is only expressed as a new DELETED timestamp,
   // so committing over a tombstone without touching it means revival
   #revive (value: Record): void {
-    if (this.#origin?._deleted == null || value._deleted !== this.#origin._deleted)
+    if (this.#origin?.DELETED == null || value.DELETED !== this.#origin.DELETED)
       return
 
-    value._deleted = null
+    value.DELETED = null
     this.deleted = false
   }
 
@@ -114,17 +114,17 @@ export class Entity {
         value: {}
       })
 
-    if (!('_created' in value)) {
-      value._created = Date.now()
-      value._updated ??= value._created
+    if (!('CREATED' in value)) {
+      value.CREATED = Date.now()
+      value.UPDATED ??= value.CREATED
     }
 
-    if ('_deleted' in value && value._deleted !== null)
+    if ('DELETED' in value && value.DELETED !== null)
       this.deleted = true
 
     if (this.#state !== undefined) {
-      value._updated = Date.now()
-      value._version++
+      value.UPDATED = Date.now()
+      value.VERSION++
     }
 
     this.#state = value

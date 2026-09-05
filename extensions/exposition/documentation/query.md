@@ -274,7 +274,7 @@ GET /dummies/?foo=0&bar=baz
 
 ## Optimistic concurrency control
 
-If an operation returns an object with `_version` property,
+If an operation returns an object with `VERSION` property,
 then its value is passed as the value of
 the [`etag` header](https://datatracker.ietf.org/doc/html/rfc7232#section-2.3) in the response
 (and removed from the object).

@@ -35,7 +35,7 @@ describe('read-only', () => {
   })
 
   it('should still report a tombstone', () => {
-    const record = { ...fixtures.state(), _deleted: Date.now() }
+    const record = { ...fixtures.state(), DELETED: Date.now() }
     const entity = new Entity(fixtures.schema, record, undefined, false)
 
     assert.strictEqual(entity.deleted, true)
@@ -49,7 +49,7 @@ describe('read-only', () => {
 })
 
 describe('tombstone', () => {
-  it('should lift tombstone when transition leaves _deleted untouched', () => {
+  it('should lift tombstone when transition leaves DELETED untouched', () => {
     const origin = fixtures.state()
     const entity = new Entity(fixtures.schema, origin)
     const state = entity.get()
@@ -57,21 +57,21 @@ describe('tombstone', () => {
     state.foo = 'revived'
     entity.set(state)
 
-    assert.strictEqual(entity.get()._deleted, null)
+    assert.strictEqual(entity.get().DELETED, null)
     assert.strictEqual(entity.deleted, false)
-    assert.strictEqual(entity.event().state._deleted, null)
+    assert.strictEqual(entity.event().state.DELETED, null)
   })
 
   it('should keep tombstone written by transition', () => {
-    const origin = { ...fixtures.state(), _deleted: null }
+    const origin = { ...fixtures.state(), DELETED: null }
     const entity = new Entity(fixtures.schema, origin)
     const state = entity.get()
     const timestamp = Date.now()
 
-    state._deleted = timestamp
+    state.DELETED = timestamp
     entity.set(state)
 
-    assert.strictEqual(entity.get()._deleted, timestamp)
+    assert.strictEqual(entity.get().DELETED, timestamp)
     assert.strictEqual(entity.deleted, true)
   })
 })
@@ -88,7 +88,7 @@ it('should provide event', () => {
 
   assert.partialDeepStrictEqual(event, { state, origin })
   assert.strictEqual(event.state.foo, 'new value')
-  assert.strictEqual(event.state._version, 1)
+  assert.strictEqual(event.state.VERSION, 1)
   assert.notStrictEqual(event.origin.foo, 'new value')
 })
 

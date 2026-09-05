@@ -7,7 +7,7 @@ export interface Entity {
   logo?: string
   scope?: string
   expires?: number
-  _created?: number
+  CREATED?: number
 }
 
 /** What a client says about itself, in the shape both mechanisms carry it. */

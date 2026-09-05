@@ -12,15 +12,15 @@ entity:
       id:
         type: string
         pattern: ^[a-fA-F0-9]{32}$
-      _version:
+      VERSION:
         type: integer
         minimum: 0
         default: 0
-      _created:
+      CREATED:
         type: integer
-      _updated:
+      UPDATED:
         type: integer
-      _deleted:
+      DELETED:
         type: integer
         nullable: true
         default: null

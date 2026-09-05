@@ -9,10 +9,10 @@ export interface Node {
   events: Event[]
   receivers: Receiver[]
   extensions: string[]
-  _created: number
-  _updated: number
-  _version: number
-  _deleted?: number | null
+  CREATED: number
+  UPDATED: number
+  VERSION: number
+  DELETED?: number | null
 }
 
 export interface Entity {

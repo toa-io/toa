@@ -19,7 +19,7 @@ it('aggregates only public credential properties', async () => {
             id: 'federation',
             iss: 'https://accounts.google.com',
             sub: 'secret-subject',
-            _created: 1
+            CREATED: 1
           }])
         },
         passkeys: {
@@ -28,7 +28,7 @@ it('aggregates only public credential properties', async () => {
             aid: 'aaguid',
             synced: true,
             label: 'Phone',
-            _created: 2,
+            CREATED: 2,
             key: 'public-key',
             counter: 10
           }])
@@ -41,8 +41,8 @@ it('aggregates only public credential properties', async () => {
 
   await assert.deepStrictEqual(await operation.execute(input), {
     basic: { username: 'user@example.com' },
-    federation: [{ id: 'federation', iss: 'https://accounts.google.com', _created: 1 }],
-    passkeys: [{ id: 'passkey', aid: 'aaguid', synced: true, label: 'Phone', _created: 2 }]
+    federation: [{ id: 'federation', iss: 'https://accounts.google.com', CREATED: 1 }],
+    passkeys: [{ id: 'passkey', aid: 'aaguid', synced: true, label: 'Phone', CREATED: 2 }]
   })
 
   assert.ok(context.remote.identity.basic.info.mock.calls.some((call: any) => call.arguments.length === 1 && isDeepStrictEqual(call.arguments[0], { input })))

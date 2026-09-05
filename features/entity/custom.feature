@@ -2,7 +2,7 @@ Feature: Custom Entity id
 
   Background:
     Given the `custom.id` database contains:
-      | _id | value | _version |
+      | _id | value | VERSION |
 
   Scenario: Getting a default value
     Given I compose `custom.id` component
@@ -15,7 +15,7 @@ Feature: Custom Entity id
       """yaml
       id: 1
       value: hello
-      _version: 0
+      VERSION: 0
       """
 
   Scenario: Creating an Entity instance with custom id
@@ -40,5 +40,5 @@ Feature: Custom Entity id
       """yaml
       id: 2
       value: bye
-      _version: 1
+      VERSION: 1
       """

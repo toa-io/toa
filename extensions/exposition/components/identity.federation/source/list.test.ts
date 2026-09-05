@@ -5,7 +5,7 @@ import { isDeepStrictEqual } from 'node:util'
 import { computation } from './list.js'
 
 it('lists indexed credentials', async () => {
-  const current = { id: 'credential', authority: 'nex', identity: 'identity', iss: 'apple', sub: '1', _created: 2 }
+  const current = { id: 'credential', authority: 'nex', identity: 'identity', iss: 'apple', sub: '1', CREATED: 2 }
 
   const context = {
     local: {
@@ -18,7 +18,7 @@ it('lists indexed credentials', async () => {
     query: {
       criteria: 'authority=="nex";identity=="identity"',
       projection: ['iss'],
-      sort: ['_created:desc'],
+      sort: ['CREATED:desc'],
       limit: 100
     }
   })))

@@ -164,7 +164,7 @@ Feature: Transition
       
   Scenario: Objects scope transition
     Given the `mongo.associated` database contains:
-      | _id | foo | bar | _version |
+      | _id | foo | bar | VERSION |
     And I compose `mongo.associated` component
     When I call `mongo.associated.increment` with:
       """yaml

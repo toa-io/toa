@@ -33,7 +33,7 @@ it('should depend on connection', () => {
 describe('store', () => {
   it('should insert new entity', async () => {
     /** @type {import('@toa.io/core/types').storages.Record} */
-    const entity = { id: newid(), _version: 1, foo: random(), bar: generate() }
+    const entity = { id: newid(), VERSION: 1, foo: random(), bar: generate() }
 
     const result = await storage.store(entity)
 
@@ -43,11 +43,11 @@ describe('store', () => {
 
   it('should update existing entity', async () => {
     /** @type {import('@toa.io/core/types').storages.Record} */
-    const entity = { id: newid(), _version: 2, foo: random(), bar: generate() }
+    const entity = { id: newid(), VERSION: 2, foo: random(), bar: generate() }
 
     const result = await storage.store(entity)
 
-    const criteria = { id: entity.id, _version: entity._version - 1 }
+    const criteria = { id: entity.id, VERSION: entity.VERSION - 1 }
 
     assert.ok(client.update.mock.calls.some((call) => call.arguments.length === 2 && isDeepStrictEqual(call.arguments[0], criteria) && isDeepStrictEqual(call.arguments[1], entity)))
     assert.deepStrictEqual(result, false)

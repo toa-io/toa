@@ -187,7 +187,7 @@ export class Client extends Connector {
     if (listeners === undefined)
       return
 
-    const value: Value = { configuration: created.configuration, created: created._created }
+    const value: Value = { configuration: created.configuration, created: created.CREATED }
 
     for (const listener of listeners)
       listener(value)
@@ -247,7 +247,7 @@ export interface Created {
   component: string
   epoch: string
   configuration: object
-  _created: number
+  CREATED: number
 }
 
 export type Listener = (value: Value) => void

@@ -61,7 +61,7 @@ export class Storage extends Connector {
     // identity lookups must return deleted records, so that callers
     // can tell a deleted entity from a missing one
     if (query?.id === undefined && query?.options?.deleted !== true)
-      criteria._deleted = null
+      criteria.DELETED = null
 
     const record = await this.command('findOne', { criteria, options },
       () => this.#collection.findOne(criteria, options))
@@ -73,7 +73,7 @@ export class Storage extends Connector {
     const { criteria, options, sample } = translate(query)
 
     if (query?.options?.deleted !== true)
-      criteria._deleted = null
+      criteria.DELETED = null
 
     const recordset = sample === undefined
       ? await this.command('find', { criteria, options },
@@ -95,7 +95,7 @@ export class Storage extends Connector {
     const { criteria, options } = translate(query)
 
     if (query?.options?.deleted !== true)
-      criteria._deleted = null
+      criteria.DELETED = null
 
     this.debug('find (stream)', { criteria, options })
 
@@ -114,7 +114,7 @@ export class Storage extends Connector {
   async set (entity, session = undefined) {
     const criteria = {
       _id: entity.id,
-      _version: entity._version - 1
+      VERSION: entity.VERSION - 1
     }
 
     const record = to(entity)
@@ -128,14 +128,14 @@ export class Storage extends Connector {
   async store (entity, row = undefined, attempt = 0) {
     try {
       if (row === undefined || this.#outbox === undefined) {
-        if (entity._version === 1)
+        if (entity.VERSION === 1)
           return await this.add(entity)
         else
           return await this.set(entity)
       }
 
       const committed = await this.#client.transaction(async (session) => {
-        const ok = entity._version === 1
+        const ok = entity.VERSION === 1
           ? await this.add(entity, session)
           : await this.set(entity, session)
 
@@ -172,8 +172,8 @@ export class Storage extends Connector {
     const operations = entities.map((entity) => {
       const record = to(entity)
 
-      if (entity._version === 1) {
-        const { _version, ...rest } = record
+      if (entity.VERSION === 1) {
+        const { VERSION, ...rest } = record
 
         return { // upsert in required when document is deleted
           updateOne: {
@@ -181,9 +181,9 @@ export class Storage extends Connector {
             update: {
               $set: {    
                 ...rest,
-                _deleted: null
+                DELETED: null
               },
-              $inc: { _version: 1 },
+              $inc: { VERSION: 1 },
             },
             upsert: true
           } 
@@ -191,7 +191,7 @@ export class Storage extends Connector {
       } else
         return {  
           replaceOne: { 
-            filter: { _id: entity.id, _version: entity._version - 1 },
+            filter: { _id: entity.id, VERSION: entity.VERSION - 1 },
             replacement: record
           }
         }
@@ -222,14 +222,14 @@ export class Storage extends Connector {
   async upsert (query, changeset, row = undefined) {
     const { criteria, options } = translate(query)
 
-    if (!('_deleted' in changeset) || changeset._deleted === null) {
-      delete criteria._deleted
-      changeset._deleted = null
+    if (!('DELETED' in changeset) || changeset.DELETED === null) {
+      delete criteria.DELETED
+      changeset.DELETED = null
     }
 
     const update = {
       $set: { ...changeset },
-      $inc: { _version: 1 }
+      $inc: { VERSION: 1 }
     }
 
     // BEFORE, so that the filter is applied once and atomically and the pre-image comes back
@@ -247,11 +247,11 @@ export class Storage extends Connector {
       /*
        * The post-image is `update` applied to the pre-image, computed rather than read back.
        * That is exact, not approximate: `$set` on top-level keys is a spread (entity property
-       * names cannot contain dots, so a changeset never carries a path), and `_version` is
+       * names cannot contain dots, so a changeset never carries a path), and `VERSION` is
        * incremented by one. It is also a coupling — an operator added to `update` and not
        * mirrored here diverges silently — which `features/events/outbox.feature` guards.
        */
-      const state = { ...origin, ...changeset, _version: origin._version + 1 }
+      const state = { ...origin, ...changeset, VERSION: origin.VERSION + 1 }
 
       // an assignment's event is the write's own images, so they are filled in here whether
       // or not the row is going to be committed
@@ -296,7 +296,7 @@ export class Storage extends Connector {
           return found
         })
 
-      if (result._deleted !== undefined && result._deleted !== null)
+      if (result.DELETED !== undefined && result.DELETED !== null)
         return null
       else
         return from(result)

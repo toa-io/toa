@@ -74,9 +74,9 @@ exposition:
     auth:id: identity
     auth:role: system:identity:keys
     GET:
-      io:output: [id, label, expires, revokedAt, _created]
+      io:output: [id, label, expires, revokedAt, CREATED]
       query:
-        sort: _created:desc
+        sort: CREATED:desc
       endpoint: enumerate
     /:id:
       DELETE:

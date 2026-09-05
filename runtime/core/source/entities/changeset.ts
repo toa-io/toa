@@ -25,8 +25,8 @@ export class Changeset {
     if (error !== null)
       throw new EntityContractException(error, value)
 
-    delete (value as Partial<Record>)._version
-    value._updated = Date.now()
+    delete (value as Partial<Record>).VERSION
+    value.UPDATED = Date.now()
 
     this.#state = value
   }

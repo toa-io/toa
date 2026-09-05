@@ -62,7 +62,7 @@ Uses [redlock](https://github.com/sesamecare/redlock). The key is written to eve
 majority holding it is the lock, so a minority can be lost or failed over without invalidating one.
 Against a single address there is no majority to lose: a restart that drops the key, or a failover
 to a replica that has not received it, can leave two holders. Entity writes do not rest on either —
-they have `_version`.
+they have `VERSION`.
 
 The routine is given an `AbortSignal` and a context. Extension can fail while the routine runs, and
 the signal is how it says so:

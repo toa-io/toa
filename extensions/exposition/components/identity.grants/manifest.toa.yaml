@@ -231,7 +231,7 @@ exposition:
       map:segments:
         identity: identity
       GET:
-        io:output: [id, client, scope, resource, _created]
+        io:output: [id, client, scope, resource, CREATED]
         endpoint: list
       POST:
         io:input: [client, redirect, challenge, method, scope, resource]

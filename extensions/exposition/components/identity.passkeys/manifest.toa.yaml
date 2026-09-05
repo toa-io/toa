@@ -40,12 +40,12 @@ entity:
       - synced
       - key
       - counter
-      - _created
+      - CREATED
   index:
     list:
       authority: asc
       identity: asc
-      _created: desc
+      CREATED: desc
     key:
       authority: asc
       kid: asc
@@ -259,13 +259,13 @@ exposition:
           identity: identity
         map:headers:
           origin: origin
-        io:output: [id, aid, synced, label, _created, _updated]
+        io:output: [id, aid, synced, label, CREATED, UPDATED]
         endpoint: create
       GET:
         map:authority: authority
         map:segments:
           identity: identity
-        io:output: [id, aid, synced, label, _created, _updated]
+        io:output: [id, aid, synced, label, CREATED, UPDATED]
         endpoint: list
       /:id:
         DELETE:

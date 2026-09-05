@@ -1,5 +1,5 @@
 function terminate (_, changeset) {
-  changeset._deleted = Date.now()
+  changeset.DELETED = Date.now()
 }
 
 export { terminate as assignment }

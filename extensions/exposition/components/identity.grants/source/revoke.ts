@@ -17,7 +17,7 @@ export class Transition implements Operation {
   public async execute (input: Input, object: Entity): Promise<Maybe<void>> {
     // the id is a route parameter, so a grant of another identity is asked for by anyone
     // who guesses one; the authority and the identity are what say it is theirs
-    if (object._version === 0 || object.authority !== input.authority ||
+    if (object.VERSION === 0 || object.authority !== input.authority ||
       object.identity !== input.identity)
       return ERR_NOT_FOUND
 

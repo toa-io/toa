@@ -5,5 +5,5 @@
 export function transition (_, objects) {
   const now = Date.now()
 
-  for (const object of objects) object._deleted = now
+  for (const object of objects) object.DELETED = now
 }

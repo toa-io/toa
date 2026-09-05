@@ -88,7 +88,7 @@ timestamps the rest of the system reads, without an identifier the runtime issue
 the event that tells anything it happened. Use a Transition for one object, a Transition over
 `objects` for many, and an Assignment for a changeset.
 
-**Nothing removes a record.** Deletion is a `_deleted` timestamp, which every query filters on,
+**Nothing removes a record.** Deletion is a `DELETED` timestamp, which every query filters on,
 so a removed entity stops being found while what it was survives — the prototype's `terminate`
 is that write. A record taken out of the collection takes its history with it, and leaves
 anything that referred to it pointing at nothing.

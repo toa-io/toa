@@ -14,14 +14,14 @@ export type ListOutput = {
   federation: Array<{
     id: string
     iss: string
-    _created: number
+    CREATED: number
   }>
   passkeys: Array<{
     id: string
     aid: string
     synced: boolean
     label?: string
-    _created: number
+    CREATED: number
   }>
 }
 

@@ -77,8 +77,8 @@ Feature: Delayed calls
   # that state: the next scan reads it along with what is coming, and makes it at once.
   Scenario: Calling one that is already overdue
     Given the `cadence.metronome` database contains:
-      | _id                              | lane | due | expires          | endpoint              | _version |
-      | 01a06fa7e5e676b3aefdad34be3d184a | 0    | 1   | 9007199254740991 | default.delaying.pong | 1        |
+      | _id                              | lane | due | expires          | endpoint              | VERSION |
+      | 01a06fa7e5e676b3aefdad34be3d184a | 0    | 1   | 9007199254740991 | default.delaying.pong | 1       |
     And the `cadence` service is staged
     And I compose `delaying` component
     When I wait 1 second
@@ -92,8 +92,8 @@ Feature: Delayed calls
   # `expires`, so what is left is a row nobody reads.
   Scenario: Not calling one that is too late
     Given the `cadence.metronome` database contains:
-      | _id                              | lane | due | expires | endpoint              | _version |
-      | 01a06fa7e5e676b3aefdad34be3d184a | 0    | 1   | 2       | default.delaying.pong | 1        |
+      | _id                              | lane | due | expires | endpoint              | VERSION |
+      | 01a06fa7e5e676b3aefdad34be3d184a | 0    | 1   | 2       | default.delaying.pong | 1       |
     And the `cadence` service is staged
     And I compose `delaying` component
     When I wait 1 second

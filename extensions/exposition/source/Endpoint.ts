@@ -55,8 +55,8 @@ export class Endpoint implements RTD.Endpoint {
     }
 
     // last-modified
-    if (typeof reply === 'object' && reply !== null && ('_updated' in reply || '_created' in reply)) {
-      const timestamp: string = reply._updated ?? reply._created
+    if (typeof reply === 'object' && reply !== null && ('UPDATED' in reply || 'CREATED' in reply)) {
+      const timestamp: string = reply.UPDATED ?? reply.CREATED
       const date = new Date(timestamp)
 
       message.headers ??= new Headers()
@@ -127,8 +127,8 @@ export class Endpoint implements RTD.Endpoint {
   private conditionalGet (reply: unknown, etag: string | undefined, message: http.OutgoingMessage): boolean {
     message.headers ??= new Headers()
 
-    if (typeof reply === 'object' && reply !== null && '_version' in reply) {
-      const version = reply._version as number
+    if (typeof reply === 'object' && reply !== null && 'VERSION' in reply) {
+      const version = reply.VERSION as number
       const matched = etag === undefined ? null : this.matchVersion(etag)
 
       if (etag !== undefined && matched !== null && version === matched) {
