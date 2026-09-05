@@ -58,8 +58,8 @@ operations:
 
 ```javascript
 // components/orders/operations/approve.js
-async function transition (input, order) {
-  order.status = 'approved'
+async function transition (input, object) {
+  object.status = 'approved'
 }
 
 module.exports = { transition }
@@ -257,6 +257,9 @@ function condition (event) {
 module.exports = { condition }
 ```
 
+Consumers outside the application must be listed in the Context's `events` declaration.
+Receivers must tolerate redelivery.
+
 Another component binds that event to one of its operations:
 
 ```yaml
@@ -283,8 +286,15 @@ exposition:
 ```
 
 The gateway discovers the declaration and maps `PATCH /orders/:id` to `orders.approve`.
-Authentication, authorization, caching, and input/output mapping are declarations around the same
-logical component contract.
+Declare authorization for the resource as well: a route without a granting policy denies access.
+Authentication, authorization, caching, and input/output mapping surround the same logical
+component contract. Credentials travel in the `authorization` header, not cookies.
+
+The gateway can also expose these resources through [JSON-RPC](../../extensions/exposition/documentation/rpc.md)
+at `/.rpc` and publish selected methods as [MCP tools](../../extensions/exposition/documentation/mcp.md)
+at `/.mcp`. Both require Context annotations; a method becomes a tool only when it declares
+`mcp:tool` with a description. The [OAuth authorization server](../../extensions/exposition/documentation/oauth.md)
+can authorize clients; the application supplies the page where a user signs in and gives consent.
 
 Like a composition boundary, the HTTP boundary is supplied by the runtime. It does not become part
 of the operation.
@@ -301,7 +311,9 @@ components and services at runtime. Optional call samples can capture inputs and
 sampling is off by default and can be prohibited by an individual component.
 
 Introspection is enabled by default. It publishes a protected HTTP API and, unless disabled, a web
-UI at `/.introspection/`; both rely on Exposition. A context can tune collection or turn it off:
+UI at `/.introspection/`; both rely on Exposition. The page is public, but its data requires
+the `system:introspection` role. A Context without Exposition must disable Introspection.
+A Context can tune collection or turn it off:
 
 ```yaml
 # context.toa.yaml

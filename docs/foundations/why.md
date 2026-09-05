@@ -5,7 +5,7 @@
 Consider a service that approves an order. The business logic is one line:
 
 ```javascript
-order.status = 'approved'
+object.status = 'approved'
 ```
 
 Now consider what it takes to run that line in a real distributed system:
@@ -35,9 +35,11 @@ The order approval above is a complete, valid Toa operation:
 
 ```javascript
 // operations/approve.js
-async function transition (input, order, context) {
-  order.status = 'approved'
+async function transition (input, object, context) {
+  object.status = 'approved'
 }
+
+module.exports = { transition }
 ```
 
 **Mechanics** — everything else, provided by the runtime and driven by *declarations*.
@@ -58,9 +60,9 @@ operations:
 ```
 
 From these declarations the runtime derives the machinery: it validates incoming requests against
-the schema, retrieves the order from storage before calling the function, persists the returned
+the schema, retrieves the order from storage before calling the function, persists the modified
 state after, retries the whole cycle on concurrent modification (`concurrency: retry`), and emits
-events when the state changes.
+the events defined for those changes.
 
 This is what *low-code* means in Toa. Not visual programming, and not "less capable" — it means
 the code that remains is almost entirely business logic, while the mechanics are declared and
@@ -69,8 +71,8 @@ outsourced to the runtime.
 ## Logic stays pure
 
 Notice what the `approve` function above does *not* contain: no database client, no message
-broker, no HTTP. It receives plain values and returns a plain value. Toa requires operations to be
-*genuine*:
+broker, no HTTP. It receives input and state as plain values and changes the supplied state.
+Toa requires operations to be *genuine*:
 
 - **Stateless** — no memory between calls; running N instances once each equals running one
   instance N times.
@@ -80,13 +82,27 @@ broker, no HTTP. It receives plain values and returns a plain value. Toa require
 - **Non-exceptional** — errors are returned as values, not thrown for control flow:
 
 ```javascript
-async function transition (input, order, context) {
-  if (order.status !== 'pending')
+async function transition (input, object, context) {
+  if (object.status !== 'pending')
     return new Error('ORDER_NOT_PENDING')
 
-  order.status = 'approved'
+  object.status = 'approved'
 }
+
+module.exports = { transition }
 ```
+
+Declare the expected rejection in the operation contract:
+
+```yaml
+operations:
+  approve:
+    concurrency: retry
+    errors: [ORDER_NOT_PENDING]
+```
+
+An undeclared error is a contract violation. Unexpected failures are exceptions; callers must
+handle them separately from a declared business rejection.
 
 These constraints are what make the mechanics *possible to outsource*. Because an operation is
 pure and deterministic, the runtime is free to decide where it runs, how many instances run, when
@@ -112,11 +128,12 @@ receivers:
   epics.closed: destroy
 ```
 
-- Communication is asynchronous and reliable: messages are acknowledged and redelivered, and
-  operations are constrained so that redelivery is safe.
+- Communication through the AMQP binding uses acknowledgements and redelivery. A receiver must
+  tolerate repeated delivery; purity alone does not make a payment or an increment safe to repeat.
 
-The system as a whole converges: every state change eventually propagates to everyone who
-declared an interest in it, and the developer writes no coordination code along the way.
+Applications still define how they converge: which events to consume, how to handle duplicates,
+and how to compensate when a later step is rejected. Consumers outside the Context must be named
+in its `events` declaration so those events are published in a deployment.
 
 ## Design principles
 

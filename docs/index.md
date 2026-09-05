@@ -21,9 +21,11 @@ access policies, storage requirements.
 
 ```javascript
 // operations/approve.js
-async function transition (input, order) {
-  order.status = 'approved'
+async function transition (input, object) {
+  object.status = 'approved'
 }
+
+module.exports = { transition }
 ```
 
 The runtime provides the machinery: it persists state with concurrency control,
@@ -37,12 +39,16 @@ eventual consistency guarantees.
 ## Documentation
 
 This documentation explains Toa from first principles: starting with the ideas the runtime is
-built on, descending through its core abstractions, down to the implementation details of
+built on, descending through its core abstractions, through the configuration and contracts of
 connectors and extensions, and ending with operating Toa systems in production.
 Each chapter builds on the previous ones, so it is meant to be read in order —
 though later chapters can serve as reference material.
 
 ---
+
+The Foundations chapter is available below. The remaining chapters are a writing plan; their
+links will become available as the chapters are written. Existing references remain under
+[`documentation`](../documentation), and beside each connector and extension.
 
 ## Table of Contents
 
@@ -70,8 +76,9 @@ Toa applications.*
    computation, effect; safe vs. unsafe operations; genuine operation rules
    (stateless, deterministic, autonomous, pure, non-exceptional); unmanaged escape hatch.
 2. **[State and Entities](concepts/state.md)**
-   — entity schemas; the scope: object, set, stream; changesets; identity, versioning,
-   and timestamps; optimistic concurrency control and the `retry` strategy; invariants (guards).
+   — entity schemas; scopes: object, objects, changeset; streaming reads; identity, versioning,
+   and timestamps; optimistic concurrency control and the `retry` strategy; invariants (guards);
+   deletion and revival.
 3. **[Queries](concepts/queries.md)**
    — input/query segregation; criteria, projection, sorting, pagination; queryability limits.
 4. **[Context](concepts/context.md)**
@@ -79,7 +86,7 @@ Toa applications.*
    why the context is the only door to the outside world.
 5. **[Events and Receivers](concepts/events.md)**
    — entity events and conditional emission; binding receivers to domestic and foreign events;
-   event sources beyond the application boundary.
+   event sources beyond the application boundary; declaring external consumers.
 6. **[Errors and Exceptions](concepts/errors.md)**
    — successful rejections vs. distributed exceptions; error contracts in schemas;
    how failures propagate across component boundaries.
@@ -101,11 +108,12 @@ Toa applications.*
    — full manifest reference by example: entity, operations, events, receivers,
    extensions; schema definitions (concise syntax and JSON Schema).
 3. **[Bridges](building/bridges.md)**
-   — language interoperability; the Node.js bridge in detail; the Bash bridge;
+   — language interoperability; the Node.js bridge in detail; JavaScript and erasable TypeScript;
+   ES modules and CommonJS; run commands and cleanup; the Bash bridge;
    how to implement a bridge for another language.
 4. **[The CLI](building/cli.md)**
    — developing, running, and inspecting applications; `toa mono`; the development environment;
-   replay and debugging workflows.
+   replay and debugging workflows; `toa types` and manifest-generated type declarations.
 5. **[Testing](building/testing.md)**
    — unit testing operations as pure functions; the integration stage SDK;
    the runtime bootloader API; example-based walkthrough.
@@ -153,7 +161,13 @@ optional for using it.*
    - [Protocol](extensions/exposition/protocol.md) — content negotiation, methods, embedding.
    - [Queries over HTTP](extensions/exposition/query.md) — criteria, ranges, projections.
    - [Identity](extensions/exposition/identity.md) — basic auth, identity federation (OIDC),
-     passkeys (WebAuthn), one-time passwords.
+     passkeys (WebAuthn), one-time passwords; bearer tokens and revocation.
+   - [OAuth](extensions/exposition/oauth.md) — authorization server, client registration,
+     consent, and the authorization page supplied by the application.
+   - [JSON-RPC](extensions/exposition/rpc.md) — resource methods as procedures, parameters,
+     batches, and errors.
+   - [MCP](extensions/exposition/mcp.md) — explicitly published tools, input contracts,
+     authentication, and allowed browser origins.
    - [Access Control](extensions/exposition/access.md) — authorization directives and policies;
      roles and rules.
    - [Cache Control](extensions/exposition/cache.md).
@@ -167,7 +181,9 @@ optional for using it.*
 6. **[Fetch](extensions/fetch.md)** — outbound HTTP with retries and telemetry.
 7. **[Realtime](extensions/realtime.md)** — pushing events to clients.
 8. **[Telemetry](extensions/telemetry.md)** — structured logs and distributed tracing.
-9. **[Introspection](extensions/introspection.md)** — collecting declared and observed product
+9. **[Cadence](extensions/cadence.md)** — periodic calls, delayed calls and cancellation;
+   missed intervals, duplicate delivery, and lateness bounds.
+10. **[Introspection](extensions/introspection.md)** — collecting declared and observed product
    topology; component and service interactions; call samples; the topology API and web UI.
 
 ### Chapter VII. Operations

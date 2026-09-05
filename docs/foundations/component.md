@@ -78,13 +78,16 @@ never sees a database.
 
 ## Operations: the unit of logic
 
-Each operation is declared in the manifest and implemented in `operations/<name>.js`.
+Each operation is declared in the manifest and implemented in `operations/<name>.js`
+(or `.mjs`, `.cjs`, or `.ts` with the Node bridge).
 The declaration carries the schema of the input and the concurrency strategy:
 
 ```yaml
 operations:
   approve:
+    description: Approve a pending order.
     concurrency: retry
+    errors: [NOT_PENDING]
     input:
       properties:
         comment: { type: string, maxLength: 256 }
@@ -95,23 +98,26 @@ determines what the runtime does before and after the call:
 
 ```javascript
 // operations/approve.js
-async function transition (input, order, context) {
-  if (order.status !== 'pending')
+async function transition (input, object, context) {
+  if (object.status !== 'pending')
     return new Error('NOT_PENDING')
 
-  order.status = 'approved'
+  object.status = 'approved'
 }
 
 module.exports = { transition }
 ```
 
-A `transition` receives the current state and returns the new state to persist. Other types make
+A `transition` modifies the supplied state; its return value is the reply, not replacement state.
+The second parameter names the scope: `object`, `objects`, or `changeset`. Declare `scope`
+explicitly if using another parameter name. Expected errors must appear in `errors`; returning
+an undeclared code is a contract violation. Other types make
 different deals with the runtime:
 
 ```javascript
 // observation: read-only view of the state
-async function observation (input, order) {
-  return order.status
+async function observation (input, object) {
+  return object.status
 }
 
 // computation: no state at all, pure function of input
@@ -119,9 +125,9 @@ async function computation (input) {
   return input.price * input.quantity
 }
 
-// effect: side effects allowed — the escape hatch for I/O
+// effect: interact through context without owning entity state
 async function effect (input, context) {
-  return context.origins.gateway.charge(...)
+  return context.remote.shop.billing.charge({ input })
 }
 ```
 
@@ -132,11 +138,11 @@ Note what the function signature *lacks*: transport, storage, serialization. An 
 directly callable in a unit test:
 
 ```javascript
-const order = { status: 'pending' }
+const object = { status: 'pending' }
 
-await approve.transition({}, order)
+await approve.transition({}, object)
 
-assert(order.status === 'approved')
+assert(object.status === 'approved')
 ```
 
 ## Context: the door to the world
@@ -144,24 +150,28 @@ assert(order.status === 'approved')
 The `context` argument is the only way an operation reaches beyond its input and state:
 
 ```javascript
-async function transition (input, order, context) {
+async function transition (input, object, context) {
   // call an operation of this component
-  await context.local.status({ query: { id: order.id } })
+  await context.local.status({ query: { id: object.id } })
 
   // call an operation of another component
-  const balance = await context.remote.shop.billing.balance({ query: { id: order.customer } })
+  const balance = await context.remote.shop.billing.balance({ query: { id: object.customer } })
 
   // read deployment-time configuration
   const limit = context.configuration.limit
 
   // write a structured log (an aspect provided by the telemetry extension)
-  context.logs.info('Order approved', { id: order.id })
+  context.logs.info('Order approved', { id: object.id })
 }
 ```
 
-Everything on the context is declared — configuration in the manifest, remote components resolved
-by discovery, aspects contributed by extensions. If it is not declared, it is not there; a
-component's dependencies are readable from its manifest alone.
+Extensions supply context capabilities from their declarations; remote calls use logical component
+names. Call dependencies are also expressed in code, so the manifest alone is not a complete list
+of the components an operation may call. A configuration secret is read with
+`context.configuration.apiKey.unwrap()`, not used as a plain string.
+
+Application operations, events, receivers, and guards do not import runtime packages under
+`@toa.io/*`. Type-only imports are the exception.
 
 ## Events: announcing changes
 
@@ -178,18 +188,23 @@ module.exports = { condition }
 ```
 
 `event.origin` is the entity before the operation, `event.state` — after. The runtime evaluates
-conditions after every unsafe operation and emits `shop.orders.approved` when the predicate turns
+conditions for committed state changes and emits `shop.orders.approved` when the predicate turns
 true. By default the payload is the new state; an optional `payload` function customizes it:
 
 ```javascript
 function payload (event) {
   return { id: event.state.id, total: event.state.total }
 }
+
+module.exports = { condition, payload }
 ```
 
 Events are not sent by operations. Operations change state; events are a *declared consequence*
 of the change. This keeps the logic pure and guarantees that an announcement can never be
 forgotten, no matter which operation caused the change.
+
+In a deployment, events consumed outside the Context must also be listed in its `events`
+declaration. Events with no declared consumer are not published; local runs publish all events.
 
 ## Receivers: reacting to others
 
@@ -241,13 +256,16 @@ with authorization and I/O shaping:
 exposition:
   /:id:
     GET:
-      auth:id: customer        # only the order's customer may read it
-      io:output: [id, status, total]
-      endpoint: observe
+      auth:role: manager
+      endpoint: status
     PATCH:
       auth:role: manager
       endpoint: approve
 ```
+
+`auth:id` compares an identity with a named route parameter; it does not read an entity
+field. Ownership checks that depend on stored order data belong in the application operation.
+Credentials are sent in the `authorization` header; Toa does not use cookies.
 
 Each extension chapter covers its section; the point here is the pattern: a component gains
 capabilities by *declaring* them, and the manifest remains the single place where the component's
@@ -264,6 +282,36 @@ introspection:
 ```
 
 Setting `introspection: false` excludes the component from topology collection entirely.
+
+## TypeScript and generated types
+
+Run `toa types` from the application Context after changing manifests. It generates
+`types/toa.d.ts` for each component and creates `types/index.d.ts` once for additions you own.
+Import declarations with `import type` from `../types/index.d.ts`.
+
+Application `.ts` modules run directly with Node's type erasure. Use erasable syntax, explicit
+file extensions in relative imports, and a `package.json` with `"type": "module"` for ES modules.
+Enums, namespaces, and parameter properties need compilation and are not supported here.
+Keep helpers and tests outside `operations/`, and never leave both `approve.js` and `approve.ts`
+there: each file defines an endpoint. Packaged components installed under `node_modules` must
+ship transpiled code. See the [Node bridge](../../connectors/bridges.node/readme.md#typescript).
+
+## Periodic and delayed calls
+
+A component can declare periodic work with [Cadence](../../extensions/cadence/readme.md):
+
+```yaml
+cadence:
+  sweep: 3600           # call this component's sweep operation once an hour
+```
+
+The operation receives `{ n, i }`, the interval count and index within a cycle. A missed interval
+is not made up: select work that is still due. Cadence requires configured atomicity; without it,
+no calls are made.
+
+The same extension provides `context.delay` and `context.delay.cancel`. Delays use milliseconds
+and require an explicit `overdue` bound (or `null`). Delayed calls may repeat, and scheduling one
+is not transactional with the caller's state. The target must handle duplicates.
 
 ## Why the ignorance matters
 
