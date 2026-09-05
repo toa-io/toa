@@ -18,11 +18,6 @@ The same components can run in one composition, like a monolith; each can run in
 composition, like microservices; or they can be grouped somewhere in between. The application
 code does not change when the grouping changes.
 
-For development and compact deployments, `toa mono` takes the same separation one step further:
-it boots the application composition and extension services in one process. `toa deploy --mono`
-packages that process into one image and one Kubernetes Deployment. This changes the operational
-shape, not the component model.
-
 ## Logical architecture: components
 
 A component owns a business concept. It declares its state, exposes operations, emits events, and
@@ -126,9 +121,7 @@ The CLI can discover manifests under `components/*` and boot this shape directly
 toa mono
 ```
 
-The same application can be built and deployed as a single image with `toa deploy --mono`.
-Extension services join the process as well, so this is the most compact physical form of a Toa
-application rather than merely a composition containing every component.
+Extension services join the process as well. `toa deploy --mono` deploys this arrangement.
 
 ### One composition per component: microservice deployment
 
@@ -175,23 +168,11 @@ file. It gives the application a name and points to its components:
 name: shop
 ```
 
-By convention, components under `components/*` are discovered automatically. A `packages`
-declaration is only needed when the application uses another layout.
+Components live under `components/` in the application source tree.
 
-The Context also contains deployment concerns: compositions, infrastructure addresses,
-extension configuration, and environment-specific values.
-
-```yaml
-# context.toa.yaml
-exposition:
-  authorities:
-    main@local: localhost:8000
-    main@production: api.shop.example
-```
-
-The `@` suffix selects values for an environment. The same application source can run locally,
-in a test environment, or in a production cluster with different physical topology and
-infrastructure.
+The same file describes compositions, infrastructure, extension configuration, and values that
+vary by environment. An application can run locally and in production with different topology
+and configuration while keeping the same component code.
 
 ## An application on disk
 
@@ -203,16 +184,12 @@ application/
   components/                  # logical business boundaries
     orders/
       manifest.toa.yaml
-      package.json            # { "type": "module" }
-      types/                  # types from the manifest
       operations/
         approve.ts
       events/
         approved.ts
     billing/
       manifest.toa.yaml
-      package.json            # { "type": "module" }
-      types/                  # types from the manifest
       operations/
         charge.ts
       receivers/
@@ -255,9 +232,6 @@ export function condition (event: Event<Order>) {
   return event.origin?.status !== 'approved' && event.state.status === 'approved'
 }
 ```
-
-Consumers outside the application must be listed in the Context's `events` declaration.
-Receivers must tolerate redelivery.
 
 Another component binds that event to one of its operations:
 

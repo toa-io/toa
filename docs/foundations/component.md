@@ -1,15 +1,11 @@
 # Anatomy of a Component
 
-This section takes a single component apart, file by file. The example is `orders` — simplified,
-but structurally identical to real-world components.
+A component brings together state, operations, and integration contracts. This section follows
+an `orders` component to show how those parts fit together.
 
 ```
 orders/
   manifest.toa.yaml     # declaration: what this component is
-  package.json          # ES module format
-  types/                # declarations, generated with toa types
-    index.d.ts
-    toa.d.ts
   operations/           # logic: one file per operation
     create.ts
     approve.ts
@@ -20,25 +16,16 @@ orders/
     payments.completed.ts
 ```
 
-The manifest declares; the directories implement. These examples use TypeScript ES modules,
-so `package.json` beside the manifest contains:
-
-```json
-{ "type": "module" }
-```
-
-Run `toa types` from the application Context to generate declarations before typechecking.
-Node runs the `.ts` modules directly, with no build step or loader.
+The manifest describes the component; operations, events, and receivers express its behavior.
 
 ## The manifest
 
-The manifest is the component's complete public contract. Everything the runtime, other
-components, and tooling need to know is here:
+The manifest declares the component's state, operations, and integrations:
 
 ```yaml
 # manifest.toa.yaml
 name: orders
-namespace: shop        # optional; 'default' if omitted
+namespace: shop        # groups related components
 
 entity:                # the state this component owns
   schema: ...
@@ -54,7 +41,6 @@ receivers:             # events it reacts to
 configuration: ...     # what can be tuned per deployment
 
 exposition: ...        # extension: HTTP resources
-introspection: ...     # extension: topology visibility and sampling policy
 ```
 
 The component's full name is `shop.orders`; operations are addressed as
@@ -68,9 +54,8 @@ A component owns at most one entity type, described by a schema:
 entity:
   schema:
     properties:
-      customer: &id
+      customer:
         type: string
-        pattern: ^[0-9a-f]{32}$
       status:
         type: string
         enum: [pending, approved, cancelled]
@@ -79,29 +64,19 @@ entity:
         minimum: 0
 ```
 
-The schema is standard JSON Schema in YAML, and YAML anchors (`&id`) are conventionally used to
-reuse fragments across the manifest.
-
-Declaring an entity is all it takes to get persistence. The runtime binds a storage (MongoDB,
-SQL — a deployment decision), and maintains system fields on every entity object: `id`,
-`_version` for concurrency control, `_created` and `_updated` timestamps. The component's code
-never sees a database.
+The schema describes what an order contains and which values are valid. The runtime owns
+persistence, identity, and concurrency control; operations work with the order itself.
 
 ## Operations: the unit of logic
 
 Each operation is declared in the manifest and implemented in `operations/<name>.ts`.
-The Node bridge also supports JavaScript and CommonJS modules.
-The declaration carries the schema of the input and the concurrency strategy:
+Its declaration describes what it does and the rejections a caller can expect:
 
 ```yaml
 operations:
   approve:
     description: Approve a pending order.
-    concurrency: retry
     errors: [NOT_PENDING]
-    input:
-      properties:
-        comment: { type: string, maxLength: 256 }
 ```
 
 The implementation exports a single function *named after the operation's type* — the type
@@ -117,10 +92,8 @@ export async function transition (input: ApproveInput, object: Order) {
 ```
 
 A `transition` modifies the supplied state; its return value is the reply, not replacement state.
-The second parameter names the scope: `object`, `objects`, or `changeset`. Declare `scope`
-explicitly if using another parameter name. Expected errors must appear in `errors`; returning
-an undeclared code is a contract violation. Other types make
-different deals with the runtime:
+Here, an order that is no longer pending is rejected with the declared `NOT_PENDING` error.
+Other operation types express different kinds of work:
 
 ```typescript
 // observation: read-only view of the state
@@ -143,8 +116,7 @@ export async function effect (input: ChargeInput, context: Context) {
 }
 ```
 
-The full catalog — five types plus the `unmanaged` escape hatch, and the rules operations must
-obey — is in [Operations](../concepts/operations.md).
+The operation types are covered in [Operations](../concepts/operations.md).
 
 Note what the function signature *lacks*: transport, storage, serialization. An operation is
 directly callable in a unit test:
@@ -172,18 +144,13 @@ export async function transition (input: ApproveInput, object: Order, context: C
   // read deployment-time configuration
   const limit = context.configuration.limit
 
-  // write a structured log (an aspect provided by the telemetry extension)
+  // record what happened
   context.logs.info('Order approved', { id: object.id })
 }
 ```
 
-Extensions supply context capabilities from their declarations; remote calls use logical component
-names. Call dependencies are also expressed in code, so the manifest alone is not a complete list
-of the components an operation may call. A configuration secret is read with
-`context.configuration.apiKey.unwrap()`, not used as a plain string.
-
-Application operations, events, receivers, and guards do not import runtime packages under
-`@toa.io/*`. Type-only imports are the exception.
+The context connects business logic to the rest of the application. Calls use component names;
+configuration and other capabilities are supplied by extensions.
 
 ## Events: announcing changes
 
@@ -207,12 +174,9 @@ export function payload (event: Event<Order>) {
 }
 ```
 
-Events are not sent by operations. Operations change state; events are a *declared consequence*
-of the change. This keeps the logic pure and guarantees that an announcement can never be
-forgotten, no matter which operation caused the change.
-
-In a deployment, events consumed outside the Context must also be listed in its `events`
-declaration. Events with no declared consumer are not published; local runs publish all events.
+Operations change state; events are a *declared consequence* of the change. The same event
+condition applies whichever operation changes the order, so each operation only expresses its
+own business rule.
 
 ## Receivers: reacting to others
 
@@ -249,8 +213,8 @@ configuration:
     required: [limit]
 ```
 
-Values (including secrets) come from the Context at deployment time and surface as
-`context.configuration`. A missing or invalid value fails at startup, not in production at 3am.
+Values come from the application Context and are available as `context.configuration`.
+The same operation can use different limits in different environments without changing its code.
 
 ## Extensions in the manifest
 
@@ -268,55 +232,13 @@ exposition:
       endpoint: approve
 ```
 
-`auth:id` compares an identity with a named route parameter; it does not read an entity
-field. Ownership checks that depend on stored order data belong in the application operation.
-Credentials are sent in the `authorization` header; Toa does not use cookies.
+Here, a manager can read an order's status or approve it through HTTP. The operation itself
+contains no routing or authorization code.
 
-Each extension chapter covers its section; the point here is the pattern: a component gains
-capabilities by *declaring* them, and the manifest remains the single place where the component's
-entire surface — state, logic, events, HTTP, configuration — can be read.
-
-Some extensions are predefined and therefore need no declaration in the common case.
-Introspection, for example, includes the component in the product topology by default. A component
-that handles sensitive data can prohibit call samples, even when sampling is enabled for the
-application:
-
-```yaml
-introspection:
-  samples: false
-```
-
-Setting `introspection: false` excludes the component from topology collection entirely.
-
-## TypeScript and generated types
-
-Run `toa types` from the application Context after changing manifests. It generates
-`types/toa.d.ts` for each component and creates `types/index.d.ts` once for additions you own.
-Import declarations with `import type` from `../types/index.d.ts`.
-
-Application `.ts` modules run directly with Node's type erasure. Use erasable syntax, explicit
-file extensions in relative imports, and a `package.json` with `"type": "module"` for ES modules.
-Enums, namespaces, and parameter properties need compilation and are not supported here.
-Keep helpers and tests outside `operations/`, and never leave both `approve.js` and `approve.ts`
-there: each file defines an endpoint. Packaged components installed under `node_modules` must
-ship transpiled code. See the [Node bridge](../../connectors/bridges.node/readme.md#typescript).
-
-## Periodic and delayed calls
-
-A component can declare periodic work with [Cadence](../../extensions/cadence/readme.md):
-
-```yaml
-cadence:
-  sweep: 3600           # call this component's sweep operation once an hour
-```
-
-The operation receives `{ n, i }`, the interval count and index within a cycle. A missed interval
-is not made up: select work that is still due. Cadence requires configured atomicity; without it,
-no calls are made.
-
-The same extension provides `context.delay` and `context.delay.cancel`. Delays use milliseconds
-and require an explicit `overdue` bound (or `null`). Delayed calls may repeat, and scheduling one
-is not transactional with the caller's state. The target must handle duplicates.
+Extensions follow this pattern: a component declares a capability, and the runtime provides it.
+Configuration supplies deployment values, Cadence arranges periodic or delayed work, and
+Introspection makes the component visible in the application's topology. Each extension has its
+own chapter; what matters here is that these capabilities fit around the same component model.
 
 ## Why the ignorance matters
 
@@ -325,8 +247,7 @@ A component knows nothing about:
 - **transport** — same code whether calls arrive over AMQP, HTTP, or in memory;
 - **storage** — same code on MongoDB or SQL;
 - **location** — same code in one process or across a cluster;
-- **language of its peers** — operations are files interpreted by a *bridge*
-  (Node.js is built in, and even Bash works: an operation can be a `.sh` file).
+- **language of its peers** — components interact through the same contracts across languages.
 
 This ignorance is not a limitation; it is the entire point. It is what lets the runtime scale,
 regroup, redeploy, and upgrade the mechanics of the system while the business logic — the part

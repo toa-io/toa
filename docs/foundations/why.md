@@ -71,8 +71,7 @@ Notice what the `approve` function above does *not* contain: no database client,
 broker, no HTTP. It receives input and state as plain values and changes the supplied state.
 Toa requires operations to be *genuine*:
 
-- **Stateless** — no memory between calls; running N instances once each equals running one
-  instance N times.
+- **Stateless** — no memory between calls.
 - **Deterministic** — same input, same output.
 - **Autonomous** — no assumptions about the execution environment, such as network access.
 - **Pure** — no side effects other than interactions with the provided state and context.
@@ -87,17 +86,8 @@ export async function transition (input, object: Order) {
 }
 ```
 
-Declare the expected rejection in the operation contract:
-
-```yaml
-operations:
-  approve:
-    concurrency: retry
-    errors: [ORDER_NOT_PENDING]
-```
-
-An undeclared error is a contract violation. Unexpected failures are exceptions; callers must
-handle them separately from a declared business rejection.
+A business rejection is part of the operation's contract, so callers can distinguish it from
+an unexpected failure.
 
 These constraints are what make the mechanics *possible to outsource*. Because an operation is
 pure and deterministic, the runtime is free to decide where it runs, how many instances run, when
@@ -118,17 +108,16 @@ builds on it:
   event; other components declare *receivers* to react to it.
 
 ```yaml
-# the workspaces component reacts to an event of the epics component
+# manifest.toa.yaml — billing
 receivers:
-  epics.closed: destroy
+  orders.approved: charge
 ```
 
-- Communication through the AMQP binding uses acknowledgements and redelivery. A receiver must
-  tolerate repeated delivery; purity alone does not make a payment or an increment safe to repeat.
+- An event may be delivered more than once. The receiving operation must account for that
+  when applying a business change.
 
 Applications still define how they converge: which events to consume, how to handle duplicates,
-and how to compensate when a later step is rejected. Consumers outside the Context must be named
-in its `events` declaration so those events are published in a deployment.
+and how to compensate when a later step is rejected.
 
 ## Design principles
 
@@ -142,12 +131,10 @@ up front:
    discovery, deployment: all replaceable implementations of runtime abstractions, invisible
    to the logic.
 3. **Uniform interfaces.** Every operation, local or remote, is called the same way; every
-   message has the same shape (see [Communication](../concepts/communication.md)). Uniformity is
-   what makes transparent discovery, in-memory shortcuts, and multi-protocol transmission
-   possible.
-4. **Everything is replaceable.** Storages, protocols, languages ("bridges"), and even core
-   behaviors are connectors and extensions behind contracts. Built-in implementations are just
-   defaults.
+   message follows the same contract (see [Communication](../concepts/communication.md)).
+   Moving components between processes does not change how application code calls them.
+4. **Independent platform choices.** Storage, transport, and deployment can change while
+   business operations keep the same contracts.
 
 ## Trade-offs
 
@@ -156,8 +143,7 @@ Toa is opinionated, and the opinions have a price:
 - **No shared transactions across components.** If two components must change together
   atomically, they are probably one component.
 - **Operations are constrained.** Code that wants to open sockets, keep in-process caches, or
-  throw exceptions across boundaries is fighting the model. Escape hatches exist (unmanaged
-  operations, origins), but they are explicit and visible.
+  throw exceptions across boundaries needs to be adapted to the execution model.
 - **Strong conventions.** File layout, naming, and manifests follow the runtime's rules; the
   payoff is that every Toa component looks familiar, and tooling works everywhere.
 
