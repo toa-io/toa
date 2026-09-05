@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.285](https://github.com/toa-io/toa/compare/v1.0.0-alpha.284...v1.0.0-alpha.285) (2026-09-05)
+
+### Bug Fixes
+
+* **exposition:** a procedure is named in characters a tool's name may hold ([857ff75](https://github.com/toa-io/toa/commit/857ff75858e633682d5c245eccde3dc00797ec00))
+
+### Features
+
+* **exposition:** a tool says what to call it, beside what it is ([c94dcd1](https://github.com/toa-io/toa/commit/c94dcd10ab5a2875975fdba94b37dae128f454c4))
+
+
 # [1.0.0-alpha.284](https://github.com/toa-io/toa/compare/v1.0.0-alpha.283...v1.0.0-alpha.284) (2026-09-05)
 
 ### Bug Fixes

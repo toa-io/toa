@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/runtime",
-  "version": "1.0.0-alpha.284",
+  "version": "1.0.0-alpha.285",
   "type": "module",
   "description": "Toa Runtime",
   "author": "temich <tema.gurtovoy@gmail.com>",
@@ -33,7 +33,7 @@
     "@toa.io/cli": "1.0.0-alpha.284",
     "@toa.io/core": "1.0.0-alpha.284",
     "@toa.io/extensions.configuration": "1.0.0-alpha.284",
-    "@toa.io/extensions.exposition": "1.0.0-alpha.284",
+    "@toa.io/extensions.exposition": "1.0.0-alpha.285",
     "@toa.io/extensions.fetch": "1.0.0-alpha.284",
     "@toa.io/extensions.introspection": "1.0.0-alpha.284",
     "@toa.io/extensions.realtime": "1.0.0-alpha.284",

@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/extensions.exposition",
-  "version": "1.0.0-alpha.284",
+  "version": "1.0.0-alpha.285",
   "type": "module",
   "description": "Toa Exposition",
   "author": "temich <tema.gurtovoy@gmail.com>",
