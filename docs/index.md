@@ -13,10 +13,6 @@ for making some of those decisions, including where several approaches are reaso
 is clearly superior. Choosing one keeps that problem from becoming something every application
 developer has to resolve again.
 
-These choices are part of the execution model an application adopts. Understanding their
-guarantees and limits is necessary to use Toa; deciding between every reasonable implementation
-is not. The [Foundations](foundations/why.md) explain that model and its trade-offs.
-
 ## Motivation
 
 Most of the code in a typical backend service is not business logic.
