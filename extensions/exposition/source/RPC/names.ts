@@ -1,7 +1,7 @@
 import * as http from '../HTTP/index.js'
 import { verbs } from '../RTD/syntax/index.js'
 import type { Segment } from '../RTD/segment.js'
-import type { Params } from './types.js'
+import { QUERY, type Params } from './types.js'
 
 /**
  * What a name resolves to: the path the call is made at, and the verb it is made with.
@@ -59,6 +59,34 @@ export function address (method: string, params: Params): Address {
   const path = fragments.length === 0 ? '/' : `/${fragments.join('/')}/`
 
   return { path, verb, variables }
+}
+
+/**
+ * What the call carries, as a request carries it: the path took its variables, `query` is
+ * the querystring, and the rest is the body.
+ */
+export function split (params: Params, variables: string[]): { query?: Params, input?: Params } {
+  const input: Params = {}
+  let query: Params | undefined
+
+  for (const [key, value] of Object.entries(params)) {
+    if (variables.includes(key))
+      continue
+
+    if (key !== QUERY) {
+      input[key] = value
+
+      continue
+    }
+
+    if (typeof value !== 'object' || value === null || Array.isArray(value))
+      throw new http.BadRequest(`'${QUERY}' must be an object`)
+
+    query = value as Params
+  }
+
+  // an absent body is what a request without one has, and the mapping fills it as it does
+  return { query, input: Object.keys(input).length === 0 ? undefined : input }
 }
 
 /** The parameter a part reads, or nothing where the part is a literal segment. */

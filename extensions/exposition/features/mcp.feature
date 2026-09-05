@@ -1,0 +1,521 @@
+@security
+Feature: Model Context Protocol
+
+  A tool is a procedure a method says it is. It is called as that method, under the same
+  directives, and what it takes and answers is what the method says of itself.
+
+  Two revisions are answered from one endpoint that remembers nothing between requests: the
+  modern one, where every request carries its own version and capabilities, and the one
+  before it, which opens with `initialize`. Neither is given a session, and neither is given
+  a stream.
+
+  Background:
+    Given the annotation:
+      """yaml
+      mcp:
+        name: Teapots
+        instructions: A pot is read by its id.
+        anonymous: true
+      """
+    And the `pots` is running with the following manifest:
+      """yaml
+      exposition:
+        /:
+          io:output: [id, title, volume]
+          GET:
+            endpoint: enumerate
+            mcp:tool: true
+          POST:
+            endpoint: create
+            mcp:tool: true
+          /:id:
+            GET:
+              endpoint: observe
+              mcp:tool: One pot, by the id it was given.
+          /quiet:
+            GET:
+              endpoint: enumerate
+      """
+    And the `pots` database contains:
+      | _id                              | title     | volume |
+      | 4c4759e6f9c74da989d64511df42d6f4 | First pot | 100    |
+
+  Scenario: What the server is
+    When the following request is received:
+      """
+      POST /.mcp HTTP/1.1
+      host: nex.toa.io
+      accept: application/yaml
+      content-type: application/json
+      mcp-protocol-version: 2026-07-28
+      mcp-method: server/discover
+
+      {"jsonrpc": "2.0", "id": 1, "method": "server/discover",
+       "params": {"_meta": {"io.modelcontextprotocol/protocolVersion": "2026-07-28",
+                            "io.modelcontextprotocol/clientCapabilities": {}}}}
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      cache-control: no-store
+
+      jsonrpc: '2.0'
+      id: 1
+      result:
+        supportedVersions:
+          - '2026-07-28'
+          - '2025-11-25'
+        capabilities:
+          tools: {}
+        instructions: A pot is read by its id.
+        resultType: complete
+      """
+
+  Scenario: What a client of an earlier revision opens with
+    No session is made, and none is named back.
+
+    When the following request is received:
+      """
+      POST /.mcp HTTP/1.1
+      host: nex.toa.io
+      accept: application/yaml
+      content-type: application/json
+
+      {"jsonrpc": "2.0", "id": 1, "method": "initialize",
+       "params": {"protocolVersion": "2025-11-25", "capabilities": {},
+                  "clientInfo": {"name": "Inspector", "version": "2.5.0"}}}
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+
+      jsonrpc: '2.0'
+      id: 1
+      result:
+        protocolVersion: '2025-11-25'
+        capabilities:
+          tools: {}
+        serverInfo:
+          name: Teapots
+        instructions: A pot is read by its id.
+      """
+    And the reply does not contain:
+      """
+      mcp-session-id
+      """
+    When the following request is received:
+      """
+      POST /.mcp HTTP/1.1
+      host: nex.toa.io
+      content-type: application/json
+
+      {"jsonrpc": "2.0", "method": "notifications/initialized"}
+      """
+    Then the following reply is sent:
+      """
+      202 Accepted
+      """
+
+  Scenario: What the tools are
+    A method that does not say it is a tool is not one, whatever else it is.
+
+    When the following request is received:
+      """
+      POST /.mcp HTTP/1.1
+      host: nex.toa.io
+      accept: application/yaml
+      content-type: application/json
+      mcp-protocol-version: 2026-07-28
+      mcp-method: tools/list
+
+      {"jsonrpc": "2.0", "id": 2, "method": "tools/list",
+       "params": {"_meta": {"io.modelcontextprotocol/protocolVersion": "2026-07-28",
+                            "io.modelcontextprotocol/clientCapabilities": {}}}}
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+
+      jsonrpc: '2.0'
+      id: 2
+      result:
+        tools:
+          - name: pots/GET
+            description: Every pot there is.
+            inputSchema:
+              type: object
+              properties:
+                query:
+                  type: object
+                  properties:
+                    criteria:
+                      type: string
+                    limit:
+                      type: integer
+                      minimum: 1
+                      maximum: 100
+                      default: 10
+              additionalProperties: false
+            annotations:
+              readOnlyHint: true
+          - name: pots/POST
+            description: Put a pot on to brew.
+            inputSchema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  maxLength: 64
+                volume:
+                  type: number
+              required:
+                - title
+                - volume
+              additionalProperties: false
+          - name: pots/_id/GET
+            description: One pot, by the id it was given.
+            inputSchema:
+              type: object
+              properties:
+                id:
+                  type: string
+              required:
+                - id
+              additionalProperties: false
+      """
+    And the reply does not contain:
+      """
+      pots/quiet/GET
+      """
+
+  Scenario: A tool takes what the procedure takes
+    When the following request is received:
+      """
+      POST /.mcp HTTP/1.1
+      host: nex.toa.io
+      accept: application/yaml
+      content-type: application/json
+      mcp-protocol-version: 2026-07-28
+      mcp-method: tools/call
+      mcp-name: pots/_id/GET
+
+      {"jsonrpc": "2.0", "id": 3, "method": "tools/call",
+       "params": {"name": "pots/_id/GET",
+                  "arguments": {"id": "4c4759e6f9c74da989d64511df42d6f4"},
+                  "_meta": {"io.modelcontextprotocol/protocolVersion": "2026-07-28",
+                            "io.modelcontextprotocol/clientCapabilities": {}}}}
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+
+      jsonrpc: '2.0'
+      id: 3
+      result:
+        structuredContent:
+          id: 4c4759e6f9c74da989d64511df42d6f4
+          title: First pot
+          volume: 100
+        resultType: complete
+      """
+
+  Scenario: What is left of the arguments is the input
+    When the following request is received:
+      """
+      POST /.mcp HTTP/1.1
+      host: nex.toa.io
+      accept: application/yaml
+      content-type: application/json
+      mcp-protocol-version: 2026-07-28
+      mcp-method: tools/call
+      mcp-name: pots/POST
+
+      {"jsonrpc": "2.0", "id": 4, "method": "tools/call",
+       "params": {"name": "pots/POST", "arguments": {"title": "Kettle", "volume": 1.7},
+                  "_meta": {"io.modelcontextprotocol/protocolVersion": "2026-07-28",
+                            "io.modelcontextprotocol/clientCapabilities": {}}}}
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+
+      jsonrpc: '2.0'
+      id: 4
+      result:
+        structuredContent:
+          id:
+      """
+
+  Scenario: A name that is no tool
+    A procedure that does not say it is a tool is not reachable here, and neither is one
+    that is no procedure at all.
+
+    When the following request is received:
+      """
+      POST /.mcp HTTP/1.1
+      host: nex.toa.io
+      accept: application/yaml
+      content-type: application/json
+      mcp-protocol-version: 2026-07-28
+      mcp-method: tools/call
+      mcp-name: pots/quiet/GET
+
+      {"jsonrpc": "2.0", "id": 5, "method": "tools/call",
+       "params": {"name": "pots/quiet/GET", "arguments": {},
+                  "_meta": {"io.modelcontextprotocol/protocolVersion": "2026-07-28",
+                            "io.modelcontextprotocol/clientCapabilities": {}}}}
+      """
+    Then the following reply is sent:
+      """
+      404 Not Found
+      """
+
+  Scenario: A method this server does not answer
+    The status is what tells a client that this endpoint is here and the method is not.
+
+    When the following request is received:
+      """
+      POST /.mcp HTTP/1.1
+      host: nex.toa.io
+      accept: application/yaml
+      content-type: application/json
+      mcp-protocol-version: 2026-07-28
+      mcp-method: prompts/list
+
+      {"jsonrpc": "2.0", "id": 6, "method": "prompts/list",
+       "params": {"_meta": {"io.modelcontextprotocol/protocolVersion": "2026-07-28",
+                            "io.modelcontextprotocol/clientCapabilities": {}}}}
+      """
+    Then the following reply is sent:
+      """
+      404 Not Found
+
+      jsonrpc: '2.0'
+      id: 6
+      error:
+        code: -32601
+      """
+
+  Scenario: A header saying one thing and a body another
+    What routes a request and what answers it must not be told two different things.
+
+    When the following request is received:
+      """
+      POST /.mcp HTTP/1.1
+      host: nex.toa.io
+      accept: application/yaml
+      content-type: application/json
+      mcp-protocol-version: 2026-07-28
+      mcp-method: tools/call
+      mcp-name: pots/GET
+
+      {"jsonrpc": "2.0", "id": 7, "method": "tools/call",
+       "params": {"name": "pots/POST", "arguments": {},
+                  "_meta": {"io.modelcontextprotocol/protocolVersion": "2026-07-28",
+                            "io.modelcontextprotocol/clientCapabilities": {}}}}
+      """
+    Then the following reply is sent:
+      """
+      400 Bad Request
+
+      jsonrpc: '2.0'
+      id: 7
+      error:
+        code: -32020
+      """
+
+  Scenario: A revision neither served
+    When the following request is received:
+      """
+      POST /.mcp HTTP/1.1
+      host: nex.toa.io
+      accept: application/yaml
+      content-type: application/json
+      mcp-protocol-version: 1900-01-01
+      mcp-method: tools/list
+
+      {"jsonrpc": "2.0", "id": 8, "method": "tools/list", "params": {}}
+      """
+    Then the following reply is sent:
+      """
+      400 Bad Request
+
+      jsonrpc: '2.0'
+      id: 8
+      error:
+        code: -32022
+        data:
+          supported:
+            - '2026-07-28'
+            - '2025-11-25'
+          requested: '1900-01-01'
+      """
+
+  Scenario: What the endpoint does not serve
+    A stream is what these were for, and this endpoint has none.
+
+    When the following request is received:
+      """
+      GET /.mcp HTTP/1.1
+      host: nex.toa.io
+      """
+    Then the following reply is sent:
+      """
+      405 Method Not Allowed
+      allow: POST
+      """
+
+  Scenario: Without the annotation nothing answers there
+    Given the annotation:
+      """yaml
+      {}
+      """
+    When the following request is received:
+      """
+      POST /.mcp HTTP/1.1
+      host: nex.toa.io
+      content-type: application/json
+
+      {"jsonrpc": "2.0", "id": 9, "method": "tools/list", "params": {}}
+      """
+    Then the following reply is sent:
+      """
+      404 Not Found
+      """
+
+  Scenario: What the operation refused with
+    A refusal is a value a model reads and may correct itself by, so it is a result rather
+    than an error of the protocol.
+
+    Given the `echo` is running with the following manifest:
+      """yaml
+      exposition:
+        /:
+          io:output: true
+          GET:
+            endpoint: error
+            mcp:tool: Refuses, so that what it refuses with can be read.
+      """
+    When the following request is received:
+      """
+      POST /.mcp HTTP/1.1
+      host: nex.toa.io
+      accept: application/yaml
+      content-type: application/json
+      mcp-protocol-version: 2026-07-28
+      mcp-method: tools/call
+      mcp-name: echo/GET
+
+      {"jsonrpc": "2.0", "id": 10, "method": "tools/call",
+       "params": {"name": "echo/GET", "arguments": {},
+                  "_meta": {"io.modelcontextprotocol/protocolVersion": "2026-07-28",
+                            "io.modelcontextprotocol/clientCapabilities": {}}}}
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+
+      jsonrpc: '2.0'
+      id: 10
+      result:
+        content:
+          - type: text
+            text: message
+        isError: true
+        resultType: complete
+      """
+
+  Scenario: An operation that declares no output
+    A schema the revision would have the reply validated against is worse said emptily than
+    left unsaid — and the reply is answered all the same.
+
+    Given the `echo` is running with the following manifest:
+      """yaml
+      exposition:
+        /:
+          io:output: true
+          GET:
+            endpoint: echo
+            mcp:tool: Answers with what it was given.
+      """
+    When the following request is received:
+      """
+      POST /.mcp HTTP/1.1
+      host: nex.toa.io
+      accept: application/yaml
+      content-type: application/json
+      mcp-protocol-version: 2026-07-28
+      mcp-method: tools/call
+      mcp-name: echo/GET
+
+      {"jsonrpc": "2.0", "id": 11, "method": "tools/call",
+       "params": {"name": "echo/GET", "arguments": {"greeting": "hello"},
+                  "_meta": {"io.modelcontextprotocol/protocolVersion": "2026-07-28",
+                            "io.modelcontextprotocol/clientCapabilities": {}}}}
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+
+      jsonrpc: '2.0'
+      id: 11
+      result:
+        structuredContent:
+          greeting: hello
+        resultType: complete
+      """
+
+  Scenario: An origin that is not listed
+    The revision requires this against DNS rebinding, and an empty list admits none.
+
+    When the following request is received:
+      """
+      POST /.mcp HTTP/1.1
+      host: nex.toa.io
+      origin: https://elsewhere.example
+      accept: application/yaml
+      content-type: application/json
+      mcp-protocol-version: 2026-07-28
+      mcp-method: tools/list
+
+      {"jsonrpc": "2.0", "id": 12, "method": "tools/list",
+       "params": {"_meta": {"io.modelcontextprotocol/protocolVersion": "2026-07-28",
+                            "io.modelcontextprotocol/clientCapabilities": {}}}}
+      """
+    Then the following reply is sent:
+      """
+      403 Forbidden
+      """
+
+  Scenario: Without a credential
+    A request without one is where the authorization flow starts, so the refusal carries
+    the document that says where to get a token.
+
+    Given the annotation:
+      """yaml
+      authorities:
+        nex: nex.toa.io
+      oauth:
+        authorize: https://app.nex.toa.io/oauth/authorize
+        resources: ['/.mcp']
+      mcp:
+        name: Teapots
+      """
+    When the following request is received:
+      """
+      POST /.mcp HTTP/1.1
+      host: nex.toa.io
+      accept: application/yaml
+      content-type: application/json
+      mcp-protocol-version: 2026-07-28
+      mcp-method: tools/list
+
+      {"jsonrpc": "2.0", "id": 13, "method": "tools/list",
+       "params": {"_meta": {"io.modelcontextprotocol/protocolVersion": "2026-07-28",
+                            "io.modelcontextprotocol/clientCapabilities": {}}}}
+      """
+    Then the following reply is sent:
+      """
+      401 Unauthorized
+      www-authenticate: Bearer resource_metadata="https://nex.toa.io/.well-known/oauth-protected-resource/.mcp"
+      """

@@ -3,11 +3,12 @@ import { setTimeout } from 'node:timers/promises'
 import { console } from 'openspan'
 import { type bindings, Connector } from '@toa.io/core'
 import * as http from './HTTP/index.js'
-import { RPC } from './const.js'
+import { MCP, RPC } from './const.js'
 import { rethrow } from './exceptions.js'
 import { decide } from './Branch.js'
 import type { Interception } from './Interception.js'
 import type { Dispatcher } from './RPC/index.js'
+import type { Server } from './MCP/index.js'
 import type { DirectiveFactory, Method, Node, Parameter, Tree, Match } from './RTD/index.js'
 import type { Label } from './discovery.js'
 import type { Branch, Exposed } from './Branch.js'
@@ -20,6 +21,9 @@ export class Gateway extends Connector {
 
   /** JSON-RPC is served only where the annotation asked for it. */
   private readonly dispatcher: Dispatcher | null
+
+  /** And the same of MCP. */
+  private readonly mcp: Server | null
   private readonly branches = new Map<string, Exposed>()
   private lastMerge = 0
   private widestGap = 0
@@ -29,7 +33,7 @@ export class Gateway extends Connector {
 
   // eslint-disable-next-line max-params
   public constructor (broadcast: Broadcast, tree: Tree, interception: Interception,
-    directives: DirectiveFactory, dispatcher: Dispatcher | null) {
+    directives: DirectiveFactory, dispatcher: Dispatcher | null, mcp: Server | null) {
     super()
 
     this.broadcast = broadcast
@@ -37,6 +41,7 @@ export class Gateway extends Connector {
     this.interceptor = interception
     this.directives = directives
     this.dispatcher = dispatcher
+    this.mcp = mcp
 
     this.depends(broadcast)
   }
@@ -52,16 +57,29 @@ export class Gateway extends Connector {
     await context.timing.capture('preflight',
       this.directives.preflight(context)).catch(rethrow)
 
-    const response = this.dispatcher !== null && context.url.pathname === RPC
-      ? await context.timing.capture('rpc',
-        this.dispatcher.dispatch(context, async (call) => await this.route(call)))
-      : await this.route(context)
+    const response = await this.endpoint(context)
 
     // request-scoped, on whatever is going back: this is where a credential is re-issued
     await context.timing.capture('depart',
       this.directives.depart(context, response)).catch(rethrow)
 
     return response
+  }
+
+  /**
+   * What answers the request: a pinned endpoint that makes calls of its own, or the route
+   * the path names.
+   */
+  private async endpoint (context: http.Context): Promise<http.OutgoingMessage> {
+    const route: http.Processor = async (call) => await this.route(call)
+
+    if (this.dispatcher !== null && context.url.pathname === RPC)
+      return await context.timing.capture('rpc', this.dispatcher.dispatch(context, route))
+
+    if (this.mcp !== null && context.url.pathname === MCP)
+      return await context.timing.capture('mcp', this.mcp.process(context, route))
+
+    return await this.route(context)
   }
 
   /**

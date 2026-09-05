@@ -2,10 +2,10 @@ import { console } from 'openspan'
 import * as http from '../HTTP/index.js'
 import * as schemas from '../schemas.js'
 import { BATCH } from '../const.js'
-import { address } from './names.js'
+import { address, split } from './names.js'
 import { fork } from './Context.js'
 import { BATCH_TOO_LARGE, INVALID_REQUEST, PARSE, failure, of, response } from './errors.js'
-import { QUERY, VERSION, type Call, type Params, type Response } from './types.js'
+import { VERSION, type Call, type Response } from './types.js'
 import type { RPC } from '../Annotation.js'
 
 /**
@@ -124,34 +124,6 @@ export class Dispatcher {
       throw exception
     }
   }
-}
-
-/**
- * What the call carries, as a request carries it: the path took its variables, `query`
- * is the querystring, and the rest is the body.
- */
-function split (params: Params, variables: string[]): { query?: Params, input?: Params } {
-  const input: Params = {}
-  let query: Params | undefined
-
-  for (const [name, value] of Object.entries(params)) {
-    if (variables.includes(name))
-      continue
-
-    if (name !== QUERY) {
-      input[name] = value
-
-      continue
-    }
-
-    if (typeof value !== 'object' || value === null || Array.isArray(value))
-      throw new http.BadRequest(`'${QUERY}' must be an object`)
-
-    query = value as Params
-  }
-
-  // an absent body is what a request without one has, and the mapping fills it as it does
-  return { query, input: Object.keys(input).length === 0 ? undefined : input }
 }
 
 const OK = 200

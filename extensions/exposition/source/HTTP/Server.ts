@@ -12,7 +12,7 @@ import { ClientError, Exception } from './exceptions.js'
 import { Context } from './Context.js'
 import { PROBE, Probe } from './Probe.js'
 import type { IncomingMessage, Protocol, ServerResponse } from './types.js'
-import type { Bouncer, OAuth, RPC } from '../Annotation.js'
+import type { Bouncer, MCP, OAuth, RPC } from '../Annotation.js'
 
 export class Server extends Connector {
   private readonly server: http.Server | http2.Http2Server
@@ -392,6 +392,9 @@ interface Properties {
 
   /** JSON-RPC at `/.rpc`; none is served without it. */
   rpc?: RPC
+
+  /** MCP at `/.mcp`; none is served without it. */
+  mcp?: MCP
 }
 
 export type Options = { authorities: Properties['authorities'] } & {

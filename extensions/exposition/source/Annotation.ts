@@ -29,6 +29,9 @@ export interface Annotation {
 
   /** JSON-RPC at `/.rpc`; none is served without it. See `documentation/rpc.md`. */
   rpc?: RPC
+
+  /** MCP at `/.mcp`; none is served without it. See `documentation/mcp.md`. */
+  mcp?: MCP
   '/'?: object // parsed and validated by RTD.syntax.parse
 }
 
@@ -58,6 +61,23 @@ export interface RPC {
    * reply however many calls it makes, so what a caller may ask for at once is bounded.
    */
   batch?: number
+}
+
+export interface MCP {
+  /** What the server calls itself, which a client shows a user. */
+  name: string
+
+  /** What a model is told before it calls anything here. */
+  instructions?: string
+
+  /**
+   * Browser origins the endpoint answers, which the revision requires against DNS rebinding.
+   * None are admitted without it; a request carrying no `Origin` is not a browser's.
+   */
+  origins?: string[]
+
+  /** Whether the endpoint answers without a credential. It does not unless it says so. */
+  anonymous?: boolean
 }
 
 export interface Bouncer {
