@@ -23,10 +23,13 @@ export function input (introspection: Introspection, variables: string[]): objec
     required.push(variable)
   }
 
+  // it is a querystring on the wire, which is nothing a model knows or needs to; what it
+  // is to a caller is the part of a call that picks what the call is about
   if (introspection.query !== undefined)
     properties.query = {
       type: 'object',
-      description: 'What the querystring carries.',
+      description: 'Which records the call works on: what to match, in what order, ' +
+        'and how many at once.',
       properties: introspection.query
     }
 
