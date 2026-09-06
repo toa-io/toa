@@ -1,3 +1,5 @@
+import type { Parameter } from './Match.js'
+
 export function segment(path: string): Segment[] {
   return fragment(path).map(parse)
 }
@@ -28,3 +30,22 @@ export type Segment =
       placeholder: string | null
       wildcard?: boolean
     }
+
+/**
+ * What a route template takes, by name. Describing has no values for them — a template is
+ * not a path — and nothing that describes a method reads one. A `*` is skipped: it stands
+ * for a segment the caller cannot name, so there is nothing to substitute.
+ */
+export function variables(segments: Segment[]): Parameter[] {
+  const params: Parameter[] = []
+
+  for (const segment of segments) {
+    if (segment.fragment !== null) continue
+
+    if (segment.wildcard === true) params.push({ name: '**', value: '' })
+    else if (segment.placeholder !== null)
+      params.push({ name: segment.placeholder, value: '' })
+  }
+
+  return params
+}

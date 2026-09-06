@@ -99,7 +99,7 @@ export interface Component {
   challenge: (request: { input: ChallengeInput, task?: boolean }) => Promise<unknown>
   create: (request: { input: CreateInput, task?: boolean }) => Promise<unknown | RemoteError<"FAILED" | "INVALID">>
   use: (request: { input: UseInput, query: Query<Entity>, task?: boolean }) => Promise<unknown | RemoteError<"FAILED" | "INVALID">>
-  authenticate: (request: { input: AuthenticateInput, task?: boolean }) => Promise<unknown | RemoteError<"MISS">>
+  authenticate: (request: { input: AuthenticateInput, task?: boolean }) => Promise<unknown | RemoteError<"MISS" | "FAILED" | "INVALID">>
   list: (request: { input: ListInput, task?: boolean }) => Promise<unknown>
   delete: (request: { input: DeleteInput, task?: boolean }) => Promise<unknown>
   assign: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Entity>

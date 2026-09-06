@@ -16,7 +16,7 @@ export class CORS implements Interceptor {
   private requestHeaders = new Set<string>(REQUEST_HEADERS)
 
   private readonly headers = new Headers({
-    'access-control-allow-methods': 'GET, POST, PUT, PATCH, DELETE, LOCK, UNLOCK',
+    'access-control-allow-methods': 'GET, POST, PUT, PATCH, DELETE, LOCK, UNLOCK, OPTIONS',
     'access-control-allow-credentials': 'true',
     'access-control-allow-headers': this.allowedHeaders(),
     'access-control-max-age': '3600',
@@ -26,8 +26,15 @@ export class CORS implements Interceptor {
 
   public intercept(input: Input): Output {
     const origin = input.request.headers.origin
+    const requested = input.request.headers['access-control-request-method']
 
-    if (origin !== undefined && input.request.method === 'OPTIONS')
+    /*
+     * A preflight is `OPTIONS` carrying `Access-Control-Request-Method`, and only that. A
+     * browser puts `Origin` on every request whose method is not `GET` or `HEAD` — its own
+     * `OPTIONS` included, same-origin or not — so answering that one here would put
+     * introspection out of reach of any page.
+     */
+    if (origin !== undefined && requested !== undefined && input.request.method === 'OPTIONS')
       return this.preflightResponse(origin)
 
     input.pipelines.response.push((output) => {

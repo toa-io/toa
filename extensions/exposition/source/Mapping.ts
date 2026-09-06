@@ -24,6 +24,11 @@ export abstract class Mapping {
     return this.query.explain(introspection)
   }
 
+  /** What picks the records a call is about; see `Query.selection`. */
+  public selection(): Record<string, Schema> | null {
+    return this.query.selection()
+  }
+
   protected assign(input: any, qs: QueryString): void {
     if (qs.parameters !== null) {
       if (typeof input !== 'object' || input === null)

@@ -180,6 +180,62 @@ describe('dependencies', () => {
     assert.deepStrictEqual(sequence, ['+b', '-b', '*b', '*a'])
   })
 
+  it('should disconnect a dependency taken on after disconnection', async () => {
+    a.depends(b)
+
+    await a.connect()
+    await a.disconnect()
+
+    // what a lookup that returns once the teardown walk has gone by amounts to
+    a.depends(c)
+
+    await c.connect()
+
+    assert.strictEqual(c.connected, false)
+    assert.ok(sequence.indexOf('*c') > sequence.indexOf('*a'))
+  })
+
+  it('should disconnect a connected dependency taken on after disconnection', async () => {
+    a.depends(b)
+
+    await a.connect()
+    await a.disconnect()
+    await c.connect()
+
+    a.depends(c)
+
+    // the discarding is not something the caller waits for
+    for (let i = 0; c.connected && i < 100; i++) await timeout(1)
+
+    assert.strictEqual(c.connected, false)
+    assert.ok(sequence.includes('*c'))
+  })
+
+  it('should not connect what was disconnected while connecting', async () => {
+    const late = new fixtures.LateConnector()
+
+    late.depends(c)
+    b.depends(c)
+
+    await b.connect()
+
+    const connecting = late.connect()
+
+    await late.disconnect()
+
+    late.arrive()
+
+    await connecting
+
+    // the connection landed after the disconnection, and nothing is left to say it again
+    assert.strictEqual(late.connected, false)
+
+    await b.disconnect()
+
+    assert.strictEqual(c.connected, false)
+    assert.ok(sequence.includes('*c'))
+  })
+
   describe('errors', () => {
     let f
 

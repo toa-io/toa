@@ -1,1 +1,6 @@
-features/steps/.env
+**/.env*
+!**/.env.example
+
+# the UI project is not published — only what it builds
+ui/*
+!ui/dist

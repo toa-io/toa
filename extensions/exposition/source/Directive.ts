@@ -206,6 +206,10 @@ export class DirectivesFactory implements RTD.DirectiveFactory {
     return directives
   }
 
+  public inheritable(directive: RTD.syntax.Directive): boolean {
+    return this.families[directive.family]?.inherited !== false
+  }
+
   public dispose(): void {
     for (const directives of this.instances) directives.dispose()
   }

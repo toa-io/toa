@@ -4,6 +4,7 @@ import { type Component } from '@toa.io/core'
 import type { Query } from '@toa.io/core/types'
 import { type Directive, type Identity } from './types.js'
 import type { Parameter } from '../../RTD/index.js'
+import type { Introspection } from '../../Introspection.js'
 
 export class Role implements Directive {
   public static remote: Component | null = null
@@ -29,6 +30,19 @@ export class Role implements Directive {
     }
 
     return await this.remote.invoke('list', { query })
+  }
+
+  /**
+   * Reaching it takes a role, which is what `protected` says. A role of the `system` scope
+   * says so besides: what it guards is the machinery an application runs on rather than
+   * anything it serves, and a reader has no business being offered it as one.
+   */
+  public describe(introspection: Introspection): Introspection {
+    const system = this.roles.some(
+      (role) => role === SYSTEM || role.startsWith(SYSTEM + ':')
+    )
+
+    return { ...introspection, protected: true, ...(system ? { system: true } : {}) }
   }
 
   public async authorize(
@@ -80,3 +94,6 @@ export class Role implements Directive {
     )
   }
 }
+
+/** The scope of what an application runs on, as opposed to what it serves. */
+const SYSTEM = 'system'

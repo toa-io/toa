@@ -32,12 +32,14 @@ A tool is an RTD method that says it is one, named as the [procedure](rpc.md#the
 ```yaml
 /pots:
   GET:
-    mcp:tool: Every pot there is, newest first.
+    mcp:tool: true
+    help:method: Every pot there is, newest first.
     endpoint: enumerate
   /hot:
     GET:
       query: { criteria: temperature=gt=80 }
-      mcp:tool:
+      mcp:tool: true
+      help:method:
         title: Hot pots
         description: The pots that are too hot to pour.
       endpoint: enumerate
@@ -47,21 +49,12 @@ A default denies, and a tree holds everything an application serves — its iden
 uploads, the machinery of the authorization flow the model already came through. Publishing all of
 it would spend a model's context on what it has no business calling.
 
-The value is what the tool is, and stating it is what publishes it — there is no way to publish one
-that says nothing, because a tool a model cannot read the purpose of is one it cannot choose.
+`mcp:tool` says only whether the method is published. What the tool is called and what it is for is
+[`help:method`](help.md), which is what describes the method everywhere else as well — a tool a
+model cannot read the purpose of is one it cannot choose, so declare one beside the other.
 
-A `title` is what a person is shown where a client lists what it may call. Without one a client has
-only the name, which is an address — `apps._identity._id.repos.POST` — and reads as one. A
-description alone is written as the value; a title beside it is written as a mapping.
-
-An operation [states what it is](/documentation/component/declaration.md) as well, and that is not
-this: it is written without knowledge of any route, and a tool is an operation and a route together.
-The two routes above are one operation and two tools, and one sentence is not true of both. The
-operation's own is the Introspection's to read, and the gateway does not use it.
-
-A declaration is inherited by everything below it, as every directive is, and the nearer one wins.
-Since what it carries is what one method is, it belongs on a method: a node stating one would say
-the same thing of everything under it.
+A declaration is inherited by everything below it, as every directive is, and the nearer one wins —
+so a node publishes a subtree, and `mcp:tool: false` withdraws one method of it.
 
 A route whose name a client [cannot spell](rpc.md#what-has-a-name) is refused where the directive
 is built, rather than served as a tool that is quietly never listed.
@@ -80,6 +73,10 @@ application did not publish is not reachable by guessing what it would have been
 [says of itself](introspection.md): a route variable by the name the template gives it, the
 querystring under `query`, and what is left is the body. `io:input` restricts it, and a property
 `map` fills is not there — a call carries no headers of its own.
+
+`query` carries what selects records — `criteria`, `sort`, `limit`, `omit`, `search` — beside the
+parameters the resource declares. `OPTIONS` states only the latter, because the former is the same
+of every queryable resource; here it is stated, because here it is something the caller sends.
 
 ```yaml
 type: object

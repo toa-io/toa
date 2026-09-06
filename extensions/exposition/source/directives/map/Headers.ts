@@ -29,13 +29,13 @@ export class Headers extends Mapping<Record<string, string>> {
     this.headers.forEach((header) => cors.allow(header))
   }
 
+  /**
+   * The property is filled from a request header, so it is not the body's to send. Which
+   * header, and that there is one at all, is not answered: what an application reads off a
+   * request is its own, and a caller has nowhere to put one anyway.
+   */
   public override explain(introspection: Introspection): void {
-    for (const [property, header] of Object.entries(this.value)) {
-      const schema = take(introspection, property)
-
-      introspection.headers ??= {}
-      introspection.headers[property] = { ...schema, header }
-    }
+    for (const property of Object.keys(this.value)) take(introspection, property)
   }
 
   public properties(context: Input): Record<string, string> {

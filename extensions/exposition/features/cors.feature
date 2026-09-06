@@ -13,6 +13,7 @@ Feature: CORS Support
     When the following request is received:
       """
       OPTIONS / HTTP/1.1
+      access-control-request-method: GET
       host: nex.toa.io
       origin: https://hello.world
       """
@@ -21,7 +22,7 @@ Feature: CORS Support
       204 No Content
       access-control-allow-credentials: true
       access-control-allow-headers: accept, authorization, content-type, if-match, if-none-match
-      access-control-allow-methods: GET, POST, PUT, PATCH, DELETE, LOCK, UNLOCK
+      access-control-allow-methods: GET, POST, PUT, PATCH, DELETE, LOCK, UNLOCK, OPTIONS
       access-control-allow-origin: https://hello.world
       access-control-max-age: 3600
       cache-control: max-age=3600
@@ -39,6 +40,35 @@ Feature: CORS Support
       access-control-allow-credentials: true
       access-control-allow-origin: https://hello.world
       access-control-expose-headers: authorization, content-type, content-length, date, etag, last-modified
+      vary: origin
+      """
+
+  Scenario: An OPTIONS that is not a preflight
+    A preflight is `OPTIONS` carrying `Access-Control-Request-Method`, and only that. A
+    browser puts `Origin` on every request whose method is not `GET` or `HEAD`, its own
+    `OPTIONS` included — so one answered as a preflight is a resource no page can introspect.
+
+    Given the annotation:
+      """yaml
+      /:
+        anonymous: true
+        /foo:
+          io:output: true
+          GET:
+            dev:stub: Hello
+      """
+    When the following request is received:
+      """
+      OPTIONS /foo/ HTTP/1.1
+      host: nex.toa.io
+      origin: https://hello.world
+      accept: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      access-control-allow-origin: https://hello.world
+      Allow: GET
       vary: origin
       """
 

@@ -4,8 +4,9 @@ import { address, name, split } from '../RPC/names.js'
 import { METHOD_NOT_FOUND, failure, refusal, response } from './errors.js'
 import { annotations, input, output } from './schema.js'
 import { FAMILY, MCP, type Tool as Declaration } from '../directives/mcp/index.js'
-import type { Segment } from '../RTD/segment.js'
-import type { Parameter, Tree } from '../RTD/index.js'
+import { describing } from '../Introspection.js'
+import { variables } from '../RTD/segment.js'
+import type { Tree } from '../RTD/index.js'
 import type { Params, Result, Tool } from './types.js'
 
 /**
@@ -20,28 +21,26 @@ import type { Params, Result, Tool } from './types.js'
  *
  * Sorted, because the revision asks for an order a client can cache on.
  */
-export async function list(tree: Tree, context: http.Context): Promise<Tool[]> {
+export async function list(tree: Tree, request: http.Context): Promise<Tool[]> {
   const tools: Tool[] = []
 
   /*
-   * Each method is described as the procedure it would be, not as the request asking. What
-   * refuses a credentialed request at an `anonymous` route does not refuse the call a tool
-   * makes, and a list that says otherwise disagrees with what `tools/call` then does.
+   * A description, not the request asking. What refuses a credentialed request at an
+   * `anonymous` route does not refuse the call a tool makes, and a list that says otherwise
+   * disagrees with what `tools/call` then does.
    */
-  const describing: http.Context = Object.create(context, {
-    procedural: { value: true, enumerable: true }
-  })
+  const context = describing(request)
 
   for (const { segments, verb, method } of tree.walk()) {
-    if (MCP.published(method.directives.declared<Declaration>(FAMILY)) === null) continue
+    if (!MCP.published(method.directives.declared<Declaration>(FAMILY))) continue
 
     const named = name(segments, verb)
 
     // a route a name cannot spell is a route nothing addresses, here or at `/.rpc`
     if (named === null) continue
 
-    const variables = parameters(segments)
-    const introspection = await method.explain(describing, variables)
+    const params = variables(segments)
+    const introspection = await method.explain(context, params)
 
     if (introspection === null) continue
 
@@ -56,7 +55,8 @@ export async function list(tree: Tree, context: http.Context): Promise<Tool[]> {
       ...(described === undefined ? {} : { description: described }),
       inputSchema: input(
         introspection,
-        variables.map((variable) => variable.name)
+        params.map((param) => param.name),
+        method.endpoint?.selection() ?? null
       ),
       ...(schema === undefined ? {} : { outputSchema: schema }),
       ...(hints === undefined ? {} : { annotations: hints })
@@ -129,7 +129,7 @@ export interface Scope {
 function published(tree: Tree, named: string): boolean {
   for (const { segments, verb, method } of tree.walk())
     if (name(segments, verb) === named)
-      return MCP.published(method.directives.declared<Declaration>(FAMILY)) !== null
+      return MCP.published(method.directives.declared<Declaration>(FAMILY))
 
   return false
 }
@@ -141,22 +141,4 @@ function result(body: unknown): Result {
     content: [{ type: 'text', text: JSON.stringify(body) }],
     structuredContent: body
   }
-}
-
-/**
- * What a route template takes, by name. Describing has no values for them — a template is
- * not a path — and nothing that describes a method reads one.
- */
-function parameters(segments: Segment[]): Parameter[] {
-  const params: Parameter[] = []
-
-  for (const segment of segments) {
-    if (segment.fragment !== null) continue
-
-    if (segment.wildcard === true) params.push({ name: '**', value: '' })
-    else if (segment.placeholder !== null)
-      params.push({ name: segment.placeholder, value: '' })
-  }
-
-  return params
 }

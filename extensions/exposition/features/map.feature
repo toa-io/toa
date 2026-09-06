@@ -78,6 +78,7 @@ Feature: HTTP context mapping
     When the following request is received:
       """
       OPTIONS / HTTP/1.1
+      access-control-request-method: GET
       host: nex.toa.io
       origin: https://example.com
       """
