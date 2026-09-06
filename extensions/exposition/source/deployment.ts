@@ -8,6 +8,10 @@ import { components } from './Composition.js'
 import { parse } from './RTD/syntax/index.js'
 import { DELAY, PORT, PROBE } from './HTTP/index.js'
 
+/** Where Toa's release publishes this service's image. An application takes it
+ *  instead of building one when its context says `registry.services: published`. */
+export const image = 'ghcr.io/toa-io/extension-exposition-gateway'
+
 export function deployment(_: unknown, annotation?: Annotation): Dependency {
   assert.ok(annotation !== undefined, 'Exposition context annotation is required')
   schemas.annotation.validate(annotation)
@@ -17,6 +21,7 @@ export function deployment(_: unknown, annotation?: Annotation): Dependency {
   const service: Service = {
     group: 'exposition',
     name: 'gateway',
+    image,
     port: PORT,
     version: JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8'))
       .version,

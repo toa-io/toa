@@ -11,6 +11,7 @@ interface Runtime {
 interface Registry {
   base?: string
   platforms?: string[] | null
+  services?: 'build' | 'published'
   build?: {
     arguments?: string[]
     run?: string

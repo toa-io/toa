@@ -40,6 +40,12 @@ properties:
         minItems: 1
         items:
           type: string
+      services:
+        description: >
+          Where an extension service's image comes from. `build`, which absence means,
+          builds it into `registry.base` the way a composition is built. `published` uses
+          the image the extension ships, which is neither built nor pushed.
+        enum: [build, published]
     # required: [base]
   compositions:
     type: array

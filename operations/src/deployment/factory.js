@@ -40,12 +40,7 @@ export class Factory {
       context.registry
     )
 
-    this.#registry = new Registry(
-      context.name,
-      context.registry,
-      imagesFactory,
-      this.#process
-    )
+    this.#registry = new Registry(context.registry, imagesFactory, this.#process)
     this.#claims = claims(context)
     this.#dependencies = this.#getDependencies()
     this.#compositions = []
@@ -150,7 +145,14 @@ export class Factory {
    * @returns {Service}
    */
   #service(path, service) {
-    const image = this.#registry.service(path, service)
+    // an extension that publishes its service's image is taken at its word: nothing is
+    // added to the registry, so nothing is prepared, probed, built or pushed for it
+    const published =
+      service.image !== undefined && this.#context.registry?.services === PUBLISHED
+
+    const image = published
+      ? { reference: `${service.image}:${this.#context.runtime.version}` }
+      : this.#registry.service(path, service)
 
     return new Service(service, image)
   }
@@ -163,6 +165,8 @@ export class Factory {
 }
 
 const MONO = 'mono'
+
+const PUBLISHED = 'published'
 
 /**
  * @param {toa.norm.Context} context

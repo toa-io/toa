@@ -178,3 +178,31 @@ jobs:
 
           echo "::error::failed to build the runtime image for $VERSION"
           exit 1
+
+      # An extension service's image is the extension on the runtime base and nothing else,
+      # so every application would otherwise build the same four on every release. Published
+      # here, an application with `registry.services: published` takes them as they are.
+      # Built from the tarball, not the workspace: `.npmignore` decides what an application
+      # would have got. Same CDN lag as above, so the install retries.
+      - name: Publish extension service images
+        run: |
+          VERSION=$(node -p "require('./runtime/runtime/package.json').version")
+
+          for workspace in \
+            extensions/exposition \
+            extensions/realtime \
+            extensions/introspection \
+            extensions/configuration
+          do
+            for attempt in 1 2 3; do
+              if node operations/src/deployment/images/publish.js "$workspace" "$VERSION"; then
+                continue 2
+              fi
+
+              echo "publishing $workspace failed, retrying in 30s ($attempt/3)"
+              sleep 30
+            done
+
+            echo "::error::failed to publish the service image of $workspace for $VERSION"
+            exit 1
+          done

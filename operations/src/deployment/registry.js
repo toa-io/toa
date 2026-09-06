@@ -1,12 +1,9 @@
-import { posix } from 'node:path'
 import * as workspace from './workspace.js'
 
 /**
  * @implements {toa.deployment.Registry}
  */
 export class Registry {
-  #scope
-
   #registry
 
   #factory
@@ -15,11 +12,10 @@ export class Registry {
 
   #images = []
 
-  /** @type {string | undefined} */
+  /** @type {Promise<string> | undefined} */
   #builder
 
-  constructor(scope, registry, factory, process) {
-    this.#scope = scope
+  constructor(registry, factory, process) {
     this.#registry = registry
     this.#factory = factory
     this.#process = process
@@ -47,14 +43,12 @@ export class Registry {
 
   async build() {
     await this.prepare()
-
-    for (const image of this.#images) await this.#build(image)
+    await this.#run(false)
   }
 
   async push() {
     await this.prepare()
-
-    for (const image of this.#images) await this.#push(image)
+    await this.#run(true)
   }
 
   tags() {
@@ -75,16 +69,32 @@ export class Registry {
   }
 
   /**
+   * Every image is probed at once, and what is missing is built concurrently: a build is
+   * bound by the registry it uploads to, not by the runner, so one at a time leaves both idle.
+   *
+   * @param {boolean} push
+   * @returns {Promise<void>}
+   */
+  async #run(push) {
+    const existing = await Promise.all(
+      this.#images.map((image) => this.exists(image.reference))
+    )
+
+    const missing = this.#images.filter((image, index) => {
+      if (existing[index]) console.log('Image already exists, skipping:', image.reference)
+
+      return !existing[index]
+    })
+
+    await pool(missing, (image) => this.#build(image, push))
+  }
+
+  /**
    * @param {toa.deployment.images.Image} image
    * @param {boolean} [push]
    * @returns {Promise<void>}
    */
   async #build(image, push = false) {
-    if (await this.exists(image.reference)) {
-      console.log('Image already exists, skipping:', image.reference)
-      return
-    }
-
     const args = ['--context=default', 'buildx', 'build']
 
     if (push) args.push('--push')
@@ -92,30 +102,28 @@ export class Registry {
 
     args.push('--tag', image.reference, image.context)
 
-    const multiarch = this.#registry.platforms !== null
-
     if (this.#registry.build?.arguments !== undefined) {
       for (const arg of this.#registry.build.arguments)
         args.push('--build-arg', `${arg}=${process.env[arg]}`)
     }
 
-    if (multiarch) {
-      const platform = this.#registry.platforms.join(',')
-      const builder = await this.#ensureBuilder()
+    const platforms = this.#registry.platforms
 
-      args.push('--platform', platform)
-      args.push('--builder', builder)
+    if (platforms !== null) args.push('--platform', platforms.join(','))
 
-      if (this.#registry.base !== undefined) this.#appendCache(args)
+    // the container driver is what builds for a platform the runner is not; for a single
+    // platform it costs a buildkit image to pull and buys nothing
+    if (platforms !== null && platforms.length > 1) {
+      args.push('--builder', await this.#ensureBuilder())
+
+      // the driver that produces attestations is this one, and nothing reads them;
+      // each is a manifest list to export and push per image
+      args.push('--provenance=false')
     } else args.push('--builder', 'default')
 
     args.push('--progress', 'plain')
 
     await this.#process.execute('docker', args)
-  }
-
-  async #push(image) {
-    await this.#build(image, true)
   }
 
   async exists(tag) {
@@ -132,9 +140,16 @@ export class Registry {
     return true
   }
 
-  async #ensureBuilder() {
-    if (this.#builder !== undefined) return this.#builder
+  /** @returns {Promise<string>} */
+  #ensureBuilder() {
+    // the promise is what is memoized, not its value: concurrent builds ask before any answers
+    this.#builder ??= this.#createBuilder()
 
+    return this.#builder
+  }
+
+  /** @returns {Promise<string>} */
+  async #createBuilder() {
     try {
       await this.#process.execute('docker', ['buildx', 'inspect', BUILDER], {
         silently: true
@@ -149,20 +164,30 @@ export class Registry {
       ])
     }
 
-    this.#builder = BUILDER
-
     return BUILDER
-  }
-
-  /**
-   * @param {string[]} args
-   */
-  #appendCache(args) {
-    const ref = posix.join(this.#registry.base, this.#scope, 'buildcache')
-
-    args.push('--cache-from', `type=registry,ref=${ref}`)
-    args.push('--cache-to', `type=registry,ref=${ref},mode=max,image-manifest=true`)
   }
 }
 
+/**
+ * @template T
+ * @param {T[]} items
+ * @param {(item: T) => Promise<void>} work
+ * @returns {Promise<void>}
+ */
+async function pool(items, work) {
+  const queue = items.slice()
+
+  const workers = Array.from(
+    { length: Math.min(CONCURRENCY, queue.length) },
+    async () => {
+      while (queue.length > 0) await work(queue.shift())
+    }
+  )
+
+  await Promise.all(workers)
+}
+
 const BUILDER = 'toa'
+
+/** How many builds run at once. Past this the uploads contend for the same uplink. */
+const CONCURRENCY = 3

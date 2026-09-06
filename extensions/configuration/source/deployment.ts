@@ -15,6 +15,10 @@ import * as validators from './schemas.js'
 import type { Manifest } from './manifest.js'
 import type { context } from '@toa.io/norm'
 
+/** Where Toa's release publishes this service's image. An application takes it
+ *  instead of building one when its context says `registry.services: published`. */
+export const image = 'ghcr.io/toa-io/extension-configuration-values'
+
 export function deployment(
   instances: Instance[],
   annotation: Annotation = {}
@@ -38,6 +42,7 @@ export function deployment(
   const service: Service = {
     group: 'configuration',
     name: 'values',
+    image,
     version: JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8'))
       .version,
     components: components().labels,

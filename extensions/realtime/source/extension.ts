@@ -2,6 +2,10 @@ import { readFileSync } from 'node:fs'
 import { components } from './Composition.js'
 import type { Dependency, Instances, Resources, Service } from '@toa.io/operations'
 
+/** Where Toa's release publishes this service's image. An application takes it
+ *  instead of building one when its context says `registry.services: published`. */
+export const image = 'ghcr.io/toa-io/extension-realtime-streams'
+
 export const standalone = true
 export { components } from './Composition.js'
 
@@ -30,6 +34,7 @@ export function deployment(
   const service: Service = {
     group: 'realtime',
     name: 'streams',
+    image,
 
     version: JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8'))
       .version,

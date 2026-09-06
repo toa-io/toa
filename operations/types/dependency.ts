@@ -5,6 +5,9 @@ export interface Service {
   group: string
   name: string
   version: string
+  /** The repository the extension publishes this service's image to, without a tag.
+   *  Stating it lets an application take the published image instead of building one. */
+  image?: string
   port?: number
   ingress?: Ingress
   /** Annotations for the Service itself, as opposed to `ingress.annotations`. */
