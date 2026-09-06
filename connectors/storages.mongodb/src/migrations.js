@@ -37,26 +37,66 @@ export class Migrations {
    * against what an earlier one leaves behind.
    */
   async run() {
-    for (const migration of this.#list) await this.#apply(migration)
+    let applied = 0
+
+    for (const migration of this.#list) if (await this.#apply(migration)) applied++
+
+    // debug, because the ordinary start has nothing to report: every migration was applied
+    // long ago by whoever started first. But a run that says nothing at all cannot be told
+    // from one that never looked
+    console.debug('Migrations checked', {
+      collection: this.#collection.collectionName,
+      declared: this.#list.length,
+      applied
+    })
   }
 
-  /** @private */
+  /**
+   * Answers whether this replica was the one that applied it.
+   *
+   * @private
+   */
   async #apply(migration) {
     const id = `${this.#collection.collectionName}:${migration.id}`
 
+    /** when the wait for another replica was last reported */
+    let announced
+
     while (true) {
-      if (await this.#claim(id)) return await this.#run(id, migration)
+      if (await this.#claim(id)) {
+        await this.#run(id, migration)
+
+        return true
+      }
 
       const row = await this.#state.findOne({ _id: id })
 
       // removed between the claim and the read; whoever did that wants it applied again
       if (row === null) continue
 
-      if (row.state === DONE) return
+      if (row.state === DONE) {
+        console.debug('Migration was applied already', { migration: id })
+
+        return false
+      }
 
       const stale = Date.now() - row.heartbeat.getTime() > LEASE
 
       if (!stale) {
+        /*
+         * The component does not serve until this returns, so a replica waiting here is a pod
+         * that is simply not up, with nothing anywhere saying why. On its own cadence rather
+         * than the poll's, which is a second.
+         */
+        if (announced === undefined || Date.now() - announced > PROGRESS) {
+          announced = Date.now()
+
+          console.info('Waiting for another replica to apply a migration', {
+            migration: id,
+            owner: row.owner
+          })
+        }
+
         await sleep(POLL)
 
         continue
@@ -68,7 +108,11 @@ export class Migrations {
         heartbeat: row.heartbeat
       })
 
-      if (await this.#steal(id, row.heartbeat)) return await this.#run(id, migration)
+      if (await this.#steal(id, row.heartbeat)) {
+        await this.#run(id, migration)
+
+        return true
+      }
     }
   }
 
@@ -118,7 +162,10 @@ export class Migrations {
    * @private
    */
   async #run(id, migration) {
-    console.info('Applying migration', { migration: id, steps: migration.steps.length })
+    const total = migration.steps.length
+    const started = Date.now()
+
+    console.info('Applying migration', { migration: id, steps: total })
 
     const beat = setInterval(() => {
       this.#state
@@ -130,8 +177,30 @@ export class Migrations {
 
     beat.unref?.()
 
+    let applying = 0
+
+    /*
+     * A backfill takes as long as the collection is large, and every replica of the group waits
+     * out the whole of it. On its own cadence rather than the heartbeat's, which is every five
+     * seconds and would say this a dozen times a minute.
+     */
+    const progress = setInterval(() => {
+      console.info('Migration is still being applied', {
+        migration: id,
+        step: applying,
+        steps: total,
+        elapsed: Date.now() - started
+      })
+    }, PROGRESS)
+
+    progress.unref?.()
+
     try {
-      for (const step of migration.steps) await this.#step(id, step)
+      for (const step of migration.steps) {
+        applying++
+
+        await this.#step(id, step)
+      }
 
       await this.#state.updateOne(
         { _id: id },
@@ -139,9 +208,10 @@ export class Migrations {
       )
     } finally {
       clearInterval(beat)
+      clearInterval(progress)
     }
 
-    console.info('Migration applied', { migration: id })
+    console.info('Migration applied', { migration: id, elapsed: Date.now() - started })
   }
 
   /** @private */
@@ -256,6 +326,9 @@ const DONE = 'done'
 const LEASE = 30_000
 const HEARTBEAT = 5_000
 const POLL = 1_000
+
+/** how often a run that is taking its time says it is still going, and a wait that it is waiting */
+const PROGRESS = 30_000
 
 /**
  * Which process holds a claim, and nothing more: it is read by whoever takes an abandoned

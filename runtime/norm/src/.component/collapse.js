@@ -45,6 +45,19 @@ export const collapse = (manifest, prototype) => {
     delete prototype.entity.properties.id
   }
 
+  /*
+   * `id` is the only one a component may state for itself. The rest are written by the runtime
+   * and read by it, so one redeclared here would be merged over what the prototype says and
+   * change what the record holds, or what a criterion against it compares — without the
+   * component that wrote it having anything to do with either.
+   */
+  for (const name of SYSTEM)
+    if (
+      manifest.entity?.properties?.[name] !== undefined &&
+      entity?.properties?.[name] !== undefined
+    )
+      throw new Error(`System property '${name}' cannot be overridden`)
+
   if (prototype.events !== undefined && manifest.events !== undefined)
     for (const event of Object.keys(prototype.events))
       if (event in manifest.events) delete prototype.events[event]
@@ -55,3 +68,6 @@ export const collapse = (manifest, prototype) => {
 
   merge(manifest, { entity, events, extensions })
 }
+
+/** What the runtime writes into every record. `id` is not among them: a component may own it. */
+const SYSTEM = ['VERSION', 'CREATED', 'UPDATED', 'DELETED']

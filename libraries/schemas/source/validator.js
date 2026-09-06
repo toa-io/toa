@@ -97,6 +97,14 @@ export function ajv(schemas, override = {}) {
    */
   ajv.addFormat('secret', () => true)
 
+  /*
+   * A moment, as the milliseconds since the epoch that `Date.now()` answers — and not a
+   * duration, which is the other thing a number of milliseconds is. What it constrains is
+   * nothing; what it says is what a storage holds the value as, the way `secret` says what a
+   * string reaches userland as.
+   */
+  ajv.addFormat('epoch-millis', { type: 'number', validate: () => true })
+
   return ajv
 }
 

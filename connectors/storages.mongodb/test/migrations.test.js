@@ -1,4 +1,5 @@
-import { describe, it, beforeEach, mock } from 'node:test'
+import { describe, it, beforeEach, afterEach, mock } from 'node:test'
+import { console } from 'openspan'
 import assert from 'node:assert/strict'
 
 import { Migrations, STATE } from '../src/migrations.js'
@@ -329,5 +330,59 @@ describe('state', () => {
 
     assert.equal(collection.updateMany.mock.callCount(), 1)
     assert.equal(rows.size, 1)
+  })
+})
+
+describe('logging', () => {
+  let info
+  let debug
+
+  const messages = (spy) => spy.mock.calls.map((call) => call.arguments[0])
+
+  beforeEach(() => {
+    info = mock.method(console, 'info', () => undefined)
+    debug = mock.method(console, 'debug', () => undefined)
+  })
+
+  afterEach(() => {
+    info.mock.restore()
+    debug.mock.restore()
+  })
+
+  it('should report a migration it applies', async () => {
+    await run([{ id: '0001', steps: [{ update: { update: {} } }] }])
+
+    assert.ok(messages(info).includes('Applying migration'))
+    assert.ok(messages(info).includes('Migration applied'))
+  })
+
+  it('should say at debug that a migration was applied already', async () => {
+    const list = [{ id: '0001', steps: [{ update: { update: {} } }] }]
+
+    await run(list)
+
+    info.mock.resetCalls()
+    debug.mock.resetCalls()
+
+    await run(list)
+
+    assert.deepStrictEqual(messages(info), [], 'the ordinary start has nothing to report')
+    assert.ok(messages(debug).includes('Migration was applied already'))
+  })
+
+  it('should say how many of the declared ones it applied', async () => {
+    await run([
+      { id: '0001', steps: [{ update: { update: {} } }] },
+      { id: '0002', steps: [{ update: { update: {} } }] }
+    ])
+
+    const [message, attributes] = debug.mock.calls.at(-1).arguments
+
+    assert.strictEqual(message, 'Migrations checked')
+    assert.deepStrictEqual(attributes, {
+      collection: 'test_one',
+      declared: 2,
+      applied: 2
+    })
   })
 })

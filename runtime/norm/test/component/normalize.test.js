@@ -65,6 +65,16 @@ describe('entity', () => {
     assert.deepStrictEqual(manifest.entity.associated, false)
     assert.deepStrictEqual(manifest.entity.custom, false)
   })
+
+  it('should allow a date-time on the record', async () => {
+    manifest.entity = { properties: { settled: { type: 'string', format: 'date-time' } } }
+
+    await normalize(manifest)
+
+    assert.deepStrictEqual(manifest.entity.properties.settled.format, 'date-time')
+  })
+
+
 })
 
 describe('extensions', () => {

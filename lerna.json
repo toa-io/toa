@@ -6,8 +6,7 @@
     "version": {
       "conventionalCommits": true,
       "exact": true,
-      "ignoreScripts": true,
-      "changelog": false
+      "ignoreScripts": true
     }
   },
   "version": "1.0.0-alpha.286"

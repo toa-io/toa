@@ -5,11 +5,12 @@ const parse = { ..._criteria, ..._options }
 
 /**
  * @param {import('@toa.io/core/types').storages.Query} query
+ * @param {string[]} [dates] properties held as BSON dates, so a criterion against one is one too
  * @returns {{criteria: Object, options: Object}}
  */
-export const translate = (query) => {
+export const translate = (query, dates) => {
   const result = {
-    criteria: query?.criteria === undefined ? {} : parse.criteria(query.criteria),
+    criteria: query?.criteria === undefined ? {} : parse.criteria(query.criteria, dates),
     options: query?.options === undefined ? {} : parse.options(query.options),
     sample: query?.options?.sample
   }

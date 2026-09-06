@@ -38,6 +38,26 @@ describe('entity', () => {
     assert.deepStrictEqual(manifest, samples.entity.result)
   })
 
+  it('should let a component state its own id', () => {
+    const prototype = { entity: { properties: { id: { type: 'string' }, VERSION: {} } } }
+    const manifest = { name: 'pot', entity: { properties: { id: { type: 'number' } } } }
+
+    collapse(manifest, prototype)
+
+    assert.strictEqual(manifest.entity.custom, true)
+    assert.deepStrictEqual(manifest.entity.properties.id, { type: 'number' })
+  })
+
+  it('should refuse a component that states a property the runtime writes', () => {
+    const prototype = { entity: { properties: { DELETED: { type: 'integer' } } } }
+    const manifest = { name: 'pot', entity: { properties: { DELETED: { type: 'integer' } } } }
+
+    assert.throws(
+      () => collapse(manifest, prototype),
+      /System property 'DELETED' cannot be overridden/
+    )
+  })
+
   it('should not inherit migrations', () => {
     const manifest = { entity: { migrations: [{ id: '0002', steps: [] }] } }
     const prototype = { entity: { migrations: [{ id: '0001', steps: [] }] } }

@@ -6,6 +6,12 @@ export const COMPONENT = 'metronome'
  * Constant, never configuration: a row carries its lane, so lowering this would leave rows in
  * lanes nobody reads any more. It is also the ceiling on replicas dispatching, and a power of
  * two so that the common replica counts divide evenly. The outbox says the same of its own.
+ *
+ * A scan asks for its lanes as a set and sorts on `due`, which is the index's second key, so
+ * the plan that serves it explodes the set into one scan per lane and merges them in order.
+ * MongoDB stops exploding past `internalQueryMaxScansToExplode`, 200 by default, and falls
+ * back to sorting the whole result in memory — so this staying well under that is not
+ * incidental.
  */
 export const LANES = 128
 
