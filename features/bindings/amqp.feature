@@ -4,7 +4,7 @@ Feature: AMQP binding
     Given I have a component `external.consumer`
     And I have a context with:
       """yaml
-      mongodb: mongodb://localhost
+      mongodb: mongodb://localhost:31020
       amqp:
         context: amqp://localhost:31010
         sources:
