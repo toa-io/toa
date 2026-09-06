@@ -1,11 +1,10 @@
 entity:
   storage: mongodb
-  schema:
-    properties:
-      foo:
-        type: integer
-        default: 0
-    type: object
+  properties:
+    foo:
+      type: integer
+  blank:
+    foo: 0
 
 operations:
   transit:

@@ -40,10 +40,6 @@ properties:
         minItems: 1
         items:
           type: string
-        default:
-          - linux/amd64
-          - linux/arm/v7
-          - linux/arm64
     # required: [base]
   compositions:
     type: array

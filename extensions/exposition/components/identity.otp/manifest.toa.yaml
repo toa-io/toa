@@ -2,25 +2,19 @@ namespace: identity
 name: otp
 
 entity:
-  schema:
-    definitions:
-      id:
-        type: string
-        pattern: ^[0-9a-f]{32}$
-    type: object
-    properties:
-      authority:
-        type: string
-      username:
-        type: string
-        minLength: 1
-        maxLength: 256
-      identity:
-        type: string
-        pattern: ^[0-9a-f]{32}$
-    required:
-      - authority
-      - username
+  properties:
+    authority:
+      type: string
+    username:
+      type: string
+      minLength: 1
+      maxLength: 256
+    identity:
+      type: string
+      pattern: ^[0-9a-f]{32}$
+  required:
+    - authority
+    - username
 
 operations:
   issue:
@@ -77,13 +71,15 @@ configuration:
         type: number
         minimum: 1
         maximum: 3600
-        default: 300
       attempts:
         description: Failed authentication attempts allowed per username within `lifetime`
         type: integer
         minimum: 1
-        default: 5
     type: object
+
+  defaults:
+    lifetime: 300
+    attempts: 5
 
 stash: ~
 

@@ -8,22 +8,20 @@ name: values
 # prototype's `created` event.
 
 entity:
-  schema:
-    type: object
-    properties:
-      component:
-        type: string
-      epoch:
-        type: string
-      configuration:
-        type: object
-      originator:
-        type: string
-    required:
-      - component
-      - epoch
-      - configuration
-      - originator
+  properties:
+    component:
+      type: string
+    epoch:
+      type: string
+    configuration:
+      type: object
+    originator:
+      type: string
+  required:
+    - component
+    - epoch
+    - configuration
+    - originator
 
 operations:
   # the latest configuration of a component: created, else deployed defaults, else none

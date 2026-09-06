@@ -21,8 +21,8 @@ export interface Props {
 export type Reading = { value: Node } | { errors: string[] }
 
 /**
- * `useDefaults` is off: the service fills the schema's defaults when it stores the
- * value, and filling them here would put words in the reader's mouth.
+ * `useDefaults` is off: what is stored is what was written, and filling a schema's defaults
+ * here would put words in the reader's mouth.
  *
  * `$data` is off — it is ajv's default, said out loud because the option carries a
  * ReDoS of its own (GHSA-2g4f-4pwh-qvx6) and nothing here needs it.

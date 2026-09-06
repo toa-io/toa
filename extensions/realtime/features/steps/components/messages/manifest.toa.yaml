@@ -1,26 +1,24 @@
 name: messages
 
 entity:
-  schema:
-    properties:
-      watchers:
-        type: array
-        items:
-          type: string
-          maxLength: 32
-      sender:
+  properties:
+    watchers:
+      type: array
+      items:
         type: string
         maxLength: 32
-      recipient:
-        type: string
-        maxLength: 32
-      text:
-        type: string
-    type: object
-    required:
-      - sender
-      - recipient
-      - text
+    sender:
+      type: string
+      maxLength: 32
+    recipient:
+      type: string
+      maxLength: 32
+    text:
+      type: string
+  required:
+    - sender
+    - recipient
+    - text
 
 operations:
   create:

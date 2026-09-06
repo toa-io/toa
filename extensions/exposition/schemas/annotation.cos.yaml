@@ -76,7 +76,6 @@ properties:
       registration:
         type: string
         enum: [open, closed]
-        default: closed
     required:
       - authorize
     additionalProperties: false
@@ -109,7 +108,6 @@ properties:
       anonymous:
         description: Whether the endpoint answers without a credential
         type: boolean
-        default: false
     required:
       - name
     additionalProperties: false

@@ -1,23 +1,21 @@
 name: pots
 
 entity:
-  schema:
-    properties:
-      title:
-        type: string
-        maxLength: 64
-      volume:
-        type: number
-        exclusiveMinimum: 0
-        maximum: 1000
-      temperature:
-        type: number
-        exclusiveMinimum: 0
-        maximum: 300
-    type: object
-    required:
-      - title
-      - volume
+  properties:
+    title:
+      type: string
+      maxLength: 64
+    volume:
+      type: number
+      exclusiveMinimum: 0
+      maximum: 1000
+    temperature:
+      type: number
+      exclusiveMinimum: 0
+      maximum: 300
+  required:
+    - title
+    - volume
 
 operations:
   create:

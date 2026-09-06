@@ -7,7 +7,6 @@ export async function transition(input: Input, object: Entity): Promise<Entity |
 
   if (known === undefined) return new UnknownComponentError(input.component)
 
-  // the schema fills its defaults, so what is stored is whole
   const configuration = structuredClone(input.configuration)
 
   const schema: Schema<any> = schemas.schema(known.schema)

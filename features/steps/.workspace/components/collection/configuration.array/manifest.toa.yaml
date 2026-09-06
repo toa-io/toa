@@ -27,8 +27,9 @@ configuration:
           required:
             - a
             - b
-        default:
-          - a: good
-            b: day
-          - a: good
-            b: afternoon
+  defaults:
+    greetings:
+    - a: good
+      b: day
+    - a: good
+      b: afternoon

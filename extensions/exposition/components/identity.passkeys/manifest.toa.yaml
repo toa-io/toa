@@ -2,45 +2,44 @@ namespace: identity
 name: passkeys
 
 entity:
-  schema:
-    type: object
-    properties:
-      authority:
+  properties:
+    authority:
+      type: string
+    identity:
+      type: string
+    kid:
+      type: string
+    aid:
+      description: AAGUID
+      type: string
+    synced:
+      description: credentialBackedUp
+      type: boolean
+    key:
+      description: Base64-encoded Uint8Array
+      type: string
+    counter:
+      type: number
+      minimum: 0
+    transports:
+      type: array
+      items:
         type: string
-      identity:
-        type: string
-      kid:
-        type: string
-      aid:
-        description: AAGUID
-        type: string
-      synced:
-        description: credentialBackedUp
-        type: boolean
-      key:
-        description: Base64-encoded Uint8Array
-        type: string
-      counter:
-        type: number
-        minimum: 0
-        default: 0
-      transports:
-        type: array
-        items:
-          type: string
-      label:
-        type: string
-        minLength: 1
-        maxLength: 64
-    required:
-      - authority
-      - identity
-      - kid
-      - aid
-      - synced
-      - key
-      - counter
-      - CREATED
+    label:
+      type: string
+      minLength: 1
+      maxLength: 64
+  required:
+    - authority
+    - identity
+    - kid
+    - aid
+    - synced
+    - key
+    - counter
+    - CREATED
+  blank:
+    counter: 0
 
 operations:
   challenge:
@@ -276,12 +275,8 @@ configuration:
         type: array
         items:
           type: number
-        default:
-          - -7
-          - -257
       timeout:
         type: integer
-        default: 60000
       verification:
         description: AuthenticatorSelectionCriteria.userVerification
         type: string
@@ -296,6 +291,11 @@ configuration:
           - required
           - preferred
           - discouraged
-        default: required
+  defaults:
+    algorithms:
+    - -7
+    - -257
+    timeout: 60000
+    residence: required
 
 stash: ~

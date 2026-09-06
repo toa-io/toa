@@ -5,11 +5,9 @@ name: migrated
 
 entity:
   storage: null
-  schema:
-    type: object
-    properties:
-      a:
-        type: string
+  properties:
+    a:
+      type: string
 
 operations:
   transit:

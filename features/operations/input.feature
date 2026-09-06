@@ -15,18 +15,6 @@ Feature: Additional properties
       """
     And I disconnect
 
-  Scenario: Input validation removes additional properties
-    Given I compose `dummies.one` component
-    When I call `dummies.one.transit` with:
-      """yaml
-      input:
-        foo: 1
-        bar: 'hello'
-        baz: 'additional property'
-      """
-    Then the reply is received
-    And I disconnect
-
   Scenario: Input type mismatch
     Given I compose `dummies.one` component
     When I call `dummies.one.transit` with:
@@ -41,18 +29,24 @@ Feature: Additional properties
       """
     And I disconnect
 
-  Scenario: Input schema with default value
+  Scenario: Forwarded operation
     Given I compose `echo.beacon` component
-    When I call `echo.beacon.def`
+    When I call `echo.beacon.def` with:
+      """yaml
+      input: ok
+      """
     Then the reply is received:
       """yaml
       ok
       """
     And I disconnect
 
-  Scenario: Invocation with default value
+  Scenario: Invoking a forwarded operation
     Given I boot `echo.beacon` component
-    When I invoke `def`
+    When I invoke `def` with:
+      """yaml
+      input: ok
+      """
     Then the reply is received:
       """yaml
       ok

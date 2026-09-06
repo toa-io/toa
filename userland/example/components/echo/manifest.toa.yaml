@@ -19,6 +19,7 @@ configuration:
     properties:
       signal:
         type: string
-        default: quack
+  defaults:
+    signal: quack
 
 state: ~

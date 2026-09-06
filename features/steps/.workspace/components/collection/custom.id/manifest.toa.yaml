@@ -2,15 +2,14 @@ namespace: custom
 name: id
 
 entity:
-  schema:
-    properties:
-      id:
-        type: number
-      value:
-        type: string
-        default: hello
-    type: object
   associated: true
+  properties:
+    id:
+      type: number
+    value:
+      type: string
+  blank:
+    value: hello
 
 operations:
   transit:

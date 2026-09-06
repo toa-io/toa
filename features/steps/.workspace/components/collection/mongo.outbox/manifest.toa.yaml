@@ -3,14 +3,13 @@ namespace: mongo
 
 entity:
   storage: mongodb
-  schema:
-    properties:
-      foo:
-        type: integer
-        default: 0
-      bar:
-        type: string
-    type: object
+  properties:
+    foo:
+      type: integer
+    bar:
+      type: string
+  blank:
+    foo: 0
 
 operations:
   transit:

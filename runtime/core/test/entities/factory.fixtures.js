@@ -2,7 +2,12 @@ import { mock } from 'node:test'
 
 import randomstring from 'randomstring'
 
-const schema = { [randomstring.generate()]: randomstring.generate() }
+const schemas = {
+  entity: { [randomstring.generate()]: randomstring.generate() },
+  changeset: { [randomstring.generate()]: randomstring.generate() }
+}
+
+const blank = { [randomstring.generate()]: randomstring.generate() }
 const storage = { id: mock.fn(() => randomstring.generate()) }
 const entity = { [randomstring.generate()]: randomstring.generate() }
 const set = Array.from(Array(5)).map((_, index) => ({
@@ -23,4 +28,4 @@ const EntitySet = mock.fn(function () {})
 // named `mock` for its consumers, which is what node:test calls its own tracker
 const mocks = { Entity, EntitySet }
 
-export { schema, storage, entity, set, entities, mocks as mock }
+export { schemas, blank, storage, entity, set, entities, mocks as mock }

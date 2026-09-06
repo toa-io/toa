@@ -2,22 +2,20 @@ namespace: mongo
 name: indexed
 
 entity:
-  schema:
-    properties:
-      birthday:
-        type: number
-      weight:
-        type: number
-      tag:
-        type: string
-      name:
-        type: string
-      email:
-        type: string
-    type: object
-    required:
-      - name
-      - email
+  properties:
+    birthday:
+      type: number
+    weight:
+      type: number
+    tag:
+      type: string
+    name:
+      type: string
+    email:
+      type: string
+  required:
+    - name
+    - email
 
 operations:
   transit:

@@ -101,7 +101,6 @@ export function ajv(schemas, override = {}) {
 }
 
 const OPTIONS = {
-  useDefaults: true,
   coerceTypes: true,
   strictTypes: false // omit warning: missing type "object"
 }

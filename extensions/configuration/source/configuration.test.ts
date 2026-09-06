@@ -91,14 +91,18 @@ describe('local', () => {
     manifest.schema = {
       type: 'object',
       properties: {
-        foo: { type: 'string', default: 'hello' },
+        foo: { type: 'string' },
         bar: { type: 'number' }
       }
     }
 
     set({ bar: 5 })
 
-    assert.deepStrictEqual(local(locator, manifest), { foo: 'hello', bar: 5 })
+    assert.deepStrictEqual(local(locator, manifest), { bar: 5 })
+
+    set({ bar: 'five' })
+
+    assert.throws(() => local(locator, manifest), (error: Error) => /must be number/.test(error.message))
   })
 })
 
@@ -108,18 +112,18 @@ describe('fit', () => {
       type: 'object',
       properties: {
         foo: { type: 'string' },
-        bar: { type: 'number', default: 1 }
+        bar: { type: 'number' }
       }
     }
 
     set('secret', '_FOO')
 
-    const raw = { foo: '$FOO' }
+    const raw = { foo: '$FOO', bar: 1 }
     const values = fit(raw, manifest)
 
     assert.deepStrictEqual((values.foo as Secret).unwrap(), 'secret')
     assert.deepStrictEqual(values.bar, 1)
-    assert.deepStrictEqual(raw, { foo: '$FOO' }) // untouched
+    assert.deepStrictEqual(raw, { foo: '$FOO', bar: 1 }) // untouched
   })
 
   it('should not apply the manifest defaults', async () => {

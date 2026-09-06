@@ -9,7 +9,6 @@ operations:
       properties:
         code:
           type: number
-          default: 0
         message:
           type: string
       type: object

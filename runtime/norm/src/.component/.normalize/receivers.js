@@ -7,6 +7,9 @@ export function receivers(component) {
     const segments = key.split('.')
     const source = value.source ?? 'default'
 
+    value.conditioned ??= false
+    value.adaptive ??= false
+
     if (source !== 'default') continue
     if (segments.length === 3) continue // already with a namespace
 

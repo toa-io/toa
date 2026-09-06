@@ -3,13 +3,13 @@ export const ok = {
   name: 'bar',
   entity: {
     storage: 'whatever',
-    schema: {
-      properties: {
-        name: {
-          type: 'string',
-          minLength: 1,
-          maxLength: 128
-        }
+    associated: false,
+    custom: false,
+    properties: {
+      name: {
+        type: 'string',
+        minLength: 1,
+        maxLength: 128
       }
     }
   },
@@ -35,11 +35,15 @@ export const ok = {
     },
     compute: {
       type: 'computation',
+      scope: 'none',
+      query: false,
       bridge: 'whatever',
       bindings: ['@toa.io/bindings.amqp']
     },
     affect: {
       type: 'effect',
+      scope: 'none',
+      query: false,
       bridge: 'whatever',
       bindings: ['@toa.io/bindings.amqp']
     }
@@ -58,7 +62,9 @@ export const ok = {
       operation: 'add',
       bridge: 'whatever',
       binding: 'amqp',
-      path: '/somewhere'
+      path: '/somewhere',
+      conditioned: false,
+      adaptive: false
     }
   }
 }

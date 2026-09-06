@@ -5,6 +5,9 @@ export const events = async (component) => {
 
   for (const event of Object.values(component.events)) {
     if (event.binding === undefined) event.binding = binding
+
+    event.conditioned ??= false
+    event.subjective ??= false
   }
 }
 

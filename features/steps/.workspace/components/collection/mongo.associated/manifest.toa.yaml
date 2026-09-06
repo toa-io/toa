@@ -3,14 +3,13 @@ name: associated
 
 entity:
   associated: true
-  schema:
-    properties:
-      foo:
-        type: integer
-        default: 0
-      bar:
-        type: string
-    type: object
+  properties:
+    foo:
+      type: integer
+    bar:
+      type: string
+  blank:
+    foo: 0
 
 operations:
   transit:
@@ -19,7 +18,6 @@ operations:
       properties:
         foo:
           type: integer
-          default: 0
         bar:
           type: string
       type: object
@@ -29,7 +27,6 @@ operations:
       properties:
         foo:
           type: integer
-          default: 0
         bar:
           type: string
       type: object
@@ -39,5 +36,4 @@ operations:
       properties:
         foo:
           type: integer
-          default: 0
       type: object

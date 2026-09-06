@@ -8,16 +8,21 @@ A stored component declares what it stores. `storage` names the connector and de
 ```yaml
 # manifest.toa.yaml
 entity:
-  schema:
-    type: object
-    properties:
-      title: { type: string }
-      brewed: { type: integer }
-    required: [title]
+  properties:
+    title: { type: string }
+    brewed: { type: integer }
+    booked: { type: boolean }
+  required: [title]
+  blank:
+    booked: false
 ```
 
-A record carries `CREATED`, `UPDATED`, `VERSION` and `DELETED` besides what the schema
-states.
+`required` names the properties a stored record has. `blank` is what a record holds before
+anything is written to it — it need not be whole, but each value must fit the property it names,
+and it is read once, when the component boots.
+
+A record carries `CREATED`, `UPDATED`, `VERSION` and `DELETED` besides what is declared, and none
+of the five system properties may be named in `blank`.
 
 ### Migrations
 

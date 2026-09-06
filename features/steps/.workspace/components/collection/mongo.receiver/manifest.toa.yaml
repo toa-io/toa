@@ -3,15 +3,14 @@ namespace: mongo
 
 entity:
   associated: true
-  schema:
-    properties:
-      count:
-        type: number
-        default: 0
-      deleted:
-        type: boolean
-        default: false
-    type: object
+  properties:
+    count:
+      type: number
+    deleted:
+      type: boolean
+  blank:
+    count: 0
+    deleted: false
 
 operations:
   increment:
