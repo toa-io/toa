@@ -22,7 +22,7 @@ beforeEach(async () => {
   resetCalls()
   fixtures.entities.length = 0
 
-  factory = new Factory(fixtures.schema, () => fixtures.storage.id())
+  factory = new Factory(fixtures.schemas, fixtures.blank, () => fixtures.storage.id())
 })
 
 it('should create initial', () => {
@@ -33,10 +33,11 @@ it('should create initial', () => {
   assert.ok(
     mock.Entity.mock.calls.some(
       (call) =>
-        call.arguments.length === 3 &&
-        isDeepStrictEqual(call.arguments[0], fixtures.schema) &&
-        isDeepStrictEqual(call.arguments[1], id) &&
-        typeof call.arguments[2] === 'function'
+        call.arguments.length === 4 &&
+        isDeepStrictEqual(call.arguments[0], fixtures.schemas.entity) &&
+        isDeepStrictEqual(call.arguments[1], fixtures.blank) &&
+        isDeepStrictEqual(call.arguments[2], id) &&
+        typeof call.arguments[3] === 'function'
     )
   )
 })
@@ -48,11 +49,12 @@ it('should create instance', () => {
   assert.ok(
     mock.Entity.mock.calls.some(
       (call) =>
-        call.arguments.length === 4 &&
-        isDeepStrictEqual(call.arguments[0], fixtures.schema) &&
-        isDeepStrictEqual(call.arguments[1], fixtures.entity) &&
-        typeof call.arguments[2] === 'function' &&
-        isDeepStrictEqual(call.arguments[3], true)
+        call.arguments.length === 5 &&
+        isDeepStrictEqual(call.arguments[0], fixtures.schemas.entity) &&
+        isDeepStrictEqual(call.arguments[1], fixtures.blank) &&
+        isDeepStrictEqual(call.arguments[2], fixtures.entity) &&
+        typeof call.arguments[3] === 'function' &&
+        isDeepStrictEqual(call.arguments[4], true)
     )
   )
 })
@@ -65,11 +67,12 @@ it('should create set', () => {
   const instances = fixtures.set.map((entity, index) => {
     assert.ok(
       ((call) =>
-        call.arguments.length === 4 &&
-        isDeepStrictEqual(call.arguments[0], fixtures.schema) &&
-        isDeepStrictEqual(call.arguments[1], entity) &&
-        typeof call.arguments[2] === 'function' &&
-        isDeepStrictEqual(call.arguments[3], true))(
+        call.arguments.length === 5 &&
+        isDeepStrictEqual(call.arguments[0], fixtures.schemas.entity) &&
+        isDeepStrictEqual(call.arguments[1], fixtures.blank) &&
+        isDeepStrictEqual(call.arguments[2], entity) &&
+        typeof call.arguments[3] === 'function' &&
+        isDeepStrictEqual(call.arguments[4], true))(
         mock.Entity.mock.calls[index + 1 - 1] ?? { arguments: [] }
       )
     )

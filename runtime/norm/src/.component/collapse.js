@@ -37,12 +37,12 @@ export const collapse = (manifest, prototype) => {
   const { entity, events, extensions } = prototype
 
   if (
-    manifest.entity?.schema?.properties.id !== undefined &&
-    entity?.schema?.properties.id !== undefined
+    manifest.entity?.properties?.id !== undefined &&
+    entity?.properties?.id !== undefined
   ) {
     manifest.entity.custom = true
 
-    delete prototype.entity.schema.properties.id
+    delete prototype.entity.properties.id
   }
 
   if (prototype.events !== undefined && manifest.events !== undefined)

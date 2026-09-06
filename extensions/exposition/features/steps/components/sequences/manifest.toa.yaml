@@ -4,7 +4,6 @@ operations:
   numbers:
     input:
       type: number
-      default: 5
 
 exposition:
   /tokens:

@@ -18,7 +18,7 @@ export interface Query<Entity = any> {
   deleted?: boolean
 }
 
-/** Origin of a call. Stamped by the caller, sanitized by the request contract. */
+/** Origin of a call. Stamped by the framework; whoever reads it takes the keys it knows. */
 export type Source =
   | { namespace: string; component: string; operation: string }
   | { namespace: string; component: string; event: string }

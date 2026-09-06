@@ -14,8 +14,22 @@ export const validate = async (manifest) => {
 
   if (error) throw error
 
+  if (manifest.entity !== undefined) entity(manifest)
   if (manifest.events !== undefined) await events(manifest)
   if (manifest.receivers !== undefined) receivers(manifest)
+}
+
+/** What only the entity's own declaration can answer: whether a name it uses is one it declares. */
+const entity = (manifest) => {
+  const { properties, required, blank } = manifest.entity
+
+  for (const name of required ?? [])
+    if (properties[name] === undefined)
+      throw new Error(`Entity requires property '${name}', which is not defined`)
+
+  for (const name of Object.keys(blank ?? {}))
+    if (properties[name] === undefined)
+      throw new Error(`Entity blank names property '${name}', which is not defined`)
 }
 
 const events = async (manifest) => {

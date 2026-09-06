@@ -5,6 +5,7 @@ import type { Query, Record } from '../types/storages.js'
 export class Changeset {
   public readonly query: Query
 
+  /** the changeset schema: the entity's properties, none of them required */
   readonly #schema: Schema
   #state: Record | object
 
@@ -20,7 +21,7 @@ export class Changeset {
   }
 
   public set(value: Record): void {
-    const error = this.#schema.match(value)
+    const error = this.#schema.fit(value)
 
     if (error !== null) throw new EntityContractException(error, value)
 

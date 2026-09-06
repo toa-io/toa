@@ -65,13 +65,6 @@ describe('namespace', () => {
       /must NOT be valid/.test(error.message)
     )
   })
-
-  it('should set `default` namespace', async () => {
-    delete manifest.namespace
-
-    await assert.doesNotReject(validate(manifest))
-    assert.deepStrictEqual(manifest.namespace, 'default')
-  })
 })
 
 describe('name', () => {
@@ -99,35 +92,24 @@ describe('entity', () => {
     await assert.rejects(validate(manifest))
   })
 
-  describe('schema', () => {
+  describe('properties', () => {
     it('should be required', async () => {
-      delete manifest.entity.schema
+      delete manifest.entity.properties
       await assert.rejects(validate(manifest))
     })
 
-    it('should be JSON schema object', async () => {
-      manifest.entity.schema = { properties: { foo: 'bar' } }
+    it('should be JSON schemas', async () => {
+      manifest.entity.properties.foo = 'bar'
       await assert.rejects(validate(manifest))
     })
 
-    it('should be JSON schema object of type object', async () => {
-      manifest.entity.schema = { type: 'integer' }
-      await assert.rejects(validate(manifest), (error) =>
-        /must be equal to constant/.test(error.message)
-      )
-
-      manifest.entity.schema = {}
-      validate(manifest)
-      assert.strictEqual(manifest.entity.schema.type, 'object')
-    })
-
-    it('should have property names matching token pattern', async () => {
-      manifest.entity.schema.properties._foo = { type: 'string' }
+    it('should have names matching token pattern', async () => {
+      manifest.entity.properties._foo = { type: 'string' }
       await assert.rejects(validate(manifest), (error) => /pattern/.test(error.message))
     })
 
-    it('should allow default id', async () => {
-      manifest.entity.schema.properties.id = {
+    it('should allow own id', async () => {
+      manifest.entity.properties.id = {
         type: 'string',
         pattern: '^[a-fA-F0-9]+$'
       }
@@ -135,10 +117,34 @@ describe('entity', () => {
     })
   })
 
-  describe('associated', () => {
-    it('should provide default', async () => {
+  describe('required', () => {
+    it('should name declared properties', async () => {
+      manifest.entity.required = ['name']
       await assert.doesNotReject(validate(manifest))
-      assert.strictEqual(manifest.entity.associated, false)
+
+      manifest.entity.required = ['nope']
+      await assert.rejects(validate(manifest), (error) =>
+        /requires property 'nope'/.test(error.message)
+      )
+    })
+  })
+
+  describe('blank', () => {
+    it('should name declared properties', async () => {
+      manifest.entity.blank = { name: 'whatever' }
+      await assert.doesNotReject(validate(manifest))
+
+      manifest.entity.blank = { nope: 1 }
+      await assert.rejects(validate(manifest), (error) =>
+        /names property 'nope'/.test(error.message)
+      )
+    })
+
+    it('should not name a system property', async () => {
+      manifest.entity.blank = { VERSION: 1 }
+      await assert.rejects(validate(manifest), (error) =>
+        /must NOT be valid/.test(error.message)
+      )
     })
   })
 })

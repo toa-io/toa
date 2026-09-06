@@ -19,7 +19,9 @@ operations:
           type: number
         times:
           type: number
-          default: 1
       type: object
+      required:
+        - value
+        - times
     output:
       type: number

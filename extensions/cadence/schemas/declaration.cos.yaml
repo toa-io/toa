@@ -16,6 +16,5 @@ patternProperties:
           and the operation is told which interval it is running for.
         type: integer
         minimum: 1
-        default: 1
     required: [cycle]
     additionalProperties: false

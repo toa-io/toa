@@ -107,7 +107,6 @@ export interface Storage extends Connector {
  * names no type of `@toa.io/norm`, which depends on core.
  */
 export interface Entity {
-  schema: object
   associated?: boolean
   custom?: boolean
   /** in the order they are applied; what a step is belongs to the storage that reads it */

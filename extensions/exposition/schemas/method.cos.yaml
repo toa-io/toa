@@ -12,6 +12,8 @@ properties:
         type: string
       query:
         $ref: query
+      paged:
+        type: boolean
     additionalProperties: false
     type: object
   directives:

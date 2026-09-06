@@ -92,6 +92,27 @@ Feature: Errors
       must have required property 'title'
       """
 
+  Scenario: Criteria value the property cannot hold
+    Given the `pots` is running with the following manifest:
+      """yaml
+      exposition:
+        /:
+          GET: enumerate
+      """
+    When the following request is received:
+      """
+      GET /pots/?criteria=volume>abc HTTP/1.1
+      host: nex.toa.io
+      accept: text/plain
+      """
+    Then the following reply is sent:
+      """
+      400 Bad Request
+      content-type: text/plain
+
+      Criteria selector 'volume' takes a number, and 'abc' is not one
+      """
+
   Scenario: Query limit out of range
     Given the `pots` is running with the following manifest:
       """yaml

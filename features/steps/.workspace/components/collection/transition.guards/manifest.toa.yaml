@@ -3,16 +3,14 @@ namespace: transition
 
 entity:
   storage: ~
-  schema:
-    type: object
-    properties:
-      a:
-        type: integer
-      b:
-        type: integer
-    required:
-      - a
-      - b
+  properties:
+    a:
+      type: integer
+    b:
+      type: integer
+  required:
+    - a
+    - b
 
 operations:
   transit:

@@ -3,19 +3,17 @@ name: basic
 
 entity:
   associated: true
-  schema:
-    properties:
-      authority:
-        type: string
-      username:
-        type: string
-      password:
-        type: string
-    type: object
-    required:
-      - authority
-      - username
-      - password
+  properties:
+    authority:
+      type: string
+    username:
+      type: string
+    password:
+      type: string
+  required:
+    - authority
+    - username
+    - password
 
 operations:
   transit:
@@ -168,7 +166,6 @@ configuration:
     properties:
       rounds:
         type: integer
-        default: 10
         minimum: 1
       pepper:
         description: Hashing pepper, a secret
@@ -190,16 +187,19 @@ configuration:
         type: array
         items:
           type: string
-        default:
-          - ^.{1,128}$
       password:
         type: array
         items:
           type: string
-        default:
-          - ^.{8,32}$
     # every one of them has a default, so the component reads them without checking
     required: [rounds, username, password]
+
+  defaults:
+    rounds: 10
+    username:
+    - ^.{1,128}$
+    password:
+    - ^.{8,32}$
 
 exposition:
   isolated: true

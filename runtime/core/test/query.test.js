@@ -54,6 +54,55 @@ describe('criteria', () => {
     assert.deepStrictEqual(query.criteria, fixtures.samples.extended.parsed.criteria)
   })
 
+  it('should refuse a value the property cannot hold', () => {
+    const strict = new Query({
+      volume: { type: 'number' },
+      count: { type: 'integer' },
+      booked: { type: 'boolean' }
+    })
+
+    const refused = [
+      ['volume>abc', /takes a number/],
+      ['volume==1.5kg', /takes a number/],
+      ['count==1.5', /takes an integer/],
+      ['count==12kg', /takes an integer/],
+      ['booked==yes', /takes a boolean/],
+      ['booked==TRUE', /takes a boolean/],
+      ['volume=in=(1,two)', /'two' is not one/]
+    ]
+
+    for (const [criteria, message] of refused)
+      assert.throws(
+        () => strict.parse({ criteria }),
+        (error) => message.test(error.message),
+        criteria
+      )
+  })
+
+  it('should read a value the property can hold', () => {
+    const strict = new Query({
+      volume: { type: 'number' },
+      count: { type: 'integer' },
+      booked: { type: 'boolean' },
+      title: { type: 'string' }
+    })
+
+    const read = [
+      ['volume>1.5', 1.5],
+      ['volume>-1.5', -1.5],
+      ['count==12', 12],
+      ['booked==false', false],
+      ['title==12kg', '12kg']
+    ]
+
+    for (const [criteria, value] of read)
+      assert.deepStrictEqual(
+        strict.parse({ criteria }).criteria.right.value,
+        value,
+        criteria
+      )
+  })
+
   it('should throw on unknown properties', () => {
     const instance = new Query(fixtures.samples.simple.properties)
 

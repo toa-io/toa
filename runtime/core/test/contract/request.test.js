@@ -22,7 +22,7 @@ beforeEach(() => {
   contract = new Request(fixtures.schema, {})
 })
 
-const dummy = { schema: { properties: {} } }
+const dummy = { properties: {} }
 
 it('should extend Conditions', () => {
   assert.ok(contract instanceof Contract)
@@ -147,13 +147,12 @@ describe('schema', () => {
 
 describe('source', () => {
   const compile = (definition, entity) =>
-    schemas.schema(Request.schema(definition, entity), { removeAdditional: true })
+    schemas.schema(Request.schema(definition, entity))
 
-  it('should declare source', () => {
+  it('should not hold source to a schema', () => {
     const schema = Request.schema({}, dummy)
 
-    assert.notStrictEqual(schema.properties.source, undefined)
-    assert.deepStrictEqual(schema.properties.source.additionalProperties, false)
+    assert.strictEqual(schema.properties.source, undefined)
   })
 
   it('should pass known source variants', () => {
@@ -171,18 +170,18 @@ describe('source', () => {
     }
   })
 
-  // `source` crosses the wire and keys the introspection map, so whatever
-  // a peer adds to it must not survive
-  it('should strip unknown source properties', () => {
+  // whatever a peer puts beside the keys this release knows travels through: what reads
+  // `source` takes the keys it knows, and the contract does not fail a call over the rest
+  it('should pass a source a peer added to', () => {
     const schema = compile({}, undefined)
     const request = {
       input: null,
       query: null,
-      source: { service: 'exposition', evil: 'x' }
+      source: { service: 'exposition', mystery: 'x' }
     }
 
     assert.deepStrictEqual(schema.fit(request), null)
-    assert.deepStrictEqual(request.source, { service: 'exposition' })
+    assert.deepStrictEqual(request.source, { service: 'exposition', mystery: 'x' })
   })
 })
 

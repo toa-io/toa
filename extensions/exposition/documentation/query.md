@@ -48,6 +48,10 @@ Undefined `query` denies any query arguments in requests.
 
 Search criteria in [RSQL](https://github.com/jirutka/rsql-parser) format.
 
+A value is read as what the property it selects on holds, and one that cannot be read as that is
+refused with `400 Bad Request` — `volume>abc` where `volume` is a number, or `booked==yes` where
+`booked` is a boolean. A string property takes whatever is written.
+
 The `criteria` property is considered as _open_ when it ends with a `;`, allowing the combination of
 request query criteria using `and` logic.
 Otherwise, criteria property is _closed_, that is, doesn't allow `criteria` in a request query.

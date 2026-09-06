@@ -19,10 +19,11 @@ configuration:
     properties:
       foo:
         type: string
-        default: hello
       bar:
         type: string
-        default: world
       num:
         type: integer
-        default: 0
+  defaults:
+    foo: hello
+    bar: world
+    num: 0

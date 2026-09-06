@@ -25,7 +25,6 @@ operations:
     forward: echo
     input:
       type: string
-      default: ok
     output:
       type: string
   throw:

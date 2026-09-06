@@ -7,6 +7,7 @@ import {
   type Variable,
   type Variables
 } from '@toa.io/operations'
+import { add } from '@toa.io/generic'
 import { components } from './Composition.js'
 import { EVENT, PREFIX, SECRET_RX, UI_PATH, UI_PORT, VALUES } from './const.js'
 import { epoch } from './epoch.js'
@@ -61,12 +62,20 @@ export function describe(instances: Instance[], annotation: Annotation = {}): Va
 
   const values: Values = {}
 
-  for (const { locator, manifest } of instances)
+  for (const { locator, manifest } of instances) {
+    const deployed = annotation[locator.id]
+
     values[locator.id] = {
       epoch: epoch(manifest.schema),
       schema: manifest.schema,
-      defaults: annotation[locator.id] ?? manifest.defaults
+      // what the Context says stands over what the manifest declares, value by value: a
+      // deployment that names one of them does not thereby unset the rest
+      defaults:
+        deployed === undefined
+          ? manifest.defaults
+          : add(structuredClone(deployed), manifest.defaults ?? {})
     }
+  }
 
   return values
 }

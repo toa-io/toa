@@ -209,11 +209,9 @@ This can be achieved by using the `auth:incept` directive as follows:
 name: users
 
 entity:
-  schema:
-    type: object
-    properties:
-      name:
-        type: string
+  properties:
+    name:
+      type: string
 
 exposition:
   /:

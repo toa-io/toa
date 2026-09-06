@@ -1,6 +1,4 @@
 entity:
-  schema:
-    properties:
-      foo:
-        type: string
-    type: object
+  properties:
+    foo:
+      type: string

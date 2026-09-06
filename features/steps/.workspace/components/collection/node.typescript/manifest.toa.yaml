@@ -24,4 +24,5 @@ configuration:
     properties:
       foo:
         type: string
-        default: bar
+  defaults:
+    foo: bar

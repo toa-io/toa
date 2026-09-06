@@ -2,25 +2,23 @@ namespace: identity
 name: keys
 
 entity:
-  schema:
-    properties:
-      identity:
-        type: string
-      key:
-        type: string
-      label:
-        type: string
-        minLength: 1
-        maxLength: 64
-      expires:
-        type: number
-      revokedAt:
-        type: integer
-    required:
-      - identity
-      - key
-      - label
-    type: object
+  properties:
+    identity:
+      type: string
+    key:
+      type: string
+    label:
+      type: string
+      minLength: 1
+      maxLength: 64
+    expires:
+      type: number
+    revokedAt:
+      type: integer
+  required:
+    - identity
+    - key
+    - label
 
 operations:
   create:

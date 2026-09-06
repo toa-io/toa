@@ -6,40 +6,38 @@ name: clients
 # the record at an id decided outside the storage.
 entity:
   associated: true
-  schema:
-    type: object
-    properties:
-      authority:
-        type: string
-      name:
-        description: client_name
-        type: string
-        maxLength: 128
-      uris:
-        description: redirect_uris
-        type: array
-        minItems: 1
-        maxItems: 8
-        items:
-          type: string
-          maxLength: 2048
-      uri:
-        description: client_uri
+  properties:
+    authority:
+      type: string
+    name:
+      description: client_name
+      type: string
+      maxLength: 128
+    uris:
+      description: redirect_uris
+      type: array
+      minItems: 1
+      maxItems: 8
+      items:
         type: string
         maxLength: 2048
-      logo:
-        description: logo_uri
-        type: string
-        maxLength: 2048
-      scope:
-        type: string
-        maxLength: 512
-      expires:
-        description: When a registration nothing has used is swept
-        type: number
-    required:
-      - authority
-      - uris
+    uri:
+      description: client_uri
+      type: string
+      maxLength: 2048
+    logo:
+      description: logo_uri
+      type: string
+      maxLength: 2048
+    scope:
+      type: string
+      maxLength: 512
+    expires:
+      description: When a registration nothing has used is swept
+      type: number
+  required:
+    - authority
+    - uris
 
 operations:
   transit:
@@ -191,27 +189,28 @@ configuration:
         items:
           type: string
           pattern: ^https://
-        default: []
       lifetime:
         description: Seconds a Client ID Metadata Document is held before it is read again
         type: integer
         minimum: 1
-        default: 3600
       ttl:
         description: Seconds a registration nothing has used is kept
         type: integer
         minimum: 1
-        default: 2592000
       size:
         description: Bytes of a Client ID Metadata Document that are read
         type: integer
         minimum: 1
-        default: 16384
       timeout:
         description: Milliseconds a Client ID Metadata Document has to arrive
         type: integer
         minimum: 1
-        default: 3000
+  defaults:
+    trust: []
+    lifetime: 3600
+    ttl: 2592000
+    size: 16384
+    timeout: 3000
 
 stash: ~
 

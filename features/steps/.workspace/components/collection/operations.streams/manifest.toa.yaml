@@ -2,14 +2,13 @@ name: streams
 namespace: operations
 
 entity:
-  schema:
-    properties:
-      foo:
-        type: number
-        default: 0
-      bar:
-        type: string
-    type: object
+  properties:
+    foo:
+      type: number
+    bar:
+      type: string
+  blank:
+    foo: 0
 
 operations:
   transit:

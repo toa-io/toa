@@ -25,9 +25,7 @@ export async function operation(
   const contracts = { reply, request }
 
   const query =
-    manifest.entity === undefined
-      ? undefined
-      : new Query(manifest.entity.schema.properties)
+    manifest.entity === undefined ? undefined : new Query(manifest.entity.properties)
 
   const Type = TYPES[definition.type]
 

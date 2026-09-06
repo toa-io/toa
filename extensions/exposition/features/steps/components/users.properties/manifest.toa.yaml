@@ -2,13 +2,12 @@ namespace: users
 name: properties
 
 entity:
-  schema:
-    properties:
-      newbie:
-        type: boolean
-        default: false
-    type: object
   associated: true
+  properties:
+    newbie:
+      type: boolean
+  blank:
+    newbie: false
 
 operations:
   transit:

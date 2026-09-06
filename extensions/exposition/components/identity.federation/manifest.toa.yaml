@@ -2,27 +2,24 @@ namespace: identity
 name: federation
 
 entity:
-  schema:
-    type: object
-    properties:
-      authority:
-        description: The authority token is valid for
-        type: string
-      iss:
-        description: The issuer, or signer, of the token, URI like `https://accounts.google.com`
-        type: string
-      sub:
-        description: The ID that represents the principal making the request
-        type: string
-      identity:
-        description: Identity associated with these credentials
-        type: string
-    required:
-      - authority
-      - iss
-      - sub
-      - identity
-    additionalProperties: false
+  properties:
+    authority:
+      description: The authority token is valid for
+      type: string
+    iss:
+      description: The issuer, or signer, of the token, URI like `https://accounts.google.com`
+      type: string
+    sub:
+      description: The ID that represents the principal making the request
+      type: string
+    identity:
+      description: Identity associated with these credentials
+      type: string
+  required:
+    - authority
+    - iss
+    - sub
+    - identity
 
 operations:
   transit:
@@ -256,7 +253,6 @@ configuration:
           required:
             - iss
             - aud
-        default: []
       principal:
         title: Principal
         description: Subject that will be assigned the `system` Role
@@ -277,8 +273,11 @@ configuration:
       assert:
         title: Implicitly incept Identity for new credentials
         type: boolean
-        default: true
     additionalProperties: false
+
+  defaults:
+    trust: []
+    assert: true
 
 exposition:
   /:

@@ -16,7 +16,6 @@ export function manifest(
 ): Declaration {
   const normalized: Record<string, unknown> = expand(declaration)
 
-  // `intervals` is defaulted by the schema, so the declaration is only whole after this
   schemas.declaration.validate<Declaration>(normalized, 'Invalid cadence declaration')
 
   for (const [endpoint, pulse] of Object.entries(normalized)) {
@@ -45,11 +44,16 @@ export function manifest(
 function expand(declaration: Declaration | null | undefined): Record<string, unknown> {
   if (declaration === null || declaration === undefined) return {}
 
+  // a cycle nothing splits is one interval, which is what the shorthand declares
   return Object.fromEntries(
-    Object.entries(declaration).map(([endpoint, pulse]) => [
-      endpoint,
-      typeof pulse === 'number' ? { cycle: pulse } : pulse
-    ])
+    Object.entries(declaration).map(([endpoint, pulse]) => {
+      const declared: Record<string, unknown> =
+        typeof pulse === 'number' ? { cycle: pulse } : { ...pulse }
+
+      declared.intervals ??= 1
+
+      return [endpoint, declared]
+    })
   )
 }
 

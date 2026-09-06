@@ -22,13 +22,10 @@ const manifest: Manifest = {
     type: 'object',
     properties: {
       foo: { type: 'string' },
-      bar: {
-        type: 'object',
-        properties: { baz: { type: 'string' } },
-        default: { baz: 'quux' }
-      }
+      bar: { type: 'object', properties: { baz: { type: 'string' } } }
     }
-  }
+  },
+  defaults: { bar: { baz: 'quux' } }
 }
 
 let locator: Locator
@@ -73,7 +70,8 @@ it('should fetch from the client and follow it', async () => {
 
   assert.deepStrictEqual(component, locator.id)
   assert.match(epoch, /^[a-f0-9]{64}$/)
-  assert.deepStrictEqual(aspect.invoke(), { foo: 'served', bar: { baz: 'quux' } })
+  // what the service serves is what was stored, and the manifest defaults are not applied to it
+  assert.deepStrictEqual(aspect.invoke(), { foo: 'served' })
 
   assert.ok(
     client.subscribe.mock.calls.some(

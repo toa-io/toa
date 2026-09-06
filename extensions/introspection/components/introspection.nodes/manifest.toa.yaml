@@ -7,23 +7,21 @@ name: nodes
 
 entity:
   associated: true
-  schema:
-    properties: &described
-      version:
-        type: string
-      entity: {}
-      operations: {}
-      events: {}
-      receivers: {}
-      extensions: {}
-      namespace:
-        type: string
-      component:
-        type: string
-    type: object
-    required:
-      - namespace
-      - component
+  properties: &described
+    version:
+      type: string
+    entity: {}
+    operations: {}
+    events: {}
+    receivers: {}
+    extensions: {}
+    namespace:
+      type: string
+    component:
+      type: string
+  required:
+    - namespace
+    - component
 
 operations:
   # a mass transition: the scope is inferred from the algorithm's `objects` parameter

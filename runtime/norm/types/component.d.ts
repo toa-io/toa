@@ -41,8 +41,11 @@ type Migration = {
   steps: unknown[]
 }
 
-type Entity = {
-  schema: Object
+export type Entity = {
+  properties: Record<string, Object>
+  required?: string[]
+  /** what a record holds before anything is written to it */
+  blank?: Record<string, unknown>
   storage?: string
   associated?: boolean
   custom?: boolean

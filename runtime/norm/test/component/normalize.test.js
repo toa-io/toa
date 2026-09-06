@@ -18,6 +18,53 @@ describe('operations', () => {
 
     assert.deepStrictEqual(manifest.operations.add.bindings, manifest.bindings)
   })
+
+  it('should state an empty output where none is declared', async () => {
+    await normalize(manifest)
+
+    assert.deepStrictEqual(manifest.operations.add.output, {})
+  })
+
+  it('should scope a computation to none', async () => {
+    manifest.operations.compute = { type: 'computation' }
+
+    await normalize(manifest)
+
+    assert.deepStrictEqual(manifest.operations.compute.scope, 'none')
+    assert.deepStrictEqual(manifest.operations.compute.query, false)
+  })
+
+  it('should scope an effect to none unless it says otherwise', async () => {
+    manifest.operations.affect = { type: 'effect' }
+    manifest.operations.reach = { type: 'effect', scope: 'objects' }
+
+    await normalize(manifest)
+
+    assert.deepStrictEqual(manifest.operations.affect.scope, 'none')
+    assert.deepStrictEqual(manifest.operations.reach.scope, 'objects')
+  })
+})
+
+describe('namespace', () => {
+  it('should default to `default`', async () => {
+    delete manifest.namespace
+
+    await normalize(manifest)
+
+    assert.deepStrictEqual(manifest.namespace, 'default')
+  })
+})
+
+describe('entity', () => {
+  it('should default storage and flags', async () => {
+    manifest.entity = { properties: {} }
+
+    await normalize(manifest)
+
+    assert.deepStrictEqual(manifest.entity.storage, '@toa.io/storages.mongodb')
+    assert.deepStrictEqual(manifest.entity.associated, false)
+    assert.deepStrictEqual(manifest.entity.custom, false)
+  })
 })
 
 describe('extensions', () => {
@@ -44,30 +91,21 @@ describe('extensions', () => {
 describe('receivers', () => {
   it('should substitute default namespace', async () => {
     manifest.receivers = {
-      'messages.created': 'add'
+      'messages.created': { operation: 'add' }
     }
 
     await normalize(manifest)
 
-    assert.deepStrictEqual(manifest.receivers, {
-      'default.messages.created': 'add'
-    })
+    assert.deepStrictEqual(Object.keys(manifest.receivers), ['default.messages.created'])
   })
 
   it('should not substitute default namespace for foreign events', async () => {
-    const receiver = {
-      transition: 'add',
-      source: 'test'
-    }
-
     manifest.receivers = {
-      'messages.created': receiver
+      'messages.created': { transition: 'add', source: 'test' }
     }
 
     await normalize(manifest)
 
-    assert.deepStrictEqual(manifest.receivers, {
-      'messages.created': receiver
-    })
+    assert.deepStrictEqual(Object.keys(manifest.receivers), ['messages.created'])
   })
 })

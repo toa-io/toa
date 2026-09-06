@@ -29,6 +29,13 @@ export interface Mapping {
   component?: string
   endpoint: string
   query?: Query | null
+
+  /**
+   * Whether the operation this maps to answers a page of a collection, and so takes the
+   * `omit` and `limit` a page is taken by. Written where the component's manifest is read,
+   * beside `namespace` and `component`, and not declared.
+   */
+  paged?: boolean
 }
 
 export interface Query {

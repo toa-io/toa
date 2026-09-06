@@ -35,14 +35,15 @@ export class Request extends Contract {
 
   public static schema(
     definition: Definition,
-    entity?: { schema: JSONSchema }
+    entity?: { properties: Record<string, JSONSchema> }
   ): JSONSchema {
+    // `source` is not among these: the framework stamps it and whoever reads it takes the keys
+    // it knows, so holding it to a schema would only fail calls from a peer that stamps one more
     const schema: JSONSchema = {
       type: 'object',
       properties: {
         authentic: { type: 'boolean' },
-        task: { type: 'boolean' },
-        source: structuredClone(schemas.source)
+        task: { type: 'boolean' }
       },
       additionalProperties: true
     }
@@ -63,7 +64,7 @@ export class Request extends Contract {
     if (definition.query !== false) {
       const query = structuredClone(schemas.query)
 
-      query.properties.id = entity?.schema.properties.id
+      query.properties.id = entity?.properties.id
 
       if (definition.type === 'observation') delete query.properties.version
       else delete query.properties.projection

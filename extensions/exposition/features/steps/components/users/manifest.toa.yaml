@@ -1,11 +1,9 @@
 name: users
 
 entity:
-  schema:
-    properties:
-      name:
-        type: string
-    type: object
+  properties:
+    name:
+      type: string
 
 operations:
   transit:

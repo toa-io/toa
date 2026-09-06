@@ -2,9 +2,12 @@ import { merge } from '@toa.io/generic'
 
 export const dereference = (manifest) => {
   // schemas
-  const resolver = createResolver(manifest.entity?.schema?.properties)
+  const properties = manifest.entity?.properties
+  const resolver = createResolver(properties)
 
-  if (manifest.entity !== undefined) schema(manifest.entity.schema, resolver)
+  if (properties !== undefined)
+    for (const [name, property] of Object.entries(properties))
+      properties[name] = schema(property, resolver)
 
   if ('operations' in manifest) operations(manifest, resolver)
 }

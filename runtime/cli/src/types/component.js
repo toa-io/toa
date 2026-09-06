@@ -1,3 +1,4 @@
+import { entity as declaration } from '@toa.io/norm'
 import { emit, stated } from './schema.js'
 import { BANNER, capitalize, collector, comment, imports } from './lib.js'
 
@@ -20,7 +21,7 @@ export function component(manifest, module, contributed = { types: {}, imports: 
 
   // the prototype's own fields are merged into the schema by then, so it stands alone
   if (manifest.entity !== undefined)
-    blocks.push(`export interface Entity ${emit(manifest.entity.schema)}`)
+    blocks.push(`export interface Entity ${emit(declaration.schema(manifest.entity))}`)
 
   const endpoints = Object.entries(manifest.operations ?? {}).map(
     ([endpoint, operation]) => ({

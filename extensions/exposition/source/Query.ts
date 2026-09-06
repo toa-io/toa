@@ -18,14 +18,20 @@ export class Query {
   private readonly queryable: boolean
   private readonly searchable: boolean
 
-  public constructor(query: syntax.Query) {
+  /** whether a page is taken of what this answers, and so whether `omit` and `limit` apply */
+  private readonly paged: boolean
+
+  public constructor(query: syntax.Query, paged = true) {
     this.parameterized = query?.parameters !== undefined
     this.queryable = queryable(query)
     this.searchable = query?.search === true
+    this.paged = paged
 
     if (this.queryable) {
-      query.omit ??= { value: 0, range: [0, 1000] }
-      query.limit ??= { value: 10, range: [1, 100] }
+      if (this.paged) {
+        query.omit ??= { value: 0, range: [0, 1000] }
+        query.limit ??= { value: 10, range: [1, 100] }
+      }
 
       if (query.criteria !== undefined) {
         // eslint-disable-next-line max-depth
@@ -53,7 +59,10 @@ export class Query {
       if (error !== null) throw new http.BadRequest('Query ' + error.message)
 
       this.fitCriteria(qs.query, parameters)
-      this.fitRanges(qs.query)
+
+      if (this.paged) this.fitRanges(qs.query)
+      else this.refuseRanges(qs.query)
+
       this.fitSort(qs.query)
 
       if (this.query.deleted !== undefined)
@@ -101,8 +110,11 @@ export class Query {
       'string',
       'What to order by: `rank:desc`, or `rank` for ascending.'
     )
-    query.limit = bounded('How many at once.', this.query.limit!)
-    query.omit = bounded('How many to skip.', this.query.omit!)
+
+    if (this.paged) {
+      query.limit = bounded('How many at once.', this.query.limit!)
+      query.omit = bounded('How many to skip.', this.query.omit!)
+    }
 
     if (this.searchable)
       query.search = keyword('string', 'What to search the text index for.')
@@ -176,6 +188,13 @@ export class Query {
           ? `${acc}(${criteria})`
           : `${acc}(${criteria})${operator}`
       }, '')
+  }
+
+  /** A route that answers one object is not paged, so a request that pages it is a mistake. */
+  private refuseRanges(qs: http.Query): void {
+    for (const name of ['omit', 'limit'] as const)
+      if (qs[name] !== undefined)
+        throw new http.BadRequest(`Query ${name} is not allowed`)
   }
 
   private fitRanges(qs: http.Query): void {

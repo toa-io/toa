@@ -57,19 +57,6 @@ describe('registry', () => {
       (error) => /required property 'registry'/.test(error.message)
     )
   })
-
-  it('should set default platforms', () => {
-    delete context.registry.platforms
-
-    validate(context)
-
-    assert.ok(context.registry.platforms instanceof Array)
-    assert.deepStrictEqual(context.registry.platforms, [
-      'linux/amd64',
-      'linux/arm/v7',
-      'linux/arm64'
-    ])
-  })
 })
 
 it('should require name as label', () => {

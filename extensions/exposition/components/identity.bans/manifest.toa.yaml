@@ -2,20 +2,19 @@ namespace: identity
 name: bans
 
 entity:
-  schema:
-    properties:
-      comment:
-        type: string
-      banned:
-        type: boolean
-        default: false
-      originator:
-        type: string
-    type: object
-    required:
-      - banned
-      - originator
   associated: true
+  properties:
+    comment:
+      type: string
+    banned:
+      type: boolean
+    originator:
+      type: string
+  required:
+    - banned
+    - originator
+  blank:
+    banned: false
 
 operations:
   transit:

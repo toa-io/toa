@@ -9,6 +9,7 @@ export class Entity {
   public deleted = false
 
   readonly #schema: Schema
+  readonly #blank: object
   readonly #guards: Guard[] | undefined
   #origin: Record | null = null
   #state!: Record
@@ -16,35 +17,38 @@ export class Entity {
 
   /**
    * A record makes an entity of what a storage holds; a string, or nothing at all, makes a
-   * blank one under that identity.
+   * blank one under that identity, out of what the component declared a record starts as.
    *
+   * @param blank what the component declares a record holds before anything is written to it
    * @param mutable whether the entity may be modified and committed
    */
   // eslint-disable-next-line max-params
   public constructor(
     schema: Schema,
+    blank: object,
     argument?: Record | string,
     guards?: Guard[],
     mutable = true
   ) {
     this.#schema = schema
+    this.#blank = blank
     this.#guards = guards
 
     if (typeof argument === 'object') this.#acquire(argument, mutable)
-    else this.#blank(argument ?? newid())
+    else this.#write(this.#compose(argument ?? newid()))
   }
 
   public get(): Record {
     return this.#state
   }
 
-  public set(value: Record, optional = false): void {
+  public set(value: Record): void {
     if (!this.#mutable)
       throw new Error('Entity acquired by a read-only operation cannot be modified')
 
-    if (!optional) this.#guard(value)
+    this.#guard(value)
 
-    const error = optional ? this.#schema.fitOptional(value) : this.#schema.fit(value)
+    const error = this.#schema.fit(value)
 
     if (error !== null) throw new EntityContractException(error, value)
 
@@ -79,8 +83,13 @@ export class Entity {
     this.#origin = record
   }
 
-  #blank(id: string): void {
-    this.set({ id, VERSION: 0 }, OPTIONAL)
+  /**
+   * A blank is not validated: what the component declared is fitted once, at boot, and the
+   * system properties are the runtime's own. It is copied because every entity the component
+   * makes is written over its own.
+   */
+  #compose(id: string): Record {
+    return { id, VERSION: 0, DELETED: null, ...structuredClone(this.#blank) } as Record
   }
 
   #guard(value: Record): void {
@@ -126,6 +135,3 @@ export class Entity {
     this.#state = value
   }
 }
-
-/** a blank is written before it is complete, so it is fitted against the optional schema */
-const OPTIONAL = true

@@ -1,26 +1,22 @@
 prototype: null
 
 entity:
-  schema:
-    properties:
-      id:
-        type: string
-        pattern: ^[a-fA-F0-9]{32}$
-      VERSION:
-        type: integer
-        minimum: 0
-        default: 0
-      CREATED:
-        type: integer
-      UPDATED:
-        type: integer
-      DELETED:
-        type: integer
-        nullable: true
-        default: null
-    required:
-      - id
-    type: object
+  properties:
+    id:
+      type: string
+      pattern: ^[a-fA-F0-9]{32}$
+    VERSION:
+      type: integer
+      minimum: 0
+    CREATED:
+      type: integer
+    UPDATED:
+      type: integer
+    DELETED:
+      type: integer
+      nullable: true
+  required:
+    - id
 
 operations:
   transit:

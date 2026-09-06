@@ -25,8 +25,12 @@ export function describe(manifest: Manifest): Node {
 function entity(manifest: Manifest): Node['entity'] {
   if (manifest.entity === undefined) return null
 
+  const { properties, required } = manifest.entity
+
+  // the map publishes a schema, which is what a tool reading it can validate against;
+  // a manifest declares the properties and assembles no envelope
   return {
-    schema: manifest.entity.schema,
+    schema: { type: 'object', properties, required },
     storage: manifest.entity.storage,
     associated: manifest.entity.associated === true
   }

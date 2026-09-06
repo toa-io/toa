@@ -70,7 +70,7 @@ export class Factory implements extensions.Factory {
         throw error
       } finally {
         // a call that failed is still a connection between two components
-        const src: Origin = request?.source ?? UNKNOWN
+        const src: Origin = origin(request?.source)
         const dst: Target = {
           namespace: locator.namespace!,
           component: locator.name,
@@ -130,5 +130,23 @@ export class Factory implements extensions.Factory {
 }
 
 const UNKNOWN = { service: 'unknown' } as const
+
+/**
+ * `source` crosses the wire, and what it names is stored as an edge of the map — so what is
+ * read off it is the keys this release knows, and never whatever a peer put beside them.
+ */
+function origin(source: Origin | undefined): Origin {
+  if (source === undefined) return UNKNOWN
+
+  if ('service' in source) return { service: source.service }
+
+  return 'event' in source
+    ? { namespace: source.namespace, component: source.component, event: source.event }
+    : {
+        namespace: source.namespace,
+        component: source.component,
+        operation: source.operation
+      }
+}
 
 export type Host = extensions.Host
