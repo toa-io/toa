@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/operations",
-  "version": "1.0.0-alpha.286",
+  "version": "1.0.0-alpha.287",
   "type": "module",
   "description": "Toa Deployment",
   "homepage": "https://toa.io",
@@ -29,7 +29,7 @@
   },
   "dependencies": {
     "@toa.io/generic": "1.0.0-alpha.286",
-    "@toa.io/norm": "1.0.0-alpha.286",
+    "@toa.io/norm": "1.0.0-alpha.287",
     "execa": "10.0.1",
     "fs-extra": "11.4.0",
     "js-yaml": "5.4.1"

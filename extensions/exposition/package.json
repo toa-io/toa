@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/extensions.exposition",
-  "version": "1.0.0-alpha.286",
+  "version": "1.0.0-alpha.287",
   "type": "module",
   "description": "Toa Exposition",
   "author": "temich <tema.gurtovoy@gmail.com>",
@@ -20,9 +20,9 @@
   "dependencies": {
     "@node-rs/bcrypt": "1.10.8",
     "@simplewebauthn/server": "14.0.0",
-    "@toa.io/core": "1.0.0-alpha.286",
+    "@toa.io/core": "1.0.0-alpha.287",
     "@toa.io/generic": "1.0.0-alpha.286",
-    "@toa.io/schemas": "1.0.0-alpha.286",
+    "@toa.io/schemas": "1.0.0-alpha.287",
     "content-type": "3.0.0",
     "jose": "6.2.10",
     "js-yaml": "5.4.1",
