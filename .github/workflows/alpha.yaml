@@ -1,0 +1,62 @@
+name: Publication
+
+# `alpha` is what publishes, so a pull request into it is verified in full: every check the
+# `dev` one runs, and then the scenarios, against the infrastructure a deployment connects to.
+on:
+  pull_request:
+    branches:
+      - alpha
+      - release
+
+permissions:
+  contents: read
+
+jobs:
+  unit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+
+      - name: Install dependencies
+        run: npm ci
+        env:
+          HUSKY: 0
+
+      - name: Check code style
+        run: npm run lint
+
+      - name: Check types of the step definitions
+        run: npm run typecheck
+
+      - name: Run unit tests
+        run: npm run test:unit
+
+      - name: Run stage tests
+        run: npm run test:stage
+
+  features:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+
+      # the deployment scenarios render a chart, and without it they read an empty stdout
+      - uses: azure/setup-helm@v4
+
+      - name: Install dependencies
+        run: npm ci
+        env:
+          HUSKY: 0
+
+      - name: Start the infrastructure
+        run: |
+          npm run setup:mongo
+          docker compose up -d --wait
+
+      - name: Run scenarios
+        run: npm run features
