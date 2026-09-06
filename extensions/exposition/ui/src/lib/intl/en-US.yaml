@@ -1,0 +1,13 @@
+native: English
+locale: en-US
+dir: ltr
+nav:
+  identity: Copy your account id
+  markdown: Download as Markdown
+  mcp: Copy the MCP address
+  configuration: Open Configuration
+  introspection: Open Introspection
+  signin: Sign in
+  signout: Sign out
+  filter: Filter resources
+  back: Back

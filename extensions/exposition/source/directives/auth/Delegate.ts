@@ -28,11 +28,14 @@ export class Delegate implements Directive {
     return identity !== null
   }
 
-  /** The property it embeds is the identity's, so a caller has nothing to put there. */
+  /**
+   * It takes an identity, and the property it embeds is that identity's — so a caller has
+   * nothing to put there.
+   */
   public describe(introspection: Introspection): Introspection {
     take(introspection, this.property)
 
-    return introspection
+    return { ...introspection, authenticated: true }
   }
 
   private embed(body: unknown, identity: Identity): Record<string, unknown> {

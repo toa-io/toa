@@ -82,6 +82,11 @@ export class Query {
    * Only what it actually accepts — a criteria the declaration closes is refused, and so is
    * a search where none was asked for.
    */
+  /**
+   * The querystring parameters this resource declares, which are properties of its own
+   * taken out of the input. What selects records is not among them: that is the same of
+   * every queryable resource, and `selection` is where it is stated.
+   */
   public explain(introspection: Introspection): Record<string, Schema> | null {
     let query: Record<string, Schema> | null = null
 
@@ -96,9 +101,19 @@ export class Query {
         query[parameter] = schema
       }
 
-    if (!this.queryable) return query
+    return query
+  }
 
-    query ??= {}
+  /**
+   * What picks the records a call is about, which is the querystring the gateway reads
+   * rather than anything the resource declares — the same for every queryable resource,
+   * and so not what one says about itself. A procedure states it, because there it is
+   * something the caller sends.
+   */
+  public selection(): Record<string, Schema> | null {
+    if (!this.queryable) return null
+
+    const query: Record<string, Schema> = {}
 
     if (!this.closed)
       query.criteria = keyword(

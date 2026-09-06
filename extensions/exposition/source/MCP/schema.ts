@@ -8,7 +8,12 @@ import type { Annotations } from './types.js'
  * A `map:headers` property is not here: a call carries no headers of its own, so there is
  * nowhere for a model to put one.
  */
-export function input(introspection: Introspection, variables: string[]): object {
+// eslint-disable-next-line max-params
+export function input(
+  introspection: Introspection,
+  variables: string[],
+  selection: Record<string, Schema> | null
+): object {
   const properties: Record<string, unknown> = {}
   const required: string[] = []
 
@@ -23,15 +28,21 @@ export function input(introspection: Introspection, variables: string[]): object
     required.push(variable)
   }
 
-  // it is a querystring on the wire, which is nothing a model knows or needs to; what it
-  // is to a caller is the part of a call that picks what the call is about
-  if (introspection.query !== undefined)
+  /*
+   * It is a querystring on the wire, which is nothing a model knows or needs to; what it is
+   * to a caller is the part of a call that picks what the call is about. What selects
+   * records is stated here and not in the resource's own description, where it would be the
+   * same sentence on every queryable resource there is.
+   */
+  const query = { ...introspection.query, ...selection }
+
+  if (Object.keys(query).length > 0)
     properties.query = {
       type: 'object',
       description:
         'Which records the call works on: what to match, in what order, ' +
         'and how many at once.',
-      properties: introspection.query
+      properties: query
     }
 
   const body = introspection.input as Shape | null | undefined

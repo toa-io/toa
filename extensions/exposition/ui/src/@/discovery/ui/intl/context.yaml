@@ -1,0 +1,108 @@
+context: Mount 'discovery' context
+inputs:
+  resources:
+    empty:
+      input: Nothing is served here yet.
+      context: shown when the gateway answers no resources at all
+    nomatch:
+      input: Nothing matches the filter.
+      context: shown when the filter leaves the list empty
+  resource:
+    route:
+      input: route
+      context: inline field label in a technical inspector, lowercase, no sentence case
+    query:
+      input: query
+      context: inline field label in a technical inspector, lowercase, no sentence case
+    input:
+      input: input
+      context: inline field label in a technical inspector, lowercase, no sentence case
+    output:
+      input: output
+      context: inline field label in a technical inspector, lowercase, no sentence case
+    errors:
+      input: errors
+      context: inline field label in a technical inspector, lowercase, no sentence case
+    none:
+      input: none
+      context: inline field label in a technical inspector, lowercase, no sentence case
+    copy:
+      input: Copy the JSON Schema
+      context: accessible name of a small icon button that puts the original schema on the clipboard
+    json:
+      input: Copy the answer
+      context: accessible name of a small icon button that puts a call's reply on the clipboard as JSON
+    unset:
+      input: not defined
+      context: stands where a method declares no schema at all
+    expand:
+      input: Show what it serves
+      context: accessible name of an icon-only chevron button that opens a resource card
+    mcp:
+      input: Published as a tool
+      context: tooltip on the Model Context Protocol mark beside a method a model may call
+  guard:
+    public:
+      input: Anyone may reach it
+      context: tooltip on the icon of a method nothing guards
+    private:
+      input: Your own
+      context: tooltip on the icon of a method only the identity it is about may reach
+    protected:
+      input: Takes a role
+      context: tooltip on the icon of a method guarded by a role
+    system:
+      input: What the application runs on
+      context: tooltip on the icon of a method guarded by a role of the system scope
+    authenticated:
+      input: Takes being someone
+      context: tooltip on the icon of a method any signed-in identity may reach, and no one else
+  space:
+    user:
+      input: Userspace
+    system:
+      input: System
+      context: heading over the resources the runtime serves, such as identity
+  call:
+    open:
+      input: Call this method
+      context: title attribute of the verb badge of a method; pressing it opens a dialog that makes the call
+    send:
+      input: Send request
+      context: button that makes the call the dialog was opened for
+    cancel:
+      input: Cancel
+      context: button that closes the dialog without making the call
+    close:
+      input: Close
+      context: accessible name of the icon-only button in the corner of the dialog that closes it
+    back:
+      input: Back
+      context: the one button under an answer; it goes back to what was asked, or closes the dialog where nothing was
+    hold:
+      input: Hold to send
+      context: hint shown while the send button of a destructive call is held down
+    sending:
+      input: Sending…
+      context: shown beside a spinner while a call that asked nothing is being made
+    nothing:
+      input: This call takes nothing.
+      context: shown where a destructive call has no parameters to fill in and is only confirmed
+    invalid:
+      input: The body is not JSON.
+      context: shown under the body field when what was typed does not parse
+    required:
+      input: The path does not resolve without it.
+      context: shown under a route parameter field left empty when the call was asked for
+    answered:
+      input: answered
+      context: lowercase label beside the status of a reply the gateway answered
+    refused:
+      input: refused
+      context: lowercase label beside the status of a reply the gateway refused or failed
+    body:
+      input: body
+      context: inline field label in a technical inspector, lowercase, no sentence case
+    empty:
+      input: No content.
+      context: shown where a reply carried no body at all

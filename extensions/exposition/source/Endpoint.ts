@@ -52,6 +52,10 @@ export class Endpoint implements RTD.Endpoint {
     return message
   }
 
+  public selection(): Record<string, Schema> | null {
+    return this.mapping.selection()
+  }
+
   public async explain(parameters: RTD.Parameter[]): Promise<Introspection> {
     this.introspection ??= await this.introspect(parameters)
 

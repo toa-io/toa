@@ -14,6 +14,7 @@
     "*/**/operations",
     "extensions/introspection/ui",
     "extensions/configuration/ui",
+    "extensions/exposition/ui",
     "extensions/*/features/site"
   ],
   "rules": {
@@ -45,7 +46,8 @@
           "_transform",
           "_readableState",
           "_trailers",
-          "__TESTING_EXPOSITION_BRANCH_TTL"
+          "__TESTING_EXPOSITION_BRANCH_TTL",
+          "__TESTING_EXPOSITION_DISCOVERY_ROOT"
         ]
       }
     ]

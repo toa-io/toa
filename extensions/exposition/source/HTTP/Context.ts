@@ -26,6 +26,13 @@ export class Context {
    */
   public readonly procedural: boolean = false
 
+  /**
+   * Whether this describes a resource rather than calling one. What builds a describing
+   * context says so, and a directive that answers differently to a description than to a
+   * call reads it here.
+   */
+  public readonly exploratory: boolean = false
+
   public readonly pipelines: Pipelines = {
     body: [],
     response: []

@@ -19,18 +19,37 @@ export interface Definition extends Explanation {
   query?: boolean
 }
 
+/** What the operation works on, as the manifest declares it. */
+export interface Entity {
+  properties: Record<string, JSONSchema>
+  required?: string[]
+}
+
 export class Request extends Contract {
   public readonly discovery: Explanation = {}
 
   public static override Exception: Refusal =
     RequestContractException as unknown as Refusal
 
-  public constructor(schema: Schema, definition: Definition) {
+  public constructor(schema: Schema, definition: Definition, entity?: Entity) {
     super(schema)
 
     for (const key of ['description', 'input', 'output', 'errors'] as const)
       if (definition[key] !== undefined)
         (this.discovery as Record<string, unknown>)[key] = definition[key]
+
+    /*
+     * An operation that states no output states an empty schema, which every reply fits —
+     * and which says nothing to whoever reads it. What its type answers does, so that is
+     * said here instead. Here and not in the definition, because the definition is what a
+     * reply is held to: a projection is a lawful answer, and describing one is not the same
+     * as requiring it.
+     */
+    if (empty(this.discovery.output)) {
+      const answered = answers(definition, entity)
+
+      if (answered !== undefined) this.discovery.output = answered
+    }
   }
 
   public static schema(
@@ -82,4 +101,40 @@ export class Request extends Contract {
 
     return schema
   }
+}
+
+/**
+ * What an operation of this type answers, where it did not say.
+ *
+ * A transition, an observation and an assignment work on the Entity Object, so that is what
+ * they answer — a set of them where the scope is a set. A computation neither uses the scope
+ * nor produces one, and an effect answers whatever it computed, so neither is guessed at.
+ * A stream is not a value with a schema, and is not one either.
+ *
+ * What the entity requires is said as well. It is a description and nothing is held to it —
+ * an operation answering a projection says so by declaring its own output — and a shape
+ * whose every property reads as optional says less than it knows.
+ */
+function answers(definition: Definition, entity?: Entity): JSONSchema | undefined {
+  if (entity === undefined || !ENTITY.has(definition.type as string)) return undefined
+
+  const object: JSONSchema = {
+    type: 'object',
+    properties: entity.properties,
+    ...(entity.required === undefined ? {} : { required: entity.required })
+  }
+
+  if (definition.scope === 'objects') return { type: 'array', items: object } as JSONSchema
+
+  return definition.scope === 'object' || definition.scope === 'changeset'
+    ? object
+    : undefined
+}
+
+/** The types whose subject is the Entity Object; see `documentation/design.md`. */
+const ENTITY = new Set(['transition', 'observation', 'assignment'])
+
+/** A schema that states nothing, which is what an operation saying nothing normalizes to. */
+function empty(schema: JSONSchema | null | undefined): boolean {
+  return schema === undefined || schema === null || Object.keys(schema).length === 0
 }

@@ -37,11 +37,12 @@ Feature: Supported methods
     When the following request is received:
       """
       OPTIONS / HTTP/1.1
+      access-control-request-method: GET
       host: nex.toa.io
       origin: https://hello.world
       """
     Then the following reply is sent:
       """
       204 No Content
-      access-control-allow-methods: GET, POST, PUT, PATCH, DELETE, LOCK, UNLOCK
+      access-control-allow-methods: GET, POST, PUT, PATCH, DELETE, LOCK, UNLOCK, OPTIONS
       """

@@ -48,6 +48,8 @@
     "transpile:otp": "tsc -p ./components/identity.otp",
     "transpile:clients": "tsc -p ./components/identity.clients",
     "transpile:grants": "tsc -p ./components/identity.grants",
+    "build:ui": "npm --prefix ui ci && npm --prefix ui run build",
+    "prepack": "npm run build:ui",
     "features": "TSX_TSCONFIG_PATH=features/steps/tsconfig.json NODE_OPTIONS=--import=tsx cucumber-js",
     "features:h2c": "TOA_EXPOSITION_PROTOCOL=h2c TOA_AGENT_PROTOCOL=h2c TSX_TSCONFIG_PATH=features/steps/tsconfig.json NODE_OPTIONS=--import=tsx cucumber-js",
     "features:security": "TSX_TSCONFIG_PATH=features/steps/tsconfig.json NODE_OPTIONS=--import=tsx cucumber-js --tags @security",

@@ -1,5 +1,6 @@
 import { console } from 'openspan'
 import { refusal, template } from '../RPC/names.js'
+import { DISCOVERY } from '../const.js'
 import { branchTTL, createNode } from './factory.js'
 import { fragment } from './segment.js'
 import type { Mount, Node } from './Node.js'
@@ -25,7 +26,7 @@ export class Tree {
     this.root = node
     this.trunk = this.createNode(node, PROTECTED)
 
-    unnameable(this.trunk)
+    announce(this.trunk)
   }
 
   public match(path: string): Match | null {
@@ -48,7 +49,7 @@ export class Tree {
   public merge(node: syntax.Node, extension: unknown): Node[] {
     const branch = this.createNode(node, !PROTECTED, extension)
 
-    unnameable(branch)
+    announce(branch)
 
     return this.trunk.merge(branch)
   }
@@ -87,20 +88,29 @@ export class Tree {
 }
 
 /**
- * What is served but cannot be called by name. Said once per route as it is built, because a
- * procedure that is missing is otherwise noticed only by the caller who cannot find it.
+ * What is served but cannot be reached as it reads. Said once per route as it is built,
+ * because either of these is otherwise noticed only by the caller who cannot find it.
  */
-function unnameable(node: Node): void {
+function announce(node: Node): void {
   const said = new Set<string>()
 
   for (const { segments } of node.walk([], TRUNK)) {
-    const segment = refusal(segments)
-
-    if (segment === null) continue
-
     const route = template(segments)
 
     if (said.has(route)) continue
+
+    // the page is served under this prefix, before a request is routed at all
+    if (route === DISCOVERY || route.startsWith(DISCOVERY + '/')) {
+      said.add(route)
+
+      console.warn('Route is shadowed by the discovery endpoint', { route })
+
+      continue
+    }
+
+    const segment = refusal(segments)
+
+    if (segment === null) continue
 
     said.add(route)
 
