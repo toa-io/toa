@@ -19,6 +19,39 @@ export const navigation = {
  */
 export const origin = typeof window === 'undefined' ? '' : window.location.origin
 
+/**
+ * The other consoles' ports. Constants of the runtime, which this bundle cannot import —
+ * the same reason introspection's own configuration states them.
+ */
+const INTROSPECTION_PORT = 8002
+const CONFIGURATION_PORT = 8003
+
+/**
+ * Where the other two consoles are. Deployed, all three sit behind one ingress and the
+ * path alone is right; locally each is served on a port of its own.
+ */
+export const introspection = served(INTROSPECTION_PORT, '/.introspection/')
+export const configuration = served(CONFIGURATION_PORT, '/.configuration/')
+
+function served(port: number, path: string): string {
+  if (typeof window === 'undefined') return path
+
+  const { protocol, hostname } = window.location
+
+  return (local(hostname) ? `${protocol}//${hostname}:${port}` : '') + path
+}
+
+function local(hostname: string): boolean {
+  return (
+    hostname === 'localhost' ||
+    hostname === '127.0.0.1' ||
+    hostname === '[::1]' ||
+    hostname.startsWith('192.168.') ||
+    hostname.startsWith('172.16.') ||
+    hostname.startsWith('10.')
+  )
+}
+
 export const sleep: [number, number] | undefined = (() => {
   const sleep = import.meta.env.VITE_DEV_SLEEP
 

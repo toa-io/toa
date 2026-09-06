@@ -15,6 +15,9 @@ export type Dictionary = {
       nav: {
         identity: string
         markdown: string
+        mcp: string
+        configuration: string
+        introspection: string
         signin: string
         signout: string
         filter: string

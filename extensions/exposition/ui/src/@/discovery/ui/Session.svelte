@@ -5,7 +5,8 @@
   import { Button } from '$ui/button'
   import * as Dialog from '$ui/alert-dialog'
   import { Hold } from '$lib/components/hold'
-  import { address, bodied, fields, skeleton, type Values } from './request'
+  import { guard } from './ui'
+  import { address, blank, bodied, fields, skeleton, type Values } from './request'
   import { dict } from './intl'
   import Form from './Form.svelte'
   import { DESTRUCTIVELY } from './Call'
@@ -16,7 +17,7 @@
   const { route, verb, of, onclose }: Props = $props()
 
   const form = $derived(fields(route, of))
-  const carries = $derived(bodied(of))
+  const carries = $derived(bodied(verb, of))
   const destructive = $derived(verb === DESTRUCTIVELY)
 
   /**
@@ -36,8 +37,21 @@
   let busy = $state(false)
   let answer = $state<Answered | null>(null)
 
+  /**
+   * Whether the call has been asked for yet. What is missing is not said until it is: a
+   * form opens with everything empty, and that is not something to be told off for.
+   */
+  let attempted = $state(false)
+
+  const missing = $derived(attempted ? blank(form, values) : [])
+
   async function send(): Promise<void> {
     let payload: unknown
+
+    attempted = true
+
+    // a route variable is a segment of the path, and there is no path to call without it
+    if (missing.length > 0) return
 
     if (carries && body.trim() !== '')
       try {
@@ -50,7 +64,14 @@
 
     invalid = false
     busy = true
-    answer = await call(verb, address(route, form, values), payload)
+
+    answer = await call({
+      verb,
+      path: address(route, form, values),
+      body: payload,
+      guarded: guard(of) !== 'public',
+    })
+
     busy = false
   }
 
@@ -69,7 +90,15 @@
   <Answer of={answer} />
 {:else if asked}
   {#if form.length > 0 || carries}
-    <Form fields={form} {values} bind:body {carries} {invalid} disabled={busy} />
+    <Form
+      fields={form}
+      {values}
+      bind:body
+      {carries}
+      {invalid}
+      blank={missing}
+      disabled={busy}
+    />
   {:else}
     <p class="text-muted-foreground text-sm">{$dict.call.nothing}</p>
   {/if}

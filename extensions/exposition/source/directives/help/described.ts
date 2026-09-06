@@ -6,6 +6,7 @@ export interface Described {
   description?: string
 
   /** what its methods are guarded by; see `guarded` */
+  authenticated?: boolean
   private?: boolean
   protected?: boolean
   system?: boolean

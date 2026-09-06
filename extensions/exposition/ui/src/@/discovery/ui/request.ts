@@ -47,10 +47,19 @@ export function fields(route: string, of: Method): Field[] {
   return found
 }
 
-/** Whether the call carries a body of its own. */
-export function bodied(of: Method): boolean {
+/**
+ * Whether the call carries a body of its own. A `GET` and a `HEAD` do not — what one takes
+ * comes out of the path and the querystring, and neither a browser nor `fetch` will send a
+ * body with one — so what the operation declares is nothing this asks for.
+ */
+export function bodied(verb: string, of: Method): boolean {
+  if (BODILESS.has(verb)) return false
+
   return of.input !== undefined && of.input !== null && Object.keys(of.input).length > 0
 }
+
+/** The verbs that carry nothing. */
+const BODILESS = new Set(['GET', 'HEAD'])
 
 /** The path the call is made at: the template with its variables filled, and a querystring. */
 export function address(route: string, fields: Field[], values: Values): string {
@@ -72,6 +81,17 @@ export function address(route: string, fields: Field[], values: Values): string 
   return (
     '/' + (filled.length === 0 ? '' : filled.join('/') + '/') + (query === '' ? '' : '?' + query)
   )
+}
+
+/**
+ * The fields the call cannot be made without, and that were left empty. A route variable is
+ * a segment of the path: without it the path is a different one, and blank space is not a
+ * segment either.
+ */
+export function blank(fields: Field[], values: Values): string[] {
+  return fields
+    .filter((field) => field.required && (values[field.key] ?? '').trim() === '')
+    .map((field) => field.key)
 }
 
 /** A body to start from: what the schema says the call takes, with nothing filled in. */

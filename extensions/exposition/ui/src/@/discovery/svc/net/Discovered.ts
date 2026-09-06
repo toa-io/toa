@@ -3,6 +3,9 @@ export interface Described {
   title?: string
   description?: string
 
+  /** reaching it takes being someone, whoever — `auth:anyone` and its like */
+  authenticated?: boolean
+
   /** reaching it is being the identity it is about — `auth:id` */
   private?: boolean
 

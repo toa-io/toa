@@ -27,6 +27,7 @@ export type Dictionary = {
         private: string
         protected: string
         system: string
+        authenticated: string
       }
       space: {
         user: string
@@ -36,11 +37,13 @@ export type Dictionary = {
         open: string
         send: string
         cancel: string
+        close: string
         back: string
         hold: string
         sending: string
         nothing: string
         invalid: string
+        required: string
         answered: string
         refused: string
         body: string

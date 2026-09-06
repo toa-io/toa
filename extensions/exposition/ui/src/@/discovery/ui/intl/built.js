@@ -24,7 +24,8 @@ export const dictionaries = {
       "public": "Anyone may reach it",
       "private": "Your own",
       "protected": "Takes a role",
-      "system": "What the application runs on"
+      "system": "What the application runs on",
+      "authenticated": "Takes being someone"
     },
     "space": {
       "user": "Userspace",
@@ -34,11 +35,13 @@ export const dictionaries = {
       "open": "Call this method",
       "send": "Send request",
       "cancel": "Cancel",
+      "close": "Close",
       "back": "Back",
       "hold": "Hold to send",
       "sending": "Sending…",
       "nothing": "This call takes nothing.",
       "invalid": "The body is not JSON.",
+      "required": "The path does not resolve without it.",
       "answered": "answered",
       "refused": "refused",
       "body": "body",

@@ -339,7 +339,11 @@ constrain a body, and whoever is admitted is admitted by something else.
 `anonymous` is the exception it is for a procedure: a description is not the reply a cache would
 hold, so a route it admits is described whatever the request presented.
 
-What guards a method is said in the description as well: `private` where `id` decides it,
+What guards a method is said in the description as well: `authenticated` where reaching it takes
+being someone and no more — `anyone`, `delegate`, `claims` — `private` where `id` decides it,
 `protected` where `role` does, and `system` besides where that role is one of the `system` scope.
-`rule` says whatever each directive it composes says. A resource carries whichever of the three
-any of its methods does.
+`rule` says whatever each directive it composes says. A resource carries whichever of the four any
+of its methods does.
+
+A method that says none of them is one nothing guards, and a client reads it that way: a
+credential is not presented to it, because `anonymous` refuses a caller carrying one.

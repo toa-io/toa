@@ -2,7 +2,7 @@ import { get } from 'svelte/store'
 import { meta, origin } from '@/net'
 import { challenge } from '@/iam/svc/store'
 import type { Discovered } from './Discovered'
-import type { Answer } from './Answer'
+import type { Answer, Call } from './Answer'
 
 /*
  * The resource appends the trailing slash and the endpoint answers at either. `OPTIONS`
@@ -28,13 +28,17 @@ export async function read(): Promise<Discovered | Error> {
  * One call, made at a path this caller read out of the tree. Whatever comes back is an
  * answer: a refusal says as much about the resource as a reply does, and both are what
  * the caller asked to see.
+ *
+ * A credential goes only where the method takes one. An `anonymous` route refuses a caller
+ * presenting one — the reply would not be cacheable — so sending it to a public method is
+ * a `403` where nothing was needed at all.
  */
-export async function call(verb: string, path: string, body?: unknown): Promise<Answer> {
-  const credentialed = get(challenge) !== null
+export async function call(of: Call): Promise<Answer> {
+  const credentialed = of.guarded && get(challenge) !== null
 
-  const answered = await origin.resource(path).json({
-    method: verb,
-    ...(body === undefined ? {} : { body }),
+  const answered = await origin.resource(of.path).json({
+    method: of.verb,
+    ...(of.body === undefined ? {} : { body: of.body }),
     ...(credentialed ? { credentials: 'include' } : {}),
   })
 

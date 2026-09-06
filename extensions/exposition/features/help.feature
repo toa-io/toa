@@ -299,6 +299,10 @@ Feature: Help
       """yaml
       /:
         anonymous: true
+        /pots:
+          GET:
+            auth:anyone: true
+            dev:stub: []
         /accounts/:id:
           GET:
             auth:id: id
@@ -337,6 +341,10 @@ Feature: Help
           GET:
             protected: true
             system: true
+        /pots:
+          authenticated: true
+          GET:
+            authenticated: true
       """
 
   Scenario: A rule says what each of its own says

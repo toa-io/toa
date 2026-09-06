@@ -1,5 +1,6 @@
 import assert from 'node:assert'
 import type { Directive, Identity, Context } from './types.js'
+import type { Introspection } from '../../Introspection.js'
 import type { Parameter } from '../../RTD/index.js'
 
 export class Federation implements Directive {
@@ -19,6 +20,11 @@ export class Federation implements Directive {
   /** Which claims it takes needs the request; that it takes an identity does not. */
   public admits(identity: Identity | null): boolean | undefined {
     return identity === null ? false : undefined
+  }
+
+  /** Which claims is the application's business; that it takes an identity is the caller's. */
+  public describe(introspection: Introspection): Introspection {
+    return { ...introspection, authenticated: true }
   }
 
   public authorize(

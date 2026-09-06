@@ -10,6 +10,15 @@ inputs:
     markdown:
       input: Download as Markdown
       context: accessible name of a button that saves the whole tree as a Markdown document
+    mcp:
+      input: Copy the MCP address
+      context: accessible name of a button that puts the application's Model Context Protocol endpoint on the clipboard
+    configuration:
+      input: Open Configuration
+      context: accessible name of a link to the Configuration console, another page of the same runtime
+    introspection:
+      input: Open Introspection
+      context: accessible name of a link to the Introspection console, another page of the same runtime
     identity:
       input: Copy your account id
       context: accessible name of a button showing the first characters of the signed-in account id and putting the whole of it on the clipboard

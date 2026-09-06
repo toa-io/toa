@@ -11,3 +11,13 @@ export interface Answer {
   /** Whether the gateway answered it, rather than refused or failed it. */
   ok: boolean
 }
+
+/** What making one takes. */
+export interface Call {
+  verb: string
+  path: string
+  body?: unknown
+
+  /** whether reaching the method takes a credential, which is what the tree says of it */
+  guarded: boolean
+}

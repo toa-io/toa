@@ -13,6 +13,9 @@ export interface Introspection {
   /** what a person is shown where a client lists this method, which a name is not */
   title?: string
 
+  /** whether reaching it takes being someone, whoever — `auth:anyone` and its like */
+  authenticated?: boolean
+
   /** whether reaching it is being the identity it is about — `auth:id` */
   private?: boolean
 
@@ -61,6 +64,7 @@ export function order(introspection: Introspection): Introspection {
 const KEYS = [
   'title',
   'description',
+  'authenticated',
   'private',
   'protected',
   'system',

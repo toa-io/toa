@@ -10,6 +10,8 @@ export interface Props {
   carries: boolean
   /** Whether what was typed as the body is not JSON. */
   invalid: boolean
+  /** The fields the call cannot be made without, and that are empty. */
+  blank: string[]
   /** @default false */
   disabled?: boolean
 }

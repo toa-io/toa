@@ -20,6 +20,8 @@ Introspection properties:
 - `title` and `description` what the route states this method is, from
   [`help:method`](help.md). The operation states what it is too, and that is not this: it is
   written without knowledge of any route, and the same operation mounted twice is two methods
+- `authenticated` reaching it takes being someone, whoever — [`auth:anyone`](access.md#anyone),
+  `auth:delegate` and `auth:claims`
 - `private` reaching it is being the identity it is about — [`auth:id`](access.md#id)
 - `protected` reaching it takes a role — [`auth:role`](access.md#role)
 - `system` and that role is one of the `system` scope, which guards what an application runs

@@ -1,6 +1,12 @@
 import { writable } from 'svelte/store'
-import { Globe, ShieldCog, ShieldKeyhole, ShieldUser } from '@lucide/svelte'
-import type { Described, Method, Resource } from '@/discovery'
+import {
+  Globe,
+  ShieldCog,
+  ShieldKeyhole,
+  ShieldQuestionMark,
+  ShieldUser,
+} from '@lucide/svelte'
+import type { Described, Discovered, Method, Resource } from '@/discovery'
 
 /** What the header's filter holds. Transient: not persisted, not in the URL. */
 export const query = writable('')
@@ -42,6 +48,29 @@ export function method(resource: Resource, verb: string): Method {
 }
 
 /**
+ * The route each of the other consoles serves, and by which it says it is there to be
+ * opened. A reader who cannot see it is one the console would refuse anyway.
+ */
+export const CONSOLES = {
+  configuration: '/configuration/values',
+  introspection: '/introspection/nodes',
+} as const
+
+/** Whether the tree carries a route at all. */
+export function carries(tree: Discovered | null, route: string): boolean {
+  return tree !== null && route in tree.routes
+}
+
+/** Whether anything the tree carries is published to a model, and so whether MCP is on. */
+export function published(tree: Discovered | null): boolean {
+  if (tree === null) return false
+
+  return Object.values(tree.routes).some((resource) =>
+    verbs(resource).some((verb) => method(resource, verb).mcp === true),
+  )
+}
+
+/**
  * What guards it, strictest first — which is the one icon a reader is shown. `system` is
  * what an application runs on rather than what it serves, so it outranks the rest.
  *
@@ -55,6 +84,8 @@ export function guard(described: Described): Guard {
 
   if (described.private === true) return 'private'
 
+  if (described.authenticated === true) return 'authenticated'
+
   return 'public'
 }
 
@@ -63,6 +94,7 @@ export const GUARDS = {
   system: ShieldCog,
   protected: ShieldKeyhole,
   private: ShieldUser,
+  authenticated: ShieldQuestionMark,
   public: Globe,
 } as const
 

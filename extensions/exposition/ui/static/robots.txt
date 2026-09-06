@@ -1,3 +1,0 @@
-# an operator's page, never a destination
-User-agent: *
-Disallow: /

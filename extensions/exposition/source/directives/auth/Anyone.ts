@@ -1,4 +1,5 @@
 import { type Directive, type Context } from './types.js'
+import type { Introspection } from '../../Introspection.js'
 
 export class Anyone implements Directive {
   private readonly allow: boolean
@@ -13,5 +14,10 @@ export class Anyone implements Directive {
 
   public admits(_: any, context: Context): boolean {
     return this.authorize(_, context)
+  }
+
+  /** Whoever asks, as long as they are somebody. */
+  public describe(introspection: Introspection): Introspection {
+    return this.allow ? { ...introspection, authenticated: true } : introspection
   }
 }

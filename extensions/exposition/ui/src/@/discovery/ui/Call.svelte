@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { X } from '@lucide/svelte'
   import { badgeVariants } from '$ui/badge'
   import * as Dialog from '$ui/alert-dialog'
   import { slashed } from './ui'
@@ -35,7 +36,19 @@
     class="data-[size=default]:max-w-[calc(100vw-2rem)]
       data-[size=default]:sm:max-w-lg"
   >
-    <Dialog.Header>
+    <!-- the way out, wherever the dialog has got to: a call under way is not something to
+         be held to, and what it answered has been read by the time it is closed -->
+    <Dialog.Cancel
+      id="discovery-close-button"
+      variant="ghost"
+      size="icon"
+      aria-label={$dict.call.close}
+      class="text-muted-foreground absolute end-2 top-2"
+    >
+      <X />
+    </Dialog.Cancel>
+
+    <Dialog.Header class="pe-8">
       <Dialog.Title class="flex w-full min-w-0 items-baseline gap-2 font-mono text-sm">
         <span class="text-muted-foreground shrink-0">{verb}</span>
         <span class="min-w-0 truncate">{slashed(route)}</span>

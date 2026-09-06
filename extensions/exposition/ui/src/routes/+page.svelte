@@ -1,9 +1,20 @@
 <script lang="ts">
   import { onMount } from 'svelte'
-  import { ArrowBigDownDash, LogOut, Search, UserKey, X } from '@lucide/svelte'
+  import { ArrowBigDownDash, Bolt, LogOut, Search, UserKey, Waypoints, X } from '@lucide/svelte'
   import { Authenticated } from '@/iam/ui'
   import { account, authenticated, logout } from '@/iam'
-  import { Resources, addressed, markdown, only, query, stated } from '@/discovery/ui'
+  import {
+    CONSOLES,
+    Mcp,
+    Resources,
+    addressed,
+    carries,
+    markdown,
+    only,
+    published,
+    query,
+    stated,
+  } from '@/discovery/ui'
   import { tree } from '@/discovery'
   import { Kbd } from '$ui/kbd'
   import { Input } from '$ui/input'
@@ -12,7 +23,7 @@
   import { dict } from '$lib/intl'
   import { Screen, Sticky } from '$lib/components/shell'
   import { Clipboard } from '$lib/components/clipboard'
-  import { meta } from '$config'
+  import { configuration, introspection, meta, origin } from '$config'
   import { replaceState } from '$app/navigation'
 
   /** How much of an identifier fits on a button, and is enough to tell one from another. */
@@ -56,6 +67,16 @@
     if (address !== location.hash)
       replaceState(address === '' ? location.pathname : address, {})
   })
+
+  /** Whether anything is published to a model, which is what the address is worth having. */
+  const mcp = $derived(published($tree))
+
+  /*
+   * The other consoles, offered where this reader can see what each of them serves — one
+   * that would refuse them is not somewhere to send them.
+   */
+  const configured = $derived(carries($tree, CONSOLES.configuration))
+  const introspected = $derived(carries($tree, CONSOLES.introspection))
 
   /** The tree as a document, saved where the reader keeps things. */
   function save(): void {
@@ -103,6 +124,22 @@
       <div class="flex shrink-0 items-center gap-2 md:flex-1 md:gap-4">
         <h1 class="hidden min-w-0 truncate text-lg font-medium md:block">{meta.title}</h1>
 
+        <!-- where a model is pointed, for pasting into whatever is being configured -->
+        {#if mcp}
+          <Clipboard
+            id="discovery-mcp-button"
+            text={`${origin}/.mcp`}
+            variant="ghost"
+            size="icon"
+            aria-label={$dict.nav.mcp}
+            class="text-muted-foreground"
+          >
+            {#snippet icon()}
+              <Mcp class="size-4" />
+            {/snippet}
+          </Clipboard>
+        {/if}
+
         <Button
           id="discovery-markdown-button"
           variant="ghost"
@@ -113,6 +150,36 @@
         >
           <ArrowBigDownDash />
         </Button>
+
+        <!-- what else the runtime serves, which is a screen rather than a line: the group
+             goes where the title does, and for the same reason -->
+        <div class="hidden items-center gap-4 md:flex">
+          {#if configured}
+            <Button
+              id="discovery-configuration-button"
+              href={configuration}
+              variant="ghost"
+              size="icon"
+              class="text-muted-foreground"
+              aria-label={$dict.nav.configuration}
+            >
+              <Bolt />
+            </Button>
+          {/if}
+
+          {#if introspected}
+            <Button
+              id="discovery-introspection-button"
+              href={introspection}
+              variant="ghost"
+              size="icon"
+              class="text-muted-foreground"
+              aria-label={$dict.nav.introspection}
+            >
+              <Waypoints />
+            </Button>
+          {/if}
+        </div>
       </div>
 
       {#if identifying}

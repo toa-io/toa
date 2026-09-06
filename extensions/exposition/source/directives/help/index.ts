@@ -36,7 +36,7 @@ export function guarded(methods: Record<string, Introspection>): Described {
   return described
 }
 
-const FLAGS = ['private', 'protected', 'system'] as const
+const FLAGS = ['authenticated', 'private', 'protected', 'system'] as const
 
 export { FAMILY, Family } from './Family.js'
 export { Help } from './Help.js'

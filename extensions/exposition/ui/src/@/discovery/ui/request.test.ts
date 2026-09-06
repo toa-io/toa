@@ -1,5 +1,5 @@
 import { it, expect } from 'vitest'
-import { address, bodied, fields, hint, skeleton, slug } from './request'
+import { address, blank, bodied, fields, hint, skeleton, slug } from './request'
 import type { Method } from '@/discovery'
 
 it('should ask for what the template names', () => {
@@ -36,9 +36,14 @@ it('should leave a variable without a schema where the name is not answered', ()
 })
 
 it('should tell whether it carries a body', () => {
-  expect(bodied({})).toBe(false)
-  expect(bodied({ input: {} })).toBe(false)
-  expect(bodied({ input: { type: 'object' } })).toBe(true)
+  expect(bodied('POST', {})).toBe(false)
+  expect(bodied('POST', { input: {} })).toBe(false)
+  expect(bodied('POST', { input: { type: 'object' } })).toBe(true)
+})
+
+it('should carry no body where the verb has none', () => {
+  expect(bodied('GET', { input: { type: 'object' } })).toBe(false)
+  expect(bodied('HEAD', { input: { type: 'object' } })).toBe(false)
 })
 
 it('should address the trunk', () => {
@@ -101,4 +106,12 @@ it('should name a route', () => {
   expect(slug('/pots/:id')).toBe('pots-id')
   expect(slug('/')).toBe('root')
   expect(slug('/files/**')).toBe('files')
+})
+
+it('should say what the call cannot be made without', () => {
+  const form = fields('/pots/:id', { query: { limit: {} } })
+
+  expect(blank(form, {})).toStrictEqual(['route:1'])
+  expect(blank(form, { 'route:1': '  ' })).toStrictEqual(['route:1'])
+  expect(blank(form, { 'route:1': 'a' })).toStrictEqual([])
 })

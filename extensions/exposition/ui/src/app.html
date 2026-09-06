@@ -16,6 +16,15 @@
     />
     <link rel="apple-touch-icon" href="%sveltekit.assets%/apple-touch-icon.png" />
 
+    <!-- what a shared link unfurls as. No `og:image`: what is here is a 180px icon, and an
+         icon is not a card — an unfurler that is given one either rejects it for its size
+         or draws it badly. -->
+    <meta name="description" content="Resource exploration and playground" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Toa Discovery" />
+    <meta property="og:description" content="Resource exploration and playground" />
+    <meta name="twitter:card" content="summary" />
+
     %sveltekit.head%
   </head>
   <body data-sveltekit-preload-data="hover">

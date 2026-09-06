@@ -6,8 +6,15 @@
   import { dict } from './intl'
   import { id, type Props } from './Form'
 
-  let { fields, values, body = $bindable(''), carries, invalid, disabled = false }: Props =
-    $props()
+  let {
+    fields,
+    values,
+    body = $bindable(''),
+    carries,
+    invalid,
+    blank,
+    disabled = false,
+  }: Props = $props()
 
   /** What a resource says of a parameter, where the `help` family gave it words. */
   function said(schema: Record<string, unknown> | null, key: string): string | null {
@@ -34,11 +41,14 @@
         id={id(field.key)}
         bind:value={values[field.key]}
         placeholder={hint(field.schema)}
+        aria-invalid={blank.includes(field.key)}
         {disabled}
         class="font-mono text-xs"
       />
 
-      {#if said(field.schema, 'description') !== null}
+      {#if blank.includes(field.key)}
+        <p class="text-destructive text-xs">{$dict.call.required}</p>
+      {:else if said(field.schema, 'description') !== null}
         <p class="text-muted-foreground text-xs">{said(field.schema, 'description')}</p>
       {/if}
     </div>

@@ -54,6 +54,9 @@ inputs:
     system:
       input: What the application runs on
       context: tooltip on the icon of a method guarded by a role of the system scope
+    authenticated:
+      input: Takes being someone
+      context: tooltip on the icon of a method any signed-in identity may reach, and no one else
   space:
     user:
       input: Userspace
@@ -70,6 +73,9 @@ inputs:
     cancel:
       input: Cancel
       context: button that closes the dialog without making the call
+    close:
+      input: Close
+      context: accessible name of the icon-only button in the corner of the dialog that closes it
     back:
       input: Back
       context: the one button under an answer; it goes back to what was asked, or closes the dialog where nothing was
@@ -85,6 +91,9 @@ inputs:
     invalid:
       input: The body is not JSON.
       context: shown under the body field when what was typed does not parse
+    required:
+      input: The path does not resolve without it.
+      context: shown under a route parameter field left empty when the call was asked for
     answered:
       input: answered
       context: lowercase label beside the status of a reply the gateway answered
