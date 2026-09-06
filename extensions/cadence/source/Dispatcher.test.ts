@@ -1,8 +1,9 @@
 import { it, beforeEach, afterEach, mock } from 'node:test'
 import assert from 'node:assert/strict'
+import { console } from 'openspan'
 
 import { Dispatcher } from './Dispatcher.js'
-import { LANES } from './const.js'
+import { BATCH, LANES } from './const.js'
 import type { Local } from './Local.js'
 import type { atomicity } from '@toa.io/core/types'
 
@@ -17,19 +18,23 @@ let target: Local & { invoke: ReturnType<typeof mock.fn<Invoke>> }
 let atom: atomicity.Atom & { slots: ReturnType<typeof mock.fn<Slots>> }
 let listeners: Listener[]
 let rows: Row[]
+let warn: ReturnType<typeof mock.method<typeof console, 'warn'>>
 
 interface Row {
   id: string
   lane: number
   due: number
+  expires: number
   endpoint: string
   request: object | null
 }
 
-const row = (id: string, due: number, lane = 0): Row => ({
+/** `expires` defaults to no bound at all, which is what `overdue: null` writes */
+const row = (id: string, due: number, lane = 0, expires = Number.MAX_SAFE_INTEGER): Row => ({
   id,
   lane,
   due,
+  expires,
   endpoint: 'tea.pots.transit',
   request: { input: { id } }
 })
@@ -69,6 +74,7 @@ beforeEach(() => {
 
   rows = []
   listeners = []
+  warn = mock.method(console, 'warn', () => undefined)
 
   metronome = connector({
     invoke: mock.fn<Invoke>(async (endpoint: string) =>
@@ -93,10 +99,11 @@ beforeEach(() => {
 
 afterEach(() => {
   mock.timers.reset()
+  warn.mock.restore()
   delete process.env.TOA_CADENCE_DISCRETENESS
 })
 
-it('should read what is due within the interval, in the lanes it owns', async () => {
+it('should read two intervals ahead, in the lanes it owns', async () => {
   const dispatcher = create()
 
   await dispatcher.connect()
@@ -104,12 +111,120 @@ it('should read what is due within the interval, in the lanes it owns', async ()
 
   const [first] = reads()
 
-  // the first scan is the one the subscription runs as it is added, at time zero
+  // the first scan is the one the subscription runs as it is added, at time zero. Two
+  // intervals, so that consecutive passes overlap; and no bound on `expires`, because an
+  // expired row is settled rather than left where nothing will ever read it again
   assert.strictEqual(
     first.criteria,
-    `lane=in=(${range(LANES).join(',')});due<${INTERVAL};expires>0`
+    `lane=in=(${range(LANES).join(',')});due<${2 * INTERVAL}`
   )
   assert.deepStrictEqual(first.sort, ['due:asc'])
+})
+
+it('should reach past the next pass, so a row on its horizon is armed before it is due', async () => {
+  rows = [row('a', INTERVAL + 10)]
+
+  const dispatcher = create()
+
+  await dispatcher.connect()
+
+  // gone from the store before the next pass, so nothing but the scan at time zero can have
+  // armed it — which is what reaching two intervals rather than one is for
+  rows = []
+
+  await advance(INTERVAL)
+
+  assert.strictEqual(target.invoke.mock.callCount(), 0, 'armed, not yet due')
+
+  await advance(10)
+
+  assert.strictEqual(target.invoke.mock.callCount(), 1, 'and called at its due time')
+})
+
+it('should settle an expired row without calling it', async () => {
+  rows = [row('a', -10_000, 0, -5_000)]
+
+  const dispatcher = create()
+
+  await dispatcher.connect()
+  await advance(0)
+
+  assert.strictEqual(target.invoke.mock.callCount(), 0, 'past the bound its caller gave it')
+
+  rows = []
+  await advance(INTERVAL)
+
+  assert.deepStrictEqual(
+    settled(),
+    ['a'],
+    'and settled, or nothing would ever read it again'
+  )
+})
+
+it('should settle what it has called even while it owns nothing', async () => {
+  rows = [row('a', 10)]
+
+  const dispatcher = create()
+
+  await dispatcher.connect()
+  await advance(10)
+
+  assert.strictEqual(target.invoke.mock.callCount(), 1)
+
+  // the lane is somebody else's now, and a row left live is one they call again
+  rows = []
+  atom.slots.mock.mockImplementation(() => null)
+
+  await advance(INTERVAL)
+
+  assert.deepStrictEqual(settled(), ['a'])
+})
+
+it('should say so when a scan fills its batch', async () => {
+  rows = Array.from({ length: BATCH }, (_, i) => row(String(i), 10_000))
+
+  const dispatcher = create()
+
+  await dispatcher.connect()
+  await advance(0)
+
+  const warned = warn.mock.calls.map((call) => call.arguments[0] as string)
+
+  assert.ok(
+    warned.some((message) => message.includes('filled its batch')),
+    'the horizon is truncated and the rest arrive late'
+  )
+})
+
+it('should say so when a pass is skipped because the one before it is still running', async () => {
+  let release: () => void = () => {}
+
+  metronome.invoke.mock.mockImplementation(async (endpoint: string) => {
+    if (endpoint !== 'enumerate') return null
+
+    await new Promise<void>((resolve) => {
+      release = resolve
+    })
+
+    return []
+  })
+
+  const dispatcher = create()
+
+  await dispatcher.connect()
+  await advance(0) // the scan at time zero, which does not come back
+
+  await advance(INTERVAL)
+
+  const warned = warn.mock.calls.map((call) => call.arguments[0] as string)
+
+  assert.ok(
+    warned.some((message) => message.includes('has not returned')),
+    'a dispatcher that stops dispatching says so'
+  )
+
+  release()
+  await advance(0)
 })
 
 it('should read nothing while it owns nothing', async () => {
@@ -307,4 +422,58 @@ it('should scan at once when what it owns changes', async () => {
   await advance(0)
 
   assert.strictEqual(reads().length, 1, 'without waiting out an interval')
+})
+
+it('should give up a row a scan stops reading, so a cancellation still lands', async () => {
+  rows = [row('a', INTERVAL + 50)]
+
+  const dispatcher = create()
+
+  await dispatcher.connect()
+  await advance(1)
+
+  // cancelled: the row is tombstoned, so the next scan does not read it
+  rows = []
+
+  await advance(INTERVAL) // the scan that finds it gone
+  await advance(INTERVAL) // and past when it would have been called
+
+  assert.strictEqual(target.invoke.mock.callCount(), 0, 'the timer was given up with the row')
+})
+
+it('should keep a row the scan still reads', async () => {
+  rows = [row('a', INTERVAL + 50)]
+
+  const dispatcher = create()
+
+  await dispatcher.connect()
+  await advance(INTERVAL)
+
+  assert.strictEqual(target.invoke.mock.callCount(), 0, 'not yet due')
+
+  await advance(50)
+
+  assert.strictEqual(target.invoke.mock.callCount(), 1)
+})
+
+it('should not give up a row when the batch was filled', async () => {
+  const held = row('held', INTERVAL + 50)
+
+  rows = [held, ...Array.from({ length: BATCH - 1 }, (_, i) => row('b' + i, 10_000))]
+
+  const dispatcher = create()
+
+  await dispatcher.connect()
+  await advance(1)
+
+  // a full batch is a read that was cut short, so absence from the next one is not a
+  // cancellation — these are rows it never reached, not rows nobody owes
+  rows = Array.from({ length: BATCH }, (_, i) => row('c' + i, 20_000))
+
+  await advance(INTERVAL)
+  await advance(50)
+
+  const called = target.invoke.mock.calls.map((call) => call.arguments[1].input.id)
+
+  assert.deepStrictEqual(called, ['held'], 'the row it armed is still called')
 })
