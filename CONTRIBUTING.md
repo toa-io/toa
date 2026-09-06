@@ -96,6 +96,13 @@ once, in `cucumber.tags.mjs`; `TOA_FEATURES=nightly` selects between them.
 
 ## Tests
 
+Types are checked across the repository by one configuration, `tsconfig.check.json`. It covers
+every workspace's sources and the step definitions, and it excludes `*.test.ts`:
+
+```shell
+$ npm run typecheck
+```
+
 Unit tests run on `node:test`, through `tsx`:
 
 ```shell

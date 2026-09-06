@@ -1,0 +1,24 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "incremental": false,
+    "allowJs": false
+  },
+  "include": [
+    "connectors/*/source/**/*.ts",
+    "connectors/*/src/**/*.ts",
+    "extensions/*/source/**/*.ts",
+    "extensions/*/components/*/source/**/*.ts",
+    "libraries/*/source/**/*.ts",
+    "operations/src/**/*.ts",
+    "runtime/*/source/**/*.ts",
+    "runtime/*/src/**/*.ts",
+    "features/**/*.ts",
+    "extensions/*/features/**/*.ts"
+  ],
+  "exclude": [
+    "**/transpiled",
+    "**/*.test.ts"
+  ]
+}
