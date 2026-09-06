@@ -63,6 +63,10 @@ A method is called from it: the verb is a button, what the method takes is a for
 back is shown where the form was. The call is made as whoever is reading — the same request they
 would send themselves, and with the same effect.
 
+A `GET /` whose `accept` prefers a page is sent here, so the address of the application opens it
+in a browser. A route declared at `/` answers `/` as it always did; this is only what stands where
+an application serves nothing there.
+
 ## What it is not
 
 Neither is annotated, and both answer wherever a gateway does. What each entry says is what

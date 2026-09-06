@@ -139,3 +139,59 @@ Feature: The discovery page
       allow: GET, HEAD, OPTIONS
       """
 
+  Scenario: A browser at the trunk is sent to the page
+    An application serves what it declares, and `/` is usually not one of those. Someone
+    who typed the address into a browser is looking for something to look at, and the page
+    is the only thing here that is one.
+
+    When the following request is received:
+      """
+      GET / HTTP/1.1
+      host: nex.toa.io
+      accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+      """
+    Then the following reply is sent:
+      """
+      302 Moved Temporarily
+      location: /.discovery/
+      """
+
+  Scenario: A client that takes anything is not
+    `accept` has to prefer a page over what the gateway answers with, which is what a
+    browser sends and an API client does not.
+
+    When the following request is received:
+      """
+      GET / HTTP/1.1
+      host: nex.toa.io
+      accept: */*
+      """
+    Then the following reply is sent:
+      """
+      405 Method Not Allowed
+      """
+
+  Scenario: What the application serves there answers instead
+    A route declared at the trunk is what answers it, browser or not.
+
+    Given the annotation:
+      """yaml
+      /:
+        anonymous: true
+        GET:
+          dev:stub: hello
+      """
+    When the following request is received:
+      """
+      GET / HTTP/1.1
+      host: nex.toa.io
+      accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      """
+    And the reply does not contain:
+      """
+      /.discovery/
+      """

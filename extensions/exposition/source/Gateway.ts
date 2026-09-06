@@ -8,7 +8,7 @@ import { DISCOVERY, MCP, RPC } from './const.js'
 import { rethrow } from './exceptions.js'
 import { decide } from './Branch.js'
 import { describing } from './Introspection.js'
-import { Explorer } from './Discovery/index.js'
+import { Explorer, looking } from './Discovery/index.js'
 import type { Interception } from './Interception.js'
 import type { Dispatcher } from './RPC/index.js'
 import type { Server } from './MCP/index.js'
@@ -99,7 +99,22 @@ export class Gateway extends Connector {
     if (context.url.pathname === DISCOVERY || context.url.pathname === DISCOVERY + '/')
       return await this.explorer.process(context)
 
+    // a browser that asked for the trunk of an API is looking for the page, and where the
+    // application answers there itself, that is what answers
+    if (context.url.pathname === '/' && !this.serves(context)) {
+      const page = looking(context)
+
+      if (page !== null) return page
+    }
+
     return await this.route(context)
+  }
+
+  /** Whether the application serves the trunk with the verb the request was made with. */
+  private serves(context: http.Context): boolean {
+    const match = this.tree.match('/')
+
+    return match !== null && context.request.method in match.node.methods
   }
 
   /**
