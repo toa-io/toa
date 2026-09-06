@@ -1,3 +1,4 @@
+@deployment
 Feature: Atomicity deployment
 
   Scenario: One address

@@ -1,3 +1,4 @@
+@deployment
 Feature: Component deployment
 
   Scenario: Export deployment of two components

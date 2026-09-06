@@ -1,3 +1,4 @@
+@cli
 Feature: Call operation
 
   Scenario: Call operation

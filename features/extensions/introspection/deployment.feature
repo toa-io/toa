@@ -1,3 +1,4 @@
+@deployment
 Feature: Introspection deployment
 
   The extension is predefined, so the explorer and its components are deployed

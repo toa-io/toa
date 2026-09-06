@@ -1,3 +1,4 @@
+@deployment
 Feature: Components with MongoDB
 
   Scenario: Export image

@@ -1,3 +1,4 @@
+@deployment
 Feature: Exposition deployment
 
   Background:

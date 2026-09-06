@@ -1,3 +1,4 @@
+@deployment
 Feature: Resource management
 
   A deployment states what it may take. One that states nothing is `BestEffort`: first
@@ -37,6 +38,7 @@ Feature: Resource management
       Service 'introspection-explorer' declares no resources. Declare them on it or as the context's 'resources', or 'resources: null' to deploy it without any.
       """
 
+  @helm
   Scenario: The context states what a deployment does not
     Given I have a component `exposed.one`
     And I have a context with:
@@ -63,6 +65,7 @@ Feature: Resource management
           memory: 1Gi
       """
 
+  @helm
   Scenario: Deploying without any is said out loud, over a context that states some
     Given I have a component `exposed.one`
     And I have a context with:
@@ -84,6 +87,7 @@ Feature: Resource management
       resources:
       """
 
+  @helm
   Scenario: Deploy Exposition with resource constraints
     Given I have a component `exposed.one`
     And I have a context with:
@@ -115,6 +119,7 @@ Feature: Resource management
           memory: 1Gi
       """
 
+  @helm
   Scenario: Deploy Realtime with resource constraints
     Given I have a component `exposed.one`
     And I have a context with:
@@ -138,6 +143,7 @@ Feature: Resource management
           memory: 1Gi
       """
 
+  @helm
   Scenario: Deploy Composition with resource constraints
     Given I have a component `exposed.one`
     And I have a context with:

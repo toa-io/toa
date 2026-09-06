@@ -1,3 +1,4 @@
+@cli
 Feature: toa -v
 
   Output version

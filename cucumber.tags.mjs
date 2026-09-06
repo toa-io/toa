@@ -1,10 +1,12 @@
 /*
  * What a change has to pass before it is pushed. A scenario is left out of it only where
  * something other than the code decides whether it passes: a host on the internet, an image
- * it pulls and boots, or a lifetime it has to sit through.
+ * it pulls and boots, a lifetime it has to sit through, or a `helm` on the PATH rendering a
+ * chart that does not change.
  */
 const REQUIRED =
-  'not @skip and not @manual and not @network and not @containers and not @timing'
+  'not @skip and not @manual and not @network and not @containers and not @timing' +
+  ' and not @helm and not @cli and not @deployment'
 
 /*
  * And what runs nightly, where a failure costs a report rather than a merge. `@manual` is

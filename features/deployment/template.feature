@@ -1,3 +1,4 @@
+@deployment @helm
 Feature: Deployment render
 
   Scenario: Export deployment and render it with Helm

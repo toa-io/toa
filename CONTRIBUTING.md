@@ -85,13 +85,14 @@ itself, not a map of them — and it sets `failFast`, so a run stops at the firs
 Nothing to do here: `npm run features` is the command, and what it runs is what a change has to
 pass. The rest of this is for information.
 
-A scenario it leaves out is one where something other than the code decides whether it passes,
-and it says which by its tag — `@network` reaches a host on the internet, `@containers` pulls an
-image and boots a broker or a database of its own, `@timing` waits out a lifetime, a budget or an
-interval, `@manual` needs a secret and skips where it is absent, `@skip` is held back and runs
-nowhere. Write one of these on a scenario only where it is true of it.
+A scenario it leaves out says why by its tag: `@network` reaches a host on the internet,
+`@containers` pulls an image and boots a broker or a database of its own, `@timing` waits out a
+lifetime, a budget or an interval, `@helm` renders a chart with the binary of that name, `@cli`
+runs the `toa` program as a program, `@deployment` writes what a deployment carries, `@manual`
+needs a secret and skips where it is absent, and `@skip` is held back and runs nowhere. Write one
+of these on a scenario only where it is true of it.
 
-`npm run features:nightly` adds `@network`, `@containers` and `@timing`. Both sets are stated
+`npm run features:nightly` adds all of them back but `@manual` and `@skip`. Both sets are stated
 once, in `cucumber.tags.mjs`; `TOA_FEATURES=nightly` selects between them.
 
 ## Tests

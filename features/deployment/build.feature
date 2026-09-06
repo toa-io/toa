@@ -1,3 +1,4 @@
+@deployment
 Feature: Container Building Options
 
   Scenario: Building a container with additional RUN
