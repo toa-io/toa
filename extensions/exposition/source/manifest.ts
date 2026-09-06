@@ -47,6 +47,10 @@ function specifyMethod(method: Method, manifest: Manifest): void {
   if (method.mapping.query === undefined)
     method.mapping.query = operation.query === false ? null : ({} as unknown as Query)
 
+  // a page is taken of a collection, and of nothing else: an operation that answers one object
+  // takes no `omit` and no `limit`, and refuses a request that carries them
+  method.mapping.paged = operation.type === 'observation' && operation.scope === 'objects'
+
   method.mapping.namespace = manifest.namespace
   method.mapping.component = manifest.name
 }
