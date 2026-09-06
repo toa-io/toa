@@ -1,7 +1,7 @@
 import { reduce } from '@toa.io/generic'
 
 import { Schema } from './schema.js'
-import { ajv, is } from './validator.js'
+import { ajv } from './validator.js'
 import { readDirectory } from './directory.js'
 
 class Namespace {

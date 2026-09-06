@@ -1,4 +1,4 @@
-import { it, beforeEach, mock } from 'node:test'
+import { it, beforeEach } from 'node:test'
 import assert from 'node:assert/strict'
 
 import * as fixtures from './context.configuration.fixtures.js'

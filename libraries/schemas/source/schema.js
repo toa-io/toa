@@ -1,8 +1,7 @@
 import { defined } from '@toa.io/generic'
 import { readFileSync, statSync } from 'node:fs'
 import { yaml as jsyaml } from '@toa.io/generic'
-import { create, is, ajv } from './validator.js'
-import { debug } from 'node:util'
+import { create } from './validator.js'
 import betterAjvErrors from 'better-ajv-errors'
 
 export class Schema {

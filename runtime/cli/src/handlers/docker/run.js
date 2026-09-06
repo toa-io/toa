@@ -29,7 +29,7 @@ export async function run (repository, command, envFile) {
 
   running.on('exit', done.resolve)
 
-  const code = await done
+  await done
 
   await execute(`docker rmi --force ${id}`)
 }

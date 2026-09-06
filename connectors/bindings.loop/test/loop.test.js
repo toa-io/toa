@@ -1,4 +1,4 @@
-import { it, before, after, beforeEach, afterEach, mock } from 'node:test'
+import { it, before, after, beforeEach, afterEach } from 'node:test'
 import assert from 'node:assert/strict'
 
 import clone from 'clone-deep'

@@ -25,7 +25,15 @@
       }
     ],
     "import/namespace": "warn",
-    "no-unused-vars": "warn",
+    "no-unused-vars": [
+      "warn",
+      {
+        "args": "none",
+        "varsIgnorePattern": "^_",
+        "caughtErrorsIgnorePattern": "^_",
+        "ignoreRestSiblings": true
+      }
+    ],
     "no-shadow": "off",
     "no-underscore-dangle": [
       "warn",
