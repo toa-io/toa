@@ -34,6 +34,20 @@ export class FailingConnector extends Connector {
   }
 }
 
+/** Stands for a connector whose connection lands once it has been disconnected. */
+export class LateConnector extends Connector {
+  #arrive
+
+  async open() {
+    await new Promise((resolve) => (this.#arrive = resolve))
+  }
+
+  /** Lets the connection land. */
+  arrive() {
+    this.#arrive()
+  }
+}
+
 /** Stands for a connector waiting for something that never arrives. */
 export class StuckConnector extends Connector {
   async open() {
