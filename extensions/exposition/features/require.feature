@@ -27,7 +27,6 @@ Feature: Request requirements
     Then the following reply is sent:
       """
       201 Created
-      etag: "${{ etag }}"
 
       id: ${{ id }}
       """
@@ -53,7 +52,7 @@ Feature: Request requirements
       host: nex.toa.io
       content-type: application/yaml
       accept: text/plain
-      if-match: "${{ etag }}"
+      if-match: "1"
 
       title: Bye
       """

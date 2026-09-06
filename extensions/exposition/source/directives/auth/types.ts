@@ -55,6 +55,9 @@ export interface Extension {
 
   /** the error code the presented credentials were rejected with, when they were */
   rejection?: string
+
+  /** whether the identity was checked against the bans while being resolved */
+  vetted?: boolean
 }
 
 export interface Ban {

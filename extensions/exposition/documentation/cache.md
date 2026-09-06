@@ -52,6 +52,19 @@ any method, so a reply that must not be stored can say so:
     cache:exact: no-store
 ```
 
+## Validators
+
+A reply that carries an `UPDATED` or `CREATED` timestamp says so in `last-modified`, whatever
+the method. A reply to a safe request (`GET`, `HEAD`) that carries a `VERSION` is tagged with
+it: `etag: "3"`. A request sending the tag back in `if-none-match`, strong or weak (`W/"3"`), is
+answered `304 Not Modified` with the tag as it was sent.
+
+A reply that carries no version has no tag, and a reply to an unsafe request has none either:
+its `VERSION` is in the body, and the next `GET` is what a cache validates.
+
+`if-match` is [concurrency control](query.md#optimistic-concurrency-control), which is the
+request's, whatever its method.
+
 ## References
 
 - HTTP 14.9.1 [What is cacheable](https://datatracker.ietf.org/doc/html/rfc2616#section-14.9.1)

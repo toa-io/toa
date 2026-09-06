@@ -1,5 +1,6 @@
 import { Control } from './Control.js'
 import { Exact } from './Exact.js'
+import { matches, tag } from './etag.js'
 import type { Output } from '../../io.js'
 import type { AuthenticatedContext, Directive } from './types.js'
 import type { DirectiveFamily } from '../../RTD/index.js'
@@ -24,8 +25,12 @@ export class Cache implements DirectiveFamily<Directive> {
 
   public async settle (directives: Directive[], context: AuthenticatedContext, response: http.OutgoingMessage): Promise<void> {
     const directive = directives[0]
+    const method = context.request.method
+    const safe = method === 'GET' || method === 'HEAD'
 
     response.headers ??= new Headers()
+
+    validate(context, response, response.headers, safe)
 
     // `cache:exact` sets what it is given, whatever the method: whether a reply may be
     // stored at all is not a question about the method's cacheability, and a token
@@ -36,9 +41,7 @@ export class Cache implements DirectiveFamily<Directive> {
       return
     }
 
-    const method = context.request.method
-
-    if (method !== 'GET' && method !== 'HEAD')
+    if (!safe)
       return
 
     if (directive === undefined) {
@@ -49,6 +52,34 @@ export class Cache implements DirectiveFamily<Directive> {
     } else
       directive.set(context, response.headers)
   }
+}
+
+/**
+ * The validators a reply carries: the timestamp as `last-modified`, whatever the method, and
+ * on a safe one the version as its `etag`. A client that sends the tag back in `if-none-match`
+ * already has the representation and is told so, with the tag as it sent it. A reply without
+ * a version has no tag: nothing identifies it but its body, and hashing that on every reply
+ * is what a version is for.
+ */
+// eslint-disable-next-line max-params
+function validate (context: AuthenticatedContext, response: http.OutgoingMessage, headers: Headers,
+  safe: boolean): void {
+  const { version, modified } = response
+
+  if (modified !== undefined)
+    headers.set('last-modified', new Date(modified).toUTCString())
+
+  if (version === undefined || !safe)
+    return
+
+  const sent = context.request.headers['if-none-match']
+
+  if (sent !== undefined && matches(sent, version)) {
+    response.status = 304
+    response.body = undefined
+    headers.set('etag', sent)
+  } else
+    headers.set('etag', tag(version))
 }
 
 const constructors: Record<string, new (value: any) => Directive> = {
