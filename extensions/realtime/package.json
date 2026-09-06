@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/extensions.realtime",
-  "version": "1.0.0-alpha.284",
+  "version": "1.0.0-alpha.286",
   "type": "module",
   "description": "Toa Realtime",
   "author": "temich <tema.gurtovoy@gmail.com>",
@@ -18,8 +18,8 @@
     "access": "public"
   },
   "dependencies": {
-    "@toa.io/core": "1.0.0-alpha.284",
-    "openspan": "1.0.0-alpha.277"
+    "@toa.io/core": "1.0.0-alpha.286",
+    "openspan": "1.0.0-alpha.286"
   },
   "scripts": {
     "transpile": "npx tsc && npx tsc -p ./components/realtime.streams",
