@@ -1,0 +1,49 @@
+/**
+ * Auto-generated TypeScript definitions for i18n dictionaries
+ *
+ * @author copilot
+ */
+
+export type Dictionary = {
+      resources: {
+        empty: string
+        nomatch: string
+      }
+      resource: {
+        route: string
+        query: string
+        input: string
+        output: string
+        errors: string
+        none: string
+        copy: string
+        json: string
+        unset: string
+        expand: string
+        mcp: string
+      }
+      guard: {
+        public: string
+        private: string
+        protected: string
+        system: string
+      }
+      space: {
+        user: string
+        system: string
+      }
+      call: {
+        open: string
+        send: string
+        cancel: string
+        back: string
+        hold: string
+        sending: string
+        nothing: string
+        invalid: string
+        answered: string
+        refused: string
+        body: string
+        empty: string
+      }
+    }

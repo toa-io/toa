@@ -8,7 +8,9 @@ import { map } from './map/index.js'
 import { mcp } from './mcp/index.js'
 import { req } from './require/index.js'
 import { flow } from './flow/index.js'
+import { help } from './help/index.js'
 import { discovery } from './oauth/index.js'
+import { Site } from '../Discovery/index.js'
 import type { DirectiveFamily } from '../RTD/index.js'
 import type { Interceptor } from '../Interception.js'
 
@@ -18,9 +20,14 @@ export const families: DirectiveFamily[] = [
   cache,
   map,
   mcp,
+  help,
   req,
   flow,
   octets,
   dev
 ]
-export const interceptors: Interceptor[] = [cors, discovery]
+/**
+ * `cors` first, so a preflight is answered before anything reads the request; the page is
+ * last, and claims its own prefix.
+ */
+export const interceptors: Interceptor[] = [cors, discovery, new Site()]

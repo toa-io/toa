@@ -4,9 +4,11 @@ import { console } from 'openspan'
 import { Connector } from '@toa.io/core'
 import type { bindings } from '@toa.io/core/types'
 import * as http from './HTTP/index.js'
-import { MCP, RPC } from './const.js'
+import { DISCOVERY, MCP, RPC } from './const.js'
 import { rethrow } from './exceptions.js'
 import { decide } from './Branch.js'
+import { describing } from './Introspection.js'
+import { Explorer } from './Discovery/index.js'
 import type { Interception } from './Interception.js'
 import type { Dispatcher } from './RPC/index.js'
 import type { Server } from './MCP/index.js'
@@ -32,6 +34,9 @@ export class Gateway extends Connector {
 
   /** And the same of MCP. */
   private readonly mcp: Server | null
+
+  /** The tree, for every route at once. Served always, and so not nullable. */
+  private readonly explorer: Explorer
   private readonly branches = new Map<string, Exposed>()
   private lastMerge = 0
   private widestGap = 0
@@ -56,6 +61,7 @@ export class Gateway extends Connector {
     this.directives = directives
     this.dispatcher = dispatcher
     this.mcp = mcp
+    this.explorer = new Explorer(tree)
 
     this.depends(broadcast)
   }
@@ -88,6 +94,10 @@ export class Gateway extends Connector {
 
     if (this.mcp !== null && context.url.pathname === MCP)
       return await this.mcp.process(context, route)
+
+    // the page under this prefix is an interceptor's, and has already answered
+    if (context.url.pathname === DISCOVERY || context.url.pathname === DISCOVERY + '/')
+      return await this.explorer.process(context)
 
     return await this.route(context)
   }
@@ -200,14 +210,19 @@ export class Gateway extends Connector {
     node: Node,
     parameters: Parameter[]
   ): Promise<http.OutgoingMessage> {
-    const body = await node.explain(context, parameters)
-    const verbs = Object.keys(body)
+    const { described, methods } = await node.explain(describing(context), parameters)
+    const verbs = Object.keys(methods)
 
     // what a caller may not use is not a resource to them, and describing it would be the leak
     if (verbs.length === 0 && Object.keys(node.methods).length > 0)
       throw new http.Forbidden()
 
-    return { body, headers: new Headers({ allow: verbs.join(', ') }) }
+    // what the resource is, beside the methods it serves; a verb is upper case and cannot
+    // collide with either key
+    return {
+      body: { ...described, ...methods },
+      headers: new Headers({ allow: verbs.join(', ') })
+    }
   }
 
   private async discover(): Promise<void> {

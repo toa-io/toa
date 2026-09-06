@@ -1,8 +1,8 @@
 import assert from 'node:assert'
 import { Tool } from './Tool.js'
+import type { DirectiveFamily } from '../../RTD/index.js'
 import type { Context } from '../../HTTP/index.js'
 import type { Introspection } from '../../Introspection.js'
-import type { DirectiveFamily } from '../../RTD/index.js'
 
 /** The name the family is declared under, and what `MCP` asks a method for. */
 export const FAMILY = 'mcp'
@@ -11,9 +11,17 @@ export class MCP implements DirectiveFamily<Tool> {
   public readonly name = FAMILY
   public readonly mandatory = false
 
-  /** What this method is published as, which is what the nearest declaration says. */
-  public static published(directives: Tool[] | undefined): Tool | null {
-    return directives?.[0] ?? null
+  /** Whether this method is published, which is what the nearest declaration says. */
+  public static published(directives: Tool[] | undefined): boolean {
+    return directives?.[0]?.published ?? false
+  }
+
+  /**
+   * Whether this method is published to a model, which is what the route declares. Whether
+   * one is served at all is the annotation's, and a route says nothing of that.
+   */
+  public explain(directives: Tool[], _: Context, introspection: Introspection): Introspection {
+    return MCP.published(directives) ? { ...introspection, mcp: true } : introspection
   }
 
   // eslint-disable-next-line max-params
@@ -21,22 +29,5 @@ export class MCP implements DirectiveFamily<Tool> {
     assert.ok(name === 'tool', `Unknown directive: mcp:${name}`)
 
     return new Tool(value, route)
-  }
-
-  /** What the route states this method is, which is the only thing that states it. */
-  public explain(
-    directives: Tool[],
-    _: Context,
-    introspection: Introspection
-  ): Introspection {
-    const tool = MCP.published(directives)
-
-    if (tool === null) return introspection
-
-    return {
-      ...introspection,
-      description: tool.description,
-      ...(tool.title === undefined ? {} : { title: tool.title })
-    }
   }
 }

@@ -29,6 +29,9 @@ export interface Directives {
 export interface DirectiveFactory {
   create: (directives: syntax.Directive[], route: string) => Directives
 
+  /** Whether this declaration is carried into the nodes below the one it is on. */
+  inheritable: (directive: syntax.Directive) => boolean
+
   /** Runs every family's `preflight`, which is request-scoped and needs no node. */
   preflight: (context: Context) => Promise<void>
 
@@ -49,6 +52,13 @@ export interface DirectiveSet {
 export interface DirectiveFamily<TDirective = any, TExtension = any> {
   readonly name: string
   readonly mandatory: boolean
+
+  /**
+   * Whether a declaration applies to everything below the node it is on, as every directive
+   * does unless it says otherwise. A family that describes what one node *is* sets this
+   * `false`: inherited, it would say the same thing of every resource under it.
+   */
+  readonly inherited?: boolean
 
   create: (name: string, ...rest: any[]) => TDirective
 

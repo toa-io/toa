@@ -28,7 +28,8 @@ A [procedure](rpc.md) is the exception: it grants access whatever the request pr
 is about a cacheable reply, and what a procedure answers is not one — it is a value in an envelope
 the gateway answers `no-store`, and the procedure's own headers are discarded. So a request that
 carries a credential reaches an `anonymous` route through `/.rpc` and `/.mcp`, where the same
-request would be refused at the route itself.
+request would be refused at the route itself. Describing one is the same exception: `OPTIONS` and
+[discovery](discovery.md) answer what the route is whatever the request presented.
 
 [^1]:
     Credentials in the request make the
@@ -326,6 +327,19 @@ exposition:
 ## Introspection
 
 [`OPTIONS`](introspection.md) answers only the methods this identity may reach, and `403` where it
-may reach none. What is decided from the identity decides here — `anonymous`, `anyone`, `role`,
-`delegate`. `id` reads a route variable's value and `input` a body property, and a description has
-neither, so a method they guard is described rather than withheld.
+may reach none. So does [discovery](discovery.md), which omits a resource they may reach no method
+of, and so does MCP's `tools/list`: all three read the same description.
+
+What is decided from the identity decides here — `anonymous`, `anyone`, `role`, `delegate`. `id`
+and `federation` decide from one too: *which* identity needs the request, and a description has no
+route variable to read, but a caller with no identity at all is refused whatever the value would
+have been — and is not shown it. `assert` and `input` admit nobody: they require a credential and
+constrain a body, and whoever is admitted is admitted by something else.
+
+`anonymous` is the exception it is for a procedure: a description is not the reply a cache would
+hold, so a route it admits is described whatever the request presented.
+
+What guards a method is said in the description as well: `private` where `id` decides it,
+`protected` where `role` does, and `system` besides where that role is one of the `system` scope.
+`rule` says whatever each directive it composes says. A resource carries whichever of the three
+any of its methods does.

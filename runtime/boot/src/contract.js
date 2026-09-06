@@ -7,7 +7,7 @@ export const request = (definition, entity) => {
   const request = Request.schema(definition, entity)
   const schema = schemas.schema(request)
 
-  return new Request(schema, definition)
+  return new Request(schema, definition, entity)
 }
 
 export const reply = (output, errors) => {

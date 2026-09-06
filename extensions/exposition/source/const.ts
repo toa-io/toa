@@ -17,3 +17,11 @@ export const BATCH = 32
  * application could choose is a path it could collide with a route of its own.
  */
 export const MCP = '/.mcp'
+
+/**
+ * Where the resource tree and the page that reads it are served. Pinned for the reason
+ * `/.rpc` is: a path an application could choose is a path it could collide with a route of
+ * its own. Unlike those two it is not annotated — every entry it carries is what `OPTIONS`
+ * on that path already answers to the same caller, and what it adds is the enumeration.
+ */
+export const DISCOVERY = '/.discovery'

@@ -1,7 +1,8 @@
+import assert from 'node:assert'
 import { BRANCH_TTL } from '../const.js'
 import { Node, type Properties } from './Node.js'
 import { Route } from './Route.js'
-import { segment } from './segment.js'
+import { fragment, segment } from './segment.js'
 import { Method, type Methods } from './Method.js'
 import type { Context } from './Context.js'
 import type * as syntax from './syntax/index.js'
@@ -9,6 +10,8 @@ import type * as syntax from './syntax/index.js'
 export function createNode(node: syntax.Node, context: Context): Node {
   if (node.isolated === true) context.directives.stack = node.directives
   else context.directives.stack = node.directives.concat(context.directives.stack)
+
+  described(node, context)
 
   const routes: Route[] = node.routes.map((route) => createRoute(route, context))
   const methods: Methods = {}
@@ -43,6 +46,16 @@ function createRoute(route: syntax.Route, context: Context): Route {
 
   context.path = join(path, route.path)
 
+  /*
+   * What a node says of itself is not said of what is under it. Its own `/` is the
+   * exception: an intermediate node is never what a path matches, because that route
+   * answers in its place — so the two are one resource and what describes it carries.
+   */
+  if (route.path !== ROOT)
+    context.directives.stack = stack.filter((directive) =>
+      context.directives.factory.inheritable(directive)
+    )
+
   const node = createNode(route.node, context)
 
   context.directives.stack = stack // restore
@@ -67,3 +80,26 @@ function createMethod(method: syntax.Method, context: Context): Method {
 
   return new Method(endpoint, directives)
 }
+
+/**
+ * A resource is what it is described beside: a node with no methods of its own is never
+ * what a path answers, so nothing would carry what it says about itself. Refused where the
+ * declaration is, rather than left to be noticed by whoever cannot find it in the answer.
+ */
+function described(node: syntax.Node, context: Context): void {
+  const help = node.directives.find(
+    (directive) => directive.family === HELP && directive.name === 'node'
+  )
+
+  if (help === undefined || node.methods.length > 0) return
+
+  // an intermediate node's `/` answers in its place, and carries what it says
+  if (node.routes.some((route) => route.path === ROOT)) return
+
+  const route = '/' + fragment(context.path).join('/')
+
+  assert.fail(`Directive help:node: '${route}' serves no methods`)
+}
+
+const ROOT = '/'
+const HELP = 'help'

@@ -1,0 +1,36 @@
+resources:
+  empty: Nothing is served here yet.
+  nomatch: No results match the filter.
+resource:
+  route: route
+  query: query
+  input: input
+  output: output
+  errors: errors
+  none: none
+  copy: Copy JSON Schema
+  json: Copy the answer
+  unset: not defined
+  expand: Show what it serves
+  mcp: Published as a tool
+guard:
+  public: Anyone may reach it
+  private: Your own
+  protected: Takes a role
+  system: What the application runs on
+space:
+  user: Userspace
+  system: System
+call:
+  open: Call this method
+  send: Send request
+  cancel: Cancel
+  back: Back
+  hold: Hold to send
+  sending: Sending…
+  nothing: This call takes nothing.
+  invalid: The body is not JSON.
+  answered: answered
+  refused: refused
+  body: body
+  empty: No content.

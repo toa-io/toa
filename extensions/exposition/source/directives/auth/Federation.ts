@@ -16,6 +16,11 @@ export class Federation implements Directive {
     )
   }
 
+  /** Which claims it takes needs the request; that it takes an identity does not. */
+  public admits(identity: Identity | null): boolean | undefined {
+    return identity === null ? false : undefined
+  }
+
   public authorize(
     identity: Identity | null,
     context: Context,

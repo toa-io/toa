@@ -62,7 +62,12 @@ Feature: Introspection
           required:
             - title
             - volume
-        output: {}
+        output:
+          type: object
+          properties:
+            title:
+              type: string
+              maxLength: 64
         errors:
           - NO_WAY
           - WONT_CREATE
@@ -79,7 +84,8 @@ Feature: Introspection
         /:
           io:output: true
           GET:
-            mcp:tool: Every pot there is, newest first.
+            help:method:
+              description: Every pot there is, newest first.
             endpoint: enumerate
           POST: create
       """
@@ -214,6 +220,85 @@ Feature: Introspection
       POST:
       """
 
+  Scenario: A credential does not hide what is anonymous
+    A credential refuses an `anonymous` route because it would make the reply uncacheable,
+    and a description is not that reply — it is what the resource is, and it varies by who
+    asked in any case. Without this an identity would be told less than someone presenting
+    nothing at all.
+
+    Given the `pots` is running with the following manifest:
+      """yaml
+      exposition:
+        /:
+          isolated: true
+          anonymous: true
+          io:output: [id]
+          GET: enumerate
+      """
+    When the following request is received:
+      """
+      OPTIONS /pots/ HTTP/1.1
+      host: nex.toa.io
+      authorization: Basic ZGV2ZWxvcGVyOnNlY3JldA==
+      accept: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      Allow: GET
+      """
+
+  Scenario: A method that takes an identity is not described to nobody
+    Which identity it is about cannot be told from a description, which has no route
+    variable to read. That there must be one can, and a caller with none is refused
+    whatever the value would have been — so they are not shown it.
+
+    Given the `identity.basic` database contains:
+      # developer:secret
+      | _id                              | authority | username  | password                                                     |
+      | efe3a65ebbee47ed95a73edd911ea328 | nex       | developer | $2b$10$ZRSKkgZoGnrcTNA5w5eCcu3pxDzdTduhteVYXcp56AaNcilNkwJ.O |
+    And the `identity.bans` database is empty
+    And the `pots` is running with the following manifest:
+      """yaml
+      exposition:
+        /:id:
+          isolated: true
+          io:output: [id]
+          GET:
+            anonymous: true
+            endpoint: observe
+          PATCH:
+            auth:id: id
+            endpoint: assign
+      """
+    When the following request is received:
+      """
+      OPTIONS /pots/:id/ HTTP/1.1
+      host: nex.toa.io
+      accept: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      Allow: GET
+      """
+    And the reply does not contain:
+      """
+      PATCH:
+      """
+    When the following request is received:
+      """
+      OPTIONS /pots/:id/ HTTP/1.1
+      host: nex.toa.io
+      authorization: Basic ZGV2ZWxvcGVyOnNlY3JldA==
+      accept: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      Allow: GET, PATCH
+      """
+
   Scenario: A resource the caller cannot reach at all
     Given the `pots` is running with the following manifest:
       """yaml
@@ -274,8 +359,9 @@ Feature: Introspection
       """
 
   Scenario: A property a header carries
-    `map:headers` fills the property from the request, so it is not the body's to send —
-    and the caller is told where it does go.
+    `map:headers` fills the property from the request, so it is not the body's to send.
+    Which header it reads is not answered: what an application takes off a request is its
+    own, and a caller has nowhere to put one.
 
     Given the `echo` is running with the following manifest:
       """yaml
@@ -299,15 +385,15 @@ Feature: Introspection
       Allow: PATCH
 
       PATCH:
-        headers:
-          a:
-            type: string
-            header: x-first
         input:
           type: object
           properties:
             b:
               type: string
+      """
+    And the reply does not contain:
+      """
+      x-first
       """
 
   Scenario: A property a segment carries under another name

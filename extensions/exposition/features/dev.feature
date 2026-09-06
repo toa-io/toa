@@ -18,6 +18,7 @@ Feature: Dev
     When the following request is received:
       """
       OPTIONS / HTTP/1.1
+      access-control-request-method: GET
       origin: http://example.com
       """
     Then the following reply is sent:
@@ -70,6 +71,7 @@ Feature: Dev
     When the following request is received:
       """
       OPTIONS / HTTP/1.1
+      access-control-request-method: GET
       origin: http://example.com
       """
     Then the following reply is sent:

@@ -1,11 +1,12 @@
 @security
 Feature: Model Context Protocol
 
-  A tool is a procedure a method is published as. A method says so with `mcp:tool`, whose
-  value is what the tool is, and a default denies: a tree holds everything an application
-  serves and most of it is machinery a model has no business reading. What a tool takes and
-  answers is what the method says of itself, and what a caller may do with it is what `auth`
-  says.
+  A tool is a procedure a method is published as. A method says so with `mcp:tool`, and a
+  default denies: a tree holds everything an application serves and most of it is machinery
+  a model has no business reading. What the tool is called and what it is for is
+  `help:method`, which is what describes the method everywhere else as well. What a tool
+  takes and answers is what the method says of itself, and what a caller may do with it is
+  what `auth` says.
 
   What a tool is, is stated on the route and nowhere else. The operation states what it is
   too, and that is not this: one operation mounted on two routes is two tools. A `title`
@@ -30,20 +31,27 @@ Feature: Model Context Protocol
         /:
           io:output: [id, title, volume]
           GET:
-            mcp:tool: All the pots, newest first.
+            mcp:tool: true
+            help:method:
+              description: All the pots, newest first.
             endpoint: enumerate
           POST:
-            mcp:tool: Start a new pot brewing.
+            mcp:tool: true
+            help:method:
+              description: Start a new pot brewing.
             endpoint: create
           /:id:
             GET:
-              mcp:tool: One pot, by its id.
+              mcp:tool: true
+              help:method:
+                description: One pot, by its id.
               endpoint: observe
           /large:
             GET:
               query:
                 criteria: volume>=100
-              mcp:tool:
+              mcp:tool: true
+              help:method:
                 title: Large pots
                 description: The pots that hold a hundred or more, newest first.
               endpoint: enumerate
@@ -53,7 +61,9 @@ Feature: Model Context Protocol
             isolated: true
             GET:
               auth:role: admin
-              mcp:tool: Every pot there is, for whoever may see them all.
+              mcp:tool: true
+              help:method:
+                description: Every pot there is, for whoever may see them all.
               endpoint: enumerate
       """
     And the `pots` database contains:
@@ -254,6 +264,54 @@ Feature: Model Context Protocol
       id: null
       error:
         code: -32601
+      """
+
+  Scenario: A tool that takes an identity is not listed to nobody
+    `tools/list` answers what this caller may reach, and it is the description that decides
+    — the same one `OPTIONS` answers. A model is not shown a tool it would be refused.
+
+    Given the annotation:
+      """yaml
+      mcp:
+        name: Pots
+        anonymous: true
+      /:
+        anonymous: true
+        /pots/:id:
+          isolated: true
+          GET:
+            anonymous: true
+            mcp:tool: true
+            help:method: One pot, by its id.
+            dev:stub: []
+          PATCH:
+            auth:id: id
+            mcp:tool: true
+            help:method: Change your own pot.
+            dev:stub: []
+      """
+    When the following request is received:
+      """
+      POST /.mcp HTTP/1.1
+      host: nex.toa.io
+      accept: application/yaml
+      content-type: application/json
+      mcp-protocol-version: 2026-07-28
+      mcp-method: tools/list
+
+      {"jsonrpc": "2.0", "id": 3, "method": "tools/list",
+       "params": {"_meta": {"io.modelcontextprotocol/protocolVersion": "2026-07-28",
+                            "io.modelcontextprotocol/clientCapabilities": {}}}}
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+
+      - name: pots._id.GET
+      """
+    And the reply does not contain:
+      """
+      pots._id.PATCH
       """
 
   Scenario: A credential does not hide an anonymous tool
@@ -563,7 +621,9 @@ Feature: Model Context Protocol
         /:
           io:output: true
           GET:
-            mcp:tool: Refuses, with what it was given.
+            mcp:tool: true
+            help:method:
+              description: Refuses, with what it was given.
             endpoint: error
       """
     When the following request is received:
@@ -605,7 +665,9 @@ Feature: Model Context Protocol
         /:
           io:output: true
           GET:
-            mcp:tool: Answers with what it was given.
+            mcp:tool: true
+            help:method:
+              description: Answers with what it was given.
             endpoint: echo
       """
     When the following request is received:

@@ -12,6 +12,11 @@ export class Input implements Directive {
     )
   }
 
+  /** It admits nobody: it says what a body may carry, not who may send one. */
+  public admits(): boolean {
+    return false
+  }
+
   public async authorize(
     identity: Identity | null,
     context: Context,

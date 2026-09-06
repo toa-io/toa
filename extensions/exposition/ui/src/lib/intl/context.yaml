@@ -1,0 +1,30 @@
+context: Internationalization project
+inputs:
+  locale:
+    input: locale
+    context: BCP 47 language tag, should not be translated, always use the target language code
+  native:
+    input: native
+    context: native name of the language in that language, should not be translated
+  nav:
+    markdown:
+      input: Download as Markdown
+      context: accessible name of a button that saves the whole tree as a Markdown document
+    identity:
+      input: Copy your account id
+      context: accessible name of a button showing the first characters of the signed-in account id and putting the whole of it on the clipboard
+    signin:
+      input: Sign in
+      context: button that opens the sign-in screen; the page reads without one
+    signout:
+      input: Sign out
+      context: button that ends the session
+    filter:
+      input: Filter resources
+      context: placeholder of the search box in the header
+    back:
+      input: Back
+      context: button that leaves the sign-in screen for the page it was opened from
+mounts:
+  iam: ../../@/iam/ui/intl
+  discovery: ../../@/discovery/ui/intl

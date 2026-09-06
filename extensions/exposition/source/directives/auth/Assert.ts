@@ -16,6 +16,11 @@ export class Assert implements Directive {
     this.disabled = !enabled
   }
 
+  /** It admits nobody: it is there to require a credential, not to authorize one. */
+  public admits(): boolean {
+    return false
+  }
+
   public async authorize(identity: Identity | null, context: Context): Promise<boolean> {
     if (!this.disabled) await this.incept(context, identity)
 

@@ -3,6 +3,7 @@ import { type Method, type Methods } from './Method.js'
 import { type Match, type Parameter } from './Match.js'
 import type { Segment } from './segment.js'
 import type { Context } from '../HTTP/index.js'
+import { guarded, resource, type Described } from '../directives/help/index.js'
 import type { Introspection } from '../Introspection.js'
 
 export class Node {
@@ -72,11 +73,11 @@ export class Node {
     for (const route of this.routes) yield* route.walk(segments)
   }
 
-  /** Every method of this node that this caller may reach, in the order they were declared. */
-  public async explain(
-    context: Context,
-    parameters: Parameter[]
-  ): Promise<Record<string, Introspection>> {
+  /**
+   * What this resource is, and every method of it this caller may reach, in the order they
+   * were declared. The two are answered apart because only the methods are `Allow`.
+   */
+  public async explain(context: Context, parameters: Parameter[]): Promise<Explained> {
     const entries = Object.entries(this.methods)
 
     const explained = await Promise.all(
@@ -88,7 +89,14 @@ export class Node {
     for (let i = 0; i < entries.length; i++)
       if (explained[i] !== null) methods[entries[i][0]] = explained[i]!
 
-    return methods
+    // every method of a node carries the same declaration, so the first that is there says it
+    const stated = entries.length === 0 ? null : resource(entries[0][1].directives)
+    const described = { ...stated, ...guarded(methods) }
+
+    return {
+      described: Object.keys(described).length === 0 ? null : described,
+      methods
+    }
   }
 
   private replace(node: Node): Node[] {
@@ -139,6 +147,12 @@ export class Node {
         : a.variables - b.variables // routes with more variables should be matched last
     })
   }
+}
+
+/** What a resource says of itself, and what it serves. */
+export interface Explained {
+  described: Described | null
+  methods: Record<string, Introspection>
 }
 
 /** A method, and the route template it is reached by. */

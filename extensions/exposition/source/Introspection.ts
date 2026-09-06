@@ -1,4 +1,5 @@
 import type { Remote } from '@toa.io/core'
+import type { Context } from './HTTP/index.js'
 
 export interface Introspection {
   /**
@@ -11,23 +12,38 @@ export interface Introspection {
 
   /** what a person is shown where a client lists this method, which a name is not */
   title?: string
+
+  /** whether reaching it is being the identity it is about — `auth:id` */
+  private?: boolean
+
+  /** whether reaching it takes a role — `auth:role` */
+  protected?: boolean
+
+  /** and whether that role is one of the `system` scope */
+  system?: boolean
+
+  /** whether the route publishes this method to a model — [`mcp:tool`](mcp.md) */
+  mcp?: boolean
   route?: Record<string, Schema>
   query?: Record<string, Schema>
-
-  /** what a request header carries, which is therefore not the body's to send */
-  headers?: Record<string, Sourced>
   input?: Schema
   output?: Schema
   errors?: string[]
 }
 
-/** A property the gateway reads from somewhere else, and the schema it was declared with. */
-export interface Sourced {
-  header: string
-  [keyword: string]: unknown
-}
-
 export type Schema = Awaited<ReturnType<Remote['explain']>>['input']
+
+/**
+ * The same request, as a description of a resource rather than a call to one. A directive
+ * that answers differently to the two reads `exploratory` — `Anonymous` is the one that
+ * does, because the rule refusing a credential at an `anonymous` route is about a reply a
+ * cache would hold, and a description is not one.
+ */
+export function describing(context: Context): Context {
+  return Object.create(context, {
+    exploratory: { value: true, enumerable: true }
+  }) as Context
+}
 
 /**
  * The same, in the order the shape states — whatever order the families that filled it ran
@@ -45,9 +61,12 @@ export function order(introspection: Introspection): Introspection {
 const KEYS = [
   'title',
   'description',
+  'private',
+  'protected',
+  'system',
+  'mcp',
   'route',
   'query',
-  'headers',
   'input',
   'output',
   'errors'
