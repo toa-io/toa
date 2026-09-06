@@ -103,6 +103,10 @@ every workspace's sources and the step definitions, and it excludes `*.test.ts`:
 $ npm run typecheck
 ```
 
+Style is checked by `npm run lint`, which reports nothing. Fix what it finds by hand:
+`oxlint --fix` rewrites `if (a) { if (b) c } else d` into an `else` that binds to the inner
+`if`, which no test of ours would have caught.
+
 Unit tests run on `node:test`, through `tsx`:
 
 ```shell
@@ -119,13 +123,13 @@ A declaration carries `export` where it is written, and a barrel re-exports thro
 `export ... from`:
 
 ```javascript
-function component (manifest) { }
+function component(manifest) {}
 
 export { component }
 ```
 
 ```javascript
-export function component (manifest) { }
+export function component(manifest) {}
 ```
 
 ```javascript

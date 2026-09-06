@@ -56,10 +56,6 @@
         "**/*.ts"
       ],
       "rules": {
-        "curly": [
-          "warn",
-          "multi"
-        ],
         "func-style": [
           "error",
           "declaration"
