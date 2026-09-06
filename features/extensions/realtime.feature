@@ -30,7 +30,7 @@ Feature: Realtime extension
           - name: TOA_REALTIME
             value: '[{"event":"realtime.streamer.created","properties":["streamer"]},{"event":"realtime.streamer.deleted","properties":["id","streamer"]}]'
           - name: TOA_STASH_REALTIME_STREAMS
-            value: redis://localhost
+            value: redis://localhost:31040
           components:
             - realtime-streams
       """
