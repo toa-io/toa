@@ -27,8 +27,7 @@ export class Assignment extends Operation {
     const output = await this.scope.apply(changeset, request.input)
 
     // assignment returns new state by default
-    if (store.reply.output === undefined) {
+    if (store.reply.output === undefined)
       store.reply.output = output
-    }
   }
 }

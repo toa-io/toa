@@ -41,13 +41,12 @@ export class Cache implements DirectiveFamily<Directive> {
     if (method !== 'GET' && method !== 'HEAD')
       return
 
-    if (directive === undefined) {
-      if (context.identity !== null && !Control.disabled(response.headers)) {
-        response.headers.set('cache-control', 'private')
-        response.headers.append('vary', 'authorization')
-      }
-    } else
+    if (directive !== undefined)
       directive.set(context, response.headers)
+    else if (context.identity !== null && !Control.disabled(response.headers)) {
+      response.headers.set('cache-control', 'private')
+      response.headers.append('vary', 'authorization')
+    }
   }
 }
 

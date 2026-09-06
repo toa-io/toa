@@ -66,19 +66,18 @@ export class Request extends Contract {
 
       query.properties.id = entity?.schema.properties.id
 
-      if (definition.type === 'observation') {
+      if (definition.type === 'observation')
         delete query.properties.version
-      } else {
+      else
         delete query.properties.projection
-      }
 
       if (definition.type !== 'observation' || definition.scope !== 'objects') {
         delete query.properties.omit
         delete query.properties.limit
-      } else {
-        if (query.required === undefined) query.required = ['limit']
-        else query.required.push('limit')
-      }
+      } else if (query.required === undefined)
+        query.required = ['limit']
+      else
+        query.required.push('limit')
 
       schema.properties.query = query
     }

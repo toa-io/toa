@@ -16,9 +16,8 @@ function sort (sort: string[], properties: Properties): Array<[string, string]> 
   for (const sorting of sort) {
     const [property, direction] = sorting.split(':')
 
-    if (properties[property] === undefined) {
+    if (properties[property] === undefined)
       throw new QuerySyntaxException(`Sort property '${property}' is not defined`)
-    }
 
     result.push([property, direction ?? 'asc'])
   }
@@ -27,11 +26,9 @@ function sort (sort: string[], properties: Properties): Array<[string, string]> 
 }
 
 function projection (projection: string[], properties: Properties): void {
-  for (const property of projection) {
-    if (properties[property] === undefined) {
+  for (const property of projection)
+    if (properties[property] === undefined)
       throw new QuerySyntaxException(`Projection property '${property}' is not defined`)
-    }
-  }
 
   for (const property of ['VERSION', 'CREATED', 'UPDATED', 'DELETED'])
     if (!projection.includes(property))

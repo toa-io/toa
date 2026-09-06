@@ -61,6 +61,8 @@ export class Context extends Connector {
       map[aspect.name] = aspect.invoke.bind(aspect)
 
       if (aspect.name in shortcuts)
+        // the aspect names the shortcut
+        // oxlint-disable-next-line import/namespace
         shortcuts[aspect.name](this, aspect)
     }
 

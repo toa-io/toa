@@ -32,6 +32,8 @@ function explain (annotation: unknown): void {
     assert.ok(declaration.provider in schemas,
       `No schema for provider '${declaration.provider}'`)
 
+    // the declaration names the provider
+    // oxlint-disable-next-line import/namespace
     const schema: Schema<Declaration> = schemas[declaration.provider as keyof typeof providers]
 
     schema.validate(declaration, `Storage '${declaration.provider}' annotation`)

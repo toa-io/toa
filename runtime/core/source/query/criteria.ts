@@ -25,9 +25,8 @@ function coerce (node: Node, properties: Properties): void {
     const selector = node.left.selector as string
     const property = properties[selector]
 
-    if (property === undefined) {
+    if (property === undefined)
       throw new QuerySyntaxException(`Criteria selector '${selector}' is not defined`)
-    }
 
     const cast = COERCE[property.type]
 

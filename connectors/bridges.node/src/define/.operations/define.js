@@ -11,5 +11,7 @@ export const define = (module) => {
   if (descriptor === null)
     return null
 
+  // the syntax is chosen at run time
+  // oxlint-disable-next-line import/namespace
   return syntaxes[descriptor.syntax].define(descriptor)
 }

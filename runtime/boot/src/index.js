@@ -1,4 +1,5 @@
 // the environment is read at module scope elsewhere, so it is loaded first
+// oxlint-disable-next-line import/no-unassigned-import
 import './env.js'
 
 import * as bindings from './bindings/index.js'

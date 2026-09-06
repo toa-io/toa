@@ -52,12 +52,13 @@ export class Transition extends Operation {
 
     const result = await this.scope.commit(entity, store.request.input)
 
-    if (result === false) {
-      if (this.#concurrency === 'retry')
-        await retry?.()
-      else
-        throw new StateConcurrencyException()
-    }
+    if (result !== false)
+      return
+
+    if (this.#concurrency === 'retry')
+      await retry?.()
+    else
+      throw new StateConcurrencyException()
   }
 
   async #retry (store: Store, retry: () => Promise<any>): Promise<any> {
