@@ -3,7 +3,6 @@ import tsflow from 'cucumber-tsflow'
 import * as boot from '@toa.io/boot'
 import { type Connector } from '@toa.io/core'
 import { load as parse } from 'js-yaml'
-import { timeout } from '@toa.io/generic'
 import { Factory } from '../../source/index.js'
 import * as syntax from '../../source/RTD/syntax/index.js'
 import { shortcuts } from '../../source/Directive.js'
@@ -13,10 +12,10 @@ import type * as http from '../../source/HTTP/index.js'
 const { after, afterAll, binding, given } = tsflow
 
 let instance: Connector | null = null
+let deployment: string | null = null
 
 @binding()
 export class Gateway {
-  private default: boolean = true
   private written: string[] = []
 
   @given('the annotation:')
@@ -54,10 +53,6 @@ export class Gateway {
       properties.mcp = mcp
 
     process.env.TOA_EXPOSITION_PROPERTIES = JSON.stringify(properties)
-
-    await Gateway.stop()
-
-    this.default = false
   }
 
   /**
@@ -87,10 +82,6 @@ export class Gateway {
 
     process.env.TOA_EXPOSITION = JSON.stringify(tree)
     process.env.TOA_EXPOSITION_PROPERTIES = JSON.stringify(DEFAULT_PROPERTIES)
-
-    await Gateway.stop()
-
-    this.default = false
   }
 
   @given('the `{word}` configuration:')
@@ -105,10 +96,6 @@ export class Gateway {
     // outlives the secrets it points at, and the next scenario cannot resolve them
     this.written.push(key)
     process.env[key] = JSON.stringify(configuration)
-
-    await Gateway.stop()
-
-    this.default = false
   }
 
   /** The secrets a scenario's configuration refers to. */
@@ -120,30 +107,31 @@ export class Gateway {
       this.written.push(SECRET + name)
       process.env[SECRET + name] = value
     }
-
-    await Gateway.stop()
-
-    this.default = false
   }
 
   @given('the branch TTL is {float} second(s)')
   public async setBranchTTL (seconds: number): Promise<void> {
     process.env.__TESTING_EXPOSITION_BRANCH_TTL = String(seconds * 1000)
-
-    await Gateway.stop()
-
-    this.default = false
   }
 
   @given('the Gateway is running')
   public async start (): Promise<void> {
-    if (instance !== null)
-      return
-
     process.env.TOA_EXPOSITION ??= DEFAULT_TREE
     process.env.TOA_EXPOSITION_PROPERTIES ??= JSON.stringify(DEFAULT_PROPERTIES)
 
     this.writeConfiguration()
+
+    const signature = Gateway.signature()
+
+    /*
+     * A component is published without restarting the gateway, and a scenario that asks for
+     * the deployment already running gets that one. Only a different deployment is a restart,
+     * which is what an annotation, a configuration or a branch TTL of its own amounts to.
+     */
+    if (instance !== null && signature === deployment)
+      return
+
+    await Gateway.stop()
 
     const factory = new Factory(boot.host())
     const service = await factory.service()
@@ -155,14 +143,22 @@ export class Gateway {
 
     await service.connect()
 
-    /*
-     * The gateway waits for the branches it discovers, but a component's own resources —
-     * a storage, a queue — are still connecting when it answers. Fifty milliseconds was
-     * enough until the composition grew, then a hundred; a scenario that asks too early
-     * reads the 404 that precedes the route, which `realtime` was failing on in two runs
-     * of three. It is a sleep and not a poll, so it is raised rather than fixed.
-     */
-    await timeout(DISCOVERY)
+    deployment = signature
+  }
+
+  /** What the running gateway was built from: a different value is a different deployment. */
+  private static signature (): string {
+    const configuration = Object.keys(process.env)
+      .filter((key) => key.startsWith('TOA_CONFIGURATION_'))
+      .sort()
+      .map((key) => [key, process.env[key]])
+
+    return JSON.stringify([
+      process.env.TOA_EXPOSITION,
+      process.env.TOA_EXPOSITION_PROPERTIES,
+      process.env.__TESTING_EXPOSITION_BRANCH_TTL,
+      configuration
+    ])
   }
 
   @after()
@@ -174,19 +170,15 @@ export class Gateway {
 
     this.written = []
 
-    if (this.default)
-      return
-
     delete process.env.TOA_EXPOSITION
     delete process.env.TOA_EXPOSITION_PROPERTIES
-
-    await Gateway.stop()
   }
 
   @afterAll()
   public static async stop (): Promise<void> {
     await instance?.disconnect()
     instance = null
+    deployment = null
   }
 
   private writeConfiguration (): void {
@@ -216,9 +208,6 @@ const DEFAULT_TREE = JSON.stringify({
     }
   ]
 } satisfies syntax.Node)
-
-/** Milliseconds a composition is given to finish connecting what it needs. */
-const DISCOVERY = 500
 
 const DEFAULT_PROPERTIES: Partial<http.Options> = {
   authorities: {
