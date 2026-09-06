@@ -73,14 +73,16 @@ jobs:
           # `ignoreScripts` of `command.version` as its own, so it skipped `prepack` too and
           # a package shipped without what that script builds. Versioning still ignores
           # scripts, as it is meant to; publishing says so explicitly.
+          # No `--create-release`: lerna builds a release body out of the changelog, and
+          # `lerna.json` says to keep none. The tag is what a release is here.
           if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.from-package }}" = "true" ]; then
             DIST_TAG=${{ inputs.dist-tag }}
           elif [ "${{ github.base_ref }}" = "release" ]; then
             DIST_TAG=latest
-            npx lerna version --conventional-graduate --create-release github --no-commit-hooks --yes --message "ci: %s" --sign-git-commit
+            npx lerna version --conventional-graduate --no-commit-hooks --yes --message "ci: %s" --sign-git-commit
           else
             DIST_TAG=alpha
-            npx lerna version --conventional-prerelease --preid alpha --create-release github --no-commit-hooks --yes --message "ci: %s" --sign-git-commit
+            npx lerna version --conventional-prerelease --preid alpha --no-commit-hooks --yes --message "ci: %s" --sign-git-commit
           fi
 
           npx lerna publish from-package --dist-tag "$DIST_TAG" --no-ignore-scripts --yes
