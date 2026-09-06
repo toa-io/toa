@@ -37,6 +37,24 @@ describe('entity', () => {
     collapse(manifest, samples.entity.prototype)
     assert.deepStrictEqual(manifest, samples.entity.result)
   })
+
+  it('should not inherit migrations', () => {
+    const manifest = { entity: { migrations: [{ id: '0002', steps: [] }] } }
+    const prototype = { entity: { migrations: [{ id: '0001', steps: [] }] } }
+
+    collapse(manifest, prototype)
+
+    assert.deepStrictEqual(manifest.entity.migrations.map(({ id }) => id), ['0002'])
+  })
+
+  it('should leave a component with no migrations without any', () => {
+    const manifest = {}
+    const prototype = { entity: { migrations: [{ id: '0001', steps: [] }] } }
+
+    collapse(manifest, prototype)
+
+    assert.strictEqual(manifest.entity?.migrations, undefined)
+  })
 })
 
 it('should ignore bindings', () => {

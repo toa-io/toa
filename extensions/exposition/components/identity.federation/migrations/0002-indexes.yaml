@@ -1,0 +1,25 @@
+- index:
+    name: unique_token
+    keys:
+      authority: asc
+      iss: asc
+      sub: asc
+    unique: true
+    partial:
+      DELETED: null
+- index:
+    name: unique_identity
+    keys:
+      authority: asc
+      iss: asc
+      identity: asc
+    unique: true
+    partial:
+      DELETED: null
+- index:
+    name: index_list
+    keys:
+      authority: asc
+      identity: asc
+      CREATED: desc
+    sparse: true

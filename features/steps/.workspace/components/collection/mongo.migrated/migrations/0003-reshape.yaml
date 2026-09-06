@@ -1,0 +1,17 @@
+# the same name, a different shape: what a declaration change looks like
+- index:
+    name: index_shape
+    keys:
+      a: asc
+      b: desc
+- index:
+    name: index_live
+    keys:
+      a: asc
+    partial:
+      DELETED: null
+- update:
+    filter: {}
+    update:
+      $inc:
+        runs: 1

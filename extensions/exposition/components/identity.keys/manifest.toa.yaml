@@ -21,9 +21,6 @@ entity:
       - key
       - label
     type: object
-  index:
-    identity:
-      identity: asc
 
 operations:
   create:

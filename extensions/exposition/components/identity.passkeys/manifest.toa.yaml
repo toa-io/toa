@@ -41,14 +41,6 @@ entity:
       - key
       - counter
       - CREATED
-  index:
-    list:
-      authority: asc
-      identity: asc
-      CREATED: desc
-    key:
-      authority: asc
-      kid: asc
 
 operations:
   challenge:

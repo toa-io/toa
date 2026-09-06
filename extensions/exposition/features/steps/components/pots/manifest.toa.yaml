@@ -18,9 +18,6 @@ entity:
     required:
       - title
       - volume
-  index:
-    text:
-      title: text
 
 operations:
   create:

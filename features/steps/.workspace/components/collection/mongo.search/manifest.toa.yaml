@@ -12,7 +12,3 @@ entity:
     required:
       - foo
       - bar
-  index:
-    search:
-      foo: text
-      bar: text

@@ -47,18 +47,6 @@ services:
       interval: 5s
       timeout: 5s
       retries: 30
-  postgres:
-    image: postgres:14.4
-    ports: ["5432:5432"]
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -d integration -U developer"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    environment:
-      POSTGRES_USER: developer
-      POSTGRES_PASSWORD: secret
-      POSTGRES_DB: integration
   redis0:
     image: redis:7.0.11
     ports:

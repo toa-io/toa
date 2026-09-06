@@ -31,10 +31,6 @@ entity:
       - authority
       - identity
       - client
-  index:
-    identity:
-      authority: asc
-      identity: asc
 
 operations:
   transit:

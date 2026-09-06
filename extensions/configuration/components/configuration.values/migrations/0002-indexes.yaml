@@ -1,0 +1,7 @@
+- index:
+    name: index_lookup
+    keys:
+      component: asc
+      epoch: asc
+      CREATED: desc
+    sparse: true

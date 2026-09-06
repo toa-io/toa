@@ -1,0 +1,26 @@
+- index:
+    name: unique_email
+    keys:
+      email: asc
+    unique: true
+    partial:
+      DELETED: null
+- index:
+    name: unique_optional
+    keys:
+      tag: asc
+    unique: true
+    partial:
+      tag:
+        $exists: true
+      DELETED: null
+- index:
+    name: index_some
+    keys:
+      birthday: desc
+      weight: asc
+    sparse: true
+- index:
+    name: index_some_other
+    keys:
+      name: hash

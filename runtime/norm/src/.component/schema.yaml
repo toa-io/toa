@@ -85,22 +85,18 @@ properties:
             propertyNames:
               # a system property is named like any other, so nothing is enumerated beside them
               $ref: "#/definitions/name"
-      unique:
-        type: object
-        patternProperties:
-          ".*":
-            type: array
-            items:
+      migrations:
+        type: array
+        items:
+          type: object
+          properties:
+            id:
               type: string
-      index:
-        type: object
-        patternProperties:
-          ".*":
-            type: object
-            patternProperties:
-              ".*":
-                type: string
-                enum: [asc, desc, hash, text]
+            # what a step means belongs to the storage, which is the only thing that reads it
+            steps:
+              type: array
+          required: [id, steps]
+          additionalProperties: false
       associated:
         type: boolean
         default: false

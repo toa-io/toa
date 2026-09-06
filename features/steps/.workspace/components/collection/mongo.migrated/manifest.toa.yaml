@@ -1,0 +1,26 @@
+namespace: mongo
+name: migrated
+
+# Two migrations, the second reshaping an index the first made under the same name.
+
+entity:
+  schema:
+    type: object
+    properties:
+      a:
+        type: string
+      b:
+        type: string
+      runs:
+        type: integer
+    required:
+      - a
+
+operations:
+  transit:
+    concurrency: retry
+    input:
+      type: object
+      properties:
+        a:
+          type: string

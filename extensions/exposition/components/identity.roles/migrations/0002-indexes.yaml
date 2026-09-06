@@ -1,0 +1,8 @@
+- index:
+    name: unique_role
+    keys:
+      identity: asc
+      role: asc
+    unique: true
+    partial:
+      DELETED: null

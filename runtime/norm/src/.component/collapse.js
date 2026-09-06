@@ -45,5 +45,9 @@ export const collapse = (manifest, prototype) => {
       if (event in manifest.events)
         delete prototype.events[event]
 
+  // a migration is applied to a collection, and a prototype has none: what it declares belongs
+  // to the component that declared it, so it is not collapsed into this one
+  if (entity?.migrations !== undefined) delete entity.migrations
+
   merge(manifest, { entity, events, extensions })
 }

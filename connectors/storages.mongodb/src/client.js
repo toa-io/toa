@@ -44,6 +44,15 @@ export class Client extends Connector {
   transactional = false
 
   /**
+   * The database this component's collections live in, which is where the migration state
+   * is kept as well.
+   *
+   * @public
+   * @type {import('mongodb').Db}
+   */
+  db
+
+  /**
    * @private
    * @type {Locator}
    */
@@ -101,6 +110,7 @@ export class Client extends Connector {
 
     const db = this.instance.client.db(dbname)
 
+    this.db = db
     this.collection = await collection(db, this.name)
     this.transactional = await transactional(db)
 

@@ -3,6 +3,7 @@ import { console } from 'openspan'
 import { translate } from './translate.js'
 import { to, from } from './record.js'
 import { Outbox } from './outbox.js'
+import { Migrations } from './migrations.js'
 import { ReturnDocument } from 'mongodb'
 
 export class Storage extends Connector {
@@ -17,6 +18,9 @@ export class Storage extends Connector {
    * the deployment cannot run transactions
    */
   #outbox
+
+  /** @type {Migrations | undefined} absent where the component declares no migrations */
+  #migrations
 
   /** @type {Map<string, object>} span options per driver method */
   #spans = new Map()
@@ -43,6 +47,11 @@ export class Storage extends Connector {
     return this.#outbox
   }
 
+  /** This storage applies what a component's `migrations` directory declares. */
+  get migrates () {
+    return true
+  }
+
   async open () {
     this.#collection = this.#client.collection
 
@@ -51,7 +60,10 @@ export class Storage extends Connector {
 
     this.#spans.clear()
 
-    await this.index()
+    if (this.#entity.migrations?.length > 0)
+      this.#migrations = new Migrations(this.#client.db, this.#collection, this.#entity.migrations)
+
+    await this.#migrations?.run()
     await this.#outbox?.index()
   }
 
@@ -308,95 +320,6 @@ export class Storage extends Connector {
     }
   }
 
-  /** A component does not start before this returns, so the indexes are created at once. */
-  async index () {
-    const pending = []
-
-    if (this.#entity.unique !== undefined)
-      for (const [name, fields] of Object.entries(this.#entity.unique)) {
-        const optional = this.getOptional(fields)
-
-        pending.push(this.uniqueIndex(name, fields, optional))
-      }
-
-    if (this.#entity.index !== undefined)
-      for (const [suffix, declaration] of Object.entries(this.#entity.index)) {
-        const name = 'index_' + suffix
-        const fields = Object.fromEntries(Object.entries(declaration)
-          .map(([name, type]) => [name, INDEX_TYPES[type] ?? type]))
-
-        const optional = this.getOptional(Object.keys(fields))
-        const options = { name, sparse: optional.length > 0 }
-
-        console.info('Creating index', { fields, options })
-
-        pending.push(this.#collection.createIndex(fields, options)
-          .catch((e) => console.warn('MongoDB index creation failed', { collection: this.#collection.collectionName, name, fields, error: e }))
-          .then(() => name))
-      }
-
-    const indexes = await Promise.all(pending)
-
-    await this.removeObsoleteIndexes(indexes)
-  }
-
-  async uniqueIndex (name, properties, optional) {
-    const fields = properties.reduce((acc, property) => {
-      acc[property] = 1
-      return acc
-    }, {})
-
-    name = 'unique_' + name
-
-    const options = { name, unique: true }
-
-    if (optional.length > 0)
-      options.partialFilterExpression = Object.fromEntries(optional.map((field) => [field, { $exists: true }]))
-
-    console.info('Creating unique index', { name, fields, options })
-
-    await this.#collection.createIndex(fields, options)
-      .catch((e) => console.warn('MongoDB unique index creation failed', 
-        { collection: this.#collection.collectionName, name, fields, error: e }))
-
-    return name
-  }
-
-  async removeObsoleteIndexes (desired) {
-    const current = await this.getCurrentIndexes()
-    const obsolete = current.filter((name) => !desired.includes(name))
-
-    if (obsolete.length > 0) {
-      console.info('Removing obsolete indexes', { collection: this.#collection.collectionName, indexes: obsolete.join(', ') })
-
-      await Promise.all(obsolete.map((name) => this.#collection.dropIndex(name)))
-    }
-  }
-
-  async getCurrentIndexes () {
-    try {
-      const array = await this.#collection.listIndexes().toArray()
-
-      return array.map(({ name }) => name).filter((name) => name !== '_id_')
-    } catch {
-      return []
-    }
-  }
-
-  getOptional (fields) {
-    const optional = []
-
-    for (const field of fields) {      
-      if (!field.includes('.') && !(field in this.#entity.schema.properties))
-        throw new Error(`Index field '${field}' is not defined.`)
-
-      if (!this.#entity.schema.required?.includes(field))
-        optional.push(field)
-    }
-
-    return optional
-  }
-
   /**
    * Names, logs and times a call into the driver. The driver's own command monitoring is
    * off (see `client.js`), so this is where a query becomes a span.
@@ -464,12 +387,6 @@ function toPipeline (criteria, options, sample) {
     pipeline.push({ $project: options.projection })
 
   return pipeline
-}
-
-const INDEX_TYPES = {
-  'asc': 1,
-  'desc': -1,
-  'hash': 'hashed'
 }
 
 const ERR_DUPLICATE_KEY = 11000

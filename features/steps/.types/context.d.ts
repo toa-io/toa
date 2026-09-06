@@ -2,19 +2,11 @@ import * as amqp from 'amqplib'
 
 import type { Connector, Exception } from '@toa.io/core'
 import type { Reply } from '@toa.io/core/types'
-import type { Migration } from '@toa.io/storages.sql/types/migration.js'
 import type { StartedTestContainer } from 'testcontainers'
 
 declare namespace toa.features {
 
   namespace context {
-
-    type Storage = {
-      driver: string
-      database?: string
-      tables?: Record<string, string>
-      migration?: Migration
-    }
 
     type AMQP = {
       connection?: amqp.Connection
@@ -32,7 +24,6 @@ declare namespace toa.features {
     stderrLines?: string[]
     aborted?: boolean
     connector?: Connector
-    storage?: context.Storage
     amqp?: context.AMQP
     reply?: Reply
     pendingReply?: Promise<Reply>

@@ -2,7 +2,6 @@ name: consumer2
 namespace: external
 
 entity:
-  storage: sql
   schema:
     properties:
       time:
