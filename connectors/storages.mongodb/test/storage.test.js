@@ -11,11 +11,21 @@ beforeEach(async () => {
   collection = {
     collectionName: 'test',
     findOne: mock.fn(async () => null),
-    find: mock.fn(() => ({ stream: () => null }))
+    find: mock.fn(() => ({ stream: () => null })),
+    updateMany: mock.fn(async () => ({ modifiedCount: 0 }))
+  }
+
+  // the runtime's own migrations are applied to every collection, so a storage needs the
+  // database its record of them lives in
+  const state = {
+    insertOne: mock.fn(async () => ({})),
+    findOne: mock.fn(async () => null),
+    updateOne: mock.fn(async () => ({ modifiedCount: 1 }))
   }
 
   const client = {
     collection,
+    db: { collection: () => state },
     link: () => null
   }
 

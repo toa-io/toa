@@ -1,9 +1,10 @@
 import { Connector, exceptions } from '@toa.io/core'
 import { console } from 'openspan'
 import { translate } from './translate.js'
-import { to, from } from './record.js'
+import { codec } from './record.js'
 import { Outbox } from './outbox.js'
 import { Migrations } from './migrations.js'
+import { SYSTEM } from './system.js'
 import { ReturnDocument } from 'mongodb'
 
 export class Storage extends Connector {
@@ -25,11 +26,24 @@ export class Storage extends Connector {
   /** @type {Map<string, object>} span options per driver method */
   #spans = new Map()
 
+  /** how a record is written and read back, which depends on what the entity declares */
+  #to
+  #from
+
+  /** properties held as BSON dates, so that a criterion against one is one too */
+  #dates
+
   constructor(client, entity) {
     super()
 
     this.#client = client
     this.#entity = entity
+
+    const { to, from, dates } = codec(entity?.properties)
+
+    this.#to = to
+    this.#from = from
+    this.#dates = dates
 
     this.depends(client)
   }
@@ -59,19 +73,19 @@ export class Storage extends Connector {
 
     this.#spans.clear()
 
-    if (this.#entity.migrations?.length > 0)
-      this.#migrations = new Migrations(
-        this.#client.db,
-        this.#collection,
-        this.#entity.migrations
-      )
+    // the runtime's own come first: what a component declares is written against a collection
+    // whose system properties are already what this release holds them as
+    this.#migrations = new Migrations(this.#client.db, this.#collection, [
+      ...SYSTEM,
+      ...(this.#entity.migrations ?? [])
+    ])
 
-    await this.#migrations?.run()
+    await this.#migrations.run()
     await this.#outbox?.index()
   }
 
   async get(query) {
-    const { criteria, options } = translate(query)
+    const { criteria, options } = translate(query, this.#dates)
 
     // identity lookups must return deleted records, so that callers
     // can tell a deleted entity from a missing one
@@ -82,11 +96,11 @@ export class Storage extends Connector {
       this.#collection.findOne(criteria, options)
     )
 
-    return from(record)
+    return this.#from(record)
   }
 
   async find(query) {
-    const { criteria, options, sample } = translate(query)
+    const { criteria, options, sample } = translate(query, this.#dates)
 
     if (query?.options?.deleted !== true) criteria.DELETED = null
 
@@ -99,7 +113,7 @@ export class Storage extends Connector {
           )
         : await this.aggregate(criteria, options, sample)
 
-    return recordset.map((item) => from(item))
+    return recordset.map((item) => this.#from(item))
   }
 
   /** @private */
@@ -114,17 +128,17 @@ export class Storage extends Connector {
   }
 
   async stream(query = undefined) {
-    const { criteria, options } = translate(query)
+    const { criteria, options } = translate(query, this.#dates)
 
     if (query?.options?.deleted !== true) criteria.DELETED = null
 
     this.debug('find (stream)', { criteria, options })
 
-    return this.#collection.find(criteria, options).stream({ transform: from })
+    return this.#collection.find(criteria, options).stream({ transform: this.#from })
   }
 
   async add(entity, session = undefined) {
-    const record = to(entity)
+    const record = this.#to(entity)
 
     const result = await this.command('insertOne', { record }, () =>
       this.#collection.insertOne(record, { session })
@@ -139,7 +153,7 @@ export class Storage extends Connector {
       VERSION: entity.VERSION - 1
     }
 
-    const record = to(entity)
+    const record = this.#to(entity)
 
     const result = await this.command('findOneAndReplace', { criteria, record }, () =>
       this.#collection.findOneAndReplace(criteria, record, { session })
@@ -189,7 +203,7 @@ export class Storage extends Connector {
     if (entities.length === 0) return true
 
     const operations = entities.map((entity) => {
-      const record = to(entity)
+      const record = this.#to(entity)
 
       if (entity.VERSION === 1) {
         const { VERSION, ...rest } = record
@@ -241,7 +255,7 @@ export class Storage extends Connector {
   }
 
   async upsert(query, changeset, row = undefined) {
-    const { criteria, options } = translate(query)
+    const { criteria, options } = translate(query, this.#dates)
 
     if (!('DELETED' in changeset) || changeset.DELETED === null) {
       delete criteria.DELETED
@@ -266,7 +280,7 @@ export class Storage extends Connector {
 
       if (found === null) return null
 
-      const origin = from(found)
+      const origin = this.#from(found)
 
       /*
        * The post-image is `update` applied to the pre-image, computed rather than read back.
@@ -293,11 +307,11 @@ export class Storage extends Connector {
   }
 
   async ensure(query, properties, state, row = undefined) {
-    let { criteria, options } = translate(query)
+    let { criteria, options } = translate(query, this.#dates)
 
     if (query === undefined) criteria = properties
 
-    const update = { $setOnInsert: to(state) }
+    const update = { $setOnInsert: this.#to(state) }
 
     options.upsert = true
     options.returnDocument = ReturnDocument.AFTER
@@ -327,7 +341,7 @@ export class Storage extends Connector {
             })
 
       if (result.DELETED !== undefined && result.DELETED !== null) return null
-      else return from(result)
+      else return this.#from(result)
     } catch (error) {
       if (error.code === ERR_DUPLICATE_KEY)
         throw new exceptions.DuplicateException(this.#client.name)

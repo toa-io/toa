@@ -21,8 +21,57 @@ entity:
 anything is written to it — it need not be whole, but each value must fit the property it names,
 and it is read once, when the component boots.
 
-A record carries `CREATED`, `UPDATED`, `VERSION` and `DELETED` besides what is declared, and none
-of the five system properties may be named in `blank`.
+A record carries `CREATED`, `UPDATED`, `VERSION` and `DELETED` besides what is declared. None of
+the five may be named in `blank`, and none but `id` may be declared in `properties` — they are the
+runtime's to write, and a component that states one is refused:
+
+```
+System property 'DELETED' cannot be overridden
+```
+
+### Moments
+
+**A property declared as a moment is stored as a date**, so that an index sorts, compares and
+reaps by it rather than by text or by a number that happens to be one — which is what a `ttl`
+index needs. Two ways to say it, differing in what your code holds rather than in what is stored:
+
+```yaml
+entity:
+  properties:
+    starts:  { type: string, format: date-time }     # an ISO 8601 string
+    expires: { type: integer, format: epoch-millis } # what Date.now() answers
+```
+
+`epoch-millis` is a moment and not a duration, which is the other thing a number of milliseconds
+is: an interval or a timeout declared with it would be stored as a date in 1970 and reaped by any
+`ttl` over it. The system timestamps — `CREATED`, `UPDATED`, `DELETED` — are `epoch-millis`, so a
+retention policy is a `ttl` on `DELETED` and needs nothing declared for it:
+
+```yaml
+- index:
+    name: index_deleted
+    keys: { DELETED: asc }
+    ttl: 2592000 # a tombstone is kept thirty days
+```
+
+A record still in use has `DELETED: null`, and the TTL monitor passes over a field that is not a
+date, so nothing live is reaped by that.
+
+The value an operation writes and reads is what was declared, on any storage. Only a property of
+the record itself is stored this way: a `date-time` nested in an object or in the items of an
+array is an ordinary JSON Schema format, validated and stored as the string it was written as.
+
+**Adding the format to a property that already holds data needs a migration.** MongoDB compares
+by type before value, so a date and the string or number a record was written with match nothing
+rather than raising, and a collection holding both sorts every number ahead of every date.
+Convert what is there in the same release, and stop the deployment first:
+
+```yaml
+- update:
+    filter: { expires: { $type: number } }
+    update:
+      - $set: { expires: { $toDate: { $toLong: '$expires' } } }
+```
 
 ### Migrations
 
