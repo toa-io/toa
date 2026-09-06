@@ -20,7 +20,8 @@ The deployment scenarios render a chart, so `helm` has to be on the `PATH`; with
 command produces nothing and the scenario reads an empty `stdout`.
 
 The Cloudinary scenarios upload to a real account, which no compose file can stand up. They are
-skipped unless `features/steps/.env` names one — see `.env.example` beside it.
+tagged `@manual` and run in neither group; to run them, name an account in
+`features/steps/.env` — see `.env.example` beside it — and select them by tag.
 
 ### Transpiling
 
@@ -78,6 +79,20 @@ $ npm run features -w @toa.io/extensions.exposition
 
 `cucumber.mjs` states one profile — a configuration written as a module exports the profile
 itself, not a map of them — and it sets `failFast`, so a run stops at the first failed scenario.
+
+### What `npm run features` leaves out
+
+Nothing to do here: `npm run features` is the command, and what it runs is what a change has to
+pass. The rest of this is for information.
+
+A scenario it leaves out is one where something other than the code decides whether it passes,
+and it says which by its tag — `@network` reaches a host on the internet, `@containers` pulls an
+image and boots a broker or a database of its own, `@timing` waits out a lifetime, a budget or an
+interval, `@manual` needs a secret and skips where it is absent, `@skip` is held back and runs
+nowhere. Write one of these on a scenario only where it is true of it.
+
+`npm run features:nightly` adds `@network`, `@containers` and `@timing`. Both sets are stated
+once, in `cucumber.tags.mjs`; `TOA_FEATURES=nightly` selects between them.
 
 ## Tests
 

@@ -1,3 +1,4 @@
+@timing
 Feature: Request throttling
 
   Scenario: Throttle requests to a path

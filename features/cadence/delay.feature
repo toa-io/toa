@@ -1,3 +1,4 @@
+@timing
 Feature: Delayed calls
 
   A component hands a call over to be made later. The rows live in the component the extension
