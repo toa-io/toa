@@ -34,7 +34,7 @@ export interface Context {
     identity: {
       clients: {
         describe: (request: {
-          input: { authority: string, id: string, redirect?: string }
+          input: { authority: string; id: string; redirect?: string }
         }) => Promise<Client>
       }
       tokens: {
@@ -47,7 +47,7 @@ export interface Context {
             scopes?: string[]
             permissions?: Record<string, string[]>
           }
-        }) => Promise<{ kid: string, exp?: number, token: string }>
+        }) => Promise<{ kid: string; exp?: number; token: string }>
       }
       keys: {
         disable: (request: { query: Query }) => Promise<null>

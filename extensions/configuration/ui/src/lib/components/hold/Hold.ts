@@ -1,7 +1,10 @@
 import type { Snippet } from 'svelte'
 import type { ButtonProps } from '$ui/button'
 
-export interface Props extends Omit<ButtonProps, 'onpointerdown' | 'onkeydown' | 'onclick'> {
+export interface Props extends Omit<
+  ButtonProps,
+  'onpointerdown' | 'onkeydown' | 'onclick'
+> {
   name?: string
   duration?: number
   label?: string

@@ -9,7 +9,7 @@ export class Flow implements DirectiveFamily<Directive> {
   public readonly name: string = 'flow'
   public readonly mandatory: boolean = false
 
-  public create (name: string, value: unknown, remotes: Remotes): Directive {
+  public create(name: string, value: unknown, remotes: Remotes): Directive {
     const Class = constructors[name]
 
     if (Class === undefined)
@@ -18,18 +18,19 @@ export class Flow implements DirectiveFamily<Directive> {
     return new Class(value, remotes)
   }
 
-  public async precall (directives: Directive[], input: Input, parameters: Parameter[]): Promise<Output> {
+  public async precall(
+    directives: Directive[],
+    input: Input,
+    parameters: Parameter[]
+  ): Promise<Output> {
     for (const directive of directives) {
-      if (directive.attach !== undefined)
-        directive.attach(input)
+      if (directive.attach !== undefined) directive.attach(input)
 
-      if (directive.apply === undefined)
-        continue
+      if (directive.apply === undefined) continue
 
       const output = await directive.apply(input, parameters)
 
-      if (output !== null)
-        return output
+      if (output !== null) return output
     }
 
     return null

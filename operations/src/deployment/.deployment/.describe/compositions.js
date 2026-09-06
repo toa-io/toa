@@ -2,15 +2,17 @@ import { addVariables } from './variables.js'
 import { addMounts } from './mounts.js'
 import { fold } from './fold.js'
 
-export function compositions (compositions, dependency) {
+export function compositions(compositions, dependency) {
   for (const composition of compositions) {
-    const claimed = (dependency.services ?? [])
-      .filter((service) => service.workload?.includes(composition.name) === true)
+    const claimed = (dependency.services ?? []).filter(
+      (service) => service.workload?.includes(composition.name) === true
+    )
 
     // a service brings components of its own — the identity components inside the gateway —
     // and their variables are keyed by their own labels, not by the composition's
-    const keys = composition.components
-      .concat(...claimed.map((service) => service.components ?? []))
+    const keys = composition.components.concat(
+      ...claimed.map((service) => service.components ?? [])
+    )
 
     addVariables(composition, dependency.variables, keys)
     addMounts(composition, dependency.mounts, keys)

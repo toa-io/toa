@@ -1,7 +1,7 @@
 import { join } from 'node:path'
 import fs from 'node:fs'
 
-export function effect (input, context) {
+export function effect(input, context) {
   const path = join(import.meta.dirname, 'lenna.ascii')
   const stream = fs.createReadStream(path)
 

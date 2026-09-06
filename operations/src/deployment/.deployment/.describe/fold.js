@@ -10,7 +10,7 @@
  * @param {toa.deployment.dependency.Service[]} services
  * @param {toa.deployment.Dependency} dependency
  */
-export function fold (workload, services, dependency) {
+export function fold(workload, services, dependency) {
   workload.variables ??= []
 
   for (const service of services) {
@@ -21,13 +21,20 @@ export function fold (workload, services, dependency) {
 
     // every declared port is bound by the single process, none is primary
     if (service.port !== undefined)
-      (workload.backends ??= []).push({ port: service.port, path: service.ingress?.path ?? '/' })
+      (workload.backends ??= []).push({
+        port: service.port,
+        path: service.ingress?.path ?? '/'
+      })
 
     if (service.probe !== undefined && service.probe !== false)
       workload.probe = service.probe
   }
 
-  if (workload.probe === undefined && dependency.probe !== undefined && dependency.probe !== false)
+  if (
+    workload.probe === undefined &&
+    dependency.probe !== undefined &&
+    dependency.probe !== false
+  )
     workload.probe = dependency.probe
 
   // the more specific prefix must come first, whatever the controller's tie-break

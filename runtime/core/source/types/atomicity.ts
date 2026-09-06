@@ -20,7 +20,7 @@ export interface Atom extends Connector {
    * coordination is unreachable. Whoever asks must be able to stand down: acting on a claim
    * that cannot be supported is a different guarantee, not a degraded one.
    */
-  slots (total: number): number[] | null
+  slots(total: number): number[] | null
 
   /**
    * Calls `listener` with the assignment this replica holds, and again whenever it changes —
@@ -30,7 +30,7 @@ export interface Atom extends Connector {
    * A change and not a heartbeat: a group that stays as it is never calls back. It is called
    * once as it is added, with the claim as it stands.
    */
-  onassigned (listener: (assignment: Assignment | null) => void): () => void
+  onassigned(listener: (assignment: Assignment | null) => void): () => void
 
   /**
    * Debt the group has run up under each key, in milliseconds. Every call adds its own deltas
@@ -39,7 +39,7 @@ export interface Atom extends Connector {
    *
    * Rejects where there is nothing to arbitrate through.
    */
-  meter (keys: string[], deltas: number[]): Promise<number[]>
+  meter(keys: string[], deltas: number[]): Promise<number[]>
 
   /**
    * Runs `routine` holding `keys`, and while it holds them no other replica of the group
@@ -51,11 +51,13 @@ export interface Atom extends Connector {
    *
    * Rejects where there is nothing to arbitrate through.
    */
-  lock<T> (keys: string | string[],
-    routine: (signal: AbortSignal, context: unknown) => Promise<T>): Promise<T>
+  lock<T>(
+    keys: string | string[],
+    routine: (signal: AbortSignal, context: unknown) => Promise<T>
+  ): Promise<T>
 }
 
 export interface Factory {
   /** @param group what the replicas deciding together have in common */
-  atom (group: string, options?: { interval?: number }): Atom
+  atom(group: string, options?: { interval?: number }): Atom
 }

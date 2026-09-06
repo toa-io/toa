@@ -9,12 +9,12 @@ describe('normalize', () => {
     const annotation = normalize(declaration)
 
     assert.deepStrictEqual(annotation, {
-        '.': [
-          'amqp://rmq0.example.com',
-          'amqp://rmq1.example.com',
-          'amqp://rmq2.example.com'
-        ]
-      })
+      '.': [
+        'amqp://rmq0.example.com',
+        'amqp://rmq1.example.com',
+        'amqp://rmq2.example.com'
+      ]
+    })
   })
 
   it('should expand shards within array', async () => {
@@ -25,13 +25,13 @@ describe('normalize', () => {
     const annotation = normalize(declaration)
 
     assert.deepStrictEqual(annotation, {
-        foo: [
-          'amqp://rmq.example.com',
-          'amqp://rmq0.example.com',
-          'amqp://rmq1.example.com',
-          'amqp://rmq2.example.com'
-        ]
-      })
+      foo: [
+        'amqp://rmq.example.com',
+        'amqp://rmq0.example.com',
+        'amqp://rmq1.example.com',
+        'amqp://rmq2.example.com'
+      ]
+    })
   })
 })
 
@@ -45,19 +45,28 @@ describe('validation', () => {
   it('should throw if non-uri', async () => {
     const declaration = 'non uri'
 
-    assert.throws(() => normalize(declaration), (error: any) => /must match format/.test(error.message))
+    assert.throws(
+      () => normalize(declaration),
+      (error: any) => /must match format/.test(error.message)
+    )
   })
 
   for (const credentials of ['user:pass', 'user', ':pass'])
-     it('should throw if uri has credentials', async () => {
+    it('should throw if uri has credentials', async () => {
       const declaration = `http://${credentials}@localhost`
 
-      assert.throws(() => normalize(declaration), (error: any) => /must not contain credentials/.test(error.message))
+      assert.throws(
+        () => normalize(declaration),
+        (error: any) => /must not contain credentials/.test(error.message)
+      )
     })
 
   it('should throw if key is not deployable', async () => {
     const declaration = { 'foo bar': 'http://localhost' }
 
-    assert.throws(() => normalize(declaration), (error: any) => /not expected/.test(error.message))
+    assert.throws(
+      () => normalize(declaration),
+      (error: any) => /not expected/.test(error.message)
+    )
   })
 })

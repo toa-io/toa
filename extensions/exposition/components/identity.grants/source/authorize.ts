@@ -15,25 +15,30 @@ import type { Context } from './lib/index.js'
 export class Effect implements Operation {
   private context!: Context
 
-  public mount (context: Context): void {
+  public mount(context: Context): void {
     this.context = context
   }
 
-  public async execute (input: Input): Promise<Maybe<Output>> {
+  public async execute(input: Input): Promise<Maybe<Output>> {
     const { authority, identity } = input
 
     if (input.method !== S256)
-      return invalid('invalid_request', 'Only the S256 code challenge method is supported')
+      return invalid(
+        'invalid_request',
+        'Only the S256 code challenge method is supported'
+      )
 
     const client = await this.context.remote.identity.clients.describe({
       input: { authority, id: input.client, redirect: input.redirect }
     })
 
-    if (client instanceof Error)
-      return invalid('invalid_client', 'No such client')
+    if (client instanceof Error) return invalid('invalid_client', 'No such client')
 
     if (client.permitted !== true)
-      return invalid('invalid_request', 'The redirect is not one this client may receive a code at')
+      return invalid(
+        'invalid_request',
+        'The redirect is not one this client may receive a code at'
+      )
 
     const scope = input.scope ?? []
 
@@ -47,23 +52,26 @@ export class Effect implements Operation {
       input: { authority, identity, client: input.client, scope, resource }
     })
 
-    if (grant instanceof Error)
-      return grant
+    if (grant instanceof Error) return grant
 
-    const code = await hold(authority, {
-      identity,
-      client: input.client,
-      redirect: input.redirect,
-      challenge: input.challenge,
-      scope,
-      resource
-    }, this.context)
+    const code = await hold(
+      authority,
+      {
+        identity,
+        client: input.client,
+        redirect: input.redirect,
+        challenge: input.challenge,
+        scope,
+        resource
+      },
+      this.context
+    )
 
     return { code, expires_in: this.context.configuration.lifetime }
   }
 }
 
-function invalid (error: string, description: string): Output {
+function invalid(error: string, description: string): Output {
   return { status: BAD_REQUEST, error, error_description: description }
 }
 

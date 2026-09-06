@@ -29,8 +29,9 @@ describe('extensions', () => {
   })
 
   it('should not find what is not there', async () => {
-    await assert.rejects(load.operation(dummy('typescript'), 'nope'),
-      (error) => /has no operations\/nope/.test(error.message))
+    await assert.rejects(load.operation(dummy('typescript'), 'nope'), (error) =>
+      /has no operations\/nope/.test(error.message)
+    )
   })
 })
 
@@ -55,12 +56,14 @@ describe('conflicts', () => {
 
   // the collision belongs to the directory, so it is found before any one name is looked up
   it('should refuse before reporting a missing module', async () => {
-    await assert.rejects(load.operation(dummy('conflict'), 'nope'),
-      (error) => /has more than one operations\/do/.test(error.message))
+    await assert.rejects(load.operation(dummy('conflict'), 'nope'), (error) =>
+      /has more than one operations\/do/.test(error.message)
+    )
   })
 
   it('should refuse a scan of the directory too', async () => {
-    await assert.rejects(load.operations(dummy('conflict')),
-      (error) => /has more than one operations\/do/.test(error.message))
+    await assert.rejects(load.operations(dummy('conflict')), (error) =>
+      /has more than one operations\/do/.test(error.message)
+    )
   })
 })

@@ -7,12 +7,11 @@ import type { Entity, MergeInput } from '../types/index.js'
  * and the matching description under `nodes[id]`. Unknown nodes are initialized
  * by the runtime, since the entity is `associated`.
  */
-export function transition (input: MergeInput, objects: Entity[]): Entity[] {
+export function transition(input: MergeInput, objects: Entity[]): Entity[] {
   for (const node of objects) {
     const described = input.nodes[node.id]
 
-    if (described === undefined)
-      continue
+    if (described === undefined) continue
 
     Object.assign(node, described)
   }

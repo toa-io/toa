@@ -9,24 +9,28 @@ export abstract class Provider<Options = unknown> {
   public readonly root?: string
   public readonly options: Options
 
-  protected constructor (options: Options, secrets?: Secrets) {
+  protected constructor(options: Options, secrets?: Secrets) {
     this.options = options
 
     new.target.SECRETS?.forEach(({ name, optional }) =>
-      assert.ok(optional === true || secrets?.[name] !== undefined, `Missing secret '${name}'`))
+      assert.ok(
+        optional === true || secrets?.[name] !== undefined,
+        `Missing secret '${name}'`
+      )
+    )
   }
 
-  public abstract get (path: string, options?: unknown): Promise<Maybe<Stream>>
+  public abstract get(path: string, options?: unknown): Promise<Maybe<Stream>>
 
-  public abstract head (path: string): Promise<Maybe<Metadata>>
+  public abstract head(path: string): Promise<Maybe<Metadata>>
 
-  public abstract put (path: string, stream: Readable): Promise<void>
+  public abstract put(path: string, stream: Readable): Promise<void>
 
-  public abstract commit (path: string, metadata: Metadata): Promise<void>
+  public abstract commit(path: string, metadata: Metadata): Promise<void>
 
-  public abstract delete (path: string): Promise<void>
+  public abstract delete(path: string): Promise<void>
 
-  public abstract move (from: string, to: string): Promise<Maybe<void>>
+  public abstract move(from: string, to: string): Promise<Maybe<void>>
 }
 
 export interface Constructor<Options = any> {

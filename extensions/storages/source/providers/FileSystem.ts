@@ -15,25 +15,24 @@ export interface FileSystemOptions {
 export class FileSystem extends Provider<FileSystemOptions> {
   public override readonly root: string
 
-  public constructor (options: FileSystemOptions) {
+  public constructor(options: FileSystemOptions) {
     super(options)
 
     this.root = options.path
   }
 
-  public async get (rel: string): Promise<Maybe<Stream>> {
+  public async get(rel: string): Promise<Maybe<Stream>> {
     const path = this.blob(rel)
     const metadata = await this.head(rel)
 
-    if (metadata instanceof Error)
-      return metadata
+    if (metadata instanceof Error) return metadata
 
     const stream = createReadStream(path)
 
     return { stream, ...metadata }
   }
 
-  public async head (rel: string): Promise<Maybe<Metadata>> {
+  public async head(rel: string): Promise<Maybe<Metadata>> {
     const path = this.meta(rel)
 
     return this.try(async () => {
@@ -43,7 +42,7 @@ export class FileSystem extends Provider<FileSystemOptions> {
     })
   }
 
-  public async put (rel: string, stream: Readable): Promise<void> {
+  public async put(rel: string, stream: Readable): Promise<void> {
     const path = this.blob(rel)
     const dir = dirname(path)
 
@@ -51,20 +50,20 @@ export class FileSystem extends Provider<FileSystemOptions> {
     await fs.writeFile(path, stream)
   }
 
-  public async commit (rel: string, metadata: Metadata): Promise<void> {
+  public async commit(rel: string, metadata: Metadata): Promise<void> {
     const path = this.meta(rel)
 
     await fs.writeFile(path, JSON.stringify(metadata), 'utf8')
   }
 
-  public async delete (path: string): Promise<void> {
+  public async delete(path: string): Promise<void> {
     await Promise.all([
       fs.rm(this.blob(path), { force: true }),
       fs.rm(this.meta(path), { force: true })
     ])
   }
 
-  public async move (from: string, to: string): Promise<Maybe<void>> {
+  public async move(from: string, to: string): Promise<Maybe<void>> {
     const bf = this.blob(from)
     const bt = this.blob(to)
     const mf = this.meta(from)
@@ -73,22 +72,19 @@ export class FileSystem extends Provider<FileSystemOptions> {
     await fs.mkdir(dirname(bt), { recursive: true })
 
     return await this.try(async () => {
-      await Promise.all([
-        fs.rename(bf, bt),
-        fs.rename(mf, mt)
-      ])
+      await Promise.all([fs.rename(bf, bt), fs.rename(mf, mt)])
     })
   }
 
-  private blob (rel: string): string {
+  private blob(rel: string): string {
     return this.join(rel, '.blob')
   }
 
-  private meta (rel: string): string {
+  private meta(rel: string): string {
     return this.join(rel, '.meta')
   }
 
-  private join (rel: string, ext: string): string {
+  private join(rel: string, ext: string): string {
     return join(this.root, rel) + ext
   }
 
@@ -96,10 +92,8 @@ export class FileSystem extends Provider<FileSystemOptions> {
     try {
       return await action()
     } catch (err: NodeJS.ErrnoException | any) {
-      if (err?.code === 'ENOENT')
-        return ERR_NOT_FOUND
-      else
-        throw err
+      if (err?.code === 'ENOENT') return ERR_NOT_FOUND
+      else throw err
     }
   }
 }

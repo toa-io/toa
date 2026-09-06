@@ -14,17 +14,13 @@ export const translate = (query) => {
     sample: query?.options?.sample
   }
 
-  if (query?.id !== undefined)
-    result.criteria._id = query.id
+  if (query?.id !== undefined) result.criteria._id = query.id
 
-  if (query?.ids !== undefined)
-    result.criteria._id = { $in: query.ids }
+  if (query?.ids !== undefined) result.criteria._id = { $in: query.ids }
 
-  if (query?.version !== undefined)
-    result.criteria.VERSION = query.version
+  if (query?.version !== undefined) result.criteria.VERSION = query.version
 
-  if (query?.search !== undefined)
-    result.criteria.$text = { $search: query.search }
+  if (query?.search !== undefined) result.criteria.$text = { $search: query.search }
 
   return result
 }

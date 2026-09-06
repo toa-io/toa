@@ -20,22 +20,25 @@ export const remote = async (locator, source, manifest) => {
   }
 
   // a call binds its consumers, which are loaded rather than required
-  const calls = manifest.operations === undefined
-    ? {}
-    : await settle(remap(manifest.operations,
-      (definition, endpoint) => boot.call(locator, endpoint, definition, manifest.entity, source)))
+  const calls =
+    manifest.operations === undefined
+      ? {}
+      : await settle(
+          remap(manifest.operations, (definition, endpoint) =>
+            boot.call(locator, endpoint, definition, manifest.entity, source)
+          )
+        )
 
   const remote = new Remote(locator, calls)
 
   // ensure discovery shutdown
-  if (discovery !== undefined)
-    remote.depends(discovery)
+  if (discovery !== undefined) remote.depends(discovery)
 
   return remote
 }
 
 /** An object whose values are promises, as an object of what they resolve to. */
-async function settle (object) {
+async function settle(object) {
   const entries = Object.entries(object)
   const values = await Promise.all(entries.map(([, promise]) => promise))
 

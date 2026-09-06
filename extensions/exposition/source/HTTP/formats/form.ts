@@ -7,7 +7,7 @@ export const type = 'application/x-www-form-urlencoded'
  * A name repeated in a form is a list, which is how a form says one — `URLSearchParams` keeps
  * every value, and a name given once stays the string it was written as.
  */
-export function decode (buffer: Buffer, charset = 'utf-8'): any {
+export function decode(buffer: Buffer, charset = 'utf-8'): any {
   const params = new URLSearchParams(buffer.toString(charset as BufferEncoding))
   const value: Record<string, string | string[]> = {}
 

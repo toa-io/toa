@@ -29,7 +29,7 @@ describe('call', () => {
   })
 })
 
-function resetCalls (target = [assert, fixtures], seen = new Set()) {
+function resetCalls(target = [assert, fixtures], seen = new Set()) {
   if (target === null || typeof target !== 'object' || seen.has(target)) return
 
   seen.add(target)

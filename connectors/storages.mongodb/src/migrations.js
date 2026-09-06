@@ -26,7 +26,7 @@ export class Migrations {
    * @param {import('mongodb').Collection} collection the entity's own
    * @param {Array<{ id: string, steps: object[] }>} list
    */
-  constructor (db, collection, list) {
+  constructor(db, collection, list) {
     this.#collection = collection
     this.#state = db.collection(STATE)
     this.#list = list
@@ -36,12 +36,12 @@ export class Migrations {
    * A migration is applied only after the one before it, because a later one is written
    * against what an earlier one leaves behind.
    */
-  async run () {
+  async run() {
     for (const migration of this.#list) await this.#apply(migration)
   }
 
   /** @private */
-  async #apply (migration) {
+  async #apply(migration) {
     const id = `${this.#collection.collectionName}:${migration.id}`
 
     while (true) {
@@ -62,8 +62,11 @@ export class Migrations {
         continue
       }
 
-      console.warn('Taking over an abandoned migration',
-        { migration: id, owner: row.owner, heartbeat: row.heartbeat })
+      console.warn('Taking over an abandoned migration', {
+        migration: id,
+        owner: row.owner,
+        heartbeat: row.heartbeat
+      })
 
       if (await this.#steal(id, row.heartbeat)) return await this.#run(id, migration)
     }
@@ -74,7 +77,7 @@ export class Migrations {
    *
    * @private
    */
-  async #claim (id) {
+  async #claim(id) {
     try {
       await this.#state.insertOne({
         _id: id,
@@ -98,10 +101,11 @@ export class Migrations {
    *
    * @private
    */
-  async #steal (id, heartbeat) {
+  async #steal(id, heartbeat) {
     const result = await this.#state.updateOne(
       { _id: id, state: RUNNING, heartbeat },
-      { $set: { owner: OWNER, heartbeat: new Date() } })
+      { $set: { owner: OWNER, heartbeat: new Date() } }
+    )
 
     return result.modifiedCount === 1
   }
@@ -113,12 +117,15 @@ export class Migrations {
    *
    * @private
    */
-  async #run (id, migration) {
+  async #run(id, migration) {
     console.info('Applying migration', { migration: id, steps: migration.steps.length })
 
     const beat = setInterval(() => {
-      this.#state.updateOne({ _id: id }, { $set: { heartbeat: new Date() } })
-        .catch((error) => console.warn('Migration heartbeat failed', { migration: id, error }))
+      this.#state
+        .updateOne({ _id: id }, { $set: { heartbeat: new Date() } })
+        .catch((error) =>
+          console.warn('Migration heartbeat failed', { migration: id, error })
+        )
     }, HEARTBEAT)
 
     beat.unref?.()
@@ -126,8 +133,10 @@ export class Migrations {
     try {
       for (const step of migration.steps) await this.#step(id, step)
 
-      await this.#state.updateOne({ _id: id },
-        { $set: { state: DONE, completed: new Date() } })
+      await this.#state.updateOne(
+        { _id: id },
+        { $set: { state: DONE, completed: new Date() } }
+      )
     } finally {
       clearInterval(beat)
     }
@@ -136,12 +145,14 @@ export class Migrations {
   }
 
   /** @private */
-  async #step (id, step) {
+  async #step(id, step) {
     const verbs = Object.keys(step ?? {})
 
     if (verbs.length !== 1 || !(verbs[0] in STEPS))
-      throw new Error(`Migration '${id}' has a step that is not one of ` +
-        `${Object.keys(STEPS).join(', ')}: ${JSON.stringify(step)}`)
+      throw new Error(
+        `Migration '${id}' has a step that is not one of ` +
+          `${Object.keys(STEPS).join(', ')}: ${JSON.stringify(step)}`
+      )
 
     await STEPS[verbs[0]](this.#collection, step[verbs[0]], id)
   }
@@ -152,12 +163,16 @@ export class Migrations {
  * that one is dropped: the declaration is what the component is to run against, and refusing
  * to reconcile is what left a database diverged from its manifest before migrations existed.
  */
-async function index (collection, { name, keys, ...rest }, id) {
+async function index(collection, { name, keys, ...rest }, id) {
   if (name === undefined || keys === undefined)
     throw new Error(`Migration '${id}' declares an index without a name or keys`)
 
-  const spec = Object.fromEntries(Object.entries(keys)
-    .map(([field, direction]) => [field, DIRECTIONS[direction] ?? direction]))
+  const spec = Object.fromEntries(
+    Object.entries(keys).map(([field, direction]) => [
+      field,
+      DIRECTIONS[direction] ?? direction
+    ])
+  )
 
   const options = { name }
 
@@ -180,8 +195,9 @@ async function index (collection, { name, keys, ...rest }, id) {
   }
 }
 
-async function dropIndex (collection, { name }, id) {
-  if (name === undefined) throw new Error(`Migration '${id}' drops an index without a name`)
+async function dropIndex(collection, { name }, id) {
+  if (name === undefined)
+    throw new Error(`Migration '${id}' drops an index without a name`)
 
   try {
     await collection.dropIndex(name)
@@ -190,21 +206,29 @@ async function dropIndex (collection, { name }, id) {
   }
 }
 
-async function update (collection, { filter, update: changeset }, id) {
+async function update(collection, { filter, update: changeset }, id) {
   if (changeset === undefined) throw new Error(`Migration '${id}' updates with nothing`)
 
   const result = await collection.updateMany(filter ?? {}, changeset)
 
-  console.info('Migration updated records', { migration: id, records: result.modifiedCount })
+  console.info('Migration updated records', {
+    migration: id,
+    records: result.modifiedCount
+  })
 }
 
-async function remove (collection, { filter }, id) {
+async function remove(collection, { filter }, id) {
   if (filter === undefined)
-    throw new Error(`Migration '${id}' deletes without a filter; pass {} to mean every record`)
+    throw new Error(
+      `Migration '${id}' deletes without a filter; pass {} to mean every record`
+    )
 
   const result = await collection.deleteMany(filter)
 
-  console.info('Migration deleted records', { migration: id, records: result.deletedCount })
+  console.info('Migration deleted records', {
+    migration: id,
+    records: result.deletedCount
+  })
 }
 
 const STEPS = { index, dropIndex, update, delete: remove }

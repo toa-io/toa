@@ -15,11 +15,11 @@ export class Conveyor {
   /**
    * @param {toa.conveyor.Processor} processor
    */
-  constructor (processor) {
+  constructor(processor) {
     this.#processor = processor
   }
 
-  async process (unit) {
+  async process(unit) {
     const promise = this.#promise(unit)
 
     if (!this.#busy) this.#process().then()
@@ -27,7 +27,7 @@ export class Conveyor {
     return promise
   }
 
-  async #process () {
+  async #process() {
     const units = [...this.#batch]
     const promises = [...this.#promises]
 
@@ -45,7 +45,7 @@ export class Conveyor {
     if (this.#batch.length > 0) this.#process().then()
   }
 
-  #promise (unit) {
+  #promise(unit) {
     const completion = {}
 
     const promise = new Promise((resolve, reject) => {

@@ -10,10 +10,8 @@ export const produce = async (component, operations) => {
     const producer = made.producer(component.locator, endpoints, component)
     const { properties } = await import(binding)
 
-    if (properties.local === true)
-      local.push(producer)
-    else
-      other.push(producer)
+    if (properties.local === true) local.push(producer)
+    else other.push(producer)
   }
 
   return { local, other }

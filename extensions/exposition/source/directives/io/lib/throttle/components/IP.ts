@@ -12,20 +12,19 @@ import type { Component } from './Component.js'
 export class IP implements Component {
   private readonly warning: Warning
 
-  public constructor (options: unknown, route: string) {
+  public constructor(options: unknown, route: string) {
     const subject = typeof options === 'string' ? options : throttle(route)
 
     this.warning = new Warning(`${subject} is not in effect: the request has no ip`)
   }
 
-  public get (context: Context): string | undefined {
-    if (context.ip === undefined)
-      this.warning.emit()
+  public get(context: Context): string | undefined {
+    if (context.ip === undefined) this.warning.emit()
 
     return context.ip
   }
 }
 
-function throttle (route: string): string {
+function throttle(route: string): string {
   return route === '' ? 'Throttle' : `Throttle of ${route}`
 }

@@ -11,5 +11,5 @@ export interface Descriptor {
 export const providers: readonly Descriptor[] = [
   { id: 'email', icon: Mail },
   { id: 'google', icon: icons.google },
-  { id: 'apple', icon: icons.apple },
+  { id: 'apple', icon: icons.apple }
 ] as const

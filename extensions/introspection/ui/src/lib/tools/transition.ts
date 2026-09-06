@@ -2,8 +2,7 @@ import { derived, writable, type Readable } from 'svelte/store'
 import type { OnNavigate } from '@sveltejs/kit'
 
 export function transit(fn?: (() => void) | (() => Promise<void>)): Promise<void> {
-  if (document.startViewTransition === undefined)
-    return Promise.resolve(fn?.())
+  if (document.startViewTransition === undefined) return Promise.resolve(fn?.())
 
   const fly = fn !== undefined
 
@@ -56,7 +55,7 @@ export function navigate(nav: OnNavigate): Promise<void> | void {
         resolve()
 
         await nav.complete
-      },
+      }
     })
 
     // the same unwinding `transit` does, and for the same reason: an aborted transition
@@ -82,8 +81,7 @@ export function takeoff(id: string, name: string, classes?: string) {
 
   el.style.viewTransitionName = name
 
-  if (classes !== undefined)
-    el.style.viewTransitionClass = classes
+  if (classes !== undefined) el.style.viewTransitionClass = classes
 
   launch = { el, name, classes }
 }
@@ -129,14 +127,14 @@ export function transition(node: HTMLElement, options: FlyOptions) {
     options,
     original: {
       name: node.style.viewTransitionName,
-      classes: node.style.viewTransitionClass,
-    },
+      classes: node.style.viewTransitionClass
+    }
   }
 
   flyers.add(flyer)
 
   return {
-    destroy: () => flyers.delete(flyer),
+    destroy: () => flyers.delete(flyer)
   }
 }
 
@@ -150,10 +148,9 @@ export function transition(node: HTMLElement, options: FlyOptions) {
 export function styles(name: string, classes?: string): Readable<string | undefined> {
   let value = `view-transition-name: ${name};`
 
-  if (classes !== undefined)
-    value += ` view-transition-class: ${classes};`
+  if (classes !== undefined) value += ` view-transition-class: ${classes};`
 
-  return derived(flying, (flying) => flying ? value : undefined)
+  return derived(flying, (flying) => (flying ? value : undefined))
 }
 
 function depart() {
@@ -163,7 +160,7 @@ function depart() {
     // could have changed
     flyer.original = {
       name: flyer.node.style.viewTransitionName,
-      classes: flyer.node.style.viewTransitionClass,
+      classes: flyer.node.style.viewTransitionClass
     }
 
     flyer.node.style.viewTransitionName = flyer.options.name

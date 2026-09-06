@@ -7,7 +7,7 @@ export const passkeys = collection<Passkey>({
   get,
   persist: 'identity:passkeys',
   bind: account,
-  stale: true,
+  stale: true
 })
 
 export type Passkey = origin.Passkey

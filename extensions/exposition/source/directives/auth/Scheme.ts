@@ -6,26 +6,26 @@ export class Scheme implements Directive {
   private readonly scheme: string
   private readonly Scheme: string
 
-  public constructor (scheme: string) {
+  public constructor(scheme: string) {
     this.scheme = scheme.toLowerCase()
     this.Scheme = scheme[0].toUpperCase() + scheme.substring(1)
   }
 
-  public authorize (_: Identity | null, context: Context): boolean {
-    if (context.request.headers.authorization === undefined)
-      return false
+  public authorize(_: Identity | null, context: Context): boolean {
+    if (context.request.headers.authorization === undefined) return false
 
     const [scheme] = split(context.request.headers.authorization)
 
     if (scheme !== this.scheme)
-      throw new http.Forbidden(this.Scheme +
-        ' authentication scheme is required to access this resource')
+      throw new http.Forbidden(
+        this.Scheme + ' authentication scheme is required to access this resource'
+      )
 
     return false
   }
 
   /** It admits nobody: it is there to refuse a scheme, not to authorize one. */
-  public admits (): boolean {
+  public admits(): boolean {
     return false
   }
 }

@@ -15,11 +15,13 @@ const FORBIDDEN = new Set(['host', 'origin'])
 export class Headers extends Mapping<Record<string, string>> {
   private readonly headers: string[]
 
-  public constructor (map: Record<string, string>) {
+  public constructor(map: Record<string, string>) {
     assert.ok(map.constructor === Object, '`map:headers` must be an object')
 
-    assert.ok(Object.values(map).every((value) => typeof value === 'string'),
-      '`map:headers` must be an object with string values')
+    assert.ok(
+      Object.values(map).every((value) => typeof value === 'string'),
+      '`map:headers` must be an object with string values'
+    )
 
     super(map)
 
@@ -27,7 +29,7 @@ export class Headers extends Mapping<Record<string, string>> {
     this.headers.forEach((header) => cors.allow(header))
   }
 
-  public override explain (introspection: Introspection): void {
+  public override explain(introspection: Introspection): void {
     for (const [property, header] of Object.entries(this.value)) {
       const schema = take(introspection, property)
 
@@ -36,21 +38,23 @@ export class Headers extends Mapping<Record<string, string>> {
     }
   }
 
-  public properties (context: Input): Record<string, string> {
+  public properties(context: Input): Record<string, string> {
     context.pipelines.response.push((response) => {
       response.headers ??= new global.Headers()
 
-      for (const header of this.headers)
-        response.headers.append('vary', header)
+      for (const header of this.headers) response.headers.append('vary', header)
     })
 
-    return Object.entries(this.value).reduce((properties: Record<string, string>, [property, header]) => {
-      const value = context.request.headers[header]
+    return Object.entries(this.value).reduce(
+      (properties: Record<string, string>, [property, header]) => {
+        const value = context.request.headers[header]
 
-      if (value !== undefined)
-        properties[property] = Array.isArray(value) ? value.join(', ') : value
+        if (value !== undefined)
+          properties[property] = Array.isArray(value) ? value.join(', ') : value
 
-      return properties
-    }, {})
+        return properties
+      },
+      {}
+    )
   }
 }

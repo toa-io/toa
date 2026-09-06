@@ -13,7 +13,7 @@ export class Node {
   private readonly protected: boolean
   private routes: Route[]
 
-  public constructor (routes: Route[], methods: Methods, properties: Properties) {
+  public constructor(routes: Route[], methods: Methods, properties: Properties) {
     this.routes = routes
     this.methods = methods
     this.protected = properties.protected
@@ -24,13 +24,12 @@ export class Node {
     this.sort()
   }
 
-  public match (fragments: string[], parameters: Parameter[] = []): Match | null {
+  public match(fragments: string[], parameters: Parameter[] = []): Match | null {
     for (const route of this.routes) {
       const params = parameters.slice()
       const match = route.match(fragments, params)
 
-      if (match !== null)
-        return match
+      if (match !== null) return match
     }
 
     return null
@@ -40,7 +39,7 @@ export class Node {
    * Returns the nodes the merged branch has landed on, so that its expiration
    * can later be extended without rebuilding anything.
    */
-  public merge (node: Node): Node[] {
+  public merge(node: Node): Node[] {
     this.intermediate = node.intermediate
 
     const nodes = this.protected ? this.append(node) : this.replace(node)
@@ -50,9 +49,8 @@ export class Node {
     return nodes
   }
 
-  public touch (expiration: number): void {
-    if (!this.protected)
-      this.expiration = expiration
+  public touch(expiration: number): void {
+    if (!this.protected) this.expiration = expiration
   }
 
   /**
@@ -62,33 +60,34 @@ export class Node {
    * answers at the same place and is reached instead. The trunk is the exception `match`
    * makes for it — `'/'` answers the trunk itself, whatever it holds.
    */
-  public * walk (segments: Segment[], trunk = false): Generator<Mount> {
+  public *walk(segments: Segment[], trunk = false): Generator<Mount> {
     if (trunk || !this.intermediate)
       for (const [verb, method] of Object.entries(this.methods))
         yield { segments, verb, method }
 
-    for (const route of this.routes)
-      yield * route.walk(segments)
+    for (const route of this.routes) yield* route.walk(segments)
   }
 
   /** Every method of this node that this caller may reach, in the order they were declared. */
-  public async explain (context: Context,
-    parameters: Parameter[]): Promise<Record<string, Introspection>> {
+  public async explain(
+    context: Context,
+    parameters: Parameter[]
+  ): Promise<Record<string, Introspection>> {
     const entries = Object.entries(this.methods)
 
-    const explained = await Promise.all(entries
-      .map(async ([, method]) => await method.explain(context, parameters)))
+    const explained = await Promise.all(
+      entries.map(async ([, method]) => await method.explain(context, parameters))
+    )
 
     const methods: Record<string, Introspection> = {}
 
     for (let i = 0; i < entries.length; i++)
-      if (explained[i] !== null)
-        methods[entries[i][0]] = explained[i]!
+      if (explained[i] !== null) methods[entries[i][0]] = explained[i]!
 
     return methods
   }
 
-  private replace (node: Node): Node[] {
+  private replace(node: Node): Node[] {
     const methods = Object.values(this.methods)
 
     this.routes = node.routes
@@ -97,44 +96,39 @@ export class Node {
     this.forward = node.forward
 
     // race condition is really unlikely
-    for (const method of methods)
-      void method.close()
+    for (const method of methods) void method.close()
 
     return this.nodes()
   }
 
-  private append (node: Node): Node[] {
+  private append(node: Node): Node[] {
     const nodes: Node[] = []
 
-    for (const route of node.routes)
-      nodes.push(...this.route(route))
+    for (const route of node.routes) nodes.push(...this.route(route))
 
-    for (const [verb, method] of Object.entries(node.methods))
-      this.methods[verb] = method
+    for (const [verb, method] of Object.entries(node.methods)) this.methods[verb] = method
 
     return nodes
   }
 
-  private route (candidate: Route): Node[] {
+  private route(candidate: Route): Node[] {
     for (const route of this.routes)
-      if (candidate.equals(route))
-        return route.merge(candidate)
+      if (candidate.equals(route)) return route.merge(candidate)
 
     this.routes.push(candidate)
 
     return candidate.node.nodes()
   }
 
-  private nodes (): Node[] {
+  private nodes(): Node[] {
     const nodes: Node[] = [this]
 
-    for (const route of this.routes)
-      nodes.push(...route.node.nodes())
+    for (const route of this.routes) nodes.push(...route.node.nodes())
 
     return nodes
   }
 
-  private sort (): void {
+  private sort(): void {
     this.routes.sort((a, b) => {
       return a.variables === b.variables
         ? b.segments.length - a.segments.length // routes with more segments should be matched first

@@ -19,11 +19,11 @@ export class Sync {
   /** Ticks do not overlap: a slow round trip delays reconciling, it does not double it. */
   private reconciling = false
 
-  public constructor (atom: atomicity.Atom) {
+  public constructor(atom: atomicity.Atom) {
     this.atom = atom
   }
 
-  public register (quotas: Quotas): void {
+  public register(quotas: Quotas): void {
     this.quotas.push(quotas)
 
     // the shortest interval sets the pace, and reconciling the others more often than
@@ -35,7 +35,7 @@ export class Sync {
     }
   }
 
-  public dispose (): void {
+  public dispose(): void {
     if (this.timer !== null) {
       clearInterval(this.timer)
 
@@ -43,7 +43,7 @@ export class Sync {
     }
   }
 
-  private start (): void {
+  private start(): void {
     this.dispose()
 
     this.timer = setInterval(this.tick, this.period)
@@ -52,17 +52,14 @@ export class Sync {
   }
 
   private readonly tick = (): void => {
-    if (this.reconciling)
-      return
+    if (this.reconciling) return
 
     const now = Date.now()
     const batch: Batch[] = []
 
-    for (const quotas of this.quotas)
-      quotas.flush(now, batch)
+    for (const quotas of this.quotas) quotas.flush(now, batch)
 
-    if (batch.length === 0)
-      return
+    if (batch.length === 0) return
 
     this.reconciling = true
 
@@ -71,7 +68,7 @@ export class Sync {
     })
   }
 
-  private async reconcile (batch: Batch[]): Promise<void> {
+  private async reconcile(batch: Batch[]): Promise<void> {
     try {
       const keys = batch.map((entry) => entry.quotas.name(entry.key))
       const deltas = batch.map((entry) => entry.delta)

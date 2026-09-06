@@ -1,11 +1,10 @@
-export function encode (input) {
-  if (typeof input !== 'string')
-    input = JSON.stringify(input)
+export function encode(input) {
+  if (typeof input !== 'string') input = JSON.stringify(input)
 
   return Buffer.from(input).toString(ENCODING)
 }
 
-export function decode (input) {
+export function decode(input) {
   const string = Buffer.from(input, ENCODING).toString()
 
   try {

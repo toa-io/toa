@@ -18,7 +18,7 @@ export class Event extends Connector {
   readonly #subjective: boolean | undefined
   readonly #label: string
 
-  public constructor (definition: Definition, emitter: Emitter, bridge?: Bridge) {
+  public constructor(definition: Definition, emitter: Emitter, bridge?: Bridge) {
     super()
 
     this.#conditioned = definition.conditioned
@@ -32,11 +32,10 @@ export class Event extends Connector {
     if (bridge !== undefined) this.depends(bridge)
   }
 
-  public async emit (event: StateEvent): Promise<void> {
-    if (this.#conditioned === false || await this.#bridge?.condition(event) === true) {
-      const payload = this.#subjective === true
-        ? await this.#bridge?.payload(event)
-        : event.state
+  public async emit(event: StateEvent): Promise<void> {
+    if (this.#conditioned === false || (await this.#bridge?.condition(event)) === true) {
+      const payload =
+        this.#subjective === true ? await this.#bridge?.payload(event) : event.state
 
       const message: Message = { payload }
 
@@ -49,8 +48,7 @@ export class Event extends Connector {
       await console.span(options, async () => {
         const context = current()
 
-        if (context !== undefined)
-          message.telemetry = encode(context)
+        if (context !== undefined) message.telemetry = encode(context)
 
         await this.#emitter.emit(message)
       })

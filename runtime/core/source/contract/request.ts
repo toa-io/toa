@@ -25,7 +25,7 @@ export class Request extends Contract {
   public static override Exception: Refusal =
     RequestContractException as unknown as Refusal
 
-  public constructor (schema: Schema, definition: Definition) {
+  public constructor(schema: Schema, definition: Definition) {
     super(schema)
 
     for (const key of ['description', 'input', 'output', 'errors'] as const)
@@ -33,7 +33,10 @@ export class Request extends Contract {
         (this.discovery as Record<string, unknown>)[key] = definition[key]
   }
 
-  public static schema (definition: Definition, entity?: { schema: JSONSchema }): JSONSchema {
+  public static schema(
+    definition: Definition,
+    entity?: { schema: JSONSchema }
+  ): JSONSchema {
     const schema: JSONSchema = {
       type: 'object',
       properties: {
@@ -49,41 +52,32 @@ export class Request extends Contract {
     if (definition.input !== undefined) {
       schema.properties.input = definition.input
       required.push('input')
-    } else
-      schema.properties.input = { type: 'null' }
+    } else schema.properties.input = { type: 'null' }
 
-    if (entity === undefined)
-      definition.query = false
+    if (entity === undefined) definition.query = false
 
-    if (definition.query === true)
-      required.push('query')
+    if (definition.query === true) required.push('query')
 
-    if (definition.query === false)
-      schema.properties.query = { type: 'null' }
+    if (definition.query === false) schema.properties.query = { type: 'null' }
 
     if (definition.query !== false) {
       const query = structuredClone(schemas.query)
 
       query.properties.id = entity?.schema.properties.id
 
-      if (definition.type === 'observation')
-        delete query.properties.version
-      else
-        delete query.properties.projection
+      if (definition.type === 'observation') delete query.properties.version
+      else delete query.properties.projection
 
       if (definition.type !== 'observation' || definition.scope !== 'objects') {
         delete query.properties.omit
         delete query.properties.limit
-      } else if (query.required === undefined)
-        query.required = ['limit']
-      else
-        query.required.push('limit')
+      } else if (query.required === undefined) query.required = ['limit']
+      else query.required.push('limit')
 
       schema.properties.query = query
     }
 
-    if (required.length > 0)
-      schema.required = required
+    if (required.length > 0) schema.required = required
 
     return schema
   }

@@ -9,11 +9,10 @@ import type { Declaration } from './annotation.js'
  * declaration arrives as `null` — which still has to produce a value,
  * or norm rejects the extension.
  */
-export function manifest (declaration: Declaration | null | undefined): Declaration {
+export function manifest(declaration: Declaration | null | undefined): Declaration {
   const normalized = component(declaration)
 
-  if (normalized !== false)
-    schemas.declaration.validate(normalized)
+  if (normalized !== false) schemas.declaration.validate(normalized)
 
   return normalized
 }

@@ -42,7 +42,6 @@ const oh = [
   },
   {
     whatever: {
-
       provider: 's3'
     }
   },
@@ -59,6 +58,6 @@ it('should pass', () => {
 })
 
 for (const value of oh)
-   it('should fail', () => {
-  assert.throws(() => schemas.annotation.validate(value))
-})
+  it('should fail', () => {
+    assert.throws(() => schemas.annotation.validate(value))
+  })

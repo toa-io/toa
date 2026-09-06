@@ -14,9 +14,9 @@ at all.
 ```yaml
 # manifest.toa.yaml
 cadence:
-  sweep:                # an operation of this component
-    cycle: 86400        # seconds one whole cycle takes
-    intervals: 24       # what it is split into, so one call an hour
+  sweep: # an operation of this component
+    cycle: 86400 # seconds one whole cycle takes
+    intervals: 24 # what it is split into, so one call an hour
 ```
 
 The gap between calls is `cycle / intervals`, derived rather than declared, so the two cannot
@@ -26,13 +26,13 @@ declares:
 ```yaml
 # manifest.toa.yaml
 cadence:
-  sweep: 3600           # once an hour
+  sweep: 3600 # once an hour
 ```
 
 The operation is called with the cycle and the interval as its input:
 
 ```javascript
-async function sweep ({ n, i }, context) { }
+async function sweep({ n, i }, context) {}
 ```
 
 `n` is `intervals` and `i` is which of them this call is for, from `0` to `n - 1`. They are there
@@ -77,22 +77,25 @@ either answer put to everyone who wanted an operation called every hour is a wor
 picking one.
 
 `intervals` is not a replica count. With `intervals: 24` and three replicas each makes eight of
-the day's calls: the cycle is spread over *time*, not over the fleet. Replicas beyond `intervals`
+the day's calls: the cycle is spread over _time_, not over the fleet. Replicas beyond `intervals`
 make none.
 
 ## Delay
 
 ```javascript
-const id = await context.delay('mail.sender.remind', { input: { user } },
-  { interval: 7 * 24 * 3600 * 1000, overdue: null })
+const id = await context.delay(
+  'mail.sender.remind',
+  { input: { user } },
+  { interval: 7 * 24 * 3600 * 1000, overdue: null }
+)
 
 await context.delay.cancel(id)
 ```
 
-| | |
-|---|---|
-| `interval` | milliseconds from now |
-| `overdue` | milliseconds the call may be late and still be made, or `null` for no bound |
+|            |                                                                             |
+| ---------- | --------------------------------------------------------------------------- |
+| `interval` | milliseconds from now                                                       |
+| `overdue`  | milliseconds the call may be late and still be made, or `null` for no bound |
 
 The call is made once the delay has passed, and waits for the target where it is not there to
 take it. The id it answers cancels it, and `cancel` raises where the id was never issued.
@@ -111,11 +114,11 @@ cadence: ~
 ordinary path has: a call is made at the moment it is due. How much is left of that in practice
 depends on how coarsely the calls are looked over — see [Discreteness](#discreteness).
 
-| | |
-|---|---|
-| `null` | no bound: made whenever it can be, however late that is |
-| `0` | on time or never |
-| a number | made if no more than that many milliseconds late |
+|          |                                                         |
+| -------- | ------------------------------------------------------- |
+| `null`   | no bound: made whenever it can be, however late that is |
+| `0`      | on time or never                                        |
+| a number | made if no more than that many milliseconds late        |
 
 **There is no default, and it is stated on every call.** Only the caller knows whether a late
 call is still the right call — an unpaid order expires on time or not at all, a report is wanted
@@ -179,7 +182,7 @@ may no longer be one it accepts. Either way the attempt is spent.
 ```yaml
 # context.toa.yaml
 cadence:
-  discreteness: 60    # seconds between passes over the calls waiting to be made
+  discreteness: 60 # seconds between passes over the calls waiting to be made
 ```
 
 `discreteness` is how often the calls waiting to be made are looked over. It defaults to 60,

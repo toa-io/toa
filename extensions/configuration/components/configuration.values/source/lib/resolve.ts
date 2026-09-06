@@ -4,13 +4,16 @@ import { entry } from './map.js'
  * The latest configuration created for the component and the epoch; the deployed
  * defaults when none was; `null` when the epoch is not the one deployed.
  */
-export async function resolve (context: Context, component: string, epoch?: string): Promise<Value | null> {
+export async function resolve(
+  context: Context,
+  component: string,
+  epoch?: string
+): Promise<Value | null> {
   const known = entry(component)
 
   epoch ??= known?.epoch
 
-  if (epoch === undefined)
-    return null
+  if (epoch === undefined) return null
 
   // one query per pair, so that a component's latest is never behind another's newer ones
   const query: Query = {

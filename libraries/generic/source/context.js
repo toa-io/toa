@@ -15,15 +15,15 @@ const instances = {}
 class Storage {
   #storage
 
-  constructor () {
+  constructor() {
     this.#storage = new AsyncLocalStorage()
   }
 
-  async apply (value, func) {
+  async apply(value, func) {
     return this.#storage.run(value, func)
   }
 
-  get () {
+  get() {
     return this.#storage.getStore()
   }
 }

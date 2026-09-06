@@ -15,28 +15,29 @@ import type * as http from '../../HTTP/index.js'
 export class Status implements Directive {
   private readonly property: string
 
-  public constructor (property: unknown) {
+  public constructor(property: unknown) {
     this.property = property as string
   }
 
-  public static validate (value: unknown): asserts value is string {
+  public static validate(value: unknown): asserts value is string {
     assert.ok(typeof value === 'string', '`io:status` must be a string')
   }
 
-  public precall (): void {
+  public precall(): void {
     // nothing to do until the operation has answered
   }
 
-  public settle (_: unknown, response: http.OutgoingMessage): void {
+  public settle(_: unknown, response: http.OutgoingMessage): void {
     const body: unknown = response.body
 
-    if (body === null || typeof body !== 'object' || !(this.property in body))
-      return
+    if (body === null || typeof body !== 'object' || !(this.property in body)) return
 
     const value: unknown = (body as Record<string, unknown>)[this.property]
 
-    assert.ok(typeof value === 'number',
-      `\`io:status\` expects '${this.property}' to be a number`)
+    assert.ok(
+      typeof value === 'number',
+      `\`io:status\` expects '${this.property}' to be a number`
+    )
 
     response.status = value
 

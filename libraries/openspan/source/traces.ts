@@ -13,22 +13,19 @@ import type { SamplingOptions } from './tracing.js'
  * created. The console exporter is a local development mechanism and is opted into
  * explicitly (`{ exporters: { console: {} } }`); a deployment configures `otlp`.
  */
-export function traces (options: TracesOptions = {}): void {
+export function traces(options: TracesOptions = {}): void {
   sampling(options)
   exporting(createExporters(options.exporters))
 }
 
-function createExporters (config?: ExportersConfig): Exporter[] {
-  if (config === undefined)
-    return []
+function createExporters(config?: ExportersConfig): Exporter[] {
+  if (config === undefined) return []
 
   const exporters: Exporter[] = []
 
-  if ('console' in config)
-    exporters.push(consoleExporter)
+  if ('console' in config) exporters.push(consoleExporter)
 
-  if (config.otlp !== undefined)
-    exporters.push(new Otlp(config.otlp))
+  if (config.otlp !== undefined) exporters.push(new Otlp(config.otlp))
 
   return exporters
 }

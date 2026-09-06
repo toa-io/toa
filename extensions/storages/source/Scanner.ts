@@ -15,7 +15,7 @@ export class Scanner extends PassThrough {
   private completed = false
   private readonly chunks: Buffer[] = []
 
-  public constructor (control?: ScanOptions) {
+  public constructor(control?: ScanOptions) {
     super()
 
     this.claim = control?.claim
@@ -23,11 +23,15 @@ export class Scanner extends PassThrough {
     this.limit = control?.limit
   }
 
-  public digest (): string {
+  public digest(): string {
     return this.hash.digest('hex')
   }
 
-  public override _transform (buffer: Buffer, encoding: BufferEncoding, callback: TransformCallback): void {
+  public override _transform(
+    buffer: Buffer,
+    encoding: BufferEncoding,
+    callback: TransformCallback
+  ): void {
     super._transform(buffer, encoding, callback)
 
     this.process(buffer)
@@ -37,8 +41,7 @@ export class Scanner extends PassThrough {
     this.size += buffer.length
     this.hash.update(buffer)
 
-    if (this.completed)
-      return
+    if (this.completed) return
 
     if (this.position + buffer.length > HEADER_SIZE)
       buffer = buffer.subarray(0, HEADER_SIZE - this.position)
@@ -46,24 +49,20 @@ export class Scanner extends PassThrough {
     this.chunks.push(buffer)
     this.position += buffer.length
 
-    if (this.position === HEADER_SIZE)
-      this.complete()
+    if (this.position === HEADER_SIZE) this.complete()
 
     if (this.limit !== undefined && this.size > this.limit)
       this.interrupt(ERR_LIMIT_EXCEEDED)
   }
 
-  private complete (): void {
+  private complete(): void {
     const header = Buffer.concat(this.chunks).toString('hex')
 
-    const signature = SIGNATURES
-      .find(({ off, hex, expression }) => {
-        const sig = header.slice(off, off + hex.length)
+    const signature = SIGNATURES.find(({ off, hex, expression }) => {
+      const sig = header.slice(off, off + hex.length)
 
-        return expression === undefined
-          ? sig === hex
-          : expression.test(sig)
-      })
+      return expression === undefined ? sig === hex : expression.test(sig)
+    })
 
     const type = signature?.type ?? this.claim
 
@@ -76,33 +75,30 @@ export class Scanner extends PassThrough {
     this.completed = true
   }
 
-  private verify (signature: Signature | undefined): void {
-    if (this.claim === undefined || this.claim === 'application/octet-stream')
-      return
+  private verify(signature: Signature | undefined): void {
+    if (this.claim === undefined || this.claim === 'application/octet-stream') return
 
-    const mismatch = signature === undefined
-      ? KNOWN_TYPES.has(this.claim)
-      : this.claim !== signature.type
+    const mismatch =
+      signature === undefined
+        ? KNOWN_TYPES.has(this.claim)
+        : this.claim !== signature.type
 
-    if (mismatch)
-      this.interrupt(ERR_TYPE_MISMATCH)
+    if (mismatch) this.interrupt(ERR_TYPE_MISMATCH)
   }
 
-  private match (type: string): void {
-    if (this.accept === undefined)
-      return
+  private match(type: string): void {
+    if (this.accept === undefined) return
 
     const unacceptable = this.negotiate(this.accept, [type]) === null
 
-    if (unacceptable)
-      this.interrupt(ERR_NOT_ACCEPTABLE)
+    if (unacceptable) this.interrupt(ERR_NOT_ACCEPTABLE)
   }
 
-  private negotiate (accept: string, type: string[]): string | null {
+  private negotiate(accept: string, type: string[]): string | null {
     return new Negotiator({ headers: { accept } }).mediaType(type) ?? null
   }
 
-  private interrupt (error: Error): void {
+  private interrupt(error: Error): void {
     this.completed = true
     this.error = error
     this.destroy(error)
@@ -132,8 +128,10 @@ const SIGNATURES: Signature[] = [
   signature.hex = signature.hex.replaceAll(' ', '')
 
   if (signature.hex.includes('??')) {
-    const expression = signature.hex.replaceAll(/(?<wildcards>\?{1,24})/g,
-      (_, wildcards) => `[0-9a-f]{${wildcards.length}}`)
+    const expression = signature.hex.replaceAll(
+      /(?<wildcards>\?{1,24})/g,
+      (_, wildcards) => `[0-9a-f]{${wildcards.length}}`
+    )
 
     signature.expression = new RegExp(expression, 'i')
   }
@@ -141,8 +139,8 @@ const SIGNATURES: Signature[] = [
   return signature
 })
 
-const HEADER_SIZE = SIGNATURES
-  .reduce((max, { off, hex }) => Math.max(max, off + hex.length), 0) / 2
+const HEADER_SIZE =
+  SIGNATURES.reduce((max, { off, hex }) => Math.max(max, off + hex.length), 0) / 2
 
 const KNOWN_TYPES = new Set(SIGNATURES.map(({ type }) => type))
 

@@ -29,14 +29,23 @@ export class Factory {
    *  @type {Map<string, string[]>} */
   #claims
 
-  constructor (context, options = {}) {
+  constructor(context, options = {}) {
     this.#context = context
     this.#mono = options.mono === true
     this.#process = new Process()
 
-    const imagesFactory = new ImagesFactory(context.name, context.runtime, context.registry)
+    const imagesFactory = new ImagesFactory(
+      context.name,
+      context.runtime,
+      context.registry
+    )
 
-    this.#registry = new Registry(context.name, context.registry, imagesFactory, this.#process)
+    this.#registry = new Registry(
+      context.name,
+      context.registry,
+      imagesFactory,
+      this.#process
+    )
     this.#claims = claims(context)
     this.#dependencies = this.#getDependencies()
     this.#compositions = []
@@ -46,10 +55,12 @@ export class Factory {
         components: context.components
       })
     else
-      this.#compositions = context.compositions.map((composition) => this.#composition(composition))
+      this.#compositions = context.compositions.map((composition) =>
+        this.#composition(composition)
+      )
   }
 
-  async operator () {
+  async operator() {
     const deployment = new Deployment(
       this.#context,
       this.#compositions,
@@ -62,17 +73,17 @@ export class Factory {
     return new Operator(deployment, this.#registry)
   }
 
-  registry () {
+  registry() {
     return this.#registry
   }
 
-  #composition (composition) {
+  #composition(composition) {
     const image = this.#registry.composition(composition)
 
     return new Composition(composition, image)
   }
 
-  async #getDependencies () {
+  async #getDependencies() {
     /** @type {toa.deployment.Dependency[]} */
     const dependencies = []
 
@@ -95,17 +106,21 @@ export class Factory {
     // point where a reference that yields nothing can be told from one that yields a service
     for (const [reference, compositions] of this.#claims)
       if (!contributing.has(reference))
-        throw new Error(`Composition '${compositions[0]}' lists '${reference}', ` +
-          'which contributes no service.')
+        throw new Error(
+          `Composition '${compositions[0]}' lists '${reference}', ` +
+            'which contributes no service.'
+        )
 
     return dependencies
   }
 
-  async #getDependency (reference, instances) {
+  async #getDependency(reference, instances) {
     // a dependency may be named the way a package is or written as a directory,
     // and a module is loaded by file
     const module = await import(pathToFileURL(require.resolve(reference)).href)
-    const pkg = JSON.parse(readFileSync(require.resolve(join(reference, 'package.json')), 'utf8'))
+    const pkg = JSON.parse(
+      readFileSync(require.resolve(join(reference, 'package.json')), 'utf8')
+    )
 
     if (module.deployment === undefined) return
 
@@ -121,9 +136,10 @@ export class Factory {
     /** @type {toa.deployment.Service[]} */
     const services = dependency.services?.map((service) =>
       workload === undefined
-        ? this.#service(reference, service)   // its own deployment, its own image
-        // named the way `Service` would name it, since it skips that wrapper
-        : { ...service, name: `${service.group}-${service.name}`, workload })
+        ? this.#service(reference, service) // its own deployment, its own image
+        : // named the way `Service` would name it, since it skips that wrapper
+          { ...service, name: `${service.group}-${service.name}`, workload }
+    )
 
     return { ...dependency, services }
   }
@@ -133,13 +149,13 @@ export class Factory {
    * @param service {toa.deployment.dependency.Service}
    * @returns {Service}
    */
-  #service (path, service) {
+  #service(path, service) {
     const image = this.#registry.service(path, service)
 
     return new Service(service, image)
   }
 
-  static async create (path, environment, options = {}) {
+  static async create(path, environment, options = {}) {
     const context = await load(path, environment)
 
     return new Factory(context, options)
@@ -152,7 +168,7 @@ const MONO = 'mono'
  * @param {toa.norm.Context} context
  * @returns {Map<string, string[]>}
  */
-function claims (context) {
+function claims(context) {
   const map = new Map()
 
   for (const composition of context.compositions ?? [])

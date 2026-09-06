@@ -30,64 +30,60 @@ export class Schema {
    * @param {() => import('ajv').ValidateFunction} [compileOptional]
    * @param {() => import('ajv').ValidateFunction} [compileMatch]
    */
-  constructor (validate, compileOptional, compileMatch) {
+  constructor(validate, compileOptional, compileMatch) {
     this.id = validate.schema.$id
     this.#validate = validate
     this.#compileOptional = compileOptional
     this.#compileMatch = compileMatch
   }
 
-  get #optional () {
+  get #optional() {
     if (this.#validateOptional === undefined)
       this.#validateOptional = this.#compileOptional?.()
 
     return this.#validateOptional
   }
 
-  get #matching () {
-    if (this.#match === undefined)
-      this.#match = this.#compileMatch?.()
+  get #matching() {
+    if (this.#match === undefined) this.#match = this.#compileMatch?.()
 
     return this.#match
   }
 
-  fit (value, validate = this.#validate) {
+  fit(value, validate = this.#validate) {
     const valid = validate(value)
 
     if (valid) return null
     else return this.#error(value)
   }
 
-  fitOptional (value) {
+  fitOptional(value) {
     const validate = this.#optional
 
-    if (validate === undefined)
-      throw new Error('Optional schema is not defined')
+    if (validate === undefined) throw new Error('Optional schema is not defined')
 
     return this.fit(value, validate)
   }
 
-  match (value) {
+  match(value) {
     const validate = this.#matching
 
-    if (validate === undefined)
-      throw new Error('Matching schema is not defined')
+    if (validate === undefined) throw new Error('Matching schema is not defined')
 
     return this.fit(value, validate)
   }
 
-  validate (value, message) {
+  validate(value, message) {
     const valid = this.#validate(value)
 
     if (!valid) {
-      let error = betterAjvErrors(this.#validate.schema, value, this.#validate.errors, { format: 'js' })
+      let error = betterAjvErrors(this.#validate.schema, value, this.#validate.errors, {
+        format: 'js'
+      })
 
-      const text = error.length === 0
-        ? this.#validate.errors[0].message
-        : error[0].error
+      const text = error.length === 0 ? this.#validate.errors[0].message : error[0].error
 
-      if (message !== undefined)
-        message += ': '
+      if (message !== undefined) message += ': '
 
       throw new TypeError((message ?? '') + text)
     }
@@ -95,7 +91,9 @@ export class Schema {
 
   #error = (value) => {
     const error = this.#validate.errors[0]
-    let be = betterAjvErrors(this.#validate.schema, value, this.#validate.errors, { format: 'js' })
+    let be = betterAjvErrors(this.#validate.schema, value, this.#validate.errors, {
+      format: 'js'
+    })
 
     const mapped = {
       message: be[0].error.trim(),
@@ -111,8 +109,7 @@ export class Schema {
 }
 
 export const schema = (cos, options) => {
-  if (typeof cos === 'string' && isFile(cos))
-    cos = jsyaml.load(readFileSync(cos, 'utf8'))
+  if (typeof cos === 'string' && isFile(cos)) cos = jsyaml.load(readFileSync(cos, 'utf8'))
 
   const schema = cos
   const validate = create(schema, options)

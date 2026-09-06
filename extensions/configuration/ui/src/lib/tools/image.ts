@@ -35,5 +35,7 @@ export function preload(assets: DensityMap) {
  * ```
  */
 export function imageSet(assets: DensityMap) {
-  return `image-set(${Object.entries(assets).map(([density, url]) => `url('${url}') ${density}`).join(', ')})`
+  return `image-set(${Object.entries(assets)
+    .map(([density, url]) => `url('${url}') ${density}`)
+    .join(', ')})`
 }

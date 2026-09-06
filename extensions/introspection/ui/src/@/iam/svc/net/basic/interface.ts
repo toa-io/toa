@@ -10,6 +10,6 @@ export interface Basic {
 export async function post(id: string, body: Basic): Promise<void | Error> {
   return await basic.json(id, {
     method: 'POST',
-    body,
+    body
   })
 }

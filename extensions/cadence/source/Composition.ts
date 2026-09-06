@@ -5,7 +5,7 @@ import type { Dirent } from 'node:fs'
 import type { Host } from './Factory.js'
 
 /** The components this extension ships, which run inside its own service. */
-export function components (): Components {
+export function components(): Components {
   const labels: string[] = []
   const paths: string[] = []
 
@@ -20,13 +20,13 @@ export function components (): Components {
 export class Composition extends Connector {
   private readonly host: Host
 
-  public constructor (host: Host) {
+  public constructor(host: Host) {
     super()
 
     this.host = host
   }
 
-  protected override async open (): Promise<void> {
+  protected override async open(): Promise<void> {
     const composition = await this.host.composition(components().paths)
 
     await composition.connect()
@@ -35,7 +35,7 @@ export class Composition extends Connector {
   }
 }
 
-function entries (): Dirent[] {
+function entries(): Dirent[] {
   return readdirSync(ROOT, { withFileTypes: true }).filter((entry) => entry.isDirectory())
 }
 

@@ -6,7 +6,7 @@ import type { Fetch } from '../types/context.js'
 const cache = new Map<string, Configuration>()
 const resolvers = new WeakMap<Fetch, Map<string, Promise<jose.RemoteJWKSet>>>()
 
-export async function discover (iss: string, fetch: Fetch): Promise<Configuration> {
+export async function discover(iss: string, fetch: Fetch): Promise<Configuration> {
   if (!cache.has(iss)) {
     const configuration = await fetchConfiguration(iss, fetch)
 
@@ -16,16 +16,18 @@ export async function discover (iss: string, fetch: Fetch): Promise<Configuratio
   return cache.get(iss)!
 }
 
-async function fetchConfiguration (iss: string, fetch: Fetch): Promise<Configuration> {
+async function fetchConfiguration(iss: string, fetch: Fetch): Promise<Configuration> {
   const response = await fetch(`${iss}/.well-known/openid-configuration`)
 
-  if (!response.ok)
-    throw new Error('Failed to fetch OIDC configuration')
+  if (!response.ok) throw new Error('Failed to fetch OIDC configuration')
 
-  return await response.json() as Configuration
+  return (await response.json()) as Configuration
 }
 
-export async function createRemoteJWKSet (iss: string, fetch: Fetch): Promise<jose.RemoteJWKSet> {
+export async function createRemoteJWKSet(
+  iss: string,
+  fetch: Fetch
+): Promise<jose.RemoteJWKSet> {
   let entries = resolvers.get(fetch)
 
   if (entries === undefined) {
@@ -33,13 +35,12 @@ export async function createRemoteJWKSet (iss: string, fetch: Fetch): Promise<jo
     resolvers.set(fetch, entries)
   }
 
-  if (!entries.has(iss))
-    entries.set(iss, create(iss, fetch))
+  if (!entries.has(iss)) entries.set(iss, create(iss, fetch))
 
   return await entries.get(iss)!
 }
 
-async function create (iss: string, fetch: Fetch): Promise<jose.RemoteJWKSet> {
+async function create(iss: string, fetch: Fetch): Promise<jose.RemoteJWKSet> {
   const jose = await load()
   const configuration = await discover(iss, fetch)
 

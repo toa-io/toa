@@ -22,7 +22,11 @@ beforeEach(() => {
   context.configuration = {
     keys: [
       { id: 'key0', key: secret('sTxL6qVOadKkUJwh3FveU53XgTEo3Sdfg7k2FfiIKfs') },
-      { id: 'legacy0', key: secret('k3.local.m28p8SrbS467t-2IUjQuSOqmjvi24TbXhyjAW_dOrog'), format: 'paseto' }
+      {
+        id: 'legacy0',
+        key: secret('k3.local.m28p8SrbS467t-2IUjQuSOqmjvi24TbXhyjAW_dOrog'),
+        format: 'paseto'
+      }
     ],
     lifetime: 1,
     refresh: 2,
@@ -57,8 +61,7 @@ it('should use the first encryption key as active and expose its id as kid', asy
     identity: { id: generate(), roles: [] }
   })
 
-  if (encrypted instanceof Error)
-    throw encrypted
+  if (encrypted instanceof Error) throw encrypted
 
   const header = JSON.parse(Buffer.from(encrypted.split('.')[0], 'base64url').toString())
 
@@ -73,15 +76,17 @@ it('should encrypt with configured lifetime by default', async () => {
     identity
   })
 
-  if (encrypted instanceof Error)
-    throw encrypted
+  if (encrypted instanceof Error) throw encrypted
 
-  await assert.partialDeepStrictEqual(await decrypt.execute(encrypted), { iss: authority, identity })
+  await assert.partialDeepStrictEqual(await decrypt.execute(encrypted), {
+    iss: authority,
+    identity
+  })
 
   await timeout(context.configuration.lifetime * 1000)
 
   const thrown: any = await decrypt.execute(encrypted)
-        assert.deepStrictEqual(thrown.code, 'INVALID_TOKEN')
+  assert.deepStrictEqual(thrown.code, 'INVALID_TOKEN')
 })
 
 it('should encrypt with given lifetime', async () => {
@@ -94,15 +99,17 @@ it('should encrypt with given lifetime', async () => {
     lifetime
   })
 
-  if (encrypted instanceof Error)
-    throw encrypted
+  if (encrypted instanceof Error) throw encrypted
 
-  await assert.partialDeepStrictEqual(await decrypt.execute(encrypted), { iss: authority, identity })
+  await assert.partialDeepStrictEqual(await decrypt.execute(encrypted), {
+    iss: authority,
+    identity
+  })
 
   await timeout(lifetime * 1000)
 
   const thrown: any = await decrypt.execute(encrypted)
-        assert.deepStrictEqual(thrown.code, 'INVALID_TOKEN')
+  assert.deepStrictEqual(thrown.code, 'INVALID_TOKEN')
 })
 
 it('should encrypt without lifetime INSECURE', async () => {
@@ -115,8 +122,7 @@ it('should encrypt without lifetime INSECURE', async () => {
     lifetime
   })
 
-  if (encrypted instanceof Error)
-    throw encrypted
+  if (encrypted instanceof Error) throw encrypted
 
   const decrypted = await decrypt.execute(encrypted)
 
@@ -131,8 +137,7 @@ it('should keep the identity permissions when none are given', async () => {
 
   const encrypted = await encrypt.execute({ authority, identity, lifetime: 100 })
 
-  if (encrypted instanceof Error)
-    throw encrypted
+  if (encrypted instanceof Error) throw encrypted
 
   const decrypted = await decrypt.execute(encrypted)
 
@@ -140,6 +145,6 @@ it('should keep the identity permissions when none are given', async () => {
   assert.deepStrictEqual(decrypted.identity.permissions, permissions)
 })
 
-function secret (value: string): Secret {
+function secret(value: string): Secret {
   return { unwrap: () => value }
 }

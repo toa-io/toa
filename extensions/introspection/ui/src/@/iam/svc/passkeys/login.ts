@@ -14,8 +14,7 @@ export async function login(id?: string): Promise<Echo | Error> {
 
   const echo = await passkeys.post(response)
 
-  if (echo instanceof Error)
-    console.error('Credential verification failed', echo)
+  if (echo instanceof Error) console.error('Credential verification failed', echo)
 
   return authenticated(echo, 'passkey')
 }

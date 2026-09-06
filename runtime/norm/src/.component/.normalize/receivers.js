@@ -1,4 +1,4 @@
-export function receivers (component) {
+export function receivers(component) {
   if (component.receivers === undefined) return
 
   const receivers = component.receivers

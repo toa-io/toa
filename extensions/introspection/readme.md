@@ -29,13 +29,13 @@ introspection:
 
 All properties are optional.
 
-| Property | Default | Description |
-| --- | --- | --- |
-| `samples` | `false` | Enables collection of call input and outcome samples. |
-| `interval` | `300` | Interval between topology updates, in seconds. |
-| `threshold` | `1024` | Number of distinct observed interactions that triggers an update before the interval expires. |
-| `ui` | `true` | Publishes the web UI. |
-| `resources` | — | Resource requirements for the Introspection deployment. |
+| Property    | Default | Description                                                                                   |
+| ----------- | ------- | --------------------------------------------------------------------------------------------- |
+| `samples`   | `false` | Enables collection of call input and outcome samples.                                         |
+| `interval`  | `300`   | Interval between topology updates, in seconds.                                                |
+| `threshold` | `1024`  | Number of distinct observed interactions that triggers an update before the interval expires. |
+| `ui`        | `true`  | Publishes the web UI.                                                                         |
+| `resources` | —       | Resource requirements for the Introspection deployment.                                       |
 
 Resource requirements can be declared specifically for Introspection:
 

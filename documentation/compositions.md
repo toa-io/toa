@@ -30,12 +30,12 @@ An unknown key in a composition is refused.
 
 ## Deployed
 
-| | |
-|---|---|
-| Deployment | `composition-<name>` |
-| image | `<registry.base>/<context>/composition-<name>:<tag>` |
-| pod label | `toa/composition: <name>` |
-| pod label, per component | `toa/component-<namespace>-<name>: "1"` |
+|                          |                                                      |
+| ------------------------ | ---------------------------------------------------- |
+| Deployment               | `composition-<name>`                                 |
+| image                    | `<registry.base>/<context>/composition-<name>:<tag>` |
+| pod label                | `toa/composition: <name>`                            |
+| pod label, per component | `toa/component-<namespace>-<name>: "1"`              |
 
 The image tag is a hash of the runtime version and of every member component's id and version,
 so it changes when the members change and not otherwise.

@@ -15,23 +15,27 @@ it('aggregates only public credential properties', async () => {
           info: mock.fn(async () => ({ username: 'user@example.com' }))
         },
         federation: {
-          list: mock.fn(async () => [{
-            id: 'federation',
-            iss: 'https://accounts.google.com',
-            sub: 'secret-subject',
-            CREATED: 1
-          }])
+          list: mock.fn(async () => [
+            {
+              id: 'federation',
+              iss: 'https://accounts.google.com',
+              sub: 'secret-subject',
+              CREATED: 1
+            }
+          ])
         },
         passkeys: {
-          list: mock.fn(async () => [{
-            id: 'passkey',
-            aid: 'aaguid',
-            synced: true,
-            label: 'Phone',
-            CREATED: 2,
-            key: 'public-key',
-            counter: 10
-          }])
+          list: mock.fn(async () => [
+            {
+              id: 'passkey',
+              aid: 'aaguid',
+              synced: true,
+              label: 'Phone',
+              CREATED: 2,
+              key: 'public-key',
+              counter: 10
+            }
+          ])
         }
       }
     }
@@ -45,7 +49,22 @@ it('aggregates only public credential properties', async () => {
     passkeys: [{ id: 'passkey', aid: 'aaguid', synced: true, label: 'Phone', CREATED: 2 }]
   })
 
-  assert.ok(context.remote.identity.basic.info.mock.calls.some((call: any) => call.arguments.length === 1 && isDeepStrictEqual(call.arguments[0], { input })))
-  assert.ok(context.remote.identity.federation.list.mock.calls.some((call: any) => call.arguments.length === 1 && isDeepStrictEqual(call.arguments[0], { input })))
-  assert.ok(context.remote.identity.passkeys.list.mock.calls.some((call: any) => call.arguments.length === 1 && isDeepStrictEqual(call.arguments[0], { input })))
+  assert.ok(
+    context.remote.identity.basic.info.mock.calls.some(
+      (call: any) =>
+        call.arguments.length === 1 && isDeepStrictEqual(call.arguments[0], { input })
+    )
+  )
+  assert.ok(
+    context.remote.identity.federation.list.mock.calls.some(
+      (call: any) =>
+        call.arguments.length === 1 && isDeepStrictEqual(call.arguments[0], { input })
+    )
+  )
+  assert.ok(
+    context.remote.identity.passkeys.list.mock.calls.some(
+      (call: any) =>
+        call.arguments.length === 1 && isDeepStrictEqual(call.arguments[0], { input })
+    )
+  )
 })

@@ -5,31 +5,32 @@ import type { Trust } from '../types/index.js'
 import type { Ctx } from './Ctx.js'
 import type { Payload } from './Payload.js'
 
-export async function exchange (credentials: string, ctx: Ctx): Promise<Payload | Error> {
+export async function exchange(credentials: string, ctx: Ctx): Promise<Payload | Error> {
   const jose = await load()
   const properties = decode(credentials)
 
-  if (properties instanceof Error)
-    return properties
+  if (properties instanceof Error) return properties
 
   const { code, iss, for: redirect } = properties
 
   const trusted = ctx.trust.find((trust) => trust.iss === iss)
 
-  if (trusted === undefined)
-    return errors.ERR_TRUST
+  if (trusted === undefined) return errors.ERR_TRUST
 
-  if (trusted.aud === undefined || (trusted.secret === undefined && trusted.signature === undefined))
+  if (
+    trusted.aud === undefined ||
+    (trusted.secret === undefined && trusted.signature === undefined)
+  )
     return errors.ERR_CODE_NOT_ENABLED
 
   const configuration = await discover(iss, ctx.fetch)
 
-  if (configuration.token_endpoint === undefined)
-    return errors.ERR_CONFIG
+  if (configuration.token_endpoint === undefined) return errors.ERR_CONFIG
 
   // array actually is not expected here, but it is a valid format
   const aud = Array.isArray(trusted.aud) ? trusted.aud[0] : trusted.aud
-  const secret = trusted.secret === undefined ? await sign(trusted) : trusted.secret.unwrap()
+  const secret =
+    trusted.secret === undefined ? await sign(trusted) : trusted.secret.unwrap()
   const params = new URLSearchParams()
 
   params.append('grant_type', 'authorization_code')
@@ -54,15 +55,17 @@ export async function exchange (credentials: string, ctx: Ctx): Promise<Payload 
   })
 
   if (!response.ok) {
-    ctx.logs.error('Code exchange failed', { status: response.status, text: await response.text() })
+    ctx.logs.error('Code exchange failed', {
+      status: response.status,
+      text: await response.text()
+    })
 
     return errors.ERR_RESPONSE
   }
 
-  const tokens = await response.json() as { id_token: string }
+  const tokens = (await response.json()) as { id_token: string }
 
-  if (tokens.id_token === undefined)
-    return errors.ERR_NO_TOKEN
+  if (tokens.id_token === undefined) return errors.ERR_NO_TOKEN
 
   const jwks = await createRemoteJWKSet(iss, ctx.fetch)
 
@@ -79,7 +82,7 @@ export async function exchange (credentials: string, ctx: Ctx): Promise<Payload 
   }
 }
 
-function decode (credentials: string): Properties | Error {
+function decode(credentials: string): Properties | Error {
   const json = Buffer.from(credentials, 'base64').toString('utf8')
   const properties = JSON.parse(json) as Properties
 
@@ -94,7 +97,7 @@ function decode (credentials: string): Properties | Error {
   return properties
 }
 
-async function sign (trust: Trust): Promise<string> {
+async function sign(trust: Trust): Promise<string> {
   const jose = await load()
   const signature = trust.signature!
   const aud = Array.isArray(trust.aud) ? trust.aud[0] : trust.aud!

@@ -23,7 +23,7 @@ it('should expose values', () => {
   assert.deepStrictEqual(context.configuration.foo, fixtures.configuration.foo)
 })
 
-function resetCalls (target = [assert, fixtures], seen = new Set()) {
+function resetCalls(target = [assert, fixtures], seen = new Set()) {
   if (target === null || typeof target !== 'object' || seen.has(target)) return
 
   seen.add(target)

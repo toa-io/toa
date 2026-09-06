@@ -12,7 +12,6 @@ it('should be', async () => {
 it('should iterate', async () => {
   const arr = [generate(), generate()]
 
-  
   each(arr, (element, index) => {
     assert.deepStrictEqual(element, arr[index])
   })
@@ -22,7 +21,6 @@ it('should await', async () => {
   /** @type {string[]} */
   const arr = [generate(), generate()]
 
-  
   await each(arr, async (element, index) => {
     await immediate()
 
@@ -35,15 +33,23 @@ it('should update values', () => {
 
   each(arr, (n, index) => n + index)
 
-  assert.ok([1, 3, 5].every((item) => arr.some((candidate) => isDeepStrictEqual(candidate, item))))
+  assert.ok(
+    [1, 3, 5].every((item) => arr.some((candidate) => isDeepStrictEqual(candidate, item)))
+  )
 })
 
 it('should update partially', () => {
   const arr = [1, 2, 3]
 
-  each(arr, (n, index) => { if (index === 1) return 10 })
+  each(arr, (n, index) => {
+    if (index === 1) return 10
+  })
 
-  assert.ok([1, 10, 3].every((item) => arr.some((candidate) => isDeepStrictEqual(candidate, item))))
+  assert.ok(
+    [1, 10, 3].every((item) =>
+      arr.some((candidate) => isDeepStrictEqual(candidate, item))
+    )
+  )
 })
 
 it('should update values with async callback', async () => {
@@ -51,5 +57,7 @@ it('should update values with async callback', async () => {
 
   await each(arr, async (n, index) => n + index)
 
-  assert.ok([1, 3, 5].every((item) => arr.some((candidate) => isDeepStrictEqual(candidate, item))))
+  assert.ok(
+    [1, 3, 5].every((item) => arr.some((candidate) => isDeepStrictEqual(candidate, item)))
+  )
 })

@@ -107,50 +107,61 @@ describe('read', () => {
   })
 
   it('should not offer a form as a reply encoding', () => {
-    assert.ok(!types.includes('application/x-www-form-urlencoded'),
-      'a form is read and never written')
+    assert.ok(
+      !types.includes('application/x-www-form-urlencoded'),
+      'a form is read and never written'
+    )
   })
 
   it('should output correct mulitpart format', async () => {
-    const response = new class extends PassThrough {
+    const response = new (class extends PassThrough {
       public readonly headers = new Headers()
 
-      public setHeader (key: string, value: string): this {
+      public setHeader(key: string, value: string): this {
         this.headers.set(key, value)
 
         return this
       }
-    }()
+    })()
 
     const context = { encoder: formats['text/plain'] } as unknown as Context
-    const message = { body: Readable.from(['Hello', 'New', 'World']) } as unknown as OutgoingMessage
+    const message = {
+      body: Readable.from(['Hello', 'New', 'World'])
+    } as unknown as OutgoingMessage
 
     const framed = multipart(message, context, response as unknown as http.ServerResponse)
 
     const result = await streamConsumers.text(framed)
 
-    assert.strictEqual(result, [
-      '--cut',
-      '',
-      'ACK',
-      '--cut',
-      '',
-      'Hello',
-      '--cut',
-      '',
-      'New',
-      '--cut',
-      '',
-      'World',
-      '--cut',
-      '',
-      'FIN',
-      '--cut--'].join('\r\n'))
+    assert.strictEqual(
+      result,
+      [
+        '--cut',
+        '',
+        'ACK',
+        '--cut',
+        '',
+        'Hello',
+        '--cut',
+        '',
+        'New',
+        '--cut',
+        '',
+        'World',
+        '--cut',
+        '',
+        'FIN',
+        '--cut--'
+      ].join('\r\n')
+    )
   })
 })
 
-export function createContext (url: string, headers: Record<string, string> = {}, content: string | Buffer = ''):
-Context {
+export function createContext(
+  url: string,
+  headers: Record<string, string> = {},
+  content: string | Buffer = ''
+): Context {
   const data = Buffer.isBuffer(content) ? content : Buffer.from(content)
   const stream = Readable.from(data)
   let consumed = false
@@ -163,8 +174,7 @@ Context {
     url: new URL(url, 'https://host.local'),
     timing: new Timing(),
     buffer: async () => {
-      if (consumed)
-        throw new Error('Request body already consumed')
+      if (consumed) throw new Error('Request body already consumed')
 
       consumed = true
 
@@ -175,7 +185,7 @@ Context {
   return mock as unknown as Context
 }
 
-function resetCalls (target = [], seen = new Set()) {
+function resetCalls(target = [], seen = new Set()) {
   if (target === null || typeof target !== 'object' || seen.has(target)) return
 
   seen.add(target)

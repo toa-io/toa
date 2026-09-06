@@ -9,7 +9,7 @@ export const events = async (component) => {
 }
 
 /** The first binding that carries events, which only its module can say. */
-async function asynchronous (bindings) {
+async function asynchronous(bindings) {
   for (const binding of bindings) {
     const { properties } = await import(binding)
 

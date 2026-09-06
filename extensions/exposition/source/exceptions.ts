@@ -4,26 +4,33 @@ import * as http from './HTTP/index.js'
 import { Exception as HTTPException } from './HTTP/index.js'
 import type { Exception } from '@toa.io/core'
 
-export function rethrow (exception: Exception | HTTPException): void {
-  if (exception instanceof HTTPException)
-    throw exception
+export function rethrow(exception: Exception | HTTPException): void {
+  if (exception instanceof HTTPException) throw exception
 
   // see /runtime/core/src/exceptions.js
-  throw match(exception.code,
-    badRequest, () => new http.BadRequest(exception.message),
-    CORE_EXCEPTIONS.StateNotFound, NOT_FOUND,
-    CORE_EXCEPTIONS.StatePrecondition, PRECONDITION_FAILED,
-    CORE_EXCEPTIONS.Duplicate, CONFLICT,
-    CORE_EXCEPTIONS.StateConcurrency, CONFLICT,
-    CORE_EXCEPTIONS.EntityGuard, CONFLICT,
+  throw match(
+    exception.code,
+    badRequest,
+    () => new http.BadRequest(exception.message),
+    CORE_EXCEPTIONS.StateNotFound,
+    NOT_FOUND,
+    CORE_EXCEPTIONS.StatePrecondition,
+    PRECONDITION_FAILED,
+    CORE_EXCEPTIONS.Duplicate,
+    CONFLICT,
+    CORE_EXCEPTIONS.StateConcurrency,
+    CONFLICT,
+    CORE_EXCEPTIONS.EntityGuard,
+    CONFLICT,
     () => {
       console.error('Request processing exception', exception)
 
       return exception
-    })
+    }
+  )
 }
 
-function badRequest (code: number): boolean {
+function badRequest(code: number): boolean {
   return (code >= 200 && code < 210) || code === 221
 }
 

@@ -8,10 +8,7 @@ const builder = (yargs) => {
       desc: 'Docker image',
       default: 'alpine'
     })
-    .example([
-      ['$0 shell'],
-      ['$0 shell -- ping localhost']
-    ])
+    .example([['$0 shell'], ['$0 shell -- ping localhost']])
 }
 
 export const command = 'shell [image]'

@@ -3,7 +3,7 @@ import type { Descriptor } from './providers'
 async function google(descriptor: Descriptor): Promise<string | Error> {
   await init()
 
-  const response = await new Promise((resolve) => {
+  const response = (await new Promise((resolve) => {
     const google = (window as any).google as any
 
     const client = google.accounts.oauth2.initCodeClient({
@@ -14,14 +14,13 @@ async function google(descriptor: Descriptor): Promise<string | Error> {
       redirect_uri: window.location.origin + '/',
       callback: async (response: { code?: string; error?: string }) => {
         resolve(response)
-      },
+      }
     })
 
     client.requestCode()
-  }) as { code?: string; error?: string }
+  })) as { code?: string; error?: string }
 
-  if (response?.code === undefined)
-    return new Error('NO_RESPONSE', { cause: response })
+  if (response?.code === undefined) return new Error('NO_RESPONSE', { cause: response })
 
   return response.code
 }

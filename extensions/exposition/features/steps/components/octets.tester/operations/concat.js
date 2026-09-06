@@ -1,4 +1,4 @@
-function concat (input) {
+function concat(input) {
   return input.parameters.a + ' ' + input.parameters.b
 }
 

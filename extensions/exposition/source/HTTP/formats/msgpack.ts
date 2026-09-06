@@ -1,12 +1,11 @@
 import { pack, unpack } from 'msgpackr'
 
-export function decode (buffer: Buffer): any {
+export function decode(buffer: Buffer): any {
   return unpack(buffer)
 }
 
-export function encode (value: any): Buffer {
-  if (typeof value === 'object' && value !== null)
-    Object.setPrototypeOf(value, null)
+export function encode(value: any): Buffer {
+  if (typeof value === 'object' && value !== null) Object.setPrototypeOf(value, null)
 
   return pack(value)
 }

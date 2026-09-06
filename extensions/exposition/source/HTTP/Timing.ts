@@ -14,12 +14,14 @@ export class Timing {
     return result
   }
 
-  public append (response: ServerResponse): void {
+  public append(response: ServerResponse): void {
     this.breakpoints.push({ id: 'total', duration: performance.now() - this.start })
 
     for (const breakpoint of this.breakpoints)
-      response.appendHeader('server-timing',
-        `${breakpoint.id};dur=${breakpoint.duration.toFixed(3)}`)
+      response.appendHeader(
+        'server-timing',
+        `${breakpoint.id};dur=${breakpoint.duration.toFixed(3)}`
+      )
   }
 }
 

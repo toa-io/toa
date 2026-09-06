@@ -2,13 +2,18 @@ import { Cascade } from '@toa.io/core'
 
 import * as boot from './index.js'
 
-export async function cascade (manifest, endpoint, definition, context, preflight) {
+export async function cascade(manifest, endpoint, definition, context, preflight) {
   const bridges = []
 
   if (definition.forward) endpoint = definition.forward
 
   if (definition.bridge) {
-    const bridge = await boot.bridge.algorithm(definition.bridge, manifest.path, endpoint, context)
+    const bridge = await boot.bridge.algorithm(
+      definition.bridge,
+      manifest.path,
+      endpoint,
+      context
+    )
 
     bridges.unshift(bridge)
   }
@@ -20,7 +25,12 @@ export async function cascade (manifest, endpoint, definition, context, prefligh
 
     if (operation === undefined) continue
 
-    const bridge = await boot.bridge.algorithm(operation.bridge, prototype.path, endpoint, context)
+    const bridge = await boot.bridge.algorithm(
+      operation.bridge,
+      prototype.path,
+      endpoint,
+      context
+    )
 
     bridges.unshift(bridge)
   }

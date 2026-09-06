@@ -8,13 +8,17 @@ export class Aspect extends Connector implements extensions.Aspect {
   private readonly locator: Locator
   private readonly consoles: Record<string, Console> = {}
 
-  public constructor (locator: Locator) {
+  public constructor(locator: Locator) {
     super()
 
     this.locator = locator
   }
 
-  public async invoke (operation: string, input: RequestInfo | URL, init?: FetchInit): Promise<Response> {
+  public async invoke(
+    operation: string,
+    input: RequestInfo | URL,
+    init?: FetchInit
+  ): Promise<Response> {
     const { retry, ...nativeInit } = init ?? {}
     const body = nativeInit.body ?? (input instanceof Request ? input.body : null)
 
@@ -42,7 +46,10 @@ export class Aspect extends Connector implements extensions.Aspect {
     const output = this.output(operation)
 
     return await output.span(options, async () => {
-      const response = await invoke(request, retry, { output, parentAttributes: attributes })
+      const response = await invoke(request, retry, {
+        output,
+        parentAttributes: attributes
+      })
 
       attributes['http.response.status_code'] = response.status
 
@@ -50,7 +57,7 @@ export class Aspect extends Connector implements extensions.Aspect {
     })
   }
 
-  private output (operation: string): Console {
+  private output(operation: string): Console {
     this.consoles[operation] ??= console.fork({
       namespace: this.locator.namespace,
       component: this.locator.name,
@@ -61,8 +68,11 @@ export class Aspect extends Connector implements extensions.Aspect {
   }
 }
 
-async function invoke (request: Request, options: RetryOptions | undefined,
-  telemetry: InvocationTelemetry): Promise<Response> {
+async function invoke(
+  request: Request,
+  options: RetryOptions | undefined,
+  telemetry: InvocationTelemetry
+): Promise<Response> {
   const retry = normalize(options)
 
   let response: Response | undefined
@@ -80,7 +90,8 @@ async function invoke (request: Request, options: RetryOptions | undefined,
     if (expected(response.status, retry.expected) || attempt === retry.attempts)
       return response
 
-    const interval = retryAfter(response.headers.get('retry-after')) ?? delay(retry, attempt)
+    const interval =
+      retryAfter(response.headers.get('retry-after')) ?? delay(retry, attempt)
 
     await discard(response)
     await wait(interval, request.signal)
@@ -89,7 +100,11 @@ async function invoke (request: Request, options: RetryOptions | undefined,
   return response!
 }
 
-async function send (request: Request, attempt: number, telemetry: InvocationTelemetry): Promise<Response> {
+async function send(
+  request: Request,
+  attempt: number,
+  telemetry: InvocationTelemetry
+): Promise<Response> {
   const attributes: Record<string, unknown> = {
     ...telemetry.parentAttributes,
     'retry.attempt': attempt
@@ -97,20 +112,26 @@ async function send (request: Request, attempt: number, telemetry: InvocationTel
 
   delete attributes['retry.attempts']
 
-  return await telemetry.output.span({
-    name: `attempt ${attempt}`,
-    kind: 'client',
-    attributes
-  }, async () => {
-    const response = await globalThis.fetch(request.clone())
+  return await telemetry.output.span(
+    {
+      name: `attempt ${attempt}`,
+      kind: 'client',
+      attributes
+    },
+    async () => {
+      const response = await globalThis.fetch(request.clone())
 
-    attributes['http.response.status_code'] = response.status
+      attributes['http.response.status_code'] = response.status
 
-    return response
-  })
+      return response
+    }
+  )
 }
 
-async function retryError (error: unknown, parameters: RetryErrorParameters): Promise<void> {
+async function retryError(
+  error: unknown,
+  parameters: RetryErrorParameters
+): Promise<void> {
   const { attempt, options, request } = parameters
 
   if (attempt === options.attempts || request.signal.aborted) throw error
@@ -118,7 +139,7 @@ async function retryError (error: unknown, parameters: RetryErrorParameters): Pr
   await wait(delay(options, attempt), request.signal)
 }
 
-async function discard (response: Response): Promise<void> {
+async function discard(response: Response): Promise<void> {
   try {
     await response.body?.cancel()
   } catch {
@@ -126,22 +147,37 @@ async function discard (response: Response): Promise<void> {
   }
 }
 
-function normalize (options?: RetryOptions): NormalizedRetryOptions {
+function normalize(options?: RetryOptions): NormalizedRetryOptions {
   if (options === undefined)
-    return { attempts: 1, expected: undefined, delay: DEFAULT_DELAY, factor: DEFAULT_FACTOR }
+    return {
+      attempts: 1,
+      expected: undefined,
+      delay: DEFAULT_DELAY,
+      factor: DEFAULT_FACTOR
+    }
 
   if (!Number.isInteger(options.attempts) || options.attempts < 1)
     throw new TypeError('retry.attempts must be an integer greater than or equal to 1')
 
-  if (options.expected !== undefined &&
-    (options.expected.length === 0 || options.expected.some((status) =>
-      !Number.isInteger(status) || status < 100 || status > 599)))
+  if (
+    options.expected !== undefined &&
+    (options.expected.length === 0 ||
+      options.expected.some(
+        (status) => !Number.isInteger(status) || status < 100 || status > 599
+      ))
+  )
     throw new TypeError('retry.expected must contain HTTP status codes')
 
-  if (options.delay !== undefined && (!Number.isFinite(options.delay) || options.delay < 0))
+  if (
+    options.delay !== undefined &&
+    (!Number.isFinite(options.delay) || options.delay < 0)
+  )
     throw new TypeError('retry.delay must be a non-negative number')
 
-  if (options.factor !== undefined && (!Number.isFinite(options.factor) || options.factor < 0))
+  if (
+    options.factor !== undefined &&
+    (!Number.isFinite(options.factor) || options.factor < 0)
+  )
     throw new TypeError('retry.factor must be a non-negative number')
 
   return {
@@ -152,15 +188,17 @@ function normalize (options?: RetryOptions): NormalizedRetryOptions {
   }
 }
 
-function expected (status: number, statuses?: number[]): boolean {
-  return statuses === undefined ? status >= 200 && status < 300 : statuses.includes(status)
+function expected(status: number, statuses?: number[]): boolean {
+  return statuses === undefined
+    ? status >= 200 && status < 300
+    : statuses.includes(status)
 }
 
-function delay (options: NormalizedRetryOptions, attempt: number): number {
+function delay(options: NormalizedRetryOptions, attempt: number): number {
   return options.delay * Math.pow(options.factor, attempt - 1)
 }
 
-function retryAfter (value: string | null): number | undefined {
+function retryAfter(value: string | null): number | undefined {
   if (value === null) return undefined
 
   const seconds = Number(value)
@@ -174,7 +212,7 @@ function retryAfter (value: string | null): number | undefined {
   return Math.max(0, date - Date.now())
 }
 
-async function wait (milliseconds: number, signal: AbortSignal): Promise<void> {
+async function wait(milliseconds: number, signal: AbortSignal): Promise<void> {
   if (signal.aborted) throw signal.reason
 
   await new Promise<void>((resolve, reject) => {
@@ -182,19 +220,19 @@ async function wait (milliseconds: number, signal: AbortSignal): Promise<void> {
 
     signal.addEventListener('abort', aborted, { once: true })
 
-    function done (): void {
+    function done(): void {
       signal.removeEventListener('abort', aborted)
       resolve()
     }
 
-    function aborted (): void {
+    function aborted(): void {
       clearTimeout(timeout)
       reject(signal.reason)
     }
   })
 }
 
-function requestURL (request: Request): URL {
+function requestURL(request: Request): URL {
   return new URL(request.url)
 }
 

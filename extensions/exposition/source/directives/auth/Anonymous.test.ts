@@ -14,7 +14,10 @@ describe('anonymous', () => {
 
   it('should refuse a request that presents a credential', () => {
     // it would make the reply uncacheable, which is the whole of the rule
-    assert.equal(new Anonymous(true).authorize(null, context({ authorization: 'Token x' })), false)
+    assert.equal(
+      new Anonymous(true).authorize(null, context({ authorization: 'Token x' })),
+      false
+    )
   })
 
   it('should admit a procedure whatever the request presented', () => {
@@ -33,6 +36,9 @@ describe('anonymous', () => {
     const directive = new Anonymous(true)
 
     assert.equal(directive.admits(null, context({ authorization: 'Token x' })), false)
-    assert.equal(directive.admits(null, context({ authorization: 'Token x' }, true)), true)
+    assert.equal(
+      directive.admits(null, context({ authorization: 'Token x' }, true)),
+      true
+    )
   })
 })

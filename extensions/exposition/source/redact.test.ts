@@ -4,7 +4,10 @@ import assert from 'node:assert/strict'
 import { redact } from './redact.js'
 
 it('should replace credential values at any depth', () => {
-  const input = { input: { username: 'bob', password: 'secret', nested: [{ token: 't' }] }, query: { id: '1' } }
+  const input = {
+    input: { username: 'bob', password: 'secret', nested: [{ token: 't' }] },
+    query: { id: '1' }
+  }
 
   assert.deepEqual(redact(input), {
     input: { username: 'bob', password: '[redacted]', nested: [{ token: '[redacted]' }] },

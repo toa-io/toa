@@ -9,7 +9,7 @@ let db
 let rows
 
 /** whatever `insertOne` has accepted, keyed as MongoDB would key it */
-function stateCollection () {
+function stateCollection() {
   return {
     insertOne: mock.fn(async (row) => {
       if (rows.has(row._id)) throw Object.assign(new Error('duplicate'), { code: 11000 })
@@ -25,7 +25,8 @@ function stateCollection () {
       if (row === undefined) return { modifiedCount: 0 }
 
       for (const [key, value] of Object.entries(criteria))
-        if (key !== '_id' && String(row[key]) !== String(value)) return { modifiedCount: 0 }
+        if (key !== '_id' && String(row[key]) !== String(value))
+          return { modifiedCount: 0 }
 
       Object.assign(row, $set)
 
@@ -46,28 +47,51 @@ beforeEach(() => {
   }
 
   state = stateCollection()
-  db = { collection: mock.fn((name) => name === STATE ? state : null) }
+  db = { collection: mock.fn((name) => (name === STATE ? state : null)) }
 })
 
 const run = (list) => new Migrations(db, collection, list).run()
 
 describe('steps', () => {
   it('should create an index', async () => {
-    await run([{ id: '0001', steps: [{ index: { name: 'index_a', keys: { a: 'asc', b: 'desc', c: 'hash', d: 'text' } } }] }])
+    await run([
+      {
+        id: '0001',
+        steps: [
+          {
+            index: {
+              name: 'index_a',
+              keys: { a: 'asc', b: 'desc', c: 'hash', d: 'text' }
+            }
+          }
+        ]
+      }
+    ])
 
-    assert.deepEqual(collection.createIndex.mock.calls[0].arguments,
-      [{ a: 1, b: -1, c: 'hashed', d: 'text' }, { name: 'index_a' }])
+    assert.deepEqual(collection.createIndex.mock.calls[0].arguments, [
+      { a: 1, b: -1, c: 'hashed', d: 'text' },
+      { name: 'index_a' }
+    ])
   })
 
   it('should translate index options', async () => {
-    await run([{ id: '0001', steps: [{ index: {
-      name: 'unique_a',
-      keys: { a: 'asc' },
-      unique: true,
-      sparse: true,
-      partial: { a: { $exists: true } },
-      ttl: 60
-    } }] }])
+    await run([
+      {
+        id: '0001',
+        steps: [
+          {
+            index: {
+              name: 'unique_a',
+              keys: { a: 'asc' },
+              unique: true,
+              sparse: true,
+              partial: { a: { $exists: true } },
+              ttl: 60
+            }
+          }
+        ]
+      }
+    ])
 
     assert.deepEqual(collection.createIndex.mock.calls[0].arguments[1], {
       name: 'unique_a',
@@ -80,13 +104,21 @@ describe('steps', () => {
 
   it('should refuse an unknown index option', async () => {
     await assert.rejects(
-      run([{ id: '0001', steps: [{ index: { name: 'a', keys: { a: 'asc' }, backgorund: true } }] }]),
-      /unknown index option 'backgorund'/)
+      run([
+        {
+          id: '0001',
+          steps: [{ index: { name: 'a', keys: { a: 'asc' }, backgorund: true } }]
+        }
+      ]),
+      /unknown index option 'backgorund'/
+    )
   })
 
   it('should refuse an index without keys', async () => {
-    await assert.rejects(run([{ id: '0001', steps: [{ index: { name: 'a' } }] }]),
-      /without a name or keys/)
+    await assert.rejects(
+      run([{ id: '0001', steps: [{ index: { name: 'a' } }] }]),
+      /without a name or keys/
+    )
   })
 
   it('should recreate an index whose declaration changed', async () => {
@@ -100,7 +132,9 @@ describe('steps', () => {
       throw Object.assign(new Error('conflict'), { code: 85 })
     })
 
-    await run([{ id: '0001', steps: [{ index: { name: 'index_a', keys: { a: 'asc' } } }] }])
+    await run([
+      { id: '0001', steps: [{ index: { name: 'index_a', keys: { a: 'asc' } } }] }
+    ])
 
     assert.deepEqual(collection.dropIndex.mock.calls[0].arguments, ['index_a'])
     assert.equal(collection.createIndex.mock.callCount(), 2)
@@ -112,8 +146,10 @@ describe('steps', () => {
       throw Object.assign(new Error('nope'), { code: 13 })
     })
 
-    await assert.rejects(run([{ id: '0001', steps: [{ index: { name: 'a', keys: { a: 'asc' } } }] }]),
-      /nope/)
+    await assert.rejects(
+      run([{ id: '0001', steps: [{ index: { name: 'a', keys: { a: 'asc' } } }] }]),
+      /nope/
+    )
   })
 
   it('should drop an index', async () => {
@@ -133,9 +169,17 @@ describe('steps', () => {
   })
 
   it('should update', async () => {
-    await run([{ id: '0001', steps: [{ update: { filter: { a: 1 }, update: { $set: { b: 2 } } } }] }])
+    await run([
+      {
+        id: '0001',
+        steps: [{ update: { filter: { a: 1 }, update: { $set: { b: 2 } } } }]
+      }
+    ])
 
-    assert.deepEqual(collection.updateMany.mock.calls[0].arguments, [{ a: 1 }, { $set: { b: 2 } }])
+    assert.deepEqual(collection.updateMany.mock.calls[0].arguments, [
+      { a: 1 },
+      { $set: { b: 2 } }
+    ])
   })
 
   it('should update every record when no filter is given', async () => {
@@ -151,31 +195,45 @@ describe('steps', () => {
   })
 
   it('should refuse deleting without a filter', async () => {
-    await assert.rejects(run([{ id: '0001', steps: [{ delete: {} }] }]),
-      /deletes without a filter/)
+    await assert.rejects(
+      run([{ id: '0001', steps: [{ delete: {} }] }]),
+      /deletes without a filter/
+    )
   })
 
   it('should refuse a step that is not a verb', async () => {
-    await assert.rejects(run([{ id: '0001', steps: [{ truncate: {} }] }]),
-      /has a step that is not one of/)
+    await assert.rejects(
+      run([{ id: '0001', steps: [{ truncate: {} }] }]),
+      /has a step that is not one of/
+    )
   })
 
   it('should refuse a step naming two verbs', async () => {
-    await assert.rejects(run([{ id: '0001', steps: [{ update: {}, delete: {} }] }]),
-      /has a step that is not one of/)
+    await assert.rejects(
+      run([{ id: '0001', steps: [{ update: {}, delete: {} }] }]),
+      /has a step that is not one of/
+    )
   })
 
   it('should apply steps in order', async () => {
     const order = []
 
     collection.createIndex = mock.fn(async () => order.push('index'))
-    collection.updateMany = mock.fn(async () => { order.push('update'); return { modifiedCount: 0 } })
+    collection.updateMany = mock.fn(async () => {
+      order.push('update')
+      return { modifiedCount: 0 }
+    })
 
-    await run([{ id: '0001', steps: [
-      { update: { update: {} } },
-      { index: { name: 'a', keys: { a: 'asc' } } },
-      { update: { update: {} } }
-    ] }])
+    await run([
+      {
+        id: '0001',
+        steps: [
+          { update: { update: {} } },
+          { index: { name: 'a', keys: { a: 'asc' } } },
+          { update: { update: {} } }
+        ]
+      }
+    ])
 
     assert.deepEqual(order, ['update', 'index', 'update'])
   })
@@ -185,7 +243,10 @@ describe('state', () => {
   it('should apply migrations in order', async () => {
     const order = []
 
-    collection.updateMany = mock.fn(async (filter) => { order.push(filter.n); return { modifiedCount: 0 } })
+    collection.updateMany = mock.fn(async (filter) => {
+      order.push(filter.n)
+      return { modifiedCount: 0 }
+    })
 
     await run([
       { id: '0001', steps: [{ update: { filter: { n: 1 }, update: {} } }] },
@@ -211,20 +272,31 @@ describe('state', () => {
   })
 
   it('should leave the row running where a step throws', async () => {
-    collection.updateMany = mock.fn(async () => { throw new Error('nope') })
+    collection.updateMany = mock.fn(async () => {
+      throw new Error('nope')
+    })
 
-    await assert.rejects(run([{ id: '0001', steps: [{ update: { update: {} } }] }]), /nope/)
+    await assert.rejects(
+      run([{ id: '0001', steps: [{ update: { update: {} } }] }]),
+      /nope/
+    )
 
     assert.equal(rows.get('test_one:0001').state, 'running')
   })
 
   it('should wait for a claim whose owner is alive', async () => {
-    rows.set('test_one:0001',
-      { _id: 'test_one:0001', state: 'running', owner: 'other/1', heartbeat: new Date() })
+    rows.set('test_one:0001', {
+      _id: 'test_one:0001',
+      state: 'running',
+      owner: 'other/1',
+      heartbeat: new Date()
+    })
 
     const pending = run([{ id: '0001', steps: [{ update: { update: {} } }] }])
-    const settled = await Promise.race([pending.then(() => 'done'),
-      new Promise((resolve) => setTimeout(() => resolve('waiting'), 1500))])
+    const settled = await Promise.race([
+      pending.then(() => 'done'),
+      new Promise((resolve) => setTimeout(() => resolve('waiting'), 1500))
+    ])
 
     assert.equal(settled, 'waiting')
     assert.equal(collection.updateMany.mock.callCount(), 0)

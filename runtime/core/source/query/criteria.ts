@@ -5,7 +5,7 @@ import type { Node } from '../types/storages.js'
 /** What a component declares about the properties a criteria may select on. */
 export type Properties = Record<string, { type: string }>
 
-export function criteria (expression: string, properties?: Properties): Node {
+export function criteria(expression: string, properties?: Properties): Node {
   let ast: Node
 
   try {
@@ -19,9 +19,12 @@ export function criteria (expression: string, properties?: Properties): Node {
   return ast
 }
 
-function coerce (node: Node, properties: Properties): void {
-  if (node.type === 'COMPARISON' && node.left?.type === 'SELECTOR' &&
-    node.right?.type === 'VALUE') {
+function coerce(node: Node, properties: Properties): void {
+  if (
+    node.type === 'COMPARISON' &&
+    node.left?.type === 'SELECTOR' &&
+    node.right?.type === 'VALUE'
+  ) {
     const selector = node.left.selector as string
     const property = properties[selector]
 

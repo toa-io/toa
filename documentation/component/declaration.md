@@ -50,12 +50,12 @@ A file is a list of steps, applied in the order they are written:
 
 What a step may say, for MongoDB:
 
-| Step | Fields |
-|---|---|
-| `index` | `name`, `keys` — a property to `asc`, `desc`, `hash` or `text` — and any of `unique`, `sparse`, `partial`, `ttl` |
-| `dropIndex` | `name` |
-| `update` | `filter`, and `update` as an object or as a list to run as an aggregation pipeline |
-| `delete` | `filter`, where `{}` means every record |
+| Step        | Fields                                                                                                           |
+| ----------- | ---------------------------------------------------------------------------------------------------------------- |
+| `index`     | `name`, `keys` — a property to `asc`, `desc`, `hash` or `text` — and any of `unique`, `sparse`, `partial`, `ttl` |
+| `dropIndex` | `name`                                                                                                           |
+| `update`    | `filter`, and `update` as an object or as a list to run as an aggregation pipeline                               |
+| `delete`    | `filter`, where `{}` means every record                                                                          |
 
 An index whose name is already taken by one of another shape is dropped and made again, so
 changing what an index is made of is an edit to its declaration.
@@ -126,7 +126,7 @@ a [realtime](/extensions/realtime) route, or an entry in the context's `events`.
 ```yaml
 # context.toa.yaml
 events:
-  - store.orders.created   # consumed outside this context
+  - store.orders.created # consumed outside this context
 ```
 
 An event nothing consumes has no exchange and no [outbox](/documentation/outbox.md) row, and a
@@ -199,8 +199,8 @@ An operation of the component is called on a cadence, with no schedule stored an
 # manifest.toa.yaml
 cadence:
   sweep:
-    cycle: 86400      # seconds one whole cycle takes
-    intervals: 24     # what it is split into, so one call an hour
+    cycle: 86400 # seconds one whole cycle takes
+    intervals: 24 # what it is split into, so one call an hour
 ```
 
 The operation receives `{ n, i }` — the number of intervals in the cycle, and which of them this
@@ -209,7 +209,7 @@ call is for. `intervals` defaults to `1`, which is also what the shorthand decla
 ```yaml
 # manifest.toa.yaml
 cadence:
-  sweep: 3600         # once an hour
+  sweep: 3600 # once an hour
 ```
 
 `context.delay`, which hands one call over to be made later, comes with the extension. A

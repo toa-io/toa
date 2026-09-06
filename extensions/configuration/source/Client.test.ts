@@ -10,12 +10,17 @@ import { EVENT } from './const.js'
 import type { Host } from './Factory.js'
 
 class Remote extends Connector {
-  public readonly invoke = mock.fn(async (_endpoint: string, request: { input: Array<{ component: string, epoch: string }> }) =>
-    request.input.map((pair): Fetched => ({
-      ...pair,
-      configuration: this.values[pair.component] ?? null,
-      created: this.values[pair.component] === undefined ? 0 : 7
-    })))
+  public readonly invoke = mock.fn(
+    async (
+      _endpoint: string,
+      request: { input: Array<{ component: string; epoch: string }> }
+    ) =>
+      request.input.map((pair): Fetched => ({
+        ...pair,
+        configuration: this.values[pair.component] ?? null,
+        created: this.values[pair.component] === undefined ? 0 : 7
+      }))
+  )
 
   public values: Record<string, object | null> = {}
 }
@@ -56,13 +61,19 @@ it('should send the requests of one tick as one call', async () => {
 
   await client.connect()
 
-  const [one, two] = await Promise.all([client.fetch('a.one', 'e1'), client.fetch('a.two', 'e2')])
+  const [one, two] = await Promise.all([
+    client.fetch('a.one', 'e1'),
+    client.fetch('a.two', 'e2')
+  ])
 
   assert.deepStrictEqual(one, { configuration: { foo: 1 }, created: 7 })
   assert.deepStrictEqual(two, { configuration: { foo: 2 }, created: 7 })
   assert.strictEqual(remote.invoke.mock.callCount(), 1)
   assert.deepStrictEqual(remote.invoke.mock.calls[0].arguments[1], {
-    input: [{ component: 'a.one', epoch: 'e1' }, { component: 'a.two', epoch: 'e2' }]
+    input: [
+      { component: 'a.one', epoch: 'e1' },
+      { component: 'a.two', epoch: 'e2' }
+    ]
   })
 })
 
@@ -72,8 +83,7 @@ it('should keep asking until served', async () => {
   const fetching = client.fetch('a.one', 'e1')
   const deadline = Date.now() + 1000
 
-  while (remote.invoke.mock.calls.length < 2 && Date.now() < deadline)
-    await timeout(5)
+  while (remote.invoke.mock.calls.length < 2 && Date.now() < deadline) await timeout(5)
 
   assert.ok(remote.invoke.mock.calls.length >= 2)
 
@@ -95,7 +105,13 @@ it('should hand a created object to its subscribers', async () => {
     payload: { component: 'a.one', epoch: 'e1', configuration: { foo: 2 }, CREATED: 12 }
   } satisfies Message)
 
-  assert.ok(listener.mock.calls.some((call: any) => call.arguments.length === 1 && isDeepStrictEqual(call.arguments[0], { configuration: { foo: 2 }, created: 12 })))
+  assert.ok(
+    listener.mock.calls.some(
+      (call: any) =>
+        call.arguments.length === 1 &&
+        isDeepStrictEqual(call.arguments[0], { configuration: { foo: 2 }, created: 12 })
+    )
+  )
   assert.strictEqual(other.mock.callCount(), 0)
   assert.strictEqual(remote.invoke.mock.callCount(), 0)
 

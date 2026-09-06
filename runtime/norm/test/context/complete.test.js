@@ -17,7 +17,11 @@ beforeEach(() => {
 
 it('should complete compositions', () => {
   assert.deepStrictEqual(context.compositions.length, fixtures.compositions.length)
-  assert.ok(fixtures.compositions.every((item) => context.compositions.some((candidate) => isDeepStrictEqual(candidate, item))))
+  assert.ok(
+    fixtures.compositions.every((item) =>
+      context.compositions.some((candidate) => isDeepStrictEqual(candidate, item))
+    )
+  )
 })
 
 it('should create if compositions are not set', () => {

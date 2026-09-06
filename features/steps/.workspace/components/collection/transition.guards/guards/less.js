@@ -1,6 +1,6 @@
 import assert from 'node:assert'
 
-export function guard (state, origin, context) {
+export function guard(state, origin, context) {
   assert(state.id !== undefined && state.VERSION !== undefined, 'state is required')
   assert(origin === null || origin.VERSION !== undefined, 'origin is required')
   assert(context.remote !== undefined, 'context is required')

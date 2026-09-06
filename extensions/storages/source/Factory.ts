@@ -13,7 +13,7 @@ import type { Secrets } from './Secrets.js'
 export class Factory {
   private readonly annotation: Annotation
 
-  public constructor () {
+  public constructor() {
     const env = process.env[ENV_PREFIX]
 
     assert.ok(env !== undefined, `${ENV_PREFIX} is not defined`)
@@ -23,13 +23,13 @@ export class Factory {
     validateAnnotation(this.annotation)
   }
 
-  public aspect (): Aspect {
+  public aspect(): Aspect {
     const storages = this.createStorages()
 
     return new Aspect(storages)
   }
 
-  private createStorages (): Storages {
+  private createStorages(): Storages {
     const storages: Storages = {}
 
     for (const [name, declaration] of Object.entries(this.annotation))
@@ -38,7 +38,7 @@ export class Factory {
     return storages
   }
 
-  private createStorage (name: string, declaration: Declaration): Storage {
+  private createStorage(name: string, declaration: Declaration): Storage {
     const { provider: id, ...options } = declaration
     const Provider: Constructor = providers[id]
     const secrets = this.resolveSecrets(name, Provider)
@@ -53,9 +53,8 @@ export class Factory {
     return new Storage(provider, { name, provider: id })
   }
 
-  private resolveSecrets (storageName: string, Class: Constructor): Secrets {
-    if (Class.SECRETS === undefined)
-      return {}
+  private resolveSecrets(storageName: string, Class: Constructor): Secrets {
+    if (Class.SECRETS === undefined) return {}
 
     const secrets: Record<string, string | undefined> = {}
 
@@ -63,8 +62,10 @@ export class Factory {
       const variable = `${ENV_PREFIX}_${storageName}_${secret.name}`.toUpperCase()
       const value = process.env[variable]
 
-      assert.ok(secret.optional === true || value !== undefined,
-        `'${variable}' is not defined`)
+      assert.ok(
+        secret.optional === true || value !== undefined,
+        `'${variable}' is not defined`
+      )
 
       secrets[secret.name] = value
     }

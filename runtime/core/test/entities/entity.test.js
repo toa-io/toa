@@ -44,7 +44,10 @@ describe('read-only', () => {
   it('should refuse to be modified', () => {
     const entity = new Entity(fixtures.schema, fixtures.state(), undefined, false)
 
-    assert.throws(() => entity.set(entity.get()), (error) => /read-only/.test(error.message))
+    assert.throws(
+      () => entity.set(entity.get()),
+      (error) => /read-only/.test(error.message)
+    )
   })
 })
 
@@ -92,7 +95,7 @@ it('should provide event', () => {
   assert.notStrictEqual(event.origin.foo, 'new value')
 })
 
-function resetCalls (target = [assert, fixtures], seen = new Set()) {
+function resetCalls(target = [assert, fixtures], seen = new Set()) {
   if (target === null || typeof target !== 'object' || seen.has(target)) return
 
   seen.add(target)

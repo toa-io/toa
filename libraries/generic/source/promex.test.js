@@ -79,11 +79,11 @@ describe('callback', () => {
   })
 
   for (const error of [undefined, null])
-     it(`should resolve to result if error is ${error}`, async () => {
-    const result = generate()
+    it(`should resolve to result if error is ${error}`, async () => {
+      const result = generate()
 
-    setImmediate(() => instance.callback(error, result))
+      setImmediate(() => instance.callback(error, result))
 
-    await assert.deepStrictEqual(await instance, result)
-  })
+      await assert.deepStrictEqual(await instance, result)
+    })
 })

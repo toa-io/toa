@@ -29,7 +29,7 @@ The Storages extension provides `storages` aspect,
 containing named Storage instances, according to the annotation.
 
 ```javascript
-async function effect (_, context) {
+async function effect(_, context) {
   await context.storages.photos.get('/path/to/b4f577e0.thumbnail.jpeg')
 }
 ```

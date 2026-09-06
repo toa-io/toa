@@ -3,7 +3,7 @@ export class Factory {
    *
    * @returns {Connector}
    */
-  storage () {
+  storage() {
     return {
       id: '',
       connected: false,
@@ -18,15 +18,15 @@ export class Factory {
   }
 }
 
-
-
 export const deployment = (_, value) => {
   return {
     variables: {
-      global: [{
-        name: 'TOA_TEST_CUSTOM_STORAGE',
-        value
-      }]
+      global: [
+        {
+          name: 'TOA_TEST_CUSTOM_STORAGE',
+          value
+        }
+      ]
     }
   }
 }

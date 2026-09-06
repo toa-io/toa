@@ -26,9 +26,9 @@ Exposes an imperative `focus()` method — bind the instance (`bind:this`) and c
 
 ## Props
 
-| Prop       | Type                                                              | Default | Notes                                              |
-| ---------- | ----------------------------------------------------------------- | ------- | -------------------------------------------------- |
-| `value`       | `string`                                                          | —             | Initial/current value; resets to this when cleared. |
-| `class`       | `ClassValue`                                                      | —             | Extra classes on the shadcn `Input`.               |
-| `placeholder` | `string`                                                          | `'Enter name'`| Placeholder text when the field is empty.          |
-| `onsubmit`    | `(value: string) => Promise<string \| undefined> \| string \| undefined` | —       | Called on blur (if changed) or form submit. Return a string to update the field. |
+| Prop          | Type                                                                     | Default        | Notes                                                                            |
+| ------------- | ------------------------------------------------------------------------ | -------------- | -------------------------------------------------------------------------------- |
+| `value`       | `string`                                                                 | —              | Initial/current value; resets to this when cleared.                              |
+| `class`       | `ClassValue`                                                             | —              | Extra classes on the shadcn `Input`.                                             |
+| `placeholder` | `string`                                                                 | `'Enter name'` | Placeholder text when the field is empty.                                        |
+| `onsubmit`    | `(value: string) => Promise<string \| undefined> \| string \| undefined` | —              | Called on blur (if changed) or form submit. Return a string to update the field. |

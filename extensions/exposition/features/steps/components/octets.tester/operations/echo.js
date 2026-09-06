@@ -1,4 +1,4 @@
-function echo (input) {
+function echo(input) {
   return input
 }
 

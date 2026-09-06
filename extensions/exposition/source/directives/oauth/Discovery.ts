@@ -20,11 +20,10 @@ export class Discovery implements Interceptor {
    */
   private readonly authorities = new Map<string, Documents>()
 
-  public mount (options: http.Options): void {
+  public mount(options: http.Options): void {
     this.authorities.clear()
 
-    if (options.oauth === undefined)
-      return
+    if (options.oauth === undefined) return
 
     /*
      * `https` always: RFC 8414 has an issuer be one, and OAuth 2.1 has every endpoint of an
@@ -39,20 +38,18 @@ export class Discovery implements Interceptor {
       this.authorities.set(authority, documents(`https://${host}`, options.oauth))
   }
 
-  public reset (): void {
+  public reset(): void {
     this.authorities.clear()
   }
 
-  public intercept (input: Input): Output {
+  public intercept(input: Input): Output {
     const known = this.authorities.get(input.authority)
 
-    if (known === undefined)
-      return null
+    if (known === undefined) return null
 
     // every reply, not just a document's: the challenge is what points a client here
     input.pipelines.response.push((response) => {
-      if (response.status !== UNAUTHORIZED)
-        return
+      if (response.status !== UNAUTHORIZED) return
 
       response.headers ??= new Headers()
       response.headers.set('www-authenticate', known.challenge(input.url.pathname))
@@ -60,8 +57,7 @@ export class Discovery implements Interceptor {
 
     const body = known.read(input.url.pathname)
 
-    if (body === undefined)
-      return null
+    if (body === undefined) return null
 
     return { body, headers: new Headers({ 'cache-control': 'public, max-age=3600' }) }
   }

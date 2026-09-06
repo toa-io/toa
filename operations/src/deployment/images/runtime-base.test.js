@@ -16,7 +16,7 @@ class TestImage extends Image {
   #name
   #base
 
-  constructor (runtime, registry, dockerfile, name = 'test', base) {
+  constructor(runtime, registry, dockerfile, name = 'test', base) {
     super('acme', runtime, registry)
 
     this.dockerfile = dockerfile
@@ -24,15 +24,15 @@ class TestImage extends Image {
     this.#base = base
   }
 
-  get name () {
+  get name() {
     return this.#name
   }
 
-  get version () {
+  get version() {
     return 'abcdef12'
   }
 
-  get base () {
+  get base() {
     return this.#base
   }
 }
@@ -76,12 +76,18 @@ describe('runtime base image', () => {
     const dockerfile = await readFile(join(path, 'Dockerfile'), 'utf8')
 
     assert.ok(dockerfile.includes('FROM node:24.14.0-alpine3.22'))
-    assert.ok(!(dockerfile.includes(RUNTIME_IMAGE)))
+    assert.ok(!dockerfile.includes(RUNTIME_IMAGE))
   })
 
   it('should allow composition.image override via base', async () => {
     const runtime = { version: '1.0.0-alpha.232' }
-    const image = new TestImage(runtime, {}, compositionDockerfile, 'mono', 'custom.example/base:1')
+    const image = new TestImage(
+      runtime,
+      {},
+      compositionDockerfile,
+      'mono',
+      'custom.example/base:1'
+    )
 
     const path = await image.prepare(root)
     const dockerfile = await readFile(join(path, 'Dockerfile'), 'utf8')

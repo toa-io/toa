@@ -26,12 +26,12 @@ Before(
   /**
    * @this {toa.features.Context}
    */
-  async function() {
+  async function () {
     this.cwd = await mkdtemp(join(tmpdir(), Math.random().toString(36).slice(2)))
     this.containers = {}
-  })
+  }
+)
 
-After(
-  async function() {
-    await stage.shutdown()
-  })
+After(async function () {
+  await stage.shutdown()
+})

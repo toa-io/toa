@@ -13,7 +13,7 @@ import { BANNER, capitalize, collector, comment, imports } from './lib.js'
  *   Context every component shares has taken what they all have
  * @returns {string}
  */
-export function component (manifest, module, contributed = { types: {}, imports: {} }) {
+export function component(manifest, module, contributed = { types: {}, imports: {} }) {
   const { importing, required } = collector()
   const blocks = []
   const entity = manifest.entity === undefined ? 'unknown' : 'Entity'
@@ -22,16 +22,18 @@ export function component (manifest, module, contributed = { types: {}, imports:
   if (manifest.entity !== undefined)
     blocks.push(`export interface Entity ${emit(manifest.entity.schema)}`)
 
-  const endpoints = Object.entries(manifest.operations ?? {})
-    .map(([endpoint, operation]) => ({
+  const endpoints = Object.entries(manifest.operations ?? {}).map(
+    ([endpoint, operation]) => ({
       endpoint,
       operation,
       name: capitalize(endpoint),
       output: returns(endpoint, operation, manifest, importing)
-    }))
+    })
+  )
 
   for (const { operation, name, output } of endpoints) {
-    if (stated(operation.input)) blocks.push(`export type ${name}Input = ${emit(operation.input)}`)
+    if (stated(operation.input))
+      blocks.push(`export type ${name}Input = ${emit(operation.input)}`)
     if (output.declared) blocks.push(`export type ${name}Output = ${output.type}`)
   }
 
@@ -49,7 +51,7 @@ export function component (manifest, module, contributed = { types: {}, imports:
 }
 
 /** One call signature per endpoint, as the call actually resolves. */
-function calls (endpoints, entity, importing) {
+function calls(endpoints, entity, importing) {
   const lines = []
 
   for (const { endpoint, operation, name, output } of endpoints) {
@@ -69,18 +71,19 @@ function calls (endpoints, entity, importing) {
     const type = output.declared ? `${name}Output` : output.type
     const described = comment(operation.description, '  ')
 
-    if (described !== null)
-      lines.push(described)
+    if (described !== null) lines.push(described)
 
-    lines.push(`  ${endpoint}: (request: { ${request.join(', ')} }) => ` +
-      `Promise<${resolves(type, operation, importing)}>`)
+    lines.push(
+      `  ${endpoint}: (request: { ${request.join(', ')} }) => ` +
+        `Promise<${resolves(type, operation, importing)}>`
+    )
   }
 
   return `export interface Component {\n${lines.join('\n')}\n}`
 }
 
 /** The Context this component's own code is given: the base, plus what its extensions add. */
-function context (contributed, module, importing) {
+function context(contributed, module, importing) {
   const { types, imports: needed } = contributed
 
   const blocks = []
@@ -108,7 +111,9 @@ function context (contributed, module, importing) {
   else {
     const lines = keys.map((key) => `  ${key}: ${types[key]}`)
 
-    blocks.push(`export interface Context extends Base<Component> {\n${lines.join('\n')}\n}`)
+    blocks.push(
+      `export interface Context extends Base<Component> {\n${lines.join('\n')}\n}`
+    )
   }
 
   return blocks
@@ -121,7 +126,7 @@ function context (contributed, module, importing) {
  * declaration. Where nothing is declared, only an operation Toa itself provides has a knowable
  * result: the prototype's algorithms return the scope they were given.
  */
-function returns (endpoint, operation, manifest, importing) {
+function returns(endpoint, operation, manifest, importing) {
   if (stated(operation.output)) return { declared: true, type: emit(operation.output) }
 
   if (manifest.prototype?.operations?.[endpoint] === undefined)
@@ -130,15 +135,19 @@ function returns (endpoint, operation, manifest, importing) {
   const entity = manifest.entity === undefined ? 'unknown' : 'Entity'
 
   switch (operation.scope) {
-    case 'object': return { declared: false, type: entity }
-    case 'objects': return { declared: false, type: `${entity}[]` }
+    case 'object':
+      return { declared: false, type: entity }
+    case 'objects':
+      return { declared: false, type: `${entity}[]` }
     // an assignment hands back the new state unless the algorithm returned one
-    case 'changeset': return { declared: false, type: entity }
+    case 'changeset':
+      return { declared: false, type: entity }
     case 'stream':
       importing('node:stream', 'Readable')
 
       return { declared: false, type: 'Readable' }
-    default: return { declared: false, type: 'unknown' }
+    default:
+      return { declared: false, type: 'unknown' }
   }
 }
 
@@ -147,9 +156,10 @@ function returns (endpoint, operation, manifest, importing) {
  * is meant to handle is one the operation states. An exception is thrown rather than returned,
  * so it is in no return type either way.
  */
-function resolves (type, operation, importing) {
+function resolves(type, operation, importing) {
   // an observation of one object finds nothing as often as it finds something
-  const empty = operation.type === 'observation' && operation.scope === 'object' ? ' | null' : ''
+  const empty =
+    operation.type === 'observation' && operation.scope === 'object' ? ' | null' : ''
 
   if (operation.errors === undefined) return `${type}${empty}`
 

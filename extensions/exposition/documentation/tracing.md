@@ -32,7 +32,7 @@ clients instrumented with OpenTelemetry-compatible tooling, or by upstream proxi
 traceparent: 00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01
 ```
 
-In addition to the trace ID, it carries the ID of the client span, which becomes the *parent* of
+In addition to the trace ID, it carries the ID of the client span, which becomes the _parent_ of
 the gateway's server span, linking client-side and server-side spans into a single trace tree.
 
 ### `ray`
@@ -52,9 +52,9 @@ Headers with invalid values are ignored, and a new trace is started.
 
 ## Sampling
 
-The trace *context* (trace ID) is always created and propagated, so the `ray` header and
+The trace _context_ (trace ID) is always created and propagated, so the `ray` header and
 `trace_id` in log entries are always present. The sampling decision only determines whether
-the *spans* of the trace are recorded.
+the _spans_ of the trace are recorded.
 
 The decision is made once, by the process that starts the trace, and is propagated along with
 the trace context (the flags byte of `traceparent`), so a trace is either recorded as a whole

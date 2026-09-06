@@ -27,6 +27,26 @@ import { guards } from './guards.js'
 import { host } from './host.js'
 import { rc } from './rc.js'
 
-export { call, cascade, component, composition, context, emission, events, outbox, atomicity, atom, host, manifest, operation, receivers, receive, remote, storage, guards, rc }
+export {
+  call,
+  cascade,
+  component,
+  composition,
+  context,
+  emission,
+  events,
+  outbox,
+  atomicity,
+  atom,
+  host,
+  manifest,
+  operation,
+  receivers,
+  receive,
+  remote,
+  storage,
+  guards,
+  rc
+}
 
 export { bindings, bridge, contract, discovery, extensions }

@@ -6,7 +6,7 @@ import { once } from 'node:events'
  * @param {import('child_process').SpawnOptions} [options]
  * @this {toa.features.Context}
  */
-export async function execute (command, options = {}) {
+export async function execute(command, options = {}) {
   options.cwd = this.cwd
 
   // the command leads its own process group, so aborting it takes the program along;
@@ -34,7 +34,11 @@ export async function execute (command, options = {}) {
   this.stdout = stdout.trim()
   // node warns about experimental APIs a dependency reaches for; that is the
   // runtime speaking, not the program under test
-  this.stderr = stderr.split('\n').filter((line) => !EXPERIMENTAL.test(line)).join('\n').trim()
+  this.stderr = stderr
+    .split('\n')
+    .filter((line) => !EXPERIMENTAL.test(line))
+    .join('\n')
+    .trim()
   this.stdoutLines = lines(this.stdout)
   this.stderrLines = lines(this.stderr)
 }
@@ -45,7 +49,7 @@ const EXPERIMENTAL = /ExperimentalWarning|--trace-warnings/
  * @param {import('child_process').ChildProcess} child
  * @this {toa.features.Context}
  */
-function abort (child) {
+function abort(child) {
   this.aborted = true
 
   try {

@@ -2,11 +2,10 @@ import { split } from './lib/credentials.js'
 import type { Context } from '../types/index.js'
 import type { Maybe } from '@toa.io/core/types'
 
-export async function effect (input: Input, context: Context): Promise<Maybe<Output>> {
+export async function effect(input: Input, context: Context): Promise<Maybe<Output>> {
   const pair = split(input.credentials)
 
-  if (pair === null)
-    return INVALID_CREDENTIALS
+  if (pair === null) return INVALID_CREDENTIALS
 
   const [username, password] = pair
 
@@ -23,8 +22,7 @@ export async function effect (input: Input, context: Context): Promise<Maybe<Out
 
   const incepted = await context.local.transit(request)
 
-  if (incepted instanceof Error)
-    return incepted
+  if (incepted instanceof Error) return incepted
 
   await principal({ authority: input.authority, username }, incepted.id, context)
 
@@ -35,13 +33,18 @@ export async function effect (input: Input, context: Context): Promise<Maybe<Out
  * The `system` Role is granted here, before the reply that mints a Token from these
  * credentials — the event that carries the same grant lands after it.
  */
-async function principal (credentials: Credentials, id: string,
-  context: Context): Promise<void> {
+async function principal(
+  credentials: Credentials,
+  id: string,
+  context: Context
+): Promise<void> {
   const configured = context.configuration.principal
 
-  if (configured === undefined ||
+  if (
+    configured === undefined ||
     configured.authority !== credentials.authority ||
-    configured.username !== credentials.username)
+    configured.username !== credentials.username
+  )
     return
 
   await context.remote.identity.roles.principal({ input: { id } })

@@ -9,10 +9,11 @@ const { Factory } = deployment
  */
 export const tags = async (argv) => {
   const path = find(argv.path)
-  const factory = await Factory.create(path, argv.environment, { mono: argv.mono === true })
+  const factory = await Factory.create(path, argv.environment, {
+    mono: argv.mono === true
+  })
   const operator = await factory.operator()
   const tags = operator.tags()
 
-  for (const tag of tags)
-    console.log(tag)
+  for (const tag of tags) console.log(tag)
 }

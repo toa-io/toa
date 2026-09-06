@@ -2,16 +2,17 @@ import { Guard } from '@toa.io/core'
 import * as boot from './index.js'
 
 export async function guards(manifest, context) {
-  if (manifest.guards === undefined)
-    return 
+  if (manifest.guards === undefined) return
 
   const entries = Object.entries(manifest.guards)
 
-  return await Promise.all(entries.map(async ([name, guard]) => {
-    const bridge = await load(guard, name, context)
+  return await Promise.all(
+    entries.map(async ([name, guard]) => {
+      const bridge = await load(guard, name, context)
 
-    return new Guard(name, bridge)
-  }))
+      return new Guard(name, bridge)
+    })
+  )
 }
 
 async function load(guard, name, context) {

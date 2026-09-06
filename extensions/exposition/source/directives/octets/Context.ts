@@ -6,15 +6,18 @@ export class Context extends Directive {
   public readonly targeted = false
   public readonly storage: string
 
-  public constructor (value: unknown) {
+  public constructor(value: unknown) {
     super()
 
-    assert.ok(typeof value === 'string', 'Directive \'octets:context\' must must be a string')
+    assert.ok(
+      typeof value === 'string',
+      "Directive 'octets:context' must must be a string"
+    )
 
     this.storage = value
   }
 
-  public async apply (): Promise<Output> {
+  public async apply(): Promise<Output> {
     return null
   }
 }

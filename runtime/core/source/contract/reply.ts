@@ -7,9 +7,12 @@ export class Reply extends Contract {
   public static override Exception: Refusal =
     ResponseContractException as unknown as Refusal
 
-  public static schema (output?: JSONSchema, errors?: Array<string | number>): JSONSchema {
-    const schema: JSONSchema =
-      { type: 'object', properties: {}, additionalProperties: false }
+  public static schema(output?: JSONSchema, errors?: Array<string | number>): JSONSchema {
+    const schema: JSONSchema = {
+      type: 'object',
+      properties: {},
+      additionalProperties: false
+    }
 
     if (output !== undefined) {
       /*
@@ -20,8 +23,7 @@ export class Reply extends Contract {
        */
       output = structuredClone(output)
 
-      if (output.type === 'object')
-        output.additionalProperties = true
+      if (output.type === 'object') output.additionalProperties = true
       else if (output.type === 'array' && output.items?.type === 'object')
         output.items.additionalProperties = true
 
@@ -33,20 +35,21 @@ export class Reply extends Contract {
      * stated, an error is not a reply this operation makes — it is a mistake, and the
      * contract says so rather than passing an undeclared code on to whoever called.
      */
-    schema.properties.error = errors === undefined
-      ? false
-      : {
-          type: 'object',
-          properties: {
-            code: {
-              enum: errors
+    schema.properties.error =
+      errors === undefined
+        ? false
+        : {
+            type: 'object',
+            properties: {
+              code: {
+                enum: errors
+              },
+              message: {
+                type: 'string'
+              }
             },
-            message: {
-              type: 'string'
-            }
-          },
-          required: ['code']
-        }
+            required: ['code']
+          }
 
     return schema
   }

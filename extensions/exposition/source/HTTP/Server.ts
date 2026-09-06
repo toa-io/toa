@@ -27,32 +27,35 @@ export class Server extends Connector {
 
   private process?: Processor
 
-  private constructor (properties: Properties) {
+  private constructor(properties: Properties) {
     super()
 
     this.properties = properties
-    this.authorities = new Map(Object.entries(properties.authorities).map(([key, value]) => [value, key]))
+    this.authorities = new Map(
+      Object.entries(properties.authorities).map(([key, value]) => [value, key])
+    )
     this.server = instantiate(properties.protocol)
     this.probe = new Probe(properties.probe)
 
     this.server.on('request', (req, res) =>
-      this.listener(req as unknown as IncomingMessage, res as unknown as ServerResponse))
+      this.listener(req as unknown as IncomingMessage, res as unknown as ServerResponse)
+    )
 
     if (properties.protocol === 'h1') this.h1(this.server as http.Server)
     else this.h2(this.server as http2.Http2Server)
   }
 
-  public static create (options: Options): Server {
+  public static create(options: Options): Server {
     const properties: Properties = { ...DEFAULTS, ...options }
 
     return new Server(properties)
   }
 
-  public attach (process: Processor): void {
+  public attach(process: Processor): void {
     this.process = process
   }
 
-  protected override async open (): Promise<void> {
+  protected override async open(): Promise<void> {
     // answers 503 from here; the gateway's dependencies have settled by the time `open` runs
     await this.probe.listen()
 
@@ -67,7 +70,7 @@ export class Server extends Connector {
     console.info('Ready')
   }
 
-  protected override async close (): Promise<void> {
+  protected override async close(): Promise<void> {
     await this.probe.close()
 
     this.server.close()
@@ -75,8 +78,7 @@ export class Server extends Connector {
     // GOAWAY lets in-flight streams finish; `Http2Server` has no `closeIdleConnections`
     if (this.properties.protocol === 'h1')
       (this.server as http.Server).closeIdleConnections()
-    else
-      for (const session of this.sessions) session.close()
+    else for (const session of this.sessions) session.close()
 
     console.info('Stopped accepting new connections')
 
@@ -88,14 +90,13 @@ export class Server extends Connector {
 
     if (this.properties.protocol === 'h1')
       (this.server as http.Server).closeAllConnections()
-    else
-      for (const session of this.sessions) session.destroy()
+    else for (const session of this.sessions) session.destroy()
 
     console.info('Stopped')
   }
 
   /** A malformed HTTP/1.1 request has no framing to answer in, so the status line is written by hand. */
-  private h1 (server: http.Server): void {
+  private h1(server: http.Server): void {
     server.on('clientError', (error, socket) => {
       console.warn('Client connection error', error)
 
@@ -105,7 +106,7 @@ export class Server extends Connector {
   }
 
   /** HTTP/2 has no `clientError`: failures surface per session, per stream, or per frame. */
-  private h2 (server: http2.Http2Server): void {
+  private h2(server: http2.Http2Server): void {
     server.on('session', (session) => {
       this.sessions.add(session)
       session.on('close', () => this.sessions.delete(session))
@@ -120,12 +121,11 @@ export class Server extends Connector {
     })
   }
 
-  private listener (request: IncomingMessage, response: ServerResponse): void {
+  private listener(request: IncomingMessage, response: ServerResponse): void {
     request.once('error', (error) => {
       console.warn('Request error', errorAttributes(request, error))
 
-      if (!response.writableEnded)
-        response.destroy()
+      if (!response.writableEnded) response.destroy()
     })
 
     // no listener on `request.socket`: under HTTP/2 it is the session's socket, shared by
@@ -134,7 +134,10 @@ export class Server extends Connector {
     const host = authorityOf(request)?.toLowerCase()
 
     if (host === undefined || !HOST.test(host)) {
-      console.warn('Request without a valid authority', errorAttributes(request, new Error('Invalid authority')))
+      console.warn(
+        'Request without a valid authority',
+        errorAttributes(request, new Error('Invalid authority'))
+      )
 
       response.writeHead(400).end()
 
@@ -168,53 +171,55 @@ export class Server extends Connector {
     // if the request carries no trace context, the trace starts here
     const remote = trace(request.headers)
 
-    const processing = remote === null
-      ? this.serve(request, response, authority, url)
-      : run(remote, async () => await this.serve(request, response, authority, url))
+    const processing =
+      remote === null
+        ? this.serve(request, response, authority, url)
+        : run(remote, async () => await this.serve(request, response, authority, url))
 
     processing.catch((error) => {
       console.error('Request processing failed', error)
 
-      if (!response.writableEnded)
-        response.writeHead(500).end()
+      if (!response.writableEnded) response.writeHead(500).end()
     })
   }
 
   // eslint-disable-next-line max-params
-  private async serve (request: IncomingMessage,
+  private async serve(
+    request: IncomingMessage,
     response: ServerResponse,
     authority: string,
-    url: URL): Promise<void> {
-    await console.span({
-      name: `${request.method} ${request.url}`,
-      kind: 'server',
-      service: 'exposition',
-      attributes: { method: request.method, url: request.url, authority }
-    }, async () => {
-      response.setHeader('ray', current()!.traceId)
+    url: URL
+  ): Promise<void> {
+    await console.span(
+      {
+        name: `${request.method} ${request.url}`,
+        kind: 'server',
+        service: 'exposition',
+        attributes: { method: request.method, url: request.url, authority }
+      },
+      async () => {
+        response.setHeader('ray', current()!.traceId)
 
-      const context = new Context(authority, request, this.properties, url)
+        const context = new Context(authority, request, this.properties, url)
 
-      await this.process!(context)
-        .then(this.success(context, response))
-        .catch(this.fail(context, response))
-        .finally(() => request.removeAllListeners('error'))
-    })
+        await this.process!(context)
+          .then(this.success(context, response))
+          .catch(this.fail(context, response))
+          .finally(() => request.removeAllListeners('error'))
+      }
+    )
   }
 
-  private success (context: Context, response: ServerResponse) {
+  private success(context: Context, response: ServerResponse) {
     return async (message: OutgoingMessage) => {
       let status = message.status
 
       if (status === undefined)
-        if (message.body === null)
-          status = 404
-        else if (context.request.method === 'POST')
-          status = 201
+        if (message.body === null) status = 404
+        else if (context.request.method === 'POST') status = 201
         else if (message.body === undefined && context.request.method !== 'HEAD')
           status = 204
-        else
-          status = 200
+        else status = 200
 
       message.status = status
 
@@ -222,7 +227,7 @@ export class Server extends Connector {
     }
   }
 
-  private fail (context: Context, response: ServerResponse) {
+  private fail(context: Context, response: ServerResponse) {
     return async (exception: Error) => {
       try {
         // Over HTTP/2 the reply is followed by RST_STREAM(NO_ERROR), which tells the client
@@ -234,26 +239,27 @@ export class Server extends Connector {
         const span = current()
 
         // https://opentelemetry.io/docs/specs/semconv/http/http-spans/#status
-        if (status >= 500 && span !== undefined)
-          span.status = 'error'
+        if (status >= 500 && span !== undefined) span.status = 'error'
 
         if (!response.writableEnded) {
           response.statusCode = status
 
-          const message: OutgoingMessage = { status: response.statusCode, authentic: true }
+          const message: OutgoingMessage = {
+            status: response.statusCode,
+            authentic: true
+          }
 
           // eslint-disable-next-line max-depth
           if (exception instanceof Exception && exception.headers !== undefined)
             message.headers = exception.headers
 
           // eslint-disable-next-line max-depth
-          if (context.encoder === null)
-            message.body = undefined
+          if (context.encoder === null) message.body = undefined
           else if (exception instanceof ClientError || this.properties.debug)
             message.body =
               exception instanceof Exception
                 ? exception.body
-                : (this.properties.debug && exception.stack) ?? exception.message
+                : ((this.properties.debug && exception.stack) ?? exception.message)
 
           await write(context, response, message)
         }
@@ -271,9 +277,8 @@ export class Server extends Connector {
   }
 }
 
-function instantiate (protocol: Protocol): http.Server | http2.Http2Server {
-  if (protocol === 'h1')
-    return http.createServer()
+function instantiate(protocol: Protocol): http.Server | http2.Http2Server {
+  if (protocol === 'h1') return http.createServer()
 
   return http2.createServer({
     // realtime pins one stream per subscription, and they all share a session
@@ -286,12 +291,12 @@ function instantiate (protocol: Protocol): http.Server | http2.Http2Server {
  * The authority the request is addressed to. HTTP/2 carries it in `:authority` and omits
  * `host` entirely, so reading `host` alone would leave every HTTP/2 request unattributed.
  */
-function authorityOf (request: IncomingMessage): string | undefined {
+function authorityOf(request: IncomingMessage): string | undefined {
   return request.headers[':authority'] ?? request.headers.host
 }
 
 /** Parsing the URL is how a request is validated, so the `Context` is handed the result. */
-function parse (request: IncomingMessage, authority: string): URL | Error {
+function parse(request: IncomingMessage, authority: string): URL | Error {
   try {
     return new URL(request.url, `https://${authority}`)
   } catch (error) {
@@ -300,7 +305,7 @@ function parse (request: IncomingMessage, authority: string): URL | Error {
 }
 
 // https://github.com/whatwg/fetch/issues/1254
-async function adam (request: IncomingMessage): Promise<void> {
+async function adam(request: IncomingMessage): Promise<void> {
   const devnull = fs.createWriteStream(os.devNull)
 
   devnull.on('error', () => undefined)
@@ -309,18 +314,19 @@ async function adam (request: IncomingMessage): Promise<void> {
   await once(request, 'end')
 }
 
-function errorAttributes (request: IncomingMessage, error: Error & any): RequestErrorAttributes {
+function errorAttributes(
+  request: IncomingMessage,
+  error: Error & any
+): RequestErrorAttributes {
   const attributes: RequestErrorAttributes = {
     path: request.url,
     method: request.method,
     name: error.name
   }
 
-  if (typeof error.code === 'string')
-    attributes.code = error.code
+  if (typeof error.code === 'string') attributes.code = error.code
 
-  if (typeof error.stack === 'string')
-    attributes.stack = error.stack
+  if (typeof error.stack === 'string') attributes.stack = error.stack
 
   return attributes
 }
@@ -341,12 +347,15 @@ const WINDOW = 1024 * 1024
  * The `ray` header adopts the trace by ID only and does not bypass sampling:
  * the sampling decision is made by the server.
  */
-function trace (headers: IncomingMessage['headers']): SpanContext | null {
-  if (typeof headers.traceparent === 'string')
-    return decode(headers.traceparent)
+function trace(headers: IncomingMessage['headers']): SpanContext | null {
+  if (typeof headers.traceparent === 'string') return decode(headers.traceparent)
 
   // adopting a trace by ID does not bypass sampling
-  if (typeof headers.ray === 'string' && RAY.test(headers.ray) && headers.ray !== ZERO_RAY)
+  if (
+    typeof headers.ray === 'string' &&
+    RAY.test(headers.ray) &&
+    headers.ray !== ZERO_RAY
+  )
     return { traceId: headers.ray.toLowerCase(), sampled: decide() }
 
   return null
@@ -362,7 +371,17 @@ const RAY = /^[\da-f]{32}$/i
 const ZERO_RAY = '0'.repeat(32)
 
 const DEFAULTS: Omit<Properties, 'authorities'> = {
-  methods: new Set<string>(['OPTIONS', 'GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'DELETE', 'LOCK', 'UNLOCK']),
+  methods: new Set<string>([
+    'OPTIONS',
+    'GET',
+    'HEAD',
+    'POST',
+    'PUT',
+    'PATCH',
+    'DELETE',
+    'LOCK',
+    'UNLOCK'
+  ]),
   debug: false,
   port: PORT,
   drain: DRAIN * 1000,

@@ -14,7 +14,13 @@ beforeEach(() => {
 })
 
 it('should depend on transmission', () => {
-  assert.ok(((invocation) => invocation.arguments.length === 1 && isDeepStrictEqual(invocation.arguments[0], call))(fixtures.transmission.link.mock.calls.at(-1) ?? { arguments: [] }))
+  assert.ok(
+    ((invocation) =>
+      invocation.arguments.length === 1 &&
+      isDeepStrictEqual(invocation.arguments[0], call))(
+      fixtures.transmission.link.mock.calls.at(-1) ?? { arguments: [] }
+    )
+  )
 })
 
 it('should call transmission', async () => {
@@ -22,7 +28,13 @@ it('should call transmission', async () => {
 
   await call.invoke(request)
 
-  assert.ok(fixtures.transmission.request.mock.calls.some((invocation) => invocation.arguments.length === 1 && isDeepStrictEqual(invocation.arguments[0], request)))
+  assert.ok(
+    fixtures.transmission.request.mock.calls.some(
+      (invocation) =>
+        invocation.arguments.length === 1 &&
+        isDeepStrictEqual(invocation.arguments[0], request)
+    )
+  )
 })
 
 it('should fit request', async () => {
@@ -30,7 +42,13 @@ it('should fit request', async () => {
 
   await call.invoke(request)
 
-  assert.ok(((invocation) => invocation.arguments.length === 1 && isDeepStrictEqual(invocation.arguments[0], request))(fixtures.contract.fit.mock.calls.at(-1) ?? { arguments: [] }))
+  assert.ok(
+    ((invocation) =>
+      invocation.arguments.length === 1 &&
+      isDeepStrictEqual(invocation.arguments[0], request))(
+      fixtures.contract.fit.mock.calls.at(-1) ?? { arguments: [] }
+    )
+  )
 })
 
 it('should return reply', async () => {
@@ -44,10 +62,13 @@ it('should return reply', async () => {
 it('should throw received exceptions', async () => {
   const request = fixtures.request().bad
 
-  await assert.rejects(call.invoke(request), (error) => { assert.notStrictEqual(error, undefined); return true })
+  await assert.rejects(call.invoke(request), (error) => {
+    assert.notStrictEqual(error, undefined)
+    return true
+  })
 })
 
-function resetCalls (target = [assert, fixtures], seen = new Set()) {
+function resetCalls(target = [assert, fixtures], seen = new Set()) {
   if (target === null || typeof target !== 'object' || seen.has(target)) return
 
   seen.add(target)

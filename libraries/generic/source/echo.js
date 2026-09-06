@@ -4,7 +4,7 @@
  * @param {...string} [substitutions]
  * @returns {string}
  */
-export function echo (input, argument = process.env, ...substitutions) {
+export function echo(input, argument = process.env, ...substitutions) {
   if (typeof argument === 'string') return array(input, [argument, ...substitutions])
   else if (Array.isArray(argument)) return array(input, argument)
   else return object(input, /** @type {Record<string, string>} */ argument)
@@ -15,7 +15,7 @@ export function echo (input, argument = process.env, ...substitutions) {
  * @param {Record<string, string>} [variables]
  * @returns {string}
  */
-function object (input, variables) {
+function object(input, variables) {
   return input.replaceAll(VARIABLE, (_, variable) => variables[variable] ?? '')
 }
 
@@ -24,7 +24,7 @@ function object (input, variables) {
  * @param {string[]} [array]
  * @returns {string}
  */
-function array (input, array) {
+function array(input, array) {
   return input.replaceAll(INDEX, (_, index) => array[+index] ?? '')
 }
 

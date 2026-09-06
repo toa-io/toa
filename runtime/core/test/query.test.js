@@ -57,7 +57,10 @@ describe('criteria', () => {
   it('should throw on unknown properties', () => {
     const instance = new Query(fixtures.samples.simple.properties)
 
-    assert.throws(() => instance.parse({ criteria: 'lastname==Johnson' }), (error) => /not defined/.test(error.message))
+    assert.throws(
+      () => instance.parse({ criteria: 'lastname==Johnson' }),
+      (error) => /not defined/.test(error.message)
+    )
   })
 
   it('should parse id', () => {
@@ -91,13 +94,20 @@ describe('options', () => {
       const sort = ['a', 'b:desc', 'c']
       const query = instance.parse({ sort })
 
-      assert.deepStrictEqual(query.options.sort, [['a', 'asc'], ['b', 'desc'], ['c', 'asc']])
+      assert.deepStrictEqual(query.options.sort, [
+        ['a', 'asc'],
+        ['b', 'desc'],
+        ['c', 'asc']
+      ])
     })
 
     it('should throw on unknown properties', () => {
       const sort = ['d:asc']
 
-      assert.throws(() => instance.parse({ sort }), (error) => /not defined/.test(error.message))
+      assert.throws(
+        () => instance.parse({ sort }),
+        (error) => /not defined/.test(error.message)
+      )
     })
   })
 
@@ -105,12 +115,15 @@ describe('options', () => {
     it('should throw on unknown properties', () => {
       const projection = ['a', 'b', 'c', 'd']
 
-      assert.throws(() => instance.parse({ projection }), (error) => /not defined/.test(error.message))
+      assert.throws(
+        () => instance.parse({ projection }),
+        (error) => /not defined/.test(error.message)
+      )
     })
   })
 })
 
-function resetCalls (target = [assert, fixtures], seen = new Set()) {
+function resetCalls(target = [assert, fixtures], seen = new Set()) {
   if (target === null || typeof target !== 'object' || seen.has(target)) return
 
   seen.add(target)

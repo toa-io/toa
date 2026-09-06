@@ -1,7 +1,7 @@
 import { quote } from '@toa.io/generic'
 import type { Call, Observation } from '@toa.io/core/types'
 
-export async function effect ({ identity }: Input, context: Context): Promise<void> {
+export async function effect({ identity }: Input, context: Context): Promise<void> {
   const keys = await context.local.enumerate({
     query: {
       criteria: `identity==${quote(identity)}`,

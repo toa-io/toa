@@ -5,7 +5,8 @@ import { rename } from './rename.js'
  * @returns {import('mongodb').Filter}
  */
 export const criteria = (node) => {
-  if (TYPES[node.type] === undefined) throw new Error(`AST parse error: unknown node type '${node.type}'`)
+  if (TYPES[node.type] === undefined)
+    throw new Error(`AST parse error: unknown node type '${node.type}'`)
 
   return TYPES[node.type](node)
 }
@@ -43,7 +44,8 @@ TYPES.COMPARISON = (expression) => {
   const right = criteria(expression.right)
   const operator = OPERATORS.COMPARISON[expression.operator]
 
-  if (operator === undefined) throw new Error(`AST parse error: unknown operator '${expression.operator}'`)
+  if (operator === undefined)
+    throw new Error(`AST parse error: unknown operator '${expression.operator}'`)
 
   return { [left]: { [operator]: right } }
 }

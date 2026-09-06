@@ -1,10 +1,9 @@
 import { reveal } from '../handlers/reveal.js'
 
 const builder = (yargs) => {
-  yargs
-    .positional('secret', {
-      type: 'string'
-    })
+  yargs.positional('secret', {
+    type: 'string'
+  })
 }
 
 export const command = 'reveal <secret>'

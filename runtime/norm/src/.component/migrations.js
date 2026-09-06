@@ -27,25 +27,27 @@ export const migrations = async (root, manifest) => {
     const found = ids.get(id)
 
     if (found !== undefined)
-      throw new Error(`Component at '${root}' has more than one ${DIRECTORY}/${id}: ` +
-        `${basename(found)} and ${basename(path)}`)
+      throw new Error(
+        `Component at '${root}' has more than one ${DIRECTORY}/${id}: ` +
+          `${basename(found)} and ${basename(path)}`
+      )
 
     ids.set(id, path)
   }
 
-  manifest.entity.migrations = await Promise.all(Array.from(ids,
-    async ([id, path]) => ({ id, steps: await read(path) })))
+  manifest.entity.migrations = await Promise.all(
+    Array.from(ids, async ([id, path]) => ({ id, steps: await read(path) }))
+  )
 }
 
 /**
  * A migration is a list of steps. A file that is not one is refused here rather than at the
  * storage, where the component it belongs to is no longer known.
  */
-async function read (path) {
+async function read(path) {
   const steps = yaml.load(await readFile(path, 'utf8'))
 
-  if (!Array.isArray(steps))
-    throw new Error(`Migration '${path}' is not a list of steps`)
+  if (!Array.isArray(steps)) throw new Error(`Migration '${path}' is not a list of steps`)
 
   return steps
 }

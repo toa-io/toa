@@ -44,9 +44,15 @@ it('should decode plain number', async () => {
 })
 
 it('should throw if not quantity', async () => {
-  assert.throws(() => quantity('KB10'), (error) => /'KB10' doesn't look like a quantity of something/.test(error.message))
+  assert.throws(
+    () => quantity('KB10'),
+    (error) => /'KB10' doesn't look like a quantity of something/.test(error.message)
+  )
 })
 
 it('should throw if multiplier not known', async () => {
-  assert.throws(() => quantity('10wB'), (error) => /'wB' doesn't look like a quantity unit/.test(error.message))
+  assert.throws(
+    () => quantity('10wB'),
+    (error) => /'wB' doesn't look like a quantity unit/.test(error.message)
+  )
 })

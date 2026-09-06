@@ -42,31 +42,30 @@ const create = async (manifest, locator) => {
 
   const decorated = boot.extensions.component(component)
 
-  if (phases?.settle !== undefined)
-    decorated.settle = phases.settle
+  if (phases?.settle !== undefined) decorated.settle = phases.settle
 
   // a dependency closes after its dependant, so the component is already closed
   // when the RC releases what it opened
-  if (phases?.dispose !== undefined)
-    decorated.depends(phases.dispose)
+  if (phases?.dispose !== undefined) decorated.depends(phases.dispose)
 
   return decorated
 }
 
-async function bootOperations (manifest, context, state, preflight) {
-  if (manifest.operations === undefined)
-    return {}
+async function bootOperations(manifest, context, state, preflight) {
+  if (manifest.operations === undefined) return {}
 
   const entries = Object.entries(manifest.operations)
 
   // each one loads its algorithm from disk and compiles its contracts
-  const booted = await Promise.all(entries.map(([endpoint, definition]) =>
-    boot.operation(manifest, endpoint, definition, context, state, preflight)))
+  const booted = await Promise.all(
+    entries.map(([endpoint, definition]) =>
+      boot.operation(manifest, endpoint, definition, context, state, preflight)
+    )
+  )
 
   const operations = {}
 
-  for (let i = 0; i < entries.length; i++)
-    operations[entries[i][0]] = booted[i]
+  for (let i = 0; i < entries.length; i++) operations[entries[i][0]] = booted[i]
 
   return operations
 }

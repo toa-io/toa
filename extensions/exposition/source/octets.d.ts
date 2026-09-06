@@ -1,6 +1,6 @@
 export interface WorkflowInput<
   TParameters extends Record<string, string> = Record<string, string>,
-  TSteps extends Record<string, unknown> = Record<string, unknown>,
+  TSteps extends Record<string, unknown> = Record<string, unknown>
 > {
   authority: string
   identity?: string

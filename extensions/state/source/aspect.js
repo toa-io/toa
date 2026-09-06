@@ -14,12 +14,12 @@ export class Aspect extends Connector {
   /**
    * @param {object} value
    */
-  invoke (value) {
+  invoke(value) {
     if (value === undefined) return this.#value
     else this.#set(value)
   }
 
-  #set (value) {
+  #set(value) {
     overwrite(this.#value, value)
   }
 }

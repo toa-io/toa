@@ -5,7 +5,7 @@ import type { Event as StateEvent } from './types/state.js'
 export class Emission extends Connector {
   readonly #events: Event[]
 
-  public constructor (events: Event[]) {
+  public constructor(events: Event[]) {
     super()
 
     this.#events = events
@@ -13,7 +13,7 @@ export class Emission extends Connector {
     this.depends(events)
   }
 
-  public async emit (event: StateEvent): Promise<void> {
+  public async emit(event: StateEvent): Promise<void> {
     const emission = this.#events.map((e) => e.emit(event))
 
     await Promise.all(emission)

@@ -10,41 +10,39 @@ import * as extract from './.deployment/index.js'
 
 import { When, Then } from '@cucumber/cucumber'
 
-When('I export deployment',
-  function () {
-    return extract.deployment.call(this)
-  })
+When('I export deployment', function () {
+  return extract.deployment.call(this)
+})
 
-When('I export images',
-  function () {
-    return extract.images.call(this)
-  })
+When('I export images', function () {
+  return extract.images.call(this)
+})
 
-Then('exporting deployment fails with:',
+Then(
+  'exporting deployment fails with:',
   /**
    * @param {string} message
    * @this {toa.features.Context}
    */
   async function (message) {
     await assert.rejects(extract.deployment.call(this), { message })
-  })
+  }
+)
 
-When('I export deployment for {word}',
-  function (env) {
-    return extract.deployment.call(this, env)
-  })
+When('I export deployment for {word}', function (env) {
+  return extract.deployment.call(this, env)
+})
 
-When('I export a mono deployment',
-  function () {
-    return extract.deployment.call(this, undefined, { mono: true })
-  })
+When('I export a mono deployment', function () {
+  return extract.deployment.call(this, undefined, { mono: true })
+})
 
-When('I export a mono deployment for {word}',
-  function (env) {
-    return extract.deployment.call(this, env, { mono: true })
-  })
+When('I export a mono deployment for {word}', function (env) {
+  return extract.deployment.call(this, env, { mono: true })
+})
 
-Then('exported {helm-artifact} should contain:',
+Then(
+  'exported {helm-artifact} should contain:',
   /**
    * @param {string} artifact
    * @param {string} text
@@ -52,9 +50,11 @@ Then('exported {helm-artifact} should contain:',
    */
   async function (artifact, text) {
     await contains(this.cwd, artifact, text)
-  })
+  }
+)
 
-Then('exported {helm-artifact} should not contain:',
+Then(
+  'exported {helm-artifact} should not contain:',
   /**
    * @param {string} artifact
    * @param {string} text
@@ -62,7 +62,8 @@ Then('exported {helm-artifact} should not contain:',
    */
   async function (artifact, text) {
     await contains(this.cwd, artifact, text, false)
-  })
+  }
+)
 
 /**
  * @param {string} cwd

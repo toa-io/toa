@@ -3,7 +3,8 @@
  * something other than the code decides whether it passes: a host on the internet, an image
  * it pulls and boots, or a lifetime it has to sit through.
  */
-const REQUIRED = 'not @skip and not @manual and not @network and not @containers and not @timing'
+const REQUIRED =
+  'not @skip and not @manual and not @network and not @containers and not @timing'
 
 /*
  * And what runs nightly, where a failure costs a report rather than a merge. `@manual` is

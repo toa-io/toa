@@ -6,7 +6,7 @@ import { Connector } from '@toa.io/core'
 export class Receiver extends Connector {
   #receiver
 
-  constructor (receiver) {
+  constructor(receiver) {
     super()
 
     this.#receiver = receiver

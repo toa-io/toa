@@ -12,25 +12,23 @@ export class Ready extends Connector {
   private listening = false
   private skipped = false
 
-  public constructor (options: ReadyOptions) {
+  public constructor(options: ReadyOptions) {
     super()
 
     this.options = options
     this.server.on('request', (req, res) => this.#listener(req, res))
   }
 
-  public static create (): Ready | null {
+  public static create(): Ready | null {
     const options = resolveOptions()
 
-    if (options === null)
-      return null
+    if (options === null) return null
 
     return new Ready(options)
   }
 
-  public async listen (): Promise<void> {
-    if (this.listening || this.skipped)
-      return
+  public async listen(): Promise<void> {
+    if (this.listening || this.skipped) return
 
     this.startedAt = Date.now()
 
@@ -54,7 +52,9 @@ export class Ready extends Connector {
       // Local multi-process (pm2 + features) shares a host; k8s pods do not.
       if (error?.code === 'EADDRINUSE') {
         this.skipped = true
-        console.warn('Ready probe port already in use, skipping', { port: this.options.port })
+        console.warn('Ready probe port already in use, skipping', {
+          port: this.options.port
+        })
 
         return
       }
@@ -68,7 +68,7 @@ export class Ready extends Connector {
     this.server.unref()
   }
 
-  public async complete (): Promise<void> {
+  public async complete(): Promise<void> {
     await this.listen()
 
     this.ready = true
@@ -80,15 +80,14 @@ export class Ready extends Connector {
     process.send?.('ready')
   }
 
-  protected override async open (): Promise<void> {
+  protected override async open(): Promise<void> {
     await this.listen()
   }
 
-  protected override async close (): Promise<void> {
+  protected override async close(): Promise<void> {
     this.ready = false
 
-    if (!this.listening)
-      return
+    if (!this.listening) return
 
     this.listening = false
 
@@ -98,15 +97,14 @@ export class Ready extends Connector {
     await new Promise<void>((resolve) => this.server.close(() => resolve()))
   }
 
-  #listener (request: http.IncomingMessage, response: http.ServerResponse): void {
+  #listener(request: http.IncomingMessage, response: http.ServerResponse): void {
     if (request.url !== this.options.path) {
       response.writeHead(404).end()
 
       return
     }
 
-    if (this.ready)
-      response.writeHead(200, { 'cache-control': 'no-store' }).end()
+    if (this.ready) response.writeHead(200, { 'cache-control': 'no-store' }).end()
     else {
       const remaining = Math.ceil((Date.now() - this.startedAt) / 1000).toString()
 
@@ -115,16 +113,14 @@ export class Ready extends Connector {
   }
 }
 
-export function resolveOptions (): ReadyOptions | null {
+export function resolveOptions(): ReadyOptions | null {
   const env = process.env[READY_ENV]
 
-  if (env === undefined)
-    return { ...DEFAULTS }
+  if (env === undefined) return { ...DEFAULTS }
 
   const decoded = JSON.parse(env) as ReadyConfig
 
-  if (decoded === false || decoded.enabled === false)
-    return null
+  if (decoded === false || decoded.enabled === false) return null
 
   return {
     path: decoded.path ?? DEFAULTS.path,
@@ -132,12 +128,12 @@ export function resolveOptions (): ReadyOptions | null {
   }
 }
 
-export function normalizeAnnotation (ready: ReadyAnnotation | undefined): ReadyConfig | false {
-  if (ready === false)
-    return false
+export function normalizeAnnotation(
+  ready: ReadyAnnotation | undefined
+): ReadyConfig | false {
+  if (ready === false) return false
 
-  if (ready === undefined)
-    return { enabled: true, ...DEFAULT_ANNOTATION }
+  if (ready === undefined) return { enabled: true, ...DEFAULT_ANNOTATION }
 
   return {
     enabled: true,
@@ -159,13 +155,17 @@ export interface ReadyOptions {
   port: number
 }
 
-export type ReadyAnnotation = false | {
-  path?: string
-  port?: number
-}
+export type ReadyAnnotation =
+  | false
+  | {
+      path?: string
+      port?: number
+    }
 
-export type ReadyConfig = false | {
-  enabled?: boolean
-  path?: string
-  port?: number
-}
+export type ReadyConfig =
+  | false
+  | {
+      enabled?: boolean
+      path?: string
+      port?: number
+    }

@@ -12,6 +12,15 @@ import { discovery } from './oauth/index.js'
 import type { DirectiveFamily } from '../RTD/index.js'
 import type { Interceptor } from '../Interception.js'
 
-export const families: DirectiveFamily[] =
-  [authorization, io, cache, map, mcp, req, flow, octets, dev]
+export const families: DirectiveFamily[] = [
+  authorization,
+  io,
+  cache,
+  map,
+  mcp,
+  req,
+  flow,
+  octets,
+  dev
+]
 export const interceptors: Interceptor[] = [cors, discovery]

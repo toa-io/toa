@@ -15,7 +15,7 @@ export class Broadcast extends Connector {
   /** @type {string} */
   #group
 
-  constructor (comm, locator, group) {
+  constructor(comm, locator, group) {
     super()
 
     this.#comm = comm
@@ -25,13 +25,13 @@ export class Broadcast extends Connector {
     this.depends(comm)
   }
 
-  async transmit (label, payload) {
+  async transmit(label, payload) {
     const exchange = name(this.#locator, label)
 
     await this.#comm.emit(exchange, payload, { deliveryMode: 1 })
   }
 
-  async receive (label, callback) {
+  async receive(label, callback) {
     const exchange = name(this.#locator, label)
 
     await this.#comm.consume(exchange, this.#group, callback)

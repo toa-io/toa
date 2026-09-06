@@ -1,4 +1,4 @@
-function assign (input, changeset) {
+function assign(input, changeset) {
   Object.assign(changeset, input)
 }
 

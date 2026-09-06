@@ -17,12 +17,12 @@ export class Components {
   private readonly realtime: Realtime
   private remotes: Record<string, Component> = {}
 
-  public constructor (realtime: Realtime) {
+  public constructor(realtime: Realtime) {
     this.realtime = realtime
   }
 
   @given('the `{word}` component is running with routes:')
-  public async run (component: string, yaml: string): Promise<void> {
+  public async run(component: string, yaml: string): Promise<void> {
     const declaration = parse(yaml) as Declaration
     const [name, namespace = 'default'] = component.split('.').reverse()
     const routes = parseRoutes(declaration)
@@ -35,7 +35,7 @@ export class Components {
   }
 
   @when('the `{word}` is called with:')
-  public async call (endpoint: string, yaml: string): Promise<void> {
+  public async call(endpoint: string, yaml: string): Promise<void> {
     const request = parse(yaml) as Request
     const [operation, component, namespace = 'default'] = endpoint.split('.').reverse()
     const id = `${namespace}.${component}`
@@ -47,21 +47,21 @@ export class Components {
   }
 
   @before()
-  private async compose (): Promise<void> {
+  private async compose(): Promise<void> {
     const paths = componentPaths()
 
     await stage.compose(paths)
   }
 
   @after()
-  private async shutdown (): Promise<void> {
+  private async shutdown(): Promise<void> {
     this.remotes = {}
 
     await stage.shutdown()
   }
 }
 
-function componentPaths (): string[] {
+function componentPaths(): string[] {
   const entries = readdirSync(ROOT, { withFileTypes: true })
 
   return entries

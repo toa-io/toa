@@ -3,7 +3,6 @@ import type * as _service from './service.js'
 import type * as _dependency from './dependency.js'
 
 declare namespace toa.deployment {
-
   interface Declaration {
     apiVersion: string
     type: string
@@ -25,13 +24,11 @@ declare namespace toa.deployment {
   }
 
   namespace installation {
-
     interface Options {
       wait?: boolean
       target?: string
       namespace?: string
     }
-
   }
 
   namespace template {
@@ -54,7 +51,6 @@ declare namespace toa.deployment {
 
     variables(): _dependency.Variables
   }
-
 }
 
 export namespace installation {

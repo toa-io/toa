@@ -30,8 +30,9 @@ the gateway answers `no-store`, and the procedure's own headers are discarded. S
 carries a credential reaches an `anonymous` route through `/.rpc` and `/.mcp`, where the same
 request would be refused at the route itself.
 
-[^1]: Credentials in the request make the
-response [non-cacheable](https://datatracker.ietf.org/doc/html/rfc7234#section-3).
+[^1]:
+    Credentials in the request make the
+    response [non-cacheable](https://datatracker.ietf.org/doc/html/rfc7234#section-3).
 
 ### `anyone`
 
@@ -48,7 +49,7 @@ Given the Route declaration and corresponding HTTP request:
 
 ```yaml
 /users/:user-id:
-  id: "user-id"
+  id: 'user-id'
 ```
 
 ```http

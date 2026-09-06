@@ -49,7 +49,7 @@ export const viewport: Action<HTMLElement, Options> = (element, options) => {
     destroy: () => {
       element.removeEventListener('wheel', pan)
       select<HTMLElement, unknown>(element).on('.zoom', null)
-    },
+    }
   }
 
   /** What the filter turns away: a plain scroll, which moves the map rather than scaling it. */
@@ -63,7 +63,11 @@ export const viewport: Action<HTMLElement, Options> = (element, options) => {
     // divided by the scale, so a scroll covers the same distance on screen at every zoom
     const { k } = zoomTransform(element)
 
-    behavior.translateBy(selection, (-event.deltaX * step) / k, (-event.deltaY * step) / k)
+    behavior.translateBy(
+      selection,
+      (-event.deltaX * step) / k,
+      (-event.deltaY * step) / k
+    )
   }
 }
 

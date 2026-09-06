@@ -10,17 +10,17 @@ export class Discovery extends Connector {
   readonly #lookup: (locator: Locator) => Promise<Lookup>
   #lookups: Record<string, Promise<Lookup>> = {}
 
-  public constructor (lookup: (locator: Locator) => Promise<Lookup>) {
+  public constructor(lookup: (locator: Locator) => Promise<Lookup>) {
     super()
 
     this.#lookup = lookup
   }
 
-  protected override async open (): Promise<void> {
+  protected override async open(): Promise<void> {
     this.#lookups = {}
   }
 
-  public async lookup (locator: Locator): Promise<any> {
+  public async lookup(locator: Locator): Promise<any> {
     const id = locator.id
 
     if (this.#lookups[id] === undefined) {

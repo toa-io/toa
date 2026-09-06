@@ -34,8 +34,8 @@ Non-scattered documentation is coming some time later.
     applied once per database
   - MongoDB
 - [Cadence](/extensions/cadence): calls that happen on their own time
-  - a *pulse* calls a component's own operation on a cadence, with no schedule stored anywhere
-  - a *delay* hands one call over to be made later, and answers the id that cancels it
+  - a _pulse_ calls a component's own operation on a cadence, with no schedule stored anywhere
+  - a _delay_ hands one call over to be made later, and answers the id that cancels it
 - [Configuration](/extensions/configuration) with secrets
 - [API Gateway](/extensions/exposition)
   - Resource discovery

@@ -12,7 +12,10 @@ import type { Node } from './net'
  * The created value is written into the store, so every screen showing it follows
  * without asking the service again.
  */
-export async function create(component: string, configuration: Node): Promise<void | Error> {
+export async function create(
+  component: string,
+  configuration: Node
+): Promise<void | Error> {
   // the identity is what the service records as the originator, and creating is a side
   // effect of a user action — so it must be there by now
   ensure(account)
@@ -24,6 +27,6 @@ export async function create(component: string, configuration: Node): Promise<vo
   configurations.update(component, (current) => ({
     ...current,
     configuration,
-    epoch: created.epoch,
+    epoch: created.epoch
   }))
 }

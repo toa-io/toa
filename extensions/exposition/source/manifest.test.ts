@@ -38,7 +38,10 @@ it('should not create node for default namespace', async () => {
 })
 
 it('should throw on invalid declaration type', async () => {
-  assert.throws(() => manifest('hello' as unknown as object, mf), (error: any) => /Exposition declaration must be an object/.test(error.message))
+  assert.throws(
+    () => manifest('hello' as unknown as object, mf),
+    (error: any) => /Exposition declaration must be an object/.test(error.message)
+  )
 })
 
 it('should set namespace and component', async () => {

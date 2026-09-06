@@ -23,18 +23,18 @@ export class Components {
   private readonly gateway: Gateway
   private compositions: Record<string, Connector> = {}
 
-  public constructor (workspace: Workspace, gateway: Gateway) {
+  public constructor(workspace: Workspace, gateway: Gateway) {
     this.workspace = workspace
     this.gateway = gateway
   }
 
   @given('the `{word}` is running')
-  public async run (name: string): Promise<void> {
+  public async run(name: string): Promise<void> {
     await this.runComponent(name)
   }
 
   @given('the `{word}` is running with the following manifest:')
-  public async patchAndRun (name: string, yaml: string): Promise<void> {
+  public async patchAndRun(name: string, yaml: string): Promise<void> {
     const manifest = parse(yaml) as object
 
     await this.runComponent(name, manifest)
@@ -42,7 +42,7 @@ export class Components {
 
   /** One composition, as the explorer hosts them. */
   @given('the introspection components are running')
-  public async runMap (): Promise<void> {
+  public async runMap(): Promise<void> {
     assert.ok(!(MAP in this.compositions), `Composition '${MAP}' is already running`)
 
     this.compositions[MAP] = await boot.composition(map())
@@ -52,8 +52,11 @@ export class Components {
 
   /** The values component, as the configuration extension ships it; the service hosts it alone. */
   @given('the configuration values are running')
-  public async runValues (): Promise<void> {
-    assert.ok(!(VALUES in this.compositions), `Composition '${VALUES}' is already running`)
+  public async runValues(): Promise<void> {
+    assert.ok(
+      !(VALUES in this.compositions),
+      `Composition '${VALUES}' is already running`
+    )
 
     await this.gateway.start()
 
@@ -64,12 +67,12 @@ export class Components {
 
   /** What the deployment would tell the values service, as the scenario needs it. */
   @given('the configuration values are deployed:')
-  public deployValues (yaml: string): void {
+  public deployValues(yaml: string): void {
     process.env.TOA_CONFIGURATION_VALUES = JSON.stringify(parse(yaml))
   }
 
   @given('the `{word}` is stopped')
-  public async stop (name: string): Promise<void> {
+  public async stop(name: string): Promise<void> {
     assert.ok(name in this.compositions, `Composition '${name}' is not running`)
 
     await this.compositions[name].disconnect()
@@ -77,15 +80,17 @@ export class Components {
   }
 
   @after()
-  public async shutdown (): Promise<void> {
-    const promises = Object.values(this.compositions).map((composition) => composition.disconnect())
+  public async shutdown(): Promise<void> {
+    const promises = Object.values(this.compositions).map((composition) =>
+      composition.disconnect()
+    )
 
     await Promise.all(promises)
 
     delete process.env.TOA_CONFIGURATION_VALUES
   }
 
-  private async runComponent (name: string, manifest?: object): Promise<void> {
+  private async runComponent(name: string, manifest?: object): Promise<void> {
     assert.ok(!(name in this.compositions), `Composition '${name}' is already running`)
 
     // the gateway first: a component announces itself when it opens, and that only
@@ -101,7 +106,7 @@ export class Components {
   }
 }
 
-function values (): string {
+function values(): string {
   const root = dirname(require.resolve('@toa.io/extensions.configuration/package.json'))
 
   return join(root, 'components', 'configuration.values')

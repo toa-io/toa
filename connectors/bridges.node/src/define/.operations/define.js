@@ -8,8 +8,7 @@ import * as syntaxes from './syntaxes/index.js'
 export const define = (module) => {
   const descriptor = extract(module)
 
-  if (descriptor === null)
-    return null
+  if (descriptor === null) return null
 
   // the syntax is chosen at run time
   // oxlint-disable-next-line import/namespace

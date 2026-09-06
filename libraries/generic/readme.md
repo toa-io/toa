@@ -28,11 +28,7 @@ See [tests](test/range.test.js).
 Transforms `amqp://shard{0-2}.domain.com` into:
 
 ```javascript
-[
-  'amqp://shard0.domain.com',
-  'amqp://shard1.domain.com',
-  'amqp://shard2.domain.com'
-]
+;['amqp://shard0.domain.com', 'amqp://shard1.domain.com', 'amqp://shard2.domain.com']
 ```
 
 Uses [`range`](#range).

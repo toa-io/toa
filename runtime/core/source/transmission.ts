@@ -6,14 +6,14 @@ import type { Request } from './types/request.js'
 export class Transmission extends Connector {
   readonly #bindings: Consumer[]
 
-  public constructor (bindings: Consumer[]) {
+  public constructor(bindings: Consumer[]) {
     super()
 
     this.#bindings = bindings
     this.depends(bindings)
   }
 
-  public async request (request: Request): Promise<any> {
+  public async request(request: Request): Promise<any> {
     let reply: any = false
     let i = 0
 
@@ -23,13 +23,11 @@ export class Transmission extends Connector {
       i++
 
       if (request?.task === true) {
-        if (binding.task === undefined)
-          continue
+        if (binding.task === undefined) continue
 
         await binding.task(request)
         reply = null
-      } else
-        reply = await binding.request(request)
+      } else reply = await binding.request(request)
     }
 
     if (reply === false)

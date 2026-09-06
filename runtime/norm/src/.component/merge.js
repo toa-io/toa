@@ -28,8 +28,7 @@ const define = async (root, manifest, property) => {
   // default bridge
   const definition = await scan(manifest.bridge, root, property)
 
-  if (definition === undefined)
-    return
+  if (definition === undefined) return
 
   const items = Object.entries(definition)
 
@@ -57,7 +56,7 @@ const define = async (root, manifest, property) => {
 const cache = {}
 
 // the promise is what is remembered, so a bridge is loaded once
-function req (mod) {
+function req(mod) {
   cache[mod] ??= import(mod)
 
   return cache[mod]
@@ -66,8 +65,7 @@ function req (mod) {
 const scan = async (bridge, root, property) => {
   const { define } = await req(bridge)
 
-  if (property in define)
-    return define[property](root)
+  if (property in define) return define[property](root)
   else return undefined
 }
 

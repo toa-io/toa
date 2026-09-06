@@ -16,7 +16,10 @@ describe('description', () => {
       }
     })
 
-    match(emitted, /\/\*\* Every pot that is brewing, newest first\. \*\/\n {2}enumerate:/)
+    match(
+      emitted,
+      /\/\*\* Every pot that is brewing, newest first\. \*\/\n {2}enumerate:/
+    )
   })
 
   it('should write none where the operation states none', () => {

@@ -1,1 +1,1 @@
-export declare var SYSTEM: "system";
+export declare var SYSTEM: 'system'

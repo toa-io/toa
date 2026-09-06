@@ -1,4 +1,4 @@
-async function meter (input, context) {
+async function meter(input, context) {
   // a key of its own each run, so what the debt starts from is known
   const key = `${input.name}:${Date.now()}`
 

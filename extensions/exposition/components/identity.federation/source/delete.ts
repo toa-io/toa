@@ -1,6 +1,9 @@
 import type { Context } from './types/index.js'
 
-export async function effect ({ authority, identity, credential }: Input, context: Context): Promise<void | null> {
+export async function effect(
+  { authority, identity, credential }: Input,
+  context: Context
+): Promise<void | null> {
   const object = await context.local.observe({ query: { id: credential } })
 
   if (object === null || object.authority !== authority || object.identity !== identity)

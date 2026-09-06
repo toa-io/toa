@@ -17,7 +17,7 @@ export class Octets implements DirectiveFamily<Directive> {
 
   private discovery = null as unknown as Promise<Component>
 
-  public create (name: string, value: any, remotes: Remotes): Directive {
+  public create(name: string, value: any, remotes: Remotes): Directive {
     const Class = DIRECTIVES[name]
 
     if (Class === undefined)
@@ -28,32 +28,36 @@ export class Octets implements DirectiveFamily<Directive> {
     return new Class(value, this.discovery, remotes)
   }
 
-  public async precall (directives: Directive[], input: Input, parameters: Parameter[]): Promise<Output> {
+  public async precall(
+    directives: Directive[],
+    input: Input,
+    parameters: Parameter[]
+  ): Promise<Output> {
     let context: Context | null = null
     let action: Directive | null = null
 
     for (const directive of directives)
-      if (directive instanceof Context)
-        context ??= directive
-      else if (action === null)
-        action = directive
-      else
-        throw new Error('Octets action is ambiguous')
+      if (directive instanceof Context) context ??= directive
+      else if (action === null) action = directive
+      else throw new Error('Octets action is ambiguous')
 
-    if (action === null)
-      return null
+    if (action === null) return null
 
     // noinspection PointlessBooleanExpressionJS
-    if (context === null)
-      throw new Error('Octets context is not defined')
+    if (context === null) throw new Error('Octets context is not defined')
 
     const targeted = input.request.url[input.request.url.length - 1] !== '/'
 
     if (targeted !== action.targeted)
-      throw new NotFound(`Trailing slash is ${action.targeted ? 'redundant' : 'required'}`)
+      throw new NotFound(
+        `Trailing slash is ${action.targeted ? 'redundant' : 'required'}`
+      )
 
     // noinspection JSObjectNullOrUndefined
-    return await input.timing.capture(action.name, action.apply(context.storage, input, parameters))
+    return await input.timing.capture(
+      action.name,
+      action.apply(context.storage, input, parameters)
+    )
   }
 }
 
@@ -66,4 +70,8 @@ const DIRECTIVES: Record<string, Constructor> = {
   workflow: WorkflowDirective
 }
 
-type Constructor = new (value: any, discovery: Promise<Component>, remotes: Remotes) => Directive
+type Constructor = new (
+  value: any,
+  discovery: Promise<Component>,
+  remotes: Remotes
+) => Directive

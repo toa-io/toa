@@ -39,14 +39,11 @@ export const remove = async (directory, key) => {
 const FILENAME = 'context.toa.yaml'
 const TEMPLATE = parse(readFileSync(join(import.meta.dirname, FILENAME), 'utf8'))
 
-
-
-
 /**
  * @param {object} object
  * @param {string} path
  * @return {Promise<void>}
  */
-async function save (object, path) {
+async function save(object, path) {
   await writeFile(path, dump(object, { noRefs: true, lineWidth: -1 }), 'utf8')
 }

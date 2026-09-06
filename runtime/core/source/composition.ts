@@ -3,8 +3,12 @@ import { Connector } from './connector.js'
 
 export class Composition extends Connector {
   // eslint-disable-next-line max-params
-  public constructor (expositions: Connector[], producers: Connector[],
-    receivers: Connector[], tenants: Connector[]) {
+  public constructor(
+    expositions: Connector[],
+    producers: Connector[],
+    receivers: Connector[],
+    tenants: Connector[]
+  ) {
     super()
 
     if (expositions.length > 0) this.depends(expositions)
@@ -13,11 +17,11 @@ export class Composition extends Connector {
     if (tenants.length > 0) this.depends(tenants)
   }
 
-  protected override async open (): Promise<void> {
+  protected override async open(): Promise<void> {
     console.info('Composition complete')
   }
 
-  protected override async dispose (): Promise<void> {
+  protected override async dispose(): Promise<void> {
     console.info('Composition shutdown complete')
   }
 }

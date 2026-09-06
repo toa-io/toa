@@ -105,9 +105,11 @@ it('should clear what it reported', async () => {
 })
 
 it('should keep what it could not report, and keep serving', async () => {
-  sync = new Sync(createStash(() => {
-    throw new Error('Redis is unreachable')
-  }))
+  sync = new Sync(
+    createStash(() => {
+      throw new Error('Redis is unreachable')
+    })
+  )
 
   const quotas = createQuotas()
 
@@ -122,7 +124,7 @@ it('should keep what it could not report, and keep serving', async () => {
   assert.strictEqual(quotas.check(context, []), 0)
 })
 
-async function tick (): Promise<void> {
+async function tick(): Promise<void> {
   mock.timers.tick(250)
 
   // the reconciliation a tick starts is asynchronous, and node:test advances
@@ -130,18 +132,20 @@ async function tick (): Promise<void> {
   await new Promise((resolve) => process.nextTick(resolve))
 }
 
-function createQuotas (properties?: Partial<Configuration>): Quotas {
+function createQuotas(properties?: Partial<Configuration>): Quotas {
   const configuration = { key: [{ method: 'path' as const }], requests: 2, interval: 100 }
 
   return Quotas.create(Object.assign(configuration, properties))
 }
 
-function createContext (properties?: any): Context {
-  return Object.assign({ url: new URL('http://localhost/'), identity: { id: 'one' } },
-    properties) as unknown as Context
+function createContext(properties?: any): Context {
+  return Object.assign(
+    { url: new URL('http://localhost/'), identity: { id: 'one' } },
+    properties
+  ) as unknown as Context
 }
 
-function createStash (reply?: (deltas: number[]) => number[]): atomicity.Atom {
+function createStash(reply?: (deltas: number[]) => number[]): atomicity.Atom {
   const atom = {
     meter: async (keys: string[], deltas: number[]): Promise<number[]> => {
       invocations.push({ keys, deltas })

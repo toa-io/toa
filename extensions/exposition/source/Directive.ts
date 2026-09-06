@@ -12,7 +12,7 @@ export class Directives implements RTD.Directives {
   /** the span of a stage depends only on the set, so it is built once per route */
   private readonly spans: Spans[]
 
-  public constructor (sets: RTD.DirectiveSet[]) {
+  public constructor(sets: RTD.DirectiveSet[]) {
     this.sets = sets
     this.spans = sets.map((set) => ({
       precall: options(set, 'precall'),
@@ -21,29 +21,29 @@ export class Directives implements RTD.Directives {
     }))
   }
 
-  public declared<T> (family: string): T[] | undefined {
-    return this.sets.find((set) => set.family.name === family)?.directives as T[] | undefined
+  public declared<T>(family: string): T[] | undefined {
+    return this.sets.find((set) => set.family.name === family)?.directives as
+      | T[]
+      | undefined
   }
 
-  public async precall (context: Context, parameters: RTD.Parameter[]): Promise<Output> {
+  public async precall(context: Context, parameters: RTD.Parameter[]): Promise<Output> {
     let output = null
 
     for (let i = 0; i < this.sets.length; i++) {
       const set = this.sets[i]
 
-      if (set.family.precall === undefined)
-        continue
+      if (set.family.precall === undefined) continue
 
-      const out = await console.span(this.spans[i].precall,
-        async () => await set.family.precall!(set.directives, context, parameters))
+      const out = await console.span(
+        this.spans[i].precall,
+        async () => await set.family.precall!(set.directives, context, parameters)
+      )
 
-      if (out === null)
-        continue
+      if (out === null) continue
 
-      if (output !== null)
-        throw new Error('Multiple precall directives responded')
-      else
-        output = out
+      if (output !== null) throw new Error('Multiple precall directives responded')
+      else output = out
     }
 
     return output
@@ -54,21 +54,23 @@ export class Directives implements RTD.Directives {
    * what the one before it returned, and the first to refuse ends it: a method this caller
    * cannot reach is not described at all.
    */
-  public async explain (context: Context,
-    introspection: Introspection): Promise<Introspection | null> {
+  public async explain(
+    context: Context,
+    introspection: Introspection
+  ): Promise<Introspection | null> {
     let described: Introspection = introspection
 
     for (let i = 0; i < this.sets.length; i++) {
       const set = this.sets[i]
 
-      if (set.family.explain === undefined)
-        continue
+      if (set.family.explain === undefined) continue
 
-      const next = await console.span(this.spans[i].explain,
-        async () => await set.family.explain!(set.directives, context, described))
+      const next = await console.span(
+        this.spans[i].explain,
+        async () => await set.family.explain!(set.directives, context, described)
+      )
 
-      if (next === null)
-        return null
+      if (next === null) return null
 
       described = next
     }
@@ -76,19 +78,20 @@ export class Directives implements RTD.Directives {
     return described
   }
 
-  public async settle (context: Context, response: OutgoingMessage): Promise<void> {
+  public async settle(context: Context, response: OutgoingMessage): Promise<void> {
     for (let i = 0; i < this.sets.length; i++) {
       const set = this.sets[i]
 
       if (set.family.settle !== undefined)
-        await console.span(this.spans[i].settle,
-          async () => await set.family.settle!(set.directives, context, response))
+        await console.span(
+          this.spans[i].settle,
+          async () => await set.family.settle!(set.directives, context, response)
+        )
     }
   }
 
-  public dispose (): void {
-    for (const set of this.sets)
-      set.family.dispose?.(set.directives)
+  public dispose(): void {
+    for (const set of this.sets) set.family.dispose?.(set.directives)
   }
 }
 
@@ -102,14 +105,17 @@ export class DirectivesFactory implements RTD.DirectiveFactory {
   private readonly stages: Stage[] = []
 
   // eslint-disable-next-line max-params
-  public constructor (families: RTD.DirectiveFamily[], remotes: Remotes, host: Host,
-    options: Options) {
+  public constructor(
+    families: RTD.DirectiveFamily[],
+    remotes: Remotes,
+    host: Host,
+    options: Options
+  ) {
     for (const family of families) {
       family.mount?.(host, options)
       this.families[family.name] = family
 
-      if (family.mandatory)
-        this.mandatory.push(family.name)
+      if (family.mandatory) this.mandatory.push(family.name)
 
       this.stages.push({
         family,
@@ -125,22 +131,24 @@ export class DirectivesFactory implements RTD.DirectiveFactory {
    * Request-scoped, before anything is routed, so no directives are passed: a family
    * answers here only for what it does on its own behalf.
    */
-  public async preflight (context: Context): Promise<void> {
+  public async preflight(context: Context): Promise<void> {
     for (const stage of this.stages)
       if (stage.family.preflight !== undefined)
-        await console.span(stage.preflight,
-          async () => { await stage.family.preflight!(context) })
+        await console.span(stage.preflight, async () => {
+          await stage.family.preflight!(context)
+        })
   }
 
   /** Request-scoped, on the message going back. */
-  public async depart (context: Context, response: OutgoingMessage): Promise<void> {
+  public async depart(context: Context, response: OutgoingMessage): Promise<void> {
     for (const stage of this.stages)
       if (stage.family.depart !== undefined)
-        await console.span(stage.depart,
-          async () => { await stage.family.depart!(context, response) })
+        await console.span(stage.depart, async () => {
+          await stage.family.depart!(context, response)
+        })
   }
 
-  public create (declarations: RTD.syntax.Directive[], route: string = ''): Directives {
+  public create(declarations: RTD.syntax.Directive[], route: string = ''): Directives {
     const groups: Record<string, any> = {}
     const mandatory = new Set(this.mandatory)
 
@@ -152,7 +160,12 @@ export class DirectivesFactory implements RTD.DirectiveFactory {
       if (family === undefined)
         throw new Error(`Directive family '${declaration.family}' is not found`)
 
-      const directive = family.create(declaration.name, declaration.value, this.remotes, route)
+      const directive = family.create(
+        declaration.name,
+        declaration.value,
+        this.remotes,
+        route
+      )
 
       groups[family.name] ??= []
       groups[family.name].push(directive)
@@ -184,8 +197,7 @@ export class DirectivesFactory implements RTD.DirectiveFactory {
     sets.sort((a, b) => this.rank(a.family.name) - this.rank(b.family.name))
 
     // whatever order a family needs among its own directives is fixed here, not per request
-    for (const set of sets)
-      set.family.arrange?.(set.directives)
+    for (const set of sets) set.family.arrange?.(set.directives)
 
     const directives = new Directives(sets)
 
@@ -194,20 +206,22 @@ export class DirectivesFactory implements RTD.DirectiveFactory {
     return directives
   }
 
-  public dispose (): void {
-    for (const directives of this.instances)
-      directives.dispose()
+  public dispose(): void {
+    for (const directives of this.instances) directives.dispose()
   }
 
   /** Mandatory families first, in their own order; everything else keeps its own. */
-  private rank (family: string): number {
+  private rank(family: string): number {
     const index = this.mandatory.indexOf(family)
 
     return index === -1 ? this.mandatory.length : index
   }
 }
 
-function options (set: RTD.DirectiveSet, stage: 'precall' | 'settle' | 'explain'): SpanOptions {
+function options(
+  set: RTD.DirectiveSet,
+  stage: 'precall' | 'settle' | 'explain'
+): SpanOptions {
   const options: SpanOptions = { name: `${set.family.name} ${stage}` }
 
   if (set.names !== undefined && set.names.length > 0)

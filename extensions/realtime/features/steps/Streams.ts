@@ -18,12 +18,12 @@ export class Streams {
   private streams: Record<string, Readable> = {}
   private events: Record<string, Event[]> = {}
 
-  public constructor (realtime: Realtime) {
+  public constructor(realtime: Realtime) {
     this.realtime = realtime
   }
 
   @given('the stream `{word}` is consumed', { timeout: 30_000 })
-  public async consume (key: string): Promise<void> {
+  public async consume(key: string): Promise<void> {
     await this.realtime.serve()
 
     this.remote ??= await stage.remote('realtime.streams')
@@ -33,26 +33,24 @@ export class Streams {
   }
 
   @then('an event is received from the stream `{word}`:')
-  public async received (key: string, yaml: string): Promise<void> {
+  public async received(key: string, yaml: string): Promise<void> {
     await setTimeout(100)
 
     const expected = parse(yaml) as object
 
-    for (const event of this.events[key])
-      if (match(event, expected))
-        return
+    for (const event of this.events[key]) if (match(event, expected)) return
 
     throw new Error('No matching event received')
   }
 
   @then('the consumer `{word}` is disconnected')
-  public disconnected (key: string): void {
+  public disconnected(key: string): void {
     this.streams[key]?.destroy()
     delete this.streams[key]
   }
 
   @then('the consumer `{word}` is reconnected')
-  public async reconnected (key: string): Promise<void> {
+  public async reconnected(key: string): Promise<void> {
     const last = this.events[key].findLast((event) => event.event === 'token')
 
     assert.ok(last, `No last event found for stream ${key}`)
@@ -61,9 +59,8 @@ export class Streams {
   }
 
   @after()
-  public async shutdown (): Promise<void> {
-    for (const stream of Object.values(this.streams))
-      stream.destroy()
+  public async shutdown(): Promise<void> {
+    for (const stream of Object.values(this.streams)) stream.destroy()
 
     this.streams = {}
     this.events = {}
@@ -71,7 +68,7 @@ export class Streams {
     await setTimeout(100)
   }
 
-  private async createStream (key: string, token?: string): Promise<void> {
+  private async createStream(key: string, token?: string): Promise<void> {
     this.streams[key] = await this.remote!.invoke('create', { input: { key, token } })
     this.streams[key].on('data', (event: Event) => {
       console.log('[TEST] Received event', event)

@@ -4,7 +4,9 @@ import { generate } from 'randomstring'
 
 // noinspection JSCheckFunctionSignatures
 export const transmission = {
-  request: mock.fn((request) => ({ [request.invalid ? 'exception' : 'output']: generate() })),
+  request: mock.fn((request) => ({
+    [request.invalid ? 'exception' : 'output']: generate()
+  })),
   link: mock.fn()
 }
 

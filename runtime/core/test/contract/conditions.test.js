@@ -18,7 +18,11 @@ it('should fit value', () => {
 
   contract.fit(value)
 
-  assert.ok(fixtures.schema.fit.mock.calls.some((call) => call.arguments.length === 1 && isDeepStrictEqual(call.arguments[0], value)))
+  assert.ok(
+    fixtures.schema.fit.mock.calls.some(
+      (call) => call.arguments.length === 1 && isDeepStrictEqual(call.arguments[0], value)
+    )
+  )
 })
 
 it('should throw on invalid value', () => {

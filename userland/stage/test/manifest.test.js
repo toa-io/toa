@@ -22,6 +22,10 @@ it('should boot manifest', async () => {
 
   const manifest = await stage.manifest(path)
 
-  assert.ok(mock.boot.manifest.mock.calls.some((call) => call.arguments.length === 1 && isDeepStrictEqual(call.arguments[0], path)))
+  assert.ok(
+    mock.boot.manifest.mock.calls.some(
+      (call) => call.arguments.length === 1 && isDeepStrictEqual(call.arguments[0], path)
+    )
+  )
   assert.deepStrictEqual(manifest, await mock.boot.manifest.mock.calls[0].result)
 })

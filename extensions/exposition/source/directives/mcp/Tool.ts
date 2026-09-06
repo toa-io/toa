@@ -19,27 +19,39 @@ export class Tool {
   public readonly description: string
   public readonly title: string | undefined
 
-  public constructor (value: unknown, route: string) {
+  public constructor(value: unknown, route: string) {
     const stated = typeof value === 'string' ? { description: value } : value
 
-    assert.ok(typeof stated === 'object' && stated !== null && !Array.isArray(stated),
-      'Directive mcp:tool: the value is what the tool is, or a `title` and a `description`')
+    assert.ok(
+      typeof stated === 'object' && stated !== null && !Array.isArray(stated),
+      'Directive mcp:tool: the value is what the tool is, or a `title` and a `description`'
+    )
 
     const { description, title, ...rest } = stated as Record<string, unknown>
 
-    assert.ok(Object.keys(rest).length === 0,
-      `Directive mcp:tool: unknown ${Object.keys(rest).map((key) => `'${key}'`).join(', ')}`)
+    assert.ok(
+      Object.keys(rest).length === 0,
+      `Directive mcp:tool: unknown ${Object.keys(rest)
+        .map((key) => `'${key}'`)
+        .join(', ')}`
+    )
 
-    assert.ok(typeof description === 'string' && description.trim().length > 0,
-      'Directive mcp:tool: a description cannot be empty')
+    assert.ok(
+      typeof description === 'string' && description.trim().length > 0,
+      'Directive mcp:tool: a description cannot be empty'
+    )
 
-    assert.ok(title === undefined || (typeof title === 'string' && title.trim().length > 0),
-      'Directive mcp:tool: a title cannot be empty')
+    assert.ok(
+      title === undefined || (typeof title === 'string' && title.trim().length > 0),
+      'Directive mcp:tool: a title cannot be empty'
+    )
 
     // a tool is called by name, so a route that cannot be named cannot be one — said where
     // the mistake is, rather than as a tool that is quietly never listed
-    assert.ok(refusal(segment(route)) === null,
-      `Directive mcp:tool: '${route}' holds a segment no tool name can spell`)
+    assert.ok(
+      refusal(segment(route)) === null,
+      `Directive mcp:tool: '${route}' holds a segment no tool name can spell`
+    )
 
     this.description = description
     this.title = title as string | undefined

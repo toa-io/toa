@@ -23,13 +23,13 @@ export class Realtime {
   private log: Record<string, unknown[]> = {}
   private aborted = false
 
-  public constructor (gateway: Gateway, parameters: Parameters, captures: Captures) {
+  public constructor(gateway: Gateway, parameters: Parameters, captures: Captures) {
     this.gateway = gateway
     this.agent = new Agent(parameters.origin, captures)
   }
 
   @given('the Realtime is running with the following annotation:')
-  public async start (yaml: string): Promise<void> {
+  public async start(yaml: string): Promise<void> {
     await Realtime.stop()
 
     const annotation = parse(yaml) as Record<string, string>
@@ -50,25 +50,24 @@ export class Realtime {
   }
 
   @given('the identity {word} is consuming realtime events')
-  public async connect (name: string): Promise<void> {
+  public async connect(name: string): Promise<void> {
     await this.gateway.start()
 
     const id = await this.createIdentity(name)
 
-    const parts = await this.agent.parts(`
+    const parts = (await this.agent.parts(`
       GET /realtime/streams/\${{ ${name}.id }}/ HTTP/1.1
       authorization: Token \${{ ${name}.token }}
       accept: application/json
-    `) as AsyncIterable<Uint8Array>
+    `)) as AsyncIterable<Uint8Array>
 
     void this.consume(id, parts).catch((e) => {
-      if (!this.aborted)
-        console.debug('Consumption interrupted', e)
+      if (!this.aborted) console.debug('Consumption interrupted', e)
     })
   }
 
   @then('the following event `{word}` is received by {word}:')
-  public async received (label: string, name: string, yaml: string): Promise<void> {
+  public async received(label: string, name: string, yaml: string): Promise<void> {
     const id = this.agent.captures.get(`${name}.id`)
     const tag = `${id}:${label}`
     const expected = parse(yaml)
@@ -76,8 +75,7 @@ export class Realtime {
     if (this.log[tag] !== undefined)
       for (const data of this.log[tag])
         // eslint-disable-next-line max-depth
-        if (match(data, expected))
-          return
+        if (match(data, expected)) return
 
     const [event] = await once(this.events, tag)
 
@@ -85,7 +83,7 @@ export class Realtime {
   }
 
   @after()
-  public abort (): void {
+  public abort(): void {
     this.aborted = true
     this.agent.abort()
     this.log = {}
@@ -93,9 +91,8 @@ export class Realtime {
   }
 
   @afterAll()
-  public static async stop (): Promise<void> {
-    if (this.instance === null)
-      return
+  public static async stop(): Promise<void> {
+    if (this.instance === null) return
 
     await this.instance.disconnect()
 
@@ -103,7 +100,7 @@ export class Realtime {
     process.env.TOA_REALTIME = undefined
   }
 
-  private async createIdentity (name: string): Promise<string> {
+  private async createIdentity(name: string): Promise<string> {
     const password = Math.random().toString(36).slice(2)
     const username = name + Math.random().toString(36).slice(2)
 
@@ -138,13 +135,12 @@ export class Realtime {
     return this.agent.captures.get(`${name}.id`) as string
   }
 
-  private async consume (id: string, parts: any): Promise<void> {
+  private async consume(id: string, parts: any): Promise<void> {
     for await (const part of parts) {
       const text = Buffer.from(part.body).toString('utf8')
       const event = JSON.parse(text)
 
-      if (typeof event === 'string')
-        continue
+      if (typeof event === 'string') continue
 
       const tag = `${id}:${event.event}`
 
@@ -154,4 +150,3 @@ export class Realtime {
     }
   }
 }
-

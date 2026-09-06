@@ -7,23 +7,27 @@
  * `http://127.0.0.1/callback` and comes back on an ephemeral port; comparing those
  * literally would refuse every one of them.
  */
-export function permits (registered: string[], redirect: string): boolean {
+export function permits(registered: string[], redirect: string): boolean {
   return registered.some((uri) => uri === redirect || loopback(uri, redirect))
 }
 
-function loopback (registered: string, redirect: string): boolean {
+function loopback(registered: string, redirect: string): boolean {
   const a = parse(registered)
   const b = parse(redirect)
 
-  if (a === null || b === null)
-    return false
+  if (a === null || b === null) return false
 
-  return a.protocol === 'http:' && b.protocol === 'http:' &&
-    LOOPBACK.has(a.hostname) && a.hostname === b.hostname &&
-    a.pathname === b.pathname && a.search === b.search
+  return (
+    a.protocol === 'http:' &&
+    b.protocol === 'http:' &&
+    LOOPBACK.has(a.hostname) &&
+    a.hostname === b.hostname &&
+    a.pathname === b.pathname &&
+    a.search === b.search
+  )
 }
 
-function parse (value: string): URL | null {
+function parse(value: string): URL | null {
   try {
     return new URL(value)
   } catch {

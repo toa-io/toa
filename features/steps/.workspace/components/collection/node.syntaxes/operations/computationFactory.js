@@ -6,11 +6,11 @@ import { Computation } from './computationClass.js'
 export class ComputationFactory {
   #context
 
-  constructor (context) {
+  constructor(context) {
     this.#context = context
   }
 
-  create () {
+  create() {
     return new Computation()
   }
 }

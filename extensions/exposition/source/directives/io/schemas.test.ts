@@ -14,16 +14,22 @@ describe('throttle', () => {
     for (const key of ['ip', 'path', 'route', 'identity'])
       assert.doesNotThrow(() => schemas.throttle.validate({ key, ...rest }))
 
-    assert.doesNotThrow(() => schemas.throttle.validate({ key: { segment: 'id' }, ...rest }))
-    assert.doesNotThrow(() => schemas.throttle.validate({
-      key: ['route', { segment: 'id' }],
-      ...rest
-    }))
+    assert.doesNotThrow(() =>
+      schemas.throttle.validate({ key: { segment: 'id' }, ...rest })
+    )
+    assert.doesNotThrow(() =>
+      schemas.throttle.validate({
+        key: ['route', { segment: 'id' }],
+        ...rest
+      })
+    )
   })
 
   it('should reject an unknown key component', () => {
     assert.throws(() => schemas.throttle.validate({ key: 'header', ...rest }))
-    assert.throws(() => schemas.throttle.validate({ key: { header: 'x-real-ip' }, ...rest }))
+    assert.throws(() =>
+      schemas.throttle.validate({ key: { header: 'x-real-ip' }, ...rest })
+    )
   })
 
   it('should reject a declaration it no longer honours', () => {

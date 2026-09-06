@@ -16,7 +16,7 @@ const IDENTIFIER = /^[A-Za-z_$][A-Za-z0-9_$]*$/
  * @param {number} [depth] indentation of the object this expression is written into
  * @returns {string}
  */
-export function emit (schema, root = schema, depth = 0) {
+export function emit(schema, root = schema, depth = 0) {
   if (schema === undefined || schema === true) return 'unknown'
   if (schema === false) return 'never'
 
@@ -33,7 +33,7 @@ export function emit (schema, root = schema, depth = 0) {
  * `allOf` of `anyOf`s, which is how a manifest says "these fields, and one of these is
  * required". So each is read and what they say together is the intersection.
  */
-function shape (schema, root, depth) {
+function shape(schema, root, depth) {
   if (schema.const !== undefined) return literal(schema.const)
   if (schema.enum !== undefined) return union(schema.enum.map(literal))
 
@@ -53,34 +53,42 @@ function shape (schema, root, depth) {
   if (stated.length === 1) return stated[0]
 
   // a union binds looser than an intersection, so it is the one that needs the brackets
-  return stated.map((part) => part.includes(' | ') ? `(${part})` : part).join(' & ')
+  return stated.map((part) => (part.includes(' | ') ? `(${part})` : part)).join(' & ')
 }
 
 /** What a schema states of itself, before what it composes. */
-function own (schema, root, depth) {
+function own(schema, root, depth) {
   if (Array.isArray(schema.type))
     return union(schema.type.map((type) => emit({ ...schema, type }, root, depth)))
 
   switch (schema.type) {
-    case 'string': return schema.format === 'secret' ? 'Secret' : 'string'
-    case 'number': case 'integer': return 'number'
-    case 'boolean': return 'boolean'
-    case 'null': return 'null'
-    case 'array': return array(schema, root, depth)
-    case 'object': return object(schema, root, depth)
+    case 'string':
+      return schema.format === 'secret' ? 'Secret' : 'string'
+    case 'number':
+    case 'integer':
+      return 'number'
+    case 'boolean':
+      return 'boolean'
+    case 'null':
+      return 'null'
+    case 'array':
+      return array(schema, root, depth)
+    case 'object':
+      return object(schema, root, depth)
 
     // a schema stating nothing accepts anything; one that only lists properties is an object
-    default: return schema.properties === undefined ? 'unknown' : object(schema, root, depth)
+    default:
+      return schema.properties === undefined ? 'unknown' : object(schema, root, depth)
   }
 }
 
-function array (schema, root, depth) {
+function array(schema, root, depth) {
   const item = emit(schema.items, root, depth)
 
   return IDENTIFIER.test(item) ? `${item}[]` : `Array<${item}>`
 }
 
-function object (schema, root, depth) {
+function object(schema, root, depth) {
   const entries = Object.entries(schema.properties ?? {})
   const rest = index(schema, root, depth)
 
@@ -97,8 +105,7 @@ function object (schema, root, depth) {
 
     const described = comment(property?.description, padding)
 
-    if (described !== null)
-      lines.push(described)
+    if (described !== null) lines.push(described)
 
     lines.push(`${padding}${key}${optional}: ${emit(property, root, depth + 1)}`)
   }
@@ -109,7 +116,7 @@ function object (schema, root, depth) {
 }
 
 /** What a schema says about the properties it does not name. */
-function index (schema, root, depth) {
+function index(schema, root, depth) {
   const patterns = Object.values(schema.patternProperties ?? {})
 
   if (patterns.length > 0)
@@ -123,8 +130,9 @@ function index (schema, root, depth) {
   return `Record<string, ${emit(additional, root, depth)}>`
 }
 
-function dereference (ref, root) {
-  if (!ref.startsWith('#/')) throw new Error(`Cannot resolve '${ref}': only local pointers`)
+function dereference(ref, root) {
+  if (!ref.startsWith('#/'))
+    throw new Error(`Cannot resolve '${ref}': only local pointers`)
 
   let node = root
 
@@ -137,7 +145,7 @@ function dereference (ref, root) {
 }
 
 /** Whether a schema constrains anything at all: `output` defaults to `{}`, which does not. */
-export function stated (schema) {
+export function stated(schema) {
   return schema !== undefined && schema !== null && Object.keys(schema).length > 0
 }
 

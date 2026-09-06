@@ -4,7 +4,7 @@ import assert from 'node:assert/strict'
 import { decide } from './Branch.js'
 import type { Branch, Exposed } from './Branch.js'
 
-function branch (version: string, timestamp: number): Branch {
+function branch(version: string, timestamp: number): Branch {
   return {
     namespace: 'default',
     component: 'one',
@@ -15,7 +15,7 @@ function branch (version: string, timestamp: number): Branch {
   }
 }
 
-function exposed (version: string, timestamp: number): Exposed {
+function exposed(version: string, timestamp: number): Exposed {
   return { version, timestamp, nodes: [] }
 }
 

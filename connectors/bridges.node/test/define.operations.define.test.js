@@ -16,7 +16,10 @@ it('should throw if function does not match conventions', () => {
   const append = () => null
   const module = { append }
 
-  assert.throws(() => define(module), (error) => /does not match conventions/.test(error.message))
+  assert.throws(
+    () => define(module),
+    (error) => /does not match conventions/.test(error.message)
+  )
 })
 
 it('should throw if class does not match conventions', () => {
@@ -24,7 +27,10 @@ it('should throw if class does not match conventions', () => {
 
   const module = { Foo }
 
-  assert.throws(() => define(module), (error) => /does not match conventions/.test(error.message))
+  assert.throws(
+    () => define(module),
+    (error) => /does not match conventions/.test(error.message)
+  )
 })
 
 it('should return null if no function exported', () => {
@@ -36,7 +42,7 @@ it('should return null if no function exported', () => {
 
 describe('function', () => {
   it('should parse transition declaration', () => {
-    function transition (input, object) {}
+    function transition(input, object) {}
 
     const module = { transition }
     const definition = define(module)
@@ -45,7 +51,7 @@ describe('function', () => {
   })
 
   it('should parse observation declaration', () => {
-    function observation (input, object) {}
+    function observation(input, object) {}
 
     const module = { observation }
     const definition = define(module)
@@ -54,7 +60,7 @@ describe('function', () => {
   })
 
   it('should parse assignment declaration', () => {
-    function assignment (input, changeset) {}
+    function assignment(input, changeset) {}
 
     const module = { assignment }
     const definition = define(module)
@@ -63,7 +69,7 @@ describe('function', () => {
   })
 
   it('should parse computation declaration', () => {
-    function computation (input, context) {}
+    function computation(input, context) {}
 
     const module = { computation }
     const definition = define(module)
@@ -72,7 +78,7 @@ describe('function', () => {
   })
 
   it('should parse effect declaration', () => {
-    function effect (input, context) {}
+    function effect(input, context) {}
 
     const module = { effect }
     const definition = define(module)
@@ -123,7 +129,7 @@ describe('function', () => {
 
 describe('class', () => {
   class Transition {
-    execute (input, object) {}
+    execute(input, object) {}
   }
 
   const module = { Transition }
@@ -142,9 +148,9 @@ describe('class', () => {
 
   it('should find execute method', () => {
     class Assignment {
-      execute (input, object) {}
+      execute(input, object) {}
 
-      run (input, objects) {}
+      run(input, objects) {}
     }
 
     const module = { Assignment }
@@ -158,20 +164,26 @@ describe('class', () => {
 
     const module = { Observation }
 
-    assert.throws(() => define(module), (error) => /Method 'execute' not found/.test(error.message))
+    assert.throws(
+      () => define(module),
+      (error) => /Method 'execute' not found/.test(error.message)
+    )
   })
 
   it('should throw if function is not a class', () => {
-    function Transition () {}
+    function Transition() {}
 
     const module = { Transition }
 
-    assert.throws(() => define(module), (error) => /does not match conventions/.test(error.message))
+    assert.throws(
+      () => define(module),
+      (error) => /does not match conventions/.test(error.message)
+    )
   })
 
   it('should define none scope', async () => {
     class Observation {
-      execute (input) {}
+      execute(input) {}
     }
 
     const module = { Observation }
@@ -182,7 +194,7 @@ describe('class', () => {
 
   it('should define null input', async () => {
     class Observation {
-      execute () {}
+      execute() {}
     }
 
     const module = { Observation }
@@ -193,7 +205,7 @@ describe('class', () => {
 
   it('should parse Computation', async () => {
     class Computation {
-      execute () {}
+      execute() {}
     }
 
     const module = { Computation }
@@ -204,7 +216,7 @@ describe('class', () => {
 
   it('should parse Effect', async () => {
     class Effect {
-      execute () {}
+      execute() {}
     }
 
     const module = { Effect }
@@ -216,7 +228,7 @@ describe('class', () => {
 
 describe('factory', () => {
   class ObjectTransitionFactory {
-    create () {}
+    create() {}
   }
 
   const module = { ObjectTransitionFactory }
@@ -235,17 +247,19 @@ describe('factory', () => {
 
   it('should throw if not follows convention', async () => {
     class NoneObservationFactory {
-      create () {}
+      create() {}
     }
 
     const module = { NoneObservationFactory }
 
-    assert.throws(() => define(module), (error) => /does not match conventions/.test(error.message))
+    assert.throws(
+      () => define(module),
+      (error) => /does not match conventions/.test(error.message)
+    )
   })
 
   it('should parse ComputationFactory', () => {
-    class ComputationFactory {
-    }
+    class ComputationFactory {}
 
     const module = { ComputationFactory }
     const definition = define(module)
@@ -254,8 +268,7 @@ describe('factory', () => {
   })
 
   it('should parse EffectFactory', () => {
-    class EffectFactory {
-    }
+    class EffectFactory {}
 
     const module = { EffectFactory }
     const definition = define(module)

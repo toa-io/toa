@@ -8,7 +8,7 @@ import type { Component } from './Component.js'
  * that tells them apart.
  */
 export class Identity implements Component {
-  public get (context: Input): string {
+  public get(context: Input): string {
     return (context as AuthenticatedContext).identity?.id ?? ''
   }
 }

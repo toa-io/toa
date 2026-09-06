@@ -26,7 +26,7 @@ export const measure: Action<HTMLElement, Measured> = (element, options) => {
 
       take()
     },
-    destroy: () => observer.disconnect(),
+    destroy: () => observer.disconnect()
   }
 
   function take(): void {

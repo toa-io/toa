@@ -49,12 +49,7 @@
 
   .typeset
     *:not(
-      :where(
-        .not-typeset,
-        [data-not-typeset],
-        .not-typeset *,
-        [data-not-typeset] *
-      )
+      :where(.not-typeset, [data-not-typeset], .not-typeset *, [data-not-typeset] *)
     ) {
     /* Paragraphs. */
     &:where(p) {
@@ -145,11 +140,7 @@
       font-weight: 600;
     }
     &:where(mark) {
-      background-color: color-mix(
-        in oklab,
-        oklch(0.86 0.17 95) 40%,
-        transparent
-      );
+      background-color: color-mix(in oklab, oklch(0.86 0.17 95) 40%, transparent);
       color: inherit;
       padding: 0.05em 0.15em;
       border-radius: 0.2em;
@@ -196,16 +187,16 @@
     &:where(.typeset ul ul ul) {
       list-style-type: square;
     }
-    &:where(ol[type="a" i]) {
+    &:where(ol[type='a' i]) {
       list-style-type: lower-alpha;
     }
-    &:where(ol[type="i" i]) {
+    &:where(ol[type='i' i]) {
       list-style-type: lower-roman;
     }
-    &:where(ol[type="A" s]) {
+    &:where(ol[type='A' s]) {
       list-style-type: upper-alpha;
     }
-    &:where(ol[type="I" s]) {
+    &:where(ol[type='I' s]) {
       list-style-type: upper-roman;
     }
     &:where(ul, ol) {
@@ -232,7 +223,7 @@
       list-style-type: none;
       padding-inline-start: 0.25em;
     }
-    &:where(li.task-list-item > input[type="checkbox"]) {
+    &:where(li.task-list-item > input[type='checkbox']) {
       margin-inline-end: 0.5em;
       vertical-align: -0.1em;
       accent-color: var(--color-primary, currentColor);
@@ -348,7 +339,7 @@
     }
 
     /* Math. */
-    &:where(math[display="block"]) {
+    &:where(math[display='block']) {
       margin-block-start: var(--typeset-flow);
       margin-block-end: 0;
       overflow-x: auto;
@@ -428,10 +419,10 @@
     &:where(th:first-child, td:first-child) {
       padding-inline-start: 0;
     }
-    &:where(th[align="center"], td[align="center"]) {
+    &:where(th[align='center'], td[align='center']) {
       text-align: center;
     }
-    &:where(th[align="right"], td[align="right"]) {
+    &:where(th[align='right'], td[align='right']) {
       text-align: end;
     }
 
@@ -463,22 +454,12 @@
   /* First child adds no space above. Last so it wins ties. */
   .typeset
     > :where(:first-child):not(
-      :where(
-        .not-typeset,
-        [data-not-typeset],
-        .not-typeset *,
-        [data-not-typeset] *
-      )
+      :where(.not-typeset, [data-not-typeset], .not-typeset *, [data-not-typeset] *)
     ),
   .typeset
     > :where(:first-child)
     > :where(:first-child):not(
-      :where(
-        .not-typeset,
-        [data-not-typeset],
-        .not-typeset *,
-        [data-not-typeset] *
-      )
+      :where(.not-typeset, [data-not-typeset], .not-typeset *, [data-not-typeset] *)
     ),
   .typeset
     :where(
@@ -490,12 +471,7 @@
       figure > :first-child,
       figure > picture > img
     ):not(
-      :where(
-        .not-typeset,
-        [data-not-typeset],
-        .not-typeset *,
-        [data-not-typeset] *
-      )
+      :where(.not-typeset, [data-not-typeset], .not-typeset *, [data-not-typeset] *)
     ) {
     margin-block-start: 0;
   }

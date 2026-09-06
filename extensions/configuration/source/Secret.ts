@@ -8,23 +8,23 @@ import { inspect } from 'node:util'
 export class Secret {
   readonly #value: string
 
-  public constructor (value: string) {
+  public constructor(value: string) {
     this.#value = value
   }
 
-  public unwrap (): string {
+  public unwrap(): string {
     return this.#value
   }
 
-  public toString (): string {
+  public toString(): string {
     return REDACTED
   }
 
-  public toJSON (): string {
+  public toJSON(): string {
     return REDACTED
   }
 
-  public [inspect.custom] (): string {
+  public [inspect.custom](): string {
     return REDACTED
   }
 }

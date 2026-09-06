@@ -1,6 +1,11 @@
 import type { Request } from './request.js'
 
-export type type = 'transition' | 'observation' | 'assignment' | 'computation' | 'effect'
+export type type =
+  | 'transition'
+  | 'observation'
+  | 'assignment'
+  | 'computation'
+  | 'effect'
   | 'unmanaged'
 
 export type scope = 'object' | 'objects' | 'changeset' | 'stream' | 'none'
@@ -11,11 +16,13 @@ export type scope = 'object' | 'objects' | 'changeset' | 'stream' | 'none'
  */
 export type Call<Output = any, Input = any> = (request: Request<Input>) => Promise<Output>
 
-export type Observation<Output = any, Input = never, Entity = unknown> =
-  (request: Request<Input, Entity>) => Promise<Output extends unknown[] ? Output : Output | null>
+export type Observation<Output = any, Input = never, Entity = unknown> = (
+  request: Request<Input, Entity>
+) => Promise<Output extends unknown[] ? Output : Output | null>
 
-export type Transition<Output = any, Input = never, Entity = unknown> =
-  (request: Request<Input, Entity>) => Promise<Output | null>
+export type Transition<Output = any, Input = never, Entity = unknown> = (
+  request: Request<Input, Entity>
+) => Promise<Output | null>
 
 /**
  * Runs on every change to an entity's state, before the contract is applied. `false` refuses

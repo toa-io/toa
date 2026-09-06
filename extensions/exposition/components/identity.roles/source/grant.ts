@@ -1,13 +1,14 @@
 import type { Entity } from './lib/Entity.js'
 
-export async function transition (input: Input, object: Entity): Promise<Entity | Error> {
-  if (input.grantor === undefined)
-    return Object.assign(object, input)
+export async function transition(input: Input, object: Entity): Promise<Entity | Error> {
+  if (input.grantor === undefined) return Object.assign(object, input)
 
   // a manager grants any role; a delegate grants within its own scopes, and never the
   // right to grant
-  if (!within(MANAGEMENT, input.grantor.roles) &&
-    (!within(input.role, input.grantor.roles) || within(input.role, [MANAGEMENT])))
+  if (
+    !within(MANAGEMENT, input.grantor.roles) &&
+    (!within(input.role, input.grantor.roles) || within(input.role, [MANAGEMENT]))
+  )
     return ERR_INACCESSIBLE_SCOPE
 
   object.role = input.role
@@ -17,7 +18,7 @@ export async function transition (input: Input, object: Entity): Promise<Entity 
   return object
 }
 
-function within (role: string, scopes: string[]): boolean {
+function within(role: string, scopes: string[]): boolean {
   return scopes.some((scope) => role === scope || role.startsWith(scope + ':'))
 }
 

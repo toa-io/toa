@@ -9,7 +9,7 @@ export class Cache implements DirectiveFamily<Directive> {
   public readonly name: string = 'cache'
   public readonly mandatory: boolean = true
 
-  public create (name: string, value: any): Directive {
+  public create(name: string, value: any): Directive {
     const Class = constructors[name]
 
     if (Class === undefined)
@@ -18,11 +18,15 @@ export class Cache implements DirectiveFamily<Directive> {
     return new Class(value)
   }
 
-  public precall (): Output {
+  public precall(): Output {
     return null
   }
 
-  public async settle (directives: Directive[], context: AuthenticatedContext, response: http.OutgoingMessage): Promise<void> {
+  public async settle(
+    directives: Directive[],
+    context: AuthenticatedContext,
+    response: http.OutgoingMessage
+  ): Promise<void> {
     const directive = directives[0]
 
     response.headers ??= new Headers()
@@ -38,11 +42,9 @@ export class Cache implements DirectiveFamily<Directive> {
 
     const method = context.request.method
 
-    if (method !== 'GET' && method !== 'HEAD')
-      return
+    if (method !== 'GET' && method !== 'HEAD') return
 
-    if (directive !== undefined)
-      directive.set(context, response.headers)
+    if (directive !== undefined) directive.set(context, response.headers)
     else if (context.identity !== null && !Control.disabled(response.headers)) {
       response.headers.set('cache-control', 'private')
       response.headers.append('vary', 'authorization')

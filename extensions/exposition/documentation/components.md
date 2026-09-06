@@ -308,7 +308,7 @@ convenience.
 configuration:
   identity.tokens:
     lifetime: 2592000 # seconds, 30 days
-    refresh: 600      # seconds, 10 minutes
+    refresh: 600 # seconds, 10 minutes
 ```
 
 > Values in the example above are the default values.

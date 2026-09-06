@@ -12,8 +12,10 @@ export const serve = async (argv) => {
 
     // an extension that is off in this environment has nothing to run, and said so
     if (service === undefined)
-      throw new Error(`'${argv.path}' has no service to run in this environment: ` +
-        'its variables are absent. Regenerate the environment file with `toa env`.')
+      throw new Error(
+        `'${argv.path}' has no service to run in this environment: ` +
+          'its variables are absent. Regenerate the environment file with `toa env`.'
+      )
 
     graceful(service)
 
@@ -23,6 +25,5 @@ export const serve = async (argv) => {
   // the trace of the startup
   if (process.env.TOA_BOOT_TRACE === '1')
     await output.span({ name: 'toa serve', attributes: { path: argv.path } }, start)
-  else
-    await start()
+  else await start()
 }

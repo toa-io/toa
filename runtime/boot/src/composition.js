@@ -5,34 +5,52 @@ import { version } from '@toa.io/runtime'
 import * as boot from './index.js'
 import { span } from './span.js'
 
-export async function composition (paths, options) {
+export async function composition(paths, options) {
   options = Object.assign({}, options)
 
   return span('boot composition', async () => {
-    const manifests = await span('load manifests',
-      async () => await Promise.all(paths.map((path) => boot.manifest(path, options))))
+    const manifests = await span(
+      'load manifests',
+      async () => await Promise.all(paths.map((path) => boot.manifest(path, options)))
+    )
 
     console.info('Starting composition', {
       runtime: version,
       components: manifests.map((manifest) => manifest.locator.id)
     })
 
-    const tenants = await span('create tenants',
-      async () => await Promise.all(manifests.map(boot.extensions.tenants)))
+    const tenants = await span(
+      'create tenants',
+      async () => await Promise.all(manifests.map(boot.extensions.tenants))
+    )
 
-    const expositions = await span('expose discovery',
-      async () => await Promise.all(manifests.map(boot.discovery.expose)))
+    const expositions = await span(
+      'expose discovery',
+      async () => await Promise.all(manifests.map(boot.discovery.expose))
+    )
 
     try {
-      const components = await span('create components',
-        async () => await Promise.all(manifests.map(boot.component)))
+      const components = await span(
+        'create components',
+        async () => await Promise.all(manifests.map(boot.component))
+      )
 
-      const groups = await Promise.all(components.map(async (component, index) =>
-        await boot.bindings.produce(component, manifests[index].operations)))
+      const groups = await Promise.all(
+        components.map(
+          async (component, index) =>
+            await boot.bindings.produce(component, manifests[index].operations)
+        )
+      )
 
-      const receivers = await span('create receivers',
-        async () => await Promise.all(components.map((component, index) =>
-          boot.receivers(manifests[index], component))))
+      const receivers = await span(
+        'create receivers',
+        async () =>
+          await Promise.all(
+            components.map((component, index) =>
+              boot.receivers(manifests[index], component)
+            )
+          )
+      )
 
       const producers = []
       const settles = []
@@ -55,22 +73,23 @@ export async function composition (paths, options) {
         for (const receiver of receivers[i])
           for (const producer of serving) receiver.depends(producer)
 
-        if (settle === undefined)
-          continue
+        if (settle === undefined) continue
 
-        if (local.length > 0)
-          settle.depends(local)
+        if (local.length > 0) settle.depends(local)
 
-        for (const producer of other)
-          producer.depends(settle)
+        for (const producer of other) producer.depends(settle)
 
-        for (const receiver of receivers[i])
-          receiver.depends(settle)
+        for (const receiver of receivers[i]) receiver.depends(settle)
 
         settles.push(settle)
       }
 
-      const composition = new Composition(expositions.flat(), producers.concat(settles), receivers.flat(), tenants.flat())
+      const composition = new Composition(
+        expositions.flat(),
+        producers.concat(settles),
+        receivers.flat(),
+        tenants.flat()
+      )
 
       /*
        * A lookup that is never answered holds a connection open, and whoever

@@ -47,10 +47,13 @@ it('should expand enumerations with ranges', async () => {
 })
 
 it('should throw on garbage input', async () => {
-  assert.throws(() => range('hello'), (error) => /Invalid input format/.test(error.message))
+  assert.throws(
+    () => range('hello'),
+    (error) => /Invalid input format/.test(error.message)
+  )
 })
 
-function gen (min, max) {
+function gen(min, max) {
   const array = []
 
   for (let i = min; i <= max; i++) array.push(i)
@@ -58,7 +61,7 @@ function gen (min, max) {
   return array
 }
 
-function same (a, b) {
+function same(a, b) {
   assert.deepStrictEqual(a.length, b.length)
   assert.ok(b.every((item) => a.some((candidate) => isDeepStrictEqual(candidate, item))))
 }

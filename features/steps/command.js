@@ -5,7 +5,8 @@ import { execute } from './.command/execute.js'
 
 import { When, Then } from '@cucumber/cucumber'
 
-When('I run {command}',
+When(
+  'I run {command}',
   /**
    * @param {string} command
    * @return {Promise<void>}
@@ -18,7 +19,8 @@ When('I run {command}',
     const grace = timeout(10000)
 
     await Promise.any([grace, this.process])
-  })
+  }
+)
 
 When('I abort execution', async function () {
   this.controller.abort()
@@ -32,7 +34,8 @@ Then('program should exit', async function () {
   await this.process
 })
 
-Then('program should exit with code {int}',
+Then(
+  'program should exit with code {int}',
   /**
    * @param {number} code
    * @this {toa.features.Context}
@@ -41,4 +44,5 @@ Then('program should exit with code {int}',
     await this.process
 
     assert.equal(this.exitCode, code, `Program exit code is not ${code}\n${this.stderr}`)
-  })
+  }
+)

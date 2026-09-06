@@ -59,23 +59,34 @@ describe('objects', () => {
   })
 
   it('should emit an index signature for additional properties', () => {
-    equal(emit({ type: 'object', additionalProperties: { type: 'string' } }),
-      'Record<string, string>')
+    equal(
+      emit({ type: 'object', additionalProperties: { type: 'string' } }),
+      'Record<string, string>'
+    )
   })
 
   it('should emit an index signature for pattern properties', () => {
-    equal(emit({ type: 'object', patternProperties: { '.*': { type: 'integer' } } }),
-      'Record<string, number>')
+    equal(
+      emit({ type: 'object', patternProperties: { '.*': { type: 'integer' } } }),
+      'Record<string, number>'
+    )
   })
 
   it('should quote a key that is not an identifier', () => {
-    equal(emit({ type: 'object', properties: { 'a-b': { type: 'string' } } }),
-      '{\n  "a-b"?: string\n}')
+    equal(
+      emit({ type: 'object', properties: { 'a-b': { type: 'string' } } }),
+      '{\n  "a-b"?: string\n}'
+    )
   })
 
   it('should carry a description as a comment', () => {
-    equal(emit({ type: 'object', properties: { a: { type: 'string', description: 'what\n  it is' } } }),
-      '{\n  /** what it is */\n  a?: string\n}')
+    equal(
+      emit({
+        type: 'object',
+        properties: { a: { type: 'string', description: 'what\n  it is' } }
+      }),
+      '{\n  /** what it is */\n  a?: string\n}'
+    )
   })
 
   it('should indent a nested object', () => {
@@ -94,8 +105,10 @@ describe('arrays', () => {
   })
 
   it('should wrap what a suffix would misread', () => {
-    equal(emit({ type: 'array', items: { type: 'string', nullable: true } }),
-      'Array<string | null>')
+    equal(
+      emit({ type: 'array', items: { type: 'string', nullable: true } }),
+      'Array<string | null>'
+    )
   })
 })
 
@@ -134,7 +147,10 @@ describe('references', () => {
 
   it('should refuse what it cannot resolve', () => {
     throws(() => emit({ $ref: 'https://example.com/schema' }), /only local pointers/)
-    throws(() => emit({ $ref: '#/definitions/absent' }, { definitions: {} }), /Cannot resolve/)
+    throws(
+      () => emit({ $ref: '#/definitions/absent' }, { definitions: {} }),
+      /Cannot resolve/
+    )
   })
 })
 
@@ -190,7 +206,10 @@ describe('composition beside a shape', () => {
     const type = emit({
       type: 'object',
       properties: { a: { type: 'string' } },
-      anyOf: [{ type: 'object', properties: { b: { type: 'string' } } }, { type: 'string' }]
+      anyOf: [
+        { type: 'object', properties: { b: { type: 'string' } } },
+        { type: 'string' }
+      ]
     })
 
     equal(type, '{\n  a?: string\n} & ({\n  b?: string\n} | string)')

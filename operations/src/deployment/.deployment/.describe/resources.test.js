@@ -32,22 +32,29 @@ describe('refusal', () => {
   it('should refuse a composition that declares none', () => {
     const values = { compositions: [{ name: 'edge' }] }
 
-    assert.throws(() => resources({}, values),
-      (error) => /^Composition 'edge' declares no resources\./.test(error.message))
+    assert.throws(
+      () => resources({}, values),
+      (error) => /^Composition 'edge' declares no resources\./.test(error.message)
+    )
   })
 
   it('should refuse a service that declares none', () => {
     const values = { services: [{ name: 'exposition-gateway' }] }
 
-    assert.throws(() => resources({}, values),
-      (error) => /^Service 'exposition-gateway' declares no resources\./.test(error.message))
+    assert.throws(
+      () => resources({}, values),
+      (error) =>
+        /^Service 'exposition-gateway' declares no resources\./.test(error.message)
+    )
   })
 
   it('should refuse the mono deployment when it declares none', () => {
     const values = { mono: {} }
 
-    assert.throws(() => resources({}, values),
-      (error) => /^The mono deployment declares no resources\./.test(error.message))
+    assert.throws(
+      () => resources({}, values),
+      (error) => /^The mono deployment declares no resources\./.test(error.message)
+    )
   })
 
   it('should not ask a service a composition runs', () => {

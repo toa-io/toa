@@ -21,15 +21,15 @@ for (const [_, reference] of [
   ['package id', '@toa.io/norm'],
   ['relative path', '../../']
 ])
-   describe(`${_}`, () => {
-  it('should resolve storage', async () => {
-    component.entity = { storage: reference, schema: {} }
+  describe(`${_}`, () => {
+    it('should resolve storage', async () => {
+      component.entity = { storage: reference, schema: {} }
 
-    dependencies(component)
+      dependencies(component)
 
-    assert.deepStrictEqual(component.entity.storage, NORM)
+      assert.deepStrictEqual(component.entity.storage, NORM)
+    })
   })
-})
 
 it('should resolve toa packages', async () => {
   component.entity = { storage: '@toa.io/core', schema: {} }

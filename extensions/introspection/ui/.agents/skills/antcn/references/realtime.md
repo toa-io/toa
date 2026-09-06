@@ -34,7 +34,9 @@ Subscribe in any domain's store:
 ```ts
 import { events } from '@/realtime'
 
-events.on('contact.added', (data) => { /* … */ })
+events.on('contact.added', (data) => {
+  /* … */
+})
 ```
 
 ## Notes

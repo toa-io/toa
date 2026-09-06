@@ -18,26 +18,26 @@ export class Registry {
   /** @type {string | undefined} */
   #builder
 
-  constructor (scope, registry, factory, process) {
+  constructor(scope, registry, factory, process) {
     this.#scope = scope
     this.#registry = registry
     this.#factory = factory
     this.#process = process
   }
 
-  composition (composition) {
+  composition(composition) {
     return this.#create('composition', composition)
   }
 
-  service (path, service) {
+  service(path, service) {
     return this.#create('service', path, service)
   }
 
-  mono (composition) {
+  mono(composition) {
     return this.#create('mono', composition)
   }
 
-  async prepare (root) {
+  async prepare(root) {
     const path = await workspace.create('images', root)
 
     await Promise.all(this.#images.map((image) => image.prepare(path)))
@@ -45,20 +45,19 @@ export class Registry {
     return path
   }
 
-  async build () {
+  async build() {
     await this.prepare()
 
-    for (const image of this.#images)
-      await this.#build(image)
+    for (const image of this.#images) await this.#build(image)
   }
 
-  async push () {
+  async push() {
     await this.prepare()
 
     for (const image of this.#images) await this.#push(image)
   }
 
-  tags () {
+  tags() {
     return this.#images.map((image) => image.reference)
   }
 
@@ -67,7 +66,7 @@ export class Registry {
    * @param {...any} args
    * @returns {toa.deployment.images.Image}
    */
-  #create (type, ...args) {
+  #create(type, ...args) {
     const image = this.#factory[type](...args)
 
     this.#images.push(image)
@@ -80,7 +79,7 @@ export class Registry {
    * @param {boolean} [push]
    * @returns {Promise<void>}
    */
-  async #build (image, push = false) {
+  async #build(image, push = false) {
     if (await this.exists(image.reference)) {
       console.log('Image already exists, skipping:', image.reference)
       return
@@ -88,17 +87,16 @@ export class Registry {
 
     const args = ['--context=default', 'buildx', 'build']
 
-    if (push)
-      args.push('--push')
-    else
-      args.push('--load')
+    if (push) args.push('--push')
+    else args.push('--load')
 
     args.push('--tag', image.reference, image.context)
 
     const multiarch = this.#registry.platforms !== null
 
     if (this.#registry.build?.arguments !== undefined) {
-      for (const arg of this.#registry.build.arguments) args.push('--build-arg', `${arg}=${process.env[arg]}`)
+      for (const arg of this.#registry.build.arguments)
+        args.push('--build-arg', `${arg}=${process.env[arg]}`)
     }
 
     if (multiarch) {
@@ -108,21 +106,19 @@ export class Registry {
       args.push('--platform', platform)
       args.push('--builder', builder)
 
-      if (this.#registry.base !== undefined)
-        this.#appendCache(args)
-    } else
-      args.push('--builder', 'default')
+      if (this.#registry.base !== undefined) this.#appendCache(args)
+    } else args.push('--builder', 'default')
 
     args.push('--progress', 'plain')
 
     await this.#process.execute('docker', args)
   }
 
-  async #push (image) {
+  async #push(image) {
     await this.#build(image, true)
   }
 
-  async exists (tag) {
+  async exists(tag) {
     const args = ['manifest', 'inspect', tag]
 
     try {
@@ -136,14 +132,21 @@ export class Registry {
     return true
   }
 
-  async #ensureBuilder () {
-    if (this.#builder !== undefined)
-      return this.#builder
+  async #ensureBuilder() {
+    if (this.#builder !== undefined) return this.#builder
 
     try {
-      await this.#process.execute('docker', ['buildx', 'inspect', BUILDER], { silently: true })
+      await this.#process.execute('docker', ['buildx', 'inspect', BUILDER], {
+        silently: true
+      })
     } catch {
-      await this.#process.execute('docker', ['buildx', 'create', '--name', BUILDER, '--bootstrap'])
+      await this.#process.execute('docker', [
+        'buildx',
+        'create',
+        '--name',
+        BUILDER,
+        '--bootstrap'
+      ])
     }
 
     this.#builder = BUILDER
@@ -154,7 +157,7 @@ export class Registry {
   /**
    * @param {string[]} args
    */
-  #appendCache (args) {
+  #appendCache(args) {
     const ref = posix.join(this.#registry.base, this.#scope, 'buildcache')
 
     args.push('--cache-from', `type=registry,ref=${ref}`)

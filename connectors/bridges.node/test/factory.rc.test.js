@@ -56,5 +56,7 @@ it('should run disposal on disconnection', async () => {
 it('should reject an RC exporting no phase', async () => {
   const promise = factory.rc(resolve(import.meta.dirname, 'dummies/rc.none'), context)
 
-  await assert.rejects(promise, (error) => /RC 'empty' must export preflight, settle and\/or dispose/.test(error.message))
+  await assert.rejects(promise, (error) =>
+    /RC 'empty' must export preflight, settle and\/or dispose/.test(error.message)
+  )
 })

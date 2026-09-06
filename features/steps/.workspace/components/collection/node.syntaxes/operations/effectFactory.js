@@ -3,11 +3,11 @@ import { Effect } from './effectClass.js'
 export class EffectFactory {
   #context
 
-  constructor (context) {
+  constructor(context) {
     this.#context = context
   }
 
-  async create () {
+  async create() {
     return new Effect()
   }
 }

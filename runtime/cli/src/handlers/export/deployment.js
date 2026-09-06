@@ -9,7 +9,9 @@ const { Factory } = deployment
  */
 export const dump = async (argv) => {
   const path = find(argv.path)
-  const factory = await Factory.create(path, argv.environment, { mono: argv.mono === true })
+  const factory = await Factory.create(path, argv.environment, {
+    mono: argv.mono === true
+  })
   const operator = await factory.operator()
   const target = await operator.export(argv.target)
 

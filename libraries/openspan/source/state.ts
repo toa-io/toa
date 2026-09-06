@@ -25,11 +25,11 @@ export interface Bucket {
 const KEY = Symbol.for('openspan.state')
 
 // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-export const state: State = (globalThis as Global)[KEY] ??= {
+export const state: State = ((globalThis as Global)[KEY] ??= {
   storage: new AsyncLocalStorage<SpanContext>(),
   sample: 1,
   bucket: null,
   exporters: null
-}
+})
 
 type Global = typeof globalThis & { [KEY]?: State }

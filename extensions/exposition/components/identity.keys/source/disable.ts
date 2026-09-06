@@ -1,4 +1,4 @@
-export function transition (_: unknown, object: Key): Key {
+export function transition(_: unknown, object: Key): Key {
   object.revokedAt ??= Date.now()
 
   return object

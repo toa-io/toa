@@ -22,8 +22,16 @@ beforeEach(() => {
       { id: 'key0', key: secret('sTxL6qVOadKkUJwh3FveU53XgTEo3Sdfg7k2FfiIKfs') },
       // keys are secrets, and a secret is an object
       { id: 'key1', key: secret('5I0iSKw3yfBkQ4AXfA8eR-tWR0Q1dpn4x3bPrPzHkP0') },
-      { id: 'legacy0', key: secret('k3.local.m28p8SrbS467t-2IUjQuSOqmjvi24TbXhyjAW_dOrog'), format: 'paseto' },
-      { id: 'legacy1', key: secret('k3.local.-498jfWenrZH-Dqw3-zQJih_hKzDgBgUMfe37OCqSOA'), format: 'paseto' }
+      {
+        id: 'legacy0',
+        key: secret('k3.local.m28p8SrbS467t-2IUjQuSOqmjvi24TbXhyjAW_dOrog'),
+        format: 'paseto'
+      },
+      {
+        id: 'legacy1',
+        key: secret('k3.local.-498jfWenrZH-Dqw3-zQJih_hKzDgBgUMfe37OCqSOA'),
+        format: 'paseto'
+      }
     ],
     lifetime: 1000,
     refresh: 500,
@@ -33,7 +41,11 @@ beforeEach(() => {
     }
   }
 
-  context = { configuration, remote, logs: { debug: () => undefined } } as unknown as Context
+  context = {
+    configuration,
+    remote,
+    logs: { debug: () => undefined }
+  } as unknown as Context
 
   encrypt = new Encrypt()
   encrypt.mount(context)
@@ -48,25 +60,33 @@ it('should decrypt', async () => {
 
   const reply = await encrypt.execute({ authority, identity, lifetime })
 
-  if (reply instanceof Error)
-    throw reply
+  if (reply instanceof Error) throw reply
 
   const decrypted = await decrypt.execute(reply)
 
-  assert.partialDeepStrictEqual(decrypted, { iss: authority, identity, refresh: false, custom: false })
+  assert.partialDeepStrictEqual(decrypted, {
+    iss: authority,
+    identity,
+    refresh: false,
+    custom: false
+  })
 })
 
 it('should mark a token encrypted with a custom key', async () => {
   const identity: Identity = { id: generate(), roles: [] }
-  const key = { id: generate(), key: '5I0iSKw3yfBkQ4AXfA8eR-tWR0Q1dpn4x3bPrPzHkP0', label: 'custom' }
+  const key = {
+    id: generate(),
+    key: '5I0iSKw3yfBkQ4AXfA8eR-tWR0Q1dpn4x3bPrPzHkP0',
+    label: 'custom'
+  }
 
   remote.identity.keys.observe = mock.fn(async ({ query }: { query: { id: string } }) =>
-    query.id === key.id ? { ...key, identity: identity.id } : null) as any
+    query.id === key.id ? { ...key, identity: identity.id } : null
+  ) as any
 
   const encrypted = await encrypt.execute({ authority, identity, lifetime: 100, key })
 
-  if (encrypted instanceof Error)
-    throw encrypted
+  if (encrypted instanceof Error) throw encrypted
 
   const decrypted = await decrypt.execute(encrypted)
 
@@ -88,8 +108,7 @@ it('should decrypt with key1', async () => {
 
   const encrypted = await encrypt.execute({ authority, identity, lifetime })
 
-  if (encrypted instanceof Error)
-    throw encrypted
+  if (encrypted instanceof Error) throw encrypted
 
   const decrypted = await decrypt.execute(encrypted)
 
@@ -99,7 +118,11 @@ it('should decrypt with key1', async () => {
 it('should decrypt legacy PASETO and require refresh', async () => {
   const identity: Identity = { id: generate(), roles: [] }
 
-  const token = await paseto(configuration.keys[2].key.unwrap(), { iss: authority, identity }, 'legacy0')
+  const token = await paseto(
+    configuration.keys[2].key.unwrap(),
+    { iss: authority, identity },
+    'legacy0'
+  )
 
   await assert.partialDeepStrictEqual(await decrypt.execute(token), {
     iss: authority,
@@ -116,22 +139,33 @@ it('should separate JWE and PASETO keys with the same id by format', async () =>
 
   const identity: Identity = { id: generate(), roles: [] }
 
-  const token = await paseto(configuration.keys[2].key.unwrap(), { iss: authority, identity }, 'key0')
+  const token = await paseto(
+    configuration.keys[2].key.unwrap(),
+    { iss: authority, identity },
+    'key0'
+  )
 
-  await assert.partialDeepStrictEqual(await decrypt.execute(token), { identity, refresh: true })
+  await assert.partialDeepStrictEqual(await decrypt.execute(token), {
+    identity,
+    refresh: true
+  })
 })
 
 it('should reject a token under a revoked key', async () => {
   const identity: Identity = { id: generate(), roles: [] }
-  const key = { id: generate(), key: '5I0iSKw3yfBkQ4AXfA8eR-tWR0Q1dpn4x3bPrPzHkP0', label: 'revoked' }
+  const key = {
+    id: generate(),
+    key: '5I0iSKw3yfBkQ4AXfA8eR-tWR0Q1dpn4x3bPrPzHkP0',
+    label: 'revoked'
+  }
 
   remote.identity.keys.observe = mock.fn(async ({ query }: { query: { id: string } }) =>
-    query.id === key.id ? { ...key, identity: identity.id, revokedAt: Date.now() } : null) as any
+    query.id === key.id ? { ...key, identity: identity.id, revokedAt: Date.now() } : null
+  ) as any
 
   const encrypted = await encrypt.execute({ authority, identity, lifetime: 0, key })
 
-  if (encrypted instanceof Error)
-    throw encrypted
+  if (encrypted instanceof Error) throw encrypted
 
   const thrown: any = await decrypt.execute(encrypted)
 
@@ -144,8 +178,7 @@ it('should reject a tampered JWE', async () => {
     identity: { id: generate(), roles: [] }
   })
 
-  if (token instanceof Error)
-    throw token
+  if (token instanceof Error) throw token
 
   const parts = token.split('.')
 
@@ -154,7 +187,7 @@ it('should reject a tampered JWE', async () => {
   const tampered = parts.join('.')
 
   const thrown: any = await decrypt.execute(tampered)
-        assert.deepStrictEqual(thrown.code, 'INVALID_TOKEN')
+  assert.deepStrictEqual(thrown.code, 'INVALID_TOKEN')
 })
 
 it('should reject JWE with an unknown key', async () => {
@@ -164,20 +197,20 @@ it('should reject JWE with an unknown key', async () => {
     key: { id: 'missing', key: configuration.keys[0].key.unwrap(), label: 'missing' }
   })
 
-  if (token instanceof Error)
-    throw token
+  if (token instanceof Error) throw token
 
   const thrown: any = await decrypt.execute(token)
-        assert.deepStrictEqual(thrown.code, 'INVALID_KEY')
+  assert.deepStrictEqual(thrown.code, 'INVALID_KEY')
 })
 
-function secret (value: string): Secret {
+function secret(value: string): Secret {
   return { unwrap: () => value }
 }
 
-async function paseto (key: string, claims: object, kid: string): Promise<string> {
+async function paseto(key: string, claims: object, kid: string): Promise<string> {
   const imported = await ImportKeyFactory().run(key as `k3.local.${string}`)
 
-  return await EncryptFactory().run(imported, claims,
-    { footer: new TextEncoder().encode(JSON.stringify({ kid })) })
+  return await EncryptFactory().run(imported, claims, {
+    footer: new TextEncoder().encode(JSON.stringify({ kid }))
+  })
 }

@@ -20,7 +20,7 @@ export class Aspect extends Connector implements extensions.Aspect {
    * Without a client the value is local: the variable, the defaults and the schema.
    * With one, the value is what the service holds, and it follows the service.
    */
-  public constructor (locator: Locator, manifest: Manifest, client: Client | null) {
+  public constructor(locator: Locator, manifest: Manifest, client: Client | null) {
     super()
 
     this.locator = locator
@@ -28,56 +28,64 @@ export class Aspect extends Connector implements extensions.Aspect {
     this.client = client
     this.epoch = epoch(manifest.schema)
 
-    if (client !== null)
-      this.depends(client)
+    if (client !== null) this.depends(client)
   }
 
-  public invoke (path?: string[]): any {
+  public invoke(path?: string[]): any {
     let cursor: any = this.value
 
-    if (path !== undefined)
-      for (const segment of path)
-        cursor = cursor[segment]
+    if (path !== undefined) for (const segment of path) cursor = cursor[segment]
 
     return cursor
   }
 
-  protected override async open (): Promise<void> {
+  protected override async open(): Promise<void> {
     if (this.client === null) {
       this.value = local(this.locator, this.manifest)
 
       return
     }
 
-    const { configuration, created } = await this.client.fetch(this.locator.id, this.epoch)
+    const { configuration, created } = await this.client.fetch(
+      this.locator.id,
+      this.epoch
+    )
 
     this.value = fit(configuration, this.manifest)
     this.created = created
     this.client.subscribe(this.locator.id, this.epoch, this.listener)
 
-    console.info('Configuration resolved',
-      { component: this.locator.id, epoch: this.epoch, created })
+    console.info('Configuration resolved', {
+      component: this.locator.id,
+      epoch: this.epoch,
+      created
+    })
   }
 
-  protected override async close (): Promise<void> {
+  protected override async close(): Promise<void> {
     this.client?.unsubscribe(this.locator.id, this.epoch, this.listener)
   }
 
   private readonly listener = ({ configuration, created }: Value): void => {
     // deliveries may repeat or cross: only what is newer than the held value replaces it
-    if (created <= this.created)
-      return
+    if (created <= this.created) return
 
     try {
       this.value = fit(configuration, this.manifest)
       this.created = created
 
-      console.info('Configuration updated',
-        { component: this.locator.id, epoch: this.epoch, created })
+      console.info('Configuration updated', {
+        component: this.locator.id,
+        epoch: this.epoch,
+        created
+      })
     } catch (error) {
       // the service validated it against the schema of its epoch, so the two schemas differ
-      console.error('Configuration value does not match the schema',
-        { component: this.locator.id, epoch: this.epoch, error })
+      console.error('Configuration value does not match the schema', {
+        component: this.locator.id,
+        epoch: this.epoch,
+        error
+      })
     }
   }
 }

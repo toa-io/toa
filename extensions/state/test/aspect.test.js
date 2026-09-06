@@ -18,7 +18,10 @@ const declaration = {}
 
 beforeEach(() => {
   factory = new Factory()
-  aspect = /** @type {import('@toa.io/core/types').extensions.Aspect} */ factory.aspect(locator, declaration)
+  aspect = /** @type {import('@toa.io/core/types').extensions.Aspect} */ factory.aspect(
+    locator,
+    declaration
+  )
 })
 
 it('should be instance of Aspect', async () => {

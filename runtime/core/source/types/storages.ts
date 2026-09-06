@@ -55,29 +55,33 @@ export interface Query {
  */
 export interface Storage extends Connector {
   /** scope `object` */
-  get (query: Query): Promise<Record | null>
+  get(query: Query): Promise<Record | null>
 
   /** scope `objects` */
-  find (query: Query): Promise<Record[]>
+  find(query: Query): Promise<Record[]>
 
   /** scope `stream` */
-  stream (query?: Query): Promise<Readable>
+  stream(query?: Query): Promise<Readable>
 
   /**
    * A transition's commit. `false` is a lost compare-and-swap, not an error. Where `row` is
    * given, it is committed in the same transaction as the record or not at all.
    */
-  store (record: Record, row?: Row): Promise<boolean>
+  store(record: Record, row?: Row): Promise<boolean>
 
   /** a transition over `objects` */
-  massStore (records: Record[], rows?: Row[]): Promise<boolean>
+  massStore(records: Record[], rows?: Row[]): Promise<boolean>
 
   /** an assignment; `null` where the query matched nothing */
-  upsert (query: Query, changeset: object, row?: Row): Promise<Record | null>
+  upsert(query: Query, changeset: object, row?: Row): Promise<Record | null>
 
   /** get-or-create, in one indivisible step */
-  ensure (query: Query | undefined, properties: object, record: Record, row?: Row):
-  Promise<Record>
+  ensure(
+    query: Query | undefined,
+    properties: object,
+    record: Record,
+    row?: Row
+  ): Promise<Record>
 
   /** the driver's own handle, which an unmanaged operation is given as its state */
   readonly raw: unknown
@@ -122,5 +126,5 @@ export interface StorageOptions {
 }
 
 export interface Factory {
-  storage (locator: Locator, entity: Entity, options?: StorageOptions): Storage
+  storage(locator: Locator, entity: Entity, options?: StorageOptions): Storage
 }

@@ -22,15 +22,19 @@ export const storage = async (manifest, outbox) => {
 
   // a component whose structure nothing will make must not start with the structure it lacks
   if (manifest.entity.migrations?.length > 0 && storage.migrates !== true)
-    throw new Error(`Component '${manifest.locator.id}' declares migrations, ` +
-      `which storage '${manifest.entity.storage}' does not apply`)
+    throw new Error(
+      `Component '${manifest.locator.id}' declares migrations, ` +
+        `which storage '${manifest.entity.storage}' does not apply`
+    )
 
   return extensions.storage(storage)
 }
 
-async function load (component) {
+async function load(component) {
   const reference = component.entity.storage
-  const path = require.resolve(reference, { paths: [component.path, import.meta.dirname] })
+  const path = require.resolve(reference, {
+    paths: [component.path, import.meta.dirname]
+  })
   const { Factory } = await import(pathToFileURL(path).href)
 
   return Factory

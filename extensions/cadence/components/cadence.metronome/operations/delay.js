@@ -8,7 +8,7 @@ import { LANES } from '@toa.io/extensions.cadence'
  * row has no immediate path to settle, so nothing is gained, and an even spread is what the
  * dispatchers want.
  */
-export function transition (input, object) {
+export function transition(input, object) {
   const due = Date.now() + input.interval
 
   object.lane = Math.floor(Math.random() * LANES)

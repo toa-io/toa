@@ -37,8 +37,12 @@ export class Context {
   private consumed = false
 
   // eslint-disable-next-line max-params
-  public constructor (authority: string, request: IncomingMessage, properties: Properties,
-    url: URL) {
+  public constructor(
+    authority: string,
+    request: IncomingMessage,
+    properties: Properties,
+    url: URL
+  ) {
     this.authority = authority
     this.request = request
     this.ip = address(request, properties.ip)
@@ -56,11 +60,7 @@ export class Context {
       const match = SUBTYPE.exec(accept)
 
       if (match !== null) {
-        const {
-          type,
-          subtype,
-          suffix
-        } = match.groups!
+        const { type, subtype, suffix } = match.groups!
 
         this.request.headers.accept = `${type}/${suffix}`
         this.subtype = subtype
@@ -69,11 +69,10 @@ export class Context {
 
     const encoder = negotiate(this.request)
 
-    if (encoder !== undefined)
-      this.encoder = encoder
+    if (encoder !== undefined) this.encoder = encoder
   }
 
-  public async buffer (): Promise<Buffer> {
+  public async buffer(): Promise<Buffer> {
     this.consumed = true
 
     return await buffer(this.request)
@@ -82,19 +81,22 @@ export class Context {
   public async body<T>(): Promise<T> {
     let value = this.consumed ? null : await read(this)
 
-    for (const transform of this.pipelines.body)
-      value = await transform(value)
+    for (const transform of this.pipelines.body) value = await transform(value)
 
     return value
   }
 
-  private log (request: IncomingMessage): void {
+  private log(request: IncomingMessage): void {
     const headers = { ...request.headers }
 
     if (headers.authorization !== undefined)
       headers.authorization = SCHEME.exec(headers.authorization)?.[1] ?? '[malformed]'
 
-    console.debug('Received request', { method: request.method, url: request.url, headers })
+    console.debug('Received request', {
+      method: request.method,
+      url: request.url,
+      headers
+    })
   }
 }
 
@@ -117,18 +119,16 @@ interface Properties {
  * Negotiation parses the header and sorts the candidates, and the value repeats:
  * clients send one of a handful of `accept` strings. Bounded, the header is theirs.
  */
-function negotiate (request: IncomingMessage): Format | undefined {
+function negotiate(request: IncomingMessage): Format | undefined {
   const accept = request.headers.accept ?? ''
   const known = NEGOTIATED.get(accept)
 
-  if (known !== undefined)
-    return known === NONE ? undefined : known
+  if (known !== undefined) return known === NONE ? undefined : known
 
   const mediaType = new Negotiator(request).mediaType(types)
   const encoder = mediaType === undefined ? undefined : formats[mediaType]
 
-  if (NEGOTIATED.size >= NEGOTIATED_LIMIT)
-    NEGOTIATED.clear()
+  if (NEGOTIATED.size >= NEGOTIATED_LIMIT) NEGOTIATED.clear()
 
   NEGOTIATED.set(accept, encoder ?? NONE)
 
@@ -140,4 +140,5 @@ const NONE = Symbol('not acceptable') as unknown as Format
 const NEGOTIATED = new Map<string, Format>()
 const NEGOTIATED_LIMIT = 1024
 
-const SUBTYPE = /^(?<type>\w{1,32})\/(vnd\.toa\.(?<subtype>\S{1,32})\+)(?<suffix>\S{1,32})$/
+const SUBTYPE =
+  /^(?<type>\w{1,32})\/(vnd\.toa\.(?<subtype>\S{1,32})\+)(?<suffix>\S{1,32})$/

@@ -28,26 +28,26 @@ Collapsible card stack with view-transition morphs. Click the stack (or press En
 
 ### Root
 
-| Prop        | Type          | Default | Notes                                                                 |
-| ----------- | ------------- | ------- | --------------------------------------------------------------------- |
-| `children`  | `Snippet`     | —       | `Item` and optional `Toolbar` slots.                                  |
-| `collapsed` | `boolean`     | `true`  | Bindable. When true and item count ≥ `min`, cards stack visually.     |
-| `min`       | `number`      | `3`     | Minimum items before the stacked collapsed layout applies.            |
-| `class`     | `ClassValue`  | —       | Root container classes.                                               |
+| Prop        | Type         | Default | Notes                                                             |
+| ----------- | ------------ | ------- | ----------------------------------------------------------------- |
+| `children`  | `Snippet`    | —       | `Item` and optional `Toolbar` slots.                              |
+| `collapsed` | `boolean`    | `true`  | Bindable. When true and item count ≥ `min`, cards stack visually. |
+| `min`       | `number`     | `3`     | Minimum items before the stacked collapsed layout applies.        |
+| `class`     | `ClassValue` | —       | Root container classes.                                           |
 
 **Methods** (via `bind:this`): `toggle(on?)`, `expand()`, `collapse()`.
 
 ### Item
 
-| Prop       | Type      | Default | Notes                                      |
-| ---------- | --------- | ------- | ------------------------------------------ |
-| `children` | `Snippet` | —       | Card content.                              |
-| `id`       | `string`  | —       | Stable key for `view-transition-name`.     |
-| `class`    | `ClassValue`  | —       | Wrapper classes.                           |
+| Prop       | Type         | Default | Notes                                  |
+| ---------- | ------------ | ------- | -------------------------------------- |
+| `children` | `Snippet`    | —       | Card content.                          |
+| `id`       | `string`     | —       | Stable key for `view-transition-name`. |
+| `class`    | `ClassValue` | —       | Wrapper classes.                       |
 
 ### Toolbar
 
-| Prop       | Type         | Default | Notes                                                        |
-| ---------- | ------------ | ------- | ------------------------------------------------------------ |
-| `children` | `Snippet`    | —       | Shown only when expanded and stacked (≥ `min` items).        |
-| `class`    | `ClassValue` | —       | Wrapper classes.                                             |
+| Prop       | Type         | Default | Notes                                                 |
+| ---------- | ------------ | ------- | ----------------------------------------------------- |
+| `children` | `Snippet`    | —       | Shown only when expanded and stacked (≥ `min` items). |
+| `class`    | `ClassValue` | —       | Wrapper classes.                                      |

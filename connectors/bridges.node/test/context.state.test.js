@@ -26,7 +26,12 @@ it('should expose aspect', async () => {
 it('should set value', async () => {
   context.state.a = 1
 
-  assert.ok(state.invoke.mock.calls.some((call) => call.arguments.length === 1 && isDeepStrictEqual(call.arguments[0], { a: 1 })))
+  assert.ok(
+    state.invoke.mock.calls.some(
+      (call) =>
+        call.arguments.length === 1 && isDeepStrictEqual(call.arguments[0], { a: 1 })
+    )
+  )
 })
 
 it('should get value', async () => {
@@ -41,7 +46,7 @@ it('should get value', async () => {
   state.invoke.mock.resetCalls()
 })
 
-function resetCalls (target = [assert, fixtures, state], seen = new Set()) {
+function resetCalls(target = [assert, fixtures, state], seen = new Set()) {
   if (target === null || typeof target !== 'object' || seen.has(target)) return
 
   seen.add(target)

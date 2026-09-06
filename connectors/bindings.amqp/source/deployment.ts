@@ -5,7 +5,7 @@ import * as sources from './deployment/sources.js'
 import * as context from './deployment/context.js'
 import { type Instance } from './deployment/instance.js'
 
-export function deployment (instances: Instance[], declaration: Declaration): Dependency {
+export function deployment(instances: Instance[], declaration: Declaration): Dependency {
   const annotation = normalize(declaration)
   const contextDependency = context.createDependency(annotation.context)
   const sourcesDependency = sources.createDependency(annotation.sources, instances)

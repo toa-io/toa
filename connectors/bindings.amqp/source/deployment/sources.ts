@@ -5,7 +5,7 @@ import { type Locator } from '@toa.io/core'
 import { type Instance } from './instance.js'
 import { type Annotation } from './annotation.js'
 
-export function createDependency (sources: Sources, instances: Instance[]): Dependency {
+export function createDependency(sources: Sources, instances: Instance[]): Dependency {
   const requests = []
 
   for (const instance of instances) {
@@ -19,21 +19,19 @@ export function createDependency (sources: Sources, instances: Instance[]): Depe
   return { variables }
 }
 
-export function resolveURIs (locator: Locator): string[] {
+export function resolveURIs(locator: Locator): string[] {
   return resolve(ID, locator.id)
 }
 
-function createRequest (instance: Instance): Request | null {
+function createRequest(instance: Instance): Request | null {
   const group = instance.locator.label
   const selectors = createSelectors(instance.component)
 
-  if (selectors === null)
-    return null
-  else
-    return { group, selectors }
+  if (selectors === null) return null
+  else return { group, selectors }
 }
 
-function createSelectors (component: Manifest): string[] | null {
+function createSelectors(component: Manifest): string[] | null {
   if (component.receivers === undefined) return null
 
   const sources = Object.values(component.receivers).map((receiver) => receiver.source)

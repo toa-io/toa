@@ -1,14 +1,14 @@
 /** What the deployment told the service about every configured component. */
-export function entry (component: string): Entry | undefined {
+export function entry(component: string): Entry | undefined {
   return read()[component]
 }
 
 /** The configured components, by name. */
-export function components (): string[] {
+export function components(): string[] {
   return Object.keys(read()).sort()
 }
 
-function read (): Values {
+function read(): Values {
   const source = process.env[VARIABLE] ?? '{}'
 
   // read again once the variable changes, as it does between scenarios of one process

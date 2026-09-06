@@ -21,8 +21,7 @@ beforeEach(() => {
 })
 
 afterEach(() => {
-  for (const name of used)
-    delete process.env[name]
+  for (const name of used) delete process.env[name]
 
   used = []
 })
@@ -134,7 +133,7 @@ describe('fit', () => {
   })
 })
 
-function set (value: object | string, key = locator.uppercase): void {
+function set(value: object | string, key = locator.uppercase): void {
   const string = typeof value === 'string' ? value : JSON.stringify(value)
   const name = 'TOA_CONFIGURATION_' + key
 

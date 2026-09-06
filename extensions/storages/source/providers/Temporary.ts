@@ -7,7 +7,7 @@ export interface TemporaryOptions {
 }
 
 export class Temporary extends FileSystem {
-  public constructor (options: TemporaryOptions) {
+  public constructor(options: TemporaryOptions) {
     const path = join(tmpdir(), options.directory)
 
     super({ path })

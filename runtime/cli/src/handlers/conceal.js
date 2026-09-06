@@ -10,7 +10,7 @@ export const conceal = async (argv) => {
   else await concealValue(argv)
 }
 
-async function concealValue (argv) {
+async function concealValue(argv) {
   if (argv['key-values'].length === 0) throw new Error('Key-values must be passed')
 
   const values = argv['key-values'].reduce((values, pair) => {
@@ -26,7 +26,7 @@ async function concealValue (argv) {
   await secrets.upsert(secret, values, argv.namespace)
 }
 
-async function concealValues (argv) {
+async function concealValues(argv) {
   const path = find(argv.path)
   const factory = await Factory.create(path, argv.environment)
   const operator = await factory.operator()
@@ -42,7 +42,7 @@ async function concealValues (argv) {
 /**
  * @return {Record<string, Record<string, string>>}
  */
-function groupValues (values) {
+function groupValues(values) {
   const secrets = {}
 
   for (const [key, value] of Object.entries(values)) {

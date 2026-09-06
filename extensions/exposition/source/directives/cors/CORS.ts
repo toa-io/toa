@@ -24,7 +24,7 @@ export class CORS implements Interceptor {
     vary: 'origin'
   })
 
-  public intercept (input: Input): Output {
+  public intercept(input: Input): Output {
     const origin = input.request.headers.origin
 
     if (origin !== undefined && input.request.method === 'OPTIONS')
@@ -36,8 +36,10 @@ export class CORS implements Interceptor {
       if (origin !== undefined) {
         output.headers.set('access-control-allow-origin', origin)
         output.headers.set('access-control-allow-credentials', 'true')
-        output.headers.set('access-control-expose-headers',
-          'authorization, content-type, content-length, date, etag, last-modified')
+        output.headers.set(
+          'access-control-expose-headers',
+          'authorization, content-type, content-length, date, etag, last-modified'
+        )
       }
 
       const method = input.request.method
@@ -49,12 +51,12 @@ export class CORS implements Interceptor {
     return null
   }
 
-  public reset (): void {
+  public reset(): void {
     this.requestHeaders = new Set(REQUEST_HEADERS)
     this.headers.set('access-control-allow-headers', this.allowedHeaders())
   }
 
-  public allow (header: string): void {
+  public allow(header: string): void {
     this.requestHeaders.add(header.toLowerCase())
     this.headers.set('access-control-allow-headers', this.allowedHeaders())
   }
@@ -64,11 +66,11 @@ export class CORS implements Interceptor {
    * fixed — an unsorted value would differ between otherwise identical processes,
    * and between one restart and the next.
    */
-  private allowedHeaders (): string {
+  private allowedHeaders(): string {
     return Array.from(this.requestHeaders).sort().join(', ')
   }
 
-  private preflightResponse (origin: string): Output {
+  private preflightResponse(origin: string): Output {
     this.headers.set('access-control-allow-origin', origin)
 
     return {

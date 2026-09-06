@@ -21,38 +21,38 @@ export class Entity {
    * @param mutable whether the entity may be modified and committed
    */
   // eslint-disable-next-line max-params
-  public constructor (schema: Schema, argument?: Record | string, guards?: Guard[],
-    mutable = true) {
+  public constructor(
+    schema: Schema,
+    argument?: Record | string,
+    guards?: Guard[],
+    mutable = true
+  ) {
     this.#schema = schema
     this.#guards = guards
 
-    if (typeof argument === 'object')
-      this.#acquire(argument, mutable)
-    else
-      this.#blank(argument ?? newid())
+    if (typeof argument === 'object') this.#acquire(argument, mutable)
+    else this.#blank(argument ?? newid())
   }
 
-  public get (): Record {
+  public get(): Record {
     return this.#state
   }
 
-  public set (value: Record, optional = false): void {
+  public set(value: Record, optional = false): void {
     if (!this.#mutable)
       throw new Error('Entity acquired by a read-only operation cannot be modified')
 
-    if (!optional)
-      this.#guard(value)
+    if (!optional) this.#guard(value)
 
     const error = optional ? this.#schema.fitOptional(value) : this.#schema.fit(value)
 
-    if (error !== null)
-      throw new EntityContractException(error, value)
+    if (error !== null) throw new EntityContractException(error, value)
 
     this.#revive(value)
     this.#write(value)
   }
 
-  public event (input?: object): Event {
+  public event(input?: object): Event {
     return {
       origin: this.#origin,
       state: this.#state,
@@ -66,7 +66,7 @@ export class Entity {
    * cannot commit has nothing to diff, so it takes the record as it came from the storage
    * instead of paying for a deep copy of every record it read.
    */
-  #acquire (record: Record, mutable: boolean): void {
+  #acquire(record: Record, mutable: boolean): void {
     this.#mutable = mutable
 
     if (!mutable) {
@@ -79,33 +79,30 @@ export class Entity {
     this.#origin = record
   }
 
-  #blank (id: string): void {
+  #blank(id: string): void {
     this.set({ id, VERSION: 0 }, OPTIONAL)
   }
 
-  #guard (value: Record): void {
-    if (this.#guards === undefined)
-      return
+  #guard(value: Record): void {
+    if (this.#guards === undefined) return
 
     for (const guard of this.#guards) {
       const ok = guard.fit(value, this.#origin)
 
-      if (ok === false)
-        throw new EntityGuardException(guard.name, value)
+      if (ok === false) throw new EntityGuardException(guard.name, value)
     }
   }
 
   // deletion is only expressed as a new DELETED timestamp,
   // so committing over a tombstone without touching it means revival
-  #revive (value: Record): void {
-    if (this.#origin?.DELETED == null || value.DELETED !== this.#origin.DELETED)
-      return
+  #revive(value: Record): void {
+    if (this.#origin?.DELETED == null || value.DELETED !== this.#origin.DELETED) return
 
     value.DELETED = null
     this.deleted = false
   }
 
-  #write (value: Record): void {
+  #write(value: Record): void {
     if (!('_trailers' in value))
       Object.defineProperty(value, '_trailers', {
         writable: false,
@@ -119,8 +116,7 @@ export class Entity {
       value.UPDATED ??= value.CREATED
     }
 
-    if ('DELETED' in value && value.DELETED !== null)
-      this.deleted = true
+    if ('DELETED' in value && value.DELETED !== null) this.deleted = true
 
     if (this.#state !== undefined) {
       value.UPDATED = Date.now()

@@ -1,21 +1,19 @@
 import { nameVariable } from './naming.js'
 import { type AnnotationRecord, type URIMap } from './Deployment.js'
 
-export function resolve (id: string, selector: string): string[] {
+export function resolve(id: string, selector: string): string[] {
   const variable = nameVariable(id, selector)
   const value = process.env[variable]
 
-  if (value === undefined)
-    throw new Error(`${variable} is not set.`)
+  if (value === undefined) throw new Error(`${variable} is not set.`)
 
   const urls = value.split(' ')
 
   return withCredentials(variable, urls)
 }
 
-export function resolveRecord (uris: URIMap, selector: string): AnnotationRecord {
-  if (selector in uris)
-    return getRecord(uris, selector)
+export function resolveRecord(uris: URIMap, selector: string): AnnotationRecord {
+  if (selector in uris) return getRecord(uris, selector)
 
   const segments = selector.split('.')
 
@@ -25,20 +23,18 @@ export function resolveRecord (uris: URIMap, selector: string): AnnotationRecord
     if (current in uris) return getRecord(uris, current)
   }
 
-  if ('.' in uris)
-    return getRecord(uris, '.')
-  else
-    throw new Error(`Selector '${selector}' cannot be resolved.`)
+  if ('.' in uris) return getRecord(uris, '.')
+  else throw new Error(`Selector '${selector}' cannot be resolved.`)
 }
 
-function withCredentials (variable: string, urls: string[]): string[] {
+function withCredentials(variable: string, urls: string[]): string[] {
   const username = process.env[variable + '_USERNAME'] ?? ''
   const password = process.env[variable + '_PASSWORD'] ?? ''
 
   return urls.map((url) => addCredentials(url, username, password))
 }
 
-function addCredentials (ref: string, username: string, password: string): string {
+function addCredentials(ref: string, username: string, password: string): string {
   const url = new URL(ref)
 
   url.username = username
@@ -47,7 +43,7 @@ function addCredentials (ref: string, username: string, password: string): strin
   return url.href
 }
 
-function getRecord (uris: URIMap, key: string): AnnotationRecord {
+function getRecord(uris: URIMap, key: string): AnnotationRecord {
   return {
     key,
     references: uris[key]

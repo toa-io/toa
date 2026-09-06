@@ -6,7 +6,6 @@ import { random } from '../source/random.js'
 it('should be less than or equal to ceil(max)', () => {
   const iterations = 100
 
-  
   for (let i = iterations; i > 0; i--) {
     const max = Math.ceil(Math.random() * i)
     const value = random(max)
@@ -24,7 +23,6 @@ it('should be integer', () => {
 it('should be less than 100 by default', () => {
   const iterations = 100
 
-  
   for (let i = iterations; i > 0; i--) {
     const value = random()
 

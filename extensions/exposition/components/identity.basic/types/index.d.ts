@@ -14,8 +14,12 @@ export interface Context {
   remote: {
     identity: {
       tokens: { revoke: (request: { query: Query }) => Promise<null | RemoteError> }
-      keys: { revoke: (request: { input: { identity: string } }) => Promise<null | RemoteError> }
-      roles: { principal: (request: { input: { id: string } }) => Promise<null | RemoteError> }
+      keys: {
+        revoke: (request: { input: { identity: string } }) => Promise<null | RemoteError>
+      }
+      roles: {
+        principal: (request: { input: { id: string } }) => Promise<null | RemoteError>
+      }
     }
   }
   configuration: Configuration

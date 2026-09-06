@@ -15,20 +15,20 @@ export class Local extends Connector {
   private readonly locator: Locator
   private remote?: Promise<Remote>
 
-  public constructor (host: Host, locator: Locator) {
+  public constructor(host: Host, locator: Locator) {
     super()
 
     this.host = host
     this.locator = locator
   }
 
-  public async invoke (endpoint: string, request: Request): Promise<Reply> {
+  public async invoke(endpoint: string, request: Request): Promise<Reply> {
     this.remote ??= this.locate()
 
     return await (await this.remote).invoke(endpoint, request)
   }
 
-  private async locate (): Promise<Remote> {
+  private async locate(): Promise<Remote> {
     const remote = await this.host.remote(this.locator)
 
     this.depends(remote)

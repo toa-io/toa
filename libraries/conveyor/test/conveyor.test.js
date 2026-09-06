@@ -63,7 +63,12 @@ it('should buffer units while processing', async () => {
   const promise = promises.shift()
 
   assert.strictEqual(processor.mock.callCount(), 1)
-  assert.ok(((call) => call.arguments.length === 1 && isDeepStrictEqual(call.arguments[0], [unit]))(processor.mock.calls[1 - 1] ?? { arguments: [] }))
+  assert.ok(
+    ((call) =>
+      call.arguments.length === 1 && isDeepStrictEqual(call.arguments[0], [unit]))(
+      processor.mock.calls[1 - 1] ?? { arguments: [] }
+    )
+  )
 
   first(result)
 
@@ -71,7 +76,12 @@ it('should buffer units while processing', async () => {
 
   // second process
   assert.strictEqual(processor.mock.callCount(), 2)
-  assert.ok(((call) => call.arguments.length === 1 && isDeepStrictEqual(call.arguments[0], units))(processor.mock.calls[2 - 1] ?? { arguments: [] }))
+  assert.ok(
+    ((call) =>
+      call.arguments.length === 1 && isDeepStrictEqual(call.arguments[0], units))(
+      processor.mock.calls[2 - 1] ?? { arguments: [] }
+    )
+  )
 
   second(results)
 
@@ -84,7 +94,7 @@ it('should buffer units while processing', async () => {
   }
 })
 
-it('should throw if amount of results doesn\'t match amount of units', async () => {
+it("should throw if amount of results doesn't match amount of units", async () => {
   const amount = random(5) + 5
   const promises = []
 
@@ -111,7 +121,10 @@ it('should throw if amount of results doesn\'t match amount of units', async () 
 const once = () => {
   let complete
 
-  processor.mock.mockImplementationOnce(() => new Promise((resolve) => (complete = resolve)), queued++)
+  processor.mock.mockImplementationOnce(
+    () => new Promise((resolve) => (complete = resolve)),
+    queued++
+  )
 
   return (result) => complete(result)
 }

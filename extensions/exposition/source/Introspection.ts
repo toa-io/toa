@@ -33,28 +33,40 @@ export type Schema = Awaited<ReturnType<Remote['explain']>>['input']
  * The same, in the order the shape states — whatever order the families that filled it ran
  * in. What a resource says about itself is read, so it is written the way it is documented.
  */
-export function order (introspection: Introspection): Introspection {
+export function order(introspection: Introspection): Introspection {
   const ordered: Introspection = {}
 
   for (const key of KEYS)
-    if (introspection[key] !== undefined)
-      (ordered[key] as unknown) = introspection[key]
+    if (introspection[key] !== undefined) (ordered[key] as unknown) = introspection[key]
 
   return ordered
 }
 
-const KEYS = ['title', 'description', 'route', 'query', 'headers', 'input', 'output', 'errors'] as const
+const KEYS = [
+  'title',
+  'description',
+  'route',
+  'query',
+  'headers',
+  'input',
+  'output',
+  'errors'
+] as const
 
 /**
  * The schema of one input property, taken out of it: a property another family fills is
  * not the caller's to send, and what took it says where it comes from instead.
  */
-export function take (carrier: Carrier, property: string): Schema | undefined {
+export function take(carrier: Carrier, property: string): Schema | undefined {
   const input = carrier.input as Shape | null | undefined
   const properties = input?.properties
 
-  if (input === undefined || input === null || properties === undefined ||
-    !(property in properties))
+  if (
+    input === undefined ||
+    input === null ||
+    properties === undefined ||
+    !(property in properties)
+  )
     return undefined
 
   const schema = properties[property]
@@ -72,23 +84,23 @@ export function take (carrier: Carrier, property: string): Schema | undefined {
  * describes an array. What is not an object of properties is left alone: a whitelist has
  * nothing to say about a string.
  */
-export function restrict (schema: Schema | undefined, allowed: Set<string>): Schema | undefined {
+export function restrict(
+  schema: Schema | undefined,
+  allowed: Set<string>
+): Schema | undefined {
   const shape = schema as Shape | null | undefined
 
-  if (shape === undefined || shape === null)
-    return schema
+  if (shape === undefined || shape === null) return schema
 
   if (shape.items !== undefined)
     return { ...shape, items: restrict(shape.items, allowed) } as unknown as Schema
 
-  if (shape.properties === undefined)
-    return schema
+  if (shape.properties === undefined) return schema
 
   const properties: Record<string, Schema> = {}
 
   for (const [name, property] of Object.entries(shape.properties))
-    if (allowed.has(name))
-      properties[name] = property
+    if (allowed.has(name)) properties[name] = property
 
   const restricted: Shape = { ...shape, properties }
 

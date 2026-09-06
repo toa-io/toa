@@ -53,7 +53,6 @@ it('should track context', async () => {
 })
 
 it('should track nested context', async () => {
-  
   const storage = context(id)
 
   const outer = { a: generate() }

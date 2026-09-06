@@ -8,13 +8,13 @@ export class Reflection<T = any> extends Connector {
 
   readonly #source: Source<T>
 
-  public constructor (source: Source<T>) {
+  public constructor(source: Source<T>) {
     super()
 
     this.#source = source
   }
 
-  protected override async open (): Promise<void> {
+  protected override async open(): Promise<void> {
     this.value = await this.#source()
   }
 }

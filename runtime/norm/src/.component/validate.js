@@ -4,7 +4,9 @@ import { readFileSync } from 'node:fs'
 import { yaml } from '@toa.io/generic'
 import * as schemas from '@toa.io/schemas'
 
-const object = yaml.load(readFileSync(path.resolve(import.meta.dirname, 'schema.yaml'), 'utf8'))
+const object = yaml.load(
+  readFileSync(path.resolve(import.meta.dirname, 'schema.yaml'), 'utf8')
+)
 const schema = schemas.schema(object)
 
 export const validate = async (manifest) => {
@@ -29,11 +31,15 @@ const events = async (manifest) => {
 const receivers = (manifest) => {
   for (const [locator, receiver] of Object.entries(manifest.receivers)) {
     if (manifest.operations?.[receiver.operation] === undefined) {
-      throw new Error(`Receiver '${locator}' refers to undefined operation '${receiver.operation}'`)
+      throw new Error(
+        `Receiver '${locator}' refers to undefined operation '${receiver.operation}'`
+      )
     }
 
     if (!TYPES.has(manifest.operations[receiver.operation].type)) {
-      throw new Error(`Receiver '${locator}' must refer to an operation of the allowed types: ${Array.from(TYPES).join(', ')}`)
+      throw new Error(
+        `Receiver '${locator}' must refer to an operation of the allowed types: ${Array.from(TYPES).join(', ')}`
+      )
     }
   }
 }

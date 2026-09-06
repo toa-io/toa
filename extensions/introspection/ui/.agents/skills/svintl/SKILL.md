@@ -46,7 +46,7 @@ YAML with arbitrary nesting, strings at leaves:
 ```yaml
 native: English
 example:
-  hello: "Hello world"
+  hello: 'Hello world'
 ```
 
 Usage: `{$dict.example.hello}`
@@ -94,6 +94,7 @@ npx intl unit items.count "item"
 ```
 
 Produces:
+
 ```yaml
 items:
   count:
@@ -125,6 +126,7 @@ Mount keys use `{mount}/` prefix in CLI commands.
 ## Import Pattern
 
 **Root dictionary:**
+
 ```svelte
 <script lang="ts">
   import { dict, locale } from '$lib/intl'
@@ -133,6 +135,7 @@ Mount keys use `{mount}/` prefix in CLI commands.
 ```
 
 **Mount dictionary:**
+
 ```svelte
 <script lang="ts">
   import { dict } from './intl'
@@ -141,6 +144,7 @@ Mount keys use `{mount}/` prefix in CLI commands.
 ```
 
 **Mount's `intl/index.ts`:**
+
 ```typescript
 import { derived } from 'svelte/store'
 import { locale } from '$lib/intl'

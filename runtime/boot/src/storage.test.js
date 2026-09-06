@@ -24,8 +24,10 @@ it('should refuse migrations a storage does not apply', async () => {
     migrations: [{ id: '0001', steps: [] }]
   }
 
-  await assert.rejects(storage(manifest(entity), false),
-    /declares migrations, which storage '@toa.io\/storages.null' does not apply/)
+  await assert.rejects(
+    storage(manifest(entity), false),
+    /declares migrations, which storage '@toa.io\/storages.null' does not apply/
+  )
 })
 
 it('should accept a storage with no migrations', async () => {

@@ -11,14 +11,20 @@ import { print } from './print.js'
 import type { Captures } from '../Captures.js'
 
 export const functions: Functions = {
-  id, get, set, basic, email, password, now, utc, unix, print
+  id,
+  get,
+  set,
+  basic,
+  email,
+  password,
+  now,
+  utc,
+  unix,
+  print
 }
 
 type Fn = (this: Captures, value: string, ...args: string[]) => string
 
 export type Functions = Record<string, Fn>
 
-export {
-  email,
-  password
-}
+export { email, password }

@@ -11,15 +11,15 @@ class Func {
   /**
    * @param {toa.node.algorithms.func} func
    */
-  constructor (func) {
+  constructor(func) {
     this.#func = func
   }
 
-  mount (context) {
+  mount(context) {
     this.#context = context
   }
 
-  execute (input, state) {
+  execute(input, state) {
     if (state === undefined) return this.#func(input, this.#context)
     else return this.#func(input, state, this.#context)
   }

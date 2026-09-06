@@ -26,4 +26,4 @@ as a result for all processed units.
 > ![Important](https://img.shields.io/badge/Important-red)<br/>
 > If Conveyor is used for batch insert into a database, scaling up instances of the corresponding
 > component may result in **lower** overall request processing rate due to higher amount of
-> database commits. 
+> database commits.

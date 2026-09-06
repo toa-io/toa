@@ -1,4 +1,4 @@
-function terminate (_, changeset) {
+function terminate(_, changeset) {
   changeset.DELETED = Date.now()
 }
 

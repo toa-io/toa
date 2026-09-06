@@ -48,9 +48,9 @@ Undefined `query` denies any query arguments in requests.
 
 Search criteria in [RSQL](https://github.com/jirutka/rsql-parser) format.
 
-The `criteria` property is considered as *open* when it ends with a `;`, allowing the combination of
+The `criteria` property is considered as _open_ when it ends with a `;`, allowing the combination of
 request query criteria using `and` logic.
-Otherwise, criteria property is *closed*, that is, doesn't allow `criteria` in a request query.
+Otherwise, criteria property is _closed_, that is, doesn't allow `criteria` in a request query.
 
 ```yaml
 # manifest.toa.yaml
@@ -225,7 +225,7 @@ sort: rank:asc
 sort: rank:desc;timestamp:asc
 ```
 
-If `sort` value ends with a semicolon `;` then the sorting is considered *open*
+If `sort` value ends with a semicolon `;` then the sorting is considered _open_
 and can be extended using request query `sort` argument.
 
 ```yaml

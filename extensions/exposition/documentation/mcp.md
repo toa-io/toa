@@ -117,14 +117,14 @@ request is, is read from `MCP-Protocol-Version`, or from
 `_meta['io.modelcontextprotocol/protocolVersion']` where the header is absent; `initialize` is one
 by itself, and a request naming no version is of a revision that sent none.
 
-| method | |
-| --- | --- |
-| `server/discover` | what is served, and who serves it |
-| `tools/list` | every tool this caller may reach, in a stable order |
-| `tools/call` | the call the tool is |
-| `initialize` | the same as `server/discover`, in the shape a client of `2025-11-25` reads |
-| `notifications/initialized` | `202`, and nothing done |
-| `ping` | `{}` |
+| method                      |                                                                            |
+| --------------------------- | -------------------------------------------------------------------------- |
+| `server/discover`           | what is served, and who serves it                                          |
+| `tools/list`                | every tool this caller may reach, in a stable order                        |
+| `tools/call`                | the call the tool is                                                       |
+| `initialize`                | the same as `server/discover`, in the shape a client of `2025-11-25` reads |
+| `notifications/initialized` | `202`, and nothing done                                                    |
+| `ping`                      | `{}`                                                                       |
 
 `POST` only, one message per request; `GET` and `DELETE` are `405`. An `Mcp-Session-Id` is ignored
 and none is minted, a `Last-Event-ID` is ignored, and `accept` is negotiated as everywhere else.
@@ -164,15 +164,15 @@ say it twice.
 
 ## What refuses
 
-| | |
-| --- | --- |
-| `-32700` | the body is not readable |
-| `-32600` | the body is not one JSON-RPC message |
-| `-32601` | no method of that name, at `404` |
+|          |                                                        |
+| -------- | ------------------------------------------------------ |
+| `-32700` | the body is not readable                               |
+| `-32600` | the body is not one JSON-RPC message                   |
+| `-32601` | no method of that name, at `404`                       |
 | `-32602` | the arguments do not fit, or `_meta` states too little |
-| `-32603` | anything the gateway did not mean to answer |
-| `-32020` | a header says one thing and the body another |
-| `-32022` | a revision neither served, naming both |
+| `-32603` | anything the gateway did not mean to answer            |
+| `-32020` | a header says one thing and the body another           |
+| `-32022` | a revision neither served, naming both                 |
 
 The codes MCP reserves for itself are `-32020` to `-32099`, and it has an implementation use none of
 `-32000` to `-32019` — which is where [JSON-RPC](rpc.md#what-refuses) has this gateway's own, so none

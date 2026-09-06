@@ -10,7 +10,7 @@ export class Sleep implements Directive {
   private static warned = false
   private readonly maximum: number
 
-  public constructor (value: number) {
+  public constructor(value: number) {
     assert.ok(Number.isInteger(value), '`dev:sleep` directive value must be an integer')
 
     if (!Sleep.warned) {
@@ -22,11 +22,10 @@ export class Sleep implements Directive {
     this.maximum = value
   }
 
-  public async apply (input: Input): Promise<Output> {
+  public async apply(input: Input): Promise<Output> {
     const value = input.request.headers.sleep as string | undefined
 
-    if (value === undefined)
-      return null
+    if (value === undefined) return null
 
     const [min, max] = this.parse(value)
 
@@ -40,12 +39,11 @@ export class Sleep implements Directive {
     return null
   }
 
-  private parse (value: string): [number, number] {
+  private parse(value: string): [number, number] {
     try {
       const pair = JSON.parse(value) as [number, number]
 
-      if (!Array.isArray(pair) || pair.length !== 2)
-        throw new Error()
+      if (!Array.isArray(pair) || pair.length !== 2) throw new Error()
 
       return pair
     } catch {

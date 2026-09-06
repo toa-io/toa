@@ -1,4 +1,7 @@
-import { verifyRegistrationResponse, type RegistrationResponseJSON } from '@simplewebauthn/server'
+import {
+  verifyRegistrationResponse,
+  type RegistrationResponseJSON
+} from '@simplewebauthn/server'
 import type { Operation } from '@toa.io/bridges.node'
 import type { Context, Passkey } from './types/index.js'
 
@@ -11,7 +14,7 @@ export class Transition implements Operation {
   private verification!: boolean
   private presence!: boolean
 
-  public mount (context: Context): void {
+  public mount(context: Context): void {
     this.algorithms = context.configuration.algorithms
     this.verification = context.configuration.verification === 'required'
     this.presence = context.configuration.residence === 'required'
@@ -19,7 +22,7 @@ export class Transition implements Operation {
     this.logs = context.logs
   }
 
-  public async execute (input: Input, object: Passkey): Promise<Passkey | Error> {
+  public async execute(input: Input, object: Passkey): Promise<Passkey | Error> {
     const { authority, identity, label, ...response } = input
 
     // rawId is not sent from the client
@@ -38,8 +41,7 @@ export class Transition implements Operation {
       return ERR_FAILED as Error
     })
 
-    if (verified instanceof Error)
-      return verified
+    if (verified instanceof Error) return verified
 
     if (!verified.verified || verified.registrationInfo?.credential === undefined)
       return ERR_INVALID
@@ -58,7 +60,7 @@ export class Transition implements Operation {
     return object
   }
 
-  private async verifyChallenge (authority: string, challenge: string): Promise<boolean> {
+  private async verifyChallenge(authority: string, challenge: string): Promise<boolean> {
     const n = await this.stash.del(`challenge:${authority}:${challenge}`)
 
     return n === 1

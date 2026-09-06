@@ -11,7 +11,7 @@ export class Connector {
   public readonly id: string
   public connected: boolean = false
 
-  public constructor () {
+  public constructor() {
     this.id = this.constructor.name + '#' + Math.random().toString(36).substring(2, 8)
   }
 
@@ -21,7 +21,7 @@ export class Connector {
    * See .connect() and .disconnect()
    *
    */
-  public depends (connector: Connector | Connector[]): Connector {
+  public depends(connector: Connector | Connector[]): Connector {
     let next: Connector
 
     if (connector instanceof Array) {
@@ -49,7 +49,7 @@ export class Connector {
    * See .connect() and .disconnect()
    *
    */
-  public link (connector: Connector): void {
+  public link(connector: Connector): void {
     this.#links.push(connector)
   }
 
@@ -61,7 +61,7 @@ export class Connector {
    * Method is idempotent
    *
    */
-  public async connect (): Promise<void> {
+  public async connect(): Promise<void> {
     if (this.#connecting) return this.#connecting
 
     this.#disconnecting = undefined
@@ -72,13 +72,17 @@ export class Connector {
     }
 
     // anonymous grouping nodes are not worth a span
-    this.#connecting = TRACE_BOOT && this.constructor.name !== 'Connector'
-      ? console.span({
-        name: `connect ${this.constructor.name}`,
-        // a connector that has a locator is named by it; a grouping node has none
-        attributes: { id: (this as { locator?: Locator }).locator?.id ?? this.id }
-      }, work)
-      : work()
+    this.#connecting =
+      TRACE_BOOT && this.constructor.name !== 'Connector'
+        ? console.span(
+            {
+              name: `connect ${this.constructor.name}`,
+              // a connector that has a locator is named by it; a grouping node has none
+              attributes: { id: (this as { locator?: Locator }).locator?.id ?? this.id }
+            },
+            work
+          )
+        : work()
 
     try {
       await this.#connecting
@@ -97,7 +101,7 @@ export class Connector {
    * Method is idempotent
    *
    */
-  public async disconnect (interrupt?: boolean): Promise<void> {
+  public async disconnect(interrupt?: boolean): Promise<void> {
     // a connector that has not finished connecting has nothing to close, and
     // awaiting a connection that may never settle outlives any grace period
     const pending = interrupt === true || this.connected === false
@@ -131,7 +135,7 @@ export class Connector {
 
       clearInterval(interval)
 
-      await Promise.all(this.#dependencies.map(connector => connector.disconnect()))
+      await Promise.all(this.#dependencies.map((connector) => connector.disconnect()))
 
       await this.dispose()
     })()
@@ -139,27 +143,28 @@ export class Connector {
     await this.#disconnecting
   }
 
-  public async reconnect (): Promise<void> {
+  public async reconnect(): Promise<void> {
     await this.disconnect()
     await this.connect()
   }
 
-  public debug (node: Record<string, any> = {}): Record<string, any> {
+  public debug(node: Record<string, any> = {}): Record<string, any> {
     node[this.id] = { connected: this.connected }
 
-    if (this.#dependencies.length > 0) for (const connector of this.#dependencies) connector.debug?.(node[this.id])
+    if (this.#dependencies.length > 0)
+      for (const connector of this.#dependencies) connector.debug?.(node[this.id])
 
     return node
   }
 
   /** Called on connection */
-  protected open (): Promise<void> | void {}
+  protected open(): Promise<void> | void {}
 
   /** Called on disconnection */
-  protected close (): Promise<void> | void {}
+  protected close(): Promise<void> | void {}
 
   /** Called after self and dependants disconnection is complete */
-  protected dispose (): Promise<void> | void {}
+  protected dispose(): Promise<void> | void {}
 }
 
 const DELAY = 5000

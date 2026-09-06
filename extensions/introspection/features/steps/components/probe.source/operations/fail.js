@@ -1,4 +1,4 @@
-export function computation (input) {
+export function computation(input) {
   return NOPE
 }
 

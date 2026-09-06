@@ -19,13 +19,16 @@ export class Endpoint implements RTD.Endpoint {
   /** What the operation says, with what the route takes already split out of it. */
   private introspection: Introspection | null = null
 
-  public constructor (endpoint: string, mapping: Mapping, discovery: Promise<Remote>) {
+  public constructor(endpoint: string, mapping: Mapping, discovery: Promise<Remote>) {
     this.endpoint = endpoint
     this.mapping = mapping
     this.discovery = discovery
   }
 
-  public async call (context: http.Context, parameters: RTD.Parameter[]): Promise<http.OutgoingMessage> {
+  public async call(
+    context: http.Context,
+    parameters: RTD.Parameter[]
+  ): Promise<http.OutgoingMessage> {
     const body = await context.body()
     const query = this.query(context)
     const request = this.mapping.fit(body, query, parameters)
@@ -38,11 +41,12 @@ export class Endpoint implements RTD.Endpoint {
 
     const reply = await this.remote.invoke(this.endpoint, request)
 
-    console.debug('Received reply',
-      { endpoint, reply: reply instanceof Readable ? '[Readable stream]' : redact(reply) })
+    console.debug('Received reply', {
+      endpoint,
+      reply: reply instanceof Readable ? '[Readable stream]' : redact(reply)
+    })
 
-    if (reply instanceof Error)
-      throw new http.UnprocessableEntity(reply)
+    if (reply instanceof Error) throw new http.UnprocessableEntity(reply)
 
     const message: http.OutgoingMessage = {}
 
@@ -50,12 +54,15 @@ export class Endpoint implements RTD.Endpoint {
     if (reply !== null && reply !== undefined) {
       const etag = context.request.headers['if-none-match']
 
-      if (this.conditionalGet(reply, etag, message))
-        return message
+      if (this.conditionalGet(reply, etag, message)) return message
     }
 
     // last-modified
-    if (typeof reply === 'object' && reply !== null && ('UPDATED' in reply || 'CREATED' in reply)) {
+    if (
+      typeof reply === 'object' &&
+      reply !== null &&
+      ('UPDATED' in reply || 'CREATED' in reply)
+    ) {
       const timestamp: string = reply.UPDATED ?? reply.CREATED
       const date = new Date(timestamp)
 
@@ -68,7 +75,7 @@ export class Endpoint implements RTD.Endpoint {
     return message
   }
 
-  public async explain (parameters: RTD.Parameter[]): Promise<Introspection> {
+  public async explain(parameters: RTD.Parameter[]): Promise<Introspection> {
     this.introspection ??= await this.introspect(parameters)
 
     // what a directive narrows is this caller's answer, not the next caller's
@@ -81,7 +88,7 @@ export class Endpoint implements RTD.Endpoint {
    * share one remote — so the copy is what keeps the second from describing what the first
    * took away.
    */
-  private async introspect (parameters: RTD.Parameter[]): Promise<Introspection> {
+  private async introspect(parameters: RTD.Parameter[]): Promise<Introspection> {
     this.remote ??= await this.discovery
 
     const operation = structuredClone(await this.remote.explain(this.endpoint))
@@ -97,8 +104,7 @@ export class Endpoint implements RTD.Endpoint {
     for (const parameter of parameters) {
       const schema = take(operation, parameter.name)
 
-      if (schema === undefined)
-        continue
+      if (schema === undefined) continue
 
       route ??= {}
       route[parameter.name] = schema
@@ -107,24 +113,26 @@ export class Endpoint implements RTD.Endpoint {
     const query = this.mapping.explain(operation)
     const introspection: Introspection = {}
 
-    if (route !== null)
-      introspection.route = route
+    if (route !== null) introspection.route = route
 
-    if (query !== null)
-      introspection.query = query
+    if (query !== null) introspection.query = query
 
     Object.assign(introspection, operation)
 
     return introspection
   }
 
-  public async close (): Promise<void> {
+  public async close(): Promise<void> {
     this.remote ??= await this.discovery
 
     await this.remote.disconnect(INTERRUPT)
   }
 
-  private conditionalGet (reply: unknown, etag: string | undefined, message: http.OutgoingMessage): boolean {
+  private conditionalGet(
+    reply: unknown,
+    etag: string | undefined,
+    message: http.OutgoingMessage
+  ): boolean {
     message.headers ??= new Headers()
 
     if (typeof reply === 'object' && reply !== null && 'VERSION' in reply) {
@@ -143,8 +151,7 @@ export class Endpoint implements RTD.Endpoint {
       return false
     }
 
-    if (reply instanceof Readable)
-      return false
+    if (reply instanceof Readable) return false
 
     /*
      * A reply that carries no version is tagged with a hash of its body. The body is
@@ -157,30 +164,27 @@ export class Endpoint implements RTD.Endpoint {
     return false
   }
 
-  private query (context: http.Context): http.Query {
+  private query(context: http.Context): http.Query {
     const query: http.Query = Object.fromEntries(context.url.searchParams)
     const etag = context.request.headers['if-match']
 
-    if (etag !== undefined && this.mapping.queryable)
-      query.version = this.version(etag)
+    if (etag !== undefined && this.mapping.queryable) query.version = this.version(etag)
 
     return query
   }
 
-  private matchVersion (etag: string): number | null {
+  private matchVersion(etag: string): number | null {
     const match = etag.match(ETAG)
 
-    if (match === null)
-      return null
+    if (match === null) return null
 
     return Number.parseInt(match.groups!.version)
   }
 
-  private version (etag: string): number {
+  private version(etag: string): number {
     const version = this.matchVersion(etag)
 
-    if (version === null)
-      throw new http.BadRequest('Invalid ETag')
+    if (version === null) throw new http.BadRequest('Invalid ETag')
 
     return version
   }
@@ -189,11 +193,11 @@ export class Endpoint implements RTD.Endpoint {
 export class EndpointsFactory implements RTD.EndpointsFactory {
   private readonly remotes: Remotes
 
-  public constructor (remotes: Remotes) {
+  public constructor(remotes: Remotes) {
     this.remotes = remotes
   }
 
-  public create (method: RTD.syntax.Method, context: Context): Endpoint {
+  public create(method: RTD.syntax.Method, context: Context): Endpoint {
     if (method.mapping === undefined)
       throw new Error('Cannot create Endpoint without mapping')
 

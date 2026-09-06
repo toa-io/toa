@@ -7,7 +7,7 @@ export class Event extends Connector {
   #event
   #context
 
-  constructor (event, context) {
+  constructor(event, context) {
     super()
 
     this.#event = event

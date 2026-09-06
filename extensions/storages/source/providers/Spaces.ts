@@ -14,11 +14,14 @@ export class Spaces extends S3 {
     { name: 'SECRET_ACCESS_KEY' }
   ]
 
-  public constructor (options: SpacesOptions, secrets?: SpacesSecrets) {
-    super({
-      bucket: options.space,
-      region: options.region,
-      endpoint: `https://${options.region}.digitaloceanspaces.com`
-    }, secrets)
+  public constructor(options: SpacesOptions, secrets?: SpacesSecrets) {
+    super(
+      {
+        bucket: options.space,
+        region: options.region,
+        endpoint: `https://${options.region}.digitaloceanspaces.com`
+      },
+      secrets
+    )
   }
 }

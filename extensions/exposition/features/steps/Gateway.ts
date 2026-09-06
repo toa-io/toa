@@ -19,7 +19,7 @@ export class Gateway {
   private written: string[] = []
 
   @given('the annotation:')
-  public async annotate (yaml: string): Promise<void> {
+  public async annotate(yaml: string): Promise<void> {
     const annotation = parse(yaml) as Partial<http.Options> & { '/'?: object }
 
     if (annotation['/'] !== undefined) {
@@ -31,26 +31,19 @@ export class Gateway {
     const { debug, authorities, bouncer, ip, oauth, rpc, mcp } = annotation
     const properties = Object.assign({}, DEFAULT_PROPERTIES)
 
-    if (debug !== undefined)
-      properties.debug = debug
+    if (debug !== undefined) properties.debug = debug
 
-    if (bouncer !== undefined)
-      properties.bouncer = bouncer
+    if (bouncer !== undefined) properties.bouncer = bouncer
 
-    if (ip !== undefined)
-      properties.ip = ip
+    if (ip !== undefined) properties.ip = ip
 
-    if (authorities !== undefined)
-      properties.authorities = authorities
+    if (authorities !== undefined) properties.authorities = authorities
 
-    if (oauth !== undefined)
-      properties.oauth = oauth
+    if (oauth !== undefined) properties.oauth = oauth
 
-    if (rpc !== undefined)
-      properties.rpc = rpc
+    if (rpc !== undefined) properties.rpc = rpc
 
-    if (mcp !== undefined)
-      properties.mcp = mcp
+    if (mcp !== undefined) properties.mcp = mcp
 
     process.env.TOA_EXPOSITION_PROPERTIES = JSON.stringify(properties)
   }
@@ -60,16 +53,17 @@ export class Gateway {
    * exposition extension over them, so what lands here is what a deployment would carry.
    */
   @given('the annotation of the introspection map')
-  public async annotateMap (): Promise<void> {
+  public async annotateMap(): Promise<void> {
     await this.annotateMapUnder()
   }
 
   /** The same routes under a root of the scenario's own: what an application declares around the map. */
   @given('the annotation of the introspection map under:')
-  public async annotateMapUnder (yaml?: string): Promise<void> {
-    const tree: syntax.Node = yaml === undefined
-      ? { routes: [], methods: [], directives: [] }
-      : syntax.parse((parse(yaml) as { '/': object })['/'], shortcuts)
+  public async annotateMapUnder(yaml?: string): Promise<void> {
+    const tree: syntax.Node =
+      yaml === undefined
+        ? { routes: [], methods: [], directives: [] }
+        : syntax.parse((parse(yaml) as { '/': object })['/'], shortcuts)
 
     for (const manifest of await manifests()) {
       const node = manifest.extensions?.[EXPOSITION] as syntax.Node | undefined
@@ -85,7 +79,7 @@ export class Gateway {
   }
 
   @given('the `{word}` configuration:')
-  public async configure (id: string, yaml: string): Promise<void> {
+  public async configure(id: string, yaml: string): Promise<void> {
     const [name, namespace = 'default'] = id.split('.').reverse()
     const key = `TOA_CONFIGURATION_${namespace.toUpperCase()}_${name.toUpperCase()}`
     const def = DEFAULT_CONFIGURATION[id] ?? {}
@@ -100,7 +94,7 @@ export class Gateway {
 
   /** The secrets a scenario's configuration refers to. */
   @given('the configuration secrets:')
-  public async secrets (yaml: string): Promise<void> {
+  public async secrets(yaml: string): Promise<void> {
     const secrets = parse(yaml) as Record<string, string>
 
     for (const [name, value] of Object.entries(secrets)) {
@@ -110,12 +104,12 @@ export class Gateway {
   }
 
   @given('the branch TTL is {float} second(s)')
-  public async setBranchTTL (seconds: number): Promise<void> {
+  public async setBranchTTL(seconds: number): Promise<void> {
     process.env.__TESTING_EXPOSITION_BRANCH_TTL = String(seconds * 1000)
   }
 
   @given('the Gateway is running')
-  public async start (): Promise<void> {
+  public async start(): Promise<void> {
     process.env.TOA_EXPOSITION ??= DEFAULT_TREE
     process.env.TOA_EXPOSITION_PROPERTIES ??= JSON.stringify(DEFAULT_PROPERTIES)
 
@@ -128,16 +122,14 @@ export class Gateway {
      * the deployment already running gets that one. Only a different deployment is a restart,
      * which is what an annotation, a configuration or a branch TTL of its own amounts to.
      */
-    if (instance !== null && signature === deployment)
-      return
+    if (instance !== null && signature === deployment) return
 
     await Gateway.stop()
 
     const factory = new Factory(boot.host())
     const service = await factory.service()
 
-    if (service === null)
-      throw new Error('?')
+    if (service === null) throw new Error('?')
 
     instance = service
 
@@ -147,7 +139,7 @@ export class Gateway {
   }
 
   /** What the running gateway was built from: a different value is a different deployment. */
-  private static signature (): string {
+  private static signature(): string {
     const configuration = Object.keys(process.env)
       .filter((key) => key.startsWith('TOA_CONFIGURATION_'))
       .sort()
@@ -162,11 +154,10 @@ export class Gateway {
   }
 
   @after()
-  public async cleanup (): Promise<void> {
+  public async cleanup(): Promise<void> {
     delete process.env.__TESTING_EXPOSITION_BRANCH_TTL
 
-    for (const key of this.written)
-      delete process.env[key]
+    for (const key of this.written) delete process.env[key]
 
     this.written = []
 
@@ -175,13 +166,13 @@ export class Gateway {
   }
 
   @afterAll()
-  public static async stop (): Promise<void> {
+  public static async stop(): Promise<void> {
     await instance?.disconnect()
     instance = null
     deployment = null
   }
 
-  private writeConfiguration (): void {
+  private writeConfiguration(): void {
     for (const [id, configuration] of Object.entries(DEFAULT_CONFIGURATION)) {
       const [name, namespace = 'default'] = id.split('.').reverse()
       const key = `TOA_CONFIGURATION_${namespace.toUpperCase()}_${name.toUpperCase()}`

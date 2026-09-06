@@ -28,14 +28,14 @@ bridge.transmission.onNotificationClick((n) => {
 
 ## API
 
-| Symbol                          | Description                                                                                  |
-| ------------------------------- | -------------------------------------------------------------------------------------------- |
-| `bridge.platform`               | `'ios' \| 'android' \| null` — native host detected from UA / referrer; `null` in a browser. |
-| `bridge.version`                | Native host version string parsed from the `PWAShell/<version>` UA marker, else `null`.      |
-| `bridge.semver(pattern)`        | `true` when `version` satisfies the semver `pattern`; `false` when there is no native host.   |
-| `bridge.available()`            | `true` when the native message handler is reachable in the current environment.              |
-| `bridge.purchases`              | StoreKit operations: `available()`, `products(ids)`, `purchase(id, token)`, `restore()`, `manage()`, `finish(txId)`. |
-| `bridge.transmission`           | Push channel: `address()`, `permission()`, `request()`, `delete()`, `onNotification(cb)`, `onNotificationClick(cb)`. |
-| `on(key, cb)` / `send(label, args?)` | Low-level transport: subscribe to a reply id / event label, or fire-and-forget a message. |
+| Symbol                               | Description                                                                                                          |
+| ------------------------------------ | -------------------------------------------------------------------------------------------------------------------- |
+| `bridge.platform`                    | `'ios' \| 'android' \| null` — native host detected from UA / referrer; `null` in a browser.                         |
+| `bridge.version`                     | Native host version string parsed from the `PWAShell/<version>` UA marker, else `null`.                              |
+| `bridge.semver(pattern)`             | `true` when `version` satisfies the semver `pattern`; `false` when there is no native host.                          |
+| `bridge.available()`                 | `true` when the native message handler is reachable in the current environment.                                      |
+| `bridge.purchases`                   | StoreKit operations: `available()`, `products(ids)`, `purchase(id, token)`, `restore()`, `manage()`, `finish(txId)`. |
+| `bridge.transmission`                | Push channel: `address()`, `permission()`, `request()`, `delete()`, `onNotification(cb)`, `onNotificationClick(cb)`. |
+| `on(key, cb)` / `send(label, args?)` | Low-level transport: subscribe to a reply id / event label, or fire-and-forget a message.                            |
 
 Every `purchases`/`transmission` request resolves to its typed result **or** an `Error` (a native-side failure) — narrow with `instanceof Error` before use.

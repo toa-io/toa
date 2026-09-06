@@ -210,7 +210,7 @@ The value of the directive is an object with the following properties:
     GET:
       octets:get:
         blob: false # prevent access to the original BLOB
-        meta: true  # allow access to an Entry
+        meta: true # allow access to an Entry
 ```
 
 The `octets:get: ~` declaration is equivalent to defaults.
@@ -295,9 +295,9 @@ If it's an array, the workflow units are executed in sequence.
 ```yaml
 octets:put:
   workflow:
-    - optimize: images.optimize   # executed first
-    - resize: images.resize       # executed second
-      analyze: images.analyze     # executed in parallel with `resize`
+    - optimize: images.optimize # executed first
+    - resize: images.resize # executed second
+      analyze: images.analyze # executed in parallel with `resize`
 ```
 
 If one of the workflow units returns or throws an error,

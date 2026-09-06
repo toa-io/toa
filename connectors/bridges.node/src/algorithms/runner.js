@@ -8,7 +8,7 @@ export class Runner extends Connector {
   /** @type {toa.node.Context} */
   #context
 
-  constructor (algorithm, context) {
+  constructor(algorithm, context) {
     super()
 
     this.#algorithm = algorithm
@@ -17,34 +17,32 @@ export class Runner extends Connector {
     this.depends(context)
   }
 
-  async open () {
+  async open() {
     await this.#algorithm.mount?.(this.#context)
   }
 
-  async close () {
+  async close() {
     await this.#algorithm.unmount?.()
   }
 
-  async execute (input, state) {
+  async execute(input, state) {
     const reply = await this.#algorithm.execute(input, state)
 
-    if (reply instanceof Error)
-      return { error: reply }
+    if (reply instanceof Error) return { error: reply }
 
-    if (reply instanceof Readable)
-      return reply
+    if (reply instanceof Readable) return reply
 
-    if (isGenerator(reply))
-      return Readable.from(reply)
+    if (isGenerator(reply)) return Readable.from(reply)
 
     return { output: reply }
   }
 }
 
-function isGenerator (object) {
+function isGenerator(object) {
   const constructor = object?.constructor?.[Symbol.toStringTag]
 
-  return constructor !== undefined &&
-    (constructor === 'AsyncGeneratorFunction' ||
-      constructor === 'GeneratorFunction')
+  return (
+    constructor !== undefined &&
+    (constructor === 'AsyncGeneratorFunction' || constructor === 'GeneratorFunction')
+  )
 }

@@ -12,12 +12,12 @@ export class OTP {
   private captures: Captures
   private otp: Remote | null = null
 
-  public constructor (captures: Captures) {
+  public constructor(captures: Captures) {
     this.captures = captures
   }
 
   @given('OTP for `{word}` in `{word}` authority is issued')
-  public async issue (username: string, authority: string): Promise<void> {
+  public async issue(username: string, authority: string): Promise<void> {
     this.otp ??= await this.connect()
 
     const reply = await this.otp.invoke('issue', {
@@ -34,7 +34,7 @@ export class OTP {
     this.captures.set(`${username}.otp`, credentials)
   }
 
-  private async connect (): Promise<Remote> {
+  private async connect(): Promise<Remote> {
     const locator = new Locator('otp', 'identity')
 
     return await boot.remote(locator)

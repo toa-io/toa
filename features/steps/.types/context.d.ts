@@ -5,9 +5,7 @@ import type { Reply } from '@toa.io/core/types'
 import type { StartedTestContainer } from 'testcontainers'
 
 declare namespace toa.features {
-
   namespace context {
-
     type AMQP = {
       connection?: amqp.Connection
       channel?: amqp.Channel
@@ -31,5 +29,4 @@ declare namespace toa.features {
     env?: Array<[string, string | undefined]>
     containers?: Record<string, StartedTestContainer>
   }
-
 }

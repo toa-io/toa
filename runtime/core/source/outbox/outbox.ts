@@ -49,8 +49,12 @@ export class Outbox extends Connector {
   #closing = false
 
   // eslint-disable-next-line max-params
-  public constructor (emission: Emission, storage: Storage | undefined, atom: Atom,
-    options: Options = {}) {
+  public constructor(
+    emission: Emission,
+    storage: Storage | undefined,
+    atom: Atom,
+    options: Options = {}
+  ) {
     super()
 
     this.#emission = emission
@@ -69,7 +73,7 @@ export class Outbox extends Connector {
   }
 
   /** whether the storage can commit a row atomically with the entity */
-  public get durable (): boolean {
+  public get durable(): boolean {
     return this.#storage?.outbox !== undefined
   }
 
@@ -77,7 +81,7 @@ export class Outbox extends Connector {
    * An assignment's images are the write's own, so it hands over an event with neither, and
    * the storage fills them in.
    */
-  public row (event: Partial<Event>): Row {
+  public row(event: Partial<Event>): Row {
     return {
       id: newid(),
       lane: this.#lane(),
@@ -91,30 +95,37 @@ export class Outbox extends Connector {
    * Hands a committed row over. Awaited by the caller only on the legacy path — with an
    * outbox this returns at once and the broker leaves the operation's path.
    */
-  public publish (row: Row): Promise<void> | void {
+  public publish(row: Row): Promise<void> | void {
     // without a durable outbox this is the inline path, and the caller awaits the emission
-    if (!this.durable)
-      return this.#emission.emit(row.event)
+    if (!this.durable) return this.#emission.emit(row.event)
 
     /*
      * A publication started while the pump is closing would outlive the emitters it needs,
      * and `comq` waits on a connection that is going rather than failing. The row is already
      * durable, so leaving it is exactly what it is for.
      */
-    if (this.#closing || this.#defer ||
-      this.#inflight.size >= INFLIGHT || this.#published.size >= PUBLISHED)
+    if (
+      this.#closing ||
+      this.#defer ||
+      this.#inflight.size >= INFLIGHT ||
+      this.#published.size >= PUBLISHED
+    )
       return
 
     void this.#publish(row)
   }
 
-  protected override async open (): Promise<void> {
+  protected override async open(): Promise<void> {
     if (!this.durable) return
 
     if (this.#defer)
-      console.warn('Outbox immediate publication is deferred; events are published by the pump only')
+      console.warn(
+        'Outbox immediate publication is deferred; events are published by the pump only'
+      )
 
-    this.#timer = setInterval(() => { this.#tick() }, this.#interval)
+    this.#timer = setInterval(() => {
+      this.#tick()
+    }, this.#interval)
     this.#timer.unref()
 
     /*
@@ -122,10 +133,12 @@ export class Outbox extends Connector {
      * publish, and the cycle would not notice for up to an interval. Being told costs a cycle
      * that finds nothing in the usual case, where the claim arrives once and never changes.
      */
-    this.#off = this.#atom.onassigned(() => { this.#tick() })
+    this.#off = this.#atom.onassigned(() => {
+      this.#tick()
+    })
   }
 
-  protected override async close (): Promise<void> {
+  protected override async close(): Promise<void> {
     this.#closing = true
 
     this.#off?.()
@@ -146,7 +159,7 @@ export class Outbox extends Connector {
    * bounds this instead is the in-flight cap and the drain on close.
    *
    */
-  async #publish (row: Row): Promise<void> {
+  async #publish(row: Row): Promise<void> {
     this.#publishing.add(row.id)
 
     const publishing = this.#emission.emit(row.event)
@@ -170,7 +183,7 @@ export class Outbox extends Connector {
    * unbounded drain outlives any grace period.
    *
    */
-  async #drain (): Promise<void> {
+  async #drain(): Promise<void> {
     if (this.#inflight.size === 0) return
 
     await Promise.race([Promise.allSettled([...this.#inflight]), delay(DRAIN)])
@@ -181,7 +194,7 @@ export class Outbox extends Connector {
    * published and what the immediate path published since the last cycle. One cycle at a time.
    *
    */
-  #tick (): void {
+  #tick(): void {
     if (this.#pumping) return
 
     this.#pumping = true
@@ -189,7 +202,7 @@ export class Outbox extends Connector {
     void this.#pump().finally(() => (this.#pumping = false))
   }
 
-  async #pump (): Promise<void> {
+  async #pump(): Promise<void> {
     let page: Row[]
     let after: string | undefined
 
@@ -206,8 +219,9 @@ export class Outbox extends Connector {
        * this replica is sending right now and what a failed marking left behind. Only this
        * process knows either.
        */
-      const rows = page.filter((row) =>
-        !this.#published.has(row.id) && !this.#publishing.has(row.id))
+      const rows = page.filter(
+        (row) => !this.#published.has(row.id) && !this.#publishing.has(row.id)
+      )
 
       if (rows.length > 0) {
         console.info('Outbox recovering unpublished events', { count: rows.length })
@@ -234,12 +248,13 @@ export class Outbox extends Connector {
    *
    * @param after the last id of the page before, so a page is never read twice
    */
-  async #read (after?: string): Promise<Row[]> {
+  async #read(after?: string): Promise<Row[]> {
     const lanes = this.#atom.slots(LANES)
 
     if (lanes === null || lanes.length === 0) return []
 
-    return this.#storage!.outbox!.pending(lanes, Date.now(), this.#batch, after)
+    return this.#storage!
+      .outbox!.pending(lanes, Date.now(), this.#batch, after)
       .catch((error) => {
         console.warn('Outbox read failed', { error })
 
@@ -253,7 +268,7 @@ export class Outbox extends Connector {
    * marked is simply published again, which is within the contract.
    *
    */
-  async #mark (): Promise<void> {
+  async #mark(): Promise<void> {
     if (this.#published.size === 0) return
 
     const ids = [...this.#published]
@@ -267,13 +282,13 @@ export class Outbox extends Connector {
     }
   }
 
-   /**
+  /**
    * A lane this replica currently owns, so that in steady state it settles its own rows
    * before it ever reads them. Any lane at all when it owns none: the row still has to be
    * written, and whoever ends up owning that lane will pump it.
    *
    */
-  #lane (): number {
+  #lane(): number {
     const owned = this.#atom.slots(LANES)
 
     return owned === null || owned.length === 0
@@ -282,7 +297,11 @@ export class Outbox extends Connector {
   }
 }
 
-function number (variable: string, declared: number | undefined, fallback: number): number {
+function number(
+  variable: string,
+  declared: number | undefined,
+  fallback: number
+): number {
   if (declared !== undefined) return declared
 
   const value = Number(process.env[variable])
@@ -290,8 +309,10 @@ function number (variable: string, declared: number | undefined, fallback: numbe
   return Number.isNaN(value) || value <= 0 ? fallback : value
 }
 
-async function delay (ms: number): Promise<void> {
-  return new Promise((resolve) => { setTimeout(resolve, ms).unref() })
+async function delay(ms: number): Promise<void> {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms).unref()
+  })
 }
 
 /**

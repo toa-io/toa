@@ -10,7 +10,8 @@ export const emitter = (emitter, label, locator) => {
   let decorated = emitter
 
   for (const factory of Object.values(instances)) {
-    if (factory.emitter !== undefined) decorated = factory.emitter(decorated, label, locator)
+    if (factory.emitter !== undefined)
+      decorated = factory.emitter(decorated, label, locator)
   }
 
   return decorated

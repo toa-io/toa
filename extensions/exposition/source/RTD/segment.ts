@@ -1,8 +1,8 @@
-export function segment (path: string): Segment[] {
+export function segment(path: string): Segment[] {
   return fragment(path).map(parse)
 }
 
-export function fragment (path: string): string[] {
+export function fragment(path: string): string[] {
   const parts = path.split('/')
 
   // trailing slash
@@ -12,17 +12,19 @@ export function fragment (path: string): string[] {
   return parts.splice(1)
 }
 
-function parse (segment: string): Segment {
+function parse(segment: string): Segment {
   if (segment[0] === ':') return { fragment: null, placeholder: segment.substring(1) }
   else if (segment === '*') return { fragment: null, placeholder: null }
   else if (segment === '**') return { fragment: null, placeholder: null, wildcard: true }
   else return { fragment: segment }
 }
 
-export type Segment = {
-  fragment: string
-} | {
-  fragment: null
-  placeholder: string | null
-  wildcard?: boolean
-}
+export type Segment =
+  | {
+      fragment: string
+    }
+  | {
+      fragment: null
+      placeholder: string | null
+      wildcard?: boolean
+    }

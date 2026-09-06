@@ -11,8 +11,7 @@ export function timeout(ms: number, fps = 24) {
     function tick() {
       const remaining = ms - (Date.now() - then)
 
-      if (remaining > 0)
-        set(remaining)
+      if (remaining > 0) set(remaining)
       else {
         set(0)
         clearInterval(interval)

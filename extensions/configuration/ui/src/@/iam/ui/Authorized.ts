@@ -26,21 +26,14 @@ export interface Props extends Checks {
 type Principal = Pick<Echo, 'id' | 'roles'>
 
 export function authorize(checks: Checks, principal: Principal | null): boolean {
-  if (checks.dev !== undefined)
-    if (checks.dev === dev)
-      return true
+  if (checks.dev !== undefined) if (checks.dev === dev) return true
 
-  if (checks.beta !== undefined)
-    if (checks.beta === beta())
-      return true
+  if (checks.beta !== undefined) if (checks.beta === beta()) return true
 
-  if (checks.debug !== undefined)
-    if (checks.debug === debug())
-      return true
+  if (checks.debug !== undefined) if (checks.debug === debug()) return true
 
   if (checks.role !== undefined && principal?.roles !== undefined)
-    if (scoped(principal.roles, checks.role))
-      return true
+    if (scoped(principal.roles, checks.role)) return true
 
   return false
 }

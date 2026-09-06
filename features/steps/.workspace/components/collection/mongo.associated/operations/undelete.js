@@ -1,4 +1,4 @@
-export function transition (input, object) {
+export function transition(input, object) {
   Object.assign(object, input)
   object.DELETED = null
 

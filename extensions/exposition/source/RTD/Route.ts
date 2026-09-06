@@ -9,7 +9,7 @@ export class Route {
   public readonly node: Node
   private readonly wildcard: boolean = false
 
-  public constructor (segments: Segment[], node: Node) {
+  public constructor(segments: Segment[], node: Node) {
     this.root = segments.length === 0
     this.segments = segments
     this.node = node
@@ -21,15 +21,13 @@ export class Route {
       }
   }
 
-  public match (fragments: string[], parameters: Parameter[]): Match | null {
-    if (Date.now() >= this.node.expiration)
-      return null
+  public match(fragments: string[], parameters: Parameter[]): Match | null {
+    if (Date.now() >= this.node.expiration) return null
 
     for (let i = 0; i < this.segments.length; i++) {
       const segment = this.segments[i]
 
-      if (segment.fragment !== null && segment.fragment !== fragments[i])
-        return null
+      if (segment.fragment !== null && segment.fragment !== fragments[i]) return null
 
       if (segment.fragment === null && segment.placeholder !== null)
         parameters.push({ name: segment.placeholder, value: decode(fragments[i]) })
@@ -37,7 +35,10 @@ export class Route {
       if (segment.fragment === null && segment.wildcard === true)
         parameters.push({
           name: '**',
-          value: fragments.slice(this.segments.length - 1).map(decode).join('/')
+          value: fragments
+            .slice(this.segments.length - 1)
+            .map(decode)
+            .join('/')
         })
     }
 
@@ -45,34 +46,30 @@ export class Route {
 
     if ((exact && !this.node.intermediate) || this.wildcard)
       return { node: this.node, parameters }
-    else
-      return this.matchNested(fragments, parameters)
+    else return this.matchNested(fragments, parameters)
   }
 
-  public * walk (prefix: Segment[]): Generator<Mount> {
+  public *walk(prefix: Segment[]): Generator<Mount> {
     // an expired branch is not matched, so nothing under it is reachable to name
-    if (Date.now() >= this.node.expiration)
-      return
+    if (Date.now() >= this.node.expiration) return
 
-    yield * this.node.walk(prefix.concat(this.segments))
+    yield* this.node.walk(prefix.concat(this.segments))
   }
 
-  public equals (route: Route): boolean {
-    if (route.segments.length !== this.segments.length)
-      return false
+  public equals(route: Route): boolean {
+    if (route.segments.length !== this.segments.length) return false
 
     for (let i = 0; i < this.segments.length; i++)
-      if (this.segments[i].fragment !== route.segments[i].fragment)
-        return false
+      if (this.segments[i].fragment !== route.segments[i].fragment) return false
 
     return true
   }
 
-  public merge (route: Route): Node[] {
+  public merge(route: Route): Node[] {
     return this.node.merge(route.node)
   }
 
-  private matchNested (fragments: string[], parameters: Parameter[]): Match | null {
+  private matchNested(fragments: string[], parameters: Parameter[]): Match | null {
     fragments = fragments.slice(this.segments.length)
 
     return this.node.match(fragments, parameters)
@@ -87,7 +84,7 @@ export class Route {
  * An escape that decodes to nothing valid is left as it stands; refusing the route over it
  * would answer `404` to a request whose only fault is its spelling.
  */
-function decode (fragment: string): string {
+function decode(fragment: string): string {
   try {
     return decodeURIComponent(fragment)
   } catch {

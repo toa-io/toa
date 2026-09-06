@@ -3,7 +3,12 @@ export * from './toa.d.ts'
 // What a manifest does not state belongs here, and every run keeps it.
 
 import type { Logs } from '@toa.io/extensions.telemetry'
-import type { AuthenticateOutput, Component, Configuration, DecryptOutput } from './toa.js'
+import type {
+  AuthenticateOutput,
+  Component,
+  Configuration,
+  DecryptOutput
+} from './toa.js'
 
 /** Who the token is for, as it travels: the claim set the gateway is written against. */
 export type Identity = AuthenticateOutput['identity']
@@ -44,13 +49,17 @@ export interface Context {
   remote: {
     identity: {
       keys: {
-        observe: (request: { query: { id?: string, criteria?: string } }) => Promise<CustomKey | null>
+        observe: (request: {
+          query: { id?: string; criteria?: string }
+        }) => Promise<CustomKey | null>
         create: (request: {
-          input: { identity: string, label?: string, expires?: number }
+          input: { identity: string; label?: string; expires?: number }
         }) => Promise<Key>
       }
       roles: {
-        list: (request: { query: { criteria: string, limit?: number } }) => Promise<string[]>
+        list: (request: {
+          query: { criteria: string; limit?: number }
+        }) => Promise<string[]>
       }
     }
   }

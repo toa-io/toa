@@ -13,8 +13,7 @@ export function onsubmit(callback: Callback) {
 
     await callback(event)
 
-    for (const fieldset of disabled)
-      fieldset.disabled = false
+    for (const fieldset of disabled) fieldset.disabled = false
   }
 }
 

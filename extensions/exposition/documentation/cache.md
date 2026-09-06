@@ -29,9 +29,10 @@ In terms of security, the following implicit modifications are made to the `cach
   added.
   This is to prevent the reuse of private data when authenticated as another identity.[^1]
 
-[^1]: This also will invalidate the cache each time a new token is used for the same identity, thus
-limiting the `max-age` value to the token's `refresh` time.
-See [Issuing tokens](components.md#issuing-tokens).
+[^1]:
+    This also will invalidate the cache each time a new token is used for the same identity, thus
+    limiting the `max-age` value to the token's `refresh` time.
+    See [Issuing tokens](components.md#issuing-tokens).
 
 ## `cache:exact`
 

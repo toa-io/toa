@@ -7,7 +7,7 @@ dotenv.config({ path: join(import.meta.dirname, '.env') })
 export class Parameters {
   public readonly origin: string
 
-  public constructor () {
+  public constructor() {
     this.origin = 'http://127.0.0.1:8000'
   }
 }
@@ -49,13 +49,16 @@ const CLOUDINARY = {
     transformations: [
       {
         extension: 'icon',
-        transformation: [{
-          width: 48,
-          height: 48,
-          crop: 'fill'
-        }, {
-          border: '10px_solid_white'
-        }],
+        transformation: [
+          {
+            width: 48,
+            height: 48,
+            crop: 'fill'
+          },
+          {
+            border: '10px_solid_white'
+          }
+        ],
         optional: true
       },
       {

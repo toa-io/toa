@@ -29,7 +29,7 @@ export interface Storage {
    * One page of what is due, still unpublished, and in one of the given lanes, in the order
    * the rows were written. `after` continues from the last id of the page before.
    */
-  pending (lanes: number[], now: number, limit: number, after?: string): Promise<Row[]>
+  pending(lanes: number[], now: number, limit: number, after?: string): Promise<Row[]>
 
-  settle (ids: string[]): Promise<void>
+  settle(ids: string[]): Promise<void>
 }

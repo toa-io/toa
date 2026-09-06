@@ -7,19 +7,17 @@ import type { Entity, MergeInput } from '../types/index.js'
  * and the matching edge under `edges[id]`. Unknown edges are initialized by the
  * runtime, since the entity is `associated`.
  */
-export function transition (input: MergeInput, objects: Entity[]): Entity[] {
+export function transition(input: MergeInput, objects: Entity[]): Entity[] {
   for (const edge of objects) {
     const observed = input.edges[edge.id]
 
-    if (observed === undefined)
-      continue
+    if (observed === undefined) continue
 
     edge.src = observed.src
     edge.dst = observed.dst
 
     // absent when sampling is off, and the last one wins otherwise
-    if (observed.sample !== undefined)
-      edge.sample = observed.sample
+    if (observed.sample !== undefined) edge.sample = observed.sample
   }
 
   return objects
