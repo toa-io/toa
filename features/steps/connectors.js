@@ -279,18 +279,6 @@ Then('the following exception is thrown:',
     assert.equal(matches, true, diff(expected, this.exception))
   })
 
-When('an event {label} is emitted with the payload:',
-  /**
-   * @param {string} label
-   * @param {string} yaml
-   * @this {toa.features.Context}
-   */
-  async function(label, yaml) {
-    const payload = parse(yaml)
-
-    await stage.emit(label, payload)
-  })
-
 Then('the {label} explained is:',
   /**
    * @param {string} endpoint
