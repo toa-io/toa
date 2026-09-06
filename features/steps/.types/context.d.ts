@@ -14,6 +14,9 @@ declare namespace toa.features {
 
   type Context = {
     process?: Promise<any>
+
+    /** Settles once the program has exited, or has run and fallen quiet. */
+    settled?: Promise<void>
     cwd?: string
     exitCode?: number
     stdout?: string

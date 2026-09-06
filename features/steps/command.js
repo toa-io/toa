@@ -16,9 +16,9 @@ When(
 
     this.process = execute.call(this, command)
 
-    const grace = timeout(10000)
-
-    await Promise.any([grace, this.process])
+    // a program that exits is awaited, one that keeps running is awaited until it falls
+    // quiet, and one that does neither is given a bound
+    await Promise.any([timeout(GRACE), this.process, this.settled])
   }
 )
 
@@ -46,3 +46,6 @@ Then(
     assert.equal(this.exitCode, code, `Program exit code is not ${code}\n${this.stderr}`)
   }
 )
+
+/** What a program that neither exits nor falls quiet is given. */
+const GRACE = 10000
