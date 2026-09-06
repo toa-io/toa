@@ -5,12 +5,12 @@ export class Guard {
 
   readonly #bridge: Bridge
 
-  public constructor (name: string, bridge: Bridge) {
+  public constructor(name: string, bridge: Bridge) {
     this.name = name
     this.#bridge = bridge
   }
 
-  public fit (state: object, origin: object | null): boolean {
+  public fit(state: object, origin: object | null): boolean {
     return this.#bridge.fit(state, origin)
   }
 }

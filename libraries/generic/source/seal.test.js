@@ -8,7 +8,10 @@ it('should seal', () => {
 
   seal(object)
 
-  assert.throws(() => (object.bar = 'foo'), (error) => /not extensible/.test(error.message))
+  assert.throws(
+    () => (object.bar = 'foo'),
+    (error) => /not extensible/.test(error.message)
+  )
 })
 
 it('should deep seal', () => {
@@ -16,7 +19,10 @@ it('should deep seal', () => {
 
   seal(object)
 
-  assert.throws(() => (object.foo.baz = 'foo'), (error) => /not extensible/.test(error.message))
+  assert.throws(
+    () => (object.foo.baz = 'foo'),
+    (error) => /not extensible/.test(error.message)
+  )
 })
 
 it('should not throw on null or undefined', () => {

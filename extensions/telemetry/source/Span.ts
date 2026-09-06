@@ -9,14 +9,19 @@ export class Span extends Connector implements extensions.Aspect {
   private readonly locator: Locator
   private readonly consoles: Record<string, Console> = {}
 
-  public constructor (locator: Locator) {
+  public constructor(locator: Locator) {
     super()
 
     this.locator = locator
   }
 
   // eslint-disable-next-line max-params
-  public async invoke (operation: string, name: string, attributes: object | Task<unknown>, task?: Task<unknown>): Promise<unknown> {
+  public async invoke(
+    operation: string,
+    name: string,
+    attributes: object | Task<unknown>,
+    task?: Task<unknown>
+  ): Promise<unknown> {
     this.consoles[operation] ??= console.fork({
       namespace: this.locator.namespace,
       component: this.locator.name,
@@ -27,7 +32,6 @@ export class Span extends Connector implements extensions.Aspect {
 
     if (typeof attributes === 'function')
       return await output.span(name, attributes as Task<unknown>)
-    else
-      return await output.span(name, attributes, task!)
+    else return await output.span(name, attributes, task!)
   }
 }

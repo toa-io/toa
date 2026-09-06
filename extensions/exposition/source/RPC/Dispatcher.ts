@@ -4,7 +4,14 @@ import * as schemas from '../schemas.js'
 import { BATCH } from '../const.js'
 import { address, split } from './names.js'
 import { fork } from './Context.js'
-import { BATCH_TOO_LARGE, INVALID_REQUEST, PARSE, failure, of, response } from './errors.js'
+import {
+  BATCH_TOO_LARGE,
+  INVALID_REQUEST,
+  PARSE,
+  failure,
+  of,
+  response
+} from './errors.js'
 import { VERSION, type Call, type Response } from './types.js'
 import type { RPC } from '../Annotation.js'
 
@@ -19,12 +26,14 @@ import type { RPC } from '../Annotation.js'
 export class Dispatcher {
   private readonly batch: number
 
-  public constructor (options: RPC) {
+  public constructor(options: RPC) {
     this.batch = options.batch ?? BATCH
   }
 
-  public async dispatch (context: http.Context,
-    route: http.Processor): Promise<http.OutgoingMessage> {
+  public async dispatch(
+    context: http.Context,
+    route: http.Processor
+  ): Promise<http.OutgoingMessage> {
     if (context.request.method !== 'POST')
       throw new http.MethodNotAllowed(new Headers({ allow: 'POST' }))
 
@@ -33,12 +42,17 @@ export class Dispatcher {
     const calls = batched ? envelope : [envelope]
 
     if (calls.length === 0)
-      throw new http.BadRequest(response(null,
-        failure(INVALID_REQUEST, 'A request carries at least one call')))
+      throw new http.BadRequest(
+        response(null, failure(INVALID_REQUEST, 'A request carries at least one call'))
+      )
 
     if (calls.length > this.batch)
-      throw new http.BadRequest(response(null,
-        failure(BATCH_TOO_LARGE, `A request carries at most ${this.batch} calls`)))
+      throw new http.BadRequest(
+        response(
+          null,
+          failure(BATCH_TOO_LARGE, `A request carries at most ${this.batch} calls`)
+        )
+      )
 
     const answers: Response[] = []
 
@@ -46,13 +60,11 @@ export class Dispatcher {
     for (const call of calls) {
       const answer = await this.answer(call, context, route)
 
-      if (answer !== null)
-        answers.push(answer)
+      if (answer !== null) answers.push(answer)
     }
 
     // every call was a notification, and a notification is answered by not answering
-    if (answers.length === 0)
-      return { status: NO_CONTENT }
+    if (answers.length === 0) return { status: NO_CONTENT }
 
     // a reply assembled from several is not one of them, and is not stored as if it were
     return {
@@ -62,19 +74,24 @@ export class Dispatcher {
     }
   }
 
-  private async answer (input: unknown, context: http.Context,
-    route: http.Processor): Promise<Response | null> {
+  private async answer(
+    input: unknown,
+    context: http.Context,
+    route: http.Processor
+  ): Promise<Response | null> {
     const invalid = schemas.call.fit(input)
 
     // it may have carried an id, but nothing about it is trustworthy enough to answer to
-    if (invalid !== null)
-      return response(null, failure(INVALID_REQUEST, invalid.message))
+    if (invalid !== null) return response(null, failure(INVALID_REQUEST, invalid.message))
 
     return await this.call(input as Call, context, route)
   }
 
-  private async call (call: Call, context: http.Context,
-    route: http.Processor): Promise<Response | null> {
+  private async call(
+    call: Call,
+    context: http.Context,
+    route: http.Processor
+  ): Promise<Response | null> {
     const notification = call.id === undefined
 
     try {
@@ -84,14 +101,15 @@ export class Dispatcher {
       const clone = fork(context, path, verb, query, input)
 
       // one span per call, so what the directives of that call open has somewhere to hang
-      const message = await console.span({ name: call.method, attributes: { id: call.id } },
-        async () => await route(clone))
+      const message = await console.span(
+        { name: call.method, attributes: { id: call.id } },
+        async () => await route(clone)
+      )
 
       // what `io:output` restricts, over this call's reply rather than the envelope
       await http.shape(clone, message)
 
-      if (notification)
-        return null
+      if (notification) return null
 
       return { jsonrpc: VERSION, id: call.id!, result: message.body ?? null }
     } catch (exception) {
@@ -100,11 +118,13 @@ export class Dispatcher {
        * reply a 200, and the challenge that tells a client where to authenticate is
        * attached to a 401 — so the whole envelope is refused instead.
        */
-      if (exception instanceof http.Unauthorized)
-        throw exception
+      if (exception instanceof http.Unauthorized) throw exception
 
       if (notification) {
-        console.debug('Notification failed', { method: call.method, error: of(exception) })
+        console.debug('Notification failed', {
+          method: call.method,
+          error: of(exception)
+        })
 
         return null
       }
@@ -114,7 +134,7 @@ export class Dispatcher {
   }
 
   /** A body the decoder refuses is a parse error; a media type it does not know is not. */
-  private async read (context: http.Context): Promise<unknown> {
+  private async read(context: http.Context): Promise<unknown> {
     try {
       return await context.body()
     } catch (exception) {

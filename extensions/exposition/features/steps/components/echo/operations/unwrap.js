@@ -1,3 +1,3 @@
-export function computation (input) {
+export function computation(input) {
   return JSON.parse(input.buf)
 }

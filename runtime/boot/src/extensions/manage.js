@@ -8,8 +8,7 @@ export const manage = (composition) => {
   let managed = composition
 
   for (const factory of Object.values(instances)) {
-    if (factory.manage !== undefined)
-      managed = factory.manage(managed)
+    if (factory.manage !== undefined) managed = factory.manage(managed)
   }
 
   return managed

@@ -8,13 +8,13 @@ export class Aspect extends Connector implements extensions.Aspect {
 
   private readonly storages: Storages
 
-  public constructor (storages: Storages) {
+  public constructor(storages: Storages) {
     super()
 
     this.storages = storages
   }
 
-  public invoke (name: string, method: keyof Storage, ...args: unknown[]): unknown {
+  public invoke(name: string, method: keyof Storage, ...args: unknown[]): unknown {
     const storage = this.storages[name]
 
     assert.ok(storage !== undefined, `Storage '${name}' is not defined`)

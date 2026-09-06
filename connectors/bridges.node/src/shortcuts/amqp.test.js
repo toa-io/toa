@@ -1,4 +1,4 @@
-import { it, beforeEach, mock } from 'node:test'
+import { it, beforeEach } from 'node:test'
 import assert from 'node:assert/strict'
 import { isDeepStrictEqual } from 'node:util'
 
@@ -32,14 +32,20 @@ it('should call invoke', async () => {
 
   await context.amqp.test.emit(...args)
 
-  assert.ok(aspect.invoke.mock.calls.some((call) => isDeepStrictEqual(call.arguments, ['test', 'emit', ...args])))
+  assert.ok(
+    aspect.invoke.mock.calls.some((call) =>
+      isDeepStrictEqual(call.arguments, ['test', 'emit', ...args])
+    )
+  )
 })
 
 it('should throw if wrong amount of segments', async () => {
-  await assert.rejects(context.amqp.one.two.emit(), (error) => /AMQP aspect call should have 2 segments \[one, two, emit\] given/.test(error.message))
+  await assert.rejects(context.amqp.one.two.emit(), (error) =>
+    /AMQP aspect call should have 2 segments \[one, two, emit\] given/.test(error.message)
+  )
 })
 
-function resetCalls (target = [assert], seen = new Set()) {
+function resetCalls(target = [assert], seen = new Set()) {
   if (target === null || typeof target !== 'object' || seen.has(target)) return
 
   seen.add(target)

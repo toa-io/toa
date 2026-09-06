@@ -1,3 +1,4 @@
+@deployment
 Feature: Mono deployment
 
   Scenario: Show `toa deploy` help
@@ -16,6 +17,7 @@ Feature: Mono deployment
     And I run `find images -name context.toa.yaml`
     Then stdout should be empty
 
+  @helm
   Scenario: Deploy as a single image
     Given I have a component `dummies.one`
     And I have a context
@@ -34,6 +36,7 @@ Feature: Mono deployment
       extension-exposition-gateway
       """
 
+  @helm
   Scenario: Apply mono replicas and resources
     Given I have a component `dummies.one`
     And I have a context with:
@@ -62,6 +65,7 @@ Feature: Mono deployment
           memory: 512Mi
       """
 
+  @helm
   Scenario: Expose the mono deployment
     Given I have a component `exposed.one`
     And I have a context with:
@@ -95,6 +99,7 @@ Feature: Mono deployment
           port: 8004
       """
 
+  @helm
   Scenario: Every service keeps its own path and port in mono
     Given I have a component `exposed.one`
     And I have a context with:

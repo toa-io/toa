@@ -27,17 +27,17 @@ List row built on shadcn `Button`: main content in `left`/`right`/`icon` snippet
 
 ## Props
 
-| Prop        | Type                         | Default     | Notes                                                                 |
-| ----------- | ---------------------------- | ----------- | --------------------------------------------------------------------- |
-| `left`      | `Snippet`                    | —           | Main label/content (required).                                        |
-| `right`     | `Snippet`                    | —           | Trailing slot (balance, badge, etc.).                                 |
-| `icon`      | `Snippet`                    | —           | Leading icon/avatar before `left`.                                    |
-| `collapsed` | `boolean`                    | `false`     | Animate height to zero. Requires `h`.                                 |
-| `selected`  | `boolean`                    | `false`     | Applies `.selected` ring styling.                                     |
-| `h`         | `string`                     | —           | Tailwind height class on the row and collapse wrapper.                |
-| `actions`   | `Action[]`                   | —           | Swipe-reveal toolbar items. Pair with `action` snippet.               |
-| `action`    | `Snippet<[string]>`          | —           | Renders one action by `id`. Required when `actions` is set.           |
-| `variant`   | `ButtonVariant`              | `'outline'` | Forwarded to shadcn `Button`.                                         |
+| Prop        | Type                | Default     | Notes                                                       |
+| ----------- | ------------------- | ----------- | ----------------------------------------------------------- |
+| `left`      | `Snippet`           | —           | Main label/content (required).                              |
+| `right`     | `Snippet`           | —           | Trailing slot (balance, badge, etc.).                       |
+| `icon`      | `Snippet`           | —           | Leading icon/avatar before `left`.                          |
+| `collapsed` | `boolean`           | `false`     | Animate height to zero. Requires `h`.                       |
+| `selected`  | `boolean`           | `false`     | Applies `.selected` ring styling.                           |
+| `h`         | `string`            | —           | Tailwind height class on the row and collapse wrapper.      |
+| `actions`   | `Action[]`          | —           | Swipe-reveal toolbar items. Pair with `action` snippet.     |
+| `action`    | `Snippet<[string]>` | —           | Renders one action by `id`. Required when `actions` is set. |
+| `variant`   | `ButtonVariant`     | `'outline'` | Forwarded to shadcn `Button`.                               |
 
 `Action`: `{ id, class?: ClassValue, href?, onclick? }` — tapping an action scrolls the row back; `href` navigates via SvelteKit `goto`.
 

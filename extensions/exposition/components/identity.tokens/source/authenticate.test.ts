@@ -21,7 +21,11 @@ beforeEach(() => {
   configuration = {
     keys: [
       { id: 'key0', key: secret('sTxL6qVOadKkUJwh3FveU53XgTEo3Sdfg7k2FfiIKfs') },
-      { id: 'legacy0', key: secret('k3.local.m28p8SrbS467t-2IUjQuSOqmjvi24TbXhyjAW_dOrog'), format: 'paseto' }
+      {
+        id: 'legacy0',
+        key: secret('k3.local.m28p8SrbS467t-2IUjQuSOqmjvi24TbXhyjAW_dOrog'),
+        format: 'paseto'
+      }
     ],
     lifetime: 2592000,
     refresh: 600,
@@ -34,7 +38,7 @@ beforeEach(() => {
   context = {
     configuration,
     local: {
-      decrypt: mock.fn(async () => (output)),
+      decrypt: mock.fn(async () => output),
       observe: mock.fn(async () => null)
     }
   } as unknown as Context
@@ -47,23 +51,23 @@ for (const [expected, shift] of [
   [true, -50],
   [false, +50]
 ])
-   it(`should mark as stale: ${expected}`, async () => {
-  const now = Date.now()
-  const iat = new Date(now - configuration.refresh * 1000 + shift).toISOString()
-  const exp = new Date(now + 1000).toISOString()
+  it(`should mark as stale: ${expected}`, async () => {
+    const now = Date.now()
+    const iat = new Date(now - configuration.refresh * 1000 + shift).toISOString()
+    const exp = new Date(now + 1000).toISOString()
 
-  output = { iss: authority, identity, exp, iat, refresh: false, custom: false }
+    output = { iss: authority, identity, exp, iat, refresh: false, custom: false }
 
-  const result = await authenticate.execute({
-    authority,
-    credentials
+    const result = await authenticate.execute({
+      authority,
+      credentials
+    })
+
+    assert.deepStrictEqual(result, { identity, refresh: expected })
   })
 
-  assert.deepStrictEqual(result, { identity, refresh: expected })
-})
-
 for (const refresh of [true, false])
-   it(`should return stale: ${refresh}`, async () => {
+  it(`should return stale: ${refresh}`, async () => {
     const iat = new Date().toISOString()
     const exp = new Date(Date.now() + 1000).toISOString()
 
@@ -93,7 +97,9 @@ it('should check revocation of an aged custom token', async () => {
   const exp = new Date(Date.now() + 1000).toISOString()
 
   output = { iss: authority, identity, exp, iat, refresh: false, custom: true }
-  context.local.observe = mock.fn(async () => ({ revokedAt: Date.now() })) as unknown as Context['local']['observe']
+  context.local.observe = mock.fn(async () => ({
+    revokedAt: Date.now()
+  })) as unknown as Context['local']['observe']
   authenticate.mount(context)
 
   const result: any = await authenticate.execute({ authority, credentials })
@@ -101,6 +107,6 @@ it('should check revocation of an aged custom token', async () => {
   assert.deepStrictEqual(result.code, 'TOKEN_REVOKED')
 })
 
-function secret (value: string): Secret {
+function secret(value: string): Secret {
   return { unwrap: () => value }
 }

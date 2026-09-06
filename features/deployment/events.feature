@@ -1,3 +1,4 @@
+@deployment
 Feature: Events deployment
 
   A component is told which of its events something consumes. What nothing consumes is not
@@ -65,6 +66,7 @@ Feature: Events deployment
               value: created
       """
 
+  @helm
   Scenario: A composition carries the variable, empty one included
     # `{{- if .value }}` drops the `value` key for an empty string, and Kubernetes reads such
     # an entry as `""` — which is what says nothing is consumed
@@ -87,6 +89,7 @@ Feature: Events deployment
         - name: TOA_EVENTS_MONGO_SINK
       """
 
+  @helm
   Scenario: A mono deployment carries the variables of every component
     Given I have components:
       | mongo.outbox |
@@ -107,6 +110,7 @@ Feature: Events deployment
         - name: TOA_EVENTS_MONGO_SINK
       """
 
+  @helm
   Scenario: The components an extension brings are counted too
     # `identity.tokens` receives `identity.bans.created` and `identity.bans.updated`, and both
     # components come with exposition rather than from the context

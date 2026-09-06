@@ -4,7 +4,8 @@ import { When, Then } from '@cucumber/cucumber'
 const PORT = 8001
 const PATH = '/.ready'
 
-When('I request ready probe',
+When(
+  'I request ready probe',
   /**
    * @this {toa.features.Context}
    */
@@ -15,9 +16,11 @@ When('I request ready probe',
       status: response.status,
       headers: Object.fromEntries(response.headers.entries())
     }
-  })
+  }
+)
 
-Then('ready probe status is {int}',
+Then(
+  'ready probe status is {int}',
   /**
    * @param {number} status
    * @this {toa.features.Context}
@@ -26,6 +29,6 @@ Then('ready probe status is {int}',
     assert.ok(this.readyProbe !== undefined, 'Ready probe was not requested')
     assert.equal(this.readyProbe.status, status)
 
-    if (status === 200)
-      assert.equal(this.readyProbe.headers['cache-control'], 'no-store')
-  })
+    if (status === 200) assert.equal(this.readyProbe.headers['cache-control'], 'no-store')
+  }
+)

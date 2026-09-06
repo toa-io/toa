@@ -8,10 +8,10 @@ The version is the build's **commit short-hash** (e.g. `f3a9c21`), used verbatim
 
 Chronological order lives in each entry's `timestamp` (Unix milliseconds): the history sort, the pre-apply update delta, and the running-build baseline all compare `timestamp`. The running build exposes both identities:
 
-| Constant | Type | Meaning |
-| --- | --- | --- |
-| `version` | `string` | the running build's hash — for display / logging / the SW broadcast |
-| `timestamp` | `number` | the running build's release time — the ordering signal |
+| Constant    | Type     | Meaning                                                             |
+| ----------- | -------- | ------------------------------------------------------------------- |
+| `version`   | `string` | the running build's hash — for display / logging / the SW broadcast |
+| `timestamp` | `number` | the running build's release time — the ordering signal              |
 
 `timestamp` is stored in svintl as a digit string and read back as a `number`. A fresh install with no releases yet shows a friendly empty state — key `0000000`, headline `Hello`, no date — which the first merged release replaces.
 
@@ -82,10 +82,10 @@ The update status card: a single row that reads the `update` state and renders t
 
 ### Props
 
-| Prop | Type | Notes |
-| --- | --- | --- |
-| `update` | `Update` | The update store value (`$update`). |
-| `href` | `string` | Optional. When set, renders a release-notes / what's-new link. |
+| Prop     | Type     | Notes                                                          |
+| -------- | -------- | -------------------------------------------------------------- |
+| `update` | `Update` | The update store value (`$update`).                            |
+| `href`   | `string` | Optional. When set, renders a release-notes / what's-new link. |
 
 ## `Changelog`
 
@@ -104,11 +104,11 @@ The full release-notes list for a settings/about or dedicated notes screen. Rend
 
 ### Props
 
-| Prop | Type | Notes |
-| --- | --- | --- |
-| `update` | `Update` | The update store value; a `ready` state contributes the incoming delta and its install control. |
-| `changelog` | `Log` | An all-locales changelog — typically the bundled `changelog` mount. |
-| `class` | `ClassValue` | Applied to the list. |
+| Prop        | Type         | Notes                                                                                           |
+| ----------- | ------------ | ----------------------------------------------------------------------------------------------- |
+| `update`    | `Update`     | The update store value; a `ready` state contributes the incoming delta and its install control. |
+| `changelog` | `Log`        | An all-locales changelog — typically the bundled `changelog` mount.                             |
+| `class`     | `ClassValue` | Applied to the list.                                                                            |
 
 ## On-demand check — `check()`
 

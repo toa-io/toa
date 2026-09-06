@@ -49,7 +49,7 @@ function add(
   value: unknown,
   depth: number,
   optional: boolean,
-  into: Line[],
+  into: Line[]
 ): void {
   const schema = shape(value)
   const opened = open(schema)
@@ -149,7 +149,8 @@ function kinds(schema: Schema | null): string[] {
 function stated(schema: Schema): string[] {
   if (typeof schema.type === 'string') return [schema.type]
 
-  if (Array.isArray(schema.type)) return schema.type.filter((name) => typeof name === 'string')
+  if (Array.isArray(schema.type))
+    return schema.type.filter((name) => typeof name === 'string')
 
   return []
 }

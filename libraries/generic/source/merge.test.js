@@ -19,7 +19,11 @@ it('should merge properties', () => {
 
   merge(target, source)
 
-  assert.deepStrictEqual(target, { a: 1, foo: { a: 1, b: ['foo', 'bar', 'baz'], c: 3 }, d: 4 })
+  assert.deepStrictEqual(target, {
+    a: 1,
+    foo: { a: 1, b: ['foo', 'bar', 'baz'], c: 3 },
+    d: 4
+  })
 })
 
 it('should return target', () => {
@@ -43,11 +47,17 @@ it('should throw TypeError on non-objects', () => {
 })
 
 it('should throw on conflict', () => {
-  assert.throws(() => merge({ a: 1 }, { a: 2 }), (error) => /conflict/.test(error.message))
+  assert.throws(
+    () => merge({ a: 1 }, { a: 2 }),
+    (error) => /conflict/.test(error.message)
+  )
 })
 
 it('should throw with conflict path', () => {
-  assert.throws(() => merge({ a: { b: { c: 1 } } }, { a: { b: { c: 2 } } }), (error) => /\/a\/b\/c/.test(error.message))
+  assert.throws(
+    () => merge({ a: { b: { c: 1 } } }, { a: { b: { c: 2 } } }),
+    (error) => /\/a\/b\/c/.test(error.message)
+  )
 })
 
 it('should ignore undefined source', () => {

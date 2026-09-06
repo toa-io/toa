@@ -3,9 +3,8 @@ import { Connector } from '@toa.io/core'
 import type { extensions } from '@toa.io/core/types'
 import type { FetchInit } from '@toa.io/extensions.fetch'
 
-declare namespace toa.node{
-
-  interface Context extends Connector{
+declare namespace toa.node {
+  interface Context extends Connector {
     local: Underlay
     remote: Underlay
     aspects: Record<string, Function>
@@ -18,8 +17,11 @@ declare namespace toa.node{
     amqp?: Underlay
     configuration?: object
     delay?: {
-      (endpoint: string, request: object | null,
-        options: { interval: number, overdue: number | null }): Promise<string>
+      (
+        endpoint: string,
+        request: object | null,
+        options: { interval: number; overdue: number | null }
+      ): Promise<string>
       cancel: (id: string) => Promise<void>
     }
     state?: object
@@ -39,12 +41,13 @@ declare namespace toa.node{
      * Runs `routine` while no other replica holds `keys`. The signal aborts when the lease
      * could not be extended.
      */
-    lock: <T>(keys: string | string[],
-      routine: (signal: AbortSignal, context: unknown) => Promise<T>) => Promise<T>
+    lock: <T>(
+      keys: string | string[],
+      routine: (signal: AbortSignal, context: unknown) => Promise<T>
+    ) => Promise<T>
   }
 
   type shortcut = (context: Context, aspect: extensions.Aspect) => void
-
 }
 
 export type Context = toa.node.Context

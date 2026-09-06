@@ -2,11 +2,10 @@ import * as schemas from '@toa.io/schemas'
 import { entry } from './lib/map.js'
 import type { Schema } from '@toa.io/schemas'
 
-export async function transition (input: Input, object: Entity): Promise<Entity | Error> {
+export async function transition(input: Input, object: Entity): Promise<Entity | Error> {
   const known = entry(input.component)
 
-  if (known === undefined)
-    return new UnknownComponentError(input.component)
+  if (known === undefined) return new UnknownComponentError(input.component)
 
   // the schema fills its defaults, so what is stored is whole
   const configuration = structuredClone(input.configuration)
@@ -30,7 +29,7 @@ export async function transition (input: Input, object: Entity): Promise<Entity 
 class UnknownComponentError extends Error {
   public readonly code = 'UNKNOWN_COMPONENT'
 
-  public constructor (component: string) {
+  public constructor(component: string) {
     super(`Component '${component}' is not configured`)
   }
 }

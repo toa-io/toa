@@ -9,7 +9,7 @@ export class Method {
   public readonly endpoint: Endpoint | null
   public readonly directives: Directives
 
-  public constructor (endpoint: Endpoint | null, directives: Directives) {
+  public constructor(endpoint: Endpoint | null, directives: Directives) {
     this.endpoint = endpoint
     this.directives = directives
   }
@@ -19,17 +19,19 @@ export class Method {
    * refuse this caller. A method of no endpoint — one a directive answers on its own —
    * states nothing of its own, and its directives still have their say.
    */
-  public async explain (context: Context, parameters: Parameter[]): Promise<Introspection | null> {
-    const introspection = this.endpoint === null
-      ? {}
-      : await this.endpoint.explain(parameters)
+  public async explain(
+    context: Context,
+    parameters: Parameter[]
+  ): Promise<Introspection | null> {
+    const introspection =
+      this.endpoint === null ? {} : await this.endpoint.explain(parameters)
 
     const described = await this.directives.explain(context, introspection)
 
     return described === null ? null : order(described)
   }
 
-  public async close (): Promise<void> {
+  public async close(): Promise<void> {
     await this.endpoint?.close()
   }
 }

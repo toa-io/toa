@@ -1,9 +1,8 @@
-export async function computation (_, context) {
+export async function computation(_, context) {
   const response = await context.fetch('http://api.example.com/path/to/resource')
   const type = response.headers.get('content-type')
 
-  if (type !== 'application/json')
-    return ERR_UNSUPPORTED_MEDIA_TYPE
+  if (type !== 'application/json') return ERR_UNSUPPORTED_MEDIA_TYPE
 
   return await response.json()
 }

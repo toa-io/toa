@@ -1,4 +1,4 @@
-export async function effect (input, context) {
+export async function effect(input, context) {
   // a key of its own each run, so the counter behind it starts from nothing
   const key = `plusing:${Date.now()}`
 

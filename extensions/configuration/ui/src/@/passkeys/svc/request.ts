@@ -34,10 +34,12 @@ function toRequestResponse(credential: PublicKeyCredential): origin.RequestRespo
       clientDataJSON: credentials.bufferToBase64url(response.clientDataJSON),
       signature: credentials.bufferToBase64url(response.signature),
       userHandle:
-        response.userHandle === null ? null : credentials.bufferToBase64url(response.userHandle),
+        response.userHandle === null
+          ? null
+          : credentials.bufferToBase64url(response.userHandle)
     },
     authenticatorAttachment: credential.authenticatorAttachment,
-    clientExtensionResults: credential.getClientExtensionResults(),
+    clientExtensionResults: credential.getClientExtensionResults()
   }
 }
 

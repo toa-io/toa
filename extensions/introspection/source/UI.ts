@@ -17,7 +17,7 @@ export class UI extends Connector {
   private readonly port: number
   private readonly root: string
 
-  public constructor (port: number, root: string = SITE) {
+  public constructor(port: number, root: string = SITE) {
     super()
 
     this.port = port
@@ -27,7 +27,7 @@ export class UI extends Connector {
     })
   }
 
-  protected override async open (): Promise<void> {
+  protected override async open(): Promise<void> {
     /*
      * A taken port is a real error: uniqueness across services is settled at export
      * time, so nothing here has to negotiate for one.
@@ -54,10 +54,12 @@ export class UI extends Connector {
     console.info('Introspection UI started', { port: this.port, path: UI_PATH + '/' })
   }
 
-  protected override async close (): Promise<void> {
-    const closed = new Promise<void>((resolve) => this.server.once('close', () => {
-      resolve()
-    }))
+  protected override async close(): Promise<void> {
+    const closed = new Promise<void>((resolve) =>
+      this.server.once('close', () => {
+        resolve()
+      })
+    )
 
     this.server.close()
     this.server.closeAllConnections()
@@ -65,16 +67,18 @@ export class UI extends Connector {
     await closed
   }
 
-  private listen (request: http.IncomingMessage, response: http.ServerResponse): void {
+  private listen(request: http.IncomingMessage, response: http.ServerResponse): void {
     void this.respond(request, response).catch((error: Error) => {
       console.error('Introspection UI failure', { message: error.message })
 
-      if (!response.writableEnded)
-        response.writeHead(500).end()
+      if (!response.writableEnded) response.writeHead(500).end()
     })
   }
 
-  private async respond (request: http.IncomingMessage, response: http.ServerResponse): Promise<void> {
+  private async respond(
+    request: http.IncomingMessage,
+    response: http.ServerResponse
+  ): Promise<void> {
     if (request.method !== 'GET' && request.method !== 'HEAD') {
       response.writeHead(405, { allow: 'GET, HEAD' }).end()
 
@@ -98,10 +102,8 @@ export class UI extends Connector {
 
     const file = this.resolve(pathname)
 
-    if (file === null)
-      response.writeHead(404).end()
-    else
-      await this.send(file, request, response)
+    if (file === null) response.writeHead(404).end()
+    else await this.send(file, request, response)
   }
 
   /**
@@ -109,22 +111,18 @@ export class UI extends Connector {
    * served as it is; anything else that could be a route falls back to the page,
    * because the client router — not this server — knows what routes there are.
    */
-  private resolve (pathname: string): string | null {
-    if (!pathname.startsWith(UI_PATH))
-      return null
+  private resolve(pathname: string): string | null {
+    if (!pathname.startsWith(UI_PATH)) return null
 
     const relative = pathname.slice(UI_PATH.length)
 
-    if (relative !== '' && !relative.startsWith('/'))
-      return null
+    if (relative !== '' && !relative.startsWith('/')) return null
 
     const file = path.join(this.root, relative)
 
-    if (file !== this.root && !file.startsWith(this.root + path.sep))
-      return null
+    if (file !== this.root && !file.startsWith(this.root + path.sep)) return null
 
-    if (isFile(file))
-      return file
+    if (isFile(file)) return file
 
     /*
      * A missing asset is missing, but a route can look like one: `identity.passkeys` is a
@@ -137,11 +135,16 @@ export class UI extends Connector {
     return asset ? null : path.join(this.root, 'index.html')
   }
 
-  private async send (file: string, request: http.IncomingMessage, response: http.ServerResponse): Promise<void> {
+  private async send(
+    file: string,
+    request: http.IncomingMessage,
+    response: http.ServerResponse
+  ): Promise<void> {
     const stats = await fs.promises.stat(file).catch(() => null)
 
     if (stats === null) {
-      response.writeHead(503, { 'content-type': 'text/plain' })
+      response
+        .writeHead(503, { 'content-type': 'text/plain' })
         .end('The introspection UI is not built. Run `npm run build:ui`.\n')
 
       return
@@ -153,14 +156,12 @@ export class UI extends Connector {
       'cache-control': caching(path.relative(this.root, file))
     })
 
-    if (request.method === 'HEAD')
-      response.end()
-    else
-      fs.createReadStream(file).pipe(response)
+    if (request.method === 'HEAD') response.end()
+    else fs.createReadStream(file).pipe(response)
   }
 }
 
-function decode (url: string): string | null {
+function decode(url: string): string | null {
   try {
     return decodeURIComponent(url.split('?')[0])
   } catch {
@@ -168,7 +169,7 @@ function decode (url: string): string | null {
   }
 }
 
-function isFile (file: string): boolean {
+function isFile(file: string): boolean {
   return fs.existsSync(file) && fs.statSync(file).isFile()
 }
 
@@ -188,7 +189,7 @@ const DAY = 'public, max-age=86400'
  * and their names carry the build. An icon is named for what it is rather than for its
  * content, so it is asked about again, but not on every page load.
  */
-function caching (relative: string): string {
+function caching(relative: string): string {
   if (relative.startsWith(IMMUTABLE)) return FOREVER
 
   return ICONS.has(relative) ? DAY : 'no-cache'

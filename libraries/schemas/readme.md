@@ -2,7 +2,7 @@
 
 Feeds your JSONSchema to [Ajv](https://ajv.js.org).
 
-*Also, slightly transforms validation error objects for no obvious reason.*
+_Also, slightly transforms validation error objects for no obvious reason._
 
 ## schema(schema: object): Schema
 

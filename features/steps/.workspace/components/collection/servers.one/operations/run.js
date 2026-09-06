@@ -4,26 +4,26 @@ import { once } from 'node:events'
 export class Computation {
   server
 
-  constructor () {
+  constructor() {
     this.server = http.createServer((request, response) => {
       response.writeHead(200, { 'Content-Type': 'text/plain' })
       response.end('Hello World\n')
     })
   }
 
-  async mount () {
+  async mount() {
     this.server.listen(PORT)
 
     await once(this.server, 'listening')
   }
 
-  async unmount () {
+  async unmount() {
     this.server.close()
 
     await once(this.server, 'close')
   }
 
-  async execute () {
+  async execute() {
     return 1
   }
 }

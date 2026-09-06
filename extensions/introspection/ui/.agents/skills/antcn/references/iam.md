@@ -4,9 +4,9 @@ Identity & access — a complete authentication surface plus the services behind
 
 ## `$config`
 
-| Field              | Type                | Notes                                                |
-| ------------------ | ------------------- | ---------------------------------------------------- |
-| `navigation.entry` | `{ entry: string }` | Route to land on after a successful OIDC redirect.   |
+| Field              | Type                | Notes                                              |
+| ------------------ | ------------------- | -------------------------------------------------- |
+| `navigation.entry` | `{ entry: string }` | Route to land on after a successful OIDC redirect. |
 
 Network access (`origin`, `sleep`) flows through `@/net`.
 
@@ -14,17 +14,17 @@ Network access (`origin`, `sleep`) flows through `@/net`.
 
 OIDC client IDs come from `$env/dynamic/public`. Omit or leave empty to hide the provider button:
 
-| Var                       | Notes                                              |
-| ------------------------- | -------------------------------------------------- |
+| Var                       | Notes                                                 |
+| ------------------------- | ----------------------------------------------------- |
 | `PUBLIC_GOOGLE_CLIENT_ID` | Google OIDC client ID. Empty hides the Google button. |
-| `PUBLIC_APPLE_CLIENT_ID`  | Apple OIDC client ID. Empty hides the Apple button.  |
+| `PUBLIC_APPLE_CLIENT_ID`  | Apple OIDC client ID. Empty hides the Apple button.   |
 
 ## Notes
 
 - **OIDC is opt-in.** Missing/empty `PUBLIC_*_CLIENT_ID` disables the provider buttons — no wiring crashes if you only want password/passkey/OTP.
 - **Account shape.** Components accept an `AccountLike` (`Pick` of the account fields they render); the `account` store holds the authenticated `Echo`. Extend `Echo` (`svc/net/Echo.ts`) if your API returns extra profile fields.
 - **`Credentials` manager.** Renders the signed-in account's security surface: a passkey manager (register / list / hold-to-delete — a thin layer over `@/passkeys`), inert provider rows (email/Google/Apple; the `Connect` CTA carries no behaviour yet), and a "sign in on another device" action whose QR encodes the current session `challenge`. It gates itself on the `account` store, so just mount it anywhere inside your authenticated area.
-- **Session transfer is two-sided.** The QR is the *sending* device; the *receiving* device adopts the session by reading the fragment `challenge` on load. `rc()` already does this on init (shared `consume()`), so transfer completes as long as `rc()` runs once at app start.
+- **Session transfer is two-sided.** The QR is the _sending_ device; the _receiving_ device adopts the session by reading the fragment `challenge` on load. `rc()` already does this on init (shared `consume()`), so transfer completes as long as `rc()` runs once at app start.
 
 ## Usage
 

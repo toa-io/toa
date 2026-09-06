@@ -8,8 +8,14 @@ it('should be a sha256 hex', () => {
 })
 
 it('should not depend on key order', () => {
-  const a = { type: 'object', properties: { foo: { type: 'string', default: 'x' }, bar: { type: 'number' } } }
-  const b = { properties: { bar: { type: 'number' }, foo: { default: 'x', type: 'string' } }, type: 'object' }
+  const a = {
+    type: 'object',
+    properties: { foo: { type: 'string', default: 'x' }, bar: { type: 'number' } }
+  }
+  const b = {
+    properties: { bar: { type: 'number' }, foo: { default: 'x', type: 'string' } },
+    type: 'object'
+  }
 
   assert.deepStrictEqual(epoch(a), epoch(b))
 })

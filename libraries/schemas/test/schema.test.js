@@ -86,12 +86,10 @@ describe('fit', () => {
     assert.deepStrictEqual(error2, null)
     assert.deepStrictEqual(o.arr, ['bar'])
   })
-
 })
 
 describe('validate', () => {
   it('should throw Exception', async () => {
-    
     const schema = schemas.schema({
       type: 'object',
       properties: { foo: { type: 'string' } }

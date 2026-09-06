@@ -15,19 +15,22 @@ import type { Source } from './request.js'
  */
 export interface Host {
   /** a component of the context, by locator */
-  remote (locator: Locator, source?: Source): Promise<Remote>
+  remote(locator: Locator, source?: Source): Promise<Remote>
 
   /** a channel of the messaging binding */
-  broadcast<L extends string = string> (channel: string, group?: string): Promise<Broadcast<L>>
+  broadcast<L extends string = string>(
+    channel: string,
+    group?: string
+  ): Promise<Broadcast<L>>
 
   /** components to run inside the extension's own process */
-  composition (paths: string[]): Promise<Connector>
+  composition(paths: string[]): Promise<Connector>
 
   /** a consumer of an event of the context, `namespace.component.event` */
-  receive (label: string, receiver: Receiver): Promise<Connector>
+  receive(label: string, receiver: Receiver): Promise<Connector>
 
   /** what the replicas of one group decide together */
-  atom (group: string): Atom
+  atom(group: string): Atom
 }
 
 /**
@@ -35,32 +38,35 @@ export interface Host {
  * core cannot name its types.
  */
 export interface Factory<Manifest = unknown> {
-  tenant? (locator: Locator, declaration: any, manifest: Manifest):
-  Connector | Promise<Connector>
+  tenant?(
+    locator: Locator,
+    declaration: any,
+    manifest: Manifest
+  ): Connector | Promise<Connector>
 
-  aspect? (locator: Locator, declaration: any): Aspect | Aspect[]
+  aspect?(locator: Locator, declaration: any): Aspect | Aspect[]
 
   /** what the extension runs as a process of its own; `null` where it is off here */
-  service? (): Connector | null | Promise<Connector | null>
+  service?(): Connector | null | Promise<Connector | null>
 
-  component? (component: Component): Component
+  component?(component: Component): Component
 
-  context? (context: Context): Context
+  context?(context: Context): Context
 
-  manage? (composition: Connector): Connector
+  manage?(composition: Connector): Connector
 
-  storage? (storage: Storage): Storage
+  storage?(storage: Storage): Storage
 
-  emitter? (emitter: Emitter, label: string, locator: Locator): Emitter
+  emitter?(emitter: Emitter, label: string, locator: Locator): Emitter
 
-  receiver? (receiver: Receiver, locator: Locator): Receiver
+  receiver?(receiver: Receiver, locator: Locator): Receiver
 }
 
 export interface Aspect extends Connector {
   /** the key it takes on the context; a duplicate is a boot error */
   readonly name: string
 
-  invoke (...args: any[]): any
+  invoke(...args: any[]): any
 }
 
 /**

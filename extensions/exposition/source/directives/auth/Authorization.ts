@@ -52,7 +52,7 @@ export class Authorization implements DirectiveFamily<Directive, Extension> {
   private meter: Quotas | null = null
   private sync: Sync | null = null
 
-  public mount (host: Host, options: http.Options): void {
+  public mount(host: Host, options: http.Options): void {
     this.sync?.dispose()
     this.sync = null
     this.meter = null
@@ -60,8 +60,7 @@ export class Authorization implements DirectiveFamily<Directive, Extension> {
     const bouncer = options.bouncer
 
     // keyed by address, which is the deployment's to name, so off until it is set
-    if (bouncer === undefined)
-      return
+    if (bouncer === undefined) return
 
     this.meter = new Quotas({
       keys: Keys.create([{ method: 'ip', options: BOUNCER }]),
@@ -75,29 +74,35 @@ export class Authorization implements DirectiveFamily<Directive, Extension> {
     this.sync.register(this.meter)
   }
 
-  public dispose (): void {
+  public dispose(): void {
     this.sync?.dispose()
   }
 
-  public create (name: string, value: any, remotes: Remotes): Directive {
-    assert.ok(name in constructors,
-      `Directive 'auth:${name}' is not implemented`)
+  public create(name: string, value: any, remotes: Remotes): Directive {
+    assert.ok(name in constructors, `Directive 'auth:${name}' is not implemented`)
 
     const Class = constructors[name]
 
     for (const name of REMOTES)
       this.discovery[name] ??= remotes.discover('identity', name)
 
-    return match(Class,
-      Role, () => new Role(value as string | string[], this.discovery.roles),
-      Rule, () => new Rule(value as Record<string, string>, this.create.bind(this)),
-      Input, () => new Input(value as Declaration[], this.create.bind(this)),
-      Incept, () => new Incept(value as string, this.discovery),
-      Delegate, () => new Delegate(value as string, this.discovery.roles),
-      () => new Class(value))
+    return match(
+      Class,
+      Role,
+      () => new Role(value as string | string[], this.discovery.roles),
+      Rule,
+      () => new Rule(value as Record<string, string>, this.create.bind(this)),
+      Input,
+      () => new Input(value as Declaration[], this.create.bind(this)),
+      Incept,
+      () => new Incept(value as string, this.discovery),
+      Delegate,
+      () => new Delegate(value as string, this.discovery.roles),
+      () => new Class(value)
+    )
   }
 
-  public arrange (directives: Directive[]): void {
+  public arrange(directives: Directive[]): void {
     directives.sort((a, b) => (a.priority ?? 1) - (b.priority ?? 1))
   }
 
@@ -105,28 +110,26 @@ export class Authorization implements DirectiveFamily<Directive, Extension> {
    * Authentication: who the credential names, if one is presented. A credential belongs to
    * the request, so it is read once however many calls the request carries.
    */
-  public async preflight (context: Context): Promise<void> {
+  public async preflight(context: Context): Promise<void> {
     context.identity = await this.resolve(context)
   }
 
   /** Authorization: whether that identity may make this call, which every call asks anew. */
-  public async precall (directives: Directive[],
+  public async precall(
+    directives: Directive[],
     context: Context,
-    parameters: Parameter[]): Promise<Output> {
+    parameters: Parameter[]
+  ): Promise<Output> {
     for (const directive of directives) {
       const allow = await directive.authorize(context.identity, context, parameters)
 
       if (allow)
-        if (this.permitted(context))
-          return directive.reply?.(context) ?? null
-        else
-          throw new http.Forbidden()
+        if (this.permitted(context)) return directive.reply?.(context) ?? null
+        else throw new http.Forbidden()
     }
 
-    if (context.identity === null)
-      throw new http.Unauthorized()
-    else
-      throw new http.Forbidden()
+    if (context.identity === null) throw new http.Unauthorized()
+    else throw new http.Forbidden()
   }
 
   /**
@@ -142,8 +145,11 @@ export class Authorization implements DirectiveFamily<Directive, Extension> {
    * admission is a disjunction and stops at the first that admits, while what the directives
    * fill is not any one of them's to state alone.
    */
-  public async explain (directives: Directive[], context: Context,
-    introspection: Introspection): Promise<Introspection | null> {
+  public async explain(
+    directives: Directive[],
+    context: Context,
+    introspection: Introspection
+  ): Promise<Introspection | null> {
     let untold = false
     let admitted = false
 
@@ -163,8 +169,7 @@ export class Authorization implements DirectiveFamily<Directive, Extension> {
       }
     }
 
-    if (!admitted && !untold)
-      return null
+    if (!admitted && !untold) return null
 
     // whichever of them admitted, a property any of them fills from the identity is filled
     // from the identity: what a caller sent there would be overwritten or forged
@@ -174,36 +179,36 @@ export class Authorization implements DirectiveFamily<Directive, Extension> {
     return introspection
   }
 
-  public async settle (directives: Directive[],
+  public async settle(
+    directives: Directive[],
     context: Context,
-    response: http.OutgoingMessage): Promise<void> {
-    await Promise.all(directives.map(async (directive) =>
-      directive.settle?.(context, response)))
+    response: http.OutgoingMessage
+  ): Promise<void> {
+    await Promise.all(
+      directives.map(async (directive) => directive.settle?.(context, response))
+    )
   }
 
   /**
    * Re-issuing a credential, and refusing a ban, are the request's business: the header
    * carries one token however many calls were made, and a ban refuses all of them.
    */
-  public async depart (context: Context, response: http.OutgoingMessage): Promise<void> {
+  public async depart(context: Context, response: http.OutgoingMessage): Promise<void> {
     const identity = context.identity
 
-    if (identity === null)
-      return
+    if (identity === null) return
 
-    if (identity.provider === PRIMARY && !identity.refresh)
-      return
+    if (identity.provider === PRIMARY && !identity.refresh) return
 
     // resolving already asked, for any provider but the primary
-    if (context.vetted !== true && await this.banned(identity))
+    if (context.vetted !== true && (await this.banned(identity)))
       throw new http.Unauthorized()
 
     // a token carries the roles it was issued with, and the refresh is where they are read again;
     // any other scheme has just read them, unless a Role directive already did
     if (identity.provider === PRIMARY)
       identity.roles = await Role.get(identity, this.discovery.roles)
-    else
-      identity.roles ??= await Role.get(identity, this.discovery.roles)
+    else identity.roles ??= await Role.get(identity, this.discovery.roles)
     this.tokens ??= await this.discovery.tokens
 
     const token = await this.tokens.invoke<string>('encrypt', {
@@ -217,17 +222,15 @@ export class Authorization implements DirectiveFamily<Directive, Extension> {
     response.headers.set('cache-control', 'no-store')
   }
 
-  private async resolve (context: Context): Promise<Identity | null> {
+  private async resolve(context: Context): Promise<Identity | null> {
     const { authority } = context
     const { authorization } = context.request.headers
 
-    if (authorization === undefined)
-      return null
+    if (authorization === undefined) return null
 
     const retry = this.meter?.check(context, NONE) ?? 0
 
-    if (retry > 0)
-      throw new http.TooManyRequests(retry)
+    if (retry > 0) throw new http.TooManyRequests(retry)
 
     const [scheme, credentials] = split(authorization)
     const candidates = providersOf(scheme)
@@ -243,16 +246,18 @@ export class Authorization implements DirectiveFamily<Directive, Extension> {
     for (const candidate of candidates) {
       this.components[candidate] ??= await this.discovery[candidate]
 
-      const answer = await this.components[candidate]!.invoke<AuthenticationResult>('authenticate', {
-        input: {
-          scheme,
-          authority,
-          credentials
+      const answer = await this.components[candidate]!.invoke<AuthenticationResult>(
+        'authenticate',
+        {
+          input: {
+            scheme,
+            authority,
+            credentials
+          }
         }
-      })
+      )
 
-      if (declined(answer))
-        continue
+      if (declined(answer)) continue
 
       provider = candidate
       result = answer
@@ -277,8 +282,7 @@ export class Authorization implements DirectiveFamily<Directive, Extension> {
     const identity = result.identity
 
     if (provider !== PRIMARY) {
-      if (await this.banned(identity))
-        throw new http.Unauthorized()
+      if (await this.banned(identity)) throw new http.Unauthorized()
 
       context.vetted = true
     }
@@ -290,17 +294,16 @@ export class Authorization implements DirectiveFamily<Directive, Extension> {
     return identity
   }
 
-  private permitted (context: Context): boolean {
+  private permitted(context: Context): boolean {
     const permissions = context.identity?.permissions
 
-    if (permissions === undefined)
-      return true
+    if (permissions === undefined) return true
 
     // the route is matched on the normalized path, so the permission is too
     return permits(permissions, context.request.method, context.url.pathname)
   }
 
-  private async banned (identity: Identity): Promise<boolean> {
+  private async banned(identity: Identity): Promise<boolean> {
     this.bans ??= await this.discovery.bans
 
     const ban = await this.bans.invoke<Ban>('observe', { query: { id: identity.id } })
@@ -310,21 +313,27 @@ export class Authorization implements DirectiveFamily<Directive, Extension> {
 }
 
 /** Whether a provider says the credentials are not of its kind, so the next is asked. */
-function declined (result: AuthenticationResult): boolean {
+function declined(result: AuthenticationResult): boolean {
   return result instanceof Error && codeOf(result) === UNRECOGNIZED
 }
 
-function codeOf (result: Error): string | undefined {
+function codeOf(result: Error): string | undefined {
   const code: string | unknown = (result as unknown as { code: string }).code
 
   return typeof code === 'string' ? code : undefined
 }
 
 /** Whether the permissions admit the method on the path the request is routed by. */
-export function permits (permissions: Record<string, string[]>, method: string, pathname: string): boolean {
-  return Object.entries(permissions).some(([pattern, methods]) =>
-    methods.some((allowed) => allowed === '*' || allowed === method) &&
-    glob(pattern).match(pathname))
+export function permits(
+  permissions: Record<string, string[]>,
+  method: string,
+  pathname: string
+): boolean {
+  return Object.entries(permissions).some(
+    ([pattern, methods]) =>
+      methods.some((allowed) => allowed === '*' || allowed === method) &&
+      glob(pattern).match(pathname)
+  )
 }
 
 /**
@@ -332,12 +341,11 @@ export function permits (permissions: Record<string, string[]>, method: string, 
  * matched on every request the identity makes. Patterns arrive with an identity, hence
  * the bound.
  */
-function glob (pattern: string): Minimatch {
+function glob(pattern: string): Minimatch {
   let compiled = GLOBS.get(pattern)
 
   if (compiled === undefined) {
-    if (GLOBS.size >= GLOBS_LIMIT)
-      GLOBS.clear()
+    if (GLOBS.size >= GLOBS_LIMIT) GLOBS.clear()
 
     compiled = new Minimatch(pattern)
 

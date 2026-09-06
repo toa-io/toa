@@ -9,7 +9,8 @@ import { promisify } from 'node:util'
 const run = promisify(execFile)
 
 const root = resolve(import.meta.dirname, 'dummies')
-const source = (file) => pathToFileURL(resolve(import.meta.dirname, '..', 'src', file)).href
+const source = (file) =>
+  pathToFileURL(resolve(import.meta.dirname, '..', 'src', file)).href
 
 /**
  * The unit suite runs through `tsx`, which reads TypeScript itself and accepts what Node
@@ -17,8 +18,11 @@ const source = (file) => pathToFileURL(resolve(import.meta.dirname, '..', 'src',
  * process started without a loader.
  */
 const node = async (script) => {
-  const { stdout } = await run(process.execPath, ['--input-type=module', '--eval', script],
-    { env: { ...process.env, NODE_OPTIONS: '' } })
+  const { stdout } = await run(
+    process.execPath,
+    ['--input-type=module', '--eval', script],
+    { env: { ...process.env, NODE_OPTIONS: '' } }
+  )
 
   return stdout.trim()
 }

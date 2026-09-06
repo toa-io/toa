@@ -25,7 +25,30 @@
       }
     ],
     "import/namespace": "warn",
-    "no-unused-vars": "warn"
+    "no-unused-vars": [
+      "warn",
+      {
+        "args": "none",
+        "varsIgnorePattern": "^_",
+        "caughtErrorsIgnorePattern": "^_",
+        "ignoreRestSiblings": true
+      }
+    ],
+    "no-shadow": "off",
+    "no-underscore-dangle": [
+      "warn",
+      {
+        "allow": [
+          "_id",
+          "_meta",
+          "_destroy",
+          "_transform",
+          "_readableState",
+          "_trailers",
+          "__TESTING_EXPOSITION_BRANCH_TTL"
+        ]
+      }
+    ]
   },
   "overrides": [
     {
@@ -33,17 +56,13 @@
         "**/*.ts"
       ],
       "rules": {
-        "curly": [
-          "warn",
-          "multi"
-        ],
         "func-style": [
           "error",
           "declaration"
         ],
         "max-depth": [
           "warn",
-          2
+          3
         ],
         "max-params": "error",
         "import/no-default-export": "error",
@@ -61,6 +80,7 @@
     {
       "files": [
         "**/*.test.ts",
+        "**/*.test.js",
         "**/test/**",
         "**/features/**"
       ],
@@ -68,7 +88,9 @@
         "func-style": "off",
         "max-depth": "off",
         "max-params": "off",
-        "typescript/explicit-member-accessibility": "off"
+        "typescript/explicit-member-accessibility": "off",
+        "typescript/no-extraneous-class": "off",
+        "no-underscore-dangle": "off"
       }
     }
   ]

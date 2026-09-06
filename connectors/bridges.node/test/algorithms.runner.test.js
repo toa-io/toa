@@ -52,5 +52,10 @@ it('should mount', async () => {
 
   await runner.connect()
 
-  assert.ok(mount.mock.calls.some((call) => call.arguments.length === 1 && isDeepStrictEqual(call.arguments[0], context)))
+  assert.ok(
+    mount.mock.calls.some(
+      (call) =>
+        call.arguments.length === 1 && isDeepStrictEqual(call.arguments[0], context)
+    )
+  )
 })

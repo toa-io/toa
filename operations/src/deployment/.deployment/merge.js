@@ -61,22 +61,27 @@ const reserve = (services, probe) => {
         const conflicting = claimed.get(port)
 
         if (conflicting !== undefined)
-          throw new Error(`Port ${port} is claimed by both ${conflicting} and ${claimant}` +
-            (service.workload === undefined ? '' : ` in '${workload}'`))
+          throw new Error(
+            `Port ${port} is claimed by both ${conflicting} and ${claimant}` +
+              (service.workload === undefined ? '' : ` in '${workload}'`)
+          )
 
         claimed.set(port, claimant)
       }
     }
 }
 
-function * ports (service) {
+function* ports(service) {
   // every service reaching here is named the way it is deployed, `<group>-<name>`
   const name = `'${service.name}'`
 
-  if (service.port !== undefined)
-    yield [service.port, name]
+  if (service.port !== undefined) yield [service.port, name]
 
-  if (service.probe !== undefined && service.probe !== false && service.probe.port !== service.port)
+  if (
+    service.probe !== undefined &&
+    service.probe !== false &&
+    service.probe.port !== service.port
+  )
     yield [service.probe.port, `the readiness probe of ${name}`]
 }
 

@@ -18,12 +18,8 @@ To create a new package or migrate an existing one to TypeScript, follow these s
     "outDir": "./transpiled",
     "rootDir": "./source"
   },
-  "include": [
-    "source"
-  ],
-  "exclude": [
-    "**/*.test.ts"
-  ]
+  "include": ["source"],
+  "exclude": ["**/*.test.ts"]
 }
 ```
 

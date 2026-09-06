@@ -2,37 +2,40 @@
 
 /** @type {Record<import('$lib/intl').Locale, import('./types').Dictionary>} */
 export const dictionaries = {
-  "en-US": {
-    "values": {
-      "empty": "No component declares configuration.",
-      "nomatch": "No results match the filter."
+  'en-US': {
+    values: {
+      empty: 'No component declares configuration.',
+      nomatch: 'No results match the filter.'
     },
-    "value": {
-      "none": "This component has no configuration.",
-      "secret": "Secret",
-      "count": (count) => {
-      const forms = {"one":"{n} value","other":"{n} values"};
-      const locale = "en-US"; // This will be replaced by the build system
-      const pluralRules = new Intl.PluralRules(locale);
-      const rule = pluralRules.select(count);
-      const table = /** @type {Record<string, string>} */ (forms);
+    value: {
+      none: 'This component has no configuration.',
+      secret: 'Secret',
+      count: (count) => {
+        const forms = { one: '{n} value', other: '{n} values' }
+        const locale = 'en-US' // This will be replaced by the build system
+        const pluralRules = new Intl.PluralRules(locale)
+        const rule = pluralRules.select(count)
+        const table = /** @type {Record<string, string>} */ (forms)
 
-      return (table[rule] ?? table.other).replace(/{n}/g, new Intl.NumberFormat(locale).format(count));
+        return (table[rule] ?? table.other).replace(
+          /{n}/g,
+          new Intl.NumberFormat(locale).format(count)
+        )
+      },
+      title: 'Configuration'
     },
-      "title": "Configuration"
+    create: {
+      action: 'Edit',
+      title: 'Edit configuration',
+      editor: 'Configuration',
+      submit: 'Update',
+      cancel: 'Cancel',
+      malformed: 'This is not valid YAML.',
+      failed: 'The configuration could not be created.'
     },
-    "create": {
-      "action": "Edit",
-      "title": "Edit configuration",
-      "editor": "Configuration",
-      "submit": "Update",
-      "cancel": "Cancel",
-      "malformed": "This is not valid YAML.",
-      "failed": "The configuration could not be created."
-    },
-    "space": {
-      "user": "Userspace",
-      "system": "System"
+    space: {
+      user: 'Userspace',
+      system: 'System'
     }
   }
-};
+}

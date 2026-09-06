@@ -22,7 +22,7 @@ it('should not modify argument', () => {
 it('should pass key argument', () => {
   const object = { a: 1, b: 2 }
 
-  const result = remap(object, (value, key) => key === 'b' ? value + 1 : value)
+  const result = remap(object, (value, key) => (key === 'b' ? value + 1 : value))
 
   assert.deepStrictEqual(result, { a: 1, b: 3 })
 })

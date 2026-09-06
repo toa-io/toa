@@ -21,13 +21,13 @@ export class Image {
     build: {}
   }
 
-  constructor (scope, runtime, registry) {
+  constructor(scope, runtime, registry) {
     this.#scope = scope
     this.#registry = registry
     this.#runtime = runtime
   }
 
-  tag () {
+  tag() {
     const hash = createHash('sha256')
 
     hash.update(this.#runtime.version)
@@ -35,25 +35,37 @@ export class Image {
 
     const tag = hash.digest('hex').slice(0, 8)
 
-    this.reference = posix.join(this.#registry.base ?? '', this.#scope, `${this.name}:${tag}`)
+    this.reference = posix.join(
+      this.#registry.base ?? '',
+      this.#scope,
+      `${this.name}:${tag}`
+    )
   }
 
   /** @returns {string | undefined} */
-  get name () { return undefined }
+  get name() {
+    return undefined
+  }
 
   /** @returns {string | undefined} */
-  get version () { return undefined }
+  get version() {
+    return undefined
+  }
 
   /** The image to build `FROM`. Undefined takes the runtime's, which is what a service does.
    *  @returns {string | undefined} */
-  get base () { return undefined }
+  get base() {
+    return undefined
+  }
 
   /** Build commands to add. Undefined adds none, which is what a service does.
    *  @returns {string | undefined} */
-  get run () { return undefined }
+  get run() {
+    return undefined
+  }
 
-  async prepare (root) {
-    if (this.dockerfile === undefined) throw new Error('Dockerfile isn\'t specified')
+  async prepare(root) {
+    if (this.dockerfile === undefined) throw new Error("Dockerfile isn't specified")
 
     this.#setValues()
 
@@ -73,38 +85,43 @@ export class Image {
     return path
   }
 
-  #setValues () {
+  #setValues() {
     this.#values.runtime = this.#runtime
-    this.#values.build = overwrite({
-      image: `${RUNTIME_IMAGE}:${this.#runtime.version}`
-    }, this.#registry.build)
+    this.#values.build = overwrite(
+      {
+        image: `${RUNTIME_IMAGE}:${this.#runtime.version}`
+      },
+      this.#registry.build
+    )
 
     const image = this.base
 
-    if (image !== undefined)
-      this.#values.build.image = image
+    if (image !== undefined) this.#values.build.image = image
 
     const run = this.run
 
     if (run !== undefined)
-      this.#values.build.run = (this.#values.build.run === undefined ? '' : this.#values.build.run + '\n') + run
+      this.#values.build.run =
+        (this.#values.build.run === undefined ? '' : this.#values.build.run + '\n') + run
 
-    if (this.#values.build.arguments !== undefined) this.#values.build.arguments = createArguments(this.#values.build.arguments)
-    if (this.#values.build.run !== undefined) this.#values.build.run = createRunCommands(this.#values.build.run)
+    if (this.#values.build.arguments !== undefined)
+      this.#values.build.arguments = createArguments(this.#values.build.arguments)
+    if (this.#values.build.run !== undefined)
+      this.#values.build.run = createRunCommands(this.#values.build.run)
   }
 
   /**
    * @param key {string}
    * @returns {string}
    */
-  #value (key) {
+  #value(key) {
     const [source, property] = key.split('.')
 
     return this.#values[source]?.[property] ?? ''
   }
 }
 
-function createRunCommands (input) {
+function createRunCommands(input) {
   const lines = input.split('\n')
 
   return lines.reduce((commands, command) => {
@@ -114,7 +131,7 @@ function createRunCommands (input) {
   }, '')
 }
 
-function createArguments (variables) {
+function createArguments(variables) {
   const args = []
 
   for (const variable of variables) {

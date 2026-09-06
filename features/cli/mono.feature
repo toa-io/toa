@@ -1,3 +1,4 @@
+@cli
 Feature: toa mono
 
   Run composition and extension services in one process

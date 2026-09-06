@@ -2,13 +2,12 @@ export const promex = () => {
   let ok
   let oh
 
-  const promise =
-    new Promise((resolve, reject) => {
-      ok = resolve
-      oh = reject
-    })
+  const promise = new Promise((resolve, reject) => {
+    ok = resolve
+    oh = reject
+  })
 
-  function callback (error, result) {
+  function callback(error, result) {
     if (error) oh(error)
     else ok(result)
   }

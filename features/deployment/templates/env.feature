@@ -1,3 +1,4 @@
+@deployment @helm
 Feature: Environment variable TOA_ENV
 
   Scenario: TOA_ENV for compositions

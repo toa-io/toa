@@ -11,13 +11,16 @@ export class Role implements Directive {
   private readonly discovery: Promise<Component>
   private readonly dynamic: boolean
 
-  public constructor (roles: string | string[], discovery: Promise<Component>) {
+  public constructor(roles: string | string[], discovery: Promise<Component>) {
     this.roles = typeof roles === 'string' ? [roles] : roles
     this.discovery = discovery
     this.dynamic = this.roles.some((role) => role.includes('{'))
   }
 
-  public static async get (identity: Identity, discovery: Promise<Component>): Promise<string[]> {
+  public static async get(
+    identity: Identity,
+    discovery: Promise<Component>
+  ): Promise<string[]> {
     this.remote ??= await discovery
 
     const query: Query = {
@@ -28,9 +31,12 @@ export class Role implements Directive {
     return await this.remote.invoke('list', { query })
   }
 
-  public async authorize (identity: Identity | null, _: unknown, parameters: Parameter[]): Promise<boolean> {
-    if (identity === null)
-      return false
+  public async authorize(
+    identity: Identity | null,
+    _: unknown,
+    parameters: Parameter[]
+  ): Promise<boolean> {
+    if (identity === null) return false
 
     identity.roles ??= await Role.get(identity, this.discovery)
 
@@ -38,39 +44,39 @@ export class Role implements Directive {
   }
 
   /** A role naming a route variable cannot be told from a description, which has no values. */
-  public async admits (identity: Identity | null): Promise<boolean | undefined> {
-    if (this.dynamic)
-      return undefined
+  public async admits(identity: Identity | null): Promise<boolean | undefined> {
+    if (this.dynamic) return undefined
 
-    if (identity === null)
-      return false
+    if (identity === null) return false
 
     identity.roles ??= await Role.get(identity, this.discovery)
 
     return this.match(identity.roles, [])
   }
 
-  private match (roles: string[], parameters: Parameter[]): boolean {
+  private match(roles: string[], parameters: Parameter[]): boolean {
     const required = this.dynamic ? this.substitute(parameters) : this.roles
 
     for (const role of roles) {
-      const ok = required.some((expected) => expected === role || expected.startsWith(role + ':'))
+      const ok = required.some(
+        (expected) => expected === role || expected.startsWith(role + ':')
+      )
 
-      if (ok)
-        return true
+      if (ok) return true
     }
 
     return false
   }
 
-  private substitute (parameters: Parameter[]): string[] {
-    return this.roles.map((role) => role.replaceAll(/{(\w+)}/g, (_, key) => {
-      const value = parameters.find((parameter) => parameter.name === key)?.value
+  private substitute(parameters: Parameter[]): string[] {
+    return this.roles.map((role) =>
+      role.replaceAll(/{(\w+)}/g, (_, key) => {
+        const value = parameters.find((parameter) => parameter.name === key)?.value
 
-      assert.ok(value !== undefined,
-        `Role '${role}' requires '${key}' route parameter`)
+        assert.ok(value !== undefined, `Role '${role}' requires '${key}' route parameter`)
 
-      return value
-    }))
+        return value
+      })
+    )
   }
 }

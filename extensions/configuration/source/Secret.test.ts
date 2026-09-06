@@ -23,7 +23,7 @@ it('should not show in JSON', () => {
 it('should not show when inspected', () => {
   assert.deepStrictEqual(inspect(secret), REDACTED)
   assert.ok(inspect({ key: secret }).includes(REDACTED))
-  assert.ok(!(inspect({ key: secret }).includes('s3cret')))
+  assert.ok(!inspect({ key: secret }).includes('s3cret'))
 })
 
 it('should not expose the value as a property', () => {

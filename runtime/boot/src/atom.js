@@ -13,7 +13,7 @@ class Aspect extends Connector {
 
   #atom
 
-  constructor (atom) {
+  constructor(atom) {
     super()
 
     this.#atom = atom
@@ -23,12 +23,16 @@ class Aspect extends Connector {
 
   // the methods are named rather than forwarded, so that the connector's lifecycle is not
   // reachable from an algorithm
-  invoke (method, ...args) {
+  invoke(method, ...args) {
     switch (method) {
-      case 'slots': return this.#atom.slots(...args)
-      case 'meter': return this.#atom.meter(...args)
-      case 'lock': return this.#atom.lock(...args)
-      default: throw new Error(`Atom aspect has no '${method}' method`)
+      case 'slots':
+        return this.#atom.slots(...args)
+      case 'meter':
+        return this.#atom.meter(...args)
+      case 'lock':
+        return this.#atom.lock(...args)
+      default:
+        throw new Error(`Atom aspect has no '${method}' method`)
     }
   }
 }

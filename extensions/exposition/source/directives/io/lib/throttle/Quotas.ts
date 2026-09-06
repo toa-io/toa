@@ -42,7 +42,7 @@ export class Quotas {
    */
   private readonly keyed = new WeakMap<Context, string>()
 
-  public constructor (options: Options) {
+  public constructor(options: Options) {
     this.keys = options.keys
     this.conditional = options.conditional
     this.emission = options.interval / options.requests
@@ -50,12 +50,13 @@ export class Quotas {
     this.period = period(options.interval)
 
     // a key means one budget, so quotas that do not share one must not share a key
-    this.prefix = options.name === undefined
-      ? `t:${options.requests}:${options.interval}:`
-      : `${options.name}:`
+    this.prefix =
+      options.name === undefined
+        ? `t:${options.requests}:${options.interval}:`
+        : `${options.name}:`
   }
 
-  public static create (configuration: Configuration, route: string = ''): Quotas {
+  public static create(configuration: Configuration, route: string = ''): Quotas {
     const { requests, interval, condition } = configuration
     const keys = Keys.create(configuration.key, condition, route)
 
@@ -69,12 +70,11 @@ export class Quotas {
    * the same call that admits it; otherwise only the response can tell whether it counts,
    * and {@link use} charges once it can.
    */
-  public check (context: Context, parameters: Parameter[]): number {
+  public check(context: Context, parameters: Parameter[]): number {
     const key = this.keys.get(context, parameters)
 
     // a request that cannot be keyed is not metered
-    if (key === undefined)
-      return 0
+    if (key === undefined) return 0
 
     this.keyed.set(context, key)
 
@@ -83,25 +83,21 @@ export class Quotas {
     const tat = Math.max(entry?.tat ?? now, now)
     const admit = tat + this.emission - this.capacity
 
-    if (admit > now)
-      return Math.ceil((admit - now) / 1000)
+    if (admit > now) return Math.ceil((admit - now) / 1000)
 
-    if (!this.conditional)
-      this.charge(key, entry, tat)
+    if (!this.conditional) this.charge(key, entry, tat)
 
     return 0
   }
 
   /** Charges what the condition accepts, once the response can be matched against it. */
-  public use (input: Context, output: Output): void {
-    if (!this.conditional || !this.keys.matches(input, output))
-      return
+  public use(input: Context, output: Output): void {
+    if (!this.conditional || !this.keys.matches(input, output)) return
 
     // precall always runs first, and a request it refuses never reaches settle
     const key = this.keyed.get(input) ?? this.keys.get(input)
 
-    if (key === undefined)
-      return
+    if (key === undefined) return
 
     const now = Date.now()
     const entry = this.entries.get(key)
@@ -116,7 +112,7 @@ export class Quotas {
    * The debt is not cleared here but in {@link settled}, so a tick that fails to reach
    * Redis leaves it to be reported by the next one instead of losing it.
    */
-  public flush (now: number, batch: Batch[]): void {
+  public flush(now: number, batch: Batch[]): void {
     for (const [key, entry] of this.entries) {
       const delta = Math.round(entry.debt)
 
@@ -127,18 +123,16 @@ export class Quotas {
       }
 
       // out of debt and with nothing left to report, a key says no more than an absent one
-      if (entry.tat <= now)
-        this.entries.delete(key)
+      if (entry.tat <= now) this.entries.delete(key)
     }
   }
 
   /** Takes the group's debt back, and clears what this process contributed to it. */
-  public settled (reported: Batch, debt: number, now: number): void {
+  public settled(reported: Batch, debt: number, now: number): void {
     const entry = this.entries.get(reported.key)
 
     if (entry === undefined) {
-      if (debt > 0)
-        this.entries.set(reported.key, { tat: now + debt, debt: 0 })
+      if (debt > 0) this.entries.set(reported.key, { tat: now + debt, debt: 0 })
 
       return
     }
@@ -149,11 +143,11 @@ export class Quotas {
     entry.tat = Math.max(entry.tat, now + debt)
   }
 
-  public name (key: string): string {
+  public name(key: string): string {
     return this.prefix + key
   }
 
-  private charge (key: string, entry: Entry | undefined, tat: number): void {
+  private charge(key: string, entry: Entry | undefined, tat: number): void {
     if (entry === undefined)
       this.entries.set(key, { tat: tat + this.emission, debt: this.emission })
     else {
@@ -170,7 +164,7 @@ export class Quotas {
  * what it alone has spent — so it is worth doing an order of magnitude more often than
  * the interval, within reason on either end.
  */
-function period (interval: number): number {
+function period(interval: number): number {
   return Math.min(Math.max(interval / 10, MIN_PERIOD), MAX_PERIOD)
 }
 

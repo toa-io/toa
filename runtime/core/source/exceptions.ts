@@ -27,24 +27,23 @@ export const codes = {
 export class Exception {
   public readonly code: number
   public readonly message: string
-  public cause?: unknown
+  public cause?: unknown;
 
   /** what a contract exception copies off the schema error it refused with */
   [key: string]: unknown
 
-  public constructor (code: number, message: string, cause?: unknown) {
+  public constructor(code: number, message: string, cause?: unknown) {
     this.code = code
     this.message = message
 
-    if (cause !== undefined)
-      this.cause = cause
+    if (cause !== undefined) this.cause = cause
   }
 }
 
 export class SystemException extends Exception {
   public readonly stack?: string
 
-  public constructor (error: Error | string) {
+  public constructor(error: Error | string) {
     super(codes.System, typeof error === 'string' ? error : error.message)
 
     if (typeof error !== 'string' && error.stack !== undefined) this.stack = error.stack
@@ -52,60 +51,63 @@ export class SystemException extends Exception {
 }
 
 export class ContractException extends Exception {
-  public constructor (code: number | undefined, error: SchemaError | string | null,
-    cause?: unknown) {
-    super(code ?? codes.Contract,
-      typeof error === 'string' ? error : error?.message ?? '', cause)
+  public constructor(
+    code: number | undefined,
+    error: SchemaError | string | null,
+    cause?: unknown
+  ) {
+    super(
+      code ?? codes.Contract,
+      typeof error === 'string' ? error : (error?.message ?? ''),
+      cause
+    )
 
     if (typeof error === 'object' && error !== null)
       for (const k of ['keyword', 'property', 'schema', 'path', 'params'] as const)
-        if (k in error)
-          this[k] = (error as unknown as Record<string, unknown>)[k]
+        if (k in error) this[k] = (error as unknown as Record<string, unknown>)[k]
   }
 }
 
 export class RequestContractException extends ContractException {
-  public constructor (error: SchemaError | string, cause?: unknown) {
+  public constructor(error: SchemaError | string, cause?: unknown) {
     super(codes.RequestContract, error, cause)
   }
 }
 
 export class ResponseContractException extends ContractException {
-  public constructor (error: SchemaError | string, cause?: unknown) {
+  public constructor(error: SchemaError | string, cause?: unknown) {
     super(codes.ResponseContract, error, cause)
   }
 }
 
 export class EntityContractException extends ContractException {
-  public constructor (error: SchemaError | string, cause?: unknown) {
+  public constructor(error: SchemaError | string, cause?: unknown) {
     super(codes.EntityContract, error, cause)
   }
 }
 
 export class EntityGuardException extends ContractException {
-  public constructor (name: string, cause?: unknown) {
+  public constructor(name: string, cause?: unknown) {
     super(codes.EntityGuard, name, cause)
   }
 }
 
 // #region exports
 
-
-
-
-
-
-
 // a module's exports are static, so the ones that follow a code are named rather
 // than generated onto the namespace
 type Derived = new (message?: string, cause?: unknown) => Exception
 
-function derive (name: keyof typeof codes): Derived {
+function derive(name: keyof typeof codes): Derived {
   const classname = name + 'Exception'
 
   const derived = class extends Exception {
-    public constructor (message?: string, cause?: unknown) {
-      super(codes[name], message === undefined ? classname : `${classname}: ${message}`, cause)
+    public constructor(message?: string, cause?: unknown) {
+      super(
+        codes[name],
+        message === undefined ? classname : `${classname}: ${message}`,
+        cause
+      )
     }
   }
 

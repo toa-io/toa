@@ -13,9 +13,10 @@ let event, emit
 // the fixtures are not connectors, so the dependency is recorded rather than linked
 const depends = mock.method(Connector.prototype, 'depends', () => undefined)
 
-const dependencies = (instance) => depends.mock.calls
-  .filter((call) => call.this === instance)
-  .map((call) => call.arguments[0])
+const dependencies = (instance) =>
+  depends.mock.calls
+    .filter((call) => call.this === instance)
+    .map((call) => call.arguments[0])
 
 beforeEach(() => {
   resetCalls()
@@ -35,7 +36,9 @@ it('should depend on bridge if provided', () => {
 
   const bridgeless = new Event(fixtures.definition, fixtures.binding)
 
-  assert.ok(!dependencies(bridgeless).some((one) => isDeepStrictEqual(one, fixtures.bridge)))
+  assert.ok(
+    !dependencies(bridgeless).some((one) => isDeepStrictEqual(one, fixtures.bridge))
+  )
 })
 
 describe('condition', () => {
@@ -43,7 +46,13 @@ describe('condition', () => {
     it('should call condition', async () => {
       await emit()
 
-      assert.ok(fixtures.bridge.condition.mock.calls.some((call) => call.arguments.length === 1 && isDeepStrictEqual(call.arguments[0], fixtures.event)))
+      assert.ok(
+        fixtures.bridge.condition.mock.calls.some(
+          (call) =>
+            call.arguments.length === 1 &&
+            isDeepStrictEqual(call.arguments[0], fixtures.event)
+        )
+      )
     })
 
     it('should emit if condition returns true', async () => {
@@ -74,9 +83,15 @@ describe('condition', () => {
     })
 
     it('should not call condition', async () => {
-      await event.emit(fixtures.event.origin, fixtures.event.changeset, fixtures.event.state)
+      await event.emit(
+        fixtures.event.origin,
+        fixtures.event.changeset,
+        fixtures.event.state
+      )
 
-      assert.ok(!(fixtures.bridge.condition.mock.calls.some((call) => call.arguments.length === 0)))
+      assert.ok(
+        !fixtures.bridge.condition.mock.calls.some((call) => call.arguments.length === 0)
+      )
 
       const payload = await fixtures.bridge.payload.mock.calls[0].result
       assertEmitted(payload)
@@ -119,7 +134,10 @@ describe('payload', () => {
   })
 })
 
-function resetCalls (target = [assert, clone, fixtures, depends, dependencies], seen = new Set()) {
+function resetCalls(
+  target = [assert, clone, fixtures, depends, dependencies],
+  seen = new Set()
+) {
   if (target === null || typeof target !== 'object' || seen.has(target)) return
 
   seen.add(target)
@@ -130,7 +148,7 @@ function resetCalls (target = [assert, clone, fixtures, depends, dependencies], 
 }
 
 /** The message carries the payload and a telemetry token generated per emission. */
-function assertEmitted (payload) {
+function assertEmitted(payload) {
   const emitted = fixtures.binding.emit.mock.calls
     .map((call) => call.arguments[0])
     .filter((message) => isDeepStrictEqual(message.payload, payload))

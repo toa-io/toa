@@ -14,7 +14,7 @@ export class Computation implements Operation {
   private remote!: Context['remote']['identity']['keys']
   private logs!: Context['logs']
 
-  public mount (context: Context): void {
+  public mount(context: Context): void {
     const latest = context.configuration.keys.find(({ format }) => format !== 'paseto')
 
     if (latest === undefined)
@@ -32,32 +32,28 @@ export class Computation implements Operation {
     }
   }
 
-  public async execute (token: string): Promise<Maybe<DecryptOutput>> {
+  public async execute(token: string): Promise<Maybe<DecryptOutput>> {
     const legacy = form(token) === 'paseto'
     const kid = legacy ? this.pasetoKid(token) : await this.jweKid(token)
 
-    if (kid instanceof Error)
-      return kid
+    if (kid instanceof Error) return kid
 
     const key = await this.key(kid, legacy)
 
-    if (key instanceof Error)
-      return key
+    if (key instanceof Error) return key
 
     const claims = legacy
       ? await decryptPaseto(token, key.key)
       : await decryptJWE(token, key.key)
 
-    if (claims instanceof Error)
-      return claims
+    if (claims instanceof Error) return claims
 
     this.logs.debug('Token claims', claims)
 
     if (key.identity !== undefined && claims.identity.id !== key.identity)
       return ERR_FORGED_KEY
 
-    if (key.revokedAt !== undefined)
-      return ERR_REVOKED_KEY
+    if (key.revokedAt !== undefined) return ERR_REVOKED_KEY
 
     return {
       iss: claims.iss,
@@ -69,18 +65,16 @@ export class Computation implements Operation {
     }
   }
 
-  private pasetoKid (token: string): Maybe<string> {
+  private pasetoKid(token: string): Maybe<string> {
     const [, , , footer] = token.split('.')
 
-    if (footer === undefined)
-      return ERR_INVALID_TOKEN
+    if (footer === undefined) return ERR_INVALID_TOKEN
 
     try {
       const json = Buffer.from(footer, 'base64url').toString('utf-8')
       const { kid } = JSON.parse(json)
 
-      if (typeof kid !== 'string')
-        return ERR_INVALID_TOKEN
+      if (typeof kid !== 'string') return ERR_INVALID_TOKEN
 
       return kid
     } catch {
@@ -88,13 +82,17 @@ export class Computation implements Operation {
     }
   }
 
-  private async jweKid (token: string): Promise<Maybe<string>> {
+  private async jweKid(token: string): Promise<Maybe<string>> {
     try {
       const { decodeProtectedHeader } = await load()
       const header = decodeProtectedHeader(token)
 
-      if (header.alg !== 'dir' || header.enc !== 'A256GCM' || header.typ !== 'JWT' ||
-        typeof header.kid !== 'string')
+      if (
+        header.alg !== 'dir' ||
+        header.enc !== 'A256GCM' ||
+        header.typ !== 'JWT' ||
+        typeof header.kid !== 'string'
+      )
         return ERR_INVALID_TOKEN
 
       return header.kid
@@ -103,11 +101,10 @@ export class Computation implements Operation {
     }
   }
 
-  private async key (kid: string, legacy: boolean): Promise<Maybe<Key>> {
+  private async key(kid: string, legacy: boolean): Promise<Maybe<Key>> {
     const configured = legacy ? this.legacy : this.keys
 
-    if (kid in configured)
-      return configured[kid]
+    if (kid in configured) return configured[kid]
 
     if (!this.cache.has(kid)) {
       const value = await this.remote.observe({ query: { id: kid } })
@@ -121,7 +118,7 @@ export class Computation implements Operation {
   }
 }
 
-async function decryptPaseto (token: string, key: string): Promise<Maybe<Claims>> {
+async function decryptPaseto(token: string, key: string): Promise<Maybe<Claims>> {
   try {
     const secret = await importKey(key as `k3.local.${string}`)
     // paseto 3 read a token that never expires; these are tokens already in the wild
@@ -133,7 +130,7 @@ async function decryptPaseto (token: string, key: string): Promise<Maybe<Claims>
   }
 }
 
-async function decryptJWE (token: string, key: string): Promise<Maybe<Claims>> {
+async function decryptJWE(token: string, key: string): Promise<Maybe<Claims>> {
   try {
     const { jwtDecrypt } = await load()
 
@@ -142,8 +139,12 @@ async function decryptJWE (token: string, key: string): Promise<Maybe<Claims>> {
       contentEncryptionAlgorithms: ['A256GCM']
     })
 
-    if (typeof payload.iss !== 'string' || typeof payload.iat !== 'number' ||
-      typeof payload.identity !== 'object' || payload.identity === null)
+    if (
+      typeof payload.iss !== 'string' ||
+      typeof payload.iat !== 'number' ||
+      typeof payload.identity !== 'object' ||
+      payload.identity === null
+    )
       return ERR_INVALID_TOKEN
 
     if (payload.exp !== undefined && payload.exp * 1000 <= Date.now())
@@ -152,7 +153,9 @@ async function decryptJWE (token: string, key: string): Promise<Maybe<Claims>> {
     return {
       iss: payload.iss,
       iat: new Date(payload.iat * 1000).toISOString(),
-      ...(payload.exp === undefined ? {} : { exp: new Date(payload.exp * 1000).toISOString() }),
+      ...(payload.exp === undefined
+        ? {}
+        : { exp: new Date(payload.exp * 1000).toISOString() }),
       identity: payload.identity
     }
   } catch {

@@ -16,24 +16,27 @@ export class Effect implements Operation {
   private transit!: Context['local']['transit']
   private ttl!: number
 
-  public mount (context: Context): void {
+  public mount(context: Context): void {
     this.transit = context.local.transit
     this.ttl = context.configuration.ttl
   }
 
-  public async execute (input: Input): Promise<Maybe<Output>> {
+  public async execute(input: Input): Promise<Maybe<Output>> {
     const { authority } = input
 
-    if (input.token_endpoint_auth_method !== undefined &&
-      input.token_endpoint_auth_method !== 'none')
-      return invalid('invalid_client_metadata',
-        'Only public clients are supported: token_endpoint_auth_method must be `none`')
+    if (
+      input.token_endpoint_auth_method !== undefined &&
+      input.token_endpoint_auth_method !== 'none'
+    )
+      return invalid(
+        'invalid_client_metadata',
+        'Only public clients are supported: token_endpoint_auth_method must be `none`'
+      )
 
     const uris = input.redirect_uris.map(normalize)
 
     for (const uri of uris)
-      if (uri instanceof Error)
-        return invalid('invalid_redirect_uri', uri.message)
+      if (uri instanceof Error) return invalid('invalid_redirect_uri', uri.message)
 
     const metadata: Metadata = {
       client_name: input.client_name,
@@ -74,7 +77,7 @@ export class Effect implements Operation {
 }
 
 /** Absolute, no fragment, and either https or a loopback address (RFC 8252 §7.3). */
-function normalize (value: string): string | Error {
+function normalize(value: string): string | Error {
   let url: URL
 
   try {
@@ -83,20 +86,17 @@ function normalize (value: string): string | Error {
     return new Error(`\`${value}\` is not an absolute URI`)
   }
 
-  if (url.hash !== '')
-    return new Error(`\`${value}\` carries a fragment`)
+  if (url.hash !== '') return new Error(`\`${value}\` carries a fragment`)
 
-  if (url.protocol === 'https:')
-    return url.href
+  if (url.protocol === 'https:') return url.href
 
-  if (url.protocol === 'http:' && LOOPBACK.has(url.hostname))
-    return url.href
+  if (url.protocol === 'http:' && LOOPBACK.has(url.hostname)) return url.href
 
   return new Error(`\`${value}\` is neither https nor a loopback address`)
 }
 
 /** RFC 7591 §3.2.2: a registration error is a body, and `map:status` makes it the status. */
-function invalid (error: string, description: string): Output {
+function invalid(error: string, description: string): Output {
   return { status: BAD_REQUEST, error, error_description: description }
 }
 

@@ -1,7 +1,7 @@
 import { newid } from '@toa.io/generic'
 import type { Identity } from './types.js'
 
-export function create (credentials?: string): Identity {
+export function create(credentials?: string): Identity {
   return {
     id: newid(),
     scheme: credentials?.split(' ')[0] ?? null,

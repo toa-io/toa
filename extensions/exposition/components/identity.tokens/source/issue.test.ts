@@ -46,8 +46,10 @@ it('should expire a token issued without a lifetime as the configuration says', 
 
   const seconds = (reply.exp - now) / 1000
 
-  assert.ok(Math.abs(seconds - LIFETIME) < 10,
-    `expected to expire in about ${LIFETIME} seconds, got ${seconds}`)
+  assert.ok(
+    Math.abs(seconds - LIFETIME) < 10,
+    `expected to expire in about ${LIFETIME} seconds, got ${seconds}`
+  )
 })
 
 it('should hand the lifetime to `encrypt` in the seconds it reads', async () => {

@@ -10,7 +10,7 @@ import type { Metadata } from './Entity.js'
  * client per release of whoever sends it, and the authority is in there because credentials
  * are scoped to one.
  */
-export function identify (authority: string, metadata: Metadata): string {
+export function identify(authority: string, metadata: Metadata): string {
   const canonical = JSON.stringify([
     authority,
     metadata.client_name ?? null,

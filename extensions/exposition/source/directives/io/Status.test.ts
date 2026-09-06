@@ -8,8 +8,11 @@ import type { OutgoingMessage } from '../../HTTP/index.js'
 
 const status = new Status('status')
 
-function context (): Context {
-  return { pipelines: { body: [], response: [] }, url: { pathname: '/' } } as unknown as Context
+function context(): Context {
+  return {
+    pipelines: { body: [], response: [] },
+    url: { pathname: '/' }
+  } as unknown as Context
 }
 
 it('should take the status from the property and remove it', () => {
@@ -55,8 +58,7 @@ it('should have a reply it named the status of restricted, whatever that status 
 
     status.settle(ctx, response)
 
-    for (const transform of ctx.pipelines.response)
-      transform(response)
+    for (const transform of ctx.pipelines.response) transform(response)
 
     assert.equal(response.status, stated)
     assert.deepEqual(response.body, { code: 'SplxlO', error: 'invalid_grant' })
@@ -76,9 +78,11 @@ it('should leave a failure the gateway built alone, on such a route too', () => 
     body: { code: 'NOT_FOUND', message: 'nope' }
   }
 
-  for (const transform of ctx.pipelines.response)
-    transform(response)
+  for (const transform of ctx.pipelines.response) transform(response)
 
-  assert.deepEqual(response.body, { code: 'NOT_FOUND', message: 'nope' },
-    'a code and a message are not what a restriction has anything to say about')
+  assert.deepEqual(
+    response.body,
+    { code: 'NOT_FOUND', message: 'nope' },
+    'a code and a message are not what a restriction has anything to say about'
+  )
 })

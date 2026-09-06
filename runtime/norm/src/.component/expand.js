@@ -1,6 +1,15 @@
-import { entity, bridge, operations, events, receivers, extensions, properties, version } from './.expand/index.js'
+import {
+  entity,
+  bridge,
+  operations,
+  events,
+  receivers,
+  extensions,
+  properties,
+  version
+} from './.expand/index.js'
 
-export async function expand (manifest) {
+export async function expand(manifest) {
   entity(manifest)
   bridge(manifest)
   operations(manifest)

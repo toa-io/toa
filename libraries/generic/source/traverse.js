@@ -13,7 +13,8 @@ export const traverse = (object, visit) => {
   if (visited === undefined) visited = object
   if (!plain(visited)) return visited
 
-  for (const [key, value] of Object.entries(visited)) visited[key] = traverse(value, visit)
+  for (const [key, value] of Object.entries(visited))
+    visited[key] = traverse(value, visit)
 
   return visited
 }

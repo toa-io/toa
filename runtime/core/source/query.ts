@@ -14,11 +14,11 @@ export class Query {
   /** parsed criteria by their expression */
   readonly #asts = new Map<string, Node>()
 
-  public constructor (properties: Properties) {
+  public constructor(properties: Properties) {
     this.#properties = properties
   }
 
-  public parse (query: Requested): Parsed {
+  public parse(query: Requested): Parsed {
     const result: Parsed = {}
     const { id, ids, version, criteria, search, ...rest } = query
 
@@ -34,7 +34,7 @@ export class Query {
     return result
   }
 
-  #options (given: Record<string, any>): Options | undefined {
+  #options(given: Record<string, any>): Options | undefined {
     if (empty(given)) return undefined
 
     return parse.options(given, this.#properties)
@@ -49,7 +49,7 @@ export class Query {
    * Expressions come from the client, hence the bound. An invalid one throws before it
    * reaches the cache.
    */
-  #criteria (criteria: string): Node {
+  #criteria(criteria: string): Node {
     const known = this.#asts.get(criteria)
 
     if (known !== undefined) return known

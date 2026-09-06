@@ -20,7 +20,7 @@ export const each = async (array, callback) => {
  * @param {number} i
  * @param {any} value
  */
-function set (array, i, value) {
+function set(array, i, value) {
   if (value !== undefined) array[i] = value
 }
 
@@ -30,7 +30,7 @@ function set (array, i, value) {
  * @param {Promise<any>} promise
  * @returns {Promise<void>}
  */
-async function setAsync (array, i, promise) {
+async function setAsync(array, i, promise) {
   const value = await promise
 
   set(array, i, value)

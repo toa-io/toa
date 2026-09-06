@@ -6,11 +6,11 @@ import { Transition } from './cls.js'
 export class ObjectTransitionFactory {
   #context
 
-  constructor (context) {
+  constructor(context) {
     this.#context = context
   }
 
-  create () {
+  create() {
     return new Transition(this.#context)
   }
 }

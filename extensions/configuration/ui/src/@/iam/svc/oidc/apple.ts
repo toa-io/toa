@@ -7,8 +7,7 @@ async function apple(descriptor: Descriptor): Promise<string | Error> {
 
   const response = await win.AppleID.auth.signIn().catch((err: unknown) => err)
 
-  if (response instanceof Error)
-    return response
+  if (response instanceof Error) return response
 
   if (response?.authorization === undefined)
     return new Error('No authentication response received', { cause: response })
@@ -17,13 +16,13 @@ async function apple(descriptor: Descriptor): Promise<string | Error> {
 }
 
 function init(descriptor: Descriptor) {
-  if (win.AppleID !== undefined)
-    return undefined
+  if (win.AppleID !== undefined) return undefined
 
   return new Promise((resolve, reject) => {
     const script = document.createElement('script')
 
-    script.src = 'https://appleid.cdn-apple.com/appleauth/static/jsapi/appleid/1/en_US/appleid.auth.js'
+    script.src =
+      'https://appleid.cdn-apple.com/appleauth/static/jsapi/appleid/1/en_US/appleid.auth.js'
     script.async = true
 
     script.onload = () => {
@@ -32,7 +31,7 @@ function init(descriptor: Descriptor) {
         scope: descriptor.scope,
         redirectURI: window.location.origin,
         state: btoa(JSON.stringify({ idp: 'apple' })),
-        usePopup: true,
+        usePopup: true
       })
 
       resolve(undefined)

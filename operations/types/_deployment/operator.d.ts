@@ -2,19 +2,17 @@ import * as _deployment from './deployment.js'
 import * as _dependency from './dependency.js'
 
 declare namespace toa.deployment {
-
   interface Operator {
-    export (path?: string): Promise<string>
+    export(path?: string): Promise<string>
 
-    install (options?: _deployment.installation.Options): Promise<void>
+    install(options?: _deployment.installation.Options): Promise<void>
 
-    template (options?: _deployment.template.Options): Promise<string>
+    template(options?: _deployment.template.Options): Promise<string>
 
-    variables (): _dependency.Variables
+    variables(): _dependency.Variables
 
-    listVariables (): _dependency.Variable[]
+    listVariables(): _dependency.Variable[]
   }
-
 }
 
 export type Operator = toa.deployment.Operator

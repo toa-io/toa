@@ -10,7 +10,12 @@ export const extensions = async (context) => {
   const declared = await extractDeclaredServices(context, extensions)
 
   const extracted = declared.concat(
-    await extractExtensionComponents(components.concat(declared), extensions, context.annotations))
+    await extractExtensionComponents(
+      components.concat(declared),
+      extensions,
+      context.annotations
+    )
+  )
 
   components.push(...extracted)
 
@@ -27,7 +32,7 @@ export const extensions = async (context) => {
   return { extensions, components: extracted }
 }
 
-async function extractDeclaredServices (context, extensions) {
+async function extractDeclaredServices(context, extensions) {
   const extracted = []
 
   for (const composition of context.compositions ?? [])
@@ -35,18 +40,20 @@ async function extractDeclaredServices (context, extensions) {
       if (reference in extensions) continue
 
       try {
-        extracted.push(...await extract(reference, extensions, context.annotations))
+        extracted.push(...(await extract(reference, extensions, context.annotations)))
       } catch (e) {
-        throw new Error(`Composition '${composition.name}' lists '${reference}', ` +
-          `which cannot be resolved: ${e.message}`, { cause: e })
+        throw new Error(
+          `Composition '${composition.name}' lists '${reference}', ` +
+            `which cannot be resolved: ${e.message}`,
+          { cause: e }
+        )
       }
     }
 
   return extracted
 }
 
-async function extractExtensionComponents (components, extensions, annotations) {
-
+async function extractExtensionComponents(components, extensions, annotations) {
   const extracted = []
 
   for (const component of components) {
@@ -55,12 +62,11 @@ async function extractExtensionComponents (components, extensions, annotations) 
     for (const reference of Object.keys(component.extensions)) {
       if (reference in extensions) continue
 
-      extracted.push(...await extract(reference, extensions, annotations))
+      extracted.push(...(await extract(reference, extensions, annotations)))
     }
   }
 
-  if (extracted.length === 0)
-    return extracted
+  if (extracted.length === 0) return extracted
 
   const deeper = await extractExtensionComponents(extracted, extensions, annotations)
 
@@ -75,7 +81,7 @@ async function extractExtensionComponents (components, extensions, annotations) 
  * @param {object} [annotations]
  * @returns {Promise<Array<toa.norm.Component>>}
  */
-async function extract (reference, extensions, annotations) {
+async function extract(reference, extensions, annotations) {
   extensions[reference] = []
 
   const { metadata, module: mod } = await loadDependency(reference)
@@ -86,8 +92,7 @@ async function extract (reference, extensions, annotations) {
   const annotation = annotations?.[metadata?.name ?? reference]
   const extracted = []
 
-  for (const path of mod.components(annotation).paths)
-    extracted.push(await load(path))
+  for (const path of mod.components(annotation).paths) extracted.push(await load(path))
 
   return extracted
 }

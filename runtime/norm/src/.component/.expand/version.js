@@ -2,7 +2,7 @@ import { join } from 'node:path'
 import { createHash } from 'node:crypto'
 import fs from 'node:fs/promises'
 
-export async function version (manifest) {
+export async function version(manifest) {
   manifest.version ??= await hash(manifest.path)
 }
 
@@ -14,14 +14,13 @@ export async function version (manifest) {
  * build writes (see `operations/src/deployment/images/image.js`), so hashing it would only
  * retag an identical image after a local install.
  */
-async function hash (path) {
+async function hash(path) {
   const files = (await list(path)).sort()
   const digests = await Promise.all(files.map((file) => digest(join(path, file))))
   const total = createHash('sha256')
 
   // the path is part of it: moving a file changes the build even if no content did
-  for (let i = 0; i < files.length; i++)
-    total.update(files[i]).update(digests[i])
+  for (let i = 0; i < files.length; i++) total.update(files[i]).update(digests[i])
 
   return total.digest('hex').slice(0, 8)
 }
@@ -32,26 +31,25 @@ async function hash (path) {
  * @param {string[]} [acc]
  * @returns {Promise<string[]>} paths relative to `root`
  */
-async function list (root, path = '', acc = []) {
+async function list(root, path = '', acc = []) {
   const entries = await fs.readdir(join(root, path), { withFileTypes: true })
 
   for (const entry of entries) {
-    if (EXCLUDED.has(entry.name))
-      continue
+    if (EXCLUDED.has(entry.name)) continue
 
     const relative = path === '' ? entry.name : `${path}/${entry.name}`
 
-    if (entry.isDirectory())
-      await list(root, relative, acc)
-    else if (entry.isFile())
-      acc.push(relative)
+    if (entry.isDirectory()) await list(root, relative, acc)
+    else if (entry.isFile()) acc.push(relative)
   }
 
   return acc
 }
 
-async function digest (path) {
-  return createHash('sha256').update(await fs.readFile(path)).digest()
+async function digest(path) {
+  return createHash('sha256')
+    .update(await fs.readFile(path))
+    .digest()
 }
 
 const EXCLUDED = new Set(['node_modules', '.git'])

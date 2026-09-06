@@ -54,7 +54,9 @@ const lock = (context, init, args, key) => {
   if (init[key] === undefined) init[key] = []
 
   const locks = init[key]
-  const found = locks.find((lock) => lock.args.reduce((match, argument, i) => match && argument === args[i], true))
+  const found = locks.find((lock) =>
+    lock.args.reduce((match, argument, i) => match && argument === args[i], true)
+  )
 
   if (found !== undefined) return found.promise
 

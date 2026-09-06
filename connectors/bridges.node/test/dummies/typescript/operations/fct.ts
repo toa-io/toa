@@ -1,7 +1,7 @@
 import { Transition } from './cls.ts'
 
 export class ObjectTransitionFactory {
-  create (): Transition {
+  create(): Transition {
     return new Transition()
   }
 }

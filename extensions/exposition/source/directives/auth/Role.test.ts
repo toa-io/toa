@@ -34,12 +34,19 @@ it('should return false if not matched', async () => {
 
   assert.strictEqual(result, false)
 
-  assert.ok(remote.invoke.mock.calls.some((call: any) => call.arguments.length === 2 && isDeepStrictEqual(call.arguments[0], 'list') && isDeepStrictEqual(call.arguments[1], {
-      query: {
-        criteria: `identity=="${identity.id}"`,
-        limit: 1024
-      }
-    })))
+  assert.ok(
+    remote.invoke.mock.calls.some(
+      (call: any) =>
+        call.arguments.length === 2 &&
+        isDeepStrictEqual(call.arguments[0], 'list') &&
+        isDeepStrictEqual(call.arguments[1], {
+          query: {
+            criteria: `identity=="${identity.id}"`,
+            limit: 1024
+          }
+        })
+    )
+  )
 })
 
 it('should return true on exact match', async () => {
@@ -67,36 +74,55 @@ it('should return false on non-scope substring match', async () => {
 })
 
 it('should return true on match with parameters', async () => {
-  const result = await match(['app:{org}:reviews'],
-    ['app:29e54ae1:reviews'], [{
-      name: 'org',
-      value: '29e54ae1'
-    }])
+  const result = await match(
+    ['app:{org}:reviews'],
+    ['app:29e54ae1:reviews'],
+    [
+      {
+        name: 'org',
+        value: '29e54ae1'
+      }
+    ]
+  )
 
   assert.strictEqual(result, true)
 })
 
 it('should return true on match with parameters', async () => {
-  const result = await match(['app:{org}:reviews'],
-    ['app:29e54ae1:reviews'], [{
-      name: 'org',
-      value: '29e54ae1'
-    }])
+  const result = await match(
+    ['app:{org}:reviews'],
+    ['app:29e54ae1:reviews'],
+    [
+      {
+        name: 'org',
+        value: '29e54ae1'
+      }
+    ]
+  )
 
   assert.strictEqual(result, true)
 })
 
 it('should return false on mismatch with parameters', async () => {
-  const result = await match(['app:{org}:reviews'],
-    ['app:29e54ae1:reviews'], [{
-      name: 'org',
-      value: '88584c9b'
-    }])
+  const result = await match(
+    ['app:{org}:reviews'],
+    ['app:29e54ae1:reviews'],
+    [
+      {
+        name: 'org',
+        value: '88584c9b'
+      }
+    ]
+  )
 
   assert.strictEqual(result, false)
 })
 
-async function match (expected: string[], actual: string[], parameters: Parameter[] = []): Promise<boolean> {
+async function match(
+  expected: string[],
+  actual: string[],
+  parameters: Parameter[] = []
+): Promise<boolean> {
   const directive = new Role(expected, discovery)
 
   const identity: Identity = {
@@ -110,7 +136,7 @@ async function match (expected: string[], actual: string[], parameters: Paramete
   return await directive.authorize(identity, undefined, parameters)
 }
 
-function resetCalls (target = [remote, discovery], seen = new Set()) {
+function resetCalls(target = [remote, discovery], seen = new Set()) {
   if (target === null || typeof target !== 'object' || seen.has(target)) return
 
   seen.add(target)

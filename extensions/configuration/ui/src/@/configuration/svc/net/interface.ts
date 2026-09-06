@@ -22,10 +22,13 @@ export async function get(component: string): Promise<Configuration | Error> {
   return identify({ ...item, component })
 }
 
-export async function create(component: string, configuration: Node): Promise<Created | Error> {
+export async function create(
+  component: string,
+  configuration: Node
+): Promise<Created | Error> {
   return await values.json<Created>(component + '/', {
     method: 'POST',
-    body: { configuration },
+    body: { configuration }
   })
 }
 

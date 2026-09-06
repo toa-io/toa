@@ -1,7 +1,6 @@
 import type * as _core from '@toa.io/core'
 
-declare namespace toa.stage{
-
+declare namespace toa.stage {
   type State = {
     reset: () => void
     components: _core.Component[]
@@ -9,7 +8,6 @@ declare namespace toa.stage{
     services: _core.Connector[]
     remotes: _core.Component[]
   }
-
 }
 
 export type State = toa.stage.State

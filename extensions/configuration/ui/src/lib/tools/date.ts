@@ -12,7 +12,9 @@ export function date(value: string | Date | number, locale: Locale): string {
   const d = new Date(value)
   const year = d.getFullYear() === new Date().getFullYear() ? undefined : 'numeric'
 
-  return new Intl.DateTimeFormat(locale, { year, month: 'short', day: 'numeric' }).format(d)
+  return new Intl.DateTimeFormat(locale, { year, month: 'short', day: 'numeric' }).format(
+    d
+  )
 }
 
 /**
@@ -23,13 +25,24 @@ export function date(value: string | Date | number, locale: Locale): string {
  * @returns Formatted duration string
  */
 export function formatISODuration(iso: string, locale: Locale): string {
-  const match = iso.match(/^P(?:(\d+)Y)?(?:(\d+)M)?(?:(\d+)W)?(?:(\d+)D)?(?:T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?)?$/)
+  const match = iso.match(
+    /^P(?:(\d+)Y)?(?:(\d+)M)?(?:(\d+)W)?(?:(\d+)D)?(?:T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?)?$/
+  )
 
   if (match === null) return iso
 
-  const [, y, mo, w, d, h, mi, s] = match.map((v) => Number.isNaN(Number(v)) ? undefined : Number(v))
+  const [, y, mo, w, d, h, mi, s] = match.map((v) =>
+    Number.isNaN(Number(v)) ? undefined : Number(v)
+  )
 
   // @ts-ignore Intl.DurationFormat — Stage 3 proposal, available at runtime in modern engines
-  return new Intl.DurationFormat(locale, { style: 'long' })
-    .format({ years: y, months: mo, weeks: w, days: d, hours: h, minutes: mi, seconds: s })
+  return new Intl.DurationFormat(locale, { style: 'long' }).format({
+    years: y,
+    months: mo,
+    weeks: w,
+    days: d,
+    hours: h,
+    minutes: mi,
+    seconds: s
+  })
 }

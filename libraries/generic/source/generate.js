@@ -3,7 +3,7 @@ import { plain } from './plain.js'
 /**
  * @param {function} generator
  */
-export function generate (generator) {
+export function generate(generator) {
   return proxy({}, generator)
 }
 
@@ -12,7 +12,7 @@ export function generate (generator) {
  * @param {function} generator
  * @param {string[]} [segments]
  */
-function proxy (value, generator, segments = []) {
+function proxy(value, generator, segments = []) {
   if (!plain(value)) return value
 
   return new Proxy(value, {

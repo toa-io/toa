@@ -3,12 +3,11 @@ import { join, extname } from 'node:path'
 import { DIR, EXT } from './const.js'
 import type { component } from '@toa.io/norm'
 
-export async function operations (root: string): Promise<component.Operations> {
+export async function operations(root: string): Promise<component.Operations> {
   const path = join(root, DIR)
   const names = await list(path)
 
-  const promises = names
-    .map(async (name) => operation(root, name))
+  const promises = names.map(async (name) => operation(root, name))
 
   const operations = await Promise.all(promises)
 
@@ -19,7 +18,10 @@ export async function operations (root: string): Promise<component.Operations> {
   }, {})
 }
 
-export async function operation (root: string, name: string): Promise<component.Operation> {
+export async function operation(
+  root: string,
+  name: string
+): Promise<component.Operation> {
   const path = join(root, DIR, name + EXT)
 
   await fs.access(path, fs.constants.F_OK)
@@ -27,7 +29,7 @@ export async function operation (root: string, name: string): Promise<component.
   return { type: 'computation' }
 }
 
-async function list (path: string): Promise<string[]> {
+async function list(path: string): Promise<string[]> {
   const files = await fs.readdir(path)
 
   return files

@@ -7,7 +7,7 @@ export class Algorithm extends Connector implements bridges.Algorithm {
   private readonly shell: string
   private readonly path: string
 
-  public constructor (path: string) {
+  public constructor(path: string) {
     super()
 
     const shell = userInfo().shell
@@ -19,13 +19,17 @@ export class Algorithm extends Connector implements bridges.Algorithm {
     this.path = path
   }
 
-  public async mount (): Promise<void> {
-  }
+  public async mount(): Promise<void> {}
 
-  public async execute (input: Record<string, unknown> | undefined | null): Promise<Reply> {
-    const args = (input === undefined || input === null)
-      ? []
-      : Object.entries(input).map(([key, value]) => ['--' + key, value?.toString() ?? '']).flat()
+  public async execute(
+    input: Record<string, unknown> | undefined | null
+  ): Promise<Reply> {
+    const args =
+      input === undefined || input === null
+        ? []
+        : Object.entries(input)
+            .map(([key, value]) => ['--' + key, value?.toString() ?? ''])
+            .flat()
 
     const result = spawnSync(this.shell, [this.path].concat(args), { shell: true })
 
@@ -36,10 +40,8 @@ export class Algorithm extends Connector implements bridges.Algorithm {
     } else {
       const error = new Error(result.stderr.toString().trim())
 
-      if (result.status === 1)
-        return { output: error }
-      else
-        throw error
+      if (result.status === 1) return { output: error }
+      else throw error
     }
   }
 }

@@ -25,7 +25,7 @@ export const press: Action<HTMLElement, Handler> = (element, handler) => {
       element.removeEventListener('pointerdown', down)
       element.removeEventListener('click', click)
       element.removeEventListener('keydown', key)
-    },
+    }
   }
 
   function down(event: PointerEvent): void {
@@ -38,7 +38,10 @@ export const press: Action<HTMLElement, Handler> = (element, handler) => {
     from = null
 
     // no pointer at all is a click raised some other way, and nothing dragged it here
-    if (start !== null && Math.hypot(event.clientX - start.x, event.clientY - start.y) > SLACK)
+    if (
+      start !== null &&
+      Math.hypot(event.clientX - start.x, event.clientY - start.y) > SLACK
+    )
       return
 
     // a control inside the card answers for itself; the card answers for the rest of it

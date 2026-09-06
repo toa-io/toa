@@ -26,21 +26,23 @@
 
 ## Definition
 
-> The goal of the Cycle is to help teams producing *simple[^1] non-broken[^2] software* in a fast
+> The goal of the Cycle is to help teams producing _simple[^1] non-broken[^2] software_ in a fast
 > and predictable way.
 
 Cycle of making changes consists of four mandatory straight forward steps[^3]: discussion,
-documentation, decomposition and development. Each iteration of the Cycle starts with the *input*,
+documentation, decomposition and development. Each iteration of the Cycle starts with the _input_,
 which is a description of the customer needs, provided in arbitrary form.
 
 [^1]: Meeting a common sense expectations.
+
 [^2]: Meeting the requirements.
+
 [^3]: Neither step may be skipped when going forward. Going backward is arbitrary.
 
 ## Discussion
 
-Analyse the input to transform it into *correct*[^4], *consistent*[^5], *complete*[^6] and
-*realizable*[^7] form, that is *strict* problem definition.
+Analyse the input to transform it into _correct_[^4], _consistent_[^5], _complete_[^6] and
+_realizable_[^7] form, that is _strict_ problem definition.
 
 Discussion should have an artifact which is a document that should have the following sections:
 
@@ -69,8 +71,11 @@ List of <b>what is unknown</b>. At this step many questions may don't have an an
 [Example](https://github.com/toa-io/toa/issues/159)
 
 [^4]: Does not conflict with the input.
+
 [^5]: Does not conflict with itself.
+
 [^6]: Contains enough information for next steps of the Cycle.
+
 [^7]: Able to be implemented.
 
 ## Documentation
@@ -91,7 +96,7 @@ solution is yet to be found, thus an author of the manual **is not bound to the 
 implementation complexity**.
 
 Designing an end-user application interface without regard to the complexity of the implementation
-is a key to producing a *simple software*. Thus, the end goal of writing user manual is to produce
+is a key to producing a _simple software_. Thus, the end goal of writing user manual is to produce
 a software that doesn't need a manual.
 
 ### Scenarios
@@ -146,14 +151,14 @@ Add missing step implementations until all scenarios are executable and failing.
 ### Write the Code
 
 Add the implementation in compliance with the solution and according to the set of change
-requests until scenarios are *green* and the feature branch is closed according to existent flow.
+requests until scenarios are _green_ and the feature branch is closed according to existent flow.
 See [development requirements](development.md).
 
 At this point, it is likely that reasons will be found to update the solution, change requests,
 manual or scenarios. If so, the update must be performed at the appropriate step and the Cycle
 must continue **sequentially from that step**.
 
-> At any moment of this step it should be clear *what to do now* and *what to do next*. Otherwise,
+> At any moment of this step it should be clear _what to do now_ and _what to do next_. Otherwise,
 > it is necessary to return to one of the previous steps.
 
 ## Perfect Result

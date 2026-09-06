@@ -16,7 +16,10 @@ const families: Array<DirectiveFamily> = [
     mandatory: true,
     create: mock.fn((_0: any, _1: any, _2: any) => generate() as any),
     arrange: mock.fn(),
-    precall: mock.fn(() => { sequence.push('foo'); return null }),
+    precall: mock.fn(() => {
+      sequence.push('foo')
+      return null
+    }),
     settle: mock.fn(),
     dispose: mock.fn()
   },
@@ -25,7 +28,10 @@ const families: Array<DirectiveFamily> = [
     mandatory: true,
     create: mock.fn((_0: any, _1: any, _2: any) => generate() as any),
     arrange: mock.fn(),
-    precall: mock.fn(() => { sequence.push('qux'); return null }),
+    precall: mock.fn(() => {
+      sequence.push('qux')
+      return null
+    }),
     settle: mock.fn(),
     dispose: mock.fn()
   },
@@ -34,7 +40,10 @@ const families: Array<DirectiveFamily> = [
     mandatory: false,
     create: mock.fn((_0: string, _1: any, _2: any) => generate() as any),
     arrange: mock.fn(),
-    precall: mock.fn(() => { sequence.push('bar'); return null }),
+    precall: mock.fn(() => {
+      sequence.push('bar')
+      return null
+    }),
     settle: mock.fn(),
     dispose: mock.fn()
   }
@@ -49,11 +58,18 @@ beforeEach(() => {
   for (const family of families) {
     assert.ok(family.precall !== undefined)
 
-    family.precall.mock.mockImplementation(() => { sequence.push(family.name); return null })
+    family.precall.mock.mockImplementation(() => {
+      sequence.push(family.name)
+      return null
+    })
   }
 
-  factory = new DirectivesFactory(families, {} as unknown as Remotes, {} as unknown as Host,
-    { authorities: {} })
+  factory = new DirectivesFactory(
+    families,
+    {} as unknown as Remotes,
+    {} as unknown as Host,
+    { authorities: {} }
+  )
 })
 
 it('should create directive', async () => {
@@ -95,8 +111,11 @@ it('should throw error if directive family is not found', async () => {
     value: generate()
   }
 
-  assert.throws(() => factory.create([declaration]),
-    (error: Error) => error.message.includes(`Directive family '${declaration.family}' is not found`))
+  assert.throws(
+    () => factory.create([declaration]),
+    (error: Error) =>
+      error.message.includes(`Directive family '${declaration.family}' is not found`)
+  )
 })
 
 it('should apply directive', async () => {
@@ -129,7 +148,7 @@ it('should apply mandatory families', async () => {
 
 describe('order', () => {
   // the order the families actually ran, as each precall recorded it
-  function order (): string[] {
+  function order(): string[] {
     return sequence
   }
 
@@ -145,18 +164,17 @@ describe('order', () => {
     assert.deepStrictEqual(order(), ['foo', 'qux'])
   })
 
-  it('should run a mandatory family before a declared one it is not declared with',
-    async () => {
-      // only `qux` is declared: `foo` still has to run first, not merely first of
-      // whatever had no declarations
-      const directives = factory.create([
-        { family: 'qux', name: generate(), value: generate() }
-      ])
+  it('should run a mandatory family before a declared one it is not declared with', async () => {
+    // only `qux` is declared: `foo` still has to run first, not merely first of
+    // whatever had no declarations
+    const directives = factory.create([
+      { family: 'qux', name: generate(), value: generate() }
+    ])
 
-      await directives.precall(generate() as unknown as Context, [])
+    await directives.precall(generate() as unknown as Context, [])
 
-      assert.deepStrictEqual(order(), ['foo', 'qux'])
-    })
+    assert.deepStrictEqual(order(), ['foo', 'qux'])
+  })
 
   it('should run mandatory families before the rest', async () => {
     const directives = factory.create([
@@ -170,7 +188,7 @@ describe('order', () => {
   })
 })
 
-function resetCalls (target = [families], seen = new Set()) {
+function resetCalls(target = [families], seen = new Set()) {
   if (target === null || typeof target !== 'object' || seen.has(target)) return
 
   seen.add(target)

@@ -29,6 +29,7 @@ it('should throw on an unknown component', () => {
 
   broken.compositions[1].components.push('nope.here')
 
-  assert.throws(() => dereference(broken),
-    { message: "Composition 'bar' lists an unknown component 'nope.here'." })
+  assert.throws(() => dereference(broken), {
+    message: "Composition 'bar' lists an unknown component 'nope.here'."
+  })
 })

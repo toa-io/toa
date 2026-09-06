@@ -4,7 +4,7 @@ import { events } from './events'
 
 export const dashboard = writable<Dashboard>({
   status: 'disconnected',
-  events: [],
+  events: []
 })
 
 if (browser)

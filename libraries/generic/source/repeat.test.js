@@ -16,7 +16,6 @@ it('should repeat', () => {
 it('should return results', () => {
   const times = random(10)
 
-  
   const fn = mock.fn(() => generate())
   const results = repeat(fn, times)
 
@@ -26,7 +25,6 @@ it('should return results', () => {
 it('should return promises', async () => {
   const times = 10
 
-  
   const fn = mock.fn(async () => generate())
   const promise = repeat(fn, times)
 

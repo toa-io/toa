@@ -15,7 +15,7 @@ const require = createRequire(import.meta.url)
  * @param {string[]} paths
  * @return {Promise<import('@toa.io/core').Connector[]>}
  */
-export async function discover (paths) {
+export async function discover(paths) {
   const references = new Set()
   const services = []
   const pending = [...paths]
@@ -54,7 +54,7 @@ export async function discover (paths) {
  * @param {string[]} references
  * @return {Promise<import('@toa.io/core').Connector[]>}
  */
-export async function create (references) {
+export async function create(references) {
   const services = []
 
   for (const reference of new Set(references.map(shortcuts.resolve))) {
@@ -78,7 +78,7 @@ export async function create (references) {
  * @param {string} reference
  * @return {Promise<object>}
  */
-async function load (reference) {
+async function load(reference) {
   // the runtime's own installation is searched too, so a reference resolves
   // inside the image as well as in a workspace
   const module = find(reference, process.cwd())

@@ -9,7 +9,7 @@ const dispatchers = new Map<string, undici.Dispatcher>()
  * One dispatcher per origin. Over `h2c` every request is a stream on a single connection,
  * so there is nothing to pool.
  */
-export function dispatcher (origin: string): undici.Dispatcher {
+export function dispatcher(origin: string): undici.Dispatcher {
   let existing = dispatchers.get(origin)
 
   if (existing === undefined) {
@@ -21,13 +21,15 @@ export function dispatcher (origin: string): undici.Dispatcher {
   return existing
 }
 
-export async function request (http: string, options: Options = {}): Promise<undici.Dispatcher.ResponseData> {
+export async function request(
+  http: string,
+  options: Options = {}
+): Promise<undici.Dispatcher.ResponseData> {
   const { base, ...requestOptions } = options
   const { method, headers, body, url } = parse(http, base)
   const { origin, pathname, search } = new URL(url)
 
-  if (origin === undefined)
-    throw new Error('Invalid Host header')
+  if (origin === undefined) throw new Error('Invalid Host header')
 
   return await dispatcher(origin).request({
     ...requestOptions,
@@ -38,7 +40,7 @@ export async function request (http: string, options: Options = {}): Promise<und
   })
 }
 
-export function parse (http: string, origin?: string): HTTPRequest {
+export function parse(http: string, origin?: string): HTTPRequest {
   const { method, url, headers, body } = parser.request(http, origin)
 
   origin ??= 'https://' + headers.get('host')

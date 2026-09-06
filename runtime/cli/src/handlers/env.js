@@ -10,7 +10,7 @@ import { context as find } from '../util/find.js'
 
 const { Factory } = deployment
 
-export async function env (argv) {
+export async function env(argv) {
   const path = find(argv.path)
   const filepath = join(path, argv.as)
   const factory = await Factory.create(path, argv.environment)
@@ -30,8 +30,7 @@ export async function env (argv) {
     const secrets = await promptSecrets(result)
 
     mergeSecrets(result, secrets)
-  } else if (argv.dev)
-    assertNoPendingSecrets(result)
+  } else if (argv.dev) assertNoPendingSecrets(result)
 
   await write(filepath, result)
 }
@@ -40,7 +39,7 @@ export async function env (argv) {
  * @param path {string}
  * @returns {Record<string, string>}
  */
-async function read (path) {
+async function read(path) {
   let contents
 
   try {
@@ -57,8 +56,11 @@ async function read (path) {
  * @param {toa.deployment.dependency.Variable[]} values
  * @return {Promise<void>}
  */
-async function write (path, values) {
-  const contents = values.reduce((lines, { name, value }) => lines + `${name}=${value ?? ''}\n`, '')
+async function write(path, values) {
+  const contents = values.reduce(
+    (lines, { name, value }) => lines + `${name}=${value ?? ''}\n`,
+    ''
+  )
 
   await writeFile(path, contents, 'utf8')
 }
@@ -68,7 +70,7 @@ async function write (path, values) {
  * @param {Record<string, string>} current
  * @return {toa.deployment.dependency.Variable[]}
  */
-function merge (variables, current) {
+function merge(variables, current) {
   return variables.map((variable) => {
     if (variable.secret === undefined || !current[variable.name]) return variable
 
@@ -79,7 +81,7 @@ function merge (variables, current) {
   })
 }
 
-export async function promptSecrets (variables) {
+export async function promptSecrets(variables) {
   const rl = readline.createInterface({ input, output })
   const secrets = {}
 
@@ -96,7 +98,7 @@ export async function promptSecrets (variables) {
   return secrets
 }
 
-async function promptSecret (key, rl) {
+async function promptSecret(key, rl) {
   if (SECRETS[key] === undefined) SECRETS[key] = await rl.question(`${key}: `)
 
   return SECRETS[key]
@@ -106,7 +108,7 @@ async function promptSecret (key, rl) {
  * @param {toa.deployment.dependency.Variable[]} variables
  * @return {Promise<Record<string, string>>}
  */
-async function resolveDevSecrets (variables) {
+async function resolveDevSecrets(variables) {
   const secrets = {}
 
   for (const variable of variables) {
@@ -123,8 +125,7 @@ async function resolveDevSecrets (variables) {
 
     const value = process.env[variable.secret.key]
 
-    if (value !== undefined && value !== '')
-      secrets[key] = value
+    if (value !== undefined && value !== '') secrets[key] = value
   }
 
   return secrets
@@ -134,17 +135,17 @@ async function resolveDevSecrets (variables) {
  * @param {string} key
  * @return {Promise<string>}
  */
-async function resolveDevSecret (key) {
+async function resolveDevSecret(key) {
   const source = DEV_SECRETS[key]
 
-  if (source.value !== undefined)
-    return source.value
+  if (source.value !== undefined) return source.value
 
-  if (source.generate === 'jwe')
-    return randomBytes(32).toString('base64url')
+  if (source.generate === 'jwe') return randomBytes(32).toString('base64url')
 
   if (source.generate === true || source.generate === 'paseto')
-    return await ExportKeyFactory().run(await GenerateKeyFactory().run({ extractable: true }))
+    return await ExportKeyFactory().run(
+      await GenerateKeyFactory().run({ extractable: true })
+    )
 
   throw new Error(`Unknown dev secret source for ${key}`)
 }
@@ -152,7 +153,7 @@ async function resolveDevSecret (key) {
 /**
  * @param {toa.deployment.dependency.Variable[]} variables
  */
-function assertNoPendingSecrets (variables) {
+function assertNoPendingSecrets(variables) {
   const pending = []
 
   for (const variable of variables) {
@@ -160,8 +161,7 @@ function assertNoPendingSecrets (variables) {
 
     const key = getKey(variable.secret)
 
-    if (!pending.includes(key))
-      pending.push(key)
+    if (!pending.includes(key)) pending.push(key)
   }
 
   if (pending.length === 0) return
@@ -173,7 +173,7 @@ function assertNoPendingSecrets (variables) {
  * @param {toa.deployment.dependency.Variable[]} variables
  * @param {Record<string, string>} secrets
  */
-function mergeSecrets (variables, secrets) {
+function mergeSecrets(variables, secrets) {
   for (const variable of variables) {
     if (variable.secret === undefined) continue
 
@@ -187,7 +187,7 @@ function mergeSecrets (variables, secrets) {
   }
 }
 
-function getKey (secret) {
+function getKey(secret) {
   return `${secret.name}/${secret.key}`
 }
 

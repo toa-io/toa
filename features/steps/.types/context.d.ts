@@ -5,9 +5,7 @@ import type { Reply } from '@toa.io/core/types'
 import type { StartedTestContainer } from 'testcontainers'
 
 declare namespace toa.features {
-
   namespace context {
-
     type AMQP = {
       connection?: amqp.Connection
       channel?: amqp.Channel
@@ -16,6 +14,9 @@ declare namespace toa.features {
 
   type Context = {
     process?: Promise<any>
+
+    /** Settles once the program has exited, or has run and fallen quiet. */
+    settled?: Promise<void>
     cwd?: string
     exitCode?: number
     stdout?: string
@@ -31,5 +32,4 @@ declare namespace toa.features {
     env?: Array<[string, string | undefined]>
     containers?: Record<string, StartedTestContainer>
   }
-
 }

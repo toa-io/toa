@@ -14,7 +14,7 @@ export class Execution extends Readable {
   private readonly discovery: Record<string, Promise<Component>> = {}
   private interrupted = false
 
-  public constructor (context: Context, units: Unit[], remotes: Remotes) {
+  public constructor(context: Context, units: Unit[], remotes: Remotes) {
     super({ objectMode: true })
 
     this.context = context
@@ -24,27 +24,24 @@ export class Execution extends Readable {
     void this.run()
   }
 
-  public override _read (): void {
-  }
+  public override _read(): void {}
 
-  private async run (): Promise<void> {
+  private async run(): Promise<void> {
     for (const unit of this.units) {
       await this.execute(unit)
 
-      if (this.interrupted)
-        break
+      if (this.interrupted) break
     }
 
     this.push(null)
   }
 
-  private async execute (unit: Unit): Promise<void> {
+  private async execute(unit: Unit): Promise<void> {
     const promises = Object.entries(unit).map(async ([step, endpoint]) => {
       try {
         const result = await this.call(endpoint)
 
-        if (result instanceof Readable)
-          return await this.stream(step, result)
+        if (result instanceof Readable) return await this.stream(step, result)
 
         this.report(step, result)
       } catch (e: unknown) {
@@ -55,10 +52,9 @@ export class Execution extends Readable {
     await Promise.all(promises)
   }
 
-  private async stream (step: string, stream: Readable): Promise<void> {
+  private async stream(step: string, stream: Readable): Promise<void> {
     try {
-      for await (const result of stream)
-        this.report(step, result, false)
+      for await (const result of stream) this.report(step, result, false)
 
       this.report(step, undefined, true)
     } catch (e: unknown) {
@@ -66,11 +62,10 @@ export class Execution extends Readable {
     }
   }
 
-  private report (step: string, result?: Maybe<unknown>, completed = true): void {
+  private report(step: string, result?: Maybe<unknown>, completed = true): void {
     const report: Report = { step }
 
-    if (completed)
-      report.status = 'completed'
+    if (completed) report.status = 'completed'
 
     if (result instanceof Error) {
       // an Error cannot be serialized where it sits, and the encoders only unwrap
@@ -85,18 +80,17 @@ export class Execution extends Readable {
     this.push(report)
   }
 
-  private exception (step: string, error: unknown): void {
+  private exception(step: string, error: unknown): void {
     console.error('Workflow exception', error as Error)
 
     this.push({ step, status: 'exception' } satisfies Report)
     this.interrupted = true
   }
 
-  private async call (endpoint: string): Promise<Maybe<unknown>> {
+  private async call(endpoint: string): Promise<Maybe<unknown>> {
     const task = endpoint.startsWith('task:')
 
-    if (task)
-      endpoint = endpoint.slice(5)
+    if (task) endpoint = endpoint.slice(5)
 
     const [operation, component, namespace = 'default'] = endpoint.split('.').reverse()
     const key = `${namespace}.${component}`
@@ -106,7 +100,11 @@ export class Execution extends Readable {
     return this.components[key].invoke(operation, { input: this.context, task })
   }
 
-  private async discover (key: string, namespace: string, component: string): Promise<Component> {
+  private async discover(
+    key: string,
+    namespace: string,
+    component: string
+  ): Promise<Component> {
     if (this.discovery[key] === undefined)
       this.discovery[key] = this.remotes.discover(namespace, component)
 

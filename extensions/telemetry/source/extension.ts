@@ -19,7 +19,7 @@ export class Factory implements extensions.Factory {
   private readonly logsOptions: LogsOptions
   private readonly ready: Ready | null
 
-  public constructor () {
+  public constructor() {
     const globEnv = process.env[LOGS_PREFIX]
     const level = process.env.TOA_DEV === '1' ? 'trace' : 'info'
 
@@ -30,21 +30,22 @@ export class Factory implements extensions.Factory {
 
     const tracesEnv = process.env[TRACES_ENV]
 
-    traces(tracesEnv === undefined ? development() : JSON.parse(tracesEnv) as TracesOptions)
+    traces(
+      tracesEnv === undefined ? development() : (JSON.parse(tracesEnv) as TracesOptions)
+    )
 
     this.ready = Ready.create()
   }
 
-  public aspect (locator: Locator): extensions.Aspect[] {
+  public aspect(locator: Locator): extensions.Aspect[] {
     const logs = this.createLogs(locator)
     const span = new Span(locator)
 
     return [logs, span]
   }
 
-  public manage (composition: Connector): Connector {
-    if (this.ready === null)
-      return composition
+  public manage(composition: Connector): Connector {
+    if (this.ready === null) return composition
 
     const ready = this.ready
 
@@ -62,7 +63,7 @@ export class Factory implements extensions.Factory {
     return composition
   }
 
-  private createLogs (locator: Locator): extensions.Aspect {
+  private createLogs(locator: Locator): extensions.Aspect {
     const overEnv = process.env[`${LOGS_PREFIX}_${locator.uppercase}`]
     const override = overEnv !== undefined ? JSON.parse(overEnv) : undefined
 
@@ -81,20 +82,18 @@ export class Factory implements extensions.Factory {
  * `extensions/exposition/source/Factory.ts` says the same thing for the gateway process,
  * which boots without this extension.
  */
-function development (): TracesOptions {
+function development(): TracesOptions {
   const local = process.env.TOA_DEV === '1' || process.env.TOA_BOOT_TRACE === '1'
 
   return local ? { exporters: { console: {} } } : {}
 }
 
-export function deployment (_: unknown, annotation?: Annotation): Dependency {
+export function deployment(_: unknown, annotation?: Annotation): Dependency {
   const variables: Variables = { global: [] }
 
-  if (annotation?.logs !== undefined)
-    addLogsVariables(annotation.logs, variables)
+  if (annotation?.logs !== undefined) addLogsVariables(annotation.logs, variables)
 
-  if (annotation?.traces !== undefined)
-    addTracesVariables(annotation.traces, variables)
+  if (annotation?.traces !== undefined) addTracesVariables(annotation.traces, variables)
 
   const ready = normalizeAnnotation(annotation?.ready)
 
@@ -114,7 +113,7 @@ export function deployment (_: unknown, annotation?: Annotation): Dependency {
   return { variables, probe }
 }
 
-function addLogsVariables (annotation: LogsAnnotation, variables: Variables): void {
+function addLogsVariables(annotation: LogsAnnotation, variables: Variables): void {
   const { level, ...components } = annotation
   const global = { level }
 
@@ -132,22 +131,31 @@ function addLogsVariables (annotation: LogsAnnotation, variables: Variables): vo
   }
 }
 
-function addTracesVariables (annotation: TracesAnnotation, variables: Variables): void {
+function addTracesVariables(annotation: TracesAnnotation, variables: Variables): void {
   const { sample, rate, exporters } = annotation
 
   if (sample !== undefined)
-    assert.ok(typeof sample === 'number' && sample >= 0 && sample <= 1,
-      'telemetry.traces.sample must be a number within [0, 1]')
+    assert.ok(
+      typeof sample === 'number' && sample >= 0 && sample <= 1,
+      'telemetry.traces.sample must be a number within [0, 1]'
+    )
 
   if (rate !== undefined)
-    assert.ok(typeof rate === 'number' && rate > 0,
-      'telemetry.traces.rate must be a positive number')
+    assert.ok(
+      typeof rate === 'number' && rate > 0,
+      'telemetry.traces.rate must be a positive number'
+    )
 
   if (exporters?.otlp !== undefined)
-    assert.ok(typeof exporters.otlp.endpoint === 'string',
-      'telemetry.traces.exporters.otlp.endpoint is required')
+    assert.ok(
+      typeof exporters.otlp.endpoint === 'string',
+      'telemetry.traces.exporters.otlp.endpoint is required'
+    )
 
-  variables.global.push({ name: TRACES_ENV, value: JSON.stringify({ sample, rate, exporters }) })
+  variables.global.push({
+    name: TRACES_ENV,
+    value: JSON.stringify({ sample, rate, exporters })
+  })
 }
 
 interface Annotation {

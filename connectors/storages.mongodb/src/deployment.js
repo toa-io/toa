@@ -7,7 +7,7 @@ export const deployment = (instances, annotation) => {
   return { variables }
 }
 
-function createRequest (instance) {
+function createRequest(instance) {
   return {
     group: instance.locator.label,
     selectors: [instance.locator.id]

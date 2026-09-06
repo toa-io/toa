@@ -33,12 +33,10 @@ export interface Exposed {
  * - `superseded`: it came from a tenant that started before the one exposed now
  * - `merge`: everything else
  */
-export function decide (exposed: Exposed, branch: Branch): Decision {
-  if (exposed.version === branch.version)
-    return 'refresh'
+export function decide(exposed: Exposed, branch: Branch): Decision {
+  if (exposed.version === branch.version) return 'refresh'
 
-  if (branch.timestamp < exposed.timestamp)
-    return 'superseded'
+  if (branch.timestamp < exposed.timestamp) return 'superseded'
 
   return 'merge'
 }

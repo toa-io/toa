@@ -21,7 +21,7 @@ export const PRIMARY: Remote = 'tokens'
  * The providers of a scheme, or nothing for a scheme that is not one — including a name a
  * plain object answers on its own, like `constructor`.
  */
-export function providers (scheme: string): Remote[] | undefined {
+export function providers(scheme: string): Remote[] | undefined {
   return Object.hasOwn(PROVIDERS, scheme) ? PROVIDERS[scheme as Scheme] : undefined
 }
 

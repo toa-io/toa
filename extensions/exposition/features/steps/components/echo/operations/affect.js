@@ -1,3 +1,3 @@
-export function effect (input) {
+export function effect(input) {
   return `Hello ${input.name}`
 }

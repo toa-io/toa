@@ -38,7 +38,8 @@ it('should mutate all object type properties', () => {
   assert.deepStrictEqual(object, {
     a: {
       b: {
-        c, seen: 1
+        c,
+        seen: 1
       },
       seen: 1
     },

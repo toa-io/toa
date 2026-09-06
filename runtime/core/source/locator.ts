@@ -10,7 +10,7 @@ export class Locator {
   public readonly uppercase: string
   public readonly lowercase: string
 
-  public constructor (name: string, namespace?: string) {
+  public constructor(name: string, namespace?: string) {
     if (name === undefined) throw new TypeError('Locator name must be defined')
 
     this.name = name
@@ -22,16 +22,14 @@ export class Locator {
     this.lowercase = (concat(namespace, '_') + name).toLowerCase()
   }
 
-  public static parse (string: string): Locator {
+  public static parse(string: string): Locator {
     const [namespace, name] = string.split(DOT)
 
-    if (name === undefined)
-      return new Locator(namespace)
-    else
-      return new Locator(name, namespace)
+    if (name === undefined) return new Locator(namespace)
+    else return new Locator(name, namespace)
   }
 
-  public hostname (prefix?: string): string {
+  public hostname(prefix?: string): string {
     return concat(prefix?.toLowerCase(), '-') + this.label
   }
 }

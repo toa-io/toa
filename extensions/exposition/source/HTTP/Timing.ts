@@ -5,7 +5,10 @@ import type { ServerResponse } from './types.js'
 export class Timing {
   private readonly start = performance.now()
 
-  public append (response: ServerResponse): void {
-    response.setHeader('server-timing', `total;dur=${(performance.now() - this.start).toFixed(3)}`)
+  public append(response: ServerResponse): void {
+    response.setHeader(
+      'server-timing',
+      `total;dur=${(performance.now() - this.start).toFixed(3)}`
+    )
   }
 }

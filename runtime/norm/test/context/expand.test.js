@@ -47,8 +47,10 @@ describe('composition services', () => {
 
     expand(context)
 
-    assert.deepStrictEqual(context.compositions[0].services,
-      ['@toa.io/extensions.exposition', '@toa.io/extensions.configuration'])
+    assert.deepStrictEqual(context.compositions[0].services, [
+      '@toa.io/extensions.exposition',
+      '@toa.io/extensions.configuration'
+    ])
   })
 
   it('should leave a package reference alone', () => {

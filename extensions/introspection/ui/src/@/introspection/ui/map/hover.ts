@@ -5,7 +5,10 @@ import type { Action } from 'svelte/action'
  * itself, several components deep, and none of them has to know it is on a map.
  * Keyboard focus answers the same way, so a row reached by tabbing lights its lines too.
  */
-export const hover: Action<HTMLElement, (row: string | null) => void> = (element, handler) => {
+export const hover: Action<HTMLElement, (row: string | null) => void> = (
+  element,
+  handler
+) => {
   let tell = handler
 
   element.addEventListener('mouseover', enter)
@@ -20,7 +23,7 @@ export const hover: Action<HTMLElement, (row: string | null) => void> = (element
       element.removeEventListener('mouseleave', leave)
       element.removeEventListener('focusin', enter)
       element.removeEventListener('focusout', leave)
-    },
+    }
   }
 
   function enter(event: Event): void {

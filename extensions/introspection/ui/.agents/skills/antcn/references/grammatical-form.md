@@ -41,7 +41,7 @@ The subject's gender lives on the account as `grammar?: Grammar | null` (`Gramma
 ## Two consumption modes
 
 - **Current user** — for "you did X" texts, feed a `grammar` store derived from the active account (`$lib/intl` can expose `grammar = derived(account, $a => $a?.grammar ?? 'none')`).
-- **Per subject** — for "{name} did X" texts about *other* people, pass that account's own field explicitly: `$dict.contacts.transferred.received(name, amount, account.grammar)`. Forgetting this is the common bug — the dictionary function needs the *subject's* gender, not the viewer's.
+- **Per subject** — for "{name} did X" texts about _other_ people, pass that account's own field explicitly: `$dict.contacts.transferred.received(name, amount, account.grammar)`. Forgetting this is the common bug — the dictionary function needs the _subject's_ gender, not the viewer's.
 
 ## Picker (interface pattern — not shipped by antcn)
 
@@ -61,9 +61,9 @@ Mirror the language switcher: a small control that edits `account.grammar` and r
 
 Suggested interface:
 
-| Prop       | Type                          | Notes                                              |
-| ---------- | ----------------------------- | -------------------------------------------------- |
-| `value`    | `Grammar \| ''`               | Current account gender; `''` for unset             |
-| `onselect` | `(grammar: Grammar) => void`  | Fires after the choice changes; persist it         |
+| Prop       | Type                         | Notes                                      |
+| ---------- | ---------------------------- | ------------------------------------------ |
+| `value`    | `Grammar \| ''`              | Current account gender; `''` for unset     |
+| `onselect` | `(grammar: Grammar) => void` | Fires after the choice changes; persist it |
 
 A toggle-group of the gender tokens (e.g. `he` / `she` / `none` with icons) is the proven shape.

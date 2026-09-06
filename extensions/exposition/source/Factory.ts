@@ -24,11 +24,11 @@ import type { extensions } from '@toa.io/core/types'
 export class Factory implements extensions.Factory {
   private readonly host: Host
 
-  public constructor (host: Host) {
+  public constructor(host: Host) {
     this.host = host
   }
 
-  public async tenant (locator: Locator, node: syntax.Node): Promise<Connector> {
+  public async tenant(locator: Locator, node: syntax.Node): Promise<Connector> {
     const broadcast: Broadcast = await this.host.broadcast(CHANNEL, locator.id)
     const hash = createHash('sha256').update(JSON.stringify(node)).digest('hex')
 
@@ -45,9 +45,11 @@ export class Factory implements extensions.Factory {
     return new Tenant(broadcast, branch)
   }
 
-  public async service (): Promise<Connector | null> {
-    assert.ok(process.env.TOA_EXPOSITION_PROPERTIES,
-      'TOA_EXPOSITION_PROPERTIES is undefined')
+  public async service(): Promise<Connector | null> {
+    assert.ok(
+      process.env.TOA_EXPOSITION_PROPERTIES,
+      'TOA_EXPOSITION_PROPERTIES is undefined'
+    )
 
     configureLogs()
 
@@ -64,7 +66,14 @@ export class Factory implements extensions.Factory {
     const composition = new Composition(this.host)
     const dispatcher = options.rpc === undefined ? null : new Dispatcher(options.rpc)
     const mcp = options.mcp === undefined ? null : new Model(options.mcp, tree)
-    const gateway = new Gateway(broadcast, tree, interception, directives, dispatcher, mcp)
+    const gateway = new Gateway(
+      broadcast,
+      tree,
+      interception,
+      directives,
+      dispatcher,
+      mcp
+    )
 
     gateway.depends(remotes)
     gateway.depends(composition)
@@ -82,16 +91,19 @@ const CHANNEL = 'exposition'
 const LOGS_PREFIX = 'TOA_TELEMETRY_LOGS'
 const TRACES_ENV = 'TOA_TELEMETRY_TRACES'
 
-function configureLogs (): void {
+function configureLogs(): void {
   const globEnv = process.env[LOGS_PREFIX]
   const level: LevelName = process.env.TOA_DEV === '1' ? 'trace' : 'info'
-  const options = globEnv === undefined ? { level } : JSON.parse(globEnv) as { level?: LevelName }
+  const options =
+    globEnv === undefined ? { level } : (JSON.parse(globEnv) as { level?: LevelName })
 
   console.configure({ level: options.level ?? level })
 
   const tracesEnv = process.env[TRACES_ENV]
 
-  traces(tracesEnv === undefined ? development() : JSON.parse(tracesEnv) as TracesOptions)
+  traces(
+    tracesEnv === undefined ? development() : (JSON.parse(tracesEnv) as TracesOptions)
+  )
 }
 
 /**
@@ -103,7 +115,7 @@ function configureLogs (): void {
  * The gateway boots without the telemetry extension, hence the copy of
  * `extensions/telemetry/source/extension.ts`.
  */
-function development (): TracesOptions {
+function development(): TracesOptions {
   const local = process.env.TOA_DEV === '1' || process.env.TOA_BOOT_TRACE === '1'
 
   return local ? { exporters: { console: {} } } : {}

@@ -4,7 +4,7 @@ import { Delegate } from './Delegate.js'
 import type { Introspection } from '../../Introspection.js'
 
 describe('auth:delegate', () => {
-  function explanation (): Introspection {
+  function explanation(): Introspection {
     return {
       input: {
         type: 'object',
@@ -20,7 +20,7 @@ describe('auth:delegate', () => {
   it('should take the property it embeds out of the input', () => {
     const delegate = new Delegate('identity', null as never)
     const described = delegate.describe(explanation())
-    const input = described.input as { properties: object, required: string[] }
+    const input = described.input as { properties: object; required: string[] }
 
     assert.deepStrictEqual(Object.keys(input.properties), ['title'])
     assert.deepStrictEqual(input.required, ['title'])

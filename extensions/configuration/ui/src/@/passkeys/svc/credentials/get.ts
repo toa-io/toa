@@ -7,7 +7,7 @@ export async function get(options: RequestOptions): Promise<PublicKeyCredential 
     timeout: options.timeout,
     challenge: base64urlToArrayBuffer(options.challenge),
     allowCredentials: options.allowCredentials.map(key),
-    userVerification: options.userVerification,
+    userVerification: options.userVerification
   }
 
   return (await navigator.credentials.get({ publicKey })) as PublicKeyCredential

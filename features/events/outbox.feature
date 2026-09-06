@@ -203,6 +203,7 @@ Feature: Transactional outbox
       """
     And the `mongo.outbox` outbox holds 1 unpublished row
 
+  @containers
   Scenario: The broker is down at commit, and the event goes out when it returns
     # the failure the outbox exists for: the state change must not be lost with the publish
     Given an environment variable `TOA_AMQP_CONTEXT` is set to "{\".\":[\"amqp://localhost:5673\"]}"
@@ -227,6 +228,7 @@ Feature: Transactional outbox
     Then the reply is received
     And the `mongo.outbox` outbox holds 1 unpublished row
 
+  @containers
   Scenario: A storage that cannot commit a row publishes inline instead
     # a standalone mongod runs no transactions, and an outbox without atomicity would be worse
     # than none — so the storage does not offer one and the runtime emits as it always did

@@ -1,4 +1,4 @@
-import { describe, it, beforeEach, mock } from 'node:test'
+import { describe, it, beforeEach } from 'node:test'
 import assert from 'node:assert/strict'
 
 import * as fixtures from './context.fixtures.js'
@@ -29,7 +29,7 @@ describe('call', () => {
   })
 })
 
-function resetCalls (target = [assert, fixtures], seen = new Set()) {
+function resetCalls(target = [assert, fixtures], seen = new Set()) {
   if (target === null || typeof target !== 'object' || seen.has(target)) return
 
   seen.add(target)

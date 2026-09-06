@@ -1,7 +1,7 @@
 export class Computation {
   ok
 
-  mount (ctx) {
+  mount(ctx) {
     this.ok = ctx.state.ok
   }
 

@@ -10,7 +10,7 @@ export class Cache implements DirectiveFamily<Directive> {
   public readonly name: string = 'cache'
   public readonly mandatory: boolean = true
 
-  public create (name: string, value: any): Directive {
+  public create(name: string, value: any): Directive {
     const Class = constructors[name]
 
     if (Class === undefined)
@@ -19,11 +19,15 @@ export class Cache implements DirectiveFamily<Directive> {
     return new Class(value)
   }
 
-  public precall (): Output {
+  public precall(): Output {
     return null
   }
 
-  public async settle (directives: Directive[], context: AuthenticatedContext, response: http.OutgoingMessage): Promise<void> {
+  public async settle(
+    directives: Directive[],
+    context: AuthenticatedContext,
+    response: http.OutgoingMessage
+  ): Promise<void> {
     const directive = directives[0]
     const method = context.request.method
     const safe = method === 'GET' || method === 'HEAD'
@@ -41,16 +45,14 @@ export class Cache implements DirectiveFamily<Directive> {
       return
     }
 
-    if (!safe)
-      return
+    if (!safe) return
 
     if (directive === undefined) {
       if (context.identity !== null && !Control.disabled(response.headers)) {
         response.headers.set('cache-control', 'private')
         response.headers.append('vary', 'authorization')
       }
-    } else
-      directive.set(context, response.headers)
+    } else directive.set(context, response.headers)
   }
 }
 
@@ -62,15 +64,18 @@ export class Cache implements DirectiveFamily<Directive> {
  * is what a version is for.
  */
 // eslint-disable-next-line max-params
-function validate (context: AuthenticatedContext, response: http.OutgoingMessage, headers: Headers,
-  safe: boolean): void {
+function validate(
+  context: AuthenticatedContext,
+  response: http.OutgoingMessage,
+  headers: Headers,
+  safe: boolean
+): void {
   const { version, modified } = response
 
   if (modified !== undefined)
     headers.set('last-modified', new Date(modified).toUTCString())
 
-  if (version === undefined || !safe)
-    return
+  if (version === undefined || !safe) return
 
   const sent = context.request.headers['if-none-match']
 
@@ -78,8 +83,7 @@ function validate (context: AuthenticatedContext, response: http.OutgoingMessage
     response.status = 304
     response.body = undefined
     headers.set('etag', sent)
-  } else
-    headers.set('etag', tag(version))
+  } else headers.set('etag', tag(version))
 }
 
 const constructors: Record<string, new (value: any) => Directive> = {

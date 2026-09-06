@@ -37,7 +37,7 @@ export class Service extends Image {
    * @param {string} reference
    * @param {toa.deployment.dependency.Service} service
    */
-  constructor (scope, runtime, registry, reference, service) {
+  constructor(scope, runtime, registry, reference, service) {
     super(scope, runtime, registry)
 
     this.service = service.name
@@ -48,15 +48,15 @@ export class Service extends Image {
     this.#version = service.version
   }
 
-  get name () {
+  get name() {
     return 'extension-' + this.#group + '-' + this.#name
   }
 
-  get version () {
+  get version() {
     return this.#version
   }
 
-  async prepare (root) {
+  async prepare(root) {
     const context = await super.prepare(root)
 
     await fs.copy(this.#path, context)

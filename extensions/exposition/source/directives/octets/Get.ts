@@ -17,7 +17,7 @@ export class Get extends Directive {
   private readonly discovery: Promise<Component>
   private storage!: Component
 
-  public constructor (options: Options | null, discovery: Promise<Component>) {
+  public constructor(options: Options | null, discovery: Promise<Component>) {
     super()
 
     schemas.get.validate(options)
@@ -26,21 +26,17 @@ export class Get extends Directive {
     this.discovery = discovery
   }
 
-  public async apply (storage: string, input: Input): Promise<Output> {
+  public async apply(storage: string, input: Input): Promise<Output> {
     this.storage ??= await this.discovery
 
     if (input.subtype === 'octets.entry')
-      if (this.options.meta)
-        return this.head(storage, input)
-      else
-        throw new Forbidden('Metadata is not accessible')
-    else
-      return await this.get(storage, input)
+      if (this.options.meta) return this.head(storage, input)
+      else throw new Forbidden('Metadata is not accessible')
+    else return await this.get(storage, input)
   }
 
-  private async get (storage: string, input: Input): Promise<Output> {
-    if ('if-none-match' in input.request.headers)
-      return { status: 304 }
+  private async get(storage: string, input: Input): Promise<Output> {
+    if ('if-none-match' in input.request.headers) return { status: 304 }
 
     const endpoint = input.request.method === 'GET' ? 'get' : 'head'
 
@@ -53,21 +49,18 @@ export class Get extends Directive {
       }
     })
 
-    if (entry instanceof Error)
-      throw new NotFound()
+    if (entry instanceof Error) throw new NotFound()
 
     const headers = new Headers({
       'content-type': entry.type,
       etag: `"${entry.checksum}"`
     })
 
-    if (entry.range !== undefined)
-      headers.set('content-range', entry.range)
+    if (entry.range !== undefined) headers.set('content-range', entry.range)
 
     // an absent content-length is what says the length is unknown; naming the encoding
     // is redundant over HTTP/1.1 and forbidden over HTTP/2
-    if (entry.size !== null)
-      headers.set('content-length', entry.size.toString())
+    if (entry.size !== null) headers.set('content-length', entry.size.toString())
 
     return {
       status: entry.partial === true ? 206 : 200,
@@ -76,7 +69,7 @@ export class Get extends Directive {
     }
   }
 
-  private async head (storage: string, input: Input): Promise<Output> {
+  private async head(storage: string, input: Input): Promise<Output> {
     const entry = await this.storage.invoke<Maybe<Entry>>('head', {
       input: {
         storage,
@@ -84,8 +77,7 @@ export class Get extends Directive {
       }
     })
 
-    if (entry instanceof Error)
-      throw new NotFound()
+    if (entry instanceof Error) throw new NotFound()
 
     return { body: entry }
   }

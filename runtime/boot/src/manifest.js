@@ -9,8 +9,10 @@ import { span } from './span.js'
 export const manifest = async (path, options = {}) => {
   options = merge(clone(options), DEFAULTS)
 
-  const manifest = await span({ name: `manifest ${basename(path)}`, attributes: { path } },
-    async () => await load(path))
+  const manifest = await span(
+    { name: `manifest ${basename(path)}`, attributes: { path } },
+    async () => await load(path)
+  )
 
   if (options?.bindings !== undefined) {
     if ('operations' in manifest) {
@@ -30,7 +32,8 @@ export const manifest = async (path, options = {}) => {
       }
     }
 
-    if (asyncBinding === undefined) throw new Error('Bindings override must contain at least one async binding')
+    if (asyncBinding === undefined)
+      throw new Error('Bindings override must contain at least one async binding')
 
     if ('events' in manifest) {
       for (const event of Object.values(manifest.events)) event.binding = asyncBinding
@@ -51,7 +54,8 @@ export const manifest = async (path, options = {}) => {
     }
   }
 
-  if ('storage' in options && 'entity' in manifest) manifest.entity.storage = options.storage
+  if ('storage' in options && 'entity' in manifest)
+    manifest.entity.storage = options.storage
 
   manifest.locator = new Locator(manifest.name, manifest.namespace)
 

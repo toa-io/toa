@@ -12,8 +12,10 @@ export class Probe {
   private headers: Record<string, string> = {}
 
   @when('the ready probe is requested')
-  public async request (): Promise<void> {
-    const response = await request(`http://127.0.0.1:${PROBE}${PATH}`, { dispatcher: this.agent })
+  public async request(): Promise<void> {
+    const response = await request(`http://127.0.0.1:${PROBE}${PATH}`, {
+      dispatcher: this.agent
+    })
 
     this.status = response.statusCode
     this.headers = response.headers as Record<string, string>
@@ -22,15 +24,14 @@ export class Probe {
   }
 
   @then('the ready probe answers {int}')
-  public answers (status: number): void {
+  public answers(status: number): void {
     assert.equal(this.status, status)
 
-    if (status === 200)
-      assert.equal(this.headers['cache-control'], 'no-store')
+    if (status === 200) assert.equal(this.headers['cache-control'], 'no-store')
   }
 
   @after()
-  public async close (): Promise<void> {
+  public async close(): Promise<void> {
     await this.agent.close()
   }
 }

@@ -6,5 +6,5 @@ import type { Message } from './message.js'
  * in its place, so what a binding is handed is this rather than core's class.
  */
 export interface Receiver extends Connector {
-  receive (message: Message): Promise<void>
+  receive(message: Message): Promise<void>
 }

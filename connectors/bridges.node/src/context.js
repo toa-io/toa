@@ -12,7 +12,7 @@ export class Context extends Connector {
   #context
   #source
 
-  constructor (context, operation) {
+  constructor(context, operation) {
     super()
 
     this.operation = operation
@@ -24,7 +24,7 @@ export class Context extends Connector {
     this.depends(context)
   }
 
-  async open () {
+  async open() {
     this.aspects = this.#aspects(this.#context.aspects)
   }
 
@@ -43,7 +43,7 @@ export class Context extends Connector {
   /**
    * Stamps the origin of the call, unless the caller has set one explicitly.
    */
-  #attribute (request) {
+  #attribute(request) {
     if (this.#source === undefined) return request
 
     request ??= {}
@@ -52,15 +52,18 @@ export class Context extends Connector {
     return request
   }
 
-  #aspects (aspects) {
+  #aspects(aspects) {
     const map = {}
 
     for (const aspect of aspects) {
-      if (map[aspect.name] !== undefined) throw new Error(`Aspect conflict on '${aspect.name}'`)
+      if (map[aspect.name] !== undefined)
+        throw new Error(`Aspect conflict on '${aspect.name}'`)
 
       map[aspect.name] = aspect.invoke.bind(aspect)
 
       if (aspect.name in shortcuts)
+        // the aspect names the shortcut
+        // oxlint-disable-next-line import/namespace
         shortcuts[aspect.name](this, aspect)
     }
 
@@ -72,7 +75,7 @@ export class Context extends Connector {
  * Events, guards and rc phases get a Context without an operation,
  * thus their calls are not attributed.
  */
-function source (locator, operation) {
+function source(locator, operation) {
   if (locator === undefined || operation === undefined) return undefined
 
   return { namespace: locator.namespace, component: locator.name, operation }

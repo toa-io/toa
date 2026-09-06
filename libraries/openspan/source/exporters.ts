@@ -9,7 +9,7 @@ import type { Console, Entry, Kind } from './Console.js'
  * the streams of whichever console emitted the span.
  */
 export const consoleExporter: Exporter = {
-  export (span: Span, output: Console): void {
+  export(span: Span, output: Console): void {
     const entry: Partial<Entry> = {
       attributes: span.attributes as Record<string, any>,
       trace_id: span.traceId,
@@ -17,14 +17,11 @@ export const consoleExporter: Exporter = {
       duration: span.duration
     }
 
-    if (span.parentId !== undefined)
-      entry.parent_id = span.parentId
+    if (span.parentId !== undefined) entry.parent_id = span.parentId
 
-    if (span.kind !== 'internal')
-      entry.kind = span.kind
+    if (span.kind !== 'internal') entry.kind = span.kind
 
-    if (span.status !== undefined)
-      entry.status = span.status
+    if (span.status !== undefined) entry.status = span.status
 
     output.entry('trace', span.name, entry)
   }
@@ -34,11 +31,11 @@ export const consoleExporter: Exporter = {
  * Replaces the set of span exporters entirely.
  * Defaults to none: tracing is off until an exporter is configured.
  */
-export function exporting (exporters: Exporter[]): void {
+export function exporting(exporters: Exporter[]): void {
   state.exporters = exporters
 }
 
-export function exporters (): Exporter[] {
+export function exporters(): Exporter[] {
   return state.exporters ?? NONE
 }
 
@@ -46,7 +43,7 @@ export function exporters (): Exporter[] {
  * Whether anything at all consumes spans. When nothing does, traces are not
  * sampled and spans are not created — see `decide()`.
  */
-export function recording (): boolean {
+export function recording(): boolean {
   return exporters().length > 0
 }
 
@@ -56,7 +53,7 @@ const NONE: Exporter[] = []
  * Flushes all exporters, e.g. before `process.exit()`,
  * which does not emit `beforeExit`.
  */
-export async function flush (): Promise<void> {
+export async function flush(): Promise<void> {
   await Promise.all(exporters().map(async (exporter) => exporter.flush?.()))
 }
 

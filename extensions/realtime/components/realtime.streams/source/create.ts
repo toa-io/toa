@@ -8,7 +8,7 @@ export class Effect implements Operation {
   private stash!: Stash
   private logs: any
 
-  public mount (context: Context): void {
+  public mount(context: Context): void {
     context.state.streams = this.streams
     context.state.stash = new Stash(context.stash, context.configuration, context.logs)
 
@@ -16,17 +16,16 @@ export class Effect implements Operation {
     this.stash = context.state.stash
   }
 
-  public unmount (): void {
+  public unmount(): void {
     this.logs.info('Destroying streams', { count: this.streams.size })
 
     // closed, not destroyed: destroying a stream that is still piped to a response
     // makes end-of-stream report a premature close, which reaches no one and takes
     // the process down.
-    for (const stream of this.streams.values())
-      stream.close()
+    for (const stream of this.streams.values()) stream.close()
   }
 
-  public async execute (input: Input): Promise<Readable> {
+  public async execute(input: Input): Promise<Readable> {
     const key = input.key
 
     if (!this.streams.has(key)) {
@@ -43,8 +42,7 @@ export class Effect implements Operation {
       void this.stash.connect(key).then((token) => {
         if (token instanceof Error)
           this.logs.error('Failed to connect to stash', { key, error: token })
-        else
-          this.streams.get(key)?.push({ event: 'token', data: token })
+        else this.streams.get(key)?.push({ event: 'token', data: token })
       })
     else
       void this.stash.pop(key, input.token).then((result) => {
@@ -60,8 +58,7 @@ export class Effect implements Operation {
 
         const stream = this.streams.get(key)
 
-        if (stream === undefined)
-          return
+        if (stream === undefined) return
 
         const [token, events] = result
 
@@ -74,7 +71,7 @@ export class Effect implements Operation {
     return this.streams.get(key)!
   }
 
-  private createStream (key: string): Stream {
+  private createStream(key: string): Stream {
     const stream = new Stream()
 
     stream.events.once('destroy', () => {

@@ -7,19 +7,21 @@ export class Stream extends Readable {
   private interval: NodeJS.Timeout | null = null
   private ended = false
 
-  public constructor () {
+  public constructor() {
     super(objectMode)
   }
 
   // has to be here
-  public override _read (): void {
+  public override _read(): void {
     if (this.interval === null)
       this.interval = setInterval(() => this.heartbeat(), HEARTBEAT_INTERVAL)
   }
 
-  public override _destroy (error: Error | null, callback: (error?: (Error | null)) => void): void {
-    if (this.interval !== null)
-      clearInterval(this.interval)
+  public override _destroy(
+    error: Error | null,
+    callback: (error?: Error | null) => void
+  ): void {
+    if (this.interval !== null) clearInterval(this.interval)
 
     this.events.emit('destroy')
 
@@ -27,7 +29,7 @@ export class Stream extends Readable {
   }
 
   /** Ends the stream: whoever reads it gets EOF rather than a broken pipe. */
-  public close (): void {
+  public close(): void {
     this.ended = true
 
     if (this.interval !== null) {
@@ -38,7 +40,7 @@ export class Stream extends Readable {
     this.push(null)
   }
 
-  public heartbeat (stream: Readable = this): boolean {
+  public heartbeat(stream: Readable = this): boolean {
     if (this.ended) return false
 
     const resume = stream.push('heartbeat ' + Date.now())

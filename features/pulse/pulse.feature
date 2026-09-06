@@ -6,6 +6,7 @@ Feature: Pulse
   # The fixture splits a four second cycle into four, so it is called once a second and told
   # which second of the cycle it is running for. Six seconds of it, and three calls asked for:
   # the first interval is gone before atomicity has settled, and a loaded run may lose another.
+  @timing
   Scenario: Calling on a cadence
     Given I compose `pulse` component
     And I wait 6 seconds

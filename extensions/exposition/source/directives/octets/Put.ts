@@ -27,25 +27,33 @@ export class Put extends Directive {
   private readonly discovery: Record<string, Promise<Component>> = {}
   private storage: Component | null = null
 
-  public constructor (options: Options | null, discovery: Promise<Component>, remotes: Remotes) {
+  public constructor(
+    options: Options | null,
+    discovery: Promise<Component>,
+    remotes: Remotes
+  ) {
     super()
 
     schemas.put.validate<Options>(options)
 
-    this.accept = match(options?.accept,
-      String, (value: string) => value,
-      Array, (types: string[]) => types.join(','),
-      undefined)
+    this.accept = match(
+      options?.accept,
+      String,
+      (value: string) => value,
+      Array,
+      (types: string[]) => types.join(','),
+      undefined
+    )
 
     if (options?.workflow !== undefined)
       this.workflow = new Workflow(options.workflow, remotes)
 
     if (options?.trust !== undefined)
       this.trust = options.trust.map((value: string) =>
-        value.startsWith('/') ? new RegExp(value.slice(1, -1)) : value)
+        value.startsWith('/') ? new RegExp(value.slice(1, -1)) : value
+      )
 
-    if (options?.location !== undefined)
-      this.location = options.location
+    if (options?.location !== undefined) this.location = options.location
 
     this.limitString = options?.limit ?? '64MiB'
     this.limit = toBytes(this.limitString)
@@ -55,7 +63,11 @@ export class Put extends Directive {
     cors.allow('content-location')
   }
 
-  public async apply (storage: string, input: Input, parameters: Parameter[]): Promise<Output> {
+  public async apply(
+    storage: string,
+    input: Input,
+    parameters: Parameter[]
+  ): Promise<Output> {
     this.storage ??= await this.discovery.storage
 
     const request: StoreRequest = {
@@ -71,22 +83,36 @@ export class Put extends Directive {
 
     const entry = await this.storage.invoke<Entry>('put', request)
 
-    return match<Output>(entry,
-      Error, (error: CodedError) => this.throw(error),
-      () => this.reply(input, storage, entry, parameters))
+    return match<Output>(
+      entry,
+      Error,
+      (error: CodedError) => this.throw(error),
+      () => this.reply(input, storage, entry, parameters)
+    )
   }
 
   // eslint-disable-next-line max-params
-  private reply (input: Input, storage: string, entry: Entry, parameters: Parameter[]): Output {
-    const body = this.workflow === undefined
-      ? entry
-      : this.execute(input, storage, entry, parameters)
+  private reply(
+    input: Input,
+    storage: string,
+    entry: Entry,
+    parameters: Parameter[]
+  ): Output {
+    const body =
+      this.workflow === undefined
+        ? entry
+        : this.execute(input, storage, entry, parameters)
 
     return { body }
   }
 
   // eslint-disable-next-line max-params
-  private execute (input: Input, storage: string, entry: Entry, parameters: Parameter[]): Readable {
+  private execute(
+    input: Input,
+    storage: string,
+    entry: Entry,
+    parameters: Parameter[]
+  ): Readable {
     const stream = new PassThrough({ objectMode: true })
 
     stream.push(entry)
@@ -103,16 +129,25 @@ export class Put extends Directive {
     return stream
   }
 
-  private throw (error: CodedError): never {
-    throw match(error.code,
-      'NOT_ACCEPTABLE', () => new http.UnsupportedMediaType(),
-      'TYPE_MISMATCH', () => new http.BadRequest(),
-      'LIMIT_EXCEEDED', () => new http.RequestEntityTooLarge(`Size limit is ${this.limitString}`),
-      'LOCATION_UNTRUSTED', () => new http.Forbidden(error.message),
-      'LOCATION_LENGTH', () => new http.BadRequest(error.message),
-      'LOCATION_UNAVAILABLE', () => new http.NotFound(error.message),
-      'INVALID_ID', () => new http.BadRequest(error.message),
-      error)
+  private throw(error: CodedError): never {
+    throw match(
+      error.code,
+      'NOT_ACCEPTABLE',
+      () => new http.UnsupportedMediaType(),
+      'TYPE_MISMATCH',
+      () => new http.BadRequest(),
+      'LIMIT_EXCEEDED',
+      () => new http.RequestEntityTooLarge(`Size limit is ${this.limitString}`),
+      'LOCATION_UNTRUSTED',
+      () => new http.Forbidden(error.message),
+      'LOCATION_LENGTH',
+      () => new http.BadRequest(error.message),
+      'LOCATION_UNAVAILABLE',
+      () => new http.NotFound(error.message),
+      'INVALID_ID',
+      () => new http.BadRequest(error.message),
+      error
+    )
   }
 }
 

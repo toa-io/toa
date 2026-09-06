@@ -20,7 +20,7 @@ export class Receiver extends Connector {
   /** @type {Set<Promise<any>>} */
   #pending = new Set()
 
-  constructor (comm, label, group, receiver) {
+  constructor(comm, label, group, receiver) {
     super()
 
     const [name, type] = label.split(':').reverse()
@@ -36,11 +36,9 @@ export class Receiver extends Connector {
     this.depends(receiver)
   }
 
-  async open () {
-    if (this.#queue !== undefined)
-      await this.#comm.process(this.#queue, this.#receive)
-    else
-      await this.#comm.consume(this.#exchange, this.#group, this.#receive)
+  async open() {
+    if (this.#queue !== undefined) await this.#comm.process(this.#queue, this.#receive)
+    else await this.#comm.consume(this.#exchange, this.#group, this.#receive)
   }
 
   /**
@@ -51,7 +49,7 @@ export class Receiver extends Connector {
    * Sealing does not recall deliveries already dispatched, hence the wait for those
    * still running.
    */
-  async close () {
+  async close() {
     await this.#comm.seal()
     await Promise.allSettled(this.#pending)
   }
@@ -63,7 +61,11 @@ export class Receiver extends Connector {
   #receive = async (message, properties) => {
     if (!('toa.io/amqp' in properties.headers)) message = { payload: message }
 
-    console.debug('AMQP event received', { label: this.#exchange ?? this.#queue, message, properties })
+    console.debug('AMQP event received', {
+      label: this.#exchange ?? this.#queue,
+      message,
+      properties
+    })
 
     const promise = this.#receiver.receive(message)
 

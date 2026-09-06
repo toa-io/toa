@@ -6,13 +6,14 @@ export const failsafe = (context, recover, method = undefined) => {
     recover = undefined
   }
 
-  return async function call (...args) {
+  return async function call(...args) {
     if (call[DISABLED] === true) return await method.apply(context, args)
 
     try {
       return await method.apply(context, args)
     } catch (exception) {
-      if (recover !== undefined && await recover.call(context, exception) === false) throw exception
+      if (recover !== undefined && (await recover.call(context, exception)) === false)
+        throw exception
 
       return call.apply(this, args)
     }

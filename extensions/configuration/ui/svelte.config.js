@@ -23,14 +23,14 @@ const config = {
       $lib: './src/lib',
       $config: './src/config',
       $origin: './src/origin',
-      '@': './src/@',
+      '@': './src/@'
     },
     typescript: {
       config: (config) => {
         config.include.push('../features/**/*.ts')
-      },
-    },
-  },
+      }
+    }
+  }
 }
 
 export default config

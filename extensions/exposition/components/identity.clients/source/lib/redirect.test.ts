@@ -16,7 +16,10 @@ it('should refuse anything else on a registered host', () => {
 })
 
 it('should refuse a host that merely starts the same way', () => {
-  assert.equal(permits(hosted, 'https://claude.ai.evil.example/api/mcp/auth_callback'), false)
+  assert.equal(
+    permits(hosted, 'https://claude.ai.evil.example/api/mcp/auth_callback'),
+    false
+  )
 })
 
 it('should ignore the port of a loopback address', () => {
@@ -33,7 +36,10 @@ it('should not ignore the path of a loopback address', () => {
 })
 
 it('should not treat a remote address as loopback', () => {
-  assert.equal(permits(['http://example.com/callback'], 'http://example.com:8080/callback'), false)
+  assert.equal(
+    permits(['http://example.com/callback'], 'http://example.com:8080/callback'),
+    false
+  )
 })
 
 it('should not cross schemes', () => {

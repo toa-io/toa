@@ -3,8 +3,7 @@ import * as load from '../load.js'
 export const guard = async (root, label) => {
   const module = await load.guard(root, label)
 
-  if (module.guard === undefined)
-    throw new Error(`Guard ${label} not found`)
+  if (module.guard === undefined) throw new Error(`Guard ${label} not found`)
 
   return module.guard
 }

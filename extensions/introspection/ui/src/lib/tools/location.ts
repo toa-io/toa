@@ -34,8 +34,7 @@ export function inAppPopOut() {
 
   const url = window.location.href
 
-  if (apple)
-    window.location.href = `x-safari-${url}`
+  if (apple) window.location.href = `x-safari-${url}`
   else
     window.location.href = `intent://${url.replace(/^https?:\/\//, '')}#Intent;scheme=https;action=android.intent.action.VIEW;category=android.intent.category.BROWSABLE;end`
 }

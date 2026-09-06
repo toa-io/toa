@@ -4,8 +4,7 @@ import { generate } from 'randomstring'
 
 // noinspection JSCheckFunctionSignatures
 export const schema = {
-  fit: mock.fn((object) =>
-    (object.fail ? { [generate()]: generate() } : null)),
+  fit: mock.fn((object) => (object.fail ? { [generate()]: generate() } : null)),
 
   defaults: mock.fn(() => ({ [generate()]: generate() }))
 }

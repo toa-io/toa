@@ -9,11 +9,11 @@ import type { OutgoingMessage } from '../../HTTP/index.js'
 export class Compose implements Directive {
   private readonly expressions: Expression[]
 
-  public constructor (composition: any) {
+  public constructor(composition: any) {
     this.expressions = build(composition)
   }
 
-  public attach (context: Context): void {
+  public attach(context: Context): void {
     context.pipelines.response.push(async (message: OutgoingMessage) => {
       if (!(message.body instanceof Readable)) {
         console.warn('Response body is not a stream, skipping composition')
@@ -23,8 +23,11 @@ export class Compose implements Directive {
 
       assert.ok(message.body instanceof Readable, 'Response body is not a stream')
 
-      // @ts-expect-error -- objectMode is not defined in the type definition
-      assert.ok(message.body._readableState.objectMode, 'Response stream is not in object mode')
+      assert.ok(
+        // @ts-expect-error -- objectMode is not defined in the type definition
+        message.body._readableState.objectMode,
+        'Response stream is not in object mode'
+      )
 
       const $ = await this.compose(message.body)
 
@@ -32,7 +35,7 @@ export class Compose implements Directive {
     })
   }
 
-  private async compose (stream: Readable): Promise<unknown[]> {
+  private async compose(stream: Readable): Promise<unknown[]> {
     const $: unknown[] = []
 
     stream.on('data', (data) => $.push(data))
@@ -42,7 +45,7 @@ export class Compose implements Directive {
     return $
   }
 
-  private execute ($: unknown[]): unknown {
+  private execute($: unknown[]): unknown {
     let exception: Error | undefined
 
     for (const expression of this.expressions)
@@ -57,36 +60,39 @@ export class Compose implements Directive {
   }
 }
 
-function build (composition: any): Expression[] {
+function build(composition: any): Expression[] {
   return Array.isArray(composition)
     ? composition.map((variant) => compile(variant as object | string))
     : [compile(composition as object | string)]
 }
 
-function compile (composition: object | string): Expression {
-  const text = typeof composition === 'string'
-    ? `return ${composition}`
-    : `return ${json(composition)}`
+function compile(composition: object | string): Expression {
+  const text =
+    typeof composition === 'string'
+      ? `return ${composition}`
+      : `return ${json(composition)}`
 
   // eslint-disable-next-line @typescript-eslint/no-implied-eval,no-new-func
   return new Function('$', text) as Expression
 }
 
-function json (node: object | string): string {
+function json(node: object | string): string {
   if (typeof node === 'string')
-    if (node.startsWith('\\'))
-      return `"${node}"`
-    else
-      return node
+    if (node.startsWith('\\')) return `"${node}"`
+    else return node
 
   if (Array.isArray(node))
     return `[${node.map((v) => json(v as object | string)).join(',')}]`
 
-  if (node.constructor !== Object)
-    return JSON.stringify(node)
+  if (node.constructor !== Object) return JSON.stringify(node)
 
-  return '{' + Object.entries(node)
-    .map(([key, value]) => `"${key}": ${json(value as object | string)}`).join(',') + '}'
+  return (
+    '{' +
+    Object.entries(node)
+      .map(([key, value]) => `"${key}": ${json(value as object | string)}`)
+      .join(',') +
+    '}'
+  )
 }
 
 type Expression = ($: unknown[]) => unknown

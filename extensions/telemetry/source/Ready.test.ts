@@ -24,7 +24,12 @@ it('should signal readiness', async () => {
   await ready.connect()
   await ready.complete()
 
-  assert.ok(send.mock.calls.some((call: any) => call.arguments.length === 1 && isDeepStrictEqual(call.arguments[0], 'ready')))
+  assert.ok(
+    send.mock.calls.some(
+      (call: any) =>
+        call.arguments.length === 1 && isDeepStrictEqual(call.arguments[0], 'ready')
+    )
+  )
 
   await ready.disconnect()
 })
@@ -40,7 +45,12 @@ it('should signal readiness when the probe port is taken', async () => {
 
   await second.complete()
 
-  assert.ok(send.mock.calls.some((call: any) => call.arguments.length === 1 && isDeepStrictEqual(call.arguments[0], 'ready')))
+  assert.ok(
+    send.mock.calls.some(
+      (call: any) =>
+        call.arguments.length === 1 && isDeepStrictEqual(call.arguments[0], 'ready')
+    )
+  )
 
   await first.disconnect()
   await second.disconnect()

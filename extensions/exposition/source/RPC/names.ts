@@ -19,12 +19,11 @@ export interface Address {
   variables: string[]
 }
 
-export function address (method: string, params: Params): Address {
+export function address(method: string, params: Params): Address {
   const parts = method.split(SEPARATOR)
   const verb = parts.pop()!
 
-  if (!verbs.has(verb))
-    throw new http.NotFound(`'${method}' names no method`)
+  if (!verbs.has(verb)) throw new http.NotFound(`'${method}' names no method`)
 
   const variables: string[] = []
   const fragments: string[] = []
@@ -66,13 +65,15 @@ export function address (method: string, params: Params): Address {
  * What the call carries, as a request carries it: the path took its variables, `query` is
  * the querystring, and the rest is the body.
  */
-export function split (params: Params, variables: string[]): { query?: Params, input?: Params } {
+export function split(
+  params: Params,
+  variables: string[]
+): { query?: Params; input?: Params } {
   const input: Params = {}
   let query: Params | undefined
 
   for (const [key, value] of Object.entries(params)) {
-    if (variables.includes(key))
-      continue
+    if (variables.includes(key)) continue
 
     if (key !== QUERY) {
       input[key] = value
@@ -91,30 +92,27 @@ export function split (params: Params, variables: string[]): { query?: Params, i
 }
 
 /** The parameter a part reads, or nothing where the part is a literal segment. */
-function parameter (part: string): string | null {
-  if (part === TAIL)
-    return WILDCARD
+function parameter(part: string): string | null {
+  if (part === TAIL) return WILDCARD
 
   return part[0] === VARIABLE ? part.slice(1) : null
 }
 
 /** A segment a name cannot spell is a segment no name has, so this one names nothing. */
-function literal (part: string, method: string): string {
-  if (!NAMEABLE.test(part))
-    throw new http.NotFound(`'${method}' names no procedure`)
+function literal(part: string, method: string): string {
+  if (!NAMEABLE.test(part)) throw new http.NotFound(`'${method}' names no procedure`)
 
   return part
 }
 
 /** The name of a method on this route, or nothing where the route has none. */
-export function name (segments: Segment[], verb: string): string | null {
+export function name(segments: Segment[], verb: string): string | null {
   const parts: string[] = []
 
   for (const segment of segments) {
     const part = component(segment)
 
-    if (part === null)
-      return null
+    if (part === null) return null
 
     parts.push(part)
   }
@@ -125,39 +123,34 @@ export function name (segments: Segment[], verb: string): string | null {
 }
 
 /** The segment that leaves a route unnameable, as it was declared, or nothing where none does. */
-export function refusal (segments: Segment[]): string | null {
+export function refusal(segments: Segment[]): string | null {
   for (const segment of segments)
-    if (component(segment) === null)
-      return declared(segment)
+    if (component(segment) === null) return declared(segment)
 
   return null
 }
 
-function component (segment: Segment): string | null {
+function component(segment: Segment): string | null {
   if (segment.fragment !== null)
     return NAMEABLE.test(segment.fragment) ? segment.fragment : null
 
-  if (segment.wildcard === true)
-    return TAIL
+  if (segment.wildcard === true) return TAIL
 
   // it stands for a segment the caller cannot name, so there is nothing to substitute
-  if (segment.placeholder === null)
-    return null
+  if (segment.placeholder === null) return null
 
   return NAMEABLE.test(segment.placeholder) ? VARIABLE + segment.placeholder : null
 }
 
 /** The route as it was declared, which is how a message about it should read. */
-export function template (segments: Segment[]): string {
+export function template(segments: Segment[]): string {
   return '/' + segments.map(declared).join('/')
 }
 
-function declared (segment: Segment): string {
-  if (segment.fragment !== null)
-    return segment.fragment
+function declared(segment: Segment): string {
+  if (segment.fragment !== null) return segment.fragment
 
-  if (segment.wildcard === true)
-    return '**'
+  if (segment.wildcard === true) return '**'
 
   return segment.placeholder === null ? '*' : ':' + segment.placeholder
 }

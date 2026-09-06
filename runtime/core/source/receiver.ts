@@ -29,7 +29,7 @@ export class Receiver extends Connector {
   readonly #delivery: SpanOptions
   readonly #processing: SpanOptions
 
-  public constructor (definition: Definition, local: Component, bridge?: Bridge) {
+  public constructor(definition: Definition, local: Component, bridge?: Bridge) {
     super()
 
     const { conditioned, adaptive, operation } = definition
@@ -71,11 +71,11 @@ export class Receiver extends Connector {
   }
 
   /** @hot */
-  public async receive (message: Message): Promise<void> {
+  public async receive(message: Message): Promise<void> {
     const { payload, telemetry, ...extensions } = message
 
-    if (this.#conditioned === true &&
-      await this.#bridge?.condition(payload) === false) return
+    if (this.#conditioned === true && (await this.#bridge?.condition(payload)) === false)
+      return
 
     const request = await this.#request(payload)
 
@@ -86,31 +86,33 @@ export class Receiver extends Connector {
 
     // continue the trace from the producer span
     const remote = telemetry === undefined ? null : decode(telemetry)
-    const task = async (): Promise<void> => { await this.#process(request) }
+    const task = async (): Promise<void> => {
+      await this.#process(request)
+    }
 
-    if (remote === null)
-      await task()
-    else
-      await run(remote, task)
+    if (remote === null) await task()
+    else await run(remote, task)
   }
 
-  async #process (request: Request): Promise<void> {
-    return console.span(this.#delivery, async () => console.span(this.#processing, async () => {
-      try {
-        await this.#local.invoke(this.#endpoint, request)
-      } catch (error) {
-        console.error('Receiver error', {
-          component: this.#local.locator.id,
-          endpoint: this.#endpoint,
-          error
-        })
+  async #process(request: Request): Promise<void> {
+    return console.span(this.#delivery, async () =>
+      console.span(this.#processing, async () => {
+        try {
+          await this.#local.invoke(this.#endpoint, request)
+        } catch (error) {
+          console.error('Receiver error', {
+            component: this.#local.locator.id,
+            endpoint: this.#endpoint,
+            error
+          })
 
-        throw error
-      }
-    }))
+          throw error
+        }
+      })
+    )
   }
 
-  async #request (payload: object): Promise<Request> {
+  async #request(payload: object): Promise<Request> {
     return this.#adaptive === true
       ? await this.#bridge!.request(payload, ...(this.#arguments ?? []))
       : { input: payload }

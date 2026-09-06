@@ -41,5 +41,8 @@ it('should throw on invalid input', async () => {
   const a = 'not a number'
   const b = 'neither'
 
-  await assert.rejects(math.invoke('add', { input: { a, b } }), (error) => { assert.ok(error instanceof RequestContractException); return true })
+  await assert.rejects(math.invoke('add', { input: { a, b } }), (error) => {
+    assert.ok(error instanceof RequestContractException)
+    return true
+  })
 })

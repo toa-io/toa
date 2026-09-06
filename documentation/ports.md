@@ -10,13 +10,13 @@ A workload that runs services puts them in one process — `mono`, a composition
 them, a local run — so within one a port is claimed once. Services in separate pods share
 nothing, and two compositions may each bind the same port.
 
-| Port   | Claimed by                                    |
-|--------|-----------------------------------------------|
-| `8000` | Exposition gateway                            |
-| `8001` | Telemetry readiness probe                     |
-| `8002` | Introspection UI                              |
-| `8003` | Configuration UI                              |
-| `8004` | Exposition readiness probe                    |
+| Port   | Claimed by                 |
+| ------ | -------------------------- |
+| `8000` | Exposition gateway         |
+| `8001` | Telemetry readiness probe  |
+| `8002` | Introspection UI           |
+| `8003` | Configuration UI           |
+| `8004` | Exposition readiness probe |
 
 The Exposition gateway answers its own probe, rather than the Telemetry one, because that probe
 tracks the composition nested in the gateway process, which connects before route discovery has

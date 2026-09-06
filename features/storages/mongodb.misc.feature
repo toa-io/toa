@@ -1,5 +1,6 @@
 Feature: MongoDB storage
 
+  @containers
   Scenario: Create a record in MongoDB with reconnection
     Given environment variables:
       """

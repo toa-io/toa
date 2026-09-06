@@ -3,15 +3,15 @@ import { type Directive, type Context } from './types.js'
 export class Anyone implements Directive {
   private readonly allow: boolean
 
-  public constructor (allow: boolean) {
+  public constructor(allow: boolean) {
     this.allow = allow
   }
 
-  public authorize (_: any, context: Context): boolean {
+  public authorize(_: any, context: Context): boolean {
     return context.identity !== null && this.allow
   }
 
-  public admits (_: any, context: Context): boolean {
+  public admits(_: any, context: Context): boolean {
     return this.authorize(_, context)
   }
 }

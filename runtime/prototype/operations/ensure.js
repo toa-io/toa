@@ -1,4 +1,4 @@
-function ensure (_, object) {
+function ensure(_, object) {
   return object
 }
 

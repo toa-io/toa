@@ -5,7 +5,7 @@ import { generate } from 'randomstring'
 export const storage = {
   name: 'dummy',
   get: mock.fn(() => ({ id: generate() })),
-  find: mock.fn(() => ([{ id: generate() }])),
+  find: mock.fn(() => [{ id: generate() }]),
   add: mock.fn(() => true),
   set: mock.fn(() => true),
   store: mock.fn(() => true),
@@ -27,7 +27,8 @@ export const entity = {
 }
 
 export const initial = {
-  initial: true, ...entity
+  initial: true,
+  ...entity
 }
 
 export const unchanged = {
@@ -37,6 +38,12 @@ export const unchanged = {
 
 // a legacy outbox: no storage capability, so `publish` emits inline
 export const outbox = {
-  row: mock.fn((event) => ({ id: generate(), lane: 0, published: false, pending: 0, event })),
+  row: mock.fn((event) => ({
+    id: generate(),
+    lane: 0,
+    published: false,
+    pending: 0,
+    event
+  })),
   publish: mock.fn()
 }

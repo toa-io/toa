@@ -27,12 +27,10 @@ export const test = (statement, type) => {
   return func && known
 }
 
-function scope (name) {
-  if (scopes.includes(name))
-    return name
+function scope(name) {
+  if (scopes.includes(name)) return name
 
-  if (name === 'context')
-    return 'none'
+  if (name === 'context') return 'none'
 
   return undefined
 }

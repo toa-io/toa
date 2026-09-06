@@ -12,7 +12,9 @@ it('should be', async () => {
 let object
 
 it('should call generator', async () => {
-  const generator = /** @type {import('node:test').Mock<any>} */ mock.fn(() => randomstring.generate())
+  const generator = /** @type {import('node:test').Mock<any>} */ mock.fn(() =>
+    randomstring.generate()
+  )
 
   object = generate(generator)
 
@@ -33,7 +35,12 @@ it('should pass segments', async () => {
   const value = object.a.b
 
   assert.strictEqual(generator.mock.callCount(), 2)
-  assert.ok(((call) => call.arguments.length === 1 && isDeepStrictEqual(call.arguments[0], ['a', 'b']))(generator.mock.calls[2 - 1] ?? { arguments: [] }))
+  assert.ok(
+    ((call) =>
+      call.arguments.length === 1 && isDeepStrictEqual(call.arguments[0], ['a', 'b']))(
+      generator.mock.calls[2 - 1] ?? { arguments: [] }
+    )
+  )
   assert.deepStrictEqual(value, generator.mock.calls[1].result)
 })
 
@@ -47,7 +54,14 @@ it('should pass value', async () => {
 
   object[prop] = value
 
-  assert.ok(generator.mock.calls.some((call) => call.arguments.length === 2 && isDeepStrictEqual(call.arguments[0], [prop]) && isDeepStrictEqual(call.arguments[1], value)))
+  assert.ok(
+    generator.mock.calls.some(
+      (call) =>
+        call.arguments.length === 2 &&
+        isDeepStrictEqual(call.arguments[0], [prop]) &&
+        isDeepStrictEqual(call.arguments[1], value)
+    )
+  )
 })
 
 it('should pass segments and value', async () => {
@@ -59,7 +73,14 @@ it('should pass segments and value', async () => {
 
   object.a.b = value
 
-  assert.ok(generator.mock.calls.some((call) => call.arguments.length === 2 && isDeepStrictEqual(call.arguments[0], ['a', 'b']) && isDeepStrictEqual(call.arguments[1], value)))
+  assert.ok(
+    generator.mock.calls.some(
+      (call) =>
+        call.arguments.length === 2 &&
+        isDeepStrictEqual(call.arguments[0], ['a', 'b']) &&
+        isDeepStrictEqual(call.arguments[1], value)
+    )
+  )
 })
 
 it('should pass segments repeatedly', async () => {
@@ -69,13 +90,37 @@ it('should pass segments repeatedly', async () => {
   object = generate(generator)
   object.a.b = value
 
-  assert.ok(((call) => call.arguments.length === 1 && isDeepStrictEqual(call.arguments[0], ['a']))(generator.mock.calls[1 - 1] ?? { arguments: [] }))
-  assert.ok(((call) => call.arguments.length === 2 && isDeepStrictEqual(call.arguments[0], ['a', 'b']) && isDeepStrictEqual(call.arguments[1], value))(generator.mock.calls[2 - 1] ?? { arguments: [] }))
+  assert.ok(
+    ((call) =>
+      call.arguments.length === 1 && isDeepStrictEqual(call.arguments[0], ['a']))(
+      generator.mock.calls[1 - 1] ?? { arguments: [] }
+    )
+  )
+  assert.ok(
+    ((call) =>
+      call.arguments.length === 2 &&
+      isDeepStrictEqual(call.arguments[0], ['a', 'b']) &&
+      isDeepStrictEqual(call.arguments[1], value))(
+      generator.mock.calls[2 - 1] ?? { arguments: [] }
+    )
+  )
 
   object.a.b = value
 
-  assert.ok(((call) => call.arguments.length === 1 && isDeepStrictEqual(call.arguments[0], ['a']))(generator.mock.calls[3 - 1] ?? { arguments: [] }))
-  assert.ok(((call) => call.arguments.length === 2 && isDeepStrictEqual(call.arguments[0], ['a', 'b']) && isDeepStrictEqual(call.arguments[1], value))(generator.mock.calls[4 - 1] ?? { arguments: [] }))
+  assert.ok(
+    ((call) =>
+      call.arguments.length === 1 && isDeepStrictEqual(call.arguments[0], ['a']))(
+      generator.mock.calls[3 - 1] ?? { arguments: [] }
+    )
+  )
+  assert.ok(
+    ((call) =>
+      call.arguments.length === 2 &&
+      isDeepStrictEqual(call.arguments[0], ['a', 'b']) &&
+      isDeepStrictEqual(call.arguments[1], value))(
+      generator.mock.calls[4 - 1] ?? { arguments: [] }
+    )
+  )
 })
 
 it('should apply methods with the context', async () => {
@@ -91,15 +136,21 @@ it('should apply methods with the context', async () => {
 })
 
 for (const [_, Type] of [
-  ['Array', Array], ['Set', Set], ['Map', Map], ['Uint8Array', Uint8Array], ['null', null]
+  ['Array', Array],
+  ['Set', Set],
+  ['Map', Map],
+  ['Uint8Array', Uint8Array],
+  ['null', null]
 ])
-   it(`should not proxy ${_}`, async () => {
-  const generator = /** @type {import('node:test').Mock<any>} */ mock.fn(() => Type?.constructor ? new Type() : Type)
+  it(`should not proxy ${_}`, async () => {
+    const generator = /** @type {import('node:test').Mock<any>} */ mock.fn(() =>
+      Type?.constructor ? new Type() : Type
+    )
 
-  object = generate(generator)
+    object = generate(generator)
 
-  assert.strictEqual(object.a?.foo, undefined)
-})
+    assert.strictEqual(object.a?.foo, undefined)
+  })
 
 it('should not proxy primitive values', async () => {
   const generator = /** @type {import('node:test').Mock<any>} */ mock.fn(() => 1)

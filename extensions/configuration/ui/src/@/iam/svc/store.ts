@@ -4,27 +4,29 @@ import type { IDP } from './oidc'
 import type { Echo } from './net'
 
 const account = value<Echo>({
-  persist: 'auth:account',
+  persist: 'auth:account'
 })
 
 const challenge = value<string>({
   persist: 'auth:challenge',
-  bind: account,
+  bind: account
 })
 
 const method = value<Method>({
-  persist: 'auth:method',
+  persist: 'auth:method'
 })
 
 const processing = writable(false)
 const greeting = writable(false)
 
-const authenticated = derived([challenge, account, processing],
-  ([$challenge, $account, $processing]) => $challenge !== null && $account !== null && $processing === false)
+const authenticated = derived(
+  [challenge, account, processing],
+  ([$challenge, $account, $processing]) =>
+    $challenge !== null && $account !== null && $processing === false
+)
 
 function iam(value: Echo) {
-  if (account.extract()?.id !== value.id)
-    account.set(null) // clear bound stores
+  if (account.extract()?.id !== value.id) account.set(null) // clear bound stores
 
   account.set(value)
 }

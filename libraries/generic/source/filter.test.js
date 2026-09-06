@@ -9,7 +9,7 @@ it('should be', async () => {
 })
 
 it('should filter', async () => {
-  async function test (value) {
+  async function test(value) {
     await immediate()
     return value === 'b'
   }

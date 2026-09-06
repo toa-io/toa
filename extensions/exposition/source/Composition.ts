@@ -6,12 +6,12 @@ import { type Host } from './Factory.js'
 export class Composition extends Connector {
   private readonly host: Host
 
-  public constructor (host: Host) {
+  public constructor(host: Host) {
     super()
     this.host = host
   }
 
-  protected override async open (): Promise<void> {
+  protected override async open(): Promise<void> {
     const paths = find()
     const composition = await this.host.composition(paths)
 
@@ -21,17 +21,17 @@ export class Composition extends Connector {
   }
 }
 
-function find (): string[] {
+function find(): string[] {
   return entries().map((entry) => resolve(ROOT, entry.name))
 }
 
-function entries (): Dirent[] {
+function entries(): Dirent[] {
   const entries = readdirSync(ROOT, { withFileTypes: true })
 
   return entries.filter((entry) => entry.isDirectory())
 }
 
-export function components (): Components {
+export function components(): Components {
   const labels: string[] = []
   const paths: string[] = []
 

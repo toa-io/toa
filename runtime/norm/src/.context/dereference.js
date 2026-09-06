@@ -12,7 +12,9 @@ export const dereference = (context) => {
         const component = components[id]
 
         if (component === undefined)
-          throw new Error(`Composition '${composition.name}' lists an unknown component '${id}'.`)
+          throw new Error(
+            `Composition '${composition.name}' lists an unknown component '${id}'.`
+          )
 
         return component
       })

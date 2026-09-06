@@ -17,7 +17,7 @@ export class Context extends Connector {
   readonly #discover: Discover
   readonly #remotes: Record<string, Promise<Remote>> = {}
 
-  public constructor (local: Component, discover: Discover, aspects: Aspect[] = []) {
+  public constructor(local: Component, discover: Discover, aspects: Aspect[] = []) {
     super()
 
     this.env = process.env.TOA_ENV
@@ -33,19 +33,23 @@ export class Context extends Connector {
     if (aspects.length > 0) this.depends(aspects)
   }
 
-  public async apply (endpoint: string, request: Request): Promise<any> {
+  public async apply(endpoint: string, request: Request): Promise<any> {
     return this.#local.invoke(endpoint, request)
   }
 
   // eslint-disable-next-line max-params
-  public async call (namespace: string, name: string, endpoint: string,
-    request: Request): Promise<any> {
+  public async call(
+    namespace: string,
+    name: string,
+    endpoint: string,
+    request: Request
+  ): Promise<any> {
     const remote = await this.#remote(namespace, name)
 
     return remote.invoke(endpoint, request)
   }
 
-  async #remote (namespace: string, name: string): Promise<Remote> {
+  async #remote(namespace: string, name: string): Promise<Remote> {
     const key = namespace + '.' + name
 
     this.#remotes[key] ??= this.#connect(namespace, name)
@@ -53,7 +57,7 @@ export class Context extends Connector {
     return this.#remotes[key]
   }
 
-  async #connect (namespace: string, name: string): Promise<Remote> {
+  async #connect(namespace: string, name: string): Promise<Remote> {
     const remote = await this.#discover(namespace, name)
 
     this.depends(remote)

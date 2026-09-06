@@ -58,8 +58,14 @@ it('does not retry by default', async () => {
 })
 
 it('retries unexpected responses and returns an expected response', async () => {
-  fetchMock.mock.mockImplementationOnce(async () => new Response(null, { status: 503 }), fetchMock.mock.callCount())
-  fetchMock.mock.mockImplementationOnce(async () => new Response(null, { status: 201 }), fetchMock.mock.callCount() + 1)
+  fetchMock.mock.mockImplementationOnce(
+    async () => new Response(null, { status: 503 }),
+    fetchMock.mock.callCount()
+  )
+  fetchMock.mock.mockImplementationOnce(
+    async () => new Response(null, { status: 201 }),
+    fetchMock.mock.callCount() + 1
+  )
 
   const response = await aspect.invoke('create', 'https://example.com', {
     retry: { attempts: 3, expected: [201], delay: 0 }
@@ -73,8 +79,14 @@ it('cancels an unexpected response body before retrying', async () => {
   const cancel = mock.fn()
   const body = new ReadableStream({ cancel })
 
-  fetchMock.mock.mockImplementationOnce(async () => new Response(body, { status: 503 }), fetchMock.mock.callCount())
-  fetchMock.mock.mockImplementationOnce(async () => new Response(null, { status: 200 }), fetchMock.mock.callCount() + 1)
+  fetchMock.mock.mockImplementationOnce(
+    async () => new Response(body, { status: 503 }),
+    fetchMock.mock.callCount()
+  )
+  fetchMock.mock.mockImplementationOnce(
+    async () => new Response(null, { status: 200 }),
+    fetchMock.mock.callCount() + 1
+  )
 
   await aspect.invoke('get', 'https://example.com', {
     retry: { attempts: 2, delay: 0 }
@@ -90,8 +102,14 @@ it('continues retrying when response body cancellation fails', async () => {
     }
   })
 
-  fetchMock.mock.mockImplementationOnce(async () => new Response(body, { status: 503 }), fetchMock.mock.callCount())
-  fetchMock.mock.mockImplementationOnce(async () => new Response(null, { status: 200 }), fetchMock.mock.callCount() + 1)
+  fetchMock.mock.mockImplementationOnce(
+    async () => new Response(body, { status: 503 }),
+    fetchMock.mock.callCount()
+  )
+  fetchMock.mock.mockImplementationOnce(
+    async () => new Response(null, { status: 200 }),
+    fetchMock.mock.callCount() + 1
+  )
 
   const response = await aspect.invoke('get', 'https://example.com', {
     retry: { attempts: 2, delay: 0 }
@@ -101,8 +119,14 @@ it('continues retrying when response body cancellation fails', async () => {
 })
 
 it('replays a regular request body', async () => {
-  fetchMock.mock.mockImplementationOnce(async () => new Response(null, { status: 503 }), fetchMock.mock.callCount())
-  fetchMock.mock.mockImplementationOnce(async () => new Response(null, { status: 200 }), fetchMock.mock.callCount() + 1)
+  fetchMock.mock.mockImplementationOnce(
+    async () => new Response(null, { status: 503 }),
+    fetchMock.mock.callCount()
+  )
+  fetchMock.mock.mockImplementationOnce(
+    async () => new Response(null, { status: 200 }),
+    fetchMock.mock.callCount() + 1
+  )
 
   await aspect.invoke('create', 'https://example.com', {
     method: 'POST',
@@ -118,11 +142,18 @@ it('replays a regular request body', async () => {
 })
 
 it('honors Retry-After instead of the configured delay', async () => {
-  fetchMock.mock.mockImplementationOnce(async () => new Response(null, {
-      status: 503,
-      headers: { 'retry-after': '0' }
-    }), fetchMock.mock.callCount())
-  fetchMock.mock.mockImplementationOnce(async () => new Response(null, { status: 200 }), fetchMock.mock.callCount() + 1)
+  fetchMock.mock.mockImplementationOnce(
+    async () =>
+      new Response(null, {
+        status: 503,
+        headers: { 'retry-after': '0' }
+      }),
+    fetchMock.mock.callCount()
+  )
+  fetchMock.mock.mockImplementationOnce(
+    async () => new Response(null, { status: 200 }),
+    fetchMock.mock.callCount() + 1
+  )
 
   const response = await aspect.invoke('get', 'https://example.com', {
     retry: { attempts: 2, delay: 60_000 }
@@ -133,8 +164,14 @@ it('honors Retry-After instead of the configured delay', async () => {
 })
 
 it('returns the last unexpected response', async () => {
-  fetchMock.mock.mockImplementationOnce(async () => new Response(null, { status: 500 }), fetchMock.mock.callCount())
-  fetchMock.mock.mockImplementationOnce(async () => new Response(null, { status: 502 }), fetchMock.mock.callCount() + 1)
+  fetchMock.mock.mockImplementationOnce(
+    async () => new Response(null, { status: 500 }),
+    fetchMock.mock.callCount()
+  )
+  fetchMock.mock.mockImplementationOnce(
+    async () => new Response(null, { status: 502 }),
+    fetchMock.mock.callCount() + 1
+  )
 
   const response = await aspect.invoke('get', 'https://example.com', {
     retry: { attempts: 2, delay: 0 }
@@ -147,12 +184,22 @@ it('retries network errors and throws the final error', async () => {
   const first = new Error('first')
   const last = new Error('last')
 
-  fetchMock.mock.mockImplementationOnce(async () => { throw first }, fetchMock.mock.callCount())
-  fetchMock.mock.mockImplementationOnce(async () => { throw last }, fetchMock.mock.callCount() + 1)
+  fetchMock.mock.mockImplementationOnce(async () => {
+    throw first
+  }, fetchMock.mock.callCount())
+  fetchMock.mock.mockImplementationOnce(async () => {
+    throw last
+  }, fetchMock.mock.callCount() + 1)
 
-  await assert.rejects(aspect.invoke('get', 'https://example.com', {
-    retry: { attempts: 2, delay: 0 }
-  }), (error: any) => { assert.strictEqual(error, last); return true })
+  await assert.rejects(
+    aspect.invoke('get', 'https://example.com', {
+      retry: { attempts: 2, delay: 0 }
+    }),
+    (error: any) => {
+      assert.strictEqual(error, last)
+      return true
+    }
+  )
 
   assert.strictEqual(fetchMock.mock.callCount(), 2)
 })
@@ -175,26 +222,35 @@ it('aborts while waiting for another attempt', async () => {
 })
 
 it('rejects invalid retry options', async () => {
-  await assert.rejects(aspect.invoke('get', 'https://example.com', {
-    retry: { attempts: 0 }
-  }), (error: any) => /retry\.attempts/.test(error.message))
+  await assert.rejects(
+    aspect.invoke('get', 'https://example.com', {
+      retry: { attempts: 0 }
+    }),
+    (error: any) => /retry\.attempts/.test(error.message)
+  )
 
-  await assert.rejects(aspect.invoke('get', 'https://example.com', {
-    retry: { attempts: 2, expected: [] }
-  }), (error: any) => /retry\.expected/.test(error.message))
+  await assert.rejects(
+    aspect.invoke('get', 'https://example.com', {
+      retry: { attempts: 2, expected: [] }
+    }),
+    (error: any) => /retry\.expected/.test(error.message)
+  )
 })
 
 it('rejects an explicit streaming body before sending it', async () => {
   const body = new ReadableStream()
 
-  await assert.rejects(aspect.invoke('create', 'https://example.com', {
-    method: 'POST',
-    body,
-    // Required by Node.js for a streaming request body.
-    // @ts-expect-error -- duplex is implemented by Node but absent from lib.dom RequestInit.
-    duplex: 'half',
-    retry: { attempts: 2 }
-  }), (error: any) => /non-replayable/.test(error.message))
+  await assert.rejects(
+    aspect.invoke('create', 'https://example.com', {
+      method: 'POST',
+      body,
+      // Required by Node.js for a streaming request body.
+      // @ts-expect-error -- duplex is implemented by Node but absent from lib.dom RequestInit.
+      duplex: 'half',
+      retry: { attempts: 2 }
+    }),
+    (error: any) => /non-replayable/.test(error.message)
+  )
 
   assert.strictEqual(fetchMock.mock.callCount(), 0)
 })
@@ -202,16 +258,25 @@ it('rejects an explicit streaming body before sending it', async () => {
 it('rejects a Request input with a body before retrying', async () => {
   const request = new Request('https://example.com', { method: 'POST', body: 'hello' })
 
-  await assert.rejects(aspect.invoke('create', request, {
-    retry: { attempts: 2 }
-  }), (error: any) => /non-replayable/.test(error.message))
+  await assert.rejects(
+    aspect.invoke('create', request, {
+      retry: { attempts: 2 }
+    }),
+    (error: any) => /non-replayable/.test(error.message)
+  )
 
   assert.strictEqual(fetchMock.mock.callCount(), 0)
 })
 
 it('creates a scoped parent span with a client span for each attempt', async () => {
-  fetchMock.mock.mockImplementationOnce(async () => new Response(null, { status: 503 }), fetchMock.mock.callCount())
-  fetchMock.mock.mockImplementationOnce(async () => new Response(null, { status: 204 }), fetchMock.mock.callCount() + 1)
+  fetchMock.mock.mockImplementationOnce(
+    async () => new Response(null, { status: 503 }),
+    fetchMock.mock.callCount()
+  )
+  fetchMock.mock.mockImplementationOnce(
+    async () => new Response(null, { status: 204 }),
+    fetchMock.mock.callCount() + 1
+  )
 
   await aspect.invoke('update', 'https://example.com/items?token=secret', {
     method: 'PUT',
@@ -257,14 +322,21 @@ it('creates a scoped parent span with a client span for each attempt', async () 
       }
     }
   ])
-  assert.ok(!(JSON.stringify(spans).includes('token=secret')))
+  assert.ok(!JSON.stringify(spans).includes('token=secret'))
 })
 
 it('marks the span as failed after a final network error', async () => {
-  fetchMock.mock.mockImplementation(async () => { throw new Error('unavailable') })
+  fetchMock.mock.mockImplementation(async () => {
+    throw new Error('unavailable')
+  })
 
-  await assert.rejects(aspect.invoke('get', 'https://example.com'), (error: any) => /unavailable/.test(error.message))
+  await assert.rejects(aspect.invoke('get', 'https://example.com'), (error: any) =>
+    /unavailable/.test(error.message)
+  )
 
   assert.strictEqual(spans.length, 2)
-  assert.strictEqual(spans.every((span) => span.status === 'error'), true)
+  assert.strictEqual(
+    spans.every((span) => span.status === 'error'),
+    true
+  )
 })

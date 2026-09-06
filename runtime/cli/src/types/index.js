@@ -14,9 +14,11 @@ import { module as contextModule } from './context.js'
  * @param {string} [environment]
  * @returns {Promise<string[]>} what was written
  */
-export async function types (root, environment) {
+export async function types(root, environment) {
   const context = await normalize(root, environment)
-  const own = new Map(context.components.map((manifest) => [manifest.locator.id, manifest]))
+  const own = new Map(
+    context.components.map((manifest) => [manifest.locator.id, manifest])
+  )
   const contributed = extras(context, own)
 
   const module = context.name
@@ -38,8 +40,9 @@ export async function types (root, environment) {
     const specifier = SCOPE + '/' + basename(manifest.path)
     const rest = remainder(puts.get(manifest), shared)
 
-    written.push(...await surface(join(manifest.path, TYPES),
-      component(manifest, module, rest)))
+    written.push(
+      ...(await surface(join(manifest.path, TYPES), component(manifest, module, rest)))
+    )
 
     await declare(manifest.path, specifier, join(TYPES, 'index.d.ts'))
 
@@ -66,7 +69,7 @@ export async function types (root, environment) {
     written.push(join(directory, REMOTE, file))
   }
 
-  written.push(...await surface(directory, contextModule(context, referenced, shared)))
+  written.push(...(await surface(directory, contextModule(context, referenced, shared))))
 
   await declare(directory, module, 'index.d.ts')
 
@@ -81,14 +84,18 @@ export async function types (root, environment) {
  * @param {string[]} paths
  * @returns {Promise<string[]>}
  */
-export async function components (paths) {
+export async function components(paths) {
   const written = []
 
   for (const path of paths) {
     const manifest = await load(path)
 
-    written.push(...await surface(join(path, TYPES),
-      component(manifest, undefined, await contributions(manifest.extensions))))
+    written.push(
+      ...(await surface(
+        join(path, TYPES),
+        component(manifest, undefined, await contributions(manifest.extensions))
+      ))
+    )
   }
 
   return written
@@ -100,7 +107,7 @@ export async function components (paths) {
  *
  * @param {Array<{ types: Record<string, string>, imports: Record<string, Set<string>> }>} all
  */
-function common (all) {
+function common(all) {
   const types = {}
   const imports = {}
 
@@ -122,7 +129,7 @@ function common (all) {
 }
 
 /** What a component has of its own, once the shared Context has taken what they all have. */
-function remainder (one, shared) {
+function remainder(one, shared) {
   const types = {}
 
   for (const [key, type] of Object.entries(one.types))
@@ -140,7 +147,7 @@ function remainder (one, shared) {
  * @param {string} generated
  * @returns {Promise<string[]>}
  */
-async function surface (directory, generated) {
+async function surface(directory, generated) {
   const toa = join(directory, 'toa.d.ts')
   const index = join(directory, 'index.d.ts')
 
@@ -170,7 +177,7 @@ const OWN = `export * from './toa.d.ts'
  * @param {toa.norm.Component} manifest
  * @returns {string | undefined}
  */
-function published (manifest) {
+function published(manifest) {
   if (!existsSync(join(manifest.path, TYPES, 'index.d.ts'))) return undefined
 
   let directory = manifest.path
@@ -199,7 +206,7 @@ function published (manifest) {
  * The components the Context resolves that it does not itself declare — what its extensions
  * contribute. They are reachable through the dependencies rather than `components`.
  */
-function extras (context, own) {
+function extras(context, own) {
   const found = new Map()
 
   for (const dependencies of Object.values(context.dependencies ?? {}))
@@ -215,7 +222,7 @@ function extras (context, own) {
 }
 
 /** Toa owns how a generated module is named, so it states it. */
-async function declare (directory, name, entry = 'types.ts') {
+async function declare(directory, name, entry = 'types.ts') {
   const path = join(directory, 'package.json')
 
   let declared = {}
@@ -226,13 +233,21 @@ async function declare (directory, name, entry = 'types.ts') {
 
   if (declared.name === name && declared.types === entry) return
 
-  await writeFile(path, JSON.stringify({
-    ...declared,
-    name,
-    type: declared.type ?? 'module',
-    private: declared.private ?? true,
-    types: entry
-  }, null, 2) + '\n', 'utf8')
+  await writeFile(
+    path,
+    JSON.stringify(
+      {
+        ...declared,
+        name,
+        type: declared.type ?? 'module',
+        private: declared.private ?? true,
+        types: entry
+      },
+      null,
+      2
+    ) + '\n',
+    'utf8'
+  )
 }
 
 const TYPES = 'types'

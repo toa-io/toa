@@ -15,9 +15,9 @@ consumed takes no transaction, and its `{collection}_outbox` is never created. S
 ```yaml
 # context.toa.yaml
 outbox:
-  interval: 5000      # the cycle, in milliseconds
-  batch: 200          # rows one read brings back
-  retention: 86400    # seconds a published row is kept
+  interval: 5000 # the cycle, in milliseconds
+  batch: 200 # rows one read brings back
+  retention: 86400 # seconds a published row is kept
 ```
 
 Recovery needs [`atomicity`](/connectors/atomicity) as well. Without it rows are written and
@@ -80,11 +80,11 @@ swept by B, whose cycle is unsynchronised with A's.
 gap = interval * K
 ```
 
-| | | |
-|---|---|---|
-| `interval` | 5 s | One cycle reads, publishes and marks. |
-| `K` | 3 | Two cycles of separation across a handover, plus one of margin. |
-| `gap` | 15 s | Derived. Recovery after a failed publication takes `gap + [0, interval]`. |
+|            |      |                                                                           |
+| ---------- | ---- | ------------------------------------------------------------------------- |
+| `interval` | 5 s  | One cycle reads, publishes and marks.                                     |
+| `K`        | 3    | Two cycles of separation across a handover, plus one of margin.           |
+| `gap`      | 15 s | Derived. Recovery after a failed publication takes `gap + [0, interval]`. |
 
 Clock skew between the writing replica and whoever inherits its lanes costs an early read, which
 is a duplicate, or a late one, which is delay.
@@ -105,15 +105,17 @@ again. Every row of a batch is attempted; there is no attempt counter and no bac
 ## The event
 
 ```js
-{ origin, state, trailers, input }
+{
+  ;(origin, state, trailers, input)
+}
 ```
 
-| | |
-|---|---|
-| `origin` | the pre-image; `null` when the entity did not exist |
-| `state` | the new record |
-| `trailers` | what the algorithm wrote into `state._trailers` |
-| `input` | the operation's input |
+|            |                                                     |
+| ---------- | --------------------------------------------------- |
+| `origin`   | the pre-image; `null` when the entity did not exist |
+| `state`    | the new record                                      |
+| `trailers` | what the algorithm wrote into `state._trailers`     |
+| `input`    | the operation's input                               |
 
 An assignment carries `origin` too, and no `trailers` — there is no entity object to hold them.
 
@@ -130,7 +132,7 @@ BSON limit.
 The collection is a change log and a dead-letter queue at once.
 
 ```js
-db.tea_pots_outbox.find({ published: false }).sort({ _id: 1 })   // what is stuck, oldest first
+db.tea_pots_outbox.find({ published: false }).sort({ _id: 1 }) // what is stuck, oldest first
 ```
 
 A published row carries `publishedAt` and expires by TTL. An unpublished row has no `publishedAt`,
@@ -141,13 +143,13 @@ Two indexes: `{ lane, pending }` over unpublished rows, and a TTL index over `pu
 
 ## Development
 
-| | |
-|---|---|
-| `TOA_OUTBOX_DEFER=1` | Skip immediate publication; only the pump delivers. Announced at startup. |
-| `TOA_OUTBOX_INTERVAL` | The cycle in milliseconds, from `outbox.interval`. `gap` follows from it. The feature suite runs at 100 ms. |
-| `TOA_OUTBOX_BATCH` | Rows one read brings back, from `outbox.batch`. |
-| `TOA_EVENTS_<NS>_<NAME>` | The component's events that something consumes, space-separated. Absent, every event is published. |
-| `TOA_ATOMICITY_INTERVAL` | The registration interval, from `atomicity.interval`. The feature suite runs at 150 ms. |
+|                          |                                                                                                             |
+| ------------------------ | ----------------------------------------------------------------------------------------------------------- |
+| `TOA_OUTBOX_DEFER=1`     | Skip immediate publication; only the pump delivers. Announced at startup.                                   |
+| `TOA_OUTBOX_INTERVAL`    | The cycle in milliseconds, from `outbox.interval`. `gap` follows from it. The feature suite runs at 100 ms. |
+| `TOA_OUTBOX_BATCH`       | Rows one read brings back, from `outbox.batch`.                                                             |
+| `TOA_EVENTS_<NS>_<NAME>` | The component's events that something consumes, space-separated. Absent, every event is published.          |
+| `TOA_ATOMICITY_INTERVAL` | The registration interval, from `atomicity.interval`. The feature suite runs at 150 ms.                     |
 
 Seeding a row directly is the post-crash state, which is how `features/events/outbox.feature`
 tests recovery without a crash. Those scenarios need `atomicity` running.

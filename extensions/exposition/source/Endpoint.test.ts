@@ -10,7 +10,7 @@ import type { Parameter } from './RTD/index.js'
  * What `Remote.explain` answers is the contract's own object, the same one every time and
  * on every route that mounts the endpoint — which is what this stands in for.
  */
-function remote (): Promise<Remote> {
+function remote(): Promise<Remote> {
   const explanation = {
     input: {
       type: 'object',

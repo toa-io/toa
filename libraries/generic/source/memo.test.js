@@ -6,7 +6,7 @@ import { memo } from './index.js'
 it('should memoize returned values', async () => {
   let calls = 0
 
-  function inc () {
+  function inc() {
     calls++
 
     return calls

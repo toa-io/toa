@@ -21,4 +21,6 @@ export const test = (statement, name) => {
   return declaration && match
 }
 
-const pattern = new RegExp('^(?<scope>Objects?|Changeset)?(?<type>Transition|Observation|Assignment|Computation|Effect)Factory$')
+const pattern = new RegExp(
+  '^(?<scope>Objects?|Changeset)?(?<type>Transition|Observation|Assignment|Computation|Effect)Factory$'
+)

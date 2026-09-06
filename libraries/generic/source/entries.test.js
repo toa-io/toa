@@ -24,5 +24,8 @@ it('should return symbols', async () => {
   const object = { [key]: generate(), [sym]: value }
   const output = entries(object)
 
-  assert.deepStrictEqual(output, [[key, object[key]], [sym, value]])
+  assert.deepStrictEqual(output, [
+    [key, object[key]],
+    [sym, value]
+  ])
 })

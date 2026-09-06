@@ -1,4 +1,4 @@
-export function transition (input: Input, object: Entity): Entity {
+export function transition(input: Input, object: Entity): Entity {
   object.banned = input.banned
   object.originator = input.originator.id
   object.comment = input.comment

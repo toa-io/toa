@@ -22,7 +22,7 @@ interface PluralForms {
 type Plural = Translation<PluralForms>
 
 const selected = value<Locale | undefined>({
-  persist: 'intl:selected',
+  persist: 'intl:selected'
 })
 
 const locale = derived([account, selected], ([$account, $selected]) => {
@@ -48,8 +48,7 @@ function preferred(): Locale | null {
 }
 
 export function acceptable(header: string | null): Locale {
-  if (header === null)
-    return defaultLocale
+  if (header === null) return defaultLocale
 
   const negotiator = new Negotiator({ headers: { 'accept-language': header } })
   const languages = negotiator.languages(locales) as Locale[]

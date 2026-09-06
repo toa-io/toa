@@ -19,37 +19,41 @@ export interface Consumer extends Connector {
    * `false` says this binding does not carry the endpoint, and the transmission tries the
    * next one. A `Readable` is a streamed reply.
    */
-  request (request: Request): Promise<Reply | Readable | false>
+  request(request: Request): Promise<Reply | Readable | false>
 
   /**
    * Absent where the binding cannot enqueue — a transmission skips a binding that offers
    * no `task` rather than failing over it.
    */
-  task? (request: Request): Promise<void>
+  task?(request: Request): Promise<void>
 }
 
 export interface Emitter extends Connector {
-  emit (message: Message): Promise<void>
+  emit(message: Message): Promise<void>
 }
 
 export interface Broadcast<L extends string = string> extends Connector {
-  transmit<T> (label: L, payload: T): Promise<void>
+  transmit<T>(label: L, payload: T): Promise<void>
 
-  receive<T> (label: L, callback: (payload: T) => void | Promise<void>): Promise<void>
+  receive<T>(label: L, callback: (payload: T) => void | Promise<void>): Promise<void>
 }
 
 export interface Factory {
-  producer (locator: Locator, endpoints: string[], component: Component): Connector
+  producer(locator: Locator, endpoints: string[], component: Component): Connector
 
-  consumer (locator: Locator, endpoint: string): Consumer
+  consumer(locator: Locator, endpoint: string): Consumer
 
   /** only the binding an event declares is asked for one */
-  emitter? (locator: Locator, label: string): Emitter
+  emitter?(locator: Locator, label: string): Emitter
 
   /** `group` is absent for an exclusive subscription */
   // eslint-disable-next-line max-params
-  receiver? (locator: Locator, label: string, group: string | undefined,
-    receiver: Receiver): Connector
+  receiver?(
+    locator: Locator,
+    label: string,
+    group: string | undefined,
+    receiver: Receiver
+  ): Connector
 
-  broadcast? (name: string, group?: string): Broadcast
+  broadcast?(name: string, group?: string): Broadcast
 }

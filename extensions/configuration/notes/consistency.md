@@ -33,15 +33,15 @@ single moment when configuration can be safely changed. Thus, it must be a proce
 
 1. Configuration updates are always backward compatible.
 2. Configuration updates are always being delivered before algorithm updates.
-    1. Including federated deployment, that is: first deliver configuration to all facilities (data
-       centers, zones,
-       whatever), then deliver algorithm updates.
+   1. Including federated deployment, that is: first deliver configuration to all facilities (data
+      centers, zones,
+      whatever), then deliver algorithm updates.
 3. Configuration storage and access solution must provide the transactional updates, that is if any
    arbitrary
    participant observed a certain configuration version, then any other participant is guaranteed to
    be able to
    subsequently observe that version.
-    1. Including federated deployment[^1].
+   1. Including federated deployment[^1].
 
 ## Solution
 
@@ -62,8 +62,9 @@ However, an attempt
 will be made to implement this solution with a certain
 constraints [#147](https://github.com/toa-io/toa/issues/147).
 
-[^1]: Since it looks like there is no reasonable way to provide this kind of guarantee without
-significant performance
-and/or availability impact, it may be implemented as a mechanism with read retries and with a
-timeout considered as
-“enough for the most of fail-over scenarios”.
+[^1]:
+    Since it looks like there is no reasonable way to provide this kind of guarantee without
+    significant performance
+    and/or availability impact, it may be implemented as a mechanism with read retries and with a
+    timeout considered as
+    “enough for the most of fail-over scenarios”.

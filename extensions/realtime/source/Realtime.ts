@@ -7,7 +7,7 @@ export class Realtime extends Connector {
   private readonly discovery: () => Promise<Component>
   private streams: Component | null = null
 
-  public constructor (routes: Routes, discovery: () => Promise<Component>) {
+  public constructor(routes: Routes, discovery: () => Promise<Component>) {
     super()
 
     this.discovery = discovery
@@ -15,7 +15,7 @@ export class Realtime extends Connector {
     routes.events.on('data', this.push.bind(this))
   }
 
-  protected override async open (): Promise<void> {
+  protected override async open(): Promise<void> {
     // the lookup belongs here, not in the constructor: dependencies connect before
     // open, so the composition that serves realtime.streams is up to answer it. Asked
     // any earlier the lookup goes unanswered, and it waits without a bound.
@@ -27,19 +27,20 @@ export class Realtime extends Connector {
     console.info('Realtime service started')
   }
 
-  protected override dispose (): void {
+  protected override dispose(): void {
     console.info('Realtime service shutdown complete')
   }
 
-  private push ({ telemetry, ...event }: Push): void {
-    const processing = telemetry === null
-      ? this.deliver(event)
-      : run(telemetry, async () => await this.deliver(event))
+  private push({ telemetry, ...event }: Push): void {
+    const processing =
+      telemetry === null
+        ? this.deliver(event)
+        : run(telemetry, async () => await this.deliver(event))
 
     void processing.catch((error) => console.error('Realtime push failed', error))
   }
 
-  private async deliver (event: Omit<Push, 'telemetry'>): Promise<void> {
+  private async deliver(event: Omit<Push, 'telemetry'>): Promise<void> {
     /*
      * The delivery span is created on behalf of the messaging destination
      * (same as the core Receiver), so that service graphs display the fan-out:
@@ -59,8 +60,12 @@ export class Realtime extends Connector {
       attributes: { 'messaging.destination.name': event.event }
     }
 
-    await console.span(delivery, async () => await console.span(options, async () => {
-      await this.streams?.invoke('push', { input: event })
-    }))
+    await console.span(
+      delivery,
+      async () =>
+        await console.span(options, async () => {
+          await this.streams?.invoke('push', { input: event })
+        })
+    )
   }
 }

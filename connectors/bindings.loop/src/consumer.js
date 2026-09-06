@@ -5,7 +5,7 @@ export class Consumer extends Connector {
   #locator
   #endpoint
 
-  constructor (bindings, locator, endpoint) {
+  constructor(bindings, locator, endpoint) {
     super()
 
     this.#bindings = bindings
@@ -13,7 +13,7 @@ export class Consumer extends Connector {
     this.#endpoint = endpoint
   }
 
-  async request (request) {
+  async request(request) {
     const invoke = this.#bindings[this.#locator.id]?.[this.#endpoint]
 
     if (invoke === undefined) return false

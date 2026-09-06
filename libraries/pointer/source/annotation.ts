@@ -4,7 +4,7 @@ import { shards } from '@toa.io/generic'
 import type { Schema } from '@toa.io/schemas'
 import type { URIMap } from './Deployment.js'
 
-export function normalize (declaration: Declaration): URIMap {
+export function normalize(declaration: Declaration): URIMap {
   const map: URIMap = {}
 
   if (declaration === undefined) return map
@@ -21,27 +21,31 @@ export function normalize (declaration: Declaration): URIMap {
   return map
 }
 
-function format (values: string[]): string[] {
+function format(values: string[]): string[] {
   return values.map(shards).flat()
 }
 
-function validate (map: URIMap): void {
+function validate(map: URIMap): void {
   schema.validate(map)
 
-  for (const uris of Object.values(map))
-    for (const uri of uris)
-      checkCredentials(uri)
+  for (const uris of Object.values(map)) for (const uri of uris) checkCredentials(uri)
 }
 
-function checkCredentials (uri: string): void {
+function checkCredentials(uri: string): void {
   const url = new URL(uri)
 
   if (url.username !== '' || url.password !== '')
-    throw new Error(`Pointer URI '${uri}' must not contain credentials. ` +
-      'Please refer to the "Credentials" section of the documentation for more information.')
+    throw new Error(
+      `Pointer URI '${uri}' must not contain credentials. ` +
+        'Please refer to the "Credentials" section of the documentation for more information.'
+    )
 }
 
 const path = resolve(import.meta.dirname, '../schemas/urimap.cos.yaml')
 const schema: Schema<URIMap> = schemas.schema(path)
 
-export type Declaration = string | string[] | Record<string, string | string[]> | undefined
+export type Declaration =
+  | string
+  | string[]
+  | Record<string, string | string[]>
+  | undefined

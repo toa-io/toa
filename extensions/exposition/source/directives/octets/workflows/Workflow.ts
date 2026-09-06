@@ -10,19 +10,22 @@ export class Workflow {
   private readonly units: Unit[]
   private readonly remotes: Remotes
 
-  public constructor (units: Unit[] | Unit, remotes: Remotes) {
-    this.units = match<Unit[]>(units,
-      Array, (units: Unit[]) => units,
-      Object, (unit: Unit) => [unit])
+  public constructor(units: Unit[] | Unit, remotes: Remotes) {
+    this.units = match<Unit[]>(
+      units,
+      Array,
+      (units: Unit[]) => units,
+      Object,
+      (unit: Unit) => [unit]
+    )
 
     this.remotes = remotes
   }
 
-  public execute (location: Location, entry: Entry, params: Parameter[]): Execution {
+  public execute(location: Location, entry: Entry, params: Parameter[]): Execution {
     const parameters: Record<string, string> = {}
 
-    for (const { name, value } of params)
-      parameters[name] = value
+    for (const { name, value } of params) parameters[name] = value
 
     const context: Context = {
       authority: location.authority,

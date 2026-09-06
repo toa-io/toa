@@ -12,7 +12,10 @@ describe('mcp:tool', () => {
   })
 
   it('should take a title beside the description', () => {
-    const tool = new Tool({ title: 'Hot pots', description: 'The pots that are hot.' }, '/pots')
+    const tool = new Tool(
+      { title: 'Hot pots', description: 'The pots that are hot.' },
+      '/pots'
+    )
 
     assert.strictEqual(tool.title, 'Hot pots')
     assert.strictEqual(tool.description, 'The pots that are hot.')
@@ -23,13 +26,17 @@ describe('mcp:tool', () => {
   })
 
   it('should not accept an empty title', () => {
-    assert.throws(() => new Tool({ title: ' ', description: 'A pot.' }, '/pots'),
-      /a title cannot be empty/)
+    assert.throws(
+      () => new Tool({ title: ' ', description: 'A pot.' }, '/pots'),
+      /a title cannot be empty/
+    )
   })
 
   it('should not accept what it does not know', () => {
-    assert.throws(() => new Tool({ description: 'A pot.', name: 'pots' }, '/pots'),
-      /unknown 'name'/)
+    assert.throws(
+      () => new Tool({ description: 'A pot.', name: 'pots' }, '/pots'),
+      /unknown 'name'/
+    )
   })
 
   it('should not accept an empty description', () => {
@@ -73,8 +80,11 @@ describe('mcp:tool inheritance', () => {
   })
 
   it('should describe a method with what the route states', () => {
-    const described = family.explain([new Tool('What the route is.', '/pots')], null as never,
-      { description: 'What the operation is.' })
+    const described = family.explain(
+      [new Tool('What the route is.', '/pots')],
+      null as never,
+      { description: 'What the operation is.' }
+    )
 
     assert.strictEqual(described.description, 'What the route is.')
   })
@@ -84,7 +94,9 @@ describe('mcp:tool inheritance', () => {
   })
 
   it('should refuse a directive it does not know', () => {
-    assert.throws(() => family.create('resource', 'A pot.', null, '/pots'),
-      /Unknown directive: mcp:resource/)
+    assert.throws(
+      () => family.create('resource', 'A pot.', null, '/pots'),
+      /Unknown directive: mcp:resource/
+    )
   })
 })

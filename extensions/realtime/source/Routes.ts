@@ -10,25 +10,28 @@ export class Routes extends Connector {
 
   private readonly host: Host
 
-  public constructor (host: Host) {
+  public constructor(host: Host) {
     super()
 
     this.host = host
   }
 
-  private static read (): Route[] {
+  private static read(): Route[] {
     if (process.env.TOA_REALTIME === undefined)
       throw new Error('TOA_REALTIME is not defined')
 
     return JSON.parse(process.env.TOA_REALTIME) as Route[]
   }
 
-  public override async open (): Promise<void> {
+  public override async open(): Promise<void> {
     const routes = Routes.read()
     const creating = []
 
     for (const { event, properties, expose } of routes) {
-      const consumer = this.host.receive(event, new Receiver({ event, properties, stream: this.events, expose }))
+      const consumer = this.host.receive(
+        event,
+        new Receiver({ event, properties, stream: this.events, expose })
+      )
 
       creating.push(consumer)
     }
@@ -44,18 +47,17 @@ export class Routes extends Connector {
     console.info('Event sources connected', { count: creating.length })
   }
 
-  public override async close (): Promise<void> {
+  public override async close(): Promise<void> {
     console.info('Event sources disconnected')
   }
 }
 
 class Events extends Readable {
-  public constructor () {
+  public constructor() {
     super({ objectMode: true })
   }
 
-  public override _read (): void {
-  }
+  public override _read(): void {}
 }
 
 export type { Route }

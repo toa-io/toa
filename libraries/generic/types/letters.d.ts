@@ -1,1 +1,1 @@
-export function capitalize (string: string): string
+export function capitalize(string: string): string

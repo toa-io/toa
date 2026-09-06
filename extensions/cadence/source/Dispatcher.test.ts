@@ -26,11 +26,20 @@ interface Row {
   request: object | null
 }
 
-const row = (id: string, due: number, lane = 0): Row =>
-  ({ id, lane, due, endpoint: 'tea.pots.transit', request: { input: { id } } })
+const row = (id: string, due: number, lane = 0): Row => ({
+  id,
+  lane,
+  due,
+  endpoint: 'tea.pots.transit',
+  request: { input: { id } }
+})
 
-const connector = (properties: object): any =>
-  ({ ...properties, link: mock.fn(), connect: async () => {}, disconnect: async () => {} })
+const connector = (properties: object): any => ({
+  ...properties,
+  link: mock.fn(),
+  connect: async () => {},
+  disconnect: async () => {}
+})
 
 const advance = async (ms: number): Promise<void> => {
   mock.timers.tick(ms)
@@ -39,20 +48,20 @@ const advance = async (ms: number): Promise<void> => {
 }
 
 /** the query one scan made */
-const reads = (): any[] => metronome.invoke.mock.calls
-  .filter((call) => call.arguments[0] === 'enumerate')
-  .map((call) => call.arguments[1].query)
+const reads = (): any[] =>
+  metronome.invoke.mock.calls
+    .filter((call) => call.arguments[0] === 'enumerate')
+    .map((call) => call.arguments[1].query)
 
 /** what has been settled, flattened */
-const settled = (): string[] => metronome.invoke.mock.calls
-  .filter((call) => call.arguments[0] === 'settle')
-  .flatMap((call) => call.arguments[1].query.ids as string[])
+const settled = (): string[] =>
+  metronome.invoke.mock.calls
+    .filter((call) => call.arguments[0] === 'settle')
+    .flatMap((call) => call.arguments[1].query.ids as string[])
 
 const range = (total: number): number[] => Array.from({ length: total }, (_, i) => i)
 
-const create = (): Dispatcher =>
-  new Dispatcher(metronome, () => target, atom)
-
+const create = (): Dispatcher => new Dispatcher(metronome, () => target, atom)
 
 beforeEach(() => {
   process.env.TOA_CADENCE_DISCRETENESS = String(INTERVAL)
@@ -62,7 +71,9 @@ beforeEach(() => {
   listeners = []
 
   metronome = connector({
-    invoke: mock.fn<Invoke>(async (endpoint: string) => endpoint === 'enumerate' ? rows : null)
+    invoke: mock.fn<Invoke>(async (endpoint: string) =>
+      endpoint === 'enumerate' ? rows : null
+    )
   })
 
   target = connector({ invoke: mock.fn<Invoke>(async () => null) })
@@ -73,7 +84,9 @@ beforeEach(() => {
       listeners.push(listener)
       listener()
 
-      return () => { listeners = listeners.filter((one) => one !== listener) }
+      return () => {
+        listeners = listeners.filter((one) => one !== listener)
+      }
     }
   })
 })
@@ -92,8 +105,10 @@ it('should read what is due within the interval, in the lanes it owns', async ()
   const [first] = reads()
 
   // the first scan is the one the subscription runs as it is added, at time zero
-  assert.strictEqual(first.criteria,
-    `lane=in=(${range(LANES).join(',')});due<${INTERVAL};expires>0`)
+  assert.strictEqual(
+    first.criteria,
+    `lane=in=(${range(LANES).join(',')});due<${INTERVAL};expires>0`
+  )
   assert.deepStrictEqual(first.sort, ['due:asc'])
 })
 
@@ -136,8 +151,11 @@ it('should call one whose time has already passed at once', async () => {
   await dispatcher.connect()
   await advance(0)
 
-  assert.strictEqual(target.invoke.mock.callCount(), 1,
-    'a scan reads what is overdue along with what is coming')
+  assert.strictEqual(
+    target.invoke.mock.callCount(),
+    1,
+    'a scan reads what is overdue along with what is coming'
+  )
 })
 
 it('should arm a row once, however often a scan reads it', async () => {
@@ -159,8 +177,12 @@ it('should not arm a row again while its call is in flight', async () => {
   let release: () => void = () => {}
 
   rows = [row('a', 10)]
-  target.invoke.mock.mockImplementation(async () =>
-    await new Promise<void>((resolve) => { release = resolve }))
+  target.invoke.mock.mockImplementation(
+    async () =>
+      await new Promise<void>((resolve) => {
+        release = resolve
+      })
+  )
 
   const dispatcher = create()
 
@@ -175,7 +197,11 @@ it('should not arm a row again while its call is in flight', async () => {
   // far enough for anything that scan armed to have fired
   await advance(INTERVAL)
 
-  assert.strictEqual(target.invoke.mock.callCount(), 1, 'and does not send it a second time')
+  assert.strictEqual(
+    target.invoke.mock.callCount(),
+    1,
+    'and does not send it a second time'
+  )
 
   release()
   await advance(0)
@@ -199,19 +225,29 @@ it('should settle what it has called', async () => {
 
 it('should settle a row whose call failed, and keep dispatching', async () => {
   rows = [row('a', 10), row('b', 20)]
-  target.invoke.mock.mockImplementationOnce(async () => { throw new Error('nope') })
+  target.invoke.mock.mockImplementationOnce(async () => {
+    throw new Error('nope')
+  })
 
   const dispatcher = create()
 
   await dispatcher.connect()
   await advance(20)
 
-  assert.strictEqual(target.invoke.mock.callCount(), 2, 'the one after it is still called')
+  assert.strictEqual(
+    target.invoke.mock.callCount(),
+    2,
+    'the one after it is still called'
+  )
 
   rows = []
   await advance(INTERVAL)
 
-  assert.deepStrictEqual(settled().sort(), ['a', 'b'], 'and the one that failed is settled')
+  assert.deepStrictEqual(
+    settled().sort(),
+    ['a', 'b'],
+    'and the one that failed is settled'
+  )
 })
 
 it('should drop timers for lanes it no longer owns', async () => {
@@ -229,7 +265,7 @@ it('should drop timers for lanes it no longer owns', async () => {
 
   await advance(20_000)
 
-  assert.strictEqual(target.invoke.mock.callCount(), 0, 'lane 7 is somebody else\'s now')
+  assert.strictEqual(target.invoke.mock.callCount(), 0, "lane 7 is somebody else's now")
 })
 
 it('should drop everything it holds when it owns nothing', async () => {
@@ -247,8 +283,11 @@ it('should drop everything it holds when it owns nothing', async () => {
 
   await advance(20_000)
 
-  assert.strictEqual(target.invoke.mock.callCount(), 0,
-    'whoever holds lane 7 now is the one to make that call')
+  assert.strictEqual(
+    target.invoke.mock.callCount(),
+    0,
+    'whoever holds lane 7 now is the one to make that call'
+  )
 })
 
 it('should scan at once when what it owns changes', async () => {

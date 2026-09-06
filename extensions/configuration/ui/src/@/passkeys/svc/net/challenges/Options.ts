@@ -5,7 +5,10 @@ interface CommonOptions {
 }
 
 export interface CreationOptions extends CommonOptions {
-  authenticatorSelection?: Pick<AuthenticatorSelectionCriteria, 'userVerification' | 'residentKey'>
+  authenticatorSelection?: Pick<
+    AuthenticatorSelectionCriteria,
+    'userVerification' | 'residentKey'
+  >
   pubKeyCredParams: PublicKeyCredentialParameters[]
   excludeCredentials: KeyDescriptor[]
 }

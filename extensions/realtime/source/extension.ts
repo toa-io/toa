@@ -5,13 +5,15 @@ import type { Dependency, Instances, Resources, Service } from '@toa.io/operatio
 export const standalone = true
 export { components } from './Composition.js'
 
-export function deployment (instances: Instances<Declaration>, annotation?: Declaration & Annotation): Dependency {
+export function deployment(
+  instances: Instances<Declaration>,
+  annotation?: Declaration & Annotation
+): Dependency {
   const routes = []
   const { resources, ...annotatedRoutes } = annotation ?? {}
   const labels = components().labels
 
-  if (annotatedRoutes !== undefined)
-    routes.push(...parse(annotatedRoutes))
+  if (annotatedRoutes !== undefined) routes.push(...parse(annotatedRoutes))
 
   for (const instance of instances) {
     const completed: Declaration = {}
@@ -29,19 +31,22 @@ export function deployment (instances: Instances<Declaration>, annotation?: Decl
     group: 'realtime',
     name: 'streams',
 
-    version: JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8')).version,
+    version: JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8'))
+      .version,
     components: labels,
     resources,
-    variables: [{
-      name: 'TOA_REALTIME',
-      value: JSON.stringify(routes)
-    }]
+    variables: [
+      {
+        name: 'TOA_REALTIME',
+        value: JSON.stringify(routes)
+      }
+    ]
   }
 
   return { services: [service], events: routes.map((route) => route.event) }
 }
 
-export function parse (declaration: Declaration): Route[] {
+export function parse(declaration: Declaration): Route[] {
   const routes: Route[] = []
 
   for (const [event, value] of Object.entries(declaration))
@@ -58,7 +63,7 @@ export function parse (declaration: Declaration): Route[] {
   return routes
 }
 
-function isObject (value: Entry): value is RouteDeclaration {
+function isObject(value: Entry): value is RouteDeclaration {
   return typeof value === 'object' && !Array.isArray(value)
 }
 

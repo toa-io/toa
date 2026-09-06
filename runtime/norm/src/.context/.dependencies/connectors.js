@@ -3,10 +3,10 @@ import { resolve } from 'node:path'
 export const connectors = (context, extracted) => {
   const connectors = {}
 
-  const components = (context.components === undefined
+  const components =
+    (context.components === undefined
       ? extracted
-      : context.components.concat(extracted)
-  ) ?? []
+      : context.components.concat(extracted)) ?? []
 
   for (const component of components) {
     if (component.entity !== undefined) {

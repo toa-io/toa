@@ -2,17 +2,16 @@
 
 /** @type {Record<import('./types').Locale, import('./types').Dictionary>} */
 export const dictionaries = {
-  "en-US": {
-    "native": "English",
-    "locale": "en-US",
-    "dir": "ltr",
-    "nav": {
-      "signout": "Sign out",
-      "filter": "Filter components"
+  'en-US': {
+    native: 'English',
+    locale: 'en-US',
+    dir: 'ltr',
+    nav: {
+      signout: 'Sign out',
+      filter: 'Filter components'
     }
   }
-};
+}
 
 /** @type {import('./types').Locale[]} */
-export const locales = ["en-US"];
-
+export const locales = ['en-US']

@@ -1,3 +1,4 @@
+@network
 Feature: Download external resources
 
   Scenario Outline: Download from trusted location defined as <type>

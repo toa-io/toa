@@ -6,5 +6,9 @@ export abstract class Directive {
   public readonly name = 'octets.' + this.constructor.name.toLowerCase()
   public abstract readonly targeted: boolean
 
-  public abstract apply (storage: string, input: Input, parameters: Parameter[]): Promise<io.Output>
+  public abstract apply(
+    storage: string,
+    input: Input,
+    parameters: Parameter[]
+  ): Promise<io.Output>
 }

@@ -6,14 +6,14 @@ export class Computation implements Operation {
   private federation: Federation = undefined as unknown as Federation
   private passkeys: Passkeys = undefined as unknown as Passkeys
 
-  public mount (context: Context): void {
+  public mount(context: Context): void {
     this.basic = context.remote.identity.basic
     this.federation = context.remote.identity.federation
 
     this.passkeys = context.remote.identity.passkeys
   }
 
-  public async execute (input: Input): Promise<Output> {
+  public async execute(input: Input): Promise<Output> {
     const request = { input }
 
     const [basic, federationObjects, passkeyObjects] = await Promise.all([
@@ -22,7 +22,11 @@ export class Computation implements Operation {
       this.passkeys.list(request)
     ])
 
-    const federation = federationObjects.map(({ id, iss, CREATED }) => ({ id, iss, CREATED }))
+    const federation = federationObjects.map(({ id, iss, CREATED }) => ({
+      id,
+      iss,
+      CREATED
+    }))
 
     const passkeys = passkeyObjects.map(({ id, aid, synced, label, CREATED }) => ({
       id,

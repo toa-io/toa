@@ -1,16 +1,4 @@
 {
-  "eslint.format.enable": true,
-  "jest.autoRun": "off",
-  "eslint.useESLintClass": true,
-  "eslint.options": {
-    "cache": true,
-    "reportUnusedDisableDirectives": "error"
-  },
-  "eslint.workingDirectories": [
-    {
-      "mode": "location"
-    }
-  ],
   "search.exclude": {
     "**/node_modules": true,
     "**/transpiled": true
@@ -24,15 +12,23 @@
   "cucumberautocomplete.strictGherkinValidation": true,
   "cucumberautocomplete.skipDocStringsFormat": true,
   "[typescript]": {
-    "editor.defaultFormatter": "dbaeumer.vscode-eslint",
+    "editor.defaultFormatter": "oxc.oxc-vscode",
+    "editor.formatOnSave": true,
     "editor.codeActionsOnSave": {
-      "source.fixAll": "explicit"
+      "source.fixAll.oxc": "explicit"
     }
   },
   "editor.rulers": [
-    100
+    90
   ],
   "cucumber_runner.features": [
     "**/features/**/*.feature"
-  ]
+  ],
+  "[javascript]": {
+    "editor.defaultFormatter": "oxc.oxc-vscode",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.fixAll.oxc": "explicit"
+    }
+  }
 }

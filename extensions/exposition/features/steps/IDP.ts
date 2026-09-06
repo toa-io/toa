@@ -20,12 +20,12 @@ export class IDP {
   private static authCodes = new Map<string, AuthCode>()
   private readonly captures: Captures
 
-  public constructor (captures: Captures) {
+  public constructor(captures: Captures) {
     this.captures = captures
   }
 
   @afterAll()
-  public static async stop (): Promise<void> {
+  public static async stop(): Promise<void> {
     if (this.server instanceof http.Server) {
       this.server.close()
       await once(this.server, 'close')
@@ -33,25 +33,27 @@ export class IDP {
   }
 
   @given(/local IDP is running/i)
-  public async start (): Promise<void> {
+  public async start(): Promise<void> {
     if (IDP.server instanceof http.Server) return
 
     // creating the key
-    const {
-      publicKey,
-      privateKey
-    } = await util.promisify(crypto.generateKeyPair)('rsa', {
-      modulusLength: 2048
-    })
+    const { publicKey, privateKey } = await util.promisify(crypto.generateKeyPair)(
+      'rsa',
+      {
+        modulusLength: 2048
+      }
+    )
 
     IDP.privateKey = privateKey
 
     const jwk = JSON.stringify({
-      keys: [{
-        use: 'sig',
-        alg: 'RS256',
-        ...publicKey.export({ format: 'jwk' })
-      }]
+      keys: [
+        {
+          use: 'sig',
+          alg: 'RS256',
+          ...publicKey.export({ format: 'jwk' })
+        }
+      ]
     })
 
     const JWK_ENDPOINT = '/.well-known/jwks'
@@ -71,78 +73,82 @@ export class IDP {
           response.end(jwk)
           break
 
-        case '/.well-known/openid-configuration': {
-          const openIdConfiguration = JSON.stringify({
-            issuer: IDP.issuer,
-            jwks_uri: IDP.issuer + JWK_ENDPOINT,
-            authorization_endpoint: IDP.issuer + AUTH_ENDPOINT,
-            token_endpoint: IDP.issuer + TOKEN_ENDPOINT,
-            response_types_supported: ['id_token', 'code'],
-            grant_types_supported: ['authorization_code'],
-            subject_types_supported: ['public'],
-            id_token_signing_alg_values_supported: ['RS256'],
-            scopes_supported: ['openid', 'email', 'profile']
-          })
+        case '/.well-known/openid-configuration':
+          {
+            const openIdConfiguration = JSON.stringify({
+              issuer: IDP.issuer,
+              jwks_uri: IDP.issuer + JWK_ENDPOINT,
+              authorization_endpoint: IDP.issuer + AUTH_ENDPOINT,
+              token_endpoint: IDP.issuer + TOKEN_ENDPOINT,
+              response_types_supported: ['id_token', 'code'],
+              grant_types_supported: ['authorization_code'],
+              subject_types_supported: ['public'],
+              id_token_signing_alg_values_supported: ['RS256'],
+              scopes_supported: ['openid', 'email', 'profile']
+            })
 
-          response.writeHead(200, {
-            'Content-Type': 'application/json',
-            'Cache-Control': 'public, max-age=3600',
-            'Content-Length': openIdConfiguration.length
-          })
+            response.writeHead(200, {
+              'Content-Type': 'application/json',
+              'Cache-Control': 'public, max-age=3600',
+              'Content-Length': openIdConfiguration.length
+            })
 
-          response.end(openIdConfiguration)
-        }
+            response.end(openIdConfiguration)
+          }
 
           break
 
-        case TOKEN_ENDPOINT: {
-          if (request.method !== 'POST') {
-            response.writeHead(405, { 'Content-Type': 'text/plain' })
-            response.end('Method not allowed')
+        case TOKEN_ENDPOINT:
+          {
+            if (request.method !== 'POST') {
+              response.writeHead(405, { 'Content-Type': 'text/plain' })
+              response.end('Method not allowed')
 
-            return
+              return
+            }
+
+            const buf = await buffer(request)
+            const body = buf.toString('utf8')
+
+            const params = new URLSearchParams(body)
+            const grantType = params.get('grant_type')!
+            const code = params.get('code')!
+            const redirectUri = params.get('redirect_uri')!
+            const clientId = params.get('client_id')!
+
+            if (grantType !== 'authorization_code' || !code || !clientId) {
+              response.writeHead(400, { 'Content-Type': 'application/json' })
+              response.end(JSON.stringify({ error: 'invalid_request' }))
+            }
+
+            const codeData = IDP.authCodes.get(code)
+
+            if (
+              !codeData ||
+              codeData.expiresAt < Date.now() ||
+              codeData.clientId !== clientId ||
+              (redirectUri && codeData.redirectUri !== redirectUri)
+            ) {
+              response.writeHead(400, { 'Content-Type': 'application/json' })
+              response.end(JSON.stringify({ error: 'invalid_grant' }))
+
+              return
+            }
+
+            const accessToken = crypto.randomBytes(32).toString('hex')
+            const idToken = this.generateIdToken(codeData.sub, codeData.email, clientId)
+
+            IDP.authCodes.delete(code)
+
+            response.writeHead(200, { 'Content-Type': 'application/json' }).end(
+              JSON.stringify({
+                access_token: accessToken,
+                token_type: 'Bearer',
+                id_token: idToken,
+                expires_in: 3600
+              })
+            )
           }
-
-          const buf = await buffer(request)
-          const body = buf.toString('utf8')
-
-          const params = new URLSearchParams(body)
-          const grantType = params.get('grant_type')!
-          const code = params.get('code')!
-          const redirectUri = params.get('redirect_uri')!
-          const clientId = params.get('client_id')!
-
-          if (grantType !== 'authorization_code' || !code || !clientId) {
-            response.writeHead(400, { 'Content-Type': 'application/json' })
-            response.end(JSON.stringify({ error: 'invalid_request' }))
-          }
-
-          const codeData = IDP.authCodes.get(code)
-
-          if (!codeData ||
-            codeData.expiresAt < Date.now() ||
-            codeData.clientId !== clientId ||
-            (redirectUri && codeData.redirectUri !== redirectUri)) {
-            response.writeHead(400, { 'Content-Type': 'application/json' })
-            response.end(JSON.stringify({ error: 'invalid_grant' }))
-
-            return
-          }
-
-          const accessToken = crypto.randomBytes(32).toString('hex')
-          const idToken = this.generateIdToken(codeData.sub, codeData.email, clientId)
-
-          IDP.authCodes.delete(code)
-
-          response
-            .writeHead(200, { 'Content-Type': 'application/json' })
-            .end(JSON.stringify({
-              access_token: accessToken,
-              token_type: 'Bearer',
-              id_token: idToken,
-              expires_in: 3600
-            }))
-        }
 
           break
 
@@ -163,7 +169,7 @@ export class IDP {
   }
 
   @given('the IDP token for {word} is issued')
-  public async issueToken (user: string): Promise<void> {
+  public async issueToken(user: string): Promise<void> {
     assert.ok(IDP.privateKey, 'IdP private key is not available')
 
     const jwt = [
@@ -183,7 +189,10 @@ export class IDP {
       .map((v) => Buffer.from(JSON.stringify(v)).toString('base64url'))
       .join('.')
 
-    const signature = crypto.createSign('RSA-SHA256').end(jwt).sign(IDP.privateKey, 'base64url')
+    const signature = crypto
+      .createSign('RSA-SHA256')
+      .end(jwt)
+      .sign(IDP.privateKey, 'base64url')
 
     const idToken = `${jwt}.${signature}`
 
@@ -191,7 +200,7 @@ export class IDP {
   }
 
   @given('the IDP random token is issued')
-  public async issueNewToken (): Promise<void> {
+  public async issueNewToken(): Promise<void> {
     assert.ok(IDP.privateKey, 'IdP private key is not available')
 
     const sub = Math.random().toString(36).substring(7)
@@ -213,7 +222,10 @@ export class IDP {
       .map((v) => Buffer.from(JSON.stringify(v)).toString('base64url'))
       .join('.')
 
-    const signature = crypto.createSign('RSA-SHA256').end(jwt).sign(IDP.privateKey, 'base64url')
+    const signature = crypto
+      .createSign('RSA-SHA256')
+      .end(jwt)
+      .sign(IDP.privateKey, 'base64url')
 
     const idToken = `${jwt}.${signature}`
 
@@ -223,7 +235,11 @@ export class IDP {
   }
 
   @given('the IDP {word} token for {word} is issued with following secret:')
-  public async issueSymmetricToken (alg: string, user: string, secret: string): Promise<void> {
+  public async issueSymmetricToken(
+    alg: string,
+    user: string,
+    secret: string
+  ): Promise<void> {
     const jwt = [
       {
         typ: 'JWT',
@@ -240,7 +256,8 @@ export class IDP {
       .map((v) => Buffer.from(JSON.stringify(v)).toString('base64url'))
       .join('.')
 
-    const signature = crypto.createHmac(alg.replace(/^HS(\d{3})$/, 'sha$1'), secret)
+    const signature = crypto
+      .createHmac(alg.replace(/^HS(\d{3})$/, 'sha$1'), secret)
       .update(jwt)
       .digest('base64url')
 
@@ -250,7 +267,7 @@ export class IDP {
   }
 
   @given('ID token with jti is issued for {word}')
-  public async issueTokenWithJti (user: string): Promise<void> {
+  public async issueTokenWithJti(user: string): Promise<void> {
     assert.ok(IDP.privateKey, 'IdP private key is not available')
 
     const jwt = [
@@ -271,7 +288,10 @@ export class IDP {
       .map((v) => Buffer.from(JSON.stringify(v)).toString('base64url'))
       .join('.')
 
-    const signature = crypto.createSign('RSA-SHA256').end(jwt).sign(IDP.privateKey, 'base64url')
+    const signature = crypto
+      .createSign('RSA-SHA256')
+      .end(jwt)
+      .sign(IDP.privateKey, 'base64url')
 
     const idToken = `${jwt}.${signature}`
 
@@ -279,7 +299,7 @@ export class IDP {
   }
 
   @given('auth code for {word} is issued for {word}')
-  public async issueAuthCode (user: string, redirectUri: string): Promise<void> {
+  public async issueAuthCode(user: string, redirectUri: string): Promise<void> {
     const code = crypto.randomBytes(16).toString('hex')
     const email = user + '@test.local'
     const clientId = 'nex'
@@ -300,7 +320,7 @@ export class IDP {
     this.captures.set(`${user}.code_credentials`, base64)
   }
 
-  private generateIdToken (sub: string, email: string, clientId: string): string {
+  private generateIdToken(sub: string, email: string, clientId: string): string {
     assert.ok(IDP.privateKey, 'IdP private key is not available')
     assert.ok(IDP.issuer, 'IdP issuer is not available')
 
@@ -321,7 +341,10 @@ export class IDP {
       .map((v) => Buffer.from(JSON.stringify(v)).toString('base64url'))
       .join('.')
 
-    const signature = crypto.createSign('RSA-SHA256').end(jwt).sign(IDP.privateKey, 'base64url')
+    const signature = crypto
+      .createSign('RSA-SHA256')
+      .end(jwt)
+      .sign(IDP.privateKey, 'base64url')
 
     return `${jwt}.${signature}`
   }

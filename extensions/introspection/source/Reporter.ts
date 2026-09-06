@@ -30,7 +30,7 @@ export class Reporter extends Connector {
   private acquiring = false
   private dropped = 0
 
-  public constructor (host: Host, options: Options) {
+  public constructor(host: Host, options: Options) {
     super()
 
     this.host = host
@@ -38,14 +38,14 @@ export class Reporter extends Connector {
   }
 
   /** The static description of a component. */
-  public expose (node: Node): void {
+  public expose(node: Node): void {
     this.nodes.set(keys.node(node.namespace, node.component), node)
 
     void this.flush()
   }
 
   /** A call between two components. */
-  public observe (observed: Edge): void {
+  public observe(observed: Edge): void {
     const id = keys.edge(observed.src, observed.dst)
     const edge = this.edges.get(id)
 
@@ -62,14 +62,12 @@ export class Reporter extends Connector {
       }
 
       this.edges.set(id, observed)
-    } else if (observed.sample !== undefined)
-      edge.sample = observed.sample
+    } else if (observed.sample !== undefined) edge.sample = observed.sample
 
-    if (this.edges.size >= this.options.threshold)
-      void this.flush()
+    if (this.edges.size >= this.options.threshold) void this.flush()
   }
 
-  protected override async open (): Promise<void> {
+  protected override async open(): Promise<void> {
     // deliberately not awaited: the explorer may not be there yet, or at all
     this.acquire()
 
@@ -77,7 +75,7 @@ export class Reporter extends Connector {
     this.timer.unref()
   }
 
-  protected override async close (): Promise<void> {
+  protected override async close(): Promise<void> {
     if (this.timer !== null) {
       clearInterval(this.timer)
       this.timer = null
@@ -97,23 +95,20 @@ export class Reporter extends Connector {
     })
   }
 
-  private ready (): boolean {
+  private ready(): boolean {
     return NODES in this.remotes && EDGES in this.remotes
   }
 
-  private async flush (): Promise<void> {
+  private async flush(): Promise<void> {
     // a dispatch in flight keeps observations buffered, they join the next batch
-    if (this.flushing !== null)
-      return
+    if (this.flushing !== null) return
 
-    if (this.nodes.size === 0 && this.edges.size === 0)
-      return
+    if (this.nodes.size === 0 && this.edges.size === 0) return
 
     if (!this.ready()) {
       this.acquire()
 
-      if (this.edges.size >= MAX_EDGES)
-        this.discard('the explorer is not reachable')
+      if (this.edges.size >= MAX_EDGES) this.discard('the explorer is not reachable')
 
       return
     }
@@ -129,7 +124,7 @@ export class Reporter extends Connector {
     await this.flushing
   }
 
-  private discard (reason: string): void {
+  private discard(reason: string): void {
     const nodes = this.nodes.size
     const edges = this.edges.size + this.dropped
 
@@ -137,13 +132,12 @@ export class Reporter extends Connector {
     this.edges.clear()
     this.dropped = 0
 
-    if (nodes === 0 && edges === 0)
-      return
+    if (nodes === 0 && edges === 0) return
 
     console.warn(`Introspection data discarded, ${reason}`, { nodes, edges })
   }
 
-  private async dispatch (): Promise<void> {
+  private async dispatch(): Promise<void> {
     const nodes = [...this.nodes.entries()]
     const edges = [...this.edges.entries()]
 
@@ -151,7 +145,10 @@ export class Reporter extends Connector {
     this.edges.clear()
 
     if (this.dropped > 0) {
-      console.warn('Introspection edges dropped', { dropped: this.dropped, limit: MAX_EDGES })
+      console.warn('Introspection edges dropped', {
+        dropped: this.dropped,
+        limit: MAX_EDGES
+      })
       this.dropped = 0
     }
 
@@ -165,15 +162,16 @@ export class Reporter extends Connector {
    * A mass transition: every affected object is acquired and committed at once,
    * so a flush is one call per component whatever it carries.
    */
-  private async merge (name: string, property: string,
-    observed: Array<[string, Node | Edge]>): Promise<void> {
-    if (observed.length === 0)
-      return
+  private async merge(
+    name: string,
+    property: string,
+    observed: Array<[string, Node | Edge]>
+  ): Promise<void> {
+    if (observed.length === 0) return
 
     const objects: Record<string, Node | Edge> = {}
 
-    for (const [id, object] of observed)
-      objects[id] = object
+    for (const [id, object] of observed) objects[id] = object
 
     await this.remotes[name].invoke('merge', {
       query: { ids: observed.map(([id]) => id) },
@@ -183,9 +181,8 @@ export class Reporter extends Connector {
   }
 
   /** Runs in the background: discovery waits for the explorer as long as it takes. */
-  private acquire (): void {
-    if (this.acquiring)
-      return
+  private acquire(): void {
+    if (this.acquiring) return
 
     this.acquiring = true
 
@@ -196,15 +193,17 @@ export class Reporter extends Connector {
     })
   }
 
-  private async reach (): Promise<void> {
-    await Promise.all([NODES, EDGES].map(async (name) => {
-      const remote = await this.host.remote(new Locator(name, NAMESPACE))
+  private async reach(): Promise<void> {
+    await Promise.all(
+      [NODES, EDGES].map(async (name) => {
+        const remote = await this.host.remote(new Locator(name, NAMESPACE))
 
-      this.depends(remote)
+        this.depends(remote)
 
-      await remote.connect()
+        await remote.connect()
 
-      this.remotes[name] = remote
-    }))
+        this.remotes[name] = remote
+      })
+    )
   }
 }

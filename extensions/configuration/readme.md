@@ -25,7 +25,7 @@ configuration:
 ### Use
 
 ```javascript
-function transition (input, entity, context) {
+function transition(input, entity, context) {
   const { foo, bar } = context.configuration
 
   // ...
@@ -38,9 +38,9 @@ function transition (input, entity, context) {
 # context.toa.yaml
 configuration:
   dummies.dummy:
-    foo: qux          # override default value
+    foo: qux # override default value
     foo@staging: quux # deployment environment discriminator
-    bar: $BAZ_VALUE   # secret
+    bar: $BAZ_VALUE # secret
 ```
 
 ### Deploy secrets
@@ -176,7 +176,7 @@ In the component, a secret is a `Secret` object: `unwrap()` returns the string, 
 `toString()`, JSON and `util.inspect` give `<REDACTED>`.
 
 ```javascript
-function transition (input, entity, context) {
+function transition(input, entity, context) {
   const key = context.configuration.apiKey.unwrap()
 
   // ...
@@ -231,11 +231,11 @@ object as stored.
 
 ### Resources
 
-| Method | Path                                  | Role                          |
-|--------|---------------------------------------|-------------------------------|
-| `GET`  | `/configuration/values/`              | `system:configuration:get`    |
-| `GET`  | `/configuration/values/:component/`   | `system:configuration:get`    |
-| `POST` | `/configuration/values/:component/`   | `system:configuration:create` |
+| Method | Path                                | Role                          |
+| ------ | ----------------------------------- | ----------------------------- |
+| `GET`  | `/configuration/values/`            | `system:configuration:get`    |
+| `GET`  | `/configuration/values/:component/` | `system:configuration:get`    |
+| `POST` | `/configuration/values/:component/` | `system:configuration:create` |
 
 `GET /configuration/values/` lists every component's configuration for its deployed epoch, by
 component name, as `[{ component, epoch, schema, configuration }]`.
@@ -261,7 +261,7 @@ annotation is the per-component values map and has nowhere to carry a switch.
 Component's configuration values are available as a well-known Aspect `configuration`.
 
 ```javascript
-function transition (input, entity, context) {
+function transition(input, entity, context) {
   const foo = context.configuration.foo
 
   // ...

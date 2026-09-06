@@ -6,7 +6,7 @@ export const BANNER = `// Written by \`toa types\`. Every run rewrites it.
 export const capitalize = (word) => word[0].toUpperCase() + word.slice(1)
 
 /** Collects what a module needs to import, so that a writer can ask for a name where it uses it. */
-export function collector () {
+export function collector() {
   const required = {}
 
   const importing = (module, ...names) => {
@@ -21,7 +21,7 @@ export function collector () {
  * @param {Record<string, Set<string>>} required
  * @returns {string}
  */
-export function imports (required) {
+export function imports(required) {
   const lines = []
 
   for (const module of Object.keys(required).sort()) {
@@ -41,9 +41,8 @@ export function imports (required) {
  * @param {string} [padding]
  * @returns {string | null}
  */
-export function comment (description, padding = '') {
-  if (description === undefined)
-    return null
+export function comment(description, padding = '') {
+  if (description === undefined) return null
 
   const text = description.trim().replace(/\s+/g, ' ')
 

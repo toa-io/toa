@@ -5,7 +5,14 @@ import { isDeepStrictEqual } from 'node:util'
 import { computation } from './list.js'
 
 it('lists indexed credentials', async () => {
-  const current = { id: 'credential', authority: 'nex', identity: 'identity', iss: 'apple', sub: '1', CREATED: 2 }
+  const current = {
+    id: 'credential',
+    authority: 'nex',
+    identity: 'identity',
+    iss: 'apple',
+    sub: '1',
+    CREATED: 2
+  }
 
   const context = {
     local: {
@@ -13,13 +20,22 @@ it('lists indexed credentials', async () => {
     }
   }
 
-  await assert.deepStrictEqual(await computation({ authority: 'nex', identity: 'identity' }, context as never), [current])
-  assert.ok(context.local.enumerate.mock.calls.some((call: any) => call.arguments.length === 1 && isDeepStrictEqual(call.arguments[0], {
-    query: {
-      criteria: 'authority=="nex";identity=="identity"',
-      projection: ['iss'],
-      sort: ['CREATED:desc'],
-      limit: 100
-    }
-  })))
+  await assert.deepStrictEqual(
+    await computation({ authority: 'nex', identity: 'identity' }, context as never),
+    [current]
+  )
+  assert.ok(
+    context.local.enumerate.mock.calls.some(
+      (call: any) =>
+        call.arguments.length === 1 &&
+        isDeepStrictEqual(call.arguments[0], {
+          query: {
+            criteria: 'authority=="nex";identity=="identity"',
+            projection: ['iss'],
+            sort: ['CREATED:desc'],
+            limit: 100
+          }
+        })
+    )
+  )
 })

@@ -6,12 +6,12 @@ export class Deployment {
   private readonly id: string
   private readonly annotation: URIMap
 
-  public constructor (id: string, annotation: URIMap) {
+  public constructor(id: string, annotation: URIMap) {
     this.id = id
     this.annotation = annotation
   }
 
-  public export (requests: Request[]): Variables {
+  public export(requests: Request[]): Variables {
     const variables: Variables = {}
 
     for (const request of requests)
@@ -20,7 +20,7 @@ export class Deployment {
     return variables
   }
 
-  private createVariables (selectors: string[]): Variable[] {
+  private createVariables(selectors: string[]): Variable[] {
     const variables: Variable[] = []
 
     for (const selector of selectors) {
@@ -33,7 +33,7 @@ export class Deployment {
     return variables
   }
 
-  private createVariable (selector: string): Variable {
+  private createVariable(selector: string): Variable {
     const name = nameVariable(this.id, selector)
     const { references } = this.resolveRecord(selector)
     const value = references.join(' ')
@@ -41,14 +41,13 @@ export class Deployment {
     return { name, value }
   }
 
-  private createSecrets (selector: string): Variable[] {
+  private createSecrets(selector: string): Variable[] {
     const variables: Variable[] = []
     const { key, references } = this.resolveRecord(selector)
 
     const protocol = new URL(references[0]).protocol
 
-    if (insecureProtocols.includes(protocol))
-      return []
+    if (insecureProtocols.includes(protocol)) return []
 
     for (const token of ['username', 'password']) {
       const varName = nameVariable(this.id, selector, token)
@@ -66,7 +65,7 @@ export class Deployment {
     return variables
   }
 
-  private resolveRecord (selector: string): AnnotationRecord {
+  private resolveRecord(selector: string): AnnotationRecord {
     return resolveRecord(this.annotation, selector)
   }
 }

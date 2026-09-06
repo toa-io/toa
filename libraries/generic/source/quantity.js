@@ -5,7 +5,8 @@
 export const quantity = (input) => {
   const match = input.match(EXPRESSION)
 
-  if (match === null) throw new Error(`'${input}' doesn't look like a quantity of something`)
+  if (match === null)
+    throw new Error(`'${input}' doesn't look like a quantity of something`)
 
   const number = +match[1]
   const suffix = match[2]
@@ -14,7 +15,8 @@ export const quantity = (input) => {
 
   const multiplier = find(suffix)
 
-  if (multiplier === undefined) throw new Error(`'${suffix}' doesn't look like a quantity unit`)
+  if (multiplier === undefined)
+    throw new Error(`'${suffix}' doesn't look like a quantity unit`)
 
   return number * multiplier
 }

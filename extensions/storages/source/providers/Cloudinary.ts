@@ -8,11 +8,7 @@ import type { Maybe } from '@toa.io/core/types'
 import type { Metadata, Stream } from '../Entry.js'
 import type { Secret, Secrets } from '../Secrets.js'
 import type { ReadableStream } from 'node:stream/web'
-import type {
-  ConfigOptions,
-  TransformationOptions,
-  UploadApiOptions
-} from 'cloudinary'
+import type { ConfigOptions, TransformationOptions, UploadApiOptions } from 'cloudinary'
 
 export type CloudinarySecrets = Secrets<'API_KEY' | 'API_SECRET'>
 
@@ -28,13 +24,12 @@ export class Cloudinary extends Provider<CloudinaryOptions> {
   private readonly config: ConfigOptions
   private readonly prefix: string
 
-  public constructor (options: CloudinaryOptions, secrets?: CloudinarySecrets) {
+  public constructor(options: CloudinaryOptions, secrets?: CloudinarySecrets) {
     super(options, secrets)
 
     this.type = options.type
 
-    if (options.eager !== undefined)
-      this.eager = options.eager
+    if (options.eager !== undefined) this.eager = options.eager
 
     if (options.transformations !== undefined)
       this.transformations = options.transformations.map((transformation) => {
@@ -42,11 +37,9 @@ export class Cloudinary extends Provider<CloudinaryOptions> {
 
         let expression = extension
 
-        if (!extension.startsWith('^'))
-          expression = '^' + extension
+        if (!extension.startsWith('^')) expression = '^' + extension
 
-        if (!extension.endsWith('$'))
-          expression = extension + '$'
+        if (!extension.endsWith('$')) expression = extension + '$'
 
         return {
           extension: new RegExp(expression),
@@ -63,19 +56,16 @@ export class Cloudinary extends Provider<CloudinaryOptions> {
     this.prefix = options.prefix ?? '/'
   }
 
-  public async get (path: string, options?: GetOptions): Promise<Maybe<Stream>> {
+  public async get(path: string, options?: GetOptions): Promise<Maybe<Stream>> {
     const headers: Record<string, string> = {}
 
-    if (options?.range !== undefined)
-      headers.range = options.range
+    if (options?.range !== undefined) headers.range = options.range
 
-    if (options?.agent !== undefined)
-      headers['user-agent'] = options.agent
+    if (options?.agent !== undefined) headers['user-agent'] = options.agent
 
     const response = await this.fetch(path, { method: 'GET', headers })
 
-    if (response instanceof Error)
-      return ERR_NOT_FOUND
+    if (response instanceof Error) return ERR_NOT_FOUND
 
     const metadata = this.metadata(response)
 
@@ -85,16 +75,15 @@ export class Cloudinary extends Provider<CloudinaryOptions> {
     }
   }
 
-  public async head (path: string): Promise<Maybe<Metadata>> {
+  public async head(path: string): Promise<Maybe<Metadata>> {
     const response = await this.fetch(path, { method: 'HEAD' })
 
-    if (response instanceof Error)
-      return ERR_NOT_FOUND
+    if (response instanceof Error) return ERR_NOT_FOUND
 
     return this.metadata(response)
   }
 
-  public async put (path: string, stream: Readable): Promise<void> {
+  public async put(path: string, stream: Readable): Promise<void> {
     const id = basename(path)
     const folder = join(this.prefix, dirname(path))
 
@@ -108,11 +97,12 @@ export class Cloudinary extends Provider<CloudinaryOptions> {
 
       console.debug('Uploading to Cloudinary', { path, options })
 
-      stream.pipe(this.cloudinary().uploader.upload_stream(options,
-        (error, result) => {
+      stream.pipe(
+        this.cloudinary().uploader.upload_stream(options, (error, result) => {
           if (error !== undefined) reject(error)
           else resolve(result)
-        }))
+        })
+      )
 
       stream.on('error', (e) => {
         console.error('Cloudinary stream error', { path, error: e })
@@ -123,39 +113,43 @@ export class Cloudinary extends Provider<CloudinaryOptions> {
     })
   }
 
-  public async commit (): Promise<void> {
+  public async commit(): Promise<void> {
     // metadata is read-only
   }
 
-  public async delete (path: string): Promise<void> {
+  public async delete(path: string): Promise<void> {
     const id = join(this.prefix, path)
 
     console.debug('Deleting from Cloudinary', { path: id })
 
-    await this.cloudinary().uploader.destroy(id,
-      { resource_type: this.type, invalidate: true })
+    await this.cloudinary().uploader.destroy(id, {
+      resource_type: this.type,
+      invalidate: true
+    })
   }
 
-  public async move (from: string, to: string): Promise<void | Error> {
+  public async move(from: string, to: string): Promise<void | Error> {
     const source = join(this.prefix, from)
     const target = join(this.prefix, to)
 
     try {
-      await this.cloudinary().uploader.rename(source, target,
-        { resource_type: this.type, overwrite: true })
+      await this.cloudinary().uploader.rename(source, target, {
+        resource_type: this.type,
+        overwrite: true
+      })
     } catch (error: any) {
-      if (error.http_code === 404)
-        return ERR_NOT_FOUND
-      else
-        throw error
+      if (error.http_code === 404) return ERR_NOT_FOUND
+      else throw error
     }
   }
 
-  private async fetch (path: string, options: RequestInit = { method: 'GET' }): Promise<Maybe<Response>> {
+  private async fetch(
+    path: string,
+    options: RequestInit = { method: 'GET' }
+  ): Promise<Maybe<Response>> {
     const url = this.url(path)
 
-    if (url === null)
-      return ERR_NOT_FOUND
+    if (url === null) return ERR_NOT_FOUND
 
     console.debug('Fetching from Cloudinary', {
       method: options.method,
@@ -183,11 +177,10 @@ export class Cloudinary extends Provider<CloudinaryOptions> {
     return response
   }
 
-  private url (path: string): string | null {
+  private url(path: string): string | null {
     const [base, transformation] = this.toTransformation(path)
 
-    if (base === null)
-      return null
+    if (base === null) return null
 
     const id = join(this.prefix, base)
 
@@ -198,9 +191,10 @@ export class Cloudinary extends Provider<CloudinaryOptions> {
     })
   }
 
-  private toTransformation (path: string): [string | null, TransformationOptions[] | undefined] {
-    if (this.transformations.length === 0)
-      return [path, undefined]
+  private toTransformation(
+    path: string
+  ): [string | null, TransformationOptions[] | undefined] {
+    if (this.transformations.length === 0) return [path, undefined]
 
     const [base, ...extensions] = path.split('.')
     const transformations: TransformationOptions[] = []
@@ -211,24 +205,28 @@ export class Cloudinary extends Provider<CloudinaryOptions> {
       let found = false
 
       for (t; t < this.transformations.length && !found; t++) {
-        const { extension: regex, condition, transformation, optional } = this.transformations[t]
+        const {
+          extension: regex,
+          condition,
+          transformation,
+          optional
+        } = this.transformations[t]
 
         const match = regex.exec(extension)
 
         // eslint-disable-next-line max-depth
         if (match === null)
-          if (optional === true)
-            continue
-          else
-            return [null, undefined]
+          if (optional === true) continue
+          else return [null, undefined]
 
         const options = Array.isArray(transformation) ? transformation : [transformation]
-        const stages = options.map((stage) => this.mapTransformation(stage, match.groups!))
+        const stages = options.map((stage) =>
+          this.mapTransformation(stage, match.groups!)
+        )
 
         found = true
 
-        if (condition === undefined)
-          transformations.push(...stages)
+        if (condition === undefined) transformations.push(...stages)
         else {
           transformations.push({ if: condition })
           transformations.push(...stages)
@@ -236,39 +234,41 @@ export class Cloudinary extends Provider<CloudinaryOptions> {
         }
       }
 
-      if (!found)
-        return [null, undefined]
+      if (!found) return [null, undefined]
     }
 
     for (t; t < this.transformations.length; t++)
-      if (this.transformations[t].optional !== true)
-        return [null, undefined]
+      if (this.transformations[t].optional !== true) return [null, undefined]
 
     return [base, transformations]
   }
 
-  private mapTransformation (options: Record<string, unknown>, groups: Record<string, string>): TransformationOptions {
-    return Object.fromEntries(Object.entries(options).map(([key, value]) => {
-      if (typeof value !== 'string')
+  private mapTransformation(
+    options: Record<string, unknown>,
+    groups: Record<string, string>
+  ): TransformationOptions {
+    return Object.fromEntries(
+      Object.entries(options).map(([key, value]) => {
+        if (typeof value !== 'string') return [key, value]
+
+        if (value.startsWith('<') && value.endsWith('>'))
+          value = groups[value.slice(1, -1)]
+
+        if (key === 'zoom' && value !== undefined)
+          value = Number.parseInt(value as string) / 100
+
+        if (key === 'fetch_format' && value === 'jpeg') value = 'jpg'
+
         return [key, value]
-
-      if (value.startsWith('<') && value.endsWith('>'))
-        value = groups[value.slice(1, -1)]
-
-      if (key === 'zoom' && value !== undefined)
-        value = Number.parseInt(value as string) / 100
-
-      if (key === 'fetch_format' && value === 'jpeg')
-        value = 'jpg'
-
-      return [key, value]
-    }))
+      })
+    )
   }
 
-  private metadata (response: Response): Metadata {
-    const size = response.headers.get('content-length') === null
-      ? null
-      : Number.parseInt(response.headers.get('content-length')!)
+  private metadata(response: Response): Metadata {
+    const size =
+      response.headers.get('content-length') === null
+        ? null
+        : Number.parseInt(response.headers.get('content-length')!)
 
     const created = response.headers.get('date') ?? new Date().toISOString()
     const etag = response.headers.get('etag')
@@ -288,7 +288,7 @@ export class Cloudinary extends Provider<CloudinaryOptions> {
     }
   }
 
-  private cloudinary (): typeof cloudinary {
+  private cloudinary(): typeof cloudinary {
     cloudinary.config(this.config)
 
     return cloudinary

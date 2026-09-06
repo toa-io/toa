@@ -4,7 +4,7 @@ import type { Input, Output } from './io.js'
 export class Interception implements Interceptor {
   private readonly interceptors: Interceptor[]
 
-  public constructor (interceptors: Interceptor[], options: http.Options) {
+  public constructor(interceptors: Interceptor[], options: http.Options) {
     this.interceptors = interceptors
 
     // interceptors are module singletons, so a second gateway in one process —
@@ -15,12 +15,11 @@ export class Interception implements Interceptor {
     }
   }
 
-  public async intercept (input: Input): Promise<Output> {
+  public async intercept(input: Input): Promise<Output> {
     for (const interceptor of this.interceptors) {
       const output = await interceptor.intercept(input)
 
-      if (output !== null)
-        return output
+      if (output !== null) return output
     }
 
     return null

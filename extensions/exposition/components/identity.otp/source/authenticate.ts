@@ -1,17 +1,15 @@
 import type { Context } from './lib/index.js'
 
-export async function effect (input: Input, context: Context): Promise<Output | Error> {
+export async function effect(input: Input, context: Context): Promise<Output | Error> {
   const { authority, credentials } = input
   const [username, code] = Buffer.from(credentials, 'base64').toString().split(':')
 
-  if (code === undefined)
-    return ERR_INVALID_CREDENTIALS
+  if (code === undefined) return ERR_INVALID_CREDENTIALS
 
   const attempts = `${authority}:${username}:attempts`
   const attempt = await context.stash.incr(attempts)
 
-  if (attempt === 1)
-    await context.stash.expire(attempts, context.configuration.lifetime)
+  if (attempt === 1) await context.stash.expire(attempts, context.configuration.lifetime)
 
   if (attempt > context.configuration.attempts) {
     context.logs.debug('OTP attempts exceeded', { authority, username, attempt })
@@ -37,8 +35,7 @@ export async function effect (input: Input, context: Context): Promise<Output | 
     }
   })
 
-  if (entry === null)
-    return ERR_NOT_FOUND
+  if (entry === null) return ERR_NOT_FOUND
 
   const id = entry.identity ?? entry.id // identity inception
 

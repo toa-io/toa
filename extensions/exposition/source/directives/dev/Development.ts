@@ -10,16 +10,15 @@ export class Development implements DirectiveFamily<Directive> {
   public readonly name: string = 'dev'
   public readonly mandatory: boolean = false
 
-  public create (name: string, value: unknown): Directive {
+  public create(name: string, value: unknown): Directive {
     const Class = constructors[name]
 
-    if (Class === undefined)
-      throw new Error(`Directive 'dev:${name}' is not implemented`)
+    if (Class === undefined) throw new Error(`Directive 'dev:${name}' is not implemented`)
 
     return new Class(value)
   }
 
-  public async precall (directives: Directive[], input: Input): Promise<Output> {
+  public async precall(directives: Directive[], input: Input): Promise<Output> {
     let output = null
 
     for (const directive of directives) {

@@ -1,3 +1,4 @@
+@deployment @helm
 Feature: Deploy secrets for AMQP binding
 
   Scenario: Secrets for component and system bindings

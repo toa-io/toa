@@ -1,3 +1,4 @@
+@cli
 Feature: toa serve
 
   Run service

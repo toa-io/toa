@@ -8,7 +8,7 @@ import type { Annotations } from './types.js'
  * A `map:headers` property is not here: a call carries no headers of its own, so there is
  * nowhere for a model to put one.
  */
-export function input (introspection: Introspection, variables: string[]): object {
+export function input(introspection: Introspection, variables: string[]): object {
   const properties: Record<string, unknown> = {}
   const required: string[] = []
 
@@ -28,7 +28,8 @@ export function input (introspection: Introspection, variables: string[]): objec
   if (introspection.query !== undefined)
     properties.query = {
       type: 'object',
-      description: 'Which records the call works on: what to match, in what order, ' +
+      description:
+        'Which records the call works on: what to match, in what order, ' +
         'and how many at once.',
       properties: introspection.query
     }
@@ -37,13 +38,12 @@ export function input (introspection: Introspection, variables: string[]): objec
 
   if (body?.properties !== undefined) {
     Object.assign(properties, body.properties)
-    required.push(...body.required ?? [])
+    required.push(...(body.required ?? []))
   }
 
   const schema: Record<string, unknown> = { type: 'object', properties }
 
-  if (required.length > 0)
-    schema.required = required
+  if (required.length > 0) schema.required = required
 
   // what a name does not state is not a parameter, and a model should not invent one
   schema.additionalProperties = false
@@ -56,27 +56,23 @@ export function input (introspection: Introspection, variables: string[]): objec
  * and normalizes to `{}`, which describes nothing — and a schema the revision would have the
  * reply validated against is worse said emptily than left unsaid.
  */
-export function output (introspection: Introspection): object | undefined {
+export function output(introspection: Introspection): object | undefined {
   const schema = introspection.output as Shape | null | undefined
 
-  if (schema === undefined || schema === null)
-    return undefined
+  if (schema === undefined || schema === null) return undefined
 
-  return Object.keys(schema).length === 0 ? undefined : schema as object
+  return Object.keys(schema).length === 0 ? undefined : (schema as object)
 }
 
 /** What the verb says of the call, which the revision has a client treat as a hint. */
-export function annotations (verb: string): Annotations | undefined {
+export function annotations(verb: string): Annotations | undefined {
   const value: Annotations = {}
 
-  if (verb === 'GET' || verb === 'HEAD')
-    value.readOnlyHint = true
+  if (verb === 'GET' || verb === 'HEAD') value.readOnlyHint = true
 
-  if (verb === 'DELETE')
-    value.destructiveHint = true
+  if (verb === 'DELETE') value.destructiveHint = true
 
-  if (verb === 'PUT' || verb === 'DELETE')
-    value.idempotentHint = true
+  if (verb === 'PUT' || verb === 'DELETE') value.idempotentHint = true
 
   return Object.keys(value).length === 0 ? undefined : value
 }

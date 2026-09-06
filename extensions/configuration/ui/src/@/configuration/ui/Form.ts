@@ -35,7 +35,11 @@ const validators = new WeakMap<object, ValidateFunction>()
  * The configuration the text holds, or every reason it is not one. Nothing is sent that
  * has not passed this, so the service never refuses what the page could have caught.
  */
-export function read(text: string, schema: object | undefined, malformed: string): Reading {
+export function read(
+  text: string,
+  schema: object | undefined,
+  malformed: string
+): Reading {
   let parsed: unknown
 
   try {

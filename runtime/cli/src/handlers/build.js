@@ -5,7 +5,9 @@ const { Factory } = deployment
 
 export const build = async (argv) => {
   const path = find(argv.path)
-  const factory = await Factory.create(path, argv.environment, { mono: argv.mono === true })
+  const factory = await Factory.create(path, argv.environment, {
+    mono: argv.mono === true
+  })
   const registry = factory.registry()
 
   await registry.build()

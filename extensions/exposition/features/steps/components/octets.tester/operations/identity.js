@@ -1,4 +1,4 @@
-function identity (input) {
+function identity(input) {
   return input.identity
 }
 

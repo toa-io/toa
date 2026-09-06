@@ -9,7 +9,7 @@ export class Effect implements Operation {
   private encrypt!: Context['local']['encrypt']
   private lifetime!: number
 
-  public mount (context: Context): void {
+  public mount(context: Context): void {
     this.keys = context.remote.identity.keys
     this.roles = context.remote.identity.roles
     this.encrypt = context.local.encrypt
@@ -17,12 +17,11 @@ export class Effect implements Operation {
     this.lifetime = context.configuration.lifetime
   }
 
-  public async execute (input: Input): Promise<Maybe<Output>> {
+  public async execute(input: Input): Promise<Maybe<Output>> {
     const lifetime = input.lifetime ?? this.lifetime
 
-    const expires = lifetime === 0
-      ? undefined
-      : new Date(Date.now() + lifetime * 1000).getTime()
+    const expires =
+      lifetime === 0 ? undefined : new Date(Date.now() + lifetime * 1000).getTime()
 
     const key = await this.keys.create({
       input: {
@@ -57,8 +56,7 @@ export class Effect implements Operation {
       }
     })
 
-    if (token instanceof Error)
-      return token
+    if (token instanceof Error) return token
 
     return {
       kid: key.id,

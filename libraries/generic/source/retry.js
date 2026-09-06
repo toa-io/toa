@@ -9,10 +9,14 @@ export const retry = async (func, options = {}, attempt = 0) => {
   let inner
 
   const outer = await func(async () => {
-    if (attempt === options.retries) throw new RetryError(`Retry failed after ${attempt} attempts`)
+    if (attempt === options.retries)
+      throw new RetryError(`Retry failed after ${attempt} attempts`)
 
     inner = (async () => {
-      const interval = Math.min(options.base * Math.pow(options.factor, attempt), options.max)
+      const interval = Math.min(
+        options.base * Math.pow(options.factor, attempt),
+        options.max
+      )
       const dispersion = interval * options.dispersion * (Math.random() - 0.5)
 
       await timeout(interval + dispersion)
@@ -34,6 +38,5 @@ const DEFAULTS = {
   max: 30000,
   dispersion: 0.1
 }
-
 
 retry.Error = RetryError

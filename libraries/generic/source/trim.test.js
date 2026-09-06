@@ -26,9 +26,12 @@ it('should preserve relative indentation', async () => {
           model: fast
   `)
 
-  assert.deepStrictEqual(trimmed, `agents:
+  assert.deepStrictEqual(
+    trimmed,
+    `agents:
   - provider: cursor
-    model: fast`)
+    model: fast`
+  )
 })
 
 it('should trim tabs by first line padding', async () => {

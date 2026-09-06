@@ -18,11 +18,15 @@ export interface Section {
 }
 
 export function match(section: Section, path: string): boolean {
-  if (section.href === '/') // special case for home screen
+  if (section.href === '/')
+    // special case for home screen
     if (path === '/') return true
     else return section.nested?.some((nested) => path.startsWith(nested)) === true
 
-  return path.startsWith(section.href) || section.nested?.some((nested) => path.startsWith(nested)) === true
+  return (
+    path.startsWith(section.href) ||
+    section.nested?.some((nested) => path.startsWith(nested)) === true
+  )
 }
 
 export function exact(section: Section, path: string): boolean {

@@ -11,7 +11,7 @@ export class Tenant extends Connector {
   private started = 0
   private stopped = false
 
-  public constructor (broadcast: Broadcast, branch: Omit<Branch, 'timestamp'>) {
+  public constructor(broadcast: Broadcast, branch: Omit<Branch, 'timestamp'>) {
     super()
 
     this.broadcast = broadcast
@@ -20,7 +20,7 @@ export class Tenant extends Connector {
     this.depends(broadcast)
   }
 
-  public override async open (): Promise<void> {
+  public override async open(): Promise<void> {
     this.started = Date.now()
 
     await this.expose()
@@ -35,35 +35,35 @@ export class Tenant extends Connector {
    * announces itself once more has its routes held open by whoever is listening, and the
    * requests that follow reach nothing.
    */
-  protected override async close (): Promise<void> {
+  protected override async close(): Promise<void> {
     this.stopped = true
   }
 
-  private async announce (): Promise<void> {
+  private async announce(): Promise<void> {
     while (!this.stopped) {
       const delay = exposeInterval(Date.now() - this.started)
 
       await setTimeout(delay, undefined, { ref: false })
 
-      if (this.stopped)
-        break
+      if (this.stopped) break
 
       await this.expose()
     }
   }
 
-  private async expose (): Promise<void> {
+  private async expose(): Promise<void> {
     // the ping subscription outlives the announcing loop, and answering one on the way out
     // is the same announcement by another route
-    if (this.stopped)
-      return
+    if (this.stopped) return
 
     await this.broadcast.transmit('expose', { ...this.branch, timestamp: this.started })
   }
 }
 
-function exposeInterval (uptime: number): number {
-  return Math.round(EXPOSE_MAX - (EXPOSE_MAX - EXPOSE_MIN) * Math.exp(-uptime / EXPOSE_TAU))
+function exposeInterval(uptime: number): number {
+  return Math.round(
+    EXPOSE_MAX - (EXPOSE_MAX - EXPOSE_MIN) * Math.exp(-uptime / EXPOSE_TAU)
+  )
 }
 
 const EXPOSE_MIN = 5_000

@@ -9,11 +9,11 @@ import type { Component } from './Component.js'
 export class Route implements Component {
   private readonly route: string
 
-  public constructor (_: unknown, route: string) {
+  public constructor(_: unknown, route: string) {
     this.route = route
   }
 
-  public get (): string {
+  public get(): string {
     return this.route
   }
 }

@@ -1,3 +1,4 @@
+@timing
 Feature: Request interruptions
 
   Scenario: Connection reset while processing a request

@@ -10,8 +10,13 @@ import type { Params } from './types.js'
  * here, `identity` included, is read through.
  */
 // eslint-disable-next-line max-params
-export function fork (context: http.Context, path: string, verb: string,
-  query: Params | undefined, input: unknown): http.Context {
+export function fork(
+  context: http.Context,
+  path: string,
+  verb: string,
+  query: Params | undefined,
+  input: unknown
+): http.Context {
   const url = new URL(path, context.url)
 
   if (query !== undefined)
@@ -46,8 +51,7 @@ export function fork (context: http.Context, path: string, verb: string,
       value: async () => {
         let value = input
 
-        for (const transform of pipelines.body)
-          value = await transform(value)
+        for (const transform of pipelines.body) value = await transform(value)
 
         return value
       }

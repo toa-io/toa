@@ -2,15 +2,15 @@ import { Connector } from '@toa.io/core'
 import { newid } from '@toa.io/generic'
 
 export class Storage extends Connector {
-  async get (_) {
+  async get(_) {
     return { id: newid(), VERSION: 1 }
   }
 
-  async store (_) {
+  async store(_) {
     return true
   }
 
-  async upsert (_, __, ___) {
+  async upsert(_, __, ___) {
     return { id: newid(), VERSION: 1 }
   }
 }

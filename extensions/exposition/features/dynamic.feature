@@ -83,6 +83,7 @@ Feature: Dynamic tree updates
       200 OK
       """
 
+  @timing
   Scenario: Stale branch expires
     Given the branch TTL is 5 seconds
     And the Gateway is running

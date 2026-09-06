@@ -7,8 +7,7 @@ let connected: string | null = null
 let controller: AbortController | null = null
 
 async function connect(id: string): Promise<void> {
-  if (connected !== null && connected !== id)
-    disconnect()
+  if (connected !== null && connected !== id) disconnect()
 
   if (connected === id) return
   else connected = id
@@ -52,8 +51,7 @@ function disconnect() {
   if (connected === null) return
   else connected = null
 
-  if (controller === null)
-    throw new Error('Realtime controller is NULL')
+  if (controller === null) throw new Error('Realtime controller is NULL')
 
   controller.abort()
   reset()

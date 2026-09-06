@@ -1,4 +1,4 @@
-async function foo (input, context) {
+async function foo(input, context) {
   return { foo: 'bar' }
 }
 

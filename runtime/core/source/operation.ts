@@ -52,8 +52,13 @@ export class Operation extends Connector {
   readonly #scope: Scope
 
   // eslint-disable-next-line max-params
-  public constructor (cascade: Cascade, scope: State, contracts: Contracts,
-    query: Translator, definition: Definition) {
+  public constructor(
+    cascade: Cascade,
+    scope: State,
+    contracts: Contracts,
+    query: Translator,
+    definition: Definition
+  ) {
     super()
 
     this.scope = scope
@@ -66,10 +71,9 @@ export class Operation extends Connector {
     this.depends(cascade)
   }
 
-  public async invoke (request: Request): Promise<any> {
+  public async invoke(request: Request): Promise<any> {
     try {
-      if (request.authentic !== true)
-        this.#contracts.request.fit(request)
+      if (request.authentic !== true) this.#contracts.request.fit(request)
 
       // the request carries the query onward in its parsed form: what a storage is given,
       // not what the caller sent
@@ -77,8 +81,7 @@ export class Operation extends Connector {
         request.query = this.#query.parse(request.query as Query) as any
 
       // validate entity
-      if ('entity' in request)
-        this.scope.fit(request.entity)
+      if ('entity' in request) this.scope.fit(request.entity)
 
       const store = { request }
 
@@ -90,7 +93,7 @@ export class Operation extends Connector {
     }
   }
 
-  protected async process (store: Store): Promise<any> {
+  protected async process(store: Store): Promise<any> {
     await this.acquire(store)
     await this.run(store)
     await this.commit(store)
@@ -98,9 +101,8 @@ export class Operation extends Connector {
     return store.reply
   }
 
-  protected async acquire (store: Store): Promise<void> {
-    if (this.#scope === 'none')
-      return
+  protected async acquire(store: Store): Promise<void> {
+    if (this.#scope === 'none') return
 
     const scope = await this.query(store.request.query)
     const raw = scope === null || scope instanceof Readable
@@ -109,7 +111,7 @@ export class Operation extends Connector {
     store.state = raw ? scope : (scope as Entity).get()
   }
 
-  protected async run (store: Store): Promise<void> {
+  protected async run(store: Store): Promise<void> {
     const { request, state } = store
     const reply = await this.#cascade.run(request.input, state)
 
@@ -120,14 +122,16 @@ export class Operation extends Connector {
     store.reply = reply
   }
 
-  protected async commit (_store: Store): Promise<void> {}
+  protected async commit(_store: Store): Promise<void> {}
 
-  protected async query (query?: Query): Promise<Scoped> {
+  protected async query(query?: Query): Promise<Scoped> {
     if (query === undefined)
       throw new RequestContractException('Request query is required')
 
-    const acquire = this.scope[this.#scope] as
-      (query: Query, mutable?: boolean) => Promise<Scoped>
+    const acquire = this.scope[this.#scope] as (
+      query: Query,
+      mutable?: boolean
+    ) => Promise<Scoped>
 
     return acquire.call(this.scope, query, this.mutable)
   }

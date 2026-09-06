@@ -22,8 +22,12 @@ export class State {
   readonly #associated: boolean
 
   // eslint-disable-next-line max-params
-  public constructor (storage: Storage, entities: Factory, outbox: Outbox | undefined,
-    associated?: boolean) {
+  public constructor(
+    storage: Storage,
+    entities: Factory,
+    outbox: Outbox | undefined,
+    associated?: boolean
+  ) {
     this.storage = storage
 
     this.#entities = entities
@@ -31,35 +35,37 @@ export class State {
     this.#associated = associated === true
   }
 
-  public init (id?: string): Entity {
+  public init(id?: string): Entity {
     return this.#entities.init(id)
   }
 
-  public fit (values: object): void {
+  public fit(values: object): void {
     this.#entities.fit(values)
   }
 
   /** scope `object` */
-  public async object (query: Query, mutable = true): Promise<Entity | null> {
+  public async object(query: Query, mutable = true): Promise<Entity | null> {
     const record = await this.storage.get(query)
 
-    if (record !== null)
-      return this.#entities.object(record, mutable)
+    if (record !== null) return this.#entities.object(record, mutable)
 
     // an associated entity is whatever the identity it is looked up by names, so a miss on
     // that identity alone is a blank rather than an absence
-    if (this.#associated && query.id !== undefined &&
-      query.criteria === undefined && query.version === undefined)
+    if (
+      this.#associated &&
+      query.id !== undefined &&
+      query.criteria === undefined &&
+      query.version === undefined
+    )
       return this.init(query.id)
 
-    if (query.version !== undefined)
-      throw new StatePreconditionException()
+    if (query.version !== undefined) throw new StatePreconditionException()
 
     return null
   }
 
   /** scope `objects` */
-  public async objects (query: Query, mutable = true): Promise<EntitySet> {
+  public async objects(query: Query, mutable = true): Promise<EntitySet> {
     const recordset = await this.storage.find(query)
     const ids = query.ids
 
@@ -73,23 +79,26 @@ export class State {
   }
 
   /** scope `stream` */
-  public async stream (query: Query): Promise<Readable> {
+  public async stream(query: Query): Promise<Readable> {
     return this.storage.stream(query)
   }
 
   /** scope `changeset` */
-  public changeset (query: Query): Changeset {
+  public changeset(query: Query): Changeset {
     return this.#entities.changeset(query)
   }
 
   /** scope `none`: an operation that acquires nothing still asks for its scope */
-  public none (): null {
+  public none(): null {
     return null
   }
 
   /** get-or-create, in one indivisible step */
-  public async ensure (query: Query | undefined, properties: object,
-    input?: object): Promise<Entity> {
+  public async ensure(
+    query: Query | undefined,
+    properties: object,
+    input?: object
+  ): Promise<Entity> {
     const object = this.#entities.init()
     const blank = object.get()
 
@@ -100,17 +109,15 @@ export class State {
     const record = await this.storage.ensure(query, properties, object.get(), row)
 
     // whatever came back under another id was already there, and an effect never commits it
-    if (record.id !== blank.id)
-      return this.#entities.object(record, NOT_MUTABLE)
+    if (record.id !== blank.id) return this.#entities.object(record, NOT_MUTABLE)
 
     await this.#publish(row)
 
     return object
   }
 
-  public async commit (state: Entity | EntitySet, input?: object): Promise<boolean> {
-    if (state instanceof EntitySet)
-      return this.massCommit(state, input)
+  public async commit(state: Entity | EntitySet, input?: object): Promise<boolean> {
+    if (state instanceof EntitySet) return this.massCommit(state, input)
 
     // the row is built before the write so that the storage can commit it in the same
     // transaction, closing the window this used to have
@@ -122,12 +129,13 @@ export class State {
     return ok
   }
 
-  public async massCommit (state: EntitySet, input?: object): Promise<boolean> {
+  public async massCommit(state: EntitySet, input?: object): Promise<boolean> {
     const outbox = this.#outbox
 
-    const rows = outbox === undefined
-      ? undefined
-      : state.events(input).map((event) => outbox.row(event))
+    const rows =
+      outbox === undefined
+        ? undefined
+        : state.events(input).map((event) => outbox.row(event))
 
     const ok = await this.storage.massStore(state.get(), rows)
 
@@ -137,7 +145,7 @@ export class State {
     return ok
   }
 
-  public async apply (state: Changeset, input?: object): Promise<Record> {
+  public async apply(state: Changeset, input?: object): Promise<Record> {
     // an assignment's images are the write's own, so the storage fills them in
     const row = this.#outbox?.row({ input })
     const result = await this.storage.upsert(state.query, state.export(), row)
@@ -162,7 +170,7 @@ export class State {
    * Without a durable outbox this is the emission itself, and the operation waits for it;
    * with one the row is already committed and this returns at once.
    */
-  async #publish (row: Row | undefined): Promise<void> {
+  async #publish(row: Row | undefined): Promise<void> {
     if (row !== undefined) await this.#outbox?.publish(row)
   }
 }

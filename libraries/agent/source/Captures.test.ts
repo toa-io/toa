@@ -31,7 +31,10 @@ it('should not capture parts of the words', () => {
 it('should substitute multiple times', () => {
   captures.set('word', 'foo')
 
-  assert.deepStrictEqual(captures.capture('hey foo foo', 'hey ${{ word }} ${{ word }}'), [])
+  assert.deepStrictEqual(
+    captures.capture('hey foo foo', 'hey ${{ word }} ${{ word }}'),
+    []
+  )
 
   assert.strictEqual(captures.capture('hey foo bar', 'hey ${{ word }} ${{ word }}'), null)
 })
@@ -41,7 +44,10 @@ it('should substitute parts of the words', () => {
 
   assert.strictEqual(captures.capture('foo', 'https://${{ host }}/path'), null)
 
-  assert.deepStrictEqual(captures.capture('https://domain.com/path', 'https://${{ host }}/path'), [])
+  assert.deepStrictEqual(
+    captures.capture('https://domain.com/path', 'https://${{ host }}/path'),
+    []
+  )
 })
 
 it('should substitute padded', () => {
@@ -133,7 +139,10 @@ describe('pipelines', () => {
   it('should convert to timestamp', () => {
     const timestamp = Math.floor(Date.now() / 1000)
 
-    assert.strictEqual(captures.substitute('hello #{{ now | utc | unix }}'), `hello ${timestamp}`)
+    assert.strictEqual(
+      captures.substitute('hello #{{ now | utc | unix }}'),
+      `hello ${timestamp}`
+    )
   })
 
   it('should print', () => {

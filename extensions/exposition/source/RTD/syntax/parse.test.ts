@@ -120,7 +120,9 @@ describe('methods', () => {
     const node = parse(declaration)
     const root = node.routes[0].node
 
-    assert.deepStrictEqual(root.methods[0].directives, [{ family: 'auth', name: 'incept', value: 'id' }])
+    assert.deepStrictEqual(root.methods[0].directives, [
+      { family: 'auth', name: 'incept', value: 'id' }
+    ])
   })
 })
 
@@ -132,9 +134,7 @@ describe('directives', () => {
       }
     }
 
-    const shortcuts = new Map<string, string>([
-      ['foo', 'dev:foo']
-    ])
+    const shortcuts = new Map<string, string>([['foo', 'dev:foo']])
 
     const node = parse(declaration, shortcuts)
     const root = node.routes[0].node
@@ -150,7 +150,10 @@ describe('validation', () => {
   it('should throw on unknown key', async () => {
     const declaration = { hello: 'world' }
 
-    assert.throws(() => parse(declaration), (error: any) => /RTD parse error: unknown key 'hello'/.test(error.message))
+    assert.throws(
+      () => parse(declaration),
+      (error: any) => /RTD parse error: unknown key 'hello'/.test(error.message)
+    )
   })
 
   it('should throw on invalid mapping', async () => {
@@ -163,7 +166,10 @@ describe('validation', () => {
       }
     }
 
-    assert.throws(() => parse(declaration), (error: any) => /\/methods\/0\/mapping/.test(error.message))
+    assert.throws(
+      () => parse(declaration),
+      (error: any) => /\/methods\/0\/mapping/.test(error.message)
+    )
   })
 })
 

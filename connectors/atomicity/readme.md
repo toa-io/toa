@@ -92,8 +92,8 @@ Requires Redis.
 ```yaml
 # context.toa.yaml
 atomicity:
-  redis: redis://redis.example.com    # one address, or an odd number of them
-  interval: 5000                      # how often a replica registers, milliseconds
+  redis: redis://redis.example.com # one address, or an odd number of them
+  interval: 5000 # how often a replica registers, milliseconds
 ```
 
 Several addresses are **independent servers**, not the nodes of a cluster. The lock is taken on a

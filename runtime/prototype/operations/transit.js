@@ -1,4 +1,4 @@
-function transit (input, object) {
+function transit(input, object) {
   return Object.assign(object, input)
 }
 

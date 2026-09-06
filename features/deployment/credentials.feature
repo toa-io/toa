@@ -1,3 +1,4 @@
+@deployment
 Feature: Image pull secret
 
   Scenario: Deployment with image pull secret
@@ -13,6 +14,7 @@ Feature: Image pull secret
       credentials: docker-credentials-secret-name
       """
 
+  @helm
   Scenario: Template with image pull secret
     Given I have a component `dummies.one`
     And I have a context with:

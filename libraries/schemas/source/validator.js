@@ -14,7 +14,7 @@ import formats from 'ajv-formats'
  * @param {object} [options]
  * @returns {import('ajv').ValidateFunction}
  */
-export function create (schema, options) {
+export function create(schema, options) {
   const key = JSON.stringify(schema) + '\u0000' + JSON.stringify(options ?? null)
   const cached = COMPILED.get(key)
 
@@ -31,8 +31,7 @@ export function create (schema, options) {
   COMPILED.set(key, validate)
 
   // components discovered at runtime keep adding schemas, so the cache is bounded
-  if (COMPILED.size > LIMIT)
-    COMPILED.delete(COMPILED.keys().next().value)
+  if (COMPILED.size > LIMIT) COMPILED.delete(COMPILED.keys().next().value)
 
   return validate
 }
@@ -47,7 +46,7 @@ export function create (schema, options) {
  * the same `$id`, and Ajv refuses to register one twice. Removing it leaves the validator
  * that was already generated intact, references and all.
  */
-function compile (schema, options) {
+function compile(schema, options) {
   const key = JSON.stringify(options ?? null)
 
   let compiler = COMPILERS.get(key)
@@ -61,8 +60,7 @@ function compile (schema, options) {
   try {
     return compiler.compile(schema)
   } finally {
-    if (schema.$id !== undefined)
-      compiler.removeSchema(schema.$id)
+    if (schema.$id !== undefined) compiler.removeSchema(schema.$id)
   }
 }
 
@@ -71,7 +69,7 @@ const COMPILERS = new Map()
 
 let VALIDATOR
 
-export function is (schema) {
+export function is(schema) {
   VALIDATOR ??= ajv()
 
   return VALIDATOR.validateSchema(schema) === true
@@ -86,7 +84,7 @@ const LIMIT = 4096
  * @param {object[]} [schemas]
  * @param {object} [additional]
  */
-export function ajv (schemas, override = {}) {
+export function ajv(schemas, override = {}) {
   const options = Object.assign({ schemas }, OPTIONS, override)
   const ajv = new Ajv(options)
 

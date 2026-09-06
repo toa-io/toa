@@ -16,7 +16,7 @@ const SCHEMA = CORE_SCHEMA.withTags(mergeTag)
  * @param {object} [options]
  * @returns {any}
  */
-export function load (text, options) {
+export function load(text, options) {
   return read(text, { schema: SCHEMA, ...options })
 }
 
@@ -29,6 +29,6 @@ export function load (text, options) {
  * @param {object} [options]
  * @returns {string}
  */
-export function dump (value, options) {
+export function dump(value, options) {
   return write(value, options)
 }

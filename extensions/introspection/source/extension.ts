@@ -15,19 +15,18 @@ export const standalone = true
  * with the service — never on its own, or tasks would pile up in a queue
  * nothing consumes.
  */
-export function deployment (_: Instances<unknown>, annotation?: Annotation): Dependency {
-  if (annotation === false)
-    return {}
+export function deployment(_: Instances<unknown>, annotation?: Annotation): Dependency {
+  if (annotation === false) return {}
 
-  if (annotation !== undefined)
-    schemas.annotation.validate(annotation)
+  if (annotation !== undefined) schemas.annotation.validate(annotation)
 
   const opts = options(annotation)
 
   const service: Service = {
     group: 'introspection',
     name: 'explorer',
-    version: JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8')).version,
+    version: JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8'))
+      .version,
     components: components().labels,
     resources: annotation?.resources,
     variables: []

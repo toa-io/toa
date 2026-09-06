@@ -19,10 +19,20 @@ describe('options', () => {
   })
 
   it('should translate sort', () => {
-    const options = { sort: [['a', 'asc'], ['b', 'desc'], ['id', 'asc']] }
+    const options = {
+      sort: [
+        ['a', 'asc'],
+        ['b', 'desc'],
+        ['id', 'asc']
+      ]
+    }
     const query = translate({ options })
 
-    assert.deepStrictEqual(query.options.sort, [['a', 1], ['b', -1], ['_id', 1]])
+    assert.deepStrictEqual(query.options.sort, [
+      ['a', 1],
+      ['b', -1],
+      ['_id', 1]
+    ])
   })
 
   it('should translate projection', () => {

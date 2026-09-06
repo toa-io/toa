@@ -1,7 +1,7 @@
 import { reduce } from '@toa.io/generic'
 
 import { Schema } from './schema.js'
-import { ajv, is } from './validator.js'
+import { ajv } from './validator.js'
 import { readDirectory } from './directory.js'
 
 class Namespace {
@@ -11,11 +11,11 @@ class Namespace {
   /**
    * @param {toa.schemas.Schema[]} schemas
    */
-  constructor (schemas) {
+  constructor(schemas) {
     this.#schemas = reduce(schemas, (schemas, schema) => (schemas[schema.id] = schema))
   }
 
-  schema (id) {
+  schema(id) {
     if (!(id in this.#schemas)) {
       throw new Error(`Namespace doesn't contain schema '${id}'`)
     }
@@ -25,7 +25,8 @@ class Namespace {
 }
 
 export const namespace = (path) => {
-  const entries = typeof path === 'string' ? readDirectory(path) : path.map((schema) => ({ schema }))
+  const entries =
+    typeof path === 'string' ? readDirectory(path) : path.map((schema) => ({ schema }))
   const schemas = entries.map(transform)
   const validator = ajv(schemas)
   const extract = (schema) => validator.getSchema(schema.$id)
@@ -35,7 +36,7 @@ export const namespace = (path) => {
   return new Namespace(instances)
 }
 
-function transform (entry) {
+function transform(entry) {
   const schema = entry.schema
 
   schema.$id ??= entry.id

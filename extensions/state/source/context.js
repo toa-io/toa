@@ -4,6 +4,6 @@
  *
  * @returns {import('@toa.io/core/types').extensions.Contribution}
  */
-export function context () {
+export function context() {
   return { name: 'state', type: 'Record<string, any>' }
 }

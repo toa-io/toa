@@ -4,20 +4,22 @@ export const recall = (context, method = undefined) => {
   else return recorder(context, method)
 }
 
-const recorder = (context, method) => async (...args) => {
-  if (context[METHODS] === undefined) context[METHODS] = []
+const recorder =
+  (context, method) =>
+  async (...args) => {
+    if (context[METHODS] === undefined) context[METHODS] = []
 
-  if (method[CALLS] === undefined) {
-    context[METHODS].push(method)
-    method[CALLS] = []
+    if (method[CALLS] === undefined) {
+      context[METHODS].push(method)
+      method[CALLS] = []
+    }
+
+    const result = await method.apply(context, args)
+
+    method[CALLS].push(args)
+
+    return result
   }
-
-  const result = await method.apply(context, args)
-
-  method[CALLS].push(args)
-
-  return result
-}
 
 const replay = async (context) => {
   if (context[METHODS] === undefined) return

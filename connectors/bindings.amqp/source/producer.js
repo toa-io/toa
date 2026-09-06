@@ -19,7 +19,7 @@ export class Producer extends Connector {
   /** @type {Set<Promise<any>>} */
   #pending = new Set()
 
-  constructor (comm, locator, endpoints, component) {
+  constructor(comm, locator, endpoints, component) {
     super()
 
     this.#comm = comm
@@ -31,7 +31,7 @@ export class Producer extends Connector {
     this.depends(component)
   }
 
-  async open () {
+  async open() {
     await Promise.all(this.#endpoints.map((endpoint) => this.#endpoint(endpoint)))
   }
 
@@ -46,31 +46,35 @@ export class Producer extends Connector {
    * A message that arrives after this is left in its queue for whoever comes up next,
    * which is what a durable queue is for.
    */
-  async close () {
+  async close() {
     await this.#comm.seal()
     await Promise.allSettled(this.#pending)
   }
 
-  async #endpoint (endpoint) {
+  async #endpoint(endpoint) {
     const queue = name(this.#locator, endpoint)
-    const promises = [this.#comm.reply(queue, (request) => {
-      console.debug('AMQP request received', { label: queue, request })
+    const promises = [
+      this.#comm.reply(queue, (request) => {
+        console.debug('AMQP request received', { label: queue, request })
 
-      return this.#invoke(endpoint, request)
-    })]
+        return this.#invoke(endpoint, request)
+      })
+    ]
 
     if (endpoint[0] !== '.')
-      promises.push(this.#comm.process(queue + '..tasks', async (request) => {
-        console.debug('AMQP task received', { label: queue, request })
+      promises.push(
+        this.#comm.process(queue + '..tasks', async (request) => {
+          console.debug('AMQP task received', { label: queue, request })
 
-        return await this.#invoke(endpoint, request)
-      }))
+          return await this.#invoke(endpoint, request)
+        })
+      )
 
     await Promise.all(promises)
   }
 
   /** Invokes the component, counting the call in while it runs. See .close() */
-  async #invoke (endpoint, request) {
+  async #invoke(endpoint, request) {
     const promise = this.#component.invoke(endpoint, request)
 
     this.#pending.add(promise)

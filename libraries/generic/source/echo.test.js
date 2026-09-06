@@ -24,7 +24,7 @@ for (const [input, variable, value, expected] of [
   ['a${FOO}', 'FOO', sample, `a${sample}`],
   ['a${FOO_BAR}bar', 'FOO_BAR', sample, `a${sample}bar`]
 ])
-   it(`should substitute environment variables in ${input}`, async () => {
+  it(`should substitute environment variables in ${input}`, async () => {
     process.env[variable] = value
 
     const output = echo(input)

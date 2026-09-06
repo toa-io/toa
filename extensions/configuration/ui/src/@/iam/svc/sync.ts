@@ -11,8 +11,7 @@ export async function sync(): Promise<void | Error> {
 
   const echo = await origin.get(credentials)
 
-  if (echo instanceof Error)
-    return echo
+  if (echo instanceof Error) return echo
 
   iam(echo)
 }

@@ -9,65 +9,78 @@ import * as context from './.workspace/context.js'
 
 import { Given, Then, After } from '@cucumber/cucumber'
 
-Given('I have a component {component}',
-  async function(component) {
-    await components.copy([component], this.cwd)
-  })
+Given('I have a component {component}', async function (component) {
+  await components.copy([component], this.cwd)
+})
 
-Given('I have components:',
+Given(
+  'I have components:',
   /**
    * @param {import('@cucumber/cucumber').DataTable} table
    */
-  async function(table) {
+  async function (table) {
     const list = table.transpose().raw()[0]
 
     await components.copy(list, this.cwd)
-  })
+  }
+)
 
-Given('I have a context',
+Given(
+  'I have a context',
   /**
    * @this {toa.features.Context}
    */
-  async function() {
+  async function () {
     await context.template(this.cwd)
-  })
+  }
+)
 
-Given('I have a context with:',
+Given(
+  'I have a context with:',
   /**
    * @param {string} [additions]
    * @this {toa.features.Context}
    */
-  async function(additions) {
+  async function (additions) {
     await context.template(this.cwd, additions)
-  })
+  }
+)
 
-Given('the context has no {token} annotation',
+Given(
+  'the context has no {token} annotation',
   /**
    * @param {string} key
    * @this {toa.features.Context}
    */
-  async function(key) {
+  async function (key) {
     await context.remove(this.cwd, key)
-  })
+  }
+)
 
-Then('the environment contains:',
+Then(
+  'the environment contains:',
   /**
    * @param {string} [search]
    * @this {toa.features.Context}
    */
-  async function(search) {
+  async function (search) {
     const searchLines = search.split('\n')
     const path = join(this.cwd, ENV_FILE)
     const contents = await readFile(path, 'utf8')
     const existingLines = contents.split('\n')
     const diffLines = subtract(searchLines, existingLines)
 
-    assert.equal(diffLines.length, 0,
+    assert.equal(
+      diffLines.length,
+      0,
       'Environment does not contain at least one of the given lines.\n' +
-      diff(searchLines, existingLines))
-  })
+        diff(searchLines, existingLines)
+    )
+  }
+)
 
-Then('the environment variable {word} starts with {string}',
+Then(
+  'the environment variable {word} starts with {string}',
   /**
    * @param {string} name
    * @param {string} prefix
@@ -79,30 +92,35 @@ Then('the environment variable {word} starts with {string}',
     const vars = dotenv.parse(contents)
 
     assert.equal(typeof vars[name], 'string', `Environment variable ${name} is not set`)
-    assert.equal(vars[name].startsWith(prefix), true,
-      `Environment variable ${name} does not start with '${prefix}': ${vars[name]}`)
-  })
+    assert.equal(
+      vars[name].startsWith(prefix),
+      true,
+      `Environment variable ${name} does not start with '${prefix}': ${vars[name]}`
+    )
+  }
+)
 
-Then('I update an environment with:',
+Then(
+  'I update an environment with:',
   /**
    * @param {string} update
    * @this {toa.features.Context}
    */
-  async function(update) {
+  async function (update) {
     await updateEnv.call(this, update, ENV_FILE)
-  })
+  }
+)
 
-Given('environment variables:',
-  function(contents) {
-    const vars = dotenv.parse(contents)
+Given('environment variables:', function (contents) {
+  const vars = dotenv.parse(contents)
 
-    for (const [name, value] of Object.entries(vars)) {
-      VARS.set(name, process.env[name])
-      process.env[name] = value
-    }
-  })
+  for (const [name, value] of Object.entries(vars)) {
+    VARS.set(name, process.env[name])
+    process.env[name] = value
+  }
+})
 
-After(function() {
+After(function () {
   for (const [key, value] of VARS) {
     if (value === undefined) {
       delete process.env[key]
@@ -114,7 +132,7 @@ After(function() {
   VARS.clear()
 })
 
-async function updateEnv (update, envFile) {
+async function updateEnv(update, envFile) {
   const path = join(this.cwd, envFile)
   const contents = await readFile(path, 'utf8')
   const oldVars = dotenv.parse(contents)

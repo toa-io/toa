@@ -1,0 +1,39 @@
+name: Nightly
+
+# What a pull request does not wait for: the scenarios whose outcome something other than the
+# code decides — a host on the internet, an image they boot, a lifetime they sit through. A
+# failure here costs a report rather than a merge.
+on:
+  schedule:
+    - cron: "0 2 * * *" # 02:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  features:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: dev
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+
+      - uses: azure/setup-helm@v4
+
+      - name: Install dependencies
+        run: npm ci
+        env:
+          HUSKY: 0
+
+      - name: Start the infrastructure
+        run: |
+          npm run setup:mongo
+          docker compose up -d --wait
+
+      - name: Run every scenario
+        run: npm run features:nightly

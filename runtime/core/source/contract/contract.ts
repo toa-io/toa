@@ -10,11 +10,11 @@ export class Contract {
 
   public static Exception: Refusal = SystemException as unknown as Refusal
 
-  public constructor (schema: Schema) {
+  public constructor(schema: Schema) {
     this.schema = schema
   }
 
-  public fit (value: unknown): void {
+  public fit(value: unknown): void {
     const error = this.schema.fit(value)
 
     if (error !== null)

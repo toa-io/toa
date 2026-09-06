@@ -15,8 +15,7 @@ function closest(target: string): number {
   for (let i = entry.index - 1; i >= 0; i--) {
     const url = entries[i].url
 
-    if (url !== null && path(new URL(url)) === target)
-      return entry.index - i
+    if (url !== null && path(new URL(url)) === target) return entry.index - i
   }
 
   return -1

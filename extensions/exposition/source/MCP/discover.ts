@@ -15,7 +15,7 @@ export interface Discovery {
   legacy: (offered: string | undefined) => object
 }
 
-export function discovery (options: MCP): Discovery {
+export function discovery(options: MCP): Discovery {
   const info = { name: options.name, version: VERSION }
 
   // `listChanged` is a stream a client holds open, and this endpoint holds none
@@ -27,10 +27,9 @@ export function discovery (options: MCP): Discovery {
     _meta: { [SERVER_INFO]: info }
   }
 
-  if (options.instructions !== undefined)
-    modern.instructions = options.instructions
+  if (options.instructions !== undefined) modern.instructions = options.instructions
 
-  function legacy (offered: string | undefined): object {
+  function legacy(offered: string | undefined): object {
     const value: Record<string, unknown> = {
       // what the client asked for where that is served, and the newest handshake otherwise
       protocolVersion: offered !== undefined && offered !== MODERN ? offered : LEGACY,
@@ -38,8 +37,7 @@ export function discovery (options: MCP): Discovery {
       serverInfo: info
     }
 
-    if (options.instructions !== undefined)
-      value.instructions = options.instructions
+    if (options.instructions !== undefined) value.instructions = options.instructions
 
     return value
   }
@@ -49,4 +47,5 @@ export function discovery (options: MCP): Discovery {
 
 /** What this gateway is, which is what answers however an application names itself. */
 const VERSION: string = JSON.parse(
-  readFileSync(new URL('../../package.json', import.meta.url), 'utf8')).version
+  readFileSync(new URL('../../package.json', import.meta.url), 'utf8')
+).version

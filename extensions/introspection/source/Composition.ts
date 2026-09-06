@@ -8,12 +8,12 @@ import type { Annotation } from './annotation.js'
 export class Composition extends Connector {
   private readonly host: Host
 
-  public constructor (host: Host) {
+  public constructor(host: Host) {
     super()
     this.host = host
   }
 
-  protected override async open (): Promise<void> {
+  protected override async open(): Promise<void> {
     const paths = find()
     const composition = await this.host.composition(paths)
 
@@ -23,11 +23,11 @@ export class Composition extends Connector {
   }
 }
 
-export function find (): string[] {
+export function find(): string[] {
   return entries().map((entry) => resolve(ROOT, entry.name))
 }
 
-function entries (): Dirent[] {
+function entries(): Dirent[] {
   const entries = readdirSync(ROOT, { withFileTypes: true })
 
   return entries.filter((entry) => entry.isDirectory())
@@ -38,9 +38,8 @@ function entries (): Dirent[] {
  * must not end up with the explorer components — nor with the exposition
  * dependency they bring in.
  */
-export function components (annotation?: Annotation): Components {
-  if (annotation === false)
-    return { labels: [], paths: [] }
+export function components(annotation?: Annotation): Components {
+  if (annotation === false) return { labels: [], paths: [] }
 
   const labels: string[] = []
   const paths: string[] = []

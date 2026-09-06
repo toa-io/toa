@@ -1,12 +1,10 @@
 declare namespace toa.mongodb {
+  interface Record {
+    _id: string
+    VERSION: number
 
-    interface Record {
-        _id: string
-        VERSION: number
-
-        [key: string]: any
-    }
-
+    [key: string]: any
+  }
 }
 
 export type Record = toa.mongodb.Record

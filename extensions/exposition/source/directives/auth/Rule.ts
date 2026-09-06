@@ -5,7 +5,7 @@ import type { Context, Directive, Identity, Create } from './types.js'
 export class Rule implements Directive {
   private readonly directives: Directive[] = []
 
-  public constructor (directives: Record<string, any>, create: Create) {
+  public constructor(directives: Record<string, any>, create: Create) {
     for (const [name, value] of Object.entries(directives)) {
       const directive = create(name, value)
 
@@ -13,19 +13,22 @@ export class Rule implements Directive {
     }
   }
 
-  public async authorize (identity: Identity | null, context: Context, parameters: Parameter[]): Promise<boolean> {
+  public async authorize(
+    identity: Identity | null,
+    context: Context,
+    parameters: Parameter[]
+  ): Promise<boolean> {
     for (const directive of this.directives) {
       const authorized = await directive.authorize(identity, context, parameters)
 
-      if (!authorized)
-        return false
+      if (!authorized) return false
     }
 
     return true
   }
 
   /** Whatever each of them makes of it, in the order they were declared. */
-  public describe (introspection: Introspection): Introspection {
+  public describe(introspection: Introspection): Introspection {
     for (const directive of this.directives)
       introspection = directive.describe?.(introspection) ?? introspection
 
@@ -33,7 +36,10 @@ export class Rule implements Directive {
   }
 
   /** All of them, so one that refuses ends it and one that cannot tell leaves it untold. */
-  public async admits (identity: Identity | null, context: Context): Promise<boolean | undefined> {
+  public async admits(
+    identity: Identity | null,
+    context: Context
+  ): Promise<boolean | undefined> {
     let untold = false
 
     for (const directive of this.directives) {
@@ -45,8 +51,7 @@ export class Rule implements Directive {
         continue
       }
 
-      if (!admits)
-        return false
+      if (!admits) return false
     }
 
     return untold ? undefined : true

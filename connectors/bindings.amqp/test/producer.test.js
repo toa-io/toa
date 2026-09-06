@@ -57,11 +57,25 @@ it('should bind endpoints', async () => {
   await each(endpoints, async (endpoint, i) => {
     const n = i + 1
 
-    assert.ok(((call) => call.arguments.length === 2 && isDeepStrictEqual(call.arguments[0], locator) && isDeepStrictEqual(call.arguments[1], endpoint))(mock.queues.name.mock.calls[n - 1] ?? { arguments: [] }))
+    assert.ok(
+      ((call) =>
+        call.arguments.length === 2 &&
+        isDeepStrictEqual(call.arguments[0], locator) &&
+        isDeepStrictEqual(call.arguments[1], endpoint))(
+        mock.queues.name.mock.calls[n - 1] ?? { arguments: [] }
+      )
+    )
 
     const queue = mock.queues.name.mock.calls[i].result
 
-    assert.ok(((call) => call.arguments.length === 2 && isDeepStrictEqual(call.arguments[0], queue) && typeof call.arguments[1] === 'function')(comm.reply.mock.calls[n - 1] ?? { arguments: [] }))
+    assert.ok(
+      ((call) =>
+        call.arguments.length === 2 &&
+        isDeepStrictEqual(call.arguments[0], queue) &&
+        typeof call.arguments[1] === 'function')(
+        comm.reply.mock.calls[n - 1] ?? { arguments: [] }
+      )
+    )
 
     const process = comm.reply.mock.calls[i].arguments[1]
 
@@ -69,7 +83,14 @@ it('should bind endpoints', async () => {
 
     await process(request)
 
-    assert.ok(((call) => call.arguments.length === 2 && isDeepStrictEqual(call.arguments[0], endpoint) && isDeepStrictEqual(call.arguments[1], request))(component.invoke.mock.calls[n - 1] ?? { arguments: [] }))
+    assert.ok(
+      ((call) =>
+        call.arguments.length === 2 &&
+        isDeepStrictEqual(call.arguments[0], endpoint) &&
+        isDeepStrictEqual(call.arguments[1], request))(
+        component.invoke.mock.calls[n - 1] ?? { arguments: [] }
+      )
+    )
   })
 })
 
@@ -79,14 +100,28 @@ it('should bind the tasks queue', async () => {
   await each(endpoints, async (endpoint, i) => {
     const queue = mock.queues.name.mock.calls[i].result
 
-    assert.ok(((call) => call.arguments.length === 2 && isDeepStrictEqual(call.arguments[0], queue + '..tasks') && typeof call.arguments[1] === 'function')(comm.process.mock.calls[i + 1 - 1] ?? { arguments: [] }))
+    assert.ok(
+      ((call) =>
+        call.arguments.length === 2 &&
+        isDeepStrictEqual(call.arguments[0], queue + '..tasks') &&
+        typeof call.arguments[1] === 'function')(
+        comm.process.mock.calls[i + 1 - 1] ?? { arguments: [] }
+      )
+    )
 
     const process = comm.process.mock.calls[i].arguments[1]
     const request = generate()
 
     await process(request)
 
-    assert.ok(component.invoke.mock.calls.some((call) => call.arguments.length === 2 && isDeepStrictEqual(call.arguments[0], endpoint) && isDeepStrictEqual(call.arguments[1], request)))
+    assert.ok(
+      component.invoke.mock.calls.some(
+        (call) =>
+          call.arguments.length === 2 &&
+          isDeepStrictEqual(call.arguments[0], endpoint) &&
+          isDeepStrictEqual(call.arguments[1], request)
+      )
+    )
   })
 })
 
@@ -104,14 +139,20 @@ describe('closing', () => {
     let complete
     let closed = false
 
-    component.invoke.mock.mockImplementationOnce(async () =>
-      await new Promise((resolve) => { complete = resolve }))
+    component.invoke.mock.mockImplementationOnce(
+      async () =>
+        await new Promise((resolve) => {
+          complete = resolve
+        })
+    )
 
     await producer.connect()
 
     const process = comm.reply.mock.calls[0].arguments[1]
     const invocation = process(generate())
-    const closing = producer.disconnect().then(() => { closed = true })
+    const closing = producer.disconnect().then(() => {
+      closed = true
+    })
 
     await sleep()
 
@@ -126,7 +167,9 @@ describe('closing', () => {
   })
 
   it('should not be held by an invocation that failed', async () => {
-    component.invoke.mock.mockImplementationOnce(async () => { throw new Error('nope') })
+    component.invoke.mock.mockImplementationOnce(async () => {
+      throw new Error('nope')
+    })
 
     await producer.connect()
 
@@ -139,7 +182,10 @@ describe('closing', () => {
 
 const sleep = async () => await new Promise((resolve) => setImmediate(resolve))
 
-function resetCalls (target = [assert, mock, locator, endpoints, component, sleep], seen = new Set()) {
+function resetCalls(
+  target = [assert, mock, locator, endpoints, component, sleep],
+  seen = new Set()
+) {
   if (target === null || typeof target !== 'object' || seen.has(target)) return
 
   seen.add(target)

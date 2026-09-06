@@ -8,50 +8,55 @@ export class Claims extends Mapping<Record<string, string>> {
   private readonly discovery!: Promise<Component>
   private federation: Component | null = null
 
-  public constructor (map: Record<string, string>, remotes: Remotes) {
+  public constructor(map: Record<string, string>, remotes: Remotes) {
     assert.ok(map.constructor === Object, '`map:claims` must be an object')
 
-    assert.ok(Object.values(map).every((value) => typeof value === 'string'),
-      '`map:claims ` must be an object with string values')
+    assert.ok(
+      Object.values(map).every((value) => typeof value === 'string'),
+      '`map:claims ` must be an object with string values'
+    )
 
     super(map, remotes)
 
     this.discovery = remotes.discover('identity', 'federation')
   }
 
-  public override async properties (context: Input): Promise<Record<string, string> | null> {
+  public override async properties(
+    context: Input
+  ): Promise<Record<string, string> | null> {
     const authentication = context.request.headers.authorization
 
-    if (authentication === undefined)
-      return null
+    if (authentication === undefined) return null
 
     const claims = await this.claims(authentication)
 
-    if (claims === null)
-      return null
+    if (claims === null) return null
 
-    return Object.entries(this.value).reduce((properties: Record<string, string>, [property, claim]) => {
-      const value = claims[claim]
+    return Object.entries(this.value).reduce(
+      (properties: Record<string, string>, [property, claim]) => {
+        const value = claims[claim]
 
-      if (value !== undefined)
-        properties[property] = value
+        if (value !== undefined) properties[property] = value
 
-      return properties
-    }, {})
+        return properties
+      },
+      {}
+    )
   }
 
-  private async claims (authentication: string): Promise<Record<string, string> | null> {
+  private async claims(authentication: string): Promise<Record<string, string> | null> {
     const [scheme, credentials] = authentication.split(' ')
 
-    if (scheme !== 'Bearer' || credentials === undefined)
-      return null
+    if (scheme !== 'Bearer' || credentials === undefined) return null
 
     this.federation ??= await this.discovery
 
-    const claims = await this.federation.invoke<Record<string, string> | Error>('decode', { input: credentials })
+    const claims = await this.federation.invoke<Record<string, string> | Error>(
+      'decode',
+      { input: credentials }
+    )
 
-    if (claims instanceof Error)
-      return null
+    if (claims instanceof Error) return null
 
     return claims
   }

@@ -1,4 +1,4 @@
-function id (input) {
+function id(input) {
   return input.entry.id
 }
 

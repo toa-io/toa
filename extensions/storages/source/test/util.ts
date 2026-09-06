@@ -103,6 +103,11 @@ export const suites = [
 export interface Suite {
   run: boolean
   provider: keyof typeof providers
-  options?: S3Options | SpacesOptions | CloudinaryOptions | FileSystemOptions | TemporaryOptions
+  options?:
+    | S3Options
+    | SpacesOptions
+    | CloudinaryOptions
+    | FileSystemOptions
+    | TemporaryOptions
   secrets?: Secrets
 }

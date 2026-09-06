@@ -14,7 +14,10 @@ export interface Context {
   configuration: Configuration
 }
 
-export type Fetch = (input: string | URL | Request, init?: RequestInit) => Promise<Response>
+export type Fetch = (
+  input: string | URL | Request,
+  init?: RequestInit
+) => Promise<Response>
 
 export type TransitInput = Omit<Entity, 'id' | 'CREATED'>
 

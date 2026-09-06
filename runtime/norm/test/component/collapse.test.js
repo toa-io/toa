@@ -44,7 +44,10 @@ describe('entity', () => {
 
     collapse(manifest, prototype)
 
-    assert.deepStrictEqual(manifest.entity.migrations.map(({ id }) => id), ['0002'])
+    assert.deepStrictEqual(
+      manifest.entity.migrations.map(({ id }) => id),
+      ['0002']
+    )
   })
 
   it('should leave a component with no migrations without any', () => {

@@ -38,8 +38,11 @@ describe('input', () => {
       headers: { token: { header: 'x-access-token', type: 'string' } }
     }
 
-    assert.deepEqual(input(introspection, []),
-      { type: 'object', properties: {}, additionalProperties: false })
+    assert.deepEqual(input(introspection, []), {
+      type: 'object',
+      properties: {},
+      additionalProperties: false
+    })
   })
 
   it('should take the body as it is, requiring what it requires', () => {
@@ -78,7 +81,10 @@ describe('annotations', () => {
   it('should read what the verb says of the call', () => {
     assert.deepEqual(annotations('GET'), { readOnlyHint: true })
     assert.deepEqual(annotations('HEAD'), { readOnlyHint: true })
-    assert.deepEqual(annotations('DELETE'), { destructiveHint: true, idempotentHint: true })
+    assert.deepEqual(annotations('DELETE'), {
+      destructiveHint: true,
+      idempotentHint: true
+    })
     assert.deepEqual(annotations('PUT'), { idempotentHint: true })
     assert.equal(annotations('POST'), undefined)
   })

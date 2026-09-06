@@ -47,6 +47,7 @@ Feature: Atom aspect
       """
 
   # The routine runs for a whole lease, so the lock is held only if it is extended.
+  @timing
   Scenario: Holding a lock across a lease
     Given I compose `atom` component
     When I call `default.atom.locks` with:

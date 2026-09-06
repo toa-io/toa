@@ -20,8 +20,8 @@ export interface Query<Entity = any> {
 
 /** Origin of a call. Stamped by the caller, sanitized by the request contract. */
 export type Source =
-  | { namespace: string, component: string, operation: string }
-  | { namespace: string, component: string, event: string }
+  | { namespace: string; component: string; operation: string }
+  | { namespace: string; component: string; event: string }
   | { service: string }
 
 export interface Request<Input = any, Entity = any> {

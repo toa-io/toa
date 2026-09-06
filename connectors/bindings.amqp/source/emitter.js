@@ -13,7 +13,7 @@ export class Emitter extends Connector {
   /** @type {toa.amqp.Communication} */
   #comm
 
-  constructor (comm, locator, label) {
+  constructor(comm, locator, label) {
     super()
 
     this.#exchange = name(locator, label)
@@ -22,7 +22,7 @@ export class Emitter extends Connector {
     this.depends(comm)
   }
 
-  async emit (message) {
+  async emit(message) {
     console.debug('Emitting AMQP event', { exchange: this.#exchange, message })
 
     await this.#comm.emit(this.#exchange, message, PROPERTIES)

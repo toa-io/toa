@@ -22,23 +22,29 @@ it('should convert key', () => {
 })
 
 it('should convert condition', () => {
-  assert.partialDeepStrictEqual(parse({ key: ['ip', 'path'], condition: { status: '404' }, ...rest }), {
-    condition: [
-      {
-        method: 'status',
-        options: '404'
-      }
-    ]
-  })
+  assert.partialDeepStrictEqual(
+    parse({ key: ['ip', 'path'], condition: { status: '404' }, ...rest }),
+    {
+      condition: [
+        {
+          method: 'status',
+          options: '404'
+        }
+      ]
+    }
+  )
 
-  assert.partialDeepStrictEqual(parse({ key: 'ip', condition: { status: '404' }, ...rest }), {
-    condition: [
-      {
-        method: 'status',
-        options: '404'
-      }
-    ]
-  })
+  assert.partialDeepStrictEqual(
+    parse({ key: 'ip', condition: { status: '404' }, ...rest }),
+    {
+      condition: [
+        {
+          method: 'status',
+          options: '404'
+        }
+      ]
+    }
+  )
 })
 
 it('should convert a key component that takes an argument', () => {
@@ -53,11 +59,14 @@ it('should convert a key component that takes an argument', () => {
 })
 
 it('should convert a mixed key', () => {
-  assert.partialDeepStrictEqual(parse({ key: ['route', { segment: 'id' }, 'identity'], ...rest }), {
-    key: [
-      { method: 'route' },
-      { method: 'segment', options: 'id' },
-      { method: 'identity' }
-    ]
-  })
+  assert.partialDeepStrictEqual(
+    parse({ key: ['route', { segment: 'id' }, 'identity'], ...rest }),
+    {
+      key: [
+        { method: 'route' },
+        { method: 'segment', options: 'id' },
+        { method: 'identity' }
+      ]
+    }
+  )
 })

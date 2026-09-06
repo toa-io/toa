@@ -9,16 +9,15 @@ export class Warning {
   private readonly interval: number
   private last = -Infinity
 
-  public constructor (message: string, interval: number = INTERVAL) {
+  public constructor(message: string, interval: number = INTERVAL) {
     this.message = message
     this.interval = interval
   }
 
-  public emit (attributes?: Record<string, unknown>): void {
+  public emit(attributes?: Record<string, unknown>): void {
     const now = Date.now()
 
-    if (now - this.last < this.interval)
-      return
+    if (now - this.last < this.interval) return
 
     this.last = now
 

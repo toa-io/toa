@@ -1,4 +1,4 @@
-function enumerate (_, objects) {
+function enumerate(_, objects) {
   return objects
 }
 

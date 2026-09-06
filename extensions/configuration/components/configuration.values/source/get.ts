@@ -6,11 +6,10 @@ import { resolve, type Context } from './lib/resolve.js'
  * schema is the deployment's, so an epoch the deployment does not know has none — the
  * value is still what was stored for it.
  */
-export async function computation (input: Input, context: Context): Promise<Item | null> {
+export async function computation(input: Input, context: Context): Promise<Item | null> {
   const value = await resolve(context, input.component, input.epoch)
 
-  if (value === null)
-    return null
+  if (value === null) return null
 
   const known = entry(input.component)
 

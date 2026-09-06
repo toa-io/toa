@@ -37,10 +37,10 @@ authorization: Basic #{{ basic Bubba }}
 import { Agent, Captures, type Functions } from '@toa.io/agent'
 
 const functions: Functions = {
-  duplicate: function(this: Captures, value: string, arg: string): string {
+  duplicate: function (this: Captures, value: string, arg: string): string {
     return arg + arg
   },
-  append: function(this: Captures, value: string, arg: string): string {
+  append: function (this: Captures, value: string, arg: string): string {
     return value + arg
   }
 }
@@ -58,5 +58,6 @@ foo: #{{ duplicate bar | append baz }}
 
 In the above example, `foo` will be set to `barbarbaz`.
 
-[^1]: Also supports some human-readable values like `now -1d`, `now +1h`. Supported units
-are `ms`, `s`, `sec`, `m`, `min`, `h`, `hr`, `hour`, `hours`, `d`, `day`, `days`.
+[^1]:
+    Also supports some human-readable values like `now -1d`, `now +1h`. Supported units
+    are `ms`, `s`, `sec`, `m`, `min`, `h`, `hr`, `hour`, `hours`, `d`, `day`, `days`.

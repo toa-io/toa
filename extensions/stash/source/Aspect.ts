@@ -11,18 +11,18 @@ export class Aspect extends Connector implements extensions.Aspect {
   private readonly connection: Connection
   private redis: Redis | null = null
 
-  public constructor (connection: Connection) {
+  public constructor(connection: Connection) {
     super()
 
     this.connection = connection
     this.depends(connection)
   }
 
-  public invoke (method: 'store', key: string, value: object): any
-  public invoke (method: 'fetch', key: string): any
-  public invoke (method: string, ...args: unknown[]): any
+  public invoke(method: 'store', key: string, value: object): any
+  public invoke(method: 'fetch', key: string): any
+  public invoke(method: string, ...args: unknown[]): any
   // eslint-disable-next-line @typescript-eslint/promise-function-async
-  public invoke (method: string, ...args: unknown[]): any {
+  public invoke(method: string, ...args: unknown[]): any {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error
     if (typeof this.redis[method] === 'function') {
@@ -50,18 +50,22 @@ export class Aspect extends Connector implements extensions.Aspect {
     }
 
     if (method === 'store')
-      console.span(span(method, args[0]),
-        async () => { await this.store(args[0] as string, args[1] as object, ...args.slice(2)) })
+      console.span(span(method, args[0]), async () => {
+        await this.store(args[0] as string, args[1] as object, ...args.slice(2))
+      })
 
     if (method === 'fetch')
-      return console.span(span(method, args[0]), async () => await this.fetch(args[0] as string))
+      return console.span(
+        span(method, args[0]),
+        async () => await this.fetch(args[0] as string)
+      )
   }
 
-  protected override async open (): Promise<void> {
+  protected override async open(): Promise<void> {
     this.redis = this.connection.redis
   }
 
-  private async store (key: string, value: object, ...args: unknown[]): Promise<void> {
+  private async store(key: string, value: object, ...args: unknown[]): Promise<void> {
     const buffer = encode(value)
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -69,7 +73,7 @@ export class Aspect extends Connector implements extensions.Aspect {
     await this.redis.set(key, buffer, ...args)
   }
 
-  private async fetch (key: string): Promise<object | null> {
+  private async fetch(key: string): Promise<object | null> {
     if (this.redis === null) return null
 
     const buffer = await this.redis.getBuffer(key)
@@ -78,7 +82,7 @@ export class Aspect extends Connector implements extensions.Aspect {
   }
 }
 
-function span (method: string, key: unknown): SpanOptions {
+function span(method: string, key: unknown): SpanOptions {
   // https://opentelemetry.io/docs/specs/semconv/database/redis/
   // `db.namespace` names the database node on service graphs,
   // which otherwise displays 'unknown'
@@ -88,10 +92,8 @@ function span (method: string, key: unknown): SpanOptions {
     'db.operation.name': method
   }
 
-  if (typeof key === 'string')
-    attributes.key = key
-  else if (Array.isArray(key))
-    attributes.key = key.join(' ')
+  if (typeof key === 'string') attributes.key = key
+  else if (Array.isArray(key)) attributes.key = key.join(' ')
 
   return { name: `${method} stash`, kind: 'client', attributes }
 }

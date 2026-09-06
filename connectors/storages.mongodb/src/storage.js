@@ -25,7 +25,7 @@ export class Storage extends Connector {
   /** @type {Map<string, object>} span options per driver method */
   #spans = new Map()
 
-  constructor (client, entity) {
+  constructor(client, entity) {
     super()
 
     this.#client = client
@@ -34,7 +34,7 @@ export class Storage extends Connector {
     this.depends(client)
   }
 
-  get raw () {
+  get raw() {
     return this.#collection
   }
 
@@ -43,31 +43,34 @@ export class Storage extends Connector {
    * Without that it would be a second write with a window in front of it — worse than the
    * inline emission it replaces — so the storage simply does not advertise it.
    */
-  get outbox () {
+  get outbox() {
     return this.#outbox
   }
 
   /** This storage applies what a component's `migrations` directory declares. */
-  get migrates () {
+  get migrates() {
     return true
   }
 
-  async open () {
+  async open() {
     this.#collection = this.#client.collection
 
-    if (this.#client.outbox !== undefined)
-      this.#outbox = new Outbox(this.#client.outbox)
+    if (this.#client.outbox !== undefined) this.#outbox = new Outbox(this.#client.outbox)
 
     this.#spans.clear()
 
     if (this.#entity.migrations?.length > 0)
-      this.#migrations = new Migrations(this.#client.db, this.#collection, this.#entity.migrations)
+      this.#migrations = new Migrations(
+        this.#client.db,
+        this.#collection,
+        this.#entity.migrations
+      )
 
     await this.#migrations?.run()
     await this.#outbox?.index()
   }
 
-  async get (query) {
+  async get(query) {
     const { criteria, options } = translate(query)
 
     // identity lookups must return deleted records, so that callers
@@ -75,55 +78,62 @@ export class Storage extends Connector {
     if (query?.id === undefined && query?.options?.deleted !== true)
       criteria.DELETED = null
 
-    const record = await this.command('findOne', { criteria, options },
-      () => this.#collection.findOne(criteria, options))
+    const record = await this.command('findOne', { criteria, options }, () =>
+      this.#collection.findOne(criteria, options)
+    )
 
     return from(record)
   }
 
-  async find (query) {
+  async find(query) {
     const { criteria, options, sample } = translate(query)
 
-    if (query?.options?.deleted !== true)
-      criteria.DELETED = null
+    if (query?.options?.deleted !== true) criteria.DELETED = null
 
-    const recordset = sample === undefined
-      ? await this.command('find', { criteria, options },
-        async () => await this.#collection.find(criteria, options).toArray())
-      : await this.aggregate(criteria, options, sample)
+    const recordset =
+      sample === undefined
+        ? await this.command(
+            'find',
+            { criteria, options },
+            async () => await this.#collection.find(criteria, options).toArray()
+          )
+        : await this.aggregate(criteria, options, sample)
 
     return recordset.map((item) => from(item))
   }
 
   /** @private */
-  async aggregate (criteria, options, sample) {
+  async aggregate(criteria, options, sample) {
     const pipeline = toPipeline(criteria, options, sample)
 
-    return await this.command('aggregate', { pipeline },
-      async () => await this.#collection.aggregate(pipeline).toArray())
+    return await this.command(
+      'aggregate',
+      { pipeline },
+      async () => await this.#collection.aggregate(pipeline).toArray()
+    )
   }
 
-  async stream (query = undefined) {
+  async stream(query = undefined) {
     const { criteria, options } = translate(query)
 
-    if (query?.options?.deleted !== true)
-      criteria.DELETED = null
+    if (query?.options?.deleted !== true) criteria.DELETED = null
 
     this.debug('find (stream)', { criteria, options })
 
     return this.#collection.find(criteria, options).stream({ transform: from })
   }
 
-  async add (entity, session = undefined) {
+  async add(entity, session = undefined) {
     const record = to(entity)
 
-    const result = await this.command('insertOne', { record },
-      () => this.#collection.insertOne(record, { session }))
+    const result = await this.command('insertOne', { record }, () =>
+      this.#collection.insertOne(record, { session })
+    )
 
     return result.acknowledged
   }
 
-  async set (entity, session = undefined) {
+  async set(entity, session = undefined) {
     const criteria = {
       _id: entity.id,
       VERSION: entity.VERSION - 1
@@ -131,25 +141,25 @@ export class Storage extends Connector {
 
     const record = to(entity)
 
-    const result = await this.command('findOneAndReplace', { criteria, record },
-      () => this.#collection.findOneAndReplace(criteria, record, { session }))
+    const result = await this.command('findOneAndReplace', { criteria, record }, () =>
+      this.#collection.findOneAndReplace(criteria, record, { session })
+    )
 
     return result !== null
   }
 
-  async store (entity, row = undefined, attempt = 0) {
+  async store(entity, row = undefined, attempt = 0) {
     try {
       if (row === undefined || this.#outbox === undefined) {
-        if (entity.VERSION === 1)
-          return await this.add(entity)
-        else
-          return await this.set(entity)
+        if (entity.VERSION === 1) return await this.add(entity)
+        else return await this.set(entity)
       }
 
       const committed = await this.#client.transaction(async (session) => {
-        const ok = entity.VERSION === 1
-          ? await this.add(entity, session)
-          : await this.set(entity, session)
+        const ok =
+          entity.VERSION === 1
+            ? await this.add(entity, session)
+            : await this.set(entity, session)
 
         // a lost compare-and-swap must take the row down with it, or a retried transition
         // leaves a row for a write that never happened
@@ -170,16 +180,13 @@ export class Storage extends Connector {
 
       const retry = await retriable(error, attempt)
 
-      if (retry)
-        return await this.store(entity, row, attempt + 1)
-      else
-        return false
+      if (retry) return await this.store(entity, row, attempt + 1)
+      else return false
     }
   }
 
-  async massStore (entities, rows = undefined, attempt = 0) {
-    if (entities.length === 0)
-      return true
+  async massStore(entities, rows = undefined, attempt = 0) {
+    if (entities.length === 0) return true
 
     const operations = entities.map((entity) => {
       const record = to(entity)
@@ -187,22 +194,23 @@ export class Storage extends Connector {
       if (entity.VERSION === 1) {
         const { VERSION, ...rest } = record
 
-        return { // upsert in required when document is deleted
+        return {
+          // upsert in required when document is deleted
           updateOne: {
             filter: { _id: entity.id },
             update: {
-              $set: {    
+              $set: {
                 ...rest,
                 DELETED: null
               },
-              $inc: { VERSION: 1 },
+              $inc: { VERSION: 1 }
             },
             upsert: true
-          } 
+          }
         }
       } else
-        return {  
-          replaceOne: { 
+        return {
+          replaceOne: {
             filter: { _id: entity.id, VERSION: entity.VERSION - 1 },
             replacement: record
           }
@@ -211,8 +219,11 @@ export class Storage extends Connector {
 
     try {
       await this.#client.transaction(async (session) => {
-        await this.command('bulkWrite', { operations: operations.length },
-          async () => await this.#collection.bulkWrite(operations, { session }))
+        await this.command(
+          'bulkWrite',
+          { operations: operations.length },
+          async () => await this.#collection.bulkWrite(operations, { session })
+        )
 
         if (rows !== undefined && this.#outbox !== undefined)
           await this.#outbox.insertMany(rows, session)
@@ -224,14 +235,12 @@ export class Storage extends Connector {
 
       const retry = await retriable(error, attempt)
 
-      if (retry)
-        return await this.massStore(entities, rows, attempt + 1)
-      else
-        return false
+      if (retry) return await this.massStore(entities, rows, attempt + 1)
+      else return false
     }
   }
 
-  async upsert (query, changeset, row = undefined) {
+  async upsert(query, changeset, row = undefined) {
     const { criteria, options } = translate(query)
 
     if (!('DELETED' in changeset) || changeset.DELETED === null) {
@@ -249,8 +258,11 @@ export class Storage extends Connector {
     options.returnDocument = ReturnDocument.BEFORE
 
     const apply = async (session) => {
-      const found = await this.command('findOneAndUpdate', { criteria, update, options },
-        () => this.#collection.findOneAndUpdate(criteria, update, { ...options, session }))
+      const found = await this.command(
+        'findOneAndUpdate',
+        { criteria, update, options },
+        () => this.#collection.findOneAndUpdate(criteria, update, { ...options, session })
+      )
 
       if (found === null) return null
 
@@ -267,8 +279,7 @@ export class Storage extends Connector {
 
       // an assignment's event is the write's own images, so they are filled in here whether
       // or not the row is going to be committed
-      if (row !== undefined)
-        row.event = { origin, state, ...row.event }
+      if (row !== undefined) row.event = { origin, state, ...row.event }
 
       if (row !== undefined && this.#outbox !== undefined)
         await this.#outbox.insert(row, session)
@@ -276,17 +287,15 @@ export class Storage extends Connector {
       return state
     }
 
-    if (row === undefined || this.#outbox === undefined)
-      return apply(undefined)
+    if (row === undefined || this.#outbox === undefined) return apply(undefined)
 
     return this.#client.transaction(apply)
   }
 
-  async ensure (query, properties, state, row = undefined) {
+  async ensure(query, properties, state, row = undefined) {
     let { criteria, options } = translate(query)
 
-    if (query === undefined)
-      criteria = properties
+    if (query === undefined) criteria = properties
 
     const update = { $setOnInsert: to(state) }
 
@@ -294,29 +303,35 @@ export class Storage extends Connector {
     options.returnDocument = ReturnDocument.AFTER
 
     try {
-      const result = row === undefined || this.#outbox === undefined
-        ? await this.command('findOneAndUpdate', { criteria, update, options },
-          () => this.#collection.findOneAndUpdate(criteria, update, options))
-        : await this.#client.transaction(async (session) => {
-          const found = await this.command('findOneAndUpdate', { criteria, update, options },
-            () => this.#collection.findOneAndUpdate(criteria, update, { ...options, session }))
+      const result =
+        row === undefined || this.#outbox === undefined
+          ? await this.command('findOneAndUpdate', { criteria, update, options }, () =>
+              this.#collection.findOneAndUpdate(criteria, update, options)
+            )
+          : await this.#client.transaction(async (session) => {
+              const found = await this.command(
+                'findOneAndUpdate',
+                { criteria, update, options },
+                () =>
+                  this.#collection.findOneAndUpdate(criteria, update, {
+                    ...options,
+                    session
+                  })
+              )
 
-          // only an insert is an event; finding an existing record is not
-          if (found !== null && found._id === state.id)
-            await this.#outbox.insert(row, session)
+              // only an insert is an event; finding an existing record is not
+              if (found !== null && found._id === state.id)
+                await this.#outbox.insert(row, session)
 
-          return found
-        })
+              return found
+            })
 
-      if (result.DELETED !== undefined && result.DELETED !== null)
-        return null
-      else
-        return from(result)
+      if (result.DELETED !== undefined && result.DELETED !== null) return null
+      else return from(result)
     } catch (error) {
       if (error.code === ERR_DUPLICATE_KEY)
         throw new exceptions.DuplicateException(this.#client.name)
-      else
-        throw error
+      else throw error
     }
   }
 
@@ -326,7 +341,7 @@ export class Storage extends Connector {
    *
    * @private
    */
-  async command (method, attributes, task) {
+  async command(method, attributes, task) {
     this.debug(method, attributes)
 
     return console.span(this.span(method), task)
@@ -338,7 +353,7 @@ export class Storage extends Connector {
    *
    * @private
    */
-  span (method) {
+  span(method) {
     let options = this.#spans.get(method)
 
     if (options === undefined) {
@@ -362,7 +377,7 @@ export class Storage extends Connector {
     return options
   }
 
-  debug (method, attributes) {
+  debug(method, attributes) {
     console.debug('MongoDB query', {
       collection: this.#collection.collectionName,
       method,
@@ -371,47 +386,40 @@ export class Storage extends Connector {
   }
 }
 
-function toPipeline (criteria, options, sample) {
+function toPipeline(criteria, options, sample) {
   const pipeline = []
 
-  if (criteria !== undefined)
-    pipeline.push({ $match: criteria })
+  if (criteria !== undefined) pipeline.push({ $match: criteria })
 
-  if (sample !== undefined)
-    pipeline.push({ $sample: { size: sample } })
+  if (sample !== undefined) pipeline.push({ $sample: { size: sample } })
 
-  if (options?.sort !== undefined)
-    pipeline.push({ $sort: options.sort })
+  if (options?.sort !== undefined) pipeline.push({ $sort: options.sort })
 
-  if (options?.projection !== undefined)
-    pipeline.push({ $project: options.projection })
+  if (options?.projection !== undefined) pipeline.push({ $project: options.projection })
 
   return pipeline
 }
 
 const ERR_DUPLICATE_KEY = 11000
 
-async function retriable (error, attempt) {
+async function retriable(error, attempt) {
   if (error.code === ERR_DUPLICATE_KEY) {
-    const id = error.keyPattern === undefined
-      ? error.message.includes(' index: _id_ ') // AWS DocumentDB
-      : error.keyPattern._id === 1
+    const id =
+      error.keyPattern === undefined
+        ? error.message.includes(' index: _id_ ') // AWS DocumentDB
+        : error.keyPattern._id === 1
 
-    if (id)
-      return false
-    else
-      throw new exceptions.DuplicateException()
+    if (id) return false
+    else throw new exceptions.DuplicateException()
   } else if (error.cause?.code === 'ECONNREFUSED') {
-    if (attempt === LAST_ATTEMPT)
-      throw error
+    if (attempt === LAST_ATTEMPT) throw error
 
     const timeout = 1000 + 500 * attempt
 
     await new Promise((resolve) => setTimeout(resolve, timeout))
 
     return true
-  } else
-    throw error
+  } else throw error
 }
 
 const LAST_ATTEMPT = 9

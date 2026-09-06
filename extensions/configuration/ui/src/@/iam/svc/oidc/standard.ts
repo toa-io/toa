@@ -4,8 +4,7 @@ import type { Descriptor, IDP } from './providers'
 export function standard(descriptor: Descriptor, idp: IDP) {
   const { client, endpoint, type, scope } = descriptor
 
-  if (client === undefined || client === '')
-    throw new Error('Client ID is required')
+  if (client === undefined || client === '') throw new Error('Client ID is required')
 
   const id = newid()
 
@@ -16,7 +15,7 @@ export function standard(descriptor: Descriptor, idp: IDP) {
     response_mode: 'fragment',
     scope,
     state: btoa(JSON.stringify({ idp })),
-    nonce: id,
+    nonce: id
   })
 
   nonce.set(id)

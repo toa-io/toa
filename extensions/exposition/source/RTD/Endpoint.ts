@@ -5,7 +5,10 @@ import type * as RTD from './index.js'
 import type { Introspection } from '../Introspection.js'
 
 export interface Endpoint {
-  call: (context: http.Context, parameters: RTD.Parameter[]) => Promise<http.OutgoingMessage>
+  call: (
+    context: http.Context,
+    parameters: RTD.Parameter[]
+  ) => Promise<http.OutgoingMessage>
 
   explain: (parameters: RTD.Parameter[]) => Promise<Introspection>
 

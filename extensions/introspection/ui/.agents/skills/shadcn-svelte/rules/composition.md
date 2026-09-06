@@ -111,11 +111,11 @@ This applies to all group-based components:
 ```
 
 ```ts
-toast.success("Changes saved.");
-toast.error("Something went wrong.");
-toast("File deleted.", {
-  action: { label: "Undo", onClick: () => undoDelete() },
-});
+toast.success('Changes saved.')
+toast.error('Something went wrong.')
+toast('File deleted.', {
+  action: { label: 'Undo', onClick: () => undoDelete() }
+})
 ```
 
 Mount the `Toaster` from your UI folder once in the app layout (see [Sonner](https://shadcn-svelte.com/docs/components/sonner)).

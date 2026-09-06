@@ -72,7 +72,7 @@ amqp:
 URL resolution for the example above is as follows:
 
 | Selector          | Result                               | Description        |
-|-------------------|--------------------------------------|--------------------|
+| ----------------- | ------------------------------------ | ------------------ |
 | `dummies.dummy`   | `amqp://d1.rmq.example.com`          | Exact match        |
 | `dummies.another` | `amqp://all-dummies.rmq.example.com` | Partial match      |
 | `what.ever`       | `amqp://default.rmq.example.com`     | No match (default) |

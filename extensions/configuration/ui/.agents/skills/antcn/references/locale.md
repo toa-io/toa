@@ -34,10 +34,10 @@ Horizontal snap-scroller of native language names.
 
 ### Props
 
-| Prop       | Type                       | Default | Notes                                                                                       |
-| ---------- | -------------------------- | ------- | ------------------------------------------------------------------------------------------- |
-| `onselect` | `(locale: Locale) => void` | —       | Fires after the host store is set. Use it to persist or track the choice.                   |
-| `infinite` | `boolean`                  | _auto_  | Forces the loop/clone scroller on or off. Defaults to on when `locales.length >= 10`.       |
+| Prop       | Type                       | Default | Notes                                                                                 |
+| ---------- | -------------------------- | ------- | ------------------------------------------------------------------------------------- |
+| `onselect` | `(locale: Locale) => void` | —       | Fires after the host store is set. Use it to persist or track the choice.             |
+| `infinite` | `boolean`                  | _auto_  | Forces the loop/clone scroller on or off. Defaults to on when `locales.length >= 10`. |
 
 ### Notes
 

@@ -12,7 +12,8 @@ export const collapse = (manifest, prototype) => {
       if (manifest.operations === undefined) manifest.operations = {}
 
       for (let [endpoint, operation] of operations) {
-        if (manifest.operations[endpoint] === undefined) manifest.operations[endpoint] = {}
+        if (manifest.operations[endpoint] === undefined)
+          manifest.operations[endpoint] = {}
         else {
           const { virtual, ...real } = operation
 
@@ -24,7 +25,8 @@ export const collapse = (manifest, prototype) => {
         merge(manifest.operations[endpoint], declaration)
 
         if (bridge !== undefined) {
-          if (manifest.prototype.operations === undefined) manifest.prototype.operations = {}
+          if (manifest.prototype.operations === undefined)
+            manifest.prototype.operations = {}
 
           manifest.prototype.operations[endpoint] = { bridge }
         }
@@ -34,7 +36,10 @@ export const collapse = (manifest, prototype) => {
 
   const { entity, events, extensions } = prototype
 
-  if (manifest.entity?.schema?.properties.id !== undefined && entity?.schema?.properties.id !== undefined) {
+  if (
+    manifest.entity?.schema?.properties.id !== undefined &&
+    entity?.schema?.properties.id !== undefined
+  ) {
     manifest.entity.custom = true
 
     delete prototype.entity.schema.properties.id
@@ -42,8 +47,7 @@ export const collapse = (manifest, prototype) => {
 
   if (prototype.events !== undefined && manifest.events !== undefined)
     for (const event of Object.keys(prototype.events))
-      if (event in manifest.events)
-        delete prototype.events[event]
+      if (event in manifest.events) delete prototype.events[event]
 
   // a migration is applied to a collection, and a prototype has none: what it declares belongs
   // to the component that declared it, so it is not collapsed into this one

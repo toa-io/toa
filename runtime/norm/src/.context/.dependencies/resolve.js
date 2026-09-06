@@ -38,7 +38,7 @@ export const resolve = async (references, annotations = {}) => {
  * @param {string} reference
  * @returns {object | null}
  */
-async function optional (reference) {
+async function optional(reference) {
   try {
     return (await load(reference)).module
   } catch {

@@ -14,21 +14,21 @@ import * as functions from './algorithms/function.js'
 const SYNTAXES = { class: classes, factory: factories, function: functions }
 
 export class Factory {
-  async algorithm (root, name, context) {
+  async algorithm(root, name, context) {
     const module = await load.operation(root, name)
     const ctx = new Context(context, name)
 
     return runner(module, ctx)
   }
 
-  async event (root, label, context) {
+  async event(root, label, context) {
     const event = await load.event(root, label)
     const ctx = new Context(context)
 
     return new Event(event, ctx)
   }
 
-  async receiver (root, label) {
+  async receiver(root, label) {
     if (label.startsWith(DEFAULT)) label = label.substring(DEFAULT.length)
 
     const receiver = await load.receiver(root, label)
@@ -36,18 +36,17 @@ export class Factory {
     return new Receiver(receiver)
   }
 
-  async guard (root, label, context) {
+  async guard(root, label, context) {
     const guard = await load.guard(root, label)
     const ctx = new Context(context)
 
     return new Guard(guard, ctx)
   }
 
-  async rc (root, context) {
+  async rc(root, context) {
     const modules = await load.rcs(root)
 
-    if (modules.length === 0)
-      return
+    if (modules.length === 0) return
 
     const ctx = new Context(context)
     const preflights = []
@@ -55,18 +54,18 @@ export class Factory {
     const disposals = []
 
     for (const [name, module] of modules) {
-      if (typeof module.preflight !== 'function' && typeof module.settle !== 'function' &&
-        typeof module.dispose !== 'function')
+      if (
+        typeof module.preflight !== 'function' &&
+        typeof module.settle !== 'function' &&
+        typeof module.dispose !== 'function'
+      )
         throw new Error(`RC '${name}' must export preflight, settle and/or dispose`)
 
-      if (typeof module.preflight === 'function')
-        preflights.push(module.preflight)
+      if (typeof module.preflight === 'function') preflights.push(module.preflight)
 
-      if (typeof module.settle === 'function')
-        settles.push(module.settle)
+      if (typeof module.settle === 'function') settles.push(module.settle)
 
-      if (typeof module.dispose === 'function')
-        disposals.push(module.dispose)
+      if (typeof module.dispose === 'function') disposals.push(module.dispose)
     }
 
     return {
@@ -82,7 +81,7 @@ export class Factory {
  * @param {toa.node.Context} context
  * @returns {Runner}
  */
-async function runner (module, context) {
+async function runner(module, context) {
   const descriptor = extract(module)
   const func = module[descriptor.name]
   const instance = await SYNTAXES[descriptor.syntax].create(func)

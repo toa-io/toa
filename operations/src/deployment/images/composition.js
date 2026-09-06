@@ -12,7 +12,7 @@ export class Composition extends Image {
   #image
   #components
 
-  constructor (scope, runtime, registry, composition) {
+  constructor(scope, runtime, registry, composition) {
     super(scope, runtime, registry)
 
     this.#name = composition.name
@@ -20,11 +20,11 @@ export class Composition extends Image {
     this.#components = composition.components
   }
 
-  get name () {
+  get name() {
     return 'composition-' + this.#name
   }
 
-  get version () {
+  get version() {
     const hash = createHash('sha256')
 
     for (const component of this.#components) {
@@ -35,31 +35,32 @@ export class Composition extends Image {
     return hash.digest('hex').slice(0, 8)
   }
 
-  get base () {
+  get base() {
     if (this.#image !== undefined) return this.#image
 
     const images = new Set(this.#components.map((component) => component.build?.image))
 
     if (images.size > 1)
-      throw new Error(`Composition '${this.#name}' requires different base images for its components. Specify base image for the composition in the context.`)
+      throw new Error(
+        `Composition '${this.#name}' requires different base images for its components. Specify base image for the composition in the context.`
+      )
 
     return images.values().next().value
   }
 
-  get run () {
+  get run() {
     const commands = []
 
     for (const component of this.#components) {
       const run = component.build?.run
 
-      if (run !== undefined)
-        commands.push(run)
+      if (run !== undefined) commands.push(run)
     }
 
     return commands.join('\n')
   }
 
-  async prepare (root) {
+  async prepare(root) {
     const context = await super.prepare(root)
 
     for (const component of this.#components) {

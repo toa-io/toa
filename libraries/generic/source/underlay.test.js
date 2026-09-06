@@ -29,7 +29,8 @@ describe('arguments', () => {
     const withArgs = instance.foo.bar.baz(1, 'two')
 
     assert.deepStrictEqual(withArgs, {
-      segs: ['foo', 'bar', 'baz'], args: [1, 'two']
+      segs: ['foo', 'bar', 'baz'],
+      args: [1, 'two']
     })
 
     const noArgs = instance.foo()

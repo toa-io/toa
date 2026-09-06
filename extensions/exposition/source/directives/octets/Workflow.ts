@@ -18,7 +18,11 @@ export class WorkflowDirective extends Directive {
   private readonly discovery: Promise<Component>
   private storage: Component | null = null
 
-  public constructor (units: Unit[] | Unit, discovery: Promise<Component>, remotes: Remotes) {
+  public constructor(
+    units: Unit[] | Unit,
+    discovery: Promise<Component>,
+    remotes: Remotes
+  ) {
     super()
     schemas.workflow.validate(units)
 
@@ -26,19 +30,21 @@ export class WorkflowDirective extends Directive {
     this.discovery = discovery
   }
 
-  public async apply (storage: string, input: Input, parameters: Parameter[]): Promise<Output> {
+  public async apply(
+    storage: string,
+    input: Input,
+    parameters: Parameter[]
+  ): Promise<Output> {
     this.storage ??= await this.discovery
 
-    const entry = await this.storage.invoke<Maybe<Entry>>('head',
-      {
-        input: {
-          storage,
-          path: input.request.url
-        }
-      })
+    const entry = await this.storage.invoke<Maybe<Entry>>('head', {
+      input: {
+        storage,
+        path: input.request.url
+      }
+    })
 
-    if (entry instanceof Error)
-      throw new NotFound()
+    if (entry instanceof Error) throw new NotFound()
 
     const location: Location = {
       storage,

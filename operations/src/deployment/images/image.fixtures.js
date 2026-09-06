@@ -8,11 +8,11 @@ const name = generate()
  * @implements {toa.deployment.images.Image}
  */
 class Class extends Image {
-  get name () {
+  get name() {
     return name
   }
 
-  get version () {
+  get version() {
     return version
   }
 }

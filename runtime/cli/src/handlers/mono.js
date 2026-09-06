@@ -11,7 +11,7 @@ import { components as find } from '../util/find.js'
  * @param {Record<string, string | boolean | string[]>} argv
  * @return {Promise<void>}
  */
-export async function mono (argv) {
+export async function mono(argv) {
   console.log('Runtime', version)
 
   const paths = find(argv.paths)
