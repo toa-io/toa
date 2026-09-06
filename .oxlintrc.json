@@ -25,7 +25,22 @@
       }
     ],
     "import/namespace": "warn",
-    "no-unused-vars": "warn"
+    "no-unused-vars": "warn",
+    "no-shadow": "off",
+    "no-underscore-dangle": [
+      "warn",
+      {
+        "allow": [
+          "_id",
+          "_meta",
+          "_destroy",
+          "_transform",
+          "_readableState",
+          "_trailers",
+          "__TESTING_EXPOSITION_BRANCH_TTL"
+        ]
+      }
+    ]
   },
   "overrides": [
     {
