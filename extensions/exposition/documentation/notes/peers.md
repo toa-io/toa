@@ -9,7 +9,7 @@ and the own index of the current instance.
 ## Forces
 
 1. Static configuration is not an option (due to dynamic scaling / failover).
-2. In a distributed system, there is no concept of a *global current time*.
+2. In a distributed system, there is no concept of a _global current time_.
 
 ## Solution
 

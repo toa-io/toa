@@ -6,11 +6,11 @@ import { Assignment } from './assignmentClass.js'
 export class ChangesetAssignmentFactory {
   #context
 
-  constructor (context) {
+  constructor(context) {
     this.#context = context
   }
 
-  create () {
+  create() {
     return new Assignment()
   }
 }

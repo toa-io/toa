@@ -5,7 +5,7 @@ const { binding } = tsflow
 
 @binding()
 export class Captures extends http.Captures {
-  public constructor () {
+  public constructor() {
     super(functions)
   }
 }

@@ -16,13 +16,13 @@ Most modules need only an import. Below: app-wide setup the CLI cannot merge.
 
 View Transition API helpers for SvelteKit navigation and in-page morphs.
 
-| Export | Role |
-| --- | --- |
-| `navigate` | Pass to SvelteKit `onNavigate` — wraps route changes in `document.startViewTransition` |
-| `transit` | Manual `startViewTransition` wrapper (async callback optional) |
-| `takeoff` | Before navigation, pin a departing element by `id` + transition name |
-| `transition` | Svelte action for non-navigation morphs |
-| `styles` | Store of inline `view-transition-*` style while a non-nav transition runs |
+| Export       | Role                                                                                   |
+| ------------ | -------------------------------------------------------------------------------------- |
+| `navigate`   | Pass to SvelteKit `onNavigate` — wraps route changes in `document.startViewTransition` |
+| `transit`    | Manual `startViewTransition` wrapper (async callback optional)                         |
+| `takeoff`    | Before navigation, pin a departing element by `id` + transition name                   |
+| `transition` | Svelte action for non-navigation morphs                                                |
+| `styles`     | Store of inline `view-transition-*` style while a non-nav transition runs              |
 
 ### Route transitions — wire once in root layout
 
@@ -64,5 +64,7 @@ await goto('/profile')
 ```
 
 ```ts
-await transit(async () => { /* DOM updates */ })
+await transit(async () => {
+  /* DOM updates */
+})
 ```

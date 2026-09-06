@@ -7,7 +7,10 @@ export const merge = (target, source, options = {}, path = []) => {
 
   if (typeof target !== typeof source) {
     if (options.overwrite) return source
-    else throw new TypeError(`generic/merge: arguments must be of the same type at ${string(path)}`)
+    else
+      throw new TypeError(
+        `generic/merge: arguments must be of the same type at ${string(path)}`
+      )
   }
 
   if (source instanceof Array && target instanceof Array) {
@@ -38,14 +41,19 @@ export const merge = (target, source, options = {}, path = []) => {
         } else if (target[name] !== value) {
           if (options.overwrite === true) target[name] = value
           else if (options.ignore !== true) {
-            throw new Error(`generic/merge: conflict at ${string(path)} ('${value}', '${target[name]}')`)
+            throw new Error(
+              `generic/merge: conflict at ${string(path)} ('${value}', '${target[name]}')`
+            )
           }
         }
       }
 
       path.pop()
     }
-  } else throw new TypeError(`generic/merge: arguments must be objects or arrays at ${string(path)}`)
+  } else
+    throw new TypeError(
+      `generic/merge: arguments must be objects or arrays at ${string(path)}`
+    )
 
   return target
 }

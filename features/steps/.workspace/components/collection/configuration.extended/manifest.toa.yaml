@@ -8,7 +8,8 @@ configuration:
     properties:
       baz:
         type: string
-        default: something
       qux:
         type: integer
-        default: 1
+  defaults:
+    baz: something
+    qux: 1

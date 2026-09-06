@@ -1,3 +1,3 @@
-export function computation (input, context) {
+export function computation(input, context) {
   return context.state.marks ?? []
 }

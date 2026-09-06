@@ -3,12 +3,11 @@ name: target
 
 entity:
   storage: null
-  schema:
-    properties:
-      counted:
-        type: integer
-        default: 0
-    type: object
+  properties:
+    counted:
+      type: integer
+  blank:
+    counted: 0
 
 operations:
   compute:

@@ -1,14 +1,12 @@
 export const source = {
   entity: {
-    schema: {
-      properties: {
-        foo: {
-          type: 'string'
-        },
-        bar: {
-          type: 'string',
-          default: '.foo'
-        }
+    properties: {
+      foo: {
+        type: 'string'
+      },
+      bar: {
+        type: 'string',
+        default: '.foo'
       }
     }
   },
@@ -66,14 +64,12 @@ export const source = {
 
 export const target = {
   entity: {
-    schema: {
-      properties: {
-        foo: {
-          type: 'string'
-        },
-        bar: {
-          type: 'string'
-        }
+    properties: {
+      foo: {
+        type: 'string'
+      },
+      bar: {
+        type: 'string'
       }
     }
   },

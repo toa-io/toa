@@ -3,6 +3,6 @@ export interface Passkey {
   aid: string
   synced: boolean
   label: string
-  _created: number
-  _updated: number
+  CREATED: number
+  UPDATED: number
 }

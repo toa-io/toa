@@ -1,3 +1,4 @@
+@deployment
 Feature: AMQP deployment
 
   Background:

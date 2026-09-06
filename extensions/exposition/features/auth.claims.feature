@@ -8,7 +8,7 @@ Feature: Federated identity authentication
     And the `identity.federation` configuration:
       """yaml
       trust:
-        - iss: http://localhost:44444
+        - iss: http://localhost:31005
           aud: test
       """
 
@@ -18,7 +18,7 @@ Feature: Federated identity authentication
       /:
         GET:
           auth:claims:
-            iss: http://localhost:44444
+            iss: http://localhost:31005
             aud: test
             sub: Bob
           dev:stub: ok
@@ -62,7 +62,7 @@ Feature: Federated identity authentication
       /:
         GET:
           auth:claims:
-            iss: http://localhost:44444
+            iss: http://localhost:31005
             aud: test
           dev:stub: ok
       """
@@ -84,7 +84,7 @@ Feature: Federated identity authentication
       /:
         GET:
           auth:claims:
-            iss: http://localhost:44444
+            iss: http://localhost:31005
             sub: Alice
           dev:stub: ok
       """
@@ -106,7 +106,7 @@ Feature: Federated identity authentication
       /:
         GET:
           auth:claims:
-            iss: http://localhost:44444
+            iss: http://localhost:31005
             aud: goalkeepers
           dev:stub: ok
       """

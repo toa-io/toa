@@ -1,5 +1,5 @@
 import { ERR_UNKNOWN_CLIENT, permits, read } from './lib/index.js'
-import type { Maybe } from '@toa.io/core'
+import type { Maybe } from '@toa.io/core/types'
 import type { Operation } from '@toa.io/bridges.node'
 import type { Client, Context } from './lib/index.js'
 
@@ -15,17 +15,16 @@ import type { Client, Context } from './lib/index.js'
 export class Computation implements Operation {
   private context!: Context
 
-  public mount (context: Context): void {
+  public mount(context: Context): void {
     this.context = context
   }
 
-  public async execute (input: Input): Promise<Maybe<Output>> {
+  public async execute(input: Input): Promise<Maybe<Output>> {
     const client = input.id.startsWith(HTTPS)
       ? await read(input.id, this.context)
       : await this.registered(input)
 
-    if (client instanceof Error)
-      return client
+    if (client instanceof Error) return client
 
     return {
       ...client,
@@ -35,12 +34,11 @@ export class Computation implements Operation {
     }
   }
 
-  private async registered (input: Input): Promise<Client | Error> {
+  private async registered(input: Input): Promise<Client | Error> {
     const entity = await this.context.local.observe({ query: { id: input.id } })
 
     // credentials are scoped to an authority, and so is what may act for them
-    if (entity === null || entity.authority !== input.authority)
-      return ERR_UNKNOWN_CLIENT
+    if (entity === null || entity.authority !== input.authority) return ERR_UNKNOWN_CLIENT
 
     return {
       client_id: entity.id,

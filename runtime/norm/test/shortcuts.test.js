@@ -55,7 +55,8 @@ describe('recognize', () => {
 
     assert.deepStrictEqual(object[group], known)
 
-    for (const alias of Object.keys(fixtures.SHORTCUTS)) assert.strictEqual(object[alias], undefined)
+    for (const alias of Object.keys(fixtures.SHORTCUTS))
+      assert.strictEqual(object[alias], undefined)
   })
 
   it('should not overwrite group', () => {

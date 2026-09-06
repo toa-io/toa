@@ -28,9 +28,9 @@ Feature: Configuration values
               type: string
             bar:
               type: string
-              default: world
         defaults:
           foo: deployed
+          bar: world
       """
     And the configuration values are running
 
@@ -49,6 +49,7 @@ Feature: Configuration values
 
       configuration:
         foo: deployed
+        bar: world
       schema:
         type: object
         properties:
@@ -56,7 +57,6 @@ Feature: Configuration values
             type: string
           bar:
             type: string
-            default: world
       epoch: e1
       """
 
@@ -82,9 +82,9 @@ Feature: Configuration values
               type: string
             bar:
               type: string
-              default: world
         configuration:
           foo: deployed
+          bar: world
       """
 
   Scenario: Listing without the role
@@ -154,7 +154,6 @@ Feature: Configuration values
 
       configuration:
         foo: created
-        bar: world
       epoch: e1
       """
 

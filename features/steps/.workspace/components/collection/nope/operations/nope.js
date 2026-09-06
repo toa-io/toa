@@ -1,4 +1,4 @@
-export function computation () {
+export function computation() {
   return ERR
 }
 

@@ -22,7 +22,7 @@ it('should split with double quotes', () => {
 })
 
 it('should split with single quotes', () => {
-  const string = 'one two \'three four\' five'
+  const string = "one two 'three four' five"
   const array = split(string)
 
   assert.deepStrictEqual(array, ['one', 'two', 'three four', 'five'])
@@ -39,5 +39,5 @@ it('should split with nested single quotes', () => {
   const string = 'one two "three \'or\' four" five'
   const array = split(string)
 
-  assert.deepStrictEqual(array, ['one', 'two', 'three \'or\' four', 'five'])
+  assert.deepStrictEqual(array, ['one', 'two', "three 'or' four", 'five'])
 })

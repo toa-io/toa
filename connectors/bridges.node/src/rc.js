@@ -10,7 +10,7 @@ class Commands extends Connector {
   /** @type {toa.node.Context} */
   #context
 
-  constructor (fns, context) {
+  constructor(fns, context) {
     super()
 
     this.#fns = fns
@@ -19,7 +19,7 @@ class Commands extends Connector {
     this.depends(context)
   }
 
-  async run () {
+  async run() {
     await Promise.all(this.#fns.map((fn) => fn(this.#context)))
   }
 }
@@ -28,7 +28,7 @@ class Commands extends Connector {
  * A startup phase: `preflight` and `settle`
  */
 export class Phase extends Commands {
-  async open () {
+  async open() {
     await this.run()
   }
 }
@@ -39,7 +39,7 @@ export class Phase extends Commands {
  * disconnected, so the component can still reach its remotes while releasing.
  */
 export class Teardown extends Commands {
-  async close () {
+  async close() {
     await this.run()
   }
 }

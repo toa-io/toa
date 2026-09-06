@@ -8,20 +8,22 @@
  * Deploying without any is a decision rather than an omission, and it is spelled
  * `resources: null` — at either place.
  */
-export function resources (context, values) {
+export function resources(context, values) {
   for (const unit of units(values)) {
     // `null` is an answer and `undefined` is not one, so the fallback reads only the latter
     if (unit.deployment.resources === undefined)
       unit.deployment.resources = context.resources
 
     if (unit.deployment.resources === undefined)
-      throw new Error(`${unit.subject} declares no resources. ` +
-        'Declare them on it or as the context\'s \'resources\', ' +
-        'or \'resources: null\' to deploy it without any.')
+      throw new Error(
+        `${unit.subject} declares no resources. ` +
+          "Declare them on it or as the context's 'resources', " +
+          "or 'resources: null' to deploy it without any."
+      )
   }
 }
 
-function * units (values) {
+function* units(values) {
   if (values.mono !== undefined)
     yield { deployment: values.mono, subject: 'The mono deployment' }
 

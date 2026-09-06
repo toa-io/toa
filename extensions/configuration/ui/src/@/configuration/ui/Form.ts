@@ -21,8 +21,8 @@ export interface Props {
 export type Reading = { value: Node } | { errors: string[] }
 
 /**
- * `useDefaults` is off: the service fills the schema's defaults when it stores the
- * value, and filling them here would put words in the reader's mouth.
+ * `useDefaults` is off: what is stored is what was written, and filling a schema's defaults
+ * here would put words in the reader's mouth.
  *
  * `$data` is off — it is ajv's default, said out loud because the option carries a
  * ReDoS of its own (GHSA-2g4f-4pwh-qvx6) and nothing here needs it.
@@ -35,7 +35,11 @@ const validators = new WeakMap<object, ValidateFunction>()
  * The configuration the text holds, or every reason it is not one. Nothing is sent that
  * has not passed this, so the service never refuses what the page could have caught.
  */
-export function read(text: string, schema: object | undefined, malformed: string): Reading {
+export function read(
+  text: string,
+  schema: object | undefined,
+  malformed: string
+): Reading {
   let parsed: unknown
 
   try {

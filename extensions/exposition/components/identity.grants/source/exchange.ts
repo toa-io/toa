@@ -1,5 +1,5 @@
 import { identify, spend, verifies } from './lib/index.js'
-import type { Maybe } from '@toa.io/core'
+import type { Maybe } from '@toa.io/core/types'
 import type { Operation } from '@toa.io/bridges.node'
 import type { Code, Context } from './lib/index.js'
 
@@ -15,15 +15,18 @@ import type { Code, Context } from './lib/index.js'
 export class Effect implements Operation {
   private context!: Context
 
-  public mount (context: Context): void {
+  public mount(context: Context): void {
     this.context = context
   }
 
-  public async execute (input: Input): Promise<Maybe<Output>> {
+  public async execute(input: Input): Promise<Maybe<Output>> {
     const { authority } = input
 
     if (input.grant_type !== AUTHORIZATION_CODE)
-      return invalid('unsupported_grant_type', 'Only the authorization code grant is supported')
+      return invalid(
+        'unsupported_grant_type',
+        'Only the authorization code grant is supported'
+      )
 
     if (input.code === undefined || input.code_verifier === undefined)
       return invalid('invalid_request', 'A code and a code verifier are required')
@@ -68,8 +71,10 @@ export class Effect implements Operation {
     })
 
     if (grant instanceof Error)
-      this.context.logs.error('Grant not recorded for an issued token',
-        { client: code.client, kid: issued.kid })
+      this.context.logs.error('Grant not recorded for an issued token', {
+        client: code.client,
+        kid: issued.kid
+      })
 
     return {
       // RFC 6749 §5.1 asks for 200, where a POST would otherwise answer 201
@@ -83,9 +88,8 @@ export class Effect implements Operation {
     }
   }
 
-  private redeemable (code: Code, input: Input): boolean {
-    if (!verifies(code.challenge, input.code_verifier!))
-      return false
+  private redeemable(code: Code, input: Input): boolean {
+    if (!verifies(code.challenge, input.code_verifier!)) return false
 
     // RFC 6749 §4.1.3: what was sent to `authorize` must be sent again
     if (input.redirect_uri !== undefined && input.redirect_uri !== code.redirect)
@@ -96,11 +100,11 @@ export class Effect implements Operation {
 }
 
 /** `identity.tokens` requires one, and it is what a user sees when listing what they issued. */
-function label (client: string): string {
+function label(client: string): string {
   return client.slice(0, LABEL)
 }
 
-function invalid (error: string, description: string): Output {
+function invalid(error: string, description: string): Output {
   return { status: BAD_REQUEST, error, error_description: description }
 }
 

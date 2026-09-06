@@ -6,7 +6,7 @@ import { Dispatcher } from './Dispatcher.js'
 import { Local } from './Local.js'
 import { Pulse } from './Pulse.js'
 import type { Declaration } from './types.js'
-import type { extensions } from '@toa.io/core'
+import type { extensions } from '@toa.io/core/types'
 
 export class Factory implements extensions.Factory {
   private readonly host: Host
@@ -14,7 +14,7 @@ export class Factory implements extensions.Factory {
   /** one per component, however much of this extension calls through it */
   private readonly locals: Record<string, Local> = {}
 
-  public constructor (host: Host) {
+  public constructor(host: Host) {
     this.host = host
   }
 
@@ -25,10 +25,13 @@ export class Factory implements extensions.Factory {
    * A tenant is created before the components of its composition are, which is why nothing here
    * reaches for one.
    */
-  public tenant (locator: Locator, declaration: object): Connector {
+  public tenant(locator: Locator, declaration: object): Connector {
     if (mine(locator))
-      return new Dispatcher(this.metronome(), (target) => this.local(target),
-        this.host.atom(locator.id))
+      return new Dispatcher(
+        this.metronome(),
+        (target) => this.local(target),
+        this.host.atom(locator.id)
+      )
 
     const tenant = new Connector()
     const pulses = declaration as Declaration | null
@@ -46,27 +49,27 @@ export class Factory implements extensions.Factory {
   }
 
   /** `context.delay` — for every component but the one that keeps the calls. */
-  public aspect (locator: Locator): extensions.Aspect | extensions.Aspect[] {
+  public aspect(locator: Locator): extensions.Aspect | extensions.Aspect[] {
     if (mine(locator)) return []
 
     return new Aspect(this.metronome())
   }
 
-  public service (): Connector {
+  public service(): Connector {
     return new Composition(this.host)
   }
 
-  private metronome (): Local {
+  private metronome(): Local {
     return this.local(new Locator(COMPONENT, NAMESPACE))
   }
 
-  private local (locator: Locator): Local {
+  private local(locator: Locator): Local {
     return (this.locals[locator.id] ??= new Local(this.host, locator))
   }
 }
 
 /** Whether this is a component the extension ships rather than one of the application's. */
-function mine (locator: Locator): boolean {
+function mine(locator: Locator): boolean {
   return locator.namespace === NAMESPACE
 }
 

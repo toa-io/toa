@@ -18,11 +18,11 @@
     "access": "public"
   },
   "dependencies": {
+    "@node-rs/bcrypt": "1.10.8",
     "@simplewebauthn/server": "14.0.0",
     "@toa.io/core": "1.0.0-alpha.284",
     "@toa.io/generic": "1.0.0-alpha.283",
     "@toa.io/schemas": "1.0.0-alpha.283",
-    "bcryptjs": "3.0.3",
     "content-type": "3.0.0",
     "jose": "6.2.10",
     "js-yaml": "5.4.1",

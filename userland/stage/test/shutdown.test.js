@@ -59,7 +59,7 @@ it('should reset state', async () => {
   assert.ok(state.reset.mock.callCount() > 0)
 })
 
-function resetCalls (target = [assert, mock, stage], seen = new Set()) {
+function resetCalls(target = [assert, mock, stage], seen = new Set()) {
   if (target === null || typeof target !== 'object' || seen.has(target)) return
 
   seen.add(target)

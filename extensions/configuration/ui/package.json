@@ -10,11 +10,8 @@
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
     "lint": "eslint .",
-    "test:e2e": "playwright install && playwright test",
-    "test": "npm run test:e2e",
     "format": "eslint . --fix",
-    "bump": "npx -y npm-check-updates --target minor -u",
-    "features": "npx bddgen && npx playwright test"
+    "bump": "npx -y npm-check-updates --target minor -u"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.5",
@@ -22,7 +19,6 @@
     "@fontsource-variable/inter": "^5.3.0",
     "@internationalized/date": "^3.12.3",
     "@lucide/svelte": "^1.34.0",
-    "@playwright/test": "^1.62.1",
     "@sveltejs/adapter-static": "^3.0.10",
     "@sveltejs/kit": "^2.70.3",
     "@sveltejs/vite-plugin-svelte": "^7.3.0",
@@ -48,9 +44,8 @@
     "meros": "^1.3.2",
     "mitt": "^3.0.1",
     "neostandard": "^0.13.0",
-    "playwright-bdd": "^9.2.0",
     "shadcn-svelte": "^1.5.1",
-    "svas": "^1.7.1",
+    "svas": "^2.0.1",
     "svelte": "^5.56.10",
     "svelte-check": "^4.7.6",
     "svintl": "^1.17.0",

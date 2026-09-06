@@ -1,5 +1,5 @@
 import { type Component } from '@toa.io/core'
-import { type Maybe } from '@toa.io/core'
+import type { Maybe } from '@toa.io/core/types'
 import { type Parameter } from '../../RTD/index.js'
 import type { Introspection } from '../../Introspection.js'
 import type * as http from '../../HTTP/index.js'
@@ -55,6 +55,9 @@ export interface Extension {
 
   /** the error code the presented credentials were rejected with, when they were */
   rejection?: string
+
+  /** whether the identity was checked against the bans while being resolved */
+  vetted?: boolean
 }
 
 export interface Ban {
@@ -62,7 +65,7 @@ export interface Ban {
 }
 
 export type Context = io.Input & Extension
-export type AuthenticationResult = Maybe<{ identity: Identity, refresh: boolean }>
+export type AuthenticationResult = Maybe<{ identity: Identity; refresh: boolean }>
 
 export type Scheme = 'basic' | 'token' | 'bearer' | 'code' | 'otp'
 export type Remote = 'basic' | 'federation' | 'tokens' | 'roles' | 'bans' | 'otp'

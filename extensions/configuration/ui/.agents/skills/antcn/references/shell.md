@@ -90,18 +90,18 @@ Typical split: **`back`** for “undo my last navigation” (one step, parent ro
 
 ## Exports
 
-| Export         | Role                                                                    |
-| -------------- | ----------------------------------------------------------------------- |
-| `Screen`       | Page wrapper with safe-area insets and optional iOS status-bar underlay |
-| `Header`       | Sticky top bar with blur                                                |
-| `Nav`          | Fixed bottom bar: sections, back, toolbar                               |
-| `Return`       | Registers a back button in `Nav` for the current route                  |
-| `Actions`      | Registers toolbar snippets in `Nav`                                     |
-| `Attention`    | Small constructive dot (e.g. unseen badge on nav item)                  |
-| `Underlay`     | Gradient fade under fixed chrome                                        |
+| Export         | Role                                                                       |
+| -------------- | -------------------------------------------------------------------------- |
+| `Screen`       | Page wrapper with safe-area insets and optional iOS status-bar underlay    |
+| `Header`       | Sticky top bar with blur                                                   |
+| `Nav`          | Fixed bottom bar: sections, back, toolbar                                  |
+| `Return`       | Registers a back button in `Nav` for the current route                     |
+| `Actions`      | Registers toolbar snippets in `Nav`                                        |
+| `Attention`    | Small constructive dot (e.g. unseen badge on nav item)                     |
+| `Underlay`     | Gradient fade under fixed chrome                                           |
 | `Sticky`       | Sticky top/bottom bar over a blurred `Underlay` (e.g. a pinned action bar) |
-| `Section`      | Type for nav tab config                                                 |
-| `back`, `jump` | History-aware navigation — see above                                    |
+| `Section`      | Type for nav tab config                                                    |
+| `back`, `jump` | History-aware navigation — see above                                       |
 
 ## Nav sections
 

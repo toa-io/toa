@@ -6,7 +6,7 @@ export const range = (input) => {
   return arrays.flat()
 }
 
-function parse (input) {
+function parse(input) {
   input = input.trim()
 
   const [left, right] = input.split(SEPARATOR)

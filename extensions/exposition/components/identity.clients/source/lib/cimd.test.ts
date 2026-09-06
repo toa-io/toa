@@ -16,7 +16,7 @@ let context: Context
 let fetched: string[]
 let stored: Record<string, string>
 
-function respond (body: unknown, ok = true): Response {
+function respond(body: unknown, ok = true): Response {
   return {
     ok,
     text: async () => JSON.stringify(body)
@@ -94,15 +94,17 @@ it('should refuse anything but https', async () => {
 })
 
 it('should refuse a document that names another client', async () => {
-  context.fetch = mock.fn(async () => respond({ ...document, client_id: 'https://claude.ai/other' }))
+  context.fetch = mock.fn(async () =>
+    respond({ ...document, client_id: 'https://claude.ai/other' })
+  )
 
-  assert.ok(await read(ID, context) instanceof Error)
+  assert.ok((await read(ID, context)) instanceof Error)
 })
 
 it('should refuse a document with no redirect to send a code to', async () => {
   context.fetch = mock.fn(async () => respond({ client_id: ID, redirect_uris: [] }))
 
-  assert.ok(await read(ID, context) instanceof Error)
+  assert.ok((await read(ID, context)) instanceof Error)
 })
 
 it('should remember that a document did not answer', async () => {
@@ -114,7 +116,7 @@ it('should remember that a document did not answer', async () => {
     return respond({}, false)
   })
 
-  assert.ok(await read(ID, context) instanceof Error)
-  assert.ok(await read(ID, context) instanceof Error)
+  assert.ok((await read(ID, context)) instanceof Error)
+  assert.ok((await read(ID, context)) instanceof Error)
   assert.equal(calls, 1, 'a document that failed must not be refetched per request')
 })

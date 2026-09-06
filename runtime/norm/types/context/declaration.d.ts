@@ -2,7 +2,7 @@ import { Registry, Runtime } from '../context.js'
 
 /** A composition as declared, before its members are resolved. */
 interface Composition {
-  name: string,
+  name: string
   components: string[]
   services?: string[]
 }

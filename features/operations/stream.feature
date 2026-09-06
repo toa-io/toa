@@ -3,7 +3,7 @@ Feature: Stream scope
   Background:
     # the scenario counts what it has written, so it starts from an empty collection
     Given the `operations.streams` database contains:
-      | _id | foo | bar | _version |
+      | _id | foo | bar | VERSION |
     And I compose `operations.streams` component
 
   Scenario: Getting a stream
@@ -16,12 +16,12 @@ Feature: Stream scope
     And I call `operations.streams.extract` with:
       """yaml
       query:
-        sort: [_created:desc]
+        sort: [CREATED:desc]
       """
     Then the stream of 2000 items is received
     When I call `operations.streams.stream` with:
       """yaml
       query:
-        sort: [_created:desc]
+        sort: [CREATED:desc]
       """
     Then the stream of 2000 items is received

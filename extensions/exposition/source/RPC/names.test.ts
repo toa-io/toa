@@ -7,33 +7,47 @@ import { address, name, refusal } from './names.js'
 
 describe('address', () => {
   it('should resolve a name without variables', () => {
-    assert.deepEqual(address('pots.GET', {}),
-      { path: '/pots/', verb: 'GET', variables: [] })
+    assert.deepEqual(address('pots.GET', {}), {
+      path: '/pots/',
+      verb: 'GET',
+      variables: []
+    })
   })
 
   it('should resolve the trunk', () => {
-    assert.deepEqual(address('GET', {}),
-      { path: '/', verb: 'GET', variables: [] })
+    assert.deepEqual(address('GET', {}), { path: '/', verb: 'GET', variables: [] })
   })
 
   it('should substitute a variable and report it taken', () => {
-    assert.deepEqual(address('pots._id.GET', { id: 'a1b2', title: 'Kettle' }),
-      { path: '/pots/a1b2/', verb: 'GET', variables: ['id'] })
+    assert.deepEqual(address('pots._id.GET', { id: 'a1b2', title: 'Kettle' }), {
+      path: '/pots/a1b2/',
+      verb: 'GET',
+      variables: ['id']
+    })
   })
 
   it('should substitute every variable', () => {
-    assert.deepEqual(address('users._user.pots._id.PATCH', { user: 'bob', id: 'a1b2' }),
-      { path: '/users/bob/pots/a1b2/', verb: 'PATCH', variables: ['user', 'id'] })
+    assert.deepEqual(address('users._user.pots._id.PATCH', { user: 'bob', id: 'a1b2' }), {
+      path: '/users/bob/pots/a1b2/',
+      verb: 'PATCH',
+      variables: ['user', 'id']
+    })
   })
 
   it('should let a tail carry separators', () => {
-    assert.deepEqual(address('files.__.GET', { '**': 'a/b/c' }),
-      { path: '/files/a/b/c/', verb: 'GET', variables: ['**'] })
+    assert.deepEqual(address('files.__.GET', { '**': 'a/b/c' }), {
+      path: '/files/a/b/c/',
+      verb: 'GET',
+      variables: ['**']
+    })
   })
 
   it('should not confuse a trailing literal with a verb', () => {
-    assert.deepEqual(address('pots.GET.POST', {}),
-      { path: '/pots/GET/', verb: 'POST', variables: [] })
+    assert.deepEqual(address('pots.GET.POST', {}), {
+      path: '/pots/GET/',
+      verb: 'POST',
+      variables: []
+    })
   })
 
   it('should refuse a name that states no verb', () => {
@@ -81,8 +95,10 @@ describe('name', () => {
 
   it('should mark a variable', () => {
     assert.equal(name(segment('/pots/:id'), 'GET'), 'pots._id.GET')
-    assert.equal(name(segment('/identity/tokens/:identity'), 'POST'),
-      'identity.tokens._identity.POST')
+    assert.equal(
+      name(segment('/identity/tokens/:identity'), 'POST'),
+      'identity.tokens._identity.POST'
+    )
   })
 
   it('should mark a tail', () => {
@@ -103,8 +119,11 @@ describe('name', () => {
   it('should round-trip what it names', () => {
     const named = name(segment('/pots/:id'), 'GET')!
 
-    assert.deepEqual(address(named, { id: 'a1b2' }),
-      { path: '/pots/a1b2/', verb: 'GET', variables: ['id'] })
+    assert.deepEqual(address(named, { id: 'a1b2' }), {
+      path: '/pots/a1b2/',
+      verb: 'GET',
+      variables: ['id']
+    })
   })
 })
 

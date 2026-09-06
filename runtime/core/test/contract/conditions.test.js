@@ -4,7 +4,7 @@ import { isDeepStrictEqual } from 'node:util'
 
 import { generate } from 'randomstring'
 
-import { Contract } from '../../src/contract/contract.js'
+import { Contract } from '../../source/contract/contract.js'
 import * as fixtures from './contract.fixtures.js'
 
 let contract
@@ -18,7 +18,11 @@ it('should fit value', () => {
 
   contract.fit(value)
 
-  assert.ok(fixtures.schema.fit.mock.calls.some((call) => call.arguments.length === 1 && isDeepStrictEqual(call.arguments[0], value)))
+  assert.ok(
+    fixtures.schema.fit.mock.calls.some(
+      (call) => call.arguments.length === 1 && isDeepStrictEqual(call.arguments[0], value)
+    )
+  )
 })
 
 it('should throw on invalid value', () => {

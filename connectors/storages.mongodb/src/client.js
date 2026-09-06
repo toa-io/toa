@@ -44,6 +44,15 @@ export class Client extends Connector {
   transactional = false
 
   /**
+   * The database this component's collections live in, which is where the migration state
+   * is kept as well.
+   *
+   * @public
+   * @type {import('mongodb').Db}
+   */
+  db
+
+  /**
    * @private
    * @type {Locator}
    */
@@ -71,7 +80,7 @@ export class Client extends Connector {
    * @param {Locator} locator
    * @param {boolean} [publishes] whether this component publishes anything
    */
-  constructor (locator, publishes = false) {
+  constructor(locator, publishes = false) {
     super()
 
     this.locator = locator
@@ -84,7 +93,7 @@ export class Client extends Connector {
    * @override
    * @return {Promise<void>}
    */
-  async open () {
+  async open() {
     const urls = await this.resolveURLs()
     const dbname = this.resolveDB()
 
@@ -101,6 +110,7 @@ export class Client extends Connector {
 
     const db = this.instance.client.db(dbname)
 
+    this.db = db
     this.collection = await collection(db, this.name)
     this.transactional = await transactional(db)
 
@@ -108,8 +118,10 @@ export class Client extends Connector {
 
     if (this.transactional) this.outbox = await collection(db, this.name + OUTBOX)
     else
-      console.warn('MongoDB is not a replica set; events are emitted inline, without an outbox',
-        { collection: this.name })
+      console.warn(
+        'MongoDB is not a replica set; events are emitted inline, without an outbox',
+        { collection: this.name }
+      )
   }
 
   /**
@@ -122,9 +134,10 @@ export class Client extends Connector {
    * @param {(session: import('mongodb').ClientSession) => Promise<T>} fn
    * @return {Promise<T>}
    */
-  async transaction (fn) {
+  async transaction(fn) {
     return this.instance.client.withSession(async (session) =>
-      session.withTransaction(async () => fn(session)))
+      session.withTransaction(async () => fn(session))
+    )
   }
 
   /**
@@ -132,7 +145,7 @@ export class Client extends Connector {
    * @override
    * @return {Promise<void>}
    */
-  async close () {
+  async close() {
     const instance = await INSTANCES[this.key]
 
     instance.count--
@@ -148,7 +161,7 @@ export class Client extends Connector {
    * @param {string[]} urls
    * @return {Promise<Instance>}
    */
-  async createInstance (urls) {
+  async createInstance(urls) {
     const client = new MongoClient(urls.join(','), OPTIONS)
     const hosts = urls.map((str) => new URL(str).host)
 
@@ -166,9 +179,11 @@ export class Client extends Connector {
    * @private
    * @return {Promise<string[]>}
    */
-  async resolveURLs () {
+  async resolveURLs() {
+    // Toa's own development stack is not on the conventional ports: the applications built on
+    // Toa are, and they share the machine. See CONTRIBUTING.md.
     if (process.env.TOA_DEV === '1') {
-      return ['mongodb://developer:secret@localhost']
+      return ['mongodb://developer:secret@localhost:31020']
     } else {
       return await resolve(ID, this.locator.id)
     }
@@ -178,7 +193,7 @@ export class Client extends Connector {
    * @private
    * @return {string}
    */
-  resolveDB () {
+  resolveDB() {
     if (process.env.TOA_CONTEXT !== undefined) {
       return process.env.TOA_CONTEXT
     }
@@ -191,14 +206,14 @@ export class Client extends Connector {
   }
 }
 
-function getKey (db, urls) {
+function getKey(db, urls) {
   return db + ':' + urls.sort().join(' ')
 }
 
 /**
  * Concurrent pods race to create the same collection, and losing that race is not an error.
  */
-async function collection (db, name) {
+async function collection(db, name) {
   try {
     return await db.createCollection(name)
   } catch (e) {
@@ -208,7 +223,7 @@ async function collection (db, name) {
   }
 }
 
-async function transactional (db) {
+async function transactional(db) {
   try {
     const hello = await db.admin().command({ hello: 1 })
 

@@ -18,9 +18,17 @@ type Maybe<T, E extends Error = Error> = null | T | E
 
 ```ts
 import {
-  value, values, collection,           // stores
-  ok, ensure, having, awaited, once,   // guards & awaiting
-  combined, sync, Async,               // compose & render
+  value,
+  values,
+  collection, // stores
+  ok,
+  ensure,
+  having,
+  awaited,
+  once, // guards & awaiting
+  combined,
+  sync,
+  Async, // compose & render
   type Maybe
 } from 'svas'
 ```
@@ -29,15 +37,15 @@ import {
 
 Every store fetches on **first subscribe**, then auto-revalidates. Common options:
 
-| Option | Meaning |
-|--------|---------|
-| `get` | fetcher returning `Promise<T \| Error>` |
-| `revalidate` | ms before re-fetch (default `300_000`; `Infinity` disables) |
-| `persist` | mirror into local storage under this key |
-| `session` | use `sessionStorage` instead of `localStorage` |
-| `stale` | keep previous value visible while revalidating (default `false`) |
-| `bind` | `Readable<unknown \| null>` — reset/clear store when bound store is `null` (tie data to a user) |
-| `default` | initial value when nothing is persisted |
+| Option       | Meaning                                                                                         |
+| ------------ | ----------------------------------------------------------------------------------------------- |
+| `get`        | fetcher returning `Promise<T \| Error>`                                                         |
+| `revalidate` | ms before re-fetch (default `300_000`; `Infinity` disables)                                     |
+| `persist`    | mirror into local storage under this key                                                        |
+| `session`    | use `sessionStorage` instead of `localStorage`                                                  |
+| `stale`      | keep previous value visible while revalidating (default `false`)                                |
+| `bind`       | `Readable<unknown \| null>` — reset/clear store when bound store is `null` (tie data to a user) |
+| `default`    | initial value when nothing is persisted                                                         |
 
 ## Stores
 
@@ -62,11 +70,15 @@ Methods: `set(v)`, `update(fn)`, `extract(): T | null` (sync read), `sync()` (re
 A map of independent `Readable<Maybe<T>>` lifecycles, one per key.
 
 ```ts
-const products = values<Product>({ get: (id) => api.product(id), stale: true, persist: 'products' })
+const products = values<Product>({
+  get: (id) => api.product(id),
+  stale: true,
+  persist: 'products'
+})
 
-const one = products.get('42')      // Readable<Maybe<Product>>, fetches if missing
-products.set('42', next)            // write by key
-products.extract('42')              // Product | null, sync
+const one = products.get('42') // Readable<Maybe<Product>>, fetches if missing
+products.set('42', next) // write by key
+products.extract('42') // Product | null, sync
 ```
 
 Methods: `get(key, { fetch? })` · `set(key, v, { stash? })` · `reset(key)` (restore stashed value) · `extract(key)` · `delete(key)` · `clear()`.
@@ -81,8 +93,8 @@ Extra options: `permanent` (don't revalidate persisted entries on startup). `sta
 const todos = collection<Todo>({
   get: () => api.todos(),
   values: values<Todo>(), // enables todos.get(id) / extract(id)
-  stale: true, 
-  persist: 'todos', 
+  stale: true,
+  persist: 'todos',
   bind: session
 })
 ```
@@ -102,16 +114,16 @@ store.extract(key?) // sync read, T | null (ignores errors) — never throws
 ```
 
 ```ts
-if (ok($todos)) $todos.length        // typed as T
-items.filter((i) => ok(i.account) && !i.account.deleted)   // ✅ guard before access
+if (ok($todos)) $todos.length // typed as T
+items.filter((i) => ok(i.account) && !i.account.deleted) // ✅ guard before access
 ```
 
 ## Awaiting
 
 ```ts
-await having(store)   // first non-null value; REJECTS on Error — services needing auth
-await awaited(store)  // first non-null value; returns Error as a value (never rejects)
-await once(store, (v) => v === 'ready')   // first value satisfying a condition
+await having(store) // first non-null value; REJECTS on Error — services needing auth
+await awaited(store) // first non-null value; returns Error as a value (never rejects)
+await once(store, (v) => v === 'ready') // first value satisfying a condition
 ```
 
 ## Compose & render
@@ -149,9 +161,9 @@ One `Maybe` from many: tuple when **all** resolve, first `Error`, else `null`. S
 
 Conflict-free update.
 
-T must implement interface Comparable { id: string; _version: number;_deleted?: number | null }
+T must implement interface Comparable { id: string; VERSION: number;DELETED?: number | null }
 
-Merge a versioned item into a `collection` or `value`, respecting `_version`; removes on `_deleted` (unless `delete: false`). For applying server/realtime events.
+Merge a versioned item into a `collection` or `value`, respecting `VERSION`; removes on `DELETED` (unless `delete: false`). For applying server/realtime events.
 
 ```ts
 events.on('todos.sync', (todo) => sync(todos, todo))

@@ -114,18 +114,18 @@ Optional: `takeoff(sourceId, name, classes)` before `transit` when morphing from
 
 ## Props
 
-| Prop         | Type           | Default | Notes                                                                 |
-| ------------ | -------------- | ------- | --------------------------------------------------------------------- |
-| `children`   | `Snippet`      | —       | Trigger markup; also fullscreen body when `content` is omitted.       |
-| `content`    | `Snippet`      | —       | Fullscreen-only body; trigger stays on the page.                      |
-| `overlay`    | `Snippet`      | —       | Toolbar/actions above content; rendered inside `Overlay`.             |
-| `open`       | `boolean`      | `false` | Bindable. Mutate inside `transit()` unless using `show()` / `hide()`. |
-| `onshow`     | `() => void`   | —       | Fires when `show()` starts.                                           |
-| `onhide`     | `() => void`   | —       | Fires after the close transition finishes.                            |
-| `class`      | `ClassValue`   | —       | Classes on the trigger button (ignored when `controlled`).            |
-| `fragile`    | `boolean`      | `false` | Close on backdrop pointer down.                                       |
-| `controlled` | `boolean`      | `false` | No built-in trigger; call `show()` / `hide()` yourself.               |
-| `x`          | `boolean`      | `true`  | Top-trailing close button.                                            |
+| Prop         | Type         | Default | Notes                                                                 |
+| ------------ | ------------ | ------- | --------------------------------------------------------------------- |
+| `children`   | `Snippet`    | —       | Trigger markup; also fullscreen body when `content` is omitted.       |
+| `content`    | `Snippet`    | —       | Fullscreen-only body; trigger stays on the page.                      |
+| `overlay`    | `Snippet`    | —       | Toolbar/actions above content; rendered inside `Overlay`.             |
+| `open`       | `boolean`    | `false` | Bindable. Mutate inside `transit()` unless using `show()` / `hide()`. |
+| `onshow`     | `() => void` | —       | Fires when `show()` starts.                                           |
+| `onhide`     | `() => void` | —       | Fires after the close transition finishes.                            |
+| `class`      | `ClassValue` | —       | Classes on the trigger button (ignored when `controlled`).            |
+| `fragile`    | `boolean`    | `false` | Close on backdrop pointer down.                                       |
+| `controlled` | `boolean`    | `false` | No built-in trigger; call `show()` / `hide()` yourself.               |
+| `x`          | `boolean`    | `true`  | Top-trailing close button.                                            |
 
 `bind:this` exposes `show()` and `hide()`. `Overlay` accepts `children` and optional `class`.
 
@@ -139,9 +139,9 @@ Optional: `takeoff(sourceId, name, classes)` before `transit` when morphing from
 
 ### `children` vs `content`
 
-| Setup | Trigger | Fullscreen body | Typical use |
-| ----- | ------- | --------------- | ----------- |
-| `children` only | wrapped in a button | same `children` | Thumbnail zoom |
+| Setup                    | Trigger                   | Fullscreen body   | Typical use                       |
+| ------------------------ | ------------------------- | ----------------- | --------------------------------- |
+| `children` only          | wrapped in a button       | same `children`   | Thumbnail zoom                    |
 | `controlled` + `content` | `children` stays in place | `content` snippet | Button → upload progress, paywall |
 
 ### View transitions

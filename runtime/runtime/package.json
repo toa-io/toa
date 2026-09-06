@@ -46,7 +46,6 @@
     "@toa.io/prototype": "1.0.0-alpha.284",
     "@toa.io/storages.mongodb": "1.0.0-alpha.284",
     "@toa.io/storages.null": "1.0.0-alpha.284",
-    "@toa.io/storages.sql": "1.0.0-alpha.284",
     "@toa.io/userland": "1.0.0-alpha.284",
     "openspan": "1.0.0-alpha.277"
   },

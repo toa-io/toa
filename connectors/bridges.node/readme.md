@@ -17,7 +17,7 @@ Factory. Module file name without extension is an operation name (endpoint).
 ```javascript
 // operations/create.js
 
-function transition (input, object, context) {
+function transition(input, object, context) {
   // ...
 
   return { foo: 'bar' }
@@ -35,7 +35,7 @@ Following function signature defines operation of `observation` type with `objec
 ```javascript
 // operations/set.js
 
-function observation (input, objects) {
+function observation(input, objects) {
   // ...
 }
 ```
@@ -52,11 +52,11 @@ See [Operation properties](#).
 class Transition {
   #context
 
-  async mount (context) {
+  async mount(context) {
     this.#context = context
   }
 
-  execute (input, object) {
+  execute(input, object) {
     // ...
 
     return { foo: 'bar' }
@@ -75,7 +75,7 @@ it defines operation's `scope`.
 
 ```javascript
 class ObjectTransitionFactory {
-  async create () {
+  async create() {
     // ...
   }
 }
@@ -103,11 +103,11 @@ operation. A module must export at least one of three phases, and may export sev
 ```javascript
 // rc/providers.js
 
-async function preflight (context) {
+async function preflight(context) {
   context.state.providers = await connect(context)
 }
 
-async function dispose (context) {
+async function dispose(context) {
   await release(context.state.providers)
 }
 
@@ -115,7 +115,7 @@ export { preflight, dispose }
 ```
 
 | Phase       | When                                                                            |
-|-------------|---------------------------------------------------------------------------------|
+| ----------- | ------------------------------------------------------------------------------- |
 | `preflight` | on connection, before operations are served                                     |
 | `settle`    | on connection, once the component can call its own operations (`context.local`) |
 | `dispose`   | on disconnection, after the component has stopped serving                       |
@@ -141,7 +141,7 @@ beside the manifest is the file that runs.
 
 import type { Context, CreateInput } from '../types/index.d.ts'
 
-function transition (input: CreateInput, object: Entity, context: Context) {
+function transition(input: CreateInput, object: Entity, context: Context) {
   // ...
 
   return { foo: 'bar' }
@@ -228,6 +228,10 @@ Component at '/app/components/orders' has more than one operations/create: creat
 
 A file in `operations` is an operation, so shared code lives somewhere the bridge does not read —
 a `lib` beside them, not among them.
+
+`migrations` is not one of those directories: it holds what a component's storage is to make of
+its structure, read by the runtime rather than by a bridge, and written as YAML or JSON. See
+[Migrations](/documentation/component/declaration.md#migrations).
 
 ### What a package ships is transpiled
 

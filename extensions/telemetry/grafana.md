@@ -50,7 +50,7 @@ Toa stamps `trace_id` and `span_id` into every log entry written within a span
 (including unsampled traces), so once pod logs are shipped to Loki,
 traces and logs link up with two datasource settings:
 
-- Tempo datasource, *Trace to logs*: select the Loki datasource,
+- Tempo datasource, _Trace to logs_: select the Loki datasource,
   set time shifts (e.g. `-5m`/`+5m`) and a custom query:
 
   ```logql
@@ -58,7 +58,8 @@ traces and logs link up with two datasource settings:
   ```
 
   Append `` | span_id = `${__span.spanId}` `` to narrow down to a single span.
-- Loki datasource, *Derived fields*: regex `"trace_id":"([0-9a-f]+)"`,
+
+- Loki datasource, _Derived fields_: regex `"trace_id":"([0-9a-f]+)"`,
   query `${__value.raw}`, internal link to the Tempo datasource.
 
 Logs of unsampled traces carry a `trace_id` that does not exist in Tempo.

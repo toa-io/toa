@@ -2,11 +2,10 @@ import { quote } from '@toa.io/generic'
 import { resolve } from './lib/index.js'
 import type { Context, Entity, Scheme } from './types/index.js'
 
-export async function effect (input: Input, context: Context): Promise<Entity | Error> {
+export async function effect(input: Input, context: Context): Promise<Entity | Error> {
   const claims = await resolve(input.scheme, input.credentials, context)
 
-  if (claims instanceof Error)
-    return claims
+  if (claims instanceof Error) return claims
 
   const { iss, sub } = claims
 
@@ -19,10 +18,9 @@ export async function effect (input: Input, context: Context): Promise<Entity | 
 
   const record = { authority: input.authority, iss, sub, identity: input.id }
 
-  if (existent === null)
-    return await context.local.transit({ input: record })
+  if (existent === null) return await context.local.transit({ input: record })
 
-  if (existent._deleted === undefined || existent._deleted === null)
+  if (existent.DELETED === undefined || existent.DELETED === null)
     return existent.identity === input.id ? existent : ERR_EXISTS
 
   // a deleted record still occupies the unique index, so the transition revives it
@@ -41,5 +39,6 @@ export interface Input {
 
 const ERR_EXISTS = new (class ExistsError extends Error {
   public readonly code = 'EXISTS'
-  public override readonly message = 'Federation credentials are associated with another Identity'
+  public override readonly message =
+    'Federation credentials are associated with another Identity'
 })()

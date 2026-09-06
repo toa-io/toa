@@ -49,7 +49,7 @@ function add(
   value: unknown,
   depth: number,
   optional: boolean,
-  into: Line[],
+  into: Line[]
 ): void {
   const schema = shape(value)
   const opened = open(schema)
@@ -102,12 +102,15 @@ function order(schema: Schema, required: Set<string>): string[] {
 }
 
 /**
- * The properties worth showing. What a component keeps for its own bookkeeping is named
- * with a leading underscore, and is not part of the shape anyone else deals with.
+ * The properties worth showing. What the runtime keeps for its own bookkeeping is on every
+ * record alike, and is not part of the shape anyone else deals with.
  */
 function held(schema: Schema): string[] {
-  return Object.keys(record(schema.properties)).filter((name) => !name.startsWith('_'))
+  return Object.keys(record(schema.properties)).filter((name) => !SYSTEM.has(name))
 }
+
+/** What the runtime writes on every record, whatever the component declares. */
+const SYSTEM = new Set(['VERSION', 'CREATED', 'UPDATED', 'DELETED'])
 
 /** How the type is written: `string`, `number | null`, `string[]`, `(string | number)[]`. */
 function name(schema: Schema | null): string {
@@ -146,7 +149,8 @@ function kinds(schema: Schema | null): string[] {
 function stated(schema: Schema): string[] {
   if (typeof schema.type === 'string') return [schema.type]
 
-  if (Array.isArray(schema.type)) return schema.type.filter((name) => typeof name === 'string')
+  if (Array.isArray(schema.type))
+    return schema.type.filter((name) => typeof name === 'string')
 
   return []
 }

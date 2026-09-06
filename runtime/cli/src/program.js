@@ -10,7 +10,8 @@ yargs(process.argv.slice(2))
     'boolean-negation': false
   })
   .middleware((argv) => {
-    if (argv.log === undefined) argv.log = process.env.TOA_DEBUG === '1' ? 'debug' : 'info'
+    if (argv.log === undefined)
+      argv.log = process.env.TOA_DEBUG === '1' ? 'debug' : 'info'
   })
   .middleware(async (argv) => {
     if (argv.env === undefined) return
@@ -35,7 +36,10 @@ yargs(process.argv.slice(2))
     describe: 'Path to environment variables file (.env format)'
   })
   .commandDir('./commands')
-  .demandCommand(1, 'A command is required. Pass --help to see all available commands and options.')
+  .demandCommand(
+    1,
+    'A command is required. Pass --help to see all available commands and options.'
+  )
   .strict()
   .help()
   .version(version)

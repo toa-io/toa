@@ -4,7 +4,7 @@ export class Composition {
   /** @type {string[]} */
   components
 
-  constructor (composition, image) {
+  constructor(composition, image) {
     this.name = composition.name
     this.image = image.reference
     this.components = composition.components.map(component)

@@ -15,6 +15,6 @@ for (const [type, value] of [
   ['symbol', Symbol('ok')],
   ['bigint', 1n]
 ])
-   it(`should return true for ${type}`, async () => {
-  assert.deepStrictEqual(primitive(value), true)
-})
+  it(`should return true for ${type}`, async () => {
+    assert.deepStrictEqual(primitive(value), true)
+  })

@@ -20,13 +20,22 @@ it('should dereference', () => {
 
 it('should throw on invalid schema reference', () => {
   source.operations.transit.output.properties.baz = { type: 'string', default: '.' }
-  assert.throws(() => dereference(source), (error) => /is not defined/.test(error.message))
+  assert.throws(
+    () => dereference(source),
+    (error) => /is not defined/.test(error.message)
+  )
 
   source.operations.transit.output.properties.baz = { type: 'string', default: '.baz' }
-  assert.throws(() => dereference(source), (error) => /is not defined/.test(error.message))
+  assert.throws(
+    () => dereference(source),
+    (error) => /is not defined/.test(error.message)
+  )
 })
 
 it('should throw on invalid forwarding', () => {
   source.operations.create.forward = 'foo'
-  assert.throws(() => dereference(source), (error) => /is not defined/.test(error.message))
+  assert.throws(
+    () => dereference(source),
+    (error) => /is not defined/.test(error.message)
+  )
 })

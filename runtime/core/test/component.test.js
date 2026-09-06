@@ -1,9 +1,8 @@
-import { describe, it, beforeEach, mock } from 'node:test'
+import { describe, it, beforeEach } from 'node:test'
 import assert from 'node:assert/strict'
 import { isDeepStrictEqual } from 'node:util'
 
-import { Component } from '../src/component.js'
-import { codes } from '../src/exceptions.js'
+import { Component } from '../source/component.js'
 import * as fixtures from './component.fixtures.js'
 import { AssertionError } from 'node:assert'
 
@@ -31,7 +30,13 @@ describe('Invocations', () => {
     const query = { test: Math.random() }
     await component.invoke(name, { input, query })
 
-    assert.ok(invocation.invoke.mock.calls.some((call) => call.arguments.length === 1 && isDeepStrictEqual(call.arguments[0], { input, query })))
+    assert.ok(
+      invocation.invoke.mock.calls.some(
+        (call) =>
+          call.arguments.length === 1 &&
+          isDeepStrictEqual(call.arguments[0], { input, query })
+      )
+    )
   })
 
   it('should return io', async () => {
@@ -41,7 +46,7 @@ describe('Invocations', () => {
   })
 })
 
-function resetCalls (target = [assert, fixtures], seen = new Set()) {
+function resetCalls(target = [assert, fixtures], seen = new Set()) {
   if (target === null || typeof target !== 'object' || seen.has(target)) return
 
   seen.add(target)

@@ -39,10 +39,13 @@ it('should match objects', () => {
   assert.deepStrictEqual(match(reference, { qux: { val: 'whatever' } }), false)
   assert.deepStrictEqual(match(reference, { qux: { arr: [1, 2] } }), true)
   assert.deepStrictEqual(match(reference, { qux: { arr: [2, 5] } }), false)
-  assert.deepStrictEqual(match(reference, {
-    foo: 'bar',
-    bar: 1
-  }), false)
+  assert.deepStrictEqual(
+    match(reference, {
+      foo: 'bar',
+      bar: 1
+    }),
+    false
+  )
 })
 
 it('should not throw on nulls', () => {
@@ -54,10 +57,7 @@ it('should not throw on nulls', () => {
 
 it('should match array items in objects', async () => {
   const reference = {
-    foo: [
-      { bar: 1 },
-      { bar: 2 }
-    ]
+    foo: [{ bar: 1 }, { bar: 2 }]
   }
 
   assert.deepStrictEqual(match(reference, { foo: [{ bar: 2 }] }), true)

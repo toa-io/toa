@@ -12,8 +12,14 @@ it('should be nothing without a header named', () => {
 })
 
 it('should be the last value of the named header', () => {
-  assert.equal(address(request({ 'x-forwarded-for': '1.1.1.1, 2.2.2.2' }), 'x-forwarded-for'), '2.2.2.2')
-  assert.equal(address(request({ 'cf-connecting-ip': '3.3.3.3' }), 'cf-connecting-ip'), '3.3.3.3')
+  assert.equal(
+    address(request({ 'x-forwarded-for': '1.1.1.1, 2.2.2.2' }), 'x-forwarded-for'),
+    '2.2.2.2'
+  )
+  assert.equal(
+    address(request({ 'cf-connecting-ip': '3.3.3.3' }), 'cf-connecting-ip'),
+    '3.3.3.3'
+  )
 })
 
 it('should be nothing when the named header is absent or empty', () => {

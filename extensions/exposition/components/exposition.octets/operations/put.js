@@ -2,7 +2,7 @@ import { Readable } from 'node:stream'
 import { posix } from 'node:path'
 import { match } from 'matchacho'
 
-async function put (input, context) {
+async function put(input, context) {
   const { storage, request, location, accept, limit, trust } = input
   const url = request.url
   const id = request.headers['content-id']
@@ -16,8 +16,7 @@ async function put (input, context) {
   const options = { claim, accept, attributes }
 
   if (id !== undefined) {
-    if (!ID_RX.test(id))
-      return ERR_INVALID_ID
+    if (!ID_RX.test(id)) return ERR_INVALID_ID
 
     options.id = id
   }
@@ -25,22 +24,18 @@ async function put (input, context) {
   if (reference !== undefined) {
     const length = Number.parseInt(request.headers['content-length'])
 
-    if (length !== 0)
-      return ERR_LENGTH
+    if (length !== 0) return ERR_LENGTH
 
-    if (!trusted(reference, trust))
-      return ERR_UNTRUSTED
+    if (!trusted(reference, trust)) return ERR_UNTRUSTED
 
     body = await download(reference)
 
-    if (body instanceof Error)
-      return body
+    if (body instanceof Error) return body
 
     options.origin = reference
   }
 
-  if (limit !== undefined)
-    options.limit = limit
+  if (limit !== undefined) options.limit = limit
 
   const path = posix.resolve(url, location ?? '.')
 
@@ -51,14 +46,12 @@ async function put (input, context) {
  * @param {string | string[] | undefined} values
  * @returns {Record<string, string>}
  */
-function parseAttributes (values) {
+function parseAttributes(values) {
   const attributes = {}
 
-  if (values === undefined)
-    return attributes
+  if (values === undefined) return attributes
 
-  if (typeof values === 'string')
-    values = values.split(',')
+  if (typeof values === 'string') values = values.split(',')
 
   for (const pair of values) {
     const eq = pair.indexOf('=')
@@ -74,15 +67,16 @@ function parseAttributes (values) {
  * @param {string} location
  * @return {Readable | Error}
  */
-async function download (location) {
+async function download(location) {
   const response = await fetch(location)
 
-  if (!response.ok)
-    return ERR_UNAVAILABLE
+  if (!response.ok) return ERR_UNAVAILABLE
 
-  return response.body === null ? ERR_UNAVAILABLE : Readable.fromWeb(
-    /** @type {import('node:stream/web').ReadableStream} **/ response.body)
-
+  return response.body === null
+    ? ERR_UNAVAILABLE
+    : Readable.fromWeb(
+        /** @type {import('node:stream/web').ReadableStream} **/ response.body
+      )
 }
 
 /**
@@ -90,28 +84,29 @@ async function download (location) {
  * @param {Trust | undefined} trust
  * @return {boolean}
  */
-function trusted (location, trust) {
-  if (trust === undefined)
-    return false
+function trusted(location, trust) {
+  if (trust === undefined) return false
 
   const url = toURL(location)
 
-  if (url === null)
-    return false
+  if (url === null) return false
 
   for (const permission of trust) {
-    const ok = match(permission,
-      String, (origin) => url.origin === origin,
-      RegExp, (pattern) => pattern.test(url.origin))
+    const ok = match(
+      permission,
+      String,
+      (origin) => url.origin === origin,
+      RegExp,
+      (pattern) => pattern.test(url.origin)
+    )
 
-    if (ok)
-      return true
+    if (ok) return true
   }
 
   return false
 }
 
-function toURL (location) {
+function toURL(location) {
   try {
     return new URL(location)
   } catch (error) {
@@ -139,10 +134,7 @@ const ERR_INVALID_ID = new (class InvalidIdError extends Error {
   message = 'Invalid Content-ID'
 })()
 
-
 const ID_RX = /^[a-zA-Z0-9-_]{1,32}$/
-
-
 
 /** @typedef {Array<string | RegExp>} Trust */
 /** @typedef {import('node:stream').Readable} Readable */

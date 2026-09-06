@@ -4,13 +4,13 @@ Shared theme tokens, Tailwind variants, and utility classes for antcn components
 
 ## What's included
 
-| Kind | Examples |
-| --- | --- |
-| CSS variables | `--constructive`, `--constructive-foreground`, `--destructive-foreground`, `--shadow-color` → `bg-constructive`, `text-constructive-foreground`, `text-destructive-foreground`, popover shadows |
-| Custom variants | `standalone:`, `tim:` |
-| Shared layers | `@layer transitions` — `transition-morph` / `transition-spring` / `transition-instant` timing, reduced-motion guard |
-| Utility classes | `.no-scrollbar` — hide scrollbars while keeping scroll; `.selected` — accent ring for selected rows |
-| Typography | `.typeset` — document rhythm for rendered Markdown, sized relative to its container |
+| Kind            | Examples                                                                                                                                                                                        |
+| --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| CSS variables   | `--constructive`, `--constructive-foreground`, `--destructive-foreground`, `--shadow-color` → `bg-constructive`, `text-constructive-foreground`, `text-destructive-foreground`, popover shadows |
+| Custom variants | `standalone:`, `tim:`                                                                                                                                                                           |
+| Shared layers   | `@layer transitions` — `transition-morph` / `transition-spring` / `transition-instant` timing, reduced-motion guard                                                                             |
+| Utility classes | `.no-scrollbar` — hide scrollbars while keeping scroll; `.selected` — accent ring for selected rows                                                                                             |
+| Typography      | `.typeset` — document rhythm for rendered Markdown, sized relative to its container                                                                                                             |
 
 Component-specific view-transition rules stay in each component's `<style>` block.
 

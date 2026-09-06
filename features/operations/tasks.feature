@@ -2,8 +2,8 @@ Feature: Tasks
 
   Background:
     Given the `mongo.one` database contains:
-      | _id                              | foo | bar   | _version |
-      | 72cf9b0ab0ac4ab2b8036e4e940ddcae | 0   | hello | 1        |
+      | _id                              | foo | bar   | VERSION |
+      | 72cf9b0ab0ac4ab2b8036e4e940ddcae | 0   | hello | 1       |
 
   Scenario: Sending a task
     Given I compose `mongo.one` component
@@ -29,5 +29,5 @@ Feature: Tasks
       id: 72cf9b0ab0ac4ab2b8036e4e940ddcae
       foo: 0
       bar: bye
-      _version: 2
+      VERSION: 2
       """

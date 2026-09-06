@@ -10,7 +10,7 @@ import { dirname, join, resolve } from 'node:path'
  * @param {{ cwd?: string }} [options]
  * @returns {string | undefined}
  */
-export function findUp (name, options = {}) {
+export function findUp(name, options = {}) {
   let directory = resolve(options.cwd ?? process.cwd())
 
   while (true) {

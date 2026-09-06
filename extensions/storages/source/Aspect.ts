@@ -1,5 +1,6 @@
 import assert from 'node:assert'
-import { Connector, type extensions } from '@toa.io/core'
+import { Connector } from '@toa.io/core'
+import type { extensions } from '@toa.io/core/types'
 import { type Storage, type Storages } from './Storage.js'
 
 export class Aspect extends Connector implements extensions.Aspect {
@@ -7,13 +8,13 @@ export class Aspect extends Connector implements extensions.Aspect {
 
   private readonly storages: Storages
 
-  public constructor (storages: Storages) {
+  public constructor(storages: Storages) {
     super()
 
     this.storages = storages
   }
 
-  public invoke (name: string, method: keyof Storage, ...args: unknown[]): unknown {
+  public invoke(name: string, method: keyof Storage, ...args: unknown[]): unknown {
     const storage = this.storages[name]
 
     assert.ok(storage !== undefined, `Storage '${name}' is not defined`)

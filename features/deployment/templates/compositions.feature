@@ -1,3 +1,4 @@
+@deployment @helm
 Feature: Composition Deployment
 
   Scenario: Deploy a composition with probes

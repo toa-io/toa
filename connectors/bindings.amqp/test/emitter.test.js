@@ -23,10 +23,13 @@ it('should be', async () => {
 })
 
 const comm = mock.communication()
-const locator = /** @type {toa.core.Locator} */ { name: generate(), namespace: generate() }
+const locator = /** @type {import('@toa.io/core').Locator} */ {
+  name: generate(),
+  namespace: generate()
+}
 const label = generate()
 
-/** @type {toa.core.bindings.Emitter} */
+/** @type {import('@toa.io/core/types').bindings.Emitter} */
 let emitter
 
 beforeEach(() => {
@@ -42,7 +45,12 @@ it('should be instance of Connector', async () => {
 })
 
 it('should depend on communication', async () => {
-  assert.ok(comm.link.mock.calls.some((call) => call.arguments.length === 1 && isDeepStrictEqual(call.arguments[0], emitter)))
+  assert.ok(
+    comm.link.mock.calls.some(
+      (call) =>
+        call.arguments.length === 1 && isDeepStrictEqual(call.arguments[0], emitter)
+    )
+  )
 })
 
 it('should emit', async () => {
@@ -50,7 +58,14 @@ it('should emit', async () => {
 
   await emitter.emit(message)
 
-  assert.ok(mock.queues.name.mock.calls.some((call) => call.arguments.length === 2 && isDeepStrictEqual(call.arguments[0], locator) && isDeepStrictEqual(call.arguments[1], label)))
+  assert.ok(
+    mock.queues.name.mock.calls.some(
+      (call) =>
+        call.arguments.length === 2 &&
+        isDeepStrictEqual(call.arguments[0], locator) &&
+        isDeepStrictEqual(call.arguments[1], label)
+    )
+  )
 
   const exchange = mock.queues.name.mock.calls[0].result
   const { arguments: args } = comm.emit.mock.calls[0]
@@ -64,10 +79,12 @@ it('should set authored header', async () => {
 
   await emitter.emit(message)
 
-  assert.partialDeepStrictEqual(comm.emit.mock.calls[0].arguments[2], { headers: { 'toa.io/amqp': '0' } })
+  assert.partialDeepStrictEqual(comm.emit.mock.calls[0].arguments[2], {
+    headers: { 'toa.io/amqp': '0' }
+  })
 })
 
-function resetCalls (target = [assert, mock, comm, locator, label], seen = new Set()) {
+function resetCalls(target = [assert, mock, comm, locator, label], seen = new Set()) {
   if (target === null || typeof target !== 'object' || seen.has(target)) return
 
   seen.add(target)

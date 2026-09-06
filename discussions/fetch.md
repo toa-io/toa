@@ -22,10 +22,7 @@ interface FetchInit extends RequestInit {
   }
 }
 
-type ContextFetch = (
-  input: string | URL | Request,
-  init?: FetchInit
-) => Promise<Response>
+type ContextFetch = (input: string | URL | Request, init?: FetchInit) => Promise<Response>
 ```
 
 ```js
@@ -114,7 +111,7 @@ POST https://google.com
 It is constructed as:
 
 ```ts
-`${request.method} ${new URL(request.url).origin}`
+;`${request.method} ${new URL(request.url).origin}`
 ```
 
 Span attributes:

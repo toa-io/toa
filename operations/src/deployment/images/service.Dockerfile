@@ -7,7 +7,7 @@ RUN if [ "{{runtime.proxy}}" != "" ]; then npm set proxy {{runtime.proxy}}; fi
 WORKDIR /service
 COPY --chown=node:node . /service
 
-RUN --mount=type=cache,target=/root/.npm \
+RUN --mount=type=cache,target=/root/.npm,sharing=locked \
   npm i --omit=dev
 
 USER node

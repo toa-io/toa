@@ -10,7 +10,7 @@ import type { Remotes } from '../../Remotes.js'
 import type { Constructor, Directive } from './Directive.js'
 import type { Introspection } from '../../Introspection.js'
 import { ATOM_GROUP } from '../../const.js'
-import type { extensions } from '@toa.io/core'
+import type { extensions } from '@toa.io/core/types'
 
 export class IO implements DirectiveFamily<Directive> {
   public readonly name = 'io'
@@ -21,12 +21,17 @@ export class IO implements DirectiveFamily<Directive> {
   /** Throttling reconciles through the atom of the gateways, one for every directive. */
   private sync: Sync | null = null
 
-  public mount (host: extensions.Host): void {
+  public mount(host: extensions.Host): void {
     this.host = host
   }
 
   // eslint-disable-next-line max-params
-  public create (name: string, value: unknown, remotes: Remotes, route: string): Directive {
+  public create(
+    name: string,
+    value: unknown,
+    remotes: Remotes,
+    route: string
+  ): Directive {
     if (!(name in constructors))
       throw new Error(`Directive 'io:${name}' is not implemented`)
 
@@ -34,14 +39,16 @@ export class IO implements DirectiveFamily<Directive> {
 
     Directive.validate(value)
 
-    if (name === 'throttle')
-      this.sync ??= new Sync(this.host.atom(ATOM_GROUP))
+    if (name === 'throttle') this.sync ??= new Sync(this.host.atom(ATOM_GROUP))
 
     return new Directive(value, this.sync!, route)
   }
 
-  public precall (directives: Directive[], context: http.Context,
-    parameters: Parameter[]): null {
+  public precall(
+    directives: Directive[],
+    context: http.Context,
+    parameters: Parameter[]
+  ): null {
     let restricted = false
 
     for (const directive of directives) {
@@ -50,8 +57,7 @@ export class IO implements DirectiveFamily<Directive> {
       directive.precall(context, parameters)
     }
 
-    if (!restricted)
-      DENIAL.precall(context, parameters)
+    if (!restricted) DENIAL.precall(context, parameters)
 
     return null
   }
@@ -60,16 +66,18 @@ export class IO implements DirectiveFamily<Directive> {
    * What a whitelist admits is what the schema states. Without an `io:output` the reply is
    * dropped before it is sent, so there is no output to describe at all.
    */
-  public explain (directives: Directive[], _: http.Context,
-    introspection: Introspection): Introspection {
+  public explain(
+    directives: Directive[],
+    _: http.Context,
+    introspection: Introspection
+  ): Introspection {
     let restricted = false
 
     for (const directive of directives) {
       if (directive instanceof Input)
         introspection.input = restrict(introspection.input, directive.allowed)
 
-      if (!(directive instanceof Output))
-        continue
+      if (!(directive instanceof Output)) continue
 
       restricted = true
 
@@ -77,16 +85,17 @@ export class IO implements DirectiveFamily<Directive> {
         introspection.output = restrict(introspection.output, directive.allowed)
     }
 
-    if (!restricted)
-      delete introspection.output
+    if (!restricted) delete introspection.output
 
     return introspection
   }
 
-  public settle (directives: Directive[], context: http.Context,
-    output: http.OutgoingMessage): void {
-    for (const directive of directives)
-      directive.settle?.(context, output)
+  public settle(
+    directives: Directive[],
+    context: http.Context,
+    output: http.OutgoingMessage
+  ): void {
+    for (const directive of directives) directive.settle?.(context, output)
   }
 
   /**
@@ -94,7 +103,7 @@ export class IO implements DirectiveFamily<Directive> {
    * factory disposes every route it made — so this runs once per route at shutdown,
    * and disposing an already stopped ticker is what makes that harmless.
    */
-  public dispose (): void {
+  public dispose(): void {
     this.sync?.dispose()
   }
 }

@@ -5,7 +5,7 @@ import { type AnnotationRecord } from '@toa.io/pointer/transpiled/Deployment.js'
 import { type Annotation } from './annotation.js'
 import type { URIMap } from '@toa.io/pointer'
 
-export function createDependency (context: Context): Dependency {
+export function createDependency(context: Context): Dependency {
   const global: Variable[] = []
   const variables = { global }
 
@@ -16,9 +16,10 @@ export function createDependency (context: Context): Dependency {
   return { variables }
 }
 
-export function resolveURIs (locator: Locator): string[] {
-  if (process.env.TOA_DEV === '1')
-    return ['amqp://developer:secret@localhost']
+export function resolveURIs(locator: Locator): string[] {
+  // Toa's own development stack is not on the conventional ports: the applications built on
+  // Toa are, and they share the machine. See CONTRIBUTING.md.
+  if (process.env.TOA_DEV === '1') return ['amqp://developer:secret@localhost:31010']
 
   const value = process.env[VARIABLE]
 
@@ -31,7 +32,7 @@ export function resolveURIs (locator: Locator): string[] {
   return parseRecord(record)
 }
 
-function createVariables (context: Context): Variable[] {
+function createVariables(context: Context): Variable[] {
   const variables: Variable[] = []
   const uris = JSON.stringify(context)
 
@@ -47,7 +48,7 @@ function createVariables (context: Context): Variable[] {
   return variables
 }
 
-function createSecrets (context: Context): Variable[] {
+function createSecrets(context: Context): Variable[] {
   const secrets: Variable[] = []
 
   for (const key of Object.keys(context)) {
@@ -59,14 +60,14 @@ function createSecrets (context: Context): Variable[] {
   return secrets
 }
 
-function createKeySecrets (key: string): Variable[] {
+function createKeySecrets(key: string): Variable[] {
   const username = createSecretVariable(key, 'username')
   const password = createSecretVariable(key, 'password')
 
   return [username, password]
 }
 
-function createSecretVariable (key: string, secretKey: string): Variable {
+function createSecretVariable(key: string, secretKey: string): Variable {
   const varKey = key === '.' ? '' : key
   const varName = naming.nameVariable(ID, varKey, secretKey.toUpperCase())
   const secName = naming.nameSecret(ID, key)
@@ -80,7 +81,7 @@ function createSecretVariable (key: string, secretKey: string): Variable {
   }
 }
 
-function parseRecord (record: AnnotationRecord): string[] {
+function parseRecord(record: AnnotationRecord): string[] {
   const urls = new Array(record.references.length)
   const key = record.key === '.' ? '' : record.key
   const username = readEnv(key, 'USERNAME')
@@ -98,14 +99,12 @@ function parseRecord (record: AnnotationRecord): string[] {
   return urls
 }
 
-function readEnv (key: string, name: string): string {
+function readEnv(key: string, name: string): string {
   const variable = naming.nameVariable(ID, key, name)
   const value = process.env[variable]
 
-  if (value === undefined)
-    throw new Error(variable + ' is not set')
-  else
-    return value
+  if (value === undefined) throw new Error(variable + ' is not set')
+  else return value
 }
 
 const ID = 'amqp-context'

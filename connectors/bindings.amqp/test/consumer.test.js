@@ -21,10 +21,13 @@ it('should be', async () => {
 })
 
 const comm = mock.communication()
-const locator = /** @type {toa.core.Locator} */ { name: generate(), namespace: generate() }
+const locator = /** @type {import('@toa.io/core').Locator} */ {
+  name: generate(),
+  namespace: generate()
+}
 const endpoint = generate()
 
-/** @type {toa.core.bindings.Consumer} */
+/** @type {import('@toa.io/core/types').bindings.Consumer} */
 let consumer
 
 beforeEach(() => {
@@ -38,7 +41,12 @@ it('should be instance of Connector', async () => {
 })
 
 it('should depend on communication', async () => {
-  assert.ok(comm.link.mock.calls.some((call) => call.arguments.length === 1 && isDeepStrictEqual(call.arguments[0], consumer)))
+  assert.ok(
+    comm.link.mock.calls.some(
+      (call) =>
+        call.arguments.length === 1 && isDeepStrictEqual(call.arguments[0], consumer)
+    )
+  )
 })
 
 it('should send request', async () => {
@@ -46,15 +54,29 @@ it('should send request', async () => {
 
   const reply = await consumer.request(request)
 
-  assert.ok(mock.queues.name.mock.calls.some((call) => call.arguments.length === 2 && isDeepStrictEqual(call.arguments[0], locator) && isDeepStrictEqual(call.arguments[1], endpoint)))
+  assert.ok(
+    mock.queues.name.mock.calls.some(
+      (call) =>
+        call.arguments.length === 2 &&
+        isDeepStrictEqual(call.arguments[0], locator) &&
+        isDeepStrictEqual(call.arguments[1], endpoint)
+    )
+  )
 
   const queue = mock.queues.name.mock.calls[0].result
 
-  assert.ok(comm.request.mock.calls.some((call) => call.arguments.length === 2 && isDeepStrictEqual(call.arguments[0], queue) && isDeepStrictEqual(call.arguments[1], request)))
+  assert.ok(
+    comm.request.mock.calls.some(
+      (call) =>
+        call.arguments.length === 2 &&
+        isDeepStrictEqual(call.arguments[0], queue) &&
+        isDeepStrictEqual(call.arguments[1], request)
+    )
+  )
   assert.deepStrictEqual(reply, await comm.request.mock.calls[0].result)
 })
 
-function resetCalls (target = [assert, mock, comm, locator, endpoint], seen = new Set()) {
+function resetCalls(target = [assert, mock, comm, locator, endpoint], seen = new Set()) {
   if (target === null || typeof target !== 'object' || seen.has(target)) return
 
   seen.add(target)

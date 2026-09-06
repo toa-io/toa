@@ -4,7 +4,7 @@ import { generate } from 'randomstring'
 
 export const configuration = { foo: { bar: generate() } }
 
-export const context = /** @type {toa.core.Context} */ {
+export const context = /** @type {import('@toa.io/core').Context} */ {
   apply: mock.fn(),
   call: mock.fn(),
   aspects: [

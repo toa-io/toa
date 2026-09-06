@@ -14,10 +14,10 @@ Copies `text` (string or async retriever) to the system clipboard. Shows a check
 
 ## Props
 
-| Prop     | Type                         | Default | Notes                                              |
-| -------- | ---------------------------- | ------- | -------------------------------------------------- |
+| Prop     | Type                              | Default | Notes                                               |
+| -------- | --------------------------------- | ------- | --------------------------------------------------- |
 | `text`   | `string \| () => Promise<string>` | —       | Value to copy. Retriever may return `null` to skip. |
-| `label`  | `string`                     | —       | Button label. Omit for icon-only.                  |
-| `oncopy` | `() => void`                 | —       | Fires after a successful copy.                     |
+| `label`  | `string`                          | —       | Button label. Omit for icon-only.                   |
+| `oncopy` | `() => void`                      | —       | Fires after a successful copy.                      |
 
 All other props pass through to the underlying `Button`.

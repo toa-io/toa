@@ -6,12 +6,12 @@ Consent-first GA4 + Google Tag Manager analytics. A typed `track()` dual-dispatc
 
 Configured through `VITE_*` env vars (read at build via `import.meta.env`, so no custom `envPrefix` is needed). Set whichever delivery you use — at least one `id` must be present or the whole stack no-ops:
 
-| Var                | Example        | Notes                                                                 |
-| ------------------ | -------------- | --------------------------------------------------------------------- |
-| `VITE_GA_ID`       | `G-XXXXXXXXXX` | GA4 Measurement ID. When set, events go to GA4 via `gtag` (takes priority). |
+| Var                | Example        | Notes                                                                                                                                   |
+| ------------------ | -------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| `VITE_GA_ID`       | `G-XXXXXXXXXX` | GA4 Measurement ID. When set, events go to GA4 via `gtag` (takes priority).                                                             |
 | `VITE_GTM_ID`      | `GTM-XXXXXXX`  | GTM container ID. Used for `track()` only when `VITE_GA_ID` is unset; otherwise the container still sees gtag's push as a Custom Event. |
-| `VITE_GTM_AUTH`    | `abc123…`      | Optional — GTM Environment snippet auth param. Empty for the Live environment. |
-| `VITE_GTM_PREVIEW` | `env-3`        | Optional — GTM Environment snippet preview param. Empty for Live.     |
+| `VITE_GTM_AUTH`    | `abc123…`      | Optional — GTM Environment snippet auth param. Empty for the Live environment.                                                          |
+| `VITE_GTM_PREVIEW` | `env-3`        | Optional — GTM Environment snippet preview param. Empty for Live.                                                                       |
 
 ## Notes
 
@@ -69,9 +69,9 @@ track('sign_up', { method: 'passkey' })
 
 ### `<Analytics>`
 
-| Prop    | Type     | Default | Notes                                                                        |
-| ------- | -------- | ------- | ---------------------------------------------------------------------------- |
-| `title` | `string` | —       | Resolved page title sent with each `page_view` (avoids the SPA title race).  |
+| Prop    | Type     | Default | Notes                                                                       |
+| ------- | -------- | ------- | --------------------------------------------------------------------------- |
+| `title` | `string` | —       | Resolved page title sent with each `page_view` (avoids the SPA title race). |
 
 ### `<Consent>` / `<Manage>`
 

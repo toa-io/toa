@@ -62,7 +62,7 @@ Uses [redlock](https://github.com/sesamecare/redlock). The key is written to eve
 majority holding it is the lock, so a minority can be lost or failed over without invalidating one.
 Against a single address there is no majority to lose: a restart that drops the key, or a failover
 to a replica that has not received it, can leave two holders. Entity writes do not rest on either —
-they have `_version`.
+they have `VERSION`.
 
 The routine is given an `AbortSignal` and a context. Extension can fail while the routine runs, and
 the signal is how it says so:
@@ -92,8 +92,8 @@ Requires Redis.
 ```yaml
 # context.toa.yaml
 atomicity:
-  redis: redis://redis.example.com    # one address, or an odd number of them
-  interval: 5000                      # how often a replica registers, milliseconds
+  redis: redis://redis.example.com # one address, or an odd number of them
+  interval: 5000 # how often a replica registers, milliseconds
 ```
 
 Several addresses are **independent servers**, not the nodes of a cluster. The lock is taken on a

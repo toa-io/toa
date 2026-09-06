@@ -13,12 +13,12 @@ and `cause` chain.
 Log entry format:
 
 ```yaml
-time: string       # ISO 8601 timestamp
-severity: string   # TRACE, DEBUG, INFO, WARN, ERROR
+time: string # ISO 8601 timestamp
+severity: string # TRACE, DEBUG, INFO, WARN, ERROR
 message: string
 attributes?: object
-context?: object   # context passed to the constructor
-trace_id?: string  # present when written within a span
+context?: object # context passed to the constructor
+trace_id?: string # present when written within a span
 span_id?: string
 ```
 
@@ -62,18 +62,20 @@ span<T>(options: SpanOptions, task: () => T | Promise<T>): Promise<T>
 ```
 
 ```javascript
-const response = await console.span('fetch', { foo: 'bar' }, () => fetch('https://example.com'))
+const response = await console.span('fetch', { foo: 'bar' }, () =>
+  fetch('https://example.com')
+)
 ```
 
 Span entry additional fields:
 
 ```yaml
-trace_id: string   # 32 hex characters, shared by all spans and logs of the trace
-span_id: string    # 16 hex characters
+trace_id: string # 32 hex characters, shared by all spans and logs of the trace
+span_id: string # 16 hex characters
 parent_id?: string # span_id of the enclosing span
-duration: number   # milliseconds
-kind?: string      # server, client, producer, consumer; internal when omitted
-status?: error     # present if an exception was thrown
+duration: number # milliseconds
+kind?: string # server, client, producer, consumer; internal when omitted
+status?: error # present if an exception was thrown
 ```
 
 Spans nest: spans created and logs written inside the task are linked to the enclosing span
@@ -129,7 +131,7 @@ import { sampling } from 'openspan'
 
 sampling({
   sample: 0.1, // probability of recording a trace, 0..1, defaults to 1
-  rate: 5      // maximum recorded traces per second, unlimited when omitted (may be fractional)
+  rate: 5 // maximum recorded traces per second, unlimited when omitted (may be fractional)
 })
 ```
 

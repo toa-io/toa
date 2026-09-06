@@ -18,8 +18,12 @@ describe('load', () => {
 
   it('should read yes, no, on and off as strings', () => {
     // YAML 1.2: only true and false are booleans
-    assert.deepStrictEqual(load('a: yes\nb: no\nc: on\nd: off\n'),
-      { a: 'yes', b: 'no', c: 'on', d: 'off' })
+    assert.deepStrictEqual(load('a: yes\nb: no\nc: on\nd: off\n'), {
+      a: 'yes',
+      b: 'no',
+      c: 'on',
+      d: 'off'
+    })
   })
 
   it('should read true and false as booleans', () => {
@@ -39,7 +43,9 @@ describe('dump', () => {
 
   it('should quote a scalar another YAML version would not read as a string', () => {
     // reading under the 1.2 core does not need the quotes; whoever reads this document may
-    assert.strictEqual(dump({ code: 'NO', ok: 'yes', at: 'on' }),
-      "code: 'NO'\nok: 'yes'\nat: 'on'\n")
+    assert.strictEqual(
+      dump({ code: 'NO', ok: 'yes', at: 'on' }),
+      "code: 'NO'\nok: 'yes'\nat: 'on'\n"
+    )
   })
 })

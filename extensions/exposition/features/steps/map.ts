@@ -12,14 +12,14 @@ const COMPONENTS = ['introspection.nodes', 'introspection.edges']
  * The map's own components, as the introspection package ships them. Mounted rather
  * than copied on purpose: a scenario about a manifest must read that manifest.
  */
-export function components (): string[] {
+export function components(): string[] {
   const root = dirname(require.resolve(PACKAGE + '/package.json'))
 
   return COMPONENTS.map((name) => join(root, 'components', name))
 }
 
 /** `norm` declares `component` as a namespace of types; the runtime export is a function. */
-export async function manifests (): Promise<Manifest[]> {
+export async function manifests(): Promise<Manifest[]> {
   const { component } = norm as unknown as Norm
 
   return await Promise.all(components().map(async (path) => await component(path)))

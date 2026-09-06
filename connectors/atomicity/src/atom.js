@@ -5,7 +5,7 @@ import { Connector } from '@toa.io/core'
  * What one group of replicas decides together, in one place: which of them owns what, what they
  * have spent between them, and which of them holds a name while it works.
  *
- * @implements {toa.core.atomicity.Atom}
+ * @implements {import('@toa.io/core/types').atomicity.Atom}
  */
 export class Atom extends Connector {
   #connection
@@ -27,7 +27,7 @@ export class Atom extends Connector {
   /** the loop's own logger, carrying the group every line belongs to */
   #console
 
-  constructor (connection, name, interval) {
+  constructor(connection, name, interval) {
     super()
 
     this.#connection = connection
@@ -50,7 +50,7 @@ export class Atom extends Connector {
    * @param total {number}
    * @returns {number[] | null} null while this replica owns nothing
    */
-  slots (total) {
+  slots(total) {
     const assignment = this.#assignment
 
     if (assignment === null) return null
@@ -78,7 +78,7 @@ export class Atom extends Connector {
    * @param listener {(assignment: { i: number, n: number } | null) => void}
    * @returns {() => void}
    */
-  onassigned (listener) {
+  onassigned(listener) {
     this.#listeners.add(listener)
 
     listener(this.#assignment)
@@ -95,7 +95,7 @@ export class Atom extends Connector {
    * @param {number[]} deltas
    * @returns {Promise<number[]>}
    */
-  async meter (keys, deltas) {
+  async meter(keys, deltas) {
     const meter = this.#connection.meter
 
     if (meter === undefined)
@@ -112,7 +112,7 @@ export class Atom extends Connector {
    * @param {() => Promise<any>} routine
    * @returns {Promise<any>}
    */
-  async lock (keys, routine) {
+  async lock(keys, routine) {
     const redlock = this.#connection.redlock
 
     if (redlock === undefined)
@@ -128,13 +128,13 @@ export class Atom extends Connector {
    *
    * @private
    */
-  #keys (kind, keys) {
+  #keys(kind, keys) {
     if (typeof keys === 'string') keys = [keys]
 
     return keys.map((key) => `${ATOM}:${this.#name}:${kind}:${key}`)
   }
 
-  async open () {
+  async open() {
     const redis = this.#connection.redis
 
     // without a Redis nothing can be owned exclusively, so nothing is claimed at all
@@ -144,7 +144,7 @@ export class Atom extends Connector {
     this.#discovering = this.#discover(redis)
   }
 
-  async close () {
+  async close() {
     this.#assignment = null
 
     this.#abort?.abort()
@@ -160,7 +160,7 @@ export class Atom extends Connector {
    *
    * @private
    */
-  async #discover (redis) {
+  async #discover(redis) {
     const { discover } = await import('n-and-i')
 
     const loop = discover({
@@ -191,7 +191,7 @@ export class Atom extends Connector {
   }
 }
 
-function override () {
+function override() {
   const value = Number(process.env.TOA_ATOMICITY_INTERVAL)
 
   return Number.isNaN(value) || value <= 0 ? undefined : value

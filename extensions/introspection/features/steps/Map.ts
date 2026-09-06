@@ -11,7 +11,8 @@ import * as boot from '@toa.io/boot'
 import { Locator } from '@toa.io/core'
 import * as stage from '@toa.io/userland/stage'
 import { Factory } from '../../source/index.js'
-import type { Component, Connector, Request } from '@toa.io/core'
+import type { Component, Connector } from '@toa.io/core'
+import type { Request } from '@toa.io/core/types'
 
 const { after, before, binding, then, when } = tsflow
 
@@ -23,12 +24,14 @@ export class Map {
   private unidentified: Component | null = null
 
   @when('the `{word}` is called with:')
-  public async call (endpoint: string, yaml: string): Promise<void> {
+  public async call(endpoint: string, yaml: string): Promise<void> {
     const request = parse(yaml) as Request
     const [operation, component, namespace = 'default'] = endpoint.split('.').reverse()
 
     // an operation may throw, and that is exactly what one of the scenarios is about
-    await this.invoke(`${namespace}.${component}`, operation, request).catch(() => undefined)
+    await this.invoke(`${namespace}.${component}`, operation, request).catch(
+      () => undefined
+    )
   }
 
   /**
@@ -36,7 +39,7 @@ export class Map {
    * nobody is made past it, straight through a remote of its own.
    */
   @when('the `{word}` is called by an unidentified caller with:')
-  public async callUnidentified (endpoint: string, yaml: string): Promise<void> {
+  public async callUnidentified(endpoint: string, yaml: string): Promise<void> {
     const request = parse(yaml) as Request
     const [operation, component, namespace = 'default'] = endpoint.split('.').reverse()
 
@@ -47,34 +50,34 @@ export class Map {
   }
 
   @then('the map contains a node:')
-  public async node (yaml: string): Promise<void> {
+  public async node(yaml: string): Promise<void> {
     await this.eventually('introspection.nodes', parse(yaml) as object)
   }
 
   @then('the map contains an edge:')
-  public async edge (yaml: string): Promise<void> {
+  public async edge(yaml: string): Promise<void> {
     await this.eventually('introspection.edges', parse(yaml) as object)
   }
 
   @then('the map contains no node:')
-  public async noNode (yaml: string): Promise<void> {
+  public async noNode(yaml: string): Promise<void> {
     await this.never('introspection.nodes', parse(yaml) as object)
   }
 
   @then('the map contains no edge:')
-  public async noEdge (yaml: string): Promise<void> {
+  public async noEdge(yaml: string): Promise<void> {
     await this.never('introspection.edges', parse(yaml) as object)
   }
 
   @when('the components are stopped')
-  public async stop (): Promise<void> {
+  public async stop(): Promise<void> {
     await this.composition?.disconnect()
 
     this.composition = null
   }
 
   @before('not @ui')
-  public async run (): Promise<void> {
+  public async run(): Promise<void> {
     await clean()
 
     this.service = (await new Factory(boot.host()).service())!
@@ -88,7 +91,7 @@ export class Map {
   }
 
   @after('not @ui')
-  public async shutdown (): Promise<void> {
+  public async shutdown(): Promise<void> {
     this.remotes = {}
 
     await this.unidentified?.disconnect()
@@ -101,14 +104,18 @@ export class Map {
     this.unidentified = null
   }
 
-  private async invoke (id: string, operation: string, request: Request): Promise<unknown> {
+  private async invoke(
+    id: string,
+    operation: string,
+    request: Request
+  ): Promise<unknown> {
     this.remotes[id] ??= await stage.remote(id)
 
     return await this.remotes[id].invoke(operation, request)
   }
 
   /** The map is eventually consistent: the collector buffers, flushes, and the task is queued. */
-  private async eventually (id: string, expected: object): Promise<void> {
+  private async eventually(id: string, expected: object): Promise<void> {
     const deadline = Date.now() + DEADLINE
 
     let records: any[] = []
@@ -116,33 +123,37 @@ export class Map {
     while (Date.now() < deadline) {
       records = await this.list(id)
 
-      if (records.some((record) => match(record, expected)))
-        return
+      if (records.some((record) => match(record, expected))) return
 
       await setTimeout(POLL)
     }
 
-    assert.fail(`No record in '${id}' matches\n${JSON.stringify(expected, null, 2)}\n\n` +
-      `Present:\n${JSON.stringify(records, null, 2)}`)
+    assert.fail(
+      `No record in '${id}' matches\n${JSON.stringify(expected, null, 2)}\n\n` +
+        `Present:\n${JSON.stringify(records, null, 2)}`
+    )
   }
 
   /** Absence has to outlive a flush, otherwise it only proves the map is slow. */
-  private async never (id: string, expected: object): Promise<void> {
+  private async never(id: string, expected: object): Promise<void> {
     await setTimeout(SETTLE)
 
     const records = await this.list(id)
     const found = records.find((record) => match(record, expected))
 
-    assert.equal(found, undefined,
-      `Unexpected record in '${id}':\n${JSON.stringify(found, null, 2)}`)
+    assert.equal(
+      found,
+      undefined,
+      `Unexpected record in '${id}':\n${JSON.stringify(found, null, 2)}`
+    )
   }
 
-  private async list (id: string): Promise<any[]> {
-    return await this.invoke(id, 'enumerate', { query: { limit: 100 } }) as any[]
+  private async list(id: string): Promise<any[]> {
+    return (await this.invoke(id, 'enumerate', { query: { limit: 100 } })) as any[]
   }
 }
 
-async function clean (): Promise<void> {
+async function clean(): Promise<void> {
   const client = new MongoClient(URL)
 
   await client.connect()
@@ -157,7 +168,7 @@ async function clean (): Promise<void> {
   await client.close()
 }
 
-function components (): string[] {
+function components(): string[] {
   const entries = readdirSync(ROOT, { withFileTypes: true })
 
   return entries
@@ -166,7 +177,7 @@ function components (): string[] {
 }
 
 const ROOT = resolve(import.meta.dirname, 'components')
-const URL = 'mongodb://developer:secret@localhost:27017'
+const URL = 'mongodb://developer:secret@localhost:31020'
 const DB = 'toa-dev'
 const DEADLINE = 20_000
 const POLL = 250

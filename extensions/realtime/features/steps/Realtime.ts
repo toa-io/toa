@@ -15,19 +15,18 @@ export class Realtime {
   private connected = false
 
   @after()
-  public async shutdown (): Promise<void> {
+  public async shutdown(): Promise<void> {
     this.connected = false
 
     await this.service?.disconnect()
   }
 
-  public declare (event: string, properties: string[], expose?: string[]): void {
+  public declare(event: string, properties: string[], expose?: string[]): void {
     this.routes.push({ event, properties, expose })
   }
 
-  public async serve (): Promise<void> {
-    if (this.connected)
-      return
+  public async serve(): Promise<void> {
+    if (this.connected) return
 
     process.env.TOA_REALTIME = JSON.stringify(this.routes)
 

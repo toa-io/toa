@@ -3,8 +3,8 @@ import assert from 'node:assert/strict'
 import { isDeepStrictEqual } from 'node:util'
 
 import { console } from 'openspan'
-import { Connector } from '../src/connector.js'
-import { Discovery } from '../src/discovery.js'
+import { Connector } from '../source/connector.js'
+import { Discovery } from '../source/discovery.js'
 
 class Lookup extends Connector {
   invoke = mock.fn(async () => ({ operations: {} }))
@@ -60,5 +60,12 @@ it('should keep warning while a lookup is unanswered', async () => {
 
   assert.strictEqual(warn.mock.callCount(), 2)
 
-  assert.ok(((call) => call.arguments.length === 2 && isDeepStrictEqual(call.arguments[0], 'Waiting for lookup response') && isDeepStrictEqual(call.arguments[1], { component: locator.id, waiting: 10 }))(warn.mock.calls.at(-1) ?? { arguments: [] }))
+  assert.ok(
+    ((call) =>
+      call.arguments.length === 2 &&
+      isDeepStrictEqual(call.arguments[0], 'Waiting for lookup response') &&
+      isDeepStrictEqual(call.arguments[1], { component: locator.id, waiting: 10 }))(
+      warn.mock.calls.at(-1) ?? { arguments: [] }
+    )
+  )
 })

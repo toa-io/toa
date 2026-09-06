@@ -1,4 +1,4 @@
-export async function computation (input, context) {
+export async function computation(input, context) {
   const greeting = GREETINGS[input.language]
 
   const sentence = await context.local.format({
@@ -12,6 +12,6 @@ export async function computation (input, context) {
 }
 
 const GREETINGS = {
-  'en': 'Hello',
-  'fr': 'Bonjour'
+  en: 'Hello',
+  fr: 'Bonjour'
 }

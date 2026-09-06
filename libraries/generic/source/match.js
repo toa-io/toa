@@ -17,10 +17,13 @@ export const match = (reference, candidate) => {
  * @param {any[]} candidate
  * @return {boolean}
  */
-function arrays (reference, candidate) {
+function arrays(reference, candidate) {
   if (!Array.isArray(reference)) return false
 
-  return candidate.reduce((result, value) => (result && reference.some((item) => match(item, value))), true)
+  return candidate.reduce(
+    (result, value) => result && reference.some((item) => match(item, value)),
+    true
+  )
 }
 
 /**
@@ -28,7 +31,7 @@ function arrays (reference, candidate) {
  * @param {Object} reference
  * @return {boolean}
  */
-function objects (candidate, reference) {
+function objects(candidate, reference) {
   if (candidate === null) return reference === null
   else if (reference === null) return false
 

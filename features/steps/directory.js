@@ -4,7 +4,8 @@ import { readFile } from 'node:fs/promises'
 import glob from 'fast-glob'
 import { Given, Then } from '@cucumber/cucumber'
 
-Given('my working directory is {path}',
+Given(
+  'my working directory is {path}',
   /**
    * @param {string} path
    * @this {toa.features.Context}
@@ -18,9 +19,11 @@ Given('my working directory is {path}',
     process.chdir(target)
 
     this.cwd = target
-  })
+  }
+)
 
-Then('the file {path} contains exact line {string}',
+Then(
+  'the file {path} contains exact line {string}',
   /**
    * @param {string} relative
    * @param {string} line
@@ -31,9 +34,24 @@ Then('the file {path} contains exact line {string}',
     const found = lines.some((item) => item === line)
 
     assert.equal(found, true, `Line '${line}' not found in '${relative}'`)
-  })
+  }
+)
 
-Then('the file {path} contains line starting with {string}',
+Then(
+  'there is no file {path}',
+  /**
+   * @param {string} relative
+   * @this {toa.features.Context}
+   */
+  async function (relative) {
+    const paths = await glob(resolve(this.cwd, relative), FILES)
+
+    assert.deepEqual(paths, [], `'${relative}' matches ${paths.length} file(s)`)
+  }
+)
+
+Then(
+  'the file {path} contains line starting with {string}',
   /**
    * @param {string} relative
    * @param {string} prefix
@@ -44,14 +62,15 @@ Then('the file {path} contains line starting with {string}',
     const found = lines.some((item) => item.startsWith(prefix))
 
     assert.equal(found, true, `Line starting with '${prefix}' not found in '${relative}'`)
-  })
+  }
+)
 
 /**
  * @param {string} relative
  * @this {toa.features.Context}
  * @return {Promise<string[]>}
  */
-async function read (relative) {
+async function read(relative) {
   const pattern = resolve(this.cwd, relative)
   const paths = await glob(pattern, FILES)
 
@@ -65,7 +84,7 @@ async function read (relative) {
  * @param {string} path
  * @return {Promise<string>}
  */
-async function pattern (cwd, path) {
+async function pattern(cwd, path) {
   const pattern = resolve(cwd, path)
   const paths = await glob(pattern, DIRECTORIES)
 

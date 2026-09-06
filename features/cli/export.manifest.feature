@@ -1,3 +1,4 @@
+@cli
 Feature: Print manifest
 
   Scenario: Show help

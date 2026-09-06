@@ -93,10 +93,10 @@ Wrap it with `<Actions>` from `shell` component, pass `active` store to control 
 
 ### Root
 
-| Prop       | Type                      | Default | Notes                                      |
-| ---------- | ------------------------- | ------- | ------------------------------------------ |
-| `children` | `Snippet`                 | —       | `Trigger` and `Content` slots.             |
-| `onopen`   | `(open: boolean) => void` | —       | Fires when open state changes.             |
+| Prop       | Type                      | Default | Notes                          |
+| ---------- | ------------------------- | ------- | ------------------------------ |
+| `children` | `Snippet`                 | —       | `Trigger` and `Content` slots. |
+| `onopen`   | `(open: boolean) => void` | —       | Fires when open state changes. |
 
 **Methods** (via `bind:this`): `open()`, `close()`.
 
@@ -104,18 +104,18 @@ Wrap it with `<Actions>` from `shell` component, pass `active` store to control 
 
 Extends shadcn `Button` props (`variant`, `size`, `class`, …).
 
-| Prop       | Type      | Default | Notes                                |
-| ---------- | --------- | ------- | ------------------------------------ |
-| `children` | `Snippet` | —       | Trigger label or icon.               |
-| `id`       | `string`  | —       | Passed to the underlying `Button`.   |
+| Prop       | Type      | Default | Notes                              |
+| ---------- | --------- | ------- | ---------------------------------- |
+| `children` | `Snippet` | —       | Trigger label or icon.             |
+| `id`       | `string`  | —       | Passed to the underlying `Button`. |
 
 ### Content
 
-| Prop       | Type                                                                 | Default         | Notes                                                                 |
-| ---------- | -------------------------------------------------------------------- | --------------- | --------------------------------------------------------------------- |
-| `children` | `Snippet`                                                            | —               | `Layer`, `Group`, `Item`, `Separator` slots.                          |
-| `class`    | `ClassValue`                                                         | —               | Panel wrapper classes.                                                |
-| `position` | `'start-top' \| 'start-bottom' \| 'end-top' \| 'end-bottom'`         | `'end-bottom'`  | Corner where menu aligns with the trigger; menu grows outward from it. |
+| Prop       | Type                                                         | Default        | Notes                                                                  |
+| ---------- | ------------------------------------------------------------ | -------------- | ---------------------------------------------------------------------- |
+| `children` | `Snippet`                                                    | —              | `Layer`, `Group`, `Item`, `Separator` slots.                           |
+| `class`    | `ClassValue`                                                 | —              | Panel wrapper classes.                                                 |
+| `position` | `'start-top' \| 'start-bottom' \| 'end-top' \| 'end-bottom'` | `'end-bottom'` | Corner where menu aligns with the trigger; menu grows outward from it. |
 
 ### Layer
 
@@ -126,21 +126,21 @@ Extends shadcn `Button` props (`variant`, `size`, `class`, …).
 
 ### Group
 
-| Prop        | Type               | Default | Notes                                      |
-| ----------- | ------------------ | ------- | ------------------------------------------ |
-| `children`  | `Snippet`          | —       | `Item` or custom content.                  |
-| `direction` | `'col' \| 'row'`   | `'col'` | Layout for items; affects `itemVariants`.  |
-| `class`     | `ClassValue`       | —       | Wrapper classes.                           |
+| Prop        | Type             | Default | Notes                                     |
+| ----------- | ---------------- | ------- | ----------------------------------------- |
+| `children`  | `Snippet`        | —       | `Item` or custom content.                 |
+| `direction` | `'col' \| 'row'` | `'col'` | Layout for items; affects `itemVariants`. |
+| `class`     | `ClassValue`     | —       | Wrapper classes.                          |
 
 ### Item
 
 Extends shadcn `Button` props. Export `itemVariants` for custom buttons in a row group.
 
-| Prop       | Type      | Default   | Notes                                                         |
-| ---------- | --------- | --------- | ------------------------------------------------------------- |
-| `children` | `Snippet` | —         | Row content (icon + label).                                   |
+| Prop       | Type      | Default   | Notes                                                           |
+| ---------- | --------- | --------- | --------------------------------------------------------------- |
+| `children` | `Snippet` | —         | Row content (icon + label).                                     |
 | `layer`    | `string`  | —         | When set, click pushes this layer instead of calling `onclick`. |
-| `variant`  | `string`  | `'ghost'` | Button variant.                                               |
+| `variant`  | `string`  | `'ghost'` | Button variant.                                                 |
 
 ### Back
 
@@ -148,6 +148,6 @@ Same props as `Item` except `onclick` / `layer` (handled internally). Optional l
 
 ### Separator
 
-| Prop       | Type      | Default | Notes                              |
-| ---------- | --------- | ------- | ---------------------------------- |
+| Prop       | Type      | Default | Notes                                  |
+| ---------- | --------- | ------- | -------------------------------------- |
 | `children` | `Snippet` | —       | Optional centered label between rules. |

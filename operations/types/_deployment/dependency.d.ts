@@ -2,10 +2,11 @@ import * as _service from './service.js'
 import { dependencies } from '@toa.io/norm/types/context'
 
 declare namespace toa.deployment {
-
   namespace dependency {
-
-    type Constructor = (instances: dependencies.Instance[], annotation: any) => Declaration
+    type Constructor = (
+      instances: dependencies.Instance[],
+      annotation: any
+    ) => Declaration
 
     type Reference = {
       name: string
@@ -19,6 +20,11 @@ declare namespace toa.deployment {
       group: string
       name: string
       version: string
+
+      /** The repository the extension publishes this service's image to, without a tag.
+       *  Stating it lets an application take the published image instead of building one. */
+      image?: string
+
       port: number
       ingress?: {
         host: string
@@ -36,7 +42,7 @@ declare namespace toa.deployment {
       name: string
       value?: string | number
       secret?: {
-        name: string,
+        name: string
         key: string
       }
     }
@@ -52,7 +58,6 @@ declare namespace toa.deployment {
       variables?: Variables
       events?: string[]
     }
-
   }
 
   type Dependency = {
@@ -62,7 +67,6 @@ declare namespace toa.deployment {
     variables?: dependency.Variables
     events?: string[]
   }
-
 }
 
 export type Declaration = toa.deployment.dependency.Declaration

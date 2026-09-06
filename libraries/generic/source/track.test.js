@@ -17,7 +17,8 @@ let done
 /** @type {toa.generic.Promex} */
 let undone
 
-const method1 = /** @type {import('node:test').Mock<(a: string, b: string) => Promise>} */
+const method1 =
+  /** @type {import('node:test').Mock<(a: string, b: string) => Promise>} */
   mock.fn(async function () {
     // should execute in context
     assert.deepStrictEqual(this.ok, 1)
@@ -25,8 +26,11 @@ const method1 = /** @type {import('node:test').Mock<(a: string, b: string) => Pr
     return done
   })
 
-const method2 = /** @type {import('node:test').Mock<(a: string, b: string) => Promise>} */
-  mock.fn(async function () { return undone })
+const method2 =
+  /** @type {import('node:test').Mock<(a: string, b: string) => Promise>} */
+  mock.fn(async function () {
+    return undone
+  })
 
 class Test {
   ok = 1
@@ -58,12 +62,13 @@ it('should execute method', async () => {
 
   const output = await test.do(...args)
 
-  assert.ok(method1.mock.calls.some((call) => isDeepStrictEqual(call.arguments, [...args])))
+  assert.ok(
+    method1.mock.calls.some((call) => isDeepStrictEqual(call.arguments, [...args]))
+  )
   assert.deepStrictEqual(output, result)
 })
 
 it('should track method execution', async () => {
-  
   setImmediate(async () => {
     setImmediate(() => {
       done.resolve()
@@ -86,7 +91,7 @@ it('should track method execution', async () => {
 })
 
 it('should track multiple methods', async () => {
-   // + method1
+  // + method1
 
   setImmediate(async () => {
     setImmediate(() => {
@@ -112,16 +117,17 @@ it('should track multiple methods', async () => {
   await Promise.all([test.do(), test.undo()])
 })
 
-it('should resolve if methods haven\'t been called', async () => {
+it("should resolve if methods haven't been called", async () => {
   await track({})
 })
 
 it('should handle exceptions', async () => {
-  
   const exception = new Error(generate())
 
   class Bad {
-    do = track(this, async () => { throw exception })
+    do = track(this, async () => {
+      throw exception
+    })
   }
 
   const b = new Bad()
@@ -135,7 +141,7 @@ it('should handle exceptions', async () => {
   await assert.doesNotReject(track(b))
 })
 
-function resetCalls (target = [assert, method1, method2], seen = new Set()) {
+function resetCalls(target = [assert, method1, method2], seen = new Set()) {
   if (target === null || typeof target !== 'object' || seen.has(target)) return
 
   seen.add(target)

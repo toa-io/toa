@@ -38,6 +38,6 @@ it('should expand context with sources', async () => {
   })
 })
 
-function uri (): string {
+function uri(): string {
   return 'http://host-' + generate()
 }

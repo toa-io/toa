@@ -1,7 +1,7 @@
 // Written by `toa types`. Every run rewrites it.
 // What a manifest does not state belongs in a file of your own.
 
-import type { Query, RemoteError } from '@toa.io/core'
+import type { Query, RemoteError } from '@toa.io/core/types'
 import type { FetchInit } from '@toa.io/extensions.fetch'
 import type { Stash } from '@toa.io/extensions.stash'
 import type { Logs, Span } from '@toa.io/extensions.telemetry'
@@ -12,10 +12,10 @@ export interface Entity {
   username: string
   identity?: string
   id: string
-  _version?: number
-  _created?: number
-  _updated?: number
-  _deleted?: number | null
+  VERSION?: number
+  CREATED?: number
+  UPDATED?: number
+  DELETED?: number | null
 }
 
 export type IssueInput = {

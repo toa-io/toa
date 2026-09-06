@@ -51,7 +51,10 @@ it('should retry async', async () => {
 it('should throw on failed retries', async () => {
   options.retries = random(10)
 
-  await assert.rejects(() => retry((retry) => retry(), options), new RegExp(`Retry failed after ${options.retries} attempts`))
+  await assert.rejects(
+    () => retry((retry) => retry(), options),
+    new RegExp(`Retry failed after ${options.retries} attempts`)
+  )
 })
 
 it('should delay attempts', async () => {

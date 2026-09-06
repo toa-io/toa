@@ -7,29 +7,26 @@ name: plain
 
 entity:
   storage: mongodb
-  schema:
-    properties:
-      id:
-        type: string
-        pattern: ^[a-fA-F0-9]{32}$
-      _version:
-        type: integer
-        minimum: 0
-        default: 0
-      _created:
-        type: integer
-      _updated:
-        type: integer
-      _deleted:
-        type: integer
-        nullable: true
-        default: null
-      foo:
-        type: integer
-        default: 0
-    required:
-      - id
-    type: object
+  properties:
+    id:
+      type: string
+      pattern: ^[a-fA-F0-9]{32}$
+    VERSION:
+      type: integer
+      minimum: 0
+    CREATED:
+      type: integer
+    UPDATED:
+      type: integer
+    DELETED:
+      type: integer
+      nullable: true
+    foo:
+      type: integer
+  required:
+    - id
+  blank:
+    foo: 0
 
 operations:
   write:

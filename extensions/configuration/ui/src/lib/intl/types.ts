@@ -9,11 +9,11 @@ export type Locale = 'en-US'
 export type Grammar = string
 
 export type Dictionary = {
-      native: string
-      locale: string
-      dir: string
-      nav: {
-        signout: string
-        filter: string
-      }
-    }
+  native: string
+  locale: string
+  dir: string
+  nav: {
+    signout: string
+    filter: string
+  }
+}

@@ -1,18 +1,16 @@
 name: orders
 
 entity:
-  schema:
-    properties:
-      title:
-        type: string
-      volume:
-        type: number
-      price:
-        type: number
-    type: object
-    required:
-      - title
-      - volume
+  properties:
+    title:
+      type: string
+    volume:
+      type: number
+    price:
+      type: number
+  required:
+    - title
+    - volume
 
 operations:
   create:

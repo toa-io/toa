@@ -2,11 +2,11 @@ import { randomFillSync } from 'node:crypto'
 import { state } from './state.js'
 import { recording } from './exporters.js'
 
-export function run<T> (context: SpanContext, fn: () => T): T {
+export function run<T>(context: SpanContext, fn: () => T): T {
   return state.storage.run(context, fn)
 }
 
-export function current (): SpanContext | undefined {
+export function current(): SpanContext | undefined {
   return state.storage.getStore()
 }
 
@@ -17,7 +17,7 @@ export function current (): SpanContext | undefined {
  * `rate` is the maximum number of recorded traces per second per process
  * (may be fractional: 0.5 is one trace per 2 seconds), unlimited when omitted.
  */
-export function sampling (options: SamplingOptions = {}): void {
+export function sampling(options: SamplingOptions = {}): void {
   state.sample = options.sample ?? 1
   state.bucket = options.rate === undefined ? null : new Bucket(options.rate)
 }
@@ -25,44 +25,38 @@ export function sampling (options: SamplingOptions = {}): void {
 /**
  * Makes the sampling decision for a trace root.
  */
-export function decide (): boolean {
+export function decide(): boolean {
   // a span nothing consumes is not worth creating
-  if (!recording())
-    return false
+  if (!recording()) return false
 
-  if (state.sample !== 1 && Math.random() >= state.sample)
-    return false
+  if (state.sample !== 1 && Math.random() >= state.sample) return false
 
   return state.bucket?.take() ?? true
 }
 
-export function create (parent?: SpanContext): SpanContext {
+export function create(parent?: SpanContext): SpanContext {
   const context: SpanContext = {
     traceId: parent?.traceId ?? id(TRACE_ID),
     spanId: id(SPAN_ID),
     sampled: parent?.sampled ?? decide()
   }
 
-  if (parent?.spanId !== undefined)
-    context.parentId = parent.spanId
+  if (parent?.spanId !== undefined) context.parentId = parent.spanId
 
-  if (parent?.service !== undefined)
-    context.service = parent.service
+  if (parent?.service !== undefined) context.service = parent.service
 
   return context
 }
 
 // https://www.w3.org/TR/trace-context/#traceparent-header
-export function decode (traceparent: string): SpanContext | null {
+export function decode(traceparent: string): SpanContext | null {
   const match = EXPRESSION.exec(traceparent)
 
-  if (match === null)
-    return null
+  if (match === null) return null
 
   const [, traceId, spanId, flags] = match
 
-  if (traceId === ZERO_TRACE || spanId === ZERO_SPAN)
-    return null
+  if (traceId === ZERO_TRACE || spanId === ZERO_SPAN) return null
 
   return {
     traceId,
@@ -71,7 +65,7 @@ export function decode (traceparent: string): SpanContext | null {
   }
 }
 
-export function encode (context: SpanContext): string {
+export function encode(context: SpanContext): string {
   return `00-${context.traceId}-${context.spanId ?? ZERO_SPAN}-${context.sampled ? '01' : '00'}`
 }
 
@@ -80,7 +74,7 @@ export function encode (context: SpanContext): string {
  * an order of magnitude more than the rest of opening one, and a span is opened on
  * every call. Same source of randomness, refilled a few hundred identifiers at a time.
  */
-function id (bytes: number): string {
+function id(bytes: number): string {
   if (offset + bytes > POOL.length) {
     randomFillSync(POOL)
     offset = 0
@@ -105,20 +99,22 @@ class Bucket {
   private tokens: number
   private updated = Date.now()
 
-  public constructor (rate: number) {
+  public constructor(rate: number) {
     this.rate = rate
     this.capacity = Math.max(rate, 1)
     this.tokens = this.capacity
   }
 
-  public take (): boolean {
+  public take(): boolean {
     const now = Date.now()
 
-    this.tokens = Math.min(this.capacity, this.tokens + ((now - this.updated) / 1000) * this.rate)
+    this.tokens = Math.min(
+      this.capacity,
+      this.tokens + ((now - this.updated) / 1000) * this.rate
+    )
     this.updated = now
 
-    if (this.tokens < 1)
-      return false
+    if (this.tokens < 1) return false
 
     this.tokens--
 

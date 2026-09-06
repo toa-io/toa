@@ -1,4 +1,4 @@
-import type { Call, Observation, Transition } from '@toa.io/core'
+import type { Call, Observation, Transition } from '@toa.io/core/types'
 import type { Stash } from '@toa.io/extensions.stash'
 import type { Logs } from '@toa.io/extensions.telemetry'
 import type { Entity } from './Entity.js'
@@ -14,9 +14,12 @@ export interface Context {
   configuration: Configuration
 }
 
-export type Fetch = (input: string | URL | Request, init?: RequestInit) => Promise<Response>
+export type Fetch = (
+  input: string | URL | Request,
+  init?: RequestInit
+) => Promise<Response>
 
-export type TransitInput = Omit<Entity, 'id' | '_created'>
+export type TransitInput = Omit<Entity, 'id' | 'CREATED'>
 
 export interface Configuration {
   /** Origins whose Client ID Metadata Documents may be read. Empty admits nobody. */

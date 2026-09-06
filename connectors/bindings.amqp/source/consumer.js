@@ -2,7 +2,7 @@ import { Connector } from '@toa.io/core'
 import { name } from './queues.js'
 
 /**
- * @implements {toa.core.bindings.Consumer}
+ * @implements {import('@toa.io/core/types').bindings.Consumer}
  */
 export class Consumer extends Connector {
   /** @type {string} */
@@ -14,7 +14,7 @@ export class Consumer extends Connector {
   /** @type {toa.amqp.Communication} */
   #comm
 
-  constructor (comm, locator, endpoint) {
+  constructor(comm, locator, endpoint) {
     super()
 
     this.#queue = name(locator, endpoint)
@@ -24,11 +24,11 @@ export class Consumer extends Connector {
     this.depends(comm)
   }
 
-  async request (request) {
+  async request(request) {
     return this.#comm.request(this.#queue, request)
   }
 
-  async task (request) {
+  async task(request) {
     await this.#comm.enqueue(this.#tasksQueue, request)
   }
 }

@@ -4,10 +4,7 @@ import assert from 'node:assert/strict'
 import { request } from './request.js'
 
 it('should parse headers', () => {
-  const http =
-    'GET / HTTP/1.1\n' +
-    'host: localhost:3000\n' +
-    '\n'
+  const http = 'GET / HTTP/1.1\nhost: localhost:3000\n\n'
 
   const result = request(http)
 
@@ -30,9 +27,7 @@ it('should parse body', () => {
 })
 
 it('should add default host header', () => {
-  const http =
-    'GET / HTTP/1.1\n' +
-    '\n'
+  const http = 'GET / HTTP/1.1\n\n'
 
   const result = request(http, 'https://foo.bar')
 

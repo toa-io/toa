@@ -43,7 +43,7 @@ describe('traces', () => {
 
   it('should share exporters between module copies', async () => {
     // a process may load several copies of the module (the package installed more than once)
-    let copy!: { exporting: typeof exporting, exporters: typeof exporters }
+    let copy!: { exporting: typeof exporting; exporters: typeof exporters }
 
     copy = await import('./exporters.js')
 
@@ -84,11 +84,19 @@ describe('export', () => {
 
     const instance = new Console({ streams, context: { component: 'pots' } })
 
-    await instance.span({ name: 'work', kind: 'server', attributes: { foo: 1 } }, () => null)
+    await instance.span(
+      { name: 'work', kind: 'server', attributes: { foo: 1 } },
+      () => null
+    )
 
     assert.strictEqual(seen.length, 1)
 
-    assert.partialDeepStrictEqual(seen[0], { name: 'work', kind: 'server', attributes: { foo: 1 }, scope: { component: 'pots' } })
+    assert.partialDeepStrictEqual(seen[0], {
+      name: 'work',
+      kind: 'server',
+      attributes: { foo: 1 },
+      scope: { component: 'pots' }
+    })
     assert.match(seen[0]['traceId'], /^[\da-f]{32}$/)
     assert.match(seen[0]['spanId'], /^[\da-f]{16}$/)
     assert.strictEqual(typeof seen[0]['time'], 'number')
@@ -110,11 +118,14 @@ describe('export', () => {
       await instance.span({ name: 'overridden', service: 'orders' }, () => null)
     })
 
-    assert.deepStrictEqual(seen.map((span) => [span.name, span.service]), [
-      ['inherited', 'exposition'],
-      ['overridden', 'orders'],
-      ['request', 'exposition']
-    ])
+    assert.deepStrictEqual(
+      seen.map((span) => [span.name, span.service]),
+      [
+        ['inherited', 'exposition'],
+        ['overridden', 'orders'],
+        ['request', 'exposition']
+      ]
+    )
   })
 
   it('should mark the span as failed through the context', async () => {

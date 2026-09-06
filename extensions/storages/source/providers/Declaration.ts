@@ -5,7 +5,7 @@ import type { FileSystemOptions } from './FileSystem.js'
 import type { TemporaryOptions } from './Temporary.js'
 
 export type Declaration =
-  ({ provider: 's3' } & S3Options)
+  | ({ provider: 's3' } & S3Options)
   | ({ provider: 'spaces' } & SpacesOptions)
   | ({ provider: 'cloudinary' } & CloudinaryOptions)
   | ({ provider: 'fs' } & FileSystemOptions)

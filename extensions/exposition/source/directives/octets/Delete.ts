@@ -5,7 +5,7 @@ import { Workflow } from './workflows/index.js'
 import { Directive } from './Directive.js'
 import type { Parameter } from '../../RTD/index.js'
 import type { Unit, Location } from './workflows/index.js'
-import type { Maybe } from '@toa.io/core'
+import type { Maybe } from '@toa.io/core/types'
 import type { Component } from '@toa.io/core'
 import type { Output } from '../../io.js'
 import type { Input } from './types.js'
@@ -19,7 +19,11 @@ export class Delete extends Directive {
   private readonly discovery: Promise<Component>
   private storage!: Component
 
-  public constructor (options: Options | null, discovery: Promise<Component>, remotes: Remotes) {
+  public constructor(
+    options: Options | null,
+    discovery: Promise<Component>,
+    remotes: Remotes
+  ) {
     super()
     schemas.remove.validate(options)
 
@@ -29,43 +33,48 @@ export class Delete extends Directive {
     this.discovery = discovery
   }
 
-  public async apply (storage: string, input: Input, parameters: Parameter[]): Promise<Output> {
+  public async apply(
+    storage: string,
+    input: Input,
+    parameters: Parameter[]
+  ): Promise<Output> {
     this.storage ??= await this.discovery
 
     const output: Output = {}
 
     if (this.workflow !== undefined) {
-      const entry = await this.storage.invoke<Maybe<Entry>>('head',
-        {
-          input: {
-            storage,
-            path: input.request.url
-          }
-        })
-
-      if (entry instanceof Error)
-        throw new NotFound()
-
-      output.status = 202
-      output.body = Readable.from(this.execute(input, storage, entry, parameters))
-    } else
-      await this.delete(storage, input)
-
-    return output
-  }
-
-  private async delete (storage: string, input: Input): Promise<void> {
-    await this.storage.invoke('delete',
-      {
+      const entry = await this.storage.invoke<Maybe<Entry>>('head', {
         input: {
           storage,
           path: input.request.url
         }
       })
+
+      if (entry instanceof Error) throw new NotFound()
+
+      output.status = 202
+      output.body = Readable.from(this.execute(input, storage, entry, parameters))
+    } else await this.delete(storage, input)
+
+    return output
+  }
+
+  private async delete(storage: string, input: Input): Promise<void> {
+    await this.storage.invoke('delete', {
+      input: {
+        storage,
+        path: input.request.url
+      }
+    })
   }
 
   // eslint-disable-next-line max-params
-  private async * execute (input: Input, storage: string, entry: Entry, parameters: Parameter[]): AsyncGenerator {
+  private async *execute(
+    input: Input,
+    storage: string,
+    entry: Entry,
+    parameters: Parameter[]
+  ): AsyncGenerator {
     const location: Location = {
       storage,
       authority: input.authority,
@@ -75,8 +84,7 @@ export class Delete extends Directive {
     for await (const chunk of this.workflow!.execute(location, entry, parameters)) {
       yield chunk
 
-      if (typeof chunk === 'object' && chunk !== null && 'error' in chunk)
-        return
+      if (typeof chunk === 'object' && chunk !== null && 'error' in chunk) return
     }
 
     await this.delete(storage, input)

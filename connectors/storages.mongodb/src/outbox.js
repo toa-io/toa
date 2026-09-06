@@ -12,18 +12,18 @@ export class Outbox {
 
   #retention
 
-  constructor (collection) {
+  constructor(collection) {
     this.#collection = collection
     this.#retention = retention()
   }
 
   /** @param {import('mongodb').ClientSession} session */
-  async insert (row, session) {
+  async insert(row, session) {
     await this.#collection.insertOne(to(row), { session })
   }
 
   /** @param {import('mongodb').ClientSession} session */
-  async insertMany (rows, session) {
+  async insertMany(rows, session) {
     if (rows.length === 0) return
 
     await this.#collection.insertMany(rows.map(to), { session })
@@ -37,7 +37,7 @@ export class Outbox {
    * the order rows were written and a page is never read twice within a cycle — which matters
    * because a row stays unpublished in the database until the cycle that sent it marks it.
    */
-  async pending (lanes, now, limit, after = undefined) {
+  async pending(lanes, now, limit, after = undefined) {
     const criteria = { lane: { $in: lanes }, published: false, pending: { $lte: now } }
 
     if (after !== undefined) criteria._id = { $gt: after }
@@ -55,18 +55,21 @@ export class Outbox {
    * One batched write for many events, which is why the ids are held in memory until the
    * tick rather than updated one by one.
    */
-  async settle (ids) {
+  async settle(ids) {
     if (ids.length === 0) return
 
-    await this.#collection.updateMany({ _id: { $in: ids } },
-      { $set: { published: true, publishedAt: new Date() } })
+    await this.#collection.updateMany(
+      { _id: { $in: ids } },
+      { $set: { published: true, publishedAt: new Date() } }
+    )
   }
 
   /**
-   * The entity collection's index management does not reach here, so this collection keeps
-   * its own — including pruning, or a later change leaves the old index behind forever.
+   * These are the runtime's indexes, not the component's, so they are declared here rather
+   * than in a migration a component would have to write — including pruning, or a later
+   * change leaves the old index behind forever.
    */
-  async index () {
+  async index() {
     const desired = {
       // holds only what is not published yet, so it stays at in-flight size
       outbox_pending: {
@@ -82,15 +85,54 @@ export class Outbox {
     }
 
     for (const { fields, options } of Object.values(desired))
-      await this.#collection.createIndex(fields, options)
-        .catch((e) => console.warn('MongoDB outbox index creation failed',
-          { collection: this.#collection.collectionName, name: options.name, error: e }))
+      await this.#index(fields, options)
 
     await this.#prune(Object.keys(desired))
   }
 
+  /**
+   * The name of an index here is fixed, so changing what it is made of — a retention that
+   * changes `expireAfterSeconds`, say — leaves that name held by an index of the old shape,
+   * which MongoDB refuses to overwrite. The old one is dropped and the declared one made.
+   *
+   * @private
+   */
+  async #index(fields, options) {
+    try {
+      await this.#collection.createIndex(fields, options)
+    } catch (e) {
+      if (!CONFLICTS.includes(e.code))
+        return console.warn('MongoDB outbox index creation failed', {
+          collection: this.#collection.collectionName,
+          name: options.name,
+          error: e
+        })
+
+      console.info('Recreating an outbox index whose declaration changed', {
+        collection: this.#collection.collectionName,
+        name: options.name
+      })
+
+      await this.#drop(options.name)
+      await this.#collection.createIndex(fields, options)
+    }
+  }
+
+  /**
+   * Concurrent replicas prune the same index, and losing that race is not an error.
+   *
+   * @private
+   */
+  async #drop(name) {
+    try {
+      await this.#collection.dropIndex(name)
+    } catch (e) {
+      if (e.code !== ERR_INDEX_NOT_FOUND) throw e
+    }
+  }
+
   /** @private */
-  async #prune (desired) {
+  async #prune(desired) {
     let current
 
     try {
@@ -105,17 +147,19 @@ export class Outbox {
 
     if (obsolete.length === 0) return
 
-    console.info('Removing obsolete outbox indexes',
-      { collection: this.#collection.collectionName, indexes: obsolete.join(', ') })
+    console.info('Removing obsolete outbox indexes', {
+      collection: this.#collection.collectionName,
+      indexes: obsolete.join(', ')
+    })
 
-    await Promise.all(obsolete.map((name) => this.#collection.dropIndex(name)))
+    await Promise.all(obsolete.map((name) => this.#drop(name)))
   }
 }
 
 const to = ({ id, ...rest }) => ({ _id: id, ...rest })
 const from = ({ _id, ...rest }) => ({ id: _id, ...rest })
 
-function retention () {
+function retention() {
   const value = Number(process.env.TOA_OUTBOX_RETENTION)
 
   return Number.isNaN(value) || value < 0 ? RETENTION : value
@@ -123,3 +167,6 @@ function retention () {
 
 /** seconds a published row is kept as a change log before the TTL monitor reaps it */
 const RETENTION = 86400
+
+const ERR_INDEX_NOT_FOUND = 27
+const CONFLICTS = [85, 86] // IndexOptionsConflict, IndexKeySpecsConflict

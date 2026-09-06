@@ -13,18 +13,17 @@ export const defaults = (manifest, proto) => {
     if (manifest.entity.storage === null)
       manifest.entity.storage = '@toa.io/storages.null'
   } else {
-    if (manifest.prototype === undefined)
-      manifest.prototype = null
+    if (manifest.prototype === undefined) manifest.prototype = null
   }
 
   if (manifest.prototype === undefined) manifest.prototype = '@toa.io/prototype'
 }
 
-function protoName (manifest) {
+function protoName(manifest) {
   return 'proto' + hash(manifest.path)
 }
 
-function nameAfterDir (manifest) {
+function nameAfterDir(manifest) {
   const parts = manifest.path.split('/')
   const dirname = parts[parts.length - 1]
   const [name, namespace] = dirname.split('.').reverse()

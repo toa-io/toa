@@ -36,7 +36,7 @@ corresponding to the type of
 the parts:
 
 | Response type       | Part type             |
-|---------------------|-----------------------|
+| ------------------- | --------------------- |
 | `multipart/msgpack` | `application/msgpack` |
 | `multipart/yaml`    | `application/yaml`    |
 | `multipart/json`    | `application/json`    |
@@ -70,7 +70,7 @@ FIN
 See also:
 
 - [Multipart Content-Type](https://www.w3.org/Protocols/rfc1341/7_2_Multipart.html) at W3C
-- [Content-Type: multipart](https://learn.microsoft.com/en-us/previous-versions/office/developer/exchange-server-2010/aa493937(v=exchg.140))
+- [Content-Type: multipart](<https://learn.microsoft.com/en-us/previous-versions/office/developer/exchange-server-2010/aa493937(v=exchg.140)>)
   at Microsoft
 
 ## HTTP version
@@ -82,7 +82,7 @@ exposition:
   protocol: h2c
   service:
     annotations:
-      projectcontour.io/upstream-protocol.h2c: "8000"
+      projectcontour.io/upstream-protocol.h2c: '8000'
 ```
 
 `h2c` requires an ingress controller that proxies cleartext HTTP/2 upstream, and the

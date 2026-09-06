@@ -2,14 +2,14 @@ import { merge } from '@toa.io/generic'
 
 export const dereference = (manifest) => {
   // schemas
-  const resolver = createResolver(manifest.entity?.schema?.properties)
+  const properties = manifest.entity?.properties
+  const resolver = createResolver(properties)
 
-  if (manifest.entity !== undefined)
-    schema(manifest.entity.schema, resolver)
+  if (properties !== undefined)
+    for (const [name, property] of Object.entries(properties))
+      properties[name] = schema(property, resolver)
 
-  if ('operations' in manifest)
-    operations(manifest, resolver)
-
+  if ('operations' in manifest) operations(manifest, resolver)
 }
 
 const createResolver = (properties) => (property) => {
@@ -20,15 +20,14 @@ const createResolver = (properties) => (property) => {
   return properties[property]
 }
 
-function operations (manifest, resolver) {
+function operations(manifest, resolver) {
   for (const operation of Object.values(manifest.operations)) {
     if (operation.input !== undefined) operation.input = schema(operation.input, resolver)
 
     if (operation.output !== undefined)
       if (Array.isArray(operation.output) && operation.output.length === 1)
         operation.output = [schema(operation.output[0], resolver)]
-      else
-        operation.output = schema(operation.output, resolver)
+      else operation.output = schema(operation.output, resolver)
   }
 
   // forwarding
@@ -39,18 +38,19 @@ function operations (manifest, resolver) {
   for (const operation of Object.values(manifest.operations)) {
     delete operation.forwarded
   }
-
 }
 
 const schema = (object, resolve) => {
   if (object === undefined || object === null || typeof object !== 'object') return
-  if (object.type === 'string' && object.default?.[0] === '.') return resolve(object.default.substring(1))
+  if (object.type === 'string' && object.default?.[0] === '.')
+    return resolve(object.default.substring(1))
 
   if (object.type === 'array') {
     object.items = schema(object.items, resolve)
   } else if (object.properties !== undefined) {
     for (const [name, value] of Object.entries(object.properties)) {
-      if (value?.type === 'string' && value.default === '.') object.properties[name] = resolve(name)
+      if (value?.type === 'string' && value.default === '.')
+        object.properties[name] = resolve(name)
       else object.properties[name] = schema(value, resolve)
     }
   }
@@ -61,7 +61,8 @@ const schema = (object, resolve) => {
 const forward = (operation, operations) => {
   const target = operations[operation.forward]
 
-  if (target === undefined) throw new Error(`Referenced operation '${operation.forward}' is not defined`)
+  if (target === undefined)
+    throw new Error(`Referenced operation '${operation.forward}' is not defined`)
 
   if (target.forward !== undefined) {
     if (target.forwarded !== true) forward(target, operations)

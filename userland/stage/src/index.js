@@ -5,4 +5,12 @@ import { service } from './service.js'
 import { remote } from './remote.js'
 import { shutdown } from './shutdown.js'
 
-export { manifest, component, composition, composition as compose, service as serve, remote, shutdown }
+export {
+  manifest,
+  component,
+  composition,
+  composition as compose,
+  service as serve,
+  remote,
+  shutdown
+}

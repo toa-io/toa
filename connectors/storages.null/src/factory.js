@@ -1,10 +1,10 @@
 import { Storage } from './storage.js'
 
 /**
- * @implements {toa.core.storages.Factory}
+ * @implements {import('@toa.io/core/types').storages.Factory}
  */
 export class Factory {
-  storage (_) {
+  storage(_) {
     return new Storage()
   }
 }

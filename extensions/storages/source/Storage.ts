@@ -11,16 +11,16 @@ export class Storage<T extends Provider = Provider> {
   private readonly provider: T
   private readonly scope?: Scope
 
-  public constructor (provider: T, scope?: Scope) {
+  public constructor(provider: T, scope?: Scope) {
     this.provider = provider
     this.scope = scope
   }
 
-  public options (): T['options'] {
+  public options(): T['options'] {
     return this.provider.options
   }
 
-  public async put (path: string, stream: Readable, options?: Options): Maybe<Entry> {
+  public async put(path: string, stream: Readable, options?: Options): Maybe<Entry> {
     return await console.span(this.span('put', path), async () => {
       const scanner = new Scanner(options)
       const pipe = stream.pipe(scanner).on('error', () => undefined)
@@ -31,14 +31,14 @@ export class Storage<T extends Provider = Provider> {
        * Provider can return or throw an error.
        * If thrown error is TYPE_MISMATCH from the Scanner, it should be returned.
        */
-      const error: Error | undefined = await this.provider.put(location, pipe)
+      const error: Error | undefined = await this.provider
+        .put(location, pipe)
         .catch((error: any) => {
           if (error === scanner.error) return error
           else throw error
         })
 
-      if (error instanceof Error)
-        return error
+      if (error instanceof Error) return error
 
       const metadata: Entry = {
         id,
@@ -49,8 +49,7 @@ export class Storage<T extends Provider = Provider> {
         attributes: options?.attributes ?? {}
       }
 
-      if (options?.origin !== undefined)
-        metadata.attributes.origin = options.origin
+      if (options?.origin !== undefined) metadata.attributes.origin = options.origin
 
       await this.provider.commit(location, metadata)
 
@@ -58,7 +57,7 @@ export class Storage<T extends Provider = Provider> {
     })
   }
 
-  public async get (path: string, options?: unknown): Maybe<Stream> {
+  public async get(path: string, options?: unknown): Maybe<Stream> {
     return await console.span(this.span('get', dirname(path)), async () => {
       const location = this.locate(path)
 
@@ -66,14 +65,13 @@ export class Storage<T extends Provider = Provider> {
     })
   }
 
-  public async head (path: string): Promise<Maybe<Entry>> {
+  public async head(path: string): Promise<Maybe<Entry>> {
     return await console.span(this.span('head', dirname(path)), async () => {
       const id = basename(path).split('.')[0]
       const location = this.locate(path)
       const metadata = await this.provider.head(location)
 
-      if (metadata instanceof Error)
-        return metadata
+      if (metadata instanceof Error) return metadata
 
       return {
         id,
@@ -82,7 +80,7 @@ export class Storage<T extends Provider = Provider> {
     })
   }
 
-  public async delete (path: string): Maybe<void> {
+  public async delete(path: string): Maybe<void> {
     return await console.span(this.span('delete', dirname(path)), async () => {
       const location = this.locate(path)
 
@@ -90,20 +88,20 @@ export class Storage<T extends Provider = Provider> {
     })
   }
 
-  public path (): string | null {
+  public path(): string | null {
     return this.provider.root ?? null
   }
 
-  private locate (...rel: string[]): string {
+  private locate(...rel: string[]): string {
     return join(ENTRIES, ...rel)
   }
 
-  private span (method: string, path: string): SpanOptions {
+  private span(method: string, path: string): SpanOptions {
     return {
       name: `${method} ${this.scope?.name ?? 'storage'}`,
       kind: 'client',
       attributes: {
-        ...this.scope === undefined ? {} : { provider: this.scope.provider },
+        ...(this.scope === undefined ? {} : { provider: this.scope.provider }),
         path
       }
     }

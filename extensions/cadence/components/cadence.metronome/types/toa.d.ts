@@ -1,7 +1,7 @@
 // Written by `toa types`. Every run rewrites it.
 // What a manifest does not state belongs in a file of your own.
 
-import type { Query } from '@toa.io/core'
+import type { Query } from '@toa.io/core/types'
 import type { Readable } from 'node:stream'
 
 export interface Entity {
@@ -16,10 +16,10 @@ export interface Entity {
   /** The request to make, as it was handed over */
   request?: Record<string, unknown>
   id: string
-  _version?: number
-  _created?: number
-  _updated?: number
-  _deleted?: number | null
+  VERSION?: number
+  CREATED?: number
+  UPDATED?: number
+  DELETED?: number | null
 }
 
 export type DelayInput = {

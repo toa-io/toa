@@ -81,14 +81,13 @@ Feature: Configuration Extension
         originator:
           id: tester
       """
+    # what is stored is what was sent, whole: nothing fills a value it leaves out
     Then the reply is received:
       """yaml
       component: configuration.base
       originator: tester
       configuration:
         foo: created
-        bar: world
-        num: 0
       """
     # the running component follows the service
     When I wait 1 second

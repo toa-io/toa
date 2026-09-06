@@ -1,4 +1,4 @@
-export function transition (input, object) {
+export function transition(input, object) {
   if (input.name === 'return_error') {
     const e = new Error()
 

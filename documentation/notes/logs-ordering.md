@@ -12,15 +12,15 @@ Attempts to merge logs by wall-clock timestamps therefore yield interleavings th
 
 Conventional log ingestion and aggregation systems typically sort events using:
 
-* the timestamp recorded by the service, or  
-* the timestamp of ingestion by the collector.
+- the timestamp recorded by the service, or
+- the timestamp of ingestion by the collector.
 
 Both approaches suffer inherent limitations:
 
-* **Clock drift is indistinguishable from communication delay.** No observation can determine whether a later timestamp originated from drift or from slow delivery.  
-* **Timestamps encode no causal information.** An event with a greater timestamp may not depend on an event with a smaller one.  
-* **Collectors alter event order.** Batching and transport buffering introduce additional nondeterministic reordering unrelated to causality.  
-* **Sorting heuristics obscure underlying issues.** When tools reorder logs using timestamps, clock drift becomes invisible; without reordering, the sequence appears chaotic.
+- **Clock drift is indistinguishable from communication delay.** No observation can determine whether a later timestamp originated from drift or from slow delivery.
+- **Timestamps encode no causal information.** An event with a greater timestamp may not depend on an event with a smaller one.
+- **Collectors alter event order.** Batching and transport buffering introduce additional nondeterministic reordering unrelated to causality.
+- **Sorting heuristics obscure underlying issues.** When tools reorder logs using timestamps, clock drift becomes invisible; without reordering, the sequence appears chaotic.
 
 Because globally correct ordering cannot be derived from wall-clock time, most platforms expose ordering policies to users, implicitly acknowledging the limitations of timestamp-based ordering.
 
@@ -34,9 +34,9 @@ A more robust approach is to derive ordering from **causality** rather than phys
 
 Each request carries:
 
-* `trace_id` – uniquely identifies the execution.  
-* `branch` – a hierarchical identifier describing the request’s execution path through the system.  
-* `sequence` – a monotonically increasing counter local to the current branch.
+- `trace_id` – uniquely identifies the execution.
+- `branch` – a hierarchical identifier describing the request’s execution path through the system.
+- `sequence` – a monotonically increasing counter local to the current branch.
 
 Every log entry produced within that request includes `(trace_id, branch, sequence)`, allowing deterministic reconstruction of execution order.
 
@@ -50,9 +50,9 @@ Events within a branch are totally ordered by the sequence field.
 
 When execution diverges into parallel or independent subpaths, a new branch identifier is created by extending the current branch:
 
-* root branch: `/`  
-* first parallel branch: `/0/`  
-* second parallel branch: `/1/`
+- root branch: `/`
+- first parallel branch: `/0/`
+- second parallel branch: `/1/`
 
 Each new branch initializes its own sequence counter starting at zero.
 
@@ -64,16 +64,16 @@ Sibling branches represent concurrent execution and therefore remain unordered r
 
 The branch–sequence mechanism encodes **happens-before** relations explicitly:
 
-* Events within the same branch are totally ordered by `sequence`.  
-* Branch prefixes encode ancestry (e.g., `/1/2/` descends from `/1/`).  
-* Sibling branches (e.g., `/0/` and `/1/`) represent concurrency and therefore remain unordered.
+- Events within the same branch are totally ordered by `sequence`.
+- Branch prefixes encode ancestry (e.g., `/1/2/` descends from `/1/`).
+- Sibling branches (e.g., `/0/` and `/1/`) represent concurrency and therefore remain unordered.
 
 ### Practical Properties
 
-* Unaffected by clock drift, NTP adjustments, or physical-time inconsistencies.  
-* Represents execution structure explicitly, enabling reliable causal reconstruction.  
-* Requires minimal instrumentation: two small metadata fields propagated through normal trace context.  
-* Suitable both for operational debugging and post-incident analysis.
+- Unaffected by clock drift, NTP adjustments, or physical-time inconsistencies.
+- Represents execution structure explicitly, enabling reliable causal reconstruction.
+- Requires minimal instrumentation: two small metadata fields propagated through normal trace context.
+- Suitable both for operational debugging and post-incident analysis.
 
 By deriving ordering from execution structure instead of timekeeping infrastructure, the branch–sequence method provides deterministic, causally accurate ordering within each distributed trace.
 
@@ -81,11 +81,11 @@ By deriving ordering from execution structure instead of timekeeping infrastruct
 
 There are important considerations and trade-offs with using logical clocks for log ordering:
 
-* **Causality over chronology:** The solution intentionally prioritizes causal order (the happens-before relation) over interpretations based on each server’s local clock readings. In diagnostic scenarios, the causal chain of events provides more reliable information than the timestamps generated by individual machines. For instance, if an error in Service C originates from a failure in Service A, the logical ordering will correctly place A’s events before C’s, even if a chronological sort based on local timestamps is distorted by clock drift, transient I/O delays, or other timing uncertainties.
+- **Causality over chronology:** The solution intentionally prioritizes causal order (the happens-before relation) over interpretations based on each server’s local clock readings. In diagnostic scenarios, the causal chain of events provides more reliable information than the timestamps generated by individual machines. For instance, if an error in Service C originates from a failure in Service A, the logical ordering will correctly place A’s events before C’s, even if a chronological sort based on local timestamps is distorted by clock drift, transient I/O delays, or other timing uncertainties.
 
-* **Not a global order:** This mechanism does not produce a single total order of all events across the entire system in real time – nor is that typically needed. Each trace (request) is ordered internally, but events from different traces remain incomparable except by wall-clock time. This is acceptable, because unrelated requests do not have a causal ordering between them anyway. Even within one trace, if two branches execute in parallel, their events are concurrent and any ordering between them is somewhat arbitrary.
+- **Not a global order:** This mechanism does not produce a single total order of all events across the entire system in real time – nor is that typically needed. Each trace (request) is ordered internally, but events from different traces remain incomparable except by wall-clock time. This is acceptable, because unrelated requests do not have a causal ordering between them anyway. Even within one trace, if two branches execute in parallel, their events are concurrent and any ordering between them is somewhat arbitrary.
 
 ## References
 
-* [Lamport Clock](https://martinfowler.com/articles/patterns-of-distributed-systems/lamport-clock.html)
-* [Logical Clock](https://en.wikipedia.org/wiki/Logical_clock)
+- [Lamport Clock](https://martinfowler.com/articles/patterns-of-distributed-systems/lamport-clock.html)
+- [Logical Clock](https://en.wikipedia.org/wiki/Logical_clock)

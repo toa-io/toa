@@ -9,12 +9,12 @@ export interface Documents {
   challenge: (pathname: string) => string
 }
 
-export function documents (issuer: string, oauth: OAuth): Documents {
+export function documents(issuer: string, oauth: OAuth): Documents {
   const server = authorizationServer(issuer, oauth)
   const resources = protectedResources(issuer, oauth)
   const scope = oauth.scopes === undefined ? '' : `, scope="${oauth.scopes.join(' ')}"`
 
-  function read (pathname: string): object | undefined {
+  function read(pathname: string): object | undefined {
     if (pathname === AUTHORIZATION_SERVER || pathname === OPENID_CONFIGURATION)
       return server
 
@@ -24,7 +24,7 @@ export function documents (issuer: string, oauth: OAuth): Documents {
     return undefined
   }
 
-  function challenge (pathname: string): string {
+  function challenge(pathname: string): string {
     return `Bearer resource_metadata="${issuer}${PROTECTED_RESOURCE}${suffix(oauth, pathname)}"${scope}`
   }
 
@@ -36,7 +36,7 @@ export function documents (issuer: string, oauth: OAuth): Documents {
  * everything else this extension serves. Both flags are load-bearing for a client that
  * prefers Client ID Metadata Documents: without either it falls back to registration.
  */
-function authorizationServer (issuer: string, oauth: OAuth): object {
+function authorizationServer(issuer: string, oauth: OAuth): object {
   const metadata: Record<string, unknown> = {
     issuer,
     authorization_endpoint: oauth.authorize,
@@ -52,8 +52,7 @@ function authorizationServer (issuer: string, oauth: OAuth): object {
   if (oauth.registration === 'open')
     metadata.registration_endpoint = `${issuer}${REGISTRATION}`
 
-  if (oauth.scopes !== undefined)
-    metadata.scopes_supported = oauth.scopes
+  if (oauth.scopes !== undefined) metadata.scopes_supported = oauth.scopes
 
   return metadata
 }
@@ -63,7 +62,7 @@ function authorizationServer (issuer: string, oauth: OAuth): object {
  * `https://host/mcp` reads `/.well-known/oauth-protected-resource/mcp`, and one that names
  * no path reads the document at the origin.
  */
-function protectedResources (issuer: string, oauth: OAuth): Map<string, object> {
+function protectedResources(issuer: string, oauth: OAuth): Map<string, object> {
   const map = new Map<string, object>()
 
   for (const path of oauth.resources ?? [])
@@ -74,26 +73,24 @@ function protectedResources (issuer: string, oauth: OAuth): Map<string, object> 
   return map
 }
 
-function resource (issuer: string, path: string, oauth: OAuth): object {
+function resource(issuer: string, path: string, oauth: OAuth): object {
   const metadata: Record<string, unknown> = {
     resource: issuer + path,
     authorization_servers: [issuer],
     bearer_methods_supported: ['header']
   }
 
-  if (oauth.scopes !== undefined)
-    metadata.scopes_supported = oauth.scopes
+  if (oauth.scopes !== undefined) metadata.scopes_supported = oauth.scopes
 
   return metadata
 }
 
 /** The document a request to this path was refused against: the longest resource holding it. */
-function suffix (oauth: OAuth, pathname: string): string {
+function suffix(oauth: OAuth, pathname: string): string {
   let longest = ''
 
   for (const path of oauth.resources ?? [])
-    if (pathname.startsWith(path) && path.length > longest.length)
-      longest = path
+    if (pathname.startsWith(path) && path.length > longest.length) longest = path
 
   return canonical(longest)
 }
@@ -102,7 +99,7 @@ function suffix (oauth: OAuth, pathname: string): string {
  * A resource is identified without its trailing slash — the form MCP asks for — while a
  * route is declared with one, so `/mcp/` identifies `…/mcp`.
  */
-function canonical (path: string): string {
+function canonical(path: string): string {
   return path.endsWith('/') ? path.slice(0, -1) : path
 }
 

@@ -7,7 +7,7 @@ import type { Manifest } from '@toa.io/norm'
  * Everything here is already normalized by norm: the prototype chain is collapsed,
  * so this is the shape the runtime actually runs.
  */
-export function describe (manifest: Manifest): Node {
+export function describe(manifest: Manifest): Node {
   return {
     namespace: manifest.namespace,
     component: manifest.name,
@@ -22,20 +22,23 @@ export function describe (manifest: Manifest): Node {
   }
 }
 
-function entity (manifest: Manifest): Node['entity'] {
-  if (manifest.entity === undefined)
-    return null
+function entity(manifest: Manifest): Node['entity'] {
+  if (manifest.entity === undefined) return null
 
+  const { properties, required } = manifest.entity
+
+  // the map publishes a schema, which is what a tool reading it can validate against;
+  // a manifest declares the properties and assembles no envelope
   return {
-    schema: manifest.entity.schema,
+    schema: { type: 'object', properties, required },
     storage: manifest.entity.storage,
     associated: manifest.entity.associated === true
   }
 }
 
-function operations (manifest: Manifest): Operation[] {
-  return Object.entries(manifest.operations ?? {})
-    .map(([endpoint, definition]: [string, any]) => ({
+function operations(manifest: Manifest): Operation[] {
+  return Object.entries(manifest.operations ?? {}).map(
+    ([endpoint, definition]: [string, any]) => ({
       endpoint,
       type: definition.type,
       description: definition.description,
@@ -44,26 +47,29 @@ function operations (manifest: Manifest): Operation[] {
       input: definition.input ?? null,
       output: definition.output ?? null,
       errors: definition.errors ?? []
-    }))
+    })
+  )
 }
 
-function events (manifest: Manifest): Event[] {
-  return Object.entries(manifest.events ?? {})
-    .map(([label, definition]: [string, any]) => ({ label, binding: definition.binding }))
+function events(manifest: Manifest): Event[] {
+  return Object.entries(manifest.events ?? {}).map(
+    ([label, definition]: [string, any]) => ({ label, binding: definition.binding })
+  )
 }
 
 /*
  * Receiver labels contain dots (`identity.bans.created`), which is why nodes keep
  * these as arrays rather than maps — a dot in a document key is a hazard in Mongo.
  */
-function receivers (manifest: Manifest): Receiver[] {
-  return Object.entries(manifest.receivers ?? {})
-    .map(([label, definition]: [string, any]) => ({
+function receivers(manifest: Manifest): Receiver[] {
+  return Object.entries(manifest.receivers ?? {}).map(
+    ([label, definition]: [string, any]) => ({
       label,
       source: definition.source ?? label.split('.').slice(0, 2).join('.'),
       event: label.split('.').pop()!,
       operation: definition.operation,
       conditioned: definition.conditioned === true,
       adaptive: definition.adaptive === true
-    }))
+    })
+  )
 }

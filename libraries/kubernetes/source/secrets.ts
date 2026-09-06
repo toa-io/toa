@@ -3,7 +3,7 @@ import { exec as execute } from 'node:child_process'
 
 const exec = promisify(execute)
 
-export async function get (name: string, namespace?: string): Promise<Data | null> {
+export async function get(name: string, namespace?: string): Promise<Data | null> {
   try {
     const { stdout } = await exec(`kubectl get secret ${name}${n(namespace)} -o json`)
     const secret = JSON.parse(stdout) as Secret
@@ -14,26 +14,30 @@ export async function get (name: string, namespace?: string): Promise<Data | nul
   }
 }
 
-export async function upsert (name: string, data: Data, namespace?: string): Promise<void> {
-  const value = await get(name, namespace) ?? {}
+export async function upsert(
+  name: string,
+  data: Data,
+  namespace?: string
+): Promise<void> {
+  const value = (await get(name, namespace)) ?? {}
 
   Object.assign(value, data)
 
   await deploy(name, value, namespace)
 }
 
-async function deploy (name: string, data: Data, namespace?: string): Promise<void> {
+async function deploy(name: string, data: Data, namespace?: string): Promise<void> {
   const secret = encode(name, data)
   const json = JSON.stringify(secret)
 
   await exec(`echo '${json}' | kubectl apply${n(namespace)} -f -`)
 }
 
-function decode (data: Data): Data {
+function decode(data: Data): Data {
   return apply(data, atob)
 }
 
-function encode (name: string, data: Data): Secret {
+function encode(name: string, data: Data): Secret {
   const encoded = apply(data, btoa)
 
   return {
@@ -45,11 +49,10 @@ function encode (name: string, data: Data): Secret {
   }
 }
 
-function apply (data: Data, fn: (input: string) => string): Data {
+function apply(data: Data, fn: (input: string) => string): Data {
   const result: Data = {}
 
-  for (const [key, value] of Object.entries(data))
-    result[key] = fn(value)
+  for (const [key, value] of Object.entries(data)) result[key] = fn(value)
 
   return result
 }
@@ -66,6 +69,6 @@ interface Secret {
 
 type Data = Record<string, string>
 
-function n (namespace?: string): string {
+function n(namespace?: string): string {
   return namespace === undefined ? '' : ` -n ${namespace}`
 }

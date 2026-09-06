@@ -2,19 +2,16 @@
 
 import type { Composition } from '@toa.io/norm'
 import type { dependency } from '../dependency.js'
-import type { Image } from "./image.js"
+import type { Image } from './image.js'
 
 declare namespace toa.deployment.images {
+  interface Registry {
+    composition(composition: Composition): Image
 
-    interface Registry {
-        composition(composition: Composition): Image
+    service(path: string, service: dependency.Service): Image
 
-        service(path: string, service: dependency.Service): Image
+    prepare(target: string): Promise<void>
 
-        prepare(target: string): Promise<void>
-
-        push(): Promise<void>
-    }
-
+    push(): Promise<void>
+  }
 }
-

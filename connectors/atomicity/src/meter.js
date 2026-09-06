@@ -15,7 +15,7 @@
 export class Meter {
   #redis
 
-  constructor (redis) {
+  constructor(redis) {
     this.#redis = redis
 
     redis.defineCommand(COMMAND, { lua: SCRIPT })
@@ -28,7 +28,7 @@ export class Meter {
    * @param {number[]} deltas
    * @returns {Promise<number[]>}
    */
-  async meter (keys, deltas) {
+  async meter(keys, deltas) {
     if (keys.length <= CHUNK) return this.#call(keys, deltas)
 
     // arguments are spread into the call, so a batch is split rather than risking the
@@ -36,13 +36,15 @@ export class Meter {
     const debts = []
 
     for (let i = 0; i < keys.length; i += CHUNK)
-      debts.push(...await this.#call(keys.slice(i, i + CHUNK), deltas.slice(i, i + CHUNK)))
+      debts.push(
+        ...(await this.#call(keys.slice(i, i + CHUNK), deltas.slice(i, i + CHUNK)))
+      )
 
     return debts
   }
 
   /** @private */
-  async #call (keys, deltas) {
+  async #call(keys, deltas) {
     // `defineCommand` extends the client at runtime
     return this.#redis[COMMAND](keys.length, ...keys, ...deltas)
   }

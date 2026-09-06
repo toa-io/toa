@@ -18,14 +18,25 @@ export const receivers = async (manifest, component) => {
     // the origin of the calls this receiver makes to its local operation
     const origin = { namespace: source.namespace, component: source.name, event }
 
-    const bridge = definition.bridge !== undefined
-      ? await boot.bridge.receiver(definition.bridge, manifest.path, label)
-      : undefined
-    const receiver = new Receiver({ ...definition, label, destination, origin }, local, bridge)
+    const bridge =
+      definition.bridge !== undefined
+        ? await boot.bridge.receiver(definition.bridge, manifest.path, label)
+        : undefined
+    const receiver = new Receiver(
+      { ...definition, label, destination, origin },
+      local,
+      bridge
+    )
     const decorator = extensions.receiver(receiver, manifest.locator)
 
-    const transport = definition.binding ?? await resolveBinding(locator, label)
-    const binding = await boot.bindings.receive(transport, source, label, manifest.locator.id, decorator)
+    const transport = definition.binding ?? (await resolveBinding(locator, label))
+    const binding = await boot.bindings.receive(
+      transport,
+      source,
+      label,
+      manifest.locator.id,
+      decorator
+    )
 
     binding.depends(component)
     receivers.push(binding)
@@ -34,7 +45,7 @@ export const receivers = async (manifest, component) => {
   return receivers
 }
 
-export async function receive (label, group, callback) {
+export async function receive(label, group, callback) {
   if (callback === undefined) {
     callback = group
     group = undefined
@@ -47,11 +58,11 @@ export async function receive (label, group, callback) {
 }
 
 /**
- * @param {toa.core.Locator} locator
+ * @param {import('@toa.io/core').Locator} locator
  * @param {string} label
  * @return {Promise<string>}
  */
-async function resolveBinding (locator, label) {
+async function resolveBinding(locator, label) {
   const event = label.split('.').pop()
   const discovery = await boot.discovery.discovery()
   const { events } = await discovery.lookup(locator)

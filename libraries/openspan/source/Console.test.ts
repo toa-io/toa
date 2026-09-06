@@ -1,7 +1,16 @@
 import { describe, it, beforeEach, afterEach, mock } from 'node:test'
 import assert from 'node:assert/strict'
 
-import { console, Console, consoleExporter, create, current, exporting, run, sampling } from './index.js'
+import {
+  console,
+  Console,
+  consoleExporter,
+  create,
+  current,
+  exporting,
+  run,
+  sampling
+} from './index.js'
 import type { Channel } from './Console.js'
 
 afterEach(() => {
@@ -38,7 +47,7 @@ it('should be', async () => {
 })
 
 for (const severity of channels)
-   describe(`${severity}`, () => {
+  describe(`${severity}`, () => {
     const channel = severity === 'error' ? streams.stderr : streams.stdout
 
     it('should write', () => {
@@ -104,15 +113,15 @@ it('should share the singleton between module copies', async () => {
 })
 
 for (const channel of channels)
-   describe(`console instance (${channel})`, () => {
-  it('should print message', () => {
-    console[channel]('Hello')
-  })
+  describe(`console instance (${channel})`, () => {
+    it('should print message', () => {
+      console[channel]('Hello')
+    })
 
-  it('should print attributes', async () => {
-    console[channel]('Hello again', { foo: 42 })
+    it('should print attributes', async () => {
+      console[channel]('Hello again', { foo: 42 })
+    })
   })
-})
 
 it('should fork', async () => {
   const con = instance.fork({ bar: 'foo' })
@@ -223,7 +232,10 @@ describe('span', () => {
   it('should not open a span within an unsampled trace', async () => {
     const context = { ...create(), sampled: false }
 
-    const inner = await run(context, async () => await instance.span('work', () => current()))
+    const inner = await run(
+      context,
+      async () => await instance.span('work', () => current())
+    )
 
     // the context in scope is reused rather than replaced, so there is nothing to propagate
     assert.strictEqual(inner, context)
@@ -241,7 +253,10 @@ describe('span', () => {
   })
 
   it('should write span entry with duration', async () => {
-    await instance.span('fetch', async () => await new Promise((resolve) => setTimeout(resolve, 10)))
+    await instance.span(
+      'fetch',
+      async () => await new Promise((resolve) => setTimeout(resolve, 10))
+    )
 
     const entry = pop(streams.stdout)
 
@@ -301,10 +316,17 @@ describe('span', () => {
   it('should rethrow and mark status on failure', async () => {
     const oops = new Error('oops')
 
-    await assert.rejects(instance.span('work', () => Promise.reject(oops)), oops)
+    await assert.rejects(
+      instance.span('work', () => Promise.reject(oops)),
+      oops
+    )
 
     const subject = pop(streams.stdout)
-    assert.partialDeepStrictEqual(subject, { severity: 'TRACE', message: 'work', status: 'error' })
+    assert.partialDeepStrictEqual(subject, {
+      severity: 'TRACE',
+      message: 'work',
+      status: 'error'
+    })
     assert.strictEqual(typeof subject['duration'], 'number')
   })
 
@@ -352,16 +374,15 @@ describe('span', () => {
   })
 })
 
-function pop (channel: any): any {
+function pop(channel: any): any {
   const buffer = channel.write.mock.calls[0]?.arguments[0] as Buffer
 
-  if (buffer === undefined)
-    return undefined
+  if (buffer === undefined) return undefined
 
   return JSON.parse(buffer.toString())
 }
 
-function resetCalls (target = [streams, context, channels], seen = new Set()) {
+function resetCalls(target = [streams, context, channels], seen = new Set()) {
   if (target === null || typeof target !== 'object' || seen.has(target)) return
 
   seen.add(target)

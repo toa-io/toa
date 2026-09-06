@@ -6,8 +6,8 @@ import { isDeepStrictEqual } from 'node:util'
 import clone from 'clone-deep'
 import { generate } from 'randomstring'
 
-import { Request } from '../../src/contract/request.js'
-import { Contract } from '../../src/contract/contract.js'
+import { Request } from '../../source/contract/request.js'
+import { Contract } from '../../source/contract/contract.js'
 import * as fixtures from './contract.fixtures.js'
 
 // the base is real; what it was constructed with and told to fit is observable
@@ -22,7 +22,7 @@ beforeEach(() => {
   contract = new Request(fixtures.schema, {})
 })
 
-const dummy = { schema: { properties: {} } }
+const dummy = { properties: {} }
 
 it('should extend Conditions', () => {
   assert.ok(contract instanceof Contract)
@@ -34,8 +34,11 @@ it('should fit request', () => {
 
   contract.fit(request)
 
-  assert.ok(fit.mock.calls.some((call) =>
-    call.this === contract && isDeepStrictEqual(call.arguments[0], request)))
+  assert.ok(
+    fit.mock.calls.some(
+      (call) => call.this === contract && isDeepStrictEqual(call.arguments[0], request)
+    )
+  )
 })
 
 describe('schema', () => {
@@ -70,21 +73,45 @@ describe('schema', () => {
 
   it('should require query if declaration.query is true', () => {
     schema.required = ['query']
-    assert.ok(['query'].every((item) => Request.schema({ query: true }, dummy).required.some((candidate) => isDeepStrictEqual(candidate, item))))
+    assert.ok(
+      ['query'].every((item) =>
+        Request.schema({ query: true }, dummy).required.some((candidate) =>
+          isDeepStrictEqual(candidate, item)
+        )
+      )
+    )
   })
 
   it('should forbid projection for non observations', () => {
-    assert.strictEqual(Request.schema({ type: 'transition' }, dummy).properties.query.properties.projection, undefined)
+    assert.strictEqual(
+      Request.schema({ type: 'transition' }, dummy).properties.query.properties
+        .projection,
+      undefined
+    )
 
-    assert.strictEqual(Request.schema({ type: 'assignment' }, dummy).properties.query.properties.projection, undefined)
+    assert.strictEqual(
+      Request.schema({ type: 'assignment' }, dummy).properties.query.properties
+        .projection,
+      undefined
+    )
 
-    assert.notStrictEqual(Request.schema({ type: 'observation' }, dummy).properties.query.properties.projection, undefined)
+    assert.notStrictEqual(
+      Request.schema({ type: 'observation' }, dummy).properties.query.properties
+        .projection,
+      undefined
+    )
   })
 
   it('should forbid version for observations', () => {
-    assert.notStrictEqual(Request.schema({ type: 'transition' }, dummy).properties.query.properties.version, undefined)
+    assert.notStrictEqual(
+      Request.schema({ type: 'transition' }, dummy).properties.query.properties.version,
+      undefined
+    )
 
-    assert.strictEqual(Request.schema({ type: 'observation' }, dummy).properties.query.properties.version, undefined)
+    assert.strictEqual(
+      Request.schema({ type: 'observation' }, dummy).properties.query.properties.version,
+      undefined
+    )
   })
 
   it('should allow omit, limit only for set observations', () => {
@@ -94,18 +121,24 @@ describe('schema', () => {
     assert.strictEqual(transition.omit, undefined)
     assert.strictEqual(transition.limit, undefined)
 
-    const object = Request.schema({
-      type: 'observation',
-      scope: 'object'
-    }, dummy).properties.query.properties
+    const object = Request.schema(
+      {
+        type: 'observation',
+        scope: 'object'
+      },
+      dummy
+    ).properties.query.properties
 
     assert.strictEqual(object.omit, undefined)
     assert.strictEqual(object.limit, undefined)
 
-    const objects = Request.schema({
-      type: 'observation',
-      scope: 'objects'
-    }, dummy).properties.query.properties
+    const objects = Request.schema(
+      {
+        type: 'observation',
+        scope: 'objects'
+      },
+      dummy
+    ).properties.query.properties
 
     assert.notStrictEqual(objects.omit, undefined)
     assert.notStrictEqual(objects.limit, undefined)
@@ -113,16 +146,13 @@ describe('schema', () => {
 })
 
 describe('source', () => {
-
-
   const compile = (definition, entity) =>
-    schemas.schema(Request.schema(definition, entity), { removeAdditional: true })
+    schemas.schema(Request.schema(definition, entity))
 
-  it('should declare source', () => {
+  it('should not hold source to a schema', () => {
     const schema = Request.schema({}, dummy)
 
-    assert.notStrictEqual(schema.properties.source, undefined)
-    assert.deepStrictEqual(schema.properties.source.additionalProperties, false)
+    assert.strictEqual(schema.properties.source, undefined)
   })
 
   it('should pass known source variants', () => {
@@ -140,18 +170,22 @@ describe('source', () => {
     }
   })
 
-  // `source` crosses the wire and keys the introspection map, so whatever
-  // a peer adds to it must not survive
-  it('should strip unknown source properties', () => {
+  // whatever a peer puts beside the keys this release knows travels through: what reads
+  // `source` takes the keys it knows, and the contract does not fail a call over the rest
+  it('should pass a source a peer added to', () => {
     const schema = compile({}, undefined)
-    const request = { input: null, query: null, source: { service: 'exposition', evil: 'x' } }
+    const request = {
+      input: null,
+      query: null,
+      source: { service: 'exposition', mystery: 'x' }
+    }
 
     assert.deepStrictEqual(schema.fit(request), null)
-    assert.deepStrictEqual(request.source, { service: 'exposition' })
+    assert.deepStrictEqual(request.source, { service: 'exposition', mystery: 'x' })
   })
 })
 
-function resetCalls (target = [assert, clone, fixtures, dummy], seen = new Set()) {
+function resetCalls(target = [assert, clone, fixtures, dummy], seen = new Set()) {
   if (target === null || typeof target !== 'object' || seen.has(target)) return
 
   seen.add(target)

@@ -5,6 +5,6 @@ export function key({ id, transports }: KeyDescriptor): PublicKeyCredentialDescr
   return {
     id: base64urlToArrayBuffer(id),
     type: 'public-key',
-    transports,
+    transports
   }
 }

@@ -21,7 +21,7 @@ type KeyEntry = KeyComponentMethod | { segment: string }
 type KeyDeclaration = KeyEntry | KeyEntry[]
 
 type ConditionDeclaration =
-  Record<KeyConditionMethod, unknown>
+  | Record<KeyConditionMethod, unknown>
   | Array<Record<KeyConditionMethod, unknown>>
 
 export interface Declaration extends Omit<Configuration, 'key' | 'condition'> {
@@ -29,7 +29,7 @@ export interface Declaration extends Omit<Configuration, 'key' | 'condition'> {
   condition?: ConditionDeclaration
 }
 
-export function parse (declaration: Declaration): Configuration {
+export function parse(declaration: Declaration): Configuration {
   const { key, condition, requests, interval } = declaration
 
   return {
@@ -40,24 +40,29 @@ export function parse (declaration: Declaration): Configuration {
   }
 }
 
-function mapKey (declaration: KeyDeclaration): KeyComponent[] {
+function mapKey(declaration: KeyDeclaration): KeyComponent[] {
   const entries = Array.isArray(declaration) ? declaration : [declaration]
 
   // a bare `path`, or `segment: id` for the ones that take an argument
   return entries.flatMap((entry): KeyComponent[] =>
     typeof entry === 'string'
       ? [{ method: entry }]
-      : Object.entries(entry).map(([method, options]) =>
-        ({ method: method as KeyComponentMethod, options })))
+      : Object.entries(entry).map(([method, options]) => ({
+          method: method as KeyComponentMethod,
+          options
+        }))
+  )
 }
 
-function mapCondition (declaration?: ConditionDeclaration): KeyCondition[] | undefined {
-  if (declaration === undefined)
-    return
+function mapCondition(declaration?: ConditionDeclaration): KeyCondition[] | undefined {
+  if (declaration === undefined) return
 
   // reduce to a single object, then map entries to rules
   const conditions = Array.isArray(declaration) ? declaration : [declaration]
   const single = conditions.reduce((acc, condition) => ({ ...acc, ...condition }), {})
 
-  return Object.entries(single).map(([method, options]) => ({ method, options })) as KeyCondition[]
+  return Object.entries(single).map(([method, options]) => ({
+    method,
+    options
+  })) as KeyCondition[]
 }

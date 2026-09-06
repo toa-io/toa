@@ -3,22 +3,21 @@ namespace: tea
 
 entity:
   storage: mongodb
-  schema:
-    properties:
-      volume:
-        type: number
-      booked:
-        type: boolean
-        default: false
-      material:
-        type: string
-        enum:
-          - glass
-          - ceramic
-          - steel
-    type: object
-    required:
-      - material
+  properties:
+    volume:
+      type: number
+    booked:
+      type: boolean
+    material:
+      type: string
+      enum:
+        - glass
+        - ceramic
+        - steel
+  required:
+    - material
+  blank:
+    booked: false
 
 operations:
   transit:
@@ -53,4 +52,5 @@ configuration:
     properties:
       step:
         type: number
-        default: 0.5
+  defaults:
+    step: 0.5

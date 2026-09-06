@@ -1,4 +1,4 @@
-@cloudinary
+@manual @cloudinary
 Feature: Octets with Cloudinary storage
 
   Background:

@@ -6,6 +6,6 @@ import { Factory } from '@toa.io/atomicity'
  * see the connector's readme.
  *
  * @param {string} group
- * @returns {toa.core.atomicity.Atom}
+ * @returns {import('@toa.io/core/types').atomicity.Atom}
  */
 export const atomicity = (group) => new Factory().atom(group)

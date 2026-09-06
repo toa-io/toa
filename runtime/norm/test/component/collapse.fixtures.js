@@ -3,51 +3,45 @@ import { generate } from 'randomstring'
 const entity = {
   manifest: {
     entity: {
-      schema: {
-        properties: {
-          foo: {
-            type: 'string'
-          },
-          bar: {
-            type: 'integer'
-          }
+      properties: {
+        foo: {
+          type: 'string'
         },
-        required: ['foo']
-      }
+        bar: {
+          type: 'integer'
+        }
+      },
+      required: ['foo']
     }
   },
   prototype: {
     entity: {
-      schema: {
-        properties: {
-          foo: {
-            default: 'ok'
-          },
-          baz: {
-            type: 'boolean'
-          }
+      properties: {
+        foo: {
+          minLength: 1
         },
-        required: ['baz']
-      }
+        baz: {
+          type: 'boolean'
+        }
+      },
+      required: ['baz']
     }
   },
   result: {
     entity: {
-      schema: {
-        properties: {
-          foo: {
-            type: 'string',
-            default: 'ok'
-          },
-          bar: {
-            type: 'integer'
-          },
-          baz: {
-            type: 'boolean'
-          }
+      properties: {
+        foo: {
+          type: 'string',
+          minLength: 1
         },
-        required: ['foo', 'baz']
-      }
+        bar: {
+          type: 'integer'
+        },
+        baz: {
+          type: 'boolean'
+        }
+      },
+      required: ['foo', 'baz']
     }
   }
 }

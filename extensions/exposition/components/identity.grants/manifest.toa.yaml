@@ -5,36 +5,30 @@ name: grants
 # it is single-use and lives seconds, so it is held in the stash and redeemed atomically.
 entity:
   associated: true
-  schema:
-    type: object
-    properties:
-      authority:
-        type: string
-      identity:
-        type: string
-      client:
-        type: string
-      scope:
-        type: array
-        items:
-          type: string
-      resource:
-        type: array
-        items:
-          type: string
-      kid:
-        description: The identity.keys record backing the access token, revoked with the grant
-        type: string
-      revokedAt:
-        type: integer
-    required:
-      - authority
-      - identity
-      - client
-  index:
+  properties:
+    authority:
+      type: string
     identity:
-      authority: asc
-      identity: asc
+      type: string
+    client:
+      type: string
+    scope:
+      type: array
+      items:
+        type: string
+    resource:
+      type: array
+      items:
+        type: string
+    kid:
+      description: The identity.keys record backing the access token, revoked with the grant
+      type: string
+    revokedAt:
+      type: integer
+  required:
+    - authority
+    - identity
+    - client
 
 operations:
   transit:
@@ -199,14 +193,16 @@ configuration:
         type: integer
         minimum: 1
         maximum: 600
-        default: 60
       token:
         description: Seconds an access token is valid for; 0 is until it is revoked
         type: integer
         minimum: 0
-        default: 2592000
     # both have defaults, so the component reads them without checking
     required: [lifetime, token]
+
+  defaults:
+    lifetime: 60
+    token: 2592000
 
 stash: ~
 
@@ -231,7 +227,7 @@ exposition:
       map:segments:
         identity: identity
       GET:
-        io:output: [id, client, scope, resource, _created]
+        io:output: [id, client, scope, resource, CREATED]
         endpoint: list
       POST:
         io:input: [client, redirect, challenge, method, scope, resource]

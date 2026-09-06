@@ -48,9 +48,13 @@ Undefined `query` denies any query arguments in requests.
 
 Search criteria in [RSQL](https://github.com/jirutka/rsql-parser) format.
 
-The `criteria` property is considered as *open* when it ends with a `;`, allowing the combination of
+A value is read as what the property it selects on holds, and one that cannot be read as that is
+refused with `400 Bad Request` — `volume>abc` where `volume` is a number, or `booked==yes` where
+`booked` is a boolean. A string property takes whatever is written.
+
+The `criteria` property is considered as _open_ when it ends with a `;`, allowing the combination of
 request query criteria using `and` logic.
-Otherwise, criteria property is *closed*, that is, doesn't allow `criteria` in a request query.
+Otherwise, criteria property is _closed_, that is, doesn't allow `criteria` in a request query.
 
 ```yaml
 # manifest.toa.yaml
@@ -151,7 +155,9 @@ rank: 5
 
 ## Text search
 
-For entities with `text` indexes, search queries can be enabled using the `search` property.
+For entities with `text` indexes — declared in a
+[migration](/documentation/component/declaration.md#migrations) — search queries can be enabled
+using the `search` property.
 
 ```yaml
 # manifest.toa.yaml
@@ -223,7 +229,7 @@ sort: rank:asc
 sort: rank:desc;timestamp:asc
 ```
 
-If `sort` value ends with a semicolon `;` then the sorting is considered *open*
+If `sort` value ends with a semicolon `;` then the sorting is considered _open_
 and can be extended using request query `sort` argument.
 
 ```yaml
@@ -274,10 +280,10 @@ GET /dummies/?foo=0&bar=baz
 
 ## Optimistic concurrency control
 
-If an operation returns an object with `_version` property,
-then its value is passed as the value of
-the [`etag` header](https://datatracker.ietf.org/doc/html/rfc7232#section-2.3) in the response
-(and removed from the object).
+If an operation answers a safe request (`GET`, `HEAD`) with an object that has a `VERSION`
+property, its value is passed as the value of
+the [`etag` header](https://datatracker.ietf.org/doc/html/rfc7232#section-2.3) in the response,
+see [validators](cache.md#validators).
 
 Client can use the `if-match` request header to perform an operation only if the corresponding
 object has not been modified since the last retrieval.

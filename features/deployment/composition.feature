@@ -1,3 +1,4 @@
+@deployment
 Feature: Export Compositions Deployment
 
   Scenario: Two components without explicit compositions
@@ -44,6 +45,7 @@ Feature: Export Compositions Deployment
             path: /
     """
 
+  @helm
   Scenario: The service it runs is not deployed on its own
     Given I have a component `exposed.one`
     And I have a context with:
@@ -73,6 +75,7 @@ Feature: Export Compositions Deployment
       toa/service: extension-exposition-gateway
       """
 
+  @helm
   Scenario: A service no composition runs is deployed on its own
     Given I have a component `exposed.one`
     And I have a context
@@ -84,6 +87,7 @@ Feature: Export Compositions Deployment
       toa/service: extension-exposition-gateway
       """
 
+  @helm
   Scenario: Two compositions running one service
 
   A service is stateless and already runs several replicas. Two compositions running one are
@@ -129,6 +133,7 @@ Feature: Export Compositions Deployment
       toa/service: extension-exposition-gateway
       """
 
+  @helm
   Scenario: A service of an extension no component references
 
   Listing it is what pulls the extension in, and its own components with it.

@@ -1,7 +1,8 @@
 import assert from 'node:assert'
 import { setTimeout } from 'node:timers/promises'
 import { console } from 'openspan'
-import { type bindings, Connector } from '@toa.io/core'
+import { Connector } from '@toa.io/core'
+import type { bindings } from '@toa.io/core/types'
 import * as http from './HTTP/index.js'
 import { MCP, RPC } from './const.js'
 import { rethrow } from './exceptions.js'
@@ -9,7 +10,14 @@ import { decide } from './Branch.js'
 import type { Interception } from './Interception.js'
 import type { Dispatcher } from './RPC/index.js'
 import type { Server } from './MCP/index.js'
-import type { DirectiveFactory, Method, Node, Parameter, Tree, Match } from './RTD/index.js'
+import type {
+  DirectiveFactory,
+  Method,
+  Node,
+  Parameter,
+  Tree,
+  Match
+} from './RTD/index.js'
 import type { Label } from './discovery.js'
 import type { Branch, Exposed } from './Branch.js'
 
@@ -32,8 +40,14 @@ export class Gateway extends Connector {
   private resolveFirstMerge: (() => void) | null = null
 
   // eslint-disable-next-line max-params
-  public constructor (broadcast: Broadcast, tree: Tree, interception: Interception,
-    directives: DirectiveFactory, dispatcher: Dispatcher | null, mcp: Server | null) {
+  public constructor(
+    broadcast: Broadcast,
+    tree: Tree,
+    interception: Interception,
+    directives: DirectiveFactory,
+    dispatcher: Dispatcher | null,
+    mcp: Server | null
+  ) {
     super()
 
     this.broadcast = broadcast
@@ -46,22 +60,18 @@ export class Gateway extends Connector {
     this.depends(broadcast)
   }
 
-  public async process (context: http.Context): Promise<http.OutgoingMessage> {
-    const interception = await context.timing.capture('intercept',
-      this.interceptor.intercept(context))
+  public async process(context: http.Context): Promise<http.OutgoingMessage> {
+    const interception = await this.interceptor.intercept(context)
 
-    if (interception !== null)
-      return interception
+    if (interception !== null) return interception
 
     // request-scoped, before anything is routed: this is where a credential is read
-    await context.timing.capture('preflight',
-      this.directives.preflight(context)).catch(rethrow)
+    await this.directives.preflight(context).catch(rethrow)
 
     const response = await this.endpoint(context)
 
     // request-scoped, on whatever is going back: this is where a credential is re-issued
-    await context.timing.capture('depart',
-      this.directives.depart(context, response)).catch(rethrow)
+    await this.directives.depart(context, response).catch(rethrow)
 
     return response
   }
@@ -70,14 +80,14 @@ export class Gateway extends Connector {
    * What answers the request: a pinned endpoint that makes calls of its own, or the route
    * the path names.
    */
-  private async endpoint (context: http.Context): Promise<http.OutgoingMessage> {
+  private async endpoint(context: http.Context): Promise<http.OutgoingMessage> {
     const route: http.Processor = async (call) => await this.route(call)
 
     if (this.dispatcher !== null && context.url.pathname === RPC)
-      return await context.timing.capture('rpc', this.dispatcher.dispatch(context, route))
+      return await this.dispatcher.dispatch(context, route)
 
     if (this.mcp !== null && context.url.pathname === MCP)
-      return await context.timing.capture('mcp', this.mcp.process(context, route))
+      return await this.mcp.process(context, route)
 
     return await this.route(context)
   }
@@ -86,7 +96,7 @@ export class Gateway extends Connector {
    * One call: everything that needs a node. A request makes one of these, and a request
    * that carries several calls makes one per call.
    */
-  private async route (context: http.Context): Promise<http.OutgoingMessage> {
+  private async route(context: http.Context): Promise<http.OutgoingMessage> {
     const { node, parameters } = this.match(context)
 
     if (context.request.method === 'OPTIONS')
@@ -94,39 +104,35 @@ export class Gateway extends Connector {
 
     let verb = context.request.method
 
-    if (!(verb in node.methods) && verb === 'HEAD' && 'GET' in node.methods)
-      verb = 'GET'
+    if (!(verb in node.methods) && verb === 'HEAD' && 'GET' in node.methods) verb = 'GET'
 
-    if (!(verb in node.methods))
-      throw new http.MethodNotAllowed()
+    if (!(verb in node.methods)) throw new http.MethodNotAllowed()
 
     const method = node.methods[verb]
 
-    const interruption = await context.timing.capture('precall',
-      method.directives.precall(context, parameters)).catch(rethrow)
+    const interruption = await method.directives
+      .precall(context, parameters)
+      .catch(rethrow)
+    const response = interruption ?? (await this.call(method, context, parameters))
 
-    const response = interruption ??
-      await context.timing.capture('call', this.call(method, context, parameters))
-
-    await context.timing.capture('settle',
-      method.directives.settle(context, response)).catch(rethrow)
+    await method.directives.settle(context, response).catch(rethrow)
 
     return response
   }
 
-  protected override async open (): Promise<void> {
+  protected override async open(): Promise<void> {
     await this.discover()
 
     // what is served besides the tree, so that turning one on can be seen to have worked
     const pinned: string[] = []
 
-    if (this.dispatcher !== null)
-      pinned.push(RPC)
+    if (this.dispatcher !== null) pinned.push(RPC)
 
-    if (this.mcp !== null)
-      pinned.push(MCP)
+    if (this.mcp !== null) pinned.push(MCP)
 
-    console.info('Gateway started', { endpoints: pinned.length === 0 ? 'none' : pinned.join(' ') })
+    console.info('Gateway started', {
+      endpoints: pinned.length === 0 ? 'none' : pinned.join(' ')
+    })
   }
 
   /**
@@ -135,17 +141,17 @@ export class Gateway extends Connector {
    * ticker firing in between calls an endpoint that has just been unbound, and reports the
    * refusal as a failure to reconcile.
    */
-  protected override async close (): Promise<void> {
+  protected override async close(): Promise<void> {
     this.stopped = true
 
     this.tree.dispose()
   }
 
-  protected override dispose (): void {
+  protected override dispose(): void {
     console.info('Gateway is closed')
   }
 
-  private match (context: http.Context): Match {
+  private match(context: http.Context): Match {
     const match = this.tree.match(context.url.pathname)
 
     if (match === null) {
@@ -155,17 +161,15 @@ export class Gateway extends Connector {
       throw new http.NotFound('Route not found')
     }
 
-    if (match.node.forward === null)
-      return match
+    if (match.node.forward === null) return match
 
-    const destination = match.node.forward.replace(/\/:([^/]+)/g,
-      (_, name) => {
-        const value = match.parameters.find((parameter) => parameter.name === name)?.value
+    const destination = match.node.forward.replace(/\/:([^/]+)/g, (_, name) => {
+      const value = match.parameters.find((parameter) => parameter.name === name)?.value
 
-        assert.ok(value !== undefined, `Forwarded parameter '${name}' not found`)
+      assert.ok(value !== undefined, `Forwarded parameter '${name}' not found`)
 
-        return `/${value}`
-      })
+      return `/${value}`
+    })
 
     const forward = this.tree.match(destination)
 
@@ -174,23 +178,28 @@ export class Gateway extends Connector {
     return forward
   }
 
-  private async call (method: Method, context: http.Context, parameters: Parameter[]): Promise<http.OutgoingMessage> {
+  private async call(
+    method: Method,
+    context: http.Context,
+    parameters: Parameter[]
+  ): Promise<http.OutgoingMessage> {
     if (context.url.pathname[context.url.pathname.length - 1] !== '/')
       throw new http.NotFound('Trailing slash is required')
 
-    if (context.encoder === null)
-      throw new http.NotAcceptable()
+    if (context.encoder === null) throw new http.NotAcceptable()
 
-    if (method.endpoint === null)
-      throw new http.MethodNotAllowed()
+    if (method.endpoint === null) throw new http.MethodNotAllowed()
 
-    return await method.endpoint
+    return (await method.endpoint
       .call(context, parameters)
-      .catch(rethrow) as http.OutgoingMessage
+      .catch(rethrow)) as http.OutgoingMessage
   }
 
-  private async explain (context: http.Context, node: Node,
-    parameters: Parameter[]): Promise<http.OutgoingMessage> {
+  private async explain(
+    context: http.Context,
+    node: Node,
+    parameters: Parameter[]
+  ): Promise<http.OutgoingMessage> {
     const body = await node.explain(context, parameters)
     const verbs = Object.keys(body)
 
@@ -201,7 +210,7 @@ export class Gateway extends Connector {
     return { body, headers: new Headers({ allow: verbs.join(', ') }) }
   }
 
-  private async discover (): Promise<void> {
+  private async discover(): Promise<void> {
     const first = new Promise<void>((resolve) => {
       this.resolveFirstMerge = resolve
     })
@@ -217,43 +226,46 @@ export class Gateway extends Connector {
    * A single ping is enough only if every tenant is listening by then, which is
    * not the case while the deployment is still rolling out.
    */
-  private async knock (): Promise<void> {
+  private async knock(): Promise<void> {
     for (const delay of KNOCK_DELAYS) {
-      if (this.stopped)
-        return
+      if (this.stopped) return
 
-      if (delay > 0)
-        await setTimeout(delay, undefined, { ref: false })
+      if (delay > 0) await setTimeout(delay, undefined, { ref: false })
 
       await this.ping()
     }
   }
 
-  private async ping (): Promise<void> {
-    if (this.stopped)
-      return
+  private async ping(): Promise<void> {
+    if (this.stopped) return
 
     this.lastPing = Date.now()
 
-    await this.broadcast.transmit<null>('ping', null)
-      .catch((exception: Error) => console.error('Discovery ping failed',
-        { message: exception.message }))
+    await this.broadcast
+      .transmit<null>('ping', null)
+      .catch((exception: Error) =>
+        console.error('Discovery ping failed', { message: exception.message })
+      )
   }
 
-  private reping (): void {
-    if (Date.now() - this.lastPing < PING_COOLDOWN)
-      return
+  private reping(): void {
+    if (Date.now() - this.lastPing < PING_COOLDOWN) return
 
     void this.ping()
   }
 
-  private async settled (first: Promise<void>): Promise<void> {
+  private async settled(first: Promise<void>): Promise<void> {
     const deadline = Date.now() + SETTLE_TIMEOUT
     const abort = new AbortController()
 
     // an uncancelled timer keeps the process alive long after the race is won
-    await Promise.race([first, setTimeout(SETTLE_TIMEOUT, undefined, { signal: abort.signal })])
-      .finally(() => { abort.abort() })
+    await Promise.race([
+      first,
+      setTimeout(SETTLE_TIMEOUT, undefined, { signal: abort.signal })
+    ])
+      .finally(() => {
+        abort.abort()
+      })
       .catch(() => {})
 
     if (this.lastMerge === 0) {
@@ -263,8 +275,7 @@ export class Gateway extends Connector {
     }
 
     while (Date.now() - this.lastMerge < this.quiet()) {
-      if (Date.now() >= deadline)
-        break
+      if (Date.now() >= deadline) break
 
       await setTimeout(SETTLE_POLL)
     }
@@ -277,13 +288,13 @@ export class Gateway extends Connector {
    * is enough; a rolling deployment brings them up seconds apart, and the window grows with
    * the widest gap seen so far to keep waiting for the ones still starting.
    */
-  private quiet (): number {
+  private quiet(): number {
     const adaptive = this.widestGap * SETTLE_QUIET_FACTOR
 
     return Math.min(Math.max(adaptive, SETTLE_QUIET_MIN), SETTLE_QUIET_MAX)
   }
 
-  private merge (branch: Branch): void {
+  private merge(branch: Branch): void {
     const id = branch.namespace + '.' + branch.component
 
     const attributes = {

@@ -2,53 +2,44 @@ namespace: identity
 name: passkeys
 
 entity:
-  schema:
-    type: object
-    properties:
-      authority:
-        type: string
-      identity:
-        type: string
-      kid:
-        type: string
-      aid:
-        description: AAGUID
-        type: string
-      synced:
-        description: credentialBackedUp
-        type: boolean
-      key:
-        description: Base64-encoded Uint8Array
-        type: string
-      counter:
-        type: number
-        minimum: 0
-        default: 0
-      transports:
-        type: array
-        items:
-          type: string
-      label:
-        type: string
-        minLength: 1
-        maxLength: 64
-    required:
-      - authority
-      - identity
-      - kid
-      - aid
-      - synced
-      - key
-      - counter
-      - _created
-  index:
-    list:
-      authority: asc
-      identity: asc
-      _created: desc
+  properties:
+    authority:
+      type: string
+    identity:
+      type: string
+    kid:
+      type: string
+    aid:
+      description: AAGUID
+      type: string
+    synced:
+      description: credentialBackedUp
+      type: boolean
     key:
-      authority: asc
-      kid: asc
+      description: Base64-encoded Uint8Array
+      type: string
+    counter:
+      type: number
+      minimum: 0
+    transports:
+      type: array
+      items:
+        type: string
+    label:
+      type: string
+      minLength: 1
+      maxLength: 64
+  required:
+    - authority
+    - identity
+    - kid
+    - aid
+    - synced
+    - key
+    - counter
+    - CREATED
+  blank:
+    counter: 0
 
 operations:
   challenge:
@@ -259,13 +250,13 @@ exposition:
           identity: identity
         map:headers:
           origin: origin
-        io:output: [id, aid, synced, label, _created, _updated]
+        io:output: [id, aid, synced, label, CREATED, UPDATED]
         endpoint: create
       GET:
         map:authority: authority
         map:segments:
           identity: identity
-        io:output: [id, aid, synced, label, _created, _updated]
+        io:output: [id, aid, synced, label, CREATED, UPDATED]
         endpoint: list
       /:id:
         DELETE:
@@ -284,12 +275,8 @@ configuration:
         type: array
         items:
           type: number
-        default:
-          - -7
-          - -257
       timeout:
         type: integer
-        default: 60000
       verification:
         description: AuthenticatorSelectionCriteria.userVerification
         type: string
@@ -304,6 +291,11 @@ configuration:
           - required
           - preferred
           - discouraged
-        default: required
+  defaults:
+    algorithms:
+    - -7
+    - -257
+    timeout: 60000
+    residence: required
 
 stash: ~

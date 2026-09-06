@@ -31,6 +31,19 @@ it('should expand registry', () => {
   normalize(context)
 
   assert.deepStrictEqual(context.registry, {
-    base
+    base,
+    platforms: ['linux/amd64', 'linux/arm/v7', 'linux/arm64']
   })
+})
+
+it('should set default platforms', () => {
+  context.registry = { base: generate() }
+
+  normalize(context)
+
+  assert.deepStrictEqual(context.registry.platforms, [
+    'linux/amd64',
+    'linux/arm/v7',
+    'linux/arm64'
+  ])
 })

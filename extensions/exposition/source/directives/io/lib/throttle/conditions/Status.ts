@@ -5,13 +5,13 @@ import type { Condition } from './Condition.js'
 export class Status implements Condition {
   private readonly status: number
 
-  public constructor (status: unknown) {
+  public constructor(status: unknown) {
     assert.ok(typeof status === 'number', 'Status must be a number')
 
     this.status = status
   }
 
-  public match (input: Input, output: Output): boolean {
+  public match(input: Input, output: Output): boolean {
     return output?.status === this.status
   }
 }

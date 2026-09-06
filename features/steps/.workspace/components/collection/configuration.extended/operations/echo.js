@@ -1,4 +1,4 @@
-export async function computation (_, context) {
+export async function computation(_, context) {
   const output = {}
 
   output.foo = context.configuration.foo

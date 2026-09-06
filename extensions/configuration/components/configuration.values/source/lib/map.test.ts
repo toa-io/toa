@@ -12,7 +12,9 @@ it('should be empty without the variable', () => {
 })
 
 it('should read the variable', () => {
-  const values = { 'a.b': { epoch: 'e', schema: { type: 'object' }, defaults: { foo: 1 } } }
+  const values = {
+    'a.b': { epoch: 'e', schema: { type: 'object' }, defaults: { foo: 1 } }
+  }
 
   process.env[VARIABLE] = JSON.stringify(values)
 
@@ -31,7 +33,10 @@ it('should follow the variable', () => {
 })
 
 it('should list the components by name', () => {
-  process.env[VARIABLE] = JSON.stringify({ 'b.two': { epoch: 'e', schema: {} }, 'a.one': { epoch: 'e', schema: {} } })
+  process.env[VARIABLE] = JSON.stringify({
+    'b.two': { epoch: 'e', schema: {} },
+    'a.one': { epoch: 'e', schema: {} }
+  })
 
   assert.deepStrictEqual(components(), ['a.one', 'b.two'])
 })

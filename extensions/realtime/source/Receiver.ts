@@ -1,5 +1,6 @@
 import { console, decode, run } from 'openspan'
-import { Connector, type Message } from '@toa.io/core'
+import { Connector } from '@toa.io/core'
+import type { Message } from '@toa.io/core/types'
 import type { SpanContext } from 'openspan'
 import type { Readable } from 'node:stream'
 
@@ -9,7 +10,12 @@ export class Receiver extends Connector {
   private readonly expose?: string[]
   private readonly stream: Readable
 
-  public constructor ({ event, properties, stream, expose }: {
+  public constructor({
+    event,
+    properties,
+    stream,
+    expose
+  }: {
     event: string
     properties: string[]
     stream: Readable
@@ -23,49 +29,52 @@ export class Receiver extends Connector {
     this.stream = stream
   }
 
-  public async receive (message: Message<Record<string, string>>): Promise<void> {
+  public async receive(message: Message<Record<string, string>>): Promise<void> {
     // the push continues the trace from the producer
     const telemetry = message.telemetry === undefined ? null : decode(message.telemetry)
 
-    if (telemetry === null)
-      this.process(message, telemetry)
-    else
-      run(telemetry, () => this.process(message, telemetry))
+    if (telemetry === null) this.process(message, telemetry)
+    else run(telemetry, () => this.process(message, telemetry))
   }
 
-  private process (message: Message<Record<string, string>>, telemetry: SpanContext | null): void {
+  private process(
+    message: Message<Record<string, string>>,
+    telemetry: SpanContext | null
+  ): void {
     const data = this.fit(message.payload)
 
     for (const property of this.properties) {
       const key = message.payload[property]
 
       if (key === undefined) {
-        console.debug('Event does not contain key property',
-          { property, event: this.event })
+        console.debug('Event does not contain key property', {
+          property,
+          event: this.event
+        })
 
         continue
       }
 
       if (Array.isArray(key))
         // eslint-disable-next-line max-depth
-        for (const k of key as string[])
-          this.push(k, data, telemetry)
-      else
-        this.push(key, data, telemetry)
+        for (const k of key as string[]) this.push(k, data, telemetry)
+      else this.push(key, data, telemetry)
     }
   }
 
-  private fit (payload: Record<string, string>): Record<string, string> {
-    if (this.expose === undefined)
-      return payload
+  private fit(payload: Record<string, string>): Record<string, string> {
+    if (this.expose === undefined) return payload
 
-    const entries = Object.entries(payload)
-      .filter(([key]) => this.expose!.includes(key))
+    const entries = Object.entries(payload).filter(([key]) => this.expose!.includes(key))
 
     return Object.fromEntries(entries)
   }
 
-  private push (key: string | null, data: Record<string, string>, telemetry: SpanContext | null): void {
+  private push(
+    key: string | null,
+    data: Record<string, string>,
+    telemetry: SpanContext | null
+  ): void {
     if (key === null || typeof key === 'undefined') {
       console.debug('Key is null or undefined, skipping', { key, event: this.event })
 

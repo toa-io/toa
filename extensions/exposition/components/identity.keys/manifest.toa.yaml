@@ -2,28 +2,23 @@ namespace: identity
 name: keys
 
 entity:
-  schema:
-    properties:
-      identity:
-        type: string
-      key:
-        type: string
-      label:
-        type: string
-        minLength: 1
-        maxLength: 64
-      expires:
-        type: number
-      revokedAt:
-        type: integer
-    required:
-      - identity
-      - key
-      - label
-    type: object
-  index:
+  properties:
     identity:
-      identity: asc
+      type: string
+    key:
+      type: string
+    label:
+      type: string
+      minLength: 1
+      maxLength: 64
+    expires:
+      type: number
+    revokedAt:
+      type: integer
+  required:
+    - identity
+    - key
+    - label
 
 operations:
   create:
@@ -74,9 +69,9 @@ exposition:
     auth:id: identity
     auth:role: system:identity:keys
     GET:
-      io:output: [id, label, expires, revokedAt, _created]
+      io:output: [id, label, expires, revokedAt, CREATED]
       query:
-        sort: _created:desc
+        sort: CREATED:desc
       endpoint: enumerate
     /:id:
       DELETE:

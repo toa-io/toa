@@ -1,1 +1,1 @@
-export const condition = (event) => event.state._deleted !== null
+export const condition = (event) => event.state.DELETED !== null

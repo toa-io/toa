@@ -2,7 +2,7 @@ import { console } from 'openspan'
 import { Connector, Locator } from '@toa.io/core'
 import { BATCH, DISCRETENESS, LANES, number } from './const.js'
 import type { Local } from './Local.js'
-import type { atomicity } from '@toa.io/core'
+import type { atomicity } from '@toa.io/core/types'
 
 /**
  * Makes the calls that were put off.
@@ -37,8 +37,11 @@ export class Dispatcher extends Connector {
   private scanning = false
   private closing = false
 
-  public constructor (metronome: Local, resolve: (locator: Locator) => Local,
-    atom: atomicity.Atom) {
+  public constructor(
+    metronome: Local,
+    resolve: (locator: Locator) => Local,
+    atom: atomicity.Atom
+  ) {
     super()
 
     this.metronome = metronome
@@ -50,15 +53,19 @@ export class Dispatcher extends Connector {
     this.depends(atom)
   }
 
-  protected override async open (): Promise<void> {
-    this.timer = setInterval(() => { this.tick() }, this.discreteness)
+  protected override async open(): Promise<void> {
+    this.timer = setInterval(() => {
+      this.tick()
+    }, this.discreteness)
     this.timer.unref()
 
     // a lane changing hands is when its rows become this replica's, or stop being
-    this.off = this.atom.onassigned(() => { this.adopt() })
+    this.off = this.atom.onassigned(() => {
+      this.adopt()
+    })
   }
 
-  protected override async close (): Promise<void> {
+  protected override async close(): Promise<void> {
     this.closing = true
 
     this.off?.()
@@ -72,14 +79,18 @@ export class Dispatcher extends Connector {
   }
 
   /** One scan at a time: a slow one must not have another started underneath it. */
-  private tick (): void {
+  private tick(): void {
     if (this.scanning || this.closing) return
 
     this.scanning = true
 
     void this.scan()
-      .catch((error: unknown) => { console.error('Delayed calls scan failed', { error }) })
-      .finally(() => { this.scanning = false })
+      .catch((error: unknown) => {
+        console.error('Delayed calls scan failed', { error })
+      })
+      .finally(() => {
+        this.scanning = false
+      })
   }
 
   /**
@@ -87,7 +98,7 @@ export class Dispatcher extends Connector {
    * whoever holds them now will arm them — and a scan runs at once rather than at the next
    * interval, so lanes just acquired are not left waiting.
    */
-  private adopt (): void {
+  private adopt(): void {
     // nothing owned is nothing held: what was armed under a claim this replica no longer has
     // belongs to whoever has it now, and firing it anyway is the call twice
     this.disarm(this.atom.slots(LANES) ?? [])
@@ -96,7 +107,7 @@ export class Dispatcher extends Connector {
   }
 
   /** What is armed for a lane this replica no longer holds: whoever holds it now will arm it. */
-  private disarm (lanes: number[]): void {
+  private disarm(lanes: number[]): void {
     for (const [id, { timer, lane }] of this.armed) {
       if (lanes.includes(lane)) continue
 
@@ -105,7 +116,7 @@ export class Dispatcher extends Connector {
     }
   }
 
-  private async scan (): Promise<void> {
+  private async scan(): Promise<void> {
     const lanes = this.atom.slots(LANES)
 
     if (lanes === null || lanes.length === 0) return
@@ -115,14 +126,14 @@ export class Dispatcher extends Connector {
     const now = Date.now()
     const until = now + this.discreteness
 
-    const rows = await this.metronome.invoke('enumerate', {
+    const rows = (await this.metronome.invoke('enumerate', {
       query: {
         // a call nothing was running to make in time has expired, and is simply not read
         criteria: `lane=in=(${lanes.join(',')});due<${until};expires>${now}`,
         sort: ['due:asc'],
         limit: BATCH
       }
-    }) as Row[]
+    })) as Row[]
 
     for (const row of rows) this.arm(row)
   }
@@ -131,10 +142,15 @@ export class Dispatcher extends Connector {
    * A row already armed is left alone: a scan reads what it read before, because a row stays
    * until its call has been made.
    */
-  private arm (row: Row): void {
+  private arm(row: Row): void {
     if (this.armed.has(row.id) || this.called.has(row.id)) return
 
-    const timer = setTimeout(() => { void this.dispatch(row) }, Math.max(row.due - Date.now(), 0))
+    const timer = setTimeout(
+      () => {
+        void this.dispatch(row)
+      },
+      Math.max(row.due - Date.now(), 0)
+    )
 
     timer.unref()
     this.armed.set(row.id, { timer, lane: row.lane })
@@ -145,7 +161,7 @@ export class Dispatcher extends Connector {
    * makes the call twice, and the other order would lose it. It travels as a task, so the
    * broker holds it if the target is not there to take it.
    */
-  private async dispatch (row: Row): Promise<void> {
+  private async dispatch(row: Row): Promise<void> {
     if (this.closing) {
       this.armed.delete(row.id)
 
@@ -170,20 +186,27 @@ export class Dispatcher extends Connector {
      *
      * Skipped, as a pulse skips: reported, and the row settled on the attempt either way.
      */
-    await local.invoke(endpoint, { input: null, ...row.request, task: true })
+    await local
+      .invoke(endpoint, { input: null, ...row.request, task: true })
       .catch((error: unknown) => {
-        console.error('Delayed call failed', { endpoint: row.endpoint, id: row.id, error })
+        console.error('Delayed call failed', {
+          endpoint: row.endpoint,
+          id: row.id,
+          error
+        })
       })
       // held for as long as the call is, so `armed` answers what this replica has in hand
       // rather than what it has a timer for
-      .finally(() => { this.armed.delete(row.id) })
+      .finally(() => {
+        this.armed.delete(row.id)
+      })
   }
 
   /**
    * A remote is resolved once per target and held: it opens a connection, and one nothing
    * depends on would outlive the dispatcher that made it.
    */
-  private target (locator: Locator): Local {
+  private target(locator: Locator): Local {
     const local = this.resolve(locator)
 
     if (!this.targets.has(local)) {
@@ -195,7 +218,7 @@ export class Dispatcher extends Connector {
   }
 
   /** One write for many rows, which is why the ids are held rather than settled one by one. */
-  private async settle (): Promise<void> {
+  private async settle(): Promise<void> {
     if (this.called.size === 0) return
 
     const ids = [...this.called]

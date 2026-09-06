@@ -5,7 +5,7 @@ import { createHash } from 'node:crypto'
  * say which: authorizing again replaces what is there rather than leaving another row, and
  * revoking has one thing to revoke.
  */
-export function identify (authority: string, identity: string, client: string): string {
+export function identify(authority: string, identity: string, client: string): string {
   return createHash('sha256')
     .update(JSON.stringify([authority, identity, client]))
     .digest('hex')

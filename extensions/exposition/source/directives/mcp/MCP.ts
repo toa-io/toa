@@ -12,29 +12,31 @@ export class MCP implements DirectiveFamily<Tool> {
   public readonly mandatory = false
 
   /** What this method is published as, which is what the nearest declaration says. */
-  public static published (directives: Tool[] | undefined): Tool | null {
+  public static published(directives: Tool[] | undefined): Tool | null {
     return directives?.[0] ?? null
   }
 
   // eslint-disable-next-line max-params
-  public create (name: string, value: unknown, _: unknown, route: string): Tool {
+  public create(name: string, value: unknown, _: unknown, route: string): Tool {
     assert.ok(name === 'tool', `Unknown directive: mcp:${name}`)
 
     return new Tool(value, route)
   }
 
   /** What the route states this method is, which is the only thing that states it. */
-  public explain (directives: Tool[], _: Context,
-    introspection: Introspection): Introspection {
+  public explain(
+    directives: Tool[],
+    _: Context,
+    introspection: Introspection
+  ): Introspection {
     const tool = MCP.published(directives)
 
-    if (tool === null)
-      return introspection
+    if (tool === null) return introspection
 
     return {
       ...introspection,
       description: tool.description,
-      ...tool.title === undefined ? {} : { title: tool.title }
+      ...(tool.title === undefined ? {} : { title: tool.title })
     }
   }
 }

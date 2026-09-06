@@ -10,7 +10,7 @@ import { BANNER, collector, imports } from './lib.js'
  *   what every component of the Context has on its context
  * @returns {string}
  */
-export function module (context, components, shared = { types: {}, imports: {} }) {
+export function module(context, components, shared = { types: {}, imports: {} }) {
   const { importing, required } = collector()
 
   for (const [from, names] of Object.entries(shared.imports)) importing(from, ...names)
@@ -47,7 +47,7 @@ ${common}
  * unshifts `default` for a two-segment path, so a component of the default namespace is
  * reached both ways.
  */
-function remote (components) {
+function remote(components) {
   const namespaces = {}
 
   for (const { manifest } of components) {
@@ -65,7 +65,8 @@ function remote (components) {
   for (const namespace of Object.keys(namespaces).sort()) {
     if (namespace === 'default') continue
 
-    const members = Object.keys(namespaces[namespace]).sort()
+    const members = Object.keys(namespaces[namespace])
+      .sort()
       .map((name) => `    ${name}: ${namespaces[namespace][name]}`)
 
     lines.push(`  ${namespace}: {\n${members.join('\n')}\n  }`)
@@ -76,4 +77,7 @@ function remote (components) {
 
 /** A component's name in this module, unique across namespaces. */
 const alias = (locator) =>
-  locator.id.split(/[.\-_]/).map((part) => part[0].toUpperCase() + part.slice(1)).join('')
+  locator.id
+    .split(/[.\-_]/)
+    .map((part) => part[0].toUpperCase() + part.slice(1))
+    .join('')

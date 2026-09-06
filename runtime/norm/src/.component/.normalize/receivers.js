@@ -1,4 +1,4 @@
-export function receivers (component) {
+export function receivers(component) {
   if (component.receivers === undefined) return
 
   const receivers = component.receivers
@@ -6,6 +6,9 @@ export function receivers (component) {
   for (const [key, value] of Object.entries(receivers)) {
     const segments = key.split('.')
     const source = value.source ?? 'default'
+
+    value.conditioned ??= false
+    value.adaptive ??= false
 
     if (source !== 'default') continue
     if (segments.length === 3) continue // already with a namespace

@@ -4,14 +4,13 @@ name: source
 entity:
   associated: true
   storage: null
-  schema:
-    properties:
-      value:
-        type: integer
-        default: 0
-      secret:
-        type: string
-    type: object
+  properties:
+    value:
+      type: integer
+    secret:
+      type: string
+  blank:
+    value: 0
 
 operations:
   transit:

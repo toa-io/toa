@@ -3,10 +3,18 @@ import { rename } from './rename.js'
 export const options = (options) => {
   const result = {}
 
-  if (options.omit) { result.skip = options.omit }
-  if (options.limit) { result.limit = options.limit }
-  if (options.sort) { result.sort = sort(options.sort) }
-  if (options.projection) { result.projection = projection(options.projection) }
+  if (options.omit) {
+    result.skip = options.omit
+  }
+  if (options.limit) {
+    result.limit = options.limit
+  }
+  if (options.sort) {
+    result.sort = sort(options.sort)
+  }
+  if (options.projection) {
+    result.projection = projection(options.projection)
+  }
 
   return result
 }
@@ -18,7 +26,9 @@ const sort = (sort) => {
 const projection = (projection) => {
   const result = {}
 
-  for (const property of projection) { result[rename(property)] = 1 }
+  for (const property of projection) {
+    result[rename(property)] = 1
+  }
 
   return result
 }

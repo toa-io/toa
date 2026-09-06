@@ -7,7 +7,7 @@ export class Test extends Temporary {
     { name: 'PASSWORD' }
   ]
 
-  public constructor (options: TemporaryOptions) {
+  public constructor(options: TemporaryOptions) {
     super(options)
   }
 }

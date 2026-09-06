@@ -5,11 +5,14 @@ export const events = async (component) => {
 
   for (const event of Object.values(component.events)) {
     if (event.binding === undefined) event.binding = binding
+
+    event.conditioned ??= false
+    event.subjective ??= false
   }
 }
 
 /** The first binding that carries events, which only its module can say. */
-async function asynchronous (bindings) {
+async function asynchronous(bindings) {
   for (const binding of bindings) {
     const { properties } = await import(binding)
 

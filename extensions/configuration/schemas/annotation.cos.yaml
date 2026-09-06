@@ -7,7 +7,7 @@
 properties:
   resources:
     # `null` deploys the service without any, which every deployment has to state one way
-    # or the other — see `migrations/263.md`.
+    # or the other — see `migrations/262.md`.
     type: object
     nullable: true
     properties:

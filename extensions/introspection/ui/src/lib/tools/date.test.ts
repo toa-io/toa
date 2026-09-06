@@ -2,7 +2,9 @@ import { describe, it, expect, vi, afterEach } from 'vitest'
 import { date, formatISODuration } from './date'
 
 describe('date', () => {
-  afterEach(() => { vi.useRealTimers() })
+  afterEach(() => {
+    vi.useRealTimers()
+  })
 
   it('carries the year only outside the current one', () => {
     vi.useFakeTimers().setSystemTime(new Date('2026-08-05'))

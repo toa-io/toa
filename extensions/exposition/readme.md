@@ -130,18 +130,18 @@ exposition:
     example: the.example.com
 ```
 
-| Option        | Description                                                                                                       |
-|---------------|-------------------------------------------------------------------------------------------------------------------|
-| `auhorities`  | Mapping of authority identifiers to domain names. See [Authorities](documentation/authorities.md).                |
-| `class`       | Ingress class.                                                                                                    |
-| `annotations` | Ingress annotations.                                                                                              |
-| `debug`       | Output server errors. Default `false`.                                                                            |
-| `ip`          | Header the client address is read from. See [Client address](documentation/ip.md).                              |
+| Option        | Description                                                                                                                   |
+| ------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| `auhorities`  | Mapping of authority identifiers to domain names. See [Authorities](documentation/authorities.md).                            |
+| `class`       | Ingress class.                                                                                                                |
+| `annotations` | Ingress annotations.                                                                                                          |
+| `debug`       | Output server errors. Default `false`.                                                                                        |
+| `ip`          | Header the client address is read from. See [Client address](documentation/ip.md).                                            |
 | `bouncer`     | Meter of failed authentications per address. See [Identity authentication](documentation/identity.md#failed-authentications). |
-| `oauth`       | Authorization server exposed to OAuth clients. See [OAuth](documentation/oauth.md).                               |
-| `protocol`    | `h1` or `h2c`. See [Protocol](documentation/protocol.md).                                                         |
-| `rpc`         | JSON-RPC at `/.rpc`; none is served without it. See [JSON-RPC](documentation/rpc.md).                             |
-| `mcp`         | MCP at `/.mcp`; none is served without it. See [MCP](documentation/mcp.md).                                       |
+| `oauth`       | Authorization server exposed to OAuth clients. See [OAuth](documentation/oauth.md).                                           |
+| `protocol`    | `h1` or `h2c`. See [Protocol](documentation/protocol.md).                                                                     |
+| `rpc`         | JSON-RPC at `/.rpc`; none is served without it. See [JSON-RPC](documentation/rpc.md).                                         |
+| `mcp`         | MCP at `/.mcp`; none is served without it. See [MCP](documentation/mcp.md).                                                   |
 
 ### Observability
 

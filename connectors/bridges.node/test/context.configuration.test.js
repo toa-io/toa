@@ -1,4 +1,4 @@
-import { it, beforeEach, mock } from 'node:test'
+import { it, beforeEach } from 'node:test'
 import assert from 'node:assert/strict'
 
 import * as fixtures from './context.configuration.fixtures.js'
@@ -23,7 +23,7 @@ it('should expose values', () => {
   assert.deepStrictEqual(context.configuration.foo, fixtures.configuration.foo)
 })
 
-function resetCalls (target = [assert, fixtures], seen = new Set()) {
+function resetCalls(target = [assert, fixtures], seen = new Set()) {
   if (target === null || typeof target !== 'object' || seen.has(target)) return
 
   seen.add(target)

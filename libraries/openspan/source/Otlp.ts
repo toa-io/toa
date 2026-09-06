@@ -29,7 +29,7 @@ export class Otlp implements Exporter {
   private suspendedUntil = 0
   private reported = false
 
-  public constructor (options: OtlpOptions) {
+  public constructor(options: OtlpOptions) {
     const url = new URL(options.endpoint.replace(/\/$/, '') + '/v1/traces')
 
     this.url = url.href
@@ -50,30 +50,26 @@ export class Otlp implements Exporter {
     process.once('beforeExit', () => void this.flush())
   }
 
-  private get suspended (): boolean {
+  private get suspended(): boolean {
     return Date.now() < this.suspendedUntil
   }
 
-  public export (span: Span): void {
-    if (this.suspended)
-      return
+  public export(span: Span): void {
+    if (this.suspended) return
 
-    if (this.queue.length >= QUEUE)
-      this.queue.shift() // drop the oldest
+    if (this.queue.length >= QUEUE) this.queue.shift() // drop the oldest
 
     this.queue.push(span)
 
-    if (this.queue.length >= BATCH)
-      void this.flush()
-    else
-      this.timer ??= setTimeout(() => void this.flush(), INTERVAL).unref()
+    if (this.queue.length >= BATCH) void this.flush()
+    else this.timer ??= setTimeout(() => void this.flush(), INTERVAL).unref()
   }
 
   /**
    * Never rejects and is bounded by a single request timeout: an unavailable endpoint
    * suspends the exporter, dropping whatever is left in the queue.
    */
-  public async flush (): Promise<void> {
+  public async flush(): Promise<void> {
     if (this.timer !== null) {
       clearTimeout(this.timer)
       this.timer = null
@@ -84,7 +80,7 @@ export class Otlp implements Exporter {
     await this.sending
   }
 
-  private async send (): Promise<void> {
+  private async send(): Promise<void> {
     while (this.queue.length > 0) {
       if (this.suspended) {
         this.queue = []
@@ -97,7 +93,7 @@ export class Otlp implements Exporter {
   }
 
   // never rejects, as a rejection would break the `sending` chain and crash the process
-  private async post (spans: Span[]): Promise<void> {
+  private async post(spans: Span[]): Promise<void> {
     let body: string
 
     try {
@@ -112,10 +108,8 @@ export class Otlp implements Exporter {
     try {
       const status = await this.transmit(body)
 
-      if (status >= 200 && status < 300)
-        this.resume()
-      else
-        this.suspend('OTLP export rejected', { status, spans: spans.length })
+      if (status >= 200 && status < 300) this.resume()
+      else this.suspend('OTLP export rejected', { status, spans: spans.length })
     } catch (error) {
       this.suspend('OTLP export failed', error as Error)
     }
@@ -126,7 +120,7 @@ export class Otlp implements Exporter {
    * aborting a `fetch` does not: a connection attempt to an unroutable endpoint keeps
    * the process alive until the OS gives up on it, delaying the shutdown.
    */
-  private async transmit (body: string): Promise<number> {
+  private async transmit(body: string): Promise<number> {
     return await new Promise<number>((resolve, reject) => {
       const headers = { ...this.headers, 'content-length': Buffer.byteLength(body) }
 
@@ -136,8 +130,10 @@ export class Otlp implements Exporter {
         response.resume() // the socket is released once the response is consumed
       })
 
-      const timer = setTimeout(() => request.destroy(new Error('OTLP request timed out')),
-        this.timeout)
+      const timer = setTimeout(
+        () => request.destroy(new Error('OTLP request timed out')),
+        this.timeout
+      )
 
       timer.unref()
 
@@ -147,38 +143,34 @@ export class Otlp implements Exporter {
     })
   }
 
-  private suspend (message: string, attributes: Error | object): void {
+  private suspend(message: string, attributes: Error | object): void {
     this.queue = []
     this.suspendedUntil = Date.now() + this.cooldown
 
-    if (this.reported)
-      return
+    if (this.reported) return
 
     this.reported = true
 
     console.warn(`${message}, spans are dropped until the endpoint recovers`, attributes)
   }
 
-  private resume (): void {
-    if (!this.reported)
-      return
+  private resume(): void {
+    if (!this.reported) return
 
     this.reported = false
 
     console.info('OTLP export recovered', { endpoint: this.url })
   }
 
-  private request (spans: Span[]): object {
+  private request(spans: Span[]): object {
     const services = new Map<string, Span[]>()
 
     for (const span of spans) {
       const service = span.service ?? this.service
       const group = services.get(service)
 
-      if (group === undefined)
-        services.set(service, [span])
-      else
-        group.push(span)
+      if (group === undefined) services.set(service, [span])
+      else group.push(span)
     }
 
     return {
@@ -186,45 +178,52 @@ export class Otlp implements Exporter {
         resource: {
           attributes: attributes({ 'service.name': service })
         },
-        scopeSpans: [{
-          scope: { name: 'openspan' },
-          spans: spans.map((span) => this.span(span))
-        }]
+        scopeSpans: [
+          {
+            scope: { name: 'openspan' },
+            spans: spans.map((span) => this.span(span))
+          }
+        ]
       }))
     }
   }
 
-  private span (span: Span): object {
+  private span(span: Span): object {
     return {
       traceId: span.traceId,
       spanId: span.spanId,
-      ...span.parentId === undefined ? {} : { parentSpanId: span.parentId },
+      ...(span.parentId === undefined ? {} : { parentSpanId: span.parentId }),
       name: span.name,
       kind: KINDS[span.kind],
       startTimeUnixNano: (BigInt(span.time) * 1_000_000n).toString(),
-      endTimeUnixNano: (BigInt(span.time) * 1_000_000n +
-        BigInt(Math.round(span.duration * 1_000_000))).toString(),
+      endTimeUnixNano: (
+        BigInt(span.time) * 1_000_000n +
+        BigInt(Math.round(span.duration * 1_000_000))
+      ).toString(),
       attributes: attributes({ ...span.scope, ...span.attributes }),
       status: span.status === 'error' ? { code: 2 } : {}
     }
   }
 }
 
-function attributes (values: Record<string, unknown>): object[] {
+function attributes(values: Record<string, unknown>): object[] {
   return Object.entries(values)
     .filter(([, value]) => value !== undefined)
     .map(([key, value]) => ({ key, value: attribute(value) }))
 }
 
-function attribute (value: unknown): object {
+function attribute(value: unknown): object {
   switch (typeof value) {
-    case 'string': return { stringValue: value }
-    case 'boolean': return { boolValue: value }
+    case 'string':
+      return { stringValue: value }
+    case 'boolean':
+      return { boolValue: value }
     case 'number':
       return Number.isInteger(value)
         ? { intValue: value.toString() }
         : { doubleValue: value }
-    default: return { stringValue: JSON.stringify(value) }
+    default:
+      return { stringValue: JSON.stringify(value) }
   }
 }
 

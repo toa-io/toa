@@ -4,9 +4,14 @@ import { resolve } from 'node:path'
 import tsflow from 'cucumber-tsflow'
 
 import { UI } from '../../source/UI.js'
-import { UI_PORT } from '../../source/const.js'
 
 const { after, binding, given, then, when } = tsflow
+
+/**
+ * Not `UI_PORT`, which a deployment serves the page on: an application built on Toa is served
+ * on this machine too, and its own explorer holds that one. See CONTRIBUTING.md.
+ */
+const PORT = 31002
 
 /**
  * The scenarios are about the server, not about the page: it is pointed at a fixture
@@ -18,40 +23,42 @@ export class Site {
   private response: Response | null = null
 
   @given('the UI is published')
-  public async publish (): Promise<void> {
-    this.server = new UI(UI_PORT, resolve(import.meta.dirname, '..', 'site'))
+  public async publish(): Promise<void> {
+    this.server = new UI(PORT, resolve(import.meta.dirname, '..', 'site'))
 
     await this.server.connect()
   }
 
   @when('{string} is requested')
-  public async request (path: string): Promise<void> {
+  public async request(path: string): Promise<void> {
     this.response = await get(path)
   }
 
   @then('the status is {int}')
-  public statusIs (status: number): void {
+  public statusIs(status: number): void {
     assert.equal(this.response?.status, status)
   }
 
   @then('the body contains {string}')
-  public bodyContains (text: string): void {
-    assert.ok(this.response?.body.includes(text),
-      `Expected the body to contain '${text}', got '${this.response?.body}'`)
+  public bodyContains(text: string): void {
+    assert.ok(
+      this.response?.body.includes(text),
+      `Expected the body to contain '${text}', got '${this.response?.body}'`
+    )
   }
 
   @then('the body is empty')
-  public bodyIsEmpty (): void {
+  public bodyIsEmpty(): void {
     assert.equal(this.response?.body, '')
   }
 
   @then('the {string} header is {string}')
-  public headerIs (name: string, value: string): void {
+  public headerIs(name: string, value: string): void {
     assert.equal(this.response?.headers[name], value)
   }
 
   @after()
-  public async shutdown (): Promise<void> {
+  public async shutdown(): Promise<void> {
     await this.server?.disconnect()
 
     this.server = null
@@ -63,10 +70,10 @@ export class Site {
  * Raw `http`, not `fetch`: the URL parser normalizes `%2e%2e` away, and one of the
  * scenarios is about exactly that segment reaching the server.
  */
-async function get (path: string): Promise<Response> {
+async function get(path: string): Promise<Response> {
   return await new Promise((resolve, reject) => {
     // `agent: false` — a keep-alive socket outlives the scenario that opened it
-    const request = http.get({ port: UI_PORT, path, agent: false }, (response) => {
+    const request = http.get({ port: PORT, path, agent: false }, (response) => {
       let body = ''
 
       response.setEncoding('utf8')

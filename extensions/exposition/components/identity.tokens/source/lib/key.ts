@@ -1,4 +1,4 @@
-export function jweKey (value: string): Uint8Array {
+export function jweKey(value: string): Uint8Array {
   const key = Buffer.from(value, 'base64url')
 
   if (key.length !== 32 || key.toString('base64url') !== value)

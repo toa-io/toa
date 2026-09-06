@@ -5,7 +5,7 @@
 Structured logs can be written using the `logs` Context Aspect.
 
 ```javascript
-async function computation (input, context) {
+async function computation(input, context) {
   context.logs.info('Hello, world', { foo: 'bar' })
 }
 ```
@@ -20,15 +20,15 @@ severity levels, with the following signature:
 Logs are formatted as JSON and written to stdout or stderr. The log entry format is:
 
 ```yaml
-time: string        # ISO 8601 timestamp
-severity: string    # TRACE, DEBUG, INFO, WARN, ERROR
+time: string # ISO 8601 timestamp
+severity: string # TRACE, DEBUG, INFO, WARN, ERROR
 message: string
 attributes?: object
 context:
   namespace: string
   component: string
   operation: string
-trace_id?: string   # see Tracing
+trace_id?: string # see Tracing
 span_id?: string
 ```
 
@@ -44,7 +44,7 @@ Logs can be configured using `telemetry` Context Annotation.
 
 telemetry:
   logs:
-    level: debug  # trace < debug < info < warn < error
+    level: debug # trace < debug < info < warn < error
     level@production: info
 ```
 
@@ -62,7 +62,7 @@ telemetry:
 
 ## Tracing
 
-Each operation invocation runs within a *span*.
+Each operation invocation runs within a _span_.
 If the incoming request carries a trace context ([W3C Trace Context](https://www.w3.org/TR/trace-context/)),
 the span continues the trace, otherwise a new trace starts.
 All log entries written during the invocation are automatically stamped with `trace_id` and
@@ -72,12 +72,12 @@ When a span completes, an entry with the `TRACE` severity is written with the sp
 message and the following additional fields:
 
 ```yaml
-trace_id: string   # 32 hex characters, shared by all spans and logs of the trace
-span_id: string    # 16 hex characters
+trace_id: string # 32 hex characters, shared by all spans and logs of the trace
+span_id: string # 16 hex characters
 parent_id?: string # span_id of the enclosing span
-duration: number   # milliseconds
-kind?: string      # server, client, producer, consumer; internal when omitted
-status?: error     # present if an exception was thrown
+duration: number # milliseconds
+kind?: string # server, client, producer, consumer; internal when omitted
+status?: error # present if an exception was thrown
 ```
 
 Remote calls produce a `client`/`server` span pair: the gap between their durations
@@ -115,7 +115,7 @@ environments). Spans are executed regardless of the log level.
 Sub-steps of an operation can be measured using the `span` Context Aspect:
 
 ```javascript
-async function computation (input, context) {
+async function computation(input, context) {
   const rate = await context.span('fetch rate', () => fetch(RATES_URL))
 
   return input.amount * rate
@@ -140,7 +140,7 @@ Spans can be nested: spans created and logs written inside `task` are linked to 
 span.
 
 ```javascript
-async function computation (input, context) {
+async function computation(input, context) {
   return context.span('convert', { currency: input.currency }, async () => {
     const rate = await context.span('fetch rate', () => fetch(RATES_URL))
 
@@ -163,8 +163,8 @@ context: log entries carry `trace_id`, only span entries are not written.
 
 telemetry:
   traces:
-    sample: 0.1  # probability of recording a trace, 0..1, defaults to 1
-    rate: 5      # maximum recorded traces per second per process, unlimited when omitted
+    sample: 0.1 # probability of recording a trace, 0..1, defaults to 1
+    rate: 5 # maximum recorded traces per second per process, unlimited when omitted
 ```
 
 - `sample: 0` disables recording entirely, `1` records every trace.
@@ -172,12 +172,12 @@ telemetry:
   to the traffic, while `rate` sets a hard cap (token bucket). It may be fractional:
   `0.5` is one trace per 2 seconds.
 
-When both are set, a trace is recorded if the `sample` lottery passes *and* the rate limit
+When both are set, a trace is recorded if the `sample` lottery passes _and_ the rate limit
 is not exceeded.
 
 ### Exporting
 
-Recorded spans are passed to a set of *exporters*:
+Recorded spans are passed to a set of _exporters_:
 
 - `console` — writes spans as `TRACE` log entries to stdout (requires the `trace` log level,
   the default on local environments)
@@ -196,9 +196,9 @@ telemetry:
     exporters:
       console: ~
       otlp:
-        endpoint: http://tempo:4318  # POSTs to {endpoint}/v1/traces
-        timeout: 5000                # request timeout, milliseconds
-        cooldown: 30000              # how long to drop spans for after a failed export
+        endpoint: http://tempo:4318 # POSTs to {endpoint}/v1/traces
+        timeout: 5000 # request timeout, milliseconds
+        cooldown: 30000 # how long to drop spans for after a failed export
 ```
 
 When the `exporters` key is omitted, spans are exported to the console.
@@ -234,7 +234,9 @@ Logs are not comments or documentation, nor are they a replacement for them.
 :-1: Don't:
 
 ```javascript
-context.logs.error('Failed to send the email, please check the email server configuration')
+context.logs.error(
+  'Failed to send the email, please check the email server configuration'
+)
 ```
 
 :+1: Do:

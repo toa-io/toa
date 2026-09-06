@@ -84,13 +84,13 @@ it('should emit event', async () => {
 class Subscriber extends Connector {
   #handler
 
-  constructor (handler) {
+  constructor(handler) {
     super()
 
     this.#handler = handler
   }
 
-  async receive (message) {
+  async receive(message) {
     this.#handler(message.payload)
   }
 }

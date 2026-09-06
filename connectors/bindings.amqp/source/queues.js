@@ -1,7 +1,7 @@
 import { concat } from '@toa.io/generic'
 
 /**
- * @param {toa.core.Locator} locator
+ * @param {import('@toa.io/core').Locator} locator
  * @param {string} endpoint
  * @returns {string}
  */

@@ -7,7 +7,7 @@ export const nodes = collection<Node>({
   values: values<Node>(),
   persist: 'introspection:nodes',
   bind: account,
-  stale: true,
+  stale: true
 })
 
 export const edges = collection<Edge>({
@@ -15,7 +15,7 @@ export const edges = collection<Edge>({
   values: values<Edge>(),
   persist: 'introspection:edges',
   bind: account,
-  stale: true,
+  stale: true
 })
 
 export type Node = origin.Node

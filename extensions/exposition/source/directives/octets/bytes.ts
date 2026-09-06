@@ -1,6 +1,6 @@
 import assert from 'node:assert'
 
-export function toBytes (input: string): number {
+export function toBytes(input: string): number {
   const match = RX.exec(input)
 
   assert.ok(match !== null, `Invalid bytes format: ${input}`)

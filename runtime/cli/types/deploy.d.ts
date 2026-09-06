@@ -1,5 +1,4 @@
 declare namespace toa.cli.deploy {
-
   interface Arguments {
     path: string
     environment?: string

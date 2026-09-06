@@ -1,0 +1,13 @@
+- index:
+    name: unique_authority_username
+    keys:
+      authority: asc
+      username: asc
+    unique: true
+    partial:
+      DELETED: null
+- index:
+    name: index_username
+    keys:
+      authority: asc
+      username: asc

@@ -11,7 +11,7 @@
 
   const copy = $derived($dict.credentials.passkeys)
   const auth = $derived(resolve(passkey.aid))
-  const meta = $derived(copy.meta(date(passkey._created, $locale), date(passkey._updated, $locale)))
+  const meta = $derived(copy.meta(date(passkey.CREATED, $locale), date(passkey.UPDATED, $locale)))
 </script>
 
 <Item.Root>

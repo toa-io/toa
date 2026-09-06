@@ -7,8 +7,8 @@ import * as boot from './index.js'
  * static check that keeps the common case free of a transaction.
  *
  * @param {toa.norm.Component} manifest
- * @param {toa.core.Storage} [storage]
- * @param {toa.core.Emission} [emission]
+ * @param {import('@toa.io/core/types').storages.Storage} [storage]
+ * @param {import('@toa.io/core').Emission} [emission]
  */
 export const outbox = (manifest, storage, emission) => {
   if (emission === undefined) return

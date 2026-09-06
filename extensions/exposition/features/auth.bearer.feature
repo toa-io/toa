@@ -87,7 +87,7 @@ Feature: More than one provider claims Bearer
     Given the `identity.federation` configuration:
       """yaml
       trust:
-        - iss: http://localhost:44444
+        - iss: http://localhost:31005
           aud: test
       """
     And the IDP token for User is issued

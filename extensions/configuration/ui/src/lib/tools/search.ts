@@ -10,10 +10,9 @@
 export function search<T>(
   items: T[],
   search: string | undefined,
-  stringify: (item: T) => string | null | undefined = JSON.stringify,
+  stringify: (item: T) => string | null | undefined = JSON.stringify
 ): T[] {
-  if (search === undefined || search === '')
-    return items
+  if (search === undefined || search === '') return items
 
   const lowercase = search.toLowerCase()
 

@@ -3,16 +3,19 @@ import { load as parse } from 'js-yaml'
 import { describe } from '@toa.io/extensions.configuration'
 import { load } from './.workspace/components/index.js'
 
-Given('the configuration of {component} is deployed',
+Given(
+  'the configuration of {component} is deployed',
   /**
    * @param {string} reference
    * @this {toa.features.Context}
    */
   async function (reference) {
     await deploy.call(this, reference)
-  })
+  }
+)
 
-Given('the configuration of {component} is deployed with:',
+Given(
+  'the configuration of {component} is deployed with:',
   /**
    * @param {string} reference
    * @param {string} yaml
@@ -20,7 +23,8 @@ Given('the configuration of {component} is deployed with:',
    */
   async function (reference, yaml) {
     await deploy.call(this, reference, parse(yaml))
-  })
+  }
+)
 
 /**
  * What the deployment would tell the values service about the component: its epoch, its
@@ -30,9 +34,13 @@ Given('the configuration of {component} is deployed with:',
  * @param {object} [values]
  * @this {toa.features.Context}
  */
-async function deploy (reference, values) {
+async function deploy(reference, values) {
   const manifest = await load(reference)
-  const instance = { locator: manifest.locator, manifest: manifest.extensions[REFERENCE], component: manifest }
+  const instance = {
+    locator: manifest.locator,
+    manifest: manifest.extensions[REFERENCE],
+    component: manifest
+  }
   const annotation = values === undefined ? {} : { [manifest.locator.id]: values }
   const current = JSON.parse(process.env[VARIABLE] ?? '{}')
   const map = { ...current, ...describe([instance], annotation) }

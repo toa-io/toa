@@ -18,7 +18,7 @@ export class Communication extends Connector {
    * @param {string[]} references the brokers this communication is held over
    * @param {() => void} [evict] tells whoever caches this one that it is going
    */
-  constructor (references, evict = noop) {
+  constructor(references, evict = noop) {
     super()
 
     this.#references = references
@@ -26,11 +26,11 @@ export class Communication extends Connector {
   }
 
   /** Whether this communication has stopped consuming, for good. */
-  get sealed () {
+  get sealed() {
     return this.#sealed
   }
 
-  async open () {
+  async open() {
     this.#io = await assert(...this.#references)
 
     // `assert` shares one connection per broker while handing out an IO of its own,
@@ -51,20 +51,20 @@ export class Communication extends Connector {
    * for its own disconnection to reach this one: a dependency is torn down after its
    * dependant, so by then it would be too late.
    */
-  async seal () {
+  async seal() {
     this.#sealed = true
 
     await this.#io?.seal()
   }
 
-  async close () {
+  async close() {
     // nobody may be handed a communication that is on its way out
     this.#evict()
 
     await this.seal()
   }
 
-  async dispose () {
+  async dispose() {
     this.#evict()
 
     // the duty of reporting this broker set passes to whoever holds it next
@@ -75,33 +75,33 @@ export class Communication extends Connector {
     await this.#io?.close()
   }
 
-  async reply (queue, process) {
+  async reply(queue, process) {
     this.#consumable('reply to')
 
     await this.#io.reply(queue, process)
   }
 
-  async request (queue, request) {
+  async request(queue, request) {
     return this.#io.request(queue, request)
   }
 
-  async emit (exchange, message, properties) {
+  async emit(exchange, message, properties) {
     await this.#io.emit(exchange, message, properties)
   }
 
-  async consume (exchange, group, consumer) {
+  async consume(exchange, group, consumer) {
     this.#consumable('consume')
 
     await this.#io.consume(exchange, group, consumer)
   }
 
-  async process (queue, consumer) {
+  async process(queue, consumer) {
     this.#consumable('process')
 
     await this.#io.process(queue, consumer)
   }
 
-  async enqueue (queue, message) {
+  async enqueue(queue, message) {
     await this.#io.enqueue(queue, message)
   }
 
@@ -111,23 +111,26 @@ export class Communication extends Connector {
    *
    * @param {string} operation
    */
-  #consumable (operation) {
+  #consumable(operation) {
     if (this.#sealed)
-      throw new Error(`AMQP communication is sealed and cannot ${operation} '${this.#references.join()}'`)
+      throw new Error(
+        `AMQP communication is sealed and cannot ${operation} '${this.#references.join()}'`
+      )
   }
 
   /**
    * Without this, an undeliverable message, a discarded request, a shard
    * dropping out or a failed reconnect leave no trace at all.
    */
-  #diagnose () {
+  #diagnose() {
     this.#io.diagnose('return', (type, message, shard) =>
       console.error('AMQP message returned', {
         type,
         queue: message.fields?.routingKey,
         correlationId: message.properties?.correlationId,
         shard
-      }))
+      })
+    )
 
     this.#io.diagnose('discard', (type, message, exception, shard) =>
       console.error('AMQP message discarded', {
@@ -135,42 +138,48 @@ export class Communication extends Connector {
         queue: message.fields?.routingKey,
         message: exception?.message,
         shard
-      }))
+      })
+    )
 
     this.#io.diagnose('remove', (type, shard) =>
-      console.warn('AMQP shard removed', { type, shard }))
+      console.warn('AMQP shard removed', { type, shard })
+    )
 
     this.#io.diagnose('lost', (type, shard) =>
-      console.warn('AMQP shard lost', { type, shard }))
+      console.warn('AMQP shard lost', { type, shard })
+    )
 
     this.#io.diagnose('recover', (type, shard) =>
-      console.info('AMQP channel recovered', { type, shard }))
+      console.info('AMQP channel recovered', { type, shard })
+    )
 
     this.#io.diagnose('flow', (type, shard) =>
-      console.warn('AMQP back pressure', { type, shard }))
+      console.warn('AMQP back pressure', { type, shard })
+    )
 
     this.#io.diagnose('drain', (type, shard) =>
-      console.info('AMQP back pressure released', { type, shard }))
+      console.info('AMQP back pressure released', { type, shard })
+    )
 
     this.#io.diagnose('close', (error, shard) => {
-      if (error === undefined)
-        console.debug('AMQP connection closed', { shard })
-      else
-        console.warn('AMQP connection lost', { message: error.message, shard })
+      if (error === undefined) console.debug('AMQP connection closed', { shard })
+      else console.warn('AMQP connection lost', { message: error.message, shard })
     })
 
     this.#io.diagnose('error', (error, shard) =>
-      console.warn('AMQP connection failed', { message: error.message, shard }))
+      console.warn('AMQP connection failed', { message: error.message, shard })
+    )
 
     this.#io.diagnose('reconnect', (shard) =>
-      console.warn('AMQP reconnecting', { shard }))
+      console.warn('AMQP reconnecting', { shard })
+    )
 
     // not transient and not self-healing: every later channel creation fails too
     this.#io.diagnose('exhausted', (limit, shard) =>
-      console.error('AMQP channels exhausted', { limit, shard }))
+      console.error('AMQP channels exhausted', { limit, shard })
+    )
 
-    this.#io.diagnose('open', (shard) =>
-      console.debug('AMQP connection open', { shard }))
+    this.#io.diagnose('open', (shard) => console.debug('AMQP connection open', { shard }))
   }
 }
 
@@ -182,4 +191,4 @@ export class Communication extends Connector {
  */
 const diagnosed = new Map()
 
-function noop () {}
+function noop() {}

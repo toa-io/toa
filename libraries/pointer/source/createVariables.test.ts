@@ -15,10 +15,12 @@ it('should create from selector', async () => {
   const variables = createVariables(id, annotation, [request])
 
   const expectation: Variables = {
-    [request.group]: [{
-      name: `TOA_${id.toUpperCase()}_${selector.toUpperCase()}`,
-      value: annotation[selector]
-    }]
+    [request.group]: [
+      {
+        name: `TOA_${id.toUpperCase()}_${selector.toUpperCase()}`,
+        value: annotation[selector]
+      }
+    ]
   }
 
   assert.deepStrictEqual(variables, expectation)
@@ -33,14 +35,12 @@ it('should create from partial match', async () => {
   const variables = createVariables(id, annotation, [request])
 
   const expectation: Variables = {
-    [request.group]: [{
-      name: `TOA_${id.toUpperCase()}_${
-        selector
-          .replace('.', '_')
-          .toUpperCase()
-      }`,
-      value: annotation[key]
-    }]
+    [request.group]: [
+      {
+        name: `TOA_${id.toUpperCase()}_${selector.replace('.', '_').toUpperCase()}`,
+        value: annotation[key]
+      }
+    ]
   }
 
   assert.deepStrictEqual(variables, expectation)
@@ -54,10 +54,12 @@ it('should create from default', async () => {
   const variables = createVariables(id, annotation, [request])
 
   const expectation: Variables = {
-    [request.group]: [{
-      name: `TOA_${id.toUpperCase()}_${selector.toUpperCase()}`,
-      value: annotation
-    }]
+    [request.group]: [
+      {
+        name: `TOA_${id.toUpperCase()}_${selector.toUpperCase()}`,
+        value: annotation
+      }
+    ]
   }
 
   assert.deepStrictEqual(variables, expectation)
@@ -72,10 +74,12 @@ it('should create from array', async () => {
   const variables = createVariables(id, annotation, [request])
 
   const expectation: Variables = {
-    [request.group]: [{
-      name: `TOA_${id.toUpperCase()}_${selector.toUpperCase()}`,
-      value: values.join(' ')
-    }]
+    [request.group]: [
+      {
+        name: `TOA_${id.toUpperCase()}_${selector.toUpperCase()}`,
+        value: values.join(' ')
+      }
+    ]
   }
 
   assert.deepStrictEqual(variables, expectation)
@@ -90,10 +94,12 @@ it('should create from default array', async () => {
   const variables = createVariables(id, annotation, [request])
 
   const expectation: Variables = {
-    [request.group]: [{
-      name: `TOA_${id.toUpperCase()}_${selector.toUpperCase()}`,
-      value: values.join(' ')
-    }]
+    [request.group]: [
+      {
+        name: `TOA_${id.toUpperCase()}_${selector.toUpperCase()}`,
+        value: values.join(' ')
+      }
+    ]
   }
 
   assert.deepStrictEqual(variables, expectation)
@@ -105,7 +111,10 @@ it('should throw if selector cannot be resolved', async () => {
   const annotation = {}
   const request: Request = { group: generate(), selectors: [selector] }
 
-  assert.throws(() => createVariables(id, annotation, [request]), (error: any) => /cannot be resolved\./.test(error.message))
+  assert.throws(
+    () => createVariables(id, annotation, [request]),
+    (error: any) => /cannot be resolved\./.test(error.message)
+  )
 })
 
 it('should create credential secrets for annotation keys', async () => {
@@ -140,25 +149,23 @@ it('should create credential secrets for annotation keys', async () => {
     assert.ok(variables[group].some((one: any) => isDeepStrictEqual(one, secret)))
 })
 
-for (const protocol of [
-  'http:', 'redis:'
-])
-   it(`should not create credetial secrets for ${protocol}`, async () => {
-  const id = generate()
-  const selector = generate()
-  const annotation = { [selector]: uri(protocol) }
-  const request: Request = { group: generate(), selectors: [selector] }
-  const variables = createVariables(id, annotation, [request])
+for (const protocol of ['http:', 'redis:'])
+  it(`should not create credetial secrets for ${protocol}`, async () => {
+    const id = generate()
+    const selector = generate()
+    const annotation = { [selector]: uri(protocol) }
+    const request: Request = { group: generate(), selectors: [selector] }
+    const variables = createVariables(id, annotation, [request])
 
-  for (const variable of variables[request.group])
-    assert.strictEqual(variable.secret, undefined)
-})
+    for (const variable of variables[request.group])
+      assert.strictEqual(variable.secret, undefined)
+  })
 
-function uri (protocol = 'http:'): string {
+function uri(protocol = 'http:'): string {
   return protocol + '//host-' + generate()
 }
 
-function createExpectedSecrets (id: string, key: string, selector: string): Variable[] {
+function createExpectedSecrets(id: string, key: string, selector: string): Variable[] {
   key = key === '.' ? '.default' : '-' + key.replaceAll('.', '-')
   selector = selector.replaceAll('.', '_').toUpperCase()
 

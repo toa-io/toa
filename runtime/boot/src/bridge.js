@@ -1,4 +1,4 @@
-export async function algorithm (bridge, path, endpoint, context) {
+export async function algorithm(bridge, path, endpoint, context) {
   const factory = await resolve(bridge)
   const algorithm = await factory.algorithm(path, endpoint, context)
 
@@ -16,11 +16,10 @@ export const receiver = async (bridge, path, label) =>
 export const guard = async (bridge, path, label, context) =>
   (await resolve(bridge)).guard(path, label, context)
 
-export async function rc (bridge, path, context) {
+export async function rc(bridge, path, context) {
   const factory = await resolve(bridge)
 
-  if (factory.rc === undefined)
-    return
+  if (factory.rc === undefined) return
 
   return factory.rc(path, context)
 }

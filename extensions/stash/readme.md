@@ -7,7 +7,7 @@ Shared cache on top of [ioredis](https://github.com/redis/ioredis).
 `stash` aspect exposes [`ioredis` methods](https://redis.github.io/ioredis/classes/Cluster.html).
 
 ```javascript
-async function computation (input, context) {
+async function computation(input, context) {
   await context.stash.set('key', 'value')
   await context.stash.get('key')
 }

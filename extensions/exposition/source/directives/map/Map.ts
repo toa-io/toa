@@ -21,37 +21,50 @@ export class Map implements DirectiveFamily {
 
   private remotes!: Remotes
 
-  public create (name: string, value: unknown, remotes: Remotes): Property | Mapping {
+  public create(name: string, value: unknown, remotes: Remotes): Property | Mapping {
     this.remotes = remotes
 
-    return match(name,
-      () => properties.has(name), (name: PN) => new Property(name, value as PV),
-      () => name in mappings, (name: keyof typeof mappings) => new mappings[name](value, remotes),
+    return match(
+      name,
+      () => properties.has(name),
+      (name: PN) => new Property(name, value as PV),
+      () => name in mappings,
+      (name: keyof typeof mappings) => new mappings[name](value, remotes),
       () => {
         throw new Error(`Directive 'map:${name}' is not implemented`)
-      })
+      }
+    )
   }
 
-  public explain (directives: Directive[], _: Input, introspection: Introspection): Introspection {
+  public explain(
+    directives: Directive[],
+    _: Input,
+    introspection: Introspection
+  ): Introspection {
     for (const directive of directives)
-      if (directive instanceof Mapping)
-        directive.explain(introspection)
+      if (directive instanceof Mapping) directive.explain(introspection)
 
     return introspection
   }
 
-  public async precall (directives: Directive[], context: Input, parameters: Parameter[]): Promise<Output> {
+  public async precall(
+    directives: Directive[],
+    context: Input,
+    parameters: Parameter[]
+  ): Promise<Output> {
     const properties = {}
 
     for (const directive of directives)
       if (directive instanceof Mapping)
-        Object.assign(properties, await directive.properties(context, parameters, directives))
+        Object.assign(
+          properties,
+          await directive.properties(context, parameters, directives)
+        )
 
     context.pipelines.body.push((body: unknown) => {
       if (body === undefined || body === null || typeof body !== 'object')
         return properties
-      else
-        return Object.assign(body, properties)
+      else return Object.assign(body, properties)
     })
 
     return null

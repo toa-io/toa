@@ -2,13 +2,13 @@ Feature: AMQP binding
 
   Scenario: Start a component with an external event source
     Given I have a component `external.consumer`
-    And I have a PostgreSQL database developer
     And I have a context with:
       """yaml
+      mongodb: mongodb://localhost:31020
       amqp:
-        context: amqp://localhost
+        context: amqp://localhost:31010
         sources:
-          external: amqp://localhost
+          external: amqp://localhost:31010
       """
     When I run `toa env`
     And I update an environment with:
@@ -17,8 +17,8 @@ Feature: AMQP binding
       TOA_AMQP_CONTEXT__PASSWORD=secret
       TOA_AMQP_SOURCES_EXTERNAL_USERNAME=developer
       TOA_AMQP_SOURCES_EXTERNAL_PASSWORD=secret
-      TOA_SQL_EXTERNAL_CONSUMER_USERNAME=developer
-      TOA_SQL_EXTERNAL_CONSUMER_PASSWORD=secret
+      TOA_MONGODB_EXTERNAL_CONSUMER_USERNAME=developer
+      TOA_MONGODB_EXTERNAL_CONSUMER_PASSWORD=secret
       """
     And I run `TOA_DEV=0 toa compose ./components/external.consumer --kill`
     Then program should exit with code 0

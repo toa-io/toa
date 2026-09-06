@@ -14,11 +14,16 @@ beforeEach(() => {
 it('should assign url', () => {
   instance.tag()
 
-  assert.deepStrictEqual(instance.reference, `${fixtures.registry.base}/${fixtures.scope}/${fixtures.name}:${fixtures.version}`)
+  assert.deepStrictEqual(
+    instance.reference,
+    `${fixtures.registry.base}/${fixtures.scope}/${fixtures.name}:${fixtures.version}`
+  )
 })
 
 describe('prepare', () => {
   it('should throw error if no dockerfile specified', async () => {
-    await assert.rejects(instance.prepare(generate()), (error) => /Dockerfile isn't specified/.test(error.message))
+    await assert.rejects(instance.prepare(generate()), (error) =>
+      /Dockerfile isn't specified/.test(error.message)
+    )
   })
 })

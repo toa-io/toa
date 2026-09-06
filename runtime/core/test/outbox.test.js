@@ -1,7 +1,7 @@
 import { it, beforeEach, afterEach, mock } from 'node:test'
 import assert from 'node:assert/strict'
 
-import { Outbox } from '../src/outbox/index.js'
+import { Outbox } from '../source/outbox/index.js'
 
 let emission, storage, atom, outbox, listeners
 
@@ -36,7 +36,9 @@ beforeEach(() => {
       listeners.push(listener)
       listener({ i: 0, n: 1 })
 
-      return () => { listeners = listeners.filter((one) => one !== listener) }
+      return () => {
+        listeners = listeners.filter((one) => one !== listener)
+      }
     },
     link: mock.fn()
   }
@@ -70,9 +72,18 @@ it('should read nothing more when the first page is short', async () => {
 })
 
 it('should keep reading while a page comes back full', async () => {
-  storage.outbox.pending.mock.mockImplementationOnce(async () => page(0, BATCH), storage.outbox.pending.mock.callCount())
-  storage.outbox.pending.mock.mockImplementationOnce(async () => page(BATCH, BATCH), storage.outbox.pending.mock.callCount() + 1)
-  storage.outbox.pending.mock.mockImplementationOnce(async () => page(2 * BATCH, 5), storage.outbox.pending.mock.callCount() + 2)
+  storage.outbox.pending.mock.mockImplementationOnce(
+    async () => page(0, BATCH),
+    storage.outbox.pending.mock.callCount()
+  )
+  storage.outbox.pending.mock.mockImplementationOnce(
+    async () => page(BATCH, BATCH),
+    storage.outbox.pending.mock.callCount() + 1
+  )
+  storage.outbox.pending.mock.mockImplementationOnce(
+    async () => page(2 * BATCH, 5),
+    storage.outbox.pending.mock.callCount() + 2
+  )
 
   await outbox.open()
   await cycle()
@@ -82,8 +93,14 @@ it('should keep reading while a page comes back full', async () => {
 })
 
 it('should continue each page from the id the one before ended on', async () => {
-  storage.outbox.pending.mock.mockImplementationOnce(async () => page(0, BATCH), storage.outbox.pending.mock.callCount())
-  storage.outbox.pending.mock.mockImplementationOnce(async () => page(BATCH, 1), storage.outbox.pending.mock.callCount() + 1)
+  storage.outbox.pending.mock.mockImplementationOnce(
+    async () => page(0, BATCH),
+    storage.outbox.pending.mock.callCount()
+  )
+  storage.outbox.pending.mock.mockImplementationOnce(
+    async () => page(BATCH, 1),
+    storage.outbox.pending.mock.callCount() + 1
+  )
 
   await outbox.open()
   await cycle()
@@ -95,8 +112,14 @@ it('should continue each page from the id the one before ended on', async () => 
 })
 
 it('should mark what it published, once, after the last page', async () => {
-  storage.outbox.pending.mock.mockImplementationOnce(async () => page(0, BATCH), storage.outbox.pending.mock.callCount())
-  storage.outbox.pending.mock.mockImplementationOnce(async () => page(BATCH, 2), storage.outbox.pending.mock.callCount() + 1)
+  storage.outbox.pending.mock.mockImplementationOnce(
+    async () => page(0, BATCH),
+    storage.outbox.pending.mock.callCount()
+  )
+  storage.outbox.pending.mock.mockImplementationOnce(
+    async () => page(BATCH, 2),
+    storage.outbox.pending.mock.callCount() + 1
+  )
 
   await outbox.open()
   await cycle()
@@ -106,9 +129,17 @@ it('should mark what it published, once, after the last page', async () => {
 })
 
 it('should not publish a row it has published and not yet marked', async () => {
-  storage.outbox.settle.mock.mockImplementationOnce(async () => { throw new Error('mongo is out') })
-  storage.outbox.pending.mock.mockImplementationOnce(async () => page(0, 2), storage.outbox.pending.mock.callCount())
-  storage.outbox.pending.mock.mockImplementationOnce(async () => page(0, 2), storage.outbox.pending.mock.callCount() + 1)
+  storage.outbox.settle.mock.mockImplementationOnce(async () => {
+    throw new Error('mongo is out')
+  })
+  storage.outbox.pending.mock.mockImplementationOnce(
+    async () => page(0, 2),
+    storage.outbox.pending.mock.callCount()
+  )
+  storage.outbox.pending.mock.mockImplementationOnce(
+    async () => page(0, 2),
+    storage.outbox.pending.mock.callCount() + 1
+  )
 
   await outbox.open()
   await cycle()
@@ -126,7 +157,7 @@ it('should read nothing while it owns no slots', async () => {
   assert.strictEqual(storage.outbox.pending.mock.callCount(), 0)
 })
 
-function resetCalls (target = [assert, BATCH, page, cycle], seen = new Set()) {
+function resetCalls(target = [assert, BATCH, page, cycle], seen = new Set()) {
   if (target === null || typeof target !== 'object' || seen.has(target)) return
 
   seen.add(target)
@@ -150,8 +181,11 @@ it('should read as soon as a claim arrives, rather than on its next cycle', asyn
 
   await settled()
 
-  assert.strictEqual(storage.outbox.pending.mock.callCount(), 1,
-    'the lane is its own now, and the cycle is up to five seconds away')
+  assert.strictEqual(
+    storage.outbox.pending.mock.callCount(),
+    1,
+    'the lane is its own now, and the cycle is up to five seconds away'
+  )
 })
 
 it('should read the lanes it inherits when the group resizes', async () => {

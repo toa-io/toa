@@ -26,8 +26,8 @@ algorithm is an entry point for an application developer.
 
 ### Types
 
-Operations have three phases: *Retrieve* - acquire the current state, *run* - execute algorithm, and
-*commit* - store the new state.
+Operations have three phases: _Retrieve_ - acquire the current state, _run_ - execute algorithm, and
+_commit_ - store the new state.
 
 Retrieve or commit phases may be optional depending on operation's type.
 
@@ -74,7 +74,7 @@ Unmanaged operations have direct access to the underlying client of the Storage.
 
 ```javascript
 // MongoDB Storage
-async function unmanaged (input, collection, context) {
+async function unmanaged(input, collection, context) {
   return await collection.findOne({ id: input.id })
 }
 ```
@@ -88,18 +88,18 @@ timestamps the rest of the system reads, without an identifier the runtime issue
 the event that tells anything it happened. Use a Transition for one object, a Transition over
 `objects` for many, and an Assignment for a changeset.
 
-**Nothing removes a record.** Deletion is a `_deleted` timestamp, which every query filters on,
+**Nothing removes a record.** Deletion is a `DELETED` timestamp, which every query filters on,
 so a removed entity stops being found while what it was survives — the prototype's `terminate`
 is that write. A record taken out of the collection takes its history with it, and leaves
 anything that referred to it pointing at nothing.
 
 ### Safety
 
-Operations are categorized into two types based on their impact on the State: *safe* and *unsafe*.
+Operations are categorized into two types based on their impact on the State: _safe_ and _unsafe_.
 Safe operations don't modify the State, while unsafe operations do.
 
 | Operation   | Safety |
-|-------------|--------|
+| ----------- | ------ |
 | Transition  | Unsafe |
 | Observation | Safe   |
 | Assignment  | Unsafe |
@@ -121,7 +121,7 @@ Operation algorithm must be:
 ### Declaration
 
 Operations are declared in component's manifest file with `operations` object whose keys are
-operation names (*endpoints*) and values as an operation declaration object.
+operation names (_endpoints_) and values as an operation declaration object.
 
 <dl>
 <dt></dt>
@@ -149,16 +149,15 @@ operations:
 
 ```javascript
 // Node.js Bridge
-async function transition (input, entity, context) {
+async function transition(input, entity, context) {
   const price = context.configuration.price
 
-  const reply = await context.remote.credits.balance.debit({ 
-    input: { price }, 
-    query: { id: input.senderId } 
+  const reply = await context.remote.credits.balance.debit({
+    input: { price },
+    query: { id: input.senderId }
   })
 
-  if (reply instanceof Error)
-    return reply
+  if (reply instanceof Error) return reply
 
   Object.assign(entity, input)
 

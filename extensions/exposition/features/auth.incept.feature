@@ -121,8 +121,8 @@ Feature: Identity inception
 
   Scenario: Inception with a wrong password for existing credentials
     Given the `identity.basic` database contains:
-      | _id                              | authority | username  | password                                                     | _version |
-      | efe3a65ebbee47ed95a73edd911ea328 | nex       | developer | $2b$10$ZRSKkgZoGnrcTNA5w5eCcu3pxDzdTduhteVYXcp56AaNcilNkwJ.O | 1        |
+      | _id                              | authority | username  | password                                                     | VERSION |
+      | efe3a65ebbee47ed95a73edd911ea328 | nex       | developer | $2b$10$ZRSKkgZoGnrcTNA5w5eCcu3pxDzdTduhteVYXcp56AaNcilNkwJ.O | 1       |
     And the `users` is running with the following manifest:
       """yaml
       exposition:

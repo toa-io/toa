@@ -2,16 +2,22 @@ import { readFileSync } from 'node:fs'
 import { components } from './Composition.js'
 import type { Dependency, Instances, Resources, Service } from '@toa.io/operations'
 
+/** Where Toa's release publishes this service's image. An application takes it
+ *  instead of building one when its context says `registry.services: published`. */
+export const image = 'ghcr.io/toa-io/extension-realtime-streams'
+
 export const standalone = true
 export { components } from './Composition.js'
 
-export function deployment (instances: Instances<Declaration>, annotation?: Declaration & Annotation): Dependency {
+export function deployment(
+  instances: Instances<Declaration>,
+  annotation?: Declaration & Annotation
+): Dependency {
   const routes = []
   const { resources, ...annotatedRoutes } = annotation ?? {}
   const labels = components().labels
 
-  if (annotatedRoutes !== undefined)
-    routes.push(...parse(annotatedRoutes))
+  if (annotatedRoutes !== undefined) routes.push(...parse(annotatedRoutes))
 
   for (const instance of instances) {
     const completed: Declaration = {}
@@ -28,20 +34,24 @@ export function deployment (instances: Instances<Declaration>, annotation?: Decl
   const service: Service = {
     group: 'realtime',
     name: 'streams',
+    image,
 
-    version: JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8')).version,
+    version: JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8'))
+      .version,
     components: labels,
     resources,
-    variables: [{
-      name: 'TOA_REALTIME',
-      value: JSON.stringify(routes)
-    }]
+    variables: [
+      {
+        name: 'TOA_REALTIME',
+        value: JSON.stringify(routes)
+      }
+    ]
   }
 
   return { services: [service], events: routes.map((route) => route.event) }
 }
 
-export function parse (declaration: Declaration): Route[] {
+export function parse(declaration: Declaration): Route[] {
   const routes: Route[] = []
 
   for (const [event, value] of Object.entries(declaration))
@@ -58,7 +68,7 @@ export function parse (declaration: Declaration): Route[] {
   return routes
 }
 
-function isObject (value: Entry): value is RouteDeclaration {
+function isObject(value: Entry): value is RouteDeclaration {
   return typeof value === 'object' && !Array.isArray(value)
 }
 

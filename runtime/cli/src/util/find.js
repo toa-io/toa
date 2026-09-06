@@ -27,7 +27,6 @@ const find = (from, filename, test) => {
   if (path === undefined)
     if (test === true) return null
     else throw new Error(`Cannot find '${filename}' from '${from}'`)
-  
 
   return dirname(path)
 }

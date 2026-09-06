@@ -8,8 +8,7 @@ import * as syntaxes from './syntaxes/index.js'
 export const extract = (module) => {
   const entry = find(module)
 
-  if (entry === null)
-    return null
+  if (entry === null) return null
 
   const [name, func] = entry
   const statement = parse(func)
@@ -18,10 +17,12 @@ export const extract = (module) => {
   const descriptor = { name, statement, syntax: undefined }
 
   for (const [syntax, { test }] of Object.entries(syntaxes)) {
-    if (test(statement, name)) descriptor.syntax = /** @type {toa.node.define.algorithms.Syntax} */ syntax
+    if (test(statement, name))
+      descriptor.syntax = /** @type {toa.node.define.algorithms.Syntax} */ syntax
   }
 
-  if (descriptor.syntax === undefined) throw new Error('Exported function does not match conventions')
+  if (descriptor.syntax === undefined)
+    throw new Error('Exported function does not match conventions')
 
   return descriptor
 }
@@ -34,8 +35,9 @@ export const extract = (module) => {
  * @returns [string, Function]
  */
 const find = (module) => {
-  const functions = Object.entries(module)
-    .filter(([key, value]) => typeof value === 'function' && key !== '__esModule')
+  const functions = Object.entries(module).filter(
+    ([key, value]) => typeof value === 'function' && key !== '__esModule'
+  )
 
   if (functions.length === 0) return null
   if (functions.length === 1) {
@@ -49,8 +51,10 @@ const find = (module) => {
 
   if (named.length === 1) return named[0]
 
-  throw new Error('A module must export one algorithm, and this one exports ' +
-    named.map(([key]) => `'${key}'`).join(', '))
+  throw new Error(
+    'A module must export one algorithm, and this one exports ' +
+      named.map(([key]) => `'${key}'`).join(', ')
+  )
 }
 
 /**

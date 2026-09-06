@@ -12,7 +12,7 @@ COPY --chown=node:node . /composition
 {{build.run}}
 
 # run 'npm i' in each component
-RUN --mount=type=cache,target=/root/.npm \
+RUN --mount=type=cache,target=/root/.npm,sharing=locked \
   for entry in *; do if grep -qs '"dependencies"' "$entry/package.json"; then (cd $entry && npm i --omit=dev); fi; done
 
 USER node

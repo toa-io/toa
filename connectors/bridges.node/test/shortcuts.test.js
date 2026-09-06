@@ -15,8 +15,10 @@ describe('shortcuts', () => {
     for (const [reference, declaration] of Object.entries(EXTENSIONS)) {
       const extension = await import(reference)
 
-      ok(typeof extension.context === 'function',
-        `'${reference}' declares no contribution`)
+      ok(
+        typeof extension.context === 'function',
+        `'${reference}' declares no contribution`
+      )
 
       const contributed = extension.context(declaration)
       const list = Array.isArray(contributed) ? contributed : [contributed]
@@ -25,8 +27,10 @@ describe('shortcuts', () => {
     }
 
     for (const name of Object.keys(shortcuts))
-      ok(declared.has(name),
-        `'${name}' is presented on the context, and nothing declares it`)
+      ok(
+        declared.has(name),
+        `'${name}' is presented on the context, and nothing declares it`
+      )
   })
 
   it('should present every key an extension declares', async () => {
@@ -36,8 +40,10 @@ describe('shortcuts', () => {
       const list = Array.isArray(contributed) ? contributed : [contributed]
 
       for (const contribution of list)
-        ok(contribution.name in shortcuts,
-          `'${reference}' declares '${contribution.name}', which nothing presents`)
+        ok(
+          contribution.name in shortcuts,
+          `'${reference}' declares '${contribution.name}', which nothing presents`
+        )
     }
   })
 

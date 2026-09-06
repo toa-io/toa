@@ -6,6 +6,6 @@ export interface Reply {
   context: boolean
 }
 
-export function reply (input: unknown, state: unknown, context: unknown): Reply {
+export function reply(input: unknown, state: unknown, context: unknown): Reply {
   return { input, state, context: context !== undefined }
 }

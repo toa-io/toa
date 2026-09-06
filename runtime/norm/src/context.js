@@ -6,7 +6,14 @@ import { yaml as jsyaml } from '@toa.io/generic'
 
 import { component } from './component.js'
 
-import { dependencies, normalize, complete, dereference, expand, validate } from './.context/index.js'
+import {
+  dependencies,
+  normalize,
+  complete,
+  dereference,
+  expand,
+  validate
+} from './.context/index.js'
 
 export const context = async (root, environment = process.env.TOA_ENV) => {
   const path = resolve(root, CONTEXT)
@@ -34,10 +41,7 @@ export const context = async (root, environment = process.env.TOA_ENV) => {
 const CONTEXT = 'context.toa.yaml'
 const COMPONENTS = 'components/*'
 
-
 const GLOB = { onlyDirectories: true, absolute: true }
-
-
 
 /**
  * Reads a YAML file, resolving anchors into distinct objects so that
@@ -46,7 +50,7 @@ const GLOB = { onlyDirectories: true, absolute: true }
  * @param {string} path
  * @return {Promise<object>}
  */
-async function read (path) {
+async function read(path) {
   const object = jsyaml.load(await readFile(path, 'utf8'))
 
   return jsyaml.load(jsyaml.dump(object, { noRefs: true, lineWidth: -1 }))

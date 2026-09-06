@@ -24,8 +24,12 @@ it('should boot component', async () => {
   assert.deepStrictEqual(mock.boot.manifest.mock.calls[0].arguments[0], path)
   const manifest = await mock.boot.manifest.mock.calls[0].result
 
-  assert.ok(mock.boot.component.mock.calls.some((call) =>
-    call.arguments.length === 1 && isDeepStrictEqual(call.arguments[0], manifest)))
+  assert.ok(
+    mock.boot.component.mock.calls.some(
+      (call) =>
+        call.arguments.length === 1 && isDeepStrictEqual(call.arguments[0], manifest)
+    )
+  )
   assert.deepStrictEqual(component, await mock.boot.component.mock.calls[0].result)
   assert.ok(component.connect.mock.callCount() > 0)
 })

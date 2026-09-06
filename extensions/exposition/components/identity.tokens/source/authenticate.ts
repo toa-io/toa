@@ -1,4 +1,4 @@
-import type { Maybe } from '@toa.io/core'
+import type { Maybe } from '@toa.io/core/types'
 import type { Operation } from '@toa.io/bridges.node'
 import { form } from './lib/index.js'
 import type { AuthenticateInput, AuthenticateOutput, Context } from './lib/index.js'
@@ -8,30 +8,27 @@ export class Computation implements Operation {
   private decrypt!: Context['local']['decrypt']
   private observe!: Context['local']['observe']
 
-  public mount (context: Context): void {
+  public mount(context: Context): void {
     this.refresh = context.configuration.refresh * 1000
     this.decrypt = context.local.decrypt
     this.observe = context.local.observe
   }
 
-  public async execute (input: AuthenticateInput): Promise<Maybe<AuthenticateOutput>> {
+  public async execute(input: AuthenticateInput): Promise<Maybe<AuthenticateOutput>> {
     // `Bearer` is presented by an OpenID id_token too, and the gateway asks each provider
     // in turn: a credential this component did not issue is declined, not rejected
-    if (form(input.credentials) === null)
-      return ERR_UNRECOGNIZED
+    if (form(input.credentials) === null) return ERR_UNRECOGNIZED
 
     const claims = await this.decrypt({ input: input.credentials })
 
-    if (claims instanceof Error)
-      return claims
+    if (claims instanceof Error) return claims
 
-    if (claims.iss !== input.authority)
-      return ERR_AUTHORITY
+    if (claims.iss !== input.authority) return ERR_AUTHORITY
 
     const identity = claims.identity
     const iat = new Date(claims.iat).getTime()
     const transient = claims.exp !== undefined
-    const aged = transient && (iat + this.refresh < Date.now())
+    const aged = transient && iat + this.refresh < Date.now()
 
     if (aged) {
       const revocation = await this.observe({ query: { id: identity.id } })

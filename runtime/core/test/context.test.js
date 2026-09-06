@@ -1,10 +1,10 @@
-import { describe, it, beforeEach, mock } from 'node:test'
+import { describe, it, beforeEach } from 'node:test'
 import assert from 'node:assert/strict'
 
 import * as fixtures from './context.fixtures.js'
-import { Context } from '../src/context.js'
+import { Context } from '../source/context.js'
 
-/** @type {toa.core.Context} */
+/** @type {import('@toa.io/core').Context} */
 let context
 
 beforeEach(() => {
@@ -29,7 +29,7 @@ describe('call', () => {
   })
 })
 
-function resetCalls (target = [assert, fixtures], seen = new Set()) {
+function resetCalls(target = [assert, fixtures], seen = new Set()) {
   if (target === null || typeof target !== 'object' || seen.has(target)) return
 
   seen.add(target)

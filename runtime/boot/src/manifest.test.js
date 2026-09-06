@@ -7,7 +7,6 @@ mock.module('@toa.io/norm', { namedExports: { component: () => mockComponent() }
 
 const { manifest } = await import('./manifest.js')
 
-
 const path = generate()
 
 it('should not modify options', async () => {
@@ -18,6 +17,6 @@ it('should not modify options', async () => {
   assert.deepStrictEqual(options.extensions.length, 2)
 })
 
-function mockComponent () {
+function mockComponent() {
   return { name: generate(), namespace: generate() }
 }

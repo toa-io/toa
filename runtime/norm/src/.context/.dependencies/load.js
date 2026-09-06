@@ -11,16 +11,18 @@ const require = createRequire(import.meta.url)
  * @param {string} path
  * @returns {Promise<{ metadata: object, module: object }>}
  */
-export async function load (path) {
+export async function load(path) {
   const metadata = loadMetadata(path)
   const module = await loadModule(path)
 
   return { metadata, module }
 }
 
-function loadMetadata (reference) {
+function loadMetadata(reference) {
   try {
-    return JSON.parse(readFileSync(require.resolve(join(reference, 'package.json')), 'utf8'))
+    return JSON.parse(
+      readFileSync(require.resolve(join(reference, 'package.json')), 'utf8')
+    )
   } catch {
     return null
   }
@@ -30,7 +32,7 @@ function loadMetadata (reference) {
  * @param {string} reference
  * @returns {Promise<object>}
  */
-async function loadModule (reference) {
+async function loadModule(reference) {
   const path = require.resolve(reference)
 
   return await import(pathToFileURL(path).href)

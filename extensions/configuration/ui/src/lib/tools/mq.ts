@@ -4,18 +4,22 @@ export const windows = browser && navigator.userAgent.toLowerCase().includes('wi
 
 export const apple = browser
   ? /mac ?os|ios|ipad ?os/i.test((navigator as any).userAgentData?.platform ?? '') ||
-  /(Mac|iPhone|iPad|iPod)/.test(navigator.userAgent)
+    /(Mac|iPhone|iPad|iPod)/.test(navigator.userAgent)
   : false
 
 export const android = browser ? /android/i.test(navigator.userAgent) : false
 
 export const ios = browser ? /(iPhone|iPad|iPod)/.test(navigator.userAgent) : false
 
-export const safari = browser ? /^((?!chrome|android).)*safari/i.test(navigator.userAgent) : false
+export const safari = browser
+  ? /^((?!chrome|android).)*safari/i.test(navigator.userAgent)
+  : false
 
 export const touch = browser ? 'ontouchstart' in window : false
 
-export const standalone = browser ? window.matchMedia('(display-mode: standalone)').matches : false
+export const standalone = browser
+  ? window.matchMedia('(display-mode: standalone)').matches
+  : false
 
 export const shell = browser ? /PWAShell/i.test(navigator.userAgent) : false
 
@@ -27,7 +31,17 @@ export const autofocus = browser ? !('ontouchstart' in window) : false
 
 export const units = {
   lbs: ['en-US', 'en-LR', 'en-MM'].includes(navigator.language),
-  inches: ['en-US', 'en-GB', 'en-CA', 'en-AU', 'en-NZ', 'en-IE', 'en-IN', 'en-LR', 'en-MM'].includes(navigator.language),
+  inches: [
+    'en-US',
+    'en-GB',
+    'en-CA',
+    'en-AU',
+    'en-NZ',
+    'en-IE',
+    'en-IN',
+    'en-LR',
+    'en-MM'
+  ].includes(navigator.language)
 } as const
 
 export function isInAppWebView(ua: string = navigator.userAgent): boolean {
@@ -54,7 +68,7 @@ export function isInAppWebView(ua: string = navigator.userAgent): boolean {
     /Slack/i, // Slack
     /Signal/i, // Signal
     /KakaoTalk/i, // KakaoTalk (Popular in South Korea)
-    /Baidu/i, // Baidu (Popular in China)
+    /Baidu/i // Baidu (Popular in China)
   ]
 
   const isInAppBrowser = () => inAppBrowserPatterns.some((pattern) => pattern.test(ua))
@@ -64,7 +78,7 @@ export function isInAppWebView(ua: string = navigator.userAgent): boolean {
       'WebView', // Generic WebView detection
       '(iPhone|iPod|iPad)(?!.*Safari/)', // iOS WebView without Safari
       'Android.*(wv)', // Android WebView
-      '(AppleWebKit)(?!.*Safari)', // iOS Safari WebView (missing Safari in UA)
+      '(AppleWebKit)(?!.*Safari)' // iOS Safari WebView (missing Safari in UA)
     ]
 
     const regex = new RegExp(`(${rules.join('|')})`, 'ig')
@@ -72,11 +86,10 @@ export function isInAppWebView(ua: string = navigator.userAgent): boolean {
     return ua.match(regex) !== null
   }
 
-  const isTelegram = () => (
+  const isTelegram = () =>
     'TelegramWebviewProxy' in window ||
     'TelegramWebviewProxyProto' in window ||
     'TelegramWebview' in window
-  )
 
   return browser && (isInAppBrowser() || isGenericWebView() || isTelegram())
 }

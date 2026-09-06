@@ -1,4 +1,4 @@
-export async function computation () {
+export async function computation() {
   return new (class KnownError extends Error {
     code = 'KNOWN'
     message = 'declared'

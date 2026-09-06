@@ -7,7 +7,7 @@ import type { context } from '@toa.io/norm'
 
 export const ENV_PREFIX = 'TOA_STORAGES'
 
-export function deployment (instances: Instance[], annotation: unknown): Dependency {
+export function deployment(instances: Instance[], annotation: unknown): Dependency {
   validate(instances, annotation)
 
   const value = JSON.stringify(annotation)
@@ -17,13 +17,15 @@ export function deployment (instances: Instance[], annotation: unknown): Depende
 
   const dependency: Dependency = { variables: { global: [pointer, ...secrets] } }
 
-  if (mounts !== null)
-    dependency.mounts = mounts
+  if (mounts !== null) dependency.mounts = mounts
 
   return dependency
 }
 
-function validate (instances: Instance[], annotation: unknown): asserts annotation is Annotation {
+function validate(
+  instances: Instance[],
+  annotation: unknown
+): asserts annotation is Annotation {
   validateAnnotation(annotation)
 
   for (const instance of instances) {
@@ -33,14 +35,16 @@ function validate (instances: Instance[], annotation: unknown): asserts annotati
   }
 }
 
-function contains (instance: Instance, annotation: Annotation): void {
+function contains(instance: Instance, annotation: Annotation): void {
   for (const name of instance.manifest)
-    assert.ok(name in annotation,
+    assert.ok(
+      name in annotation,
       `Missing '${name}' storage annotation ` +
-      `declared in '${instance.component.locator.id}'`)
+        `declared in '${instance.component.locator.id}'`
+    )
 }
 
-function getSecrets (annotation: Annotation): Variable[] {
+function getSecrets(annotation: Annotation): Variable[] {
   const secrets: Variable[] = []
 
   for (const [name, declaration] of Object.entries(annotation)) {
@@ -62,7 +66,7 @@ function getSecrets (annotation: Annotation): Variable[] {
   return secrets
 }
 
-function getMounts (instances: Instance[], annotation: Annotation): Mounts | null {
+function getMounts(instances: Instance[], annotation: Annotation): Mounts | null {
   let mounts: Mounts | null = null
 
   for (const { locator, manifest } of instances)
@@ -70,8 +74,7 @@ function getMounts (instances: Instance[], annotation: Annotation): Mounts | nul
       const declaration = annotation[name]
 
       // eslint-disable-next-line max-depth
-      if (declaration.provider !== 'fs')
-        continue
+      if (declaration.provider !== 'fs') continue
 
       // eslint-disable-next-line max-depth
       if (declaration.claim !== undefined) {

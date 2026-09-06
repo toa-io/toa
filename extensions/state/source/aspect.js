@@ -3,7 +3,7 @@ import { overwrite } from '@toa.io/generic'
 import { Connector } from '@toa.io/core'
 
 /**
- * @implements {toa.core.extensions.Aspect}
+ * @implements {import('@toa.io/core/types').extensions.Aspect}
  */
 export class Aspect extends Connector {
   name = 'state'
@@ -14,12 +14,12 @@ export class Aspect extends Connector {
   /**
    * @param {object} value
    */
-  invoke (value) {
+  invoke(value) {
     if (value === undefined) return this.#value
     else this.#set(value)
   }
 
-  #set (value) {
+  #set(value) {
     overwrite(this.#value, value)
   }
 }

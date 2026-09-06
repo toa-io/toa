@@ -8,7 +8,7 @@ import { console } from 'openspan'
 import { Provider } from '../Provider.js'
 import { ERR_NOT_FOUND } from '../errors.js'
 import type { ReadableStream } from 'node:stream/web'
-import type { Maybe } from '@toa.io/core'
+import type { Maybe } from '@toa.io/core/types'
 import type { Metadata, Stream } from '../Entry.js'
 import type { Secret, Secrets } from '../Secrets.js'
 
@@ -29,7 +29,7 @@ export class S3 extends Provider<S3Options> {
   private readonly bucket: string
   private readonly client: s3.S3Client
 
-  public constructor (options: S3Options, secrets?: S3Secrets) {
+  public constructor(options: S3Options, secrets?: S3Secrets) {
     super(options, secrets)
 
     this.bucket = options.bucket
@@ -43,12 +43,13 @@ export class S3 extends Provider<S3Options> {
       s3Config.endpoint = options.endpoint
     }
 
-    if (options.region !== undefined)
-      s3Config.region = options.region
+    if (options.region !== undefined) s3Config.region = options.region
 
     if (typeof secrets?.ACCESS_KEY_ID === 'string') {
-      assert.ok(secrets.SECRET_ACCESS_KEY !== undefined,
-        'SECRET_ACCESS_KEY is required if ACCESS_KEY_ID is provided')
+      assert.ok(
+        secrets.SECRET_ACCESS_KEY !== undefined,
+        'SECRET_ACCESS_KEY is required if ACCESS_KEY_ID is provided'
+      )
 
       s3Config.credentials = {
         accessKeyId: secrets.ACCESS_KEY_ID,
@@ -58,39 +59,45 @@ export class S3 extends Provider<S3Options> {
 
     this.client = new s3.S3Client(s3Config)
 
-    this.client.middlewareStack.add((next, _context) => async (args) => {
-      // removes leading slash
-      if ('Key' in args.input && typeof args.input.Key === 'string')
-        args.input.Key = args.input.Key.replace(/^\//, '')
+    this.client.middlewareStack.add(
+      (next, _context) => async (args) => {
+        // removes leading slash
+        if ('Key' in args.input && typeof args.input.Key === 'string')
+          args.input.Key = args.input.Key.replace(/^\//, '')
 
-      // removes leading slash and ensures finishing slash
-      if ('Prefix' in args.input && typeof args.input.Prefix === 'string')
-        args.input.Prefix = args.input.Prefix.replace(/^\/|\/$/g, '') + '/'
+        // removes leading slash and ensures finishing slash
+        if ('Prefix' in args.input && typeof args.input.Prefix === 'string')
+          args.input.Prefix = args.input.Prefix.replace(/^\/|\/$/g, '') + '/'
 
-      return next(args)
-    },
-    {
-      step: 'initialize',
-      priority: 'high',
-      name: 'normalizesSlashesInPath'
-    })
+        return next(args)
+      },
+      {
+        step: 'initialize',
+        priority: 'high',
+        name: 'normalizesSlashesInPath'
+      }
+    )
   }
 
-  public async get (Key: string): Promise<Maybe<Stream>> {
+  public async get(Key: string): Promise<Maybe<Stream>> {
     return await this.try<Stream>(async () => {
-      const entry = await this.client.send(new s3.GetObjectCommand({
-        Bucket: this.bucket,
-        Key
-      }))
+      const entry = await this.client.send(
+        new s3.GetObjectCommand({
+          Bucket: this.bucket,
+          Key
+        })
+      )
 
-      const stream = entry.Body instanceof Readable
-        ? entry.Body
-        : Readable.fromWeb((entry.Body instanceof Blob
-          ? entry.Body.stream()
-          : entry.Body) as ReadableStream)
+      const stream =
+        entry.Body instanceof Readable
+          ? entry.Body
+          : Readable.fromWeb(
+              (entry.Body instanceof Blob
+                ? entry.Body.stream()
+                : entry.Body) as ReadableStream
+            )
 
-      if (entry.Metadata?.value === undefined)
-        return ERR_NOT_FOUND
+      if (entry.Metadata?.value === undefined) return ERR_NOT_FOUND
 
       const metadata = JSON.parse(entry.Metadata.value)
 
@@ -98,21 +105,22 @@ export class S3 extends Provider<S3Options> {
     })
   }
 
-  public async head (Key: string): Promise<Maybe<Metadata>> {
+  public async head(Key: string): Promise<Maybe<Metadata>> {
     return await this.try<Metadata>(async () => {
-      const entry = await this.client.send(new s3.HeadObjectCommand({
-        Bucket: this.bucket,
-        Key
-      }))
+      const entry = await this.client.send(
+        new s3.HeadObjectCommand({
+          Bucket: this.bucket,
+          Key
+        })
+      )
 
-      if (entry.Metadata?.value === undefined)
-        return ERR_NOT_FOUND
+      if (entry.Metadata?.value === undefined) return ERR_NOT_FOUND
 
       return JSON.parse(entry.Metadata.value)
     })
   }
 
-  public async put (Key: string, stream: Readable): Promise<void> {
+  public async put(Key: string, stream: Readable): Promise<void> {
     await new Upload({
       client: this.client,
       params: {
@@ -123,31 +131,37 @@ export class S3 extends Provider<S3Options> {
     }).done()
   }
 
-  public async commit (Key: string, metadata: object): Promise<void> {
-    await this.client.send(new s3.CopyObjectCommand({
-      Bucket: this.bucket,
-      Key,
-      CopySource: join(this.bucket, Key),
-      Metadata: { value: JSON.stringify(metadata) },
-      MetadataDirective: 'REPLACE'
-    }))
+  public async commit(Key: string, metadata: object): Promise<void> {
+    await this.client.send(
+      new s3.CopyObjectCommand({
+        Bucket: this.bucket,
+        Key,
+        CopySource: join(this.bucket, Key),
+        Metadata: { value: JSON.stringify(metadata) },
+        MetadataDirective: 'REPLACE'
+      })
+    )
 
     console.debug('Uploaded to S3', { bucket: this.bucket, path: Key, metadata })
   }
 
-  public async delete (Key: string): Promise<void> {
+  public async delete(Key: string): Promise<void> {
     await this.client.send(new s3.DeleteObjectCommand({ Bucket: this.bucket, Key }))
   }
 
-  public async move (from: string, keyTo: string): Promise<Maybe<void>> {
+  public async move(from: string, keyTo: string): Promise<Maybe<void>> {
     return await this.try(async () => {
-      await this.client.send(new s3.CopyObjectCommand({
-        Bucket: this.bucket,
-        Key: keyTo,
-        CopySource: join(this.bucket, from)
-      }))
+      await this.client.send(
+        new s3.CopyObjectCommand({
+          Bucket: this.bucket,
+          Key: keyTo,
+          CopySource: join(this.bucket, from)
+        })
+      )
 
-      await this.client.send(new s3.DeleteObjectCommand({ Bucket: this.bucket, Key: from }))
+      await this.client.send(
+        new s3.DeleteObjectCommand({ Bucket: this.bucket, Key: from })
+      )
     })
   }
 
@@ -155,10 +169,8 @@ export class S3 extends Provider<S3Options> {
     try {
       return await action()
     } catch (err: any) {
-      if (err?.name === 'NotFound' || err?.name === 'NoSuchKey')
-        return ERR_NOT_FOUND
-      else
-        throw err
+      if (err?.name === 'NotFound' || err?.name === 'NoSuchKey') return ERR_NOT_FOUND
+      else throw err
     }
   }
 }

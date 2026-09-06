@@ -6,5 +6,7 @@ import type { Annotation, Declaration } from './annotation.js'
 const path = resolve(import.meta.dirname, '../schemas')
 const namespace = schemas.namespace(path)
 
-export const annotation: Schema<Exclude<Annotation, false>> = namespace.schema('annotation')
-export const declaration: Schema<Exclude<Declaration, false>> = namespace.schema('declaration')
+export const annotation: Schema<Exclude<Annotation, false>> =
+  namespace.schema('annotation')
+export const declaration: Schema<Exclude<Declaration, false>> =
+  namespace.schema('declaration')

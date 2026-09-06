@@ -8,13 +8,13 @@ export class Connection extends Connector {
   public redis: Redis | null = null
   public readonly locator: Locator
 
-  public constructor (locator: Locator) {
+  public constructor(locator: Locator) {
     super()
 
     this.locator = locator
   }
 
-  protected override async open (): Promise<void> {
+  protected override async open(): Promise<void> {
     const keyPrefix = `${this.locator.namespace}:${this.locator.name}:`
 
     const options: RedisOptions = {
@@ -32,16 +32,17 @@ export class Connection extends Connector {
     console.info('Stash connected to redis', { host: this.redis.options.host })
   }
 
-  protected override async close (): Promise<void> {
+  protected override async close(): Promise<void> {
     this.redis?.disconnect()
     this.redis = null
 
     console.info('Stash shutdown complete')
   }
 
-  private async resolveURL (): Promise<string> {
-    if (process.env.TOA_DEV === '1')
-      return 'redis://localhost'
+  private async resolveURL(): Promise<string> {
+    // Toa's own development stack is not on the conventional ports: the applications built on
+    // Toa are, and they share the machine. See CONTRIBUTING.md.
+    if (process.env.TOA_DEV === '1') return 'redis://localhost:31040'
 
     const urls = resolve(ID, this.locator.id)
 

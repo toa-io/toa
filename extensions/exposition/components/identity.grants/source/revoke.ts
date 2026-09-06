@@ -1,4 +1,4 @@
-import type { Maybe } from '@toa.io/core'
+import type { Maybe } from '@toa.io/core/types'
 import type { Operation } from '@toa.io/bridges.node'
 import type { Context, Entity } from './lib/index.js'
 
@@ -10,19 +10,21 @@ import type { Context, Entity } from './lib/index.js'
 export class Transition implements Operation {
   private keys!: Context['remote']['identity']['keys']
 
-  public mount (context: Context): void {
+  public mount(context: Context): void {
     this.keys = context.remote.identity.keys
   }
 
-  public async execute (input: Input, object: Entity): Promise<Maybe<void>> {
+  public async execute(input: Input, object: Entity): Promise<Maybe<void>> {
     // the id is a route parameter, so a grant of another identity is asked for by anyone
     // who guesses one; the authority and the identity are what say it is theirs
-    if (object._version === 0 || object.authority !== input.authority ||
-      object.identity !== input.identity)
+    if (
+      object.VERSION === 0 ||
+      object.authority !== input.authority ||
+      object.identity !== input.identity
+    )
       return ERR_NOT_FOUND
 
-    if (object.kid !== undefined)
-      await this.keys.disable({ query: { id: object.kid } })
+    if (object.kid !== undefined) await this.keys.disable({ query: { id: object.kid } })
 
     object.revokedAt = Date.now()
   }

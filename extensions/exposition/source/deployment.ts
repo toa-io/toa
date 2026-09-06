@@ -8,7 +8,11 @@ import { components } from './Composition.js'
 import { parse } from './RTD/syntax/index.js'
 import { DELAY, PORT, PROBE } from './HTTP/index.js'
 
-export function deployment (_: unknown, annotation?: Annotation): Dependency {
+/** Where Toa's release publishes this service's image. An application takes it
+ *  instead of building one when its context says `registry.services: published`. */
+export const image = 'ghcr.io/toa-io/extension-exposition-gateway'
+
+export function deployment(_: unknown, annotation?: Annotation): Dependency {
   assert.ok(annotation !== undefined, 'Exposition context annotation is required')
   schemas.annotation.validate(annotation)
 
@@ -17,8 +21,10 @@ export function deployment (_: unknown, annotation?: Annotation): Dependency {
   const service: Service = {
     group: 'exposition',
     name: 'gateway',
+    image,
     port: PORT,
-    version: JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8')).version,
+    version: JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8'))
+      .version,
     variables: [],
     components: labels,
     resources: annotation.resources,
@@ -44,8 +50,7 @@ export function deployment (_: unknown, annotation?: Annotation): Dependency {
   service.ingress!.hosts = Object.values(authorities)
 
   // leaving these undefined lets the context's own ingress section supply them
-  if (annotation.class !== undefined)
-    service.ingress!.class = annotation.class
+  if (annotation.class !== undefined) service.ingress!.class = annotation.class
 
   if (annotation.annotations !== undefined)
     service.ingress!.annotations = annotation.annotations
@@ -55,26 +60,19 @@ export function deployment (_: unknown, annotation?: Annotation): Dependency {
 
   const properties: Properties = { authorities }
 
-  if (debug === true)
-    properties.debug = true
+  if (debug === true) properties.debug = true
 
-  if (annotation.protocol !== undefined)
-    properties.protocol = annotation.protocol
+  if (annotation.protocol !== undefined) properties.protocol = annotation.protocol
 
-  if (annotation.ip !== undefined)
-    properties.ip = annotation.ip
+  if (annotation.ip !== undefined) properties.ip = annotation.ip
 
-  if (annotation.bouncer !== undefined)
-    properties.bouncer = annotation.bouncer
+  if (annotation.bouncer !== undefined) properties.bouncer = annotation.bouncer
 
-  if (annotation.oauth !== undefined)
-    properties.oauth = annotation.oauth
+  if (annotation.oauth !== undefined) properties.oauth = annotation.oauth
 
-  if (annotation.rpc !== undefined)
-    properties.rpc = annotation.rpc
+  if (annotation.rpc !== undefined) properties.rpc = annotation.rpc
 
-  if (annotation.mcp !== undefined)
-    properties.mcp = annotation.mcp
+  if (annotation.mcp !== undefined) properties.mcp = annotation.mcp
 
   service.variables!.push({
     name: 'TOA_EXPOSITION_PROPERTIES',
@@ -92,5 +90,7 @@ export function deployment (_: unknown, annotation?: Annotation): Dependency {
   return { services: [service] }
 }
 
-type Properties = Pick<Annotation,
-'authorities' | 'debug' | 'protocol' | 'bouncer' | 'ip' | 'oauth' | 'rpc' | 'mcp'>
+type Properties = Pick<
+  Annotation,
+  'authorities' | 'debug' | 'protocol' | 'bouncer' | 'ip' | 'oauth' | 'rpc' | 'mcp'
+>

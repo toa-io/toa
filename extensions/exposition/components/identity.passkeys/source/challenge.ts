@@ -12,9 +12,12 @@ export class Effect implements Operation {
   private stash!: Context['stash']
   private logs!: Context['logs']
 
-  public mount (context: Context): void {
+  public mount(context: Context): void {
     this.timeout = context.configuration.timeout
-    this.credParams = context.configuration.algorithms.map((alg) => ({ type: 'public-key', alg }))
+    this.credParams = context.configuration.algorithms.map((alg) => ({
+      type: 'public-key',
+      alg
+    }))
 
     if (context.configuration.verification !== undefined) {
       this.authenticator ??= {}
@@ -34,7 +37,7 @@ export class Effect implements Operation {
     this.logs = context.logs
   }
 
-  public async execute (input: Input): Promise<Output> {
+  public async execute(input: Input): Promise<Output> {
     const { type, identity, authority } = input
     const challenge = await this.createChallenge(authority)
 
@@ -43,18 +46,18 @@ export class Effect implements Operation {
       timeout: this.timeout
     }
 
-    if (type === 'creation')
-      options.identity = identity ?? newid()
+    if (type === 'creation') options.identity = identity ?? newid()
 
-    const keys = identity === undefined || identity === null
-      ? []
-      : await this.enumerate({
-        query: {
-          criteria: `identity==${quote(identity)}`,
-          projection: ['kid', 'transports'],
-          limit: MAX_KEYS
-        }
-      })
+    const keys =
+      identity === undefined || identity === null
+        ? []
+        : await this.enumerate({
+            query: {
+              criteria: `identity==${quote(identity)}`,
+              projection: ['kid', 'transports'],
+              limit: MAX_KEYS
+            }
+          })
 
     if (type === 'creation')
       return {
@@ -71,13 +74,13 @@ export class Effect implements Operation {
       } satisfies RequestOptions
   }
 
-  private async createChallenge (authority: string): Promise<string> {
+  private async createChallenge(authority: string): Promise<string> {
     const challenge = randomBytes(32).toString('base64url')
     const key = `challenge:${authority}:${challenge}`
 
     this.logs.debug('Creating challenge', { key })
 
-    await this.stash.set(key, 1, 'EX', this.timeout / 1000 * EX_GAP)
+    await this.stash.set(key, 1, 'EX', (this.timeout / 1000) * EX_GAP)
 
     return challenge
   }
@@ -104,12 +107,13 @@ interface KeyDescriptor {
   transports?: string[]
 }
 
-type CreationOptions =
-  CommonOptions
-  & Omit<PublicKeyCredentialCreationOptions, 'challenge' | 'rp' | 'user' | 'excludeCredentials'>
-  & { excludeCredentials?: KeyDescriptor[] }
+type CreationOptions = CommonOptions &
+  Omit<
+    PublicKeyCredentialCreationOptions,
+    'challenge' | 'rp' | 'user' | 'excludeCredentials'
+  > & { excludeCredentials?: KeyDescriptor[] }
 
-type RequestOptions =
-  CommonOptions
-  & Omit<PublicKeyCredentialRequestOptions, 'challenge' | 'allowCredentials'>
-  & { allowCredentials?: KeyDescriptor[] }
+type RequestOptions = CommonOptions &
+  Omit<PublicKeyCredentialRequestOptions, 'challenge' | 'allowCredentials'> & {
+    allowCredentials?: KeyDescriptor[]
+  }

@@ -8,8 +8,14 @@ it('should freeze', () => {
 
   freeze(object)
 
-  assert.throws(() => (object.foo = 'baz'), (error) => /read only property/.test(error.message))
-  assert.throws(() => (object.bar = 'foo'), (error) => /not extensible/.test(error.message))
+  assert.throws(
+    () => (object.foo = 'baz'),
+    (error) => /read only property/.test(error.message)
+  )
+  assert.throws(
+    () => (object.bar = 'foo'),
+    (error) => /not extensible/.test(error.message)
+  )
 })
 
 it('should deep freeze', () => {
@@ -17,8 +23,14 @@ it('should deep freeze', () => {
 
   freeze(object)
 
-  assert.throws(() => (object.foo.bar = 'foo'), (error) => /read only property/.test(error.message))
-  assert.throws(() => (object.foo.baz = 'foo'), (error) => /not extensible/.test(error.message))
+  assert.throws(
+    () => (object.foo.bar = 'foo'),
+    (error) => /read only property/.test(error.message)
+  )
+  assert.throws(
+    () => (object.foo.baz = 'foo'),
+    (error) => /not extensible/.test(error.message)
+  )
 })
 
 it('should not throw on null or undefined', () => {

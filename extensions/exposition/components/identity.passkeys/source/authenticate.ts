@@ -7,12 +7,12 @@ export class Effect implements Operation {
   private use!: Context['local']['use']
   private logs!: Context['logs']
 
-  public mount (context: Context): void {
+  public mount(context: Context): void {
     this.use = context.local.use
     this.logs = context.logs
   }
 
-  public async execute (input: Input): Promise<Output> {
+  public async execute(input: Input): Promise<Output> {
     const { authority, ...response } = input
 
     const identity = await this.use({
@@ -31,8 +31,7 @@ export class Effect implements Operation {
       return ERR_MISS
     }
 
-    if (identity instanceof Error)
-      return identity
+    if (identity instanceof Error) return identity
 
     return { identity }
   }

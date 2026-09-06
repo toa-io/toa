@@ -3,7 +3,12 @@ import assert from 'node:assert/strict'
 
 import { services } from './services.js'
 
-const service = (extra = {}) => ({ group: 'group', name: 'group-one', version: '0', ...extra })
+const service = (extra = {}) => ({
+  group: 'group',
+  name: 'group-one',
+  version: '0',
+  ...extra
+})
 
 it('should leave a service without an ingress alone', () => {
   const list = [service()]
@@ -20,7 +25,11 @@ it('should leave a service without an ingress alone', () => {
 it('should supply hosts, class and annotations from the context', () => {
   const list = [service({ port: 8002, ingress: { path: '/.introspection' } })]
 
-  services(list, {}, undefined, { hosts: ['api.dev'], class: 'alb', annotations: { a: 'b' } })
+  services(list, {}, undefined, {
+    hosts: ['api.dev'],
+    class: 'alb',
+    annotations: { a: 'b' }
+  })
 
   assert.deepStrictEqual(list[0].ingress, {
     path: '/.introspection',
@@ -50,12 +59,20 @@ it('should ignore properties the service left undefined', () => {
 it('should reject an ingress with nowhere to land', () => {
   const list = [service({ port: 8002, ingress: { path: '/.introspection' } })]
 
-  assert.throws(() => services(list, {}, undefined, undefined), (error) => /Service 'group-one' declares an ingress, but no hosts are defined/.test(error.message))
+  assert.throws(
+    () => services(list, {}, undefined, undefined),
+    (error) =>
+      /Service 'group-one' declares an ingress, but no hosts are defined/.test(
+        error.message
+      )
+  )
 })
 
 it('should reject an ingress without a port', () => {
   const list = [service({ ingress: { path: '/.introspection' } })]
 
-  assert.throws(() => services(list, {}, undefined, { hosts: ['api.dev'] }), (error) => /Service 'group-one' declares an ingress, but no port/.test(error.message))
+  assert.throws(
+    () => services(list, {}, undefined, { hosts: ['api.dev'] }),
+    (error) => /Service 'group-one' declares an ingress, but no port/.test(error.message)
+  )
 })
-

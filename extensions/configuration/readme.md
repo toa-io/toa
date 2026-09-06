@@ -25,7 +25,7 @@ configuration:
 ### Use
 
 ```javascript
-function transition (input, entity, context) {
+function transition(input, entity, context) {
   const { foo, bar } = context.configuration
 
   // ...
@@ -38,9 +38,9 @@ function transition (input, entity, context) {
 # context.toa.yaml
 configuration:
   dummies.dummy:
-    foo: qux          # override default value
+    foo: qux # override default value
     foo@staging: quux # deployment environment discriminator
-    bar: $BAZ_VALUE   # secret
+    bar: $BAZ_VALUE # secret
 ```
 
 ### Deploy secrets
@@ -176,7 +176,7 @@ In the component, a secret is a `Secret` object: `unwrap()` returns the string, 
 `toString()`, JSON and `util.inspect` give `<REDACTED>`.
 
 ```javascript
-function transition (input, entity, context) {
+function transition(input, entity, context) {
   const key = context.configuration.apiKey.unwrap()
 
   // ...
@@ -231,11 +231,11 @@ object as stored.
 
 ### Resources
 
-| Method | Path                                  | Role                          |
-|--------|---------------------------------------|-------------------------------|
-| `GET`  | `/configuration/values/`              | `system:configuration:get`    |
-| `GET`  | `/configuration/values/:component/`   | `system:configuration:get`    |
-| `POST` | `/configuration/values/:component/`   | `system:configuration:create` |
+| Method | Path                                | Role                          |
+| ------ | ----------------------------------- | ----------------------------- |
+| `GET`  | `/configuration/values/`            | `system:configuration:get`    |
+| `GET`  | `/configuration/values/:component/` | `system:configuration:get`    |
+| `POST` | `/configuration/values/:component/` | `system:configuration:create` |
 
 `GET /configuration/values/` lists every component's configuration for its deployed epoch, by
 component name, as `[{ component, epoch, schema, configuration }]`.
@@ -261,7 +261,7 @@ annotation is the per-component values map and has nowhere to carry a switch.
 Component's configuration values are available as a well-known Aspect `configuration`.
 
 ```javascript
-function transition (input, entity, context) {
+function transition(input, entity, context) {
   const foo = context.configuration.foo
 
   // ...
@@ -270,14 +270,15 @@ function transition (input, entity, context) {
 
 On start, a component requests its configuration for its epoch from the values service and
 waits until there is one, reporting every fifth attempt. The schema is applied, and secrets
-are substituted. After a configuration is created, the running component receives the new
-object and takes it when its `_created` is later than that of the value it holds.
+are substituted. What is served is what was stored, whole: a `default` written into the schema
+fills nothing, so a value every component is to have is declared in `defaults`. After a configuration is created, the running component receives the new
+object and takes it when its `CREATED` is later than that of the value it holds.
 
 ### Local override
 
 When the variable `TOA_CONFIGURATION_<NAMESPACE>_<NAME>` is set, the component's
-configuration is the variable's value with the manifest `defaults` and the schema applied,
-and the values service is not used.
+configuration is the variable's value with the manifest `defaults` filled in and the schema
+applied, and the values service is not used.
 
 ```shell
 $ TOA_CONFIGURATION_DUMMIES_DUMMY='{"foo":"local"}' toa run components/dummy

@@ -29,9 +29,10 @@ In terms of security, the following implicit modifications are made to the `cach
   added.
   This is to prevent the reuse of private data when authenticated as another identity.[^1]
 
-[^1]: This also will invalidate the cache each time a new token is used for the same identity, thus
-limiting the `max-age` value to the token's `refresh` time.
-See [Issuing tokens](components.md#issuing-tokens).
+[^1]:
+    This also will invalidate the cache each time a new token is used for the same identity, thus
+    limiting the `max-age` value to the token's `refresh` time.
+    See [Issuing tokens](components.md#issuing-tokens).
 
 ## `cache:exact`
 
@@ -51,6 +52,19 @@ any method, so a reply that must not be stored can say so:
   POST:
     cache:exact: no-store
 ```
+
+## Validators
+
+A reply that carries an `UPDATED` or `CREATED` timestamp says so in `last-modified`, whatever
+the method. A reply to a safe request (`GET`, `HEAD`) that carries a `VERSION` is tagged with
+it: `etag: "3"`. A request sending the tag back in `if-none-match`, strong or weak (`W/"3"`), is
+answered `304 Not Modified` with the tag as it was sent.
+
+A reply that carries no version has no tag, and a reply to an unsafe request has none either:
+its `VERSION` is in the body, and the next `GET` is what a cache validates.
+
+`if-match` is [concurrency control](query.md#optimistic-concurrency-control), which is the
+request's, whatever its method.
 
 ## References
 

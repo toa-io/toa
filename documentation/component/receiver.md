@@ -11,15 +11,15 @@ receivers:
 ## Definition
 
 Receiver is a [component function](#) that conditionally converts an event into a call to a local
-operation. Receiver can implement a *condition* whether an event should be converted to an operation
-call or skipped, and an *adaptation* of an event payload to an operation input.
+operation. Receiver can implement a _condition_ whether an event should be converted to an operation
+call or skipped, and an _adaptation_ of an event payload to an operation input.
 
 See [Bridges](#) for implementation details.
 
 ## Declaration
 
 Receivers are declared as a part of component manifest by `receivers` object with keys as receiver
-names and values as an object with [*declaration properties*](#properties).
+names and values as an object with [_declaration properties_](#properties).
 
 ```yaml
 # component.toa.yaml
@@ -32,8 +32,8 @@ receivers:
 
 ### Name
 
-Receiver name follows the convention `namespace.name.event`, which is *an `event` produced by a
-component with a `name` within a `namespace`*. This convention is being mapped to an exact queue
+Receiver name follows the convention `namespace.name.event`, which is _an `event` produced by a
+component with a `name` within a `namespace`_. This convention is being mapped to an exact queue
 name by the binding.
 
 ### Properties
@@ -74,7 +74,7 @@ See [Bridges](#).
 
 > This is temporary not supported.
 
-*Foreign messages* are produced outside the context and thus may not conform
+_Foreign messages_ are produced outside the context and thus may not conform
 to [UCP](/documentation/communication/ucp.md). As sources of foreign messages may not be
 discovered, components consuming foreign messages must explicitly define receiver's `binding`
 property to prevent discovery attempts.

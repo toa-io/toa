@@ -5,7 +5,7 @@ import { NotFound } from '../../HTTP/index.js'
 import type { Directive } from './types.js'
 import type { ReadableStream } from 'node:stream/web'
 import type { Remotes } from '../../Remotes.js'
-import type { Maybe } from '@toa.io/core'
+import type { Maybe } from '@toa.io/core/types'
 import type { Component } from '@toa.io/core'
 import type { Output } from '../../io.js'
 import type { Input } from '../octets/types.js'
@@ -16,7 +16,7 @@ export class Fetch implements Directive {
   private remote: Component | null = null
   private readonly operation: string
 
-  public constructor (endpoint: string, discovery: Remotes) {
+  public constructor(endpoint: string, discovery: Remotes) {
     assert.equal(typeof endpoint, 'string', '`flow:fetch` must be a string')
 
     const [operation, name, namespace = 'default'] = endpoint.split('.').reverse()
@@ -25,9 +25,8 @@ export class Fetch implements Directive {
     this.connecting = discovery.discover(namespace, name)
   }
 
-  public async apply (input: Input, parameters: Parameter[]): Promise<Output> {
-    if ('if-none-match' in input.request.headers)
-      return { status: 304 }
+  public async apply(input: Input, parameters: Parameter[]): Promise<Output> {
+    if ('if-none-match' in input.request.headers) return { status: 304 }
 
     this.remote ??= await this.connecting
 
@@ -39,11 +38,12 @@ export class Fetch implements Directive {
       }
     })
 
-    if (request instanceof Error)
-      throw new NotFound(request)
+    if (request instanceof Error) throw new NotFound(request)
 
-    const { url, options } = match<Request>(request,
-      String, { url: request },
+    const { url, options } = match<Request>(
+      request,
+      String,
+      { url: request },
       (request: Request): Request => ({
         url: request.url,
         options: {
@@ -51,25 +51,25 @@ export class Fetch implements Directive {
           body: request.options?.body,
           headers: request.options?.headers
         }
-      }))
+      })
+    )
 
     const response = await fetch(url, options)
 
-    if (!response.ok)
-      throw new NotFound()
+    if (!response.ok) throw new NotFound()
 
     const headers = new Headers()
 
     for (const header of ['content-type', 'content-length', 'etag']) {
       const value = response.headers.get(header)
 
-      if (value !== null)
-        headers.set(header, value)
+      if (value !== null) headers.set(header, value)
     }
 
     return {
       headers,
-      body: response.body === null ? null : Readable.fromWeb(response.body as ReadableStream)
+      body:
+        response.body === null ? null : Readable.fromWeb(response.body as ReadableStream)
     }
   }
 }

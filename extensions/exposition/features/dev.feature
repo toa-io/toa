@@ -1,5 +1,6 @@
 Feature: Dev
 
+  @timing
   Scenario: Delays
     Given the annotation:
       """yaml

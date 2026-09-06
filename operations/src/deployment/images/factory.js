@@ -17,7 +17,7 @@ export class Factory {
    * @param {toa.norm.context.Runtime} runtime
    * @param {toa.norm.context.Registry} registry
    */
-  constructor (scope, runtime, registry) {
+  constructor(scope, runtime, registry) {
     this.#scope = scope
     this.#runtime = runtime
     this.#registry = registry
@@ -26,8 +26,13 @@ export class Factory {
   /**
    * @returns {Composition}
    */
-  composition (composition) {
-    const instance = new Composition(this.#scope, this.#runtime, this.#registry, composition)
+  composition(composition) {
+    const instance = new Composition(
+      this.#scope,
+      this.#runtime,
+      this.#registry,
+      composition
+    )
 
     instance.tag()
 
@@ -37,8 +42,14 @@ export class Factory {
   /**
    * @returns {Service}
    */
-  service (path, service) {
-    const instance = new Service(this.#scope, this.#runtime, this.#registry, path, service)
+  service(path, service) {
+    const instance = new Service(
+      this.#scope,
+      this.#runtime,
+      this.#registry,
+      path,
+      service
+    )
 
     instance.tag()
 
@@ -48,7 +59,7 @@ export class Factory {
   /**
    * @returns {Mono}
    */
-  mono (composition) {
+  mono(composition) {
     const instance = new Mono(this.#scope, this.#runtime, this.#registry, composition)
 
     instance.tag()

@@ -6,10 +6,10 @@ The networking foundation every other Solution builds on. Connects a single `@to
 
 `net` reads two fields from your `$config` module (`import * as config from '$config'`):
 
-| Field    | Type                            | Notes                                                                       |
-| -------- | ------------------------------- | --------------------------------------------------------------------------- |
+| Field    | Type                            | Notes                                                                        |
+| -------- | ------------------------------- | ---------------------------------------------------------------------------- |
 | `origin` | `string`                        | Absolute API origin; `''` is invalid (resolved via `new URL(path, origin)`). |
-| `sleep`  | `[number, number] \| undefined` | Dev-only artificial latency range; `undefined` disables it.                 |
+| `sleep`  | `[number, number] \| undefined` | Dev-only artificial latency range; `undefined` disables it.                  |
 
 ## Usage
 

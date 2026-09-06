@@ -5,9 +5,8 @@ import type { IncomingMessage } from './types.js'
  * Of a header holding a list, the last value is the one the edge in front appended. The
  * connection's address is never it: behind an edge it is the edge's.
  */
-export function address (request: IncomingMessage, header?: string): string | undefined {
-  if (header === undefined)
-    return
+export function address(request: IncomingMessage, header?: string): string | undefined {
+  if (header === undefined) return
 
   const value = request.headers[header]
   const raw = Array.isArray(value) ? value[value.length - 1] : value

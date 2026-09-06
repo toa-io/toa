@@ -1,14 +1,11 @@
-/**
- * @implements {toa.core.bridges.Algorithm}
- */
 export class Effect {
   #foo
 
-  async mount (context) {
+  async mount(context) {
     this.#foo = context.configuration.foo
   }
 
-  async execute (input) {
+  async execute(input) {
     return this.#foo
   }
 }

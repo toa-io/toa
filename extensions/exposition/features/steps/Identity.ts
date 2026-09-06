@@ -13,14 +13,14 @@ export class Identity {
   private readonly http: http.Agent
   private readonly variables: Captures
 
-  public constructor (gateway: Gateway, parameters: Parameters, captures: Captures) {
+  public constructor(gateway: Gateway, parameters: Parameters, captures: Captures) {
     this.gateway = gateway
     this.http = new http.Agent(parameters.origin, captures)
     this.variables = captures
   }
 
   @given('transient identity {word}')
-  public async transient (as: string): Promise<Principal> {
+  public async transient(as: string): Promise<Principal> {
     await this.gateway.start()
 
     await this.http.request(`
@@ -43,7 +43,7 @@ export class Identity {
   }
 
   @given('transient identity')
-  public async anonymous (): Promise<Principal> {
+  public async anonymous(): Promise<Principal> {
     return await this.transient('identity')
   }
 }

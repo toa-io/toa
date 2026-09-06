@@ -12,10 +12,17 @@ it('discovers an issuer using the component fetch', async () => {
   const configuration = { issuer: iss, jwks_uri: `${iss}/jwks` }
 
   const fetch = mock.fn(async (_input: string | URL | Request) =>
-    Response.json(configuration)) as Mock<Fetch>
+    Response.json(configuration)
+  ) as Mock<Fetch>
 
   await assert.partialDeepStrictEqual(await discover(iss, fetch), configuration)
-  assert.ok(fetch.mock.calls.some((call: any) => call.arguments.length === 1 && isDeepStrictEqual(call.arguments[0], `${iss}/.well-known/openid-configuration`)))
+  assert.ok(
+    fetch.mock.calls.some(
+      (call: any) =>
+        call.arguments.length === 1 &&
+        isDeepStrictEqual(call.arguments[0], `${iss}/.well-known/openid-configuration`)
+    )
+  )
 })
 
 it('loads and caches remote keys using the component fetch', async () => {
@@ -43,8 +50,11 @@ it('loads and caches remote keys using the component fetch', async () => {
   const second = await createRemoteJWKSet(iss, fetch)
 
   assert.strictEqual(second, first)
-  await assert.partialDeepStrictEqual(await jose.jwtVerify(token, first, { issuer: iss }), {
-    payload: { sub: 'subject' }
-  })
+  await assert.partialDeepStrictEqual(
+    await jose.jwtVerify(token, first, { issuer: iss }),
+    {
+      payload: { sub: 'subject' }
+    }
+  )
   assert.strictEqual(fetch.mock.callCount(), 2)
 })

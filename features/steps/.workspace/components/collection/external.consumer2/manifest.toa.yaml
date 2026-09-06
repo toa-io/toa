@@ -2,14 +2,11 @@ name: consumer2
 namespace: external
 
 entity:
-  storage: sql
-  schema:
-    properties:
-      time:
-        type: integer
-      description:
-        type: string
-    type: object
+  properties:
+    time:
+      type: integer
+    description:
+      type: string
 
 operations:
   transit:

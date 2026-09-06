@@ -6,7 +6,7 @@ import { once } from 'node:events'
  * @param {import('child_process').SpawnOptions} [options]
  * @this {toa.features.Context}
  */
-export async function execute (command, options = {}) {
+export async function execute(command, options = {}) {
   options.cwd = this.cwd
 
   // the command leads its own process group, so aborting it takes the program along;
@@ -17,12 +17,33 @@ export async function execute (command, options = {}) {
 
   let stdout = ''
   let stderr = ''
+  let spoke = 0
 
-  child.stdout.on('data', (chunk) => (stdout += chunk))
-  child.stderr.on('data', (chunk) => (stderr += chunk))
+  child.stdout.on('data', (chunk) => ((stdout += chunk), (spoke = Date.now())))
+  child.stderr.on('data', (chunk) => ((stderr += chunk), (spoke = Date.now())))
 
   this.aborted = false
   this.controller = { abort: () => abort.call(this, child) }
+
+  /*
+   * A program that keeps running says when it is up — a composition prints `Composition
+   * complete` — and then has nothing more to say. Waiting for it to fall quiet is what tells
+   * a caller it may proceed; waiting a fixed span tells it nothing and costs the whole span.
+   */
+  this.settled = new Promise((resolve) => {
+    const poll = setInterval(() => {
+      if (spoke === 0 || Date.now() - spoke < QUIET) return
+
+      clearInterval(poll)
+      resolve()
+    }, POLL)
+
+    poll.unref()
+    child.once('close', () => {
+      clearInterval(poll)
+      resolve()
+    })
+  })
 
   const [code] = await once(child, 'close')
 
@@ -34,18 +55,26 @@ export async function execute (command, options = {}) {
   this.stdout = stdout.trim()
   // node warns about experimental APIs a dependency reaches for; that is the
   // runtime speaking, not the program under test
-  this.stderr = stderr.split('\n').filter((line) => !EXPERIMENTAL.test(line)).join('\n').trim()
+  this.stderr = stderr
+    .split('\n')
+    .filter((line) => !EXPERIMENTAL.test(line))
+    .join('\n')
+    .trim()
   this.stdoutLines = lines(this.stdout)
   this.stderrLines = lines(this.stderr)
 }
 
 const EXPERIMENTAL = /ExperimentalWarning|--trace-warnings/
 
+/** How long a program must say nothing before it counts as up, and how often that is looked at. */
+const QUIET = 500
+const POLL = 50
+
 /**
  * @param {import('child_process').ChildProcess} child
  * @this {toa.features.Context}
  */
-function abort (child) {
+function abort(child) {
   this.aborted = true
 
   try {

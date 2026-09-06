@@ -17,16 +17,15 @@ export const HEADER_MISMATCH = -32020
 export const MISSING_CAPABILITY = -32021
 export const UNSUPPORTED_VERSION = -32022
 
-export function failure (code: number, message: string, data?: unknown): Failure {
+export function failure(code: number, message: string, data?: unknown): Failure {
   const value: Failure = { code, message }
 
-  if (data !== undefined)
-    value.data = data
+  if (data !== undefined) value.data = data
 
   return value
 }
 
-export function response (id: string | number | null, error: Failure): Response {
+export function response(id: string | number | null, error: Failure): Response {
   return { jsonrpc: JSONRPC, id, error }
 }
 
@@ -36,7 +35,7 @@ export function response (id: string | number | null, error: Failure): Response 
  * The readable text is `body`, never `message`: `http.Exception` calls `super()` with no
  * argument, so every one of them carries an empty `message`.
  */
-export function of (exception: unknown): Failure {
+export function of(exception: unknown): Failure {
   if (exception instanceof http.NotFound || exception instanceof http.MethodNotAllowed)
     return failure(METHOD_NOT_FOUND, text(exception, 'Method not found'))
 
@@ -50,7 +49,7 @@ export function of (exception: unknown): Failure {
  * What the call was refused with, which a model reads and may correct itself by: what the
  * operation said, where it said anything, and otherwise what the status means here.
  */
-export function refusal (exception: http.ClientError): string {
+export function refusal(exception: http.ClientError): string {
   const body = exception.body
 
   if (typeof body !== 'object' || body === null || typeof body.code !== 'string')
@@ -58,7 +57,7 @@ export function refusal (exception: http.ClientError): string {
 
   const message = body.message as unknown
 
-  return typeof message === 'string' && message !== '' ? message : body.code as string
+  return typeof message === 'string' && message !== '' ? message : (body.code as string)
 }
 
 /**
@@ -74,7 +73,7 @@ const REFUSALS: Record<number, string> = {
   429: 'Too many calls'
 }
 
-function text (exception: http.Exception, fallback: string): string {
+function text(exception: http.Exception, fallback: string): string {
   return typeof exception.body === 'string' && exception.body !== ''
     ? exception.body
     : fallback

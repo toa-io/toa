@@ -12,18 +12,30 @@
   "bugs": {
     "url": "https://github.com/toa-io/toa/issues"
   },
-  "main": "src/index.js",
-  "types": "types/index.ts",
+  "main": "transpiled/index.js",
+  "types": "transpiled/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./transpiled/index.d.ts",
+      "default": "./transpiled/index.js"
+    },
+    "./types": {
+      "types": "./transpiled/types/index.d.ts",
+      "default": "./transpiled/types/index.js"
+    },
+    "./package.json": "./package.json"
+  },
   "publishConfig": {
     "access": "public"
   },
   "scripts": {
+    "transpile": "tsc",
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
     "@rsql/parser": "1.6.0",
     "@toa.io/generic": "1.0.0-alpha.283",
-    "js-yaml": "5.4.1",
+    "@toa.io/schemas": "1.0.0-alpha.283",
     "openspan": "1.0.0-alpha.277",
     "uuid": "14.0.2"
   },

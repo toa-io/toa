@@ -40,7 +40,11 @@ export interface Graph {
  * service rather than a component, so services are vertices here in their own right.
  */
 export function build(nodes: Node[], edges: Edge[]): Graph {
-  const components = nodes.map((node): Component => ({ kind: 'component', id: identify(node), node }))
+  const components = nodes.map((node): Component => ({
+    kind: 'component',
+    id: identify(node),
+    node
+  }))
   const services = new Map<string, Service>()
   const links = new Map<string, Link>()
 
@@ -54,14 +58,19 @@ export function build(nodes: Node[], edges: Edge[]): Graph {
     const link = links.get(`${from} ${to}`)
     const events = caused(edge) ? 1 : 0
 
-    if (link === undefined) links.set(`${from} ${to}`, { id: `${from} ${to}`, from, to, calls: 1, events })
+    if (link === undefined)
+      links.set(`${from} ${to}`, { id: `${from} ${to}`, from, to, calls: 1, events })
     else {
       link.calls++
       link.events += events
     }
   }
 
-  return { vertices: [...services.values(), ...components], links: [...links.values()], calls: edges }
+  return {
+    vertices: [...services.values(), ...components],
+    links: [...links.values()],
+    calls: edges
+  }
 }
 
 function origin(src: Edge['src']): string {
@@ -122,7 +131,9 @@ export function label(vertex: Vertex): string {
 
 /** Whether the filter admits a card: a component by all it declares, a service by its name. */
 export function found(vertex: Vertex, query: string): boolean {
-  return vertex.kind === 'component' ? rank(vertex.node, query) > 0 : matches(vertex.name, query)
+  return vertex.kind === 'component'
+    ? rank(vertex.node, query) > 0
+    : matches(vertex.name, query)
 }
 
 /** One call between the focused card and a neighbour, named by the rows it concerns. */
@@ -197,14 +208,20 @@ export function focus(graph: Graph, id: string): Focus | null {
         ? { row: arrival(looked, call), theirs: departure(call) }
         : { row: departure(call), theirs: arrival(neighbour, call) }
 
-    wire(side === 'in' ? incoming : outgoing, `${side}:${of}`, neighbour, ends, caused(call))
+    wire(
+      side === 'in' ? incoming : outgoing,
+      `${side}:${of}`,
+      neighbour,
+      ends,
+      caused(call)
+    )
   }
 
   return {
     vertex: looked,
     incoming: [...incoming.values()].sort(byVertex),
     outgoing: [...outgoing.values()].sort(byVertex),
-    self,
+    self
   }
 }
 
@@ -215,7 +232,7 @@ function wire(
   at: string,
   vertex: Vertex,
   ends: Ends,
-  event: boolean,
+  event: boolean
 ): void {
   let satellite = into.get(at)
 
@@ -239,7 +256,7 @@ function arrival(vertex: Vertex, call: Edge): string | null {
     const source = identify(src)
 
     const receiver = vertex.node.receivers.find(
-      (receiver) => receiver.source === source && receiver.event === src.event,
+      (receiver) => receiver.source === source && receiver.event === src.event
     )
 
     if (receiver !== undefined) return `receiver:${receiver.label}`

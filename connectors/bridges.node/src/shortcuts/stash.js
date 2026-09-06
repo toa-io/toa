@@ -1,10 +1,12 @@
 import { underlay } from '@toa.io/generic'
 
 /** @type {toa.node.shortcut} */
-export function stash (context, aspect) {
+export function stash(context, aspect) {
   context.stash = underlay((segs, args) => {
     if (segs.length !== 1)
-      throw new Error(`Stash aspect call should have 1 segment, [${segs.join(', ')}] given`)
+      throw new Error(
+        `Stash aspect call should have 1 segment, [${segs.join(', ')}] given`
+      )
 
     const method = segs[0]
 

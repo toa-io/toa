@@ -8,9 +8,9 @@ it('should be', () => {
 })
 
 it('should reset', () => {
-  const component = /** @type {toa.core.Component} */ 1
-  const composition = /** @type {toa.core.Connector} */ 2
-  const remote = /** @type {toa.core.Component} */ 3
+  const component = /** @type {import('@toa.io/core').Component} */ 1
+  const composition = /** @type {import('@toa.io/core').Connector} */ 2
+  const remote = /** @type {import('@toa.io/core').Component} */ 3
 
   assert.deepStrictEqual(state.components.length, 0)
   assert.deepStrictEqual(state.compositions.length, 0)

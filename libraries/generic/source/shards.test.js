@@ -20,7 +20,11 @@ it('should expand shards', async () => {
   ]
 
   assert.deepStrictEqual(output.length, expected.length)
-  assert.ok(expected.every((item) => output.some((candidate) => isDeepStrictEqual(candidate, item))))
+  assert.ok(
+    expected.every((item) =>
+      output.some((candidate) => isDeepStrictEqual(candidate, item))
+    )
+  )
 })
 
 it('should return input if no range specified', async () => {

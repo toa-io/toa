@@ -12,7 +12,7 @@ const internal = collection<Item>({ get: () => api.get(), persist: 'items' })
 export const items = derived<[typeof internal, typeof me], Maybe<Item[]>>(
   [list, me],
   ([$list, $me], set, update) => {
-    if (!ok($list)) return set($list)   // forward loading/error verbatim
+    if (!ok($list)) return set($list) // forward loading/error verbatim
     if (!ok($me)) return set($me)
 
     const items = $list.map((i) => map(i, $me.id))
@@ -31,7 +31,7 @@ export const items = derived<[typeof internal, typeof me], Maybe<Item[]>>(
       )
     )
 
-    return () => unsubs.forEach((u) => u())   // cleanup on unsubscribe
+    return () => unsubs.forEach((u) => u()) // cleanup on unsubscribe
   }
 )
 ```
@@ -52,10 +52,10 @@ events.on('todos.sync', (todo) => sync(todos, todo))
 events.on('accounts.sync', (a) => accounts.set(a.id, a))
 
 export async function add(input: Input): Promise<Todo | Error> {
-  const me = await having(account)        // wait for auth
+  const me = await having(account) // wait for auth
   const res = await net.add(me.id, input)
-  if (res instanceof Error) return res     // error as value
-  sync(todos, res)                         // merge authoritative result
+  if (res instanceof Error) return res // error as value
+  sync(todos, res) // merge authoritative result
   return res
 }
 ```
@@ -70,7 +70,7 @@ export interface Contact extends net.Contact {
 }
 
 export function map(entry: net.Contact): Contact {
-  return { ...entry, account: accounts.extract(entry.owner) }  // sync snapshot
+  return { ...entry, account: accounts.extract(entry.owner) } // sync snapshot
 }
 ```
 

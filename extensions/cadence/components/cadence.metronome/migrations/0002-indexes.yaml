@@ -1,0 +1,5 @@
+- index:
+    name: index_due
+    keys:
+      lane: asc
+      due: asc

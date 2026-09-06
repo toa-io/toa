@@ -8,13 +8,13 @@ export const definition = /** @type {toa.norm.component.Receiver} */ {
   adaptive: false
 }
 
-export const local = /** @type {toa.core.Component} */ {
+export const local = /** @type {import('@toa.io/core').Component} */ {
   locator: { id: 'default.dummy' },
   invoke: mock.fn()
 }
 
 // noinspection JSCheckFunctionSignatures
-export const bridge = /** @type {toa.core.bridges.Event} */ {
+export const bridge = /** @type {import('@toa.io/core/types').bridges.Event} */ {
   condition: mock.fn(async (payload) => !(payload.reject === true)),
   request: mock.fn(async () => ({ input: generate() }))
 }

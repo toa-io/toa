@@ -1,4 +1,4 @@
-export async function computation (input, context) {
+export async function computation(input, context) {
   let value = input.value
 
   for (let i = 0; i < input.times; i++) {

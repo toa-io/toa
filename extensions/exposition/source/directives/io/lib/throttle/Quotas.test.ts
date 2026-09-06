@@ -77,8 +77,7 @@ describe('retry', () => {
     quotas = Quotas.create(createConfiguration({ requests: 10, interval: 1000 }))
     context = createContext()
 
-    for (let i = 0; i < 10; i++)
-      quotas.check(context, [])
+    for (let i = 0; i < 10; i++) quotas.check(context, [])
 
     // an emission here is a tenth of a second, and `Retry-After` counts in whole ones
     assert.strictEqual(quotas.check(context, []), 1)
@@ -237,14 +236,16 @@ describe('ip', () => {
 
     const context = createContext({})
 
-    for (let i = 0; i < 5; i++)
-      assert.strictEqual(quotas.check(context, []), 0)
+    for (let i = 0; i < 5; i++) assert.strictEqual(quotas.check(context, []), 0)
   })
 })
 
 describe('route', () => {
   it('should key on the route, not on the path it came in on', () => {
-    quotas = Quotas.create(createConfiguration({ key: [{ method: 'route' }] }), '/users/:id')
+    quotas = Quotas.create(
+      createConfiguration({ key: [{ method: 'route' }] }),
+      '/users/:id'
+    )
 
     const one = createContext({ url: new URL('http://localhost/users/1/') })
     const two = createContext({ url: new URL('http://localhost/users/2/') })
@@ -258,8 +259,14 @@ describe('route', () => {
   })
 
   it('should have separate quotas per route', () => {
-    const users = Quotas.create(createConfiguration({ key: [{ method: 'route' }] }), '/users/:id')
-    const posts = Quotas.create(createConfiguration({ key: [{ method: 'route' }] }), '/posts/:id')
+    const users = Quotas.create(
+      createConfiguration({ key: [{ method: 'route' }] }),
+      '/users/:id'
+    )
+    const posts = Quotas.create(
+      createConfiguration({ key: [{ method: 'route' }] }),
+      '/posts/:id'
+    )
 
     context = createContext({ url: new URL('http://localhost/users/1/') })
 
@@ -323,7 +330,9 @@ describe('identity', () => {
 describe('status', () => {
   beforeEach(() => {
     context = createContext()
-    configuration = createConfiguration({ condition: [{ method: 'status', options: 404 }] })
+    configuration = createConfiguration({
+      condition: [{ method: 'status', options: 404 }]
+    })
     quotas = Quotas.create(configuration)
   })
 
@@ -356,7 +365,9 @@ describe('status', () => {
   it('should charge the key checking saw, which settling cannot recompute', () => {
     const keys = [{ method: 'segment' as const, options: 'id' }]
 
-    quotas = Quotas.create(createConfiguration({ key: keys, condition: configuration.condition }))
+    quotas = Quotas.create(
+      createConfiguration({ key: keys, condition: configuration.condition })
+    )
 
     const one = createContext()
     const two = createContext()
@@ -373,23 +384,28 @@ describe('status', () => {
   })
 })
 
-function flush (now: number = Date.now(), ...of: Quotas[]): Batch[] {
+function flush(now: number = Date.now(), ...of: Quotas[]): Batch[] {
   const batch: Batch[] = []
 
-  for (const one of of.length === 0 ? [quotas] : of)
-    one.flush(now, batch)
+  for (const one of of.length === 0 ? [quotas] : of) one.flush(now, batch)
 
   return batch
 }
 
-function createConfiguration (properties?: Partial<Configuration>): Configuration {
-  return Object.assign({ key: [{ method: 'path' }], requests: 2, interval: 100 }, properties)
+function createConfiguration(properties?: Partial<Configuration>): Configuration {
+  return Object.assign(
+    { key: [{ method: 'path' }], requests: 2, interval: 100 },
+    properties
+  )
 }
 
-function createContext (properties?: any): Context {
-  return Object.assign({ url: new URL('http://localhost/') }, properties) as unknown as Context
+function createContext(properties?: any): Context {
+  return Object.assign(
+    { url: new URL('http://localhost/') },
+    properties
+  ) as unknown as Context
 }
 
-async function timeout (ms: number): Promise<void> {
+async function timeout(ms: number): Promise<void> {
   await setTimeout(ms * 1.2)
 }

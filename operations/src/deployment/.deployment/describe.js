@@ -14,7 +14,8 @@ export const describe = (context, compositions, dependency, image) => {
     {
       name: 'TOA_CONTEXT',
       value: context.name
-    }, {
+    },
+    {
       name: 'TOA_ENV',
       value: context.environment
     }
@@ -28,8 +29,10 @@ export const describe = (context, compositions, dependency, image) => {
     // a lock is taken on `floor(n / 2) + 1` of them, so an even number tolerates no more
     // losses than the odd number below it, and two tolerate fewer than one does
     if (addresses.length % 2 === 0)
-      throw new Error(`'atomicity.redis' takes an odd number of addresses, ` +
-        `${addresses.length} given`)
+      throw new Error(
+        `'atomicity.redis' takes an odd number of addresses, ` +
+          `${addresses.length} given`
+      )
 
     dependency.variables.global.push({
       name: 'TOA_ATOMICITY_REDIS',
@@ -102,8 +105,10 @@ export const describe = (context, compositions, dependency, image) => {
   return values
 }
 
-function unit (context, dependency) {
-  const components = (context.components ?? []).map((component) => component.locator.label)
+function unit(context, dependency) {
+  const components = (context.components ?? []).map(
+    (component) => component.locator.label
+  )
 
   const variables = dependency.variables ?? {}
   const mounts = dependency.mounts ?? {}
@@ -115,8 +120,7 @@ function unit (context, dependency) {
     variables: []
   }
 
-  if (context.ingress !== undefined)
-    mono.ingress = Object.assign({}, context.ingress)
+  if (context.ingress !== undefined) mono.ingress = Object.assign({}, context.ingress)
 
   addVariables(mono, variables, Object.keys(variables))
   addMounts(mono, dependency.mounts, Object.keys(mounts))

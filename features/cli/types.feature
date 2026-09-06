@@ -1,3 +1,4 @@
+@cli
 Feature: toa types
 
   Generate types for a Context and its components

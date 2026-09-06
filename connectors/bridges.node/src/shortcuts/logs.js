@@ -1,6 +1,7 @@
-export function logs (context, aspect) {
-  function invoke (severity) {
-    return (message, attributes) => aspect.invoke(context.operation, severity, message, attributes)
+export function logs(context, aspect) {
+  function invoke(severity) {
+    return (message, attributes) =>
+      aspect.invoke(context.operation, severity, message, attributes)
   }
 
   context.logs = CHANNELS.reduce((logs, channel) => {

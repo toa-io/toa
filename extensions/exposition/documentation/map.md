@@ -9,10 +9,10 @@ The `map` directive family is used to map HTTP request parts to operation call i
 ```yaml
 exposition:
   /:group:
-    languages: [en, fr]   # supported languages
+    languages: [en, fr] # supported languages
     GET:
       map:authority: hostname # request authority (e.g., hostname)
-      map:language: lang      # requested language
+      map:language: lang # requested language
       map:headers: # raw header values
         token: x-access-token
       map:buffer: body # unparsed request body

@@ -44,11 +44,11 @@ Programmatic API (no UI):
 ```ts
 import { configure, ping, request, unsubscribe, key, permissions } from '@/transmission'
 
-await request()                                            // OS prompt + subscribe (idempotent)
-await configure({ [key({ domain: 'expenses' })]: false })  // mute one domain
-await ping()                                               // round-trip a test push (signed-in + subscribed)
-await unsubscribe()                                        // drop subscription on this device
-$permissions                                               // reactive scope→bool map
+await request() // OS prompt + subscribe (idempotent)
+await configure({ [key({ domain: 'expenses' })]: false }) // mute one domain
+await ping() // round-trip a test push (signed-in + subscribed)
+await unsubscribe() // drop subscription on this device
+$permissions // reactive scope→bool map
 ```
 
 Send a real push from your backend by `POST`ing to the user's `transmission/<identity>` row — see `svc/net` for the wire shape.
@@ -70,9 +70,9 @@ Onboarding nag card asking the user to enable push. Drop it on a high-traffic su
 
 ### Props
 
-| Prop    | Type         | Default | Notes                          |
-| ------- | ------------ | ------- | ------------------------------ |
-| `class` | `ClassValue` | —       | Forwarded to the root `Card`.  |
+| Prop    | Type         | Default | Notes                         |
+| ------- | ------------ | ------- | ----------------------------- |
+| `class` | `ClassValue` | —       | Forwarded to the root `Card`. |
 
 ## `Scopes`
 

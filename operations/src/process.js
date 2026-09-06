@@ -4,7 +4,7 @@ import { execa } from 'execa'
  * @implements {toa.operations.Process}
  */
 export class Process {
-  async execute (cmd, args, options = {}) {
+  async execute(cmd, args, options = {}) {
     console.log('toa>', cmd, args.join(' '))
 
     const command = execa(cmd, args)

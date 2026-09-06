@@ -2,7 +2,7 @@
 
 ## Notes
 
-Use for obvious failures on small forms where error copy adds little value — e.g. a wrong password is already clear from context. Prefer a real error message when the user needs to know *what* went wrong.
+Use for obvious failures on small forms where error copy adds little value — e.g. a wrong password is already clear from context. Prefer a real error message when the user needs to know _what_ went wrong.
 
 ## Usage
 
@@ -22,15 +22,15 @@ Use for obvious failures on small forms where error copy adds little value — e
 
 ## Props
 
-| Prop       | Type         | Default | Notes                          |
-| ---------- | ------------ | ------- | ------------------------------ |
-| `children` | `Snippet`    | —       | Content that shakes.           |
-| `class`    | `ClassValue` | —       | Classes on the wrapper `div`.  |
+| Prop       | Type         | Default | Notes                         |
+| ---------- | ------------ | ------- | ----------------------------- |
+| `children` | `Snippet`    | —       | Content that shakes.          |
+| `class`    | `ClassValue` | —       | Classes on the wrapper `div`. |
 
 ## Instance methods
 
 Bind with `bind:this` to trigger the animation:
 
-| Method     | Notes                                      |
-| ---------- | ------------------------------------------ |
-| `shake()`  | Plays the shake; resolves when it finishes. |
+| Method    | Notes                                       |
+| --------- | ------------------------------------------- |
+| `shake()` | Plays the shake; resolves when it finishes. |

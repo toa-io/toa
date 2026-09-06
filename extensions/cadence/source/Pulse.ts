@@ -2,7 +2,8 @@ import { console } from 'openspan'
 import { Connector } from '@toa.io/core'
 import type { Local } from './Local.js'
 import type { SpanOptions } from 'openspan'
-import type { Locator, atomicity } from '@toa.io/core'
+import type { Locator } from '@toa.io/core'
+import type { atomicity } from '@toa.io/core/types'
 
 /**
  * A recurring call to an operation of its own component, on the cadence its manifest states.
@@ -43,7 +44,7 @@ export class Pulse extends Connector {
 
   private closing = false
 
-  public constructor (definition: Definition, local: Local, atom: atomicity.Atom) {
+  public constructor(definition: Definition, local: Local, atom: atomicity.Atom) {
     super()
 
     const { locator, endpoint, cycle, intervals } = definition
@@ -75,17 +76,17 @@ export class Pulse extends Connector {
    * as large as the cycle has seconds, so their product leaves the range a double is exact in
    * for a long cycle cut finely. It is evaluated once per interval, where this costs nothing.
    */
-  public ordinal (now: number): number {
-    return Number(BigInt(now) * BigInt(this.n) / BigInt(this.cycle))
+  public ordinal(now: number): number {
+    return Number((BigInt(now) * BigInt(this.n)) / BigInt(this.cycle))
   }
 
   /** Which of the cycle's intervals `now` falls in. */
-  public index (now: number): number {
+  public index(now: number): number {
     return this.ordinal(now) % this.n
   }
 
   /** When the interval `now` falls in gives way to the next one. */
-  public boundary (now: number): number {
+  public boundary(now: number): number {
     const cycle = BigInt(this.cycle)
     const n = BigInt(this.n)
     const next = BigInt(this.ordinal(now) + 1)
@@ -94,7 +95,7 @@ export class Pulse extends Connector {
     return Number((next * cycle + n - 1n) / n)
   }
 
-  protected override async open (): Promise<void> {
+  protected override async open(): Promise<void> {
     // whatever interval it is now, this replica was not there when it began, so it is not
     // this one's to call — the first call is at the next boundary
     this.fired = this.ordinal(Date.now())
@@ -102,7 +103,7 @@ export class Pulse extends Connector {
     this.arm()
   }
 
-  protected override async close (): Promise<void> {
+  protected override async close(): Promise<void> {
     this.closing = true
 
     clearTimeout(this.timer)
@@ -110,11 +111,10 @@ export class Pulse extends Connector {
     // a call still running holds the remote it was made through, which is torn down after
     // this returns. Bounded, because an operation that never returns would outlive any
     // grace period and the interval is over either way
-    if (this.firing !== undefined)
-      await Promise.race([this.firing, delay(DRAIN)])
+    if (this.firing !== undefined) await Promise.race([this.firing, delay(DRAIN)])
   }
 
-  private arm (): void {
+  private arm(): void {
     const now = Date.now()
 
     // a delay past this fires at once rather than late, so a long cycle is waited out in
@@ -125,7 +125,7 @@ export class Pulse extends Connector {
     this.timer.unref()
   }
 
-  private tick (): void {
+  private tick(): void {
     if (this.closing) return
 
     const ordinal = this.ordinal(Date.now())
@@ -145,10 +145,12 @@ export class Pulse extends Connector {
    * Nothing queues here. A call still running when the next boundary arrives means the work
    * does not fit the gap, and starting a second one would only make that worse.
    */
-  private async fire (i: number): Promise<void> {
+  private async fire(i: number): Promise<void> {
     if (this.firing !== undefined) {
-      console.warn('Pulse skipped: the previous call has not returned',
-        { pulse: this.label, interval: i })
+      console.warn('Pulse skipped: the previous call has not returned', {
+        pulse: this.label,
+        interval: i
+      })
 
       return
     }
@@ -156,8 +158,10 @@ export class Pulse extends Connector {
     const owned = this.atom.slots(this.n)
 
     if (owned === null) {
-      console.warn('Pulse skipped: this replica owns nothing',
-        { pulse: this.label, interval: i })
+      console.warn('Pulse skipped: this replica owns nothing', {
+        pulse: this.label,
+        interval: i
+      })
 
       return
     }
@@ -171,12 +175,17 @@ export class Pulse extends Connector {
      * only wanted an operation called every hour. So the interval is skipped: it is reported,
      * and the next one is called as though it had not happened.
      */
-    const firing = console.span(this.options,
-      async () => await this.local.invoke(this.endpoint, { input: { n: this.n, i } }))
+    const firing = console
+      .span(
+        this.options,
+        async () => await this.local.invoke(this.endpoint, { input: { n: this.n, i } })
+      )
       .catch((error: unknown) => {
         console.error('Pulse failed', { pulse: this.label, interval: i, error })
       })
-      .finally(() => { this.firing = undefined })
+      .finally(() => {
+        this.firing = undefined
+      })
 
     this.firing = firing
 
@@ -191,7 +200,7 @@ export interface Definition {
   intervals: number
 }
 
-async function delay (ms: number): Promise<void> {
+async function delay(ms: number): Promise<void> {
   await new Promise((resolve) => setTimeout(resolve, ms).unref())
 }
 

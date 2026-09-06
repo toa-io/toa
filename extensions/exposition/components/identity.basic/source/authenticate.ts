@@ -1,14 +1,16 @@
-import { compare } from 'bcryptjs'
+import { compare } from '@node-rs/bcrypt'
 import { quote } from '@toa.io/generic'
-import { type Query, type Maybe } from '@toa.io/core'
+import type { Query, Maybe } from '@toa.io/core/types'
 import { split } from './lib/credentials.js'
 import { type Context } from '../types/index.js'
 
-export async function computation (input: Input, context: Context): Promise<Maybe<Output>> {
+export async function computation(
+  input: Input,
+  context: Context
+): Promise<Maybe<Output>> {
   const pair = split(input.credentials)
 
-  if (pair === null)
-    return ERR_NOT_FOUND
+  if (pair === null) return ERR_NOT_FOUND
 
   const [username, password] = pair
 
@@ -17,19 +19,15 @@ export async function computation (input: Input, context: Context): Promise<Mayb
   }
   const credentials = await context.local.observe({ query })
 
-  if (credentials instanceof Error)
-    return credentials
+  if (credentials instanceof Error) return credentials
 
-  if (credentials === null)
-    return ERR_NOT_FOUND
+  if (credentials === null) return ERR_NOT_FOUND
 
   const spicy = password + (context.configuration.pepper?.unwrap() ?? '')
   const match = await compare(spicy, credentials.password)
 
-  if (match)
-    return { identity: { id: credentials.id } }
-  else
-    return ERR_PASSWORD_MISMATCH
+  if (match) return { identity: { id: credentials.id } }
+  else return ERR_PASSWORD_MISMATCH
 }
 
 const ERR_NOT_FOUND = new (class NotFoundError extends Error {

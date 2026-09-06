@@ -59,17 +59,17 @@ Bind each row, call `remove()` on every ref with a short stagger (`delay` from `
 
 ## Props
 
-| Prop          | Type                              | Default | Notes                                                                 |
-| ------------- | --------------------------------- | ------- | --------------------------------------------------------------------- |
-| `children`    | `Snippet`                         | —       | Content inside the swipe track.                                       |
-| `ondismiss`   | `() => Promise<void> \| void`     | —       | Swipe-to-sentinel fires immediately; `dismiss()` fires after animation. |
-| `dismissable` | `boolean`                         | `true`  | When `false`, hides the swipe sentinel and disables swipe dismissal.  |
+| Prop          | Type                          | Default | Notes                                                                   |
+| ------------- | ----------------------------- | ------- | ----------------------------------------------------------------------- |
+| `children`    | `Snippet`                     | —       | Content inside the swipe track.                                         |
+| `ondismiss`   | `() => Promise<void> \| void` | —       | Swipe-to-sentinel fires immediately; `dismiss()` fires after animation. |
+| `dismissable` | `boolean`                     | `true`  | When `false`, hides the swipe sentinel and disables swipe dismissal.    |
 
 ## Instance methods
 
 Bind with `bind:this` to call programmatic dismissal:
 
-| Method     | Notes                                                          |
-| ---------- | -------------------------------------------------------------- |
-| `dismiss()` | Slide-out animation, then `ondismiss`.                        |
-| `remove()`  | Slide-out animation only — no `ondismiss`.                    |
+| Method      | Notes                                      |
+| ----------- | ------------------------------------------ |
+| `dismiss()` | Slide-out animation, then `ondismiss`.     |
+| `remove()`  | Slide-out animation only — no `ondismiss`. |

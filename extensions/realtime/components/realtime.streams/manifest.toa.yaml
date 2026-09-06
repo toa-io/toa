@@ -30,13 +30,15 @@ configuration:
     properties:
       maxlen:
         type: number
-        default: 1000
       expire:
         type: number
-        default: 300
     type: object
     # both have defaults, so the component reads them without checking
     required: [maxlen, expire]
+
+  defaults:
+    maxlen: 1000
+    expire: 300
 
 state: ~
 stash: ~

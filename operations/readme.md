@@ -38,6 +38,49 @@ registry:
     run: npm i -g @toa.io/runtime --omit=dev
 ```
 
+#### Extension Service Images
+
+`registry.services` says where an extension service's image comes from.
+
+`build`, the default, builds one per service into `registry.base`. Its tag carries the
+runtime version, so every Toa release rebuilds them all.
+
+`published` deploys the image the extension ships and builds nothing:
+
+```yaml
+# context.toa.yaml
+
+registry:
+  services: published
+```
+
+The images are tagged with the runtime version:
+
+```
+ghcr.io/toa-io/extension-exposition-gateway:1.0.0-alpha.285
+ghcr.io/toa-io/extension-realtime-streams:1.0.0-alpha.285
+ghcr.io/toa-io/extension-introspection-explorer:1.0.0-alpha.285
+ghcr.io/toa-io/extension-configuration-values:1.0.0-alpha.285
+```
+
+The cluster pulls them from `ghcr.io` rather than from `registry.base`. They are public and
+`registry.credentials` does not apply; a cluster that cannot reach `ghcr.io` needs `build`.
+
+The field is environment-scoped like the rest:
+
+```yaml
+# context.toa.yaml
+
+registry:
+  base@local: localhost:5000
+  base@production: registry.digitalocean.com/acme
+  services: published
+  services@local: build
+```
+
+An extension that states no image is built whatever this says, as is a service a
+composition runs in its own pod.
+
 #### Build Options
 
 ```yaml

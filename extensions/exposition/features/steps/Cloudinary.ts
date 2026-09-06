@@ -8,6 +8,5 @@ import { Before } from '@cucumber/cucumber'
  * fresh machine; with one they run, no flag to remember.
  */
 Before({ tags: '@cloudinary' }, function () {
-  if (process.env.CLOUDINARY_ENVIRONMENT === undefined)
-    return 'skipped'
+  if (process.env.CLOUDINARY_ENVIRONMENT === undefined) return 'skipped'
 })

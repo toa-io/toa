@@ -1,7 +1,6 @@
 import { readFileSync } from 'node:fs'
 import { Readable } from 'node:stream'
 import { pipeline } from 'node:stream/promises'
-import { createHash } from 'node:crypto'
 import * as contentType from 'content-type'
 import { console } from 'openspan'
 import { type Format, decoders } from './formats/index.js'
@@ -9,27 +8,28 @@ import { BadRequest, NotAcceptable, UnsupportedMediaType } from './exceptions.js
 import type { Context } from './Context.js'
 import type { ServerResponse } from './types.js'
 
-const server = `Exposition/${JSON.parse(readFileSync(new URL('../../package.json', import.meta.url), 'utf8')).version}` +
+const server =
+  `Exposition/${JSON.parse(readFileSync(new URL('../../package.json', import.meta.url), 'utf8')).version}` +
   ((process.env.TOA_CONTEXT === undefined ? '' : ` ${process.env.TOA_CONTEXT}`) +
     (process.env.TOA_ENV === undefined ? '' : `/${process.env.TOA_ENV}`))
-
-const pending = new Map<string, PendingStream>()
 
 /**
  * Applies what the request accumulated in `pipelines.response` — an `io:output` restriction,
  * a `vary` a `map` directive owes. Separate from `write` because a message is not always
  * written: one call of several produces a value the reply is assembled from.
  */
-export async function shape (context: Context, message: OutgoingMessage): Promise<void> {
-  for (const transform of context.pipelines.response)
-    await transform(message)
+export async function shape(context: Context, message: OutgoingMessage): Promise<void> {
+  for (const transform of context.pipelines.response) await transform(message)
 }
 
-export async function write (context: Context, response: ServerResponse, message: OutgoingMessage): Promise<void> {
+export async function write(
+  context: Context,
+  response: ServerResponse,
+  message: OutgoingMessage
+): Promise<void> {
   await shape(context, message)
 
-  if (message?.status !== undefined)
-    response.statusCode = message.status
+  if (message?.status !== undefined) response.statusCode = message.status
 
   response.setHeader('server', server)
   message.headers?.forEach((value, key) => response.setHeader(key, value))
@@ -42,24 +42,21 @@ export async function write (context: Context, response: ServerResponse, message
   }
 
   response.on('error', (exception: Error) =>
-    console.warn('HTTP response error', { path: context.url.pathname, exception }))
+    console.warn('HTTP response error', { path: context.url.pathname, exception })
+  )
 
-  if (message.body instanceof Readable)
-    stream(message, context, response)
-  else
-    send(message, context, response)
+  if (message.body instanceof Readable) stream(message, context, response)
+  else send(message, context, response)
 }
 
-export async function read (context: Context): Promise<any> {
+export async function read(context: Context): Promise<any> {
   const header = context.request.headers['content-type']
 
-  if (header === undefined)
-    return undefined
+  if (header === undefined) return undefined
 
   const { type, parameters } = contentType.parse(header)
 
-  if (!(type in decoders))
-    throw new UnsupportedMediaType()
+  if (!(type in decoders)) throw new UnsupportedMediaType()
 
   const format = decoders[type]
   const buf = await context.buffer()
@@ -76,25 +73,24 @@ export async function read (context: Context): Promise<any> {
   }
 }
 
-function send (message: OutgoingMessage, context: Context, response: ServerResponse): void {
+function send(
+  message: OutgoingMessage,
+  context: Context,
+  response: ServerResponse
+): void {
   if (message.body === undefined || message.body === null) {
     // a HEAD reply carries no body but must still report the length a GET would
     // have returned, so a length already set by a directive is left alone
-    if (!response.hasHeader('content-length'))
-      response.setHeader('content-length', '0')
+    if (!response.hasHeader('content-length')) response.setHeader('content-length', '0')
 
     response.end()
 
     return
   }
 
-  if (context.encoder === null)
-    throw new NotAcceptable()
+  if (context.encoder === null) throw new NotAcceptable()
 
   const buf = context.encoder.encode(message.body)
-
-  if (message.etag === true && conditional(context, response, buf))
-    return
 
   response.setHeader('content-type', context.encoder.type)
   response.setHeader('content-length', buf.length.toString())
@@ -102,30 +98,11 @@ function send (message: OutgoingMessage, context: Context, response: ServerRespo
   response.end(buf)
 }
 
-/**
- * Tags a reply that carries no version with a hash of the body being sent, and answers
- * `304` when the client already has it. The tag is taken from the encoded body rather
- * than from a serialization of its own, so it identifies the representation — which is
- * what `vary` says.
- */
-function conditional (context: Context, response: ServerResponse, buf: Buffer): boolean {
-  const etag = `"${createHash('sha256').update(buf).digest('hex')}"`
-
-  response.setHeader('etag', etag)
-
-  if (context.request.headers['if-none-match'] !== etag)
-    return false
-
-  response.setHeader('content-length', '0')
-  response.appendHeader('vary', 'accept')
-
-  response.statusCode = 304
-  response.end()
-
-  return true
-}
-
-function stream (message: OutgoingMessage, context: Context, response: ServerResponse): void {
+function stream(
+  message: OutgoingMessage,
+  context: Context,
+  response: ServerResponse
+): void {
   const encoded = message.headers !== undefined && message.headers.has('content-type')
   const source: Readable = encoded ? message.body : multipart(message, context, response)
 
@@ -134,21 +111,21 @@ function stream (message: OutgoingMessage, context: Context, response: ServerRes
   //
   // `pipeline` carries an error to every stage and destroys them. `pipe` leaves the stages it
   // built behind, and an `error` on a stream nobody listens to is an uncaught exception.
-  pipeline(source, response)
-    .catch((exception: Error) =>
-      console.warn('Message stream error', { path: context.url.pathname, exception }))
-
-  if (context.debug)
-    debugStream(context, response)
+  pipeline(source, response).catch((exception: Error) =>
+    console.warn('Message stream error', { path: context.url.pathname, exception })
+  )
 }
 
 /**
  * Frames an object stream as `multipart/*`: an `ACK` part, the parts themselves, then `FIN`.
  * The body is a `Readable`; `write` reached here by testing it.
  */
-export function multipart (message: OutgoingMessage, context: Context, response: ServerResponse): Readable {
-  if (context.encoder === null)
-    throw new NotAcceptable()
+export function multipart(
+  message: OutgoingMessage,
+  context: Context,
+  response: ServerResponse
+): Readable {
+  if (context.encoder === null) throw new NotAcceptable()
 
   const encoder = context.encoder
 
@@ -157,7 +134,7 @@ export function multipart (message: OutgoingMessage, context: Context, response:
   return Readable.from(frames(message.body as Readable, encoder))
 }
 
-async function * frames (body: Readable, encoder: Format): AsyncGenerator<Buffer> {
+async function* frames(body: Readable, encoder: Format): AsyncGenerator<Buffer> {
   yield Buffer.concat([CUT, CRLF, encoder.encode('ACK'), CRLF, CUT])
 
   for await (const part of body)
@@ -165,7 +142,8 @@ async function * frames (body: Readable, encoder: Format): AsyncGenerator<Buffer
       CRLF /* indicates no boundary headers */,
       encoder.encode(part),
       CRLF,
-      CUT])
+      CUT
+    ])
 
   yield Buffer.concat([CRLF, encoder.encode('FIN'), CRLF, FINALCUT])
 }
@@ -175,41 +153,14 @@ const CUT = Buffer.from(`--${BOUNDARY}\r\n`)
 const CRLF = Buffer.from('\r\n')
 const FINALCUT = Buffer.from(`--${BOUNDARY}--`)
 
-const PENDING_DEBUG_INTERVAL = 30000
-
-let pendingInterval: NodeJS.Timeout | null = null
-
-function debugStream (context: Context, response: ServerResponse): void {
-  const ctx = { method: context.request.method, path: context.url.pathname }
-
-  console.debug('Stream opened', ctx)
-  pending.set(context.id, ctx)
-
-  response.on('close', () => {
-    console.debug('Stream closed', ctx)
-    pending.delete(context.id)
-
-    if (pending.size === 0) {
-      if (pendingInterval !== null)
-        clearInterval(pendingInterval)
-
-      pendingInterval = null
-    }
-  })
-
-  if (pendingInterval === null)
-    pendingInterval = setInterval(() =>
-      console.debug('Pending streams', { size: pending.size }),
-    PENDING_DEBUG_INTERVAL)
-}
-
 export interface OutgoingMessage {
   status?: number
   headers?: Headers
   body?: any
 
-  /** tag the response with a hash of the encoded body, see `conditional` */
-  etag?: boolean
+  /** what the reply carries for a cache to validate by; the `cache` family sets the headers */
+  version?: number
+  modified?: number | string
 
   /**
    * Built by the gateway rather than returned by an operation, as a request is `authentic`
@@ -230,9 +181,4 @@ export interface Query {
   omit?: string
   limit?: string
   version?: number
-}
-
-interface PendingStream {
-  method: string
-  path: string
 }

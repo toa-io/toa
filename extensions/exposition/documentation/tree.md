@@ -112,7 +112,7 @@ key.
 HTTP methods can only be mapped to operations of the corresponding types.
 
 | HTTP method | Operation type                                |
-|-------------|-----------------------------------------------|
+| ----------- | --------------------------------------------- |
 | `POST`      | **Transition** (without Query)<br/>**Effect** |
 | `PUT`       | **Transition** (with Query)<br/>**Effect**    |
 | `GET`       | **Observation**<br/>**Computation**           |

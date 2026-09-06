@@ -20,16 +20,15 @@ export const FORBIDDEN = -32000
 export const REFUSED = -32001
 export const BATCH_TOO_LARGE = -32002
 
-export function failure (code: number, message: string, data?: unknown): Failure {
+export function failure(code: number, message: string, data?: unknown): Failure {
   const value: Failure = { code, message }
 
-  if (data !== undefined)
-    value.data = data
+  if (data !== undefined) value.data = data
 
   return value
 }
 
-export function response (id: string | number | null, error: Failure): Response {
+export function response(id: string | number | null, error: Failure): Response {
   return { jsonrpc: VERSION, id, error }
 }
 
@@ -39,9 +38,8 @@ export function response (id: string | number | null, error: Failure): Response 
  * The readable text is `body`, never `message`: `http.Exception` calls `super()` with no
  * argument, so every one of them carries an empty `message`.
  */
-export function of (exception: unknown): Failure {
-  if (exception instanceof http.UnprocessableEntity)
-    return refusal(exception)
+export function of(exception: unknown): Failure {
+  if (exception instanceof http.UnprocessableEntity) return refusal(exception)
 
   if (exception instanceof http.NotFound || exception instanceof http.MethodNotAllowed)
     return failure(METHOD_NOT_FOUND, text(exception, 'Method not found'))
@@ -64,19 +62,20 @@ export function of (exception: unknown): Failure {
  * reply contract states `{ code, message? }` — the message optional. The number says the
  * operation refused; `data.code` says what it refused with, and is what a caller branches on.
  */
-function refusal (exception: http.UnprocessableEntity): Failure {
+function refusal(exception: http.UnprocessableEntity): Failure {
   const body = exception.body
 
   if (typeof body !== 'object' || body === null || typeof body.code !== 'string')
     return failure(REFUSED, text(exception, 'Refused'))
 
   const code = body.code as string
-  const message = typeof body.message === 'string' && body.message !== '' ? body.message : code
+  const message =
+    typeof body.message === 'string' && body.message !== '' ? body.message : code
 
   return failure(REFUSED, message, { code })
 }
 
-function text (exception: http.Exception, fallback: string): string {
+function text(exception: http.Exception, fallback: string): string {
   return typeof exception.body === 'string' && exception.body !== ''
     ? exception.body
     : fallback

@@ -6,11 +6,11 @@ import type { Context, Entity } from './lib/index.js'
 export class Computation implements Operation {
   private enumerate!: Context['local']['enumerate']
 
-  public mount (context: Context): void {
+  public mount(context: Context): void {
     this.enumerate = context.local.enumerate
   }
 
-  public async execute (input: Input): Promise<Entity[]> {
+  public async execute(input: Input): Promise<Entity[]> {
     return await this.enumerate({
       query: {
         criteria: `authority==${quote(input.authority)};identity==${quote(input.identity)}`,

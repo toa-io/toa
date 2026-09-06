@@ -1,3 +1,4 @@
+@deployment
 Feature: Pointer
 
   Scenario: Deploy a default URL

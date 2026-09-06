@@ -3,11 +3,11 @@ Feature: Events emission
   Background:
     Given the `mongo.receiver` event queues are empty
     And the `mongo.one` database contains:
-      | _id                              | foo | bar   | _version |
-      | ff0431dac0e14fce95c4496c21086781 | 0   | hello | 1        |
+      | _id                              | foo | bar   | VERSION |
+      | ff0431dac0e14fce95c4496c21086781 | 0   | hello | 1       |
     And the `mongo.receiver` database contains:
-      | _id                              | count | _version |
-      | ff0431dac0e14fce95c4496c21086781 | 0     | 1        |
+      | _id                              | count | VERSION |
+      | ff0431dac0e14fce95c4496c21086781 | 0     | 1       |
 
   Scenario: Events emitted if no changes
     Given I compose components:

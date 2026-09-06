@@ -1,4 +1,5 @@
-import type { Locator, operations } from '@toa.io/core'
+import type { Locator } from '@toa.io/core'
+import type { operations } from '@toa.io/core/types'
 
 type Map = {
   [id: string]: Component
@@ -35,10 +36,20 @@ type Receiver = {
   source?: string
 }
 
-type Entity = {
-  schema: Object
+type Migration = {
+  id: string
+  steps: unknown[]
+}
+
+export type Entity = {
+  properties: Record<string, Object>
+  required?: string[]
+  /** what a record holds before anything is written to it */
+  blank?: Record<string, unknown>
   storage?: string
   associated?: boolean
+  custom?: boolean
+  migrations?: Migration[]
 }
 
 type Declaration = {

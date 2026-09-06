@@ -9,7 +9,7 @@ import {
   type Range
 } from './types.js'
 
-export function parse (input: object, shortcuts?: Shortcuts): Node {
+export function parse(input: object, shortcuts?: Shortcuts): Node {
   const node = parseNode(input, shortcuts)
 
   schemas.node.validate(node)
@@ -17,7 +17,7 @@ export function parse (input: object, shortcuts?: Shortcuts): Node {
   return node
 }
 
-function parseNode (input: object | string, shortcuts?: Shortcuts): Node {
+function parseNode(input: object | string, shortcuts?: Shortcuts): Node {
   const node = createNode()
 
   if (typeof input === 'string') {
@@ -71,7 +71,7 @@ function parseNode (input: object | string, shortcuts?: Shortcuts): Node {
   return node
 }
 
-export function createNode (): Node {
+export function createNode(): Node {
   return {
     routes: [],
     methods: [],
@@ -79,17 +79,21 @@ export function createNode (): Node {
   }
 }
 
-function parseRoute (path: string, value: Node, shortcuts?: Shortcuts): Route {
+function parseRoute(path: string, value: Node, shortcuts?: Shortcuts): Route {
   const node = parse(value, shortcuts)
 
   return createRoute(path, node)
 }
 
-function createRoute (path: string, node: Node): Route {
+function createRoute(path: string, node: Node): Route {
   return { path, node }
 }
 
-function parseMethod (verb: string, value: Mapping | string, shortcuts?: Shortcuts): Method {
+function parseMethod(
+  verb: string,
+  value: Mapping | string,
+  shortcuts?: Shortcuts
+): Method {
   const mapping = typeof value === 'string' ? { endpoint: value } : value
 
   parseEndpoint(mapping)
@@ -100,9 +104,8 @@ function parseMethod (verb: string, value: Mapping | string, shortcuts?: Shortcu
   return { verb, mapping, directives }
 }
 
-function parseEndpoint (mapping: Mapping): void {
-  if (mapping.endpoint === undefined)
-    return
+function parseEndpoint(mapping: Mapping): void {
+  if (mapping.endpoint === undefined) return
 
   const [endpoiont, component, namespace] = mapping.endpoint.split('.').reverse()
 
@@ -113,27 +116,26 @@ function parseEndpoint (mapping: Mapping): void {
   }
 }
 
-function parseQuery (mapping: any): void {
+function parseQuery(mapping: any): void {
   const query = mapping.query
 
-  if (query === undefined || query === null)
-    return
+  if (query === undefined || query === null) return
 
-  if (typeof query.limit === 'number')
-    query.limit = expandRange(query.limit as number)
+  if (typeof query.limit === 'number') query.limit = expandRange(query.limit as number)
 
-  if (typeof query.omit === 'number')
-    query.omit = expandRange(query.omit as number)
+  if (typeof query.omit === 'number') query.omit = expandRange(query.omit as number)
 }
 
-function parseDirectives (mapping: Record<string, any>, shortcuts?: Shortcuts): Directive[] {
+function parseDirectives(
+  mapping: Record<string, any>,
+  shortcuts?: Shortcuts
+): Directive[] {
   const directives: Directive[] = []
 
   for (const [key, value] of Object.entries(mapping)) {
     const directive = parseDirective(key, value, shortcuts)
 
-    if (directive === null)
-      continue
+    if (directive === null) continue
 
     directives.push(directive)
 
@@ -144,21 +146,23 @@ function parseDirectives (mapping: Record<string, any>, shortcuts?: Shortcuts): 
   return directives
 }
 
-function parseDirective (key: string, value: any, shortcuts?: Shortcuts): Directive | null {
-  if (shortcuts?.has(key) === true)
-    key = shortcuts.get(key)! // eslint-disable-line @typescript-eslint/no-non-null-assertion
+function parseDirective(
+  key: string,
+  value: any,
+  shortcuts?: Shortcuts
+): Directive | null {
+  if (shortcuts?.has(key) === true) key = shortcuts.get(key)! // eslint-disable-line @typescript-eslint/no-non-null-assertion
 
   const match = key.match(DIRECTIVE_RX)
 
-  if (match === null)
-    return null
+  if (match === null) return null
 
-  const { family, name } = match.groups as { family: string, name: string }
+  const { family, name } = match.groups as { family: string; name: string }
 
   return { family, name, value }
 }
 
-function expandRange (range: number): Range {
+function expandRange(range: number): Range {
   return { value: range, range: [range, range] }
 }
 

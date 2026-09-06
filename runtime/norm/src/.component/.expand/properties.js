@@ -1,6 +1,6 @@
 import { recognize } from '../../shortcuts.js'
 
-export function properties (manifest) {
+export function properties(manifest) {
   recognize(SHORTCUTS, manifest, 'properties')
   recognize(SHORTCUTS, manifest.properties)
 }

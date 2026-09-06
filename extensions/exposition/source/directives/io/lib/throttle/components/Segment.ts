@@ -7,13 +7,13 @@ import type { Component } from './Component.js'
 export class Segment implements Component {
   private readonly name: string
 
-  public constructor (name: unknown) {
+  public constructor(name: unknown) {
     assert.ok(typeof name === 'string', 'Throttle segment must be a string')
 
     this.name = name
   }
 
-  public get (_: Context, parameters: Parameter[]): string {
+  public get(_: Context, parameters: Parameter[]): string {
     return parameters.find(({ name }) => name === this.name)?.value ?? ''
   }
 }

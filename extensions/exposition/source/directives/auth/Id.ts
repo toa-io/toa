@@ -4,13 +4,16 @@ import { type Directive, type Identity } from './types.js'
 export class Id implements Directive {
   private readonly parameter: string
 
-  public constructor (parameter: string) {
+  public constructor(parameter: string) {
     this.parameter = parameter
   }
 
-  public authorize (identity: Identity | null, _: unknown, parameters: Parameter[]): boolean {
-    if (identity === null)
-      return false
+  public authorize(
+    identity: Identity | null,
+    _: unknown,
+    parameters: Parameter[]
+  ): boolean {
+    if (identity === null) return false
 
     const parameter = parameters.find((parameter) => parameter.name === this.parameter)
 

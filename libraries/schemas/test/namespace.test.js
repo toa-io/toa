@@ -43,11 +43,20 @@ it('should resolve references', async () => {
 
   assert.deepStrictEqual(schema.fit({ bar: { foo: 'ok' }, baz: 'ok' }), null)
 
-  assert.partialDeepStrictEqual(schema.fit({ bar: { foo: [1, 2] } }), { keyword: 'type', path: '/bar/foo' })
+  assert.partialDeepStrictEqual(schema.fit({ bar: { foo: [1, 2] } }), {
+    keyword: 'type',
+    path: '/bar/foo'
+  })
 
-  assert.partialDeepStrictEqual(schema.fit({ bar: [1, 2] }), { keyword: 'type', path: '/bar' })
+  assert.partialDeepStrictEqual(schema.fit({ bar: [1, 2] }), {
+    keyword: 'type',
+    path: '/bar'
+  })
 
-  assert.partialDeepStrictEqual(schema.fit({ baz: { not: 'ok' } }), { keyword: 'type', path: '/baz' })
+  assert.partialDeepStrictEqual(schema.fit({ baz: { not: 'ok' } }), {
+    keyword: 'type',
+    path: '/baz'
+  })
 })
 
 describe('directory', () => {

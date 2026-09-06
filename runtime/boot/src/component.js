@@ -1,5 +1,6 @@
 import { Component, Locator, State, entities } from '@toa.io/core'
-import * as schemas from '@toa.io/schemas'
+import { entity as declaration } from '@toa.io/norm'
+import { schema as compileSchema } from '@toa.io/schemas'
 
 import * as boot from './index.js'
 import { span } from './span.js'
@@ -23,11 +24,23 @@ const create = async (manifest, locator) => {
   let state
 
   if (manifest.entity !== undefined) {
-    const schema = schemas.schema(manifest.entity.schema)
+    const schemas = compile(manifest.entity)
     const guards = await boot.guards(manifest, context)
-    const entity = new entities.Factory(schema, guards)
+    const blank = manifest.entity.blank ?? {}
 
-    state = new State(storage, entity, outbox, manifest.entity.associated)
+    // fitted here rather than where the first record is written, so a component that
+    // declares a blank nothing can hold does not boot
+    const error = schemas.changeset.fit(blank)
+
+    if (error !== null)
+      throw new Error(`Component '${locator.id}' entity blank: ${error.message}`)
+
+    state = new State(
+      storage,
+      new entities.Factory(schemas, blank, guards),
+      outbox,
+      manifest.entity.associated
+    )
   }
 
   const phases = await boot.rc(manifest, context)
@@ -42,31 +55,36 @@ const create = async (manifest, locator) => {
 
   const decorated = boot.extensions.component(component)
 
-  if (phases?.settle !== undefined)
-    decorated.settle = phases.settle
+  if (phases?.settle !== undefined) decorated.settle = phases.settle
 
   // a dependency closes after its dependant, so the component is already closed
   // when the RC releases what it opened
-  if (phases?.dispose !== undefined)
-    decorated.depends(phases.dispose)
+  if (phases?.dispose !== undefined) decorated.depends(phases.dispose)
 
   return decorated
 }
 
-async function bootOperations (manifest, context, state, preflight) {
-  if (manifest.operations === undefined)
-    return {}
+async function bootOperations(manifest, context, state, preflight) {
+  if (manifest.operations === undefined) return {}
 
   const entries = Object.entries(manifest.operations)
 
   // each one loads its algorithm from disk and compiles its contracts
-  const booted = await Promise.all(entries.map(([endpoint, definition]) =>
-    boot.operation(manifest, endpoint, definition, context, state, preflight)))
+  const booted = await Promise.all(
+    entries.map(([endpoint, definition]) =>
+      boot.operation(manifest, endpoint, definition, context, state, preflight)
+    )
+  )
 
   const operations = {}
 
-  for (let i = 0; i < entries.length; i++)
-    operations[entries[i][0]] = booted[i]
+  for (let i = 0; i < entries.length; i++) operations[entries[i][0]] = booted[i]
 
   return operations
 }
+
+/** What a stored record must fit, and what a changeset may. */
+const compile = (entity) => ({
+  entity: compileSchema(declaration.schema(entity)),
+  changeset: compileSchema(declaration.changeset(entity))
+})

@@ -87,7 +87,10 @@ describe('dependencies', () => {
   })
 
   it('should throw on empty array', async () => {
-    assert.throws(() => a.depends([]), (error) => /must not be empty/.test(error.message))
+    assert.throws(
+      () => a.depends([]),
+      (error) => /must not be empty/.test(error.message)
+    )
   })
 
   it('should await 2-way dependencies', async () => {
@@ -143,7 +146,17 @@ describe('dependencies', () => {
 
     await b.disconnect()
 
-    assert.deepStrictEqual(sequence, ['+c', '+a', '+b', '-a', '*a', '-b', '-c', '*c', '*b'])
+    assert.deepStrictEqual(sequence, [
+      '+c',
+      '+a',
+      '+b',
+      '-a',
+      '*a',
+      '-b',
+      '-c',
+      '*c',
+      '*b'
+    ])
   })
 
   it('should throw if depends not on Connector', async () => {

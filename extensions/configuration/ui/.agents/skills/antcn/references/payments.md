@@ -4,8 +4,8 @@ Subscription paywall stack: a tier selector, animated benefits table, pay button
 
 ## `$config`
 
-| Field    | Used by                                                                                   |
-| -------- | ----------------------------------------------------------------------------------------- |
+| Field    | Used by                                                                                                             |
+| -------- | ------------------------------------------------------------------------------------------------------------------- |
 | `origin` | All three live processors resolve their backend endpoints through `@/net`'s `origin`, which reads `$config.origin`. |
 
 The App Store / Google Play processors transact through the native shell (`@/bridge`); the dev processor stands in whenever `$app/environment`'s `dev` is true and there is no native host. No other `$config` field is read.
@@ -17,9 +17,9 @@ The App Store / Google Play processors transact through the native shell (`@/bri
 ```ts
 export interface Entitlements {
   tier: Tier
-  seats: number      // metered → gated by usage(account, 'seats') >= seats
-  storage: number    // metered
-  priority: boolean  // flag → gated by the boolean itself
+  seats: number // metered → gated by usage(account, 'seats') >= seats
+  storage: number // metered
+  priority: boolean // flag → gated by the boolean itself
 }
 ```
 
@@ -78,22 +78,22 @@ Commit a pending Stripe return once on app start, then drop the paywall behind a
 
 ### `Payguard`
 
-| Prop          | Type                   | Default | Notes                                                                       |
-| ------------- | ---------------------- | ------- | --------------------------------------------------------------------------- |
-| `children`    | `Snippet`              | —       | The gated trigger; rendered as-is when the account already has entitlement. |
-| `entitlement` | `keyof Entitlements`   | —       | When set, gates on that specific entitlement; omit to gate on premium only. |
-| `crown`       | `boolean`              | `true`  | Show the crown badge on the gated trigger.                                  |
-| `class`       | `ClassValue`           | —       | Forwarded to the trigger button.                                            |
+| Prop          | Type                 | Default | Notes                                                                       |
+| ------------- | -------------------- | ------- | --------------------------------------------------------------------------- |
+| `children`    | `Snippet`            | —       | The gated trigger; rendered as-is when the account already has entitlement. |
+| `entitlement` | `keyof Entitlements` | —       | When set, gates on that specific entitlement; omit to gate on premium only. |
+| `crown`       | `boolean`            | `true`  | Show the crown badge on the gated trigger.                                  |
+| `class`       | `ClassValue`         | —       | Forwarded to the trigger button.                                            |
 
 ### `Paywall`
 
-| Prop         | Type         | Default | Notes                                  |
-| ------------ | ------------ | ------- | -------------------------------------- |
+| Prop         | Type         | Default | Notes                                           |
+| ------------ | ------------ | ------- | ----------------------------------------------- |
 | `oncomplete` | `() => void` | —       | Fired after a successful checkout or dismissal. |
 
 ### `Entitlements`
 
-| Prop      | Type          | Default | Notes                                                  |
-| --------- | ------------- | ------- | ------------------------------------------------------ |
+| Prop      | Type          | Default | Notes                                                            |
+| --------- | ------------- | ------- | ---------------------------------------------------------------- |
 | `account` | `AccountLike` | —       | Renders the current plan, usage bars, and manage/upgrade action. |
-| `class`   | `ClassValue`  | —       | Root class.                                            |
+| `class`   | `ClassValue`  | —       | Root class.                                                      |

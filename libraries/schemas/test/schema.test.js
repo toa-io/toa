@@ -33,19 +33,6 @@ describe('fit', () => {
     assert.ok(error.message.includes('must be integer'))
   })
 
-  it('should set defaults', () => {
-    const def = generate()
-    const schema = schemas.schema({
-      type: 'object',
-      properties: { foo: { type: 'string', default: def } }
-    })
-    const value = {}
-
-    schema.fit(value)
-
-    assert.deepStrictEqual(value.foo, def)
-  })
-
   it('should coerce types', async () => {
     const schema = schemas.schema({
       type: 'object',
@@ -59,39 +46,21 @@ describe('fit', () => {
     assert.deepStrictEqual(value.foo, '1')
   })
 
-  it('should not delete arrays that belongs to Daria', () => {
+  it('should not write a default', () => {
     const schema = schemas.schema({
       type: 'object',
-      properties: {
-        arr: {
-          type: 'array',
-          items: {
-            type: 'string'
-          },
-          default: ['foo']
-        }
-      }
+      properties: { foo: { type: 'string', default: generate() } }
     })
 
-    const o = {}
-    const error = schema.fit(o)
+    const value = {}
 
-    assert.deepStrictEqual(error, null)
-    assert.deepStrictEqual(o.arr, ['foo'])
-
-    o.arr = ['bar']
-
-    const error2 = schema.fit(o)
-
-    assert.deepStrictEqual(error2, null)
-    assert.deepStrictEqual(o.arr, ['bar'])
+    assert.deepStrictEqual(schema.fit(value), null)
+    assert.deepStrictEqual(value, {})
   })
-
 })
 
 describe('validate', () => {
   it('should throw Exception', async () => {
-    
     const schema = schemas.schema({
       type: 'object',
       properties: { foo: { type: 'string' } }

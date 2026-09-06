@@ -73,18 +73,21 @@ export const internal = collection<Group>({
   persist: 'groups',
   bind: account,
   stale: true,
-  values: values<Group>(),
+  values: values<Group>()
 })
 
 // Derived store aggregating multiple domains
-const groups = derived([internal, contacts, account], ([$internal, $contacts, $account]) => {
-  return $internal.map((group) => {
-    return {
-      ...group,
-      balance: balance($group, $contacts, $account),
-    }
-  })
-})
+const groups = derived(
+  [internal, contacts, account],
+  ([$internal, $contacts, $account]) => {
+    return $internal.map((group) => {
+      return {
+        ...group,
+        balance: balance($group, $contacts, $account)
+      }
+    })
+  }
+)
 ```
 
 ## Shared Components
@@ -314,7 +317,7 @@ export async function map(entry: net.Contact): Promise<Contact | Error> {
 
   return {
     ...entry,
-    account, // Linked Account entity from @/account domain
+    account // Linked Account entity from @/account domain
   }
 }
 ```

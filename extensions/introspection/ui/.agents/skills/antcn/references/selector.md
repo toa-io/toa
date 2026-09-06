@@ -45,26 +45,26 @@ More than one `Selector.Root` on the same page with overlapping option `value`s 
 
 ### Root
 
-| Prop       | Type                  | Default   | Notes                                              |
-| ---------- | --------------------- | --------- | -------------------------------------------------- |
-| `id`       | `string`              | `'radio'` | Prefix for each option’s control/label id.         |
-| `type`     | `'single' \| 'multi'` | `'single'`| Single uses radio group; multi uses checkboxes.    |
-| `value`    | `string`              | `''`      | Bindable selection for `type="single"`.            |
-| `values`   | `string[]`            | `[]`      | Bindable selection for `type="multi"`.             |
-| `position` | `'start' \| 'end'`    | `'start'` | Indicator column: leading media or trailing actions. |
-| `variant`  | `ItemVariant`         | `'outline'` | Forwarded to each `Option` row.                  |
-| `size`     | `ItemSize`            | —         | Forwarded to each `Option` row.                    |
-| `class`    | `ClassValue`              | —         | Wrapper classes (`single` mode radio group only).  |
-| `children` | `Snippet`             | —         | `Option` slots.                                    |
+| Prop       | Type                  | Default     | Notes                                                |
+| ---------- | --------------------- | ----------- | ---------------------------------------------------- |
+| `id`       | `string`              | `'radio'`   | Prefix for each option’s control/label id.           |
+| `type`     | `'single' \| 'multi'` | `'single'`  | Single uses radio group; multi uses checkboxes.      |
+| `value`    | `string`              | `''`        | Bindable selection for `type="single"`.              |
+| `values`   | `string[]`            | `[]`        | Bindable selection for `type="multi"`.               |
+| `position` | `'start' \| 'end'`    | `'start'`   | Indicator column: leading media or trailing actions. |
+| `variant`  | `ItemVariant`         | `'outline'` | Forwarded to each `Option` row.                      |
+| `size`     | `ItemSize`            | —           | Forwarded to each `Option` row.                      |
+| `class`    | `ClassValue`          | —           | Wrapper classes (`single` mode radio group only).    |
+| `children` | `Snippet`             | —           | `Option` slots.                                      |
 
 ### Option
 
-| Prop       | Type      | Default | Notes                                      |
-| ---------- | --------- | ------- | ------------------------------------------ |
-| `value`    | `string`  | —       | Option id stored in `value` / `values`.    |
-| `id`       | `string`  | `{rootId}-{value}` | Override control/label id for this row. |
-| `class`    | `ClassValue`  | —       | Row classes.                               |
-| `children` | `Snippet` | —       | `Title` and `Description` slots.           |
+| Prop       | Type         | Default            | Notes                                   |
+| ---------- | ------------ | ------------------ | --------------------------------------- |
+| `value`    | `string`     | —                  | Option id stored in `value` / `values`. |
+| `id`       | `string`     | `{rootId}-{value}` | Override control/label id for this row. |
+| `class`    | `ClassValue` | —                  | Row classes.                            |
+| `children` | `Snippet`    | —                  | `Title` and `Description` slots.        |
 
 ### Title / Description
 

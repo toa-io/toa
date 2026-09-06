@@ -24,7 +24,7 @@ export const suites = [
     run: process.env.RUN_S3 === '1',
     provider: 's3',
     options: {
-      endpoint: 'http://localhost:4566',
+      endpoint: 'http://localhost:31050',
       region: 'us-west-1',
       bucket: 'test-bucket'
     },
@@ -103,6 +103,11 @@ export const suites = [
 export interface Suite {
   run: boolean
   provider: keyof typeof providers
-  options?: S3Options | SpacesOptions | CloudinaryOptions | FileSystemOptions | TemporaryOptions
+  options?:
+    | S3Options
+    | SpacesOptions
+    | CloudinaryOptions
+    | FileSystemOptions
+    | TemporaryOptions
   secrets?: Secrets
 }

@@ -1,10 +1,10 @@
 import { Aspect } from './aspect.js'
 
 /**
- * @implements {toa.core.extensions.Factory}
+ * @implements {import('@toa.io/core/types').extensions.Factory}
  */
 export class Factory {
-  aspect (_, __) {
+  aspect(_, __) {
     return new Aspect()
   }
 }

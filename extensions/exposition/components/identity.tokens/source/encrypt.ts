@@ -1,30 +1,29 @@
 import { jweKey } from './lib/index.js'
 import { load } from './lib/jose.js'
 import type { Operation } from '@toa.io/bridges.node'
-import type { Maybe } from '@toa.io/core'
+import type { Maybe } from '@toa.io/core/types'
 import type { Identity, Context, EncryptInput, Key } from './lib/index.js'
 
 export class Effect implements Operation {
   private key!: Pick<Key, 'id' | 'key'>
   private lifetime!: number
 
-  public mount (context: Context): void {
+  public mount(context: Context): void {
     const key = context.configuration.keys.find(({ format }) => format !== 'paseto')
 
-    if (key === undefined)
-      throw new TypeError('At least one JWE key must be configured')
+    if (key === undefined) throw new TypeError('At least one JWE key must be configured')
 
     this.key = { id: key.id, key: key.key.unwrap() }
     this.lifetime = context.configuration.lifetime * 1000
   }
 
-  public async execute (input: EncryptInput): Promise<Maybe<string>> {
+  public async execute(input: EncryptInput): Promise<Maybe<string>> {
     const { EncryptJWT } = await load()
 
     if (input.scopes?.some((scope) => !within(scope, input.identity.roles)) === true)
       return ERR_INACCESSIBLE_SCOPE
 
-    const lifetime = input.lifetime === undefined ? this.lifetime : (input.lifetime * 1000)
+    const lifetime = input.lifetime === undefined ? this.lifetime : input.lifetime * 1000
 
     const identity: Identity = {
       id: input.identity.id,
@@ -33,8 +32,7 @@ export class Effect implements Operation {
 
     const permissions = input.permissions ?? input.identity.permissions
 
-    if (permissions !== undefined)
-      identity.permissions = permissions
+    if (permissions !== undefined) identity.permissions = permissions
 
     const key = input.key ?? this.key
 
@@ -43,14 +41,13 @@ export class Effect implements Operation {
       .setIssuer(input.authority)
       .setIssuedAt(Date.now() / 1000)
 
-    if (lifetime !== 0)
-      token = token.setExpirationTime((Date.now() + lifetime) / 1000)
+    if (lifetime !== 0) token = token.setExpirationTime((Date.now() + lifetime) / 1000)
 
     return await token.encrypt(jweKey(key.key))
   }
 }
 
-function within (scope: string, roles: string[]): boolean {
+function within(scope: string, roles: string[]): boolean {
   return roles.some((role) => role === scope || scope.startsWith(role + ':'))
 }
 

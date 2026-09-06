@@ -48,8 +48,7 @@ describe('sampling', () => {
   it('should not sample when nothing consumes spans', () => {
     exporting([])
 
-    for (let i = 0; i < 10; i++)
-      assert.strictEqual(decide(), false)
+    for (let i = 0; i < 10; i++) assert.strictEqual(decide(), false)
   })
 
   it('should sample once an exporter is configured', () => {
@@ -63,15 +62,13 @@ describe('sampling', () => {
   })
 
   it('should sample all traces by default', () => {
-    for (let i = 0; i < 10; i++)
-      assert.strictEqual(decide(), true)
+    for (let i = 0; i < 10; i++) assert.strictEqual(decide(), true)
   })
 
   it('should not sample when sample is 0', () => {
     sampling({ sample: 0 })
 
-    for (let i = 0; i < 10; i++)
-      assert.strictEqual(create().sampled, false)
+    for (let i = 0; i < 10; i++) assert.strictEqual(create().sampled, false)
   })
 
   it('should not re-decide for children', () => {
@@ -137,9 +134,9 @@ describe('traceparent', () => {
     ['zero trace id', '00-00000000000000000000000000000000-00f067aa0ba902b7-01'],
     ['zero span id', '00-4bf92f3577b34da6a3ce929d0e0e4736-0000000000000000-01']
   ])
-     it(`should reject ${_}`, () => {
-    assert.strictEqual(decode(header), null)
-  })
+    it(`should reject ${_}`, () => {
+      assert.strictEqual(decode(header), null)
+    })
 })
 
 describe('module copies', () => {
@@ -184,7 +181,7 @@ describe('run', () => {
   it('should isolate concurrent chains', async () => {
     const seen: string[] = []
 
-    async function chain (id: string): Promise<void> {
+    async function chain(id: string): Promise<void> {
       await run({ ...create(), traceId: id.repeat(32) }, async () => {
         await new Promise((resolve) => setTimeout(resolve, Math.random() * 10))
         seen.push(`${id}:${current()?.traceId[0]}`)

@@ -16,11 +16,55 @@ $ docker compose up -d
 
 Without them a scenario hangs at `Starting composition` and prints no error.
 
+### Ports
+
+An application built on Toa is developed on the same machine, and every one of them carries the
+same compose file — on the conventional ports, with its services on `8000`-`8004`. So none of
+what a Toa checkout binds is conventional: the whole of it sits in `31000`-`31099`, and a
+`31xxx` in `ss -tlnp` is Toa's own and nothing else's.
+
+| port    | what                                          | conventionally |
+| ------- | --------------------------------------------- | -------------- |
+| `31000` | exposition gateway                            | `8000`         |
+| `31001` | telemetry readiness probe                     | `8001`         |
+| `31002` | introspection UI                              | `8002`         |
+| `31003` | configuration UI                              | `8003`         |
+| `31004` | exposition readiness probe                    | `8004`         |
+| `31005` | the mock IdP of the exposition suite          | —              |
+| `31010` | RabbitMQ                                      | `5672`         |
+| `31011` | RabbitMQ management                           | `15672`        |
+| `31012` | RabbitMQ, the second broker a scenario starts | —              |
+| `31020` | MongoDB                                       | `27017`        |
+| `31021` | MongoDB, the standalone a scenario starts     | —              |
+| `31040` | Redis                                         | `6379`         |
+| `31041` | Redis, the second                             | `6378`         |
+| `31042` | Redis, the third                              | `6377`         |
+| `31050` | LocalStack                                    | `4566`         |
+| `31060` | Tempo                                         | `3200`         |
+| `31061` | Tempo, OTLP/HTTP                              | `4318`         |
+| `31070` | Prometheus                                    | `9090`         |
+| `31080` | Grafana                                       | `3000`         |
+
+The block is below `net.ipv4.ip_local_port_range`, so an outgoing connection is never already
+holding one of these when the stack comes up.
+
+The ports a deployment uses are the conventional ones and stay that way: `8000` is what the
+chart renders and what an application serves on. What moves is only what a checkout binds
+locally — the compose file, the suites, and the addresses the `TOA_DEV` fallbacks name.
+
+A stack that ran on the conventional ports has a replica set configured for the old address, and
+MongoDB will not start on the new one until that anonymous volume is gone:
+
+```shell
+$ npm run compose                   # recreates the stack, volumes and all
+```
+
 The deployment scenarios render a chart, so `helm` has to be on the `PATH`; without it the
 command produces nothing and the scenario reads an empty `stdout`.
 
 The Cloudinary scenarios upload to a real account, which no compose file can stand up. They are
-skipped unless `features/steps/.env` names one — see `.env.example` beside it.
+tagged `@manual` and run in neither group; to run them, name an account in
+`features/steps/.env` — see `.env.example` beside it — and select them by tag.
 
 ### Transpiling
 
@@ -79,7 +123,33 @@ $ npm run features -w @toa.io/extensions.exposition
 `cucumber.mjs` states one profile — a configuration written as a module exports the profile
 itself, not a map of them — and it sets `failFast`, so a run stops at the first failed scenario.
 
+### What `npm run features` leaves out
+
+Nothing to do here: `npm run features` is the command, and what it runs is what a change has to
+pass. The rest of this is for information.
+
+A scenario it leaves out says why by its tag: `@network` reaches a host on the internet,
+`@containers` pulls an image and boots a broker or a database of its own, `@timing` waits out a
+lifetime, a budget or an interval, `@helm` renders a chart with the binary of that name, `@cli`
+runs the `toa` program as a program, `@deployment` writes what a deployment carries, `@manual`
+needs a secret and skips where it is absent, and `@skip` is held back and runs nowhere. Write one
+of these on a scenario only where it is true of it.
+
+`npm run features:nightly` adds all of them back but `@manual` and `@skip`. Both sets are stated
+once, in `cucumber.tags.mjs`; `TOA_FEATURES=nightly` selects between them.
+
 ## Tests
+
+Types are checked across the repository by one configuration, `tsconfig.check.json`. It covers
+every workspace's sources and the step definitions, and it excludes `*.test.ts`:
+
+```shell
+$ npm run typecheck
+```
+
+Style is checked by `npm run lint`, which reports nothing. Fix what it finds by hand:
+`oxlint --fix` rewrites `if (a) { if (b) c } else d` into an `else` that binds to the inner
+`if`, which no test of ours would have caught.
 
 Unit tests run on `node:test`, through `tsx`:
 
@@ -97,13 +167,13 @@ A declaration carries `export` where it is written, and a barrel re-exports thro
 `export ... from`:
 
 ```javascript
-function component (manifest) { }
+function component(manifest) {}
 
 export { component }
 ```
 
 ```javascript
-export function component (manifest) { }
+export function component(manifest) {}
 ```
 
 ```javascript

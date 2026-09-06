@@ -10,8 +10,9 @@ export const guard = (root, name) => load(root, GUARDS_DIRECTORY, name)
 const scan = (directory) => async (root) => {
   const modules = await find(root, directory)
 
-  return await Promise.all(Array.from(modules,
-    async ([name, path]) => [name, await read(path)]))
+  return await Promise.all(
+    Array.from(modules, async ([name, path]) => [name, await read(path)])
+  )
 }
 
 /**
@@ -20,7 +21,7 @@ const scan = (directory) => async (root) => {
  * Two files that resolve to one name are a conflict rather than a race: which of them a scan
  * reached first is not something a component may depend on.
  */
-async function find (root, directory) {
+async function find(root, directory) {
   const paths = await glob(resolve(root, directory, '*' + EXTENSIONS), GLOB)
   const modules = new Map()
 
@@ -30,8 +31,10 @@ async function find (root, directory) {
     const found = modules.get(name)
 
     if (found !== undefined)
-      throw new Error(`Component at '${root}' has more than one ${directory}/${name}: ` +
-        `${basename(found)} and ${basename(path)}`)
+      throw new Error(
+        `Component at '${root}' has more than one ${directory}/${name}: ` +
+          `${basename(found)} and ${basename(path)}`
+      )
 
     modules.set(name, path)
   }
@@ -39,7 +42,7 @@ async function find (root, directory) {
   return modules
 }
 
-async function load (root, directory, name) {
+async function load(root, directory, name) {
   const modules = await find(root, directory)
   const path = modules.get(name)
 
@@ -58,20 +61,26 @@ async function load (root, directory, name) {
  * refuses is named here, because its own message says neither which file it was reading nor
  * what to write instead.
  */
-async function read (path) {
+async function read(path) {
   let namespace
 
   try {
     namespace = await import(pathToFileURL(path).href)
   } catch (error) {
     if (error.code === ERASABLE)
-      throw new Error(`${path}: ${error.message}. Types are erased, never compiled, so a ` +
-        'component is written in erasable syntax only — no enum, no namespace, no parameter ' +
-        'property.', { cause: error })
+      throw new Error(
+        `${path}: ${error.message}. Types are erased, never compiled, so a ` +
+          'component is written in erasable syntax only — no enum, no namespace, no parameter ' +
+          'property.',
+        { cause: error }
+      )
 
     if (error.code === PACKAGED)
-      throw new Error(`${path}: Node does not erase types under 'node_modules'. A component ` +
-        'a package ships is transpiled before it is published.', { cause: error })
+      throw new Error(
+        `${path}: Node does not erase types under 'node_modules'. A component ` +
+          'a package ships is transpiled before it is published.',
+        { cause: error }
+      )
 
     throw error
   }
@@ -80,10 +89,14 @@ async function read (path) {
 }
 
 /** What a module exports, whether it says so by name or as a default. */
-function shape (namespace) {
-  const named = Object.keys(namespace).filter((key) => key !== 'default' && key !== '__esModule')
+function shape(namespace) {
+  const named = Object.keys(namespace).filter(
+    (key) => key !== 'default' && key !== '__esModule'
+  )
 
-  return named.length === 0 && namespace.default !== undefined ? namespace.default : namespace
+  return named.length === 0 && namespace.default !== undefined
+    ? namespace.default
+    : namespace
 }
 
 const EXTENSIONS = '.{js,mjs,cjs,ts}'

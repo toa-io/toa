@@ -8,7 +8,7 @@ it('should be', async () => {
 })
 
 it('should replace key-value pair', async () => {
-  function transform (key, value) {
+  function transform(key, value) {
     return [key + '1', value + '1']
   }
 
@@ -19,7 +19,7 @@ it('should replace key-value pair', async () => {
 })
 
 it('should replace nested key-value', async () => {
-  function transform (key, value) {
+  function transform(key, value) {
     if (key === 'bar') return ['baz', value + ' world']
   }
 
@@ -30,7 +30,7 @@ it('should replace nested key-value', async () => {
 })
 
 it('should keep unmodified keys', async () => {
-  function transform (key, value) {
+  function transform(key, value) {
     if (key === 'foo') return ['foo', 'replaced']
   }
 
@@ -41,7 +41,7 @@ it('should keep unmodified keys', async () => {
 })
 
 it('should transform values', async () => {
-  function transform (value) {
+  function transform(value) {
     if (typeof value === 'string') return value + ' world'
   }
 
@@ -52,7 +52,7 @@ it('should transform values', async () => {
 })
 
 it('should transform values of object type', async () => {
-  function transform (key, _) {
+  function transform(key, _) {
     if (key === 'foo') return [key, { baz: 'bye' }]
   }
 

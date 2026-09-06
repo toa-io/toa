@@ -4,11 +4,11 @@
 export class Transition {
   #context
 
-  async mount (context) {
+  async mount(context) {
     this.#context = context
   }
 
-  async execute (input, object) {
+  async execute(input, object) {
     return { input, state: object, context: this.#context !== undefined }
   }
 }

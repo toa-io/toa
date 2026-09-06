@@ -11,7 +11,7 @@ export class Deployment {
   #process
   #target
 
-  constructor (context, compositions, dependencies, process, image) {
+  constructor(context, compositions, dependencies, process, image) {
     const dependency = merge(dependencies)
 
     this.#chart = declare(context, dependency)
@@ -19,7 +19,7 @@ export class Deployment {
     this.#process = process
   }
 
-  async export (target) {
+  async export(target) {
     const chart = dump(this.#chart)
     const values = dump(this.#values)
 
@@ -32,9 +32,9 @@ export class Deployment {
     this.#target = target
   }
 
-  async install (options) {
+  async install(options) {
     if (options.target) this.#target = options.target
-    if (this.#target === undefined) throw new Error('Deployment hasn\'t been exported')
+    if (this.#target === undefined) throw new Error("Deployment hasn't been exported")
 
     const args = []
 
@@ -42,25 +42,46 @@ export class Deployment {
     if (options.wait === true) args.push('--wait')
     if (options.timeout !== undefined) args.push('--timeout', options.timeout)
 
-    await this.#process.execute('helm', ['dependency', 'update', this.#target])
-    await this.#process.execute('helm', ['upgrade', this.#chart.name, '-i', ...args, this.#target])
+    await this.#update()
+    await this.#process.execute('helm', [
+      'upgrade',
+      this.#chart.name,
+      '-i',
+      ...args,
+      this.#target
+    ])
   }
 
-  async template (options) {
-    if (this.#target === undefined) throw new Error('Deployment hasn\'t been exported')
+  async template(options) {
+    if (this.#target === undefined) throw new Error("Deployment hasn't been exported")
 
-    await this.#process.execute('helm', ['dependency', 'update', this.#target], { silently: true })
+    await this.#update({ silently: true })
 
     const args = []
 
     if (options.namespace !== undefined) args.push('-n', options.namespace)
 
-    return await this.#process.execute('helm',
+    return await this.#process.execute(
+      'helm',
       ['template', this.#chart.name, ...args, this.#target],
-      { silently: true })
+      { silently: true }
+    )
   }
 
-  variables () {
+  /**
+   * A chart with no subcharts has nothing to resolve, and the call still reaches out for
+   * the repositories it would have read.
+   *
+   * @param {object} [options]
+   * @returns {Promise<void>}
+   */
+  async #update(options = {}) {
+    if (this.#chart.dependencies.length === 0) return
+
+    await this.#process.execute('helm', ['dependency', 'update', this.#target], options)
+  }
+
+  variables() {
     const variables = []
     const used = new Set()
 
@@ -74,7 +95,7 @@ export class Deployment {
   }
 }
 
-function addVariables (list, variables, used = new Set()) {
+function addVariables(list, variables, used = new Set()) {
   for (const item of list) {
     if (item.variables === undefined) continue
 
@@ -89,9 +110,7 @@ function addVariables (list, variables, used = new Set()) {
 
 const TEMPLATES = join(import.meta.dirname, 'chart/templates')
 
-
-
-function dump (object) {
+function dump(object) {
   // js-yaml writes plain objects only, and the values carry locators and images
   return jsyaml.dump(JSON.parse(JSON.stringify(object)), { noRefs: true, lineWidth: -1 })
 }

@@ -23,13 +23,18 @@ it('should return false for class instances', async () => {
 })
 
 for (const [_, Type] of [
-  ['Array', Array], ['Set', Set], ['Map', Map], ['Uint8Array', Uint8Array], ['null', null],
-  ['Number', 1], ['String', 'bar']
+  ['Array', Array],
+  ['Set', Set],
+  ['Map', Map],
+  ['Uint8Array', Uint8Array],
+  ['null', null],
+  ['Number', 1],
+  ['String', 'bar']
 ])
-   it(`should return false for ${_}`, async () => {
-  const instance = Type?.constructor ? Type.constructor() : Type
+  it(`should return false for ${_}`, async () => {
+    const instance = Type?.constructor ? Type.constructor() : Type
 
-  const nope = plain(instance)
+    const nope = plain(instance)
 
-  assert.deepStrictEqual(nope, false)
-})
+    assert.deepStrictEqual(nope, false)
+  })

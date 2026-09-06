@@ -64,7 +64,12 @@ export function entry(box: Box, towards: number, at?: Anchor): Anchorage {
   return point(box, towards, at, ENTRY)
 }
 
-function point(box: Box, towards: number, at: Anchor | undefined, share: number): Anchorage {
+function point(
+  box: Box,
+  towards: number,
+  at: Anchor | undefined,
+  share: number
+): Anchorage {
   // the side facing the other card; two cards in one column face each other on the same
   // side, and the line has to leave and arrive across it rather than around it
   const right = towards >= box.x + box.width / 2

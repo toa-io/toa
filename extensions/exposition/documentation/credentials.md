@@ -23,13 +23,13 @@ basic:
 federation:
   - id: 09200d0bcc2448c5863e3f50ae18af84
     iss: https://accounts.google.com
-    _created: 1754899200000
+    CREATED: 1754899200000
 passkeys:
   - id: 54ed430804324e81b39756ea4708b546
     aid: adce0002-35bc-c60a-648b-0b25f1f05503
     synced: true
     label: Personal iPhone
-    _created: 1754899200000
+    CREATED: 1754899200000
 ```
 
 `basic` is `null` when Basic credentials do not exist. `federation` and `passkeys` are always

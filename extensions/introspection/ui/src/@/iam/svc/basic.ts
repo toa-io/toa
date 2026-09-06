@@ -10,11 +10,17 @@ export async function verify(username: string, password: string): Promise<Echo |
   return authenticated(echo, 'password')
 }
 
-export async function create(identity: string, body: net.basic.Basic): Promise<void | Error> {
+export async function create(
+  identity: string,
+  body: net.basic.Basic
+): Promise<void | Error> {
   return await net.basic.post(identity, body)
 }
 
-export async function capture(identity: string, body: net.basic.Basic): Promise<void | Error> {
+export async function capture(
+  identity: string,
+  body: net.basic.Basic
+): Promise<void | Error> {
   const created = await create(identity, body)
 
   if (created instanceof Error) return created

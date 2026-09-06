@@ -6,7 +6,8 @@ const { capitalize } = letters
 
 /** @type {toa.node.define.operations.Define} */
 export const define = (descriptor) => {
-  const declaration = /** @type {import('@babel/types').ClassDeclaration} */ descriptor.statement
+  const declaration =
+    /** @type {import('@babel/types').ClassDeclaration} */ descriptor.statement
 
   descriptor.name = descriptor.name.toLowerCase()
   descriptor.statement = method(declaration, 'execute')
@@ -29,7 +30,9 @@ export const test = (statement, name) => {
  */
 const method = (statement, name) => {
   const methods = statement.body.body
-  const method = methods.find((method) => method.type === 'ClassMethod' && method.key.name === name)
+  const method = methods.find(
+    (method) => method.type === 'ClassMethod' && method.key.name === name
+  )
 
   if (method === undefined) throw new Error(`Method '${name}' not found`)
 

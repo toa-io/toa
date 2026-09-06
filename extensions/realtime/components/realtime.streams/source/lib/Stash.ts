@@ -5,37 +5,37 @@ export class Stash {
   private readonly configuration: Configuration
   private readonly logs: any
 
-  public constructor (stash: any, configuration: Configuration, logs: any) {
+  public constructor(stash: any, configuration: Configuration, logs: any) {
     this.stash = stash
     this.configuration = configuration
     this.logs = logs
   }
 
-  public async connect (key: string): Promise<string | Error> {
+  public async connect(key: string): Promise<string | Error> {
     return await this.xadd(key, 'connect')
   }
 
-  public async push (key: string, event: string, data: unknown): Promise<string | Error> {
+  public async push(key: string, event: string, data: unknown): Promise<string | Error> {
     return await this.xadd(key, event, data)
   }
 
-  public async pop (key: string, token: string): Promise<[string, Event[]] | null | Error> {
+  public async pop(
+    key: string,
+    token: string
+  ): Promise<[string, Event[]] | null | Error> {
     const stamp = this.decode(token)
 
     const results = await this.stash
       .xread('STREAMS', key, stamp)
       .catch((error: Error) => error)
 
-    if (results === null)
-      return ERR_NO_RESULTS
+    if (results === null) return ERR_NO_RESULTS
 
-    if (results instanceof Error)
-      return results
+    if (results instanceof Error) return results
 
     const items = entries(results)
 
-    if (items === null)
-      return null
+    if (items === null) return null
 
     const events: Event[] = []
 
@@ -48,23 +48,24 @@ export class Stash {
 
       const data = json === undefined ? undefined : JSON.parse(json)
 
-      if (data === undefined)
-        this.logs.debug('Undefined event payload', { key, event })
+      if (data === undefined) this.logs.debug('Undefined event payload', { key, event })
 
       events.push({ event, data })
     }
 
-    if (lastStamp === null)
-      return null
+    if (lastStamp === null) return null
 
     return [this.encode(lastStamp), events]
   }
 
-  private async xadd (key: string, event: string, data?: unknown): Promise<string | Error> {
+  private async xadd(
+    key: string,
+    event: string,
+    data?: unknown
+  ): Promise<string | Error> {
     const args = ['MAXLEN', '~', this.configuration.maxlen, '*', 'type', event]
 
-    if (data !== undefined)
-      args.push('data', JSON.stringify(data))
+    if (data !== undefined) args.push('data', JSON.stringify(data))
 
     const results = await this.stash
       .multi()
@@ -73,25 +74,22 @@ export class Stash {
       .exec()
       .catch((error: Error) => error)
 
-    if (results === null)
-      return ERR_NO_RESULTS
+    if (results === null) return ERR_NO_RESULTS
 
-    if (results instanceof Error)
-      return results
+    if (results instanceof Error) return results
 
     const [[error, stamp]] = results
 
-    if (error !== null)
-      return error
+    if (error !== null) return error
 
     return this.encode(stamp as string)
   }
 
-  private encode (token: string): string {
+  private encode(token: string): string {
     return Buffer.from(token).toString('base64url')
   }
 
-  private decode (token: string): string {
+  private decode(token: string): string {
     return Buffer.from(token, 'base64url').toString()
   }
 }
@@ -101,7 +99,7 @@ export class Stash {
  * object keyed by stream name over RESP3. One stream is read, so either way it is the
  * first, and an empty answer means nothing has been added since the token.
  */
-function entries (results: unknown): Entry[] | null {
+function entries(results: unknown): Entry[] | null {
   if (Array.isArray(results))
     return results.length === 0 ? null : (results[0] as [string, Entry[]])[1]
 

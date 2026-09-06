@@ -2,7 +2,7 @@ import { describe, it, beforeEach } from 'node:test'
 import assert from 'node:assert/strict'
 
 import { generate } from 'randomstring'
-import { Locator } from '../src/locator.js'
+import { Locator } from '../source/locator.js'
 
 /** @type {string} */
 let name
@@ -10,7 +10,7 @@ let name
 /** @type {string} */
 let namespace
 
-/** @type {toa.core.Locator} */
+/** @type {import('@toa.io/core').Locator} */
 let locator
 
 beforeEach(() => {
@@ -34,7 +34,10 @@ it('should expose id, label', () => {
 })
 
 it('should expose uppercase', () => {
-  assert.deepStrictEqual(locator.uppercase, (locator.namespace + '_' + locator.name).toUpperCase())
+  assert.deepStrictEqual(
+    locator.uppercase,
+    (locator.namespace + '_' + locator.name).toUpperCase()
+  )
 })
 
 it('should throw if name is undefined', () => {
@@ -51,7 +54,10 @@ it('should expose host', () => {
 it('should expose host with given prefix', () => {
   const prefix = generate()
 
-  assert.deepStrictEqual(locator.hostname(prefix), (prefix + '-' + namespace + '-' + name).toLowerCase())
+  assert.deepStrictEqual(
+    locator.hostname(prefix),
+    (prefix + '-' + namespace + '-' + name).toLowerCase()
+  )
 })
 
 describe('global', () => {

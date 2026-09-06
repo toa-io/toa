@@ -1,7 +1,8 @@
 import { console } from 'openspan'
 import { Connector, Locator } from '@toa.io/core'
 import { EVENT, SOURCE } from './const.js'
-import type { Message, Remote } from '@toa.io/core'
+import type { Remote } from '@toa.io/core'
+import type { Message } from '@toa.io/core/types'
 import type { Host } from './Factory.js'
 
 /**
@@ -23,7 +24,7 @@ export class Client extends Connector {
   private fresh = false
   private round = 0
 
-  public constructor (host: Host, options: Partial<Options> = {}) {
+  public constructor(host: Host, options: Partial<Options> = {}) {
     super()
 
     this.host = host
@@ -31,7 +32,7 @@ export class Client extends Connector {
   }
 
   /** The configuration of a component for an epoch, once the service has one. */
-  public async fetch (component: string, epoch: string): Promise<Value> {
+  public async fetch(component: string, epoch: string): Promise<Value> {
     const key = id(component, epoch)
 
     let entry = this.pending.get(key)
@@ -45,28 +46,25 @@ export class Client extends Connector {
       entry!.waiters.push(resolve)
     })
 
-    if (this.flushing)
-      this.fresh = true
-    else
-      this.schedule(0)
+    if (this.flushing) this.fresh = true
+    else this.schedule(0)
 
     return await promise
   }
 
-  public subscribe (component: string, epoch: string, listener: Listener): void {
+  public subscribe(component: string, epoch: string, listener: Listener): void {
     const key = id(component, epoch)
 
-    if (!this.listeners.has(key))
-      this.listeners.set(key, new Set())
+    if (!this.listeners.has(key)) this.listeners.set(key, new Set())
 
     this.listeners.get(key)!.add(listener)
   }
 
-  public unsubscribe (component: string, epoch: string, listener: Listener): void {
+  public unsubscribe(component: string, epoch: string, listener: Listener): void {
     this.listeners.get(id(component, epoch))?.delete(listener)
   }
 
-  protected override async open (): Promise<void> {
+  protected override async open(): Promise<void> {
     this.remote = await this.host.remote(LOCATOR, SOURCE)
 
     this.depends(this.remote)
@@ -79,25 +77,23 @@ export class Client extends Connector {
     await consumer.connect()
   }
 
-  protected override async close (): Promise<void> {
+  protected override async close(): Promise<void> {
     if (this.timer !== null) {
       clearTimeout(this.timer)
       this.timer = null
     }
   }
 
-  protected override async dispose (): Promise<void> {
+  protected override async dispose(): Promise<void> {
     this.disposed = true
   }
 
-  private schedule (delay: number): void {
-    if (this.flushing)
-      return
+  private schedule(delay: number): void {
+    if (this.flushing) return
 
     if (this.timer !== null) {
       // a request that has just arrived does not wait for the round already planned
-      if (delay > 0)
-        return
+      if (delay > 0) return
 
       clearTimeout(this.timer)
     }
@@ -107,7 +103,7 @@ export class Client extends Connector {
     }, delay)
   }
 
-  private async flush (): Promise<void> {
+  private async flush(): Promise<void> {
     this.timer = null
     this.flushing = true
     this.fresh = false
@@ -118,8 +114,7 @@ export class Client extends Connector {
     try {
       const output = await this.remote!.invoke<Fetched[] | Error>('fetch', { input })
 
-      if (output instanceof Error)
-        throw output
+      if (output instanceof Error) throw output
 
       this.settle(output)
     } catch (error) {
@@ -130,35 +125,29 @@ export class Client extends Connector {
 
     this.report(batch)
 
-    if (this.pending.size === 0)
-      return
+    if (this.pending.size === 0) return
 
-    if (this.fresh)
-      this.schedule(0)
-    else
-      this.schedule(this.backoff())
+    if (this.fresh) this.schedule(0)
+    else this.schedule(this.backoff())
   }
 
   /** Those the service has served are told; the rest stay for the next round. */
-  private settle (output: Fetched[]): void {
+  private settle(output: Fetched[]): void {
     for (const { component, epoch, configuration, created } of output) {
-      if (configuration === null)
-        continue
+      if (configuration === null) continue
 
       const key = id(component, epoch)
       const entry = this.pending.get(key)
 
-      if (entry === undefined)
-        continue
+      if (entry === undefined) continue
 
       this.pending.delete(key)
 
-      for (const resolve of entry.waiters)
-        resolve({ configuration, created })
+      for (const resolve of entry.waiters) resolve({ configuration, created })
     }
   }
 
-  private report (batch: Pending[]): void {
+  private report(batch: Pending[]): void {
     const waiting = batch
       .filter(({ component, epoch }) => this.pending.has(id(component, epoch)))
       .map(({ component }) => component)
@@ -172,24 +161,28 @@ export class Client extends Connector {
     this.round++
 
     if (this.round % this.options.warn === 1)
-      console.warn('Waiting for configuration', { components: waiting, round: this.round })
+      console.warn('Waiting for configuration', {
+        components: waiting,
+        round: this.round
+      })
   }
 
-  private backoff (): number {
+  private backoff(): number {
     return Math.min(this.options.base * Math.pow(FACTOR, this.round), this.options.max)
   }
 
   /** A created object goes to the subscribers of its component and epoch, as it is. */
-  private deliver (created: Created): void {
+  private deliver(created: Created): void {
     const listeners = this.listeners.get(id(created.component, created.epoch))
 
-    if (listeners === undefined)
-      return
+    if (listeners === undefined) return
 
-    const value: Value = { configuration: created.configuration, created: created._created }
+    const value: Value = {
+      configuration: created.configuration,
+      created: created.CREATED
+    }
 
-    for (const listener of listeners)
-      listener(value)
+    for (const listener of listeners) listener(value)
   }
 }
 
@@ -197,18 +190,18 @@ export class Client extends Connector {
 class Subscription extends Connector {
   private readonly handler: (created: Created) => void
 
-  public constructor (handler: (created: Created) => void) {
+  public constructor(handler: (created: Created) => void) {
     super()
 
     this.handler = handler
   }
 
-  public async receive (message: Message<Created>): Promise<void> {
+  public async receive(message: Message<Created>): Promise<void> {
     this.handler(message.payload)
   }
 }
 
-function id (component: string, epoch: string): string {
+function id(component: string, epoch: string): string {
   return component + '\0' + epoch
 }
 
@@ -246,7 +239,7 @@ export interface Created {
   component: string
   epoch: string
   configuration: object
-  _created: number
+  CREATED: number
 }
 
 export type Listener = (value: Value) => void

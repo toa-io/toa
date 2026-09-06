@@ -1,5 +1,112 @@
 # Component Declaration
 
+## Entity
+
+A stored component declares what it stores. `storage` names the connector and defaults to
+`@toa.io/storages.mongodb`.
+
+```yaml
+# manifest.toa.yaml
+entity:
+  properties:
+    title: { type: string }
+    brewed: { type: integer }
+    booked: { type: boolean }
+  required: [title]
+  blank:
+    booked: false
+```
+
+`required` names the properties a stored record has. `blank` is what a record holds before
+anything is written to it — it need not be whole, but each value must fit the property it names,
+and it is read once, when the component boots.
+
+A record carries `CREATED`, `UPDATED`, `VERSION` and `DELETED` besides what is declared, and none
+of the five system properties may be named in `blank`.
+
+### Migrations
+
+Indexes and data changes are files in the component's `migrations` directory, written as YAML or
+JSON. The file name without its extension is the migration's id, and sorting those ids is the
+order they are applied in — so name them to sort:
+
+```
+migrations/
+  0001-indexes.yaml
+  0002-brewed-defaults-to-zero.yaml
+```
+
+A file is a list of steps, applied in the order they are written:
+
+```yaml
+# migrations/0001-indexes.yaml
+- index:
+    name: unique_title
+    keys: { title: asc }
+    unique: true
+```
+
+```yaml
+# migrations/0002-brewed-defaults-to-zero.yaml
+- update:
+    filter: { brewed: { $exists: false } }
+    update: { $set: { brewed: 0 } }
+```
+
+What a step may say, for MongoDB:
+
+| Step        | Fields                                                                                                           |
+| ----------- | ---------------------------------------------------------------------------------------------------------------- |
+| `index`     | `name`, `keys` — a property to `asc`, `desc`, `hash` or `text` — and any of `unique`, `sparse`, `partial`, `ttl` |
+| `dropIndex` | `name`                                                                                                           |
+| `update`    | `filter`, and `update` as an object or as a list to run as an aggregation pipeline                               |
+| `delete`    | `filter`, where `{}` means every record                                                                          |
+
+An index whose name is already taken by one of another shape is dropped and made again, so
+changing what an index is made of is an edit to its declaration.
+
+Nothing is ever hard-deleted: a terminated record stays as a tombstone, and every read filters
+it out with `DELETED: null`. No index carries that unless it says so, which matters most for a
+**unique** index — without it a tombstone holds its key for good and the value can never be used
+again:
+
+```yaml
+- index:
+    name: unique_title
+    keys: { title: asc }
+    unique: true
+    partial: { DELETED: null }
+```
+
+The same filter keeps tombstones out of an ordinary index, where it is a question of how much
+the index holds rather than of what the component can do.
+
+**A migration is applied once for the database** — not once per replica, not once per start —
+and never again. An index dropped by hand is not made again; write another migration.
+
+**A migration must be idempotent.** A replica that dies while applying one has it applied again
+from its first step by whichever replica takes it over.
+
+**A migration runs before the component serves**, and every other replica waits for it. A
+backfill over a large collection belongs in an operation something calls, not here.
+
+**A migration lands while the version before it is still serving.** The first replica to start
+applies it, and every replica of the release before it goes on reading the collection it changed.
+Where that release can still read what the migration leaves, a rolling update is fine. Where it
+cannot — a rename, a field that changes meaning — the deployment stops first: scale it to zero,
+deploy, and say so wherever the upgrade is written down.
+
+**Migrations are not inherited.** A migration is applied to a collection and a prototype has
+none, so what a prototype declares stays with it — a component that takes a prototype's schema
+writes its own migrations for it.
+
+Only `@toa.io/storages.mongodb` applies migrations, and a step is written in its dialect. A
+component that declares them against another storage does not start:
+
+```
+Component 'pots.pot' declares migrations, which storage '@toa.io/storages.null' does not apply
+```
+
 ## Operations
 
 An operation may state what it is.
@@ -24,7 +131,7 @@ a [realtime](/extensions/realtime) route, or an entry in the context's `events`.
 ```yaml
 # context.toa.yaml
 events:
-  - store.orders.created   # consumed outside this context
+  - store.orders.created # consumed outside this context
 ```
 
 An event nothing consumes has no exchange and no [outbox](/documentation/outbox.md) row, and a
@@ -97,8 +204,8 @@ An operation of the component is called on a cadence, with no schedule stored an
 # manifest.toa.yaml
 cadence:
   sweep:
-    cycle: 86400      # seconds one whole cycle takes
-    intervals: 24     # what it is split into, so one call an hour
+    cycle: 86400 # seconds one whole cycle takes
+    intervals: 24 # what it is split into, so one call an hour
 ```
 
 The operation receives `{ n, i }` — the number of intervals in the cycle, and which of them this
@@ -107,7 +214,7 @@ call is for. `intervals` defaults to `1`, which is also what the shorthand decla
 ```yaml
 # manifest.toa.yaml
 cadence:
-  sweep: 3600         # once an hour
+  sweep: 3600 # once an hour
 ```
 
 `context.delay`, which hands one call over to be made later, comes with the extension. A

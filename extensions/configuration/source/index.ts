@@ -1,5 +1,5 @@
 export { manifest } from './manifest.js'
-export { deployment, describe } from './deployment.js'
+export { deployment, describe, image } from './deployment.js'
 export { components } from './Composition.js'
 export { Factory } from './Factory.js'
 

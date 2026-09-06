@@ -19,7 +19,7 @@ export async function list(): Promise<Edge[] | Error> {
 }
 
 function updatedSince(maxAge: number): string {
-  const params = new URLSearchParams({ criteria: `_updated>${Date.now() - maxAge}` })
+  const params = new URLSearchParams({ criteria: `UPDATED>${Date.now() - maxAge}` })
 
   return `?${params.toString()}`
 }

@@ -3,11 +3,11 @@ Feature: Deleted event
   Background:
     Given the `mongo.receiver` event queues are empty
     And the `mongo.one` database contains:
-      | _id                              | foo | bar   | _version |
-      | 72cf9b0ab0ac4ab2b8036e4e940ddcae | 0   | hello | 1        |
+      | _id                              | foo | bar   | VERSION |
+      | 72cf9b0ab0ac4ab2b8036e4e940ddcae | 0   | hello | 1       |
     And the `mongo.receiver` database contains:
-      | _id                              | count | _version |
-      | 72cf9b0ab0ac4ab2b8036e4e940ddcae | 0     | 1        |
+      | _id                              | count | VERSION |
+      | 72cf9b0ab0ac4ab2b8036e4e940ddcae | 0     | 1       |
 
   Scenario: Receiving `deleted` event
     Given I compose components:

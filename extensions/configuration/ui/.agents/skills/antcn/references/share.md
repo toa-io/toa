@@ -18,11 +18,11 @@ Invokes the Web Share API when `navigator.share` exists; otherwise renders `Clip
 
 ## Props
 
-| Prop      | Type                                      | Default | Notes                                                        |
-| --------- | ----------------------------------------- | ------- | ------------------------------------------------------------ |
-| `data`    | `ShareData \| () => Promise<ShareData \| null>` | —       | Payload for `navigator.share`. Retriever may return `null`.   |
-| `label`   | `string`                                  | —       | Button label when no `children` snippet.                     |
-| `onshare` | `() => void`                              | —       | Fires after share (or clipboard fallback copy).              |
-| `children`| `Snippet`                                 | —       | Custom button content; replaces icon + label.                |
+| Prop       | Type                                            | Default | Notes                                                       |
+| ---------- | ----------------------------------------------- | ------- | ----------------------------------------------------------- |
+| `data`     | `ShareData \| () => Promise<ShareData \| null>` | —       | Payload for `navigator.share`. Retriever may return `null`. |
+| `label`    | `string`                                        | —       | Button label when no `children` snippet.                    |
+| `onshare`  | `() => void`                                    | —       | Fires after share (or clipboard fallback copy).             |
+| `children` | `Snippet`                                       | —       | Custom button content; replaces icon + label.               |
 
 All other props pass through to the underlying `Button` (or `Clipboard` on unsupported browsers).

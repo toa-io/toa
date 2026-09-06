@@ -2,15 +2,15 @@ Feature: MongoDB Timestamps
 
   Background:
     Given the `mongo.one` database contains:
-      | _id                              | foo | bar   | _created      | _version |
-      | 72cf9b0ab0ac4ab2b8036e4e940ddcae | 3   | hello | 1709781946176 | 1        |
+      | _id                              | foo | bar   | CREATED       | VERSION |
+      | 72cf9b0ab0ac4ab2b8036e4e940ddcae | 3   | hello | 1709781946176 | 1       |
     And I compose `mongo.one` component
 
-  Scenario: Querying with `_created`
+  Scenario: Querying with `CREATED`
     When I call `mongo.one.enumerate` with:
       """yaml
       query:
-        criteria: _created<1709781946177
+        criteria: CREATED<1709781946177
         limit: 10
       """
     Then the reply is received:
@@ -18,8 +18,8 @@ Feature: MongoDB Timestamps
       - id: 72cf9b0ab0ac4ab2b8036e4e940ddcae
         foo: 3
         bar: hello
-        _created: 1709781946176
-        _version: 1
+        CREATED: 1709781946176
+        VERSION: 1
       """
 
   # break assertions and see values in exceptions
@@ -36,7 +36,7 @@ Feature: MongoDB Timestamps
       """yaml
       id: 72cf9b0ab0ac4ab2b8036e4e940ddcae
       foo: 5
-      _version: 2
+      VERSION: 2
       """
 
   Scenario: Creating and updating an entry
@@ -48,7 +48,7 @@ Feature: MongoDB Timestamps
     Then the reply is received:
       """yaml
       foo: 1
-      _version: 1
+      VERSION: 1
       """
     When I call `mongo.one.transit` with:
       """yaml
@@ -60,5 +60,5 @@ Feature: MongoDB Timestamps
     Then the reply is received:
       """yaml
       foo: 5
-      _version: 2
+      VERSION: 2
       """

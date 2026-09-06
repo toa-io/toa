@@ -1,7 +1,7 @@
 import { generate } from '@toa.io/generic'
 
 /** @type {toa.node.shortcut} */
-export function state (context, aspect) {
+export function state(context, aspect) {
   context.state = generate((segs, value) => {
     if (value === undefined) return get(aspect, segs)
     else set(aspect, segs, value)
@@ -9,11 +9,11 @@ export function state (context, aspect) {
 }
 
 /**
- * @param {toa.core.extensions.Aspect} aspect
+ * @param {import('@toa.io/core/types').extensions.Aspect} aspect
  * @param {string[]} segs
  * @return {any}
  */
-function get (aspect, segs) {
+function get(aspect, segs) {
   let cursor = aspect.invoke()
 
   for (const seg of segs) cursor = cursor[seg]
@@ -22,11 +22,11 @@ function get (aspect, segs) {
 }
 
 /**
- * @param {toa.core.extensions.Aspect} aspect
+ * @param {import('@toa.io/core/types').extensions.Aspect} aspect
  * @param {string[]} segs
  * @param {any} value
  */
-function set (aspect, segs, value) {
+function set(aspect, segs, value) {
   const object = build(segs, value)
 
   aspect.invoke(object)
@@ -36,7 +36,7 @@ function set (aspect, segs, value) {
  * @param {string[]} segs
  * @param {any} value
  */
-function build (segs, value) {
+function build(segs, value) {
   const object = {}
   let cursor = object
   const key = segs.pop()

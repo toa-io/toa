@@ -1,17 +1,15 @@
 import { Given, After, Before } from '@cucumber/cucumber'
 import { load as parse } from 'js-yaml'
 
-Given('an environment variable {token} is set to {string}',
-  setEnv)
+Given('an environment variable {token} is set to {string}', setEnv)
 
-Given('an environment variable {token} is set to:',
-  function (name, yaml) {
-    const value = parse(yaml)
+Given('an environment variable {token} is set to:', function (name, yaml) {
+  const value = parse(yaml)
 
-    setEnv.call(this, name, JSON.stringify(value))
-  })
+  setEnv.call(this, name, JSON.stringify(value))
+})
 
-function setEnv (name, value) {
+function setEnv(name, value) {
   // what it was, not that it was set: a scenario overriding one the suite relies on
   // must leave it as it found it
   this.env.push([name, process.env[name]])
@@ -25,7 +23,8 @@ Before(
    */
   function () {
     this.env = []
-  })
+  }
+)
 
 After(
   /**
@@ -36,4 +35,5 @@ After(
     for (const [name, value] of this.env.reverse())
       if (value === undefined) delete process.env[name]
       else process.env[name] = value
-  })
+  }
+)

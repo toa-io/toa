@@ -26,12 +26,14 @@ export class Connection extends Connector {
   /** @type {import('ioredis').Redis[]} */
   #clients = []
 
-  async open () {
+  async open() {
     const urls = resolve()
 
     if (urls.length === 0) {
-      console.warn('Atomicity is not configured, so nothing is owned and nothing is metered. ' +
-        'Set TOA_ATOMICITY_REDIS.')
+      console.warn(
+        'Atomicity is not configured, so nothing is owned and nothing is metered. ' +
+          'Set TOA_ATOMICITY_REDIS.'
+      )
 
       return
     }
@@ -56,8 +58,11 @@ export class Connection extends Connector {
     for (const client of this.#clients)
       // ioredis leaves `message` empty on a refused connection, where the code is the whole story
       client.on('error', (error) =>
-        console.warn('Atomicity is unreachable, so nothing is owned',
-          { host: client.options.host, error: error.code ?? error.message }))
+        console.warn('Atomicity is unreachable, so nothing is owned', {
+          host: client.options.host,
+          error: error.code ?? error.message
+        })
+      )
 
     this.redis = this.#clients[0]
 
@@ -75,7 +80,7 @@ export class Connection extends Connector {
     console.info('Atomicity connecting to redis', { nodes: this.#clients.length })
   }
 
-  async close () {
+  async close() {
     for (const client of this.#clients) client.disconnect()
 
     // a closed connection holds nothing: it is opened again with whatever is configured then,
@@ -89,7 +94,7 @@ export class Connection extends Connector {
 
 const OPTIONS = { enableReadyCheck: true }
 
-function resolve () {
+function resolve() {
   const value = process.env[VARIABLE]
 
   // an empty value is atomicity turned off, where an absent one in development is the
@@ -108,4 +113,8 @@ export const connection = () => (instance ??= new Connection())
 export const reset = () => (instance = undefined)
 
 export const VARIABLE = 'TOA_ATOMICITY_REDIS'
-const DEV = 'redis://localhost'
+/**
+ * Toa's own development stack is not on the conventional ports: the applications built on
+ * Toa are, and they share the machine. See CONTRIBUTING.md.
+ */
+const DEV = 'redis://localhost:31040'

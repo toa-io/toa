@@ -1,0 +1,19 @@
+namespace: plain
+name: migrated
+
+# migrations against a storage that does not apply them
+
+entity:
+  storage: null
+  properties:
+    a:
+      type: string
+
+operations:
+  transit:
+    concurrency: retry
+    input:
+      type: object
+      properties:
+        a:
+          type: string

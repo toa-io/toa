@@ -1,3 +1,4 @@
+@deployment @helm
 Feature: Service Deployment
 
   Scenario: Deploy a service with global variables

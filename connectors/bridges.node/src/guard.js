@@ -2,12 +2,12 @@ export class Guard {
   #guard
   #context
 
-  constructor (guard, context) {
+  constructor(guard, context) {
     this.#guard = guard
     this.#context = context
   }
 
-  fit (state, origin) {
+  fit(state, origin) {
     return this.#guard.guard(state, origin, this.#context)
   }
 }

@@ -17,7 +17,7 @@ const loading = {}
  *
  * @param {string} reference
  * @param {string} base
- * @returns {Promise<toa.core.extensions.Factory>}
+ * @returns {Promise<import('@toa.io/core/types').extensions.Factory>}
  */
 export const resolve = async (reference, base = process.cwd()) => {
   const path = find(reference, base)
@@ -35,7 +35,7 @@ export const resolve = async (reference, base = process.cwd()) => {
  *
  * @param {string} reference
  * @param {string} base
- * @returns {toa.core.extensions.Factory}
+ * @returns {import('@toa.io/core/types').extensions.Factory}
  */
 export const instance = (reference, base = process.cwd()) => {
   const factory = instances[find(reference, base)]

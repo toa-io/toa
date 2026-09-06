@@ -1,7 +1,7 @@
 export class ProcessorException extends Error {
-  constructor () {
+  constructor() {
     super()
 
-    this.message = 'Processor\'s result size doesn\'t match amount of units'
+    this.message = "Processor's result size doesn't match amount of units"
   }
 }

@@ -1,3 +1,4 @@
+@cli
 Feature: Export local deployment environment variables
 
   Scenario: Show help

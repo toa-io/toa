@@ -8,14 +8,14 @@ import type { Node } from './model.js'
  * Announces the static description of a component.
  *
  * Delivery is guaranteed, so the repeat is not about reliability — it keeps
- * `_updated` fresh, which is how a removed component fades off the map.
+ * `UPDATED` fresh, which is how a removed component fades off the map.
  */
 export class Tenant extends Connector {
   private readonly reporter: Reporter
   private readonly node: Node
   private stopped = false
 
-  public constructor (reporter: Reporter, node: Node) {
+  public constructor(reporter: Reporter, node: Node) {
     super()
 
     this.reporter = reporter
@@ -24,22 +24,21 @@ export class Tenant extends Connector {
     this.depends(reporter)
   }
 
-  protected override async open (): Promise<void> {
+  protected override async open(): Promise<void> {
     this.reporter.expose(this.node)
 
     void this.announce()
   }
 
-  protected override dispose (): void {
+  protected override dispose(): void {
     this.stopped = true
   }
 
-  private async announce (): Promise<void> {
+  private async announce(): Promise<void> {
     while (!this.stopped) {
       await setTimeout(ANNOUNCE_INTERVAL, undefined, { ref: false })
 
-      if (this.stopped)
-        break
+      if (this.stopped) break
 
       this.reporter.expose(this.node)
     }

@@ -6,7 +6,7 @@ import * as find from '../../util/find.js'
 
 const { Factory } = deployment
 
-export async function build (contextPath, componentPatterns) {
+export async function build(contextPath, componentPatterns) {
   const context = await createContext(contextPath, componentPatterns)
   const factory = new Factory(context)
   const registry = factory.registry()
@@ -19,7 +19,7 @@ export async function build (contextPath, componentPatterns) {
   return `${base}${context.name}/composition-${composition}`
 }
 
-async function createContext (contextPath, componentPatterns) {
+async function createContext(contextPath, componentPatterns) {
   const contextRoot = find.context(contextPath)
   const context = await norm.context(contextRoot, 'docker')
   const paths = componentPatterns.map((pattern) => find.components(pattern))
@@ -28,10 +28,12 @@ async function createContext (contextPath, componentPatterns) {
   const name = 'temp-' + rnd
 
   context.name += '-' + rnd
-  context.compositions = [{
-    name,
-    components
-  }]
+  context.compositions = [
+    {
+      name,
+      components
+    }
+  ]
 
   return context
 }
@@ -40,7 +42,7 @@ async function createContext (contextPath, componentPatterns) {
  * @param {string[]} paths
  * @return {Promise<toa.norm.Component[]>}
  */
-async function loadComponents (paths) {
+async function loadComponents(paths) {
   const components = []
 
   for (const path of paths) {

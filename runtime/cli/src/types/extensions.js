@@ -10,15 +10,16 @@ import { emit } from './schema.js'
  * @param {Record<string, object | null>} extensions a component's normalized extensions
  * @returns {Promise<{ types: Record<string, string>, imports: Record<string, Set<string>> }>}
  */
-export async function contributions (extensions = {}) {
+export async function contributions(extensions = {}) {
   const types = {}
   const imports = {}
 
   for (const [reference, declaration] of Object.entries(extensions)) {
     for (const contribution of await state(reference, declaration)) {
-      types[contribution.name] = contribution.schema === undefined
-        ? contribution.type ?? 'unknown'
-        : emit(contribution.schema)
+      types[contribution.name] =
+        contribution.schema === undefined
+          ? (contribution.type ?? 'unknown')
+          : emit(contribution.schema)
 
       for (const [module, names] of Object.entries(contribution.imports ?? {})) {
         imports[module] ??= new Set()
@@ -33,9 +34,9 @@ export async function contributions (extensions = {}) {
 /**
  * @param {string} reference
  * @param {object | null} declaration
- * @returns {Promise<toa.core.extensions.Contribution[]>}
+ * @returns {Promise<import('@toa.io/core/types').extensions.Contribution[]>}
  */
-async function state (reference, declaration) {
+async function state(reference, declaration) {
   let extension
 
   try {

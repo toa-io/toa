@@ -1,5 +1,4 @@
 import * as http from '../HTTP/index.js'
-import { Timing } from '../HTTP/Timing.js'
 import type { Params } from './types.js'
 
 /**
@@ -11,8 +10,13 @@ import type { Params } from './types.js'
  * here, `identity` included, is read through.
  */
 // eslint-disable-next-line max-params
-export function fork (context: http.Context, path: string, verb: string,
-  query: Params | undefined, input: unknown): http.Context {
+export function fork(
+  context: http.Context,
+  path: string,
+  verb: string,
+  query: Params | undefined,
+  input: unknown
+): http.Context {
   const url = new URL(path, context.url)
 
   if (query !== undefined)
@@ -43,18 +47,11 @@ export function fork (context: http.Context, path: string, verb: string,
     url: { value: url, enumerable: true },
     request: { value: request, enumerable: true },
     pipelines: { value: pipelines, enumerable: true },
-    /*
-     * Its own, so that what the stages of a call take is measured per call and stays there.
-     * `server-timing` is a header, and a request carrying thirty-two calls would otherwise
-     * write ninety-six values into one — where a trace says the same thing, per call.
-     */
-    timing: { value: new Timing(), enumerable: true },
     body: {
       value: async () => {
         let value = input
 
-        for (const transform of pipelines.body)
-          value = await transform(value)
+        for (const transform of pipelines.body) value = await transform(value)
 
         return value
       }

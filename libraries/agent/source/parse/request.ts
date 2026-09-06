@@ -1,7 +1,7 @@
 import { HTTPParser } from 'http-parser-js'
 import type * as undici from 'undici'
 
-export function request (input: string, origin?: string): HTTPRequest {
+export function request(input: string, origin?: string): HTTPRequest {
   const parser = new HTTPParser(HTTPParser.REQUEST)
   const request: Partial<HTTPRequest> = {}
   const bodyChunks: Buffer[] = []
@@ -35,20 +35,20 @@ export function request (input: string, origin?: string): HTTPRequest {
     throw new Error('Failed to parse request')
   }
 
-  if (bodyChunks.length > 0)
-    request.body = Buffer.concat(bodyChunks)
+  if (bodyChunks.length > 0) request.body = Buffer.concat(bodyChunks)
 
   return request as HTTPRequest
 }
 
-function reduceHeaders (array: string[]): Headers {
+function reduceHeaders(array: string[]): Headers {
   const headers = new Headers()
 
   while (array.length > 1) {
     const name = array.shift()
     const value = array.shift()
 
-    if (name === undefined || value === undefined) throw new Error('Error parsing headers')
+    if (name === undefined || value === undefined)
+      throw new Error('Error parsing headers')
 
     headers.append(name, value)
   }

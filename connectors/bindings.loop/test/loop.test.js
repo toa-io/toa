@@ -1,4 +1,4 @@
-import { it, before, after, beforeEach, afterEach, mock } from 'node:test'
+import { it, before, after, beforeEach, afterEach } from 'node:test'
 import assert from 'node:assert/strict'
 
 import clone from 'clone-deep'
@@ -8,7 +8,11 @@ import { Factory } from '../src/factory.js'
 import * as fixtures from './fixtures.js'
 
 const factory = new Factory()
-const producer = factory.producer(fixtures.component.locator, fixtures.endpoints, fixtures.component)
+const producer = factory.producer(
+  fixtures.component.locator,
+  fixtures.endpoints,
+  fixtures.component
+)
 
 let consumer, endpoint
 
@@ -67,10 +71,13 @@ it('should not depend on initialization order', async () => {
   const producer = factory.producer(component.locator, fixtures.endpoints, component)
   await producer.connect()
 
-  assert.strictEqual(await consumer.request(), await component.invoke.mock.calls[0].result)
+  assert.strictEqual(
+    await consumer.request(),
+    await component.invoke.mock.calls[0].result
+  )
 })
 
-function resetCalls (target = [fixtures], seen = new Set()) {
+function resetCalls(target = [fixtures], seen = new Set()) {
   if (target === null || typeof target !== 'object' || seen.has(target)) return
 
   seen.add(target)

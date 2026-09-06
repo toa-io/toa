@@ -246,7 +246,7 @@ authorization: ...
 ```
 
 The listing returns `id`, `label`, optional `expires`, `revokedAt` where the key is revoked, and
-`_created`. Revocation and deletion prevent new cache lookups from finding a usable key. A runtime
+`CREATED`. Revocation and deletion prevent new cache lookups from finding a usable key. A runtime
 that already cached it can continue accepting the token for up to `identity.tokens.cache.ttl`
 milliseconds (10 minutes by default).
 
@@ -308,7 +308,7 @@ convenience.
 configuration:
   identity.tokens:
     lifetime: 2592000 # seconds, 30 days
-    refresh: 600      # seconds, 10 minutes
+    refresh: 600 # seconds, 10 minutes
 ```
 
 > Values in the example above are the default values.

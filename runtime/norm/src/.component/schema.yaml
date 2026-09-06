@@ -51,7 +51,6 @@ properties:
   namespace:
     type: string
     pattern: ^[a-zA-Z]([a-zA-Z0-9]{1,31})?$
-    default: "default"
     not:
       oneOf:
         - const: "system"
@@ -72,43 +71,42 @@ properties:
     properties:
       storage:
         type: string
-        default: "@toa.io/storages.mongodb"
-      schema:
-        $ref: https://json-schema.org/draft/2019-09/schema
+      properties:
         type: object
-        properties:
-          type:
-            default: object
-            const: object
+        # a system property is named like any other, so nothing is enumerated beside them
+        propertyNames:
+          $ref: "#/definitions/name"
+        additionalProperties:
+          $ref: https://json-schema.org/draft/2019-09/schema
+      required:
+        type: array
+        uniqueItems: true
+        items:
+          $ref: "#/definitions/name"
+      blank:
+        # what a record holds before anything is written to it; a system property is the
+        # runtime's to write, so none may be named here
+        type: object
+        propertyNames:
+          not:
+            enum: [id, VERSION, CREATED, UPDATED, DELETED]
+      migrations:
+        type: array
+        items:
+          type: object
           properties:
-            type: object
-            propertyNames:
-              oneOf:
-                - $ref: "#/definitions/name"
-                - enum: [_version, _created, _updated, _deleted]
-      unique:
-        type: object
-        patternProperties:
-          ".*":
-            type: array
-            items:
+            id:
               type: string
-      index:
-        type: object
-        patternProperties:
-          ".*":
-            type: object
-            patternProperties:
-              ".*":
-                type: string
-                enum: [asc, desc, hash, text]
+            # what a step means belongs to the storage, which is the only thing that reads it
+            steps:
+              type: array
+          required: [id, steps]
+          additionalProperties: false
       associated:
         type: boolean
-        default: false
       custom:
         type: boolean
-        default: false
-    required: [schema]
+    required: [properties]
     additionalProperties: false
 
   bindings:
@@ -155,7 +153,6 @@ properties:
             $ref: https://json-schema.org/draft/2019-09/schema
           output:
             $ref: https://json-schema.org/draft/2019-09/schema
-            default: {}
           errors:
             # what a reply may carry as a code: the error schema allows either
             type: array
@@ -228,10 +225,8 @@ properties:
               properties:
                 scope:
                   const: none
-                  default: none
                 query:
                   const: false
-                  default: false
           - if: # effect
               properties:
                 type:
@@ -239,7 +234,6 @@ properties:
             then:
               properties:
                 scope:
-                  default: none
                   enum: [object, objects, stream, none]
         additionalProperties: false
     additionalProperties: false
@@ -260,10 +254,8 @@ properties:
             $ref: "#/definitions/binding"
           conditioned:
             type: boolean
-            default: false
           subjective:
             type: boolean
-            default: false
         required: [bridge, path]
         additionalProperties: false
 
@@ -287,10 +279,8 @@ properties:
             type: string
           conditioned:
             type: boolean
-            default: false
           adaptive:
             type: boolean
-            default: false
           arguments:
             type: array
         required: [operation]

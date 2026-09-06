@@ -9,12 +9,16 @@ export abstract class Mapping<T = unknown> {
   protected value: T
   protected remotes?: Remotes
 
-  protected constructor (value: T, remotes?: Remotes) {
+  protected constructor(value: T, remotes?: Remotes) {
     this.value = value
     this.remotes = remotes
   }
 
-  public abstract properties (context: Input, parameters: Parameter[], directives: Directive[]): Output
+  public abstract properties(
+    context: Input,
+    parameters: Parameter[],
+    directives: Directive[]
+  ): Output
 
   /**
    * What this mapping does to what the method says about itself, which is the reverse of
@@ -25,13 +29,12 @@ export abstract class Mapping<T = unknown> {
    * from the request itself and there is nowhere for a caller to put one; a header and a
    * segment are the caller's, and those say where.
    */
-  public explain (introspection: Introspection): void {
-    for (const property of this.names())
-      take(introspection, property)
+  public explain(introspection: Introspection): void {
+    for (const property of this.names()) take(introspection, property)
   }
 
   /** The input properties this mapping fills, however its value names them. */
-  protected names (): string[] {
+  protected names(): string[] {
     return typeof this.value === 'string'
       ? [this.value]
       : Object.keys(this.value as object)

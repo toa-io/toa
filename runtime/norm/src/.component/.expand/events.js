@@ -1,6 +1,6 @@
 import { resolve } from '../../shortcuts.js'
 
-export function events (manifest) {
+export function events(manifest) {
   if (manifest.events === undefined) return
 
   for (const event of Object.values(manifest.events)) {

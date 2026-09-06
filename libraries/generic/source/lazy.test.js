@@ -26,13 +26,13 @@ class LazyInitialized {
 
   action = lazy(this, this.#initialize, this.#action)
 
-  async #initialize () {
+  async #initialize() {
     await timeout(1)
     await initialize()
     this.log.push('initializer')
   }
 
-  async #action (...args) {
+  async #action(...args) {
     await action(...args)
     this.log.push('action')
 
@@ -59,7 +59,9 @@ it('should pass arguments to action', async () => {
 
   await instance.action(...args)
 
-  assert.ok(action.mock.calls.some((call) => isDeepStrictEqual(call.arguments, [...args])))
+  assert.ok(
+    action.mock.calls.some((call) => isDeepStrictEqual(call.arguments, [...args]))
+  )
 })
 
 it('should return value', async () => {
@@ -99,15 +101,13 @@ const initialize2 = mock.fn(async () => undefined)
 class InitializerSet {
   action = lazy(this, [this.#initialize1, this.#initialize2], this.#action)
 
-  async #action () {
+  async #action() {}
 
-  }
-
-  async #initialize1 () {
+  async #initialize1() {
     await initialize()
   }
 
-  async #initialize2 () {
+  async #initialize2() {
     await initialize2()
   }
 }
@@ -126,19 +126,15 @@ class InitializerIntersection {
 
   undo = lazy(this, this.#initialize2, this.#undo)
 
-  async #do () {
+  async #do() {}
 
-  }
+  async #undo() {}
 
-  async #undo () {
-
-  }
-
-  async #initialize1 () {
+  async #initialize1() {
     await initialize()
   }
 
-  async #initialize2 () {
+  async #initialize2() {
     await initialize2()
   }
 }
@@ -169,13 +165,13 @@ it('should call intersecting concurrent initializers once', async () => {
 class InitializersWithArguments {
   do = lazy(this, [this.#initialize1, this.#initialize2], this.#do)
 
-  async #do (a, b, c) {}
+  async #do(a, b, c) {}
 
-  async #initialize1 () {
+  async #initialize1() {
     await initialize(arguments)
   }
 
-  async #initialize2 (a, b) {
+  async #initialize2(a, b) {
     await initialize2(arguments)
   }
 }
@@ -218,12 +214,12 @@ class OrderedInitializers {
 
   do = lazy(this, [this.#initialize1, this.#initialize2], async () => undefined)
 
-  async #initialize1 () {
+  async #initialize1() {
     await timeout(1)
     this.log.push(1)
   }
 
-  async #initialize2 (a, b) {
+  async #initialize2(a, b) {
     this.log.push(2)
   }
 }
@@ -242,7 +238,7 @@ it('should override argument values', async () => {
   class Test {
     do = lazy(this, this.#update, method)
 
-    #update (foo, bar) {
+    #update(foo, bar) {
       return [foo + ' updated', bar + ' updated']
     }
   }
@@ -253,7 +249,14 @@ it('should override argument values', async () => {
 
   await test.do(foo, bar)
 
-  assert.ok(method.mock.calls.some((call) => call.arguments.length === 2 && isDeepStrictEqual(call.arguments[0], foo + ' updated') && isDeepStrictEqual(call.arguments[1], bar + ' updated')))
+  assert.ok(
+    method.mock.calls.some(
+      (call) =>
+        call.arguments.length === 2 &&
+        isDeepStrictEqual(call.arguments[0], foo + ' updated') &&
+        isDeepStrictEqual(call.arguments[1], bar + ' updated')
+    )
+  )
 })
 
 it('should partially override argument values', async () => {
@@ -262,7 +265,7 @@ it('should partially override argument values', async () => {
   class Test {
     do = lazy(this, this.#update, method)
 
-    #update (foo, bar) {
+    #update(foo, bar) {
       return [foo + ' updated']
     }
   }
@@ -273,7 +276,14 @@ it('should partially override argument values', async () => {
 
   await test.do(foo, bar)
 
-  assert.ok(method.mock.calls.some((call) => call.arguments.length === 2 && isDeepStrictEqual(call.arguments[0], foo + ' updated') && isDeepStrictEqual(call.arguments[1], bar)))
+  assert.ok(
+    method.mock.calls.some(
+      (call) =>
+        call.arguments.length === 2 &&
+        isDeepStrictEqual(call.arguments[0], foo + ' updated') &&
+        isDeepStrictEqual(call.arguments[1], bar)
+    )
+  )
 })
 
 describe('reset', () => {
@@ -300,7 +310,10 @@ describe('reset', () => {
   })
 })
 
-function resetCalls (target = [assert, action, initialize, value, initialize2], seen = new Set()) {
+function resetCalls(
+  target = [assert, action, initialize, value, initialize2],
+  seen = new Set()
+) {
   if (target === null || typeof target !== 'object' || seen.has(target)) return
 
   seen.add(target)

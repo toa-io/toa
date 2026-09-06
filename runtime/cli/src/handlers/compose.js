@@ -13,7 +13,7 @@ import { components as find } from '../util/find.js'
  * @param {Record<string, string | boolean>} argv
  * @return {Promise<void>}
  */
-export async function compose (argv) {
+export async function compose(argv) {
   console.log('Runtime', version)
 
   if (argv.dock === true) return dock(argv)
@@ -30,7 +30,7 @@ export async function compose (argv) {
     else {
       connector = new Connector()
 
-      connector.depends([composition, ...await create(references)])
+      connector.depends([composition, ...(await create(references))])
     }
 
     graceful(connector)
@@ -52,7 +52,7 @@ export async function compose (argv) {
  * @param {Record<string, string | string[] | boolean>} argv
  * @return {string[]}
  */
-function services (argv) {
+function services(argv) {
   if (argv.service !== undefined) return argv.service
 
   const variable = process.env.TOA_SERVICES?.trim()
@@ -64,7 +64,7 @@ function services (argv) {
  * @param {Record<string, string | string[] | boolean>} argv
  * @return {Promise<void>}
  */
-async function dock (argv) {
+async function dock(argv) {
   const repository = await docker.build(argv.context, argv.paths)
   const args = pick(argv, ['kill', 'bindings', 'service'])
   const command = docker.command('toa compose *', args)

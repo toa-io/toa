@@ -2,7 +2,7 @@ import { resolve } from './resolve.js'
 
 /**
  * @param {toa.norm.Component} manifest
- * @returns {toa.core.Connector[]}
+ * @returns {import('@toa.io/core').Connector[]}
  */
 export const tenants = async (manifest) => {
   const tenants = []

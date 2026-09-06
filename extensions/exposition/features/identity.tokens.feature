@@ -92,8 +92,8 @@ Feature: Tokens lifecycle
       refresh: 1
       """
     And the `identity.basic` database contains:
-      | _id                              | _version | authority | username  | password                                                     |
-      | efe3a65ebbee47ed95a73edd911ea328 | 1        | nex       | developer | $2b$10$ZRSKkgZoGnrcTNA5w5eCcu3pxDzdTduhteVYXcp56AaNcilNkwJ.O |
+      | _id                              | VERSION | authority | username  | password                                                     |
+      | efe3a65ebbee47ed95a73edd911ea328 | 1       | nex       | developer | $2b$10$ZRSKkgZoGnrcTNA5w5eCcu3pxDzdTduhteVYXcp56AaNcilNkwJ.O |
     When the following request is received:
       """
       GET /efe3a65ebbee47ed95a73edd911ea328/ HTTP/1.1

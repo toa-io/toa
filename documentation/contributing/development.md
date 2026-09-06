@@ -5,10 +5,11 @@ Toa requires Node.js 24 or newer. CI and the published runtime image use Node.js
 ## Unit of Work
 
 [TDD](https://en.wikipedia.org/wiki/Test-driven_development) is considered to be the way (but
-not guarantee) to produce a *non-broken software*. Developer's unit of work is one completed
+not guarantee) to produce a _non-broken software_. Developer's unit of work is one completed
 iteration of TDD cycle.
 
-> *tl;dr-version*
+> _tl;dr-version_
+>
 > 1. If your tests are failing you must write code.
 > 2. If your tests are passing you must write test, unless you're refactoring or done.
 

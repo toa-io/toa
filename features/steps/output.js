@@ -2,61 +2,63 @@ import * as runtime from '@toa.io/runtime'
 import assert from 'node:assert'
 import { Then } from '@cucumber/cucumber'
 
-Then('{word} should be the version',
+Then(
+  '{word} should be the version',
   /**
    * @param {string} channel
    * @this {toa.features.Context}
    */
-  async function(channel) {
+  async function (channel) {
     const { version } = runtime
 
     await this.process
 
     assert.equal(this[channel], version)
-  })
+  }
+)
 
-Then('{word} should contain {int} line(s)', async function(channel, lines) {
+Then('{word} should contain {int} line(s)', async function (channel, lines) {
   await this.process
 
-  assert.equal(this[channel + 'Lines'].length, lines, `${channel} contains ${this[channel].length} lines, ${lines} expected`)
+  assert.equal(
+    this[channel + 'Lines'].length,
+    lines,
+    `${channel} contains ${this[channel].length} lines, ${lines} expected`
+  )
 })
 
-Then('{word} should be empty', async function(channel) {
+Then('{word} should be empty', async function (channel) {
   await this.process
 
   assert.equal(this[channel], '')
 })
 
-Then('{word} should contain line(s):',
-  async function(channel, lines) {
-    await this.process
+Then('{word} should contain line(s):', async function (channel, lines) {
+  await this.process
 
-    find(this, channel, lines)
-  })
+  find(this, channel, lines)
+})
 
-Then('{word} should not contain line(s):',
-  async function(channel, lines) {
-    await this.process
+Then('{word} should not contain line(s):', async function (channel, lines) {
+  await this.process
 
-    find(this, channel, lines, undefined, true)
-  })
+  find(this, channel, lines, undefined, true)
+})
 
-Then('{word} should contain line(s) once:',
-  async function(channel, lines) {
-    await this.process
+Then('{word} should contain line(s) once:', async function (channel, lines) {
+  await this.process
 
-    find(this, channel, lines, 1)
-  })
+  find(this, channel, lines, 1)
+})
 
-Then('{word} should be: {string}',
-  async function(channel, line) {
-    await this.process
+Then('{word} should be: {string}', async function (channel, line) {
+  await this.process
 
-    const actual = this[channel]
-    const equal = compare(actual, line)
+  const actual = this[channel]
+  const equal = compare(actual, line)
 
-    assert.equal(equal, true)
-  })
+  assert.equal(equal, true)
+})
 
 /**
  * @param {toa.features.Context} context
@@ -84,10 +86,18 @@ const find = (context, channel, lines, exact = undefined, reverse = false) => {
 
     count.push(matches)
 
-    assert[reverse ? 'equal' : 'notEqual'](matches, 0, `Line${reverse ? '' : ' not'} found: ${query}`)
+    assert[reverse ? 'equal' : 'notEqual'](
+      matches,
+      0,
+      `Line${reverse ? '' : ' not'} found: ${query}`
+    )
 
     if (exact !== undefined) {
-      assert[reverse ? 'notEqual' : 'equal'](matches, exact, 'Line found multiple times: ' + query)
+      assert[reverse ? 'notEqual' : 'equal'](
+        matches,
+        exact,
+        'Line found multiple times: ' + query
+      )
     }
   }
 
@@ -109,7 +119,7 @@ const compare = (reference, line) => {
   return rx.test(search)
 }
 
-function substituteExpression (expression) {
+function substituteExpression(expression) {
   if (!(expression in expressions)) {
     return expression
   } else {

@@ -35,14 +35,14 @@ beforeEach(async () => {
  * @param {string[]} references
  * @param {() => void} [evict]
  */
-function communication (references, evict) {
+function communication(references, evict) {
   return new Communication(references, evict)
 }
 
 /**
  * @param {string[]} references
  */
-async function connect (references) {
+async function connect(references) {
   const instance = communication(references)
 
   await instance.connect()
@@ -106,9 +106,18 @@ describe('sealing', () => {
 
     assert.strictEqual(instance.sealed, true)
 
-    await assert.rejects(instance.reply('queue', () => undefined), (error) => /sealed/.test(error.message))
-    await assert.rejects(instance.process('queue', () => undefined), (error) => /sealed/.test(error.message))
-    await assert.rejects(instance.consume('exchange', 'group', () => undefined), (error) => /sealed/.test(error.message))
+    await assert.rejects(
+      instance.reply('queue', () => undefined),
+      (error) => /sealed/.test(error.message)
+    )
+    await assert.rejects(
+      instance.process('queue', () => undefined),
+      (error) => /sealed/.test(error.message)
+    )
+    await assert.rejects(
+      instance.consume('exchange', 'group', () => undefined),
+      (error) => /sealed/.test(error.message)
+    )
   })
 
   // sealing stops consuming, not publishing

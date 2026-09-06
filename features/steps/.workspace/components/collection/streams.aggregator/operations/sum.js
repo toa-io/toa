@@ -1,4 +1,4 @@
-export async function computation (input, context) {
+export async function computation(input, context) {
   const numbers = await context.remote.streams.numbers.generate({ input })
 
   let sum = 0

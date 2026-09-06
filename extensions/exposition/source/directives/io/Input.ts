@@ -8,15 +8,15 @@ export class Input implements Directive {
   /** what a client may send, which is therefore what the input schema states */
   public readonly allowed: Set<string>
 
-  public constructor (permissions: Permissions) {
+  public constructor(permissions: Permissions) {
     this.allowed = new Set(permissions)
   }
 
-  public static validate (permissions: unknown): asserts permissions is Permissions {
-    schemas.input.validate<Permissions>(permissions, 'Incorrect \'io:input\' format')
+  public static validate(permissions: unknown): asserts permissions is Permissions {
+    schemas.input.validate<Permissions>(permissions, "Incorrect 'io:input' format")
   }
 
-  public precall (context: Context): void {
+  public precall(context: Context): void {
     // Restrictions are on what the client sent, so the check goes to the front of the
     // pipeline whatever order the families ran in: `auth:delegate` embeds the identity
     // and `map:*` assigns mapped properties, and those additions are the server's own,
@@ -24,9 +24,8 @@ export class Input implements Directive {
     context.pipelines.body.unshift((body) => this.check(body))
   }
 
-  private check (body: unknown): Message | Message[] | undefined {
-    if (body === undefined)
-      return body
+  private check(body: unknown): Message | Message[] | undefined {
+    if (body === undefined) return body
 
     try {
       schemas.message.validate<Message | Message[]>(body)
@@ -36,21 +35,19 @@ export class Input implements Directive {
 
     const property = this.violation(body)
 
-    if (property !== undefined)
-      throw new BadRequest(`Unexpected input: ${property}`)
+    if (property !== undefined) throw new BadRequest(`Unexpected input: ${property}`)
 
     return body
   }
 
-  private violation (value: Message | Message[]): string | undefined {
+  private violation(value: Message | Message[]): string | undefined {
     if (!Array.isArray(value))
       return Object.keys(value).find((key) => !this.allowed.has(key))
 
     for (const item of value) {
       const property = this.violation(item)
 
-      if (property !== undefined)
-        return property
+      if (property !== undefined) return property
     }
   }
 }

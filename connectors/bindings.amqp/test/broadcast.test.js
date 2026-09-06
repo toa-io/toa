@@ -23,10 +23,13 @@ it('should be', async () => {
 })
 
 const comm = mock.communication()
-const locator = /** @type {toa.core.Locator} */ { namespace: generate(), name: generate() }
+const locator = /** @type {import('@toa.io/core').Locator} */ {
+  namespace: generate(),
+  name: generate()
+}
 const group = generate()
 
-/** @type {toa.core.bindings.Broadcast} */
+/** @type {import('@toa.io/core/types').bindings.Broadcast} */
 let broadcast
 
 beforeEach(() => {
@@ -42,7 +45,12 @@ it('should be instance of Connector', async () => {
 })
 
 it('should depend on communication', async () => {
-  assert.ok(comm.link.mock.calls.some((call) => call.arguments.length === 1 && isDeepStrictEqual(call.arguments[0], broadcast)))
+  assert.ok(
+    comm.link.mock.calls.some(
+      (call) =>
+        call.arguments.length === 1 && isDeepStrictEqual(call.arguments[0], broadcast)
+    )
+  )
 })
 
 it('should transmit', async () => {
@@ -51,13 +59,28 @@ it('should transmit', async () => {
 
   await broadcast.transmit(label, message)
 
-  assert.ok(mock.queues.name.mock.calls.some((call) => call.arguments.length === 2 && isDeepStrictEqual(call.arguments[0], locator) && isDeepStrictEqual(call.arguments[1], label)))
+  assert.ok(
+    mock.queues.name.mock.calls.some(
+      (call) =>
+        call.arguments.length === 2 &&
+        isDeepStrictEqual(call.arguments[0], locator) &&
+        isDeepStrictEqual(call.arguments[1], label)
+    )
+  )
 
   const exchange = mock.queues.name.mock.calls[0].result
 
-  assert.ok(comm.emit.mock.calls.some((call) => call.arguments.length === 3 && isDeepStrictEqual(call.arguments[0], exchange) && isDeepStrictEqual(call.arguments[1], message) && isDeepStrictEqual(call.arguments[2], {
-    'deliveryMode': 1
-  })))
+  assert.ok(
+    comm.emit.mock.calls.some(
+      (call) =>
+        call.arguments.length === 3 &&
+        isDeepStrictEqual(call.arguments[0], exchange) &&
+        isDeepStrictEqual(call.arguments[1], message) &&
+        isDeepStrictEqual(call.arguments[2], {
+          deliveryMode: 1
+        })
+    )
+  )
 })
 
 it('should receive', async () => {
@@ -66,11 +89,26 @@ it('should receive', async () => {
 
   await broadcast.receive(label, process)
 
-  assert.ok(mock.queues.name.mock.calls.some((call) => call.arguments.length === 2 && isDeepStrictEqual(call.arguments[0], locator) && isDeepStrictEqual(call.arguments[1], label)))
+  assert.ok(
+    mock.queues.name.mock.calls.some(
+      (call) =>
+        call.arguments.length === 2 &&
+        isDeepStrictEqual(call.arguments[0], locator) &&
+        isDeepStrictEqual(call.arguments[1], label)
+    )
+  )
 
   const exchange = mock.queues.name.mock.calls[0].result
 
-  assert.ok(comm.consume.mock.calls.some((call) => call.arguments.length === 3 && isDeepStrictEqual(call.arguments[0], exchange) && isDeepStrictEqual(call.arguments[1], group) && typeof call.arguments[2] === 'function'))
+  assert.ok(
+    comm.consume.mock.calls.some(
+      (call) =>
+        call.arguments.length === 3 &&
+        isDeepStrictEqual(call.arguments[0], exchange) &&
+        isDeepStrictEqual(call.arguments[1], group) &&
+        typeof call.arguments[2] === 'function'
+    )
+  )
 })
 
 it('should consume exclusively if group is not provided', async () => {
@@ -88,7 +126,7 @@ it('should consume exclusively if group is not provided', async () => {
   assert.strictEqual(group, undefined)
 })
 
-function resetCalls (target = [assert, mock, comm, locator, group], seen = new Set()) {
+function resetCalls(target = [assert, mock, comm, locator, group], seen = new Set()) {
   if (target === null || typeof target !== 'object' || seen.has(target)) return
 
   seen.add(target)

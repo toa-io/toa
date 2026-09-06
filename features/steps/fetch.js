@@ -4,12 +4,13 @@ import { Given, Then, After } from '@cucumber/cucumber'
 import { consoleExporter, exporting } from 'openspan'
 import { load as parse } from 'js-yaml'
 
-Given('an HTTP endpoint responds with statuses {string}',
+Given(
+  'an HTTP endpoint responds with statuses {string}',
   /**
    * @param {string} declaration
    * @this {toa.features.Context}
    */
-  async function(declaration) {
+  async function (declaration) {
     const statuses = declaration.split(',').map((value) => Number(value.trim()))
     let attempt = 0
 
@@ -30,23 +31,27 @@ Given('an HTTP endpoint responds with statuses {string}',
 
     this.fetchOrigin = `http://127.0.0.1:${address.port}`
     process.env.TOA_FEATURES_FETCH_URL = this.fetchOrigin
-  })
+  }
+)
 
-Given('I capture fetch spans',
+Given(
+  'I capture fetch spans',
   /**
    * @this {toa.features.Context}
    */
-  function() {
+  function () {
     this.fetchSpans = []
     exporting([{ export: (span) => this.fetchSpans.push(span) }])
-  })
+  }
+)
 
-Then('a fetch span tree is recorded:',
+Then(
+  'a fetch span tree is recorded:',
   /**
    * @param {string} yaml
    * @this {toa.features.Context}
    */
-  function(yaml) {
+  function (yaml) {
     const expected = parse(yaml)
     const name = `${expected.method} ${this.fetchOrigin}`
     const span = this.fetchSpans.find((span) => span.name === name)
@@ -60,18 +65,26 @@ Then('a fetch span tree is recorded:',
     const attempts = this.fetchSpans.filter((attempt) => attempt.parentId === span.spanId)
 
     assert.equal(attempts.length, expected.attempts)
-    assert.equal(attempts.every((attempt) => attempt.kind === 'client'), true)
-  })
+    assert.equal(
+      attempts.every((attempt) => attempt.kind === 'client'),
+      true
+    )
+  }
+)
 
 After(
   /**
    * @this {toa.features.Context}
    */
-  async function() {
+  async function () {
     exporting([consoleExporter])
     delete process.env.TOA_FEATURES_FETCH_URL
 
     if (this.fetchServer !== undefined)
-      await new Promise((resolve, reject) => this.fetchServer.close((error) =>
-        error === undefined ? resolve() : reject(error)))
-  })
+      await new Promise((resolve, reject) =>
+        this.fetchServer.close((error) =>
+          error === undefined ? resolve() : reject(error)
+        )
+      )
+  }
+)

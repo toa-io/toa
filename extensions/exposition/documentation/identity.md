@@ -209,11 +209,9 @@ This can be achieved by using the `auth:incept` directive as follows:
 name: users
 
 entity:
-  schema:
-    type: object
-    properties:
-      name:
-        type: string
+  properties:
+    name:
+      type: string
 
 exposition:
   /:
@@ -266,10 +264,10 @@ The directive itself does not allow or deny access to the requested resource.
 > Used authentication scheme must support inception.
 
 ```yaml
-  /accounts/echo:
-    auth:assert: true
-    auth:anyone: true
-    endpoint: echo
+/accounts/echo:
+  auth:assert: true
+  auth:anyone: true
+  endpoint: echo
 ```
 
 ```http

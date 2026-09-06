@@ -1,15 +1,16 @@
 Feature: MongoDB storage
 
+  @containers
   Scenario: Create a record in MongoDB with reconnection
     Given environment variables:
       """
       TOA_DEV=0
-      TOA_MONGODB_MONGO_ONE=mongodb://localhost:27018
+      TOA_MONGODB_MONGO_ONE=mongodb://localhost:31021
       TOA_MONGODB_MONGO_ONE_USERNAME=testcontainersuser
       TOA_MONGODB_MONGO_ONE_PASSWORD=secret
       TOA_ENV=local
       TOA_CONTEXT=toa-dev
-      TOA_AMQP_CONTEXT={".":["amqp://localhost"]}
+      TOA_AMQP_CONTEXT={".":["amqp://localhost:31010"]}
       TOA_AMQP_CONTEXT__USERNAME=developer
       TOA_AMQP_CONTEXT__PASSWORD=secret
       """
@@ -39,12 +40,12 @@ Feature: MongoDB storage
     Given environment variables:
       """
       TOA_DEV=0
-      TOA_MONGODB_MONGO_ONE=mongodb://localhost:27018?foo=bar
+      TOA_MONGODB_MONGO_ONE=mongodb://localhost:31021?foo=bar
       TOA_MONGODB_MONGO_ONE_USERNAME=testcontainersuser
       TOA_MONGODB_MONGO_ONE_PASSWORD=secret
       TOA_ENV=local
       TOA_CONTEXT=toa-dev
-      TOA_AMQP_CONTEXT={".":["amqp://localhost"]}
+      TOA_AMQP_CONTEXT={".":["amqp://localhost:31010"]}
       TOA_AMQP_CONTEXT__USERNAME=developer
       TOA_AMQP_CONTEXT__PASSWORD=secret
       """

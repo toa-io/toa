@@ -3,9 +3,8 @@ import { Node, Statement } from '@babel/types'
 import * as _context from './context.js'
 import * as _algorithm from './algorithms.js'
 
-declare namespace toa.node.define{
-
-  namespace algorithms{
+declare namespace toa.node.define {
+  namespace algorithms {
     type Definition = Partial<Operation>
 
     type List = Record<string, Definition>
@@ -22,9 +21,11 @@ declare namespace toa.node.define{
 
     type Test = (node: Node, type: string) => boolean
 
-    type Constructor = (func: _algorithm.func, context: _context.Context) => _algorithm.Algorithm
+    type Constructor = (
+      func: _algorithm.func,
+      context: _context.Context
+    ) => _algorithm.Algorithm
   }
 
   type Algorithms = (root: string) => Promise<algorithms.List>
-
 }

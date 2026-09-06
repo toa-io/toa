@@ -30,7 +30,12 @@ before(async () => {
     request.setEncoding('utf8')
     request.on('data', (chunk: string) => (body += chunk))
     request.on('end', () => {
-      requests.push({ method: request.method, url: request.url, headers: request.headers, body })
+      requests.push({
+        method: request.method,
+        url: request.url,
+        headers: request.headers,
+        body
+      })
       respond(response)
     })
   })
@@ -85,8 +90,14 @@ it('should encode spans as OTLP JSON', async () => {
   const resource = body.resourceSpans[0]
   const encoded = resource.scopeSpans[0].spans[0]
 
-  assert.ok(resource.resource.attributes.some((attribute: any) =>
-    isDeepStrictEqual(attribute, { key: 'service.name', value: { stringValue: 'my-service' } })))
+  assert.ok(
+    resource.resource.attributes.some((attribute: any) =>
+      isDeepStrictEqual(attribute, {
+        key: 'service.name',
+        value: { stringValue: 'my-service' }
+      })
+    )
+  )
 
   assert.partialDeepStrictEqual(encoded, {
     traceId: span.traceId,
@@ -99,13 +110,17 @@ it('should encode spans as OTLP JSON', async () => {
     status: { code: 2 }
   })
 
-  assert.ok([
-    { key: 'component', value: { stringValue: 'pots' } },
-    { key: 'method', value: { stringValue: 'GET' } },
-    { key: 'attempt', value: { intValue: '2' } },
-    { key: 'ratio', value: { doubleValue: 0.5 } },
-    { key: 'ok', value: { boolValue: true } }
-  ].every((item: any) => encoded.attributes.some((candidate: any) => isDeepStrictEqual(candidate, item))))
+  assert.ok(
+    [
+      { key: 'component', value: { stringValue: 'pots' } },
+      { key: 'method', value: { stringValue: 'GET' } },
+      { key: 'attempt', value: { intValue: '2' } },
+      { key: 'ratio', value: { doubleValue: 0.5 } },
+      { key: 'ok', value: { boolValue: true } }
+    ].every((item: any) =>
+      encoded.attributes.some((candidate: any) => isDeepStrictEqual(candidate, item))
+    )
+  )
 })
 
 it('should batch spans', async () => {
@@ -134,10 +149,18 @@ it('should group spans by service', async () => {
 
   assert.strictEqual(body.resourceSpans.length, 2)
 
-  const services = body.resourceSpans.map((resource: any) =>
-    resource.resource.attributes.find((attribute: any) => attribute.key === 'service.name').value.stringValue)
+  const services = body.resourceSpans.map(
+    (resource: any) =>
+      resource.resource.attributes.find(
+        (attribute: any) => attribute.key === 'service.name'
+      ).value.stringValue
+  )
 
-  assert.ok(['orders', 'fallback'].every((item: any) => services.some((candidate: any) => isDeepStrictEqual(candidate, item))))
+  assert.ok(
+    ['orders', 'fallback'].every((item: any) =>
+      services.some((candidate: any) => isDeepStrictEqual(candidate, item))
+    )
+  )
 
   const orders = body.resourceSpans[services.indexOf('orders')]
 

@@ -8,7 +8,6 @@ operations:
       properties:
         greeting:
           type: string
-          default: Hello
         name:
           type: string
       type: object

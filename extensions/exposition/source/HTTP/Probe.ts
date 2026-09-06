@@ -21,14 +21,14 @@ export class Probe {
   private listening = false
   private skipped = false
 
-  public constructor (port: number, path: string = PATH) {
+  public constructor(port: number, path: string = PATH) {
     this.port = port
     this.path = path
 
     this.server.on('request', (request, response) => this.listener(request, response))
   }
 
-  public async listen (): Promise<void> {
+  public async listen(): Promise<void> {
     this.startedAt = Date.now()
 
     try {
@@ -59,7 +59,7 @@ export class Probe {
   }
 
   /** The gateway is listening and has routes: answer `200`. */
-  public complete (): void {
+  public complete(): void {
     this.ready = true
 
     // the IPC signal is not tied to the probe: a process that gave up the shared port is
@@ -67,11 +67,10 @@ export class Probe {
     process.send?.('ready')
   }
 
-  public async close (): Promise<void> {
+  public async close(): Promise<void> {
     this.ready = false
 
-    if (!this.listening || this.skipped)
-      return
+    if (!this.listening || this.skipped) return
 
     this.listening = false
 
@@ -81,15 +80,14 @@ export class Probe {
     await new Promise<void>((resolve) => this.server.close(() => resolve()))
   }
 
-  private listener (request: http.IncomingMessage, response: http.ServerResponse): void {
+  private listener(request: http.IncomingMessage, response: http.ServerResponse): void {
     if (request.url !== this.path) {
       response.writeHead(404).end()
 
       return
     }
 
-    if (this.ready)
-      response.writeHead(200, { 'cache-control': 'no-store' }).end()
+    if (this.ready) response.writeHead(200, { 'cache-control': 'no-store' }).end()
     else {
       const remaining = Math.ceil((Date.now() - this.startedAt) / 1000).toString()
 

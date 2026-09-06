@@ -3,7 +3,7 @@ import type * as syntax from './syntax/index.js'
 import type { Context, OutgoingMessage, Options } from '../HTTP/index.js'
 import type { Output } from '../io.js'
 import type { Introspection } from '../Introspection.js'
-import type { extensions } from '@toa.io/core'
+import type { extensions } from '@toa.io/core/types'
 
 type Host = extensions.Host
 
@@ -18,7 +18,10 @@ export interface Directives {
   precall: (context: Context, parameters: Parameter[]) => Promise<Output>
 
   /** What this route's directives make of what its method says about itself. */
-  explain: (context: Context, introspection: Introspection) => Promise<Introspection | null>
+  explain: (
+    context: Context,
+    introspection: Introspection
+  ) => Promise<Introspection | null>
   settle: (context: Context, response: OutgoingMessage) => Promise<void>
   dispose: () => void
 }
@@ -71,9 +74,11 @@ export interface DirectiveFamily<TDirective = any, TExtension = any> {
   preflight?: (request: Context & TExtension) => void | Promise<void>
 
   /** Call-scoped, with what the node declares. Runs once per call. */
-  precall?: (directives: TDirective[],
+  precall?: (
+    directives: TDirective[],
     request: Context & TExtension,
-    parameters: Parameter[]) => Output | Promise<Output>
+    parameters: Parameter[]
+  ) => Output | Promise<Output>
 
   /**
    * What this family's directives make of what the method says about itself, which is
@@ -84,22 +89,28 @@ export interface DirectiveFamily<TDirective = any, TExtension = any> {
    * is why no parameters are passed — so a directive that can only tell from one hands back
    * what it was given.
    */
-  explain?: (directives: TDirective[],
+  explain?: (
+    directives: TDirective[],
     request: Context & TExtension,
-    introspection: Introspection) => Introspection | null | Promise<Introspection | null>
+    introspection: Introspection
+  ) => Introspection | null | Promise<Introspection | null>
 
   /** Call-scoped, on the message that call produced. */
-  settle?: (directives: TDirective[],
+  settle?: (
+    directives: TDirective[],
     request: Context & TExtension,
-    response: OutgoingMessage) => void | Promise<void>
+    response: OutgoingMessage
+  ) => void | Promise<void>
 
   /**
    * Request-scoped, on the message going back — the counterpart of `preflight`, and
    * likewise without directives. A reply the whole request carries, such as a re-issued
    * credential, is written here rather than by a call that would not own it.
    */
-  depart?: (request: Context & TExtension,
-    response: OutgoingMessage) => void | Promise<void>
+  depart?: (
+    request: Context & TExtension,
+    response: OutgoingMessage
+  ) => void | Promise<void>
 
   dispose?: (directives: TDirective[]) => void
 }

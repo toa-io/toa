@@ -5,35 +5,29 @@ name: metronome
 cadence: ~
 
 entity:
-  schema:
-    type: object
-    properties:
-      lane:
-        description: Which dispatcher takes this row, as the outbox partitions its lanes
-        type: integer
-      due:
-        description: When the call is to be made, in milliseconds since the epoch
-        type: integer
-      expires:
-        description: >
-          After this the call is not made at all. A scan bounds on it, so a call nothing was
-          running to make in time is a row nobody reads, rather than an event anything sees.
-        type: integer
-      endpoint:
-        description: What to call, as `namespace.component.operation`
-        type: string
-      request:
-        description: The request to make, as it was handed over
-        type: object
-    required:
-      - lane
-      - due
-      - expires
-      - endpoint
-  index:
+  properties:
+    lane:
+      description: Which dispatcher takes this row, as the outbox partitions its lanes
+      type: integer
     due:
-      lane: asc
-      due: asc
+      description: When the call is to be made, in milliseconds since the epoch
+      type: integer
+    expires:
+      description: >
+        After this the call is not made at all. A scan bounds on it, so a call nothing was
+        running to make in time is a row nobody reads, rather than an event anything sees.
+      type: integer
+    endpoint:
+      description: What to call, as `namespace.component.operation`
+      type: string
+    request:
+      description: The request to make, as it was handed over
+      type: object
+  required:
+    - lane
+    - due
+    - expires
+    - endpoint
 
 # `enumerate` reads what is due and `terminate` cancels one; both come from the prototype.
 operations:

@@ -16,7 +16,7 @@ export const DISCRETENESS = 60
 export const BATCH = 200
 
 /** A number from the environment, where a deployment or a test suite states one. */
-export function number (variable: string, fallback: number): number {
+export function number(variable: string, fallback: number): number {
   const value = Number(process.env[variable])
 
   return Number.isNaN(value) || value <= 0 ? fallback : value

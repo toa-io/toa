@@ -1,4 +1,4 @@
-export async function computation (input, context) {
+export async function computation(input, context) {
   const criteria = `material==${input}`
   const query = { criteria, limit }
 

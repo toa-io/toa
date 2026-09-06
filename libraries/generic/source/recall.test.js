@@ -17,8 +17,11 @@ let method
 beforeEach(() => {
   resetCalls()
 
-  method = /** @type {import('node:test').Mock<(...args: any[]) => any>} */
-    mock.fn(function () { return this.foo })
+  method =
+    /** @type {import('node:test').Mock<(...args: any[]) => any>} */
+    mock.fn(function () {
+      return this.foo
+    })
 })
 
 it('should return function', async () => {
@@ -47,7 +50,9 @@ it('should pass arguments', async () => {
 
   await func(...args)
 
-  assert.ok(method.mock.calls.some((call) => isDeepStrictEqual(call.arguments, [...args])))
+  assert.ok(
+    method.mock.calls.some((call) => isDeepStrictEqual(call.arguments, [...args]))
+  )
 })
 
 it('should re-call', async () => {
@@ -64,8 +69,12 @@ it('should re-call', async () => {
 
   await recall(context)
 
-  assert.ok(method.mock.calls.some((call) => isDeepStrictEqual(call.arguments, [...args1])))
-  assert.ok(method.mock.calls.some((call) => isDeepStrictEqual(call.arguments, [...args2])))
+  assert.ok(
+    method.mock.calls.some((call) => isDeepStrictEqual(call.arguments, [...args1]))
+  )
+  assert.ok(
+    method.mock.calls.some((call) => isDeepStrictEqual(call.arguments, [...args2]))
+  )
 })
 
 it('should not trow on empty re-call', async () => {
@@ -73,9 +82,10 @@ it('should not trow on empty re-call', async () => {
 })
 
 it('should not re-call those thrown exceptions', async () => {
-  
   method.mock.mockImplementationOnce(async () => 1, method.mock.callCount())
-  method.mock.mockImplementationOnce(async () => { throw new Error() }, method.mock.callCount() + 1)
+  method.mock.mockImplementationOnce(async () => {
+    throw new Error()
+  }, method.mock.callCount() + 1)
 
   const func = recall(context, method)
 
@@ -92,7 +102,7 @@ it('should not re-call those thrown exceptions', async () => {
   assert.strictEqual(method.mock.callCount(), 3)
 })
 
-function resetCalls (target = [assert, context], seen = new Set()) {
+function resetCalls(target = [assert, context], seen = new Set()) {
   if (target === null || typeof target !== 'object' || seen.has(target)) return
 
   seen.add(target)

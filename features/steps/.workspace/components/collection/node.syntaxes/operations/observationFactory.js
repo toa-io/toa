@@ -6,11 +6,11 @@ import { Observation } from './observationClass.js'
 export class ObjectObservationFactory {
   #context
 
-  constructor (context) {
+  constructor(context) {
     this.#context = context
   }
 
-  create () {
+  create() {
     return new Observation()
   }
 }

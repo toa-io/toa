@@ -21,14 +21,14 @@ The separator is `.` and not `/` because a name is a tool's name too, and
 receives one outside that set may refuse the tool, and one that accepts it rewrites what it shows
 a model — so what is published has to be spellable as it stands.
 
-| route | verb | method |
-| --- | --- | --- |
-| `/pots` | `GET` | `pots.GET` |
-| `/pots` | `POST` | `pots.POST` |
-| `/pots/:id` | `GET` | `pots._id.GET` |
+| route                        | verb   | method                           |
+| ---------------------------- | ------ | -------------------------------- |
+| `/pots`                      | `GET`  | `pots.GET`                       |
+| `/pots`                      | `POST` | `pots.POST`                      |
+| `/pots/:id`                  | `GET`  | `pots._id.GET`                   |
 | `/identity/tokens/:identity` | `POST` | `identity.tokens._identity.POST` |
-| `/files/**` | `GET` | `files.__.GET` |
-| `/` | `GET` | `GET` |
+| `/files/**`                  | `GET`  | `files.__.GET`                   |
+| `/`                          | `GET`  | `GET`                            |
 
 The verb is always the last segment, so `/pots/GET` answering `POST` is `pots.GET.POST` and
 `/pots` answering `GET` is `pots.GET`. Nothing is declared to make a name: a re-mounted route is
@@ -55,17 +55,25 @@ A key the template names is a route variable, and is taken by the path. `query` 
 querystring. Whatever is left is the body.
 
 ```json
-{"jsonrpc": "2.0", "id": 1, "method": "pots._id.GET", "params": {"id": "a1b2"}}
+{ "jsonrpc": "2.0", "id": 1, "method": "pots._id.GET", "params": { "id": "a1b2" } }
 ```
 
 ```json
-{"jsonrpc": "2.0", "id": 2, "method": "pots.POST",
- "params": {"title": "Kettle", "volume": 1.7}}
+{
+  "jsonrpc": "2.0",
+  "id": 2,
+  "method": "pots.POST",
+  "params": { "title": "Kettle", "volume": 1.7 }
+}
 ```
 
 ```json
-{"jsonrpc": "2.0", "id": 3, "method": "pots.GET",
- "params": {"query": {"criteria": "volume=gt=1", "limit": 10}}}
+{
+  "jsonrpc": "2.0",
+  "id": 3,
+  "method": "pots.GET",
+  "params": { "query": { "criteria": "volume=gt=1", "limit": 10 } }
+}
 ```
 
 The querystring has a name of its own because an operation's input is free to have an `id` or
@@ -91,8 +99,10 @@ A request may carry an array of calls instead of one, and answers an array of wh
 answered — shorter than what it was given, where some were notifications.
 
 ```json
-[{"jsonrpc": "2.0", "id": 1, "method": "pots._id.GET", "params": {"id": "a1b2"}},
- {"jsonrpc": "2.0", "method": "pots._id.DELETE", "params": {"id": "c3d4"}}]
+[
+  { "jsonrpc": "2.0", "id": 1, "method": "pots._id.GET", "params": { "id": "a1b2" } },
+  { "jsonrpc": "2.0", "method": "pots._id.DELETE", "params": { "id": "c3d4" } }
+]
 ```
 
 They run one after another, in the order given. `batch` is how many one request may carry, 32
@@ -114,14 +124,14 @@ authenticate.
 
 Everything else a call runs into is a value, at `200`, because the request itself succeeded.
 
-| | |
-| --- | --- |
-| `-32601` | no route of that name, or no such verb on it |
-| `-32602` | a variable is missing, or a query is not one |
-| `-32000` | the identity is not authorized to make this call |
+|          |                                                    |
+| -------- | -------------------------------------------------- |
+| `-32601` | no route of that name, or no such verb on it       |
+| `-32602` | a variable is missing, or a query is not one       |
+| `-32000` | the identity is not authorized to make this call   |
 | `-32001` | the operation refused, its own code in `data.code` |
-| `-32603` | anything the gateway did not mean to answer |
-| `-32002` | the request carries more calls than `batch` |
+| `-32603` | anything the gateway did not mean to answer        |
+| `-32002` | the request carries more calls than `batch`        |
 
 The first five codes JSON-RPC states mean the same to every client. `-32000` and `-32001` are
 this gateway's, from the block the specification reserves and leaves empty, so

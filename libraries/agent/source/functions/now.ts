@@ -1,6 +1,6 @@
 import assert from 'node:assert'
 
-export function now (_: unknown, shift = '0'): string {
+export function now(_: unknown, shift = '0'): string {
   const match = SHIFT_RX.exec(shift) as Match | null
 
   assert.ok(match !== null, `Invalid shift: ${shift}`)
@@ -10,7 +10,7 @@ export function now (_: unknown, shift = '0'): string {
   return (Date.now() + ms).toString()
 }
 
-function parse (value: string, unit?: string): number {
+function parse(value: string, unit?: string): number {
   const number = Number.parseFloat(value)
   const multiplier = unit === undefined ? 1 : multipliers[unit]
 

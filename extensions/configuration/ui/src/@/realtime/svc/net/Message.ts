@@ -1,6 +1,6 @@
 export type Message =
   | {
-    event: string
-    data: unknown
-  }
+      event: string
+      data: unknown
+    }
   | string
