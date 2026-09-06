@@ -200,7 +200,9 @@ export class Authorization implements DirectiveFamily<Directive, Extension> {
 
     if (identity.provider === PRIMARY && !identity.refresh) return
 
-    if (await this.banned(identity)) throw new http.Unauthorized()
+    // resolving already asked, for any provider but the primary
+    if (context.vetted !== true && (await this.banned(identity)))
+      throw new http.Unauthorized()
 
     // a token carries the roles it was issued with, and the refresh is where they are read again;
     // any other scheme has just read them, unless a Role directive already did
@@ -279,8 +281,11 @@ export class Authorization implements DirectiveFamily<Directive, Extension> {
 
     const identity = result.identity
 
-    if (provider !== PRIMARY && (await this.banned(identity)))
-      throw new http.Unauthorized()
+    if (provider !== PRIMARY) {
+      if (await this.banned(identity)) throw new http.Unauthorized()
+
+      context.vetted = true
+    }
 
     identity.scheme = scheme
     identity.provider = provider!

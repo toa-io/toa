@@ -1,4 +1,4 @@
-import { genSalt, hash } from 'bcryptjs'
+import { hash } from '@node-rs/bcrypt'
 import type { Maybe } from '@toa.io/core/types'
 import type { Operation } from '@toa.io/bridges.node'
 import type {
@@ -66,10 +66,9 @@ export class Transition implements Operation {
     if (input.password !== undefined) {
       if (invalid(input.password, this.passwordRx)) return ERR_INVALID_PASSWORD
 
-      const salt = await genSalt(this.rounds)
       const spicy = input.password + this.pepper
 
-      object.password = await hash(spicy, salt)
+      object.password = await hash(spicy, this.rounds)
     }
 
     return { id: object.id }

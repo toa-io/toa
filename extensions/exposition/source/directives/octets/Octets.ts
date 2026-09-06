@@ -54,10 +54,7 @@ export class Octets implements DirectiveFamily<Directive> {
       )
 
     // noinspection JSObjectNullOrUndefined
-    return await input.timing.capture(
-      action.name,
-      action.apply(context.storage, input, parameters)
-    )
+    return await action.apply(context.storage, input, parameters)
   }
 }
 

@@ -1,4 +1,4 @@
-import { compare } from 'bcryptjs'
+import { compare } from '@node-rs/bcrypt'
 import { quote } from '@toa.io/generic'
 import type { Query, Maybe } from '@toa.io/core/types'
 import { split } from './lib/credentials.js'

@@ -1,8 +1,7 @@
 import { Readable } from 'node:stream'
-import { console } from 'openspan'
 import { Mapping } from './Mapping.js'
 import { take } from './Introspection.js'
-import { redact } from './redact.js'
+import { parse } from './directives/cache/etag.js'
 import * as http from './HTTP/index.js'
 import type { Introspection, Schema } from './Introspection.js'
 import type { Remote } from '@toa.io/core'
@@ -35,42 +34,20 @@ export class Endpoint implements RTD.Endpoint {
 
     this.remote ??= await this.discovery
 
-    const endpoint = this.remote.locator.id + '.' + this.endpoint
-
-    console.debug('Calling operation', { endpoint, request: redact(request) })
-
     const reply = await this.remote.invoke(this.endpoint, request)
-
-    console.debug('Received reply', {
-      endpoint,
-      reply: reply instanceof Readable ? '[Readable stream]' : redact(reply)
-    })
 
     if (reply instanceof Error) throw new http.UnprocessableEntity(reply)
 
-    const message: http.OutgoingMessage = {}
+    const message: http.OutgoingMessage = { body: reply }
 
-    // etag
-    if (reply !== null && reply !== undefined) {
-      const etag = context.request.headers['if-none-match']
+    // what the reply carries for a cache to validate by; the `cache` family sets the headers
+    if (typeof reply === 'object' && reply !== null && !(reply instanceof Readable)) {
+      if ('VERSION' in reply) message.version = reply.VERSION
 
-      if (this.conditionalGet(reply, etag, message)) return message
+      const modified = reply.UPDATED ?? reply.CREATED
+
+      if (modified !== undefined) message.modified = modified
     }
-
-    // last-modified
-    if (
-      typeof reply === 'object' &&
-      reply !== null &&
-      ('UPDATED' in reply || 'CREATED' in reply)
-    ) {
-      const timestamp: string = reply.UPDATED ?? reply.CREATED
-      const date = new Date(timestamp)
-
-      message.headers ??= new Headers()
-      message.headers.set('last-modified', date.toUTCString())
-    }
-
-    message.body = reply
 
     return message
   }
@@ -128,42 +105,6 @@ export class Endpoint implements RTD.Endpoint {
     await this.remote.disconnect(INTERRUPT)
   }
 
-  private conditionalGet(
-    reply: unknown,
-    etag: string | undefined,
-    message: http.OutgoingMessage
-  ): boolean {
-    message.headers ??= new Headers()
-
-    if (typeof reply === 'object' && reply !== null && 'VERSION' in reply) {
-      const version = reply.VERSION as number
-      const matched = etag === undefined ? null : this.matchVersion(etag)
-
-      if (etag !== undefined && matched !== null && version === matched) {
-        message.status = 304
-        message.headers.set('etag', etag)
-
-        return true
-      }
-
-      message.headers.set('etag', `"${version.toString()}"`)
-
-      return false
-    }
-
-    if (reply instanceof Readable) return false
-
-    /*
-     * A reply that carries no version is tagged with a hash of its body. The body is
-     * serialized anyway when the response is written, so the tag is computed from what
-     * is actually sent rather than from a second serialization of the reply — which
-     * makes it specific to the negotiated representation, hence `vary: accept`.
-     */
-    message.etag = true
-
-    return false
-  }
-
   private query(context: http.Context): http.Query {
     const query: http.Query = Object.fromEntries(context.url.searchParams)
     const etag = context.request.headers['if-match']
@@ -173,16 +114,8 @@ export class Endpoint implements RTD.Endpoint {
     return query
   }
 
-  private matchVersion(etag: string): number | null {
-    const match = etag.match(ETAG)
-
-    if (match === null) return null
-
-    return Number.parseInt(match.groups!.version)
-  }
-
   private version(etag: string): number {
-    const version = this.matchVersion(etag)
+    const version = parse(etag)
 
     if (version === null) throw new http.BadRequest('Invalid ETag')
 
@@ -216,7 +149,5 @@ export class EndpointsFactory implements RTD.EndpointsFactory {
     return new Endpoint(method.mapping.endpoint, mapping, discovery)
   }
 }
-
-const ETAG = /^(W\/)?"(?<version>\d{1,32})"$/
 
 const INTERRUPT = true

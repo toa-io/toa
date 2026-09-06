@@ -1,5 +1,4 @@
 import * as http from '../HTTP/index.js'
-import { Timing } from '../HTTP/Timing.js'
 import type { Params } from './types.js'
 
 /**
@@ -48,12 +47,6 @@ export function fork(
     url: { value: url, enumerable: true },
     request: { value: request, enumerable: true },
     pipelines: { value: pipelines, enumerable: true },
-    /*
-     * Its own, so that what the stages of a call take is measured per call and stays there.
-     * `server-timing` is a header, and a request carrying thirty-two calls would otherwise
-     * write ninety-six values into one — where a trace says the same thing, per call.
-     */
-    timing: { value: new Timing(), enumerable: true },
     body: {
       value: async () => {
         let value = input

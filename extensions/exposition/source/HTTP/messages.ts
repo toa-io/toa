@@ -1,7 +1,6 @@
 import { readFileSync } from 'node:fs'
 import { Readable } from 'node:stream'
 import { pipeline } from 'node:stream/promises'
-import { createHash } from 'node:crypto'
 import * as contentType from 'content-type'
 import { console } from 'openspan'
 import { type Format, decoders } from './formats/index.js'
@@ -13,8 +12,6 @@ const server =
   `Exposition/${JSON.parse(readFileSync(new URL('../../package.json', import.meta.url), 'utf8')).version}` +
   ((process.env.TOA_CONTEXT === undefined ? '' : ` ${process.env.TOA_CONTEXT}`) +
     (process.env.TOA_ENV === undefined ? '' : `/${process.env.TOA_ENV}`))
-
-const pending = new Map<string, PendingStream>()
 
 /**
  * Applies what the request accumulated in `pipelines.response` — an `io:output` restriction,
@@ -95,34 +92,10 @@ function send(
 
   const buf = context.encoder.encode(message.body)
 
-  if (message.etag === true && conditional(context, response, buf)) return
-
   response.setHeader('content-type', context.encoder.type)
   response.setHeader('content-length', buf.length.toString())
   response.appendHeader('vary', 'accept')
   response.end(buf)
-}
-
-/**
- * Tags a reply that carries no version with a hash of the body being sent, and answers
- * `304` when the client already has it. The tag is taken from the encoded body rather
- * than from a serialization of its own, so it identifies the representation — which is
- * what `vary` says.
- */
-function conditional(context: Context, response: ServerResponse, buf: Buffer): boolean {
-  const etag = `"${createHash('sha256').update(buf).digest('hex')}"`
-
-  response.setHeader('etag', etag)
-
-  if (context.request.headers['if-none-match'] !== etag) return false
-
-  response.setHeader('content-length', '0')
-  response.appendHeader('vary', 'accept')
-
-  response.statusCode = 304
-  response.end()
-
-  return true
 }
 
 function stream(
@@ -141,8 +114,6 @@ function stream(
   pipeline(source, response).catch((exception: Error) =>
     console.warn('Message stream error', { path: context.url.pathname, exception })
   )
-
-  if (context.debug) debugStream(context, response)
 }
 
 /**
@@ -182,41 +153,14 @@ const CUT = Buffer.from(`--${BOUNDARY}\r\n`)
 const CRLF = Buffer.from('\r\n')
 const FINALCUT = Buffer.from(`--${BOUNDARY}--`)
 
-const PENDING_DEBUG_INTERVAL = 30000
-
-let pendingInterval: NodeJS.Timeout | null = null
-
-function debugStream(context: Context, response: ServerResponse): void {
-  const ctx = { method: context.request.method, path: context.url.pathname }
-
-  console.debug('Stream opened', ctx)
-  pending.set(context.id, ctx)
-
-  response.on('close', () => {
-    console.debug('Stream closed', ctx)
-    pending.delete(context.id)
-
-    if (pending.size === 0) {
-      if (pendingInterval !== null) clearInterval(pendingInterval)
-
-      pendingInterval = null
-    }
-  })
-
-  if (pendingInterval === null)
-    pendingInterval = setInterval(
-      () => console.debug('Pending streams', { size: pending.size }),
-      PENDING_DEBUG_INTERVAL
-    )
-}
-
 export interface OutgoingMessage {
   status?: number
   headers?: Headers
   body?: any
 
-  /** tag the response with a hash of the encoded body, see `conditional` */
-  etag?: boolean
+  /** what the reply carries for a cache to validate by; the `cache` family sets the headers */
+  version?: number
+  modified?: number | string
 
   /**
    * Built by the gateway rather than returned by an operation, as a request is `authentic`
@@ -237,9 +181,4 @@ export interface Query {
   omit?: string
   limit?: string
   version?: number
-}
-
-interface PendingStream {
-  method: string
-  path: string
 }

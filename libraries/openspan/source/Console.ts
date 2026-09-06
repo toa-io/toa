@@ -113,6 +113,9 @@ export class Console {
     return (message: string, attributes?: any) => {
       if (level < this.level) return
 
+      // what costs to build is built only for a line that is written
+      if (typeof attributes === 'function') attributes = attributes()
+
       this.write(level, severity, message, attributes)
     }
   }
@@ -270,4 +273,5 @@ export type Kind = 'internal' | 'server' | 'client' | 'producer' | 'consumer'
 export type Severity = Uppercase<LevelName>
 export type Task<T> = () => T | Promise<T>
 type Level = -2 | -1 | 0 | 1 | 2
-type Method = (message: string, attributes?: any) => void
+/** The attributes, or a function of no arguments producing them, called only when the line is written. */
+type Method = (message: string, attributes?: any | (() => any)) => void
