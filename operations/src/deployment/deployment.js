@@ -42,7 +42,7 @@ export class Deployment {
     if (options.wait === true) args.push('--wait')
     if (options.timeout !== undefined) args.push('--timeout', options.timeout)
 
-    await this.#process.execute('helm', ['dependency', 'update', this.#target])
+    await this.#update()
     await this.#process.execute('helm', [
       'upgrade',
       this.#chart.name,
@@ -55,9 +55,7 @@ export class Deployment {
   async template(options) {
     if (this.#target === undefined) throw new Error("Deployment hasn't been exported")
 
-    await this.#process.execute('helm', ['dependency', 'update', this.#target], {
-      silently: true
-    })
+    await this.#update({ silently: true })
 
     const args = []
 
@@ -68,6 +66,19 @@ export class Deployment {
       ['template', this.#chart.name, ...args, this.#target],
       { silently: true }
     )
+  }
+
+  /**
+   * A chart with no subcharts has nothing to resolve, and the call still reaches out for
+   * the repositories it would have read.
+   *
+   * @param {object} [options]
+   * @returns {Promise<void>}
+   */
+  async #update(options = {}) {
+    if (this.#chart.dependencies.length === 0) return
+
+    await this.#process.execute('helm', ['dependency', 'update', this.#target], options)
   }
 
   variables() {

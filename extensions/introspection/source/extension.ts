@@ -6,6 +6,10 @@ import * as schemas from './schemas.js'
 import type { Annotation } from './annotation.js'
 import type { Dependency, Instances, Service } from '@toa.io/operations'
 
+/** Where Toa's release publishes this service's image. An application takes it
+ *  instead of building one when its context says `registry.services: published`. */
+export const image = 'ghcr.io/toa-io/extension-introspection-explorer'
+
 export const standalone = true
 
 /**
@@ -25,6 +29,7 @@ export function deployment(_: Instances<unknown>, annotation?: Annotation): Depe
   const service: Service = {
     group: 'introspection',
     name: 'explorer',
+    image,
     version: JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8'))
       .version,
     components: components().labels,

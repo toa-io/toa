@@ -38,6 +38,19 @@ Then(
 )
 
 Then(
+  'there is no file {path}',
+  /**
+   * @param {string} relative
+   * @this {toa.features.Context}
+   */
+  async function (relative) {
+    const paths = await glob(resolve(this.cwd, relative), FILES)
+
+    assert.deepEqual(paths, [], `'${relative}' matches ${paths.length} file(s)`)
+  }
+)
+
+Then(
   'the file {path} contains line starting with {string}',
   /**
    * @param {string} relative
