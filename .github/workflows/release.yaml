@@ -74,7 +74,7 @@ jobs:
           # a package shipped without what that script builds. Versioning still ignores
           # scripts, as it is meant to; publishing says so explicitly.
           # No `--create-release`: lerna builds a release body out of the changelog, and
-          # `lerna.json` says to keep none. The tag is what a release is here.
+          # `lerna.json` says to keep none. The GitHub Release is the next step.
           if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.from-package }}" = "true" ]; then
             DIST_TAG=${{ inputs.dist-tag }}
           elif [ "${{ github.base_ref }}" = "release" ]; then
@@ -86,6 +86,15 @@ jobs:
           fi
 
           npx lerna publish from-package --dist-tag "$DIST_TAG" --no-ignore-scripts --yes
+
+      # Lerna will not `--create-release` when changelog files are off. The notes
+      # are the same conventional-changelog page it used to write; they go to
+      # GitHub and nowhere in the tree. After publish, so a failed npm does not
+      # get a release page.
+      - name: GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: bash .github/scripts/github-release.sh
 
       # the version bump is the source of truth for the next release, so it reaches
       # `dev` as soon as publishing succeeded — an image that fails to build must not
