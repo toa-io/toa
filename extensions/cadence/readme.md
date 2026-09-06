@@ -142,11 +142,22 @@ it already past its bound and leaves it. State an `overdue` several times `discr
 `null`.
 
 **A cancellation is reliable while the call is further out than `discreteness`**, and is a race
-closer than that, where the call may already be on its way.
+closer than that, where the call may already be on its way. What bounds it is the period between
+passes: a cancelled call stops being owed, the next pass stops reading it, and a call taken in
+hand is given up again when that happens.
+
+**A call is due by the clock of whichever replica took the `delay`**, and made by the clock of
+whichever one dispatches it. The overlap covers the disagreement between two machines kept in
+ordinary time; nothing here measures it.
 
 So `discreteness` and `overdue` are chosen together against what the application needs. A call
 that must be made within seconds of its time, or cancellable within seconds of it, needs a
 `discreteness` of seconds — at the cost of looking the calls over that much more often.
+
+**A pass takes a bounded number of calls**, 200 to a replica, oldest first. Where more than that
+come due to one replica in one period, the rest are taken on a later pass and are late by however
+long that took; where it is logged, the rate is past what one period can carry. Replicas divide
+the lanes between them, so the ceiling is per replica rather than for the application.
 
 ### What to expect
 
@@ -186,6 +197,6 @@ cadence:
 ```
 
 `discreteness` is how often the calls waiting to be made are looked over. It defaults to 60,
-which is what an application that states nothing gets. It is the floor under how closely a
-delayed call can be cancelled and how small an `overdue` is worth stating — see
+which is what an application that states nothing gets. It sets how small an `overdue` is worth
+stating, and it is the floor under how closely a delayed call can be cancelled — see
 [Discreteness](#discreteness) — and lowering it costs a pass that runs more often.

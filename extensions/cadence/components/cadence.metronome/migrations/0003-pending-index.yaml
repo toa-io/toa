@@ -1,0 +1,16 @@
+# The index holds what is still owed, and nothing else.
+#
+# Without the filter a scan walks every row the collection has ever held: the criteria bounds
+# `due` from above and not below, and `DELETED` is not in the index, so every tombstone is
+# fetched and discarded on the way to the few rows that are live. The cost of a pass grows with
+# the age of the deployment until it outlives its own interval.
+#
+# The name is the one 0002 gave it, deliberately: an index whose declaration changed is dropped
+# and made again.
+- index:
+    name: index_due
+    keys:
+      lane: asc
+      due: asc
+    partial:
+      DELETED: null

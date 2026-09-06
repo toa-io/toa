@@ -1,0 +1,15 @@
+# A settled row is kept, and not kept forever.
+#
+# `DELETED` is what `settle` writes and what the runtime holds as a date, so the row ages out
+# on the moment its call was disposed of. A row still owed has `DELETED: null`, and the TTL
+# monitor passes over a record whose field is not a date — so nothing waiting to be called can
+# be reaped by this, however long it has been waiting.
+#
+# Thirty days. The record answers what was asked for and when it was disposed of, which is a
+# question asked while an incident is recent; a year of it is a collection nobody reads and
+# everybody stores.
+- index:
+    name: index_deleted
+    keys:
+      DELETED: asc
+    ttl: 2592000

@@ -5,15 +5,30 @@ import * as boot from './index.js'
 let promise
 let instance = null
 
+/**
+ * The process's discovery, for as long as it is connected.
+ *
+ * A disconnected one is replaced rather than reused. A lookup becomes a dependency of the
+ * discovery that made it and nothing takes one back, so an instance carried across a
+ * disconnection would reconnect every call it has ever made beside the ones the composition now
+ * booting asks for — and every disconnection after that would walk all of them again.
+ */
 export const discovery = async () => {
-  if (instance === null) {
-    instance = new Discovery(lookup)
-    promise = instance.connect()
+  while (true) {
+    if (instance === null) {
+      instance = new Discovery(lookup)
+      promise = instance.connect()
+    }
+
+    const current = instance
+
+    await promise
+
+    if (current.connected) return current
+
+    // whoever replaced it first wins, and the loop reads what they left
+    if (instance === current) instance = null
   }
-
-  await promise
-
-  return instance
 }
 
 const lookup = async (locator) => {

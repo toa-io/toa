@@ -10,10 +10,13 @@ entity:
       minimum: 0
     CREATED:
       type: integer
+      format: epoch-millis
     UPDATED:
       type: integer
+      format: epoch-millis
     DELETED:
       type: integer
+      format: epoch-millis
       nullable: true
   required:
     - id
