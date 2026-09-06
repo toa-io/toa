@@ -1,0 +1,2 @@
+# Go templates, which are YAML only once Helm has rendered them
+operations/src/deployment/chart/templates
