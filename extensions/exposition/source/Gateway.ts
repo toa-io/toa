@@ -48,21 +48,18 @@ export class Gateway extends Connector {
   }
 
   public async process (context: http.Context): Promise<http.OutgoingMessage> {
-    const interception = await context.timing.capture('intercept',
-      this.interceptor.intercept(context))
+    const interception = await this.interceptor.intercept(context)
 
     if (interception !== null)
       return interception
 
     // request-scoped, before anything is routed: this is where a credential is read
-    await context.timing.capture('preflight',
-      this.directives.preflight(context)).catch(rethrow)
+    await this.directives.preflight(context).catch(rethrow)
 
     const response = await this.endpoint(context)
 
     // request-scoped, on whatever is going back: this is where a credential is re-issued
-    await context.timing.capture('depart',
-      this.directives.depart(context, response)).catch(rethrow)
+    await this.directives.depart(context, response).catch(rethrow)
 
     return response
   }
@@ -75,10 +72,10 @@ export class Gateway extends Connector {
     const route: http.Processor = async (call) => await this.route(call)
 
     if (this.dispatcher !== null && context.url.pathname === RPC)
-      return await context.timing.capture('rpc', this.dispatcher.dispatch(context, route))
+      return await this.dispatcher.dispatch(context, route)
 
     if (this.mcp !== null && context.url.pathname === MCP)
-      return await context.timing.capture('mcp', this.mcp.process(context, route))
+      return await this.mcp.process(context, route)
 
     return await this.route(context)
   }
@@ -103,14 +100,10 @@ export class Gateway extends Connector {
 
     const method = node.methods[verb]
 
-    const interruption = await context.timing.capture('precall',
-      method.directives.precall(context, parameters)).catch(rethrow)
+    const interruption = await method.directives.precall(context, parameters).catch(rethrow)
+    const response = interruption ?? await this.call(method, context, parameters)
 
-    const response = interruption ??
-      await context.timing.capture('call', this.call(method, context, parameters))
-
-    await context.timing.capture('settle',
-      method.directives.settle(context, response)).catch(rethrow)
+    await method.directives.settle(context, response).catch(rethrow)
 
     return response
   }

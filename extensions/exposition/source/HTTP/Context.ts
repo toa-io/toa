@@ -1,4 +1,3 @@
-import crypto from 'node:crypto'
 import { buffer } from 'node:stream/consumers'
 import Negotiator from 'negotiator'
 import { console } from 'openspan'
@@ -10,7 +9,6 @@ import type { OutgoingMessage } from './messages.js'
 import type { IncomingMessage } from './types.js'
 
 export class Context {
-  public readonly id: string
   public readonly authority: string
   public readonly request: IncomingMessage
 
@@ -20,7 +18,6 @@ export class Context {
   public readonly subtype: string | null = null
   public readonly encoder: Format | null = null
   public readonly timing: Timing
-  public readonly debug: boolean
 
   /**
    * Whether this is a procedure a request made, rather than the request. What forks one
@@ -43,11 +40,9 @@ export class Context {
     this.request = request
     this.ip = address(request, properties.ip)
 
-    this.id = crypto.randomUUID()
     // parsed by the server, which had to parse it anyway to know the request is valid
     this.url = url
     this.timing = new Timing()
-    this.debug = properties.debug
     this.log(request)
 
     const accept = this.request.headers.accept
@@ -89,12 +84,15 @@ export class Context {
   }
 
   private log (request: IncomingMessage): void {
-    const headers = { ...request.headers }
+    // built only when the line is written, which at `info` it is not
+    console.debug('Received request', () => {
+      const headers = { ...request.headers }
 
-    if (headers.authorization !== undefined)
-      headers.authorization = SCHEME.exec(headers.authorization)?.[1] ?? '[malformed]'
+      if (headers.authorization !== undefined)
+        headers.authorization = SCHEME.exec(headers.authorization)?.[1] ?? '[malformed]'
 
-    console.debug('Received request', { method: request.method, url: request.url, headers })
+      return { method: request.method, url: request.url, headers }
+    })
   }
 }
 
@@ -107,8 +105,6 @@ interface Pipelines {
 }
 
 interface Properties {
-  debug: boolean
-
   /** the header the client address is read from; the connection's without one */
   ip?: string
 }

@@ -25,12 +25,16 @@ export class Node {
   }
 
   public match (fragments: string[], parameters: Parameter[] = []): Match | null {
+    // a route only pushes, so what a failed one added is cut off rather than the array copied
+    const mark = parameters.length
+
     for (const route of this.routes) {
-      const params = parameters.slice()
-      const match = route.match(fragments, params)
+      const match = route.match(fragments, parameters)
 
       if (match !== null)
         return match
+
+      parameters.length = mark
     }
 
     return null
