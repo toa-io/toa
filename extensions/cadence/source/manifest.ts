@@ -10,8 +10,10 @@ import type { Manifest } from '@toa.io/norm'
  * A component that declares nothing still has a declaration. `cadence: ~` is how one that only
  * delays calls says so, and it has to produce a value or norm rejects the extension.
  */
-export function manifest (declaration: Declaration | null | undefined,
-  component: Manifest): Declaration {
+export function manifest(
+  declaration: Declaration | null | undefined,
+  component: Manifest
+): Declaration {
   const normalized: Record<string, unknown> = expand(declaration)
 
   schemas.declaration.validate<Declaration>(normalized, 'Invalid cadence declaration')
@@ -23,31 +25,36 @@ export function manifest (declaration: Declaration | null | undefined,
       throw new Error(`Pulse refers to undefined operation '${endpoint}'`)
 
     if (!TYPES.has(operation.type))
-      throw new Error(`Pulse '${endpoint}' must refer to an operation of the allowed types: ` +
-        [...TYPES].join(', '))
+      throw new Error(
+        `Pulse '${endpoint}' must refer to an operation of the allowed types: ` +
+          [...TYPES].join(', ')
+      )
 
     if (pulse.intervals > pulse.cycle)
-      throw new Error(`Pulse '${endpoint}' splits a cycle of ${pulse.cycle} seconds into ` +
-        `${pulse.intervals} intervals, which is less than a second each`)
+      throw new Error(
+        `Pulse '${endpoint}' splits a cycle of ${pulse.cycle} seconds into ` +
+          `${pulse.intervals} intervals, which is less than a second each`
+      )
   }
 
   return normalized
 }
 
 /** A pulse whose cycle is not split has nothing to state but the cycle. */
-function expand (declaration: Declaration | null | undefined): Record<string, unknown> {
+function expand(declaration: Declaration | null | undefined): Record<string, unknown> {
   if (declaration === null || declaration === undefined) return {}
 
   // a cycle nothing splits is one interval, which is what the shorthand declares
-  return Object.fromEntries(Object.entries(declaration)
-    .map(([endpoint, pulse]) => {
+  return Object.fromEntries(
+    Object.entries(declaration).map(([endpoint, pulse]) => {
       const declared: Record<string, unknown> =
         typeof pulse === 'number' ? { cycle: pulse } : { ...pulse }
 
       declared.intervals ??= 1
 
       return [endpoint, declared]
-    }))
+    })
+  )
 }
 
 /**

@@ -9,22 +9,21 @@ export class Changeset {
   readonly #schema: Schema
   #state: Record | object
 
-  public constructor (schema: Schema, query: Query) {
+  public constructor(schema: Schema, query: Query) {
     this.query = query
 
     this.#schema = schema
     this.#state = {}
   }
 
-  public get (): object {
+  public get(): object {
     return this.#state
   }
 
-  public set (value: Record): void {
+  public set(value: Record): void {
     const error = this.#schema.fit(value)
 
-    if (error !== null)
-      throw new EntityContractException(error, value)
+    if (error !== null) throw new EntityContractException(error, value)
 
     delete (value as Partial<Record>).VERSION
     value.UPDATED = Date.now()
@@ -32,7 +31,7 @@ export class Changeset {
     this.#state = value
   }
 
-  public export (): object {
+  public export(): object {
     return this.#state
   }
 }

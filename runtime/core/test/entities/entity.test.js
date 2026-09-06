@@ -40,8 +40,9 @@ describe('blank', () => {
   })
 
   it('should not validate it', () => {
-    new Entity(fixtures.schema, { fail: true })
+    const entity = new Entity(fixtures.schema, { fail: true })
 
+    assert.strictEqual(entity.get().fail, true)
     assert.strictEqual(fixtures.schema.fit.mock.callCount(), 0)
   })
 

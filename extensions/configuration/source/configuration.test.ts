@@ -102,7 +102,10 @@ describe('local', () => {
 
     set({ bar: 'five' })
 
-    assert.throws(() => local(locator, manifest), (error: Error) => /must be number/.test(error.message))
+    assert.throws(
+      () => local(locator, manifest),
+      (error: Error) => /must be number/.test(error.message)
+    )
   })
 })
 

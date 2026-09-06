@@ -5,7 +5,7 @@ import type { Node } from '../types/storages.js'
 /** What a component declares about the properties a criteria may select on. */
 export type Properties = Record<string, { type: string }>
 
-export function criteria (expression: string, properties?: Properties): Node {
+export function criteria(expression: string, properties?: Properties): Node {
   let ast: Node
 
   try {
@@ -19,9 +19,12 @@ export function criteria (expression: string, properties?: Properties): Node {
   return ast
 }
 
-function read (node: Node, properties: Properties): void {
-  if (node.type === 'COMPARISON' && node.left?.type === 'SELECTOR' &&
-    node.right?.type === 'VALUE') {
+function read(node: Node, properties: Properties): void {
+  if (
+    node.type === 'COMPARISON' &&
+    node.left?.type === 'SELECTOR' &&
+    node.right?.type === 'VALUE'
+  ) {
     const selector = node.left.selector as string
     const property = properties[selector]
 
@@ -71,7 +74,7 @@ const CAST: Record<string, (value: string, selector: string) => unknown> = {
   }
 }
 
-function finite (value: string, selector: string, expected: string): number {
+function finite(value: string, selector: string, expected: string): number {
   // `Number` reads a blank string as zero, and a criteria that says nothing says nothing
   const number = value.trim() === '' ? Number.NaN : Number(value)
 
@@ -80,7 +83,8 @@ function finite (value: string, selector: string, expected: string): number {
   return number
 }
 
-function refuse (selector: string, expected: string, value: string): never {
+function refuse(selector: string, expected: string, value: string): never {
   throw new QuerySyntaxException(
-    `Criteria selector '${selector}' takes ${expected}, and '${value}' is not one`)
+    `Criteria selector '${selector}' takes ${expected}, and '${value}' is not one`
+  )
 }

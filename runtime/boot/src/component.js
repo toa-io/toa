@@ -35,8 +35,12 @@ const create = async (manifest, locator) => {
     if (error !== null)
       throw new Error(`Component '${locator.id}' entity blank: ${error.message}`)
 
-    state = new State(storage, new entities.Factory(schemas, blank, guards), outbox,
-      manifest.entity.associated)
+    state = new State(
+      storage,
+      new entities.Factory(schemas, blank, guards),
+      outbox,
+      manifest.entity.associated
+    )
   }
 
   const phases = await boot.rc(manifest, context)

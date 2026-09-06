@@ -41,6 +41,9 @@ it('should set default platforms', () => {
 
   normalize(context)
 
-  assert.deepStrictEqual(context.registry.platforms,
-    ['linux/amd64', 'linux/arm/v7', 'linux/arm64'])
+  assert.deepStrictEqual(context.registry.platforms, [
+    'linux/amd64',
+    'linux/arm/v7',
+    'linux/arm64'
+  ])
 })

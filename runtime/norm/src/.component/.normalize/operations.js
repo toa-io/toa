@@ -6,11 +6,9 @@ export const operations = (component) => {
     if (operation.type === 'computation' || operation.type === 'unmanaged') {
       operation.scope = 'none'
       operation.query = false
-    } else if (operation.type === 'effect')
-      operation.scope ??= 'none'
+    } else if (operation.type === 'effect') operation.scope ??= 'none'
 
-    if (operation.scope === 'none')
-      operation.query = false
+    if (operation.scope === 'none') operation.query = false
 
     // an operation that states no output states an empty schema, which every reply fits
     operation.output ??= {}

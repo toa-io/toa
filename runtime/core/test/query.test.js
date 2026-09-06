@@ -72,8 +72,11 @@ describe('criteria', () => {
     ]
 
     for (const [criteria, message] of refused)
-      assert.throws(() => strict.parse({ criteria }),
-        (error) => message.test(error.message), criteria)
+      assert.throws(
+        () => strict.parse({ criteria }),
+        (error) => message.test(error.message),
+        criteria
+      )
   })
 
   it('should read a value the property can hold', () => {
@@ -93,7 +96,11 @@ describe('criteria', () => {
     ]
 
     for (const [criteria, value] of read)
-      assert.deepStrictEqual(strict.parse({ criteria }).criteria.right.value, value, criteria)
+      assert.deepStrictEqual(
+        strict.parse({ criteria }).criteria.right.value,
+        value,
+        criteria
+      )
   })
 
   it('should throw on unknown properties', () => {

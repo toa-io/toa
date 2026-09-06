@@ -1,6 +1,12 @@
 import { readFileSync } from 'node:fs'
 import assert from 'node:assert'
-import { type Dependency, type Resources, type Service, type Variable, type Variables } from '@toa.io/operations'
+import {
+  type Dependency,
+  type Resources,
+  type Service,
+  type Variable,
+  type Variables
+} from '@toa.io/operations'
 import { add } from '@toa.io/generic'
 import { components } from './Composition.js'
 import { EVENT, PREFIX, SECRET_RX, UI_PATH, UI_PORT, VALUES } from './const.js'
@@ -9,7 +15,10 @@ import * as validators from './schemas.js'
 import type { Manifest } from './manifest.js'
 import type { context } from '@toa.io/norm'
 
-export function deployment (instances: Instance[], annotation: Annotation = {}): Dependency {
+export function deployment(
+  instances: Instance[],
+  annotation: Annotation = {}
+): Dependency {
   const { resources, values } = split(annotation)
 
   annotation = prepare(values, instances)
@@ -19,35 +28,36 @@ export function deployment (instances: Instance[], annotation: Annotation = {}):
   for (const instance of instances) {
     const values = annotation[instance.locator.id]
 
-    if (values === undefined)
-      continue
+    if (values === undefined) continue
 
     const secrets = createSecrets(values)
 
-    if (secrets.length > 0)
-      variables[instance.locator.label] = secrets
+    if (secrets.length > 0) variables[instance.locator.label] = secrets
   }
 
   const service: Service = {
     group: 'configuration',
     name: 'values',
-    version: JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8')).version,
+    version: JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8'))
+      .version,
     components: components().labels,
     resources,
     // the service that holds the values also serves the page that reads them
     port: UI_PORT,
     ingress: { path: UI_PATH },
-    variables: [{
-      name: VALUES,
-      value: JSON.stringify(describe(instances, annotation))
-    }]
+    variables: [
+      {
+        name: VALUES,
+        value: JSON.stringify(describe(instances, annotation))
+      }
+    ]
   }
 
   return { services: [service], variables, events: [EVENT] }
 }
 
 /** What the values service is given: the epoch, the schema and the defaults of every component. */
-export function describe (instances: Instance[], annotation: Annotation = {}): Values {
+export function describe(instances: Instance[], annotation: Annotation = {}): Values {
   annotation = prepare(split(annotation).values, instances)
 
   const values: Values = {}
@@ -60,16 +70,17 @@ export function describe (instances: Instance[], annotation: Annotation = {}): V
       schema: manifest.schema,
       // what the Context says stands over what the manifest declares, value by value: a
       // deployment that names one of them does not thereby unset the rest
-      defaults: deployed === undefined
-        ? manifest.defaults
-        : add(structuredClone(deployed), manifest.defaults ?? {})
+      defaults:
+        deployed === undefined
+          ? manifest.defaults
+          : add(structuredClone(deployed), manifest.defaults ?? {})
     }
   }
 
   return values
 }
 
-function createSecrets (values: object): Variable[] {
+function createSecrets(values: object): Variable[] {
   const secrets: Variable[] = []
 
   for (const value of Object.values(values)) {
@@ -106,7 +117,7 @@ function createSecrets (values: object): Variable[] {
  * called that is written with its namespace, `default.resources`, which is what an id is
  * anyway — the bare form is the shorthand.
  */
-function split (annotation: Annotation): { resources?: Resources, values: Annotation } {
+function split(annotation: Annotation): { resources?: Resources; values: Annotation } {
   validators.annotation.validate(annotation)
 
   const { resources, ...values } = annotation as Annotation & { resources?: Resources }
@@ -115,15 +126,17 @@ function split (annotation: Annotation): { resources?: Resources, values: Annota
 }
 
 /** Validated, keyed by full component ids, and checked against the components that ask. */
-function prepare (annotation: Annotation, instances: Instance[]): Annotation {
+function prepare(annotation: Annotation, instances: Instance[]): Annotation {
   const normalized: Annotation = {}
   const requested = instances.map((instance) => instance.locator.id)
 
   for (const [key, values] of Object.entries(annotation)) {
     const id = key.includes('.') ? key : 'default.' + key
 
-    assert.ok(requested.includes(id),
-      `Component '${id}' does not request configuration or does not exist.`)
+    assert.ok(
+      requested.includes(id),
+      `Component '${id}' does not request configuration or does not exist.`
+    )
 
     normalized[id] = values
   }

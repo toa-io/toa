@@ -4,9 +4,10 @@
  * that a stored record must fit, and one for a changeset, which is whatever subset of the same
  * properties an assignment writes.
  */
-export const schema = (entity) => entity.required === undefined
-  ? changeset(entity)
-  : { type: 'object', properties: entity.properties, required: entity.required }
+export const schema = (entity) =>
+  entity.required === undefined
+    ? changeset(entity)
+    : { type: 'object', properties: entity.properties, required: entity.required }
 
 export const changeset = (entity) => ({
   type: 'object',

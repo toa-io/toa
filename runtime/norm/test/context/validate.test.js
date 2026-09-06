@@ -19,12 +19,18 @@ beforeEach(() => {
 describe('runtime', () => {
   it('should require', () => {
     delete context.runtime
-    assert.throws(() => validate(context), (error) => /required/.test(error.message))
+    assert.throws(
+      () => validate(context),
+      (error) => /required/.test(error.message)
+    )
   })
 
   it('should require registry to match uri format', () => {
     context.runtime.registry = 'not-a-uri'
-    assert.throws(() => validate(context), (error) => /must match format/.test(error.message))
+    assert.throws(
+      () => validate(context),
+      (error) => /must match format/.test(error.message)
+    )
 
     context.runtime.registry = 'http://localhost'
     assert.doesNotThrow(() => validate(context))
@@ -32,7 +38,10 @@ describe('runtime', () => {
 
   it('should require proxy to match uri format', () => {
     context.runtime.proxy = 'not-a-uri'
-    assert.throws(() => validate(context), (error) => /must match format/.test(error.message))
+    assert.throws(
+      () => validate(context),
+      (error) => /must match format/.test(error.message)
+    )
 
     context.runtime.proxy = 'http://localhost'
     assert.doesNotThrow(() => validate(context))
@@ -43,17 +52,25 @@ describe('registry', () => {
   it('should require', () => {
     delete context.registry
 
-    assert.throws(() => validate(context), (error) => /required property 'registry'/.test(error.message))
+    assert.throws(
+      () => validate(context),
+      (error) => /required property 'registry'/.test(error.message)
+    )
   })
-
 })
 
 it('should require name as label', () => {
   delete context.name
-  assert.throws(() => validate(context), (error) => /required/.test(error.message))
+  assert.throws(
+    () => validate(context),
+    (error) => /required/.test(error.message)
+  )
 
   context.name = 'foo bar'
-  assert.throws(() => validate(context), (error) => /pattern/.test(error.message))
+  assert.throws(
+    () => validate(context),
+    (error) => /pattern/.test(error.message)
+  )
 
   context.name = 'foo-bar'
   assert.doesNotThrow(() => validate(context))
@@ -61,7 +78,10 @@ it('should require name as label', () => {
 
 it('should require registry url', () => {
   delete context.registry
-  assert.throws(() => validate(context), (error) => /required/.test(error.message))
+  assert.throws(
+    () => validate(context),
+    (error) => /required/.test(error.message)
+  )
 })
 
 it('should allow mono replicas and resources', () => {
@@ -85,16 +105,24 @@ describe('compositions', () => {
 
   it('should require services to be a non-empty array of strings', () => {
     context.compositions[0].services = []
-    assert.throws(() => validate(context), (error) => /fewer than 1 items/.test(error.message))
+    assert.throws(
+      () => validate(context),
+      (error) => /fewer than 1 items/.test(error.message)
+    )
 
     context.compositions[0].services = 'exposition'
-    assert.throws(() => validate(context), (error) => /must be array/.test(error.message))
+    assert.throws(
+      () => validate(context),
+      (error) => /must be array/.test(error.message)
+    )
   })
 
   it('should reject an unknown property', () => {
     context.compositions[0].compoments = ['a.b']
 
-    assert.throws(() => validate(context),
-      (error) => /Property compoments is not expected to be here/.test(error.message))
+    assert.throws(
+      () => validate(context),
+      (error) => /Property compoments is not expected to be here/.test(error.message)
+    )
   })
 })

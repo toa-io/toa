@@ -21,7 +21,7 @@ export class Query {
   /** whether a page is taken of what this answers, and so whether `omit` and `limit` apply */
   private readonly paged: boolean
 
-  public constructor (query: syntax.Query, paged = true) {
+  public constructor(query: syntax.Query, paged = true) {
     this.parameterized = query?.parameters !== undefined
     this.queryable = queryable(query)
     this.searchable = query?.search === true
@@ -35,10 +35,8 @@ export class Query {
 
       if (query.criteria !== undefined) {
         // eslint-disable-next-line max-depth
-        if (query.criteria.endsWith(';'))
-          query.criteria = query.criteria.slice(0, -1)
-        else
-          this.closed = true
+        if (query.criteria.endsWith(';')) query.criteria = query.criteria.slice(0, -1)
+        else this.closed = true
 
         // eslint-disable-next-line max-depth
         if (query.criteria.startsWith(',') || query.criteria.startsWith(';')) {
@@ -52,14 +50,13 @@ export class Query {
     this.query = query
   }
 
-  public fit (query: http.Query, parameters: Parameter[]): QueryString {
+  public fit(query: http.Query, parameters: Parameter[]): QueryString {
     const qs = this.split(query)
 
     if (qs.query !== null) {
       const error = schemas.querystring.fit(qs.query)
 
-      if (error !== null)
-        throw new http.BadRequest('Query ' + error.message)
+      if (error !== null) throw new http.BadRequest('Query ' + error.message)
 
       this.fitCriteria(qs.query, parameters)
 
@@ -85,7 +82,7 @@ export class Query {
    * Only what it actually accepts — a criteria the declaration closes is refused, and so is
    * a search where none was asked for.
    */
-  public explain (introspection: Introspection): Record<string, Schema> | null {
+  public explain(introspection: Introspection): Record<string, Schema> | null {
     let query: Record<string, Schema> | null = null
 
     if (this.query?.parameters !== undefined)
@@ -93,23 +90,26 @@ export class Query {
         const schema = take(introspection, parameter)
 
         // eslint-disable-next-line max-depth
-        if (schema === undefined)
-          continue
+        if (schema === undefined) continue
 
         query ??= {}
         query[parameter] = schema
       }
 
-    if (!this.queryable)
-      return query
+    if (!this.queryable) return query
 
     query ??= {}
 
     if (!this.closed)
-      query.criteria = keyword('string',
-        'What to match, in RSQL: `state==hot`, `rank=gt=5;name==*tea*`.')
+      query.criteria = keyword(
+        'string',
+        'What to match, in RSQL: `state==hot`, `rank=gt=5;name==*tea*`.'
+      )
 
-    query.sort = keyword('string', 'What to order by: `rank:desc`, or `rank` for ascending.')
+    query.sort = keyword(
+      'string',
+      'What to order by: `rank:desc`, or `rank` for ascending.'
+    )
 
     if (this.paged) {
       query.limit = bounded('How many at once.', this.query.limit!)
@@ -122,7 +122,7 @@ export class Query {
     return query
   }
 
-  private split (query: http.Query): {
+  private split(query: http.Query): {
     query: http.Query | null
     parameters: Record<string, string> | null
   } {
@@ -156,7 +156,7 @@ export class Query {
     }
   }
 
-  private fitCriteria (query: http.Query, parameters: Parameter[]): void {
+  private fitCriteria(query: http.Query, parameters: Parameter[]): void {
     const groups: CriteriaGroup[] = []
     const idx = parameters.findIndex((parameter) => parameter.name === 'id')
 
@@ -179,10 +179,8 @@ export class Query {
       groups.push({ criteria: this.query.criteria, operator: ';' })
 
     if (query.criteria !== undefined)
-      if (this.closed)
-        throw new http.BadRequest('Query criteria is closed')
-      else
-        groups.push({ criteria: query.criteria, operator: WHATEVER })
+      if (this.closed) throw new http.BadRequest('Query criteria is closed')
+      else groups.push({ criteria: query.criteria, operator: WHATEVER })
 
     if (groups.length > 0)
       query.criteria = groups.reduce((acc, { criteria, operator }, i) => {
@@ -193,13 +191,13 @@ export class Query {
   }
 
   /** A route that answers one object is not paged, so a request that pages it is a mistake. */
-  private refuseRanges (qs: http.Query): void {
+  private refuseRanges(qs: http.Query): void {
     for (const name of ['omit', 'limit'] as const)
       if (qs[name] !== undefined)
         throw new http.BadRequest(`Query ${name} is not allowed`)
   }
 
-  private fitRanges (qs: http.Query): void {
+  private fitRanges(qs: http.Query): void {
     const query = qs as core.Query
 
     assert.ok(this.query.limit !== undefined, 'Query limit must be defined')
@@ -207,18 +205,15 @@ export class Query {
 
     if (qs.limit !== undefined)
       query.limit = fit(qs.limit, this.query.limit.range, 'limit')
-    else
-      query.limit = this.query.limit.value
+    else query.limit = this.query.limit.value
 
-    if (qs.omit !== undefined)
-      query.omit = fit(qs.omit, this.query.omit.range, 'omit')
+    if (qs.omit !== undefined) query.omit = fit(qs.omit, this.query.omit.range, 'omit')
   }
 
-  private fitSort (qs: http.Query): void {
+  private fitSort(qs: http.Query): void {
     const query = qs as core.Query
 
-    if (qs.sort === undefined && this.query.sort === undefined)
-      return
+    if (qs.sort === undefined && this.query.sort === undefined) return
 
     const sort = (this.query.sort ?? '') + (qs.sort ?? '')
 
@@ -226,12 +221,13 @@ export class Query {
   }
 }
 
-function fit (string: string, range: [number, number], name: string): number {
+function fit(string: string, range: [number, number], name: string): number {
   const number = parseInt(string)
 
   if (number < range[0] || number > range[1])
-    throw new http.BadRequest(`Query ${name} must be between ` +
-      `${range[0]} and ${range[1]} inclusive`)
+    throw new http.BadRequest(
+      `Query ${name} must be between ${range[0]} and ${range[1]} inclusive`
+    )
 
   return number
 }
@@ -243,11 +239,11 @@ interface CriteriaGroup {
   operator: ',' | ';'
 }
 
-function keyword (type: string, description: string): Schema {
+function keyword(type: string, description: string): Schema {
   return { type, description } as unknown as Schema
 }
 
-function bounded (description: string, bounds: syntax.Range): Schema {
+function bounded(description: string, bounds: syntax.Range): Schema {
   const schema: Record<string, unknown> = {
     type: 'integer',
     description,
@@ -255,8 +251,7 @@ function bounded (description: string, bounds: syntax.Range): Schema {
     maximum: bounds.range[1]
   }
 
-  if (bounds.value !== undefined)
-    schema.default = bounds.value
+  if (bounds.value !== undefined) schema.default = bounds.value
 
   return schema as unknown as Schema
 }

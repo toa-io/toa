@@ -1,4 +1,4 @@
-export function entity (component) {
+export function entity(component) {
   if (component.entity === undefined) return
 
   component.entity.storage ??= '@toa.io/storages.mongodb'

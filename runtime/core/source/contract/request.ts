@@ -25,7 +25,7 @@ export class Request extends Contract {
   public static override Exception: Refusal =
     RequestContractException as unknown as Refusal
 
-  public constructor (schema: Schema, definition: Definition) {
+  public constructor(schema: Schema, definition: Definition) {
     super(schema)
 
     for (const key of ['description', 'input', 'output', 'errors'] as const)
@@ -33,8 +33,10 @@ export class Request extends Contract {
         (this.discovery as Record<string, unknown>)[key] = definition[key]
   }
 
-  public static schema (definition: Definition,
-    entity?: { properties: Record<string, JSONSchema> }): JSONSchema {
+  public static schema(
+    definition: Definition,
+    entity?: { properties: Record<string, JSONSchema> }
+  ): JSONSchema {
     // `source` is not among these: the framework stamps it and whoever reads it takes the keys
     // it knows, so holding it to a schema would only fail calls from a peer that stamps one more
     const schema: JSONSchema = {
@@ -51,17 +53,13 @@ export class Request extends Contract {
     if (definition.input !== undefined) {
       schema.properties.input = definition.input
       required.push('input')
-    } else
-      schema.properties.input = { type: 'null' }
+    } else schema.properties.input = { type: 'null' }
 
-    if (entity === undefined)
-      definition.query = false
+    if (entity === undefined) definition.query = false
 
-    if (definition.query === true)
-      required.push('query')
+    if (definition.query === true) required.push('query')
 
-    if (definition.query === false)
-      schema.properties.query = { type: 'null' }
+    if (definition.query === false) schema.properties.query = { type: 'null' }
 
     if (definition.query !== false) {
       const query = structuredClone(schemas.query)
@@ -80,8 +78,7 @@ export class Request extends Contract {
       schema.properties.query = query
     }
 
-    if (required.length > 0)
-      schema.required = required
+    if (required.length > 0) schema.required = required
 
     return schema
   }

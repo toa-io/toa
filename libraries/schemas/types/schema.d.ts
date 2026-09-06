@@ -11,9 +11,9 @@ export interface Schema<T = any> {
   id: string
 
   /** `null` where the value fits, the first error otherwise */
-  fit (value: unknown): SchemaError | null
+  fit(value: unknown): SchemaError | null
 
-  validate<V = T> (value: unknown, message?: string): asserts value is V
+  validate<V = T>(value: unknown, message?: string): asserts value is V
 }
 
 export type schema = (schema: any) => Schema

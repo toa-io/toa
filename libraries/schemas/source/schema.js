@@ -11,30 +11,29 @@ export class Schema {
   #validate
 
   /** @param {import('ajv').ValidateFunction} validate */
-  constructor (validate) {
+  constructor(validate) {
     this.id = validate.schema.$id
     this.#validate = validate
   }
 
-  fit (value) {
+  fit(value) {
     const valid = this.#validate(value)
 
     if (valid) return null
     else return this.#error(value)
   }
 
-  validate (value, message) {
+  validate(value, message) {
     const valid = this.#validate(value)
 
     if (!valid) {
-      let error = betterAjvErrors(this.#validate.schema, value, this.#validate.errors, { format: 'js' })
+      let error = betterAjvErrors(this.#validate.schema, value, this.#validate.errors, {
+        format: 'js'
+      })
 
-      const text = error.length === 0
-        ? this.#validate.errors[0].message
-        : error[0].error
+      const text = error.length === 0 ? this.#validate.errors[0].message : error[0].error
 
-      if (message !== undefined)
-        message += ': '
+      if (message !== undefined) message += ': '
 
       throw new TypeError((message ?? '') + text)
     }
@@ -42,7 +41,9 @@ export class Schema {
 
   #error = (value) => {
     const error = this.#validate.errors[0]
-    let be = betterAjvErrors(this.#validate.schema, value, this.#validate.errors, { format: 'js' })
+    let be = betterAjvErrors(this.#validate.schema, value, this.#validate.errors, {
+      format: 'js'
+    })
 
     const mapped = {
       message: be[0].error.trim(),
@@ -58,8 +59,7 @@ export class Schema {
 }
 
 export const schema = (cos, options) => {
-  if (typeof cos === 'string' && isFile(cos))
-    cos = jsyaml.load(readFileSync(cos, 'utf8'))
+  if (typeof cos === 'string' && isFile(cos)) cos = jsyaml.load(readFileSync(cos, 'utf8'))
 
   return new Schema(create(cos, options))
 }
