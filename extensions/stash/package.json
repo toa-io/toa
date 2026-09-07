@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/extensions.stash",
-  "version": "1.0.0-alpha.289",
+  "version": "1.0.0-alpha.291",
   "type": "module",
   "description": "Toa Stash",
   "author": "temich <tema.gurtovoy@gmail.com>",
@@ -18,8 +18,8 @@
     "access": "public"
   },
   "dependencies": {
-    "@toa.io/generic": "1.0.0-alpha.289",
-    "@toa.io/pointer": "1.0.0-alpha.289",
+    "@toa.io/generic": "1.0.0-alpha.291",
+    "@toa.io/pointer": "1.0.0-alpha.291",
     "ioredis": "6.0.0",
     "msgpackr": "2.1.0",
     "openspan": "1.0.0-alpha.286"
