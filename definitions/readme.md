@@ -59,7 +59,9 @@ components from the digest; the process that runs them reads them from the exten
 code is.
 
 The digest is generated from the workspace, after every extension it covers has transpiled, so a
-change to a shipped component is in the next `npm run transpile`; a release packs it afresh.
+change to a shipped component is in the next `npm run transpile`; a release packs it afresh. The
+generator reaches the extensions and norm through the workspace, and does not declare them: each
+of them depends on this package, and a cycle is one `lerna version` does not survive.
 
 ## Adding an extension's definition
 

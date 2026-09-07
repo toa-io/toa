@@ -37,14 +37,6 @@
   },
   "devDependencies": {
     "@toa.io/core": "1.0.0-alpha.288",
-    "@toa.io/extensions.cadence": "1.0.0-alpha.288",
-    "@toa.io/extensions.configuration": "1.0.0-alpha.288",
-    "@toa.io/extensions.exposition": "1.0.0-alpha.288",
-    "@toa.io/extensions.introspection": "1.0.0-alpha.288",
-    "@toa.io/extensions.realtime": "1.0.0-alpha.288",
-    "@toa.io/norm": "1.0.0-alpha.288",
-    "@toa.io/operations": "1.0.0-alpha.288",
-    "@toa.io/prototype": "1.0.0-alpha.287",
     "openspan": "1.0.0-alpha.286"
   }
 }

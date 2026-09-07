@@ -13,6 +13,9 @@
     "url": "https://github.com/toa-io/toa/issues"
   },
   "main": "src/program.js",
+  "bin": {
+    "toa": "bin/toa"
+  },
   "publishConfig": {
     "access": "public"
   },
@@ -22,6 +25,14 @@
   "peerDependencies": {
     "@toa.io/boot": "*",
     "@toa.io/operations": "*"
+  },
+  "peerDependenciesMeta": {
+    "@toa.io/boot": {
+      "optional": true
+    },
+    "@toa.io/operations": {
+      "optional": true
+    }
   },
   "dependencies": {
     "@toa.io/core": "1.0.0-alpha.288",
@@ -35,19 +46,8 @@
     "paseto": "4.0.0",
     "yargs": "18.1.0"
   },
-  "gitHead": "61c8e74a336385265767e9fd37d49128cb51b17f",
-  "bin": {
-    "toa": "bin/toa"
-  },
-  "peerDependenciesMeta": {
-    "@toa.io/boot": {
-      "optional": true
-    },
-    "@toa.io/operations": {
-      "optional": true
-    }
-  },
   "devDependencies": {
     "wtfnode": "0.10.1"
-  }
+  },
+  "gitHead": "61c8e74a336385265767e9fd37d49128cb51b17f"
 }
