@@ -217,6 +217,16 @@
           <!-- who you are, and the thing every other call wants: the id itself goes to the
                clipboard, and the first of it is what fits on a button -->
           {#if $account !== null}
+            <!-- the icon alone where the row is tight, and the first of the id beside it
+                 where there is room: what the button does is the same either way -->
+            <Clipboard
+              text={$account.id}
+              variant="outline"
+              size="icon-sm"
+              aria-label={$dict.nav.identity}
+              class="md:hidden"
+            />
+
             <Clipboard
               id="iam-identity-button"
               text={$account.id}
@@ -224,7 +234,7 @@
               variant="outline"
               size="sm"
               aria-label={$dict.nav.identity}
-              class="font-mono"
+              class="hidden font-mono md:inline-flex"
             />
           {/if}
 
