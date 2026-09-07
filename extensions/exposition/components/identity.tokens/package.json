@@ -3,6 +3,7 @@
   "private": true,
   "type": "module",
   "dependencies": {
+    "jose": "6.2.10",
     "lru-cache": "11.5.2",
     "paseto": "4.0.0"
   }
