@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/bindings.loop",
-  "version": "1.0.0-alpha.288",
+  "version": "1.0.0-alpha.289",
   "type": "module",
   "description": "Toa Loop Binding",
   "author": "temich <tema.gurtovoy@gmail.com>",
@@ -20,8 +20,8 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@toa.io/core": "1.0.0-alpha.288",
-    "@toa.io/generic": "1.0.0-alpha.286"
+    "@toa.io/core": "1.0.0-alpha.289",
+    "@toa.io/generic": "1.0.0-alpha.289"
   },
   "gitHead": "61c8e74a336385265767e9fd37d49128cb51b17f"
 }

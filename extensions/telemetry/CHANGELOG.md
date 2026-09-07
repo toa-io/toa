@@ -12,16 +12,3 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 * a component that read `process.env.TOA_*` reads `context` instead;
   `echo(input)` no longer substitutes from the environment; a bash operation sees no
   `TOA_*`; images no longer set `USER node` — see migrations/289.md.
-
-
-# [1.0.0-alpha.288](https://github.com/toa-io/toa/compare/v1.0.0-alpha.287...v1.0.0-alpha.288) (2026-09-06)
-
-**Note:** Version bump only for package @toa.io/core
-
-
-
-
-
-# [1.0.0-alpha.287](https://github.com/toa-io/toa/compare/v1.0.0-alpha.286...v1.0.0-alpha.287) (2026-09-06)
-
-**Note:** Version bump only for package @toa.io/core

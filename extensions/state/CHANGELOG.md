@@ -5,12 +5,4 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 # [1.0.0-alpha.289](https://github.com/toa-io/toa/compare/v1.0.0-alpha.288...v1.0.0-alpha.289) (2026-09-07)
 
-**Note:** Version bump only for package @toa.io/schemas
-
-
-
-
-
-# [1.0.0-alpha.287](https://github.com/toa-io/toa/compare/v1.0.0-alpha.286...v1.0.0-alpha.287) (2026-09-06)
-
-**Note:** Version bump only for package @toa.io/schemas
+**Note:** Version bump only for package @toa.io/extensions.state
