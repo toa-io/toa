@@ -24,11 +24,15 @@ it('installs every package the definitions define', () => {
   assert.deepEqual(missing, [], 'defined and not installed by the runtime')
 })
 
-it('installs them at its own version', () => {
+/*
+Not at the runtime's own version: `lerna` bumps what changed and what depends on it, so a
+package nothing touched stays where the release before left it.
+*/
+it('installs them at a version', () => {
   for (const suffix of DEFINED)
-    assert.equal(
+    assert.match(
       manifest.dependencies[`@toa.io/${suffix}`],
-      manifest.version,
+      /^\d+\.\d+\.\d+/,
       `@toa.io/${suffix}`
     )
 })
