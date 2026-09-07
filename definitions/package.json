@@ -23,7 +23,8 @@
   "dependencies": {
     "@toa.io/generic": "1.0.0-alpha.286",
     "@toa.io/pointer": "1.0.0-alpha.287",
-    "@toa.io/schemas": "1.0.0-alpha.287"
+    "@toa.io/schemas": "1.0.0-alpha.287",
+    "oxc-parser": "0.149.0"
   },
   "scripts": {
     "transpile": "tsc",

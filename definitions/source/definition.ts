@@ -23,6 +23,7 @@ export const DEFINED: ReadonlySet<string> = new Set([
   'bindings.amqp',
   'bindings.loop',
   'bridges.bash',
+  'bridges.node',
   'extensions.cadence',
   'extensions.configuration',
   'extensions.exposition',

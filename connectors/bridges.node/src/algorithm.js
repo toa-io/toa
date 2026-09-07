@@ -1,30 +1,20 @@
-import { signature } from './signature.js'
-import * as syntaxes from './syntaxes/index.js'
-
 /**
+ * The one algorithm a loaded module exports, and the syntax it is written in. What the
+ * algorithm is — its type and scope — was read from the source before anything ran; here the
+ * module is loaded to run it, so only which export to call and how remains.
+ *
  * @param {Object} module
- * @returns {toa.node.define.algorithms.Descriptor}
+ * @returns {{ name: string, func: Function, syntax: 'function' | 'class' | 'factory' }}
  */
-export const extract = (module) => {
+export function algorithm(module) {
   const entry = find(module)
 
-  if (entry === null) return null
+  if (entry === null) throw new Error('Module exports no algorithm')
 
   const [name, func] = entry
-  const statement = parse(func)
+  const syntax = FACTORY.test(name) ? 'factory' : isClass(func) ? 'class' : 'function'
 
-  /** @type {toa.node.define.algorithms.Descriptor} */
-  const descriptor = { name, statement, syntax: undefined }
-
-  for (const [syntax, { test }] of Object.entries(syntaxes)) {
-    if (test(statement, name))
-      descriptor.syntax = /** @type {toa.node.define.algorithms.Syntax} */ syntax
-  }
-
-  if (descriptor.syntax === undefined)
-    throw new Error('Exported function does not match conventions')
-
-  return descriptor
+  return { name, func, syntax }
 }
 
 /**
@@ -32,9 +22,9 @@ export const extract = (module) => {
  * they were written, so which one is meant has to be unambiguous.
  *
  * @param {Object} module
- * @returns [string, Function]
+ * @returns {[string, Function] | null}
  */
-const find = (module) => {
+function find(module) {
   const functions = Object.entries(module).filter(
     ([key, value]) => typeof value === 'function' && key !== '__esModule'
   )
@@ -57,8 +47,9 @@ const find = (module) => {
   )
 }
 
-/**
- * @param {Function} func
- * @returns {toa.node.define.algorithms.Statement}
- */
-const parse = (func) => signature(func)
+function isClass(func) {
+  return /^class[\s{]/.test(Function.prototype.toString.call(func))
+}
+
+const FACTORY =
+  /^(?:Objects?|Changeset)?(?:Transition|Observation|Assignment|Computation|Effect)Factory$/

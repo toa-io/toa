@@ -5,7 +5,7 @@ import { resolve } from 'node:path'
 import { generate } from 'randomstring'
 import { Connector } from '@toa.io/core'
 
-import * as define from '../src/define/index.js'
+import { define } from '@toa.io/definitions/bridges.node'
 import { Factory } from '../src/factory.js'
 import { calls } from './dummies/typescript/rc/phases.ts'
 
@@ -24,7 +24,7 @@ before(() => {
 })
 
 describe('define', () => {
-  // the syntax is read back from the loaded function, whose types Node has erased
+  // the syntax is read from the source, types and all
   it('should define an operation of each syntax', async () => {
     const operations = await define.operations(root)
 

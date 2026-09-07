@@ -5,7 +5,7 @@ import { Receiver } from './receiver.js'
 import { Guard } from './guard.js'
 import { Context } from './context.js'
 import { Phase, Teardown } from './rc.js'
-import { extract } from './define/operations.js'
+import { algorithm } from './algorithm.js'
 import * as classes from './algorithms/class.js'
 import * as factories from './algorithms/factory.js'
 import * as functions from './algorithms/function.js'
@@ -82,9 +82,8 @@ export class Factory {
  * @returns {Runner}
  */
 async function runner(module, context) {
-  const descriptor = extract(module)
-  const func = module[descriptor.name]
-  const instance = await SYNTAXES[descriptor.syntax].create(func)
+  const { func, syntax } = algorithm(module)
+  const instance = await SYNTAXES[syntax].create(func)
 
   return new Runner(instance, context)
 }
