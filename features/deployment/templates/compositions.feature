@@ -20,7 +20,7 @@ Feature: Composition Deployment
         httpGet:
           path: /.ready
           port: 8001
-        periodSeconds: 10
+        periodSeconds: 2
         timeoutSeconds: 3
-        failureThreshold: 3
+        failureThreshold: 5
       """

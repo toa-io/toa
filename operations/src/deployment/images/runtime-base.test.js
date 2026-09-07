@@ -7,7 +7,7 @@ import { tmpdir } from 'node:os'
 
 import { Image, RUNTIME_IMAGE } from './image.js'
 
-const compositionDockerfile = join(import.meta.dirname, 'composition.Dockerfile')
+const dependenciesDockerfile = join(import.meta.dirname, 'dependencies.Dockerfile')
 const serviceDockerfile = join(import.meta.dirname, 'service.Dockerfile')
 
 class TestImage extends Image {
@@ -47,7 +47,7 @@ describe('runtime base image', () => {
 
   it('should default build.image to version-pinned GHCR runtime image', async () => {
     const runtime = { version: '1.0.0-alpha.232' }
-    const image = new TestImage(runtime, {}, compositionDockerfile)
+    const image = new TestImage(runtime, {}, dependenciesDockerfile)
 
     const path = await image.prepare(root)
     const dockerfile = await readFile(join(path, 'Dockerfile'), 'utf8')
@@ -70,7 +70,7 @@ describe('runtime base image', () => {
   it('should allow registry.build.image override', async () => {
     const runtime = { version: '1.0.0-alpha.232' }
     const registry = { build: { image: 'node:24.14.0-alpine3.22' } }
-    const image = new TestImage(runtime, registry, compositionDockerfile)
+    const image = new TestImage(runtime, registry, dependenciesDockerfile)
 
     const path = await image.prepare(root)
     const dockerfile = await readFile(join(path, 'Dockerfile'), 'utf8')
@@ -84,7 +84,7 @@ describe('runtime base image', () => {
     const image = new TestImage(
       runtime,
       {},
-      compositionDockerfile,
+      dependenciesDockerfile,
       'mono',
       'custom.example/base:1'
     )

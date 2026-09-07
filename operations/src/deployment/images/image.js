@@ -14,6 +14,17 @@ export class Image {
   reference
   dockerfile
 
+  /**
+   * The image this one is laid over, built and pushed as an image of its own.
+   * Undefined stands on the base alone, which is what a service does.
+   *
+   * @type {toa.deployment.images.Image | undefined}
+   */
+  dependencies
+
+  /** Whether the build reads `registry.build.arguments`. */
+  arguments = false
+
   #scope
   #registry
   #runtime
@@ -28,18 +39,25 @@ export class Image {
   }
 
   tag() {
+    this.reference = posix.join(
+      this.#registry.base ?? '',
+      this.#scope,
+      `${this.name}:${this.digest()}`
+    )
+  }
+
+  /**
+   * What follows the colon: the runtime and the image's own version, digested.
+   *
+   * @returns {string}
+   */
+  digest() {
     const hash = createHash('sha256')
 
     hash.update(this.#runtime.version)
     hash.update(this.version)
 
-    const tag = hash.digest('hex').slice(0, 8)
-
-    this.reference = posix.join(
-      this.#registry.base ?? '',
-      this.#scope,
-      `${this.name}:${tag}`
-    )
+    return hash.digest('hex').slice(0, 8)
   }
 
   /** @returns {string | undefined} */
