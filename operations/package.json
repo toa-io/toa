@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/operations",
-  "version": "1.0.0-alpha.288",
+  "version": "1.0.0-alpha.290",
   "type": "module",
   "description": "Toa Deployment",
   "homepage": "https://toa.io",
@@ -28,9 +28,9 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@toa.io/generic": "1.0.0-alpha.286",
+    "@toa.io/generic": "1.0.0-alpha.289",
     "@toa.io/kubernetes": "1.0.0-alpha.286",
-    "@toa.io/norm": "1.0.0-alpha.288",
+    "@toa.io/norm": "1.0.0-alpha.289",
     "js-yaml": "5.4.1"
   },
   "gitHead": "61c8e74a336385265767e9fd37d49128cb51b17f"

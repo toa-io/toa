@@ -47,3 +47,12 @@ it('should set default platforms', () => {
     'linux/arm64'
   ])
 })
+
+it('should keep platforms declared as none', () => {
+  // `platforms: ~` in the context: the runner's own platform, not the default list
+  context.registry = { base: generate(), platforms: null }
+
+  normalize(context)
+
+  assert.strictEqual(context.registry.platforms, null)
+})

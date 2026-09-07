@@ -8,6 +8,13 @@ spec:
   # A backstop for stuck rollouts only. Must stay above the `helm upgrade --timeout`
   # the deploy runs with, so a slow but progressing rollout is not marked failed.
   progressDeadlineSeconds: 900
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      # a replacement must pass readiness before a running replica is taken out, and every
+      # replacement starts at once: the rollout takes one start-up, not one per replica
+      maxUnavailable: 0
+      maxSurge: 100%
   selector:
     matchLabels:
       toa/composition: {{ .name }}
@@ -78,9 +85,10 @@ spec:
             httpGet:
               path: {{ .probe.path }}
               port: {{ .probe.port }}
-            periodSeconds: 10
+            # a replica is ready when it says so, not at the next tick of a slow clock
+            periodSeconds: 2
             timeoutSeconds: 3
-            failureThreshold: 3
+            failureThreshold: 5
           {{- end }}
           {{- if .mounts }}
           volumeMounts:

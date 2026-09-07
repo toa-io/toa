@@ -13,8 +13,9 @@ export const normalize = (context) => {
 
   if (typeof context.registry === 'string') context.registry = { base: context.registry }
 
-  // what an image is built for, where the Context does not say
-  if (context.registry !== undefined) context.registry.platforms ??= PLATFORMS
+  // what an image is built for, where the Context does not say; `~` says the runner's own
+  if (context.registry !== undefined && context.registry.platforms === undefined)
+    context.registry.platforms = PLATFORMS
 }
 
 const PLATFORMS = ['linux/amd64', 'linux/arm/v7', 'linux/arm64']

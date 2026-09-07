@@ -174,6 +174,21 @@ Build Docker images.
 </dd>
 </dl>
 
+### push
+
+Build Docker images and push them to the registry.
+
+<dl>
+<dt><code>toa push [environment]</code></dt>
+<dd>
+<code>environment</code> deployment environment name (default <code>default</code>).<br/>
+<code>--path</code>, <code>-p</code> path to the context (default <code>.</code>).<br/>
+</dd>
+</dl>
+
+An image that the registry already has is skipped, so a push of the sources a release is
+made of leaves that release nothing to build.
+
 ### deploy
 
 Deploy a Context.
