@@ -43,6 +43,11 @@ export interface Identity {
   readonly id: string
   roles?: string[]
   permissions?: Record<string, string[]>
+  /**
+   * Resource URIs this credential may be presented at. Absent on a session token.
+   * Checked against the outer request, not a procedure a request forks.
+   */
+  aud?: string[]
   scheme: string | null // null for transient identities
 
   /** The component that verified the credentials; none for a transient identity. */

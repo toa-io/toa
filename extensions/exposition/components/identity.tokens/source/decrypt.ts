@@ -60,6 +60,7 @@ export class Computation implements Operation {
       iat: claims.iat,
       exp: claims.exp,
       identity: claims.identity,
+      ...(claims.aud === undefined ? {} : { aud: claims.aud }),
       refresh: legacy || (kid !== this.latest && key.identity === undefined),
       custom: key.identity !== undefined
     }
@@ -156,7 +157,8 @@ async function decryptJWE(token: string, key: string): Promise<Maybe<Claims>> {
       ...(payload.exp === undefined
         ? {}
         : { exp: new Date(payload.exp * 1000).toISOString() }),
-      identity: payload.identity
+      identity: payload.identity,
+      ...(payload.aud === undefined ? {} : { aud: payload.aud })
     }
   } catch {
     return ERR_INVALID_TOKEN

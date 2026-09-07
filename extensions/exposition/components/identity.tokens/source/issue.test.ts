@@ -52,6 +52,14 @@ it('should expire a token issued without a lifetime as the configuration says', 
   )
 })
 
+it('should hand the audience to `encrypt`', async () => {
+  const audience = ['https://nex.toa.io/.mcp']
+
+  await issue.execute({ authority, identity, label, audience })
+
+  assert.deepStrictEqual(encrypted.audience, audience)
+})
+
 it('should hand the lifetime to `encrypt` in the seconds it reads', async () => {
   await issue.execute({ authority, identity, label })
 

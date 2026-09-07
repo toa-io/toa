@@ -20,6 +20,7 @@ export type EncryptInput = {
   lifetime?: number
   scopes?: string[]
   permissions?: Record<string, string[]>
+  audience?: string[]
   key?: {
     id: string
     key: string
@@ -46,6 +47,7 @@ export type DecryptOutput = {
   }
   iat: string
   exp?: string
+  aud?: string | string[]
   custom: boolean
   refresh: boolean
 }
@@ -70,6 +72,7 @@ export type IssueInput = {
   lifetime?: number
   scopes?: string[]
   permissions?: Record<string, string[]>
+  audience?: string[]
   label: string
 }
 

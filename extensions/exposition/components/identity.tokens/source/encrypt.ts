@@ -41,6 +41,11 @@ export class Effect implements Operation {
       .setIssuer(input.authority)
       .setIssuedAt(Date.now() / 1000)
 
+    if (input.audience !== undefined && input.audience.length > 0)
+      token = token.setAudience(
+        input.audience.length === 1 ? input.audience[0] : input.audience
+      )
+
     if (lifetime !== 0) token = token.setExpirationTime((Date.now() + lifetime) / 1000)
 
     return await token.encrypt(jweKey(key.key))

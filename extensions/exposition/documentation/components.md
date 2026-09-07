@@ -221,7 +221,8 @@ token: <token>
   string.
 
 > `roles` and `permissions` are additional restrictions applied on top of the Identity’s inherent
-> privileges.
+> privileges. An OAuth access token is bound to an entry as `aud` instead, see
+> [Audience](oauth.md#audience).
 
 ### Custom token invalidation
 

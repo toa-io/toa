@@ -25,6 +25,11 @@ operations:
               type: array
               items:
                 type: string
+        audience:
+          description: Resource URIs this token may be presented at (RFC 8707)
+          type: array
+          items:
+            type: string
         key:
           type: object
           properties:
@@ -80,6 +85,9 @@ operations:
           type: string
         exp:
           type: string
+        aud:
+          description: Resource URIs this token may be presented at
+          type: [string, array]
         custom:
           type: boolean
         refresh:
@@ -148,6 +156,11 @@ operations:
             type: array
             items:
               type: string
+        audience:
+          description: Resource URIs this token may be presented at (RFC 8707)
+          type: array
+          items:
+            type: string
         label:
           type: string
           minLength: 1

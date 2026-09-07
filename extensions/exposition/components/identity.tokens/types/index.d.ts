@@ -35,6 +35,7 @@ export interface Claims {
   iss: string
   iat: string
   exp?: string
+  aud?: string | string[]
 }
 
 /** The same, as JWE writes the times. */

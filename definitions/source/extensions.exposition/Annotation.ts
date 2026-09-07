@@ -44,7 +44,10 @@ export interface OAuth {
    */
   authorize: string
 
-  /** Paths a token may be restricted to, each advertised as a protected resource. */
+  /**
+   * Paths advertised as protected resources. A token issued with `resource` is bound to
+   * that entry as JWT `aud`.
+   */
   resources?: string[]
 
   /** What a client may ask for. Each is a role, or a scope within one. */

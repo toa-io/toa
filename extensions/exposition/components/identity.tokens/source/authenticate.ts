@@ -41,10 +41,14 @@ export class Computation implements Operation {
     const refresh = (aged && !claims.custom) || claims.refresh
 
     return {
-      identity,
+      identity: claims.aud === undefined ? identity : { ...identity, aud: list(claims.aud) },
       refresh
     }
   }
+}
+
+function list(aud: string | string[]): string[] {
+  return typeof aud === 'string' ? [aud] : aud
 }
 
 const ERR_UNRECOGNIZED = new (class UnrecognizedError extends Error {
