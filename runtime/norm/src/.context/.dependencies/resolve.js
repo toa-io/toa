@@ -1,11 +1,10 @@
-import { load } from './load.js'
+import { definition } from '../../definition.js'
 
 export const resolve = async (references, annotations = {}) => {
   const dependencies = {}
 
   for (const [dependency, components] of Object.entries(references)) {
-    const { metadata, module } = await load(dependency)
-    const id = metadata.name
+    const { name: id, module } = await definition(dependency)
 
     const instances = components.map((component) => ({
       locator: component.locator,
@@ -40,7 +39,7 @@ export const resolve = async (references, annotations = {}) => {
  */
 async function optional(reference) {
   try {
-    return (await load(reference)).module
+    return (await definition(reference)).module
   } catch {
     return null
   }

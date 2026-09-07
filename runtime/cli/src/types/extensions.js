@@ -1,4 +1,5 @@
 import { emit } from './schema.js'
+import { definition } from '@toa.io/norm'
 
 /**
  * What each extension puts on a component's context, as the extension states it.
@@ -40,7 +41,7 @@ async function state(reference, declaration) {
   let extension
 
   try {
-    extension = await import(reference)
+    extension = (await definition(reference)).module
   } catch {
     // an extension that cannot be loaded is one this application does not install
     return []

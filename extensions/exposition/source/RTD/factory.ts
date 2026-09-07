@@ -1,5 +1,5 @@
 import assert from 'node:assert'
-import { BRANCH_TTL } from '../const.js'
+import { BRANCH_TTL } from '@toa.io/definitions/extensions.exposition'
 import { Node, type Properties } from './Node.js'
 import { Route } from './Route.js'
 import { fragment, segment } from './segment.js'

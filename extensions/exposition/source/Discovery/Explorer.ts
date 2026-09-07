@@ -1,5 +1,5 @@
 import * as http from '../HTTP/index.js'
-import { BRANCH_TTL } from '../const.js'
+import { BRANCH_TTL } from '@toa.io/definitions/extensions.exposition'
 import { describe } from './tree.js'
 import type { Tree } from '../RTD/index.js'
 

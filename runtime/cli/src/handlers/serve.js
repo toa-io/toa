@@ -1,5 +1,5 @@
 import { console as output } from 'openspan'
-import { version } from '@toa.io/runtime'
+import { version } from '@toa.io/definitions'
 
 import { graceful } from './lib/graceful.js'
 import { create } from './lib/services.js'

@@ -7,7 +7,7 @@ const require = createRequire(import.meta.url)
 
 /**
  * Returns the directory of the package referenced by `reference`,
- * resolved against `base` and the runtime.
+ * resolved against `base` and against where Toa itself is installed.
  *
  * @param {string} reference
  * @param {string} base
@@ -15,8 +15,7 @@ const require = createRequire(import.meta.url)
  * @return {string}
  */
 export const find = (reference, base, indicator = 'package.json') => {
-  const runtime = dirname(require.resolve('@toa.io/runtime'))
-  const paths = [base, runtime]
+  const paths = [base, import.meta.dirname]
   const filename = basename(reference)
 
   let request = filename === indicator ? reference : join(reference, indicator)

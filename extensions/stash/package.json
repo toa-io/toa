@@ -18,6 +18,7 @@
     "access": "public"
   },
   "dependencies": {
+    "@toa.io/definitions": "1.0.0-alpha.291",
     "@toa.io/generic": "1.0.0-alpha.291",
     "@toa.io/pointer": "1.0.0-alpha.291",
     "ioredis": "6.0.0",

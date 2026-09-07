@@ -20,6 +20,7 @@
     "libraries/openspan",
     "runtime/core",
     "libraries/*",
+    "definitions",
     "extensions/telemetry",
     "extensions/fetch",
     "extensions/stash",
@@ -45,7 +46,7 @@
     "uuid": "14.0.2"
   },
   "bin": {
-    "toa": "runtime/runtime/bin/toa"
+    "toa": "runtime/cli/bin/toa"
   },
   "devDependencies": {
     "@commitlint/cli": "21.2.2",
@@ -74,7 +75,7 @@
     "postinstall": "npm run transpile",
     "test": "npm run lint && npm run typecheck && npm run test:unit",
     "typecheck": "tsc -p tsconfig.check.json",
-    "test:unit": "node --import tsx --test --experimental-test-module-mocks 'libraries/*/source/**/*.test.ts' 'libraries/*/source/**/*.test.js' 'libraries/*/test/**/*.test.js' 'runtime/*/test/**/*.test.js' 'runtime/*/src/**/*.test.js' 'runtime/*/source/**/*.test.ts' 'connectors/*/test/**/*.test.js' 'connectors/*/source/**/*.test.ts' 'connectors/*/src/**/*.test.js' 'extensions/*/test/**/*.test.js' 'extensions/*/source/**/*.test.ts' 'extensions/*/components/**/source/**/*.test.ts' 'operations/src/**/*.test.js' 'operations/src/**/.*/**/*.test.js' 'userland/stage/test/**/*.test.js' 'features/**/*.test.js'",
+    "test:unit": "node --import tsx --test --experimental-test-module-mocks 'libraries/*/source/**/*.test.ts' 'libraries/*/source/**/*.test.js' 'libraries/*/test/**/*.test.js' 'runtime/*/test/**/*.test.js' 'runtime/*/src/**/*.test.js' 'runtime/*/source/**/*.test.ts' 'connectors/*/test/**/*.test.js' 'connectors/*/source/**/*.test.ts' 'connectors/*/src/**/*.test.js' 'extensions/*/test/**/*.test.js' 'extensions/*/source/**/*.test.ts' 'extensions/*/components/**/source/**/*.test.ts' 'definitions/source/**/*.test.ts' 'operations/src/**/*.test.js' 'operations/src/**/.*/**/*.test.js' 'userland/stage/test/**/*.test.js' 'features/**/*.test.js'",
     "test:stage": "node --import tsx --test --experimental-test-module-mocks 'userland/example/stage/**/*.test.js'",
     "features": "cucumber-js && npm run features --workspaces --if-present",
     "test:all": "npm run test && npm run test:stage && npm run features:nightly",
@@ -84,13 +85,14 @@
     "publish:alpha": "npx lerna publish --conventional-prerelease --preid alpha --dist-tag alpha --no-commit-hooks --no-changelog --yes --message \"ci: %s\" --sign-git-commit",
     "setup:mongo": "openssl rand -base64 756 > ./.mongo-keyfile && chmod 400 ./.mongo-keyfile",
     "ci": "rm -f package-lock.json && rm -rf node_modules && npm exec --workspaces -c \"rm -rf node_modules transpiled\" && npm i",
-    "types": "node runtime/runtime/bin/toa types -q -c 'runtime/prototype' 'extensions/*/components/*'",
+    "types": "node runtime/cli/bin/toa types -q -c 'runtime/prototype' 'extensions/*/components/*'",
     "transpile": "npm run transpile --workspaces --if-present",
-    "posttranspile": "npm run types",
+    "posttranspile": "npm run digest && npm run types",
     "retranspile": "npm exec --workspaces -c \"rm -rf transpiled\" && find . -name tsconfig.tsbuildinfo -not -path '*/node_modules/*' -delete && npm run transpile",
     "compose": "docker compose rm -f -s -v && docker compose up -d",
     "format": "oxfmt",
     "format:check": "oxfmt --check",
-    "features:nightly": "TOA_FEATURES=nightly npm run features"
+    "features:nightly": "TOA_FEATURES=nightly npm run features",
+    "digest": "node definitions/transpiled/digest/generate.js"
   }
 }

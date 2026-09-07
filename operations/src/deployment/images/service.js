@@ -66,9 +66,22 @@ export class Service extends Image {
 }
 
 /**
+ * Where the extension is installed, which is what its image is built from. A deploy install
+ * carries what an extension declares and not the extension, so a service is built only where
+ * the runtime is installed beside the deployment library; elsewhere its image is published.
+ *
  * @param {string} reference
  * @returns {string}
  */
 const find = (reference) => {
-  return dirname(require.resolve(join(reference, 'package.json')))
+  try {
+    return dirname(require.resolve(join(reference, 'package.json')))
+  } catch (error) {
+    throw new Error(
+      `'${reference}' is not installed, and \`registry.services: build\` builds its image ` +
+        'from where it is: install the runtime beside @toa.io/operations, or take the ' +
+        'image the release publishes with `registry.services: published`',
+      { cause: error }
+    )
+  }
 }

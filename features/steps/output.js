@@ -1,4 +1,4 @@
-import * as runtime from '@toa.io/runtime'
+import * as definitions from '@toa.io/definitions'
 import assert from 'node:assert'
 import { Then } from '@cucumber/cucumber'
 
@@ -9,7 +9,7 @@ Then(
    * @this {toa.features.Context}
    */
   async function (channel) {
-    const { version } = runtime
+    const { version } = definitions
 
     await this.process
 

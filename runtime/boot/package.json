@@ -23,6 +23,7 @@
   "dependencies": {
     "@toa.io/atomicity": "1.0.0-alpha.291",
     "@toa.io/core": "1.0.0-alpha.291",
+    "@toa.io/definitions": "1.0.0-alpha.291",
     "@toa.io/generic": "1.0.0-alpha.291",
     "@toa.io/norm": "1.0.0-alpha.291",
     "@toa.io/schemas": "1.0.0-alpha.291",

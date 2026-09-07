@@ -1,4 +1,4 @@
-import * as runtime from '@toa.io/runtime'
+import * as definitions from '@toa.io/definitions'
 import { it, beforeEach } from 'node:test'
 import assert from 'node:assert/strict'
 
@@ -20,7 +20,7 @@ it('should resolve local version', () => {
   normalize(context)
 
   assert.notDeepStrictEqual(context.runtime, '.')
-  assert.deepStrictEqual(context.runtime.version, runtime.version)
+  assert.deepStrictEqual(context.runtime.version, definitions.version)
 })
 
 it('should expand registry', () => {

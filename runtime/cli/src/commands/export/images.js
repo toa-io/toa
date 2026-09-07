@@ -1,4 +1,4 @@
-import { prepare } from '../../handlers/export/images.js'
+import { needs, OPERATIONS } from '../../util/needs.js'
 
 const builder = (yargs) => {
   yargs
@@ -23,4 +23,15 @@ const builder = (yargs) => {
 export const command = ['images <target>', 'img']
 export const desc = 'Export docker image sources'
 
-export { builder, prepare as handler }
+// the handler and what it depends on load when the command runs, not when the program starts
+const handler = async (argv) => {
+  const { prepare } = await needs(
+    'export images',
+    () => import('../../handlers/export/images.js'),
+    OPERATIONS
+  )
+
+  return await prepare(argv)
+}
+
+export { builder, handler }

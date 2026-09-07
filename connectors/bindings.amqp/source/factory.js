@@ -5,8 +5,7 @@ import { Consumer } from './consumer.js'
 import { Emitter } from './emitter.js'
 import { Receiver } from './receiver.js'
 import { Broadcast } from './broadcast.js'
-import * as context from './deployment/context.js'
-import * as sources from './deployment/sources.js'
+import * as uris from './uris.js'
 
 import { SYSTEM } from './constants.js'
 import { Communication } from './communication.js'
@@ -24,28 +23,26 @@ export class Factory {
   #serial = 0
 
   producer(locator, endpoints, component) {
-    const comm = this.#communication(locator.id, context.resolveURIs(locator))
+    const comm = this.#communication(locator.id, uris.context(locator))
 
     return new Producer(comm, locator, endpoints, component)
   }
 
   consumer(locator, endpoint) {
-    const comm = this.#communication(OUTBOUND, context.resolveURIs(locator))
+    const comm = this.#communication(OUTBOUND, uris.context(locator))
 
     return new Consumer(comm, locator, endpoint)
   }
 
   emitter(locator, label) {
-    const comm = this.#communication(locator.id, context.resolveURIs(locator))
+    const comm = this.#communication(locator.id, uris.context(locator))
 
     return new Emitter(comm, locator, label)
   }
 
   receiver(locator, label, group, receiver) {
     const references =
-      locator.namespace === undefined
-        ? sources.resolveURIs(locator)
-        : context.resolveURIs(locator)
+      locator.namespace === undefined ? uris.sources(locator) : uris.context(locator)
 
     // the locator names the component the events come *from*, while `group` names the
     // one that consumes them — and it is that component's teardown the sealing precedes
@@ -57,7 +54,7 @@ export class Factory {
   broadcast(name, group) {
     const locator = new Locator(name, SYSTEM)
     const owner = group === undefined ? this.#alone() : locator.id
-    const comm = this.#communication(owner, context.resolveURIs(locator))
+    const comm = this.#communication(owner, uris.context(locator))
 
     return new Broadcast(comm, locator, group)
   }

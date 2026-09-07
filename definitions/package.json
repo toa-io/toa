@@ -1,0 +1,42 @@
+{
+  "name": "@toa.io/definitions",
+  "version": "1.0.0-alpha.291",
+  "type": "module",
+  "description": "What Toa packages declare, read without running them",
+  "author": "temich <tema.gurtovoy@gmail.com>",
+  "homepage": "https://github.com/toa-io/toa#readme",
+  "main": "transpiled/index.js",
+  "types": "transpiled/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/toa-io/toa.git"
+  },
+  "bugs": {
+    "url": "https://github.com/toa-io/toa/issues"
+  },
+  "engines": {
+    "node": ">= 24.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@toa.io/generic": "1.0.0-alpha.291",
+    "@toa.io/pointer": "1.0.0-alpha.291",
+    "@toa.io/schemas": "1.0.0-alpha.291",
+    "oxc-parser": "0.149.0"
+  },
+  "scripts": {
+    "transpile": "tsc",
+    "prepack": "tsc && node transpiled/digest/generate.js",
+    "test": "echo \"Error: run tests from root\" && exit 1"
+  },
+  "exports": {
+    ".": "./transpiled/index.js",
+    "./*": "./transpiled/*/index.js"
+  },
+  "devDependencies": {
+    "@toa.io/core": "1.0.0-alpha.291",
+    "openspan": "1.0.0-alpha.286"
+  }
+}

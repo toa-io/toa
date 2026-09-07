@@ -3,7 +3,12 @@ import assert from 'node:assert/strict'
 
 import { generate } from 'randomstring'
 
-mock.module('@toa.io/norm', { namedExports: { component: () => mockComponent() } })
+mock.module('@toa.io/norm', {
+  namedExports: {
+    component: () => mockComponent(),
+    definition: async () => ({ module: {} })
+  }
+})
 
 const { manifest } = await import('./manifest.js')
 

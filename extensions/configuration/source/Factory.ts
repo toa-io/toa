@@ -4,7 +4,7 @@ import { Aspect } from './Aspect.js'
 import { Client } from './Client.js'
 import { Composition } from './Composition.js'
 import { overridden } from './configuration.js'
-import type { Manifest } from './manifest.js'
+import type { Manifest } from '@toa.io/definitions/extensions.configuration'
 
 export class Factory implements extensions.Factory {
   private readonly host: Host

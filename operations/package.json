@@ -29,6 +29,7 @@
   },
   "dependencies": {
     "@toa.io/generic": "1.0.0-alpha.291",
+    "@toa.io/kubernetes": "1.0.0-alpha.286",
     "@toa.io/norm": "1.0.0-alpha.291",
     "js-yaml": "5.4.1"
   },

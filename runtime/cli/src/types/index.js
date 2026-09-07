@@ -1,4 +1,5 @@
-import { basename, dirname, join, relative, sep } from 'node:path'
+import { basename, dirname, isAbsolute, join, relative, sep } from 'node:path'
+import { createRequire } from 'node:module'
 import { existsSync, readFileSync } from 'node:fs'
 import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import { component as load, context as normalize } from '@toa.io/norm'
@@ -6,6 +7,9 @@ import { component as load, context as normalize } from '@toa.io/norm'
 import { component } from './component.js'
 import { contributions } from './extensions.js'
 import { module as contextModule } from './context.js'
+
+// a shipped component's types are named by a specifier, which is resolved rather than read
+const require = createRequire(import.meta.url)
 
 /**
  * Writes the types of a Context and of every component in it.
@@ -178,6 +182,9 @@ const OWN = `export * from './toa.d.ts'
  * @returns {string | undefined}
  */
 function published(manifest) {
+  // a component an extension ships is read from a digest, where its path is the specifier
+  if (!isAbsolute(manifest.path)) return shipped(manifest.path)
+
   if (!existsSync(join(manifest.path, TYPES, 'index.d.ts'))) return undefined
 
   let directory = manifest.path
@@ -200,6 +207,17 @@ function published(manifest) {
   }
 
   return undefined
+}
+
+/** `@toa.io/extensions.exposition/components/identity.basic` → its types, where it ships them. */
+function shipped(specifier) {
+  try {
+    require.resolve(`${specifier}/${TYPES}/index.d.ts`)
+  } catch {
+    return undefined
+  }
+
+  return `${specifier}/${TYPES}/index.js`
 }
 
 /**

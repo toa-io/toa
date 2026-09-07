@@ -3,7 +3,7 @@ import * as path from 'node:path'
 import { Readable } from 'node:stream'
 import { console } from 'openspan'
 import * as http from '../HTTP/index.js'
-import { DISCOVERY } from '../const.js'
+import { DISCOVERY } from '@toa.io/definitions/extensions.exposition'
 import type { Input, Output } from '../io.js'
 import type { Interceptor } from '../Interception.js'
 

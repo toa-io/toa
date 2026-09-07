@@ -130,6 +130,41 @@ released, and a feature suite that boots a composition in its own process does t
 work a component starts and does not await — a stream it drives, a client it keeps — belongs in
 `dispose`.
 
+## What is read without running
+
+A manifest says what an operation is — its `type`, its `scope` — and the bridge supplies what the
+manifest leaves out by reading the module's source: the exported name is the type, the second
+parameter's name is the scope, a class named after a type says the same through its `execute`,
+and a `…Factory` class says both in its name. Nothing is imported to read it, so a component is
+read where its dependencies are not installed — by `toa deploy`, by `toa types` — and a booting
+process reads it the same way.
+
+What is read is what is written. A name is read from `export function`, `export class`,
+`export const`, `export { meter as computation }`, `export default function transition`, and
+from `module.exports = { … }`, `exports.name = …` in a CommonJS module. A value that is computed
+rather than written says its type by its name and nothing more:
+
+```javascript
+// operations/create.js
+
+export const transition = withRetries(async (input, object) => {
+  // ...
+})
+```
+
+The parameters of what `withRetries` returns are not in this file, so the manifest declares the
+scope:
+
+```yaml
+# manifest.toa.yaml
+
+operations:
+  create:
+    scope: object
+```
+
+A `computation` and an `unmanaged` have no scope to declare, and an `effect` defaults to none.
+
 ## TypeScript
 
 An operation, an event, a receiver, a guard or a run command may be a `.ts`. Node erases the types
@@ -151,7 +186,8 @@ export { transition }
 ```
 
 The name a module exports still says what it is, and the second parameter still says the scope;
-the annotations are gone by the time either is read.
+both are read through the annotations. What Node refuses to erase — an enum, a namespace, a
+parameter property — is refused when the module is loaded to run, not when it is read.
 
 ### A relative import carries the extension of the file that exists
 

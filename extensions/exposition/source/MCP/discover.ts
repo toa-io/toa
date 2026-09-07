@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs'
 import { LEGACY, MODERN, SERVER_INFO, VERSIONS } from './types.js'
-import type { MCP } from '../Annotation.js'
+import type { MCPAnnotation as MCP } from '@toa.io/definitions/extensions.exposition'
 
 /**
  * What a client is told before it calls anything: the revisions served, what is served, and

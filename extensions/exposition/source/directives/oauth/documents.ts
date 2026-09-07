@@ -1,4 +1,4 @@
-import type { OAuth } from '../../Annotation.js'
+import type { OAuth } from '@toa.io/definitions/extensions.exposition'
 
 /** The discovery documents of one authority, and the challenge that points at them. */
 export interface Documents {

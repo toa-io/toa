@@ -1,6 +1,11 @@
 import { console } from 'openspan'
 import { Connector, Locator } from '@toa.io/core'
-import { BATCH, DISCRETENESS, LANES, number } from './const.js'
+import {
+  BATCH,
+  DISCRETENESS,
+  LANES,
+  number
+} from '@toa.io/definitions/extensions.cadence'
 import type { Local } from './Local.js'
 import type { atomicity } from '@toa.io/core/types'
 
@@ -177,7 +182,10 @@ export class Dispatcher extends Connector {
     const truncated = rows.length === BATCH
 
     if (truncated)
-      console.warn('Delayed calls scan filled its batch', { limit: BATCH, lanes: lanes.length })
+      console.warn('Delayed calls scan filled its batch', {
+        limit: BATCH,
+        lanes: lanes.length
+      })
 
     for (const row of rows) this.arm(row)
 

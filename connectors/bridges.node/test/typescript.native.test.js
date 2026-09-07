@@ -32,11 +32,10 @@ describe('node reads TypeScript', () => {
     assert.strictEqual(await node('console.log(process.features.typescript)'), 'strip')
   })
 
-  // an operation's type and scope are read back from the loaded function, and Node leaves
-  // whitespace where the annotations were, so what it hands back still parses as JavaScript
+  // an operation's type and scope are read from the source, annotations and all
   it('should define an operation of each syntax', async () => {
     const printed = await node(`
-      const { operations } = await import('${source('define/index.js')}')
+      const { define: { operations } } = await import('@toa.io/definitions/bridges.node')
 
       console.log(JSON.stringify(await operations('${resolve(root, 'typescript')}')))
     `)

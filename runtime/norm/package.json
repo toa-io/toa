@@ -22,7 +22,9 @@
   },
   "dependencies": {
     "@toa.io/core": "1.0.0-alpha.291",
+    "@toa.io/definitions": "1.0.0-alpha.291",
     "@toa.io/generic": "1.0.0-alpha.291",
+    "@toa.io/prototype": "1.0.0-alpha.289",
     "@toa.io/schemas": "1.0.0-alpha.291",
     "fast-glob": "3.3.3",
     "js-yaml": "5.4.1"

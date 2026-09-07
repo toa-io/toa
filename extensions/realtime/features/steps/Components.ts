@@ -7,7 +7,10 @@ import * as stage from '@toa.io/userland/stage'
 import { type Component } from '@toa.io/core'
 import type { Request } from '@toa.io/core/types'
 import { timeout } from '@toa.io/generic'
-import { parse as parseRoutes, type Declaration } from '../../source/extension.js'
+import {
+  parse as parseRoutes,
+  type Declaration
+} from '@toa.io/definitions/extensions.realtime'
 import { Realtime } from './Realtime.js'
 
 const { after, before, binding, given, when } = tsflow

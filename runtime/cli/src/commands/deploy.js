@@ -1,3 +1,5 @@
+import { needs, OPERATIONS } from '../util/needs.js'
+
 const builder = (yargs) => {
   yargs
     .positional('environment', {
@@ -45,7 +47,11 @@ const builder = (yargs) => {
 
 // the handler and what it depends on load when the command runs, not when the program starts
 const handler = async (argv) => {
-  const { deploy } = await import('../handlers/deploy.js')
+  const { deploy } = await needs(
+    'deploy',
+    () => import('../handlers/deploy.js'),
+    OPERATIONS
+  )
 
   return await deploy(argv)
 }
