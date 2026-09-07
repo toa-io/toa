@@ -98,7 +98,20 @@ const own = (name) => name.startsWith(PREFIX)
 
 const PREFIX = 'TOA_'
 
-/** @type {Record<string, string>} */
-const store = {}
+const SHARED = Symbol.for('toa.environment')
+
+/**
+ * One store for the process, whatever copy of this package reads it. A service image
+ * installs the extension beside the runtime rather than into it, so both are loaded and
+ * each would otherwise hold a store of its own: the runtime's would absorb, and the
+ * extension's would find neither its own value nor the one taken out of `process.env`.
+ *
+ * Nothing is given away by holding it here that importing this package did not already
+ * give: what runs in this process was never kept from what the runtime holds — see
+ * migrations/289.md.
+ *
+ * @type {Record<string, string>}
+ */
+const store = (globalThis[SHARED] ??= {})
 
 environment.absorb()
