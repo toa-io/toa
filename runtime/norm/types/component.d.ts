@@ -65,7 +65,6 @@ type Declaration = {
   events?: Events
   receivers?: Record<string, Receiver>
   extensions?: Record<string, object>
-  properties?: Record<string, object>
 }
 
 export type Manifest = Declaration & {
