@@ -10,11 +10,18 @@
     fields,
     values,
     body = $bindable(''),
+    file = $bindable(null),
     carries,
+    octets,
     invalid,
     blank,
     disabled = false,
   }: Props = $props()
+
+  /** What was picked, which is what is sent. */
+  function picked(event: Event): void {
+    file = (event.currentTarget as HTMLInputElement).files?.[0] ?? null
+  }
 
   /** What a resource says of a parameter, where the `help` family gave it words. */
   function said(schema: Record<string, unknown> | null, key: string): string | null {
@@ -53,6 +60,32 @@
       {/if}
     </div>
   {/each}
+
+  {#if octets !== undefined}
+    <div class="flex flex-col gap-1.5">
+      <Label for="discovery-file-input" class="gap-1.5">
+        <span class="font-mono text-xs">{$dict.call.file}</span>
+
+        <span class="text-muted-foreground text-xs font-normal">
+          {octets.accept ?? $dict.call.anything} · {octets.limit}
+        </span>
+      </Label>
+
+      <!-- the body is the file itself, sent with the type the file says it is -->
+      <Input
+        id="discovery-file-input"
+        type="file"
+        accept={octets.accept}
+        onchange={picked}
+        {disabled}
+        class="text-xs"
+      />
+
+      {#if octets.stream === true}
+        <p class="text-muted-foreground text-xs">{$dict.call.streamed}</p>
+      {/if}
+    </div>
+  {/if}
 
   {#if carries}
     <div class="flex flex-col gap-1.5">

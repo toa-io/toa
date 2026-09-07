@@ -56,6 +56,16 @@ export const CONSOLES = {
   introspection: '/introspection/nodes',
 } as const
 
+/**
+ * Whether the method refuses a credential. `anonymous` is what admits it and nothing else
+ * does, so a caller presenting one is refused — that reply would not be cacheable. A method
+ * that says nothing at all is neither: `auth:echo` answers whoever asks, and answers a
+ * signed-in caller with their own identity only where the credential reaches it.
+ */
+export function refuses(described: Described): boolean {
+  return described.anonymous === true && guard(described) === 'public'
+}
+
 /** Whether the tree carries a route at all. */
 export function carries(tree: Discovered | null, route: string): boolean {
   return tree !== null && route in tree.routes

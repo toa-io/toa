@@ -13,6 +13,13 @@ export interface Introspection {
   /** what a person is shown where a client lists this method, which a name is not */
   title?: string
 
+  /**
+   * whether reaching it takes nothing at all — `auth:anonymous`. Said rather than left
+   * unsaid, because it is also what refuses a caller presenting a credential: a client
+   * cannot know that from an answer that says nothing.
+   */
+  anonymous?: boolean
+
   /** whether reaching it takes being someone, whoever — `auth:anyone` and its like */
   authenticated?: boolean
 
@@ -29,9 +36,28 @@ export interface Introspection {
   mcp?: boolean
   route?: Record<string, Schema>
   query?: Record<string, Schema>
+
+  /** what the body is, where it is a file rather than a value — [`octets:put`](octets.md) */
+  octets?: Octets
   input?: Schema
   output?: Schema
   errors?: string[]
+}
+
+/** What sending a file to a resource takes, which is not something a schema states. */
+export interface Octets {
+  /** what may be sent, in the syntax of an `accept` header; anything where unstated */
+  accept?: string
+
+  /** the largest body it takes, as it is written and as a refusal reports it */
+  limit: string
+
+  /**
+   * Whether the reply arrives as a stream of parts rather than as one object: a workflow
+   * runs on what was stored, and each step answers as it finishes. The first part is the
+   * entry itself, which is what a caller that wants nothing else reads and stops.
+   */
+  stream?: boolean
 }
 
 export type Schema = Awaited<ReturnType<Remote['explain']>>['input']
@@ -64,6 +90,7 @@ export function order(introspection: Introspection): Introspection {
 const KEYS = [
   'title',
   'description',
+  'anonymous',
   'authenticated',
   'private',
   'protected',
@@ -71,6 +98,7 @@ const KEYS = [
   'mcp',
   'route',
   'query',
+  'octets',
   'input',
   'output',
   'errors'

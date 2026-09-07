@@ -44,6 +44,7 @@ it('should tell whether it carries a body', () => {
 it('should carry no body where the verb has none', () => {
   expect(bodied('GET', { input: { type: 'object' } })).toBe(false)
   expect(bodied('HEAD', { input: { type: 'object' } })).toBe(false)
+  expect(bodied('DELETE', { input: { type: 'object' } })).toBe(false)
 })
 
 it('should address the trunk', () => {

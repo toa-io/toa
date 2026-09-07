@@ -48,5 +48,9 @@ export type Dictionary = {
         refused: string
         body: string
         empty: string
+        file: string
+        anything: string
+        stream: string
+        streamed: string
       }
     }

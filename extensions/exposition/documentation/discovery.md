@@ -63,16 +63,16 @@ A method is called from it: the verb is a button, what the method takes is a for
 back is shown where the form was. The call is made as whoever is reading — the same request they
 would send themselves, and with the same effect.
 
-A `GET /` whose `accept` prefers a page is sent here, so the address of the application opens it
-in a browser. A route declared at `/` answers `/` as it always did; this is only what stands where
-an application serves nothing there.
+A `GET /` is sent here where its `accept` prefers a page, or asks for nothing in particular — so
+the address of the application opens it in a browser, and a link to that address unfurls as it.
+A client that asked for a media type the gateway answers with gets what it asked for, and a route
+declared at `/` answers `/` as it always did.
 
-## What it is not
+## Turning it off
 
-Neither is annotated, and both answer wherever a gateway does. What each entry says is what
-`OPTIONS` on that path already says to the same caller, but the enumeration is not otherwise
-available: an application that does not publish its routes to everyone refuses `/.discovery` at
-the ingress.
+Both answer wherever a gateway does, and no annotation turns either on. An application that does
+not publish its routes to everyone refuses `/.discovery` at the ingress, which is the whole of
+what an operator does about it.
 
 ## References
 

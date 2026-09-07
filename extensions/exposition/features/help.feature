@@ -464,3 +464,49 @@ Feature: Help
       """
       404 Not Found
       """
+
+  Scenario: A method nobody is meant to find
+    `help:method: null` takes the method out of every answer and leaves it as callable as it
+    was — what a monitor reaches for, and what a person has no business going looking for.
+
+    Given the annotation:
+      """yaml
+      /:
+        anonymous: true
+        /hello:
+          GET:
+            dev:stub: hi
+          /agent:
+            GET:
+              help:method: null
+              dev:stub: hi
+      """
+    When the following request is received:
+      """
+      OPTIONS /.discovery HTTP/1.1
+      host: nex.toa.io
+      accept: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+
+      routes:
+        /hello:
+          GET:
+            anonymous: true
+      """
+    And the reply does not contain:
+      """
+      /hello/agent
+      """
+    # and it answers as it always did
+    When the following request is received:
+      """
+      GET /hello/agent/ HTTP/1.1
+      host: nex.toa.io
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      """
