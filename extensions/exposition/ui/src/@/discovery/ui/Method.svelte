@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { ChevronRight } from '@lucide/svelte'
+  import { ChevronRight, SearchCheck } from '@lucide/svelte'
   import * as Tooltip from '$ui/tooltip'
   import * as Item from '$ui/item'
   import * as Collapsible from '$ui/collapsible'
@@ -20,6 +20,7 @@
   const detailed = $derived(
     of.route !== undefined ||
       of.query !== undefined ||
+      of.selection !== undefined ||
       of.octets !== undefined ||
       of.input !== undefined ||
       of.output !== undefined ||
@@ -57,6 +58,18 @@
               <Tooltip.Content>{$dict.guard[guarded]}</Tooltip.Content>
             </Tooltip.Root>
           </Tooltip.Provider>
+
+          {#if of.selection?.search !== undefined}
+            <Tooltip.Provider delayDuration={200}>
+              <Tooltip.Root>
+                <Tooltip.Trigger class="shrink-0">
+                  <SearchCheck class="text-muted-foreground size-3.5" />
+                </Tooltip.Trigger>
+
+                <Tooltip.Content>{$dict.resource.search}</Tooltip.Content>
+              </Tooltip.Root>
+            </Tooltip.Provider>
+          {/if}
 
           {#if of.mcp === true}
             <Tooltip.Provider delayDuration={200}>
@@ -98,6 +111,10 @@
 
           {#if of.query !== undefined}
             <Parameters label={$dict.resource.query} of={of.query} />
+          {/if}
+
+          {#if of.selection !== undefined}
+            <Parameters label={$dict.resource.selection} of={of.selection} />
           {/if}
 
           {#if of.octets !== undefined}

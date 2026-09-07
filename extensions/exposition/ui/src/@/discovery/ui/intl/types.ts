@@ -21,6 +21,8 @@ export type Dictionary = {
         unset: string
         expand: string
         mcp: string
+        selection: string
+        search: string
       }
       guard: {
         public: string

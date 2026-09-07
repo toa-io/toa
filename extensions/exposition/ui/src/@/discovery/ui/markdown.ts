@@ -84,6 +84,7 @@ function answered(verb: string, of: Method): string[] {
   for (const [name, parameters] of [
     ['route', of.route],
     ['query', of.query],
+    ['selection', of.selection],
   ] as Array<[string, Record<string, Schema> | undefined]>)
     if (parameters !== undefined)
       for (const [parameter, schema] of Object.entries(parameters))

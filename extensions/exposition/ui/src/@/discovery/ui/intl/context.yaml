@@ -41,6 +41,10 @@ inputs:
     mcp:
       input: Published as a tool
       context: tooltip on the Model Context Protocol mark beside a method a model may call
+    selection:
+      input: selection
+    search:
+      input: Takes a text search
   guard:
     public:
       input: Anyone may reach it
