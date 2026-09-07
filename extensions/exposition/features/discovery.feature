@@ -133,7 +133,8 @@ Feature: Resource discovery
 
       routes:
         /open:
-          GET: {}
+          GET:
+            anonymous: true
       """
     And the reply does not contain:
       """
@@ -207,5 +208,6 @@ Feature: Resource discovery
 
       routes:
         /pots:
-          GET: {}
+          GET:
+            anonymous: true
       """

@@ -21,7 +21,7 @@
   import { Button } from '$ui/button'
   import { apple } from '$lib/tools'
   import { dict } from '$lib/intl'
-  import { Screen, Sticky } from '$lib/components/shell'
+  import { Screen } from '$lib/components/shell'
   import { Clipboard } from '$lib/components/clipboard'
   import { configuration, introspection, meta, origin } from '$config'
   import { replaceState } from '$app/navigation'
@@ -118,8 +118,13 @@
 
 <Screen>
   <!-- one header throughout, so what closes the sign-in screen is where what opened it was -->
-  <Sticky direction="top" class="px-4">
-    <header class="flex w-full items-center gap-4" style="view-transition-name: chrome">
+  <!-- Opaque and nothing else: a backdrop filter over a mask is re-composited on every
+       scroll frame, and this is a list that scrolls. `py-3` and the negative margin against
+       `Screen`'s own `pt-2` put the title where it sits on the other two consoles. -->
+  <header
+    class="bg-background sticky top-0 z-50 -mt-2 flex w-full items-center gap-4 px-4 py-3"
+    style="view-transition-name: chrome"
+  >
       <!-- the sides take equal space, which is what leaves the filter in the middle -->
       <div class="flex shrink-0 items-center gap-2 md:flex-1 md:gap-4">
         <h1 class="hidden min-w-0 truncate text-lg font-medium md:block">{meta.title}</h1>
@@ -212,6 +217,16 @@
           <!-- who you are, and the thing every other call wants: the id itself goes to the
                clipboard, and the first of it is what fits on a button -->
           {#if $account !== null}
+            <!-- the icon alone where the row is tight, and the first of the id beside it
+                 where there is room: what the button does is the same either way -->
+            <Clipboard
+              text={$account.id}
+              variant="outline"
+              size="icon-sm"
+              aria-label={$dict.nav.identity}
+              class="md:hidden"
+            />
+
             <Clipboard
               id="iam-identity-button"
               text={$account.id}
@@ -219,7 +234,7 @@
               variant="outline"
               size="sm"
               aria-label={$dict.nav.identity}
-              class="font-mono"
+              class="hidden font-mono md:inline-flex"
             />
           {/if}
 
@@ -255,8 +270,7 @@
           </Button>
         {/if}
       </div>
-    </header>
-  </Sticky>
+  </header>
 
   {#if identifying}
     <!-- it renders what it wraps once there is an identity, which is where this leaves off -->

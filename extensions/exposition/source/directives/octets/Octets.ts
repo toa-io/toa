@@ -9,6 +9,7 @@ import type { Output } from '../../io.js'
 import type { Component } from '@toa.io/core'
 import type { Remotes } from '../../Remotes.js'
 import type { Parameter, DirectiveFamily } from '../../RTD/index.js'
+import type { Introspection } from '../../Introspection.js'
 import type { Input } from './types.js'
 
 export class Octets implements DirectiveFamily<Directive> {
@@ -26,6 +27,13 @@ export class Octets implements DirectiveFamily<Directive> {
     this.discovery ??= remotes.discover('exposition', 'octets')
 
     return new Class(value, this.discovery, remotes)
+  }
+
+  /** What the request takes, which only sending a file says anything about. */
+  public explain(directives: Directive[], _: Input, introspection: Introspection): Introspection {
+    for (const directive of directives) directive.describe?.(introspection)
+
+    return introspection
   }
 
   public async precall(

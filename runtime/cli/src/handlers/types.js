@@ -3,6 +3,7 @@ import { dirname, resolve } from 'node:path'
 
 import { components as generate, types as context } from '../types/index.js'
 import { context as find } from '../util/find.js'
+import { environment as variables } from '@toa.io/generic'
 
 export async function types(argv) {
   const written =
@@ -20,7 +21,7 @@ async function whole(argv) {
    * validate. What types are made of does not vary by environment — a schema is a schema — so
    * one is assumed rather than demanded.
    */
-  const environment = argv.environment ?? process.env.TOA_ENV ?? 'local'
+  const environment = argv.environment ?? variables.get('TOA_ENV') ?? 'local'
 
   return await context(path, environment)
 }

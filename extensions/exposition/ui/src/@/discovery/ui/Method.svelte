@@ -20,6 +20,7 @@
   const detailed = $derived(
     of.route !== undefined ||
       of.query !== undefined ||
+      of.octets !== undefined ||
       of.input !== undefined ||
       of.output !== undefined ||
       of.errors !== undefined,
@@ -97,6 +98,22 @@
 
           {#if of.query !== undefined}
             <Parameters label={$dict.resource.query} of={of.query} />
+          {/if}
+
+          {#if of.octets !== undefined}
+            <!-- the body is a file, which no schema states -->
+            <div class="text-muted-foreground flex flex-wrap gap-x-2">
+              <span>{$dict.call.file}</span>
+              <span class="text-foreground font-mono">
+                {of.octets.accept ?? $dict.call.anything}
+              </span>
+              <span class="opacity-60">·</span>
+              <span class="text-foreground font-mono">{of.octets.limit}</span>
+              {#if of.octets.stream === true}
+                <span class="opacity-60">·</span>
+                <span>{$dict.call.stream}</span>
+              {/if}
+            </div>
           {/if}
 
           {#if of.input !== undefined}

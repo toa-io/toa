@@ -2,10 +2,12 @@ import tsflow from 'cucumber-tsflow'
 
 import * as boot from '@toa.io/boot'
 import { type Connector } from '@toa.io/core'
+import { environment } from '@toa.io/generic'
+
 import { load as parse } from 'js-yaml'
 import { Factory } from '../../source/index.js'
 import * as syntax from '../../source/RTD/syntax/index.js'
-import { shortcuts } from '../../source/Directive.js'
+import { shortcuts } from '../../source/shortcuts.js'
 import { manifests } from './map.js'
 import { PORT, PROBE } from './Parameters.js'
 import type * as http from '../../source/HTTP/index.js'
@@ -26,7 +28,7 @@ export class Gateway {
     if (annotation['/'] !== undefined) {
       const tree = syntax.parse(annotation['/'], shortcuts)
 
-      process.env.TOA_EXPOSITION = JSON.stringify(tree)
+      environment.set('TOA_EXPOSITION', JSON.stringify(tree))
     }
 
     const { debug, authorities, bouncer, ip, oauth, rpc, mcp } = annotation
@@ -46,7 +48,7 @@ export class Gateway {
 
     if (mcp !== undefined) properties.mcp = mcp
 
-    process.env.TOA_EXPOSITION_PROPERTIES = JSON.stringify(properties)
+    environment.set('TOA_EXPOSITION_PROPERTIES', JSON.stringify(properties))
   }
 
   /**
@@ -75,8 +77,8 @@ export class Gateway {
       tree.routes.push(...node.routes)
     }
 
-    process.env.TOA_EXPOSITION = JSON.stringify(tree)
-    process.env.TOA_EXPOSITION_PROPERTIES = JSON.stringify(DEFAULT_PROPERTIES)
+    environment.set('TOA_EXPOSITION', JSON.stringify(tree))
+    environment.set('TOA_EXPOSITION_PROPERTIES', JSON.stringify(DEFAULT_PROPERTIES))
   }
 
   @given('the `{word}` configuration:')
@@ -90,7 +92,7 @@ export class Gateway {
     // scenario-scoped, as the secrets it may refer to are: a configuration left behind
     // outlives the secrets it points at, and the next scenario cannot resolve them
     this.written.push(key)
-    process.env[key] = JSON.stringify(configuration)
+    environment.set(key, JSON.stringify(configuration))
   }
 
   /** The secrets a scenario's configuration refers to. */
@@ -100,7 +102,7 @@ export class Gateway {
 
     for (const [name, value] of Object.entries(secrets)) {
       this.written.push(SECRET + name)
-      process.env[SECRET + name] = value
+      environment.set(SECRET + name, value)
     }
   }
 
@@ -111,8 +113,11 @@ export class Gateway {
 
   @given('the Gateway is running')
   public async start(): Promise<void> {
-    process.env.TOA_EXPOSITION ??= DEFAULT_TREE
-    process.env.TOA_EXPOSITION_PROPERTIES ??= JSON.stringify(DEFAULT_PROPERTIES)
+    if (!environment.has('TOA_EXPOSITION'))
+      environment.set('TOA_EXPOSITION', DEFAULT_TREE)
+
+    if (!environment.has('TOA_EXPOSITION_PROPERTIES'))
+      environment.set('TOA_EXPOSITION_PROPERTIES', JSON.stringify(DEFAULT_PROPERTIES))
 
     this.writeConfiguration()
 
@@ -141,14 +146,11 @@ export class Gateway {
 
   /** What the running gateway was built from: a different value is a different deployment. */
   private static signature(): string {
-    const configuration = Object.keys(process.env)
-      .filter((key) => key.startsWith('TOA_CONFIGURATION_'))
-      .sort()
-      .map((key) => [key, process.env[key]])
+    const configuration = Object.entries(environment.entries('TOA_CONFIGURATION_')).sort()
 
     return JSON.stringify([
-      process.env.TOA_EXPOSITION,
-      process.env.TOA_EXPOSITION_PROPERTIES,
+      environment.get('TOA_EXPOSITION'),
+      environment.get('TOA_EXPOSITION_PROPERTIES'),
       process.env.__TESTING_EXPOSITION_BRANCH_TTL,
       configuration
     ])
@@ -158,12 +160,12 @@ export class Gateway {
   public async cleanup(): Promise<void> {
     delete process.env.__TESTING_EXPOSITION_BRANCH_TTL
 
-    for (const key of this.written) delete process.env[key]
+    for (const key of this.written) environment.delete(key)
 
     this.written = []
 
-    delete process.env.TOA_EXPOSITION
-    delete process.env.TOA_EXPOSITION_PROPERTIES
+    environment.delete('TOA_EXPOSITION')
+    environment.delete('TOA_EXPOSITION_PROPERTIES')
   }
 
   @afterAll()
@@ -178,11 +180,11 @@ export class Gateway {
       const [name, namespace = 'default'] = id.split('.').reverse()
       const key = `TOA_CONFIGURATION_${namespace.toUpperCase()}_${name.toUpperCase()}`
 
-      process.env[key] ??= JSON.stringify(configuration)
+      if (!environment.has(key)) environment.set(key, JSON.stringify(configuration))
     }
 
     for (const [name, value] of Object.entries(DEFAULT_SECRETS))
-      process.env[SECRET + name] ??= value
+      if (!environment.has(SECRET + name)) environment.set(SECRET + name, value)
   }
 }
 
@@ -208,7 +210,7 @@ const DEFAULT_PROPERTIES: Partial<http.Options> = {
   port: PORT,
   probe: PROBE,
   // `npm run features:h2c` runs the whole suite over cleartext HTTP/2
-  protocol: process.env.TOA_EXPOSITION_PROTOCOL === 'h2c' ? 'h2c' : 'h1'
+  protocol: environment.get('TOA_EXPOSITION_PROTOCOL') === 'h2c' ? 'h2c' : 'h1'
 }
 
 // the identity components boot inside the gateway, and without a variable each would wait

@@ -30,6 +30,16 @@ it('should refuse migrations a storage does not apply', async () => {
   )
 })
 
+it('should accept inherited migrations a storage does not apply', async () => {
+  const entity = {
+    schema,
+    storage: '@toa.io/storages.null',
+    migrations: [{ id: 'system:0001', steps: [], prototype: 'system' }]
+  }
+
+  assert.notEqual(await storage(manifest(entity), false), undefined)
+})
+
 it('should accept a storage with no migrations', async () => {
   const entity = { schema, storage: '@toa.io/storages.null' }
 

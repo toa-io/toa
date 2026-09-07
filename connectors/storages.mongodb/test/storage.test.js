@@ -5,6 +5,7 @@ import { isDeepStrictEqual } from 'node:util'
 import { Storage } from '../src/storage.js'
 
 let collection
+let db
 let storage
 
 beforeEach(async () => {
@@ -15,23 +16,19 @@ beforeEach(async () => {
     updateMany: mock.fn(async () => ({ modifiedCount: 0 }))
   }
 
-  // the runtime's own migrations are applied to every collection, so a storage needs the
-  // database its record of them lives in
-  const state = {
-    insertOne: mock.fn(async () => ({})),
-    findOne: mock.fn(async () => null),
-    updateOne: mock.fn(async () => ({ modifiedCount: 1 }))
-  }
+  db = { collection: mock.fn(() => null) }
 
-  const client = {
-    collection,
-    db: { collection: () => state },
-    link: () => null
-  }
+  const client = { collection, db, link: () => null }
 
   storage = new Storage(client, { schema: { properties: {} } })
 
   await storage.open()
+})
+
+describe('open', () => {
+  it('should not touch the migrations record where the entity declares none', () => {
+    assert.equal(db.collection.mock.callCount(), 0)
+  })
 })
 
 describe('get', () => {

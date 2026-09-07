@@ -106,3 +106,15 @@ inputs:
     empty:
       input: No content.
       context: shown where a reply carried no body at all
+    file:
+      input: file
+      context: inline field label in a technical inspector, lowercase, no sentence case; the request body is a file
+    anything:
+      input: anything
+      context: stands where a resource accepting a file names no media type, lowercase
+    stream:
+      input: streamed
+      context: one word beside a file field, saying the reply arrives in parts
+    streamed:
+      input: The reply arrives in parts as the work is done.
+      context: shown under a file field where storing the file starts a workflow

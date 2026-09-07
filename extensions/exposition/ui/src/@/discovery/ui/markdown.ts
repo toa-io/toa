@@ -54,6 +54,13 @@ function answered(verb: string, of: Method): string[] {
       for (const [parameter, schema] of Object.entries(parameters))
         lines.push(...shaped(`${name}.${parameter}`, schema))
 
+  if (of.octets !== undefined) {
+    const { accept, limit, stream } = of.octets
+    const said = [accept ?? 'anything', limit].concat(stream === true ? ['streamed'] : [])
+
+    lines.push('**file**', '', said.join(' · '), '')
+  }
+
   if (of.input !== undefined) lines.push(...shaped('input', of.input))
 
   if (of.output !== undefined) lines.push(...shaped('output', of.output))

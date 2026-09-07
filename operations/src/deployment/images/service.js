@@ -2,7 +2,7 @@ import { createRequire } from 'node:module'
 import { join, dirname } from 'node:path'
 
 import { Image } from './image.js'
-import fs from 'fs-extra'
+import { cp } from 'node:fs/promises'
 
 // a service is named the way a package is, and its directory is where it lives
 const require = createRequire(import.meta.url)
@@ -59,7 +59,7 @@ export class Service extends Image {
   async prepare(root) {
     const context = await super.prepare(root)
 
-    await fs.copy(this.#path, context)
+    await cp(this.#path, context, { recursive: true })
 
     return context
   }

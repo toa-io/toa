@@ -5,8 +5,6 @@ import { Process } from './process.js'
 
 describe('execute', () => {
   it('should answer what the command wrote', async () => {
-    // `execa` is a named export, and calling the module namespace instead answers
-    // `execa is not a function` — where only a deployment would have found out
     const output = await new Process().execute(
       'node',
       ['-e', 'process.stdout.write("ok")'],
@@ -16,9 +14,20 @@ describe('execute', () => {
     assert.strictEqual(output, 'ok')
   })
 
-  it('should reject what the command failed at', async () => {
+  it('should reject what the command failed at, with what it wrote', async () => {
     await assert.rejects(
-      new Process().execute('node', ['-e', 'process.exit(1)'], { silently: true })
+      new Process().execute(
+        'node',
+        ['-e', 'process.stderr.write("broken"); process.exit(2)'],
+        { silently: true }
+      ),
+      (error) => /exit code 2: node/.test(error.message) && /broken/.test(error.message)
+    )
+  })
+
+  it('should reject a command that does not exist', async () => {
+    await assert.rejects(
+      new Process().execute('toa-no-such-command', [], { silently: true })
     )
   })
 })

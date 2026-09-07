@@ -1,8 +1,7 @@
 # Migrations
 
-What a release broke, and what to do about it. Upgrading from `1.0.0-alpha.279` and reading
-forwards, `279.md` is the first file to read and `283.md` the last; a version with no file of its
-own broke nothing.
+What a release broke, and what to do about it. Upgrading from a version, read its file and every
+later one; a version with no file of its own broke nothing.
 
 ## A file is named after the version it breaks
 

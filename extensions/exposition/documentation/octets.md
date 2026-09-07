@@ -190,6 +190,26 @@ status: exception
 --cut--
 ```
 
+### What a client is told
+
+`octets:put` says what sending a file takes, where everything else about a method is said —
+[`OPTIONS`](introspection.md) and the [tree](discovery.md):
+
+```yaml
+POST:
+  octets:
+    accept: image/jpeg,image/png
+    limit: 64MiB
+    stream: true
+```
+
+`accept` is absent where the directive names no type, and anything may be sent. `limit` is
+written as the declaration writes it, and is what a `413` reports. `stream` says a workflow runs
+on what was stored, so the reply arrives as parts rather than as one object — the first part is
+the entry.
+
+Reading a file and deleting one say nothing: those requests are what they look like.
+
 ## `octets:get`
 
 Fetches the content of a stored BLOB corresponding to the request path, and returns it as the

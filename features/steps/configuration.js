@@ -1,5 +1,7 @@
 import { Given } from '@cucumber/cucumber'
 import { load as parse } from 'js-yaml'
+import { environment } from '@toa.io/generic'
+
 import { describe } from '@toa.io/extensions.configuration'
 import { load } from './.workspace/components/index.js'
 
@@ -42,12 +44,12 @@ async function deploy(reference, values) {
     component: manifest
   }
   const annotation = values === undefined ? {} : { [manifest.locator.id]: values }
-  const current = JSON.parse(process.env[VARIABLE] ?? '{}')
+  const current = JSON.parse(environment.get(VARIABLE) ?? '{}')
   const map = { ...current, ...describe([instance], annotation) }
 
-  this.env.push([VARIABLE, process.env[VARIABLE]])
+  this.env.push([VARIABLE, environment.get(VARIABLE)])
 
-  process.env[VARIABLE] = JSON.stringify(map)
+  environment.set(VARIABLE, JSON.stringify(map))
 }
 
 const REFERENCE = '@toa.io/extensions.configuration'

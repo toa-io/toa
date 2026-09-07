@@ -29,3 +29,12 @@ Feature: Bash bridge
       """
       message: broken
       """
+
+  Scenario: A bash operation sees none of the runtime's variables
+    Given an environment variable `TOA_CONFIGURATION__SECRET_C` is set to 'hidden'
+    And I boot `bash.dummy` component
+    When I invoke `env`
+    Then the reply is received:
+      """
+      ""
+      """

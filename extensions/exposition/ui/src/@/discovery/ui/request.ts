@@ -48,9 +48,9 @@ export function fields(route: string, of: Method): Field[] {
 }
 
 /**
- * Whether the call carries a body of its own. A `GET` and a `HEAD` do not — what one takes
- * comes out of the path and the querystring, and neither a browser nor `fetch` will send a
- * body with one — so what the operation declares is nothing this asks for.
+ * Whether the call carries a body of its own. A `GET`, a `HEAD` and a `DELETE` do not: what
+ * each takes comes out of the path and the querystring — and `fetch` will not send a body
+ * with the first two at all — so what the operation declares is nothing this asks for.
  */
 export function bodied(verb: string, of: Method): boolean {
   if (BODILESS.has(verb)) return false
@@ -59,7 +59,7 @@ export function bodied(verb: string, of: Method): boolean {
 }
 
 /** The verbs that carry nothing. */
-const BODILESS = new Set(['GET', 'HEAD'])
+const BODILESS = new Set(['GET', 'HEAD', 'DELETE'])
 
 /** The path the call is made at: the template with its variables filled, and a querystring. */
 export function address(route: string, fields: Field[], values: Values): string {

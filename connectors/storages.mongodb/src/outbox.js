@@ -1,4 +1,5 @@
 import { console } from 'openspan'
+import { environment } from '@toa.io/generic'
 
 /**
  * The outbox rows of one component. Its lifecycle is the Client's, so it is not a Connector.
@@ -160,7 +161,7 @@ const to = ({ id, ...rest }) => ({ _id: id, ...rest })
 const from = ({ _id, ...rest }) => ({ id: _id, ...rest })
 
 function retention() {
-  const value = Number(process.env.TOA_OUTBOX_RETENTION)
+  const value = Number(environment.get('TOA_OUTBOX_RETENTION'))
 
   return Number.isNaN(value) || value < 0 ? RETENTION : value
 }

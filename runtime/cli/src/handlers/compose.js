@@ -1,10 +1,9 @@
 import { console as output } from 'openspan'
-import { pick } from '@toa.io/generic'
+import { environment, pick } from '@toa.io/generic'
 import { Connector } from '@toa.io/core'
 import * as boot from '@toa.io/boot'
 import { version } from '@toa.io/runtime'
 
-import * as docker from './docker/index.js'
 import { graceful } from './lib/graceful.js'
 import { create } from './lib/services.js'
 import { components as find } from '../util/find.js'
@@ -39,7 +38,7 @@ export async function compose(argv) {
   }
 
   // the trace of the startup
-  if (process.env.TOA_BOOT_TRACE === '1') await output.span('toa compose', start)
+  if (environment.get('TOA_BOOT_TRACE') === '1') await output.span('toa compose', start)
   else await start()
 
   if (argv.kill === true) await connector.disconnect()
@@ -55,7 +54,7 @@ export async function compose(argv) {
 function services(argv) {
   if (argv.service !== undefined) return argv.service
 
-  const variable = process.env.TOA_SERVICES?.trim()
+  const variable = environment.get('TOA_SERVICES')?.trim()
 
   return variable === undefined || variable === '' ? [] : variable.split(/\s+/)
 }
@@ -65,6 +64,8 @@ function services(argv) {
  * @return {Promise<void>}
  */
 async function dock(argv) {
+  // the image is built with the deployment package, which a plain run never needs
+  const docker = await import('./docker/index.js')
   const repository = await docker.build(argv.context, argv.paths)
   const args = pick(argv, ['kill', 'bindings', 'service'])
   const command = docker.command('toa compose *', args)

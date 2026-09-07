@@ -1,3 +1,4 @@
+import assert from 'node:assert'
 import { described, type Described } from './described.js'
 
 /**
@@ -14,10 +15,30 @@ export class Help {
   public readonly title: string | undefined
   public readonly description: string | undefined
 
+  /**
+   * Whether the method is described at all. `help:method: null` takes it out of every
+   * answer — `OPTIONS`, discovery and the tools MCP publishes — and leaves it as callable
+   * as it was: a route something else reaches for, and nobody is meant to go looking for.
+   */
+  public readonly hidden: boolean
+
   public constructor(subject: Subject, value: unknown) {
+    assert.ok(
+      value !== null || subject === 'method',
+      `Directive help:${subject}: only a method is hidden`
+    )
+
+    if (value === null) {
+      this.subject = subject
+      this.hidden = true
+
+      return
+    }
+
     const stated: Described = described(`help:${subject}`, value)
 
     this.subject = subject
+    this.hidden = false
     this.title = stated.title
     this.description = stated.description
   }

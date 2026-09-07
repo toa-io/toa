@@ -1,5 +1,3 @@
-import { mono } from '../handlers/mono.js'
-
 const builder = (yargs) => {
   yargs
     .positional('paths', {
@@ -15,7 +13,14 @@ const builder = (yargs) => {
     })
 }
 
+// the handler and what it depends on load when the command runs, not when the program starts
+const handler = async (argv) => {
+  const { mono } = await import('../handlers/mono.js')
+
+  return await mono(argv)
+}
+
 export const command = 'mono [paths...]'
 export const desc = 'Run composition and services'
 
-export { builder, mono as handler }
+export { builder, handler }

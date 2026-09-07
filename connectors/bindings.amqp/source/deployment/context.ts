@@ -3,6 +3,7 @@ import { resolveRecord, naming } from '@toa.io/pointer'
 import { type Locator } from '@toa.io/core'
 import { type AnnotationRecord } from '@toa.io/pointer/transpiled/Deployment.js'
 import { type Annotation } from './annotation.js'
+import { environment } from '@toa.io/generic'
 import type { URIMap } from '@toa.io/pointer'
 
 export function createDependency(context: Context): Dependency {
@@ -19,9 +20,10 @@ export function createDependency(context: Context): Dependency {
 export function resolveURIs(locator: Locator): string[] {
   // Toa's own development stack is not on the conventional ports: the applications built on
   // Toa are, and they share the machine. See CONTRIBUTING.md.
-  if (process.env.TOA_DEV === '1') return ['amqp://developer:secret@localhost:31010']
+  if (environment.get('TOA_DEV') === '1')
+    return ['amqp://developer:secret@localhost:31010']
 
-  const value = process.env[VARIABLE]
+  const value = environment.get(VARIABLE)
 
   if (value === undefined)
     throw new Error(`Environment variable ${VARIABLE} is not specified`)
@@ -101,7 +103,7 @@ function parseRecord(record: AnnotationRecord): string[] {
 
 function readEnv(key: string, name: string): string {
   const variable = naming.nameVariable(ID, key, name)
-  const value = process.env[variable]
+  const value = environment.get(variable)
 
   if (value === undefined) throw new Error(variable + ' is not set')
   else return value

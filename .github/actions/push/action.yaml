@@ -1,0 +1,44 @@
+name: Push Toa images
+description: >-
+  Builds and pushes the images a context deploys, so that a release made of the same
+  sources finds them in the registry and builds nothing. The caller checks out the
+  repository and logs in to the registry; this restores the dependencies and pushes.
+
+inputs:
+  environment:
+    description: The deployment environment of the context
+    required: true
+  path:
+    description: Path to the context
+    default: .
+  node-version:
+    description: The Node.js version to set up
+    default: '24'
+
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-node@v5
+      with:
+        node-version: ${{ inputs.node-version }}
+
+    - name: Restore dependencies
+      id: modules
+      uses: actions/cache@v4
+      with:
+        path: |
+          node_modules
+          **/node_modules
+        key: modules-${{ runner.os }}-${{ inputs.node-version }}-${{ hashFiles('package-lock.json') }}
+        restore-keys: |
+          modules-${{ runner.os }}-${{ inputs.node-version }}-
+
+    # a partial hit is reconciled in place: what the lockfile moved is what is installed
+    - name: Install dependencies
+      if: steps.modules.outputs.cache-hit != 'true'
+      shell: bash
+      run: npm install --prefer-offline --no-audit --no-fund
+
+    - name: Push images
+      shell: bash
+      run: npx toa push ${{ inputs.environment }} -p ${{ inputs.path }}

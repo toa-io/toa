@@ -5,7 +5,7 @@ const { Factory } = deployment
 
 export const push = async (argv) => {
   const path = find(argv.path)
-  const factory = await Factory.create(path)
+  const factory = await Factory.create(path, argv.environment)
   const registry = factory.registry()
 
   await registry.push()

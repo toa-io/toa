@@ -1,5 +1,5 @@
 import { resolve } from 'node:path'
-import { convolve } from '@toa.io/generic'
+import { convolve, environment as variables } from '@toa.io/generic'
 import glob from 'fast-glob'
 import { readFile } from 'node:fs/promises'
 import { yaml as jsyaml } from '@toa.io/generic'
@@ -15,7 +15,7 @@ import {
   validate
 } from './.context/index.js'
 
-export const context = async (root, environment = process.env.TOA_ENV) => {
+export const context = async (root, environment = variables.get('TOA_ENV')) => {
   const path = resolve(root, CONTEXT)
   const context = /** @type {toa.norm.Context} */ await read(path)
 

@@ -1,6 +1,7 @@
 import { Readable } from 'node:stream'
 import { Connector } from './connector.js'
 import { SystemException, RequestContractException } from './exceptions.js'
+import { environment } from '@toa.io/generic'
 import type { Cascade } from './cascade.js'
 import type { State } from './state.js'
 import type { Query as Translator } from './query.js'
@@ -116,7 +117,7 @@ export class Operation extends Connector {
     const reply = await this.#cascade.run(request.input, state)
 
     // validate reply only on local environments
-    if (process.env.TOA_ENV === 'local' && !(reply instanceof Readable))
+    if (environment.get('TOA_ENV') === 'local' && !(reply instanceof Readable))
       this.#contracts.reply.fit(reply)
 
     store.reply = reply

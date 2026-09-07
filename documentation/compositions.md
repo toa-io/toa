@@ -136,6 +136,9 @@ compositions:
 
 `resources: null`, at either place, deploys without any.
 
+The memory limit also sizes the heap: the container runs with `--max-old-space-size` at three
+quarters of it. A deployment that states `NODE_OPTIONS` in its variables keeps its own.
+
 ```
 Composition 'edge' declares no resources. Declare them on it or as the context's 'resources',
 or 'resources: null' to deploy it without any.

@@ -1,5 +1,3 @@
-import { types } from '../handlers/types.js'
-
 const builder = (yargs) => {
   yargs
     .option('path', {
@@ -35,7 +33,14 @@ const builder = (yargs) => {
     ])
 }
 
+// the handler and what it depends on load when the command runs, not when the program starts
+const handler = async (argv) => {
+  const { types } = await import('../handlers/types.js')
+
+  return await types(argv)
+}
+
 export const command = 'types'
 export const desc = 'Generate types for a Context and its components'
 
-export { builder, types as handler }
+export { builder, handler }

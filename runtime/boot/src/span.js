@@ -1,6 +1,7 @@
 import { console, traces } from 'openspan'
+import { environment } from '@toa.io/generic'
 
-const enabled = process.env.TOA_BOOT_TRACE === '1'
+const enabled = environment.get('TOA_BOOT_TRACE') === '1'
 
 // Tracing is off until an exporter is configured, and the CLI opens its own span before
 // any extension gets to configure one — so asking for a boot trace turns the console

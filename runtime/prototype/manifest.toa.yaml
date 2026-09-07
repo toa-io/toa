@@ -1,5 +1,8 @@
 prototype: null
 
+# what its migrations are recorded under, in every collection they are applied to
+name: system
+
 entity:
   properties:
     id:

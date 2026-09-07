@@ -1,5 +1,5 @@
 import { join } from 'node:path'
-import fse from 'fs-extra'
+import { access, cp, mkdir } from 'node:fs/promises'
 
 import { COLLECTION } from './constants.js'
 
@@ -13,11 +13,11 @@ export const copy = async (list, to) => {
     const source = join(COLLECTION, component)
     const target = join(to, 'components', component)
 
-    const dir = await fse.exists(source)
+    await access(source).catch(() => {
+      throw new Error(`Source directory '${source}' does not exist`)
+    })
 
-    if (!dir) throw Error('Source directory does not exists')
-
-    await fse.ensureDir(target)
-    await fse.copy(source, target)
+    await mkdir(target, { recursive: true })
+    await cp(source, target, { recursive: true })
   }
 }

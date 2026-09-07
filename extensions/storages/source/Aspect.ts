@@ -6,12 +6,18 @@ import { type Storage, type Storages } from './Storage.js'
 export class Aspect extends Connector implements extensions.Aspect {
   public readonly name = 'storages'
 
-  private readonly storages: Storages
+  private readonly create: () => Promise<Storages>
+  private storages: Storages = {}
 
-  public constructor(storages: Storages) {
+  /** The storages are made as the aspect connects: their providers load then, not before. */
+  public constructor(create: () => Promise<Storages>) {
     super()
 
-    this.storages = storages
+    this.create = create
+  }
+
+  protected override async open(): Promise<void> {
+    this.storages = await this.create()
   }
 
   public invoke(name: string, method: keyof Storage, ...args: unknown[]): unknown {

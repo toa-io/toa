@@ -12,3 +12,6 @@ operations:
         message:
           type: string
       type: object
+  env:
+    output:
+      type: string

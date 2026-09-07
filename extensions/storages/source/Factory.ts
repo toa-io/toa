@@ -5,6 +5,7 @@ import { Storage, type Storages } from './Storage.js'
 import { Aspect } from './Aspect.js'
 import { ENV_PREFIX } from './deployment.js'
 import { validateAnnotation } from './Annotation.js'
+import { environment } from '@toa.io/generic'
 import type { Constructor } from './Provider.js'
 import type { Declaration } from './providers/index.js'
 import type { Annotation } from './Annotation.js'
@@ -14,7 +15,7 @@ export class Factory {
   private readonly annotation: Annotation
 
   public constructor() {
-    const env = process.env[ENV_PREFIX]
+    const env = environment.get(ENV_PREFIX)
 
     assert.ok(env !== undefined, `${ENV_PREFIX} is not defined`)
 
@@ -24,23 +25,21 @@ export class Factory {
   }
 
   public aspect(): Aspect {
-    const storages = this.createStorages()
-
-    return new Aspect(storages)
+    return new Aspect(() => this.createStorages())
   }
 
-  private createStorages(): Storages {
+  private async createStorages(): Promise<Storages> {
     const storages: Storages = {}
 
     for (const [name, declaration] of Object.entries(this.annotation))
-      storages[name] = this.createStorage(name, declaration)
+      storages[name] = await this.createStorage(name, declaration)
 
     return storages
   }
 
-  private createStorage(name: string, declaration: Declaration): Storage {
+  private async createStorage(name: string, declaration: Declaration): Promise<Storage> {
     const { provider: id, ...options } = declaration
-    const Provider: Constructor = providers[id]
+    const Provider: Constructor = await providers[id]()
     const secrets = this.resolveSecrets(name, Provider)
     const provider = new Provider(options, secrets)
 
@@ -60,7 +59,7 @@ export class Factory {
 
     for (const secret of Class.SECRETS) {
       const variable = `${ENV_PREFIX}_${storageName}_${secret.name}`.toUpperCase()
-      const value = process.env[variable]
+      const value = environment.get(variable)
 
       assert.ok(
         secret.optional === true || value !== undefined,

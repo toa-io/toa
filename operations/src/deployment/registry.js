@@ -10,6 +10,7 @@ export class Registry {
 
   #process
 
+  /** @type {toa.deployment.images.Image[]} */
   #images = []
 
   /** @type {Promise<string> | undefined} */
@@ -36,18 +37,16 @@ export class Registry {
   async prepare(root) {
     const path = await workspace.create('images', root)
 
-    await Promise.all(this.#images.map((image) => image.prepare(path)))
+    await Promise.all(this.#all().map((image) => image.prepare(path)))
 
     return path
   }
 
   async build() {
-    await this.prepare()
     await this.#run(false)
   }
 
   async push() {
-    await this.prepare()
     await this.#run(true)
   }
 
@@ -69,24 +68,57 @@ export class Registry {
   }
 
   /**
-   * Every image is probed at once, and what is missing is built concurrently: a build is
-   * bound by the registry it uploads to, not by the runner, so one at a time leaves both idle.
+   * Every image and what it is laid over.
+   *
+   * @returns {toa.deployment.images.Image[]}
+   */
+  #all() {
+    return this.#images.flatMap((image) =>
+      image.dependencies === undefined ? [image] : [image.dependencies, image]
+    )
+  }
+
+  /**
+   * Every image is probed at once, and what is missing is prepared and built concurrently:
+   * a build is bound by the registry it uploads to, not by the runner, so one at a time
+   * leaves both idle. What an image is laid over is built before it.
    *
    * @param {boolean} push
    * @returns {Promise<void>}
    */
   async #run(push) {
+    // a push builds on the container driver, whose bootstrap is spent while the probes are out
+    if (push) this.#ensureBuilder().catch(() => undefined)
+
+    const images = this.#all()
+
     const existing = await Promise.all(
-      this.#images.map((image) => this.exists(image.reference))
+      images.map((image) => this.exists(image.reference))
     )
 
-    const missing = this.#images.filter((image, index) => {
+    const missing = images.filter((image, index) => {
       if (existing[index]) console.log('Image already exists, skipping:', image.reference)
 
       return !existing[index]
     })
 
-    await pool(missing, (image) => this.#build(image, push))
+    if (missing.length === 0) return
+
+    const path = await workspace.create('images')
+
+    await Promise.all(missing.map((image) => image.prepare(path)))
+
+    const bases = new Set(this.#images.map((image) => image.dependencies))
+    const build = (image) => this.#build(image, push)
+
+    await pool(
+      missing.filter((image) => bases.has(image)),
+      build
+    )
+    await pool(
+      missing.filter((image) => !bases.has(image)),
+      build
+    )
   }
 
   /**
@@ -102,7 +134,7 @@ export class Registry {
 
     args.push('--tag', image.reference, image.context)
 
-    if (this.#registry.build?.arguments !== undefined) {
+    if (image.arguments && this.#registry.build?.arguments !== undefined) {
       for (const arg of this.#registry.build.arguments)
         args.push('--build-arg', `${arg}=${process.env[arg]}`)
     }
@@ -111,9 +143,10 @@ export class Registry {
 
     if (platforms !== null) args.push('--platform', platforms.join(','))
 
-    // the container driver is what builds for a platform the runner is not; for a single
-    // platform it costs a buildkit image to pull and buys nothing
-    if (platforms !== null && platforms.length > 1) {
+    // a push takes the container driver: its registry exporter is what lays an image over a
+    // base it never pulled. A load takes the daemon's own, unless it builds for a platform
+    // the runner is not, which the daemon's cannot
+    if (push || (platforms !== null && platforms.length > 1)) {
       args.push('--builder', await this.#ensureBuilder())
 
       // the driver that produces attestations is this one, and nothing reads them;
@@ -127,7 +160,12 @@ export class Registry {
   }
 
   async exists(tag) {
-    const args = ['manifest', 'inspect', tag]
+    const args = ['manifest', 'inspect']
+
+    // a registry on this machine speaks plain HTTP, which the probe has to be told
+    if (LOCAL.test(tag)) args.push('--insecure')
+
+    args.push(tag)
 
     try {
       await this.#process.execute('docker', args, { silently: true })
@@ -155,11 +193,16 @@ export class Registry {
         silently: true
       })
     } catch {
+      // on the host's network, a registry the host reaches as `localhost` is reached
       await this.#process.execute('docker', [
         'buildx',
         'create',
         '--name',
         BUILDER,
+        '--driver',
+        'docker-container',
+        '--driver-opt',
+        'network=host',
         '--bootstrap'
       ])
     }
@@ -188,6 +231,9 @@ async function pool(items, work) {
 }
 
 const BUILDER = 'toa'
+
+/** A reference into a registry on this machine, by any of the names it goes by. */
+const LOCAL = /^(localhost|127\.\d+\.\d+\.\d+|host\.docker\.internal)(:\d+)?\//
 
 /** How many builds run at once. Past this the uploads contend for the same uplink. */
 const CONCURRENCY = 3

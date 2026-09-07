@@ -45,7 +45,11 @@ export const dictionaries = {
       "answered": "answered",
       "refused": "refused",
       "body": "body",
-      "empty": "No content."
+      "empty": "No content.",
+      "file": "file",
+      "anything": "anything",
+      "stream": "streamed",
+      "streamed": "The reply arrives in parts as the work is done."
     }
   }
 };

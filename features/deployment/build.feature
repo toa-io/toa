@@ -10,7 +10,7 @@ Feature: Container Building Options
         run: echo test
     """
     When I export images
-    Then the file ./images/*dummies-one*/Dockerfile contains exact line 'RUN echo test'
+    Then the file ./images/dependencies/*dummies-one*/Dockerfile contains exact line 'RUN echo test'
 
   Scenario: Building a container with multiline RUN
     Given I have a component `dummies.one`
@@ -23,8 +23,8 @@ Feature: Container Building Options
           rm .test
     """
     When I export images
-    Then the file ./images/*dummies-one*/Dockerfile contains exact line 'RUN echo test > .test'
-    And the file ./images/*dummies-one*/Dockerfile contains exact line 'RUN rm .test'
+    Then the file ./images/dependencies/*dummies-one*/Dockerfile contains exact line 'RUN echo test > .test'
+    And the file ./images/dependencies/*dummies-one*/Dockerfile contains exact line 'RUN rm .test'
 
   Scenario: Building a container with arguments
     Given I have a component `dummies.one`
@@ -35,10 +35,10 @@ Feature: Container Building Options
         arguments: [FOO, BAR]
     """
     When I export images
-    Then the file ./images/*dummies-one*/Dockerfile contains exact line 'ARG FOO'
-    Then the file ./images/*dummies-one*/Dockerfile contains exact line 'ENV FOO=$FOO'
-    Then the file ./images/*dummies-one*/Dockerfile contains exact line 'ARG FOO'
-    Then the file ./images/*dummies-one*/Dockerfile contains exact line 'ARG FOO'
+    Then the file ./images/dependencies/*dummies-one*/Dockerfile contains exact line 'ARG FOO'
+    Then the file ./images/dependencies/*dummies-one*/Dockerfile contains exact line 'ENV FOO=$FOO'
+    Then the file ./images/dependencies/*dummies-one*/Dockerfile contains exact line 'ARG FOO'
+    Then the file ./images/dependencies/*dummies-one*/Dockerfile contains exact line 'ARG FOO'
 
   Scenario: Building an image with custom npm registry
     Given I have a component `dummies.one`
@@ -48,7 +48,7 @@ Feature: Container Building Options
       registry: http://host.docker.internal:4873
     """
     When I export images
-    Then the file ./images/*dummies-one*/Dockerfile contains exact line 'RUN if [ "http://host.docker.internal:4873" != "" ]; then npm set registry http://host.docker.internal:4873; fi'
+    Then the file ./images/dependencies/*dummies-one*/Dockerfile contains exact line 'RUN if [ "http://host.docker.internal:4873" != "" ]; then npm set registry http://host.docker.internal:4873; fi'
 
   Scenario: Building an image with custom npm proxy
     Given I have a component `dummies.one`
@@ -58,19 +58,19 @@ Feature: Container Building Options
       proxy: http://host.docker.internal:4873
     """
     When I export images
-    Then the file ./images/*dummies-one*/Dockerfile contains exact line 'RUN if [ "http://host.docker.internal:4873" != "" ]; then npm set proxy http://host.docker.internal:4873; fi'
+    Then the file ./images/dependencies/*dummies-one*/Dockerfile contains exact line 'RUN if [ "http://host.docker.internal:4873" != "" ]; then npm set proxy http://host.docker.internal:4873; fi'
 
   Scenario: Building an image with default base image
     Given I have a component `dummies.one`
     Given I have a context
     When I export images
-    Then the file ./images/*dummies-one*/Dockerfile contains line starting with 'FROM ghcr.io/toa-io/runtime:'
+    Then the file ./images/dependencies/*dummies-one*/Dockerfile contains line starting with 'FROM ghcr.io/toa-io/runtime:'
 
   Scenario: Building an image with custom base image
     Given I have a component `dummies.debian`
     Given I have a context
     When I export images
-    Then the file ./images/*dummies-debian*/Dockerfile contains exact line 'FROM node:20.10.0-buster-slim'
+    Then the file ./images/dependencies/*dummies-debian*/Dockerfile contains exact line 'FROM node:20.10.0-buster-slim'
 
   Scenario: Getting error because of different base images
     Given I have components:
@@ -105,7 +105,7 @@ Feature: Container Building Options
             - dummies.debian
       """
     When I export images
-    Then the file ./images/*conflict*/Dockerfile contains exact line 'FROM node:20.0.0-buster-slim'
+    Then the file ./images/dependencies/*conflict*/Dockerfile contains exact line 'FROM node:20.0.0-buster-slim'
 
   Scenario: Building a component with additional RUN
     Given I have a component `build.run`
@@ -116,5 +116,22 @@ Feature: Container Building Options
         run: echo context
     """
     When I export images
-    Then the file ./images/*build-run*/Dockerfile contains exact line 'RUN echo context'
-    Then the file ./images/*build-run*/Dockerfile contains exact line 'RUN echo component'
+    Then the file ./images/dependencies/*build-run*/Dockerfile contains exact line 'RUN echo context'
+    Then the file ./images/dependencies/*build-run*/Dockerfile contains exact line 'RUN echo component'
+
+  Scenario: Laying the sources over the dependencies
+    Given I have a component `dummies.one`
+    And I have a context with:
+    """
+    registry:
+      base: registry.example.com/acme
+      build:
+        run: echo test
+    """
+    When I export images
+    Then the file ./images/dependencies/*dummies-one*/Dockerfile contains line starting with 'FROM ghcr.io/toa-io/runtime:'
+    And the file ./images/dependencies/*dummies-one*/Dockerfile contains exact line 'RUN echo test'
+    And the file ./images/dependencies/*dummies-one*/Dockerfile contains exact line 'WORKDIR /composition'
+    And the file ./images/*dummies-one*/Dockerfile contains line starting with 'FROM registry.example.com/acme/collection/composition-dummies-one:deps-'
+    And the file ./images/*dummies-one*/Dockerfile contains exact line 'COPY --link . /composition'
+    And the file ./images/*dummies-one*/Dockerfile contains exact line 'CMD toa compose *'

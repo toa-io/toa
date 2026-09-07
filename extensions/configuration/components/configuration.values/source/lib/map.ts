@@ -1,3 +1,5 @@
+import { environment } from '@toa.io/generic'
+
 /** What the deployment told the service about every configured component. */
 export function entry(component: string): Entry | undefined {
   return read()[component]
@@ -9,7 +11,7 @@ export function components(): string[] {
 }
 
 function read(): Values {
-  const source = process.env[VARIABLE] ?? '{}'
+  const source = environment.get(VARIABLE) ?? '{}'
 
   // read again once the variable changes, as it does between scenarios of one process
   if (source !== parsed) {

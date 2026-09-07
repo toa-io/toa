@@ -5,7 +5,7 @@
   import { Button } from '$ui/button'
   import * as Dialog from '$ui/alert-dialog'
   import { Hold } from '$lib/components/hold'
-  import { guard } from './ui'
+  import { refuses } from './ui'
   import { address, blank, bodied, fields, skeleton, type Values } from './request'
   import { dict } from './intl'
   import Form from './Form.svelte'
@@ -18,6 +18,9 @@
 
   const form = $derived(fields(route, of))
   const carries = $derived(bodied(verb, of))
+
+  /** Where the body is a file rather than a value, what is sent is the file itself. */
+  const filed = $derived(of.octets !== undefined)
   const destructive = $derived(verb === DESTRUCTIVELY)
 
   /**
@@ -25,7 +28,7 @@
    * press that opened it — except a destructive one, which is asked for twice however
    * little it takes.
    */
-  const asked = $derived(form.length > 0 || carries || destructive)
+  const asked = $derived(form.length > 0 || carries || filed || destructive)
 
   // what it opened on, which is the whole of what it is: a session is one call, and the
   // next one is a new one
@@ -33,6 +36,7 @@
   const values = $state<Values>(Object.fromEntries(form.map((field) => [field.key, ''])))
   // svelte-ignore state_referenced_locally
   let body = $state(carries ? skeleton(of.input) : '')
+  let file = $state<File | null>(null)
   let invalid = $state(false)
   let busy = $state(false)
   let answer = $state<Answered | null>(null)
@@ -53,7 +57,8 @@
     // a route variable is a segment of the path, and there is no path to call without it
     if (missing.length > 0) return
 
-    if (carries && body.trim() !== '')
+    if (filed) payload = file ?? undefined
+    else if (carries && body.trim() !== '')
       try {
         payload = JSON.parse(body)
       } catch {
@@ -69,7 +74,7 @@
       verb,
       path: address(route, form, values),
       body: payload,
-      guarded: guard(of) !== 'public',
+      guarded: !refuses(of),
     })
 
     busy = false
@@ -89,12 +94,14 @@
 {#if answer !== null}
   <Answer of={answer} />
 {:else if asked}
-  {#if form.length > 0 || carries}
+  {#if form.length > 0 || carries || filed}
     <Form
       fields={form}
       {values}
       bind:body
+      bind:file
       {carries}
+      octets={of.octets}
       {invalid}
       blank={missing}
       disabled={busy}

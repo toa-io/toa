@@ -169,8 +169,8 @@ $ toa conceal configuration STRIPE_API_KEY=xxxxxxxx
 ```
 
 A secret is substituted in the component's process, from the variable
-`TOA_CONFIGURATION__<NAME>` deployed to it. The values service holds and returns the
-reference.
+`TOA_CONFIGURATION__<NAME>` deployed to it — a variable the component's code cannot read.
+The values service holds and returns the reference.
 
 In the component, a secret is a `Secret` object: `unwrap()` returns the string, while
 `toString()`, JSON and `util.inspect` give `<REDACTED>`.

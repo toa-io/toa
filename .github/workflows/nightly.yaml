@@ -23,7 +23,7 @@ jobs:
         with:
           node-version: 24
 
-      - uses: azure/setup-helm@v4
+      - uses: azure/setup-helm@v5
 
       - name: Install dependencies
         run: npm ci

@@ -12,6 +12,7 @@ import type { Unit, Location } from './workflows/index.js'
 import type { Entry } from '@toa.io/extensions.storages'
 import type { Remotes } from '../../Remotes.js'
 import type { Component } from '@toa.io/core'
+import type { Introspection } from '../../Introspection.js'
 import type { Output } from '../../io.js'
 import type { Input } from './types.js'
 
@@ -61,6 +62,15 @@ export class Put extends Directive {
 
     cors.allow('content-attributes')
     cors.allow('content-location')
+  }
+
+  /** What sending a file here takes: what may be sent, how much of it, and what comes back. */
+  public override describe(introspection: Introspection): void {
+    introspection.octets = {
+      ...(this.accept === undefined ? {} : { accept: this.accept }),
+      limit: this.limitString,
+      ...(this.workflow === undefined ? {} : { stream: true })
+    }
   }
 
   public async apply(

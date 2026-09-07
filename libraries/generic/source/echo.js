@@ -4,7 +4,7 @@
  * @param {...string} [substitutions]
  * @returns {string}
  */
-export function echo(input, argument = process.env, ...substitutions) {
+export function echo(input, argument = {}, ...substitutions) {
   if (typeof argument === 'string') return array(input, [argument, ...substitutions])
   else if (Array.isArray(argument)) return array(input, argument)
   else return object(input, /** @type {Record<string, string>} */ argument)

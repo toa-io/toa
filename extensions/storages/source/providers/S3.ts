@@ -6,6 +6,7 @@ import { Upload } from '@aws-sdk/lib-storage'
 import * as s3 from '@aws-sdk/client-s3'
 import { console } from 'openspan'
 import { Provider } from '../Provider.js'
+import { secrets } from './secrets.js'
 import { ERR_NOT_FOUND } from '../errors.js'
 import type { ReadableStream } from 'node:stream/web'
 import type { Maybe } from '@toa.io/core/types'
@@ -21,10 +22,7 @@ export interface S3Options {
 type S3Secrets = Secrets<'ACCESS_KEY_ID' | 'SECRET_ACCESS_KEY'>
 
 export class S3 extends Provider<S3Options> {
-  public static override readonly SECRETS: readonly Secret[] = [
-    { name: 'ACCESS_KEY_ID', optional: true },
-    { name: 'SECRET_ACCESS_KEY', optional: true }
-  ]
+  public static override readonly SECRETS: readonly Secret[] = secrets.s3
 
   private readonly bucket: string
   private readonly client: s3.S3Client

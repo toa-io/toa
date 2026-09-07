@@ -1,3 +1,5 @@
+import { environment } from '@toa.io/generic'
+
 /**
  * The events of this component that something consumes. An event nobody consumes is not
  * published, so it gets no emitter and no exchange, and a component none of whose events are
@@ -12,7 +14,7 @@
 export const events = (manifest) => {
   if (manifest.events === undefined) return
 
-  const value = process.env[VARIABLE + manifest.locator.uppercase]
+  const value = environment.get(VARIABLE + manifest.locator.uppercase)
 
   if (value === undefined) return manifest.events
 

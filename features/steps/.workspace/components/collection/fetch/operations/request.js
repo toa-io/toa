@@ -1,5 +1,5 @@
 export const computation = async (input, context) => {
-  const response = await context.fetch(process.env.TOA_FEATURES_FETCH_URL, {
+  const response = await context.fetch(process.env.FEATURES_FETCH_URL, {
     method: input.method,
     retry: input.retry
   })

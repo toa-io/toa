@@ -1,6 +1,7 @@
 import { console } from 'openspan'
 import { Connector } from '../connector.js'
 import { newid } from '../entities/newid.js'
+import { environment } from '@toa.io/generic'
 import type { Emission } from '../emission.js'
 import type { Atom } from '../types/atomicity.js'
 import type { Storage } from '../types/storages.js'
@@ -64,7 +65,7 @@ export class Outbox extends Connector {
     this.#interval = number('TOA_OUTBOX_INTERVAL', options.interval, INTERVAL)
     this.#batch = number('TOA_OUTBOX_BATCH', options.batch, BATCH)
     this.#gap = options.gap ?? this.#interval * K
-    this.#defer = process.env.TOA_OUTBOX_DEFER === '1'
+    this.#defer = environment.get('TOA_OUTBOX_DEFER') === '1'
 
     this.depends(emission)
     this.depends(atom)
@@ -304,7 +305,7 @@ function number(
 ): number {
   if (declared !== undefined) return declared
 
-  const value = Number(process.env[variable])
+  const value = Number(environment.get(variable))
 
   return Number.isNaN(value) || value <= 0 ? fallback : value
 }

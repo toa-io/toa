@@ -4,7 +4,6 @@ import { translate } from './translate.js'
 import { codec } from './record.js'
 import { Outbox } from './outbox.js'
 import { Migrations } from './migrations.js'
-import { SYSTEM } from './system.js'
 import { ReturnDocument } from 'mongodb'
 
 export class Storage extends Connector {
@@ -73,14 +72,16 @@ export class Storage extends Connector {
 
     this.#spans.clear()
 
-    // the runtime's own come first: what a component declares is written against a collection
-    // whose system properties are already what this release holds them as
-    this.#migrations = new Migrations(this.#client.db, this.#collection, [
-      ...SYSTEM,
-      ...(this.#entity.migrations ?? [])
-    ])
+    if (this.#entity.migrations?.length > 0) {
+      this.#migrations = new Migrations(
+        this.#client.db,
+        this.#collection,
+        this.#entity.migrations
+      )
 
-    await this.#migrations.run()
+      await this.#migrations.run()
+    }
+
     await this.#outbox?.index()
   }
 

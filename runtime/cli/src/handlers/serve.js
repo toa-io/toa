@@ -3,6 +3,7 @@ import { version } from '@toa.io/runtime'
 
 import { graceful } from './lib/graceful.js'
 import { create } from './lib/services.js'
+import { environment } from '@toa.io/generic'
 
 export const serve = async (argv) => {
   console.log('Runtime', version)
@@ -23,7 +24,7 @@ export const serve = async (argv) => {
   }
 
   // the trace of the startup
-  if (process.env.TOA_BOOT_TRACE === '1')
+  if (environment.get('TOA_BOOT_TRACE') === '1')
     await output.span({ name: 'toa serve', attributes: { path: argv.path } }, start)
   else await start()
 }
