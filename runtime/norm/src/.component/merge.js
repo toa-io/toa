@@ -1,4 +1,5 @@
 import { merge } from '@toa.io/generic'
+import { definition } from '../definition.js'
 
 const bridge = async (root, manifest) => {
   await Promise.all([
@@ -18,7 +19,7 @@ const define = async (root, manifest, property) => {
       if (item.bridge === undefined || item.bridge === manifest.bridge) continue // default bridge later
 
       const bridge = item.bridge || manifest.bridge
-      const { define } = await req(bridge)
+      const { define } = await bridged(bridge)
       const definition = await define[singular](root, endpoint)
 
       merge(item, definition)
@@ -53,20 +54,20 @@ const define = async (root, manifest, property) => {
   }
 }
 
-const cache = {}
-
-// the promise is what is remembered, so a bridge is loaded once
-function req(mod) {
-  cache[mod] ??= import(mod)
-
-  return cache[mod]
-}
-
 const scan = async (bridge, root, property) => {
-  const { define } = await req(bridge)
+  const { define } = await bridged(bridge)
 
   if (property in define) return define[property](root)
   else return undefined
+}
+
+async function bridged(reference) {
+  const { module } = await definition(reference)
+
+  if (module.define === undefined)
+    throw new Error(`Bridge '${reference}' defines nothing: it exports no 'define'`)
+
+  return module
 }
 
 export { bridge as merge }

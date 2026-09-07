@@ -3,6 +3,7 @@ import path from 'node:path'
 import { readFileSync } from 'node:fs'
 import { yaml } from '@toa.io/generic'
 import * as schemas from '@toa.io/schemas'
+import { definition } from '../definition.js'
 
 const object = yaml.load(
   readFileSync(path.resolve(import.meta.dirname, 'schema.yaml'), 'utf8')
@@ -34,7 +35,7 @@ const entity = (manifest) => {
 
 const events = async (manifest) => {
   for (const [label, event] of Object.entries(manifest.events)) {
-    const { properties } = await import(event.binding)
+    const { properties } = (await definition(event.binding)).module
 
     if (properties.async !== true) {
       throw new Error(`Event '${label}' binding '${event.binding}' is not async`)

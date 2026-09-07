@@ -2,7 +2,7 @@ import { mkdtemp, writeFile } from 'node:fs/promises'
 import { readFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join, resolve } from 'node:path'
-import { pathToFileURL } from 'node:url'
+import { definition } from '@toa.io/norm'
 
 import { run } from '../../process.js'
 import { Service } from './service.js'
@@ -23,9 +23,7 @@ export async function publish(workspace, runtime, platforms) {
   const directory = resolve(workspace)
   const manifest = read(join(directory, 'package.json'))
 
-  // read from the workspace, where the extension's own dependencies resolve; what is
-  // installed below carries the same constant but not everything it takes to load it
-  const { image } = await import(pathToFileURL(join(directory, manifest.main)).href)
+  const { image } = (await definition(manifest.name)).module
 
   if (image === undefined)
     throw new Error(

@@ -1,7 +1,7 @@
 import clone from 'clone-deep'
 import { basename } from 'node:path'
 import { merge } from '@toa.io/generic'
-import { component as load } from '@toa.io/norm'
+import { component as load, definition } from '@toa.io/norm'
 import { Locator } from '@toa.io/core'
 
 import { span } from './span.js'
@@ -24,7 +24,7 @@ export const manifest = async (path, options = {}) => {
     let asyncBinding
 
     for (const binding of options.bindings) {
-      const { properties } = await import(binding)
+      const { properties } = (await definition(binding)).module
 
       if (properties?.async === true) {
         asyncBinding = binding

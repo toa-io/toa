@@ -1,5 +1,5 @@
 import { component as load } from '../../component.js'
-import { load as loadDependency } from './load.js'
+import { definition } from '../../definition.js'
 
 export const extensions = async (context) => {
   const extensions = {}
@@ -84,12 +84,12 @@ async function extractExtensionComponents(components, extensions, annotations) {
 async function extract(reference, extensions, annotations) {
   extensions[reference] = []
 
-  const { metadata, module: mod } = await loadDependency(reference)
+  const { name, module: mod } = await definition(reference)
 
   if (mod.components === undefined) return []
 
   // the annotation decides whether an extension contributes components at all
-  const annotation = annotations?.[metadata?.name ?? reference]
+  const annotation = annotations?.[name]
   const extracted = []
 
   for (const path of mod.components(annotation).paths) extracted.push(await load(path))
