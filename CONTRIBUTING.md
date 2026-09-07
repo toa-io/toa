@@ -259,7 +259,8 @@ published by hand, once, before it is ever part of a release:
    the same `E404` for one it may not create.
 2. Build what it ships — `npm run transpile -w <package>` — and read the tarball with
    `npm pack --dry-run`, because nothing else checks that a package can boot what it declares.
-3. Publish it from the package directory, as yourself: `npm publish --access public`. Its version
+3. Publish it from the package directory, as yourself: `npm publish --access public --tag alpha`
+   (npm refuses a prerelease without a tag, and `alpha` is the tag the release uses). Its version
    is whatever the release before it left in `package.json`; the release that follows bumps it
    with every other package.
 4. On npmjs.com, open the package, then **Settings → Trusted publisher**, and name this
