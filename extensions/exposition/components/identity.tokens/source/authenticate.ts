@@ -47,8 +47,10 @@ export class Computation implements Operation {
   }
 }
 
-function list(aud: string | string[]): string[] {
-  return typeof aud === 'string' ? [aud] : aud
+function list(aud: string | unknown[]): string[] {
+  if (typeof aud === 'string') return [aud]
+
+  return aud.filter((value): value is string => typeof value === 'string')
 }
 
 const ERR_UNRECOGNIZED = new (class UnrecognizedError extends Error {
