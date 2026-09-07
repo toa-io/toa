@@ -6,5 +6,6 @@ FROM {{build.image}}
 # and the runtime reads its sources, it does not write them
 COPY --link . /composition
 
-USER node
+# no USER: the runtime drops to `node` itself, and only a process that started as root can
+# close its environment under /proc — see runtime/runtime/bin/toa
 CMD toa compose *
