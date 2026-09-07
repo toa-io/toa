@@ -95,7 +95,13 @@ describe('reference', () => {
 
     composition.components[1].packages = { cloudinary: '2.11.0' }
 
-    assert.notStrictEqual(create().dependencies.reference, before.dependencies.reference)
+    const component = create()
+
+    assert.notStrictEqual(component.dependencies.reference, before.dependencies.reference)
+
+    composition.packages = { 'lru-cache': '11.5.2' }
+
+    assert.notStrictEqual(create().dependencies.reference, component.dependencies.reference)
   })
 
   it('should change with the registry build settings', () => {
@@ -171,6 +177,18 @@ describe('prepare', () => {
     const dockerfile = await readFile(join(context, 'Dockerfile'), 'utf8')
 
     assert.ok(dockerfile.includes('npm i --prefix /toa --omit=dev $(cat .packages)'))
+  })
+
+  it('should hold what a service the composition runs brings', async () => {
+    composition.packages = { 'lru-cache': '11.5.2' }
+    composition.components[0].packages = { cloudinary: '2.11.0' }
+
+    const context = await create().dependencies.prepare(root)
+
+    assert.strictEqual(
+      await readFile(join(context, '.packages'), 'utf8'),
+      'cloudinary@2.11.0\nlru-cache@11.5.2'
+    )
   })
 
   it('should hold an empty list where nothing is declared', async () => {

@@ -23,11 +23,16 @@ export class Bundle extends Image {
   /** @type {toa.norm.Component[]} */
   components
 
+  /** What the services this workload runs install, which no component of it declares.
+   *  @type {Record<string, string> | undefined} */
+  packages
+
   constructor(scope, runtime, registry, composition) {
     super(scope, runtime, registry)
 
     this.image = composition.image
     this.components = composition.components
+    this.packages = composition.packages
     this.dependencies = new Dependencies(scope, runtime, registry, this)
   }
 

@@ -1,6 +1,6 @@
 import { createRequire } from 'node:module'
 import { dirname, join, relative, resolve, sep } from 'node:path'
-import { mkdirSync, readdirSync, writeFileSync } from 'node:fs'
+import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs'
 import type { Entry } from './read.js'
 
 /**
@@ -39,12 +39,36 @@ for (const suffix of DIGESTED) {
   for (const dirent of readdirSync(directory, { withFileTypes: true })) {
     if (!dirent.isDirectory()) continue
 
-    const manifest = await component(join(directory, dirent.name))
+    const path = join(directory, dirent.name)
+    const manifest = await component(path)
+    const entry: Entry = {
+      label: dirent.name.replace('.', '-'),
+      manifest: relativize(manifest)
+    }
 
-    entries.push({ label: dirent.name.replace('.', '-'), manifest: relativize(manifest) })
+    const packages = dependencies(path)
+
+    if (packages !== undefined) entry.packages = packages
+
+    entries.push(entry)
   }
 
   writeFileSync(join(OUT, suffix + '.json'), JSON.stringify(entries))
+}
+
+/**
+ * What a component of an extension's own declares in its manifest. A composition that runs the
+ * extension's service runs these components in its own process, and a deploy installs what they
+ * import without having the extension to read it from.
+ */
+function dependencies(path: string): Record<string, string> | undefined {
+  const manifest = join(path, 'package.json')
+
+  if (!existsSync(manifest)) return undefined
+
+  const { dependencies } = JSON.parse(readFileSync(manifest, 'utf8'))
+
+  return dependencies
 }
 
 function root(name: string): string {

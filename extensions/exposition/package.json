@@ -28,22 +28,17 @@
     "!**/.env*"
   ],
   "dependencies": {
-    "@node-rs/bcrypt": "1.10.8",
-    "@simplewebauthn/server": "14.0.0",
     "@toa.io/core": "1.0.0-alpha.292",
     "@toa.io/definitions": "1.0.0-alpha.292",
     "@toa.io/generic": "1.0.0-alpha.292",
     "@toa.io/schemas": "1.0.0-alpha.292",
     "content-type": "3.0.0",
-    "jose": "6.2.10",
     "js-yaml": "5.4.1",
-    "lru-cache": "11.5.2",
     "matchacho": "0.6.0",
     "minimatch": "10.2.6",
     "msgpackr": "2.1.0",
     "negotiator": "1.1.0",
-    "openspan": "1.0.0-alpha.286",
-    "paseto": "4.0.0"
+    "openspan": "1.0.0-alpha.286"
   },
   "scripts": {
     "test": "echo \"Error: run tests from root\" && exit 1",
@@ -67,9 +62,14 @@
     "features:octets": "TSX_TSCONFIG_PATH=features/steps/tsconfig.json NODE_OPTIONS=--import=tsx cucumber-js features/octets.*"
   },
   "devDependencies": {
+    "@node-rs/bcrypt": "1.10.8",
+    "@simplewebauthn/server": "14.0.0",
     "@toa.io/extensions.storages": "*",
     "@types/cors": "2.8.19",
-    "@types/negotiator": "0.6.5"
+    "@types/negotiator": "0.6.5",
+    "jose": "6.2.10",
+    "lru-cache": "11.5.2",
+    "paseto": "4.0.0"
   },
   "gitHead": "2ab75e1fd23f2e64720a60b8562dda606aa723ee"
 }

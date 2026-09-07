@@ -1,6 +1,6 @@
 import { definition } from '../../definition.js'
 
-export const resolve = async (references, annotations = {}) => {
+export const resolve = async (references, annotations = {}, context = {}) => {
   const dependencies = {}
 
   for (const [dependency, components] of Object.entries(references)) {
@@ -20,14 +20,26 @@ export const resolve = async (references, annotations = {}) => {
       annotations[id] = module.annotation(annotation, instances)
     }
 
-    // what a component's declaration costs to install, read from the definition rather than
-    // from the package: a deploy installs it, and nothing that declares nothing carries it
-    if (module.installs !== undefined)
+    // what a declaration costs to install, read from the definition rather than from the
+    // package: a deploy installs it, and nothing that declares nothing carries it. A component
+    // is asked for its own instance; a composition that runs the package's service is asked
+    // with none, because what a service brings is not a component's to declare
+    if (module.installs !== undefined) {
       for (const instance of instances)
         Object.assign(
           (instance.component.packages ??= {}),
           module.installs(instance, annotations[id])
         )
+
+      const service = module.installs(undefined, annotations[id])
+
+      // mono runs every service in one process, so it takes every service's packages
+      Object.assign((context.packages ??= {}), service)
+
+      for (const composition of context.compositions ?? [])
+        if (composition.services?.includes(dependency) === true)
+          Object.assign((composition.packages ??= {}), service)
+    }
   }
 
   for (const dependency of Object.keys(annotations)) {

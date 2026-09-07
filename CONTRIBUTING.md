@@ -210,7 +210,10 @@ a configuration secret, for one, is read as `context.configuration.apiKey.unwrap
 A component sees none of the variables the runtime was deployed with: no `TOA_*` in its
 `process.env`, in a bash operation's environment, or under `/proc`.
 
-The components an extension ships are Toa's own, and may use its packages.
+The components an extension ships are Toa's own, and may use its packages. What a component of
+one imports from outside Toa it declares in a `package.json` of its own, beside its manifest —
+not in the extension's. The image that runs it installs it there, and the runtime image every
+application is built on carries nothing for a component no application runs.
 
 ## Documentation
 

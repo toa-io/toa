@@ -1,0 +1,9 @@
+{
+  "name": "identity.tokens",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "lru-cache": "11.5.2",
+    "paseto": "4.0.0"
+  }
+}

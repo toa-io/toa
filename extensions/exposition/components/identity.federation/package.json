@@ -1,0 +1,8 @@
+{
+  "name": "identity.federation",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "jose": "6.2.10"
+  }
+}

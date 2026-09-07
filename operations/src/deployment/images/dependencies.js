@@ -123,15 +123,16 @@ export class Dependencies extends Image {
   }
 
   /**
-   * What the extensions install for what these components declare, as `name@version`. A
-   * component states its own dependencies in its manifest; this is what the packages that
-   * read its declaration need, which its manifest has no way to say.
+   * What the extensions install for what this workload runs, as `name@version`: what its
+   * components declare, and what the services it hosts bring. A component states its own
+   * dependencies in its manifest; this is what the packages that read its declaration need,
+   * which its manifest has no way to say.
    *
    * @returns {string[]}
    */
   #packages() {
     /** @type {Record<string, string>} */
-    const packages = {}
+    const packages = { ...this.#owner.packages }
 
     for (const component of this.#owner.components)
       Object.assign(packages, component.packages)
