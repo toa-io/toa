@@ -43,7 +43,7 @@ export class Effect implements Operation {
       roles
     }
 
-    const { authority, scopes, permissions } = input
+    const { authority, scopes, permissions, audience } = input
 
     const token = await this.encrypt({
       input: {
@@ -52,6 +52,7 @@ export class Effect implements Operation {
         lifetime,
         scopes,
         permissions,
+        audience,
         key
       }
     })
@@ -74,6 +75,7 @@ interface Input {
   lifetime?: number
   scopes?: string[]
   permissions?: Record<string, string[]>
+  audience?: string[]
 }
 
 interface Output {

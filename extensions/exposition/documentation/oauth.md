@@ -23,8 +23,8 @@ exposition:
 <dt><code>resources</code></dt>
 <dd>Paths advertised as protected resources, each with a document of its own and named by the
 challenge a request to it is refused with. <code>/.mcp</code> is where
-<a href="mcp.md">MCP</a> is served. A token is not yet bound to one, see
-<a href="#audience">Audience</a>.</dd>
+<a href="mcp.md">MCP</a> is served. A token the client asked for with <code>resource</code>
+is bound to that entry, see <a href="#audience">Audience</a>.</dd>
 <dt><code>scopes</code></dt>
 <dd>Advertised as what a client may ask for. Each is a <a href="access.md#roles">role</a>, or a
 scope within one.</dd>
@@ -164,14 +164,18 @@ what an application means to offer, not what the server will refuse.
 ## Audience
 
 `resource` ([RFC 8707](https://www.rfc-editor.org/rfc/rfc8707)) is accepted at both endpoints and
-recorded on the grant. **It does not yet restrict the token.** An access token carries the rights
-of the identity that consented, over every path that identity may reach, whichever resource it was
-asked for.
+recorded on the grant. When the consenting user allowed a resource, the access token carries it as
+`aud`. The gateway admits that credential only at that entry.
 
-Restricting it is a `permissions` argument at the `identity.tokens.issue` call in
-`identity.grants.exchange` — `{'/.mcp': ['*']}` for a resource at `/.mcp` — enforced by
-`permits()`, which is already what reads a token's permissions on every request. It waits on the
-resource that will check the audience itself.
+HTTP, RPC and MCP that call the same operation are the same data. Refusing `GET /pots/` while
+allowing `pots.GET` through MCP does not hide the pots. What it refuses is everything that is not
+that entry: the REST tree, `/.rpc`, identity management — surfaces MCP does not publish.
+
+A first-party [Token](identity.md#token-scheme) has no `aud` and is unchanged. A custom token
+restricts paths as [permissions](components.md#custom-tokens) on the call itself. `aud` is the
+OAuth client's entry.
+
+A request to the wrong entry is `401`, with the challenge that names the resource it failed at.
 
 ## References
 

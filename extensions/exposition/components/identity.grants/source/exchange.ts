@@ -37,16 +37,16 @@ export class Effect implements Operation {
     if (code === null || !this.redeemable(code, input))
       return invalid('invalid_grant', 'The authorization code is not redeemable')
 
-    // `permissions` would bind the token to `code.resource` — `{'/mcp/**': ['*']}` for a
-    // resource at `/mcp/`, which `permits()` reads on every request. Left unset: the token
-    // carries the rights of the identity that consented, see documentation/oauth.md#audience
+    // `aud` binds the token to `code.resource` — the entry it may be presented at,
+    // which `preflight` reads. A fork MCP or RPC makes is not that entry.
     const issued = await this.context.remote.identity.tokens.issue({
       input: {
         authority,
         identity: code.identity,
         label: label(code.client),
         lifetime: this.context.configuration.token,
-        ...(code.scope.length === 0 ? {} : { scopes: code.scope })
+        ...(code.scope.length === 0 ? {} : { scopes: code.scope }),
+        ...(code.resource.length === 0 ? {} : { audience: code.resource })
       }
     })
 

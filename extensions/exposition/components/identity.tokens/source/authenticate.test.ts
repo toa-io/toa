@@ -81,6 +81,18 @@ for (const refresh of [true, false])
     assert.deepStrictEqual(result, { identity, refresh })
   })
 
+it('should put the audience on the identity the gateway sees', async () => {
+  const iat = new Date().toISOString()
+  const exp = new Date(Date.now() + 1000).toISOString()
+  const aud = ['https://nex.toa.io/.mcp']
+
+  output = { iss: authority, identity, exp, iat, aud: aud[0], refresh: false, custom: true }
+
+  const result = await authenticate.execute({ authority, credentials })
+
+  assert.deepStrictEqual(result, { identity: { ...identity, aud }, refresh: false })
+})
+
 it('should not refresh an aged custom token', async () => {
   const iat = new Date(Date.now() - configuration.refresh * 1000 - 50).toISOString()
   const exp = new Date(Date.now() + 1000).toISOString()

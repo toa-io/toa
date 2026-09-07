@@ -145,6 +145,26 @@ it('should keep the identity permissions when none are given', async () => {
   assert.deepStrictEqual(decrypted.identity.permissions, permissions)
 })
 
+it('should carry the audience as a JWT claim, not on the identity', async () => {
+  const identity: Identity = { id: generate(), roles: [] }
+  const audience = ['https://nex.toa.io/.mcp']
+
+  const encrypted = await encrypt.execute({
+    authority,
+    identity,
+    lifetime: 100,
+    audience
+  })
+
+  if (encrypted instanceof Error) throw encrypted
+
+  const decrypted = await decrypt.execute(encrypted)
+
+  assert.ok(!(decrypted instanceof Error))
+  assert.deepStrictEqual(decrypted.aud, audience[0])
+  assert.equal('aud' in decrypted.identity, false)
+})
+
 function secret(value: string): Secret {
   return { unwrap: () => value }
 }

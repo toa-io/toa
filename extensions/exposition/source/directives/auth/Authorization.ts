@@ -112,6 +112,14 @@ export class Authorization implements DirectiveFamily<Directive, Extension> {
    */
   public async preflight(context: Context): Promise<void> {
     context.identity = await this.resolve(context)
+
+    // the outer request, not a procedure it forks: `aud` is where this credential may
+    // appear, and a tool call is still the request to `/.mcp`
+    if (
+      context.identity?.aud !== undefined &&
+      !audience(context.identity.aud, context.url)
+    )
+      throw new http.Unauthorized()
   }
 
   /** Authorization: whether that identity may make this call, which every call asks anew. */
@@ -334,6 +342,39 @@ export function permits(
       methods.some((allowed) => allowed === '*' || allowed === method) &&
       glob(pattern).match(pathname)
   )
+}
+
+/**
+ * Whether the request is one the token's `aud` was issued for. A path is a prefix of the
+ * entry; an origin (empty or `/`) is every path on that host. A URI whose host is not
+ * this request's is not this resource.
+ */
+export function audience(audiences: string[], url: URL): boolean {
+  return audiences.some((value) => covers(value, url))
+}
+
+function covers(value: string, url: URL): boolean {
+  if (value.startsWith('/')) return prefixed(value, url.pathname)
+
+  let resource: URL
+
+  try {
+    resource = new URL(value)
+  } catch {
+    return false
+  }
+
+  if (resource.hostname !== url.hostname) return false
+
+  return prefixed(resource.pathname, url.pathname)
+}
+
+function prefixed(declared: string, pathname: string): boolean {
+  const prefix = declared.endsWith('/') ? declared.slice(0, -1) : declared
+
+  if (prefix === '') return true
+
+  return pathname === prefix || pathname.startsWith(prefix + '/')
 }
 
 /**
