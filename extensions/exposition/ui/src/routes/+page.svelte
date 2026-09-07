@@ -8,6 +8,7 @@
     Guides,
     Mcp,
     Resources,
+    Signature,
     addressed,
     carries,
     markdown,
@@ -282,4 +283,7 @@
   {:else}
     {@render resources()}
   {/if}
+
+  <!-- what answered, under whichever of the two is showing -->
+  <Signature />
 </Screen>

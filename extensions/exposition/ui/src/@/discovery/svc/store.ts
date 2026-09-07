@@ -12,6 +12,17 @@ export const tree = value<origin.Discovered>({
   bind: account,
 })
 
+/**
+ * What answered: the `server` line the gateway signs every reply with. It arrives with a
+ * reply rather than being asked for, so there is nothing to `get` — `rc` sets it from the
+ * first one back.
+ *
+ * Not bound to the account: one gateway answers everyone, and what it calls itself says
+ * nothing about who asked. Persisted so the line is there on the first frame rather than a
+ * reply later.
+ */
+export const server = value<string>({ persist: 'discovery:server' })
+
 export type Discovered = origin.Discovered
 export type Resource = origin.Resource
 export type Method = origin.Method
