@@ -25,7 +25,6 @@ Run composition.
 reference. Repeat for several.<br/>
 <code>--dock</code> Run in Docker using current <code>.env</code>.<br/>
 <code>--context</code> Path to the Context root (default <code>.</code>).<br/>
-<code>--bindnings</code> Override bindings (obsolete).
 </dd>
 </dl>
 
