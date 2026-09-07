@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/kubernetes",
-  "version": "1.0.0-alpha.286",
+  "version": "1.0.0-alpha.293",
   "type": "module",
   "description": "kubectl/kubectx wrapper",
   "homepage": "https://toa.io",
