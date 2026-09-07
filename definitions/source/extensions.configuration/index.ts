@@ -3,6 +3,7 @@ export { components } from './components.js'
 export { deployment, describe, image } from './deployment.js'
 export { epoch } from './epoch.js'
 export { context } from './context.js'
+export { assertSecrets } from './secrets.js'
 export * from './const.js'
 export * as schemas from './schemas.js'
 

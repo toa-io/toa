@@ -62,13 +62,18 @@ function declared(context) {
  * Whether the workspace declares it, at the version wanted. What it merely has installed does
  * not count: a package that reaches it through a dependency of Toa's is one Toa is about to
  * stop carrying, and the workspace is what has to say it needs it.
+ *
+ * A range counts where the version it is written around is the one wanted, because `npm i -D`
+ * writes `^1.2.3` for `1.2.3` and a second run must find nothing to do.
  */
-function declares(manifest, name, version) {
-  return (
-    manifest.dependencies?.[name] === version ||
-    manifest.devDependencies?.[name] === version
-  )
+export function declares(manifest, name, version) {
+  const declared = manifest.dependencies?.[name] ?? manifest.devDependencies?.[name]
+
+  return declared !== undefined && declared.replace(RANGE, '') === version
 }
+
+/** What `npm i` writes around a version, and `toa npm` reads back through. */
+const RANGE = /^[\^~=v]+/
 
 /** Where the workspace's `devDependencies` are: the nearest manifest above the Context. */
 function findUpwards(path) {

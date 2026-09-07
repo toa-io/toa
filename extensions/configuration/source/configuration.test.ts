@@ -138,6 +138,19 @@ describe('fit', () => {
   it('should throw on a value not fitting the schema', async () => {
     assert.throws(() => fit({ foo: { nested: true } }, manifest))
   })
+
+  it('should throw when a secret is a plain string', async () => {
+    manifest.schema = {
+      type: 'object',
+      properties: { foo: { type: 'string', format: 'secret' } }
+    }
+
+    assert.throws(
+      () => fit({ foo: 'plaintext' }, manifest),
+      (error: Error) =>
+        /'foo' is a secret and must be given as a \$NAME reference/.test(error.message)
+    )
+  })
 })
 
 function set(value: object | string, key = locator.uppercase): void {

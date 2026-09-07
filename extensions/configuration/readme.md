@@ -85,7 +85,13 @@ configuration:
         type: string
       bar:
         type: number
+      token:
+        type: string
+        format: secret
 ```
+
+A string the component reads as a secret is declared `format: secret`. It is a `Secret`
+on the context, and is given as a `$NAME` reference — see [Secrets](#secrets).
 
 ### Defaults
 
@@ -148,7 +154,18 @@ configuration:
 
 ## Secrets
 
-Configuration values which are uppercase strings prefixed with `$` are considered as secrets.
+A property declared `format: secret` is given as an uppercase name prefixed with `$`.
+A plain string in its place is refused.
+
+```yaml
+# manifest.toa.yaml
+configuration:
+  schema:
+    properties:
+      api-key:
+        type: string
+        format: secret
+```
 
 ```yaml
 # context.toa.yaml
@@ -182,9 +199,6 @@ function transition(input, entity, context) {
   // ...
 }
 ```
-
-A value a component reads as a secret is given as a reference: a plain string in its place
-has no `unwrap`.
 
 ## Values
 

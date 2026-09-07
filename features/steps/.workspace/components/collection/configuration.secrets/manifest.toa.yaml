@@ -17,3 +17,4 @@ configuration:
         type: integer
       b:
         type: string
+        format: secret
