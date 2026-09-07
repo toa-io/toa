@@ -50,6 +50,14 @@ export const dictionaries = {
       "anything": "anything",
       "stream": "streamed",
       "streamed": "The reply arrives in parts as the work is done."
+    },
+    "guide": {
+      "authentication": {
+        "title": "Authentication"
+      },
+      "multipart": {
+        "title": "Multipart responses"
+      }
     }
   }
 };

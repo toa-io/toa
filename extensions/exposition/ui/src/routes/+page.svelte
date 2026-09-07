@@ -5,6 +5,7 @@
   import { account, authenticated, logout } from '@/iam'
   import {
     CONSOLES,
+    Guides,
     Mcp,
     Resources,
     addressed,
@@ -111,7 +112,8 @@
 <svelte:window onkeydown={shortcut} />
 
 {#snippet resources()}
-  <div class="mx-auto w-full max-w-3xl px-4 pb-12">
+  <div class="mx-auto flex w-full max-w-3xl flex-col gap-6 px-4 pb-12">
+    <Guides />
     <Resources />
   </div>
 {/snippet}

@@ -53,4 +53,12 @@ export type Dictionary = {
         stream: string
         streamed: string
       }
+      guide: {
+        authentication: {
+          title: string
+        }
+        multipart: {
+          title: string
+        }
+      }
     }

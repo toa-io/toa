@@ -118,3 +118,10 @@ inputs:
     streamed:
       input: The reply arrives in parts as the work is done.
       context: shown under a file field where storing the file starts a workflow
+  guide:
+    authentication:
+      title:
+        input: Authentication
+    multipart:
+      title:
+        input: Multipart responses
