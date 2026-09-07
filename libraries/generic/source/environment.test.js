@@ -131,3 +131,22 @@ describe('entries', () => {
     environment.delete('ENVIRONMENT_TEST_ENTRY')
   })
 })
+
+it('should hold one store for every copy of this package', async () => {
+  // a service image installs the extension beside the runtime, so both are loaded: what
+  // one absorbed out of `process.env` is what the other has to be able to read
+  process.env.TOA_TWO_COPIES = 'value'
+
+  const { environment: first } = await import('./environment.js?copy=1')
+  const { environment: second } = await import('./environment.js?copy=2')
+
+  assert.strictEqual(process.env.TOA_TWO_COPIES, undefined)
+  assert.strictEqual(first.get('TOA_TWO_COPIES'), 'value')
+  assert.strictEqual(second.get('TOA_TWO_COPIES'), 'value')
+
+  second.set('TOA_TWO_COPIES', 'other')
+
+  assert.strictEqual(first.get('TOA_TWO_COPIES'), 'other')
+
+  first.delete('TOA_TWO_COPIES')
+})
