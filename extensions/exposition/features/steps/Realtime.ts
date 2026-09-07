@@ -4,7 +4,7 @@ import tsflow from 'cucumber-tsflow'
 
 import { Factory } from '@toa.io/extensions.realtime'
 import * as boot from '@toa.io/boot'
-import { match, timeout } from '@toa.io/generic'
+import { environment, match, timeout } from '@toa.io/generic'
 import { load as parse } from 'js-yaml'
 import { Agent } from '@toa.io/agent'
 import { Parameters } from './Parameters.js'
@@ -38,7 +38,7 @@ export class Realtime {
     for (const [event, property] of Object.entries(annotation))
       routes.push({ event, properties: [property] })
 
-    process.env.TOA_REALTIME = JSON.stringify(routes)
+    environment.set('TOA_REALTIME', JSON.stringify(routes))
 
     const factory = new Factory(boot.host())
 
@@ -93,7 +93,7 @@ export class Realtime {
     await this.instance.disconnect()
 
     this.instance = null
-    process.env.TOA_REALTIME = undefined
+    environment.delete('TOA_REALTIME')
   }
 
   /**

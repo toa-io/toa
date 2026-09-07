@@ -6,6 +6,7 @@ import { version } from '@toa.io/runtime'
 import { graceful } from './lib/graceful.js'
 import { discover } from './lib/services.js'
 import { components as find } from '../util/find.js'
+import { environment } from '@toa.io/generic'
 
 /**
  * @param {Record<string, string | boolean | string[]>} argv
@@ -27,7 +28,7 @@ export async function mono(argv) {
     await connector.connect()
   }
 
-  if (process.env.TOA_BOOT_TRACE === '1') await output.span('toa mono', start)
+  if (environment.get('TOA_BOOT_TRACE') === '1') await output.span('toa mono', start)
   else await start()
 
   if (argv.kill === true) await connector.disconnect()

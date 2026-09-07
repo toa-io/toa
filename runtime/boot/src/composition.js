@@ -1,11 +1,16 @@
 import { console } from 'openspan'
 import { Composition } from '@toa.io/core'
 import { version } from '@toa.io/runtime'
+import { environment } from '@toa.io/generic'
 
 import * as boot from './index.js'
 import { span } from './span.js'
 
 export async function composition(paths, options) {
+  // what a test set after this package loaded goes to the store now, before a module of a
+  // component is imported: nothing of it is left in `process.env` for that module to read
+  environment.absorb()
+
   options = Object.assign({}, options)
 
   return span('boot composition', async () => {

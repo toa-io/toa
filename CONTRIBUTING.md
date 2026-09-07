@@ -202,6 +202,8 @@ follow from that are in the [Node bridge readme](./connectors/bridges.node/readm
 
 Everything a component needs is on `context`;
 a configuration secret, for one, is read as `context.configuration.apiKey.unwrap()`.
+A component sees none of the variables the runtime was deployed with: no `TOA_*` in its
+`process.env`, in a bash operation's environment, or under `/proc`.
 
 The components an extension ships are Toa's own, and may use its packages.
 

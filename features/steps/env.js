@@ -1,5 +1,6 @@
 import { Given, After, Before } from '@cucumber/cucumber'
 import { load as parse } from 'js-yaml'
+import { environment } from '@toa.io/generic'
 
 Given('an environment variable {token} is set to {string}', setEnv)
 
@@ -12,9 +13,9 @@ Given('an environment variable {token} is set to:', function (name, yaml) {
 function setEnv(name, value) {
   // what it was, not that it was set: a scenario overriding one the suite relies on
   // must leave it as it found it
-  this.env.push([name, process.env[name]])
+  this.env.push([name, environment.get(name)])
 
-  process.env[name] = value
+  environment.set(name, value)
 }
 
 Before(
@@ -33,7 +34,7 @@ After(
   function () {
     // in reverse, so a variable set more than once comes back to what it was before the first
     for (const [name, value] of this.env.reverse())
-      if (value === undefined) delete process.env[name]
-      else process.env[name] = value
+      if (value === undefined) environment.delete(name)
+      else environment.set(name, value)
   }
 )

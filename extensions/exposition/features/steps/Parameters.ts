@@ -1,6 +1,7 @@
 import { join } from 'node:path'
 import * as dotenv from 'dotenv'
 import { setDefaultTimeout } from '@cucumber/cucumber'
+import { environment as variables } from '@toa.io/generic'
 
 dotenv.config({ path: join(import.meta.dirname, '.env') })
 
@@ -21,24 +22,29 @@ export class Parameters {
 
 setDefaultTimeout(60 * 1000)
 
-process.env.TOA_DEV = '1'
+variables.set('TOA_DEV', '1')
 
 // a reply is checked against what the operation declares, so the suite runs Toa under the
 // contract it asks applications to keep
-process.env.TOA_ENV ??= 'local'
+if (!variables.has('TOA_ENV')) variables.set('TOA_ENV', 'local')
 
 // the gateway answers for itself, as it does in a deployment: telemetry's probe tracks the
 // nested composition, which connects before route discovery settles
-process.env.TOA_TELEMETRY_READY ??= JSON.stringify(false)
+if (!variables.has('TOA_TELEMETRY_READY'))
+  variables.set('TOA_TELEMETRY_READY', JSON.stringify(false))
 
 // export traces to the local Tempo (`docker compose up tempo grafana`),
 // unavailability of the endpoint is harmless
-process.env.TOA_TELEMETRY_TRACES ??= JSON.stringify({
-  exporters: {
-    console: null,
-    otlp: { endpoint: 'http://localhost:31061' }
-  }
-})
+if (!variables.has('TOA_TELEMETRY_TRACES'))
+  variables.set(
+    'TOA_TELEMETRY_TRACES',
+    JSON.stringify({
+      exporters: {
+        console: null,
+        otlp: { endpoint: 'http://localhost:31061' }
+      }
+    })
+  )
 
 /*
  * The page the gateway serves at `/.discovery/`, pointed at a fixture: the scenarios are
@@ -144,10 +150,13 @@ const CLOUDINARY = {
   }
 }
 
-process.env.TOA_STORAGES = JSON.stringify({
-  octets: {
-    provider: 'tmp',
-    directory: Math.random().toString(36).substring(2)
-  },
-  ...(environment === undefined ? {} : CLOUDINARY)
-})
+variables.set(
+  'TOA_STORAGES',
+  JSON.stringify({
+    octets: {
+      provider: 'tmp',
+      directory: Math.random().toString(36).substring(2)
+    },
+    ...(environment === undefined ? {} : CLOUDINARY)
+  })
+)

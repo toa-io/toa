@@ -1,9 +1,10 @@
 import { nameVariable } from './naming.js'
 import { type AnnotationRecord, type URIMap } from './Deployment.js'
+import { environment } from '@toa.io/generic'
 
 export function resolve(id: string, selector: string): string[] {
   const variable = nameVariable(id, selector)
-  const value = process.env[variable]
+  const value = environment.get(variable)
 
   if (value === undefined) throw new Error(`${variable} is not set.`)
 
@@ -28,8 +29,8 @@ export function resolveRecord(uris: URIMap, selector: string): AnnotationRecord 
 }
 
 function withCredentials(variable: string, urls: string[]): string[] {
-  const username = process.env[variable + '_USERNAME'] ?? ''
-  const password = process.env[variable + '_PASSWORD'] ?? ''
+  const username = environment.get(variable + '_USERNAME') ?? ''
+  const password = environment.get(variable + '_PASSWORD') ?? ''
 
   return urls.map((url) => addCredentials(url, username, password))
 }

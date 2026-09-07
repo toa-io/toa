@@ -5,6 +5,8 @@ import tsflow from 'cucumber-tsflow'
 
 import * as boot from '@toa.io/boot'
 import { type Connector } from '@toa.io/core'
+import { environment } from '@toa.io/generic'
+
 import { load as parse } from 'js-yaml'
 import { Gateway } from './Gateway.js'
 import { Workspace } from './Workspace.js'
@@ -68,7 +70,7 @@ export class Components {
   /** What the deployment would tell the values service, as the scenario needs it. */
   @given('the configuration values are deployed:')
   public deployValues(yaml: string): void {
-    process.env.TOA_CONFIGURATION_VALUES = JSON.stringify(parse(yaml))
+    environment.set('TOA_CONFIGURATION_VALUES', JSON.stringify(parse(yaml)))
   }
 
   @given('the `{word}` is stopped')
@@ -87,7 +89,7 @@ export class Components {
 
     await Promise.all(promises)
 
-    delete process.env.TOA_CONFIGURATION_VALUES
+    environment.delete('TOA_CONFIGURATION_VALUES')
   }
 
   private async runComponent(name: string, manifest?: object): Promise<void> {

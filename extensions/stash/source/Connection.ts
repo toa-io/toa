@@ -3,6 +3,7 @@ import { console } from 'openspan'
 import { Connector, type Locator } from '@toa.io/core'
 import { resolve } from '@toa.io/pointer'
 import { ID } from './extension.js'
+import { environment } from '@toa.io/generic'
 
 export class Connection extends Connector {
   public redis: Redis | null = null
@@ -42,7 +43,7 @@ export class Connection extends Connector {
   private async resolveURL(): Promise<string> {
     // Toa's own development stack is not on the conventional ports: the applications built on
     // Toa are, and they share the machine. See CONTRIBUTING.md.
-    if (process.env.TOA_DEV === '1') return 'redis://localhost:31040'
+    if (environment.get('TOA_DEV') === '1') return 'redis://localhost:31040'
 
     const urls = resolve(ID, this.locator.id)
 

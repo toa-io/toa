@@ -1,5 +1,5 @@
 import { console as output } from 'openspan'
-import { pick } from '@toa.io/generic'
+import { environment, pick } from '@toa.io/generic'
 import { Connector } from '@toa.io/core'
 import * as boot from '@toa.io/boot'
 import { version } from '@toa.io/runtime'
@@ -38,7 +38,7 @@ export async function compose(argv) {
   }
 
   // the trace of the startup
-  if (process.env.TOA_BOOT_TRACE === '1') await output.span('toa compose', start)
+  if (environment.get('TOA_BOOT_TRACE') === '1') await output.span('toa compose', start)
   else await start()
 
   if (argv.kill === true) await connector.disconnect()
@@ -54,7 +54,7 @@ export async function compose(argv) {
 function services(argv) {
   if (argv.service !== undefined) return argv.service
 
-  const variable = process.env.TOA_SERVICES?.trim()
+  const variable = environment.get('TOA_SERVICES')?.trim()
 
   return variable === undefined || variable === '' ? [] : variable.split(/\s+/)
 }

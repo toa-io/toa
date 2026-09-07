@@ -5,6 +5,7 @@ import { Storage, type Storages } from './Storage.js'
 import { Aspect } from './Aspect.js'
 import { ENV_PREFIX } from './deployment.js'
 import { validateAnnotation } from './Annotation.js'
+import { environment } from '@toa.io/generic'
 import type { Constructor } from './Provider.js'
 import type { Declaration } from './providers/index.js'
 import type { Annotation } from './Annotation.js'
@@ -14,7 +15,7 @@ export class Factory {
   private readonly annotation: Annotation
 
   public constructor() {
-    const env = process.env[ENV_PREFIX]
+    const env = environment.get(ENV_PREFIX)
 
     assert.ok(env !== undefined, `${ENV_PREFIX} is not defined`)
 
@@ -58,7 +59,7 @@ export class Factory {
 
     for (const secret of Class.SECRETS) {
       const variable = `${ENV_PREFIX}_${storageName}_${secret.name}`.toUpperCase()
-      const value = process.env[variable]
+      const value = environment.get(variable)
 
       assert.ok(
         secret.optional === true || value !== undefined,

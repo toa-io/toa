@@ -5,6 +5,7 @@
  */
 
 import { console } from 'openspan'
+import { environment } from '@toa.io/generic'
 import { Connector } from '@toa.io/core'
 import { resolve } from '@toa.io/pointer'
 import { ID } from './deployment.js'
@@ -182,7 +183,7 @@ export class Client extends Connector {
   async resolveURLs() {
     // Toa's own development stack is not on the conventional ports: the applications built on
     // Toa are, and they share the machine. See CONTRIBUTING.md.
-    if (process.env.TOA_DEV === '1') {
+    if (environment.get('TOA_DEV') === '1') {
       return ['mongodb://developer:secret@localhost:31020']
     } else {
       return await resolve(ID, this.locator.id)
@@ -194,13 +195,11 @@ export class Client extends Connector {
    * @return {string}
    */
   resolveDB() {
-    if (process.env.TOA_CONTEXT !== undefined) {
-      return process.env.TOA_CONTEXT
-    }
+    const context = environment.get('TOA_CONTEXT')
 
-    if (process.env.TOA_DEV === '1') {
-      return 'toa-dev'
-    }
+    if (context !== undefined) return context
+
+    if (environment.get('TOA_DEV') === '1') return 'toa-dev'
 
     throw new Error('Environment variable TOA_CONTEXT is not defined')
   }

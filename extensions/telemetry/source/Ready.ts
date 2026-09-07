@@ -1,6 +1,7 @@
 import * as http from 'node:http'
 import { console } from 'openspan'
 import { Connector } from '@toa.io/core'
+import { environment } from '@toa.io/generic'
 
 export class Ready extends Connector {
   public readonly name = 'ready'
@@ -114,7 +115,7 @@ export class Ready extends Connector {
 }
 
 export function resolveOptions(): ReadyOptions | null {
-  const env = process.env[READY_ENV]
+  const env = environment.get(READY_ENV)
 
   if (env === undefined) return { ...DEFAULTS }
 

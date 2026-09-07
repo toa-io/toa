@@ -1,5 +1,6 @@
 import { console } from 'openspan'
 import { Connector } from '@toa.io/core'
+import { environment } from '@toa.io/generic'
 
 /**
  * What one group of replicas decides together, in one place: which of them owns what, what they
@@ -192,7 +193,7 @@ export class Atom extends Connector {
 }
 
 function override() {
-  const value = Number(process.env.TOA_ATOMICITY_INTERVAL)
+  const value = Number(environment.get('TOA_ATOMICITY_INTERVAL'))
 
   return Number.isNaN(value) || value <= 0 ? undefined : value
 }

@@ -13,6 +13,7 @@ import { Interception } from './Interception.js'
 import { Dispatcher } from './RPC/index.js'
 import { Server as Model } from './MCP/index.js'
 import * as http from './HTTP/index.js'
+import { environment } from '@toa.io/generic'
 import type { Broadcast } from './Gateway.js'
 import type { Connector } from '@toa.io/core'
 import type { Host } from './Factory.js'
@@ -22,14 +23,13 @@ import type { Host } from './Factory.js'
  * gateway is made of is reached from here and nowhere the factory imports.
  */
 export async function service(host: Host): Promise<Connector | null> {
-  assert.ok(
-    process.env.TOA_EXPOSITION_PROPERTIES,
-    'TOA_EXPOSITION_PROPERTIES is undefined'
-  )
+  const properties = environment.get('TOA_EXPOSITION_PROPERTIES')
+
+  assert.ok(properties !== undefined, 'TOA_EXPOSITION_PROPERTIES is undefined')
 
   configureLogs()
 
-  const options = JSON.parse(process.env.TOA_EXPOSITION_PROPERTIES) as http.Options
+  const options = JSON.parse(properties) as http.Options
   const broadcast: Broadcast = await host.broadcast(CHANNEL)
   const server = http.Server.create({ ...options })
   const remotes = new Remotes(host)
@@ -59,18 +59,23 @@ const LOGS_PREFIX = 'TOA_TELEMETRY_LOGS'
 const TRACES_ENV = 'TOA_TELEMETRY_TRACES'
 
 function configureLogs(): void {
-  const globEnv = process.env[LOGS_PREFIX]
-  const level: LevelName = process.env.TOA_DEV === '1' ? 'trace' : 'info'
+  const globEnv = environment.get(LOGS_PREFIX)
+  const level: LevelName = environment.get('TOA_DEV') === '1' ? 'trace' : 'info'
   const options =
     globEnv === undefined ? { level } : (JSON.parse(globEnv) as { level?: LevelName })
 
   console.configure({ level: options.level ?? level })
 
-  const tracesEnv = process.env[TRACES_ENV]
-
-  traces(
+  const tracesEnv = environment.get(TRACES_ENV)
+  const tracing =
     tracesEnv === undefined ? development() : (JSON.parse(tracesEnv) as TracesOptions)
-  )
+
+  // `openspan` is not Toa's and reads the environment, which no longer holds the context by
+  // the time the exporter is made — so the service is named here
+  if (tracing.exporters?.otlp !== undefined)
+    tracing.exporters.otlp.service ??= environment.get('TOA_CONTEXT')
+
+  traces(tracing)
 }
 
 /**
@@ -83,7 +88,7 @@ function configureLogs(): void {
  * `extensions/telemetry/source/extension.ts`.
  */
 function development(): TracesOptions {
-  const local = process.env.TOA_DEV === '1' || process.env.TOA_BOOT_TRACE === '1'
+  const local = environment.get('TOA_DEV') === '1' || environment.get('TOA_BOOT_TRACE') === '1'
 
   return local ? { exporters: { console: {} } } : {}
 }

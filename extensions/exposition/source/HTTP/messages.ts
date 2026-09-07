@@ -5,13 +5,15 @@ import * as contentType from 'content-type'
 import { console } from 'openspan'
 import { type Format, decoders } from './formats/index.js'
 import { BadRequest, NotAcceptable, UnsupportedMediaType } from './exceptions.js'
+import { environment } from '@toa.io/generic'
 import type { Context } from './Context.js'
 import type { ServerResponse } from './types.js'
 
+const context = environment.get('TOA_CONTEXT')
+const env = environment.get('TOA_ENV')
 const server =
   `Exposition/${JSON.parse(readFileSync(new URL('../../package.json', import.meta.url), 'utf8')).version}` +
-  ((process.env.TOA_CONTEXT === undefined ? '' : ` ${process.env.TOA_CONTEXT}`) +
-    (process.env.TOA_ENV === undefined ? '' : `/${process.env.TOA_ENV}`))
+  ((context === undefined ? '' : ` ${context}`) + (env === undefined ? '' : `/${env}`))
 
 /**
  * Applies what the request accumulated in `pipelines.response` — an `io:output` restriction,

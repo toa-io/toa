@@ -13,5 +13,8 @@ Other exit codes will cause exceptions.
 Operations cannot have access to the state or context. Basically,
 only [computations](/documentation/design.md#special-types) are possible.
 
+A script runs with the process's environment less every `TOA_*` variable: what the runtime was
+deployed with is not the script's to read.
+
 > While theoretically this bridge may find some use, it is mainly a demonstration of language
 > interoperability.

@@ -1,3 +1,4 @@
+import { environment } from '@toa.io/generic'
 import type { Source } from '@toa.io/core/types'
 
 /** Per-component variables: the local override and the secrets. */
@@ -19,7 +20,7 @@ export const UI_PORT = 8003
  */
 export const UI_PORT_ENV = 'TOA_CONFIGURATION_UI_PORT'
 export function uiPort(): number {
-  const value = process.env[UI_PORT_ENV]
+  const value = environment.get(UI_PORT_ENV)
 
   return value === undefined ? UI_PORT : Number(value)
 }

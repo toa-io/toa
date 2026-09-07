@@ -1,5 +1,7 @@
 import * as boot from '@toa.io/boot'
 import { type Connector } from '@toa.io/core'
+import { environment } from '@toa.io/generic'
+
 import tsflow from 'cucumber-tsflow'
 
 import { Factory } from '../../source/index.js'
@@ -28,7 +30,7 @@ export class Realtime {
   public async serve(): Promise<void> {
     if (this.connected) return
 
-    process.env.TOA_REALTIME = JSON.stringify(this.routes)
+    environment.set('TOA_REALTIME', JSON.stringify(this.routes))
 
     this.connected = true
     this.service = await new Factory(boot.host()).service()

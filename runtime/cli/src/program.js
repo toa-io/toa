@@ -1,8 +1,9 @@
-import dotenv from 'dotenv'
 // noinspection JSUnresolvedVariable
 
 import yargs from 'yargs/yargs'
 
+import { environment } from '@toa.io/generic'
+import * as boot from '@toa.io/boot'
 import { version } from '@toa.io/runtime'
 
 yargs(process.argv.slice(2))
@@ -11,12 +12,12 @@ yargs(process.argv.slice(2))
   })
   .middleware((argv) => {
     if (argv.log === undefined)
-      argv.log = process.env.TOA_DEBUG === '1' ? 'debug' : 'info'
+      argv.log = environment.get('TOA_DEBUG') === '1' ? 'debug' : 'info'
   })
   .middleware(async (argv) => {
     if (argv.env === undefined) return
 
-    dotenv.config({ path: /** @type {string} */ argv.env })
+    boot.env(/** @type {string} */ argv.env)
   })
   .fail((msg, err) => {
     const actual = err || new Error(msg)

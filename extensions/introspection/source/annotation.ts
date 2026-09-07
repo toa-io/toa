@@ -1,4 +1,5 @@
 import { DEFAULT_INTERVAL, DEFAULT_THRESHOLD, DENIED, ENV } from './const.js'
+import { environment as variables } from '@toa.io/generic'
 import type { Resources } from '@toa.io/operations'
 
 /** `context.toa.yaml` */
@@ -52,7 +53,7 @@ export function options(annotation?: Annotation): Options {
 
 /** Reads what `deployment()` has put into the environment. */
 export function environment(): Options | null {
-  const value = process.env[ENV]
+  const value = variables.get(ENV)
 
   if (value === undefined) return null
 

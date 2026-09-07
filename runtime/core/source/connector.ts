@@ -1,4 +1,5 @@
 import { console } from 'openspan'
+import { environment } from '@toa.io/generic'
 import type { Locator } from './locator.js'
 
 /** Abstract connections hierarchy */
@@ -213,4 +214,4 @@ export class Connector {
 }
 
 const DELAY = 5000
-const TRACE_BOOT = process.env.TOA_BOOT_TRACE === '1'
+const TRACE_BOOT = environment.get('TOA_BOOT_TRACE') === '1'

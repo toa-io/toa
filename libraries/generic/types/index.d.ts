@@ -20,6 +20,16 @@ export function echo(input: string): string
 export function echo(input: string, values: Record<string, string>): string
 export function echo(input: string, ...values: string[]): string
 
+export const environment: {
+  get(name: string): string | undefined
+  has(name: string): boolean
+  entries(prefix?: string): Record<string, string>
+  set(name: string, value: string): void
+  delete(name: string): void
+  absorb(): void
+  absorbEntries(record: Record<string, string>): void
+}
+
 export function encode(input: any): string
 
 export function decode<T = any>(input: string): T

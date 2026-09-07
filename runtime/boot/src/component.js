@@ -1,6 +1,7 @@
 import { Component, Locator, State, entities } from '@toa.io/core'
 import { entity as declaration } from '@toa.io/norm'
 import { schema as compileSchema } from '@toa.io/schemas'
+import { environment } from '@toa.io/generic'
 
 import * as boot from './index.js'
 import { span } from './span.js'
@@ -12,6 +13,10 @@ export const component = async (manifest) => {
 }
 
 const create = async (manifest, locator) => {
+  // what a test set after this package loaded goes to the store now, before a module of the
+  // component is imported: nothing of it is left in `process.env` for that module to read
+  environment.absorb()
+
   await boot.extensions.load(manifest)
 
   // the storage is told whether there will be an outbox, so the events come first
