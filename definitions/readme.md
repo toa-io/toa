@@ -19,7 +19,7 @@ is `@toa.io/operations` beside `@toa.io/cli`, with no extension installed at all
 | `annotation`  | an extension           | norm, normalising the context's block    |
 | `standalone`  | an extension           | norm, deploying it whether or not named  |
 | `deployment`  | an extension, a connector | operations, rendering the chart       |
-| `installs`    | an extension, a connector | norm, what a deploy installs for a component's declaration |
+| `installs`    | an extension, a connector | norm, what a deploy installs — for a component's declaration, and, called with no instance, for the workload that runs its service |
 | `image`       | an extension           | operations, taking a published image     |
 | `context`     | an extension           | `toa types`, what a component's context has |
 | `properties`  | a binding              | norm and boot, whether it is asynchronous |

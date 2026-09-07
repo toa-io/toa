@@ -2,6 +2,21 @@
 
 Shared BLOB storage.
 
+## Installing a provider
+
+A provider's SDK is not installed with this extension: `s3` and `spaces` need
+`@aws-sdk/client-s3` and `@aws-sdk/lib-storage`, `cloudinary` needs `cloudinary`, and `fs`, `tmp`
+and `test` need nothing. A deploy installs what the components of each composition declare, so
+an image carries the SDK of a provider it uses and no other.
+
+A workspace installs the same set itself, once, and again when a storage is added:
+
+```shell
+$ toa npm -p application
+```
+
+Without it a composition fails to start, naming the package and version it wants.
+
 ## Entry
 
 BLOBs are stored with the meta-information object (Entry) having the following properties:

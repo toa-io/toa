@@ -22,9 +22,15 @@ export const packages: Record<Provider, Readonly<Record<string, string>>> = {
  * of the storages it declares. A component that declares the extension and names no storage —
  * `storages: ~`, which is what `exposition.octets` declares — reaches every storage there is,
  * and takes every provider with it.
+ *
+ * A storage is a component's to declare, so there is nothing here for a workload that runs
+ * this extension's service, which is what no instance means.
  */
-export function installs(instance: Instance, annotation: unknown): Record<string, string> {
-  if (!isAnnotation(annotation)) return {}
+export function installs(
+  instance: Instance | undefined,
+  annotation: unknown
+): Record<string, string> {
+  if (instance === undefined || !isAnnotation(annotation)) return {}
 
   const declared = instance.manifest ?? []
   const names = declared.length > 0 ? declared : Object.keys(annotation)
