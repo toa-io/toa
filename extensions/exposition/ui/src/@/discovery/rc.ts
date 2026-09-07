@@ -1,5 +1,6 @@
+import { origin } from '@/net'
 import { authenticated } from '@/iam'
-import { tree } from './svc/store'
+import { server, tree } from './svc/store'
 import { read } from './svc/net'
 
 /**
@@ -9,6 +10,17 @@ import { read } from './svc/net'
  * the anonymous one. Both are read again here.
  */
 function rc(): void {
+  /*
+   * What answered, taken off whatever answered: one gateway serves this page and every
+   * reply it reads, so any reply carries the same line. A reply without one — a proxy that
+   * stripped it — leaves the line standing rather than blanking it.
+   */
+  origin.events.on('response', ({ headers }) => {
+    const signature = headers.get('server')
+
+    if (signature !== null) server.set(signature)
+  })
+
   let identified: boolean | undefined
 
   authenticated.subscribe((value) => {
