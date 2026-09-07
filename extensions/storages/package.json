@@ -17,6 +17,13 @@
   "publishConfig": {
     "access": "public"
   },
+  "files": [
+    "transpiled",
+    "readme.md",
+    "!**/tsconfig.tsbuildinfo",
+    "!**/*.test.*",
+    "!**/.env*"
+  ],
   "scripts": {
     "test": "echo \"Error: run tests from root\" && exit 1",
     "transpile": "npx tsc"

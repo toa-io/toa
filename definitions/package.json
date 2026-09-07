@@ -20,6 +20,15 @@
   "publishConfig": {
     "access": "public"
   },
+  "files": [
+    "transpiled",
+    "digest",
+    "schemas",
+    "readme.md",
+    "!**/tsconfig.tsbuildinfo",
+    "!**/*.test.*",
+    "!**/.env*"
+  ],
   "dependencies": {
     "@toa.io/generic": "1.0.0-alpha.292",
     "@toa.io/pointer": "1.0.0-alpha.292",

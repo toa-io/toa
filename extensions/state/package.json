@@ -16,6 +16,13 @@
   "publishConfig": {
     "access": "public"
   },
+  "files": [
+    "source",
+    "readme.md",
+    "!**/tsconfig.tsbuildinfo",
+    "!**/*.test.*",
+    "!**/.env*"
+  ],
   "dependencies": {
     "@toa.io/generic": "1.0.0-alpha.292"
   },

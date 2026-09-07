@@ -15,6 +15,13 @@
   "publishConfig": {
     "access": "public"
   },
+  "files": [
+    "transpiled",
+    "readme.md",
+    "!**/tsconfig.tsbuildinfo",
+    "!**/*.test.*",
+    "!**/.env*"
+  ],
   "main": "transpiled/index.js",
   "types": "transpiled/index.d.ts",
   "scripts": {

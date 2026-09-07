@@ -228,13 +228,14 @@ they choose, a failure they will see and have to answer for.
 
 ## Publishing
 
-npm packs by `.npmignore` where a package has one, and by `.gitignore` where it does not. Build
-output is git-ignored — a component's `operations`, what a `ui` builds — so a package without
-`.npmignore` publishes its manifests without the code beside them.
+A package that transpiles states what it ships in `files`: its build, the assets read beside it —
+`components`, `schemas`, `digest`, `ui/dist` — and nothing else. Sources, suites, features and
+`tsconfig.tsbuildinfo` are not published, because an image that runs the package carries whatever
+it publishes, and `extensions.storages` alone was shipping eight megabytes of sample video.
 
-Every extension that transpiles components or builds a page carries one, and so does
-`@toa.io/definitions`, whose digest is git-ignored build output. What a package would publish is
-read before releasing it:
+`files` is an allowlist, so build output being git-ignored no longer keeps it out of the tarball,
+and a new directory a package needs at runtime is published only once it is named there. What a
+package would publish is read before releasing it:
 
 ```shell
 $ npm pack --dry-run                # from the package directory

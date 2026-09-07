@@ -17,6 +17,16 @@
   "publishConfig": {
     "access": "public"
   },
+  "files": [
+    "transpiled",
+    "components",
+    "schemas",
+    "ui/dist",
+    "readme.md",
+    "!**/tsconfig.tsbuildinfo",
+    "!**/*.test.*",
+    "!**/.env*"
+  ],
   "dependencies": {
     "@node-rs/bcrypt": "1.10.8",
     "@simplewebauthn/server": "14.0.0",

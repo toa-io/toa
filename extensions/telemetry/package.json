@@ -17,6 +17,14 @@
   "publishConfig": {
     "access": "public"
   },
+  "files": [
+    "transpiled",
+    "readme.md",
+    "grafana.md",
+    "!**/tsconfig.tsbuildinfo",
+    "!**/*.test.*",
+    "!**/.env*"
+  ],
   "scripts": {
     "transpile": "tsc"
   },
