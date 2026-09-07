@@ -17,3 +17,4 @@ export type Resource = origin.Resource
 export type Method = origin.Method
 export type Described = origin.Described
 export type Schema = origin.Schema
+export type Octets = origin.Octets

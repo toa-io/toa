@@ -245,3 +245,62 @@ Feature: Octets directive family
 
       Trailing slash is redundant
       """
+
+  Scenario: What sending a file takes
+    A file is not a value, so no schema states what may be sent — `octets:put` does, and a
+    client reads it where it reads everything else about the method.
+
+    When the following request is received:
+      """
+      OPTIONS /media/jpeg-or-png/ HTTP/1.1
+      host: nex.toa.io
+      accept: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      Allow: POST
+
+      POST:
+        octets:
+          accept: image/jpeg,image/png
+          limit: 64MiB
+      """
+
+  Scenario: A limit is what a refusal reports
+    What a larger body is refused by is said the way the refusal says it.
+
+    When the following request is received:
+      """
+      OPTIONS /limit-1kb/ HTTP/1.1
+      host: nex.toa.io
+      accept: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+
+      POST:
+        octets:
+          limit: 1kb
+      """
+
+  Scenario: Reading a file takes nothing to say
+    Only sending one says anything a schema does not; `octets:get` and `octets:delete` are
+    the request they look like.
+
+    When the following request is received:
+      """
+      OPTIONS /media/images/whatever/ HTTP/1.1
+      host: nex.toa.io
+      accept: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      Allow: GET
+      """
+    And the reply does not contain:
+      """
+      octets:
+      """

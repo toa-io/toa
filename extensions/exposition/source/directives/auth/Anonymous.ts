@@ -1,4 +1,5 @@
 import { type Directive, type Context } from './types.js'
+import type { Introspection } from '../../Introspection.js'
 
 export class Anonymous implements Directive {
   private readonly allow: boolean
@@ -22,5 +23,14 @@ export class Anonymous implements Directive {
 
   public admits(_: any, context: Context): boolean {
     return this.authorize(_, context)
+  }
+
+  /**
+   * That nothing guards it is something said rather than something left unsaid: it is also
+   * what refuses a caller presenting a credential, and a client with one has to know which
+   * methods not to present it to.
+   */
+  public describe(introspection: Introspection): Introspection {
+    return this.allow ? { ...introspection, anonymous: true } : introspection
   }
 }

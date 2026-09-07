@@ -39,6 +39,19 @@ All four take the same value. A bare one is the <code>title</code> — the short
 client has somewhere to put. A sentence is written as a <code>description</code> beside it, and
 either may stand alone. The parameters name each one they describe.
 
+`help:method: null` hides the method instead of naming it: it is in no answer — not `OPTIONS`,
+not the [tree](discovery.md), not the tools [MCP](mcp.md) publishes — and is reached exactly as
+it was. What a monitor calls, and what a person has no business going looking for, is declared
+this way. A resource whose every method is hidden answers `403` to `OPTIONS` and is not in the
+tree at all.
+
+```yaml
+/hello/agent:
+  GET:
+    help:method: null
+    endpoint: agent
+```
+
 A title is not a name. A name is an address — `apps._identity._id.repos.POST` — and reads as one;
 this is what a person is shown instead.
 
@@ -76,10 +89,10 @@ nobody's is not answered, and nothing here checks one: the template does not say
 records — `criteria`, `sort` and the rest — is the same of every queryable resource and says so
 itself, so it is neither answered here nor described.
 
-## What it is not inherited by
+## Where it applies
 
-Every other directive applies to everything below the node it is on. This one does not: carried
-downward, it would say of every resource below that it is the one it was written for.
+To the node it is written on, and to nothing under it. Every other directive applies downward;
+carried down, this one would say of every resource below that it is the one it was written for.
 
 ```yaml
 /pots:

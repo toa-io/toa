@@ -156,15 +156,31 @@ Feature: The discovery page
       location: /.discovery/
       """
 
-  Scenario: A client that takes anything is not
-    `accept` has to prefer a page over what the gateway answers with, which is what a
-    browser sends and an API client does not.
+  Scenario: A client that asks for nothing in particular is sent there too
+    Several unfurlers ask for anything at all, and a link to an application would otherwise
+    show nothing.
 
     When the following request is received:
       """
       GET / HTTP/1.1
       host: nex.toa.io
       accept: */*
+      """
+    Then the following reply is sent:
+      """
+      302 Moved Temporarily
+      location: /.discovery/
+      """
+
+  Scenario: A client that asked for something else gets what it asked for
+    An `accept` naming what the gateway answers with is a client that wants the resource,
+    not the page.
+
+    When the following request is received:
+      """
+      GET / HTTP/1.1
+      host: nex.toa.io
+      accept: application/json
       """
     Then the following reply is sent:
       """

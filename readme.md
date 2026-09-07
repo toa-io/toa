@@ -38,7 +38,8 @@ Non-scattered documentation is coming some time later.
   - a _delay_ hands one call over to be made later, and answers the id that cancels it
 - [Configuration](/extensions/configuration) with secrets
 - [API Gateway](/extensions/exposition)
-  - Resource discovery
+  - [Resource discovery](/extensions/exposition/documentation/discovery.md): every route an
+    application serves, at one path, and a page that reads it and calls it
   - [Identity](extensions/exposition/documentation/identity.md)
     - Basis authentication
     - Identity federation (OIDC)

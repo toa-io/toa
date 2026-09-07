@@ -345,5 +345,6 @@ being someone and no more — `anyone`, `delegate`, `claims` — `private` where
 `rule` says whatever each directive it composes says. A resource carries whichever of the four any
 of its methods does.
 
-A method that says none of them is one nothing guards, and a client reads it that way: a
-credential is not presented to it, because `anonymous` refuses a caller carrying one.
+`anonymous` says so too, which is what tells a client where not to present a credential: it is
+the one that refuses a caller carrying one. A method that says nothing at all — `echo` is the
+one — takes a credential where there is one and answers without it where there is not.

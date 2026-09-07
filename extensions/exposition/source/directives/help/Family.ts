@@ -47,8 +47,12 @@ export class Family implements DirectiveFamily<Directive> {
     directives: Directive[],
     _: Context,
     introspection: Introspection
-  ): Introspection {
+  ): Introspection | null {
     const help = Family.method(directives)
+
+    // what is hidden is hidden from every answer at once, this being the one place they
+    // all read; the method itself is reached as it always was
+    if (help?.hidden === true) return null
 
     const described: Introspection = {
       ...introspection,

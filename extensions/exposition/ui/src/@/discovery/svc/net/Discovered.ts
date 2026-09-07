@@ -3,6 +3,9 @@ export interface Described {
   title?: string
   description?: string
 
+  /** reaching it takes nothing at all, and presenting a credential is refused — `auth:anonymous` */
+  anonymous?: boolean
+
   /** reaching it takes being someone, whoever — `auth:anyone` and its like */
   authenticated?: boolean
 
@@ -23,9 +26,21 @@ export interface Method extends Described {
 
   route?: Record<string, Schema>
   query?: Record<string, Schema>
+
+  /** what sending a file here takes, where the body is one — `octets:put` */
+  octets?: Octets
   input?: Schema
   output?: Schema
   errors?: string[]
+}
+
+/** What sending a file to a resource takes, which is not something a schema states. */
+export interface Octets {
+  /** what may be sent, in the syntax of an `accept` header; anything where unstated */
+  accept?: string
+  limit: string
+  /** whether the reply arrives as a stream of parts rather than as one object */
+  stream?: boolean
 }
 
 export type Schema = Record<string, unknown>
