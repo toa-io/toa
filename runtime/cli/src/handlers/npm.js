@@ -16,9 +16,10 @@ export async function npm(argv) {
   const path = find(argv.path)
   const environment = argv.environment ?? variables.get('TOA_ENV') ?? 'local'
   const context = await load(path, environment)
-  const root = dirname(findUpwards(path))
+  const workspace = findUpwards(path)
+  const root = dirname(workspace)
 
-  const manifest = JSON.parse(readFileSync(findUpwards(path), 'utf8'))
+  const manifest = JSON.parse(readFileSync(workspace, 'utf8'))
   const required = declared(context)
   const missing = Object.entries(required)
     .filter(([name, version]) => !declares(manifest, name, version))
