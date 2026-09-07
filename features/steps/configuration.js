@@ -2,7 +2,7 @@ import { Given } from '@cucumber/cucumber'
 import { load as parse } from 'js-yaml'
 import { environment } from '@toa.io/generic'
 
-import { describe } from '@toa.io/extensions.configuration'
+import { describe } from '@toa.io/definitions/extensions.configuration'
 import { load } from './.workspace/components/index.js'
 
 Given(

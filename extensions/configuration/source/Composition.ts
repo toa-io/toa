@@ -1,7 +1,7 @@
 import { readdirSync, type Dirent } from 'node:fs'
 import { resolve } from 'node:path'
 import { Connector } from '@toa.io/core'
-import { uiPort } from './const.js'
+import { uiPort } from '@toa.io/definitions/extensions.configuration'
 import { UI } from './UI.js'
 import type { Host } from './Factory.js'
 

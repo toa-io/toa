@@ -5,7 +5,7 @@ import { environment } from '@toa.io/generic'
 import tsflow from 'cucumber-tsflow'
 
 import { Factory } from '../../source/index.js'
-import type { Route } from '../../source/extension.js'
+import type { Route } from '@toa.io/definitions/extensions.realtime'
 
 const { after, binding } = tsflow
 

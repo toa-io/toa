@@ -21,6 +21,7 @@
     "transpile": "tsc"
   },
   "dependencies": {
-    "@toa.io/core": "1.0.0-alpha.288"
+    "@toa.io/core": "1.0.0-alpha.288",
+    "@toa.io/definitions": "1.0.0-alpha.288"
   }
 }

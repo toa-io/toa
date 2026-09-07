@@ -1,6 +1,6 @@
 import Negotiator from 'negotiator'
 import { types } from '../HTTP/formats/index.js'
-import { DISCOVERY } from '../const.js'
+import { DISCOVERY } from '@toa.io/definitions/extensions.exposition'
 import type { Context, OutgoingMessage } from '../HTTP/index.js'
 
 /** What a browser asks for, and what nothing else here answers with. */

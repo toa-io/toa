@@ -21,6 +21,7 @@
     "@node-rs/bcrypt": "1.10.8",
     "@simplewebauthn/server": "14.0.0",
     "@toa.io/core": "1.0.0-alpha.288",
+    "@toa.io/definitions": "1.0.0-alpha.288",
     "@toa.io/generic": "1.0.0-alpha.286",
     "@toa.io/schemas": "1.0.0-alpha.287",
     "content-type": "3.0.0",

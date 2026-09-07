@@ -1,9 +1,14 @@
 import { Connector, Locator } from '@toa.io/core'
 import { console } from 'openspan'
-import { EDGES, MAX_EDGES, NAMESPACE, NODES } from './const.js'
+import {
+  EDGES,
+  MAX_EDGES,
+  NAMESPACE,
+  NODES
+} from '@toa.io/definitions/extensions.introspection'
 import * as keys from './keys.js'
 import type { Host } from './Factory.js'
-import type { Options } from './annotation.js'
+import type { Options } from '@toa.io/definitions/extensions.introspection'
 import type { Edge, Node } from './model.js'
 import type { Remote } from '@toa.io/core'
 

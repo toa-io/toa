@@ -8,7 +8,7 @@ import { families, interceptors } from './directives/index.js'
 import { DirectivesFactory } from './Directive.js'
 import { Composition } from './Composition.js'
 import * as root from './root.js'
-import { ATOM_GROUP, CHANNEL } from './const.js'
+import { ATOM_GROUP, CHANNEL } from '@toa.io/definitions/extensions.exposition'
 import { Interception } from './Interception.js'
 import { Dispatcher } from './RPC/index.js'
 import { Server as Model } from './MCP/index.js'
@@ -88,7 +88,8 @@ function configureLogs(): void {
  * `extensions/telemetry/source/extension.ts`.
  */
 function development(): TracesOptions {
-  const local = environment.get('TOA_DEV') === '1' || environment.get('TOA_BOOT_TRACE') === '1'
+  const local =
+    environment.get('TOA_DEV') === '1' || environment.get('TOA_BOOT_TRACE') === '1'
 
   return local ? { exporters: { console: {} } } : {}
 }

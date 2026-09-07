@@ -6,7 +6,7 @@ import { Connector, Locator } from '@toa.io/core'
 import { generate } from 'randomstring'
 import { Aspect } from './Aspect.js'
 import type { Client, Listener } from './Client.js'
-import type { Manifest } from './manifest.js'
+import type { Manifest } from '@toa.io/definitions/extensions.configuration'
 
 class Fake extends Connector {
   public readonly fetch = mock.fn(async () => ({

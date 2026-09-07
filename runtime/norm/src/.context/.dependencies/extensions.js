@@ -1,3 +1,4 @@
+import { Locator } from '@toa.io/core'
 import { component as load } from '../../component.js'
 import { definition } from '../../definition.js'
 
@@ -90,9 +91,22 @@ async function extract(reference, extensions, annotations) {
 
   // the annotation decides whether an extension contributes components at all
   const annotation = annotations?.[name]
+  const { manifests, paths } = mod.components(annotation)
+
+  // a definition carries the manifests, read where the extension is not installed;
+  // an entry names the directories, where it is
+  if (manifests !== undefined) return manifests.map(revive)
+
   const extracted = []
 
-  for (const path of mod.components(annotation).paths) extracted.push(await load(path))
+  for (const path of paths) extracted.push(await load(path))
 
   return extracted
+}
+
+/** A manifest as a digest carries it, which is one norm read, without the locator. */
+function revive(manifest) {
+  manifest.locator = new Locator(manifest.name, manifest.namespace)
+
+  return manifest
 }

@@ -13,8 +13,6 @@ export const providers = {
   test: async () => (await import('./Test.js')).Test
 } as const satisfies Record<string, () => Promise<Constructor>>
 
-export { secrets } from './secrets.js'
-
 export type { Declaration } from './Declaration.js'
 
 export type { S3Options } from './S3.js'

@@ -1,7 +1,7 @@
 import { it } from 'node:test'
 import assert from 'node:assert/strict'
 
-import { epoch } from './epoch.js'
+import { epoch } from '@toa.io/definitions/extensions.configuration'
 
 it('should be a sha256 hex', () => {
   assert.match(epoch({ type: 'object' }), /^[a-f0-9]{64}$/)

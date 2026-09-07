@@ -1,5 +1,5 @@
 import { Readable } from 'node:stream'
-import { REDACTED, SAMPLE_LIMIT } from './const.js'
+import { REDACTED, SAMPLE_LIMIT } from '@toa.io/definitions/extensions.introspection'
 import type { Outcome, Sample } from './model.js'
 
 /**

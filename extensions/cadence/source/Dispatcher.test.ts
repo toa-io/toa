@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 import { console } from 'openspan'
 
 import { Dispatcher } from './Dispatcher.js'
-import { BATCH, LANES } from './const.js'
+import { BATCH, LANES } from '@toa.io/definitions/extensions.cadence'
 import type { Local } from './Local.js'
 import type { atomicity } from '@toa.io/core/types'
 
@@ -30,7 +30,12 @@ interface Row {
 }
 
 /** `expires` defaults to no bound at all, which is what `overdue: null` writes */
-const row = (id: string, due: number, lane = 0, expires = Number.MAX_SAFE_INTEGER): Row => ({
+const row = (
+  id: string,
+  due: number,
+  lane = 0,
+  expires = Number.MAX_SAFE_INTEGER
+): Row => ({
   id,
   lane,
   due,
@@ -149,7 +154,11 @@ it('should settle an expired row without calling it', async () => {
   await dispatcher.connect()
   await advance(0)
 
-  assert.strictEqual(target.invoke.mock.callCount(), 0, 'past the bound its caller gave it')
+  assert.strictEqual(
+    target.invoke.mock.callCount(),
+    0,
+    'past the bound its caller gave it'
+  )
 
   rows = []
   await advance(INTERVAL)
@@ -438,7 +447,11 @@ it('should give up a row a scan stops reading, so a cancellation still lands', a
   await advance(INTERVAL) // the scan that finds it gone
   await advance(INTERVAL) // and past when it would have been called
 
-  assert.strictEqual(target.invoke.mock.callCount(), 0, 'the timer was given up with the row')
+  assert.strictEqual(
+    target.invoke.mock.callCount(),
+    0,
+    'the timer was given up with the row'
+  )
 })
 
 it('should keep a row the scan still reads', async () => {

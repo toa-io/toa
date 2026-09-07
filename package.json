@@ -20,6 +20,7 @@
     "libraries/openspan",
     "runtime/core",
     "libraries/*",
+    "definitions",
     "extensions/telemetry",
     "extensions/fetch",
     "extensions/stash",
@@ -27,7 +28,6 @@
     "runtime/*",
     "connectors/*",
     "extensions/*",
-    "definitions",
     "operations",
     "userland"
   ],
@@ -87,11 +87,12 @@
     "ci": "rm -f package-lock.json && rm -rf node_modules && npm exec --workspaces -c \"rm -rf node_modules transpiled\" && npm i",
     "types": "node runtime/runtime/bin/toa types -q -c 'runtime/prototype' 'extensions/*/components/*'",
     "transpile": "npm run transpile --workspaces --if-present",
-    "posttranspile": "npm run types",
+    "posttranspile": "npm run digest && npm run types",
     "retranspile": "npm exec --workspaces -c \"rm -rf transpiled\" && find . -name tsconfig.tsbuildinfo -not -path '*/node_modules/*' -delete && npm run transpile",
     "compose": "docker compose rm -f -s -v && docker compose up -d",
     "format": "oxfmt",
     "format:check": "oxfmt --check",
-    "features:nightly": "TOA_FEATURES=nightly npm run features"
+    "features:nightly": "TOA_FEATURES=nightly npm run features",
+    "digest": "node definitions/transpiled/digest/generate.js"
   }
 }

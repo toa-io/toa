@@ -1,5 +1,5 @@
 import { Temporary, type TemporaryOptions } from './Temporary.js'
-import { secrets } from './secrets.js'
+import { secrets } from '@toa.io/definitions/extensions.storages'
 import type { Secret } from '../Secrets.js'
 
 export class Test extends Temporary {

@@ -2,7 +2,6 @@ import { readdirSync, type Dirent } from 'node:fs'
 import { resolve } from 'node:path'
 import { Connector } from '@toa.io/core'
 import { type Host } from './Factory.js'
-import type { Annotation } from './annotation.js'
 
 /** Hosts the introspection components in the explorer process. */
 export class Composition extends Connector {
@@ -33,23 +32,11 @@ function entries(): Dirent[] {
   return entries.filter((entry) => entry.isDirectory())
 }
 
-/**
- * The extension is predefined, so an application that turns introspection off
- * must not end up with the explorer components — nor with the exposition
- * dependency they bring in.
- */
-export function components(annotation?: Annotation): Components {
-  if (annotation === false) return { labels: [], paths: [] }
+/** The components this extension ships, where they are, for the process that runs them. */
+export function components(): Components {
+  const paths = find()
 
-  const labels: string[] = []
-  const paths: string[] = []
-
-  for (const entry of entries()) {
-    labels.push(entry.name.replace('.', '-'))
-    paths.push(resolve(ROOT, entry.name))
-  }
-
-  return { labels, paths }
+  return { labels: entries().map((entry) => entry.name.replace('.', '-')), paths }
 }
 
 interface Components {

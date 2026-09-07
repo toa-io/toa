@@ -3,13 +3,12 @@ import { console } from 'openspan'
 import { providers } from './providers/index.js'
 import { Storage, type Storages } from './Storage.js'
 import { Aspect } from './Aspect.js'
-import { ENV_PREFIX } from './deployment.js'
-import { validateAnnotation } from './Annotation.js'
+import { ENV_PREFIX, validateAnnotation } from '@toa.io/definitions/extensions.storages'
 import { environment } from '@toa.io/generic'
 import type { Constructor } from './Provider.js'
 import type { Declaration } from './providers/index.js'
-import type { Annotation } from './Annotation.js'
 import type { Secrets } from './Secrets.js'
+import type { Annotation } from '@toa.io/definitions/extensions.storages'
 
 export class Factory {
   private readonly annotation: Annotation
@@ -32,7 +31,8 @@ export class Factory {
     const storages: Storages = {}
 
     for (const [name, declaration] of Object.entries(this.annotation))
-      storages[name] = await this.createStorage(name, declaration)
+      // the annotation is validated above, so a declaration is its provider's
+      storages[name] = await this.createStorage(name, declaration as Declaration)
 
     return storages
   }

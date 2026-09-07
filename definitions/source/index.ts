@@ -1,2 +1,2 @@
 export { version } from './version.js'
-export { definition } from './definition.js'
+export { definition, DEFINED } from './definition.js'

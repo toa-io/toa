@@ -1,6 +1,6 @@
 import { Connector } from '@toa.io/core'
 import type { Local } from './Local.js'
-import type { Options } from './types.js'
+import type { Options } from '@toa.io/definitions/extensions.cadence'
 
 interface Input {
   endpoint: string

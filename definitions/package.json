@@ -20,9 +20,30 @@
   "publishConfig": {
     "access": "public"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@toa.io/generic": "1.0.0-alpha.286",
+    "@toa.io/pointer": "1.0.0-alpha.287",
+    "@toa.io/schemas": "1.0.0-alpha.287"
+  },
   "scripts": {
     "transpile": "tsc",
+    "prepack": "node transpiled/digest/generate.js",
     "test": "echo \"Error: run tests from root\" && exit 1"
+  },
+  "exports": {
+    ".": "./transpiled/index.js",
+    "./*": "./transpiled/*/index.js"
+  },
+  "devDependencies": {
+    "@toa.io/core": "1.0.0-alpha.288",
+    "@toa.io/extensions.cadence": "1.0.0-alpha.288",
+    "@toa.io/extensions.configuration": "1.0.0-alpha.288",
+    "@toa.io/extensions.exposition": "1.0.0-alpha.288",
+    "@toa.io/extensions.introspection": "1.0.0-alpha.288",
+    "@toa.io/extensions.realtime": "1.0.0-alpha.288",
+    "@toa.io/norm": "1.0.0-alpha.288",
+    "@toa.io/operations": "1.0.0-alpha.288",
+    "@toa.io/prototype": "1.0.0-alpha.287",
+    "openspan": "1.0.0-alpha.286"
   }
 }

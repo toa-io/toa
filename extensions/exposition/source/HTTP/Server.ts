@@ -11,9 +11,14 @@ import { type OutgoingMessage, write } from './messages.js'
 import { ClientError, Exception } from './exceptions.js'
 import { Context } from './Context.js'
 import { Probe } from './Probe.js'
-import { PORT, PROBE } from '../const.js'
+import { PORT, PROBE } from '@toa.io/definitions/extensions.exposition'
 import type { IncomingMessage, Protocol, ServerResponse } from './types.js'
-import type { Bouncer, MCP, OAuth, RPC } from '../Annotation.js'
+import type {
+  Bouncer,
+  MCPAnnotation as MCP,
+  OAuth,
+  RPCAnnotation as RPC
+} from '@toa.io/definitions/extensions.exposition'
 
 export class Server extends Connector {
   private readonly server: http.Server | http2.Http2Server
