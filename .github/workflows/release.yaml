@@ -96,12 +96,28 @@ jobs:
         run: |
           git fetch
           git checkout dev
-          # package-lock.json has -merge in .gitattributes, so concurrent
-          # lockfile edits (e.g. Dependabot) always conflict with the release bump.
+
+          # A release lands on the release branch as one squashed commit, so `dev`'s commits
+          # are not ancestors of it and every manifest whose dependencies moved meets the same
+          # block with bumped versions. What that branch holds is `dev`'s content plus the
+          # bump, so it is the newer manifest, and the lockfile follows from the manifests
+          # rather than from either side — it has `-merge` in .gitattributes and never merges.
           if ! git merge ${{ github.base_ref }}; then
-            git checkout --ours package-lock.json
+            git diff --name-only --diff-filter=U -- '*package.json' | xargs -r git checkout --theirs --
+            git diff --name-only --diff-filter=U -- '*package.json' | xargs -r git add
+            git checkout --theirs -- package-lock.json 2>/dev/null || true
             npm install --package-lock-only --ignore-scripts
             git add package-lock.json
+
+            # anything still conflicting is code, which means `dev` moved during the release:
+            # that is for a person to resolve, and the version bump is on the release branch
+            # to merge from once they have
+            if git diff --name-only --diff-filter=U | grep -q .; then
+              echo "::error::merging ${{ github.base_ref }} into dev left conflicts outside the manifests"
+              git diff --name-only --diff-filter=U
+              exit 1
+            fi
+
             git -c core.hooksPath=/dev/null commit --no-edit
           fi
           git push --all origin --no-verify
