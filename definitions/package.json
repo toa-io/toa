@@ -28,7 +28,7 @@
   },
   "scripts": {
     "transpile": "tsc",
-    "prepack": "node transpiled/digest/generate.js",
+    "prepack": "tsc && node transpiled/digest/generate.js",
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "exports": {
