@@ -1,6 +1,6 @@
 import assert from 'node:assert'
 import { parse, type Node, type Method, type Query } from './RTD/syntax/index.js'
-import { shortcuts } from './Directive.js'
+import { shortcuts } from './shortcuts.js'
 import * as schemas from './schemas.js'
 import type { Manifest } from '@toa.io/norm'
 

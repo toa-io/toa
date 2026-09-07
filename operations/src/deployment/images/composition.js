@@ -1,5 +1,5 @@
 import { join } from 'node:path'
-import fs from 'fs-extra'
+import { cp } from 'node:fs/promises'
 import { createHash } from 'node:crypto'
 
 import { Image } from './image.js'
@@ -66,7 +66,7 @@ export class Composition extends Image {
     for (const component of this.#components) {
       const target = join(context, component.locator.label)
 
-      await fs.copy(component.path, target)
+      await cp(component.path, target, { recursive: true })
       await declare(component.path, target, component.locator.label)
     }
 

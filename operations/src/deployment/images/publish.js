@@ -4,8 +4,7 @@ import { tmpdir } from 'node:os'
 import { join, resolve } from 'node:path'
 import { pathToFileURL } from 'node:url'
 
-import { execa } from 'execa'
-
+import { run } from '../../process.js'
 import { Service } from './service.js'
 
 /**
@@ -29,7 +28,9 @@ export async function publish(workspace, runtime, platforms) {
   const { image } = await import(pathToFileURL(join(directory, manifest.main)).href)
 
   if (image === undefined)
-    throw new Error(`'${manifest.name}' publishes no service image: it exports no 'image'`)
+    throw new Error(
+      `'${manifest.name}' publishes no service image: it exports no 'image'`
+    )
 
   const root = await mkdtemp(join(tmpdir(), 'toa-publish'))
 
@@ -79,12 +80,6 @@ function name(image) {
 }
 
 const read = (path) => JSON.parse(readFileSync(path, 'utf8'))
-
-const run = async (cmd, args) => {
-  console.log('toa>', cmd, args.join(' '))
-
-  await execa(cmd, args, { stdio: 'inherit' })
-}
 
 // the reference is assigned rather than derived from a scope
 const SCOPE = ''

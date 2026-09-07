@@ -1,7 +1,5 @@
 // noinspection JSCheckFunctionSignatures
 
-import { compose } from '../handlers/compose.js'
-
 const builder = (yargs) => {
   yargs
     .positional('paths', {
@@ -47,7 +45,14 @@ const builder = (yargs) => {
     ])
 }
 
+// the handler and what it depends on load when the command runs, not when the program starts
+const handler = async (argv) => {
+  const { compose } = await import('../handlers/compose.js')
+
+  return await compose(argv)
+}
+
 export const command = 'compose [paths...]'
 export const desc = 'Run composition'
 
-export { builder, compose as handler }
+export { builder, handler }

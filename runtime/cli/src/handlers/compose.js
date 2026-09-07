@@ -4,7 +4,6 @@ import { Connector } from '@toa.io/core'
 import * as boot from '@toa.io/boot'
 import { version } from '@toa.io/runtime'
 
-import * as docker from './docker/index.js'
 import { graceful } from './lib/graceful.js'
 import { create } from './lib/services.js'
 import { components as find } from '../util/find.js'
@@ -65,6 +64,8 @@ function services(argv) {
  * @return {Promise<void>}
  */
 async function dock(argv) {
+  // the image is built with the deployment package, which a plain run never needs
+  const docker = await import('./docker/index.js')
   const repository = await docker.build(argv.context, argv.paths)
   const args = pick(argv, ['kill', 'bindings', 'service'])
   const command = docker.command('toa compose *', args)

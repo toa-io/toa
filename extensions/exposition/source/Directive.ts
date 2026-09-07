@@ -246,14 +246,3 @@ interface Stage {
   depart: SpanOptions
 }
 
-export const shortcuts: RTD.syntax.Shortcuts = new Map([
-  ['anonymous', 'auth:anonymous'],
-  ['anyone', 'auth:anyone'],
-  ['id', 'auth:id'],
-  ['role', 'auth:role'],
-  ['rule', 'auth:rule'],
-  ['incept', 'auth:incept'],
-  ['input', 'io:input'],
-  ['output', 'io:output'],
-  ['languages', 'map:languages']
-])

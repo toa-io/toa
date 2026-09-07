@@ -3,6 +3,7 @@ import { Readable } from 'node:stream'
 import { v2 as cloudinary } from 'cloudinary'
 import { console } from 'openspan'
 import { Provider } from '../Provider.js'
+import { secrets } from './secrets.js'
 import { ERR_NOT_FOUND } from '../errors.js'
 import type { Maybe } from '@toa.io/core/types'
 import type { Metadata, Stream } from '../Entry.js'
@@ -13,10 +14,7 @@ import type { ConfigOptions, TransformationOptions, UploadApiOptions } from 'clo
 export type CloudinarySecrets = Secrets<'API_KEY' | 'API_SECRET'>
 
 export class Cloudinary extends Provider<CloudinaryOptions> {
-  public static override readonly SECRETS: readonly Secret[] = [
-    { name: 'API_KEY' },
-    { name: 'API_SECRET' }
-  ]
+  public static override readonly SECRETS: readonly Secret[] = secrets.cloudinary
 
   private readonly type: StorageType
   private readonly eager: TransformationOptions[] = []

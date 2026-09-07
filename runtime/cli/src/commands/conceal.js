@@ -1,5 +1,3 @@
-import { conceal } from '../handlers/conceal.js'
-
 const builder = (yargs) => {
   yargs
     .positional('secret', {
@@ -44,7 +42,14 @@ const builder = (yargs) => {
     ])
 }
 
+// the handler and what it depends on load when the command runs, not when the program starts
+const handler = async (argv) => {
+  const { conceal } = await import('../handlers/conceal.js')
+
+  return await conceal(argv)
+}
+
 export const command = 'conceal [secret] [key-values...]'
 export const desc = 'Deploy a secret'
 
-export { builder, conceal as handler }
+export { builder, handler }
