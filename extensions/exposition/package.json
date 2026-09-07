@@ -33,7 +33,6 @@
     "@toa.io/generic": "1.0.0-alpha.292",
     "@toa.io/schemas": "1.0.0-alpha.292",
     "content-type": "3.0.0",
-    "js-yaml": "5.4.1",
     "matchacho": "0.6.0",
     "minimatch": "10.2.6",
     "msgpackr": "2.1.0",
@@ -64,10 +63,12 @@
   "devDependencies": {
     "@node-rs/bcrypt": "1.10.8",
     "@simplewebauthn/server": "14.0.0",
+    "@toa.io/agent": "*",
     "@toa.io/extensions.storages": "*",
     "@types/cors": "2.8.19",
     "@types/negotiator": "0.6.5",
     "jose": "6.2.10",
+    "js-yaml": "5.4.1",
     "lru-cache": "11.5.2",
     "paseto": "4.0.0"
   },

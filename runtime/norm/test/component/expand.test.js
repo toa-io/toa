@@ -30,14 +30,3 @@ it('should keep declared version', async () => {
 
   assert.deepStrictEqual(source.version, '1.0.0')
 })
-
-it('should recognize storages.queues', async () => {
-  const queues = { foo: 'bar' }
-
-  source.queues = clone(queues)
-
-  await expand(source)
-
-  assert.strictEqual(source.queues, undefined)
-  assert.partialDeepStrictEqual(source.properties['@toa.io/storages.queues'], queues)
-})

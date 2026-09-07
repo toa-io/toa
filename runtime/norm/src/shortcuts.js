@@ -41,7 +41,6 @@ export const SHORTCUTS = {
   node: '@toa.io/bridges.node',
   bash: '@toa.io/bridges.bash',
   mongodb: '@toa.io/storages.mongodb',
-  queues: '@toa.io/storages.queues',
   exposition: '@toa.io/extensions.exposition',
   realtime: '@toa.io/extensions.realtime',
   configuration: '@toa.io/extensions.configuration',
