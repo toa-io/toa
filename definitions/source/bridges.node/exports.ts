@@ -1,11 +1,14 @@
-import { parseSync } from 'oxc-parser'
+import { createRequire } from 'node:module'
+
+// erased before anything runs, so the parser is a type here and a package only where it is read
+import type { parseSync } from 'oxc-parser'
 
 /**
  * What a module exports, read from its source: the name, and what the value is declared as.
  * Nothing is imported, so what a module depends on need not be installed to read it.
  */
 export function exports(path: string, text: string): Exports {
-  const { program, errors } = parseSync(path, text)
+  const { program, errors } = parser()(path, text)
 
   if (errors.length > 0) throw new Error(`${path}: ${errors[0].message}`)
 
@@ -49,6 +52,37 @@ function named(node: any, locals: Locals, exported: Exports): void {
     exported.set(name(specifier.exported), binding(specifier.local, locals))
   }
 }
+
+/**
+ * The parser, loaded when a module is read and not before.
+ *
+ * It is an optional peer of this package rather than a dependency: a composition reads the
+ * manifest its build normalised and reads no source at all, so an image carries three and a half
+ * megabytes of parser for nothing. What normalises — a workspace and a deploy — has it through
+ * `@toa.io/operations`.
+ */
+function parser(): ParseSync {
+  if (parse !== undefined) return parse
+
+  try {
+    parse = (require('oxc-parser') as { parseSync: ParseSync }).parseSync
+  } catch (error) {
+    throw new Error(
+      'Reading what a module declares needs `oxc-parser`, which is not installed: it comes ' +
+        'with `@toa.io/operations`, which a workspace that composes or deploys has.',
+      { cause: error }
+    )
+  }
+
+  return parse
+}
+
+// what `find` returns is a package directory, and the parser is a module of this machine's
+const require = createRequire(import.meta.url)
+
+type ParseSync = typeof parseSync
+
+let parse: ParseSync | undefined
 
 /** `module.exports = { … }`, `module.exports.x = …` and `exports.x = …` */
 function assigned(expression: any, locals: Locals, exported: Exports): void {

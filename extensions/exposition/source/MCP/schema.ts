@@ -31,8 +31,8 @@ export function input(
   /*
    * It is a querystring on the wire, which is nothing a model knows or needs to; what it is
    * to a caller is the part of a call that picks what the call is about. What selects
-   * records is stated here and not in the resource's own description, where it would be the
-   * same sentence on every queryable resource there is.
+   * records is `selection` on the method, and is merged here because here it is something
+   * the caller sends.
    */
   const query = { ...introspection.query, ...selection }
 

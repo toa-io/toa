@@ -12,7 +12,7 @@ import { Service } from './service.js'
  * with `registry.services: published` takes it instead of building one.
  *
  * The image is built from the package as npm publishes it, not from the workspace: what
- * `.npmignore` leaves out is not in the tarball, and an application builds from the tarball.
+ * `files` leaves out is not in the tarball, and an application builds from the tarball.
  *
  * @param {string} workspace path to the extension's directory in this repository
  * @param {string} runtime the runtime version, which is the tag and the base image

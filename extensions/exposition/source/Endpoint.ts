@@ -92,11 +92,14 @@ export class Endpoint implements RTD.Endpoint {
     }
 
     const query = this.mapping.explain(operation)
+    const selection = this.mapping.selection()
     const introspection: Introspection = {}
 
     if (route !== null) introspection.route = route
 
     if (query !== null) introspection.query = query
+
+    if (selection !== null) introspection.selection = selection
 
     Object.assign(introspection, operation)
 

@@ -29,6 +29,7 @@
     "@toa.io/cli": "1.0.0-alpha.292",
     "@toa.io/core": "1.0.0-alpha.292",
     "@toa.io/definitions": "1.0.0-alpha.292",
+    "@toa.io/extensions.cadence": "1.0.0-alpha.292",
     "@toa.io/extensions.configuration": "1.0.0-alpha.292",
     "@toa.io/extensions.exposition": "1.0.0-alpha.292",
     "@toa.io/extensions.fetch": "1.0.0-alpha.292",
@@ -42,8 +43,7 @@
     "@toa.io/prototype": "1.0.0-alpha.289",
     "@toa.io/storages.mongodb": "1.0.0-alpha.292",
     "@toa.io/storages.null": "1.0.0-alpha.292",
-    "@toa.io/userland": "1.0.0-alpha.292",
-    "openspan": "1.0.0-alpha.286"
+    "@toa.io/userland": "1.0.0-alpha.292"
   },
   "gitHead": "2ab75e1fd23f2e64720a60b8562dda606aa723ee"
 }

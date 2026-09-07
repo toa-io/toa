@@ -1,10 +1,10 @@
 <script lang="ts">
   import { SvelteSet } from 'svelte/reactivity'
-  import { Async, ok } from 'svas'
+  import { Async } from 'svas'
   import { tree } from '@/discovery'
   import { Separator } from '$ui/separator'
   import * as Item from '$ui/item'
-  import { only, query, rank, system } from './ui'
+  import { discovered, only, query, rank, system } from './ui'
   import { dict } from './intl'
   import Resource from './Resource.svelte'
   import type { Resource as Described } from '@/discovery'
@@ -15,7 +15,8 @@
   /** Which cards are open. Held here so the filter can open the one it has left. */
   const opened = new SvelteSet<string>()
 
-  const routes = $derived(ok($tree) ? Object.entries($tree.routes) : [])
+  const of = $derived(discovered($tree))
+  const routes = $derived(of === null ? [] : Object.entries(of.routes))
 
   const shown = $derived(
     routes

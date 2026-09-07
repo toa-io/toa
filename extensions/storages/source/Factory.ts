@@ -1,6 +1,6 @@
 import assert from 'node:assert'
 import { console } from 'openspan'
-import { providers } from './providers/index.js'
+import { provider as load } from './providers/index.js'
 import { Storage, type Storages } from './Storage.js'
 import { Aspect } from './Aspect.js'
 import { ENV_PREFIX, validateAnnotation } from '@toa.io/definitions/extensions.storages'
@@ -39,7 +39,7 @@ export class Factory {
 
   private async createStorage(name: string, declaration: Declaration): Promise<Storage> {
     const { provider: id, ...options } = declaration
-    const Provider: Constructor = await providers[id]()
+    const Provider: Constructor = await load(id)
     const secrets = this.resolveSecrets(name, Provider)
     const provider = new Provider(options, secrets)
 

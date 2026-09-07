@@ -20,11 +20,19 @@
   "publishConfig": {
     "access": "public"
   },
+  "files": [
+    "transpiled",
+    "digest",
+    "schemas",
+    "readme.md",
+    "!**/tsconfig.tsbuildinfo",
+    "!**/*.test.*",
+    "!**/.env*"
+  ],
   "dependencies": {
     "@toa.io/generic": "1.0.0-alpha.292",
     "@toa.io/pointer": "1.0.0-alpha.292",
-    "@toa.io/schemas": "1.0.0-alpha.292",
-    "oxc-parser": "0.149.0"
+    "@toa.io/schemas": "1.0.0-alpha.292"
   },
   "scripts": {
     "transpile": "tsc",
@@ -37,6 +45,15 @@
   },
   "devDependencies": {
     "@toa.io/core": "1.0.0-alpha.292",
-    "openspan": "1.0.0-alpha.286"
+    "openspan": "1.0.0-alpha.286",
+    "oxc-parser": "0.149.0"
+  },
+  "peerDependencies": {
+    "oxc-parser": "0.149.0"
+  },
+  "peerDependenciesMeta": {
+    "oxc-parser": {
+      "optional": true
+    }
   }
 }

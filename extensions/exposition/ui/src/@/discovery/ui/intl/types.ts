@@ -21,6 +21,8 @@ export type Dictionary = {
         unset: string
         expand: string
         mcp: string
+        selection: string
+        search: string
       }
       guard: {
         public: string
@@ -52,5 +54,16 @@ export type Dictionary = {
         anything: string
         stream: string
         streamed: string
+      }
+      guide: {
+        authentication: {
+          title: string
+        }
+        multipart: {
+          title: string
+        }
+        queries: {
+          title: string
+        }
       }
     }

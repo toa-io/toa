@@ -23,6 +23,8 @@ interface Composition {
   name: string
   components: Manifest[]
   services?: string[]
+  /** what a deploy installs for the services this composition runs, by package name */
+  packages?: Record<string, string>
 }
 
 export interface Dependency<T = undefined> {
@@ -38,6 +40,8 @@ interface Context extends Declaration {
   compositions?: Composition[]
   components?: Manifest[]
   dependencies?: Record<string, Dependency[]>
+  /** what a deploy installs for every service, which is what `mono` runs */
+  packages?: Record<string, string>
 }
 
 export function context(path: string, environment?: string): Promise<Context>

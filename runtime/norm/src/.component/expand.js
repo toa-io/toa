@@ -5,7 +5,6 @@ import {
   events,
   receivers,
   extensions,
-  properties,
   version
 } from './.expand/index.js'
 
@@ -15,7 +14,6 @@ export async function expand(manifest) {
   operations(manifest)
   events(manifest)
   receivers(manifest)
-  properties(manifest)
   extensions(manifest)
 
   await version(manifest)

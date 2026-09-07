@@ -34,10 +34,10 @@ Introspection properties:
 - `route` route parameters, including what `map:segments` names differently, each as
   [`help:route`](help.md) describes it
 - `query` the [query parameters](query.md#parameters) this resource declares, each as
-  [`help:query`](help.md) describes it. What selects records — `criteria`, `sort`, `limit`,
-  `omit`, `search` — is not among them: it is the same of every queryable resource, and so
-  not something one says about itself. A [procedure](rpc.md) carries it, because there it is
-  something the caller sends
+  [`help:query`](help.md) describes it
+- `selection` what picks the records — `criteria`, `sort`, `limit`, `omit`, `search` — where
+  the method is queryable. Not among `query`: those are parameters of its own. A closed
+  `criteria` is not here, because the method does not take one
 - `octets` what sending a file takes, from [`octets:put`](octets.md): the media types it
   `accept`s, the `limit` a larger body is refused by, and `stream` where storing it starts a
   workflow and the reply arrives in parts rather than as one object

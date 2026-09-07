@@ -198,7 +198,7 @@ jobs:
       # An extension service's image is the extension on the runtime base and nothing else,
       # so every application would otherwise build the same four on every release. Published
       # here, an application with `registry.services: published` takes them as they are.
-      # Built from the tarball, not the workspace: `.npmignore` decides what an application
+      # Built from the tarball, not the workspace: `files` decides what an application
       # would have got. Same CDN lag as above, so the install retries.
       - name: Publish extension service images
         run: |

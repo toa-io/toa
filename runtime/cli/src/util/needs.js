@@ -28,3 +28,7 @@ export const RUNTIME = ['@toa.io/boot', '@toa.io/runtime']
 
 /** What deploys one. */
 export const OPERATIONS = ['@toa.io/operations', '@toa.io/operations']
+
+/** What generates a key, which a container never does: the deployment library carries it. */
+export const PASETO = ['paseto', '@toa.io/operations']
+

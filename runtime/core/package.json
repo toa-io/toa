@@ -28,6 +28,12 @@
   "publishConfig": {
     "access": "public"
   },
+  "files": [
+    "transpiled",
+    "!**/tsconfig.tsbuildinfo",
+    "!**/*.test.*",
+    "!**/.env*"
+  ],
   "scripts": {
     "transpile": "tsc",
     "test": "echo \"Error: run tests from root\" && exit 1"

@@ -5,6 +5,7 @@
   import { account, authenticated, logout } from '@/iam'
   import {
     CONSOLES,
+    Guides,
     Mcp,
     Resources,
     addressed,
@@ -80,7 +81,7 @@
 
   /** The tree as a document, saved where the reader keeps things. */
   function save(): void {
-    const document_ = markdown($tree ?? { routes: {} }, meta.title)
+    const document_ = markdown($tree, meta.title)
     const url = URL.createObjectURL(new Blob([document_], { type: 'text/markdown' }))
     const anchor = window.document.createElement('a')
 
@@ -111,7 +112,8 @@
 <svelte:window onkeydown={shortcut} />
 
 {#snippet resources()}
-  <div class="mx-auto w-full max-w-3xl px-4 pb-12">
+  <div class="mx-auto flex w-full max-w-3xl flex-col gap-6 px-4 pb-12">
+    <Guides />
     <Resources />
   </div>
 {/snippet}

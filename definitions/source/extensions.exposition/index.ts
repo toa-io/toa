@@ -1,5 +1,6 @@
 export { manifest } from './manifest.js'
 export { components } from './components.js'
+export { installs } from './packages.js'
 export { deployment, image } from './deployment.js'
 export { shortcuts } from './shortcuts.js'
 export * from './const.js'

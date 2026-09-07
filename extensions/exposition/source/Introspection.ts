@@ -37,6 +37,14 @@ export interface Introspection {
   route?: Record<string, Schema>
   query?: Record<string, Schema>
 
+  /**
+   * What picks the records a call is about — `criteria`, `sort`, `limit`, `omit`, `search`.
+   * Not the parameters the resource declares: those are `query`. Absent where the method
+   * is not queryable.
+   */
+  selection?: Record<string, Schema>
+
+
   /** what the body is, where it is a file rather than a value — [`octets:put`](octets.md) */
   octets?: Octets
   input?: Schema
@@ -98,6 +106,7 @@ const KEYS = [
   'mcp',
   'route',
   'query',
+  'selection',
   'octets',
   'input',
   'output',

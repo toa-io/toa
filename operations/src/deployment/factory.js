@@ -41,7 +41,9 @@ export class Factory {
 
     if (this.#mono)
       this.#image = this.#registry.mono({
-        components: context.components
+        components: context.components,
+        // mono runs every service, so it installs what every one of them brings
+        packages: context.packages
       })
     else
       this.#compositions = context.compositions.map((composition) =>
