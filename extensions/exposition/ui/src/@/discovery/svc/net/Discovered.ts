@@ -27,6 +27,9 @@ export interface Method extends Described {
   route?: Record<string, Schema>
   query?: Record<string, Schema>
 
+  /** what picks the records — `criteria`, `sort`, `limit`, `omit`, `search` */
+  selection?: Record<string, Schema>
+
   /** what sending a file here takes, where the body is one — `octets:put` */
   octets?: Octets
   input?: Schema

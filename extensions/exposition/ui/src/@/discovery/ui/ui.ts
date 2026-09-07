@@ -66,16 +66,27 @@ export function refuses(described: Described): boolean {
   return described.anonymous === true && guard(described) === 'public'
 }
 
+/** Whether the store holds a tree, and not a failed or unfinished read. */
+export function discovered(tree: Discovered | null | undefined): Discovered | null {
+  if (tree == null || typeof tree !== 'object' || tree.routes == null) return null
+
+  return tree
+}
+
 /** Whether the tree carries a route at all. */
 export function carries(tree: Discovered | null, route: string): boolean {
-  return tree !== null && route in tree.routes
+  const of = discovered(tree)
+
+  return of !== null && route in of.routes
 }
 
 /** Whether anything the tree carries is published to a model, and so whether MCP is on. */
 export function published(tree: Discovered | null): boolean {
-  if (tree === null) return false
+  const of = discovered(tree)
 
-  return Object.values(tree.routes).some((resource) =>
+  if (of === null) return false
+
+  return Object.values(of.routes).some((resource) =>
     verbs(resource).some((verb) => method(resource, verb).mcp === true),
   )
 }

@@ -41,7 +41,7 @@ export function fields(route: string, of: Method): Field[] {
     })
   })
 
-  for (const [name, schema] of Object.entries(of.query ?? {}))
+  for (const [name, schema] of Object.entries({ ...of.selection, ...of.query }))
     found.push({ key: `query:${name}`, name, where: 'query', schema, required: false })
 
   return found

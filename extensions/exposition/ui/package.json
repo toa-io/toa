@@ -63,7 +63,8 @@
   },
   "dependencies": {
     "negotiator": "^1.1.0",
-    "qrcode": "^1.5.4"
+    "qrcode": "^1.5.4",
+    "snarkdown": "^2.0.0"
   },
   "description": "Toa Exposition discovery UI",
   "overrides": {

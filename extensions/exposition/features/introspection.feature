@@ -563,3 +563,39 @@ Feature: Introspection
             b:
               type: string
       """
+
+  Scenario: What picks the records
+    Given the `pots` is running with the following manifest:
+      """yaml
+      exposition:
+        /:
+          io:output: true
+          GET: enumerate
+      """
+    When the following request is received:
+      """
+      OPTIONS /pots/ HTTP/1.1
+      host: nex.toa.io
+      accept: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+
+      GET:
+        selection:
+          criteria:
+            type: string
+          sort:
+            type: string
+          limit:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 10
+          omit:
+            type: integer
+            minimum: 0
+            maximum: 1000
+            default: 0
+      """

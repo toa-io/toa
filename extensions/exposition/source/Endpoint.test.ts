@@ -64,4 +64,41 @@ describe('explain', () => {
 
     assert.deepEqual(Object.keys((second.input as any).properties), ['b'])
   })
+
+  it('should state what picks the records, where the method is queryable', async () => {
+    const endpoint = new Endpoint('enumerate', Mapping.create({}), remote())
+    const introspection = await endpoint.explain([])
+
+    assert.deepEqual(Object.keys(introspection.selection ?? {}), [
+      'criteria',
+      'sort',
+      'limit',
+      'omit'
+    ])
+  })
+
+  it('should omit selection where the method is not queryable', async () => {
+    const introspection = await endpoint(remote()).explain([])
+
+    assert.equal(introspection.selection, undefined)
+  })
+
+  it('should not page a method that answers one object', async () => {
+    const endpoint = new Endpoint('observe', Mapping.create({}, false), remote())
+    const introspection = await endpoint.explain([])
+
+    assert.deepEqual(Object.keys(introspection.selection ?? {}), ['criteria', 'sort'])
+  })
+
+  it('should omit a closed criteria from selection', async () => {
+    const endpoint = new Endpoint(
+      'enumerate',
+      Mapping.create({ criteria: 'temperature>60' }),
+      remote()
+    )
+    const introspection = await endpoint.explain([])
+
+    assert.equal('criteria' in (introspection.selection ?? {}), false)
+    assert.ok(introspection.selection?.sort !== undefined)
+  })
 })

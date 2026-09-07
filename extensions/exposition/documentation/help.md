@@ -86,8 +86,8 @@ what puts it there. Anything else is described only where it is already answered
 nobody's is not answered, and nothing here checks one: the template does not say them all.
 
 `help:query` describes the [parameters a resource declares](query.md#parameters). What selects
-records — `criteria`, `sort` and the rest — is the same of every queryable resource and says so
-itself, so it is neither answered here nor described.
+records — `criteria`, `sort` and the rest — is answered as [`selection`](introspection.md)
+on the method, and is not described here.
 
 ## Where it applies
 

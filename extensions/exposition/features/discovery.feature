@@ -211,3 +211,46 @@ Feature: Resource discovery
           GET:
             anonymous: true
       """
+
+  Scenario: What picks the records
+    `selection` is what a queryable method takes besides the parameters it declares.
+
+    Given the `pots` is running with the following manifest:
+      """yaml
+      exposition:
+        /:
+          io:output: [id, title]
+          GET: enumerate
+          /:id:
+            GET: observe
+      """
+    When the following request is received:
+      """
+      OPTIONS /.discovery HTTP/1.1
+      host: nex.toa.io
+      accept: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+
+      routes:
+        /pots:
+          GET:
+            selection:
+              criteria:
+                type: string
+              sort:
+                type: string
+              limit:
+                type: integer
+              omit:
+                type: integer
+        /pots/:id:
+          GET:
+            selection:
+              criteria:
+                type: string
+              sort:
+                type: string
+      """
