@@ -155,10 +155,11 @@ describe('prepare', () => {
       .split('\n')
       .filter((line) => line !== '' && !line.startsWith('#'))
 
+    // no USER: the runtime starts as root and drops to `node` itself, and nothing else
+    // touches the filesystem, which is what lets the layer be laid over a base never pulled
     assert.deepStrictEqual(lines, [
       `FROM ${image.dependencies.reference}`,
       'COPY --link . /composition',
-      'USER node',
       'CMD toa compose *'
     ])
 
@@ -180,6 +181,7 @@ describe('prepare', () => {
     const dockerfile = await readFile(join(context, 'Dockerfile'), 'utf8')
 
     assert.ok(dockerfile.includes('CMD toa mono *'))
+    assert.doesNotMatch(dockerfile, /^USER /m)
   })
 })
 
