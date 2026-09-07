@@ -57,6 +57,9 @@ export const dictionaries = {
       },
       "multipart": {
         "title": "Multipart responses"
+      },
+      "queries": {
+        "title": "Collection queries"
       }
     }
   }

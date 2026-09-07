@@ -60,5 +60,8 @@ export type Dictionary = {
         multipart: {
           title: string
         }
+        queries: {
+          title: string
+        }
       }
     }

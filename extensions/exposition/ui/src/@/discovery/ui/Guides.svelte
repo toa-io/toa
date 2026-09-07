@@ -20,6 +20,12 @@
     />
 
     <Guide
+      id="discovery-queries-link"
+      href={resolve('/queries/')}
+      title={$dict.guide.queries.title}
+    />
+
+    <Guide
       id="discovery-multipart-link"
       href={resolve('/multipart/')}
       title={$dict.guide.multipart.title}

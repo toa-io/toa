@@ -125,3 +125,6 @@ inputs:
     multipart:
       title:
         input: Multipart responses
+    queries:
+      title:
+        input: Collection queries

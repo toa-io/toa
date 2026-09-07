@@ -81,7 +81,7 @@
 
   /** The tree as a document, saved where the reader keeps things. */
   function save(): void {
-    const document_ = markdown($tree ?? { routes: {} }, meta.title)
+    const document_ = markdown($tree, meta.title)
     const url = URL.createObjectURL(new Blob([document_], { type: 'text/markdown' }))
     const anchor = window.document.createElement('a')
 
