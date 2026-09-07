@@ -4,7 +4,7 @@ import { createHash } from 'node:crypto'
 
 import { Image } from './image.js'
 import { Dependencies } from './dependencies.js'
-import { declare } from './format.js'
+import { declare, normalized } from './format.js'
 
 /**
  * Components in one image: their sources laid over their dependencies, which are an image
@@ -78,6 +78,7 @@ export class Bundle extends Image {
       // what was installed in the workspace is not what the image installs
       await cp(component.path, target, { recursive: true, filter: sources })
       await declare(component.path, target, component.locator.label)
+      await normalized(component, target)
     }
 
     return context

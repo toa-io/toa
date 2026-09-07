@@ -220,6 +220,7 @@ describe('prepare', () => {
 
     assert.ok(entries.includes('one/index.js'))
     assert.ok(entries.includes('two/package.json')) // declared for the component that had none
+    assert.ok(entries.includes('one/manifest.toa.json')) // what the process reads instead of normalizing
     assert.ok(!entries.some((entry) => entry.includes('node_modules')))
   })
 

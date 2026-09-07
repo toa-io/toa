@@ -2,6 +2,8 @@ import { existsSync, readFileSync } from 'node:fs'
 import { writeFile } from 'node:fs/promises'
 import { dirname, join, parse } from 'node:path'
 
+import { NORMALIZED, plain } from '@toa.io/norm'
+
 /**
  * A component is copied into the image on its own, away from the package that
  * declared what its files are. Node reads a `.js` as CommonJS unless a manifest
@@ -21,6 +23,18 @@ export async function declare(source, target, name) {
     join(target, MANIFEST),
     JSON.stringify({ name, private: true, type: format(source) }, null, 2) + '\n'
   )
+}
+
+/**
+ * The manifest as this build read it, written beside the component so that the process which
+ * runs it does not read it again. See `plain` in `@toa.io/norm` for what is left out and why
+ * a build's answer is the one to trust.
+ *
+ * @param {toa.norm.Component} component
+ * @param {string} target where it was copied
+ */
+export async function normalized(component, target) {
+  await writeFile(join(target, NORMALIZED), JSON.stringify(plain(component)))
 }
 
 /**
