@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/definitions",
-  "version": "1.0.0-alpha.293",
+  "version": "1.0.0-alpha.294",
   "type": "module",
   "description": "What Toa packages declare, read without running them",
   "author": "temich <tema.gurtovoy@gmail.com>",

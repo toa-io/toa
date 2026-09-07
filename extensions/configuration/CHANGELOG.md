@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.294](https://github.com/toa-io/toa/compare/v1.0.0-alpha.293...v1.0.0-alpha.294) (2026-09-07)
+
+### Features
+
+* **configuration:** refuse a plain string where the schema declares a secret ([f100057](https://github.com/toa-io/toa/commit/f1000576370c4fb02bac30313097825c159f3a45))
+
+
 # [1.0.0-alpha.293](https://github.com/toa-io/toa/compare/v1.0.0-alpha.292...v1.0.0-alpha.293) (2026-09-07)
 
 **Note:** Version bump only for package @toa.io/extensions.configuration

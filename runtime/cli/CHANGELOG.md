@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.294](https://github.com/toa-io/toa/compare/v1.0.0-alpha.293...v1.0.0-alpha.294) (2026-09-07)
+
+### Bug Fixes
+
+* **cli:** `toa npm` reads back through the range npm wrote ([8af4c53](https://github.com/toa-io/toa/commit/8af4c536fb0bf7f122a98d864d903f580ad832ba))
+
+
 # [1.0.0-alpha.293](https://github.com/toa-io/toa/compare/v1.0.0-alpha.292...v1.0.0-alpha.293) (2026-09-07)
 
 ### Features
