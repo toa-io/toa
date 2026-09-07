@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/userland",
-  "version": "1.0.0-alpha.294",
+  "version": "1.0.0-alpha.295",
   "type": "module",
   "description": "Toa development kit",
   "homepage": "https://toa.io",
@@ -32,10 +32,10 @@
     "./package.json": "./package.json"
   },
   "dependencies": {
-    "@toa.io/boot": "1.0.0-alpha.294",
+    "@toa.io/boot": "1.0.0-alpha.295",
     "@toa.io/core": "1.0.0-alpha.293",
     "@toa.io/generic": "1.0.0-alpha.292",
-    "@toa.io/norm": "1.0.0-alpha.294",
+    "@toa.io/norm": "1.0.0-alpha.295",
     "@toa.io/schemas": "1.0.0-alpha.293",
     "@toa.io/storages.null": "1.0.0-alpha.293"
   },
