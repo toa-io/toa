@@ -63,13 +63,16 @@ registry:
       ln -s /toa/node_modules/.bin/toa /usr/local/bin/toa
 ```
 
+`/toa` is where it goes: what an extension needs for what a component declares is installed
+there, beside the extension that reads the declaration.
+
 #### Composition Images
 
 A composition is two images in one repository. `composition-<name>:deps-<hash>` is what its
 components depend on, installed on the base image: it is tagged by everything the install
-reads — the runtime version, the base image, the build options and each component's
-`package.json` (and `package-lock.json`, where there is one) — and is built only when one of
-those changes. `composition-<name>:<hash>` is the sources laid over it in a single linked
+reads — the runtime version, the base image, the build options, each component's
+`package.json` (and `package-lock.json`, where there is one), and what the extensions install
+for what the components declare — and is built only when one of those changes. `composition-<name>:<hash>` is the sources laid over it in a single linked
 layer, so a deploy that changes code alone builds and pushes that layer, and neither
 downloads nor uploads the dependencies again. The same holds for `mono`.
 
@@ -78,6 +81,14 @@ an image over a base it never pulled; `toa build` loads on the daemon's own.
 
 A dependency named by a moving git ref is installed when the dependencies image is built and
 not again until its manifest changes, so pin such a dependency to a commit and bump it there.
+
+An extension's heavy dependency is not installed with the extension: `@toa.io/extensions.storages`
+declares the AWS and Cloudinary SDKs as optional peers, so the base image carries neither. What a
+component declares is what a deploy installs — the storages named in its `manifest.toa.yaml`,
+resolved through the context's annotation to their providers' packages, installed into `/toa`
+beside the extension that reads them. A composition whose components declare no `s3` storage
+carries no AWS SDK, whatever the context declares for another composition. A workspace installs
+the same set with `toa npm`.
 
 #### Extension Service Images
 

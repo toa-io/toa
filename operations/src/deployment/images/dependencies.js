@@ -1,6 +1,6 @@
 import { basename, join } from 'node:path'
 import { existsSync, readFileSync } from 'node:fs'
-import { copyFile, mkdir } from 'node:fs/promises'
+import { copyFile, mkdir, writeFile } from 'node:fs/promises'
 import { createHash } from 'node:crypto'
 
 import { Image } from './image.js'
@@ -68,6 +68,8 @@ export class Dependencies extends Image {
       for (const file of files)
         hash.update(label).update(basename(file)).update(readFileSync(file))
 
+    hash.update(this.#packages().join('\n'))
+
     this.#version = hash.digest('hex').slice(0, 8)
 
     return this.#version
@@ -112,7 +114,31 @@ export class Dependencies extends Image {
       for (const file of files) await copyFile(file, join(target, basename(file)))
     }
 
+    const packages = this.#packages()
+
+    // written whether or not there are any, so the file is one thing the Dockerfile reads
+    await writeFile(join(context, PACKAGES), packages.join('\n'))
+
     return context
+  }
+
+  /**
+   * What the extensions install for what these components declare, as `name@version`. A
+   * component states its own dependencies in its manifest; this is what the packages that
+   * read its declaration need, which its manifest has no way to say.
+   *
+   * @returns {string[]}
+   */
+  #packages() {
+    /** @type {Record<string, string>} */
+    const packages = {}
+
+    for (const component of this.#owner.components)
+      Object.assign(packages, component.packages)
+
+    return Object.entries(packages)
+      .map(([name, version]) => `${name}@${version}`)
+      .sort()
   }
 
   /**
@@ -139,3 +165,6 @@ const PREFIX = 'deps-'
 const DIRECTORY = 'dependencies'
 
 const MANIFESTS = ['package.json', 'package-lock.json']
+
+/** Where the install reads what the extensions need, one `name@version` per line. */
+const PACKAGES = '.packages'

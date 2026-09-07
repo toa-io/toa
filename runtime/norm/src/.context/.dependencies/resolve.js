@@ -19,6 +19,15 @@ export const resolve = async (references, annotations = {}) => {
     if (annotation !== undefined && module.annotation !== undefined) {
       annotations[id] = module.annotation(annotation, instances)
     }
+
+    // what a component's declaration costs to install, read from the definition rather than
+    // from the package: a deploy installs it, and nothing that declares nothing carries it
+    if (module.installs !== undefined)
+      for (const instance of instances)
+        Object.assign(
+          (instance.component.packages ??= {}),
+          module.installs(instance, annotations[id])
+        )
   }
 
   for (const dependency of Object.keys(annotations)) {

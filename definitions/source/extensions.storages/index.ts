@@ -2,6 +2,7 @@ export { deployment, ENV_PREFIX } from './deployment.js'
 export { manifest } from './manifest.js'
 export { validateAnnotation } from './Annotation.js'
 export { secrets } from './secrets.js'
+export { packages, installs } from './packages.js'
 export { context } from './context.js'
 export * as schemas from './schemas.js'
 

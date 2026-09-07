@@ -71,4 +71,6 @@ type Declaration = {
 export type Manifest = Declaration & {
   locator: Locator
   path: string
+  /** what a deploy installs beside this component for what it declares, by package name */
+  packages?: Record<string, string>
 }
