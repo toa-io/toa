@@ -11,6 +11,7 @@ import { components } from './components.js'
 import { version } from '../version.js'
 import { EVENT, PREFIX, SECRET_RX, UI_PATH, UI_PORT, VALUES } from './const.js'
 import { epoch } from './epoch.js'
+import { assertSecrets } from './secrets.js'
 import * as validators from './schemas.js'
 import type { Manifest } from './manifest.js'
 import type { context } from '@toa.io/norm'
@@ -132,15 +133,17 @@ function split(annotation: Annotation): { resources?: Resources; values: Annotat
 /** Validated, keyed by full component ids, and checked against the components that ask. */
 function prepare(annotation: Annotation, instances: Instance[]): Annotation {
   const normalized: Annotation = {}
-  const requested = instances.map((instance) => instance.locator.id)
 
   for (const [key, values] of Object.entries(annotation)) {
     const id = key.includes('.') ? key : 'default.' + key
+    const instance = instances.find((instance) => instance.locator.id === id)
 
     assert.ok(
-      requested.includes(id),
+      instance !== undefined,
       `Component '${id}' does not request configuration or does not exist.`
     )
+
+    assertSecrets(instance.manifest.schema, values)
 
     normalized[id] = values
   }

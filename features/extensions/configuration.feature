@@ -169,6 +169,38 @@ Feature: Configuration Extension
       null
       """
 
+  Scenario: A secret given as a plain string is refused
+    Given I have a component `configuration.secrets`
+    And I have a context with:
+      """yaml
+      configuration:
+        configuration.secrets:
+          b: plaintext
+      """
+    When I run `toa env`
+    Then program should exit with code 1
+    And stderr should contain line:
+    """
+    'b' is a secret and must be given as a $NAME reference.
+    """
+
+  Scenario: Creating a secret as a plain string
+    Given the configuration of `configuration.secrets` is deployed
+    And the `configuration` service is staged
+    When I call `configuration.values.create` with:
+      """yaml
+      input:
+        component: configuration.secrets
+        configuration:
+          b: plaintext
+        originator:
+          id: tester
+      """
+    Then the error is received:
+      """yaml
+      code: INVALID_CONFIGURATION
+      """
+
   Scenario: Secrets are objects, and stay redacted
     Given an environment variable `TOA_CONFIGURATION__SECRET_B` is set to 'hidden'
     And the configuration of `configuration.secrets` is deployed with:
