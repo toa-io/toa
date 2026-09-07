@@ -20,8 +20,14 @@ export const storage = async (manifest, outbox) => {
   const factory = new Factory()
   const storage = factory.storage(manifest.locator, manifest.entity, { outbox })
 
-  // a component whose structure nothing will make must not start with the structure it lacks
-  if (manifest.entity.migrations?.length > 0 && storage.migrates !== true)
+  // a component whose structure nothing will make must not start with the structure it lacks;
+  // what it inherits was written for descendants that store, and one that stores nothing has
+  // nothing to convert
+  const own = manifest.entity.migrations?.some(
+    (migration) => migration.prototype === undefined
+  )
+
+  if (own === true && storage.migrates !== true)
     throw new Error(
       `Component '${manifest.locator.id}' declares migrations, ` +
         `which storage '${manifest.entity.storage}' does not apply`

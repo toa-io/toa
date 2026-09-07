@@ -50,7 +50,10 @@ describe('entity', () => {
 
   it('should refuse a component that states a property the runtime writes', () => {
     const prototype = { entity: { properties: { DELETED: { type: 'integer' } } } }
-    const manifest = { name: 'pot', entity: { properties: { DELETED: { type: 'integer' } } } }
+    const manifest = {
+      name: 'pot',
+      entity: { properties: { DELETED: { type: 'integer' } } }
+    }
 
     assert.throws(
       () => collapse(manifest, prototype),
@@ -58,25 +61,54 @@ describe('entity', () => {
     )
   })
 
-  it('should not inherit migrations', () => {
+  it('should inherit migrations ahead of its own, under the prototype name', () => {
     const manifest = { entity: { migrations: [{ id: '0002', steps: [] }] } }
-    const prototype = { entity: { migrations: [{ id: '0001', steps: [] }] } }
+    const prototype = {
+      name: 'base',
+      entity: { migrations: [{ id: '0001', steps: [] }] }
+    }
+
+    collapse(manifest, prototype)
+
+    assert.deepStrictEqual(manifest.entity.migrations, [
+      { id: 'base:0001', steps: [], prototype: 'base' },
+      { id: '0002', steps: [] }
+    ])
+  })
+
+  it('should pass on what the prototype inherited as it is', () => {
+    const manifest = { entity: { migrations: [{ id: '0002', steps: [] }] } }
+    const prototype = {
+      name: 'base',
+      entity: {
+        migrations: [
+          { id: 'system:0001', steps: [], prototype: 'system' },
+          { id: '0001', steps: [] }
+        ]
+      }
+    }
 
     collapse(manifest, prototype)
 
     assert.deepStrictEqual(
       manifest.entity.migrations.map(({ id }) => id),
-      ['0002']
+      ['system:0001', 'base:0001', '0002']
     )
   })
 
-  it('should leave a component with no migrations without any', () => {
+  it('should inherit migrations into a component that declares none', () => {
     const manifest = {}
-    const prototype = { entity: { migrations: [{ id: '0001', steps: [] }] } }
+    const prototype = {
+      name: 'base',
+      entity: { migrations: [{ id: '0001', steps: [] }] }
+    }
 
     collapse(manifest, prototype)
 
-    assert.strictEqual(manifest.entity?.migrations, undefined)
+    assert.deepStrictEqual(
+      manifest.entity.migrations.map(({ id }) => id),
+      ['base:0001']
+    )
   })
 })
 

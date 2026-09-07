@@ -100,6 +100,9 @@ properties:
             # what a step means belongs to the storage, which is the only thing that reads it
             steps:
               type: array
+            # the prototype it is inherited from; absent on the component's own
+            prototype:
+              type: string
           required: [id, steps]
           additionalProperties: false
       associated:

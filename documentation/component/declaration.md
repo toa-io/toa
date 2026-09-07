@@ -38,7 +38,7 @@ index needs. Two ways to say it, differing in what your code holds rather than i
 ```yaml
 entity:
   properties:
-    starts:  { type: string, format: date-time }     # an ISO 8601 string
+    starts: { type: string, format: date-time } # an ISO 8601 string
     expires: { type: integer, format: epoch-millis } # what Date.now() answers
 ```
 
@@ -145,9 +145,12 @@ Where that release can still read what the migration leaves, a rolling update is
 cannot — a rename, a field that changes meaning — the deployment stops first: scale it to zero,
 deploy, and say so wherever the upgrade is written down.
 
-**Migrations are not inherited.** A migration is applied to a collection and a prototype has
-none, so what a prototype declares stays with it — a component that takes a prototype's schema
-writes its own migrations for it.
+**Migrations are inherited.** A prototype's migrations are applied to the collection of every
+component that takes it, ahead of the component's own, and recorded as `<prototype>:<id>` — so a
+prototype that declares migrations has a `name`. The system properties are the runtime's, and so
+are their migrations: what `id`, `VERSION`, `CREATED`, `UPDATED` and `DELETED` are held as is
+converted by the runtime's own, recorded as `system:<id>`, and a component declares nothing for
+them. An index over one of them is declared like any other.
 
 Only `@toa.io/storages.mongodb` applies migrations, and a step is written in its dialect. A
 component that declares them against another storage does not start:
