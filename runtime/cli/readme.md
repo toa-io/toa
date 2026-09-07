@@ -9,6 +9,9 @@
 
 ## Development
 
+> These commands run a composition, so they need `@toa.io/runtime` installed beside the CLI, which
+> an application lists in its `devDependencies`. `types` and `export manifest` read manifests only.
+
 ### compose
 
 Run composition.
@@ -155,7 +158,9 @@ Credentials specified in the output file are preserved.
 
 ## Operations
 
-> Some commands use current `kubectl` and `docker` context.
+> These commands need `@toa.io/operations` installed beside the CLI, and nothing of the runtime:
+> see [installing](../../operations/readme.md#installing). Some use the current `kubectl` and
+> `docker` context.
 
 ### build
 

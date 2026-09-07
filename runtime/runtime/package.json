@@ -15,9 +15,6 @@
   "publishConfig": {
     "access": "public"
   },
-  "bin": {
-    "toa": "bin/toa"
-  },
   "scripts": {
     "test": "echo \"Error: run tests from root\" && exit 1",
     "postversion": "jq --argjson value \"$(jq '.version' package.json)\" '.version = $value' ../../package.json > tmp.json && mv tmp.json ../../package.json"
@@ -42,15 +39,11 @@
     "@toa.io/extensions.storages": "1.0.0-alpha.287",
     "@toa.io/extensions.telemetry": "1.0.0-alpha.286",
     "@toa.io/norm": "1.0.0-alpha.288",
-    "@toa.io/operations": "1.0.0-alpha.288",
     "@toa.io/prototype": "1.0.0-alpha.287",
     "@toa.io/storages.mongodb": "1.0.0-alpha.288",
     "@toa.io/storages.null": "1.0.0-alpha.288",
     "@toa.io/userland": "1.0.0-alpha.288",
     "openspan": "1.0.0-alpha.286"
   },
-  "gitHead": "2ab75e1fd23f2e64720a60b8562dda606aa723ee",
-  "devDependencies": {
-    "wtfnode": "0.10.1"
-  }
+  "gitHead": "2ab75e1fd23f2e64720a60b8562dda606aa723ee"
 }

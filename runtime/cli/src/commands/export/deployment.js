@@ -1,4 +1,4 @@
-import { dump } from '../../handlers/export/deployment.js'
+import { needs, OPERATIONS } from '../../util/needs.js'
 
 const builder = (yargs) => {
   yargs
@@ -27,4 +27,15 @@ const builder = (yargs) => {
 export const command = ['deployment <environment> <target>', 'dep']
 export const desc = 'Export context deployment'
 
-export { builder, dump as handler }
+// the handler and what it depends on load when the command runs, not when the program starts
+const handler = async (argv) => {
+  const { dump } = await needs(
+    'export deployment',
+    () => import('../../handlers/export/deployment.js'),
+    OPERATIONS
+  )
+
+  return await dump(argv)
+}
+
+export { builder, handler }

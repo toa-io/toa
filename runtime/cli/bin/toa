@@ -28,4 +28,4 @@ if (process.argv.includes('--wtf')) {
   setInterval(() => wtf.default.dump(), 10000)
 }
 
-await import('@toa.io/cli')
+await import('../src/program.js')

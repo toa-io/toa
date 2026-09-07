@@ -1,6 +1,7 @@
-import { secrets } from '@toa.io/kubernetes'
-
+import { kubernetes } from '@toa.io/operations'
 import { PREFIX } from './conceal.js'
+
+const { secrets } = kubernetes
 
 export const reveal = async (argv) => {
   const prefixed = PREFIX + argv.secret

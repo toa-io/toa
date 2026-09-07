@@ -1,3 +1,5 @@
+import { needs, RUNTIME } from '../util/needs.js'
+
 const builder = (yargs) => {
   yargs.positional('path', {
     group: 'Command options:',
@@ -9,7 +11,7 @@ const builder = (yargs) => {
 
 // the handler and what it depends on load when the command runs, not when the program starts
 const handler = async (argv) => {
-  const { serve } = await import('../handlers/serve.js')
+  const { serve } = await needs('serve', () => import('../handlers/serve.js'), RUNTIME)
 
   return await serve(argv)
 }

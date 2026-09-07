@@ -78,6 +78,11 @@ previous build:
 $ npm run transpile                 # the workspace and every component
 ```
 
+The same run writes the digest of the components the extensions ship into `definitions/digest`,
+read by a deploy where the extensions are not installed (see [definitions](./definitions/readme.md)),
+and then the types. A change to a shipped component's manifest is not seen by `toa deploy` until
+the digest is regenerated.
+
 An `operations` directory holds modules and nothing else: the bridge reads every file in it as one
 and names the endpoint after the file, so a declaration or a test left there becomes an endpoint.
 What building a component means is stated once, in `tsconfig.component.json`, which every
@@ -227,8 +232,9 @@ npm packs by `.npmignore` where a package has one, and by `.gitignore` where it 
 output is git-ignored — a component's `operations`, what a `ui` builds — so a package without
 `.npmignore` publishes its manifests without the code beside them.
 
-Every extension that transpiles components or builds a page carries one. What a package would
-publish is read before releasing it:
+Every extension that transpiles components or builds a page carries one, and so does
+`@toa.io/definitions`, whose digest is git-ignored build output. What a package would publish is
+read before releasing it:
 
 ```shell
 $ npm pack --dry-run                # from the package directory
@@ -275,6 +281,13 @@ $ gh workflow run release.yaml --ref alpha -f from-package=true -f dist-tag=alph
 
 The ref matters: the image is tagged with the version in `runtime/runtime/package.json` as that
 tree has it.
+
+### The version of Toa
+
+`@toa.io/definitions` is versioned with every release (`forcePublish` in `lerna.json`), whether or
+not anything in it changed: its version is what a context that states no `runtime.version` is
+deployed on, and its digest is what the extensions ship at that version. The runtime depends on it,
+so the two carry one number.
 
 ## Security
 

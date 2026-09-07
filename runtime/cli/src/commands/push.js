@@ -1,3 +1,5 @@
+import { needs, OPERATIONS } from '../util/needs.js'
+
 const builder = (yargs) => {
   yargs.option('path', {
     alias: 'p',
@@ -10,7 +12,7 @@ const builder = (yargs) => {
 
 // the handler and what it depends on load when the command runs, not when the program starts
 const handler = async (argv) => {
-  const { push } = await import('../handlers/push.js')
+  const { push } = await needs('push', () => import('../handlers/push.js'), OPERATIONS)
 
   return await push(argv)
 }
