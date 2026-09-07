@@ -1,7 +1,11 @@
 import { type Locator } from '@toa.io/core'
 import { add, environment } from '@toa.io/generic'
 import * as schemas from '@toa.io/schemas'
-import { PREFIX, SECRET_RX } from '@toa.io/definitions/extensions.configuration'
+import {
+  PREFIX,
+  SECRET_RX,
+  assertSecrets
+} from '@toa.io/definitions/extensions.configuration'
 import { Secret } from './Secret.js'
 import type { Schema } from '@toa.io/schemas'
 import type { Manifest } from '@toa.io/definitions/extensions.configuration'
@@ -36,6 +40,7 @@ function validate(values: Node, manifest: Manifest): void {
   const schema: Schema<any> = schemas.schema(manifest.schema)
 
   schema.validate(values)
+  assertSecrets(manifest.schema, values)
 }
 
 function read(suffix: string): Node {

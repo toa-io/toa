@@ -110,3 +110,24 @@ it('should map secrets to the component', async () => {
     { key: '$KEY' }
   )
 })
+
+it('should refuse a secret given as a plain string', async () => {
+  const secret = {
+    type: 'object',
+    properties: { key: { type: 'string', format: 'secret' } }
+  }
+
+  function keyed(): Instance {
+    return {
+      locator: new Locator('base', 'configuration'),
+      manifest: { schema: secret },
+      component: {} as any
+    }
+  }
+
+  assert.throws(
+    () => deployment([keyed()], { 'configuration.base': { key: 'plaintext' } }),
+    (error: Error) =>
+      /'key' is a secret and must be given as a \$NAME reference/.test(error.message)
+  )
+})
