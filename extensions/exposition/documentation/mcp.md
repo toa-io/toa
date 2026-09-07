@@ -75,8 +75,8 @@ querystring under `query`, and what is left is the body. `io:input` restricts it
 `map` fills is not there — a call carries no headers of its own.
 
 `query` carries what selects records — `criteria`, `sort`, `limit`, `omit`, `search` — beside the
-parameters the resource declares. `OPTIONS` states only the latter, because the former is the same
-of every queryable resource; here it is stated, because here it is something the caller sends.
+parameters the resource declares. `OPTIONS` states the former as `selection` on the method, and
+only the latter as `query`.
 
 ```yaml
 type: object

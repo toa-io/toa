@@ -13,6 +13,8 @@ resource:
   unset: not defined
   expand: Show what it serves
   mcp: Published as a tool
+  selection: selection
+  search: Takes a text search
 guard:
   public: Anyone may reach it
   private: Your own
@@ -41,3 +43,10 @@ call:
   anything: anything
   stream: streamed
   streamed: The reply arrives in parts as the work is done.
+guide:
+  authentication:
+    title: Authentication
+  multipart:
+    title: Multipart responses
+  queries:
+    title: Collection queries

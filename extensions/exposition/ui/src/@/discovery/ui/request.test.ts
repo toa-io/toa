@@ -21,6 +21,20 @@ it('should ask for a wildcard', () => {
   expect(fields('/files/*/meta', {}).map((field) => field.key)).toStrictEqual(['route:1'])
 })
 
+it('should ask for what picks the records', () => {
+  const of: Method = { selection: { sort: { type: 'string' } } }
+
+  expect(fields('/pots', of)).toStrictEqual([
+    {
+      key: 'query:sort',
+      name: 'sort',
+      where: 'query',
+      schema: { type: 'string' },
+      required: false,
+    },
+  ])
+})
+
 it('should ask for every parameter a resource declares', () => {
   const of: Method = { query: { limit: { type: 'number' } } }
 
@@ -28,6 +42,7 @@ it('should ask for every parameter a resource declares', () => {
     { key: 'query:limit', name: 'limit', where: 'query', schema: { type: 'number' }, required: false },
   ])
 })
+
 
 it('should leave a variable without a schema where the name is not answered', () => {
   const of: Method = { route: { a: { type: 'string' } } }

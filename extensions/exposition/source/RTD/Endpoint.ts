@@ -13,9 +13,8 @@ export interface Endpoint {
   explain: (parameters: RTD.Parameter[]) => Promise<Introspection>
 
   /**
-   * What picks the records a call is about — `criteria`, `sort` and the rest. Not part of
-   * what the resource says about itself: it is the same of every queryable one. A
-   * procedure carries it, because there it is something the caller sends.
+   * What picks the records a call is about — `criteria`, `sort` and the rest. Stated as
+   * `selection` on the method, because it is not a parameter the resource declares.
    */
   selection: () => Record<string, Schema> | null
 

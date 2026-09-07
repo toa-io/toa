@@ -41,6 +41,10 @@ inputs:
     mcp:
       input: Published as a tool
       context: tooltip on the Model Context Protocol mark beside a method a model may call
+    selection:
+      input: selection
+    search:
+      input: Takes a text search
   guard:
     public:
       input: Anyone may reach it
@@ -118,3 +122,13 @@ inputs:
     streamed:
       input: The reply arrives in parts as the work is done.
       context: shown under a file field where storing the file starts a workflow
+  guide:
+    authentication:
+      title:
+        input: Authentication
+    multipart:
+      title:
+        input: Multipart responses
+    queries:
+      title:
+        input: Collection queries
