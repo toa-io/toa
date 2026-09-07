@@ -27,9 +27,9 @@ beforeEach(() => {
   }
 
   factory = /** @type {toa.deployment.images.Factory} */ {
-    composition: () => createImage('composition-mono'),
+    composition: () => createImage('composition-mono', true),
     service: () => createImage('extension-realtime'),
-    mono: () => createImage('mono')
+    mono: () => createImage('mono', true)
   }
 })
 
@@ -54,6 +54,10 @@ it('should reuse named builder across images', async () => {
     'create',
     '--name',
     'toa',
+    '--driver',
+    'docker-container',
+    '--driver-opt',
+    'network=host',
     '--bootstrap'
   ])
 
@@ -62,7 +66,7 @@ it('should reuse named builder across images', async () => {
       args[0] === '--context=default' && args[1] === 'buildx' && args[2] === 'build'
   )
 
-  assert.strictEqual(builds.length, 2)
+  assert.strictEqual(builds.length, 3)
 
   for (const {
     arguments: [, args]
@@ -107,7 +111,7 @@ it('should not export a build cache', async () => {
     ({ arguments: [, args] }) => args[0] === '--context=default' && args[2] === 'build'
   )
 
-  assert.strictEqual(builds.length, 2)
+  assert.strictEqual(builds.length, 3)
 
   for (const {
     arguments: [, args]
@@ -172,8 +176,114 @@ it('should probe every image before building any', async () => {
   const build = calls.indexOf('--context=default')
   const probed = calls.slice(0, build).filter((argument) => argument === 'manifest')
 
-  // both probes are spent before the first build starts, rather than one before each
-  assert.strictEqual(probed.length, 2)
+  // every probe is spent before the first build starts, rather than one before each:
+  // the composition, what it is laid over, and the service
+  assert.strictEqual(probed.length, 3)
+})
+
+it('should build what an image is laid over before the image', async () => {
+  const registry = createRegistry({ base: 'example.com/reg', platforms: ['linux/amd64'] })
+
+  registry.composition(/** @type {any} */ ({}))
+  registry.service('.', /** @type {any} */ ({}))
+
+  await registry.build()
+
+  const tags = builds().map((args) => args[args.indexOf('--tag') + 1])
+  const [composition] = images
+
+  assert.strictEqual(tags.length, 3)
+  assert.ok(
+    tags.indexOf(composition.dependencies.reference) < tags.indexOf(composition.reference)
+  )
+})
+
+it('should lay the image over what already exists', async () => {
+  process.execute = mock.fn(async (cmd, args) => {
+    if (args[0] === 'manifest' && !args[2].includes(':deps-'))
+      throw new Error('manifest unknown')
+
+    return ''
+  })
+
+  const registry = createRegistry({ base: 'example.com/reg', platforms: ['linux/amd64'] })
+
+  registry.composition(/** @type {any} */ ({}))
+
+  await registry.build()
+
+  const tags = builds().map((args) => args[args.indexOf('--tag') + 1])
+  const [composition] = images
+
+  assert.deepStrictEqual(tags, [composition.reference])
+  assert.strictEqual(composition.dependencies.prepare.mock.callCount(), 0)
+  assert.strictEqual(composition.prepare.mock.callCount(), 1)
+})
+
+it('should prepare only what is missing', async () => {
+  process.execute = mock.fn(async () => '')
+
+  const registry = createRegistry({ base: 'example.com/reg', platforms: ['linux/amd64'] })
+
+  registry.composition(/** @type {any} */ ({}))
+  registry.service('.', /** @type {any} */ ({}))
+
+  await registry.build()
+
+  for (const image of images) assert.strictEqual(image.prepare.mock.callCount(), 0)
+})
+
+it('should pass build arguments to the images that read them', async () => {
+  const registry = createRegistry({
+    base: 'example.com/reg',
+    platforms: ['linux/amd64'],
+    build: { arguments: ['TOKEN'] }
+  })
+
+  registry.composition(/** @type {any} */ ({}))
+  registry.service('.', /** @type {any} */ ({}))
+
+  await registry.build()
+
+  const [composition] = images
+
+  for (const args of builds()) {
+    const tag = args[args.indexOf('--tag') + 1]
+    const reads = tag === composition.dependencies.reference
+
+    assert.strictEqual(args.includes('--build-arg'), reads, tag)
+  }
+})
+
+it('should push on the container builder', async () => {
+  const registry = createRegistry({ base: 'example.com/reg', platforms: ['linux/amd64'] })
+
+  registry.composition(/** @type {any} */ ({}))
+
+  await registry.push()
+
+  for (const args of builds()) {
+    assert.ok(args.includes('--push'))
+    assert.strictEqual(args[args.indexOf('--builder') + 1], 'toa')
+    assert.ok(args.includes('--provenance=false'))
+  }
+})
+
+it('should not create the builder for a push when nothing is missing', async () => {
+  process.execute = mock.fn(async (cmd, args) => {
+    if (args[0] === 'buildx' && args[1] === 'inspect')
+      throw new Error('builder not found')
+
+    return ''
+  })
+
+  const registry = createRegistry({ base: 'example.com/reg', platforms: ['linux/amd64'] })
+
+  registry.composition(/** @type {any} */ ({}))
+
+  await registry.push()
+
+  assert.strictEqual(builds().length, 0)
 })
 
 it('should use default builder when platforms is null', async () => {
@@ -187,14 +297,14 @@ it('should use default builder when platforms is null', async () => {
     ({ arguments: [, args] }) => args[0] === '--context=default' && args[2] === 'build'
   )
 
-  assert.strictEqual(builds.length, 1)
+  assert.strictEqual(builds.length, 2)
 
-  const {
+  for (const {
     arguments: [, args]
-  } = builds[0]
-
-  assert.strictEqual(args[args.indexOf('--builder') + 1], 'default')
-  assert.ok(!args.includes('--platform'))
+  } of builds) {
+    assert.strictEqual(args[args.indexOf('--builder') + 1], 'default')
+    assert.ok(!args.includes('--platform'))
+  }
 })
 
 it('should skip build when image already exists', async () => {
@@ -226,6 +336,34 @@ it('should skip build when image already exists', async () => {
   )
 })
 
+it('should probe a local registry as insecure', async () => {
+  process.execute = mock.fn(async () => '')
+
+  const registry = createRegistry({ base: 'localhost:5000', platforms: null })
+
+  factory.composition = () => {
+    const image = createImage('composition-mono', true)
+
+    image.reference = 'localhost:5000/acme/composition-mono:abcdef12'
+    image.dependencies.reference = 'localhost:5000/acme/composition-mono:deps-12345678'
+
+    return image
+  }
+
+  registry.composition(/** @type {any} */ ({}))
+
+  await registry.build()
+
+  const probes = process.execute.mock.calls
+    .filter(({ arguments: [, args] }) => args[0] === 'manifest')
+    .map(({ arguments: [, args] }) => args)
+
+  assert.strictEqual(probes.length, 2)
+
+  for (const args of probes)
+    assert.deepStrictEqual(args.slice(0, 3), ['manifest', 'inspect', '--insecure'])
+})
+
 /**
  * @param {object} [registry]
  * @returns {Registry}
@@ -236,16 +374,34 @@ function createRegistry(registry = {}) {
 
 /**
  * @param {string} name
+ * @param {boolean} [bundle] laid over an image of its dependencies
  * @returns {toa.deployment.images.Image}
  */
-function createImage(name) {
+function createImage(name, bundle = false) {
   const image = /** @type {toa.deployment.images.Image} */ {
     reference: `example.com/reg/acme/${name}:abcdef12`,
     context: `/tmp/${name}`,
     prepare: mock.fn(async () => `/tmp/${name}`)
   }
 
+  if (bundle)
+    image.dependencies = /** @type {toa.deployment.images.Image} */ {
+      reference: `example.com/reg/acme/${name}:deps-12345678`,
+      context: `/tmp/dependencies/${name}`,
+      arguments: true,
+      prepare: mock.fn(async () => `/tmp/dependencies/${name}`)
+    }
+
   images.push(image)
 
   return image
+}
+
+/** @returns {string[][]} the arguments of every build run */
+function builds() {
+  return process.execute.mock.calls
+    .filter(
+      ({ arguments: [, args] }) => args[0] === '--context=default' && args[2] === 'build'
+    )
+    .map(({ arguments: [, args] }) => args)
 }

@@ -4,6 +4,7 @@ import { yaml as jsyaml } from '@toa.io/generic'
 import { cp } from 'node:fs/promises'
 
 import { merge, declare, describe } from './.deployment/index.js'
+import { drain } from './drain.js'
 
 export class Deployment {
   #chart
@@ -50,6 +51,9 @@ export class Deployment {
       ...args,
       this.#target
     ])
+
+    // ready is not done: the replicas replaced are still draining when helm answers
+    if (options.wait === true) await drain(this.#process, options)
   }
 
   async template(options) {

@@ -168,9 +168,9 @@ Feature: Service Deployment
         httpGet:
           path: /.ready
           port: 8004
-        periodSeconds: 10
+        periodSeconds: 2
         timeoutSeconds: 3
-        failureThreshold: 3
+        failureThreshold: 5
       """
 
   Scenario: Replicas are replaced without reducing availability
@@ -195,7 +195,7 @@ Feature: Service Deployment
       type: RollingUpdate
       rollingUpdate:
         maxUnavailable: 0
-        maxSurge: 50%
+        maxSurge: 100%
       """
     And extension-exposition-gateway Deployment spec spec should contain:
       """

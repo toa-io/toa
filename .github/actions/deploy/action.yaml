@@ -1,0 +1,81 @@
+name: Deploy a Toa context
+description: >-
+  Deploys a context and waits for the rollout to complete. The caller checks out the
+  repository and logs in to the registry and the cluster; this restores the dependencies,
+  waits for a push of the same sources that is still running, and deploys.
+
+inputs:
+  environment:
+    description: The deployment environment of the context
+    required: true
+  path:
+    description: Path to the context
+    default: .
+  namespace:
+    description: The namespace to deploy into
+    required: true
+  timeout:
+    description: How long the rollout may take, as a helm duration
+    default: 10m
+  push-workflow:
+    description: >-
+      The name of the workflow that pushes the images of a pull request. When a run of it
+      for the deployed commit is still in progress, the deploy waits for it rather than
+      building the same images again. Empty waits for nothing.
+    default: ''
+  commit:
+    description: The commit whose push run to wait for
+    default: ${{ github.event.pull_request.head.sha }}
+  token:
+    description: A token that reads the repository's workflow runs
+    default: ${{ github.token }}
+  node-version:
+    description: The Node.js version to set up
+    default: '24'
+
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-node@v5
+      with:
+        node-version: ${{ inputs.node-version }}
+
+    - name: Restore dependencies
+      id: modules
+      uses: actions/cache@v4
+      with:
+        path: |
+          node_modules
+          **/node_modules
+        key: modules-${{ runner.os }}-${{ inputs.node-version }}-${{ hashFiles('package-lock.json') }}
+        restore-keys: |
+          modules-${{ runner.os }}-${{ inputs.node-version }}-
+
+    - name: Install dependencies
+      if: steps.modules.outputs.cache-hit != 'true'
+      shell: bash
+      run: npm install --prefer-offline --no-audit --no-fund
+
+    # the images of these sources may be on their way already; a second build of the same
+    # content lands the same image, so this is a wait for time, not for correctness
+    - name: Wait for the images being pushed
+      if: inputs.push-workflow != '' && inputs.commit != ''
+      shell: bash
+      env:
+        GH_TOKEN: ${{ inputs.token }}
+      run: |
+        run=$(gh run list --workflow "${{ inputs.push-workflow }}" --commit "${{ inputs.commit }}" \
+          --status in_progress --json databaseId --jq '.[0].databaseId // empty')
+
+        if [ -n "$run" ]; then
+          echo "waiting for push run $run of ${{ inputs.commit }}"
+          gh run watch "$run" --exit-status || echo "push run $run did not succeed; building what is missing"
+        fi
+
+    - name: Deploy
+      shell: bash
+      run: >-
+        npx toa deploy ${{ inputs.environment }}
+        -p ${{ inputs.path }}
+        -n ${{ inputs.namespace }}
+        -w -t ${{ inputs.timeout }}

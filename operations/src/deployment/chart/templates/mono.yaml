@@ -11,7 +11,7 @@ spec:
     type: RollingUpdate
     rollingUpdate:
       maxUnavailable: 0
-      maxSurge: 50%
+      maxSurge: 100%
   selector:
     matchLabels:
       toa/composition: mono
@@ -75,9 +75,10 @@ spec:
             httpGet:
               path: {{ .probe.path }}
               port: {{ .probe.port }}
-            periodSeconds: 10
+            # a replica is ready when it says so, not at the next tick of a slow clock
+            periodSeconds: 2
             timeoutSeconds: 3
-            failureThreshold: 3
+            failureThreshold: 5
           {{- end }}
           {{- if .mounts }}
           volumeMounts:
