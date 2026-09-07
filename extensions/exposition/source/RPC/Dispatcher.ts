@@ -1,7 +1,7 @@
 import { console } from 'openspan'
 import * as http from '../HTTP/index.js'
-import * as schemas from '../schemas.js'
-import { BATCH } from '../const.js'
+import { schemas } from '@toa.io/definitions/extensions.exposition'
+import { BATCH } from '@toa.io/definitions/extensions.exposition'
 import { address, split } from './names.js'
 import { fork } from './Context.js'
 import {
@@ -13,7 +13,7 @@ import {
   response
 } from './errors.js'
 import { VERSION, type Call, type Response } from './types.js'
-import type { RPC } from '../Annotation.js'
+import type { RPCAnnotation as RPC } from '@toa.io/definitions/extensions.exposition'
 
 /**
  * JSON-RPC, as the calls a request carries.

@@ -6,7 +6,7 @@ import { Connector, type Locator, type Receiver } from '@toa.io/core'
 import type { Message } from '@toa.io/core/types'
 import { timeout } from '@toa.io/generic'
 import { Client, type Fetched } from './Client.js'
-import { EVENT } from './const.js'
+import { EVENT } from '@toa.io/definitions/extensions.configuration'
 import type { Host } from './Factory.js'
 
 class Remote extends Connector {

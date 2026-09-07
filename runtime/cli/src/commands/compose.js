@@ -1,3 +1,5 @@
+import { needs, RUNTIME } from '../util/needs.js'
+
 // noinspection JSCheckFunctionSignatures
 
 const builder = (yargs) => {
@@ -47,7 +49,11 @@ const builder = (yargs) => {
 
 // the handler and what it depends on load when the command runs, not when the program starts
 const handler = async (argv) => {
-  const { compose } = await import('../handlers/compose.js')
+  const { compose } = await needs(
+    'compose',
+    () => import('../handlers/compose.js'),
+    RUNTIME
+  )
 
   return await compose(argv)
 }

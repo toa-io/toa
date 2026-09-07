@@ -8,7 +8,7 @@ import { console } from 'openspan'
 import { environment } from '@toa.io/generic'
 import { Connector } from '@toa.io/core'
 import { resolve } from '@toa.io/pointer'
-import { ID } from './deployment.js'
+import { ID } from '@toa.io/definitions/storages.mongodb'
 import { MongoClient } from 'mongodb'
 
 /**

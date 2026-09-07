@@ -2,6 +2,11 @@ import * as http from 'node:http'
 import { console } from 'openspan'
 import { Connector } from '@toa.io/core'
 import { environment } from '@toa.io/generic'
+import {
+  DEFAULT_ANNOTATION,
+  READY_ENV,
+  type ReadyConfig
+} from '@toa.io/definitions/extensions.telemetry'
 
 export class Ready extends Connector {
   public readonly name = 'ready'
@@ -129,44 +134,9 @@ export function resolveOptions(): ReadyOptions | null {
   }
 }
 
-export function normalizeAnnotation(
-  ready: ReadyAnnotation | undefined
-): ReadyConfig | false {
-  if (ready === false) return false
-
-  if (ready === undefined) return { enabled: true, ...DEFAULT_ANNOTATION }
-
-  return {
-    enabled: true,
-    path: ready.path ?? DEFAULT_ANNOTATION.path,
-    port: ready.port ?? DEFAULT_ANNOTATION.port
-  }
-}
-
-export const READY_ENV = 'TOA_TELEMETRY_READY'
-export const DEFAULT_ANNOTATION = {
-  path: '/.ready',
-  port: 8001
-} as const
-
 const DEFAULTS: ReadyOptions = { ...DEFAULT_ANNOTATION }
 
 export interface ReadyOptions {
   path: string
   port: number
 }
-
-export type ReadyAnnotation =
-  | false
-  | {
-      path?: string
-      port?: number
-    }
-
-export type ReadyConfig =
-  | false
-  | {
-      enabled?: boolean
-      path?: string
-      port?: number
-    }

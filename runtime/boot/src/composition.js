@@ -1,6 +1,6 @@
 import { console } from 'openspan'
 import { Composition } from '@toa.io/core'
-import { version } from '@toa.io/runtime'
+import { version } from '@toa.io/definitions'
 import { environment } from '@toa.io/generic'
 
 import * as boot from './index.js'

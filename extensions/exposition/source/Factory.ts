@@ -1,6 +1,6 @@
 import { createHash } from 'node:crypto'
 import { Tenant } from './Tenant.js'
-import { CHANNEL } from './const.js'
+import { CHANNEL } from '@toa.io/definitions/extensions.exposition'
 import type { Branch } from './Branch.js'
 import type { syntax } from './RTD/index.js'
 import type { Broadcast } from './Gateway.js'

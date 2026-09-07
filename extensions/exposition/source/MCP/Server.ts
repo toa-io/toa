@@ -1,5 +1,5 @@
 import { console } from 'openspan'
-import { BRANCH_TTL } from '../const.js'
+import { BRANCH_TTL } from '@toa.io/definitions/extensions.exposition'
 import * as http from '../HTTP/index.js'
 import { discovery, type Discovery } from './discover.js'
 import { call, list, type Scope } from './tools.js'
@@ -26,7 +26,7 @@ import {
   type Params
 } from './types.js'
 import type { Tree } from '../RTD/index.js'
-import type { MCP } from '../Annotation.js'
+import type { MCPAnnotation as MCP } from '@toa.io/definitions/extensions.exposition'
 
 /**
  * The Model Context Protocol, as one endpoint that remembers nothing between requests.

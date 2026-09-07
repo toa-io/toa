@@ -1,5 +1,5 @@
 import { S3 } from './S3.js'
-import { secrets } from './secrets.js'
+import { secrets } from '@toa.io/definitions/extensions.storages'
 import type { Secret, Secrets } from '../Secrets.js'
 
 export interface SpacesOptions {

@@ -1,3 +1,5 @@
+import { definition } from '../../definition.js'
+
 export const events = async (component) => {
   if (component.events === undefined) return
 
@@ -14,7 +16,7 @@ export const events = async (component) => {
 /** The first binding that carries events, which only its module can say. */
 async function asynchronous(bindings) {
   for (const binding of bindings) {
-    const { properties } = await import(binding)
+    const { properties } = (await definition(binding)).module
 
     if (properties.async === true) return binding
   }

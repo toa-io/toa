@@ -1,2 +1,2 @@
 export { Factory } from './Factory.js'
-export * from './extension.js'
+export { components } from './Composition.js'

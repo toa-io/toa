@@ -1,9 +1,9 @@
-import { deployment } from '@toa.io/operations'
-import { secrets } from '@toa.io/kubernetes'
+import { deployment, kubernetes } from '@toa.io/operations'
 import { context as find } from '../util/find.js'
 import { promptSecrets } from './env.js'
 
 const { Factory } = deployment
+const { secrets } = kubernetes
 
 export const conceal = async (argv) => {
   if (argv.interactive) await concealValues(argv)

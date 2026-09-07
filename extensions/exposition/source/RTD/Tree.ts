@@ -1,6 +1,6 @@
 import { console } from 'openspan'
 import { refusal, template } from '../RPC/names.js'
-import { DISCOVERY } from '../const.js'
+import { DISCOVERY } from '@toa.io/definitions/extensions.exposition'
 import { branchTTL, createNode } from './factory.js'
 import { fragment } from './segment.js'
 import type { Mount, Node } from './Node.js'

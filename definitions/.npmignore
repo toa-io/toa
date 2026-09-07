@@ -1,0 +1,3 @@
+# the digest is generated at pack time and git-ignored, so the package says what it ships itself
+*.tsbuildinfo
+source/**/*.test.ts

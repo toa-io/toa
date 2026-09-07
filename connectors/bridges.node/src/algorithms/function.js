@@ -25,5 +25,5 @@ class Func {
   }
 }
 
-/** @type {toa.node.define.algorithms.Constructor} */
+/** @type {(func: Function, context: toa.node.Context) => toa.node.Algorithm} */
 export const create = (func) => new Func(func)

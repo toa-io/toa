@@ -1,11 +1,11 @@
 import { Connector, Locator } from '@toa.io/core'
 import { Composition } from './Composition.js'
-import { COMPONENT, NAMESPACE } from './const.js'
+import { COMPONENT, NAMESPACE } from '@toa.io/definitions/extensions.cadence'
 import { Aspect } from './Aspect.js'
 import { Dispatcher } from './Dispatcher.js'
 import { Local } from './Local.js'
 import { Pulse } from './Pulse.js'
-import type { Declaration } from './types.js'
+import type { Declaration } from '@toa.io/definitions/extensions.cadence'
 import type { extensions } from '@toa.io/core/types'
 
 export class Factory implements extensions.Factory {

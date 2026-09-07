@@ -1,7 +1,6 @@
 import { find } from '@toa.io/generic'
 import { resolve } from '../shortcuts.js'
-
-const cache = {}
+import { definition } from '../definition.js'
 
 export const extensions = async (manifest) => {
   manifest.extensions = Object.assign({}, PREDEFINED, manifest.extensions)
@@ -14,9 +13,7 @@ export const extensions = async (manifest) => {
     // relative path
     if (key[0] === '.') key = find(key, manifest.path)
 
-    cache[key] ??= import(key)
-
-    const extension = await cache[key]
+    const { module: extension } = await definition(key)
 
     if (extension.manifest !== undefined) {
       declaration = extension.manifest(declaration, manifest)

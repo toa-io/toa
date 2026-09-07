@@ -1,3 +1,4 @@
+import { definition } from '@toa.io/norm'
 import { LOOP } from './constants.js'
 import { factory } from './factory.js'
 
@@ -8,7 +9,7 @@ export const produce = async (component, operations) => {
   for (const [binding, endpoints] of group(operations)) {
     const made = await factory(binding)
     const producer = made.producer(component.locator, endpoints, component)
-    const { properties } = await import(binding)
+    const { properties } = (await definition(binding)).module
 
     if (properties.local === true) local.push(producer)
     else other.push(producer)

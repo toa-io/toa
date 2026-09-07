@@ -1,6 +1,7 @@
 import { equal, ok } from 'node:assert/strict'
 import { describe, it } from 'node:test'
 
+import { definition } from '@toa.io/definitions'
 import * as shortcuts from '../src/shortcuts/index.js'
 
 /**
@@ -13,7 +14,7 @@ describe('shortcuts', () => {
     const declared = new Set(SYSTEM)
 
     for (const [reference, declaration] of Object.entries(EXTENSIONS)) {
-      const extension = await import(reference)
+      const extension = await definition(reference)
 
       ok(
         typeof extension.context === 'function',
@@ -35,7 +36,7 @@ describe('shortcuts', () => {
 
   it('should present every key an extension declares', async () => {
     for (const [reference, declaration] of Object.entries(EXTENSIONS)) {
-      const extension = await import(reference)
+      const extension = await definition(reference)
       const contributed = extension.context(declaration)
       const list = Array.isArray(contributed) ? contributed : [contributed]
 

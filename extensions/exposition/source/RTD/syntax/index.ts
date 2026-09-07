@@ -1,2 +1,1 @@
-export * from './parse.js'
-export * from './types.js'
+export * from '@toa.io/definitions/extensions.exposition/syntax'

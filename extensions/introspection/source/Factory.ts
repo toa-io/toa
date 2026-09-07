@@ -4,8 +4,8 @@ import {
   environment,
   component as declaration,
   settings
-} from './annotation.js'
-import { NAMESPACE, uiPort } from './const.js'
+} from '@toa.io/definitions/extensions.introspection'
+import { NAMESPACE, uiPort } from '@toa.io/definitions/extensions.introspection'
 import { describe } from './describe.js'
 import { Reporter } from './Reporter.js'
 import { Tenant } from './Tenant.js'
@@ -13,7 +13,11 @@ import { Composition } from './Composition.js'
 import { Explorer } from './Explorer.js'
 import { UI } from './UI.js'
 import { capture, samplable } from './sample.js'
-import type { Declaration, Options, Settings } from './annotation.js'
+import type {
+  Declaration,
+  Options,
+  Settings
+} from '@toa.io/definitions/extensions.introspection'
 import type { Origin, Outcome, Target } from './model.js'
 import type { Manifest } from '@toa.io/norm'
 import type { Component, Locator } from '@toa.io/core'

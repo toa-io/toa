@@ -2,11 +2,12 @@ import { console as output } from 'openspan'
 import { environment, pick } from '@toa.io/generic'
 import { Connector } from '@toa.io/core'
 import * as boot from '@toa.io/boot'
-import { version } from '@toa.io/runtime'
+import { version } from '@toa.io/definitions'
 
 import { graceful } from './lib/graceful.js'
 import { create } from './lib/services.js'
 import { components as find } from '../util/find.js'
+import { needs, OPERATIONS } from '../util/needs.js'
 
 /**
  * @param {Record<string, string | boolean>} argv
@@ -65,7 +66,11 @@ function services(argv) {
  */
 async function dock(argv) {
   // the image is built with the deployment package, which a plain run never needs
-  const docker = await import('./docker/index.js')
+  const docker = await needs(
+    'compose --dock',
+    () => import('./docker/index.js'),
+    OPERATIONS
+  )
   const repository = await docker.build(argv.context, argv.paths)
   const args = pick(argv, ['kill', 'bindings', 'service'])
   const command = docker.command('toa compose *', args)

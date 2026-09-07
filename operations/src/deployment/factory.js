@@ -1,15 +1,9 @@
-import { readFileSync } from 'node:fs'
-import { join } from 'node:path'
-import { createRequire } from 'node:module'
-import { pathToFileURL } from 'node:url'
-import { context as load } from '@toa.io/norm'
+import { context as load, definition } from '@toa.io/norm'
 import { Process } from '../process.js'
 import { Operator } from './operator.js'
 import { Factory as ImagesFactory } from './images/index.js'
 import { Deployment } from './deployment.js'
 
-// a dependency is resolved the way a package is
-const require = createRequire(import.meta.url)
 import { Registry } from './registry.js'
 import { Composition } from './composition.js'
 import { Service } from './service.js'
@@ -110,16 +104,11 @@ export class Factory {
   }
 
   async #getDependency(reference, instances) {
-    // a dependency may be named the way a package is or written as a directory,
-    // and a module is loaded by file
-    const module = await import(pathToFileURL(require.resolve(reference)).href)
-    const pkg = JSON.parse(
-      readFileSync(require.resolve(join(reference, 'package.json')), 'utf8')
-    )
+    const { name, module } = await definition(reference)
 
     if (module.deployment === undefined) return
 
-    const annotation = this.#context.annotations?.[pkg.name]
+    const annotation = this.#context.annotations?.[name]
 
     /** @type {toa.deployment.dependency.Declaration} */
     const dependency = module.deployment(instances, annotation)
