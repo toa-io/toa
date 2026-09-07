@@ -25,7 +25,6 @@
   "peerDependencies": {
     "@toa.io/boot": "*",
     "@toa.io/operations": "*",
-    "jsonpath": "1.3.0",
     "paseto": "4.0.0"
   },
   "peerDependenciesMeta": {
@@ -33,9 +32,6 @@
       "optional": true
     },
     "@toa.io/operations": {
-      "optional": true
-    },
-    "jsonpath": {
       "optional": true
     },
     "paseto": {
