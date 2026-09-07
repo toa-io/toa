@@ -1,5 +1,5 @@
 import * as assert from 'node:assert'
-import { providers } from './providers/index.js'
+import { secrets as declared } from './providers/index.js'
 import { validateAnnotation } from './Annotation.js'
 import type { Annotation } from './Annotation.js'
 import type { Dependency, Variable, Mounts } from '@toa.io/operations'
@@ -48,19 +48,15 @@ function getSecrets(annotation: Annotation): Variable[] {
   const secrets: Variable[] = []
 
   for (const [name, declaration] of Object.entries(annotation)) {
-    const Provider = providers[declaration.provider]
-
-    if (Provider.SECRETS !== undefined)
-      // eslint-disable-next-line max-depth
-      for (const secret of Provider.SECRETS)
-        secrets.push({
-          name: `${ENV_PREFIX}_${name}_${secret.name}`.toUpperCase(),
-          secret: {
-            name: `toa-storages-${name}`,
-            key: secret.name,
-            optional: secret.optional
-          }
-        })
+    for (const secret of declared[declaration.provider])
+      secrets.push({
+        name: `${ENV_PREFIX}_${name}_${secret.name}`.toUpperCase(),
+        secret: {
+          name: `toa-storages-${name}`,
+          key: secret.name,
+          optional: secret.optional
+        }
+      })
   }
 
   return secrets

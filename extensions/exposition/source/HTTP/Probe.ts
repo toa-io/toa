@@ -96,15 +96,4 @@ export class Probe {
   }
 }
 
-/**
- * Reserved for this probe. `8001` is the Telemetry readiness probe's, and `toa export` refuses a
- * port claimed twice — `toa mono` and a local run put every service in one process.
- */
-export const PROBE = 8004
 export const PATH = '/.ready'
-
-/**
- * The initial delay of the readiness probe. The server does not sleep for it: whoever
- * probes is the one that waits, and doing it here as well only delayed the process twice.
- */
-export const DELAY = 3 // seconds

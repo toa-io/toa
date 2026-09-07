@@ -20,7 +20,70 @@ export function resources(context, values) {
           "Declare them on it or as the context's 'resources', " +
           "or 'resources: null' to deploy it without any."
       )
+
+    heap(unit.deployment)
   }
+}
+
+/**
+ * The memory limit sizes the heap. Node reads the machine's memory rather than the
+ * container's, so without this the heap grows past the limit and the pod is killed instead
+ * of collected. What is left of the limit is the process itself: its code, its buffers and
+ * its threads. A deployment that states `NODE_OPTIONS` of its own keeps them.
+ */
+function heap(deployment) {
+  const limit = deployment.resources?.memory?.[1]
+
+  if (limit === undefined) return
+
+  deployment.variables ??= []
+
+  if (deployment.variables.some((variable) => variable.name === NODE_OPTIONS)) return
+
+  const megabytes = Math.floor((quantity(limit) * HEAP_SHARE) / 2 ** 20)
+
+  deployment.variables.push({
+    name: NODE_OPTIONS,
+    value: `--max-old-space-size=${megabytes}`
+  })
+}
+
+/**
+ * A Kubernetes quantity, in bytes.
+ *
+ * @param {string | number} value
+ * @returns {number}
+ */
+export function quantity(value) {
+  const match = String(value).match(/^(\d+(?:\.\d+)?)([KMGTPE]i?|[kmun])?$/)
+
+  if (match === null) throw new Error(`'${value}' is not a quantity`)
+
+  const [, number, suffix = ''] = match
+  const scale = SUFFIXES[suffix]
+
+  if (scale === undefined) throw new Error(`'${value}' is not a memory quantity`)
+
+  return Number(number) * scale
+}
+
+const NODE_OPTIONS = 'NODE_OPTIONS'
+const HEAP_SHARE = 0.75
+
+const SUFFIXES = {
+  '': 1,
+  K: 1e3,
+  M: 1e6,
+  G: 1e9,
+  T: 1e12,
+  P: 1e15,
+  E: 1e18,
+  Ki: 2 ** 10,
+  Mi: 2 ** 20,
+  Gi: 2 ** 30,
+  Ti: 2 ** 40,
+  Pi: 2 ** 50,
+  Ei: 2 ** 60
 }
 
 function* units(values) {

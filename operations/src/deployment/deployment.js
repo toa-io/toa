@@ -1,7 +1,7 @@
 import { join } from 'node:path'
 import { writeFile as write } from 'node:fs/promises'
 import { yaml as jsyaml } from '@toa.io/generic'
-import fs from 'fs-extra'
+import { cp } from 'node:fs/promises'
 
 import { merge, declare, describe } from './.deployment/index.js'
 
@@ -26,7 +26,7 @@ export class Deployment {
     await Promise.all([
       write(join(target, 'Chart.yaml'), chart),
       write(join(target, 'values.yaml'), values),
-      fs.copy(TEMPLATES, join(target, 'templates'))
+      cp(TEMPLATES, join(target, 'templates'), { recursive: true })
     ])
 
     this.#target = target

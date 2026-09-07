@@ -1,5 +1,3 @@
-import { push } from '../handlers/push.js'
-
 const builder = (yargs) => {
   yargs.option('path', {
     alias: 'p',
@@ -10,7 +8,14 @@ const builder = (yargs) => {
   })
 }
 
+// the handler and what it depends on load when the command runs, not when the program starts
+const handler = async (argv) => {
+  const { push } = await import('../handlers/push.js')
+
+  return await push(argv)
+}
+
 export const command = 'push'
 export const desc = 'Build and push Docker images'
 
-export { builder, push as handler }
+export { builder, handler }

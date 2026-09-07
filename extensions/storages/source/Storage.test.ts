@@ -12,7 +12,7 @@ import type { Entry, Stream } from './Entry.js'
 import type { Constructor } from './Provider.js'
 
 const suite = suites[0]
-const Provider: Constructor = providers[suite.provider]
+const Provider: Constructor = await providers[suite.provider]()
 const provider = new Provider(suite.options, suite.secrets)
 const storage = new Storage(provider)
 const dir = '/' + randomUUID()

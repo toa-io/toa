@@ -7,7 +7,9 @@ const { capitalize } = letters
 /** @type {toa.node.define.operations.Define} */
 export const define = (descriptor) => {
   const declaration =
-    /** @type {import('@babel/types').ClassDeclaration} */ descriptor.statement
+    /** @type {Extract<toa.node.define.algorithms.Statement, { type: 'ClassDeclaration' }>} */ (
+      descriptor.statement
+    )
 
   descriptor.name = descriptor.name.toLowerCase()
   descriptor.statement = method(declaration, 'execute')
@@ -24,9 +26,9 @@ export const test = (statement, name) => {
 }
 
 /**
- * @param {import('@babel/types').ClassDeclaration} statement
+ * @param {Extract<toa.node.define.algorithms.Statement, { type: 'ClassDeclaration' }>} statement
  * @param {string} name
- * @returns {import('@babel/types').Statement}
+ * @returns {toa.node.define.algorithms.Method}
  */
 const method = (statement, name) => {
   const methods = statement.body.body
@@ -36,7 +38,7 @@ const method = (statement, name) => {
 
   if (method === undefined) throw new Error(`Method '${name}' not found`)
 
-  return /** @type {import('@babel/types').Statement} */ method
+  return method
 }
 
 const names = types.map((type) => capitalize(type))

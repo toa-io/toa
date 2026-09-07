@@ -1,4 +1,4 @@
-import * as parser from '@babel/parser'
+import { signature } from './signature.js'
 import * as syntaxes from './syntaxes/index.js'
 
 /**
@@ -59,11 +59,6 @@ const find = (module) => {
 
 /**
  * @param {Function} func
- * @returns {import('@babel/types').Statement}
+ * @returns {toa.node.define.algorithms.Statement}
  */
-const parse = (func) => {
-  // an operation is a module, and may say so with import.meta
-  const file = parser.parse(func.toString(), { sourceType: 'module' })
-
-  return file.program.body[0]
-}
+const parse = (func) => signature(func)

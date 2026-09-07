@@ -10,7 +10,8 @@ import { Connector } from '@toa.io/core'
 import { type OutgoingMessage, write } from './messages.js'
 import { ClientError, Exception } from './exceptions.js'
 import { Context } from './Context.js'
-import { PROBE, Probe } from './Probe.js'
+import { Probe } from './Probe.js'
+import { PORT, PROBE } from '../const.js'
 import type { IncomingMessage, Protocol, ServerResponse } from './types.js'
 import type { Bouncer, MCP, OAuth, RPC } from '../Annotation.js'
 
@@ -330,8 +331,6 @@ function errorAttributes(
 
   return attributes
 }
-
-export const PORT = 8000
 
 export const DRAIN = 10 // seconds
 

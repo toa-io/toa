@@ -1,5 +1,4 @@
 import { Operation } from '@toa.io/norm/types'
-import { Node, Statement } from '@babel/types'
 import * as _context from './context.js'
 import * as _algorithm from './algorithms.js'
 
@@ -10,6 +9,17 @@ declare namespace toa.node.define {
     type List = Record<string, Definition>
 
     type Syntax = 'function' | 'class' | 'factory'
+
+    type Parameter = { name: string | undefined }
+
+    type Method = { type: 'ClassMethod'; key: { name: string }; params: Parameter[] }
+
+    /** What is read from an algorithm's source: the form it is declared in, and its parameters. */
+    type Statement =
+      | { type: 'FunctionDeclaration' | 'ArrowFunctionExpression'; params: Parameter[] }
+      | { type: 'ClassDeclaration'; body: { body: Method[] } }
+
+    type Node = Statement | Method
 
     type Descriptor = {
       name: string

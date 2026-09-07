@@ -28,7 +28,6 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@babel/parser": "8.0.4",
     "@toa.io/core": "1.0.0-alpha.288",
     "@toa.io/extensions.fetch": "1.0.0-alpha.288",
     "@toa.io/generic": "1.0.0-alpha.286",

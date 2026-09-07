@@ -25,8 +25,13 @@ for (const suite of suites)
   (suite.run ? describe : describe.skip)(`${suite.provider}`, () => {
     const id = Math.random().toString(36).substring(7)
     const test = it
-    const Provider: Constructor = providers[suite.provider]
-    const provider = new Provider(suite.options, suite.secrets)
+    let provider: InstanceType<Constructor>
+
+    before(async () => {
+      const Provider: Constructor = await providers[suite.provider]()
+
+      provider = new Provider(suite.options, suite.secrets)
+    })
 
     describe('put, get, head', () => {
       let entry: Stream

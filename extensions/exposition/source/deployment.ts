@@ -3,10 +3,10 @@ import assert from 'node:assert'
 import { type Dependency, type Service } from '@toa.io/operations'
 import { type Annotation } from './Annotation.js'
 import * as schemas from './schemas.js'
-import { shortcuts } from './Directive.js'
+import { shortcuts } from './shortcuts.js'
 import { components } from './Composition.js'
 import { parse } from './RTD/syntax/index.js'
-import { DELAY, PORT, PROBE } from './HTTP/index.js'
+import { DELAY, PORT, PROBE } from './const.js'
 
 /** Where Toa's release publishes this service's image. An application takes it
  *  instead of building one when its context says `registry.services: published`. */

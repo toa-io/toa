@@ -24,23 +24,21 @@ export class Factory {
   }
 
   public aspect(): Aspect {
-    const storages = this.createStorages()
-
-    return new Aspect(storages)
+    return new Aspect(() => this.createStorages())
   }
 
-  private createStorages(): Storages {
+  private async createStorages(): Promise<Storages> {
     const storages: Storages = {}
 
     for (const [name, declaration] of Object.entries(this.annotation))
-      storages[name] = this.createStorage(name, declaration)
+      storages[name] = await this.createStorage(name, declaration)
 
     return storages
   }
 
-  private createStorage(name: string, declaration: Declaration): Storage {
+  private async createStorage(name: string, declaration: Declaration): Promise<Storage> {
     const { provider: id, ...options } = declaration
-    const Provider: Constructor = providers[id]
+    const Provider: Constructor = await providers[id]()
     const secrets = this.resolveSecrets(name, Provider)
     const provider = new Provider(options, secrets)
 
