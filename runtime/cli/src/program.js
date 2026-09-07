@@ -4,7 +4,7 @@ import yargs from 'yargs/yargs'
 
 import { environment } from '@toa.io/generic'
 import * as boot from '@toa.io/boot'
-import { version } from '@toa.io/runtime'
+import { version } from '@toa.io/definitions'
 
 yargs(process.argv.slice(2))
   .parserConfiguration({

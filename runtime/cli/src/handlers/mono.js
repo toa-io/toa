@@ -1,7 +1,7 @@
 import { console as output } from 'openspan'
 import { Connector } from '@toa.io/core'
 import * as boot from '@toa.io/boot'
-import { version } from '@toa.io/runtime'
+import { version } from '@toa.io/definitions'
 
 import { graceful } from './lib/graceful.js'
 import { discover } from './lib/services.js'

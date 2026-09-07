@@ -2,7 +2,7 @@ import { console as output } from 'openspan'
 import { environment, pick } from '@toa.io/generic'
 import { Connector } from '@toa.io/core'
 import * as boot from '@toa.io/boot'
-import { version } from '@toa.io/runtime'
+import { version } from '@toa.io/definitions'
 
 import { graceful } from './lib/graceful.js'
 import { create } from './lib/services.js'

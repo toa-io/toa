@@ -12,7 +12,6 @@
   "bugs": {
     "url": "https://github.com/toa-io/toa/issues"
   },
-  "main": "index.js",
   "publishConfig": {
     "access": "public"
   },
@@ -32,6 +31,7 @@
     "@toa.io/bridges.node": "1.0.0-alpha.288",
     "@toa.io/cli": "1.0.0-alpha.288",
     "@toa.io/core": "1.0.0-alpha.288",
+    "@toa.io/definitions": "1.0.0-alpha.288",
     "@toa.io/extensions.configuration": "1.0.0-alpha.288",
     "@toa.io/extensions.exposition": "1.0.0-alpha.288",
     "@toa.io/extensions.fetch": "1.0.0-alpha.288",

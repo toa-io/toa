@@ -10,6 +10,7 @@
     "connectors/*/src/**/*.ts",
     "extensions/*/source/**/*.ts",
     "extensions/*/components/*/source/**/*.ts",
+    "definitions/source/**/*.ts",
     "libraries/*/source/**/*.ts",
     "operations/src/**/*.ts",
     "runtime/*/source/**/*.ts",
