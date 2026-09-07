@@ -1,4 +1,5 @@
 import { Connector } from './connector.js'
+import { environment } from '@toa.io/generic'
 import type { Locator } from './locator.js'
 import type { Component } from './component.js'
 import type { Remote } from './remote.js'
@@ -20,8 +21,8 @@ export class Context extends Connector {
   public constructor(local: Component, discover: Discover, aspects: Aspect[] = []) {
     super()
 
-    this.env = process.env.TOA_ENV
-    this.name = process.env.TOA_CONTEXT
+    this.env = environment.get('TOA_ENV')
+    this.name = environment.get('TOA_CONTEXT')
     this.aspects = aspects
     this.locator = local?.locator
 

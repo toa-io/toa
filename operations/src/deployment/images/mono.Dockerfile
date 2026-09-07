@@ -14,5 +14,6 @@ COPY --chown=node:node . /composition
 RUN --mount=type=cache,target=/root/.npm,sharing=locked \
   for entry in *; do if grep -qs '"dependencies"' "$entry/package.json"; then (cd $entry && npm i --omit=dev); fi; done
 
-USER node
+# no USER: the runtime drops to `node` itself, and only a process that started as root can
+# close its environment under /proc — see runtime/runtime/bin/toa
 CMD toa mono *

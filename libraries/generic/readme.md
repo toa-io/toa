@@ -68,21 +68,10 @@ object.a.b.c = 1 // (['a', 'b', 'c'], 1)
 
 Returns the input string.
 Substitutes variables to a placeholders following `${NAME}` syntax.
-If no variables are passed, then environment variables are used.
+A placeholder with no variable is substituted with an empty string; the environment is never
+read.
 
 ### Example
-
-#### Environment variables
-
-```javascript
-process.env['FOO'] = 'bar'
-
-const output = echo('foo: ${FOO}')
-
-console.log(output) // foo: bar
-```
-
-#### Custom variables
 
 ```javascript
 const variables = { foo: 'world' }

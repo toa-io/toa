@@ -1,3 +1,5 @@
+import { environment } from '@toa.io/generic'
+
 /** The component the extension ships to hold delayed calls. */
 export const NAMESPACE = 'cadence'
 export const COMPONENT = 'metronome'
@@ -23,7 +25,7 @@ export const BATCH = 200
 
 /** A number from the environment, where a deployment or a test suite states one. */
 export function number(variable: string, fallback: number): number {
-  const value = Number(process.env[variable])
+  const value = Number(environment.get(variable))
 
   return Number.isNaN(value) || value <= 0 ? fallback : value
 }

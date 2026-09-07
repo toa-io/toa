@@ -2,6 +2,7 @@ import { Readable } from 'node:stream'
 import { console } from 'openspan'
 import { Connector } from '@toa.io/core'
 import { Receiver } from './Receiver.js'
+import { environment } from '@toa.io/generic'
 import type { Route } from './extension.js'
 import type { Host } from './Factory.js'
 
@@ -17,10 +18,11 @@ export class Routes extends Connector {
   }
 
   private static read(): Route[] {
-    if (process.env.TOA_REALTIME === undefined)
-      throw new Error('TOA_REALTIME is not defined')
+    const value = environment.get('TOA_REALTIME')
 
-    return JSON.parse(process.env.TOA_REALTIME) as Route[]
+    if (value === undefined) throw new Error('TOA_REALTIME is not defined')
+
+    return JSON.parse(value) as Route[]
   }
 
   public override async open(): Promise<void> {

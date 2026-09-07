@@ -2,6 +2,23 @@
 
 // the file has no extension, so its format is the package's: a module
 
+import { userInfo } from 'node:os'
+
+/*
+ * A process that changes its uid is non-dumpable: its environment and its memory under /proc
+ * are closed to the user it runs as, and a component's code runs as that user. So the image
+ * starts the runtime as root, and the runtime gives root up before it loads anything else.
+ * Where it did not start as root — a developer's machine, a test — there is nothing to give up.
+ */
+if (process.getuid?.() === 0) {
+  process.setgroups([])
+  process.setgid('node')
+  process.setuid('node')
+
+  // `setuid` leaves the environment alone, and root's home is not this user's
+  process.env.HOME = userInfo().homedir
+}
+
 if (process.argv.includes('--wtf')) {
   const wtf = await import('wtfnode')
 

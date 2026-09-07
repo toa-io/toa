@@ -3,6 +3,7 @@ import { Redis } from 'ioredis'
 import { console } from 'openspan'
 import { Connector } from '@toa.io/core'
 import { Meter } from './meter.js'
+import { environment } from '@toa.io/generic'
 
 /**
  * One set of clients per process, shared by every atom in it. Each keeps its own keys, so a
@@ -95,11 +96,11 @@ export class Connection extends Connector {
 const OPTIONS = { enableReadyCheck: true }
 
 function resolve() {
-  const value = process.env[VARIABLE]
+  const value = environment.get(VARIABLE)
 
   // an empty value is atomicity turned off, where an absent one in development is the
   // local Redis — as everything else in development resolves
-  if (value === undefined) return process.env.TOA_DEV === '1' ? [DEV] : []
+  if (value === undefined) return environment.get('TOA_DEV') === '1' ? [DEV] : []
 
   return value.split(' ').filter((url) => url !== '')
 }

@@ -1,5 +1,5 @@
 import { type Locator } from '@toa.io/core'
-import { add } from '@toa.io/generic'
+import { add, environment } from '@toa.io/generic'
 import * as schemas from '@toa.io/schemas'
 import { PREFIX, SECRET_RX } from './const.js'
 import { Secret } from './Secret.js'
@@ -8,7 +8,7 @@ import type { Manifest } from './manifest.js'
 
 /** The variable is set, so the values service is not consulted. */
 export function overridden(locator: Locator): boolean {
-  return process.env[PREFIX + locator.uppercase] !== undefined
+  return environment.get(PREFIX + locator.uppercase) !== undefined
 }
 
 /** The variable, the manifest defaults, then the schema. */
@@ -40,7 +40,7 @@ function validate(values: Node, manifest: Manifest): void {
 
 function read(suffix: string): Node {
   const variable = PREFIX + suffix
-  const string = process.env[variable]
+  const string = environment.get(variable)
 
   if (string === undefined) return {}
   else return JSON.parse(string)
@@ -64,7 +64,7 @@ function substituteSecrets(configuration: Node): void {
 
 function getSecret(name: string): string {
   const variable = PREFIX + '_' + name
-  const value = process.env[variable]
+  const value = environment.get(variable)
 
   if (value === undefined) throw new Error(`${variable} is not set.`)
 

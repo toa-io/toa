@@ -1,3 +1,5 @@
+import { environment } from '@toa.io/generic'
+
 export const ID = 'introspection'
 export const NAMESPACE = 'introspection'
 
@@ -17,7 +19,7 @@ export const UI_PORT = 8002
  */
 export const UI_PORT_ENV = 'TOA_INTROSPECTION_UI_PORT'
 export function uiPort(): number {
-  const value = process.env[UI_PORT_ENV]
+  const value = environment.get(UI_PORT_ENV)
 
   return value === undefined ? UI_PORT : Number(value)
 }

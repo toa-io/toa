@@ -1,5 +1,6 @@
 import { spawn } from 'node:child_process'
 import { once } from 'node:events'
+import { environment } from '@toa.io/generic'
 
 /**
  * @param {string} command
@@ -8,6 +9,10 @@ import { once } from 'node:events'
  */
 export async function execute(command, options = {}) {
   options.cwd = this.cwd
+
+  // what the suite set went to the store, not to `process.env`, and a program is started
+  // with the environment it would have had
+  options.env = environment.entries()
 
   // the command leads its own process group, so aborting it takes the program along;
   // signalling the shell alone leaves what it started holding on to ports

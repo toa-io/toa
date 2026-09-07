@@ -30,7 +30,7 @@ Given(
     assert.notEqual(typeof address, 'string')
 
     this.fetchOrigin = `http://127.0.0.1:${address.port}`
-    process.env.TOA_FEATURES_FETCH_URL = this.fetchOrigin
+    process.env.FEATURES_FETCH_URL = this.fetchOrigin
   }
 )
 
@@ -78,7 +78,7 @@ After(
    */
   async function () {
     exporting([consoleExporter])
-    delete process.env.TOA_FEATURES_FETCH_URL
+    delete process.env.FEATURES_FETCH_URL
 
     if (this.fetchServer !== undefined)
       await new Promise((resolve, reject) =>

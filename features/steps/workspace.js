@@ -2,7 +2,7 @@ import assert from 'node:assert'
 import { join } from 'node:path'
 import dotenv from 'dotenv'
 import { diff } from 'jest-diff'
-import { subtract } from '@toa.io/generic'
+import { environment, subtract } from '@toa.io/generic'
 import { readFile, writeFile } from 'node:fs/promises'
 import * as components from './.workspace/components/index.js'
 import * as context from './.workspace/context.js'
@@ -115,18 +115,15 @@ Given('environment variables:', function (contents) {
   const vars = dotenv.parse(contents)
 
   for (const [name, value] of Object.entries(vars)) {
-    VARS.set(name, process.env[name])
-    process.env[name] = value
+    VARS.set(name, environment.get(name))
+    environment.set(name, value)
   }
 })
 
 After(function () {
   for (const [key, value] of VARS) {
-    if (value === undefined) {
-      delete process.env[key]
-    } else {
-      process.env[key] = value
-    }
+    if (value === undefined) environment.delete(key)
+    else environment.set(key, value)
   }
 
   VARS.clear()

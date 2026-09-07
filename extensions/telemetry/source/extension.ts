@@ -9,6 +9,7 @@ import {
   READY_ENV,
   type ReadyAnnotation
 } from './Ready.js'
+import { environment } from '@toa.io/generic'
 import type { LogsOptions } from './Logs.js'
 import type { Connector, Locator } from '@toa.io/core'
 import type { extensions } from '@toa.io/core/types'
@@ -20,19 +21,24 @@ export class Factory implements extensions.Factory {
   private readonly ready: Ready | null
 
   public constructor() {
-    const globEnv = process.env[LOGS_PREFIX]
-    const level = process.env.TOA_DEV === '1' ? 'trace' : 'info'
+    const globEnv = environment.get(LOGS_PREFIX)
+    const level = environment.get('TOA_DEV') === '1' ? 'trace' : 'info'
 
     this.logsOptions = globEnv === undefined ? { level } : JSON.parse(globEnv)
     this.logsOptions.level ??= level
 
     console.configure({ level: this.logsOptions.level })
 
-    const tracesEnv = process.env[TRACES_ENV]
-
-    traces(
+    const tracesEnv = environment.get(TRACES_ENV)
+    const options =
       tracesEnv === undefined ? development() : (JSON.parse(tracesEnv) as TracesOptions)
-    )
+
+    // `openspan` is not Toa's and reads the environment, which no longer holds the context by
+    // the time the exporter is made — so the service is named here
+    if (options.exporters?.otlp !== undefined)
+      options.exporters.otlp.service ??= environment.get('TOA_CONTEXT')
+
+    traces(options)
 
     this.ready = Ready.create()
   }
@@ -64,7 +70,7 @@ export class Factory implements extensions.Factory {
   }
 
   private createLogs(locator: Locator): extensions.Aspect {
-    const overEnv = process.env[`${LOGS_PREFIX}_${locator.uppercase}`]
+    const overEnv = environment.get(`${LOGS_PREFIX}_${locator.uppercase}`)
     const override = overEnv !== undefined ? JSON.parse(overEnv) : undefined
 
     const { level } = Object.assign({}, this.logsOptions, override)
@@ -83,7 +89,8 @@ export class Factory implements extensions.Factory {
  * which boots without this extension.
  */
 function development(): TracesOptions {
-  const local = process.env.TOA_DEV === '1' || process.env.TOA_BOOT_TRACE === '1'
+  const local =
+    environment.get('TOA_DEV') === '1' || environment.get('TOA_BOOT_TRACE') === '1'
 
   return local ? { exporters: { console: {} } } : {}
 }

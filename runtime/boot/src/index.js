@@ -1,6 +1,5 @@
 // the environment is read at module scope elsewhere, so it is loaded first
-// oxlint-disable-next-line import/no-unassigned-import
-import './env.js'
+import { load as env } from './env.js'
 
 import * as bindings from './bindings/index.js'
 import * as bridge from './bridge.js'
@@ -29,6 +28,7 @@ import { rc } from './rc.js'
 
 export {
   call,
+  env,
   cascade,
   component,
   composition,
