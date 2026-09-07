@@ -25,7 +25,6 @@ Run composition.
 reference. Repeat for several.<br/>
 <code>--dock</code> Run in Docker using current <code>.env</code>.<br/>
 <code>--context</code> Path to the Context root (default <code>.</code>).<br/>
-<code>--bindnings</code> Override bindings (obsolete).
 </dd>
 </dl>
 
@@ -130,7 +129,6 @@ Credentials specified in the output file are preserved.
 <dd>Print normalized manifest.
 
 <code>--path</code> path to a component (default <code>.</code>)<br/>
-<code>--jsonpath</code> JSONPath expression to filter the output<br/>
 <code>--error</code> print errors only<br/>
 <code>--output</code> output format (default <code>yaml</code>)
 </dd>

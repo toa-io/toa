@@ -17,20 +17,43 @@
   "publishConfig": {
     "access": "public"
   },
+  "files": [
+    "transpiled",
+    "readme.md",
+    "!**/tsconfig.tsbuildinfo",
+    "!**/*.test.*",
+    "!**/.env*"
+  ],
   "scripts": {
     "test": "echo \"Error: run tests from root\" && exit 1",
     "transpile": "npx tsc"
   },
   "devDependencies": {
-    "dotenv": "17.4.2"
-  },
-  "dependencies": {
     "@aws-sdk/client-s3": "3.1125.0",
     "@aws-sdk/lib-storage": "3.1125.0",
+    "cloudinary": "2.11.0",
+    "dotenv": "17.4.2"
+  },
+  "peerDependencies": {
+    "@aws-sdk/client-s3": "3.1125.0",
+    "@aws-sdk/lib-storage": "3.1125.0",
+    "cloudinary": "2.11.0"
+  },
+  "peerDependenciesMeta": {
+    "@aws-sdk/client-s3": {
+      "optional": true
+    },
+    "@aws-sdk/lib-storage": {
+      "optional": true
+    },
+    "cloudinary": {
+      "optional": true
+    }
+  },
+  "dependencies": {
     "@toa.io/definitions": "1.0.0-alpha.292",
     "@toa.io/generic": "1.0.0-alpha.292",
     "@toa.io/schemas": "1.0.0-alpha.292",
-    "cloudinary": "2.11.0",
     "negotiator": "1.1.0",
     "openspan": "1.0.0-alpha.286"
   },

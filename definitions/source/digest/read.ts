@@ -26,6 +26,19 @@ const cache: Record<string, Entry[]> = {}
 /** `transpiled/digest/read.js` → `digest/` */
 const ROOT = resolve(import.meta.dirname, '../../digest')
 
+/**
+ * What the components an extension ships declare in their manifests, by package name — read
+ * from the digest for the reason the manifests are: the extension is not installed beside a
+ * deploy, and a composition that runs its service runs these components in its own process.
+ */
+export function packages(suffix: string): Record<string, string> {
+  const packages: Record<string, string> = {}
+
+  for (const entry of digest(suffix)) Object.assign(packages, entry.packages)
+
+  return packages
+}
+
 export interface Components {
   /** what a chart names each component's workload by: `identity-basic` */
   labels: string[]
@@ -36,4 +49,6 @@ export interface Components {
 export interface Entry {
   label: string
   manifest: object
+  /** the component's own `dependencies`, where it ships a manifest */
+  packages?: Record<string, string>
 }

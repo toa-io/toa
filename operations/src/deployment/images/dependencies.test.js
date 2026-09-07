@@ -90,6 +90,20 @@ describe('reference', () => {
     assert.notStrictEqual(create().dependencies.reference, run.dependencies.reference)
   })
 
+  it('should change with what an extension installs', () => {
+    const before = create()
+
+    composition.components[1].packages = { cloudinary: '2.11.0' }
+
+    const component = create()
+
+    assert.notStrictEqual(component.dependencies.reference, before.dependencies.reference)
+
+    composition.packages = { 'lru-cache': '11.5.2' }
+
+    assert.notStrictEqual(create().dependencies.reference, component.dependencies.reference)
+  })
+
   it('should change with the registry build settings', () => {
     const before = create()
 
@@ -128,6 +142,7 @@ describe('prepare', () => {
 
     assert.deepStrictEqual(entries, [
       '.dockerignore',
+      '.packages',
       'Dockerfile',
       'one',
       'one/package.json',
@@ -142,6 +157,44 @@ describe('prepare', () => {
     assert.ok(dockerfile.includes('npm i --omit=dev'))
     assert.ok(dockerfile.includes('WORKDIR /composition'))
     assert.doesNotMatch(dockerfile, /USER node|CMD /)
+  })
+
+  it('should hold what the extensions install, deduplicated and ordered', async () => {
+    composition.components[0].packages = { cloudinary: '2.11.0' }
+    composition.components[1].packages = {
+      cloudinary: '2.11.0',
+      '@aws-sdk/client-s3': '3.1125.0'
+    }
+
+    const image = create()
+    const context = await image.dependencies.prepare(root)
+
+    assert.strictEqual(
+      await readFile(join(context, '.packages'), 'utf8'),
+      '@aws-sdk/client-s3@3.1125.0\ncloudinary@2.11.0'
+    )
+
+    const dockerfile = await readFile(join(context, 'Dockerfile'), 'utf8')
+
+    assert.ok(dockerfile.includes('npm i --prefix /toa --omit=dev $(cat .packages)'))
+  })
+
+  it('should hold what a service the composition runs brings', async () => {
+    composition.packages = { 'lru-cache': '11.5.2' }
+    composition.components[0].packages = { cloudinary: '2.11.0' }
+
+    const context = await create().dependencies.prepare(root)
+
+    assert.strictEqual(
+      await readFile(join(context, '.packages'), 'utf8'),
+      'cloudinary@2.11.0\nlru-cache@11.5.2'
+    )
+  })
+
+  it('should hold an empty list where nothing is declared', async () => {
+    const context = await create().dependencies.prepare(root)
+
+    assert.strictEqual(await readFile(join(context, '.packages'), 'utf8'), '')
   })
 
   it('should lay the sources over the dependencies', async () => {
@@ -167,6 +220,7 @@ describe('prepare', () => {
 
     assert.ok(entries.includes('one/index.js'))
     assert.ok(entries.includes('two/package.json')) // declared for the component that had none
+    assert.ok(entries.includes('one/manifest.toa.json')) // what the process reads instead of normalizing
     assert.ok(!entries.some((entry) => entry.includes('node_modules')))
   })
 

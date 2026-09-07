@@ -17,6 +17,15 @@
   "publishConfig": {
     "access": "public"
   },
+  "files": [
+    "transpiled",
+    "components",
+    "ui/dist",
+    "readme.md",
+    "!**/tsconfig.tsbuildinfo",
+    "!**/*.test.*",
+    "!**/.env*"
+  ],
   "scripts": {
     "transpile": "tsc && tsc -p ./components/configuration.values",
     "build:ui": "npm --prefix ui ci && npm --prefix ui run build",

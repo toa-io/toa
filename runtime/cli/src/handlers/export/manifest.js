@@ -1,4 +1,3 @@
-import jsonpath from 'jsonpath'
 import { component } from '@toa.io/norm'
 import { yaml as jsyaml } from '@toa.io/generic'
 
@@ -9,9 +8,7 @@ const print = async (argv) => {
 
   if (path === undefined) throw new Error(`No component found in ${argv.path}`)
 
-  let manifest = await component(path)
-
-  if (argv.jsonpath !== undefined) manifest = jsonpath.value(manifest, argv.jsonpath)
+  const manifest = await component(path)
 
   if (argv.error !== true) {
     // js-yaml writes plain objects only, and a manifest carries a Locator

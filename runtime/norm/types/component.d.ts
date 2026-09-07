@@ -65,10 +65,11 @@ type Declaration = {
   events?: Events
   receivers?: Record<string, Receiver>
   extensions?: Record<string, object>
-  properties?: Record<string, object>
 }
 
 export type Manifest = Declaration & {
   locator: Locator
   path: string
+  /** what a deploy installs beside this component for what it declares, by package name */
+  packages?: Record<string, string>
 }

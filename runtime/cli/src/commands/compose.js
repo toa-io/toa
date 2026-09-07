@@ -32,12 +32,6 @@ const builder = (yargs) => {
       desc: 'Extension service to run in this composition, by shortcut or package reference'
     })
     .array('service')
-    .option('bindings', {
-      group: 'Command options:',
-      type: 'string',
-      desc: 'OBSOLETE'
-    })
-    .array('bindings')
     .example([
       ['$0 compose ./component'],
       ['$0 compose ./first ./second'],

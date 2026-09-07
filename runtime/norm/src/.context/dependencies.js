@@ -5,5 +5,5 @@ export const dependencies = async (context) => {
   const c = connectors(context, components)
   const references = { ...c, ...e }
 
-  return resolve(references, context.annotations)
+  return resolve(references, context.annotations, context)
 }

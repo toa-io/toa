@@ -1,0 +1,8 @@
+{
+  "name": "identity.basic",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@node-rs/bcrypt": "1.10.8"
+  }
+}

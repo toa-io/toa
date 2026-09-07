@@ -72,7 +72,7 @@ async function dock(argv) {
     OPERATIONS
   )
   const repository = await docker.build(argv.context, argv.paths)
-  const args = pick(argv, ['kill', 'bindings', 'service'])
+  const args = pick(argv, ['kill', 'service'])
   const command = docker.command('toa compose *', args)
 
   await docker.run(repository, command, argv.env)

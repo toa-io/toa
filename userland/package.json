@@ -37,8 +37,7 @@
     "@toa.io/generic": "1.0.0-alpha.292",
     "@toa.io/norm": "1.0.0-alpha.292",
     "@toa.io/schemas": "1.0.0-alpha.292",
-    "@toa.io/storages.null": "0.22.0",
-    "js-yaml": "5.4.1"
+    "@toa.io/storages.null": "1.0.0-alpha.292"
   },
   "gitHead": "61c8e74a336385265767e9fd37d49128cb51b17f"
 }
