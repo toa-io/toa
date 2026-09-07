@@ -33,9 +33,6 @@ a secure store.
 `GET /identity/` is the usual first request: it returns the identity those
 credentials resolved to, and it is as good a place as any to receive the token.
 
-A `GET /identity/` with no credentials creates a new identity that has no
-persistent credentials, and returns its token.
-
 ## Sign-out
 
 Delete the stored `Token`.
