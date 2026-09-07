@@ -46,7 +46,7 @@ jobs:
           node-version: 24
 
       # the deployment scenarios render a chart, and without it they read an empty stdout
-      - uses: azure/setup-helm@v4
+      - uses: azure/setup-helm@v5
 
       - name: Install dependencies
         run: npm ci
