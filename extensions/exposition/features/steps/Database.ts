@@ -45,6 +45,10 @@ export class Database {
       document.CREATED ??= Date.now()
       document.UPDATED ??= document.CREATED
 
+      // a table states a timestamp as the entity carries it; the storage holds it as a date
+      for (const name of TIMESTAMPS)
+        if (typeof document[name] === 'number') document[name] = new Date(document[name])
+
       documents.push(document)
     }
 
@@ -96,5 +100,7 @@ export class Database {
   }
 }
 
+const TIMESTAMPS = ['CREATED', 'UPDATED', 'DELETED']
+
 /** Every fixture table names an `_id`, which is what a row is replaced by. */
-type Document = Record<string, string | number | boolean | null> & { _id: string }
+type Document = Record<string, string | number | boolean | Date | null> & { _id: string }

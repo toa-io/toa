@@ -37,11 +37,18 @@ const load = async (path, base, proto = false) => {
 
   manifest.path = path
 
+  const anonymous = manifest.name === undefined
+
   defaults(manifest, proto)
   await expand(manifest)
 
   await merge(path, manifest)
   await migrations(path, manifest)
+
+  // an inherited migration is recorded under the prototype's name, and a generated one is not
+  // the same on the next machine
+  if (proto && anonymous && manifest.entity?.migrations !== undefined)
+    throw new Error(`Prototype at '${path}' declares migrations, so it has to be named`)
 
   if (manifest.prototype !== null) {
     const prototype = await load(manifest.prototype, path, true)

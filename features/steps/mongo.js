@@ -272,14 +272,30 @@ function parse(table) {
       const str = rows[r][c]
       const int = parseInt(str)
 
-      document[columns[c]] = int.toString() === str ? int : str === 'null' ? null : str
+      document[columns[c]] =
+        int.toString() === str
+          ? int
+          : str === 'null'
+            ? null
+            : ISO.test(str)
+              ? new Date(str)
+              : str
     }
+
+    // a table states a timestamp as the entity carries it; the storage holds it as a date
+    for (const name of TIMESTAMPS)
+      if (typeof document[name] === 'number') document[name] = new Date(document[name])
 
     documents.push(document)
   }
 
   return documents
 }
+
+const TIMESTAMPS = ['CREATED', 'UPDATED', 'DELETED']
+
+/** a moment written as ISO 8601 is stored as the date it names */
+const ISO = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?Z$/
 
 async function using(id, fn) {
   const client = new MongoClient(URL)

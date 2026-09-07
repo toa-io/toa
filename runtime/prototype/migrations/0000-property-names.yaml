@@ -1,0 +1,12 @@
+# 1.0.0-alpha.286 renamed the four system properties of a record. A record written before it
+# holds them under the old names, where nothing reads them.
+#
+# First, because the one after it selects by `CREATED`, which this is what gives a record.
+- update:
+    filter: { _version: { $exists: true } }
+    update:
+      $rename:
+        _version: VERSION
+        _created: CREATED
+        _updated: UPDATED
+        _deleted: DELETED

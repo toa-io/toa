@@ -1,0 +1,15 @@
+# 1.0.0-alpha.287 made the system timestamps dates: what sorts, compares and expires as a
+# moment rather than as a number that happens to be one. A record written before it holds
+# milliseconds.
+#
+# `CREATED` says whether a record has been converted, because every record has one. Null
+# passes through the conversion, which is what an undeleted record's `DELETED` is. The
+# widening is not decoration: MongoDB makes a date from a long and refuses one from an int,
+# and a small enough millisecond is stored as an int.
+- update:
+    filter: { CREATED: { $type: number } }
+    update:
+      - $set:
+          CREATED: { $toDate: { $toLong: '$CREATED' } }
+          UPDATED: { $toDate: { $toLong: '$UPDATED' } }
+          DELETED: { $toDate: { $toLong: '$DELETED' } }

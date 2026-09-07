@@ -39,6 +39,8 @@ type Receiver = {
 type Migration = {
   id: string
   steps: unknown[]
+  /** the prototype it is inherited from; absent on the component's own */
+  prototype?: string
 }
 
 export type Entity = {

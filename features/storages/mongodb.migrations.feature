@@ -82,10 +82,9 @@ Feature: MongoDB migrations
       | name        | keys              |
       | index_shape | {"a":1,"b":-1}    |
     And the `mongo.migrated` migrations are recorded:
-      | migration              | state |
-      | 0001-system-properties | done  |
-      | 0002-indexes           | done  |
-      | 0003-reshape           | done  |
+      | migration    | state |
+      | 0002-indexes | done  |
+      | 0003-reshape | done  |
 
   Scenario: A migration changes records
 
@@ -114,21 +113,24 @@ Feature: MongoDB migrations
       | name        | keys      |
       | index_shape | {"a":1}   |
 
-  Scenario: A migration renames the system properties of a record
+  Scenario: The runtime's own migrations are applied ahead of the component's
 
-  What every stored component declares as `0001-system-properties`, to rename what a release
-  before 1.0.0-alpha.286 wrote.
+  The root prototype declares what a release before 1.0.0-alpha.286 wrote differently — the
+  names of the system properties, then the type of the timestamps — and every stored component
+  inherits it. The rename comes first, because the conversion selects by `CREATED`.
 
     Given the `mongo.migrated` database contains:
-      | _id                              | a | b | runs | _version | _created | _deleted |
-      | 82cf9b0ab0ac4ab2b8036e4e940ddcae | x | y | 0    | 1        | 1709446907166 | null |
+      | _id                              | a | b | runs | _version | _created      | _deleted |
+      | 82cf9b0ab0ac4ab2b8036e4e940ddcae | x | y | 0    | 1        | 1709446907166 | null     |
     When I compose `mongo.migrated` component
     Then the `mongo.migrated` collection holds:
-      | _id                              | VERSION | CREATED       | DELETED |
-      | 82cf9b0ab0ac4ab2b8036e4e940ddcae | 1       | 1709446907166 | null    |
+      | _id                              | VERSION | CREATED                  | DELETED |
+      | 82cf9b0ab0ac4ab2b8036e4e940ddcae | 1       | 2024-03-03T06:21:47.166Z | null    |
     And the `mongo.migrated` migrations are recorded:
-      | migration              | state |
-      | 0001-system-properties | done  |
+      | migration                   | state |
+      | system:0000-property-names  | done  |
+      | system:0001-epoch-millis    | done  |
+      | 0002-indexes                | done  |
 
   Scenario: A storage that does not apply what a component declares refuses to start
     Then I compose `plain.migrated` component and it fails with:

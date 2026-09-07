@@ -113,10 +113,15 @@ export interface Entity {
   migrations?: Migration[]
 }
 
-/** One file of a component's `migrations` directory, named after it. */
+/**
+ * One file of a `migrations` directory, named after it — the component's own, or a prototype's,
+ * which every descendant applies to its collection ahead of its own.
+ */
 export interface Migration {
   id: string
   steps: unknown[]
+  /** the prototype it is inherited from; absent on the component's own */
+  prototype?: string
 }
 
 export interface StorageOptions {
