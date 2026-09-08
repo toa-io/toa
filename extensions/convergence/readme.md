@@ -5,39 +5,45 @@ entity state.
 
 ## Declaration
 
-A region is a deployment of the context, not a variant of it: one context declares every region
-there is, at its root.
+A region is a deployment of the context, and **the environment is which region it is** — the
+same thing that already decides which database and which broker it uses. So a context declares
+one of these per region, and they share nothing:
 
 ```yaml
 # context.toa.yaml
-convergence:
-  - region: eu
-    priority: 0 # a rank: 0 outranks 1
-    binding:
-      provider: amqp
-      pointer: [amqp://cnv-eu-0.example.com, amqp://cnv-eu-1.example.com]
-  - region: us
-    priority: 1
-    binding: { provider: amqp, pointer: amqp://cnv-us.example.com }
+mongodb@eu: mongodb://mongo.eu.example.com/store
+mongodb@us: mongodb://mongo.us.example.com/store
+
+convergence@eu:
+  priority: 0 # a rank: 0 outranks 1
+  binding:
+    provider: amqp
+    pointer: [amqp://cnv-eu-0.example.com, amqp://cnv-eu-1.example.com]
+
+convergence@us:
+  priority: 1
+  binding: { provider: amqp, pointer: amqp://cnv-us.example.com }
 ```
 
+```shell
+$ toa deploy eu
+```
+
+An environment that declares no `convergence` is not a region and converges nothing, so the
+same context still deploys to `staging` as one place.
+
 Nothing is declared in a manifest. A context that declares convergence converges **every
-component that stores anything**, as the outbox publishes every event something consumes.
+component that stores anything**.
 
 `pointer` is a [pointer](/libraries/pointer), so a URL carries no credentials — they are
 deployed as secrets — and shards syntax works. It is flat: a URL or a list of them. A region has
 one set of brokers, and they are that region's own, shared with nothing else.
 
-## Deploying
-
-Which region a deployment is, is chosen when it is deployed:
-
-```shell
-$ TOA_CONVERGENCE_REGION=eu toa deploy production
-```
-
-An operator can write it in `.env` instead of prefixing every command. Without it, a context
-that declares convergence is refused rather than deployed as a region it cannot name.
+**`priority` is the same table in every region, and nothing checks that.** A deployment reads
+only its own declaration, so two regions given one rank is a misconfiguration no deploy can see:
+ties between those two would resolve for neither. What notices is the runtime — a record can
+only carry the rank of the region that wrote it, so one arriving with this region's own rank is
+reported as an error.
 
 **The region an existing application is first deployed as is rank `0`.** Its records were
 written by whatever region it is now becoming, and that is what they are recorded as.

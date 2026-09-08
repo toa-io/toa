@@ -1,4 +1,5 @@
 import { console, decode, run, type SpanOptions } from 'openspan'
+import { environment } from '@toa.io/generic'
 import { Connector } from '@toa.io/core'
 import { CHANNEL } from '@toa.io/definitions/extensions.convergence'
 import type { Readable } from 'node:stream'
@@ -58,6 +59,19 @@ export class Converging extends Connector implements storages.Storage, bindings.
    */
   public async accept(message: object): Promise<void> {
     const { record, trace } = message as Message
+
+    /*
+     * A record carrying this region's own rank cannot have come from anywhere: a region is
+     * not bound to what it publishes, and it republishes nothing it merges, so the rank on a
+     * record that arrives is the rank of the region that wrote it. Two of them sharing one is
+     * a misconfiguration nothing else can see — no deployment knows what the others declared —
+     * and it means ties between those two resolve for neither.
+     */
+    if ((record as storages.Record).REGION === REGION)
+      console.error('Convergence received a record of this region\'s own rank', {
+        component: this.locator.id,
+        region: REGION
+      })
 
     const remote = trace === undefined ? null : decode(trace)
 
@@ -165,3 +179,6 @@ export class Converging extends Connector implements storages.Storage, bindings.
 
   // endregion
 }
+
+/** The rank of this region, which nothing that arrives should be carrying. */
+const REGION = Number(environment.get('TOA_REGION') ?? 0)

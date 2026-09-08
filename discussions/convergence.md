@@ -40,20 +40,46 @@ Only RabbitMQ implements the transport.
 
 ## Declaration
 
-Written at the root of the context, and in no manifest:
+**The environment is which region a deployment is** — the same thing that already decides which
+database and which broker it uses, because each region has its own of both and the `@`
+discriminator is the only way to vary them. So a context declares one of these per region, at its
+root and in no manifest, and they share nothing:
 
 ```yaml
 # context.toa.yaml
-convergence:
-  - region: eu
-    priority: 0 # a rank: 0 outranks 1
-    binding:
-      provider: amqp
-      pointer: [amqp://rmq-eu-0, amqp://rmq-eu-1]
-  - region: us
-    priority: 1
-    binding: { provider: amqp, pointer: amqp://rmq-us }
+mongodb@eu: mongodb://mongo.eu.example.com/store
+mongodb@us: mongodb://mongo.us.example.com/store
+
+convergence@eu:
+  priority: 0 # a rank: 0 outranks 1
+  binding:
+    provider: amqp
+    pointer: [amqp://rmq-eu-0, amqp://rmq-eu-1]
+
+convergence@us:
+  priority: 1
+  binding: { provider: amqp, pointer: amqp://rmq-us }
 ```
+
+```shell
+$ toa deploy eu
+```
+
+Nothing is shared between them because nothing needs to be: a deployment stamps its own rank and
+publishes to its own brokers, and a record says for itself which region wrote it, so no table
+reaches the runtime and none is read after the deploy. An environment that declares no
+`convergence` is not a region and converges nothing, so the same context still deploys to
+`staging` as one place.
+
+A second selector would have said the region twice — once as the environment, once as its own —
+with nothing checking that the two agreed. Crossed, they would give a deployment that writes to
+one region's database while stamping another's rank and publishing to its brokers: it would start,
+look healthy, and resolve every tie the wrong way.
+
+What is lost is that no deployment can check the ranks are distinct, because none sees another's
+declaration. The runtime catches it instead: a record can only carry the rank of the region that
+wrote it — a region is not bound to what it publishes and republishes nothing it merges — so one
+arriving with this region's own rank means two share it, and that is reported as an error.
 
 A context that declares convergence converges every component that stores anything. There is no
 per-component opt-in and no opt-out, as the outbox has none; turning the outbox off for a
@@ -65,31 +91,17 @@ credentials and shards syntax works — but it is flat, a URL or a list of them,
 permits nothing else. The Pointer's nested keys select a URL per component or namespace, which is
 meaningless here: a region has one set of brokers.
 
-Which region a deployment is, is a variable, as the environment selector itself already falls back
-to one:
-
-```shell
-$ TOA_CONVERGENCE_REGION=eu toa deploy production
-```
-
-The CLI knows nothing of it. `environment.get` falls through to `process.env` and `toa` loads
-`.env` into the store before anything runs, so the extension's own `deployment` reads it, and an
-operator can write it in `.env` rather than prefixing every command.
-
-The table is read at deploy and not after: it turns the region named into the rank the runtime
-stamps, and picks that region's pointer. The other regions' addresses are not that deployment's
-business, and their credentials would be secrets nothing reads.
+What the deploy renders, and all of it:
 
 ```
 TOA_REGION                  0
 TOA_CONVERGENCE_BINDING     @toa.io/bindings.amqp
-TOA_CONVERGENCE_POINTER     ["amqp://rmq-eu-0","amqp://rmq-eu-1"]
-                            + __USERNAME / __PASSWORD secret references
+TOA_CONVERGENCE_BROKERS     amqp://rmq-eu-0 amqp://rmq-eu-1
+                            + _USERNAME / _PASSWORD secret references
 ```
 
-`TOA_REGION` is the runtime's, and the only one of the three that an application which does not
-converge would ever have. Nothing carries the table into the runtime, because nothing there reads
-it.
+`TOA_REGION` is the runtime's, and the only one of the three an application that does not converge
+would ever have.
 
 ## The rule
 
@@ -586,9 +598,9 @@ inline. That is right for events, where a lost publication means a receiver miss
 is wrong for convergence, where a lost publication means two regions diverge permanently, with
 nothing that detects it and nothing that repairs it.
 
-**At deploy, an exception.** `deployment(instances, annotation)` throws where
-`TOA_CONVERGENCE_REGION` is unset, and where it names a region the declaration does not carry. A
-context that declares convergence cannot be deployed as a region it cannot name.
+**At deploy, an exception.** `deployment(instances, annotation)` throws where the region declares
+no rank or no brokers. An environment that declares no convergence at all is not a region, which
+is not an error: the same context deploys to `staging` as one place.
 
 **At boot, an exception.** Whether the outbox is durable is a `hello` against the live database,
 so it is not knowable at deploy. The storage decorator opens after the storage beneath it, reads
@@ -706,8 +718,8 @@ loses no tie, which is what the migration is there to prevent.
 
 ### The extension
 
-That the deployment turns a region name into its rank, and refuses a name the table does not
-carry.
+That the deploy renders the rank and the brokers of the region it is, and refuses a declaration
+with no rank or no brokers. That a record arriving with this region's own rank is reported.
 
 ### The binding
 
@@ -719,10 +731,10 @@ body is exactly the message it was handed.
 `features/events/outbox.feature` gains a scenario where one destination fails and the other's
 events are not republished, seeded the way that suite already seeds a row.
 
-A deployment scenario: under `TOA_CONVERGENCE_REGION=eu`, `toa export deployment production`
-renders the four variables and the secret references for `eu` and for no other region, in the
-shape `features/deployment/amqp.feature` already uses. With the variable unset, and with it naming
-a region the declaration does not carry, the export fails and says which.
+A deployment scenario: `toa export deployment eu` renders the rank and the brokers of `eu` and of
+no other region, in the shape `features/deployment/amqp.feature` already uses; the same context
+exported for `us` renders that region's; and one exported for an environment that declares no
+convergence renders none of it.
 
 A refusal scenario: a converging context over the standalone MongoDB the suite already starts
 (`31021`) does not boot, and says the outbox is not durable. Tagged `@containers`.
@@ -753,8 +765,8 @@ meanwhile.
 
 ## Definition of done
 
-A context declares its regions at its root and is deployed once per region, selected by
-`TOA_CONVERGENCE_REGION`. Every component that stores anything publishes each committed record to
+A context declares its regions at its root, one per environment, and is deployed once per
+region. Every component that stores anything publishes each committed record to
 its region's convergence brokers through the outbox, over a transport that is a binding and knows
 only a label and a message. Each region writes what the others send into its own database where
 the record it replaces is older, ordered by `VERSION` and then by the rank the record itself

@@ -1,10 +1,14 @@
-/** What a context declares at its root, as the list of regions there are. */
-export type Declaration = Region[]
-
-export interface Region {
-  /** what this region is deployed as */
-  region: string
-
+/**
+ * What a context declares of the region it is deployed as. The environment names the region,
+ * so a context declares one of these per region and shares nothing between them:
+ *
+ * ```yaml
+ * convergence@eu:
+ *   priority: 0
+ *   binding: { provider: amqp, pointer: amqp://cnv-eu.example.com }
+ * ```
+ */
+export interface Declaration {
   /** a rank: zero outranks one, and it is read only where two regions wrote one version */
   priority: number
 
