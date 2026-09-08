@@ -80,7 +80,7 @@ export class Converging extends Connector implements storages.Storage, bindings.
         console.span(this.processing, async () => {
           const merged = await this.storage.merge!(record as storages.Record)
 
-          console.debug('Convergence merge', {
+          console.trace('Convergence merge', {
             component: this.locator.id,
             outcome: merged ? 'applied' : 'stale'
           })
