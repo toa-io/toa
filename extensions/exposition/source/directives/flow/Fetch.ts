@@ -54,7 +54,7 @@ export class Fetch implements Directive {
       })
     )
 
-    const response = await fetch(url, options)
+    const response = await fetch(url, { ...options, signal: input.signal })
 
     if (!response.ok) throw new NotFound()
 

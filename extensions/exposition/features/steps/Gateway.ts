@@ -1,3 +1,4 @@
+import assert from 'node:assert'
 import tsflow from 'cucumber-tsflow'
 
 import * as boot from '@toa.io/boot'
@@ -11,7 +12,7 @@ import { manifests } from './map.js'
 import { PORT, PROBE } from './Parameters.js'
 import type * as http from '../../source/HTTP/index.js'
 
-const { after, afterAll, binding, given } = tsflow
+const { after, afterAll, binding, given, then, when } = tsflow
 
 let instance: Connector | null = null
 let deployment: string | null = null
@@ -19,6 +20,9 @@ let deployment: string | null = null
 @binding()
 export class Gateway {
   private written: string[] = []
+
+  /** How long the last stop took, in milliseconds. */
+  private stopped = 0
 
   @given('the annotation:')
   public async annotate(yaml: string): Promise<void> {
@@ -30,10 +34,12 @@ export class Gateway {
       environment.set('TOA_EXPOSITION', JSON.stringify(tree))
     }
 
-    const { debug, authorities, bouncer, ip, oauth, rpc, mcp } = annotation
+    const { debug, authorities, bouncer, ip, oauth, rpc, mcp, drain } = annotation
     const properties = Object.assign({}, DEFAULT_PROPERTIES)
 
     if (debug !== undefined) properties.debug = debug
+
+    if (drain !== undefined) properties.drain = drain
 
     if (bouncer !== undefined) properties.bouncer = bouncer
 
@@ -165,6 +171,23 @@ export class Gateway {
 
     environment.delete('TOA_EXPOSITION')
     environment.delete('TOA_EXPOSITION_PROPERTIES')
+  }
+
+  @when('the Gateway is stopped')
+  public async halt(): Promise<void> {
+    const started = Date.now()
+
+    await Gateway.stop()
+
+    this.stopped = Date.now() - started
+  }
+
+  @then('the Gateway stopped within {float} second(s)')
+  public stoppedWithin(seconds: number): void {
+    assert.ok(
+      this.stopped <= seconds * 1000,
+      `The Gateway took ${this.stopped}ms to stop, more than ${seconds}s`
+    )
   }
 
   @afterAll()
