@@ -1,6 +1,7 @@
 export { aspects } from './aspects.js'
 export { component } from './component.js'
 export { context } from './context.js'
+export { destinations } from './destinations.js'
 export { emitter } from './emitter.js'
 export { load } from './load.js'
 export { manage } from './manage.js'

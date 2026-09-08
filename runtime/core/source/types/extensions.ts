@@ -8,6 +8,7 @@ import type { Storage } from './storages.js'
 import type { Broadcast, Emitter } from './bindings.js'
 import type { Atom } from './atomicity.js'
 import type { Source } from './request.js'
+import type { Destination } from './outbox.js'
 
 /**
  * What the process hosting an extension provides to it: the counterpart of a component's
@@ -45,6 +46,17 @@ export interface Factory<Manifest = unknown> {
   ): Connector | Promise<Connector>
 
   aspect?(locator: Locator, declaration: any): Aspect | Aspect[]
+
+  /**
+   * Where a committed state change of this component goes, beside its own events. Read before
+   * the storage is made, because one of these is what gives a component an outbox when it
+   * declares no event at all.
+   */
+  destination?(
+    locator: Locator,
+    declaration: any,
+    manifest: Manifest
+  ): Destination | Promise<Destination> | undefined
 
   /** what the extension runs as a process of its own; `null` where it is off here */
   service?(): Connector | null | Promise<Connector | null>
