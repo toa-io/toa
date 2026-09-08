@@ -471,9 +471,9 @@ const result = await this.#collection.updateOne(
         $cond: [
           {
             $or: [
-              // nothing stored under this id: the pipeline runs over `{ _id }`
-              { $eq: [{ $type: '$VERSION' }, 'missing'] },
-              { $lt: ['$VERSION', document.VERSION] },
+              // nothing stored under this id reads as `0`, the version an entity
+              // holds before its first write
+              { $lt: [{ $ifNull: ['$VERSION', 0] }, document.VERSION] },
               {
                 $and: [
                   { $eq: ['$VERSION', document.VERSION] },
@@ -510,8 +510,18 @@ out-of-order delivery is reported by an `E11000` and pays for a failed insert to
 happened. It would also put `$or` in an upsert filter, where it contributes nothing to the
 document that would be inserted.
 
-`$literal` is not decoration: a value in a pipeline is an expression, so a record whose property
-happens to hold a string beginning with `$` would otherwise be read as a field path.
+**Absence has to be covered, and it is `$ifNull` that covers it.** On the upsert path the pipeline
+runs over the base document the filter builds, which is `{ _id }` and nothing else, so `$VERSION`
+is missing there. Were that branch ever false the update would not decline — it would insert
+`$$ROOT`, a stub holding an `_id` and no properties at all, which every later read then fails the
+entity contract on. `$ifNull` answers for a missing field as well as a null one, and `VERSION` is
+never null: the prototype declares it `{ type: integer, minimum: 0 }`, every write of it is `0` at
+compose, `++`, `$inc` or `origin.VERSION + 1`, and `Changeset.set` deletes it so that userland
+cannot write one. `0` is not a sentinel chosen for the query — it is what `Entity` composes a
+blank with, and the first write makes it `1`.
+
+`$literal` is not decoration either: a value in a pipeline is an expression, so a record whose
+property happens to hold a string beginning with `$` would otherwise be read as a field path.
 
 The record is written exactly as it arrived, `REGION` included — which is why nothing has to be
 added to it here, and why the rank of whoever wrote it survives every hop. A document that lacks
