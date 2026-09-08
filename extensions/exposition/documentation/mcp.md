@@ -150,9 +150,10 @@ Its RFC 9728 document is then read at `/.well-known/oauth-protected-resource/.mc
 canonical URI of the resource is `https://api.example.com/.mcp`. See [OAuth](oauth.md).
 
 A request without a credential is `401`, carrying the challenge that names that document — which is
-where the flow starts. A call the identity is not authorized to make is `403` with
-`error="insufficient_scope"`. Each tool is authorized as the resource it is, against the path and
-the verb its name states.
+where the flow starts. A token the client asked for with that `resource` is admitted here and
+refused at another entry, see [Audience](oauth.md#audience). A call the identity is not authorized
+to make is `403` with `error="insufficient_scope"`. Each tool is authorized as the resource it is,
+against the path and the verb its name states.
 
 A route that is [`anonymous`](access.md#anonymous) is reached here whatever the client presented:
 the rule that refuses a credentialed request is about a cacheable reply, and what a tool answers is

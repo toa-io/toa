@@ -34,6 +34,28 @@ describe('the table', () => {
   })
 })
 
+describe('the component that serves every storage', () => {
+  /*
+  `exposition.octets` declares `storages: ~`, so it reaches whichever storages an application
+  annotates — and the image the release publishes for the gateway is built once, for every
+  application, when none of them is known. So it carries every provider's packages.
+  */
+  it('declares every provider a storage can name', () => {
+    const octets = JSON.parse(
+      readFileSync(
+        require.resolve('@toa.io/extensions.exposition/components/exposition.octets/package.json'),
+        'utf8'
+      )
+    ) as { dependencies: Record<string, string> }
+
+    const every: Record<string, string> = {}
+
+    for (const entry of Object.values(packages)) Object.assign(every, entry)
+
+    assert.deepEqual(octets.dependencies, every)
+  })
+})
+
 describe('what a component installs', () => {
   const annotation = {
     pictures: { provider: 'cloudinary' },

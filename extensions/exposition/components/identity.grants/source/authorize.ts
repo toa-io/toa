@@ -42,9 +42,8 @@ export class Effect implements Operation {
 
     const scope = input.scope ?? []
 
-    // recorded on the grant and carried to the token endpoint, and restricting nothing yet:
-    // a token carries the rights of the identity that consented, over every path it may
-    // reach. What binds it is a `permissions` argument in `exchange`, see documentation/oauth.md
+    // recorded on the grant and carried to the token endpoint, where it becomes the
+    // token's `aud` — the entry it may be presented at, see documentation/oauth.md
     const resource = input.resource ?? []
 
     const grant = await this.context.local.transit({

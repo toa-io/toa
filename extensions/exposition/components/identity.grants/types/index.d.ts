@@ -45,6 +45,7 @@ export interface Context {
             label: string
             lifetime?: number
             scopes?: string[]
+            audience?: string[]
             permissions?: Record<string, string[]>
           }
         }) => Promise<{ kid: string; exp?: number; token: string }>

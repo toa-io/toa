@@ -60,6 +60,8 @@ Feature: Authorization code flow
       redirect: https://claude.ai/api/mcp/auth_callback
       challenge: E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM
       method: S256
+      resource:
+        - https://nex.toa.io/.mcp
       """
     Then the following reply is sent:
       """
@@ -122,6 +124,57 @@ Feature: Authorization code flow
       result:
         tools:
           - name: pots.GET
+      """
+
+  Scenario: A token bound to MCP does not open the same operation over HTTP
+    MCP publishes a subset. The pots are a tool, and they are also `GET /pots/` — same
+    operation, same data. What the audience refuses is everything that is not that entry:
+    the REST tree, including this one, so a client given MCP is not given the HTTP API.
+
+    When the following request is received:
+      """
+      POST /identity/grants/ HTTP/1.1
+      host: nex.toa.io
+      content-type: application/x-www-form-urlencoded
+      accept: application/yaml
+
+      grant_type=authorization_code&code=${{ code }}&code_verifier=dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk&redirect_uri=https%3A%2F%2Fclaude.ai%2Fapi%2Fmcp%2Fauth_callback&client_id=${{ client }}
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+
+      access_token: ${{ access_token }}
+      """
+    When the following request is received:
+      """
+      POST /.mcp HTTP/1.1
+      host: nex.toa.io
+      authorization: Bearer ${{ access_token }}
+      accept: application/yaml
+      content-type: application/json
+
+      {"jsonrpc": "2.0", "id": 2, "method": "tools/call", "params": {"name": "pots.GET", "arguments": {}}}
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+
+      jsonrpc: '2.0'
+      id: 2
+      result:
+        structuredContent: Kettles and teapots.
+      """
+    When the following request is received:
+      """
+      GET /pots/ HTTP/1.1
+      host: nex.toa.io
+      authorization: Bearer ${{ access_token }}
+      """
+    Then the following reply is sent:
+      """
+      401 Unauthorized
+      www-authenticate: Bearer resource_metadata="https://nex.toa.io/.well-known/oauth-protected-resource"
       """
 
   Scenario: A code is spent once

@@ -20,6 +20,8 @@ export type EncryptInput = {
   lifetime?: number
   scopes?: string[]
   permissions?: Record<string, string[]>
+  /** Resource URIs this token may be presented at (RFC 8707) */
+  audience?: string[]
   key?: {
     id: string
     key: string
@@ -46,6 +48,8 @@ export type DecryptOutput = {
   }
   iat: string
   exp?: string
+  /** Resource URIs this token may be presented at */
+  aud?: string | unknown[]
   custom: boolean
   refresh: boolean
 }
@@ -70,6 +74,8 @@ export type IssueInput = {
   lifetime?: number
   scopes?: string[]
   permissions?: Record<string, string[]>
+  /** Resource URIs this token may be presented at (RFC 8707) */
+  audience?: string[]
   label: string
 }
 

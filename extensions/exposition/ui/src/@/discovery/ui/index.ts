@@ -5,6 +5,7 @@ export { default as Document } from './Document.svelte'
 export { default as Method } from './Method.svelte'
 export { default as Schema } from './Schema.svelte'
 export { default as Mcp } from './Mcp.svelte'
+export { default as Signature } from './Signature.svelte'
 export {
   CONSOLES,
   carries,
