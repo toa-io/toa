@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.298](https://github.com/toa-io/toa/compare/v1.0.0-alpha.297...v1.0.0-alpha.298) (2026-09-08)
+
+### Features
+
+* **operations:** tag a deploy with the environment so registries can prune ([7247c35](https://github.com/toa-io/toa/commit/7247c35f33fb34dcfb3ffa04b196c14bfb3d5620))
+
+
 # [1.0.0-alpha.297](https://github.com/toa-io/toa/compare/v1.0.0-alpha.296...v1.0.0-alpha.297) (2026-09-08)
 
 **Note:** Version bump only for package @toa.io/operations

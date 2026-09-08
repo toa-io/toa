@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/extensions.realtime",
-  "version": "1.0.0-alpha.297",
+  "version": "1.0.0-alpha.298",
   "type": "module",
   "description": "Toa Realtime",
   "author": "temich <tema.gurtovoy@gmail.com>",
@@ -27,7 +27,7 @@
   ],
   "dependencies": {
     "@toa.io/core": "1.0.0-alpha.293",
-    "@toa.io/definitions": "1.0.0-alpha.297",
+    "@toa.io/definitions": "1.0.0-alpha.298",
     "@toa.io/generic": "1.0.0-alpha.292",
     "openspan": "1.0.0-alpha.293"
   },
