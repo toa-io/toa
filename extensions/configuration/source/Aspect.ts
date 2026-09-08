@@ -55,7 +55,7 @@ export class Aspect extends Connector implements extensions.Aspect {
     this.created = created
     this.client.subscribe(this.locator.id, this.epoch, this.listener)
 
-    console.info('Configuration resolved', {
+    console.trace('Configuration resolved', {
       component: this.locator.id,
       epoch: this.epoch,
       created
