@@ -10,11 +10,11 @@ export interface Entity {
   configuration: Record<string, unknown>
   originator: string
   id: string
-  VERSION?: number
-  CREATED?: number
-  UPDATED?: number
-  DELETED?: number | null
-  REGION?: number
+  VERSION: number
+  CREATED: number
+  UPDATED: number
+  DELETED: number | null
+  REGION: number
 }
 
 export type GetInput = {

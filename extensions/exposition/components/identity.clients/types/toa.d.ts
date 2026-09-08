@@ -21,11 +21,11 @@ export interface Entity {
   /** When a registration nothing has used is swept */
   expires?: number
   id: string
-  VERSION?: number
-  CREATED?: number
-  UPDATED?: number
-  DELETED?: number | null
-  REGION?: number
+  VERSION: number
+  CREATED: number
+  UPDATED: number
+  DELETED: number | null
+  REGION: number
 }
 
 export type TransitInput = {

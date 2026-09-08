@@ -12,11 +12,11 @@ export interface Entity {
   username: string
   identity?: string
   id: string
-  VERSION?: number
-  CREATED?: number
-  UPDATED?: number
-  DELETED?: number | null
-  REGION?: number
+  VERSION: number
+  CREATED: number
+  UPDATED: number
+  DELETED: number | null
+  REGION: number
 }
 
 export type IssueInput = {

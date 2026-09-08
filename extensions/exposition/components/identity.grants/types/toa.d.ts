@@ -17,11 +17,11 @@ export interface Entity {
   kid?: string
   revokedAt?: number
   id: string
-  VERSION?: number
-  CREATED?: number
-  UPDATED?: number
-  DELETED?: number | null
-  REGION?: number
+  VERSION: number
+  CREATED: number
+  UPDATED: number
+  DELETED: number | null
+  REGION: number
 }
 
 export type TransitInput = {
