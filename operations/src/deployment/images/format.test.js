@@ -111,3 +111,39 @@ describe('normalized', () => {
     assert.strictEqual(read.locator.id, 'todos.tasks')
   })
 })
+
+describe('a service image', () => {
+  it('installs what its components declare beside Toa as well', async () => {
+    const { Service } = await import('./service.js')
+
+    const path = join(root, 'extension')
+    const component = join(path, 'components', 'octets')
+
+    await mkdir(component, { recursive: true })
+    await writeFile(join(path, 'package.json'), JSON.stringify({ name: 'ext', version: '1' }))
+    await writeFile(
+      join(component, 'package.json'),
+      JSON.stringify({ dependencies: { cloudinary: '2.11.0', jose: '6.2.10' } })
+    )
+
+    const service = new Service('', { version: '1' }, {}, path, {
+      group: 'g',
+      name: 'n',
+      version: '1'
+    })
+
+    service.reference = 'probe'
+
+    const context = await service.prepare(join(root, 'service'))
+
+    // what an extension imports on a component's behalf is imported from where Toa is
+    assert.strictEqual(
+      await readFile(join(context, '.packages'), 'utf8'),
+      'cloudinary@2.11.0\njose@6.2.10'
+    )
+
+    const dockerfile = await readFile(join(context, 'Dockerfile'), 'utf8')
+
+    assert.ok(dockerfile.includes('npm i --prefix /toa --omit=dev --legacy-peer-deps $(cat .packages)'))
+  })
+})
