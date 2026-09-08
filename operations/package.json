@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/operations",
-  "version": "1.0.0-alpha.296",
+  "version": "1.0.0-alpha.297",
   "type": "module",
   "description": "Toa Deployment",
   "homepage": "https://toa.io",
@@ -30,7 +30,7 @@
   "dependencies": {
     "@toa.io/generic": "1.0.0-alpha.292",
     "@toa.io/kubernetes": "1.0.0-alpha.293",
-    "@toa.io/norm": "1.0.0-alpha.296",
+    "@toa.io/norm": "1.0.0-alpha.297",
     "paseto": "4.0.0"
   },
   "gitHead": "61c8e74a336385265767e9fd37d49128cb51b17f"

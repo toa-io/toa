@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/extensions.storages",
-  "version": "1.0.0-alpha.296",
+  "version": "1.0.0-alpha.297",
   "type": "module",
   "description": "Toa Storages",
   "author": "temich <tema.gurtovoy@gmail.com>",
@@ -51,7 +51,7 @@
     }
   },
   "dependencies": {
-    "@toa.io/definitions": "1.0.0-alpha.296",
+    "@toa.io/definitions": "1.0.0-alpha.297",
     "@toa.io/generic": "1.0.0-alpha.292",
     "@toa.io/schemas": "1.0.0-alpha.293",
     "negotiator": "1.1.0",
