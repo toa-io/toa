@@ -4,6 +4,8 @@ import { Producer } from './producer.js'
 import { Consumer } from './consumer.js'
 import { Emitter } from './emitter.js'
 import { Receiver } from './receiver.js'
+import { Outbound } from './outbound.js'
+import { Inbound } from './inbound.js'
 import { Broadcast } from './broadcast.js'
 import * as uris from './uris.js'
 
@@ -49,6 +51,27 @@ export class Factory {
     const comm = this.#communication(group ?? this.#alone(), references)
 
     return new Receiver(comm, label, group, receiver)
+  }
+
+  /**
+   * A channel of its own, over brokers of its own: what crosses between deployments is not
+   * what happens inside one, and neither the connection nor the sealing is shared with the
+   * context's. Publishing only, so it is pooled where nothing seals.
+   */
+  outbound(channel, uris) {
+    const comm = this.#communication(OUTBOUND, uris)
+
+    return new Outbound(comm, channel)
+  }
+
+  /**
+   * One per label, because sealing stops every consumer of a communication at once and what
+   * consumes for one component must stop when that component does, and not before.
+   */
+  inbound(channel, uris, label, sink) {
+    const comm = this.#communication(INBOUND + channel + SEPARATOR + label, uris)
+
+    return new Inbound(comm, channel, label, sink)
   }
 
   broadcast(name, group) {
@@ -104,6 +127,9 @@ export class Factory {
 
 /** What connectors that only publish are pooled under. Nothing seals them. */
 const OUTBOUND = '\u0000outbound'
+
+/** What consumes one label of a channel, and seals with whatever it consumes for. */
+const INBOUND = '\u0000inbound:'
 
 const ALONE = '\u0000alone:'
 

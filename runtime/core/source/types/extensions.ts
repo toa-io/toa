@@ -5,7 +5,7 @@ import type { Remote } from '../remote.js'
 import type { Receiver } from './receiver.js'
 import type { Context } from '../context.js'
 import type { Storage } from './storages.js'
-import type { Broadcast, Emitter } from './bindings.js'
+import type { Broadcast, Emitter, Inbound, Outbound } from './bindings.js'
 import type { Atom } from './atomicity.js'
 import type { Source } from './request.js'
 import type { Destination } from './outbox.js'
@@ -32,6 +32,19 @@ export interface Host {
 
   /** what the replicas of one group decide together */
   atom(group: string): Atom
+
+  /** where this deployment publishes a channel, over the brokers named */
+  outbound(binding: string, channel: string, uris: string[]): Promise<Outbound>
+
+  /** what arrives on a channel under one label */
+  // eslint-disable-next-line max-params
+  inbound(
+    binding: string,
+    channel: string,
+    uris: string[],
+    label: string,
+    sink: Inbound
+  ): Promise<Connector>
 }
 
 /**

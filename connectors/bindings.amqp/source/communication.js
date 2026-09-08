@@ -95,6 +95,16 @@ export class Communication extends Connector {
     await this.#io.consume(exchange, group, consumer)
   }
 
+  async route(exchange, key, message, properties) {
+    await this.#io.route(exchange, key, message, properties)
+  }
+
+  async subscribe(exchange, queue, key, consumer) {
+    this.#consumable('subscribe to')
+
+    await this.#io.subscribe(exchange, queue, key, consumer)
+  }
+
   async process(queue, consumer) {
     this.#consumable('process')
 
