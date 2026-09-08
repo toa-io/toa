@@ -409,31 +409,28 @@ region it is now becoming. Making that region the highest-ranked is what lets th
 be true rather than merely harmless, and it means the incumbent wins a tie by default.
 
 1. `runtime/prototype/manifest.toa.yaml` — `REGION: { type: integer, minimum: 0 }`.
-2. `runtime/prototype/migrations/0002-region.yaml` — `$set: { REGION: 0 }` over records that lack
-   it, recorded as `system:0002-region`, in the style of the two before it.
-3. `runtime/core/source/entities/entity.ts` — the stamp.
-4. `runtime/norm/src/.component/collapse.js` — `REGION` in `SYSTEM`, so a component that declares
+2. `runtime/core/source/entities/entity.ts` — the stamp.
+3. `runtime/norm/src/.component/collapse.js` — `REGION` in `SYSTEM`, so a component that declares
    one is refused with `System property 'REGION' cannot be overridden`.
-5. `runtime/norm/src/.component/schema.yaml` — `REGION` in the names a `blank` may not carry.
-6. `runtime/core/source/query/options.ts` — `REGION` in what a projection always includes, so the
+4. `runtime/norm/src/.component/schema.yaml` — `REGION` in the names a `blank` may not carry.
+5. `runtime/core/source/query/options.ts` — `REGION` in what a projection always includes, so the
    record the runtime hands back is whole, as it is for the other four.
-7. `runtime/core/source/types/storages.ts` and `runtime/prototype/types/toa.d.ts` — the type.
-8. `documentation/component/declaration.md` and a `migrations/<release>.md` note — six system
+6. `runtime/core/source/types/storages.ts` and `runtime/prototype/types/toa.d.ts` — the type.
+7. `documentation/component/declaration.md` and a `migrations/<release>.md` note — six system
    properties rather than five, the rank-`0` constraint, and that a component declaring a `REGION`
    property stops building.
 
-**The migration is not optional.** `{ VERSION: v, REGION: { $gt: r } }` does not match a document
-where the field is absent, so a record written before this existed would never lose a tie: it
-would beat every equal-version write from anywhere, silently and for good. Backfilling makes the
-declared property uniform, which is what `0000-property-names` and `0001-epoch-millis` each did
-for the properties before it.
+**No migration.** A record written before this has no `REGION`, and `merge` reads a missing one as
+the first region — which is what a backfill would have written, so there is nothing for one to do.
+That matters because a prototype migration is applied to every collection of every application,
+converging or not, and a migration runs before the component serves with every other replica
+waiting for it: "a backfill takes as long as the collection is large"
+(`connectors/storages.mongodb/src/migrations.js:183`), which is why
+`documentation/component/declaration.md` says one over a large collection belongs in an operation
+rather than in a migration. Upgrading to this rewrites no document.
 
-It runs once, on an existing database upgraded in the first region. `Migrations` records it as
-`<collection>:<id>` in a state collection of that same database, so a second region seeded from
-its snapshot carries the record and never re-applies it, and one started empty applies it to an
-empty collection. There is no arrangement where it runs where it should not.
-
-An application that never converges pays a `0` on every record and one backfill.
+An application that never converges pays a `0` on the records it writes from then on, and nothing
+else.
 
 ### The storage capability
 
@@ -651,19 +648,17 @@ thing for comq to have. Everything below depends on the version that carries it.
 ### 4. `REGION`, a system property
 
 1. `runtime/prototype/manifest.toa.yaml` — `REGION: { type: integer, minimum: 0 }`.
-2. `runtime/prototype/migrations/0002-region.yaml` — `$set: { REGION: 0 }` over records that lack
-   it.
-3. `runtime/core/source/entities/entity.ts` — stamped where `UPDATED` is, from `TOA_REGION`, `0`
+2. `runtime/core/source/entities/entity.ts` — stamped where `UPDATED` is, from `TOA_REGION`, `0`
    where that is unset.
-4. `runtime/norm/src/.component/collapse.js` — `REGION` in `SYSTEM`.
-5. `runtime/norm/src/.component/schema.yaml` — `REGION` in what a `blank` may not name.
-6. `runtime/core/source/query/options.ts` — `REGION` in what a projection always includes.
-7. `runtime/core/source/types/storages.ts`, `runtime/prototype/types/toa.d.ts` — the type.
-8. `connectors/storages.mongodb/src/storage.js` — `merge()` and `get merges()`, which belong here
+3. `runtime/norm/src/.component/collapse.js` — `REGION` in `SYSTEM`.
+4. `runtime/norm/src/.component/schema.yaml` — `REGION` in what a `blank` may not name.
+5. `runtime/core/source/query/options.ts` — `REGION` in what a projection always includes.
+6. `runtime/core/source/types/storages.ts`, `runtime/prototype/types/toa.d.ts` — the type.
+7. `connectors/storages.mongodb/src/storage.js` — `merge()` and `get merges()`, which belong here
    rather than with the transport now that the rule is two properties of a record.
-9. `documentation/component/declaration.md` — six system properties rather than five, and the
+8. `documentation/component/declaration.md` — six system properties rather than five, and the
    rank-`0` constraint on the region an existing deployment becomes.
-10. `migrations/<release>.md` — a component that declares a `REGION` property stops building.
+9. `migrations/<release>.md` — a component that declares a `REGION` property stops building.
 
 ### 5. `@toa.io/extensions.convergence`
 

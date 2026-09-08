@@ -269,9 +269,14 @@ export class Storage extends Connector {
    * same miss, and then have the upsert collide on `_id` to say so.
    *
    * `$literal` because a value in a pipeline is an expression, so a property holding a string
-   * that begins with `$` would otherwise be read as a field path. `$ifNull` because on the
-   * upsert path the pipeline runs over the base document the filter builds, which is `{ _id }`:
-   * a missing `VERSION` reads as `0`, the version an entity holds before its first write.
+   * that begins with `$` would otherwise be read as a field path.
+   *
+   * `$ifNull` twice, and for two reasons. On the upsert path the pipeline runs over the base
+   * document the filter builds, which is `{ _id }`, so a missing `VERSION` reads as `0` — the
+   * version an entity holds before its first write. And a record written before `REGION`
+   * existed has none, which reads as the first region: what it would have been backfilled
+   * with, so nothing is backfilled. A migration would rewrite every document of every
+   * collection of every application, converging or not, to store what this reads anyway.
    */
   async merge(record) {
     const document = this.#to(record)
@@ -282,7 +287,7 @@ export class Storage extends Connector {
         {
           $and: [
             { $eq: ['$VERSION', document.VERSION] },
-            { $gt: ['$REGION', document.REGION] }
+            { $gt: [{ $ifNull: ['$REGION', FIRST] }, document.REGION] }
           ]
         }
       ]
@@ -460,6 +465,9 @@ function toPipeline(criteria, options, sample) {
 
   return pipeline
 }
+
+/** the rank of the first region, which is what a record written before regions reads as */
+const FIRST = 0
 
 const ERR_DUPLICATE_KEY = 11000
 
