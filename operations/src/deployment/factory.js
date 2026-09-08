@@ -61,7 +61,7 @@ export class Factory {
       this.#image
     )
 
-    return new Operator(deployment, this.#registry)
+    return new Operator(deployment, this.#registry, this.#context.environment)
   }
 
   registry() {
