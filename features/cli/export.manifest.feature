@@ -55,6 +55,7 @@ Feature: Print manifest
     When I run `toa export manifest -e`
     Then stderr should contain lines:
       """
-      <...>/name: pattern must match pattern<...>
+      instancePath: '/name',
+      message: 'must match pattern <...>'
       """
     And stdout should be empty
