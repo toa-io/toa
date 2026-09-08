@@ -1,8 +1,6 @@
-import { defined } from '@toa.io/generic'
 import { readFileSync, statSync } from 'node:fs'
 import { yaml as jsyaml } from '@toa.io/generic'
 import { create } from './validator.js'
-import betterAjvErrors from 'better-ajv-errors'
 
 export class Schema {
   id
@@ -17,44 +15,16 @@ export class Schema {
   }
 
   fit(value) {
-    const valid = this.#validate(value)
-
-    if (valid) return null
-    else return this.#error(value)
+    if (this.#validate(value)) return null
+    else return this.#validate.errors[0]
   }
 
   validate(value, message) {
-    const valid = this.#validate(value)
+    if (this.#validate(value)) return
 
-    if (!valid) {
-      let error = betterAjvErrors(this.#validate.schema, value, this.#validate.errors, {
-        format: 'js'
-      })
+    if (message !== undefined) message += ': '
 
-      const text = error.length === 0 ? this.#validate.errors[0].message : error[0].error
-
-      if (message !== undefined) message += ': '
-
-      throw new TypeError((message ?? '') + text)
-    }
-  }
-
-  #error = (value) => {
-    const error = this.#validate.errors[0]
-    let be = betterAjvErrors(this.#validate.schema, value, this.#validate.errors, {
-      format: 'js'
-    })
-
-    const mapped = {
-      message: be[0].error.trim(),
-      keyword: error.keyword,
-      property: error.propertyName,
-      path: error.instancePath,
-      schema: error.schemaPath,
-      params: error.params
-    }
-
-    return defined(mapped)
+    throw new TypeError((message ?? '') + this.#validate.errors[0].message)
   }
 }
 
