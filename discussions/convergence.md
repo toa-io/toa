@@ -404,16 +404,28 @@ What it costs is that it lands in every application, converging or not:
 7. `documentation/component/declaration.md` and a `migrations/<release>.md` note — a component
    that declares a `REGION` property stops building, which is a thing to say out loud.
 
-**No migration**, unlike the two system properties before it. A migration is a file shipped with
-the prototype, applied once per database by whichever replica reaches it first, and it cannot know
-which region is deploying — there is no value for it to write. Nor should there be: a new region
-is seeded by copying a database, and those records were written by the region they came from, so
-the region they carry is already the true one.
+**No migration**, unlike the two system properties before it — and not because one would be
+unsafe. It would run once, on an existing database upgraded in the first region, and `Migrations`
+records it as `<collection>:<id>` in a state collection of that same database, so a second region
+seeded from its snapshot carries the record and never re-applies it. A second region started
+empty applies it to an empty collection and matches nothing. There is no arrangement where it runs
+where it should not.
 
-So a record written before this exists carries `REGION: null`, and the documentation says what
-that means rather than a migration changing it. Nothing needs changing: the rule never matches a
-null, and it never has to. Two regions seeded from one copy hold the same record at the same
-version, which is agreement, not a tie; and the first write in either region stamps it.
+It is not warranted, which is a different thing. A file can only write a constant, and no constant
+is true: `REGION` holds a region name, read from `TOA_REGION` at write time, and nothing static
+knows which region is deploying. And whatever it wrote would never be read — a record that has not
+been written since the upgrade cannot be in a tie, because a tie needs two concurrent writes and
+every write stamps a real region. It would rewrite every document of every collection of every
+application to store a value nothing consults, and that is not free: "a backfill takes as long as
+the collection is large, and every replica of the group waits"
+(`connectors/storages.mongodb/src/migrations.js:183`), which is why
+`documentation/component/declaration.md` says a backfill over a large collection belongs in an
+operation something calls rather than in a migration.
+
+So a record written before this exists carries no region, and the documentation says what that
+means. The rule never matches it and never has to: two regions seeded from one copy hold the same
+record at the same version, which is agreement rather than a tie, and the first write in either
+region stamps it.
 
 An application that never converges pays a null on every record and nothing else.
 
@@ -561,8 +573,9 @@ thing for comq to have. Everything below depends on the version that carries it.
    null region means for a database that existed before this did.
 8. `migrations/<release>.md` — a component that declares a `REGION` property stops building.
 
-No migration: nothing static can know which region is deploying, and a copied database's records
-carry the region that wrote them, which is already right.
+No migration. One would be safe — it is recorded per database, so a snapshot-seeded region never
+re-applies it — but it could only write a constant, that constant is never read, and it would
+rewrite every collection to do it.
 
 ### 5. `@toa.io/extensions.convergence`
 
