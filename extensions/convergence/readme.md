@@ -62,6 +62,9 @@ Each region's broker holds two exchanges, the same two names everywhere:
 | `convergence.in` | **federated** from every other region's `convergence.out`. |
 | `convergence.<namespace>.<name>` | a durable queue per component, bound to `convergence.in` under that component's key. |
 
+Adding a region to an application that is already running is an order that matters — see
+[operations](./operations.md).
+
 **Toa does not configure the federation.** On each region's broker, an upstream per other region
 and one policy over them:
 
