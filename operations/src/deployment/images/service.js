@@ -1,8 +1,9 @@
 import { createRequire } from 'node:module'
 import { join, dirname } from 'node:path'
+import { existsSync, readdirSync, readFileSync } from 'node:fs'
 
 import { Image } from './image.js'
-import { cp } from 'node:fs/promises'
+import { cp, writeFile } from 'node:fs/promises'
 
 // a service is named the way a package is, and its directory is where it lives
 const require = createRequire(import.meta.url)
@@ -60,10 +61,45 @@ export class Service extends Image {
     const context = await super.prepare(root)
 
     await cp(this.#path, context, { recursive: true })
+    await writeFile(join(context, PACKAGES), this.#packages().join('\n'))
 
     return context
   }
+
+  /**
+   * What the components this service runs declare, as `name@version`.
+   *
+   * Each is installed beside its component, where the component's own modules import it, and
+   * beside Toa, where an extension that imports on a component's behalf is — a storage
+   * provider's SDK is imported by `@toa.io/extensions.storages`, not by the component that
+   * declares the storage.
+   *
+   * @returns {string[]}
+   */
+  #packages() {
+    const directory = join(this.#path, 'components')
+
+    if (!existsSync(directory)) return []
+
+    /** @type {Record<string, string>} */
+    const packages = {}
+
+    for (const label of readdirSync(directory)) {
+      const manifest = join(directory, label, 'package.json')
+
+      if (!existsSync(manifest)) continue
+
+      Object.assign(packages, JSON.parse(readFileSync(manifest, 'utf8')).dependencies)
+    }
+
+    return Object.entries(packages)
+      .map(([name, version]) => `${name}@${version}`)
+      .sort()
+  }
 }
+
+/** Where the install reads what the components need, one `name@version` per line. */
+const PACKAGES = '.packages'
 
 /**
  * Where the extension is installed, which is what its image is built from. A deploy install

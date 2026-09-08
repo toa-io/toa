@@ -1,6 +1,10 @@
-Feature: `Server` response header
+Feature: `exposition` response header
 
-  Scenario: `Server` response header
+  What answered, on every reply: the build of the gateway, and the context and environment it
+  was deployed with. Under a name of its own rather than `server`, which a CDN in front takes
+  for itself — so a gateway that said it there said it to nobody.
+
+  Scenario: `exposition` response header
     Given the annotation:
       """yaml
       /:
@@ -17,7 +21,7 @@ Feature: `Server` response header
     Then the following reply is sent:
       """
       200 OK
-      server: Exposition/
+      exposition: ${{ version }}
       """
 
   Scenario: The tree is signed too
@@ -39,5 +43,5 @@ Feature: `Server` response header
     Then the following reply is sent:
       """
       200 OK
-      server: Exposition/
+      exposition: ${{ version }}
       """

@@ -11,8 +11,16 @@ import type { ServerResponse } from './types.js'
 
 const context = environment.get('TOA_CONTEXT')
 const env = environment.get('TOA_ENV')
-const server =
-  `Exposition/${JSON.parse(readFileSync(new URL('../../package.json', import.meta.url), 'utf8')).version}` +
+
+/*
+ * What answered, on every reply: the build of the gateway, and the context and environment
+ * it was deployed with. Under a name of its own rather than `server`, which a CDN in front
+ * takes for itself — Cloudflare pins it to `cloudflare` and refuses to let a rule set it,
+ * so a gateway that said it there said it to nobody. A name like `ray`'s, and it survives
+ * the same hop `ray` does.
+ */
+const exposition =
+  `${JSON.parse(readFileSync(new URL('../../package.json', import.meta.url), 'utf8')).version}` +
   ((context === undefined ? '' : ` ${context}`) + (env === undefined ? '' : `/${env}`))
 
 /**
@@ -33,7 +41,7 @@ export async function write(
 
   if (message?.status !== undefined) response.statusCode = message.status
 
-  response.setHeader('server', server)
+  response.setHeader('exposition', exposition)
   message.headers?.forEach((value, key) => response.setHeader(key, value))
   context.timing.append(response)
 
