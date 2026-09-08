@@ -83,11 +83,11 @@ TOA_CONVERGENCE_POINTER     ["amqp://rmq-eu-0","amqp://rmq-eu-1"]
 
 ## The rule
 
-A record carries the region that last wrote it. An incoming record wins where
+A record carries the priority of the region that last wrote it. An incoming record wins where
 
 ```
 remote.VERSION > local.VERSION
-or (remote.VERSION == local.VERSION and priority(remote.region) < priority(local.region))
+or (remote.VERSION == local.VERSION and remote.PRIORITY < local.PRIORITY)
 ```
 
 `VERSION` is already a Lamport clock in disguise. `Entity.#write` increments off whatever was
@@ -96,9 +96,13 @@ has to be added for the counter to advance across regions.
 
 Priorities come from the declaration and are the same in every region, so the ordering is total
 and every region computes the same winner regardless of what it hears first. Two records can never
-share both a version and a region — a region writing twice increments `VERSION`, and the
+share both a version and a priority — a region writing twice increments `VERSION`, and the
 compare-and-swap in `Storage.set` prevents two writes at one version — so the order has no ties
 and there is no residual case.
+
+The record carries the priority rather than the region, because the storage compares it and a rank
+is what compares. The extension is where regions are known: it maps the region a message names to
+that region's rank, and hands the storage a number.
 
 `priority` is read only here. It decides nothing else.
 
@@ -361,84 +365,82 @@ dependant — the storage under it is still whole while a delivery drains.
 ```
 Converging implements Storage, Inbound, depends(storage)
   open()            host.inbound(binding, 'convergence', uris, locator.id, this) → connect
-  accept(message)   this.merge(message.record with REGION = message.region,
-                               criteria(message.region))
+  accept(message)   this.merge(message.record, priority(message.region))
   close()           stop consuming; the storage under it closes after
-  store/upsert/…    REGION on write, off on read, everything else delegated
+  store/upsert/…    PRIORITY on write, off on read, everything else delegated
 ```
 
 `accept` refuses a region the table does not carry — that is a misconfiguration, and dropping is
 safer than guessing a rank.
 
-### Where the region is kept
+### Where the precedence is kept
 
-`REGION` is written into the stored document and stripped from every record the storage hands
-back. It is not an entity property, not a system property, and no component or prototype declares
-it. Applications that do not converge never see it, and nothing needs a migration.
+A record carries the priority of the region that last wrote it, as `PRIORITY`. It is not an entity
+property, not a system property, and no component or prototype declares it. Applications that do
+not converge never see it, and nothing needs a migration.
 
-The decorator writes it on `store`, `massStore`, `upsert` and `ensure`, and removes it on `get`,
-`find` and `stream`. `merge` it delegates untouched: that record carries the region that wrote it,
-which is not this one. `store` gets a shallow copy rather than a mutation, because the record it
-is handed is the entity's own state object — the same one the outbox row holds — and writing into
-it would put `REGION` on the wire and in front of a condition bridge.
+The decorator writes its own region's priority on `store`, `massStore`, `upsert` and `ensure`, and
+removes it on `get`, `find` and `stream`. `merge` writes the priority it is given instead: that
+record was written elsewhere. `store` gets a shallow copy rather than a mutation, because the
+record it is handed is the entity's own state object — the same one the outbox row holds — and
+writing into it would put `PRIORITY` on the wire and in front of a condition bridge.
+
+A rank rather than a region name is what is stored, because a rank is comparable and a name is
+not: an order over names needs the table in the filter, and that is what turns a scalar into a
+tree. The cost is that a rank is derived from configuration — reorder the priorities and records
+written before the change carry their old ones. It decides only ties between concurrent writes,
+and only until each such record is next written, so a reordering settles rather than persists.
 
 An unmanaged operation reads through `storage.raw` and will see the field. That is the one leak,
 and the readme names it.
 
-### The precondition
-
-The rule, as the filter tree `Storage` already takes. **Not as RSQL.** What crosses between
-components is RSQL *text* — a criteria arrives from a client as an expression and `Query.parse`
-lexes it into a tree, "the query a request carries into the one a storage is given". The tree is
-the storage interface's own vocabulary, declared beside `Query` in `types/storages.ts` and never
-serialised, so `merge` takes one. What a direct call must not do is format an expression and parse
-it back: that borrows the wire contract and pays a lexer to say something it already knows
-structurally. The version in the predicate is the incoming record's, so it varies per message —
-an expression would be lexed on every merge.
-
-What is known at boot is the set a region outranks, one per remote region. The tree is four
-objects assembled around it per message:
-
-```js
-// VERSION < 7 or (VERSION == 7 and REGION in (us, ap))
-or(
-  lt('VERSION', record.VERSION),
-  and(eq('VERSION', record.VERSION), of('REGION', outranked))
-)
-```
-
-`or`, `and`, `lt`, `eq` and `of` are five one-line constructors over the `Node` shape, and
-`translate` maps them to `$or`, `$and`, `$lt`, `$eq` and `$in` as it does for any criteria.
-Nothing casts, because the values are already typed — the casting in `query/criteria.ts` exists
-only because the wire form is text.
-
 ### The storage capability
+
+The clock is already here: `Storage.set` commits a transition by compare-and-swap on
+`VERSION: entity.VERSION - 1`. Merging is the same comparison loosened from equality to order,
+with one scalar to break its ties — so the storage owns the whole rule, atomically, and the
+extension reduces every region it knows of to that scalar.
 
 ```ts
 /**
  * Writes `record` as it stands — its VERSION, its timestamps and whatever else it carries —
- * over the stored one where that one matches `criteria`, or where there is none. `false`
- * where it does not match: nothing is written, and that is not an error.
+ * where what it would replace precedes it: a lower `VERSION`, or the same `VERSION` written
+ * at a lower priority. `false` where it does not: nothing is written, and that is not an
+ * error. `priority` is the rank of whoever wrote the record, lower being higher.
  */
-merge?(record: Record, criteria: Node): Promise<boolean>
+merge?(record: Record, priority: number): Promise<boolean>
 
 /** Whether this storage merges. Its absence refuses a component of a converging context. */
 readonly merges?: boolean
 ```
 
-Core defines no ordering and names no region. MongoDB:
+Core learns that records are ordered and that a scalar breaks ties. It learns of no region, no
+table and no query. MongoDB:
 
 ```js
 const result = await this.#collection.replaceOne(
-  { _id: document._id, ...translate(criteria) },
-  document,
+  {
+    _id: document._id,
+    $or: [
+      { VERSION: { $lt: record.VERSION } },
+      { VERSION: record.VERSION, PRIORITY: { $gt: priority } }
+    ]
+  },
+  { ...document, PRIORITY: priority },
   { upsert: true }
 )
 
 return result.matchedCount === 1 || result.upsertedCount === 1
 ```
 
-`upsert` covers the record this region has never seen. Where the criteria does not match and the
+**A number, not a boolean.** A boolean is exactly two regions. With three it cannot rank: split
+`eu`, `us` and `ap` into two classes and a tie between the two that share a class resolves for
+neither, so each keeps its own record until something writes that entity again. And a boolean
+meaning "outranks this deployment" compares an incoming record against the wrong region whenever
+the stored one was itself merged from a third — `ap` hearing `us` then `eu` would end on `eu`, and
+hearing `eu` then `us` would end on `us`.
+
+`upsert` covers the record this region has never seen. Where the filter does not match and the
 document is there, MongoDB attempts the insert and answers `E11000` on `_id`, which is the
 rejection — caught and returned as `false`, the idiom `retriable()` already uses. Verify that a
 top-level `$or` in an upsert filter does not itself raise; if it does, fall back to `replaceOne`
@@ -525,10 +527,10 @@ thing for comq to have. Everything below depends on the version that carries it.
 2. `extensions/convergence/source/Factory.ts` — `destination` and `storage`, and nothing else.
 3. `extensions/convergence/source/Destination.ts` — `emit(event)` →
    `send(locator.id, { record, region, trace })`.
-4. `extensions/convergence/source/Storage.ts` — `Converging`: `REGION` on write, off on read; the
-   inbound; the merge; the refusals at boot.
-5. `extensions/convergence/source/Regions.ts` — the table, the pointer it resolves, the set each
-   region outranks, and the constructors that build a precondition tree over it.
+4. `extensions/convergence/source/Storage.ts` — `Converging`: `PRIORITY` on write, off on read;
+   the inbound; the merge; the refusals at boot.
+5. `extensions/convergence/source/Regions.ts` — the table, the pointer it resolves, and the rank
+   of a region a message names.
 6. `extensions/convergence/readme.md` — what to declare, how it is deployed, what it guarantees,
    what it does not, that atomicity is required, and the federation to configure.
 7. `definitions/source/extensions.convergence/` — `index.ts`, `deployment.ts` (the variables and
@@ -553,13 +555,14 @@ fills its own cap and does not stop the cycle.
 
 ### The merge
 
-`merge` accepts a lower version, rejects an equal one whose region does not outrank, inserts where
-nothing is stored, and answers `false` rather than throwing on the rejection.
+`merge` accepts a lower version, accepts an equal one written at a higher priority, rejects an
+equal one written at a lower priority and one written at the same, inserts where nothing is
+stored, and answers `false` rather than throwing on a rejection.
 
 ### The extension
 
-The precondition tree for each region of a three-region table. The unknown-region refusal. That the
-storage decorator lets no `REGION` reach a record core is given.
+The rank of each region of a three-region table. The unknown-region refusal. That the storage
+decorator lets no `PRIORITY` reach a record core is given.
 
 ### The binding
 
