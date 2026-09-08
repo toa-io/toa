@@ -1,4 +1,4 @@
-import { PassThrough } from 'node:stream'
+import { PassThrough, pipeline } from 'node:stream'
 import { match } from 'matchacho'
 import * as http from '../../HTTP/index.js'
 import { cors } from '../cors/index.js'
@@ -134,7 +134,9 @@ export class Put extends Directive {
       path: this.location ?? input.request.url
     }
 
-    this.workflow!.execute(location, entry, parameters).pipe(stream)
+    // not `pipe`: destroying the reply destroys the execution with it. The error is the
+    // reply's, and the pipeline that writes the reply is the one that reports it.
+    pipeline(this.workflow!.execute(location, entry, parameters), stream, () => {})
 
     return stream
   }

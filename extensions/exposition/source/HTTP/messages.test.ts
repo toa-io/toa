@@ -1,7 +1,9 @@
 import { describe, it, beforeEach } from 'node:test'
 import assert from 'node:assert/strict'
 
+import { once } from 'node:events'
 import { PassThrough, Readable } from 'node:stream'
+import { setTimeout } from 'node:timers/promises'
 import * as streamConsumers from 'node:stream/consumers'
 import { generate } from 'randomstring'
 import * as msgpack from 'msgpackr'
@@ -124,7 +126,7 @@ describe('read', () => {
       }
     })()
 
-    const context = { encoder: formats['text/plain'] } as unknown as Context
+    const context = createStreamContext()
     const message = {
       body: Readable.from(['Hello', 'New', 'World'])
     } as unknown as OutgoingMessage
@@ -155,7 +157,62 @@ describe('read', () => {
       ].join('\r\n')
     )
   })
+
+  it('should destroy the body at once when destroyed', async () => {
+    const body = new Readable({ objectMode: true, read: () => {} })
+    const framed = frame(body)
+    const closed = once(body, 'close')
+
+    framed.resume()
+    await setTimeout(10) // a pull is pending
+    framed.destroy()
+
+    await Promise.race([closed, setTimeout(100).then(() => assert.fail('body not destroyed'))])
+  })
+
+  it('should end with FIN when aborted', async () => {
+    const controller = new AbortController()
+    const body = new Readable({ objectMode: true, read: () => {} })
+    const framed = frame(body, controller.signal)
+    const text = streamConsumers.text(framed)
+
+    body.push('Hello')
+    await setTimeout(10)
+    controller.abort()
+
+    const result = await text
+
+    assert.ok(body.destroyed)
+    assert.strictEqual(
+      result,
+      ['--cut', '', 'ACK', '--cut', '', 'Hello', '--cut', '', 'FIN', '--cut--'].join('\r\n')
+    )
+  })
+
+  it('should fail with the body', async () => {
+    const body = new Readable({ objectMode: true, read: () => {} })
+    const framed = frame(body)
+    const text = streamConsumers.text(framed)
+
+    body.destroy(new Error('boom'))
+
+    await assert.rejects(text, { message: 'boom' })
+  })
 })
+
+function frame(body: Readable, signal?: AbortSignal): Readable {
+  const response = new PassThrough() as unknown as http.ServerResponse
+
+  Object.assign(response, { setHeader: () => response })
+
+  const context = createStreamContext(signal)
+
+  return multipart({ body } as unknown as OutgoingMessage, context, response)
+}
+
+function createStreamContext(signal = new AbortController().signal): Context {
+  return { encoder: formats['text/plain'], signal } as unknown as Context
+}
 
 export function createContext(
   url: string,
@@ -173,6 +230,7 @@ export function createContext(
     }) as unknown as Context['request'],
     url: new URL(url, 'https://host.local'),
     timing: new Timing(),
+    signal: new AbortController().signal,
     buffer: async () => {
       if (consumed) throw new Error('Request body already consumed')
 

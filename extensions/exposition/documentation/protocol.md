@@ -45,6 +45,9 @@ the parts:
 Multipart responses are started with a text chunk `ACK`, and finished with a text
 chunk `FIN`.
 
+A response still streaming when the gateway stops is finished with `FIN` as well, so a client that
+wants to go on reconnects on `FIN`. One that has not read `FIN` by the end of the drain is cut.
+
 Example:
 
 ```

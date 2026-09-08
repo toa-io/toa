@@ -1,10 +1,10 @@
-import { Readable } from 'stream'
+import { type Readable, Transform, pipeline } from 'node:stream'
 import { NotFound } from '../../HTTP/index.js'
 import * as schemas from './schemas.js'
 import { Workflow } from './workflows/index.js'
 import { Directive } from './Directive.js'
 import type { Parameter } from '../../RTD/index.js'
-import type { Unit, Location } from './workflows/index.js'
+import type { Unit, Location, Report } from './workflows/index.js'
 import type { Maybe } from '@toa.io/core/types'
 import type { Component } from '@toa.io/core'
 import type { Output } from '../../io.js'
@@ -53,7 +53,7 @@ export class Delete extends Directive {
       if (entry instanceof Error) throw new NotFound()
 
       output.status = 202
-      output.body = Readable.from(this.execute(input, storage, entry, parameters))
+      output.body = this.execute(input, storage, entry, parameters)
     } else await this.delete(storage, input)
 
     return output
@@ -68,26 +68,43 @@ export class Delete extends Directive {
     })
   }
 
+  /**
+   * The reports, then the deletion once every step has completed. A reply destroyed before
+   * that — the client gone, the gateway stopping — destroys the execution with it, and the
+   * entry stays.
+   */
   // eslint-disable-next-line max-params
-  private async *execute(
+  private execute(
     input: Input,
     storage: string,
     entry: Entry,
     parameters: Parameter[]
-  ): AsyncGenerator {
+  ): Readable {
     const location: Location = {
       storage,
       authority: input.authority,
       path: input.request.url
     }
 
-    for await (const chunk of this.workflow!.execute(location, entry, parameters)) {
-      yield chunk
+    let failed = false
 
-      if (typeof chunk === 'object' && chunk !== null && 'error' in chunk) return
-    }
+    const reports = new Transform({
+      objectMode: true,
+      transform: (report: Report, _, callback) => {
+        if (report.error !== undefined || report.status === 'exception') failed = true
 
-    await this.delete(storage, input)
+        callback(null, report)
+      },
+      flush: (callback) => {
+        if (failed) callback()
+        else this.delete(storage, input).then(() => callback(), callback)
+      }
+    })
+
+    // the error is the reply's, and the pipeline that writes the reply reports it
+    pipeline(this.workflow!.execute(location, entry, parameters), reports, () => {})
+
+    return reports
   }
 }
 

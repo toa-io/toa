@@ -12,6 +12,9 @@ export class Execution extends Readable {
   private readonly context: Context
   private readonly components: Record<string, Component> = {}
   private readonly discovery: Record<string, Promise<Component>> = {}
+
+  /** The step streams being read, to be cut with the execution. */
+  private readonly streams = new Set<Readable>()
   private interrupted = false
 
   public constructor(context: Context, units: Unit[], remotes: Remotes) {
@@ -26,6 +29,21 @@ export class Execution extends Readable {
 
   public override _read(): void {}
 
+  /**
+   * Nobody reads the reports any more: the reply was destroyed, or the gateway is stopping.
+   * The step in flight completes — an invocation is not cancelled — and no other starts.
+   */
+  public override _destroy(
+    error: Error | null,
+    callback: (error?: Error | null) => void
+  ): void {
+    this.interrupted = true
+
+    for (const stream of this.streams) stream.destroy()
+
+    callback(error)
+  }
+
   private async run(): Promise<void> {
     for (const unit of this.units) {
       await this.execute(unit)
@@ -33,7 +51,7 @@ export class Execution extends Readable {
       if (this.interrupted) break
     }
 
-    this.push(null)
+    if (!this.destroyed) this.push(null)
   }
 
   private async execute(unit: Unit): Promise<void> {
@@ -53,16 +71,22 @@ export class Execution extends Readable {
   }
 
   private async stream(step: string, stream: Readable): Promise<void> {
+    this.streams.add(stream)
+
     try {
       for await (const result of stream) this.report(step, result, false)
 
       this.report(step, undefined, true)
     } catch (e: unknown) {
       this.exception(step, e)
+    } finally {
+      this.streams.delete(stream)
     }
   }
 
   private report(step: string, result?: Maybe<unknown>, completed = true): void {
+    if (this.destroyed) return
+
     const report: Report = { step }
 
     if (completed) report.status = 'completed'
@@ -81,6 +105,9 @@ export class Execution extends Readable {
   }
 
   private exception(step: string, error: unknown): void {
+    // a step stream cut by `_destroy` is not an exception of the step
+    if (this.destroyed) return
+
     console.error('Workflow exception', error as Error)
 
     this.push({ step, status: 'exception' } satisfies Report)
@@ -122,7 +149,7 @@ export interface Context {
   steps: Record<string, unknown>
 }
 
-interface Report {
+export interface Report {
   step: string
   status?: 'completed' | 'exception'
   output?: unknown

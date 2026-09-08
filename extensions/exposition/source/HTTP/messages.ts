@@ -141,21 +141,107 @@ export function multipart(
 
   response.setHeader('content-type', `${encoder.multipart}; boundary=${BOUNDARY}`)
 
-  return Readable.from(frames(message.body as Readable, encoder))
+  return new Framing(message.body as Readable, encoder, context.signal)
 }
 
-async function* frames(body: Readable, encoder: Format): AsyncGenerator<Buffer> {
-  yield Buffer.concat([CUT, CRLF, encoder.encode('ACK'), CRLF, CUT])
+/**
+ * A part is pulled when the reader takes one, so a slow reader holds the body back.
+ *
+ * Not a generator under `Readable.from`: that one's `return()` waits behind the `next()` it is
+ * suspended in, and a body destroyed with its reply would live on until its next part — a
+ * subscription's, until its next heartbeat. Destroyed, this destroys the body at once.
+ *
+ * Aborted, it ends with `FIN` instead of being cut: the gateway is stopping, and the reader is
+ * told the stream is over rather than left to find out.
+ */
+class Framing extends Readable {
+  private readonly body: Readable
+  private readonly parts: AsyncIterator<unknown>
+  private readonly encoder: Format
+  private readonly signal: AbortSignal
+  private pulling = false
+  private stopping = false
+  private finished = false
 
-  for await (const part of body)
-    yield Buffer.concat([
-      CRLF /* indicates no boundary headers */,
-      encoder.encode(part),
-      CRLF,
-      CUT
-    ])
+  public constructor(body: Readable, encoder: Format, signal: AbortSignal) {
+    super()
 
-  yield Buffer.concat([CRLF, encoder.encode('FIN'), CRLF, FINALCUT])
+    this.body = body
+    this.encoder = encoder
+    this.signal = signal
+    this.parts = body[Symbol.asyncIterator]()
+
+    this.push(Buffer.concat([CUT, CRLF, encoder.encode('ACK'), CRLF, CUT]))
+
+    if (signal.aborted) this.stop()
+    else signal.addEventListener('abort', this.stop, { once: true })
+  }
+
+  public override _read(): void {
+    if (this.pulling || this.finished) return
+
+    this.pulling = true
+
+    this.pull().catch((error: Error) => this.destroy(error))
+  }
+
+  public override _destroy(
+    error: Error | null,
+    callback: (error?: Error | null) => void
+  ): void {
+    this.signal.removeEventListener('abort', this.stop)
+    this.body.destroy()
+
+    callback(error)
+  }
+
+  private async pull(): Promise<void> {
+    let result: IteratorResult<unknown>
+
+    try {
+      result = await this.parts.next()
+    } catch (error) {
+      // the body was destroyed by `stop`, and that is not an error of the stream
+      if (this.stopping) {
+        this.finish()
+
+        return
+      }
+
+      throw error
+    } finally {
+      this.pulling = false
+    }
+
+    if (result.done === true || this.stopping) this.finish()
+    else
+      this.push(
+        Buffer.concat([
+          CRLF /* indicates no boundary headers */,
+          this.encoder.encode(result.value),
+          CRLF,
+          CUT
+        ])
+      )
+  }
+
+  private readonly stop = (): void => {
+    this.stopping = true
+    this.body.destroy()
+
+    // a pull in flight finishes on its own once the body is gone
+    if (!this.pulling) this.finish()
+  }
+
+  private finish(): void {
+    if (this.finished) return
+
+    this.finished = true
+    this.signal.removeEventListener('abort', this.stop)
+
+    this.push(Buffer.concat([CRLF, this.encoder.encode('FIN'), CRLF, FINALCUT]))
+    this.push(null)
+  }
 }
 
 const BOUNDARY = 'cut'

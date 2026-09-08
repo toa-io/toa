@@ -22,6 +22,8 @@ If it returns a URL or Request, then the response to the specified request is re
 response to the original request, along with the `content-type`, `content-length`, and `etag`
 headers.
 
+The request to the resource is abandoned when the client has gone, or when the gateway stops.
+
 ## `flow:compose`
 
 Compose an object from a response stream in object mode.
