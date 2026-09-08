@@ -7,13 +7,18 @@ export class Operator {
   /** @type {toa.deployment.Registry} */
   #registry
 
+  /** @type {string | undefined} */
+  #environment
+
   /**
-   * @param deployment {toa.deployment.Deployment}
-   * @param registry {toa.deployment.Registry}
+   * @param {toa.deployment.Deployment} deployment
+   * @param {toa.deployment.Registry} registry
+   * @param {string} [environment]
    */
-  constructor(deployment, registry) {
+  constructor(deployment, registry, environment) {
     this.#deployment = deployment
     this.#registry = registry
+    this.#environment = environment
   }
 
   async export(path) {
@@ -36,6 +41,7 @@ export class Operator {
     options = Object.assign({}, OPTIONS, options)
 
     await Promise.all([this.export(), this.push()])
+    await this.#registry.alias(this.#environment)
     await this.#deployment.install(options)
   }
 

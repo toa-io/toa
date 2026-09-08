@@ -50,6 +50,24 @@ export class Registry {
     await this.#run(true)
   }
 
+  /**
+   * A second tag on each workload image, the environment, so a retention job can see what
+   * a deploy left running. `deps-*` is not in `#images`.
+   *
+   * @param {string} [environment]
+   * @returns {Promise<void>}
+   */
+  async alias(environment) {
+    if (
+      typeof environment !== 'string' ||
+      environment === '' ||
+      CONTENT_TAG.test(environment)
+    )
+      return
+
+    await Promise.all(this.#images.map((image) => this.#alias(image, environment)))
+  }
+
   tags() {
     return this.#images.map((image) => image.reference)
   }
@@ -159,6 +177,22 @@ export class Registry {
     await this.#process.execute('docker', args)
   }
 
+  /**
+   * @param {toa.deployment.images.Image} image
+   * @param {string} environment
+   * @returns {Promise<void>}
+   */
+  async #alias(image, environment) {
+    const target = retag(image.reference, environment)
+    const args = ['buildx', 'imagetools', 'create', '--tag', target]
+
+    if (LOCAL.test(image.reference)) args.push('--insecure')
+
+    args.push(image.reference)
+
+    await this.#process.execute('docker', args)
+  }
+
   async exists(tag) {
     const args = ['manifest', 'inspect']
 
@@ -230,7 +264,19 @@ async function pool(items, work) {
   await Promise.all(workers)
 }
 
+/**
+ * @param {string} reference
+ * @param {string} tag
+ * @returns {string}
+ */
+function retag(reference, tag) {
+  return reference.slice(0, reference.lastIndexOf(':') + 1) + tag
+}
+
 const BUILDER = 'toa'
+
+/** An environment named this way is a content tag, and must not be moved as one. */
+const CONTENT_TAG = /^(deps-)?[0-9a-f]{8}$/
 
 /** A reference into a registry on this machine, by any of the names it goes by. */
 const LOCAL = /^(localhost|127\.\d+\.\d+\.\d+|host\.docker\.internal)(:\d+)?\//

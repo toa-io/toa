@@ -1,0 +1,27 @@
+name: GHCR prune
+
+# Untagged manifests, and prereleases older than 90 days that are not among the last 30.
+# `:alpha`, `:latest`, and a version without a pre-release suffix stay.
+on:
+  schedule:
+    - cron: "0 3 * * *" # 03:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  prune:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+
+      - name: Delete expired GHCR versions
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node .github/scripts/prune-ghcr.js
