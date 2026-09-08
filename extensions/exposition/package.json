@@ -33,7 +33,7 @@
     "@toa.io/generic": "1.0.0-alpha.292",
     "@toa.io/schemas": "1.0.0-alpha.293",
     "content-type": "3.0.0",
-    "matchacho": "0.6.0",
+    "matchacho": "0.6.1",
     "minimatch": "10.2.6",
     "msgpackr": "2.1.0",
     "negotiator": "1.1.0",

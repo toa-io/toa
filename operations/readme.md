@@ -79,7 +79,10 @@ downloads nor uploads the dependencies again. The same holds for `mono`.
 Beside each component's sources the layer carries `manifest.toa.json`, the manifest as this
 build normalised it. A composition reads it instead of normalising again, so it loads no
 bridge to read what a module declares; a workspace has no such file and is read as it always
-was. What a build cannot express there — a prototype in a directory of the application's own
+was. A component an extension ships has none either — its package is published long before any
+image is built — and is read from the digest `@toa.io/definitions` carries, which a deploy has
+always read. So nothing that runs reads a module's source, and `oxc-parser` is installed only
+where a manifest is normalised: a workspace and a deploy, both through `@toa.io/operations`. What a build cannot express there — a prototype in a directory of the application's own
 rather than in a package — fails the build, where before it failed the container.
 
 A pushed image builds on the `toa` container builder, whose registry exporter is what lays

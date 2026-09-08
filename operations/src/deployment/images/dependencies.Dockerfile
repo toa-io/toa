@@ -19,7 +19,5 @@ RUN --mount=type=cache,target=/root/.npm,sharing=locked \
 # what the extensions need for what these components declare: installed beside the extension
 # that reads the declaration, in Toa's own install, because that is where Node resolves an
 # extension's imports from — and one copy for the composition rather than one per component
-# `--legacy-peer-deps` for the reason the base image installs with it: what is added here
-# re-resolves the tree, and a peer nothing imports comes back with it — 23 MB of `typescript`
 RUN --mount=type=cache,target=/root/.npm,sharing=locked \
-  if [ -s .packages ]; then npm i --prefix /toa --omit=dev --legacy-peer-deps $(cat .packages); fi
+  if [ -s .packages ]; then npm i --prefix /toa --omit=dev $(cat .packages); fi
