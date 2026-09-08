@@ -385,16 +385,32 @@ it would put `REGION` on the wire and in front of a condition bridge.
 An unmanaged operation reads through `storage.raw` and will see the field. That is the one leak,
 and the readme names it.
 
-### The criteria
+### The precondition
 
-The rule, as the tree core already defines. The regions a given one outranks are known from the
-table at boot, so it is one string per remote region, parsed once with `@rsql/parser`:
+The rule, as the filter tree `Storage` already takes. **Not as RSQL.** What crosses between
+components is RSQL *text* — a criteria arrives from a client as an expression and `Query.parse`
+lexes it into a tree, "the query a request carries into the one a storage is given". The tree is
+the storage interface's own vocabulary, declared beside `Query` in `types/storages.ts` and never
+serialised, so `merge` takes one. What a direct call must not do is format an expression and parse
+it back: that borrows the wire contract and pays a lexer to say something it already knows
+structurally. The version in the predicate is the incoming record's, so it varies per message —
+an expression would be lexed on every merge.
 
+What is known at boot is the set a region outranks, one per remote region. The tree is four
+objects assembled around it per message:
+
+```js
+// VERSION < 7 or (VERSION == 7 and REGION in (us, ap))
+or(
+  lt('VERSION', record.VERSION),
+  and(eq('VERSION', record.VERSION), of('REGION', outranked))
+)
 ```
-VERSION<7,(VERSION==7;REGION=in=(us,ap))
-```
 
-`,` is or, `;` is and, and `=in=`, `<` and `==` all translate.
+`or`, `and`, `lt`, `eq` and `of` are five one-line constructors over the `Node` shape, and
+`translate` maps them to `$or`, `$and`, `$lt`, `$eq` and `$in` as it does for any criteria.
+Nothing casts, because the values are already typed — the casting in `query/criteria.ts` exists
+only because the wire form is text.
 
 ### The storage capability
 
@@ -511,8 +527,8 @@ thing for comq to have. Everything below depends on the version that carries it.
    `send(locator.id, { record, region, trace })`.
 4. `extensions/convergence/source/Storage.ts` — `Converging`: `REGION` on write, off on read; the
    inbound; the merge; the refusals at boot.
-5. `extensions/convergence/source/Regions.ts` — the table, the pointer it resolves, the criteria
-   string per remote region.
+5. `extensions/convergence/source/Regions.ts` — the table, the pointer it resolves, the set each
+   region outranks, and the constructors that build a precondition tree over it.
 6. `extensions/convergence/readme.md` — what to declare, how it is deployed, what it guarantees,
    what it does not, that atomicity is required, and the federation to configure.
 7. `definitions/source/extensions.convergence/` — `index.ts`, `deployment.ts` (the variables and
@@ -542,7 +558,7 @@ nothing is stored, and answers `false` rather than throwing on the rejection.
 
 ### The extension
 
-The criteria string for each region of a three-region table. The unknown-region refusal. That the
+The precondition tree for each region of a three-region table. The unknown-region refusal. That the
 storage decorator lets no `REGION` reach a record core is given.
 
 ### The binding
