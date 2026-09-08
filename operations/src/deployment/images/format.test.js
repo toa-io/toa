@@ -144,6 +144,6 @@ describe('a service image', () => {
 
     const dockerfile = await readFile(join(context, 'Dockerfile'), 'utf8')
 
-    assert.ok(dockerfile.includes('npm i --prefix /toa --omit=dev --legacy-peer-deps $(cat .packages)'))
+    assert.ok(dockerfile.includes('npm i --prefix /toa --omit=dev $(cat .packages)'))
   })
 })

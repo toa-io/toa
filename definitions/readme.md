@@ -59,6 +59,10 @@ workspace transpiles and written to `digest/`, which ships and is not committed.
 components from the digest; the process that runs them reads them from the extension, where their
 code is.
 
+A running service reads it too. Its components are in the extension's package, published long
+before any image was built, so nothing baked their manifests into one — the digest is what a
+service and a composition that hosts one read instead of normalising them again at start.
+
 The digest is generated from the workspace, after every extension it covers has transpiled, so a
 change to a shipped component is in the next `npm run transpile`; a release packs it afresh. The
 generator reaches the extensions and norm through the workspace, and does not declare them: each

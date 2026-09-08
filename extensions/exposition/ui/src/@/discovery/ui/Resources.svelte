@@ -59,11 +59,7 @@
 
 <Async store={tree}>
   {#snippet awaited()}
-    {#if routes.length === 0}
-      <p class="text-muted-foreground py-20 text-center">{$dict.resources.empty}</p>
-    {:else if shown.length === 0}
-      <p class="text-muted-foreground py-20 text-center">{$dict.resources.nomatch}</p>
-    {:else}
+    {#if shown.length > 0}
       <div class={['flex flex-col gap-6', className]} {...props}>
         {#each group(shown) as band (band.id)}
           <section class="flex flex-col gap-2">
@@ -85,6 +81,8 @@
           </section>
         {/each}
       </div>
+    {:else if routes.length > 0}
+      <p class="text-muted-foreground py-20 text-center">{$dict.resources.nomatch}</p>
     {/if}
   {/snippet}
 </Async>

@@ -177,6 +177,7 @@ jobs:
             docker buildx build \
               --platform linux/amd64,linux/arm64 \
               --build-arg VERSION="$VERSION" \
+              --provenance=false \
               "${TAGS[@]}" \
               --push \
               -f operations/image/runtime.Dockerfile \

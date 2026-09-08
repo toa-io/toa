@@ -1,7 +1,7 @@
 import { createRequire } from 'node:module'
 import { pathToFileURL } from 'node:url'
 import * as boot from '@toa.io/boot'
-import { component, shortcuts } from '@toa.io/norm'
+import { shortcuts } from '@toa.io/norm'
 import { find } from '@toa.io/generic'
 
 // an extension is named the way a package is, and a module is loaded by file
@@ -21,7 +21,9 @@ export async function discover(paths) {
   const pending = [...paths]
 
   while (pending.length > 0) {
-    const manifest = await component(pending.shift())
+    // read the way a booting process reads it: what a build normalised, or what the digest
+    // holds for a component an extension ships, before the sources of either
+    const manifest = await boot.manifest(pending.shift())
 
     for (const reference of Object.keys(manifest.extensions ?? {})) {
       if (references.has(reference)) continue

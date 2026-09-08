@@ -15,16 +15,7 @@ let images
 
 beforeEach(() => {
   images = []
-  process = /** @type {toa.operations.Process} */ {
-    execute: mock.fn(async (cmd, args) => {
-      if (args[0] === 'manifest') throw new Error('manifest unknown')
-
-      if (args[0] === 'buildx' && args[1] === 'inspect')
-        throw new Error('builder not found')
-
-      return ''
-    })
-  }
+  process = execute()
 
   factory = /** @type {toa.deployment.images.Factory} */ {
     composition: () => createImage('composition-mono', true),
@@ -336,25 +327,115 @@ it('should skip build when image already exists', async () => {
   )
 })
 
+it('should tag the environment on each workload image', async () => {
+  const proc = execute()
+  const registry = createRegistry(
+    { base: 'example.com/reg', platforms: ['linux/amd64'] },
+    proc
+  )
+
+  registry.composition(/** @type {any} */ ({}))
+  registry.service('.', /** @type {any} */ ({}))
+
+  await registry.alias('production')
+
+  const aliases = imagetools(proc)
+  const tags = aliases.map((args) => args[args.indexOf('--tag') + 1]).sort()
+  const sources = aliases.map((args) => args.at(-1)).sort()
+
+  assert.strictEqual(aliases.length, 2)
+  assert.deepStrictEqual(tags, [
+    'example.com/reg/acme/composition-mono:production',
+    'example.com/reg/acme/extension-realtime:production'
+  ])
+  assert.deepStrictEqual(sources, [
+    'example.com/reg/acme/composition-mono:abcdef12',
+    'example.com/reg/acme/extension-realtime:abcdef12'
+  ])
+})
+
+it('should not tag deps images with the environment', async () => {
+  const proc = execute()
+  const registry = createRegistry(
+    { base: 'example.com/reg', platforms: ['linux/amd64'] },
+    proc
+  )
+
+  registry.composition(/** @type {any} */ ({}))
+
+  await registry.alias('production')
+
+  const aliases = imagetools(proc)
+
+  assert.strictEqual(aliases.length, 1)
+  assert.ok(!aliases[0].some((arg) => String(arg).includes(':deps-')))
+})
+
+it('should not tag the environment on push', async () => {
+  const proc = execute()
+  const registry = createRegistry(
+    { base: 'example.com/reg', platforms: ['linux/amd64'] },
+    proc
+  )
+
+  registry.composition(/** @type {any} */ ({}))
+
+  await registry.push()
+
+  assert.deepStrictEqual(imagetools(proc), [])
+})
+
+it('should not move a content tag as the environment', async () => {
+  const proc = execute()
+  const registry = createRegistry(
+    { base: 'example.com/reg', platforms: ['linux/amd64'] },
+    proc
+  )
+
+  registry.composition(/** @type {any} */ ({}))
+
+  await registry.alias('abcdef12')
+  await registry.alias('deps-12345678')
+
+  assert.deepStrictEqual(imagetools(proc), [])
+})
+
+it('should not tag without an environment', async () => {
+  const proc = execute()
+  const registry = createRegistry(
+    { base: 'example.com/reg', platforms: ['linux/amd64'] },
+    proc
+  )
+
+  registry.composition(/** @type {any} */ ({}))
+
+  await registry.alias()
+  await registry.alias('')
+
+  assert.deepStrictEqual(imagetools(proc), [])
+})
+
 it('should probe a local registry as insecure', async () => {
-  process.execute = mock.fn(async () => '')
+  const proc = execute()
 
-  const registry = createRegistry({ base: 'localhost:5000', platforms: null })
+  proc.execute = mock.fn(async () => '')
 
-  factory.composition = () => {
-    const image = createImage('composition-mono', true)
+  const image = createImage('composition-mono', true)
 
-    image.reference = 'localhost:5000/acme/composition-mono:abcdef12'
-    image.dependencies.reference = 'localhost:5000/acme/composition-mono:deps-12345678'
+  image.reference = 'localhost:5000/acme/composition-mono:abcdef12'
+  image.dependencies.reference = 'localhost:5000/acme/composition-mono:deps-12345678'
 
-    return image
-  }
+  const registry = new Registry(
+    { base: 'localhost:5000', platforms: null },
+    { composition: () => image, service: factory.service, mono: factory.mono },
+    proc
+  )
 
   registry.composition(/** @type {any} */ ({}))
 
   await registry.build()
 
-  const probes = process.execute.mock.calls
+  const probes = proc.execute.mock.calls
     .filter(({ arguments: [, args] }) => args[0] === 'manifest')
     .map(({ arguments: [, args] }) => args)
 
@@ -364,12 +445,56 @@ it('should probe a local registry as insecure', async () => {
     assert.deepStrictEqual(args.slice(0, 3), ['manifest', 'inspect', '--insecure'])
 })
 
+it('should tag a local registry as insecure', async () => {
+  const proc = execute()
+  const image = createImage('composition-mono', true)
+
+  image.reference = 'localhost:5000/acme/composition-mono:abcdef12'
+  image.dependencies.reference = 'localhost:5000/acme/composition-mono:deps-12345678'
+
+  const registry = new Registry(
+    { base: 'localhost:5000', platforms: null },
+    { composition: () => image, service: factory.service, mono: factory.mono },
+    proc
+  )
+
+  registry.composition(/** @type {any} */ ({}))
+
+  await registry.alias('production')
+
+  assert.deepStrictEqual(imagetools(proc), [
+    [
+      'buildx',
+      'imagetools',
+      'create',
+      '--tag',
+      'localhost:5000/acme/composition-mono:production',
+      '--insecure',
+      'localhost:5000/acme/composition-mono:abcdef12'
+    ]
+  ])
+})
+
 /**
  * @param {object} [registry]
  * @returns {Registry}
  */
-function createRegistry(registry = {}) {
-  return new Registry(registry, factory, process)
+function createRegistry(registry = {}, proc = process) {
+  return new Registry(registry, factory, proc)
+}
+
+/** @returns {toa.operations.Process} */
+function execute() {
+  return /** @type {toa.operations.Process} */ {
+    execute: mock.fn(async (cmd, args) => {
+      if (args[0] === 'manifest') throw new Error('manifest unknown')
+
+      if (args[0] === 'buildx' && args[1] === 'inspect')
+        throw new Error('builder not found')
+
+      return ''
+    })
+  }
 }
 
 /**
@@ -395,6 +520,13 @@ function createImage(name, bundle = false) {
   images.push(image)
 
   return image
+}
+
+/** @returns {string[][]} the arguments of every imagetools run */
+function imagetools(proc = process) {
+  return proc.execute.mock.calls
+    .filter(({ arguments: [, args] }) => args[0] === 'buildx' && args[1] === 'imagetools')
+    .map(({ arguments: [, args] }) => args)
 }
 
 /** @returns {string[][]} the arguments of every build run */

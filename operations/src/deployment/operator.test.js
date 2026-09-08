@@ -43,3 +43,52 @@ describe('env', () => {
     assert.deepStrictEqual(output, variables)
   })
 })
+
+describe('install', () => {
+  /** @type {toa.deployment.Deployment} */
+  let deployment
+
+  /** @type {toa.deployment.Registry} */
+  let registry
+
+  beforeEach(() => {
+    deployment = /** @type {toa.deployment.Deployment} */ {
+      export: mock.fn(async () => {}),
+      install: mock.fn(async () => {})
+    }
+    registry = /** @type {toa.deployment.Registry} */ {
+      push: mock.fn(async () => {}),
+      alias: mock.fn(async () => {})
+    }
+  })
+
+  it('should tag the environment after a push', async () => {
+    const order = []
+
+    registry.push = mock.fn(async () => {
+      order.push('push')
+    })
+    registry.alias = mock.fn(async () => {
+      order.push('alias')
+    })
+    deployment.install = mock.fn(async () => {
+      order.push('install')
+    })
+
+    operator = new Operator(deployment, registry, 'production')
+
+    await operator.install()
+
+    assert.deepStrictEqual(order, ['push', 'alias', 'install'])
+    assert.deepStrictEqual(registry.alias.mock.calls[0].arguments, ['production'])
+  })
+
+  it('should not tag the environment on push', async () => {
+    operator = new Operator(deployment, registry, 'production')
+
+    await operator.push()
+
+    assert.strictEqual(registry.push.mock.callCount(), 1)
+    assert.strictEqual(registry.alias.mock.callCount(), 0)
+  })
+})

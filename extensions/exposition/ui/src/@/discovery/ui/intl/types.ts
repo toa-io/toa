@@ -6,7 +6,6 @@
 
 export type Dictionary = {
       resources: {
-        empty: string
         nomatch: string
       }
       resource: {

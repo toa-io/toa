@@ -79,7 +79,10 @@ downloads nor uploads the dependencies again. The same holds for `mono`.
 Beside each component's sources the layer carries `manifest.toa.json`, the manifest as this
 build normalised it. A composition reads it instead of normalising again, so it loads no
 bridge to read what a module declares; a workspace has no such file and is read as it always
-was. What a build cannot express there — a prototype in a directory of the application's own
+was. A component an extension ships has none either — its package is published long before any
+image is built — and is read from the digest `@toa.io/definitions` carries, which a deploy has
+always read. So nothing that runs reads a module's source, and `oxc-parser` is installed only
+where a manifest is normalised: a workspace and a deploy, both through `@toa.io/operations`. What a build cannot express there — a prototype in a directory of the application's own
 rather than in a package — fails the build, where before it failed the container.
 
 A pushed image builds on the `toa` container builder, whose registry exporter is what lays
@@ -175,3 +178,46 @@ a secret containing required credentials can be specified using `registry.creden
 registry:
   credentials: docker-credentials-secret-name
 ```
+
+#### Toa images
+
+Each release publishes `ghcr.io/toa-io/runtime:<version>` and, beside it, `:alpha` or `:latest`.
+The extension services share that version:
+
+```
+ghcr.io/toa-io/extension-exposition-gateway:1.0.0-alpha.285
+ghcr.io/toa-io/extension-realtime-streams:1.0.0-alpha.285
+ghcr.io/toa-io/extension-introspection-explorer:1.0.0-alpha.285
+ghcr.io/toa-io/extension-configuration-values:1.0.0-alpha.285
+```
+
+Untagged manifests are deleted. A prerelease older than 90 days, and not among the last 30, is
+deleted with the four service images of that version. `:alpha`, `:latest`, and a version without
+a pre-release suffix stay.
+
+An application still on a deleted prerelease cannot pull `registry.services: published` and cannot
+rebuild `FROM` that runtime. Images already in `registry.base` keep running. Stay inside the
+window, or pin a graduated release.
+
+#### Userspace images
+
+`toa deploy production` writes two tags on the same composition image (`mono` and a service
+`registry.services: build` built are the same):
+
+- `<name>:<hash>` — what the chart pins. A hash of the runtime and the sources. `toa push` writes
+  this tag and nothing else.
+- `<name>:production` — moved onto that image. The next production deploy moves it again.
+
+`deps-<hash>` is not tagged with the environment. Do not name an environment eight hex digits, or
+`deps-` plus eight: a retention job would treat it as a content tag.
+
+A job the application runs deletes every `<hash>` and `deps-<hash>` older than 7 days, except the
+last 5, except the image `:production` (or `:staging`, or `:latest`) currently names. Then:
+
+```shell
+$ doctl registries garbage-collection start --include-untagged-manifests <registry>
+```
+
+Rollback is only those 7 days, those last 5, and whatever the environment tag still names. Turn
+the job on after the first deploy that writes that tag. The first garbage collection returns the
+space the old tags held, and blocks pushes while it runs.
