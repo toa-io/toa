@@ -63,8 +63,14 @@ export class ContractException extends Exception {
     )
 
     if (typeof error === 'object' && error !== null)
-      for (const k of ['keyword', 'property', 'schema', 'path', 'params'] as const)
-        if (k in error) this[k] = (error as unknown as Record<string, unknown>)[k]
+      for (const k of [
+        'keyword',
+        'instancePath',
+        'schemaPath',
+        'params',
+        'propertyName'
+      ] as const)
+        if (k in error) this[k] = error[k]
   }
 }
 

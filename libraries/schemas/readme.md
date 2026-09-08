@@ -2,8 +2,6 @@
 
 Feeds your JSONSchema to [Ajv](https://ajv.js.org).
 
-_Also, slightly transforms validation error objects for no obvious reason._
-
 ## schema(schema: object): Schema
 
 Factory for [Schema class](./types/schema.d.ts).

@@ -45,17 +45,17 @@ it('should resolve references', async () => {
 
   assert.partialDeepStrictEqual(schema.fit({ bar: { foo: [1, 2] } }), {
     keyword: 'type',
-    path: '/bar/foo'
+    instancePath: '/bar/foo'
   })
 
   assert.partialDeepStrictEqual(schema.fit({ bar: [1, 2] }), {
     keyword: 'type',
-    path: '/bar'
+    instancePath: '/bar'
   })
 
   assert.partialDeepStrictEqual(schema.fit({ baz: { not: 'ok' } }), {
     keyword: 'type',
-    path: '/baz'
+    instancePath: '/baz'
   })
 })
 
