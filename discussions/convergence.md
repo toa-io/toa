@@ -459,24 +459,56 @@ readonly merges?: boolean
 Core learns that a record carries the rank of whoever wrote it and that lower outranks. It learns
 of no region name, no table and no query.
 
+The filter selects by `_id` alone, so it always matches what is there and upserts what is not.
+The rule is the pipeline, which either replaces the document or keeps it:
+
 ```js
-const result = await this.#collection.replaceOne(
-  {
-    _id: document._id,
-    $or: [
-      { VERSION: { $lt: record.VERSION } },
-      { VERSION: record.VERSION, REGION: { $gt: record.REGION } }
-    ]
-  },
-  document,
+const result = await this.#collection.updateOne(
+  { _id: document._id },
+  [
+    {
+      $replaceWith: {
+        $cond: [
+          {
+            $or: [
+              // nothing stored under this id: the pipeline runs over `{ _id }`
+              { $eq: [{ $type: '$VERSION' }, 'missing'] },
+              { $lt: ['$VERSION', document.VERSION] },
+              {
+                $and: [
+                  { $eq: ['$VERSION', document.VERSION] },
+                  { $gt: ['$REGION', document.REGION] }
+                ]
+              }
+            ]
+          },
+          { $literal: document },
+          '$$ROOT'
+        ]
+      }
+    }
+  ],
   { upsert: true }
 )
 
-return result.matchedCount === 1 || result.upsertedCount === 1
+return result.upsertedCount === 1 || result.modifiedCount === 1
 ```
 
+**Absent and stale are different answers, not the same one twice.** A record this region has never
+seen is an upsert; a record it has already superseded leaves `$$ROOT` in place, changes nothing,
+and comes back as `modifiedCount: 0`. Neither raises. The obvious spelling — `replaceOne` with the
+rule in the filter and `upsert: true` — cannot tell them apart: no match means either, and the
+upsert then attempts an insert that collides on `_id`, so the ordinary case of a duplicate or an
+out-of-order delivery is reported by an `E11000` and pays for a failed insert to say nothing
+happened. It would also put `$or` in an upsert filter, where it contributes nothing to the
+document that would be inserted.
+
+`$literal` is not decoration: a value in a pipeline is an expression, so a record whose property
+happens to hold a string beginning with `$` would otherwise be read as a field path.
+
 The record is written exactly as it arrived, `REGION` included — which is why nothing has to be
-added to it here, and why the rank of whoever wrote it survives every hop.
+added to it here, and why the rank of whoever wrote it survives every hop. A document that lacks
+`REGION` altogether fails `$gt` and so wins every tie, which is the hazard the migration closes.
 
 **Stored, not computed.** What decides a tie is who wrote the record being replaced, so it has to
 be on that record. A flag or a rank computed from the sender and this deployment cannot do it:
@@ -485,14 +517,8 @@ for their two concurrent writes and keep whichever arrived second — ending on 
 `us` both end on `eu`. Two regions is the case where computing it works, because there "not me"
 names the writer uniquely.
 
-`upsert` covers the record this region has never seen. Where the filter does not match and the
-document is there, MongoDB attempts the insert and answers `E11000` on `_id`, which is the
-rejection — caught and returned as `false`, the idiom `retriable()` already uses. Verify that a
-top-level `$or` in an upsert filter does not itself raise; if it does, fall back to `replaceOne`
-without `upsert` followed by `insertOne` on `matchedCount === 0`.
-
-A duplicate key on any other index means an incoming record cannot be stored at all: two regions
-independently took the same unique value. Redelivery will not help, so it is logged as an error
+A duplicate key still means something, on any index but `_id`: two regions independently took the
+same unique value. Redelivery will not help, so it is logged as an error
 and the message is acknowledged. Unique indexes other than `_id` are not safe under multi-region
 writes, and the readme says so.
 
@@ -616,11 +642,11 @@ fills its own cap and does not stop the cycle.
 
 ### The merge
 
-`merge` accepts a lower version, accepts an equal one written by a region it outranks, rejects an
-equal one written by a region that outranks it and one written by the same region, inserts where
-nothing is stored, and answers `false` rather than throwing on a rejection. The migration
-backfills a record that lacks `REGION`, and a record that still lacks one loses no tie — which is
-what the migration is there to prevent.
+`merge` inserts where nothing is stored under that id, accepts a lower version, accepts an equal
+one written by a region it outranks, and leaves the stored record untouched for an equal version
+written by a region that outranks it, for one written by the same region, and for a higher stored
+version — answering `false` each time, and raising on none of them. A record that lacks `REGION`
+loses no tie, which is what the migration is there to prevent.
 
 ### The extension
 
