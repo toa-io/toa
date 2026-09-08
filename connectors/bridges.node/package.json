@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/bridges.node",
-  "version": "1.0.0-alpha.295",
+  "version": "1.0.0-alpha.296",
   "type": "module",
   "description": "Toa Node Bridge (inproc)",
   "homepage": "https://toa.io",
@@ -34,7 +34,7 @@
     "fast-glob": "3.3.3"
   },
   "devDependencies": {
-    "@toa.io/definitions": "1.0.0-alpha.295",
+    "@toa.io/definitions": "1.0.0-alpha.296",
     "clone-deep": "4.0.1"
   },
   "gitHead": "61c8e74a336385265767e9fd37d49128cb51b17f"
