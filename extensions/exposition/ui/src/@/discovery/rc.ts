@@ -12,13 +12,21 @@ import { read } from './svc/net'
 function rc(): void {
   /*
    * What answered, taken off whatever answered: one gateway serves this page and every
-   * reply it reads, so any reply carries the same line. A reply without one — a proxy that
-   * stripped it — leaves the line standing rather than blanking it.
+   * reply it reads, so any reply carries the same line.
+   *
+   * The gateway names itself in `exposition`; `server` is whoever stands in front of it and
+   * took that header for their own — a CDN names itself there, and a deployment with nothing
+   * in front sends none. So the two read as one line: what serves this, and what it came
+   * through. Without the first there is nothing to say, and a bare `cloudflare` says nothing.
    */
   origin.events.on('response', ({ headers }) => {
-    const signature = headers.get('server')
+    const gateway = headers.get('exposition')
 
-    if (signature !== null) server.set(signature)
+    if (gateway === null) return
+
+    const through = headers.get('server')
+
+    server.set(through === null ? gateway : `${gateway} ${through}`)
   })
 
   let identified: boolean | undefined
