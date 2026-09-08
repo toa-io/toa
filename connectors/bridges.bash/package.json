@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/bridges.bash",
-  "version": "1.0.0-alpha.297",
+  "version": "1.0.0-alpha.298",
   "type": "module",
   "description": "Toa Bash Bridge",
   "author": "temich <tema.gurtovoy@gmail.com>",
@@ -29,6 +29,6 @@
   },
   "dependencies": {
     "@toa.io/core": "1.0.0-alpha.293",
-    "@toa.io/definitions": "1.0.0-alpha.297"
+    "@toa.io/definitions": "1.0.0-alpha.298"
   }
 }
