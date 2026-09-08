@@ -4,7 +4,6 @@
 export const dictionaries = {
   "en-US": {
     "resources": {
-      "empty": "Nothing is served here yet.",
       "nomatch": "No results match the filter."
     },
     "resource": {

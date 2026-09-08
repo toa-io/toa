@@ -1,5 +1,4 @@
 resources:
-  empty: Nothing is served here yet.
   nomatch: No results match the filter.
 resource:
   route: route

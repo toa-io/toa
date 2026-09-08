@@ -113,10 +113,8 @@
 <svelte:window onkeydown={shortcut} />
 
 {#snippet resources()}
-  <div class="mx-auto flex w-full max-w-3xl flex-col gap-6 px-4 pb-12">
-    <Guides />
-    <Resources />
-  </div>
+  <Guides />
+  <Resources />
 {/snippet}
 
 <Screen>
@@ -275,15 +273,17 @@
       </div>
   </header>
 
-  {#if identifying}
-    <!-- it renders what it wraps once there is an identity, which is where this leaves off -->
-    <Authenticated>
+  <div class="mx-auto flex w-full max-w-3xl flex-col gap-4 px-4 pb-4">
+    {#if identifying}
+      <!-- it renders what it wraps once there is an identity, which is where this leaves off -->
+      <Authenticated>
+        {@render resources()}
+      </Authenticated>
+    {:else}
       {@render resources()}
-    </Authenticated>
-  {:else}
-    {@render resources()}
-  {/if}
+    {/if}
 
-  <!-- what answered, under whichever of the two is showing -->
-  <Signature />
+    <!-- what answered, under whichever of the two is showing -->
+    <Signature />
+  </div>
 </Screen>
