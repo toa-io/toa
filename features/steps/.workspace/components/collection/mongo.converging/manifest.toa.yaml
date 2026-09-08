@@ -1,0 +1,20 @@
+name: converging
+namespace: mongo
+
+entity:
+  storage: mongodb
+  properties:
+    foo:
+      type: integer
+  blank:
+    foo: 0
+
+operations:
+  transit:
+    concurrency: retry
+    input:
+      properties:
+        foo:
+          type: string
+          default: .
+      type: object

@@ -7,6 +7,7 @@ import { yaml as jsyaml } from '@toa.io/generic'
 import { component } from './component.js'
 
 import {
+  converge,
   dependencies,
   normalize,
   complete,
@@ -30,6 +31,10 @@ export const context = async (root, environment = variables.get('TOA_ENV')) => {
   const paths = await glob(resolve(root, COMPONENTS), GLOB)
 
   context.components = await Promise.all(paths.map(component))
+
+  // what the context declares of every component that stores anything, which no manifest says
+  converge(context)
+
   context.dependencies = await dependencies(context)
 
   dereference(context)

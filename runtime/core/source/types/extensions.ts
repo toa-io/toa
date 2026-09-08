@@ -80,7 +80,7 @@ export interface Factory<Manifest = unknown> {
 
   manage?(composition: Connector): Connector
 
-  storage?(storage: Storage): Storage
+  storage?(storage: Storage, locator: Locator): Storage
 
   emitter?(emitter: Emitter, label: string, locator: Locator): Emitter
 

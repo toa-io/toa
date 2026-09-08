@@ -33,7 +33,7 @@ export const storage = async (manifest, outbox) => {
         `which storage '${manifest.entity.storage}' does not apply`
     )
 
-  return extensions.storage(storage)
+  return extensions.storage(storage, manifest.locator)
 }
 
 async function load(component) {
