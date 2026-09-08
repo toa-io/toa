@@ -201,13 +201,13 @@ describe('merge', () => {
     assert.equal(await storage.merge(record), true)
   })
 
-  it('should read a record written before regions as the first one', async () => {
+  it('should read a record that lacks a region as the first one', async () => {
     await storage.merge(record)
 
     const [, pipeline] = call()
     const [, tied] = pipeline[0].$replaceWith.$cond[0].$or
 
-    // no migration writes it, so what lacks it reads as what one would have written
+    // the migration writes it, and one that reached here without it would win every tie
     assert.deepEqual(tied.$and[1].$gt[0], { $ifNull: ['$REGION', 0] })
   })
 

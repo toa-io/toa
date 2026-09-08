@@ -273,10 +273,10 @@ export class Storage extends Connector {
    *
    * `$ifNull` twice, and for two reasons. On the upsert path the pipeline runs over the base
    * document the filter builds, which is `{ _id }`, so a missing `VERSION` reads as `0` — the
-   * version an entity holds before its first write. And a record written before `REGION`
-   * existed has none, which reads as the first region: what it would have been backfilled
-   * with, so nothing is backfilled. A migration would rewrite every document of every
-   * collection of every application, converging or not, to store what this reads anyway.
+   * version an entity holds before its first write. And a record that somehow reached here
+   * without a `REGION` reads as the first region, which is what the prototype's migration
+   * writes into one: without that, such a record would lose no tie and would beat every
+   * equal-version write from anywhere, silently and for good.
    */
   async merge(record) {
     const document = this.#to(record)
