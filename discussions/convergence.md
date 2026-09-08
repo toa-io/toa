@@ -539,6 +539,46 @@ same unique value. Redelivery will not help, so it is logged as an error
 and the message is acknowledged. Unique indexes other than `_id` are not safe under multi-region
 writes, and the readme says so.
 
+## Telemetry
+
+Toa has no metrics API — `extensions.telemetry` is logs and traces — and `observability/tempo.yaml`
+runs Tempo's `metrics_generator`, which derives service graphs and span metrics from spans and
+remote-writes them to Prometheus. Spans are the instrument, so convergence is observable only to
+the extent that it emits them.
+
+`send` opens a producer span and `accept` the `deliver`/`process` pair that
+`connectors/bindings.amqp/source/receiver.js` already opens for an event, with
+`messaging.destination.name` on both — `tempo.yaml` lists that attribute under `peer_attributes`,
+so the two pair into a service-graph edge between the regions, and Prometheus gets its request
+rate, its error rate and each side's duration. That is the signal to alert on: whether convergence
+is flowing, and whether it is failing.
+
+The merge span carries the region the record came from, the outcome — `inserted`, `superseded` or
+`stale` — and the lag in milliseconds. The outcome matters because there is no counter to
+increment: without it, convergence healthily dropping duplicates and convergence dropping
+everything because the ranks are misconfigured look exactly alike.
+
+`trace` on the message is what joins the two halves. Sampling is decided at the trace root and
+propagated, so a recorded write's merge is recorded with it and there are no orphaned halves; and
+an unrecorded trace still propagates its context, so **every** log line of the merge carries the
+`trace_id` of the write that caused it, at any sample rate. That is the one to reach for first: a
+single id leads from a record that surprised someone to the request in another region that wrote
+it.
+
+Two things it does not give.
+
+**Convergence lag is not a series.** Tempo's edge histograms are built from each span's own
+duration, not from the gap between the producer ending in one region and the consumer starting in
+another, which is what the lag is. It is visible in a trace and as an attribute in TraceQL, and
+alerting on it would need a metrics facility that does not exist here.
+
+**And no cross-host duration is better than the clocks.** The runtime already treats skew as an
+operational hazard in the outbox, in cadence and in atomicity. A lag of hundreds of milliseconds
+read against a skew of a few is worth reading; nothing precise should be built on it.
+
+One deployment condition follows: the regions export to one trace store, or to ones that
+federate. Two independent backends give two halves of every trace that never join.
+
 ## What is refused
 
 Convergence departs from how the runtime treats a missing dependency elsewhere. The outbox
