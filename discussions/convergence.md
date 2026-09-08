@@ -83,11 +83,12 @@ TOA_CONVERGENCE_POINTER     ["amqp://rmq-eu-0","amqp://rmq-eu-1"]
 
 ## The rule
 
-A record carries the priority of the region that last wrote it. An incoming record wins where
+A record carries the region that last wrote it, as the system property `REGION`. An incoming
+record wins where
 
 ```
 remote.VERSION > local.VERSION
-or (remote.VERSION == local.VERSION and remote.PRIORITY < local.PRIORITY)
+or (remote.VERSION == local.VERSION and priority(remote.REGION) < priority(local.REGION))
 ```
 
 `VERSION` is already a Lamport clock in disguise. `Entity.#write` increments off whatever was
@@ -96,13 +97,16 @@ has to be added for the counter to advance across regions.
 
 Priorities come from the declaration and are the same in every region, so the ordering is total
 and every region computes the same winner regardless of what it hears first. Two records can never
-share both a version and a priority — a region writing twice increments `VERSION`, and the
+share both a version and a region — a region writing twice increments `VERSION`, and the
 compare-and-swap in `Storage.set` prevents two writes at one version — so the order has no ties
 and there is no residual case.
 
-The record carries the priority rather than the region, because the storage compares it and a rank
-is what compares. The extension is where regions are known: it maps the region a message names to
-that region's rank, and hands the storage a number.
+**The region is stored because the tie is not about this deployment.** At an equal version the
+question is whether the sender outranks *whoever wrote the record being replaced*, and after any
+merge that is not this region. A deployment that only knew its own region would compare the wrong
+pair: with `eu`, `us` and `ap`, both `eu` and `us` outrank `ap`, so `ap` could not tell their two
+concurrent writes apart and would keep whichever arrived second. The two questions coincide only
+where there are two regions.
 
 `priority` is read only here. It decides nothing else.
 
@@ -290,16 +294,15 @@ extension at both ends and named by nothing in core:
 ```ts
 /** @toa.io/extensions.convergence */
 interface Message {
-  /** the record as it stands — VERSION, timestamps and all */
+  /** the record as it stands — VERSION, timestamps, REGION and all */
   record: Record
-
-  /** the region that wrote it; what the tie-break ranks */
-  region: string
 
   /** W3C traceparent, so the merge continues the trace of the write that caused it */
   trace?: string
 }
 ```
+
+The record says which region wrote it, so the message does not say it again.
 
 `trace` is there because convergence owns both ends and wants it, not because a binding put it
 there. The label is the component, `<namespace>.<name>`.
@@ -330,7 +333,7 @@ export class Factory implements extensions.Factory {
   /** out */
   destination(locator, declaration, manifest) { … }
 
-  /** the region on a record, and in */
+  /** in */
   storage(storage, locator, manifest) { … }
 }
 ```
@@ -350,72 +353,93 @@ today calls "the static check that keeps the common case free of a transaction".
 context-wide decision and that is its price.
 
 **Out** is a `Destination` named `convergence`, whose `emit(event)` sends the whole new record
-under the component's label, saying which region wrote it:
+under the component's label. The record already says which region wrote it, so the message says
+nothing the record does not:
 
 ```
-send(locator.id, { record: event.state, region, trace })
+send(locator.id, { record: event.state, trace })
 ```
 
-**In** is the storage decorator. A record from another region is written verbatim: its `VERSION`,
-its timestamps, its provenance. That is not an operation and not a `State` commit, so it needs a
-`Storage`, and the decorator is one. It holds the storage by construction, needs no lookup and no
-registry, is made and torn down with the component, and — because a dependency closes after its
-dependant — the storage under it is still whole while a delivery drains.
+**In** is a storage decorator, and it decorates almost nothing. A record from another region is
+written verbatim — its `VERSION`, its timestamps, its region — which is not an operation and not a
+`State` commit, so it needs a `Storage`, and the decorator is one. It holds the storage by
+construction, needs no lookup and no registry, is made and torn down with the component, and —
+because a dependency closes after its dependant — the storage under it is still whole while a
+delivery drains. Every method it delegates untouched.
 
 ```
 Converging implements Storage, Inbound, depends(storage)
   open()            host.inbound(binding, 'convergence', uris, locator.id, this) → connect
-  accept(message)   this.merge(message.record, priority(message.region))
+  accept(message)   this.merge(message.record, outranked(message.record.REGION))
   close()           stop consuming; the storage under it closes after
-  store/upsert/…    PRIORITY on write, off on read, everything else delegated
+  everything else   delegated
 ```
 
 `accept` refuses a region the table does not carry — that is a misconfiguration, and dropping is
 safer than guessing a rank.
 
-### Where the precedence is kept
+### `REGION`, a system property
 
-A record carries the priority of the region that last wrote it, as `PRIORITY`. It is not an entity
-property, not a system property, and no component or prototype declares it. Applications that do
-not converge never see it, and nothing needs a migration.
+`REGION` is the sixth thing the runtime writes into every record, beside `id`, `VERSION`,
+`CREATED`, `UPDATED` and `DELETED`. It is declared by `@toa.io/prototype` and written by
+`Entity.#write` wherever `UPDATED` is written, from `TOA_REGION` — absent, it is null, which is
+what every record of every application that does not converge holds.
 
-The decorator writes its own region's priority on `store`, `massStore`, `upsert` and `ensure`, and
-removes it on `get`, `find` and `stream`. `merge` writes the priority it is given instead: that
-record was written elsewhere. `store` gets a shallow copy rather than a mutation, because the
-record it is handed is the entity's own state object — the same one the outbox row holds — and
-writing into it would put `PRIORITY` on the wire and in front of a condition bridge.
+This is a change to the runtime rather than to the extension, and deliberately so. The alternative
+was for the extension to add the field on the way into the storage and strip it on the way out, on
+every read and every write path, so that the entity contract never saw it. That is a decorator
+that rewrites the shape of a document in both directions, and it has to be exhaustive to be
+correct. A system property is declared once and written where the others are.
 
-A rank rather than a region name is what is stored, because a rank is comparable and a name is
-not: an order over names needs the table in the filter, and that is what turns a scalar into a
-tree. The cost is that a rank is derived from configuration — reorder the priorities and records
-written before the change carry their old ones. It decides only ties between concurrent writes,
-and only until each such record is next written, so a reordering settles rather than persists.
+What it costs is that it lands in every application, converging or not:
 
-An unmanaged operation reads through `storage.raw` and will see the field. That is the one leak,
-and the readme names it.
+1. `runtime/prototype/manifest.toa.yaml` — `REGION: { type: string, nullable: true }`.
+2. `runtime/norm/src/.component/collapse.js` — `REGION` in `SYSTEM`, so a component that declares
+   one is refused with `System property 'REGION' cannot be overridden`.
+3. `runtime/norm/src/.component/schema.yaml` — `REGION` in the names a `blank` may not carry.
+4. `runtime/core/source/query/options.ts` — `REGION` in what a projection always includes, so the
+   record the runtime hands back is whole, as it is for the other four.
+5. `runtime/core/source/types/storages.ts` and `runtime/prototype/types/toa.d.ts` — the type.
+6. `runtime/core/source/entities/entity.ts` — the stamp.
+7. `documentation/component/declaration.md` and a `migrations/<release>.md` note — a component
+   that declares a `REGION` property stops building, which is a thing to say out loud.
+
+**No migration**, unlike the two system properties before it. A migration is a file shipped with
+the prototype, applied once per database by whichever replica reaches it first, and it cannot know
+which region is deploying — there is no value for it to write. Nor should there be: a new region
+is seeded by copying a database, and those records were written by the region they came from, so
+the region they carry is already the true one.
+
+So a record written before this exists carries `REGION: null`, and the documentation says what
+that means rather than a migration changing it. Nothing needs changing: the rule never matches a
+null, and it never has to. Two regions seeded from one copy hold the same record at the same
+version, which is agreement, not a tie; and the first write in either region stamps it.
+
+An application that never converges pays a null on every record and nothing else.
 
 ### The storage capability
 
 The clock is already here: `Storage.set` commits a transition by compare-and-swap on
-`VERSION: entity.VERSION - 1`. Merging is the same comparison loosened from equality to order,
-with one scalar to break its ties — so the storage owns the whole rule, atomically, and the
-extension reduces every region it knows of to that scalar.
+`VERSION: entity.VERSION - 1`. Merging is that comparison loosened from equality to order, with
+one thing to break its ties — so the storage owns the whole rule, atomically, in one write.
 
 ```ts
 /**
- * Writes `record` as it stands — its VERSION, its timestamps and whatever else it carries —
- * where what it would replace precedes it: a lower `VERSION`, or the same `VERSION` written
- * at a lower priority. `false` where it does not: nothing is written, and that is not an
- * error. `priority` is the rank of whoever wrote the record, lower being higher.
+ * Writes `record` as it stands — its VERSION, its timestamps, its REGION and whatever else it
+ * carries — where what it would replace precedes it: a lower `VERSION`, or the same `VERSION`
+ * written by one of `outranked`. `false` where it does not: nothing is written, and that is
+ * not an error.
  */
-merge?(record: Record, priority: number): Promise<boolean>
+merge?(record: Record, outranked: string[]): Promise<boolean>
 
 /** Whether this storage merges. Its absence refuses a component of a converging context. */
 readonly merges?: boolean
 ```
 
-Core learns that records are ordered and that a scalar breaks ties. It learns of no region, no
-table and no query. MongoDB:
+`outranked` is the regions whose writes this record's own supersedes at an equal version. It
+depends on the sender alone, so the extension computes one array per remote region at boot and
+passes the same one for every message from that region. Core learns that records carry a region
+and that regions are ordered; it learns of no table, no rank and no query.
 
 ```js
 const result = await this.#collection.replaceOne(
@@ -423,22 +447,25 @@ const result = await this.#collection.replaceOne(
     _id: document._id,
     $or: [
       { VERSION: { $lt: record.VERSION } },
-      { VERSION: record.VERSION, PRIORITY: { $gt: priority } }
+      { VERSION: record.VERSION, REGION: { $in: outranked } }
     ]
   },
-  { ...document, PRIORITY: priority },
+  document,
   { upsert: true }
 )
 
 return result.matchedCount === 1 || result.upsertedCount === 1
 ```
 
-**A number, not a boolean.** A boolean is exactly two regions. With three it cannot rank: split
-`eu`, `us` and `ap` into two classes and a tie between the two that share a class resolves for
-neither, so each keeps its own record until something writes that entity again. And a boolean
-meaning "outranks this deployment" compares an incoming record against the wrong region whenever
-the stored one was itself merged from a third — `ap` hearing `us` then `eu` would end on `eu`, and
-hearing `eu` then `us` would end on `us`.
+The record is written exactly as it arrived, `REGION` included — which is why nothing has to be
+added to it here, and why the region that wrote it survives every hop.
+
+**A set, not a flag.** What decides a tie is who wrote the record being replaced, and that is a
+name, so the comparison is membership. A boolean computed from the sender and this deployment
+cannot do it: with `eu`, `us` and `ap`, both `eu` and `us` outrank `ap`, so `ap` would compute the
+same flag for their two concurrent writes and keep whichever arrived second — ending on `us` where
+`eu` and `us` both end on `eu`. Two regions is the case where a flag is enough, because there
+"not me" names the writer uniquely.
 
 `upsert` covers the record this region has never seen. Where the filter does not match and the
 document is there, MongoDB attempts the insert and answers `E11000` on `_id`, which is the
@@ -475,7 +502,8 @@ annotation, so there is no honest check at either end.
 
 ## Implementation
 
-Each step stands on its own and is reviewed on its own. Only the last is convergence.
+Each step stands on its own and is reviewed on its own. Only the last is the extension; the one
+before it is a change to the runtime that an application which never converges also carries.
 
 ### 1. `toa-io/comq`, released first
 
@@ -520,17 +548,33 @@ thing for comq to have. Everything below depends on the version that carries it.
    broker set arrives as an argument.
 9. `connectors/storages.mongodb/src/storage.js` — `merge()` and `get merges()`.
 
-### 4. `@toa.io/extensions.convergence`
+### 4. `REGION`, a system property
+
+1. `runtime/prototype/manifest.toa.yaml` — `REGION: { type: string, nullable: true }`.
+2. `runtime/core/source/entities/entity.ts` — stamped where `UPDATED` is, from `TOA_REGION`, null
+   where that is unset.
+3. `runtime/norm/src/.component/collapse.js` — `REGION` in `SYSTEM`.
+4. `runtime/norm/src/.component/schema.yaml` — `REGION` in what a `blank` may not name.
+5. `runtime/core/source/query/options.ts` — `REGION` in what a projection always includes.
+6. `runtime/core/source/types/storages.ts`, `runtime/prototype/types/toa.d.ts` — the type.
+7. `documentation/component/declaration.md` — six system properties rather than five, and what a
+   null region means for a database that existed before this did.
+8. `migrations/<release>.md` — a component that declares a `REGION` property stops building.
+
+No migration: nothing static can know which region is deploying, and a copied database's records
+carry the region that wrote them, which is already right.
+
+### 5. `@toa.io/extensions.convergence`
 
 1. `extensions/convergence/package.json`, `source/index.ts` — `@toa.io/extensions.convergence`,
    `main: transpiled/index.js`, `files: [transpiled, readme.md]`.
 2. `extensions/convergence/source/Factory.ts` — `destination` and `storage`, and nothing else.
 3. `extensions/convergence/source/Destination.ts` — `emit(event)` →
-   `send(locator.id, { record, region, trace })`.
-4. `extensions/convergence/source/Storage.ts` — `Converging`: `PRIORITY` on write, off on read;
-   the inbound; the merge; the refusals at boot.
-5. `extensions/convergence/source/Regions.ts` — the table, the pointer it resolves, and the rank
-   of a region a message names.
+   `send(locator.id, { record, trace })`.
+4. `extensions/convergence/source/Storage.ts` — `Converging`: the inbound, the merge, and the
+   refusals at boot. Every storage method delegated untouched.
+5. `extensions/convergence/source/Regions.ts` — the table, the pointer it resolves, and the array
+   each region outranks, computed once at boot.
 6. `extensions/convergence/readme.md` — what to declare, how it is deployed, what it guarantees,
    what it does not, that atomicity is required, and the federation to configure.
 7. `definitions/source/extensions.convergence/` — `index.ts`, `deployment.ts` (the variables and
@@ -555,14 +599,15 @@ fills its own cap and does not stop the cycle.
 
 ### The merge
 
-`merge` accepts a lower version, accepts an equal one written at a higher priority, rejects an
-equal one written at a lower priority and one written at the same, inserts where nothing is
-stored, and answers `false` rather than throwing on a rejection.
+`merge` accepts a lower version, accepts an equal one written by an outranked region, rejects an
+equal one written by a region that is not outranked and one written by the same region, matches no
+record whose `REGION` is null, inserts where nothing is stored, and answers `false` rather than
+throwing on a rejection.
 
 ### The extension
 
-The rank of each region of a three-region table. The unknown-region refusal. That the storage
-decorator lets no `PRIORITY` reach a record core is given.
+The array each region of a three-region table outranks — including the empty one, for the lowest.
+The unknown-region refusal.
 
 ### The binding
 
