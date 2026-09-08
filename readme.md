@@ -29,6 +29,8 @@ Non-scattered documentation is coming some time later.
   - Data validation
   - Multi-document transactions
   - [Transactional outbox](/documentation/outbox.md): state and its events commit together
+  - [Convergence](/extensions/convergence): deployments of one context, each with its own
+    database, converging on the same entity state
   - Invariants (guards)
   - [Migrations](/documentation/component/declaration.md#migrations): indexes and data changes,
     applied once per database
