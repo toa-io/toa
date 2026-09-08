@@ -36,13 +36,13 @@ inputs:
 runs:
   using: composite
   steps:
-    - uses: actions/setup-node@v5
+    - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
       with:
         node-version: ${{ inputs.node-version }}
 
     - name: Restore dependencies
       id: modules
-      uses: actions/cache@v6
+      uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
       with:
         path: |
           node_modules
@@ -63,19 +63,26 @@ runs:
       shell: bash
       env:
         GH_TOKEN: ${{ inputs.token }}
+        PUSH_WORKFLOW: ${{ inputs.push-workflow }}
+        COMMIT: ${{ inputs.commit }}
       run: |
-        run=$(gh run list --workflow "${{ inputs.push-workflow }}" --commit "${{ inputs.commit }}" \
+        run=$(gh run list --workflow "$PUSH_WORKFLOW" --commit "$COMMIT" \
           --status in_progress --json databaseId --jq '.[0].databaseId // empty')
 
         if [ -n "$run" ]; then
-          echo "waiting for push run $run of ${{ inputs.commit }}"
+          echo "waiting for push run $run of $COMMIT"
           gh run watch "$run" --exit-status || echo "push run $run did not succeed; building what is missing"
         fi
 
     - name: Deploy
       shell: bash
+      env:
+        ENVIRONMENT: ${{ inputs.environment }}
+        CONTEXT: ${{ inputs.path }}
+        NAMESPACE: ${{ inputs.namespace }}
+        TIMEOUT: ${{ inputs.timeout }}
       run: >-
-        npx toa deploy ${{ inputs.environment }}
-        -p ${{ inputs.path }}
-        -n ${{ inputs.namespace }}
-        -w -t ${{ inputs.timeout }}
+        npx toa deploy "$ENVIRONMENT"
+        -p "$CONTEXT"
+        -n "$NAMESPACE"
+        -w -t "$TIMEOUT"

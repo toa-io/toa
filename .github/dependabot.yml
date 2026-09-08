@@ -1,0 +1,31 @@
+# Keeps the commit pins of the actions and the dependencies moving without hand work.
+# Every update is a pull request into `dev` and waits for the `Test` check like any other.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directories:
+      - /
+      - /.github/actions/push
+      - /.github/actions/deploy
+    schedule:
+      interval: weekly
+      day: monday
+    target-branch: dev
+    commit-message:
+      prefix: ci
+
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    target-branch: dev
+    open-pull-requests-limit: 5
+    versioning-strategy: increase
+    commit-message:
+      prefix: build
+    groups:
+      minor-and-patch:
+        update-types:
+          - minor
+          - patch
