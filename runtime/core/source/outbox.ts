@@ -1,11 +1,11 @@
 import { console } from 'openspan'
-import { Connector } from '../connector.js'
-import { newid } from '../entities/newid.js'
+import { Connector } from './connector.js'
+import { newid } from './entities/newid.js'
 import { environment } from '@toa.io/generic'
-import type { Atom } from '../types/atomicity.js'
-import type { Storage } from '../types/storages.js'
-import type { Destination, Row } from '../types/outbox.js'
-import type { Event } from '../types/state.js'
+import type { Atom } from './types/atomicity.js'
+import type { Storage } from './types/storages.js'
+import type { Destination, Row } from './types/outbox.js'
+import type { Event } from './types/state.js'
 
 export interface Options {
   interval?: number

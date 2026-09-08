@@ -4,7 +4,7 @@ import type { Readable } from 'node:stream'
 import type { Factory } from './entities/factory.js'
 import type { Entity } from './entities/entity.js'
 import type { Changeset } from './entities/changeset.js'
-import type { Outbox } from './outbox/outbox.js'
+import type { Outbox } from './outbox.js'
 import type { Row } from './types/outbox.js'
 import type { Query, Record, Storage } from './types/storages.js'
 
