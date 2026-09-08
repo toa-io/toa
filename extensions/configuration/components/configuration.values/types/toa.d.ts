@@ -14,6 +14,7 @@ export interface Entity {
   CREATED?: number
   UPDATED?: number
   DELETED?: number | null
+  REGION?: number
 }
 
 export type GetInput = {

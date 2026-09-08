@@ -30,6 +30,6 @@ function projection(projection: string[], properties: Properties): void {
     if (properties[property] === undefined)
       throw new QuerySyntaxException(`Projection property '${property}' is not defined`)
 
-  for (const property of ['VERSION', 'CREATED', 'UPDATED', 'DELETED'])
+  for (const property of ['VERSION', 'CREATED', 'UPDATED', 'DELETED', 'REGION'])
     if (!projection.includes(property)) projection.push(property)
 }

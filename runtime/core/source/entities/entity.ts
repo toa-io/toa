@@ -1,3 +1,4 @@
+import { environment } from '@toa.io/generic'
 import { EntityContractException, EntityGuardException } from '../exceptions.js'
 import { newid } from './newid.js'
 import type { Schema } from '@toa.io/schemas'
@@ -127,11 +128,23 @@ export class Entity {
 
     if ('DELETED' in value && value.DELETED !== null) this.deleted = true
 
+    // beside the version and the timestamp, and for the same reason: all three say what the
+    // write did, so all three change only where there is one. A record read here keeps the
+    // region that wrote it, which is not necessarily this one — that is the whole of what it
+    // is for, and stamping it on the way in would answer every read with the wrong region.
     if (this.#state !== undefined) {
       value.UPDATED = Date.now()
       value.VERSION++
+      value.REGION = REGION
     }
 
     this.#state = value
   }
 }
+
+/**
+ * The rank of the region this deployment is, from what deployed it. An application that is one
+ * region has none and writes `0`, which is what the first region is and what a record written
+ * before any of this existed is backfilled with.
+ */
+const REGION = Number(environment.get('TOA_REGION') ?? 0)

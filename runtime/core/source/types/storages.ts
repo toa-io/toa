@@ -21,6 +21,9 @@ export interface Record {
   UPDATED?: number
   /** a tombstone's timestamp; `null` on a live record */
   DELETED?: number | null
+
+  /** the rank of the region that last wrote it; `0` where there is one region */
+  REGION?: number
   [key: string]: any
 }
 
@@ -100,6 +103,26 @@ export interface Storage extends Connector {
    * starting with a structure nothing has made.
    */
   readonly migrates?: boolean
+
+  /**
+   * Writes `record` as it stands — its `VERSION`, its timestamps, its `REGION` and whatever
+   * else it carries — where what it would replace precedes it: a lower `VERSION`, or the same
+   * `VERSION` written by a region this one outranks. `false` where it does not: nothing is
+   * written, and that is not an error.
+   *
+   * Both sides of the comparison are on the two records, so this takes nothing else. What it
+   * is for is a record that was written somewhere else and has to land here as it was, which
+   * is neither a transition nor an assignment: it is not the writer's version to increment,
+   * nor its timestamps to set.
+   */
+  merge?(record: Record): Promise<boolean>
+
+  /**
+   * Whether this storage merges. Absent is what a storage that does not says, and a component
+   * of a context that converges is refused at boot rather than starting where it would never
+   * take a record from another region.
+   */
+  readonly merges?: boolean
 }
 
 /**

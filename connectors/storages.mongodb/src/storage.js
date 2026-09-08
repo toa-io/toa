@@ -65,6 +65,11 @@ export class Storage extends Connector {
     return true
   }
 
+  /** This storage merges. */
+  get merges() {
+    return true
+  }
+
   async open() {
     this.#collection = this.#client.collection
 
@@ -253,6 +258,47 @@ export class Storage extends Connector {
       if (retry) return await this.massStore(entities, rows, attempt + 1)
       else return false
     }
+  }
+
+  /**
+   * The filter selects by `_id` alone, so it always matches what is there and upserts what is
+   * not, and the rule is the pipeline: either the incoming document replaces the stored one, or
+   * `$$ROOT` stays where it is and nothing changes. That keeps the three answers apart — a
+   * record never seen is an upsert, a superseded one is a modification, and a stale one is
+   * neither — where putting the rule in the filter would make absence and staleness one and the
+   * same miss, and then have the upsert collide on `_id` to say so.
+   *
+   * `$literal` because a value in a pipeline is an expression, so a property holding a string
+   * that begins with `$` would otherwise be read as a field path. `$ifNull` because on the
+   * upsert path the pipeline runs over the base document the filter builds, which is `{ _id }`:
+   * a missing `VERSION` reads as `0`, the version an entity holds before its first write.
+   */
+  async merge(record) {
+    const document = this.#to(record)
+
+    const supersedes = {
+      $or: [
+        { $lt: [{ $ifNull: ['$VERSION', 0] }, document.VERSION] },
+        {
+          $and: [
+            { $eq: ['$VERSION', document.VERSION] },
+            { $gt: ['$REGION', document.REGION] }
+          ]
+        }
+      ]
+    }
+
+    const pipeline = [
+      { $replaceWith: { $cond: [supersedes, { $literal: document }, '$$ROOT'] } }
+    ]
+
+    const result = await this.command(
+      'updateOne',
+      { criteria: { _id: document._id }, pipeline },
+      () => this.#collection.updateOne({ _id: document._id }, pipeline, { upsert: true })
+    )
+
+    return result.upsertedCount === 1 || result.modifiedCount === 1
   }
 
   async upsert(query, changeset, row = undefined) {
