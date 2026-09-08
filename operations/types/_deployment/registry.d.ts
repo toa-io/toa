@@ -14,6 +14,9 @@ declare namespace toa.deployment {
 
     push(): Promise<void>
 
+    /** Point each workload image at `environment` (`:production`). `deps-*` is not tagged. */
+    alias(environment?: string): Promise<void>
+
     tags(): string[]
   }
 }

@@ -65,6 +65,14 @@ Then(
   }
 )
 
+Then('the exported composition image tag is the content hash', async function () {
+  const path = join(this.cwd, 'deployment', 'values.yaml')
+  const values = parse(await readFile(path, 'utf8'))
+
+  for (const composition of values.compositions)
+    assert.match(composition.image, /:[0-9a-f]{8}$/)
+})
+
 /**
  * @param {string} cwd
  * @param {string} artifact
