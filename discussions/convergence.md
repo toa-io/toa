@@ -494,6 +494,13 @@ const result = await this.#collection.updateOne(
 return result.upsertedCount === 1 || result.modifiedCount === 1
 ```
 
+**No index is added, here or anywhere.** The filter is `_id`, which is the one index a collection
+always has, and `REGION` is never selected on alone — it is read as part of a document already
+found by its id. The outbox is the same: `published` was left meaning "settled everywhere" rather
+than replaced by `outstanding`, so a row outstanding for any destination still carries
+`published: false` and the partial `outbox_pending` still holds exactly what the pump reads, while
+`publishedAt` is still written only when the last destination lands and the TTL is untouched.
+
 **Absent and stale are different answers, not the same one twice.** A record this region has never
 seen is an upsert; a record it has already superseded leaves `$$ROOT` in place, changes nothing,
 and comes back as `modifiedCount: 0`. Neither raises. The obvious spelling — `replaceOne` with the
