@@ -1,9 +1,6 @@
 context: Mount 'discovery' context
 inputs:
   resources:
-    empty:
-      input: Nothing is served here yet.
-      context: shown when the gateway answers no resources at all
     nomatch:
       input: Nothing matches the filter.
       context: shown when the filter leaves the list empty
