@@ -6,7 +6,7 @@ import { Locator } from '@toa.io/core'
 import { Converging } from './Storage.js'
 import type { bindings, storages } from '@toa.io/core/types'
 
-type Merge = (record: storages.Record) => Promise<boolean>
+type Converge = (record: storages.Record) => Promise<boolean>
 
 let storage: any
 let inbound: any
@@ -45,9 +45,9 @@ beforeEach(() => {
   error = mock.method(console, 'error', () => undefined)
 
   storage = connector({
-    merges: true,
+    converges: true,
     outbox: { collection: 'outbox' },
-    merge: mock.fn<Merge>(async () => true),
+    converge: mock.fn<Converge>(async () => true),
     get: mock.fn(async () => null),
     store: mock.fn(async () => true)
   })
@@ -63,7 +63,7 @@ it('should refuse a storage that offers no outbox', async () => {
   assert.equal(subscribe.mock.callCount(), 0)
 })
 
-it('should consume where the storage merges and the outbox is durable', async () => {
+it('should consume where the storage converges and the outbox is durable', async () => {
   const converging = create()
 
   await converging.connect()
@@ -73,13 +73,13 @@ it('should consume where the storage merges and the outbox is durable', async ()
   assert.equal(inbound.connect.mock.callCount(), 1)
 })
 
-it('should merge what arrives, as it stands', async () => {
+it('should converge what arrives, as it stands', async () => {
   const arrived = record()
 
   await create().accept({ record: arrived })
 
-  assert.equal(storage.merge.mock.callCount(), 1)
-  assert.deepEqual(storage.merge.mock.calls[0].arguments[0], arrived)
+  assert.equal(storage.converge.mock.callCount(), 1)
+  assert.deepEqual(storage.converge.mock.calls[0].arguments[0], arrived)
 })
 
 it('should report a record carrying this region\'s own rank', async () => {
@@ -88,8 +88,8 @@ it('should report a record carrying this region\'s own rank', async () => {
   assert.equal(error.mock.callCount(), 1)
   assert.match(error.mock.calls[0].arguments[0] as string, /this region's own rank/)
 
-  // and merges it: dropping would leave the two regions differing for good
-  assert.equal(storage.merge.mock.callCount(), 1)
+  // and converges it: dropping would leave the two regions differing for good
+  assert.equal(storage.converge.mock.callCount(), 1)
 })
 
 it('should report nothing where the rank is another region\'s', async () => {
@@ -107,6 +107,6 @@ it('should delegate what it does not do', async () => {
   assert.equal(storage.store.mock.callCount(), 1)
   assert.deepEqual(storage.store.mock.calls[0].arguments[0], written)
 
-  assert.equal(converging.merges, true)
+  assert.equal(converging.converges, true)
   assert.deepEqual(converging.outbox, storage.outbox)
 })

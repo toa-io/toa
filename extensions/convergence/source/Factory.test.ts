@@ -22,8 +22,8 @@ const connector = (properties: object): any => ({
   disconnect: mock.fn(async () => undefined)
 })
 
-const storage = (merges?: boolean): storages.Storage =>
-  connector({ merges, outbox: { collection: 'outbox' }, merge: mock.fn(async () => true) })
+const storage = (converges?: boolean): storages.Storage =>
+  connector({ converges, outbox: { collection: 'outbox' }, converge: mock.fn(async () => true) })
 
 beforeEach(() => {
   mock.restoreAll()
@@ -63,7 +63,7 @@ it('should decorate the storage of a component it converges', () => {
   assert.ok(factory.storage(storage(true), locator) instanceof Converging)
 })
 
-it('should stand both halves down where the storage does not merge', async () => {
+it('should stand both halves down where the storage does not converge', async () => {
   const destination = factory.destination(locator, null, manifest)!
   const one = storage(undefined)
 

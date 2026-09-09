@@ -131,7 +131,7 @@ their two concurrent writes apart and would keep whichever arrived second. The t
 coincide only where there are two regions.
 
 Both values are on the two records, so the comparison needs nothing else: no table at the point of
-the write, and no argument to `merge`.
+the write, and no argument to `converge`.
 
 Convergence follows: the rule is a maximum over a total order, so a record that is not newer is
 dropped and a late one and a duplicate are the same thing. This is why the broker is asked for no
@@ -393,7 +393,7 @@ delivery drains. Every method it delegates untouched.
 ```
 Converging implements Storage, Inbound, depends(storage)
   open()            host.inbound(binding, 'convergence', uris, locator.id, this) → connect
-  accept(message)   this.merge(message.record)
+  accept(message)   this.converge(message.record)
   close()           stop consuming; the storage under it closes after
   everything else   delegated
 ```
@@ -461,10 +461,10 @@ Both values it compares are on the two records, so it takes nothing else:
  * written by a region this one outranks. `false` where it does not: nothing is written, and
  * that is not an error.
  */
-merge?(record: Record): Promise<boolean>
+converge?(record: Record): Promise<boolean>
 
-/** Whether this storage merges. Its absence refuses a component of a converging context. */
-readonly merges?: boolean
+/** Whether this storage converges. Its absence stands a component of a converging context down. */
+readonly converges?: boolean
 ```
 
 Core learns that a record carries the rank of whoever wrote it and that lower outranks. It learns

@@ -65,8 +65,8 @@ export class Storage extends Connector {
     return true
   }
 
-  /** This storage merges. */
-  get merges() {
+  /** This storage converges. */
+  get converges() {
     return true
   }
 
@@ -278,7 +278,7 @@ export class Storage extends Connector {
    * writes into one: without that, such a record would lose no tie and would beat every
    * equal-version write from anywhere, silently and for good.
    */
-  async merge(record) {
+  async converge(record) {
     const document = this.#to(record)
 
     const supersedes = {

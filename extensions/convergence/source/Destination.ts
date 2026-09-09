@@ -18,7 +18,7 @@ export class Destination extends Connector implements outbox.Destination {
 
   private outbound!: bindings.Outbound
 
-  /** whether the storage under this component turned out to be one that cannot merge */
+  /** whether the storage under this component turned out to be one that does not converge */
   private disabled = false
 
   public constructor(locator: Locator, resolve: () => Promise<bindings.Outbound>) {
@@ -35,8 +35,8 @@ export class Destination extends Connector implements outbox.Destination {
   }
 
   /**
-   * Stands down: the half that receives found a storage that cannot merge, so this component
-   * does not converge, and publishing what no region will consume would be returns and
+   * Stands down: the half that receives found a storage that does not converge, so neither
+   * does this component, and publishing what no region will consume would be returns and
    * nothing else. The row settles at once rather than staying outstanding for good.
    */
   public disable(): void {
@@ -52,7 +52,7 @@ export class Destination extends Connector implements outbox.Destination {
       /*
        * The record says which region wrote it, so the message does not say it again. `trace`
        * is convergence's own field rather than anything a binding puts there: it owns both
-       * ends, and it wants the merge to continue the trace of the write that caused it.
+       * ends, and it wants the far side to continue the trace of the write that caused it.
        */
       const message: Message = { record: event.state }
 
@@ -78,6 +78,6 @@ export interface Message {
   /** the record as it stands — VERSION, timestamps, REGION and all */
   record: object
 
-  /** W3C traceparent, so the merge continues the trace of the write that caused it */
+  /** W3C traceparent, so the far side continues the trace of the write that caused it */
   trace?: string
 }

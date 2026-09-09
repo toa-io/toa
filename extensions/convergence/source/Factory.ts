@@ -62,15 +62,15 @@ export class Factory implements extensions.Factory {
     if (destination === undefined || !converging()) return storage
 
     /*
-     * A storage that cannot merge has nowhere to put what another region wrote, so this
-     * component does not converge — and the half that publishes stands down with it, because
+     * A storage that does not converge has nowhere to put what another region wrote, so
+     * neither does this component — and the half that publishes stands down with it, because
      * what it sent would reach a queue no region declares. Said out loud, because a component
      * silently not converging is two regions differing with nothing to notice it.
      */
-    if (storage.merges !== true) {
+    if (storage.converges !== true) {
       destination.disable()
 
-      console.warn('Component does not converge: its storage does not merge', {
+      console.warn('Component does not converge: its storage cannot', {
         component: locator.id
       })
 

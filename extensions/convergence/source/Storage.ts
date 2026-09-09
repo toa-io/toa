@@ -46,7 +46,7 @@ export class Converging extends Connector implements storages.Storage, bindings.
     }
 
     this.processing = {
-      name: `${CHANNEL} merge`,
+      name: `${CHANNEL} process`,
       kind: 'consumer',
       service: locator.id,
       attributes: { 'messaging.destination.name': CHANNEL }
@@ -62,7 +62,7 @@ export class Converging extends Connector implements storages.Storage, bindings.
 
     /*
      * A record carrying this region's own rank cannot have come from anywhere: a region is
-     * not bound to what it publishes, and it republishes nothing it merges, so the rank on a
+     * not bound to what it publishes, and it republishes nothing it converges, so the rank on a
      * record that arrives is the rank of the region that wrote it. Two of them sharing one is
      * a misconfiguration nothing else can see — no deployment knows what the others declared —
      * and it means ties between those two resolve for neither.
@@ -78,11 +78,11 @@ export class Converging extends Connector implements storages.Storage, bindings.
     const task = async (): Promise<void> =>
       console.span(this.delivery, async () =>
         console.span(this.processing, async () => {
-          const merged = await this.storage.merge!(record as storages.Record)
+          const applied = await this.storage.converge!(record as storages.Record)
 
-          console.trace('Convergence merge', {
+          console.trace('Convergence processed', {
             component: this.locator.id,
-            outcome: merged ? 'applied' : 'stale'
+            outcome: applied ? 'applied' : 'stale'
           })
         })
       )
@@ -123,8 +123,8 @@ export class Converging extends Connector implements storages.Storage, bindings.
     return this.storage.migrates
   }
 
-  public get merges(): boolean | undefined {
-    return this.storage.merges
+  public get converges(): boolean | undefined {
+    return this.storage.converges
   }
 
   public async get(query: storages.Query): Promise<storages.Record | null> {
@@ -165,8 +165,8 @@ export class Converging extends Connector implements storages.Storage, bindings.
     return this.storage.ensure(query, properties, record, row)
   }
 
-  public async merge(record: storages.Record): Promise<boolean> {
-    return this.storage.merge!(record)
+  public async converge(record: storages.Record): Promise<boolean> {
+    return this.storage.converge!(record)
   }
 
   // endregion

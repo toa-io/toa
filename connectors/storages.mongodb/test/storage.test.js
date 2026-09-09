@@ -129,13 +129,13 @@ describe('stream', () => {
   })
 })
 
-describe('merge', () => {
+describe('converge', () => {
   const record = { id: 'a1', VERSION: 4, REGION: 1, status: 'paid' }
 
   const call = () => collection.updateOne.mock.calls[0].arguments
 
   it('should select by id alone, so that what is absent is upserted', async () => {
-    await storage.merge(record)
+    await storage.converge(record)
 
     const [criteria, , options] = call()
 
@@ -144,7 +144,7 @@ describe('merge', () => {
   })
 
   it('should supersede a lower version', async () => {
-    await storage.merge(record)
+    await storage.converge(record)
 
     const [, pipeline] = call()
     const [older] = pipeline[0].$replaceWith.$cond[0].$or
@@ -153,7 +153,7 @@ describe('merge', () => {
   })
 
   it('should supersede an equal version written by an outranked region', async () => {
-    await storage.merge(record)
+    await storage.converge(record)
 
     const [, pipeline] = call()
     const [, tied] = pipeline[0].$replaceWith.$cond[0].$or
@@ -165,7 +165,7 @@ describe('merge', () => {
   })
 
   it('should leave what is stored where it does not', async () => {
-    await storage.merge(record)
+    await storage.converge(record)
 
     const [, pipeline] = call()
 
@@ -173,7 +173,7 @@ describe('merge', () => {
   })
 
   it('should write the record as a literal, so that a `$` value is not a field path', async () => {
-    await storage.merge({ ...record, status: '$paid' })
+    await storage.converge({ ...record, status: '$paid' })
 
     const [, pipeline] = call()
     const written = pipeline[0].$replaceWith.$cond[1].$literal
@@ -189,7 +189,7 @@ describe('merge', () => {
       modifiedCount: 0
     }))
 
-    assert.equal(await storage.merge(record), true)
+    assert.equal(await storage.converge(record), true)
   })
 
   it('should answer true where it superseded', async () => {
@@ -198,11 +198,11 @@ describe('merge', () => {
       modifiedCount: 1
     }))
 
-    assert.equal(await storage.merge(record), true)
+    assert.equal(await storage.converge(record), true)
   })
 
   it('should read a record that lacks a region as the first one', async () => {
-    await storage.merge(record)
+    await storage.converge(record)
 
     const [, pipeline] = call()
     const [, tied] = pipeline[0].$replaceWith.$cond[0].$or
@@ -212,6 +212,6 @@ describe('merge', () => {
   })
 
   it('should answer false where it changed nothing, and not throw', async () => {
-    assert.equal(await storage.merge(record), false)
+    assert.equal(await storage.converge(record), false)
   })
 })

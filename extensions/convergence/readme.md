@@ -37,9 +37,9 @@ component that stores anything** — its own, and the ones its extensions ship: 
 holds users, their roles and the keys their tokens are read with, and a region without them is
 one where nobody registered elsewhere exists.
 
-**A storage that cannot merge does not converge, and says so at boot.** Nothing else about the
-component changes and nothing else is held back; it is one line in the log, because a component
-quietly not converging is two regions differing with nothing to notice it.
+**A storage that does not converge stands the component down, and says so at boot.** Nothing
+else about the component changes and nothing else is held back; it is one line in the log,
+because a component quietly not converging is two regions differing with nothing to notice it.
 
 `pointer` is a [pointer](/libraries/pointer), so a URL carries no credentials — they are
 deployed as secrets — and shards syntax works. It is flat: a URL or a list of them. A region has

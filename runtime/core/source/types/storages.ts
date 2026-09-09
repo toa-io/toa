@@ -115,14 +115,14 @@ export interface Storage extends Connector {
    * is neither a transition nor an assignment: it is not the writer's version to increment,
    * nor its timestamps to set.
    */
-  merge?(record: Record): Promise<boolean>
+  converge?(record: Record): Promise<boolean>
 
   /**
-   * Whether this storage merges. Absent is what a storage that does not says, and a component
-   * of a context that converges is refused at boot rather than starting where it would never
-   * take a record from another region.
+   * Whether this storage converges. Absent is what a storage that does not says, and a
+   * component of a context that converges stands down rather than running where it would
+   * never take a record from another region.
    */
-  readonly merges?: boolean
+  readonly converges?: boolean
 }
 
 /**
