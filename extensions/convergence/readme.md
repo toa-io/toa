@@ -62,8 +62,10 @@ Each region's broker holds two exchanges, the same two names everywhere:
 | `convergence.in` | **federated** from every other region's `convergence.out`. |
 | `convergence.<namespace>.<name>` | a durable queue per component, bound to `convergence.in` under that component's key. |
 
-Adding a region to an application that is already running is an order that matters — see
-[operations](./operations.md).
+Nothing declares those queues for a region that is not running yet, which is what makes adding
+one an order that matters, and adding a converging component to a running pair the same:
+`toa export convergence <environment>` prints what a region's broker must carry, and
+[operations](./operations.md) says when to declare it.
 
 **Toa does not configure the federation.** On each region's broker, an upstream per other region
 and one policy over them:
@@ -112,7 +114,7 @@ which is why it is written here rather than raised.
 queue there, so its records cannot be routed; publishing is `mandatory`, so what had nowhere to
 go is logged rather than dropped in silence.
 
-**Unique indexes other than `_id` are not safe.** Two regions can independently take the same
+**Uniqueness over anything but `id` is not safe.** Two regions can independently take the same
 value, and the record that arrives second cannot be stored at all. It is logged and dropped;
 redelivery would not help.
 
