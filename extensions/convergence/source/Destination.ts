@@ -43,7 +43,7 @@ export class Destination extends Connector implements outbox.Destination {
     this.disabled = true
   }
 
-  public async emit(event: outbox.Row['event']): Promise<void> {
+  public async emit(row: outbox.Row): Promise<void> {
     if (this.disabled) return
 
     await console.span(this.span, async () => {
@@ -53,8 +53,12 @@ export class Destination extends Connector implements outbox.Destination {
        * The record says which region wrote it, so the message does not say it again. `trace`
        * is convergence's own field rather than anything a binding puts there: it owns both
        * ends, and it wants the far side to continue the trace of the write that caused it.
+       *
+       * `row.trail` is deliberately not carried. The far side writes the record through the
+       * storage rather than through an operation, so it makes no call and publishes no event —
+       * there is no chain there to continue, and nothing to refuse.
        */
-      const message: Message = { record: event.state }
+      const message: Message = { record: row.event.state }
 
       if (context !== undefined) message.trace = encode(context)
 

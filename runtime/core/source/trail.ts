@@ -71,7 +71,7 @@ export async function follow<T>(hops: string[], task: () => Promise<T>): Promise
  * times makes fifty chains of one hop, not one chain of fifty.
  */
 export function extend(inbound: unknown, hop: string, limits: Limits): string[] {
-  const hops = received(inbound, limits.depth)
+  const hops = clip(received(inbound), limits.depth)
   const trail = [...hops, hop]
 
   if (limits.repeats === 0) return trail
@@ -90,18 +90,30 @@ export function extend(inbound: unknown, hop: string, limits: Limits): string[] 
 }
 
 /**
+ * How an event is named in a chain. The sigil is what tells it from an operation: the two are
+ * the same shape, a component may declare one of each under a single name, and `sync` is both
+ * the event every component inherits and an ordinary name for an operation.
+ *
+ * What an operator rewires to break a cycle is the subscription rather than the operation, so a
+ * chain that named only operations would not say how a component was re-entered.
+ */
+export function event(destination: string): string {
+  return '~' + destination
+}
+
+/**
  * What came off the wire, as a chain and nothing else. Neither the request contract nor a
  * message validates this — a request is not validated at all once it is `authentic` — so a
  * malformed one would otherwise become a `TypeError` where a named exception was contracted
- * for.
+ * for. Bounding it is `extend`'s, one hop later, which is the only place the limits are known.
  */
-function received(value: unknown, depth: number): string[] {
-  if (!Array.isArray(value)) return []
+export function received(value: unknown): string[] {
+  return Array.isArray(value) ? value.filter((hop) => typeof hop === 'string') : []
+}
 
-  const hops = value.filter((hop) => typeof hop === 'string')
-
-  // with this hop that is one past the cap, which is enough to be refused; the rest is a
-  // message buying memory, and where the rule is off it is what keeps the chain bounded
+// with the hop being appended that is one past the cap, which is enough to be refused; the
+// rest is a message buying memory, and where the rule is off it is what bounds the chain
+function clip(hops: string[], depth: number): string[] {
   return hops.length > depth ? hops.slice(0, depth) : hops
 }
 

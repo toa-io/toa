@@ -17,21 +17,31 @@ const connector = (properties: object): any => ({
   disconnect: mock.fn(async () => undefined)
 })
 
-const event = (): outbox.Row['event'] =>
+const row = (): outbox.Row =>
   ({
-    origin: 'transited',
-    state: {
-      id: 'b5c8a1a0d1e04b1e9b3b8a3f2c7d6e50',
-      foo: 1,
-      VERSION: 4,
-      CREATED: 1757320000000,
-      UPDATED: 1757337600000,
-      DELETED: null,
-      REGION: 0
-    },
-    trailers: null,
-    input: null
-  }) as unknown as outbox.Row['event']
+    id: '01a0881900047f9e8b4c1d2e3f4a5b6c',
+    lane: 0,
+    published: false,
+    pending: 0,
+    outstanding: ['convergence'],
+    // a chain the write was made by, which convergence does not carry: the far side writes
+    // through the storage, so it makes no call and publishes no event
+    trail: ['default.mongo.converging.transit'],
+    event: {
+      origin: 'transited',
+      state: {
+        id: 'b5c8a1a0d1e04b1e9b3b8a3f2c7d6e50',
+        foo: 1,
+        VERSION: 4,
+        CREATED: 1757320000000,
+        UPDATED: 1757337600000,
+        DELETED: null,
+        REGION: 0
+      },
+      trailers: null,
+      input: null
+    }
+  }) as unknown as outbox.Row
 
 const create = (): Destination =>
   new Destination(locator, resolve as unknown as () => Promise<bindings.Outbound>)
@@ -46,7 +56,7 @@ it('should be a destination named after the channel', async () => {
 })
 
 it('should send the record as it stands, under the component', async () => {
-  const committed = event()
+  const committed = row()
   const destination = create()
 
   await destination.connect()
@@ -57,14 +67,15 @@ it('should send the record as it stands, under the component', async () => {
   const [label, message] = outbound.send.mock.calls[0].arguments
 
   assert.equal(label, 'mongo.converging')
-  assert.deepEqual(message.record, committed.state)
+  assert.deepEqual(message.record, committed.event.state)
 })
 
+// the chain is deliberately not among them; see `Destination.emit`
 it('should send the record and the trace of the write, and nothing else', async () => {
   const destination = create()
 
   await destination.connect()
-  await destination.emit(event())
+  await destination.emit(row())
 
   const [, message] = outbound.send.mock.calls[0].arguments
 

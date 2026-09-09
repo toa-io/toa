@@ -1,6 +1,7 @@
 import { console } from 'openspan'
 import { Connector } from './connector.js'
 import { newid } from './entities/newid.js'
+import * as trail from './trail.js'
 import { environment } from '@toa.io/generic'
 import type { Atom } from './types/atomicity.js'
 import type { Storage } from './types/storages.js'
@@ -99,7 +100,7 @@ export class Outbox extends Connector {
    * the storage fills them in.
    */
   public row(event: Partial<Event>): Row {
-    return {
+    const row: Row = {
       id: newid(),
       lane: this.#lane(),
       published: false,
@@ -107,6 +108,17 @@ export class Outbox extends Connector {
       outstanding: this.#destinations.map((destination) => destination.name),
       event: event as Event
     }
+
+    /*
+     * This runs on the operation's own path, which is the only moment the chain is in scope:
+     * the pump that publishes the row may be another replica, an hour later. A row that had
+     * no chain stores no field.
+     */
+    const hops = trail.current()
+
+    if (hops !== undefined) row.trail = hops
+
+    return row
   }
 
   /**
@@ -134,7 +146,7 @@ export class Outbox extends Connector {
   async #inline(row: Row): Promise<void> {
     const sending = this.#destinations
       .filter((destination) => row.outstanding.includes(destination.name))
-      .map(async (destination) => destination.emit(row.event))
+      .map(async (destination) => destination.emit(row))
 
     await Promise.all(sending)
   }
@@ -228,7 +240,7 @@ export class Outbox extends Connector {
 
     publishing.add(row.id)
 
-    const sending = destination.emit(row.event)
+    const sending = destination.emit(row)
 
     inflight.add(sending)
 

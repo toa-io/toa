@@ -250,9 +250,9 @@ is itself the outage.
   Loop: 500
 ```
 
-A family of its own rather than a `402`. The whole `Communication` family is transient under the
-classification — nothing was listening yet, so try again — and a loop is its exact opposite. One
-permanent code inside a transient family means every later reader has to know the exception before
+A family of its own. `402` is `Endpoint`, and the rest of the `Communication` family is transient —
+nothing was listening yet, so try again — which a loop is the exact opposite of. A permanent code
+sitting inside a family that reads as transient makes every later reader learn the exception before
 they can read the table, and this codebase already writes range checks over code families
 (`extensions/exposition/source/exceptions.ts:33-35`).
 
@@ -264,9 +264,10 @@ LoopException: 'default.orders.place' is hop 3 of this chain
          default.billing.charge > ~default.billing.charged > default.orders.place
 ```
 
-Being named is what makes it permanent (`permanent(e) = e.code in names && !TRANSIENT.has(e.code)`),
-so it is not added to `TRANSIENT`. Parked on the first attempt is right: another attempt is another
-cycle.
+`OUTCOME` in `runtime/core/source/exceptions.ts` is a `Record<keyof typeof codes, …>`, so the
+compiler refuses a code that has not answered the question. `Loop` answers `permanent`, and a
+permanent failure is set aside on the first attempt rather than retried — which is right, because
+the chain is deterministic and another attempt walks it again.
 
 **It is answered, not thrown.** `Component.invoke` returns `{ exception }`, exactly as
 `Operation.invoke` does (`runtime/core/source/operation.ts:93`). Thrown, it would run into comq's
@@ -332,33 +333,19 @@ against a row that already holds two entity images. No budget, no sampling, no o
 
 ## Stages
 
-The order is forced by one thing: **a refusal on the event path is fatal until
-`exception-handling.md` lands.** An exception reaching a receiver escapes into comq and ends at
-`process.exit(1)`, so a breaker firing there converts an infinite loop into a crash loop — a worse
-morning than the loop, which at least keeps serving. Its stage 3 is what makes a refusal park a
-message instead.
-
-That does not hold the first stage back, because until an event carries a chain, none crosses one: a
-receiver's call starts at nothing and is one hop long, so the rule cannot fire there. Stage 1 refuses
-on the call path only, where the caller is waiting and `Operation.invoke` already turns an exception
-into a reply. It ships with `TOA_TRAIL_REPEATS` at `3` and needs nothing else.
+`exception-handling.md` has landed, which is what the events stage was waiting for: an exception
+raised in a receiver no longer ends the process, and a permanent one is set aside at once with its
+reason. A cycle is permanent, so it is parked on the first delivery.
 
 1. **Calls.** `trail.ts`, the `Request` field, `Component.invoke`, `Call.invoke`, the exception.
-   Independent of everything else, and safe on its own for the reason above.
-2. **Events.** `Message.trail`, `Receiver.receive`, `Row.trail`, and the `Destination.emit`
-   signature. **Decided: this waits** — for stages 1–3 of `exception-handling.md`, and so for the
-   comq release those wait on. Two things are wanted from them, and neither can be had early: that a
-   refused event is parked with its reason rather than ending the process, and that
-   `Destination.emit` changes once rather than twice.
-
-   The cost of waiting is stated rather than hidden: **until this lands, a cycle that goes through an
-   event is not caught, and that is the cycle this document opens with.** Shipping the plumbing
-   early with `TOA_TRAIL_REPEATS=0` — every request, message and row carrying its chain, and a
-   warning where the rule would have fired — was weighed and turned down: it is interim code to
-   write, test and then remove, for a diagnostic rather than a fix.
-3. **Cadence.** `Aspect.delay`, the detached option, and the missing `source`. Follows the events
-   stage, in a PR of its own: a delayed call is only a loophole once a chain crosses an event, and
-   what it decides — that re-arming a call to yourself is a cycle — is worth reviewing on its own.
+   **Done.**
+2. **Events.** `Message.trail`, `Receiver.receive`, `Row.trail`, and `Destination.emit` taking the
+   row rather than its event alone. **Done.** That signature is the one the idempotency stage of
+   `exception-handling.md` also wants, for `Message.id` — it has changed once, and the row is what a
+   destination is handed from here on.
+3. **Cadence.** `Aspect.delay`, the detached option, and the missing `source`. Next, in a PR of its
+   own. Until it lands **a delayed call starts a fresh chain**, so a cycle routed through
+   `context.delay` is not caught — which is the remaining hole, and the reason the stage exists.
 
 ## Verification
 
