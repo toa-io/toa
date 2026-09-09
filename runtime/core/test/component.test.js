@@ -7,7 +7,6 @@ import { Remote } from '../source/remote.js'
 import * as trail from '../source/trail.js'
 import { codes } from '../source/exceptions.js'
 import * as fixtures from './component.fixtures.js'
-import { codes } from '../source/exceptions.js'
 
 describe('Invocations', () => {
   const name = ['foo', 'bar'][Math.floor(2 * Math.random())]
