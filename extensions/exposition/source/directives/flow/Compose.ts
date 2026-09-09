@@ -1,5 +1,4 @@
 import { once } from 'node:events'
-import * as assert from 'node:assert'
 import { Readable } from 'node:stream'
 import { console } from 'openspan'
 import type { Directive } from './types.js'
@@ -21,13 +20,16 @@ export class Compose implements Directive {
         return
       }
 
-      assert.ok(message.body instanceof Readable, 'Response body is not a stream')
+      if (!(message.body instanceof Readable))
+        throw new Error('Response body is not a stream')
 
-      assert.ok(
-        // @ts-expect-error -- objectMode is not defined in the type definition
-        message.body._readableState.objectMode,
-        'Response stream is not in object mode'
+      if (
+        !(
+          // @ts-expect-error -- objectMode is not defined in the type definition
+          message.body._readableState.objectMode
+        )
       )
+        throw new Error('Response stream is not in object mode')
 
       const $ = await this.compose(message.body)
 

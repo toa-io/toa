@@ -1,4 +1,3 @@
-import assert from 'node:assert'
 import { Mapping } from './Mapping.js'
 import type { Component } from '@toa.io/core'
 import type { Remotes } from '../../Remotes.js'
@@ -9,12 +8,10 @@ export class Claims extends Mapping<Record<string, string>> {
   private federation: Component | null = null
 
   public constructor(map: Record<string, string>, remotes: Remotes) {
-    assert.ok(map.constructor === Object, '`map:claims` must be an object')
+    if (map.constructor !== Object) throw new Error('`map:claims` must be an object')
 
-    assert.ok(
-      Object.values(map).every((value) => typeof value === 'string'),
-      '`map:claims ` must be an object with string values'
-    )
+    if (!Object.values(map).every((value) => typeof value === 'string'))
+      throw new Error('`map:claims ` must be an object with string values')
 
     super(map, remotes)
 

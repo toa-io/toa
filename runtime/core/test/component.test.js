@@ -4,7 +4,7 @@ import { isDeepStrictEqual } from 'node:util'
 
 import { Component } from '../source/component.js'
 import * as fixtures from './component.fixtures.js'
-import { AssertionError } from 'node:assert'
+import { codes } from '../source/exceptions.js'
 
 describe('Invocations', () => {
   const name = ['foo', 'bar'][Math.floor(2 * Math.random())]
@@ -21,8 +21,12 @@ describe('Invocations', () => {
     assert.ok(invocation.invoke.mock.callCount() > 0)
   })
 
-  it('should throw on unknown invocation name', async () => {
-    await assert.rejects(() => component.invoke('baz'), AssertionError)
+  it('should refuse an endpoint it does not provide', async () => {
+    // a fact about the component, and one that crosses a binding: a code, not an assertion
+    await assert.rejects(
+      async () => await component.invoke('baz'),
+      (error) => error.code === codes.Endpoint
+    )
   })
 
   it('should invoke input and query', async () => {

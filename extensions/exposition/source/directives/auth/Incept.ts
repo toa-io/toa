@@ -1,4 +1,3 @@
-import assert from 'node:assert'
 import { console } from 'openspan'
 import * as http from '../../HTTP/index.js'
 import { split } from './split.js'
@@ -17,10 +16,8 @@ export class Incept implements Directive {
   private readonly property: string | null
 
   public constructor(property: string, discovery: Discovery) {
-    assert.ok(
-      property === null || typeof property === 'string',
-      '`auth:incept` value must be a string or null'
-    )
+    if (!(property === null || typeof property === 'string'))
+      throw new Error('`auth:incept` value must be a string or null')
 
     this.property = property
     Incept.discovery ??= discovery
@@ -100,10 +97,8 @@ export class Incept implements Directive {
       return
     }
 
-    assert(
-      typeof id === 'string',
-      `Response body property "${this.property}" expected to be a string`
-    )
+    if (typeof id !== 'string')
+      throw new Error(`Response body property "${this.property}" expected to be a string`)
 
     if (context.request.headers.authorization !== undefined)
       context.identity = await Incept.incept(context, id)

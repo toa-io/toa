@@ -2,6 +2,7 @@ import { Connector } from '@toa.io/core'
 import { console } from 'openspan'
 
 import { name } from './queues.js'
+import { refuse } from './verdict.js'
 
 export class Producer extends Connector {
   /** @type {toa.amqp.Communication} */
@@ -66,7 +67,18 @@ export class Producer extends Connector {
         this.#comm.process(queue + '..tasks', async (request) => {
           console.debug('AMQP task received', { label: queue, request })
 
-          return await this.#invoke(endpoint, request)
+          const reply = await this.#invoke(endpoint, request)
+
+          /*
+           * A task is a call with nobody waiting for it, so the runtime reads the reply that
+           * caller would have read. An exception is not an answer: raising it here is what
+           * brings the message back, where acknowledging it would end the work silently.
+           *
+           * A declared error is an answer, and is acknowledged like any other.
+           */
+          if (reply?.exception !== undefined) refuse(reply.exception)
+
+          return reply
         })
       )
 

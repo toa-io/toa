@@ -1,7 +1,6 @@
 import { Readable } from 'node:stream'
 import { Blob } from 'node:buffer'
 import { join } from 'node:path/posix'
-import assert from 'node:assert'
 import { Upload } from '@aws-sdk/lib-storage'
 import * as s3 from '@aws-sdk/client-s3'
 import { console } from 'openspan'
@@ -44,10 +43,8 @@ export class S3 extends Provider<S3Options> {
     if (options.region !== undefined) s3Config.region = options.region
 
     if (typeof secrets?.ACCESS_KEY_ID === 'string') {
-      assert.ok(
-        secrets.SECRET_ACCESS_KEY !== undefined,
-        'SECRET_ACCESS_KEY is required if ACCESS_KEY_ID is provided'
-      )
+      if (secrets.SECRET_ACCESS_KEY === undefined)
+        throw new Error('SECRET_ACCESS_KEY is required if ACCESS_KEY_ID is provided')
 
       s3Config.credentials = {
         accessKeyId: secrets.ACCESS_KEY_ID,

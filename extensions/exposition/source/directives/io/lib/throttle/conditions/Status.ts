@@ -1,4 +1,3 @@
-import assert from 'node:assert'
 import type { Input, Output } from '../../../../../io.js'
 import type { Condition } from './Condition.js'
 
@@ -6,7 +5,7 @@ export class Status implements Condition {
   private readonly status: number
 
   public constructor(status: unknown) {
-    assert.ok(typeof status === 'number', 'Status must be a number')
+    if (typeof status !== 'number') throw new Error('Status must be a number')
 
     this.status = status
   }

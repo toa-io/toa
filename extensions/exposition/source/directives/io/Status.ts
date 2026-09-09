@@ -1,4 +1,3 @@
-import assert from 'node:assert'
 import type { Directive } from './Directive.js'
 import type * as http from '../../HTTP/index.js'
 
@@ -20,7 +19,7 @@ export class Status implements Directive {
   }
 
   public static validate(value: unknown): asserts value is string {
-    assert.ok(typeof value === 'string', '`io:status` must be a string')
+    if (typeof value !== 'string') throw new Error('`io:status` must be a string')
   }
 
   public precall(): void {
@@ -34,10 +33,8 @@ export class Status implements Directive {
 
     const value: unknown = (body as Record<string, unknown>)[this.property]
 
-    assert.ok(
-      typeof value === 'number',
-      `\`io:status\` expects '${this.property}' to be a number`
-    )
+    if (typeof value !== 'number')
+      throw new Error(`\`io:status\` expects '${this.property}' to be a number`)
 
     response.status = value
 

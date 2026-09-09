@@ -2,6 +2,7 @@ import { it, beforeEach, afterEach, mock } from 'node:test'
 import assert from 'node:assert/strict'
 import { console } from 'openspan'
 
+import { exceptions } from '@toa.io/core'
 import { Dispatcher } from './Dispatcher.js'
 import { BATCH, LANES } from '@toa.io/definitions/extensions.cadence'
 import type { Local } from './Local.js'
@@ -349,10 +350,10 @@ it('should settle what it has called', async () => {
   assert.deepStrictEqual(settled(), ['a'])
 })
 
-it('should settle a row whose call failed, and keep dispatching', async () => {
+it('should keep a row whose call failed on the way out, and keep dispatching', async () => {
   rows = [row('a', 10), row('b', 20)]
   target.invoke.mock.mockImplementationOnce(async () => {
-    throw new Error('nope')
+    throw new Error('the broker refused it')
   })
 
   const dispatcher = create()
@@ -366,13 +367,42 @@ it('should settle a row whose call failed, and keep dispatching', async () => {
     'the one after it is still called'
   )
 
+  // the store still owes the one that never went out
+  rows = [row('a', 10)]
+  await advance(INTERVAL)
+
+  assert.deepStrictEqual(settled(), ['b'], 'only the one that went out is settled')
+
+  // the scan armed it again, and what it armed is already overdue
+  await advance(0)
+
+  assert.strictEqual(
+    target.invoke.mock.callCount(),
+    3,
+    'and the one that did not is called again'
+  )
+})
+
+it('should settle a row the target will never accept', async () => {
+  rows = [row('a', 10)]
+  target.invoke.mock.mockImplementation(async () => {
+    throw new exceptions.RequestContractException('input.id must be a string')
+  })
+
+  const dispatcher = create()
+
+  await dispatcher.connect()
+  await advance(10)
+
+  assert.strictEqual(target.invoke.mock.callCount(), 1)
+
   rows = []
   await advance(INTERVAL)
 
   assert.deepStrictEqual(
-    settled().sort(),
-    ['a', 'b'],
-    'and the one that failed is settled'
+    settled(),
+    ['a'],
+    'a request its schema no longer fits never becomes one it does'
   )
 })
 

@@ -1,4 +1,3 @@
-import assert from 'node:assert'
 import type { Parameter } from '../../../../../RTD/index.js'
 import type { Input as Context } from '../../../../../io.js'
 import type { Component } from './Component.js'
@@ -8,7 +7,7 @@ export class Segment implements Component {
   private readonly name: string
 
   public constructor(name: unknown) {
-    assert.ok(typeof name === 'string', 'Throttle segment must be a string')
+    if (typeof name !== 'string') throw new Error('Throttle segment must be a string')
 
     this.name = name
   }

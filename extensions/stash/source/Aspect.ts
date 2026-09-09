@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-floating-promises */
 import { encode, decode } from 'msgpackr'
 import { console, type SpanOptions } from 'openspan'
 import { Connector } from '@toa.io/core'
@@ -50,7 +49,7 @@ export class Aspect extends Connector implements extensions.Aspect {
     }
 
     if (method === 'store')
-      console.span(span(method, args[0]), async () => {
+      return console.span(span(method, args[0]), async () => {
         await this.store(args[0] as string, args[1] as object, ...args.slice(2))
       })
 

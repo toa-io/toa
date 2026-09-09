@@ -1,4 +1,3 @@
-import assert from 'node:assert'
 import { segment } from '../../RTD/segment.js'
 import { described, type Described } from './described.js'
 
@@ -19,10 +18,10 @@ export class Parameters {
   public readonly variables: string[]
 
   public constructor(subject: Subject, value: unknown, route: string) {
-    assert.ok(
-      typeof value === 'object' && value !== null && !Array.isArray(value),
-      `Directive help:${subject}: the value names each parameter it describes`
-    )
+    if (!(typeof value === 'object' && value !== null && !Array.isArray(value)))
+      throw new Error(
+        `Directive help:${subject}: the value names each parameter it describes`
+      )
 
     const parameters: Record<string, Described> = {}
 

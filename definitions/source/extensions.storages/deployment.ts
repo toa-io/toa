@@ -1,4 +1,3 @@
-import * as assert from 'node:assert'
 import { secrets as declared } from './secrets.js'
 import { validateAnnotation } from './Annotation.js'
 import type { Annotation } from './Annotation.js'
@@ -37,11 +36,11 @@ function validate(
 
 function contains(instance: Instance, annotation: Annotation): void {
   for (const name of instance.manifest)
-    assert.ok(
-      name in annotation,
-      `Missing '${name}' storage annotation ` +
-        `declared in '${instance.component.locator.id}'`
-    )
+    if (!(name in annotation))
+      throw new Error(
+        `Missing '${name}' storage annotation ` +
+          `declared in '${instance.component.locator.id}'`
+      )
 }
 
 function getSecrets(annotation: Annotation): Variable[] {

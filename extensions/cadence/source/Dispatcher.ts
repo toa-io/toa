@@ -1,5 +1,5 @@
 import { console } from 'openspan'
-import { Connector, Locator } from '@toa.io/core'
+import { Connector, Locator, exceptions } from '@toa.io/core'
 import {
   BATCH,
   DISCRETENESS,
@@ -283,26 +283,29 @@ export class Dispatcher extends Connector {
     const local = this.target(new Locator(name, namespace))
 
     /*
-     * Attempted before it is made, not after it comes back. One attempt is what a dispatcher
-     * has to give: what it can tell about a failure is nothing, and a request the target's
-     * schema no longer fits never becomes one it does.
-     */
-    this.called.add(row.id)
-
-    /*
      * The call travels as a task, so what raises here is this side of it: a stored request the
      * target's contract no longer fits, an endpoint it no longer has, a broker that refused the
      * enqueue. What the operation itself does with it happens in the target's own process and
      * never comes back.
      *
-     * Skipped, as a pulse skips: reported, and the row settled on the attempt either way.
+     * A row is settled by the outcome, not by the attempt. One the target will never accept is
+     * settled at once, because a request its schema no longer fits never becomes one it does.
+     * One that failed on the way out is left where it is, and the next scan calls again — a
+     * broker that was briefly not there is not a reason to drop a call somebody asked for, and
+     * the bound on trying is the `overdue` its caller gave it.
      */
     await local
       .invoke(endpoint, { input: null, ...row.request, task: true })
+      .then(() => {
+        this.called.add(row.id)
+      })
       .catch((error: unknown) => {
+        if (exceptions.permanent(error)) this.called.add(row.id)
+
         console.error('Delayed call failed', {
           endpoint: row.endpoint,
           id: row.id,
+          permanent: exceptions.permanent(error),
           error
         })
       })

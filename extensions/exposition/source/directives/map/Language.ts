@@ -1,4 +1,3 @@
-import assert from 'node:assert'
 import Negotiator from 'negotiator'
 import { cors } from '../cors/index.js'
 import { Mapping } from './Mapping.js'
@@ -11,7 +10,7 @@ export class Language extends Mapping<string> {
   private languages: string[] | null = null
 
   public constructor(property: string) {
-    assert.ok(typeof property === 'string', '`map:language` must be a string')
+    if (typeof property !== 'string') throw new Error('`map:language` must be a string')
 
     cors.allow('accept-language')
     super(property)
