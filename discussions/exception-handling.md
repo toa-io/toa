@@ -43,7 +43,7 @@ is readable at once.
 3. A message that fails stops nothing: not the process, not its queue, not another receiver of the
    same component.
 4. A failure that may pass later is retried, with a growing wait, off the consumer's path.
-5. A failure that cannot pass is not retried. *(open — needs a verdict comq does not have yet)*
+5. A failure that cannot pass is not retried.
 6. Nothing is dropped. A message that is not processed is kept, with the reason it failed, and can
    be replayed.
 7. 3–6 hold for a task as much as for an event. A task is a call carried on the event topology, so
@@ -240,11 +240,11 @@ the exception comes back in the reply, the way `Call` reads one. Both then answe
 The RPC processor beside it is untouched: there the exception *is* the reply, and a caller is
 waiting for it.
 
-**Landed in part, on comq 0.18.0.** The waiting, the ladder and the parking queue are there, and a
+**Landed, on comq 0.19.0.** The waiting, the ladder and the parking queue came with 0.18.0, and a
 receiver needed nothing for them — it already raises what its operation refused with. A task did:
-its processor reads the reply the absent caller would have read. What is still comq's to do is the
-verdict itself, and until it exists a failure that can never pass is raised like any other, so it
-climbs the whole ladder before it is kept. §5 was independent of all of it and landed first.
+its processor reads the reply the absent caller would have read. 0.19.0 added the verdict, so both
+paths now say which kind of failure it was rather than leaving every one of them to climb the
+ladder. §5 was independent of all of it and landed first.
 
 ### 2. Classification
 
@@ -392,9 +392,8 @@ queues, which the broker reports, and the log. Failure text and levels to be agr
 1. **The process, and what needs no broker.** §5, §2, and the delayed calls that were dropped on a
    failed dispatch. Independent of everything else, so it goes first rather than waiting. *Done.*
 2. **Stop the crash.** §1–§3 — guarantees 3, 4, 6 and 7, on comq 0.18.0. *Done.*
-3. **The verdict.** Guarantee 5, the one that needs a consumer to say *how* it failed. comq's to
-   build; a small change here once it is there, because the classification already exists and
-   already has a caller.
+3. **The verdict.** Guarantee 5, on comq 0.19.0: one function that asks the classification and
+   raises `Park` or the exception itself, called from both paths. *Done.*
 4. **Idempotency.** §4 — guarantee 10, its own change. Needs nothing from a broker.
 
 The call path is left as it is.

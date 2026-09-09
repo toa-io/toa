@@ -73,3 +73,24 @@ Feature: Work with nobody waiting for it
       """yaml
       count: 1
       """
+
+  Scenario: A message the receiver can never accept is kept at once
+    Given the `mongo.refused` event queues are empty
+    And the `mongo.refused` parked queues are empty
+    And the `mongo.refused` database contains:
+      | _id                              | count | VERSION |
+      | 5d2f9c1b7e0a4d3c8f6b2a1e9c4d7b30 | 0     | 1       |
+    And I compose components:
+      | mongo.one     |
+      | mongo.refused |
+    When I call `mongo.one.transit` with:
+      """yaml
+      input:
+        foo: 1
+        bar: world
+      query:
+        id: 5d2f9c1b7e0a4d3c8f6b2a1e9c4d7b30
+      """
+    Then the reply is received
+    # its contract refuses the message, and no waiting changes a contract
+    And `mongo.refused` parks 1 message on the first delivery

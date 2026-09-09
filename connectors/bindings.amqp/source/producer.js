@@ -2,6 +2,7 @@ import { Connector } from '@toa.io/core'
 import { console } from 'openspan'
 
 import { name } from './queues.js'
+import { refuse } from './verdict.js'
 
 export class Producer extends Connector {
   /** @type {toa.amqp.Communication} */
@@ -75,7 +76,7 @@ export class Producer extends Connector {
            *
            * A declared error is an answer, and is acknowledged like any other.
            */
-          if (reply?.exception !== undefined) throw reply.exception
+          if (reply?.exception !== undefined) refuse(reply.exception)
 
           return reply
         })
