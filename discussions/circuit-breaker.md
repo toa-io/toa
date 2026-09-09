@@ -346,12 +346,19 @@ into a reply. It ships with `TOA_TRAIL_REPEATS` at `3` and needs nothing else.
 1. **Calls.** `trail.ts`, the `Request` field, `Component.invoke`, `Call.invoke`, the exception.
    Independent of everything else, and safe on its own for the reason above.
 2. **Events.** `Message.trail`, `Receiver.receive`, `Row.trail`, and the `Destination.emit`
-   signature. This is the stage that waits: on the emit signature, agreed with the
-   exception-handling work so it changes once, and on parking, so that a refused event is set aside
-   rather than fatal. Landing it sooner means shipping it with `TOA_TRAIL_REPEATS=0` — every request,
-   message and row carrying its chain, and a warning where the rule would have fired — which answers
-   "is anything here going round in circles" without refusing anything.
-3. **Cadence.** `Aspect.delay`, the detached option, and the missing `source`.
+   signature. **Decided: this waits** — for stages 1–3 of `exception-handling.md`, and so for the
+   comq release those wait on. Two things are wanted from them, and neither can be had early: that a
+   refused event is parked with its reason rather than ending the process, and that
+   `Destination.emit` changes once rather than twice.
+
+   The cost of waiting is stated rather than hidden: **until this lands, a cycle that goes through an
+   event is not caught, and that is the cycle this document opens with.** Shipping the plumbing
+   early with `TOA_TRAIL_REPEATS=0` — every request, message and row carrying its chain, and a
+   warning where the rule would have fired — was weighed and turned down: it is interim code to
+   write, test and then remove, for a diagnostic rather than a fix.
+3. **Cadence.** `Aspect.delay`, the detached option, and the missing `source`. Follows the events
+   stage, in a PR of its own: a delayed call is only a loophole once a chain crosses an event, and
+   what it decides — that re-arming a call to yourself is a cycle — is worth reviewing on its own.
 
 ## Verification
 
