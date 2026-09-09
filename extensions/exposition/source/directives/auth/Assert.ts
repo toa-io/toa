@@ -1,4 +1,3 @@
-import assert from 'node:assert'
 import { newid } from '@toa.io/generic'
 import * as http from '../../HTTP/index.js'
 import { Incept } from './Incept.js'
@@ -8,10 +7,8 @@ export class Assert implements Directive {
   private readonly disabled: boolean
 
   public constructor(enabled: boolean) {
-    assert.ok(
-      typeof enabled === 'boolean',
-      '`auth:assert` directive value must be a boolean'
-    )
+    if (typeof enabled !== 'boolean')
+      throw new Error('`auth:assert` directive value must be a boolean')
 
     this.disabled = !enabled
   }

@@ -1,4 +1,3 @@
-import assert from 'node:assert'
 import { console, traces, type LevelName, type TracesOptions } from 'openspan'
 import { Gateway } from './Gateway.js'
 import { Remotes } from './Remotes.js'
@@ -25,7 +24,7 @@ import type { Host } from './Factory.js'
 export async function service(host: Host): Promise<Connector | null> {
   const properties = environment.get('TOA_EXPOSITION_PROPERTIES')
 
-  assert.ok(properties !== undefined, 'TOA_EXPOSITION_PROPERTIES is undefined')
+  if (properties === undefined) throw new Error('TOA_EXPOSITION_PROPERTIES is undefined')
 
   configureLogs()
 

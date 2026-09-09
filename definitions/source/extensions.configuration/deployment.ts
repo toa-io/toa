@@ -1,4 +1,3 @@
-import assert from 'node:assert'
 import {
   type Dependency,
   type Resources,
@@ -100,7 +99,9 @@ function createSecrets(values: object): Variable[] {
 
     const name = match.groups?.variable
 
-    assert.ok(name !== undefined)
+    // the pattern that matched has the group, so this is a change to one of the two
+    if (name === undefined)
+      throw new Error(`Secret reference '${value}' names no variable`)
 
     secrets.push({
       name: PREFIX + '_' + name,
@@ -138,10 +139,10 @@ function prepare(annotation: Annotation, instances: Instance[]): Annotation {
     const id = key.includes('.') ? key : 'default.' + key
     const instance = instances.find((instance) => instance.locator.id === id)
 
-    assert.ok(
-      instance !== undefined,
-      `Component '${id}' does not request configuration or does not exist.`
-    )
+    if (instance === undefined)
+      throw new Error(
+        `Component '${id}' does not request configuration or does not exist.`
+      )
 
     assertSecrets(instance.manifest.schema, values)
 

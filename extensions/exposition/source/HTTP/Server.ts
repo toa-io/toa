@@ -1,4 +1,3 @@
-import assert from 'node:assert'
 import fs from 'node:fs'
 import os from 'node:os'
 import * as http from 'node:http'
@@ -213,7 +212,7 @@ export class Server extends Connector {
       return
     }
 
-    assert(this.process !== undefined, 'Request processor is not attached')
+    if (this.process === undefined) throw new Error('Request processor is not attached')
 
     const authority = this.authorities.get(host) ?? host
 

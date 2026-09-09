@@ -1,4 +1,3 @@
-import assert from 'node:assert'
 import { type Dependency, type Service } from '@toa.io/operations'
 import { type Annotation } from './Annotation.js'
 import * as schemas from './schemas.js'
@@ -13,7 +12,8 @@ import { version } from '../version.js'
 export const image = 'ghcr.io/toa-io/extension-exposition-gateway'
 
 export function deployment(_: unknown, annotation?: Annotation): Dependency {
-  assert.ok(annotation !== undefined, 'Exposition context annotation is required')
+  if (annotation === undefined)
+    throw new Error('Exposition context annotation is required')
   schemas.annotation.validate(annotation)
 
   const labels = components().labels

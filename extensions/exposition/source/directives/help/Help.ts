@@ -1,4 +1,3 @@
-import assert from 'node:assert'
 import { described, type Described } from './described.js'
 
 /**
@@ -23,10 +22,8 @@ export class Help {
   public readonly hidden: boolean
 
   public constructor(subject: Subject, value: unknown) {
-    assert.ok(
-      value !== null || subject === 'method',
-      `Directive help:${subject}: only a method is hidden`
-    )
+    if (!(value !== null || subject === 'method'))
+      throw new Error(`Directive help:${subject}: only a method is hidden`)
 
     if (value === null) {
       this.subject = subject

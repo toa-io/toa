@@ -1,4 +1,3 @@
-import assert from 'node:assert'
 import { Help } from './Help.js'
 import { Parameters } from './Parameters.js'
 import type { Introspection, Schema } from '../../Introspection.js'
@@ -37,7 +36,8 @@ export class Family implements DirectiveFamily<Directive> {
   public create(name: string, value: unknown, _: unknown, route: string): Directive {
     if (name === 'node' || name === 'method') return new Help(name, value)
 
-    assert.ok(name === 'route' || name === 'query', `Unknown directive: help:${name}`)
+    if (!(name === 'route' || name === 'query'))
+      throw new Error(`Unknown directive: help:${name}`)
 
     return new Parameters(name, value, route)
   }

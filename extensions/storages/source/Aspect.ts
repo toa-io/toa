@@ -1,4 +1,3 @@
-import assert from 'node:assert'
 import { Connector } from '@toa.io/core'
 import type { extensions } from '@toa.io/core/types'
 import { type Storage, type Storages } from './Storage.js'
@@ -23,7 +22,7 @@ export class Aspect extends Connector implements extensions.Aspect {
   public invoke(name: string, method: keyof Storage, ...args: unknown[]): unknown {
     const storage = this.storages[name]
 
-    assert.ok(storage !== undefined, `Storage '${name}' is not defined`)
+    if (storage === undefined) throw new Error(`Storage '${name}' is not defined`)
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error

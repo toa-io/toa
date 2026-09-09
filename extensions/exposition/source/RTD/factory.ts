@@ -1,4 +1,3 @@
-import assert from 'node:assert'
 import { BRANCH_TTL } from '@toa.io/definitions/extensions.exposition'
 import { Node, type Properties } from './Node.js'
 import { Route } from './Route.js'
@@ -98,7 +97,7 @@ function described(node: syntax.Node, context: Context): void {
 
   const route = '/' + fragment(context.path).join('/')
 
-  assert.fail(`Directive help:node: '${route}' serves no methods`)
+  throw new Error(`Directive help:node: '${route}' serves no methods`)
 }
 
 const ROOT = '/'

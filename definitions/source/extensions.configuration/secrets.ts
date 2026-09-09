@@ -1,4 +1,3 @@
-import assert from 'node:assert'
 import { SECRET_RX } from './const.js'
 
 /**
@@ -8,10 +7,10 @@ export function assertSecrets(schema: object, value: unknown, path = ''): void {
   if (format(schema) === 'secret') {
     if (value === undefined) return
 
-    assert.ok(
-      typeof value === 'string' && SECRET_RX.test(value),
-      `'${path || '.'}' is a secret and must be given as a $NAME reference.`
-    )
+    if (!(typeof value === 'string' && SECRET_RX.test(value)))
+      throw new Error(
+        `'${path || '.'}' is a secret and must be given as a $NAME reference.`
+      )
 
     return
   }

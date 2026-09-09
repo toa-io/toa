@@ -1,4 +1,3 @@
-import assert from 'node:assert'
 import { Headers } from './Headers.js'
 import type { Input } from '../../io.js'
 import type { Directive } from './Directive.js'
@@ -9,7 +8,7 @@ export class Require implements DirectiveFamily {
   public readonly mandatory = false
 
   public create(name: string, value: unknown): Directive {
-    assert.ok(name in directives, `Unknown directive: require:${name}`)
+    if (!(name in directives)) throw new Error(`Unknown directive: require:${name}`)
 
     return new directives[name](value)
   }

@@ -1,5 +1,3 @@
-import assert from 'node:assert'
-
 /** What a resource, a method or a parameter says of itself, in the order it is written. */
 export interface Described {
   title?: string
@@ -20,35 +18,33 @@ export interface Described {
 export function described(subject: string, value: unknown): Described {
   const stated = typeof value === 'string' ? { title: value } : value
 
-  assert.ok(
-    typeof stated === 'object' && stated !== null && !Array.isArray(stated),
-    `Directive ${subject}: the value is a title, or a \`title\` and a \`description\``
-  )
+  if (!(typeof stated === 'object' && stated !== null && !Array.isArray(stated)))
+    throw new Error(
+      `Directive ${subject}: the value is a title, or a \`title\` and a \`description\``
+    )
 
   const { title, description, ...rest } = stated as Record<string, unknown>
 
-  assert.ok(
-    Object.keys(rest).length === 0,
-    `Directive ${subject}: unknown ${Object.keys(rest)
-      .map((key) => `'${key}'`)
-      .join(', ')}`
-  )
+  if (Object.keys(rest).length !== 0)
+    throw new Error(
+      `Directive ${subject}: unknown ${Object.keys(rest)
+        .map((key) => `'${key}'`)
+        .join(', ')}`
+    )
 
-  assert.ok(
-    title === undefined || (typeof title === 'string' && title.trim().length > 0),
-    `Directive ${subject}: a title cannot be empty`
-  )
+  if (!(title === undefined || (typeof title === 'string' && title.trim().length > 0)))
+    throw new Error(`Directive ${subject}: a title cannot be empty`)
 
-  assert.ok(
-    description === undefined ||
-      (typeof description === 'string' && description.trim().length > 0),
-    `Directive ${subject}: a description cannot be empty`
+  if (
+    !(
+      description === undefined ||
+      (typeof description === 'string' && description.trim().length > 0)
+    )
   )
+    throw new Error(`Directive ${subject}: a description cannot be empty`)
 
-  assert.ok(
-    title !== undefined || description !== undefined,
-    `Directive ${subject}: says nothing`
-  )
+  if (!(title !== undefined || description !== undefined))
+    throw new Error(`Directive ${subject}: says nothing`)
 
   return {
     ...(title === undefined ? {} : { title: title as string }),

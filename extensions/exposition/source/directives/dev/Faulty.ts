@@ -1,4 +1,3 @@
-import assert from 'node:assert'
 import { ServiceUnavailable } from '../../HTTP/index.js'
 import { cors } from '../cors/index.js'
 import type { Output } from '../../io.js'
@@ -9,14 +8,10 @@ export class Faulty implements Directive {
   private readonly probability: number
 
   public constructor(probability: number) {
-    assert.ok(
-      typeof probability === 'number',
-      '`dev:faulty` directive value must be a number'
-    )
-    assert.ok(
-      probability > 0 && probability <= 1,
-      '`dev:faulty` directive value must be in the range (0, 1]'
-    )
+    if (typeof probability !== 'number')
+      throw new Error('`dev:faulty` directive value must be a number')
+    if (!(probability > 0 && probability <= 1))
+      throw new Error('`dev:faulty` directive value must be in the range (0, 1]')
 
     this.probability = probability
 

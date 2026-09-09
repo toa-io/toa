@@ -1,5 +1,4 @@
 import { Readable } from 'node:stream'
-import assert from 'node:assert'
 import { match } from 'matchacho'
 import { NotFound } from '../../HTTP/index.js'
 import type { Directive } from './types.js'
@@ -17,7 +16,7 @@ export class Fetch implements Directive {
   private readonly operation: string
 
   public constructor(endpoint: string, discovery: Remotes) {
-    assert.equal(typeof endpoint, 'string', '`flow:fetch` must be a string')
+    if (typeof endpoint !== 'string') throw new Error('`flow:fetch` must be a string')
 
     const [operation, name, namespace = 'default'] = endpoint.split('.').reverse()
 

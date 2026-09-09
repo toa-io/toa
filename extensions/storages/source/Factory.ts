@@ -1,4 +1,3 @@
-import assert from 'node:assert'
 import { console } from 'openspan'
 import { provider as load } from './providers/index.js'
 import { Storage, type Storages } from './Storage.js'
@@ -16,7 +15,7 @@ export class Factory {
   public constructor() {
     const env = environment.get(ENV_PREFIX)
 
-    assert.ok(env !== undefined, `${ENV_PREFIX} is not defined`)
+    if (env === undefined) throw new Error(`${ENV_PREFIX} is not defined`)
 
     this.annotation = JSON.parse(env)
 
@@ -61,10 +60,8 @@ export class Factory {
       const variable = `${ENV_PREFIX}_${storageName}_${secret.name}`.toUpperCase()
       const value = environment.get(variable)
 
-      assert.ok(
-        secret.optional === true || value !== undefined,
-        `'${variable}' is not defined`
-      )
+      if (secret.optional !== true && value === undefined)
+        throw new Error(`'${variable}' is not defined`)
 
       secrets[secret.name] = value
     }

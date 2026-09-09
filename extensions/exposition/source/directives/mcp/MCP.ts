@@ -1,4 +1,3 @@
-import assert from 'node:assert'
 import { Tool } from './Tool.js'
 import type { DirectiveFamily } from '../../RTD/index.js'
 import type { Context } from '../../HTTP/index.js'
@@ -20,13 +19,17 @@ export class MCP implements DirectiveFamily<Tool> {
    * Whether this method is published to a model, which is what the route declares. Whether
    * one is served at all is the annotation's, and a route says nothing of that.
    */
-  public explain(directives: Tool[], _: Context, introspection: Introspection): Introspection {
+  public explain(
+    directives: Tool[],
+    _: Context,
+    introspection: Introspection
+  ): Introspection {
     return MCP.published(directives) ? { ...introspection, mcp: true } : introspection
   }
 
   // eslint-disable-next-line max-params
   public create(name: string, value: unknown, _: unknown, route: string): Tool {
-    assert.ok(name === 'tool', `Unknown directive: mcp:${name}`)
+    if (name !== 'tool') throw new Error(`Unknown directive: mcp:${name}`)
 
     return new Tool(value, route)
   }

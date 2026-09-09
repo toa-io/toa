@@ -1,4 +1,3 @@
-import assert from 'node:assert'
 import type { Directive, Identity, Context } from './types.js'
 import type { Introspection } from '../../Introspection.js'
 import type { Parameter } from '../../RTD/index.js'
@@ -11,10 +10,8 @@ export class Federation implements Directive {
       ([key, value]) => [key, toMatcher(value)]
     )
 
-    assert.ok(
-      this.matchers.length > 0,
-      '`auth:claims` requires at least one property defined'
-    )
+    if (this.matchers.length === 0)
+      throw new Error('`auth:claims` requires at least one property defined')
   }
 
   /** Which claims it takes needs the request; that it takes an identity does not. */
