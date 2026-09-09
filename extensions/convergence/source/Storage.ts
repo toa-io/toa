@@ -99,9 +99,7 @@ export class Converging extends Connector implements storages.Storage, bindings.
      */
     if (this.storage.outbox === undefined)
       throw new Error(
-        `Component '${this.locator.id}' converges, and its outbox is not durable. ` +
-          'MongoDB is not a replica set, so a change that fails to publish is lost rather ' +
-          'than recovered, and the regions would differ with nothing to say so.'
+        `Component '${this.locator.id}' converges, and its storage offers no outbox.`
       )
 
     const inbound = await this.subscribe(this)

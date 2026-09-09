@@ -56,10 +56,10 @@ beforeEach(() => {
   subscribe = mock.fn(async () => inbound)
 })
 
-it('should refuse an outbox that is not durable', async () => {
+it('should refuse a storage that offers no outbox', async () => {
   storage.outbox = undefined
 
-  await assert.rejects(create().connect(), /its outbox is not durable/)
+  await assert.rejects(create().connect(), /offers no outbox/)
   assert.equal(subscribe.mock.callCount(), 0)
 })
 
