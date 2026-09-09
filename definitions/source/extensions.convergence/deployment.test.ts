@@ -1,8 +1,11 @@
 import { it } from 'node:test'
 import assert from 'node:assert/strict'
 
+import { environment } from '@toa.io/generic'
+import { resolve } from '@toa.io/pointer'
+
 import { deployment } from './deployment.js'
-import { BINDING, REGION } from './const.js'
+import { BINDING, BROKERS, ID, REGION } from './const.js'
 import type { Declaration } from './declaration.js'
 import type { Variable } from '@toa.io/operations'
 
@@ -39,16 +42,20 @@ it('should render the binding that carries the channel', () => {
   assert.equal(value(variables!.global, BINDING), '@toa.io/bindings.amqp')
 })
 
-it('should take a list of brokers', () => {
-  const { variables } = deployment([], {
-    ...declaration,
-    binding: { pointer: ['amqp://us-0', 'amqp://us-1'] }
-  })
+it('should take a list of brokers, and the runtime should read every one back', () => {
+  const brokers = ['amqp://us-0', 'amqp://us-1']
+  const { variables } = deployment([], { ...declaration, binding: { pointer: brokers } })
 
-  const rendered = JSON.stringify(variables!.global)
+  // the deploy writes one variable and the runtime resolves it, so what a region converges
+  // over is only whole if the two agree on how a list is written down
+  for (const variable of variables!.global)
+    if (variable.value !== undefined) environment.set(variable.name, variable.value)
 
-  assert.ok(rendered.includes('amqp://us-0'))
-  assert.ok(rendered.includes('amqp://us-1'))
+  try {
+    assert.deepEqual(resolve(ID, BROKERS), brokers)
+  } finally {
+    for (const variable of variables!.global) environment.delete(variable.name)
+  }
 })
 
 it('should refuse a rank that is not one', () => {
