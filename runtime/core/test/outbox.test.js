@@ -1,5 +1,6 @@
 import { it, beforeEach, afterEach, mock } from 'node:test'
 import assert from 'node:assert/strict'
+import { console } from 'openspan'
 
 import { Outbox } from '../source/outbox.js'
 
@@ -307,3 +308,73 @@ it('should keep pumping while one destination never answers', async () => {
 function destination (name) {
   return { name, emit: mock.fn(async () => undefined), link: mock.fn() }
 }
+
+it('should say it recovers nothing where it is never assigned a lane', async () => {
+  const warn = mock.method(console, 'warn', () => undefined)
+
+  atom.slots.mock.mockImplementation(() => null)
+
+  await outbox.open()
+
+  // a replica that has just started owns nothing for a moment, and that is not worth saying
+  for (let i = 0; i < 8; i++) await cycle()
+
+  assert.strictEqual(warn.mock.callCount(), 0)
+
+  for (let i = 0; i < 3; i++) await cycle()
+
+  assert.strictEqual(warn.mock.callCount(), 1, 'said at the tenth, not every cycle after')
+  assert.match(warn.mock.calls[0].arguments[0], /recovers nothing/)
+  assert.strictEqual(warn.mock.calls[0].arguments[1].cycles, 10)
+
+  // and again every ten, so it is there to be found in a log read later
+  for (let i = 0; i < 10; i++) await cycle()
+
+  assert.strictEqual(warn.mock.callCount(), 2)
+  assert.strictEqual(warn.mock.calls[1].arguments[1].cycles, 20)
+
+  warn.mock.restore()
+})
+
+it('should say when a lane is assigned after all', async () => {
+  const warn = mock.method(console, 'warn', () => undefined)
+  const info = mock.method(console, 'info', () => undefined)
+
+  atom.slots.mock.mockImplementation(() => null)
+
+  await outbox.open()
+
+  for (let i = 0; i < 11; i++) await cycle()
+
+  assert.strictEqual(warn.mock.callCount(), 1)
+
+  atom.slots.mock.mockImplementation(() => [0])
+
+  await cycle()
+
+  const said = info.mock.calls.map((call) => call.arguments[0])
+
+  assert.ok(said.some((message) => /recovery resumed/.test(message)))
+
+  warn.mock.restore()
+  info.mock.restore()
+})
+
+it('should say nothing while it owns a lane', async () => {
+  const warn = mock.method(console, 'warn', () => undefined)
+  const info = mock.method(console, 'info', () => undefined)
+
+  await outbox.open()
+
+  for (let i = 0; i < 15; i++) await cycle()
+
+  assert.strictEqual(warn.mock.callCount(), 0)
+
+  // and nothing is said of recovery either: an outbox that was never in trouble has none
+  const said = info.mock.calls.map((call) => call.arguments[0])
+
+  assert.ok(!said.some((message) => /recover/.test(message)))
+
+  warn.mock.restore()
+  info.mock.restore()
+})

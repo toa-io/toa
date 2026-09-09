@@ -22,7 +22,9 @@ outbox:
 ```
 
 Recovery needs [`atomicity`](/connectors/atomicity) as well. Without it rows are written and
-published as they are committed, and the pump reads nothing.
+published as they are committed, and the pump reads nothing — which it says every ten cycles
+it has owned no lane, and once more where one is assigned after all. It is not said sooner
+because a replica that has just started owns nothing for a moment, and that reads the same.
 
 ## The row
 

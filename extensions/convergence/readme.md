@@ -113,8 +113,9 @@ where a change that failed to publish would be lost rather than recovered, and t
 differ with nothing to say so. Events degrade there; convergence refuses.
 
 **[Atomicity](/connectors/atomicity).** Without it the outbox pump recovers nothing, so a
-publication that fails is never retried and that change is lost for good. Nothing detects this,
-which is why it is written here rather than raised.
+publication that fails is never retried and that change is lost for good. Nothing can refuse at
+boot over it — a replica owns no lane for a moment anyway — so what happens instead is that the
+pump says so, every ten cycles it has owned none.
 
 **Which delayed calls a region makes is `cadence.regions`,** not something held back from
 convergence: every region holds every region's rows, and each makes the calls of the region it
