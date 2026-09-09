@@ -86,7 +86,7 @@ Given(
     io ??= await connect(FAR)
 
     await io.subscribe(`${CHANNEL}.in`, `${CHANNEL}.test.${id}`, id, (message) => {
-      received.push(message)
+      received.push({ id, message })
     })
   }
 )
@@ -95,20 +95,22 @@ Then(
   'the region {string} is sent {component}:',
   /**
    * What the composition published, read from the far broker: its `convergence.in` is
-   * federated from the one the composition publishes to.
+   * federated from the one the composition publishes to. By component, because a scenario
+   * that converges several is delivered several.
    *
    * @param {string} region
-   * @param {string} _
+   * @param {string} id
    * @param {string} yaml
    */
-  async function (region, _, yaml) {
+  async function (region, id, yaml) {
     const expected = parse(yaml)
+    const sent = () => received.filter((one) => one.id === id)
 
-    for (let i = 0; i < 60 && received.length === 0; i++) await delay(100)
+    for (let i = 0; i < 60 && sent().length === 0; i++) await delay(100)
 
-    assert.notEqual(received.length, 0, `Nothing reached the region '${region}'`)
+    assert.notEqual(sent().length, 0, `Nothing of '${id}' reached the region '${region}'`)
 
-    const { record } = received[received.length - 1]
+    const { record } = sent().at(-1).message
 
     for (const [key, value] of Object.entries(expected))
       assert.deepEqual(record[key], value, `'${key}' of the record sent to '${region}'`)
