@@ -332,23 +332,26 @@ against a row that already holds two entity images. No budget, no sampling, no o
 
 ## Stages
 
-The first thing to say about the order is that **the breaker must not start refusing events before
-`exception-handling.md` lands**. Today an exception reaching a receiver escapes into comq and ends at
-`process.exit(1)`; a breaker that fires there converts an infinite loop into a crash loop, which is a
-worse morning than the loop — the loop at least keeps serving. Its stage 3 is what makes a refusal
-park a message instead.
+The order is forced by one thing: **a refusal on the event path is fatal until
+`exception-handling.md` lands.** An exception reaching a receiver escapes into comq and ends at
+`process.exit(1)`, so a breaker firing there converts an infinite loop into a crash loop — a worse
+morning than the loop, which at least keeps serving. Its stage 3 is what makes a refusal park a
+message instead.
 
-So the chain ships first as a diagnostic, with `TOA_TRAIL_REPEATS` defaulting to `0`: every request,
-message and row carries its chain, and where the rule would have fired the runtime logs a warning
-naming the hop and the chain. That alone answers "is anything here going round in circles", which
-nothing answers today. The default flips to `3` when the parking behaviour is there to receive it.
+That does not hold the first stage back, because until an event carries a chain, none crosses one: a
+receiver's call starts at nothing and is one hop long, so the rule cannot fire there. Stage 1 refuses
+on the call path only, where the caller is waiting and `Operation.invoke` already turns an exception
+into a reply. It ships with `TOA_TRAIL_REPEATS` at `3` and needs nothing else.
 
 1. **Calls.** `trail.ts`, the `Request` field, `Component.invoke`, `Call.invoke`, the exception.
-   Independent of everything else.
+   Independent of everything else, and safe on its own for the reason above.
 2. **Events.** `Message.trail`, `Receiver.receive`, `Row.trail`, and the `Destination.emit`
-   signature — the last agreed with the exception-handling work first.
+   signature. This is the stage that waits: on the emit signature, agreed with the
+   exception-handling work so it changes once, and on parking, so that a refused event is set aside
+   rather than fatal. Landing it sooner means shipping it with `TOA_TRAIL_REPEATS=0` — every request,
+   message and row carrying its chain, and a warning where the rule would have fired — which answers
+   "is anything here going round in circles" without refusing anything.
 3. **Cadence.** `Aspect.delay`, the detached option, and the missing `source`.
-4. **The default.** `TOA_TRAIL_REPEATS` to `3`, once messages are parked rather than fatal.
 
 ## Verification
 

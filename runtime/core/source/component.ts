@@ -1,6 +1,7 @@
 import { console, current, decode, run, type SpanOptions } from 'openspan'
 import { Connector } from './connector.js'
 import { EndpointException } from './exceptions.js'
+import * as trail from './trail.js'
 import type { Locator } from './locator.js'
 import type { Request } from './types/request.js'
 
@@ -19,6 +20,9 @@ export class Component<O extends Invocable = Invocable> extends Connector {
   /** span options per endpoint */
   readonly #spans: Record<string, SpanOptions> = {}
 
+  /** what refuses a call that has been here already, as the environment states it */
+  readonly #limits = trail.limits()
+
   public constructor(locator: Locator, operations: Record<string, O>) {
     super()
 
@@ -34,7 +38,37 @@ export class Component<O extends Invocable = Invocable> extends Connector {
 
     // if the request carries no telemetry, the trace starts here
     const remote = request?.telemetry === undefined ? null : decode(request.telemetry)
-    const task = async (): Promise<any> => this.#process(endpoint, request)
+
+    const invocation = async (): Promise<any> => this.#process(endpoint, request)
+
+    let task = invocation
+
+    /*
+     * The hop is the server's alone. A `Remote` is a component too and names the very endpoint
+     * this one does, so counting it there as well would make the threshold depend on how many
+     * clients a call happened to cross — a different number for a local call, an HTTP one and a
+     * delayed one. An endpoint beginning with `.` is the runtime's own and is no hop at all.
+     */
+    if (this.kind === 'server' && endpoint[0] !== '.') {
+      let hops: string[]
+
+      try {
+        // the span's name is the hop's, and it is already built once per endpoint
+        hops = trail.extend(request?.trail, this.#span(endpoint).name, this.#limits)
+      } catch (exception) {
+        console.error('Call chain refused', {
+          endpoint: `${this.locator.id}.${endpoint}`,
+          exception
+        })
+
+        // answered, not thrown: thrown, this would run into the broker library on the event
+        // path, and on the call path its code would survive only by `Exception` not being an
+        // `Error`. Answered, `Call` throws it into the caller as it does any other.
+        return { exception } as T
+      }
+
+      task = async (): Promise<any> => trail.follow(hops, invocation)
+    }
 
     if (remote === null) return task()
     else return run(remote, task)

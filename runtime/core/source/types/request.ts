@@ -34,6 +34,11 @@ export interface Request<Input = any, Entity = any> {
   /** W3C traceparent */
   telemetry?: string
   source?: Source
+  /**
+   * The hops this call passed through, oldest first. Stamped by the framework; a call that has
+   * been where it is going already is refused rather than made. See `core/source/trail.ts`.
+   */
+  trail?: string[]
 }
 
 /**

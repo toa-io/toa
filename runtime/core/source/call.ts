@@ -1,6 +1,7 @@
 import { Readable } from 'node:stream'
 import { current, encode } from 'openspan'
 import { Connector } from './connector.js'
+import * as trail from './trail.js'
 import type { Transmission } from './transmission.js'
 import type { Request as Contract } from './contract/request.js'
 import type { Request, Source } from './types/request.js'
@@ -36,6 +37,14 @@ export class Call extends Connector {
 
     if (context !== undefined) request.telemetry = encode(context)
 
+    /*
+     * Assigned, never appended to: one request object is handed to several concurrent calls in
+     * more than one place, and appending there would put a hop on the caller's own array once
+     * per sibling. `??=` so that what a receiver has already put on the request wins, and so
+     * that a service with no chain in scope starts one under its own name.
+     */
+    request.trail ??= trail.current() ?? service(this.#source)
+
     const reply = await this.#transmitter.request(request)
 
     if (reply === null) return null
@@ -51,6 +60,11 @@ export class Call extends Connector {
   public explain(): any {
     return this.#contract.discovery
   }
+}
+
+/** Where a service calls from no invocation, the chain starts under the service's own name. */
+function service(source: Source | undefined): string[] | undefined {
+  return source !== undefined && 'service' in source ? [source.service] : undefined
 }
 
 // the remote error as a value: every property it carries, and nothing else enumerable
