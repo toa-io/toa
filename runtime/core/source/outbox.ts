@@ -294,7 +294,7 @@ export class Outbox extends Connector {
       )
 
       if (rows.length > 0) {
-        console.info('Outbox recovering unpublished rows', { count: rows.length })
+        console.debug('Outbox recovering unpublished rows', { count: rows.length })
 
         // every row is given its chance, at every destination it is still outstanding for;
         // what a broker refused stays outstanding there and comes back on a later cycle
