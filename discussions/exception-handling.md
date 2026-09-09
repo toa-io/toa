@@ -251,29 +251,30 @@ Core already declares every exception it raises deliberately, in the `codes` tab
 core meant, and it will mean the same thing on the next delivery; a failure it did not name is
 `SystemException` wrapping something arbitrary, which is exactly what may be gone in a minute.**
 
-So the default is transient, and being on the list is what makes an exception permanent:
+Every code answers, in a table beside the enumeration, and the type is what makes that true:
 
 ```ts
+const OUTCOME: Record<keyof typeof codes, 'permanent' | 'transient'> = {
+  System: 'transient',
+  Contract: 'permanent',
+  // ... every code, or it does not compile
+  Endpoint: 'permanent'
+}
+
 export function permanent(exception: unknown): boolean {
   const code = (exception as Exception | undefined)?.code
 
-  return code !== undefined && names[code] !== undefined && !TRANSIENT.has(code)
+  return code !== undefined && PERMANENT.has(code)
 }
-
-const TRANSIENT = new Set<number>([
-  codes.System, // and it is on this list: `System` is a named code, not the absence of one
-  codes.StateNotFound,
-  codes.StateConcurrency,
-  codes.Communication,
-  codes.Transmission
-])
 ```
 
-Two things the shape has to get right, both easy to lose. `System` is `0`, which is a code like any
-other — `names[0]` answers `'System'` — so "not named" does not exclude it and it has to be on the
-list explicitly, or every failure from below is called permanent. And the parameter is `unknown`,
-because a caller has caught something rather than been handed an `Exception`: `permanent(undefined)`
-has to answer, not throw.
+`Record<keyof typeof codes, …>` refuses to compile until a code added later says which it is, so
+the sentence above is enforced rather than hoped for. Two things that shape avoids, both of which
+an earlier draft of this note got wrong: nothing is decided by a code's *absence* from a list of
+exceptions, which put `System` — a code like any other, and the one that wraps everything core did
+not name — on the wrong side by omission; and the parameter is `unknown`, because a caller has
+caught something rather than been handed an `Exception`, so `permanent(undefined)` answers rather
+than throwing.
 
 The answer lives beside the enumeration, so a code added later cannot avoid the question.
 
@@ -300,9 +301,8 @@ The answer lives beside the enumeration, so a code added later cannot avoid the 
 | `401` Transmission        | every binding rejected — nothing is listening yet           | **transient**  |
 | `402` Endpoint            | the component provides no operation by that name           | permanent      |
 
-The rule holds for the whole contract family and most of the state family; five codes are the stated
-exceptions and are the `TRANSIENT` list above — the four below, and `System`, which is where
-everything core did not name arrives. `Endpoint` is the
+The rule holds for the whole contract family and most of the state family. Five codes answer
+`transient`: `System`, where everything core did not name arrives, and the four below. `Endpoint` is the
 newest code and the clearest illustration of why the answer sits beside the enumeration: it and
 `Transmission` are the same sentence about reaching an operation — nothing carried the call, and
 there is nothing to carry it to — and they fall on opposite sides.
