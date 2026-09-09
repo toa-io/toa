@@ -38,9 +38,14 @@ Given(
 
 Given(
   'the {component} convergence queue is empty',
-  /** @param {string} id */
+  /**
+   * The queue this suite consumes, which is durable and outlives the run: a scenario that
+   * fails leaves what it had not read yet, and the next one would assert on that.
+   *
+   * @param {string} id
+   */
   async function (id) {
-    await purge(`${CHANNEL}.${id}`)
+    await purge(`${CHANNEL}.test.${id}`)
   }
 )
 
