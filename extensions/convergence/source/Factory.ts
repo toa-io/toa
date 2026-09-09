@@ -1,3 +1,4 @@
+import { console } from 'openspan'
 import { environment } from '@toa.io/generic'
 import { resolve } from '@toa.io/pointer'
 import {
@@ -22,6 +23,14 @@ export class Factory implements extensions.Factory {
   /** one publisher for the process, however many components send through it */
   private outbound: Promise<bindings.Outbound> | undefined
 
+  /**
+   * What this extension was given, by component, until the storage of that component is made.
+   * What decorates a storage is every extension loaded in the process rather than the ones a
+   * manifest named, so this is what tells a component this extension converges from one it was
+   * never asked about — one that stores nothing, or one of another composition entirely.
+   */
+  private readonly destinations = new Map<string, Destination>()
+
   public constructor(host: extensions.Host) {
     this.host = host
   }
@@ -34,17 +43,39 @@ export class Factory implements extensions.Factory {
   ): Destination | undefined {
     if (!converging() || manifest.entity === undefined) return undefined
 
-    return new Destination(locator, async () => this.publisher())
+    const destination = new Destination(locator, async () => this.publisher())
+
+    this.destinations.set(locator.id, destination)
+
+    return destination
   }
 
-  /**
-   * In. Guarded, because what decorates a storage is every extension loaded in the process
-   * rather than the ones a manifest named: once anything here converges, this is asked about
-   * everything. Convergence is a property of a deployment, so what it is deployed with is what
-   * says whether there is any.
-   */
+  /** in, for the components this extension was given and no others */
   public storage(storage: storages.Storage, locator: Locator): storages.Storage {
-    if (!converging()) return storage
+    const destination = this.destinations.get(locator.id)
+
+    // the pairing is for the component being built, and one is built once: an extension is
+    // loaded once for the life of a process, and holding a component's id past its build
+    // would decorate the next one to carry that id
+    this.destinations.delete(locator.id)
+
+    if (destination === undefined || !converging()) return storage
+
+    /*
+     * A storage that cannot merge has nowhere to put what another region wrote, so this
+     * component does not converge — and the half that publishes stands down with it, because
+     * what it sent would reach a queue no region declares. Said out loud, because a component
+     * silently not converging is two regions differing with nothing to notice it.
+     */
+    if (storage.merges !== true) {
+      destination.disable()
+
+      console.warn('Component does not converge: its storage does not merge', {
+        component: locator.id
+      })
+
+      return storage
+    }
 
     return new Converging(storage, locator, async (sink) =>
       this.host.inbound(this.binding(), CHANNEL, this.uris(), locator.id, sink)

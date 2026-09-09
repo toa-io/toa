@@ -56,13 +56,6 @@ beforeEach(() => {
   subscribe = mock.fn(async () => inbound)
 })
 
-it('should refuse a storage that does not merge', async () => {
-  storage.merges = undefined
-
-  await assert.rejects(create().connect(), /which its storage does not do/)
-  assert.equal(subscribe.mock.callCount(), 0)
-})
-
 it('should refuse an outbox that is not durable', async () => {
   storage.outbox = undefined
 

@@ -56,9 +56,9 @@ for later, they are dropped, and `region0` logs each one as returned.
 So the queues are declared before the copy is taken, and they are what holds everything written
 from that moment on.
 
-Which queues those are — one per component of the context that converges, plus the two
-exchanges they hang off — is what `toa export convergence` answers, read from the context
-itself:
+Which queues those are — one per component of the context that converges, the application's own
+and the ones its extensions ship, plus the two exchanges they hang off — is what
+`toa export convergence` answers, read from the context itself:
 
 ```shell
 $ toa export convergence region1 \

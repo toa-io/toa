@@ -33,7 +33,13 @@ An environment that declares no `convergence` is not a region and converges noth
 same context still deploys to `staging` as one place.
 
 Nothing is declared in a manifest. A context that declares convergence converges **every
-component that stores anything**.
+component that stores anything** — its own, and the ones its extensions ship: identity is what
+holds users, their roles and the keys their tokens are read with, and a region without them is
+one where nobody registered elsewhere exists.
+
+**A storage that cannot merge does not converge, and says so at boot.** Nothing else about the
+component changes and nothing else is held back; it is one line in the log, because a component
+quietly not converging is two regions differing with nothing to notice it.
 
 `pointer` is a [pointer](/libraries/pointer), so a URL carries no credentials — they are
 deployed as secrets — and shards syntax works. It is flat: a URL or a list of them. A region has
@@ -109,6 +115,10 @@ differ with nothing to say so. Events degrade there; convergence refuses.
 **[Atomicity](/connectors/atomicity).** Without it the outbox pump recovers nothing, so a
 publication that fails is never retried and that change is lost for good. Nothing detects this,
 which is why it is written here rather than raised.
+
+**Which delayed calls a region makes is `cadence.regions`,** not something held back from
+convergence: every region holds every region's rows, and each makes the calls of the region it
+is. See [cadence](/extensions/cadence#regions).
 
 **The same components in every region.** A component deployed in one and not another has no
 queue there, so its records cannot be routed; publishing is `mandatory`, so what had nowhere to

@@ -18,6 +18,9 @@ export class Destination extends Connector implements outbox.Destination {
 
   private outbound!: bindings.Outbound
 
+  /** whether the storage under this component turned out to be one that cannot merge */
+  private disabled = false
+
   public constructor(locator: Locator, resolve: () => Promise<bindings.Outbound>) {
     super()
 
@@ -31,7 +34,18 @@ export class Destination extends Connector implements outbox.Destination {
     }
   }
 
+  /**
+   * Stands down: the half that receives found a storage that cannot merge, so this component
+   * does not converge, and publishing what no region will consume would be returns and
+   * nothing else. The row settles at once rather than staying outstanding for good.
+   */
+  public disable(): void {
+    this.disabled = true
+  }
+
   public async emit(event: outbox.Row['event']): Promise<void> {
+    if (this.disabled) return
+
     await console.span(this.span, async () => {
       const context = current()
 
@@ -49,6 +63,8 @@ export class Destination extends Connector implements outbox.Destination {
   }
 
   protected override async open(): Promise<void> {
+    if (this.disabled) return
+
     this.outbound = await this.resolve()
 
     await this.outbound.connect()
