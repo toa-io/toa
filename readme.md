@@ -14,7 +14,7 @@ Non-scattered documentation is coming some time later.
 - Interservice communications
   - Reliable RPC and Events ([ComQ](https://github.com/toa-io/comq))
   - Flow control
-  - Eventual consistency guarantee (not yet)
+  - Eventual consistency guarantee
   - Uniform interface
     - Input/query segregation
     - Successful rejections

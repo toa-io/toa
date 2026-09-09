@@ -1,4 +1,5 @@
 import { Locator } from '@toa.io/core'
+import { converge } from '../converge.js'
 import { component as load } from '../../component.js'
 import { definition } from '../../definition.js'
 
@@ -19,6 +20,9 @@ export const extensions = async (context) => {
   )
 
   components.push(...extracted)
+
+  // after the extraction, because what an extension ships converges like anything else
+  converge(context, components)
 
   for (const component of components) {
     if (component.extensions === undefined) continue

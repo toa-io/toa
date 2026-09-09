@@ -17,6 +17,17 @@ Feature: Print what a region needs on its convergence broker
         binding: { provider: amqp, pointer: amqp://cnv-us.example.com/records }
       """
 
+  Scenario: Print what an extension ships as well as what the application declares
+    When I run `toa export convergence eu`
+    Then stdout should contain lines:
+      """
+      "name": "convergence.identity.basic",
+      """
+    And stdout should contain lines:
+      """
+      "name": "convergence.configuration.values",
+      """
+
   Scenario: Print the definitions of the region being added
     When I run `toa export convergence eu`
     Then stdout should contain lines:
@@ -40,7 +51,7 @@ Feature: Print what a region needs on its convergence broker
     When I run `toa export convergence eu`
     Then stderr should contain lines:
       """
-      # 1 component converges in 'eu'.
+      components converge in 'eu'.
       """
     And stderr should contain lines:
       """

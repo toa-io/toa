@@ -38,4 +38,7 @@ export interface Options {
 export interface Annotation {
   /** seconds between passes over the calls waiting to be made */
   discreteness?: number
+
+  /** the ranks of the regions whose delayed calls this deployment makes; its own by default */
+  regions?: number[]
 }

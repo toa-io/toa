@@ -92,12 +92,6 @@ export class Converging extends Connector implements storages.Storage, bindings.
   }
 
   protected override async open(): Promise<void> {
-    if (this.storage.merges !== true)
-      throw new Error(
-        `Component '${this.locator.id}' converges, which its storage does not do. ` +
-          'A record written in another region has nowhere to land.'
-      )
-
     /*
      * Without a durable outbox a publication is lost where the process dies before it lands,
      * and a lost one here is two regions differing for good, with nothing that notices and
@@ -105,9 +99,7 @@ export class Converging extends Connector implements storages.Storage, bindings.
      */
     if (this.storage.outbox === undefined)
       throw new Error(
-        `Component '${this.locator.id}' converges, and its outbox is not durable. ` +
-          'MongoDB is not a replica set, so a change that fails to publish is lost rather ' +
-          'than recovered, and the regions would differ with nothing to say so.'
+        `Component '${this.locator.id}' converges, and its storage offers no outbox.`
       )
 
     const inbound = await this.subscribe(this)

@@ -4,7 +4,8 @@ import {
   BATCH,
   DISCRETENESS,
   LANES,
-  number
+  number,
+  regions
 } from '@toa.io/definitions/extensions.cadence'
 import type { Local } from './Local.js'
 import type { atomicity } from '@toa.io/core/types'
@@ -38,6 +39,13 @@ export class Dispatcher extends Connector {
   /** milliseconds between passes, and how far ahead each one reaches */
   private readonly discreteness: number
 
+  /**
+   * The ranks whose calls this deployment makes. Where an application converges, every region
+   * holds every region's rows, and a row is called by the one that asked for it — read once,
+   * because what a deployment is is not a thing that changes under it.
+   */
+  private readonly regions: number[]
+
   private timer?: NodeJS.Timeout
   private off?: () => void
   private scanning = false
@@ -57,6 +65,7 @@ export class Dispatcher extends Connector {
     this.resolve = resolve
     this.atom = atom
     this.discreteness = number('TOA_CADENCE_DISCRETENESS', DISCRETENESS * 1000)
+    this.regions = regions()
 
     this.depends(metronome)
     this.depends(atom)
@@ -169,9 +178,20 @@ export class Dispatcher extends Connector {
 
     const rows = (await this.metronome.invoke('enumerate', {
       query: {
-        // expiry is not a criterion: a row nobody reads is a row nobody settles, and it would
-        // stay live for good. It is read, and settled without the call being made
-        criteria: `lane=in=(${lanes.join(',')});due<${until}`,
+        /*
+         * Expiry is not a criterion: a row nobody reads is a row nobody settles, and it would
+         * stay live for good. It is read, and settled without the call being made.
+         *
+         * `REGION` is not in `index_due` and is not going into it: the scan asks for its lanes
+         * as a set, and a second set would be explored as the product of the two — past the
+         * hundred-odd scans MongoDB explodes before it gives up and sorts in memory, which is
+         * what that index exists to avoid. So it is read off the rows the index found, and a
+         * region pays for the rows of the others that fall in its window.
+         */
+        criteria:
+          `lane=in=(${lanes.join(',')});` +
+          `REGION=in=(${this.regions.join(',')});` +
+          `due<${until}`,
         sort: ['due:asc'],
         limit: BATCH
       }

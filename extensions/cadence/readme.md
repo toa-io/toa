@@ -194,9 +194,37 @@ may no longer be one it accepts. Either way the attempt is spent.
 # context.toa.yaml
 cadence:
   discreteness: 60 # seconds between passes over the calls waiting to be made
+  regions: [0] # the regions whose calls this deployment makes, by rank
 ```
 
 `discreteness` is how often the calls waiting to be made are looked over. It defaults to 60,
 which is what an application that states nothing gets. It sets how small an `overdue` is worth
 stating, and it is the floor under how closely a delayed call can be cancelled — see
 [Discreteness](#discreteness) — and lowering it costs a pass that runs more often.
+
+### Regions
+
+An application deployed as [several regions](/extensions/convergence) holds every region's
+delayed calls in every one of them, and each makes only its own: a row says which region asked
+for the call, and a deployment makes the calls of the region it is. So there is nothing to state
+for this to be right, and a single-region application never meets it.
+
+**`regions` is how a region that is gone is taken over.** Redeploy a surviving region naming the
+lost one's rank beside its own, and it makes both:
+
+```yaml
+cadence:
+  regions: [0, 1] # this region's calls, and those of the region that was 1
+```
+
+What it takes over it keeps: settling a call stamps the region that settled it, so the rows move
+across for good and the configuration can go back to naming one rank once they have.
+
+**Two regions naming one rank make every one of its calls twice**, and nothing detects it —
+the same hazard as two regions given one `priority`, and the same answer: the table is written
+once and deployed everywhere.
+
+**A cancellation crosses regions.** `cancel` is a write like any other, so it reaches the region
+that owns the call by convergence — bounded by the link, on top of the `discreteness` race that
+is there anyway.
+

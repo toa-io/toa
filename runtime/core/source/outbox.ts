@@ -52,6 +52,9 @@ export class Outbox extends Connector {
   #timer: NodeJS.Timeout | undefined
   #off: (() => void) | undefined
   #pumping = false
+
+  /** cycles in a row this replica has been assigned no lane */
+  #unassigned = 0
   #closing = false
 
   // eslint-disable-next-line max-params
@@ -268,6 +271,8 @@ export class Outbox extends Connector {
   }
 
   async #pump(): Promise<void> {
+    this.#assignment()
+
     let page: Row[]
     let after: string | undefined
 
@@ -289,7 +294,7 @@ export class Outbox extends Connector {
       )
 
       if (rows.length > 0) {
-        console.info('Outbox recovering unpublished rows', { count: rows.length })
+        console.debug('Outbox recovering unpublished rows', { count: rows.length })
 
         // every row is given its chance, at every destination it is still outstanding for;
         // what a broker refused stays outstanding there and comes back on a later cycle
@@ -300,6 +305,40 @@ export class Outbox extends Connector {
     } while (page.length === this.#batch)
 
     await this.#mark()
+  }
+
+  /**
+   * Says when this replica has owned nothing for long enough that nothing is going to assign
+   * it anything.
+   *
+   * Owning no lane is ordinary for a moment — a replica that has just started has not been
+   * told yet — and is why nothing here refuses at boot: one cycle of it cannot be told from an
+   * atomicity that is absent. Ten in a row can, and what it means is that this outbox recovers
+   * nothing: a publication that failed is never retried, and that change is lost with the
+   * process that failed to make it.
+   *
+   * Said every ten cycles rather than once, so that it is still there to be found in a log
+   * read long after the deployment that broke it, and once when it is over.
+   */
+  #assignment(): void {
+    const lanes = this.#atom.slots(LANES)
+
+    if (lanes !== null && lanes.length > 0) {
+      if (this.#unassigned >= UNASSIGNED)
+        console.info('Outbox lanes assigned, recovery resumed')
+
+      this.#unassigned = 0
+
+      return
+    }
+
+    this.#unassigned++
+
+    if (this.#unassigned % UNASSIGNED === 0)
+      console.warn('Outbox owns no lane and recovers nothing', {
+        cycles: this.#unassigned,
+        interval: this.#interval
+      })
   }
 
   /**
@@ -441,6 +480,13 @@ async function delay(ms: number): Promise<void> {
 export const LANES = 128
 
 /** one cycle reads, publishes and marks; in steady state it finds nothing to read */
+/**
+ * Cycles owning nothing before that is said out loud, and between one saying and the next.
+ * Long enough that a replica which has just started, or one whose assignment is being redrawn,
+ * says nothing at all.
+ */
+const UNASSIGNED = 10
+
 const INTERVAL = 5000
 
 /**

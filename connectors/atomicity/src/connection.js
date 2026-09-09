@@ -31,10 +31,7 @@ export class Connection extends Connector {
     const urls = resolve()
 
     if (urls.length === 0) {
-      console.warn(
-        'Atomicity is not configured, so nothing is owned and nothing is metered. ' +
-          'Set TOA_ATOMICITY_REDIS.'
-      )
+      console.warn('Atomicity is not configured. Set TOA_ATOMICITY_REDIS.')
 
       return
     }
@@ -59,7 +56,7 @@ export class Connection extends Connector {
     for (const client of this.#clients)
       // ioredis leaves `message` empty on a refused connection, where the code is the whole story
       client.on('error', (error) =>
-        console.warn('Atomicity is unreachable, so nothing is owned', {
+        console.warn('Atomicity is unreachable', {
           host: client.options.host,
           error: error.code ?? error.message
         })

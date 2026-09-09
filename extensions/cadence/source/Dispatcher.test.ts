@@ -106,6 +106,8 @@ afterEach(() => {
   mock.timers.reset()
   warn.mock.restore()
   delete process.env.TOA_CADENCE_DISCRETENESS
+  delete process.env.TOA_CADENCE_REGIONS
+  delete process.env.TOA_REGION
 })
 
 it('should read two intervals ahead, in the lanes it owns', async () => {
@@ -121,7 +123,7 @@ it('should read two intervals ahead, in the lanes it owns', async () => {
   // expired row is settled rather than left where nothing will ever read it again
   assert.strictEqual(
     first.criteria,
-    `lane=in=(${range(LANES).join(',')});due<${2 * INTERVAL}`
+    `lane=in=(${range(LANES).join(',')});REGION=in=(0);due<${2 * INTERVAL}`
   )
   assert.deepStrictEqual(first.sort, ['due:asc'])
 })
@@ -489,4 +491,28 @@ it('should not give up a row when the batch was filled', async () => {
   const called = target.invoke.mock.calls.map((call) => call.arguments[1].input.id)
 
   assert.deepStrictEqual(called, ['held'], 'the row it armed is still called')
+})
+
+it('should make the calls of the region it is deployed as, and no other', async () => {
+  process.env.TOA_REGION = '1'
+
+  const dispatcher = create()
+
+  await dispatcher.connect()
+  await advance(INTERVAL)
+
+  assert.match(reads()[0].criteria, /REGION=in=\(1\)/)
+})
+
+it('should make the calls of every region it is given', async () => {
+  // what a surviving region is redeployed with to take over the calls of one that is gone
+  process.env.TOA_CADENCE_REGIONS = '0 1'
+  process.env.TOA_REGION = '0'
+
+  const dispatcher = create()
+
+  await dispatcher.connect()
+  await advance(INTERVAL)
+
+  assert.match(reads()[0].criteria, /REGION=in=\(0,1\)/)
 })
