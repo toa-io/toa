@@ -57,7 +57,8 @@ Feature: OTP authentication
 
     # expiration
     Given OTP for `alice` in `nex` authority is issued
-    And after 1 second
+    # half a second past the lifetime, rather than exactly it: the margin was the round trip
+    And after 1.5 seconds
     When the following request is received:
       """
       GET /identity/ HTTP/1.1
