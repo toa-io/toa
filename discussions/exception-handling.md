@@ -194,13 +194,11 @@ line. The caller was told nothing either — `Transmission` answers `null` as so
 accepts the enqueue.
 
 Cadence's delayed calls go this way, and inherit it: what the operation does with a delayed call
-happens in the target's process and never comes back
-(`extensions/cadence/source/Dispatcher.ts:300`). Its own ordering is already right — the call goes
-out before the row is settled, and `called` is an in-memory set of attempts that a later scan
-writes through. What is deliberate there, and worth its own decision rather than a change made in
-passing, is that a *failed* dispatch settles the row too: a broker that briefly refuses the enqueue
-drops the delayed call, with one `Delayed call failed` line. The code says why — one attempt is
-what a dispatcher gives — but it is the same transient failure everything else here retries.
+happens in the target's process and never comes back. Its own ordering was already right — the
+call goes out before the row is settled — but a *failed* dispatch settled the row too, so a broker
+that briefly refused the enqueue dropped a call somebody had asked for. **Fixed**: a row is settled
+by its outcome now, and what failed on the way out is called again on the next scan, until the
+`overdue` its caller gave it. It was the first caller of the classification below.
 
 ### Duplicates
 
@@ -244,6 +242,9 @@ waiting for it.
 §5 is independent of it and can land first.
 
 ### 2. Classification
+
+*Landed, ahead of the rest: cadence needed it to tell a broker that was briefly away from a request
+a target will never accept.*
 
 Core already declares every exception it raises deliberately, in the `codes` table of
 `runtime/core/source/exceptions.ts`. That enumeration is the answer: **a failure core named is one
@@ -362,8 +363,8 @@ queues, which the broker reports, and the log. Failure text and levels to be agr
 
 ## Stages
 
-1. **The process.** §5 — guarantee 11 in part. Independent of everything else, so it goes first
-   rather than waiting.
+1. **The process, and what needs no broker.** §5, §2, and the delayed calls that were dropped on a
+   failed dispatch. Independent of everything else, so it goes first rather than waiting. *Done.*
 2. **comq.** The verdict a consumer answers with, and the topology behind it. Its own task, in its
    own repository, on its own schedule.
 3. **Stop the crash.** §1–§3 — guarantees 3–7. Needs stage 2 released.
