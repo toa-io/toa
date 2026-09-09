@@ -135,3 +135,32 @@ function resetCalls(target = [assert, fixtures], seen = new Set()) {
     if (typeof value === 'function' && value.mock !== undefined) value.mock.resetCalls()
     else resetCalls(value, seen)
 }
+
+describe('region', () => {
+  it('should stamp the region on a write', () => {
+    const entity = new Entity(fixtures.schema, BLANK)
+    const state = entity.get()
+
+    entity.set(state)
+
+    assert.strictEqual(entity.get().REGION, 0)
+  })
+
+  it('should keep the region a record came with until something writes over it', () => {
+    const record = { ...fixtures.state(), REGION: 2 }
+    const entity = new Entity(fixtures.schema, BLANK, record)
+
+    // read here, written elsewhere: the region says who wrote it, not where it is read
+    assert.strictEqual(entity.get().REGION, 2)
+  })
+
+  it('should take the region over when it writes', () => {
+    const record = { ...fixtures.state(), VERSION: 3, REGION: 2 }
+    const entity = new Entity(fixtures.schema, BLANK, record)
+
+    entity.set(entity.get())
+
+    assert.strictEqual(entity.get().REGION, 0)
+    assert.strictEqual(entity.get().VERSION, 4)
+  })
+})

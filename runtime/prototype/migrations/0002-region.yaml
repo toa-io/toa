@@ -1,0 +1,16 @@
+# 1.0.0-alpha.299 added `REGION`, the region that last wrote a record, as the rank that region
+# was declared with. A record written before it holds none, and this gives it the value it
+# would have been written with.
+#
+# `0` is the first region, which is the one an existing database is deployed as: its records
+# were written by whatever region it is now becoming, and that region is declared first.
+#
+# What reads `REGION` tolerates its absence, so this normalises the shape rather than making
+# the rule work. Both, because a record that reached a converging deployment without one — a
+# database restored from before this, a migrations record removed by hand — would otherwise
+# beat every equal-version write from anywhere, silently and for good.
+- update:
+    filter: { REGION: { $exists: false } }
+    update:
+      $set:
+        REGION: 0

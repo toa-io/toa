@@ -19,12 +19,17 @@ const create = async (manifest, locator) => {
 
   await boot.extensions.load(manifest)
 
-  // the storage is told whether there will be an outbox, so the events come first
+  // the storage is told whether there will be an outbox, so what it publishes to comes first:
+  // its own events, and whatever an extension adds
   const events = boot.events(manifest)
-  const storage = await boot.storage(manifest, events !== undefined)
+  const destinations = await boot.extensions.destinations(manifest)
+  const storage = await boot.storage(
+    manifest,
+    events !== undefined || destinations.length > 0
+  )
   const context = await boot.context(manifest)
   const emission = await boot.emission(events, locator, context)
-  const outbox = boot.outbox(manifest, storage, emission)
+  const outbox = boot.outbox(manifest, storage, emission, destinations)
 
   let state
 

@@ -5,10 +5,11 @@ import type { Query } from '@toa.io/core/types'
 
 export interface Entity {
   id: string
-  VERSION?: number
-  CREATED?: number
-  UPDATED?: number
-  DELETED?: number | null
+  VERSION: number
+  CREATED: number
+  UPDATED: number
+  DELETED: number | null
+  REGION: number
 }
 
 export interface Component {

@@ -11,5 +11,7 @@ export const host = () => ({
   broadcast: boot.bindings.broadcast,
   composition: boot.composition,
   receive: boot.receive,
-  atom: boot.atomicity
+  atom: boot.atomicity,
+  outbound: boot.bindings.outbound,
+  inbound: boot.bindings.inbound
 })

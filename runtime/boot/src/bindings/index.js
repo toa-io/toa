@@ -1,5 +1,7 @@
 export { broadcast } from './broadcast.js'
 export { consume } from './consume.js'
 export { emit } from './emit.js'
+export { inbound } from './inbound.js'
+export { outbound } from './outbound.js'
 export { produce } from './produce.js'
 export { receive } from './receive.js'

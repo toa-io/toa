@@ -1,0 +1,48 @@
+{
+  "vhosts": [
+    {
+      "name": "/"
+    }
+  ],
+  "users": [
+    {
+      "name": "developer",
+      "password": "secret",
+      "tags": [
+        "administrator"
+      ]
+    }
+  ],
+  "permissions": [
+    {
+      "user": "developer",
+      "vhost": "/",
+      "configure": ".*",
+      "write": ".*",
+      "read": ".*"
+    }
+  ],
+  "parameters": [
+    {
+      "vhost": "/",
+      "component": "federation-upstream",
+      "name": "us",
+      "value": {
+        "uri": "amqp://developer:secret@convergence-us:5672",
+        "exchange": "convergence.out",
+        "max-hops": 1
+      }
+    }
+  ],
+  "policies": [
+    {
+      "vhost": "/",
+      "name": "convergence",
+      "pattern": "^convergence\\.in$",
+      "apply-to": "exchanges",
+      "definition": {
+        "federation-upstream-set": "all"
+      }
+    }
+  ]
+}

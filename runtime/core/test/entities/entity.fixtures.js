@@ -15,7 +15,8 @@ export const state = () => ({
   CREATED: generate(),
   UPDATED: generate(),
   DELETED: generate(),
-  VERSION: 0
+  VERSION: 0,
+  REGION: 0
 })
 
 export const failed = () => ({

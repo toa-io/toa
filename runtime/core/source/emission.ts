@@ -3,6 +3,9 @@ import type { Event } from './event.js'
 import type { Event as StateEvent } from './types/state.js'
 
 export class Emission extends Connector {
+  /** what a row is outstanding for while this has not published it */
+  public readonly name = 'events'
+
   readonly #events: Event[]
 
   public constructor(events: Event[]) {

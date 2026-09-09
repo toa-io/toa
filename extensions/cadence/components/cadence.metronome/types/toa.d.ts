@@ -16,10 +16,11 @@ export interface Entity {
   /** The request to make, as it was handed over */
   request?: Record<string, unknown>
   id: string
-  VERSION?: number
-  CREATED?: number
-  UPDATED?: number
-  DELETED?: number | null
+  VERSION: number
+  CREATED: number
+  UPDATED: number
+  DELETED: number | null
+  REGION: number
 }
 
 export type DelayInput = {

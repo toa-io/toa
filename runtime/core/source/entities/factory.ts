@@ -1,4 +1,3 @@
-import { newid } from './newid.js'
 import { Entity } from './entity.js'
 import { EntitySet } from './set.js'
 import { Changeset } from './changeset.js'
@@ -26,8 +25,13 @@ export class Factory {
     this.#guards = guards
   }
 
+  /**
+   * What these values would make of a record, held to what a record must be. It starts from a
+   * blank rather than from the declared properties alone, because what is validated is the
+   * record and a record carries what the runtime writes into every one of them.
+   */
   public fit(values: object): void {
-    this.#schemas.entity.validate({ id: newid(), ...this.#blank, ...values }, 'Entity')
+    this.#schemas.entity.validate({ ...this.init().get(), ...values }, 'Entity')
   }
 
   public init(id?: string): Entity {

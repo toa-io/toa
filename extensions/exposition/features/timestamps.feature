@@ -37,5 +37,5 @@ Feature: Entity timestamp
       """
       200 OK
       last-modified: ${{ created }}
-      content-length: 145
+      content-length: 156
       """

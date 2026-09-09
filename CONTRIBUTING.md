@@ -34,6 +34,10 @@ what a Toa checkout binds is conventional: the whole of it sits in `31000`-`3109
 | `31010` | RabbitMQ                                      | `5672`         |
 | `31011` | RabbitMQ management                           | `15672`        |
 | `31012` | RabbitMQ, the second broker a scenario starts | —              |
+| `31013` | RabbitMQ, the `eu` convergence broker         | —              |
+| `31014` | its management                                | —              |
+| `31015` | RabbitMQ, the `us` convergence broker         | —              |
+| `31016` | its management                                | —              |
 | `31020` | MongoDB                                       | `27017`        |
 | `31021` | MongoDB, the standalone a scenario starts     | —              |
 | `31040` | Redis                                         | `6379`         |

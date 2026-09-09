@@ -1,16 +1,17 @@
 import { it, beforeEach, afterEach, mock } from 'node:test'
 import assert from 'node:assert/strict'
 
-import { Outbox } from '../source/outbox/index.js'
+import { Outbox } from '../source/outbox.js'
 
 let emission, storage, atom, outbox, listeners
 
 const BATCH = 4
 
 /** rows as the storage hands them back, ids ascending like the uuid v7 they are */
-const page = (from, count) =>
+const page = (from, count, outstanding = ['events']) =>
   Array.from({ length: count }, (_, i) => ({
     id: String(from + i).padStart(4, '0'),
+    outstanding,
     event: { state: {} }
   }))
 
@@ -18,7 +19,7 @@ beforeEach(() => {
   resetCalls()
   mock.timers.enable()
 
-  emission = { emit: mock.fn(async () => undefined), link: mock.fn() }
+  emission = { name: 'events', emit: mock.fn(async () => undefined), link: mock.fn() }
 
   storage = {
     link: mock.fn(),
@@ -42,7 +43,7 @@ beforeEach(() => {
     },
     link: mock.fn()
   }
-  outbox = new Outbox(emission, storage, atom, { interval: 1000, batch: BATCH })
+  outbox = new Outbox([emission], storage, atom, { interval: 1000, batch: BATCH })
 })
 
 afterEach(() => {
@@ -126,6 +127,7 @@ it('should mark what it published, once, after the last page', async () => {
 
   assert.strictEqual(storage.outbox.settle.mock.callCount(), 1)
   assert.strictEqual(storage.outbox.settle.mock.calls[0].arguments[0].length, BATCH + 2)
+  assert.deepStrictEqual(storage.outbox.settle.mock.calls[0].arguments[1], ['events'])
 })
 
 it('should not publish a row it has published and not yet marked', async () => {
@@ -200,3 +202,108 @@ it('should read the lanes it inherits when the group resizes', async () => {
 
   assert.strictEqual(storage.outbox.pending.mock.callCount(), before + 1)
 })
+
+it('should publish a row to every destination it is outstanding for', async () => {
+  const other = destination('convergence')
+
+  outbox = new Outbox([emission, other], storage, atom, { interval: 1000, batch: BATCH })
+
+  storage.outbox.pending.mock.mockImplementationOnce(
+    async () => page(0, 2, ['events', 'convergence']),
+    storage.outbox.pending.mock.callCount()
+  )
+
+  await outbox.open()
+  await cycle()
+
+  assert.strictEqual(emission.emit.mock.callCount(), 2)
+  assert.strictEqual(other.emit.mock.callCount(), 2)
+})
+
+it('should settle every destination of a row in one write', async () => {
+  const other = destination('convergence')
+
+  outbox = new Outbox([emission, other], storage, atom, { interval: 1000, batch: BATCH })
+
+  storage.outbox.pending.mock.mockImplementationOnce(
+    async () => page(0, 2, ['events', 'convergence']),
+    storage.outbox.pending.mock.callCount()
+  )
+
+  await outbox.open()
+  await cycle()
+
+  assert.strictEqual(storage.outbox.settle.mock.callCount(), 1)
+  assert.deepStrictEqual(storage.outbox.settle.mock.calls[0].arguments[1], [
+    'events',
+    'convergence'
+  ])
+})
+
+it('should settle the destination that landed when another refused', async () => {
+  const other = destination('convergence')
+
+  other.emit.mock.mockImplementation(async () => {
+    throw new Error('the far broker is out')
+  })
+
+  outbox = new Outbox([emission, other], storage, atom, { interval: 1000, batch: BATCH })
+
+  storage.outbox.pending.mock.mockImplementationOnce(
+    async () => page(0, 2, ['events', 'convergence']),
+    storage.outbox.pending.mock.callCount()
+  )
+
+  await outbox.open()
+  await cycle()
+
+  assert.strictEqual(storage.outbox.settle.mock.callCount(), 1)
+  assert.deepStrictEqual(storage.outbox.settle.mock.calls[0].arguments[1], ['events'])
+})
+
+it('should not republish a destination that has landed while another has not', async () => {
+  const other = destination('convergence')
+
+  other.emit.mock.mockImplementation(async () => {
+    throw new Error('the far broker is out')
+  })
+
+  outbox = new Outbox([emission, other], storage, atom, { interval: 1000, batch: BATCH })
+
+  // the row comes back because it is still outstanding for `convergence`
+  storage.outbox.pending.mock.mockImplementation(async () =>
+    storage.outbox.pending.mock.callCount() > 2 ? [] : page(0, 1, ['convergence'])
+  )
+
+  await outbox.open()
+  await cycle()
+  await cycle()
+
+  assert.strictEqual(emission.emit.mock.callCount(), 0)
+  assert.strictEqual(other.emit.mock.callCount(), 2)
+})
+
+it('should keep pumping while one destination never answers', async () => {
+  const stuck = destination('convergence')
+
+  stuck.emit.mock.mockImplementation(async () => new Promise(() => {}))
+
+  outbox = new Outbox([emission, stuck], storage, atom, { interval: 1000, batch: BATCH })
+
+  storage.outbox.pending.mock.mockImplementation(async () =>
+    storage.outbox.pending.mock.callCount() > 4 ? [] : page(0, 2, ['events', 'convergence'])
+  )
+
+  await outbox.open()
+  await cycle()
+  await cycle()
+
+  // the events landed and were settled, though nothing came back from the other
+  assert.ok(emission.emit.mock.callCount() >= 2)
+  assert.ok(storage.outbox.settle.mock.callCount() >= 1)
+  assert.deepStrictEqual(storage.outbox.settle.mock.calls[0].arguments[1], ['events'])
+})
+
+function destination (name) {
+  return { name, emit: mock.fn(async () => undefined), link: mock.fn() }
+}

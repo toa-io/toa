@@ -21,13 +21,21 @@ entity:
 anything is written to it — it need not be whole, but each value must fit the property it names,
 and it is read once, when the component boots.
 
-A record carries `CREATED`, `UPDATED`, `VERSION` and `DELETED` besides what is declared. None of
-the five may be named in `blank`, and none but `id` may be declared in `properties` — they are the
-runtime's to write, and a component that states one is refused:
+A record carries `CREATED`, `UPDATED`, `VERSION`, `DELETED` and `REGION` besides what is declared.
+None of the six may be named in `blank`, and none but `id` may be declared in `properties` — they
+are the runtime's to write, and a component that states one is refused:
 
 ```
 System property 'DELETED' cannot be overridden
 ```
+
+`REGION` is which region wrote the record, as the rank that region was declared with. An
+application deployed in one place has one region, so every record holds `0` and nothing reads it.
+Where a context declares more, it is what decides between two regions that wrote the same version
+of one record — see [convergence](/extensions/convergence).
+
+**The region an existing application is first deployed as is rank `0`.** Its records were written
+by whatever region it is now becoming, and that is what they are recorded as.
 
 ### Moments
 
