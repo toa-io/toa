@@ -125,8 +125,10 @@ carrying the exception is never read, the message is acknowledged, and the work 
 
 The producer half of the same story is finished and documented: a state change and the intent to
 publish commit together, the pump recovers what was not published, and the guarantee is written down
-— *nothing is dropped*. The consumer half contradicts it. `readme.md:17` still lists "Eventual
-consistency guarantee (**not yet**)"; this is that item.
+— *nothing is dropped*. The consumer half contradicts it, and the readme no longer hedges: `bcc91a8f9`
+struck "(not yet)" from the eventual consistency guarantee on the grounds that the outbox "was the
+last way for a committed change to be lost between a component and whatever consumes it". It is not
+the last one. The change is published, delivered, fails five times, and the broker deletes it.
 
 ## What happens today
 

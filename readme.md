@@ -17,8 +17,10 @@ Non-scattered documentation is coming some time later.
   - Eventual consistency guarantee
   - Uniform interface
     - Input/query segregation
-    - Successful rejections
-    - Distributed exception handling
+    - [Successful rejections](/documentation/exceptions.md): a refusal is an answer rather
+      than a failure
+    - [Distributed exception handling](/documentation/exceptions.md#where-nobody-is-waiting): a
+      failure reaches whoever is waiting, or is tried again and then kept
   - Transparent service discovery
   - Multi-protocol transmission
     - built-in support for AMQP and HTTP
