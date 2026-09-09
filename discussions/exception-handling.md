@@ -61,7 +61,7 @@ is readable at once.
 
 11. A failure is visible: what is parked accumulates where its depth can be watched, and every retry
     and every parking is in the log.
-12. A replica that is alive but no longer consuming is restarted.
+12. A replica that is alive but no longer consuming is noticed. *(open — see the changes, area 6)*
 
 ### What a component author does differently
 
@@ -95,22 +95,24 @@ Nothing, to keep working. What changes is what they can rely on:
    grows a verdict a consumer answers with; the runtime declares no queue and picks no delay. That
    change is a task of its own, and this one waits on the release that carries it.
 
-4. **Publish before settle.** Where the runtime hands work on and then settles what it came from, it
-   publishes first and settles second, so a crash in between duplicates rather than loses. Delayed
-   calls settle their row before dispatching today.
-
-5. **Idempotency.** A message carries the identity of the outbox row it came from, and a receiver's
+4. **Idempotency.** A message carries the identity of the outbox row it came from, and a receiver's
    state change records that identity in the same transaction as the entity, so a message delivered
    twice is written once. This is the second stage.
 
-6. **Process lifetime.** An unhandled rejection stops being the retry mechanism and becomes what it
+5. **Process lifetime.** An unhandled rejection stops being the retry mechanism and becomes what it
    should be — a last resort that shuts down in order, draining and flushing rather than exiting
    mid-way. Two places that leak a rejection today are closed.
 
-7. **Deployment.** A liveness probe, because once a process stops dying of its own accord, one that
-   is alive but has stopped consuming is nobody's problem.
+6. **Deployment — now a question, not a task.** A liveness probe was the answer to "a process that
+   is alive but has stopped consuming is nobody's problem". Two things undercut it: the wedge it was
+   for is the sealed channel, which comq stops doing, and the readiness endpoint it would point at
+   reports lifecycle only — it answers 200 for a process that has not consumed anything in an hour.
+   A probe that actually checks consumption is new machinery and a definition of "consuming" that
+   does not fire on a component with no receivers; a probe that checks a dependency is the standard
+   way to turn a broker blip into a fleet-wide restart. Decide it after the rest lands, with
+   evidence, rather than now.
 
-8. **Documentation.** A consumer-side page to set beside the outbox page: what a receiver may see,
+7. **Documentation.** A consumer-side page to set beside the outbox page: what a receiver may see,
    what it has to tolerate, where a parked message goes and how it is replayed.
 
 ## Context
@@ -191,8 +193,14 @@ reads and the message is acknowledged. A failed task is lost, with one `Failed t
 line. The caller was told nothing either — `Transmission` answers `null` as soon as the broker
 accepts the enqueue.
 
-Cadence's delayed calls go this way (`extensions/cadence/source/Dispatcher.ts:281`), and the row is
-settled *before* the call is made, so nothing survives to retry.
+Cadence's delayed calls go this way, and inherit it: what the operation does with a delayed call
+happens in the target's process and never comes back
+(`extensions/cadence/source/Dispatcher.ts:300`). Its own ordering is already right — the call goes
+out before the row is settled, and `called` is an in-memory set of attempts that a later scan
+writes through. What is deliberate there, and worth its own decision rather than a change made in
+passing, is that a *failed* dispatch settles the row too: a broker that briefly refuses the enqueue
+drops the delayed call, with one `Delayed call failed` line. The code says why — one attempt is
+what a dispatcher gives — but it is the same transient failure everything else here retries.
 
 ### Duplicates
 
@@ -233,7 +241,7 @@ The RPC processor beside it is untouched: there the exception *is* the reply, an
 waiting for it.
 
 **This waits on a comq release** — the verdict and the topology behind it are a task of comq's own.
-§6 is independent of it and can land first.
+§5 is independent of it and can land first.
 
 ### 2. Classification
 
@@ -303,13 +311,7 @@ attempts nor picks a delay — one policy in one place, and no second opinion ab
 What Toa does add is the reason, so a parked message can be read without guessing: the exception's
 code and message, the consumer that failed, and the time. Those travel as message headers.
 
-### 4. Publish before settle
-
-The rule the failure path follows holds wherever the runtime hands work on and then settles what it
-came from. Cadence settles its row before dispatching the call today; it should settle after the
-enqueue, so a crash duplicates a delayed call rather than losing it.
-
-### 5. Duplicates: the inbox
+### 4. Duplicates: the inbox
 
 The mirror of the outbox, and what makes retrying safe.
 
@@ -321,14 +323,16 @@ The mirror of the outbox, and what makes retrying safe.
 Bounded by a TTL, like the outbox's published rows. Where a storage has no transaction, or a message
 has no id (a foreign event), the receiver runs as it does now and the documentation says so.
 
-### 6. The process
+### 5. The process
 
 - `runtime/cli/src/program.js` keeps its `unhandledRejection` guard — a last resort now, not the
-  retry mechanism — but shuts down gracefully: disconnect, flush telemetry, exit 1.
+  retry mechanism — and leaves with its telemetry rather than without it. It flushes and exits 1;
+  it does not disconnect. A rejection nobody handled says the state is one nobody described, and
+  running a teardown through that is how a process stops exiting at all — where a flush is bounded
+  by the exporter's own request timeout and never rejects. What the messages need is durability,
+  which they have, not a drain.
 - `graceful.js` catches a failing `disconnect()` so shutdown reaches its exit.
 - `extensions/stash/source/Aspect.ts` returns its span.
-- A **liveness probe** in the chart; the readiness endpoint already exists
-  (`extensions/telemetry/source/Ready.ts`).
 
 ### Watching it
 
@@ -353,19 +357,17 @@ queues, which the broker reports, and the log. Failure text and levels to be agr
 - `runtime/core/source/outbox/outbox.ts`, `connectors/storages.mongodb` — the row id on the message;
   the inbox record and its transaction.
 - `runtime/cli/src/program.js`, `runtime/cli/src/handlers/lib/graceful.js`,
-  `extensions/stash/source/Aspect.ts`, `extensions/cadence/source/Dispatcher.ts` — the other places
-  the same rule is broken.
-- `operations/src/deployment/chart/templates/compositions.yaml` — the liveness probe.
+  `extensions/stash/source/Aspect.ts` — the other places the same rule is broken.
 - `documentation/` — a consumer-side counterpart to `outbox.md`, and the receiver page.
 
 ## Stages
 
-1. **The process.** §6 — guarantees 11 and 12 in part. Independent of everything else, so it goes
-   first rather than waiting.
+1. **The process.** §5 — guarantee 11 in part. Independent of everything else, so it goes first
+   rather than waiting.
 2. **comq.** The verdict a consumer answers with, and the topology behind it. Its own task, in its
    own repository, on its own schedule.
-3. **Stop the crash.** §1–§4 — guarantees 3–7. Needs stage 2 released.
-4. **Idempotency.** §5 — guarantee 10, its own change.
+3. **Stop the crash.** §1–§3 — guarantees 3–7. Needs stage 2 released.
+4. **Idempotency.** §4 — guarantee 10, its own change.
 
 The call path is left as it is.
 
