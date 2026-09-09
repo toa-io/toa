@@ -90,3 +90,44 @@ Feature: Convergence
     Then the `mongo.converging` database contains:
       | _id                              | foo | VERSION | REGION |
       | 72cf9b0ab0ac4ab2b8036e4e940ddcae | 0   | 3       | 0      |
+
+  Scenario: A component's own events are emitted as they were
+    Given the `mongo.receiver` event queues are empty
+    And the `mongo.one` convergence queue is empty
+    And the `mongo.receiver` convergence queue is empty
+    And the `mongo.one` database contains:
+      | _id                              | foo | bar   | VERSION | REGION |
+      | c1c4f6e6a4d64f5aa2a3f0a1c9b7d842 | 0   | hello | 1       | 0      |
+    And the `mongo.receiver` database contains:
+      | _id                              | count | VERSION | REGION |
+      | c1c4f6e6a4d64f5aa2a3f0a1c9b7d842 | 0     | 1       | 0      |
+    And the region "us" is consuming `mongo.one`
+    And the region "us" is consuming `mongo.receiver`
+    And I compose converging components:
+      | mongo.one      |
+      | mongo.receiver |
+    When I call `mongo.one.transit` with:
+      """yaml
+      input:
+        foo: 1
+      query:
+        id: c1c4f6e6a4d64f5aa2a3f0a1c9b7d842
+      """
+    Then the reply is received
+    And I wait 0.2 second
+    And I call `mongo.receiver.observe` with:
+      """yaml
+      query:
+        id: c1c4f6e6a4d64f5aa2a3f0a1c9b7d842
+      """
+    Then the reply is received:
+      """yaml
+      count: 1
+      """
+    And the region "us" is sent `mongo.one`:
+      """yaml
+      id: c1c4f6e6a4d64f5aa2a3f0a1c9b7d842
+      foo: 1
+      VERSION: 2
+      REGION: 0
+      """
