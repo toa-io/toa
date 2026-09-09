@@ -136,4 +136,8 @@ that region's rank. An incoming record wins where its version is greater, or whe
 is equal and the region that wrote it outranks the one that wrote what is stored. `priority` is
 read there and nowhere else.
 
+**`context.region` is that rank**, which is what a component reads to tell where it is running.
+It is zero where an application is deployed as one place, which is what such a deployment's
+records carry.
+
 An unmanaged operation reads the driver's own handle, and will see the field.

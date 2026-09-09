@@ -6,6 +6,7 @@ import * as shortcuts from './shortcuts/index.js'
 export class Context extends Connector {
   env
   name
+  region
   aspects
   operation
 
@@ -18,6 +19,7 @@ export class Context extends Connector {
     this.operation = operation
     this.env = context.env
     this.name = context.name
+    this.region = context.region
     this.#context = context
     this.#source = source(context.locator, operation)
 
