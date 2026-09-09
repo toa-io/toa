@@ -144,6 +144,25 @@ Credentials specified in the output file are preserved.
 </dd>
 </dl>
 
+### export convergence
+
+<dl>
+<dt><code>toa export convergence &lt;environment&gt;</code></dt>
+<dd>Print what the region's convergence broker must carry: an exchange pair and a durable queue
+per component the context converges. Declaring them is not this command's to do — a pointer
+carries no credentials, and the region being prepared has nothing deployed on it yet — so the
+output is piped into the broker's definitions import:
+
+<pre>$ toa export convergence eu | curl -u &lt;user&gt;:&lt;password&gt; \
+    -H 'content-type: application/json' -X POST --data @- \
+    http://&lt;broker&gt;:15672/api/definitions</pre>
+
+<code>--path</code> path to context (default <code>.</code>)<br/>
+<code>--format</code> <code>definitions</code> (default) or <code>commands</code>, which prints
+<code>rabbitmqadmin</code> invocations instead
+</dd>
+</dl>
+
 ### export image tags
 
 <dl>

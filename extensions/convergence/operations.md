@@ -43,8 +43,8 @@ $ rabbitmqctl set_policy convergence '^convergence\.in$' \
 And the mirror of it on `region0`'s, with an upstream named `region1` pointing at
 `amqp://cnv-region1.example.com`.
 
-`region0`'s link has nothing to pull yet and will log that it cannot reach what does not exist
-until `region1` is serving. That is expected.
+`region0`'s link has nothing to pull yet, and will log that what it federates from does not
+exist until step 3 declares it. That is expected.
 
 ## 3. Declare `region1`'s queues, before anything is copied
 
@@ -56,17 +56,22 @@ for later, they are dropped, and `region0` logs each one as returned.
 So the queues are declared before the copy is taken, and they are what holds everything written
 from that moment on.
 
-For every component that converges — every component of the context that stores anything — on
-`region1`'s convergence broker:
+Which queues those are — one per component of the context that converges, plus the two
+exchanges they hang off — is what `toa export convergence` answers, read from the context
+itself:
 
 ```shell
-$ rabbitmqadmin declare queue name=convergence.store.orders durable=true
-$ rabbitmqadmin declare binding source=convergence.in \
-    destination=convergence.store.orders routing_key=store.orders
+$ toa export convergence region1 \
+    | curl -u <user>:<password> -H 'content-type: application/json' \
+           -X POST --data @- http://<region1-broker>:15672/api/definitions
 ```
 
-`durable=true` and nothing else: the application asserts the same queue when it starts, and a
-queue that exists with other arguments makes that assertion fail.
+The import adds and removes nothing, so it is safe against a broker that already carries some of
+what it declares, and safe to run twice. Where the management API is out of reach,
+`--format=commands` prints `rabbitmqadmin` invocations to run instead.
+
+Nothing it declares is settable, and that is deliberate: the application asserts the same queues
+when it starts, and one that exists with other arguments makes that assertion fail.
 
 Check that the link picked them up. On `region0`'s broker there is now an internal queue per
 component, filling:
@@ -123,6 +128,25 @@ far side — a component deployed in one region and not the other.
 **A record of this region's own rank.** Reported as an error, and it means two regions were given
 one rank. Fix the declaration and redeploy; records already written with the wrong rank keep it
 until they are next written.
+
+## Adding a converging component
+
+A component added to a context that already runs in several regions has the same problem in
+miniature. It is deployed to one region before the others, and until a region has a queue bound
+for it, what the regions ahead write for that component is routed nowhere and dropped. There is
+no dump to cover it here, and nothing converges those records until something writes them again.
+
+So declare its queue on every region's broker first, from a checkout that has the component, and
+deploy after:
+
+```shell
+$ toa export convergence region0 | curl ... region0's broker
+$ toa export convergence region1 | curl ... region1's broker
+```
+
+The export names the same components whichever region it is asked for — a context converges the
+same set everywhere — and the import is additive, so a region that already carries the rest of
+its queues is left as it was.
 
 ## Removing a region
 
