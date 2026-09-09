@@ -1,0 +1,22 @@
+name: faulty
+namespace: mongo
+
+entity:
+  associated: true
+  properties:
+    count:
+      type: number
+    failing:
+      type: boolean
+  blank:
+    count: 0
+    failing: true
+
+operations:
+  increment:
+    concurrency: retry
+  mend:
+    concurrency: retry
+
+receivers:
+  mongo.one.sync: increment
