@@ -254,10 +254,26 @@ core meant, and it will mean the same thing on the next delivery; a failure it d
 So the default is transient, and being on the list is what makes an exception permanent:
 
 ```ts
-export function permanent(exception: Exception): boolean {
-  return exception.code in names && !TRANSIENT.has(exception.code)
+export function permanent(exception: unknown): boolean {
+  const code = (exception as Exception | undefined)?.code
+
+  return code !== undefined && names[code] !== undefined && !TRANSIENT.has(code)
 }
+
+const TRANSIENT = new Set<number>([
+  codes.System, // and it is on this list: `System` is a named code, not the absence of one
+  codes.StateNotFound,
+  codes.StateConcurrency,
+  codes.Communication,
+  codes.Transmission
+])
 ```
+
+Two things the shape has to get right, both easy to lose. `System` is `0`, which is a code like any
+other — `names[0]` answers `'System'` — so "not named" does not exclude it and it has to be on the
+list explicitly, or every failure from below is called permanent. And the parameter is `unknown`,
+because a caller has caught something rather than been handed an `Exception`: `permanent(undefined)`
+has to answer, not throw.
 
 The answer lives beside the enumeration, so a code added later cannot avoid the question.
 
@@ -284,8 +300,9 @@ The answer lives beside the enumeration, so a code added later cannot avoid the 
 | `401` Transmission        | every binding rejected — nothing is listening yet           | **transient**  |
 | `402` Endpoint            | the component provides no operation by that name           | permanent      |
 
-The rule holds for the whole contract family and most of the state family; four codes are the stated
-exceptions, and `TRANSIENT` is that list, short enough to defend line by line. `Endpoint` is the
+The rule holds for the whole contract family and most of the state family; five codes are the stated
+exceptions and are the `TRANSIENT` list above — the four below, and `System`, which is where
+everything core did not name arrives. `Endpoint` is the
 newest code and the clearest illustration of why the answer sits beside the enumeration: it and
 `Transmission` are the same sentence about reaching an operation — nothing carried the call, and
 there is nothing to carry it to — and they fall on opposite sides.
