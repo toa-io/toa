@@ -1,6 +1,6 @@
-import assert from 'node:assert'
 import { console, current, decode, run, type SpanOptions } from 'openspan'
 import { Connector } from './connector.js'
+import { EndpointException } from './exceptions.js'
 import type { Locator } from './locator.js'
 import type { Request } from './types/request.js'
 
@@ -30,8 +30,7 @@ export class Component<O extends Invocable = Invocable> extends Connector {
 
   public async invoke<T = any>(endpoint: string, request?: Request): Promise<T> {
     if (!(endpoint in this.operations))
-      // `assert.fail`, not `assert.ok`: the message is built only when it is needed
-      assert.fail(`Endpoint '${endpoint}' is not provided by '${this.locator.id}'`)
+      throw new EndpointException(`'${endpoint}' is not provided by '${this.locator.id}'`)
 
     // if the request carries no telemetry, the trace starts here
     const remote = request?.telemetry === undefined ? null : decode(request.telemetry)

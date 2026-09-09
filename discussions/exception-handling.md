@@ -282,9 +282,13 @@ The answer lives beside the enumeration, so a code added later cannot avoid the 
 | `306` Duplicate           | a unique index other than `_id` refused the write           | permanent      |
 | `400` Communication       | base of the family, never raised                            | **transient**  |
 | `401` Transmission        | every binding rejected — nothing is listening yet           | **transient**  |
+| `402` Endpoint            | the component provides no operation by that name           | permanent      |
 
 The rule holds for the whole contract family and most of the state family; four codes are the stated
-exceptions, and `TRANSIENT` is that list, short enough to defend line by line:
+exceptions, and `TRANSIENT` is that list, short enough to defend line by line. `Endpoint` is the
+newest code and the clearest illustration of why the answer sits beside the enumeration: it and
+`Transmission` are the same sentence about reaching an operation — nothing carried the call, and
+there is nothing to carry it to — and they fall on opposite sides.
 
 - ¹ **EntityGuard** — a guard reads the entity, and the entity can change, so a later attempt could
   pass. Called permanent because the guard refused *this* transition against state that already

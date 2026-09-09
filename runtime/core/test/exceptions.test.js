@@ -9,6 +9,7 @@ import {
   StateNotFoundException,
   StateConcurrencyException,
   TransmissionException,
+  EndpointException,
   DuplicateException,
   Exception
 } from '../source/exceptions.js'
@@ -25,6 +26,12 @@ it('should not call a failure it did not name permanent', () => {
 it('should call a request the contract refuses permanent', () => {
   assert.equal(permanent(new RequestContractException('input is required')), true)
   assert.equal(permanent(new DuplicateException()), true)
+})
+
+it('should tell an endpoint that is not there from a call nothing carried', () => {
+  // one is a fact about the component, the other a moment in a deployment
+  assert.equal(permanent(new EndpointException('no such thing')), true)
+  assert.equal(permanent(new TransmissionException('all rejected')), false)
 })
 
 it('should name the ones worth trying again', () => {

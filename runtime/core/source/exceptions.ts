@@ -21,7 +21,8 @@ export const codes = {
   Duplicate: 306,
 
   Communication: 400,
-  Transmission: 401
+  Transmission: 401,
+  Endpoint: 402
 }
 
 export class Exception {
@@ -134,6 +135,7 @@ export const StateInitializationException = derive('StateInitialization')
 export const DuplicateException = derive('Duplicate')
 export const CommunicationException = derive('Communication')
 export const TransmissionException = derive('Transmission')
+export const EndpointException = derive('Endpoint')
 
 export const names = swap(codes)
 // #endregion
@@ -169,4 +171,6 @@ const TRANSIENT = new Set<number>([
   codes.Communication,
   // nothing is listening on that queue yet — a deployment in progress, most of the time
   codes.Transmission
+  // `Endpoint` is its sibling and is not here: nothing carried the call is a moment,
+  // there is nothing to carry it to is a fact
 ])
