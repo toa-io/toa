@@ -174,11 +174,18 @@ sentence is the whole placement rule.
 survivor side: it holds the residents, the deadline, and every gate in the process.
 
 ```js
-const workload = new Workload(async () => { /* what the handler builds today */ })
+const workload = new Workload(async (workload) => {
+  const composition = workload.gate(async () => await boot.composition(paths, argv))
+  ...
+})
 
 graceful(workload)
 await workload.connect()
 ```
+
+The build runs once, and is handed the workload so that what it builds can say which parts of
+itself a halt takes. The residents connect before it and go after it, so the probe is answering
+while the build is still happening — which is what it is for.
 
 `compose.js` moves `boot.composition(paths, argv)` and `create(references)` into the closure;
 `serve.js` moves `create(paths)` and its empty-services check; `mono.js` moves `discover(paths)` and

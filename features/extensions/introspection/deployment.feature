@@ -22,6 +22,7 @@ Feature: Introspection deployment
           components:
             - introspection-nodes
             - introspection-edges
+            - introspection-signals
       """
 
   Scenario: Deploying database pointers of the explorer components
@@ -46,7 +47,7 @@ Feature: Introspection deployment
       compositions:
         - variables:
           - name: TOA_INTROSPECTION
-            value: '{"samples":false,"interval":300,"threshold":1024,"ui":true}'
+            value: '{"samples":false,"interval":300,"threshold":1024,"ui":true,"halt":false}'
       """
 
   Scenario: Enabling samples
@@ -61,7 +62,7 @@ Feature: Introspection deployment
       compositions:
         - variables:
           - name: TOA_INTROSPECTION
-            value: '{"samples":true,"interval":300,"threshold":1024,"ui":true}'
+            value: '{"samples":true,"interval":300,"threshold":1024,"ui":true,"halt":false}'
       """
 
   Scenario: Disabling introspection
