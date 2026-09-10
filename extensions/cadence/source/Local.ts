@@ -1,7 +1,7 @@
 import { Connector } from '@toa.io/core'
 import type { Host } from './Factory.js'
 import type { Locator, Remote } from '@toa.io/core'
-import type { Reply, Request } from '@toa.io/core/types'
+import type { Reply, Request, Source } from '@toa.io/core/types'
 
 /**
  * The component a tenant belongs to, as something to call.
@@ -29,7 +29,7 @@ export class Local extends Connector {
   }
 
   private async locate(): Promise<Remote> {
-    const remote = await this.host.remote(this.locator)
+    const remote = await this.host.remote(this.locator, SOURCE)
 
     this.depends(remote)
 
@@ -38,3 +38,6 @@ export class Local extends Connector {
     return remote
   }
 }
+
+// what a pulse and a delayed call are made by; without it they arrive unattributed
+const SOURCE: Source = { service: 'cadence' }

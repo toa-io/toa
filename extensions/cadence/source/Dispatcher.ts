@@ -8,7 +8,7 @@ import {
   regions
 } from '@toa.io/definitions/extensions.cadence'
 import type { Local } from './Local.js'
-import type { atomicity } from '@toa.io/core/types'
+import type { atomicity, Request } from '@toa.io/core/types'
 
 /**
  * Makes the calls that were put off.
@@ -282,6 +282,15 @@ export class Dispatcher extends Connector {
     const [namespace, name, endpoint] = row.endpoint.split('.')
     const local = this.target(new Locator(name, namespace))
 
+    const request: Request = { input: null, ...row.request, task: true }
+
+    /*
+     * Set after the stored request is spread, so a stored field of that name cannot stand in
+     * for it: the row's chain is the one that was in scope when the call was asked for. Absent
+     * — the caller detached the call — `Call` starts one under cadence's own name.
+     */
+    if (row.trail !== undefined) request.trail = row.trail
+
     /*
      * The call travels as a task, so what raises here is this side of it: a stored request the
      * target's contract no longer fits, an endpoint it no longer has, a broker that refused the
@@ -295,7 +304,7 @@ export class Dispatcher extends Connector {
      * the bound on trying is the `overdue` its caller gave it.
      */
     await local
-      .invoke(endpoint, { input: null, ...row.request, task: true })
+      .invoke(endpoint, request)
       .then(() => {
         this.called.add(row.id)
       })
@@ -359,6 +368,9 @@ interface Row {
 
   endpoint: string
   request?: object
+
+  /** the chain that asked for the call, which the call is made by */
+  trail?: string[]
 }
 
 /** intervals a scan may run for before it is a stuck pass rather than a slow one */

@@ -96,9 +96,42 @@ await context.delay.cancel(id)
 | ---------- | --------------------------------------------------------------------------- |
 | `interval` | milliseconds from now                                                       |
 | `overdue`  | milliseconds the call may be late and still be made, or `null` for no bound |
+| `detached` | whether the call begins a chain of its own; see below                       |
 
 The call is made once the delay has passed, and waits for the target where it is not there to
 take it. The id it answers cancels it, and `cancel` raises where the id was never issued.
+
+### A delay is a hop
+
+The call is made by the chain that asked for it, so an operation that delays a call to itself is
+going round in a circle and is refused on its third round — see
+[call cycles](/documentation/cycles.md). A delay makes it a slow circle rather than not one.
+
+Nothing here repeats a call: a delayed call is made **once**, and `detached` does not change
+that. What repeats is an operation that re-arms itself, and `detached: true` is how that
+operation says the call it is arming begins a chain of its own rather than continuing the one it
+is running in:
+
+```javascript
+// billing.dunning.chase — arms the next chase as it finishes this one
+export async function effect (input, context) {
+  await chase(input.invoice)
+
+  await context.delay(
+    'billing.dunning.chase',
+    { input },
+    { interval: DAY, overdue: null, detached: true }
+  )
+}
+```
+
+Without it the second chase is hop two of one chain and the third is refused. With it each chase
+is its own chain, and they go on for as long as the operation keeps arming them.
+
+A [pulse](#pulse) is the other way to write recurring work, and where it fits it is the simpler
+one: one timer for the component rather than a row per item, and no chain to detach, because it
+is called from the clock. Reach for a delay instead when each item has its own schedule — this
+invoice a day from now, that one in a week.
 
 Nothing is declared for it beyond naming the extension. A component that only delays calls says
 so with an empty declaration:
