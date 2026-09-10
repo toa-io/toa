@@ -11,6 +11,7 @@ import { ClientError, Exception } from './exceptions.js'
 import { Context } from './Context.js'
 import { Probe } from './Probe.js'
 import { PORT, PROBE } from '@toa.io/definitions/extensions.exposition'
+import type { Gate } from '@toa.io/core'
 import type { IncomingMessage, Protocol, ServerResponse } from './types.js'
 import type {
   Bouncer,
@@ -35,6 +36,13 @@ export class Server extends Connector {
   private drained: (() => void) | null = null
 
   private readonly probe: Probe
+
+  /**
+   * The gate that holds the gateway, where there is one. While it is down the port stays
+   * bound and every request is answered `503`: a client is owed an answer, and a closed port
+   * is not one — nor is one that whatever fronts the deployment invents on its behalf.
+   */
+  private gate?: Gate
 
   private process?: Processor
 
@@ -64,6 +72,11 @@ export class Server extends Connector {
 
   public attach(process: Processor): void {
     this.process = process
+  }
+
+  /** What a halt takes the gateway down by, so that this can say when it is back. */
+  public gated(gate: Gate): void {
+    this.gate = gate
   }
 
   protected override async open(): Promise<void> {
@@ -175,6 +188,18 @@ export class Server extends Connector {
 
       if (!response.writableEnded) response.destroy()
     })
+
+    // answered before anything is parsed: a halted gateway does no work, it only says so
+    if (this.gate !== undefined && !this.gate.holding()) {
+      response
+        .writeHead(503, {
+          'retry-after': this.gate.remaining().toString(),
+          'cache-control': 'no-store'
+        })
+        .end()
+
+      return
+    }
 
     // no listener on `request.socket`: under HTTP/2 it is the session's socket, shared by
     // every concurrent stream, and removing listeners on it would strip the siblings'

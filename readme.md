@@ -72,6 +72,8 @@ Non-scattered documentation is coming some time later.
   - Structured logs
   - Distributed tracing
 - [Introspection](/extensions/introspection): product topology collection and visualization
+  - [Halt](/documentation/halt.md): every process stops, holds nothing open, and comes back on its
+    own when the interval it was given is over
 - [Realtime events](/extensions/realtime)
 - [BLOB storage](/extensions/storages)
   - MIME type detection and validation

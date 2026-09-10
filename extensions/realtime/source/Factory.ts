@@ -1,4 +1,4 @@
-import { type Component, Locator } from '@toa.io/core'
+import { type Component, type Connector, Locator } from '@toa.io/core'
 import type { extensions } from '@toa.io/core/types'
 import { Realtime } from './Realtime.js'
 import { Composition } from './Composition.js'
@@ -11,15 +11,18 @@ export class Factory implements extensions.Factory {
     this.host = host
   }
 
-  public service(): Realtime {
-    const routes = new Routes(this.host)
-    const composition = new Composition(this.host)
-    const realtime = new Realtime(routes, async () => await this.discovery())
+  // a halt takes the whole of it: a stream it would keep open has nothing to carry
+  public service(): Connector {
+    return this.host.gate(async () => {
+      const routes = new Routes(this.host)
+      const composition = new Composition(this.host)
+      const realtime = new Realtime(routes, async () => await this.discovery())
 
-    realtime.depends(routes)
-    realtime.depends(composition)
+      realtime.depends(routes)
+      realtime.depends(composition)
 
-    return realtime
+      return realtime
+    })
   }
 
   private async discovery(): Promise<Component> {

@@ -14,6 +14,11 @@ export type Annotation =
       threshold?: number
       /** Publish the UI. On by default. */
       ui?: boolean
+      /**
+       * Accept halt signals. Off by default: a stop button for the whole deployment,
+       * reachable over HTTP, is a thing an application asks for rather than inherits.
+       */
+      halt?: boolean
       resources?: Resources
     }
 
@@ -30,6 +35,7 @@ export interface Options {
   interval: number
   threshold: number
   ui: boolean
+  halt: boolean
 }
 
 /** The effective per-component decision. */
@@ -47,7 +53,8 @@ export function options(annotation?: Annotation): Options {
     samples: declaration.samples === true,
     interval: declaration.interval ?? DEFAULT_INTERVAL,
     threshold: declaration.threshold ?? DEFAULT_THRESHOLD,
-    ui: declaration.ui !== false
+    ui: declaration.ui !== false,
+    halt: declaration.halt === true
   }
 }
 

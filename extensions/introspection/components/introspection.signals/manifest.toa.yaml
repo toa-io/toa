@@ -1,0 +1,72 @@
+namespace: introspection
+name: signals
+
+# What an operator tells every process of the deployment at once. A signal is a record and
+# nothing more: creating one publishes the prototype's `created` event, which every process
+# is subscribed to, and carrying it out is theirs. Nothing here knows anyone is listening.
+#
+# The records stay, because they are how a halt is legible after the fact: `CREATED` says
+# when it was asked for and `seconds` how long it was for, so whether one is on is read off
+# the record and never has to be retracted — which matters, because the write that would
+# retract it is the one thing a halted deployment cannot do.
+
+entity:
+  properties:
+    type:
+      description: What the processes are being told to do
+      type: string
+      enum: [halt]
+    seconds:
+      description: How long every process stays disconnected before it builds itself again
+      type: integer
+      minimum: 30
+      maximum: 3600
+  required:
+    - type
+    - seconds
+
+operations:
+  # `query: false` is what makes this a new signal rather than a change to one, and the
+  # properties are the entity's own say on themselves, so the bounds are stated once
+  create:
+    description: Tell every process of this deployment to do something.
+    query: false
+    forward: transit
+    input:
+      type: object
+      properties:
+        type:
+          type: string
+          default: .
+        seconds:
+          type: string
+          default: .
+      required:
+        - type
+        - seconds
+  transit:
+    concurrency: retry
+    input:
+      type: object
+      properties:
+        type:
+          type: string
+          default: .
+        seconds:
+          type: string
+          default: .
+
+# the map must not describe itself
+introspection: false
+
+exposition:
+  isolated: true
+  /:
+    # not `system:introspection`: reading the map and stopping the product are not one
+    # authority, and the map's role is already held by whoever draws it
+    auth:role: system:halt
+    io:output: true
+    GET: enumerate
+    POST: create
+    /:id:
+      GET: observe

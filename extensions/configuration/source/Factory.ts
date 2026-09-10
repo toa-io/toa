@@ -20,8 +20,9 @@ export class Factory implements extensions.Factory {
     return new Aspect(locator, manifest, client)
   }
 
+  // nothing connects to this, so a halt takes the whole of it
   public service(): Connector {
-    return new Composition(this.host)
+    return this.host.gate(async () => new Composition(this.host))
   }
 
   private shared(): Client {

@@ -44,3 +44,18 @@ export const REDACTED = /^(password|secret|token|credentials?|key|authorization|
 
 /** Serialized size cap of a single sample. */
 export const SAMPLE_LIMIT = 4096
+
+/** The signals component, and the event a process halts on. */
+export const SIGNALS = 'signals'
+export const SIGNAL = `${NAMESPACE}.${SIGNALS}.created`
+
+/**
+ * How long a halt may be asked for.
+ *
+ * The floor is what a teardown costs — a gateway drains for ten seconds and the broker
+ * shuts down over about five — so below it a halt is mostly the halting. The ceiling is
+ * because a halted deployment looks well to everything watching it, so one that overran
+ * would be an outage with nothing reporting one.
+ */
+export const MIN_HALT = 30
+export const MAX_HALT = 3600
