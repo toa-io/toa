@@ -9,8 +9,6 @@ import { environment, timeout } from '@toa.io/generic'
  * contribute a resident are off. `TOA_INTROSPECTION` is unset, so introspection's is `null`.
  */
 environment.set('TOA_TELEMETRY_READY', 'false')
-environment.set('TOA_HALT_LEAD', '1')
-environment.set('TOA_HALT_BACKOFF', '1')
 
 let Workload
 

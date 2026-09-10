@@ -1,5 +1,6 @@
 import { setTimeout } from 'node:timers/promises'
 import { console } from 'openspan'
+import { testing } from '@toa.io/generic'
 import { Connector } from '@toa.io/core'
 import type { bindings } from '@toa.io/core/types'
 import * as http from './HTTP/index.js'
@@ -386,4 +387,4 @@ const SETTLE_QUIET_FACTOR = 2
 const SETTLE_TIMEOUT = 30_000
 const SETTLE_POLL = 50
 const KNOCK_DELAYS = [0, 500, 1000, 1500]
-const PING_COOLDOWN = 5_000
+const PING_COOLDOWN = testing('EXPOSITION_PING_COOLDOWN', 5_000)

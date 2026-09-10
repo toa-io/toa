@@ -1,5 +1,6 @@
 import { setTimeout } from 'node:timers/promises'
 import { Connector } from '@toa.io/core'
+import { testing } from '@toa.io/generic'
 import { BRANCH_TTL } from '@toa.io/definitions/extensions.exposition'
 import type { bindings } from '@toa.io/core/types'
 import type { Label } from './discovery.js'
@@ -66,8 +67,8 @@ function exposeInterval(uptime: number): number {
   )
 }
 
-const EXPOSE_MIN = 5_000
-const EXPOSE_MAX = Math.round(BRANCH_TTL / 2.1)
+const EXPOSE_MIN = testing('EXPOSITION_EXPOSE', 5_000)
+const EXPOSE_MAX = Math.max(EXPOSE_MIN, Math.round(BRANCH_TTL / 2.1))
 const EXPOSE_TAU = 900_000
 
 type Broadcast = bindings.Broadcast<Label>

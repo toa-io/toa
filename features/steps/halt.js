@@ -78,6 +78,33 @@ Then(
 )
 
 /**
+ * A delayed call is dispatched by a scan the metronome runs on its own period, which a halt
+ * takes down with everything else. What says it is scanning again is a row coming due and
+ * being called.
+ */
+Then(
+  'the {token} eventually marks {token}',
+  /**
+   * @param {string} id
+   * @param {string} note
+   * @this {toa.features.Context}
+   */
+  async function (id, note) {
+    const remote = await stage.remote(`default.${id}`)
+
+    try {
+      await until(async () => {
+        const reply = await remote.invoke('marks', {})
+
+        return ((reply?.output ?? reply) ?? []).includes(note)
+      }, `${id} never marked '${note}'`)
+    } finally {
+      await remote.disconnect()
+    }
+  }
+)
+
+/**
  * @param {() => Promise<boolean>} condition
  * @param {string} failure
  */

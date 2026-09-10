@@ -1,0 +1,14 @@
+name: callee
+namespace: halting
+
+operations:
+  echo:
+    input:
+      type: object
+      properties:
+        n:
+          type: number
+      required:
+        - n
+    output:
+      type: number

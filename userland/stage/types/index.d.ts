@@ -17,7 +17,8 @@ export function compose(paths: string[]): Promise<void>
 /** the same components as a process runs them: behind a gate, with the residents beside */
 export function workload(
   paths: string[],
-  options?: _composition.Options
+  options?: _composition.Options,
+  services?: string[]
 ): Promise<_boot.Workload>
 
 export function serve(ref: string): Promise<_core.Component>

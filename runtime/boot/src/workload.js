@@ -1,6 +1,4 @@
-import { setTimeout as delay } from 'node:timers/promises'
 import { console } from 'openspan'
-import { environment } from '@toa.io/generic'
 import { Connector, Gate } from '@toa.io/core'
 import { PREDEFINED } from '@toa.io/definitions'
 
@@ -70,9 +68,13 @@ export class Workload extends Connector {
   /**
    * Stops this process for `seconds`, then builds it again.
    *
-   * Returns at once and does the work on a timer: whoever calls this is a consumer callback
-   * more often than not, and the teardown seals the communication that callback is being
-   * awaited by. The lead is what lets a reply be written and a message acked first.
+   * Returns before anything closes, on the next tick rather than in the caller's own.
+   *
+   * Whoever asks for this is a consumer callback more often than not, and `comq`'s `close`
+   * waits for the outstanding message to be processed and acknowledged before it closes the
+   * connection — so a teardown awaited inside that callback would be waiting on the callback
+   * that is waiting on it. Letting the caller return first is the whole of what that needs;
+   * the draining is already comq's, and the rest is each connector's own `close`.
    *
    * @param {number} seconds
    */
@@ -81,8 +83,7 @@ export class Workload extends Connector {
 
     this.#halting = true
 
-    this.#timer = setTimeout(() => void this.#cycle(seconds), LEAD)
-    this.#timer.unref()
+    setImmediate(() => void this.#cycle(seconds))
   }
 
   async open() {
@@ -119,22 +120,40 @@ export class Workload extends Connector {
    * @param {number} seconds
    */
   async #cycle(seconds) {
-    this.#timer = null
+    /*
+     * The window is measured from here, and not from where the teardown ends.
+     *
+     * A teardown takes as long as what it drains, and what it drains can be a call to a
+     * component that has already halted — which under load is not a possibility but a
+     * certainty, because there is always one in flight. That call is answered when its
+     * callee is back, so a process that started counting afterwards would halt for a full
+     * window beginning where everyone else's ended. Counting from the signal instead means
+     * every process comes back at one instant however long its own teardown took, and one
+     * whose teardown outran the window comes back at once, with nothing left to wait.
+     */
+    const resumesAt = Date.now() + seconds * 1000
+
+    console.warn('Halting', { seconds })
 
     for (const resident of this.#residents) resident.halted?.(seconds)
 
     await this.#down(seconds)
 
+    const remaining = resumesAt - Date.now()
+
+    if (remaining <= 0) {
+      // said out loud: for as long as it took, this process was neither halted nor working
+      console.warn('Halted late, the teardown outran the window', {
+        seconds,
+        over: Math.round(-remaining / 1000)
+      })
+
+      return await this.#resume()
+    }
+
     console.warn('Halted', { seconds })
 
-    const window = seconds * 1000
-
-    // spread, so that a fleet does not arrive at the database and the broker in one moment
-    this.#timer = setTimeout(
-      () => void this.#resume(),
-      window + Math.random() * Math.min(window / 10, JITTER)
-    )
-
+    this.#timer = setTimeout(() => void this.#resume(), remaining)
     this.#timer.unref()
   }
 
@@ -147,43 +166,33 @@ export class Workload extends Connector {
     for (const gate of [...this.#gates].reverse()) await gate.down(seconds)
   }
 
+  /**
+   * Building again is building, and nothing about it is special: the same function of the same
+   * arguments, against the same infrastructure, as at boot. So it is tried once and not
+   * retried, and a failure ends the process the way a boot failure ends it. Anything else
+   * would be a second, weaker path to being up — one that could paper over a rebuild that does
+   * not work, which is precisely what there is to find out.
+   */
   async #resume() {
     this.#timer = null
 
-    for (let attempt = 1; attempt <= ATTEMPTS; attempt++) {
-      try {
-        for (const gate of this.#gates) await gate.up()
+    try {
+      for (const gate of this.#gates) await gate.up()
+    } catch (error) {
+      console.error('Resume failed', { message: error?.message })
 
-        this.#halting = false
+      await this.disconnect().catch((error) => {
+        console.error('Shutdown after a failed resume failed', { message: error?.message })
+      })
 
-        for (const resident of this.#residents) resident.resumed?.()
-
-        console.info('Resumed')
-
-        return
-      } catch (error) {
-        console.error('Resume failed', { attempt, error })
-
-        // what came up before the failure goes down again, so the next attempt is a build
-        await this.#down()
-
-        if (attempt < ATTEMPTS)
-          await delay(BACKOFF * 2 ** (attempt - 1), undefined, { ref: false })
-      }
+      process.exit(1)
     }
 
-    /*
-     * A process that stays up rebuilding for ever is what a halt is otherwise designed to
-     * avoid: it answers its probe, holds nothing, does nothing, and nobody is told. It leaves
-     * instead, the way a process that cannot boot leaves — the probe going down with it.
-     */
-    console.error('Resume failed, giving up', { attempts: ATTEMPTS })
+    this.#halting = false
 
-    await this.disconnect().catch((error) => {
-      console.error('Shutdown after a failed resume failed', { error })
-    })
+    for (const resident of this.#residents) resident.resumed?.()
 
-    process.exit(1)
+    console.info('Resumed')
   }
 }
 
@@ -215,28 +224,3 @@ async function residents(workload) {
   return residents
 }
 
-/**
- * What a halt waits before it begins.
- *
- * Whoever asks for one is a consumer callback, and the teardown seals the communication that
- * callback is being awaited by — so the reply is written and the message acked first. A suite
- * that would otherwise wait this out states its own.
- */
-const LEAD = number('TOA_HALT_LEAD', 2000)
-
-/** The most a rebuild is spread over. */
-const JITTER = 5000
-
-const ATTEMPTS = 3
-const BACKOFF = number('TOA_HALT_BACKOFF', 2000)
-
-/**
- * @param {string} variable
- * @param {number} fallback
- * @returns {number}
- */
-function number(variable, fallback) {
-  const value = Number(environment.get(variable))
-
-  return Number.isNaN(value) || value <= 0 ? fallback : value
-}

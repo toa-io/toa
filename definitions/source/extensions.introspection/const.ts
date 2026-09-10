@@ -1,4 +1,4 @@
-import { environment } from '@toa.io/generic'
+import { environment, testing } from '@toa.io/generic'
 
 export const ID = 'introspection'
 export const NAMESPACE = 'introspection'
@@ -28,7 +28,7 @@ export const DEFAULT_INTERVAL = 300
 export const DEFAULT_THRESHOLD = 1024
 
 /** How often a component re-announces its description, so that removed components fade out. */
-export const ANNOUNCE_INTERVAL = 1_800_000
+export const ANNOUNCE_INTERVAL = testing('INTROSPECTION_ANNOUNCE', 1_800_000)
 
 /**
  * `source` arrives over the wire, so the number of distinct edges a process

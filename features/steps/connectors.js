@@ -73,6 +73,23 @@ Given(
   }
 )
 
+Given(
+  'I run {token} service with components:',
+  /**
+   * A service staged apart is a process of its own, which is not the one being halted — so a
+   * service whose own clock is what a scenario is about is run inside this one.
+   *
+   * @param {string} service
+   * @param {import('@cucumber/cucumber').DataTable} data
+   * @this {toa.features.Context}
+   */
+  async function (service, data) {
+    const references = transpose(data.raw())[0]
+
+    this.workload = await stage.workload(references, {}, [service])
+  }
+)
+
 When(
   'the process is halted for {int} seconds',
   /**

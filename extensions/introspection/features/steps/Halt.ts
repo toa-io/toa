@@ -6,13 +6,9 @@ import tsflow from 'cucumber-tsflow'
 
 import * as boot from '@toa.io/boot'
 import { Locator } from '@toa.io/core'
-import { environment } from '@toa.io/generic'
 import type { Component, Connector } from '@toa.io/core'
 
 const { after, binding, given, then, when } = tsflow
-
-// what a halt is asked for the moment a signal lands, rather than two seconds later
-environment.set('TOA_HALT_LEAD', '100')
 
 /**
  * A halt is about a process, so this boots one — a `Workload`, the way `toa compose` does —

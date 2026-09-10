@@ -30,6 +30,9 @@ export const environment: {
   absorbEntries(record: Record<string, string>): void
 }
 
+/** an interval a suite may shorten with `TOA_TESTING_<name>`, and nothing else may */
+export function testing(name: string, fallback: number): number
+
 export function encode(input: any): string
 
 export function decode<T = any>(input: string): T

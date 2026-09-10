@@ -54,5 +54,6 @@ export class Stream extends Readable {
   }
 }
 
-const HEARTBEAT_INTERVAL = 16_000 // why?
+// long enough not to be traffic, short enough that a proxy does not call the stream idle
+const HEARTBEAT_INTERVAL = 16_000
 const objectMode = { objectMode: true }

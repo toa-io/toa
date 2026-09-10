@@ -1,0 +1,11 @@
+name: caller
+namespace: halting
+
+operations:
+  # three calls to another component, a second apart: whatever happens to that component
+  # between the first and the last, this one is in the middle of it
+  chain:
+    output:
+      type: array
+      items:
+        type: number
