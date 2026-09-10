@@ -249,7 +249,13 @@ export class Outbox extends Connector {
 
       published.add(row.id)
     } catch (error) {
-      console.warn('Outbox publication failed', { row: row.id, destination: name, error })
+      // the message, not the error: an `Error` has no enumerable own properties, so what
+      // reached the log was `{}` and a publication that keeps failing said nothing about why
+      console.warn('Outbox publication failed', {
+        row: row.id,
+        destination: name,
+        message: (error as Error)?.message
+      })
     } finally {
       inflight.delete(sending)
       publishing.delete(row.id)
