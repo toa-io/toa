@@ -63,10 +63,12 @@ not a circle, and a [pulse](/extensions/cadence#pulse) is how you write it — e
 its own chain.
 
 **A delay is a hop.** `context.delay` makes the call by the chain that asked for it, so an
-operation that delays a call to itself is a circle, and a slow circle is still one. Where the
-recurrence is meant, say so:
+operation that re-arms itself — delaying a call to its own endpoint — is a circle, and a slow
+circle is still one. A delayed call is made once either way; what says the next one is a fresh
+start rather than another lap is `detached`:
 
 ```javascript
+// in the operation that arms its own next run
 await context.delay(endpoint, request, { interval, overdue: null, detached: true })
 ```
 
