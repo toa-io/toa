@@ -59,6 +59,15 @@ export class Workload extends Connector {
   }
 
   /**
+   * Whether what a halt takes down is up. False from the moment a halt begins until the
+   * rebuild has landed, so whoever is watching one is watching the thing itself rather than
+   * a clock they set beside it.
+   */
+  running() {
+    return !this.#halting && this.#gates.every((gate) => gate.holding())
+  }
+
+  /**
    * Stops this process for `seconds`, then builds it again.
    *
    * Returns at once and does the work on a timer: whoever calls this is a consumer callback

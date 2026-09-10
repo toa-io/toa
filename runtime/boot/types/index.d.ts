@@ -41,4 +41,7 @@ export class Workload extends core.Connector {
 
   /** stops this process for `seconds`, then builds it again */
   halt(seconds: number): void
+
+  /** whether what a halt takes down is up */
+  running(): boolean
 }
