@@ -12,4 +12,7 @@ export const expand = (context) => {
   for (const composition of context.compositions ?? [])
     if (composition.services !== undefined)
       composition.services = composition.services.map(shortcuts.resolve)
+
+  if (context.evicted?.services !== undefined)
+    context.evicted.services = context.evicted.services.map(shortcuts.resolve)
 }

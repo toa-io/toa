@@ -7,6 +7,12 @@ interface Composition {
   services?: string[]
 }
 
+/** What a context does not deploy, whatever else names it. */
+export interface Evicted {
+  components?: string[]
+  services?: string[]
+}
+
 export interface Resources {
   cpu?: [string, string]
   memory?: [string, string]
@@ -34,6 +40,7 @@ export interface Declaration {
   runtime?: Runtime | string
   registry?: Registry | string
   compositions?: Composition[]
+  evicted?: Evicted
   mono?: Mono
   ingress?: Ingress
   annotations?: Record<string, object>

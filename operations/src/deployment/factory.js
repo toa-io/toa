@@ -23,6 +23,10 @@ export class Factory {
    *  @type {Map<string, string[]>} */
   #claims
 
+  /** what this context does not deploy, by package reference
+   *  @type {Set<string>} */
+  #evicted
+
   constructor(context, options = {}) {
     this.#context = context
     this.#mono = options.mono === true
@@ -36,6 +40,7 @@ export class Factory {
 
     this.#registry = new Registry(context.registry, imagesFactory, this.#process)
     this.#claims = claims(context)
+    this.#evicted = new Set(context.evicted?.services ?? [])
     this.#dependencies = this.#getDependencies()
     this.#compositions = []
 
@@ -119,8 +124,12 @@ export class Factory {
     // written, so its claim is the wildcard rather than a list
     const workload = this.#mono ? [MONO] : this.#claims.get(reference)
 
+    // an evicted service is deployed nowhere, so nothing is prepared for it: no image, and
+    // no Deployment, Service or Ingress downstream
+    const declared = this.#evicted.has(reference) ? undefined : dependency.services
+
     /** @type {toa.deployment.Service[]} */
-    const services = dependency.services?.map((service) =>
+    const services = declared?.map((service) =>
       workload === undefined
         ? this.#service(reference, service) // its own deployment, its own image
         : // named the way `Service` would name it, since it skips that wrapper

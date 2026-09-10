@@ -9,6 +9,12 @@ export const complete = (context) => {
 
   if (context.compositions === undefined) context.compositions = []
 
+  // a composition every component of which is evicted is not deployed, and the name it held
+  // is free again
+  context.compositions = context.compositions.filter(
+    (composition) => composition.components.length > 0
+  )
+
   for (const composition of context.compositions) {
     for (const component of composition.components) {
       composed.add(component.locator.id)

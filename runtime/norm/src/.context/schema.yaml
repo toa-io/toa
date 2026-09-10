@@ -78,6 +78,28 @@ properties:
         resources:
           $ref: '#/definitions/resources'
       required: [name, components]
+  evicted:
+    description: >
+      What this context does not deploy, even where a composition lists it. A component named
+      here is in no pod, and what only it declared — an extension, a storage, a binding — is
+      not deployed either. A service named here gets no Deployment, Service or Ingress, and
+      no composition runs it.
+    type: object
+    additionalProperties: false
+    minProperties: 1
+    properties:
+      components:
+        type: array
+        minItems: 1
+        items:
+          type: string
+          pattern: ^([a-zA-Z]+([_a-zA-Z0-9]*[a-zA-Z0-9]+)?)(\.([a-zA-Z]+([_a-zA-Z0-9]*[a-zA-Z0-9]+)?))$
+      services:
+        type: array
+        minItems: 1
+        items:
+          type: string
+          minLength: 1
   atomicity:
     description: >
       Where the replicas of a component decide together: who owns what, what they have spent
