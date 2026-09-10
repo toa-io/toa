@@ -66,7 +66,7 @@ export class Aspect extends Connector {
      * It rides the row rather than the request, because the request is the caller's and a call
      * that carries none must go on carrying none.
      */
-    const hops = options.detached === true ? undefined : trail.current()
+    const hops = options.detached === true ? undefined : trail.current()?.hops
 
     if (hops !== undefined) input.trail = hops
 

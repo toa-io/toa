@@ -35,7 +35,7 @@ export class Outbox extends Connector {
   readonly #batch: number
   readonly #defer: boolean
 
-/*
+  /*
    * Everything a destination is answerable for is held per destination, which is what keeps
    * one from delaying another: a dead one fills its own in-flight cap and the cycle stops
    * handing it rows, while the rest go on being published and settled.
@@ -114,7 +114,7 @@ export class Outbox extends Connector {
      * the pump that publishes the row may be another replica, an hour later. A row that had
      * no chain stores no field.
      */
-    const hops = trail.current()
+    const hops = trail.current()?.hops
 
     if (hops !== undefined) row.trail = hops
 
@@ -402,7 +402,8 @@ export class Outbox extends Connector {
    * failure this exists for.
    */
   async #mark(): Promise<void> {
-    for (const [destinations, ids] of this.#groups()) await this.#settle(destinations, ids)
+    for (const [destinations, ids] of this.#groups())
+      await this.#settle(destinations, ids)
   }
 
   /** @private */

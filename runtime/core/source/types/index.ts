@@ -11,4 +11,12 @@ export type { Event } from './state.js'
 export type { Message } from './message.js'
 export type { Receiver } from './receiver.js'
 export type { Call, Guard, Observation, Transition } from './operations.js'
-export type { Maybe, Query, Reply, RemoteError, Request, Source } from './request.js'
+export type {
+  Envelope,
+  Maybe,
+  Query,
+  Reply,
+  RemoteError,
+  Request,
+  Source
+} from './request.js'

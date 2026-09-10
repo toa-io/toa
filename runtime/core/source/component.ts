@@ -3,11 +3,11 @@ import { Connector } from './connector.js'
 import { EndpointException } from './exceptions.js'
 import * as trail from './trail.js'
 import type { Locator } from './locator.js'
-import type { Request } from './types/request.js'
+import type { Envelope, Request } from './types/request.js'
 
 /** What a component holds one of per endpoint: an operation, or the call that stands for it. */
 export interface Invocable extends Connector {
-  invoke: (request: Request) => Promise<any>
+  invoke: (request: Envelope) => Promise<any>
 }
 
 export class Component<O extends Invocable = Invocable> extends Connector {
@@ -67,7 +67,13 @@ export class Component<O extends Invocable = Invocable> extends Connector {
         return { exception } as T
       }
 
-      task = async (): Promise<any> => trail.follow(hops, invocation)
+      /*
+       * The identity is put in scope with the chain: an operation reaches neither, and the
+       * calls it makes derive their own from what it is serving.
+       */
+      const scope: trail.Invocation = { hops, id: request?.id, calls: new Map() }
+
+      task = async (): Promise<any> => trail.follow(scope, invocation)
     }
 
     if (remote === null) return task()
@@ -76,7 +82,7 @@ export class Component<O extends Invocable = Invocable> extends Connector {
 
   async #process(endpoint: string, request?: Request): Promise<any> {
     return console.span(this.#span(endpoint), async () => {
-      const reply = await this.operations[endpoint].invoke(request as Request)
+      const reply = await this.operations[endpoint].invoke(request as Envelope)
 
       if (reply?.exception !== undefined) {
         const span = current()

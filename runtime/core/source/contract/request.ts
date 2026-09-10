@@ -61,6 +61,14 @@ export class Request extends Contract {
     const schema: JSONSchema = {
       type: 'object',
       properties: {
+        /*
+         * Listed, and not required. `additionalProperties` already admits it, and a callee skips
+         * this contract altogether for an `authentic` request — which every request from a `Call`
+         * is — so requiring it would refuse nothing on the side where a missing identity matters,
+         * and would refuse every request built by hand on the side where it never is. An
+         * operation that declares `once` raises on a request without one instead.
+         */
+        id: { type: 'string' },
         authentic: { type: 'boolean' },
         task: { type: 'boolean' }
       },
@@ -124,7 +132,8 @@ function answers(definition: Definition, entity?: Entity): JSONSchema | undefine
     ...(entity.required === undefined ? {} : { required: entity.required })
   }
 
-  if (definition.scope === 'objects') return { type: 'array', items: object } as JSONSchema
+  if (definition.scope === 'objects')
+    return { type: 'array', items: object } as JSONSchema
 
   return definition.scope === 'object' || definition.scope === 'changeset'
     ? object

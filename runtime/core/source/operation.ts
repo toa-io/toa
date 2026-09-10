@@ -10,14 +10,14 @@ import type { Entity } from './entities/entity.js'
 import type { EntitySet } from './entities/set.js'
 import type { Changeset } from './entities/changeset.js'
 import type { scope as Scope } from './types/operations.js'
-import type { Query, Request } from './types/request.js'
+import type { Envelope, Query } from './types/request.js'
 
 /** What an operation acquires for the algorithm to run against. */
 export type Scoped = Entity | EntitySet | Changeset | Readable | null
 
 /** What one invocation carries from step to step. */
 export interface Store {
-  request: Request
+  request: Envelope
   scope?: Scoped
   state?: any
   reply?: any
@@ -72,7 +72,7 @@ export class Operation extends Connector {
     this.depends(cascade)
   }
 
-  public async invoke(request: Request): Promise<any> {
+  public async invoke(request: Envelope): Promise<any> {
     try {
       if (request.authentic !== true) this.#contracts.request.fit(request)
 
