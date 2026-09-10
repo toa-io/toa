@@ -394,9 +394,9 @@ queues, which the broker reports, and the log. Failure text and levels to be agr
 2. **Stop the crash.** §1–§3 — guarantees 3, 4, 6 and 7, on comq 0.18.0. *Done.*
 3. **The verdict.** Guarantee 5, on comq 0.19.0: one function that asks the classification and
    raises `Park` or the exception itself, called from both paths. *Done.*
-4. **Idempotency.** §4 — guarantee 10, its own change. Needs nothing from a broker.
-
-The call path is left as it is.
+4. **Idempotency.** §4 — guarantee 10, its own change. Needs nothing from a broker. Designed in
+   [the transactional inbox](/discussions/transactional-inbox.md), which carries it to the call path
+   as well, and makes guarantee 10 conditional on the operation declaring it.
 
 ## Verification
 
