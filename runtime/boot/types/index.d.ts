@@ -27,4 +27,18 @@ export async function receive<T = any>(
 
 type Receiver = { receive: (message: types.Message<T>) => void | Promise<void> }
 
-export function host(): types.extensions.Host
+export function host(workload?: Workload): types.extensions.Host
+
+/**
+ * A process, as a connector: what the command built, what the extensions keep in every
+ * process, and the gates a halt takes down and builds again.
+ */
+export class Workload extends core.Connector {
+  constructor(build: (workload: Workload) => Promise<core.Connector>)
+
+  /** a part of this tree a halt takes down and builds again */
+  gate(build: () => Promise<core.Connector>): core.Gate
+
+  /** stops this process for `seconds`, then builds it again */
+  halt(seconds: number): void
+}

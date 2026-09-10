@@ -5,9 +5,11 @@ import { Logs } from './Logs.js'
 import { Span } from './Span.js'
 import { Ready } from './Ready.js'
 import type { LogsOptions } from './Logs.js'
-import type { Connector, Locator } from '@toa.io/core'
+import type { Locator } from '@toa.io/core'
 import type { extensions } from '@toa.io/core/types'
 import type { TracesOptions } from 'openspan'
+
+type Resident = extensions.Resident
 
 export class Factory implements extensions.Factory {
   private readonly logsOptions: LogsOptions
@@ -43,23 +45,14 @@ export class Factory implements extensions.Factory {
     return [logs, span]
   }
 
-  public manage(composition: Connector): Connector {
-    if (this.ready === null) return composition
-
-    const ready = this.ready
-
-    // the composition manages the probe server lifecycle (listen on connect, close on disconnect)
-    composition.depends(ready)
-
-    const connect = composition.connect.bind(composition)
-
-    // readiness is a post-connect phase, not expressible as a dependency
-    composition.connect = async () => {
-      await connect()
-      await ready.complete()
-    }
-
-    return composition
+  /**
+   * The probe answers for the process, so it is the process it belongs to — not to whichever
+   * composition happens to be nearest, which in a service is the one nested inside it. It
+   * binds before the process is built and answers `503` until `complete()`, and a halt leaves
+   * it where it is: what a halt takes down is behind a gate, and this is not.
+   */
+  public resident(): Resident | null {
+    return this.ready
   }
 
   private createLogs(locator: Locator): extensions.Aspect {

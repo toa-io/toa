@@ -1,4 +1,5 @@
 import { find } from '@toa.io/generic'
+import { PREDEFINED } from '@toa.io/definitions'
 import { resolve } from '../shortcuts.js'
 import { definition } from '../definition.js'
 
@@ -27,10 +28,4 @@ export const extensions = async (manifest) => {
     // shortcut was used
     if (reference !== key) delete extensions[reference]
   }
-}
-
-const PREDEFINED = {
-  '@toa.io/extensions.telemetry': null,
-  '@toa.io/extensions.fetch': null,
-  '@toa.io/extensions.introspection': null
 }

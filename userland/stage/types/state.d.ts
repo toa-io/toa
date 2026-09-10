@@ -5,6 +5,7 @@ declare namespace toa.stage {
     reset: () => void
     components: _core.Component[]
     compositions: _core.Connector[]
+    workloads: _core.Connector[]
     services: _core.Connector[]
     remotes: _core.Component[]
   }

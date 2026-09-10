@@ -13,6 +13,12 @@ export function composition(
 
 export function compose(paths: string[]): Promise<void>
 
+/** the same components as a process runs them: behind a gate, with the residents beside */
+export function workload(
+  paths: string[],
+  options?: _composition.Options
+): Promise<_core.Connector>
+
 export function serve(ref: string): Promise<_core.Component>
 
 export function remote(id: string): Promise<_core.Component>

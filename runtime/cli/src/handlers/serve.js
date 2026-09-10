@@ -1,5 +1,6 @@
 import { console as output } from 'openspan'
 import { Connector } from '@toa.io/core'
+import * as boot from '@toa.io/boot'
 import { version } from '@toa.io/definitions'
 
 import { graceful } from './lib/graceful.js'
@@ -11,8 +12,10 @@ export const serve = async (argv) => {
 
   const paths = Array.isArray(argv.paths) ? argv.paths : [argv.paths]
 
-  const start = async () => {
-    const services = await create(paths)
+  // each service says for itself what a halt takes of it: the gateway keeps its port and
+  // answers 503, where a service nobody connects to goes down whole
+  const workload = new boot.Workload(async (workload) => {
+    const services = await create(paths, workload)
 
     // an extension that is off in this environment has nothing to run, and said so
     if (services.length === 0) {
@@ -24,12 +27,17 @@ export const serve = async (argv) => {
       )
     }
 
-    const connector = new Connector()
+    const root = new Connector()
 
-    connector.depends(services)
-    graceful(connector)
+    root.depends(services)
 
-    await connector.connect()
+    return root
+  })
+
+  const start = async () => {
+    graceful(workload)
+
+    await workload.connect()
   }
 
   // the trace of the startup

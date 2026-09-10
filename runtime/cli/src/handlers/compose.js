@@ -21,28 +21,31 @@ export async function compose(argv) {
   const paths = find(argv.paths)
   const references = services(argv)
 
-  let connector
+  // the composition is behind a gate, so a halt takes it down and builds it again from
+  // these same arguments; each service says for itself what a halt takes of it
+  const workload = new boot.Workload(async (workload) => {
+    const composition = workload.gate(async () => await boot.composition(paths, argv))
+
+    if (references.length === 0) return composition
+
+    const root = new Connector()
+
+    root.depends([composition, ...(await create(references, workload))])
+
+    return root
+  })
 
   const start = async () => {
-    const composition = await boot.composition(paths, argv)
+    graceful(workload)
 
-    if (references.length === 0) connector = composition
-    else {
-      connector = new Connector()
-
-      connector.depends([composition, ...(await create(references))])
-    }
-
-    graceful(connector)
-
-    await connector.connect()
+    await workload.connect()
   }
 
   // the trace of the startup
   if (environment.get('TOA_BOOT_TRACE') === '1') await output.span('toa compose', start)
   else await start()
 
-  if (argv.kill === true) await connector.disconnect()
+  if (argv.kill === true) await workload.disconnect()
 }
 
 /**

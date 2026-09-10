@@ -13,9 +13,10 @@ const require = createRequire(import.meta.url)
  * wait for the values service — so what a running service hosts is looked into as well.
  *
  * @param {string[]} paths
+ * @param {import('@toa.io/boot').Workload} workload
  * @return {Promise<import('@toa.io/core').Connector[]>}
  */
-export async function discover(paths) {
+export async function discover(paths, workload) {
   const references = new Set()
   const services = []
   const pending = [...paths]
@@ -34,7 +35,7 @@ export async function discover(paths) {
 
       if (typeof Factory?.prototype.service !== 'function') continue
 
-      const service = await new Factory(boot.host()).service()
+      const service = await new Factory(boot.host(workload)).service()
 
       // an extension that is off in this environment hosts nothing here either
       if (service === null) continue
@@ -54,9 +55,10 @@ export async function discover(paths) {
  * pods reach each other, rather than started here.
  *
  * @param {string[]} references
+ * @param {import('@toa.io/boot').Workload} workload
  * @return {Promise<import('@toa.io/core').Connector[]>}
  */
-export async function create(references) {
+export async function create(references, workload) {
   const services = []
 
   for (const reference of new Set(references.map(shortcuts.resolve))) {
@@ -65,7 +67,7 @@ export async function create(references) {
     if (typeof Factory?.prototype.service !== 'function')
       throw new Error(`Service is not implemented by '${reference}'`)
 
-    const service = await new Factory(boot.host()).service()
+    const service = await new Factory(boot.host(workload)).service()
 
     // an extension that is off in this environment has nothing to run here
     if (service === null) continue

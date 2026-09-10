@@ -16,20 +16,26 @@ export async function mono(argv) {
   console.log('Runtime', version)
 
   const paths = find(argv.paths)
-  const services = await discover(paths)
-  const composition = await boot.composition(paths, argv)
-  const connector = new Connector()
 
-  connector.depends([composition, ...services])
+  // inside the workload, so that the boot span covers it and a halt builds it again
+  const workload = new boot.Workload(async (workload) => {
+    const services = await discover(paths, workload)
+    const composition = workload.gate(async () => await boot.composition(paths, argv))
+    const root = new Connector()
+
+    root.depends([composition, ...services])
+
+    return root
+  })
 
   const start = async () => {
-    graceful(connector)
+    graceful(workload)
 
-    await connector.connect()
+    await workload.connect()
   }
 
   if (environment.get('TOA_BOOT_TRACE') === '1') await output.span('toa mono', start)
   else await start()
 
-  if (argv.kill === true) await connector.disconnect()
+  if (argv.kill === true) await workload.disconnect()
 }

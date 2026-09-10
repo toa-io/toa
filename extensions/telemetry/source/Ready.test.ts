@@ -55,3 +55,39 @@ it('should signal readiness when the probe port is taken', async () => {
   await first.disconnect()
   await second.disconnect()
 })
+
+// a port of this suite's own: the conventional one is what an application binds, and a
+// machine running one answers this probe with its own
+const PORT = 31091
+const PATH = '/.ready'
+
+it('should answer a halted process as well, and say for how long', async () => {
+  const ready = new Ready({ port: PORT, path: PATH })
+
+  await ready.connect()
+  await ready.complete()
+
+  const url = `http://127.0.0.1:${PORT}${PATH}`
+
+  let response = await fetch(url)
+
+  assert.equal(response.status, 200)
+  assert.equal(response.headers.get('x-toa-halted'), null)
+
+  // nothing must replace a halted process: it is well, it is only doing nothing
+  ready.halted(60)
+
+  response = await fetch(url)
+
+  assert.equal(response.status, 200)
+  assert.equal(response.headers.get('x-toa-halted'), '60')
+
+  ready.resumed()
+
+  response = await fetch(url)
+
+  assert.equal(response.status, 200)
+  assert.equal(response.headers.get('x-toa-halted'), null)
+
+  await ready.disconnect()
+})

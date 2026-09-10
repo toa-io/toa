@@ -1,5 +1,5 @@
 import assert from 'node:assert'
-import { When, Then } from '@cucumber/cucumber'
+import { Given, When, Then } from '@cucumber/cucumber'
 import { diff } from 'jest-diff'
 import { exceptions } from '@toa.io/core'
 import { transpose, match } from '@toa.io/generic'
@@ -43,6 +43,20 @@ When(
    */
   async function (reference) {
     await stage.composition([reference], {})
+  }
+)
+
+Given(
+  'I run {component} component',
+  /**
+   * The same components, as a process runs them. What belongs to the process rather than to
+   * the composition — the readiness probe — is there only this way.
+   *
+   * @param {string} reference
+   * @this {toa.features.Context}
+   */
+  async function (reference) {
+    await stage.workload([reference], {})
   }
 )
 
