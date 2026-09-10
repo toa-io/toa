@@ -292,6 +292,14 @@ export class Dispatcher extends Connector {
     if (row.trail !== undefined) request.trail = row.trail
 
     /*
+     * The row's id is what this delayed call is — it is what `delay` answered as the handle
+     * that cancels it — so a dispatch that is made twice is one call made twice rather than
+     * two. A stored `id` belongs to the call that asked for the delay, not to this one, which
+     * is why this is set after the spread as well.
+     */
+    request.id = row.id
+
+    /*
      * The call travels as a task, so what raises here is this side of it: a stored request the
      * target's contract no longer fits, an endpoint it no longer has, a broker that refused the
      * enqueue. What the operation itself does with it happens in the target's own process and

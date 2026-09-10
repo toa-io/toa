@@ -36,6 +36,15 @@ export class Client extends Connector {
   outbox
 
   /**
+   * The calls this component has made good on, absent unless it declares `once` anywhere.
+   * Created eagerly beside the entity collection, for the reason the outbox's is.
+   *
+   * @public
+   * @type {import('mongodb').Collection | undefined}
+   */
+  inbox
+
+  /**
    * Whether this deployment can run transactions at all. A standalone mongod cannot, and an
    * outbox without atomicity is worse than none, so the storage falls back to inline emission.
    *
@@ -78,15 +87,23 @@ export class Client extends Connector {
   publishes
 
   /**
+   * @private
+   * @type {boolean}
+   */
+  claims
+
+  /**
    * @param {Locator} locator
    * @param {boolean} [publishes] whether this component publishes anything
+   * @param {boolean} [claims] whether any of its operations declares `once`
    */
-  constructor(locator, publishes = false) {
+  constructor(locator, publishes = false, claims = false) {
     super()
 
     this.locator = locator
     this.name = locator.lowercase
     this.publishes = publishes
+    this.claims = claims
   }
 
   /**
@@ -114,6 +131,21 @@ export class Client extends Connector {
     this.db = db
     this.collection = await collection(db, this.name)
     this.transactional = await transactional(db)
+
+    /*
+     * The outbox may fall back and this may not: inline emission still delivers, where a call
+     * that is not recorded is a call that will be made twice, which is the opposite of what was
+     * asked for. So this refuses rather than warns.
+     */
+    if (this.claims) {
+      if (!this.transactional)
+        throw new Error(
+          `Component '${this.name}' declares 'once', which needs a MongoDB replica set ` +
+            'or a sharded cluster to commit a call with the entity it changed'
+        )
+
+      this.inbox = await collection(db, this.name + INBOX)
+    }
 
     if (!this.publishes) return
 
@@ -246,3 +278,4 @@ const OPTIONS = {
 
 const ALREADY_EXISTS = 48
 const OUTBOX = '_outbox'
+const INBOX = '_inbox'

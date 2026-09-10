@@ -50,6 +50,35 @@ Feature: Resource discovery
                   type: string
       """
 
+  Scenario: A method that is safe to retry says so
+    A client cannot tell from an answer that says nothing whether repeating a call it is
+    unsure about will charge twice. The operation declares `once`; the method states it.
+
+    Given the `pots` is running with the following manifest:
+      """yaml
+      exposition:
+        /:
+          GET: enumerate
+          POST: create
+          /:id:
+            PUT: transit
+      """
+    When the following request is received:
+      """
+      OPTIONS /.discovery HTTP/1.1
+      host: nex.toa.io
+      accept: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+
+      routes:
+        /pots/:id:
+          PUT:
+            once: true
+      """
+
   Scenario: A key is a request that can be made
     What each entry says is what `OPTIONS` on that key says, so a client reads the tree
     once and addresses any of it by the key it was given.

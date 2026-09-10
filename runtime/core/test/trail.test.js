@@ -28,13 +28,16 @@ describe('extend', () => {
   })
 
   it('should refuse the hop that repeats once too often', () => {
-    assert.throws(() => extend([hop, hop], hop), (exception) => {
-      assert.equal(exception.code, codes.Loop)
-      assert.deepEqual(exception.trail, [hop, hop, hop])
-      assert.match(exception.message, /is hop 3 of this chain/)
+    assert.throws(
+      () => extend([hop, hop], hop),
+      (exception) => {
+        assert.equal(exception.code, codes.Loop)
+        assert.deepEqual(exception.trail, [hop, hop, hop])
+        assert.match(exception.message, /is hop 3 of this chain/)
 
-      return true
-    })
+        return true
+      }
+    )
   })
 
   it('should count one hop only', () => {
@@ -47,12 +50,15 @@ describe('extend', () => {
     // 32 distinct hops is the cap, so the 33rd is one too many
     const hops = Array.from({ length: 32 }, (_, i) => `default.one.op${i}`)
 
-    assert.throws(() => extend(hops, hop), (exception) => {
-      assert.equal(exception.code, codes.Loop)
-      assert.match(exception.message, /33 hops deep/)
+    assert.throws(
+      () => extend(hops, hop),
+      (exception) => {
+        assert.equal(exception.code, codes.Loop)
+        assert.match(exception.message, /33 hops deep/)
 
-      return true
-    })
+        return true
+      }
+    )
   })
 
   it('should permit a chain at the depth', () => {
@@ -79,37 +85,47 @@ describe('what came off the wire', () => {
   it('should clip a chain a peer made long, rather than hold it', () => {
     const hops = Array.from({ length: 4096 }, () => 'default.one.op')
 
-    assert.throws(() => extend(hops, hop), (exception) => {
-      assert.equal(exception.code, codes.Loop)
+    assert.throws(
+      () => extend(hops, hop),
+      (exception) => {
+        assert.equal(exception.code, codes.Loop)
 
-      // one past the cap is enough to be refused; the rest is memory a message bought
-      assert.equal(exception.trail.length, 33)
+        // one past the cap is enough to be refused; the rest is memory a message bought
+        assert.equal(exception.trail.length, 33)
 
-      return true
-    })
+        return true
+      }
+    )
   })
 })
 
+/** as `Component.invoke` builds it */
+const invocation = (hops, id) => ({ hops, id, calls: new Map() })
+
 describe('the store', () => {
-  it('should carry the chain into what it runs', async () => {
+  it('should carry the invocation into what it runs', async () => {
     assert.equal(trail.current(), undefined)
 
     const hops = [hop]
 
-    await trail.follow(hops, async () => {
+    await trail.follow(invocation(hops, 'a1'), async () => {
       await Promise.resolve()
 
-      assert.deepEqual(trail.current(), hops)
+      assert.deepEqual(trail.current().hops, hops)
+      assert.equal(trail.current().id, 'a1')
     })
 
     assert.equal(trail.current(), undefined)
   })
 
-  it('should give siblings the chain they were entered with, not each other\'s', async () => {
-    await trail.follow(['a.b.c'], async () => {
+  it("should give siblings the chain they were entered with, not each other's", async () => {
+    await trail.follow(invocation(['a.b.c']), async () => {
       const seen = await Promise.all(
         ['d.e.f', 'g.h.i'].map(async (one) =>
-          trail.follow(extend(trail.current(), one), async () => trail.current())
+          trail.follow(
+            invocation(extend(trail.current().hops, one)),
+            async () => trail.current().hops
+          )
         )
       )
 
@@ -119,7 +135,35 @@ describe('the store', () => {
       ])
 
       // and the chain they were made from is untouched
-      assert.deepEqual(trail.current(), ['a.b.c'])
+      assert.deepEqual(trail.current().hops, ['a.b.c'])
     })
+  })
+
+  it('should carry an identity of none where the caller stamped none', async () => {
+    await trail.follow(invocation([hop]), async () => {
+      assert.equal(trail.current().id, undefined)
+    })
+  })
+})
+
+describe('ordinal', () => {
+  it('should count from zero, per endpoint', () => {
+    const one = invocation([hop], 'a1')
+
+    assert.equal(trail.ordinal(one, 'default.stock.reserve'), 0)
+    assert.equal(trail.ordinal(one, 'default.stock.reserve'), 1)
+    assert.equal(trail.ordinal(one, 'default.stock.reserve'), 2)
+
+    // a different endpoint is a different call, and counts on its own
+    assert.equal(trail.ordinal(one, 'default.billing.charge'), 0)
+  })
+
+  it('should count per invocation', () => {
+    const one = invocation([hop], 'a1')
+    const other = invocation([hop], 'a2')
+
+    trail.ordinal(one, 'default.stock.reserve')
+
+    assert.equal(trail.ordinal(other, 'default.stock.reserve'), 0)
   })
 })

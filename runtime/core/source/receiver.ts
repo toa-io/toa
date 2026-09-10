@@ -78,7 +78,7 @@ export class Receiver extends Connector {
      * request already has alone and shares the deserialized one by reference where it does
      * not — and validates neither.
      */
-    const { payload, telemetry, trail: inbound, ...extensions } = message
+    const { payload, telemetry, id, trail: inbound, ...extensions } = message
 
     if (this.#conditioned === true && (await this.#bridge?.condition(payload)) === false)
       return
@@ -89,6 +89,14 @@ export class Receiver extends Connector {
 
     // set after `add`, so that a message field can not spoof the origin
     if (this.#origin !== undefined) request.source = this.#origin
+
+    /*
+     * The message's identity is the request's. Not derived any further: a component declares at
+     * most one receiver per event, so two of its own cannot collide, and two components have
+     * collections of their own. A message from before this existed carries none, and the call
+     * this makes mints one — which is to say it is not deduplicated, as it is not today.
+     */
+    if (id !== undefined) request.id = id
 
     /*
      * The event is a hop of its own. What an operator rewires to break a cycle is the

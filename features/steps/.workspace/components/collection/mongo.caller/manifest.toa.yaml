@@ -1,0 +1,24 @@
+name: caller
+namespace: mongo
+
+entity:
+  storage: mongodb
+  properties:
+    foo:
+      type: integer
+  blank:
+    foo: 0
+
+operations:
+  # calls `mongo.once` on its way, so that a duplicate of this call is a duplicate of that one
+  relay:
+    scope: object
+    concurrency: retry
+    once: true
+    input:
+      properties:
+        foo:
+          type: integer
+        target:
+          type: string
+      type: object

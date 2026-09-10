@@ -1,3 +1,4 @@
+export { derive, newid } from './newid.js'
 export { Factory } from './factory.js'
 export { Entity } from './entity.js'
 export { EntitySet } from './set.js'

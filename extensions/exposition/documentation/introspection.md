@@ -31,6 +31,10 @@ Introspection properties:
 - `protected` reaching it takes a role — [`auth:role`](access.md#role)
 - `system` and that role is one of the `system` scope, which guards what an application runs
   on rather than what it serves
+- `once` making this call twice changes state once, because the operation it reaches declares
+  [`once`](/documentation/inbox.md). What it means for a client is that a retry it is unsure
+  about is safe to make, under an `idempotency-key` it repeats. Read off the operation and not
+  the route, so the same one mounted twice is as safe under either
 - `route` route parameters, including what `map:segments` names differently, each as
   [`help:route`](help.md) describes it
 - `query` the [query parameters](query.md#parameters) this resource declares, each as

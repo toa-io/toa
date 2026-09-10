@@ -2,6 +2,7 @@ import { Connector, exceptions } from '@toa.io/core'
 import { console } from 'openspan'
 import { translate } from './translate.js'
 import { codec } from './record.js'
+import { Inbox } from './inbox.js'
 import { Outbox } from './outbox.js'
 import { Migrations } from './migrations.js'
 import { ReturnDocument } from 'mongodb'
@@ -18,6 +19,13 @@ export class Storage extends Connector {
    * the deployment cannot run transactions
    */
   #outbox
+
+  /**
+   * @type {Inbox | undefined} absent unless the component declares `once` somewhere; a
+   * deployment that cannot commit one with the entity does not boot, so this is present
+   * wherever it was asked for
+   */
+  #inbox
 
   /** @type {Migrations | undefined} absent where the component declares no migrations */
   #migrations
@@ -60,6 +68,15 @@ export class Storage extends Connector {
     return this.#outbox
   }
 
+  get inbox() {
+    return this.#inbox
+  }
+
+  /** This storage can record a call, given a deployment that can commit one. */
+  get claims() {
+    return true
+  }
+
   /** This storage applies what a component's `migrations` directory declares. */
   get migrates() {
     return true
@@ -74,6 +91,7 @@ export class Storage extends Connector {
     this.#collection = this.#client.collection
 
     if (this.#client.outbox !== undefined) this.#outbox = new Outbox(this.#client.outbox)
+    if (this.#client.inbox !== undefined) this.#inbox = new Inbox(this.#client.inbox)
 
     this.#spans.clear()
 
@@ -88,6 +106,7 @@ export class Storage extends Connector {
     }
 
     await this.#outbox?.index()
+    await this.#inbox?.index()
   }
 
   async get(query) {
@@ -168,14 +187,37 @@ export class Storage extends Connector {
     return result !== null
   }
 
-  async store(entity, row = undefined, attempt = 0) {
+  async store(entity, row = undefined, call = undefined, attempt = 0) {
+    const writes = row !== undefined && this.#outbox !== undefined
+    const records = call !== undefined && this.#inbox !== undefined
+
+    let committed
+
     try {
-      if (row === undefined || this.#outbox === undefined) {
+      if (!writes && !records) {
         if (entity.VERSION === 1) return await this.add(entity)
         else return await this.set(entity)
       }
 
-      const committed = await this.#client.transaction(async (session) => {
+      committed = await this.#client.transaction(async (session) => {
+        /*
+         * First, so that a call already made pays for nothing else: the duplicate key is the
+         * whole mechanism, and it takes the entity write down with it. Caught here rather than
+         * around the transaction, because here is where which key refused it is known — the
+         * driver's message is the only other thing that says, and it is worded differently by
+         * DocumentDB.
+         */
+        if (records)
+          try {
+            await this.#inbox.insert(call, session)
+          } catch (error) {
+            if (error?.code !== ERR_DUPLICATE_KEY) throw error
+
+            await session.abortTransaction()
+
+            return MADE
+          }
+
         const ok =
           entity.VERSION === 1
             ? await this.add(entity, session)
@@ -189,20 +231,27 @@ export class Storage extends Connector {
           return false
         }
 
-        await this.#outbox.insert(row, session)
+        if (writes) await this.#outbox.insert(row, session)
 
         return true
       })
-
-      return committed === true
     } catch (error) {
       console.error('MongoDB error', error)
 
       const retry = await retriable(error, attempt)
 
-      if (retry) return await this.store(entity, row, attempt + 1)
+      if (retry) return await this.store(entity, row, call, attempt + 1)
       else return false
     }
+
+    /*
+     * Outside the catch: the call has been made and what it changed is changed, which is not a
+     * driver failure and not worth another attempt. Raised rather than answered `false`, which
+     * means a lost compare-and-swap and *is* worth one.
+     */
+    if (committed === MADE) throw new exceptions.DuplicateCallException(call.id)
+
+    return committed === true
   }
 
   async massStore(entities, rows = undefined, attempt = 0) {
@@ -306,7 +355,8 @@ export class Storage extends Connector {
     return result.upsertedCount === 1 || result.modifiedCount === 1
   }
 
-  async upsert(query, changeset, row = undefined) {
+  async upsert(query, changeset, row = undefined, call = undefined) {
+    const records = call !== undefined && this.#inbox !== undefined
     const { criteria, options } = translate(query, this.#dates)
 
     if (!('DELETED' in changeset) || changeset.DELETED === null) {
@@ -347,15 +397,40 @@ export class Storage extends Connector {
       // or not the row is going to be committed
       if (row !== undefined) row.event = { origin, state, ...row.event }
 
+      /*
+       * The reply is what a duplicate is answered with, and an assignment answers the post-image
+       * where its algorithm named nothing — which is this, computed here and nowhere else. Held
+       * to a copy: the driver may run this again, and the call is the caller's object.
+       */
+      if (records) {
+        const reply =
+          call.reply?.output === undefined ? { ...call.reply, output: state } : call.reply
+
+        try {
+          await this.#inbox.insert({ id: call.id, reply }, session)
+        } catch (error) {
+          if (error?.code !== ERR_DUPLICATE_KEY) throw error
+
+          await session.abortTransaction()
+
+          return MADE
+        }
+      }
+
       if (row !== undefined && this.#outbox !== undefined)
         await this.#outbox.insert(row, session)
 
       return state
     }
 
-    if (row === undefined || this.#outbox === undefined) return apply(undefined)
+    if ((row === undefined || this.#outbox === undefined) && !records)
+      return apply(undefined)
 
-    return this.#client.transaction(apply)
+    const result = await this.#client.transaction(apply)
+
+    if (result === MADE) throw new exceptions.DuplicateCallException(call.id)
+
+    return result
   }
 
   async ensure(query, properties, state, row = undefined) {
@@ -470,6 +545,9 @@ function toPipeline(criteria, options, sample) {
 const FIRST = 0
 
 const ERR_DUPLICATE_KEY = 11000
+
+/** what the transaction answers where the call it carries has already been made */
+const MADE = Symbol('made')
 
 async function retriable(error, attempt) {
   if (error.code === ERR_DUPLICATE_KEY) {

@@ -320,7 +320,8 @@ it('should call at the due time and not before', async () => {
   const [endpoint, request] = target.invoke.mock.calls[0].arguments
 
   assert.strictEqual(endpoint, 'transit')
-  assert.deepStrictEqual(request, { input: { id: 'a' }, task: true })
+  // the row's id is the delayed call's, so a dispatch made twice is one call made twice
+  assert.deepStrictEqual(request, { input: { id: 'a' }, task: true, id: 'a' })
 })
 
 it('should call one whose time has already passed at once', async () => {

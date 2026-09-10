@@ -165,7 +165,10 @@ function resetCalls(
     else resetCalls(value, seen)
 }
 
-/** The message carries the payload and a telemetry token generated per emission. */
+/**
+ * The message carries the payload, an identity derived from the row, and a telemetry token
+ * generated per emission.
+ */
 function assertEmitted(payload) {
   const emitted = fixtures.binding.emit.mock.calls
     .map((call) => call.arguments[0])
@@ -175,6 +178,7 @@ function assertEmitted(payload) {
 
   for (const message of emitted) {
     assert.strictEqual(typeof message.telemetry, 'string')
-    assert.deepStrictEqual(Object.keys(message).sort(), ['payload', 'telemetry'])
+    assert.strictEqual(typeof message.id, 'string')
+    assert.deepStrictEqual(Object.keys(message).sort(), ['id', 'payload', 'telemetry'])
   }
 }

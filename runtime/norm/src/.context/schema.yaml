@@ -129,6 +129,18 @@ properties:
           made it out has no expiry and is never reaped.
         type: integer
         minimum: 0
+  inbox:
+    type: object
+    additionalProperties: false
+    properties:
+      retention:
+        description: >
+          Seconds a call is remembered, which is the window a duplicate of it is caught in. Budget
+          it for how late a duplicate can arrive — a redelivery, the attempts the broker library
+          makes of a message, whatever a client retries on — rather than for how long the change
+          matters. Every call of an operation that declares `once` is a record for this long.
+        type: integer
+        minimum: 1
   events:
     description: >
       Events of this context that are consumed outside it. An event is otherwise published only

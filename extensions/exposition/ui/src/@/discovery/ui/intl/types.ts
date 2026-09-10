@@ -19,6 +19,7 @@ export type Dictionary = {
         json: string
         unset: string
         expand: string
+        once: string
         mcp: string
         selection: string
         search: string

@@ -112,9 +112,16 @@ function answered(verb: string, of: Method): string[] {
   return lines
 }
 
-/** What guards it, and whether a model may call it: the icons the page draws, as words. */
-function marks(of: Described & { mcp?: boolean }): string[] {
-  return of.mcp === true ? [guard(of), 'mcp'] : [guard(of)]
+/** What guards it, whether it is safe to retry, and whether a model may call it: the icons
+ * the page draws, as words and in the order it draws them. */
+function marks(of: Described & { once?: boolean, mcp?: boolean }): string[] {
+  const said: string[] = [guard(of)]
+
+  if (of.once === true) said.push('once')
+
+  if (of.mcp === true) said.push('mcp')
+
+  return said
 }
 
 function shaped(label: string, value: Schema): string[] {

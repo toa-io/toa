@@ -110,6 +110,9 @@ Feature: Configuration values
       """
 
   Scenario: Reading the configuration of an unknown component
+    The path is one the gateway serves, so what is missing is the configuration and not the
+    route: a null reply is `410`.
+
     When the following request is received:
       """
       GET /configuration/values/dummies.unknown/ HTTP/1.1
@@ -118,7 +121,7 @@ Feature: Configuration values
       """
     Then the following reply is sent:
       """
-      404 Not Found
+      410 Gone
       """
 
   Scenario: Creating configuration

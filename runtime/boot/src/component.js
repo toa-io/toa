@@ -25,7 +25,8 @@ const create = async (manifest, locator) => {
   const destinations = await boot.extensions.destinations(manifest)
   const storage = await boot.storage(
     manifest,
-    events !== undefined || destinations.length > 0
+    events !== undefined || destinations.length > 0,
+    boot.inbox(manifest)
   )
   const context = await boot.context(manifest)
   const emission = await boot.emission(events, locator, context)

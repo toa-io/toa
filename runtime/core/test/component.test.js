@@ -70,7 +70,11 @@ describe('The chain', () => {
       trail: ['exposition', '~default.billing.charged']
     })
 
-    assert.deepEqual(seen, ['exposition', '~default.billing.charged', 'default.orders.foo'])
+    assert.deepEqual(seen, [
+      'exposition',
+      '~default.billing.charged',
+      'default.orders.foo'
+    ])
   })
 
   it('should not be written back onto the request', async () => {
@@ -89,7 +93,7 @@ describe('The chain', () => {
     assert.equal(seen, undefined)
   })
 
-  it('should not be appended to by an endpoint of the runtime\'s own', async () => {
+  it("should not be appended to by an endpoint of the runtime's own", async () => {
     const operations = invocations()
     const component = new Component(locator, { ...operations, '.lookup': operations.foo })
 
@@ -109,11 +113,11 @@ describe('The chain', () => {
   })
 
   /** What the endpoint saw as its chain, or `undefined` where it was given none. */
-  async function chain (component, endpoint, request) {
+  async function chain(component, endpoint, request) {
     let seen
 
     component.operations[endpoint].invoke = () => {
-      seen = trail.current()
+      seen = trail.current()?.hops
 
       return null
     }
@@ -123,7 +127,7 @@ describe('The chain', () => {
     return seen
   }
 
-  function invocations () {
+  function invocations() {
     return {
       foo: { invoke: mock.fn(() => null), link: () => null }
     }

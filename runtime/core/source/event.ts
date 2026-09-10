@@ -1,5 +1,6 @@
 import { console, current, encode, type SpanOptions } from 'openspan'
 import { Connector } from './connector.js'
+import { derive } from './entities/newid.js'
 import type { Emitter } from './types/bindings.js'
 import type { Event as Bridge } from './types/bridges.js'
 import type { Message } from './types/message.js'
@@ -39,7 +40,14 @@ export class Event extends Connector {
       const payload =
         this.#subjective === true ? await this.#bridge?.payload(event) : event.state
 
-      const message: Message = { payload }
+      /*
+       * The row is committed once, so its id is what makes every publication of it one message:
+       * the immediate path, the pump that may run an hour later in another replica, and a
+       * redelivery of what either sent. Derived with the label rather than the row id itself,
+       * because one row is published as several events and a component may consume two of them —
+       * one identity across both would have the second refused as a duplicate of the first.
+       */
+      const message: Message = { payload, id: derive(row.id, this.#label) }
 
       // the chain the change was made by, so a receiver of this continues it rather than
       // starting one; read off the row, because the pump publishes off the operation's path
