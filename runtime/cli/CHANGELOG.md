@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.299](https://github.com/toa-io/toa/compare/v1.0.0-alpha.298...v1.0.0-alpha.299) (2026-09-10)
+
+### Bug Fixes
+
+* **cli:** a process on its way out keeps its telemetry ([eb33bd4](https://github.com/toa-io/toa/commit/eb33bd4fd6a1beabf2a2535cdd0901037a4587f7))
+
+### Features
+
+* **cli:** a region's broker topology is exported ([697ca6c](https://github.com/toa-io/toa/commit/697ca6ca08091a79a23c59ffe5ef5d9d462dbb8a))
+
+
 # [1.0.0-alpha.298](https://github.com/toa-io/toa/compare/v1.0.0-alpha.297...v1.0.0-alpha.298) (2026-09-08)
 
 **Note:** Version bump only for package @toa.io/cli

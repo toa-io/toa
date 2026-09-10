@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/extensions.introspection",
-  "version": "1.0.0-alpha.298",
+  "version": "1.0.0-alpha.299",
   "type": "module",
   "description": "Toa Introspection",
   "author": "temich <tema.gurtovoy@gmail.com>",
@@ -27,10 +27,10 @@
     "!**/.env*"
   ],
   "dependencies": {
-    "@toa.io/core": "1.0.0-alpha.293",
-    "@toa.io/definitions": "1.0.0-alpha.298",
+    "@toa.io/core": "1.0.0-alpha.299",
+    "@toa.io/definitions": "1.0.0-alpha.299",
     "@toa.io/generic": "1.0.0-alpha.292",
-    "@toa.io/schemas": "1.0.0-alpha.293",
+    "@toa.io/schemas": "1.0.0-alpha.299",
     "openspan": "1.0.0-alpha.293"
   },
   "scripts": {

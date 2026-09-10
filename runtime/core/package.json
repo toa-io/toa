@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/core",
-  "version": "1.0.0-alpha.293",
+  "version": "1.0.0-alpha.299",
   "type": "module",
   "description": "Toa Core",
   "author": "temich <tema.gurtovoy@gmail.com>",
@@ -41,7 +41,7 @@
   "dependencies": {
     "@rsql/parser": "1.6.0",
     "@toa.io/generic": "1.0.0-alpha.292",
-    "@toa.io/schemas": "1.0.0-alpha.293",
+    "@toa.io/schemas": "1.0.0-alpha.299",
     "openspan": "1.0.0-alpha.293",
     "uuid": "14.0.2"
   },

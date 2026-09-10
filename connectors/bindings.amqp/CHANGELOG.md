@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.299](https://github.com/toa-io/toa/compare/v1.0.0-alpha.298...v1.0.0-alpha.299) (2026-09-10)
+
+### Bug Fixes
+
+* **bindings.amqp:** work with nobody waiting for it survives failing ([e70dd59](https://github.com/toa-io/toa/commit/e70dd59fc277623928ca132e2b911c5c4f441ffc))
+
+### Features
+
+* **bindings.amqp:** a binding carries a channel, addressed by label ([17cf178](https://github.com/toa-io/toa/commit/17cf1782d1c47d033c02f99947b766eb9d45df75))
+* **bindings.amqp:** a message that can never be processed is kept at once ([5dd9e4b](https://github.com/toa-io/toa/commit/5dd9e4b1d9403a324eac5b64146d5f1170f70e95))
+* **cli:** a region's broker topology is exported ([697ca6c](https://github.com/toa-io/toa/commit/697ca6ca08091a79a23c59ffe5ef5d9d462dbb8a))
+
+
 # [1.0.0-alpha.298](https://github.com/toa-io/toa/compare/v1.0.0-alpha.297...v1.0.0-alpha.298) (2026-09-08)
 
 **Note:** Version bump only for package @toa.io/bindings.amqp
