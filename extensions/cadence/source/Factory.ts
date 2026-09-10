@@ -63,8 +63,18 @@ export class Factory implements extensions.Factory {
     return this.local(new Locator(COMPONENT, NAMESPACE))
   }
 
+  /**
+   * One per component — and per build of it. A `Local` holds a remote, and one that went with
+   * a tree that has been taken down holds a remote that is gone: every pulse and every delayed
+   * call would await something disconnected, for good and in silence.
+   */
   private local(locator: Locator): Local {
-    return (this.locals[locator.id] ??= new Local(this.host, locator))
+    const local = this.locals[locator.id]
+
+    if (local === undefined || local.disposed)
+      this.locals[locator.id] = new Local(this.host, locator)
+
+    return this.locals[locator.id]
   }
 }
 

@@ -126,8 +126,14 @@ export class Factory implements extensions.Factory {
     )
   }
 
+  /**
+   * One collector per process — and per build of its tree. A reporter that went with a tree
+   * that has been taken down holds remotes that are gone: it would answer that it is ready,
+   * dispatch into nothing, and say so at `debug` alone.
+   */
   private collector(): Reporter {
-    this.reporter ??= new Reporter(this.host, this.options!)
+    if (this.reporter === null || this.reporter.disposed)
+      this.reporter = new Reporter(this.host, this.options!)
 
     return this.reporter
   }

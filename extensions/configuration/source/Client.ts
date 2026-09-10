@@ -12,7 +12,6 @@ import type { Host } from './Factory.js'
  */
 export class Client extends Connector {
   /** Disconnected once, a connector keeps what it depended on, so a gone client is not reused. */
-  public disposed = false
 
   private readonly host: Host
   private readonly options: Options
@@ -82,10 +81,6 @@ export class Client extends Connector {
       clearTimeout(this.timer)
       this.timer = null
     }
-  }
-
-  protected override async dispose(): Promise<void> {
-    this.disposed = true
   }
 
   private schedule(delay: number): void {
