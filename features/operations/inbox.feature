@@ -170,6 +170,41 @@ Feature: Transactional inbox
       """
     And the `mongo.once` inbox holds 1 record
 
+  Scenario: An assignment is made once
+    Given I compose `mongo.once` component
+    When I call `mongo.once.assign` with:
+      """yaml
+      id: aa11e57cc0e14fce95c4496c21086781
+      input:
+        foo: 3
+        bar: assigned
+      query:
+        id: 6b93e57cc0e14fce95c4496c21086781
+      """
+    Then the reply is received:
+      """yaml
+      foo: 3
+      bar: assigned
+      VERSION: 2
+      """
+    When I call `mongo.once.assign` with:
+      """yaml
+      id: aa11e57cc0e14fce95c4496c21086781
+      input:
+        foo: 8
+        bar: again
+      query:
+        id: 6b93e57cc0e14fce95c4496c21086781
+      """
+    # answered with the post-image the first one wrote, which the storage recorded for it
+    Then the reply is received:
+      """yaml
+      foo: 3
+      bar: assigned
+      VERSION: 2
+      """
+    And the `mongo.once` inbox holds 1 record
+
   Scenario: A component that declares none has no collection
     Given I compose `mongo.one` component
     Then the `mongo.one` inbox collection does not exist

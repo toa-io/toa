@@ -136,16 +136,22 @@ Then:
    the outbox's own. An hour, not the outbox's day: the window a duplicate arrives in is the
    broker's redelivery, `comq`'s five requeues and a client's retries — minutes.
 
-6. **Where it may be declared.** On a transition over `scope: object`. `objects` is refused — a set
-   is where the reply stops being bounded, and a transition over five hundred records would write
-   five hundred records' worth of answer on every call. The manifest schema refuses the rest the way
-   it already refuses `concurrency` on an operation that is not a transition.
+6. **Where it may be declared.** On a transition over `scope: object`, and on an assignment.
+   `objects` is refused — a set is where the reply stops being bounded, and a transition over five
+   hundred records would write five hundred records' worth of answer on every call. The manifest
+   schema refuses the rest the way it already refuses `concurrency` on an operation that is not a
+   transition.
 
-   An assignment and an effect write too, and neither is covered, because neither knows its reply
-   when it writes: an assignment computes it from what the write returns, and an effect writes in
-   `acquire`, before the algorithm has run at all. The reply is what a duplicate is answered with,
-   so covering them means deciding what a duplicate of one is answered with instead. That is a
-   design of its own and it is not made here.
+   An assignment does not know its reply when it writes — where its algorithm named no output, the
+   reply is the post-image — so the storage writes the record from the post-image it already
+   computes inside the transaction, which is the same place and the same seam it fills the outbox
+   row's images from.
+
+   An effect is left out, and needs no covering: its write is get-or-create, so a second arrival of
+   one writes nothing already and its state changes once without any of this. What it would gain is
+   a stable reply, which is a smaller promise than the one being made here, and it writes in
+   `acquire` — before its algorithm has run — so there is no reply to record where the record is
+   made.
 
 7. **Degradation — there is none.** The record has to commit with the entity, so this needs a storage
    that has transactions: MongoDB on a replica set or a sharded cluster, the condition the outbox
@@ -211,8 +217,8 @@ commit, and a second event published from a second outbox row. Nothing anywhere 
    boot, and retention.
 3. **The client's own retry.** The gateway honouring an idempotency key, which is the one duplicate
    the runtime cannot otherwise see, because the client makes it.
-4. **Assignments and effects**, if they are wanted: what a duplicate of one is answered with, given
-   that neither knows its reply when it writes.
+4. **Effects**, if a stable reply to a duplicate of one is ever wanted; their state already changes
+   once without this.
 
 ## Verification
 

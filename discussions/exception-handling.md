@@ -397,7 +397,7 @@ queues, which the broker reports, and the log. Failure text and levels to be agr
 4. **Idempotency.** §4 — guarantee 10, its own change. Needs nothing from a broker. Designed and
    built as [the transactional inbox](/discussions/transactional-inbox.md), which carries it to the
    call path as well, and makes guarantee 10 conditional on the operation declaring `once`. *Done,
-   for a transition; an assignment and an effect are left, and that document says why.*
+   for a transition and an assignment; an effect needs none, and that document says why.*
 
 ## Verification
 

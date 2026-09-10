@@ -15,9 +15,12 @@ operations:
     once: true
 ```
 
-Per operation, and only on a transition over `scope: object`. An operation that writes nothing has
-nothing to record; a transition over `objects` answers a whole set, and the answer is what a
-duplicate is given back.
+Per operation, on a transition over `scope: object` or an assignment. An operation that writes
+nothing has nothing to record; a transition over `objects` answers a whole set, and the answer is
+what a duplicate is given back.
+
+An effect takes it neither way, and does not need to: its write is get-or-create, so a second
+arrival of one writes nothing already.
 
 ```yaml
 # context.toa.yaml

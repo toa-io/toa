@@ -204,17 +204,17 @@ properties:
               properties:
                 concurrency:
                   const: ~ # never pass
-          - if: # not a transition
+          - if: # neither a transition nor an assignment
               not:
                 properties:
                   type:
-                    const: transition
+                    enum: [transition, assignment]
             then:
               properties:
-                # An operation that writes nothing has nothing to record. An assignment and an
-                # effect write, but neither knows its reply when it writes — an assignment
-                # computes it from what the write returns, an effect writes in `acquire`, before
-                # the algorithm has run — and the reply is what a duplicate is answered with.
+                # An operation that writes nothing has nothing to record. An effect writes, but
+                # its write is get-or-create, so a second arrival of one writes nothing already —
+                # and it writes in `acquire`, before its algorithm has run, so its reply is not
+                # known where the record is made.
                 once:
                   const: ~ # never pass
           - if: # commits more than one entity

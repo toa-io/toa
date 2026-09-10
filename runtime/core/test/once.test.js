@@ -139,6 +139,36 @@ describe('once', () => {
     assert.strictEqual(operation.scope.commit.mock.callCount(), 1)
   })
 
+  it('should record an assignment with what it answered', async () => {
+    const { Assignment } = await import('../source/assignment.js')
+
+    const applied = []
+    const cascade = { run: mock.fn(async () => ({})), link: () => null }
+    const changeset = { get: () => ({}), set: () => undefined, query: {} }
+
+    const operation = new Assignment(
+      cascade,
+      {
+        recall: mock.fn(async () => null),
+        changeset: () => changeset,
+        apply: mock.fn(async (_state, _input, call) => {
+          applied.push(call)
+
+          return { id: 'x', VERSION: 2 }
+        }),
+        fit: () => undefined
+      },
+      { request: { fit: () => null }, reply: { fit: () => null } },
+      { parse: (query) => query },
+      { scope: 'changeset', once: true }
+    )
+
+    await operation.invoke(request())
+
+    // empty, because an assignment's reply is the post-image and the storage computes that
+    assert.deepStrictEqual(applied, [{ id: ID, reply: {} }])
+  })
+
   it('should refuse a request that carries no identity', async () => {
     const operation = transition()
 

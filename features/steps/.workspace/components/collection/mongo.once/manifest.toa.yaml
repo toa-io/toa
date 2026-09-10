@@ -52,6 +52,19 @@ operations:
     concurrency: retry
     once: true
 
+  # an assignment: it writes through a changeset, and answers the post-image
+  assign:
+    once: true
+    input:
+      properties:
+        foo:
+          type: string
+          default: .
+        bar:
+          type: string
+          default: .
+      type: object
+
   # runs long enough for a duplicate to arrive while it is still running
   slow:
     concurrency: retry

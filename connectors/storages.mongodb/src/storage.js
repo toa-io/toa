@@ -355,7 +355,8 @@ export class Storage extends Connector {
     return result.upsertedCount === 1 || result.modifiedCount === 1
   }
 
-  async upsert(query, changeset, row = undefined) {
+  async upsert(query, changeset, row = undefined, call = undefined) {
+    const records = call !== undefined && this.#inbox !== undefined
     const { criteria, options } = translate(query, this.#dates)
 
     if (!('DELETED' in changeset) || changeset.DELETED === null) {
@@ -396,15 +397,40 @@ export class Storage extends Connector {
       // or not the row is going to be committed
       if (row !== undefined) row.event = { origin, state, ...row.event }
 
+      /*
+       * The reply is what a duplicate is answered with, and an assignment answers the post-image
+       * where its algorithm named nothing — which is this, computed here and nowhere else. Held
+       * to a copy: the driver may run this again, and the call is the caller's object.
+       */
+      if (records) {
+        const reply =
+          call.reply?.output === undefined ? { ...call.reply, output: state } : call.reply
+
+        try {
+          await this.#inbox.insert({ id: call.id, reply }, session)
+        } catch (error) {
+          if (error?.code !== ERR_DUPLICATE_KEY) throw error
+
+          await session.abortTransaction()
+
+          return MADE
+        }
+      }
+
       if (row !== undefined && this.#outbox !== undefined)
         await this.#outbox.insert(row, session)
 
       return state
     }
 
-    if (row === undefined || this.#outbox === undefined) return apply(undefined)
+    if ((row === undefined || this.#outbox === undefined) && !records)
+      return apply(undefined)
 
-    return this.#client.transaction(apply)
+    const result = await this.#client.transaction(apply)
+
+    if (result === MADE) throw new exceptions.DuplicateCallException(call.id)
+
+    return result
   }
 
   async ensure(query, properties, state, row = undefined) {

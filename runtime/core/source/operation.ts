@@ -144,7 +144,12 @@ export class Operation extends Connector {
   protected call(store: Store): Call | undefined {
     if (!this.#once) return undefined
 
-    return { id: store.request.id, reply: store.reply }
+    /*
+     * A copy: an assignment fills its output in after the write it is recorded by returns, and
+     * what is recorded must be what was known when the record was made rather than whatever the
+     * reply became afterwards.
+     */
+    return { id: store.request.id, reply: { ...store.reply } }
   }
 
   protected async process(store: Store): Promise<any> {
