@@ -1,0 +1,18 @@
+name: ping
+namespace: cycle
+
+# receives the other's `sync` and commits, which publishes its own `sync` — the circle
+entity:
+  associated: true
+  properties:
+    count:
+      type: number
+  blank:
+    count: 0
+
+operations:
+  increment:
+    concurrency: retry
+
+receivers:
+  cycle.pong.sync: increment

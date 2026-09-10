@@ -94,7 +94,9 @@ the operation returns goes nowhere, so the two outcomes mean something different
   compensating event, a record written — the operation writes it, because nothing else will.
 - **An exception is not.** The message is tried again, after a wait that grows with each attempt.
   If it keeps failing it is kept, somewhere an operator can find it and put it back, and you will
-  hear about it.
+  hear about it. A failure that cannot pass on a later attempt — a request that does not fit the
+  contract, or a [call gone round in a circle](/documentation/cycles.md) — is kept at once
+  instead, because trying it again is only a way of failing again.
 
 So an operation a receiver invokes **may run more than once for one message**, and nothing
 deduplicates it for you. Write it so that handling the same message twice leaves the same state:

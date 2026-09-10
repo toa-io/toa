@@ -1,6 +1,7 @@
 import { console, decode, run, type SpanOptions } from 'openspan'
 import { add } from '@toa.io/generic'
 import { Connector } from './connector.js'
+import * as trail from './trail.js'
 import type { Component } from './component.js'
 import type { Receiver as Bridge } from './types/bridges.js'
 import type { Message } from './types/message.js'
@@ -72,7 +73,12 @@ export class Receiver extends Connector {
 
   /** @hot */
   public async receive(message: Message): Promise<void> {
-    const { payload, telemetry, ...extensions } = message
+    /*
+     * `trail` is taken out by name rather than left to `add`, which leaves an array the
+     * request already has alone and shares the deserialized one by reference where it does
+     * not — and validates neither.
+     */
+    const { payload, telemetry, trail: inbound, ...extensions } = message
 
     if (this.#conditioned === true && (await this.#bridge?.condition(payload)) === false)
       return
@@ -83,6 +89,14 @@ export class Receiver extends Connector {
 
     // set after `add`, so that a message field can not spoof the origin
     if (this.#origin !== undefined) request.source = this.#origin
+
+    /*
+     * The event is a hop of its own. What an operator rewires to break a cycle is the
+     * subscription rather than the operation, so a chain that named only operations would not
+     * say how a component was re-entered. Refusing is left to `Component.invoke`, one hop
+     * later, which acquires and commits nothing before it.
+     */
+    request.trail = [...trail.received(inbound), trail.event(this.#destination)]
 
     // continue the trace from the producer span
     const remote = telemetry === undefined ? null : decode(telemetry)

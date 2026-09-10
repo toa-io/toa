@@ -1,6 +1,6 @@
 import { Connector } from './connector.js'
 import type { Event } from './event.js'
-import type { Event as StateEvent } from './types/state.js'
+import type { Row } from './types/outbox.js'
 
 export class Emission extends Connector {
   /** what a row is outstanding for while this has not published it */
@@ -16,8 +16,8 @@ export class Emission extends Connector {
     this.depends(events)
   }
 
-  public async emit(event: StateEvent): Promise<void> {
-    const emission = this.#events.map((e) => e.emit(event))
+  public async emit(row: Row): Promise<void> {
+    const emission = this.#events.map((e) => e.emit(row))
 
     await Promise.all(emission)
   }

@@ -25,6 +25,7 @@ export { Unmanaged } from './unmanaged.js'
 export { Guard } from './guard.js'
 export * as entities from './entities/index.js'
 export * as exceptions from './exceptions.js'
+export * as trail from './trail.js'
 export * as contract from './contract/index.js'
 
 export type { Exception } from './exceptions.js'

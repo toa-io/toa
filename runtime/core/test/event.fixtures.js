@@ -22,3 +22,13 @@ export const event = {
   state: { [generate()]: generate() },
   changeset: { [generate()]: generate() }
 }
+
+/** What the outbox hands a destination: the committed row, not its event alone. */
+export const row = () => ({
+  id: generate(),
+  lane: 0,
+  published: false,
+  pending: 0,
+  outstanding: ['events'],
+  event
+})

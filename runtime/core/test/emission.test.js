@@ -16,14 +16,14 @@ const dependencies = (instance) =>
 import { Emission } from '../source/emission.js'
 import * as fixtures from './emission.fixtures.js'
 
-let emission, event
+let emission, row
 
 beforeEach(async () => {
   resetCalls()
   depends.mock.resetCalls()
 
   emission = new Emission(fixtures.events)
-  event = clone(fixtures.event)
+  row = clone(fixtures.row)
 
   await emission.open()
 })
@@ -33,14 +33,14 @@ it('should depend on events', () => {
   assert.ok(dependencies(emission).some((one) => isDeepStrictEqual(one, fixtures.events)))
 })
 
-it('should emit events', async () => {
-  await emission.emit(event)
+// the row and not its event alone: what goes on the wire is the chain it carries too
+it('should emit the row to every event', async () => {
+  await emission.emit(row)
 
   for (const evt of fixtures.events) {
     assert.ok(
       evt.emit.mock.calls.some(
-        (call) =>
-          call.arguments.length === 1 && isDeepStrictEqual(call.arguments[0], event)
+        (call) => call.arguments.length === 1 && isDeepStrictEqual(call.arguments[0], row)
       )
     )
   }

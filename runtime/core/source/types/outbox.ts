@@ -21,6 +21,13 @@ export interface Row {
   /** the destinations it has not been sent to yet, by name */
   outstanding: string[]
 
+  /**
+   * The hops that led to the change. Written onto the row rather than left in scope, because
+   * the pump publishes off the operation's path — possibly in another replica, an hour later.
+   * Absent on a row written before this existed, which reads as a chain that starts there.
+   */
+  trail?: string[]
+
   /** an assignment's images are absent until the storage fills them in */
   event: Event
 }
@@ -34,7 +41,8 @@ export interface Destination extends Connector {
   /** what a row is outstanding for, as the row records it */
   readonly name: string
 
-  emit(event: Event): Promise<void>
+  /** the row, not its event: what goes on the wire is the chain it carries too */
+  emit(row: Row): Promise<void>
 }
 
 /**

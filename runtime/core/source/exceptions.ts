@@ -22,7 +22,10 @@ export const codes = {
 
   Communication: 400,
   Transmission: 401,
-  Endpoint: 402
+  Endpoint: 402,
+
+  /** a chain that came back to where it had been, or went further than a chain goes */
+  Loop: 500
 }
 
 export class Exception {
@@ -48,6 +51,21 @@ export class SystemException extends Exception {
     super(codes.System, typeof error === 'string' ? error : error.message)
 
     if (typeof error !== 'string' && error.stack !== undefined) this.stack = error.stack
+  }
+}
+
+/**
+ * A call refused for where it has been rather than for what it says. Named, and so permanent:
+ * the chain is deterministic, and another attempt reproduces it hop for hop.
+ */
+export class LoopException extends Exception {
+  /** the whole chain, so what is set aside can be read without guessing */
+  public readonly trail: string[]
+
+  public constructor(message: string, trail: string[]) {
+    super(codes.Loop, message)
+
+    this.trail = trail
   }
 }
 
@@ -177,7 +195,10 @@ const OUTCOME: Record<keyof typeof codes, 'permanent' | 'transient'> = {
   Transmission: 'transient',
   // its sibling, and the other way round: nothing carried the call is a moment,
   // there is nothing to carry it to is a fact
-  Endpoint: 'permanent'
+  Endpoint: 'permanent',
+
+  // the chain is deterministic, so another attempt walks it again: a retry is another cycle
+  Loop: 'permanent'
 }
 
 const PERMANENT = new Set<number>(

@@ -4,6 +4,7 @@ import { isDeepStrictEqual } from 'node:util'
 
 import * as fixtures from './call.fixtures.js'
 import { Call } from '../source/call.js'
+import * as trail from '../source/trail.js'
 
 let call
 
@@ -66,6 +67,54 @@ it('should throw received exceptions', async () => {
     assert.notStrictEqual(error, undefined)
     return true
   })
+})
+
+it('should carry the chain the call is made from', async () => {
+  const request = fixtures.request().ok
+  const hops = ['default.orders.place']
+
+  await trail.follow(hops, async () => call.invoke(request))
+
+  assert.deepStrictEqual(request.trail, hops)
+})
+
+it('should leave a chain the caller stamped alone', async () => {
+  const request = fixtures.request().ok
+
+  request.trail = ['~default.orders.placed']
+
+  await trail.follow(['default.billing.charge'], async () => call.invoke(request))
+
+  assert.deepStrictEqual(request.trail, ['~default.orders.placed'])
+})
+
+it('should start a chain under the name of the service it calls for', async () => {
+  const request = fixtures.request().ok
+  const service = new Call(fixtures.transmission, fixtures.contract, { service: 'exposition' })
+
+  await service.invoke(request)
+
+  assert.deepStrictEqual(request.trail, ['exposition'])
+})
+
+it('should not start one for a call a component makes', async () => {
+  const request = fixtures.request().ok
+
+  await call.invoke(request)
+
+  assert.strictEqual(request.trail, undefined)
+})
+
+// one request object is handed to several concurrent calls in more than one place —
+// `identity.credentials.list` is three under one `Promise.all` — so the chain is assigned
+it('should give concurrent calls sharing one request the same chain', async () => {
+  const request = fixtures.request().ok
+
+  await trail.follow(['default.credentials.list'], async () =>
+    Promise.all([call.invoke(request), call.invoke(request), call.invoke(request)])
+  )
+
+  assert.deepStrictEqual(request.trail, ['default.credentials.list'])
 })
 
 function resetCalls(target = [assert, fixtures], seen = new Set()) {

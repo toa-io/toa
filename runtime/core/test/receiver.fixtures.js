@@ -4,6 +4,8 @@ import { generate } from 'randomstring'
 
 export const definition = /** @type {toa.norm.component.Receiver} */ {
   operation: generate(),
+  // what the event is called where it was published, which is the hop it adds to a chain
+  destination: 'default.source.created',
   conditioned: false,
   adaptive: false
 }
