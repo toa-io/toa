@@ -343,9 +343,12 @@ reason. A cycle is permanent, so it is parked on the first delivery.
    row rather than its event alone. **Done.** That signature is the one the idempotency stage of
    `exception-handling.md` also wants, for `Message.id` — it has changed once, and the row is what a
    destination is handed from here on.
-3. **Cadence.** `Aspect.delay`, the detached option, and the missing `source`. Next, in a PR of its
-   own. Until it lands **a delayed call starts a fresh chain**, so a cycle routed through
-   `context.delay` is not caught — which is the remaining hole, and the reason the stage exists.
+3. **Cadence.** `Aspect.delay`, the detached option, and the missing `source`. **Done.** The chain
+   rides the metronome's row rather than the stored request, because the request is the caller's
+   and one that carries none must go on carrying none. A call meant to recur says `detached: true`;
+   recurrence that never ends is a pulse, which is called from the clock and starts its own chain.
+
+Every path a call can take is now counted: a call, an event, a task and a delay.
 
 ## Verification
 

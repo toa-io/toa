@@ -28,6 +28,7 @@ interface Row {
   expires: number
   endpoint: string
   request: object | null
+  trail?: string[]
 }
 
 /** `expires` defaults to no bound at all, which is what `overdue: null` writes */
@@ -109,6 +110,58 @@ afterEach(() => {
   delete process.env.TOA_CADENCE_DISCRETENESS
   delete process.env.TOA_CADENCE_REGIONS
   delete process.env.TOA_REGION
+})
+
+it('should make the call by the chain that asked for it', async () => {
+  const hops = ['default.orders.place', '~default.orders.sync']
+
+  rows = [{ ...row('a', 0), trail: hops }]
+
+  const dispatcher = create()
+
+  await dispatcher.connect()
+  await advance(INTERVAL)
+
+  const [, request] = target.invoke.mock.calls[0].arguments
+
+  assert.deepStrictEqual(request.trail, hops)
+})
+
+it('should start none where the caller detached the call', async () => {
+  rows = [row('a', 0)]
+
+  const dispatcher = create()
+
+  await dispatcher.connect()
+  await advance(INTERVAL)
+
+  const [, request] = target.invoke.mock.calls[0].arguments
+
+  // `Call` starts one under cadence's own name; nothing is stated here
+  assert.ok(!('trail' in request))
+})
+
+// the row's chain is the one that was in scope when the call was asked for, and a stored
+// request that happens to carry the name is the caller's data rather than that
+it('should not let a stored request stand the chain up', async () => {
+  const hops = ['default.orders.place']
+
+  rows = [
+    {
+      ...row('a', 0),
+      request: { input: { id: 'a' }, trail: ['spoofed'] },
+      trail: hops
+    }
+  ]
+
+  const dispatcher = create()
+
+  await dispatcher.connect()
+  await advance(INTERVAL)
+
+  const [, request] = target.invoke.mock.calls[0].arguments
+
+  assert.deepStrictEqual(request.trail, hops)
 })
 
 it('should read two intervals ahead, in the lanes it owns', async () => {

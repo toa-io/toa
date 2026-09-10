@@ -56,11 +56,19 @@ Over HTTP it is a `500`. The caller did nothing wrong; the wiring did.
 Nothing. The chain is stamped, carried and read by the runtime, and no operation writes one or
 needs to read one.
 
-Two things to know:
+Three things to know:
 
 **It counts nesting, not repetition in time.** Work that runs again and again on a schedule is
-not a circle, and a [pulse](/extensions/cadence) is how you write it — every firing starts its
-own chain.
+not a circle, and a [pulse](/extensions/cadence#pulse) is how you write it — every firing starts
+its own chain.
+
+**A delay is a hop.** `context.delay` makes the call by the chain that asked for it, so an
+operation that delays a call to itself is a circle, and a slow circle is still one. Where the
+recurrence is meant, say so:
+
+```javascript
+await context.delay(endpoint, request, { interval, overdue: null, detached: true })
+```
 
 **It is not a security boundary.** It stops a context wired into a circle by accident. It is not
 a defence against a peer that sends whatever it likes, any more than `source` is.

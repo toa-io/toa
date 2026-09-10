@@ -32,6 +32,16 @@ export interface Options {
    * a dispatcher scans, so a bound shorter than that is one nothing can honour.
    */
   overdue: number | null
+
+  /**
+   * Whether the call begins a chain of its own rather than continuing the one that asked for
+   * it. A delay is a hop like any other, so a call that delays a call to itself is a circle and
+   * is refused on its third round — which is right for work that has gone round, and wrong for
+   * work that is meant to recur. Say so here where it is meant.
+   *
+   * Recurring work that never ends is a pulse; this is for the case that is neither.
+   */
+  detached?: boolean
 }
 
 /** What an application states under `cadence:` in its context. */

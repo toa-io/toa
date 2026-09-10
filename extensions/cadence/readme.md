@@ -96,9 +96,29 @@ await context.delay.cancel(id)
 | ---------- | --------------------------------------------------------------------------- |
 | `interval` | milliseconds from now                                                       |
 | `overdue`  | milliseconds the call may be late and still be made, or `null` for no bound |
+| `detached` | whether the call begins a chain of its own; see below                       |
 
 The call is made once the delay has passed, and waits for the target where it is not there to
 take it. The id it answers cancels it, and `cancel` raises where the id was never issued.
+
+### A delay is a hop
+
+The call is made by the chain that asked for it, so an operation that delays a call to itself is
+going round in a circle and is refused on its third round — see
+[call cycles](/documentation/cycles.md). A delay makes it a slow circle rather than not one.
+
+`detached: true` says the call begins a chain of its own, and is for work that is meant to recur:
+
+```javascript
+await context.delay('billing.dunning.chase', { input: { invoice } }, {
+  interval: DAY,
+  overdue: null,
+  detached: true // chased again tomorrow, and the day after
+})
+```
+
+Recurring work that never ends is a [pulse](#pulse) rather than either of these: it is called
+from the clock, so every firing starts its own chain and there is nothing to detach.
 
 Nothing is declared for it beyond naming the extension. A component that only delays calls says
 so with an empty declaration:

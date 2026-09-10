@@ -121,3 +121,44 @@ Feature: Delayed calls
       """yaml
       []
       """
+
+  Scenario: A call that re-arms itself is a circle
+    Given the `cadence.metronome` database is empty
+    And the `cadence` service is staged
+    And I compose `delaying` component
+    When I call `default.delaying.rearm` with:
+      """yaml
+      input:
+        delay: 300
+        rounds: 4
+      """
+    And I wait 3 seconds
+    And I call `default.delaying.marks`
+    # the chain is carried across the delay, so the third visit is refused rather than made
+    Then the reply is received:
+      """yaml
+      - round
+      - round
+      """
+
+  Scenario: A detached call starts a chain of its own
+    Given the `cadence.metronome` database is empty
+    And the `cadence` service is staged
+    And I compose `delaying` component
+    When I call `default.delaying.rearm` with:
+      """yaml
+      input:
+        delay: 300
+        rounds: 4
+        detached: true
+      """
+    And I wait 3 seconds
+    And I call `default.delaying.marks`
+    Then the reply is received:
+      """yaml
+      - round
+      - round
+      - round
+      - round
+      - round
+      """
