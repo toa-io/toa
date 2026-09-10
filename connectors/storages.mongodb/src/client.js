@@ -179,13 +179,25 @@ export class Client extends Connector {
    * @return {Promise<void>}
    */
   async close() {
-    const instance = await INSTANCES[this.key]
+    /*
+     * What was never counted is not discounted. An `open` that threw between taking the
+     * instance and incrementing it leaves the count one high, and a client nothing ever
+     * closes — which a process that is taken down and built again, as a halt does, would
+     * otherwise leak once per cycle.
+     */
+    if (this.instance === undefined) return
+
+    const instance = this.instance
+
+    this.instance = undefined
 
     instance.count--
 
     if (instance.count === 0) {
       await instance.client.close()
-      delete INSTANCES[this.key]
+
+      // another `open` may have taken it in the meantime, and that one is not this one
+      if ((await INSTANCES[this.key]) === instance) delete INSTANCES[this.key]
     }
   }
 

@@ -82,10 +82,19 @@ export class Factory implements extensions.Factory {
     )
   }
 
+  /**
+   * One publisher per process — and per build of it. A halt takes the composition down and
+   * builds it again, and the communication this held was sealed with it: every converged row
+   * a rebuilt storage published through it would fail to leave, and two regions would differ
+   * with nothing noticing.
+   */
   private async publisher(): Promise<bindings.Outbound> {
-    this.outbound ??= this.host.outbound(this.binding(), CHANNEL, this.uris())
+    const outbound = await this.outbound
 
-    return this.outbound
+    if (outbound === undefined || outbound.disposed)
+      this.outbound = this.host.outbound(this.binding(), CHANNEL, this.uris())
+
+    return await this.outbound!
   }
 
   private binding(): string {

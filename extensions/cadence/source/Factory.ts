@@ -55,16 +55,27 @@ export class Factory implements extensions.Factory {
     return new Aspect(this.metronome())
   }
 
+  // nothing connects to this, so a halt takes the whole of it
   public service(): Connector {
-    return new Composition(this.host)
+    return this.host.gate(async () => new Composition(this.host))
   }
 
   private metronome(): Local {
     return this.local(new Locator(COMPONENT, NAMESPACE))
   }
 
+  /**
+   * One per component — and per build of it. A halt takes the composition down and builds it
+   * again, and a `Local` that went with the first one holds a remote that is gone: every
+   * pulse and every delayed call would await something disconnected, for good and in silence.
+   */
   private local(locator: Locator): Local {
-    return (this.locals[locator.id] ??= new Local(this.host, locator))
+    const local = this.locals[locator.id]
+
+    if (local === undefined || local.disposed)
+      this.locals[locator.id] = new Local(this.host, locator)
+
+    return this.locals[locator.id]
   }
 }
 
