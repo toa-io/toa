@@ -38,11 +38,11 @@ deadline it waits for its reply as it does today.
 
 **An addressed call**
 
-1. A name's calls reach at most one process at any moment. The broker grants a name to one connection
-   for that connection's lifetime. A process that finds its name held fails to start, and so does a
-   process restarted under the same name before the broker has noticed its predecessor is gone; the
-   restart that follows tries again. A connection restored after a loss holds its name again as part
-   of its recovery, which is made again until the broker has let the old connection go.
+1. On each broker, a name's calls reach one process at a time: the broker grants the name to one
+   connection for that connection's lifetime. A process that finds its name held by another
+   connection keeps claiming it, reports it taken, and holds it once it is let go, while the rest of
+   its connection works. A process restarted under its own name before the broker has noticed its
+   predecessor is gone goes through the same.
 2. A refused call never ran.
 3. A process waiting on an addressed call stops within that call's deadline.
 4. For a streamed reply, the deadline covers the wait for the stream to start; the stream's own
@@ -65,7 +65,8 @@ deadline it waits for its reply as it does today.
    event at once.
 8. A name given by `TOA_INSTANCE` passes to the next process started with it, which then answers
    calls meant for its predecessor, with none of its memory. A generated name belongs to one process
-   for good.
+   for good. Two live processes given the same name can hold it on different brokers, and both answer
+   calls; each reports the name taken where the other holds it.
 9. A process waiting on an ordinary call without a deadline waits for its reply, and so does its
    shutdown.
 
@@ -158,9 +159,11 @@ the three reaches the wire.
 inside the grace period, and a stopping process that lets its handlers finish keeps redelivery
 transparent to whoever called it.
 
-**A held name has one way back.** A process that finds its name held fails to start and is
-restarted; a connection that finds it held fails its recovery and reconnects. Both paths already
-retry, and a retry of the name's own beside them would hide whether they work.
+**A taken name is claimed again, and nothing else stops.** A broker announces nothing when another
+connection lets a queue go, so the claim is made again, on the schedule a lost connection is restored
+on. Failing would leave a process holding its name on some brokers and never on the others once the
+other process is gone; reconnecting would take everything else on the connection down for the sake
+of one name.
 
 **The broker's own mechanisms only.** A plugin that reports deleted queues would tell a caller of a
 crash without a timer, and is enabled on few brokers and on almost no managed ones.
@@ -182,11 +185,12 @@ crash without a timer, and is enabled on few brokers and on almost no managed on
    options as `request`. A returned call rejects with `Unroutable`, exported beside `Retry` and `Park`.
 3. **Withdrawal.** `seal()` unbinds every backed queue, waits for the broker to confirm, and then
    cancels consumers.
-4. **A held key refuses.** The broker refuses a queue another connection holds by closing the channel
-   that asked, and a channel error left unheard closes the whole connection. So the exclusive queue
-   is declared on a channel of its own, which is all that closes, and `back` rejects with what the
-   broker refused with. A recovery that finds a key held fails, and the connection is reopened and
-   recovered again, as after any failed recovery.
+4. **A taken key is claimed again.** The broker refuses a queue another connection holds by closing
+   the channel that asked, and a channel error left unheard closes the whole connection. So the
+   exclusive queue is declared on a channel of its own, which is all that closes, and a refusal is
+   reported as `taken` and claimed again, with the backoff a lost connection is restored with. `back`
+   returns once a broker holds the key; over a sharded connection, the other brokers go on being
+   claimed.
 5. **Shards.** A call returned by one shard is published on the next through `route`, which declares
    the exchange there first, and rejects once every shard has returned it.
 6. **Documentation.** The readme's Request, Call and back, Retries and Parked messages sections, and
@@ -248,14 +252,15 @@ blocker stays, since ordinary calls keep waiting by default.
 - a call is answered by the holder of its key;
 - a call to a key nobody holds is refused at once;
 - a sealed holder refuses new calls and answers those it holds;
-- a second holder of a key is refused, and holds it once the first has closed;
+- a second holder of a key finds it taken, and holds it once the first has closed;
 - a caller whose holder crashed stops waiting at its timeout, and a call made afterwards is refused;
 - a holder holds its key again after the broker restarts, and once the broker lets a silent
   connection go;
 - a call in flight when the broker crashes ends;
 - a caller stops waiting at its timeout while the broker is down;
 - over a sharded connection, a key bound on one broker is reached, one bound on none is refused,
-  and a call reaches its holder while one of the brokers is down;
+  a call reaches its holder while one of the brokers is down, and a key taken on one broker is held
+  on the other, and on both once it is let go;
 - a request nobody took before its timeout is never delivered to a consumer started afterwards;
 - a request re-sent after a broker restart expires at its caller's deadline.
 
@@ -269,7 +274,7 @@ blocker stays, since ordinary calls keep waiting by default.
 - a process waiting on a call to a killed process stops;
 - a process answers calls under its name again after the broker restarts, and after its connection
   went silent;
-- a second process started with a held name fails to start;
+- a second process started with a held name reports it taken, and serves once the first has gone;
 - an ordinary call with a `timeout` to a component that is down is abandoned, and the component, once
   up, never receives it;
 - through the gateway, a route with `map:instance` reaches the named process, a name nobody holds
