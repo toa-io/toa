@@ -8,9 +8,9 @@ Feature: Transactional inbox
     Given the `mongo.once` database contains:
       | _id                              | foo | bar   | VERSION |
       | 6b93e57cc0e14fce95c4496c21086781 | 0   | hello | 1       |
-    And I compose `mongo.once` component
 
   Scenario: The same call twice changes state once
+    Given I compose `mongo.once` component
     When I call `mongo.once.transit` with:
       """yaml
       id: aa11e57cc0e14fce95c4496c21086781
@@ -45,6 +45,7 @@ Feature: Transactional inbox
     And the `mongo.once` inbox holds 1 record
 
   Scenario: Two calls are two calls
+    Given I compose `mongo.once` component
     When I call `mongo.once.transit` with:
       """yaml
       id: aa11e57cc0e14fce95c4496c21086781
@@ -69,6 +70,7 @@ Feature: Transactional inbox
     And the `mongo.once` inbox holds 2 records
 
   Scenario: An operation that does not declare it is called twice
+    Given I compose `mongo.once` component
     When I call `mongo.once.plain` with:
       """yaml
       id: aa11e57cc0e14fce95c4496c21086781
@@ -92,6 +94,7 @@ Feature: Transactional inbox
       """
 
   Scenario: A call already answered is answered again without running
+    Given I compose `mongo.once` component
     # seeding a record *is* the state of a call that was made and answered
     Given the `mongo.once` inbox contains:
       | _id                              | reply                    |
@@ -114,6 +117,7 @@ Feature: Transactional inbox
       | 6b93e57cc0e14fce95c4496c21086781 | 0   | hello | 1       |
 
   Scenario: A call that refuses is not remembered
+    Given I compose `mongo.once` component
     When I call `mongo.once.refuse` with:
       """yaml
       id: aa11e57cc0e14fce95c4496c21086781
@@ -127,6 +131,7 @@ Feature: Transactional inbox
     And the `mongo.once` inbox holds 0 records
 
   Scenario: A call that raises is not remembered
+    Given I compose `mongo.once` component
     When I call `mongo.once.raise` with:
       """yaml
       id: aa11e57cc0e14fce95c4496c21086781
@@ -140,6 +145,7 @@ Feature: Transactional inbox
     And the `mongo.once` inbox holds 0 records
 
   Scenario: A duplicate arriving while the first is still running
+    Given I compose `mongo.once` component
     When I call `mongo.once.slow` without waiting with:
       """yaml
       id: aa11e57cc0e14fce95c4496c21086781
@@ -167,3 +173,36 @@ Feature: Transactional inbox
   Scenario: A component that declares none has no collection
     Given I compose `mongo.one` component
     Then the `mongo.one` inbox collection does not exist
+
+  Scenario: The chain holds across a hop
+    # `mongo.caller.relay` calls `mongo.once.transit` on its way, and the identity of that call
+    # is derived from the one being served — so the duplicate makes the same call, not a new one
+    Given the `mongo.caller` database contains:
+      | _id                              | foo | VERSION |
+      | cc33e57cc0e14fce95c4496c21086781 | 0   | 1       |
+    And I compose components:
+      | mongo.caller |
+      | mongo.once   |
+    When I call `mongo.caller.relay` with:
+      """yaml
+      id: aa11e57cc0e14fce95c4496c21086781
+      input:
+        foo: 4
+        target: 6b93e57cc0e14fce95c4496c21086781
+      query:
+        id: cc33e57cc0e14fce95c4496c21086781
+      """
+    Then the reply is received
+    # a second arrival of the same call, which re-runs nothing because the caller remembers it
+    When I call `mongo.caller.relay` with:
+      """yaml
+      id: aa11e57cc0e14fce95c4496c21086781
+      input:
+        foo: 4
+        target: 6b93e57cc0e14fce95c4496c21086781
+      query:
+        id: cc33e57cc0e14fce95c4496c21086781
+      """
+    Then the reply is received
+    And the `mongo.once` inbox holds 1 record
+    And the `mongo.caller` inbox holds 1 record
