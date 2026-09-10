@@ -1,4 +1,5 @@
 import type { Connector } from '../connector.js'
+import type { Gate } from '../gate.js'
 import type { Locator } from '../locator.js'
 import type { Component } from '../component.js'
 import type { Remote } from '../remote.js'
@@ -45,6 +46,16 @@ export interface Host {
     label: string,
     sink: Inbound
   ): Promise<Connector>
+
+  /**
+   * A part of this tree a halt takes down and builds again. What is not behind one of these
+   * outlives a halt: the readiness probe does, and so does whatever answers on a port the
+   * process was already listening on.
+   */
+  gate(build: () => Promise<Connector>): Gate
+
+  /** Stops this process for `seconds`, then builds it again. */
+  halt(seconds: number): void
 }
 
 /**
@@ -74,6 +85,15 @@ export interface Factory<Manifest = unknown> {
   /** what the extension runs as a process of its own; `null` where it is off here */
   service?(): Connector | null | Promise<Connector | null>
 
+  /**
+   * What the extension keeps in every process, whatever that process runs — the counterpart of
+   * `tenant` for a process rather than a component. Asked of every extension the process has
+   * loaded, and the predefined ones are loaded by every process for this.
+   *
+   * `null` where the extension keeps nothing here.
+   */
+  resident?(host: Host): Resident | null | Promise<Resident | null>
+
   component?(component: Component): Component
 
   context?(context: Context): Context
@@ -85,6 +105,23 @@ export interface Factory<Manifest = unknown> {
   emitter?(emitter: Emitter, label: string, locator: Locator): Emitter
 
   receiver?(receiver: Receiver, locator: Locator): Receiver
+}
+
+/**
+ * A connector that lives as long as the process, and is told how the process is doing.
+ *
+ * It outlives a halt. One that must not says so by being a `Host.gate`, which is a connector
+ * like any other: the gate stays, what it holds does not.
+ */
+export interface Resident extends Connector {
+  /** Everything the process was built with has connected. */
+  complete?: () => Promise<void>
+
+  /** It is halted, and for how long. */
+  halted?: (seconds: number) => void
+
+  /** It is back. */
+  resumed?: () => void
 }
 
 export interface Aspect extends Connector {
