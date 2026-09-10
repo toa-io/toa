@@ -10,15 +10,17 @@ const require = createRequire(import.meta.url)
  * @param {toa.norm.Component} manifest
  * @param {boolean} outbox whether this component publishes anything, and so needs a place to
  *   commit it with the entity
+ * @param {boolean} inbox whether any of its operations declares `once`, and so needs a place to
+ *   record the call it commits
  */
-export const storage = async (manifest, outbox) => {
+export const storage = async (manifest, outbox, inbox) => {
   if (manifest.entity === undefined) return
 
   const Factory = await load(manifest)
 
   /** @type {import('@toa.io/core/types').storages.Factory} */
   const factory = new Factory()
-  const storage = factory.storage(manifest.locator, manifest.entity, { outbox })
+  const storage = factory.storage(manifest.locator, manifest.entity, { outbox, inbox })
 
   // a component whose structure nothing will make must not start with the structure it lacks;
   // what it inherits was written for descendants that store, and one that stores nothing has
@@ -31,6 +33,17 @@ export const storage = async (manifest, outbox) => {
     throw new Error(
       `Component '${manifest.locator.id}' declares migrations, ` +
         `which storage '${manifest.entity.storage}' does not apply`
+    )
+
+  /*
+   * Refused here rather than degraded: a storage that cannot record a call would run every
+   * duplicate of it, which is what declaring `once` asked not to happen. Whether the deployment
+   * can commit one is the storage's own to refuse, once it is connected.
+   */
+  if (inbox && storage.claims !== true)
+    throw new Error(
+      `Component '${manifest.locator.id}' declares 'once', ` +
+        `which storage '${manifest.entity.storage}' does not provide`
     )
 
   return extensions.storage(storage, manifest.locator)

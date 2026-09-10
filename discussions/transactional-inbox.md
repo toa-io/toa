@@ -55,7 +55,7 @@ is readable at once.
    where they land — for as far along the chain as every hop declares `once`. A hop that does not is
    a break in it.
 6. A message is delivered at least once, and a receiver's state change happens once however many
-   times it arrives, where the operation it invokes declares `once`.
+   times it arrives, where the operation it invokes is a transition that declares `once`.
 
 **What is not promised**
 
@@ -136,12 +136,16 @@ Then:
    the outbox's own. An hour, not the outbox's day: the window a duplicate arrives in is the
    broker's redelivery, `comq`'s five requeues and a client's retries — minutes.
 
-6. **Where it may be declared.** On an operation that commits one entity: a transition or an effect
-   over `scope: object`, and an assignment, whose scope is a changeset and always one. `objects` and
-   `stream` are refused — a set is where the reply stops being bounded, and a transition over five
-   hundred records would write five hundred records' worth of answer on every call. The manifest
-   schema refuses the rest the way it already refuses `concurrency` on an operation that is not a
-   transition.
+6. **Where it may be declared.** On a transition over `scope: object`. `objects` is refused — a set
+   is where the reply stops being bounded, and a transition over five hundred records would write
+   five hundred records' worth of answer on every call. The manifest schema refuses the rest the way
+   it already refuses `concurrency` on an operation that is not a transition.
+
+   An assignment and an effect write too, and neither is covered, because neither knows its reply
+   when it writes: an assignment computes it from what the write returns, and an effect writes in
+   `acquire`, before the algorithm has run at all. The reply is what a duplicate is answered with,
+   so covering them means deciding what a duplicate of one is answered with instead. That is a
+   design of its own and it is not made here.
 
 7. **Degradation — there is none.** The record has to commit with the entity, so this needs a storage
    that has transactions: MongoDB on a replica set or a sharded cluster, the condition the outbox
@@ -205,11 +209,10 @@ commit, and a second event published from a second outbox row. Nothing anywhere 
 2. **The record, on transitions.** The declaration, the collection and its index, the insert in the
    transaction, the read before the operation, the exception and its classification, the refusals to
    boot, and retention.
-3. **The record, on the other two.** Assignments and effects. An assignment's reply is computed after
-   its write returns, so the storage writes the record from the post-image it already computes inside
-   the transaction, which is why this follows rather than leads.
-4. **The client's own retry.** The gateway honouring an idempotency key, which is the one duplicate
+3. **The client's own retry.** The gateway honouring an idempotency key, which is the one duplicate
    the runtime cannot otherwise see, because the client makes it.
+4. **Assignments and effects**, if they are wanted: what a duplicate of one is answered with, given
+   that neither knows its reply when it writes.
 
 ## Verification
 

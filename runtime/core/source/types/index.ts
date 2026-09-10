@@ -3,6 +3,7 @@ export * as bindings from './bindings.js'
 export * as bridges from './bridges.js'
 export * as extensions from './extensions.js'
 export * as operations from './operations.js'
+export * as inbox from './inbox.js'
 export * as outbox from './outbox.js'
 export * as storages from './storages.js'
 

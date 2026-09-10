@@ -1,0 +1,63 @@
+name: once
+namespace: mongo
+
+entity:
+  storage: mongodb
+  properties:
+    foo:
+      type: integer
+    bar:
+      type: string
+  blank:
+    foo: 0
+
+operations:
+  # the same call arriving twice changes state once, and both callers get one reply
+  transit:
+    concurrency: retry
+    once: true
+    input:
+      properties:
+        foo:
+          type: string
+          default: .
+        bar:
+          type: string
+          default: .
+      type: object
+
+  # the control: the same thing without the declaration
+  plain:
+    concurrency: retry
+    input:
+      properties:
+        foo:
+          type: string
+          default: .
+        bar:
+          type: string
+          default: .
+      type: object
+
+  # refuses by returning a declared error, so it changes nothing and is not remembered
+  refuse:
+    scope: object
+    concurrency: retry
+    once: true
+    errors: [REFUSED]
+
+  # raises, so it changes nothing and is not remembered
+  raise:
+    scope: object
+    concurrency: retry
+    once: true
+
+  # runs long enough for a duplicate to arrive while it is still running
+  slow:
+    concurrency: retry
+    once: true
+    input:
+      properties:
+        foo:
+          type: integer
+      type: object

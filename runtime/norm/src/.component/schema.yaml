@@ -143,6 +143,9 @@ properties:
             enum: [object, objects, changeset, stream, none]
           concurrency:
             enum: [none, retry]
+          once:
+            # the same call arriving twice changes state once; see documentation/inbox.md
+            type: boolean
           forward:
             $ref: "#/definitions/name"
           bridge:
@@ -200,6 +203,30 @@ properties:
             then:
               properties:
                 concurrency:
+                  const: ~ # never pass
+          - if: # not a transition
+              not:
+                properties:
+                  type:
+                    const: transition
+            then:
+              properties:
+                # An operation that writes nothing has nothing to record. An assignment and an
+                # effect write, but neither knows its reply when it writes — an assignment
+                # computes it from what the write returns, an effect writes in `acquire`, before
+                # the algorithm has run — and the reply is what a duplicate is answered with.
+                once:
+                  const: ~ # never pass
+          - if: # commits more than one entity
+              properties:
+                type:
+                  const: transition
+                scope:
+                  const: objects
+            then:
+              properties:
+                # the reply is recorded, and over a set it is unbounded
+                once:
                   const: ~ # never pass
           - if: # observation
               properties:

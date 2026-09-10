@@ -1,5 +1,5 @@
-import { console } from 'openspan'
 import { environment } from '@toa.io/generic'
+import { index, prune } from './indexes.js'
 
 /**
  * The outbox rows of one component. Its lifecycle is the Client's, so it is not a Connector.
@@ -106,74 +106,9 @@ export class Outbox {
     }
 
     for (const { fields, options } of Object.values(desired))
-      await this.#index(fields, options)
+      await index(this.#collection, fields, options)
 
-    await this.#prune(Object.keys(desired))
-  }
-
-  /**
-   * The name of an index here is fixed, so changing what it is made of — a retention that
-   * changes `expireAfterSeconds`, say — leaves that name held by an index of the old shape,
-   * which MongoDB refuses to overwrite. The old one is dropped and the declared one made.
-   *
-   * @private
-   */
-  async #index(fields, options) {
-    try {
-      await this.#collection.createIndex(fields, options)
-    } catch (e) {
-      if (!CONFLICTS.includes(e.code))
-        return console.warn('MongoDB outbox index creation failed', {
-          collection: this.#collection.collectionName,
-          name: options.name,
-          error: e
-        })
-
-      console.info('Recreating an outbox index whose declaration changed', {
-        collection: this.#collection.collectionName,
-        name: options.name
-      })
-
-      await this.#drop(options.name)
-      await this.#collection.createIndex(fields, options)
-    }
-  }
-
-  /**
-   * Concurrent replicas prune the same index, and losing that race is not an error.
-   *
-   * @private
-   */
-  async #drop(name) {
-    try {
-      await this.#collection.dropIndex(name)
-    } catch (e) {
-      if (e.code !== ERR_INDEX_NOT_FOUND) throw e
-    }
-  }
-
-  /** @private */
-  async #prune(desired) {
-    let current
-
-    try {
-      current = await this.#collection.listIndexes().toArray()
-    } catch {
-      return
-    }
-
-    const obsolete = current
-      .map(({ name }) => name)
-      .filter((name) => name !== '_id_' && !desired.includes(name))
-
-    if (obsolete.length === 0) return
-
-    console.info('Removing obsolete outbox indexes', {
-      collection: this.#collection.collectionName,
-      indexes: obsolete.join(', ')
-    })
-
-    await Promise.all(obsolete.map((name) => this.#drop(name)))
+    await prune(this.#collection, Object.keys(desired))
   }
 }
 
@@ -194,6 +129,3 @@ const EVENTS = 'events'
 
 /** seconds a published row is kept as a change log before the TTL monitor reaps it */
 const RETENTION = 86400
-
-const ERR_INDEX_NOT_FOUND = 27
-const CONFLICTS = [85, 86] // IndexOptionsConflict, IndexKeySpecsConflict

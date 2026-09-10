@@ -66,6 +66,12 @@ export const describe = (context, compositions, dependency, image) => {
       value: String(outbox.retention)
     })
 
+  if (context.inbox?.retention !== undefined)
+    dependency.variables.global.push({
+      name: 'TOA_INBOX_RETENTION',
+      value: String(context.inbox.retention)
+    })
+
   events(context, dependency)
 
   const credentials = context.registry?.credentials

@@ -19,6 +19,8 @@ export const codes = {
   StateConcurrency: 304,
   StateInitialization: 305,
   Duplicate: 306,
+  /** this call has been made, and what it changed is changed */
+  DuplicateCall: 307,
 
   Communication: 400,
   Transmission: 401,
@@ -151,6 +153,7 @@ export const StatePreconditionException = derive('StatePrecondition')
 export const StateConcurrencyException = derive('StateConcurrency')
 export const StateInitializationException = derive('StateInitialization')
 export const DuplicateException = derive('Duplicate')
+export const DuplicateCallException = derive('DuplicateCall')
 export const CommunicationException = derive('Communication')
 export const TransmissionException = derive('Transmission')
 export const EndpointException = derive('Endpoint')
@@ -189,6 +192,8 @@ const OUTCOME: Record<keyof typeof codes, 'permanent' | 'transient'> = {
   StateConcurrency: 'transient',
   StateInitialization: 'permanent',
   Duplicate: 'permanent',
+  // a call that has been made stays made: another attempt is refused by the same record
+  DuplicateCall: 'permanent',
 
   Communication: 'transient',
   // nothing is listening on that queue yet — a deployment in progress, most of the time

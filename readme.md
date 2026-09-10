@@ -31,6 +31,7 @@ Non-scattered documentation is coming some time later.
   - Data validation
   - Multi-document transactions
   - [Transactional outbox](/documentation/outbox.md): state and its events commit together
+  - [Transactional inbox](/documentation/inbox.md): the same call arriving twice changes state once
   - [Convergence](/extensions/convergence): deployments of one context, each with its own
     database, converging on the same entity state
   - Invariants (guards)

@@ -1,6 +1,7 @@
 import type { Readable } from 'node:stream'
 import type { Connector } from '../connector.js'
 import type { Locator } from '../locator.js'
+import type { Call, Inbox } from './inbox.js'
 import type { Row, Storage as Outbox } from './outbox.js'
 
 /** the RSQL tree `@rsql/parser` produces; a storage translates it into its own dialect */
@@ -68,22 +69,26 @@ export interface Storage extends Connector {
 
   /**
    * A transition's commit. `false` is a lost compare-and-swap, not an error. Where `row` is
-   * given, it is committed in the same transaction as the record or not at all.
+   * given, it is committed in the same transaction as the record or not at all, and where
+   * `call` is, so is that — and an identity already recorded raises `DuplicateCall` instead,
+   * having written nothing.
    */
-  store(record: Record, row?: Row): Promise<boolean>
+  store(record: Record, row?: Row, call?: Call): Promise<boolean>
 
   /** a transition over `objects` */
   massStore(records: Record[], rows?: Row[]): Promise<boolean>
 
   /** an assignment; `null` where the query matched nothing */
-  upsert(query: Query, changeset: object, row?: Row): Promise<Record | null>
+  upsert(query: Query, changeset: object, row?: Row, call?: Call): Promise<Record | null>
 
   /** get-or-create, in one indivisible step */
+  // eslint-disable-next-line max-params
   ensure(
     query: Query | undefined,
     properties: object,
     record: Record,
-    row?: Row
+    row?: Row,
+    call?: Call
   ): Promise<Record>
 
   /** the driver's own handle, which an unmanaged operation is given as its state */
@@ -96,6 +101,20 @@ export interface Storage extends Connector {
    * in front of it, which is the defect the outbox exists to close.
    */
   readonly outbox?: Outbox
+
+  /**
+   * Present only where a call can be recorded atomically with the entity, and only where a
+   * component declares `once`. Unlike the outbox there is no weaker thing to fall back to —
+   * a record written outside the transaction guarantees nothing — so a storage that cannot
+   * says so through `claims`, and a component that asked for it does not boot.
+   */
+  readonly inbox?: Inbox
+
+  /**
+   * Whether this storage can record a call at all, which is a property of the storage rather
+   * than of the deployment it is pointed at, and so is answerable before it is connected.
+   */
+  readonly claims?: boolean
 
   /**
    * Whether this storage applies `entity.migrations`. Absent is what a storage that does not
