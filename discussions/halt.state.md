@@ -80,7 +80,11 @@ for.
 
 **Bounding the teardown**, and **bounding the call**. Both need a timer, and a call that can be
 abandoned. comq and Toa have neither, deliberately. A halt is the wrong feature to decide that
-in.
+in — and the same answer has been given before, from the other direction: the transactional
+inbox refused a claim taken ahead of the work, because *"no lease to renew, no claim to release,
+and no state a crash can leave behind"* is what makes it one atomic write
+([transactional-inbox.md](./transactional-inbox.md)). A timer in the correctness path was not
+wanted there and is not wanted here.
 
 **Halting in topological order**, sources first. It does not help. The caller's outgoing call is
 not a source the caller can seal, and the callee is already sealed by the time the call arrives.
