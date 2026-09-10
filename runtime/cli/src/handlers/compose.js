@@ -21,28 +21,29 @@ export async function compose(argv) {
   const paths = find(argv.paths)
   const references = services(argv)
 
-  let connector
-
-  const start = async () => {
+  const workload = new boot.Workload(async () => {
     const composition = await boot.composition(paths, argv)
 
-    if (references.length === 0) connector = composition
-    else {
-      connector = new Connector()
+    if (references.length === 0) return composition
 
-      connector.depends([composition, ...(await create(references))])
-    }
+    const root = new Connector()
 
-    graceful(connector)
+    root.depends([composition, ...(await create(references))])
 
-    await connector.connect()
+    return root
+  })
+
+  const start = async () => {
+    graceful(workload)
+
+    await workload.connect()
   }
 
   // the trace of the startup
   if (environment.get('TOA_BOOT_TRACE') === '1') await output.span('toa compose', start)
   else await start()
 
-  if (argv.kill === true) await connector.disconnect()
+  if (argv.kill === true) await workload.disconnect()
 }
 
 /**
