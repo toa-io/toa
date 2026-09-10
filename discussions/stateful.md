@@ -39,9 +39,10 @@ deadline it waits for its reply as it does today.
 **An addressed call**
 
 1. A name's calls reach at most one process at any moment. The broker grants a name to one connection
-   and holds it for that connection's lifetime. A process that finds its name held waits for it to be
-   released — which is also what a restarted process does while the broker has yet to notice its
-   predecessor is gone. The broker treats the two the same way, and so does Toa.
+   for that connection's lifetime. A process that finds its name held fails to start, and so does a
+   process restarted under the same name before the broker has noticed its predecessor is gone; the
+   restart that follows tries again. A connection restored after a loss holds its name again as part
+   of its recovery, which is made again until the broker has let the old connection go.
 2. A refused call never ran.
 3. A process waiting on an addressed call stops within that call's deadline.
 4. For a streamed reply, the deadline covers the wait for the stream to start; the stream's own
@@ -49,7 +50,8 @@ deadline it waits for its reply as it does today.
 
 **Any call with a deadline**
 
-5. A call abandoned while it still waited in a queue is dropped by the broker and never runs.
+5. A call still waiting in a queue when its `timeout` passes is dropped by the broker and never runs.
+   A call its `signal` ended earlier waits in the queue until then, and may still run.
 6. A call abandoned after a consumer took it has an unknown outcome and may still run. So may a call
    that failed and waits on `comq`'s retry ladder, because dead-lettering strips a message's expiry.
    A caller that repeats an abandoned call relies on the identity every call carries, and on
@@ -94,8 +96,8 @@ Then:
 - A call to a stateful operation names `instance`; a call to an ordinary operation, a task and a
   delayed call name none. A mismatch is refused as a contract error before anything is sent.
 - A call that needs longer or shorter than the default says so: `{ input, instance, timeout: 60_000 }`.
-  A `signal` ends a call when it aborts, within whatever deadline applies; given alone, it leaves a
-  queued call in its queue.
+  A `signal` ends the wait when it aborts, within whatever deadline applies, and leaves the call
+  queued until that deadline passes — or, for an ordinary call with no deadline, until it is taken.
 - Two exceptions are new. *Addressee* is permanent: nothing at that name took the call. *Abandoned* is
   transient: the caller stopped waiting, and the call may still run.
 - The default is set in the context manifest:
@@ -156,6 +158,10 @@ the three reaches the wire.
 inside the grace period, and a stopping process that lets its handlers finish keeps redelivery
 transparent to whoever called it.
 
+**A held name has one way back.** A process that finds its name held fails to start and is
+restarted; a connection that finds it held fails its recovery and reconnects. Both paths already
+retry, and a retry of the name's own beside them would hide whether they work.
+
 **The broker's own mechanisms only.** A plugin that reports deleted queues would tell a caller of a
 crash without a timer, and is enabled on few brokers and on almost no managed ones.
 
@@ -176,10 +182,11 @@ crash without a timer, and is enabled on few brokers and on almost no managed on
    options as `request`. A returned call rejects with `Unroutable`, exported beside `Retry` and `Park`.
 3. **Withdrawal.** `seal()` unbinds every backed queue, waits for the broker to confirm, and then
    cancels consumers.
-4. **A held key waits.** The broker refuses a queue another connection holds by closing the channel
+4. **A held key refuses.** The broker refuses a queue another connection holds by closing the channel
    that asked, and a channel error left unheard closes the whole connection. So the exclusive queue
-   is declared on a channel of its own, which is all that closes, and asked for again every second
-   until the key is let go. A recovery restores the rest of the connection meanwhile.
+   is declared on a channel of its own, which is all that closes, and `back` rejects with what the
+   broker refused with. A recovery that finds a key held fails, and the connection is reopened and
+   recovered again, as after any failed recovery.
 5. **Shards.** A call returned by one shard is published on the next through `route`, which declares
    the exchange there first, and rejects once every shard has returned it.
 6. **Documentation.** The readme's Request, Call and back, Retries and Parked messages sections, and
@@ -241,11 +248,16 @@ blocker stays, since ordinary calls keep waiting by default.
 - a call is answered by the holder of its key;
 - a call to a key nobody holds is refused at once;
 - a sealed holder refuses new calls and answers those it holds;
-- a second holder of a key waits, and takes the key when the first closes;
-- a caller whose holder's connection is killed rejects at its timeout;
-- over a sharded connection, a key bound on one broker is reached, and one bound on none is refused;
+- a second holder of a key is refused, and holds it once the first has closed;
+- a caller whose holder crashed stops waiting at its timeout, and a call made afterwards is refused;
+- a holder holds its key again after the broker restarts, and once the broker lets a silent
+  connection go;
+- a call in flight when the broker crashes ends;
+- a caller stops waiting at its timeout while the broker is down;
+- over a sharded connection, a key bound on one broker is reached, one bound on none is refused,
+  and a call reaches its holder while one of the brokers is down;
 - a request nobody took before its timeout is never delivered to a consumer started afterwards;
-- a request re-sent after a broker restart carries the time it has left.
+- a request re-sent after a broker restart expires at its caller's deadline.
 
 **Toa**, with a fixture component whose ordinary `open` returns `context.instance` and whose stateful
 `increment` keeps a counter in memory, the second process started on its own with `TOA_INSTANCE`:
@@ -255,7 +267,9 @@ blocker stays, since ordinary calls keep waiting by default.
 - a call to a process that has stopped is refused;
 - a call to a process that was killed is abandoned at the default deadline, and at a `timeout` given;
 - a process waiting on a call to a killed process stops;
-- a second process started with a held name serves once the first has gone;
+- a process answers calls under its name again after the broker restarts, and after its connection
+  went silent;
+- a second process started with a held name fails to start;
 - an ordinary call with a `timeout` to a component that is down is abandoned, and the component, once
   up, never receives it;
 - through the gateway, a route with `map:instance` reaches the named process, a name nobody holds
