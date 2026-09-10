@@ -64,5 +64,8 @@ export type Dictionary = {
         queries: {
           title: string
         }
+        status: {
+          title: string
+        }
       }
     }

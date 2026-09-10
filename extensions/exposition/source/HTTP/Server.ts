@@ -264,7 +264,8 @@ export class Server extends Connector {
       let status = message.status
 
       if (status === undefined)
-        if (message.body === null) status = 404
+        // null is a resource that is not there; 404 is a route that is not there
+        if (message.body === null) status = 410
         else if (context.request.method === 'POST') status = 201
         else if (message.body === undefined && context.request.method !== 'HEAD')
           status = 204

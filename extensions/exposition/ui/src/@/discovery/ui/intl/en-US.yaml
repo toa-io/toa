@@ -49,3 +49,5 @@ guide:
     title: Multipart responses
   queries:
     title: Collection queries
+  status:
+    title: Status codes

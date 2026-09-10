@@ -129,3 +129,6 @@ inputs:
     queries:
       title:
         input: Collection queries
+    status:
+      title:
+        input: Status codes

@@ -1,4 +1,5 @@
 import authentication from '../../../docs/authentication.md?raw'
+import status from '../../../docs/status.md?raw'
 import queries from '../../../docs/queries.md?raw'
 import multipart from '../../../docs/multipart.md?raw'
 import { discovered, guard, method, slashed, system, verbs } from './ui'
@@ -6,7 +7,7 @@ import { read } from './shape'
 import type { Described, Discovered, Method, Resource, Schema } from '@/discovery'
 
 /** The in-app guides, in the order the landing shows them. */
-const GUIDES = [authentication, queries, multipart]
+const GUIDES = [authentication, status, queries, multipart]
 
 /**
  * A document a reader can take with them: the guides, then what the page shows of the
@@ -39,7 +40,11 @@ export function markdown(tree: Discovered | null | undefined, title: string): st
 
 /** One guide, nested under the document title; page-only markup is dropped. */
 function guide(source: string): string {
-  return demote(source.replace(/<footer\b[^>]*>([\s\S]*?)<\/footer>/g, '$1')).trim()
+  return demote(
+    source
+      .replace(/<footer\b[^>]*>([\s\S]*?)<\/footer>/g, '$1')
+      .replace(/<span class="note">([\s\S]*?)<\/span>/g, '\n\n$1'),
+  ).trim()
 }
 
 /** Headings down one, so a guide's `#` sits under the document title. Fences stay put. */

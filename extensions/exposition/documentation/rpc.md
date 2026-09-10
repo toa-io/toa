@@ -88,7 +88,7 @@ which is what the RTD calls it wherever else it is read.
 
 The reply is the operation's, restricted by the same [`io:output`](io.md) as the resource's,
 and encoded as the request's `accept` asks. A call that returned nothing answers `result: null`
-— JSON-RPC has no 404, and nothing went wrong.
+— JSON-RPC has no 410, and nothing went wrong.
 
 A call with no `id` is a notification: it runs and answers nothing, and a request carrying only
 notifications answers `204`.

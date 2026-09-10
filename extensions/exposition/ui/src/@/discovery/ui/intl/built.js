@@ -61,6 +61,9 @@ export const dictionaries = {
       },
       "queries": {
         "title": "Collection queries"
+      },
+      "status": {
+        "title": "Status codes"
       }
     }
   }
