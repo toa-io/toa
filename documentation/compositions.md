@@ -96,6 +96,67 @@ The list is exact — unlike [`toa mono`](../runtime/cli/readme.md#mono), nothin
 A service the named ones talk to answers over the network in a deployment; in one process it is
 named too, or nothing answers it.
 
+## Evicted
+
+`evicted` names what this context does not deploy, whatever else names it:
+
+```yaml
+# context.toa.yaml
+
+compositions:
+  - name: edge
+    components:
+      - todos.tasks
+      - todos.stats
+    services:
+      - exposition
+
+evicted:
+  components:
+    - todos.stats
+  services:
+    - exposition
+```
+
+An evicted **component** is in no pod, gets no `Service`, is in no image, and its migrations do
+not run. Nothing it alone required is deployed either — a storage nothing else stores in, an
+extension nothing else declares — and an event nothing else consumes stops being published.
+
+A composition every component of which is evicted is not deployed, and the name it held is free
+again. A service it listed falls back to a `Deployment` of its own, unless another composition
+runs it.
+
+An evicted **service** is deployed nowhere: no `Deployment`, no `Service`, no `Ingress`, in a
+composition's pod or on its own — including a service an annotation alone would have deployed.
+The extension is otherwise untouched: the components that declare it still carry it, and what it
+contributes besides a service still applies.
+
+Eviction only ever subtracts, so naming a service nothing here would have deployed changes
+nothing. A component this context has none of is refused by name:
+
+```
+'evicted' names an unknown component 'todos.three'.
+```
+
+Every key of a context is read for the environment it is deployed to, so this is where an
+environment deploys less than another:
+
+```yaml
+evicted@production:
+  components:
+    - todos.stats
+```
+
+Two things to hold onto. A component that calls an evicted one is not refused here — nothing
+states who calls whom — and the call fails where it is made. And `toa env` reads what is
+deployed, so run it again after changing this, or an environment file still carries variables
+for what is no longer there.
+
+An eviction an environment states is a deployment's business alone. One that states no
+environment is read by the workspace commands too — `toa npm` installs nothing for the evicted
+component, and `toa types` writes it no types and drops it from what the Context can call. So
+evict for the environment that is not to deploy it, and keep developing it in the one that is.
+
 ## Base image
 
 Every member of a composition builds `FROM` the same image. Where they disagree, the

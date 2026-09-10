@@ -126,3 +126,41 @@ describe('compositions', () => {
     )
   })
 })
+
+describe('evicted', () => {
+  it('should allow components and services', () => {
+    context.evicted = {
+      components: ['a.b'],
+      services: ['@toa.io/extensions.exposition']
+    }
+
+    assert.doesNotThrow(() => validate(context))
+  })
+
+  it('should require a component to be named as one', () => {
+    context.evicted = { components: ['a'] }
+
+    assert.throws(
+      () => validate(context),
+      (error) => /must match pattern/.test(error.message)
+    )
+  })
+
+  it('should reject an empty declaration', () => {
+    context.evicted = {}
+
+    assert.throws(
+      () => validate(context),
+      (error) => /fewer than 1 properties/.test(error.message)
+    )
+  })
+
+  it('should reject an unknown property', () => {
+    context.evicted = { compoments: ['a.b'] }
+
+    assert.throws(
+      () => validate(context),
+      (error) => /must NOT have additional properties/.test(error.message)
+    )
+  })
+})

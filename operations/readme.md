@@ -40,6 +40,25 @@ compositions:
 
 See [compositions](../documentation/compositions.md).
 
+## Evicted
+
+What a context does not deploy, whatever a composition lists:
+
+```yaml
+# context.toa.yaml
+
+evicted:
+  components:
+    - todos.stats
+  services:
+    - exposition
+```
+
+Nothing an evicted component alone required is deployed either — its storage, the extensions it
+declared. `evicted@production` states it for one environment.
+
+See [compositions](../documentation/compositions.md#evicted).
+
 ## Context
 
 ### Container Registry
