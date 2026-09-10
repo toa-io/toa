@@ -42,6 +42,7 @@ operations:
       - WONT_CREATE
   transit:
     concurrency: retry
+    once: true
     input:
       properties:
         title:

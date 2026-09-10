@@ -32,6 +32,16 @@ export interface Introspection {
   /** and whether that role is one of the `system` scope */
   system?: boolean
 
+  /**
+   * Whether making this call twice changes state once — the operation declares
+   * [`once`](/documentation/inbox.md). What it means for a client is that a retry it is not
+   * sure about is safe to make, under an `idempotency-key` it repeats.
+   *
+   * Read off the operation rather than off the route: it is the operation that records the
+   * call, and the same one mounted twice is as safe under either.
+   */
+  once?: boolean
+
   /** whether the route publishes this method to a model — [`mcp:tool`](mcp.md) */
   mcp?: boolean
   route?: Record<string, Schema>
@@ -43,7 +53,6 @@ export interface Introspection {
    * is not queryable.
    */
   selection?: Record<string, Schema>
-
 
   /** what the body is, where it is a file rather than a value — [`octets:put`](octets.md) */
   octets?: Octets
@@ -103,6 +112,7 @@ const KEYS = [
   'private',
   'protected',
   'system',
+  'once',
   'mcp',
   'route',
   'query',

@@ -8,6 +8,11 @@ import type { JSONSchema } from './schemas.js'
 /** What an operation states about itself, and answers when asked to explain. */
 export interface Explanation {
   description?: string
+  /**
+   * Whether the same call arriving twice changes state once. Said, because a caller cannot tell
+   * it from an answer that says nothing, and what it changes is whether a retry is safe to make.
+   */
+  once?: boolean
   input?: JSONSchema | null
   output?: JSONSchema | null
   errors?: Array<string | number>
@@ -34,7 +39,7 @@ export class Request extends Contract {
   public constructor(schema: Schema, definition: Definition, entity?: Entity) {
     super(schema)
 
-    for (const key of ['description', 'input', 'output', 'errors'] as const)
+    for (const key of ['description', 'once', 'input', 'output', 'errors'] as const)
       if (definition[key] !== undefined)
         (this.discovery as Record<string, unknown>)[key] = definition[key]
 

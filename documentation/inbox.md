@@ -84,3 +84,35 @@ db.tea_pots_inbox.findOne({ _id: '<the request id>' }) // what that call answere
 ```
 
 A record expires by TTL on `at`. There is nothing to clean up and nothing to replay.
+
+## Over HTTP
+
+A client that retries a request the gateway never answered is making a second call, and the
+runtime cannot see that it is the same one — the client alone knows. It says so with a key:
+
+```http
+POST /orders/ HTTP/1.1
+idempotency-key: 3f1c8a2e-...
+```
+
+The gateway turns the key into the call's identity, so a retry carrying the same key is the same
+call and is answered with what the first one answered. The key is the client's to generate, and
+to repeat only for a retry of the same request — the convention is
+[`draft-ietf-httpapi-idempotency-key-header`](https://datatracker.ietf.org/doc/draft-ietf-httpapi-idempotency-key-header/).
+
+Four things make the identity, and each of them means a key stays yours:
+
+- **who is calling**, so a key you picked is not a key someone else picked;
+- **the key**;
+- **the method and the path**, so one key sent to two routes is two calls — and a key reused
+  across two records is not one call about both of them.
+
+Not the body. Sending one key with two different bodies answers you with what the first one
+answered, which is what asking for idempotency means.
+
+A route that nothing authenticates has no caller to scope a key by, so two clients of one that
+pick the same key collide. Scope a state-changing route with `auth:` or expect that.
+
+A key sent to a method that does not declare `once` is accepted and does nothing. Whether a method
+does is in [what it answers about itself](/extensions/exposition/documentation/introspection.md),
+as `once`, and the discovery page marks it.

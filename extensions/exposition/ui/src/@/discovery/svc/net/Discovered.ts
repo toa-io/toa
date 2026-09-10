@@ -21,6 +21,9 @@ export interface Described {
 
 /** What one method takes and answers. A schema is read as a shape; see `ui/shape`. */
 export interface Method extends Described {
+  /** whether making the call twice changes state once — the operation declares `once` */
+  once?: boolean
+
   /** whether the route publishes it to a model — `mcp:tool` */
   mcp?: boolean
 
