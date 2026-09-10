@@ -1,5 +1,6 @@
 export { remote } from './remote.js'
 export { component } from './component.js'
 export { composition } from './composition.js'
+export { workload } from './workload.js'
 export { copy } from './copy.js'
 export { load } from './load.js'

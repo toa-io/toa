@@ -5,6 +5,7 @@ const reset = () => {
     reset,
     components: [],
     compositions: [],
+    workloads: [],
     remotes: [],
     services: []
   })

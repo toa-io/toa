@@ -26,6 +26,7 @@ import { storage } from './storage.js'
 import { guards } from './guards.js'
 import { host } from './host.js'
 import { rc } from './rc.js'
+import { Workload } from './workload.js'
 
 export {
   call,
@@ -48,7 +49,8 @@ export {
   remote,
   storage,
   guards,
-  rc
+  rc,
+  Workload
 }
 
 export { bindings, bridge, contract, discovery, extensions }

@@ -28,3 +28,8 @@ export async function receive<T = any>(
 type Receiver = { receive: (message: types.Message<T>) => void | Promise<void> }
 
 export function host(): types.extensions.Host
+
+/** A process, as a connector: what the command built, and what the extensions keep in one. */
+export class Workload extends core.Connector {
+  constructor(build: (workload: Workload) => Promise<core.Connector>)
+}

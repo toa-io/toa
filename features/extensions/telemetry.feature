@@ -218,7 +218,7 @@ Feature: Telemetry
               value: 'false'
       """
 
-  Scenario: Composition becomes ready
-    Given I compose `dummies.one` component
+  Scenario: A process becomes ready
+    Given I run `dummies.one` component
     When I request ready probe
     Then ready probe status is 200

@@ -13,6 +13,14 @@ export class Connector {
   public readonly id: string
   public connected: boolean = false
 
+  /**
+   * Whether this has been taken down. What is disposed of is never connected again: a
+   * communication it held is sealed, an announcement it made has stopped, an algorithm it ran
+   * is unmounted. Whoever remembers one for the life of the process — an extension factory
+   * caching what it hands to components — replaces it rather than handing it out twice.
+   */
+  public disposed: boolean = false
+
   public constructor() {
     this.id = this.constructor.name + '#' + Math.random().toString(36).substring(2, 8)
   }
@@ -184,6 +192,8 @@ export class Connector {
       await Promise.all(this.#dependencies.map((connector) => connector.disconnect()))
 
       await this.dispose()
+
+      this.disposed = true
     })()
 
     await this.#disconnecting

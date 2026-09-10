@@ -1,5 +1,6 @@
 import { console as output } from 'openspan'
 import { Connector } from '@toa.io/core'
+import * as boot from '@toa.io/boot'
 import { version } from '@toa.io/definitions'
 
 import { graceful } from './lib/graceful.js'
@@ -11,7 +12,7 @@ export const serve = async (argv) => {
 
   const paths = Array.isArray(argv.paths) ? argv.paths : [argv.paths]
 
-  const start = async () => {
+  const workload = new boot.Workload(async () => {
     const services = await create(paths)
 
     // an extension that is off in this environment has nothing to run, and said so
@@ -24,12 +25,17 @@ export const serve = async (argv) => {
       )
     }
 
-    const connector = new Connector()
+    const root = new Connector()
 
-    connector.depends(services)
-    graceful(connector)
+    root.depends(services)
 
-    await connector.connect()
+    return root
+  })
+
+  const start = async () => {
+    graceful(workload)
+
+    await workload.connect()
   }
 
   // the trace of the startup
