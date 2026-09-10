@@ -1,4 +1,3 @@
-import assert from 'node:assert'
 import { setTimeout } from 'node:timers/promises'
 import { console } from 'openspan'
 import { Connector } from '@toa.io/core'
@@ -191,14 +190,14 @@ export class Gateway extends Connector {
     const destination = match.node.forward.replace(/\/:([^/]+)/g, (_, name) => {
       const value = match.parameters.find((parameter) => parameter.name === name)?.value
 
-      assert.ok(value !== undefined, `Forwarded parameter '${name}' not found`)
+      if (value === undefined) throw new Error(`Forwarded parameter '${name}' not found`)
 
       return `/${value}`
     })
 
     const forward = this.tree.match(destination)
 
-    assert.ok(forward !== null, 'Forwarded route not found')
+    if (forward === null) throw new Error('Forwarded route not found')
 
     return forward
   }

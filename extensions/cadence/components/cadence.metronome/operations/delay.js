@@ -24,5 +24,8 @@ export function transition(input, object) {
   // there at all, and a null would not fit it
   if (input.request !== undefined) object.request = input.request
 
+  // the chain that asked for the call, absent where the caller detached it
+  if (input.trail !== undefined) object.trail = input.trail
+
   return object.id
 }

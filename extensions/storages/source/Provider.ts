@@ -1,4 +1,3 @@
-import * as assert from 'node:assert'
 import type { Metadata, Stream } from './Entry.js'
 import type { Readable } from 'node:stream'
 import type { Maybe } from '@toa.io/core/types'
@@ -12,12 +11,10 @@ export abstract class Provider<Options = unknown> {
   protected constructor(options: Options, secrets?: Secrets) {
     this.options = options
 
-    new.target.SECRETS?.forEach(({ name, optional }) =>
-      assert.ok(
-        optional === true || secrets?.[name] !== undefined,
-        `Missing secret '${name}'`
-      )
-    )
+    new.target.SECRETS?.forEach(({ name, optional }) => {
+      if (optional !== true && secrets?.[name] === undefined)
+        throw new Error(`Missing secret '${name}'`)
+    })
   }
 
   public abstract get(path: string, options?: unknown): Promise<Maybe<Stream>>

@@ -1,4 +1,5 @@
 export { complete } from './complete.js'
+export { converge } from './converge.js'
 export { dependencies } from './dependencies.js'
 export { dereference } from './dereference.js'
 export { expand } from './expand.js'

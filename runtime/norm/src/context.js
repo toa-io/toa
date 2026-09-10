@@ -30,6 +30,9 @@ export const context = async (root, environment = variables.get('TOA_ENV')) => {
   const paths = await glob(resolve(root, COMPONENTS), GLOB)
 
   context.components = await Promise.all(paths.map(component))
+
+  // what a context declares of every component that stores anything, its own and the ones its
+  // extensions bring, is given to them where those are known: inside `dependencies`
   context.dependencies = await dependencies(context)
 
   dereference(context)

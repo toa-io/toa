@@ -1,0 +1,23 @@
+name: refused
+namespace: mongo
+
+entity:
+  associated: true
+  properties:
+    count:
+      type: number
+  blank:
+    count: 0
+
+operations:
+  strict:
+    concurrency: retry
+    input:
+      type: object
+      required: [amount]
+      properties:
+        amount:
+          type: integer
+
+receivers:
+  mongo.one.updated: strict

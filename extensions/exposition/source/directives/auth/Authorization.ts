@@ -1,4 +1,3 @@
-import assert from 'node:assert'
 import { match } from 'matchacho'
 import { console } from 'openspan'
 import { Minimatch } from 'minimatch'
@@ -79,7 +78,8 @@ export class Authorization implements DirectiveFamily<Directive, Extension> {
   }
 
   public create(name: string, value: any, remotes: Remotes): Directive {
-    assert.ok(name in constructors, `Directive 'auth:${name}' is not implemented`)
+    if (!(name in constructors))
+      throw new Error(`Directive 'auth:${name}' is not implemented`)
 
     const Class = constructors[name]
 

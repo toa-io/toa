@@ -1,4 +1,3 @@
-import assert from 'node:assert'
 import { Mapping } from './Mapping.js'
 import { take } from '../../Introspection.js'
 import type { Parameter } from '../../RTD/index.js'
@@ -6,12 +5,10 @@ import type { Introspection, Schema } from '../../Introspection.js'
 
 export class Segments extends Mapping<Record<string, string>> {
   public constructor(map: Record<string, string>) {
-    assert.ok(map.constructor === Object, '`map:segments` must be an object')
+    if (map.constructor !== Object) throw new Error('`map:segments` must be an object')
 
-    assert.ok(
-      Object.values(map).every((value) => typeof value === 'string'),
-      '`map:segments ` must be an object with string values'
-    )
+    if (!Object.values(map).every((value) => typeof value === 'string'))
+      throw new Error('`map:segments ` must be an object with string values')
 
     super(map)
   }
@@ -38,7 +35,7 @@ export class Segments extends Mapping<Record<string, string>> {
 
         const index = parameters.findIndex(({ name }) => name === parameter)
 
-        assert.ok(index > -1, `Route parameter '${parameter}' is missing`)
+        if (!(index > -1)) throw new Error(`Route parameter '${parameter}' is missing`)
 
         properties[property] = parameters[index].value
 

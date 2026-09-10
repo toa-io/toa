@@ -1,6 +1,6 @@
 import { components } from './components.js'
 import { version } from '../version.js'
-import { DISCRETENESS, NAMESPACE } from './const.js'
+import { DISCRETENESS, NAMESPACE, REGIONS } from './const.js'
 import * as schemas from './schemas.js'
 import type { Annotation } from './types.js'
 import type { Dependency, Service, Variable } from '@toa.io/operations'
@@ -21,6 +21,11 @@ export function deployment(_: unknown, annotation?: Annotation | null): Dependen
   const variables: Variable[] = [
     { name: 'TOA_CADENCE_DISCRETENESS', value: String(discreteness) }
   ]
+
+  // absent, the metronome makes the calls of the region it is deployed as, which is what a
+  // deployment that has never heard of regions does anyway
+  if (annotation?.regions !== undefined)
+    variables.push({ name: REGIONS, value: annotation.regions.join(' ') })
 
   const service: Service = {
     group: NAMESPACE,

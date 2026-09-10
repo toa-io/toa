@@ -33,3 +33,19 @@ Feature: Reply streams
       FIN
       --cut--
       """
+
+  Scenario: Stopping the Gateway while a reply streams
+    Given the annotation:
+      """yaml
+      drain: 500
+      """
+    And the `sequences` is running
+    When the following stream is received:
+      """
+      GET /sequences/tokens/ HTTP/1.1
+      host: nex.toa.io
+      accept: text/plain
+      """
+    And the Gateway is stopped
+    Then the stream ends with `FIN`
+    And the Gateway stopped within 1 second

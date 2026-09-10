@@ -38,3 +38,19 @@ function resetCalls(target = [assert, fixtures], seen = new Set()) {
     if (typeof value === 'function' && value.mock !== undefined) value.mock.resetCalls()
     else resetCalls(value, seen)
 }
+
+describe('region', () => {
+  it('should be zero where a deployment is no region', () => {
+    assert.strictEqual(context.region, 0)
+  })
+
+  it('should be the rank this deployment writes with', () => {
+    process.env.TOA_REGION = '1'
+
+    try {
+      assert.strictEqual(new Context(fixtures.local, fixtures.discover).region, 1)
+    } finally {
+      delete process.env.TOA_REGION
+    }
+  })
+})

@@ -1,4 +1,3 @@
-import assert from 'node:assert'
 import { Directive } from './Directive.js'
 import type { Output } from '../../io.js'
 
@@ -9,10 +8,8 @@ export class Context extends Directive {
   public constructor(value: unknown) {
     super()
 
-    assert.ok(
-      typeof value === 'string',
-      "Directive 'octets:context' must must be a string"
-    )
+    if (typeof value !== 'string')
+      throw new Error("Directive 'octets:context' must must be a string")
 
     this.storage = value
   }

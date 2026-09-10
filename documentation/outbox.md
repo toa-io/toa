@@ -1,15 +1,16 @@
 # Transactional Outbox
 
-A state change and the events it produces commit together. Publication happens off the operation's
-path, and what fails to publish is recovered from the database.
+A state change and what it is published to commit together. Publication happens off the
+operation's path, and what fails to publish is recovered from the database.
 
 ## When it applies
 
 Wherever the storage can commit a row atomically with the entity: MongoDB on a replica set or a
 sharded cluster. A standalone `mongod` publishes inline and says so at startup.
 
-Only for a component whose events something consumes. A component none of whose events are
-consumed takes no transaction, and its `{collection}_outbox` is never created. See
+Only for a component that has somewhere to publish to. Its own events are one such place, and an
+extension may add others; a component with none takes no transaction, and its
+`{collection}_outbox` is never created. See
 [events](/documentation/component/declaration.md#events).
 
 ```yaml
@@ -21,7 +22,9 @@ outbox:
 ```
 
 Recovery needs [`atomicity`](/connectors/atomicity) as well. Without it rows are written and
-published as they are committed, and the pump reads nothing.
+published as they are committed, and the pump reads nothing — which it says every ten cycles
+it has owned no lane, and once more where one is assigned after all. It is not said sooner
+because a replica that has just started owns nothing for a moment, and that reads the same.
 
 ## The row
 
@@ -31,8 +34,9 @@ One row per state change, in `{collection}_outbox`, written in the entity's tran
 {
   _id,                  // uuid v7, chronological
   lane,                 // which replica pumps this row
-  published: false,
+  published: false,     // sent everywhere it was outstanding for
   pending,              // not swept before this
+  outstanding,          // where it has not been sent yet, by name
   event: { origin, state, trailers, input }
 }
 ```
@@ -47,17 +51,22 @@ Its id is held in memory until a cycle marks it.
 
 One cycle at a time, the pump:
 
-1. **reads** a page of rows that are due, unpublished, and in a lane it owns, skipping those this
-   process has sent or is sending, and reads on while a page comes back full;
-2. **publishes** them, every one of them, whatever the broker refuses;
+1. **reads** a page of rows that are due, not yet sent everywhere, and in a lane it owns,
+   skipping those this process has sent or is sending, and reads on while a page comes back full;
+2. **publishes** them, every one of them, to every destination each is still outstanding for,
+   whatever a broker refuses;
 3. **marks** what it published, together with what the immediate path published since the last
-   cycle, in one batched write.
+   cycle, in one batched write per set of destinations that landed together — which is one write
+   in the ordinary case, where they all did.
 
 In a healthy system step 1 answers with nothing, every cycle: a row is due only if the process
 that wrote it failed to publish or died before marking it.
 
 Publication has no timeout. The broker binding waits for the broker to return rather than failing,
-so what bounds the pump is a cap on publications in flight and a bounded drain on shutdown.
+so what bounds the pump is a cap on publications in flight — per destination — and a bounded drain
+on shutdown. A cycle waits for what it started before marking, but not past its own interval: a
+publication is never abandoned, it is only stopped being waited for, so one destination with
+nothing to say does not hold up the settling of another.
 
 ### Lanes
 
@@ -98,6 +107,10 @@ the pump reads least when the process is busiest.
 this from AMQP redelivery regardless, and every event carries `VERSION`.
 
 **No ordering.** The immediate path races the pump, and AMQP fanout gives no cross-channel order.
+
+**One destination does not answer for another.** Each is published and marked on its own, so a
+destination that is down delays only itself and republishes nothing that already landed
+elsewhere.
 
 **Nothing is dropped.** A failed publication leaves the row as it is and a later cycle sends it
 again. Every row of a batch is attempted; there is no attempt counter and no backoff.

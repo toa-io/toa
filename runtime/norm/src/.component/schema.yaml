@@ -89,7 +89,7 @@ properties:
         type: object
         propertyNames:
           not:
-            enum: [id, VERSION, CREATED, UPDATED, DELETED]
+            enum: [id, VERSION, CREATED, UPDATED, DELETED, REGION]
       migrations:
         type: array
         items:

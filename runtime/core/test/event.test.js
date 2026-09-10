@@ -23,7 +23,7 @@ beforeEach(() => {
   depends.mock.resetCalls()
 
   event = new Event(fixtures.definition, fixtures.binding, fixtures.bridge)
-  emit = () => event.emit(fixtures.event)
+  emit = () => event.emit(fixtures.row())
 })
 
 it('should depend on binding', () => {
@@ -67,7 +67,7 @@ describe('condition', () => {
 
       origin.falsy = true
 
-      await event.emit(origin, fixtures.event.changeset, fixtures.event.state)
+      await event.emit({ ...fixtures.row(), event: origin })
 
       assert.strictEqual(fixtures.binding.emit.mock.callCount(), 0)
     })
@@ -83,11 +83,7 @@ describe('condition', () => {
     })
 
     it('should not call condition', async () => {
-      await event.emit(
-        fixtures.event.origin,
-        fixtures.event.changeset,
-        fixtures.event.state
-      )
+      await event.emit(fixtures.row())
 
       assert.ok(
         !fixtures.bridge.condition.mock.calls.some((call) => call.arguments.length === 0)
@@ -116,7 +112,7 @@ describe('payload', () => {
       definition.subjective = false
 
       event = new Event(definition, fixtures.binding, fixtures.bridge)
-      emit = () => event.emit(fixtures.event)
+      emit = () => event.emit(fixtures.row())
     })
 
     it('should not call payload', async () => {
@@ -131,6 +127,28 @@ describe('payload', () => {
       const payload = fixtures.event.state
       assertEmitted(payload)
     })
+  })
+})
+
+describe('the chain', () => {
+  it('should carry what the row was committed by', async () => {
+    const hops = ['default.orders.place']
+
+    await event.emit({ ...fixtures.row(), trail: hops })
+
+    const [message] = fixtures.binding.emit.mock.calls.at(-1).arguments
+
+    assert.deepStrictEqual(message.trail, hops)
+  })
+
+  // it is read off the row rather than out of scope: the pump publishes off the operation's
+  // path, and may be another replica entirely
+  it('should carry none where the row has none', async () => {
+    await emit()
+
+    const [message] = fixtures.binding.emit.mock.calls.at(-1).arguments
+
+    assert.ok(!('trail' in message))
   })
 })
 

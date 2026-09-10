@@ -1,4 +1,3 @@
-import assert from 'node:assert'
 import { LOGS_PREFIX, READY_ENV, TRACES_ENV } from './const.js'
 import { DEFAULT_ANNOTATION, normalizeAnnotation, type ReadyAnnotation } from './ready.js'
 import type { Dependency, Probe, Variables } from '@toa.io/operations'
@@ -51,22 +50,16 @@ function addTracesVariables(annotation: TracesAnnotation, variables: Variables):
   const { sample, rate, exporters } = annotation
 
   if (sample !== undefined)
-    assert.ok(
-      typeof sample === 'number' && sample >= 0 && sample <= 1,
-      'telemetry.traces.sample must be a number within [0, 1]'
-    )
+    if (!(typeof sample === 'number' && sample >= 0 && sample <= 1))
+      throw new Error('telemetry.traces.sample must be a number within [0, 1]')
 
   if (rate !== undefined)
-    assert.ok(
-      typeof rate === 'number' && rate > 0,
-      'telemetry.traces.rate must be a positive number'
-    )
+    if (!(typeof rate === 'number' && rate > 0))
+      throw new Error('telemetry.traces.rate must be a positive number')
 
   if (exporters?.otlp !== undefined)
-    assert.ok(
-      typeof exporters.otlp.endpoint === 'string',
-      'telemetry.traces.exporters.otlp.endpoint is required'
-    )
+    if (typeof exporters.otlp.endpoint !== 'string')
+      throw new Error('telemetry.traces.exporters.otlp.endpoint is required')
 
   variables.global.push({
     name: TRACES_ENV,

@@ -1,4 +1,3 @@
-import assert from 'node:assert'
 import { quote } from '@toa.io/generic'
 import * as http from './HTTP/index.js'
 import { type Parameter } from './RTD/index.js'
@@ -205,8 +204,9 @@ export class Query {
   private fitRanges(qs: http.Query): void {
     const query = qs as core.Query
 
-    assert.ok(this.query.limit !== undefined, 'Query limit must be defined')
-    assert.ok(this.query.omit !== undefined, 'Query limit range must be defined')
+    if (this.query.limit === undefined) throw new Error('Query limit must be defined')
+    if (this.query.omit === undefined)
+      throw new Error('Query limit range must be defined')
 
     if (qs.limit !== undefined)
       query.limit = fit(qs.limit, this.query.limit.range, 'limit')

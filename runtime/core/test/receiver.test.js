@@ -25,6 +25,9 @@ let receiver
 /** @type {toa.norm.component.Receiver} */
 let definition
 
+/** the event the receiver adds to the chain of every call it makes */
+const hop = '~' + fixtures.definition.destination
+
 beforeEach(() => {
   resetCalls()
   depends.mock.resetCalls()
@@ -48,7 +51,7 @@ it('should apply', async () => {
       (call) =>
         call.arguments.length === 2 &&
         isDeepStrictEqual(call.arguments[0], definition.operation) &&
-        isDeepStrictEqual(call.arguments[1], { input: payload })
+        isDeepStrictEqual(call.arguments[1], { input: payload, trail: [hop] })
     )
   )
 })
@@ -69,7 +72,7 @@ for (const [adaptive] of [[false], [true]])
     const request = adaptive
       ? await fixtures.bridge.request.mock.calls[0].result
       : { input: payload }
-    const expected = merge(clone(request), extension)
+    const expected = { ...merge(clone(request), extension), trail: [hop] }
 
     const argument = fixtures.local.invoke.mock.calls[0].arguments[1]
 
@@ -97,7 +100,7 @@ describe('conditioned', () => {
         (call) =>
           call.arguments.length === 2 &&
           isDeepStrictEqual(call.arguments[0], definition.operation) &&
-          isDeepStrictEqual(call.arguments[1], { input: payload })
+          isDeepStrictEqual(call.arguments[1], { input: payload, trail: [hop] })
       )
     )
   })
@@ -130,6 +133,44 @@ describe('adaptive', () => {
           isDeepStrictEqual(call.arguments[1], request)
       )
     )
+  })
+})
+
+describe('the chain', () => {
+  /** what the receiver handed its operation */
+  const request = () => fixtures.local.invoke.mock.calls.at(-1).arguments[1]
+
+  it('should continue what the message carries', async () => {
+    const hops = ['default.orders.place', '~default.orders.sync', 'default.billing.charge']
+
+    await receiver.receive({ payload: { foo: 'bar' }, trail: hops })
+
+    assert.deepStrictEqual(request().trail, [...hops, hop])
+  })
+
+  it('should start one where the message carries none', async () => {
+    await receiver.receive({ payload: { foo: 'bar' } })
+
+    assert.deepStrictEqual(request().trail, [hop])
+  })
+
+  // the message field is taken by name rather than merged, so what an adaptive bridge put
+  // there — or what a peer sent — cannot stand in for the chain
+  it('should not let a message stand a chain up', async () => {
+    for (const trail of ['nope', 42, { 0: 'a' }, null]) {
+      await receiver.receive({ payload: { foo: 'bar' }, trail })
+
+      assert.deepStrictEqual(request().trail, [hop])
+    }
+  })
+
+  it('should drop what is not a hop', async () => {
+    await receiver.receive({
+      payload: { foo: 'bar' },
+      trail: ['default.orders.place', 7, null, {}]
+    })
+
+    assert.deepStrictEqual(request().trail, ['default.orders.place', hop])
   })
 })
 

@@ -122,7 +122,7 @@ describe('compositions', () => {
 
     assert.throws(
       () => validate(context),
-      (error) => /Property compoments is not expected to be here/.test(error.message)
+      (error) => /must NOT have additional properties/.test(error.message)
     )
   })
 })

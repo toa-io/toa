@@ -1,10 +1,9 @@
-import assert from 'node:assert'
 import { Mapping } from './Mapping.js'
 import type { Input } from '../../io.js'
 
 export class Authority extends Mapping<string> {
   public constructor(property: string) {
-    assert.ok(typeof property === 'string', '`map:authority` must be a string')
+    if (typeof property !== 'string') throw new Error('`map:authority` must be a string')
 
     super(property)
   }

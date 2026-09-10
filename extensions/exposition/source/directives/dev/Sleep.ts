@@ -1,4 +1,3 @@
-import assert from 'node:assert'
 import { setTimeout } from 'node:timers/promises'
 import { console } from 'openspan'
 import { cors } from '../cors/index.js'
@@ -11,7 +10,8 @@ export class Sleep implements Directive {
   private readonly maximum: number
 
   public constructor(value: number) {
-    assert.ok(Number.isInteger(value), '`dev:sleep` directive value must be an integer')
+    if (!Number.isInteger(value))
+      throw new Error('`dev:sleep` directive value must be an integer')
 
     if (!Sleep.warned) {
       console.warn('Sleep directive is enabled', { maximum: value })

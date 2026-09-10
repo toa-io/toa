@@ -96,4 +96,4 @@ function inherit(manifest, prototype) {
 }
 
 /** What the runtime writes into every record. `id` is not among them: a component may own it. */
-const SYSTEM = ['VERSION', 'CREATED', 'UPDATED', 'DELETED']
+const SYSTEM = ['VERSION', 'CREATED', 'UPDATED', 'DELETED', 'REGION']

@@ -9,6 +9,6 @@ Feature: Component with null prototype
     When I call `default.calculations.observe`
     Then the following exception is thrown:
       """yaml
-      message: "Endpoint 'observe' is not provided by 'default.calculations'"
+      code: 402
       """
     And I disconnect

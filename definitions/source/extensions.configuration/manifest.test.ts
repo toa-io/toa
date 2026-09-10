@@ -10,7 +10,7 @@ it('should validate', async () => {
     () => {
       manifest(additional)
     },
-    (error: any) => /not expected/.test(error.message)
+    (error: any) => /must NOT have additional properties/.test(error.message)
   )
 
   const wrongType = { schema: 'not ok' } as unknown as Manifest

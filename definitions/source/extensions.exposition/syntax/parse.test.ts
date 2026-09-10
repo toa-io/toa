@@ -168,7 +168,7 @@ describe('validation', () => {
 
     assert.throws(
       () => parse(declaration),
-      (error: any) => /\/methods\/0\/mapping/.test(error.message)
+      (error: any) => /must NOT have additional properties/.test(error.message)
     )
   })
 })

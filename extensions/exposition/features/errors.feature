@@ -177,7 +177,7 @@ Feature: Errors
       400 Bad Request
       content-type: text/plain
 
-      Query Property foo is not expected to be here
+      Query must NOT have additional properties
       """
 
   Scenario: Malformed authorization header

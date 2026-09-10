@@ -1,4 +1,3 @@
-import assert from 'node:assert'
 import { quote } from '@toa.io/generic'
 import { type Component } from '@toa.io/core'
 import type { Query } from '@toa.io/core/types'
@@ -87,7 +86,8 @@ export class Role implements Directive {
       role.replaceAll(/{(\w+)}/g, (_, key) => {
         const value = parameters.find((parameter) => parameter.name === key)?.value
 
-        assert.ok(value !== undefined, `Role '${role}' requires '${key}' route parameter`)
+        if (value === undefined)
+          throw new Error(`Role '${role}' requires '${key}' route parameter`)
 
         return value
       })

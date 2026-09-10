@@ -14,11 +14,13 @@ Non-scattered documentation is coming some time later.
 - Interservice communications
   - Reliable RPC and Events ([ComQ](https://github.com/toa-io/comq))
   - Flow control
-  - Eventual consistency guarantee (not yet)
+  - Eventual consistency guarantee
   - Uniform interface
     - Input/query segregation
-    - Successful rejections
-    - Distributed exception handling
+    - [Successful rejections](/documentation/exceptions.md): a refusal is an answer rather
+      than a failure
+    - [Distributed exception handling](/documentation/exceptions.md#where-nobody-is-waiting): a
+      failure reaches whoever is waiting, or is tried again and then kept
   - Transparent service discovery
   - Multi-protocol transmission
     - built-in support for AMQP and HTTP
@@ -29,6 +31,8 @@ Non-scattered documentation is coming some time later.
   - Data validation
   - Multi-document transactions
   - [Transactional outbox](/documentation/outbox.md): state and its events commit together
+  - [Convergence](/extensions/convergence): deployments of one context, each with its own
+    database, converging on the same entity state
   - Invariants (guards)
   - [Migrations](/documentation/component/declaration.md#migrations): indexes and data changes,
     applied once per database

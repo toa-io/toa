@@ -21,10 +21,11 @@ export interface Entity {
   transports?: string[]
   label?: string
   id: string
-  VERSION?: number
+  VERSION: number
   CREATED: number
-  UPDATED?: number
-  DELETED?: number | null
+  UPDATED: number
+  DELETED: number | null
+  REGION: number
 }
 
 export type ChallengeInput = {

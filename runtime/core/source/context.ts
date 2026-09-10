@@ -11,6 +11,13 @@ type Discover = (namespace: string, name: string) => Promise<Remote>
 export class Context extends Connector {
   public readonly env: string | undefined
   public readonly name: string | undefined
+
+  /**
+   * The rank of the region this deployment is, which is what its writes are stamped with. A
+   * deployment that is no region at all reads as zero, which is what its records carry.
+   */
+  public readonly region: number
+
   public readonly aspects: Aspect[]
   public readonly locator: Locator
 
@@ -23,6 +30,7 @@ export class Context extends Connector {
 
     this.env = environment.get('TOA_ENV')
     this.name = environment.get('TOA_CONTEXT')
+    this.region = Number(environment.get('TOA_REGION') ?? 0)
     this.aspects = aspects
     this.locator = local?.locator
 

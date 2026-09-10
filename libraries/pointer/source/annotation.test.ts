@@ -66,7 +66,7 @@ describe('validation', () => {
 
     assert.throws(
       () => normalize(declaration),
-      (error: any) => /not expected/.test(error.message)
+      (error: any) => /must NOT have additional properties/.test(error.message)
     )
   })
 })

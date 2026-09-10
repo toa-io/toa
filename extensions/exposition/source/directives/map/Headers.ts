@@ -1,4 +1,3 @@
-import assert from 'node:assert'
 import { cors } from '../cors/index.js'
 import { Mapping } from './Mapping.js'
 import { take } from '../../Introspection.js'
@@ -16,12 +15,10 @@ export class Headers extends Mapping<Record<string, string>> {
   private readonly headers: string[]
 
   public constructor(map: Record<string, string>) {
-    assert.ok(map.constructor === Object, '`map:headers` must be an object')
+    if (map.constructor !== Object) throw new Error('`map:headers` must be an object')
 
-    assert.ok(
-      Object.values(map).every((value) => typeof value === 'string'),
-      '`map:headers` must be an object with string values'
-    )
+    if (!Object.values(map).every((value) => typeof value === 'string'))
+      throw new Error('`map:headers` must be an object with string values')
 
     super(map)
 

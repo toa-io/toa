@@ -1,14 +1,11 @@
-import assert from 'node:assert'
 import { parse, type Node, type Method, type Query } from './syntax/index.js'
 import { shortcuts } from './shortcuts.js'
 import * as schemas from './schemas.js'
 import type { Manifest } from '@toa.io/norm'
 
 export function manifest(declaration: object, manifest: Manifest): Node {
-  assert.ok(
-    typeof declaration === 'object' && declaration !== null,
-    'Exposition declaration must be an object'
-  )
+  if (!(typeof declaration === 'object' && declaration !== null))
+    throw new Error('Exposition declaration must be an object')
 
   declaration = wrap(declaration, manifest.namespace, manifest.name)
 
@@ -42,7 +39,8 @@ function specifyMethod(method: Method, manifest: Manifest): void {
 
   const operation = manifest.operations[method.mapping.endpoint]
 
-  assert.ok(operation !== undefined, `Operation '${method.mapping.endpoint}' not found`)
+  if (operation === undefined)
+    throw new Error(`Operation '${method.mapping.endpoint}' not found`)
 
   if (method.mapping.query === undefined)
     method.mapping.query = operation.query === false ? null : ({} as unknown as Query)

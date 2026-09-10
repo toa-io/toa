@@ -1,6 +1,8 @@
 import { Connector } from '@toa.io/core'
 import { console } from 'openspan'
 
+import { refuse } from './verdict.js'
+
 export class Receiver extends Connector {
   /** @type {string | undefined} */
   #exchange
@@ -73,6 +75,8 @@ export class Receiver extends Connector {
 
     try {
       await promise
+    } catch (exception) {
+      refuse(exception)
     } finally {
       this.#pending.delete(promise)
     }

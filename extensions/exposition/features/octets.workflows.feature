@@ -87,6 +87,31 @@ Feature: Octets storage workflows
       bar: baz
       """
 
+  Scenario: Interrupting a workflow
+    Given the `octets.tester` is running
+    And the annotation:
+      """yaml
+      /:
+        auth:anonymous: true
+        octets:context: octets
+        POST:
+          octets:put:
+            workflow:
+              - add-foo: octets.tester.yield
+              - add-baz: octets.tester.baz
+      """
+    When the following request is interrupted after 0.01 seconds:
+      """
+      POST / HTTP/1.1
+      host: nex.toa.io
+      accept: application/yaml, multipart/yaml
+      content-type: application/octet-stream
+
+      hello
+      """
+    Then after 0.1 seconds
+    And the process is running
+
   Scenario: Getting error when running workflow on `store`
     Given the `octets.tester` is running
     Given the annotation:

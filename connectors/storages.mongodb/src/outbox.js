@@ -53,16 +53,36 @@ export class Outbox {
   }
 
   /**
-   * One batched write for many events, which is why the ids are held in memory until the
-   * tick rather than updated one by one.
+   * Takes those destinations out of what those rows are outstanding for, and marks published
+   * the ones left outstanding for nothing — which is what `pending` selects on and what the
+   * TTL reaps by, so neither changes.
+   *
+   * One batched write for many rows, which is why the ids are held in memory until the tick
+   * rather than updated one by one. A row written before this property existed reads as
+   * outstanding for `events` alone, which is all there was.
    */
-  async settle(ids) {
+  async settle(ids, destinations) {
     if (ids.length === 0) return
 
-    await this.#collection.updateMany(
-      { _id: { $in: ids } },
-      { $set: { published: true, publishedAt: new Date() } }
-    )
+    await this.#collection.updateMany({ _id: { $in: ids } }, [
+      {
+        $set: {
+          outstanding: {
+            $setDifference: [{ $ifNull: ['$outstanding', [EVENTS]] }, destinations]
+          }
+        }
+      },
+      {
+        $set: {
+          published: { $eq: [{ $size: '$outstanding' }, 0] },
+          // written once, when the last destination lands: an unpublished row has none, and
+          // the TTL monitor skips a document that lacks the field it expires by
+          publishedAt: {
+            $cond: [{ $eq: [{ $size: '$outstanding' }, 0] }, '$$NOW', '$publishedAt']
+          }
+        }
+      }
+    ])
   }
 
   /**
@@ -158,13 +178,19 @@ export class Outbox {
 }
 
 const to = ({ id, ...rest }) => ({ _id: id, ...rest })
-const from = ({ _id, ...rest }) => ({ id: _id, ...rest })
+
+// a row written before destinations existed is outstanding for the events, which is all a row
+// was ever published to then
+const from = ({ _id, ...rest }) => ({ id: _id, outstanding: [EVENTS], ...rest })
 
 function retention() {
   const value = Number(environment.get('TOA_OUTBOX_RETENTION'))
 
   return Number.isNaN(value) || value < 0 ? RETENTION : value
 }
+
+/** what a component's own events are outstanding for; `Emission.name` */
+const EVENTS = 'events'
 
 /** seconds a published row is kept as a change log before the TTL monitor reaps it */
 const RETENTION = 86400

@@ -1,4 +1,3 @@
-import assert from 'node:assert'
 import { secrets } from './secrets.js'
 import * as schemas from './schemas.js'
 import type { Provider } from './secrets.js'
@@ -28,23 +27,21 @@ export function validateAnnotation(
 It is required because `oneOf` schema is used for the annotation validation.
  */
 function explain(annotation: unknown): void {
-  assert.ok(
-    typeof annotation === 'object' && annotation !== null,
-    'TOA_STORAGES is not an object'
-  )
+  if (!(typeof annotation === 'object' && annotation !== null))
+    throw new Error('TOA_STORAGES is not an object')
 
   for (const declaration of Object.values(annotation)) {
-    assert.ok(
-      typeof declaration === 'object' &&
+    if (
+      !(
+        typeof declaration === 'object' &&
         declaration !== null &&
-        declaration.provider in secrets,
-      `Unknown provider '${declaration.provider}'`
+        declaration.provider in secrets
+      )
     )
+      throw new Error(`Unknown provider '${declaration.provider}'`)
 
-    assert.ok(
-      declaration.provider in schemas,
-      `No schema for provider '${declaration.provider}'`
-    )
+    if (!(declaration.provider in schemas))
+      throw new Error(`No schema for provider '${declaration.provider}'`)
 
     const provider = declaration.provider as Provider
 

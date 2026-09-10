@@ -56,4 +56,31 @@ export interface Factory {
   ): Connector
 
   broadcast?(name: string, group?: string): Broadcast
+
+  /**
+   * A channel is a name the caller picks, from which the binding derives whatever its
+   * transport needs, and `uris` are the brokers to carry it over — so a second broker set
+   * costs the binding no configuration and no variable of its own.
+   */
+  outbound?(channel: string, uris: string[]): Outbound
+
+  /** what arrives on `channel` under `label` */
+  // eslint-disable-next-line max-params
+  inbound?(channel: string, uris: string[], label: string, sink: Inbound): Connector
+}
+
+/**
+ * Publishes to a channel, addressed by label. It forwards messages and nothing else: what
+ * `send` is handed is what is published, with no envelope, no field and no header of the
+ * binding's own, and none stripped — because a message shape is often somebody else's
+ * contract, and an extension shipping changes into another system must be able to send
+ * exactly what that system accepts.
+ */
+export interface Outbound extends Connector {
+  send(label: string, message: object): Promise<void>
+}
+
+/** What a binding hands a message to. */
+export interface Inbound {
+  accept(message: object): Promise<void>
 }

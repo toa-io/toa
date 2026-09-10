@@ -1,4 +1,4 @@
-import { Connector } from '@toa.io/core'
+import { Connector, trail } from '@toa.io/core'
 import type { Local } from './Local.js'
 import type { Options } from '@toa.io/definitions/extensions.cadence'
 
@@ -7,6 +7,7 @@ interface Input {
   interval: number
   overdue: number | null
   request?: object
+  trail?: string[]
 }
 
 /**
@@ -58,6 +59,16 @@ export class Aspect extends Connector {
 
     // a call that takes no request carries none, rather than a null one
     if (request !== null && request !== undefined) input.request = request
+
+    /*
+     * A delay is a hop, so the chain that asked for the call is stored with it and the call is
+     * made by it — otherwise a circle routed through `context.delay` would be one nothing sees.
+     * It rides the row rather than the request, because the request is the caller's and a call
+     * that carries none must go on carrying none.
+     */
+    const hops = options.detached === true ? undefined : trail.current()
+
+    if (hops !== undefined) input.trail = hops
 
     return await this.metronome.invoke('delay', { input })
   }

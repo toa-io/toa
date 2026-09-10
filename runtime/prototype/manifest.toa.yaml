@@ -21,8 +21,18 @@ entity:
       type: integer
       format: epoch-millis
       nullable: true
+    REGION:
+      type: integer
+      minimum: 0
+  # every one is on a record before it is validated: `id`, `VERSION`, `DELETED` and `REGION`
+  # from the blank an entity is composed with, the timestamps from the write that composes it
   required:
     - id
+    - VERSION
+    - CREATED
+    - UPDATED
+    - DELETED
+    - REGION
 
 operations:
   transit:

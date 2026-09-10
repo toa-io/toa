@@ -1,13 +1,14 @@
 import { console } from 'openspan'
-import { Connector, Locator } from '@toa.io/core'
+import { Connector, Locator, exceptions } from '@toa.io/core'
 import {
   BATCH,
   DISCRETENESS,
   LANES,
-  number
+  number,
+  regions
 } from '@toa.io/definitions/extensions.cadence'
 import type { Local } from './Local.js'
-import type { atomicity } from '@toa.io/core/types'
+import type { atomicity, Request } from '@toa.io/core/types'
 
 /**
  * Makes the calls that were put off.
@@ -38,6 +39,13 @@ export class Dispatcher extends Connector {
   /** milliseconds between passes, and how far ahead each one reaches */
   private readonly discreteness: number
 
+  /**
+   * The ranks whose calls this deployment makes. Where an application converges, every region
+   * holds every region's rows, and a row is called by the one that asked for it — read once,
+   * because what a deployment is is not a thing that changes under it.
+   */
+  private readonly regions: number[]
+
   private timer?: NodeJS.Timeout
   private off?: () => void
   private scanning = false
@@ -57,6 +65,7 @@ export class Dispatcher extends Connector {
     this.resolve = resolve
     this.atom = atom
     this.discreteness = number('TOA_CADENCE_DISCRETENESS', DISCRETENESS * 1000)
+    this.regions = regions()
 
     this.depends(metronome)
     this.depends(atom)
@@ -169,9 +178,20 @@ export class Dispatcher extends Connector {
 
     const rows = (await this.metronome.invoke('enumerate', {
       query: {
-        // expiry is not a criterion: a row nobody reads is a row nobody settles, and it would
-        // stay live for good. It is read, and settled without the call being made
-        criteria: `lane=in=(${lanes.join(',')});due<${until}`,
+        /*
+         * Expiry is not a criterion: a row nobody reads is a row nobody settles, and it would
+         * stay live for good. It is read, and settled without the call being made.
+         *
+         * `REGION` is not in `index_due` and is not going into it: the scan asks for its lanes
+         * as a set, and a second set would be explored as the product of the two — past the
+         * hundred-odd scans MongoDB explodes before it gives up and sorts in memory, which is
+         * what that index exists to avoid. So it is read off the rows the index found, and a
+         * region pays for the rows of the others that fall in its window.
+         */
+        criteria:
+          `lane=in=(${lanes.join(',')});` +
+          `REGION=in=(${this.regions.join(',')});` +
+          `due<${until}`,
         sort: ['due:asc'],
         limit: BATCH
       }
@@ -262,12 +282,14 @@ export class Dispatcher extends Connector {
     const [namespace, name, endpoint] = row.endpoint.split('.')
     const local = this.target(new Locator(name, namespace))
 
+    const request: Request = { input: null, ...row.request, task: true }
+
     /*
-     * Attempted before it is made, not after it comes back. One attempt is what a dispatcher
-     * has to give: what it can tell about a failure is nothing, and a request the target's
-     * schema no longer fits never becomes one it does.
+     * Set after the stored request is spread, so a stored field of that name cannot stand in
+     * for it: the row's chain is the one that was in scope when the call was asked for. Absent
+     * — the caller detached the call — `Call` starts one under cadence's own name.
      */
-    this.called.add(row.id)
+    if (row.trail !== undefined) request.trail = row.trail
 
     /*
      * The call travels as a task, so what raises here is this side of it: a stored request the
@@ -275,14 +297,24 @@ export class Dispatcher extends Connector {
      * enqueue. What the operation itself does with it happens in the target's own process and
      * never comes back.
      *
-     * Skipped, as a pulse skips: reported, and the row settled on the attempt either way.
+     * A row is settled by the outcome, not by the attempt. One the target will never accept is
+     * settled at once, because a request its schema no longer fits never becomes one it does.
+     * One that failed on the way out is left where it is, and the next scan calls again — a
+     * broker that was briefly not there is not a reason to drop a call somebody asked for, and
+     * the bound on trying is the `overdue` its caller gave it.
      */
     await local
-      .invoke(endpoint, { input: null, ...row.request, task: true })
+      .invoke(endpoint, request)
+      .then(() => {
+        this.called.add(row.id)
+      })
       .catch((error: unknown) => {
+        if (exceptions.permanent(error)) this.called.add(row.id)
+
         console.error('Delayed call failed', {
           endpoint: row.endpoint,
           id: row.id,
+          permanent: exceptions.permanent(error),
           error
         })
       })
@@ -336,6 +368,9 @@ interface Row {
 
   endpoint: string
   request?: object
+
+  /** the chain that asked for the call, which the call is made by */
+  trail?: string[]
 }
 
 /** intervals a scan may run for before it is a stuck pass rather than a slow one */

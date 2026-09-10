@@ -17,6 +17,9 @@ const { binding, then, when } = tsflow
 export class HTTP extends http.Agent {
   private readonly gateway: Gateway
 
+  /** The parts of a reply that streams, left to be read by a later step. */
+  private opened: AsyncIterable<{ body: Uint8Array | string }> | null = null
+
   public constructor(gateway: Gateway, parameters: Parameters, captures: Captures) {
     super(parameters.origin, captures)
     this.gateway = gateway
@@ -62,6 +65,24 @@ export class HTTP extends http.Agent {
     const stream = open(filename)
 
     await super.streamMatch(head, stream)
+  }
+
+  @when('the following stream is received:')
+  public async open(input: string): Promise<void> {
+    await this.gateway.start()
+
+    this.opened = (await this.parts(input)) as AsyncIterable<{ body: Uint8Array | string }>
+  }
+
+  @then('the stream ends with `{word}`')
+  public async streamEnds(expected: string): Promise<void> {
+    assert.ok(this.opened !== null, 'No stream has been opened')
+
+    let last: string | null = null
+
+    for await (const part of this.opened) last = Buffer.from(part.body).toString()
+
+    assert.strictEqual(last, expected)
   }
 
   @when('the following request is interrupted after {float} second(s):')

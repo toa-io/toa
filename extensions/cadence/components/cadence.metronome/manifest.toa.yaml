@@ -23,6 +23,14 @@ entity:
     request:
       description: The request to make, as it was handed over
       type: object
+    trail:
+      description: >
+        The chain of hops that asked for the call, which the call is then made by. A delay is a
+        hop like any other, so a circle routed through one is still a circle. Absent where the
+        caller detached the call, and on a row written before this existed.
+      type: array
+      items:
+        type: string
   required:
     - lane
     - due
@@ -41,6 +49,10 @@ operations:
           pattern: ^[a-zA-Z][a-zA-Z0-9]*\.[a-zA-Z][a-zA-Z0-9]*\.[a-zA-Z][_a-zA-Z0-9]*$
         request:
           type: object
+        trail:
+          type: array
+          items:
+            type: string
         interval:
           description: Milliseconds from now
           type: integer

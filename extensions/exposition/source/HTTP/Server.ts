@@ -1,4 +1,3 @@
-import assert from 'node:assert'
 import fs from 'node:fs'
 import os from 'node:os'
 import * as http from 'node:http'
@@ -28,6 +27,12 @@ export class Server extends Connector {
 
   /** Tracked for the drain: `Http2Server` has no `closeIdleConnections`. */
   private readonly sessions = new Set<http2.ServerHttp2Session>()
+
+  /** Every request not yet answered in full, by what it is answered on. */
+  private readonly inflight = new Map<ServerResponse, AbortController>()
+
+  /** Resolves the wait for the last of them, while the stop is waiting. */
+  private drained: (() => void) | null = null
 
   private readonly probe: Probe
 
@@ -94,11 +99,48 @@ export class Server extends Connector {
       setTimeout(this.properties.drain, undefined, { ref: false })
     ])
 
+    // what is still in flight is told so: a reply that streams ends with `FIN`, a call
+    // waiting on an upstream abandons it. Then the replies that ended are given a moment to
+    // reach the socket, bounded in turn against a reader that has stopped reading.
+    for (const controller of this.inflight.values()) controller.abort()
+
+    await Promise.race([this.settled(), setTimeout(FLUSH, undefined, { ref: false })])
+
+    // every reply that streamed has finished, so what produced it is already destroyed; the
+    // walk that takes the remotes down follows this. What is destroyed here is what was left
+    // holding a connection open with nothing in flight.
     if (this.properties.protocol === 'h1')
       (this.server as http.Server).closeAllConnections()
     else for (const session of this.sessions) session.destroy()
 
     console.info('Stopped')
+  }
+
+  private async settled(): Promise<void> {
+    if (this.inflight.size === 0) return
+
+    await new Promise<void>((resolve) => {
+      this.drained = resolve
+    })
+  }
+
+  /**
+   * Tracks a request until its reply is finished or its connection is gone: a response
+   * emits `close` on either, under both protocols.
+   */
+  private track(response: ServerResponse): AbortSignal {
+    const controller = new AbortController()
+
+    this.inflight.set(response, controller)
+
+    response.once('close', () => {
+      this.inflight.delete(response)
+      controller.abort()
+
+      if (this.inflight.size === 0) this.drained?.()
+    })
+
+    return controller.signal
   }
 
   /** A malformed HTTP/1.1 request has no framing to answer in, so the status line is written by hand. */
@@ -170,7 +212,7 @@ export class Server extends Connector {
       return
     }
 
-    assert(this.process !== undefined, 'Request processor is not attached')
+    if (this.process === undefined) throw new Error('Request processor is not attached')
 
     const authority = this.authorities.get(host) ?? host
 
@@ -206,7 +248,8 @@ export class Server extends Connector {
       async () => {
         response.setHeader('ray', current()!.traceId)
 
-        const context = new Context(authority, request, this.properties, url)
+        const signal = this.track(response)
+        const context = new Context(authority, request, this.properties, url, signal)
 
         await this.process!(context)
           .then(this.success(context, response))
@@ -235,6 +278,13 @@ export class Server extends Connector {
 
   private fail(context: Context, response: ServerResponse) {
     return async (exception: Error) => {
+      // nobody is waiting for the answer: the connection is gone, or the gateway is stopping
+      if (context.signal.aborted) {
+        console.debug('Request aborted', { path: context.url.pathname })
+
+        return
+      }
+
       try {
         // Over HTTP/2 the reply is followed by RST_STREAM(NO_ERROR), which tells the client
         // to stop sending without discarding the response — so the body is never read.
@@ -338,6 +388,9 @@ function errorAttributes(
 }
 
 export const DRAIN = 10 // seconds
+
+/** Milliseconds the replies finished at the end of the drain are given to leave the process. */
+const FLUSH = 1000
 
 /** Megabytes a single HTTP/2 session may hold, over Node's default of 10. */
 const SESSION_MEMORY = 128

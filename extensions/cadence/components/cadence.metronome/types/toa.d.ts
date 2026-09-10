@@ -15,16 +15,20 @@ export interface Entity {
   endpoint: string
   /** The request to make, as it was handed over */
   request?: Record<string, unknown>
+  /** The chain of hops that asked for the call, which the call is then made by. A delay is a hop like any other, so a circle routed through one is still a circle. Absent where the caller detached the call, and on a row written before this existed. */
+  trail?: string[]
   id: string
-  VERSION?: number
-  CREATED?: number
-  UPDATED?: number
-  DELETED?: number | null
+  VERSION: number
+  CREATED: number
+  UPDATED: number
+  DELETED: number | null
+  REGION: number
 }
 
 export type DelayInput = {
   endpoint: string
   request?: Record<string, unknown>
+  trail?: string[]
   /** Milliseconds from now */
   interval: number
   /** Milliseconds the call may be late and still be made, or null for no bound. Stated rather than defaulted: only the caller knows whether a late call is still the right call. */

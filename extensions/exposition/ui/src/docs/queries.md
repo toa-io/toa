@@ -18,5 +18,5 @@ with an optional `:asc` or `:desc` suffix.
 
 `search` is a text query, where the resource takes one.
 
-A resource MAY constrain the set, and refuse further `criteria` or
-`sort`.
+A resource MAY constrain the collection it exposes, disallow
+additional `criteria` or `sort`, and bound `omit` and `limit`.

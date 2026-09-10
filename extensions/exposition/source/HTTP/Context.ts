@@ -20,6 +20,12 @@ export class Context {
   public readonly timing: Timing
 
   /**
+   * Aborted when the reply is finished, when the connection is gone, or when the gateway is
+   * stopping. What is still waiting on something else when it fires abandons it.
+   */
+  public readonly signal: AbortSignal
+
+  /**
    * Whether this is a procedure a request made, rather than the request. What forks one
    * says so, and a directive that answers differently to a procedure than to a request
    * reads it here.
@@ -45,10 +51,12 @@ export class Context {
     authority: string,
     request: IncomingMessage,
     properties: Properties,
-    url: URL
+    url: URL,
+    signal: AbortSignal
   ) {
     this.authority = authority
     this.request = request
+    this.signal = signal
     this.ip = address(request, properties.ip)
 
     // parsed by the server, which had to parse it anyway to know the request is valid

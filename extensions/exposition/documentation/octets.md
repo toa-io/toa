@@ -323,6 +323,9 @@ octets:put:
 If one of the workflow units returns or throws an error,
 the execution of the workflow is interrupted.
 
+A workflow whose client has gone, or whose gateway is stopping, starts no further step; the step in
+flight completes. On `octets:delete`, the entry is then not deleted.
+
 ### Workflow tasks
 
 A workflow unit which value starts with `task:` prefix will be executed as a Task.

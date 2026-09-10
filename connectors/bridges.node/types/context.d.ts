@@ -9,6 +9,18 @@ declare namespace toa.node {
     remote: Underlay
     aspects: Record<string, Function>
 
+    /** The environment this deployment was deployed as. */
+    env?: string
+
+    /** The name of the context. */
+    name?: string
+
+    /**
+     * The rank of the region this deployment is, and what its writes are stamped with. Zero
+     * where an application is deployed as one place, which is what its records carry.
+     */
+    region: number
+
     // system aspects
     atom: Atom
 

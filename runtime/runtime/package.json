@@ -31,6 +31,7 @@
     "@toa.io/definitions": "1.0.0-alpha.298",
     "@toa.io/extensions.cadence": "1.0.0-alpha.298",
     "@toa.io/extensions.configuration": "1.0.0-alpha.298",
+    "@toa.io/extensions.convergence": "1.0.0-alpha.298",
     "@toa.io/extensions.exposition": "1.0.0-alpha.298",
     "@toa.io/extensions.fetch": "1.0.0-alpha.293",
     "@toa.io/extensions.introspection": "1.0.0-alpha.298",

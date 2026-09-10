@@ -2,6 +2,7 @@ import { it, beforeEach, afterEach, mock } from 'node:test'
 import assert from 'node:assert/strict'
 import { console } from 'openspan'
 
+import { exceptions } from '@toa.io/core'
 import { Dispatcher } from './Dispatcher.js'
 import { BATCH, LANES } from '@toa.io/definitions/extensions.cadence'
 import type { Local } from './Local.js'
@@ -27,6 +28,7 @@ interface Row {
   expires: number
   endpoint: string
   request: object | null
+  trail?: string[]
 }
 
 /** `expires` defaults to no bound at all, which is what `overdue: null` writes */
@@ -106,6 +108,60 @@ afterEach(() => {
   mock.timers.reset()
   warn.mock.restore()
   delete process.env.TOA_CADENCE_DISCRETENESS
+  delete process.env.TOA_CADENCE_REGIONS
+  delete process.env.TOA_REGION
+})
+
+it('should make the call by the chain that asked for it', async () => {
+  const hops = ['default.orders.place', '~default.orders.sync']
+
+  rows = [{ ...row('a', 0), trail: hops }]
+
+  const dispatcher = create()
+
+  await dispatcher.connect()
+  await advance(INTERVAL)
+
+  const [, request] = target.invoke.mock.calls[0].arguments
+
+  assert.deepStrictEqual(request.trail, hops)
+})
+
+it('should start none where the caller detached the call', async () => {
+  rows = [row('a', 0)]
+
+  const dispatcher = create()
+
+  await dispatcher.connect()
+  await advance(INTERVAL)
+
+  const [, request] = target.invoke.mock.calls[0].arguments
+
+  // `Call` starts one under cadence's own name; nothing is stated here
+  assert.ok(!('trail' in request))
+})
+
+// the row's chain is the one that was in scope when the call was asked for, and a stored
+// request that happens to carry the name is the caller's data rather than that
+it('should not let a stored request stand the chain up', async () => {
+  const hops = ['default.orders.place']
+
+  rows = [
+    {
+      ...row('a', 0),
+      request: { input: { id: 'a' }, trail: ['spoofed'] },
+      trail: hops
+    }
+  ]
+
+  const dispatcher = create()
+
+  await dispatcher.connect()
+  await advance(INTERVAL)
+
+  const [, request] = target.invoke.mock.calls[0].arguments
+
+  assert.deepStrictEqual(request.trail, hops)
 })
 
 it('should read two intervals ahead, in the lanes it owns', async () => {
@@ -121,7 +177,7 @@ it('should read two intervals ahead, in the lanes it owns', async () => {
   // expired row is settled rather than left where nothing will ever read it again
   assert.strictEqual(
     first.criteria,
-    `lane=in=(${range(LANES).join(',')});due<${2 * INTERVAL}`
+    `lane=in=(${range(LANES).join(',')});REGION=in=(0);due<${2 * INTERVAL}`
   )
   assert.deepStrictEqual(first.sort, ['due:asc'])
 })
@@ -347,10 +403,10 @@ it('should settle what it has called', async () => {
   assert.deepStrictEqual(settled(), ['a'])
 })
 
-it('should settle a row whose call failed, and keep dispatching', async () => {
+it('should keep a row whose call failed on the way out, and keep dispatching', async () => {
   rows = [row('a', 10), row('b', 20)]
   target.invoke.mock.mockImplementationOnce(async () => {
-    throw new Error('nope')
+    throw new Error('the broker refused it')
   })
 
   const dispatcher = create()
@@ -364,13 +420,42 @@ it('should settle a row whose call failed, and keep dispatching', async () => {
     'the one after it is still called'
   )
 
+  // the store still owes the one that never went out
+  rows = [row('a', 10)]
+  await advance(INTERVAL)
+
+  assert.deepStrictEqual(settled(), ['b'], 'only the one that went out is settled')
+
+  // the scan armed it again, and what it armed is already overdue
+  await advance(0)
+
+  assert.strictEqual(
+    target.invoke.mock.callCount(),
+    3,
+    'and the one that did not is called again'
+  )
+})
+
+it('should settle a row the target will never accept', async () => {
+  rows = [row('a', 10)]
+  target.invoke.mock.mockImplementation(async () => {
+    throw new exceptions.RequestContractException('input.id must be a string')
+  })
+
+  const dispatcher = create()
+
+  await dispatcher.connect()
+  await advance(10)
+
+  assert.strictEqual(target.invoke.mock.callCount(), 1)
+
   rows = []
   await advance(INTERVAL)
 
   assert.deepStrictEqual(
-    settled().sort(),
-    ['a', 'b'],
-    'and the one that failed is settled'
+    settled(),
+    ['a'],
+    'a request its schema no longer fits never becomes one it does'
   )
 })
 
@@ -489,4 +574,28 @@ it('should not give up a row when the batch was filled', async () => {
   const called = target.invoke.mock.calls.map((call) => call.arguments[1].input.id)
 
   assert.deepStrictEqual(called, ['held'], 'the row it armed is still called')
+})
+
+it('should make the calls of the region it is deployed as, and no other', async () => {
+  process.env.TOA_REGION = '1'
+
+  const dispatcher = create()
+
+  await dispatcher.connect()
+  await advance(INTERVAL)
+
+  assert.match(reads()[0].criteria, /REGION=in=\(1\)/)
+})
+
+it('should make the calls of every region it is given', async () => {
+  // what a surviving region is redeployed with to take over the calls of one that is gone
+  process.env.TOA_CADENCE_REGIONS = '0 1'
+  process.env.TOA_REGION = '0'
+
+  const dispatcher = create()
+
+  await dispatcher.connect()
+  await advance(INTERVAL)
+
+  assert.match(reads()[0].criteria, /REGION=in=\(0,1\)/)
 })
