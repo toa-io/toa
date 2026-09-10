@@ -176,10 +176,10 @@ crash without a timer, and is enabled on few brokers and on almost no managed on
    options as `request`. A returned call rejects with `Unroutable`, exported beside `Retry` and `Park`.
 3. **Withdrawal.** `seal()` unbinds every backed queue, waits for the broker to confirm, and then
    cancels consumers.
-4. **A held key waits.** A declaration refused because another connection holds the queue fails that
-   declaration alone and is retried as recovery retries one. A channel error stays on its channel:
-   today every amqplib channel lacks an `error` listener, so a 404 or a 405 tears down the whole
-   connection.
+4. **A held key waits.** The broker refuses a queue another connection holds by closing the channel
+   that asked, and a channel error left unheard closes the whole connection. So the exclusive queue
+   is declared on a channel of its own, which is all that closes, and asked for again every second
+   until the key is let go. A recovery restores the rest of the connection meanwhile.
 5. **Shards.** A call returned by one shard is published on the next through `route`, which declares
    the exchange there first, and rejects once every shard has returned it.
 6. **Documentation.** The readme's Request, Call and back, Retries and Parked messages sections, and
