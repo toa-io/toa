@@ -32,7 +32,7 @@
     "@toa.io/kubernetes": "1.0.0-alpha.293",
     "@toa.io/norm": "1.0.0-alpha.299",
     "oxc-parser": "0.149.0",
-    "paseto": "4.0.0"
+    "paseto": "4.0.1"
   },
   "gitHead": "61c8e74a336385265767e9fd37d49128cb51b17f"
 }
