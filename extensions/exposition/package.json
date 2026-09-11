@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/extensions.exposition",
-  "version": "1.0.0-alpha.300",
+  "version": "1.0.0-alpha.301",
   "type": "module",
   "description": "Toa Exposition",
   "author": "temich <tema.gurtovoy@gmail.com>",
@@ -28,16 +28,16 @@
     "!**/.env*"
   ],
   "dependencies": {
-    "@toa.io/core": "1.0.0-alpha.300",
-    "@toa.io/definitions": "1.0.0-alpha.300",
-    "@toa.io/generic": "1.0.0-alpha.292",
-    "@toa.io/schemas": "1.0.0-alpha.299",
+    "@toa.io/core": "1.0.0-alpha.301",
+    "@toa.io/definitions": "1.0.0-alpha.301",
+    "@toa.io/generic": "1.0.0-alpha.301",
+    "@toa.io/schemas": "1.0.0-alpha.301",
     "content-type": "3.0.0",
     "matchacho": "0.6.1",
     "minimatch": "10.2.6",
     "msgpackr": "2.1.0",
     "negotiator": "1.1.0",
-    "openspan": "1.0.0-alpha.293"
+    "openspan": "1.0.0-alpha.301"
   },
   "scripts": {
     "test": "echo \"Error: run tests from root\" && exit 1",
