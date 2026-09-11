@@ -1,6 +1,6 @@
 import * as stage from '@toa.io/userland/stage'
 import { environment } from '@toa.io/generic'
-import { mkdtemp } from 'node:fs/promises'
+import { mkdtemp, rm } from 'node:fs/promises'
 import { join } from 'node:path'
 import { tmpdir } from 'node:os'
 import { Before, BeforeAll, After } from '@cucumber/cucumber'
@@ -50,6 +50,12 @@ Before(
   }
 )
 
+// a workspace holds whatever its scenario wrote there, an exported image among it, and /tmp is
+// memory
 After(async function () {
-  await stage.shutdown()
+  try {
+    await stage.shutdown()
+  } finally {
+    await rm(this.cwd, { recursive: true, force: true, maxRetries: 3 })
+  }
 })

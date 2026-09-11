@@ -1,11 +1,25 @@
 import { join } from 'node:path'
 import { tmpdir, devNull } from 'node:os'
-import { mkdtemp, cp, readFile, writeFile } from 'node:fs/promises'
+import { mkdtemp, cp, readFile, rm, writeFile } from 'node:fs/promises'
 import { load, dump } from 'js-yaml'
+import tsflow from 'cucumber-tsflow'
 import { overwrite } from '@toa.io/generic'
 
+const { after, binding } = tsflow
+
+@binding()
 export class Workspace {
   private root: string = devNull
+
+  // /tmp is memory, and a workspace outlives its scenario unless it is removed
+  @after()
+  public async remove(): Promise<void> {
+    if (this.root === devNull) return
+
+    await rm(this.root, { recursive: true, force: true, maxRetries: 3 })
+
+    this.root = devNull
+  }
 
   public static exists(
     _0: unknown,
