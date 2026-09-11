@@ -140,9 +140,11 @@ caller, whose own operation catches it the same way. A failure walks up the call
 whoever is waiting. The gateway maps it to a status (`extensions/exposition/source/exceptions.ts`).
 Nothing crashes.
 
-Two things are worth knowing and are **out of scope by decision**: there is no deadline anywhere in
-the runtime, so a caller waits forever on a queue with no consumer; and `SystemException` carries
-the callee's stack across the service boundary. The call path is not changed by this work.
+Two things are worth knowing and are **out of scope by decision**: an ordinary call has no deadline
+unless its caller gives it one, so a caller waits forever on a queue with no consumer — deadlines came
+in with [stateful operations](/discussions/stateful.md), on addressed calls and on calls that ask for
+one; and `SystemException` carries the callee's stack across the service boundary. The call path is
+not changed by this work.
 
 ### An event — the process pays for the message
 

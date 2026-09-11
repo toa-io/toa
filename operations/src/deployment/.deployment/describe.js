@@ -72,6 +72,12 @@ export const describe = (context, compositions, dependency, image) => {
       value: String(context.inbox.retention)
     })
 
+  if (context.addressed?.timeout !== undefined)
+    dependency.variables.global.push({
+      name: 'TOA_ADDRESSED_TIMEOUT',
+      value: String(context.addressed.timeout)
+    })
+
   events(context, dependency)
 
   const credentials = context.registry?.credentials

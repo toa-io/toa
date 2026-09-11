@@ -36,6 +36,11 @@ export interface Request<Input = any, Entity = any> {
   entity?: Entity
   task?: boolean
   /**
+   * The process a call to a stateful operation goes to: that process's `context.instance`. Named
+   * for a stateful operation, and for no other.
+   */
+  instance?: string
+  /**
    * What this call is, so that the same call arriving twice is written once. Left out, the caller
    * stamps one: derived from the call it is itself serving, where there is one, and minted where
    * there is not. See `core/source/entities/newid.ts` and the inbox.
@@ -51,6 +56,20 @@ export interface Request<Input = any, Entity = any> {
   authentic?: boolean
   /** W3C traceparent */
   telemetry?: string
+}
+
+/**
+ * How a caller waits for a call, given beside the request: neither is part of what the call asks,
+ * and neither is sent with it.
+ */
+export interface Options {
+  /**
+   * Milliseconds the caller waits for the reply. An addressed call waits the context's default
+   * without one; an ordinary call waits for as long as it takes.
+   */
+  timeout?: number
+  /** Ends the wait when it aborts, within the timeout. */
+  signal?: AbortSignal
 }
 
 /**

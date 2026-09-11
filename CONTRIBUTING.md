@@ -149,6 +149,11 @@ once, in `cucumber.tags.mjs`; `TOA_FEATURES=nightly` selects between them.
 
 ## Tests
 
+**A unit test proves that the code matches your expectations. An integration test proves that
+your expectations match reality.** Code is *working* once an integration test has run it; until
+then it is a *hypothesis*. Toa's integration tests are its feature scenarios, run against the
+broker, the database and the network the code relies on.
+
 **"Not mine" is never an answer.** A suite run during a change has to pass, whether or not the
 change is what broke it. A failure that was already there is still a failure that is there now,
 and the run that found it is the one that owns it — leaving it for the next person means leaving
@@ -176,52 +181,19 @@ $ node --import tsx --test 'runtime/core/test/**/*.test.js'
 A suite that replaces a module needs `--experimental-test-module-mocks`, which `test:unit`
 passes.
 
-## Exports
-
-A declaration carries `export` where it is written, and a barrel re-exports through
-`export ... from`:
-
-```javascript
-function component(manifest) {}
-
-export { component }
-```
-
-```javascript
-export function component(manifest) {}
-```
-
-```javascript
-import { Factory } from './factory.js'
-
-export { Factory }
-```
-
-```javascript
-export { Factory } from './factory.js'
-```
-
-An alias is the exception, because the exported name is the declaration: an operation module
-states its type by the name it exports, as in `export { meter as computation }`.
-
 ## Refusing
 
-**Nothing that ships uses `node:assert`.** It belongs to a test, where a failed assertion is the
-result. In anything that runs it says the wrong thing twice: an assertion means *this cannot
-happen*, and everything worth guarding is something that can — a manifest that does not parse, a
-variable nobody set, an endpoint a component no longer provides. And an `AssertionError` carries
-`code: 'ERR_ASSERTION'`, a string where a `code` in this codebase is a number, so a failure
-somebody reads by its code is read wrong.
+**Runtime code does not use `node:assert`.** What refuses depends on when it happens, and who has
+to answer for it:
 
-What refuses instead depends on who has to answer for it:
-
-- **A program that is starting, or a deploy** — `throw new Error()` with the message a person
-  needs. It stops what it was doing and says why, which is the whole of what an assertion was
-  doing there.
-- **Anything a caller is waiting on** — an exception from `@toa.io/core` with a code, because it
-  crosses a binding as a value and whoever receives it decides by that code. A new code goes in
-  the enumeration in `runtime/core/source/exceptions.ts`, where it also states whether it can pass
-  on a later attempt.
+- **Startup** — a program booting, a manifest being read, a deploy — may assert. A declaration
+  that is wrong, or an invariant that does not hold, stops the program before it serves anything,
+  and a person reads why.
+- **Runtime** — anything a caller is waiting on — throws an exception from `@toa.io/core` with a
+  code, because it crosses a binding as a value and whoever receives it decides by that code. An
+  `AssertionError` carries `code: 'ERR_ASSERTION'`, a string where a `code` in this codebase is a
+  number, so a caller reading it by its code reads it wrong. A new code goes in the enumeration in
+  `runtime/core/source/exceptions.ts`, where it also states whether it can pass on a later attempt.
 
 ## Userspace
 

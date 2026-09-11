@@ -1,0 +1,20 @@
+name: caller
+namespace: stateful
+
+operations:
+  relay:
+    type: computation
+    input:
+      type: object
+      properties:
+        instance:
+          type: string
+        endpoint:
+          type: string
+        input: {}
+        timeout:
+          type: integer
+        aborted:
+          type: boolean
+      required: [endpoint]
+    output: {}

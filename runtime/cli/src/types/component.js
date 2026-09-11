@@ -66,8 +66,13 @@ function calls(endpoints, entity, importing) {
       request.push(`query${operation.query === true ? '' : '?'}: Query<${entity}>`)
     }
 
+    // the process a call to a stateful operation goes to
+    if (operation.stateful === true) request.push('instance: string')
+
     // whether the call is awaited or left to run
     request.push('task?: boolean')
+
+    importing('@toa.io/core/types', 'Options')
 
     const type = output.declared ? `${name}Output` : output.type
     const described = comment(operation.description, '  ')
@@ -75,7 +80,7 @@ function calls(endpoints, entity, importing) {
     if (described !== null) lines.push(described)
 
     lines.push(
-      `  ${endpoint}: (request: { ${request.join(', ')} }) => ` +
+      `  ${endpoint}: (request: { ${request.join(', ')} }, options?: Options) => ` +
         `Promise<${resolves(type, operation, importing)}>`
     )
   }

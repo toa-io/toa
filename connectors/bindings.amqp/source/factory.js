@@ -24,10 +24,11 @@ export class Factory {
 
   #serial = 0
 
-  producer(locator, endpoints, component) {
+  // eslint-disable-next-line max-params
+  producer(locator, endpoints, component, stateful) {
     const comm = this.#communication(locator.id, uris.context(locator))
 
-    return new Producer(comm, locator, endpoints, component)
+    return new Producer(comm, locator, endpoints, component, stateful)
   }
 
   consumer(locator, endpoint) {

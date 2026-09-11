@@ -36,11 +36,12 @@ describe('Invocations', () => {
     const query = { test: Math.random() }
     await component.invoke(name, { input, query })
 
+    // a call given no options hands the operation none
     assert.ok(
       invocation.invoke.mock.calls.some(
         (call) =>
-          call.arguments.length === 1 &&
-          isDeepStrictEqual(call.arguments[0], { input, query })
+          isDeepStrictEqual(call.arguments[0], { input, query }) &&
+          call.arguments[1] === undefined
       )
     )
   })

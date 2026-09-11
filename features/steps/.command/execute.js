@@ -28,7 +28,10 @@ export async function execute(command, options = {}) {
   child.stderr.on('data', (chunk) => ((stderr += chunk), (spoke = Date.now())))
 
   this.aborted = false
-  this.controller = { abort: () => abort.call(this, child) }
+  this.controller = {
+    abort: () => abort.call(this, child),
+    kill: () => abort.call(this, child, 'SIGKILL')
+  }
 
   /*
    * A program that keeps running says when it is up — a composition prints `Composition
@@ -79,11 +82,11 @@ const POLL = 50
  * @param {import('child_process').ChildProcess} child
  * @this {toa.features.Context}
  */
-function abort(child) {
+function abort(child, signal = 'SIGTERM') {
   this.aborted = true
 
   try {
-    process.kill(-child.pid, 'SIGTERM')
+    process.kill(-child.pid, signal)
   } catch {
     // the program is already gone
   }

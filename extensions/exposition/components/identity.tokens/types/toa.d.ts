@@ -1,7 +1,7 @@
 // Written by `toa types`. Every run rewrites it.
 // What a manifest does not state belongs in a file of your own.
 
-import type { Query, RemoteError } from '@toa.io/core/types'
+import type { Options, Query, RemoteError } from '@toa.io/core/types'
 import type { Secret } from '@toa.io/extensions.configuration'
 import type { FetchInit } from '@toa.io/extensions.fetch'
 import type { Logs, Span } from '@toa.io/extensions.telemetry'
@@ -89,17 +89,17 @@ export type IssueOutput = {
 export type RevokeOutput = null
 
 export interface Component {
-  encrypt: (request: { input: EncryptInput, task?: boolean }) => Promise<EncryptOutput | RemoteError<"INACCESSIBLE_SCOPE">>
-  decrypt: (request: { input: DecryptInput, task?: boolean }) => Promise<DecryptOutput | RemoteError<"INVALID_TOKEN" | "INVALID_KEY" | "FORGED_KEY" | "REVOKED_KEY">>
-  authenticate: (request: { input: AuthenticateInput, task?: boolean }) => Promise<AuthenticateOutput | RemoteError<"UNRECOGNIZED" | "AUTHORITY_MISMATCH" | "TOKEN_REVOKED" | "INVALID_TOKEN" | "INVALID_KEY" | "FORGED_KEY" | "REVOKED_KEY">>
-  issue: (request: { input: IssueInput, task?: boolean }) => Promise<IssueOutput | RemoteError<"INACCESSIBLE_SCOPE">>
-  revoke: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<RevokeOutput>
-  assign: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Entity>
-  ensure: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Entity>
-  enumerate: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Entity[]>
-  observe: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Entity | null>
-  stream: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Readable>
-  terminate: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Entity>
+  encrypt: (request: { input: EncryptInput, task?: boolean }, options?: Options) => Promise<EncryptOutput | RemoteError<"INACCESSIBLE_SCOPE">>
+  decrypt: (request: { input: DecryptInput, task?: boolean }, options?: Options) => Promise<DecryptOutput | RemoteError<"INVALID_TOKEN" | "INVALID_KEY" | "FORGED_KEY" | "REVOKED_KEY">>
+  authenticate: (request: { input: AuthenticateInput, task?: boolean }, options?: Options) => Promise<AuthenticateOutput | RemoteError<"UNRECOGNIZED" | "AUTHORITY_MISMATCH" | "TOKEN_REVOKED" | "INVALID_TOKEN" | "INVALID_KEY" | "FORGED_KEY" | "REVOKED_KEY">>
+  issue: (request: { input: IssueInput, task?: boolean }, options?: Options) => Promise<IssueOutput | RemoteError<"INACCESSIBLE_SCOPE">>
+  revoke: (request: { input?: null, query?: Query<Entity>, task?: boolean }, options?: Options) => Promise<RevokeOutput>
+  assign: (request: { input?: null, query?: Query<Entity>, task?: boolean }, options?: Options) => Promise<Entity>
+  ensure: (request: { input?: null, query?: Query<Entity>, task?: boolean }, options?: Options) => Promise<Entity>
+  enumerate: (request: { input?: null, query?: Query<Entity>, task?: boolean }, options?: Options) => Promise<Entity[]>
+  observe: (request: { input?: null, query?: Query<Entity>, task?: boolean }, options?: Options) => Promise<Entity | null>
+  stream: (request: { input?: null, query?: Query<Entity>, task?: boolean }, options?: Options) => Promise<Readable>
+  terminate: (request: { input?: null, query?: Query<Entity>, task?: boolean }, options?: Options) => Promise<Entity>
 }
 
 export interface Configuration {

@@ -1,7 +1,7 @@
 // Written by `toa types`. Every run rewrites it.
 // What a manifest does not state belongs in a file of your own.
 
-import type { Query, RemoteError } from '@toa.io/core/types'
+import type { Options, Query, RemoteError } from '@toa.io/core/types'
 import type { Secret } from '@toa.io/extensions.configuration'
 import type { FetchInit } from '@toa.io/extensions.fetch'
 import type { Logs, Span } from '@toa.io/extensions.telemetry'
@@ -88,19 +88,19 @@ export type DeleteInput = {
 }
 
 export interface Component {
-  transit: (request: { input: TransitInput, query?: Query<Entity>, task?: boolean }) => Promise<Entity>
-  create: (request: { input: CreateInput, task?: boolean }) => Promise<unknown | RemoteError<"EXISTS" | "TOKEN" | "TRUST" | "RESPONSE" | "CONFIG" | "NO_TOKEN" | "ISS" | "SUB" | "EXP" | "REPLAY" | "CODE_NOT_ENABLED" | "CODE_SCHEMA">>
-  incept: (request: { input: InceptInput, task?: boolean }) => Promise<InceptOutput | RemoteError<"EXISTS" | "TOKEN" | "TRUST" | "RESPONSE" | "CONFIG" | "NO_TOKEN" | "ISS" | "SUB" | "EXP" | "REPLAY" | "CODE_NOT_ENABLED" | "CODE_SCHEMA">>
-  authenticate: (request: { input: AuthenticateInput, task?: boolean }) => Promise<AuthenticateOutput | RemoteError<"NOT_FOUND" | "TOKEN" | "TRUST" | "RESPONSE" | "CONFIG" | "NO_TOKEN" | "ISS" | "SUB" | "EXP" | "REPLAY" | "CODE_NOT_ENABLED" | "CODE_SCHEMA">>
-  decode: (request: { input: DecodeInput, task?: boolean }) => Promise<DecodeOutput>
-  list: (request: { input: ListInput, task?: boolean }) => Promise<unknown>
-  delete: (request: { input: DeleteInput, task?: boolean }) => Promise<unknown>
-  assign: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Entity>
-  ensure: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Entity>
-  enumerate: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Entity[]>
-  observe: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Entity | null>
-  stream: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Readable>
-  terminate: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Entity>
+  transit: (request: { input: TransitInput, query?: Query<Entity>, task?: boolean }, options?: Options) => Promise<Entity>
+  create: (request: { input: CreateInput, task?: boolean }, options?: Options) => Promise<unknown | RemoteError<"EXISTS" | "TOKEN" | "TRUST" | "RESPONSE" | "CONFIG" | "NO_TOKEN" | "ISS" | "SUB" | "EXP" | "REPLAY" | "CODE_NOT_ENABLED" | "CODE_SCHEMA">>
+  incept: (request: { input: InceptInput, task?: boolean }, options?: Options) => Promise<InceptOutput | RemoteError<"EXISTS" | "TOKEN" | "TRUST" | "RESPONSE" | "CONFIG" | "NO_TOKEN" | "ISS" | "SUB" | "EXP" | "REPLAY" | "CODE_NOT_ENABLED" | "CODE_SCHEMA">>
+  authenticate: (request: { input: AuthenticateInput, task?: boolean }, options?: Options) => Promise<AuthenticateOutput | RemoteError<"NOT_FOUND" | "TOKEN" | "TRUST" | "RESPONSE" | "CONFIG" | "NO_TOKEN" | "ISS" | "SUB" | "EXP" | "REPLAY" | "CODE_NOT_ENABLED" | "CODE_SCHEMA">>
+  decode: (request: { input: DecodeInput, task?: boolean }, options?: Options) => Promise<DecodeOutput>
+  list: (request: { input: ListInput, task?: boolean }, options?: Options) => Promise<unknown>
+  delete: (request: { input: DeleteInput, task?: boolean }, options?: Options) => Promise<unknown>
+  assign: (request: { input?: null, query?: Query<Entity>, task?: boolean }, options?: Options) => Promise<Entity>
+  ensure: (request: { input?: null, query?: Query<Entity>, task?: boolean }, options?: Options) => Promise<Entity>
+  enumerate: (request: { input?: null, query?: Query<Entity>, task?: boolean }, options?: Options) => Promise<Entity[]>
+  observe: (request: { input?: null, query?: Query<Entity>, task?: boolean }, options?: Options) => Promise<Entity | null>
+  stream: (request: { input?: null, query?: Query<Entity>, task?: boolean }, options?: Options) => Promise<Readable>
+  terminate: (request: { input?: null, query?: Query<Entity>, task?: boolean }, options?: Options) => Promise<Entity>
 }
 
 export interface Configuration {

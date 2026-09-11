@@ -1,8 +1,11 @@
 import { describe, it, beforeEach } from 'node:test'
 import assert from 'node:assert/strict'
 
+import { mock } from 'node:test'
+
 import * as fixtures from './context.fixtures.js'
 import { Context } from '../source/context.js'
+import { codes } from '../source/exceptions.js'
 
 /** @type {import('@toa.io/core').Context} */
 let context
@@ -26,6 +29,45 @@ describe('call', () => {
     await context.call('a', 'b', 'c', request)
 
     assert.strictEqual(fixtures.discover.mock.callCount(), 1)
+  })
+})
+
+// a caller that stops waiting is answered at once, whether its component has been found yet or not
+describe('call waited for', () => {
+  /** a lookup that has found nothing yet, and a remote it would have found */
+  const pending = () => {
+    const remote = { invoke: mock.fn(), link: mock.fn() }
+    const discover = mock.fn(() => new Promise(() => undefined))
+
+    return { remote, context: new Context(fixtures.local, discover, fixtures.aspects) }
+  }
+
+  it('should end the call when its signal aborts while the component is looked up', async () => {
+    const { remote, context } = pending()
+    const controller = new AbortController()
+    const reason = new Error('stopped waiting')
+    const call = context.call('a', 'b', 'c', {}, { signal: controller.signal })
+
+    controller.abort(reason)
+
+    await assert.rejects(call, (exception) => {
+      assert.strictEqual(exception.code, codes.Abandoned)
+      assert.strictEqual(exception.cause, reason)
+
+      return true
+    })
+
+    assert.strictEqual(remote.invoke.mock.callCount(), 0)
+  })
+
+  it('should end at once a call whose signal aborted before it was made', async () => {
+    const { context } = pending()
+    const controller = new AbortController()
+
+    controller.abort()
+
+    await assert.rejects(context.call('a', 'b', 'c', {}, { signal: controller.signal }), (exception) =>
+      exception.code === codes.Abandoned)
   })
 })
 

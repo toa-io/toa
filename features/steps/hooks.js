@@ -1,6 +1,6 @@
 import * as stage from '@toa.io/userland/stage'
 import { environment } from '@toa.io/generic'
-import { mkdtemp } from 'node:fs/promises'
+import { mkdtemp, rm } from 'node:fs/promises'
 import { join } from 'node:path'
 import { tmpdir } from 'node:os'
 import { Before, BeforeAll, After } from '@cucumber/cucumber'
@@ -45,11 +45,23 @@ Before(
    * @this {toa.features.Context}
    */
   async function () {
-    this.cwd = await mkdtemp(join(tmpdir(), Math.random().toString(36).slice(2)))
+    this.workspace = await mkdtemp(join(tmpdir(), Math.random().toString(36).slice(2)))
+    this.cwd = this.workspace
     this.containers = {}
   }
 )
 
+// a workspace holds whatever its scenario wrote there, an exported image among it, and /tmp is
+// memory. A step may have moved the process into it, and `cwd` elsewhere — the repository among
+// the places it may point — so the process goes back first, and only what was created goes.
 After(async function () {
-  await stage.shutdown()
+  try {
+    await stage.shutdown()
+  } finally {
+    process.chdir(ORIGIN)
+
+    await rm(this.workspace, { recursive: true, force: true, maxRetries: 3 })
+  }
 })
+
+const ORIGIN = process.cwd()

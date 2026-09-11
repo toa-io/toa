@@ -37,6 +37,9 @@ export class Endpoint implements RTD.Endpoint {
 
     if (typeof key === 'string' && key !== '') request.id = identity(context, key)
 
+    // the process a stateful operation is called on, where the route carries one
+    if (context.instance !== undefined) request.instance = context.instance
+
     this.remote ??= await this.discovery
 
     const reply = await this.remote.invoke(this.endpoint, request)

@@ -15,6 +15,7 @@ export type { Call, Guard, Observation, Transition } from './operations.js'
 export type {
   Envelope,
   Maybe,
+  Options,
   Query,
   Reply,
   RemoteError,

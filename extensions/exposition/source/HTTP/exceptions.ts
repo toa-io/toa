@@ -97,3 +97,9 @@ export class ServiceUnavailable extends Exception {
     super(503, body)
   }
 }
+
+export class GatewayTimeout extends Exception {
+  public constructor(body?: any) {
+    super(504, body)
+  }
+}

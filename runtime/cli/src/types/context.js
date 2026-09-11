@@ -32,6 +32,7 @@ export function module(context, components, shared = { types: {}, imports: {} })
 export interface Context<Local> {
   env: string
   name: string
+  instance: string
   local: Local
   remote: Remote
 ${common}

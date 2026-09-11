@@ -40,7 +40,7 @@ it('should pass arguments and return value', async () => {
   assert.ok(
     fixtures.bindings[0].request.mock.calls.some(
       (call) =>
-        call.arguments.length === 1 && isDeepStrictEqual(call.arguments[0], request)
+        isDeepStrictEqual(call.arguments[0], request) && call.arguments[1] === undefined
     )
   )
   assert.strictEqual(result, await fixtures.bindings[0].request.mock.calls[0].result)

@@ -22,6 +22,13 @@ When(
   }
 )
 
+// as a process that crashes leaves it: no shutdown, nothing withdrawn
+When('I kill execution', async function () {
+  this.controller.kill()
+
+  await this.process
+})
+
 When('I abort execution', async function () {
   this.controller.abort()
 

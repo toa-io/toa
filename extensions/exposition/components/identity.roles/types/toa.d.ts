@@ -1,7 +1,7 @@
 // Written by `toa types`. Every run rewrites it.
 // What a manifest does not state belongs in a file of your own.
 
-import type { Query, RemoteError } from '@toa.io/core/types'
+import type { Options, Query, RemoteError } from '@toa.io/core/types'
 import type { Readable } from 'node:stream'
 
 export interface Entity {
@@ -32,13 +32,13 @@ export type PrincipalInput = {
 }
 
 export interface Component {
-  grant: (request: { input: GrantInput, task?: boolean }) => Promise<unknown | RemoteError<"INACCESSIBLE_SCOPE">>
-  list: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<ListOutput>
-  principal: (request: { input: PrincipalInput, task?: boolean }) => Promise<unknown>
-  assign: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Entity>
-  ensure: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Entity>
-  enumerate: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Entity[]>
-  observe: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Entity | null>
-  stream: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Readable>
-  terminate: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Entity>
+  grant: (request: { input: GrantInput, task?: boolean }, options?: Options) => Promise<unknown | RemoteError<"INACCESSIBLE_SCOPE">>
+  list: (request: { input?: null, query?: Query<Entity>, task?: boolean }, options?: Options) => Promise<ListOutput>
+  principal: (request: { input: PrincipalInput, task?: boolean }, options?: Options) => Promise<unknown>
+  assign: (request: { input?: null, query?: Query<Entity>, task?: boolean }, options?: Options) => Promise<Entity>
+  ensure: (request: { input?: null, query?: Query<Entity>, task?: boolean }, options?: Options) => Promise<Entity>
+  enumerate: (request: { input?: null, query?: Query<Entity>, task?: boolean }, options?: Options) => Promise<Entity[]>
+  observe: (request: { input?: null, query?: Query<Entity>, task?: boolean }, options?: Options) => Promise<Entity | null>
+  stream: (request: { input?: null, query?: Query<Entity>, task?: boolean }, options?: Options) => Promise<Readable>
+  terminate: (request: { input?: null, query?: Query<Entity>, task?: boolean }, options?: Options) => Promise<Entity>
 }

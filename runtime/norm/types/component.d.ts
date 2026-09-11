@@ -14,6 +14,8 @@ export type Operation = {
   output?: any
   error?: any
   query?: boolean
+  /** served by every process under an address of its own, which a call to it names */
+  stateful?: boolean
 }
 
 export type Operations = Record<string, Operation>

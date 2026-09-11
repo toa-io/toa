@@ -1,7 +1,7 @@
 import assert from 'node:assert'
 import { Given, When, Then } from '@cucumber/cucumber'
 import { diff } from 'jest-diff'
-import { exceptions } from '@toa.io/core'
+import { exceptions, instance } from '@toa.io/core'
 import { transpose, match } from '@toa.io/generic'
 import { load as parse } from 'js-yaml'
 
@@ -151,6 +151,47 @@ When(
     const request = parse(yaml)
 
     await call.call(this, endpoint, request)
+  }
+)
+
+When(
+  'I call {endpoint} on this process with:',
+  /**
+   * An addressed call to the process the scenario runs in, whose name is known only here.
+   *
+   * @param {string} endpoint
+   * @param {string} yaml
+   * @this {toa.features.Context}
+   */
+  async function (endpoint, yaml) {
+    const request = { ...parse(yaml), instance: instance() }
+
+    await call.call(this, endpoint, request)
+  }
+)
+
+When(
+  'I call {endpoint} on this process until it is answered, within {int} seconds, with:',
+  /**
+   * A process that has lost its broker holds its name again once it is back, and a call
+   * made in between is refused; this is the call that finds it back.
+   *
+   * @param {string} endpoint
+   * @param {number} seconds
+   * @param {string} yaml
+   * @this {toa.features.Context}
+   */
+  async function (endpoint, seconds, yaml) {
+    const request = { ...parse(yaml), instance: instance() }
+    const deadline = Date.now() + seconds * 1000
+
+    do {
+      await call.call(this, endpoint, request)
+
+      if (this.exception === undefined) return
+
+      await new Promise((resolve) => setTimeout(resolve, 500))
+    } while (Date.now() < deadline)
   }
 )
 

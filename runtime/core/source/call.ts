@@ -2,10 +2,14 @@ import { Readable } from 'node:stream'
 import { current, encode } from 'openspan'
 import { Connector } from './connector.js'
 import { derive, newid } from './entities/newid.js'
+import { RequestContractException } from './exceptions.js'
+import { abandoned, waiting } from './abandon.js'
+import * as addressed from './instance.js'
 import * as trail from './trail.js'
 import type { Transmission } from './transmission.js'
 import type { Request as Contract } from './contract/request.js'
-import type { Envelope, Request, Source } from './types/request.js'
+import type { Terms } from './types/bindings.js'
+import type { Envelope, Options, Request, Source } from './types/request.js'
 
 export class Call extends Connector {
   readonly #transmitter: Transmission
@@ -16,12 +20,16 @@ export class Call extends Connector {
 
   readonly #source: Source | undefined
 
+  /** whether a call to it names the process it goes to */
+  readonly #stateful: boolean
+
   // eslint-disable-next-line max-params
   public constructor(
     transmitter: Transmission,
     contract: Contract,
     target: string,
-    source?: Source
+    source?: Source,
+    stateful: boolean = false
   ) {
     super()
 
@@ -29,12 +37,18 @@ export class Call extends Connector {
     this.#contract = contract
     this.#target = target
     this.#source = source
+    this.#stateful = stateful
 
     this.depends(transmitter)
   }
 
-  public async invoke(request: Request = {}): Promise<any> {
+  public async invoke(request: Request = {}, options: Options = {}): Promise<any> {
     const invocation = trail.current()
+
+    this.#refuse(request, options)
+
+    // the process a call goes to, which the transmission is handed beside what the call asks
+    const { instance, ...asked } = request
 
     /*
      * The envelope is built around what the caller asked for rather than written over it: one
@@ -43,7 +57,7 @@ export class Call extends Connector {
      * of it.
      */
     const envelope: Envelope = {
-      ...request,
+      ...asked,
 
       // avoid validation on the recipient's side
       authentic: true,
@@ -73,7 +87,7 @@ export class Call extends Connector {
 
     if (context !== undefined) envelope.telemetry = encode(context)
 
-    const reply = await this.#transmitter.request(envelope)
+    const reply = await this.#transmit(envelope, this.#terms(instance, options.timeout, options.signal))
 
     if (reply === null) return null
     else if (reply instanceof Readable) return reply
@@ -98,6 +112,66 @@ export class Call extends Connector {
     if (invocation?.id === undefined) return newid()
 
     return derive(invocation.id, this.#target, trail.ordinal(invocation, this.#target))
+  }
+
+  /** A call whose making contradicts what it calls is refused before anything is sent. */
+  #refuse(request: Request, options: Options): void {
+    const { instance, task } = request
+    const { timeout, signal } = options
+
+    if (this.#stateful && instance === undefined)
+      throw new RequestContractException(
+        `'${this.#target}' is stateful, and a call to it names \`instance\``
+      )
+
+    if (!this.#stateful && instance !== undefined)
+      throw new RequestContractException(
+        `'${this.#target}' is stateless, and a call to it names no \`instance\``
+      )
+
+    // nobody waits for a task, and it is made from wherever the queue is consumed
+    if (task === true && (timeout !== undefined || signal !== undefined))
+      throw new RequestContractException('A task names no `timeout` and no `signal`')
+
+    if (timeout !== undefined && !(Number.isFinite(timeout) && timeout > 0))
+      throw new RequestContractException('`timeout` is a positive number of milliseconds')
+  }
+
+  /**
+   * What the transmission is handed beside the envelope. An addressed call always waits for a set
+   * time — its caller's, or the context's — because nothing else ends a call to a process that has
+   * gone; an ordinary call waits for one only where its caller set it.
+   */
+  #terms(instance?: string, timeout?: number, signal?: AbortSignal): Terms | undefined {
+    const deadline = timeout ?? (this.#stateful ? addressed.timeout() : undefined)
+
+    if (instance === undefined && deadline === undefined && signal === undefined)
+      return undefined
+
+    const signals: AbortSignal[] = []
+
+    if (signal !== undefined) signals.push(signal)
+    if (deadline !== undefined) signals.push(AbortSignal.timeout(deadline))
+
+    const terms: Terms = {}
+
+    if (instance !== undefined) terms.instance = instance
+    if (deadline !== undefined) terms.timeout = deadline
+
+    if (signals.length > 0)
+      terms.signal = signals.length === 1 ? signals[0] : AbortSignal.any(signals)
+
+    return terms
+  }
+
+  /** The reply, or *abandoned* once the caller has stopped waiting, however the wait ended. */
+  async #transmit(envelope: Envelope, terms: Terms | undefined): Promise<any> {
+    const signal = terms?.signal
+
+    // a call its caller stopped waiting for before it was made is handed to no binding
+    if (signal?.aborted === true) throw abandoned(this.#target, signal)
+
+    return await waiting(this.#transmitter.request(envelope, terms), signal, this.#target)
   }
 }
 

@@ -68,3 +68,17 @@ it('should leave the request the caller handed over alone', async () => {
   assert.deepStrictEqual(request, { input: { foo: 1 } })
   assert.deepStrictEqual(stored().request, { input: { foo: 1 } })
 })
+
+// a delayed call goes out as a task, which reaches no stateful operation
+it('should refuse a delayed call that names a process', async () => {
+  const request = { input: { foo: 1 }, instance: 'streams-0' }
+
+  await assert.rejects(aspect.invoke('delay', 'a.b.c', request, options), (exception: any) => {
+    assert.equal(exception.code, 202)
+    assert.match(exception.message, /instance/)
+
+    return true
+  })
+
+  assert.equal(metronome.invoke.mock.callCount(), 0)
+})
