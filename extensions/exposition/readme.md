@@ -138,6 +138,7 @@ exposition:
 | `debug`       | Output server errors. Default `false`.                                                                                        |
 | `ip`          | Header the client address is read from. See [Client address](documentation/ip.md).                                            |
 | `bouncer`     | Meter of failed authentications per address. See [Identity authentication](documentation/identity.md#failed-authentications). |
+| `censor`      | Header values a request is answered `451` for. See [Censor](documentation/censor.md).                                         |
 | `oauth`       | Authorization server exposed to OAuth clients. See [OAuth](documentation/oauth.md).                                           |
 | `protocol`    | `h1` or `h2c`. See [Protocol](documentation/protocol.md).                                                                     |
 | `rpc`         | JSON-RPC at `/.rpc`; none is served without it. See [JSON-RPC](documentation/rpc.md).                                         |
@@ -208,6 +209,7 @@ See also [telemetry ready probe](../telemetry/readme.md#ready-probe) and
 
 - [Protocol support](documentation/protocol.md)
 - [Client address](documentation/ip.md)
+- [Censor](documentation/censor.md)
 - [Resource Tree Definition](documentation/tree.md)
 - [Identity authentication](documentation/identity.md)
 - [Access authorization](documentation/access.md)
