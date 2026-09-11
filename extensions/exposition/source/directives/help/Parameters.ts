@@ -1,5 +1,5 @@
-import { segment } from '../../RTD/segment.js'
-import { described, type Described } from './described.js'
+import { segment } from '../../RTD/segment.ts'
+import { described, type Described } from './described.ts'
 
 /**
  * What the parameters of a method are, by name: a route variable, or one of the

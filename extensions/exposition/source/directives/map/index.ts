@@ -1,3 +1,3 @@
-import { Map } from './Map.js'
+import { Map } from './Map.ts'
 
 export const map = new Map()

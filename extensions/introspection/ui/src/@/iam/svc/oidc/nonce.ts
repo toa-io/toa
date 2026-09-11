@@ -1,5 +1,5 @@
 import { value } from 'svas'
 
 export const nonce = value<string>({
-  persist: 'auth:oidc:nonce'
+  persist: 'auth:oidc:nonce',
 })

@@ -1,4 +1,4 @@
-import type { Context } from './lib/index.js'
+import type { Context } from './lib/index.ts'
 
 export async function effect(input: Input, context: Context): Promise<Output | Error> {
   const { authority, credentials } = input

@@ -1,4 +1,4 @@
-import { Property } from './Properties.js'
+import { Property } from './Properties.ts'
 
 export class Languages extends Property<'languages'> {
   public constructor(value: string[]) {

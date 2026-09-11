@@ -1,5 +1,5 @@
-import { Aspect } from './Aspect.js'
-import { Connection } from './Connection.js'
+import { Aspect } from './Aspect.ts'
+import { Connection } from './Connection.ts'
 import type { Locator } from '@toa.io/core'
 import type { extensions } from '@toa.io/core/types'
 

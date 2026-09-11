@@ -1,7 +1,7 @@
-import * as http from '../HTTP/index.js'
-import { verbs } from '../RTD/syntax/index.js'
-import type { Segment } from '../RTD/segment.js'
-import { QUERY, type Params } from './types.js'
+import * as http from '../HTTP/index.ts'
+import { verbs } from '../RTD/syntax/index.ts'
+import type { Segment } from '../RTD/segment.ts'
+import { QUERY, type Params } from './types.ts'
 
 /**
  * What a name resolves to: the path the call is made at, and the verb it is made with.

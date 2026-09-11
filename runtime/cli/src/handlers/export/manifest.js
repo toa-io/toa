@@ -3,16 +3,16 @@ import { yaml as jsyaml } from '@toa.io/generic'
 
 import { components as find } from '../../util/find.js'
 
-const print = async (argv) => {
+export const manifest = async (argv) => {
   const path = find(argv.path)
 
   if (path === undefined) throw new Error(`No component found in ${argv.path}`)
 
-  const manifest = await component(path)
+  const declaration = await component(path)
 
   if (argv.error !== true) {
     // js-yaml writes plain objects only, and a manifest carries a Locator
-    const plain = JSON.parse(JSON.stringify(manifest))
+    const plain = JSON.parse(JSON.stringify(declaration))
 
     const result =
       argv.output === 'json'
@@ -22,5 +22,3 @@ const print = async (argv) => {
     console.log(result)
   }
 }
-
-export { print as manifest }

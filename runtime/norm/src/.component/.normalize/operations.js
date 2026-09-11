@@ -13,6 +13,9 @@ export const operations = (component) => {
     // an operation that states no output states an empty schema, which every reply fits
     operation.output ??= {}
 
+    // a bridge says an algorithm takes no input with `null`, which the manifest states as none
+    if (operation.input === null) delete operation.input
+
     if (operation.bindings === undefined) operation.bindings = component.bindings
     if (operation.bindings === null) operation.bindings = []
     if (operation.virtual === true) delete component.operations[endpoint]

@@ -1,7 +1,7 @@
 import { it } from 'node:test'
 import assert from 'node:assert/strict'
 
-import * as schemas from './schemas.js'
+import * as schemas from './schemas.ts'
 
 const authorities = { nex: 'nex.toa.io' }
 
@@ -27,5 +27,18 @@ it('should default nothing in bouncer', () => {
       ip: 'x-real-ip',
       bouncer: { attempts: 0 }
     })
+  )
+})
+
+it('should require a header and a value in censor', () => {
+  const header = 'cf-ipcountry'
+
+  assert.doesNotThrow(() =>
+    schemas.annotation.validate({ authorities, censor: { header, values: ['RU'] } })
+  )
+  assert.throws(() => schemas.annotation.validate({ authorities, censor: { values: ['RU'] } }))
+  assert.throws(() => schemas.annotation.validate({ authorities, censor: { header } }))
+  assert.throws(() =>
+    schemas.annotation.validate({ authorities, censor: { header, values: [] } })
   )
 })

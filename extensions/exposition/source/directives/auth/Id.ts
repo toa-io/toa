@@ -1,6 +1,6 @@
-import { type Parameter } from '../../RTD/index.js'
-import { type Directive, type Identity } from './types.js'
-import type { Introspection } from '../../Introspection.js'
+import { type Parameter } from '../../RTD/index.ts'
+import { type Directive, type Identity } from './types.ts'
+import type { Introspection } from '../../Introspection.ts'
 
 export class Id implements Directive {
   private readonly parameter: string

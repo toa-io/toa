@@ -6,22 +6,29 @@ import {
   type Variables
 } from '@toa.io/operations'
 import { add } from '@toa.io/generic'
-import { components } from './components.js'
-import { version } from '../version.js'
-import { EVENT, PREFIX, SECRET_RX, UI_PATH, UI_PORT, VALUES } from './const.js'
-import { epoch } from './epoch.js'
-import { assertSecrets } from './secrets.js'
-import * as validators from './schemas.js'
-import type { Manifest } from './manifest.js'
+import { components } from './components.ts'
+import { version } from '../version.ts'
+import { EVENT, PREFIX, SECRET_RX, UI_PATH, UI_PORT, VALUES } from './const.ts'
+import { epoch } from './epoch.ts'
+import { assertSecrets } from './secrets.ts'
+import * as validators from './schemas.ts'
+import type { Manifest } from './manifest.ts'
 import type { context } from '@toa.io/norm'
 
 /** Where Toa's release publishes this service's image. An application takes it
  *  instead of building one when its context says `registry.services: published`. */
 export const image = 'ghcr.io/toa-io/extension-configuration-values'
 
+/**
+ * @param managed the components Toa deploys, which are given their secrets
+ * @param annotation the context's values, keyed by component
+ * @param instances every component that declares configuration, evicted ones included: the
+ * values service serves each of them, wherever it runs
+ */
 export function deployment(
-  instances: Instance[],
-  annotation: Annotation = {}
+  managed: Instance[],
+  annotation: Annotation = {},
+  instances: Instance[] = managed
 ): Dependency {
   const { resources, values } = split(annotation)
 
@@ -29,7 +36,7 @@ export function deployment(
 
   const variables: Variables = {}
 
-  for (const instance of instances) {
+  for (const instance of managed) {
     const values = annotation[instance.locator.id]
 
     if (values === undefined) continue

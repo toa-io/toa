@@ -3,9 +3,9 @@ import assert from 'node:assert/strict'
 import { createRequire } from 'node:module'
 import { readFileSync } from 'node:fs'
 
-import { packages, installs } from './packages.js'
-import { secrets } from './secrets.js'
-import type { Instance } from './deployment.js'
+import { packages, installs } from './packages.ts'
+import { secrets } from './secrets.ts'
+import type { Instance } from './deployment.ts'
 
 const require = createRequire(import.meta.url)
 

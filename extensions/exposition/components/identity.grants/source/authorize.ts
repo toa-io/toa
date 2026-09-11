@@ -1,7 +1,7 @@
-import { hold, identify } from './lib/index.js'
+import { hold, identify } from './lib/index.ts'
 import type { Maybe } from '@toa.io/core/types'
 import type { Operation } from '@toa.io/bridges.node'
-import type { Context } from './lib/index.js'
+import type { Context } from './lib/index.ts'
 
 /**
  * What the consent page calls when a user allows a client. The page holds the user's own

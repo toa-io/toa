@@ -1,6 +1,6 @@
 import { quote } from '@toa.io/generic'
-import { MAX_KEYS } from './lib/const.js'
-import type { Context, Passkey } from './types/index.js'
+import { MAX_KEYS } from './lib/const.ts'
+import type { Context, Passkey } from './types/index.ts'
 
 export async function computation(
   { authority, identity }: Input,

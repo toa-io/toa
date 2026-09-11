@@ -1,6 +1,6 @@
-import { Operation } from './operation.js'
-import type { Store } from './operation.js'
-import type { Changeset } from './entities/changeset.js'
+import { Operation } from './operation.ts'
+import type { Store } from './operation.ts'
+import type { Changeset } from './entities/changeset.ts'
 
 export class Assignment extends Operation {
   protected override async acquire(store: Store): Promise<void> {

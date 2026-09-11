@@ -1,36 +1,8 @@
 import { merge } from '@toa.io/generic'
 
 export const dereference = (manifest) => {
-  // schemas
-  const properties = manifest.entity?.properties
-  const resolver = createResolver(properties)
+  if (!('operations' in manifest)) return
 
-  if (properties !== undefined)
-    for (const [name, property] of Object.entries(properties))
-      properties[name] = schema(property, resolver)
-
-  if ('operations' in manifest) operations(manifest, resolver)
-}
-
-const createResolver = (properties) => (property) => {
-  if (properties?.[property] === undefined) {
-    throw new Error(`Referenced property '${property}' is not defined`)
-  }
-
-  return properties[property]
-}
-
-function operations(manifest, resolver) {
-  for (const operation of Object.values(manifest.operations)) {
-    if (operation.input !== undefined) operation.input = schema(operation.input, resolver)
-
-    if (operation.output !== undefined)
-      if (Array.isArray(operation.output) && operation.output.length === 1)
-        operation.output = [schema(operation.output[0], resolver)]
-      else operation.output = schema(operation.output, resolver)
-  }
-
-  // forwarding
   for (const operation of Object.values(manifest.operations)) {
     if (operation.forward !== undefined) forward(operation, manifest.operations)
   }
@@ -38,24 +10,6 @@ function operations(manifest, resolver) {
   for (const operation of Object.values(manifest.operations)) {
     delete operation.forwarded
   }
-}
-
-const schema = (object, resolve) => {
-  if (object === undefined || object === null || typeof object !== 'object') return
-  if (object.type === 'string' && object.default?.[0] === '.')
-    return resolve(object.default.substring(1))
-
-  if (object.type === 'array') {
-    object.items = schema(object.items, resolve)
-  } else if (object.properties !== undefined) {
-    for (const [name, value] of Object.entries(object.properties)) {
-      if (value?.type === 'string' && value.default === '.')
-        object.properties[name] = resolve(name)
-      else object.properties[name] = schema(value, resolve)
-    }
-  }
-
-  return object
 }
 
 const forward = (operation, operations) => {

@@ -4,9 +4,9 @@ import { isDeepStrictEqual } from 'node:util'
 
 import { type Component } from '@toa.io/core'
 import { generate } from 'randomstring'
-import { Role } from './Role.js'
-import { type Identity } from './types.js'
-import type { Parameter } from '../../RTD/index.js'
+import { Role } from './Role.ts'
+import { type Identity } from './types.ts'
+import type { Parameter } from '../../RTD/index.ts'
 
 const remote = {
   invoke: mock.fn()

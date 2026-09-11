@@ -1,4 +1,4 @@
-import type { Parameter } from './Match.js'
+import type { Parameter } from './Match.ts'
 
 export function segment(path: string): Segment[] {
   return fragment(path).map(parse)

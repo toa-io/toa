@@ -4,8 +4,8 @@ import { createRequire } from 'node:module'
 import { existsSync, readFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 
-import { installs } from './packages.js'
-import { components } from './components.js'
+import { installs } from './packages.ts'
+import { components } from './components.ts'
 
 const require = createRequire(import.meta.url)
 

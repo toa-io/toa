@@ -1,6 +1,6 @@
 import { needs, OPERATIONS } from '../../util/needs.js'
 
-const builder = (yargs) => {
+export const builder = (yargs) => {
   yargs
     .positional('environment', {
       type: 'string',
@@ -19,7 +19,7 @@ export const command = ['secrets <environment>']
 export const desc = 'Export deployment secrets'
 
 // the handler and what it depends on load when the command runs, not when the program starts
-const handler = async (argv) => {
+export const handler = async (argv) => {
   const { secrets } = await needs(
     'export secrets',
     () => import('../../handlers/export/secrets.js'),
@@ -28,5 +28,3 @@ const handler = async (argv) => {
 
   return await secrets(argv)
 }
-
-export { builder, handler }

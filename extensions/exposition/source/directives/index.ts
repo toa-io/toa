@@ -1,18 +1,19 @@
-import { authorization } from './auth/index.js'
-import { cache } from './cache/index.js'
-import { cors } from './cors/index.js'
-import { dev } from './dev/index.js'
-import { octets } from './octets/index.js'
-import { io } from './io/index.js'
-import { map } from './map/index.js'
-import { mcp } from './mcp/index.js'
-import { req } from './require/index.js'
-import { flow } from './flow/index.js'
-import { help } from './help/index.js'
-import { discovery } from './oauth/index.js'
-import { Site } from '../Discovery/index.js'
-import type { DirectiveFamily } from '../RTD/index.js'
-import type { Interceptor } from '../Interception.js'
+import { authorization } from './auth/index.ts'
+import { cache } from './cache/index.ts'
+import { cors } from './cors/index.ts'
+import { censor } from './censor/index.ts'
+import { dev } from './dev/index.ts'
+import { octets } from './octets/index.ts'
+import { io } from './io/index.ts'
+import { map } from './map/index.ts'
+import { mcp } from './mcp/index.ts'
+import { req } from './require/index.ts'
+import { flow } from './flow/index.ts'
+import { help } from './help/index.ts'
+import { discovery } from './oauth/index.ts'
+import { Site } from '../Discovery/index.ts'
+import type { DirectiveFamily } from '../RTD/index.ts'
+import type { Interceptor } from '../Interception.ts'
 
 export const families: DirectiveFamily[] = [
   authorization,
@@ -27,7 +28,8 @@ export const families: DirectiveFamily[] = [
   dev
 ]
 /**
- * `cors` first, so a preflight is answered before anything reads the request; the page is
- * last, and claims its own prefix.
+ * `cors` first, so a preflight is answered before anything reads the request; `censor` next,
+ * so a refusal carries the CORS headers a page needs to read it; the page is last, and claims
+ * its own prefix.
  */
-export const interceptors: Interceptor[] = [cors, discovery, new Site()]
+export const interceptors: Interceptor[] = [cors, censor, discovery, new Site()]

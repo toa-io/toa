@@ -1,7 +1,7 @@
 import { it } from 'node:test'
 import assert from 'node:assert/strict'
 
-import { providers } from './schemes.js'
+import { providers } from './schemes.ts'
 
 it('should resolve a known scheme', () => {
   assert.deepEqual(providers('basic'), ['basic'])

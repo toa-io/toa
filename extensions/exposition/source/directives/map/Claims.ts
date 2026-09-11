@@ -1,7 +1,7 @@
-import { Mapping } from './Mapping.js'
+import { Mapping } from './Mapping.ts'
 import type { Component } from '@toa.io/core'
-import type { Remotes } from '../../Remotes.js'
-import type { Input } from '../../io.js'
+import type { Remotes } from '../../Remotes.ts'
+import type { Input } from '../../io.ts'
 
 export class Claims extends Mapping<Record<string, string>> {
   private readonly discovery!: Promise<Component>

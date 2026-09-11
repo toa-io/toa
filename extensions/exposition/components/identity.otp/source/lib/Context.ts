@@ -1,7 +1,7 @@
 import type { Call, Observation } from '@toa.io/core/types'
 import type { Stash } from '@toa.io/extensions.stash'
 import type { Logs } from '@toa.io/extensions.telemetry'
-import type { Entity } from './Entity.js'
+import type { Entity } from './Entity.ts'
 
 export interface Context {
   stash: Stash

@@ -1,9 +1,9 @@
 import tsflow from 'cucumber-tsflow'
 
 import * as http from '@toa.io/agent'
-import { Parameters } from './Parameters.js'
-import { Captures } from './Captures.js'
-import { Gateway } from './Gateway.js'
+import { Parameters } from './Parameters.ts'
+import { Captures } from './Captures.ts'
+import { Gateway } from './Gateway.ts'
 
 const { binding, given } = tsflow
 

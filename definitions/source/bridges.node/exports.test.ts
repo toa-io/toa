@@ -1,7 +1,7 @@
 import { describe, it } from 'node:test'
 import assert from 'node:assert/strict'
 
-import { exports } from './exports.js'
+import { exports } from './exports.ts'
 
 const read = (text: string, file = 'module.js'): ReturnType<typeof exports> => exports(file, text)
 

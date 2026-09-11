@@ -1,7 +1,7 @@
 import * as undici from 'undici'
-import * as parser from './parse/index.js'
-import { PROTOCOL } from './protocol.js'
-import type { HTTPRequest } from './parse/request.js'
+import * as parser from './parse/index.ts'
+import { PROTOCOL } from './protocol.ts'
+import type { HTTPRequest } from './parse/request.ts'
 
 const dispatchers = new Map<string, undici.Dispatcher>()
 

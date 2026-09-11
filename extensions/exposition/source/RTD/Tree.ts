@@ -1,14 +1,14 @@
 import { console } from 'openspan'
-import { refusal, template } from '../RPC/names.js'
+import { refusal, template } from '../RPC/names.ts'
 import { DISCOVERY } from '@toa.io/definitions/extensions.exposition'
-import { branchTTL, createNode } from './factory.js'
-import { fragment } from './segment.js'
-import type { Mount, Node } from './Node.js'
-import type { Match } from './Match.js'
-import type { Context } from './Context.js'
-import type { DirectiveFactory } from './Directives.js'
-import type { EndpointsFactory } from './Endpoint.js'
-import type * as syntax from './syntax/index.js'
+import { branchTTL, createNode } from './factory.ts'
+import { fragment } from './segment.ts'
+import type { Mount, Node } from './Node.ts'
+import type { Match } from './Match.ts'
+import type { Context } from './Context.ts'
+import type { DirectiveFactory } from './Directives.ts'
+import type { EndpointsFactory } from './Endpoint.ts'
+import type * as syntax from './syntax/index.ts'
 
 export class Tree {
   private readonly root: syntax.Node

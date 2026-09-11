@@ -1,5 +1,5 @@
-import type * as _operator from './operator.js'
-import * as _registry from './registry.js'
+import type * as _operator from './operator.d.ts'
+import * as _registry from './registry.d.ts'
 
 declare namespace toa.deployment {
   interface Factory {

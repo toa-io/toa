@@ -1,5 +1,3 @@
-function id(input) {
+export function computation(input) {
   return input.entry.id
 }
-
-export { id as computation }

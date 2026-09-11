@@ -153,9 +153,18 @@ evicted@production:
     - todos.stats
 ```
 
+The name may be `primary:fallback:…`. Each key uses the first of those that has an `@` suffix,
+and the unsuffixed key if none of them does. The running environment is the first name:
+`toa env staging:production` writes `TOA_ENV=staging`. The chain is not stored.
+
 A call to an evicted component is answered by whatever deploys it, and waits while nothing does.
 `toa env` writes the variables of what Toa deploys, so run it again after changing this, or an
-environment file still carries variables for what Toa no longer deploys.
+environment file still carries variables for what Toa no longer deploys. `toa env -c` still
+writes for a named component, evicted or not: a local run of it still needs them.
+
+An evicted component's [configuration](/extensions/configuration/readme.md) is declared in the
+context like any other's and is served by the values service Toa deploys, so the process that
+runs it only has to be given its secrets — which `toa env -c` writes, and nothing deployed carries.
 
 ## Base image
 

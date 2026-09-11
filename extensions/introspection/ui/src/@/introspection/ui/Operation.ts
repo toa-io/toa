@@ -1,7 +1,7 @@
 import type { ClassValue } from 'svelte/elements'
 import type { Operation } from '@/introspection'
 
-type OperationLike = Pick<
+export type OperationLike = Pick<
   Operation,
   'endpoint' | 'type' | 'scope' | 'input' | 'output' | 'errors'
 >
@@ -12,5 +12,3 @@ export interface Props {
   row?: string
   class?: ClassValue
 }
-
-export type { OperationLike }

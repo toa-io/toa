@@ -1,18 +1,7 @@
-import { manifest } from './manifest.js'
-import { component } from './component.js'
-import { composition } from './composition.js'
-import { workload } from './workload.js'
-import { service } from './service.js'
-import { remote } from './remote.js'
-import { shutdown } from './shutdown.js'
-
-export {
-  manifest,
-  component,
-  composition,
-  composition as compose,
-  workload,
-  service as serve,
-  remote,
-  shutdown
-}
+export { manifest } from './manifest.js'
+export { component } from './component.js'
+export { composition, composition as compose } from './composition.js'
+export { workload } from './workload.js'
+export { service as serve } from './service.js'
+export { remote } from './remote.js'
+export { shutdown } from './shutdown.js'

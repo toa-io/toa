@@ -124,6 +124,27 @@ Then(
 )
 
 Then(
+  'the environment variable {word} contains {string}',
+  /**
+   * @param {string} name
+   * @param {string} substring
+   * @this {toa.features.Context}
+   */
+  async function (name, substring) {
+    const path = join(this.cwd, ENV_FILE)
+    const contents = await readFile(path, 'utf8')
+    const vars = dotenv.parse(contents)
+
+    assert.equal(typeof vars[name], 'string', `Environment variable ${name} is not set`)
+    assert.equal(
+      vars[name].includes(substring),
+      true,
+      `Environment variable ${name} does not contain '${substring}': ${vars[name]}`
+    )
+  }
+)
+
+Then(
   'I update an environment with:',
   /**
    * @param {string} update

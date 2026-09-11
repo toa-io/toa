@@ -29,6 +29,7 @@
     "transpile": "tsc"
   },
   "dependencies": {
+    "@toa.io/core": "1.0.0-alpha.300",
     "@toa.io/definitions": "1.0.0-alpha.300",
     "@toa.io/generic": "1.0.0-alpha.292",
     "openspan": "1.0.0-alpha.293"

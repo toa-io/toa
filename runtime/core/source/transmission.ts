@@ -1,7 +1,7 @@
-import { Connector } from './connector.js'
-import { TransmissionException } from './exceptions.js'
-import type { Consumer, Terms } from './types/bindings.js'
-import type { Request } from './types/request.js'
+import { Connector } from './connector.ts'
+import { TransmissionException } from './exceptions.ts'
+import type { Consumer, Terms } from './types/bindings.ts'
+import type { Request } from './types/request.ts'
 
 export class Transmission extends Connector {
   readonly #bindings: Consumer[]

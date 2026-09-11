@@ -1,9 +1,9 @@
-import type { Parameter } from './Match.js'
-import type { Endpoint } from './Endpoint.js'
-import type { Directives } from './Directives.js'
-import type { Context } from '../HTTP/index.js'
-import { order } from '../Introspection.js'
-import type { Introspection } from '../Introspection.js'
+import type { Parameter } from './Match.ts'
+import type { Endpoint } from './Endpoint.ts'
+import type { Directives } from './Directives.ts'
+import type { Context } from '../HTTP/index.ts'
+import { order } from '../Introspection.ts'
+import type { Introspection } from '../Introspection.ts'
 
 export class Method {
   public readonly endpoint: Endpoint | null

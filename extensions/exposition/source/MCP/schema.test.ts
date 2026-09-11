@@ -1,8 +1,8 @@
 import { describe, it } from 'node:test'
 import assert from 'node:assert/strict'
 
-import { annotations, input, output } from './schema.js'
-import type { Introspection, Schema } from '../Introspection.js'
+import { annotations, input, output } from './schema.ts'
+import type { Introspection, Schema } from '../Introspection.ts'
 
 const schema = (value: object): Schema => value as unknown as Schema
 

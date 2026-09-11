@@ -4,7 +4,7 @@ name: properties
 entity:
   associated: true
   properties:
-    newbie:
+    newbie: &newbie
       type: boolean
   blank:
     newbie: false
@@ -14,9 +14,7 @@ operations:
     concurrency: retry
     input:
       properties:
-        newbie:
-          type: string
-          default: .
+        newbie: *newbie
       type: object
       required:
         - newbie

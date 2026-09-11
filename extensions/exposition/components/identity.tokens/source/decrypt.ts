@@ -1,10 +1,10 @@
 import { DecryptFactory, ImportKeyFactory } from 'paseto/v3/local'
 import { LRUCache } from 'lru-cache'
-import { form, jweKey } from './lib/index.js'
+import { form, jweKey } from './lib/index.ts'
 import { load } from './lib/jose.js'
 import type { Maybe } from '@toa.io/core/types'
 import type { Operation } from '@toa.io/bridges.node'
-import type { Context, Claims, DecryptOutput, JWEClaims } from './lib/index.js'
+import type { Context, Claims, DecryptOutput, JWEClaims } from './lib/index.ts'
 
 export class Computation implements Operation {
   private readonly keys: Record<string, Key> = {}

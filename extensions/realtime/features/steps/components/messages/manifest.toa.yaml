@@ -2,18 +2,18 @@ name: messages
 
 entity:
   properties:
-    watchers:
+    watchers: &watchers
       type: array
       items:
         type: string
         maxLength: 32
-    sender:
+    sender: &sender
       type: string
       maxLength: 32
-    recipient:
+    recipient: &recipient
       type: string
       maxLength: 32
-    text:
+    text: &text
       type: string
   required:
     - sender
@@ -26,18 +26,10 @@ operations:
     forward: transit
     input:
       properties:
-        watchers:
-          type: string
-          default: .
-        sender:
-          type: string
-          default: .
-        recipient:
-          type: string
-          default: .
-        text:
-          type: string
-          default: .
+        watchers: *watchers
+        sender: *sender
+        recipient: *recipient
+        text: *text
       type: object
       required:
         - sender

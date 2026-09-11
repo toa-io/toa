@@ -1,8 +1,8 @@
 import type { Readable } from 'node:stream'
-import type { Connector } from '../connector.js'
-import type { Context } from '../context.js'
-import type { Event as StateEvent } from './state.js'
-import type { Reply, Request } from './request.js'
+import type { Connector } from '../connector.ts'
+import type { Context } from '../context.ts'
+import type { Event as StateEvent } from './state.ts'
+import type { Reply, Request } from './request.ts'
 
 /**
  * What runs one endpoint. `mount` and `unmount` are the component author's, called by the

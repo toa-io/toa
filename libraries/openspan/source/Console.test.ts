@@ -10,8 +10,8 @@ import {
   exporting,
   run,
   sampling
-} from './index.js'
-import type { Channel } from './Console.js'
+} from './index.ts'
+import type { Channel } from './Console.ts'
 
 afterEach(() => {
   sampling()
@@ -107,7 +107,7 @@ it('should consider log() as debug()', async () => {
 })
 
 it('should share the singleton between module copies', async () => {
-  const copy = await import('./Console.js')
+  const copy = await import('./Console.ts')
 
   assert.strictEqual(copy.console, console)
 })

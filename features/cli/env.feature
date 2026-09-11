@@ -248,6 +248,112 @@ Feature: Export local deployment environment variables
       Component 'missing.one' is not in the context
       """
 
+  Scenario: Export environment for an evicted component
+
+    Eviction is that Toa does not deploy it. A local run of it still needs its variables,
+    so `toa env -c` writes them.
+
+    Given I have components:
+      | mongo.one |
+      | stash      |
+    And I have a context with:
+      """yaml
+      evicted:
+        components:
+          - mongo.one
+      """
+    When I run `toa env --component mongo.one`
+    Then the environment contains:
+      """
+      TOA_ENV=local
+      TOA_MONGODB_MONGO_ONE=mongodb://localhost:31020
+      """
+    And the environment does not contain:
+      """
+      TOA_STASH_DEFAULT_STASH=redis://localhost:31040
+      """
+
+  Scenario: Export environment for an evicted component with a configuration secret
+    Given I have components:
+      | configuration.base    |
+      | configuration.secrets |
+    And I have a context with:
+      """yaml
+      configuration:
+        configuration.secrets:
+          b: $SECRET_B
+      evicted:
+        components:
+          - configuration.secrets
+      """
+    When I run `toa env --component configuration.secrets`
+    Then program should exit with code 0
+    And the environment contains:
+      """
+      TOA_CONFIGURATION__SECRET_B=
+      """
+
+  Scenario: Export environment for an evicted component the context states no resources for
+
+    Toa deploys nothing of it, so nothing asks what it may take.
+
+    Given I have components:
+      | configuration.base    |
+      | configuration.secrets |
+    And I have a context with:
+      """yaml
+      compositions:
+        - name: base
+          resources: null
+          components:
+            - configuration.base
+      configuration:
+        resources: null
+        configuration.secrets:
+          b: $SECRET_B
+      introspection:
+        resources: null
+      exposition:
+        authorities:
+          local: localhost
+        resources: null
+      evicted:
+        components:
+          - configuration.secrets
+      """
+    And the context has no `resources` annotation
+    When I run `toa env --component configuration.secrets`
+    Then program should exit with code 0
+    And the environment contains:
+      """
+      TOA_CONFIGURATION__SECRET_B=
+      """
+
+  Scenario: Export environment for a context that configures an evicted component
+
+    Its configuration is served like any other, so the values service knows it, while its secret
+    is written only for a run of it.
+
+    Given I have components:
+      | configuration.base    |
+      | configuration.secrets |
+    And I have a context with:
+      """yaml
+      configuration:
+        configuration.secrets:
+          b: $SECRET_B
+      evicted:
+        components:
+          - configuration.secrets
+      """
+    When I run `toa env`
+    Then program should exit with code 0
+    And the environment does not contain:
+      """
+      TOA_CONFIGURATION__SECRET_B=
+      """
+    And the environment variable TOA_CONFIGURATION_VALUES contains '"configuration.secrets"'
+
   Scenario: Export environment for a listed service
     Given I have components:
       | exposed.one |
@@ -300,4 +406,78 @@ Feature: Export local deployment environment variables
     And stderr should contain lines:
       """
       Service 'nope' is not in the context
+      """
+
+  Scenario: A named environment uses its overlay
+    Given I have a component `dummies.one`
+    And I have a context with:
+      """yaml
+      amqp:
+        context:
+          .: amqp://whatever
+          .@foo: amqp://foo.host
+          .@bar: amqp://bar.host
+      """
+    When I run `toa env foo:bar`
+    Then the environment contains:
+      """
+      TOA_ENV=foo
+      TOA_AMQP_CONTEXT={".":["amqp://foo.host"]}
+      """
+
+  Scenario: A missing overlay uses the fallback
+    Given I have a component `dummies.one`
+    And I have a context with:
+      """yaml
+      amqp:
+        context:
+          .: amqp://whatever
+          .@bar: amqp://bar.host
+      """
+    When I run `toa env foo:bar`
+    Then the environment contains:
+      """
+      TOA_ENV=foo
+      TOA_AMQP_CONTEXT={".":["amqp://bar.host"]}
+      """
+
+  Scenario: A missing overlay and fallback use the unsuffixed key
+    Given I have a component `dummies.one`
+    And I have a context with:
+      """yaml
+      amqp:
+        context: amqp://whatever
+      """
+    When I run `toa env foo:bar`
+    Then the environment contains:
+      """
+      TOA_ENV=foo
+      TOA_AMQP_CONTEXT={".":["amqp://whatever"]}
+      """
+
+  Scenario: A longer chain uses the first matching overlay
+    Given I have a component `dummies.one`
+    And I have a context with:
+      """yaml
+      amqp:
+        context:
+          .: amqp://whatever
+          .@bar: amqp://bar.host
+          .@baz: amqp://baz.host
+      """
+    When I run `toa env foo:bar:baz`
+    Then the environment contains:
+      """
+      TOA_ENV=foo
+      TOA_AMQP_CONTEXT={".":["amqp://bar.host"]}
+      """
+
+  Scenario: An environment name with an empty segment is refused
+    Given I have a component `dummies.one`
+    And I have a context
+    When I run `toa env foo:`
+    Then program should exit with code 1
+    And stderr should contain lines:
+      """
+      Environment 'foo:' contains an empty name.
       """

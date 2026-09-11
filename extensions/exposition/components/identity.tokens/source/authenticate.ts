@@ -1,7 +1,7 @@
 import type { Maybe } from '@toa.io/core/types'
 import type { Operation } from '@toa.io/bridges.node'
-import { form } from './lib/index.js'
-import type { AuthenticateInput, AuthenticateOutput, Context } from './lib/index.js'
+import { form } from './lib/index.ts'
+import type { AuthenticateInput, AuthenticateOutput, Context } from './lib/index.ts'
 
 export class Computation implements Operation {
   private refresh: number = 0

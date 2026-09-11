@@ -1,10 +1,10 @@
 import type { Readable } from 'node:stream'
-import type { Connector } from '../connector.js'
-import type { Locator } from '../locator.js'
-import type { Component } from '../component.js'
-import type { Receiver } from './receiver.js'
-import type { Message } from './message.js'
-import type { Reply, Request } from './request.js'
+import type { Connector } from '../connector.ts'
+import type { Locator } from '../locator.ts'
+import type { Component } from '../component.ts'
+import type { Receiver } from './receiver.ts'
+import type { Message } from './message.ts'
+import type { Reply, Request } from './request.ts'
 
 /** What a binding module exports beside its factory. */
 export interface Properties {

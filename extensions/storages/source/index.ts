@@ -1,5 +1,5 @@
-export { Factory } from './Factory.js'
+export { Factory } from './Factory.ts'
 
-export type { Entry, Stream } from './Entry.js'
-export type { Storage } from './Storage.js'
-export type * from './providers/index.js'
+export type { Entry, Stream } from './Entry.ts'
+export type { Storage } from './Storage.ts'
+export type * from './providers/index.ts'

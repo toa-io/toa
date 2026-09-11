@@ -1,7 +1,7 @@
-import { SystemException } from '../exceptions.js'
-import type { Entity } from './entity.js'
-import type { Record } from '../types/storages.js'
-import type { Event } from '../types/state.js'
+import { SystemException } from '../exceptions.ts'
+import type { Entity } from './entity.ts'
+import type { Record } from '../types/storages.ts'
+import type { Event } from '../types/state.ts'
 
 export class EntitySet {
   readonly #set: Entity[]

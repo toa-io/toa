@@ -1,7 +1,7 @@
 import { it } from 'node:test'
 import assert from 'node:assert/strict'
 
-import { type Manifest, manifest } from './manifest.js'
+import { type Manifest, manifest } from './manifest.ts'
 
 it('should validate', async () => {
   const additional = { schema: {}, foo: 'bar' } as unknown as Manifest

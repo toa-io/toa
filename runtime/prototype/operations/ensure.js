@@ -1,5 +1,3 @@
-function ensure(_, object) {
+export function effect(_, object) {
   return object
 }
-
-export { ensure as effect }

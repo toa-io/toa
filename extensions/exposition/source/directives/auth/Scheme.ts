@@ -1,6 +1,6 @@
-import * as http from '../../HTTP/index.js'
-import { type Directive, type Identity, type Context } from './types.js'
-import { split } from './split.js'
+import * as http from '../../HTTP/index.ts'
+import { type Directive, type Identity, type Context } from './types.ts'
+import { split } from './split.ts'
 
 export class Scheme implements Directive {
   private readonly scheme: string

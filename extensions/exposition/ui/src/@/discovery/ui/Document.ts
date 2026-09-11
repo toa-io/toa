@@ -44,4 +44,3 @@ function chunks(source: string): string[] {
 
   return out.map((chunk) => chunk.trim()).filter((chunk) => chunk !== '')
 }
-

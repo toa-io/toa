@@ -1,9 +1,9 @@
 import { quote } from '@toa.io/generic'
 import { type Component } from '@toa.io/core'
 import type { Query } from '@toa.io/core/types'
-import { type Directive, type Identity } from './types.js'
-import type { Parameter } from '../../RTD/index.js'
-import type { Introspection } from '../../Introspection.js'
+import { type Directive, type Identity } from './types.ts'
+import type { Parameter } from '../../RTD/index.ts'
+import type { Introspection } from '../../Introspection.ts'
 
 export class Role implements Directive {
   public static remote: Component | null = null

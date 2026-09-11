@@ -14,6 +14,19 @@ Feature: Environment variable TOA_ENV
           value: production
       """
 
+  Scenario: TOA_ENV is the first name of a chain
+    Given I have a component `dummies.one`
+    And I have a context
+    When I export deployment for foo:bar
+    And I run `helm template deployment`
+    Then program should exit
+    And composition-dummies-one Deployment container spec should contain:
+      """
+      env:
+        - name: TOA_ENV
+          value: foo
+      """
+
   Scenario: TOA_ENV for services
     Given I have a component `exposed.one`
     And I have a context with:

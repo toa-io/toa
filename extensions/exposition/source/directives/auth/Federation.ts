@@ -1,6 +1,6 @@
-import type { Directive, Identity, Context } from './types.js'
-import type { Introspection } from '../../Introspection.js'
-import type { Parameter } from '../../RTD/index.js'
+import type { Directive, Identity, Context } from './types.ts'
+import type { Introspection } from '../../Introspection.ts'
+import type { Parameter } from '../../RTD/index.ts'
 
 export class Federation implements Directive {
   private readonly matchers: Array<[keyof Claims, Matcher]>

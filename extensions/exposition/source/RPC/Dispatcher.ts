@@ -1,9 +1,9 @@
 import { console } from 'openspan'
-import * as http from '../HTTP/index.js'
+import * as http from '../HTTP/index.ts'
 import { schemas } from '@toa.io/definitions/extensions.exposition'
 import { BATCH } from '@toa.io/definitions/extensions.exposition'
-import { address, split } from './names.js'
-import { fork } from './Context.js'
+import { address, split } from './names.ts'
+import { fork } from './Context.ts'
 import {
   BATCH_TOO_LARGE,
   INVALID_REQUEST,
@@ -11,8 +11,8 @@ import {
   failure,
   of,
   response
-} from './errors.js'
-import { VERSION, type Call, type Response } from './types.js'
+} from './errors.ts'
+import { VERSION, type Call, type Response } from './types.ts'
 import type { RPCAnnotation as RPC } from '@toa.io/definitions/extensions.exposition'
 
 /**

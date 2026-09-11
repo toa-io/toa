@@ -4,13 +4,13 @@ import { join } from 'node:path/posix'
 import { Upload } from '@aws-sdk/lib-storage'
 import * as s3 from '@aws-sdk/client-s3'
 import { console } from 'openspan'
-import { Provider } from '../Provider.js'
+import { Provider } from '../Provider.ts'
 import { secrets } from '@toa.io/definitions/extensions.storages'
-import { ERR_NOT_FOUND } from '../errors.js'
+import { ERR_NOT_FOUND } from '../errors.ts'
 import type { ReadableStream } from 'node:stream/web'
 import type { Maybe } from '@toa.io/core/types'
-import type { Metadata, Stream } from '../Entry.js'
-import type { Secret, Secrets } from '../Secrets.js'
+import type { Metadata, Stream } from '../Entry.ts'
+import type { Secret, Secrets } from '../Secrets.ts'
 
 export interface S3Options {
   bucket: string

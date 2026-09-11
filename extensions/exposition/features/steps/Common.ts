@@ -1,7 +1,7 @@
 import * as assert from 'node:assert'
 import tsflow from 'cucumber-tsflow'
 import { timeout } from '@toa.io/generic'
-import { Captures } from './Captures.js'
+import { Captures } from './Captures.ts'
 
 const { binding, given } = tsflow
 

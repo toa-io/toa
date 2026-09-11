@@ -1,6 +1,6 @@
-import { Component } from './component.js'
-import { EndpointException } from './exceptions.js'
-import type { Invocable } from './component.js'
+import { Component } from './component.ts'
+import { EndpointException } from './exceptions.ts'
+import type { Invocable } from './component.ts'
 
 /** A call knows what its endpoint declares, which is what an explanation is read from. */
 export interface Explicable extends Invocable {

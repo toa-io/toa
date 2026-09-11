@@ -26,6 +26,9 @@ export interface Annotation {
   /** Failed authentications an address may make; none are metered unless set. See `identity.md`. */
   bouncer?: Bouncer
 
+  /** Header values a request is answered 451 for; none is refused without it. See `censor.md`. */
+  censor?: Censor
+
   /** The authorization server this context exposes; none is exposed without it. */
   oauth?: OAuth
 
@@ -91,4 +94,12 @@ export interface Bouncer {
 
   /** seconds it takes to earn them back, 60 by default */
   interval?: number
+}
+
+export interface Censor {
+  /** The request header the values are read from, in any case. */
+  header: string
+
+  /** What the header holds for a request to be answered 451, compared exactly. */
+  values: string[]
 }

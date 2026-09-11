@@ -1,31 +1,28 @@
-import { mock } from 'node:test'
+import { mock as tracker } from 'node:test'
 
 import randomstring from 'randomstring'
 
-const schemas = {
+export const schemas = {
   entity: { [randomstring.generate()]: randomstring.generate() },
   changeset: { [randomstring.generate()]: randomstring.generate() }
 }
 
-const blank = { [randomstring.generate()]: randomstring.generate() }
-const storage = { id: mock.fn(() => randomstring.generate()) }
-const entity = { [randomstring.generate()]: randomstring.generate() }
-const set = Array.from(Array(5)).map((_, index) => ({
+export const blank = { [randomstring.generate()]: randomstring.generate() }
+export const storage = { id: tracker.fn(() => randomstring.generate()) }
+export const entity = { [randomstring.generate()]: randomstring.generate() }
+export const set = Array.from(Array(5)).map((_, index) => ({
   id: index,
   [randomstring.generate()]: randomstring.generate()
 }))
 
 // node:test records a mock's calls but not the instances it constructed
-const entities = []
+export const entities = []
 
-const Entity = mock.fn(function () {
+const Entity = tracker.fn(function () {
   this.id = randomstring.generate()
   entities.push(this)
 })
 
-const EntitySet = mock.fn(function () {})
+const EntitySet = tracker.fn(function () {})
 
-// named `mock` for its consumers, which is what node:test calls its own tracker
-const mocks = { Entity, EntitySet }
-
-export { schemas, blank, storage, entity, set, entities, mocks as mock }
+export const mock = { Entity, EntitySet }

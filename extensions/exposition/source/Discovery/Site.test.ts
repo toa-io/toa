@@ -5,9 +5,9 @@ import * as path from 'node:path'
 import * as fs from 'node:fs'
 import * as os from 'node:os'
 
-import { Site } from './Site.js'
-import * as http from '../HTTP/index.js'
-import type { Input, Output } from '../io.js'
+import { Site } from './Site.ts'
+import * as http from '../HTTP/index.ts'
+import type { Input, Output } from '../io.ts'
 
 const root = fs.mkdtempSync(path.join(os.tmpdir(), 'discovery-'))
 

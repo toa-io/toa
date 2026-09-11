@@ -1,8 +1,8 @@
 import { describe, it } from 'node:test'
 import assert from 'node:assert/strict'
 
-import { Anonymous } from './Anonymous.js'
-import type { Context } from './types.js'
+import { Anonymous } from './Anonymous.ts'
+import type { Context } from './types.ts'
 
 const context = (
   headers: Record<string, string>,

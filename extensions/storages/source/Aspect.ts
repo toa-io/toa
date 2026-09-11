@@ -1,6 +1,6 @@
 import { Connector } from '@toa.io/core'
 import type { extensions } from '@toa.io/core/types'
-import { type Storage, type Storages } from './Storage.js'
+import { type Storage, type Storages } from './Storage.ts'
 
 export class Aspect extends Connector implements extensions.Aspect {
   public readonly name = 'storages'

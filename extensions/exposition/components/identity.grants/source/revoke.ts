@@ -1,6 +1,6 @@
 import type { Maybe } from '@toa.io/core/types'
 import type { Operation } from '@toa.io/bridges.node'
-import type { Context, Entity } from './lib/index.js'
+import type { Context, Entity } from './lib/index.ts'
 
 /**
  * Taking back what was allowed. The token itself is not deleted — it is out in the world —

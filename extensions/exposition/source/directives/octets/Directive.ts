@@ -1,7 +1,7 @@
-import type { Input } from './types.js'
-import type { Parameter } from '../../RTD/index.js'
-import type { Introspection } from '../../Introspection.js'
-import type * as io from '../../io.js'
+import type { Input } from './types.ts'
+import type { Parameter } from '../../RTD/index.ts'
+import type { Introspection } from '../../Introspection.ts'
+import type * as io from '../../io.ts'
 
 export abstract class Directive {
   public readonly name = 'octets.' + this.constructor.name.toLowerCase()

@@ -1,6 +1,6 @@
-import { type Parameter } from '../../RTD/index.js'
-import type { Introspection } from '../../Introspection.js'
-import type { Context, Directive, Identity, Create } from './types.js'
+import { type Parameter } from '../../RTD/index.ts'
+import type { Introspection } from '../../Introspection.ts'
+import type { Context, Directive, Identity, Create } from './types.ts'
 
 export class Rule implements Directive {
   private readonly directives: Directive[] = []

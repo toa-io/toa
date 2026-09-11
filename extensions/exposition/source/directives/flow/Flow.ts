@@ -1,9 +1,9 @@
-import { Fetch } from './Fetch.js'
-import { Compose } from './Compose.js'
-import type { Directive } from './types.js'
-import type { Input, Output } from '../../io.js'
-import type { DirectiveFamily, Parameter } from '../../RTD/index.js'
-import type { Remotes } from '../../Remotes.js'
+import { Fetch } from './Fetch.ts'
+import { Compose } from './Compose.ts'
+import type { Directive } from './types.ts'
+import type { Input, Output } from '../../io.ts'
+import type { DirectiveFamily, Parameter } from '../../RTD/index.ts'
+import type { Remotes } from '../../Remotes.ts'
 
 export class Flow implements DirectiveFamily<Directive> {
   public readonly name: string = 'flow'

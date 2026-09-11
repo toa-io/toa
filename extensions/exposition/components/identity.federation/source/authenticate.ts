@@ -1,8 +1,8 @@
 import { newid, quote } from '@toa.io/generic'
-import { principal, resolve } from './lib/index.js'
+import { principal, resolve } from './lib/index.ts'
 import type { JWTPayload } from 'jose'
 import type { Maybe } from '@toa.io/core/types'
-import type { Context, Scheme } from './types/index.js'
+import type { Context, Scheme } from './types/index.ts'
 
 export async function effect(
   { scheme, authority, credentials }: Input,

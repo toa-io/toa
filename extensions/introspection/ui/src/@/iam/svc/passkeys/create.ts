@@ -4,7 +4,7 @@ import { authenticated } from '../authenticated'
 
 export async function create(
   name: string,
-  identity?: string
+  identity?: string,
 ): Promise<origin.Echo | Error> {
   const response = await passkeys.create(name, identity)
 

@@ -8,7 +8,7 @@ export function post(type: 'request', id?: string): Promise<RequestOptions | Err
 
 export async function post(
   type: Type,
-  id?: string
+  id?: string,
 ): Promise<CreationOptions | RequestOptions | Error> {
   const body = { type }
 

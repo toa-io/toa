@@ -1,9 +1,9 @@
 import { load } from './jose.js'
-import { createRemoteJWKSet } from './discovery.js'
-import { ERR_TRUST, ERR_ISS, ERR_SUB, ERR_TOKEN } from './errors.js'
+import { createRemoteJWKSet } from './discovery.ts'
+import { ERR_TRUST, ERR_ISS, ERR_SUB, ERR_TOKEN } from './errors.ts'
 import type { JWTPayload } from 'jose'
-import type { Ctx } from './Ctx.js'
-import type { Payload } from './Payload.js'
+import type { Ctx } from './Ctx.ts'
+import type { Payload } from './Payload.ts'
 
 export async function decode(token: string, ctx: Ctx): Promise<Payload | Error> {
   const jose = await load()

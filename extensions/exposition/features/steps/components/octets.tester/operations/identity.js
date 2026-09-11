@@ -1,5 +1,3 @@
-function identity(input) {
+export function computation(input) {
   return input.identity
 }
-
-export { identity as computation }

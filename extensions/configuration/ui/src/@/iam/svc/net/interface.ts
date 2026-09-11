@@ -3,7 +3,7 @@ import type { Echo } from './Echo'
 
 const echo = origin.resource<Echo>('/accounts/echo/')
 
-async function get(authorization?: string): Promise<Echo | Error> {
+export async function get(authorization?: string): Promise<Echo | Error> {
   const options: RequestOptions = { method: 'GET' }
 
   if (authorization !== undefined) {
@@ -13,5 +13,3 @@ async function get(authorization?: string): Promise<Echo | Error> {
 
   return echo.json(options)
 }
-
-export { get }

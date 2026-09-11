@@ -3,9 +3,10 @@ export * from './toa.d.ts'
 // What a manifest does not state belongs here, and every run keeps it.
 
 import type { Query } from '@toa.io/core/types'
+export type { Query } from '@toa.io/core/types'
 import type { Logs } from '@toa.io/extensions.telemetry'
 import type { Stash } from '@toa.io/extensions.stash'
-import type { Component, Configuration } from './toa.js'
+import type { Component, Configuration } from './toa.d.ts'
 
 /** A client as `identity.clients` describes it. */
 export interface Client {
@@ -57,5 +58,3 @@ export interface Context {
   }
   configuration: Configuration
 }
-
-export type { Query }

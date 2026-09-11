@@ -1,7 +1,7 @@
 import assert from 'node:assert'
 import { describe, it } from 'node:test'
-import { Tool } from './Tool.js'
-import { MCP } from './MCP.js'
+import { Tool } from './Tool.ts'
+import { MCP } from './MCP.ts'
 
 describe('mcp:tool', () => {
   it('should publish a method', () => {

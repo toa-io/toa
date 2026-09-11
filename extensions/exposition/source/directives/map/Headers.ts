@@ -1,8 +1,8 @@
-import { cors } from '../cors/index.js'
-import { Mapping } from './Mapping.js'
-import { take } from '../../Introspection.js'
-import type { Input } from '../../io.js'
-import type { Introspection } from '../../Introspection.js'
+import { cors } from '../cors/index.ts'
+import { Mapping } from './Mapping.ts'
+import { take } from '../../Introspection.ts'
+import type { Input } from '../../io.ts'
+import type { Introspection } from '../../Introspection.ts'
 
 /**
  * Forbidden request header names: the browser sets them itself and a script cannot

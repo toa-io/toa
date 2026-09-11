@@ -43,8 +43,9 @@ export function build(nodes: Node[], edges: Edge[]): Graph {
   const components = nodes.map((node): Component => ({
     kind: 'component',
     id: identify(node),
-    node
+    node,
   }))
+
   const services = new Map<string, Service>()
   const links = new Map<string, Link>()
 
@@ -69,7 +70,7 @@ export function build(nodes: Node[], edges: Edge[]): Graph {
   return {
     vertices: [...services.values(), ...components],
     links: [...links.values()],
-    calls: edges
+    calls: edges,
   }
 }
 
@@ -213,7 +214,7 @@ export function focus(graph: Graph, id: string): Focus | null {
       `${side}:${of}`,
       neighbour,
       ends,
-      caused(call)
+      caused(call),
     )
   }
 
@@ -221,7 +222,7 @@ export function focus(graph: Graph, id: string): Focus | null {
     vertex: looked,
     incoming: [...incoming.values()].sort(byVertex),
     outgoing: [...outgoing.values()].sort(byVertex),
-    self
+    self,
   }
 }
 
@@ -232,7 +233,7 @@ function wire(
   at: string,
   vertex: Vertex,
   ends: Ends,
-  event: boolean
+  event: boolean,
 ): void {
   let satellite = into.get(at)
 
@@ -256,7 +257,7 @@ function arrival(vertex: Vertex, call: Edge): string | null {
     const source = identify(src)
 
     const receiver = vertex.node.receivers.find(
-      (receiver) => receiver.source === source && receiver.event === src.event
+      (receiver) => receiver.source === source && receiver.event === src.event,
     )
 
     if (receiver !== undefined) return `receiver:${receiver.label}`

@@ -1,8 +1,8 @@
-import { jweKey } from './lib/index.js'
+import { jweKey } from './lib/index.ts'
 import { load } from './lib/jose.js'
 import type { Operation } from '@toa.io/bridges.node'
 import type { Maybe } from '@toa.io/core/types'
-import type { Identity, Context, EncryptInput, Key } from './lib/index.js'
+import type { Identity, Context, EncryptInput, Key } from './lib/index.ts'
 
 export class Effect implements Operation {
   private key!: Pick<Key, 'id' | 'key'>

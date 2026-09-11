@@ -7,7 +7,7 @@ import {
   number,
   regions
 } from '@toa.io/definitions/extensions.cadence'
-import type { Local } from './Local.js'
+import type { Local } from './Local.ts'
 import type { atomicity, Request } from '@toa.io/core/types'
 
 /**

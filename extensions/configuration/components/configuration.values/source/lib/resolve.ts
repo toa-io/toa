@@ -1,4 +1,4 @@
-import { entry } from './map.js'
+import { entry } from './map.ts'
 
 /**
  * The latest configuration created for the component and the epoch; the deployed

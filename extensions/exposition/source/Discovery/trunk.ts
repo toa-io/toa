@@ -1,7 +1,7 @@
 import Negotiator from 'negotiator'
-import { types } from '../HTTP/formats/index.js'
+import { types } from '../HTTP/formats/index.ts'
 import { DISCOVERY } from '@toa.io/definitions/extensions.exposition'
-import type { Context, OutgoingMessage } from '../HTTP/index.js'
+import type { Context, OutgoingMessage } from '../HTTP/index.ts'
 
 /** What a browser asks for, and what nothing else here answers with. */
 const HTML = 'text/html'

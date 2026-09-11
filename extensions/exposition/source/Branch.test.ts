@@ -1,8 +1,8 @@
 import { it } from 'node:test'
 import assert from 'node:assert/strict'
 
-import { decide } from './Branch.js'
-import type { Branch, Exposed } from './Branch.js'
+import { decide } from './Branch.ts'
+import type { Branch, Exposed } from './Branch.ts'
 
 function branch(version: string, timestamp: number): Branch {
   return {

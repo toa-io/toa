@@ -1,8 +1,8 @@
 import { resolve } from 'node:path'
 import * as schemas from '@toa.io/schemas'
 import type { Schema } from '@toa.io/schemas'
-import type { Node } from './syntax/types.js'
-import type { Annotation } from './Annotation.js'
+import type { Node } from './syntax/types.ts'
+import type { Annotation } from './Annotation.ts'
 
 const path = resolve(import.meta.dirname, '../../schemas/extensions.exposition')
 const namespace = schemas.namespace(path)

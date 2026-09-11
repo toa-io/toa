@@ -1,3 +1,3 @@
-import { Authorization } from './Authorization.js'
+import { Authorization } from './Authorization.ts'
 
 export const authorization = new Authorization()

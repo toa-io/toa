@@ -1,10 +1,10 @@
-import { describing } from '../Introspection.js'
-import { template } from '../RPC/names.js'
-import { variables } from '../RTD/segment.js'
-import { guarded, resource, type Described } from '../directives/help/index.js'
-import type * as http from '../HTTP/index.js'
-import type { Tree } from '../RTD/index.js'
-import type { Introspection } from '../Introspection.js'
+import { describing } from '../Introspection.ts'
+import { template } from '../RPC/names.ts'
+import { variables } from '../RTD/segment.ts'
+import { guarded, resource, type Described } from '../directives/help/index.ts'
+import type * as http from '../HTTP/index.ts'
+import type { Tree } from '../RTD/index.ts'
+import type { Introspection } from '../Introspection.ts'
 
 /**
  * Every route in the tree this caller may reach, keyed by the template it answers at, and

@@ -1,5 +1,5 @@
 import { Connector } from '@toa.io/core'
-import type { Host } from './Factory.js'
+import type { Host } from './Factory.ts'
 import type { Locator, Remote } from '@toa.io/core'
 import type { Reply, Request, Source } from '@toa.io/core/types'
 

@@ -1,7 +1,7 @@
 import { it } from 'node:test'
 import assert from 'node:assert/strict'
 
-import { assertSecrets } from './secrets.js'
+import { assertSecrets } from './secrets.ts'
 
 const schema = {
   type: 'object',

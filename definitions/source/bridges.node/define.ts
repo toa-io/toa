@@ -1,7 +1,7 @@
 import { readFile } from 'node:fs/promises'
-import { sources } from './sources.js'
-import { exports, type Exports } from './exports.js'
-import { algorithm, type Definition } from './operations.js'
+import { sources } from './sources.ts'
+import { exports, type Exports } from './exports.ts'
+import { algorithm, type Definition } from './operations.ts'
 
 /**
  * What a component's modules declare, read from their source and never by importing them: a

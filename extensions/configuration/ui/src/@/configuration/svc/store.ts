@@ -7,7 +7,7 @@ export const configurations = collection<Configuration>({
   values: values<Configuration>({ get: origin.get }),
   persist: 'configuration:values',
   bind: account,
-  stale: true
+  stale: true,
 })
 
 export type Configuration = origin.Configuration

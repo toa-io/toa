@@ -17,13 +17,11 @@ Factory. Module file name without extension is an operation name (endpoint).
 ```javascript
 // operations/create.js
 
-function transition(input, object, context) {
+export function transition(input, object, context) {
   // ...
 
   return { foo: 'bar' }
 }
-
-export { transition }
 ```
 
 Exported function's name defines operation `type` property, thus must be one of:
@@ -35,7 +33,7 @@ Following function signature defines operation of `observation` type with `objec
 ```javascript
 // operations/set.js
 
-function observation(input, objects) {
+export function observation(input, objects) {
   // ...
 }
 ```
@@ -49,7 +47,7 @@ See [Operation properties](#).
 ```javascript
 // operations/transit.js
 
-class Transition {
+export class Transition {
   #context
 
   async mount(context) {
@@ -62,8 +60,6 @@ class Transition {
     return { foo: 'bar' }
   }
 }
-
-export { Transition }
 ```
 
 Exported class name must be one of: `Transition`, `Observation`, or `Assignment`, as it defines
@@ -74,13 +70,11 @@ it defines operation's `scope`.
 ### Factory
 
 ```javascript
-class ObjectTransitionFactory {
+export class ObjectTransitionFactory {
   async create() {
     // ...
   }
 }
-
-export { ObjectTransitionFactory }
 ```
 
 Exported class name must follow the pattern: `{Subject}{Type}Factory`, where `Subject` and `Type`
@@ -103,15 +97,13 @@ operation. A module must export at least one of three phases, and may export sev
 ```javascript
 // rc/providers.js
 
-async function preflight(context) {
+export async function preflight(context) {
   context.state.providers = await connect(context)
 }
 
-async function dispose(context) {
+export async function dispose(context) {
   await release(context.state.providers)
 }
-
-export { preflight, dispose }
 ```
 
 | Phase       | When                                                                            |
@@ -176,13 +168,11 @@ beside the manifest is the file that runs.
 
 import type { Context, CreateInput } from '../types/index.d.ts'
 
-function transition(input: CreateInput, object: Entity, context: Context) {
+export function transition(input: CreateInput, object: Entity, context: Context) {
   // ...
 
   return { foo: 'bar' }
 }
-
-export { transition }
 ```
 
 The name a module exports still says what it is, and the second parameter still says the scope;
@@ -200,9 +190,6 @@ import { credentials } from './lib/credentials.js'
 ```typescript
 import { credentials } from './lib/credentials.ts'
 ```
-
-This is the opposite of the rule for a package that is transpiled, where an import names the file
-the compiler will emit.
 
 ### A type is imported with `import type`
 

@@ -1,5 +1,5 @@
-import type { Directive } from './Directive.js'
-import type * as http from '../../HTTP/index.js'
+import type { Directive } from './Directive.ts'
+import type * as http from '../../HTTP/index.ts'
 
 /**
  * The status of the reply, taken from a property of what the operation returned and removed

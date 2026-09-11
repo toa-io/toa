@@ -1,7 +1,7 @@
 import { it } from 'node:test'
 import assert from 'node:assert/strict'
 
-import { manifest } from './manifest.js'
+import { manifest } from './manifest.ts'
 import type { Manifest } from '@toa.io/norm'
 
 const component = {

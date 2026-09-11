@@ -1,9 +1,9 @@
-import { take } from '../../Introspection.js'
-import type { Remotes } from '../../Remotes.js'
-import type { Directive } from './Directive.js'
-import type { Input } from '../../io.js'
-import type { Parameter } from '../../RTD/index.js'
-import type { Introspection } from '../../Introspection.js'
+import { take } from '../../Introspection.ts'
+import type { Remotes } from '../../Remotes.ts'
+import type { Directive } from './Directive.ts'
+import type { Input } from '../../io.ts'
+import type { Parameter } from '../../RTD/index.ts'
+import type { Introspection } from '../../Introspection.ts'
 
 export abstract class Mapping<T = unknown> {
   protected value: T

@@ -1,9 +1,9 @@
-import { Entity } from './entity.js'
-import { EntitySet } from './set.js'
-import { Changeset } from './changeset.js'
+import { Entity } from './entity.ts'
+import { EntitySet } from './set.ts'
+import { Changeset } from './changeset.ts'
 import type { Schema } from '@toa.io/schemas'
-import type { Guard } from '../guard.js'
-import type { Query, Record } from '../types/storages.js'
+import type { Guard } from '../guard.ts'
+import type { Query, Record } from '../types/storages.ts'
 
 /** The two schemas a component's records are held to, and what a new one starts as. */
 export interface Schemas {

@@ -10,7 +10,7 @@ import { match } from '@toa.io/generic'
 import * as boot from '@toa.io/boot'
 import { Locator } from '@toa.io/core'
 import * as stage from '@toa.io/userland/stage'
-import { Factory } from '../../source/index.js'
+import { Factory } from '../../source/index.ts'
 import type { Component, Connector } from '@toa.io/core'
 import type { Request } from '@toa.io/core/types'
 

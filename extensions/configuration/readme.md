@@ -205,7 +205,7 @@ function transition(input, entity, context) {
 Configuration values are held by the `configuration.values` component, deployed as the
 `configuration-values` service. The service is deployed with the variable
 `TOA_CONFIGURATION_VALUES`: the epoch, the schema and the defaults of every component
-declaring configuration.
+declaring configuration, [evicted](/documentation/compositions.md#evicted) ones included.
 
 ```json
 {

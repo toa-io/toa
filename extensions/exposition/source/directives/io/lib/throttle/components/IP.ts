@@ -1,6 +1,6 @@
-import { Warning } from '../Warning.js'
-import type { Context } from '../../../../../HTTP/index.js'
-import type { Component } from './Component.js'
+import { Warning } from '../Warning.ts'
+import type { Context } from '../../../../../HTTP/index.ts'
+import type { Component } from './Component.ts'
 
 /**
  * The client address, as the request context resolved it; see `documentation/ip.md`.

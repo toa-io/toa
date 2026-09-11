@@ -6,7 +6,7 @@ entity:
   properties:
     id:
       type: number
-    value:
+    value: &value
       type: string
   blank:
     value: hello
@@ -16,7 +16,5 @@ operations:
     concurrency: retry
     input:
       properties:
-        value:
-          type: string
-          default: .
+        value: *value
       type: object

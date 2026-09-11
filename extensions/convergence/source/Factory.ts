@@ -7,8 +7,8 @@ import {
   CHANNEL,
   ID
 } from '@toa.io/definitions/extensions.convergence'
-import { Destination } from './Destination.js'
-import { Converging } from './Storage.js'
+import { Destination } from './Destination.ts'
+import { Converging } from './Storage.ts'
 import type { Locator } from '@toa.io/core'
 import type { bindings, extensions, storages } from '@toa.io/core/types'
 

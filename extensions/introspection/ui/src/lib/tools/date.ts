@@ -13,7 +13,7 @@ export function date(value: string | Date | number, locale: Locale): string {
   const year = d.getFullYear() === new Date().getFullYear() ? undefined : 'numeric'
 
   return new Intl.DateTimeFormat(locale, { year, month: 'short', day: 'numeric' }).format(
-    d
+    d,
   )
 }
 
@@ -26,13 +26,13 @@ export function date(value: string | Date | number, locale: Locale): string {
  */
 export function formatISODuration(iso: string, locale: Locale): string {
   const match = iso.match(
-    /^P(?:(\d+)Y)?(?:(\d+)M)?(?:(\d+)W)?(?:(\d+)D)?(?:T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?)?$/
+    /^P(?:(\d+)Y)?(?:(\d+)M)?(?:(\d+)W)?(?:(\d+)D)?(?:T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?)?$/,
   )
 
   if (match === null) return iso
 
   const [, y, mo, w, d, h, mi, s] = match.map((v) =>
-    Number.isNaN(Number(v)) ? undefined : Number(v)
+    Number.isNaN(Number(v)) ? undefined : Number(v),
   )
 
   // @ts-ignore Intl.DurationFormat — Stage 3 proposal, available at runtime in modern engines
@@ -43,6 +43,6 @@ export function formatISODuration(iso: string, locale: Locale): string {
     days: d,
     hours: h,
     minutes: mi,
-    seconds: s
+    seconds: s,
   })
 }

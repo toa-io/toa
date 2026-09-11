@@ -1,5 +1,5 @@
 import { createHash } from 'node:crypto'
-import type { Metadata } from './Entity.js'
+import type { Metadata } from './Entity.ts'
 
 /**
  * The id of a registration: a hash of what it says, so identical metadata is one client

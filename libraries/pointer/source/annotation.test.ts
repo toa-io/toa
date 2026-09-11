@@ -1,7 +1,7 @@
 import { describe, it } from 'node:test'
 import assert from 'node:assert/strict'
 
-import { normalize } from './annotation.js'
+import { normalize } from './annotation.ts'
 
 describe('normalize', () => {
   it('should expand default shards', async () => {

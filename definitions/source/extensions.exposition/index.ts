@@ -1,17 +1,18 @@
-export { manifest } from './manifest.js'
-export { components } from './components.js'
-export { installs } from './packages.js'
-export { deployment, image } from './deployment.js'
-export { shortcuts } from './shortcuts.js'
-export * from './const.js'
-export * as schemas from './schemas.js'
-export * as syntax from './syntax/index.js'
+export { manifest } from './manifest.ts'
+export { components } from './components.ts'
+export { installs } from './packages.ts'
+export { deployment, image } from './deployment.ts'
+export { shortcuts } from './shortcuts.ts'
+export * from './const.ts'
+export * as schemas from './schemas.ts'
+export * as syntax from './syntax/index.ts'
 
 export type {
   Annotation,
   Bouncer,
+  Censor,
   MCP as MCPAnnotation,
   OAuth,
   Protocol,
   RPC as RPCAnnotation
-} from './Annotation.js'
+} from './Annotation.ts'

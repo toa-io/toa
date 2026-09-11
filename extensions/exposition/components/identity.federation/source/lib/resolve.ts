@@ -1,8 +1,8 @@
-import { decode } from './decode.js'
-import { exchange } from './exchange.js'
-import type { Ctx } from './Ctx.js'
-import type { Payload } from './Payload.js'
-import type { Context, Scheme } from '../types/index.js'
+import { decode } from './decode.ts'
+import { exchange } from './exchange.ts'
+import type { Ctx } from './Ctx.ts'
+import type { Payload } from './Payload.ts'
+import type { Context, Scheme } from '../types/index.ts'
 
 export async function resolve(
   scheme: Scheme,

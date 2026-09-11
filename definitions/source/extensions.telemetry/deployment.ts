@@ -1,5 +1,5 @@
-import { LOGS_PREFIX, READY_ENV, TRACES_ENV } from './const.js'
-import { DEFAULT_ANNOTATION, normalizeAnnotation, type ReadyAnnotation } from './ready.js'
+import { LOGS_PREFIX, READY_ENV, TRACES_ENV } from './const.ts'
+import { DEFAULT_ANNOTATION, normalizeAnnotation, type ReadyAnnotation } from './ready.ts'
 import type { Dependency, Probe, Variables } from '@toa.io/operations'
 import type { ExportersConfig, LevelName } from 'openspan'
 

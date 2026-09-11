@@ -3,8 +3,8 @@ import assert from 'node:assert/strict'
 
 import { Locator } from '@toa.io/core'
 import { generate } from 'randomstring'
-import { fit, local, overridden } from './configuration.js'
-import { Secret } from './Secret.js'
+import { fit, local, overridden } from './configuration.ts'
+import { Secret } from './Secret.ts'
 import { type Manifest } from '@toa.io/definitions/extensions.configuration'
 
 let locator: Locator

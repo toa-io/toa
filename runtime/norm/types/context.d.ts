@@ -1,6 +1,6 @@
-import { Manifest } from './component.js'
+import { Manifest } from './component.d.ts'
 import { Locator } from '@toa.io/core'
-import type { Declaration } from './context/declaration.js'
+import type { Declaration } from './context/declaration.d.ts'
 
 interface Runtime {
   version: string
@@ -44,4 +44,11 @@ interface Context extends Declaration {
   packages?: Record<string, string>
 }
 
-export function context(path: string, environment?: string): Promise<Context>
+export function context(
+  path: string,
+  environment?: string,
+  options?: {
+    /** `false` does not apply eviction: every component is treated as deployed */
+    evicted?: boolean
+  }
+): Promise<Context>

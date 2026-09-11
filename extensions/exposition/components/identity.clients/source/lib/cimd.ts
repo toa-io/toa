@@ -1,7 +1,7 @@
 import { createHash } from 'node:crypto'
-import { ERR_UNKNOWN_CLIENT } from './errors.js'
-import type { Context } from './Context.js'
-import type { Client, Metadata } from './Entity.js'
+import { ERR_UNKNOWN_CLIENT } from './errors.ts'
+import type { Context } from './Context.ts'
+import type { Client, Metadata } from './Entity.ts'
 
 /**
  * A Client ID Metadata Document: the client publishes what it is at an https URL, and that

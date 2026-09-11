@@ -1,6 +1,6 @@
 import { parse } from '@rsql/parser'
-import { QuerySyntaxException } from '../exceptions.js'
-import type { Node } from '../types/storages.js'
+import { QuerySyntaxException } from '../exceptions.ts'
+import type { Node } from '../types/storages.ts'
 
 /** What a component declares about the properties a criteria may select on. */
 export type Properties = Record<string, { type: string }>

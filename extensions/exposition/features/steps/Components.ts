@@ -8,9 +8,9 @@ import { type Connector } from '@toa.io/core'
 import { environment } from '@toa.io/generic'
 
 import { load as parse } from 'js-yaml'
-import { Gateway } from './Gateway.js'
-import { Workspace } from './Workspace.js'
-import { components as map } from './map.js'
+import { Gateway } from './Gateway.ts'
+import { Workspace } from './Workspace.ts'
+import { components as map } from './map.ts'
 
 const { after, binding, given } = tsflow
 

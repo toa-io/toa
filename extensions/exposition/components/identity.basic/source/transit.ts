@@ -7,7 +7,7 @@ import type {
   Principal,
   TransitInput,
   TransitOutput
-} from '../types/index.js'
+} from '../types/index.d.ts'
 
 export class Transition implements Operation {
   private rounds: number = 10

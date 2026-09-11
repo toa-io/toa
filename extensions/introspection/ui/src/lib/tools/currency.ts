@@ -19,7 +19,7 @@ export function currency(amount: number, locale: Locale, currency?: string): str
 
   const formatter = new Intl.NumberFormat(locale, {
     style: 'currency',
-    currency
+    currency,
   })
 
   const options = formatter.resolvedOptions()
@@ -44,7 +44,7 @@ export function unit(amount: number, locale: Locale, currency?: string): number 
 
   const tempFormatter = new Intl.NumberFormat(locale, {
     style: 'currency',
-    currency
+    currency,
   })
 
   const options = tempFormatter.resolvedOptions()

@@ -4,8 +4,8 @@ import { isDeepStrictEqual } from 'node:util'
 
 import { generate } from 'randomstring'
 import { Connector } from '@toa.io/core'
-import { Remotes } from './Remotes.js'
-import type { Host } from './Factory.js'
+import { Remotes } from './Remotes.ts'
+import type { Host } from './Factory.ts'
 
 const host = {
   remote: mock.fn(async () => ({

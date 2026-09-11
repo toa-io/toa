@@ -1,7 +1,7 @@
 import { quote } from '@toa.io/generic'
-import type { Entity } from './lib/Entity.js'
+import type { Entity } from './lib/Entity.ts'
 import type { Call, Query } from '@toa.io/core/types'
-import type { Input as GrantInput } from './grant.js'
+import type { Input as GrantInput } from './grant.ts'
 
 const SYSTEM = 'system'
 

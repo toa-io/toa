@@ -1,6 +1,6 @@
 import type { Descriptor } from './providers'
 
-async function google(descriptor: Descriptor): Promise<string | Error> {
+export async function google(descriptor: Descriptor): Promise<string | Error> {
   await init()
 
   const response = (await new Promise((resolve) => {
@@ -40,5 +40,3 @@ function init() {
     document.head.appendChild(script)
   })
 }
-
-export { google }

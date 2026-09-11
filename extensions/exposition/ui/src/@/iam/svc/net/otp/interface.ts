@@ -6,10 +6,8 @@ interface Post {
   email: string
 }
 
-async function post(a: string | Post, b?: Post): Promise<void | Error> {
+export async function post(a: string | Post, b?: Post): Promise<void | Error> {
   if (typeof a === 'string')
     return await otp.json(a, { method: 'POST', body: b, credentials: 'include' })
   else return await otp.json({ method: 'POST', body: a })
 }
-
-export { post }

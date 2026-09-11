@@ -1,2 +1,2 @@
-export type { Context } from './Context.js'
-export type { Passkey } from './Passkey.js'
+export type { Context } from './Context.ts'
+export type { Passkey } from './Passkey.ts'

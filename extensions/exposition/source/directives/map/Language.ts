@@ -1,10 +1,10 @@
 import Negotiator from 'negotiator'
-import { cors } from '../cors/index.js'
-import { Mapping } from './Mapping.js'
-import { Languages } from './Languages.js'
-import type { Input } from '../../io.js'
-import type { Parameter } from '../../RTD/index.js'
-import type { Directive } from './Directive.js'
+import { cors } from '../cors/index.ts'
+import { Mapping } from './Mapping.ts'
+import { Languages } from './Languages.ts'
+import type { Input } from '../../io.ts'
+import type { Parameter } from '../../RTD/index.ts'
+import type { Directive } from './Directive.ts'
 
 export class Language extends Mapping<string> {
   private languages: string[] | null = null

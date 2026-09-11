@@ -1,5 +1,5 @@
-import { type Directive, type Context } from './types.js'
-import type { Introspection } from '../../Introspection.js'
+import { type Directive, type Context } from './types.ts'
+import type { Introspection } from '../../Introspection.ts'
 
 export class Anyone implements Directive {
   private readonly allow: boolean

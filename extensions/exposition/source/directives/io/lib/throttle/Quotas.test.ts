@@ -2,10 +2,10 @@ import { describe, it, beforeEach } from 'node:test'
 import assert from 'node:assert/strict'
 
 import { setTimeout } from 'node:timers/promises'
-import { Quotas } from './Quotas.js'
-import type { Batch } from './Sync.js'
-import type { Configuration } from './Configuration.js'
-import type { Input as Context, Output } from '../../../../io.js'
+import { Quotas } from './Quotas.ts'
+import type { Batch } from './Sync.ts'
+import type { Configuration } from './Configuration.ts'
+import type { Input as Context, Output } from '../../../../io.ts'
 
 let quotas: Quotas
 let configuration: Configuration

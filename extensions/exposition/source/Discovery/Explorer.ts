@@ -1,7 +1,7 @@
-import * as http from '../HTTP/index.js'
+import * as http from '../HTTP/index.ts'
 import { BRANCH_TTL } from '@toa.io/definitions/extensions.exposition'
-import { describe } from './tree.js'
-import type { Tree } from '../RTD/index.js'
+import { describe } from './tree.ts'
+import type { Tree } from '../RTD/index.ts'
 
 /**
  * What an application serves, for every route at once. Each entry is what `OPTIONS` on that

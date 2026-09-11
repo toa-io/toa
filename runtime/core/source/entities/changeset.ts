@@ -1,6 +1,6 @@
-import { EntityContractException } from '../exceptions.js'
+import { EntityContractException } from '../exceptions.ts'
 import type { Schema } from '@toa.io/schemas'
-import type { Query, Record } from '../types/storages.js'
+import type { Query, Record } from '../types/storages.ts'
 
 export class Changeset {
   public readonly query: Query

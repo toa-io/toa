@@ -1,7 +1,7 @@
-import { identify, spend, verifies } from './lib/index.js'
+import { identify, spend, verifies } from './lib/index.ts'
 import type { Maybe } from '@toa.io/core/types'
 import type { Operation } from '@toa.io/bridges.node'
-import type { Code, Context } from './lib/index.js'
+import type { Code, Context } from './lib/index.ts'
 
 /**
  * The token endpoint, RFC 6749 §4.1.3. Anonymous, because the clients this server knows are

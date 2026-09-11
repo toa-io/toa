@@ -1,5 +1,5 @@
-import type { Introspection, Schema } from '../Introspection.js'
-import type { Annotations } from './types.js'
+import type { Introspection, Schema } from '../Introspection.ts'
+import type { Annotations } from './types.ts'
 
 /**
  * What a tool takes, which is what the procedure takes: a route variable by the name the

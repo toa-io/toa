@@ -6,14 +6,15 @@ import { once } from 'node:events'
 import { setTimeout } from 'node:timers/promises'
 import { console, current, decide, decode, run, type SpanContext } from 'openspan'
 import { Connector } from '@toa.io/core'
-import { type OutgoingMessage, write } from './messages.js'
-import { ClientError, Exception } from './exceptions.js'
-import { Context } from './Context.js'
-import { Probe } from './Probe.js'
+import { type OutgoingMessage, write } from './messages.ts'
+import { ClientError, Exception } from './exceptions.ts'
+import { Context } from './Context.ts'
+import { Probe } from './Probe.ts'
 import { PORT, PROBE } from '@toa.io/definitions/extensions.exposition'
-import type { IncomingMessage, Protocol, ServerResponse } from './types.js'
+import type { IncomingMessage, Protocol, ServerResponse } from './types.ts'
 import type {
   Bouncer,
+  Censor,
   MCPAnnotation as MCP,
   OAuth,
   RPCAnnotation as RPC
@@ -462,6 +463,9 @@ interface Properties {
 
   /** Failed authentications an address may make; none are metered unless set. */
   bouncer?: Bouncer
+
+  /** Header values a request is answered 451 for; none is refused without it. */
+  censor?: Censor
 
   /** The authorization server this context exposes; none is exposed without it. */
   oauth?: OAuth

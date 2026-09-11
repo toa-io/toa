@@ -1,1 +1,1 @@
-export * from './dependency.js'
+export * from './dependency.ts'

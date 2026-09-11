@@ -1,9 +1,9 @@
-import { options } from './annotation.js'
-import { components } from './components.js'
-import { version } from '../version.js'
-import { ENV, UI_PATH, UI_PORT } from './const.js'
-import * as schemas from './schemas.js'
-import type { Annotation } from './annotation.js'
+import { options } from './annotation.ts'
+import { components } from './components.ts'
+import { version } from '../version.ts'
+import { ENV, UI_PATH, UI_PORT } from './const.ts'
+import * as schemas from './schemas.ts'
+import type { Annotation } from './annotation.ts'
 import type { Dependency, Instances, Service } from '@toa.io/operations'
 
 /** Where Toa's release publishes this service's image. An application takes it

@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 
 /* eslint-disable no-template-curly-in-string */
 
-import { Agent } from './Agent.js'
+import { Agent } from './Agent.ts'
 
 let agent: Agent
 

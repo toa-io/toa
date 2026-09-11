@@ -1,5 +1,5 @@
-import * as _deployment from './deployment.js'
-import * as _dependency from './dependency.js'
+import * as _deployment from './deployment.d.ts'
+import * as _dependency from './dependency.d.ts'
 
 declare namespace toa.deployment {
   interface Operator {

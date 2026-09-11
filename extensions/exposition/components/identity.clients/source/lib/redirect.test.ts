@@ -1,7 +1,7 @@
 import { it } from 'node:test'
 import assert from 'node:assert/strict'
 
-import { permits } from './redirect.js'
+import { permits } from './redirect.ts'
 
 const hosted = ['https://claude.ai/api/mcp/auth_callback']
 const native = ['http://localhost/callback', 'http://127.0.0.1/callback']

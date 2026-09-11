@@ -1,3 +1,3 @@
-import { Require } from './Require.js'
+import { Require } from './Require.ts'
 
 export const req = new Require()

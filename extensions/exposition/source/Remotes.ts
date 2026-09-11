@@ -1,6 +1,6 @@
 import { Locator, Connector, type Remote } from '@toa.io/core'
 import type { Source } from '@toa.io/core/types'
-import { type Host } from './Factory.js'
+import { type Host } from './Factory.ts'
 
 export class Remotes extends Connector {
   private readonly host: Host

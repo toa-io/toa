@@ -3,10 +3,10 @@ import assert from 'node:assert/strict'
 import { isDeepStrictEqual } from 'node:util'
 
 import * as http from 'node:http'
-import { console } from './Console.js'
-import { Otlp } from './Otlp.js'
+import { console } from './Console.ts'
+import { Otlp } from './Otlp.ts'
 import type { AddressInfo } from 'node:net'
-import type { Span } from './exporters.js'
+import type { Span } from './exporters.ts'
 
 interface Request {
   method?: string

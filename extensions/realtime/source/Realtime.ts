@@ -1,7 +1,7 @@
 import { console, run } from 'openspan'
 import { type Component, Connector } from '@toa.io/core'
-import { type Routes } from './Routes.js'
-import type { Push } from './Receiver.js'
+import { type Routes } from './Routes.ts'
+import type { Push } from './Receiver.ts'
 
 export class Realtime extends Connector {
   private readonly discovery: () => Promise<Component>

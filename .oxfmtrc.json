@@ -15,6 +15,9 @@
     "*.yaml",
     "*.yml",
     "*.json",
-    "**/types/toa.d.ts"
+    "**/types/toa.d.ts",
+    "extensions/introspection/ui",
+    "extensions/configuration/ui",
+    "extensions/exposition/ui"
   ]
 }

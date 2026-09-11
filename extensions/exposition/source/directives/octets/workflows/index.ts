@@ -1,2 +1,2 @@
-export { Workflow, type Unit, type Location } from './Workflow.js'
-export type { Report } from './Execution.js'
+export { Workflow, type Unit, type Location } from './Workflow.ts'
+export type { Report } from './Execution.ts'

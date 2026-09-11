@@ -1,17 +1,17 @@
-export * as atomicity from './atomicity.js'
-export * as bindings from './bindings.js'
-export * as bridges from './bridges.js'
-export * as extensions from './extensions.js'
-export * as operations from './operations.js'
-export * as inbox from './inbox.js'
-export * as outbox from './outbox.js'
-export * as storages from './storages.js'
+export * as atomicity from './atomicity.ts'
+export * as bindings from './bindings.ts'
+export * as bridges from './bridges.ts'
+export * as extensions from './extensions.ts'
+export * as operations from './operations.ts'
+export * as inbox from './inbox.ts'
+export * as outbox from './outbox.ts'
+export * as storages from './storages.ts'
 
-export type { Contribution } from './extensions.js'
-export type { Event } from './state.js'
-export type { Message } from './message.js'
-export type { Receiver } from './receiver.js'
-export type { Call, Guard, Observation, Transition } from './operations.js'
+export type { Contribution } from './extensions.ts'
+export type { Event } from './state.ts'
+export type { Message } from './message.ts'
+export type { Receiver } from './receiver.ts'
+export type { Call, Guard, Observation, Transition } from './operations.ts'
 export type {
   Envelope,
   Maybe,
@@ -21,4 +21,4 @@ export type {
   RemoteError,
   Request,
   Source
-} from './request.js'
+} from './request.ts'

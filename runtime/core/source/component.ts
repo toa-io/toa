@@ -1,9 +1,9 @@
 import { console, current, decode, run, type SpanOptions } from 'openspan'
-import { Connector } from './connector.js'
-import { EndpointException } from './exceptions.js'
-import * as trail from './trail.js'
-import type { Locator } from './locator.js'
-import type { Envelope, Options, Request } from './types/request.js'
+import { Connector } from './connector.ts'
+import { EndpointException } from './exceptions.ts'
+import * as trail from './trail.ts'
+import type { Locator } from './locator.ts'
+import type { Envelope, Options, Request } from './types/request.ts'
 
 /** What a component holds one of per endpoint: an operation, or the call that stands for it. */
 export interface Invocable extends Connector {

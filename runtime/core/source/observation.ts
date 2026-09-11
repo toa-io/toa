@@ -1,6 +1,6 @@
-import { Operation } from './operation.js'
-import type { Store } from './operation.js'
-import type { Entity } from './entities/entity.js'
+import { Operation } from './operation.ts'
+import type { Store } from './operation.ts'
+import type { Entity } from './entities/entity.ts'
 
 export class Observation extends Operation {
   protected override async run(store: Store): Promise<void> {

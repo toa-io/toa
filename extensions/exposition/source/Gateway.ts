@@ -2,15 +2,15 @@ import { setTimeout } from 'node:timers/promises'
 import { console } from 'openspan'
 import { Connector } from '@toa.io/core'
 import type { bindings } from '@toa.io/core/types'
-import * as http from './HTTP/index.js'
+import * as http from './HTTP/index.ts'
 import { DISCOVERY, MCP, RPC } from '@toa.io/definitions/extensions.exposition'
-import { rethrow } from './exceptions.js'
-import { decide } from './Branch.js'
-import { describing } from './Introspection.js'
-import { Explorer, looking } from './Discovery/index.js'
-import type { Interception } from './Interception.js'
-import type { Dispatcher } from './RPC/index.js'
-import type { Server } from './MCP/index.js'
+import { rethrow } from './exceptions.ts'
+import { decide } from './Branch.ts'
+import { describing } from './Introspection.ts'
+import { Explorer, looking } from './Discovery/index.ts'
+import type { Interception } from './Interception.ts'
+import type { Dispatcher } from './RPC/index.ts'
+import type { Server } from './MCP/index.ts'
 import type {
   DirectiveFactory,
   Method,
@@ -18,9 +18,9 @@ import type {
   Parameter,
   Tree,
   Match
-} from './RTD/index.js'
-import type { Label } from './discovery.js'
-import type { Branch, Exposed } from './Branch.js'
+} from './RTD/index.ts'
+import type { Label } from './discovery.ts'
+import type { Branch, Exposed } from './Branch.ts'
 
 export class Gateway extends Connector {
   private readonly broadcast: Broadcast

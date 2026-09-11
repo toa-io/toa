@@ -1,7 +1,7 @@
-import type { Metadata, Stream } from './Entry.js'
+import type { Metadata, Stream } from './Entry.ts'
 import type { Readable } from 'node:stream'
 import type { Maybe } from '@toa.io/core/types'
-import type { Secret, Secrets } from './Secrets.js'
+import type { Secret, Secrets } from './Secrets.ts'
 
 export abstract class Provider<Options = unknown> {
   public static readonly SECRETS?: readonly Secret[]

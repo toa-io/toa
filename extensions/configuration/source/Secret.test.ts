@@ -2,7 +2,7 @@ import { it } from 'node:test'
 import assert from 'node:assert/strict'
 
 import { inspect } from 'node:util'
-import { REDACTED, Secret } from './Secret.js'
+import { REDACTED, Secret } from './Secret.ts'
 
 const secret = new Secret('s3cret')
 

@@ -1,5 +1,5 @@
 import { environment } from '@toa.io/generic'
-import { newid } from './entities/newid.js'
+import { newid } from './entities/newid.ts'
 
 const KEY = Symbol.for('toa.core.instance')
 

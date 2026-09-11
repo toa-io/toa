@@ -1,6 +1,6 @@
 import * as schemas from '@toa.io/schemas'
 import { assertSecrets } from '@toa.io/definitions/extensions.configuration'
-import { entry } from './lib/map.js'
+import { entry } from './lib/map.ts'
 import type { Schema } from '@toa.io/schemas'
 
 export async function transition(input: Input, object: Entity): Promise<Entity | Error> {

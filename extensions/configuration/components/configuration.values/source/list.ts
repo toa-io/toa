@@ -1,5 +1,5 @@
-import { components, entry } from './lib/map.js'
-import { resolve, type Context } from './lib/resolve.js'
+import { components, entry } from './lib/map.ts'
+import { resolve, type Context } from './lib/resolve.ts'
 
 /** The configuration of every component for its deployed epoch, by component name. */
 export async function computation(_: null, context: Context): Promise<Item[]> {

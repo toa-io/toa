@@ -1,5 +1,3 @@
-function echo(input) {
+export function computation(input) {
   return input
 }
-
-export { echo as computation }

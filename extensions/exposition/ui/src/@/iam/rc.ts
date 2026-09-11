@@ -3,7 +3,7 @@ import { consume } from './svc/transfer'
 import { sync } from './svc/sync'
 import { challenge } from './svc/store'
 
-function rc() {
+export function rc() {
   origin.events.on('challenge', (value) => challenge.set(value))
 
   origin.events.on('error', (error) => {
@@ -18,5 +18,3 @@ function rc() {
 
   void sync()
 }
-
-export { rc }

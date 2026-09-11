@@ -2,8 +2,8 @@ import { it, beforeEach, mock } from 'node:test'
 import assert from 'node:assert/strict'
 
 import { generate } from 'randomstring'
-import { Effect as Issue } from './issue.js'
-import type { Context, EncryptInput } from './lib/index.js'
+import { Effect as Issue } from './issue.ts'
+import type { Context, EncryptInput } from './lib/index.ts'
 
 const LIFETIME = 2592000 // seconds, the configured default
 const identity = generate()

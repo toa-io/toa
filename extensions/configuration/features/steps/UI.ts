@@ -3,7 +3,7 @@ import * as http from 'node:http'
 import { resolve } from 'node:path'
 import tsflow from 'cucumber-tsflow'
 
-import { UI } from '../../source/UI.js'
+import { UI } from '../../source/UI.ts'
 
 const { after, binding, given, then, when } = tsflow
 

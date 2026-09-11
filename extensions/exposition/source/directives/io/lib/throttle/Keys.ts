@@ -1,9 +1,9 @@
 import { createHash } from 'node:crypto'
-import { Components, type Component } from './components/index.js'
-import { Conditions, type Condition } from './conditions/index.js'
-import type { KeyComponent, KeyCondition } from './Configuration.js'
-import type { Parameter } from '../../../../RTD/index.js'
-import type { Input as Context, Output } from '../../../../io.js'
+import { Components, type Component } from './components/index.ts'
+import { Conditions, type Condition } from './conditions/index.ts'
+import type { KeyComponent, KeyCondition } from './Configuration.ts'
+import type { Parameter } from '../../../../RTD/index.ts'
+import type { Input as Context, Output } from '../../../../io.ts'
 
 const NONE: Parameter[] = []
 

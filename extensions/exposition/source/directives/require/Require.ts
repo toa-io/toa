@@ -1,7 +1,7 @@
-import { Headers } from './Headers.js'
-import type { Input } from '../../io.js'
-import type { Directive } from './Directive.js'
-import type { DirectiveFamily } from '../../RTD/index.js'
+import { Headers } from './Headers.ts'
+import type { Input } from '../../io.ts'
+import type { Directive } from './Directive.ts'
+import type { DirectiveFamily } from '../../RTD/index.ts'
 
 export class Require implements DirectiveFamily {
   public readonly name = 'require'

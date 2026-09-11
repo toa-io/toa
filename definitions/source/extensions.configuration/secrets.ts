@@ -1,4 +1,4 @@
-import { SECRET_RX } from './const.js'
+import { SECRET_RX } from './const.ts'
 
 /**
  * A property declared `format: secret` is a `$NAME` reference, not a string.

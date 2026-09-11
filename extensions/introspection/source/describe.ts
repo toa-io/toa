@@ -1,4 +1,4 @@
-import type { Node, Operation, Event, Receiver } from './model.js'
+import type { Node, Operation, Event, Receiver } from './model.ts'
 import type { Manifest } from '@toa.io/norm'
 
 /**

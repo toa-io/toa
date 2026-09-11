@@ -1,11 +1,11 @@
 import { quote } from '@toa.io/generic'
-import * as http from './HTTP/index.js'
-import { type Parameter } from './RTD/index.js'
+import * as http from './HTTP/index.ts'
+import { type Parameter } from './RTD/index.ts'
 import { schemas } from '@toa.io/definitions/extensions.exposition'
-import { queryable } from './Mapping.js'
-import { take } from './Introspection.js'
-import type { Introspection, Schema } from './Introspection.js'
-import type * as syntax from './RTD/syntax/index.js'
+import { queryable } from './Mapping.ts'
+import { take } from './Introspection.ts'
+import type { Introspection, Schema } from './Introspection.ts'
+import type * as syntax from './RTD/syntax/index.ts'
 import type * as core from '@toa.io/core/types'
 
 export class Query {

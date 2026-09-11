@@ -1,6 +1,6 @@
-import { manifest } from '../../handlers/export/manifest.js'
+export { manifest as handler } from '../../handlers/export/manifest.js'
 
-const builder = (yargs) => {
+export const builder = (yargs) => {
   yargs
     .option('error', {
       alias: 'e',
@@ -26,5 +26,3 @@ const builder = (yargs) => {
 
 export const command = ['manifest', 'man']
 export const desc = 'Print manifest'
-
-export { builder, manifest as handler }

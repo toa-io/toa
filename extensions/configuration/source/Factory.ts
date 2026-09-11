@@ -1,9 +1,9 @@
 import { type Connector, type Locator } from '@toa.io/core'
 import type { extensions } from '@toa.io/core/types'
-import { Aspect } from './Aspect.js'
-import { Client } from './Client.js'
-import { Composition } from './Composition.js'
-import { overridden } from './configuration.js'
+import { Aspect } from './Aspect.ts'
+import { Client } from './Client.ts'
+import { Composition } from './Composition.ts'
+import { overridden } from './configuration.ts'
 import type { Manifest } from '@toa.io/definitions/extensions.configuration'
 
 export class Factory implements extensions.Factory {

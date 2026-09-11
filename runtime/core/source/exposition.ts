@@ -1,5 +1,5 @@
-import { Connector } from './connector.js'
-import type { Locator } from './locator.js'
+import { Connector } from './connector.ts'
+import type { Locator } from './locator.ts'
 
 interface Manifest {
   namespace: string

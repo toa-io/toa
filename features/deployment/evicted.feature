@@ -53,6 +53,31 @@ Feature: Evicted components and services
           components: [dummies-two]
       """
 
+  Scenario: An evicted component's configuration is deployed without its secrets
+
+  The values service serves it like any other; what runs the component is given the secrets.
+
+    Given I have components:
+      | configuration.base    |
+      | configuration.secrets |
+    And I have a context with:
+      """yaml
+      configuration:
+        configuration.secrets:
+          b: $SECRET_B
+      evicted:
+        components:
+          - configuration.secrets
+      """
+    When I export deployment
+    Then exported values should not contain:
+      """yaml
+      compositions:
+        - name: configuration-base
+          variables:
+            - name: TOA_CONFIGURATION__SECRET_B
+      """
+
   @helm
   Scenario: A composition every component of which is evicted is not deployed
 
@@ -254,6 +279,49 @@ Feature: Evicted components and services
     Then exported values should contain:
       """yaml
       components: [dummies-one, dummies-two]
+      """
+
+  Scenario: Eviction falls back to another environment
+    Given I have components:
+      | dummies.one |
+      | dummies.two |
+    And I have a context with:
+      """yaml
+      evicted@bar:
+        components:
+          - dummies.two
+      """
+    When I export deployment for foo:bar
+    Then exported values should contain:
+      """yaml
+      components: [dummies-one]
+      """
+    And exported values should not contain:
+      """yaml
+      components: [dummies-two]
+      """
+
+  Scenario: Eviction prefers the named environment
+    Given I have components:
+      | dummies.one |
+      | dummies.two |
+    And I have a context with:
+      """yaml
+      evicted@foo:
+        components:
+          - dummies.two
+      evicted@bar:
+        components:
+          - dummies.one
+      """
+    When I export deployment for foo:bar
+    Then exported values should contain:
+      """yaml
+      components: [dummies-one]
+      """
+    And exported values should not contain:
+      """yaml
+      components: [dummies-two]
       """
 
   Scenario: Mono runs what is not evicted

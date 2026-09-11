@@ -1,8 +1,8 @@
 import assert from 'node:assert'
 import { describe, it } from 'node:test'
-import { Help } from './Help.js'
-import { Family } from './Family.js'
-import { Parameters } from './Parameters.js'
+import { Help } from './Help.ts'
+import { Family } from './Family.ts'
+import { Parameters } from './Parameters.ts'
 
 describe('help:method', () => {
   it('should read a bare value as the title, which is the short thing', () => {

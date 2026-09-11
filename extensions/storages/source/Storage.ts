@@ -1,11 +1,11 @@
 import { basename, dirname, join } from 'node:path'
 import { randomUUID } from 'node:crypto'
 import { console, type SpanOptions } from 'openspan'
-import { Scanner } from './Scanner.js'
+import { Scanner } from './Scanner.ts'
 import type { Readable } from 'node:stream'
-import type { Attributes, Entry, Stream } from './Entry.js'
-import type { ScanOptions } from './Scanner.js'
-import type { Provider } from './Provider.js'
+import type { Attributes, Entry, Stream } from './Entry.ts'
+import type { ScanOptions } from './Scanner.ts'
+import type { Provider } from './Provider.ts'
 
 export class Storage<T extends Provider = Provider> {
   private readonly provider: T

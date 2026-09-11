@@ -4,9 +4,9 @@ namespace: mongo
 entity:
   storage: mongodb
   properties:
-    foo:
+    foo: &foo
       type: integer
-    bar:
+    bar: &bar
       type: string
   blank:
     foo: 0
@@ -18,12 +18,8 @@ operations:
     once: true
     input:
       properties:
-        foo:
-          type: string
-          default: .
-        bar:
-          type: string
-          default: .
+        foo: *foo
+        bar: *bar
       type: object
 
   # the control: the same thing without the declaration
@@ -31,12 +27,8 @@ operations:
     concurrency: retry
     input:
       properties:
-        foo:
-          type: string
-          default: .
-        bar:
-          type: string
-          default: .
+        foo: *foo
+        bar: *bar
       type: object
 
   # refuses by returning a declared error, so it changes nothing and is not remembered
@@ -57,12 +49,8 @@ operations:
     once: true
     input:
       properties:
-        foo:
-          type: string
-          default: .
-        bar:
-          type: string
-          default: .
+        foo: *foo
+        bar: *bar
       type: object
 
   # runs long enough for a duplicate to arrive while it is still running

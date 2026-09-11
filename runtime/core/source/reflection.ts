@@ -1,4 +1,4 @@
-import { Connector } from './connector.js'
+import { Connector } from './connector.ts'
 
 /** What a reflection reads, once, as it connects. */
 export type Source<T = any> = () => Promise<T>

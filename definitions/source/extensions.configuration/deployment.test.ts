@@ -7,9 +7,9 @@ import {
   type Instance,
   deployment,
   describe as map
-} from './deployment.js'
-import { epoch } from './epoch.js'
-import { EVENT, VALUES } from './const.js'
+} from './deployment.ts'
+import { epoch } from './epoch.ts'
+import { EVENT, VALUES } from './const.ts'
 
 const schema = {
   type: 'object',
@@ -109,6 +109,42 @@ it('should map secrets to the component', async () => {
     ].defaults,
     { key: '$KEY' }
   )
+})
+
+it('should accept the annotation of an evicted component', async () => {
+  const evicted = instance('evicted')
+  const instances = [instance('base'), evicted]
+
+  assert.doesNotThrow(() =>
+    deployment([instance('base')], { 'configuration.evicted': { foo: 'set' } }, instances)
+  )
+})
+
+it('should serve an evicted component', async () => {
+  const managed = [instance('base', { foo: 'hello' })]
+  const instances = [...managed, instance('evicted')]
+  const annotation = { 'configuration.evicted': { foo: 'set' } }
+
+  const dependency = deployment(managed, annotation, instances)
+  const variable = dependency.services![0].variables!.find(({ name }) => name === VALUES)
+
+  assert.deepStrictEqual(JSON.parse(variable!.value!), map(instances, annotation))
+})
+
+it('should not map secrets to an evicted component', async () => {
+  const managed = [instance('base')]
+  const instances = [...managed, instance('evicted')]
+
+  const dependency = deployment(
+    managed,
+    {
+      'configuration.base': { key: '$BASE' },
+      'configuration.evicted': { key: '$EVICTED' }
+    },
+    instances
+  )
+
+  assert.deepStrictEqual(Object.keys(dependency.variables!), ['configuration-base'])
 })
 
 it('should refuse a secret given as a plain string', async () => {

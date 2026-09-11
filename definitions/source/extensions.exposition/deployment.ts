@@ -1,11 +1,11 @@
 import { type Dependency, type Service } from '@toa.io/operations'
-import { type Annotation } from './Annotation.js'
-import * as schemas from './schemas.js'
-import { shortcuts } from './shortcuts.js'
-import { components } from './components.js'
-import { parse } from './syntax/index.js'
-import { DELAY, PORT, PROBE } from './const.js'
-import { version } from '../version.js'
+import { type Annotation } from './Annotation.ts'
+import * as schemas from './schemas.ts'
+import { shortcuts } from './shortcuts.ts'
+import { components } from './components.ts'
+import { parse } from './syntax/index.ts'
+import { DELAY, PORT, PROBE } from './const.ts'
+import { version } from '../version.ts'
 
 /** Where Toa's release publishes this service's image. An application takes it
  *  instead of building one when its context says `registry.services: published`. */
@@ -67,6 +67,8 @@ export function deployment(_: unknown, annotation?: Annotation): Dependency {
 
   if (annotation.bouncer !== undefined) properties.bouncer = annotation.bouncer
 
+  if (annotation.censor !== undefined) properties.censor = annotation.censor
+
   if (annotation.oauth !== undefined) properties.oauth = annotation.oauth
 
   if (annotation.rpc !== undefined) properties.rpc = annotation.rpc
@@ -91,5 +93,5 @@ export function deployment(_: unknown, annotation?: Annotation): Dependency {
 
 type Properties = Pick<
   Annotation,
-  'authorities' | 'debug' | 'protocol' | 'bouncer' | 'ip' | 'oauth' | 'rpc' | 'mcp'
+  'authorities' | 'debug' | 'protocol' | 'bouncer' | 'censor' | 'ip' | 'oauth' | 'rpc' | 'mcp'
 >

@@ -1,9 +1,9 @@
 import { describe, it, beforeEach, afterEach } from 'node:test'
 import assert from 'node:assert/strict'
 
-import { create, current, decide, decode, encode, run, sampling } from './tracing.js'
-import { exporting } from './exporters.js'
-import type * as tracing from './tracing.js'
+import { create, current, decide, decode, encode, run, sampling } from './tracing.ts'
+import { exporting } from './exporters.ts'
+import type * as tracing from './tracing.ts'
 
 const exporter = { export: () => undefined }
 
@@ -144,7 +144,7 @@ describe('module copies', () => {
   let copy: typeof tracing
 
   beforeEach(async () => {
-    copy = await import('./tracing.js')
+    copy = await import('./tracing.ts')
   })
 
   it('should share the context', () => {

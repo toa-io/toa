@@ -1,6 +1,6 @@
-import type { Parameter } from '../../../../../RTD/index.js'
-import type { Input as Context } from '../../../../../io.js'
-import type { Component } from './Component.js'
+import type { Parameter } from '../../../../../RTD/index.ts'
+import type { Input as Context } from '../../../../../io.ts'
+import type { Component } from './Component.ts'
 
 /** The value a named route segment was bound to, or nothing when the route has none. */
 export class Segment implements Component {

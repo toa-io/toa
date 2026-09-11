@@ -2,9 +2,9 @@ import { describe, it } from 'node:test'
 import assert from 'node:assert/strict'
 import type { Readable } from 'node:stream'
 import { setTimeout } from 'node:timers/promises'
-import { Delete } from './Delete.js'
-import type { Input } from './types.js'
-import type { Remotes } from '../../Remotes.js'
+import { Delete } from './Delete.ts'
+import type { Input } from './types.ts'
+import type { Remotes } from '../../Remotes.ts'
 import type { Component } from '@toa.io/core'
 
 describe('octets:delete with a workflow', () => {

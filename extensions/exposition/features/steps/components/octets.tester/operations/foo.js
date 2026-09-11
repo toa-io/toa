@@ -1,5 +1,3 @@
-async function foo(input, context) {
+export async function effect(input, context) {
   return { foo: 'bar' }
 }
-
-export { foo as effect }

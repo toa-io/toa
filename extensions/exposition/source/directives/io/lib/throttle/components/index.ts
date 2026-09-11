@@ -1,10 +1,11 @@
-import { Path } from './Path.js'
-import { IP } from './IP.js'
-import { Route } from './Route.js'
-import { Identity } from './Identity.js'
-import { Segment } from './Segment.js'
-import type { KeyComponentMethod } from '../Configuration.js'
-import type { Component } from './Component.js'
+import { Path } from './Path.ts'
+import { IP } from './IP.ts'
+import { Route } from './Route.ts'
+import { Identity } from './Identity.ts'
+import { Segment } from './Segment.ts'
+import type { KeyComponentMethod } from '../Configuration.ts'
+import type { Component } from './Component.ts'
+export type { Component } from './Component.ts'
 
 type Constructor<T> = new (options: unknown, route: string) => T
 
@@ -15,5 +16,3 @@ export const Components: Record<KeyComponentMethod, Constructor<Component>> = {
   identity: Identity,
   segment: Segment
 }
-
-export type { Component }

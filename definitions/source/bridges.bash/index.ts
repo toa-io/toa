@@ -1,2 +1,2 @@
-export * as define from './define.js'
-export { DIR, EXT } from './const.js'
+export * as define from './define.ts'
+export { DIR, EXT } from './const.ts'

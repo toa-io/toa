@@ -1,8 +1,8 @@
 import { describe, it, beforeEach } from 'node:test'
 import assert from 'node:assert/strict'
 
-import { CORS } from './CORS.js'
-import type { Input } from '../../io.js'
+import { CORS } from './CORS.ts'
+import type { Input } from '../../io.ts'
 
 const input = (method: string, headers: Record<string, string>): Input =>
   ({
