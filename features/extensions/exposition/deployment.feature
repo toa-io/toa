@@ -77,3 +77,26 @@ Feature: Exposition deployment
           - name: TOA_EXPOSITION_PROPERTIES
             value: '{"authorities":{"a":"api.a.dev","b":"api.b.dev"},"debug":true}'
       """
+
+  Scenario: Deploying the `censor` option
+    Given I have a context with:
+      """yaml
+      configuration:
+        identity.tokens:
+          key0: secret.key.0
+      exposition:
+        authorities:
+          a: api.a.dev
+        censor:
+          header: cf-ipcountry
+          values: [RU, IR]
+      """
+    When I export deployment
+    Then exported values should contain:
+      """yaml
+      services:
+        - name: exposition-gateway
+          variables:
+          - name: TOA_EXPOSITION_PROPERTIES
+            value: '{"authorities":{"a":"api.a.dev"},"censor":{"header":"cf-ipcountry","values":["RU","IR"]}}'
+      """

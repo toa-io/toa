@@ -14,6 +14,7 @@ import { PORT, PROBE } from '@toa.io/definitions/extensions.exposition'
 import type { IncomingMessage, Protocol, ServerResponse } from './types.js'
 import type {
   Bouncer,
+  Censor,
   MCPAnnotation as MCP,
   OAuth,
   RPCAnnotation as RPC
@@ -462,6 +463,9 @@ interface Properties {
 
   /** Failed authentications an address may make; none are metered unless set. */
   bouncer?: Bouncer
+
+  /** Header values a request is answered 451 for; none is refused without it. */
+  censor?: Censor
 
   /** The authorization server this context exposes; none is exposed without it. */
   oauth?: OAuth

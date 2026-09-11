@@ -1,6 +1,7 @@
 import { authorization } from './auth/index.js'
 import { cache } from './cache/index.js'
 import { cors } from './cors/index.js'
+import { censor } from './censor/index.js'
 import { dev } from './dev/index.js'
 import { octets } from './octets/index.js'
 import { io } from './io/index.js'
@@ -27,7 +28,8 @@ export const families: DirectiveFamily[] = [
   dev
 ]
 /**
- * `cors` first, so a preflight is answered before anything reads the request; the page is
- * last, and claims its own prefix.
+ * `cors` first, so a preflight is answered before anything reads the request; `censor` next,
+ * so a refusal carries the CORS headers a page needs to read it; the page is last, and claims
+ * its own prefix.
  */
-export const interceptors: Interceptor[] = [cors, discovery, new Site()]
+export const interceptors: Interceptor[] = [cors, censor, discovery, new Site()]

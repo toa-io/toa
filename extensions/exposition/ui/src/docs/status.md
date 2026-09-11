@@ -22,6 +22,7 @@ defines.
 - `415 Unsupported Media Type`
 - `422 Unprocessable Entity`<span class="note">The request is OK, but the application refused it.</span>
 - `429 Too Many Requests`
+- `451 Unavailable For Legal Reasons`
 - `500 Internal Server Error`
 - `501 Not Implemented`
 - `503 Service Unavailable`

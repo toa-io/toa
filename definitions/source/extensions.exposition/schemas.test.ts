@@ -29,3 +29,16 @@ it('should default nothing in bouncer', () => {
     })
   )
 })
+
+it('should require a header and a value in censor', () => {
+  const header = 'cf-ipcountry'
+
+  assert.doesNotThrow(() =>
+    schemas.annotation.validate({ authorities, censor: { header, values: ['RU'] } })
+  )
+  assert.throws(() => schemas.annotation.validate({ authorities, censor: { values: ['RU'] } }))
+  assert.throws(() => schemas.annotation.validate({ authorities, censor: { header } }))
+  assert.throws(() =>
+    schemas.annotation.validate({ authorities, censor: { header, values: [] } })
+  )
+})

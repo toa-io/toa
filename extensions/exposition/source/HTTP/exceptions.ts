@@ -92,6 +92,12 @@ export class TooManyRequests extends ClientError {
   }
 }
 
+export class UnavailableForLegalReasons extends ClientError {
+  public constructor() {
+    super(451)
+  }
+}
+
 export class ServiceUnavailable extends Exception {
   public constructor(body?: any) {
     super(503, body)
