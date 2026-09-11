@@ -45,17 +45,23 @@ Before(
    * @this {toa.features.Context}
    */
   async function () {
-    this.cwd = await mkdtemp(join(tmpdir(), Math.random().toString(36).slice(2)))
+    this.workspace = await mkdtemp(join(tmpdir(), Math.random().toString(36).slice(2)))
+    this.cwd = this.workspace
     this.containers = {}
   }
 )
 
 // a workspace holds whatever its scenario wrote there, an exported image among it, and /tmp is
-// memory
+// memory. A step may have moved the process into it, and `cwd` elsewhere — the repository among
+// the places it may point — so the process goes back first, and only what was created goes.
 After(async function () {
   try {
     await stage.shutdown()
   } finally {
-    await rm(this.cwd, { recursive: true, force: true, maxRetries: 3 })
+    process.chdir(ORIGIN)
+
+    await rm(this.workspace, { recursive: true, force: true, maxRetries: 3 })
   }
 })
+
+const ORIGIN = process.cwd()
