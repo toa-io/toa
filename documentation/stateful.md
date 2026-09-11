@@ -12,9 +12,6 @@ process is gone â€” it crashed, it was stopped, it lost its broker connection â€
 carry the call, and nothing says the process will return. So an addressed call can end without an
 answer, and a call that ended without one may have run.
 
-Write for it: treat a refused or an abandoned call as an outcome the caller handles, and keep whatever
-must outlive a process where every replica reaches it.
-
 ## TL;DR
 
 ```yaml
