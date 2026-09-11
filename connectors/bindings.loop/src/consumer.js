@@ -1,4 +1,4 @@
-import { Connector } from '@toa.io/core'
+import { Connector, instance } from '@toa.io/core'
 
 export class Consumer extends Connector {
   #bindings
@@ -13,7 +13,13 @@ export class Consumer extends Connector {
     this.#endpoint = endpoint
   }
 
-  async request(request) {
+  /**
+   * An addressed call is served here when it names this process, and handed to the next binding
+   * when it names another: the call is for that process, whichever replica composes the component here.
+   */
+  async request(request, terms) {
+    if (terms?.instance !== undefined && terms.instance !== instance()) return false
+
     const invoke = this.#bindings[this.#locator.id]?.[this.#endpoint]
 
     if (invoke === undefined) return false

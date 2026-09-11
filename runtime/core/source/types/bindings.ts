@@ -14,12 +14,25 @@ export interface Properties {
   local?: boolean
 }
 
+/**
+ * How a call is carried, as its caller settled it. None of it is part of the request, and none of
+ * it is sent as part of one.
+ */
+export interface Terms {
+  /** the process an addressed call goes to */
+  instance?: string
+  /** milliseconds the caller waits, where it waits for a set time */
+  timeout?: number
+  /** aborts when the caller stops waiting */
+  signal?: AbortSignal
+}
+
 export interface Consumer extends Connector {
   /**
    * `false` says this binding does not carry the endpoint, and the transmission tries the
    * next one. A `Readable` is a streamed reply.
    */
-  request(request: Request): Promise<Reply | Readable | false>
+  request(request: Request, terms?: Terms): Promise<Reply | Readable | false>
 
   /**
    * Absent where the binding cannot enqueue — a transmission skips a binding that offers
@@ -39,7 +52,14 @@ export interface Broadcast<L extends string = string> extends Connector {
 }
 
 export interface Factory {
-  producer(locator: Locator, endpoints: string[], component: Component): Connector
+  /** `stateful` are the endpoints among `endpoints` that take addressed calls only */
+  // eslint-disable-next-line max-params
+  producer(
+    locator: Locator,
+    endpoints: string[],
+    component: Component,
+    stateful?: string[]
+  ): Connector
 
   consumer(locator: Locator, endpoint: string): Consumer
 

@@ -1,4 +1,4 @@
-import { Connector, trail } from '@toa.io/core'
+import { Connector, exceptions, trail } from '@toa.io/core'
 import type { Local } from './Local.js'
 import type { Options } from '@toa.io/definitions/extensions.cadence'
 
@@ -51,6 +51,13 @@ export class Aspect extends Connector {
     request: object | null,
     options: Options
   ): Promise<unknown> {
+    /*
+     * A delayed call goes out as a task, and a task is taken by whichever process consumes the
+     * queue, which a stateful operation has none of: a delayed call names no process.
+     */
+    if (request !== null && request !== undefined && 'instance' in request)
+      throw new exceptions.RequestContractException('A delayed call names no `instance`')
+
     const input: Input = {
       endpoint,
       interval: options.interval,
@@ -66,7 +73,7 @@ export class Aspect extends Connector {
      * It rides the row rather than the request, because the request is the caller's and a call
      * that carries none must go on carrying none.
      */
-    const hops = options.detached === true ? undefined : trail.current()
+    const hops = options.detached === true ? undefined : trail.current()?.hops
 
     if (hops !== undefined) input.trail = hops
 

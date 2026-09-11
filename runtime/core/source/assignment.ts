@@ -19,7 +19,12 @@ export class Assignment extends Operation {
 
     changeset.set(state)
 
-    const output = await this.scope.apply(changeset, request.input)
+    /*
+     * The call carries the reply as it stands, which is empty where the algorithm named no
+     * output — the storage fills it with the post-image it computes, because that is where the
+     * post-image is known.
+     */
+    const output = await this.scope.apply(changeset, request.input, this.call(store))
 
     // assignment returns new state by default
     if (store.reply.output === undefined) store.reply.output = output

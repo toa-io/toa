@@ -8,6 +8,8 @@ Feature: Export local deployment environment variables
       toa env
       Select environment
         -p, --path
+        -c, --component
+        -s, --service
       """
 
   Scenario: Export `some` environment
@@ -199,4 +201,103 @@ Feature: Export local deployment environment variables
     And stderr should contain lines:
       """
       toa-configuration/FOO_VALUE is not set
+      """
+
+  Scenario: Export environment for a listed component
+    Given I have components:
+      | mongo.one |
+      | stash      |
+    And I have a context with:
+      """yaml
+      compositions:
+        - name: data
+          components:
+            - mongo.one
+            - default.stash
+      """
+    When I run `toa env --component mongo.one`
+    Then the environment contains:
+      """
+      TOA_ENV=local
+      TOA_MONGODB_MONGO_ONE=mongodb://localhost:31020
+      """
+    And the environment does not contain:
+      """
+      TOA_STASH_DEFAULT_STASH=redis://localhost:31040
+      """
+
+  Scenario: Export environment for several listed components
+    Given I have components:
+      | mongo.one |
+      | stash      |
+    And I have a context
+    When I run `toa env -c mongo.one --component stash`
+    Then the environment contains:
+      """
+      TOA_MONGODB_MONGO_ONE=mongodb://localhost:31020
+      TOA_STASH_DEFAULT_STASH=redis://localhost:31040
+      """
+
+  Scenario: Throw when a listed component is not in the context
+    Given I have a component `dummies.one`
+    And I have a context
+    When I run `toa env --component missing.one`
+    Then program should exit with code 1
+    And stderr should contain lines:
+      """
+      Component 'missing.one' is not in the context
+      """
+
+  Scenario: Export environment for a listed service
+    Given I have components:
+      | exposed.one |
+      | mongo.one    |
+    And I have a context with:
+      """yaml
+      configuration:
+        identity.tokens:
+          keys:
+            - id: key0
+              key: $IDENTITY_TOKENS_ENCRYPTION_KEY0
+      """
+    When I run `toa env --service exposition`
+    Then the environment contains:
+      """
+      TOA_ENV=local
+      TOA_EXPOSITION_PROPERTIES={"authorities":{"local":"localhost"}}
+      TOA_MONGODB_IDENTITY_TOKENS=mongodb://localhost:31020
+      """
+    And the environment does not contain:
+      """
+      TOA_MONGODB_MONGO_ONE=mongodb://localhost:31020
+      TOA_CONFIGURATION_VALUES
+      """
+
+  Scenario: Export environment for a component and a service
+    Given I have components:
+      | exposed.one |
+      | mongo.one    |
+    And I have a context with:
+      """yaml
+      configuration:
+        identity.tokens:
+          keys:
+            - id: key0
+              key: $IDENTITY_TOKENS_ENCRYPTION_KEY0
+      """
+    When I run `toa env -c mongo.one -s exposition`
+    Then the environment contains:
+      """
+      TOA_MONGODB_MONGO_ONE=mongodb://localhost:31020
+      TOA_EXPOSITION_PROPERTIES={"authorities":{"local":"localhost"}}
+      """
+
+  Scenario: Throw when a listed service is not in the context
+    Given I have a component `dummies.one`
+    And I have a context
+    When I run `toa env --service nope`
+    Then program should exit with code 1
+    And stderr should contain lines:
+      """
+      Service 'nope' is not in the context
       """

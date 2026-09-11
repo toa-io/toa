@@ -74,6 +74,15 @@ export interface Factory<Manifest = unknown> {
   /** what the extension runs as a process of its own; `null` where it is off here */
   service?(): Connector | null | Promise<Connector | null>
 
+  /**
+   * What the extension keeps in every process, whatever that process runs — the counterpart of
+   * `tenant` for a process rather than a component. Asked of every extension the process has
+   * loaded, and the predefined ones are loaded by every process for this.
+   *
+   * `null` where the extension keeps nothing here.
+   */
+  resident?(host: Host): Resident | null | Promise<Resident | null>
+
   component?(component: Component): Component
 
   context?(context: Context): Context
@@ -85,6 +94,18 @@ export interface Factory<Manifest = unknown> {
   emitter?(emitter: Emitter, label: string, locator: Locator): Emitter
 
   receiver?(receiver: Receiver, locator: Locator): Receiver
+}
+
+/**
+ * A connector that lives as long as the process, whatever the process runs.
+ *
+ * It connects before what the process was built with and goes after it, which is what makes it
+ * the place for something that answers for the process rather than for anything in it — the
+ * readiness probe is the one this was written for.
+ */
+export interface Resident extends Connector {
+  /** Everything the process was built with has connected. */
+  complete?: () => Promise<void>
 }
 
 export interface Aspect extends Connector {

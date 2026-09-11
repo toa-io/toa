@@ -39,6 +39,12 @@ export class Context {
    */
   public readonly exploratory: boolean = false
 
+  /**
+   * The process a stateful operation is called on, as the route carries it. What `map:instance`
+   * takes out of the route is left here for the endpoint to call with.
+   */
+  public instance?: string
+
   public readonly pipelines: Pipelines = {
     body: [],
     response: []

@@ -3,8 +3,9 @@ import { environment } from '@toa.io/generic'
 import { LoopException } from './exceptions.js'
 
 /**
- * The chain of hops the invocation running now passed through, and the rule that refuses one
- * that has come back to where it had been.
+ * What the invocation running now came by: the chain of hops it passed through and the rule that
+ * refuses one that has come back to where it had been, and the identity of the call it is
+ * serving, from which the identity of every call it makes is derived.
  *
  * Ambient, like the trace context and for the same reason: an algorithm's `context` is built
  * once per operation at boot and shared by every invocation of it, so nothing per-invocation
@@ -12,18 +13,38 @@ import { LoopException } from './exceptions.js'
  * on every span and does not enter at all when the trace is unsampled — a chain that
  * disappears under sampling is a breaker that stops breaking in production.
  *
- * One writer, `Component.invoke`, where the hop is appended; two readers, `Call.invoke`, which
- * puts it on the request it is about to send, and `Outbox.row`, which writes it onto the row so
- * it outlives the operation that caused it.
+ * One writer, `Component.invoke`, where the hop is appended and the identity is put in scope;
+ * two readers, `Call.invoke`, which puts both on the request it is about to send, and
+ * `Outbox.row`, which writes the chain onto the row so it outlives the operation that caused it.
  */
 
 // as openspan holds its own: a process may carry two copies of this module, and a chain that
-// is empty because the writer sat in the other one is a breaker that never fires
-const KEY = Symbol.for('toa.core.trail')
+// is empty because the writer sat in the other one is a breaker that never fires. The name says
+// what is stored, so a copy carrying the chain alone does not answer where the whole is expected
+const KEY = Symbol.for('toa.core.invocation')
 
-type Store = typeof globalThis & { [KEY]?: AsyncLocalStorage<string[]> }
+type Store = typeof globalThis & { [KEY]?: AsyncLocalStorage<Invocation> }
 
-const storage = ((globalThis as Store)[KEY] ??= new AsyncLocalStorage<string[]>())
+const storage = ((globalThis as Store)[KEY] ??= new AsyncLocalStorage<Invocation>())
+
+/** What one invocation carries for the calls it makes. */
+export interface Invocation {
+  /** the hops it came by, oldest first, ending with its own */
+  hops: string[]
+
+  /**
+   * The identity of the request being served. Absent where the caller stamped none, which is a
+   * caller from before this existed; a call made under one mints its own identity instead.
+   */
+  id?: string
+
+  /**
+   * How many calls this invocation has already made to each endpoint. Two calls to one endpoint
+   * are two calls, and their identities have to say so — without this an operation looping over
+   * five items would make one identity five times and have four of them refused.
+   */
+  calls: Map<string, number>
+}
 
 /**
  * How many times one hop may appear before the call is refused, and how long a chain may grow
@@ -51,14 +72,30 @@ export function limits(): Limits {
   }
 }
 
-/** The chain that led to the invocation running now, where there is one. */
-export function current(): string[] | undefined {
+/** The invocation running now, where there is one. */
+export function current(): Invocation | undefined {
   return storage.getStore()
 }
 
-/** Runs `task` as the hop the chain now ends with. */
-export async function follow<T>(hops: string[], task: () => Promise<T>): Promise<T> {
-  return storage.run(hops, task)
+/** Runs `task` as the invocation the chain now ends with. */
+export async function follow<T>(
+  invocation: Invocation,
+  task: () => Promise<T>
+): Promise<T> {
+  return storage.run(invocation, task)
+}
+
+/**
+ * The ordinal of the call `invocation` is about to make to `endpoint`, counting from zero, and
+ * counts it. Read once per call, on the caller's own path, which is where the order is the order
+ * the algorithm made them in.
+ */
+export function ordinal(invocation: Invocation, endpoint: string): number {
+  const made = invocation.calls.get(endpoint) ?? 0
+
+  invocation.calls.set(endpoint, made + 1)
+
+  return made
 }
 
 /**

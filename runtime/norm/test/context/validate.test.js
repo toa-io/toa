@@ -126,3 +126,67 @@ describe('compositions', () => {
     )
   })
 })
+
+describe('evicted', () => {
+  it('should allow components and services', () => {
+    context.evicted = {
+      components: ['a.b'],
+      services: ['@toa.io/extensions.exposition']
+    }
+
+    assert.doesNotThrow(() => validate(context))
+  })
+
+  it('should require a component to be named as one', () => {
+    context.evicted = { components: ['a'] }
+
+    assert.throws(
+      () => validate(context),
+      (error) => /must match pattern/.test(error.message)
+    )
+  })
+
+  it('should reject an empty declaration', () => {
+    context.evicted = {}
+
+    assert.throws(
+      () => validate(context),
+      (error) => /fewer than 1 properties/.test(error.message)
+    )
+  })
+
+  it('should reject an unknown property', () => {
+    context.evicted = { compoments: ['a.b'] }
+
+    assert.throws(
+      () => validate(context),
+      (error) => /must NOT have additional properties/.test(error.message)
+    )
+  })
+})
+
+describe('addressed', () => {
+  it('should take the timeout an addressed call waits by default', () => {
+    context.addressed = { timeout: 5000 }
+
+    assert.doesNotThrow(() => validate(context))
+  })
+
+  it('should take a timeout of a millisecond at least', () => {
+    context.addressed = { timeout: 0 }
+
+    assert.throws(
+      () => validate(context),
+      (error) => /must be >= 1/.test(error.message)
+    )
+  })
+
+  it('should take nothing else', () => {
+    context.addressed = { interval: 5000 }
+
+    assert.throws(
+      () => validate(context),
+      (error) => /must NOT have additional properties/.test(error.message)
+    )
+  })
+})

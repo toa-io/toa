@@ -14,6 +14,7 @@ import { composition } from './composition.js'
 import { context } from './context.js'
 import { emission } from './emission.js'
 import { events } from './events.js'
+import { inbox } from './inbox.js'
 import { outbox } from './outbox.js'
 import { atomicity } from './atomicity.js'
 import { atom } from './atom.js'
@@ -25,6 +26,7 @@ import { storage } from './storage.js'
 import { guards } from './guards.js'
 import { host } from './host.js'
 import { rc } from './rc.js'
+import { Workload } from './workload.js'
 
 export {
   call,
@@ -35,6 +37,7 @@ export {
   context,
   emission,
   events,
+  inbox,
   outbox,
   atomicity,
   atom,
@@ -46,7 +49,8 @@ export {
   remote,
   storage,
   guards,
-  rc
+  rc,
+  Workload
 }
 
 export { bindings, bridge, contract, discovery, extensions }

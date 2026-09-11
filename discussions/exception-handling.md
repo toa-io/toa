@@ -140,9 +140,11 @@ caller, whose own operation catches it the same way. A failure walks up the call
 whoever is waiting. The gateway maps it to a status (`extensions/exposition/source/exceptions.ts`).
 Nothing crashes.
 
-Two things are worth knowing and are **out of scope by decision**: there is no deadline anywhere in
-the runtime, so a caller waits forever on a queue with no consumer; and `SystemException` carries
-the callee's stack across the service boundary. The call path is not changed by this work.
+Two things are worth knowing and are **out of scope by decision**: an ordinary call has no deadline
+unless its caller gives it one, so a caller waits forever on a queue with no consumer — deadlines came
+in with [stateful operations](/discussions/stateful.md), on addressed calls and on calls that ask for
+one; and `SystemException` carries the callee's stack across the service boundary. The call path is
+not changed by this work.
 
 ### An event — the process pays for the message
 
@@ -394,9 +396,10 @@ queues, which the broker reports, and the log. Failure text and levels to be agr
 2. **Stop the crash.** §1–§3 — guarantees 3, 4, 6 and 7, on comq 0.18.0. *Done.*
 3. **The verdict.** Guarantee 5, on comq 0.19.0: one function that asks the classification and
    raises `Park` or the exception itself, called from both paths. *Done.*
-4. **Idempotency.** §4 — guarantee 10, its own change. Needs nothing from a broker.
-
-The call path is left as it is.
+4. **Idempotency.** §4 — guarantee 10, its own change. Needs nothing from a broker. Designed and
+   built as [the transactional inbox](/discussions/transactional-inbox.md), which carries it to the
+   call path as well, and makes guarantee 10 conditional on the operation declaring `once`. *Done,
+   for a transition and an assignment; an effect needs none, and that document says why.*
 
 ## Verification
 

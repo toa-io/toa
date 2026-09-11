@@ -7,6 +7,7 @@ export class Context extends Connector {
   env
   name
   region
+  instance
   aspects
   operation
 
@@ -20,6 +21,7 @@ export class Context extends Connector {
     this.env = context.env
     this.name = context.name
     this.region = context.region
+    this.instance = context.instance
     this.#context = context
     this.#source = source(context.locator, operation)
 
@@ -30,16 +32,16 @@ export class Context extends Connector {
     this.aspects = this.#aspects(this.#context.aspects)
   }
 
-  local = underlay(async ([endpoint], [request]) => {
-    return this.#context.apply(endpoint, this.#attribute(request))
+  local = underlay(async ([endpoint], [request, options]) => {
+    return this.#context.apply(endpoint, this.#attribute(request), options)
   })
 
-  remote = underlay(async (segments, [request]) => {
+  remote = underlay(async (segments, [request, options]) => {
     if (segments.length === 2) segments.unshift('default') // default namespace
 
     const [namespace, name, endpoint] = segments
 
-    return this.#context.call(namespace, name, endpoint, this.#attribute(request))
+    return this.#context.call(namespace, name, endpoint, this.#attribute(request), options)
   })
 
   /**

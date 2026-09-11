@@ -104,7 +104,9 @@ the pump reads least when the process is busiest.
 ## Guarantees
 
 **At-least-once.** A crash between publishing and marking republishes the event. Receivers see
-this from AMQP redelivery regardless, and every event carries `VERSION`.
+this from AMQP redelivery regardless, and every event carries `VERSION`. What a receiver invokes
+may declare [`once`](/documentation/inbox.md), which makes its state change happen once however
+many times the event arrives.
 
 **No ordering.** The immediate path races the pump, and AMQP fanout gives no cross-channel order.
 

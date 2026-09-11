@@ -15,7 +15,10 @@ export async function env(argv) {
   const filepath = join(path, argv.as)
   const factory = await Factory.create(path, argv.environment)
   const operator = await factory.operator()
-  const variables = operator.variables()
+  const variables = operator.variables({
+    components: argv.component,
+    services: argv.service
+  })
   const currentValues = await read(filepath)
 
   const result = merge(variables, currentValues)

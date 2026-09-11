@@ -19,6 +19,7 @@ export type Dictionary = {
         json: string
         unset: string
         expand: string
+        once: string
         mcp: string
         selection: string
         search: string
@@ -62,6 +63,9 @@ export type Dictionary = {
           title: string
         }
         queries: {
+          title: string
+        }
+        status: {
           title: string
         }
       }

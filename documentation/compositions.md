@@ -40,6 +40,10 @@ An unknown key in a composition is refused.
 The image tag is a hash of the runtime version and of every member component's id and version,
 so it changes when the members change and not otherwise.
 
+The pods are spread across nodes, counting only those of the current revision: a rollout spreads
+the new pods whatever nodes the old ones are on, and where one node is all that fits, they are
+scheduled there all the same. Counting by revision needs Kubernetes 1.27 or later.
+
 ## Services
 
 A composition may run extension services in its own pod, rather than let each be deployed on
@@ -95,6 +99,63 @@ the deployment sets from `services`.
 The list is exact — unlike [`toa mono`](../runtime/cli/readme.md#mono), nothing is discovered.
 A service the named ones talk to answers over the network in a deployment; in one process it is
 named too, or nothing answers it.
+
+## Evicted
+
+`evicted` names what Toa does not deploy for this context, whatever else names it. What it names
+is still part of the context — it is called, `toa types` writes its types, `toa npm` installs its
+packages, and what it receives is published — and is deployed by other means:
+
+```yaml
+# context.toa.yaml
+
+compositions:
+  - name: edge
+    components:
+      - todos.tasks
+      - todos.stats
+    services:
+      - exposition
+
+evicted:
+  components:
+    - todos.stats
+  services:
+    - exposition
+```
+
+An evicted **component** is in no pod, gets no `Service`, is in no image, and its migrations do
+not run. Nothing only evicted components require is deployed either: a storage nothing else
+stores in, an extension nothing else declares.
+
+A composition every component of which is evicted is not deployed, and the name it held is free
+again. A service it listed falls back to a `Deployment` of its own, unless another composition
+runs it.
+
+An evicted **service** is deployed nowhere: no `Deployment`, no `Service`, no `Ingress`, in a
+composition's pod or on its own — including a service an annotation alone would have deployed.
+The extension is otherwise untouched: the components that declare it still carry it, and what it
+contributes besides a service still applies.
+
+Eviction only ever subtracts, so naming a service nothing here would have deployed changes
+nothing. A component this context has none of is refused by name:
+
+```
+'evicted' names an unknown component 'todos.three'.
+```
+
+Every key of a context is read for the environment it is deployed to, so this is where an
+environment deploys less than another:
+
+```yaml
+evicted@production:
+  components:
+    - todos.stats
+```
+
+A call to an evicted component is answered by whatever deploys it, and waits while nothing does.
+`toa env` writes the variables of what Toa deploys, so run it again after changing this, or an
+environment file still carries variables for what Toa no longer deploys.
 
 ## Base image
 

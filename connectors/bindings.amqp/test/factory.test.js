@@ -2,7 +2,11 @@ import { it, beforeEach, mock } from 'node:test'
 import assert from 'node:assert/strict'
 
 // `Park` is imported by the verdict a receiver answers with, so the module must have one
-const comq = { assert: mock.fn(), Park: class Park extends Error {} }
+const comq = {
+  assert: mock.fn(),
+  Park: class Park extends Error {},
+  Unroutable: class Unroutable extends Error {}
+}
 
 mock.module('comq', { namedExports: comq })
 

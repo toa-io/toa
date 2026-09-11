@@ -40,4 +40,8 @@
   .typeset :global(a) {
     font-weight: inherit;
   }
+
+  .typeset :global(li > .note) {
+    display: block;
+  }
 </style>

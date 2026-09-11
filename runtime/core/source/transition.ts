@@ -56,7 +56,7 @@ export class Transition extends Operation {
 
     entity.set(state)
 
-    const result = await this.scope.commit(entity, store.request.input)
+    const result = await this.scope.commit(entity, store.request.input, this.call(store))
 
     if (result !== false) return
 

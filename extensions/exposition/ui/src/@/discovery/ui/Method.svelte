@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { ChevronRight, SearchCheck } from '@lucide/svelte'
+  import { CheckCheck, ChevronRight, SearchCheck } from '@lucide/svelte'
   import * as Tooltip from '$ui/tooltip'
   import * as Item from '$ui/item'
   import * as Collapsible from '$ui/collapsible'
@@ -67,6 +67,18 @@
                 </Tooltip.Trigger>
 
                 <Tooltip.Content>{$dict.resource.search}</Tooltip.Content>
+              </Tooltip.Root>
+            </Tooltip.Provider>
+          {/if}
+
+          {#if of.once === true}
+            <Tooltip.Provider delayDuration={200}>
+              <Tooltip.Root>
+                <Tooltip.Trigger class="shrink-0">
+                  <CheckCheck class="text-muted-foreground size-3.5" />
+                </Tooltip.Trigger>
+
+                <Tooltip.Content>{$dict.resource.once}</Tooltip.Content>
               </Tooltip.Root>
             </Tooltip.Provider>
           {/if}

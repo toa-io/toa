@@ -85,6 +85,9 @@ spec:
           labelSelector:
             matchLabels:
               toa/service: extension-{{ .name }}
+          # only this revision's pods: a rollout spreads the new ones, whatever the old ones occupy
+          matchLabelKeys:
+            - pod-template-hash
 {{- end }}
 {{- if .port }}
 ---

@@ -1,4 +1,6 @@
 import { console as output } from 'openspan'
+import { Connector } from '@toa.io/core'
+import * as boot from '@toa.io/boot'
 import { version } from '@toa.io/definitions'
 
 import { graceful } from './lib/graceful.js'
@@ -8,23 +10,27 @@ import { environment } from '@toa.io/generic'
 export const serve = async (argv) => {
   console.log('Runtime', version)
 
+  const paths = Array.isArray(argv.paths) ? argv.paths : [argv.paths]
+
+  const workload = new boot.Workload(async () => {
+    // the list is exact: what it names runs, or nothing does
+    const services = await create(paths, true)
+
+    const root = new Connector()
+
+    root.depends(services)
+
+    return root
+  })
+
   const start = async () => {
-    const [service] = await create([argv.path])
+    graceful(workload)
 
-    // an extension that is off in this environment has nothing to run, and said so
-    if (service === undefined)
-      throw new Error(
-        `'${argv.path}' has no service to run in this environment: ` +
-          'its variables are absent. Regenerate the environment file with `toa env`.'
-      )
-
-    graceful(service)
-
-    await service.connect()
+    await workload.connect()
   }
 
   // the trace of the startup
   if (environment.get('TOA_BOOT_TRACE') === '1')
-    await output.span({ name: 'toa serve', attributes: { path: argv.path } }, start)
+    await output.span({ name: 'toa serve', attributes: { paths } }, start)
   else await start()
 }

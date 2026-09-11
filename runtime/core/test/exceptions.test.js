@@ -11,6 +11,8 @@ import {
   TransmissionException,
   EndpointException,
   DuplicateException,
+  AddresseeException,
+  AbandonedException,
   Exception
 } from '../source/exceptions.js'
 
@@ -38,6 +40,15 @@ it('should name the ones worth trying again', () => {
   assert.equal(permanent(new StateNotFoundException()), false)
   assert.equal(permanent(new StateConcurrencyException()), false)
   assert.equal(permanent(new TransmissionException('all rejected')), false)
+})
+
+// a process reclaims its name once its broker connection is restored, and a call abandoned may
+// have run: another attempt at either can go through
+it('should call an addressed call that went unanswered worth trying again', () => {
+  assert.equal(permanent(new AddresseeException('nothing holds it')), false)
+  assert.equal(permanent(new AbandonedException('went unanswered')), false)
+  assert.equal(permanent({ code: codes.Addressee, message: '' }), false)
+  assert.equal(permanent({ code: codes.Abandoned, message: '' }), false)
 })
 
 it('should read a reply exception as it travels, not only as a class', () => {

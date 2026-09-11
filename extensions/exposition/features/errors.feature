@@ -23,6 +23,24 @@ Feature: Errors
       | /basic/non-existent-component/       |
       | /non-existent-namespace/             |
 
+  Scenario: Null reply
+    Given the annotation:
+      """yaml
+      /:
+        GET:
+          anonymous: true
+          dev:stub: null
+      """
+    When the following request is received:
+      """
+      GET / HTTP/1.1
+      host: nex.toa.io
+      """
+    Then the following reply is sent:
+      """
+      404 Not Found
+      """
+
   Scenario: Missing trailing slash
     Given the `greeter` is running with the following manifest:
       """yaml

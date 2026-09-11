@@ -8,6 +8,16 @@ import type { JSONSchema } from './schemas.js'
 /** What an operation states about itself, and answers when asked to explain. */
 export interface Explanation {
   description?: string
+  /**
+   * Whether the same call arriving twice changes state once. Said, because a caller cannot tell
+   * it from an answer that says nothing, and what it changes is whether a retry is safe to make.
+   */
+  once?: boolean
+  /**
+   * Whether a call to it names the process it goes to. Said, because the caller is the one who
+   * has to name one, and a call that names none is refused.
+   */
+  stateful?: boolean
   input?: JSONSchema | null
   output?: JSONSchema | null
   errors?: Array<string | number>
@@ -34,7 +44,7 @@ export class Request extends Contract {
   public constructor(schema: Schema, definition: Definition, entity?: Entity) {
     super(schema)
 
-    for (const key of ['description', 'input', 'output', 'errors'] as const)
+    for (const key of ['description', 'once', 'stateful', 'input', 'output', 'errors'] as const)
       if (definition[key] !== undefined)
         (this.discovery as Record<string, unknown>)[key] = definition[key]
 
@@ -61,6 +71,14 @@ export class Request extends Contract {
     const schema: JSONSchema = {
       type: 'object',
       properties: {
+        /*
+         * Listed, and not required. `additionalProperties` already admits it, and a callee skips
+         * this contract altogether for an `authentic` request — which every request from a `Call`
+         * is — so requiring it would refuse nothing on the side where a missing identity matters,
+         * and would refuse every request built by hand on the side where it never is. An
+         * operation that declares `once` raises on a request without one instead.
+         */
+        id: { type: 'string' },
         authentic: { type: 'boolean' },
         task: { type: 'boolean' }
       },
@@ -124,7 +142,8 @@ function answers(definition: Definition, entity?: Entity): JSONSchema | undefine
     ...(entity.required === undefined ? {} : { required: entity.required })
   }
 
-  if (definition.scope === 'objects') return { type: 'array', items: object } as JSONSchema
+  if (definition.scope === 'objects')
+    return { type: 'array', items: object } as JSONSchema
 
   return definition.scope === 'object' || definition.scope === 'changeset'
     ? object

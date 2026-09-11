@@ -1,7 +1,7 @@
 // Written by `toa types`. Every run rewrites it.
 // What a manifest does not state belongs in a file of your own.
 
-import type { RemoteError } from '@toa.io/core/types'
+import type { Options, RemoteError } from '@toa.io/core/types'
 
 export type PutInput = {
   location?: string
@@ -34,8 +34,8 @@ export type DeleteInput = {
 }
 
 export interface Component {
-  put: (request: { input: PutInput, task?: boolean }) => Promise<unknown | RemoteError<"LOCATION_UNTRUSTED" | "LOCATION_LENGTH" | "LOCATION_UNAVAILABLE" | "INVALID_ID" | "NOT_FOUND" | "LIMIT_EXCEEDED" | "NOT_ACCEPTABLE" | "TYPE_MISMATCH">>
-  get: (request: { input: GetInput, task?: boolean }) => Promise<unknown | RemoteError<"NOT_FOUND" | "LIMIT_EXCEEDED" | "NOT_ACCEPTABLE" | "TYPE_MISMATCH">>
-  head: (request: { input: HeadInput, task?: boolean }) => Promise<unknown | RemoteError<"NOT_FOUND" | "LIMIT_EXCEEDED" | "NOT_ACCEPTABLE" | "TYPE_MISMATCH">>
-  delete: (request: { input: DeleteInput, task?: boolean }) => Promise<unknown | RemoteError<"NOT_FOUND" | "LIMIT_EXCEEDED" | "NOT_ACCEPTABLE" | "TYPE_MISMATCH">>
+  put: (request: { input: PutInput, task?: boolean }, options?: Options) => Promise<unknown | RemoteError<"LOCATION_UNTRUSTED" | "LOCATION_LENGTH" | "LOCATION_UNAVAILABLE" | "INVALID_ID" | "NOT_FOUND" | "LIMIT_EXCEEDED" | "NOT_ACCEPTABLE" | "TYPE_MISMATCH">>
+  get: (request: { input: GetInput, task?: boolean }, options?: Options) => Promise<unknown | RemoteError<"NOT_FOUND" | "LIMIT_EXCEEDED" | "NOT_ACCEPTABLE" | "TYPE_MISMATCH">>
+  head: (request: { input: HeadInput, task?: boolean }, options?: Options) => Promise<unknown | RemoteError<"NOT_FOUND" | "LIMIT_EXCEEDED" | "NOT_ACCEPTABLE" | "TYPE_MISMATCH">>
+  delete: (request: { input: DeleteInput, task?: boolean }, options?: Options) => Promise<unknown | RemoteError<"NOT_FOUND" | "LIMIT_EXCEEDED" | "NOT_ACCEPTABLE" | "TYPE_MISMATCH">>
 }

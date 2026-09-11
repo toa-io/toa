@@ -17,6 +17,9 @@ declare namespace toa.features {
 
     /** Settles once the program has exited, or has run and fallen quiet. */
     settled?: Promise<void>
+
+    /** The directory the scenario created, removed once it ends; `cwd` may point elsewhere. */
+    workspace?: string
     cwd?: string
     exitCode?: number
     stdout?: string

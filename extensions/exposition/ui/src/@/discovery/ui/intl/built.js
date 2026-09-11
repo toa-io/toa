@@ -17,6 +17,7 @@ export const dictionaries = {
       "json": "Copy the answer",
       "unset": "not defined",
       "expand": "Show what it serves",
+      "once": "Safe to retry",
       "mcp": "Published as a tool",
       "selection": "selection",
       "search": "Takes a text search"
@@ -61,6 +62,9 @@ export const dictionaries = {
       },
       "queries": {
         "title": "Collection queries"
+      },
+      "status": {
+        "title": "Status codes"
       }
     }
   }

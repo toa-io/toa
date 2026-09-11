@@ -2,9 +2,6 @@
 
 Authentication is request-agnostic. It is not a resource: the caller is
 identified from the `authorization` header of whichever request carries it.
-There are no server-side sessions: the server is stateless, as
-[REST](https://roy.gbiv.com/pubs/dissertation/rest_arch_style.htm#sec_5_1_3)
-has it.
 
 ## Transient credentials
 
@@ -35,6 +32,9 @@ credentials resolved to, and it is as good a place as any to receive the token.
 
 ## Sign-out
 
-Delete the stored `Token`.
+Delete the stored `Token`. There are no server-side sessions: the server is
+stateless, as
+[REST](https://roy.gbiv.com/pubs/dissertation/rest_arch_style.htm#sec_5_1_3)
+has it.
 
 <footer class="text-muted-foreground mt-12 text-sm">There are no cookies.</footer>

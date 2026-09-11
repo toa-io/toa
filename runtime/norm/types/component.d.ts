@@ -14,6 +14,8 @@ export type Operation = {
   output?: any
   error?: any
   query?: boolean
+  /** served by every process under an address of its own, which a call to it names */
+  stateful?: boolean
 }
 
 export type Operations = Record<string, Operation>
@@ -72,4 +74,6 @@ export type Manifest = Declaration & {
   path: string
   /** what a deploy installs beside this component for what it declares, by package name */
   packages?: Record<string, string>
+  /** Toa deploys nothing for it: the context evicts it, or only evicted components require it */
+  evicted?: boolean
 }

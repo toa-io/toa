@@ -8,5 +8,7 @@ export const call = async (locator, endpoint, definition, entity, source) => {
   const transmission = new Transmission(consumers)
   const contract = boot.contract.request(definition, entity)
 
-  return new Call(transmission, contract, source)
+  const stateful = definition.stateful === true
+
+  return new Call(transmission, contract, `${locator.id}.${endpoint}`, source, stateful)
 }

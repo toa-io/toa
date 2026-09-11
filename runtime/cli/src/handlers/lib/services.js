@@ -53,13 +53,22 @@ export async function discover(paths) {
  * components of a running service reference is reached over the network, the way any two
  * pods reach each other, rather than started here.
  *
+ * An extension that is off in this environment has no service. Where the names are exact, one
+ * named that way is refused; otherwise it is left out, which is what a composition's list gets,
+ * since it may name a service one environment does not run.
+ *
  * @param {string[]} references
+ * @param {boolean} [exact]
  * @return {Promise<import('@toa.io/core').Connector[]>}
  */
-export async function create(references) {
+export async function create(references, exact = false) {
   const services = []
+  const off = []
 
-  for (const reference of new Set(references.map(shortcuts.resolve))) {
+  // by what it resolves to, keeping the name it was given
+  const named = new Map(references.map((reference) => [shortcuts.resolve(reference), reference]))
+
+  for (const [reference, name] of named) {
     const { Factory } = await load(reference)
 
     if (typeof Factory?.prototype.service !== 'function')
@@ -67,10 +76,18 @@ export async function create(references) {
 
     const service = await new Factory(boot.host()).service()
 
-    // an extension that is off in this environment has nothing to run here
-    if (service === null) continue
+    if (service === null) off.push(name)
+    else services.push(service)
+  }
 
-    services.push(service)
+  if (exact && off.length > 0) {
+    const one = off.length === 1
+
+    throw new Error(
+      `${off.map((name) => `'${name}'`).join(', ')} ${one ? 'has' : 'have'} no service to run ` +
+        `in this environment: ${one ? 'its' : 'their'} variables are absent. ` +
+        'Regenerate the environment file with `toa env`.'
+    )
   }
 
   return services

@@ -10,13 +10,19 @@
 
 {#if $query === ''}
   <div
-    class={['grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-3', className]}
+    class={['grid grid-cols-1 gap-2 md:grid-cols-2', className]}
     {...props}
   >
     <Guide
       id="discovery-authentication-link"
       href={resolve('/authentication/')}
       title={$dict.guide.authentication.title}
+    />
+
+    <Guide
+      id="discovery-status-link"
+      href={resolve('/status/')}
+      title={$dict.guide.status.title}
     />
 
     <Guide

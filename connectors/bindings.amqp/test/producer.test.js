@@ -4,6 +4,7 @@ import { isDeepStrictEqual } from 'node:util'
 
 import { generate } from 'randomstring'
 import { each } from '@toa.io/generic'
+import { instance } from '@toa.io/core'
 import * as _communication from './communication.mock.js'
 import * as _queues from './queues.mock.js'
 
@@ -194,3 +195,56 @@ function resetCalls(
     if (typeof value === 'function' && value.mock !== undefined) value.mock.resetCalls()
     else resetCalls(value, seen)
 }
+
+describe('stateful', () => {
+  it('should serve a stateful endpoint under the name of this process', async () => {
+    const [stateful] = endpoints
+    const producer = new Producer(comm, locator, endpoints, component, [stateful])
+
+    await producer.connect()
+
+    const exchange = mock.queues.instances.mock.calls.find(
+      (call) => call.arguments[1] === stateful
+    )?.result
+
+    assert.ok(
+      comm.back.mock.calls.some(
+        (call) => call.arguments[0] === exchange && call.arguments[1] === instance()
+      )
+    )
+  })
+
+  it('should give a stateful endpoint no queue of its own and no tasks', async () => {
+    const [stateful] = endpoints
+    const producer = new Producer(comm, locator, endpoints, component, [stateful])
+
+    await producer.connect()
+
+    // the shared endpoint alone is replied to and processed
+    assert.equal(comm.reply.mock.callCount(), endpoints.length - 1)
+    assert.equal(comm.process.mock.callCount(), endpoints.length - 1)
+    assert.ok(!mock.queues.name.mock.calls.some((call) => call.arguments[1] === stateful))
+  })
+
+  it('should hold the name before it serves any shared endpoint', async () => {
+    const [stateful] = endpoints
+    const producer = new Producer(comm, locator, endpoints, component, [stateful])
+
+    let release = () => undefined
+
+    comm.back.mock.mockImplementationOnce(
+      () => new Promise((resolve) => (release = resolve))
+    )
+
+    const connecting = producer.connect()
+
+    await new Promise((resolve) => setImmediate(resolve))
+
+    assert.equal(comm.reply.mock.callCount(), 0)
+
+    release()
+    await connecting
+
+    assert.equal(comm.reply.mock.callCount(), endpoints.length - 1)
+  })
+})

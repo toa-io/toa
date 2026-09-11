@@ -104,6 +104,22 @@ Wildcard routes are supported by using `**` as the parameter name.
     endpoint: observe
 ```
 
+## Instance
+
+The `map:instance` directive names the route parameter that carries the process a
+[stateful operation](/documentation/stateful.md) is called on.
+
+```yaml
+/streams/:instance/:id:
+  GET:
+    map:instance: instance
+    endpoint: watch
+```
+
+The parameter is taken out of the input and out of the criteria. A stateful operation behind a
+route without `map:instance` answers `400`. A name no process holds answers `404`, and a call the
+process holding it leaves unanswered past its timeout answers `504`.
+
 ## Bearer token claims
 
 The `map:claims` directive maps the values of
@@ -118,6 +134,7 @@ the [`Bearer` scheme](identity.md#bearer-scheme), the input properties are not s
 
 A property a mapping fills is not the caller's to send, so [`OPTIONS`](introspection.md) takes it
 out of the input. `map:headers` states it under `headers`, naming the header it is read from, and
-`map:segments` under `route`, named as the property rather than as the segment. The rest —
+`map:segments` under `route`, named as the property rather than as the segment, and `map:instance`
+under `route` as `instance`. The rest —
 `map:claims`, `map:authority`, `map:language`, `map:buffer` — come from the request itself, and a
 caller has nowhere to put one.

@@ -11,6 +11,7 @@ import {
   normalize,
   complete,
   dereference,
+  evict,
   expand,
   validate
 } from './.context/index.js'
@@ -30,6 +31,9 @@ export const context = async (root, environment = variables.get('TOA_ENV')) => {
   const paths = await glob(resolve(root, COMPONENTS), GLOB)
 
   context.components = await Promise.all(paths.map(component))
+
+  // before the dependencies, which mark what only evicted components require
+  evict(context)
 
   // what a context declares of every component that stores anything, its own and the ones its
   // extensions bring, is given to them where those are known: inside `dependencies`

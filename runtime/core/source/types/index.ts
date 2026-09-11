@@ -3,6 +3,7 @@ export * as bindings from './bindings.js'
 export * as bridges from './bridges.js'
 export * as extensions from './extensions.js'
 export * as operations from './operations.js'
+export * as inbox from './inbox.js'
 export * as outbox from './outbox.js'
 export * as storages from './storages.js'
 
@@ -11,4 +12,13 @@ export type { Event } from './state.js'
 export type { Message } from './message.js'
 export type { Receiver } from './receiver.js'
 export type { Call, Guard, Observation, Transition } from './operations.js'
-export type { Maybe, Query, Reply, RemoteError, Request, Source } from './request.js'
+export type {
+  Envelope,
+  Maybe,
+  Options,
+  Query,
+  Reply,
+  RemoteError,
+  Request,
+  Source
+} from './request.js'

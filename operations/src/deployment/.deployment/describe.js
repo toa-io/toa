@@ -66,6 +66,18 @@ export const describe = (context, compositions, dependency, image) => {
       value: String(outbox.retention)
     })
 
+  if (context.inbox?.retention !== undefined)
+    dependency.variables.global.push({
+      name: 'TOA_INBOX_RETENTION',
+      value: String(context.inbox.retention)
+    })
+
+  if (context.addressed?.timeout !== undefined)
+    dependency.variables.global.push({
+      name: 'TOA_ADDRESSED_TIMEOUT',
+      value: String(context.addressed.timeout)
+    })
+
   events(context, dependency)
 
   const credentials = context.registry?.credentials
@@ -106,9 +118,10 @@ export const describe = (context, compositions, dependency, image) => {
 }
 
 function unit(context, dependency) {
-  const components = (context.components ?? []).map(
-    (component) => component.locator.label
-  )
+  // an evicted component is deployed by other means, so mono runs it nowhere
+  const components = (context.components ?? [])
+    .filter((component) => component.evicted !== true)
+    .map((component) => component.locator.label)
 
   const variables = dependency.variables ?? {}
   const mounts = dependency.mounts ?? {}

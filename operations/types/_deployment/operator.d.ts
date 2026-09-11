@@ -9,7 +9,10 @@ declare namespace toa.deployment {
 
     template(options?: _deployment.template.Options): Promise<string>
 
-    variables(): _dependency.Variables
+    variables(options?: {
+      components?: string[]
+      services?: string[]
+    }): _dependency.Variable[]
 
     listVariables(): _dependency.Variable[]
   }

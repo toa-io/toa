@@ -1,6 +1,6 @@
 import { Readable } from 'node:stream'
 import { Connector } from './connector.js'
-import { SystemException, RequestContractException } from './exceptions.js'
+import { codes, SystemException, RequestContractException } from './exceptions.js'
 import { environment } from '@toa.io/generic'
 import type { Cascade } from './cascade.js'
 import type { State } from './state.js'
@@ -10,14 +10,15 @@ import type { Entity } from './entities/entity.js'
 import type { EntitySet } from './entities/set.js'
 import type { Changeset } from './entities/changeset.js'
 import type { scope as Scope } from './types/operations.js'
-import type { Query, Request } from './types/request.js'
+import type { Call } from './types/inbox.js'
+import type { Envelope, Query } from './types/request.js'
 
 /** What an operation acquires for the algorithm to run against. */
 export type Scoped = Entity | EntitySet | Changeset | Readable | null
 
 /** What one invocation carries from step to step. */
 export interface Store {
-  request: Request
+  request: Envelope
   scope?: Scoped
   state?: any
   reply?: any
@@ -33,6 +34,8 @@ export interface Contracts {
 export interface Definition {
   scope: Scope
   concurrency?: string
+  /** whether the same call arriving twice changes state once; see `documentation/inbox.md` */
+  once?: boolean
 }
 
 export class Operation extends Connector {
@@ -51,6 +54,7 @@ export class Operation extends Connector {
   readonly #contracts: Contracts
   readonly #query: Translator
   readonly #scope: Scope
+  readonly #once: boolean
 
   // eslint-disable-next-line max-params
   public constructor(
@@ -68,11 +72,12 @@ export class Operation extends Connector {
     this.#contracts = contracts
     this.#query = query
     this.#scope = definition.scope
+    this.#once = definition.once === true
 
     this.depends(cascade)
   }
 
-  public async invoke(request: Request): Promise<any> {
+  public async invoke(request: Envelope): Promise<any> {
     try {
       if (request.authentic !== true) this.#contracts.request.fit(request)
 
@@ -86,12 +91,65 @@ export class Operation extends Connector {
 
       const store = { request }
 
+      if (this.#once) return await this.once(store)
+
       return await this.process(store)
     } catch (e) {
       const exception = e instanceof Error ? new SystemException(e) : e
 
       return { exception }
     }
+  }
+
+  /**
+   * The call, once. What it answered is recorded with what it changed, in one transaction, so a
+   * second arrival of the same identity finds the key taken, changes nothing, and is answered
+   * with what the first one answered.
+   *
+   * The read in front of it is not what makes that true — the key is — but it is what keeps the
+   * ordinary duplicate from running the algorithm at all, and the ordinary duplicate is a
+   * retransmission that arrives after the first call has finished.
+   */
+  protected async once(store: Store): Promise<any> {
+    const { id } = store.request
+
+    if (id === undefined)
+      throw new RequestContractException(
+        'a request to an operation declared `once` carries no id'
+      )
+
+    const recalled = await this.scope.recall(id)
+
+    if (recalled !== null) return recalled
+
+    try {
+      return await this.process(store)
+    } catch (exception) {
+      if ((exception as { code?: number })?.code !== codes.DuplicateCall) throw exception
+
+      /*
+       * It was made between the read and the write — a duplicate that arrived while the first
+       * was still running, and lost. Nothing of this one was committed, so what is answered is
+       * the other one's reply. Absent only if the record expired in between, which is the
+       * window closing on a call nobody is waiting on any more.
+       */
+      return (await this.scope.recall(id)) ?? { exception }
+    }
+  }
+
+  /**
+   * What is recorded with the write. Read where the write is made, which is after the algorithm
+   * has run, because the reply is what a duplicate is answered with.
+   */
+  protected call(store: Store): Call | undefined {
+    if (!this.#once) return undefined
+
+    /*
+     * A copy: an assignment fills its output in after the write it is recorded by returns, and
+     * what is recorded must be what was known when the record was made rather than whatever the
+     * reply became afterwards.
+     */
+    return { id: store.request.id, reply: { ...store.reply } }
   }
 
   protected async process(store: Store): Promise<any> {

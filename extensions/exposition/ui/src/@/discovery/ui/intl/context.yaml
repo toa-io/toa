@@ -35,6 +35,9 @@ inputs:
     expand:
       input: Show what it serves
       context: accessible name of an icon-only chevron button that opens a resource card
+    once:
+      input: Safe to retry
+      context: tooltip on the mark beside a method that changes state once however many times the same call arrives
     mcp:
       input: Published as a tool
       context: tooltip on the Model Context Protocol mark beside a method a model may call
@@ -129,3 +132,6 @@ inputs:
     queries:
       title:
         input: Collection queries
+    status:
+      title:
+        input: Status codes

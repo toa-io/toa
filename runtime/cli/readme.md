@@ -42,6 +42,29 @@ answers over the network in a deployment; in one process it is named too, or not
 it. Absent `--service`, the list is read from `TOA_SERVICES`, whitespace-separated, which is
 what a deployment sets from a composition's `services`.
 
+### serve
+
+Run an extension service.
+
+<dl>
+<dt><code>toa serve [paths...]</code></dt>
+<dd>
+<code>paths</code> Path, package reference, or shortcut of an extension (default
+<code>.</code>). Several in one process.
+</dd>
+</dl>
+
+```shell
+$ toa serve exposition
+$ toa serve exposition configuration
+$ toa serve ./extensions/exposition @toa.io/extensions.configuration
+```
+
+The list is exact — unlike `mono`, nothing is discovered. A service the named ones talk to
+answers over the network in a deployment; in one process it is named too, or nothing answers
+it. One named that has no service in this environment, because its variables are absent, is
+refused, and nothing runs.
+
 ### types
 
 Generate types for a Context and every component in it.
@@ -114,7 +137,9 @@ Export environment to a `.env` file.
 <code>--path</code> path to a Context (default <code>.</code>)<br/>
 <code>--as</code> output file path (default <code>.env</code>)<br/>
 <code>--interactive</code> prompt for secret values<br/>
-<code>--dev</code> / <code>-d</code> fill secrets with local/dev defaults; unresolved secrets throw unless <code>--interactive</code> is also set
+<code>--dev</code> / <code>-d</code> fill secrets with local/dev defaults; unresolved secrets throw unless <code>--interactive</code> is also set<br/>
+<code>--component</code> / <code>-c</code> generate variables only for this component, everything needed to run it. Repeat for several<br/>
+<code>--service</code> / <code>-s</code> generate variables only for this service, by shortcut or package reference. Repeat for several
 </dd>
 </dl>
 

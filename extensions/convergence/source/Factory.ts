@@ -82,10 +82,18 @@ export class Factory implements extensions.Factory {
     )
   }
 
+  /**
+   * One publisher per process — and per build of its tree. A communication that went down with
+   * a tree it belonged to is sealed: every converged row published through it afterwards would
+   * fail to leave, and two regions would differ with nothing noticing.
+   */
   private async publisher(): Promise<bindings.Outbound> {
-    this.outbound ??= this.host.outbound(this.binding(), CHANNEL, this.uris())
+    const outbound = await this.outbound
 
-    return this.outbound
+    if (outbound === undefined || outbound.disposed)
+      this.outbound = this.host.outbound(this.binding(), CHANNEL, this.uris())
+
+    return await this.outbound!
   }
 
   private binding(): string {

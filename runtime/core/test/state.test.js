@@ -70,9 +70,10 @@ it('should store entity', async () => {
   assert.ok(
     fixtures.storage.store.mock.calls.some(
       (call) =>
-        call.arguments.length === 2 &&
+        call.arguments.length === 3 &&
         isDeepStrictEqual(call.arguments[0], fixtures.initial.get.mock.calls[0].result) &&
-        isDeepStrictEqual(call.arguments[1], fixtures.outbox.row.mock.calls[0].result)
+        isDeepStrictEqual(call.arguments[1], fixtures.outbox.row.mock.calls[0].result) &&
+        call.arguments[2] === undefined
     )
   )
 })
@@ -124,10 +125,14 @@ describe('assignment', () => {
     assert.ok(
       fixtures.storage.upsert.mock.calls.some(
         (call) =>
-          call.arguments.length === 3 &&
+          call.arguments.length === 4 &&
           isDeepStrictEqual(call.arguments[0], changeset.query) &&
           isDeepStrictEqual(call.arguments[1], { foo: 1 }) &&
-          isDeepStrictEqual(call.arguments[2], fixtures.outbox.row.mock.calls[0].result)
+          isDeepStrictEqual(
+            call.arguments[2],
+            fixtures.outbox.row.mock.calls[0].result
+          ) &&
+          call.arguments[3] === undefined
       )
     )
 

@@ -3,11 +3,11 @@ import { Connector } from './connector.js'
 import { EndpointException } from './exceptions.js'
 import * as trail from './trail.js'
 import type { Locator } from './locator.js'
-import type { Request } from './types/request.js'
+import type { Envelope, Options, Request } from './types/request.js'
 
 /** What a component holds one of per endpoint: an operation, or the call that stands for it. */
 export interface Invocable extends Connector {
-  invoke: (request: Request) => Promise<any>
+  invoke: (request: Envelope, options?: Options) => Promise<any>
 }
 
 export class Component<O extends Invocable = Invocable> extends Connector {
@@ -32,14 +32,18 @@ export class Component<O extends Invocable = Invocable> extends Connector {
     Object.values(operations).forEach((operation) => this.depends(operation))
   }
 
-  public async invoke<T = any>(endpoint: string, request?: Request): Promise<T> {
+  public async invoke<T = any>(
+    endpoint: string,
+    request?: Request,
+    options?: Options
+  ): Promise<T> {
     if (!(endpoint in this.operations))
       throw new EndpointException(`'${endpoint}' is not provided by '${this.locator.id}'`)
 
     // if the request carries no telemetry, the trace starts here
     const remote = request?.telemetry === undefined ? null : decode(request.telemetry)
 
-    const invocation = async (): Promise<any> => this.#process(endpoint, request)
+    const invocation = async (): Promise<any> => this.#process(endpoint, request, options)
 
     let task = invocation
 
@@ -67,16 +71,22 @@ export class Component<O extends Invocable = Invocable> extends Connector {
         return { exception } as T
       }
 
-      task = async (): Promise<any> => trail.follow(hops, invocation)
+      /*
+       * The identity is put in scope with the chain: an operation reaches neither, and the
+       * calls it makes derive their own from what it is serving.
+       */
+      const scope: trail.Invocation = { hops, id: request?.id, calls: new Map() }
+
+      task = async (): Promise<any> => trail.follow(scope, invocation)
     }
 
     if (remote === null) return task()
     else return run(remote, task)
   }
 
-  async #process(endpoint: string, request?: Request): Promise<any> {
+  async #process(endpoint: string, request?: Request, options?: Options): Promise<any> {
     return console.span(this.#span(endpoint), async () => {
-      const reply = await this.operations[endpoint].invoke(request as Request)
+      const reply = await this.operations[endpoint].invoke(request as Envelope, options)
 
       if (reply?.exception !== undefined) {
         const span = current()

@@ -1,4 +1,5 @@
 import { Readable } from 'node:stream'
+import { entities } from '@toa.io/core'
 import { Mapping } from './Mapping.js'
 import { take } from './Introspection.js'
 import { parse } from './directives/cache/etag.js'
@@ -25,12 +26,19 @@ export class Endpoint implements RTD.Endpoint {
   }
 
   public async call(
-    context: http.Context,
+    context: http.Context & Authenticated,
     parameters: RTD.Parameter[]
   ): Promise<http.OutgoingMessage> {
     const body = await context.body()
     const query = this.query(context)
     const request = this.mapping.fit(body, query, parameters)
+    // a header sent twice is an ambiguity, not a key; the client repeats one value or none
+    const key = context.request.headers[IDEMPOTENCY_KEY]
+
+    if (typeof key === 'string' && key !== '') request.id = identity(context, key)
+
+    // the process a stateful operation is called on, where the route carries one
+    if (context.instance !== undefined) request.instance = context.instance
 
     this.remote ??= await this.discovery
 
@@ -158,3 +166,48 @@ export class EndpointsFactory implements RTD.EndpointsFactory {
 }
 
 const INTERRUPT = true
+
+/**
+ * What a client's idempotency key names, as an identity the runtime can hold: it is what the
+ * operation records the call under, so a retry under the same key is the same call.
+ *
+ * Four things, and each of them earns its place. The **principal**, because two clients that
+ * both pick `1` would otherwise be answered with each other's replies — and worse, either could
+ * suppress the other's write by getting there first. The **key** itself, which is what the
+ * client repeats. The **method** and the **path**, because one key sent to two routes is two
+ * calls: the path carries the record the call is about, so a key reused across orders does not
+ * collapse them into one.
+ *
+ * Not the payload. A client that sends one key with two different bodies is answered with what
+ * the first one answered, which is what an idempotency key means; telling them off for it costs
+ * a stored fingerprint and buys a diagnostic.
+ *
+ * Hashed rather than taken as it is, so that a key is opaque input: a client cannot name an
+ * identity the runtime would have minted, and cannot reach one another client's key derives.
+ */
+function identity(context: http.Context & Authenticated, key: string): string {
+  return entities.derive(
+    context.identity?.id ?? ANONYMOUS,
+    key,
+    context.request.method,
+    context.url.pathname
+  )
+}
+
+/**
+ * A route nothing authenticates has no principal to scope a key by, so every client of one
+ * shares a namespace. Keys are still honoured there — the alternative is refusing a header the
+ * client is entitled to send — and what it costs is that two anonymous clients picking one key
+ * on one path collide. Anonymous routes that change state are the case to watch.
+ */
+const ANONYMOUS = ''
+
+const IDEMPOTENCY_KEY = 'idempotency-key'
+
+/**
+ * What the auth family leaves on the context, as much of it as this reads. Declared here rather
+ * than imported, the way `cache` declares its own: the property is that family's.
+ */
+interface Authenticated {
+  identity?: { id: string } | null
+}

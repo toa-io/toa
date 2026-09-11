@@ -12,12 +12,13 @@ Given(
   async function (id, table) {
     const documents = parse(table)
 
-    await using(id, async (collection, outbox, db) => {
+    await using(id, async (collection, outbox, db, inbox) => {
       await collection.deleteMany({})
 
       // dropped, not emptied: the collection is created at boot, and one left behind by an
       // earlier scenario would read as one this scenario's boot created
       await outbox.drop().catch(() => undefined)
+      await inbox.drop().catch(() => undefined)
       await forget(db, collection)
 
       if (documents.length > 0) await collection.insertMany(documents)
@@ -31,9 +32,10 @@ Given(
    * @param {string} id
    */
   async function (id) {
-    await using(id, async (collection, outbox, db) => {
+    await using(id, async (collection, outbox, db, inbox) => {
       await collection.deleteMany({})
       await outbox.drop().catch(() => undefined)
+      await inbox.drop().catch(() => undefined)
       await forget(db, collection)
     })
   }
@@ -94,6 +96,50 @@ Then(
         found.length,
         0,
         `outbox collection '${outbox.collectionName}' exists`
+      )
+    })
+  }
+)
+
+Given(
+  'the {component} inbox contains:',
+  /**
+   * Seeding a record directly is the state of a call already answered, which is how a duplicate
+   * arriving after the first one finished is tested without making the first one.
+   */
+  async function (id, table) {
+    const records = parse(table).map(({ reply, ...rest }) => ({
+      at: new Date(),
+      ...rest,
+      reply: JSON.parse(reply)
+    }))
+
+    await using(id, async (_, __, ___, inbox) => {
+      if (records.length > 0) await inbox.insertMany(records)
+    })
+  }
+)
+
+Then('the {component} inbox holds {int} record(s)', async function (id, count) {
+  await using(id, async (_, __, ___, inbox) =>
+    assert.strictEqual(await inbox.countDocuments({}), count)
+  )
+})
+
+Then(
+  'the {component} inbox collection does not exist',
+  /**
+   * The collection is created at boot beside the entity's, so its absence is the assertion that
+   * nothing was set up to remember a call.
+   */
+  async function (id) {
+    await using(id, async (_, __, db, inbox) => {
+      const found = await db.listCollections({ name: inbox.collectionName }).toArray()
+
+      assert.strictEqual(
+        found.length,
+        0,
+        `inbox collection '${inbox.collectionName}' exists`
       )
     })
   }
@@ -307,7 +353,12 @@ async function using(id, fn) {
   const db = client.db('toa-dev')
 
   try {
-    await fn(db.collection(collname), db.collection(collname + '_outbox'), db)
+    await fn(
+      db.collection(collname),
+      db.collection(collname + '_outbox'),
+      db,
+      db.collection(collname + '_inbox')
+    )
   } finally {
     await client.close()
   }

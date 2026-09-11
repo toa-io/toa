@@ -5,6 +5,7 @@ import type { Factory } from './entities/factory.js'
 import type { Entity } from './entities/entity.js'
 import type { Changeset } from './entities/changeset.js'
 import type { Outbox } from './outbox.js'
+import type { Call } from './types/inbox.js'
 import type { Row } from './types/outbox.js'
 import type { Query, Record, Storage } from './types/storages.js'
 
@@ -94,10 +95,17 @@ export class State {
   }
 
   /** get-or-create, in one indivisible step */
+  /** what the call under this identity answered, or `null` where it was never made */
+  public async recall(id: string): Promise<object | null> {
+    return (await this.storage.inbox?.recall(id)) ?? null
+  }
+
+  // eslint-disable-next-line max-params
   public async ensure(
     query: Query | undefined,
     properties: object,
-    input?: object
+    input?: object,
+    call?: Call
   ): Promise<Entity> {
     const object = this.#entities.init()
     const blank = object.get()
@@ -106,7 +114,7 @@ export class State {
     object.set(blank)
 
     const row = this.#outbox?.row(object.event(input))
-    const record = await this.storage.ensure(query, properties, object.get(), row)
+    const record = await this.storage.ensure(query, properties, object.get(), row, call)
 
     // whatever came back under another id was already there, and an effect never commits it
     if (record.id !== blank.id) return this.#entities.object(record, NOT_MUTABLE)
@@ -116,13 +124,17 @@ export class State {
     return object
   }
 
-  public async commit(state: Entity | EntitySet, input?: object): Promise<boolean> {
+  public async commit(
+    state: Entity | EntitySet,
+    input?: object,
+    call?: Call
+  ): Promise<boolean> {
     if (state instanceof EntitySet) return this.massCommit(state, input)
 
     // the row is built before the write so that the storage can commit it in the same
     // transaction, closing the window this used to have
     const row = this.#outbox?.row(state.event(input))
-    const ok = await this.storage.store(state.get(), row)
+    const ok = await this.storage.store(state.get(), row, call)
 
     if (ok) await this.#publish(row)
 
@@ -145,10 +157,10 @@ export class State {
     return ok
   }
 
-  public async apply(state: Changeset, input?: object): Promise<Record> {
+  public async apply(state: Changeset, input?: object, call?: Call): Promise<Record> {
     // an assignment's images are the write's own, so the storage fills them in
     const row = this.#outbox?.row({ input })
-    const result = await this.storage.upsert(state.query, state.export(), row)
+    const result = await this.storage.upsert(state.query, state.export(), row, call)
 
     if (result === null)
       throw state.query.version === undefined

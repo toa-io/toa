@@ -152,9 +152,15 @@ jobs:
 
           cd "$(mktemp -d)"
 
+          # A real install, not a dry run: a dry run resolves metadata and fetches no tarball,
+          # so it answers that the registry knows the version while the CDN may not yet serve
+          # the bytes — which is what the image build asks for a moment later, and what it
+          # failed on. Its own cache, so nothing is served from what an earlier step left
+          # behind, and no `-g`, so it lands in the directory above.
           for i in $(seq 1 60); do
-            if npm install -g "@toa.io/runtime@$VERSION" --omit=dev --dry-run --prefer-online >/dev/null 2>&1; then
-              echo "@toa.io/runtime@$VERSION resolves with its dependencies"
+            if npm install "@toa.io/runtime@$VERSION" --omit=dev --prefer-online \
+              --cache "$(mktemp -d)" >/dev/null 2>&1; then
+              echo "@toa.io/runtime@$VERSION installs with its dependencies"
               exit 0
             fi
 

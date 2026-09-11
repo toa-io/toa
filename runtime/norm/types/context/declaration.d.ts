@@ -7,6 +7,12 @@ interface Composition {
   services?: string[]
 }
 
+/** What Toa does not deploy for a context, whatever else names it: still part of it, deployed by other means. */
+export interface Evicted {
+  components?: string[]
+  services?: string[]
+}
+
 export interface Resources {
   cpu?: [string, string]
   memory?: [string, string]
@@ -34,6 +40,7 @@ export interface Declaration {
   runtime?: Runtime | string
   registry?: Registry | string
   compositions?: Composition[]
+  evicted?: Evicted
   mono?: Mono
   ingress?: Ingress
   annotations?: Record<string, object>

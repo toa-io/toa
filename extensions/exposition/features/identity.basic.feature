@@ -521,7 +521,7 @@ Feature: Basic authentication
       """
     When the following request is received:
       """
-      GET /identity/basic/username/bWFuYWdlcg/ HTTP/1.1
+      GET /identity/basic/usernames/bWFuYWdlcg/ HTTP/1.1
       host: nex.toa.io
       """
     Then the following reply is sent:
