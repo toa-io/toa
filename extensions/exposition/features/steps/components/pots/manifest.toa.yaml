@@ -2,14 +2,14 @@ name: pots
 
 entity:
   properties:
-    title:
+    title: &title
       type: string
       maxLength: 64
-    volume:
+    volume: &volume
       type: number
       exclusiveMinimum: 0
       maximum: 1000
-    temperature:
+    temperature: &temperature
       type: number
       exclusiveMinimum: 0
       maximum: 300
@@ -24,15 +24,9 @@ operations:
     forward: transit
     input:
       properties:
-        temperature:
-          type: string
-          default: .
-        title:
-          type: string
-          default: .
-        volume:
-          type: string
-          default: .
+        temperature: *temperature
+        title: *title
+        volume: *volume
       type: object
       required:
         - title
@@ -45,15 +39,9 @@ operations:
     once: true
     input:
       properties:
-        title:
-          type: string
-          default: .
-        volume:
-          type: string
-          default: .
-        temperature:
-          type: string
-          default: .
+        title: *title
+        volume: *volume
+        temperature: *temperature
       type: object
   observe:
     output:
@@ -75,16 +63,10 @@ operations:
         properties:
           id:
             type: string
-            default: .
-          title:
-            type: string
-            default: .
-          volume:
-            type: string
-            default: .
-          temperature:
-            type: string
-            default: .
+            pattern: ^[a-fA-F0-9]{32}$
+          title: *title
+          volume: *volume
+          temperature: *temperature
         type: object
         required:
           - id

@@ -4,7 +4,7 @@ namespace: mongo
 entity:
   storage: mongodb
   properties:
-    foo:
+    foo: &foo
       type: integer
   blank:
     foo: 0
@@ -14,7 +14,5 @@ operations:
     concurrency: retry
     input:
       properties:
-        foo:
-          type: string
-          default: .
+        foo: *foo
       type: object

@@ -2,7 +2,7 @@ name: users
 
 entity:
   properties:
-    name:
+    name: &name
       type: string
 
 operations:
@@ -10,9 +10,7 @@ operations:
     concurrency: retry
     input:
       properties:
-        name:
-          type: string
-          default: .
+        name: *name
       type: object
       required:
         - name
@@ -22,9 +20,7 @@ operations:
     errors: [0]
     input:
       properties:
-        name:
-          type: string
-          default: .
+        name: *name
       type: object
       required:
         - name

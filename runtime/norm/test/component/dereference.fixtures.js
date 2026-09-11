@@ -3,10 +3,6 @@ export const source = {
     properties: {
       foo: {
         type: 'string'
-      },
-      bar: {
-        type: 'string',
-        default: '.foo'
       }
     }
   },
@@ -15,42 +11,14 @@ export const source = {
       input: {
         properties: {
           foo: {
-            type: 'string',
-            default: '.'
-          },
-          bar: {
-            type: 'string',
-            default: '.foo'
-          },
-          baz1: {
-            type: 'array',
-            items: {
-              type: 'string',
-              default: '.foo'
-            }
-          },
-          baz2: {
-            type: 'array',
-            items: {
-              properties: {
-                foo: {
-                  type: 'string',
-                  default: '.'
-                },
-                bar: {
-                  type: 'string',
-                  default: '.foo'
-                }
-              }
-            }
+            type: 'string'
           }
         }
       },
       output: {
         properties: {
           bar: {
-            type: 'string',
-            default: '.foo'
+            type: 'string'
           }
         }
       }
@@ -67,9 +35,6 @@ export const target = {
     properties: {
       foo: {
         type: 'string'
-      },
-      bar: {
-        type: 'string'
       }
     }
   },
@@ -79,28 +44,6 @@ export const target = {
         properties: {
           foo: {
             type: 'string'
-          },
-          bar: {
-            type: 'string'
-          },
-          baz1: {
-            type: 'array',
-            items: {
-              type: 'string'
-            }
-          },
-          baz2: {
-            type: 'array',
-            items: {
-              properties: {
-                foo: {
-                  type: 'string'
-                },
-                bar: {
-                  type: 'string'
-                }
-              }
-            }
           }
         }
       },
@@ -119,28 +62,6 @@ export const target = {
         properties: {
           foo: {
             type: 'string'
-          },
-          bar: {
-            type: 'string'
-          },
-          baz1: {
-            type: 'array',
-            items: {
-              type: 'string'
-            }
-          },
-          baz2: {
-            type: 'array',
-            items: {
-              properties: {
-                foo: {
-                  type: 'string'
-                },
-                bar: {
-                  type: 'string'
-                }
-              }
-            }
           }
         }
       },
