@@ -79,6 +79,8 @@ right.
 | worked on an entity that is not there              | `404`                        |
 | was given a version that has passed                | `412`                        |
 | lost a race, or refused a duplicate                | `409`                        |
+| was called on a process that holds no such name    | `404`                        |
+| went unanswered before its caller stopped waiting  | `504`                        |
 | anything else                                      | `500`                        |
 
 `500` is the answer to a failure nobody described, which includes an operation whose _reply_ does
