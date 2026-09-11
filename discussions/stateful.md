@@ -178,7 +178,7 @@ crash without a timer, and is enabled on few brokers and on almost no managed on
    pending entry and its reply handler are removed at once, so a retransmission skips it, and the
    promise rejects with `signal.reason`. A late reply meets an unknown correlation and is dropped, as
    one already is. For a reply stream the deadline covers the wait for its first message.
-2. **Call and back.** `IO.back(exchange, key, producer)` declares the queue `<exchange>.<key>`, exclusive
+2. **Addressed Requests.** `IO.back(exchange, key, producer)` declares the queue `<exchange>.<key>`, exclusive
    to the connection, binds it to the direct `exchange` under `key` on every shard, and consumes it
    through the request consumer. `IO.call(exchange, key, payload, options?)` publishes to the exchange
    with `mandatory` on the request channel, declaring the exchange and no queue, and takes the same
@@ -193,7 +193,7 @@ crash without a timer, and is enabled on few brokers and on almost no managed on
    claimed.
 5. **Shards.** A call returned by one shard is published on the next through `route`, which declares
    the exchange there first, and rejects once every shard has returned it.
-6. **Documentation.** The readme's Request, Call and back, Retries and Parked messages sections, and
+6. **Documentation.** The readme's Request, Addressed Requests, Retries and Parked messages sections, and
    `features/rpc.parked.feature`.
 
 ### Toa
