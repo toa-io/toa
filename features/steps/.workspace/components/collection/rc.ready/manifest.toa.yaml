@@ -1,0 +1,21 @@
+name: ready
+namespace: rc
+state: ~
+
+operations:
+  whoami:
+    type: computation
+    stateful: true
+    output:
+      type: string
+  outcome:
+    type: computation
+    input:
+      type: string
+    output:
+      type: object
+      properties:
+        reached:
+          type: boolean
+        code:
+          type: integer

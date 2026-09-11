@@ -59,10 +59,11 @@ export async function composition(paths, options) {
 
       const producers = []
       const settles = []
+      const readies = []
 
       for (let i = 0; i < components.length; i++) {
         const { local, other } = groups[i]
-        const settle = components[i].settle
+        const { settle, ready } = components[i]
         const serving = [...local, ...other]
 
         producers.push(...serving)
@@ -78,6 +79,19 @@ export async function composition(paths, options) {
         for (const receiver of receivers[i])
           for (const producer of serving) receiver.depends(producer)
 
+        /*
+         * The broker producers serve the stateful endpoints under the process's name, and the
+         * name is held once they are open — before then a call to it is refused. `ready` is where
+         * a component hands the name out, so it waits for every producer and receiver of its own.
+         */
+        if (ready !== undefined) {
+          for (const producer of serving) ready.depends(producer)
+
+          for (const receiver of receivers[i]) ready.depends(receiver)
+
+          readies.push(ready)
+        }
+
         if (settle === undefined) continue
 
         if (local.length > 0) settle.depends(local)
@@ -91,7 +105,7 @@ export async function composition(paths, options) {
 
       const composition = new Composition(
         expositions.flat(),
-        producers.concat(settles),
+        producers.concat(settles, readies),
         receivers.flat(),
         tenants.flat()
       )

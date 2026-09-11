@@ -47,6 +47,17 @@ When(
 )
 
 Given(
+  'calls within this process go through the broker',
+  /**
+   * A call that names this process is otherwise served without leaving it, so whether the
+   * broker has the process's name is never asked. Reset after the scenario.
+   */
+  function () {
+    globalThis.TOA_INTEGRATION_BINDINGS_LOOP_DISABLED = true
+  }
+)
+
+Given(
   'I run {component} component',
   /**
    * The same components, as a process runs them. What belongs to the process rather than to

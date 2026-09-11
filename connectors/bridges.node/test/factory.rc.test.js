@@ -24,6 +24,7 @@ it('should create a connector per exported phase', async () => {
 
   assert.notStrictEqual(phases.preflight, undefined)
   assert.notStrictEqual(phases.settle, undefined)
+  assert.notStrictEqual(phases.ready, undefined)
   assert.notStrictEqual(phases.dispose, undefined)
 })
 
@@ -32,8 +33,19 @@ it('should run startup phases on connection', async () => {
 
   await phases.preflight.connect()
   await phases.settle.connect()
+  await phases.ready.connect()
 
-  assert.deepStrictEqual(calls, ['preflight', 'settle'])
+  assert.deepStrictEqual(calls, ['preflight', 'settle', 'ready'])
+})
+
+it('should accept an RC exporting ready alone', async () => {
+  const phases = await factory.rc(
+    resolve(import.meta.dirname, 'dummies/rc.ready'),
+    context
+  )
+
+  assert.notStrictEqual(phases.ready, undefined)
+  assert.strictEqual(phases.settle, undefined)
 })
 
 it('should not run disposal on connection', async () => {
@@ -57,6 +69,6 @@ it('should reject an RC exporting no phase', async () => {
   const promise = factory.rc(resolve(import.meta.dirname, 'dummies/rc.none'), context)
 
   await assert.rejects(promise, (error) =>
-    /RC 'empty' must export preflight, settle and\/or dispose/.test(error.message)
+    /RC 'empty' must export preflight, settle, ready and\/or dispose/.test(error.message)
   )
 })
