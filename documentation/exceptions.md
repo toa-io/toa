@@ -38,10 +38,10 @@ the code, or return something else.
 Errors are ordinary objects. Anything else enumerable on the error reaches the caller with it:
 
 ```javascript
-const ERR_LOCKED = Object.assign(new Error('Account is locked'), {
-  code: 'LOCKED',
-  until: '2026-01-01'
-})
+const ERR_LOCKED = new (class extends Error {
+  code = 'LOCKED'
+  until = '2026-01-01'
+})()
 ```
 
 ## An exception is not
