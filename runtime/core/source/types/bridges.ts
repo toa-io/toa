@@ -34,6 +34,7 @@ export interface Guard {
 export interface RunCommands {
   preflight?: Connector
   settle?: Connector
+  ready?: Connector
   dispose?: Connector
 }
 

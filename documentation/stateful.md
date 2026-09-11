@@ -1,9 +1,9 @@
 # Stateful operations
 
-Every process of a component serves a stateful operation under an address of its own, so each
-process's copy of the operation can be called on its own: a call to it names the process it goes to.
-A call to any other operation reaches whichever process takes it first. Why a call has to reach one
-particular process is the component's own business.
+An operation declared `stateful: true` is served by every process of its component under an address
+of its own, so each process's copy of the operation can be called on its own: a call to it names the
+process it goes to. A call to any other operation reaches whichever process takes it first. Why a
+call has to reach one particular process is the component's own business.
 
 **An addressed call is unreliable.** Every other call reaches a component, and a component comes
 back: a call waits for it, a message is kept until it is taken, and a failure is tried again. An
@@ -35,6 +35,10 @@ const stream = await context.remote.media.streams.watch({ input: { id }, instanc
 An operation declared `stateful: true` is served by each process under that process's own name, and
 takes calls that name a process. A process reads its name as `context.instance`: generated when the
 process starts, or given by `TOA_INSTANCE`.
+
+A call to that name is answered once the process serves its operations, so a process that hands its
+name out as it starts does it in a [`ready`](/connectors/bridges.node/readme.md#run-commands) run
+command: before then, a call to it is refused with `Addressee`.
 
 ## Calling
 

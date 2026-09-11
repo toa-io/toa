@@ -51,19 +51,25 @@ export class Factory {
     const ctx = new Context(context)
     const preflights = []
     const settles = []
+    const readies = []
     const disposals = []
 
     for (const [name, module] of modules) {
       if (
         typeof module.preflight !== 'function' &&
         typeof module.settle !== 'function' &&
+        typeof module.ready !== 'function' &&
         typeof module.dispose !== 'function'
       )
-        throw new Error(`RC '${name}' must export preflight, settle and/or dispose`)
+        throw new Error(
+          `RC '${name}' must export preflight, settle, ready and/or dispose`
+        )
 
       if (typeof module.preflight === 'function') preflights.push(module.preflight)
 
       if (typeof module.settle === 'function') settles.push(module.settle)
+
+      if (typeof module.ready === 'function') readies.push(module.ready)
 
       if (typeof module.dispose === 'function') disposals.push(module.dispose)
     }
@@ -71,6 +77,7 @@ export class Factory {
     return {
       preflight: preflights.length > 0 ? new Phase(preflights, ctx) : undefined,
       settle: settles.length > 0 ? new Phase(settles, ctx) : undefined,
+      ready: readies.length > 0 ? new Phase(readies, ctx) : undefined,
       dispose: disposals.length > 0 ? new Teardown(disposals, ctx) : undefined
     }
   }

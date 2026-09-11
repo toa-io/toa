@@ -92,7 +92,7 @@ implement [Algorithm Factory interface](#).
 ## Run Commands
 
 Modules in the `rc` directory of the component root run once per component lifetime, outside any
-operation. A module must export at least one of three phases, and may export several.
+operation. A module must export at least one of four phases, and may export several.
 
 ```javascript
 // rc/providers.js
@@ -106,11 +106,26 @@ export async function dispose(context) {
 }
 ```
 
-| Phase       | When                                                                            |
-| ----------- | ------------------------------------------------------------------------------- |
-| `preflight` | on connection, before operations are served                                     |
-| `settle`    | on connection, once the component can call its own operations (`context.local`) |
-| `dispose`   | on disconnection, after the component has stopped serving                       |
+| Phase       | When                                                                                     |
+| ----------- | ---------------------------------------------------------------------------------------- |
+| `preflight` | on connection, before operations are served                                              |
+| `settle`    | on connection, once the component can call its own operations (`context.local`)          |
+| `ready`     | on connection, once the component serves every operation and its receivers are consuming |
+| `dispose`   | on disconnection, after the component has stopped serving                                |
+
+`ready` is where a process hands out its name. A caller given `context.instance` calls the
+process's [stateful](/documentation/stateful.md) operations by it, and a call made before `ready` —
+from `settle`, or by a component `settle` reported the name to — may be refused with `Addressee`.
+
+```javascript
+// rc/register.js
+
+export async function ready(context) {
+  await context.remote.agents.registry.register({ input: context.instance })
+}
+```
+
+`settle` and `ready` have no counterpart: nothing runs for them on disconnection.
 
 `dispose` is the counterpart of `preflight`: what a component opened there is released here. It runs
 before the context it is given is disconnected, so a component can still reach its remotes while
