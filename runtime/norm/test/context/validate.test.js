@@ -164,3 +164,29 @@ describe('evicted', () => {
     )
   })
 })
+
+describe('addressed', () => {
+  it('should take the timeout an addressed call waits by default', () => {
+    context.addressed = { timeout: 5000 }
+
+    assert.doesNotThrow(() => validate(context))
+  })
+
+  it('should take a timeout of a millisecond at least', () => {
+    context.addressed = { timeout: 0 }
+
+    assert.throws(
+      () => validate(context),
+      (error) => /must be >= 1/.test(error.message)
+    )
+  })
+
+  it('should take nothing else', () => {
+    context.addressed = { interval: 5000 }
+
+    assert.throws(
+      () => validate(context),
+      (error) => /must NOT have additional properties/.test(error.message)
+    )
+  })
+})

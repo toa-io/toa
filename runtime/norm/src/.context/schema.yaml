@@ -163,6 +163,17 @@ properties:
           matters. Every call of an operation that declares `once` is a record for this long.
         type: integer
         minimum: 1
+  addressed:
+    type: object
+    additionalProperties: false
+    properties:
+      timeout:
+        description: >
+          Milliseconds an addressed call waits for its reply where it names no timeout of its own.
+          Nothing else ends a call to a process that has gone, so every addressed call waits for a
+          set time.
+        type: integer
+        minimum: 1
   events:
     description: >
       Events of this context that are consumed outside it. An event is otherwise published only

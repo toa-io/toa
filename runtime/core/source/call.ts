@@ -2,10 +2,13 @@ import { Readable } from 'node:stream'
 import { current, encode } from 'openspan'
 import { Connector } from './connector.js'
 import { derive, newid } from './entities/newid.js'
+import { AbandonedException, RequestContractException } from './exceptions.js'
+import * as addressed from './instance.js'
 import * as trail from './trail.js'
 import type { Transmission } from './transmission.js'
 import type { Request as Contract } from './contract/request.js'
-import type { Envelope, Request, Source } from './types/request.js'
+import type { Terms } from './types/bindings.js'
+import type { Envelope, Options, Request, Source } from './types/request.js'
 
 export class Call extends Connector {
   readonly #transmitter: Transmission
@@ -16,12 +19,16 @@ export class Call extends Connector {
 
   readonly #source: Source | undefined
 
+  /** whether a call to it names the process it goes to */
+  readonly #stateful: boolean
+
   // eslint-disable-next-line max-params
   public constructor(
     transmitter: Transmission,
     contract: Contract,
     target: string,
-    source?: Source
+    source?: Source,
+    stateful: boolean = false
   ) {
     super()
 
@@ -29,12 +36,18 @@ export class Call extends Connector {
     this.#contract = contract
     this.#target = target
     this.#source = source
+    this.#stateful = stateful
 
     this.depends(transmitter)
   }
 
-  public async invoke(request: Request = {}): Promise<any> {
+  public async invoke(request: Request = {}, options: Options = {}): Promise<any> {
     const invocation = trail.current()
+
+    this.#refuse(request, options)
+
+    // the process a call goes to, which the transmission is handed beside what the call asks
+    const { instance, ...asked } = request
 
     /*
      * The envelope is built around what the caller asked for rather than written over it: one
@@ -43,7 +56,7 @@ export class Call extends Connector {
      * of it.
      */
     const envelope: Envelope = {
-      ...request,
+      ...asked,
 
       // avoid validation on the recipient's side
       authentic: true,
@@ -73,7 +86,7 @@ export class Call extends Connector {
 
     if (context !== undefined) envelope.telemetry = encode(context)
 
-    const reply = await this.#transmitter.request(envelope)
+    const reply = await this.#transmit(envelope, this.#terms(instance, options.timeout, options.signal))
 
     if (reply === null) return null
     else if (reply instanceof Readable) return reply
@@ -99,12 +112,106 @@ export class Call extends Connector {
 
     return derive(invocation.id, this.#target, trail.ordinal(invocation, this.#target))
   }
+
+  /** A call whose making contradicts what it calls is refused before anything is sent. */
+  #refuse(request: Request, options: Options): void {
+    const { instance, task } = request
+    const { timeout, signal } = options
+
+    if (this.#stateful && instance === undefined)
+      throw new RequestContractException(
+        `'${this.#target}' is stateful, and a call to it names \`instance\``
+      )
+
+    if (!this.#stateful && instance !== undefined)
+      throw new RequestContractException(
+        `'${this.#target}' is stateless, and a call to it names no \`instance\``
+      )
+
+    // nobody waits for a task, and it is made from wherever the queue is consumed
+    if (task === true && (timeout !== undefined || signal !== undefined))
+      throw new RequestContractException('A task names no `timeout` and no `signal`')
+
+    if (timeout !== undefined && !(Number.isFinite(timeout) && timeout > 0))
+      throw new RequestContractException('`timeout` is a positive number of milliseconds')
+  }
+
+  /**
+   * What the transmission is handed beside the envelope. An addressed call always waits for a set
+   * time — its caller's, or the context's — because nothing else ends a call to a process that has
+   * gone; an ordinary call waits for one only where its caller set it.
+   */
+  #terms(instance?: string, timeout?: number, signal?: AbortSignal): Terms | undefined {
+    const deadline = timeout ?? (this.#stateful ? addressed.timeout() : undefined)
+
+    if (instance === undefined && deadline === undefined && signal === undefined)
+      return undefined
+
+    const signals: AbortSignal[] = []
+
+    if (signal !== undefined) signals.push(signal)
+    if (deadline !== undefined) signals.push(AbortSignal.timeout(deadline))
+
+    const terms: Terms = {}
+
+    if (instance !== undefined) terms.instance = instance
+    if (deadline !== undefined) terms.timeout = deadline
+
+    if (signals.length > 0)
+      terms.signal = signals.length === 1 ? signals[0] : AbortSignal.any(signals)
+
+    return terms
+  }
+
+  /** The reply, or *abandoned* once the caller has stopped waiting, however the wait ended. */
+  async #transmit(envelope: Envelope, terms: Terms | undefined): Promise<any> {
+    const signal = terms?.signal
+
+    try {
+      return await abortable(this.#transmitter.request(envelope, terms), signal)
+    } catch (exception) {
+      if (signal?.aborted === true)
+        throw new AbandonedException(`'${this.#target}' went unanswered`, signal.reason)
+
+      throw exception
+    }
+  }
 }
 
 /** Where a service calls from no invocation, the chain starts under the service's own name. */
 function service(source: Source | undefined): string[] | undefined {
   return source !== undefined && 'service' in source ? [source.service] : undefined
 }
+
+/**
+ * What the promise settles with, or the signal's reason once it aborts, whichever comes first. The
+ * promise goes on running, and settles with nobody waiting for it.
+ */
+async function abortable<T>(promise: Promise<T>, signal?: AbortSignal): Promise<T> {
+  if (signal === undefined) return await promise
+
+  if (signal.aborted) {
+    promise.catch(noop)
+
+    throw signal.reason
+  }
+
+  let abort: () => void = noop
+
+  const aborted = new Promise<never>((_resolve, reject) => {
+    abort = () => reject(signal.reason)
+  })
+
+  signal.addEventListener('abort', abort, { once: true })
+
+  try {
+    return await Promise.race([promise, aborted])
+  } finally {
+    signal.removeEventListener('abort', abort)
+  }
+}
+
+function noop(): void {}
 
 // the remote error as a value: every property it carries, and nothing else enumerable
 class RemoteError extends Error {

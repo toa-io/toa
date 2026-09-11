@@ -81,8 +81,18 @@ export class Communication extends Connector {
     await this.#io.reply(queue, process)
   }
 
-  async request(queue, request) {
-    return this.#io.request(queue, request)
+  async request(queue, request, options) {
+    return this.#io.request(queue, request, options)
+  }
+
+  async call(exchange, key, request, options) {
+    return this.#io.call(exchange, key, request, options)
+  }
+
+  async back(exchange, key, process) {
+    this.#consumable('answer calls to')
+
+    await this.#io.back(exchange, key, process)
   }
 
   async emit(exchange, message, properties) {
@@ -149,6 +159,11 @@ export class Communication extends Connector {
         message: exception?.message,
         shard
       })
+    )
+
+    // another process holds this one's name on that broker, and comq claims it again
+    this.#io.diagnose('taken', (type, queue, shard) =>
+      console.warn('Instance name taken', { queue, shard })
     )
 
     this.#io.diagnose('remove', (type, shard) =>

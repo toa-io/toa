@@ -21,6 +21,12 @@ declare namespace toa.node {
      */
     region: number
 
+    /**
+     * The name this process answers addressed calls under. A call to a stateful operation names
+     * the `instance` of the process holding its state, which is how the state is reached.
+     */
+    instance: string
+
     // system aspects
     atom: Atom
 

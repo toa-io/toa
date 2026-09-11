@@ -312,3 +312,21 @@ describe('receivers', () => {
     )
   })
 })
+
+describe('stateful', () => {
+  it('should be allowed on an operation', async () => {
+    const [operation] = Object.values(manifest.operations)
+
+    operation.stateful = true
+
+    await assert.doesNotReject(validate(manifest))
+  })
+
+  it('should be a boolean', async () => {
+    const [operation] = Object.values(manifest.operations)
+
+    operation.stateful = 'yes'
+
+    await assert.rejects(validate(manifest), (error) => /must be boolean/.test(error.message))
+  })
+})

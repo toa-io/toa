@@ -1,6 +1,6 @@
 import { Connector } from './connector.js'
 import { TransmissionException } from './exceptions.js'
-import type { Consumer } from './types/bindings.js'
+import type { Consumer, Terms } from './types/bindings.js'
 import type { Request } from './types/request.js'
 
 export class Transmission extends Connector {
@@ -13,7 +13,7 @@ export class Transmission extends Connector {
     this.depends(bindings)
   }
 
-  public async request(request: Request): Promise<any> {
+  public async request(request: Request, terms?: Terms): Promise<any> {
     let reply: any = false
     let i = 0
 
@@ -27,7 +27,7 @@ export class Transmission extends Connector {
 
         await binding.task(request)
         reply = null
-      } else reply = await binding.request(request)
+      } else reply = await binding.request(request, terms)
     }
 
     if (reply === false)

@@ -3,6 +3,7 @@ import assert from 'node:assert/strict'
 
 import clone from 'clone-deep'
 import { sample } from '@toa.io/generic'
+import { instance } from '@toa.io/core'
 
 import { Factory } from '../src/factory.js'
 import * as fixtures from './fixtures.js'
@@ -49,6 +50,22 @@ it('should bind', async () => {
 
   assert.strictEqual(r1, await calls[0].result)
   assert.strictEqual(r2, await calls[1].result)
+})
+
+it('should serve an addressed call that names this process', async () => {
+  const result = await consumer.request(3, { instance: instance() })
+  const calls = fixtures.component.invoke.mock.calls
+
+  assert.strictEqual(calls.length, 1)
+  assert.strictEqual(result, await calls[0].result)
+})
+
+// a component composed here holds this process's memory, and another process's call runs on its own
+it('should hand an addressed call that names another process to the next binding', async () => {
+  const result = await consumer.request(4, { instance: 'another' })
+
+  assert.strictEqual(result, false)
+  assert.strictEqual(fixtures.component.invoke.mock.calls.length, 0)
 })
 
 it('should return false if no binding', async () => {

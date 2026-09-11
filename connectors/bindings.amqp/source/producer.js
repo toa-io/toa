@@ -1,7 +1,7 @@
-import { Connector } from '@toa.io/core'
+import { Connector, instance } from '@toa.io/core'
 import { console } from 'openspan'
 
-import { name } from './queues.js'
+import { instances, name } from './queues.js'
 import { refuse } from './verdict.js'
 
 export class Producer extends Connector {
@@ -17,23 +17,36 @@ export class Producer extends Connector {
   /** @type {import('@toa.io/core').Component} */
   #component
 
+  /** @type {string[]} */
+  #stateful
+
   /** @type {Set<Promise<any>>} */
   #pending = new Set()
 
-  constructor(comm, locator, endpoints, component) {
+  // eslint-disable-next-line max-params
+  constructor(comm, locator, endpoints, component, stateful = []) {
     super()
 
     this.#comm = comm
     this.#locator = locator
     this.#endpoints = endpoints
     this.#component = component
+    this.#stateful = stateful
 
     this.depends(comm)
     this.depends(component)
   }
 
+  /**
+   * A stateful endpoint is served under this process's name before any other endpoint is served,
+   * so that a name this process hands out in a reply is reachable by the time it arrives.
+   */
   async open() {
-    await Promise.all(this.#endpoints.map((endpoint) => this.#endpoint(endpoint)))
+    await Promise.all(this.#stateful.map((endpoint) => this.#addressed(endpoint)))
+
+    const shared = this.#endpoints.filter((endpoint) => !this.#stateful.includes(endpoint))
+
+    await Promise.all(shared.map((endpoint) => this.#endpoint(endpoint)))
   }
 
   /**
@@ -50,6 +63,17 @@ export class Producer extends Connector {
   async close() {
     await this.#comm.seal()
     await Promise.allSettled(this.#pending)
+  }
+
+  /** Served under this process's name only: no queue of its own, and no tasks. */
+  async #addressed(endpoint) {
+    const exchange = instances(this.#locator, endpoint)
+
+    await this.#comm.back(exchange, instance(), (request) => {
+      console.debug('AMQP addressed request received', { label: exchange, request })
+
+      return this.#invoke(endpoint, request)
+    })
   }
 
   async #endpoint(endpoint) {

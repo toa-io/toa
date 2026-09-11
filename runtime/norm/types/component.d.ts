@@ -14,6 +14,8 @@ export type Operation = {
   output?: any
   error?: any
   query?: boolean
+  /** a call to it names the process holding the state */
+  stateful?: boolean
 }
 
 export type Operations = Record<string, Operation>

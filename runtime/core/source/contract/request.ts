@@ -13,6 +13,11 @@ export interface Explanation {
    * it from an answer that says nothing, and what it changes is whether a retry is safe to make.
    */
   once?: boolean
+  /**
+   * Whether a call to it names the process it goes to. Said, because the caller is the one who
+   * has to name one, and a call that names none is refused.
+   */
+  stateful?: boolean
   input?: JSONSchema | null
   output?: JSONSchema | null
   errors?: Array<string | number>
@@ -39,7 +44,7 @@ export class Request extends Contract {
   public constructor(schema: Schema, definition: Definition, entity?: Entity) {
     super(schema)
 
-    for (const key of ['description', 'once', 'input', 'output', 'errors'] as const)
+    for (const key of ['description', 'once', 'stateful', 'input', 'output', 'errors'] as const)
       if (definition[key] !== undefined)
         (this.discovery as Record<string, unknown>)[key] = definition[key]
 

@@ -25,6 +25,10 @@ export const codes = {
   Communication: 400,
   Transmission: 401,
   Endpoint: 402,
+  /** nothing held the name an addressed call named */
+  Addressee: 403,
+  /** the caller stopped waiting, and what it called may still run */
+  Abandoned: 404,
 
   /** a chain that came back to where it had been, or went further than a chain goes */
   Loop: 500
@@ -157,6 +161,8 @@ export const DuplicateCallException = derive('DuplicateCall')
 export const CommunicationException = derive('Communication')
 export const TransmissionException = derive('Transmission')
 export const EndpointException = derive('Endpoint')
+export const AddresseeException = derive('Addressee')
+export const AbandonedException = derive('Abandoned')
 
 export const names = swap(codes)
 // #endregion
@@ -201,6 +207,10 @@ const OUTCOME: Record<keyof typeof codes, 'permanent' | 'transient'> = {
   // its sibling, and the other way round: nothing carried the call is a moment,
   // there is nothing to carry it to is a fact
   Endpoint: 'permanent',
+  // a process that lost its broker connection claims its name again once it is restored
+  Addressee: 'transient',
+  // what the caller gave up on may have run, and may run yet
+  Abandoned: 'transient',
 
   // the chain is deterministic, so another attempt walks it again: a retry is another cycle
   Loop: 'permanent'

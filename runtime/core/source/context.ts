@@ -1,10 +1,11 @@
 import { Connector } from './connector.js'
+import { instance } from './instance.js'
 import { environment } from '@toa.io/generic'
 import type { Locator } from './locator.js'
 import type { Component } from './component.js'
 import type { Remote } from './remote.js'
 import type { Aspect } from './types/extensions.js'
-import type { Request } from './types/request.js'
+import type { Options, Request } from './types/request.js'
 
 type Discover = (namespace: string, name: string) => Promise<Remote>
 
@@ -21,6 +22,9 @@ export class Context extends Connector {
   public readonly aspects: Aspect[]
   public readonly locator: Locator
 
+  /** The name this process answers addressed calls under. */
+  public readonly instance: string
+
   readonly #local: Component
   readonly #discover: Discover
   readonly #remotes: Record<string, Promise<Remote>> = {}
@@ -33,6 +37,7 @@ export class Context extends Connector {
     this.region = Number(environment.get('TOA_REGION') ?? 0)
     this.aspects = aspects
     this.locator = local?.locator
+    this.instance = instance()
 
     this.#local = local
     this.#discover = discover
@@ -42,8 +47,8 @@ export class Context extends Connector {
     if (aspects.length > 0) this.depends(aspects)
   }
 
-  public async apply(endpoint: string, request: Request): Promise<any> {
-    return this.#local.invoke(endpoint, request)
+  public async apply(endpoint: string, request: Request, options?: Options): Promise<any> {
+    return this.#local.invoke(endpoint, request, options)
   }
 
   // eslint-disable-next-line max-params
@@ -51,11 +56,12 @@ export class Context extends Connector {
     namespace: string,
     name: string,
     endpoint: string,
-    request: Request
+    request: Request,
+    options?: Options
   ): Promise<any> {
     const remote = await this.#remote(namespace, name)
 
-    return remote.invoke(endpoint, request)
+    return remote.invoke(endpoint, request, options)
   }
 
   async #remote(namespace: string, name: string): Promise<Remote> {

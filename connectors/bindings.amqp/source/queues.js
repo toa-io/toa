@@ -8,6 +8,9 @@ import { concat } from '@toa.io/generic'
 export const name = (locator, endpoint) =>
   locator.namespace + '.' + concat(locator.name, '.') + endpoint
 
+/** the exchange the processes serving a stateful endpoint are bound to, each under its name */
+export const instances = (locator, endpoint) => name(locator, endpoint) + '..instances'
+
 /** where a channel is published to */
 export const outbound = (channel) => channel + '.' + OUT
 
