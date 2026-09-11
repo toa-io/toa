@@ -3,7 +3,9 @@ import { get } from './get.js'
 import { set } from './set.js'
 import { basic } from './basic.js'
 import { email } from './email.js'
+export { email } from './email.js'
 import { password } from './password.js'
+export { password } from './password.js'
 import { now } from './now.js'
 import { utc } from './utc.js'
 import { unix } from './unix.js'
@@ -26,5 +28,3 @@ export const functions: Functions = {
 type Fn = (this: Captures, value: string, ...args: string[]) => string
 
 export type Functions = Record<string, Fn>
-
-export { email, password }

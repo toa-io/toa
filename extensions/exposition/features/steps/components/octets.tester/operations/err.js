@@ -1,6 +1,6 @@
 import { setTimeout } from 'node:timers/promises'
 
-async function err(_) {
+export async function effect(_) {
   await setTimeout(20)
 
   const err = Object.create(Error.prototype)
@@ -10,5 +10,3 @@ async function err(_) {
 
   return err
 }
-
-export { err as effect }

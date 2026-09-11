@@ -1,18 +1,3 @@
-import Separator from './button-group-separator.svelte'
-import Text from './button-group-text.svelte'
-import Root, {
-  buttonGroupVariants,
-  type ButtonGroupOrientation
-} from './button-group.svelte'
-
-export {
-  Root,
-  Text,
-  Separator,
-  buttonGroupVariants,
-  type ButtonGroupOrientation,
-  //
-  Root as ButtonGroup,
-  Text as ButtonGroupText,
-  Separator as ButtonGroupSeparator
-}
+export { default as Separator, default as ButtonGroupSeparator } from './button-group-separator.svelte'
+export { default as Text, default as ButtonGroupText } from './button-group-text.svelte'
+export { default as Root, default as ButtonGroup, buttonGroupVariants, type ButtonGroupOrientation } from './button-group.svelte'

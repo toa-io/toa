@@ -1,4 +1,4 @@
-const builder = (yargs) => {
+export const builder = (yargs) => {
   yargs
     .option('public', {
       group: 'Command options:',
@@ -15,7 +15,7 @@ const builder = (yargs) => {
 }
 
 // the handler and what it depends on load when the command runs, not when the program starts
-const handler = async (argv) => {
+export const handler = async (argv) => {
   const { key } = await import('../handlers/key.js')
 
   return await key(argv)
@@ -23,5 +23,3 @@ const handler = async (argv) => {
 
 export const command = 'key'
 export const desc = 'Generate an encryption key'
-
-export { builder, handler }

@@ -1,5 +1,3 @@
-function observe(_, object) {
+export function observation(_, object) {
   return object
 }
-
-export { observe as observation }

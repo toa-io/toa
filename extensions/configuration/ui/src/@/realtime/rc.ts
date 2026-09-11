@@ -1,7 +1,7 @@
 import { account, authenticated } from '@/iam'
 import { disconnect, connect } from './svc/connect'
 
-function rc() {
+export function rc() {
   authenticated.subscribe((authenticated) => {
     const me = account.extract()!
 
@@ -9,5 +9,3 @@ function rc() {
     else void connect(me.id)
   })
 }
-
-export { rc }

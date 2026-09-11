@@ -1,5 +1,3 @@
-function enumerate(_, objects) {
+export function observation(_, objects) {
   return objects
 }
-
-export { enumerate as observation }

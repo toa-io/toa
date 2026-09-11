@@ -1,4 +1,4 @@
-const builder = (yargs) => {
+export const builder = (yargs) => {
   yargs
     .positional('environment', {
       type: 'string',
@@ -22,7 +22,7 @@ const builder = (yargs) => {
 }
 
 // what it reads is a declaration, so it needs neither the runtime nor the deployment library
-const handler = async (argv) => {
+export const handler = async (argv) => {
   const { npm } = await import('../handlers/npm.js')
 
   return await npm(argv)
@@ -30,5 +30,3 @@ const handler = async (argv) => {
 
 export const command = 'npm [environment]'
 export const desc = "Install what this Context's components declare"
-
-export { builder, handler }

@@ -1,6 +1,5 @@
 import type { Source } from '@toa.io/core/types'
-
-export type { Source }
+export type { Source } from '@toa.io/core/types'
 
 /**
  * The caller side of an edge: the operation that made the call, the event that

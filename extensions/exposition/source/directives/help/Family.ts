@@ -1,7 +1,7 @@
 import { Help } from './Help.js'
 import { Parameters } from './Parameters.js'
 import type { Introspection, Schema } from '../../Introspection.js'
-import type { Described } from './described.js'
+export type { Described } from './described.js'
 import type { Context } from '../../HTTP/index.js'
 import type { DirectiveFamily } from '../../RTD/index.js'
 
@@ -118,5 +118,3 @@ function declared(
 
   return (found as Parameters | undefined) ?? null
 }
-
-export type { Described }

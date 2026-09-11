@@ -4,6 +4,7 @@ import { Connector } from '@toa.io/core'
 import { Receiver } from './Receiver.js'
 import { environment } from '@toa.io/generic'
 import type { Route } from '@toa.io/definitions/extensions.realtime'
+export type { Route } from '@toa.io/definitions/extensions.realtime'
 import type { Host } from './Factory.js'
 
 export class Routes extends Connector {
@@ -61,5 +62,3 @@ class Events extends Readable {
 
   public override _read(): void {}
 }
-
-export type { Route }

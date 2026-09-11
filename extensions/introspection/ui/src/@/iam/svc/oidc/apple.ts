@@ -2,7 +2,7 @@ import type { Descriptor } from './providers'
 
 const win = typeof window !== 'undefined' && (window as any)
 
-async function apple(descriptor: Descriptor): Promise<string | Error> {
+export async function apple(descriptor: Descriptor): Promise<string | Error> {
   await init(descriptor)
 
   const response = await win.AppleID.auth.signIn().catch((err: unknown) => err)
@@ -23,6 +23,7 @@ function init(descriptor: Descriptor) {
 
     script.src =
       'https://appleid.cdn-apple.com/appleauth/static/jsapi/appleid/1/en_US/appleid.auth.js'
+
     script.async = true
 
     script.onload = () => {
@@ -31,7 +32,7 @@ function init(descriptor: Descriptor) {
         scope: descriptor.scope,
         redirectURI: window.location.origin,
         state: btoa(JSON.stringify({ idp: 'apple' })),
-        usePopup: true
+        usePopup: true,
       })
 
       resolve(undefined)
@@ -42,5 +43,3 @@ function init(descriptor: Descriptor) {
     document.head.appendChild(script)
   })
 }
-
-export { apple }

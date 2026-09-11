@@ -1,5 +1,3 @@
-function assign(input, changeset) {
+export function assignment(input, changeset) {
   Object.assign(changeset, input)
 }
-
-export { assign as assignment }

@@ -7,7 +7,7 @@ import type { Locale } from './types'
  * @param code BCP 47 language code
  * @returns {boolean} True if the code is supported, otherwise false.
  */
-function supported(code: string): boolean {
+export function supported(code: string): boolean {
   return locales.some((locale) => locale.startsWith(code))
 }
 
@@ -18,8 +18,6 @@ function supported(code: string): boolean {
  * @param code BCP 47 language code
  * @returns {Locale} A Locale type with the matched locale, or the default locale if no match is found.
  */
-function resolveLocale(code: string): Locale {
+export function resolveLocale(code: string): Locale {
   return locales.find((locale) => locale.startsWith(code)) ?? 'en-US'
 }
-
-export { supported, resolveLocale }

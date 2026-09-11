@@ -1,4 +1,4 @@
-function query(params: URLSearchParams, options?: Options): string {
+export function query(params: URLSearchParams, options?: Options): string {
   const parts: string[] = []
   const criteria: string[] = []
 
@@ -17,5 +17,3 @@ const SEPARATE: string[] = ['omit', 'limit', 'search'] as const
 interface Options {
   separate?: string[]
 }
-
-export { query }

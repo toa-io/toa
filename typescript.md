@@ -50,6 +50,18 @@ import { Storage } from './Storage'
 import { Storage } from './Storage.js'
 ```
 
+What a module exports is exported where it is declared:
+
+```typescript
+class Storage {}
+
+export { Storage }
+```
+
+```typescript
+export class Storage {}
+```
+
 ## Tests
 
 A test is a `*.test.ts` beside what it tests, written on `node:test` and `node:assert/strict`, and

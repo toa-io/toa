@@ -1,14 +1,16 @@
 import { derived } from 'svelte/store'
 import { dictionaries, locales } from './built.js'
+export { dictionaries, locales } from './built.js'
 import { account } from '@/iam'
 import { value } from 'svas'
 import { supported, resolveLocale } from './bcp'
 import Negotiator from 'negotiator'
-import type { Locale, Dictionary, Grammar } from './types'
+import type { Locale } from './types'
+export type { Locale, Dictionary, Grammar } from './types'
 
 const defaultLocale = 'en-US'
 
-type Translation<T = string> = Record<Locale, T>
+export type Translation<T = string> = Record<Locale, T>
 
 interface PluralForms {
   other: string
@@ -19,13 +21,13 @@ interface PluralForms {
   many?: string
 }
 
-type Plural = Translation<PluralForms>
+export type Plural = Translation<PluralForms>
 
-const selected = value<Locale | undefined>({
+export const selected = value<Locale | undefined>({
   persist: 'intl:selected'
 })
 
-const locale = derived([account, selected], ([$account, $selected]) => {
+export const locale = derived([account, selected], ([$account, $selected]) => {
   if ($selected) return resolveLocale($selected)
 
   const system = preferred()
@@ -56,9 +58,6 @@ export function acceptable(header: string | null): Locale {
   return languages[0] ?? defaultLocale
 }
 
-const dict = derived(locale, ($locale) => dictionaries[$locale])
-
-export { dict, dictionaries, locales, selected, locale }
-export type { Locale, Translation, Plural, Dictionary, Grammar }
+export const dict = derived(locale, ($locale) => dictionaries[$locale])
 
 export * from './bcp'

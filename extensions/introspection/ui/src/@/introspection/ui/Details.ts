@@ -1,7 +1,7 @@
 import type { ClassValue } from 'svelte/elements'
 import type { Node } from '@/introspection'
 
-type NodeDetails = Pick<
+export type NodeDetails = Pick<
   Node,
   | 'namespace'
   | 'component'
@@ -20,5 +20,3 @@ export interface Props {
   node: NodeDetails
   class?: ClassValue
 }
-
-export type { NodeDetails }
