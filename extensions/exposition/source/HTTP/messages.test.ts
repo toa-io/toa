@@ -1,13 +1,14 @@
-import { describe, it, beforeEach } from 'node:test'
+import { describe, it, beforeEach, afterEach, mock } from 'node:test'
 import assert from 'node:assert/strict'
 
 import { once } from 'node:events'
 import { PassThrough, Readable } from 'node:stream'
 import { setTimeout } from 'node:timers/promises'
 import * as streamConsumers from 'node:stream/consumers'
+import { console } from 'openspan'
 import { generate } from 'randomstring'
 import * as msgpack from 'msgpackr'
-import { multipart, read, type OutgoingMessage } from './messages.ts'
+import { multipart, read, write, type OutgoingMessage } from './messages.ts'
 import { BadRequest, UnsupportedMediaType } from './exceptions.ts'
 import { formats, types } from './formats/index.ts'
 import { Timing } from './Timing.ts'
@@ -199,6 +200,71 @@ describe('read', () => {
     await assert.rejects(text, { message: 'boom' })
   })
 })
+
+describe('write', () => {
+  let warn: ReturnType<typeof mock.method>
+
+  beforeEach(() => {
+    warn = mock.method(console, 'warn', () => undefined)
+  })
+
+  afterEach(() => {
+    warn.mock.restore()
+  })
+
+  it('should not warn when the client closes a stream', async () => {
+    const body = new Readable({ read: () => {} })
+    const response = streamed(body)
+
+    body.push('Hello')
+    await setTimeout(10)
+    response.destroy() // the client went away
+
+    await closed(body)
+    await setTimeout(10)
+
+    assert.equal(warn.mock.callCount(), 0)
+  })
+
+  it('should warn on a stream error', async () => {
+    const body = new Readable({ read: () => {} })
+
+    streamed(body)
+    body.destroy(new Error('boom'))
+
+    await closed(body)
+    await setTimeout(10)
+
+    const messages = warn.mock.calls.map((call) => call.arguments[0])
+
+    assert.ok(messages.includes('Message stream error'))
+  })
+})
+
+function streamed(body: Readable): PassThrough {
+  const response = new PassThrough()
+
+  Object.assign(response, { setHeader: () => response })
+
+  const context = {
+    ...createContext(generate()),
+    pipelines: { response: [] }
+  } as unknown as Context
+
+  const message: OutgoingMessage = {
+    headers: new Headers({ 'content-type': 'text/plain' }),
+    body
+  }
+
+  void write(context, response as unknown as http.ServerResponse, message)
+
+  return response
+}
+
+// not `once`, which rejects on the `error` a destroyed stream emits before it closes
+async function closed(stream: Readable): Promise<void> {
+  await new Promise((resolve) => stream.on('close', resolve))
+}
 
 function frame(body: Readable, signal?: AbortSignal): Readable {
   const response = new PassThrough() as unknown as http.ServerResponse
