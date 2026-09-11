@@ -1,6 +1,6 @@
 import { execFileSync, spawn } from 'node:child_process'
 import { closeSync, existsSync, openSync, readdirSync, statSync } from 'node:fs'
-import { mkdir, readdir, rm, stat, writeFile } from 'node:fs/promises'
+import { mkdir, readdir, rm, stat, utimes, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 
 /** A revision, and the installed tree it runs from. */
@@ -48,6 +48,12 @@ export async function resolve(repository: string, ref: string | undefined, cache
     await run(['sh', '-c', `git -C "${repository}" show ${sha}:package-lock.json > package-lock.json`], { cwd: root, log })
     await run(['npm', 'ci'], { cwd: root, log })
     await writeFile(ready, new Date().toISOString())
+  } else {
+    // the trees kept are the most recently used, and a run's base is resolved before its head
+    // is installed: without this, installing the head could remove the base
+    const now = new Date()
+
+    await utimes(ready, now, now)
   }
 
   await prune(trees, KEEP)
