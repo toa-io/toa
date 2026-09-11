@@ -32,8 +32,7 @@ export const context = async (root, environment = variables.get('TOA_ENV')) => {
 
   context.components = await Promise.all(paths.map(component))
 
-  // before anything is derived from what is left, so that nothing an evicted component
-  // alone declared is resolved, annotated or deployed
+  // before the dependencies, which mark what only evicted components require
   evict(context)
 
   // what a context declares of every component that stores anything, its own and the ones its

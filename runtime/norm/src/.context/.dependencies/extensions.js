@@ -7,14 +7,19 @@ export const extensions = async (context) => {
   const extensions = {}
   const components = context.components?.slice() ?? []
 
+  /** the components each extension brings, by reference
+   *  @type {Map<string, toa.norm.Component[]>} */
+  const contributed = new Map()
+
   // an extension a composition runs may be referenced by no component of this context,
   // and its own components must be extracted all the same
-  const declared = await extractDeclaredServices(context, extensions)
+  const declared = await extractDeclaredServices(context, extensions, contributed)
 
   const extracted = declared.concat(
     await extractExtensionComponents(
       components.concat(declared),
       extensions,
+      contributed,
       context.annotations
     )
   )
@@ -34,10 +39,10 @@ export const extensions = async (context) => {
     }
   }
 
-  return { extensions, components: extracted }
+  return { extensions, components: extracted, contributed }
 }
 
-async function extractDeclaredServices(context, extensions) {
+async function extractDeclaredServices(context, extensions, contributed) {
   const extracted = []
 
   for (const composition of context.compositions ?? [])
@@ -45,7 +50,9 @@ async function extractDeclaredServices(context, extensions) {
       if (reference in extensions) continue
 
       try {
-        extracted.push(...(await extract(reference, extensions, context.annotations)))
+        extracted.push(
+          ...(await extract(reference, extensions, contributed, context.annotations))
+        )
       } catch (e) {
         throw new Error(
           `Composition '${composition.name}' lists '${reference}', ` +
@@ -58,7 +65,7 @@ async function extractDeclaredServices(context, extensions) {
   return extracted
 }
 
-async function extractExtensionComponents(components, extensions, annotations) {
+async function extractExtensionComponents(components, extensions, contributed, annotations) {
   const extracted = []
 
   for (const component of components) {
@@ -67,13 +74,18 @@ async function extractExtensionComponents(components, extensions, annotations) {
     for (const reference of Object.keys(component.extensions)) {
       if (reference in extensions) continue
 
-      extracted.push(...(await extract(reference, extensions, annotations)))
+      extracted.push(...(await extract(reference, extensions, contributed, annotations)))
     }
   }
 
   if (extracted.length === 0) return extracted
 
-  const deeper = await extractExtensionComponents(extracted, extensions, annotations)
+  const deeper = await extractExtensionComponents(
+    extracted,
+    extensions,
+    contributed,
+    annotations
+  )
 
   return extracted.concat(deeper)
 }
@@ -83,10 +95,11 @@ async function extractExtensionComponents(components, extensions, annotations) {
  *
  * @param {string} reference
  * @param {object} extensions
+ * @param {Map<string, toa.norm.Component[]>} contributed
  * @param {object} [annotations]
  * @returns {Promise<Array<toa.norm.Component>>}
  */
-async function extract(reference, extensions, annotations) {
+async function extract(reference, extensions, contributed, annotations) {
   extensions[reference] = []
 
   const { name, module: mod } = await definition(reference)
@@ -99,11 +112,11 @@ async function extract(reference, extensions, annotations) {
 
   // a definition carries the manifests, read where the extension is not installed;
   // an entry names the directories, where it is
-  if (manifests !== undefined) return manifests.map(revive)
+  const extracted = manifests === undefined ? [] : manifests.map(revive)
 
-  const extracted = []
+  if (manifests === undefined) for (const path of paths) extracted.push(await load(path))
 
-  for (const path of paths) extracted.push(await load(path))
+  contributed.set(reference, extracted)
 
   return extracted
 }

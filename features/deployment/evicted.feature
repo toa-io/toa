@@ -1,7 +1,8 @@
 @deployment
 Feature: Evicted components and services
 
-  What a context evicts is not deployed, whatever else names it.
+  What a context evicts stays part of it and is deployed by other means: Toa deploys none of it,
+  whatever else names it.
 
   Scenario: An evicted component is not deployed
     Given I have components:
@@ -148,10 +149,9 @@ Feature: Evicted components and services
     When I export images
     Then there is no file ./images/extension-exposition-gateway.*/Dockerfile
 
-  Scenario: An evicted component consumes nothing
+  Scenario: An evicted component still consumes
 
-  It is taken out before anything is derived from what is left, so a producer whose only
-  receiver is evicted publishes nothing and writes no outbox.
+  It is deployed by other means, so what it receives is published all the same.
 
     Given I have components:
       | mongo.outbox |
@@ -169,14 +169,45 @@ Feature: Evicted components and services
         - name: mongo-outbox
           variables:
             - name: TOA_EVENTS_MONGO_OUTBOX
-      """
-    And exported values should not contain:
-      """yaml
-      compositions:
-        - name: mongo-outbox
-          variables:
-            - name: TOA_EVENTS_MONGO_OUTBOX
               value: incremented sync
+      """
+
+  @helm
+  Scenario: An extension only an evicted component declares is not deployed
+    Given I have components:
+      | dummies.one       |
+      | realtime.streamer |
+    And I have a context with:
+      """yaml
+      evicted:
+        components:
+          - realtime.streamer
+      """
+    When I export deployment
+    And I run `helm template deployment`
+    Then program should exit
+    And stdout should not contain lines:
+      """
+      name: extension-realtime-streams
+      """
+
+  @helm
+  Scenario: And one a deployed component declares is
+    Given I have components:
+      | dummies.one       |
+      | realtime.streamer |
+    And I have a context with:
+      """yaml
+      evicted:
+        components:
+          - dummies.one
+      """
+    When I export deployment
+    And I run `helm template deployment`
+    Then program should exit
+    And stdout should contain lines:
+      """
+      name: extension-realtime-streams
       """
 
   Scenario: Evicting a service nothing would have deployed changes nothing

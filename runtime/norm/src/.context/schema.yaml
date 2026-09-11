@@ -80,7 +80,8 @@ properties:
       required: [name, components]
   evicted:
     description: >
-      What this context does not deploy, even where a composition lists it. A component named
+      What Toa does not deploy for this context, even where a composition lists it: it stays
+      part of the context, and is deployed by other means. A component named
       here is in no pod, and what only it declared — an extension, a storage, a binding — is
       not deployed either. A service named here gets no Deployment, Service or Ingress, and
       no composition runs it.

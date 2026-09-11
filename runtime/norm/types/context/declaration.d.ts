@@ -7,7 +7,7 @@ interface Composition {
   services?: string[]
 }
 
-/** What a context does not deploy, whatever else names it. */
+/** What Toa does not deploy for a context, whatever else names it: still part of it, deployed by other means. */
 export interface Evicted {
   components?: string[]
   services?: string[]

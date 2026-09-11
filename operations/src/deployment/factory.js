@@ -27,6 +27,10 @@ export class Factory {
    *  @type {Set<string>} */
   #evicted
 
+  /** the extensions some composition lists, whether or not that composition is deployed
+   *  @type {Set<string>} */
+  #listed
+
   constructor(context, options = {}) {
     this.#context = context
     this.#mono = options.mono === true
@@ -38,22 +42,23 @@ export class Factory {
       context.registry
     )
 
+    const compositions = deployed(context.compositions)
+
     this.#registry = new Registry(context.registry, imagesFactory, this.#process)
-    this.#claims = claims(context)
+    this.#claims = claims(compositions)
+    this.#listed = listed(context.compositions)
     this.#evicted = new Set(context.evicted?.services ?? [])
     this.#dependencies = this.#getDependencies()
     this.#compositions = []
 
     if (this.#mono)
       this.#image = this.#registry.mono({
-        components: context.components,
+        components: context.components.filter(managed),
         // mono runs every service, so it installs what every one of them brings
         packages: context.packages
       })
     else
-      this.#compositions = context.compositions.map((composition) =>
-        this.#composition(composition)
-      )
+      this.#compositions = compositions.map((composition) => this.#composition(composition))
   }
 
   async operator() {
@@ -115,10 +120,16 @@ export class Factory {
 
     if (module.deployment === undefined) return
 
+    // an evicted component is deployed by other means, and so is whatever only evicted
+    // components require; a service a composition lists is deployed for being listed
+    const managed = instances.filter(({ component }) => component.evicted !== true)
+
+    if (managed.length === 0 && instances.length > 0 && !this.#listed.has(reference)) return
+
     const annotation = this.#context.annotations?.[name]
 
     /** @type {toa.deployment.dependency.Declaration} */
-    const dependency = module.deployment(instances, annotation)
+    const dependency = module.deployment(managed, annotation)
 
     // mono claims every service, including one an extension added since this context was
     // written, so its claim is the wildcard rather than a list
@@ -169,13 +180,43 @@ const MONO = 'mono'
 const PUBLISHED = 'published'
 
 /**
- * @param {toa.norm.Context} context
+ * The compositions this context deploys: each without its evicted members, and none left with no
+ * members at all — the name it held is free again, and a service it listed falls back to a
+ * deployment of its own.
+ *
+ * @param {toa.norm.Composition[]} [compositions]
+ * @returns {toa.norm.Composition[]}
+ */
+function deployed(compositions = []) {
+  return compositions
+    .map((composition) => ({
+      ...composition,
+      components: composition.components.filter(managed)
+    }))
+    .filter((composition) => composition.components.length > 0)
+}
+
+/** An evicted component is deployed by other means. */
+function managed(component) {
+  return component.evicted !== true
+}
+
+/**
+ * @param {toa.norm.Composition[]} [compositions]
+ * @returns {Set<string>}
+ */
+function listed(compositions = []) {
+  return new Set(compositions.flatMap((composition) => composition.services ?? []))
+}
+
+/**
+ * @param {toa.norm.Composition[]} compositions
  * @returns {Map<string, string[]>}
  */
-function claims(context) {
+function claims(compositions) {
   const map = new Map()
 
-  for (const composition of context.compositions ?? [])
+  for (const composition of compositions)
     for (const reference of composition.services ?? []) {
       if (!map.has(reference)) map.set(reference, [])
 

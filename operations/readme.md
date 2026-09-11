@@ -42,7 +42,8 @@ See [compositions](../documentation/compositions.md).
 
 ## Evicted
 
-What a context does not deploy, whatever a composition lists:
+What Toa does not deploy for a context, whatever a composition lists. It stays part of the
+context, and is deployed by other means:
 
 ```yaml
 # context.toa.yaml

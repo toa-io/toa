@@ -74,4 +74,6 @@ export type Manifest = Declaration & {
   path: string
   /** what a deploy installs beside this component for what it declares, by package name */
   packages?: Record<string, string>
+  /** Toa deploys nothing for it: the context evicts it, or only evicted components require it */
+  evicted?: boolean
 }
