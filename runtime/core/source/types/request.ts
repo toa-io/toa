@@ -36,8 +36,8 @@ export interface Request<Input = any, Entity = any> {
   entity?: Entity
   task?: boolean
   /**
-   * The process a call to a stateful operation goes to: the `context.instance` of the process
-   * holding the state. Named for a stateful operation, and for no other.
+   * The process a call to a stateful operation goes to: that process's `context.instance`. Named
+   * for a stateful operation, and for no other.
    */
   instance?: string
   /**

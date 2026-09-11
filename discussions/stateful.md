@@ -2,16 +2,15 @@
 
 ## Design concept
 
-Some state lives in the memory of one process — a session, a connection, a stream someone is
-producing — and a call about it has to reach that process. Every other call in Toa goes to whichever
-replica of a component takes it first.
+Some operations have to be served by one particular process, for reasons of the component's own, and
+a call to one has to reach that process. Every other call in Toa goes to whichever replica of a
+component takes it first.
 
 Every process has a **name**, generated when it starts or given by `TOA_INSTANCE`. An operation
 declared **stateful** is offered by each process under that process's name, and an **addressed call**
 — a call naming a process — is how it is reached. The two exist together: an addressed call goes to a
 stateful operation, and a stateful operation takes addressed calls only. A process reads its own name
-as `context.instance` and hands it out: in the reply of the call that created the state, or as part of
-a URL. It binds its name before it answers anything, so a name it has handed out is reachable at once.
+as `context.instance` and hands it out: in a reply, or as part of a URL. It binds its name before it answers anything, so a name it has handed out is reachable at once.
 
 An addressed call ends in one of three ways:
 
@@ -61,11 +60,11 @@ deadline it waits for its reply as it does today.
 **Limits**
 
 7. A name lives as long as its process's broker connection. During a brief connection loss or a broker
-   restart, calls to that process are refused and calls queued for it are abandoned, while its memory
-   survives. The refusal is transient: an event or a delayed call whose call is refused this way is
+   restart, calls to that process are refused and calls queued for it are abandoned, while the process
+   keeps running. The refusal is transient: an event or a delayed call whose call is refused this way is
    tried again, and goes through once the process holds its name again.
 8. A name given by `TOA_INSTANCE` passes to the next process started with it, which then answers
-   calls meant for its predecessor, with none of its memory. A generated name belongs to one process
+   the calls meant for its predecessor. A generated name belongs to one process
    for good. Two live processes given the same name can hold it on different brokers, and both answer
    calls; each reports the name taken where the other holds it.
 9. A process waiting on an ordinary call without a deadline waits for its reply, and so does its
@@ -73,7 +72,7 @@ deadline it waits for its reply as it does today.
 
 ### What a component author does differently
 
-Declare the operation stateful, and hand out the name of the process that holds the state:
+Declare the operation stateful, and hand out the name of the process that serves it:
 
 ```yaml
 # manifest.toa.yaml

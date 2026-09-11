@@ -15,7 +15,7 @@ export class Consumer extends Connector {
 
   /**
    * An addressed call is served here when it names this process, and handed to the next binding
-   * when it names another: a component composed in this process holds this process's memory only.
+   * when it names another: the call is for that process, whichever replica composes the component here.
    */
   async request(request, terms) {
     if (terms?.instance !== undefined && terms.instance !== instance()) return false

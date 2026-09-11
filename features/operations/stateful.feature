@@ -1,7 +1,7 @@
 Feature: Stateful operations
 
-  A stateful operation works on the memory of the process running it, and a call to it names the
-  process it goes to.
+  A stateful operation is served by one particular process, and a call to it names the process it
+  goes to.
 
   Scenario: A call reaches the process it names
     Given I compose `stateful.counter` component
@@ -66,7 +66,7 @@ Feature: Stateful operations
       """
 
   @cli
-  Scenario: A call reaches another process by its name, and leaves this one's memory alone
+  Scenario: A call reaches another process by its name, and leaves this one untouched
     Given I have a component `stateful.counter`
     When I run `TOA_INSTANCE=far toa compose ./components/stateful.counter`
     And I compose `stateful.counter` component

@@ -23,7 +23,7 @@ declare namespace toa.node {
 
     /**
      * The name this process answers addressed calls under. A call to a stateful operation names
-     * the `instance` of the process holding its state, which is how the state is reached.
+     * the `instance` of the process it goes to.
      */
     instance: string
 

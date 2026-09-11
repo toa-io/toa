@@ -183,8 +183,8 @@ It is written above the endpoint in the component's generated types, answered by
 [`OPTIONS`](/extensions/exposition/documentation/introspection.md), and carried by the
 [introspection map](/extensions/introspection).
 
-An operation whose work depends on the memory of the process running it is declared
-`stateful: true`, and a call to it names that process. See
+An operation that has to be served by one particular process is declared `stateful: true`, and a
+call to it names that process. See
 [stateful operations](/documentation/stateful.md).
 
 ## Events

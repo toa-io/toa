@@ -147,7 +147,7 @@ properties:
             # the same call arriving twice changes state once; see documentation/inbox.md
             type: boolean
           stateful:
-            # a call to it names the process holding the state; see documentation/stateful.md
+            # served by one particular process, which a call to it names; see documentation/stateful.md
             type: boolean
           forward:
             $ref: "#/definitions/name"

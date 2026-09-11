@@ -1,20 +1,18 @@
 # Stateful operations
 
-Some state lives in the memory of one process: a connection, a stream someone is producing, a
-session. A call about it has to reach that process, where every other call reaches whichever replica
-of a component takes it first.
+An operation declared stateful is served by one particular process, and a call to it names that
+process. Every other call reaches whichever replica of a component takes it first. Why an operation
+has to be served by one process is the component's own business.
 
 **An addressed call is unreliable.** Every other call reaches a component, and a component comes
 back: a call waits for it, a message is kept until it is taken, and a failure is tried again. An
-addressed call reaches one process, and what it is about lives in that process's memory and nowhere
-else. When the process is gone — it crashed, it was stopped, it lost its broker connection — the
-state is gone with it, and there is no other replica to carry the call and no later moment at which
-it could succeed. So an addressed call can end without an answer, and a call that ended without one
-may have run.
+addressed call reaches one process, and no other process can answer it in its place. When that
+process is gone — it crashed, it was stopped, it lost its broker connection — there is no replica to
+carry the call, and nothing says the process will return. So an addressed call can end without an
+answer, and a call that ended without one may have run.
 
-Write for it: keep in a stateful operation only what can be rebuilt, treat a refused or abandoned call
-as a state to recover from, and keep whatever must survive in the component's state rather than in
-a process.
+Write for it: treat a refused or an abandoned call as an outcome the caller handles, and keep whatever
+must outlive a process where every replica reaches it.
 
 ## TL;DR
 
@@ -29,7 +27,7 @@ operations:
 ```
 
 ```typescript
-// open: hand out the name of the process that holds the state
+// open: hand out the name of this process, which later calls name
 return { instance: context.instance, id }
 
 // elsewhere: call that process
@@ -42,8 +40,7 @@ An operation declared `stateful: true` is served by each process under that proc
 takes calls that name a process. A process reads its name as `context.instance`: generated when the
 process starts, or given by `TOA_INSTANCE`.
 
-Hand the name out with whatever the state belongs to — in the reply of the call that created it, or
-as part of a URL. A process serves its name before it answers anything, so a name it has handed out
+Hand the name out to whoever will call the process — in a reply, or as part of a URL. A process serves its name before it answers anything, so a name it has handed out
 is reachable by the time it arrives.
 
 ## Calling
@@ -115,9 +112,9 @@ A route reaches a stateful operation with the name in a route parameter:
 
 - **A name lasts as long as its process's broker connection.** While the process reconnects — a lost
   connection, a broker restart — calls to it are refused and calls queued for it are abandoned, while
-  its memory is intact.
+  the process itself keeps running.
 - **A name given by `TOA_INSTANCE` passes to the next process started with it**, which then answers
-  calls meant for the one before, with none of its memory.
+  the calls meant for the process before it.
 - **Two live processes given one name can both hold it**, on different brokers, and both answer
   calls. Each logs `Instance name taken` for the broker where the other holds it, and holds the name
   there once the other is gone. A process whose name is taken on its only broker serves nothing

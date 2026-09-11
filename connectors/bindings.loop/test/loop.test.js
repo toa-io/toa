@@ -60,7 +60,7 @@ it('should serve an addressed call that names this process', async () => {
   assert.strictEqual(result, await calls[0].result)
 })
 
-// a component composed here holds this process's memory, and another process's call runs on its own
+// a call for another process runs on that process, though the component is composed here too
 it('should hand an addressed call that names another process to the next binding', async () => {
   const result = await consumer.request(4, { instance: 'another' })
 
