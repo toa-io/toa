@@ -5,6 +5,7 @@ import { Headers } from './Headers.js'
 import { Languages } from './Languages.js'
 import { Language } from './Language.js'
 import { Segments } from './Segments.js'
+import { Instance } from './Instance.js'
 import { Authority } from './Authority.js'
 import { BufferMapping } from './Buffer.js'
 import { Claims } from './Claims.js'
@@ -81,5 +82,6 @@ const mappings: Record<string, new (value: any, remotes: Remotes) => Directive> 
   languages: Languages,
   language: Language,
   segments: Segments,
+  instance: Instance,
   claims: Claims
 }

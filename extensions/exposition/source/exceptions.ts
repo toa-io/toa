@@ -22,6 +22,12 @@ export function rethrow(exception: Exception | HTTPException): void {
     CONFLICT,
     CORE_EXCEPTIONS.EntityGuard,
     CONFLICT,
+    // nothing holds the name the route carried
+    CORE_EXCEPTIONS.Addressee,
+    NOT_FOUND,
+    // the process holding it did not answer in time
+    CORE_EXCEPTIONS.Abandoned,
+    GATEWAY_TIMEOUT,
     () => {
       console.error('Request processing exception', exception)
 
@@ -37,11 +43,14 @@ function badRequest(code: number): boolean {
 const NOT_FOUND = new http.NotFound()
 const PRECONDITION_FAILED = new http.PreconditionFailed()
 const CONFLICT = new http.Conflict()
+const GATEWAY_TIMEOUT = new http.GatewayTimeout()
 
 const CORE_EXCEPTIONS = {
   StateNotFound: 302,
   StatePrecondition: 303,
   StateConcurrency: 304,
   EntityGuard: 213,
-  Duplicate: 306
+  Duplicate: 306,
+  Addressee: 403,
+  Abandoned: 404
 }
