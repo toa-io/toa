@@ -37,6 +37,12 @@ defineParameterType({
 })
 
 defineParameterType({
+  name: 'environment',
+  regexp: /[^\s]+/,
+  transformer: (environment) => environment
+})
+
+defineParameterType({
   name: 'helm-artifact',
   regexp: /Chart|values/,
   transformer: (artifact) => artifact

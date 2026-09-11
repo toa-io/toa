@@ -29,7 +29,7 @@ Then(
   }
 )
 
-When('I export deployment for {word}', function (env) {
+When('I export deployment for {environment}', function (env) {
   return extract.deployment.call(this, env)
 })
 
@@ -37,7 +37,7 @@ When('I export a mono deployment', function () {
   return extract.deployment.call(this, undefined, { mono: true })
 })
 
-When('I export a mono deployment for {word}', function (env) {
+When('I export a mono deployment for {environment}', function (env) {
   return extract.deployment.call(this, env, { mono: true })
 })
 

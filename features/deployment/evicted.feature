@@ -256,6 +256,45 @@ Feature: Evicted components and services
       components: [dummies-one, dummies-two]
       """
 
+  Scenario: Eviction falls back to another environment
+    Given I have components:
+      | dummies.one |
+      | dummies.two |
+    And I have a context with:
+      """yaml
+      evicted@bar:
+        components:
+          - dummies.two
+      """
+    When I export deployment for foo:bar
+    Then exported values should not contain:
+      """yaml
+      components: [dummies-two]
+      """
+
+  Scenario: Eviction prefers the named environment
+    Given I have components:
+      | dummies.one |
+      | dummies.two |
+    And I have a context with:
+      """yaml
+      evicted@foo:
+        components:
+          - dummies.two
+      evicted@bar:
+        components:
+          - dummies.one
+      """
+    When I export deployment for foo:bar
+    Then exported values should contain:
+      """yaml
+      components: [dummies-one]
+      """
+    And exported values should not contain:
+      """yaml
+      components: [dummies-two]
+      """
+
   Scenario: Mono runs what is not evicted
     Given I have components:
       | dummies.one |
