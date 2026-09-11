@@ -77,18 +77,16 @@ Declare the operation stateful, and hand out the name of the process that serves
 ```yaml
 # manifest.toa.yaml
 operations:
-  open:
-    type: computation
   watch:
     type: computation
     stateful: true
 ```
 
 ```typescript
-// open
-return { instance: context.instance, id }
+// a process reads its own name, and hands it to whoever will call it
+const instance = context.instance
 
-// elsewhere
+// a caller names the process the call goes to
 const stream = await context.remote.media.streams.watch({ input: { id }, instance })
 ```
 

@@ -19,18 +19,16 @@ must outlive a process where every replica reaches it.
 ```yaml
 # manifest.toa.yaml
 operations:
-  open:
-    type: computation
   watch:
     type: computation
     stateful: true
 ```
 
 ```typescript
-// open: hand out the name of this process, which later calls name
-return { instance: context.instance, id }
+// a process reads its own name, and hands it to whoever will call it
+const instance = context.instance
 
-// elsewhere: call that process
+// a caller names the process the call goes to
 const stream = await context.remote.media.streams.watch({ input: { id }, instance })
 ```
 
