@@ -68,9 +68,10 @@ export class Profiler {
 
 async function announced(log: string): Promise<string> {
   for (let attempt = 0; attempt < 100; attempt++) {
-    const match = /Debugger listening on (ws:\/\/\S+)/.exec(readFileSync(log, 'utf8'))
+    // a log is appended to by every boot of its process, so the address is the latest one
+    const match = [...readFileSync(log, 'utf8').matchAll(/Debugger listening on (ws:\/\/\S+)/g)].at(-1)
 
-    if (match !== null) return match[1]
+    if (match !== undefined) return match[1]
 
     await sleep(100)
   }
