@@ -29,7 +29,7 @@ packages the time went to.
 **A comparison**
 
 1. Each process in each scenario gets one verdict on its CPU time per request, from a 95% interval
-   of the median ratio head/base: *slower* where the whole interval is above `1 + t`, *faster* where
+   of the ratio head/base: *slower* where the whole interval is above `1 + t`, *faster* where
    it is below `1 − t`, *unchanged* where it lies within `[1 − t, 1 + t]`, and *inconclusive*
    otherwise, with the interval's width. `t` is 5% unless stated.
 2. The interval is recomputed to the same bounds from the same measurements.
@@ -96,12 +96,15 @@ The report is a table per scenario and process, and the same data as JSON.
 6. **Counting.** CPU time is read from `/proc/<pid>/stat` immediately around a window. Broker
    messages are the vhost's `publish` count from the management API, database operations the `top`
    counters summed over the side's database. Components publish and poll their outboxes on their own
-   timers, so a quiet window at the start of every block measures that background and it is
-   subtracted.
+   timers, and run timers of their own, so once the events of seeding are published a quiet window
+   in every block measures what each process spends at rest — CPU, messages, operations — and it is
+   subtracted from every window. A window holds at least a thousand requests, so a slow scenario is
+   measured over enough of them to outweigh that rest.
 
 7. **Statistics.** A block boots both sides and runs every scenario in ABBA order, the next block in
-   BAAB. Adjacent windows form pairs. The estimate is the median of the pairs' ratios, and its
-   interval a percentile bootstrap that resamples whole blocks, seeded.
+   BAAB. Adjacent windows form pairs, and a block is the mean log-ratio of its pairs. The ratio is
+   the mean over blocks, and its interval Student's t with as many degrees of freedom as blocks
+   less one.
 
 8. **Components.** `bench` keeps an entity of fifteen fields, seeded with a thousand records at every
    block, and exposes routes for a small reply, a read, a list, a creation, an identity, a role and a
@@ -138,8 +141,9 @@ The report is a table per scenario and process, and the same data as JSON.
   binding, and a deployment's calls cross the broker.
 - **Both sides up for a block, restarted between blocks.** A boot's variance lands inside the
   pairing, and a boot per window would multiply the run's length.
-- **Whole blocks in the bootstrap.** Pairs of one block share a boot; resampling them one by one
-  would count them as independent evidence.
+- **A block is one observation.** Pairs of one block share a boot, so a block's pairs are averaged
+  into one value, and the interval is as wide as the number of blocks warrants: two blocks leave
+  nearly every difference inconclusive.
 - **Local runs only.** On shared CI runners the noise is wide enough to hide the regressions worth
   catching.
 - **No benchmarks of single functions.** They watch only what someone already suspects. One can
@@ -194,5 +198,5 @@ What stands in the way of measuring it by hand:
 
 - [oha](https://github.com/hatoo/oha) — the load generator.
 - Coordinated omission, as `oha`'s latency correction handles it.
-- B. Efron, R. Tibshirani, *An Introduction to the Bootstrap* — the percentile interval, and resampling
-  clusters where observations are correlated.
+- Student's t-interval over cluster means — the analysis at the level of the unit that was
+  randomised, where observations within a unit are correlated.

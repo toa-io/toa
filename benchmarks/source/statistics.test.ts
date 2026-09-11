@@ -24,7 +24,7 @@ describe('median', () => {
 
 describe('estimate', () => {
   it('should find a constant ratio exactly', () => {
-    const pairs = blocks(4, () => ({ base: 100, head: 110 }))
+    const pairs = blocks(4, 2, () => ({ base: 100, head: 110 }))
     const result = estimate(pairs)
 
     assert.ok(Math.abs(result.ratio - 1.1) < 1e-9)
@@ -35,7 +35,7 @@ describe('estimate', () => {
 
   it('should contain a known ratio under noise and exclude none', () => {
     const noise = random(7)
-    const pairs = blocks(6, () => {
+    const pairs = blocks(6, 2, () => {
       const base = 100 * (1 + (noise() - 0.5) * 0.04)
 
       return { base, head: base * 1.2 * (1 + (noise() - 0.5) * 0.04) }
@@ -47,29 +47,35 @@ describe('estimate', () => {
     assert.ok(result.low > 1, JSON.stringify(result))
   })
 
-  it('should give the same interval for the same seed', () => {
-    const noise = random(3)
-    const pairs = blocks(5, () => ({ base: 100 + noise() * 10, head: 100 + noise() * 10 }))
+  it('should count blocks, not pairs', () => {
+    // pairs of one block share a boot: eight of them are no more evidence than one
+    const ratios = [1.0, 1.02, 1.04, 1.06, 1.08, 1.1]
+    const few = ratios.flatMap((ratio, block) => [{ block, base: 100, head: 100 * ratio }])
+    const many = ratios.flatMap((ratio, block) =>
+      Array.from({ length: 8 }, () => ({ block, base: 100, head: 100 * ratio }))
+    )
 
-    assert.deepEqual(estimate(pairs, { seed: 11 }), estimate(pairs, { seed: 11 }))
+    const a = estimate(few)
+    const b = estimate(many)
+
+    assert.ok(Math.abs(a.low - b.low) < 1e-9 && Math.abs(a.high - b.high) < 1e-9, JSON.stringify({ a, b }))
   })
 
-  it('should widen the interval by the spread between blocks', () => {
-    // six blocks of eight identical pairs, at 1.00, 1.02 … 1.10: drawn pair by pair, 48 draws
-    // would pin the median near 1.05; drawn block by block, six draws reach the outer blocks
-    const pairs: Pair[] = []
+  it('should leave two blocks that differ by 2% inconclusive', () => {
+    // two blocks tell a spread of two values and nothing about the next: an A/A run of two
+    // blocks at 0.90 and 0.92 must not come out faster
+    const pairs: Pair[] = [
+      { block: 0, base: 100, head: 90 },
+      { block: 0, base: 100, head: 90 },
+      { block: 1, base: 100, head: 92 },
+      { block: 1, base: 100, head: 92 }
+    ]
 
-    for (let block = 0; block < 6; block++)
-      for (let i = 0; i < 8; i++) pairs.push({ block, base: 100, head: 100 + block * 2 })
-
-    const result = estimate(pairs)
-
-    assert.ok(result.low <= 1.01, JSON.stringify(result))
-    assert.ok(result.high >= 1.09, JSON.stringify(result))
+    assert.equal(verdict(estimate(pairs), 0.05), 'inconclusive')
   })
 
   it('should refuse fewer than two blocks', () => {
-    assert.throws(() => estimate(blocks(1, () => ({ base: 1, head: 1 }))))
+    assert.throws(() => estimate(blocks(1, 2, () => ({ base: 1, head: 1 }))))
   })
 })
 
@@ -97,11 +103,11 @@ describe('verdict', () => {
   })
 })
 
-function blocks(count: number, pair: () => { base: number; head: number }): Pair[] {
+function blocks(count: number, size: number, pair: () => { base: number; head: number }): Pair[] {
   const pairs: Pair[] = []
 
   for (let block = 0; block < count; block++)
-    for (let i = 0; i < 2; i++) pairs.push({ block, ...pair() })
+    for (let i = 0; i < size; i++) pairs.push({ block, ...pair() })
 
   return pairs
 }

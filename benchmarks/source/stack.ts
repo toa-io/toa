@@ -50,6 +50,18 @@ export class Stack {
     return vhost.message_stats?.publish ?? 0
   }
 
+  /** Events committed and not yet published, over every outbox of the side. */
+  public async pending(side: string): Promise<number> {
+    const database = this.mongo.db(side)
+    const collections = await database.listCollections({}, { nameOnly: true }).toArray()
+    let pending = 0
+
+    for (const { name } of collections)
+      if (name.endsWith('_outbox')) pending += await database.collection(name).countDocuments({ published: false })
+
+    return pending
+  }
+
   /** Operations sent to the database, as `top` counts them. */
   public async operations(side: string): Promise<number> {
     const { totals } = await this.mongo.db('admin').command({ top: 1 })

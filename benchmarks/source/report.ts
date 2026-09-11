@@ -104,10 +104,10 @@ export function markdown(report: Report): string {
     lines.push(
       row([
         id,
-        counts.base.publish.toFixed(2),
-        counts.head.publish.toFixed(2),
-        counts.base.operations.toFixed(2),
-        counts.head.operations.toFixed(2),
+        count(counts.base.publish),
+        count(counts.head.publish),
+        count(counts.base.operations),
+        count(counts.head.operations),
         changed ? '**changed**' : ''
       ])
     )
@@ -145,6 +145,11 @@ export function markdown(report: Report): string {
 
 function row(cells: string[]): string {
   return `| ${cells.join(' | ')} |`
+}
+
+/** what subtracting the background leaves of nothing is nothing, not a negative zero */
+function count(value: number): string {
+  return (Math.abs(value) < 0.005 ? 0 : value).toFixed(2)
 }
 
 function percent(value: number): string {

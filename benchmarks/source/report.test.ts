@@ -30,7 +30,8 @@ const report: Report = {
           verdict: 'unchanged'
         }
       ],
-      counts: { base: { publish: 2, operations: 0 }, head: { publish: 2, operations: 0 } },
+      // what subtracting the background leaves of nothing
+      counts: { base: { publish: 2, operations: -0.001 }, head: { publish: 2, operations: 0 } },
       latency: { base: { p50: 1.2, p99: 4.5 }, head: { p50: 1.3, p99: 4.9 } },
       busy: 0.02
     },

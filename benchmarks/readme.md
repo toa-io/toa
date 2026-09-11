@@ -73,8 +73,9 @@ A full run of the default scenarios takes about 50 minutes; `--quick`, about 20.
 
 `benchmarks/results/<time>/` holds `report.md`, `report.json`, and every window in `windows.json`.
 
-**CPU per request.** The microseconds of CPU each process spent per request, the median ratio
-head/base, and its 95% interval. The verdict is:
+**CPU per request.** The microseconds of CPU each process spent per request beyond what it spends
+at rest, the ratio head/base, and its 95% interval. Each block counts once: the fewer the blocks,
+the wider the interval. The verdict is:
 
 | verdict | the interval |
 | --- | --- |

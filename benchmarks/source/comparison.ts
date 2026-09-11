@@ -24,19 +24,15 @@ export interface ComparisonOptions {
   threshold: number
 }
 
+type Cpu = Record<ProcessName, number>
+
 interface Measurement {
-  /** µs of CPU per request */
-  cpu: Record<ProcessName, number>
+  /** µs of CPU per request, less what the process spends at rest */
+  cpu: Cpu
   requests: number
   p50: number
   p99: number
   busy: number | null
-}
-
-/** CPU seconds of the side under load and of the side at rest */
-interface Both {
-  side: Record<ProcessName, number>
-  other: Record<ProcessName, number>
 }
 
 interface Window extends Measurement {
@@ -45,6 +41,21 @@ interface Window extends Measurement {
   side: SideName
   index: number
 }
+
+/** What each side does at rest, per second. */
+interface Idle {
+  counts: Pair<Counts>
+  cpu: Pair<Cpu>
+}
+
+/** The drivers of a boot, and what their processes spend at rest. */
+interface Group {
+  drivers: Pair<Driver>
+  idle: Idle
+}
+
+/** CPU seconds of every process of both sides */
+type Snapshot = Pair<Cpu>
 
 /**
  * Both revisions, booted together once per block and protocol, taking turns under the same load:
@@ -132,7 +143,7 @@ export class Comparison {
     }
   }
 
-  private async group(block: number, group: Scenario[], running: Pair<Running>): Promise<void> {
+  private async group(block: number, scenarios: Scenario[], running: Pair<Running>): Promise<void> {
     const drivers: Pair<Driver> = {
       base: await Driver.prepare(this.run, running.base, true),
       head: await Driver.prepare(this.run, running.head, true)
@@ -141,11 +152,12 @@ export class Comparison {
     this.current = drivers
 
     try {
-      const supported = await this.supported(group, drivers)
+      const supported = await this.supported(scenarios, drivers)
+      const group = { drivers, idle: await this.idle(drivers) }
 
-      if (block === 0) await this.calibrate(supported, drivers)
+      if (block === 0) await this.calibrate(supported, group)
 
-      for (const scenario of supported) await this.scenario(block, scenario, drivers)
+      for (const scenario of supported) await this.scenario(block, scenario, group)
     } finally {
       this.current = null
       drivers.base.close()
@@ -178,8 +190,8 @@ export class Comparison {
   }
 
   /** The rate of every scenario, and the counts of each side at that rate. */
-  private async calibrate(scenarios: Scenario[], drivers: Pair<Driver>): Promise<void> {
-    const background = await this.idle()
+  private async calibrate(scenarios: Scenario[], group: Group): Promise<void> {
+    const { drivers, idle } = group
 
     for (const scenario of scenarios) {
       const rate = await drivers.base.calibrate(scenario)
@@ -188,27 +200,53 @@ export class Comparison {
       console.log(`  ${scenario.id}: ${rate} requests per second`)
 
       this.counts.set(scenario.id, {
-        base: await this.count(drivers.base, scenario, background.base),
-        head: await this.count(drivers.head, scenario, background.head)
+        base: await this.count(drivers.base, scenario, idle.counts.base),
+        head: await this.count(drivers.head, scenario, idle.counts.head)
       })
     }
   }
 
-  /** What the counters do per second while nothing is sent: outboxes polling, tenants announcing. */
-  private async idle(): Promise<Pair<Counts>> {
+  /**
+   * What both sides do while nothing is sent — outboxes polling, tenants announcing, timers — per
+   * second, once the work of seeding has drained.
+   */
+  private async idle(drivers: Pair<Driver>): Promise<Idle> {
+    await this.drain()
     await sleep(STATISTICS)
 
     const start = Date.now()
-    const before = { base: await this.counters('base'), head: await this.counters('head') }
+    const before = await this.snapshot(drivers)
 
     await sleep(IDLE * 1000 + STATISTICS)
 
     const seconds = (Date.now() - start) / 1000
-    const after = { base: await this.counters('base'), head: await this.counters('head') }
+    const after = await this.snapshot(drivers)
 
     return {
-      base: rate(before.base, after.base, seconds),
-      head: rate(before.head, after.head, seconds)
+      counts: { base: rate(before.counts.base, after.counts.base, seconds), head: rate(before.counts.head, after.counts.head, seconds) },
+      cpu: { base: perSecond(before.cpu.base, after.cpu.base, seconds), head: perSecond(before.cpu.head, after.cpu.head, seconds) }
+    }
+  }
+
+  /** Until neither side has an event left to publish. */
+  private async drain(): Promise<void> {
+    const deadline = Date.now() + DRAIN * 1000
+
+    for (;;) {
+      const pending = (await this.run.stack.pending(this.sides.base.context)) + (await this.run.stack.pending(this.sides.head.context))
+
+      if (pending === 0) return
+
+      if (Date.now() > deadline) throw new Error(`${pending} events are still unpublished ${DRAIN} s after seeding`)
+
+      await sleep(500)
+    }
+  }
+
+  private async snapshot(drivers: Pair<Driver>): Promise<{ counts: Pair<Counts>; cpu: Snapshot }> {
+    return {
+      counts: { base: await this.counters('base'), head: await this.counters('head') },
+      cpu: { base: drivers.base.running.cpu(), head: drivers.head.running.cpu() }
     }
   }
 
@@ -221,12 +259,13 @@ export class Comparison {
   /** Messages and operations per request, around a short load, with the statistics settled. */
   private async count(driver: Driver, scenario: Scenario, background: Counts): Promise<Counts> {
     const name = driver.running.side.name
+    const rate = this.rates.get(scenario.id)!
 
     await sleep(STATISTICS)
 
     const start = Date.now()
     const before = await this.counters(name)
-    const result = await this.send(driver, scenario, { duration: COUNTED, rate: this.rates.get(scenario.id) })
+    const result = await this.send(driver, scenario, { duration: this.duration(COUNTED, rate), rate })
 
     await sleep(STATISTICS)
 
@@ -235,39 +274,46 @@ export class Comparison {
     return perRequest({ before, after, seconds: (Date.now() - start) / 1000, requests: result.requests, background })
   }
 
-  private async scenario(block: number, scenario: Scenario, drivers: Pair<Driver>): Promise<void> {
+  private async scenario(block: number, scenario: Scenario, group: Group): Promise<void> {
     const order = block % 2 === 0 ? ABBA : BAAB
 
     for (const [index, name] of order.entries()) {
-      const measurement = await this.window(scenario, name, drivers)
+      const measurement = await this.window(scenario, name, group)
 
       this.windows.push({ block, scenario: scenario.id, side: name, index, ...measurement })
     }
 
     if (block === this.run.timing.blocks - 1)
-      this.memory.set(scenario.id, { base: peaks(drivers.base.running), head: peaks(drivers.head.running) })
+      this.memory.set(scenario.id, { base: peaks(group.drivers.base.running), head: peaks(group.drivers.head.running) })
   }
 
-  private async window(scenario: Scenario, name: SideName, drivers: Pair<Driver>): Promise<Measurement> {
+  private async window(scenario: Scenario, name: SideName, group: Group): Promise<Measurement> {
+    const { drivers, idle } = group
     const driver = drivers[name]
-    const other = drivers[name === 'base' ? 'head' : 'base'].running
     const rate = this.rates.get(scenario.id)!
     const cores = measured(this.run.placement)
 
     await this.send(driver, scenario, { duration: this.run.timing.warmup, rate })
 
     const host = cores === null ? null : times(cores)
-    const before = { side: driver.running.cpu(), other: other.cpu() }
-    const result = await this.send(driver, scenario, { duration: this.run.timing.window, rate })
-    const after = { side: driver.running.cpu(), other: other.cpu() }
+    const before = { base: drivers.base.running.cpu(), head: drivers.head.running.cpu() }
+    const start = Date.now()
+    const result = await this.send(driver, scenario, { duration: this.duration(this.run.timing.window, rate), rate })
+    const seconds = (Date.now() - start) / 1000
+    const after = { base: drivers.base.running.cpu(), head: drivers.head.running.cpu() }
 
     return {
-      cpu: perProcess(before.side, after.side, result.requests),
+      cpu: perRequestCpu({ before: before[name], after: after[name], idle: idle.cpu[name], seconds }, result.requests),
       requests: result.requests,
       p50: result.p50,
       p99: result.p99,
       busy: host === null ? null : busy(host, times(cores!), consumed(before, after))
     }
+  }
+
+  /** A window as long as asked, and long enough for its requests to outnumber what runs at rest. */
+  private duration(seconds: number, rate: number): number {
+    return Math.max(seconds, MINIMUM / rate)
   }
 
   /** Load that fails names the process that exited, on either side, where one did. */
@@ -359,20 +405,22 @@ function rate(before: Counts, after: Counts, seconds: number): Counts {
   }
 }
 
-function perProcess(
-  before: Record<ProcessName, number>,
-  after: Record<ProcessName, number>,
-  requests: number
-): Record<ProcessName, number> {
+function perSecond(before: Cpu, after: Cpu, seconds: number): Cpu {
+  return Object.fromEntries(PROCESSES.map((name) => [name, (after[name] - before[name]) / seconds])) as Cpu
+}
+
+function perRequestCpu(span: { before: Cpu; after: Cpu; idle: Cpu; seconds: number }, requests: number): Cpu {
+  const { before, after, idle, seconds } = span
+
   return Object.fromEntries(
-    PROCESSES.map((name) => [name, ((after[name] - before[name]) / requests) * 1e6])
-  ) as Record<ProcessName, number>
+    PROCESSES.map((name) => [name, ((after[name] - before[name] - idle[name] * seconds) / requests) * 1e6])
+  ) as Cpu
 }
 
 /** Seconds of CPU both sides' processes spent in a window. */
-function consumed(before: Both, after: Both): number {
+function consumed(before: Snapshot, after: Snapshot): number {
   return PROCESSES.reduce(
-    (sum, name) => sum + after.side[name] - before.side[name] + after.other[name] - before.other[name],
+    (sum, name) => sum + after.base[name] - before.base[name] + after.head[name] - before.head[name],
     0
   )
 }
@@ -393,9 +441,15 @@ const PROCESSES: ProcessName[] = ['gateway', 'bench', 'peer']
 const ABBA: SideName[] = ['base', 'head', 'head', 'base']
 const BAAB: SideName[] = ['head', 'base', 'base', 'head']
 
-/** seconds of the quiet window the counters' background is measured in, and of counted load */
+/** seconds of the quiet window what runs at rest is measured in, and of counted load */
 const IDLE = 20
 const COUNTED = 3
+
+/** requests a window holds at least, whatever the rate */
+const MINIMUM = 1000
+
+/** seconds the events of seeding may take to be published */
+const DRAIN = 120
 
 /** how long an exit may take to be seen after the load it broke */
 const EXIT = 500
