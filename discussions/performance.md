@@ -60,16 +60,20 @@ Nothing.
 
 ## The changes, by area
 
+| # | change | measured today | expected | effort | risk | stage |
+| --- | --- | --- | --- | --- | --- | ---: |
+| 1 | `noDelay` on comq's sockets | `small` p50 at 100 rps 10.36 ms; `observe` saturates at 3,781 rps with its processes under 40% of a core | `small` p50 at 100 rps 0.68 ms; `observe` saturates at 9,170 rps | one option in comq, a release, the dependency | low | 1 |
+| 2 | A JSON reply forwarded as bytes | `list.1000` gateway 10,629 µs; forwarding costs 1,780 µs by hand | about 8 ms less per 1,000-entity list in the gateway | medium: the call, the binding, comq and the gateway | medium | 3 |
+| 3 | Records translated without a rest spread | `record.js` `from` 26% of the component on `list.1000`, about 2.6 µs a record | about 2.5 ms less per 1,000-entity list in the component | a few lines | low | 2 |
+| 4 | Work on every request | `DOMException` 7.4% of the gateway on `small`; `import('jose')` about 4% on `token.id`; `environment.get` 1.5–3.6% and the traceparent expression 2–5% of components; the `uuid` hash 6% of `bench` on `chain` | 10–20 µs of the gateway's 91 on `small`; 3–6 µs of every component call | a few lines each | low | 2 |
+| 5 | Tokens opened with `node:crypto` | jose `jwtDecrypt` 40 µs; `node:crypto` 10.9 µs | about 30 µs less per authenticated request | low | low: the same algorithm and bytes | 2 |
+| 6 | `io:output` checks entity types without Ajv | 2.2 µs per 1,000 entities | the same answers from a plainer check | low | low | 2 |
+
 1. **The broker's sockets.** comq connects with `noDelay: true` beside `keepAlive` in
    `SOCKET_OPTIONS`; without it amqplib calls `setNoDelay(false)`. A release of comq carries it, and
    `bindings.amqp` depends on that release.
 
-2. **The latency curve.** `npm run bench -- --curve` sends each scenario at rising fixed rates, from
-   100 requests per second to saturation, and reports p50, p99 and the CPU of each process at every
-   rate. A comparison at half of saturation hides a delay that only light load shows, and guarantees
-   1 and 2 are measured with the curve.
-
-3. **Replies the gateway forwards.**
+2. **Replies the gateway forwards.**
    - The gateway sends with a call the properties `io:output` permits, or that it permits all of them.
    - The component's binding projects the reply to those properties as it encodes it — each entity's
      own properties in their own order, as `io:output` fits them — and marks the message as projected.
@@ -81,10 +85,10 @@ Nothing.
      — another format, `/.rpc`, `/.mcp`, a message without the mark — is decoded and restricted as it
      is today.
 
-4. **Records.** `record.js` `from` builds an entity by setting `id` and then copying every property of
+3. **Records.** `record.js` `from` builds an entity by setting `id` and then copying every property of
    the record but `_id`, in the record's order, where it now uses a rest spread.
 
-5. **Work on every request.**
+4. **Work on every request.**
    - `HTTP/Server.ts` `track()` aborts a request's controller only where its reply has left unfinished.
    - `identity.tokens` holds the promise of importing `jose` once and awaits it on every call.
    - An operation reads `TOA_ENV` when it is created.
@@ -93,13 +97,13 @@ Nothing.
    - `entities/newid.ts` `derive` hashes with `node:crypto` into the same name-based UUID v5 bytes.
    - The MongoDB storage builds a query's debug attributes only where the debug line is written.
 
-6. **Tokens.** `identity.tokens` opens a `dir` + `A256GCM` token with `node:crypto`: the compact
+5. **Tokens.** `identity.tokens` opens a `dir` + `A256GCM` token with `node:crypto`: the compact
    serialization split into its five parts, the protected header checked for `alg`, `enc` and `kid` as
    jose checks it, the ciphertext opened with AES-256-GCM with the protected header as additional
    authenticated data, and the claims checked as `jwtDecrypt` checks them. Issuing stays with jose,
    since a token is issued once a `refresh`. PASETO keys are read as they are.
 
-7. **`io:output`.** The restriction checks that every entity of an array body is an object by its
+6. **`io:output`.** The restriction checks that every entity of an array body is an object by its
    type as it fits it, where it now runs Ajv over the body first, and throws the same message for an
    entity that is something else. A body that is neither an object nor an array is omitted with a
    warning, as it is today.
@@ -225,15 +229,18 @@ until it disconnects.
 
 ## Stages
 
-1. **The sockets and the curve.** The comq release, the dependency on it, and `--curve`.
+1. **The sockets.** The comq release and the dependency on it, measured with `--curve`.
 2. **Work on every request, records, tokens and `io:output`**, each a change of its own.
 3. **Forwarded replies**: the permitted properties on the call, the projection in the binding, the
    bytes in comq, and the write in the gateway.
 
 ## Verification
 
-- **Latency.** With the curve, before and after stage 1: the p50 of `small` and `observe` at 100
-  requests per second under 1 ms, and `observe` saturating at twice its rate or more.
+- **Latency.** Measured against load, before and after stage 1, with a `--curve` mode the benchmarks
+  gain for it: each scenario at rising fixed rates from 100 requests per second to saturation, with
+  p50, p99 and the CPU of each process at every rate. A comparison at half of saturation hides a delay
+  that only light load shows. The p50 of `small` and `observe` at 100 requests per second is under
+  1 ms, and `observe` saturates at twice its rate or more.
 - **Cost.** With `npm run bench` against the revision before each change of stages 2 and 3: the
   process a change touches comes out faster or inconclusive, and no process comes out slower. Stage 2
   as a whole comes out faster in the gateway on `small` and `token.id`, and in the component on
