@@ -208,7 +208,9 @@ export class Comparison {
     const { drivers, idle } = group
 
     for (const scenario of scenarios) {
-      const rate = await drivers.base.calibrate(scenario)
+      const rate = await drivers.base.calibrate(scenario).catch((error: unknown) => {
+        throw new Error(`${scenario.id} on base: ${error instanceof Error ? error.message : String(error)}`, { cause: error })
+      })
 
       await this.drain()
       this.rates.set(scenario.id, rate)
