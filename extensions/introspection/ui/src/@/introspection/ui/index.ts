@@ -1,3 +1,4 @@
+export { default as Halt } from './Halt.svelte'
 export { default as Nodes } from './Nodes.svelte'
 export { default as Node } from './Node.svelte'
 export type { Props as NodesProps } from './Nodes'

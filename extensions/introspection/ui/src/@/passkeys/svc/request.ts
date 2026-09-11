@@ -36,10 +36,10 @@ function toRequestResponse(credential: PublicKeyCredential): origin.RequestRespo
       userHandle:
         response.userHandle === null
           ? null
-          : credentials.bufferToBase64url(response.userHandle)
+          : credentials.bufferToBase64url(response.userHandle),
     },
     authenticatorAttachment: credential.authenticatorAttachment,
-    clientExtensionResults: credential.getClientExtensionResults()
+    clientExtensionResults: credential.getClientExtensionResults(),
   }
 }
 

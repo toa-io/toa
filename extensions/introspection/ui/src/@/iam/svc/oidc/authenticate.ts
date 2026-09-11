@@ -35,7 +35,7 @@ async function getCredentials(idp: IDP) {
   const data = {
     code,
     iss: descriptor.iss,
-    for: window.location.origin
+    for: window.location.origin,
   }
 
   return btoa(JSON.stringify(data))

@@ -14,7 +14,7 @@ async function google(descriptor: Descriptor): Promise<string | Error> {
       redirect_uri: window.location.origin + '/',
       callback: async (response: { code?: string; error?: string }) => {
         resolve(response)
-      }
+      },
     })
 
     client.requestCode()

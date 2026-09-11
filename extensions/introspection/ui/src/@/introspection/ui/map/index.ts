@@ -10,7 +10,7 @@ export type {
   Satellite,
   Service,
   Vertex,
-  Wire
+  Wire,
 } from './graph'
 export type { Arc } from './Edges'
 export type { Band, Grid, Position, Size } from './layout'

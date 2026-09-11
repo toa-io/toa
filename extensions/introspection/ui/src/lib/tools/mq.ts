@@ -40,8 +40,8 @@ export const units = {
     'en-IE',
     'en-IN',
     'en-LR',
-    'en-MM'
-  ].includes(navigator.language)
+    'en-MM',
+  ].includes(navigator.language),
 } as const
 
 export function isInAppWebView(ua: string = navigator.userAgent): boolean {
@@ -68,7 +68,7 @@ export function isInAppWebView(ua: string = navigator.userAgent): boolean {
     /Slack/i, // Slack
     /Signal/i, // Signal
     /KakaoTalk/i, // KakaoTalk (Popular in South Korea)
-    /Baidu/i // Baidu (Popular in China)
+    /Baidu/i, // Baidu (Popular in China)
   ]
 
   const isInAppBrowser = () => inAppBrowserPatterns.some((pattern) => pattern.test(ua))
@@ -78,7 +78,7 @@ export function isInAppWebView(ua: string = navigator.userAgent): boolean {
       'WebView', // Generic WebView detection
       '(iPhone|iPod|iPad)(?!.*Safari/)', // iOS WebView without Safari
       'Android.*(wv)', // Android WebView
-      '(AppleWebKit)(?!.*Safari)' // iOS Safari WebView (missing Safari in UA)
+      '(AppleWebKit)(?!.*Safari)', // iOS Safari WebView (missing Safari in UA)
     ]
 
     const regex = new RegExp(`(${rules.join('|')})`, 'ig')

@@ -14,13 +14,13 @@ export async function create(name: string, identity?: string): Promise<Output | 
 
   return {
     key: toCreationResponse(credential, name),
-    identity: options.identity
+    identity: options.identity,
   }
 }
 
 function toCreationResponse(
   credential: PublicKeyCredential,
-  label: string
+  label: string,
 ): origin.CreationResponse {
   const response = credential.response as AuthenticatorAttestationResponse
   const authenticatorData = response.getAuthenticatorData()
@@ -40,11 +40,11 @@ function toCreationResponse(
       authenticatorData: credentials.bufferToBase64url(authenticatorData),
       transports,
       publicKeyAlgorithm,
-      publicKey: credentials.bufferToBase64url(publicKey)
+      publicKey: credentials.bufferToBase64url(publicKey),
     },
     authenticatorAttachment: credential.authenticatorAttachment,
     clientExtensionResults,
-    label
+    label,
   }
 }
 

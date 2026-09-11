@@ -7,6 +7,6 @@ export function ago(timestamp: number, locale: Locale): string {
     return new Intl.RelativeTimeFormat(locale, { numeric: 'auto' }).format(-days, 'day')
 
   return new Intl.DateTimeFormat(locale, { month: 'short', day: 'numeric' }).format(
-    timestamp
+    timestamp,
   )
 }

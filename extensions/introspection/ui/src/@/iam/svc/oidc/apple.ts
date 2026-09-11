@@ -23,6 +23,7 @@ function init(descriptor: Descriptor) {
 
     script.src =
       'https://appleid.cdn-apple.com/appleauth/static/jsapi/appleid/1/en_US/appleid.auth.js'
+
     script.async = true
 
     script.onload = () => {
@@ -31,7 +32,7 @@ function init(descriptor: Descriptor) {
         scope: descriptor.scope,
         redirectURI: window.location.origin,
         state: btoa(JSON.stringify({ idp: 'apple' })),
-        usePopup: true
+        usePopup: true,
       })
 
       resolve(undefined)

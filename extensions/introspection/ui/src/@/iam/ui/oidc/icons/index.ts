@@ -5,7 +5,7 @@ import type { oidc } from '@/iam'
 
 const icons: Record<oidc.IDP, Component> = {
   google: Google,
-  apple: Apple
+  apple: Apple,
 } as const
 
 export { icons }

@@ -19,6 +19,23 @@ inputs:
     filter:
       input: Filter components
       context: placeholder of the search box in the header
+    halt:
+      input: HALT
+  halt:
+    title:
+      input: Suspend operations
+    description:
+      input: All systems will be inoperative for the interval you give, then resume automatically.
+    interval:
+      input: Seconds
+      context: label of the number field for how long the halt lasts
+    cancel:
+      input: Cancel
+      context: button that closes the halt dialog without doing anything
+    hold:
+      input: Hold to halt
+    bounds:
+      input: Up to an hour
 mounts:
   iam: ../../@/iam/ui/intl
   introspection: ../../@/introspection/ui/intl

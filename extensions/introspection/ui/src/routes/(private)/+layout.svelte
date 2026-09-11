@@ -1,6 +1,6 @@
 <script lang="ts">
   import { List, LogOut, Search, Waypoints } from '@lucide/svelte'
-  import { only, query } from '@/introspection/ui'
+  import { Halt, only, query } from '@/introspection/ui'
   import { Authenticated, Authorized } from '@/iam/ui'
   import { logout } from '@/iam'
   import { Kbd } from '$ui/kbd'
@@ -20,6 +20,9 @@
 
   /** What an account needs to read the map. `auth:role` in both component manifests. */
   const ROLE = 'system:introspection'
+
+  /** What an account needs to halt a process. */
+  const OPERATIONS = 'system:operations'
 
   let filter = $state<HTMLInputElement | null>(null)
 
@@ -108,8 +111,14 @@
         <Kbd class="absolute end-2 top-1/2 hidden -translate-y-1/2 md:inline-flex">{apple ? '⌘K' : 'Ctrl K'}</Kbd>
       </div>
 
-      <!-- no `min-w-0` either: the button holds its ground and the filter gives way -->
-      <div class="flex flex-1 justify-end">
+      <!-- no `min-w-0` either: the buttons hold their ground and the filter gives way -->
+      <div class="flex flex-1 justify-end gap-1">
+        <!-- a gate over a control, not over a screen: no role, no button -->
+        <Authorized role={OPERATIONS}>
+          <Halt />
+          {#snippet denied()}{/snippet}
+        </Authorized>
+
         <!-- the icon alone, and coloured for what it does: the word only repeated it -->
         <Button
           id="iam-logout-button"

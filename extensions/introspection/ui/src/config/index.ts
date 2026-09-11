@@ -2,12 +2,12 @@ import { version as ver } from '$app/environment'
 
 export const meta = {
   title: 'Introspection',
-  description: 'The map of a Toa application'
+  description: 'The map of a Toa application',
 } as const
 
 export const navigation = {
   /** Entry point for authenticated users. */
-  entry: '/'
+  entry: '/',
 } as const
 
 /** Exposition's HTTP port. It is a constant of the runtime; this bundle cannot import it. */
