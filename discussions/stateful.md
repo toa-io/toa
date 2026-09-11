@@ -9,7 +9,8 @@ Every process has a **name**, generated when it starts or given by `TOA_INSTANCE
 declared **stateful** is offered by each process under that process's name, and an **addressed call**
 — a call naming a process — is how it is reached. The two exist together: an addressed call goes to a
 stateful operation, and a stateful operation takes addressed calls only. A process reads its own name
-as `context.instance` and hands it out: in a reply, or as part of a URL. It binds its name before it answers anything, so a name it has handed out is reachable at once.
+as `context.instance`, and binds it before it answers anything, so the name is reachable before any
+caller can have learned it.
 
 An addressed call ends in one of three ways:
 
@@ -71,7 +72,7 @@ deadline it waits for its reply as it does today.
 
 ### What a component author does differently
 
-Declare the operation stateful, and hand out the name of the process that serves it:
+Declare the operation stateful, and name the process in a call to it:
 
 ```yaml
 # manifest.toa.yaml
@@ -82,7 +83,7 @@ operations:
 ```
 
 ```typescript
-// a process reads its own name, and hands it to whoever will call it
+// a process reads its own name
 const instance = context.instance
 
 // a caller names the process the call goes to
