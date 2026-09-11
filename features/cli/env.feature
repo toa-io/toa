@@ -301,3 +301,77 @@ Feature: Export local deployment environment variables
       """
       Service 'nope' is not in the context
       """
+
+  Scenario: A named environment uses its overlay
+    Given I have a component `dummies.one`
+    And I have a context with:
+      """yaml
+      amqp:
+        context:
+          .: amqp://whatever
+          .@foo: amqp://foo.host
+          .@bar: amqp://bar.host
+      """
+    When I run `toa env foo:bar`
+    Then the environment contains:
+      """
+      TOA_ENV=foo
+      TOA_AMQP_CONTEXT={".":["amqp://foo.host"]}
+      """
+
+  Scenario: A missing overlay uses the fallback
+    Given I have a component `dummies.one`
+    And I have a context with:
+      """yaml
+      amqp:
+        context:
+          .: amqp://whatever
+          .@bar: amqp://bar.host
+      """
+    When I run `toa env foo:bar`
+    Then the environment contains:
+      """
+      TOA_ENV=foo
+      TOA_AMQP_CONTEXT={".":["amqp://bar.host"]}
+      """
+
+  Scenario: A missing overlay and fallback use the unsuffixed key
+    Given I have a component `dummies.one`
+    And I have a context with:
+      """yaml
+      amqp:
+        context: amqp://whatever
+      """
+    When I run `toa env foo:bar`
+    Then the environment contains:
+      """
+      TOA_ENV=foo
+      TOA_AMQP_CONTEXT={".":["amqp://whatever"]}
+      """
+
+  Scenario: A longer chain uses the first matching overlay
+    Given I have a component `dummies.one`
+    And I have a context with:
+      """yaml
+      amqp:
+        context:
+          .: amqp://whatever
+          .@bar: amqp://bar.host
+          .@baz: amqp://baz.host
+      """
+    When I run `toa env foo:bar:baz`
+    Then the environment contains:
+      """
+      TOA_ENV=foo
+      TOA_AMQP_CONTEXT={".":["amqp://bar.host"]}
+      """
+
+  Scenario: An environment name with an empty segment is refused
+    Given I have a component `dummies.one`
+    And I have a context
+    When I run `toa env foo:`
+    Then program should exit with code 1
+    And stderr should contain lines:
+      """
+      Environment 'foo:' contains an empty name.
+      """

@@ -73,7 +73,8 @@ Generate types for a Context and every component in it.
 <dt><code>toa types</code></dt>
 <dd>
 <code>--path</code> Path to the Context root (default <code>.</code>).<br/>
-<code>--environment</code> Environment the Context is read for.<br/>
+<code>--environment</code> Environment the Context is read for, including <code>foo:bar</code>
+as <a href="#env"><code>toa env</code></a>.<br/>
 <code>--quiet</code> Print nothing.
 </dd>
 </dl>
@@ -133,7 +134,9 @@ Export environment to a `.env` file.
 <dl>
 <dt><code>toa env [environment]</code></dt>
 <dd>
-<code>environment</code> deployment environment name (default <code>local</code>).<br/>
+<code>environment</code> deployment environment name (default <code>local</code>).
+<code>foo:bar</code> uses <code>@foo</code>, then <code>@bar</code>, then the unsuffixed key;
+the running environment is <code>foo</code>. The chain is not stored.<br/>
 <code>--path</code> path to a Context (default <code>.</code>)<br/>
 <code>--as</code> output file path (default <code>.env</code>)<br/>
 <code>--interactive</code> prompt for secret values<br/>
@@ -163,7 +166,8 @@ Credentials specified in the output file are preserved.
 
 <dl>
 <dt><code>toa export secrets &lt;environment&gt;</code></dt>
-<dd>Print deployment secrets.
+<dd>Print deployment secrets. <code>environment</code> is the same form as
+<a href="#env"><code>toa env</code></a>.
 
 <code>--path</code> path to context (default <code>.</code>)<br/>
 </dd>
@@ -182,6 +186,7 @@ output is piped into the broker's definitions import:
     -H 'content-type: application/json' -X POST --data @- \
     http://&lt;broker&gt;:15672/api/definitions</pre>
 
+<code>environment</code> is the same form as <a href="#env"><code>toa env</code></a>.<br/>
 <code>--path</code> path to context (default <code>.</code>)<br/>
 <code>--format</code> <code>definitions</code> (default) or <code>commands</code>, which prints
 <code>rabbitmqadmin</code> invocations instead
@@ -192,7 +197,8 @@ output is piped into the broker's definitions import:
 
 <dl>
 <dt><code>toa export tags &lt;environment&gt;</code></dt>
-<dd>Print image tags.
+<dd>Print image tags. <code>environment</code> is the same form as
+<a href="#env"><code>toa env</code></a>.
 
 <code>--path</code> path to context (default <code>.</code>)<br/>
 </dd>
@@ -223,7 +229,8 @@ Build Docker images and push them to the registry.
 <dl>
 <dt><code>toa push [environment]</code></dt>
 <dd>
-<code>environment</code> deployment environment name (default <code>default</code>).<br/>
+<code>environment</code> deployment environment name (default <code>default</code>),
+including <code>foo:bar</code> as <a href="#env"><code>toa env</code></a>.<br/>
 <code>--path</code>, <code>-p</code> path to the context (default <code>.</code>).<br/>
 </dd>
 </dl>
@@ -243,7 +250,8 @@ Deploy a Context.
 <dl>
 <dt><code>toa deploy [environment]</code></dt>
 <dd>
-<code>environment</code> deployment environment name (default <code>default</code>).<br/>
+<code>environment</code> deployment environment name (default <code>default</code>),
+including <code>foo:bar</code> as <a href="#env"><code>toa env</code></a>.<br/>
 <code>--path</code> path to a Context (default <code>.</code>)<br/>
 <code>--namespace</code> Kubernetes namespace to apply the Helm chat to<br/>
 <code>--wait</code> wait until all
@@ -278,7 +286,8 @@ Deploy a generic Kubernetes secret with the prefix `toa-`.
 <code>key-values</code> List of keys and values of the secret as <code>key=value</code>.<br/>
 <code>--namespace</code> Kubernetes namespace where the secret should be deployed.<br/>
 <code>--interactive</code> prompt for secret values<br/>
-<code>--environment</code> environment name for interactive mode<br/>
+<code>--environment</code> environment name for interactive mode, including <code>foo:bar</code>
+as <a href="#env"><code>toa env</code></a>.<br/>
 <code>--path</code> path to a context for interactive mode
 </dd>
 </dl>

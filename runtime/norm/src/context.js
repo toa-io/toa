@@ -20,7 +20,12 @@ export const context = async (root, environment = variables.get('TOA_ENV')) => {
   const path = resolve(root, CONTEXT)
   const context = /** @type {toa.norm.Context} */ await read(path)
 
-  context.environment = environment
+  const names = environment?.split(':')
+
+  if (names !== undefined && names.length > 1 && names.some((name) => name.length === 0))
+    throw new Error(`Environment '${environment}' contains an empty name.`)
+
+  context.environment = names?.[0]
 
   convolve(context, environment)
   expand(context)

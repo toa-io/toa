@@ -102,3 +102,62 @@ it('should not throw on nulls', () => {
 
   assert.doesNotThrow(() => convolve(source))
 })
+
+it('should prefer the first matching tag of a chain', () => {
+  const foo = generate()
+  const bar = generate()
+
+  source['foo@foo'] = foo
+  source['foo@bar'] = bar
+
+  source = convolve(source, 'foo:bar')
+
+  assert.strictEqual(source['foo@foo'], undefined)
+  assert.strictEqual(source['foo@bar'], undefined)
+  assert.deepStrictEqual(source.foo, foo)
+})
+
+it('should fall back to the next tag of a chain', () => {
+  const bar = generate()
+
+  source['foo@bar'] = bar
+
+  source = convolve(source, 'foo:bar')
+
+  assert.strictEqual(source['foo@bar'], undefined)
+  assert.deepStrictEqual(source.foo, bar)
+})
+
+it('should keep the unsuffixed value when no tag of a chain matches', () => {
+  const origin = source.foo
+
+  source['foo@other'] = generate()
+
+  source = convolve(source, 'foo:bar')
+
+  assert.strictEqual(source['foo@other'], undefined)
+  assert.deepStrictEqual(source.foo, origin)
+})
+
+it('should prefer the first matching tag of a longer chain', () => {
+  const bar = generate()
+  const baz = generate()
+
+  source['foo@bar'] = bar
+  source['foo@baz'] = baz
+
+  source = convolve(source, 'foo:bar:baz')
+
+  assert.deepStrictEqual(source.foo, bar)
+})
+
+it('should prefer the first matching tag regardless of key order', () => {
+  const foo = generate()
+  const bar = generate()
+
+  source = { 'foo@bar': bar, foo: generate(), 'foo@foo': foo }
+
+  source = convolve(source, 'foo:bar')
+
+  assert.deepStrictEqual(source.foo, foo)
+})
