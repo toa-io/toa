@@ -32,7 +32,7 @@ function finite(options: Options, mounted: boolean): Attachment<HTMLElement> {
 
     root.scrollTo({
       left: target(root, el, options.align),
-      behavior: mounted ? 'smooth' : 'instant'
+      behavior: mounted ? 'smooth' : 'instant',
     })
   }
 }

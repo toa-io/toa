@@ -15,7 +15,7 @@ export function standard(descriptor: Descriptor, idp: IDP) {
     response_mode: 'fragment',
     scope,
     state: btoa(JSON.stringify({ idp })),
-    nonce: id
+    nonce: id,
   })
 
   nonce.set(id)

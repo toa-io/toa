@@ -25,7 +25,7 @@ export const press: Action<HTMLElement, Handler> = (element, handler) => {
       element.removeEventListener('pointerdown', down)
       element.removeEventListener('click', click)
       element.removeEventListener('keydown', key)
-    }
+    },
   }
 
   function down(event: PointerEvent): void {

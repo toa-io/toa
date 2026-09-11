@@ -20,5 +20,5 @@ export const faded = derived(
 
     return unsub
   },
-  false
+  false,
 )

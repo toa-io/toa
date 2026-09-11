@@ -74,7 +74,7 @@ export function grid(graph: Graph, view: Size, columns = 4): Grid {
   const groups = (
     [
       { label: 'user' as const, of: components.filter((one) => !system(one.node)) },
-      { label: 'system' as const, of: components.filter((one) => system(one.node)) }
+      { label: 'system' as const, of: components.filter((one) => system(one.node)) },
     ] satisfies { label: Band['label']; of: Component[] }[]
   ).filter((group) => group.of.length > 0)
 
@@ -88,7 +88,7 @@ export function grid(graph: Graph, view: Size, columns = 4): Grid {
       label: group.label,
       x: 0,
       y: top,
-      width: 0
+      width: 0,
     })
 
     top += BAND.height + CARD.row
@@ -96,8 +96,8 @@ export function grid(graph: Graph, view: Size, columns = 4): Grid {
     group.of.forEach((component, i) =>
       positions.set(component.id, {
         x: (i % columns) * step.x,
-        y: top + Math.floor(i / columns) * step.y
-      })
+        y: top + Math.floor(i / columns) * step.y,
+      }),
     )
 
     top += Math.ceil(group.of.length / columns) * step.y
@@ -108,8 +108,8 @@ export function grid(graph: Graph, view: Size, columns = 4): Grid {
   services.forEach((service, i) =>
     positions.set(service.id, {
       x: (i % columns) * step.x,
-      y: top + Math.floor(i / columns) * (SERVICE.height + CARD.row)
-    })
+      y: top + Math.floor(i / columns) * (SERVICE.height + CARD.row),
+    }),
   )
 
   // to the end of the widest row the map turned out to have, so both lines agree
@@ -127,7 +127,7 @@ export function grid(graph: Graph, view: Size, columns = 4): Grid {
 
   centre(positions, view, (id) => ({
     width: id.startsWith(BAND.prefix) ? width : CARD.width,
-    height: id.startsWith(BAND.prefix) ? BAND.height : (heights.get(id) ?? CARD.height)
+    height: id.startsWith(BAND.prefix) ? BAND.height : (heights.get(id) ?? CARD.height),
   }))
 
   for (const band of bands) {
@@ -150,7 +150,7 @@ export function arrange(
   focus: Focus,
   view: Size,
   sizes: Map<string, Size>,
-  open: string | null = null
+  open: string | null = null,
 ): Map<string, Position> {
   const positions = new Map<string, Position>([[focus.vertex.id, { x: 0, y: 0 }]])
   const middle = size(sizes, focus.vertex.id, FOCUSED).height / 2
@@ -159,7 +159,7 @@ export function arrange(
   place(focus.outgoing, 1)
 
   return centre(positions, view, (id) =>
-    size(sizes, id, id === focus.vertex.id ? FOCUSED : CARD)
+    size(sizes, id, id === focus.vertex.id ? FOCUSED : CARD),
   )
 
   /**
@@ -173,6 +173,7 @@ export function arrange(
     columns(satellites).forEach((column, index) => {
       const lane = CARD.gap + index * step
       const heights = column.map((satellite) => size(sizes, satellite.id, CARD).height)
+
       const total =
         heights.reduce((sum, height) => sum + height, 0) + CARD.row * (column.length - 1)
 
@@ -183,7 +184,7 @@ export function arrange(
 
         positions.set(satellite.id, {
           x: direction < 0 ? -(lane + width) : FOCUSED.width + lane,
-          y
+          y,
         })
 
         y += heights[at] + CARD.row
@@ -211,7 +212,7 @@ function size(sizes: Map<string, Size>, id: string, fallback: Size): Size {
 function centre(
   positions: Map<string, Position>,
   view: Size,
-  size: (id: string) => Size
+  size: (id: string) => Size,
 ): Map<string, Position> {
   if (positions.size === 0) return positions
 
@@ -228,12 +229,12 @@ function centre(
 
   const content = {
     width: bounds.right - bounds.left,
-    height: bounds.bottom - bounds.top
+    height: bounds.bottom - bounds.top,
   }
 
   const offset = {
     x: Math.max(PAD, (view.width - content.width) / 2) - bounds.left,
-    y: Math.max(PAD, (view.height - content.height) / 2) - bounds.top
+    y: Math.max(PAD, (view.height - content.height) / 2) - bounds.top,
   }
 
   for (const [id, at] of positions)

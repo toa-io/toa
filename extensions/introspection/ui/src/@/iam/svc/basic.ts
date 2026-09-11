@@ -12,14 +12,14 @@ export async function verify(username: string, password: string): Promise<Echo |
 
 export async function create(
   identity: string,
-  body: net.basic.Basic
+  body: net.basic.Basic,
 ): Promise<void | Error> {
   return await net.basic.post(identity, body)
 }
 
 export async function capture(
   identity: string,
-  body: net.basic.Basic
+  body: net.basic.Basic,
 ): Promise<void | Error> {
   const created = await create(identity, body)
 

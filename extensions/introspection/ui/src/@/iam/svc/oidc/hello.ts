@@ -73,7 +73,7 @@ function code(): string | null {
   const auth = {
     code,
     iss: providers[idp].iss,
-    for: window.location.origin + window.location.pathname
+    for: window.location.origin + window.location.pathname,
   }
 
   const credentials = btoa(JSON.stringify(auth))
