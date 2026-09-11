@@ -2,7 +2,8 @@ import { Readable } from 'node:stream'
 import { current, encode } from 'openspan'
 import { Connector } from './connector.js'
 import { derive, newid } from './entities/newid.js'
-import { AbandonedException, RequestContractException } from './exceptions.js'
+import { RequestContractException } from './exceptions.js'
+import { abandoned, waiting } from './abandon.js'
 import * as addressed from './instance.js'
 import * as trail from './trail.js'
 import type { Transmission } from './transmission.js'
@@ -167,14 +168,10 @@ export class Call extends Connector {
   async #transmit(envelope: Envelope, terms: Terms | undefined): Promise<any> {
     const signal = terms?.signal
 
-    try {
-      return await abortable(this.#transmitter.request(envelope, terms), signal)
-    } catch (exception) {
-      if (signal?.aborted === true)
-        throw new AbandonedException(`'${this.#target}' went unanswered`, signal.reason)
+    // a call its caller stopped waiting for before it was made is handed to no binding
+    if (signal?.aborted === true) throw abandoned(this.#target, signal)
 
-      throw exception
-    }
+    return await waiting(this.#transmitter.request(envelope, terms), signal, this.#target)
   }
 }
 
@@ -182,36 +179,6 @@ export class Call extends Connector {
 function service(source: Source | undefined): string[] | undefined {
   return source !== undefined && 'service' in source ? [source.service] : undefined
 }
-
-/**
- * What the promise settles with, or the signal's reason once it aborts, whichever comes first. The
- * promise goes on running, and settles with nobody waiting for it.
- */
-async function abortable<T>(promise: Promise<T>, signal?: AbortSignal): Promise<T> {
-  if (signal === undefined) return await promise
-
-  if (signal.aborted) {
-    promise.catch(noop)
-
-    throw signal.reason
-  }
-
-  let abort: () => void = noop
-
-  const aborted = new Promise<never>((_resolve, reject) => {
-    abort = () => reject(signal.reason)
-  })
-
-  signal.addEventListener('abort', abort, { once: true })
-
-  try {
-    return await Promise.race([promise, aborted])
-  } finally {
-    signal.removeEventListener('abort', abort)
-  }
-}
-
-function noop(): void {}
 
 // the remote error as a value: every property it carries, and nothing else enumerable
 class RemoteError extends Error {

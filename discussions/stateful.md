@@ -50,7 +50,8 @@ deadline it waits for its reply as it does today.
 
 **Any call with a deadline**
 
-5. A call still waiting in a queue when its `timeout` passes is dropped by the broker and never runs.
+5. A call whose `signal` aborted before it was made is made nowhere. A call still waiting in a queue when
+   its `timeout` passes is dropped by the broker and never runs.
    A call its `signal` ended earlier waits in the queue until then, and may still run.
 6. A call abandoned after a consumer took it has an unknown outcome and may still run. So may a call
    that failed and waits on `comq`'s retry ladder, because dead-lettering strips a message's expiry.

@@ -1,4 +1,5 @@
 import { Connector } from './connector.js'
+import { waiting } from './abandon.js'
 import { instance } from './instance.js'
 import { environment } from '@toa.io/generic'
 import type { Locator } from './locator.js'
@@ -59,7 +60,13 @@ export class Context extends Connector {
     request: Request,
     options?: Options
   ): Promise<any> {
-    const remote = await this.#remote(namespace, name)
+    // the lookup is waited for as the call is: a caller that stops waiting is answered at once, and
+    // the lookup finishes for the next call to use
+    const remote = await waiting(
+      this.#remote(namespace, name),
+      options?.signal,
+      `${namespace}.${name}.${endpoint}`
+    )
 
     return remote.invoke(endpoint, request, options)
   }

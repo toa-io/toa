@@ -41,6 +41,30 @@ Feature: Stateful operations
       code: 403
       """
 
+  Scenario: A call its signal aborted before it was made runs nowhere
+    Given I compose components:
+      | stateful.counter |
+      | stateful.caller  |
+    When I call `stateful.caller.relay` with:
+      """yaml
+      input:
+        endpoint: increment
+        input: withheld
+        aborted: true
+      """
+    Then the following exception is thrown:
+      """yaml
+      code: 404
+      """
+    When I call `stateful.counter.increment` on this process with:
+      """yaml
+      input: withheld
+      """
+    Then the reply is received:
+      """yaml
+      count: 1
+      """
+
   @cli
   Scenario: A call reaches another process by its name, and leaves this one's memory alone
     Given I have a component `stateful.counter`

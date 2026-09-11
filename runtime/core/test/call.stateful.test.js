@@ -148,3 +148,19 @@ it('should end the wait on the signal within the deadline', async () => {
 it('should answer with a reply that arrives in time', async () => {
   assert.equal(await stateful().invoke({ instance: 'a' }, { timeout: 1000 }), 'ok')
 })
+
+it('should make a call its signal aborted before it was made nowhere', async () => {
+  const controller = new AbortController()
+  const reason = new Error('stopped before the call')
+
+  controller.abort(reason)
+
+  await assert.rejects(stateful().invoke({ instance: 'a' }, { signal: controller.signal }), (exception) => {
+    assert.equal(exception.code, codes.Abandoned)
+    assert.equal(exception.cause, reason)
+
+    return true
+  })
+
+  assert.equal(transmission.request.mock.callCount(), 0)
+})

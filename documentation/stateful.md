@@ -67,7 +67,8 @@ await context.remote.media.streams.watch({ input: { id }, instance }, { timeout:
 ```
 
 - `timeout` is in milliseconds.
-- `signal`, an `AbortSignal`, ends the wait when it aborts, within the timeout.
+- `signal`, an `AbortSignal`, ends the wait when it aborts, within the timeout — also while the
+  component is still being looked up, in which case the call is made nowhere.
 
 Every remote call and local call takes both. An ordinary call given neither waits for as long as its
 reply takes. For a streamed reply, the wait covers the start of the stream.

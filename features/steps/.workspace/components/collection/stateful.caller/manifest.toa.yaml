@@ -14,5 +14,7 @@ operations:
         input: {}
         timeout:
           type: integer
-      required: [instance, endpoint]
+        aborted:
+          type: boolean
+      required: [endpoint]
     output: {}
