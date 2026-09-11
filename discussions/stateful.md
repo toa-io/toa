@@ -61,8 +61,8 @@ deadline it waits for its reply as it does today.
 
 7. A name lives as long as its process's broker connection. During a brief connection loss or a broker
    restart, calls to that process are refused and calls queued for it are abandoned, while its memory
-   survives. The refusal is permanent, so an event receiver whose call is refused this way parks the
-   event at once.
+   survives. The refusal is transient: an event or a delayed call whose call is refused this way is
+   tried again, and goes through once the process holds its name again.
 8. A name given by `TOA_INSTANCE` passes to the next process started with it, which then answers
    calls meant for its predecessor, with none of its memory. A generated name belongs to one process
    for good. Two live processes given the same name can hold it on different brokers, and both answer
@@ -96,11 +96,15 @@ Then:
 
 - A call to a stateful operation names `instance`; a call to an ordinary operation, a task and a
   delayed call name none. A mismatch is refused as a contract error before anything is sent.
+- A receiver may be bound to a stateful operation. It names the process in the request its
+  adaptation returns, and its call reaches that process from whichever replica took the event; a
+  receiver that names none is refused like any other call without a name. A call through
+  `context.local` goes the same way as one through `context.remote`.
 - A call that needs longer or shorter than the default says so: `{ input, instance, timeout: 60_000 }`.
   A `signal` ends the wait when it aborts, within whatever deadline applies, and leaves the call
   queued until that deadline passes — or, for an ordinary call with no deadline, until it is taken.
-- Two exceptions are new. *Addressee* is permanent: nothing at that name took the call. *Abandoned* is
-  transient: the caller stopped waiting, and the call may still run.
+- Two exceptions are new, both transient. *Addressee*: nothing at that name took the call, and a
+  process may yet hold the name. *Abandoned*: the caller stopped waiting, and the call may still run.
 - The default is set in the context manifest:
 
   ```yaml
@@ -119,7 +123,8 @@ Then:
   ```
 
   A route to a stateful operation without `map:instance` is refused as any call without a name is.
-  Over HTTP, *addressee* answers `404 Not Found` and *abandoned* answers `504 Gateway Timeout`.
+  Over HTTP, *addressee* and *abandoned* answer `500`, as every exception the gateway has no mapping
+  for does.
 
 ## Decisions
 
@@ -136,8 +141,11 @@ the other, so a returned call is refused at once and exactly. Withdrawing a name
 unbinding its queue — after which every publish is returned; the calls queued past the prefetch at
 that moment go with the connection and meet their deadline.
 
-**A refusal is permanent.** A generated name never comes back, and a retry against it would be a
-retry against nothing.
+**A refusal is transient.** A process whose broker connection was lost claims its name again once
+the connection is restored, so a call refused in that gap goes through later; a name nobody will hold
+again costs an event the retries before it is parked. The classification is read in two places only —
+a receiver's event and a delayed call — and an addressed call elsewhere hands the exception to its
+caller as it is.
 
 **A deadline by default on addressed calls only.** The target of an addressed call may be gone for
 good, and nothing else ends such a call. The target of an ordinary call is a component that returns,
@@ -209,17 +217,17 @@ crash without a timer, and is enabled on few brokers and on almost no managed on
    with `RequestContract`; takes `timeout`, or `TIMEOUT` for an addressed call without one, and refuses
    a non-positive one there; combines it with `signal`; passes both down the transmission to the
    binding; and throws *abandoned*, with the abort's reason as its cause, when the deadline wins.
-5. **Exceptions.** `Addressee: 403`, permanent, and `Abandoned: 404`, transient.
+5. **Exceptions.** `Addressee: 403` and `Abandoned: 404`, both transient.
 6. **Loop binding.** Serves an addressed call when its `instance` is this process's name and hands any
    other to the next binding.
 7. **AMQP binding.** A stateful endpoint is served by `back` on the exchange
    `<namespace>.<name>.<endpoint>..instances` under the process's name, with no shared queue and no
    tasks queue, bound before any shared endpoint starts consuming. An addressed call goes out through
-   `call`; `Unroutable` becomes *addressee*.
+   `call`; `Unroutable` becomes *addressee*. A name taken on a broker is logged as a warning, with
+   the queue and the broker it is taken on; Toa adds nothing to comq's claim.
 8. **Exposition.** `map:instance` names the route parameter that carries the name. It takes the
    parameter out of the input and the criteria, and the endpoint sets `request.instance` from it beside
-   `request.id`. Introspection lists it under `route`. *Addressee* maps to `404`, *abandoned* to a new
-   `504`.
+   `request.id`. Introspection lists it under `route`. The two exceptions get no mapping of their own.
 9. **Cadence.** A delayed call is refused with `instance` or `signal` in its request.
 10. **Documentation.** A page on stateful operations and addressed calls, the component and context
     manifests, exceptions, the Node bridge, `map`; the *Stateless* principle in the design notes, and
@@ -243,7 +251,7 @@ blocker stays, since ordinary calls keep waiting by default.
    own.
 2. **The call**: the name, the flag, the request, the deadline, the exceptions, the loop and AMQP
    bindings, cadence.
-3. **Exposition**: `map:instance` and the two statuses.
+3. **Exposition**: `map:instance`.
 
 ## Verification
 
@@ -277,8 +285,8 @@ blocker stays, since ordinary calls keep waiting by default.
 - a second process started with a held name reports it taken, and serves once the first has gone;
 - an ordinary call with a `timeout` to a component that is down is abandoned, and the component, once
   up, never receives it;
-- through the gateway, a route with `map:instance` reaches the named process, a name nobody holds
-  answers `404`, and a stateful operation behind a route without `map:instance` answers `400`.
+- through the gateway, a route with `map:instance` reaches the named process, and a stateful
+  operation behind a route without `map:instance` answers `400`.
 
 ## Compatibility
 
