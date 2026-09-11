@@ -1,8 +1,8 @@
 import { it, beforeEach, afterEach, mock } from 'node:test'
 import assert from 'node:assert/strict'
 
-import { Pulse } from './Pulse.js'
-import type { Local } from './Local.js'
+import { Pulse } from './Pulse.ts'
+import type { Local } from './Local.ts'
 import type { Locator } from '@toa.io/core'
 import type { Request, atomicity } from '@toa.io/core/types'
 

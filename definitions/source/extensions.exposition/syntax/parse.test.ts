@@ -1,7 +1,7 @@
 import { describe, it } from 'node:test'
 import assert from 'node:assert/strict'
 
-import { parse } from './parse.js'
+import { parse } from './parse.ts'
 
 describe('routes', () => {
   it('should parse route', async () => {

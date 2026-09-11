@@ -1,6 +1,6 @@
 import { type Dependency, type Variable } from '@toa.io/operations'
 import { naming } from '@toa.io/pointer'
-import { type Annotation } from './annotation.js'
+import { type Annotation } from './annotation.ts'
 
 export function createDependency(context: Context): Dependency {
   const global: Variable[] = []

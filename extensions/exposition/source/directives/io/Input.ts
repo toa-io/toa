@@ -1,8 +1,8 @@
-import { BadRequest } from '../../HTTP/index.js'
-import * as schemas from './schemas.js'
-import type { Message } from './Message.js'
-import type { Directive } from './Directive.js'
-import type { Input as Context } from '../../io.js'
+import { BadRequest } from '../../HTTP/index.ts'
+import * as schemas from './schemas.ts'
+import type { Message } from './Message.ts'
+import type { Directive } from './Directive.ts'
+import type { Input as Context } from '../../io.ts'
 
 export class Input implements Directive {
   /** what a client may send, which is therefore what the input schema states */

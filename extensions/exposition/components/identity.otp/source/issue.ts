@@ -1,5 +1,5 @@
 import { randomInt } from 'node:crypto'
-import type { Context } from './lib/index.js'
+import type { Context } from './lib/index.ts'
 
 export async function effect(input: Input, context: Context): Promise<Output> {
   const { authority, username, identity } = input

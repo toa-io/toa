@@ -2,11 +2,11 @@ import { describe, it, beforeEach, mock } from 'node:test'
 import assert from 'node:assert/strict'
 
 import { generate } from 'randomstring'
-import { DirectivesFactory } from './Directive.js'
-import type { syntax, DirectiveFamily } from './RTD/index.js'
-import type { Remotes } from './Remotes.js'
-import type { Host } from './Factory.js'
-import type { Context } from './HTTP/index.js'
+import { DirectivesFactory } from './Directive.ts'
+import type { syntax, DirectiveFamily } from './RTD/index.ts'
+import type { Remotes } from './Remotes.ts'
+import type { Host } from './Factory.ts'
+import type { Context } from './HTTP/index.ts'
 
 const sequence: string[] = []
 

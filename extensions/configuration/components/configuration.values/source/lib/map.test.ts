@@ -1,7 +1,7 @@
 import { it, afterEach } from 'node:test'
 import assert from 'node:assert/strict'
 
-import { VARIABLE, components, entry } from './map.js'
+import { VARIABLE, components, entry } from './map.ts'
 
 afterEach(() => {
   delete process.env[VARIABLE]

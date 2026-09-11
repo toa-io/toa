@@ -2,7 +2,7 @@ import type { Descriptor } from './providers'
 
 const win = typeof window !== 'undefined' && (window as any)
 
-async function apple(descriptor: Descriptor): Promise<string | Error> {
+export async function apple(descriptor: Descriptor): Promise<string | Error> {
   await init(descriptor)
 
   const response = await win.AppleID.auth.signIn().catch((err: unknown) => err)
@@ -43,5 +43,3 @@ function init(descriptor: Descriptor) {
     document.head.appendChild(script)
   })
 }
-
-export { apple }

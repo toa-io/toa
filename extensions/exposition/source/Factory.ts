@@ -1,9 +1,9 @@
 import { createHash } from 'node:crypto'
-import { Tenant } from './Tenant.js'
+import { Tenant } from './Tenant.ts'
 import { CHANNEL } from '@toa.io/definitions/extensions.exposition'
-import type { Branch } from './Branch.js'
-import type { syntax } from './RTD/index.js'
-import type { Broadcast } from './Gateway.js'
+import type { Branch } from './Branch.ts'
+import type { syntax } from './RTD/index.ts'
+import type { Broadcast } from './Gateway.ts'
 import type { Connector, Locator } from '@toa.io/core'
 import type { extensions } from '@toa.io/core/types'
 
@@ -32,7 +32,7 @@ export class Factory implements extensions.Factory {
   }
 
   public async service(): Promise<Connector | null> {
-    const { service } = await import('./service.js')
+    const { service } = await import('./service.ts')
 
     return await service(this.host)
   }

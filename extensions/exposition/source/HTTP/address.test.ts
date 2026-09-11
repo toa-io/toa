@@ -1,8 +1,8 @@
 import { it } from 'node:test'
 import assert from 'node:assert/strict'
 
-import { address } from './address.js'
-import type { IncomingMessage } from './types.js'
+import { address } from './address.ts'
+import type { IncomingMessage } from './types.ts'
 
 const request = (headers: Record<string, string>): IncomingMessage =>
   ({ headers, socket: { remoteAddress: '9.9.9.9' } }) as unknown as IncomingMessage

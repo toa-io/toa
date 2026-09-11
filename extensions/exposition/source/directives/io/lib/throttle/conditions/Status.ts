@@ -1,5 +1,5 @@
-import type { Input, Output } from '../../../../../io.js'
-import type { Condition } from './Condition.js'
+import type { Input, Output } from '../../../../../io.ts'
+import type { Condition } from './Condition.ts'
 
 export class Status implements Condition {
   private readonly status: number

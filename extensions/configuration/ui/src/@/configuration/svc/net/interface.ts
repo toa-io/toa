@@ -24,11 +24,11 @@ export async function get(component: string): Promise<Configuration | Error> {
 
 export async function create(
   component: string,
-  configuration: Node
+  configuration: Node,
 ): Promise<Created | Error> {
   return await values.json<Created>(component + '/', {
     method: 'POST',
-    body: { configuration }
+    body: { configuration },
   })
 }
 

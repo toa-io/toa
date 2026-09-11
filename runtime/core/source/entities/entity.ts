@@ -1,10 +1,10 @@
 import { environment } from '@toa.io/generic'
-import { EntityContractException, EntityGuardException } from '../exceptions.js'
-import { newid } from './newid.js'
+import { EntityContractException, EntityGuardException } from '../exceptions.ts'
+import { newid } from './newid.ts'
 import type { Schema } from '@toa.io/schemas'
-import type { Guard } from '../guard.js'
-import type { Record } from '../types/storages.js'
-import type { Event } from '../types/state.js'
+import type { Guard } from '../guard.ts'
+import type { Record } from '../types/storages.ts'
+import type { Event } from '../types/state.ts'
 
 export class Entity {
   public deleted = false

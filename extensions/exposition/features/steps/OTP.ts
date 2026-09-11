@@ -3,7 +3,7 @@ import tsflow from 'cucumber-tsflow'
 
 import * as boot from '@toa.io/boot'
 import { Locator, type Remote } from '@toa.io/core'
-import { Captures } from './Captures.js'
+import { Captures } from './Captures.ts'
 
 const { binding, given } = tsflow
 

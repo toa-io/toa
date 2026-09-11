@@ -1,10 +1,10 @@
 import { console, current, encode, type SpanOptions } from 'openspan'
-import { Connector } from './connector.js'
-import { derive } from './entities/newid.js'
-import type { Emitter } from './types/bindings.js'
-import type { Event as Bridge } from './types/bridges.js'
-import type { Message } from './types/message.js'
-import type { Row } from './types/outbox.js'
+import { Connector } from './connector.ts'
+import { derive } from './entities/newid.ts'
+import type { Emitter } from './types/bindings.ts'
+import type { Event as Bridge } from './types/bridges.ts'
+import type { Message } from './types/message.ts'
+import type { Row } from './types/outbox.ts'
 
 export interface Definition {
   conditioned?: boolean

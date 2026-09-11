@@ -1,5 +1,5 @@
-import { nameVariable } from './naming.js'
-import { type AnnotationRecord, type URIMap } from './Deployment.js'
+import { nameVariable } from './naming.ts'
+import { type AnnotationRecord, type URIMap } from './Deployment.ts'
 import { environment } from '@toa.io/generic'
 
 export function resolve(id: string, selector: string): string[] {

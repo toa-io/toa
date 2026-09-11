@@ -5,9 +5,9 @@ entity:
   associated: true
   storage: null
   properties:
-    value:
+    value: &value
       type: integer
-    secret:
+    secret: &secret
       type: string
   blank:
     value: 0
@@ -17,12 +17,8 @@ operations:
     concurrency: retry
     input:
       properties:
-        value:
-          type: string
-          default: .
-        secret:
-          type: string
-          default: .
+        value: *value
+        secret: *secret
       type: object
   relay:
     input:

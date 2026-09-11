@@ -1,9 +1,9 @@
-import { Help } from './Help.js'
-import { Parameters } from './Parameters.js'
-import type { Introspection, Schema } from '../../Introspection.js'
-import type { Described } from './described.js'
-import type { Context } from '../../HTTP/index.js'
-import type { DirectiveFamily } from '../../RTD/index.js'
+import { Help } from './Help.ts'
+import { Parameters } from './Parameters.ts'
+import type { Introspection, Schema } from '../../Introspection.ts'
+export type { Described } from './described.ts'
+import type { Context } from '../../HTTP/index.ts'
+import type { DirectiveFamily } from '../../RTD/index.ts'
 
 /** The name the family is declared under, and what a consumer of one asks a method for. */
 export const FAMILY = 'help'
@@ -118,5 +118,3 @@ function declared(
 
   return (found as Parameters | undefined) ?? null
 }
-
-export type { Described }

@@ -2,8 +2,8 @@ import { readdirSync, type Dirent } from 'node:fs'
 import { resolve } from 'node:path'
 import { Connector } from '@toa.io/core'
 import { uiPort } from '@toa.io/definitions/extensions.configuration'
-import { UI } from './UI.js'
-import type { Host } from './Factory.js'
+import { UI } from './UI.ts'
+import type { Host } from './Factory.ts'
 
 /** Hosts the values component in the service process. */
 export class Composition extends Connector {

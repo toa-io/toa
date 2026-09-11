@@ -1,5 +1,5 @@
-import type { Input } from '../../../../../io.js'
-import type { Component } from './Component.js'
+import type { Input } from '../../../../../io.ts'
+import type { Component } from './Component.ts'
 
 /**
  * The authenticated identity, or nothing when the request carries none.

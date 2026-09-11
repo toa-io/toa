@@ -1,4 +1,4 @@
-import * as schemas from './schemas.js'
+import * as schemas from './schemas.ts'
 
 export function manifest(manifest: Manifest): Manifest {
   schemas.manifest.validate(manifest)

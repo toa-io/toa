@@ -1,4 +1,4 @@
-import type { IncomingMessage } from './types.js'
+import type { IncomingMessage } from './types.ts'
 
 /**
  * The client address: the value of the header the deployment names, and nothing otherwise.

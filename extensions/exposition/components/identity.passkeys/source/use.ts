@@ -4,7 +4,7 @@ import type {
   WebAuthnCredential
 } from '@simplewebauthn/server'
 import type { Operation } from '@toa.io/bridges.node'
-import type { Context, Passkey } from './types/index.js'
+import type { Context, Passkey } from './types/index.ts'
 
 export class Transition implements Operation {
   private stash!: Context['stash']

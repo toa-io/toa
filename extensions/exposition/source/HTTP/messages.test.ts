@@ -7,12 +7,12 @@ import { setTimeout } from 'node:timers/promises'
 import * as streamConsumers from 'node:stream/consumers'
 import { generate } from 'randomstring'
 import * as msgpack from 'msgpackr'
-import { multipart, read, type OutgoingMessage } from './messages.js'
-import { BadRequest, UnsupportedMediaType } from './exceptions.js'
-import { formats, types } from './formats/index.js'
-import { Timing } from './Timing.js'
+import { multipart, read, type OutgoingMessage } from './messages.ts'
+import { BadRequest, UnsupportedMediaType } from './exceptions.ts'
+import { formats, types } from './formats/index.ts'
+import { Timing } from './Timing.ts'
 import type * as http from 'node:http'
-import type { Context } from './Context.js'
+import type { Context } from './Context.ts'
 
 beforeEach(() => {
   resetCalls()

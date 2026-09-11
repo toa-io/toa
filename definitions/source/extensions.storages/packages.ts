@@ -1,6 +1,6 @@
-import type { Provider } from './secrets.js'
-import type { Annotation } from './Annotation.js'
-import type { Instance } from './deployment.js'
+import type { Provider } from './secrets.ts'
+import type { Annotation } from './Annotation.ts'
+import type { Instance } from './deployment.ts'
 
 /**
  * What each provider is written against, stated apart from the provider for the reason its

@@ -1,10 +1,10 @@
 import { posix } from 'node:path'
 import { match } from 'matchacho'
-import { Execution } from './Execution.js'
+import { Execution } from './Execution.ts'
 import type { Entry } from '@toa.io/extensions.storages'
-import type { Context } from './Execution.js'
-import type { Parameter } from '../../../RTD/index.js'
-import type { Remotes } from '../../../Remotes.js'
+import type { Context } from './Execution.ts'
+import type { Parameter } from '../../../RTD/index.ts'
+import type { Remotes } from '../../../Remotes.ts'
 
 export class Workflow {
   private readonly units: Unit[]

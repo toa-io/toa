@@ -1,9 +1,9 @@
 import { describe, it } from 'node:test'
 import assert from 'node:assert/strict'
 
-import * as http from '../HTTP/index.js'
-import { segment } from '../RTD/segment.js'
-import { address, name, refusal } from './names.js'
+import * as http from '../HTTP/index.ts'
+import { segment } from '../RTD/segment.ts'
+import { address, name, refusal } from './names.ts'
 
 describe('address', () => {
   it('should resolve a name without variables', () => {

@@ -1,7 +1,7 @@
-import { merge } from '@toa.io/generic'
+import { merge as combine } from '@toa.io/generic'
 import { definition } from '../definition.js'
 
-const bridge = async (root, manifest) => {
+export const merge = async (root, manifest) => {
   await Promise.all([
     define(root, manifest, 'operations'),
     define(root, manifest, 'events'),
@@ -22,7 +22,7 @@ const define = async (root, manifest, property) => {
       const { define } = await bridged(bridge)
       const definition = await define[singular](root, endpoint)
 
-      merge(item, definition)
+      combine(item, definition)
     }
   }
 
@@ -45,7 +45,7 @@ const define = async (root, manifest, property) => {
 
       try {
         if (declared === undefined) manifest[property][endpoint] = item
-        else merge(declared, item)
+        else combine(declared, item)
       } catch (error) {
         console.error(`Error merging ${singular} '${endpoint}' in ${root}`)
         throw error
@@ -69,5 +69,3 @@ async function bridged(reference) {
 
   return module
 }
-
-export { bridge as merge }

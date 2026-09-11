@@ -1,3 +1,3 @@
-export * from './extension.js'
-export * from './Ready.js'
-export type * from './aspects.js'
+export * from './extension.ts'
+export * from './Ready.ts'
+export type * from './aspects.ts'

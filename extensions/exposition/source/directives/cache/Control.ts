@@ -1,5 +1,5 @@
 import { match } from 'matchacho'
-import type { AuthenticatedContext, Directive } from './types.js'
+import type { AuthenticatedContext, Directive } from './types.ts'
 
 export class Control implements Directive {
   protected readonly value: string

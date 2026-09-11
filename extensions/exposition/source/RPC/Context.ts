@@ -1,5 +1,5 @@
-import * as http from '../HTTP/index.js'
-import type { Params } from './types.js'
+import * as http from '../HTTP/index.ts'
+import type { Params } from './types.ts'
 
 /**
  * One call, as a request the rest of the gateway can serve.

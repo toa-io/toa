@@ -46,7 +46,7 @@ export const rows: Action<HTMLElement, Rows> = (element, options) => {
       mutations.disconnect()
 
       for (const id of mine) into.delete(id)
-    }
+    },
   }
 
   function take(): void {

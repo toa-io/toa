@@ -1,4 +1,4 @@
-import { packages } from '../digest/read.js'
+import { packages } from '../digest/read.ts'
 
 /**
  * What a deploy installs for the exposition.

@@ -1,4 +1,4 @@
-import { Registry, Runtime } from '../context.js'
+import { Registry, Runtime } from '../context.d.ts'
 
 /** A composition as declared, before its members are resolved. */
 interface Composition {

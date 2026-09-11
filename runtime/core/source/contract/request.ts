@@ -1,9 +1,9 @@
-import * as schemas from './schemas.js'
-import { RequestContractException } from '../exceptions.js'
-import { Contract } from './contract.js'
+import * as schemas from './schemas.ts'
+import { RequestContractException } from '../exceptions.ts'
+import { Contract } from './contract.ts'
 import type { Schema } from '@toa.io/schemas'
-import type { Refusal } from './contract.js'
-import type { JSONSchema } from './schemas.js'
+import type { Refusal } from './contract.ts'
+import type { JSONSchema } from './schemas.ts'
 
 /** What an operation states about itself, and answers when asked to explain. */
 export interface Explanation {

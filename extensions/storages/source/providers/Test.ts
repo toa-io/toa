@@ -1,6 +1,6 @@
-import { Temporary, type TemporaryOptions } from './Temporary.js'
+import { Temporary, type TemporaryOptions } from './Temporary.ts'
 import { secrets } from '@toa.io/definitions/extensions.storages'
-import type { Secret } from '../Secrets.js'
+import type { Secret } from '../Secrets.ts'
 
 export class Test extends Temporary {
   public static override readonly SECRETS: readonly Secret[] = secrets.test

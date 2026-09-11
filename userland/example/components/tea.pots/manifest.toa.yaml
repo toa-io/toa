@@ -4,11 +4,11 @@ namespace: tea
 entity:
   storage: mongodb
   properties:
-    volume:
+    volume: &volume
       type: number
-    booked:
+    booked: &booked
       type: boolean
-    material:
+    material: &material
       type: string
       enum:
         - glass
@@ -24,20 +24,12 @@ operations:
     concurrency: none
     input:
       properties:
-        material:
-          type: string
-          default: .
-        volume:
-          type: string
-          default: .
-        booked:
-          type: string
-          default: .
+        material: *material
+        volume: *volume
+        booked: *booked
       type: object
   same:
-    input:
-      type: string
-      default: .material
+    input: *material
     output:
       type: array
 

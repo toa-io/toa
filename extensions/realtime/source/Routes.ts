@@ -1,10 +1,11 @@
 import { Readable } from 'node:stream'
 import { console } from 'openspan'
 import { Connector } from '@toa.io/core'
-import { Receiver } from './Receiver.js'
+import { Receiver } from './Receiver.ts'
 import { environment } from '@toa.io/generic'
 import type { Route } from '@toa.io/definitions/extensions.realtime'
-import type { Host } from './Factory.js'
+export type { Route } from '@toa.io/definitions/extensions.realtime'
+import type { Host } from './Factory.ts'
 
 export class Routes extends Connector {
   public events = new Events()
@@ -61,5 +62,3 @@ class Events extends Readable {
 
   public override _read(): void {}
 }
-
-export type { Route }

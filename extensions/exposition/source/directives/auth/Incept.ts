@@ -1,12 +1,12 @@
 import { console } from 'openspan'
-import * as http from '../../HTTP/index.js'
-import { split } from './split.js'
-import { create } from './create.js'
-import { INCEPTION, UNKNOWN, providers as providersOf } from './schemes.js'
-import { Role } from './Role.js'
+import * as http from '../../HTTP/index.ts'
+import { split } from './split.ts'
+import { create } from './create.ts'
+import { INCEPTION, UNKNOWN, providers as providersOf } from './schemes.ts'
+import { Role } from './Role.ts'
 import type { Component } from '@toa.io/core'
 import type { Maybe } from '@toa.io/core/types'
-import type { Directive, Discovery, Identity, Context, Components, Ban } from './types.js'
+import type { Directive, Discovery, Identity, Context, Components, Ban } from './types.ts'
 
 export class Incept implements Directive {
   private static readonly components: Components = {}

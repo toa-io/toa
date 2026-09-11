@@ -1,4 +1,4 @@
-import type { Connector } from '../connector.js'
+import type { Connector } from '../connector.ts'
 
 /** Which of the group this replica is, and how many of them there are. */
 export interface Assignment {

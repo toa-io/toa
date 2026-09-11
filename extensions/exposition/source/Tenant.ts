@@ -2,8 +2,8 @@ import { setTimeout } from 'node:timers/promises'
 import { Connector } from '@toa.io/core'
 import { BRANCH_TTL } from '@toa.io/definitions/extensions.exposition'
 import type { bindings } from '@toa.io/core/types'
-import type { Label } from './discovery.js'
-import type { Branch } from './Branch.js'
+import type { Label } from './discovery.ts'
+import type { Branch } from './Branch.ts'
 
 export class Tenant extends Connector {
   private readonly broadcast: Broadcast

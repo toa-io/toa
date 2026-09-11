@@ -2,8 +2,8 @@ import { it, beforeEach, mock } from 'node:test'
 import assert from 'node:assert/strict'
 
 import { generate } from 'randomstring'
-import { Computation as Authenticate } from './authenticate.js'
-import type { Configuration, Context, DecryptOutput, Identity } from './lib/index.js'
+import { Computation as Authenticate } from './authenticate.ts'
+import type { Configuration, Context, DecryptOutput, Identity } from './lib/index.ts'
 import type { Secret } from '@toa.io/extensions.configuration'
 
 let configuration: Configuration

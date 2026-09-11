@@ -1,9 +1,9 @@
-import { type Parameter } from './RTD/index.js'
-import { Query } from './Query.js'
-import type { Introspection, Schema } from './Introspection.js'
-import type { QueryString } from './Query.js'
-import type * as http from './HTTP/index.js'
-import type * as syntax from './RTD/syntax/index.js'
+import { type Parameter } from './RTD/index.ts'
+import { Query } from './Query.ts'
+import type { Introspection, Schema } from './Introspection.ts'
+import type { QueryString } from './Query.ts'
+import type * as http from './HTTP/index.ts'
+import type * as syntax from './RTD/syntax/index.ts'
 import type * as core from '@toa.io/core/types'
 
 export abstract class Mapping {

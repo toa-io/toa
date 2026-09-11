@@ -1,5 +1,5 @@
 import { console } from 'openspan'
-import { Connector } from './connector.js'
+import { Connector } from './connector.ts'
 
 export class Composition extends Connector {
   // eslint-disable-next-line max-params

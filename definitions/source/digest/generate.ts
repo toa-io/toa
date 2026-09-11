@@ -1,7 +1,7 @@
 import { createRequire } from 'node:module'
 import { dirname, join, relative, resolve, sep } from 'node:path'
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs'
-import type { Entry } from './read.js'
+import type { Entry } from './read.ts'
 
 /**
  * Writes the digest of the components each extension ships: their manifests as norm reads

@@ -1,4 +1,4 @@
-import type { Exception } from '../exceptions.js'
+import type { Exception } from '../exceptions.ts'
 
 /**
  * What a call asks for. `Entity` is the record it is about, which narrows the projection;

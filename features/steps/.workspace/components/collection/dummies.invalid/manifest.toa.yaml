@@ -3,9 +3,9 @@ name:
 entity:
   storage: ~
   properties:
-    foo:
+    foo: &foo
       type: integer
-    bar:
+    bar: &bar
       type: string
   blank:
     foo: 0
@@ -15,10 +15,6 @@ operations:
     concurrency: retry
     input:
       properties:
-        foo:
-          type: string
-          default: .
-        bar:
-          type: string
-          default: .
+        foo: *foo
+        bar: *bar
       type: object

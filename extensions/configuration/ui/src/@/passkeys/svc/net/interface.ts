@@ -10,7 +10,7 @@ export function post(identity: string, body: CreationResponse): Promise<Passkey 
 
 export async function post(
   arg: string | RequestResponse,
-  body?: CreationResponse
+  body?: CreationResponse,
 ): Promise<void | Passkey | Error> {
   if (typeof arg === 'string')
     return await passkeys.json(arg, { body, credentials: 'include' })

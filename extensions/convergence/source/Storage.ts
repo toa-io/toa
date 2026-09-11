@@ -5,7 +5,7 @@ import { CHANNEL } from '@toa.io/definitions/extensions.convergence'
 import type { Readable } from 'node:stream'
 import type { Connector as Link, Locator } from '@toa.io/core'
 import type { bindings, outbox, storages } from '@toa.io/core/types'
-import type { Message } from './Destination.js'
+import type { Message } from './Destination.ts'
 
 /**
  * A record from another region is written as it stands: its version, its timestamps, its

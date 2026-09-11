@@ -1,5 +1,5 @@
-import { Connector } from './connector.js'
-import type { Algorithm } from './types/bridges.js'
+import { Connector } from './connector.ts'
+import type { Algorithm } from './types/bridges.ts'
 
 export class Cascade extends Connector {
   readonly #last: Algorithm

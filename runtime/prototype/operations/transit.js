@@ -1,5 +1,3 @@
-function transit(input, object) {
+export function transition(input, object) {
   return Object.assign(object, input)
 }
-
-export { transit as transition }

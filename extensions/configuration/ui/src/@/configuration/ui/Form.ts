@@ -38,7 +38,7 @@ const validators = new WeakMap<object, ValidateFunction>()
 export function read(
   text: string,
   schema: object | undefined,
-  malformed: string
+  malformed: string,
 ): Reading {
   let parsed: unknown
 

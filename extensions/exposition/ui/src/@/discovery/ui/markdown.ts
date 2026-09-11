@@ -1,7 +1,7 @@
-import authentication from '../../../docs/authentication.md?raw'
 import status from '../../../docs/status.md?raw'
 import queries from '../../../docs/queries.md?raw'
 import multipart from '../../../docs/multipart.md?raw'
+import authentication from '../../../docs/authentication.md?raw'
 import { discovered, guard, method, slashed, system, verbs } from './ui'
 import { read } from './shape'
 import type { Described, Discovered, Method, Resource, Schema } from '@/discovery'

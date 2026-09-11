@@ -7,7 +7,7 @@ import type { Action } from 'svelte/action'
  */
 export const hover: Action<HTMLElement, (row: string | null) => void> = (
   element,
-  handler
+  handler,
 ) => {
   let tell = handler
 
@@ -23,7 +23,7 @@ export const hover: Action<HTMLElement, (row: string | null) => void> = (
       element.removeEventListener('mouseleave', leave)
       element.removeEventListener('focusin', enter)
       element.removeEventListener('focusout', leave)
-    }
+    },
   }
 
   function enter(event: Event): void {

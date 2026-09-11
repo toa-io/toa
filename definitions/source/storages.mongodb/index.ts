@@ -1,1 +1,1 @@
-export { deployment, ID } from './deployment.js'
+export { deployment, ID } from './deployment.ts'

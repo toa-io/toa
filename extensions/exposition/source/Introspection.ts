@@ -1,5 +1,5 @@
 import type { Remote } from '@toa.io/core'
-import type { Context } from './HTTP/index.js'
+import type { Context } from './HTTP/index.ts'
 
 export interface Introspection {
   /**

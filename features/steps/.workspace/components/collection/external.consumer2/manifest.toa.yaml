@@ -3,9 +3,9 @@ namespace: external
 
 entity:
   properties:
-    time:
+    time: &time
       type: integer
-    description:
+    description: &description
       type: string
 
 operations:
@@ -13,12 +13,8 @@ operations:
     concurrency: none
     input:
       properties:
-        time:
-          type: string
-          default: .
-        description:
-          type: string
-          default: .
+        time: *time
+        description: *description
       type: object
     query: false
 

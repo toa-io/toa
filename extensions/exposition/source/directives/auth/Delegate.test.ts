@@ -1,7 +1,7 @@
 import assert from 'node:assert'
 import { describe, it } from 'node:test'
-import { Delegate } from './Delegate.js'
-import type { Introspection } from '../../Introspection.js'
+import { Delegate } from './Delegate.ts'
+import type { Introspection } from '../../Introspection.ts'
 
 describe('auth:delegate', () => {
   function explanation(): Introspection {

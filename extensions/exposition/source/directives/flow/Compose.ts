@@ -1,9 +1,9 @@
 import { once } from 'node:events'
 import { Readable } from 'node:stream'
 import { console } from 'openspan'
-import type { Directive } from './types.js'
-import type { Input as Context } from '../../io.js'
-import type { OutgoingMessage } from '../../HTTP/index.js'
+import type { Directive } from './types.ts'
+import type { Input as Context } from '../../io.ts'
+import type { OutgoingMessage } from '../../HTTP/index.ts'
 
 export class Compose implements Directive {
   private readonly expressions: Expression[]

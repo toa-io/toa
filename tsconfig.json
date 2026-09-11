@@ -3,6 +3,7 @@
     "outDir": "/dev/null",
     "module": "nodenext",
     "moduleResolution": "nodenext",
+    "rewriteRelativeImportExtensions": true,
     "target": "ESNext",
     "types": ["node"],
     "sourceMap": true,

@@ -1,13 +1,13 @@
-import * as http from '../HTTP/index.js'
-import { fork } from '../RPC/Context.js'
-import { address, name, split } from '../RPC/names.js'
-import { METHOD_NOT_FOUND, failure, refusal, response } from './errors.js'
-import { annotations, input, output } from './schema.js'
-import { FAMILY, MCP, type Tool as Declaration } from '../directives/mcp/index.js'
-import { describing } from '../Introspection.js'
-import { variables } from '../RTD/segment.js'
-import type { Tree } from '../RTD/index.js'
-import type { Params, Result, Tool } from './types.js'
+import * as http from '../HTTP/index.ts'
+import { fork } from '../RPC/Context.ts'
+import { address, name, split } from '../RPC/names.ts'
+import { METHOD_NOT_FOUND, failure, refusal, response } from './errors.ts'
+import { annotations, input, output } from './schema.ts'
+import { FAMILY, MCP, type Tool as Declaration } from '../directives/mcp/index.ts'
+import { describing } from '../Introspection.ts'
+import { variables } from '../RTD/segment.ts'
+import type { Tree } from '../RTD/index.ts'
+import type { Params, Result, Tool } from './types.ts'
 
 /**
  * Every method this caller may reach that is published as a tool, named as the procedure

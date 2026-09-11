@@ -1,6 +1,6 @@
-import { BadRequest } from '../../HTTP/index.js'
-import type { Input } from '../../io.js'
-import type { Directive } from './Directive.js'
+import { BadRequest } from '../../HTTP/index.ts'
+import type { Input } from '../../io.ts'
+import type { Directive } from './Directive.ts'
 
 export class Headers implements Directive {
   private readonly headers: string[]

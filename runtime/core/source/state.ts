@@ -1,13 +1,13 @@
-import { EntitySet } from './entities/set.js'
-import { StatePreconditionException, StateNotFoundException } from './exceptions.js'
+import { EntitySet } from './entities/set.ts'
+import { StatePreconditionException, StateNotFoundException } from './exceptions.ts'
 import type { Readable } from 'node:stream'
-import type { Factory } from './entities/factory.js'
-import type { Entity } from './entities/entity.js'
-import type { Changeset } from './entities/changeset.js'
-import type { Outbox } from './outbox.js'
-import type { Call } from './types/inbox.js'
-import type { Row } from './types/outbox.js'
-import type { Query, Record, Storage } from './types/storages.js'
+import type { Factory } from './entities/factory.ts'
+import type { Entity } from './entities/entity.ts'
+import type { Changeset } from './entities/changeset.ts'
+import type { Outbox } from './outbox.ts'
+import type { Call } from './types/inbox.ts'
+import type { Row } from './types/outbox.ts'
+import type { Query, Record, Storage } from './types/storages.ts'
 
 /**
  * What an operation acquires and commits. One method per scope a manifest may declare, which

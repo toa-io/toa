@@ -1,2 +1,2 @@
-export * as secrets from './secrets.js'
-export * as context from './context.js'
+export * as secrets from './secrets.ts'
+export * as context from './context.ts'

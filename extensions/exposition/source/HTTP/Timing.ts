@@ -1,5 +1,5 @@
 import { performance } from 'node:perf_hooks'
-import type { ServerResponse } from './types.js'
+import type { ServerResponse } from './types.ts'
 
 /** How long the request took, from received to written: one number, the header's. */
 export class Timing {

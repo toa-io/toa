@@ -1,5 +1,5 @@
 import * as _norm from '@toa.io/norm/types'
-import * as _composition from './composition.js'
+import * as _composition from './composition.d.ts'
 
 declare namespace toa.boot {
   type Manifest = (

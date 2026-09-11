@@ -1,7 +1,7 @@
 import { resolve } from 'node:path'
 import { namespace } from '@toa.io/schemas'
 import type { Schema } from '@toa.io/schemas'
-import type { Annotation, Declaration } from './Annotation.js'
+import type { Annotation, Declaration } from './Annotation.ts'
 
 const path = resolve(import.meta.dirname, '../../schemas/extensions.storages')
 const ns = namespace(path)

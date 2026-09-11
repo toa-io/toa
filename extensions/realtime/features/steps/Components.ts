@@ -11,7 +11,7 @@ import {
   parse as parseRoutes,
   type Declaration
 } from '@toa.io/definitions/extensions.realtime'
-import { Realtime } from './Realtime.js'
+import { Realtime } from './Realtime.ts'
 
 const { after, before, binding, given, when } = tsflow
 

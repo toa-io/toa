@@ -1,6 +1,6 @@
 import { join } from 'node:path'
 import dotenv from 'dotenv'
-import type { Secrets } from '../Secrets.js'
+import type { Secrets } from '../Secrets.ts'
 import type {
   providers,
   S3Options,
@@ -8,7 +8,7 @@ import type {
   CloudinaryOptions,
   FileSystemOptions,
   TemporaryOptions
-} from '../providers/index.js'
+} from '../providers/index.ts'
 
 dotenv.config({ path: join(import.meta.dirname, '.env') })
 

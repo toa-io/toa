@@ -1,8 +1,8 @@
 import { it } from 'node:test'
 import assert from 'node:assert/strict'
 
-import { identify } from './canonical.js'
-import type { Metadata } from './Entity.js'
+import { identify } from './canonical.ts'
+import type { Metadata } from './Entity.ts'
 
 const metadata: Metadata = {
   client_name: 'Claude',

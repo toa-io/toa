@@ -1,11 +1,11 @@
 import { it, beforeEach, afterEach, mock } from 'node:test'
 import assert from 'node:assert/strict'
 
-import { Sync } from './Sync.js'
-import { Quotas } from './Quotas.js'
+import { Sync } from './Sync.ts'
+import { Quotas } from './Quotas.ts'
 import type { atomicity } from '@toa.io/core/types'
-import type { Configuration } from './Configuration.js'
-import type { Input as Context } from '../../../../io.js'
+import type { Configuration } from './Configuration.ts'
+import type { Input as Context } from '../../../../io.ts'
 
 let sync: Sync
 let invocations: Input[]

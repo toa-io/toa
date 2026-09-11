@@ -1,8 +1,8 @@
 import assert from 'node:assert'
 import { Agent, request } from 'undici'
 import tsflow from 'cucumber-tsflow'
-import { PATH } from '../../source/HTTP/index.js'
-import { PROBE } from './Parameters.js'
+import { PATH } from '../../source/HTTP/index.ts'
+import { PROBE } from './Parameters.ts'
 
 const { after, binding, then, when } = tsflow
 

@@ -1,5 +1,5 @@
-import { Directive } from './Directive.js'
-import type { Output } from '../../io.js'
+import { Directive } from './Directive.ts'
+import type { Output } from '../../io.ts'
 
 export class Context extends Directive {
   public readonly targeted = false

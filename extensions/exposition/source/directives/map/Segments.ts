@@ -1,7 +1,7 @@
-import { Mapping } from './Mapping.js'
-import { take } from '../../Introspection.js'
-import type { Parameter } from '../../RTD/index.js'
-import type { Introspection, Schema } from '../../Introspection.js'
+import { Mapping } from './Mapping.ts'
+import { take } from '../../Introspection.ts'
+import type { Parameter } from '../../RTD/index.ts'
+import type { Introspection, Schema } from '../../Introspection.ts'
 
 export class Segments extends Mapping<Record<string, string>> {
   public constructor(map: Record<string, string>) {

@@ -1,4 +1,4 @@
-import type * as _deployment from './deployment.js'
+import type * as _deployment from './deployment.d.ts'
 
 declare namespace toa.deployment {
   interface Ingress {

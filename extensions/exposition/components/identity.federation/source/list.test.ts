@@ -2,7 +2,7 @@ import { it, mock } from 'node:test'
 import assert from 'node:assert/strict'
 import { isDeepStrictEqual } from 'node:util'
 
-import { computation } from './list.js'
+import { computation } from './list.ts'
 
 it('lists indexed credentials', async () => {
   const current = {

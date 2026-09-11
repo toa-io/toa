@@ -3,11 +3,11 @@ import { Readable } from 'node:stream'
 import { pipeline } from 'node:stream/promises'
 import * as contentType from 'content-type'
 import { console } from 'openspan'
-import { type Format, decoders } from './formats/index.js'
-import { BadRequest, NotAcceptable, UnsupportedMediaType } from './exceptions.js'
+import { type Format, decoders } from './formats/index.ts'
+import { BadRequest, NotAcceptable, UnsupportedMediaType } from './exceptions.ts'
 import { environment } from '@toa.io/generic'
-import type { Context } from './Context.js'
-import type { ServerResponse } from './types.js'
+import type { Context } from './Context.ts'
+import type { ServerResponse } from './types.ts'
 
 const context = environment.get('TOA_CONTEXT')
 const env = environment.get('TOA_ENV')

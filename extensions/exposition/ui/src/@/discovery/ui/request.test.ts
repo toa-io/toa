@@ -43,7 +43,6 @@ it('should ask for every parameter a resource declares', () => {
   ])
 })
 
-
 it('should leave a variable without a schema where the name is not answered', () => {
   const of: Method = { route: { a: { type: 'string' } } }
 

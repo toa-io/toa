@@ -4,8 +4,8 @@ import { console } from 'openspan'
 import { Locator } from '@toa.io/core'
 import { BINDING } from '@toa.io/definitions/extensions.convergence'
 
-import { Factory } from './Factory.js'
-import { Converging } from './Storage.js'
+import { Factory } from './Factory.ts'
+import { Converging } from './Storage.ts'
 import type { extensions, storages } from '@toa.io/core/types'
 
 let host: any

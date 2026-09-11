@@ -31,6 +31,7 @@ function stamp(res: ServerResponse): void {
 
   res.writeHead = ((...args: Parameters<typeof res.writeHead>) => {
     res.setHeader('exposition', exposition)
+
     return writeHead(...args)
   }) as typeof res.writeHead
 

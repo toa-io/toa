@@ -1,8 +1,8 @@
 import { compare } from '@node-rs/bcrypt'
 import { quote } from '@toa.io/generic'
 import type { Query, Maybe } from '@toa.io/core/types'
-import { split } from './lib/credentials.js'
-import { type Context } from '../types/index.js'
+import { split } from './lib/credentials.ts'
+import type { Context } from '../types/index.d.ts'
 
 export async function computation(
   input: Input,

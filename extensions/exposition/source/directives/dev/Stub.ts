@@ -1,5 +1,5 @@
-import type { Output } from '../../io.js'
-import type { Directive } from './types.js'
+import type { Output } from '../../io.ts'
+import type { Directive } from './types.ts'
 
 export class Stub implements Directive {
   private readonly value: unknown

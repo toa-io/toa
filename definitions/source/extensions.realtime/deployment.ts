@@ -1,5 +1,5 @@
-import { components } from './components.js'
-import { version } from '../version.js'
+import { components } from './components.ts'
+import { version } from '../version.ts'
 import type { Dependency, Instances, Resources, Service } from '@toa.io/operations'
 
 /** Where Toa's release publishes this service's image. An application takes it

@@ -5,9 +5,9 @@ import { isDeepStrictEqual } from 'node:util'
 import { Connector, type Locator, type Receiver } from '@toa.io/core'
 import type { Message } from '@toa.io/core/types'
 import { timeout } from '@toa.io/generic'
-import { Client, type Fetched } from './Client.js'
+import { Client, type Fetched } from './Client.ts'
 import { EVENT } from '@toa.io/definitions/extensions.configuration'
-import type { Host } from './Factory.js'
+import type { Host } from './Factory.ts'
 
 class Remote extends Connector {
   public readonly invoke = mock.fn(

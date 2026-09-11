@@ -1,7 +1,7 @@
 import { it } from 'node:test'
 import assert from 'node:assert/strict'
 
-import { request } from './request.js'
+import { request } from './request.ts'
 
 it('should parse headers', () => {
   const http = 'GET / HTTP/1.1\nhost: localhost:3000\n\n'

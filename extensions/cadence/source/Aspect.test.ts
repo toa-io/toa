@@ -2,8 +2,8 @@ import { it, beforeEach, mock } from 'node:test'
 import assert from 'node:assert/strict'
 
 import { trail } from '@toa.io/core'
-import { Aspect } from './Aspect.js'
-import type { Local } from './Local.js'
+import { Aspect } from './Aspect.ts'
+import type { Local } from './Local.ts'
 
 type Invoke = (endpoint: string, request: any) => Promise<unknown>
 

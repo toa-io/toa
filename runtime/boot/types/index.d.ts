@@ -1,8 +1,8 @@
 import type * as core from '@toa.io/core'
 import type * as types from '@toa.io/core/types'
-import * as composition from './composition.js'
+import * as composition from './composition.d.ts'
 
-export * as bindings from './bindings.js'
+export * as bindings from './bindings.d.ts'
 
 export async function composition(
   paths: string[],

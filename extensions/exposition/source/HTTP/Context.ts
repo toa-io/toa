@@ -1,12 +1,12 @@
 import { buffer } from 'node:stream/consumers'
 import Negotiator from 'negotiator'
 import { console } from 'openspan'
-import { Timing } from './Timing.js'
-import { type Format, formats, types } from './formats/index.js'
-import { read } from './messages.js'
-import { address } from './address.js'
-import type { OutgoingMessage } from './messages.js'
-import type { IncomingMessage } from './types.js'
+import { Timing } from './Timing.ts'
+import { type Format, formats, types } from './formats/index.ts'
+import { read } from './messages.ts'
+import { address } from './address.ts'
+import type { OutgoingMessage } from './messages.ts'
+import type { IncomingMessage } from './types.ts'
 
 export class Context {
   public readonly authority: string

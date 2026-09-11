@@ -6,13 +6,13 @@ import {
   type Variables
 } from '@toa.io/operations'
 import { add } from '@toa.io/generic'
-import { components } from './components.js'
-import { version } from '../version.js'
-import { EVENT, PREFIX, SECRET_RX, UI_PATH, UI_PORT, VALUES } from './const.js'
-import { epoch } from './epoch.js'
-import { assertSecrets } from './secrets.js'
-import * as validators from './schemas.js'
-import type { Manifest } from './manifest.js'
+import { components } from './components.ts'
+import { version } from '../version.ts'
+import { EVENT, PREFIX, SECRET_RX, UI_PATH, UI_PORT, VALUES } from './const.ts'
+import { epoch } from './epoch.ts'
+import { assertSecrets } from './secrets.ts'
+import * as validators from './schemas.ts'
+import type { Manifest } from './manifest.ts'
 import type { context } from '@toa.io/norm'
 
 /** Where Toa's release publishes this service's image. An application takes it

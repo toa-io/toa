@@ -1,9 +1,9 @@
 import { empty } from '@toa.io/generic'
-import * as criteria from './query/criteria.js'
-import * as options from './query/options.js'
-import type { Properties } from './query/criteria.js'
-import type { Node, Options, Query as Parsed } from './types/storages.js'
-import type { Query as Requested } from './types/request.js'
+import * as criteria from './query/criteria.ts'
+import * as options from './query/options.ts'
+import type { Properties } from './query/criteria.ts'
+import type { Node, Options, Query as Parsed } from './types/storages.ts'
+import type { Query as Requested } from './types/request.ts'
 
 const parse = { ...criteria, ...options }
 

@@ -2,7 +2,7 @@ import { it, beforeEach, afterEach, mock } from 'node:test'
 import assert from 'node:assert/strict'
 
 import { console } from 'openspan'
-import { Warning } from './Warning.js'
+import { Warning } from './Warning.ts'
 
 let warn: ReturnType<typeof mock.method>
 

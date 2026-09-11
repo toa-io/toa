@@ -1,5 +1,5 @@
-import * as http from '../HTTP/index.js'
-import { VERSION, type Failure, type Response } from './types.js'
+import * as http from '../HTTP/index.ts'
+import { VERSION, type Failure, type Response } from './types.ts'
 
 /*
  * The five the specification fixes (JSON-RPC 2.0 §5.1). A client reads these the same

@@ -6,7 +6,7 @@ import * as util from 'node:util'
 import { buffer } from 'node:stream/consumers'
 import tsflow from 'cucumber-tsflow'
 
-import { Captures } from './Captures.js'
+import { Captures } from './Captures.ts'
 
 import type { AddressInfo } from 'node:net'
 

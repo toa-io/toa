@@ -4,11 +4,11 @@ namespace: mongo
 entity:
   storage: mongodb
   properties:
-    foo:
+    foo: &foo
       type: integer
-    bar:
+    bar: &bar
       type: string
-    baz:
+    baz: &baz
       type: boolean
   blank:
     foo: 0
@@ -18,28 +18,16 @@ operations:
     concurrency: retry
     input:
       properties:
-        foo:
-          type: string
-          default: .
-        bar:
-          type: string
-          default: .
-        baz:
-          type: string
-          default: .
+        foo: *foo
+        bar: *bar
+        baz: *baz
       type: object
   assign:
     input:
       properties:
-        foo:
-          type: string
-          default: .
-        bar:
-          type: string
-          default: .
-        baz:
-          type: string
-          default: .
+        foo: *foo
+        bar: *bar
+        baz: *baz
       type: object
   nothing:
     concurrency: retry

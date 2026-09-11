@@ -1,12 +1,12 @@
 import { console } from 'openspan'
-import { Connector } from './connector.js'
-import { newid } from './entities/newid.js'
-import * as trail from './trail.js'
+import { Connector } from './connector.ts'
+import { newid } from './entities/newid.ts'
+import * as trail from './trail.ts'
 import { environment } from '@toa.io/generic'
-import type { Atom } from './types/atomicity.js'
-import type { Storage } from './types/storages.js'
-import type { Destination, Row } from './types/outbox.js'
-import type { Event } from './types/state.js'
+import type { Atom } from './types/atomicity.ts'
+import type { Storage } from './types/storages.ts'
+import type { Destination, Row } from './types/outbox.ts'
+import type { Event } from './types/state.ts'
 
 export interface Options {
   interval?: number

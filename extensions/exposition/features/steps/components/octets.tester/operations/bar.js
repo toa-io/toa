@@ -1,9 +1,7 @@
 import { setTimeout } from 'node:timers/promises'
 
-async function bar(input, context) {
+export async function effect(input, context) {
   await setTimeout(10)
 
   return { bar: 'baz' }
 }
-
-export { bar as effect }

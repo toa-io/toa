@@ -14,7 +14,7 @@ import type { Node } from './net'
  */
 export async function create(
   component: string,
-  configuration: Node
+  configuration: Node,
 ): Promise<void | Error> {
   // the identity is what the service records as the originator, and creating is a side
   // effect of a user action — so it must be there by now
@@ -27,6 +27,6 @@ export async function create(
   configurations.update(component, (current) => ({
     ...current,
     configuration,
-    epoch: created.epoch
+    epoch: created.epoch,
   }))
 }

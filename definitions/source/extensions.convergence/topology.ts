@@ -1,4 +1,4 @@
-import { CHANNEL } from './const.js'
+import { CHANNEL } from './const.ts'
 
 /**
  * What a region's convergence broker must carry for the components a context converges, as

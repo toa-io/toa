@@ -9,7 +9,7 @@ import { read } from './svc/net'
  * not answering: signing out has an anonymous tree to show, and signing in has more than
  * the anonymous one. Both are read again here.
  */
-function rc(): void {
+export function rc(): void {
   /*
    * What answered, taken off whatever answered: one gateway serves this page and every
    * reply it reads, so any reply carries the same line.
@@ -52,5 +52,3 @@ async function refresh(): Promise<void> {
 
   if (!(answer instanceof Error)) tree.set(answer)
 }
-
-export { rc }

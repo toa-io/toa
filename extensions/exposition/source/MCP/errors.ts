@@ -1,5 +1,5 @@
-import * as http from '../HTTP/index.js'
-import { JSONRPC, type Failure, type Response } from './types.js'
+import * as http from '../HTTP/index.ts'
+import { JSONRPC, type Failure, type Response } from './types.ts'
 
 /* The five JSON-RPC 2.0 fixes, which mean the same to every client. */
 export const PARSE = -32700

@@ -1,7 +1,7 @@
 import { quote } from '@toa.io/generic'
 import type { Maybe } from '@toa.io/core/types'
 import type { Operation } from '@toa.io/bridges.node'
-import type { Context, Identity } from './lib/index.js'
+import type { Context, Identity } from './lib/index.ts'
 
 export class Effect implements Operation {
   private keys!: Context['remote']['identity']['keys']

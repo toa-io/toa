@@ -27,8 +27,8 @@ const dummy = {
     num: 7,
     nested: { deep: { flag: true } },
     greetings: [{ text: 'hello' }],
-    apiKey: '$STRIPE_API_KEY'
-  }
+    apiKey: '$STRIPE_API_KEY',
+  },
 }
 
 it('should rank a name above what a configuration holds', () => {

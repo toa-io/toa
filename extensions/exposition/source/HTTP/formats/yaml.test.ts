@@ -1,7 +1,7 @@
 import { it } from 'node:test'
 import assert from 'node:assert/strict'
 
-import { encode } from './yaml.js'
+import { encode } from './yaml.ts'
 
 it('encodes error values as their public properties', () => {
   const value = new (class InvalidUsernameError extends Error {

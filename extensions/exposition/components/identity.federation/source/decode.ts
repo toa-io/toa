@@ -1,6 +1,6 @@
-import { decode } from './lib/index.js'
+import { decode } from './lib/index.ts'
 import type { JWTPayload } from 'jose'
-import type { Context } from './types/index.js'
+import type { Context } from './types/index.ts'
 
 export async function effect(
   token: string,

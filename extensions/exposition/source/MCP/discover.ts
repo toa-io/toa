@@ -1,5 +1,5 @@
 import { readFileSync } from 'node:fs'
-import { LEGACY, MODERN, SERVER_INFO, VERSIONS } from './types.js'
+import { LEGACY, MODERN, SERVER_INFO, VERSIONS } from './types.ts'
 import type { MCPAnnotation as MCP } from '@toa.io/definitions/extensions.exposition'
 
 /**

@@ -1,4 +1,4 @@
-async function meter(input, context) {
+export async function computation(input, context) {
   // a key of its own each run, so what the debt starts from is known
   const key = `${input.name}:${Date.now()}`
 
@@ -7,5 +7,3 @@ async function meter(input, context) {
 
   return { debt: first, adds: second > first }
 }
-
-export { meter as computation }

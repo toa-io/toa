@@ -1,8 +1,8 @@
 import { zoom, zoomIdentity, zoomTransform, type ZoomTransform } from 'd3-zoom'
+
+export { zoomIdentity, type ZoomTransform } from 'd3-zoom'
 import { select } from 'd3-selection'
 import type { Action } from 'svelte/action'
-
-export { zoomIdentity, type ZoomTransform }
 
 export interface Controls {
   /** Puts the map back where it opens: unpanned, unzoomed. */
@@ -49,7 +49,7 @@ export const viewport: Action<HTMLElement, Options> = (element, options) => {
     destroy: () => {
       element.removeEventListener('wheel', pan)
       select<HTMLElement, unknown>(element).on('.zoom', null)
-    }
+    },
   }
 
   /** What the filter turns away: a plain scroll, which moves the map rather than scaling it. */
@@ -66,7 +66,7 @@ export const viewport: Action<HTMLElement, Options> = (element, options) => {
     behavior.translateBy(
       selection,
       (-event.deltaX * step) / k,
-      (-event.deltaY * step) / k
+      (-event.deltaY * step) / k,
     )
   }
 }

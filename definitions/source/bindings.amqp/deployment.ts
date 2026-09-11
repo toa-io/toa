@@ -1,9 +1,9 @@
 import { type Dependency } from '@toa.io/operations'
 import { merge } from '@toa.io/generic'
-import { type Declaration, normalize } from './annotation.js'
-import * as sources from './sources.js'
-import * as context from './context.js'
-import { type Instance } from './instance.js'
+import { type Declaration, normalize } from './annotation.ts'
+import * as sources from './sources.ts'
+import * as context from './context.ts'
+import { type Instance } from './instance.ts'
 
 export function deployment(instances: Instance[], declaration: Declaration): Dependency {
   const annotation = normalize(declaration)

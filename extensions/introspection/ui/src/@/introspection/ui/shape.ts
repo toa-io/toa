@@ -49,7 +49,7 @@ function add(
   value: unknown,
   depth: number,
   optional: boolean,
-  into: Line[]
+  into: Line[],
 ): void {
   const schema = shape(value)
   const opened = open(schema)

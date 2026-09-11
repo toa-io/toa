@@ -1,5 +1,5 @@
-import { Mapping } from './Mapping.js'
-import type { Input } from '../../io.js'
+import { Mapping } from './Mapping.ts'
+import type { Input } from '../../io.ts'
 
 export class BufferMapping extends Mapping<string> {
   public constructor(property: string) {

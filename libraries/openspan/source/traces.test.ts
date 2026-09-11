@@ -1,12 +1,12 @@
 import { describe, it, beforeEach, afterEach, mock } from 'node:test'
 import assert from 'node:assert/strict'
 
-import { Console, record } from './Console.js'
-import { current } from './tracing.js'
-import { consoleExporter, exporters, exporting, flush, recording } from './exporters.js'
-import { Otlp } from './Otlp.js'
-import { traces } from './traces.js'
-import type { Exporter, Span } from './exporters.js'
+import { Console, record } from './Console.ts'
+import { current } from './tracing.ts'
+import { consoleExporter, exporters, exporting, flush, recording } from './exporters.ts'
+import { Otlp } from './Otlp.ts'
+import { traces } from './traces.ts'
+import type { Exporter, Span } from './exporters.ts'
 
 afterEach(() => {
   traces()
@@ -45,7 +45,7 @@ describe('traces', () => {
     // a process may load several copies of the module (the package installed more than once)
     let copy!: { exporting: typeof exporting; exporters: typeof exporters }
 
-    copy = await import('./exporters.js')
+    copy = await import('./exporters.ts')
 
     const exporter: Exporter = { export: () => undefined }
 

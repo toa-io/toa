@@ -1,5 +1,5 @@
 import { quote } from '@toa.io/generic'
-import type { Context } from '../types/index.js'
+import type { Context } from '../types/index.d.ts'
 
 export async function computation(
   input: Input,

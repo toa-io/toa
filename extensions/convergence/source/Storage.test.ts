@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 import { console } from 'openspan'
 import { Locator } from '@toa.io/core'
 
-import { Converging } from './Storage.js'
+import { Converging } from './Storage.ts'
 import type { bindings, storages } from '@toa.io/core/types'
 
 type Converge = (record: storages.Record) => Promise<boolean>

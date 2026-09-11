@@ -2,7 +2,7 @@ import { it } from 'node:test'
 import assert from 'node:assert/strict'
 
 import { generate } from 'randomstring'
-import { normalize } from './annotation.js'
+import { normalize } from './annotation.ts'
 
 it('should expand string', async () => {
   const declaration = uri()

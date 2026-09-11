@@ -1,5 +1,5 @@
-export { Factory } from './Factory.js'
-export { components } from './Composition.js'
+export { Factory } from './Factory.ts'
+export { components } from './Composition.ts'
 
 export type {
   Annotation,
@@ -7,4 +7,4 @@ export type {
   Options,
   Settings
 } from '@toa.io/definitions/extensions.introspection'
-export type * from './model.js'
+export type * from './model.ts'

@@ -6,7 +6,7 @@ import {
   SECRET_RX,
   assertSecrets
 } from '@toa.io/definitions/extensions.configuration'
-import { Secret } from './Secret.js'
+import { Secret } from './Secret.ts'
 import type { Schema } from '@toa.io/schemas'
 import type { Manifest } from '@toa.io/definitions/extensions.configuration'
 

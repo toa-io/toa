@@ -68,7 +68,7 @@ function point(
   box: Box,
   towards: number,
   at: Anchor | undefined,
-  share: number
+  share: number,
 ): Anchorage {
   // the side facing the other card; two cards in one column face each other on the same
   // side, and the line has to leave and arrive across it rather than around it

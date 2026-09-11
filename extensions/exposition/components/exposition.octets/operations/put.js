@@ -2,7 +2,7 @@ import { Readable } from 'node:stream'
 import { posix } from 'node:path'
 import { match } from 'matchacho'
 
-async function put(input, context) {
+export async function effect(input, context) {
   const { storage, request, location, accept, limit, trust } = input
   const url = request.url
   const id = request.headers['content-id']
@@ -138,5 +138,3 @@ const ID_RX = /^[a-zA-Z0-9-_]{1,32}$/
 
 /** @typedef {Array<string | RegExp>} Trust */
 /** @typedef {import('node:stream').Readable} Readable */
-
-export { put as effect }

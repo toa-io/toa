@@ -1,14 +1,13 @@
-import { secrets } from './secrets.js'
-import * as schemas from './schemas.js'
-import type { Provider } from './secrets.js'
+import { secrets } from './secrets.ts'
+import * as schemas from './schemas.ts'
+import type { Provider } from './secrets.ts'
+export type { Provider } from './secrets.ts'
 import type { Schema } from '@toa.io/schemas'
 
 export type Annotation = Record<string, Declaration>
 
 /** What a storage is declared as; what else it takes is the provider's, stated in its schema. */
 export type Declaration = { provider: Provider } & Record<string, any>
-
-export type { Provider }
 
 export function validateAnnotation(
   annotation: unknown

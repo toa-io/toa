@@ -1,5 +1,5 @@
 import { Connector, exceptions, trail } from '@toa.io/core'
-import type { Local } from './Local.js'
+import type { Local } from './Local.ts'
 import type { Options } from '@toa.io/definitions/extensions.cadence'
 
 interface Input {

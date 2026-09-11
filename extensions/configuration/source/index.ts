@@ -1,5 +1,5 @@
-export { components } from './Composition.js'
-export { Factory } from './Factory.js'
+export { components } from './Composition.ts'
+export { Factory } from './Factory.ts'
 
 // what a value declared `format: secret` is on a component's context
-export { Secret } from './Secret.js'
+export { Secret } from './Secret.ts'

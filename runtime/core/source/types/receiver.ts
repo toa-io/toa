@@ -1,5 +1,5 @@
-import type { Connector } from '../connector.js'
-import type { Message } from './message.js'
+import type { Connector } from '../connector.ts'
+import type { Message } from './message.ts'
 
 /**
  * What consumes an event of the context. Core ships one, and an extension may put its own

@@ -1,8 +1,8 @@
 import { it, beforeEach, mock } from 'node:test'
 import assert from 'node:assert/strict'
 
-import { read } from './cimd.js'
-import type { Context } from './Context.js'
+import { read } from './cimd.ts'
+import type { Context } from './Context.ts'
 
 const ID = 'https://claude.ai/oauth/claude-code-client-metadata'
 

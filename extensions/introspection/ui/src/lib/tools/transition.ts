@@ -55,7 +55,7 @@ export function navigate(nav: OnNavigate): Promise<void> | void {
         resolve()
 
         await nav.complete
-      }
+      },
     })
 
     // the same unwinding `transit` does, and for the same reason: an aborted transition
@@ -127,14 +127,14 @@ export function transition(node: HTMLElement, options: FlyOptions) {
     options,
     original: {
       name: node.style.viewTransitionName,
-      classes: node.style.viewTransitionClass
-    }
+      classes: node.style.viewTransitionClass,
+    },
   }
 
   flyers.add(flyer)
 
   return {
-    destroy: () => flyers.delete(flyer)
+    destroy: () => flyers.delete(flyer),
   }
 }
 
@@ -160,7 +160,7 @@ function depart() {
     // could have changed
     flyer.original = {
       name: flyer.node.style.viewTransitionName,
-      classes: flyer.node.style.viewTransitionClass
+      classes: flyer.node.style.viewTransitionClass,
     }
 
     flyer.node.style.viewTransitionName = flyer.options.name

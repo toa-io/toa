@@ -1,2 +1,2 @@
-export { Stash } from './Stash.js'
-export { Stream } from './Stream.js'
+export { Stash } from './Stash.ts'
+export { Stream } from './Stream.ts'

@@ -1,8 +1,8 @@
-import { type Context } from './Context.js'
-import type * as http from '../HTTP/index.js'
-import type * as syntax from './syntax/index.js'
-import type * as RTD from './index.js'
-import type { Introspection, Schema } from '../Introspection.js'
+import { type Context } from './Context.ts'
+import type * as http from '../HTTP/index.ts'
+import type * as syntax from './syntax/index.ts'
+import type * as RTD from './index.ts'
+import type { Introspection, Schema } from '../Introspection.ts'
 
 export interface Endpoint {
   call: (

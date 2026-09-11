@@ -3,9 +3,7 @@
 Starting form version `0.20` new features are implemented using TypeScript.
 
 This is how a package in this repository is written, and it is transpiled. A component is not: Node
-reads its `.ts` as it is, so a relative import there carries the extension of the file that exists
-rather than of the file a compiler would emit. See the
-[Node bridge readme](./connectors/bridges.node/readme.md).
+reads its `.ts` as it is. See the [Node bridge readme](./connectors/bridges.node/readme.md).
 
 To create a new package or migrate an existing one to TypeScript, follow these steps:
 
@@ -40,14 +38,27 @@ To create a new package or migrate an existing one to TypeScript, follow these s
 - Name the package in the root `workspaces` before anything that builds against it, which is the
   order the workspaces are built in.
 
-Every relative import carries the extension of the file it emits:
-
-```typescript
-import { Storage } from './Storage'
-```
+Every relative import names the file that exists, and the compiler rewrites it to the file it
+emits:
 
 ```typescript
 import { Storage } from './Storage.js'
+```
+
+```typescript
+import { Storage } from './Storage.ts'
+```
+
+What a module exports is exported where it is declared:
+
+```typescript
+class Storage {}
+
+export { Storage }
+```
+
+```typescript
+export class Storage {}
 ```
 
 ## Tests
@@ -59,7 +70,7 @@ run from the root with `npm run test:unit`.
 import { it } from 'node:test'
 import assert from 'node:assert/strict'
 
-import { Storage } from './Storage.js'
+import { Storage } from './Storage.ts'
 
 it('should be', async () => {
   assert.notStrictEqual(Storage, undefined)

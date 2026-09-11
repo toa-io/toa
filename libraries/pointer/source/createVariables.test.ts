@@ -3,9 +3,9 @@ import assert from 'node:assert/strict'
 import { isDeepStrictEqual } from 'node:util'
 
 import { generate } from 'randomstring'
-import { createVariables } from './createVariables.js'
+import { createVariables } from './createVariables.ts'
 import type { Variable, Variables } from '@toa.io/operations'
-import type { Request } from './Deployment.js'
+import type { Request } from './Deployment.ts'
 
 it('should create from selector', async () => {
   const id = generate()

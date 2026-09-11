@@ -3,10 +3,10 @@ import assert from 'node:assert/strict'
 
 import { createReadStream } from 'node:fs'
 import { resolve } from 'node:path'
-import { suites } from '../test/util.js'
-import { providers } from './index.js'
-import type { Constructor } from '../Provider.js'
-import type { Metadata, Stream } from '../Entry.js'
+import { suites } from '../test/util.ts'
+import { providers } from './index.ts'
+import type { Constructor } from '../Provider.ts'
+import type { Metadata, Stream } from '../Entry.ts'
 
 const sample = resolve(import.meta.dirname, '../test/sample.jpeg')
 const lenna = resolve(import.meta.dirname, '../test/lenna.png')

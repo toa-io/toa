@@ -1,4 +1,4 @@
-export { Quotas } from './Quotas.js'
-export { Sync } from './Sync.js'
-export { Warning } from './Warning.js'
-export { parse, type Configuration, type Declaration } from './Configuration.js'
+export { Quotas } from './Quotas.ts'
+export { Sync } from './Sync.ts'
+export { Warning } from './Warning.ts'
+export { parse, type Configuration, type Declaration } from './Configuration.ts'

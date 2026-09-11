@@ -2,9 +2,9 @@ name: orders
 
 entity:
   properties:
-    title:
+    title: &title
       type: string
-    volume:
+    volume: &volume
       type: number
     price:
       type: number
@@ -18,12 +18,8 @@ operations:
     query: false
     input:
       properties:
-        title:
-          type: string
-          default: .
-        volume:
-          type: string
-          default: .
+        title: *title
+        volume: *volume
       type: object
       required:
         - title

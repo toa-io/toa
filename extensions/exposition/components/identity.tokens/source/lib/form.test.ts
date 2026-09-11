@@ -1,7 +1,7 @@
 import { it } from 'node:test'
 import assert from 'node:assert/strict'
 
-import { form } from './form.js'
+import { form } from './form.ts'
 
 it('should recognize a compact JWE by its five segments', () => {
   assert.equal(form('header.key.iv.ciphertext.tag'), 'jwe')

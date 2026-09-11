@@ -1,6 +1,6 @@
 import { setTimeout } from 'node:timers/promises'
 
-async function* effect(_) {
+export async function* effect(_) {
   await setTimeout(10)
   yield 'hello'
 
@@ -10,5 +10,3 @@ async function* effect(_) {
   await setTimeout(10)
   throw new Error('Oops!')
 }
-
-export { effect }

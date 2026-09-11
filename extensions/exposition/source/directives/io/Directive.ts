@@ -1,7 +1,7 @@
-import type { Sync } from './lib/throttle/index.js'
-import type { Parameter } from '../../RTD/index.js'
-import type { Input as Context } from '../../io.js'
-import type * as http from '../../HTTP/index.js'
+import type { Sync } from './lib/throttle/index.ts'
+import type { Parameter } from '../../RTD/index.ts'
+import type { Input as Context } from '../../io.ts'
+import type * as http from '../../HTTP/index.ts'
 
 export interface Directive {
   precall: (context: Context, parameters: Parameter[]) => void

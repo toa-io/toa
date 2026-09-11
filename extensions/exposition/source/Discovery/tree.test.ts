@@ -1,13 +1,13 @@
 import { describe as suite, it, afterEach } from 'node:test'
 import assert from 'node:assert/strict'
 
-import { describe } from './tree.js'
-import { Tree } from '../RTD/Tree.js'
-import type * as http from '../HTTP/index.js'
-import type { Introspection } from '../Introspection.js'
-import type { EndpointsFactory } from '../Endpoint.js'
-import type { DirectiveFactory } from '../RTD/Directives.js'
-import type * as syntax from '../RTD/syntax/index.js'
+import { describe } from './tree.ts'
+import { Tree } from '../RTD/Tree.ts'
+import type * as http from '../HTTP/index.ts'
+import type { Introspection } from '../Introspection.ts'
+import type { EndpointsFactory } from '../Endpoint.ts'
+import type { DirectiveFactory } from '../RTD/Directives.ts'
+import type * as syntax from '../RTD/syntax/index.ts'
 
 /** A method with no mapping has no endpoint, so what it says is its directives' alone. */
 const endpoints = {} as unknown as EndpointsFactory

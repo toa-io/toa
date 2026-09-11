@@ -1,10 +1,10 @@
 import { Stream } from 'node:stream'
 import { console } from 'openspan'
-import * as schemas from './schemas.js'
-import type { Message } from './Message.js'
-import type { Directive } from './Directive.js'
-import type { Input as Context } from '../../io.js'
-import type { OutgoingMessage } from '../../HTTP/index.js'
+import * as schemas from './schemas.ts'
+import type { Message } from './Message.ts'
+import type { Directive } from './Directive.ts'
+import type { Input as Context } from '../../io.ts'
+import type { OutgoingMessage } from '../../HTTP/index.ts'
 
 export class Output implements Directive {
   /** whether the reply passes whole, which is when the schema is the operation's own */

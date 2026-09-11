@@ -1,4 +1,4 @@
-const builder = (yargs) => {
+export const builder = (yargs) => {
   yargs
     .positional('environment', {
       type: 'string',
@@ -29,10 +29,8 @@ export const command = ['convergence <environment>']
 export const desc = 'Export what a region needs on its convergence broker'
 
 // the handler and what it depends on load when the command runs, not when the program starts
-const handler = async (argv) => {
+export const handler = async (argv) => {
   const { convergence } = await import('../../handlers/export/convergence.js')
 
   return await convergence(argv)
 }
-
-export { builder, handler }

@@ -1,6 +1,6 @@
-import { SystemException } from '../exceptions.js'
+import { SystemException } from '../exceptions.ts'
 import type { Schema, SchemaError } from '@toa.io/schemas'
-import type { Exception } from '../exceptions.js'
+import type { Exception } from '../exceptions.ts'
 
 /** What a contract throws with, stated by the subclass. */
 export type Refusal = new (error: SchemaError, cause?: unknown) => Exception
