@@ -83,17 +83,32 @@ export class Agent {
   }
 
   public responseIncludes(expected: string): void {
-    const line = this.mismatch(this.response, expected)
-
-    if (line !== null)
-      throw new assert.AssertionError({
-        message: `Response is missing '${line}'`,
-        expected: line,
-        actual: this.response.slice(0, MAX_DIFF_LENGTH)
-      })
+    this.refuse(this.mismatch(this.response, expected))
   }
 
+  /** The same, where what is asserted is the reply's order as well as what it holds. */
+  public responseIncludesInOrder(expected: string): void {
+    this.refuse(this.mismatchInOrder(this.response, expected))
+  }
+
+  /**
+   * Each line wherever it stands in the reply: what a reply holds is what is asserted, and an
+   * entity's properties reach a client in the order its record holds them.
+   */
   public mismatch(sample: string, reference: string): string | null {
+    const lines = trim(reference).split('\n')
+
+    for (const line of lines) {
+      if (line.trim() === '') continue
+
+      if (this.captures.capture(sample, line) === null) return line
+    }
+
+    return null
+  }
+
+  /** Each line after the one before it, for a reply whose order is what is being asserted. */
+  public mismatchInOrder(sample: string, reference: string): string | null {
     const lines = trim(reference).split('\n')
     let rest = sample
 
@@ -108,6 +123,16 @@ export class Agent {
     }
 
     return null
+  }
+
+  private refuse(line: string | null): void {
+    if (line === null) return
+
+    throw new assert.AssertionError({
+      message: `Response is missing '${line}'`,
+      expected: line,
+      actual: this.response.slice(0, MAX_DIFF_LENGTH)
+    })
   }
 
   public responseExcludes(expected: string): void {
@@ -162,7 +187,8 @@ export class Agent {
     const text = buf.toString('utf8')
     const expected = head + '\n\n' + text
 
-    this.responseIncludes(expected)
+    // a file's content is what it is in the order it is in
+    this.responseIncludesInOrder(expected)
   }
 
   private async h1(req: HTTPRequest, headers: Record<string, string>): Promise<Reply> {
