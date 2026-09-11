@@ -80,6 +80,29 @@ Then(
 )
 
 Then(
+  'the environment does not contain:',
+  /**
+   * @param {string} [search]
+   * @this {toa.features.Context}
+   */
+  async function (search) {
+    const searchLines = search.split('\n').filter((line) => line !== '')
+    const path = join(this.cwd, ENV_FILE)
+    const contents = await readFile(path, 'utf8')
+    const existingLines = contents.split('\n')
+    const found = searchLines.filter((line) =>
+      existingLines.some((existing) => existing.includes(line))
+    )
+
+    assert.equal(
+      found.length,
+      0,
+      'Environment contains lines it should not.\n' + diff(searchLines, found)
+    )
+  }
+)
+
+Then(
   'the environment variable {word} starts with {string}',
   /**
    * @param {string} name
