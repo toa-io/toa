@@ -21,6 +21,38 @@ Feature: Query
       baz: true
       """
 
+  Scenario: Observing what a projection names
+    Given the `mongo.one` database contains:
+      | _id                              | foo | bar   | VERSION |
+      | 72cf9b0ab0ac4ab2b8036e4e940ddcae | 0   | hello | 1       |
+    And I compose `mongo.one` component
+    When I call `mongo.one.observe` with:
+      """yaml
+      query:
+        id: 72cf9b0ab0ac4ab2b8036e4e940ddcae
+        projection: [bar]
+      """
+    Then the reply is received:
+      """
+      bar: hello
+      """
+
+  # a transition writes back the record it read, so it reads the whole of it
+  Scenario: A transition refuses a projection
+    Given I compose `mongo.one` component
+    When I call `mongo.one.transit` with:
+      """yaml
+      query:
+        id: 72cf9b0ab0ac4ab2b8036e4e940ddcae
+        projection: [bar]
+      input:
+        bar: hello
+      """
+    Then the following exception is thrown:
+      """yaml
+      code: 202
+      """
+
   Scenario: Querying with `=in=` operator
     Given the `mongo.one` database contains:
       | _id                              | foo | bar   | VERSION |

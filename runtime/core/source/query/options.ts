@@ -5,7 +5,8 @@ import type { Properties } from './criteria.ts'
 export function options(given: Record<string, any>, properties: Properties): Options {
   if (given.sort !== undefined) given.sort = sort(given.sort, properties)
 
-  if (given.projection !== undefined) projection(given.projection, properties)
+  if (given.projection !== undefined)
+    given.projection = projection(given.projection, properties)
 
   return given as Options
 }
@@ -25,11 +26,21 @@ function sort(sort: string[], properties: Properties): Array<[string, string]> {
   return result
 }
 
-function projection(projection: string[], properties: Properties): void {
-  for (const property of projection)
+/**
+ * A copy, because a route declares one projection and sends it with every request it serves,
+ * and the system properties are what every read answers besides.
+ */
+function projection(declared: string[], properties: Properties): string[] {
+  for (const property of declared)
     if (properties[property] === undefined)
       throw new QuerySyntaxException(`Projection property '${property}' is not defined`)
 
-  for (const property of ['VERSION', 'CREATED', 'UPDATED', 'DELETED', 'REGION'])
+  const projection = declared.slice()
+
+  for (const property of SYSTEM)
     if (!projection.includes(property)) projection.push(property)
+
+  return projection
 }
+
+const SYSTEM = ['VERSION', 'CREATED', 'UPDATED', 'DELETED', 'REGION']
