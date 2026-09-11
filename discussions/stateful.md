@@ -2,9 +2,8 @@
 
 ## Design concept
 
-Some operations have to be served by one particular process, for reasons of the component's own, and
-a call to one has to reach that process. Every other call in Toa goes to whichever replica of a
-component takes it first.
+Some calls have to reach one particular process, for reasons of the component's own. Every other call
+in Toa goes to whichever replica of a component takes it first.
 
 Every process has a **name**, generated when it starts or given by `TOA_INSTANCE`. An operation
 declared **stateful** is offered by each process under that process's name, and an **addressed call**

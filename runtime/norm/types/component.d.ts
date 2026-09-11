@@ -14,7 +14,7 @@ export type Operation = {
   output?: any
   error?: any
   query?: boolean
-  /** served by one particular process, which a call to it names */
+  /** served by every process under an address of its own, which a call to it names */
   stateful?: boolean
 }
 

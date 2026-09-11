@@ -1,7 +1,7 @@
 Feature: Stateful operations
 
-  A stateful operation is served by one particular process, and a call to it names the process it
-  goes to.
+  Every process serves a stateful operation under an address of its own, and a call to it names the
+  process it goes to.
 
   Scenario: A call reaches the process it names
     Given I compose `stateful.counter` component

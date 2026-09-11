@@ -112,8 +112,8 @@ Operation algorithm must be:
 
 1. **Stateless.** Results of running N operation instances 1 time each must be the same as result of
    running 1 operation instance N times. An operation declared
-   [`stateful`](/documentation/stateful.md) is served by one particular process, and is called on
-   that process by name.
+   [`stateful`](/documentation/stateful.md) is served by every process under an address of its own,
+   and is called on one of them by name.
 2. **Deterministic**. Gives the same output when it has the same input.
 3. **Autonomous.** Doesn't impose requirements on the execution environment (i.e. network access).
 4. **Pure.** Doesn't produce side effects. Therefore, the only effects allowed are Context

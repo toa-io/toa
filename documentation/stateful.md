@@ -1,8 +1,9 @@
 # Stateful operations
 
-An operation declared stateful is served by one particular process, and a call to it names that
-process. Every other call reaches whichever replica of a component takes it first. Why an operation
-has to be served by one process is the component's own business.
+Every process of a component serves a stateful operation under an address of its own, so each
+process's copy of the operation can be called on its own: a call to it names the process it goes to.
+A call to any other operation reaches whichever process takes it first. Why a call has to reach one
+particular process is the component's own business.
 
 **An addressed call is unreliable.** Every other call reaches a component, and a component comes
 back: a call waits for it, a message is kept until it is taken, and a failure is tried again. An
