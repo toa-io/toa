@@ -23,7 +23,7 @@ operations:
 ```
 
 ```typescript
-// a process reads its own name, and hands it to whoever will call it
+// a process reads its own name
 const instance = context.instance
 
 // a caller names the process the call goes to
@@ -35,9 +35,6 @@ const stream = await context.remote.media.streams.watch({ input: { id }, instanc
 An operation declared `stateful: true` is served by each process under that process's own name, and
 takes calls that name a process. A process reads its name as `context.instance`: generated when the
 process starts, or given by `TOA_INSTANCE`.
-
-Hand the name out to whoever will call the process — in a reply, or as part of a URL. A process serves its name before it answers anything, so a name it has handed out
-is reachable by the time it arrives.
 
 ## Calling
 
@@ -82,13 +79,10 @@ addressed:
 | `Addressee` | nothing held the name, and the call did not run                                |
 | `Abandoned` | the timeout passed or the signal aborted; the call may have run, and may still |
 
-Both are exceptions, thrown where the call is made, and both are worth another attempt: a process
-that lost its broker connection holds its name again once it is back, so an event whose call was
-refused in that gap goes through when it is tried again.
+Both are transient exceptions, thrown where the call is made.
 
 A call still waiting in a queue when its timeout passes is dropped, and never runs. A call its signal
-ended earlier stays queued until its timeout. Where an abandoned call must change state once, declare
-[`once: true`](/documentation/inbox.md) on the operation.
+ended earlier stays queued until its timeout.
 
 ## Over HTTP
 
