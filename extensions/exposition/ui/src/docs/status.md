@@ -26,3 +26,4 @@ defines.
 - `500 Internal Server Error`
 - `501 Not Implemented`
 - `503 Service Unavailable`
+- `504 Gateway Timeout`<span class="note">The process a route named did not answer in time.</span>
