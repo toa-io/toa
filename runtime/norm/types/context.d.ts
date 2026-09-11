@@ -44,4 +44,11 @@ interface Context extends Declaration {
   packages?: Record<string, string>
 }
 
-export function context(path: string, environment?: string): Promise<Context>
+export function context(
+  path: string,
+  environment?: string,
+  options?: {
+    /** `false` does not apply eviction: every component is treated as deployed */
+    evicted?: boolean
+  }
+): Promise<Context>

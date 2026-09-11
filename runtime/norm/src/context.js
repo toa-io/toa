@@ -16,7 +16,11 @@ import {
   validate
 } from './.context/index.js'
 
-export const context = async (root, environment = variables.get('TOA_ENV')) => {
+export const context = async (
+  root,
+  environment = variables.get('TOA_ENV'),
+  options = {}
+) => {
   const path = resolve(root, CONTEXT)
   const context = /** @type {toa.norm.Context} */ await read(path)
 
@@ -37,8 +41,9 @@ export const context = async (root, environment = variables.get('TOA_ENV')) => {
 
   context.components = await Promise.all(paths.map(component))
 
-  // before the dependencies, which mark what only evicted components require
-  evict(context)
+  // before the dependencies, which mark what only evicted components require.
+  // `evicted: false` leaves that off: a local run of a component still needs its variables
+  if (options.evicted !== false) evict(context)
 
   // what a context declares of every component that stores anything, its own and the ones its
   // extensions bring, is given to them where those are known: inside `dependencies`

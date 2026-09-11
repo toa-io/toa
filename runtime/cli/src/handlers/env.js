@@ -13,7 +13,12 @@ const { Factory } = deployment
 export async function env(argv) {
   const path = find(argv.path)
   const filepath = join(path, argv.as)
-  const factory = await Factory.create(path, argv.environment)
+  // a listed component is what someone runs, evicted or not
+  const factory = await Factory.create(
+    path,
+    argv.environment,
+    argv.component === undefined ? {} : { evicted: false }
+  )
   const operator = await factory.operator()
   const variables = operator.variables({
     components: argv.component,

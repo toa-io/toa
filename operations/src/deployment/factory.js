@@ -128,8 +128,10 @@ export class Factory {
 
     const annotation = this.#context.annotations?.[name]
 
+    // every instance as well: what a definition keeps for all of its components, such as the
+    // configuration the values service serves, holds for an evicted one too
     /** @type {toa.deployment.dependency.Declaration} */
-    const dependency = module.deployment(managed, annotation)
+    const dependency = module.deployment(managed, annotation, instances)
 
     // mono claims every service, including one an extension added since this context was
     // written, so its claim is the wildcard rather than a list
@@ -169,7 +171,7 @@ export class Factory {
   }
 
   static async create(path, environment, options = {}) {
-    const context = await load(path, environment)
+    const context = await load(path, environment, options)
 
     return new Factory(context, options)
   }
