@@ -3,6 +3,28 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.300](https://github.com/toa-io/toa/compare/v1.0.0-alpha.299...v1.0.0-alpha.300) (2026-09-11)
+
+* feat(boot)!: a process is a thing, and an extension may keep something in one ([528d6cd](https://github.com/toa-io/toa/commit/528d6cdd307b45a6c30b6a184d7e06b3328cecf8))
+* feat(core)!: an operation may ask to run once ([dca616c](https://github.com/toa-io/toa/commit/dca616cb380a7a389e277875d3bd5ca55a6e4d45))
+
+### Features
+
+* **core:** a call may name the process it goes to, and wait for a set time ([7d8adb2](https://github.com/toa-io/toa/commit/7d8adb2772a95ff45ae5374efdedfb5a857fbbe9))
+* **core:** an assignment may ask to run once as well ([10fbcbd](https://github.com/toa-io/toa/commit/10fbcbd86a5e82960e65f62c09d0a465ae8d0353))
+* **norm:** a context says what it does not deploy ([135e6fd](https://github.com/toa-io/toa/commit/135e6fdfbc4270762028e9e5a0516766960ce59c))
+
+### BREAKING CHANGES
+
+* `Storage.store`, `.upsert` and `.ensure` take one more
+  argument, and `Storage` has two more members. A connector that ignores them
+  works exactly as it did; a component that asks it for `once` is refused at
+  boot. See migrations/299.md.
+* a composition booted directly has no readiness probe. Readiness is
+  the process's, and a composition is not a process. `stage.workload` boots one where a
+  suite needs it.
+
+
 # [1.0.0-alpha.299](https://github.com/toa-io/toa/compare/v1.0.0-alpha.298...v1.0.0-alpha.299) (2026-09-10)
 
 ### Features

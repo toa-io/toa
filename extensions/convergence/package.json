@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/extensions.convergence",
-  "version": "1.0.0-alpha.299",
+  "version": "1.0.0-alpha.300",
   "type": "module",
   "description": "Toa Convergence extension",
   "author": "temich <tema.gurtovoy@gmail.com>",
@@ -28,8 +28,8 @@
     "transpile": "tsc"
   },
   "dependencies": {
-    "@toa.io/core": "1.0.0-alpha.299",
-    "@toa.io/definitions": "1.0.0-alpha.299",
+    "@toa.io/core": "1.0.0-alpha.300",
+    "@toa.io/definitions": "1.0.0-alpha.300",
     "@toa.io/generic": "1.0.0-alpha.292",
     "@toa.io/pointer": "1.0.0-alpha.299",
     "openspan": "1.0.0-alpha.293"

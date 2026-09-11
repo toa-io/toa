@@ -3,6 +3,46 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.300](https://github.com/toa-io/toa/compare/v1.0.0-alpha.299...v1.0.0-alpha.300) (2026-09-11)
+
+* feat(boot)!: a process is a thing, and an extension may keep something in one ([528d6cd](https://github.com/toa-io/toa/commit/528d6cdd307b45a6c30b6a184d7e06b3328cecf8))
+* feat(core)!: an operation may ask to run once ([dca616c](https://github.com/toa-io/toa/commit/dca616cb380a7a389e277875d3bd5ca55a6e4d45))
+
+### Bug Fixes
+
+* **core:** a caller that stops waiting is answered at once, and its call is made nowhere ([c96880a](https://github.com/toa-io/toa/commit/c96880a39adc288153816ff54213bbb71fc96d48))
+* **core:** a lookup and a failed publication say what became of them ([47b924b](https://github.com/toa-io/toa/commit/47b924b02f002ace14698365823df92f5379c537))
+* **exposition:** a null reply is 404 again ([a01d403](https://github.com/toa-io/toa/commit/a01d4032bc29ffa70f310a1d006bb67e2d4d1c58))
+* **exposition:** a route that maps only the instance keeps an input of none ([3cde80c](https://github.com/toa-io/toa/commit/3cde80c3f1c669a7959508ecfeb1cc7ef59c7ace))
+* **extensions:** what a factory remembers does not outlive the tree it was made for ([dd36631](https://github.com/toa-io/toa/commit/dd3663160f500eadfb701bf840ef3741a2d075f0))
+
+### Features
+
+* **cli:** generate env for listed components and services ([b830613](https://github.com/toa-io/toa/commit/b830613ae2a0443bf8e72a353ffb6f2efaa72fb5))
+* **cli:** run several extension services with `toa serve` ([e8eee8c](https://github.com/toa-io/toa/commit/e8eee8c8b7ed2c82bdf935f2f2065d7b1e72aab8))
+* **cli:** toa serve refuses a listed service that is off in this environment ([f3aecef](https://github.com/toa-io/toa/commit/f3aecef7b9809a9e6088ed2eb0864f9821d8c465))
+* **cli:** write types for components this context does not deploy ([964a3b9](https://github.com/toa-io/toa/commit/964a3b9d60fd6aa3a3b81a0bd024aa8aca95f179))
+* **core:** a call carries what it is, and a chain of them carries it down ([ebd7769](https://github.com/toa-io/toa/commit/ebd776984a79adb9bf4a97b680128be1efab856f))
+* **core:** a call may name the process it goes to, and wait for a set time ([7d8adb2](https://github.com/toa-io/toa/commit/7d8adb2772a95ff45ae5374efdedfb5a857fbbe9))
+* **core:** a connector says whether it has been disposed of ([5db7c49](https://github.com/toa-io/toa/commit/5db7c497df3c10310f1efaa178b9201d4dcba7a0))
+* **core:** an assignment may ask to run once as well ([10fbcbd](https://github.com/toa-io/toa/commit/10fbcbd86a5e82960e65f62c09d0a465ae8d0353))
+* **exposition:** a client's idempotency key is what the call is ([3092028](https://github.com/toa-io/toa/commit/3092028df2803183c7e0ab08a7e89de25b36151b))
+* **exposition:** a route may name the process a stateful operation is called on ([f66d085](https://github.com/toa-io/toa/commit/f66d085c8cf1a646685bc9a3ca2ee0f7e0211bfa))
+* **exposition:** discovery lists status codes, and a null reply is Gone ([b928f28](https://github.com/toa-io/toa/commit/b928f28c6a72028cd76614ac937cd35c7d385c62))
+* **norm:** a context says what it does not deploy ([135e6fd](https://github.com/toa-io/toa/commit/135e6fdfbc4270762028e9e5a0516766960ce59c))
+* **operations:** a rollout spreads the pods of its revision across nodes ([63be649](https://github.com/toa-io/toa/commit/63be649a73978a415f0c1e7ffb3837ffa7802da7))
+
+### BREAKING CHANGES
+
+* `Storage.store`, `.upsert` and `.ensure` take one more
+  argument, and `Storage` has two more members. A connector that ignores them
+  works exactly as it did; a component that asks it for `once` is refused at
+  boot. See migrations/299.md.
+* a composition booted directly has no readiness probe. Readiness is
+  the process's, and a composition is not a process. `stage.workload` boots one where a
+  suite needs it.
+
+
 # [1.0.0-alpha.299](https://github.com/toa-io/toa/compare/v1.0.0-alpha.298...v1.0.0-alpha.299) (2026-09-10)
 
 * feat(core)!: an endpoint a component does not provide is refused with a code ([6cabf9c](https://github.com/toa-io/toa/commit/6cabf9ccef9353f19a727888c667f5059c1ad2b5))

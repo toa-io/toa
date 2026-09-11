@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.300](https://github.com/toa-io/toa/compare/v1.0.0-alpha.299...v1.0.0-alpha.300) (2026-09-11)
+
+* feat(core)!: an operation may ask to run once ([dca616c](https://github.com/toa-io/toa/commit/dca616cb380a7a389e277875d3bd5ca55a6e4d45))
+
+### Features
+
+* **cli:** generate env for listed components and services ([b830613](https://github.com/toa-io/toa/commit/b830613ae2a0443bf8e72a353ffb6f2efaa72fb5))
+* **core:** a call may name the process it goes to, and wait for a set time ([7d8adb2](https://github.com/toa-io/toa/commit/7d8adb2772a95ff45ae5374efdedfb5a857fbbe9))
+* **norm:** a context says what it does not deploy ([135e6fd](https://github.com/toa-io/toa/commit/135e6fdfbc4270762028e9e5a0516766960ce59c))
+* **operations:** a rollout spreads the pods of its revision across nodes ([63be649](https://github.com/toa-io/toa/commit/63be649a73978a415f0c1e7ffb3837ffa7802da7))
+
+### BREAKING CHANGES
+
+* `Storage.store`, `.upsert` and `.ensure` take one more
+  argument, and `Storage` has two more members. A connector that ignores them
+  works exactly as it did; a component that asks it for `once` is refused at
+  boot. See migrations/299.md.
+
+
 # [1.0.0-alpha.299](https://github.com/toa-io/toa/compare/v1.0.0-alpha.298...v1.0.0-alpha.299) (2026-09-10)
 
 **Note:** Version bump only for package @toa.io/operations

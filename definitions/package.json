@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/definitions",
-  "version": "1.0.0-alpha.299",
+  "version": "1.0.0-alpha.300",
   "type": "module",
   "description": "What Toa packages declare, read without running them",
   "author": "temich <tema.gurtovoy@gmail.com>",
@@ -44,7 +44,7 @@
     "./*": "./transpiled/*/index.js"
   },
   "devDependencies": {
-    "@toa.io/core": "1.0.0-alpha.299",
+    "@toa.io/core": "1.0.0-alpha.300",
     "openspan": "1.0.0-alpha.293",
     "oxc-parser": "0.149.0"
   },

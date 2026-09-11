@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/extensions.stash",
-  "version": "1.0.0-alpha.299",
+  "version": "1.0.0-alpha.300",
   "type": "module",
   "description": "Toa Stash",
   "author": "temich <tema.gurtovoy@gmail.com>",
@@ -25,7 +25,7 @@
     "!**/.env*"
   ],
   "dependencies": {
-    "@toa.io/definitions": "1.0.0-alpha.299",
+    "@toa.io/definitions": "1.0.0-alpha.300",
     "@toa.io/generic": "1.0.0-alpha.292",
     "@toa.io/pointer": "1.0.0-alpha.299",
     "ioredis": "6.0.0",
