@@ -25,6 +25,14 @@ describe('operations', () => {
     assert.deepStrictEqual(manifest.operations.add.output, {})
   })
 
+  it('should state no input for an operation that takes none', async () => {
+    manifest.operations.compute = { type: 'computation', input: null }
+
+    await normalize(manifest)
+
+    assert.equal('input' in manifest.operations.compute, false)
+  })
+
   it('should scope a computation to none', async () => {
     manifest.operations.compute = { type: 'computation' }
 
