@@ -248,6 +248,76 @@ Feature: Export local deployment environment variables
       Component 'missing.one' is not in the context
       """
 
+  Scenario: Export environment for an evicted component
+
+    Eviction is that Toa does not deploy it. A local run of it still needs its variables,
+    so `toa env -c` writes them.
+
+    Given I have components:
+      | mongo.one |
+      | stash      |
+    And I have a context with:
+      """yaml
+      evicted:
+        components:
+          - mongo.one
+      """
+    When I run `toa env --component mongo.one`
+    Then the environment contains:
+      """
+      TOA_ENV=local
+      TOA_MONGODB_MONGO_ONE=mongodb://localhost:31020
+      """
+    And the environment does not contain:
+      """
+      TOA_STASH_DEFAULT_STASH=redis://localhost:31040
+      """
+
+  Scenario: Export environment for an evicted component with a configuration secret
+    Given I have components:
+      | configuration.base    |
+      | configuration.secrets |
+    And I have a context with:
+      """yaml
+      configuration:
+        configuration.secrets:
+          b: $SECRET_B
+      evicted:
+        components:
+          - configuration.secrets
+      """
+    When I run `toa env --component configuration.secrets`
+    Then program should exit with code 0
+    And the environment contains:
+      """
+      TOA_CONFIGURATION__SECRET_B=
+      """
+
+  Scenario: Export environment for a context that configures an evicted component
+
+    Its configuration is served like any other, so the values service knows it, while its secret
+    is written only for a run of it.
+
+    Given I have components:
+      | configuration.base    |
+      | configuration.secrets |
+    And I have a context with:
+      """yaml
+      configuration:
+        configuration.secrets:
+          b: $SECRET_B
+      evicted:
+        components:
+          - configuration.secrets
+      """
+    When I run `toa env`
+    Then program should exit with code 0
+    And the environment does not contain:
+      """
+      TOA_CONFIGURATION__SECRET_B=
+      """
+    And the environment variable TOA_CONFIGURATION_VALUES contains '"configuration.secrets"'
+
   Scenario: Export environment for a listed service
     Given I have components:
       | exposed.one |

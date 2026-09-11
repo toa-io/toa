@@ -19,9 +19,16 @@ import type { context } from '@toa.io/norm'
  *  instead of building one when its context says `registry.services: published`. */
 export const image = 'ghcr.io/toa-io/extension-configuration-values'
 
+/**
+ * @param managed the components Toa deploys, which are given their secrets
+ * @param annotation the context's values, keyed by component
+ * @param instances every component that declares configuration, evicted ones included: the
+ * values service serves each of them, wherever it runs
+ */
 export function deployment(
-  instances: Instance[],
-  annotation: Annotation = {}
+  managed: Instance[],
+  annotation: Annotation = {},
+  instances: Instance[] = managed
 ): Dependency {
   const { resources, values } = split(annotation)
 
@@ -29,7 +36,7 @@ export function deployment(
 
   const variables: Variables = {}
 
-  for (const instance of instances) {
+  for (const instance of managed) {
     const values = annotation[instance.locator.id]
 
     if (values === undefined) continue

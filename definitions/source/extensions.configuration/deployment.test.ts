@@ -111,6 +111,42 @@ it('should map secrets to the component', async () => {
   )
 })
 
+it('should accept the annotation of an evicted component', async () => {
+  const evicted = instance('evicted')
+  const instances = [instance('base'), evicted]
+
+  assert.doesNotThrow(() =>
+    deployment([instance('base')], { 'configuration.evicted': { foo: 'set' } }, instances)
+  )
+})
+
+it('should serve an evicted component', async () => {
+  const managed = [instance('base', { foo: 'hello' })]
+  const instances = [...managed, instance('evicted')]
+  const annotation = { 'configuration.evicted': { foo: 'set' } }
+
+  const dependency = deployment(managed, annotation, instances)
+  const variable = dependency.services![0].variables!.find(({ name }) => name === VALUES)
+
+  assert.deepStrictEqual(JSON.parse(variable!.value!), map(instances, annotation))
+})
+
+it('should not map secrets to an evicted component', async () => {
+  const managed = [instance('base')]
+  const instances = [...managed, instance('evicted')]
+
+  const dependency = deployment(
+    managed,
+    {
+      'configuration.base': { key: '$BASE' },
+      'configuration.evicted': { key: '$EVICTED' }
+    },
+    instances
+  )
+
+  assert.deepStrictEqual(Object.keys(dependency.variables!), ['configuration-base'])
+})
+
 it('should refuse a secret given as a plain string', async () => {
   const secret = {
     type: 'object',
