@@ -257,8 +257,8 @@ Feature: Custom tokens
       """
       200 OK
 
-      - id: ${{ kid }}
-        CREATED: ${{ created }}
+      - CREATED: ${{ created }}
+        id: ${{ kid }}
         label: One-time token
         expires: ${{ expires }}
       """

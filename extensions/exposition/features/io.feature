@@ -96,10 +96,10 @@ Feature: IO restrictions
       200 OK
       content-type: application/yaml
 
-      - id: 4c4759e6f9c74da989d64511df42d6f4
-        volume: 100
-      - id: 99988d785d7d445cad45dbf8531f560b
-        volume: 200
+      - volume: 100
+        id: 4c4759e6f9c74da989d64511df42d6f4
+      - volume: 200
+        id: 99988d785d7d445cad45dbf8531f560b
       """
     And the reply does not contain:
       """

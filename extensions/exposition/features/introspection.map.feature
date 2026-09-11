@@ -34,8 +34,8 @@ Feature: Reading the introspection map
       200 OK
       content-type: application/yaml
 
-      - id: 70e1a6551346c6932657cdb2526df0fa
-        namespace: pots
+      - namespace: pots
+        id: 70e1a6551346c6932657cdb2526df0fa
         component: tea
         version: 7bb04bba
       """

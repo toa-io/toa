@@ -339,8 +339,9 @@ Feature: Authorization code flow
       """
       200 OK
 
-      - id: ${{ grant }}
+      - CREATED: ${{ grant.created }}
         client: ${{ client }}
+        id: ${{ grant }}
       """
     When the following request is received:
       """

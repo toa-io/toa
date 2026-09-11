@@ -26,7 +26,7 @@ Feature: Annotation
       200 OK
       content-type: application/yaml
 
-      - id: 4c4759e6f9c74da989d64511df42d6f4
-        title: First pot
+      - title: First pot
+        id: 4c4759e6f9c74da989d64511df42d6f4
         volume: 100
       """
