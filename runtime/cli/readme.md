@@ -62,7 +62,8 @@ $ toa serve ./extensions/exposition @toa.io/extensions.configuration
 
 The list is exact — unlike `mono`, nothing is discovered. A service the named ones talk to
 answers over the network in a deployment; in one process it is named too, or nothing answers
-it.
+it. One named that has no service in this environment, because its variables are absent, is
+refused, and nothing runs.
 
 ### types
 
