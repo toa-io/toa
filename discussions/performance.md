@@ -126,8 +126,6 @@ const items = await context.local.enumerate({ query: { limit: 10 }, output: ['id
      `id` in one, since `id` is always read.
    - An operation of every type but observation refuses a query that carries a projection with a
      `RequestContractException`, whether the request is authentic or not.
-   - The contract a component checks a request against is built from the whole definition of the
-     operation, as the caller's is.
    - `query/options.ts` adds the system properties to a copy of the projection, so the declaration
      a gateway sends with every request stays as it was declared.
 
