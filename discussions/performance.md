@@ -13,13 +13,16 @@ costs. On two paths it costs several times more, and for reasons no part of the 
 - the gateway parses a component's JSON reply and encodes it again, which for a thousand entities is
   six times what forwarding the bytes costs.
 
+A route states two things of its own: what an observation reads from the database, and what a
+client receives of the operation's answer. The gateway sends both with the call. The component reads
+what the route projects, restricts its answer once the operation has given it, and encodes it; where
+the client takes JSON and nothing on the route changes the body, the gateway writes those bytes to
+the client as they arrived.
+
 The rest is work done on every request that a few percent each add up to: an exception object built
 for every finished request, a module resolved on every token check, an environment variable read on
-every operation, a trace context matched by a regular expression, a call identity hashed through a
-general-purpose package, a record copied through a rest spread, and a token opened through
-WebCrypto's argument handling.
-
-Each of them is removed, while every answer the gateway gives stays byte for byte what it is, and
+every operation, a call identity hashed through a general-purpose package, a record copied through a
+rest spread, and a token opened through WebCrypto's argument handling. Each of them is removed, and
 each change is measured before and after with the benchmarks.
 
 ### Guarantees
@@ -27,100 +30,157 @@ each change is measured before and after with the benchmarks.
 **Latency**
 
 1. A call is written to the broker when it is made. At 100 requests per second the p50 of `small` and
-   `observe` on the reference machine is under 1 ms; it is 10.4 ms today.
+   `observe` on the reference machine is under 1 ms; it is 10.4 ms before comq 0.20.1.
 2. A storage read is bounded by the CPU of the processes it passes through: `observe` saturates where
    its gateway and component run out of CPU, 9,170 requests per second on the reference machine
-   against 3,781 today.
+   against 3,781 before comq 0.20.1.
+
+**What is read and what is answered**
+
+3. An observation reads what its route's `projection` lists, with `id` and the system properties,
+   and its algorithm receives those. A route without `projection` reads the whole entity *(today)*.
+4. An operation of every other type answers a request whose query carries a projection with a
+   request contract exception and changes nothing, whether or not the request is marked authentic. A
+   route that declares a projection for such an operation fails to boot.
+5. A request that carries `output` receives, of each object of the output, the properties it lists,
+   in the order the object holds them; with an empty list it receives no output. A request without
+   `output` receives the whole output *(today)*.
+6. What a route's requests carry as `output` is what its `io:output` lists: the properties common to
+   the lists a method declares and inherits, all of them for `true`, and an empty list for a method
+   that declares none or `false`.
+7. A reply without output has no body and takes the status an absent body takes: 204, 201 to `POST`,
+   and 404 where the operation found nothing.
+8. `ETag` and `Last-Modified` carry the entity's `VERSION`, `UPDATED` and `CREATED` whatever
+   `io:output` lists *(today)*.
 
 **Cost**
 
-3. A JSON reply the gateway leaves unchanged reaches the client as the component encoded it: the
-   gateway neither parses nor encodes it.
-4. A request that finishes builds no exception object, a token check resolves no module, an operation
-   reads no environment variable, and a record is copied once.
+9. A JSON reply that no directive changes reaches the client as the component encoded it: the gateway
+   neither parses nor encodes it.
+10. A request that finishes builds no exception object, a token check resolves no module, an operation
+    reads no environment variable, and a record the storage reads is renamed in the object the driver
+    decoded.
 
 **What stays as it is**
 
-5. What a client receives — status, headers and body — is byte for byte what it receives today, for
-   every route, format and directive.
-6. Tokens keep their format, keys and lifetimes: a token issued before the change opens after it, and
-   one issued after it opens in a gateway from before it.
-7. What `io:output` admits and refuses, and the message it refuses with, stay as they are.
+11. Tokens keep their format, keys and lifetimes: a token issued before the change opens after it, and
+    one issued after it opens in a gateway from before it.
+12. `derive` answers the bytes the `uuid` package answers for the same parts, and a token is opened and
+    refused where jose opens and refuses it.
 
 **What is left out**
 
-8. The numbers are the reference machine's. The benchmarks compare revisions on whatever machine runs
-   them.
-9. `create`, a call between two components of one process, `tools/list`, HTTP/2 and the deadline of a
-   call to a component with no running instance are measured below and keep their cost here.
+13. The numbers are the reference machine's. The benchmarks compare revisions on whatever machine runs
+    them.
+14. `create`, a call between two components of one process, `tools/list`, HTTP/2 and the deadline of a
+    call to a component with no running instance are measured below and keep their cost here.
+15. A component deployed before the change answers its whole output to a gateway deployed after it,
+    until it is deployed again.
+16. The order of an entity's properties: `id` comes after the properties its record holds.
 
 ### What a component author does differently
 
-Nothing.
+A route may state what an observation reads, and lists in `io:output` the properties `io:status` and
+`auth:incept` read:
+
+```yaml
+/items:
+  GET:
+    endpoint: enumerate
+    query:
+      projection: [title, status, owner]
+    io:output: [id, title, status]
+```
+
+A component may ask for part of what another operation answers:
+
+```javascript
+const items = await context.local.enumerate({ query: { limit: 10 }, output: ['id', 'title'] })
+```
 
 ## The changes, by area
 
 | # | change | measured today | expected | effort | risk | stage |
 | --- | --- | --- | --- | --- | --- | ---: |
-| 1 | `noDelay` on comq's sockets | `small` p50 at 100 rps 10.36 ms; `observe` saturates at 3,781 rps with its processes under 40% of a core | `small` p50 at 100 rps 0.68 ms; `observe` saturates at 9,170 rps | one option in comq, a release, the dependency | low | 1 |
-| 2 | A JSON reply forwarded as bytes | `list.1000` gateway 10,629 µs; forwarding costs 1,780 µs by hand | about 8 ms less per 1,000-entity list in the gateway | medium: the call, the binding, comq and the gateway | medium | 3 |
-| 3 | Records translated without a rest spread | `record.js` `from` 26% of the component on `list.1000`, about 2.6 µs a record | about 2.5 ms less per 1,000-entity list in the component | `from` and the codec's `from`, about 10 lines; `record.test.js` | low | 2 |
-| 4 | `track()` aborts a request's controller only when its reply is unfinished | the `DOMException` of the abort is 7.4% of the gateway on `small` | about 5–7 µs less per request in the gateway | one condition on `writableFinished`; `interruptions.feature` in HTTP/1.1 and h2c | low | 2 |
-| 5 | `identity.tokens` imports `jose` once | importing and resolving `jose` on every decrypt is 4.2% of the gateway on `token.id` | about 8 µs less per authenticated request | the import's promise held in `lib/jose.js`, two lines; `decrypt.test.ts` | low | 2 |
-| 6 | An operation reads `TOA_ENV` when it is created | `environment.get` is 1.6–3.6% of a component | about 0.4–1.8 µs less per operation | a field of `Operation`; the feature suites, whose steps set `TOA_ENV` before they boot | low | 2 |
-| 7 | The traceparent is read by position | the regular expression is 2.2–5.1% of a component | up to that share, measured first: a check by position refuses what the expression refuses and may cost as much | a microbenchmark, then about 20 lines; the invalid headers in `tracing.test.ts` | low | 2 |
-| 8 | `derive` parses its namespace once and hashes the name directly | the `uuid` package is 6% of `bench` on `chain`; it already hashes with `node:crypto`, and converts the name and parses the namespace on every call | up to that share, measured first | a microbenchmark, then about 12 lines; `newid.test.js` against the package's bytes | low | 2 |
-| 9 | Tokens opened with `node:crypto` | jose `jwtDecrypt` 40 µs; `node:crypto` 10.9 µs | about 30 µs less per authenticated request | about 50 lines in place of `jwtDecrypt` and `decodeProtectedHeader`; `decrypt.test.ts` with a jose-issued token and a changed tag, IV, header and ciphertext | medium: every token the gateway accepts passes through it | 2 |
-| 10 | `io:output` checks entity types without Ajv | 2.2 µs per 1,000 entities | the same answers from a plainer check | about 5 lines, the same `TypeError` text; the `io` scenarios | low | 2 |
+| 1 | `noDelay` on comq's sockets | `small` p50 at 100 rps 10.36 ms; `observe` saturates at 3,781 rps with its processes under 40% of a core | `small` p50 at 100 rps 0.68 ms; `observe` saturates at 9,170 rps | comq 0.20.1; the dependency in `bindings.amqp` | low | 0 |
+| 2a | A route's projection reaches an observation's storage | `Query.fit` drops a declared `projection`; `record.js` `from` and BSON decoding are 61% of the component on `list.1000` | a share of those in proportion to what a route leaves unread | `Query.fit`, the definitions' check, the refusal by type, a copy in `query/options.ts`, the callee's contract; `query` scenarios | low | 3 |
+| 2b | The reply restricted in the component | the `io:output` fit of 1,000 entities 369 µs in the gateway | the fit in the component, on the reply the operation built; what a route leaves out crosses no process | `Request.output`, `Operation.invoke`, `Reply.system`, a call option, `io:output`, `Endpoint`; `io`, `cache`, `rpc`, `mcp` scenarios | medium: what a client receives changes as Compatibility states | 4 |
+| 2c | A JSON reply forwarded as bytes | `list.1000` gateway 10,629 µs; forwarding costs 1,780 µs by hand | about 8 ms less per 1,000-entity list in the gateway | reply headers in comq and a release; both sides of `bindings.amqp`; `Endpoint` and `send`; scenarios across formats, protocols and binding versions | medium | 5 |
+| 3 | Records renamed in place | `record.js` `from` 26% of the component on `list.1000`: a rest spread costs 2.68 µs a decoded record | about 2 ms less per 1,000-entity list in the component: the rename costs 0.26 µs a record, and encoding the renamed record 0.43 µs more | `from`, two lines; `record.test.js` | low | 1 |
+| 4 | `track()` aborts a request's controller only when its reply is unfinished | the `DOMException` of the abort is 7.4% of the gateway on `small` | about 5–7 µs less per request in the gateway | one condition on `writableFinished`; `interruptions.feature` in HTTP/1.1 and h2c | low | 1 |
+| 5 | `identity.tokens` imports `jose` once | importing and resolving `jose` on every decrypt is 4.2% of the gateway on `token.id` | about 8 µs less per authenticated request | the import's promise held in `lib/jose.js`, two lines; `decrypt.test.ts` | low | 1 |
+| 6 | An operation reads `TOA_ENV` when it is created | `environment.get` is 1.6–3.6% of a component | about 0.4–1.8 µs less per operation | a field of `Operation`; the feature suites, whose steps set `TOA_ENV` before they boot | low | 1 |
+| 7 | `derive` parses its namespace once and hashes the name directly | the `uuid` package is 6% of `bench` on `chain`: 3.07 µs a call | about 1.6 µs less per call a component makes while serving one | about 12 lines; `newid.test.js` against the package's bytes | low | 1 |
+| 8 | Tokens opened with `node:crypto` | jose `jwtDecrypt` 40 µs; `node:crypto` 10.9 µs | about 30 µs less per authenticated request | about 50 lines in place of `jwtDecrypt` and `decodeProtectedHeader`; `decrypt.test.ts` with a jose-issued token and a changed tag, IV, header and ciphertext | medium: every token the gateway accepts passes through it | 2 |
+
 
 1. **The broker's sockets.** comq connects with `noDelay: true` beside `keepAlive` in
-   `SOCKET_OPTIONS`; without it amqplib calls `setNoDelay(false)`. A release of comq carries it, and
+   `SOCKET_OPTIONS`; without it amqplib calls `setNoDelay(false)`. comq 0.20.1 carries it, and
    `bindings.amqp` depends on that release.
 
-2. **Replies the gateway forwards.**
-   - The gateway sends with a call the properties `io:output` permits, or that it permits all of them.
-   - The component's binding projects the reply to those properties as it encodes it — each entity's
-     own properties in their own order, as `io:output` fits them — and marks the message as projected.
-     `VERSION`, `UPDATED` and `CREATED`, which the cache directives read, travel in the message's
-     headers.
-   - comq hands a reply marked as projected to its caller as bytes.
-   - The gateway writes those bytes as the body where the response is JSON, the reply is neither an
-     error nor a stream, and no directive of the response pipeline changes the body. Every other reply
-     — another format, `/.rpc`, `/.mcp`, a message without the mark — is decoded and restricted as it
-     is today.
+2. **Replies.**
 
-3. **Records.** `record.js` `from` builds an entity by setting `id` and then copying every property of
-   the record but `_id`, in the record's order, where it now uses a rest spread.
+   a. **Projection.**
+   - Exposition's `Query` carries the `projection` a route declares into the request's query.
+   - The definitions refuse a `projection` on a method whose operation is not an observation, and
+     `id` in one, since `id` is always read.
+   - An operation of every type but observation refuses a query that carries a projection with a
+     `RequestContractException`, whether the request is authentic or not.
+   - The contract a component checks a request against is built from the whole definition of the
+     operation, as the caller's is.
+   - `query/options.ts` adds the system properties to a copy of the projection, so the declaration
+     a gateway sends with every request stays as it was declared.
+
+   b. **Restriction.**
+   - A request carries `output`, a list of property names.
+   - `Operation.invoke` restricts the reply the operation built as it returns it; the reply recorded
+     for a call made `once` is the whole one. An empty list removes the output. Otherwise each object
+     of the output, and each object of an array output, keeps the listed properties in its own order,
+     and every other value is answered as it is. The `VERSION`, `CREATED` and `UPDATED` of an object
+     output travel beside it as `system`. A `null` reply, an error, an exception and a stream are
+     answered as they are.
+   - `Call` answers the whole reply where the call asks for it, and the gateway's `Endpoint` does,
+     reading the version and the modification time from `system`.
+   - `io:output` puts its list on the call and reads nothing of the reply: the lists a method
+     declares and inherits give the properties common to them, `true` gives none, and a method that
+     declares none or `false` gives an empty list.
+   - `identity.grants` lists `status` in the `io:output` of the route whose errors `io:status`
+     answers.
+
+   c. **Bytes.**
+   - comq hands a producer the headers of the request it answers, lets it answer bytes with headers,
+     and hands a caller that asks for them the headers of a reply beside its payload.
+   - `bindings.amqp` marks each request it sends as coming from a caller that reads an output encoded
+     on its own. It answers such a request whose output is an object or an array with the output
+     encoded as JSON and `system` in the headers, and every other request with the reply as it is.
+   - A reply that carries an encoded output reaches `Call` as `{ output, system }`, the output
+     decoded, or held as its bytes where the call asks for them.
+   - `io:status` and `auth:incept` mark a request as one whose body they read. `Endpoint` asks for the
+     bytes where the response is JSON, no directive marked the request, and the request is a
+     resource's rather than a call of `/.rpc` or `/.mcp`; `send` writes them as the body.
+
+3. **Records.** `record.js` `from` sets `id` on the object the driver decoded and deletes `_id` from
+   it.
 
 4. **The abort of a request.** `HTTP/Server.ts` `track()` aborts a request's controller on `close`
    only when the reply is unfinished; a finished reply has nothing left to cancel, and its abort built
    a `DOMException` for every request.
 
 5. **The import of jose.** `identity.tokens` holds the promise of importing `jose`, made once, and
-   awaits it on every call.
+   returns it on every call.
 
 6. **`TOA_ENV`.** An operation reads `TOA_ENV` when it is created and holds it.
 
-7. **The traceparent.** `component.ts` and `receiver.ts` read a traceparent by position — the header
-   has a fixed layout of 55 characters — refusing every header the expression refuses, where a
-   microbenchmark shows the check by position costs less than the expression.
+7. **The call identity.** `entities/newid.ts` `derive` holds its namespace as bytes and hashes the
+   name with `node:crypto` directly, into the name-based UUID v5 bytes the `uuid` package produces.
 
-8. **The call identity.** `entities/newid.ts` `derive` holds its namespace as bytes and hashes the
-   name with `node:crypto` directly, into the name-based UUID v5 bytes the `uuid` package produces,
-   where a microbenchmark shows it costs less than the package.
-
-9. **Tokens.** `identity.tokens` opens a `dir` + `A256GCM` token with `node:crypto`, in place of
+8. **Tokens.** `identity.tokens` opens a `dir` + `A256GCM` token with `node:crypto`, in place of
    `decodeProtectedHeader` and `jwtDecrypt`: the compact serialization split into its five parts with
    an empty encrypted key; the protected header checked for `alg`, `enc`, `typ` and `kid`, with a
    `crit` or `zip` refused as jose refuses them; a 96-bit IV and a 128-bit tag; the ciphertext opened
    with AES-256-GCM with the protected header as additional authenticated data; and the claims checked
    as `decrypt.ts` and `jwtDecrypt` check them, `nbf` included. Issuing stays with jose, since a token
    is issued once a `refresh`. PASETO keys are read as they are.
-
-10. **`io:output`.** The restriction checks that every entity of an array body is an object by its
-   type as it fits it, where it now runs Ajv over the body first, and throws the same message for an
-   entity that is something else. A body that is neither an object nor an array is omitted with a
-   warning, as it is today.
 
 ## Decisions
 
@@ -130,20 +190,40 @@ Nothing.
   so the option is the whole cause.
 - **The token format stays.** A token opened with `node:crypto` costs 10.9 µs, and jose costs 40; an
   HMAC-signed token would cost 8.9. A new format would save 2 µs and cost a format.
-- **A reply is projected where it is encoded.** The component walks the reply once to encode it, and
-  restricting in the same pass leaves the gateway with bytes it can write. A reply from a component
-  that projects nothing is still restricted by the gateway, so a gateway and a component of different
-  versions answer the same bytes.
+- **A reply is restricted where the operation answered.** The component holds the reply as objects
+  the moment the operation returns it, and restricting there leaves the gateway nothing of the reply
+  to read. `io:output` becomes what a route's requests ask for.
 - **The restriction applies to what the operation answers.** `query.projection` is what a storage
-  reads, and `io:output` is what a client may receive of an operation's reply. An operation may
-  rename, compute or replace what it read, so a property of the same name can carry another meaning,
-  and the two contracts stay separate even where their names coincide. The permitted properties
-  therefore travel beside the call, and the reply is restricted after the operation has produced it.
-- **A reply is forwarded only where nothing changes its body.** The other paths — formats, RPC, MCP,
-  errors, streams — are where a body is changed or re-encoded by design, and they are the rare ones.
-- **A traceparent is read by position.** A component's log lines carry the trace and span ids of the
-  call they belong to, so the header is read on every message; reading it by position keeps that and
-  drops the expression.
+  reads, and `output` is what a caller receives of an operation's reply. An operation may rename,
+  compute or replace what it read, so a property of the same name can carry another meaning, and a
+  route states each of them on its own even where their names coincide.
+- **Only an observation reads a projection.** A transition writes back the whole record it read, an
+  assignment's event carries the record it changed, and an effect reads for what it does next; a
+  projected read would erase what it left out or cut an event short. The refusal holds for an
+  authentic request too, since that is the request that skips the contract.
+- **An empty output is no output.** A method that declares no `io:output` gives its clients nothing of
+  the reply, and a reply with nothing in it is answered as any absent body is.
+- **A property a directive reads is listed in `io:output`.** `io:output` alone decides what a request
+  asks for. `io:status` and `auth:incept` read the reply the component restricted, and a reply without
+  their property is answered as it is today.
+- **Bytes are agreed between the bindings.** Whether a reply may travel as bytes depends on the
+  versions of the two processes, so it is the transport that says so, and a route that answers the
+  whole output forwards bytes too.
+- **A reply is forwarded only where nothing changes its body.** `io:status` removes a property,
+  `auth:incept` reads one, a format other than JSON encodes the object, and `/.rpc` and `/.mcp` wrap
+  the reply in an envelope; a cache revalidation drops the body and needs nothing of it.
+- **A gateway ahead of its components answers whole outputs.** A component deployed before the change
+  ignores `output` until it is deployed again. Guarding that window would keep the gateway reading
+  every reply for the time a deployment takes.
+- **A record is renamed in place.** The driver decodes every document into an object of its own, and
+  an entity copies a state before an operation that writes changes it, so `from` sets `id` on the
+  decoded object and deletes `_id`: 0.26 µs a record, against 2.68 µs for a rest spread and 1.04 µs for
+  a copy by a loop over its keys. The renamed record encodes 0.43 µs slower, as the loop's copy does.
+- **A record holds `_id` alone.** Writing `id` beside it would spare the rename at the price of 40
+  bytes a record, a migration of every collection and a release between writing and reading, for the
+  0.26 µs the rename costs.
+- **The traceparent keeps its expression.** Read by position, a header costs 0.106 µs against the
+  expression's 0.164 µs: 0.06 µs a message, below what the benchmarks resolve.
 - **An operation reads `TOA_ENV` when it is created.** A suite sets the environment before it boots a
   composition, and a module is loaded before that.
 - **The changes are measured one at a time.** Each is a few percent of a request, which is what the
@@ -204,6 +284,17 @@ The hand-written gateway forwards a reply's bytes.
 At 3,024 requests per second with Nagle, `observe` is at a p50 of 64 ms while its gateway and
 component use a third of a core each and MongoDB answers each read in 0.055 ms.
 
+**Projection and output.** A route's `projection` is accepted by the definitions and dropped by
+`Query.fit`, so no route reads less than the whole entity. A component builds the contract it checks
+a request against from the operation's input alone, which refuses a projection on every type, and
+skips that contract for an authentic request, which lets a projection through to a transition's read.
+`io:output` restricts the reply in the gateway, after the directives that read it: `io:status` and
+`auth:incept` read properties it leaves out, and a method that declares no `io:output` answers 200
+with an empty body.
+
+**Records.** A record holds its identity as `_id` alone, and `from` builds every entity it reads anew
+to rename it to `id`.
+
 **Single operations.**
 
 | operation | µs |
@@ -217,6 +308,16 @@ component use a third of a core each and MongoDB answers each read in 0.055 ms.
 | the `io:output` fit of 1000 entities | 369 |
 | Ajv's shape check in `io:output`, 1000 entities | 2.2 |
 | `structuredClone` of 1000 entities | 1,484 |
+| `record.js` `from` of a record the driver decoded, rest spread | 2.68 |
+| the same, a copy by a loop over its keys | 1.04 |
+| the same, renamed in place | 0.26 |
+| `JSON.stringify` of 1000 entities built by the rest spread | 1,206 |
+| `JSON.stringify` of 1000 entities built by the loop | 1,620 |
+| `JSON.stringify` of 1000 records renamed in place | 1,635 |
+| `derive` through `uuid.v5` | 3.07 |
+| `derive` with `node:crypto` and a parsed namespace | 1.42 |
+| a traceparent matched by the expression | 0.164 |
+| a traceparent read by position | 0.106 |
 
 **Where the time goes.** Shares of the main thread in the measured window:
 
@@ -243,41 +344,67 @@ until it disconnects.
 
 ## Stages
 
-1. **The sockets.** The comq release and the dependency on it, measured with `--curve`.
-2. **Work on every request, records, tokens and `io:output`**, each a change of its own.
-3. **Forwarded replies**: the permitted properties on the call, the projection in the binding, the
-   bytes in comq, and the write in the gateway.
+0. **The sockets.** The dependency on comq 0.20.1.
+1. **Work on every request**: records, the abort, the import of jose, `TOA_ENV` and the call identity,
+   each a change of its own.
+2. **Tokens.**
+3. **Projection.**
+4. **Restriction in the component**, with `io:output` putting its list on the call.
+5. **Bytes**: the comq release, the bindings, and the write in the gateway.
 
 ## Verification
 
-- **Latency.** Measured against load, before and after stage 1, with a `--curve` mode the benchmarks
-  gain for it: each scenario at rising fixed rates from 100 requests per second to saturation, with
-  p50, p99 and the CPU of each process at every rate. A comparison at half of saturation hides a delay
-  that only light load shows. The p50 of `small` and `observe` at 100 requests per second is under
-  1 ms, and `observe` saturates at twice its rate or more.
-- **Cost.** With `npm run bench` against the revision before each change of stages 2 and 3: the
-  process a change touches comes out faster or inconclusive, and no process comes out slower. Stage 2
-  as a whole comes out faster in the gateway on `small` and `token.id`, and in the component on
-  `list.1000`; stage 3 comes out faster in the gateway on `list.1000`.
-- **Answers.** The exposition suite passes as it is, in HTTP/1.1 and in h2c.
-- **Forwarded replies.** A route with `io:output` returns the bytes it returns today for an object, an
-  array and a permitted subset; a component from before stage 3 behind a gateway from after it, and a
-  gateway from before it in front of a component from after it, answer the same bytes; a reply in
-  another format, from `/.rpc` or from `/.mcp` answers as it does today.
-- **Tokens.** A token jose issued opens with the new code, and one with a changed tag, a changed
-  header, another `kid`, another issuer or a passed expiry is refused as jose refuses it.
+- **Latency.** Each scenario at rising fixed rates from 100 requests per second to saturation, with
+  p50, p99 and the CPU of each process at every rate, before and after stage 0. A comparison at half of
+  saturation hides a delay that only light load shows. The p50 of `small` and `observe` at 100
+  requests per second is under 1 ms, and `observe` saturates at twice its rate or more.
+- **Cost.** With `npm run bench` against the revision before each change of stages 1 to 5: the process
+  a change touches comes out faster or inconclusive, and no process comes out slower. Stage 1 as a
+  whole comes out faster in the gateway on `small` and in the component on `list.1000`; stage 2 in the
+  gateway on `token.id`; and stage 5 in the gateway on `list.1000`.
+- **Answers.** The exposition suite passes in HTTP/1.1 and in h2c, with the scenarios Compatibility
+  names changed as it states.
+- **Projection.** An observation's algorithm receives what its route projects and nothing else; a
+  transition, an assignment and an effect called with a projection, authentic or not, answer the
+  exception and leave the entity as it was; a route that projects a transition fails to boot.
+- **Restriction.** A list restricts an object and each object of an array in their own order; a
+  method's own list under an inherited `true` restricts to that list, and two lists to what they have
+  in common; a method without `io:output` answers 204 to `GET`, 201 to `POST` and 404 where nothing is
+  found; a string under a list is answered as it is; `ETag` and `Last-Modified` appear on a reply whose
+  `io:output` lists no `VERSION`; `identity.grants` answers its errors with their status; a call
+  between components without `output` receives the whole output; `/.rpc` and `/.mcp` restrict each
+  call.
+- **Forwarded replies.** A JSON route answers the bytes it answered before stage 5, in HTTP/1.1 and in
+  h2c; YAML and MessagePack answer the same values; a caller from before stage 5 receives the reply of
+  a component from after it, and a caller from after it the reply of a component from before it,
+  against the broker.
+- **Tokens.** A token jose issued opens with the new code, and one with a changed tag, IV, header or
+  ciphertext, another `kid`, another issuer, a passed expiry or a future `nbf` is refused as jose
+  refuses it.
 - **Identities.** `derive` answers the bytes the `uuid` package answers for the same parts.
-- **`io:output`.** An array holding a string or a number answers the error it answers today, and a
-  body that is a string or a number is omitted with the warning it is omitted with today.
+- **Records.** An entity read from a record holds the record's properties with `id` for `_id`, through
+  every read: one, many, a stream, a sample and a projection.
 
 ## Compatibility
 
-**On the wire.** The permitted properties on a call, the projection mark and the cache headers on a
-reply are added fields. A component that reads none of them replies with the whole entity, which the
-gateway restricts as it does today; a gateway that reads none of them decodes a projected reply, whose
-entities its restriction leaves as they are.
+**On the wire.** `output` on a request, `system` on a reply, the mark on a request and the headers on
+a reply are added. A component from before the change reads no `output` and answers the whole output;
+a gateway from before it sends none and restricts as it did. Two bindings of which one reads no mark
+exchange the reply as they do today.
 
-**In behaviour.** None: guarantees 5 to 7.
+**In types.** `Request.output`, `Reply.system`, the option by which a call answers the whole reply, and
+the value holding an encoded output.
+
+**In behaviour.**
+
+| before | after |
+| --- | --- |
+| a method without `io:output`, or with `false`, answers 200 with an empty body | 204, 201 to `POST`, 404 where nothing is found |
+| a string or a number under an `io:output` list is omitted with a warning | answered as it is |
+| an array holding a value other than an object under a list answers 500 | its objects are restricted and the rest answered as it is |
+| `io:status` and `auth:incept` read a property `io:output` leaves out | they read what `io:output` lists |
+| a projection reaches a transition's read through an authentic request | refused |
+| an entity's properties come with `id` first | with `id` last |
 
 ## References
 
@@ -287,4 +414,3 @@ entities its restriction leaves as they are.
   opened by hand.
 - [RFC 9562](https://www.rfc-editor.org/rfc/rfc9562), UUIDs — the name-based version 5 `derive`
   produces.
-- [W3C Trace Context](https://www.w3.org/TR/trace-context/) — the fixed layout of `traceparent`.
