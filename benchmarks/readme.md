@@ -50,7 +50,8 @@ A block boots both revisions and runs every scenario on each, in turns: base, he
 head, base, base, head in the next block. Where the machine has eight logical CPUs or more, the
 gateways, the components and `oha` are pinned to cores of their own.
 
-A full run of the default scenarios takes about 50 minutes; `--quick`, about 20.
+A run of the default scenarios took 61 minutes on an 8-core machine; `--quick` has 3 blocks of
+5-second windows.
 
 ## Scenarios
 
