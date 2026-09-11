@@ -1,0 +1,27 @@
+name: counter
+namespace: stateful
+
+operations:
+  open:
+    type: computation
+    output:
+      type: string
+  increment:
+    type: computation
+    stateful: true
+    input:
+      type: string
+    output:
+      type: object
+      properties:
+        instance:
+          type: string
+        count:
+          type: integer
+  linger:
+    type: computation
+    stateful: true
+    input:
+      type: integer
+    output:
+      type: string

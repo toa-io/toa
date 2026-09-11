@@ -8,9 +8,10 @@ import type { AnnotationRecord } from '@toa.io/pointer/transpiled/Deployment.js'
 /** The brokers of the context, as the deployment wrote them into the environment. */
 export function context(locator: Locator): string[] {
   // Toa's own development stack is not on the conventional ports: the applications built on
-  // Toa are, and they share the machine. See CONTRIBUTING.md.
+  // Toa are, and they share the machine. See CONTRIBUTING.md. A scenario that restarts a broker
+  // starts one of its own and names it, since the shared one is everybody's.
   if (environment.get('TOA_DEV') === '1')
-    return ['amqp://developer:secret@localhost:31010']
+    return [environment.get('TOA_DEV_AMQP') ?? 'amqp://developer:secret@localhost:31010']
 
   const value = environment.get(CONTEXT_VARIABLE)
 
