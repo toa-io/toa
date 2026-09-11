@@ -11,6 +11,7 @@ export interface Load {
   duration: number
   /** without one, as fast as the side answers */
   rate?: number
+  signal?: AbortSignal
 }
 
 /** One running side, and what is sent to it. */
@@ -68,15 +69,15 @@ export class Driver {
         rate: load.rate,
         http2: scenario.protocol === 'h2c'
       },
-      { cpus: this.run.placement.load, status: scenario.status }
+      { cpus: this.run.placement.load, status: scenario.status, signal: load.signal }
     )
   }
 
   /** The rate every window of the scenario is sent at: a share of what the side saturates at. */
-  public async calibrate(scenario: Scenario): Promise<number> {
-    await this.load(scenario, { duration: this.run.timing.warmup })
+  public async calibrate(scenario: Scenario, signal?: AbortSignal): Promise<number> {
+    await this.load(scenario, { duration: this.run.timing.warmup, signal })
 
-    const saturated = await this.load(scenario, { duration: SATURATION })
+    const saturated = await this.load(scenario, { duration: SATURATION, signal })
 
     return Math.max(10, Math.floor(saturated.rate * LOAD))
   }

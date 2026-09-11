@@ -7,12 +7,14 @@ export interface Target {
   cpus: string | null
   /** the status every request must be answered with */
   status: number
+  /** stops the load: a request nothing answers is waited for otherwise */
+  signal?: AbortSignal
 }
 
 export async function send(options: LoadOptions, target: Target): Promise<LoadResult> {
   const argv = args(options)
   const [command, list] = target.cpus === null ? ['oha', argv] : ['taskset', ['-c', target.cpus, 'oha', ...argv]]
-  const { code, stdout, stderr } = await execute(command, list)
+  const { code, stdout, stderr } = await execute(command, list, target.signal)
 
   if (code !== 0) throw new Error(`oha exited with ${code}: ${stderr.slice(0, 500)}`)
 
@@ -31,9 +33,13 @@ export async function available(): Promise<void> {
   if (code !== 0) throw new Error('oha is not on the PATH; see benchmarks/readme.md')
 }
 
-async function execute(command: string, argv: string[]): Promise<{ code: number; stdout: string; stderr: string }> {
+async function execute(
+  command: string,
+  argv: string[],
+  signal?: AbortSignal
+): Promise<{ code: number; stdout: string; stderr: string }> {
   return await new Promise((resolve, reject) => {
-    const child = spawn(command, argv, { stdio: ['ignore', 'pipe', 'pipe'] })
+    const child = spawn(command, argv, { stdio: ['ignore', 'pipe', 'pipe'], signal })
     const stdout: Buffer[] = []
     const stderr: Buffer[] = []
 

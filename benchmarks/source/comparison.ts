@@ -208,9 +208,10 @@ export class Comparison {
     const { drivers, idle } = group
 
     for (const scenario of scenarios) {
-      const rate = await drivers.base.calibrate(scenario).catch((error: unknown) => {
-        throw new Error(`${scenario.id} on base: ${error instanceof Error ? error.message : String(error)}`, { cause: error })
-      })
+      const rate = await this.guard(
+        { scenario, side: 'base' },
+        async (signal) => await drivers.base.calibrate(scenario, signal)
+      )
 
       await this.drain()
       this.rates.set(scenario.id, rate)
@@ -250,6 +251,11 @@ export class Comparison {
     const deadline = Date.now() + DRAIN * 1000
 
     for (;;) {
+      const failure = this.failure()
+
+      // what an exited process committed is never published
+      if (failure !== null) throw new Error(failure)
+
       const pending = (await this.run.stack.pending(SLOTS.a.context)) + (await this.run.stack.pending(SLOTS.b.context))
 
       if (pending === 0) return
@@ -341,18 +347,54 @@ export class Comparison {
     return Math.max(seconds, MINIMUM / rate)
   }
 
-  /** Load that fails names the process that exited, on either side, where one did. */
   private async send(driver: Driver, scenario: Scenario, load: Load): Promise<LoadResult> {
+    return await this.guard(
+      { scenario, side: driver.running.side.name },
+      async (signal) => await driver.load(scenario, { ...load, signal })
+    )
+  }
+
+  /**
+   * Work against both sides, given up as soon as a process of either exits: a call to a
+   * component that is gone is never answered, so the load would wait for it for good. What
+   * fails is named by the process that exited, where one did.
+   */
+  private async guard<T>(label: { scenario: Scenario; side: SideName }, work: (signal: AbortSignal) => Promise<T>): Promise<T> {
+    const abort = new AbortController()
+    const lost = this.lost()
+
     try {
-      return await driver.load(scenario, load)
+      return await Promise.race([work(abort.signal), lost])
     } catch (error) {
       await sleep(EXIT)
 
-      const failure = this.current === null ? null : (this.current.base.running.failure() ?? this.current.head.running.failure())
-      const reason = failure ?? (error instanceof Error ? error.message : String(error))
+      const reason = this.failure() ?? (error instanceof Error ? error.message : String(error))
 
-      throw new Error(`${scenario.id} on ${driver.running.side.name}: ${reason}`, { cause: error })
+      throw new Error(`${label.scenario.id} on ${label.side}: ${reason}`, { cause: error })
+    } finally {
+      abort.abort()
     }
+  }
+
+  /** Rejects once a process of either side exits without being stopped; never otherwise. */
+  private lost(): Promise<never> {
+    const current = this.current
+    const lost = new Promise<never>((_, reject) => {
+      if (current === null) return
+
+      void Promise.race([current.base.running.lost(), current.head.running.lost()]).then((failure) =>
+        reject(new Error(failure))
+      )
+    })
+
+    // a loss after the work settled is the next guard's to report
+    lost.catch(() => undefined)
+
+    return lost
+  }
+
+  private failure(): string | null {
+    return this.current === null ? null : (this.current.base.running.failure() ?? this.current.head.running.failure())
   }
 
   private report(): Report {

@@ -50,6 +50,9 @@ export class Process {
   public failure: string | null = null
   public killed = false
 
+  /** settles, with what happened, once the process exits without being stopped */
+  public readonly lost: Promise<string>
+
   private stopping = false
   private readonly exited: Promise<void>
 
@@ -58,9 +61,18 @@ export class Process {
     this.child = child
     this.log = log
 
+    let lose: ((failure: string) => void) | undefined
+
+    this.lost = new Promise((resolve) => {
+      lose = resolve
+    })
+
     this.exited = new Promise((resolve) =>
       child.once('exit', (code, signal) => {
-        if (!this.stopping) this.failure = `${name} exited with ${code ?? signal}; see ${log}`
+        if (!this.stopping) {
+          this.failure = `${name} exited with ${code ?? signal}; see ${log}`
+          lose?.(this.failure)
+        }
 
         resolve()
       })
@@ -141,6 +153,11 @@ export class Running {
 
   public failure(): string | null {
     return Object.values(this.processes).find((process) => process.failure !== null)?.failure ?? null
+  }
+
+  /** Settles once any process of the side exits without being stopped. */
+  public async lost(): Promise<string> {
+    return await Promise.race(Object.values(this.processes).map(async (process) => await process.lost))
   }
 
   /** Stops every process and answers the names of those that had to be killed. */
