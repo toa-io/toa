@@ -2,6 +2,7 @@ import { join } from 'node:path'
 import { writeFile as write } from 'node:fs/promises'
 import { yaml as jsyaml } from '@toa.io/generic'
 import { cp } from 'node:fs/promises'
+import { shortcuts } from '@toa.io/norm'
 
 import { merge, declare, describe } from './.deployment/index.js'
 import { drain } from './drain.js'
@@ -9,6 +10,7 @@ import { drain } from './drain.js'
 export class Deployment {
   #chart
   #values
+  #keyed
   #process
   #target
 
@@ -17,6 +19,7 @@ export class Deployment {
 
     this.#chart = declare(context, dependency)
     this.#values = describe(context, compositions, dependency, image)
+    this.#keyed = dependency.variables
     this.#process = process
   }
 
@@ -85,31 +88,111 @@ export class Deployment {
     await this.#process.execute('helm', ['dependency', 'update', this.#target], options)
   }
 
-  variables() {
+  /**
+   * @param {{ components?: string[], services?: string[] }} [options]
+   * @returns {toa.deployment.dependency.Variable[]}
+   */
+  variables(options = {}) {
+    if (options.components === undefined && options.services === undefined) {
+      const variables = []
+      const used = new Set()
+
+      addVariables(this.#values.compositions, variables, used)
+      addVariables(this.#values.services, variables, used)
+
+      if (this.#values.mono !== undefined)
+        addVariables([this.#values.mono], variables, used)
+
+      return variables
+    }
+
+    return this.#select(options.components, options.services)
+  }
+
+  /**
+   * @param {string[] | undefined} components
+   * @param {string[] | undefined} services
+   * @returns {toa.deployment.dependency.Variable[]}
+   */
+  #select(components, services) {
+    const labels = labelsOf(this.#values, this.#keyed)
+    const keys = new Set(['global'])
+    const selected = []
+
+    for (const token of components ?? []) keys.add(matchComponent(token, labels))
+
+    for (const token of services ?? []) {
+      const service = matchService(token, this.#values.services)
+
+      selected.push(service)
+
+      for (const label of service.components ?? []) keys.add(label)
+    }
+
     const variables = []
     const used = new Set()
 
-    addVariables(this.#values.compositions, variables, used)
-    addVariables(this.#values.services, variables, used)
+    for (const key of keys) append(this.#keyed[key], variables, used)
 
-    if (this.#values.mono !== undefined)
-      addVariables([this.#values.mono], variables, used)
+    for (const service of selected) append(service.variables, variables, used)
 
     return variables
   }
 }
 
 function addVariables(list, variables, used = new Set()) {
-  for (const item of list) {
-    if (item.variables === undefined) continue
+  if (list === undefined) return
 
-    for (const variable of item.variables) {
-      if (used.has(variable.name)) continue
+  for (const item of list) append(item.variables, variables, used)
+}
 
-      variables.push(variable)
-      used.add(variable.name)
-    }
+function append(set, variables, used) {
+  if (set === undefined) return
+
+  for (const variable of set) {
+    if (used.has(variable.name)) continue
+
+    variables.push(variable)
+    used.add(variable.name)
   }
+}
+
+function labelsOf(values, keyed) {
+  const labels = new Set(values.components ?? [])
+
+  for (const service of values.services ?? [])
+    for (const label of service.components ?? []) labels.add(label)
+
+  for (const key of Object.keys(keyed ?? {})) if (key !== 'global') labels.add(key)
+
+  return labels
+}
+
+function matchComponent(token, labels) {
+  const candidates = [token, token.replaceAll('.', '-').toLowerCase()]
+
+  if (!token.includes('.')) candidates.push('default-' + token.toLowerCase())
+
+  for (const candidate of candidates) if (labels.has(candidate)) return candidate
+
+  throw new Error(`Component '${token}' is not in the context`)
+}
+
+function matchService(token, services) {
+  const resolved = shortcuts.resolve(token)
+
+  const service = (services ?? []).find((service) => {
+    if (service.name === token || service.group === token) return true
+
+    for (const [alias, pkg] of Object.entries(shortcuts.SHORTCUTS))
+      if (resolved === pkg && service.group === alias) return true
+
+    return false
+  })
+
+  if (service === undefined) throw new Error(`Service '${token}' is not in the context`)
+
+  return service
 }
 
 const TEMPLATES = join(import.meta.dirname, 'chart/templates')

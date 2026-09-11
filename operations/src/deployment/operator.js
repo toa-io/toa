@@ -51,8 +51,8 @@ export class Operator {
     return await this.#deployment.template(options)
   }
 
-  variables() {
-    return this.#deployment.variables()
+  variables(options) {
+    return this.#deployment.variables(options)
   }
 
   tags() {
