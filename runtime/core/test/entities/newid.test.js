@@ -1,5 +1,6 @@
 import { it } from 'node:test'
 import assert from 'node:assert/strict'
+import * as uuid from 'uuid'
 
 import { derive, newid } from '../../source/entities/newid.js'
 
@@ -34,4 +35,19 @@ it('should derive a different id from each part', () => {
 // or `a:b` and `c` would derive what `a` and `b:c` does
 it('should not let one part read as another', () => {
   assert.notStrictEqual(derive('a', 'b:c'), derive('a:b', 'c'))
+})
+
+// an identity is recorded with what a call changed, so one derived before a release is the one
+// derived after it
+it('should derive the bytes of a version 5 uuid in its namespace', () => {
+  const namespace = '26bd9bc6-675c-4465-9b42-9e008b20befe'
+
+  for (const parts of [[], [''], ['a1', 'default.stock.reserve', 0], ['ключ', '🙂', 7], ['x'.repeat(5000)]]) {
+    const name = parts.map((part) => String(part).length + ':' + String(part)).join('')
+    const buf = Buffer.alloc(16)
+
+    uuid.v5(name, namespace, buf)
+
+    assert.strictEqual(derive(...parts), buf.toString('hex'))
+  }
 })
