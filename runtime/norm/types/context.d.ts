@@ -23,6 +23,7 @@ interface Composition {
   name: string
   components: Manifest[]
   services?: string[]
+  replicas?: number
   /** what a deploy installs for the services this composition runs, by package name */
   packages?: Record<string, string>
 }

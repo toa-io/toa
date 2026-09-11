@@ -24,3 +24,21 @@ Feature: Composition Deployment
         timeoutSeconds: 3
         failureThreshold: 5
       """
+
+  Scenario: A composition states how many replicas it runs
+    Given I have a component `dummies.one`
+    And I have a context with:
+      """yaml
+      compositions:
+        - name: one
+          replicas: 1
+          components:
+            - dummies.one
+      """
+    When I export deployment
+    And I run `helm template deployment`
+    Then program should exit
+    And composition-one Deployment spec spec should contain:
+      """
+      replicas: 1
+      """
