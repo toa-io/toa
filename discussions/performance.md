@@ -65,9 +65,13 @@ Nothing.
 | 1 | `noDelay` on comq's sockets | `small` p50 at 100 rps 10.36 ms; `observe` saturates at 3,781 rps with its processes under 40% of a core | `small` p50 at 100 rps 0.68 ms; `observe` saturates at 9,170 rps | one option in comq, a release, the dependency | low | 1 |
 | 2 | A JSON reply forwarded as bytes | `list.1000` gateway 10,629 µs; forwarding costs 1,780 µs by hand | about 8 ms less per 1,000-entity list in the gateway | medium: the call, the binding, comq and the gateway | medium | 3 |
 | 3 | Records translated without a rest spread | `record.js` `from` 26% of the component on `list.1000`, about 2.6 µs a record | about 2.5 ms less per 1,000-entity list in the component | a few lines | low | 2 |
-| 4 | Work on every request | `DOMException` 7.4% of the gateway on `small`; `import('jose')` about 4% on `token.id`; `environment.get` 1.5–3.6% and the traceparent expression 2–5% of components; the `uuid` hash 6% of `bench` on `chain` | 10–20 µs of the gateway's 91 on `small`; 3–6 µs of every component call | a few lines each | low | 2 |
-| 5 | Tokens opened with `node:crypto` | jose `jwtDecrypt` 40 µs; `node:crypto` 10.9 µs | about 30 µs less per authenticated request | low | low: the same algorithm and bytes | 2 |
-| 6 | `io:output` checks entity types without Ajv | 2.2 µs per 1,000 entities | the same answers from a plainer check | low | low | 2 |
+| 4 | `track()` aborts a request's controller only when its reply is unfinished | the `DOMException` of the abort is 7.4% of the gateway on `small` | about 5–7 µs less per request in the gateway | a few lines | low | 2 |
+| 5 | `identity.tokens` imports `jose` once | importing and resolving `jose` on every decrypt is 4.2% of the gateway on `token.id` | about 8 µs less per authenticated request | a few lines | low | 2 |
+| 6 | An operation reads `TOA_ENV` when it is created | `environment.get` is 1.6–3.6% of a component | about 0.4–1.8 µs less per operation | a few lines | low | 2 |
+| 7 | The traceparent is read by position | the regular expression is 2.2–5.1% of a component | about 0.5–2 µs less per message | a few lines | low | 2 |
+| 8 | `derive` hashes with `node:crypto` | the `uuid` package is 6% of `bench` on `chain` | about 2 µs less per call made inside a call | a few lines | low | 2 |
+| 9 | Tokens opened with `node:crypto` | jose `jwtDecrypt` 40 µs; `node:crypto` 10.9 µs | about 30 µs less per authenticated request | low | low: the same algorithm and bytes | 2 |
+| 10 | `io:output` checks entity types without Ajv | 2.2 µs per 1,000 entities | the same answers from a plainer check | low | low | 2 |
 
 1. **The broker's sockets.** comq connects with `noDelay: true` beside `keepAlive` in
    `SOCKET_OPTIONS`; without it amqplib calls `setNoDelay(false)`. A release of comq carries it, and
@@ -88,22 +92,28 @@ Nothing.
 3. **Records.** `record.js` `from` builds an entity by setting `id` and then copying every property of
    the record but `_id`, in the record's order, where it now uses a rest spread.
 
-4. **Work on every request.**
-   - `HTTP/Server.ts` `track()` aborts a request's controller only where its reply has left unfinished.
-   - `identity.tokens` holds the promise of importing `jose` once and awaits it on every call.
-   - An operation reads `TOA_ENV` when it is created.
-   - `component.ts` and `receiver.ts` read a traceparent by position: the header has a fixed layout of
-     55 characters.
-   - `entities/newid.ts` `derive` hashes with `node:crypto` into the same name-based UUID v5 bytes.
-   - The MongoDB storage builds a query's debug attributes only where the debug line is written.
+4. **The abort of a request.** `HTTP/Server.ts` `track()` aborts a request's controller on `close`
+   only when the reply is unfinished; a finished reply has nothing left to cancel, and its abort built
+   a `DOMException` for every request.
 
-5. **Tokens.** `identity.tokens` opens a `dir` + `A256GCM` token with `node:crypto`: the compact
+5. **The import of jose.** `identity.tokens` holds the promise of importing `jose`, made once, and
+   awaits it on every call.
+
+6. **`TOA_ENV`.** An operation reads `TOA_ENV` when it is created and holds it.
+
+7. **The traceparent.** `component.ts` and `receiver.ts` read a traceparent by position: the header
+   has a fixed layout of 55 characters.
+
+8. **The call identity.** `entities/newid.ts` `derive` hashes with `node:crypto` into the same
+   name-based UUID v5 bytes the `uuid` package produces.
+
+9. **Tokens.** `identity.tokens` opens a `dir` + `A256GCM` token with `node:crypto`: the compact
    serialization split into its five parts, the protected header checked for `alg`, `enc` and `kid` as
    jose checks it, the ciphertext opened with AES-256-GCM with the protected header as additional
    authenticated data, and the claims checked as `jwtDecrypt` checks them. Issuing stays with jose,
    since a token is issued once a `refresh`. PASETO keys are read as they are.
 
-6. **`io:output`.** The restriction checks that every entity of an array body is an object by its
+10. **`io:output`.** The restriction checks that every entity of an array body is an object by its
    type as it fits it, where it now runs Ajv over the body first, and throws the same message for an
    entity that is something else. A body that is neither an object nor an array is omitted with a
    warning, as it is today.
