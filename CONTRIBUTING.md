@@ -183,22 +183,17 @@ passes.
 
 ## Refusing
 
-**Nothing that ships uses `node:assert`.** It belongs to a test, where a failed assertion is the
-result. In anything that runs it says the wrong thing twice: an assertion means *this cannot
-happen*, and everything worth guarding is something that can — a manifest that does not parse, a
-variable nobody set, an endpoint a component no longer provides. And an `AssertionError` carries
-`code: 'ERR_ASSERTION'`, a string where a `code` in this codebase is a number, so a failure
-somebody reads by its code is read wrong.
+**Runtime code does not use `node:assert`.** What refuses depends on when it happens, and who has
+to answer for it:
 
-What refuses instead depends on who has to answer for it:
-
-- **A program that is starting, or a deploy** — `throw new Error()` with the message a person
-  needs. It stops what it was doing and says why, which is the whole of what an assertion was
-  doing there.
-- **Anything a caller is waiting on** — an exception from `@toa.io/core` with a code, because it
-  crosses a binding as a value and whoever receives it decides by that code. A new code goes in
-  the enumeration in `runtime/core/source/exceptions.ts`, where it also states whether it can pass
-  on a later attempt.
+- **Startup** — a program booting, a manifest being read, a deploy — may assert. A declaration
+  that is wrong, or an invariant that does not hold, stops the program before it serves anything,
+  and a person reads why.
+- **Runtime** — anything a caller is waiting on — throws an exception from `@toa.io/core` with a
+  code, because it crosses a binding as a value and whoever receives it decides by that code. An
+  `AssertionError` carries `code: 'ERR_ASSERTION'`, a string where a `code` in this codebase is a
+  number, so a caller reading it by its code reads it wrong. A new code goes in the enumeration in
+  `runtime/core/source/exceptions.ts`, where it also states whether it can pass on a later attempt.
 
 ## Userspace
 
