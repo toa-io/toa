@@ -136,8 +136,7 @@ Export environment to a `.env` file.
 <dd>
 <code>environment</code> deployment environment name (default <code>local</code>).
 <code>foo:bar</code> uses <code>@foo</code>, then <code>@bar</code>, then the unsuffixed key;
-the running environment is <code>foo</code>. Pass the chain again on the next command; it is
-not stored.<br/>
+the running environment is <code>foo</code>. The chain is not stored.<br/>
 <code>--path</code> path to a Context (default <code>.</code>)<br/>
 <code>--as</code> output file path (default <code>.env</code>)<br/>
 <code>--interactive</code> prompt for secret values<br/>

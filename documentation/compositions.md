@@ -155,8 +155,7 @@ evicted@production:
 
 The name may be `primary:fallback:…`. Each key uses the first of those that has an `@` suffix,
 and the unsuffixed key if none of them does. The running environment is the first name:
-`toa env staging:production` writes `TOA_ENV=staging`. Pass the chain again on the next deploy
-or env; it is not stored.
+`toa env staging:production` writes `TOA_ENV=staging`. The chain is not stored.
 
 A call to an evicted component is answered by whatever deploys it, and waits while nothing does.
 `toa env` writes the variables of what Toa deploys, so run it again after changing this, or an

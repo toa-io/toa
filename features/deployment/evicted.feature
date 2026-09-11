@@ -267,7 +267,11 @@ Feature: Evicted components and services
           - dummies.two
       """
     When I export deployment for foo:bar
-    Then exported values should not contain:
+    Then exported values should contain:
+      """yaml
+      components: [dummies-one]
+      """
+    And exported values should not contain:
       """yaml
       components: [dummies-two]
       """
