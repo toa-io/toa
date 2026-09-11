@@ -25,7 +25,7 @@
   "peerDependencies": {
     "@toa.io/boot": "*",
     "@toa.io/operations": "*",
-    "paseto": "4.0.0"
+    "paseto": "4.0.1"
   },
   "peerDependenciesMeta": {
     "@toa.io/boot": {
