@@ -116,6 +116,11 @@ Nothing.
   restricting in the same pass leaves the gateway with bytes it can write. A reply from a component
   that projects nothing is still restricted by the gateway, so a gateway and a component of different
   versions answer the same bytes.
+- **The restriction applies to what the operation answers.** `query.projection` is what a storage
+  reads, and `io:output` is what a client may receive of an operation's reply. An operation may
+  rename, compute or replace what it read, so a property of the same name can carry another meaning,
+  and the two contracts stay separate even where their names coincide. The permitted properties
+  therefore travel beside the call, and the reply is restricted after the operation has produced it.
 - **A reply is forwarded only where nothing changes its body.** The other paths — formats, RPC, MCP,
   errors, streams — are where a body is changed or re-encoded by design, and they are the rare ones.
 - **A traceparent is read by position.** A component's log lines carry the trace and span ids of the
