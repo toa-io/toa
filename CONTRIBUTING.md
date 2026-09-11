@@ -230,6 +230,9 @@ and the reasoning behind a decision belong in the code, beside what they explain
 What survives the rule is what a reader acts on: a limit that changes what they write, a setting
 they choose, a failure they will see and have to answer for.
 
+A change that touches an undocumented area writes that area first, as it stands, and the change
+after it.
+
 ## Publishing
 
 A package that transpiles states what it ships in `files`: its build, the assets read beside it —
