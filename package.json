@@ -43,6 +43,7 @@
     "minimatch@^9": {
       "brace-expansion": "2.1.4"
     },
+    "pacote": "22.0.0",
     "smol-toml": "1.8.0",
     "uuid": "14.0.2"
   },
