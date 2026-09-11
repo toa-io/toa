@@ -95,14 +95,17 @@ const stream = await context.remote.media.streams.watch({ input: { id }, instanc
 Then:
 
 - A call to a stateful operation names `instance`; a call to an ordinary operation, a task and a
-  delayed call name none. A mismatch is refused as a contract error before anything is sent.
+  delayed call name none. A mismatch is refused as a contract error before anything is sent. A
+  delayed call reaches a stateful operation through an ordinary operation that makes the addressed
+  call itself.
 - A receiver may be bound to a stateful operation. It names the process in the request its
   adaptation returns, and its call reaches that process from whichever replica took the event; a
   receiver that names none is refused like any other call without a name. A call through
   `context.local` goes the same way as one through `context.remote`.
-- A call that needs longer or shorter than the default says so: `{ input, instance, timeout: 60_000 }`.
-  A `signal` ends the wait when it aborts, within whatever deadline applies, and leaves the call
-  queued until that deadline passes — or, for an ordinary call with no deadline, until it is taken.
+- A call that needs longer or shorter than the default says so in its second argument:
+  `op({ input, instance }, { timeout: 60_000 })`. A `signal` given there ends the wait when it
+  aborts, within whatever deadline applies, and leaves the call queued until that deadline passes —
+  or, for an ordinary call with no deadline, until it is taken.
 - Two exceptions are new, both transient. *Addressee*: nothing at that name took the call, and a
   process may yet hold the name. *Abandoned*: the caller stopped waiting, and the call may still run.
 - The default is set in the context manifest:
@@ -123,8 +126,7 @@ Then:
   ```
 
   A route to a stateful operation without `map:instance` is refused as any call without a name is.
-  Over HTTP, *addressee* and *abandoned* answer `500`, as every exception the gateway has no mapping
-  for does.
+  Over HTTP, *addressee* answers `404 Not Found` and *abandoned* answers `504 Gateway Timeout`.
 
 ## Decisions
 
@@ -158,10 +160,19 @@ redelivered as usual. Applications differ, so a context may set its own.
 **Both `timeout` and `signal`.** A `timeout` is a number the runtime can hand to the broker as the
 message's expiry, so the broker drops a call nobody took in time. A `signal` lets a caller end a call on an event of its own.
 
-**`instance`, `timeout` and `signal` travel in the request.** They sit beside `task`, which already
-says how a call is made. Every call site — the bridge, cadence, the gateway
-— keeps its one argument, and `Call.invoke` builds the envelope it sends field by field, so none of
-the three reaches the wire.
+**`instance` travels in the request; `timeout` and `signal` beside it.** The name says where a call
+goes, as `task` does, so it rides the request every call site already hands over, and the gateway
+and a receiver name a process the same way a component does. How long a caller waits is the caller's
+alone, so it is a second argument, which a call from a component takes and nothing else passes:
+cadence, the outbox and the gateway wait on no timer of a caller's. `Call.invoke` keeps all three
+off the envelope it sends, since a `signal` has no form on the wire and neither the name nor the
+wait is what the call asks. `Envelope` still extends `Request`.
+
+**The deadline is kept in `Call`, and comq keeps its own.** Every call is waited for in `Call.invoke`,
+which is where an aborted wait becomes *abandoned*, whichever binding carries the call — a call to a
+component composed in the same process never reaches comq. comq sets the message's expiry from the
+same timeout and bounds its own wait with it, which on the broker's path ends at the same moment and
+changes nothing.
 
 **The runtime leaves outgoing calls alone at shutdown.** An addressed call ends within its deadline,
 inside the grace period, and a stopping process that lets its handlers finish keeps redelivery
@@ -213,10 +224,12 @@ crash without a timer, and is enabled on few brokers and on almost no managed on
    schema beside `outbox` and `inbox`, written as `TOA_ADDRESSED_TIMEOUT` by the deployment.
 3. **Discovery.** `stateful` joins what an operation exposes to its callers, and `instance` joins the
    request schema.
-4. **The call.** `instance`, `timeout` and `signal` join `Request`. `Call.invoke` refuses a mismatch
-   with `RequestContract`; takes `timeout`, or `TIMEOUT` for an addressed call without one, and refuses
-   a non-positive one there; combines it with `signal`; passes both down the transmission to the
-   binding; and throws *abandoned*, with the abort's reason as its cause, when the deadline wins.
+4. **The call.** `instance` joins `Request`, and `Options` — `timeout` and `signal` — is the second
+   argument `context.remote` and `context.local` take and `Call.invoke` receives. `Call.invoke`
+   refuses a mismatch with `RequestContract`; takes `timeout`, or `TIMEOUT` for an addressed call
+   without one, and refuses a non-positive one there; combines it with `signal`; hands the name and
+   the wait down the transmission to the binding as `Terms`; and throws *abandoned*, with the
+   abort's reason as its cause, when the deadline wins.
 5. **Exceptions.** `Addressee: 403` and `Abandoned: 404`, both transient.
 6. **Loop binding.** Serves an addressed call when its `instance` is this process's name and hands any
    other to the next binding.
@@ -227,8 +240,10 @@ crash without a timer, and is enabled on few brokers and on almost no managed on
    the queue and the broker it is taken on; Toa adds nothing to comq's claim.
 8. **Exposition.** `map:instance` names the route parameter that carries the name. It takes the
    parameter out of the input and the criteria, and the endpoint sets `request.instance` from it beside
-   `request.id`. Introspection lists it under `route`. The two exceptions get no mapping of their own.
-9. **Cadence.** A delayed call is refused with `instance` or `signal` in its request.
+   `request.id`. Introspection lists it under `route`. *Addressee* maps to `404`, *abandoned* to a new
+   `504`.
+9. **Cadence.** A delayed call that names `instance` is refused: it goes out as a task, which a
+   stateful operation takes none of.
 10. **Documentation.** A page on stateful operations and addressed calls, the component and context
     manifests, exceptions, the Node bridge, `map`; the *Stateless* principle in the design notes, and
     the absence of deadlines stated in [exception handling](/discussions/exception-handling.md).
@@ -251,7 +266,7 @@ blocker stays, since ordinary calls keep waiting by default.
    own.
 2. **The call**: the name, the flag, the request, the deadline, the exceptions, the loop and AMQP
    bindings, cadence.
-3. **Exposition**: `map:instance`.
+3. **Exposition**: `map:instance` and the two statuses.
 
 ## Verification
 
@@ -285,8 +300,8 @@ blocker stays, since ordinary calls keep waiting by default.
 - a second process started with a held name reports it taken, and serves once the first has gone;
 - an ordinary call with a `timeout` to a component that is down is abandoned, and the component, once
   up, never receives it;
-- through the gateway, a route with `map:instance` reaches the named process, and a stateful
-  operation behind a route without `map:instance` answers `400`.
+- through the gateway, a route with `map:instance` reaches the named process, a name nobody holds
+  answers `404`, and a stateful operation behind a route without `map:instance` answers `400`.
 
 ## Compatibility
 
@@ -294,7 +309,8 @@ blocker stays, since ordinary calls keep waiting by default.
 properties. The order of a rolling deploy matters once: an operation declared stateful stops consuming
 its shared queue, so every caller must run a runtime that knows the flag before it is declared.
 
-**In types, additive.** `Request` gains three optional properties, and `Context` gains `instance`.
+**In types, additive.** `Request` gains `instance`, a call takes `Options` as an optional second
+argument, and `Context` gains `instance`.
 
 **In behaviour, opt-in.** An ordinary call keeps waiting unless it asks for a deadline, and an operation
 is stateful only where it says so. `comq`'s `request` keeps accepting an encoding as its third
