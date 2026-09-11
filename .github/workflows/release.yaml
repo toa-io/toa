@@ -157,14 +157,16 @@ jobs:
           # the bytes — which is what the image build asks for a moment later, and what it
           # failed on. Its own cache, so nothing is served from what an earlier step left
           # behind, and no `-g`, so it lands in the directory above.
-          for i in $(seq 1 60); do
+          # npm has taken longer than five minutes to serve a version it had published: alpha.300
+          # timed out at sixty attempts, with nothing wrong but the wait
+          for i in $(seq 1 180); do
             if npm install "@toa.io/runtime@$VERSION" --omit=dev --prefer-online \
               --cache "$(mktemp -d)" >/dev/null 2>&1; then
               echo "@toa.io/runtime@$VERSION installs with its dependencies"
               exit 0
             fi
 
-            echo "waiting for @toa.io/runtime@$VERSION and its dependencies ($i/60)"
+            echo "waiting for @toa.io/runtime@$VERSION and its dependencies ($i/180)"
             sleep 5
           done
 
