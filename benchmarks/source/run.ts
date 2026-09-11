@@ -3,11 +3,11 @@ import { homedir } from 'node:os'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import * as fixtures from './fixtures.ts'
+import { SLOTS } from './slots.ts'
 import { free, Stack } from './stack.ts'
 import { place, read as topology } from './topology.ts'
 import { git } from './trees.ts'
 import type { Files, Tokens } from './fixtures.ts'
-import type { Ports } from './processes.ts'
 import type { Placement } from './topology.ts'
 
 export type SideName = 'base' | 'head'
@@ -42,18 +42,12 @@ export interface Run {
 export const REPOSITORY = git(dirname(fileURLToPath(import.meta.url)), 'rev-parse', '--show-toplevel')
 export const CACHE = process.env.TOA_BENCH_CACHE ?? join(homedir(), '.cache/toa-bench')
 
-/** The two sides differ in names only: contexts of one length, ports of one block. */
-export const SIDES: Record<SideName, { name: SideName; context: string; ports: Ports }> = {
-  base: { name: 'base', context: 'toa-bench-a', ports: { gateway: 31090, probe: 31092, ready: [31094, 31095, 31098] } },
-  head: { name: 'head', context: 'toa-bench-b', ports: { gateway: 31091, probe: 31093, ready: [31096, 31097, 31099] } }
-}
-
 export async function open(timing: Timing): Promise<Run> {
   const stamp = new Date().toISOString().replace(/[:.]/g, '-')
   const results = join(REPOSITORY, 'benchmarks/results', stamp)
   const directory = join(CACHE, 'runs', stamp)
 
-  await free(Object.values(SIDES).flatMap(({ ports }) => [ports.gateway, ports.probe, ...ports.ready]))
+  await free(Object.values(SLOTS).flatMap(({ ports }) => [ports.gateway, ports.probe, ...ports.ready]))
   await mkdir(results, { recursive: true })
   await mkdir(directory, { recursive: true })
 

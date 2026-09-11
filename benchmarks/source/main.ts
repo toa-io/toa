@@ -2,8 +2,9 @@ import { parseArgs } from 'node:util'
 import { Comparison } from './comparison.ts'
 import { available } from './oha.ts'
 import { profile } from './profiling.ts'
-import { CACHE, open, REPOSITORY, SIDES } from './run.ts'
+import { CACHE, open, REPOSITORY } from './run.ts'
 import { select } from './scenarios.ts'
+import { SLOTS } from './slots.ts'
 import { Stack } from './stack.ts'
 import { base, resolve, stale } from './trees.ts'
 import type { Tree } from './trees.ts'
@@ -89,7 +90,7 @@ async function clean(): Promise<void> {
   await stack.connect()
 
   try {
-    for (const side of Object.values(SIDES)) await stack.remove(side.context)
+    for (const slot of Object.values(SLOTS)) await stack.remove(slot.context)
   } finally {
     await stack.close()
   }

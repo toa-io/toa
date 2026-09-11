@@ -4,7 +4,7 @@ import { Driver } from './driver.ts'
 import { Profiler } from './inspector.ts'
 import { boot, install } from './processes.ts'
 import { summarize } from './profile.ts'
-import { SIDES } from './run.ts'
+import { SLOTS } from './slots.ts'
 import type { Running, Side } from './processes.ts'
 import type { Run } from './run.ts'
 import type { ProcessName, Scenario } from './scenarios.ts'
@@ -24,7 +24,7 @@ interface Recording {
 
 /** Profiles of one revision, every process under every scenario; answers the summary's path. */
 export async function profile(run: Run, tree: Tree, scenarios: Scenario[]): Promise<string> {
-  const target = { side: { ...SIDES.head, tree }, components: install(tree, run.fixtures) }
+  const target: Target = { side: { ...SLOTS.a, name: 'head', tree }, components: install(tree, run.fixtures) }
   const summary = [`# Profiles of ${tree.ref} (${tree.sha.slice(0, 7)})`, '']
 
   await run.stack.drop(target.side.context)

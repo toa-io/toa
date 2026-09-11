@@ -6,7 +6,7 @@ import { Driver } from './driver.ts'
 import { machine, measured, times } from './machine.ts'
 import { boot, install, TICKS } from './processes.ts'
 import { markdown } from './report.ts'
-import { SIDES } from './run.ts'
+import { assign, SLOTS } from './slots.ts'
 import { estimate, median, verdict } from './statistics.ts'
 import { STATISTICS } from './stack.ts'
 import type { Counts } from './counters.ts'
@@ -59,14 +59,13 @@ type Snapshot = Pair<Cpu>
 
 /**
  * Both revisions, booted together once per block and protocol, taking turns under the same load:
- * A B B A in one block, B A A B in the next.
+ * A B B A in one block, B A A B in the next, each in the other's slot.
  */
 export class Comparison {
   private readonly run: Run
   private readonly trees: Pair<Tree>
   private readonly scenarios: Scenario[]
   private readonly threshold: number
-  private readonly sides: Pair<Side>
   private readonly components: Pair<string>
   private readonly windows: Window[] = []
   private readonly rates = new Map<string, number>()
@@ -82,13 +81,12 @@ export class Comparison {
     this.trees = trees
     this.scenarios = options.scenarios
     this.threshold = options.threshold
-    this.sides = { base: { ...SIDES.base, tree: trees.base }, head: { ...SIDES.head, tree: trees.head } }
     this.components = { base: install(trees.base, run.fixtures), head: install(trees.head, run.fixtures) }
   }
 
   /** Runs every block and answers the report as markdown. */
   public async execute(): Promise<string> {
-    for (const side of [this.sides.base, this.sides.head]) await this.run.stack.drop(side.context)
+    for (const slot of Object.values(SLOTS)) await this.run.stack.drop(slot.context)
 
     try {
       for (let block = 0; block < this.run.timing.blocks; block++)
@@ -115,12 +113,13 @@ export class Comparison {
 
     console.log(`Block ${block + 1} of ${this.run.timing.blocks}, ${protocol}`)
 
-    for (const side of [this.sides.base, this.sides.head]) await this.run.stack.reset(side.context)
+    for (const slot of Object.values(SLOTS)) await this.run.stack.reset(slot.context)
 
-    const running = await this.boot(protocol)
+    const sides = this.sides(block)
+    const running = await this.boot(sides, protocol)
 
     try {
-      await this.group(block, group, running)
+      await this.group({ block, order: order(sides) }, group, running)
     } finally {
       for (const side of [running.base, running.head]) {
         const killed = await side.stop()
@@ -130,24 +129,39 @@ export class Comparison {
     }
   }
 
-  private async boot(protocol: Protocol): Promise<Pair<Running>> {
+  private sides(block: number): Pair<Side> {
+    const slots = assign(block)
+
+    return {
+      base: { ...slots.base, name: 'base', tree: this.trees.base },
+      head: { ...slots.head, name: 'head', tree: this.trees.head }
+    }
+  }
+
+  /** Boots the side in the first slot first, so booting first falls on each revision equally. */
+  private async boot(sides: Pair<Side>, protocol: Protocol): Promise<Pair<Running>> {
     const options = { protocol, placement: this.run.placement, key: this.run.secret, directory: this.run.directory }
-    const base = await boot(this.sides.base, this.components.base, options)
+    const [first, second] = order(sides)
+    const started = await boot(sides[first], this.components[first], options)
 
     try {
-      return { base, head: await boot(this.sides.head, this.components.head, options) }
+      const other = await boot(sides[second], this.components[second], options)
+
+      return first === 'base' ? { base: started, head: other } : { base: other, head: started }
     } catch (error) {
-      await base.stop()
+      await started.stop()
 
       throw error
     }
   }
 
-  private async group(block: number, scenarios: Scenario[], running: Pair<Running>): Promise<void> {
-    const drivers: Pair<Driver> = {
-      base: await Driver.prepare(this.run, running.base, true),
-      head: await Driver.prepare(this.run, running.head, true)
-    }
+  private async group(place: { block: number; order: SideName[] }, scenarios: Scenario[], running: Pair<Running>): Promise<void> {
+    const [first, second] = place.order
+    const prepared = { [first]: await Driver.prepare(this.run, running[first], true) } as Partial<Pair<Driver>>
+
+    prepared[second] = await Driver.prepare(this.run, running[second], true)
+
+    const drivers = prepared as Pair<Driver>
 
     this.current = drivers
 
@@ -155,9 +169,9 @@ export class Comparison {
       const supported = await this.supported(scenarios, drivers)
       const group = { drivers, idle: await this.idle(drivers) }
 
-      if (block === 0) await this.calibrate(supported, group)
+      if (place.block === 0) await this.calibrate(supported, group)
 
-      for (const scenario of supported) await this.scenario(block, scenario, group)
+      for (const scenario of supported) await this.scenario(place.block, scenario, group)
     } finally {
       this.current = null
       drivers.base.close()
@@ -196,6 +210,7 @@ export class Comparison {
     for (const scenario of scenarios) {
       const rate = await drivers.base.calibrate(scenario)
 
+      await this.drain()
       this.rates.set(scenario.id, rate)
       console.log(`  ${scenario.id}: ${rate} requests per second`)
 
@@ -228,16 +243,16 @@ export class Comparison {
     }
   }
 
-  /** Until neither side has an event left to publish. */
+  /** Until neither slot has an event left to publish. */
   private async drain(): Promise<void> {
     const deadline = Date.now() + DRAIN * 1000
 
     for (;;) {
-      const pending = (await this.run.stack.pending(this.sides.base.context)) + (await this.run.stack.pending(this.sides.head.context))
+      const pending = (await this.run.stack.pending(SLOTS.a.context)) + (await this.run.stack.pending(SLOTS.b.context))
 
       if (pending === 0) return
 
-      if (Date.now() > deadline) throw new Error(`${pending} events are still unpublished ${DRAIN} s after seeding`)
+      if (Date.now() > deadline) throw new Error(`${pending} events are still unpublished after ${DRAIN} s`)
 
       await sleep(500)
     }
@@ -245,31 +260,34 @@ export class Comparison {
 
   private async snapshot(drivers: Pair<Driver>): Promise<{ counts: Pair<Counts>; cpu: Snapshot }> {
     return {
-      counts: { base: await this.counters('base'), head: await this.counters('head') },
+      counts: {
+        base: await this.counters(drivers.base.running.side.context),
+        head: await this.counters(drivers.head.running.side.context)
+      },
       cpu: { base: drivers.base.running.cpu(), head: drivers.head.running.cpu() }
     }
   }
 
-  private async counters(name: SideName): Promise<Counts> {
-    const { context } = this.sides[name]
-
+  private async counters(context: string): Promise<Counts> {
     return { publish: await this.run.stack.published(context), operations: await this.run.stack.operations(context) }
   }
 
   /** Messages and operations per request, around a short load, with the statistics settled. */
   private async count(driver: Driver, scenario: Scenario, background: Counts): Promise<Counts> {
-    const name = driver.running.side.name
+    const { context } = driver.running.side
     const rate = this.rates.get(scenario.id)!
 
     await sleep(STATISTICS)
 
     const start = Date.now()
-    const before = await this.counters(name)
+    const before = await this.counters(context)
     const result = await this.send(driver, scenario, { duration: this.duration(COUNTED, rate), rate })
 
+    // what the requests commit to publish is theirs, however late the outbox sends it
+    await this.drain()
     await sleep(STATISTICS)
 
-    const after = await this.counters(name)
+    const after = await this.counters(context)
 
     return perRequest({ before, after, seconds: (Date.now() - start) / 1000, requests: result.requests, background })
   }
@@ -294,11 +312,16 @@ export class Comparison {
     const cores = measured(this.run.placement)
 
     await this.send(driver, scenario, { duration: this.run.timing.warmup, rate })
+    await this.drain()
 
     const host = cores === null ? null : times(cores)
     const before = { base: drivers.base.running.cpu(), head: drivers.head.running.cpu() }
     const start = Date.now()
     const result = await this.send(driver, scenario, { duration: this.duration(this.run.timing.window, rate), rate })
+
+    // the outbox publishes what the window committed after the window: that work is the window's
+    await this.drain()
+
     const seconds = (Date.now() - start) / 1000
     const after = { base: drivers.base.running.cpu(), head: drivers.head.running.cpu() }
 
@@ -371,6 +394,11 @@ export class Comparison {
       memory: this.memory.get(scenario.id)
     }
   }
+}
+
+/** The sides in the order of their slots: the one in the first slot boots and seeds first. */
+function order(sides: Pair<Side>): SideName[] {
+  return sides.base.context === SLOTS.a.context ? ['base', 'head'] : ['head', 'base']
 }
 
 /** Windows next to each other in a block, one of each side. */
@@ -448,7 +476,7 @@ const COUNTED = 3
 /** requests a window holds at least, whatever the rate */
 const MINIMUM = 1000
 
-/** seconds the events of seeding may take to be published */
+/** seconds the events a load committed may take to be published */
 const DRAIN = 120
 
 /** how long an exit may take to be seen after the load it broke */
