@@ -64,14 +64,14 @@ Nothing.
 | --- | --- | --- | --- | --- | --- | ---: |
 | 1 | `noDelay` on comq's sockets | `small` p50 at 100 rps 10.36 ms; `observe` saturates at 3,781 rps with its processes under 40% of a core | `small` p50 at 100 rps 0.68 ms; `observe` saturates at 9,170 rps | one option in comq, a release, the dependency | low | 1 |
 | 2 | A JSON reply forwarded as bytes | `list.1000` gateway 10,629 µs; forwarding costs 1,780 µs by hand | about 8 ms less per 1,000-entity list in the gateway | medium: the call, the binding, comq and the gateway | medium | 3 |
-| 3 | Records translated without a rest spread | `record.js` `from` 26% of the component on `list.1000`, about 2.6 µs a record | about 2.5 ms less per 1,000-entity list in the component | a few lines | low | 2 |
-| 4 | `track()` aborts a request's controller only when its reply is unfinished | the `DOMException` of the abort is 7.4% of the gateway on `small` | about 5–7 µs less per request in the gateway | a few lines | low | 2 |
-| 5 | `identity.tokens` imports `jose` once | importing and resolving `jose` on every decrypt is 4.2% of the gateway on `token.id` | about 8 µs less per authenticated request | a few lines | low | 2 |
-| 6 | An operation reads `TOA_ENV` when it is created | `environment.get` is 1.6–3.6% of a component | about 0.4–1.8 µs less per operation | a few lines | low | 2 |
-| 7 | The traceparent is read by position | the regular expression is 2.2–5.1% of a component | about 0.5–2 µs less per message | a few lines | low | 2 |
-| 8 | `derive` hashes with `node:crypto` | the `uuid` package is 6% of `bench` on `chain` | about 2 µs less per call made inside a call | a few lines | low | 2 |
-| 9 | Tokens opened with `node:crypto` | jose `jwtDecrypt` 40 µs; `node:crypto` 10.9 µs | about 30 µs less per authenticated request | low | low: the same algorithm and bytes | 2 |
-| 10 | `io:output` checks entity types without Ajv | 2.2 µs per 1,000 entities | the same answers from a plainer check | low | low | 2 |
+| 3 | Records translated without a rest spread | `record.js` `from` 26% of the component on `list.1000`, about 2.6 µs a record | about 2.5 ms less per 1,000-entity list in the component | `from` and the codec's `from`, about 10 lines; `record.test.js` | low | 2 |
+| 4 | `track()` aborts a request's controller only when its reply is unfinished | the `DOMException` of the abort is 7.4% of the gateway on `small` | about 5–7 µs less per request in the gateway | one condition on `writableFinished`; `interruptions.feature` in HTTP/1.1 and h2c | low | 2 |
+| 5 | `identity.tokens` imports `jose` once | importing and resolving `jose` on every decrypt is 4.2% of the gateway on `token.id` | about 8 µs less per authenticated request | the import's promise held in `lib/jose.js`, two lines; `decrypt.test.ts` | low | 2 |
+| 6 | An operation reads `TOA_ENV` when it is created | `environment.get` is 1.6–3.6% of a component | about 0.4–1.8 µs less per operation | a field of `Operation`; the feature suites, whose steps set `TOA_ENV` before they boot | low | 2 |
+| 7 | The traceparent is read by position | the regular expression is 2.2–5.1% of a component | up to that share, measured first: a check by position refuses what the expression refuses and may cost as much | a microbenchmark, then about 20 lines; the invalid headers in `tracing.test.ts` | low | 2 |
+| 8 | `derive` parses its namespace once and hashes the name directly | the `uuid` package is 6% of `bench` on `chain`; it already hashes with `node:crypto`, and converts the name and parses the namespace on every call | up to that share, measured first | a microbenchmark, then about 12 lines; `newid.test.js` against the package's bytes | low | 2 |
+| 9 | Tokens opened with `node:crypto` | jose `jwtDecrypt` 40 µs; `node:crypto` 10.9 µs | about 30 µs less per authenticated request | about 50 lines in place of `jwtDecrypt` and `decodeProtectedHeader`; `decrypt.test.ts` with a jose-issued token and a changed tag, IV, header and ciphertext | medium: every token the gateway accepts passes through it | 2 |
+| 10 | `io:output` checks entity types without Ajv | 2.2 µs per 1,000 entities | the same answers from a plainer check | about 5 lines, the same `TypeError` text; the `io` scenarios | low | 2 |
 
 1. **The broker's sockets.** comq connects with `noDelay: true` beside `keepAlive` in
    `SOCKET_OPTIONS`; without it amqplib calls `setNoDelay(false)`. A release of comq carries it, and
@@ -101,17 +101,21 @@ Nothing.
 
 6. **`TOA_ENV`.** An operation reads `TOA_ENV` when it is created and holds it.
 
-7. **The traceparent.** `component.ts` and `receiver.ts` read a traceparent by position: the header
-   has a fixed layout of 55 characters.
+7. **The traceparent.** `component.ts` and `receiver.ts` read a traceparent by position — the header
+   has a fixed layout of 55 characters — refusing every header the expression refuses, where a
+   microbenchmark shows the check by position costs less than the expression.
 
-8. **The call identity.** `entities/newid.ts` `derive` hashes with `node:crypto` into the same
-   name-based UUID v5 bytes the `uuid` package produces.
+8. **The call identity.** `entities/newid.ts` `derive` holds its namespace as bytes and hashes the
+   name with `node:crypto` directly, into the name-based UUID v5 bytes the `uuid` package produces,
+   where a microbenchmark shows it costs less than the package.
 
-9. **Tokens.** `identity.tokens` opens a `dir` + `A256GCM` token with `node:crypto`: the compact
-   serialization split into its five parts, the protected header checked for `alg`, `enc` and `kid` as
-   jose checks it, the ciphertext opened with AES-256-GCM with the protected header as additional
-   authenticated data, and the claims checked as `jwtDecrypt` checks them. Issuing stays with jose,
-   since a token is issued once a `refresh`. PASETO keys are read as they are.
+9. **Tokens.** `identity.tokens` opens a `dir` + `A256GCM` token with `node:crypto`, in place of
+   `decodeProtectedHeader` and `jwtDecrypt`: the compact serialization split into its five parts with
+   an empty encrypted key; the protected header checked for `alg`, `enc`, `typ` and `kid`, with a
+   `crit` or `zip` refused as jose refuses them; a 96-bit IV and a 128-bit tag; the ciphertext opened
+   with AES-256-GCM with the protected header as additional authenticated data; and the claims checked
+   as `decrypt.ts` and `jwtDecrypt` check them, `nbf` included. Issuing stays with jose, since a token
+   is issued once a `refresh`. PASETO keys are read as they are.
 
 10. **`io:output`.** The restriction checks that every entity of an array body is an object by its
    type as it fits it, where it now runs Ajv over the body first, and throws the same message for an
