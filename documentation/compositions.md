@@ -98,7 +98,9 @@ named too, or nothing answers it.
 
 ## Evicted
 
-`evicted` names what this context does not deploy, whatever else names it:
+`evicted` names what Toa does not deploy for this context, whatever else names it. What it names
+is still part of the context — it is called, `toa types` writes its types, `toa npm` installs its
+packages, and what it receives is published — and is deployed by other means:
 
 ```yaml
 # context.toa.yaml
@@ -119,8 +121,8 @@ evicted:
 ```
 
 An evicted **component** is in no pod, gets no `Service`, is in no image, and its migrations do
-not run. Nothing it alone required is deployed either — a storage nothing else stores in, an
-extension nothing else declares — and an event nothing else consumes stops being published.
+not run. Nothing only evicted components require is deployed either: a storage nothing else
+stores in, an extension nothing else declares.
 
 A composition every component of which is evicted is not deployed, and the name it held is free
 again. A service it listed falls back to a `Deployment` of its own, unless another composition
@@ -147,16 +149,9 @@ evicted@production:
     - todos.stats
 ```
 
-Two things to hold onto. A component that calls an evicted one is not refused here — nothing
-states who calls whom — and the call fails where it is made. And `toa env` reads what is
-deployed, so run it again after changing this, or an environment file still carries variables
-for what is no longer there.
-
-An eviction an environment states is a deployment's business alone. One that states no
-environment is read by the workspace commands too — `toa npm` installs nothing for the evicted
-component. `toa types` still writes its types and keeps it on what the Context can call: it
-is still there, Toa just does not deploy it. Evict for the environment that is not to deploy
-it, and keep developing it in the one that is.
+A call to an evicted component is answered by whatever deploys it, and waits while nothing does.
+`toa env` writes the variables of what Toa deploys, so run it again after changing this, or an
+environment file still carries variables for what Toa no longer deploys.
 
 ## Base image
 

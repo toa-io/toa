@@ -118,9 +118,10 @@ export const describe = (context, compositions, dependency, image) => {
 }
 
 function unit(context, dependency) {
-  const components = (context.components ?? []).map(
-    (component) => component.locator.label
-  )
+  // an evicted component is deployed by other means, so mono runs it nowhere
+  const components = (context.components ?? [])
+    .filter((component) => component.evicted !== true)
+    .map((component) => component.locator.label)
 
   const variables = dependency.variables ?? {}
   const mounts = dependency.mounts ?? {}

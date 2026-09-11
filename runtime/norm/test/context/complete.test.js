@@ -24,17 +24,6 @@ it('should complete compositions', () => {
   )
 })
 
-it('should drop a composition with no components', () => {
-  context.compositions[0].components = []
-
-  complete(context)
-
-  assert.strictEqual(
-    context.compositions.some((composition) => composition.name === 'foo'),
-    false
-  )
-})
-
 it('should create if compositions are not set', () => {
   context.compositions = undefined
 

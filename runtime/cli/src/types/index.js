@@ -1,7 +1,7 @@
 import { basename, dirname, isAbsolute, join, relative, sep } from 'node:path'
 import { createRequire } from 'node:module'
 import { existsSync, readFileSync } from 'node:fs'
-import { mkdir, readdir, readFile, writeFile } from 'node:fs/promises'
+import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import { component as load, context as normalize } from '@toa.io/norm'
 
 import { component } from './component.js'
@@ -23,12 +23,6 @@ export async function types(root, environment) {
   const own = new Map(
     context.components.map((manifest) => [manifest.locator.id, manifest])
   )
-
-  // eviction drops them before a deployment is derived, so they are in no pod; they are
-  // still in the workspace, and their types are still written
-  for (const manifest of await dropped(root, context, own))
-    own.set(manifest.locator.id, manifest)
-
   const contributed = extras(context, own)
 
   const module = context.name
@@ -224,40 +218,6 @@ function shipped(specifier) {
   }
 
   return `${specifier}/${TYPES}/index.js`
-}
-
-/**
- * Components this context evicts are dropped before anything is derived from it, so a
- * deployment never sees them. They are still on disk, and their types belong with the rest:
- * eviction is that Toa does not deploy them, not that they are gone.
- *
- * @param {string} root
- * @param {toa.norm.Context} context
- * @param {Map<string, toa.norm.Component>} known
- * @returns {Promise<toa.norm.Component[]>}
- */
-async function dropped(root, context, known) {
-  const ids = context.evicted?.components
-
-  if (ids === undefined) return []
-
-  const directory = join(root, 'components')
-
-  if (!existsSync(directory)) return []
-
-  const wanted = new Set(ids)
-  const found = []
-
-  for (const entry of await readdir(directory, { withFileTypes: true })) {
-    if (!entry.isDirectory()) continue
-
-    const manifest = await load(join(directory, entry.name))
-
-    if (wanted.has(manifest.locator.id) && !known.has(manifest.locator.id))
-      found.push(manifest)
-  }
-
-  return found
 }
 
 /**

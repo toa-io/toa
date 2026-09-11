@@ -1,10 +1,10 @@
 /**
- * Drops what the context evicts, before anything is derived from what is left: an extension,
- * a storage or a binding only an evicted component declared is then never resolved either.
+ * Marks what the context evicts. An evicted component stays in the context like any other — it
+ * is called, its types are written, what it receives is published — and only a deployment
+ * leaves it out, because something else deploys it. What only evicted components require is
+ * marked once the extensions are extracted, by `dependencies`.
  *
- * A composition left with no components of its own is dropped later, by `complete`: what it
- * listed as a service is pulled in by its being listed, and a service that has to fall back
- * to a deployment of its own has to exist to fall back at all.
+ * An evicted service is taken off the compositions that list it, so that none of them runs it.
  *
  * @param {toa.norm.Context} context
  * @returns {void}
@@ -22,23 +22,17 @@ export const evict = (context) => {
       if (!present.has(id))
         throw new Error(`'evicted' names an unknown component '${id}'.`)
 
-    context.components = context.components.filter(
-      (component) => !components.has(component.locator.id)
-    )
+    for (const component of context.components)
+      if (components.has(component.locator.id)) component.evicted = true
   }
 
   if (context.compositions === undefined) return
 
   for (const composition of context.compositions) {
-    // the members are still ids: this runs before they are dereferenced
-    composition.components = composition.components.filter((id) => !components.has(id))
+    if (composition.services === undefined) continue
 
-    if (composition.services !== undefined) {
-      composition.services = composition.services.filter(
-        (reference) => !services.has(reference)
-      )
+    composition.services = composition.services.filter((reference) => !services.has(reference))
 
-      if (composition.services.length === 0) delete composition.services
-    }
+    if (composition.services.length === 0) delete composition.services
   }
 }

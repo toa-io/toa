@@ -23,9 +23,10 @@ export const convergence = async (argv) => {
         'A context declares one `convergence@<environment>` per region it is deployed as.'
     )
 
-  const labels = (context.dependencies?.[REFERENCE] ?? []).map(
-    (instance) => instance.component.locator.id
-  )
+  // an evicted component is deployed by other means, and its broker is not this region's
+  const labels = (context.dependencies?.[REFERENCE] ?? [])
+    .filter((instance) => instance.component.evicted !== true)
+    .map((instance) => instance.component.locator.id)
 
   const host = vhost(annotation.binding.pointer)
 

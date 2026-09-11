@@ -19,31 +19,28 @@ it('should keep a context that evicts nothing', () => {
   assert.deepStrictEqual(context, fixtures.context)
 })
 
-it('should drop an evicted component', () => {
+it('should mark an evicted component and keep it', () => {
   context.evicted = { components: ['a.b'] }
 
   evict(context)
 
   assert.deepStrictEqual(
-    context.components.map((component) => component.locator.id),
-    ['b.a', 'd.c']
+    context.components.map((component) => [component.locator.id, component.evicted === true]),
+    [
+      ['a.b', true],
+      ['b.a', false],
+      ['d.c', false]
+    ]
   )
 })
 
-it('should drop an evicted component from a composition that lists it', () => {
-  context.evicted = { components: ['a.b'] }
+it('should keep an evicted component in a composition that lists it', () => {
+  context.evicted = { components: ['a.b', 'd.c'] }
 
   evict(context)
 
-  assert.deepStrictEqual(context.compositions[0].components, ['b.a'])
-})
-
-it('should leave a composition of evicted components alone empty', () => {
-  context.evicted = { components: ['d.c'] }
-
-  evict(context)
-
-  assert.deepStrictEqual(context.compositions[1].components, [])
+  assert.deepStrictEqual(context.compositions[0].components, ['a.b', 'b.a'])
+  assert.deepStrictEqual(context.compositions[1].components, ['d.c'])
 })
 
 it('should refuse an unknown component', () => {
