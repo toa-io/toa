@@ -9,7 +9,7 @@
  * `resources: null` — at either place.
  */
 export function resources(context, values) {
-  for (const unit of units(values)) {
+  for (const unit of units(values, evicted(context))) {
     // `null` is an answer and `undefined` is not one, so the fallback reads only the latter
     if (unit.deployment.resources === undefined)
       unit.deployment.resources = context.resources
@@ -86,12 +86,38 @@ const SUFFIXES = {
   Ei: 2 ** 60
 }
 
-function* units(values) {
+/**
+ * The labels of the components the context evicts, whether or not the eviction was applied:
+ * `toa env -c` does not apply it, since a local run of an evicted component still needs its
+ * variables.
+ *
+ * @returns {Set<string>}
+ */
+function evicted(context) {
+  const ids = new Set(context.evicted?.components ?? [])
+
+  return new Set(
+    (context.components ?? [])
+      .filter(({ locator }) => ids.has(locator.id))
+      .map(({ locator }) => locator.label)
+  )
+}
+
+function* units(values, evicted) {
   if (values.mono !== undefined)
     yield { deployment: values.mono, subject: 'The mono deployment' }
 
-  for (const composition of values.compositions ?? [])
+  for (const composition of values.compositions ?? []) {
+    // a composition of what the context evicts is here only for a local run of it, and Toa
+    // deploys none of it, so nothing asks what it may take
+    if (
+      composition.components?.length > 0 &&
+      composition.components.every((label) => evicted.has(label))
+    )
+      continue
+
     yield { deployment: composition, subject: `Composition '${composition.name}'` }
+  }
 
   for (const service of values.services ?? []) {
     // a service a composition runs has no deployment of its own to size; the composition

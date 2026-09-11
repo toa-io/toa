@@ -293,6 +293,42 @@ Feature: Export local deployment environment variables
       TOA_CONFIGURATION__SECRET_B=
       """
 
+  Scenario: Export environment for an evicted component the context states no resources for
+
+    Toa deploys nothing of it, so nothing asks what it may take.
+
+    Given I have components:
+      | configuration.base    |
+      | configuration.secrets |
+    And I have a context with:
+      """yaml
+      compositions:
+        - name: base
+          resources: null
+          components:
+            - configuration.base
+      configuration:
+        resources: null
+        configuration.secrets:
+          b: $SECRET_B
+      introspection:
+        resources: null
+      exposition:
+        authorities:
+          local: localhost
+        resources: null
+      evicted:
+        components:
+          - configuration.secrets
+      """
+    And the context has no `resources` annotation
+    When I run `toa env --component configuration.secrets`
+    Then program should exit with code 0
+    And the environment contains:
+      """
+      TOA_CONFIGURATION__SECRET_B=
+      """
+
   Scenario: Export environment for a context that configures an evicted component
 
     Its configuration is served like any other, so the values service knows it, while its secret
