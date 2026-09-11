@@ -299,7 +299,7 @@ Feature: Identity Federation
       """
     Then the following reply is sent:
       """
-      200 OK
+      204 No Content
       """
     # add the same federation again
     When the following request is received:

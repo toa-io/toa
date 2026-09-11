@@ -408,7 +408,7 @@ Feature: Roles management
       """
     Then the following reply is sent:
       """
-      200 OK
+      204 No Content
       """
     Then after 1 second
     When the following request is received:
@@ -513,7 +513,7 @@ Feature: Roles management
       """
     Then the following reply is sent:
       """
-      200 OK
+      204 No Content
       """
     # the key is revoked eventually, and the runtime forgets it after `cache.ttl`
     Then after 2 seconds

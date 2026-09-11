@@ -270,7 +270,7 @@ Feature: Custom tokens
       """
     Then the following reply is sent:
       """
-      200 OK
+      204 No Content
       """
     And after 1 second
     When the following request is received:
