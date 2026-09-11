@@ -1,10 +1,34 @@
-export { default as Actions, default as ItemActions } from './item-actions.svelte'
-export { default as Content, default as ItemContent } from './item-content.svelte'
-export { default as Description, default as ItemDescription } from './item-description.svelte'
-export { default as Footer, default as ItemFooter } from './item-footer.svelte'
-export { default as Group, default as ItemGroup } from './item-group.svelte'
-export { default as Header, default as ItemHeader } from './item-header.svelte'
-export { default as Media, default as ItemMedia } from './item-media.svelte'
-export { default as Separator, default as ItemSeparator } from './item-separator.svelte'
-export { default as Title, default as ItemTitle } from './item-title.svelte'
-export { default as Root, default as Item } from './item.svelte'
+import Actions from './item-actions.svelte'
+import Content from './item-content.svelte'
+import Description from './item-description.svelte'
+import Footer from './item-footer.svelte'
+import Group from './item-group.svelte'
+import Header from './item-header.svelte'
+import Media from './item-media.svelte'
+import Separator from './item-separator.svelte'
+import Title from './item-title.svelte'
+import Root from './item.svelte'
+
+export {
+  Root,
+  Group,
+  Separator,
+  Header,
+  Footer,
+  Content,
+  Title,
+  Description,
+  Actions,
+  Media,
+  //
+  Root as Item,
+  Group as ItemGroup,
+  Separator as ItemSeparator,
+  Header as ItemHeader,
+  Footer as ItemFooter,
+  Content as ItemContent,
+  Title as ItemTitle,
+  Description as ItemDescription,
+  Actions as ItemActions,
+  Media as ItemMedia
+}
