@@ -257,11 +257,21 @@ selectors: [rank, timestamp]
 
 ## Projection
 
-A list of Entity properties to be included in the Observation result.
+A list of Entity properties an Observation reads. Its algorithm receives those, `id` and the
+system properties, and nothing else. A Method that declares no projection reads the whole Entity.
 
 ```yaml
-projection: [id, title, timestamp]
+projection: [title, timestamp]
 ```
+
+`id` is always read, and a projection that names it is refused.
+
+Only a Method mapped to an Observation declares a projection: an operation of any other type
+answers a request whose query carries one with an exception, and a composition whose Method
+declares one for such an operation does not start.
+
+What a client receives of the result is what [`io:output`](./io.md) admits, whatever the
+projection reads.
 
 ## Parameters
 
