@@ -16,7 +16,8 @@
     "runtime/*/source/**/*.ts",
     "runtime/*/src/**/*.ts",
     "features/**/*.ts",
-    "extensions/*/features/**/*.ts"
+    "extensions/*/features/**/*.ts",
+    "benchmarks/source/**/*.ts"
   ],
   "exclude": [
     "**/transpiled",

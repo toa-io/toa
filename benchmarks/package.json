@@ -1,0 +1,16 @@
+{
+  "name": "@toa.io/benchmarks",
+  "private": true,
+  "type": "module",
+  "description": "Compares the request path of two revisions on one machine",
+  "engines": {
+    "node": ">= 24.0.0"
+  },
+  "scripts": {
+    "bench": "node --import tsx source/main.ts"
+  },
+  "dependencies": {
+    "jose": "6.2.12",
+    "mongodb": "7.6.0"
+  }
+}

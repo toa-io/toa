@@ -86,6 +86,14 @@ services:
       ]
     ports:
       - "31020:31020"
+    # WiredTiger holds a descriptor for every collection and every index, and the suites create
+    # thousands of both over the days a stack stays up. The limit a container inherits is 1024;
+    # past it mongod cannot open a connection or a file, and dies of the fault that follows. The
+    # figure is the minimum MongoDB's own startup check asks for.
+    ulimits:
+      nofile:
+        soft: 64000
+        hard: 64000
     environment:
       MONGO_INITDB_ROOT_USERNAME: developer
       MONGO_INITDB_ROOT_PASSWORD: secret
