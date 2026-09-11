@@ -1,5 +1,88 @@
 # Contributing
 
+## Making a Change
+
+The goal of the process is to help teams produce _simple[^1] non-broken[^2] software_ in a fast and
+predictable way.
+
+1. **Discussion.** A [discussion](./discussions/readme.md) analyses what is asked for and the
+   current state of the system, and decides how the change is made in concept.
+2. **Documentation.** How to use what the discussion designs is written in
+   [`documentation`](./documentation) and the readmes of the packages it changes. The discussion
+   and the documentation are opened as a draft pull request into `dev`. See
+   [Documentation](#documentation).
+3. **Scenarios.** A change is made by [TDD](https://en.wikipedia.org/wiki/Test-driven_development),
+   with feature scenarios as its tests. **The scenarios are written before the code, and each fails
+   for the reason expected.**
+4. **Change.** The code does what the draft documents, made in [units of work](#unit-of-work). See
+   [Constraints](#constraints).
+5. **Test.** The scenarios written before the change pass, and so does `npm run features`. See
+   [Tests](#tests) and [Running Features](#running-features).
+6. **Pull request.** The draft is marked ready for review.
+
+[^1]: Meeting common sense expectations.
+
+[^2]: Meeting the requirements.
+
+## Documentation
+
+Documentation says **how to use** a thing, not how it works. What a reader needs is what to
+declare, what to call, what they get back, and what they have to handle themselves. How it
+arrives at that is not theirs to carry.
+
+So a guarantee is written as what it means for the code someone writes — "a missed interval is
+not made up, so select what is still due rather than everything in its share" — and not as the
+mechanism it follows from. Names of what runs inside, the state it keeps, the queries it makes
+and the reasoning behind a decision belong in the code, beside what they explain.
+
+What survives the rule is what a reader acts on: a limit that changes what they write, a setting
+they choose, a failure they will see and have to answer for.
+
+A change that touches an undocumented area writes that area first, as it stands, and the change
+after it.
+
+## Unit of Work
+
+A unit of work is one completed iteration of the
+[TDD cycle](https://blog.cleancoder.com/uncle-bob/2014/12/17/TheCyclesOfTDD.html):
+
+1. If your tests are failing, you must write code.
+2. If your tests are passing, you must write a test, unless you're refactoring or done.
+
+## Tests
+
+**A unit test proves that the code matches your expectations. An integration test proves that
+your expectations match reality.** Code is *working* once an integration test has run it; until
+then it is a *hypothesis*. Toa's integration tests are its feature scenarios, run against the
+broker, the database and the network the code relies on.
+
+**"Not mine" is never an answer.** A suite run during a change has to pass, whether or not the
+change is what broke it. A failure that was already there is still a failure that is there now,
+and the run that found it is the one that owns it — leaving it for the next person means leaving
+them a suite that cannot tell them anything, because they will read the same failure the same way
+and pass it on again.
+
+Types are checked across the repository by one configuration, `tsconfig.check.json`. It covers
+every workspace's sources and the step definitions, and it excludes `*.test.ts`:
+
+```shell
+$ npm run typecheck
+```
+
+Style is checked by `npm run lint`, which reports nothing. Fix what it finds by hand:
+`oxlint --fix` rewrites `if (a) { if (b) c } else d` into an `else` that binds to the inner
+`if`, which no test of ours would have caught.
+
+Unit tests run on `node:test`, through `tsx`:
+
+```shell
+$ npm run test:unit
+$ node --import tsx --test 'runtime/core/test/**/*.test.js'
+```
+
+A suite that replaces a module needs `--experimental-test-module-mocks`, which `test:unit`
+passes.
+
 ## Running Features
 
 Cucumber scenarios boot a composition in the test process, so the runtime needs the same
@@ -147,92 +230,6 @@ of these on a scenario only where it is true of it.
 `npm run features:nightly` adds all of them back but `@manual` and `@skip`. Both sets are stated
 once, in `cucumber.tags.mjs`; `TOA_FEATURES=nightly` selects between them.
 
-## Tests
-
-**A unit test proves that the code matches your expectations. An integration test proves that
-your expectations match reality.** Code is *working* once an integration test has run it; until
-then it is a *hypothesis*. Toa's integration tests are its feature scenarios, run against the
-broker, the database and the network the code relies on.
-
-**"Not mine" is never an answer.** A suite run during a change has to pass, whether or not the
-change is what broke it. A failure that was already there is still a failure that is there now,
-and the run that found it is the one that owns it — leaving it for the next person means leaving
-them a suite that cannot tell them anything, because they will read the same failure the same way
-and pass it on again.
-
-Types are checked across the repository by one configuration, `tsconfig.check.json`. It covers
-every workspace's sources and the step definitions, and it excludes `*.test.ts`:
-
-```shell
-$ npm run typecheck
-```
-
-Style is checked by `npm run lint`, which reports nothing. Fix what it finds by hand:
-`oxlint --fix` rewrites `if (a) { if (b) c } else d` into an `else` that binds to the inner
-`if`, which no test of ours would have caught.
-
-Unit tests run on `node:test`, through `tsx`:
-
-```shell
-$ npm run test:unit
-$ node --import tsx --test 'runtime/core/test/**/*.test.js'
-```
-
-A suite that replaces a module needs `--experimental-test-module-mocks`, which `test:unit`
-passes.
-
-## Refusing
-
-**Runtime code does not use `node:assert`.** What refuses depends on when it happens, and who has
-to answer for it:
-
-- **Startup** — a program booting, a manifest being read, a deploy — may assert. A declaration
-  that is wrong, or an invariant that does not hold, stops the program before it serves anything,
-  and a person reads why.
-- **Runtime** — anything a caller is waiting on — throws an exception from `@toa.io/core` with a
-  code, because it crosses a binding as a value and whoever receives it decides by that code. An
-  `AssertionError` carries `code: 'ERR_ASSERTION'`, a string where a `code` in this codebase is a
-  number, so a caller reading it by its code reads it wrong. A new code goes in the enumeration in
-  `runtime/core/source/exceptions.ts`, where it also states whether it can pass on a later attempt.
-
-## Userspace
-
-Component code depends on no Toa package: nothing under `@toa.io/*` is imported by an operation,
-an event, a receiver or a guard. A type is the exception, and only as `import type`, which is
-erased before anything runs. A component may be written as an ES module or a CommonJS one; a
-component that is a module says so in a `package.json` beside its manifest.
-
-A module may be written in TypeScript. Node erases the types and compiles nothing else, so a `.ts`
-runs with no build step and no loader — and what it cannot erase, it refuses. The rules that
-follow from that are in the [Node bridge readme](./connectors/bridges.node/readme.md).
-
-Everything a component needs is on `context`;
-a configuration secret, for one, is read as `context.configuration.apiKey.unwrap()`.
-A component sees none of the variables the runtime was deployed with: no `TOA_*` in its
-`process.env`, in a bash operation's environment, or under `/proc`.
-
-The components an extension ships are Toa's own, and may use its packages. What a component of
-one imports from outside Toa it declares in a `package.json` of its own, beside its manifest —
-not in the extension's. The image that runs it installs it there, and the runtime image every
-application is built on carries nothing for a component no application runs.
-
-## Documentation
-
-Documentation says **how to use** a thing, not how it works. What a reader needs is what to
-declare, what to call, what they get back, and what they have to handle themselves. How it
-arrives at that is not theirs to carry.
-
-So a guarantee is written as what it means for the code someone writes — "a missed interval is
-not made up, so select what is still due rather than everything in its share" — and not as the
-mechanism it follows from. Names of what runs inside, the state it keeps, the queries it makes
-and the reasoning behind a decision belong in the code, beside what they explain.
-
-What survives the rule is what a reader acts on: a limit that changes what they write, a setting
-they choose, a failure they will see and have to answer for.
-
-A change that touches an undocumented area writes that area first, as it stands, and the change
-after it.
-
 ## Publishing
 
 A package that transpiles states what it ships in `files`: its build, the assets read beside it —
@@ -298,19 +295,14 @@ not anything in it changed: its version is what a context that states no `runtim
 deployed on, and its digest is what the extensions ship at that version. The runtime depends on it,
 so the two carry one number.
 
-## Security
+## Constraints
 
-A default denies. What the runtime fetches, accepts or trusts is enumerated in configuration, and an
-empty enumeration admits nothing. A capability that widens what is reachable is off until an
-application turns it on.
-
-## Exposition
-
-The gateway does no I/O of its own on the request path: a request costs the call to its endpoint.
-What authentication and authorization need is read from the token, or from a cache with a bounded
-lifetime — a custom key once per `identity.tokens.cache.ttl`, a revocation once per
-`identity.tokens.refresh`. A check that needs storage is written as an event that changes what a
-token is decrypted with, or as a claim, never as a read per request.
-
-Credentials travel in the `authorization` header. Toa does not support cookies and will not;
-nothing reads or sets one.
+- **Secure by default.** What the runtime fetches, accepts or trusts is enumerated in
+  configuration, and an empty enumeration admits nothing. A capability that widens what is
+  reachable is off until an application turns it on.
+- **Zero per-request I/O.** The gateway does no I/O to serve a request, other than an
+  operation call.
+- **Independent userspace.** An application's component depends on no `@toa.io/*` package, other
+  than types imported with `import type`.
+- **Coded exceptions.** Startup code — a boot, a manifest being read, a deploy — may assert.
+  Runtime code throws a coded exception from `@toa.io/core`.
