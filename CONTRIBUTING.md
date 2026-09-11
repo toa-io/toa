@@ -49,6 +49,12 @@ A unit of work is one completed iteration of the
 1. If your tests are failing, you must write code.
 2. If your tests are passing, you must write a test, unless you're refactoring or done.
 
+## Commits
+
+Follow [Conventional Commits](https://www.conventionalcommits.org/). The subject line must be able to complete the following sentence:
+
+> If applied, this commit will <<your subject line here>>
+
 ## Tests
 
 **A unit test proves that the code matches your expectations. An integration test proves that
