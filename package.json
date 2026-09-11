@@ -29,7 +29,8 @@
     "connectors/*",
     "extensions/*",
     "operations",
-    "userland"
+    "userland",
+    "benchmarks"
   ],
   "engines": {
     "node": ">= 24.0.0"
@@ -77,7 +78,8 @@
     "postinstall": "npm run transpile",
     "test": "npm run lint && npm run typecheck && npm run test:unit",
     "typecheck": "tsc -p tsconfig.check.json",
-    "test:unit": "node --import tsx --test --experimental-test-module-mocks 'libraries/*/source/**/*.test.ts' 'libraries/*/source/**/*.test.js' 'libraries/*/test/**/*.test.js' 'runtime/*/test/**/*.test.js' 'runtime/*/src/**/*.test.js' 'runtime/*/source/**/*.test.ts' 'connectors/*/test/**/*.test.js' 'connectors/*/source/**/*.test.ts' 'connectors/*/src/**/*.test.js' 'extensions/*/test/**/*.test.js' 'extensions/*/source/**/*.test.ts' 'extensions/*/components/**/source/**/*.test.ts' 'definitions/source/**/*.test.ts' 'operations/src/**/*.test.js' 'operations/src/**/.*/**/*.test.js' '.github/scripts/**/*.test.js' 'userland/stage/test/**/*.test.js' 'features/**/*.test.js'",
+    "test:unit": "node --import tsx --test --experimental-test-module-mocks 'libraries/*/source/**/*.test.ts' 'libraries/*/source/**/*.test.js' 'libraries/*/test/**/*.test.js' 'runtime/*/test/**/*.test.js' 'runtime/*/src/**/*.test.js' 'runtime/*/source/**/*.test.ts' 'connectors/*/test/**/*.test.js' 'connectors/*/source/**/*.test.ts' 'connectors/*/src/**/*.test.js' 'extensions/*/test/**/*.test.js' 'extensions/*/source/**/*.test.ts' 'extensions/*/components/**/source/**/*.test.ts' 'definitions/source/**/*.test.ts' 'operations/src/**/*.test.js' 'operations/src/**/.*/**/*.test.js' '.github/scripts/**/*.test.js' 'userland/stage/test/**/*.test.js' 'features/**/*.test.js' 'benchmarks/source/**/*.test.ts'",
+    "bench": "npm run bench -w @toa.io/benchmarks --",
     "test:stage": "node --import tsx --test --experimental-test-module-mocks 'userland/example/stage/**/*.test.js'",
     "features": "cucumber-js && npm run features --workspaces --if-present",
     "test:all": "npm run test && npm run test:stage && npm run features:nightly",

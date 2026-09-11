@@ -9,3 +9,5 @@ lerna-debug.log
 coverage/
 .mongo-keyfile
 *.temp.*
+benchmarks/results/
+.bench/
