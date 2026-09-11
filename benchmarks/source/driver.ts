@@ -24,7 +24,8 @@ export class Driver {
     this.run = run
     this.running = running
     this.fixtures = fixtures
-    this.client = new Client(running.origin, HOST, running.protocol)
+    // the host with its port, as the load names it and as the gateway's authorities map it
+    this.client = new Client(running.origin, `${HOST}:${running.side.ports.gateway}`, running.protocol)
   }
 
   /** A side with the items seeded, where the scenarios read them. */

@@ -267,7 +267,9 @@ function configuration(side: Side, options: Options): Record<string, string> {
     TOA_CONFIGURATION_IDENTITY_TOKENS: JSON.stringify({ keys: [{ id: 'key0', key: '$IDENTITY_TOKENS_KEY0' }], refresh: 86_400 }),
     TOA_CONFIGURATION__IDENTITY_TOKENS_KEY0: options.key,
     TOA_EXPOSITION_PROPERTIES: JSON.stringify({
-      authorities: { [AUTHORITY]: HOST },
+      // the host a request names carries the port, and an authority is looked up by all of it:
+      // a host missing from the map is an authority of its own, which no token is issued by
+      authorities: { [AUTHORITY]: `${HOST}:${side.ports.gateway}` },
       port: side.ports.gateway,
       probe: side.ports.probe,
       protocol: options.protocol,
