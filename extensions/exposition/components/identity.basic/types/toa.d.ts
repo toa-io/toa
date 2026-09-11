@@ -1,7 +1,7 @@
 // Written by `toa types`. Every run rewrites it.
 // What a manifest does not state belongs in a file of your own.
 
-import type { Query, RemoteError } from '@toa.io/core/types'
+import type { Options, Query, RemoteError } from '@toa.io/core/types'
 import type { Secret } from '@toa.io/extensions.configuration'
 import type { FetchInit } from '@toa.io/extensions.fetch'
 import type { Logs, Span } from '@toa.io/extensions.telemetry'
@@ -92,20 +92,20 @@ export type DeleteInput = {
 }
 
 export interface Component {
-  transit: (request: { input: TransitInput, query?: Query<Entity>, task?: boolean }) => Promise<TransitOutput | RemoteError<"PRINCIPAL_LOCKED" | "INVALID_USERNAME" | "INVALID_PASSWORD" | "EXISTS">>
-  create: (request: { input: CreateInput, task?: boolean }) => Promise<CreateOutput | RemoteError<"PRINCIPAL_LOCKED" | "INVALID_USERNAME" | "INVALID_PASSWORD" | "EXISTS">>
-  add: (request: { input: AddInput, task?: boolean }) => Promise<unknown | RemoteError<"PRINCIPAL_LOCKED" | "INVALID_USERNAME" | "INVALID_PASSWORD" | "EXISTS">>
-  incept: (request: { input: InceptInput, task?: boolean }) => Promise<InceptOutput | RemoteError<"INVALID_CREDENTIALS">>
-  authenticate: (request: { input: AuthenticateInput, task?: boolean }) => Promise<AuthenticateOutput | RemoteError<"NOT_FOUND" | "PASSWORD_MISMATCH">>
-  check: (request: { input: CheckInput, task?: boolean }) => Promise<CheckOutput>
-  info: (request: { input: InfoInput, task?: boolean }) => Promise<InfoOutput>
-  delete: (request: { input: DeleteInput, task?: boolean }) => Promise<unknown>
-  assign: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Entity>
-  ensure: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Entity>
-  enumerate: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Entity[]>
-  observe: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Entity | null>
-  stream: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Readable>
-  terminate: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Entity>
+  transit: (request: { input: TransitInput, query?: Query<Entity>, task?: boolean }, options?: Options) => Promise<TransitOutput | RemoteError<"PRINCIPAL_LOCKED" | "INVALID_USERNAME" | "INVALID_PASSWORD" | "EXISTS">>
+  create: (request: { input: CreateInput, task?: boolean }, options?: Options) => Promise<CreateOutput | RemoteError<"PRINCIPAL_LOCKED" | "INVALID_USERNAME" | "INVALID_PASSWORD" | "EXISTS">>
+  add: (request: { input: AddInput, task?: boolean }, options?: Options) => Promise<unknown | RemoteError<"PRINCIPAL_LOCKED" | "INVALID_USERNAME" | "INVALID_PASSWORD" | "EXISTS">>
+  incept: (request: { input: InceptInput, task?: boolean }, options?: Options) => Promise<InceptOutput | RemoteError<"INVALID_CREDENTIALS">>
+  authenticate: (request: { input: AuthenticateInput, task?: boolean }, options?: Options) => Promise<AuthenticateOutput | RemoteError<"NOT_FOUND" | "PASSWORD_MISMATCH">>
+  check: (request: { input: CheckInput, task?: boolean }, options?: Options) => Promise<CheckOutput>
+  info: (request: { input: InfoInput, task?: boolean }, options?: Options) => Promise<InfoOutput>
+  delete: (request: { input: DeleteInput, task?: boolean }, options?: Options) => Promise<unknown>
+  assign: (request: { input?: null, query?: Query<Entity>, task?: boolean }, options?: Options) => Promise<Entity>
+  ensure: (request: { input?: null, query?: Query<Entity>, task?: boolean }, options?: Options) => Promise<Entity>
+  enumerate: (request: { input?: null, query?: Query<Entity>, task?: boolean }, options?: Options) => Promise<Entity[]>
+  observe: (request: { input?: null, query?: Query<Entity>, task?: boolean }, options?: Options) => Promise<Entity | null>
+  stream: (request: { input?: null, query?: Query<Entity>, task?: boolean }, options?: Options) => Promise<Readable>
+  terminate: (request: { input?: null, query?: Query<Entity>, task?: boolean }, options?: Options) => Promise<Entity>
 }
 
 export interface Configuration {

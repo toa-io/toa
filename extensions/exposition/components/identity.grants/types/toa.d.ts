@@ -1,7 +1,7 @@
 // Written by `toa types`. Every run rewrites it.
 // What a manifest does not state belongs in a file of your own.
 
-import type { Query, RemoteError } from '@toa.io/core/types'
+import type { Options, Query, RemoteError } from '@toa.io/core/types'
 import type { FetchInit } from '@toa.io/extensions.fetch'
 import type { Stash } from '@toa.io/extensions.stash'
 import type { Logs, Span } from '@toa.io/extensions.telemetry'
@@ -88,17 +88,17 @@ export type RevokeInput = {
 export type RevokeOutput = null
 
 export interface Component {
-  transit: (request: { input: TransitInput, query?: Query<Entity>, task?: boolean }) => Promise<Entity>
-  authorize: (request: { input: AuthorizeInput, task?: boolean }) => Promise<AuthorizeOutput>
-  exchange: (request: { input: ExchangeInput, task?: boolean }) => Promise<ExchangeOutput>
-  list: (request: { input: ListInput, task?: boolean }) => Promise<unknown>
-  revoke: (request: { input: RevokeInput, query?: Query<Entity>, task?: boolean }) => Promise<RevokeOutput | RemoteError<"NOT_FOUND">>
-  assign: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Entity>
-  ensure: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Entity>
-  enumerate: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Entity[]>
-  observe: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Entity | null>
-  stream: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Readable>
-  terminate: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Entity>
+  transit: (request: { input: TransitInput, query?: Query<Entity>, task?: boolean }, options?: Options) => Promise<Entity>
+  authorize: (request: { input: AuthorizeInput, task?: boolean }, options?: Options) => Promise<AuthorizeOutput>
+  exchange: (request: { input: ExchangeInput, task?: boolean }, options?: Options) => Promise<ExchangeOutput>
+  list: (request: { input: ListInput, task?: boolean }, options?: Options) => Promise<unknown>
+  revoke: (request: { input: RevokeInput, query?: Query<Entity>, task?: boolean }, options?: Options) => Promise<RevokeOutput | RemoteError<"NOT_FOUND">>
+  assign: (request: { input?: null, query?: Query<Entity>, task?: boolean }, options?: Options) => Promise<Entity>
+  ensure: (request: { input?: null, query?: Query<Entity>, task?: boolean }, options?: Options) => Promise<Entity>
+  enumerate: (request: { input?: null, query?: Query<Entity>, task?: boolean }, options?: Options) => Promise<Entity[]>
+  observe: (request: { input?: null, query?: Query<Entity>, task?: boolean }, options?: Options) => Promise<Entity | null>
+  stream: (request: { input?: null, query?: Query<Entity>, task?: boolean }, options?: Options) => Promise<Readable>
+  terminate: (request: { input?: null, query?: Query<Entity>, task?: boolean }, options?: Options) => Promise<Entity>
 }
 
 export interface Configuration {
