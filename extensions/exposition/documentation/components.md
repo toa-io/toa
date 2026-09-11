@@ -118,7 +118,7 @@ Identity should not have associated basic credentials. Access requires any crede
 
 `username` must be Base64 URL encoded.
 
-Returns empty response with status `204` if the username is already taken or `410` if it is available.
+Returns empty response with status `204` if the username is already taken or `404` if it is available.
 
 ## Identity federation (OpenID connect)
 

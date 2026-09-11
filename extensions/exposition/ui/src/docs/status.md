@@ -13,11 +13,10 @@ defines.
 - `400 Bad Request`
 - `401 Unauthorized`
 - `403 Forbidden`
-- `404 Not Found`
+- `404 Not Found`<span class="note">No such route, or nothing found behind it.</span>
 - `405 Method Not Allowed`
 - `406 Not Acceptable`
 - `409 Conflict`
-- `410 Gone`
 - `412 Precondition Failed`
 - `413 Content Too Large`
 - `415 Unsupported Media Type`

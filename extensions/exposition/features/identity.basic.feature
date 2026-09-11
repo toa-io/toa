@@ -526,7 +526,7 @@ Feature: Basic authentication
       """
     Then the following reply is sent:
       """
-      410 Gone
+      404 Not Found
       """
 
   Scenario: Adding new basic credentials
