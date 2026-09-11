@@ -65,9 +65,12 @@ A full run of the default scenarios takes about 50 minutes; `--quick`, about 20.
 | `chain` | `GET` of an operation that calls `peer` |
 | `token.id` | `GET` under `auth:id`, with a `Token` |
 | `token.role` | `GET` under `auth:role`, with a `Token` |
-| `token.aged` | `GET` under `auth:id`, with a `Token` older than `refresh`, re-issued on every request |
 | `mcp.tools.list` | `tools/list` over MCP, on a tree of 22 tools |
 | `list.1000.msgpack` | optional: `list.1000` encoded as MessagePack |
+| `token.reissue` | optional: `GET` under `auth:id` with a `Token` older than `refresh`, sent again after the reply re-issues it, so every request pays for a re-issue — the cost of one re-issue |
+
+Tokens are issued by the run and the gateway is configured with a `refresh` of a day, so no token
+ages during a run.
 
 ## The report
 

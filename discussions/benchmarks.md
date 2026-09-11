@@ -113,8 +113,11 @@ The report is a table per scenario and process, and the same data as JSON.
 
 9. **Scenarios.** `small` and `small.h2c` — the path with no storage; `observe`; `list.1000` and
    `list.1000.h2c`; `create`, which writes and publishes an event; `chain`, one component calling
-   another; `token.id`, `token.role` and `token.aged`, the last re-issuing its token on every request;
-   `mcp.tools.list`. Tokens are minted by the runner with the gateway's key.
+   another; `token.id` and `token.role`; `mcp.tools.list`. Tokens are minted by the runner with the
+   gateway's key, and the gateway's `refresh` is a day, so no token ages during a run: a client that
+   is handed a re-issued token goes on with it, and the load cannot. The cost of a re-issue is the
+   optional `token.reissue`, which sends an aged token again after every reply that replaces it, and
+   is the cost of one re-issue, which a client pays once a `refresh`.
 
 10. **Profiles.** `--profile` runs one revision, one boot per scenario, with an inspector open in
     every process on a port the system picks. The profiler starts and stops with the measured

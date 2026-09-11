@@ -92,7 +92,10 @@ export const scenarios: Scenario[] = [
     processes: ['gateway', 'bench']
   },
   {
-    id: 'token.aged',
+    // A token older than `refresh` is re-issued, and a client goes on with the new one. The load
+    // keeps sending the aged one, so every request re-issues: this is the cost of a re-issue,
+    // which a client pays once a `refresh`, and nothing a request costs.
+    id: 'token.reissue',
     protocol: 'h1',
     method: 'GET',
     path: () => `/bench/users/${USER}/`,
@@ -100,7 +103,8 @@ export const scenarios: Scenario[] = [
     status: 200,
     check: (reply) =>
       expect(String(reply.headers.authorization ?? '').startsWith('Token '), reply),
-    processes: ['gateway', 'bench']
+    processes: ['gateway', 'bench'],
+    optional: true
   },
   {
     id: 'mcp.tools.list',
