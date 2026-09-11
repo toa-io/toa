@@ -121,9 +121,12 @@ function stream(
   //
   // `pipeline` carries an error to every stage and destroys them. `pipe` leaves the stages it
   // built behind, and an `error` on a stream nobody listens to is an uncaught exception.
-  pipeline(source, response).catch((exception: Error) =>
+  pipeline(source, response).catch((exception: NodeJS.ErrnoException) => {
+    // the client went away, which is how a realtime subscription ends
+    if (exception.code === 'ERR_STREAM_PREMATURE_CLOSE') return
+
     console.warn('Message stream error', { path: context.url.pathname, exception })
-  )
+  })
 }
 
 /**
