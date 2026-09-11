@@ -1,9 +1,9 @@
-import { TooManyRequests } from '../../HTTP/index.js'
-import * as schemas from './schemas.js'
-import { parse, Quotas, type Declaration, type Sync } from './lib/throttle/index.js'
-import type * as http from '../../HTTP/index.js'
-import type { Parameter } from '../../RTD/index.js'
-import type { Directive } from './Directive.js'
+import { TooManyRequests } from '../../HTTP/index.ts'
+import * as schemas from './schemas.ts'
+import { parse, Quotas, type Declaration, type Sync } from './lib/throttle/index.ts'
+import type * as http from '../../HTTP/index.ts'
+import type { Parameter } from '../../RTD/index.ts'
+import type { Directive } from './Directive.ts'
 
 export class Throttle implements Directive {
   private readonly quotas: Quotas

@@ -3,7 +3,7 @@ import type { Mock } from 'node:test'
 import assert from 'node:assert/strict'
 import { isDeepStrictEqual } from 'node:util'
 
-import { Ready } from './Ready.js'
+import { Ready } from './Ready.ts'
 
 let send: Mock<any>
 let original: typeof process.send

@@ -1,4 +1,4 @@
-import type { Request } from './request.js'
+import type { Request } from './request.ts'
 
 export type type =
   | 'transition'

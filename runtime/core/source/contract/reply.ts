@@ -1,7 +1,7 @@
-import { Contract } from './contract.js'
-import { ResponseContractException } from '../exceptions.js'
-import type { Refusal } from './contract.js'
-import type { JSONSchema } from './schemas.js'
+import { Contract } from './contract.ts'
+import { ResponseContractException } from '../exceptions.ts'
+import type { Refusal } from './contract.ts'
+import type { JSONSchema } from './schemas.ts'
 
 export class Reply extends Contract {
   public static override Exception: Refusal =

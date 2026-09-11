@@ -1,7 +1,7 @@
 import { it } from 'node:test'
 import assert from 'node:assert/strict'
 
-import { split } from './credentials.js'
+import { split } from './credentials.ts'
 
 const encode = (value: string): string => Buffer.from(value).toString('base64')
 

@@ -1,5 +1,5 @@
 import { console } from 'openspan'
-import type { Quotas } from './Quotas.js'
+import type { Quotas } from './Quotas.ts'
 import type { atomicity } from '@toa.io/core/types'
 
 /**

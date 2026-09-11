@@ -3,9 +3,9 @@ import type { Mock } from 'node:test'
 import assert from 'node:assert/strict'
 import { isDeepStrictEqual } from 'node:util'
 
-import { createRemoteJWKSet, discover } from './discovery.js'
+import { createRemoteJWKSet, discover } from './discovery.ts'
 import { load } from './jose.js'
-import type { Fetch } from '../types/context.js'
+import type { Fetch } from '../types/context.ts'
 
 it('discovers an issuer using the component fetch', async () => {
   const iss = `https://${Math.random().toString(36).slice(2)}.example.com`

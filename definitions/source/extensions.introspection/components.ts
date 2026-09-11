@@ -1,5 +1,5 @@
-import { components as digest, type Components } from '../digest/read.js'
-import type { Annotation } from './annotation.js'
+import { components as digest, type Components } from '../digest/read.ts'
+import type { Annotation } from './annotation.ts'
 
 /**
  * The extension is predefined, so an application that turns introspection off

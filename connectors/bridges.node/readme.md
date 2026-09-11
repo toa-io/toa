@@ -191,9 +191,6 @@ import { credentials } from './lib/credentials.js'
 import { credentials } from './lib/credentials.ts'
 ```
 
-This is the opposite of the rule for a package that is transpiled, where an import names the file
-the compiler will emit.
-
 ### A type is imported with `import type`
 
 Node keeps an import that is not marked as one, and then resolves it at runtime — so

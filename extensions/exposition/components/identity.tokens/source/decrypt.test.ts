@@ -3,9 +3,9 @@ import assert from 'node:assert/strict'
 
 import { generate } from 'randomstring'
 import { EncryptFactory, ImportKeyFactory } from 'paseto/v3/local'
-import { Effect as Encrypt } from './encrypt.js'
-import { Computation as Decrypt } from './decrypt.js'
-import { type Configuration, type Context, type Identity } from './lib/index.js'
+import { Effect as Encrypt } from './encrypt.ts'
+import { Computation as Decrypt } from './decrypt.ts'
+import { type Configuration, type Context, type Identity } from './lib/index.ts'
 import type { Secret } from '@toa.io/extensions.configuration'
 
 let configuration: Configuration

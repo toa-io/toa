@@ -1,8 +1,8 @@
-export * as context from './context.js'
-export * as component from './component.js'
+export * as context from './context.d.ts'
+export * as component from './component.d.ts'
 
-export { Manifest } from './component.js'
-export * as entity from './entity.js'
+export { Manifest } from './component.d.ts'
+export * as entity from './entity.d.ts'
 
 export interface Definition {
   /** The package's name, or the reference where it has no package.json */

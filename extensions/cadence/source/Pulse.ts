@@ -1,6 +1,6 @@
 import { console } from 'openspan'
 import { Connector } from '@toa.io/core'
-import type { Local } from './Local.js'
+import type { Local } from './Local.ts'
 import type { SpanOptions } from 'openspan'
 import type { Locator } from '@toa.io/core'
 import type { atomicity } from '@toa.io/core/types'

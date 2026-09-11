@@ -1,6 +1,6 @@
-import { Observation } from './observation.js'
-import type { Store } from './operation.js'
-import type { Entity } from './entities/entity.js'
+import { Observation } from './observation.ts'
+import type { Store } from './operation.ts'
+import type { Entity } from './entities/entity.ts'
 
 export class Effect extends Observation {
   protected override async acquire(store: Store): Promise<void> {

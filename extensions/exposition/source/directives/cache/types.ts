@@ -1,4 +1,4 @@
-import type { Input } from '../../io.js'
+import type { Input } from '../../io.ts'
 
 export interface Directive {
   set: (input: Input, headers: Headers) => void

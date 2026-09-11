@@ -1,7 +1,7 @@
 import { it } from 'node:test'
 import assert from 'node:assert/strict'
 
-import { segment, fragment } from './segment.js'
+import { segment, fragment } from './segment.ts'
 
 it('should return segments', async () => {
   const segments = segment('/foo/bar/')

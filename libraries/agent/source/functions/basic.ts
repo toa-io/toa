@@ -1,5 +1,5 @@
-import * as gen from './index.js'
-import type { Captures } from '../Captures.js'
+import * as gen from './index.ts'
+import type { Captures } from '../Captures.ts'
 
 export function basic(this: Captures, _: string, user: string): string {
   const username = this.get(`${user}.username`) ?? gen.email()

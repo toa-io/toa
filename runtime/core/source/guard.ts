@@ -1,4 +1,4 @@
-import type { Guard as Bridge } from './types/bridges.js'
+import type { Guard as Bridge } from './types/bridges.ts'
 
 export class Guard {
   public readonly name: string

@@ -1,7 +1,7 @@
 import { it } from 'node:test'
 import assert from 'node:assert/strict'
 
-import { commands, topology, vhost, INBOUND, OUTBOUND } from './topology.js'
+import { commands, topology, vhost, INBOUND, OUTBOUND } from './topology.ts'
 
 const labels = ['store.orders', 'identity.roles']
 

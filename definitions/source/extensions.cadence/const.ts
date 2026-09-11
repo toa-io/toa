@@ -1,5 +1,5 @@
 import { environment } from '@toa.io/generic'
-import { REGION } from '../extensions.convergence/const.js'
+import { REGION } from '../extensions.convergence/const.ts'
 
 /** The component the extension ships to hold delayed calls. */
 export const NAMESPACE = 'cadence'

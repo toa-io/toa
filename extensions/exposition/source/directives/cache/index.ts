@@ -1,3 +1,3 @@
-import { Cache } from './Cache.js'
+import { Cache } from './Cache.ts'
 
 export const cache = new Cache()

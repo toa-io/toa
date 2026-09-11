@@ -1,6 +1,6 @@
-import { QuerySyntaxException } from '../exceptions.js'
-import type { Options } from '../types/storages.js'
-import type { Properties } from './criteria.js'
+import { QuerySyntaxException } from '../exceptions.ts'
+import type { Options } from '../types/storages.ts'
+import type { Properties } from './criteria.ts'
 
 export function options(given: Record<string, any>, properties: Properties): Options {
   if (given.sort !== undefined) given.sort = sort(given.sort, properties)

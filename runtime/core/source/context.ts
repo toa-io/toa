@@ -1,12 +1,12 @@
-import { Connector } from './connector.js'
-import { waiting } from './abandon.js'
-import { instance } from './instance.js'
+import { Connector } from './connector.ts'
+import { waiting } from './abandon.ts'
+import { instance } from './instance.ts'
 import { environment } from '@toa.io/generic'
-import type { Locator } from './locator.js'
-import type { Component } from './component.js'
-import type { Remote } from './remote.js'
-import type { Aspect } from './types/extensions.js'
-import type { Options, Request } from './types/request.js'
+import type { Locator } from './locator.ts'
+import type { Component } from './component.ts'
+import type { Remote } from './remote.ts'
+import type { Aspect } from './types/extensions.ts'
+import type { Options, Request } from './types/request.ts'
 
 type Discover = (namespace: string, name: string) => Promise<Remote>
 

@@ -1,5 +1,5 @@
 import { quote } from '@toa.io/generic'
-import type { Context } from './types/index.js'
+import type { Context } from './types/index.ts'
 import type { AuthenticationResponseJSON } from '@simplewebauthn/server'
 import type { Operation } from '@toa.io/bridges.node'
 

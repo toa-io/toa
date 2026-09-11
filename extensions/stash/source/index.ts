@@ -1,2 +1,2 @@
-export * from './extension.js'
-export type { Stash } from './Stash.js'
+export * from './extension.ts'
+export type { Stash } from './Stash.ts'

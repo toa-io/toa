@@ -1,7 +1,7 @@
 import { type Readable } from 'node:stream'
 import { type Operation } from '@toa.io/bridges.node'
-import { type Context } from '../types/index.js'
-import { Stream, Stash } from './lib/index.js'
+import type { Context } from '../types/index.d.ts'
+import { Stream, Stash } from './lib/index.ts'
 
 export class Effect implements Operation {
   private readonly streams = new Map<string, Stream>()

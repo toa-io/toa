@@ -4,8 +4,8 @@ import { isDeepStrictEqual } from 'node:util'
 
 import { Connector, Locator } from '@toa.io/core'
 import { generate } from 'randomstring'
-import { Aspect } from './Aspect.js'
-import type { Client, Listener } from './Client.js'
+import { Aspect } from './Aspect.ts'
+import type { Client, Listener } from './Client.ts'
 import type { Manifest } from '@toa.io/definitions/extensions.configuration'
 
 class Fake extends Connector {

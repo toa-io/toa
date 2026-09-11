@@ -1,4 +1,4 @@
-import type { Remote, Scheme } from './types.js'
+import type { Remote, Scheme } from './types.ts'
 
 /**
  * The providers of a scheme, in the order they are asked. More than one claims `Bearer`:

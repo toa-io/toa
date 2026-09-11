@@ -1,14 +1,14 @@
 import { Readable } from 'node:stream'
 import { entities } from '@toa.io/core'
-import { Mapping } from './Mapping.js'
-import { take } from './Introspection.js'
-import { parse } from './directives/cache/etag.js'
-import * as http from './HTTP/index.js'
-import type { Introspection, Schema } from './Introspection.js'
+import { Mapping } from './Mapping.ts'
+import { take } from './Introspection.ts'
+import { parse } from './directives/cache/etag.ts'
+import * as http from './HTTP/index.ts'
+import type { Introspection, Schema } from './Introspection.ts'
 import type { Remote } from '@toa.io/core'
-import type { Remotes } from './Remotes.js'
-import type { Context } from './Context.js'
-import type * as RTD from './RTD/index.js'
+import type { Remotes } from './Remotes.ts'
+import type { Context } from './Context.ts'
+import type * as RTD from './RTD/index.ts'
 
 export class Endpoint implements RTD.Endpoint {
   private readonly endpoint: string

@@ -1,8 +1,8 @@
 import { console } from 'openspan'
 import { BRANCH_TTL } from '@toa.io/definitions/extensions.exposition'
-import * as http from '../HTTP/index.js'
-import { discovery, type Discovery } from './discover.js'
-import { call, list, type Scope } from './tools.js'
+import * as http from '../HTTP/index.ts'
+import { discovery, type Discovery } from './discover.ts'
+import { call, list, type Scope } from './tools.ts'
 import {
   HEADER_MISMATCH,
   INVALID_PARAMS,
@@ -12,7 +12,7 @@ import {
   UNSUPPORTED_VERSION,
   failure,
   response
-} from './errors.js'
+} from './errors.ts'
 import {
   CLIENT_CAPABILITIES,
   JSONRPC,
@@ -24,8 +24,8 @@ import {
   type Cache,
   type Message,
   type Params
-} from './types.js'
-import type { Tree } from '../RTD/index.js'
+} from './types.ts'
+import type { Tree } from '../RTD/index.ts'
 import type { MCPAnnotation as MCP } from '@toa.io/definitions/extensions.exposition'
 
 /**

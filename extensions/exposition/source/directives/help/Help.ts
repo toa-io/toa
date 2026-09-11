@@ -1,4 +1,4 @@
-import { described, type Described } from './described.js'
+import { described, type Described } from './described.ts'
 
 /**
  * What a resource or a method is, in the words an application chooses for it — read by

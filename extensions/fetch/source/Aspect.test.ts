@@ -4,7 +4,7 @@ import assert from 'node:assert/strict'
 
 import { Locator } from '@toa.io/core'
 import { consoleExporter, exporting } from 'openspan'
-import { Aspect } from './Aspect.js'
+import { Aspect } from './Aspect.ts'
 import type { Span } from 'openspan'
 
 const nativeFetch = globalThis.fetch

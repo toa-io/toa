@@ -1,8 +1,8 @@
-import * as json from './json.js'
-import * as yaml from './yaml.js'
-import * as msgpack from './msgpack.js'
-import * as text from './text.js'
-import * as form from './form.js'
+import * as json from './json.ts'
+import * as yaml from './yaml.ts'
+import * as msgpack from './msgpack.ts'
+import * as text from './text.ts'
+import * as form from './form.ts'
 
 /** What a reply may be encoded as, and so what `accept` is negotiated against. */
 export const formats: Record<string, Format> = {

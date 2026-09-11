@@ -1,7 +1,7 @@
 import { it } from 'node:test'
 import assert from 'node:assert/strict'
 
-import * as schemas from './schemas.js'
+import * as schemas from './schemas.ts'
 
 const authorities = { nex: 'nex.toa.io' }
 

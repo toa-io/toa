@@ -1,8 +1,8 @@
-import { BadRequest } from '../../HTTP/index.js'
-import { take } from '../../Introspection.js'
-import { Role } from './Role.js'
-import type { Introspection } from '../../Introspection.js'
-import type { Context, Directive, Identity } from './types.js'
+import { BadRequest } from '../../HTTP/index.ts'
+import { take } from '../../Introspection.ts'
+import { Role } from './Role.ts'
+import type { Introspection } from '../../Introspection.ts'
+import type { Context, Directive, Identity } from './types.ts'
 import type { Component } from '@toa.io/core'
 
 export class Delegate implements Directive {

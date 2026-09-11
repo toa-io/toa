@@ -1,5 +1,5 @@
 import { join } from 'node:path'
-import { Algorithm } from './Algorithm.js'
+import { Algorithm } from './Algorithm.ts'
 import { DIR, EXT } from '@toa.io/definitions/bridges.bash'
 import type { bridges } from '@toa.io/core/types'
 

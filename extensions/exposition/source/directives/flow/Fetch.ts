@@ -1,14 +1,14 @@
 import { Readable } from 'node:stream'
 import { match } from 'matchacho'
-import { NotFound } from '../../HTTP/index.js'
-import type { Directive } from './types.js'
+import { NotFound } from '../../HTTP/index.ts'
+import type { Directive } from './types.ts'
 import type { ReadableStream } from 'node:stream/web'
-import type { Remotes } from '../../Remotes.js'
+import type { Remotes } from '../../Remotes.ts'
 import type { Maybe } from '@toa.io/core/types'
 import type { Component } from '@toa.io/core'
-import type { Output } from '../../io.js'
-import type { Input } from '../octets/types.js'
-import type { Parameter } from '../../RTD/index.js'
+import type { Output } from '../../io.ts'
+import type { Input } from '../octets/types.ts'
+import type { Parameter } from '../../RTD/index.ts'
 
 export class Fetch implements Directive {
   private readonly connecting: Promise<Component>

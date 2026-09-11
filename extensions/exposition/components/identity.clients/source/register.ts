@@ -1,7 +1,7 @@
-import { identify } from './lib/index.js'
+import { identify } from './lib/index.ts'
 import type { Maybe } from '@toa.io/core/types'
 import type { Operation } from '@toa.io/bridges.node'
-import type { Context, Metadata } from './lib/index.js'
+import type { Context, Metadata } from './lib/index.ts'
 
 /**
  * Dynamic Client Registration, RFC 7591: the client sends what it is and is given an

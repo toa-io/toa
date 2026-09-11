@@ -1,7 +1,7 @@
 import { it } from 'node:test'
 import assert from 'node:assert/strict'
 
-import { audience, permits } from './Authorization.js'
+import { audience, permits } from './Authorization.ts'
 
 const permissions = { '/users/me/**': ['GET'], '/notes/': ['*'] }
 

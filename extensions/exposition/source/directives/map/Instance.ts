@@ -1,7 +1,7 @@
-import { Mapping } from './Mapping.js'
-import type { Parameter } from '../../RTD/index.js'
-import type { Input } from '../../io.js'
-import type { Introspection, Schema } from '../../Introspection.js'
+import { Mapping } from './Mapping.ts'
+import type { Parameter } from '../../RTD/index.ts'
+import type { Input } from '../../io.ts'
+import type { Introspection, Schema } from '../../Introspection.ts'
 
 /**
  * Names the route parameter that carries the process a stateful operation is called on. The name

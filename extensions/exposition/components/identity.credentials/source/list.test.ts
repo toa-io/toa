@@ -2,7 +2,7 @@ import { it, mock } from 'node:test'
 import assert from 'node:assert/strict'
 import { isDeepStrictEqual } from 'node:util'
 
-import { Computation } from './list.js'
+import { Computation } from './list.ts'
 
 it('aggregates only public credential properties', async () => {
   const operation = new Computation()

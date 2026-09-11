@@ -1,4 +1,4 @@
-import type { Context, Entity } from '../types/index.js'
+import type { Context, Entity } from '../types/index.d.ts'
 
 export async function effect(
   { authority, identity }: Input,

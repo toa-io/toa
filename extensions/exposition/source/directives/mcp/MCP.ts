@@ -1,7 +1,7 @@
-import { Tool } from './Tool.js'
-import type { DirectiveFamily } from '../../RTD/index.js'
-import type { Context } from '../../HTTP/index.js'
-import type { Introspection } from '../../Introspection.js'
+import { Tool } from './Tool.ts'
+import type { DirectiveFamily } from '../../RTD/index.ts'
+import type { Context } from '../../HTTP/index.ts'
+import type { Introspection } from '../../Introspection.ts'
 
 /** The name the family is declared under, and what `MCP` asks a method for. */
 export const FAMILY = 'mcp'

@@ -3,8 +3,8 @@ import assert from 'node:assert/strict'
 
 /* eslint-disable no-template-curly-in-string */
 
-import { Captures } from './Captures.js'
-import type { Functions } from './functions/index.js'
+import { Captures } from './Captures.ts'
+import type { Functions } from './functions/index.ts'
 
 let captures: Captures
 

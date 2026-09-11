@@ -1,11 +1,11 @@
-import { Forbidden, NotFound } from '../../HTTP/index.js'
-import * as schemas from './schemas.js'
-import { Directive } from './Directive.js'
+import { Forbidden, NotFound } from '../../HTTP/index.ts'
+import * as schemas from './schemas.ts'
+import { Directive } from './Directive.ts'
 import type { Maybe } from '@toa.io/core/types'
 import type { Entry, Stream } from '@toa.io/extensions.storages'
 import type { Component } from '@toa.io/core'
-import type { Output } from '../../io.js'
-import type { Input } from './types.js'
+import type { Output } from '../../io.ts'
+import type { Input } from './types.ts'
 
 export class Get extends Directive {
   public readonly targeted = true

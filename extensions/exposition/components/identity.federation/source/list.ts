@@ -1,5 +1,5 @@
 import { quote } from '@toa.io/generic'
-import type { Context, Entity } from './types/index.js'
+import type { Context, Entity } from './types/index.ts'
 
 export async function computation(
   { authority, identity }: Input,

@@ -1,7 +1,7 @@
 import { load } from './jose.js'
 import type * as jose from 'jose'
-import type { Configuration } from './Configuration.js'
-import type { Fetch } from '../types/context.js'
+import type { Configuration } from './Configuration.ts'
+import type { Fetch } from '../types/context.ts'
 
 const cache = new Map<string, Configuration>()
 const resolvers = new WeakMap<Fetch, Map<string, Promise<jose.RemoteJWKSet>>>()

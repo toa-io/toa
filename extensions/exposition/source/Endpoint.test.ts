@@ -1,11 +1,11 @@
 import { describe, it } from 'node:test'
 import assert from 'node:assert/strict'
 
-import { Endpoint } from './Endpoint.js'
-import { Mapping } from './Mapping.js'
+import { Endpoint } from './Endpoint.ts'
+import { Mapping } from './Mapping.ts'
 import type { Remote } from '@toa.io/core'
-import type * as http from './HTTP/index.js'
-import type { Parameter } from './RTD/index.js'
+import type * as http from './HTTP/index.ts'
+import type { Parameter } from './RTD/index.ts'
 
 /**
  * What `Remote.explain` answers is the contract's own object, the same one every time and

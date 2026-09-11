@@ -7,9 +7,9 @@ import {
   type Instance,
   deployment,
   describe as map
-} from './deployment.js'
-import { epoch } from './epoch.js'
-import { EVENT, VALUES } from './const.js'
+} from './deployment.ts'
+import { epoch } from './epoch.ts'
+import { EVENT, VALUES } from './const.ts'
 
 const schema = {
   type: 'object',

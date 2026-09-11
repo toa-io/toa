@@ -1,5 +1,5 @@
-import * as schemas from './schemas.js'
-import type { Declaration } from './types.js'
+import * as schemas from './schemas.ts'
+import type { Declaration } from './types.ts'
 import type { Manifest } from '@toa.io/norm'
 
 /**

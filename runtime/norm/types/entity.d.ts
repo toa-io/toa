@@ -1,4 +1,4 @@
-import type { Entity } from './component.js'
+import type { Entity } from './component.d.ts'
 
 /** The schema a stored record must fit. */
 export function schema(entity: Entity): object

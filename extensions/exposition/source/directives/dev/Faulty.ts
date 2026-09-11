@@ -1,7 +1,7 @@
-import { ServiceUnavailable } from '../../HTTP/index.js'
-import { cors } from '../cors/index.js'
-import type { Output } from '../../io.js'
-import type { Directive } from './types.js'
+import { ServiceUnavailable } from '../../HTTP/index.ts'
+import { cors } from '../cors/index.ts'
+import type { Output } from '../../io.ts'
+import type { Directive } from './types.ts'
 
 export class Faulty implements Directive {
   private static readonly warned = false

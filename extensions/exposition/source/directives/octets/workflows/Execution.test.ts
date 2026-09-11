@@ -3,8 +3,8 @@ import assert from 'node:assert/strict'
 import { once } from 'node:events'
 import { Readable } from 'node:stream'
 import { setTimeout } from 'node:timers/promises'
-import { Execution, type Context } from './Execution.js'
-import type { Remotes } from '../../../Remotes.js'
+import { Execution, type Context } from './Execution.ts'
+import type { Remotes } from '../../../Remotes.ts'
 
 describe('Execution', () => {
   it('should report every step', async () => {

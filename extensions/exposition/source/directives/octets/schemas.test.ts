@@ -1,7 +1,7 @@
 import { describe, it } from 'node:test'
 import assert from 'node:assert/strict'
 
-import * as schemas from './schemas.js'
+import * as schemas from './schemas.ts'
 
 describe('workflow', () => {
   const ok = [{ echo: 'hello world' }, [{ echo: 'hello world' }, { ok: 'ok' }]]

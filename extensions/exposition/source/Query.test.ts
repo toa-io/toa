@@ -1,8 +1,8 @@
 import { it } from 'node:test'
 import assert from 'node:assert/strict'
 
-import { Query } from './Query.js'
-import { type Parameter, type syntax } from './RTD/index.js'
+import { Query } from './Query.ts'
+import { type Parameter, type syntax } from './RTD/index.ts'
 
 it('should combine request criteria', async () => {
   const query: syntax.Query = {

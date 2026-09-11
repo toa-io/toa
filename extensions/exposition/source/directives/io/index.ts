@@ -1,3 +1,3 @@
-import { IO } from './IO.js'
+import { IO } from './IO.ts'
 
 export const io = new IO()

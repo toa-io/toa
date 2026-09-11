@@ -1,7 +1,7 @@
 import { it } from 'node:test'
 import assert from 'node:assert/strict'
 
-import { parse, type Configuration } from './Configuration.js'
+import { parse, type Configuration } from './Configuration.ts'
 
 const rest: Omit<Configuration, 'key' | 'condition'> = {
   interval: 1,

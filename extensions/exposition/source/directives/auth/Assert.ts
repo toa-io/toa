@@ -1,7 +1,7 @@
 import { newid } from '@toa.io/generic'
-import * as http from '../../HTTP/index.js'
-import { Incept } from './Incept.js'
-import type { Context, Directive, Identity } from './types.js'
+import * as http from '../../HTTP/index.ts'
+import { Incept } from './Incept.ts'
+import type { Context, Directive, Identity } from './types.ts'
 
 export class Assert implements Directive {
   private readonly disabled: boolean

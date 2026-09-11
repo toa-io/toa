@@ -1,8 +1,8 @@
 import type { Readable } from 'node:stream'
-import type { Connector } from '../connector.js'
-import type { Locator } from '../locator.js'
-import type { Call, Inbox } from './inbox.js'
-import type { Row, Storage as Outbox } from './outbox.js'
+import type { Connector } from '../connector.ts'
+import type { Locator } from '../locator.ts'
+import type { Call, Inbox } from './inbox.ts'
+import type { Row, Storage as Outbox } from './outbox.ts'
 
 /** the RSQL tree `@rsql/parser` produces; a storage translates it into its own dialect */
 export interface Node {

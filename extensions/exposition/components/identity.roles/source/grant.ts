@@ -1,4 +1,4 @@
-import type { Entity } from './lib/Entity.js'
+import type { Entity } from './lib/Entity.ts'
 
 export async function transition(input: Input, object: Entity): Promise<Entity | Error> {
   if (input.grantor === undefined) return Object.assign(object, input)

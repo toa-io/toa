@@ -6,10 +6,10 @@ import {
   NAMESPACE,
   NODES
 } from '@toa.io/definitions/extensions.introspection'
-import * as keys from './keys.js'
-import type { Host } from './Factory.js'
+import * as keys from './keys.ts'
+import type { Host } from './Factory.ts'
 import type { Options } from '@toa.io/definitions/extensions.introspection'
-import type { Edge, Node } from './model.js'
+import type { Edge, Node } from './model.ts'
 import type { Remote } from '@toa.io/core'
 
 /**

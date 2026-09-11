@@ -1,4 +1,4 @@
-import type { Binding, Exports } from './exports.js'
+import type { Binding, Exports } from './exports.ts'
 
 /**
  * What an algorithm module declares, by the conventions the bridge reads a module by: the

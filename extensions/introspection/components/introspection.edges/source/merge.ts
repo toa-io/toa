@@ -1,4 +1,4 @@
-import type { Entity, MergeInput } from '../types/index.js'
+import type { Entity, MergeInput } from '../types/index.d.ts'
 
 /**
  * Records the calls observed by a collector since its last flush.

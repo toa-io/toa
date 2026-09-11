@@ -1,4 +1,4 @@
-import type { AddInput, Context, TransitOutput } from '../types/index.js'
+import type { AddInput, Context, TransitOutput } from '../types/index.d.ts'
 import type { Maybe } from '@toa.io/core/types'
 
 export async function effect(

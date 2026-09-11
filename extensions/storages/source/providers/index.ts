@@ -1,5 +1,5 @@
 import { packages } from '@toa.io/definitions/extensions.storages'
-import type { Constructor } from '../Provider.js'
+import type { Constructor } from '../Provider.ts'
 
 /**
  * A provider is loaded when a storage names it: the SDK one is written against is not paid
@@ -8,12 +8,12 @@ import type { Constructor } from '../Provider.js'
  * declares. See `provider` below for what a workspace that has not gets told.
  */
 export const providers = {
-  s3: async () => (await import('./S3.js')).S3,
-  spaces: async () => (await import('./Spaces.js')).Spaces,
-  cloudinary: async () => (await import('./Cloudinary.js')).Cloudinary,
-  fs: async () => (await import('./FileSystem.js')).FileSystem,
-  tmp: async () => (await import('./Temporary.js')).Temporary,
-  test: async () => (await import('./Test.js')).Test
+  s3: async () => (await import('./S3.ts')).S3,
+  spaces: async () => (await import('./Spaces.ts')).Spaces,
+  cloudinary: async () => (await import('./Cloudinary.ts')).Cloudinary,
+  fs: async () => (await import('./FileSystem.ts')).FileSystem,
+  tmp: async () => (await import('./Temporary.ts')).Temporary,
+  test: async () => (await import('./Test.ts')).Test
 } as const satisfies Record<string, () => Promise<Constructor>>
 
 export type Id = keyof typeof providers
@@ -41,11 +41,11 @@ function isMissingModule(error: unknown): boolean {
   return (error as { code?: string })?.code === 'ERR_MODULE_NOT_FOUND'
 }
 
-export type { Declaration } from './Declaration.js'
+export type { Declaration } from './Declaration.ts'
 
-export type { S3Options } from './S3.js'
-export type { SpacesOptions } from './Spaces.js'
-export type { CloudinaryOptions } from './Cloudinary.js'
-export type { FileSystemOptions } from './FileSystem.js'
-export type { TemporaryOptions } from './Temporary.js'
-export type { FileSystem, S3, Spaces, Cloudinary, Temporary } from './index.types.js'
+export type { S3Options } from './S3.ts'
+export type { SpacesOptions } from './Spaces.ts'
+export type { CloudinaryOptions } from './Cloudinary.ts'
+export type { FileSystemOptions } from './FileSystem.ts'
+export type { TemporaryOptions } from './Temporary.ts'
+export type { FileSystem, S3, Spaces, Cloudinary, Temporary } from './index.types.ts'

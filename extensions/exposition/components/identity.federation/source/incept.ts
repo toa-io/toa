@@ -1,6 +1,6 @@
-import { effect as create } from './create.js'
-import { principal } from './lib/index.js'
-import type { Context, Scheme } from './types/index.js'
+import { effect as create } from './create.ts'
+import { principal } from './lib/index.ts'
+import type { Context, Scheme } from './types/index.ts'
 
 export async function effect(input: Input, context: Context): Promise<Output | Error> {
   const credential = await create(input, context)

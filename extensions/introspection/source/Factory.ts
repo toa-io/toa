@@ -6,19 +6,19 @@ import {
   settings
 } from '@toa.io/definitions/extensions.introspection'
 import { NAMESPACE, uiPort } from '@toa.io/definitions/extensions.introspection'
-import { describe } from './describe.js'
-import { Reporter } from './Reporter.js'
-import { Tenant } from './Tenant.js'
-import { Composition } from './Composition.js'
-import { Explorer } from './Explorer.js'
-import { UI } from './UI.js'
-import { capture, samplable } from './sample.js'
+import { describe } from './describe.ts'
+import { Reporter } from './Reporter.ts'
+import { Tenant } from './Tenant.ts'
+import { Composition } from './Composition.ts'
+import { Explorer } from './Explorer.ts'
+import { UI } from './UI.ts'
+import { capture, samplable } from './sample.ts'
 import type {
   Declaration,
   Options,
   Settings
 } from '@toa.io/definitions/extensions.introspection'
-import type { Origin, Outcome, Target } from './model.js'
+import type { Origin, Outcome, Target } from './model.ts'
 import type { Manifest } from '@toa.io/norm'
 import type { Component, Locator } from '@toa.io/core'
 import type { Reply, Request, extensions } from '@toa.io/core/types'

@@ -6,11 +6,11 @@ import { type Connector } from '@toa.io/core'
 import { environment } from '@toa.io/generic'
 
 import { load as parse } from 'js-yaml'
-import { Factory } from '../../source/index.js'
+import { Factory } from '../../source/index.ts'
 import { shortcuts, syntax } from '@toa.io/definitions/extensions.exposition'
-import { manifests } from './map.js'
-import { PORT, PROBE } from './Parameters.js'
-import type * as http from '../../source/HTTP/index.js'
+import { manifests } from './map.ts'
+import { PORT, PROBE } from './Parameters.ts'
+import type * as http from '../../source/HTTP/index.ts'
 
 const { after, afterAll, binding, given, then, when } = tsflow
 

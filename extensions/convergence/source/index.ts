@@ -1,1 +1,1 @@
-export { Factory } from './Factory.js'
+export { Factory } from './Factory.ts'

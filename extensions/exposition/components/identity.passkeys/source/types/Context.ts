@@ -1,9 +1,9 @@
 import type { Observation, Transition } from '@toa.io/core/types'
 import type { Stash } from '@toa.io/extensions.stash'
 import type { Logs } from '@toa.io/extensions.telemetry'
-import type { Configuration } from './Configuration.js'
-import type { Passkey } from './Passkey.js'
-import type { Input as UseInput, Output as UseOutput } from '../use.js'
+import type { Configuration } from './Configuration.ts'
+import type { Passkey } from './Passkey.ts'
+import type { Input as UseInput, Output as UseOutput } from '../use.ts'
 
 export interface Context {
   configuration: Configuration

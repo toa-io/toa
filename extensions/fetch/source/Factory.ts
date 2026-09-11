@@ -1,4 +1,4 @@
-import { Aspect } from './Aspect.js'
+import { Aspect } from './Aspect.ts'
 import type { Locator } from '@toa.io/core'
 import type { extensions } from '@toa.io/core/types'
 

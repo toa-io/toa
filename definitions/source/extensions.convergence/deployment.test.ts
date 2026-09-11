@@ -4,9 +4,9 @@ import assert from 'node:assert/strict'
 import { environment } from '@toa.io/generic'
 import { resolve } from '@toa.io/pointer'
 
-import { deployment } from './deployment.js'
-import { BINDING, BROKERS, ID, REGION } from './const.js'
-import type { Declaration } from './declaration.js'
+import { deployment } from './deployment.ts'
+import { BINDING, BROKERS, ID, REGION } from './const.ts'
+import type { Declaration } from './declaration.ts'
 import type { Variable } from '@toa.io/operations'
 
 const declaration: Declaration = {

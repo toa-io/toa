@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 
 import { type Manifest } from '@toa.io/norm'
 import { generate } from 'randomstring'
-import { manifest } from './manifest.js'
+import { manifest } from './manifest.ts'
 
 const name = 'cm-' + generate()
 const namespace = 'ns' + generate()

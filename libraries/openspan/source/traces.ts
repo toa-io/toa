@@ -1,9 +1,9 @@
-import { sampling } from './tracing.js'
-import { consoleExporter, exporting } from './exporters.js'
-import { Otlp } from './Otlp.js'
-import type { Exporter } from './exporters.js'
-import type { OtlpOptions } from './Otlp.js'
-import type { SamplingOptions } from './tracing.js'
+import { sampling } from './tracing.ts'
+import { consoleExporter, exporting } from './exporters.ts'
+import { Otlp } from './Otlp.ts'
+import type { Exporter } from './exporters.ts'
+import type { OtlpOptions } from './Otlp.ts'
+import type { SamplingOptions } from './tracing.ts'
 
 /**
  * Configures tracing: sampling and span exporters.

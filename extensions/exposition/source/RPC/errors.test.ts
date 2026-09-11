@@ -1,7 +1,7 @@
 import { describe, it } from 'node:test'
 import assert from 'node:assert/strict'
 
-import * as http from '../HTTP/index.js'
+import * as http from '../HTTP/index.ts'
 import {
   FORBIDDEN,
   INTERNAL,
@@ -9,7 +9,7 @@ import {
   METHOD_NOT_FOUND,
   REFUSED,
   of
-} from './errors.js'
+} from './errors.ts'
 
 describe('of', () => {
   it('should read a missing route as a missing method', () => {

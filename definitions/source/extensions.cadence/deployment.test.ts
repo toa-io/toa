@@ -1,9 +1,9 @@
 import { it } from 'node:test'
 import assert from 'node:assert/strict'
 
-import { deployment } from './deployment.js'
-import { DISCRETENESS, REGIONS } from './const.js'
-import type { Annotation } from './types.js'
+import { deployment } from './deployment.ts'
+import { DISCRETENESS, REGIONS } from './const.ts'
+import type { Annotation } from './types.ts'
 import type { Variable } from '@toa.io/operations'
 
 const variables = (annotation?: Annotation | null): Variable[] =>

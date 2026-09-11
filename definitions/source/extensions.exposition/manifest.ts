@@ -1,6 +1,6 @@
-import { parse, type Node, type Method, type Query } from './syntax/index.js'
-import { shortcuts } from './shortcuts.js'
-import * as schemas from './schemas.js'
+import { parse, type Node, type Method, type Query } from './syntax/index.ts'
+import { shortcuts } from './shortcuts.ts'
+import * as schemas from './schemas.ts'
 import type { Manifest } from '@toa.io/norm'
 
 export function manifest(declaration: object, manifest: Manifest): Node {

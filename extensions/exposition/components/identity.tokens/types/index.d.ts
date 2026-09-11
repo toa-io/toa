@@ -3,8 +3,8 @@ export * from './toa.d.ts'
 // What a manifest does not state belongs here, and every run keeps it.
 
 import type { Logs } from '@toa.io/extensions.telemetry'
-import type { AuthenticateOutput, Component, Configuration } from './toa.js'
-export type { DecryptOutput } from './toa.js'
+import type { AuthenticateOutput, Component, Configuration } from './toa.d.ts'
+export type { DecryptOutput } from './toa.d.ts'
 
 /** Who the token is for, as it travels: the claim set the gateway is written against. */
 export type Identity = AuthenticateOutput['identity']

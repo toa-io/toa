@@ -1,6 +1,6 @@
-import { secrets as declared } from './secrets.js'
-import { validateAnnotation } from './Annotation.js'
-import type { Annotation } from './Annotation.js'
+import { secrets as declared } from './secrets.ts'
+import { validateAnnotation } from './Annotation.ts'
+import type { Annotation } from './Annotation.ts'
 import type { Dependency, Variable, Mounts } from '@toa.io/operations'
 import type { context } from '@toa.io/norm'
 

@@ -1,5 +1,5 @@
-import { refusal } from '../../RPC/names.js'
-import { segment } from '../../RTD/segment.js'
+import { refusal } from '../../RPC/names.ts'
+import { segment } from '../../RTD/segment.ts'
 
 /**
  * Whether one method is published to a model. Declaring it is what publishes it, and it

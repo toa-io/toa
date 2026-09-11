@@ -1,5 +1,5 @@
-import type { Parameter } from '../../../../../RTD/index.js'
-import type { Input as Context } from '../../../../../io.js'
+import type { Parameter } from '../../../../../RTD/index.ts'
+import type { Input as Context } from '../../../../../io.ts'
 
 export interface Component {
   /** what to key on, or nothing when the request cannot be keyed by this component */

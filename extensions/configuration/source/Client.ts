@@ -3,7 +3,7 @@ import { Connector, Locator } from '@toa.io/core'
 import { EVENT, SOURCE } from '@toa.io/definitions/extensions.configuration'
 import type { Remote } from '@toa.io/core'
 import type { Message } from '@toa.io/core/types'
-import type { Host } from './Factory.js'
+import type { Host } from './Factory.ts'
 
 /**
  * One per process: one remote to the values service and one subscription to its events,

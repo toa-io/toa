@@ -1,2 +1,2 @@
-export type { Algorithm, Operation, func } from './algorithms.js'
-export type { Context } from './context.js'
+export type { Algorithm, Operation, func } from './algorithms.d.ts'
+export type { Context } from './context.d.ts'

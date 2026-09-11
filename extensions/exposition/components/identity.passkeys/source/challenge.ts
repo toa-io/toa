@@ -1,8 +1,8 @@
 import { randomBytes } from 'node:crypto'
 import { newid, quote } from '@toa.io/generic'
-import { MAX_KEYS } from './lib/const.js'
+import { MAX_KEYS } from './lib/const.ts'
 import type { Operation } from '@toa.io/bridges.node'
-import type { Context } from './types/index.js'
+import type { Context } from './types/index.ts'
 
 export class Effect implements Operation {
   private timeout!: number

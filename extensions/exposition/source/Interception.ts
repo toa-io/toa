@@ -1,5 +1,5 @@
-import type * as http from './HTTP/index.js'
-import type { Input, Output } from './io.js'
+import type * as http from './HTTP/index.ts'
+import type { Input, Output } from './io.ts'
 
 export class Interception implements Interceptor {
   private readonly interceptors: Interceptor[]

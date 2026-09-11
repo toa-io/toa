@@ -1,6 +1,6 @@
 import { AsyncLocalStorage } from 'node:async_hooks'
 import { environment } from '@toa.io/generic'
-import { LoopException } from './exceptions.js'
+import { LoopException } from './exceptions.ts'
 
 /**
  * What the invocation running now came by: the chain of hops it passed through and the rule that

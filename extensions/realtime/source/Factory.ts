@@ -1,8 +1,8 @@
 import { type Component, Locator } from '@toa.io/core'
 import type { extensions } from '@toa.io/core/types'
-import { Realtime } from './Realtime.js'
-import { Composition } from './Composition.js'
-import { Routes } from './Routes.js'
+import { Realtime } from './Realtime.ts'
+import { Composition } from './Composition.ts'
+import { Routes } from './Routes.ts'
 
 export class Factory implements extensions.Factory {
   private readonly host: Host

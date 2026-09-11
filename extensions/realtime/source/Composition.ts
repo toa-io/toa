@@ -1,7 +1,7 @@
 import { readdirSync, type Dirent } from 'node:fs'
 import { resolve } from 'node:path'
 import { Connector } from '@toa.io/core'
-import { type Host } from './Factory.js'
+import { type Host } from './Factory.ts'
 
 export class Composition extends Connector {
   private readonly host: Host

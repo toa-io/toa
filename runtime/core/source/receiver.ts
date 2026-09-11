@@ -1,11 +1,11 @@
 import { console, decode, run, type SpanOptions } from 'openspan'
 import { add } from '@toa.io/generic'
-import { Connector } from './connector.js'
-import * as trail from './trail.js'
-import type { Component } from './component.js'
-import type { Receiver as Bridge } from './types/bridges.js'
-import type { Message } from './types/message.js'
-import type { Request, Source } from './types/request.js'
+import { Connector } from './connector.ts'
+import * as trail from './trail.ts'
+import type { Component } from './component.ts'
+import type { Receiver as Bridge } from './types/bridges.ts'
+import type { Message } from './types/message.ts'
+import type { Request, Source } from './types/request.ts'
 
 export interface Definition {
   conditioned?: boolean

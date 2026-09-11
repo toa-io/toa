@@ -1,10 +1,10 @@
-import { type Route } from './Route.js'
-import { type Method, type Methods } from './Method.js'
-import { type Match, type Parameter } from './Match.js'
-import type { Segment } from './segment.js'
-import type { Context } from '../HTTP/index.js'
-import { guarded, resource, type Described } from '../directives/help/index.js'
-import type { Introspection } from '../Introspection.js'
+import { type Route } from './Route.ts'
+import { type Method, type Methods } from './Method.ts'
+import { type Match, type Parameter } from './Match.ts'
+import type { Segment } from './segment.ts'
+import type { Context } from '../HTTP/index.ts'
+import { guarded, resource, type Described } from '../directives/help/index.ts'
+import type { Introspection } from '../Introspection.ts'
 
 export class Node {
   public intermediate: boolean

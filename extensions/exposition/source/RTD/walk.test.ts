@@ -1,11 +1,11 @@
 import { describe, it, mock } from 'node:test'
 import assert from 'node:assert/strict'
 
-import { Tree } from './Tree.js'
-import { address, name } from '../RPC/names.js'
-import type { EndpointsFactory } from '../Endpoint.js'
-import type { DirectiveFactory } from './Directives.js'
-import type * as syntax from './syntax/index.js'
+import { Tree } from './Tree.ts'
+import { address, name } from '../RPC/names.ts'
+import type { EndpointsFactory } from '../Endpoint.ts'
+import type { DirectiveFactory } from './Directives.ts'
+import type * as syntax from './syntax/index.ts'
 
 const endpoints = {} as unknown as EndpointsFactory
 

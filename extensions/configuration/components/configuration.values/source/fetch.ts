@@ -1,4 +1,4 @@
-import { resolve, type Context } from './lib/resolve.js'
+import { resolve, type Context } from './lib/resolve.ts'
 
 export async function computation(input: Pair[], context: Context): Promise<Fetched[]> {
   return await Promise.all(

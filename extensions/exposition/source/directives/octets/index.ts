@@ -1,3 +1,3 @@
-import { Octets } from './Octets.js'
+import { Octets } from './Octets.ts'
 
 export const octets = new Octets()

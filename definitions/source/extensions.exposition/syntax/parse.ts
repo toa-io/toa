@@ -1,4 +1,4 @@
-import * as schemas from '../schemas.js'
+import * as schemas from '../schemas.ts'
 import {
   verbs,
   type Node,
@@ -7,7 +7,7 @@ import {
   type Mapping,
   type Directive,
   type Range
-} from './types.js'
+} from './types.ts'
 
 export function parse(input: object, shortcuts?: Shortcuts): Node {
   const node = parseNode(input, shortcuts)

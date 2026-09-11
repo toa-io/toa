@@ -5,11 +5,11 @@ import { randomUUID } from 'node:crypto'
 import { buffer } from 'node:stream/consumers'
 import { createReadStream } from 'node:fs'
 import path from 'node:path'
-import { Storage } from './Storage.js'
-import { suites } from './test/util.js'
-import { providers } from './providers/index.js'
-import type { Entry, Stream } from './Entry.js'
-import type { Constructor } from './Provider.js'
+import { Storage } from './Storage.ts'
+import { suites } from './test/util.ts'
+import { providers } from './providers/index.ts'
+import type { Entry, Stream } from './Entry.ts'
+import type { Constructor } from './Provider.ts'
 
 const suite = suites[0]
 const Provider: Constructor = await providers[suite.provider]()

@@ -2,7 +2,7 @@ import { it, beforeEach, mock } from 'node:test'
 import assert from 'node:assert/strict'
 import { Locator } from '@toa.io/core'
 
-import { Destination } from './Destination.js'
+import { Destination } from './Destination.ts'
 import type { bindings, outbox } from '@toa.io/core/types'
 
 let outbound: any

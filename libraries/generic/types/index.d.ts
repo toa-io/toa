@@ -44,10 +44,10 @@ export function find(reference: string, base: string, indicator?: string): strin
 
 export function match(candidate: any, reference: any): boolean
 
-export { promex } from './promex.js'
-export { merge, add, overwrite } from './merge.js'
-export { map } from './map.js'
-export * as letters from './letters.js'
+export { promex } from './promex.d.ts'
+export { merge, add, overwrite } from './merge.d.ts'
+export { map } from './map.d.ts'
+export * as letters from './letters.d.ts'
 
 export namespace yaml {
   function load(text: string, options?: object): any

@@ -2,7 +2,7 @@ import { readdirSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { Connector } from '@toa.io/core'
 import type { Dirent } from 'node:fs'
-import type { Host } from './Factory.js'
+import type { Host } from './Factory.ts'
 
 /** The components this extension ships, which run inside its own service. */
 export function components(): Components {

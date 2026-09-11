@@ -1,8 +1,8 @@
 import { describe, it } from 'node:test'
 import assert from 'node:assert/strict'
 
-import { exports } from './exports.js'
-import { algorithm } from './operations.js'
+import { exports } from './exports.ts'
+import { algorithm } from './operations.ts'
 
 const define = (text: string): ReturnType<typeof algorithm> =>
   algorithm(exports('module.js', text), 'module.js')

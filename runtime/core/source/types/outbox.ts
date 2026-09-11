@@ -1,5 +1,5 @@
-import type { Connector } from '../connector.js'
-import type { Event } from './state.js'
+import type { Connector } from '../connector.ts'
+import type { Event } from './state.ts'
 
 /**
  * The intent to publish, committed with the state change it belongs to. Everything about it

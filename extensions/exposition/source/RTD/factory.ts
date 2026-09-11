@@ -1,10 +1,10 @@
 import { BRANCH_TTL } from '@toa.io/definitions/extensions.exposition'
-import { Node, type Properties } from './Node.js'
-import { Route } from './Route.js'
-import { fragment, segment } from './segment.js'
-import { Method, type Methods } from './Method.js'
-import type { Context } from './Context.js'
-import type * as syntax from './syntax/index.js'
+import { Node, type Properties } from './Node.ts'
+import { Route } from './Route.ts'
+import { fragment, segment } from './segment.ts'
+import { Method, type Methods } from './Method.ts'
+import type { Context } from './Context.ts'
+import type * as syntax from './syntax/index.ts'
 
 export function createNode(node: syntax.Node, context: Context): Node {
   if (node.isolated === true) context.directives.stack = node.directives

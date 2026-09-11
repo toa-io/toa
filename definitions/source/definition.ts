@@ -9,7 +9,7 @@ export async function definition(reference: string): Promise<object | undefined>
 
   if (!DEFINED.has(suffix)) return undefined
 
-  cache[suffix] ??= import(`./${suffix}/index.js`)
+  cache[suffix] ??= import(`./${suffix}/index.ts`)
 
   return cache[suffix]
 }

@@ -1,4 +1,4 @@
-import { type Context, type PushInput } from '../types/index.js'
+import type { Context, PushInput } from '../types/index.d.ts'
 
 export async function effect(
   { key, event, data }: PushInput,

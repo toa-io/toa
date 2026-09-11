@@ -1,8 +1,8 @@
-import type { S3Options } from './S3.js'
-import type { SpacesOptions } from './Spaces.js'
-import type { CloudinaryOptions } from './Cloudinary.js'
-import type { FileSystemOptions } from './FileSystem.js'
-import type { TemporaryOptions } from './Temporary.js'
+import type { S3Options } from './S3.ts'
+import type { SpacesOptions } from './Spaces.ts'
+import type { CloudinaryOptions } from './Cloudinary.ts'
+import type { FileSystemOptions } from './FileSystem.ts'
+import type { TemporaryOptions } from './Temporary.ts'
 
 export type Declaration =
   | ({ provider: 's3' } & S3Options)

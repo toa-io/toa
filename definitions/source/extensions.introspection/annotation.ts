@@ -1,4 +1,4 @@
-import { DEFAULT_INTERVAL, DEFAULT_THRESHOLD, DENIED, ENV } from './const.js'
+import { DEFAULT_INTERVAL, DEFAULT_THRESHOLD, DENIED, ENV } from './const.ts'
 import { environment as variables } from '@toa.io/generic'
 import type { Resources } from '@toa.io/operations'
 

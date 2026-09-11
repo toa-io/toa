@@ -1,6 +1,6 @@
-import { Connector } from './connector.js'
-import type { Event } from './event.js'
-import type { Row } from './types/outbox.js'
+import { Connector } from './connector.ts'
+import type { Event } from './event.ts'
+import type { Row } from './types/outbox.ts'
 
 export class Emission extends Connector {
   /** what a row is outstanding for while this has not published it */

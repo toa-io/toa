@@ -1,11 +1,11 @@
 import { retry } from '@toa.io/generic'
-import { Operation } from './operation.js'
-import { StateConcurrencyException, StateNotFoundException } from './exceptions.js'
-import type { Contracts, Definition, Store } from './operation.js'
-import type { Cascade } from './cascade.js'
-import type { State } from './state.js'
-import type { Query as Translator } from './query.js'
-import type { Entity } from './entities/entity.js'
+import { Operation } from './operation.ts'
+import { StateConcurrencyException, StateNotFoundException } from './exceptions.ts'
+import type { Contracts, Definition, Store } from './operation.ts'
+import type { Cascade } from './cascade.ts'
+import type { State } from './state.ts'
+import type { Query as Translator } from './query.ts'
+import type { Entity } from './entities/entity.ts'
 
 export class Transition extends Operation {
   /** a transition is the only operation that commits */

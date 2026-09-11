@@ -1,6 +1,6 @@
 import { console } from 'openspan'
 import { environment } from '@toa.io/generic'
-import type { Locator } from './locator.js'
+import type { Locator } from './locator.ts'
 
 /** Abstract connections hierarchy */
 export class Connector {

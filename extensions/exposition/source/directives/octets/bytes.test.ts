@@ -1,7 +1,7 @@
 import { it } from 'node:test'
 import assert from 'node:assert/strict'
 
-import { toBytes } from './bytes.js'
+import { toBytes } from './bytes.ts'
 
 it('should parse bytes', async () => {
   assert.strictEqual(toBytes('10'), 10)

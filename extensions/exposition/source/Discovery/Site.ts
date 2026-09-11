@@ -2,10 +2,10 @@ import * as fs from 'node:fs'
 import * as path from 'node:path'
 import { Readable } from 'node:stream'
 import { console } from 'openspan'
-import * as http from '../HTTP/index.js'
+import * as http from '../HTTP/index.ts'
 import { DISCOVERY } from '@toa.io/definitions/extensions.exposition'
-import type { Input, Output } from '../io.js'
-import type { Interceptor } from '../Interception.js'
+import type { Input, Output } from '../io.ts'
+import type { Interceptor } from '../Interception.ts'
 
 /**
  * The page that reads the tree: the directory `ui` builds, and nothing else.

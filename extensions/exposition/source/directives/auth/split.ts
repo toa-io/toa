@@ -1,5 +1,5 @@
-import * as http from '../../HTTP/index.js'
-import { type Scheme } from './types.js'
+import * as http from '../../HTTP/index.ts'
+import { type Scheme } from './types.ts'
 
 export function split(authorization: string): [Scheme, string] {
   const space = authorization.indexOf(' ')

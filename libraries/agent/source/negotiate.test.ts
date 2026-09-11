@@ -1,7 +1,7 @@
 import { it } from 'node:test'
 import assert from 'node:assert/strict'
 
-import { negotiate } from './negotiate.js'
+import { negotiate } from './negotiate.ts'
 
 it('should return acceptable', async () => {
   const accept = 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp'

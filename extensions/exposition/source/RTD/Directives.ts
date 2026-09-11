@@ -1,8 +1,8 @@
-import type { Parameter } from './Match.js'
-import type * as syntax from './syntax/index.js'
-import type { Context, OutgoingMessage, Options } from '../HTTP/index.js'
-import type { Output } from '../io.js'
-import type { Introspection } from '../Introspection.js'
+import type { Parameter } from './Match.ts'
+import type * as syntax from './syntax/index.ts'
+import type { Context, OutgoingMessage, Options } from '../HTTP/index.ts'
+import type { Output } from '../io.ts'
+import type { Introspection } from '../Introspection.ts'
 import type { extensions } from '@toa.io/core/types'
 
 type Host = extensions.Host

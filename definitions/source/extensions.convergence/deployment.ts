@@ -1,6 +1,6 @@
 import { createVariables, normalize } from '@toa.io/pointer'
-import { BINDING, BROKERS, ID, REGION } from './const.js'
-import type { Declaration } from './declaration.js'
+import { BINDING, BROKERS, ID, REGION } from './const.ts'
+import type { Declaration } from './declaration.ts'
 import type { context } from '@toa.io/norm'
 import type { Dependency, Variable } from '@toa.io/operations'
 

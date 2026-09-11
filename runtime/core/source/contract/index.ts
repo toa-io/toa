@@ -1,2 +1,2 @@
-export { Request } from './request.js'
-export { Reply } from './reply.js'
+export { Request } from './request.ts'
+export { Reply } from './reply.ts'

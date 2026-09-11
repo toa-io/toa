@@ -1,3 +1,3 @@
-export * from './code.js'
-export * from './identify.js'
-export type * from '../../types/index.js'
+export * from './code.ts'
+export * from './identify.ts'
+export type * from '../../types/index.d.ts'

@@ -1,7 +1,7 @@
-import { Deployment, type Request } from './Deployment.js'
-import { normalize } from './annotation.js'
+import { Deployment, type Request } from './Deployment.ts'
+import { normalize } from './annotation.ts'
 import type { Variables } from '@toa.io/operations'
-import type { Declaration } from './annotation.js'
+import type { Declaration } from './annotation.ts'
 
 export function createVariables(
   id: string,

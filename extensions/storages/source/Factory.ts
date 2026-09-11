@@ -1,12 +1,12 @@
 import { console } from 'openspan'
-import { provider as load } from './providers/index.js'
-import { Storage, type Storages } from './Storage.js'
-import { Aspect } from './Aspect.js'
+import { provider as load } from './providers/index.ts'
+import { Storage, type Storages } from './Storage.ts'
+import { Aspect } from './Aspect.ts'
 import { ENV_PREFIX, validateAnnotation } from '@toa.io/definitions/extensions.storages'
 import { environment } from '@toa.io/generic'
-import type { Constructor } from './Provider.js'
-import type { Declaration } from './providers/index.js'
-import type { Secrets } from './Secrets.js'
+import type { Constructor } from './Provider.ts'
+import type { Declaration } from './providers/index.ts'
+import type { Secrets } from './Secrets.ts'
 import type { Annotation } from '@toa.io/definitions/extensions.storages'
 
 export class Factory {

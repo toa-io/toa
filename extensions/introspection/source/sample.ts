@@ -1,6 +1,6 @@
 import { Readable } from 'node:stream'
 import { REDACTED, SAMPLE_LIMIT } from '@toa.io/definitions/extensions.introspection'
-import type { Outcome, Sample } from './model.js'
+import type { Outcome, Sample } from './model.ts'
 
 /**
  * Captures the payload of a call. Only reached when both the context and the

@@ -1,8 +1,8 @@
 import { setTimeout } from 'node:timers/promises'
 import { Connector } from '@toa.io/core'
 import { ANNOUNCE_INTERVAL } from '@toa.io/definitions/extensions.introspection'
-import type { Reporter } from './Reporter.js'
-import type { Node } from './model.js'
+import type { Reporter } from './Reporter.ts'
+import type { Node } from './model.ts'
 
 /**
  * Announces the static description of a component.

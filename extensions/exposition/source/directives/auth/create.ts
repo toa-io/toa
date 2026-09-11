@@ -1,5 +1,5 @@
 import { newid } from '@toa.io/generic'
-import type { Identity } from './types.js'
+import type { Identity } from './types.ts'
 
 export function create(credentials?: string): Identity {
   return {

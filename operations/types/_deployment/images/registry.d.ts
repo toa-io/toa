@@ -1,8 +1,8 @@
 // noinspection ES6UnusedImports
 
 import type { Composition } from '@toa.io/norm'
-import type { dependency } from '../dependency.js'
-import type { Image } from './image.js'
+import type { dependency } from '../dependency.d.ts'
+import type { Image } from './image.d.ts'
 
 declare namespace toa.deployment.images {
   interface Registry {

@@ -1,7 +1,7 @@
 import { it } from 'node:test'
 import assert from 'node:assert/strict'
 
-import { now } from './now.js'
+import { now } from './now.ts'
 
 const time = new Date().getTime()
 

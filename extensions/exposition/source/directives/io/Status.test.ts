@@ -1,10 +1,10 @@
 import { it } from 'node:test'
 import assert from 'node:assert/strict'
 
-import { Status } from './Status.js'
-import { Output } from './Output.js'
-import type { Input as Context } from '../../io.js'
-import type { OutgoingMessage } from '../../HTTP/index.js'
+import { Status } from './Status.ts'
+import { Output } from './Output.ts'
+import type { Input as Context } from '../../io.ts'
+import type { OutgoingMessage } from '../../HTTP/index.ts'
 
 const status = new Status('status')
 

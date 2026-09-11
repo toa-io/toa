@@ -1,8 +1,8 @@
-import { components } from './components.js'
-import { version } from '../version.js'
-import { DISCRETENESS, NAMESPACE, REGIONS } from './const.js'
-import * as schemas from './schemas.js'
-import type { Annotation } from './types.js'
+import { components } from './components.ts'
+import { version } from '../version.ts'
+import { DISCRETENESS, NAMESPACE, REGIONS } from './const.ts'
+import * as schemas from './schemas.ts'
+import type { Annotation } from './types.ts'
 import type { Dependency, Service, Variable } from '@toa.io/operations'
 
 /**

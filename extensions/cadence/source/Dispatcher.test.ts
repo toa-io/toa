@@ -3,9 +3,9 @@ import assert from 'node:assert/strict'
 import { console } from 'openspan'
 
 import { exceptions } from '@toa.io/core'
-import { Dispatcher } from './Dispatcher.js'
+import { Dispatcher } from './Dispatcher.ts'
 import { BATCH, LANES } from '@toa.io/definitions/extensions.cadence'
-import type { Local } from './Local.js'
+import type { Local } from './Local.ts'
 import type { atomicity } from '@toa.io/core/types'
 
 type Invoke = (endpoint: string, request: any) => Promise<unknown>

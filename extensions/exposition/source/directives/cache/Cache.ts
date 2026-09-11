@@ -1,10 +1,10 @@
-import { Control } from './Control.js'
-import { Exact } from './Exact.js'
-import { matches, tag } from './etag.js'
-import type { Output } from '../../io.js'
-import type { AuthenticatedContext, Directive } from './types.js'
-import type { DirectiveFamily } from '../../RTD/index.js'
-import type * as http from '../../HTTP/index.js'
+import { Control } from './Control.ts'
+import { Exact } from './Exact.ts'
+import { matches, tag } from './etag.ts'
+import type { Output } from '../../io.ts'
+import type { AuthenticatedContext, Directive } from './types.ts'
+import type { DirectiveFamily } from '../../RTD/index.ts'
+import type * as http from '../../HTTP/index.ts'
 
 export class Cache implements DirectiveFamily<Directive> {
   public readonly name: string = 'cache'

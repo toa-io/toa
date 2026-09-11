@@ -1,7 +1,7 @@
-import { documents, type Documents } from './documents.js'
-import type * as http from '../../HTTP/index.js'
-import type { Input, Output } from '../../io.js'
-import type { Interceptor } from '../../Interception.js'
+import { documents, type Documents } from './documents.ts'
+import type * as http from '../../HTTP/index.ts'
+import type { Input, Output } from '../../io.ts'
+import type { Interceptor } from '../../Interception.ts'
 
 /**
  * What a client reads before it can authenticate: where the authorization server is, and

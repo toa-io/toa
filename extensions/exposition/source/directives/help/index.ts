@@ -1,8 +1,8 @@
-import { Family, FAMILY } from './Family.js'
-import type { Directive } from './Family.js'
-import type { Described } from './described.js'
-import type { Directives } from '../../RTD/index.js'
-import type { Introspection } from '../../Introspection.js'
+import { Family, FAMILY } from './Family.ts'
+import type { Directive } from './Family.ts'
+import type { Described } from './described.ts'
+import type { Directives } from '../../RTD/index.ts'
+import type { Introspection } from '../../Introspection.ts'
 
 export const help = new Family()
 
@@ -38,8 +38,8 @@ export function guarded(methods: Record<string, Introspection>): Described {
 
 const FLAGS = ['authenticated', 'private', 'protected', 'system'] as const
 
-export { FAMILY, Family } from './Family.js'
-export { Help } from './Help.js'
-export { Parameters } from './Parameters.js'
-export type { Directive } from './Family.js'
-export type { Described } from './described.js'
+export { FAMILY, Family } from './Family.ts'
+export { Help } from './Help.ts'
+export { Parameters } from './Parameters.ts'
+export type { Directive } from './Family.ts'
+export type { Described } from './described.ts'

@@ -1,4 +1,4 @@
-import type { Context, Entity } from '../types/index.js'
+import type { Context, Entity } from '../types/index.ts'
 
 /**
  * The `system` Role is granted where the credentials are created, before the reply that mints
