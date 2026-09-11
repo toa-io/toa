@@ -4,12 +4,18 @@ export function to(entity) {
   return /** @type {toa.mongodb.Record} */ { _id: id, ...rest }
 }
 
+/**
+ * Renamed in the object the driver decoded, which is a new one for every document; an entity
+ * copies a state before an operation that writes changes it. A copy costs ten times the rename,
+ * and what it would keep is only `id` in front, which a reply does not promise.
+ */
 export function from(record) {
   if (record === undefined || record === null) return null
 
-  const { _id, ...rest } = record
+  record.id = record._id
+  delete record._id
 
-  return { id: _id, ...rest }
+  return record
 }
 
 /**
