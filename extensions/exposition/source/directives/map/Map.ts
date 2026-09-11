@@ -55,12 +55,21 @@ export class Map implements DirectiveFamily {
   ): Promise<Output> {
     const properties = {}
 
+    // whether any mapping fills the input: `map:instance` names the call's process and fills
+    // nothing, and a route mapping that alone keeps an input of none as none
+    let fills = false
+
     for (const directive of directives)
-      if (directive instanceof Mapping)
+      if (directive instanceof Mapping) {
         Object.assign(
           properties,
           await directive.properties(context, parameters, directives)
         )
+
+        if (!(directive instanceof Instance)) fills = true
+      }
+
+    if (!fills) return null
 
     context.pipelines.body.push((body: unknown) => {
       if (body === undefined || body === null || typeof body !== 'object')
