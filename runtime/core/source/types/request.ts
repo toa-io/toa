@@ -52,6 +52,11 @@ export interface Request<Input = any, Entity = any> {
    * been where it is going already is refused rather than made. See `core/source/trail.ts`.
    */
   trail?: string[]
+  /**
+   * The properties of the output this caller receives, of each object the operation answers. An
+   * empty list receives none of it, and a request that names none receives the output whole.
+   */
+  output?: string[]
   /** the sender validated against the contract, so the recipient does not */
   authentic?: boolean
   /** W3C traceparent */
@@ -70,6 +75,11 @@ export interface Options {
   timeout?: number
   /** Ends the wait when it aborts, within the timeout. */
   signal?: AbortSignal
+  /**
+   * Answers the reply as the operation returned it — its output, and what travels beside it —
+   * where a caller reads more of it than the output alone.
+   */
+  whole?: boolean
 }
 
 /**
@@ -101,4 +111,15 @@ export interface Reply {
   output?: any
   error?: object
   exception?: Exception
+  /**
+   * What an object output carries of the entity it answers, taken out of it where the request
+   * restricted the output: a caller reads them whatever it asked to receive.
+   */
+  system?: System
+}
+
+export interface System {
+  VERSION?: number
+  CREATED?: number
+  UPDATED?: number
 }
