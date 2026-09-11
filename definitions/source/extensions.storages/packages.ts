@@ -9,8 +9,8 @@ import type { Instance } from './deployment.js'
  * declares them — `packages.test.ts` is what keeps the two the same.
  */
 export const packages: Record<Provider, Readonly<Record<string, string>>> = {
-  s3: { '@aws-sdk/client-s3': '3.1125.0', '@aws-sdk/lib-storage': '3.1125.0' },
-  spaces: { '@aws-sdk/client-s3': '3.1125.0', '@aws-sdk/lib-storage': '3.1125.0' },
+  s3: { '@aws-sdk/client-s3': '3.1127.0', '@aws-sdk/lib-storage': '3.1127.0' },
+  spaces: { '@aws-sdk/client-s3': '3.1127.0', '@aws-sdk/lib-storage': '3.1127.0' },
   cloudinary: { cloudinary: '2.11.0' },
   fs: {},
   tmp: {},
