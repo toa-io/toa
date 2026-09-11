@@ -38,6 +38,7 @@ export interface Claims {
 export interface JWEClaims extends Omit<Claims, 'iat' | 'exp'> {
   iat: number
   exp?: number
+  nbf?: number
 }
 
 /** What this component is given: its own operations, and the two it reads keys and roles from. */
