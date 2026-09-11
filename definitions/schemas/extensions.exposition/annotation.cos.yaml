@@ -47,6 +47,24 @@ properties:
         type: integer
         minimum: 1
     additionalProperties: false
+  censor:
+    description: Header values a request is answered 451 for
+    type: object
+    properties:
+      header:
+        description: The request header the values are read from, in any case
+        type: string
+        minLength: 1
+      values:
+        description: What the header holds for a request to be refused, compared exactly
+        type: array
+        items:
+          type: string
+        minItems: 1
+    required:
+      - header
+      - values
+    additionalProperties: false
   protocol:
     type: string
     enum: [h1, h2c]

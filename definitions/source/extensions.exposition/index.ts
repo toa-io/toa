@@ -10,6 +10,7 @@ export * as syntax from './syntax/index.js'
 export type {
   Annotation,
   Bouncer,
+  Censor,
   MCP as MCPAnnotation,
   OAuth,
   Protocol,

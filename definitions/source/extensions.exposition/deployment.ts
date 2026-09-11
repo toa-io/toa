@@ -67,6 +67,8 @@ export function deployment(_: unknown, annotation?: Annotation): Dependency {
 
   if (annotation.bouncer !== undefined) properties.bouncer = annotation.bouncer
 
+  if (annotation.censor !== undefined) properties.censor = annotation.censor
+
   if (annotation.oauth !== undefined) properties.oauth = annotation.oauth
 
   if (annotation.rpc !== undefined) properties.rpc = annotation.rpc
@@ -91,5 +93,5 @@ export function deployment(_: unknown, annotation?: Annotation): Dependency {
 
 type Properties = Pick<
   Annotation,
-  'authorities' | 'debug' | 'protocol' | 'bouncer' | 'ip' | 'oauth' | 'rpc' | 'mcp'
+  'authorities' | 'debug' | 'protocol' | 'bouncer' | 'censor' | 'ip' | 'oauth' | 'rpc' | 'mcp'
 >
