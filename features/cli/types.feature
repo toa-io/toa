@@ -72,3 +72,24 @@ Feature: toa types
     # what it is called from is not knowable here, so no Context is written
     Then the file ./components/dummies.one/types/toa.d.ts contains exact line 'export interface Component {'
     And the file ./components/dummies.one/types/index.d.ts contains exact line 'export * from \'./toa.d.ts\''
+
+  Scenario: An evicted component still gets types
+
+    Eviction is that Toa does not deploy it, not that it is gone: its types are still written,
+    and it stays on what the Context can call.
+
+    Given I have components:
+      | dummies.one |
+      | dummies.two |
+    And I have a context with:
+      """yaml
+      evicted:
+        components:
+          - dummies.two
+      """
+    And my working directory is ./
+    When I run `toa types`
+    Then the file ./components/dummies.two/types/toa.d.ts contains exact line 'export interface Component {'
+    And the file ./components/dummies.two/types/toa.d.ts contains exact line 'export type Context = Base<Component>'
+    And the file ./types/toa.d.ts contains line starting with '    one: '
+    And the file ./types/toa.d.ts contains line starting with '    two: '

@@ -154,8 +154,9 @@ for what is no longer there.
 
 An eviction an environment states is a deployment's business alone. One that states no
 environment is read by the workspace commands too — `toa npm` installs nothing for the evicted
-component, and `toa types` writes it no types and drops it from what the Context can call. So
-evict for the environment that is not to deploy it, and keep developing it in the one that is.
+component. `toa types` still writes its types and keeps it on what the Context can call: it
+is still there, Toa just does not deploy it. Evict for the environment that is not to deploy
+it, and keep developing it in the one that is.
 
 ## Base image
 
