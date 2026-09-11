@@ -58,6 +58,9 @@ After(async function () {
   try {
     await stage.shutdown()
   } finally {
+    // see 'calls within this process go through the broker'
+    delete globalThis.TOA_INTEGRATION_BINDINGS_LOOP_DISABLED
+
     process.chdir(ORIGIN)
 
     await rm(this.workspace, { recursive: true, force: true, maxRetries: 3 })

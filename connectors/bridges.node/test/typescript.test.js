@@ -58,15 +58,16 @@ describe('factory', () => {
   })
 
   it('should run the run commands', async () => {
-    const { preflight, settle, dispose } = await factory.rc(root, context)
+    const { preflight, settle, ready, dispose } = await factory.rc(root, context)
 
     calls.length = 0
 
     await preflight.connect()
     await settle.connect()
+    await ready.connect()
     await dispose.connect()
     await dispose.disconnect()
 
-    assert.deepStrictEqual(calls, ['preflight', 'settle', 'dispose'])
+    assert.deepStrictEqual(calls, ['preflight', 'settle', 'ready', 'dispose'])
   })
 })

@@ -25,7 +25,7 @@ class Commands extends Connector {
 }
 
 /**
- * A startup phase: `preflight` and `settle`
+ * A startup phase: `preflight`, `settle` and `ready`
  */
 export class Phase extends Commands {
   async open() {

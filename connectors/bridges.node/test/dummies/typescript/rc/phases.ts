@@ -8,6 +8,10 @@ export async function settle(): Promise<void> {
   calls.push('settle')
 }
 
+export async function ready(): Promise<void> {
+  calls.push('ready')
+}
+
 export async function dispose(): Promise<void> {
   calls.push('dispose')
 }
