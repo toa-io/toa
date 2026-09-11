@@ -111,6 +111,9 @@ spec:
           labelSelector:
             matchLabels:
               toa/composition: mono
+          # only this revision's pods: a rollout spreads the new ones, whatever the old ones occupy
+          matchLabelKeys:
+            - pod-template-hash
 {{- if .backends }}
 ---
 apiVersion: v1

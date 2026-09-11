@@ -40,6 +40,10 @@ An unknown key in a composition is refused.
 The image tag is a hash of the runtime version and of every member component's id and version,
 so it changes when the members change and not otherwise.
 
+The pods are spread across nodes, counting only those of the current revision: a rollout spreads
+the new pods whatever nodes the old ones are on, and where one node is all that fits, they are
+scheduled there all the same. Counting by revision needs Kubernetes 1.27 or later.
+
 ## Services
 
 A composition may run extension services in its own pod, rather than let each be deployed on
