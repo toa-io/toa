@@ -181,19 +181,30 @@ From the repository root:
 
 ```shell
 $ npm run features                                  # root suite, then workspace suites
-$ npx cucumber-js features/cli/call.feature         # one file in the root suite
-$ npx cucumber-js --name 'Changing the password'    # one scenario in the root suite
+$ npx cucumber-js features/bridges/bash.feature     # one file in the root suite
+$ npx cucumber-js --name 'Calling bash operation'   # one scenario in the root suite
 ```
 
-From a workspace that has a `features` script (`extensions/exposition`, `extensions/realtime`):
+A file or a name selects only what the run's tags admit, so a scenario that
+[`npm run features` leaves out](#what-npm-run-features-leaves-out) is selected with the nightly
+set:
+
+```shell
+$ TOA_FEATURES=nightly npx cucumber-js features/cli/call.feature
+```
+
+From a workspace that has a `features` script (`extensions/configuration`,
+`extensions/exposition`, `extensions/introspection`, `extensions/realtime`):
 
 ```shell
 $ npm run features                                  # all scenarios in that workspace
 ```
 
-A single file or scenario needs the loader the `features` script carries:
+A single file or scenario is run from the same workspace, with the loader its `features` script
+carries:
 
 ```shell
+$ cd extensions/exposition
 $ TSX_TSCONFIG_PATH=features/steps/tsconfig.json NODE_OPTIONS=--import=tsx \
     npx cucumber-js features/identity.basic.feature
 ```
