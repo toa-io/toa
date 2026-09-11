@@ -149,16 +149,16 @@ once, in `cucumber.tags.mjs`; `TOA_FEATURES=nightly` selects between them.
 
 ## Tests
 
+**A unit test proves that the code matches your expectations. An integration test proves that
+your expectations match reality.** Code is *working* once an integration test has run it; until
+then it is a *hypothesis*. Toa's integration tests are its feature scenarios, run against the
+broker, the database and the network the code relies on.
+
 **"Not mine" is never an answer.** A suite run during a change has to pass, whether or not the
 change is what broke it. A failure that was already there is still a failure that is there now,
 and the run that found it is the one that owns it — leaving it for the next person means leaving
 them a suite that cannot tell them anything, because they will read the same failure the same way
 and pass it on again.
-
-**A unit test proves that the code matches your expectations. An integration test proves that
-your expectations match reality.** Code is *working* once an integration test has run it; until
-then it is a *hypothesis*. Toa's integration tests are its feature scenarios, run against the
-broker, the database and the network the code relies on.
 
 Types are checked across the repository by one configuration, `tsconfig.check.json`. It covers
 every workspace's sources and the step definitions, and it excludes `*.test.ts`:
