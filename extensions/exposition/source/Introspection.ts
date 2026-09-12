@@ -42,6 +42,12 @@ export interface Introspection {
    */
   once?: boolean
 
+  /**
+   * Whether the call this method makes may only read — [`io:readonly`](io.md#readonly). Said only
+   * where a route states it: absent, the method says it, and `GET` and `HEAD` are the safe ones.
+   */
+  readonly?: boolean
+
   /** whether the route publishes this method to a model — [`mcp:tool`](mcp.md) */
   mcp?: boolean
   route?: Record<string, Schema>
@@ -113,6 +119,7 @@ const KEYS = [
   'protected',
   'system',
   'once',
+  'readonly',
   'mcp',
   'route',
   'query',

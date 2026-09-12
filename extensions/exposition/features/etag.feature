@@ -265,6 +265,8 @@ Feature: Optimistic concurrency control
             io:output: true
             map:headers:
               name: if-match
+            # `affect` is an effect that only computes, which is the route's to say
+            io:readonly: false
             endpoint: affect
       """
     When the following request is received:

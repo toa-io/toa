@@ -69,7 +69,7 @@ async function published(tree: Tree): Promise<Published[]> {
 
       const described = introspection.description
       const schema = output(introspection)
-      const hints = annotations(verb)
+      const hints = annotations(verb, introspection)
 
       // in the order the revision documents one, which is the order it is read in
       const tool: Tool = {

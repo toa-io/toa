@@ -60,6 +60,12 @@ export class Context {
   public output?: string[]
 
   /**
+   * Whether the call this request makes may only read, as `io:readonly` states it. Absent where
+   * no route states one, and the method the request was made with is then what answers.
+   */
+  public readonly?: boolean
+
+  /**
    * Whether anything on the way out reads the body: a directive that takes a property of it, or
    * builds an answer around it. What does says so, and a reply is then values rather than bytes.
    */

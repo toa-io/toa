@@ -43,6 +43,11 @@ operations:
         volume: *volume
         temperature: *temperature
       type: object
+  # safe itself, and what it calls is not: see `features/readonly.feature`
+  purge:
+    scope: object
+    output:
+      type: object
   observe:
     output:
       properties:
