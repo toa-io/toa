@@ -1,8 +1,10 @@
 import { console } from './Console.ts'
 import type { Registry } from './Registry.ts'
 import { consoleMeter, measuring, metering, meters } from './meters.ts'
+import { OtlpMetrics } from './OtlpMetrics.ts'
 import { state } from './state.ts'
 import type { Meter } from './meters.ts'
+import type { OtlpMetricsOptions } from './OtlpMetrics.ts'
 
 /**
  * Configures metrics: how often series are collected, and where they go.
@@ -51,6 +53,8 @@ function createMeters(config?: MetersConfig): Meter[] {
 
   if ('console' in config) meters.push(consoleMeter)
 
+  if (config.otlp !== undefined) meters.push(new OtlpMetrics(config.otlp))
+
   return meters
 }
 
@@ -78,4 +82,5 @@ export interface MetricsOptions {
 
 export interface MetersConfig {
   console?: unknown
+  otlp?: OtlpMetricsOptions
 }

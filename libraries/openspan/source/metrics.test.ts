@@ -4,6 +4,7 @@ import assert from 'node:assert/strict'
 import { console } from './Console.ts'
 import { collect, metrics, registry } from './metrics.ts'
 import { consoleMeter, measuring, meters } from './meters.ts'
+import { OtlpMetrics } from './OtlpMetrics.ts'
 import type { Meter } from './meters.ts'
 import type { Series } from './Registry.ts'
 
@@ -26,11 +27,18 @@ describe('metrics', () => {
     assert.strictEqual(measuring(), true)
   })
 
-  it('should disable the console exporter when not listed', () => {
-    metrics({ exporters: {} })
+  it('should create configured exporters', () => {
+    metrics({ exporters: { console: null, otlp: { endpoint: 'http://localhost:9090' } } })
 
-    assert.strictEqual(meters().length, 0)
-    assert.strictEqual(measuring(), false)
+    assert.strictEqual(meters()[0], consoleMeter)
+    assert.ok(meters()[1] instanceof OtlpMetrics)
+  })
+
+  it('should disable the console exporter when not listed', () => {
+    metrics({ exporters: { otlp: { endpoint: 'http://localhost:9090' } } })
+
+    assert.strictEqual(meters().length, 1)
+    assert.ok(meters()[0] instanceof OtlpMetrics)
   })
 
   it('should keep the registry across configurations', () => {
