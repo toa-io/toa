@@ -3,6 +3,9 @@ import type { Store } from './operation.ts'
 import type { Entity } from './entities/entity.ts'
 
 export class Observation extends Operation {
+  /** an observation answers what it read, and writes none of it back */
+  protected override projects: boolean = true
+
   protected override async run(store: Store): Promise<void> {
     const scope = store.scope as Entity | null
 

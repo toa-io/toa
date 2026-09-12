@@ -32,6 +32,36 @@ Feature: Queries
       volume: 200
       """
 
+  Scenario: Request to a route that projects
+    Given the `pots` is running with the following manifest:
+      """yaml
+      exposition:
+        /pot:
+          io:output: true
+          GET:
+            endpoint: observe
+            query:
+              projection: [title]
+      """
+    When the following request is received:
+      """
+      GET /pots/pot/?id=99988d785d7d445cad45dbf8531f560b HTTP/1.1
+      host: nex.toa.io
+      accept: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      content-type: application/yaml
+
+      title: Second pot
+      id: 99988d785d7d445cad45dbf8531f560b
+      """
+    And the reply does not contain:
+      """
+      volume:
+      """
+
   Scenario: Request with query criteria
     Given the `pots` is running with the following manifest:
       """yaml

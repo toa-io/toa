@@ -50,6 +50,9 @@ export class Operation extends Connector {
    */
   protected mutable: boolean = false
 
+  /** whether a query of this operation may name the properties its storage reads */
+  protected projects: boolean = false
+
   readonly #cascade: Cascade
   readonly #contracts: Contracts
   readonly #query: Translator
@@ -83,6 +86,15 @@ export class Operation extends Connector {
 
   public async invoke(request: Envelope): Promise<any> {
     try {
+      /*
+       * A projection is what a storage reads, and only an observation's read is never written
+       * back: a transition replaces the record it read, an assignment's event carries the record
+       * it changed, and an effect reads for what it does next. Refused here rather than by the
+       * contract alone, because an authentic request skips the contract.
+       */
+      if (!this.projects && (request.query as Query | undefined)?.projection !== undefined)
+        throw new RequestContractException('`projection` is read by an observation alone')
+
       if (request.authentic !== true) this.#contracts.request.fit(request)
 
       // the request carries the query onward in its parsed form: what a storage is given,
