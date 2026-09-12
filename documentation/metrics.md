@@ -209,8 +209,9 @@ arriving message is an invocation, and is `toa.operation.duration`.
 | `toa.storage.query.duration` | histogram, `s` | `provider`, `collection`, `operation` |
 | `toa.storage.conflicts`      | counter        | `provider`, `collection`              |
 
-`provider` is which storage it is, `mongodb` among them. There is no database label: the database is
-the context, which the series already carries as its `job`.
+`provider` is which database it is, `mongodb` among them, so a deployment running more than one can
+be read a kind at a time. There is no database label: the database is the context, which the series
+already carries as its `job`.
 
 `toa.storage.conflicts` counts a lost compare-and-swap. Where the operation declares
 `concurrency: retry` it is retried and succeeds, so this counter is the only place it appears;

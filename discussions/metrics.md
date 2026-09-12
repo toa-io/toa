@@ -299,9 +299,10 @@ One histogram, at the one place every query already passes through. Collections 
 the widest label product in a component, so this is the zone to watch if the series count ever
 matters.
 
-`provider` is which storage it is — `mongodb` — and there is no `database` label: the database is the
-context, which the resource already names. `provider` means the same word here as in the blob zone,
-the kind of backend, so a reader moving between the two reads one vocabulary.
+`provider` is which database it is — `mongodb` — so that a deployment running more than one can be
+read a kind at a time. There is no `database` label: the database is the context, which the resource
+already names. `provider` means the same word here as in the blob zone, the kind of backend, so a
+reader moving between the two reads one vocabulary.
 
 **`toa.storage.conflicts` is a lost compare-and-swap**, which is `set()` returning `false`. It is
 counted here rather than in core, where the conflict is _decided_: `Transition.commit` either

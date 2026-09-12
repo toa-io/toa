@@ -5,6 +5,7 @@ import { codec } from './record.js'
 import { Inbox } from './inbox.js'
 import { Outbox } from './outbox.js'
 import { Migrations } from './migrations.js'
+import { conflicted, query } from './measurements.js'
 import { ReturnDocument } from 'mongodb'
 
 export class Storage extends Connector {
@@ -183,6 +184,9 @@ export class Storage extends Connector {
     const result = await this.command('findOneAndReplace', { criteria, record }, () =>
       this.#collection.findOneAndReplace(criteria, record, { session })
     )
+
+    // the version moved under this write: whoever asked either retries it or raises
+    if (result === null) conflicted(this.#collection.collectionName)
 
     return result !== null
   }
@@ -509,7 +513,8 @@ export class Storage extends Connector {
           'db.namespace': this.#collection.dbName,
           'db.operation.name': method,
           'db.collection.name': collection
-        }
+        },
+        measure: query(collection, method)
       }
 
       this.#spans.set(method, options)
