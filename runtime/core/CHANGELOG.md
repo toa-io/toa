@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.303](https://github.com/toa-io/toa/compare/v1.0.0-alpha.302...v1.0.0-alpha.303) (2026-09-12)
+
+### Features
+
+* **core:** carry an output encoded for a caller that reads bytes ([38fdb32](https://github.com/toa-io/toa/commit/38fdb3234dee1ad83f755379f39eeab5708a29d1))
+* **core:** measure operations and calls ([0d98e48](https://github.com/toa-io/toa/commit/0d98e480f38058ac0466de8b150951abe0254f2a))
+* **core:** read a projection for an observation and refuse it to every other type ([e38c926](https://github.com/toa-io/toa/commit/e38c926ce0a7149aa8b618845e48042ffd1e7eb6))
+* **core:** restrict an operation's output to what its request asks for ([532b08e](https://github.com/toa-io/toa/commit/532b08e388d2fcee54c367d344aeb74524ecf6c4))
+* **metrics:** count what no span reaches ([efabf89](https://github.com/toa-io/toa/commit/efabf89e78f98a604bb939f476a937fc9ee106b3))
+* **telemetry:** let a component declare its own metrics ([05aa3c7](https://github.com/toa-io/toa/commit/05aa3c72cd6a160e1cef99df6176a7f627075bc0))
+
+### Performance Improvements
+
+* **core:** derive a call identity with node:crypto from a parsed namespace ([7591600](https://github.com/toa-io/toa/commit/75916009409e4ae446d70d4ecbcc5af3972ec941))
+* **core:** read TOA_ENV when an operation is created ([c56d6b7](https://github.com/toa-io/toa/commit/c56d6b7e7d70b179c0d7473a22ee2f1e8c44b5fe))
+
+
 # [1.0.0-alpha.302](https://github.com/toa-io/toa/compare/v1.0.0-alpha.301...v1.0.0-alpha.302) (2026-09-11)
 
 ### Features

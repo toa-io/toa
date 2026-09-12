@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.303](https://github.com/toa-io/toa/compare/v1.0.0-alpha.302...v1.0.0-alpha.303) (2026-09-12)
+
+### Features
+
+* **metrics:** measure storage, stash, blob storages and fetch ([252298b](https://github.com/toa-io/toa/commit/252298bb9f34421694da4ee89742d62b47c39dfb))
+
+### Performance Improvements
+
+* **storages.mongodb:** rename a record's _id to id in place ([4aeb2a1](https://github.com/toa-io/toa/commit/4aeb2a1d61f7f2b0ddab203b5887152e8917ef7f))
+
+
 # [1.0.0-alpha.302](https://github.com/toa-io/toa/compare/v1.0.0-alpha.301...v1.0.0-alpha.302) (2026-09-11)
 
 **Note:** Version bump only for package @toa.io/storages.mongodb

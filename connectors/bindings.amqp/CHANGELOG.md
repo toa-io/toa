@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.303](https://github.com/toa-io/toa/compare/v1.0.0-alpha.302...v1.0.0-alpha.303) (2026-09-12)
+
+### Features
+
+* **metrics:** count what no span reaches ([efabf89](https://github.com/toa-io/toa/commit/efabf89e78f98a604bb939f476a937fc9ee106b3))
+
+### Performance Improvements
+
+* **bindings.amqp:** answer an output as bytes where its caller reads them ([96be109](https://github.com/toa-io/toa/commit/96be1096abaaf6d1d01d1a1b62354a656bbb9f20))
+* **bindings.amqp:** depend on comq 0.20.1, which sends a message without delay ([4e34c3b](https://github.com/toa-io/toa/commit/4e34c3ba51d1a086b5c82eeaa78107ce628e4494))
+
+
 # [1.0.0-alpha.302](https://github.com/toa-io/toa/compare/v1.0.0-alpha.301...v1.0.0-alpha.302) (2026-09-11)
 
 **Note:** Version bump only for package @toa.io/bindings.amqp

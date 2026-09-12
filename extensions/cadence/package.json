@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/extensions.cadence",
-  "version": "1.0.0-alpha.302",
+  "version": "1.0.0-alpha.303",
   "type": "module",
   "description": "Toa Schedule",
   "author": "temich <tema.gurtovoy@gmail.com>",
@@ -26,11 +26,11 @@
     "!**/.env*"
   ],
   "dependencies": {
-    "@toa.io/core": "1.0.0-alpha.302",
-    "@toa.io/definitions": "1.0.0-alpha.302",
+    "@toa.io/core": "1.0.0-alpha.303",
+    "@toa.io/definitions": "1.0.0-alpha.303",
     "@toa.io/generic": "1.0.0-alpha.301",
     "@toa.io/schemas": "1.0.0-alpha.301",
-    "openspan": "1.0.0-alpha.301"
+    "openspan": "1.0.0-alpha.303"
   },
   "scripts": {
     "transpile": "tsc"

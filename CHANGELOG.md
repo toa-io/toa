@@ -3,6 +3,55 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.303](https://github.com/toa-io/toa/compare/v1.0.0-alpha.302...v1.0.0-alpha.303) (2026-09-12)
+
+### Bug Fixes
+
+* **benchmarks:** attach the profiler to the latest boot of a process ([0d1ee23](https://github.com/toa-io/toa/commit/0d1ee23dc5c9cc6e86d26ee5a103352b1a201183))
+* **benchmarks:** end the load a process breaks when it exits ([f8f1388](https://github.com/toa-io/toa/commit/f8f13882fea0ed276b99938aa6a2499b8585c089))
+* **benchmarks:** keep the cache from removing a tree in use ([04e3c01](https://github.com/toa-io/toa/commit/04e3c01fd6ee940a0af78a5f47585bafe678049e))
+* **benchmarks:** make an A/A run come out unchanged ([cc7fac8](https://github.com/toa-io/toa/commit/cc7fac8cff761418e14ed2b61d4c863f5c0dfb15))
+* **benchmarks:** name the port in the authority of a request ([a2955eb](https://github.com/toa-io/toa/commit/a2955eb4bd50a916579e7554af2914ff408fa124))
+* **benchmarks:** name the scenario of a calibration that fails ([dfa1c42](https://github.com/toa-io/toa/commit/dfa1c42be751217627c5e6f8629a7f8b3c2efea2))
+* **benchmarks:** stop counting a token re-issue as the cost of a request ([0dfbe3d](https://github.com/toa-io/toa/commit/0dfbe3dc1cc4032edefb0258ede260aa8482c596))
+* **benchmarks:** swap the revisions' slots every block and wait for their outboxes ([e133b99](https://github.com/toa-io/toa/commit/e133b9918f90d09566314152427857495b20fb86))
+* **compose:** raise mongod's open file limit to what its collections need ([e92ce48](https://github.com/toa-io/toa/commit/e92ce48a3e6e79d982f635452f1dd090b9a2fe27))
+* **exposition:** state that flow:compose reads the reply it composes ([08e561d](https://github.com/toa-io/toa/commit/08e561da42080b3aa395c647bcabf3136d3e0486))
+* **telemetry:** narrow an instrument where the suite reads one ([5809aaf](https://github.com/toa-io/toa/commit/5809aaf6890fb555d9f376c73e9200dd77bfc710))
+
+### Features
+
+* **benchmarks:** compare the request path of two revisions on one machine ([e664541](https://github.com/toa-io/toa/commit/e664541283dce53583b15dcf2291d23d0b4dbad2))
+* **core:** carry an output encoded for a caller that reads bytes ([38fdb32](https://github.com/toa-io/toa/commit/38fdb3234dee1ad83f755379f39eeab5708a29d1))
+* **core:** measure operations and calls ([0d98e48](https://github.com/toa-io/toa/commit/0d98e480f38058ac0466de8b150951abe0254f2a))
+* **core:** read a projection for an observation and refuse it to every other type ([e38c926](https://github.com/toa-io/toa/commit/e38c926ce0a7149aa8b618845e48042ffd1e7eb6))
+* **core:** restrict an operation's output to what its request asks for ([532b08e](https://github.com/toa-io/toa/commit/532b08e388d2fcee54c367d344aeb74524ecf6c4))
+* **exposition:** ask an operation for what io:output admits ([6c07c75](https://github.com/toa-io/toa/commit/6c07c7595a71a55e0110e63b3d8e121d8e1ce4b0))
+* **exposition:** measure requests by route rather than by URL ([3da0c2b](https://github.com/toa-io/toa/commit/3da0c2b9ed3563edee2b754d8c420a93a5f20a67))
+* **exposition:** send the projection a route declares with its call ([edc2e93](https://github.com/toa-io/toa/commit/edc2e930761d32a599e2486991f961385e8f9219))
+* **metrics:** count what no span reaches ([efabf89](https://github.com/toa-io/toa/commit/efabf89e78f98a604bb939f476a937fc9ee106b3))
+* **metrics:** measure storage, stash, blob storages and fetch ([252298b](https://github.com/toa-io/toa/commit/252298bb9f34421694da4ee89742d62b47c39dfb))
+* **observability:** post metrics to the local Prometheus ([e0c702e](https://github.com/toa-io/toa/commit/e0c702e989f062fb79146fcdab634d1c59f9ed75))
+* **openspan:** add a metrics registry and its console exporter ([18cb39c](https://github.com/toa-io/toa/commit/18cb39ca7f5816d610b1e10d919c96d94d4a9d04))
+* **openspan:** export metrics over OTLP/HTTP ([1fe23b8](https://github.com/toa-io/toa/commit/1fe23b8271121ad81e0d750dc97d4548ce5a871c))
+* **operations:** a composition states how many replicas it runs ([4466f5a](https://github.com/toa-io/toa/commit/4466f5abcc22c6dceb2994a0143b6bf9d5201d9d))
+* **telemetry:** configure metrics from the context annotation ([7eaaa94](https://github.com/toa-io/toa/commit/7eaaa9415e77a4a02802994d16d44754c4f41694))
+* **telemetry:** let a component declare its own metrics ([05aa3c7](https://github.com/toa-io/toa/commit/05aa3c72cd6a160e1cef99df6176a7f627075bc0))
+
+### Performance Improvements
+
+* **bindings.amqp:** answer an output as bytes where its caller reads them ([96be109](https://github.com/toa-io/toa/commit/96be1096abaaf6d1d01d1a1b62354a656bbb9f20))
+* **bindings.amqp:** depend on comq 0.20.1, which sends a message without delay ([4e34c3b](https://github.com/toa-io/toa/commit/4e34c3ba51d1a086b5c82eeaa78107ce628e4494))
+* **core:** derive a call identity with node:crypto from a parsed namespace ([7591600](https://github.com/toa-io/toa/commit/75916009409e4ae446d70d4ecbcc5af3972ec941))
+* **core:** read TOA_ENV when an operation is created ([c56d6b7](https://github.com/toa-io/toa/commit/c56d6b7e7d70b179c0d7473a22ee2f1e8c44b5fe))
+* **exposition:** abort a request's controller only when its reply is unfinished ([10194f1](https://github.com/toa-io/toa/commit/10194f1abdaa32e8f7d425a18893685a5441189c))
+* **exposition:** tag a reply a client may keep ([1bc0d97](https://github.com/toa-io/toa/commit/1bc0d9756e61c562aa4252f26f1ced903267c846))
+* **exposition:** write a component's bytes and tag a reply by its body ([90b3bba](https://github.com/toa-io/toa/commit/90b3bbac5e2bc08085b27abfc4c2ebdcc349d516))
+* **identity.tokens:** import jose once ([6772753](https://github.com/toa-io/toa/commit/67727530a47873a99f97d26769cb202b795b4414))
+* **identity.tokens:** open a token with node:crypto ([1f72eaa](https://github.com/toa-io/toa/commit/1f72eaa9d977b8616467ea4939cef48c139a04ba))
+* **storages.mongodb:** rename a record's _id to id in place ([4aeb2a1](https://github.com/toa-io/toa/commit/4aeb2a1d61f7f2b0ddab203b5887152e8917ef7f))
+
+
 # [1.0.0-alpha.302](https://github.com/toa-io/toa/compare/v1.0.0-alpha.301...v1.0.0-alpha.302) (2026-09-11)
 
 ### Bug Fixes

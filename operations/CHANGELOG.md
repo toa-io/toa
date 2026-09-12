@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.303](https://github.com/toa-io/toa/compare/v1.0.0-alpha.302...v1.0.0-alpha.303) (2026-09-12)
+
+### Features
+
+* **operations:** a composition states how many replicas it runs ([4466f5a](https://github.com/toa-io/toa/commit/4466f5abcc22c6dceb2994a0143b6bf9d5201d9d))
+
+
 # [1.0.0-alpha.302](https://github.com/toa-io/toa/compare/v1.0.0-alpha.301...v1.0.0-alpha.302) (2026-09-11)
 
 **Note:** Version bump only for package @toa.io/operations
