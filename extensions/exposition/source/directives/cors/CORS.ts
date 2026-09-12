@@ -45,7 +45,7 @@ export class CORS implements Interceptor {
         output.headers.set('access-control-allow-credentials', 'true')
         output.headers.set(
           'access-control-expose-headers',
-          'authorization, content-type, content-length, date, etag, last-modified'
+          'authorization, content-type, content-length, date, etag'
         )
       }
 

@@ -66,6 +66,9 @@ export class Query {
 
       if (this.query.deleted !== undefined)
         (qs.query as core.Query).deleted = this.query.deleted
+
+      if (this.query.projection !== undefined)
+        (qs.query as core.Query).projection = this.query.projection as core.Query['projection']
     }
 
     return {

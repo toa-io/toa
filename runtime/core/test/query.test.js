@@ -169,6 +169,23 @@ describe('options', () => {
         (error) => /not defined/.test(error.message)
       )
     })
+
+    // a route declares one and sends it with every request it serves
+    it('should leave the projection it was given alone', () => {
+      const projection = ['a', 'b']
+      const parsed = instance.parse({ projection })
+
+      assert.deepStrictEqual(projection, ['a', 'b'])
+      assert.deepStrictEqual(parsed.options.projection, [
+        'a',
+        'b',
+        'VERSION',
+        'CREATED',
+        'UPDATED',
+        'DELETED',
+        'REGION'
+      ])
+    })
   })
 })
 

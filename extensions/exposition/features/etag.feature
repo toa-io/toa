@@ -35,18 +35,18 @@ Feature: Optimistic concurrency control
     Then the following reply is sent:
       """
       200 OK
-      etag: "1"
+      etag: "${{ tag }}"
       """
     When the following request is received:
       """
       GET /pots/${{ id }}/ HTTP/1.1
       host: nex.toa.io
-      if-none-match: "1"
+      if-none-match: "${{ tag }}"
       """
     Then the following reply is sent:
       """
       304 Not Modified
-      etag: "1"
+      etag: "${{ tag }}"
       """
     When the following request is received:
       """
@@ -110,18 +110,18 @@ Feature: Optimistic concurrency control
     Then the following reply is sent:
       """
       200 OK
-      etag: "1"
+      etag: "${{ tag }}"
       """
     When the following request is received:
       """
       GET /pots/${{ id }}/ HTTP/1.1
       host: nex.toa.io
-      if-none-match: W/"1"
+      if-none-match: W/"${{ tag }}"
       """
     Then the following reply is sent:
       """
       304 Not Modified
-      etag: W/"1"
+      etag: "${{ tag }}"
       """
     When the following request is received:
       """
@@ -185,7 +185,50 @@ Feature: Optimistic concurrency control
     Then the following reply is sent:
       """
       200 OK
-      etag: "1"
+      etag: "${{ tag }}"
+      """
+
+  Scenario: A reply that must not be stored carries no tag
+    Given the `pots` is running with the following manifest:
+      """yaml
+      exposition:
+        /:
+          io:output: true
+          POST: create
+          /:id:
+            cache:exact: no-store
+            GET: observe
+      """
+    When the following request is received:
+      """
+      POST /pots/ HTTP/1.1
+      host: nex.toa.io
+      accept: application/yaml
+      content-type: application/yaml
+
+      title: Hello
+      volume: 1.5
+      """
+    Then the following reply is sent:
+      """
+      201 Created
+
+      id: ${{ id }}
+      """
+    When the following request is received:
+      """
+      GET /pots/${{ id }}/ HTTP/1.1
+      host: nex.toa.io
+      """
+    # a reply a client may not keep is one it can never send back for validation
+    Then the following reply is sent:
+      """
+      200 OK
+      cache-control: no-store
+      """
+    And the reply does not contain:
+      """
+      etag
       """
 
   Scenario: Unexpected `if-match` format

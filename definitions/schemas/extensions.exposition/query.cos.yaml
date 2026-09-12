@@ -19,6 +19,8 @@ properties:
       type: string
   projection:
     type: array
+    uniqueItems: true
+    minItems: 1
     items:
       type: string
   parameters:

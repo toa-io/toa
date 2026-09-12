@@ -128,19 +128,15 @@ available:
 
 ### Projections
 
-A Method can have a `projection` key that specifies the fields of the operation result to be
-included in the response.
+What an Observation reads is declared in its Method's [query](./query.md#projection).
 
 ```yaml
 /teapots:
   GET:
     endpoint: select
-    projection:
-      - name
-      - state
+    query:
+      projection: [name, state]
 ```
-
-> `id` is always included in the projection.
 
 ## Intermediate Nodes
 

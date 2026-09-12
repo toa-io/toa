@@ -49,6 +49,29 @@ function specifyMethod(method: Method, manifest: Manifest): void {
   // takes no `omit` and no `limit`, and refuses a request that carries them
   method.mapping.paged = operation.type === 'observation' && operation.scope === 'objects'
 
+  projects(method, operation.type)
+
   method.mapping.namespace = manifest.namespace
   method.mapping.component = manifest.name
+}
+
+/**
+ * What a route projects is what its operation's storage reads, and a read that is written back
+ * reads the whole record.
+ */
+function projects(method: Method, type: string): void {
+  const projection = method.mapping?.query?.projection
+
+  if (projection === undefined) return
+
+  const endpoint = method.mapping?.endpoint
+
+  if (type !== 'observation')
+    throw new Error(
+      `Method of '${endpoint}' declares a projection, which an operation of type ` +
+        `'${type}' does not read`
+    )
+
+  if (projection.includes('id'))
+    throw new Error(`Projection of '${endpoint}' names 'id', which is always read`)
 }

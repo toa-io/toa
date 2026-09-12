@@ -50,11 +50,17 @@ export class Operation extends Connector {
    */
   protected mutable: boolean = false
 
+  /** whether a query of this operation may name the properties its storage reads */
+  protected projects: boolean = false
+
   readonly #cascade: Cascade
   readonly #contracts: Contracts
   readonly #query: Translator
   readonly #scope: Scope
   readonly #once: boolean
+
+  /** a reply is validated only on local environments, which are set before an operation is built */
+  readonly #local: boolean
 
   // eslint-disable-next-line max-params
   public constructor(
@@ -73,12 +79,22 @@ export class Operation extends Connector {
     this.#query = query
     this.#scope = definition.scope
     this.#once = definition.once === true
+    this.#local = environment.get('TOA_ENV') === 'local'
 
     this.depends(cascade)
   }
 
   public async invoke(request: Envelope): Promise<any> {
     try {
+      /*
+       * A projection is what a storage reads, and only an observation's read is never written
+       * back: a transition replaces the record it read, an assignment's event carries the record
+       * it changed, and an effect reads for what it does next. Refused here rather than by the
+       * contract alone, because an authentic request skips the contract.
+       */
+      if (!this.projects && (request.query as Query | undefined)?.projection !== undefined)
+        throw new RequestContractException('`projection` is read by an observation alone')
+
       if (request.authentic !== true) this.#contracts.request.fit(request)
 
       // the request carries the query onward in its parsed form: what a storage is given,
@@ -90,10 +106,9 @@ export class Operation extends Connector {
       if ('entity' in request) this.scope.fit(request.entity)
 
       const store = { request }
+      const reply = this.#once ? await this.once(store) : await this.process(store)
 
-      if (this.#once) return await this.once(store)
-
-      return await this.process(store)
+      return restrict(reply, request.output)
     } catch (e) {
       const exception = e instanceof Error ? new SystemException(e) : e
 
@@ -174,8 +189,7 @@ export class Operation extends Connector {
     const { request, state } = store
     const reply = await this.#cascade.run(request.input, state)
 
-    // validate reply only on local environments
-    if (environment.get('TOA_ENV') === 'local' && !(reply instanceof Readable))
+    if (this.#local && !(reply instanceof Readable))
       this.#contracts.reply.fit(reply)
 
     store.reply = reply
@@ -195,3 +209,50 @@ export class Operation extends Connector {
     return acquire.call(this.scope, query, this.mutable)
   }
 }
+
+/**
+ * What a caller receives of the output it asked for: each object of it keeps the properties the
+ * request named, in the order the object holds them, and an empty list leaves no output at all.
+ * A system property is one of them: a caller that reads `VERSION` asks for it. A stream, an error,
+ * an exception and a value that is not an object are answered as they are.
+ */
+function restrict(reply: any, output?: string[]): any {
+  if (output === undefined || reply === null || typeof reply !== 'object') return reply
+
+  const answered = reply.output
+
+  if (answered === undefined || answered === null || answered instanceof Readable) return reply
+
+  if (typeof answered !== 'object') {
+    if (output.length === 0) delete reply.output
+
+    return reply
+  }
+
+  if (output.length === 0) {
+    delete reply.output
+
+    return reply
+  }
+
+  const allowed = new Set(output)
+
+  reply.output = Array.isArray(answered)
+    ? answered.map((entity) =>
+        entity !== null && typeof entity === 'object' ? fit(entity, allowed) : entity
+      )
+    : fit(answered, allowed)
+
+  return reply
+}
+
+/** Runs per entity of a collection, hence the set and the absence of intermediates. */
+function fit(entity: Record<string, any>, allowed: Set<string>): Record<string, any> {
+  const output: Record<string, any> = {}
+
+  // the entity's own keys, so that what is answered keeps the order it was built in
+  for (const key of Object.keys(entity)) if (allowed.has(key)) output[key] = entity[key]
+
+  return output
+}
+

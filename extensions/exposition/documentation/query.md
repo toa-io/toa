@@ -257,11 +257,21 @@ selectors: [rank, timestamp]
 
 ## Projection
 
-A list of Entity properties to be included in the Observation result.
+A list of Entity properties an Observation reads. Its algorithm receives those, `id` and the
+system properties, and nothing else. A Method that declares no projection reads the whole Entity.
 
 ```yaml
-projection: [id, title, timestamp]
+projection: [title, timestamp]
 ```
+
+`id` is always read, and a projection that names it is refused.
+
+Only a Method mapped to an Observation declares a projection: an operation of any other type
+answers a request whose query carries one with an exception, and a composition whose Method
+declares one for such an operation does not start.
+
+What a client receives of the result is what [`io:output`](./io.md) admits, whatever the
+projection reads.
 
 ## Parameters
 
@@ -280,13 +290,13 @@ GET /dummies/?foo=0&bar=baz
 
 ## Optimistic concurrency control
 
-If an operation answers a safe request (`GET`, `HEAD`) with an object that has a `VERSION`
-property, its value is passed as the value of
-the [`etag` header](https://datatracker.ietf.org/doc/html/rfc7232#section-2.3) in the response,
-see [validators](cache.md#validators).
-
 Client can use the `if-match` request header to perform an operation only if the corresponding
-object has not been modified since the last retrieval.
+object has not been modified since the last retrieval. What it sends is the `VERSION` the object
+was read with, so a Method whose clients use it lists `VERSION` in
+its [`io:output`](io.md#output).
+
+The [`etag`](cache.md#validators) of a reply is a hash of the body it carries, not the version,
+and a request that sends it in `if-match` is answered `400 Bad Request`.
 
 ```http
 GET /dummies/5e82ed5e/ HTTP/1.1
@@ -294,9 +304,9 @@ GET /dummies/5e82ed5e/ HTTP/1.1
 ---
 
 HTTP/1.1 200 OK
-etag: "1"
 
 foo: bar
+VERSION: 1
 ```
 
 ```http request

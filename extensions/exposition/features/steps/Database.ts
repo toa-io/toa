@@ -39,8 +39,8 @@ export class Database {
       /*
        * A record that has never been written carries no timestamps, and the entity stamps
        * the ones it is missing as it is read — with the time it was read. The same row then
-       * enumerates differently on every request, which is a `last-modified` that moves and a
-       * collection that is never unmodified.
+       * enumerates differently on every request, which is a body that never hashes to the tag
+       * a client was given.
        */
       document.CREATED ??= Date.now()
       document.UPDATED ??= document.CREATED

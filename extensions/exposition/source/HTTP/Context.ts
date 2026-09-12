@@ -52,6 +52,19 @@ export class Context {
    */
   public instance?: string
 
+  /**
+   * What this request receives of the operation's output, as `io:output` states it: the
+   * properties of each object it answers, and none of it where the list is empty. Absent where
+   * the reply passes whole.
+   */
+  public output?: string[]
+
+  /**
+   * Whether anything on the way out reads the body: a directive that takes a property of it, or
+   * builds an answer around it. What does says so, and a reply is then values rather than bytes.
+   */
+  public reads?: boolean
+
   public readonly pipelines: Pipelines = {
     body: [],
     response: []

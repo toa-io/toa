@@ -1,0 +1,259 @@
+name: bench
+
+entity:
+  properties:
+    title: &string
+      type: string
+    summary: *string
+    status: *string
+    owner: *string
+    region: *string
+    language: *string
+    url: *string
+    rank: &integer
+      type: integer
+    count: *integer
+    score: &number
+      type: number
+    price: *number
+    due: *number
+    public: &boolean
+      type: boolean
+    archived: *boolean
+    tags:
+      type: array
+      items: *string
+
+operations:
+  transit:
+    concurrency: retry
+    query: false
+    input:
+      type: object
+      properties: &fields
+        title: *string
+        summary: *string
+        status: *string
+        owner: *string
+        region: *string
+        language: *string
+        url: *string
+        rank: *integer
+        count: *integer
+        score: *number
+        price: *number
+        due: *number
+        public: *boolean
+        archived: *boolean
+        tags:
+          type: array
+          items: *string
+      required: [title]
+  observe:
+    output:
+      type: object
+      properties:
+        <<: *fields
+        id: *string
+  enumerate:
+    output:
+      type: array
+      items:
+        type: object
+        properties:
+          <<: *fields
+          id: *string
+  small:
+    output:
+      type: object
+      properties:
+        id: *string
+        title: *string
+        rank: *integer
+        public: *boolean
+        tags:
+          type: array
+          items: *string
+  user:
+    input:
+      type: object
+      properties:
+        user: *string
+      required: [user]
+    output:
+      type: object
+      properties:
+        id: *string
+  chain:
+    output:
+      type: object
+      properties:
+        n: *integer
+
+exposition:
+  /:
+    io:output: true
+    /small:
+      anonymous: true
+      GET: small
+    /chain:
+      anonymous: true
+      GET: chain
+    # what a route leaves out of what it reads, and out of what it answers
+    /projected:
+      anonymous: true
+      GET:
+        endpoint: enumerate
+        query:
+          limit:
+            value: 1000
+            range: [1, 1000]
+          projection: [title, rank, tags]
+    /restricted:
+      anonymous: true
+      GET:
+        io:output: [id, title, rank, tags]
+        endpoint: enumerate
+        query:
+          limit:
+            value: 1000
+            range: [1, 1000]
+    /items:
+      anonymous: true
+      GET:
+        endpoint: enumerate
+        query:
+          limit:
+            value: 1000
+            range: [1, 1000]
+      POST:
+        io:input: [title, summary, status, owner, region, language, url, rank, count, score, price, due, public, archived, tags]
+        io:output: [id]
+        endpoint: transit
+      /:id:
+        GET: observe
+    /users/:user:
+      auth:id: user
+      GET: user
+    /role:
+      auth:role: bench
+      GET: small
+    /tools:
+      anonymous: true
+      mcp:tool: true
+      /t01:
+        GET:
+          help:method: Filler tool 01.
+          endpoint: small
+      /t02:
+        GET:
+          help:method: Filler tool 02.
+          endpoint: small
+      /t03:
+        GET:
+          help:method: Filler tool 03.
+          endpoint: small
+      /t04:
+        GET:
+          help:method: Filler tool 04.
+          endpoint: small
+      /t05:
+        GET:
+          help:method: Filler tool 05.
+          endpoint: small
+      /t06:
+        GET:
+          help:method: Filler tool 06.
+          endpoint: small
+      /t07:
+        GET:
+          help:method: Filler tool 07.
+          endpoint: small
+      /t08:
+        GET:
+          help:method: Filler tool 08.
+          endpoint: small
+      /t09:
+        GET:
+          help:method: Filler tool 09.
+          endpoint: small
+      /t10:
+        GET:
+          help:method: Filler tool 10.
+          endpoint: small
+      /t11:
+        GET:
+          help:method: Filler tool 11.
+          endpoint: small
+      /t12:
+        GET:
+          help:method: Filler tool 12.
+          endpoint: small
+      /t13:
+        GET:
+          help:method: Filler tool 13.
+          endpoint: small
+      /t14:
+        GET:
+          help:method: Filler tool 14.
+          endpoint: small
+      /t15:
+        GET:
+          help:method: Filler tool 15.
+          endpoint: small
+      /t16:
+        GET:
+          help:method: Filler tool 16.
+          endpoint: small
+      /t17:
+        GET:
+          help:method: Filler tool 17.
+          endpoint: small
+      /t18:
+        GET:
+          help:method: Filler tool 18.
+          endpoint: small
+      /t19:
+        GET:
+          help:method: Filler tool 19.
+          endpoint: small
+      /t20:
+        GET:
+          help:method: Filler tool 20.
+          endpoint: small
+      /t21:
+        GET:
+          help:method: Filler tool 21.
+          endpoint: small
+      /t22:
+        GET:
+          help:method: Filler tool 22.
+          endpoint: small
+    /filler:
+      anonymous: true
+      /f01:
+        GET: small
+      /f02:
+        GET: small
+      /f03:
+        GET: small
+      /f04:
+        GET: small
+      /f05:
+        GET: small
+      /f06:
+        GET: small
+      /f07:
+        GET: small
+      /f08:
+        GET: small
+      /f09:
+        GET: small
+      /f10:
+        GET: small
+      /f11:
+        GET: small
+      /f12:
+        GET: small
+      /f13:
+        GET: small

@@ -64,7 +64,7 @@ Feature: Persistent credentials management
       """
     Then the following reply is sent:
       """
-      200 OK
+      204 No Content
       """
     When the following request is received:
       """
@@ -74,7 +74,7 @@ Feature: Persistent credentials management
       """
     Then the following reply is sent:
       """
-      200 OK
+      204 No Content
       """
     When the following request is received:
       """
@@ -84,7 +84,7 @@ Feature: Persistent credentials management
       """
     Then the following reply is sent:
       """
-      200 OK
+      204 No Content
       """
     When the following request is received:
       """

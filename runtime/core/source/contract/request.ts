@@ -80,7 +80,9 @@ export class Request extends Contract {
          */
         id: { type: 'string' },
         authentic: { type: 'boolean' },
-        task: { type: 'boolean' }
+        task: { type: 'boolean' },
+        // what a caller receives of the output, which every operation admits
+        output: { type: 'array', uniqueItems: true, items: { type: 'string' } }
       },
       additionalProperties: true
     }

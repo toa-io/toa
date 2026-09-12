@@ -13,6 +13,9 @@ export class Compose implements Directive {
   }
 
   public attach(context: Context): void {
+    // the composition is built out of the reply, so the reply reaches the gateway as values
+    context.reads = true
+
     context.pipelines.response.push(async (message: OutgoingMessage) => {
       if (!(message.body instanceof Readable)) {
         console.warn('Response body is not a stream, skipping composition')

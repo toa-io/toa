@@ -67,8 +67,8 @@ Feature: Identity Federation
       """
       200 OK
 
-      - id: ${{ User.credential }}
-        iss: http://localhost:31005
+      - iss: http://localhost:31005
+        id: ${{ User.credential }}
       """
 
   Scenario: Creating an Identity using inception
@@ -149,8 +149,8 @@ Feature: Identity Federation
       """
       200 OK
 
-      - id: ${{ Bill.credential }}
         iss: http://localhost:31005
+        id: ${{ Bill.credential }}
       """
     And the following request is received:
       # same credentials
@@ -274,8 +274,8 @@ Feature: Identity Federation
       """
       200 OK
 
-      - id: ${{ Bob.credential }}
         iss: http://localhost:31005
+        id: ${{ Bob.credential }}
       """
     And the following request is received:
       """
@@ -299,7 +299,7 @@ Feature: Identity Federation
       """
     Then the following reply is sent:
       """
-      200 OK
+      204 No Content
       """
     # add the same federation again
     When the following request is received:

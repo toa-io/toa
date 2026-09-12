@@ -25,7 +25,8 @@ not in the list, the request will be rejected with a `400` status code.
 ## Output
 
 The `io:output` mandatory directive contains a list of properties that are allowed to be included in
-the response body.
+the response body. It is what the request asks the operation for, and the operation answers that
+much of each object it returns.
 
 ```yaml
 GET:
@@ -34,8 +35,8 @@ GET:
 ```
 
 When an operation does not return an object (e.g., a primitive or a stream), or an object is dynamic
-and its properties are not known in advance, `io:output` may have a value of `true` to disable
-output restrictions.
+and its properties are not known in advance, `io:output` may have a value of `true`, which asks for
+the reply whole.
 
 ```yaml
 GET:
@@ -43,9 +44,9 @@ GET:
   io:output: true
 ```
 
-If a method declaration lacks `io:output` directive, it will trigger a warning, and its
-response will consistently be empty.
-If this behavior is intended, a `false` value can be employed to suppress warnings.
+A method that declares no `io:output`, or declares `false`, asks for none of the reply: it has no
+body, and takes the status an absent body takes — `204`, `201` to a `POST`, and `404` where the
+operation found nothing.
 
 ```yaml
 GET:
@@ -53,10 +54,22 @@ GET:
   io:output: false
 ```
 
-Output restrictions are not applied to stream responses, nor to a reply the gateway built out of an
-exception — an operation that returns an error is answered with a code and a message of the
-gateway's own, and a list of permitted properties has nothing to say about those. A reply the
-operation returned is restricted whatever status it carries, see [Status](#status).
+A method declares the property [`io:status`](#status) or
+[`auth:incept`](./identity.md#identity-inception) reads, since they read what the operation
+answered of its output.
+
+```yaml
+POST:
+  endpoint: register
+  io:status: status
+  io:output: [client_id, status]
+```
+
+A list restricts each object of the reply, and each object of an array it answers; a value that is
+not an object is answered as it is. A stream, and a reply the gateway built out of an exception —
+an operation that returns an error is answered with a code and a message of the gateway's own —
+carry no restriction. A reply the operation returned is restricted whatever status it carries, see
+[Status](#status).
 
 ## Status
 

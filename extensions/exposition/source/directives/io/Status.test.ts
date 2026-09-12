@@ -45,44 +45,40 @@ it('should refuse a declaration that is not a property name', () => {
     assert.throws(() => Status.validate(value), /`io:status` must be a string/)
 })
 
-it('should have a reply it named the status of restricted, whatever that status is', () => {
+it('should take the status of a reply whatever that status is', () => {
   for (const stated of [200, 400]) {
-    const ctx = context()
-    const output = new Output(['code', 'error'])
-
-    output.precall(ctx, [])
-
     const response: OutgoingMessage = {
-      body: { status: stated, code: 'SplxlO', error: 'invalid_grant', secret: 'x' }
+      body: { status: stated, code: 'SplxlO', error: 'invalid_grant' }
     }
 
-    status.settle(ctx, response)
-
-    for (const transform of ctx.pipelines.response) transform(response)
+    status.settle(context(), response)
 
     assert.equal(response.status, stated)
     assert.deepEqual(response.body, { code: 'SplxlO', error: 'invalid_grant' })
   }
 })
 
-it('should leave a failure the gateway built alone, on such a route too', () => {
+it('should ask the operation for what it admits', () => {
   const ctx = context()
-  const output = new Output(['code'])
 
-  output.precall(ctx, [])
+  new Output(['code', 'error']).precall(ctx, [])
 
-  // what `Server.fail` builds out of an exception, on a route that also declares `io:status`
-  const response: OutgoingMessage = {
-    status: 422,
-    authentic: true,
-    body: { code: 'NOT_FOUND', message: 'nope' }
-  }
+  assert.deepEqual(ctx.output, ['code', 'error'])
+})
 
-  for (const transform of ctx.pipelines.response) transform(response)
+it('should ask for the reply whole where it admits all of it', () => {
+  const ctx = context()
 
-  assert.deepEqual(
-    response.body,
-    { code: 'NOT_FOUND', message: 'nope' },
-    'a code and a message are not what a restriction has anything to say about'
-  )
+  new Output(true).precall(ctx, [])
+
+  assert.equal(ctx.output, undefined)
+})
+
+it('should ask for what a method and its node both admit', () => {
+  const ctx = context()
+
+  new Output(['id', 'code', 'error']).precall(ctx, [])
+  new Output(['code', 'secret']).precall(ctx, [])
+
+  assert.deepEqual(ctx.output, ['code'])
 })
