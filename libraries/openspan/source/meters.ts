@@ -36,7 +36,7 @@ export function measuring(): boolean {
   return meters().length > 0
 }
 
-export async function flush(): Promise<void> {
+export async function flushMeters(): Promise<void> {
   await Promise.all(meters().map(async (meter) => meter.flush?.()))
 }
 

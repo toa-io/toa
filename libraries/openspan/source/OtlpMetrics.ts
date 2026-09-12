@@ -24,7 +24,7 @@ export class OtlpMetrics implements Meter {
   private sending: Promise<void> | null = null
   private pending: Series[] | null = null
 
-  public constructor(options: MetricsExporterOptions) {
+  public constructor(options: OtlpMetricsOptions) {
     this.transport = new Transport(options.endpoint.replace(/\/$/, '') + '/v1/metrics', {
       ...options,
       subject: 'series'

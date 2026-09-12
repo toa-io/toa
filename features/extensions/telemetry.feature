@@ -176,6 +176,42 @@ Feature: Telemetry
               value: '{"level":"warn"}'
       """
 
+  Scenario: Metrics annotations
+    Given I have a component `telemetry`
+    And I have a context with:
+      """yaml
+      telemetry:
+        metrics:
+          interval: 5000
+          exporters:
+            otlp:
+              endpoint: http://prometheus:9090/api/v1/otlp
+      """
+    When I export deployment
+    Then exported values should contain:
+      """
+      compositions:
+        - name: default-telemetry
+          variables:
+            - name: TOA_TELEMETRY_METRICS
+              value: '{"interval":5000,"exporters":{"otlp":{"endpoint":"http://prometheus:9090/api/v1/otlp"}}}'
+      """
+
+  Scenario: Metrics annotations are validated
+    Given I have a component `telemetry`
+    And I have a context with:
+      """yaml
+      telemetry:
+        metrics:
+          exporters:
+            otlp:
+              timeout: 1000
+      """
+    Then exporting deployment fails with:
+      """
+      telemetry.metrics.exporters.otlp.endpoint is required
+      """
+
   Scenario: Logs without annotations
     Given I have a component `telemetry`
     And I have a context

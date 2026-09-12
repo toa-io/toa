@@ -1,4 +1,11 @@
-import { console, traces, type LevelName, type TracesOptions } from 'openspan'
+import {
+  console,
+  metrics,
+  traces,
+  type LevelName,
+  type MetricsOptions,
+  type TracesOptions
+} from 'openspan'
 import { Gateway } from './Gateway.ts'
 import { Remotes } from './Remotes.ts'
 import { Tree } from './RTD/index.ts'
@@ -56,6 +63,7 @@ export async function service(host: Host): Promise<Connector | null> {
 
 const LOGS_PREFIX = 'TOA_TELEMETRY_LOGS'
 const TRACES_ENV = 'TOA_TELEMETRY_TRACES'
+const METRICS_ENV = 'TOA_TELEMETRY_METRICS'
 
 function configureLogs(): void {
   const globEnv = environment.get(LOGS_PREFIX)
@@ -75,10 +83,33 @@ function configureLogs(): void {
     tracing.exporters.otlp.service ??= environment.get('TOA_CONTEXT')
 
   traces(tracing)
+  metrics(measurements())
 }
 
 /**
- * Tracing is off unless it is configured. The console exporter is a local development
+ * The gateway measures what it serves, and what tells two products apart in one backend is the
+ * resource rather than the metric name.
+ */
+function measurements(): MetricsOptions {
+  const env = environment.get(METRICS_ENV)
+
+  if (env === undefined) return {}
+
+  const options = JSON.parse(env) as MetricsOptions
+
+  if (options.exporters?.otlp !== undefined) {
+    const resource = (options.exporters.otlp.resource ??= {})
+
+    resource['service.name'] ??= 'exposition'
+    resource['service.namespace'] ??= environment.get('TOA_CONTEXT')
+    resource['deployment.environment.name'] ??= environment.get('TOA_ENV')
+  }
+
+  return options
+}
+
+/**
+ * Tracing and metrics are off unless configured. The console exporter is a local development
  * mechanism, so it is turned on for `toa dev` and for a boot trace the CLI has already
  * asked for (`runtime/boot/src/span.js`), and nowhere else — a deployment that wants
  * traces annotates `telemetry.traces.exporters`.

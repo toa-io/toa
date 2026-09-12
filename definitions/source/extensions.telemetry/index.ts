@@ -1,5 +1,5 @@
 export { deployment } from './deployment.ts'
-export { ID, LOGS_PREFIX, TRACES_ENV, READY_ENV } from './const.ts'
+export { ID, LOGS_PREFIX, TRACES_ENV, METRICS_ENV, READY_ENV } from './const.ts'
 export { DEFAULT_ANNOTATION, normalizeAnnotation } from './ready.ts'
 export type { ReadyAnnotation, ReadyConfig } from './ready.ts'
 export { context } from './context.ts'

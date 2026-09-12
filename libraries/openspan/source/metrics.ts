@@ -1,6 +1,6 @@
 import { console } from './Console.ts'
 import type { Registry } from './Registry.ts'
-import { consoleMeter, measuring, metering, meters } from './meters.ts'
+import { consoleMeter, flushMeters, measuring, metering, meters } from './meters.ts'
 import { OtlpMetrics } from './OtlpMetrics.ts'
 import { state } from './state.ts'
 import type { Meter } from './meters.ts'
@@ -68,7 +68,17 @@ function stop(): void {
 }
 
 function beforeExit(): void {
+  void report()
+}
+
+/**
+ * A last collection, sent. `process.exit()` emits no `beforeExit`, so a shutdown that means to
+ * keep what the process measured says so.
+ */
+export async function report(): Promise<void> {
   collect()
+
+  await flushMeters()
 }
 
 const INTERVAL = 15_000
