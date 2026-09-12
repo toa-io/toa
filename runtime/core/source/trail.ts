@@ -42,8 +42,10 @@ export interface Invocation {
    * How many calls this invocation has already made to each endpoint. Two calls to one endpoint
    * are two calls, and their identities have to say so — without this an operation looping over
    * five items would make one identity five times and have four of them refused.
+   *
+   * Made where the first call is made: most operations make none.
    */
-  calls: Map<string, number>
+  calls?: Map<string, number>
 }
 
 /**
@@ -91,9 +93,10 @@ export async function follow<T>(
  * the algorithm made them in.
  */
 export function ordinal(invocation: Invocation, endpoint: string): number {
-  const made = invocation.calls.get(endpoint) ?? 0
+  const calls = (invocation.calls ??= new Map())
+  const made = calls.get(endpoint) ?? 0
 
-  invocation.calls.set(endpoint, made + 1)
+  calls.set(endpoint, made + 1)
 
   return made
 }

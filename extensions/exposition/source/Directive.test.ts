@@ -2,11 +2,12 @@ import { describe, it, beforeEach, mock } from 'node:test'
 import assert from 'node:assert/strict'
 
 import { generate } from 'randomstring'
+import { run } from 'openspan'
 import { DirectivesFactory } from './Directive.ts'
 import type { syntax, DirectiveFamily } from './RTD/index.ts'
 import type { Remotes } from './Remotes.ts'
 import type { Host } from './Factory.ts'
-import type { Context } from './HTTP/index.ts'
+import type { Context, OutgoingMessage } from './HTTP/index.ts'
 
 const sequence: string[] = []
 
@@ -197,3 +198,18 @@ function resetCalls(target = [families], seen = new Set()) {
     if (typeof value === 'function' && value.mock !== undefined) value.mock.resetCalls()
     else resetCalls(value, seen)
 }
+
+it('should apply directives within an unsampled trace', async () => {
+  const directives = factory.create([{ family: 'foo', name: generate(), value: generate() }])
+  const request = generate() as unknown as Context
+  const response = {} as OutgoingMessage
+
+  await run({ traceId: '0'.repeat(31) + '1', spanId: '1'.repeat(16), sampled: false }, async () => {
+    await directives.precall(request, [])
+    await directives.settle(request, response)
+  })
+
+  assert.ok(families[0].precall !== undefined && families[0].settle !== undefined)
+  assert.strictEqual(families[0].precall.mock.calls.length, 1)
+  assert.strictEqual(families[0].settle.mock.calls.length, 1)
+})

@@ -1,7 +1,7 @@
 import { describe, it, beforeEach, afterEach } from 'node:test'
 import assert from 'node:assert/strict'
 
-import { create, current, decide, decode, encode, run, sampling } from './tracing.ts'
+import { create, current, decide, decode, encode, run, sampled, sampling } from './tracing.ts'
 import { exporting } from './exporters.ts'
 import type * as tracing from './tracing.ts'
 
@@ -191,5 +191,21 @@ describe('run', () => {
     await Promise.all([chain('a'), chain('b'), chain('c')])
 
     assert.deepStrictEqual(seen.sort(), ['a:a', 'b:b', 'c:c'])
+  })
+})
+
+describe('sampled', () => {
+  it('should answer yes where no trace is in scope', () => {
+    assert.equal(sampled(), true)
+  })
+
+  it('should answer what the trace in scope decided', () => {
+    run({ traceId: '0'.repeat(31) + '1', spanId: '1'.repeat(16), sampled: true }, () => {
+      assert.equal(sampled(), true)
+    })
+
+    run({ traceId: '0'.repeat(31) + '1', spanId: '1'.repeat(16), sampled: false }, () => {
+      assert.equal(sampled(), false)
+    })
   })
 })

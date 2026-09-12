@@ -81,7 +81,7 @@ export class Component<O extends Invocable = Invocable> extends Connector {
        * The identity is put in scope with the chain: an operation reaches neither, and the
        * calls it makes derive their own from what it is serving.
        */
-      const scope: trail.Invocation = { hops, id: request?.id, calls: new Map() }
+      const scope: trail.Invocation = { hops, id: request?.id }
 
       task = async (): Promise<any> => trail.follow(scope, invocation)
     }
