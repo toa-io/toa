@@ -18,10 +18,12 @@ telemetry:
         cooldown: 30000 # how long to drop series for after a failed export
 ```
 
-|             |                                                          |
-| ----------- | -------------------------------------------------------- |
-| `interval`  | milliseconds between collections, and so between exports |
-| `exporters` | where series are sent; without it nothing is measured    |
+|             |                                                                               |
+| ----------- | ----------------------------------------------------------------------------- |
+| `interval`  | milliseconds between collections, and so between exports. Defaults to `15000` |
+| `exporters` | where series are sent. Without it nothing is measured                         |
+| `timeout`   | request timeout in milliseconds. Defaults to `5000`                           |
+| `cooldown`  | milliseconds to drop series for after a failed export. Defaults to `30000`    |
 
 Counters and histograms are cumulative from process start. Every series carries
 `service.instance.id`, so replicas do not collide.

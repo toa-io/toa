@@ -220,12 +220,12 @@ is configured.
 
 telemetry:
   metrics:
-    interval: 15000 # collection and export period, milliseconds
+    interval: 15000 # collection and export period, the default
     exporters:
       otlp:
         endpoint: http://prometheus:9090/api/v1/otlp # POSTs to {endpoint}/v1/metrics
-        timeout: 5000 # request timeout, milliseconds
-        cooldown: 30000 # how long to drop series for after a failed export
+        timeout: 5000 # request timeout, the default
+        cooldown: 30000 # how long to drop series for after a failure, the default
 ```
 
 A missing or unavailable endpoint is reported with a single warning and series are dropped until it
