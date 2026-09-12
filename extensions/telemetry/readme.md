@@ -212,8 +212,8 @@ See [Grafana stack setup](grafana.md) for local and production wiring.
 
 ## Metrics
 
-Metrics are recorded whether or not the trace is sampled, and nothing is measured until an exporter
-is configured.
+Metrics are recorded whether or not the trace is sampled. Nothing is measured until the `metrics`
+annotation is declared, and nothing leaves the process until an exporter is configured under it.
 
 ```yaml
 # context.toa.yaml

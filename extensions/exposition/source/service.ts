@@ -90,11 +90,10 @@ function configureLogs(): void {
  * The gateway measures what it serves, and what tells two products apart in one backend is the
  * resource rather than the metric name.
  */
-function measurements(): MetricsOptions {
+function measurements(): MetricsOptions | undefined {
   const env = environment.get(METRICS_ENV)
 
-  if (env === undefined)
-    return environment.get('TOA_DEV') === '1' ? { exporters: { console: {} } } : {}
+  if (env === undefined) return undefined
 
   const options = JSON.parse(env) as MetricsOptions
 

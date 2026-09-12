@@ -1,9 +1,8 @@
 import { describe, it, afterEach, mock } from 'node:test'
 import assert from 'node:assert/strict'
 
-import { console } from './Console.ts'
 import { collect, metrics, registry } from './metrics.ts'
-import { consoleMeter, measuring, meters } from './meters.ts'
+import { measuring, meters } from './meters.ts'
 import { OtlpMetrics } from './OtlpMetrics.ts'
 import type { Meter } from './meters.ts'
 import type { Series } from './Registry.ts'
@@ -13,28 +12,21 @@ afterEach(() => {
 })
 
 describe('metrics', () => {
-  it('should default to no exporters', () => {
+  it('should measure nothing until it is called', () => {
     metrics()
 
     assert.strictEqual(meters().length, 0)
     assert.strictEqual(measuring(), false)
   })
 
-  it('should opt into the console exporter', () => {
-    metrics({ exporters: { console: {} } })
+  it('should measure without an exporter', () => {
+    metrics({})
 
-    assert.deepStrictEqual(meters(), [consoleMeter])
+    assert.strictEqual(meters().length, 0)
     assert.strictEqual(measuring(), true)
   })
 
-  it('should create configured exporters', () => {
-    metrics({ exporters: { console: null, otlp: { endpoint: 'http://localhost:9090' } } })
-
-    assert.strictEqual(meters()[0], consoleMeter)
-    assert.ok(meters()[1] instanceof OtlpMetrics)
-  })
-
-  it('should disable the console exporter when not listed', () => {
+  it('should create the configured exporter', () => {
     metrics({ exporters: { otlp: { endpoint: 'http://localhost:9090' } } })
 
     assert.strictEqual(meters().length, 1)
@@ -44,7 +36,7 @@ describe('metrics', () => {
   it('should keep the registry across configurations', () => {
     const before = registry()
 
-    metrics({ exporters: { console: {} } })
+    metrics({})
 
     assert.strictEqual(registry(), before)
   })
@@ -53,7 +45,7 @@ describe('metrics', () => {
     const conversions = registry().counter('kept')
 
     conversions.add(1)
-    metrics({ exporters: { console: {} } })
+    metrics({})
 
     assert.ok(collected().some((series) => series.name === 'kept'))
   })
@@ -74,32 +66,15 @@ describe('collect', () => {
     assert.ok(exported[0].some((series) => series.name === 'collected'))
   })
 
-  it('should do nothing when nothing is measuring', () => {
+  it('should collect nothing where nothing exports', () => {
     const collectMethod = mock.method(registry(), 'collect')
 
-    metrics()
+    metrics({})
     collect()
 
     assert.strictEqual(collectMethod.mock.callCount(), 0)
 
     collectMethod.mock.restore()
-  })
-})
-
-describe('console meter', () => {
-  it('should write a series as a trace entry', () => {
-    const write = mock.method(console, 'entry')
-
-    consoleMeter.export(
-      [{ name: 'written', type: 'counter', labels: { a: 'b' }, value: 1 }],
-      console
-    )
-
-    assert.strictEqual(write.mock.callCount(), 1)
-    assert.deepStrictEqual(write.mock.calls[0].arguments[0], 'trace')
-    assert.strictEqual(write.mock.calls[0].arguments[1], 'written')
-
-    write.mock.restore()
   })
 })
 

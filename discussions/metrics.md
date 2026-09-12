@@ -14,9 +14,10 @@ enough to be always on, and off until an exporter is configured.
 
 1. A metric is recorded whether or not the trace is sampled, and whether or not any span is
    exported.
-2. With no metrics exporter configured, nothing is collected and nothing is measured — recording
-   costs one boolean check, mirroring `recording()`
-   ([`exporters.ts:46`](/libraries/openspan/source/exporters.ts)).
+2. With no `metrics` annotation, nothing is measured — recording costs one boolean check, mirroring
+   `recording()` ([`exporters.ts:46`](/libraries/openspan/source/exporters.ts)). Declared without an
+   exporter, a process measures into its registry and posts nothing, which is what a test reading
+   its own process wants and costs no timer.
 3. Counters and histograms are cumulative from process start. Every exported series carries
    `service.instance.id`, so replicas do not collide into a counter that appears to reset.
 
@@ -47,7 +48,7 @@ enough to be always on, and off until an exporter is configured.
 
 **Not promised**
 
-10. No pull endpoint, no Prometheus text format. Metrics are pushed.
+10. No pull endpoint, no Prometheus text format, and no console exporter. Metrics are pushed.
 11. No exemplars linking a series to a trace.
 12. No cross-process aggregation: each process exports its own series and the backend sums them.
 13. No instrument created at runtime. A metric a component did not declare is a metric it does not
@@ -766,6 +767,17 @@ Products separate where OpenTelemetry puts them, in resource attributes: `servic
 context (`TOA_CONTEXT`), `service.name` the process, `service.instance.id` the replica, and
 `deployment.environment.name` the environment (`TOA_ENV`). Prometheus joins the first two into `job`
 and the third into `instance`, so one dashboard filters by `job` and stays one dashboard.
+
+**No console exporter for this signal, though traces have one.** A span is an event and reads as a
+line: a name, a duration, a parent. A cumulative counter is state, and a line of it says neither a
+rate nor a comparison — what it does say, it says again on every collection, so a local run drowns
+in the series it holds rather than learning anything. The span exporter also has a user this one
+would not: `TOA_BOOT_TRACE=1` makes `toa compose` and `toa serve` print a boot-time breakdown
+([`compose.js:43`](/runtime/cli/src/handlers/compose.js)), which has no backend in the picture by
+design.
+
+What replaces it is the annotation being declared without an exporter, which records and posts
+nothing. That is what the feature suite runs under, and it costs no timer.
 
 **Push, not scrape.** A pull endpoint means a listener per process, pod scrape annotations in the
 chart, and the port contention `Ready.ts` already documents for a local multi-process run. Pushing

@@ -86,11 +86,14 @@ export class Factory implements extensions.Factory {
  * What the series say they came from. The metric names are the same in every deployment, so what
  * tells two products apart in one backend is the resource: the context is the namespace, and the
  * environment is beside it.
+ *
+ * Nothing when the annotation is absent, which is what turns measuring off: there is no console
+ * exporter for this signal, so a local run measures only where it was asked to.
  */
-function measurements(): MetricsOptions {
+function measurements(): MetricsOptions | undefined {
   const env = environment.get(METRICS_ENV)
 
-  if (env === undefined) return measuring()
+  if (env === undefined) return undefined
 
   const options = JSON.parse(env) as MetricsOptions
 
@@ -102,14 +105,6 @@ function measurements(): MetricsOptions {
   }
 
   return options
-}
-
-/**
- * Metrics are off unless configured, and the console exporter is a local development mechanism
- * — the same rule tracing keeps, for the same reason.
- */
-function measuring(): MetricsOptions {
-  return environment.get('TOA_DEV') === '1' ? { exporters: { console: {} } } : {}
 }
 
 function development(): TracesOptions {

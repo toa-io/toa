@@ -1,26 +1,12 @@
 import { state } from './state.ts'
-import type { Console } from './Console.ts'
 import type { Series } from './Registry.ts'
 
 /**
- * Writes series as TRACE log entries using the emitting console, respecting its log level.
- *
- * The counterpart of `consoleExporter` for the other signal, and the same local development
- * mechanism: it is opted into, never on by default, because a collection writes every series
- * the process holds and does so on every interval.
+ * Replaces the set of metrics exporters entirely. `null` turns measuring off altogether; an empty
+ * set records into the registry and sends nowhere, which is what a process that is read from
+ * inside itself wants.
  */
-export const consoleMeter: Meter = {
-  export(series: Series[], output: Console): void {
-    for (const one of series) {
-      const { name, labels, ...rest } = one
-
-      output.entry('trace', name, { attributes: { ...labels, ...rest } })
-    }
-  }
-}
-
-/** Replaces the set of metrics exporters entirely. Defaults to none. */
-export function metering(meters: Meter[]): void {
+export function metering(meters: Meter[] | null): void {
   state.meters = meters
 }
 
@@ -29,11 +15,13 @@ export function meters(): Meter[] {
 }
 
 /**
- * Whether anything at all consumes series. When nothing does, nothing is collected and the
- * instruments a measured site would reach for are never asked for a value.
+ * Whether the process measures at all. There is no console exporter for this signal — a
+ * cumulative counter printed as a line says neither a rate nor a comparison, and reading one
+ * needs a backend — so measuring is a thing a deployment asks for rather than a thing a local
+ * run falls into.
  */
 export function measuring(): boolean {
-  return meters().length > 0
+  return state.meters !== null
 }
 
 export async function flushMeters(): Promise<void> {
@@ -41,7 +29,7 @@ export async function flushMeters(): Promise<void> {
 }
 
 export interface Meter {
-  export: (series: Series[], output: Console) => void
+  export: (series: Series[]) => void
   flush?: () => Promise<void>
 }
 

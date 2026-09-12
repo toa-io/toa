@@ -74,11 +74,6 @@ Feature: Telemetry
       exporters:
         console: ~
       """
-    And an environment variable `TOA_TELEMETRY_METRICS` is set to:
-      """yaml
-      exporters:
-        console: ~
-      """
     And I boot `telemetry` component
     When I invoke `trace` with:
       """yaml

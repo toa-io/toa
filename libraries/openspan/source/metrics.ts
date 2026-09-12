@@ -1,29 +1,34 @@
-import { console } from './Console.ts'
 import type { Registry } from './Registry.ts'
-import { consoleMeter, flushMeters, measuring, metering, meters } from './meters.ts'
+import { flushMeters, metering, meters } from './meters.ts'
 import { OtlpMetrics } from './OtlpMetrics.ts'
 import { state } from './state.ts'
 import type { Meter } from './meters.ts'
 import type { OtlpMetricsOptions } from './OtlpMetrics.ts'
 
 /**
- * Configures metrics: how often series are collected, and where they go.
- * Replaces the current configuration entirely.
+ * Configures metrics: how often series are collected, and where they go. Replaces the current
+ * configuration entirely, and `metrics()` with nothing turns them off.
  *
- * When `exporters` is omitted, metrics are off: nothing consumes a series, so none is collected.
- * The console exporter is a local development mechanism and is opted into explicitly; a
- * deployment configures `otlp`.
+ * Being called at all is what turns measuring on, and an exporter is what sends what is measured
+ * somewhere. A process configured without one records into its registry and posts nothing, which
+ * is what a test reading its own process wants and costs no timer.
  *
  * The registry is not replaced. Instruments are declared where the code that records them is
  * built, which is before and after this is called, and an instrument that outlived a
  * reconfiguration is one whose series does not restart.
  */
-export function metrics(options: MetricsOptions = {}): void {
+export function metrics(options?: MetricsOptions): void {
   stop()
+
+  if (options === undefined) {
+    metering(null)
+
+    return
+  }
 
   metering(createMeters(options.exporters))
 
-  if (!measuring()) return
+  if (meters().length === 0) return
 
   const interval = options.interval ?? INTERVAL
 
@@ -35,11 +40,11 @@ export function metrics(options: MetricsOptions = {}): void {
 
 /** One collection, handed to every exporter. Called on the interval, and on the way out. */
 export function collect(): void {
-  if (!measuring()) return
+  if (meters().length === 0) return
 
   const series = state.registry.collect()
 
-  for (const meter of meters()) meter.export(series, console)
+  for (const meter of meters()) meter.export(series)
 }
 
 export function registry(): Registry {
@@ -47,15 +52,9 @@ export function registry(): Registry {
 }
 
 function createMeters(config?: MetersConfig): Meter[] {
-  if (config === undefined) return []
+  if (config?.otlp === undefined) return []
 
-  const meters: Meter[] = []
-
-  if ('console' in config) meters.push(consoleMeter)
-
-  if (config.otlp !== undefined) meters.push(new OtlpMetrics(config.otlp))
-
-  return meters
+  return [new OtlpMetrics(config.otlp)]
 }
 
 function stop(): void {
@@ -91,6 +90,5 @@ export interface MetricsOptions {
 }
 
 export interface MetersConfig {
-  console?: unknown
   otlp?: OtlpMetricsOptions
 }

@@ -384,7 +384,7 @@ describe('measure', () => {
   beforeEach(() => {
     registry = new Registry()
     duration = registry.histogram('duration', { buckets: [1], unit: 's' })
-    metrics({ exporters: { console: {} } })
+    metrics({})
   })
 
   afterEach(() => {

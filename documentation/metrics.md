@@ -1,7 +1,7 @@
 # Metrics
 
-A metric is recorded whether or not the trace is sampled. Nothing is collected and nothing is
-measured until a metrics exporter is configured.
+A metric is recorded whether or not the trace is sampled. Nothing is measured until the `metrics`
+annotation is declared, and nothing leaves the process until an exporter is configured under it.
 
 ## Configuration
 
@@ -33,6 +33,9 @@ recovers, so neither throughput nor shutdown is delayed by the absence of the ba
 
 Sampling does not apply. `telemetry.traces.sample` changes which traces are recorded and changes
 nothing about a metric.
+
+There is no console exporter: a cumulative counter written as a log line says neither a rate nor a
+comparison, and reading one needs a backend.
 
 ## Declaring a metric
 
