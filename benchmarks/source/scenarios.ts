@@ -123,6 +123,25 @@ export const scenarios: Scenario[] = [
     requires: '`mcp`'
   },
   {
+    // what the route reads of each entity, against `list.1000` reading every property of it
+    ...list('list.1000.projected', 'h1'),
+    path: () => '/bench/projected/?limit=1000',
+    check: (reply) => thousand(reply),
+    optional: true
+  },
+  {
+    // what the route answers of each entity, against `list.1000` answering every property of it
+    ...list('list.1000.restricted', 'h1'),
+    path: () => '/bench/restricted/?limit=1000',
+    check: (reply) =>
+      expect(
+        thousand(reply) === null &&
+          (reply.body as Array<{ summary?: string }>)[0]?.summary === undefined,
+        reply
+      ),
+    optional: true
+  },
+  {
     ...list('list.1000.msgpack', 'h1'),
     headers: () => ({ accept: 'application/msgpack' }),
     check: (reply) =>
@@ -160,11 +179,15 @@ function list(id: string, protocol: Protocol): Scenario {
     method: 'GET',
     path: () => '/bench/items/?limit=1000',
     status: 200,
-    check: (reply) =>
-      expect(Array.isArray(reply.body) && (reply.body as unknown[]).length === 1000, reply),
+    check: (reply) => thousand(reply),
     processes: ['gateway', 'bench'],
     seeded: true
   }
+}
+
+/** The thousand items seeded, whatever of each of them a route answers. */
+function thousand(reply: Reply): string | null {
+  return expect(Array.isArray(reply.body) && (reply.body as unknown[]).length === 1000, reply)
 }
 
 function expect(ok: boolean, reply: Reply): string | null {

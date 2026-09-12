@@ -99,6 +99,25 @@ exposition:
     /chain:
       anonymous: true
       GET: chain
+    # what a route leaves out of what it reads, and out of what it answers
+    /projected:
+      anonymous: true
+      GET:
+        endpoint: enumerate
+        query:
+          limit:
+            value: 1000
+            range: [1, 1000]
+          projection: [title, rank, tags]
+    /restricted:
+      anonymous: true
+      GET:
+        io:output: [id, title, rank, tags]
+        endpoint: enumerate
+        query:
+          limit:
+            value: 1000
+            range: [1, 1000]
     /items:
       anonymous: true
       GET:
