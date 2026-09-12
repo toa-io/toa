@@ -34,7 +34,10 @@ export const codes = {
   Loop: 500,
 
   /** a component asked for something its manifest does not declare */
-  Misuse: 600
+  Misuse: 600,
+
+  /** a call that changes state, made under a request that may only read */
+  Safety: 700
 }
 
 export class Exception {
@@ -167,6 +170,7 @@ export const EndpointException = derive('Endpoint')
 export const AddresseeException = derive('Addressee')
 export const AbandonedException = derive('Abandoned')
 export const MisuseException = derive('Misuse')
+export const SafetyException = derive('Safety')
 
 export const names = swap(codes)
 // #endregion
@@ -219,7 +223,9 @@ const OUTCOME: Record<keyof typeof codes, 'permanent' | 'transient'> = {
   // the chain is deterministic, so another attempt walks it again: a retry is another cycle
   Loop: 'permanent',
   // what a component did not declare, it does not declare on the next attempt either
-  Misuse: 'permanent'
+  Misuse: 'permanent',
+  // a transition does not become an observation, and the request goes on saying it only reads
+  Safety: 'permanent'
 }
 
 const PERMANENT = new Set<number>(
