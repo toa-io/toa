@@ -52,6 +52,12 @@ export class Context {
    */
   public output?: string[]
 
+  /**
+   * Whether anything on the way out reads the body: a directive that takes a property of it, or
+   * builds an answer around it. What does says so, and a reply is then values rather than bytes.
+   */
+  public reads?: boolean
+
   public readonly pipelines: Pipelines = {
     body: [],
     response: []
