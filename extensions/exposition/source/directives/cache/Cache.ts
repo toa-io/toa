@@ -1,5 +1,6 @@
 import { Control } from './Control.ts'
 import { Exact } from './Exact.ts'
+import { same, tag } from './etag.ts'
 import type { Output } from '../../io.ts'
 import type { AuthenticatedContext, Directive } from './types.ts'
 import type { DirectiveFamily } from '../../RTD/index.ts'
@@ -50,6 +51,34 @@ export class Cache implements DirectiveFamily<Directive> {
         response.headers.append('vary', 'authorization')
       }
     } else directive.set(context, response.headers)
+  }
+
+  /**
+   * What the reply is validated by, which is the body it holds. Request-scoped, because the
+   * body is the whole request's: one that made several calls sends back one of them.
+   *
+   * The tag is formed for a safe method (`GET`, `HEAD`) whose reply the client may store, and
+   * for no other: a client never sends a tag back on a write, and a reply stating `no-store`
+   * it can never send back at all. A directive that stated a tag of its own — the checksum of
+   * a stored file — keeps it. The body is bytes only once it is encoded, so what is left here
+   * is what forms the tag out of them.
+   */
+  public depart(context: http.Context, response: http.OutgoingMessage): void {
+    const method = context.request.method
+
+    if (method !== 'GET' && method !== 'HEAD') return
+
+    const headers = response.headers
+
+    if (headers !== undefined && (headers.has('etag') || Control.disabled(headers)))
+      return
+
+    response.validate = (body: Buffer) => {
+      const etag = tag(body)
+      const sent = context.request.headers['if-none-match']
+
+      return { etag, held: sent !== undefined && same(sent, etag) }
+    }
   }
 }
 
