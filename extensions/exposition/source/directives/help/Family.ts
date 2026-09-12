@@ -2,7 +2,6 @@ import { Help } from './Help.ts'
 import { Parameters } from './Parameters.ts'
 import type { Introspection, Schema } from '../../Introspection.ts'
 export type { Described } from './described.ts'
-import type { Context } from '../../HTTP/index.ts'
 import type { DirectiveFamily } from '../../RTD/index.ts'
 
 /** The name the family is declared under, and what a consumer of one asks a method for. */
@@ -43,11 +42,7 @@ export class Family implements DirectiveFamily<Directive> {
   }
 
   /** What the route states this method and its parameters are. */
-  public explain(
-    directives: Directive[],
-    _: Context,
-    introspection: Introspection
-  ): Introspection | null {
+  public explain(directives: Directive[], introspection: Introspection): Introspection | null {
     const help = Family.method(directives)
 
     // what is hidden is hidden from every answer at once, this being the one place they

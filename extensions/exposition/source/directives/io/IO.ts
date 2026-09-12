@@ -66,11 +66,7 @@ export class IO implements DirectiveFamily<Directive> {
    * What a whitelist admits is what the schema states. Without an `io:output` the reply is
    * dropped before it is sent, so there is no output to describe at all.
    */
-  public explain(
-    directives: Directive[],
-    _: http.Context,
-    introspection: Introspection
-  ): Introspection {
+  public explain(directives: Directive[], introspection: Introspection): Introspection {
     let restricted = false
 
     for (const directive of directives) {
