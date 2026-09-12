@@ -49,21 +49,11 @@ describe('output', () => {
     assert.deepStrictEqual(reply.output, [{ id: 'x' }, { id: 'y' }])
   })
 
-  // what a cache validates by, which a caller reads whatever its request asked for
-  it('should answer the system properties beside a restricted output', async () => {
-    const answered = { title: 'First pot', id: 'x', VERSION: 3, UPDATED: 17, CREATED: 16 }
-    const reply = await observation(answered).invoke(request(['title']))
-
-    assert.deepStrictEqual(reply.output, { title: 'First pot' })
-    assert.deepStrictEqual(reply.system, { VERSION: 3, CREATED: 16, UPDATED: 17 })
-  })
-
   it('should answer no output where the request asks for none of it', async () => {
     const answered = { title: 'First pot', id: 'x', VERSION: 3 }
     const reply = await observation(answered).invoke(request([]))
 
     assert.strictEqual('output' in reply, false)
-    assert.deepStrictEqual(reply.system, { VERSION: 3 })
   })
 
   it('should answer a value that is not an object as it is', async () => {

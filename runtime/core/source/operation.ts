@@ -11,7 +11,7 @@ import type { EntitySet } from './entities/set.ts'
 import type { Changeset } from './entities/changeset.ts'
 import type { scope as Scope } from './types/operations.ts'
 import type { Call } from './types/inbox.ts'
-import type { Envelope, Query, System } from './types/request.ts'
+import type { Envelope, Query } from './types/request.ts'
 
 /** What an operation acquires for the algorithm to run against. */
 export type Scoped = Entity | EntitySet | Changeset | Readable | null
@@ -230,12 +230,6 @@ function restrict(reply: any, output?: string[]): any {
     return reply
   }
 
-  if (!Array.isArray(answered)) {
-    const system = take(answered)
-
-    if (system !== undefined) reply.system = system
-  }
-
   if (output.length === 0) {
     delete reply.output
 
@@ -263,17 +257,3 @@ function fit(entity: Record<string, any>, allowed: Set<string>): Record<string, 
   return output
 }
 
-/** What a cache validates by, which a caller reads whatever its request named. */
-function take(entity: Record<string, any>): System | undefined {
-  const { VERSION, CREATED, UPDATED } = entity
-
-  if (VERSION === undefined && CREATED === undefined && UPDATED === undefined) return undefined
-
-  const system: System = {}
-
-  if (VERSION !== undefined) system.VERSION = VERSION
-  if (CREATED !== undefined) system.CREATED = CREATED
-  if (UPDATED !== undefined) system.UPDATED = UPDATED
-
-  return system
-}
