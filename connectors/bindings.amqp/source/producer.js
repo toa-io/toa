@@ -116,9 +116,31 @@ export class Producer extends Connector {
     this.#pending.add(promise)
 
     try {
-      return await promise
+      const reply = await promise
+
+      return request?.encoded === true ? encoded(reply) : reply
     } finally {
       this.#pending.delete(promise)
     }
   }
+}
+
+/**
+ * An output its caller reads as bytes: comq sends a Buffer as it is, so what the caller writes on
+ * — a response body — is encoded once, here, and read by nobody in between. Everything else
+ * travels as the reply it is: an error and an exception are read, a stream is framed, and an
+ * absent output is what a caller answers nothing for.
+ *
+ * @param {any} reply
+ * @returns {any}
+ */
+function encoded(reply) {
+  if (reply === null || typeof reply !== 'object' || Buffer.isBuffer(reply)) return reply
+  if (reply.error !== undefined || reply.exception !== undefined) return reply
+
+  const output = reply.output
+
+  if (output === undefined || output === null || typeof output !== 'object') return reply
+
+  return Buffer.from(JSON.stringify(output))
 }
