@@ -10,6 +10,8 @@ export class Composition {
     this.components = composition.components.map(component)
     this.resources = composition.resources
 
+    if (composition.replicas !== undefined) this.replicas = composition.replicas
+
     // the extensions whose services this composition runs, as `TOA_SERVICES` for the process
     if (composition.services !== undefined) this.services = composition.services
   }

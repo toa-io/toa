@@ -8,8 +8,11 @@ import {
   create,
   current,
   exporting,
+  metrics,
+  Registry,
   run,
-  sampling
+  sampling,
+  traces
 } from './index.ts'
 import type { Channel } from './Console.ts'
 
@@ -373,6 +376,90 @@ describe('span', () => {
     assert.match(log.trace_id, /^[\da-f]{32}$/)
   })
 })
+
+describe('measure', () => {
+  let registry: Registry
+  let duration: ReturnType<Registry['histogram']>
+
+  beforeEach(() => {
+    registry = new Registry()
+    duration = registry.histogram('duration', { buckets: [1], unit: 's' })
+    metrics({})
+  })
+
+  afterEach(() => {
+    metrics()
+    traces()
+  })
+
+  it('should record the duration of a measured span', async () => {
+    await console.span({ name: 'measured', measure: { histogram: duration } }, noop)
+
+    assert.strictEqual(registry.collect()[0]?.count, 1)
+  })
+
+  it('should record a span that threw', async () => {
+    await assert.rejects(
+      console.span({ name: 'measured', measure: { histogram: duration } }, () => {
+        throw new Error('nope')
+      })
+    )
+
+    assert.strictEqual(registry.collect()[0]?.count, 1)
+  })
+
+  it('should record the labels of its site', async () => {
+    const labelled = registry.histogram('labelled', { buckets: [1] }, { kind: null })
+
+    await console.span(
+      { name: 'measured', measure: { histogram: labelled, labels: { kind: 'server' } } },
+      noop
+    )
+
+    const series = registry.collect().find((one) => one.name === 'labelled')
+
+    assert.deepStrictEqual(series?.labels, { kind: 'server' })
+  })
+
+  it('should record on an unsampled trace', async () => {
+    traces({ exporters: { console: {} }, sample: 0 })
+
+    await console.span('root', async () => {
+      await console.span({ name: 'measured', measure: { histogram: duration } }, noop)
+    })
+
+    assert.strictEqual(registry.collect()[0]?.count, 1)
+  })
+
+  it('should record where nothing consumes a span at all', async () => {
+    traces()
+
+    await console.span({ name: 'measured', measure: { histogram: duration } }, noop)
+
+    assert.strictEqual(registry.collect()[0]?.count, 1)
+  })
+
+  it('should record nothing when nothing is measuring', async () => {
+    metrics()
+
+    await console.span({ name: 'measured', measure: { histogram: duration } }, noop)
+
+    assert.strictEqual(registry.collect().length, 0)
+  })
+
+  it('should record seconds where a span reports milliseconds', async () => {
+    await console.span({ name: 'measured', measure: { histogram: duration } }, () =>
+      new Promise((resolve) => setTimeout(resolve, 20))
+    )
+
+    const [series] = registry.collect()
+
+    // 20ms is 0.02s, which is under the only bound
+    assert.deepStrictEqual(series.buckets, [1, 0])
+  })
+})
+
+async function noop(): Promise<void> {}
 
 function pop(channel: any): any {
   const buffer = channel.write.mock.calls[0]?.arguments[0] as Buffer

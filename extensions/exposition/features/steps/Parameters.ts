@@ -46,17 +46,24 @@ if (!variables.has('TOA_TELEMETRY_TRACES'))
     })
   )
 
+// and metrics to the local Prometheus, whose absence is harmless the same way
+if (!variables.has('TOA_TELEMETRY_METRICS'))
+  variables.set(
+    'TOA_TELEMETRY_METRICS',
+    JSON.stringify({
+      // shorter than the default, so a suite that runs for minutes posts more than once
+      interval: 5000,
+      exporters: { otlp: { endpoint: 'http://localhost:31070/api/v1/otlp' } }
+    })
+  )
+
 /*
  * The page the gateway serves at `/.discovery/`, pointed at a fixture: the scenarios are
  * about the server, not the page, and none of them should need a UI build. Set here rather
  * than in a step because the gateway is not rebuilt between scenarios that share its
  * signature, so one flipping this would silently read whatever the last one left.
  */
-process.env.__TESTING_EXPOSITION_DISCOVERY_ROOT = join(
-  import.meta.dirname,
-  '..',
-  'site'
-)
+process.env.__TESTING_EXPOSITION_DISCOVERY_ROOT = join(import.meta.dirname, '..', 'site')
 
 const environment = process.env.CLOUDINARY_ENVIRONMENT
 

@@ -44,6 +44,46 @@ it('should throw on invalid declaration type', async () => {
   )
 })
 
+// a projection is what a storage reads, and a read an operation writes back reads the record whole
+it('should refuse a projection declared for an operation that is not an observation', async () => {
+  mf.operations = { observe: { type: 'observation' }, transit: { type: 'transition' } } as any
+
+  const projecting = {
+    '/': { POST: { endpoint: 'transit', query: { projection: ['title'] } } }
+  }
+
+  assert.throws(
+    () => manifest(projecting, mf),
+    (error: any) => /declares a projection, which an operation of type 'transition'/.test(error.message)
+  )
+})
+
+it('should refuse a projection that names id', async () => {
+  mf.operations = { observe: { type: 'observation' } } as any
+
+  const projecting = {
+    '/': { GET: { endpoint: 'observe', query: { projection: ['id', 'title'] } } }
+  }
+
+  assert.throws(
+    () => manifest(projecting, mf),
+    (error: any) => /names 'id', which is always read/.test(error.message)
+  )
+})
+
+it('should take a projection of an observation', async () => {
+  mf.operations = { observe: { type: 'observation' } } as any
+
+  const projecting = {
+    '/': { GET: { endpoint: 'observe', query: { projection: ['title'] } } }
+  }
+
+  const node = manifest(projecting, mf)
+  const GET = node.routes[0].node.routes[0].node.methods[0]
+
+  assert.deepStrictEqual(GET.mapping?.query?.projection, ['title'])
+})
+
 it('should set namespace and component', async () => {
   const node = manifest(declaration, mf)
 

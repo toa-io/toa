@@ -1,7 +1,7 @@
-import { LOGS_PREFIX, READY_ENV, TRACES_ENV } from './const.ts'
+import { LOGS_PREFIX, METRICS_ENV, READY_ENV, TRACES_ENV } from './const.ts'
 import { DEFAULT_ANNOTATION, normalizeAnnotation, type ReadyAnnotation } from './ready.ts'
 import type { Dependency, Probe, Variables } from '@toa.io/operations'
-import type { ExportersConfig, LevelName } from 'openspan'
+import type { ExportersConfig, LevelName, MetersConfig } from 'openspan'
 
 export function deployment(_: unknown, annotation?: Annotation): Dependency {
   const variables: Variables = { global: [] }
@@ -9,6 +9,9 @@ export function deployment(_: unknown, annotation?: Annotation): Dependency {
   if (annotation?.logs !== undefined) addLogsVariables(annotation.logs, variables)
 
   if (annotation?.traces !== undefined) addTracesVariables(annotation.traces, variables)
+
+  if (annotation?.metrics !== undefined)
+    addMetricsVariables(annotation.metrics, variables)
 
   const ready = normalizeAnnotation(annotation?.ready)
 
@@ -67,9 +70,27 @@ function addTracesVariables(annotation: TracesAnnotation, variables: Variables):
   })
 }
 
+function addMetricsVariables(annotation: MetricsAnnotation, variables: Variables): void {
+  const { interval, exporters } = annotation
+
+  if (interval !== undefined)
+    if (!(typeof interval === 'number' && interval > 0))
+      throw new Error('telemetry.metrics.interval must be a positive number')
+
+  if (exporters?.otlp !== undefined)
+    if (typeof exporters.otlp.endpoint !== 'string')
+      throw new Error('telemetry.metrics.exporters.otlp.endpoint is required')
+
+  variables.global.push({
+    name: METRICS_ENV,
+    value: JSON.stringify({ interval, exporters })
+  })
+}
+
 interface Annotation {
   logs?: LogsAnnotation & Record<string, LogsAnnotation>
   traces?: TracesAnnotation
+  metrics?: MetricsAnnotation
   ready?: ReadyAnnotation
 }
 
@@ -81,4 +102,9 @@ interface TracesAnnotation {
   sample?: number
   rate?: number
   exporters?: ExportersConfig
+}
+
+interface MetricsAnnotation {
+  interval?: number
+  exporters?: MetersConfig
 }

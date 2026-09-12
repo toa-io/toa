@@ -5,6 +5,7 @@ interface Composition {
   name: string
   components: string[]
   services?: string[]
+  replicas?: number
 }
 
 /** What Toa does not deploy for a context, whatever else names it: still part of it, deployed by other means. */

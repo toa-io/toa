@@ -257,8 +257,8 @@ Feature: Custom tokens
       """
       200 OK
 
-      - id: ${{ kid }}
-        CREATED: ${{ created }}
+      - CREATED: ${{ created }}
+        id: ${{ kid }}
         label: One-time token
         expires: ${{ expires }}
       """
@@ -270,7 +270,7 @@ Feature: Custom tokens
       """
     Then the following reply is sent:
       """
-      200 OK
+      204 No Content
       """
     And after 1 second
     When the following request is received:

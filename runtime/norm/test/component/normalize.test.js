@@ -81,15 +81,15 @@ describe('entity', () => {
 
     assert.deepStrictEqual(manifest.entity.properties.settled.format, 'date-time')
   })
-
-
 })
 
 describe('extensions', () => {
   it('should add predefined extensions', async () => {
     await extensions(manifest)
 
-    assert.strictEqual(manifest.extensions['@toa.io/extensions.telemetry'], null)
+    // telemetry normalizes its declaration, so a component that declares nothing has an
+    // empty one rather than none; fetch has no manifest of its own to normalize
+    assert.deepStrictEqual(manifest.extensions['@toa.io/extensions.telemetry'], {})
     assert.strictEqual(manifest.extensions['@toa.io/extensions.fetch'], null)
   })
 
@@ -99,7 +99,7 @@ describe('extensions', () => {
     await extensions(manifest)
 
     assert.deepStrictEqual(manifest.extensions, {
-      '@toa.io/extensions.telemetry': null,
+      '@toa.io/extensions.telemetry': {},
       '@toa.io/extensions.fetch': null,
       '@toa.io/extensions.introspection': {}
     })

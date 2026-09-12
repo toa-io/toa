@@ -52,6 +52,16 @@ export interface Request<Input = any, Entity = any> {
    * been where it is going already is refused rather than made. See `core/source/trail.ts`.
    */
   trail?: string[]
+  /**
+   * The properties of the output this caller receives, of each object the operation answers. An
+   * empty list receives none of it, and a request that names none receives the output whole.
+   */
+  output?: string[]
+  /**
+   * Whether this caller reads an output encoded rather than as values: a gateway writing it as a
+   * response body spends nothing on reading it. What answers one encodes it once.
+   */
+  encoded?: boolean
   /** the sender validated against the contract, so the recipient does not */
   authentic?: boolean
   /** W3C traceparent */

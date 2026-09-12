@@ -1,11 +1,9 @@
-import tsflow from 'cucumber-tsflow'
+import { binding, given } from 'specumber'
 
 import * as http from '@toa.io/agent'
 import { Parameters } from './Parameters.ts'
 import { Captures } from './Captures.ts'
 import { Gateway } from './Gateway.ts'
-
-const { binding, given } = tsflow
 
 @binding([Gateway, Parameters, Captures])
 export class Identity {

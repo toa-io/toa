@@ -1,7 +1,9 @@
 import { create, current, run } from './tracing.ts'
 import { exporters } from './exporters.ts'
+import { measuring } from './meters.ts'
 import type { Span } from './exporters.ts'
 import type { SpanContext } from './tracing.ts'
+import type { Histogram } from './Registry.ts'
 
 export class Console {
   public readonly trace = this.channel('trace')
@@ -48,8 +50,18 @@ export class Console {
      * An unsampled trace records nothing, and the context a child would inherit is the
      * one already in scope — so there is nothing to create and nothing to propagate.
      * The decision itself is made once, when the trace root is opened below.
+     *
+     * A measured site is the exception, and the reason the metric is worth having: sampling
+     * decides which traces are kept, and a rate that moved with it would be a rate of the
+     * sampling rather than of the traffic.
      */
-    if (parent !== undefined && !parent.sampled) return await task!()
+    if (parent !== undefined && !parent.sampled) {
+      const measure = typeof naming === 'string' ? undefined : naming.measure
+
+      if (measure === undefined || !measuring()) return await task!()
+
+      return await this.measured(measure, task!)
+    }
 
     const options: SpanOptions = typeof naming === 'string' ? { name: naming } : naming
 
@@ -120,6 +132,17 @@ export class Console {
     }
   }
 
+  /** A task that is measured and not traced: what an unsampled trace leaves of a measured site. */
+  private async measured<T>(measure: Measure, task: Task<T>): Promise<T> {
+    const start = performance.now()
+
+    try {
+      return await task()
+    } finally {
+      measure.histogram.record((performance.now() - start) / 1000, measure.labels)
+    }
+  }
+
   // eslint-disable-next-line max-params
   private complete(
     context: SpanContext,
@@ -128,6 +151,12 @@ export class Console {
     start: number,
     error?: unknown
   ): void {
+    const duration = Math.round((performance.now() - start) * 1000) / 1000
+
+    // before the sampling gate, and whether or not the task threw: an error is an observation
+    if (options.measure !== undefined && measuring())
+      options.measure.histogram.record(duration / 1000, options.measure.labels)
+
     if (!context.sampled) return
 
     const span: Span = {
@@ -136,7 +165,7 @@ export class Console {
       spanId: context.spanId!,
       kind: options.kind ?? 'internal',
       time,
-      duration: Math.round((performance.now() - start) * 1000) / 1000
+      duration
     }
 
     if (context.parentId !== undefined) span.parentId = context.parentId
@@ -263,6 +292,18 @@ export interface SpanOptions {
 
   /** the logical service emitting the span, inherited from the parent context when omitted */
   service?: string
+
+  /** what this site measures, recorded whether or not the trace is sampled */
+  measure?: Measure
+}
+
+/**
+ * The instrument a site records its duration in, in seconds, and the labels it records under.
+ * Both are fixed for the site, so both are built once with the span options that carry them.
+ */
+export interface Measure {
+  histogram: Histogram
+  labels?: Record<string, unknown>
 }
 
 export type Channel = 'trace' | 'debug' | 'info' | 'warn' | 'error'

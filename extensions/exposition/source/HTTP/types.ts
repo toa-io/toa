@@ -26,6 +26,7 @@ export interface ServerResponse extends Writable {
   setHeader: (name: string, value: number | string | string[]) => void
   appendHeader: (name: string, value: string | string[]) => void
   hasHeader: (name: string) => boolean
+  getHeader: (name: string) => number | string | string[] | undefined
   writeHead: (status: number, headers?: OutgoingHttpHeaders) => ServerResponse
 }
 

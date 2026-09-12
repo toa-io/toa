@@ -44,6 +44,18 @@ The pods are spread across nodes, counting only those of the current revision: a
 the new pods whatever nodes the old ones are on, and where one node is all that fits, they are
 scheduled there all the same. Counting by revision needs Kubernetes 1.27 or later.
 
+A composition states how many of those pods it runs. Absent, it deploys two.
+
+```yaml
+compositions:
+  - name: edge
+    replicas: 1
+    components:
+      - todos.tasks
+```
+
+A derived composition has nowhere to state its own, so it deploys two.
+
 ## Services
 
 A composition may run extension services in its own pod, rather than let each be deployed on

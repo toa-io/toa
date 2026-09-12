@@ -1,6 +1,7 @@
 import { console, current, encode, type SpanOptions } from 'openspan'
 import { Connector } from './connector.ts'
 import { derive } from './entities/newid.ts'
+import * as measure from './measurements.ts'
 import type { Emitter } from './types/bindings.ts'
 import type { Event as Bridge } from './types/bridges.ts'
 import type { Message } from './types/message.ts'
@@ -56,7 +57,8 @@ export class Event extends Connector {
       const options: SpanOptions = {
         name: `${this.#label} publish`,
         kind: 'producer',
-        attributes: { 'messaging.destination.name': this.#label }
+        attributes: { 'messaging.destination.name': this.#label },
+        measure: { histogram: measure.event.publish, labels: { event: this.#label } }
       }
 
       await console.span(options, async () => {

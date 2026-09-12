@@ -1,0 +1,22 @@
+name: peer
+
+operations:
+  answer:
+    input:
+      type: object
+      properties:
+        n:
+          type: integer
+      required: [n]
+    output:
+      type: object
+      properties:
+        n:
+          type: integer
+  note:
+    input:
+      type: string
+
+receivers:
+  bench.created:
+    operation: note

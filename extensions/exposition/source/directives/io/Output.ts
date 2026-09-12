@@ -1,10 +1,6 @@
-import { Stream } from 'node:stream'
-import { console } from 'openspan'
 import * as schemas from './schemas.ts'
-import type { Message } from './Message.ts'
 import type { Directive } from './Directive.ts'
 import type { Input as Context } from '../../io.ts'
-import type { OutgoingMessage } from '../../HTTP/index.ts'
 
 export class Output implements Directive {
   /** whether the reply passes whole, which is when the schema is the operation's own */
@@ -28,53 +24,18 @@ export class Output implements Directive {
     schemas.output.validate(permissions, "Incorrect 'io:output' format")
   }
 
+  /**
+   * What the request asks for of the output, which the operation answers of it. A route that
+   * passes the reply whole asks for nothing, and one declaring these beside an inherited list
+   * asks for what the two have in common.
+   */
   public precall(context: Context): void {
-    context.pipelines.response.push(this.restriction(context))
-  }
+    if (this.disabled) return
 
-  private restriction(context: Context) {
-    return (message: OutgoingMessage): void => {
-      // what the gateway built is its own — a code and a message — and a restriction has
-      // nothing to say about it; everything else is a reply the operation returned, and is
-      // restricted whatever status it carries
-      const error = message.authentic === true
-      const stream = message.body instanceof Stream
-      const none = message.body === undefined || message.body === null
-
-      if (this.disabled || error || stream || none) return
-
-      if (typeof message.body !== 'object' || this.permissions.length === 0) {
-        if (this.omitted)
-          console.warn(
-            "Permissions for 'io:output' are not specified properly, response omitted",
-            { path: context.url.pathname }
-          )
-
-        delete message.body
-
-        return
-      }
-
-      schemas.message.validate<Message>(
-        message.body,
-        "'io:output' expects response to be an object or array of objects"
-      )
-
-      if (Array.isArray(message.body))
-        message.body = message.body.map((entity) => this.fit(entity as Message))
-      else message.body = this.fit(message.body)
-    }
-  }
-
-  /** Runs per entity of a collection, hence the set and the absence of intermediates. */
-  private fit(message: Message): Message {
-    const output: Message = {}
-
-    // the keys of the entity, so that the response keeps the order it was built in
-    for (const key of Object.keys(message))
-      if (this.allowed.has(key)) output[key] = message[key]
-
-    return output
+    context.output =
+      context.output === undefined
+        ? this.permissions
+        : context.output.filter((property) => this.allowed.has(property))
   }
 }
 

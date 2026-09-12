@@ -11,6 +11,7 @@ export class Node {
   public forward: string | null
   public expiration: number
   public methods: Methods
+
   private readonly protected: boolean
   private routes: Route[]
 
@@ -25,16 +26,22 @@ export class Node {
     this.sort()
   }
 
-  public match(fragments: string[], parameters: Parameter[] = []): Match | null {
+  public match(
+    fragments: string[],
+    parameters: Parameter[] = [],
+    segments: Segment[] = []
+  ): Match | null {
     // a route only pushes, so what a failed one added is cut off rather than the array copied
     const mark = parameters.length
+    const pieces = segments.length
 
     for (const route of this.routes) {
-      const match = route.match(fragments, parameters)
+      const match = route.match(fragments, parameters, segments)
 
       if (match !== null) return match
 
       parameters.length = mark
+      segments.length = pieces
     }
 
     return null

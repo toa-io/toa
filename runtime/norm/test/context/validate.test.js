@@ -125,6 +125,21 @@ describe('compositions', () => {
       (error) => /must NOT have additional properties/.test(error.message)
     )
   })
+
+  it('should allow replicas of one', () => {
+    context.compositions[0].replicas = 1
+
+    assert.doesNotThrow(() => validate(context))
+  })
+
+  it('should refuse replicas below one', () => {
+    context.compositions[0].replicas = 0
+
+    assert.throws(
+      () => validate(context),
+      (error) => /must be >= 1/.test(error.message)
+    )
+  })
 })
 
 describe('evicted', () => {

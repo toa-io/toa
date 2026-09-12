@@ -1,11 +1,9 @@
 import assert from 'node:assert'
 import * as http from 'node:http'
 import { resolve } from 'node:path'
-import tsflow from 'cucumber-tsflow'
+import { after, binding, given, then, when } from 'specumber'
 
 import { UI } from '../../source/UI.ts'
-
-const { after, binding, given, then, when } = tsflow
 
 /**
  * Not `UI_PORT`, which a deployment serves the page on: an application built on Toa is served

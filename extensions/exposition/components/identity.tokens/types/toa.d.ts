@@ -4,7 +4,7 @@
 import type { Options, Query, RemoteError } from '@toa.io/core/types'
 import type { Secret } from '@toa.io/extensions.configuration'
 import type { FetchInit } from '@toa.io/extensions.fetch'
-import type { Logs, Span } from '@toa.io/extensions.telemetry'
+import type { Logs, Metrics, Span } from '@toa.io/extensions.telemetry'
 import type { Readable } from 'node:stream'
 
 export interface Entity {

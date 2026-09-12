@@ -55,16 +55,17 @@ any method, so a reply that must not be stored can say so:
 
 ## Validators
 
-A reply that carries an `UPDATED` or `CREATED` timestamp says so in `last-modified`, whatever
-the method. A reply to a safe request (`GET`, `HEAD`) that carries a `VERSION` is tagged with
-it: `etag: "3"`. A request sending the tag back in `if-none-match`, strong or weak (`W/"3"`), is
-answered `304 Not Modified` with the tag as it was sent.
+A reply to a safe request (`GET`, `HEAD`) is tagged with what it holds: `etag` is a hash of the
+body the client receives, whatever that body is. A request sending the tag back in
+`if-none-match`, strong or weak (`W/"…"`), is answered `304 Not Modified`.
 
-A reply that carries no version has no tag, and a reply to an unsafe request has none either:
-its `VERSION` is in the body, and the next `GET` is what a cache validates.
+A reply to an unsafe request carries no tag, nor does one the gateway built out of an exception,
+nor one a client may not keep: a reply stating `no-store` is never sent back to be validated.
+A directive that states a tag of its own — the checksum of a stored file — keeps it.
 
-`if-match` is [concurrency control](query.md#optimistic-concurrency-control), which is the
-request's, whatever its method.
+`if-match` is [concurrency control](query.md#optimistic-concurrency-control) rather than a
+validator of the representation: it carries the `VERSION` a client read in a body, so a Method
+whose clients use it lists `VERSION` in its [`io:output`](io.md#output).
 
 ## References
 

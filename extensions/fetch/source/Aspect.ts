@@ -1,4 +1,5 @@
 import { Connector } from '@toa.io/core'
+import * as measure from './measurements.ts'
 import { console, type Console, type SpanOptions } from 'openspan'
 import type { Locator } from '@toa.io/core'
 import type { extensions } from '@toa.io/core/types'
@@ -112,16 +113,25 @@ async function send(
 
   delete attributes['retry.attempts']
 
+  const url = requestURL(request)
+  const origin = url.origin
+  const { method } = request
+
+  // the first attempt is the request; every one after it is the policy trying again
+  if (attempt > 1) measure.retried(origin)
+
   return await telemetry.output.span(
     {
       name: `attempt ${attempt}`,
       kind: 'client',
-      attributes
+      attributes,
+      measure: measure.attempt(origin, method)
     },
     async () => {
       const response = await globalThis.fetch(request.clone())
 
       attributes['http.response.status_code'] = response.status
+      measure.answered(origin, method, response.status)
 
       return response
     }

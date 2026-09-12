@@ -128,6 +128,10 @@ export class Authorization implements DirectiveFamily<Directive, Extension> {
     context: Context,
     parameters: Parameter[]
   ): Promise<Output> {
+    // `auth:incept` reads the identity out of the reply at settle, so the reply reaches the
+    // gateway as values rather than as the bytes it would otherwise pass on
+    if (directives.some((directive) => directive instanceof Incept)) context.reads = true
+
     for (const directive of directives) {
       const allow = await directive.authorize(context.identity, context, parameters)
 

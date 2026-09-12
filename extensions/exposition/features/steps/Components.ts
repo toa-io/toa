@@ -1,7 +1,7 @@
 import { createRequire } from 'node:module'
 import * as assert from 'node:assert'
 import { dirname, join } from 'node:path'
-import tsflow from 'cucumber-tsflow'
+import { after, binding, given } from 'specumber'
 
 import * as boot from '@toa.io/boot'
 import { type Connector } from '@toa.io/core'
@@ -12,12 +12,16 @@ import { Gateway } from './Gateway.ts'
 import { Workspace } from './Workspace.ts'
 import { components as map } from './map.ts'
 
-const { after, binding, given } = tsflow
-
 const require = createRequire(import.meta.url)
 
 const MAP = 'introspection'
 const VALUES = 'configuration'
+
+declare global {
+  /** What a call reads to leave this process; see `runtime/boot/src/bindings/produce.js`. */
+  // eslint-disable-next-line no-var
+  var TOA_INTEGRATION_BINDINGS_LOOP_DISABLED: boolean | undefined
+}
 
 @binding([Workspace, Gateway])
 export class Components {
@@ -73,6 +77,16 @@ export class Components {
     environment.set('TOA_CONFIGURATION_VALUES', JSON.stringify(parse(yaml)))
   }
 
+  /**
+   * A composition booted here is called without leaving the process, as a deployed one is not:
+   * what a component answers a gateway with, and what it encodes for it, is only carried by the
+   * broker. Stated before the component is running, and reset after the scenario.
+   */
+  @given('the components answer over the broker')
+  public throughBroker(): void {
+    globalThis.TOA_INTEGRATION_BINDINGS_LOOP_DISABLED = true
+  }
+
   @given('the `{word}` is stopped')
   public async stop(name: string): Promise<void> {
     assert.ok(name in this.compositions, `Composition '${name}' is not running`)
@@ -88,6 +102,9 @@ export class Components {
     )
 
     await Promise.all(promises)
+
+    // see 'the components answer over the broker'
+    delete globalThis.TOA_INTEGRATION_BINDINGS_LOOP_DISABLED
 
     environment.delete('TOA_CONFIGURATION_VALUES')
   }

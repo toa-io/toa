@@ -18,7 +18,8 @@ predictable way.
    [Constraints](#constraints).
 5. **Test.** The scenarios written before the change pass, and so does `npm run features`. See
    [Tests](#tests) and [Running Features](#running-features).
-6. **Pull request.** The draft is marked ready for review.
+6. **Pull request.** The draft is marked ready for review, which the developer does once they
+   consider every task done and the change fit to be read.
 
 [^1]: Meeting common sense expectations.
 
@@ -48,6 +49,12 @@ A unit of work is one completed iteration of the
 
 1. If your tests are failing, you must write code.
 2. If your tests are passing, you must write a test, unless you're refactoring or done.
+
+## Commits
+
+Follow [Conventional Commits](https://www.conventionalcommits.org/). The subject line must be able to complete the following sentence:
+
+> If applied, this commit will <<your subject line here>>
 
 ## Tests
 
@@ -131,6 +138,16 @@ what a Toa checkout binds is conventional: the whole of it sits in `31000`-`3109
 | `31061` | Tempo, OTLP/HTTP                              | `4318`         |
 | `31070` | Prometheus                                    | `9090`         |
 | `31080` | Grafana                                       | `3000`         |
+| `31090` | the benchmark gateway of the base revision    | —              |
+| `31091` | the benchmark gateway of the head revision    | —              |
+| `31092` | its readiness probe, base                     | —              |
+| `31093` | its readiness probe, head                     | —              |
+| `31094` | readiness of the benchmark `bench`, base      | —              |
+| `31095` | readiness of the benchmark `peer`, base       | —              |
+| `31096` | readiness of the benchmark `bench`, head      | —              |
+| `31097` | readiness of the benchmark `peer`, head       | —              |
+| `31098` | readiness inside the benchmark gateway, base  | —              |
+| `31099` | readiness inside the benchmark gateway, head  | —              |
 
 The block is below `net.ipv4.ip_local_port_range`, so an outgoing connection is never already
 holding one of these when the stack comes up.
@@ -240,6 +257,12 @@ of these on a scenario only where it is true of it.
 
 `npm run features:nightly` adds all of them back but `@manual` and `@skip`. Both sets are stated
 once, in `cucumber.tags.mjs`; `TOA_FEATURES=nightly` selects between them.
+
+## Performance
+
+`npm run bench` compares the request path of two revisions on one machine: the CPU every process
+spends per request, and the messages and database operations a request costs. `--profile` records
+where a revision spends it. See [benchmarks](./benchmarks/readme.md).
 
 ## Publishing
 

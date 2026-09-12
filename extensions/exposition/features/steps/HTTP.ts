@@ -1,7 +1,7 @@
 import * as assert from 'node:assert'
 import * as fs from 'node:fs'
 import * as path from 'node:path'
-import tsflow from 'cucumber-tsflow'
+import { binding, then, when } from 'specumber'
 
 import * as http from '@toa.io/agent'
 import * as msgpack from 'msgpackr'
@@ -10,8 +10,6 @@ import { Captures } from './Captures.ts'
 import { Parameters } from './Parameters.ts'
 import { Gateway } from './Gateway.ts'
 import type { Readable } from 'node:stream'
-
-const { binding, then, when } = tsflow
 
 @binding([Gateway, Parameters, Captures])
 export class HTTP extends http.Agent {

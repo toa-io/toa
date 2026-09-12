@@ -4,7 +4,7 @@
 import type { Options } from '@toa.io/core/types'
 import type { FetchInit } from '@toa.io/extensions.fetch'
 import type { Stash } from '@toa.io/extensions.stash'
-import type { Logs, Span } from '@toa.io/extensions.telemetry'
+import type { Logs, Metrics, Span } from '@toa.io/extensions.telemetry'
 
 export type CreateInput = {
   key?: string

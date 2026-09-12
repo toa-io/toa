@@ -86,6 +86,14 @@ services:
       ]
     ports:
       - "31020:31020"
+    # WiredTiger holds a descriptor for every collection and every index, and the suites create
+    # thousands of both over the days a stack stays up. The limit a container inherits is 1024;
+    # past it mongod cannot open a connection or a file, and dies of the fault that follows. The
+    # figure is the minimum MongoDB's own startup check asks for.
+    ulimits:
+      nofile:
+        soft: 64000
+        hard: 64000
     environment:
       MONGO_INITDB_ROOT_USERNAME: developer
       MONGO_INITDB_ROOT_PASSWORD: secret
@@ -161,7 +169,10 @@ services:
     image: prom/prometheus:v3.13.2
     command:
       - --config.file=/etc/prometheus/prometheus.yml
+      # Tempo's generator writes derived series here
       - --web.enable-remote-write-receiver
+      # and Toa posts its own to /api/v1/otlp/v1/metrics
+      - --web.enable-otlp-receiver
     ports:
       - "31070:9090"
   grafana:

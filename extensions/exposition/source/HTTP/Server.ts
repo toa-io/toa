@@ -6,6 +6,7 @@ import { once } from 'node:events'
 import { setTimeout } from 'node:timers/promises'
 import { console, current, decide, decode, run, type SpanContext } from 'openspan'
 import { Connector } from '@toa.io/core'
+import * as measurements from '../measurements.ts'
 import { type OutgoingMessage, write } from './messages.ts'
 import { ClientError, Exception } from './exceptions.ts'
 import { Context } from './Context.ts'
@@ -136,7 +137,9 @@ export class Server extends Connector {
 
     response.once('close', () => {
       this.inflight.delete(response)
-      controller.abort()
+
+      // a finished reply has nothing left to cancel, and an abort builds an exception
+      if (!response.writableFinished) controller.abort()
 
       if (this.inflight.size === 0) this.drained?.()
     })
@@ -239,18 +242,24 @@ export class Server extends Connector {
     authority: string,
     url: URL
   ): Promise<void> {
+    const measure = measurements.request(request.method)
+
     await console.span(
       {
         name: `${request.method} ${request.url}`,
         kind: 'server',
         service: 'exposition',
-        attributes: { method: request.method, url: request.url, authority }
+        attributes: { method: request.method, url: request.url, authority },
+        measure
       },
       async () => {
         response.setHeader('ray', current()!.traceId)
 
         const signal = this.track(response)
         const context = new Context(authority, request, this.properties, url, signal)
+
+        // the span carries this object, and the tree fills its route in once it has matched
+        context.labels = measure.labels
 
         await this.process!(context)
           .then(this.success(context, response))
@@ -273,6 +282,8 @@ export class Server extends Connector {
 
       message.status = status
 
+      measurements.answered(context.labels, status)
+
       await write(context, response, message)
     }
   }
@@ -294,6 +305,8 @@ export class Server extends Connector {
 
         const status = exception instanceof Exception ? exception.status : 500
         const span = current()
+
+        measurements.answered(context.labels, status)
 
         // https://opentelemetry.io/docs/specs/semconv/http/http-spans/#status
         if (status >= 500 && span !== undefined) span.status = 'error'
