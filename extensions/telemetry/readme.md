@@ -210,6 +210,38 @@ of the tracing backend.
 
 See [Grafana stack setup](grafana.md) for local and production wiring.
 
+## Metrics
+
+Metrics are recorded whether or not the trace is sampled, and nothing is measured until an exporter
+is configured.
+
+```yaml
+# context.toa.yaml
+
+telemetry:
+  metrics:
+    interval: 15000 # collection and export period, milliseconds
+    exporters:
+      otlp:
+        endpoint: http://prometheus:9090/api/v1/otlp # POSTs to {endpoint}/v1/metrics
+        timeout: 5000 # request timeout, milliseconds
+        cooldown: 30000 # how long to drop series for after a failed export
+```
+
+A missing or unavailable endpoint is reported with a single warning and series are dropped until it
+recovers, the same as for spans.
+
+A component records the metrics its manifest declares, through the `metrics` Context Aspect:
+
+```javascript
+async function convert(input, context) {
+  context.metrics.conversions.add(1, { currency: input.currency })
+}
+```
+
+See [Metrics](/documentation/metrics.md) for the declaration, the three instrument types, and every
+metric the runtime records.
+
 ## Logs best practices
 
 Use constant messages and attributes to facilitate log analysis.
@@ -234,9 +266,7 @@ Logs are not comments or documentation, nor are they a replacement for them.
 :-1: Don't:
 
 ```javascript
-context.logs.error(
-  'Failed to send the email, please check the email server configuration'
-)
+context.logs.error('Failed to send the email, please check the email server configuration')
 ```
 
 :+1: Do:
@@ -244,7 +274,7 @@ context.logs.error(
 ```javascript
 context.logs.error('Failed to send the email', {
   reason: 'SMTP error',
-  status: response.statusCode
+  status: response.statusCode,
 })
 ```
 
@@ -285,7 +315,7 @@ context.logs.debug('Configuration', context.configuration)
 ```javascript
 context.logs.debug('Limits', {
   max: context.configuration.limits.max,
-  min: context.configuration.limits.min
+  min: context.configuration.limits.min,
 })
 ```
 
@@ -317,8 +347,9 @@ telemetry:
 
 The exposition gateway is a separate service process with a nested identity composition in-process.
 
-It exposes its own `GET /.ready` on the **gateway HTTP port (`8000`)**, not `8001`.
+It exposes its own `GET /.ready` on a port of its own, **`8004`**, because the kubelet probes over
+HTTP/1.1 and the gateway port answers nothing else when it serves h2c.
 Deployment sets `TOA_TELEMETRY_READY=false` for that service so the nested composition does **not**
-start a second probe. Kubernetes probes the gateway on **8000**; composition Deployments on **8001**.
+start a second probe. Kubernetes probes the gateway on **8004**; composition Deployments on **8001**.
 
 See [exposition ready probe](../exposition/readme.md#ready-probe).

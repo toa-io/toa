@@ -71,6 +71,7 @@ Non-scattered documentation is coming some time later.
 - [Telemetry](/extensions/telemetry)
   - Structured logs
   - Distributed tracing
+  - [Metrics](/documentation/metrics.md): unsampled, and what the runtime records by zone
 - [Introspection](/extensions/introspection): product topology collection and visualization
 - [Realtime events](/extensions/realtime)
 - [BLOB storage](/extensions/storages)

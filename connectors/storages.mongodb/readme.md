@@ -2,8 +2,7 @@
 
 ## Tracing
 
-Commands are recorded as `client` spans within the trace of the current invocation,
-using the [driver command monitoring events](https://www.mongodb.com/docs/drivers/node/current/monitoring/command-monitoring/).
+Commands are recorded as `client` spans within the trace of the current invocation.
 
 Spans are named `{command} {collection}` and carry `db.*` attributes following the
 [OpenTelemetry semantic conventions](https://opentelemetry.io/docs/specs/semconv/database/mongodb/):
