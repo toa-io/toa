@@ -48,4 +48,9 @@ const MULTIPLIERS = Object.entries({
   T: Math.pow(1000, 4)
 })
 
-const EXPRESSION = /^(\d+(?:.\d+)?)([^\d\W]*)$/
+/**
+ * Digits, a fraction after a decimal point, and a unit. The point is escaped: unescaped, it
+ * matched any character, which made `1x5` a number and left `\d+(?:.\d+)?` two ways to split
+ * a run of digits — the backtracking a long one then costs is quadratic in its length.
+ */
+const EXPRESSION = /^(\d+(?:\.\d+)?)([^\d\W]*)$/
