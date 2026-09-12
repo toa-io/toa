@@ -534,10 +534,9 @@ them in the extension would leave them out of the one process where loop delay m
 `openspan` already owns the collection loop, so both are read there, once per interval, by whatever
 process called `metrics()`.
 
-That makes the prefix explicit configuration rather than a constant: `openspan` is not Toa's and
-cannot name a series `toa.*` on its own, the same boundary that already makes the extension inject
-`service`. So `MetricsOptions` takes a `prefix`, and `extensions.telemetry` and the gateway both pass
-`toa`.
+`openspan` is not Toa's and cannot name a series `toa.*` on its own, the same boundary that already
+makes the extension inject `service` — so the names of these two are given to it rather than built
+into it.
 
 Loop delay is the one saturation signal Node gives, nothing in Toa reports it today, and it is a
 histogram rather than a gauge because `monitorEventLoopDelay` accumulates between reads and so has no
@@ -620,10 +619,11 @@ where the type is chosen.
 - **`Registry.ts`** — `counter`, `gauge`, `histogram`; cumulative; label keys declared at creation;
   gauges are callbacks run at collection. `collect()` returns a snapshot.
 - **`metrics.ts`** — `metrics(options)`, mirroring `traces.ts`, plus `measuring()` mirroring
-  `recording()`. `MetricsOptions` carries `interval`, `prefix`, `exporters`.
-- **`Metrics.ts`** — the OTLP/HTTP metrics exporter on the shared transport: `resourceMetrics`, `sum`
-  (cumulative, monotonic), `histogram`, `gauge`, `startTimeUnixNano` fixed at process start, resource
-  `{service.name, service.instance.id}`.
+  `recording()`. `MetricsOptions` carries `interval` and `exporters`.
+- **`OtlpMetrics.ts`** — the OTLP/HTTP metrics exporter on the shared transport: `resourceMetrics`,
+  `sum` (cumulative, monotonic), `histogram`, `gauge`, `startTimeUnixNano` fixed at process start.
+  Named for the signal it carries rather than `Metrics`, which on a case-insensitive filesystem is
+  the same file as `metrics.ts`.
 - **`Console.ts`** — `SpanOptions.measure`, and the restructure that makes measurement unsampled:
   today the method returns early when the parent is unsampled; with `measure` set it times the task
   anyway and completes the span only when sampled. A span with no `measure` keeps today's fast path
@@ -732,6 +732,17 @@ argument today, because it has never had a manifest block to read.
   copies the telemetry configuration should name metrics alongside traces.
 
 ## Decisions
+
+**One backend holds several products, and what separates them is the resource, not the name.** The
+alternative was to prefix a metric with the context name, and it inverts what the prefix is for:
+`orders_operation_duration_seconds` beside `billing_operation_duration_seconds` are two metrics, and
+no dashboard and no alerting rule can be written once and used for both. `toa.` is a prefix
+precisely because the metric is the same metric in every Toa deployment.
+
+Products separate where OpenTelemetry puts them, in resource attributes: `service.namespace` is the
+context (`TOA_CONTEXT`), `service.name` the process, `service.instance.id` the replica, and
+`deployment.environment.name` the environment (`TOA_ENV`). Prometheus joins the first two into `job`
+and the third into `instance`, so one dashboard filters by `job` and stays one dashboard.
 
 **Push, not scrape.** A pull endpoint means a listener per process, pod scrape annotations in the
 chart, and the port contention `Ready.ts` already documents for a local multi-process run. Pushing
