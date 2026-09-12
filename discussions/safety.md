@@ -92,11 +92,14 @@ exposition:
    may be shown and writes nothing, so it is a computation; it is two hops under
    `GET /identity/credentials/:id/`. `realtime.streams` serves `GET` with an effect that opens a
    stream, which is not a read, so that route declares `io:readonly: false`.
-9. **A measurement.** `cadence`'s delay counter is incremented after the call that stores the row
-   rather than before it, so a delay that was refused is not counted as one armed.
+9. **Cadence says so, and changes nothing.** Handing a call over stores a row, so `context.delay`
+   raises from a chain that may only read — `cadence.metronome.delay` is a transition reached through
+   a `Call` like any other, and the one rule covers it. The readme says it where a reader is choosing
+   what to call, and a comment says it at the line that raises, because the `Local` it calls through
+   gives no hint that a coded exception comes out of it.
 10. **Documentation.** `documentation/safety.md`, the `Unmanaged` row in the safety table of
     `documentation/design.md`, the `io:readonly` section of the exposition's `io.md`, the verb table
-    in its `tree.md`, and the realtime readme.
+    in its `tree.md`, the cadence readme, and the realtime readme.
 
 ## Decisions
 
@@ -158,10 +161,9 @@ afterwards. What a safe method does is whatever the routes and the algorithms ha
 ## Stages
 
 1. The request field, the classification, the chain, the refusal and the exception code.
-2. The delay counter.
-3. The gateway: the verb translation, `io:readonly`, and the tool hints.
-4. `realtime.streams` declares its opt-out, and `identity.basic.info` becomes the computation it is.
-5. Documentation.
+2. The gateway: the verb translation, `io:readonly`, and the tool hints.
+3. `realtime.streams` declares its opt-out, and `identity.basic.info` becomes the computation it is.
+4. Documentation.
 
 ## Verification
 
