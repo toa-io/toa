@@ -18,7 +18,8 @@ predictable way.
    [Constraints](#constraints).
 5. **Test.** The scenarios written before the change pass, and so does `npm run features`. See
    [Tests](#tests) and [Running Features](#running-features).
-6. **Pull request.** The draft is marked ready for review.
+6. **Pull request.** The draft is marked ready for review, which the developer does once they
+   consider every task done and the change fit to be read.
 
 [^1]: Meeting common sense expectations.
 
