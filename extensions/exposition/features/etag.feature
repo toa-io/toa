@@ -280,3 +280,100 @@ Feature: Optimistic concurrency control
 
       Hello "1"
       """
+
+  Scenario: `HEAD` carries the tag its `GET` would
+    Given the `pots` is running with the following manifest:
+      """yaml
+      exposition:
+        /:
+          io:output: true
+          POST: create
+          /:id:
+            GET: observe
+      """
+    When the following request is received:
+      """
+      POST /pots/ HTTP/1.1
+      host: nex.toa.io
+      accept: application/yaml
+      content-type: application/yaml
+
+      title: Hello
+      volume: 1.5
+      """
+    Then the following reply is sent:
+      """
+      201 Created
+
+      id: ${{ id }}
+      """
+    When the following request is received:
+      """
+      GET /pots/${{ id }}/ HTTP/1.1
+      host: nex.toa.io
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      etag: "${{ tag }}"
+      """
+    When the following request is received:
+      """
+      HEAD /pots/${{ id }}/ HTTP/1.1
+      host: nex.toa.io
+      """
+    # the tag is of the body a GET would have returned, so a HEAD reads it without it
+    Then the following reply is sent:
+      """
+      200 OK
+      etag: "${{ tag }}"
+      """
+
+  Scenario: A reply to a request that is not safe carries no tag
+    Given the `pots` is running with the following manifest:
+      """yaml
+      exposition:
+        /:
+          io:output: true
+          POST: create
+          /:id:
+            PUT: transit
+      """
+    When the following request is received:
+      """
+      POST /pots/ HTTP/1.1
+      host: nex.toa.io
+      accept: application/yaml
+      content-type: application/yaml
+
+      title: Hello
+      volume: 1.5
+      """
+    # a client never sends a tag back on a write, so there is nothing for one to validate
+    Then the following reply is sent:
+      """
+      201 Created
+
+      id: ${{ id }}
+      """
+    And the reply does not contain:
+      """
+      etag
+      """
+    When the following request is received:
+      """
+      PUT /pots/${{ id }}/ HTTP/1.1
+      host: nex.toa.io
+      accept: application/yaml
+      content-type: application/yaml
+
+      volume: 2.5
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      """
+    And the reply does not contain:
+      """
+      etag
+      """

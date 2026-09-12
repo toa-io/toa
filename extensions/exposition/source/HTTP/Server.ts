@@ -314,10 +314,7 @@ export class Server extends Connector {
         if (!response.writableEnded) {
           response.statusCode = status
 
-          const message: OutgoingMessage = {
-            status: response.statusCode,
-            authentic: true
-          }
+          const message: OutgoingMessage = { status: response.statusCode }
 
           // eslint-disable-next-line max-depth
           if (exception instanceof Exception && exception.headers !== undefined)

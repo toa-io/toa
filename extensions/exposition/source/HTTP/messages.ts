@@ -5,7 +5,6 @@ import * as contentType from 'content-type'
 import { console } from 'openspan'
 import { type Format, decoders } from './formats/index.ts'
 import { BadRequest, NotAcceptable, UnsupportedMediaType } from './exceptions.ts'
-import { etag, kept, same } from './etag.ts'
 import { environment } from '@toa.io/generic'
 import { Encoded } from '@toa.io/core'
 import type { Context } from './Context.ts'
@@ -106,44 +105,24 @@ function send(
   const buf = encoded ? message.body.bytes : context.encoder.encode(message.body)
   const type = encoded ? message.body.type : context.encoder.type
 
-  if (message.authentic !== true && validated(context, buf, response)) return
+  const validation = message.validate?.(buf)
+
+  if (validation !== undefined) {
+    response.setHeader('etag', validation.etag)
+
+    if (validation.held) {
+      // nothing of the body has been written yet, so a reply the client holds ends here
+      response.statusCode = 304
+      response.end()
+
+      return
+    }
+  }
 
   response.setHeader('content-type', type)
   response.setHeader('content-length', buf.length.toString())
   response.appendHeader('vary', 'accept')
   response.end(buf)
-}
-
-/**
- * Whether the client already holds this reply. Its tag is the body itself, so a reply is
- * validated whatever it carries, and one the client sent back is answered with nothing. A reply
- * the gateway built of its own, one to a request that is not safe, and one the client may not
- * keep carry no tag.
- */
-function validated(context: Context, buf: Buffer, response: ServerResponse): boolean {
-  const method = context.request.method
-
-  if (method !== 'GET' && method !== 'HEAD') return false
-
-  if (!kept(response.getHeader('cache-control'))) return false
-
-  // what a directive states of a reply it built — the checksum of a stored file, say — is what
-  // that reply is validated by
-  if (response.hasHeader('etag')) return false
-
-  const tag = etag(buf)
-
-  response.setHeader('etag', tag)
-
-  const sent = context.request.headers['if-none-match']
-
-  if (sent === undefined || !same(sent, tag)) return false
-
-  // nothing of the body has been written yet, so a reply the client holds ends here
-  response.statusCode = 304
-  response.end()
-
-  return true
 }
 
 function stream(
@@ -296,11 +275,17 @@ export interface OutgoingMessage {
   body?: any
 
   /**
-   * Built by the gateway rather than returned by an operation, as a request is `authentic`
-   * when it was made by one: what is in it is the gateway's own, and the checks that answer
-   * for what an operation returns have nothing to say about it.
+   * What tags this reply once its body is bytes, and tells whether the client already holds
+   * it. The `cache` family leaves it here, on a reply that may be validated at all; a reply
+   * without one is sent untagged. See `documentation/cache.md`.
    */
-  authentic?: boolean
+  validate?: (body: Buffer) => Validation
+}
+
+/** The tag of a reply, and whether it is the one the client sent back in `if-none-match`. */
+export interface Validation {
+  etag: string
+  held: boolean
 }
 
 export interface Query {
