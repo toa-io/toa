@@ -6,6 +6,7 @@ import { annotations, input, output } from './schema.ts'
 import { FAMILY, MCP, type Tool as Declaration } from '../directives/mcp/index.ts'
 import { describing } from '../Introspection.ts'
 import { variables } from '../RTD/segment.ts'
+import type * as RTD from '../RTD/index.ts'
 import type { Tree } from '../RTD/index.ts'
 import type { Params, Result, Tool } from './types.ts'
 
@@ -22,50 +23,80 @@ import type { Params, Result, Tool } from './types.ts'
  * Sorted, because the revision asks for an order a client can cache on.
  */
 export async function list(tree: Tree, request: http.Context): Promise<Tool[]> {
-  const tools: Tool[] = []
-
   /*
    * A description, not the request asking. What refuses a credentialed request at an
    * `anonymous` route does not refuse the call a tool makes, and a list that says otherwise
    * disagrees with what `tools/call` then does.
    */
   const context = describing(request)
+  const tools: Tool[] = []
 
-  for (const { segments, verb, method } of tree.walk()) {
-    if (!MCP.published(method.directives.declared<Declaration>(FAMILY))) continue
+  for (const { node, method, tool } of await published(tree)) {
+    // a branch that has expired is not walked, and what it published is not served either
+    if (Date.now() >= node.expiration) continue
 
-    const named = name(segments, verb)
-
-    // a route a name cannot spell is a route nothing addresses, here or at `/.rpc`
-    if (named === null) continue
-
-    const params = variables(segments)
-    const introspection = await method.explain(context, params)
-
-    if (introspection === null) continue
-
-    const described = introspection.description
-    const schema = output(introspection)
-    const hints = annotations(verb)
-
-    // in the order the revision documents one, which is the order it is read in
-    const tool: Tool = {
-      name: named,
-      ...(introspection.title === undefined ? {} : { title: introspection.title }),
-      ...(described === undefined ? {} : { description: described }),
-      inputSchema: input(
-        introspection,
-        params.map((param) => param.name),
-        method.endpoint?.selection() ?? null
-      ),
-      ...(schema === undefined ? {} : { outputSchema: schema }),
-      ...(hints === undefined ? {} : { annotations: hints })
-    }
-
-    tools.push(tool)
+    if (await method.directives.admits(context)) tools.push(tool)
   }
 
-  return tools.sort((one, other) => (one.name < other.name ? -1 : 1))
+  return tools
+}
+
+/**
+ * What the tree publishes, in the order a client reads it, whoever is asking: what a tool is
+ * said to be is the route's and not the caller's, and the only thing a caller decides is
+ * whether it is told of one at all.
+ *
+ * Built once per tree — a merged branch drops it — so a `tools/list` describes the tree once
+ * and then answers from what it described.
+ */
+async function published(tree: Tree): Promise<Published[]> {
+  return await tree.derived(TOOLS, async () => {
+    const tools: Published[] = []
+
+    for (const { segments, verb, method, node } of tree.walk()) {
+      if (!MCP.published(method.directives.declared<Declaration>(FAMILY))) continue
+
+      const named = name(segments, verb)
+
+      // a route a name cannot spell is a route nothing addresses, here or at `/.rpc`
+      if (named === null) continue
+
+      const params = variables(segments)
+      const introspection = await method.describe(params)
+
+      // a method hidden is hidden from every answer, this one included
+      if (introspection === null) continue
+
+      const described = introspection.description
+      const schema = output(introspection)
+      const hints = annotations(verb)
+
+      // in the order the revision documents one, which is the order it is read in
+      const tool: Tool = {
+        name: named,
+        ...(introspection.title === undefined ? {} : { title: introspection.title }),
+        ...(described === undefined ? {} : { description: described }),
+        inputSchema: input(
+          introspection,
+          params.map((param) => param.name),
+          method.endpoint?.selection() ?? null
+        ),
+        ...(schema === undefined ? {} : { outputSchema: schema }),
+        ...(hints === undefined ? {} : { annotations: hints })
+      }
+
+      tools.push({ node, method, tool })
+    }
+
+    // sorted, because the revision asks for an order a client can cache on
+    return tools.sort((one, other) => (one.tool.name < other.tool.name ? -1 : 1))
+  })
+}
+
+interface Published {
+  node: RTD.Node
+  method: RTD.Method
+  tool: Tool
 }
 
 /**
@@ -77,7 +108,7 @@ export async function list(tree: Tree, request: http.Context): Promise<Tool[]> {
  * its name. What the caller may then do with one that is published is still `auth`'s to say.
  */
 export async function call(scope: Scope, named: string, args: Params): Promise<Result> {
-  if (!published(scope.tree, named))
+  if (!serves(scope.tree, named))
     throw new http.NotFound(
       response(
         null,
@@ -126,12 +157,29 @@ export interface Scope {
  * asked here — the declaration is the route's and does not vary by who is calling, and the
  * call that follows is authorized as any request to that route is.
  */
-function published(tree: Tree, named: string): boolean {
-  for (const { segments, verb, method } of tree.walk())
-    if (name(segments, verb) === named)
-      return MCP.published(method.directives.declared<Declaration>(FAMILY))
+function serves(tree: Tree, named: string): boolean {
+  const names = tree.derived(NAMES, () => {
+    const names = new Map<string, RTD.Node | null>()
 
-  return false
+    for (const { segments, verb, method, node } of tree.walk()) {
+      const tool = name(segments, verb)
+
+      // the first mount of a name is the one a call would reach, as `match` tries them;
+      // one that publishes nothing takes the name all the same
+      if (tool !== null && !names.has(tool))
+        names.set(
+          tool,
+          MCP.published(method.directives.declared<Declaration>(FAMILY)) ? node : null
+        )
+    }
+
+    return names
+  })
+
+  const node = names.get(named)
+
+  // a branch that has expired publishes nothing, as it answers nothing
+  return node !== undefined && node !== null && Date.now() < node.expiration
 }
 
 function result(body: unknown): Result {
@@ -142,3 +190,6 @@ function result(body: unknown): Result {
     structuredContent: body
   }
 }
+
+const TOOLS = 'mcp:tools'
+const NAMES = 'mcp:names'
