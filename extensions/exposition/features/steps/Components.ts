@@ -1,7 +1,7 @@
 import { createRequire } from 'node:module'
 import * as assert from 'node:assert'
 import { dirname, join } from 'node:path'
-import tsflow from 'cucumber-tsflow'
+import { after, binding, given } from 'specumber'
 
 import * as boot from '@toa.io/boot'
 import { type Connector } from '@toa.io/core'
@@ -11,8 +11,6 @@ import { load as parse } from 'js-yaml'
 import { Gateway } from './Gateway.ts'
 import { Workspace } from './Workspace.ts'
 import { components as map } from './map.ts'
-
-const { after, binding, given } = tsflow
 
 const require = createRequire(import.meta.url)
 

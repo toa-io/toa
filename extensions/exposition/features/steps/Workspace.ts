@@ -2,10 +2,8 @@ import { join } from 'node:path'
 import { tmpdir, devNull } from 'node:os'
 import { mkdtemp, cp, readFile, rm, writeFile } from 'node:fs/promises'
 import { load, dump } from 'js-yaml'
-import tsflow from 'cucumber-tsflow'
+import { after, binding } from 'specumber'
 import { overwrite } from '@toa.io/generic'
-
-const { after, binding } = tsflow
 
 @binding()
 export class Workspace {

@@ -1,5 +1,5 @@
 import assert from 'node:assert'
-import tsflow from 'cucumber-tsflow'
+import { after, afterAll, binding, given, then, when } from 'specumber'
 
 import * as boot from '@toa.io/boot'
 import { type Connector } from '@toa.io/core'
@@ -11,8 +11,6 @@ import { shortcuts, syntax } from '@toa.io/definitions/extensions.exposition'
 import { manifests } from './map.ts'
 import { PORT, PROBE } from './Parameters.ts'
 import type * as http from '../../source/HTTP/index.ts'
-
-const { after, afterAll, binding, given, then, when } = tsflow
 
 let instance: Connector | null = null
 let deployment: string | null = null

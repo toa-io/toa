@@ -1,6 +1,6 @@
 import * as assert from 'node:assert'
 import { setTimeout } from 'node:timers/promises'
-import tsflow from 'cucumber-tsflow'
+import { after, binding, given, then } from 'specumber'
 
 import { match } from '@toa.io/generic'
 import { load as parse } from 'js-yaml'
@@ -8,8 +8,6 @@ import * as stage from '@toa.io/userland/stage'
 import { Realtime } from './Realtime.ts'
 import type { Readable } from 'node:stream'
 import type { Component } from '@toa.io/core'
-
-const { after, binding, given, then } = tsflow
 
 @binding([Realtime])
 export class Streams {

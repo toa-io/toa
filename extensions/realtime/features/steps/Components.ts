@@ -1,6 +1,6 @@
 import { resolve } from 'node:path'
 import { readdirSync } from 'node:fs'
-import tsflow from 'cucumber-tsflow'
+import { after, before, binding, given, when } from 'specumber'
 
 import { load as parse } from 'js-yaml'
 import * as stage from '@toa.io/userland/stage'
@@ -12,8 +12,6 @@ import {
   type Declaration
 } from '@toa.io/definitions/extensions.realtime'
 import { Realtime } from './Realtime.ts'
-
-const { after, before, binding, given, when } = tsflow
 
 @binding([Realtime])
 export class Components {
