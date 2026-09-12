@@ -2,6 +2,7 @@ import { console, run } from 'openspan'
 import { type Component, Connector } from '@toa.io/core'
 import { type Routes } from './Routes.ts'
 import type { Push } from './Receiver.ts'
+import * as measure from './measurements.ts'
 
 export class Realtime extends Connector {
   private readonly discovery: () => Promise<Component>
@@ -37,7 +38,11 @@ export class Realtime extends Connector {
         ? this.deliver(event)
         : run(telemetry, async () => await this.deliver(event))
 
-    void processing.catch((error) => console.error('Realtime push failed', error))
+    void processing.catch((error) => {
+      measure.failed(event.event)
+
+      console.error('Realtime push failed', error)
+    })
   }
 
   private async deliver(event: Omit<Push, 'telemetry'>): Promise<void> {
@@ -65,6 +70,8 @@ export class Realtime extends Connector {
       async () =>
         await console.span(options, async () => {
           await this.streams?.invoke('push', { input: event })
+
+          measure.delivered(event.event)
         })
     )
   }

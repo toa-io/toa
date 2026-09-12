@@ -6,6 +6,7 @@ import type { Readable } from 'node:stream'
 import type { Connector as Link, Locator } from '@toa.io/core'
 import type { bindings, outbox, storages } from '@toa.io/core/types'
 import type { Message } from './Destination.ts'
+import { merged } from './measurements.ts'
 
 /**
  * A record from another region is written as it stands: its version, its timestamps, its
@@ -68,7 +69,7 @@ export class Converging extends Connector implements storages.Storage, bindings.
      * and it means ties between those two resolve for neither.
      */
     if ((record as storages.Record).REGION === REGION)
-      console.error('Convergence received a record of this region\'s own rank', {
+      console.error("Convergence received a record of this region's own rank", {
         component: this.locator.id,
         region: REGION
       })
@@ -79,6 +80,12 @@ export class Converging extends Connector implements storages.Storage, bindings.
       console.span(this.delivery, async () =>
         console.span(this.processing, async () => {
           const applied = await this.storage.converge!(record as storages.Record)
+
+          merged(
+            (record as storages.Record).REGION,
+            applied ? 'applied' : 'stale',
+            (record as storages.Record).UPDATED
+          )
 
           console.trace('Convergence processed', {
             component: this.locator.id,
@@ -143,7 +150,10 @@ export class Converging extends Connector implements storages.Storage, bindings.
     return this.storage.store(record, row)
   }
 
-  public async massStore(records: storages.Record[], rows?: outbox.Row[]): Promise<boolean> {
+  public async massStore(
+    records: storages.Record[],
+    rows?: outbox.Row[]
+  ): Promise<boolean> {
     return this.storage.massStore(records, rows)
   }
 

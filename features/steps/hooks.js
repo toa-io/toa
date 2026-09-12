@@ -14,6 +14,10 @@ BeforeAll(() => {
   // contract it asks applications to keep
   fallback('TOA_ENV', 'local')
 
+  // measured, exported nowhere: a scenario reads the registry of the process it booted, and
+  // the extension is constructed once, so this cannot be a thing one scenario turns on
+  fallback('TOA_TELEMETRY_METRICS', '{}')
+
   // the outbox pumps on a tick; at the default five seconds a scenario would
   // end before it ran
   fallback('TOA_OUTBOX_INTERVAL', '100')

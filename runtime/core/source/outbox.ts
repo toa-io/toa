@@ -2,6 +2,7 @@ import { console } from 'openspan'
 import { Connector } from './connector.ts'
 import { newid } from './entities/newid.ts'
 import * as trail from './trail.ts'
+import * as measure from './outbox.measurements.ts'
 import { environment } from '@toa.io/generic'
 import type { Atom } from './types/atomicity.ts'
 import type { Storage } from './types/storages.ts'
@@ -251,6 +252,8 @@ export class Outbox extends Connector {
     } catch (error) {
       // the message, not the error: an `Error` has no enumerable own properties, so what
       // reached the log was `{}` and a publication that keeps failing said nothing about why
+      measure.failed(name)
+
       console.warn('Outbox publication failed', {
         row: row.id,
         destination: name,
@@ -294,6 +297,11 @@ export class Outbox extends Connector {
     let page: Row[]
     let after: string | undefined
 
+    // what this cycle saw, so that a destination it read nothing for is set to zero rather
+    // than left holding whatever the cycle before it found
+    const counts = new Map<string, number>()
+    const oldest = new Map<string, number>()
+
     do {
       page = await this.#read(after)
 
@@ -311,6 +319,8 @@ export class Outbox extends Connector {
         this.#destinations.some((destination) => this.#due(row, destination.name))
       )
 
+      this.#outstanding(rows, counts, oldest)
+
       if (rows.length > 0) {
         console.debug('Outbox recovering unpublished rows', { count: rows.length })
 
@@ -322,7 +332,28 @@ export class Outbox extends Connector {
       // a full page is a page that may have been cut short
     } while (page.length === this.#batch)
 
+    measure.cycled(
+      this.#destinations.map((destination) => destination.name),
+      counts,
+      oldest
+    )
+
     await this.#mark()
+  }
+
+  /** What a page leaves outstanding, by destination: how many, and the oldest of them. */
+  #outstanding(
+    rows: Row[],
+    counts: Map<string, number>,
+    oldest: Map<string, number>
+  ): void {
+    for (const row of rows)
+      for (const { name } of this.#destinations) {
+        if (!this.#due(row, name)) continue
+
+        counts.set(name, (counts.get(name) ?? 0) + 1)
+        oldest.set(name, Math.min(oldest.get(name) ?? row.pending, row.pending))
+      }
   }
 
   /**
@@ -346,11 +377,13 @@ export class Outbox extends Connector {
         console.info('Outbox lanes assigned, recovery resumed')
 
       this.#unassigned = 0
+      measure.starving(0)
 
       return
     }
 
     this.#unassigned++
+    measure.starving(this.#unassigned)
 
     if (this.#unassigned % UNASSIGNED === 0)
       console.warn('Outbox owns no lane and recovers nothing', {
@@ -375,13 +408,13 @@ export class Outbox extends Connector {
 
     if (lanes === null || lanes.length === 0) return []
 
-    return this.#storage!
-      .outbox!.pending(lanes, Date.now(), this.#batch, after)
-      .catch((error) => {
+    return this.#storage!.outbox!.pending(lanes, Date.now(), this.#batch, after).catch(
+      (error) => {
         console.warn('Outbox read failed', { error })
 
         return []
-      })
+      }
+    )
   }
 
   /**

@@ -1,6 +1,7 @@
 import { console } from 'openspan'
 import { Connector } from '@toa.io/core'
 import { environment } from '@toa.io/generic'
+import { holding, waited } from './measurements.js'
 
 /**
  * What one group of replicas decides together, in one place: which of them owns what, what they
@@ -119,7 +120,26 @@ export class Atom extends Connector {
     if (redlock === undefined)
       throw new Error('Locking requires atomicity. Set TOA_ATOMICITY_REDIS.')
 
-    return redlock.using(this.#keys(LOCK, keys), LEASE, routine)
+    const started = performance.now()
+    let acquired = false
+
+    return redlock
+      .using(this.#keys(LOCK, keys), LEASE, async (signal) => {
+        // the wait is over once the routine is entered, and what follows it is the work
+        acquired = true
+        waited(this.#name, (performance.now() - started) / 1000)
+        holding(this.#name, 1)
+
+        try {
+          return await routine(signal)
+        } finally {
+          holding(this.#name, -1)
+        }
+      })
+      .finally(() => {
+        // a lock never acquired waited for however long it was refused
+        if (!acquired) waited(this.#name, (performance.now() - started) / 1000)
+      })
   }
 
   /**

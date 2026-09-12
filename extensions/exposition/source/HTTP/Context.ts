@@ -6,6 +6,7 @@ import { type Format, formats, types } from './formats/index.ts'
 import { read } from './messages.ts'
 import { address } from './address.ts'
 import type { OutgoingMessage } from './messages.ts'
+import { NONE as UNMATCHED, type Labels } from '../measurements.ts'
 import type { IncomingMessage } from './types.ts'
 
 export class Context {
@@ -18,6 +19,12 @@ export class Context {
   public readonly subtype: string | null = null
   public readonly encoder: Format | null = null
   public readonly timing: Timing
+
+  /**
+   * The labels the request is measured under. `route` is `none` until the tree matches one, and
+   * the object is the very one the span carries — so setting it here is what the metric records.
+   */
+  public labels: Labels = { method: 'GET', route: UNMATCHED }
 
   /**
    * Aborted when the reply is finished, when the connection is gone, or when the gateway is

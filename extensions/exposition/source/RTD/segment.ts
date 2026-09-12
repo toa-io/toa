@@ -49,3 +49,23 @@ export function variables(segments: Segment[]): Parameter[] {
 
   return params
 }
+
+/** What the segments a request matched read as: a path with its placeholders, not its values. */
+export function template(segments: Segment[]): string {
+  if (segments.length === 0) return '/'
+
+  return (
+    '/' +
+    segments
+      .map((segment) =>
+        segment.fragment !== null
+          ? segment.fragment
+          : segment.wildcard === true
+            ? '**'
+            : segment.placeholder === null
+              ? '*'
+              : ':' + segment.placeholder
+      )
+      .join('/')
+  )
+}

@@ -67,6 +67,63 @@ Feature: Telemetry
       42
       """
 
+  Scenario: A metric is recorded on an unsampled trace
+    Given an environment variable `TOA_TELEMETRY_TRACES` is set to:
+      """yaml
+      sample: 0
+      exporters:
+        console: ~
+      """
+    And I boot `telemetry` component
+    When I invoke `trace` with:
+      """yaml
+      input:
+        value: 21
+      """
+    Then the reply is received:
+      """yaml
+      42
+      """
+    And the metric `toa.operation.duration` is recorded with:
+      """yaml
+      component: default.telemetry
+      operation: trace
+      """
+
+  Scenario: A component records a metric it declares
+    Given I boot `telemetry` component
+    When I invoke `convert` with:
+      """yaml
+      input:
+        amount: 10
+        currency: EUR
+      """
+    Then the reply is received:
+      """yaml
+      10
+      """
+    And the metric `default.telemetry.conversions` is recorded with:
+      """yaml
+      currency: EUR
+      """
+
+  Scenario: An unenumerated label value is recorded as UNDECLARED
+    Given I boot `telemetry` component
+    When I invoke `convert` with:
+      """yaml
+      input:
+        amount: 10
+        currency: CHF
+      """
+    Then the reply is received:
+      """yaml
+      10
+      """
+    And the metric `default.telemetry.conversions` is recorded with:
+      """yaml
+      currency: UNDECLARED
+      """
+
   Scenario: Trace propagation over remote calls
     Given I compose components:
       | math.calculations |
@@ -174,6 +231,42 @@ Feature: Telemetry
               value: '{"level":"info"}'
             - name: TOA_TELEMETRY_LOGS_DEFAULT_TELEMETRY
               value: '{"level":"warn"}'
+      """
+
+  Scenario: Metrics annotations
+    Given I have a component `telemetry`
+    And I have a context with:
+      """yaml
+      telemetry:
+        metrics:
+          interval: 5000
+          exporters:
+            otlp:
+              endpoint: http://prometheus:9090/api/v1/otlp
+      """
+    When I export deployment
+    Then exported values should contain:
+      """
+      compositions:
+        - name: default-telemetry
+          variables:
+            - name: TOA_TELEMETRY_METRICS
+              value: '{"interval":5000,"exporters":{"otlp":{"endpoint":"http://prometheus:9090/api/v1/otlp"}}}'
+      """
+
+  Scenario: Metrics annotations are validated
+    Given I have a component `telemetry`
+    And I have a context with:
+      """yaml
+      telemetry:
+        metrics:
+          exporters:
+            otlp:
+              timeout: 1000
+      """
+    Then exporting deployment fails with:
+      """
+      telemetry.metrics.exporters.otlp.endpoint is required
       """
 
   Scenario: Logs without annotations

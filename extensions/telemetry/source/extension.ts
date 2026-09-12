@@ -1,13 +1,19 @@
-import { console, traces } from 'openspan'
+import { console, metrics, traces } from 'openspan'
 import { environment } from '@toa.io/generic'
-import { LOGS_PREFIX, TRACES_ENV } from '@toa.io/definitions/extensions.telemetry'
+import {
+  LOGS_PREFIX,
+  METRICS_ENV,
+  TRACES_ENV
+} from '@toa.io/definitions/extensions.telemetry'
 import { Logs } from './Logs.ts'
 import { Span } from './Span.ts'
+import { Metrics } from './Metrics.ts'
 import { Ready } from './Ready.ts'
 import type { LogsOptions } from './Logs.ts'
+import type { Declaration } from '@toa.io/definitions/extensions.telemetry'
 import type { Locator } from '@toa.io/core'
 import type { extensions } from '@toa.io/core/types'
-import type { TracesOptions } from 'openspan'
+import type { MetricsOptions, TracesOptions } from 'openspan'
 
 type Resident = extensions.Resident
 
@@ -34,15 +40,17 @@ export class Factory implements extensions.Factory {
       options.exporters.otlp.service ??= environment.get('TOA_CONTEXT')
 
     traces(options)
+    metrics(measurements())
 
     this.ready = Ready.create()
   }
 
-  public aspect(locator: Locator): extensions.Aspect[] {
+  public aspect(locator: Locator, declaration: Declaration): extensions.Aspect[] {
     const logs = this.createLogs(locator)
     const span = new Span(locator)
+    const metrics = new Metrics(locator, declaration ?? {})
 
-    return [logs, span]
+    return [logs, span, metrics]
   }
 
   /**
@@ -77,6 +85,33 @@ export class Factory implements extensions.Factory {
  * `extensions/exposition/source/Factory.ts` says the same thing for the gateway process,
  * which boots without this extension.
  */
+/**
+ * What the series say they came from. The metric names are the same in every deployment, so what
+ * tells two products apart in one backend is the resource: the context is the namespace, and the
+ * environment is beside it.
+ *
+ * Nothing when the annotation is absent, which is what turns measuring off: there is no console
+ * exporter for this signal, so a local run measures only where it was asked to.
+ */
+function measurements(): MetricsOptions | undefined {
+  const env = environment.get(METRICS_ENV)
+
+  if (env === undefined) return undefined
+
+  const options = JSON.parse(env) as MetricsOptions
+
+  options.prefix ??= 'toa'
+
+  if (options.exporters?.otlp !== undefined) {
+    const resource = (options.exporters.otlp.resource ??= {})
+
+    resource['service.namespace'] ??= environment.get('TOA_CONTEXT')
+    resource['deployment.environment.name'] ??= environment.get('TOA_ENV')
+  }
+
+  return options
+}
+
 function development(): TracesOptions {
   const local =
     environment.get('TOA_DEV') === '1' || environment.get('TOA_BOOT_TRACE') === '1'

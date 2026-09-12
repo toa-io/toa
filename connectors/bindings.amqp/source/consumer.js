@@ -1,5 +1,6 @@
 import { Unroutable } from 'comq'
 import { Connector, Encoded, exceptions } from '@toa.io/core'
+import { publish } from './measurements.js'
 import { instances, name } from './queues.js'
 
 /**
@@ -30,6 +31,8 @@ export class Consumer extends Connector {
   }
 
   async request(request, terms) {
+    publish('request')
+
     const reply = await this.#send(request, terms)
 
     // an octet-stream reply is the bytes comq hands over, which is an output whoever answered
@@ -42,7 +45,12 @@ export class Consumer extends Connector {
       return await this.#comm.request(this.#queue, request, options(terms))
 
     try {
-      return await this.#comm.call(this.#exchange, terms.instance, request, options(terms))
+      return await this.#comm.call(
+        this.#exchange,
+        terms.instance,
+        request,
+        options(terms)
+      )
     } catch (exception) {
       if (!(exception instanceof Unroutable)) throw exception
 
@@ -56,6 +64,8 @@ export class Consumer extends Connector {
   }
 
   async task(request) {
+    publish('task')
+
     await this.#comm.enqueue(this.#tasksQueue, request)
   }
 }

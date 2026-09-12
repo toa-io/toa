@@ -2,6 +2,7 @@ import { basename, dirname, join } from 'node:path'
 import { randomUUID } from 'node:crypto'
 import { console, type SpanOptions } from 'openspan'
 import { Scanner } from './Scanner.ts'
+import { operation } from './measurements.ts'
 import type { Readable } from 'node:stream'
 import type { Attributes, Entry, Stream } from './Entry.ts'
 import type { ScanOptions } from './Scanner.ts'
@@ -103,7 +104,8 @@ export class Storage<T extends Provider = Provider> {
       attributes: {
         ...(this.scope === undefined ? {} : { provider: this.scope.provider }),
         path
-      }
+      },
+      measure: operation(method, this.scope)
     }
   }
 }

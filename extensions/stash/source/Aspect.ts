@@ -1,6 +1,7 @@
 import { encode, decode } from 'msgpackr'
 import { console, type SpanOptions } from 'openspan'
 import { Connector } from '@toa.io/core'
+import { command } from './measurements.ts'
 import type { extensions } from '@toa.io/core/types'
 import type { Connection } from './Connection.ts'
 import type { Redis, ChainableCommander } from 'ioredis'
@@ -94,5 +95,10 @@ function span(method: string, key: unknown): SpanOptions {
   if (typeof key === 'string') attributes.key = key
   else if (Array.isArray(key)) attributes.key = key.join(' ')
 
-  return { name: `${method} stash`, kind: 'client', attributes }
+  return {
+    name: `${method} stash`,
+    kind: 'client',
+    attributes,
+    measure: command(method)
+  }
 }
