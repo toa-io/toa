@@ -50,8 +50,9 @@ each change is measured before and after with the benchmarks.
    that declares none or `false`.
 7. A reply without output has no body and takes the status an absent body takes: 204, 201 to `POST`,
    and 404 where the operation found nothing.
-8. `ETag` and `Last-Modified` carry the entity's `VERSION`, `UPDATED` and `CREATED` whatever
-   `io:output` lists *(today)*.
+8. A reply to a safe request is tagged with a hash of the body it carries, and a client that sends
+   that tag back in `if-none-match` is answered 304. `if-match` carries the `VERSION` a client read
+   in a body, which is what a stale write is refused by.
 
 **Cost**
 
@@ -104,8 +105,8 @@ const items = await context.local.enumerate({ query: { limit: 10 }, output: ['id
 | --- | --- | --- | --- | --- | --- | ---: |
 | 1 | `noDelay` on comq's sockets | `small` p50 at 100 rps 10.36 ms; `observe` saturates at 3,781 rps with its processes under 40% of a core | `small` p50 at 100 rps 0.68 ms; `observe` saturates at 9,170 rps | comq 0.20.1; the dependency in `bindings.amqp` | low | 0 |
 | 2a | A route's projection reaches an observation's storage | `Query.fit` drops a declared `projection`; `record.js` `from` and BSON decoding are 61% of the component on `list.1000` | a share of those in proportion to what a route leaves unread | `Query.fit`, the definitions' check, the refusal by type, a copy in `query/options.ts`, the callee's contract; `query` scenarios | low | 3 |
-| 2b | The reply restricted in the component | the `io:output` fit of 1,000 entities 369 µs in the gateway | the fit in the component, on the reply the operation built; what a route leaves out crosses no process | `Request.output`, `Operation.invoke`, `Reply.system`, a call option, `io:output`, `Endpoint`; `io`, `cache`, `rpc`, `mcp` scenarios | medium: what a client receives changes as Compatibility states | 4 |
-| 2c | A JSON reply forwarded as bytes | `list.1000` gateway 10,629 µs; forwarding costs 1,780 µs by hand | about 8 ms less per 1,000-entity list in the gateway | reply headers in comq and a release; both sides of `bindings.amqp`; `Endpoint` and `send`; scenarios across formats, protocols and binding versions | medium | 5 |
+| 2b | The reply restricted in the component | the `io:output` fit of 1,000 entities 369 µs in the gateway | the fit in the component, on the reply the operation built; what a route leaves out crosses no process | `Request.output`, `Operation.invoke`, `io:output`, `Endpoint`; `io`, `cache`, `rpc`, `mcp` scenarios | medium: what a client receives changes as Compatibility states | 4 |
+| 2c | A JSON reply forwarded as bytes | `list.1000` gateway 10,629 µs; forwarding costs 1,780 µs by hand | about 8 ms less per 1,000-entity list in the gateway | the mark on the request; both sides of `bindings.amqp`; `Endpoint`, `send` and the tag it writes; scenarios across formats and protocols | medium | 5 |
 | 3 | Records renamed in place | `record.js` `from` 26% of the component on `list.1000`: a rest spread costs 2.68 µs a decoded record | about 2 ms less per 1,000-entity list in the component: the rename costs 0.26 µs a record, and encoding the renamed record 0.43 µs more | `from`, two lines; `record.test.js` | low | 1 |
 | 4 | `track()` aborts a request's controller only when its reply is unfinished | the `DOMException` of the abort is 7.4% of the gateway on `small` | about 5–7 µs less per request in the gateway | one condition on `writableFinished`; `interruptions.feature` in HTTP/1.1 and h2c | low | 1 |
 | 5 | `identity.tokens` imports `jose` once | importing and resolving `jose` on every decrypt is 4.2% of the gateway on `token.id` | about 8 µs less per authenticated request | the import's promise held in `lib/jose.js`, two lines; `decrypt.test.ts` | low | 1 |
@@ -134,11 +135,8 @@ const items = await context.local.enumerate({ query: { limit: 10 }, output: ['id
    - `Operation.invoke` restricts the reply the operation built as it returns it; the reply recorded
      for a call made `once` is the whole one. An empty list removes the output. Otherwise each object
      of the output, and each object of an array output, keeps the listed properties in its own order,
-     and every other value is answered as it is. The `VERSION`, `CREATED` and `UPDATED` of an object
-     output travel beside it as `system`. A `null` reply, an error, an exception and a stream are
-     answered as they are.
-   - `Call` answers the whole reply where the call asks for it, and the gateway's `Endpoint` does,
-     reading the version and the modification time from `system`.
+     and every other value is answered as it is. A `null` reply, an error, an exception and a stream
+     are answered as they are.
    - `io:output` puts its list on the call and reads nothing of the reply: the lists a method
      declares and inherits give the properties common to them, `true` gives none, and a method that
      declares none or `false` gives an empty list.
@@ -146,16 +144,18 @@ const items = await context.local.enumerate({ query: { limit: 10 }, output: ['id
      answers.
 
    c. **Bytes.**
-   - comq hands a producer the headers of the request it answers, lets it answer bytes with headers,
-     and hands a caller that asks for them the headers of a reply beside its payload.
-   - `bindings.amqp` marks each request it sends as coming from a caller that reads an output encoded
-     on its own. It answers such a request whose output is an object or an array with the output
-     encoded as JSON and `system` in the headers, and every other request with the reply as it is.
-   - A reply that carries an encoded output reaches `Call` as `{ output, system }`, the output
-     decoded, or held as its bytes where the call asks for them.
-   - `io:status` and `auth:incept` mark a request as one whose body they read. `Endpoint` asks for the
-     bytes where the response is JSON, no directive marked the request, and the request is a
-     resource's rather than a call of `/.rpc` or `/.mcp`; `send` writes them as the body.
+   - A request says that its caller reads an output encoded rather than as values, and whoever
+     answers it encodes the output once: comq carries a Buffer as `application/octet-stream` and
+     hands it to its caller as it is.
+   - `bindings.amqp` answers such a request whose output is an object or an array with the bytes of
+     it, and every other request — an error, an exception, a stream, an absent output — with the
+     reply it is. A reply that arrives as bytes reaches `Call` as an output of its own.
+   - `io:status` and `auth:incept` say that they read the body. `Endpoint` asks for bytes where the
+     response is JSON, nothing said so, and the request is a resource's rather than a call of
+     `/.rpc` or `/.mcp`; `send` writes them as the body.
+   - A reply to a safe request is tagged with a hash of the bytes it writes, which is what
+     `if-none-match` is answered against, and `last-modified` goes with the timestamps it was built
+     from.
 
 3. **Records.** `record.js` `from` sets `id` on the object the driver decoded and deletes `_id` from
    it.
@@ -204,9 +204,12 @@ const items = await context.local.enumerate({ query: { limit: 10 }, output: ['id
 - **A property a directive reads is listed in `io:output`.** `io:output` alone decides what a request
   asks for. `io:status` and `auth:incept` read the reply the component restricted, and a reply without
   their property is answered as it is today.
-- **Bytes are agreed between the bindings.** Whether a reply may travel as bytes depends on the
-  versions of the two processes, so it is the transport that says so, and a route that answers the
-  whole output forwards bytes too.
+- **Bytes are asked for in the request.** A caller says what it can read and whoever answers encodes
+  once; comq carries a Buffer as an octet-stream already, so nothing of the transport changes.
+- **A reply is validated by its body.** A tag over the bytes validates every reply, where a tag out
+  of `VERSION` validated only a reply carrying one — and reading a version is what a body travelling
+  unread rules out. `if-match` keeps carrying the `VERSION` a client read, since a stale write is
+  refused by the version rather than by the representation.
 - **A reply is forwarded only where nothing changes its body.** `io:status` removes a property,
   `auth:incept` reads one, a format other than JSON encodes the object, and `/.rpc` and `/.mcp` wrap
   the reply in an envelope; a cache revalidation drops the body and needs nothing of it.
@@ -348,7 +351,7 @@ until it disconnects.
 2. **Tokens.**
 3. **Projection.**
 4. **Restriction in the component**, with `io:output` putting its list on the call.
-5. **Bytes**: the comq release, the bindings, and the write in the gateway.
+5. **Bytes**: the mark on the request, the bindings, and the write and the tag in the gateway.
 
 ## Verification
 
@@ -368,14 +371,13 @@ until it disconnects.
 - **Restriction.** A list restricts an object and each object of an array in their own order; a
   method's own list under an inherited `true` restricts to that list, and two lists to what they have
   in common; a method without `io:output` answers 204 to `GET`, 201 to `POST` and 404 where nothing is
-  found; a string under a list is answered as it is; `ETag` and `Last-Modified` appear on a reply whose
-  `io:output` lists no `VERSION`; `identity.grants` answers its errors with their status; a call
+  found; a string under a list is answered as it is; `identity.grants` answers its errors with their
+  status; a call
   between components without `output` receives the whole output; `/.rpc` and `/.mcp` restrict each
   call.
 - **Forwarded replies.** A JSON route answers the bytes it answered before stage 5, in HTTP/1.1 and in
-  h2c; YAML and MessagePack answer the same values; a caller from before stage 5 receives the reply of
-  a component from after it, and a caller from after it the reply of a component from before it,
-  against the broker.
+  h2c; YAML and MessagePack answer the same values; a caller that asks for no bytes receives the reply
+  as values; a conditional request is answered 304 by the tag its reply carries, against the broker.
 - **Tokens.** A token jose issued opens with the new code, and one with a changed tag, IV, header or
   ciphertext, another `kid`, another issuer, a passed expiry or a future `nbf` is refused as jose
   refuses it.
@@ -385,13 +387,11 @@ until it disconnects.
 
 ## Compatibility
 
-**On the wire.** `output` on a request, `system` on a reply, the mark on a request and the headers on
-a reply are added. A component from before the change reads no `output` and answers the whole output;
-a gateway from before it sends none and restricts as it did. Two bindings of which one reads no mark
-exchange the reply as they do today.
+**On the wire.** `output`, and the mark that a caller reads an encoded output, are added to a request.
+A component from before the change reads neither and answers the whole output as values; a gateway
+from before it sends neither.
 
-**In types.** `Request.output`, `Reply.system`, the option by which a call answers the whole reply, and
-the value holding an encoded output.
+**In types.** `Request.output`, `Request.encoded`, and the value holding an encoded output.
 
 **In behaviour.**
 
@@ -402,6 +402,8 @@ the value holding an encoded output.
 | an array holding a value other than an object under a list answers 500 | its objects are restricted and the rest answered as it is |
 | `io:status` and `auth:incept` read a property `io:output` leaves out | they read what `io:output` lists |
 | a projection reaches a transition's read through an authentic request | refused |
+| `etag` is the entity's `VERSION`, on a reply that carries one | a hash of the body, on every reply to a safe request |
+| `last-modified` carries `UPDATED` or `CREATED` | gone |
 | an entity's properties come with `id` first | with `id` last |
 
 ## References
