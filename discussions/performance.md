@@ -406,6 +406,43 @@ from before it sends neither.
 | `last-modified` carries `UPDATED` or `CREATED` | gone |
 | an entity's properties come with `id` first | with `id` last |
 
+## What the measurements leave open
+
+Four things the profiles and the runs turned up that this change does not carry. Each is stated as
+what holds once it is done.
+
+1. **A reply carries a validator where a `200` would have been sent.** `validated()` decides on the
+   method alone, so a `GET` under `io:status` answering `404` or `409` from a property of the output
+   is tagged and is answered `304` on the next conditional request; RFC 9110 §15.4.5 admits `304`
+   only in place of a `200`. What the client holds and what the server has do agree — the tag is a
+   hash of that same body — so it is the status line that misleads. A condition beside the method
+   one, and a scenario for a `4xx` under `io:status`.
+
+2. **An encoded output is recognised by what it is rather than by where its class came from.**
+   `message.body instanceof Encoded` holds while one `@toa.io/core` is resolved in the gateway
+   process, which a monorepo and an image built from one lockfile give. A nested second copy makes
+   the check false, the encoder encodes the wrapper, and the client receives
+   `{"bytes":{"type":"Buffer",…},"type":"application/json"}` as a valid `200` — which is what
+   `encoded.feature` produces when the branch is disabled. A brand on the class, or a check by
+   shape, costs nothing.
+
+3. **`io:output` restricts a reply for the length of a rolling deploy as well.** A component from
+   before this change answers the whole output, and a gateway from after it no longer restricts, so
+   a client of a route whose `io:output` hides properties receives them until the components are
+   deployed. Compatibility above states the mechanism; the window is the consequence. Either the
+   gateway fits a reply that arrives as values to what the request asked for — which costs what the
+   fit used to cost, and only where a reply is values already — or the order components and gateways
+   are deployed in is stated and kept.
+
+4. **A list is answered without building what nothing reads.** What a thousand entities cost the
+   component, profiled on `a8238b9`: 8,089 µs a request, of which BSON decoding is about 40%
+   (`deserializeObject` 23.8%, `toUTF8` 7.9%, `tryReadBasicLatin` 5.1%, `parseToElements` 3.1%),
+   the `JSON.stringify` of the reply 18.7%, and the garbage collector 17.8%. The values are decoded
+   into JavaScript objects and encoded back, for a reply the runtime produces and no algorithm
+   touches. Transcoding BSON to JSON where the operation is the runtime's own removes both passes;
+   it is measured against a route that declares `projection` and `io:output` first, which already
+   answers `list.1000.projected` in 4,001 µs against 10,636.
+
 ## References
 
 - J. Nagle, [RFC 896](https://www.rfc-editor.org/rfc/rfc896), *Congestion Control in IP/TCP
