@@ -5,7 +5,7 @@ import * as contentType from 'content-type'
 import { console } from 'openspan'
 import { type Format, decoders } from './formats/index.ts'
 import { BadRequest, NotAcceptable, UnsupportedMediaType } from './exceptions.ts'
-import { etag, same } from './etag.ts'
+import { etag, kept, same } from './etag.ts'
 import { environment } from '@toa.io/generic'
 import { Encoded } from '@toa.io/core'
 import type { Context } from './Context.ts'
@@ -117,12 +117,15 @@ function send(
 /**
  * Whether the client already holds this reply. Its tag is the body itself, so a reply is
  * validated whatever it carries, and one the client sent back is answered with nothing. A reply
- * the gateway built of its own, and one to a request that is not safe, carries no tag.
+ * the gateway built of its own, one to a request that is not safe, and one the client may not
+ * keep carry no tag.
  */
 function validated(context: Context, buf: Buffer, response: ServerResponse): boolean {
   const method = context.request.method
 
   if (method !== 'GET' && method !== 'HEAD') return false
+
+  if (!kept(response.getHeader('cache-control'))) return false
 
   // what a directive states of a reply it built — the checksum of a stored file, say — is what
   // that reply is validated by
