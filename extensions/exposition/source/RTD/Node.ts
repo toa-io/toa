@@ -11,12 +11,21 @@ export class Node {
   public forward: string | null
   public expiration: number
   public methods: Methods
+
+  /**
+   * The path this node answers at, with its placeholders as declared — `/users/:id/` and not
+   * `/users/42/`. It is what a metric labels a request by: the URL is unbounded, and a series
+   * per URL is a series per caller.
+   */
+  public readonly template: string
+
   private readonly protected: boolean
   private routes: Route[]
 
   public constructor(routes: Route[], methods: Methods, properties: Properties) {
     this.routes = routes
     this.methods = methods
+    this.template = properties.template
     this.protected = properties.protected
     this.forward = properties.forward ?? null
     this.expiration = properties.expiration ?? Infinity
@@ -164,6 +173,10 @@ export interface Mount {
 
 export interface Properties {
   protected: boolean
+
+  /** the path this node answers at, placeholders and all */
+  template: string
+
   forward?: string
   expiration?: number
 }

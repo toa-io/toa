@@ -185,6 +185,9 @@ export class Gateway extends Connector {
       throw new http.NotFound('Route not found')
     }
 
+    // what the request is measured under, now that it is known to be a route and not a URL
+    context.labels.route = match.node.template
+
     if (match.node.forward === null) return match
 
     const destination = match.node.forward.replace(/\/:([^/]+)/g, (_, name) => {
@@ -198,6 +201,9 @@ export class Gateway extends Connector {
     const forward = this.tree.match(destination)
 
     if (forward === null) throw new Error('Forwarded route not found')
+
+    // the request is served by where it was forwarded to, so that is what it measures
+    context.labels.route = forward.node.template
 
     return forward
   }

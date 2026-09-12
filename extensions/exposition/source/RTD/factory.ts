@@ -21,6 +21,9 @@ export function createNode(node: syntax.Node, context: Context): Node {
 
   const properties: Properties = {
     protected: protect,
+
+    // what `createRoute` has accumulated on the way down, which is this node's own template
+    template: context.path === '' ? '/' : context.path,
     forward: node.forward,
     expiration: protect ? Infinity : Date.now() + branchTTL()
   }
