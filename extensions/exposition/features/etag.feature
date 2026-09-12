@@ -35,18 +35,18 @@ Feature: Optimistic concurrency control
     Then the following reply is sent:
       """
       200 OK
-      etag: "1"
+      etag: "${{ tag }}"
       """
     When the following request is received:
       """
       GET /pots/${{ id }}/ HTTP/1.1
       host: nex.toa.io
-      if-none-match: "1"
+      if-none-match: "${{ tag }}"
       """
     Then the following reply is sent:
       """
       304 Not Modified
-      etag: "1"
+      etag: "${{ tag }}"
       """
     When the following request is received:
       """
@@ -110,18 +110,18 @@ Feature: Optimistic concurrency control
     Then the following reply is sent:
       """
       200 OK
-      etag: "1"
+      etag: "${{ tag }}"
       """
     When the following request is received:
       """
       GET /pots/${{ id }}/ HTTP/1.1
       host: nex.toa.io
-      if-none-match: W/"1"
+      if-none-match: W/"${{ tag }}"
       """
     Then the following reply is sent:
       """
       304 Not Modified
-      etag: W/"1"
+      etag: "${{ tag }}"
       """
     When the following request is received:
       """
@@ -185,7 +185,7 @@ Feature: Optimistic concurrency control
     Then the following reply is sent:
       """
       200 OK
-      etag: "1"
+      etag: "${{ tag }}"
       """
 
   Scenario: Unexpected `if-match` format

@@ -57,6 +57,11 @@ export interface Request<Input = any, Entity = any> {
    * empty list receives none of it, and a request that names none receives the output whole.
    */
   output?: string[]
+  /**
+   * Whether this caller reads an output encoded rather than as values: a gateway writing it as a
+   * response body spends nothing on reading it. What answers one encodes it once.
+   */
+  encoded?: boolean
   /** the sender validated against the contract, so the recipient does not */
   authentic?: boolean
   /** W3C traceparent */
@@ -75,11 +80,6 @@ export interface Options {
   timeout?: number
   /** Ends the wait when it aborts, within the timeout. */
   signal?: AbortSignal
-  /**
-   * Answers the reply as the operation returned it — its output, and what travels beside it —
-   * where a caller reads more of it than the output alone.
-   */
-  whole?: boolean
 }
 
 /**
@@ -111,15 +111,4 @@ export interface Reply {
   output?: any
   error?: object
   exception?: Exception
-  /**
-   * What an object output carries of the entity it answers, taken out of it where the request
-   * restricted the output: a caller reads them whatever it asked to receive.
-   */
-  system?: System
-}
-
-export interface System {
-  VERSION?: number
-  CREATED?: number
-  UPDATED?: number
 }

@@ -22,8 +22,10 @@ export class Status implements Directive {
     if (typeof value !== 'string') throw new Error('`io:status` must be a string')
   }
 
-  public precall(): void {
-    // nothing to do until the operation has answered
+  public precall(context: http.Context): void {
+    // the status is taken out of the reply at settle, so the reply reaches the gateway as
+    // values rather than as the bytes it would otherwise pass on
+    context.reads = true
   }
 
   public settle(_: unknown, response: http.OutgoingMessage): void {

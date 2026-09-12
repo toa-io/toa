@@ -1,4 +1,3 @@
-import { Readable } from 'node:stream'
 import { entities } from '@toa.io/core'
 import { Mapping } from './Mapping.ts'
 import { take } from './Introspection.ts'
@@ -9,6 +8,9 @@ import type { Remote } from '@toa.io/core'
 import type { Remotes } from './Remotes.ts'
 import type { Context } from './Context.ts'
 import type * as RTD from './RTD/index.ts'
+
+/** What a reply may travel as bytes in, which is the one format a component encodes. */
+const JSON_TYPE = 'application/json'
 
 export class Endpoint implements RTD.Endpoint {
   private readonly endpoint: string
@@ -43,33 +45,21 @@ export class Endpoint implements RTD.Endpoint {
     // what this request receives of the output, which the operation answers of it
     if (context.output !== undefined) request.output = context.output
 
+    /*
+     * Bytes to write on rather than values to read: the response is JSON, nothing on the way out
+     * reads the body, and this is a request to a resource rather than a procedure of one, whose
+     * reply is wrapped in an envelope of its own.
+     */
+    if (context.encoder?.type === JSON_TYPE && context.reads !== true && !context.procedural)
+      request.encoded = true
+
     this.remote ??= await this.discovery
 
-    const reply = await this.remote.invoke(this.endpoint, request, { whole: true })
-    const enveloped = reply !== null && !(reply instanceof Readable)
+    const reply = await this.remote.invoke(this.endpoint, request)
 
-    if (enveloped && reply.error !== undefined)
-      throw new http.UnprocessableEntity(reply.error)
+    if (reply instanceof Error) throw new http.UnprocessableEntity(reply)
 
-    const answered = enveloped ? reply.output : reply
-    const message: http.OutgoingMessage = { body: answered }
-
-    // what the reply carries for a cache to validate by; the `cache` family sets the headers.
-    // A restricted output leaves them beside it, and an unrestricted one carries them itself.
-    let system = enveloped ? reply.system : undefined
-
-    if (system === undefined && typeof answered === 'object' && answered !== null)
-      system = answered as Record<string, any>
-
-    if (system !== undefined) {
-      if ('VERSION' in system) message.version = system.VERSION
-
-      const modified = system.UPDATED ?? system.CREATED
-
-      if (modified !== undefined) message.modified = modified
-    }
-
-    return message
+    return { body: reply }
   }
 
   public selection(): Record<string, Schema> | null {

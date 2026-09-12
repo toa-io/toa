@@ -11,7 +11,7 @@ import type { EntitySet } from './entities/set.ts'
 import type { Changeset } from './entities/changeset.ts'
 import type { scope as Scope } from './types/operations.ts'
 import type { Call } from './types/inbox.ts'
-import type { Envelope, Query, System } from './types/request.ts'
+import type { Envelope, Query } from './types/request.ts'
 
 /** What an operation acquires for the algorithm to run against. */
 export type Scoped = Entity | EntitySet | Changeset | Readable | null
@@ -213,9 +213,8 @@ export class Operation extends Connector {
 /**
  * What a caller receives of the output it asked for: each object of it keeps the properties the
  * request named, in the order the object holds them, and an empty list leaves no output at all.
- * The system properties of an object output travel beside it, since a caller reads them whatever
- * it asked to receive. A stream, an error, an exception and a value that is not an object are
- * answered as they are.
+ * A system property is one of them: a caller that reads `VERSION` asks for it. A stream, an error,
+ * an exception and a value that is not an object are answered as they are.
  */
 function restrict(reply: any, output?: string[]): any {
   if (output === undefined || reply === null || typeof reply !== 'object') return reply
@@ -228,12 +227,6 @@ function restrict(reply: any, output?: string[]): any {
     if (output.length === 0) delete reply.output
 
     return reply
-  }
-
-  if (!Array.isArray(answered)) {
-    const system = take(answered)
-
-    if (system !== undefined) reply.system = system
   }
 
   if (output.length === 0) {
@@ -263,17 +256,3 @@ function fit(entity: Record<string, any>, allowed: Set<string>): Record<string, 
   return output
 }
 
-/** What a cache validates by, which a caller reads whatever its request named. */
-function take(entity: Record<string, any>): System | undefined {
-  const { VERSION, CREATED, UPDATED } = entity
-
-  if (VERSION === undefined && CREATED === undefined && UPDATED === undefined) return undefined
-
-  const system: System = {}
-
-  if (VERSION !== undefined) system.VERSION = VERSION
-  if (CREATED !== undefined) system.CREATED = CREATED
-  if (UPDATED !== undefined) system.UPDATED = UPDATED
-
-  return system
-}

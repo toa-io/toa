@@ -1,20 +1,4 @@
-/**
- * An entity tag is its version in quotes, `"3"`, or the same marked weak, `W/"3"`. A client
- * sends one back in `if-match` and `if-none-match`; what it sent is compared here as a string
- * and parsed only where a version is needed of it.
- */
-export function tag(version: number): string {
-  return `"${version}"`
-}
-
-/** Whether the tag a client sent names the version, strong or weak. */
-export function matches(sent: string, version: number): boolean {
-  const strong = tag(version)
-
-  return sent === strong || sent === 'W/' + strong
-}
-
-/** The version a tag names, or nothing for a tag that is not one. */
+/** The version a tag names, or nothing for a tag that is not one. Read out of `if-match`. */
 export function parse(sent: string): number | null {
   const strong = sent.startsWith('W/') ? sent.slice(2) : sent
 

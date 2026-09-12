@@ -290,13 +290,13 @@ GET /dummies/?foo=0&bar=baz
 
 ## Optimistic concurrency control
 
-If an operation answers a safe request (`GET`, `HEAD`) with an object that has a `VERSION`
-property, its value is passed as the value of
-the [`etag` header](https://datatracker.ietf.org/doc/html/rfc7232#section-2.3) in the response,
-see [validators](cache.md#validators).
-
 Client can use the `if-match` request header to perform an operation only if the corresponding
-object has not been modified since the last retrieval.
+object has not been modified since the last retrieval. What it sends is the `VERSION` the object
+was read with, so a Method whose clients use it lists `VERSION` in
+its [`io:output`](io.md#output).
+
+The [`etag`](cache.md#validators) of a reply is a hash of the body it carries, not the version,
+and a request that sends it in `if-match` is answered `400 Bad Request`.
 
 ```http
 GET /dummies/5e82ed5e/ HTTP/1.1
@@ -304,9 +304,9 @@ GET /dummies/5e82ed5e/ HTTP/1.1
 ---
 
 HTTP/1.1 200 OK
-etag: "1"
 
 foo: bar
+VERSION: 1
 ```
 
 ```http request
