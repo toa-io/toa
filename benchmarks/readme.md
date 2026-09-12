@@ -68,6 +68,8 @@ A run of the default scenarios took 61 minutes on an 8-core machine; `--quick` h
 | `token.role` | `GET` under `auth:role`, with a `Token` |
 | `mcp.tools.list` | `tools/list` over MCP, on a tree of 22 tools |
 | `list.1000.msgpack` | optional: `list.1000` encoded as MessagePack |
+| `list.1000.projected` | optional: `list.1000` on a route whose query names three properties |
+| `list.1000.restricted` | optional: `list.1000` on a route whose `io:output` names four properties |
 | `token.reissue` | optional: `GET` under `auth:id` with a `Token` older than `refresh`, sent again after the reply re-issues it, so every request pays for a re-issue — the cost of one re-issue |
 
 Tokens are issued by the run and the gateway is configured with a `refresh` of a day, so no token
