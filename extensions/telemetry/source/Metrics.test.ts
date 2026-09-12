@@ -2,7 +2,7 @@ import { describe, it } from 'node:test'
 import assert from 'node:assert/strict'
 
 import { Locator } from '@toa.io/core'
-import { registry } from 'openspan'
+import { registry, type Counter } from 'openspan'
 import { Metrics } from './Metrics.ts'
 
 const locator = new Locator('pots', 'default')
@@ -22,7 +22,7 @@ describe('Metrics', () => {
   it('should name a series after the component', () => {
     const aspect = new Metrics(locator, { metrics: { named: { type: 'counter' } } })
 
-    aspect.invoke().named.add(1)
+    ;(aspect.invoke().named as Counter).add(1)
 
     assert.ok(
       registry()
