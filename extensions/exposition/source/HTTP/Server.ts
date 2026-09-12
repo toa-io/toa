@@ -136,7 +136,9 @@ export class Server extends Connector {
 
     response.once('close', () => {
       this.inflight.delete(response)
-      controller.abort()
+
+      // a finished reply has nothing left to cancel, and an abort builds an exception
+      if (!response.writableFinished) controller.abort()
 
       if (this.inflight.size === 0) this.drained?.()
     })

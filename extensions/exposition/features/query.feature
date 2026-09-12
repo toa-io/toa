@@ -51,11 +51,11 @@ Feature: Queries
       200 OK
       content-type: application/yaml
 
-      - id: 4c4759e6f9c74da989d64511df42d6f4
-        title: First pot
+      - title: First pot
+        id: 4c4759e6f9c74da989d64511df42d6f4
         volume: 100
-      - id: 99988d785d7d445cad45dbf8531f560b
-        title: Second pot
+      - title: Second pot
+        id: 99988d785d7d445cad45dbf8531f560b
         volume: 200
       """
 
@@ -78,11 +78,11 @@ Feature: Queries
       200 OK
       content-type: application/yaml
 
-      - id: 99988d785d7d445cad45dbf8531f560b
-        title: Second pot
+      - title: Second pot
+        id: 99988d785d7d445cad45dbf8531f560b
         volume: 200
-      - id: a7edded6b2ab47a0aca9508cc4da4138
-        title: Third pot
+      - title: Third pot
+        id: a7edded6b2ab47a0aca9508cc4da4138
         volume: 300
       """
 
@@ -105,11 +105,11 @@ Feature: Queries
       200 OK
       content-type: application/yaml
 
-      - id: bc6913d317334d76acd07d9f25f73535
-        title: Fourth pot
+      - title: Fourth pot
+        id: bc6913d317334d76acd07d9f25f73535
         volume: 400
-      - id: a7edded6b2ab47a0aca9508cc4da4138
-        title: Third pot
+      - title: Third pot
+        id: a7edded6b2ab47a0aca9508cc4da4138
         volume: 300
       """
 
@@ -159,12 +159,12 @@ Feature: Queries
       200 OK
       content-type: application/yaml
 
-      - id: 4c4759e6f9c74da989d64511df42d6f4
-        title: First pot
+      - title: First pot
+        id: 4c4759e6f9c74da989d64511df42d6f4
         volume: 100
         temperature: 80
-      - id: 99988d785d7d445cad45dbf8531f560b
-        title: Second pot
+      - title: Second pot
+        id: 99988d785d7d445cad45dbf8531f560b
         volume: 200
       """
 
@@ -190,11 +190,11 @@ Feature: Queries
       200 OK
       content-type: application/yaml
 
-      - id: a7edded6b2ab47a0aca9508cc4da4138
-        title: Third pot
+      - title: Third pot
+        id: a7edded6b2ab47a0aca9508cc4da4138
         volume: 300
-      - id: bc6913d317334d76acd07d9f25f73535
-        title: Fourth pot
+      - title: Fourth pot
+        id: bc6913d317334d76acd07d9f25f73535
         volume: 400
       """
 
@@ -220,8 +220,8 @@ Feature: Queries
       200 OK
       content-type: application/yaml
 
-      - id: bc6913d317334d76acd07d9f25f73535
-        title: Fourth pot
+      - title: Fourth pot
+        id: bc6913d317334d76acd07d9f25f73535
         volume: 400
         temperature: 90
       """
@@ -250,12 +250,12 @@ Feature: Queries
       200 OK
       content-type: application/yaml
 
-      - id: bc6913d317334d76acd07d9f25f73535
-        title: Fourth pot
+      - title: Fourth pot
+        id: bc6913d317334d76acd07d9f25f73535
         volume: 400
         temperature: 90
-      - id: 4c4759e6f9c74da989d64511df42d6f4
-        title: First pot
+      - title: First pot
+        id: 4c4759e6f9c74da989d64511df42d6f4
         volume: 100
         temperature: 80
       """
@@ -348,14 +348,14 @@ Feature: Queries
       """
       200 OK
 
-      - id: bc6913d317334d76acd07d9f25f73535
-        title: Fourth pot
+      - title: Fourth pot
+        id: bc6913d317334d76acd07d9f25f73535
         volume: 400
       """
     And the reply does not contain:
       """
-      - id: 4c4759e6f9c74da989d64511df42d6f4
-        title: First pot
+      - title: First pot
+        id: 4c4759e6f9c74da989d64511df42d6f4
         volume: 100
       """
     When the following request is received:

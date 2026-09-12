@@ -56,6 +56,9 @@ export class Operation extends Connector {
   readonly #scope: Scope
   readonly #once: boolean
 
+  /** a reply is validated only on local environments, which are set before an operation is built */
+  readonly #local: boolean
+
   // eslint-disable-next-line max-params
   public constructor(
     cascade: Cascade,
@@ -73,6 +76,7 @@ export class Operation extends Connector {
     this.#query = query
     this.#scope = definition.scope
     this.#once = definition.once === true
+    this.#local = environment.get('TOA_ENV') === 'local'
 
     this.depends(cascade)
   }
@@ -174,8 +178,7 @@ export class Operation extends Connector {
     const { request, state } = store
     const reply = await this.#cascade.run(request.input, state)
 
-    // validate reply only on local environments
-    if (environment.get('TOA_ENV') === 'local' && !(reply instanceof Readable))
+    if (this.#local && !(reply instanceof Readable))
       this.#contracts.reply.fit(reply)
 
     store.reply = reply

@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto'
 import * as uuid from 'uuid'
 
 export function newid(): string {
@@ -14,14 +15,16 @@ export function newid(): string {
  *
  * What it is for is a call whose identity must be the same on every run that makes it: the same
  * duplicate then produces the same identity, and whatever it reaches refuses its own copy. A
- * name-based uuid is exactly that function, and `uuid` is here already.
+ * name-based uuid is exactly that function: version 5 of RFC 9562, the bytes `uuid.v5` produces,
+ * hashed here with the namespace already parsed, since a call derives one on every call it makes.
  */
 export function derive(...parts: Array<string | number>): string {
-  const buf = Buffer.alloc(16)
+  const hash = createHash('sha1').update(NAMESPACE).update(name(parts), 'utf8').digest()
 
-  uuid.v5(name(parts), NAMESPACE, buf)
+  hash[6] = (hash[6] & 0x0f) | 0x50
+  hash[8] = (hash[8] & 0x3f) | 0x80
 
-  return buf.toString('hex')
+  return hash.toString('hex', 0, 16)
 }
 
 /**
@@ -41,5 +44,8 @@ function name(parts: Array<string | number>): string {
   return name
 }
 
-/** Toa's own, so that a name derived here collides with nothing derived elsewhere. */
-const NAMESPACE = '26bd9bc6-675c-4465-9b42-9e008b20befe'
+/**
+ * Toa's own, `26bd9bc6-675c-4465-9b42-9e008b20befe`, so that a name derived here collides with
+ * nothing derived elsewhere.
+ */
+const NAMESPACE = Buffer.from('26bd9bc6675c44659b429e008b20befe', 'hex')

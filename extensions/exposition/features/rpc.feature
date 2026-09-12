@@ -98,7 +98,7 @@ Feature: JSON-RPC
       jsonrpc: '2.0'
       id: 3
       result:
-        - id: 4c4759e6f9c74da989d64511df42d6f4
+          id: 4c4759e6f9c74da989d64511df42d6f4
       """
 
   Scenario: A call without an id answers nothing
@@ -172,7 +172,7 @@ Feature: JSON-RPC
       jsonrpc: '2.0'
       id: 17
       result:
-        - id: 4c4759e6f9c74da989d64511df42d6f4
+          id: 4c4759e6f9c74da989d64511df42d6f4
       """
 
   Scenario: A route no name can spell
