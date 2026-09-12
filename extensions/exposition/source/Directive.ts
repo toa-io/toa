@@ -1,4 +1,4 @@
-import { console, type SpanOptions } from 'openspan'
+import { console, sampled, type SpanOptions } from 'openspan'
 import type { Context, OutgoingMessage, Options } from './HTTP/index.ts'
 import type { Remotes } from './Remotes.ts'
 import type { Host } from './Factory.ts'
@@ -35,10 +35,13 @@ export class Directives implements RTD.Directives {
 
       if (set.family.precall === undefined) continue
 
-      const out = await console.span(
-        this.spans[i].precall,
-        async () => await set.family.precall!(set.directives, context, parameters)
-      )
+      // the span's closure and frames are all an unsampled trace would pay for; see `sampled`
+      const out = sampled()
+        ? await console.span(
+            this.spans[i].precall,
+            async () => await set.family.precall!(set.directives, context, parameters)
+          )
+        : await set.family.precall(set.directives, context, parameters)
 
       if (out === null) continue
 
@@ -65,10 +68,12 @@ export class Directives implements RTD.Directives {
 
       if (set.family.explain === undefined) continue
 
-      const next = await console.span(
-        this.spans[i].explain,
-        async () => await set.family.explain!(set.directives, context, described)
-      )
+      const next = sampled()
+        ? await console.span(
+            this.spans[i].explain,
+            async () => await set.family.explain!(set.directives, context, described)
+          )
+        : await set.family.explain(set.directives, context, described)
 
       if (next === null) return null
 
@@ -82,11 +87,14 @@ export class Directives implements RTD.Directives {
     for (let i = 0; i < this.sets.length; i++) {
       const set = this.sets[i]
 
-      if (set.family.settle !== undefined)
+      if (set.family.settle === undefined) continue
+
+      if (sampled())
         await console.span(
           this.spans[i].settle,
           async () => await set.family.settle!(set.directives, context, response)
         )
+      else await set.family.settle(set.directives, context, response)
     }
   }
 
@@ -132,20 +140,28 @@ export class DirectivesFactory implements RTD.DirectiveFactory {
    * answers here only for what it does on its own behalf.
    */
   public async preflight(context: Context): Promise<void> {
-    for (const stage of this.stages)
-      if (stage.family.preflight !== undefined)
+    for (const stage of this.stages) {
+      if (stage.family.preflight === undefined) continue
+
+      if (sampled())
         await console.span(stage.preflight, async () => {
           await stage.family.preflight!(context)
         })
+      else await stage.family.preflight(context)
+    }
   }
 
   /** Request-scoped, on the message going back. */
   public async depart(context: Context, response: OutgoingMessage): Promise<void> {
-    for (const stage of this.stages)
-      if (stage.family.depart !== undefined)
+    for (const stage of this.stages) {
+      if (stage.family.depart === undefined) continue
+
+      if (sampled())
         await console.span(stage.depart, async () => {
           await stage.family.depart!(context, response)
         })
+      else await stage.family.depart(context, response)
+    }
   }
 
   public create(declarations: RTD.syntax.Directive[], route: string = ''): Directives {
