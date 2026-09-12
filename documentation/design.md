@@ -80,13 +80,15 @@ async function unmanaged(input, collection, context) {
 ```
 
 > Unmanaged operations lack concurrency control, events, object identification, versioning,
-> timestamps and other features provided by the runtime.
+> timestamps, [cross-region replication](/extensions/convergence) and other features provided by the
+> runtime.
 
 **An unmanaged operation reads. It never writes.** Everything the runtime provides is what a
 write depends on, so a write made here is a write without a version to guard it, without the
 timestamps the rest of the system reads, without an identifier the runtime issued, and without
-the event that tells anything it happened. Use a Transition for one object, a Transition over
-`objects` for many, and an Assignment for a changeset.
+the event that tells anything it happened — which is also what would have carried it to another
+region. Use a Transition for one object, a Transition over `objects` for many, and an Assignment
+for a changeset.
 
 **Nothing removes a record.** Deletion is a `DELETED` timestamp, which every query filters on,
 so a removed entity stops being found while what it was survives — the prototype's `terminate`
