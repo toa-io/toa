@@ -7,8 +7,10 @@ import {
 } from '@toa.io/definitions/extensions.telemetry'
 import { Logs } from './Logs.ts'
 import { Span } from './Span.ts'
+import { Metrics } from './Metrics.ts'
 import { Ready } from './Ready.ts'
 import type { LogsOptions } from './Logs.ts'
+import type { Declaration } from '@toa.io/definitions/extensions.telemetry'
 import type { Locator } from '@toa.io/core'
 import type { extensions } from '@toa.io/core/types'
 import type { MetricsOptions, TracesOptions } from 'openspan'
@@ -43,11 +45,12 @@ export class Factory implements extensions.Factory {
     this.ready = Ready.create()
   }
 
-  public aspect(locator: Locator): extensions.Aspect[] {
+  public aspect(locator: Locator, declaration: Declaration): extensions.Aspect[] {
     const logs = this.createLogs(locator)
     const span = new Span(locator)
+    const metrics = new Metrics(locator, declaration ?? {})
 
-    return [logs, span]
+    return [logs, span, metrics]
   }
 
   /**

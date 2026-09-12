@@ -90,6 +90,40 @@ Feature: Telemetry
       operation: trace
       """
 
+  Scenario: A component records a metric it declares
+    Given I boot `telemetry` component
+    When I invoke `convert` with:
+      """yaml
+      input:
+        amount: 10
+        currency: EUR
+      """
+    Then the reply is received:
+      """yaml
+      10
+      """
+    And the metric `default.telemetry.conversions` is recorded with:
+      """yaml
+      currency: EUR
+      """
+
+  Scenario: An unenumerated label value is recorded as UNDECLARED
+    Given I boot `telemetry` component
+    When I invoke `convert` with:
+      """yaml
+      input:
+        amount: 10
+        currency: CHF
+      """
+    Then the reply is received:
+      """yaml
+      10
+      """
+    And the metric `default.telemetry.conversions` is recorded with:
+      """yaml
+      currency: UNDECLARED
+      """
+
   Scenario: Trace propagation over remote calls
     Given I compose components:
       | math.calculations |

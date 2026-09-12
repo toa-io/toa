@@ -139,6 +139,10 @@ context.metrics.conversions.add(1, { currency: input.currency }) // → { curren
 nobody is waiting, the message is parked on its first delivery rather than retried. See
 [errors and exceptions](/documentation/exceptions.md).
 
+A declaration that is malformed — a name that is not an identifier, an unknown type, a histogram
+without buckets or with buckets that do not ascend — is refused when the manifest is read, before
+anything connects.
+
 ## What a metric cannot show
 
 **Nothing below `interval`.** One collection is one sample per series, and a `rate()` window shorter

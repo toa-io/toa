@@ -31,7 +31,10 @@ export const codes = {
   Abandoned: 404,
 
   /** a chain that came back to where it had been, or went further than a chain goes */
-  Loop: 500
+  Loop: 500,
+
+  /** a component asked for something its manifest does not declare */
+  Misuse: 600
 }
 
 export class Exception {
@@ -163,6 +166,7 @@ export const TransmissionException = derive('Transmission')
 export const EndpointException = derive('Endpoint')
 export const AddresseeException = derive('Addressee')
 export const AbandonedException = derive('Abandoned')
+export const MisuseException = derive('Misuse')
 
 export const names = swap(codes)
 // #endregion
@@ -213,7 +217,9 @@ const OUTCOME: Record<keyof typeof codes, 'permanent' | 'transient'> = {
   Abandoned: 'transient',
 
   // the chain is deterministic, so another attempt walks it again: a retry is another cycle
-  Loop: 'permanent'
+  Loop: 'permanent',
+  // what a component did not declare, it does not declare on the next attempt either
+  Misuse: 'permanent'
 }
 
 const PERMANENT = new Set<number>(

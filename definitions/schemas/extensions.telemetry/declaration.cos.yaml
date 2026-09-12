@@ -1,0 +1,42 @@
+# manifest.toa.yaml telemetry declaration: the metrics a component records
+type: object
+properties:
+  metrics:
+    description: The instruments `context.metrics` carries, by the name each is declared under
+    type: object
+    propertyNames:
+      pattern: ^[a-zA-Z]+([_a-zA-Z0-9]*[a-zA-Z0-9]+)?$
+    patternProperties:
+      ".*":
+        type: object
+        properties:
+          type:
+            description: >
+              A counter counts what only ever happens, a gauge is a level at a moment, and a
+              histogram is a distribution over buckets fixed here.
+            enum: [counter, gauge, histogram]
+          unit:
+            description: What the values are in
+            type: string
+          buckets:
+            description: Histogram bucket upper bounds, ascending
+            type: array
+            items:
+              type: number
+            minItems: 1
+          labels:
+            description: >
+              Label keys, each with the values it admits. A key declared `null` admits any
+              value, and its cardinality is the component's own to keep bounded.
+            type: [object, "null"]
+            propertyNames:
+              pattern: ^[a-zA-Z]+([_a-zA-Z0-9]*[a-zA-Z0-9]+)?$
+            patternProperties:
+              ".*":
+                type: [array, "null"]
+                items:
+                  type: [string, number, boolean]
+                minItems: 1
+        required: [type]
+        additionalProperties: false
+additionalProperties: false

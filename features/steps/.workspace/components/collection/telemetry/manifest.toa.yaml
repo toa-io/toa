@@ -1,6 +1,24 @@
 name: telemetry
 
+telemetry:
+  metrics:
+    conversions:
+      type: counter
+      labels:
+        currency: [EUR, USD]
+
 operations:
+  convert:
+    input:
+      type: object
+      properties:
+        amount:
+          type: number
+        currency:
+          type: string
+      required: [amount, currency]
+    output:
+      type: number
   trace:
     input:
       properties:
