@@ -186,7 +186,6 @@ distribution is read; a counter and a gauge are one series each and are the defa
 | `toa.call.exceptions`        | counter        | `component`, `operation`, `code`            | `#transmit` in [`call.ts`](/runtime/core/source/call.ts)                             |
 | `toa.call.inflight`          | gauge          | `component`                                 | the same site                                                                        |
 | `toa.event.publish.duration` | histogram, `s` | `event`                                     | [`event.ts`](/runtime/core/source/event.ts)                                          |
-| `toa.state.conflicts`        | counter        | `component`, `operation`                    | the retry in [`transition.ts`](/runtime/core/source/transition.ts)                   |
 
 **A call and an invocation are two metrics, not one metric with a `kind` label.** `Remote extends
 Component` with `kind = 'client'` and both go through the same `#process`, naming the same endpoint
@@ -244,10 +243,6 @@ The duration histogram observes every invocation, failures included, because `Co
 its span on both branches. So `_count` is the invocation rate rather than the success rate, nothing
 in this change declares a call counter anywhere, and success is `_count` less the two counters.
 
-`toa.state.conflicts` is the only metric here that is not an outcome. A lost compare-and-swap is
-retried inside `Transition.process`, so contention succeeds and shows up as nothing at all — no
-exception, no error, only a duration that grew. One counter makes it visible.
-
 **Left out.** **Processing an event**, because it is an operation invocation: the `process` span
 wraps `this.#local.invoke(this.#endpoint, request)` in
 [`receiver.ts`](/runtime/core/source/receiver.ts), the same call `component.ts` measures, and the two
@@ -297,11 +292,32 @@ label predicts.
 
 | metric                       | type           | labels                                | site                                                                       |
 | ---------------------------- | -------------- | ------------------------------------- | -------------------------------------------------------------------------- |
-| `toa.storage.query.duration` | histogram, `s` | `database`, `collection`, `operation` | `command()` in [`storage.js`](/connectors/storages.mongodb/src/storage.js) |
+| `toa.storage.query.duration` | histogram, `s` | `provider`, `collection`, `operation` | `command()` in [`storage.js`](/connectors/storages.mongodb/src/storage.js) |
+| `toa.storage.conflicts`      | counter        | `provider`, `collection`              | the lost compare-and-swap in `set()`                                       |
 
 One histogram, at the one place every query already passes through. Collections by driver methods is
 the widest label product in a component, so this is the zone to watch if the series count ever
 matters.
+
+`provider` is which storage it is — `mongodb` — and there is no `database` label: the database is the
+context, which the resource already names. `provider` means the same word here as in the blob zone,
+the kind of backend, so a reader moving between the two reads one vocabulary.
+
+**`toa.storage.conflicts` is a lost compare-and-swap**, which is `set()` returning `false`. It is
+counted here rather than in core, where the conflict is _decided_: `Transition.commit` either
+retries it or raises `StateConcurrencyException`
+([`transition.ts:64`](/runtime/core/source/transition.ts)), and the raising branch is
+`toa.operation.exceptions{code="StateConcurrency"}` already. Only the retrying branch is invisible —
+it succeeds — so the counter exists to see that half, and sees both.
+
+Counting it in core instead would need the operation to know its own identity, which it does not:
+`Operation` holds no locator and no endpoint name, and `Definition` is the manifest's declaration
+rather than a place for one. It would also be the worse label, because contention is a property of
+the record being fought over: `collection` says what is contended where `operation` would say only
+who noticed.
+
+The cost of putting it here is that every storage connector counts it for itself. That is real, and
+it is what the label being right costs; there is one connector today.
 
 **Left out.** A duplicate-key counter — it surfaces as `toa.operation.errors` or as
 `toa.operation.exceptions{code="Duplicate"}` depending on what the operation does with it. A
@@ -451,12 +467,18 @@ response count is an origin degrading before it fails.
 
 ### Blob storages
 
-| metric                        | type           | labels                  | site                                                            |
-| ----------------------------- | -------------- | ----------------------- | --------------------------------------------------------------- |
-| `toa.blob.operation.duration` | histogram, `s` | `provider`, `operation` | [`storages/Storage.ts`](/extensions/storages/source/Storage.ts) |
+| metric                        | type           | labels                             | site                                                            |
+| ----------------------------- | -------------- | ---------------------------------- | --------------------------------------------------------------- |
+| `toa.blob.operation.duration` | histogram, `s` | `storage`, `provider`, `operation` | [`storages/Storage.ts`](/extensions/storages/source/Storage.ts) |
 
 Network I/O to a third party, not an invocation, and nothing else reports it. Four operations by a
-handful of providers is a small product.
+handful of storages is a small product.
+
+`storage` is the name the component declared it under — `storages: tmp` is `tmp` — and `provider` is
+what stands behind it. A component declares several and uses them for different things, so which one
+was slow is the question, and the provider alone does not answer it where two declarations share one.
+Both are already on the `Storage` the factory builds
+([`Factory.ts:51`](/extensions/storages/source/Factory.ts)).
 
 Named `blob` rather than `storages`: the extension calls itself BLOB storage, and
 `toa_storages_operation_duration_seconds` beside `toa_storage_query_duration_seconds` is a one-letter
@@ -849,7 +871,8 @@ Each is one unit of work: scenarios first, each failing for the reason expected.
    storages, fetch, then exposition — exposition last because `route` needs a template on `RTD/Node`
    and nothing else in the change does.
 8. **The explicit instruments**, one unit per zone: outbox, bindings, atomicity, cadence, convergence,
-   realtime, process, and `toa.operation.inflight` and `toa.state.conflicts` in core.
+   realtime, process, `toa.operation.inflight` in core, and `toa.storage.conflicts` beside the
+   storage histogram.
 9. **The manifest declaration**, with the `Misuse` code in `@toa.io/core`.
 10. **`context.metrics`.** The aspect, the type, the contribution.
 11. **The dev stack and the dashboard.**

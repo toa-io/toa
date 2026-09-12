@@ -175,7 +175,6 @@ Durations are seconds. A component's own metrics are named after it; the runtime
 | `toa.call.exceptions`        | counter        | `component`, `operation`, `code`            |
 | `toa.call.inflight`          | gauge          | `component`                                 |
 | `toa.event.publish.duration` | histogram, `s` | `event`                                     |
-| `toa.state.conflicts`        | counter        | `component`, `operation`                    |
 
 `toa.operation.*` is an invocation as the component that serves it sees it, with no transport in it.
 `toa.call.*` is the same invocation as its caller sees it, transport included; `component` there is
@@ -189,9 +188,6 @@ the two, because the histogram observes every invocation, failures included.
 
 `toa.call.exceptions` counts only what transmission raised — `Transmission`, `Addressee`,
 `Abandoned`, `Endpoint` — and never one the callee sent back, which is counted where it happened.
-
-`toa.state.conflicts` counts compare-and-swap retries inside a transition. They succeed, so they
-appear nowhere else.
 
 ### Bindings
 
@@ -210,7 +206,15 @@ arriving message is an invocation, and is `toa.operation.duration`.
 
 | metric                       | type           | labels                                |
 | ---------------------------- | -------------- | ------------------------------------- |
-| `toa.storage.query.duration` | histogram, `s` | `database`, `collection`, `operation` |
+| `toa.storage.query.duration` | histogram, `s` | `provider`, `collection`, `operation` |
+| `toa.storage.conflicts`      | counter        | `provider`, `collection`              |
+
+`provider` is which storage it is, `mongodb` among them. There is no database label: the database is
+the context, which the series already carries as its `job`.
+
+`toa.storage.conflicts` counts a lost compare-and-swap. Where the operation declares
+`concurrency: retry` it is retried and succeeds, so this counter is the only place it appears;
+otherwise it is also `toa.operation.exceptions{code="StateConcurrency"}`.
 
 ### Atomicity
 
@@ -283,9 +287,12 @@ One attempt is one observation, so a retried request is several.
 
 ### BLOB storages
 
-| metric                        | type           | labels                  |
-| ----------------------------- | -------------- | ----------------------- |
-| `toa.blob.operation.duration` | histogram, `s` | `provider`, `operation` |
+| metric                        | type           | labels                             |
+| ----------------------------- | -------------- | ---------------------------------- |
+| `toa.blob.operation.duration` | histogram, `s` | `storage`, `provider`, `operation` |
+
+`storage` is the name the component declared it under — `storages: tmp` is `tmp` — and `provider` is
+what stands behind it.
 
 ### Convergence
 
