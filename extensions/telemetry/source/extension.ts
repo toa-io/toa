@@ -97,6 +97,8 @@ function measurements(): MetricsOptions | undefined {
 
   const options = JSON.parse(env) as MetricsOptions
 
+  options.prefix ??= 'toa'
+
   if (options.exporters?.otlp !== undefined) {
     const resource = (options.exporters.otlp.resource ??= {})
 

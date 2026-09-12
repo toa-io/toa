@@ -194,10 +194,10 @@ the two, because the histogram observes every invocation, failures included.
 
 ### Bindings
 
-| metric                 | type    | labels                                           |
-| ---------------------- | ------- | ------------------------------------------------ |
-| `toa.amqp.published`   | counter | `topology` (`request`, `task`, `event`), `shard` |
-| `toa.amqp.diagnostics` | counter | `condition`, `shard`                             |
+| metric                 | type    | labels                                  |
+| ---------------------- | ------- | --------------------------------------- |
+| `toa.amqp.published`   | counter | `topology` (`request`, `task`, `event`) |
+| `toa.amqp.diagnostics` | counter | `condition`, `shard`                    |
 
 `toa.amqp.published` counts what this process put on a broker. Consumption is not counted here: an
 arriving message is an invocation, and is `toa.operation.duration`.
@@ -222,10 +222,10 @@ otherwise it is also `toa.operation.exceptions{code="StateConcurrency"}`.
 
 ### Atomicity
 
-| metric                    | type           | labels      |
-| ------------------------- | -------------- | ----------- |
-| `toa.atomicity.lock.wait` | histogram, `s` | `component` |
-| `toa.atomicity.locks`     | gauge          | `component` |
+| metric                    | type           | labels  |
+| ------------------------- | -------------- | ------- |
+| `toa.atomicity.lock.wait` | histogram, `s` | `group` |
+| `toa.atomicity.locks`     | gauge          | `group` |
 
 A lock is waited for as long as it takes to acquire, inside the operation that asked for it.
 
@@ -237,14 +237,14 @@ A lock is waited for as long as it takes to acquire, inside the operation that a
 
 ### Cadence
 
-| metric                   | type    | labels                                       |
-| ------------------------ | ------- | -------------------------------------------- |
-| `toa.cadence.pulses`     | counter | `component`, `operation`                     |
-| `toa.cadence.skipped`    | counter | `component`, `reason` (`overlap`, `unowned`) |
-| `toa.cadence.delayed`    | counter | `component`                                  |
-| `toa.cadence.dispatched` | counter | `component`                                  |
-| `toa.cadence.expired`    | counter | `component`                                  |
-| `toa.cadence.scans`      | counter | `outcome` (`done`, `skipped`, `failed`)      |
+| metric                   | type    | labels                                   |
+| ------------------------ | ------- | ---------------------------------------- |
+| `toa.cadence.pulses`     | counter | `pulse`                                  |
+| `toa.cadence.skipped`    | counter | `pulse`, `reason` (`overlap`, `unowned`) |
+| `toa.cadence.delayed`    | counter | `component`                              |
+| `toa.cadence.dispatched` | counter | `component`                              |
+| `toa.cadence.expired`    | counter | `component`                              |
+| `toa.cadence.scans`      | counter | `outcome` (`done`, `skipped`, `failed`)  |
 
 The rate a pulse should keep is `cycle / intervals` from its manifest; `toa.cadence.pulses` is what
 it kept. An interval is not made up, so what is below that rate is gone.
@@ -300,10 +300,10 @@ what stands behind it.
 
 ### Convergence
 
-| metric                     | type           | labels                                                  |
-| -------------------------- | -------------- | ------------------------------------------------------- |
-| `toa.convergence.lag`      | histogram, `s` | `region`, `outcome` (`inserted`, `superseded`, `stale`) |
-| `toa.convergence.backward` | counter        | `region`                                                |
+| metric                     | type           | labels                                   |
+| -------------------------- | -------------- | ---------------------------------------- |
+| `toa.convergence.lag`      | histogram, `s` | `region`, `outcome` (`applied`, `stale`) |
+| `toa.convergence.backward` | counter        | `region`                                 |
 
 The lag is the receiving region's clock less the timestamp the record carries from the region that
 wrote it, so it is no better than the clocks: choose an alert threshold well above the skew you
@@ -321,9 +321,13 @@ which is therefore a measure of the skew itself.
 
 ### Process
 
-| metric                   | type           | labels                             |
-| ------------------------ | -------------- | ---------------------------------- |
-| `toa.process.loop.delay` | histogram, `s` | —                                  |
-| `toa.process.memory`     | gauge          | `kind` (`rss`, `heap`, `external`) |
+| metric                   | type       | labels                                  |
+| ------------------------ | ---------- | --------------------------------------- |
+| `toa.process.loop.delay` | gauge, `s` | `quantile` (`p50`, `p90`, `p99`, `max`) |
+| `toa.process.memory`     | gauge      | `kind` (`rss`, `heap`, `external`)      |
 
 Recorded by every process that has metrics configured, the gateway included.
+
+`toa.process.loop.delay` is a gauge and still has no blind spot: Node's monitor keeps its own
+histogram between collections, so what the gauge carries is the whole interval and not the moment
+it was read.

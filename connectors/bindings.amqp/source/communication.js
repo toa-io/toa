@@ -1,6 +1,7 @@
 import { assert } from 'comq'
 import { Connector } from '@toa.io/core'
 import { console } from 'openspan'
+import { reported } from './measurements.js'
 
 export class Communication extends Connector {
   /** @type {string[]} */
@@ -143,68 +144,86 @@ export class Communication extends Connector {
    * dropping out or a failed reconnect leave no trace at all.
    */
   #diagnose() {
-    this.#io.diagnose('return', (type, message, shard) =>
+    this.#io.diagnose('return', (type, message, shard) => {
+      reported('return', shard)
+
       console.error('AMQP message returned', {
         type,
         queue: message.fields?.routingKey,
         correlationId: message.properties?.correlationId,
         shard
       })
-    )
+    })
 
-    this.#io.diagnose('discard', (type, message, exception, shard) =>
+    this.#io.diagnose('discard', (type, message, exception, shard) => {
+      reported('discard', shard)
+
       console.error('AMQP message discarded', {
         type,
         queue: message.fields?.routingKey,
         message: exception?.message,
         shard
       })
-    )
+    })
 
     // another process holds this one's name on that broker, and comq claims it again
-    this.#io.diagnose('taken', (type, queue, shard) =>
+    this.#io.diagnose('taken', (type, queue, shard) => {
+      reported('taken', shard)
       console.warn('Instance name taken', { queue, shard })
-    )
+    })
 
-    this.#io.diagnose('remove', (type, shard) =>
+    this.#io.diagnose('remove', (type, shard) => {
+      reported('remove', shard)
       console.warn('AMQP shard removed', { type, shard })
-    )
+    })
 
-    this.#io.diagnose('lost', (type, shard) =>
+    this.#io.diagnose('lost', (type, shard) => {
+      reported('lost', shard)
       console.warn('AMQP shard lost', { type, shard })
-    )
+    })
 
-    this.#io.diagnose('recover', (type, shard) =>
+    this.#io.diagnose('recover', (type, shard) => {
+      reported('recover', shard)
       console.info('AMQP channel recovered', { type, shard })
-    )
+    })
 
-    this.#io.diagnose('flow', (type, shard) =>
+    this.#io.diagnose('flow', (type, shard) => {
+      reported('flow', shard)
       console.warn('AMQP back pressure', { type, shard })
-    )
+    })
 
-    this.#io.diagnose('drain', (type, shard) =>
+    this.#io.diagnose('drain', (type, shard) => {
+      reported('drain', shard)
       console.info('AMQP back pressure released', { type, shard })
-    )
+    })
 
     this.#io.diagnose('close', (error, shard) => {
+      reported('close', shard)
+
       if (error === undefined) console.debug('AMQP connection closed', { shard })
       else console.warn('AMQP connection lost', { message: error.message, shard })
     })
 
-    this.#io.diagnose('error', (error, shard) =>
+    this.#io.diagnose('error', (error, shard) => {
+      reported('error', shard)
       console.warn('AMQP connection failed', { message: error.message, shard })
-    )
+    })
 
-    this.#io.diagnose('reconnect', (shard) =>
+    this.#io.diagnose('reconnect', (shard) => {
+      reported('reconnect', shard)
       console.warn('AMQP reconnecting', { shard })
-    )
+    })
 
     // not transient and not self-healing: every later channel creation fails too
-    this.#io.diagnose('exhausted', (limit, shard) =>
+    this.#io.diagnose('exhausted', (limit, shard) => {
+      reported('exhausted', shard)
       console.error('AMQP channels exhausted', { limit, shard })
-    )
+    })
 
-    this.#io.diagnose('open', (shard) => console.debug('AMQP connection open', { shard }))
+    this.#io.diagnose('open', (shard) => {
+      reported('open', shard)
+      console.debug('AMQP connection open', { shard })
+    })
   }
 }
 

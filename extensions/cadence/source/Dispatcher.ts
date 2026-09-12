@@ -1,5 +1,6 @@
 import { console } from 'openspan'
 import { Connector, Locator, exceptions } from '@toa.io/core'
+import * as measure from './measurements.ts'
 import {
   BATCH,
   DISCRETENESS,
@@ -22,6 +23,13 @@ import type { atomicity, Request } from '@toa.io/core/types'
  * Partitioned by lane exactly as the outbox is, so every replica scans and dispatches its own
  * share of every interval rather than taking turns at whole ones.
  */
+/** A delayed call names `namespace.component.operation`, and the series is the component's. */
+function component(endpoint: string): string {
+  const [namespace, name] = endpoint.split('.')
+
+  return `${namespace}.${name}`
+}
+
 export class Dispatcher extends Connector {
   private readonly metronome: Local
   private readonly resolve: (locator: Locator) => Local
@@ -112,6 +120,8 @@ export class Dispatcher extends Connector {
       const message = 'Delayed calls scan has not returned, so this pass is skipped'
 
       // past a few intervals it is not a slow pass but a stuck one
+      measure.scanned('skipped')
+
       if (running > STALLED * this.discreteness) console.error(message, details)
       else console.warn(message, details)
 
@@ -122,7 +132,10 @@ export class Dispatcher extends Connector {
     this.started = Date.now()
 
     void this.scan()
+      .then(() => measure.scanned('done'))
       .catch((error: unknown) => {
+        measure.scanned('failed')
+
         console.error('Delayed calls scan failed', { error })
       })
       .finally(() => {
@@ -251,6 +264,7 @@ export class Dispatcher extends Connector {
      * collection and in front of every scan, for good.
      */
     if (row.expires <= now) {
+      measure.lapsed(component(row.endpoint))
       this.called.add(row.id)
 
       return
@@ -314,6 +328,7 @@ export class Dispatcher extends Connector {
     await local
       .invoke(endpoint, request)
       .then(() => {
+        measure.made(component(row.endpoint))
         this.called.add(row.id)
       })
       .catch((error: unknown) => {

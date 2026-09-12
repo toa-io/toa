@@ -260,10 +260,10 @@ not, the repeating warning has already said so at length.
 
 ### Bindings (AMQP)
 
-| metric                 | type    | labels                                           | site                                                                                                                       |
-| ---------------------- | ------- | ------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------- |
-| `toa.amqp.published`   | counter | `topology` (`request`, `task`, `event`), `shard` | [`consumer.js`](/connectors/bindings.amqp/source/consumer.js), [`emitter.js`](/connectors/bindings.amqp/source/emitter.js) |
-| `toa.amqp.diagnostics` | counter | `condition`, `shard`                             | `#diagnose` in [`communication.js`](/connectors/bindings.amqp/source/communication.js)                                     |
+| metric                 | type    | labels                                  | site                                                                                                                       |
+| ---------------------- | ------- | --------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| `toa.amqp.published`   | counter | `topology` (`request`, `task`, `event`) | [`consumer.js`](/connectors/bindings.amqp/source/consumer.js), [`emitter.js`](/connectors/bindings.amqp/source/emitter.js) |
+| `toa.amqp.diagnostics` | counter | `condition`, `shard`                    | `#diagnose` in [`communication.js`](/connectors/bindings.amqp/source/communication.js)                                     |
 
 **`toa.amqp.published` counts publications only**, over the three topologies the runtime puts on a
 broker: a request that waits for a reply, a task that nobody waits for, and an event. Consumption is
@@ -329,10 +329,10 @@ measurement that justifies it.
 
 ### Atomicity
 
-| metric                    | type           | labels      | site                                                                     |
-| ------------------------- | -------------- | ----------- | ------------------------------------------------------------------------ |
-| `toa.atomicity.lock.wait` | histogram, `s` | `component` | around `redlock.using` in [`atom.js`](/connectors/atomicity/src/atom.js) |
-| `toa.atomicity.locks`     | gauge          | `component` | locks this replica holds                                                 |
+| metric                    | type           | labels  | site                                                                     |
+| ------------------------- | -------------- | ------- | ------------------------------------------------------------------------ |
+| `toa.atomicity.lock.wait` | histogram, `s` | `group` | around `redlock.using` in [`atom.js`](/connectors/atomicity/src/atom.js) |
+| `toa.atomicity.locks`     | gauge          | `group` | locks this replica holds                                                 |
 
 `lock()` waits for as long as it takes to acquire its keys. That wait is inside an operation, so today
 it is indistinguishable from the operation being slow, and a replica starving on a lock another
@@ -362,14 +362,14 @@ health.
 Cadence does two things — a **pulse** calls an operation on a cadence, a **delay** hands one call over
 to be made later — and each half has a way of quietly doing nothing.
 
-| metric                   | type    | labels                                       | site                                                                    |
-| ------------------------ | ------- | -------------------------------------------- | ----------------------------------------------------------------------- |
-| `toa.cadence.pulses`     | counter | `component`, `operation`                     | `fire()` in [`Pulse.ts`](/extensions/cadence/source/Pulse.ts)           |
-| `toa.cadence.skipped`    | counter | `component`, `reason` (`overlap`, `unowned`) | the same file                                                           |
-| `toa.cadence.delayed`    | counter | `component`                                  | [`Aspect.ts`](/extensions/cadence/source/Aspect.ts)                     |
-| `toa.cadence.dispatched` | counter | `component`                                  | the scan in [`Dispatcher.ts`](/extensions/cadence/source/Dispatcher.ts) |
-| `toa.cadence.expired`    | counter | `component`                                  | the same scan, a row past its `overdue`                                 |
-| `toa.cadence.scans`      | counter | `outcome` (`done`, `skipped`, `failed`)      | `tick()` in the same file                                               |
+| metric                   | type    | labels                                   | site                                                                    |
+| ------------------------ | ------- | ---------------------------------------- | ----------------------------------------------------------------------- |
+| `toa.cadence.pulses`     | counter | `pulse`                                  | `fire()` in [`Pulse.ts`](/extensions/cadence/source/Pulse.ts)           |
+| `toa.cadence.skipped`    | counter | `pulse`, `reason` (`overlap`, `unowned`) | the same file                                                           |
+| `toa.cadence.delayed`    | counter | `component`                              | [`Aspect.ts`](/extensions/cadence/source/Aspect.ts)                     |
+| `toa.cadence.dispatched` | counter | `component`                              | the scan in [`Dispatcher.ts`](/extensions/cadence/source/Dispatcher.ts) |
+| `toa.cadence.expired`    | counter | `component`                              | the same scan, a row past its `overdue`                                 |
+| `toa.cadence.scans`      | counter | `outcome` (`done`, `skipped`, `failed`)  | `tick()` in the same file                                               |
 
 **`pulses` is the numerator against a rate the manifest already fixes.** The gap between calls is
 `cycle / intervals`, so the expected rate is known without asking anything, and the readme's own list
@@ -488,10 +488,10 @@ difference on a dashboard, which is not a name.
 
 ### Convergence
 
-| metric                     | type           | labels                                                  | site                                                                               |
-| -------------------------- | -------------- | ------------------------------------------------------- | ---------------------------------------------------------------------------------- |
-| `toa.convergence.lag`      | histogram, `s` | `region`, `outcome` (`inserted`, `superseded`, `stale`) | the merge in [`convergence/Storage.ts`](/extensions/convergence/source/Storage.ts) |
-| `toa.convergence.backward` | counter        | `region`                                                | the same merge, where the lag came out negative                                    |
+| metric                     | type           | labels                                   | site                                                                               |
+| -------------------------- | -------------- | ---------------------------------------- | ---------------------------------------------------------------------------------- |
+| `toa.convergence.lag`      | histogram, `s` | `region`, `outcome` (`applied`, `stale`) | the merge in [`convergence/Storage.ts`](/extensions/convergence/source/Storage.ts) |
+| `toa.convergence.backward` | counter        | `region`                                 | the same merge, where the lag came out negative                                    |
 
 This is the gap [`convergence.md`](/discussions/convergence.md) named — _"alerting on it would need a
 metrics facility that does not exist here."_ `outcome` is what separates convergence healthily
@@ -546,10 +546,10 @@ stream-count gauges are the same story.
 
 ### Process
 
-| metric                   | type           | labels                             | site                                                   |
-| ------------------------ | -------------- | ---------------------------------- | ------------------------------------------------------ |
-| `toa.process.loop.delay` | histogram, `s` | —                                  | `perf_hooks.monitorEventLoopDelay`, read at collection |
-| `toa.process.memory`     | gauge          | `kind` (`rss`, `heap`, `external`) | `process.memoryUsage()` at collection                  |
+| metric                   | type       | labels                                  | site                                                   |
+| ------------------------ | ---------- | --------------------------------------- | ------------------------------------------------------ |
+| `toa.process.loop.delay` | gauge, `s` | `quantile` (`p50`, `p90`, `p99`, `max`) | `perf_hooks.monitorEventLoopDelay`, read at collection |
+| `toa.process.memory`     | gauge      | `kind` (`rss`, `heap`, `external`)      | `process.memoryUsage()` at collection                  |
 
 **These two live in `openspan`, not in the extension or in core.** They are about the process, and the
 gateway is a process that boots without the telemetry extension — which is why
@@ -562,9 +562,13 @@ process called `metrics()`.
 makes the extension inject `service` — so the names of these two are given to it rather than built
 into it.
 
-Loop delay is the one saturation signal Node gives, nothing in Toa reports it today, and it is a
-histogram rather than a gauge because `monitorEventLoopDelay` accumulates between reads and so has no
-blind spot. Memory is three series and is the first thing anyone looks at.
+Loop delay is the one saturation signal Node gives and nothing in Toa reports it today. It is a
+gauge of quantiles and still has no blind spot, because `monitorEventLoopDelay` keeps its own
+histogram between reads: what the gauge carries is the whole interval rather than the moment it was
+read, and the monitor is reset once it has been. Recording its quantiles as observations of a
+histogram of ours would have been the obvious thing and is wrong — it invents a distribution whose
+count is the number of quantiles rather than the number of loop turns. Memory is three series and
+is the first thing anyone looks at.
 
 ### Configuration and introspection
 

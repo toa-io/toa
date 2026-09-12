@@ -1,5 +1,6 @@
 import type { Registry } from './Registry.ts'
 import { flushMeters, metering, meters } from './meters.ts'
+import { observe } from './process.ts'
 import { OtlpMetrics } from './OtlpMetrics.ts'
 import { state } from './state.ts'
 import type { Meter } from './meters.ts'
@@ -28,6 +29,8 @@ export function metrics(options?: MetricsOptions): void {
 
   metering(createMeters(options.exporters))
 
+  observed(options.prefix ?? '')
+
   if (meters().length === 0) return
 
   const interval = options.interval ?? INTERVAL
@@ -49,6 +52,15 @@ export function collect(): void {
 
 export function registry(): Registry {
   return state.registry
+}
+
+/** The process instruments are declared once, however often the rest is reconfigured. */
+function observed(prefix: string): void {
+  if (state.observed) return
+
+  state.observed = true
+
+  observe(state.registry, prefix)
 }
 
 function createMeters(config?: MetersConfig): Meter[] {
@@ -85,6 +97,9 @@ const INTERVAL = 15_000
 export interface MetricsOptions {
   /** milliseconds between collections, and so between exports */
   interval?: number
+
+  /** what the process instruments are named under, e.g. `toa` for `toa.process.memory` */
+  prefix?: string
 
   exporters?: MetersConfig
 }

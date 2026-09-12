@@ -22,6 +22,9 @@ interface State {
   /** the instruments of this process, kept across configurations */
   registry: Registry
   collector: NodeJS.Timeout | null
+
+  /** whether the process instruments have been declared; they are declared once */
+  observed: boolean
 }
 
 /** Structural, as instances may originate from another copy of the module. */
@@ -39,7 +42,8 @@ export const state: State = ((globalThis as Global)[KEY] ??= {
   exporters: null,
   meters: null,
   registry: new Registry(),
-  collector: null
+  collector: null,
+  observed: false
 })
 
 type Global = typeof globalThis & { [KEY]?: State }

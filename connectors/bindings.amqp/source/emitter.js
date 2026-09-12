@@ -1,5 +1,6 @@
 import { Connector } from '@toa.io/core'
 import { console } from 'openspan'
+import { publish } from './measurements.js'
 
 import { name } from './queues.js'
 
@@ -23,6 +24,8 @@ export class Emitter extends Connector {
   }
 
   async emit(message) {
+    publish('event')
+
     console.debug('Emitting AMQP event', { exchange: this.#exchange, message })
 
     await this.#comm.emit(this.#exchange, message, PROPERTIES)

@@ -1,4 +1,5 @@
 import { console } from 'openspan'
+import * as measure from './measurements.ts'
 import { Connector } from '@toa.io/core'
 import type { Local } from './Local.ts'
 import type { SpanOptions } from 'openspan'
@@ -147,6 +148,8 @@ export class Pulse extends Connector {
    */
   private async fire(i: number): Promise<void> {
     if (this.firing !== undefined) {
+      measure.missed(this.label, 'overlap')
+
       console.warn('Pulse skipped: the previous call has not returned', {
         pulse: this.label,
         interval: i
@@ -158,6 +161,8 @@ export class Pulse extends Connector {
     const owned = this.atom.slots(this.n)
 
     if (owned === null) {
+      measure.missed(this.label, 'unowned')
+
       console.warn('Pulse skipped: this replica owns nothing', {
         pulse: this.label,
         interval: i
@@ -167,6 +172,8 @@ export class Pulse extends Connector {
     }
 
     if (!owned.includes(i)) return
+
+    measure.fired(this.label)
 
     /*
      * A pulse calls and waits, so an operation that raised comes back as an exception here —

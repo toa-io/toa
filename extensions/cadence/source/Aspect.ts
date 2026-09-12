@@ -1,6 +1,7 @@
 import { Connector, exceptions, trail } from '@toa.io/core'
 import type { Local } from './Local.ts'
 import type { Options } from '@toa.io/definitions/extensions.cadence'
+import * as measure from './measurements.ts'
 
 interface Input {
   endpoint: string
@@ -66,6 +67,8 @@ export class Aspect extends Connector {
 
     // a call that takes no request carries none, rather than a null one
     if (request !== null && request !== undefined) input.request = request
+
+    measure.put(endpoint.split('.').slice(0, 2).join('.'))
 
     /*
      * A delay is a hop, so the chain that asked for the call is stored with it and the call is
