@@ -3,7 +3,7 @@
 ## TL;DR
 
 ```
-SafetyException: 'default.orders.place' is a transition, and this call may only read
+SafetyException: 'default.orders.place' changes state, and this call may only read
 ```
 
 A chain that began as a read reached an operation that changes state. Over HTTP it began with a

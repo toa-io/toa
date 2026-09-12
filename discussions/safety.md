@@ -76,7 +76,9 @@ exposition:
    field on the one object that already carries the chain down a call tree.
 4. **The refusal.** `Call.#refuse` raises where the request is readonly and the endpoint it calls is
    not safe. A `Call` is built from the endpoint's own definition, so it knows the type without
-   asking anyone; `boot.call` hands it the answer, as it already hands it `stateful`.
+   asking anyone; `boot.call` hands it the answer, as it already hands it `stateful`. An endpoint
+   whose name begins with `.` is exempt there: it is the runtime's own — a lookup, an exposition —
+   rather than an operation, which is why the call chain counts it as no hop either.
 5. **The exception.** `Safety`, a code of its own, classified permanent. Over HTTP it is answered
    `500`, which is what the gateway answers a code it does not map.
 6. **The gateway.** `EndpointsFactory` reads the verb once, when the endpoint is built, and the
@@ -86,8 +88,10 @@ exposition:
    which is what a tree is about.
 7. **The tool hints.** The MCP `readOnlyHint` follows what the route declares rather than the bare
    verb, so a method that opted out does not advertise itself as read-only.
-8. **The one route this refuses.** `realtime.streams` serves `GET` with an effect that opens a
-   stream, and declares `io:readonly: false`.
+8. **Two shipped reads that were typed as writes.** `identity.basic.info` answers what of a record
+   may be shown and writes nothing, so it is a computation; it is two hops under
+   `GET /identity/credentials/:id/`. `realtime.streams` serves `GET` with an effect that opens a
+   stream, which is not a read, so that route declares `io:readonly: false`.
 9. **A measurement.** `cadence`'s delay counter is incremented after the call that stores the row
    rather than before it, so a delay that was refused is not counted as one armed.
 10. **Documentation.** `documentation/safety.md`, the `Unmanaged` row in the safety table of
@@ -156,7 +160,7 @@ afterwards. What a safe method does is whatever the routes and the algorithms ha
 1. The request field, the classification, the chain, the refusal and the exception code.
 2. The delay counter.
 3. The gateway: the verb translation, `io:readonly`, and the tool hints.
-4. `realtime.streams` declares its opt-out.
+4. `realtime.streams` declares its opt-out, and `identity.basic.info` becomes the computation it is.
 5. Documentation.
 
 ## Verification
@@ -165,24 +169,31 @@ afterwards. What a safe method does is whatever the routes and the algorithms ha
    - _A readonly call reaches a safe operation_: an observation and a computation answer.
    - _A readonly call is refused_: a transition, an assignment, an effect and an unmanaged operation,
      each with the state unchanged afterwards.
-   - _The chain carries it_: an observation that calls another component's transition, refused and
+   - _The chain carries it_: a computation that calls another component's transition, refused and
      naming the call it was about to make.
    - _A component cannot clear it_: the same chain, with the inner call made `readonly: false`.
    - _Without it the chain commits_: the same chain, unflagged.
-2. `features/cadence/delay.feature`:
    - _Arming a delay is refused_: from a readonly chain, naming a safe target, so what is refused is
-     the write rather than the delayed call; the metronome holds no row.
-   - _A stored flag settles the row_: a row whose stored request is readonly is dropped on its first
-     dispatch rather than called again until it expires.
-3. `extensions/exposition/features/readonly.feature`:
+     the write rather than the delayed call. Stated here rather than in
+     `features/cadence/delay.feature`, whose `@timing` tag keeps its scenarios out of
+     `npm run features`, and nothing here waits for a delay to fire.
+2. `extensions/exposition/features/readonly.feature`:
    - _A safe method is refused an unsafe operation_: `GET` and `HEAD` answer `500`, and the same
-     route answers a `POST`.
+     route answers another method.
    - _A method says otherwise_: `io:readonly: false`, and the same declared on a node above.
-   - _The chain survives the gateway_: a `GET` to an observation that calls a transition.
+   - _The chain survives the gateway_: a `GET` to an observation that calls an assignment, and the
+     same chain reached by a method that may write.
    - _A procedure named for a verb_: `.GET` over RPC, refused the same way.
-   - _A credential is read regardless_: an OTP-authenticated `GET`.
-4. The suites that must go on passing unchanged: `octets`, whose directives call on their own behalf,
-   and `realtime`, after its opt-out.
+   - _A method describes itself so_: `OPTIONS` carries what the route declared, which is what a tool
+     is described by.
+3. That a refusal is not retried is the permanence of the code, stated in `safety.test.js`: a row
+   whose stored request may only read is dropped on its first dispatch rather than called again on
+   every scan until it expires. A scenario for it would have to count dispatches, which is the
+   dispatcher's business rather than a requirement.
+4. The suites that must go on passing unchanged, each of which exercises a path this could have
+   refused: `identity.otp` and `identity.passkeys`, whose `authenticate` is an effect reached by an
+   authenticated `GET`; `credentials`, whose `GET` reaches `identity.basic.info` two hops down;
+   `octets`, whose directives call on their own behalf; and `realtime`, after its opt-out.
 
 ## Compatibility
 
@@ -193,11 +204,15 @@ receives it and is older ignores it, as it ignores anything else it does not rea
 **In types.** `Request.readonly` is optional. Nothing generated carries it, so no component's types
 change.
 
-**In behaviour.** A `GET` or a `HEAD` mapped to a `transition`, an `assignment`, an `effect` or an
-`unmanaged` operation stops being served and answers `500` until the route declares
-`io:readonly: false`. Across everything this repository ships that is one route, `realtime.streams`,
-which declares it. An application that has such a route and does not declare it is the only thing
-this breaks, and the refusal names the endpoint.
+**In behaviour.** A `GET` or a `HEAD` stops being served, and answers `500`, where it reaches an
+operation that changes state — whether the method maps to one or a chain under it reaches one — until
+the route declares `io:readonly: false`. An application with such a route is what this breaks, and
+the refusal names the endpoint it was about to call.
+
+Across everything this repository ships it is one route, `realtime.streams`, which declares it, and
+one operation typed as a write that only reads, `identity.basic.info`, which is now a computation. A
+chain is not something a scan of manifests finds: `info` turned up because the suite ran the `GET`
+that reaches it, which is the only way an application will find its own.
 
 ## References
 
