@@ -8,17 +8,6 @@ A `GET` or a `HEAD` may only read, and so may every call made under it, however 
 SafetyException: 'default.orders.place' may change state, and this call may only read
 ```
 
-A method that serves one of those verbs with an operation that may write says so:
-
-```yaml
-# component.toa.yaml
-exposition:
-  /:key:
-    GET:
-      endpoint: create      # an effect: it opens a stream
-      io:readonly: false
-```
-
 ## Where a chain begins
 
 Over HTTP, and nowhere else. `GET` and `HEAD` begin one; `POST`, `PUT`, `PATCH`, `DELETE`, `LOCK`
@@ -29,9 +18,6 @@ and `UNLOCK` do not, and neither does an event, a task, a
 begins one on the same terms.
 
 A refused call is a `500`. The caller asked for what the route offered; the route is what is wrong.
-
-`io:readonly` is [an `io` directive](/extensions/exposition/documentation/io.md#readonly) and is
-inherited, so a node states it for every method under it. `true` holds any other method to reading.
 
 What the gateway does around a call is not part of the chain: the credential it reads before any
 route is known, the one it re-issues on the way out, and the components a directive calls on its own
@@ -65,7 +51,7 @@ operation reads and never writes](/documentation/design.md#unmanaged) is the aut
 nothing the runtime does can hold them to it.
 
 `effect` is unsafe because that is what the type means. An effect that only reads — a stream taken
-out of object storage — is reached by a route that says so.
+out of object storage — is reached by a route that [says so](#saying-otherwise).
 
 ## Where you meet it
 
@@ -85,6 +71,48 @@ out of object storage — is reached by a route that says so.
 
 Nothing. The chain is stamped, carried and read by the runtime; no operation writes one, no
 operation reads one, and it is not among the properties a generated call signature accepts.
+
+## Saying otherwise
+
+A route may declare that its method does not begin a readonly chain. **Reach for this only where the
+operation is typed unsafe for something that is not a write** — an `effect` that reads an object out
+of storage, or that opens the stream the client opened a connection for. A safe method that writes is
+a write nobody asked for.
+
+`safe` is not this runtime's idea. It is HTTP's, and it is there because other software acts on it —
+[RFC 9110 §9.2.1](https://www.rfc-editor.org/rfc/rfc9110#section-9.2.1):
+
+> The purpose of distinguishing between safe and unsafe methods is to allow automated retrieval
+> processes (spiders) and cache performance optimization (pre-fetching) to work without fear of
+> causing harm.
+
+and, of a resource whose safe method performs an unsafe action:
+
+> If the purpose of such a resource is to perform an unsafe action, then the resource owner MUST
+> disable or disallow that action when it is accessed using a safe request method. Failure to do so
+> will result in unfortunate side effects when automated processes perform a GET on every URI
+> reference for the sake of link maintenance, pre-fetching, building a search index, etc.
+
+So a crawler walking your links, a browser prefetching one, and a cache revalidating a stored reply
+each make the call, and none of them asked for what it does. The client "did not request that
+additional behavior and cannot be held accountable for it" — you are.
+
+```yaml
+# component.toa.yaml
+exposition:
+  /:key:
+    GET:
+      endpoint: write      # write to a file
+      io:readonly: false
+```
+
+`io:readonly` is [an `io` directive](/extensions/exposition/documentation/io.md#readonly) and is
+inherited, so a node states it for every method under it. `true` holds any other method to reading.
+
+A model is told the truth at least: the `readOnlyHint` of a
+[tool](/extensions/exposition/documentation/mcp.md) follows what the route declares rather than the
+verb it is served under, so a client that would call a read-only tool unasked does not call this one.
+A crawler and a cache are told nothing, because HTTP has no way to say it.
 
 ## What it is not
 
