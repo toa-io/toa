@@ -75,7 +75,7 @@ export class Node {
   public *walk(segments: Segment[], trunk = false): Generator<Mount> {
     if (trunk || !this.intermediate)
       for (const [verb, method] of Object.entries(this.methods))
-        yield { segments, verb, method }
+        yield { segments, verb, method, node: this }
 
     for (const route of this.routes) yield* route.walk(segments)
   }
@@ -167,6 +167,9 @@ export interface Mount {
   segments: Segment[]
   verb: string
   method: Method
+
+  /** what the method is mounted on, which is what says whether it is still served */
+  node: Node
 }
 
 export interface Properties {

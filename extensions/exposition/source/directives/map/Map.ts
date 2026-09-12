@@ -37,11 +37,7 @@ export class Map implements DirectiveFamily {
     )
   }
 
-  public explain(
-    directives: Directive[],
-    _: Input,
-    introspection: Introspection
-  ): Introspection {
+  public explain(directives: Directive[], introspection: Introspection): Introspection {
     for (const directive of directives)
       if (directive instanceof Mapping) directive.explain(introspection)
 

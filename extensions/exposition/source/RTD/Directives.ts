@@ -17,11 +17,18 @@ export interface Directives {
 
   precall: (context: Context, parameters: Parameter[]) => Promise<Output>
 
-  /** What this route's directives make of what its method says about itself. */
-  explain: (
-    context: Context,
-    introspection: Introspection
-  ) => Promise<Introspection | null>
+  /**
+   * Whether this caller is told of the method at all. Asked per request, which is the one
+   * thing about a description that depends on who is asking.
+   */
+  admits: (context: Context) => Promise<boolean>
+
+  /**
+   * What this route's directives make of what its method says about itself. No caller: what
+   * a family describes is what the route declares, so the answer is the same for everyone
+   * who is admitted, and is built once.
+   */
+  describe: (introspection: Introspection) => Introspection | null
   settle: (context: Context, response: OutgoingMessage) => Promise<void>
   dispose: () => void
 }
@@ -91,19 +98,28 @@ export interface DirectiveFamily<TDirective = any, TExtension = any> {
   ) => Output | Promise<Output>
 
   /**
-   * What this family's directives make of what the method says about itself, which is
-   * what `OPTIONS` answers and what a tool is described by. `null` refuses: the method
-   * is not reachable by this caller, and is not described at all.
+   * Whether this caller is told of the method at all — `auth` alone has anything to say
+   * here. A family that does not implement it admits everyone; `false` takes the method
+   * out of every answer that describes it.
    *
-   * There is no request here — no route variable has a value and no body has arrived, which
-   * is why no parameters are passed — so a directive that can only tell from one hands back
-   * what it was given.
+   * Apart from `explain` because it is the one part of describing a method that depends on
+   * the caller: what is described is then built once and answered to all of them.
+   */
+  admits?: (directives: TDirective[], request: Context & TExtension) => Promise<boolean>
+
+  /**
+   * What this family's directives make of what the method says about itself, which is
+   * what `OPTIONS` answers and what a tool is described by. `null` hides it: the method is
+   * described to nobody, whoever asks.
+   *
+   * There is no request here — no route variable has a value, no body has arrived, and no
+   * caller is known — so a directive that can only tell from one hands back what it was
+   * given.
    */
   explain?: (
     directives: TDirective[],
-    request: Context & TExtension,
     introspection: Introspection
-  ) => Introspection | null | Promise<Introspection | null>
+  ) => Introspection | null
 
   /** Call-scoped, on the message that call produced. */
   settle?: (

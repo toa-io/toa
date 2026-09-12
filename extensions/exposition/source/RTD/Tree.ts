@@ -16,6 +16,9 @@ export class Tree {
   private readonly endpoints: EndpointsFactory
   private readonly directives: DirectiveFactory
 
+  /** What has been read off the whole tree. See `derived`. */
+  private readonly memo = new Map<string, unknown>()
+
   public constructor(
     node: syntax.Node,
     endpoints: EndpointsFactory,
@@ -47,10 +50,27 @@ export class Tree {
     return this.trunk.walk([], TRUNK)
   }
 
+  /**
+   * What is read off the whole tree rather than off one route — the tools it publishes, the
+   * page that lists it — built on demand and dropped whole when a branch is merged. A merge
+   * is the only thing that changes what the tree holds; a branch that expires stops being
+   * walked, so what is derived from it says so by carrying the node it came from.
+   *
+   * Nothing that depends on the caller belongs here: the tree is one, and its callers are
+   * not.
+   */
+  public derived<T>(key: string, build: () => T): T {
+    if (!this.memo.has(key)) this.memo.set(key, build())
+
+    return this.memo.get(key) as T
+  }
+
   public merge(node: syntax.Node, extension: unknown): Node[] {
     const branch = this.createNode(node, !PROTECTED, extension)
 
     announce(branch)
+
+    this.memo.clear()
 
     return this.trunk.merge(branch)
   }

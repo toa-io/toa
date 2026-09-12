@@ -1,6 +1,5 @@
 import { Tool } from './Tool.ts'
 import type { DirectiveFamily } from '../../RTD/index.ts'
-import type { Context } from '../../HTTP/index.ts'
 import type { Introspection } from '../../Introspection.ts'
 
 /** The name the family is declared under, and what `MCP` asks a method for. */
@@ -19,11 +18,7 @@ export class MCP implements DirectiveFamily<Tool> {
    * Whether this method is published to a model, which is what the route declares. Whether
    * one is served at all is the annotation's, and a route says nothing of that.
    */
-  public explain(
-    directives: Tool[],
-    _: Context,
-    introspection: Introspection
-  ): Introspection {
+  public explain(directives: Tool[], introspection: Introspection): Introspection {
     return MCP.published(directives) ? { ...introspection, mcp: true } : introspection
   }
 
