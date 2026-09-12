@@ -37,11 +37,20 @@ export function request(method = 'GET'): Measure & { labels: Labels } {
   return { histogram: duration, labels: { method, route: NONE } }
 }
 
+/**
+ * The status is written onto the request's own labels rather than into a copy of them: the
+ * object is the request's and dies with it, and the histogram that carries it reads the two
+ * labels it declared and nothing else.
+ */
 export function answered(labels: Labels, status: number): void {
-  responses.add(1, { ...labels, status })
+  labels.status = status
+
+  responses.add(1, labels)
 }
 
 export interface Labels extends Record<string, unknown> {
   method: string
   route: string
+  /** written when the reply is answered, which is after the histogram has read the rest */
+  status?: number
 }
