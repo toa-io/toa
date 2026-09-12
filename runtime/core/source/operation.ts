@@ -213,9 +213,8 @@ export class Operation extends Connector {
 /**
  * What a caller receives of the output it asked for: each object of it keeps the properties the
  * request named, in the order the object holds them, and an empty list leaves no output at all.
- * The system properties of an object output travel beside it, since a caller reads them whatever
- * it asked to receive. A stream, an error, an exception and a value that is not an object are
- * answered as they are.
+ * A system property is one of them: a caller that reads `VERSION` asks for it. A stream, an error,
+ * an exception and a value that is not an object are answered as they are.
  */
 function restrict(reply: any, output?: string[]): any {
   if (output === undefined || reply === null || typeof reply !== 'object') return reply
