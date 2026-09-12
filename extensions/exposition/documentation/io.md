@@ -1,7 +1,8 @@
 # I/O restrictions
 
 The Exposition comes with `io` directives to control access to the operation's input and output
-properties, and to let an operation state the status of its reply.
+properties, to let an operation state the status of its reply, and to say whether the call a method
+makes may change state.
 
 ## Input
 
@@ -101,6 +102,27 @@ error as a body rather than as a status of its own, or a request that created wh
 updated. Such an operation returns no error: both replies are its output, and `io:output` permits
 the properties of both. An operation that does return an error is unaffected — that reply is the
 gateway's, and is not restricted.
+
+## Readonly
+
+`GET` and `HEAD` may only read: a call either of them makes, and every call made below it, is refused
+where it reaches an operation that changes state. The `io:readonly` directive states otherwise.
+
+```yaml
+exposition:
+  /:key:
+    GET:
+      endpoint: create      # an effect: it opens a stream
+      io:readonly: false
+```
+
+The value is a boolean, and it is what holds for the call whatever the method is: `true` makes a
+`POST` read-only, `false` lets a `GET` write. It is inherited, so a node states it for every method
+under it.
+
+What the gateway does around a call is not the call: the credential it reads before a route is known,
+the one it re-issues on the way out, and the components a directive calls on its own behalf are each
+reached on their own terms. See [operation safety](/documentation/safety.md).
 
 ## Throttling
 

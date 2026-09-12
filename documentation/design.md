@@ -105,6 +105,13 @@ Safe operations don't modify the State, while unsafe operations do.
 | Assignment  | Unsafe |
 | Computation | Safe   |
 | Effect      | Unsafe |
+| Unmanaged   | Unsafe |
+
+An Unmanaged operation is given the driver's own handle, so the rule it is held to above is the
+author's to keep rather than the runtime's to enforce, and the runtime does not vouch for it.
+
+A request may state that it only reads, and a call to an unsafe operation made under one is refused.
+See [operation safety](/documentation/safety.md).
 
 ### Genuine Operations
 

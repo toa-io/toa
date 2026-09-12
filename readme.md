@@ -19,6 +19,8 @@ Non-scattered documentation is coming some time later.
     - Input/query segregation
     - [Successful rejections](/documentation/exceptions.md): a refusal is an answer rather
       than a failure
+    - [Operation safety](/documentation/safety.md): a call that may only read is refused where it
+      reaches an operation that changes state, however far down the chain
     - [Distributed exception handling](/documentation/exceptions.md#where-nobody-is-waiting): a
       failure reaches whoever is waiting, or is tried again and then kept
   - Transparent service discovery
