@@ -40,19 +40,31 @@ export class Endpoint implements RTD.Endpoint {
     // the process a stateful operation is called on, where the route carries one
     if (context.instance !== undefined) request.instance = context.instance
 
+    // what this request receives of the output, which the operation answers of it
+    if (context.output !== undefined) request.output = context.output
+
     this.remote ??= await this.discovery
 
-    const reply = await this.remote.invoke(this.endpoint, request)
+    const reply = await this.remote.invoke(this.endpoint, request, { whole: true })
+    const enveloped = reply !== null && !(reply instanceof Readable)
 
-    if (reply instanceof Error) throw new http.UnprocessableEntity(reply)
+    if (enveloped && reply.error !== undefined)
+      throw new http.UnprocessableEntity(reply.error)
 
-    const message: http.OutgoingMessage = { body: reply }
+    const answered = enveloped ? reply.output : reply
+    const message: http.OutgoingMessage = { body: answered }
 
-    // what the reply carries for a cache to validate by; the `cache` family sets the headers
-    if (typeof reply === 'object' && reply !== null && !(reply instanceof Readable)) {
-      if ('VERSION' in reply) message.version = reply.VERSION
+    // what the reply carries for a cache to validate by; the `cache` family sets the headers.
+    // A restricted output leaves them beside it, and an unrestricted one carries them itself.
+    let system = enveloped ? reply.system : undefined
 
-      const modified = reply.UPDATED ?? reply.CREATED
+    if (system === undefined && typeof answered === 'object' && answered !== null)
+      system = answered as Record<string, any>
+
+    if (system !== undefined) {
+      if ('VERSION' in system) message.version = system.VERSION
+
+      const modified = system.UPDATED ?? system.CREATED
 
       if (modified !== undefined) message.modified = modified
     }

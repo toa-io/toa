@@ -45,6 +45,13 @@ export class Context {
    */
   public instance?: string
 
+  /**
+   * What this request receives of the operation's output, as `io:output` states it: the
+   * properties of each object it answers, and none of it where the list is empty. Absent where
+   * the reply passes whole.
+   */
+  public output?: string[]
+
   public readonly pipelines: Pipelines = {
     body: [],
     response: []

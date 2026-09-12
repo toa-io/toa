@@ -231,7 +231,9 @@ exposition:
         endpoint: list
       POST:
         io:input: [client, redirect, challenge, method, scope, resource]
-        io:output: [code, expires_in, error, error_description]
+        # `status` is read by `io:status` out of what the operation answers, and taken out of the
+        # body before it is sent
+        io:output: [code, expires_in, error, error_description, status]
         io:status: status
         cache:exact: no-store
         endpoint: authorize

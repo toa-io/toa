@@ -23,8 +23,7 @@ Feature: IO restrictions
       """
     Then the following reply is sent:
       """
-      200 OK
-      content-length: 0
+      204 No Content
       """
     When the following request is received:
       """
@@ -34,8 +33,7 @@ Feature: IO restrictions
       """
     Then the following reply is sent:
       """
-      200 OK
-      content-length: 0
+      204 No Content
       """
 
   Scenario: Output is omitted by intention
@@ -53,8 +51,7 @@ Feature: IO restrictions
       """
     Then the following reply is sent:
       """
-      200 OK
-      content-length: 0
+      204 No Content
       """
 
   Scenario: Output permissions
@@ -105,6 +102,34 @@ Feature: IO restrictions
       """
       title:
       temperature:
+      """
+
+  Scenario: Output permissions a method and its node both state
+    Given the `pots` is running with the following manifest:
+      """yaml
+      exposition:
+        /:
+          io:output: [id, title]
+          /:id:
+            GET:
+              io:output: [title, volume]
+              endpoint: observe
+      """
+    When the following request is received:
+      """
+      GET /pots/4c4759e6f9c74da989d64511df42d6f4/ HTTP/1.1
+      host: nex.toa.io
+      accept: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+
+      title: First pot
+      """
+    And the reply does not contain:
+      """
+      volume:
       """
 
   Scenario: Input is unrestricted by default

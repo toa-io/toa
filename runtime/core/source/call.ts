@@ -94,6 +94,14 @@ export class Call extends Connector {
     else {
       if (reply.exception !== undefined) throw reply.exception
 
+      // what an operation answered beside its output — the system properties a restriction took
+      // out of it — is read by a caller that asks for the reply rather than for the output
+      if (options.whole === true) {
+        if (reply.error !== undefined) reply.error = new RemoteError(reply.error)
+
+        return reply
+      }
+
       if (reply.error !== undefined) return new RemoteError(reply.error)
       else return reply.output
     }

@@ -26,7 +26,7 @@ Feature: Realtime events
       """
     Then the following reply is sent:
       """
-      200 OK
+      204 No Content
       """
     And the following event `users.properties.sync` is received by Bob:
       """yaml
