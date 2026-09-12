@@ -1,4 +1,4 @@
-import { type Segment } from './segment.ts'
+import { type Segment, template } from './segment.ts'
 import { type Match, type Parameter } from './Match.ts'
 import type { Mount, Node } from './Node.ts'
 
@@ -21,8 +21,15 @@ export class Route {
       }
   }
 
-  public match(fragments: string[], parameters: Parameter[]): Match | null {
+  public match(
+    fragments: string[],
+    parameters: Parameter[],
+    segments: Segment[]
+  ): Match | null {
     if (Date.now() >= this.node.expiration) return null
+
+    // what a request matched is a template, and the pieces of it are these
+    segments.push(...this.segments)
 
     for (let i = 0; i < this.segments.length; i++) {
       const segment = this.segments[i]
@@ -45,8 +52,8 @@ export class Route {
     const exact = this.segments.length === fragments.length
 
     if ((exact && !this.node.intermediate) || this.wildcard)
-      return { node: this.node, parameters }
-    else return this.matchNested(fragments, parameters)
+      return { node: this.node, parameters, route: template(segments) }
+    else return this.matchNested(fragments, parameters, segments)
   }
 
   public *walk(prefix: Segment[]): Generator<Mount> {
@@ -69,10 +76,14 @@ export class Route {
     return this.node.merge(route.node)
   }
 
-  private matchNested(fragments: string[], parameters: Parameter[]): Match | null {
+  private matchNested(
+    fragments: string[],
+    parameters: Parameter[],
+    segments: Segment[]
+  ): Match | null {
     fragments = fragments.slice(this.segments.length)
 
-    return this.node.match(fragments, parameters)
+    return this.node.match(fragments, parameters, segments)
   }
 }
 

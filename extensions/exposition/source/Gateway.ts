@@ -186,7 +186,7 @@ export class Gateway extends Connector {
     }
 
     // what the request is measured under, now that it is known to be a route and not a URL
-    context.labels.route = match.node.template
+    context.labels.route = match.route
 
     if (match.node.forward === null) return match
 
@@ -203,7 +203,7 @@ export class Gateway extends Connector {
     if (forward === null) throw new Error('Forwarded route not found')
 
     // the request is served by where it was forwarded to, so that is what it measures
-    context.labels.route = forward.node.template
+    context.labels.route = forward.route
 
     return forward
   }

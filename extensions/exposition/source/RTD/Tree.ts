@@ -33,7 +33,8 @@ export class Tree {
     if (path === '/')
       return {
         node: this.trunk,
-        parameters: []
+        parameters: [],
+        route: '/'
       }
 
     const fragments = fragment(path)

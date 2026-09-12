@@ -161,7 +161,10 @@ services:
     image: prom/prometheus:v3.13.2
     command:
       - --config.file=/etc/prometheus/prometheus.yml
+      # Tempo's generator writes derived series here
       - --web.enable-remote-write-receiver
+      # and Toa posts its own to /api/v1/otlp/v1/metrics
+      - --web.enable-otlp-receiver
     ports:
       - "31070:9090"
   grafana:

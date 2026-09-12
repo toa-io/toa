@@ -226,3 +226,14 @@ it('should export nothing where there is nothing to export', async () => {
 
   assert.strictEqual(requests.length, 0)
 })
+
+it('should post a collection without being flushed', async () => {
+  const exporter = new OtlpMetrics({ endpoint })
+
+  exporter.export([counter])
+
+  // the interval collects and nothing else calls flush: a collection is what there is to post
+  await exporter.flush()
+
+  assert.strictEqual(requests.length, 1)
+})

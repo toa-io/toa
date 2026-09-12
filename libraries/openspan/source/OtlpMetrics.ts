@@ -47,6 +47,9 @@ export class OtlpMetrics implements Meter {
 
     // a collection that arrives while one is in flight replaces it: they are the same totals
     this.pending = series
+
+    // a collection is what there is to post, so posting it is what a collection means here
+    void this.flush()
   }
 
   /** Never rejects and is bounded by a single request timeout. */
