@@ -30,7 +30,7 @@ export class Octets implements DirectiveFamily<Directive> {
   }
 
   /** What the request takes, which only sending a file says anything about. */
-  public explain(directives: Directive[], _: Input, introspection: Introspection): Introspection {
+  public explain(directives: Directive[], introspection: Introspection): Introspection {
     for (const directive of directives) directive.describe?.(introspection)
 
     return introspection

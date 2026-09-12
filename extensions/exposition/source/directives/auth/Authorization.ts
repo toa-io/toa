@@ -146,24 +146,14 @@ export class Authorization implements DirectiveFamily<Directive, Extension> {
 
   /**
    * The same disjunction as `precall`, over what can be told without a request. A method no
-   * directive admits, and none is undecided about, is not this caller's to be told about —
-   * `null` takes it out of the answer.
+   * directive admits, and none is undecided about, is not this caller's to be told about.
    *
    * A permission is matched against a path, and a description is not a request to one, so
    * `permits` has no say here. The call it describes is still checked, which is where a
    * token's permissions belong.
-   *
-   * A method that is described is then described by each of them, which is a separate pass:
-   * admission is a disjunction and stops at the first that admits, while what the directives
-   * fill is not any one of them's to state alone.
    */
-  public async explain(
-    directives: Directive[],
-    context: Context,
-    introspection: Introspection
-  ): Promise<Introspection | null> {
+  public async admits(directives: Directive[], context: Context): Promise<boolean> {
     let untold = false
-    let admitted = false
 
     for (const directive of directives) {
       const admits = await directive.admits?.(context.identity, context)
@@ -174,17 +164,19 @@ export class Authorization implements DirectiveFamily<Directive, Extension> {
         continue
       }
 
-      if (admits) {
-        admitted = true
-
-        break
-      }
+      if (admits) return true
     }
 
-    if (!admitted && !untold) return null
+    return untold
+  }
 
-    // whichever of them admitted, a property any of them fills from the identity is filled
-    // from the identity: what a caller sent there would be overwritten or forged
+  /**
+   * What the directives fill in of what the method says about itself. A pass of its own,
+   * and not the caller's: admission is a disjunction and stops at the first that admits,
+   * while what the directives fill is not any one of them's to state alone — and what it
+   * fills is filled from whoever calls, which is what a caller may not send for itself.
+   */
+  public explain(directives: Directive[], introspection: Introspection): Introspection {
     for (const directive of directives)
       introspection = directive.describe?.(introspection) ?? introspection
 

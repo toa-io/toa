@@ -17,7 +17,7 @@ export class Directives implements RTD.Directives {
     this.spans = sets.map((set) => ({
       precall: options(set, 'precall'),
       settle: options(set, 'settle'),
-      explain: options(set, 'explain')
+      admits: options(set, 'admits')
     }))
   }
 
@@ -53,27 +53,43 @@ export class Directives implements RTD.Directives {
   }
 
   /**
-   * What the method says about itself, as its directives leave it. Each family is given
-   * what the one before it returned, and the first to refuse ends it: a method this caller
-   * cannot reach is not described at all.
+   * Whether this caller is told of the method at all. A family that says nothing admits
+   * everyone, and the first to refuse ends it.
    */
-  public async explain(
-    context: Context,
-    introspection: Introspection
-  ): Promise<Introspection | null> {
-    let described: Introspection = introspection
-
+  public async admits(context: Context): Promise<boolean> {
     for (let i = 0; i < this.sets.length; i++) {
       const set = this.sets[i]
 
+      if (set.family.admits === undefined) continue
+
+      // the span's closure and frames are all an unsampled trace would pay for; see `sampled`
+      const admitted = sampled()
+        ? await console.span(
+            this.spans[i].admits,
+            async () => await set.family.admits!(set.directives, context)
+          )
+        : await set.family.admits(set.directives, context)
+
+      if (!admitted) return false
+    }
+
+    return true
+  }
+
+  /**
+   * What the method says about itself, as its directives leave it. Each family is given what
+   * the one before it returned, and the first to answer nothing ends it: a method hidden is
+   * hidden from every answer, whoever asks.
+   *
+   * Synchronous, and without the caller: this is what a method is, and it is built once.
+   */
+  public describe(introspection: Introspection): Introspection | null {
+    let described: Introspection = introspection
+
+    for (const set of this.sets) {
       if (set.family.explain === undefined) continue
 
-      const next = sampled()
-        ? await console.span(
-            this.spans[i].explain,
-            async () => await set.family.explain!(set.directives, context, described)
-          )
-        : await set.family.explain(set.directives, context, described)
+      const next = set.family.explain(set.directives, described)
 
       if (next === null) return null
 
@@ -240,7 +256,7 @@ export class DirectivesFactory implements RTD.DirectiveFactory {
 
 function options(
   set: RTD.DirectiveSet,
-  stage: 'precall' | 'settle' | 'explain'
+  stage: 'precall' | 'settle' | 'admits'
 ): SpanOptions {
   const options: SpanOptions = { name: `${set.family.name} ${stage}` }
 
@@ -253,7 +269,7 @@ function options(
 interface Spans {
   precall: SpanOptions
   settle: SpanOptions
-  explain: SpanOptions
+  admits: SpanOptions
 }
 
 interface Stage {

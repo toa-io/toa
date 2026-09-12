@@ -16,19 +16,19 @@ const endpoints = {} as unknown as EndpointsFactory
 const REFUSE = 'refuse'
 
 const directives = {
-  create: (stack: syntax.Directive[]) => ({
-    declared: () => undefined,
-    precall: async () => null,
-    settle: async () => undefined,
-    dispose: () => undefined,
-    explain: async (_: unknown, introspection: Introspection) => {
-      const mark = stack.find((directive) => directive.family === 'test')?.value
+  create: (stack: syntax.Directive[]) => {
+    const mark = stack.find((directive) => directive.family === 'test')?.value
 
-      if (mark === REFUSE) return null
-
-      return mark === undefined ? introspection : { ...introspection, description: mark }
+    return {
+      declared: () => undefined,
+      precall: async () => null,
+      settle: async () => undefined,
+      dispose: () => undefined,
+      admits: async () => mark !== REFUSE,
+      describe: (introspection: Introspection) =>
+        mark === undefined ? introspection : { ...introspection, description: mark }
     }
-  }),
+  },
   preflight: async () => undefined,
   depart: async () => undefined,
   dispose: () => undefined
