@@ -104,7 +104,7 @@ take it. The id it answers cancels it, and `cancel` raises where the id was neve
 ### Arming is a write
 
 Handing a call over stores a row, so `context.delay` raises where it is called from a chain that
-[may only read](/documentation/safety.md) — whatever the delayed call itself would have been. Over
+[may only read](/documentation/readonly.md) — whatever the delayed call itself would have been. Over
 HTTP that chain begins with a `GET` or a `HEAD`, so an operation reached by one arms nothing: the
 row is not stored and no id is answered, and the exception is thrown where the call was made.
 

@@ -63,7 +63,7 @@ export class Endpoint implements RTD.Endpoint {
     if (context.encoder?.type === JSON_TYPE && context.reads !== true && !context.procedural)
       request.encoded = true
 
-    // what the method means, unless a route said otherwise; see `documentation/safety.md`
+    // what the method means, unless a route said otherwise; see `documentation/readonly.md`
     if (context.readonly ?? this.safe) request.readonly = true
 
     this.remote ??= await this.discovery

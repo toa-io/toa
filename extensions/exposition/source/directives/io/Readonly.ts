@@ -3,7 +3,7 @@ import type { Input as Context } from '../../io.ts'
 
 /**
  * Whether the call this method makes may only read, which is what `GET` and `HEAD` are taken to
- * mean. `false` lets a safe method reach an operation that changes state — a `GET` that opens a
+ * mean. `false` lets a safe method reach an operation that may change state — a `GET` that opens a
  * stream — and `true` holds any other method to reading.
  */
 export class Readonly implements Directive {

@@ -83,7 +83,7 @@ export class Aspect extends Connector {
     /*
      * Raises where this is called from a chain that may only read: the row is a write, whatever the
      * delayed call would have been, and `cadence.metronome.delay` is a transition like any other.
-     * Nothing is stored and no id is answered. See `documentation/safety.md`.
+     * Nothing is stored and no id is answered. See `documentation/readonly.md`.
      */
     return await this.metronome.invoke('delay', { input })
   }

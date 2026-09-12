@@ -36,7 +36,7 @@ export const codes = {
   /** a component asked for something its manifest does not declare */
   Misuse: 600,
 
-  /** a call that changes state, made under a request that may only read */
+  /** a call to an operation that may change state, made under a request that may only read */
   Safety: 700
 }
 

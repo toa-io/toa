@@ -96,7 +96,7 @@ anything that referred to it pointing at nothing.
 ### Safety
 
 Operations are categorized into two types based on their impact on the State: _safe_ and _unsafe_.
-Safe operations don't modify the State, while unsafe operations do.
+Safe operations cannot modify the State; unsafe operations may, whether or not a given call does.
 
 | Operation   | Safety |
 | ----------- | ------ |
@@ -111,7 +111,7 @@ An Unmanaged operation is given the driver's own handle, so the rule it is held 
 author's to keep rather than the runtime's to enforce, and the runtime does not vouch for it.
 
 A request may state that it only reads, and a call to an unsafe operation made under one is refused.
-See [operation safety](/documentation/safety.md).
+See [readonly chains](/documentation/readonly.md).
 
 ### Genuine Operations
 

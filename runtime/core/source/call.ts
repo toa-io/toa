@@ -23,7 +23,7 @@ export class Call extends Connector {
   /** whether a call to it names the process it goes to */
   readonly #stateful: boolean
 
-  /** whether what it calls leaves the State as it found it; see `safety.ts` */
+  /** whether what it calls is incapable of changing the State; see `safety.ts` */
   readonly #safe: boolean
 
   // eslint-disable-next-line max-params
@@ -135,7 +135,7 @@ export class Call extends Connector {
     const { timeout, signal } = options
 
     if (readonly && !this.#safe)
-      throw new SafetyException(`'${this.#target}' changes state, and this call may only read`)
+      throw new SafetyException(`'${this.#target}' may change state, and this call may only read`)
 
     if (this.#stateful && instance === undefined)
       throw new RequestContractException(

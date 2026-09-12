@@ -3,7 +3,7 @@
 ## Design concept
 
 A request may state that it only reads. The statement is carried down every call made under it, and
-a call to an operation that changes state, made under one, is refused before it is sent. The
+a call to an operation that may change state, made under one, is refused before it is sent. The
 exposition gateway states it for the HTTP methods that are safe by definition, so what a `GET`
 reaches is the whole of what a `GET` does.
 
@@ -97,7 +97,7 @@ exposition:
    a `Call` like any other, and the one rule covers it. The readme says it where a reader is choosing
    what to call, and a comment says it at the line that raises, because the `Local` it calls through
    gives no hint that a coded exception comes out of it.
-10. **Documentation.** `documentation/safety.md`, the `Unmanaged` row in the safety table of
+10. **Documentation.** `documentation/readonly.md`, the `Unmanaged` row in the safety table of
     `documentation/design.md`, the `io:readonly` section of the exposition's `io.md`, the verb table
     in its `tree.md`, the cadence readme, and the realtime readme.
 
@@ -118,10 +118,10 @@ exposition:
 4. **Set, never cleared.** `readonly` is the disjunction of what the caller asked for and what the
    invocation carries. An operation that could clear it would make the guarantee a convention, and
    the guarantee is what the flag is for.
-5. **`unmanaged` changes state.** Its scope is the driver's own handle, and what it does with one is
+5. **`unmanaged` may change state.** Its scope is the driver's own handle, and what it does with one is
    beyond anything the runtime sees. `design.md` asks an unmanaged operation to read and never write;
    an operation the runtime cannot hold to that is one it refuses to vouch for.
-6. **`effect` changes state.** It is the type for an operation that reaches outside, and the table in
+6. **`effect` may change state.** It is the type for an operation that reaches outside, and the table in
    `design.md` has called it unsafe since it was written. An effect that only reads — a stream taken
    out of object storage — is a route's to declare, because the route is where it is known that the
    reach is a read.
@@ -207,7 +207,7 @@ receives it and is older ignores it, as it ignores anything else it does not rea
 change.
 
 **In behaviour.** A `GET` or a `HEAD` stops being served, and answers `500`, where it reaches an
-operation that changes state — whether the method maps to one or a chain under it reaches one — until
+operation that may change state — whether the method maps to one or a chain under it reaches one — until
 the route declares `io:readonly: false`. An application with such a route is what this breaks, and
 the refusal names the endpoint it was about to call.
 

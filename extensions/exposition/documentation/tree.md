@@ -120,7 +120,7 @@ HTTP methods can only be mapped to operations of the corresponding types.
 
 `GET` and `HEAD` may only read, so a method that maps one to a Transition, an Assignment, an Effect
 or an Unmanaged operation is answered `500` unless it declares
-[`io:readonly: false`](./io.md#readonly). See [operation safety](/documentation/safety.md).
+[`io:readonly: false`](./io.md#readonly). See [readonly chains](/documentation/readonly.md).
 
 As method mapping is unambiguous for Observation, Assignment, and Computation, a concise syntax is
 available:

@@ -1,8 +1,8 @@
 import type { type as Type } from './types/operations.ts'
 
 /**
- * Whether an operation of this type leaves the State as it found it. What a readonly request may
- * reach, and nothing else; see `documentation/safety.md`.
+ * Whether an operation of this type is incapable of changing the State. What a readonly request may
+ * reach, and nothing else; see `documentation/readonly.md`.
  *
  * Exhaustive on purpose, as the outcome of an exception code is: a type added later does not
  * compile until it says which it is, because a type nobody classified would otherwise be reachable

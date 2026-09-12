@@ -106,7 +106,7 @@ gateway's, and is not restricted.
 ## Readonly
 
 `GET` and `HEAD` may only read: a call either of them makes, and every call made below it, is refused
-where it reaches an operation that changes state. The `io:readonly` directive states otherwise.
+where it reaches an operation that may change state. The `io:readonly` directive states otherwise.
 
 ```yaml
 exposition:
@@ -122,7 +122,7 @@ under it.
 
 What the gateway does around a call is not the call: the credential it reads before a route is known,
 the one it re-issues on the way out, and the components a directive calls on its own behalf are each
-reached on their own terms. See [operation safety](/documentation/safety.md).
+reached on their own terms. See [readonly chains](/documentation/readonly.md).
 
 ## Throttling
 

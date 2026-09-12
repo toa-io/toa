@@ -113,7 +113,7 @@ Refer to the [Exposition extension](/extensions/exposition) for more details:
 
 - [Multipart responses](/extensions/exposition/documentation/protocol.md#multipart-types)
 - [Access authorization](/extensions/exposition/documentation/access.md)
-- [Operation safety](/documentation/safety.md)
+- [Readonly chains](/documentation/readonly.md)
 
 ## Resources management
 

@@ -2,7 +2,7 @@ import type { Context, Entity } from '../types/index.d.ts'
 
 /**
  * A computation: it reads the record and answers what of it may be shown. Reached by a `GET`, which
- * may only read, so what it is matters — see `documentation/safety.md`.
+ * may only read, so what it is matters — see `documentation/readonly.md`.
  */
 export async function computation(
   { authority, identity }: Input,
