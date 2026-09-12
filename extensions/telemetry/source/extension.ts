@@ -90,7 +90,7 @@ export class Factory implements extensions.Factory {
 function measurements(): MetricsOptions {
   const env = environment.get(METRICS_ENV)
 
-  if (env === undefined) return {}
+  if (env === undefined) return measuring()
 
   const options = JSON.parse(env) as MetricsOptions
 
@@ -102,6 +102,14 @@ function measurements(): MetricsOptions {
   }
 
   return options
+}
+
+/**
+ * Metrics are off unless configured, and the console exporter is a local development mechanism
+ * — the same rule tracing keeps, for the same reason.
+ */
+function measuring(): MetricsOptions {
+  return environment.get('TOA_DEV') === '1' ? { exporters: { console: {} } } : {}
 }
 
 function development(): TracesOptions {

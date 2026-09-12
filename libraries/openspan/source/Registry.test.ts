@@ -69,6 +69,16 @@ describe('gauge', () => {
     assert.strictEqual(find(registry.collect(), 'backlog')?.value, 4)
   })
 
+  it('should move by a delta', () => {
+    const inflight = registry.gauge('inflight')
+
+    inflight.add(1)
+    inflight.add(1)
+    inflight.add(-1)
+
+    assert.strictEqual(find(registry.collect(), 'inflight')?.value, 1)
+  })
+
   it('should move both ways', () => {
     const inflight = registry.gauge('inflight')
 

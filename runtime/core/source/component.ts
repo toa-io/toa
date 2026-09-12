@@ -1,6 +1,7 @@
 import { console, current, decode, run, type SpanOptions } from 'openspan'
 import { Connector } from './connector.ts'
-import { EndpointException } from './exceptions.ts'
+import { EndpointException, names, permanent } from './exceptions.ts'
+import * as measure from './measurements.ts'
 import * as trail from './trail.ts'
 import type { Locator } from './locator.ts'
 import type { Envelope, Options, Request } from './types/request.ts'
@@ -8,6 +9,11 @@ import type { Envelope, Options, Request } from './types/request.ts'
 /** What a component holds one of per endpoint: an operation, or the call that stands for it. */
 export interface Invocable extends Connector {
   invoke: (request: Envelope, options?: Options) => Promise<any>
+}
+
+/** The code a declared error refuses with, which its manifest bounds. */
+function code(error: object): string {
+  return String((error as { code?: unknown }).code ?? 'UNDECLARED')
 }
 
 export class Component<O extends Invocable = Invocable> extends Connector {
@@ -85,21 +91,52 @@ export class Component<O extends Invocable = Invocable> extends Connector {
   }
 
   async #process(endpoint: string, request?: Request, options?: Options): Promise<any> {
-    return console.span(this.#span(endpoint), async () => {
-      const reply = await this.operations[endpoint].invoke(request as Envelope, options)
+    const measurements = this.kind === 'server' ? measure.operation : measure.call
+    const labels = { component: this.locator.id, operation: endpoint }
 
-      if (reply?.exception !== undefined) {
-        const span = current()
+    measurements.inflight.add(1, labels)
 
-        if (span !== undefined) span.status = 'error'
+    try {
+      return await console.span(this.#span(endpoint), async () => {
+        const reply = await this.operations[endpoint].invoke(request as Envelope, options)
 
-        console.error('Failed to execute operation', {
-          endpoint: `${this.locator.id}.${endpoint}`,
-          exception: reply.exception
-        })
-      }
+        if (reply?.error !== undefined && this.kind === 'server')
+          measure.operation.errors.add(1, { ...labels, code: code(reply.error) })
 
-      return reply
+        if (reply?.exception !== undefined) {
+          const span = current()
+
+          if (span !== undefined) span.status = 'error'
+
+          this.#failed(labels, reply.exception)
+
+          console.error('Failed to execute operation', {
+            endpoint: `${this.locator.id}.${endpoint}`,
+            exception: reply.exception
+          })
+        }
+
+        return reply
+      })
+    } finally {
+      measurements.inflight.add(-1, labels)
+    }
+  }
+
+  /**
+   * A refusal the caller sees is one the callee already counted, so only the server side counts
+   * an exception. `outcome` is what a receiver reads to choose between another attempt and the
+   * parking queue, which makes it two different incidents rather than one rate.
+   */
+  #failed(labels: object, exception: { code?: number }): void {
+    if (this.kind !== 'server') return
+
+    const { code = 0 } = exception
+
+    measure.operation.exceptions.add(1, {
+      ...labels,
+      code: names[code] ?? String(code),
+      outcome: permanent(exception) ? 'permanent' : 'transient'
     })
   }
 
@@ -112,7 +149,16 @@ export class Component<O extends Invocable = Invocable> extends Connector {
     let options = this.#spans[endpoint]
 
     if (options === undefined) {
-      options = { name: `${this.locator.id}.${endpoint}`, kind: this.kind }
+      const measurements = this.kind === 'server' ? measure.operation : measure.call
+
+      options = {
+        name: `${this.locator.id}.${endpoint}`,
+        kind: this.kind,
+        measure: {
+          histogram: measurements.duration,
+          labels: { component: this.locator.id, operation: endpoint }
+        }
+      }
 
       // the server span is emitted by the component itself, while the client span
       // belongs to the calling service and inherits it from the context

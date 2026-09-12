@@ -67,6 +67,34 @@ Feature: Telemetry
       42
       """
 
+  Scenario: A metric is recorded on an unsampled trace
+    Given an environment variable `TOA_TELEMETRY_TRACES` is set to:
+      """yaml
+      sample: 0
+      exporters:
+        console: ~
+      """
+    And an environment variable `TOA_TELEMETRY_METRICS` is set to:
+      """yaml
+      exporters:
+        console: ~
+      """
+    And I boot `telemetry` component
+    When I invoke `trace` with:
+      """yaml
+      input:
+        value: 21
+      """
+    Then the reply is received:
+      """yaml
+      42
+      """
+    And the metric `toa.operation.duration` is recorded with:
+      """yaml
+      component: default.telemetry
+      operation: trace
+      """
+
   Scenario: Trace propagation over remote calls
     Given I compose components:
       | math.calculations |

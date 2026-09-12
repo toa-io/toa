@@ -105,7 +105,7 @@ abstract class Instrument {
   }
 }
 
-class Counter extends Instrument {
+export class Counter extends Instrument {
   readonly #points = new Map<string, Point<number>>()
 
   public add(value = 1, labels?: Record<string, unknown>): void {
@@ -126,7 +126,7 @@ class Counter extends Instrument {
   }
 }
 
-class Gauge extends Instrument {
+export class Gauge extends Instrument {
   readonly #points = new Map<string, Point<number>>()
 
   public set(value: number, labels?: Record<string, unknown>): void {
@@ -135,6 +135,15 @@ class Gauge extends Instrument {
 
     if (point === undefined) this.#points.set(key, { labels: resolved, value })
     else point.value = value
+  }
+
+  /** For a level whoever holds it knows only the changes to: one in flight, one no longer. */
+  public add(delta: number, labels?: Record<string, unknown>): void {
+    const { key, labels: resolved } = this.resolve(labels)
+    const point = this.#points.get(key)
+
+    if (point === undefined) this.#points.set(key, { labels: resolved, value: delta })
+    else point.value += delta
   }
 
   public series(): Series[] {
@@ -147,7 +156,7 @@ class Gauge extends Instrument {
   }
 }
 
-class Histogram extends Instrument {
+export class Histogram extends Instrument {
   readonly #bounds: number[]
   readonly #unit?: string
   readonly #points = new Map<string, Point<Distribution>>()

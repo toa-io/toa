@@ -93,7 +93,8 @@ function configureLogs(): void {
 function measurements(): MetricsOptions {
   const env = environment.get(METRICS_ENV)
 
-  if (env === undefined) return {}
+  if (env === undefined)
+    return environment.get('TOA_DEV') === '1' ? { exporters: { console: {} } } : {}
 
   const options = JSON.parse(env) as MetricsOptions
 
