@@ -1,4 +1,5 @@
 import { EventEmitter, once } from 'node:events'
+import { randomBytes } from 'node:crypto'
 import * as assert from 'node:assert'
 import { after, afterAll, binding, given, then } from 'specumber'
 
@@ -118,8 +119,8 @@ export class Realtime {
   }
 
   private async createIdentity(name: string): Promise<string> {
-    const password = Math.random().toString(36).slice(2)
-    const username = name + Math.random().toString(36).slice(2)
+    const password = randomBytes(16).toString('hex')
+    const username = name + randomBytes(8).toString('hex')
 
     await this.agent.request(`
       POST /identity/basic/ HTTP/1.1

@@ -1,3 +1,4 @@
+import { randomUUID } from 'node:crypto'
 import { join } from 'node:path'
 import * as dotenv from 'dotenv'
 import { setDefaultTimeout } from '@cucumber/cucumber'
@@ -162,7 +163,7 @@ variables.set(
   JSON.stringify({
     octets: {
       provider: 'tmp',
-      directory: Math.random().toString(36).substring(2)
+      directory: randomUUID()
     },
     ...(environment === undefined ? {} : CLOUDINARY)
   })
