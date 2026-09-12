@@ -24,7 +24,7 @@ export class Otlp implements Exporter {
   public constructor(options: OtlpOptions) {
     this.transport = new Transport(options.endpoint.replace(/\/$/, '') + '/v1/traces', {
       ...options,
-      subject: 'spans',
+      subject: 'spans'
     })
 
     this.service = options.service ?? process.env.TOA_CONTEXT ?? 'toa'
@@ -101,15 +101,15 @@ export class Otlp implements Exporter {
     return {
       resourceSpans: Array.from(services, ([service, spans]) => ({
         resource: {
-          attributes: attributes({ 'service.name': service }),
+          attributes: attributes({ 'service.name': service })
         },
         scopeSpans: [
           {
             scope: { name: 'openspan' },
-            spans: spans.map((span) => this.span(span)),
-          },
-        ],
-      })),
+            spans: spans.map((span) => this.span(span))
+          }
+        ]
+      }))
     }
   }
 
@@ -126,7 +126,7 @@ export class Otlp implements Exporter {
         BigInt(Math.round(span.duration * 1_000_000))
       ).toString(),
       attributes: attributes({ ...span.scope, ...span.attributes }),
-      status: span.status === 'error' ? { code: 2 } : {},
+      status: span.status === 'error' ? { code: 2 } : {}
     }
   }
 }
@@ -144,7 +144,9 @@ function attribute(value: unknown): object {
     case 'boolean':
       return { boolValue: value }
     case 'number':
-      return Number.isInteger(value) ? { intValue: value.toString() } : { doubleValue: value }
+      return Number.isInteger(value)
+        ? { intValue: value.toString() }
+        : { doubleValue: value }
     default:
       return { stringValue: JSON.stringify(value) }
   }
@@ -168,7 +170,7 @@ const KINDS: Record<Kind, number> = {
   server: 2,
   client: 3,
   producer: 4,
-  consumer: 5,
+  consumer: 5
 }
 
 const BATCH = 512

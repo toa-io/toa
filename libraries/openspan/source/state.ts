@@ -1,6 +1,8 @@
 import { AsyncLocalStorage } from 'node:async_hooks'
+import { Registry } from './Registry.ts'
 import type { SpanContext } from './tracing.ts'
 import type { Exporter } from './exporters.ts'
+import type { Meter } from './meters.ts'
 
 /**
  * A process may load several copies of this module (e.g. a service with its own
@@ -15,6 +17,11 @@ interface State {
   sample: number
   bucket: Bucket | null
   exporters: Exporter[] | null
+  meters: Meter[] | null
+
+  /** the instruments of this process, kept across configurations */
+  registry: Registry
+  collector: NodeJS.Timeout | null
 }
 
 /** Structural, as instances may originate from another copy of the module. */
@@ -29,7 +36,10 @@ export const state: State = ((globalThis as Global)[KEY] ??= {
   storage: new AsyncLocalStorage<SpanContext>(),
   sample: 1,
   bucket: null,
-  exporters: null
+  exporters: null,
+  meters: null,
+  registry: new Registry(),
+  collector: null
 })
 
 type Global = typeof globalThis & { [KEY]?: State }

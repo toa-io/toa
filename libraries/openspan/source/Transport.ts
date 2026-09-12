@@ -33,7 +33,7 @@ export class Transport {
       hostname: parsed.hostname,
       port: parsed.port,
       path: parsed.pathname + parsed.search,
-      agent: new this.transport.Agent({ keepAlive: true }),
+      agent: new this.transport.Agent({ keepAlive: true })
     }
     this.subject = options.subject
     this.timeout = options.timeout ?? TIMEOUT
@@ -83,7 +83,7 @@ export class Transport {
 
       const timer = setTimeout(
         () => request.destroy(new Error('OTLP request timed out')),
-        this.timeout,
+        this.timeout
       )
 
       timer.unref()
@@ -101,7 +101,10 @@ export class Transport {
 
     this.reported = true
 
-    console.warn(`${message}, ${this.subject} are dropped until the endpoint recovers`, attributes)
+    console.warn(
+      `${message}, ${this.subject} are dropped until the endpoint recovers`,
+      attributes
+    )
   }
 
   private resume(): void {
