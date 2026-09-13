@@ -143,6 +143,11 @@ exposition:
     subtree and a route an application declares in its annotation is specified without the component's
     manifest at all: the check would hold for some of the ways a route is declared and quietly not for
     others. The refusal when the call is made holds for all of them.
+11. **The discovery page does not draw it.** The page mirrors what a method says of itself and draws
+    `once` and `mcp` as badges; `readonly` is answered and left undrawn. A route that declares the
+    opt-out is doing the one thing the documentation asks it not to, and nothing is owed to make that
+    easier to read. It is answered because the tool hint is built from it, and because `OPTIONS`
+    saying less than the gateway knows would be its own kind of wrong.
 
 ## Context
 
