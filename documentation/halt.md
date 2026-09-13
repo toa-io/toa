@@ -86,26 +86,34 @@ because it is a thing you choose.
 
 Nothing, to keep working. What changes is what a component **started itself** — an interval, a
 watcher, something held open outside. The runtime did not build those and cannot take them down,
-so a component that has any stops them in `stop` and starts them again in `resume`:
+so a component that has any releases them in `stop`:
 
 ```javascript
 // rc/poller.js
 
+export function preflight(context) {
+  context.state.poller = setInterval(() => poll(context), 1000)
+}
+
 export function stop(context) {
   clearInterval(context.state.poller)
 }
-
-export function resume(context) {
-  context.state.poller = setInterval(() => poll(context), 1000)
-}
 ```
 
-A component that starts nothing needs neither.
+`stop` runs while the component is still whole and still serving, which is the one moment it can
+let go of what only it knows about.
+
+**It comes back in `preflight`, not in `resume`.** A halt takes the component down and builds a new
+one, so what runs on the way back is what runs at boot. `resume` is for a halt that is called off
+before anything closes — the component was never taken down, so `preflight` will not run, and
+`resume` is what starts it working again. A component that has no `stop` needs neither.
 
 Otherwise: `preflight`, `settle`, `dispose` and an algorithm's `mount`/`unmount` run once per
 halt rather than once per process, which is the pairing those hooks already promise. What does not
 run again is a module — anything held at module scope survives a halt, because a halt replaces
-what the runtime built and not what Node loaded.
+what the runtime built and not what Node loaded. **A `context` is not one of those**: a new one is
+built with the component, so anything holding the old one holds something that will never work
+again.
 
 **A call through a context whose tree has been taken down is refused.** That is what a forgotten
 interval produces, and it is reported rather than fatal while the process is halted. Once the

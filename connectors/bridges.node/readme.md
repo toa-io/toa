@@ -129,31 +129,31 @@ export async function ready(context) {
 
 `settle` and `ready` have no counterpart: nothing runs for them on disconnection.
 
-`stop` and `resume` are not a lifecycle moment. The component is not taken down and nothing it holds
-is closed: the process has been told to stop doing anything of its own accord, and this is where a
-component does the same with whatever the runtime cannot see.
+`stop` and `resume` are not a lifecycle moment. The component is not taken down and nothing it
+holds is closed: the process has been told to stop doing anything of its own accord, and this is
+where a component does the same with whatever the runtime cannot see — an interval, a watcher, a
+subscription to something outside.
 
 ```javascript
 // rc/poller.js
 
+export function preflight(context) {
+  context.state.poller = setInterval(() => poll(context), 1000)
+}
+
 export function stop(context) {
   clearInterval(context.state.poller)
 }
-
-export function resume(context) {
-  context.state.poller = setInterval(() => poll(context), 1000)
-}
 ```
 
-What this is for is an interval, a watcher, a subscription to something outside — anything the
-component started itself. A component that starts nothing needs neither.
+**`resume` is not the counterpart of `stop`; `preflight` usually is.** Where the process goes on to
+be taken down and built again, the component that comes back is a new one and `preflight` is what
+runs. `resume` runs only where the process starts working again *without* being rebuilt — it is
+the same component, with the same `context.state`, and what it opened in `preflight` is still open.
 
-A component that keeps its own time and does not stop it goes on calling while the process is
-quiet, and that is seen: the halt is called off rather than performed. Worse, once the process is
-taken down the call is refused, and a rejection nobody catches ends the process.
-
-`resume` runs on the same component, with the same `context.state`. It is not a second `preflight`:
-what a component opened there is still open.
+A component that keeps its own time and does not release it goes on calling while the process is
+quiet. Once the process is taken down that call is refused, and a rejection nobody catches ends
+the process.
 
 `dispose` is the counterpart of `preflight`: what a component opened there is released here. It runs
 before the context it is given is disconnected, so a component can still reach its remotes while
