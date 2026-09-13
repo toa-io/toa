@@ -1,6 +1,6 @@
 import { console, current, decode, run, type SpanOptions } from 'openspan'
 import { Connector } from './connector.ts'
-import { EndpointException, names, permanent } from './exceptions.ts'
+import { DisposedException, EndpointException, names, permanent } from './exceptions.ts'
 import * as measure from './measurements.ts'
 import * as trail from './trail.ts'
 import type { Locator } from './locator.ts'
@@ -43,6 +43,22 @@ export class Component<O extends Invocable = Invocable> extends Connector {
     request?: Request,
     options?: Options
   ): Promise<T> {
+    /*
+     * A component that has been taken down refuses to work. What reaches it here is something
+     * the component started and did not stop — an interval, a watcher, a promise nobody
+     * awaited — calling through a context whose tree is gone, and a resume builds another tree
+     * rather than reviving this one, so it is never coming back.
+     *
+     * The client side is left alone deliberately: a `Remote` is a client to a queue rather than
+     * to an instance of anything, so its being taken down says nothing about whether what it
+     * calls is there.
+     */
+    if (this.disposed && this.kind === 'server')
+      throw new DisposedException(
+        `'${this.locator.id}' has been taken down, and what reached it here was started by ` +
+          'something that outlived it'
+      )
+
     if (!(endpoint in this.operations))
       throw new EndpointException(`'${endpoint}' is not provided by '${this.locator.id}'`)
 
