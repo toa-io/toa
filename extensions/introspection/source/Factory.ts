@@ -95,17 +95,20 @@ export class Factory implements extensions.Factory {
     return component
   }
 
+  // a halt takes the whole of it, the UI with it: a map nobody is reporting to is stale
   public service(): Connector | null {
     if (this.options === null) return null
 
-    const composition = new Composition(this.host)
-    const explorer = new Explorer()
+    return this.host.gate(async () => {
+      const composition = new Composition(this.host)
+      const explorer = new Explorer()
 
-    explorer.depends(composition)
+      explorer.depends(composition)
 
-    if (this.options.ui) explorer.depends(new UI(uiPort()))
+      if (this.options?.ui === true) explorer.depends(new UI(uiPort()))
 
-    return explorer
+      return explorer
+    })
   }
 
   /**
