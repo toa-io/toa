@@ -50,8 +50,8 @@ its service.
 `x-toa-halted` with the seconds left, so nothing watching it replaces it. The gateway answers
 `503` with `retry-after`.
 
-**Nothing is left connected.** The infrastructure sees the whole deployment disconnect, and
-connect again when the interval is up. What happens to it in between is nobody's concern.
+**Nothing is left connected.** No process holds a socket against the broker, the database or the
+cache, so they can be stopped, replaced or failed over while the deployment is down.
 
 **It ends by itself.** Nothing has to reach the deployment for it to come back.
 
@@ -79,8 +79,9 @@ up to whatever the caller's own timeout is. A request to the gateway does not wa
 late. A delayed call due inside it is dispatched when the deployment is back, subject to its own
 `overdue` — so one that cannot wait out the window is skipped in this region.
 
-**A reply that was streaming is cut**, where a halt closes everything. A stream's tail is not
-guaranteed in any case; what is worth knowing is that a halt is a moment you choose.
+**A reply that was streaming is cut** along with everything else that closes. Whoever was reading
+it sees it end early and has to ask again — a stream's tail is not guaranteed in any case, but a
+halt is a moment you choose.
 
 ## What you write
 
@@ -111,9 +112,10 @@ the **same** component — the same `context.state`, everything it opened still 
 component that exports `pause` and no `resume` does not start: it would come back from a cancelled
 halt without what it paused, and go on answering as if it had not.
 
-**A `context` does not survive a halt.** A new one is built with the component, and so is the
-algorithm that took it from `mount`. What does survive is a module: anything held at module scope
-outlives a halt, because a halt replaces what the runtime built and not what Node loaded.
+**A halt rebuilds what the runtime built, and only that.** A module stays loaded, so anything kept
+at module scope is the same object afterwards — and a connection opened there was neither closed by
+the halt nor reopened after it. That is yours to release in `pause` and take again, by the rule
+above.
 
 **A call made through a context whose component is gone is refused.** That is what a forgotten
 interval produces. While the process is halted it is reported; once the process is working again
@@ -126,8 +128,10 @@ database over, moving a cluster, taking a backup with nothing writing across it.
 interval that work needs, and for the one you can afford to be down: the deployment comes back
 when it is up, whether or not the work is finished.
 
-A halt is for a deployment that is working. The evidence that it worked is that every process came
-back, and the way to have that evidence is to have done it before.
+**A halt reaches what is connected when it is posted.** The signal travels over the broker, and a
+process that is not there to receive it is never told afterwards: it goes on working while the rest
+go down. So a halt is for a deployment that is healthy, and not a way to bring a broken one to
+rest.
 
 **If this is your big red button, press it on a schedule.** One nobody has pressed is one nobody
 knows works, and the day you need it is the wrong day to learn otherwise.
