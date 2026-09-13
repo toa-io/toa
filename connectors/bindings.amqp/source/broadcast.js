@@ -1,4 +1,4 @@
-import { Connector } from '@toa.io/core'
+import { Connector, deliveries } from '@toa.io/core'
 
 import { name } from './queues.js'
 
@@ -31,9 +31,22 @@ export class Broadcast extends Connector {
     await this.#comm.emit(exchange, payload, { deliveryMode: 1 })
   }
 
+  /**
+   * The callback is counted in while it runs, as every other delivery is. This one holds no
+   * `pending` set of its own, because nothing here waits for it: a broadcast is announcements,
+   * and what it feeds is taken down by its own teardown rather than by this one.
+   */
   async receive(label, callback) {
     const exchange = name(this.#locator, label)
 
-    await this.#comm.consume(exchange, this.#group, callback)
+    await this.#comm.consume(exchange, this.#group, async (...args) => {
+      deliveries.taken()
+
+      try {
+        return await callback(...args)
+      } finally {
+        deliveries.done()
+      }
+    })
   }
 }

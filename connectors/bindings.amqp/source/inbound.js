@@ -1,4 +1,4 @@
-import { Connector } from '@toa.io/core'
+import { Connector, deliveries } from '@toa.io/core'
 import { console } from 'openspan'
 
 import { bound, inbound } from './queues.js'
@@ -58,11 +58,13 @@ export class Inbound extends Connector {
     const promise = this.#sink.accept(message)
 
     this.#pending.add(promise)
+    deliveries.taken()
 
     try {
       await promise
     } finally {
       this.#pending.delete(promise)
+      deliveries.done()
     }
   }
 }

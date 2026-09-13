@@ -1,4 +1,4 @@
-import { Connector, instance } from '@toa.io/core'
+import { Connector, deliveries, instance } from '@toa.io/core'
 import { console } from 'openspan'
 
 import { instances, name } from './queues.js'
@@ -109,11 +109,18 @@ export class Producer extends Connector {
     await Promise.all(promises)
   }
 
-  /** Invokes the component, counting the call in while it runs. See .close() */
+  /**
+   * Invokes the component, counting the call in while it runs. See .close()
+   *
+   * Counted for the process as well, where what is in flight is read as one number: this is
+   * the whole of what a request, an addressed request and a task have in common, so counting
+   * here counts all three.
+   */
   async #invoke(endpoint, request) {
     const promise = this.#component.invoke(endpoint, request)
 
     this.#pending.add(promise)
+    deliveries.taken()
 
     try {
       const reply = await promise
@@ -121,6 +128,7 @@ export class Producer extends Connector {
       return request?.encoded === true ? encoded(reply) : reply
     } finally {
       this.#pending.delete(promise)
+      deliveries.done()
     }
   }
 }
