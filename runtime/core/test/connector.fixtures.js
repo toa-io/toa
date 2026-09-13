@@ -25,6 +25,23 @@ export class TestConnector extends Connector {
   async dispose() {
     this.#seq.push(`*${this.#label}`)
   }
+
+  async stop() {
+    await timeout(random(10))
+    this.#seq.push(`!${this.#label}`)
+  }
+
+  async resume() {
+    await timeout(random(10))
+    this.#seq.push(`=${this.#label}`)
+  }
+}
+
+/** Stands for one that refuses to stop. */
+export class UnstoppableConnector extends Connector {
+  async stop() {
+    throw new Error('UnstoppableConnector')
+  }
 }
 
 export class FailingConnector extends Connector {
