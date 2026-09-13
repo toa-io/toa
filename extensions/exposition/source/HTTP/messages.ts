@@ -101,7 +101,7 @@ function send(
 
   if (context.encoder === null) throw new NotAcceptable()
 
-  const encoded = message.body instanceof Encoded
+  const encoded = Encoded.is(message.body)
   const buf = encoded ? message.body.bytes : context.encoder.encode(message.body)
   const type = encoded ? message.body.type : context.encoder.type
 

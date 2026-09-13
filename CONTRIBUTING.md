@@ -340,3 +340,9 @@ so the two carry one number.
   than types imported with `import type`.
 - **Coded exceptions.** Startup code — a boot, a manifest being read, a deploy — may assert.
   Runtime code throws a coded exception from `@toa.io/core`.
+- **Symbols, not classes, across packages.** A value one package makes and another recognises is
+  told by a key made with `Symbol.for`, not by `instanceof`. A process may load a package more
+  than once — an image installs `@toa.io/core` beside the runtime and again beside an extension —
+  and what one copy made is no instance of the other copy's class. Nothing that runs a single
+  copy notices, which is every unit test and every scenario; a released image does. See
+  `Encoded.is` in `@toa.io/core`.
