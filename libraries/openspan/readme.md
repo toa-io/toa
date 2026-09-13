@@ -159,7 +159,11 @@ exporting([consoleExporter, new Otlp({ endpoint: 'http://localhost:4318' })])
 An absent or unavailable endpoint is tolerated and never affects the process: a request is
 bounded by `timeout` (5s by default) and its socket is released as soon as it expires, a failed
 batch is dropped, and the exporter then suspends itself for `cooldown` (30s by default),
-dropping spans instead of queueing them. One warning is logged per outage, and one info entry
+dropping spans instead of queueing them.
+
+A request that failed on a connection the endpoint had already closed is sent once more, within
+the same `timeout` — a quiet process idles its pooled connection for about as long as an endpoint
+will hold one, and a write can race the close. Nothing else is retried. One warning is logged per outage, and one info entry
 when the endpoint recovers. As a result a shutdown waits at most one `timeout` for an
 unreachable endpoint, and nothing at all while the exporter is suspended.
 
