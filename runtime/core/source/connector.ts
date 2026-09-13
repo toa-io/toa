@@ -229,15 +229,20 @@ export class Connector {
    * raised — one connector that will not stop is no reason to leave the rest working.
    */
   public async halt(visited: Set<Connector> = new Set()): Promise<void> {
-    if (visited.has(this) || this.#halted) return
+    // the walk is governed by where it has been, and the flag only by whether this one has
+    // already stopped: a connector that has, with a subtree that has not, is still walked through
+    if (visited.has(this)) return
 
     visited.add(this)
-    this.#halted = true
 
-    try {
-      await this.pause()
-    } catch (error) {
-      console.error('Connector failed to pause', { id: this.id, error })
+    if (!this.#halted) {
+      this.#halted = true
+
+      try {
+        await this.pause()
+      } catch (error) {
+        console.error('Connector failed to pause', { id: this.id, error })
+      }
     }
 
     for (const dependency of this.#dependencies) await dependency.halt(visited)
@@ -248,12 +253,15 @@ export class Connector {
    * Runs wherever the halt went, including where it failed.
    */
   public async restore(visited: Set<Connector> = new Set()): Promise<void> {
-    if (visited.has(this) || !this.#halted) return
+    if (visited.has(this)) return
 
     visited.add(this)
-    this.#halted = false
 
     for (const dependency of this.#dependencies) await dependency.restore(visited)
+
+    if (!this.#halted) return
+
+    this.#halted = false
 
     try {
       await this.unpause()

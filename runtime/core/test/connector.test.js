@@ -327,6 +327,27 @@ describe('quiescence', () => {
     assert.deepStrictEqual(sequence, ['!a', '!b'])
   })
 
+  it('should stop a subtree below one that has already stopped', async () => {
+    a.depends(b)
+    b.depends(c)
+
+    await a.connect()
+    await b.halt()
+
+    sequence.length = 0
+
+    await a.halt()
+
+    assert.deepStrictEqual(sequence, ['!a'])
+    assert.deepStrictEqual(sequence.includes('!b'), false)
+
+    sequence.length = 0
+
+    await a.restore()
+
+    assert.deepStrictEqual(sequence, ['=c', '=b', '=a'])
+  })
+
   it('should stop a dependency taken on after the walk', async () => {
     await a.connect()
     await a.halt()
