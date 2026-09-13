@@ -264,3 +264,95 @@ describe('dependencies', () => {
     })
   })
 })
+
+describe('quiescence', () => {
+  let a, b, c
+
+  beforeEach(async () => {
+    a = new fixtures.TestConnector('a', sequence)
+    b = new fixtures.TestConnector('b', sequence)
+    c = new fixtures.TestConnector('c', sequence)
+  })
+
+  it('should stop the tree from the top down', async () => {
+    a.depends(b)
+    b.depends(c)
+
+    await a.connect()
+
+    sequence.length = 0
+
+    await a.halt()
+
+    assert.deepStrictEqual(sequence, ['!a', '!b', '!c'])
+  })
+
+  it('should resume the tree from the bottom up', async () => {
+    a.depends(b)
+    b.depends(c)
+
+    await a.connect()
+    await a.halt()
+
+    sequence.length = 0
+
+    await a.restore()
+
+    assert.deepStrictEqual(sequence, ['=c', '=b', '=a'])
+  })
+
+  it('should stop what two dependants share once', async () => {
+    a.depends([b, c])
+    b.depends(c)
+
+    await a.connect()
+
+    sequence.length = 0
+
+    await a.halt()
+
+    assert.deepStrictEqual(sequence.filter((entry) => entry === '!c').length, 1)
+  })
+
+  it('should be idempotent', async () => {
+    a.depends(b)
+
+    await a.connect()
+
+    sequence.length = 0
+
+    await a.halt()
+    await a.halt()
+
+    assert.deepStrictEqual(sequence, ['!a', '!b'])
+  })
+
+  it('should stop a dependency taken on after the walk', async () => {
+    await a.connect()
+    await a.halt()
+
+    sequence.length = 0
+
+    a.depends(b)
+
+    await timeout(50)
+
+    assert.deepStrictEqual(sequence, ['!b'])
+  })
+
+  it('should resume what a failing stop left', async () => {
+    const unstoppable = new fixtures.UnstoppableConnector()
+
+    a.depends(unstoppable)
+    unstoppable.depends(b)
+
+    await a.connect()
+
+    sequence.length = 0
+
+    await a.halt()
+    await a.restore()
+
+    assert.deepStrictEqual(sequence, ['!a', '!b', '=b', '=a'])
+  })
+})
