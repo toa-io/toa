@@ -2,6 +2,7 @@ import { AsyncLocalStorage } from 'node:async_hooks'
 import { Registry } from './Registry.ts'
 import type { SpanContext } from './tracing.ts'
 import type { Exporter } from './exporters.ts'
+import type { LogExporter } from './sinks.ts'
 import type { Meter } from './meters.ts'
 
 /**
@@ -18,6 +19,9 @@ interface State {
   bucket: Bucket | null
   exporters: Exporter[] | null
   meters: Meter[] | null
+
+  /** where log entries go; `null` is the default, which is the console */
+  sinks: LogExporter[] | null
 
   /** the instruments of this process, kept across configurations */
   registry: Registry
@@ -41,6 +45,7 @@ export const state: State = ((globalThis as Global)[KEY] ??= {
   bucket: null,
   exporters: null,
   meters: null,
+  sinks: null,
   registry: new Registry(),
   collector: null,
   observed: false

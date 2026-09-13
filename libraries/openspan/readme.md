@@ -186,3 +186,42 @@ traces({
   }
 })
 ```
+
+## Log exporters
+
+Every entry a console writes is passed to a set of log exporters. The default is `consoleLogs`,
+which writes the JSON line to the streams of the console that emitted it — what a console did on
+its own before there was more than one place for an entry to go.
+
+The `OtlpLogs` exporter sends batches of entries to an OTLP/HTTP endpoint (JSON encoding), on the
+same terms as `Otlp` does spans: bounded by `timeout`, dropped rather than queued behind an
+outage, one warning per outage.
+
+```javascript
+import { logs } from 'openspan'
+
+logs({
+  exporters: {
+    console: false, // omit to keep writing the line
+    otlp: { endpoint: 'http://localhost:3100/otlp' }
+  }
+})
+```
+
+The message is the record body; the entry's attributes and context are record attributes; the
+severity travels as `severityText` and `severityNumber`; `trace_id` and `span_id` travel as the
+record's trace and span ids and as attributes. `OtlpLogsOptions.resource` names the resource the
+records are exported under, `service.name` among them.
+
+Custom exporters implement the `LogExporter` interface: `export(entry, output)` is called for
+every entry, with the console that wrote it, and must not throw. `logging(exporters)` replaces the
+set; `logging(null)` restores the default, which is the console — an empty set means silence, and
+the two are different answers. Optional `flush()` is awaited by `flushLogs()`.
+
+## Shutdown
+
+`shutdown()` sends what all three signals hold — spans, records and series — for a process leaving
+through `process.exit()`, which emits no `beforeExit`. Each is bounded by its own request timeout
+and none of them rejects, so the wait is one timeout rather than three.
+
+`flush()` is the span exporters alone, and `flushLogs()` the log exporters alone.

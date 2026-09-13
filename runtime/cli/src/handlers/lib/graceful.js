@@ -1,4 +1,4 @@
-import { console, flush } from 'openspan'
+import { console, shutdown } from 'openspan'
 
 export function graceful(connector) {
   ;['SIGTERM', 'SIGINT'].forEach((signal) =>
@@ -21,8 +21,8 @@ export function graceful(connector) {
         code = 1
       }
 
-      // process.exit() does not emit 'beforeExit', so flush span exporters explicitly
-      await flush()
+      // process.exit() does not emit 'beforeExit', so every signal is flushed explicitly
+      await shutdown()
 
       process.exit(code)
     })

@@ -59,8 +59,8 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/). The subject
 ## Tests
 
 **A unit test proves that the code matches your expectations. An integration test proves that
-your expectations match reality.** Code is *working* once an integration test has run it; until
-then it is a *hypothesis*. Toa's integration tests are its feature scenarios, run against the
+your expectations match reality.** Code is _working_ once an integration test has run it; until
+then it is a _hypothesis_. Toa's integration tests are its feature scenarios, run against the
 broker, the database and the network the code relies on.
 
 **"Not mine" is never an answer.** A suite run during a change has to pass, whether or not the
@@ -136,6 +136,7 @@ what a Toa checkout binds is conventional: the whole of it sits in `31000`-`3109
 | `31050` | LocalStack                                    | `4566`         |
 | `31060` | Tempo                                         | `3200`         |
 | `31061` | Tempo, OTLP/HTTP                              | `4318`         |
+| `31065` | Loki                                          | `3100`         |
 | `31070` | Prometheus                                    | `9090`         |
 | `31080` | Grafana                                       | `3000`         |
 | `31090` | the benchmark gateway of the base revision    | —              |

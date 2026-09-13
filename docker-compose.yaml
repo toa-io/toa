@@ -165,6 +165,13 @@ services:
       - "31061:4318" # OTLP/HTTP
     volumes:
       - ./observability/tempo.yaml:/etc/tempo.yaml:ro
+  loki:
+    image: grafana/loki:3.7.6
+    command: ["-config.file=/etc/loki/loki.yaml"]
+    ports:
+      - "31065:3100"
+    volumes:
+      - ./observability/loki.yaml:/etc/loki/loki.yaml:ro
   prometheus:
     image: prom/prometheus:v3.13.2
     command:
