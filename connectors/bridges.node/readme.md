@@ -144,12 +144,18 @@ export function preflight(context) {
 export function stop(context) {
   clearInterval(context.state.poller)
 }
+
+export const resume = preflight
 ```
 
-**`resume` is not the counterpart of `stop`; `preflight` usually is.** Where the process goes on to
-be taken down and built again, the component that comes back is a new one and `preflight` is what
-runs. `resume` runs only where the process starts working again *without* being rebuilt — it is
-the same component, with the same `context.state`, and what it opened in `preflight` is still open.
+**What `stop` released, something has to take again, and there are two places that happens.** Where
+the process goes on to be taken down and built again, the component that comes back is a new one
+and `preflight` runs on it. Where the process starts working again *without* being rebuilt, it is
+the same component, with the same `context.state` and what it opened in `preflight` still open, and
+`resume` is the only thing that runs.
+
+So `resume` is not the counterpart of `stop` — `preflight` usually is — but a component that has a
+`stop` and no `resume` is one that comes back from the second case without what it stopped.
 
 A component that keeps its own time and does not release it goes on calling while the process is
 quiet. Once the process is taken down that call is refused, and a rejection nobody catches ends

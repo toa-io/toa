@@ -60,8 +60,8 @@ handled, and only then does anything close.
 
 ## What it does not give
 
-**A halt cannot be called off.** Nothing can reach a halted process, so the interval is what ends
-it. Ask for one you can afford to wait out.
+**There is no undoing a halt from outside.** Nothing reaches a process that holds no connection,
+so the interval is what brings the deployment back. Ask for one you can afford to wait out.
 
 **It holds only over the processes that were there when it began.** One that starts during a halt
 comes up running, because nothing is there to tell it otherwise. Starting one is therefore the way
@@ -96,13 +96,20 @@ export function preflight(context) {
 export function stop(context) {
   clearInterval(context.state.poller)
 }
+
+export const resume = preflight
 ```
 
-`stop` runs while the component is still whole and still serving. What starts it again is
-`preflight`: a halt takes the component down and builds a new one.
+`stop` runs while the component is still whole and still serving, which is the one moment it can
+release what the runtime cannot see.
 
-[`resume`](/connectors/bridges.node/readme.md#run-commands) is for a halt that is called off
-before anything closes — the component was never taken down, so `preflight` will not run.
+**What you had to do in `stop` you have to undo in one of two places**, because there are two ways
+a process comes back. Where it was taken down for the interval, the component that comes back is a
+**new** one and `preflight` runs on it. Where the halt was cancelled before anything closed, it is
+the **same** component — the same `context.state`, everything it opened still open — and
+[`resume`](/connectors/bridges.node/readme.md#run-commands) is the only thing that runs. A
+component with a `stop` and no `resume` comes back from a cancelled halt without what it
+stopped.
 
 **A `context` does not survive a halt.** A new one is built with the component, and so is the
 algorithm that took it from `mount`. What does survive is a module: anything held at module scope
