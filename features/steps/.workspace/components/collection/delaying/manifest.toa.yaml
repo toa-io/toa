@@ -55,6 +55,17 @@ operations:
   pong:
     input:
       type: 'null'
+  # a safe operation that hands a call over, which is a write of its own
+  defer:
+    input:
+      type: object
+      properties:
+        delay:
+          type: integer
+      required:
+        - delay
+    output:
+      type: string
   # delays a call to itself, which is a circle a delay does not launder — unless it says so
   rearm:
     input:

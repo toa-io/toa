@@ -1,6 +1,7 @@
 import { create, current, run } from './tracing.ts'
 import { exporters } from './exporters.ts'
 import { measuring } from './meters.ts'
+import { sinks } from './sinks.ts'
 import type { Span } from './exporters.ts'
 import type { SpanContext } from './tracing.ts'
 import type { Histogram } from './Registry.ts'
@@ -93,13 +94,11 @@ export class Console {
    * an entry of their own, which today is the console span exporter.
    */
   public entry(channel: Channel, message: string, rest: Partial<Entry> = {}): void {
-    const level = LEVELS[channel]
-
-    if (level < this.level) return
+    if (LEVELS[channel] < this.level) return
 
     const { attributes, ...fields } = rest
 
-    this.write(level, channel.toUpperCase() as Severity, message, attributes, fields)
+    this.write(channel.toUpperCase() as Severity, message, attributes, fields)
   }
 
   public fork(ctx?: any): Console {
@@ -128,7 +127,7 @@ export class Console {
       // what costs to build is built only for a line that is written
       if (typeof attributes === 'function') attributes = attributes()
 
-      this.write(level, severity, message, attributes)
+      this.write(severity, message, attributes)
     }
   }
 
@@ -181,9 +180,19 @@ export class Console {
     for (const exporter of exporters()) exporter.export(span, this)
   }
 
+  /**
+   * Writes the entry to this console's streams, as a JSON line. What the console log exporter
+   * calls; the ordinary way in is a channel above.
+   */
+  public print(entry: Entry): void {
+    const buffer = Buffer.from(JSON.stringify(entry) + '\n')
+
+    if (entry.severity === 'ERROR') this.stderr.write(buffer)
+    else this.stdout.write(buffer)
+  }
+
   // eslint-disable-next-line max-params
   private write(
-    level: Level,
     severity: Severity,
     message: string,
     attributes?: any,
@@ -209,10 +218,8 @@ export class Console {
 
     if (span !== undefined) Object.assign(entry, span)
 
-    const buffer = Buffer.from(JSON.stringify(entry) + '\n')
-
-    if (level === LEVELS.error) this.stderr.write(buffer)
-    else this.stdout.write(buffer)
+    // an exporter must not throw; one that does takes the log of the process with it
+    for (const sink of sinks()) sink.export(entry, this)
   }
 }
 

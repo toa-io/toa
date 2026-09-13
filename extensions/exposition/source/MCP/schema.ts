@@ -75,11 +75,18 @@ export function output(introspection: Introspection): object | undefined {
   return Object.keys(schema).length === 0 ? undefined : (schema as object)
 }
 
-/** What the verb says of the call, which the revision has a client treat as a hint. */
-export function annotations(verb: string): Annotations | undefined {
+/**
+ * What the call is, which the revision has a client treat as a hint — and a client that reads
+ * `readOnlyHint` may call a tool without asking, so a route that says it writes is believed over
+ * the verb it is served under.
+ */
+export function annotations(
+  verb: string,
+  introspection: Introspection
+): Annotations | undefined {
   const value: Annotations = {}
 
-  if (verb === 'GET' || verb === 'HEAD') value.readOnlyHint = true
+  if (introspection.readonly ?? (verb === 'GET' || verb === 'HEAD')) value.readOnlyHint = true
 
   if (verb === 'DELETE') value.destructiveHint = true
 

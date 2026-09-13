@@ -1,0 +1,23 @@
+name: proxy
+namespace: safety
+
+operations:
+  # a computation that writes through another component: safe itself, and the chain is not
+  write: &target
+    input:
+      properties:
+        id:
+          type: string
+        foo:
+          type: integer
+      type: object
+  # the same, stating `readonly: false` on the call it makes
+  insist: *target
+  read:
+    input:
+      properties:
+        id:
+          type: string
+      type: object
+    output:
+      type: integer

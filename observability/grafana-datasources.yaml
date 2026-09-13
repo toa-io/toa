@@ -6,8 +6,24 @@ datasources:
     uid: prometheus
     access: proxy
     url: http://prometheus:9090
+  - name: Loki
+    type: loki
+    uid: loki
+    access: proxy
+    url: http://loki:3100
+    jsonData:
+      # what Toa posts over OTLP: the line is the message, and `trace_id` arrives as structured
+      # metadata, so the link to a trace is read off the label rather than out of the line
+      derivedFields:
+        - name: trace_id
+          matcherType: label
+          matcherRegex: trace_id
+          datasourceUid: tempo
+          # `$$` is a literal `$` in Grafana provisioning
+          url: "$${__value.raw}"
   - name: Tempo
     type: tempo
+    uid: tempo
     access: proxy
     url: http://tempo:3200
     isDefault: true
@@ -16,3 +32,12 @@ datasources:
         datasourceUid: prometheus
       nodeGraph:
         enabled: true
+      # the trace id is not in the line, so Grafana cannot find it by itself
+      tracesToLogsV2:
+        datasourceUid: loki
+        spanStartTimeShift: "-5m"
+        spanEndTimeShift: "5m"
+        filterByTraceID: false
+        filterBySpanID: false
+        customQuery: true
+        query: '{service_name=`$${__span.tags["service.name"]}`} | trace_id = `$${__span.traceId}`'

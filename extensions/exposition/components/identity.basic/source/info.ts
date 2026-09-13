@@ -1,6 +1,10 @@
 import type { Context, Entity } from '../types/index.d.ts'
 
-export async function effect(
+/**
+ * A computation: it reads the record and answers what of it may be shown. Reached by a `GET`, which
+ * may only read, so what it is matters — see `documentation/readonly.md`.
+ */
+export async function computation(
   { authority, identity }: Input,
   context: Context
 ): Promise<Output | null> {

@@ -13,9 +13,10 @@ import { LoopException } from './exceptions.ts'
  * on every span and does not enter at all when the trace is unsampled — a chain that
  * disappears under sampling is a breaker that stops breaking in production.
  *
- * One writer, `Component.invoke`, where the hop is appended and the identity is put in scope;
- * two readers, `Call.invoke`, which puts both on the request it is about to send, and
- * `Outbox.row`, which writes the chain onto the row so it outlives the operation that caused it.
+ * One writer, `Component.invoke`, where the hop is appended and the identity and the safety of
+ * what may be reached are put in scope; two readers, `Call.invoke`, which puts them on the request
+ * it is about to send, and `Outbox.row`, which writes the chain onto the row so it outlives the
+ * operation that caused it.
  */
 
 // as openspan holds its own: a process may carry two copies of this module, and a chain that
@@ -37,6 +38,12 @@ export interface Invocation {
    * caller from before this existed; a call made under one mints its own identity instead.
    */
   id?: string
+
+  /**
+   * Whether what it may reach is a safe operation and nothing else. Carried onto every call it
+   * makes, and never dropped: the request that arrived said so, and so does every one below it.
+   */
+  readonly?: boolean
 
   /**
    * How many calls this invocation has already made to each endpoint. Two calls to one endpoint

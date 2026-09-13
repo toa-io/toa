@@ -28,6 +28,8 @@ Feature: Request body
       exposition:
         /:name:
           io:output: true
+          # `affect` is an effect that only computes, which is the route's to say
+          io:readonly: false
           GET: <operation>
       """
     When the following request is received:

@@ -3,7 +3,7 @@
 import { readFileSync } from 'node:fs'
 import dotenv from 'dotenv'
 import yargs from 'yargs/yargs'
-import { flush } from 'openspan'
+import { shutdown } from 'openspan'
 
 import { environment, findUp } from '@toa.io/generic'
 import { version } from '@toa.io/definitions'
@@ -61,15 +61,15 @@ yargs(process.argv.slice(2))
 
 /*
  * The last resort, and nothing else: a rejection nobody handled says the process is in a state
- * nobody described, so it leaves rather than carries on. It leaves with its spans, though —
- * what explains the rejection is in the ones not exported yet, and `process.exit()` emits no
- * `beforeExit` to flush them. Flushing is bounded by the exporter's own request timeout and
- * never rejects, so it cannot keep a broken process alive.
+ * nobody described, so it leaves rather than carries on. It leaves with what it observed, though
+ * — what explains the rejection is in the spans, the records and the series not exported yet, and
+ * `process.exit()` emits no `beforeExit` to flush them. Flushing is bounded by each exporter's own
+ * request timeout and never rejects, so it cannot keep a broken process alive.
  */
 process.on('unhandledRejection', async (e) => {
   console.error(e)
 
-  await flush()
+  await shutdown()
 
   process.exit(1)
 })

@@ -1,7 +1,12 @@
 import { LOGS_PREFIX, METRICS_ENV, READY_ENV, TRACES_ENV } from './const.ts'
 import { DEFAULT_ANNOTATION, normalizeAnnotation, type ReadyAnnotation } from './ready.ts'
 import type { Dependency, Probe, Variables } from '@toa.io/operations'
-import type { ExportersConfig, LevelName, MetersConfig } from 'openspan'
+import type {
+  ExportersConfig,
+  LevelName,
+  LogExportersConfig,
+  MetersConfig
+} from 'openspan'
 
 export function deployment(_: unknown, annotation?: Annotation): Dependency {
   const variables: Variables = { global: [] }
@@ -32,11 +37,21 @@ export function deployment(_: unknown, annotation?: Annotation): Dependency {
 }
 
 function addLogsVariables(annotation: LogsAnnotation, variables: Variables): void {
-  const { level, ...components } = annotation
+  const { level, exporters, ...components } = annotation
+
+  // the level is per component, and an exporter is the process's: a component override carries
+  // the one it can change
   const global = { level }
 
-  if (level !== undefined)
-    variables.global.push({ name: LOGS_PREFIX, value: JSON.stringify(global) })
+  if (exporters?.otlp !== undefined)
+    if (typeof exporters.otlp.endpoint !== 'string')
+      throw new Error('telemetry.logs.exporters.otlp.endpoint is required')
+
+  if (level !== undefined || exporters !== undefined)
+    variables.global.push({
+      name: LOGS_PREFIX,
+      value: JSON.stringify({ level, exporters })
+    })
 
   for (const [id, override] of Object.entries(components)) {
     const [namespace, name] = id.split('.')
@@ -95,7 +110,8 @@ interface Annotation {
 }
 
 interface LogsAnnotation {
-  level: LevelName
+  level?: LevelName
+  exporters?: LogExportersConfig
 }
 
 interface TracesAnnotation {

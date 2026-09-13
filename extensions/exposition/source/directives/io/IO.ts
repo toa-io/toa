@@ -3,6 +3,7 @@ import { Output } from './Output.ts'
 import { Input } from './Input.ts'
 import { Throttle } from './Throttle.ts'
 import { Status } from './Status.ts'
+import { Readonly } from './Readonly.ts'
 import { Sync } from './lib/throttle/index.ts'
 import type * as http from '../../HTTP/index.ts'
 import type { Parameter, DirectiveFamily } from '../../RTD/index.ts'
@@ -70,6 +71,8 @@ export class IO implements DirectiveFamily<Directive> {
     let restricted = false
 
     for (const directive of directives) {
+      if (directive instanceof Readonly) introspection.readonly = directive.value
+
       if (directive instanceof Input)
         introspection.input = restrict(introspection.input, directive.allowed)
 
@@ -108,7 +111,8 @@ const constructors: Record<string, Constructor> = {
   input: Input,
   output: Output,
   status: Status,
-  throttle: Throttle
+  throttle: Throttle,
+  readonly: Readonly
 }
 
 const DENIAL: Directive = new Output([])

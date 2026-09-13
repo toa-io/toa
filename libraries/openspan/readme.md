@@ -159,7 +159,11 @@ exporting([consoleExporter, new Otlp({ endpoint: 'http://localhost:4318' })])
 An absent or unavailable endpoint is tolerated and never affects the process: a request is
 bounded by `timeout` (5s by default) and its socket is released as soon as it expires, a failed
 batch is dropped, and the exporter then suspends itself for `cooldown` (30s by default),
-dropping spans instead of queueing them. One warning is logged per outage, and one info entry
+dropping spans instead of queueing them.
+
+A request that failed on a connection the endpoint had already closed is sent once more, within
+the same `timeout` — a quiet process idles its pooled connection for about as long as an endpoint
+will hold one, and a write can race the close. Nothing else is retried. One warning is logged per outage, and one info entry
 when the endpoint recovers. As a result a shutdown waits at most one `timeout` for an
 unreachable endpoint, and nothing at all while the exporter is suspended.
 
@@ -182,3 +186,42 @@ traces({
   }
 })
 ```
+
+## Log exporters
+
+Every entry a console writes is passed to a set of log exporters. The default is `consoleLogs`,
+which writes the JSON line to the streams of the console that emitted it — what a console did on
+its own before there was more than one place for an entry to go.
+
+The `OtlpLogs` exporter sends batches of entries to an OTLP/HTTP endpoint (JSON encoding), on the
+same terms as `Otlp` does spans: bounded by `timeout`, dropped rather than queued behind an
+outage, one warning per outage.
+
+```javascript
+import { logs } from 'openspan'
+
+logs({
+  exporters: {
+    console: false, // omit to keep writing the line
+    otlp: { endpoint: 'http://localhost:3100/otlp' }
+  }
+})
+```
+
+The message is the record body; the entry's attributes and context are record attributes; the
+severity travels as `severityText` and `severityNumber`; `trace_id` and `span_id` travel as the
+record's trace and span ids and as attributes. `OtlpLogsOptions.resource` names the resource the
+records are exported under, `service.name` among them.
+
+Custom exporters implement the `LogExporter` interface: `export(entry, output)` is called for
+every entry, with the console that wrote it, and must not throw. `logging(exporters)` replaces the
+set; `logging(null)` restores the default, which is the console — an empty set means silence, and
+the two are different answers. Optional `flush()` is awaited by `flushLogs()`.
+
+## Shutdown
+
+`shutdown()` sends what all three signals hold — spans, records and series — for a process leaving
+through `process.exit()`, which emits no `beforeExit`. Each is bounded by its own request timeout
+and none of them rejects, so the wait is one timeout rather than three.
+
+`flush()` is the span exporters alone, and `flushLogs()` the log exporters alone.

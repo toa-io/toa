@@ -60,6 +60,31 @@ telemetry:
       level: debug
 ```
 
+### Logs exporting
+
+An entry goes to every configured log exporter. The console writes the JSON line and is on unless
+it is turned off; `otlp` posts entries to an OTLP/HTTP endpoint and is off until one is
+configured. The two are independent: configuring one says nothing about the other.
+
+```yaml
+# context.toa.yaml
+
+telemetry:
+  logs:
+    level: info
+    exporters:
+      console: false # stops the JSON line being written; on when omitted
+      otlp:
+        endpoint: http://loki:3100/otlp # POSTs to {endpoint}/v1/logs
+```
+
+The severity threshold is the one above, per component: what a process writes is what it exports.
+A missing or unavailable endpoint costs a single warning and dropped entries, and never the
+throughput or the shutdown.
+
+See [Logs](/documentation/logs.md) for what a record carries and the resource it is exported
+under.
+
 ## Tracing
 
 Each operation invocation runs within a _span_.
@@ -266,7 +291,9 @@ Logs are not comments or documentation, nor are they a replacement for them.
 :-1: Don't:
 
 ```javascript
-context.logs.error('Failed to send the email, please check the email server configuration')
+context.logs.error(
+  'Failed to send the email, please check the email server configuration'
+)
 ```
 
 :+1: Do:
@@ -274,7 +301,7 @@ context.logs.error('Failed to send the email, please check the email server conf
 ```javascript
 context.logs.error('Failed to send the email', {
   reason: 'SMTP error',
-  status: response.statusCode,
+  status: response.statusCode
 })
 ```
 
@@ -315,7 +342,7 @@ context.logs.debug('Configuration', context.configuration)
 ```javascript
 context.logs.debug('Limits', {
   max: context.configuration.limits.max,
-  min: context.configuration.limits.min,
+  min: context.configuration.limits.min
 })
 ```
 

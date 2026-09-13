@@ -19,6 +19,8 @@ Non-scattered documentation is coming some time later.
     - Input/query segregation
     - [Successful rejections](/documentation/exceptions.md): a refusal is an answer rather
       than a failure
+    - [Readonly chains](/documentation/readonly.md): a call that may only read is refused where it
+      reaches an operation that may change state, however far down the chain
     - [Distributed exception handling](/documentation/exceptions.md#where-nobody-is-waiting): a
       failure reaches whoever is waiting, or is tried again and then kept
   - Transparent service discovery
@@ -69,7 +71,7 @@ Non-scattered documentation is coming some time later.
   - [Distributed lock manager](/connectors/atomicity/readme.md#locking)
   - [Shared rate metering](/connectors/atomicity/readme.md#metering)
 - [Telemetry](/extensions/telemetry)
-  - Structured logs
+  - [Structured logs](/documentation/logs.md): to stdout, to an OTLP endpoint, or both
   - Distributed tracing
   - [Metrics](/documentation/metrics.md): unsampled, and what the runtime records by zone
 - [Introspection](/extensions/introspection): product topology collection and visualization
