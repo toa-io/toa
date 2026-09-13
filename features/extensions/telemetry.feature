@@ -67,6 +67,28 @@ Feature: Telemetry
       42
       """
 
+  # requires loki (docker compose up loki)
+  # open http://localhost:31080 (Explore > Loki) to see the records
+  Scenario: Exporting logs over OTLP
+    Given I boot `telemetry` component
+    And logs are exported to Loki
+    When I invoke `log` with:
+      """yaml
+      input:
+        level: warn
+        message: "Hello, Loki!"
+        attributes:
+          foo: bar
+      """
+    Then the log record "Hello, Loki!" is stored with:
+      """yaml
+      severity_text: WARN
+      namespace: default
+      component: telemetry
+      operation: log
+      foo: bar
+      """
+
   Scenario: A metric is recorded on an unsampled trace
     Given an environment variable `TOA_TELEMETRY_TRACES` is set to:
       """yaml
@@ -231,6 +253,67 @@ Feature: Telemetry
               value: '{"level":"info"}'
             - name: TOA_TELEMETRY_LOGS_DEFAULT_TELEMETRY
               value: '{"level":"warn"}'
+      """
+
+  Scenario: Logs exporter annotations
+    Given I have a component `telemetry`
+    And I have a context with:
+      """yaml
+      telemetry:
+        logs:
+          level: info
+          exporters:
+            otlp:
+              endpoint: http://loki:3100/otlp
+          default.telemetry:
+            level: warn
+      """
+    When I export deployment
+    Then exported values should contain:
+      """
+      compositions:
+        - name: default-telemetry
+          variables:
+            - name: TOA_TELEMETRY_LOGS
+              value: '{"level":"info","exporters":{"otlp":{"endpoint":"http://loki:3100/otlp"}}}'
+            - name: TOA_TELEMETRY_LOGS_DEFAULT_TELEMETRY
+              value: '{"level":"warn"}'
+      """
+
+  Scenario: The console exporter is turned off by an annotation
+    Given I have a component `telemetry`
+    And I have a context with:
+      """yaml
+      telemetry:
+        logs:
+          exporters:
+            console: false
+            otlp:
+              endpoint: http://loki:3100/otlp
+      """
+    When I export deployment
+    Then exported values should contain:
+      """
+      compositions:
+        - name: default-telemetry
+          variables:
+            - name: TOA_TELEMETRY_LOGS
+              value: '{"exporters":{"console":false,"otlp":{"endpoint":"http://loki:3100/otlp"}}}'
+      """
+
+  Scenario: Logs exporter annotations are validated
+    Given I have a component `telemetry`
+    And I have a context with:
+      """yaml
+      telemetry:
+        logs:
+          exporters:
+            otlp:
+              timeout: 1000
+      """
+    Then exporting deployment fails with:
+      """
+      telemetry.logs.exporters.otlp.endpoint is required
       """
 
   Scenario: Metrics annotations

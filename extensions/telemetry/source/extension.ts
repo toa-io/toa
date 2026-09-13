@@ -1,4 +1,4 @@
-import { console, metrics, traces } from 'openspan'
+import { console, logs, metrics, traces } from 'openspan'
 import { environment } from '@toa.io/generic'
 import {
   LOGS_PREFIX,
@@ -13,22 +13,25 @@ import type { LogsOptions } from './Logs.ts'
 import type { Declaration } from '@toa.io/definitions/extensions.telemetry'
 import type { Locator } from '@toa.io/core'
 import type { extensions } from '@toa.io/core/types'
-import type { MetricsOptions, TracesOptions } from 'openspan'
+import type { LogExportersConfig, MetricsOptions, TracesOptions } from 'openspan'
 
 type Resident = extensions.Resident
 
 export class Factory implements extensions.Factory {
-  private readonly logsOptions: LogsOptions
+  private readonly logsConfig: LogsConfig
   private readonly ready: Ready | null
 
   public constructor() {
     const globEnv = environment.get(LOGS_PREFIX)
     const level = environment.get('TOA_DEV') === '1' ? 'trace' : 'info'
 
-    this.logsOptions = globEnv === undefined ? { level } : JSON.parse(globEnv)
-    this.logsOptions.level ??= level
+    this.logsConfig = globEnv === undefined ? { level } : JSON.parse(globEnv)
+    this.logsConfig.level ??= level
 
-    console.configure({ level: this.logsOptions.level })
+    console.configure({ level: this.logsConfig.level })
+
+    // after the level, which is what decides whether an entry is written at all
+    logs({ exporters: records(this.logsConfig.exporters) })
 
     const tracesEnv = environment.get(TRACES_ENV)
     const options =
@@ -70,21 +73,29 @@ export class Factory implements extensions.Factory {
     const overEnv = environment.get(`${LOGS_PREFIX}_${locator.uppercase}`)
     const override = overEnv !== undefined ? JSON.parse(overEnv) : undefined
 
-    const { level } = Object.assign({}, this.logsOptions, override)
+    const { level } = Object.assign({}, this.logsConfig, override)
 
     return new Logs(locator, { level })
   }
 }
 
 /**
- * Tracing is off unless it is configured. The console exporter is a local development
- * mechanism, so it is turned on for `toa dev` and for a boot trace the CLI has already
- * asked for (`runtime/boot/src/span.js`), and nowhere else — a deployment that wants
- * traces annotates `telemetry.traces.exporters`.
- *
- * `extensions/exposition/source/Factory.ts` says the same thing for the gateway process,
- * which boots without this extension.
+ * What the records say they came from. The same resource the series carry, so that one backend
+ * holding several products and several environments separates them by the same attributes
+ * whichever signal is being read.
  */
+function records(exporters?: LogExportersConfig): LogExportersConfig | undefined {
+  if (exporters?.otlp !== undefined) {
+    const resource = (exporters.otlp.resource ??= {})
+
+    resource['service.name'] ??= environment.get('TOA_CONTEXT')
+    resource['service.namespace'] ??= environment.get('TOA_CONTEXT')
+    resource['deployment.environment.name'] ??= environment.get('TOA_ENV')
+  }
+
+  return exporters
+}
+
 /**
  * What the series say they came from. The metric names are the same in every deployment, so what
  * tells two products apart in one backend is the resource: the context is the namespace, and the
@@ -112,6 +123,19 @@ function measurements(): MetricsOptions | undefined {
   return options
 }
 
+interface LogsConfig extends LogsOptions {
+  exporters?: LogExportersConfig
+}
+
+/**
+ * Tracing is off unless it is configured. The console exporter is a local development
+ * mechanism, so it is turned on for `toa dev` and for a boot trace the CLI has already
+ * asked for (`runtime/boot/src/span.js`), and nowhere else — a deployment that wants
+ * traces annotates `telemetry.traces.exporters`.
+ *
+ * `extensions/exposition/source/Factory.ts` says the same thing for the gateway process,
+ * which boots without this extension.
+ */
 function development(): TracesOptions {
   const local =
     environment.get('TOA_DEV') === '1' || environment.get('TOA_BOOT_TRACE') === '1'

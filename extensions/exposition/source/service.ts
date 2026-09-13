@@ -1,8 +1,10 @@
 import {
   console,
+  logs,
   metrics,
   traces,
   type LevelName,
+  type LogExportersConfig,
   type MetricsOptions,
   type TracesOptions
 } from 'openspan'
@@ -69,9 +71,13 @@ function configureLogs(): void {
   const globEnv = environment.get(LOGS_PREFIX)
   const level: LevelName = environment.get('TOA_DEV') === '1' ? 'trace' : 'info'
   const options =
-    globEnv === undefined ? { level } : (JSON.parse(globEnv) as { level?: LevelName })
+    globEnv === undefined
+      ? { level }
+      : (JSON.parse(globEnv) as { level?: LevelName; exporters?: LogExportersConfig })
 
   console.configure({ level: options.level ?? level })
+
+  logs({ exporters: records(options.exporters) })
 
   const tracesEnv = environment.get(TRACES_ENV)
   const tracing =
@@ -84,6 +90,22 @@ function configureLogs(): void {
 
   traces(tracing)
   metrics(measurements())
+}
+
+/**
+ * What the records say they came from. The gateway serves several components and is none of
+ * them, so it names itself, as it does for the series.
+ */
+function records(exporters?: LogExportersConfig): LogExportersConfig | undefined {
+  if (exporters?.otlp !== undefined) {
+    const resource = (exporters.otlp.resource ??= {})
+
+    resource['service.name'] ??= 'exposition'
+    resource['service.namespace'] ??= environment.get('TOA_CONTEXT')
+    resource['deployment.environment.name'] ??= environment.get('TOA_ENV')
+  }
+
+  return exporters
 }
 
 /**

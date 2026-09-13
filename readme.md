@@ -71,7 +71,7 @@ Non-scattered documentation is coming some time later.
   - [Distributed lock manager](/connectors/atomicity/readme.md#locking)
   - [Shared rate metering](/connectors/atomicity/readme.md#metering)
 - [Telemetry](/extensions/telemetry)
-  - Structured logs
+  - [Structured logs](/documentation/logs.md): to stdout, to an OTLP endpoint, or both
   - Distributed tracing
   - [Metrics](/documentation/metrics.md): unsampled, and what the runtime records by zone
 - [Introspection](/extensions/introspection): product topology collection and visualization
