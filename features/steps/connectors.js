@@ -99,7 +99,7 @@ When(
   async function (seconds) {
     assert.ok(this.workload !== undefined, 'No process is running')
 
-    this.workload.halt(seconds)
+    this.workload.stop(seconds)
 
     await until(() => !this.workload.running(), 'the process did not halt')
   }

@@ -22,5 +22,5 @@ export const host = (workload) => ({
   // a composition booted outside a process — by a scenario, by `toa call` — has no workload, so
   // its gates are ones nothing ever takes down and a halt asked of it is nobody's to perform
   gate: (build) => workload?.gate(build) ?? new Gate(build),
-  halt: (seconds) => workload?.halt(seconds)
+  stop: (seconds) => workload?.stop(seconds)
 })

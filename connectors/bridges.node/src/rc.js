@@ -69,11 +69,11 @@ export class Quiescence extends Connector {
     this.depends(context)
   }
 
-  async stop() {
+  async pause() {
     await Promise.all(this.#stopping.map((fn) => fn(this.#context)))
   }
 
-  async resume() {
+  async unpause() {
     await Promise.all(this.#resuming.map((fn) => fn(this.#context)))
   }
 }

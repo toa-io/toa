@@ -193,11 +193,11 @@ export class Server extends Connector {
    * While the process is quiesced the port stays bound and every request is answered `503`: a
    * refused connection is not an answer, and the answer has to be the application's.
    */
-  protected override stop(): void {
+  protected override pause(): void {
     this.quiesced = true
   }
 
-  protected override resume(): void {
+  protected override unpause(): void {
     this.quiesced = false
   }
 

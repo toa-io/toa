@@ -90,7 +90,7 @@ describe('Workload', () => {
     sequence = []
 
     // a hundredth of a second, so the window is over before the assertions are
-    workload.halt(0.01)
+    workload.stop(0.01)
 
     // `-gated` and not `-above`: what a gate holds is closed, and nothing else is
     await until(() => sequence.includes('*gated'))
@@ -119,7 +119,7 @@ describe('Workload', () => {
 
     await workload.connect()
 
-    workload.halt(0.01)
+    workload.stop(0.01)
 
     await until(() => held.length === 2)
 
@@ -136,7 +136,7 @@ describe('Workload', () => {
     await workload.connect()
 
     sequence = []
-    workload.halt(0.01)
+    workload.stop(0.01)
 
     // the caller is a consumer callback: the teardown must not have begun under it
     assert.deepStrictEqual(sequence, [])
@@ -158,8 +158,8 @@ describe('Workload', () => {
 
     await workload.connect()
 
-    workload.halt(0.01)
-    workload.halt(0.01)
+    workload.stop(0.01)
+    workload.stop(0.01)
 
     await until(() => built === 2)
     await timeout(50)
@@ -172,7 +172,7 @@ describe('Workload', () => {
   it('should not halt what is not connected', async () => {
     const workload = new Workload(async () => new TestConnector('a'))
 
-    workload.halt(0.01)
+    workload.stop(0.01)
 
     await timeout(30)
 

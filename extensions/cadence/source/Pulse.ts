@@ -122,7 +122,7 @@ export class Pulse extends Connector {
    * Stops firing. An interval that falls while the process is quiet is not made up: the pulse
    * comes back to the interval it comes back in, which is what it does after a restart too.
    */
-  protected override async stop(): Promise<void> {
+  protected override async pause(): Promise<void> {
     this.quiesced = true
 
     clearTimeout(this.timer)
@@ -130,7 +130,7 @@ export class Pulse extends Connector {
     if (this.firing !== undefined) await Promise.race([this.firing, delay(DRAIN)])
   }
 
-  protected override resume(): void {
+  protected override unpause(): void {
     this.quiesced = false
 
     // as on open: this replica was not firing when the current interval began, so the

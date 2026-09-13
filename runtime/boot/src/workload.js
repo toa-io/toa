@@ -74,7 +74,7 @@ export class Workload extends Connector {
    *
    * @param {number} seconds
    */
-  halt(seconds) {
+  stop(seconds) {
     if (this.#halting || !this.connected) return
 
     this.#halting = true

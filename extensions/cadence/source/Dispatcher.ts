@@ -112,7 +112,7 @@ export class Dispatcher extends Connector {
    * is quiet is not made up: it is dispatched when the process is working again, subject to its
    * own `overdue`, as one whose time fell during a restart is.
    */
-  protected override async stop(): Promise<void> {
+  protected override async pause(): Promise<void> {
     this.quiesced = true
 
     this.off?.()
@@ -125,7 +125,7 @@ export class Dispatcher extends Connector {
     await this.settle()
   }
 
-  protected override resume(): void {
+  protected override unpause(): void {
     this.quiesced = false
 
     this.timer = setInterval(() => {

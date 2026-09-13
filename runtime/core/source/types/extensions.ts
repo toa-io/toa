@@ -55,7 +55,7 @@ export interface Host {
   gate(build: () => Promise<Connector>): Gate
 
   /** Stops this process for `seconds`, then builds it again. */
-  halt(seconds: number): void
+  stop(seconds: number): void
 }
 
 /**

@@ -235,9 +235,9 @@ export class Connector {
     this.#halted = true
 
     try {
-      await this.stop()
+      await this.pause()
     } catch (error) {
-      console.error('Connector failed to stop', { id: this.id, error })
+      console.error('Connector failed to pause', { id: this.id, error })
     }
 
     for (const dependency of this.#dependencies) await dependency.halt(visited)
@@ -256,17 +256,17 @@ export class Connector {
     for (const dependency of this.#dependencies) await dependency.restore(visited)
 
     try {
-      await this.resume()
+      await this.unpause()
     } catch (error) {
-      console.error('Connector failed to resume', { id: this.id, error })
+      console.error('Connector failed to unpause', { id: this.id, error })
     }
   }
 
   /** What this stops doing of its own accord while the tree is halted. See `halt`. */
-  protected stop(): Promise<void> | void {}
+  protected pause(): Promise<void> | void {}
 
   /** What it starts doing again. See `restore`. */
-  protected resume(): Promise<void> | void {}
+  protected unpause(): Promise<void> | void {}
 
   protected open(): Promise<void> | void {}
 
