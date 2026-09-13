@@ -43,3 +43,37 @@ export class Teardown extends Commands {
     await this.run()
   }
 }
+
+/**
+ * What a component stops while the process is halted, and starts again when it is not. Not a
+ * lifecycle moment like the phases above: the component is whole throughout, and this is what
+ * it does about the process going quiet.
+ */
+export class Quiescence extends Connector {
+  /** @type {Function[]} */
+  #stopping
+
+  /** @type {Function[]} */
+  #resuming
+
+  /** @type {toa.node.Context} */
+  #context
+
+  constructor(stopping, resuming, context) {
+    super()
+
+    this.#stopping = stopping
+    this.#resuming = resuming
+    this.#context = context
+
+    this.depends(context)
+  }
+
+  async stop() {
+    await Promise.all(this.#stopping.map((fn) => fn(this.#context)))
+  }
+
+  async resume() {
+    await Promise.all(this.#resuming.map((fn) => fn(this.#context)))
+  }
+}

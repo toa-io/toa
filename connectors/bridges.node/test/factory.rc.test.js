@@ -69,6 +69,18 @@ it('should reject an RC exporting no phase', async () => {
   const promise = factory.rc(resolve(import.meta.dirname, 'dummies/rc.none'), context)
 
   await assert.rejects(promise, (error) =>
-    /RC 'empty' must export preflight, settle, ready and\/or dispose/.test(error.message)
+    /RC 'empty' must export preflight, settle, ready, dispose, stop and\/or resume/.test(error.message)
   )
+})
+
+it('should run what a component stops and starts again', async () => {
+  const path = resolve(import.meta.dirname, 'dummies/rc.quiescence')
+  const { quiescence } = await factory.rc(path, context)
+  const { calls } = await import(resolve(path, 'rc/quiescence.js'))
+
+  await quiescence.connect()
+  await quiescence.halt()
+  await quiescence.restore()
+
+  assert.deepStrictEqual(calls, ['stop', 'resume'])
 })
