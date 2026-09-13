@@ -1,8 +1,11 @@
 # Halt
 
-Every process of a deployment stops what it is doing, closes everything it holds, and comes back
-on its own when the interval it was given is over. The processes are not replaced, and the ports
-they listen on stay bound.
+Every process of a deployment stops what it is doing, closes every connection it holds to the
+infrastructure, and comes back on its own when the interval it was given is over. The processes
+are not replaced, and the ports they listen on stay bound.
+
+For the length of the interval the broker, the database and the cache have no client left — which
+is the window to restart, upgrade or fail over the things the deployment runs on.
 
 **A halt is only as complete as your components make it.** The runtime stops what it built. An
 interval, a watcher or a connection a component started itself it did not build and cannot stop,
@@ -34,17 +37,21 @@ seconds: 300
    firing, delayed calls stop being dispatched, and each component's
    [`stop`](/connectors/bridges.node/readme.md#run-commands) run command runs.
 2. What is already in flight finishes. A halt waits for it.
-3. Everything a process holds closes — the database, the cache, the broker, outbound streams.
+3. Every connection closes — the broker, the database, the cache, and any stream still outbound.
+   A halted process holds no socket, no channel and no session against anything it runs on.
 4. When the interval is up, each process builds itself again and carries on.
 
 ## What it gives
 
-**A halted process holds no connection and stays up.** It is not restarted, evicted or replaced,
-and it stays a member of its service.
+**A halted process stays up.** It is not restarted, evicted or replaced, and it stays a member of
+its service.
 
 **It answers on every port it was listening on.** The readiness probe answers `200` and carries
 `x-toa-halted` with the seconds left, so nothing watching it replaces it. The gateway answers
 `503` with `retry-after`.
+
+**Nothing is left connected.** The infrastructure sees the whole deployment disconnect, and
+connect again when the interval is up. What happens to it in between is nobody's concern.
 
 **It ends by itself.** Nothing has to reach the deployment for it to come back.
 
@@ -106,6 +113,11 @@ interval produces. While the process is halted it is reported; once the process 
 it ends the process, because a stale context in a live process is a defect.
 
 ## Operating
+
+**The window is for work on what the deployment runs on** — upgrading the broker, failing the
+database over, moving a cluster, taking a backup with nothing writing across it. Ask for the
+interval that work needs, and for the one you can afford to be down: the deployment comes back
+when it is up, whether or not the work is finished.
 
 A halt is for a deployment that is working. The evidence that it worked is that every process came
 back, and the way to have that evidence is to have done it before.
