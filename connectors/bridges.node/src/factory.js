@@ -4,7 +4,7 @@ import { Event } from './event.js'
 import { Receiver } from './receiver.js'
 import { Guard } from './guard.js'
 import { Context } from './context.js'
-import { Phase, Teardown } from './rc.js'
+import { Phase, Quiescence, Teardown } from './rc.js'
 import { algorithm } from './algorithm.js'
 import * as classes from './algorithms/class.js'
 import * as factories from './algorithms/factory.js'
@@ -53,16 +53,20 @@ export class Factory {
     const settles = []
     const readies = []
     const disposals = []
+    const stopping = []
+    const resuming = []
 
     for (const [name, module] of modules) {
       if (
         typeof module.preflight !== 'function' &&
         typeof module.settle !== 'function' &&
         typeof module.ready !== 'function' &&
-        typeof module.dispose !== 'function'
+        typeof module.dispose !== 'function' &&
+        typeof module.stop !== 'function' &&
+        typeof module.resume !== 'function'
       )
         throw new Error(
-          `RC '${name}' must export preflight, settle, ready and/or dispose`
+          `RC '${name}' must export preflight, settle, ready, dispose, stop and/or resume`
         )
 
       if (typeof module.preflight === 'function') preflights.push(module.preflight)
@@ -72,13 +76,21 @@ export class Factory {
       if (typeof module.ready === 'function') readies.push(module.ready)
 
       if (typeof module.dispose === 'function') disposals.push(module.dispose)
+
+      if (typeof module.stop === 'function') stopping.push(module.stop)
+
+      if (typeof module.resume === 'function') resuming.push(module.resume)
     }
 
     return {
       preflight: preflights.length > 0 ? new Phase(preflights, ctx) : undefined,
       settle: settles.length > 0 ? new Phase(settles, ctx) : undefined,
       ready: readies.length > 0 ? new Phase(readies, ctx) : undefined,
-      dispose: disposals.length > 0 ? new Teardown(disposals, ctx) : undefined
+      dispose: disposals.length > 0 ? new Teardown(disposals, ctx) : undefined,
+      quiescence:
+        stopping.length > 0 || resuming.length > 0
+          ? new Quiescence(stopping, resuming, ctx)
+          : undefined
     }
   }
 }

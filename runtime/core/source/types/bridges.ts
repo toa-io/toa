@@ -36,6 +36,9 @@ export interface RunCommands {
   settle?: Connector
   ready?: Connector
   dispose?: Connector
+
+  /** what the component stops while the process is halted, and starts again after */
+  quiescence?: Connector
 }
 
 export interface Factory {

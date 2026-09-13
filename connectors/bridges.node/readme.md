@@ -92,7 +92,7 @@ implement [Algorithm Factory interface](#).
 ## Run Commands
 
 Modules in the `rc` directory of the component root run once per component lifetime, outside any
-operation. A module must export at least one of four phases, and may export several.
+operation. A module must export at least one of the commands below, and may export several.
 
 ```javascript
 // rc/providers.js
@@ -112,6 +112,8 @@ export async function dispose(context) {
 | `settle`    | on connection, once the component can call its own operations (`context.local`)          |
 | `ready`     | on connection, once the component serves every operation and its receivers are consuming |
 | `dispose`   | on disconnection, after the component has stopped serving                                |
+| `stop`      | when the process is told to go quiet, while the component is whole and still serving     |
+| `resume`    | when it is working again                                                                 |
 
 `ready` is where a process hands out its name. A caller given `context.instance` calls the
 process's [stateful](/documentation/stateful.md) operations by it, and a call made before `ready` —
@@ -126,6 +128,32 @@ export async function ready(context) {
 ```
 
 `settle` and `ready` have no counterpart: nothing runs for them on disconnection.
+
+`stop` and `resume` are not a lifecycle moment. The component is not taken down and nothing it holds
+is closed: the process has been told to stop doing anything of its own accord, and this is where a
+component does the same with whatever the runtime cannot see.
+
+```javascript
+// rc/poller.js
+
+export function stop(context) {
+  clearInterval(context.state.poller)
+}
+
+export function resume(context) {
+  context.state.poller = setInterval(() => poll(context), 1000)
+}
+```
+
+What this is for is an interval, a watcher, a subscription to something outside — anything the
+component started itself. A component that starts nothing needs neither.
+
+A component that keeps its own time and does not stop it goes on calling while the process is
+quiet, and that is seen: the halt is called off rather than performed. Worse, once the process is
+taken down the call is refused, and a rejection nobody catches ends the process.
+
+`resume` runs on the same component, with the same `context.state`. It is not a second `preflight`:
+what a component opened there is still open.
 
 `dispose` is the counterpart of `preflight`: what a component opened there is released here. It runs
 before the context it is given is disconnected, so a component can still reach its remotes while
