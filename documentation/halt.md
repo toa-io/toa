@@ -109,7 +109,9 @@ before anything closes — the component was never taken down, so `preflight` wi
 `resume` is what starts it working again. A component that has no `stop` needs neither.
 
 Otherwise: `preflight`, `settle`, `dispose` and an algorithm's `mount`/`unmount` run once per
-halt rather than once per process, which is the pairing those hooks already promise. What does not
+halt rather than once per process, which is the pairing those hooks already promise. The algorithm
+is a new object each time, so what it took from `mount` is the context it was built with and never
+an old one. What does not
 run again is a module — anything held at module scope survives a halt, because a halt replaces
 what the runtime built and not what Node loaded. **A `context` is not one of those**: a new one is
 built with the component, so anything holding the old one holds something that will never work
