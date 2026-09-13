@@ -10,6 +10,8 @@ properties:
     minimum: 1
   ui:
     type: boolean
+  halt:
+    type: boolean
   resources:
     # `null` deploys the service without any, which every deployment has to state one way
     # or the other — see `migrations/262.md`.

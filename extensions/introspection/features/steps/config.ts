@@ -20,7 +20,10 @@ environment.set(
     threshold: 64,
 
     // `ui.feature` starts its own server; the explorer must not take the port first
-    ui: false
+    ui: false,
+
+    // only `halt.feature` boots a process to halt; elsewhere nothing asks for one
+    halt: true
   })
 )
 
