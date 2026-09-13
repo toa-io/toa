@@ -29,6 +29,8 @@ export const codes = {
   Addressee: 403,
   /** the caller stopped waiting, and what it called may still run */
   Abandoned: 404,
+  /** the tree the call was made through has been taken down, and is not coming back */
+  Disposed: 405,
 
   /** a chain that came back to where it had been, or went further than a chain goes */
   Loop: 500,
@@ -169,6 +171,7 @@ export const TransmissionException = derive('Transmission')
 export const EndpointException = derive('Endpoint')
 export const AddresseeException = derive('Addressee')
 export const AbandonedException = derive('Abandoned')
+export const DisposedException = derive('Disposed')
 export const MisuseException = derive('Misuse')
 export const SafetyException = derive('Safety')
 
@@ -219,6 +222,9 @@ const OUTCOME: Record<keyof typeof codes, 'permanent' | 'transient'> = {
   Addressee: 'transient',
   // what the caller gave up on may have run, and may run yet
   Abandoned: 'transient',
+
+  // the tree is gone and a resume builds another, so the same context never works again
+  Disposed: 'permanent',
 
   // the chain is deterministic, so another attempt walks it again: a retry is another cycle
   Loop: 'permanent',
