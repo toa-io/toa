@@ -352,6 +352,11 @@ so the two carry one number.
   operation call.
 - **Independent userspace.** An application's component depends on no `@toa.io/*` package, other
   than types imported with `import type`.
+- **Kubernetes is not a requirement.** The runtime ships opinionated deployment tooling — a chart,
+  an image, a CLI — and reaching for it is the application's choice. Nothing in the runtime depends
+  on an application having been published in any particular way, or assumes that it was: what a
+  process needs is Node.js and the infrastructure it connects to. A change that would make anything
+  else true belongs in the tooling rather than in the runtime.
 - **Coded exceptions.** Startup code — a boot, a manifest being read, a deploy — may assert.
   Runtime code throws a coded exception from `@toa.io/core`.
 - **Symbols, not classes, across packages.** A value one package makes and another recognises is
