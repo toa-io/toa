@@ -132,6 +132,14 @@ export class Workload extends Connector {
 
     for (const resident of this.#residents) resident.halted?.(seconds)
 
+    /*
+     * Quiet first, then down. A source stopped before the drain begins is work that never
+     * starts, so what the teardown waits for is only what was already in hand — and a component
+     * gets its `stop` while it is still whole, which is the one moment it can release what the
+     * runtime cannot see.
+     */
+    await this.halt()
+
     await this.#down(seconds)
 
     const remaining = resumesAt - Date.now()
@@ -182,6 +190,8 @@ export class Workload extends Connector {
 
       process.exit(1)
     }
+
+    await this.restore()
 
     this.#halting = false
 
