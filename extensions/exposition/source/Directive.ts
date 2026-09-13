@@ -1,4 +1,4 @@
-import { console, type SpanOptions } from 'openspan'
+import { console, sampled, type SpanOptions } from 'openspan'
 import type { Context, OutgoingMessage, Options } from './HTTP/index.ts'
 import type { Remotes } from './Remotes.ts'
 import type { Host } from './Factory.ts'
@@ -17,7 +17,7 @@ export class Directives implements RTD.Directives {
     this.spans = sets.map((set) => ({
       precall: options(set, 'precall'),
       settle: options(set, 'settle'),
-      explain: options(set, 'explain')
+      admits: options(set, 'admits')
     }))
   }
 
@@ -35,10 +35,13 @@ export class Directives implements RTD.Directives {
 
       if (set.family.precall === undefined) continue
 
-      const out = await console.span(
-        this.spans[i].precall,
-        async () => await set.family.precall!(set.directives, context, parameters)
-      )
+      // the span's closure and frames are all an unsampled trace would pay for; see `sampled`
+      const out = sampled()
+        ? await console.span(
+            this.spans[i].precall,
+            async () => await set.family.precall!(set.directives, context, parameters)
+          )
+        : await set.family.precall(set.directives, context, parameters)
 
       if (out === null) continue
 
@@ -50,25 +53,43 @@ export class Directives implements RTD.Directives {
   }
 
   /**
-   * What the method says about itself, as its directives leave it. Each family is given
-   * what the one before it returned, and the first to refuse ends it: a method this caller
-   * cannot reach is not described at all.
+   * Whether this caller is told of the method at all. A family that says nothing admits
+   * everyone, and the first to refuse ends it.
    */
-  public async explain(
-    context: Context,
-    introspection: Introspection
-  ): Promise<Introspection | null> {
-    let described: Introspection = introspection
-
+  public async admits(context: Context): Promise<boolean> {
     for (let i = 0; i < this.sets.length; i++) {
       const set = this.sets[i]
 
+      if (set.family.admits === undefined) continue
+
+      // the span's closure and frames are all an unsampled trace would pay for; see `sampled`
+      const admitted = sampled()
+        ? await console.span(
+            this.spans[i].admits,
+            async () => await set.family.admits!(set.directives, context)
+          )
+        : await set.family.admits(set.directives, context)
+
+      if (!admitted) return false
+    }
+
+    return true
+  }
+
+  /**
+   * What the method says about itself, as its directives leave it. Each family is given what
+   * the one before it returned, and the first to answer nothing ends it: a method hidden is
+   * hidden from every answer, whoever asks.
+   *
+   * Synchronous, and without the caller: this is what a method is, and it is built once.
+   */
+  public describe(introspection: Introspection): Introspection | null {
+    let described: Introspection = introspection
+
+    for (const set of this.sets) {
       if (set.family.explain === undefined) continue
 
-      const next = await console.span(
-        this.spans[i].explain,
-        async () => await set.family.explain!(set.directives, context, described)
-      )
+      const next = set.family.explain(set.directives, described)
 
       if (next === null) return null
 
@@ -82,11 +103,14 @@ export class Directives implements RTD.Directives {
     for (let i = 0; i < this.sets.length; i++) {
       const set = this.sets[i]
 
-      if (set.family.settle !== undefined)
+      if (set.family.settle === undefined) continue
+
+      if (sampled())
         await console.span(
           this.spans[i].settle,
           async () => await set.family.settle!(set.directives, context, response)
         )
+      else await set.family.settle(set.directives, context, response)
     }
   }
 
@@ -132,20 +156,28 @@ export class DirectivesFactory implements RTD.DirectiveFactory {
    * answers here only for what it does on its own behalf.
    */
   public async preflight(context: Context): Promise<void> {
-    for (const stage of this.stages)
-      if (stage.family.preflight !== undefined)
+    for (const stage of this.stages) {
+      if (stage.family.preflight === undefined) continue
+
+      if (sampled())
         await console.span(stage.preflight, async () => {
           await stage.family.preflight!(context)
         })
+      else await stage.family.preflight(context)
+    }
   }
 
   /** Request-scoped, on the message going back. */
   public async depart(context: Context, response: OutgoingMessage): Promise<void> {
-    for (const stage of this.stages)
-      if (stage.family.depart !== undefined)
+    for (const stage of this.stages) {
+      if (stage.family.depart === undefined) continue
+
+      if (sampled())
         await console.span(stage.depart, async () => {
           await stage.family.depart!(context, response)
         })
+      else await stage.family.depart(context, response)
+    }
   }
 
   public create(declarations: RTD.syntax.Directive[], route: string = ''): Directives {
@@ -224,7 +256,7 @@ export class DirectivesFactory implements RTD.DirectiveFactory {
 
 function options(
   set: RTD.DirectiveSet,
-  stage: 'precall' | 'settle' | 'explain'
+  stage: 'precall' | 'settle' | 'admits'
 ): SpanOptions {
   const options: SpanOptions = { name: `${set.family.name} ${stage}` }
 
@@ -237,7 +269,7 @@ function options(
 interface Spans {
   precall: SpanOptions
   settle: SpanOptions
-  explain: SpanOptions
+  admits: SpanOptions
 }
 
 interface Stage {

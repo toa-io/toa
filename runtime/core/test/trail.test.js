@@ -166,4 +166,11 @@ describe('ordinal', () => {
 
     assert.equal(trail.ordinal(other, 'default.stock.reserve'), 0)
   })
+
+  it('should count for an invocation that carries no counter yet', () => {
+    const one = { hops: [hop], id: 'a1' }
+
+    assert.equal(trail.ordinal(one, 'default.stock.reserve'), 0)
+    assert.equal(trail.ordinal(one, 'default.stock.reserve'), 1)
+  })
 })

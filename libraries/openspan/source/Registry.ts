@@ -66,42 +66,50 @@ abstract class Instrument {
   public abstract series(): Series[]
 
   /**
-   * The key a point is held under, and the labels it is reported with.
-   *
+   * The key a point is held under. Read on every observation, which is why it is the string
+   * alone: the labels a point is reported with are built once, when the point is made.
+   */
+  protected key(labels: Record<string, unknown> = {}): string {
+    let key = ''
+
+    for (let i = 0; i < this.#keys.length; i++) key += this.#value(i, labels[this.#keys[i]]) + ' '
+
+    return key
+  }
+
+  /** The labels a new point is reported with, in the order they were declared. */
+  protected labels(labels: Record<string, unknown> = {}): Record<string, string> {
+    const values: Record<string, string> = {}
+
+    for (let i = 0; i < this.#keys.length; i++)
+      values[this.#keys[i]] = this.#value(i, labels[this.#keys[i]])
+
+    return values
+  }
+
+  /**
    * A value the declaration does not enumerate becomes `UNDECLARED` rather than a series of its
    * own: the values come from data, and the data is what the enumeration exists to keep out of
    * the cardinality. It is said once per key and not once per value — remembering which values
    * have been refused would be that same unbounded set, held in memory instead.
    */
-  protected resolve(labels: Record<string, unknown> = {}): Resolved {
-    const values: Record<string, string> = {}
-    let key = ''
+  #value(index: number, given: unknown): string {
+    const admitted = this.#values[index]
+    const value = given === undefined ? UNDECLARED : String(given)
 
-    for (let i = 0; i < this.#keys.length; i++) {
-      const name = this.#keys[i]
-      const admitted = this.#values[i]
-      const given = labels[name]
-      let value = given === undefined ? UNDECLARED : String(given)
+    if (admitted === null || admitted.includes(value)) return value
 
-      if (admitted !== null && !admitted.includes(value)) {
-        if (!this.#reported[i]) {
-          this.#reported[i] = true
+    if (!this.#reported[index]) {
+      this.#reported[index] = true
 
-          console.warn('Metric label value is not declared', {
-            metric: this.name,
-            label: name,
-            value
-          })
-        }
-
-        value = UNDECLARED
-      }
-
-      values[name] = value
-      key += value + ' '
+      console.warn('Metric label value is not declared', {
+        metric: this.name,
+        label: this.#keys[index],
+        value
+      })
     }
 
-    return { key, labels: values }
+    return UNDECLARED
   }
 }
 
@@ -109,10 +117,10 @@ export class Counter extends Instrument {
   readonly #points = new Map<string, Point<number>>()
 
   public add(value = 1, labels?: Record<string, unknown>): void {
-    const { key, labels: resolved } = this.resolve(labels)
+    const key = this.key(labels)
     const point = this.#points.get(key)
 
-    if (point === undefined) this.#points.set(key, { labels: resolved, value })
+    if (point === undefined) this.#points.set(key, { labels: this.labels(labels), value })
     else point.value += value
   }
 
@@ -130,19 +138,19 @@ export class Gauge extends Instrument {
   readonly #points = new Map<string, Point<number>>()
 
   public set(value: number, labels?: Record<string, unknown>): void {
-    const { key, labels: resolved } = this.resolve(labels)
+    const key = this.key(labels)
     const point = this.#points.get(key)
 
-    if (point === undefined) this.#points.set(key, { labels: resolved, value })
+    if (point === undefined) this.#points.set(key, { labels: this.labels(labels), value })
     else point.value = value
   }
 
   /** For a level whoever holds it knows only the changes to: one in flight, one no longer. */
   public add(delta: number, labels?: Record<string, unknown>): void {
-    const { key, labels: resolved } = this.resolve(labels)
+    const key = this.key(labels)
     const point = this.#points.get(key)
 
-    if (point === undefined) this.#points.set(key, { labels: resolved, value: delta })
+    if (point === undefined) this.#points.set(key, { labels: this.labels(labels), value: delta })
     else point.value += delta
   }
 
@@ -170,12 +178,12 @@ export class Histogram extends Instrument {
   }
 
   public record(value: number, labels?: Record<string, unknown>): void {
-    const { key, labels: resolved } = this.resolve(labels)
+    const key = this.key(labels)
     let point = this.#points.get(key)
 
     if (point === undefined) {
       point = {
-        labels: resolved,
+        labels: this.labels(labels),
         value: {
           count: 0,
           sum: 0,
@@ -229,11 +237,6 @@ interface Distribution {
   count: number
   sum: number
   buckets: number[]
-}
-
-interface Resolved {
-  key: string
-  labels: Record<string, string>
 }
 
 /** Label keys, each with the values it admits, or `null` where it admits any. */

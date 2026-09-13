@@ -34,6 +34,18 @@ export function decide(): boolean {
   return state.bucket?.take() ?? true
 }
 
+/**
+ * Whether a span opened now would record anything. A child of an unsampled trace records
+ * nothing and propagates nothing, so a caller that would pay to open one — a closure, the
+ * frames of an async call — can skip it and do the work directly. Where no trace is in scope
+ * the answer is yes: opening one is what makes the decision.
+ */
+export function sampled(): boolean {
+  const parent = current()
+
+  return parent === undefined || parent.sampled
+}
+
 export function create(parent?: SpanContext): SpanContext {
   const context: SpanContext = {
     traceId: parent?.traceId ?? id(TRACE_ID),

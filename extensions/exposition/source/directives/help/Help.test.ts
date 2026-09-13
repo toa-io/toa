@@ -92,7 +92,7 @@ describe('help', () => {
   it('should describe a method with what the route states', () => {
     const directives = [new Help('method', { title: 'Hot', description: 'Too hot.' })]
 
-    assert.deepStrictEqual(help.explain(directives, null as never, { errors: ['NO'] }), {
+    assert.deepStrictEqual(help.explain(directives, { errors: ['NO'] }), {
       errors: ['NO'],
       title: 'Hot',
       description: 'Too hot.'
@@ -103,7 +103,7 @@ describe('help', () => {
     // what the resource is, is not what one of its methods is
     const directives = [new Help('node', 'Pots')]
 
-    assert.deepStrictEqual(help.explain(directives, null as never, {}), {})
+    assert.deepStrictEqual(help.explain(directives, {}), {})
   })
 
   it('should refuse a directive it does not know', () => {
@@ -180,7 +180,7 @@ describe('help parameters', () => {
       new Parameters('query', { limit: { description: 'How many.' } }, '/pots/:id')
     ]
 
-    const explained = help.explain(directives, null as never, {
+    const explained = help.explain(directives, {
       route: { id: { type: 'string' } as never },
       query: { limit: { type: 'integer' } as never }
     })
@@ -194,14 +194,14 @@ describe('help parameters', () => {
   it('should leave a parameter the method does not take alone', () => {
     const directives = [new Parameters('query', { since: 'From when' }, '/pots')]
 
-    assert.deepStrictEqual(help.explain(directives, null as never, {}), {})
+    assert.deepStrictEqual(help.explain(directives, {}), {})
   })
 
   it('should answer a route variable an operation does not declare', () => {
     // `:id` on an observation is taken by the query, so nothing else describes it
     const directives = [new Parameters('route', { id: 'The pot' }, '/pots/:id')]
 
-    assert.deepStrictEqual(help.explain(directives, null as never, {}), {
+    assert.deepStrictEqual(help.explain(directives, {}), {
       route: { id: { title: 'The pot' } }
     })
   })
@@ -209,7 +209,7 @@ describe('help parameters', () => {
   it('should describe a segment a mapping renamed, under the name it answers by', () => {
     const directives = [new Parameters('route', { a: 'Which one' }, '/echo/:first')]
 
-    const explained = help.explain(directives, null as never, {
+    const explained = help.explain(directives, {
       route: { a: { type: 'string' } as never }
     })
 
@@ -220,7 +220,7 @@ describe('help parameters', () => {
     const directives = [new Parameters('route', { typo: 'Nobody' }, '/echo/:first')]
 
     assert.deepStrictEqual(
-      help.explain(directives, null as never, { route: { a: { type: 'string' } as never } }),
+      help.explain(directives, { route: { a: { type: 'string' } as never } }),
       { route: { a: { type: 'string' } } }
     )
   })

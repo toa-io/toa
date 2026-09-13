@@ -59,9 +59,11 @@ A reply to a safe request (`GET`, `HEAD`) is tagged with what it holds: `etag` i
 body the client receives, whatever that body is. A request sending the tag back in
 `if-none-match`, strong or weak (`W/"…"`), is answered `304 Not Modified`.
 
-A reply to an unsafe request carries no tag, nor does one the gateway built out of an exception,
-nor one a client may not keep: a reply stating `no-store` is never sent back to be validated.
-A directive that states a tag of its own — the checksum of a stored file — keeps it.
+A reply carries no tag where the client would never send one back: to a request that is not
+safe, and to one stating `no-store`, which the client may not keep at all. Nor does a reply the
+gateway answers on its own behalf — an exception, and the OAuth
+[discovery documents](oauth.md#discovery). A directive that states a tag of its own — the
+checksum of a stored file — keeps it.
 
 `if-match` is [concurrency control](query.md#optimistic-concurrency-control) rather than a
 validator of the representation: it carries the `VERSION` a client read in a body, so a Method

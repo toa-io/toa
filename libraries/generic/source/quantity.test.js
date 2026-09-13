@@ -56,3 +56,10 @@ it('should throw if multiplier not known', async () => {
     (error) => /'wB' doesn't look like a quantity unit/.test(error.message)
   )
 })
+
+it('should throw if the fraction is not separated by a decimal point', async () => {
+  assert.throws(
+    () => quantity('1x5'),
+    (error) => /'1x5' doesn't look like a quantity of something/.test(error.message)
+  )
+})

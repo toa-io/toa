@@ -168,7 +168,10 @@ describe('read', () => {
     await setTimeout(10) // a pull is pending
     framed.destroy()
 
-    await Promise.race([closed, setTimeout(100).then(() => assert.fail('body not destroyed'))])
+    await Promise.race([
+      closed,
+      setTimeout(100).then(() => assert.fail('body not destroyed'))
+    ])
   })
 
   it('should end with FIN when aborted', async () => {
@@ -186,7 +189,9 @@ describe('read', () => {
     assert.ok(body.destroyed)
     assert.strictEqual(
       result,
-      ['--cut', '', 'ACK', '--cut', '', 'Hello', '--cut', '', 'FIN', '--cut--'].join('\r\n')
+      ['--cut', '', 'ACK', '--cut', '', 'Hello', '--cut', '', 'FIN', '--cut--'].join(
+        '\r\n'
+      )
     )
   })
 
@@ -238,6 +243,37 @@ describe('write', () => {
     const messages = warn.mock.calls.map((call) => call.arguments[0])
 
     assert.ok(messages.includes('Message stream error'))
+  })
+
+  // the reply is made by the binding, which imports this package from its own copy: the gateway
+  // image installs `@toa.io/core` beside the runtime, and again beside the extension
+  it('should write the bytes of a reply another copy of the core encoded', async () => {
+    const copy = await import('../../../../runtime/core/source/encoded.ts')
+
+    const bytes = Buffer.from('{"id":"1"}')
+    const headers = new Map<string, string>()
+    const response = new PassThrough()
+
+    Object.assign(response, {
+      setHeader: (key: string, value: string) => headers.set(key, value),
+      hasHeader: (key: string) => headers.has(key),
+      appendHeader: () => response
+    })
+
+    const context = {
+      ...createContext(generate()),
+      encoder: formats['application/json'],
+      pipelines: { response: [] }
+    } as unknown as Context
+
+    const written = streamConsumers.buffer(response)
+
+    await write(context, response as unknown as http.ServerResponse, {
+      body: new copy.Encoded(bytes)
+    })
+
+    assert.equal((await written).toString(), bytes.toString())
+    assert.equal(headers.get('content-type'), 'application/json')
   })
 })
 
