@@ -57,5 +57,5 @@ Feature: Run command
   Scenario: Reject RC without phases
     Then I compose `rc.none` component and it fails with:
       """
-      RC 'empty' must export preflight, settle, ready, dispose, stop and/or resume
+      RC 'empty' must export preflight, settle, ready, dispose, pause and/or resume
       """

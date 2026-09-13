@@ -112,7 +112,7 @@ export async function dispose(context) {
 | `settle`    | on connection, once the component can call its own operations (`context.local`)          |
 | `ready`     | on connection, once the component serves every operation and its receivers are consuming |
 | `dispose`   | on disconnection, after the component has stopped serving                                |
-| `stop`      | when the process is told to go quiet, while the component is whole and still serving     |
+| `pause`     | when the process is told to go quiet, while the component is whole and still serving     |
 | `resume`    | when it is working again                                                                 |
 
 `ready` is where a process hands out its name. A caller given `context.instance` calls the
@@ -129,7 +129,7 @@ export async function ready(context) {
 
 `settle` and `ready` have no counterpart: nothing runs for them on disconnection.
 
-`stop` and `resume` are not a lifecycle moment. The component is not taken down and nothing it
+`pause` and `resume` are not a lifecycle moment. The component is not taken down and nothing it
 holds is closed: the process has been told to stop doing anything of its own accord, and this is
 where a component does the same with whatever the runtime cannot see — an interval, a watcher, a
 subscription to something outside.
@@ -141,21 +141,23 @@ export function preflight(context) {
   context.state.poller = setInterval(() => poll(context), 1000)
 }
 
-export function stop(context) {
+export function pause(context) {
   clearInterval(context.state.poller)
 }
 
 export const resume = preflight
 ```
 
-**What `stop` released, something has to take again, and there are two places that happens.** Where
-the process goes on to be taken down and built again, the component that comes back is a new one
-and `preflight` runs on it. Where the process starts working again *without* being rebuilt, it is
-the same component, with the same `context.state` and what it opened in `preflight` still open, and
-`resume` is the only thing that runs.
+**What `pause` released, something has to take again, and there are two places that happens.**
+Where the process goes on to be taken down and built again, the component that comes back is a new
+one and `preflight` runs on it. Where the process starts working again *without* being rebuilt, it
+is the same component, with the same `context.state` and what it opened in `preflight` still open,
+and `resume` is the only thing that runs.
 
-So `resume` is not the counterpart of `stop` — `preflight` usually is — but a component that has a
-`stop` and no `resume` is one that comes back from the second case without what it stopped.
+So `resume` is not the counterpart of `pause` — `preflight` usually is — but the second case is one
+nothing else covers, and a component that has a `pause` and no `resume` comes back from it without
+what it paused. **That is refused**: a component whose run commands export `pause` and no `resume`
+does not start, and says so.
 
 A component that keeps its own time and does not release it goes on calling while the process is
 quiet. Once the process is taken down that call is refused, and a rejection nobody catches ends

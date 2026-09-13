@@ -35,7 +35,7 @@ seconds: 300
 
 1. Every process stops doing anything of its own accord: the gateway answers `503`, pulses stop
    firing, delayed calls stop being dispatched, and each component's
-   [`stop`](/connectors/bridges.node/readme.md#run-commands) run command runs.
+   [`pause`](/connectors/bridges.node/readme.md#run-commands) run command runs.
 2. What is already in flight finishes. A halt waits for it.
 3. Every connection closes — the broker, the database, the cache, and any stream still outbound.
    A halted process holds no socket, no channel and no session against anything it runs on.
@@ -93,23 +93,23 @@ export function preflight(context) {
   context.state.poller = setInterval(() => poll(context), 1000)
 }
 
-export function stop(context) {
+export function pause(context) {
   clearInterval(context.state.poller)
 }
 
 export const resume = preflight
 ```
 
-`stop` runs while the component is still whole and still serving, which is the one moment it can
+`pause` runs while the component is still whole and still serving, which is the one moment it can
 release what the runtime cannot see.
 
-**What you had to do in `stop` you have to undo in one of two places**, because there are two ways
+**What you had to do in `pause` you have to undo in one of two places**, because there are two ways
 a process comes back. Where it was taken down for the interval, the component that comes back is a
 **new** one and `preflight` runs on it. Where the halt was cancelled before anything closed, it is
 the **same** component — the same `context.state`, everything it opened still open — and
-[`resume`](/connectors/bridges.node/readme.md#run-commands) is the only thing that runs. A
-component with a `stop` and no `resume` comes back from a cancelled halt without what it
-stopped.
+[`resume`](/connectors/bridges.node/readme.md#run-commands) is the only thing that runs. So a
+component that exports `pause` and no `resume` does not start: it would come back from a cancelled
+halt without what it paused, and go on answering as if it had not.
 
 **A `context` does not survive a halt.** A new one is built with the component, and so is the
 algorithm that took it from `mount`. What does survive is a module: anything held at module scope

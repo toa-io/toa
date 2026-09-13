@@ -1,6 +1,6 @@
-export function stop(ctx) {
+export function pause(ctx) {
   ctx.state.marks ??= []
-  ctx.state.marks.push('stop')
+  ctx.state.marks.push('pause')
 }
 
 export function resume(ctx) {

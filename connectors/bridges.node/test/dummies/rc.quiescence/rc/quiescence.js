@@ -1,7 +1,7 @@
 export const calls = []
 
-export async function stop() {
-  calls.push('stop')
+export async function pause() {
+  calls.push('pause')
 }
 
 export async function resume() {

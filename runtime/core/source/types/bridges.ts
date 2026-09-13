@@ -37,7 +37,7 @@ export interface RunCommands {
   ready?: Connector
   dispose?: Connector
 
-  /** what the component stops while the process is halted, and starts again after */
+  /** what the component pauses while the process is halted, and takes again after */
   quiescence?: Connector
 }
 

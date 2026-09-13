@@ -10,7 +10,7 @@ Feature: A process going quiet
     And I call `rc.quiet.marks`
     Then the reply is received:
       """yaml
-      - stop
+      - pause
       - resume
       """
 

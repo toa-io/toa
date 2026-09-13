@@ -37,6 +37,8 @@ export const codes = {
 
   /** a component asked for something its manifest does not declare */
   Misuse: 600,
+  /** a run command pauses what nothing takes again: `pause` with no `resume` */
+  Irresumable: 601,
 
   /** a call to an operation that may change state, made under a request that may only read */
   Safety: 700
@@ -173,6 +175,7 @@ export const AddresseeException = derive('Addressee')
 export const AbandonedException = derive('Abandoned')
 export const DisposedException = derive('Disposed')
 export const MisuseException = derive('Misuse')
+export const IrresumableException = derive('Irresumable')
 export const SafetyException = derive('Safety')
 
 export const names = swap(codes)
@@ -230,6 +233,8 @@ const OUTCOME: Record<keyof typeof codes, 'permanent' | 'transient'> = {
   Loop: 'permanent',
   // what a component did not declare, it does not declare on the next attempt either
   Misuse: 'permanent',
+  // the component is refused at start, so nothing reaches it to be attempted twice
+  Irresumable: 'permanent',
   // a transition does not become an observation, and the request goes on saying it only reads
   Safety: 'permanent'
 }

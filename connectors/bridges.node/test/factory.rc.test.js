@@ -2,7 +2,7 @@ import { it, beforeEach } from 'node:test'
 import assert from 'node:assert/strict'
 
 import { resolve } from 'node:path'
-import { Connector } from '@toa.io/core'
+import { Connector, exceptions } from '@toa.io/core'
 
 import { Factory } from '../src/factory.js'
 import { calls } from './dummies/rc/rc/phases.js'
@@ -69,11 +69,13 @@ it('should reject an RC exporting no phase', async () => {
   const promise = factory.rc(resolve(import.meta.dirname, 'dummies/rc.none'), context)
 
   await assert.rejects(promise, (error) =>
-    /RC 'empty' must export preflight, settle, ready, dispose, stop and\/or resume/.test(error.message)
+    /RC 'empty' must export preflight, settle, ready, dispose, pause and\/or resume/.test(
+      error.message
+    )
   )
 })
 
-it('should run what a component stops and starts again', async () => {
+it('should run what a component pauses and takes again', async () => {
   const path = resolve(import.meta.dirname, 'dummies/rc.quiescence')
   const { quiescence } = await factory.rc(path, context)
   const { calls } = await import(resolve(path, 'rc/quiescence.js'))
@@ -82,5 +84,17 @@ it('should run what a component stops and starts again', async () => {
   await quiescence.halt()
   await quiescence.restore()
 
-  assert.deepStrictEqual(calls, ['stop', 'resume'])
+  assert.deepStrictEqual(calls, ['pause', 'resume'])
+})
+
+it('should refuse an RC that pauses and does not resume', async () => {
+  const path = resolve(import.meta.dirname, 'dummies/rc.irresumable')
+  const promise = factory.rc(path, context)
+
+  await assert.rejects(promise, (error) => {
+    assert.strictEqual(error.code, exceptions.codes.Irresumable)
+    assert.match(error.message, /exports an RC 'pause' and no 'resume'/)
+
+    return true
+  })
 })

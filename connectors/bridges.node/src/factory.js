@@ -1,3 +1,5 @@
+import { exceptions } from '@toa.io/core'
+
 import * as load from './load.js'
 import { Runner } from './algorithms/runner.js'
 import { Event } from './event.js'
@@ -53,7 +55,7 @@ export class Factory {
     const settles = []
     const readies = []
     const disposals = []
-    const stopping = []
+    const pausing = []
     const resuming = []
 
     for (const [name, module] of modules) {
@@ -62,11 +64,11 @@ export class Factory {
         typeof module.settle !== 'function' &&
         typeof module.ready !== 'function' &&
         typeof module.dispose !== 'function' &&
-        typeof module.stop !== 'function' &&
+        typeof module.pause !== 'function' &&
         typeof module.resume !== 'function'
       )
         throw new Error(
-          `RC '${name}' must export preflight, settle, ready, dispose, stop and/or resume`
+          `RC '${name}' must export preflight, settle, ready, dispose, pause and/or resume`
         )
 
       if (typeof module.preflight === 'function') preflights.push(module.preflight)
@@ -77,10 +79,23 @@ export class Factory {
 
       if (typeof module.dispose === 'function') disposals.push(module.dispose)
 
-      if (typeof module.stop === 'function') stopping.push(module.stop)
+      if (typeof module.pause === 'function') pausing.push(module.pause)
 
       if (typeof module.resume === 'function') resuming.push(module.resume)
     }
+
+    /*
+     * A `pause` with no `resume` releases something nothing takes again. Where the process is
+     * taken down the component is built anew and `preflight` covers it, but where the halt is
+     * called off the same component carries on with whatever `pause` released still released —
+     * and nothing says so, because the component goes on answering. So it is refused here, at
+     * start, which is the earliest this is knowable: what a component exports is read by
+     * importing it, and that is this bridge rather than the build.
+     */
+    if (pausing.length > 0 && resuming.length === 0)
+      throw new exceptions.IrresumableException(
+        `Component at '${root}' exports an RC 'pause' and no 'resume'`
+      )
 
     return {
       preflight: preflights.length > 0 ? new Phase(preflights, ctx) : undefined,
@@ -88,8 +103,8 @@ export class Factory {
       ready: readies.length > 0 ? new Phase(readies, ctx) : undefined,
       dispose: disposals.length > 0 ? new Teardown(disposals, ctx) : undefined,
       quiescence:
-        stopping.length > 0 || resuming.length > 0
-          ? new Quiescence(stopping, resuming, ctx)
+        pausing.length > 0 || resuming.length > 0
+          ? new Quiescence(pausing, resuming, ctx)
           : undefined
     }
   }
