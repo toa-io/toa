@@ -62,6 +62,12 @@ export interface Request<Input = any, Entity = any> {
    * response body spends nothing on reading it. What answers one encodes it once.
    */
   encoded?: boolean
+  /**
+   * Whether this call, and every call made under it, may reach only a safe operation. Stamped by
+   * the framework and carried down the chain; set and never cleared, so a call made under one is
+   * readonly whatever it says of itself. See `core/source/safety.ts`.
+   */
+  readonly?: boolean
   /** the sender validated against the contract, so the recipient does not */
   authentic?: boolean
   /** W3C traceparent */

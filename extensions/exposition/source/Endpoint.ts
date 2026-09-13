@@ -18,13 +18,23 @@ export class Endpoint implements RTD.Endpoint {
   private readonly discovery: Promise<Remote>
   private remote: Remote | null = null
 
+  /** Whether the method this serves is a safe one, which `io:readonly` overrides per request. */
+  private readonly safe: boolean
+
   /** What the operation says, with what the route takes already split out of it. */
   private introspection: Introspection | null = null
 
-  public constructor(endpoint: string, mapping: Mapping, discovery: Promise<Remote>) {
+  // eslint-disable-next-line max-params
+  public constructor(
+    endpoint: string,
+    mapping: Mapping,
+    discovery: Promise<Remote>,
+    safe: boolean = false
+  ) {
     this.endpoint = endpoint
     this.mapping = mapping
     this.discovery = discovery
+    this.safe = safe
   }
 
   public async call(
@@ -52,6 +62,9 @@ export class Endpoint implements RTD.Endpoint {
      */
     if (context.encoder?.type === JSON_TYPE && context.reads !== true && !context.procedural)
       request.encoded = true
+
+    // what the method means, unless a route said otherwise; see `documentation/readonly.md`
+    if (context.readonly ?? this.safe) request.readonly = true
 
     this.remote ??= await this.discovery
 
@@ -163,9 +176,15 @@ export class EndpointsFactory implements RTD.EndpointsFactory {
 
     const discovery = this.remotes.discover(namespace, component, branch?.version)
 
-    return new Endpoint(method.mapping.endpoint, mapping, discovery)
+    return new Endpoint(method.mapping.endpoint, mapping, discovery, SAFE.has(method.verb))
   }
 }
+
+/**
+ * The methods that only read, as RFC 9110 defines safe ones. `OPTIONS` is not among them because it
+ * reaches no endpoint, and `TRACE` because the server answers it `501`.
+ */
+const SAFE = new Set(['GET', 'HEAD'])
 
 const INTERRUPT = true
 

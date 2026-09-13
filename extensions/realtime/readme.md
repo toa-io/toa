@@ -106,10 +106,14 @@ Realtime extension, and are
 accessible via the `/realtime/streams/:key/` resource with
 the [`auth:id: key`](/extensions/exposition/documentation/access.md#id) authorization rule.
 
+Opening a stream is not a read, and `GET` is the method a client opens one with, so the route
+declares [`io:readonly: false`](/extensions/exposition/documentation/io.md#readonly).
+
 Refer to the [Exposition extension](/extensions/exposition) for more details:
 
 - [Multipart responses](/extensions/exposition/documentation/protocol.md#multipart-types)
 - [Access authorization](/extensions/exposition/documentation/access.md)
+- [Readonly chains](/documentation/readonly.md)
 
 ## Resources management
 

@@ -79,13 +79,23 @@ describe('output', () => {
 
 describe('annotations', () => {
   it('should read what the verb says of the call', () => {
-    assert.deepEqual(annotations('GET'), { readOnlyHint: true })
-    assert.deepEqual(annotations('HEAD'), { readOnlyHint: true })
-    assert.deepEqual(annotations('DELETE'), {
+    assert.deepEqual(annotations('GET', {}), { readOnlyHint: true })
+    assert.deepEqual(annotations('HEAD', {}), { readOnlyHint: true })
+    assert.deepEqual(annotations('DELETE', {}), {
       destructiveHint: true,
       idempotentHint: true
     })
-    assert.deepEqual(annotations('PUT'), { idempotentHint: true })
-    assert.equal(annotations('POST'), undefined)
+    assert.deepEqual(annotations('PUT', {}), { idempotentHint: true })
+    assert.equal(annotations('POST', {}), undefined)
+  })
+
+  // a client may call a read-only tool without asking, so what the route says is believed
+  it('should read what the route says of it over the verb', () => {
+    assert.equal(annotations('GET', { readonly: false }), undefined)
+    assert.deepEqual(annotations('POST', { readonly: true }), { readOnlyHint: true })
+    assert.deepEqual(annotations('DELETE', { readonly: false }), {
+      destructiveHint: true,
+      idempotentHint: true
+    })
   })
 })

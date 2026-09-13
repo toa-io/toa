@@ -2,7 +2,7 @@ import { Readable } from 'node:stream'
 import { current, encode } from 'openspan'
 import { Connector } from './connector.ts'
 import { derive, newid } from './entities/newid.ts'
-import { RequestContractException } from './exceptions.ts'
+import { RequestContractException, SafetyException } from './exceptions.ts'
 import { abandoned, waiting } from './abandon.ts'
 import * as addressed from './instance.ts'
 import * as trail from './trail.ts'
@@ -23,13 +23,17 @@ export class Call extends Connector {
   /** whether a call to it names the process it goes to */
   readonly #stateful: boolean
 
+  /** whether what it calls is incapable of changing the State; see `safety.ts` */
+  readonly #safe: boolean
+
   // eslint-disable-next-line max-params
   public constructor(
     transmitter: Transmission,
     contract: Contract,
     target: string,
     source?: Source,
-    stateful: boolean = false
+    stateful: boolean = false,
+    safe: boolean = false
   ) {
     super()
 
@@ -38,6 +42,7 @@ export class Call extends Connector {
     this.#target = target
     this.#source = source
     this.#stateful = stateful
+    this.#safe = safe
 
     this.depends(transmitter)
   }
@@ -45,10 +50,19 @@ export class Call extends Connector {
   public async invoke(request: Request = {}, options: Options = {}): Promise<any> {
     const invocation = trail.current()
 
-    this.#refuse(request, options)
+    /*
+     * The process a call goes to, which the transmission is handed beside what the call asks, and
+     * what the caller said of reading, which is not the answer on its own.
+     */
+    const { instance, readonly: stated, ...asked } = request
 
-    // the process a call goes to, which the transmission is handed beside what the call asks
-    const { instance, ...asked } = request
+    /*
+     * The disjunction is what makes it a guarantee rather than a convention: a caller under a
+     * readonly invocation cannot clear it for a call of its own.
+     */
+    const readonly = stated === true || invocation?.readonly === true
+
+    this.#refuse(request, options, readonly)
 
     /*
      * The envelope is built around what the caller asked for rather than written over it: one
@@ -80,6 +94,7 @@ export class Call extends Connector {
     // nothing carries a key it has no value for onto the wire
     if (envelope.source === undefined) delete envelope.source
     if (envelope.trail === undefined) delete envelope.trail
+    if (readonly) envelope.readonly = true
 
     this.#contract.fit(envelope)
 
@@ -115,9 +130,12 @@ export class Call extends Connector {
   }
 
   /** A call whose making contradicts what it calls is refused before anything is sent. */
-  #refuse(request: Request, options: Options): void {
+  #refuse(request: Request, options: Options, readonly: boolean): void {
     const { instance, task } = request
     const { timeout, signal } = options
+
+    if (readonly && !this.#safe)
+      throw new SafetyException(`'${this.#target}' may change state, and this call may only read`)
 
     if (this.#stateful && instance === undefined)
       throw new RequestContractException(

@@ -79,9 +79,12 @@ export class Component<O extends Invocable = Invocable> extends Connector {
 
       /*
        * The identity is put in scope with the chain: an operation reaches neither, and the
-       * calls it makes derive their own from what it is serving.
+       * calls it makes derive their own from what it is serving. So is whether this request may
+       * only read, which is what every call the operation makes is then held to.
        */
       const scope: trail.Invocation = { hops, id: request?.id }
+
+      if (request?.readonly === true) scope.readonly = true
 
       task = async (): Promise<any> => trail.follow(scope, invocation)
     }

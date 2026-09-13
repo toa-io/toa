@@ -80,13 +80,15 @@ async function unmanaged(input, collection, context) {
 ```
 
 > Unmanaged operations lack concurrency control, events, object identification, versioning,
-> timestamps and other features provided by the runtime.
+> timestamps, [cross-region replication](/extensions/convergence) and other features provided by the
+> runtime.
 
 **An unmanaged operation reads. It never writes.** Everything the runtime provides is what a
 write depends on, so a write made here is a write without a version to guard it, without the
 timestamps the rest of the system reads, without an identifier the runtime issued, and without
-the event that tells anything it happened. Use a Transition for one object, a Transition over
-`objects` for many, and an Assignment for a changeset.
+the event that tells anything it happened — which is also what would have carried it to another
+region. Use a Transition for one object, a Transition over `objects` for many, and an Assignment
+for a changeset.
 
 **Nothing removes a record.** Deletion is a `DELETED` timestamp, which every query filters on,
 so a removed entity stops being found while what it was survives — the prototype's `terminate`
@@ -96,7 +98,7 @@ anything that referred to it pointing at nothing.
 ### Safety
 
 Operations are categorized into two types based on their impact on the State: _safe_ and _unsafe_.
-Safe operations don't modify the State, while unsafe operations do.
+Safe operations cannot modify the State; unsafe operations may, whether or not a given call does.
 
 | Operation   | Safety |
 | ----------- | ------ |
@@ -105,6 +107,13 @@ Safe operations don't modify the State, while unsafe operations do.
 | Assignment  | Unsafe |
 | Computation | Safe   |
 | Effect      | Unsafe |
+| Unmanaged   | Unsafe |
+
+An Unmanaged operation is given the driver's own handle, so the rule it is held to above is the
+author's to keep rather than the runtime's to enforce, and the runtime does not vouch for it.
+
+A request may state that it only reads, and a call to an unsafe operation made under one is refused.
+See [readonly chains](/documentation/readonly.md).
 
 ### Genuine Operations
 

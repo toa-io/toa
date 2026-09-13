@@ -174,11 +174,54 @@ describe('idempotency key', () => {
   })
 })
 
+describe('readonly', () => {
+  /** What the remote was asked to invoke, which is what the gateway built. */
+  async function sent(
+    safe: boolean,
+    readonly?: boolean
+  ): Promise<{ readonly?: boolean }> {
+    let request: { readonly?: boolean } = {}
+
+    const remote = Promise.resolve({
+      explain: async () => ({ input: null, output: null }),
+      invoke: async (_endpoint: string, sending: { readonly?: boolean }) => {
+        request = sending
+
+        return null
+      }
+    } as unknown as Remote)
+
+    const endpoint = new Endpoint('echo', Mapping.create(), remote, safe)
+
+    await endpoint.call(calling({ readonly }), [])
+
+    return request
+  }
+
+  it('should say the call only reads where the method is a safe one', async () => {
+    assert.equal((await sent(true)).readonly, true)
+  })
+
+  it('should say nothing where the method may write', async () => {
+    assert.ok(!('readonly' in (await sent(false))))
+  })
+
+  // `io:readonly`, which is what a route declaring it leaves on the context
+  it('should let a route say the call may write', async () => {
+    assert.ok(!('readonly' in (await sent(true, false))))
+  })
+
+  it('should let a route say it only reads', async () => {
+    assert.equal((await sent(false, true)).readonly, true)
+  })
+})
+
 interface Context {
   key: string
   identity: string
   method: string
   path: string
+  readonly: boolean
 }
 
 function calling(context: Partial<Context>): http.Context {
@@ -190,6 +233,7 @@ function calling(context: Partial<Context>): http.Context {
     body: async () => ({}),
     url: new URL('https://nex.toa.io' + (context.path ?? '/pots/')),
     request: { method: context.method ?? 'POST', headers },
-    identity: context.identity === undefined ? null : { id: context.identity }
+    identity: context.identity === undefined ? null : { id: context.identity },
+    readonly: context.readonly
   } as unknown as http.Context
 }

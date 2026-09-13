@@ -101,6 +101,13 @@ await context.delay.cancel(id)
 The call is made once the delay has passed, and waits for the target where it is not there to
 take it. The id it answers cancels it, and `cancel` raises where the id was never issued.
 
+### Arming is a write
+
+Handing a call over stores a row, so `context.delay` raises where it is called from a chain that
+[may only read](/documentation/readonly.md) — whatever the delayed call itself would have been. Over
+HTTP that chain begins with a `GET` or a `HEAD`, so an operation reached by one arms nothing: the
+row is not stored and no id is answered, and the exception is thrown where the call was made.
+
 ### A delay is a hop
 
 The call is made by the chain that asked for it, so an operation that delays a call to itself is

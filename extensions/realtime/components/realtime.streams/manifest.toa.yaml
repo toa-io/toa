@@ -46,4 +46,7 @@ stash: ~
 exposition:
   /:key:
     auth:id: key
-    GET: create
+    GET:
+      endpoint: create
+      # an effect: opening a stream is not a read, and `GET` is the method a client opens one with
+      io:readonly: false
