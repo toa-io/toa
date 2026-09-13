@@ -59,6 +59,9 @@ export class Dispatcher extends Connector {
   private scanning = false
   private closing = false
 
+  /** Whether the process has been told to go quiet, see `stop`. */
+  private quiesced = false
+
   /** when the scan that is running started, so a tick that finds it can say how long */
   private started = 0
 
@@ -104,9 +107,40 @@ export class Dispatcher extends Connector {
     await this.settle()
   }
 
+  /**
+   * Stops scanning and disarms what is armed. A delayed call whose time falls while the process
+   * is quiet is not made up: it is dispatched when the process is working again, subject to its
+   * own `overdue`, as one whose time fell during a restart is.
+   */
+  protected override async stop(): Promise<void> {
+    this.quiesced = true
+
+    this.off?.()
+    clearInterval(this.timer)
+
+    for (const { timer } of this.armed.values()) clearTimeout(timer)
+
+    this.armed.clear()
+
+    await this.settle()
+  }
+
+  protected override resume(): void {
+    this.quiesced = false
+
+    this.timer = setInterval(() => {
+      this.tick()
+    }, this.discreteness)
+    this.timer.unref()
+
+    this.off = this.atom.onassigned(() => {
+      this.adopt()
+    })
+  }
+
   /** One scan at a time: a slow one must not have another started underneath it. */
   private tick(): void {
-    if (this.closing) return
+    if (this.closing || this.quiesced) return
 
     /*
      * Skipped, and said so. The guard itself is right — a second scan on top of one that has
