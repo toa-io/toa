@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.304](https://github.com/toa-io/toa/compare/v1.0.0-alpha.303...v1.0.0-alpha.304) (2026-09-13)
+
+### Bug Fixes
+
+* **generic:** escape the decimal point in the quantity expression ([a947232](https://github.com/toa-io/toa/commit/a9472327d37e7130bf69a700383bc5af129caf0f))
+
+
 # [1.0.0-alpha.301](https://github.com/toa-io/toa/compare/v1.0.0-alpha.300...v1.0.0-alpha.301) (2026-09-11)
 
 ### Features

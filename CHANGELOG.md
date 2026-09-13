@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.304](https://github.com/toa-io/toa/compare/v1.0.0-alpha.303...v1.0.0-alpha.304) (2026-09-13)
+
+### Bug Fixes
+
+* **core:** recognise an encoded reply whichever copy of the package made it ([643f048](https://github.com/toa-io/toa/commit/643f048784f7dc04db57194a2c64ebc148234951))
+* **generic:** escape the decimal point in the quantity expression ([a947232](https://github.com/toa-io/toa/commit/a9472327d37e7130bf69a700383bc5af129caf0f))
+
+### Performance Improvements
+
+* **core:** make an invocation's call counter where the first call is made ([894b1e5](https://github.com/toa-io/toa/commit/894b1e5c64e880e7ba7e53cf53d9a43ebde936ad))
+* **exposition:** build the tools a tree publishes once per tree ([a010ad8](https://github.com/toa-io/toa/commit/a010ad890aaf32663b3ada05d07a68f477a83deb))
+* **exposition:** describe a method once, for every caller ([8362512](https://github.com/toa-io/toa/commit/8362512b372392c2598a95f4b8ef5903ce24c31b))
+* **exposition:** skip a directive's span where the trace is not sampled ([2ca585e](https://github.com/toa-io/toa/commit/2ca585ef0d3f58560712321102ab98382d054af0))
+* **exposition:** write an answered status onto the request's own labels ([7ead1b8](https://github.com/toa-io/toa/commit/7ead1b8d02c868ef64f7bf53d25f144f2da114db))
+* **openspan:** build a metric's labels only for a new point ([edd0683](https://github.com/toa-io/toa/commit/edd06834400981a257f84c5a1352b7fd32990a2d))
+
+
 # [1.0.0-alpha.303](https://github.com/toa-io/toa/compare/v1.0.0-alpha.302...v1.0.0-alpha.303) (2026-09-12)
 
 ### Bug Fixes

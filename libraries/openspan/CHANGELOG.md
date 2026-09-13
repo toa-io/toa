@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.304](https://github.com/toa-io/toa/compare/v1.0.0-alpha.303...v1.0.0-alpha.304) (2026-09-13)
+
+### Performance Improvements
+
+* **exposition:** skip a directive's span where the trace is not sampled ([2ca585e](https://github.com/toa-io/toa/commit/2ca585ef0d3f58560712321102ab98382d054af0))
+* **openspan:** build a metric's labels only for a new point ([edd0683](https://github.com/toa-io/toa/commit/edd06834400981a257f84c5a1352b7fd32990a2d))
+
+
 # [1.0.0-alpha.303](https://github.com/toa-io/toa/compare/v1.0.0-alpha.302...v1.0.0-alpha.303) (2026-09-12)
 
 ### Features

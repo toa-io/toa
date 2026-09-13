@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.304](https://github.com/toa-io/toa/compare/v1.0.0-alpha.303...v1.0.0-alpha.304) (2026-09-13)
+
+### Bug Fixes
+
+* **core:** recognise an encoded reply whichever copy of the package made it ([643f048](https://github.com/toa-io/toa/commit/643f048784f7dc04db57194a2c64ebc148234951))
+
+### Performance Improvements
+
+* **core:** make an invocation's call counter where the first call is made ([894b1e5](https://github.com/toa-io/toa/commit/894b1e5c64e880e7ba7e53cf53d9a43ebde936ad))
+
+
 # [1.0.0-alpha.303](https://github.com/toa-io/toa/compare/v1.0.0-alpha.302...v1.0.0-alpha.303) (2026-09-12)
 
 ### Features

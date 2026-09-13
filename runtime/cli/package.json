@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/cli",
-  "version": "1.0.0-alpha.303",
+  "version": "1.0.0-alpha.304",
   "type": "module",
   "description": "Toa CLI",
   "author": "temich <tema.gurtovoy@gmail.com>",
@@ -39,12 +39,12 @@
     }
   },
   "dependencies": {
-    "@toa.io/core": "1.0.0-alpha.303",
-    "@toa.io/definitions": "1.0.0-alpha.303",
-    "@toa.io/generic": "1.0.0-alpha.301",
-    "@toa.io/norm": "1.0.0-alpha.303",
+    "@toa.io/core": "1.0.0-alpha.304",
+    "@toa.io/definitions": "1.0.0-alpha.304",
+    "@toa.io/generic": "1.0.0-alpha.304",
+    "@toa.io/norm": "1.0.0-alpha.304",
     "dotenv": "17.4.2",
-    "openspan": "1.0.0-alpha.303",
+    "openspan": "1.0.0-alpha.304",
     "yargs": "18.1.0"
   },
   "devDependencies": {
