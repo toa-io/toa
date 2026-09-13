@@ -12,6 +12,39 @@ beforeEach(() => {
   captures = new Captures()
 })
 
+const SAID = 'hello '
+
+/** A UTC string carries no milliseconds, so what it reads back is its own second. */
+const SECOND = 1000
+
+/**
+ * What a substitution answered, and the window it was made in. Read around the call rather than
+ * before it: `now` is whatever the clock said while it ran, and a test that computes the expected
+ * value first fails whenever the second rolls over in between.
+ */
+function taken(template: string): [[number, number], string] {
+  const before = Date.now()
+  const said = captures.substitute(template)
+
+  return [[before, Date.now()], said]
+}
+
+/** Whether a time the substitution answered is the window's, shifted and rounded as stated. */
+function within(
+  answered: number,
+  [before, after]: [number, number],
+  shift = 0,
+  granularity = 1
+): void {
+  const floor = Math.floor((before + shift) / granularity) * granularity
+  const ceiling = after + shift
+
+  assert.ok(
+    answered >= floor && answered <= ceiling,
+    `${answered} is not within [${floor}, ${ceiling}]`
+  )
+}
+
 it('should capture parts of the source', () => {
   captures.capture('hello world', 'hello ${{ word }}')
 
@@ -115,34 +148,27 @@ describe('pipelines', () => {
   })
 
   it('should substitute now', () => {
-    // non-deterministic :(
-    const now = Date.now().toString().slice(0, -3)
-    const past = (Date.now() - 86400000).toString().slice(0, -3)
-    const nowRx = new RegExp(`hello ${now}\\d{2}`)
-    const pastRx = new RegExp(`hello ${past}\\d{2}`)
+    const [at, now] = taken('hello #{{ now }}')
+    const [shifted, past] = taken('hello #{{ now -86400000 }}')
 
-    assert.match(captures.substitute('hello #{{ now }}'), nowRx)
-    assert.match(captures.substitute('hello #{{ now -86400000 }}'), pastRx)
+    within(Number(now.slice(SAID.length)), at)
+    within(Number(past.slice(SAID.length)), shifted, -86400000)
   })
 
   it('should convert date to utc string', () => {
-    const now = new Date().toUTCString().slice(0, -7)
-    const past = new Date(Date.now() - 86400000).toUTCString().slice(0, -7)
-    const nowRx = new RegExp(`hello ${now}:\\d{2} GMT`)
-    const pastRx = new RegExp(`hello ${past}:\\d{2} GMT`)
+    const [at, utc] = taken('hello #{{ utc }}')
+    const [piped, through] = taken('hello #{{ now | utc }}')
+    const [shifted, past] = taken('hello #{{ now -86400000 | utc }}')
 
-    assert.match(captures.substitute('hello #{{ utc }}'), nowRx)
-    assert.match(captures.substitute('hello #{{ now | utc }}'), nowRx)
-    assert.match(captures.substitute('hello #{{ now -86400000 | utc }}'), pastRx)
+    within(Date.parse(utc.slice(SAID.length)), at, 0, SECOND)
+    within(Date.parse(through.slice(SAID.length)), piped, 0, SECOND)
+    within(Date.parse(past.slice(SAID.length)), shifted, -86400000, SECOND)
   })
 
   it('should convert to timestamp', () => {
-    const timestamp = Math.floor(Date.now() / 1000)
+    const [at, unix] = taken('hello #{{ now | utc | unix }}')
 
-    assert.strictEqual(
-      captures.substitute('hello #{{ now | utc | unix }}'),
-      `hello ${timestamp}`
-    )
+    within(Number(unix.slice(SAID.length)) * 1000, at, 0, SECOND)
   })
 
   it('should print', () => {
