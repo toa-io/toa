@@ -66,7 +66,8 @@ exposition:
     # authority, and the map's role is already held by whoever draws it
     auth:role: system:halt
     io:output: true
-    GET: enumerate
+
+    # writing only. The records are kept — a halt needs no retraction because `CREATED` and
+    # `seconds` answer whether one is on — but nothing reads them over HTTP: a process is told
+    # by the event, and during a halt the gateway answers 503 to whoever would ask
     POST: create
-    /:id:
-      GET: observe

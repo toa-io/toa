@@ -1,7 +1,12 @@
 # Halt
 
-Every process of a deployment stops, holds nothing open, and comes back on its own when the
-interval it was given is over.
+Every process of a deployment stops what it is doing, closes everything it holds, and comes back
+on its own when the interval it was given is over. The processes are not replaced, and the ports
+they listen on stay bound.
+
+**A halt is only as complete as your components make it.** The runtime stops what it built. An
+interval, a watcher or a connection a component started itself it did not build and cannot stop,
+and a component that goes on working keeps its deployment working. Nothing checks that for you.
 
 ## Asking for it
 
@@ -11,11 +16,7 @@ introspection:
   halt: true
 ```
 
-Off by default. A stop button for a whole deployment, reachable over HTTP, is a thing an
-application asks for rather than inherits — with it off there is no endpoint to post to, no
-component deployed to answer one, and nothing listening.
-
-## Halting
+Off by default: with it off there is nothing deployed to post to and nothing listening.
 
 ```http
 POST /introspection/signals/ HTTP/1.1
@@ -25,68 +26,58 @@ type: halt
 seconds: 300
 ```
 
-`seconds` is between `30` and `3600`. Requires the `system:halt` role, which is not
-`system:introspection`: reading the service map and stopping the product are not one authority.
+`seconds` is between `30` and `3600`. The route takes the `system:halt` role.
 
-The reply is the signal, and it is a record like any other:
+## What happens
 
-```http
-GET /introspection/signals/
-```
+1. Every process stops doing anything of its own accord: the gateway answers `503`, pulses stop
+   firing, delayed calls stop being dispatched, and each component's
+   [`stop`](/connectors/bridges.node/readme.md#run-commands) run command runs.
+2. What is already in flight finishes. A halt waits for it.
+3. Everything a process holds closes — the database, the cache, the broker, outbound streams.
+4. When the interval is up, each process builds itself again and carries on.
 
-`CREATED` says when it was asked for and `seconds` how long for, so whether a halt is on is read
-off the record. Nothing has to retract one, which matters, because retracting it is the one thing
-a halted deployment could not do.
+## What it gives
 
-## What a halted deployment does
+**A halted process holds no connection and stays up.** It is not restarted, evicted or replaced,
+and it stays a member of its service.
 
-**It stops doing anything of its own accord first.** The gateway answers `503`, pulses stop
-firing, delayed calls stop being dispatched. Nothing new begins.
+**It answers on every port it was listening on.** The readiness probe answers `200` and carries
+`x-toa-halted` with the seconds left, so nothing watching it replaces it. The gateway answers
+`503` with `retry-after`.
 
-**It finishes what it had.** A halt never interrupts work in flight: it waits. A request being
-served is served, an event being handled is handled, and only then does anything close.
+**It ends by itself.** Nothing has to reach the deployment for it to come back.
 
-**It holds no connection.** No database, no cache, no broker, no outbound stream.
+**Nothing in flight is interrupted.** A request being served is served, an event being handled is
+handled, and only then does anything close.
 
-**It answers.** Every port it was listening on stays bound. The readiness probe answers `200`,
-because the process is well, and carries `x-toa-halted` with the seconds left. The gateway answers
-`503` with `retry-after`, so a client is told to come back rather than left with a refused
-connection.
+## What it does not give
 
-**It comes back by itself**, with connections it has never used before, and carries on. Nothing
-has to reach it.
+**A halt cannot be called off.** Nothing can reach a halted process, so the interval is what ends
+it. Ask for one you can afford to wait out.
 
-## What to expect
+**It holds only over the processes that were there when it began.** One that starts during a halt
+comes up running, because nothing is there to tell it otherwise. Starting one is therefore the way
+to end a halt early — and the runtime starts nothing itself, so whether you have that depends on
+what supervises your processes.
 
-**A halt cannot be called off.** Nothing can reach a halted process, which is the point of it, so
-the interval is what ends it. Ask for one you can afford to wait out.
+**It reaches one deployment**, the one the signal was written in. Regions are separate deployments
+with brokers of their own, so halting another means posting to its address.
 
-**A halt holds over the processes that were there when it began.** One that starts during a halt
-comes up running and connects to everything, because nothing is there to tell it otherwise. That
-is also the only way to end a halt early — and the runtime starts nothing itself, so whether a
-deployment has that escape hatch is a property of what supervises it.
-
-**A halt reaches one deployment**, the one the signal was written in. Regions are separate
-deployments with brokers of their own, so halting another means posting to its address.
-
-**A call made to a halted component waits** on the broker and is served when it comes back, up to
-whatever the caller's own timeout is. A request to the gateway does not wait: it is answered
+**A call to a halted component waits** on the broker and is served when the component comes back,
+up to whatever the caller's own timeout is. A request to the gateway does not wait: it is answered
 `503`.
 
 **Nothing is made up afterwards.** A pulse whose interval fell inside the window is not called
-late, and a delayed call due inside it is dispatched when the deployment is back, subject to its
-own `overdue` — so a delay that cannot survive the window is a delay that is skipped in this
-region.
+late. A delayed call due inside it is dispatched when the deployment is back, subject to its own
+`overdue` — so one that cannot wait out the window is skipped in this region.
 
-**A reply that was streaming is cut**, at the moment everything closes. A stream's tail is not
-guaranteed in any case, and a rollout cuts it in the same place; a halt is worth knowing about
-because it is a thing you choose.
+**A reply that was streaming is cut**, where a halt closes everything. A stream's tail is not
+guaranteed in any case; what is worth knowing is that a halt is a moment you choose.
 
-## What a component author does differently
+## What you write
 
-Nothing, to keep working. What changes is what a component **started itself** — an interval, a
-watcher, something held open outside. The runtime did not build those and cannot take them down,
-so a component that has any releases them in `stop`:
+Nothing, to keep working. What changes is what a component **started itself**:
 
 ```javascript
 // rc/poller.js
@@ -100,35 +91,24 @@ export function stop(context) {
 }
 ```
 
-`stop` runs while the component is still whole and still serving, which is the one moment it can
-let go of what only it knows about.
+`stop` runs while the component is still whole and still serving. What starts it again is
+`preflight`: a halt takes the component down and builds a new one.
 
-**It comes back in `preflight`, not in `resume`.** A halt takes the component down and builds a new
-one, so what runs on the way back is what runs at boot. `resume` is for a halt that is called off
-before anything closes — the component was never taken down, so `preflight` will not run, and
-`resume` is what starts it working again. A component that has no `stop` needs neither.
+[`resume`](/connectors/bridges.node/readme.md#run-commands) is for a halt that is called off
+before anything closes — the component was never taken down, so `preflight` will not run.
 
-Otherwise: `preflight`, `settle`, `dispose` and an algorithm's `mount`/`unmount` run once per
-halt rather than once per process, which is the pairing those hooks already promise. The algorithm
-is a new object each time, so what it took from `mount` is the context it was built with and never
-an old one. What does not
-run again is a module — anything held at module scope survives a halt, because a halt replaces
-what the runtime built and not what Node loaded. **A `context` is not one of those**: a new one is
-built with the component, so anything holding the old one holds something that will never work
-again.
+**A `context` does not survive a halt.** A new one is built with the component, and so is the
+algorithm that took it from `mount`. What does survive is a module: anything held at module scope
+outlives a halt, because a halt replaces what the runtime built and not what Node loaded.
 
-**A call through a context whose tree has been taken down is refused.** That is what a forgotten
-interval produces, and it is reported rather than fatal while the process is halted. Once the
-process is working again the same call ends the process, because a stale context in a live process
-is a defect.
+**A call made through a context whose component is gone is refused.** That is what a forgotten
+interval produces. While the process is halted it is reported; once the process is working again
+it ends the process, because a stale context in a live process is a defect.
 
-## What the runtime cannot promise
+## Operating
 
-A halt takes down what the runtime built. What a component started itself the runtime did not
-build and cannot take down. A component that goes on working through a halt is refused, and where
-that refusal reaches nobody the process exits. Whether anything starts it again is your
-deployment's business and not the runtime's — and where something does, it comes back running.
+A halt is for a deployment that is working. The evidence that it worked is that every process came
+back, and the way to have that evidence is to have done it before.
 
-So whether a halt stops your deployment is a property of your components, and nothing checks it
-for you. **If this is your big red button, press it on a schedule.** One nobody has pressed is one
-nobody knows works, and the day you need it is the wrong day to learn otherwise.
+**If this is your big red button, press it on a schedule.** One nobody has pressed is one nobody
+knows works, and the day you need it is the wrong day to learn otherwise.
