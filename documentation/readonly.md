@@ -90,12 +90,31 @@ exposition:
 
 `HEAD` is served by the same method, and writes with it.
 
+**It is not recommended.** `safe` is not this runtime's idea. It is HTTP's, and it is there because
+other software acts on it — [RFC 9110 §9.2.1](https://www.rfc-editor.org/rfc/rfc9110#section-9.2.1):
+
+> The purpose of distinguishing between safe and unsafe methods is to allow automated retrieval
+> processes (spiders) and cache performance optimization (pre-fetching) to work without fear of
+> causing harm.
+
+and, of a resource whose safe method performs an unsafe action:
+
+> If the purpose of such a resource is to perform an unsafe action, then the resource owner MUST
+> disable or disallow that action when it is accessed using a safe request method. Failure to do so
+> will result in unfortunate side effects when automated processes perform a GET on every URI
+> reference for the sake of link maintenance, pre-fetching, building a search index, etc.
+
+So a crawler walking your links, a browser prefetching one, and a cache revalidating a stored reply
+each make the call, and none of them asked for what it does. The client "did not request that
+additional behavior and cannot be held accountable for it" — you are.
+
 `io:readonly` is [an `io` directive](/extensions/exposition/documentation/io.md#readonly) and is
 inherited, so a node states it for every method under it. `true` holds any other method to reading.
 
-The `readOnlyHint` of a [tool](/extensions/exposition/documentation/mcp.md) follows what the route
-declares. A crawler, a prefetch and a cache revalidating a stored reply are told nothing, and make
-the call as a [safe](https://www.rfc-editor.org/rfc/rfc9110#section-9.2.1) one.
+A model is told the truth at least: the `readOnlyHint` of a
+[tool](/extensions/exposition/documentation/mcp.md) follows what the route declares rather than the
+verb it is served under, so a client that would call a read-only tool unasked does not call this one.
+A crawler and a cache are told nothing, because HTTP has no way to say it.
 
 ## What it is not
 
