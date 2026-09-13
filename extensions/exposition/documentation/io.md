@@ -110,9 +110,9 @@ where it reaches an operation that may change state. The `io:readonly` directive
 
 ```yaml
 exposition:
-  /:key:
+  /:id:
     GET:
-      endpoint: write      # write to a file
+      endpoint: confirm    # a transition
       io:readonly: false
 ```
 
@@ -120,9 +120,9 @@ The value is a boolean, and it is what holds for the call whatever the method is
 `POST` read-only, `false` lets a `GET` write. It is inherited, so a node states it for every method
 under it.
 
-`false` on a safe method is the exception and not the way to serve one: `safe` is HTTP's own
-distinction, and a crawler, a prefetch and a cache each act on it. What that costs, and the one case
-that earns it, is in [readonly chains](/documentation/readonly.md#saying-otherwise).
+`HEAD` is served by the method of `GET`, and writes with it. A crawler, a prefetch and a cache make
+the call as a safe one whatever the route declares. See
+[readonly chains](/documentation/readonly.md#saying-otherwise).
 
 What the gateway does around a call is not the call: the credential it reads before a route is known,
 the one it re-issues on the way out, and the components a directive calls on its own behalf are each

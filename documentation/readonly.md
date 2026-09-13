@@ -50,8 +50,9 @@ nor by the one that called it.
 operation reads and never writes](/documentation/design.md#unmanaged) is the author's to keep, and
 nothing the runtime does can hold them to it.
 
-`effect` is unsafe because that is what the type means. An effect that only reads — a stream taken
-out of object storage — is reached by a route that [says so](#saying-otherwise).
+`effect` is unsafe because that is what the type means.
+
+A route that serves a safe method with an unsafe operation [says otherwise](#saying-otherwise).
 
 ## Where you meet it
 
@@ -74,45 +75,27 @@ operation reads one, and it is not among the properties a generated call signatu
 
 ## Saying otherwise
 
-A route may declare that its method does not begin a readonly chain. **Reach for this only where the
-operation is typed unsafe for something that is not a write** — an `effect` that reads an object out
-of storage, or that opens the stream the client opened a connection for. A safe method that writes is
-a write nobody asked for.
-
-`safe` is not this runtime's idea. It is HTTP's, and it is there because other software acts on it —
-[RFC 9110 §9.2.1](https://www.rfc-editor.org/rfc/rfc9110#section-9.2.1):
-
-> The purpose of distinguishing between safe and unsafe methods is to allow automated retrieval
-> processes (spiders) and cache performance optimization (pre-fetching) to work without fear of
-> causing harm.
-
-and, of a resource whose safe method performs an unsafe action:
-
-> If the purpose of such a resource is to perform an unsafe action, then the resource owner MUST
-> disable or disallow that action when it is accessed using a safe request method. Failure to do so
-> will result in unfortunate side effects when automated processes perform a GET on every URI
-> reference for the sake of link maintenance, pre-fetching, building a search index, etc.
-
-So a crawler walking your links, a browser prefetching one, and a cache revalidating a stored reply
-each make the call, and none of them asked for what it does. The client "did not request that
-additional behavior and cannot be held accountable for it" — you are.
+A method that declares `io:readonly: false` does not begin a readonly chain. The call it makes, and
+every call below it, reaches a transition, an assignment, an effect or an unmanaged operation as it
+would under `POST`:
 
 ```yaml
 # component.toa.yaml
 exposition:
-  /:key:
+  /:id:
     GET:
-      endpoint: write      # write to a file
+      endpoint: confirm    # a transition
       io:readonly: false
 ```
+
+`HEAD` is served by the same method, and writes with it.
 
 `io:readonly` is [an `io` directive](/extensions/exposition/documentation/io.md#readonly) and is
 inherited, so a node states it for every method under it. `true` holds any other method to reading.
 
-A model is told the truth at least: the `readOnlyHint` of a
-[tool](/extensions/exposition/documentation/mcp.md) follows what the route declares rather than the
-verb it is served under, so a client that would call a read-only tool unasked does not call this one.
-A crawler and a cache are told nothing, because HTTP has no way to say it.
+The `readOnlyHint` of a [tool](/extensions/exposition/documentation/mcp.md) follows what the route
+declares. A crawler, a prefetch and a cache revalidating a stored reply are told nothing, and make
+the call as a [safe](https://www.rfc-editor.org/rfc/rfc9110#section-9.2.1) one.
 
 ## What it is not
 
