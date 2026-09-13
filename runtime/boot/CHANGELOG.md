@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.305](https://github.com/toa-io/toa/compare/v1.0.0-alpha.304...v1.0.0-alpha.305) (2026-09-13)
+
+### Features
+
+* **core:** refuse a call that writes, made under a request that only reads ([92951d0](https://github.com/toa-io/toa/commit/92951d0f7b95bd5b838097dd6a42db5586968d0b))
+
+
 # [1.0.0-alpha.304](https://github.com/toa-io/toa/compare/v1.0.0-alpha.303...v1.0.0-alpha.304) (2026-09-13)
 
 **Note:** Version bump only for package @toa.io/boot

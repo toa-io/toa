@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.305](https://github.com/toa-io/toa/compare/v1.0.0-alpha.304...v1.0.0-alpha.305) (2026-09-13)
+
+### Bug Fixes
+
+* **agent:** read the clock around a substitution rather than before it ([a5e9ec9](https://github.com/toa-io/toa/commit/a5e9ec956b8827e9450ead2529c3150612a7705d))
+
+
 # [1.0.0-alpha.304](https://github.com/toa-io/toa/compare/v1.0.0-alpha.303...v1.0.0-alpha.304) (2026-09-13)
 
 **Note:** Version bump only for package @toa.io/agent

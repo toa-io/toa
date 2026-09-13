@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.305](https://github.com/toa-io/toa/compare/v1.0.0-alpha.304...v1.0.0-alpha.305) (2026-09-13)
+
+### Features
+
+* **exposition:** say that a safe method only reads, and let a route say otherwise ([a72227a](https://github.com/toa-io/toa/commit/a72227a63ba3f49e234aa984d70c53d5d6ef792d))
+* **telemetry:** export log records to an OTLP endpoint ([aa7741d](https://github.com/toa-io/toa/commit/aa7741d3d1f813ac5c65b5b91d0bcf094cbe0973))
+
+
 # [1.0.0-alpha.304](https://github.com/toa-io/toa/compare/v1.0.0-alpha.303...v1.0.0-alpha.304) (2026-09-13)
 
 ### Bug Fixes

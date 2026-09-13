@@ -1,6 +1,6 @@
 {
   "name": "openspan",
-  "version": "1.0.0-alpha.304",
+  "version": "1.0.0-alpha.305",
   "type": "module",
   "description": "OpenTelemetry tools",
   "homepage": "https://toa.io",
