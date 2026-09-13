@@ -18,7 +18,10 @@ predictable way.
    [Constraints](#constraints).
 5. **Test.** The scenarios written before the change pass, and so does `npm run features`. See
    [Tests](#tests) and [Running Features](#running-features).
-6. **Pull request.** The draft is marked ready for review, which the developer does once they
+6. **Measurement.** A change on a hot code path is compared against its base with `npm run bench`
+   before the pull request is opened, and the verdict is reported in it. See
+   [Performance](#performance).
+7. **Pull request.** The draft is marked ready for review, which the developer does once they
    consider every task done and the change fit to be read.
 
 [^1]: Meeting common sense expectations.
@@ -264,6 +267,16 @@ once, in `cucumber.tags.mjs`; `TOA_FEATURES=nightly` selects between them.
 `npm run bench` compares the request path of two revisions on one machine: the CPU every process
 spends per request, and the messages and database operations a request costs. `--profile` records
 where a revision spends it. See [benchmarks](./benchmarks/readme.md).
+
+**A change that touches a hot code path is measured before the pull request is opened**, and the
+run's verdict — for every scenario, not the ones that moved — goes into the pull request. A hot
+path is one a request crosses: the gateway, an operation, a call, a span, a log entry, a metric,
+the broker and storage drivers, and whatever they call in turn. Measurement is what makes a
+regression somebody's, while it is still one commit and not a release.
+
+`--quick` is enough for a verdict on a change that is not about performance. Nothing is proven by
+a run on a busy machine: the report names what else the CPU was doing, and a row marked so is a
+row to re-run rather than to read.
 
 ## Publishing
 
