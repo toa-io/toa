@@ -18,9 +18,9 @@ export async function mono(argv) {
   const paths = find(argv.paths)
 
   // inside the workload, so that the boot span covers it, which it did not before
-  const workload = new boot.Workload(async () => {
-    const services = await discover(paths)
-    const composition = await boot.composition(paths, argv)
+  const workload = new boot.Workload(async (workload) => {
+    const services = await discover(paths, workload)
+    const composition = workload.gate(async () => await boot.composition(paths, argv))
     const root = new Connector()
 
     root.depends([composition, ...services])

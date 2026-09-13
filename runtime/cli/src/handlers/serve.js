@@ -12,9 +12,9 @@ export const serve = async (argv) => {
 
   const paths = Array.isArray(argv.paths) ? argv.paths : [argv.paths]
 
-  const workload = new boot.Workload(async () => {
+  const workload = new boot.Workload(async (workload) => {
     // the list is exact: what it names runs, or nothing does
-    const services = await create(paths, true)
+    const services = await create(paths, true, workload)
 
     const root = new Connector()
 

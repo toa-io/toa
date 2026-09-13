@@ -12,6 +12,7 @@ import { ClientError, Exception } from './exceptions.ts'
 import { Context } from './Context.ts'
 import { Probe } from './Probe.ts'
 import { PORT, PROBE } from '@toa.io/definitions/extensions.exposition'
+import type { Gate } from '@toa.io/core'
 import type { IncomingMessage, Protocol, ServerResponse } from './types.ts'
 import type {
   Bouncer,
@@ -35,6 +36,18 @@ export class Server extends Connector {
 
   /** Whether the process has been told to go quiet, see `stop`. */
   private quiesced = false
+
+  /**
+   * The gate that holds the gateway, where there is one. While it is down the port stays bound
+   * and every request is answered `503`: a client is owed an answer, and a closed port is not
+   * one — nor is one that whatever fronts the deployment invents on its behalf.
+   */
+  private gate?: Gate
+
+  /** What a halt takes the gateway down by, so that this can say when it is back. */
+  public gated(gate: Gate): void {
+    this.gate = gate
+  }
 
   /** Resolves the wait for the last of them, while the stop is waiting. */
   private drained: (() => void) | null = null
@@ -189,10 +202,14 @@ export class Server extends Connector {
   }
 
   private listener(request: IncomingMessage, response: ServerResponse): void {
-    if (this.quiesced) {
-      response
-        .writeHead(503, { 'cache-control': 'no-store' })
-        .end()
+    // answered before anything is parsed: a gateway that is not working does no work, it says so
+    if (this.quiesced || this.gate?.holding() === false) {
+      const headers: Record<string, string> = { 'cache-control': 'no-store' }
+      const remaining = this.gate?.remaining() ?? 0
+
+      if (remaining > 0) headers['retry-after'] = remaining.toString()
+
+      response.writeHead(503, headers).end()
 
       return
     }
