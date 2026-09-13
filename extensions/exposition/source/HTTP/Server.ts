@@ -33,6 +33,9 @@ export class Server extends Connector {
   /** Every request not yet answered in full, by what it is answered on. */
   private readonly inflight = new Map<ServerResponse, AbortController>()
 
+  /** Whether the process has been told to go quiet, see `stop`. */
+  private quiesced = false
+
   /** Resolves the wait for the last of them, while the stop is waiting. */
   private drained: (() => void) | null = null
 
@@ -173,7 +176,27 @@ export class Server extends Connector {
     })
   }
 
+  /**
+   * While the process is quiesced the port stays bound and every request is answered `503`: a
+   * refused connection is not an answer, and the answer has to be the application's.
+   */
+  protected override stop(): void {
+    this.quiesced = true
+  }
+
+  protected override resume(): void {
+    this.quiesced = false
+  }
+
   private listener(request: IncomingMessage, response: ServerResponse): void {
+    if (this.quiesced) {
+      response
+        .writeHead(503, { 'cache-control': 'no-store' })
+        .end()
+
+      return
+    }
+
     request.once('error', (error) => {
       console.warn('Request error', errorAttributes(request, error))
 
