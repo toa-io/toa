@@ -1,7 +1,7 @@
 import { it, beforeEach, afterEach, mock } from 'node:test'
 import assert from 'node:assert/strict'
 import { Connector } from '@toa.io/core'
-import { HALT_GAP } from '@toa.io/definitions/extensions.introspection'
+import { CHECK_TIMEOUT, HALT_GAP } from '@toa.io/definitions/extensions.introspection'
 
 import { Halt } from './Halt.ts'
 import type { Host } from './Factory.ts'
@@ -142,6 +142,19 @@ it('should call a halt off where the stop cannot be written', async () => {
   assert.equal(cancelled, true)
 })
 
+it('should call a halt off where the stop went unanswered', async () => {
+  // written, perhaps, and never acknowledged: taking that for a stop would go down alone
+  signals.reply = new Promise(() => {})
+
+  await signalled()
+  await decided()
+  await unanswered()
+  await graced()
+
+  assert.equal(stopped, null)
+  assert.equal(cancelled, true)
+})
+
 it('should obey a stop another process called', async () => {
   edges.reply = { output: [{ id: 'an edge' }] }
 
@@ -217,6 +230,13 @@ async function received(signal: object): Promise<void> {
 /** The quiescence and the gap are out, and the map has answered. */
 async function decided(): Promise<void> {
   mock.timers.tick((QUIESCENCE + HALT_GAP) * 1000)
+
+  await settled()
+}
+
+/** The deadline on a call the decision rests on. */
+async function unanswered(): Promise<void> {
+  mock.timers.tick(CHECK_TIMEOUT)
 
   await settled()
 }

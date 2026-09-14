@@ -231,7 +231,7 @@ export class Halt extends Connector {
       const rows = Array.isArray(reply) ? reply : reply?.output
 
       if (!Array.isArray(rows)) {
-        console.warn('The map did not answer, the halt is not this process to call')
+        console.warn('The map answered something else', { reply })
 
         return false
       }
@@ -341,11 +341,24 @@ function bound(
 
 /**
  * A quiesced process that waits for an answer that never comes is a process that never comes
- * back, so every call a decision rests on is given a deadline. What times out is activity.
+ * back, so every call a decision rests on is given a deadline.
+ *
+ * What runs out of it is a failure and not an answer: a stop whose write went unacknowledged
+ * may never have been written, and a process that took it for one would go down alone.
  */
 async function race(call: Promise<any>): Promise<any> {
-  return await Promise.race([call, timeout(CHECK_TIMEOUT).then(() => undefined)])
+  const reply = await Promise.race([
+    call,
+    timeout(CHECK_TIMEOUT).then(() => UNANSWERED)
+  ])
+
+  if (reply === UNANSWERED)
+    throw new Error(`it was not answered within ${CHECK_TIMEOUT}ms`)
+
+  return reply
 }
+
+const UNANSWERED = Symbol('unanswered')
 
 interface Pending {
   id: string
