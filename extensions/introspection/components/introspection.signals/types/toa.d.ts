@@ -6,9 +6,15 @@ import type { Readable } from 'node:stream'
 
 export interface Entity {
   /** What the processes are being told to do */
-  type: "halt"
+  type: "halt" | "stop"
   /** How long every process stays disconnected before it builds itself again */
   seconds: number
+  /** How long the deployment is given to go quiet before the map is read */
+  quiescence?: number
+  /** How long a process that has found the deployment busy waits before it leaves */
+  grace?: number
+  /** The halt a stop answers */
+  signal?: string
   id: string
   VERSION: number
   CREATED: number
@@ -19,12 +25,18 @@ export interface Entity {
 
 export type CreateInput = {
   type: string
-  seconds: string
+  seconds?: number
+  quiescence?: number
+  grace?: number
+  signal?: string
 }
 
 export type TransitInput = {
-  type?: string
-  seconds?: string
+  type: string
+  seconds?: number
+  quiescence?: number
+  grace?: number
+  signal?: string
 }
 
 export interface Component {

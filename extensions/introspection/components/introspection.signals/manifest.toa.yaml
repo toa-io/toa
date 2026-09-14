@@ -15,46 +15,55 @@ entity:
     type:
       description: What the processes are being told to do
       type: string
-      enum: [halt]
+      enum: [halt, stop]
     seconds:
       description: How long every process stays disconnected before it builds itself again
       type: integer
       minimum: 30
       maximum: 3600
+    quiescence:
+      description: How long the deployment is given to go quiet before the map is read
+      type: integer
+      minimum: 5
+      maximum: 600
+    grace:
+      description: How long a process that has found the deployment busy waits before it leaves
+      type: integer
+      minimum: 2
+      maximum: 120
+    signal:
+      description: The halt a stop answers
+      type: string
   required:
     - type
     - seconds
 
 operations:
-  # `query: false` is what makes this a new signal rather than a change to one, and the
-  # properties are the entity's own say on themselves, so the bounds are stated once
+  # `query: false` is what makes this a new signal rather than a change to one. What a signal
+  # may say is the entity's own say on itself, so the bounds are stated once: a value that
+  # breaks them is refused by the record and not by the route.
   create:
     description: Tell every process of this deployment to do something.
     query: false
     forward: transit
-    input:
+    input: &signal
       type: object
       properties:
         type:
           type: string
-          default: .
         seconds:
+          type: integer
+        quiescence:
+          type: integer
+        grace:
+          type: integer
+        signal:
           type: string
-          default: .
       required:
         - type
-        - seconds
   transit:
     concurrency: retry
-    input:
-      type: object
-      properties:
-        type:
-          type: string
-          default: .
-        seconds:
-          type: string
-          default: .
+    input: *signal
 
 # the map must not describe itself
 introspection: false

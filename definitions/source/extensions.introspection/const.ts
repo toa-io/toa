@@ -59,3 +59,38 @@ export const SIGNAL = `${NAMESPACE}.${SIGNALS}.created`
  */
 export const MIN_HALT = 30
 export const MAX_HALT = 3600
+
+/**
+ * How long the deployment is given to go quiet before the map is read.
+ *
+ * It is what a drain costs and nothing else: nothing is being added to the queues, so what is
+ * in them is the backlog of the moment the signal landed. A deployment given less than it
+ * needs is not stopped — it is found busy and the halt is called off.
+ */
+export const MIN_QUIESCENCE = 5
+export const MAX_QUIESCENCE = 600
+export const DEFAULT_QUIESCENCE = 60
+
+/**
+ * How long a process that has found the deployment busy waits before it leaves the halt.
+ *
+ * Someone is always last to catch on. A process about to give up may be a beat behind one that
+ * has just seen stillness and called the stop, and if it left on its own timing the deployment
+ * would end half down. So it waits this out first, listening, and leaves only if no stop
+ * arrived.
+ */
+export const MIN_GRACE = 2
+export const MAX_GRACE = 120
+export const DEFAULT_GRACE = 10
+
+/**
+ * What a call observed just before the quiesce costs to become a row anyone can read: the
+ * flush that carries it, the queue it is published to, and the merge that writes it.
+ */
+export const HALT_GAP = 3
+
+/** How often a quiesced process flushes what it observed. See `Reporter`. */
+export const QUIESCE_INTERVAL = 1
+
+/** What a check of the map may take before the process treats it as unanswered. */
+export const CHECK_TIMEOUT = 5000
