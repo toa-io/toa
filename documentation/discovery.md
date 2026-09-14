@@ -2,25 +2,23 @@
 
 ## TL;DR
 
-A component is never told what another one provides. It asks, and what it asks for is the version
-a map names:
+A component is never told what another one provides. It asks, and a process is started with a map
+that says which version of each component it asks:
 
 ```shell
 $ toa map                      # writes .map.json beside the context
 $ toa compose ./components/*   # finds it, the way it finds .env
 ```
 
-Without a map, nothing starts.
-
 ## What is asked, and when
 
 A call is addressed by name — `<namespace>.<component>.<endpoint>` — so nothing is discovered to
 reach one. What is discovered is what a component declares:
 
-| what                        | when                              | what is read       |
-| --------------------------- | --------------------------------- | ------------------ |
-| the component you call       | the first call to it, per process | its operations     |
-| the component whose event you receive | boot                    | the event's binding |
+| what                                  | when                              | what is read        |
+| ------------------------------------- | --------------------------------- | ------------------- |
+| the component you call                | the first call to it, per process | its operations      |
+| the component whose event you receive | boot                              | the event's binding |
 
 Neither is declared, and a component's own manifest is never asked for: `context.local` and a
 receiver's target are read from what the process already has.
@@ -30,7 +28,7 @@ called in memory. Nothing of either reaches the broker.
 
 ## The map
 
-`toa map` reads the context and writes every component of it with the version it is running:
+`toa map` reads the context and writes every component of it with the version it runs:
 
 ```json
 {
@@ -48,26 +46,34 @@ The map is found the way `.env` is: walked up to from where the command runs, or
 $ toa compose ./components/* --env application/.env --map application/.map.json
 ```
 
-`toa compose`, `toa serve` and `toa mono` are refused where neither finds one, because an unmapped
-process asks whichever replica answers first.
+`toa compose`, `toa serve` and `toa mono` are refused where neither finds one: a process with no map
+asks whichever replica of a component answers first, and during a deployment that is not
+necessarily the one it is meant to talk to.
 
-A component the context [evicts](/documentation/compositions.md#evicted) is left out: this context
+A component the context [evicts](/documentation/compositions.md#evicted) is left out. This context
 does not decide what version of it is running, so a lookup of one is answered by whatever is.
 
 `toa deploy` writes the map it deploys. Everywhere else, **run `toa map` again when a component's
 sources change** — a map naming a version nothing runs is a lookup that waits.
 
-## What the version buys
+## While two versions serve
 
-Two versions of a component serve at once for as long as a rolling update takes, and both consume
-the same endpoint queues. Only replicas of the version the map names answer a lookup, so a process
-that starts during a rollout reads the contract its deployment intends rather than whichever
-replica took the message.
+Two versions of a component serve at once for as long as a deployment takes to replace it, and both
+take calls from the same queues. Only replicas of the version the map names answer a lookup, so
+what a process reads is the contract its deployment intends rather than whichever replica took the
+message.
 
 A component whose sources did not change keeps its version, so a process of a new release asks the
 replicas already running and is answered by them. Nothing has to be deployed in an order.
 
-## What a wait means
+A call is not routed by version: it goes to the endpoint's queue, which every version serves, so
+one two versions both declare is served by either. The caller validates against the contract it
+read and the callee does not validate again, so **an endpoint's input schema is yours to keep
+compatible while two versions of it serve** — the same rule a deployment holds you to for the
+State. An endpoint or an event only the newer version declares is not affected: the older one
+serves neither.
+
+## When a lookup waits
 
 A lookup has no deadline. It waits on its queue until the version it asks for answers, and says
 what it is waiting for every five seconds:
@@ -82,20 +88,9 @@ waiting on one is a process that is not ready, which is what its readiness probe
 Three things it can be: the component is starting, the map names a version nothing runs, or the
 component was never deployed.
 
-## What it does not promise
+## Declaring the binding instead
 
-**That a call reaches the version whose contract you read.** A call goes to the endpoint's queue,
-which every version serves, so an endpoint two versions both declare is served by either. The
-caller validates against the contract it discovered and the callee does not validate again, so
-**an endpoint's input schema is yours to keep compatible while two versions serve** — the same
-rule a rolling update holds you to for the State.
-
-An endpoint or an event that only the new version declares is not affected: the old one serves
-neither, and nothing routes to it.
-
-## Avoiding it
-
-A receiver states the binding, and then nothing is asked for at boot:
+A receiver that states its binding asks nothing at boot:
 
 ```yaml
 # manifest.toa.yaml
@@ -105,8 +100,8 @@ receivers:
     operation: transit
 ```
 
-A [foreign event source](/documentation/component/declaration.md#event-sources) requires this: it
-is not a component of the context, so there is nothing to ask.
+A [foreign event source](/documentation/component/declaration.md#event-sources) requires this: it is
+not a component of the context, so there is nothing to ask.
 
 ## The broker
 
