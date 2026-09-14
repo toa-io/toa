@@ -3,6 +3,30 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.306](https://github.com/toa-io/toa/compare/v1.0.0-alpha.305...v1.0.0-alpha.306) (2026-09-14)
+
+* refactor(core)!: name the quiesce hooks pause and unpause ([6e4e5f5](https://github.com/toa-io/toa/commit/6e4e5f55d43f03ea95ca8bbdaae57b949564dfa2))
+* feat(boot)!: a process can be halted and come back ([7196fa5](https://github.com/toa-io/toa/commit/7196fa51a9c882e84c3767a4fdd329fd2df319f5))
+
+### Bug Fixes
+
+* **cli:** write context.atom in generated types ([b74ec5c](https://github.com/toa-io/toa/commit/b74ec5c3a594024e1df45d58c9eb763f4744bca1))
+* **core:** walk past a connector that has already stopped ([e1a81a9](https://github.com/toa-io/toa/commit/e1a81a9af544c0da9d9787d66cd5c93a9c7a35d3))
+
+### Features
+
+* **bindings:** count what a process is handling ([2298a97](https://github.com/toa-io/toa/commit/2298a973ca80143910e988da64949a51eb1a9101))
+* **boot:** let a process go quiet and be let go again ([0fc3e66](https://github.com/toa-io/toa/commit/0fc3e66f217ab45e85f70271ab0768232b3fa088))
+* **bridges.node:** let a component stop what it started and start it again ([d10d5d1](https://github.com/toa-io/toa/commit/d10d5d16fcd181e717d9d2cef4c7814ae8f2a93f))
+* **core:** let a tree be told to stop and to start again ([cfff727](https://github.com/toa-io/toa/commit/cfff7270ebe46f3fc9ac53652b3d129474e442ed))
+
+### BREAKING CHANGES
+
+* `Host.halt` is `Host.stop`.
+* `Host` gains `gate` and `halt`, and `Factory.service` may answer a gate. An
+  extension that gates nothing keeps its connections through a halt.
+
+
 # [1.0.0-alpha.305](https://github.com/toa-io/toa/compare/v1.0.0-alpha.304...v1.0.0-alpha.305) (2026-09-13)
 
 ### Features

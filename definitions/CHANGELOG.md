@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.306](https://github.com/toa-io/toa/compare/v1.0.0-alpha.305...v1.0.0-alpha.306) (2026-09-14)
+
+* feat(introspection)!: remove payload samples ([934db2a](https://github.com/toa-io/toa/commit/934db2a2f617833cae37501c6ea8957f3d0a4c7d))
+
+### Features
+
+* **definitions:** refuse a component that is off the map where halts are on ([80b5a63](https://github.com/toa-io/toa/commit/80b5a63af971a6462cb14db89364f1904e22c887))
+* **introspection:** a signal stops every process of a deployment ([bfeda01](https://github.com/toa-io/toa/commit/bfeda01133e0388ad577203f3d00ea87861646f9))
+* **introspection:** let a deployment say what a halt may ask for ([a40d3ed](https://github.com/toa-io/toa/commit/a40d3ed6a07772be5bb747882cf1f4753b384b24))
+* **introspection:** stop a deployment only once it has been seen still ([268db9b](https://github.com/toa-io/toa/commit/268db9b5a9f95716d6fc50c384d3fa101e21ce57))
+
+### BREAKING CHANGES
+
+* `introspection.samples` is read by nothing, in a context and in a manifest
+  alike, and an edge carries no `sample`.
+
+
 # [1.0.0-alpha.305](https://github.com/toa-io/toa/compare/v1.0.0-alpha.304...v1.0.0-alpha.305) (2026-09-13)
 
 ### Features

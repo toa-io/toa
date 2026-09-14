@@ -3,6 +3,26 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.306](https://github.com/toa-io/toa/compare/v1.0.0-alpha.305...v1.0.0-alpha.306) (2026-09-14)
+
+* refactor(core)!: name the quiesce hooks pause and unpause ([6e4e5f5](https://github.com/toa-io/toa/commit/6e4e5f55d43f03ea95ca8bbdaae57b949564dfa2))
+* feat(boot)!: a process can be halted and come back ([7196fa5](https://github.com/toa-io/toa/commit/7196fa51a9c882e84c3767a4fdd329fd2df319f5))
+
+### Bug Fixes
+
+* **exposition:** expose a component whose contract changed but whose routes did not ([6b9130b](https://github.com/toa-io/toa/commit/6b9130b5d910b95b898347595104799190e290af))
+
+### Features
+
+* **exposition:** answer 503 while the process is quiet ([4ab8c08](https://github.com/toa-io/toa/commit/4ab8c08bcdc7dbbb94f841f97e44e20cf6a3f766))
+
+### BREAKING CHANGES
+
+* `Host.halt` is `Host.stop`.
+* `Host` gains `gate` and `halt`, and `Factory.service` may answer a gate. An
+  extension that gates nothing keeps its connections through a halt.
+
+
 # [1.0.0-alpha.305](https://github.com/toa-io/toa/compare/v1.0.0-alpha.304...v1.0.0-alpha.305) (2026-09-13)
 
 ### Features

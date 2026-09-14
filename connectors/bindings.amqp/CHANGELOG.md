@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.306](https://github.com/toa-io/toa/compare/v1.0.0-alpha.305...v1.0.0-alpha.306) (2026-09-14)
+
+### Features
+
+* **bindings:** count what a process is handling ([2298a97](https://github.com/toa-io/toa/commit/2298a973ca80143910e988da64949a51eb1a9101))
+
+
 # [1.0.0-alpha.305](https://github.com/toa-io/toa/compare/v1.0.0-alpha.304...v1.0.0-alpha.305) (2026-09-13)
 
 **Note:** Version bump only for package @toa.io/bindings.amqp

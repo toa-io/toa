@@ -3,6 +3,37 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.306](https://github.com/toa-io/toa/compare/v1.0.0-alpha.305...v1.0.0-alpha.306) (2026-09-14)
+
+* feat(introspection)!: remove payload samples ([934db2a](https://github.com/toa-io/toa/commit/934db2a2f617833cae37501c6ea8957f3d0a4c7d))
+* refactor(introspection)!: a signal is written and not read ([7dd17e9](https://github.com/toa-io/toa/commit/7dd17e9afd9344200737846b678379ab920c1517))
+* feat(boot)!: a process can be halted and come back ([7196fa5](https://github.com/toa-io/toa/commit/7196fa51a9c882e84c3767a4fdd329fd2df319f5))
+
+### Bug Fixes
+
+* **introspection:** do not take an unanswered write for a stop that was called ([930d231](https://github.com/toa-io/toa/commit/930d231b82ffdd0cda42cb44a9a2e4a68f7408c4))
+* **introspection:** hold the countdown badge to one width ([9ce301a](https://github.com/toa-io/toa/commit/9ce301a454174d7f41cbf04a44b76cbf28891fdb))
+* **introspection:** open the halt form on numbers that can be pressed ([1db3df1](https://github.com/toa-io/toa/commit/1db3df137d7531c8b945e511c96bb1d67ffb1996))
+* **introspection:** open the halt form on what is usual, within what is allowed ([e950c04](https://github.com/toa-io/toa/commit/e950c04733336af99ef1a533517a50f2d4c6014b))
+
+### Features
+
+* **introspection:** a HALT control in the header ([df076a5](https://github.com/toa-io/toa/commit/df076a50a329c97c57c379046791325735eb3ed2))
+* **introspection:** a signal stops every process of a deployment ([bfeda01](https://github.com/toa-io/toa/commit/bfeda01133e0388ad577203f3d00ea87861646f9))
+* **introspection:** ask for duration and quiescence on the halt form ([675dd17](https://github.com/toa-io/toa/commit/675dd1749b9d15f67171098f6ddabb37afe6535c))
+* **introspection:** hold, count down, and halt the deployment ([8dae775](https://github.com/toa-io/toa/commit/8dae77596b5923a3d74f6c9a40a6eb90047ea773))
+* **introspection:** let a deployment say what a halt may ask for ([a40d3ed](https://github.com/toa-io/toa/commit/a40d3ed6a07772be5bb747882cf1f4753b384b24))
+* **introspection:** stop a deployment only once it has been seen still ([268db9b](https://github.com/toa-io/toa/commit/268db9b5a9f95716d6fc50c384d3fa101e21ce57))
+
+### BREAKING CHANGES
+
+* `Host` gains `gate` and `halt`, and `Factory.service` may answer a gate. An
+  extension that gates nothing keeps its connections through a halt.
+* `introspection.samples` is read by nothing, in a context and in a manifest
+  alike, and an edge carries no `sample`.
+* `introspection.signals` exposes `POST` alone.
+
+
 # [1.0.0-alpha.305](https://github.com/toa-io/toa/compare/v1.0.0-alpha.304...v1.0.0-alpha.305) (2026-09-13)
 
 **Note:** Version bump only for package @toa.io/extensions.introspection
