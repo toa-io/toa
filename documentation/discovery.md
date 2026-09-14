@@ -25,6 +25,9 @@ reach one. What is discovered is what a component declares:
 Neither is declared, and a component's own manifest is never asked for: `context.local` and a
 receiver's target are read from what the process already has.
 
+A component in the same [composition](/documentation/compositions.md) is asked in memory, and so is
+called in memory. Nothing of either reaches the broker.
+
 ## The map
 
 `toa map` reads the context and writes every component of it with the version it is running:

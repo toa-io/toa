@@ -26,30 +26,32 @@ replicas already running and is answered by them.
    order for a new process to be answered.
 4. A component the context evicts is not in the map, and a lookup of one is answered by whatever
    is running — as every lookup is today.
+5. A lookup of a component composed in the same process is answered in memory and reaches no
+   broker, as it is today, and so are the calls built from it.
 
 **What is said**
 
-5. A wait names the component and the version it waits for, every five seconds, as it already names
+6. A wait names the component and the version it waits for, every five seconds, as it already names
    the component *(today)*.
-6. An event the named version does not declare fails the boot, naming the component, the event and
+7. An event the named version does not declare fails the boot, naming the component, the event and
    the version. Today it is a `TypeError`.
-7. A `compose`, a `serve` or a `mono` that finds no map is refused, and says what makes one.
+8. A `compose`, a `serve` or a `mono` that finds no map is refused, and says what makes one.
 
 **What is read**
 
-8. The map is read when a lookup is made, not once at a boot, so a process that outlives another
+9. The map is read when a lookup is made, not once at a boot, so a process that outlives another
    component's deployment asks for what is running rather than for what was.
-9. The map is found the way `.env` is: walked up to from where the command runs, or named with
-   `--map`.
+10. The map is found the way `.env` is: walked up to from where the command runs, or named with
+    `--map`.
 
 **What is not promised**
 
-10. That a call reaches the version whose contract was read. A call goes to the endpoint's queue,
+11. That a call reaches the version whose contract was read. A call goes to the endpoint's queue,
     which every version serves. The caller validates against the contract it discovered and sets
     `authentic`, so the callee does not validate again, and an endpoint two versions both declare
     with different input schemas is the author's to keep compatible — the rule a rolling update
     already holds them to for the State.
-11. Nothing about a component deployed outside this context. Its version is not the context's to
+12. Nothing about a component deployed outside this context. Its version is not the context's to
     know, which is why an evicted one is left out rather than guessed at.
 
 ### What a component author does differently
@@ -138,7 +140,10 @@ A run from a context root finds the map by itself and needs neither flag, exactl
    more, telling a component that is running without an endpoint from one that is not running. It
    is not taken: it chooses between two announcements by which replica started later, which is a
    guess, where the map is a fact stated by whoever deployed them — and it costs a channel, a
-   registry in every process and traffic that never stops.
+   registry in every process and traffic that never stops. Asking also keeps a lookup a call like
+   any other, so the loop binding answers one for a component composed in the same process without
+   the broker hearing of it; a registry would be a second way to find a peer, beside the one every
+   call already takes.
 
 ## Context
 
