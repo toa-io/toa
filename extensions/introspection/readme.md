@@ -7,11 +7,13 @@ The topology includes:
 
 - components and their entities, operations, events, and receivers;
 - declared event relations between components;
-- calls observed between components and services at runtime;
-- input and outcome samples for observed calls, when sampling is enabled.
+- calls observed between components and services at runtime.
 
 This provides a single view of both the product's declared structure and the communication paths
 that are exercised at runtime. The topology is available through a web UI and an HTTP API.
+
+An observed call is recorded as the pair it connects and nothing else: what the call carried is
+not collected, and nothing an application passes between its components reaches the topology.
 
 Introspection is enabled by default for every component in a composition.
 
@@ -21,7 +23,6 @@ Configure Introspection in `context.toa.yaml`:
 
 ```yaml
 introspection:
-  samples: false
   interval: 300
   threshold: 1024
   ui: true
@@ -32,7 +33,6 @@ All properties are optional.
 
 | Property    | Default | Description                                                                                   |
 | ----------- | ------- | --------------------------------------------------------------------------------------------- |
-| `samples`   | `false` | Enables collection of call input and outcome samples.                                         |
 | `interval`  | `300`   | Interval between topology updates, in seconds.                                                |
 | `threshold` | `1024`  | Number of distinct observed interactions that triggers an update before the interval expires. |
 | `ui`        | `true`  | Publishes the web UI.                                                                         |
@@ -62,32 +62,11 @@ does not use Exposition must disable Introspection.
 
 ### Component configuration
 
-Sampling can be prohibited for an individual component in `manifest.toa.yaml`:
-
-```yaml
-introspection:
-  samples: false
-```
-
-This restriction cannot be overridden by the context configuration.
-
-Exclude a component from the topology entirely:
+Exclude a component from the topology in its `manifest.toa.yaml`:
 
 ```yaml
 introspection: false
 ```
-
-## Samples
-
-A sample contains the input and outcome of an observed call. Sampling is disabled by default
-because call inputs may contain production or personal data.
-
-Samples are collected only when they are enabled in the context and not prohibited by the target
-component. Payloads in the `identity` namespace are never collected. Properties whose names match
-known secret patterns are redacted, streams are excluded, and oversized values are replaced with a
-truncation marker.
-
-Components that process sensitive data should disable sampling explicitly in their manifests.
 
 ## Web UI
 
