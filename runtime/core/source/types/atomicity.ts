@@ -53,7 +53,7 @@ export interface Atom extends Connector {
    */
   lock<T>(
     keys: string | string[],
-    routine: (signal: AbortSignal, context: unknown) => Promise<T>
+    routine: (signal: AbortSignal & { error: Error }, context: unknown) => Promise<T>
   ): Promise<T>
 }
 

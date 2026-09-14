@@ -24,15 +24,25 @@ export function module(context, components, shared = { types: {}, imports: {} })
 
   const blocks = [
     `/**
+ * What the replicas of this component decide together.
+ */
+export interface Atom {
+  slots: (total: number) => number[] | null
+  meter: (keys: string[], deltas: number[]) => Promise<number[]>
+  lock: <T>(keys: string | string[], routine: (signal: AbortSignal & { error: Error }, context: unknown) => Promise<T>) => Promise<T>
+}`,
+    `/**
  * What every component of '${context.name}' is given.
  *
- * What an extension puts here rather than on one component is what every component of this
- * Context declares — telemetry and fetch, which are declared for all of them.
+ * \`atom\` is there for all of them, declared in no manifest. What an extension puts here
+ * rather than on one component is what every component of this Context declares —
+ * telemetry and fetch, which are declared for all of them.
  */
 export interface Context<Local> {
   env: string
   name: string
   instance: string
+  atom: Atom
   local: Local
   remote: Remote
 ${common}

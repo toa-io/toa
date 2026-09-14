@@ -29,6 +29,19 @@ Feature: toa types
     And the file ./types/toa.d.ts contains exact line 'export interface Remote {'
     And the file ./types/toa.d.ts contains line starting with '    one: '
 
+  Scenario: Every component's context has an atom
+
+    `context.atom` is there for every component, declared in no manifest. The generator writes
+    it on the Context they share, as it writes `env`, `name` and `instance`.
+
+    Given I have a component `dummies.one`
+    And I have a context
+    And my working directory is ./
+    When I run `toa types`
+    Then the file ./types/toa.d.ts contains exact line 'export interface Atom {'
+    And the file ./types/toa.d.ts contains exact line '  atom: Atom'
+    And the file ./types/toa.d.ts contains exact line '  lock: <T>(keys: string | string[], routine: (signal: AbortSignal & { error: Error }, context: unknown) => Promise<T>) => Promise<T>'
+
   Scenario: An operation returns what it declares
     Given I have a component `reply.contract`
     And I have a context

@@ -85,7 +85,9 @@ it — `@components/<directory>` for a component, the Context's own `name` for t
 
 What a manifest does not state is not generated. An operation declaring no `output` returns
 `unknown`, unless it is one Toa itself provides — the prototype's algorithms return the scope
-they are given. An alias for something a schema does describe belongs in a file of your own:
+they are given. The Context every component shares always has `env`, `name`, `instance`,
+`atom`, `local` and `remote`; what an extension puts on every component — telemetry, fetch — is
+there too. An alias for something a schema does describe belongs in a file of your own:
 
 ```typescript
 import type { Entity } from '@components/activities'
