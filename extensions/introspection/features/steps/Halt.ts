@@ -58,6 +58,7 @@ export class Halt {
     this.signals = null
   }
 
+  /** The first member of every deployment here is the one holding the map. */
   @when('the explorer is killed')
   public async kill(): Promise<void> {
     const explorer = this.fleet[0]
@@ -163,6 +164,7 @@ async function member(paths: string[]): Promise<Member> {
     child.on('error', reject)
 
     void setTimeout(BOOT).then(() => {
+      child.kill('SIGKILL')
       reject(new Error('a process did not come up'))
     })
   })
