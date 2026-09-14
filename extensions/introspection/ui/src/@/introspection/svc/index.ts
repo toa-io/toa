@@ -1,4 +1,4 @@
-export { nodes, edges, bounds } from './store'
+export { nodes, edges, configuration } from './store'
 export { halt } from './halt'
 export type {
   Node,
@@ -7,6 +7,7 @@ export type {
   Operation,
   Event,
   Receiver,
+  Configuration,
   Bounds,
   Range,
   Signal,

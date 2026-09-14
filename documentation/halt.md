@@ -60,11 +60,13 @@ outlives the release that wrote it.
   call the stop before it leaves the halt. Optional: between `2` and `120`, `10` by default.
 
 ```http
-GET /introspection/signals/bounds HTTP/1.1
+GET /introspection/signals/ HTTP/1.1
 ```
 
-answers `{ duration: [min, max], quiescence: [min, max] }`, which is what a form that posts a
-halt asks for within. Both routes take the `system:halt` role.
+answers what a signal may ask for — `{ halt: { duration: [min, max], quiescence: [min, max] } }`
+— which is what the form that posts one asks for within. A deployment that does not take halts
+says nothing about them, and has no signals component to ask. Both routes take the `system:halt`
+role.
 
 ## What happens
 

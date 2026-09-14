@@ -71,15 +71,14 @@ export class Halt {
 
     await this.signals.connect()
 
-    const reply = await this.signals.invoke('bounds', {})
+    const reply = await this.signals.invoke('configuration', {})
 
     await this.signals.disconnect()
 
     this.signals = null
 
     assert.deepEqual(reply.output ?? reply, {
-      duration: [duration, until],
-      quiescence: [quiescence, quiet]
+      halt: { duration: [duration, until], quiescence: [quiescence, quiet] }
     })
   }
 

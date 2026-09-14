@@ -7,7 +7,7 @@ export const HOLD = 7_000
  * The last moment anyone can change their mind: nothing has been asked of the deployment until
  * this reaches zero.
  */
-export const COUNTDOWN = 10
+export const COUNTDOWN = 9
 
 /**
  * What the form opens on where the operator has no reason of their own, in seconds.

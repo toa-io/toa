@@ -1,16 +1,11 @@
 import { origin } from '@/net'
 import type { Node } from './Node'
-import type { Bounds } from './Halt'
+import type { Configuration } from './Halt'
 import type { Edge } from './Edge'
 
 const nodes = origin.resource<Node[]>('/introspection/nodes/')
 const edges = origin.resource<Edge[]>('/introspection/edges/')
 const signals = origin.resource('/introspection/signals/', { credentials: 'include' })
-
-// a resource of its own rather than a path relative to the collection, which is what it is not
-const limits = origin.resource<Bounds>('/introspection/signals/bounds', {
-  credentials: 'include',
-})
 
 const MINUTE = 60 * 1000
 const DAY = 24 * 60 * MINUTE
@@ -25,9 +20,9 @@ export async function list(): Promise<Edge[] | Error> {
   return await edges.json(updatedSince(EDGES_MAX_AGE), { credentials: 'include' })
 }
 
-/** What a halt may ask for: the deployment's own, and what every process holds a signal to. */
-export async function bounds(): Promise<Bounds | Error> {
-  return await limits.json()
+/** What a signal may ask for: the deployment's own, and what every process holds one to. */
+export async function configuration(): Promise<Configuration | Error> {
+  return await signals.json<Configuration>()
 }
 
 /**

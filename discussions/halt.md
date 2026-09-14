@@ -110,7 +110,8 @@ covers.
    `quiescence` and `grace`; a stop carries the id of the halt it answers.
 
    **What a halt may ask for is the deployment's own say**, annotated as two pairs of bounds and
-   read off `GET /introspection/signals/bounds` by whoever writes one. Every process holds a
+   read off `GET /introspection/signals/` — the configuration of the signals there are — by
+   whoever writes one. Every process holds a
    signal to the same pair, read from the same annotation, so a halt asking for more than the
    deployment allows is carried out as the nearest thing it does. How long a deployment takes to
    drain and how long it can afford to be down are not the runtime's to know; what the runtime

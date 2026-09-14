@@ -1,4 +1,10 @@
-/** What a halt of this deployment may ask for, in seconds. */
+/** What the signals of this deployment may ask for. A deployment says nothing of what it
+ *  does not take. */
+export interface Configuration {
+  halt?: Bounds
+}
+
+/** What a halt may ask for, in seconds. */
 export interface Bounds {
   duration: Range
   quiescence: Range

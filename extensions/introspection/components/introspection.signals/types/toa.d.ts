@@ -39,17 +39,20 @@ export type TransitInput = {
   signal?: string
 }
 
-export type BoundsOutput = {
-  duration: number[]
-  quiescence: number[]
+export type ConfigurationOutput = {
+  halt?: {
+    duration: number[]
+    quiescence: number[]
+  }
 }
 
 export interface Component {
   /** Tell every process of this deployment to do something. */
   create: (request: { input: CreateInput, task?: boolean }, options?: Options) => Promise<unknown>
   transit: (request: { input: TransitInput, query?: Query<Entity>, task?: boolean }, options?: Options) => Promise<Entity>
-  /** What a halt of this deployment may ask for, in seconds. */
-  bounds: (request: { input?: null, task?: boolean }, options?: Options) => Promise<BoundsOutput>
+  /** What a signal of this deployment may ask for, in seconds. */
+  configuration: (request: { input?: null, task?: boolean }, options?: Options) => Promise<ConfigurationOutput>
+  bounds: (request: { input?: null, task?: boolean }, options?: Options) => Promise<unknown>
   assign: (request: { input?: null, query?: Query<Entity>, task?: boolean }, options?: Options) => Promise<Entity>
   ensure: (request: { input?: null, query?: Query<Entity>, task?: boolean }, options?: Options) => Promise<Entity>
   enumerate: (request: { input?: null, query?: Query<Entity>, task?: boolean }, options?: Options) => Promise<Entity[]>

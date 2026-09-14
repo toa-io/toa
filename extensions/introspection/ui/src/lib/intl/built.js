@@ -19,11 +19,9 @@ export const dictionaries = {
       "interval": "Duration",
       "cancel": "Cancel",
       "hold": "Hold to halt",
-      "bounds": (min, max) => `${min}–${max} s`,
+      "bounds": (min, max) => `${min}–${max} seconds`,
       "quiescence": "Quiescence",
-      "unknown": "What a halt may ask for is not known yet.",
-      "counting": "Halting when this reaches zero. Cancel to call it off.",
-      "failed": "The halt was not accepted. Try again."
+      "failed": "The halt request wasn’t accepted. Try again."
     }
   }
 };

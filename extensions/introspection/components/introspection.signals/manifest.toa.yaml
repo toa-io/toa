@@ -67,21 +67,26 @@ operations:
   transit:
     concurrency: retry
     input: *signal
-  bounds:
-    description: What a halt of this deployment may ask for, in seconds.
+  # what the deployment is configured to accept, by signal — `halt` is the only one there is,
+  # and it is absent where the deployment does not take halts
+  configuration:
+    description: What a signal of this deployment may ask for, in seconds.
     output:
       type: object
       properties:
-        duration: &range
-          type: array
-          items:
-            type: integer
-          minItems: 2
-          maxItems: 2
-        quiescence: *range
-      required:
-        - duration
-        - quiescence
+        halt:
+          type: object
+          properties:
+            duration: &range
+              type: array
+              items:
+                type: integer
+              minItems: 2
+              maxItems: 2
+            quiescence: *range
+          required:
+            - duration
+            - quiescence
 
 # the map must not describe itself
 introspection: false
@@ -94,12 +99,11 @@ exposition:
     auth:role: system:halt
     io:output: true
 
-    # writing only. The records are kept — a halt needs no retraction because `CREATED` and
-    # `seconds` answer whether one is on — but nothing reads them over HTTP: a process is told
-    # by the event, and during a halt the gateway answers 503 to whoever would ask
-    POST: create
+    # what a signal may ask for, so that whoever writes one asks for something that will be
+    # carried out as written rather than clamped on arrival. The records themselves are not
+    # read: a process is told by the event, and during a halt the gateway answers 503 anyway
+    GET: configuration
 
-    # what a halt may ask for, so that whoever writes one asks for something that will be
-    # carried out as written rather than clamped on arrival
-    /bounds:
-      GET: bounds
+    # the records are kept all the same — a halt needs no retraction, because `CREATED` and
+    # `seconds` answer whether one is on
+    POST: create

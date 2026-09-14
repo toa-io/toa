@@ -34,15 +34,13 @@ inputs:
     hold:
       input: Hold to halt
     bounds:
-      input: "!js (min, max) => `${min}–${max} s`"
+      input: "!js (min, max) => `${min}–${max} seconds`"
+      context: hint under a number field, saying the range it accepts
     quiescence:
       input: Quiescence
-    unknown:
-      input: What a halt may ask for is not known yet.
-    counting:
-      input: Halting when this reaches zero. Cancel to call it off.
     failed:
       input: The halt was not accepted. Try again.
+      context: error under the halt dialog when the request is refused
 mounts:
   iam: ../../@/iam/ui/intl
   introspection: ../../@/introspection/ui/intl
