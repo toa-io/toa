@@ -39,6 +39,15 @@ export class Workload extends core.Connector {
   /** Whether what a halt takes down is up. */
   running(): boolean
 
+  /** Whether this process is quiet: it does nothing of its own accord and holds everything. */
+  quiescent(): boolean
+
+  /** Stops what this process does of its own accord, holding open everything it has. */
+  quiesce(): Promise<void>
+
+  /** Undoes a quiesce. */
+  cancel(): Promise<void>
+
   /** Stops this process for `seconds`, then builds it again. */
   stop(seconds: number): void
 }
