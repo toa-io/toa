@@ -30,3 +30,5 @@ type Event<Payload> = {
 ## Event
 
 ## Discovery
+
+See [service discovery](/documentation/discovery.md).
