@@ -48,6 +48,10 @@ yargs(process.argv.slice(2))
     type: 'string',
     describe: 'Path to environment variables file (.env format)'
   })
+  .option('map', {
+    type: 'string',
+    describe: 'Path to the component versions file (components.json)'
+  })
   .commandDir('./commands')
   .demandCommand(
     1,

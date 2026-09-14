@@ -1,4 +1,5 @@
 import { state } from './state.js'
+import { map } from './map.js'
 
 /** @type {toa.stage.Shutdown} */
 export const shutdown = async () => {
@@ -16,6 +17,9 @@ export const shutdown = async () => {
   ]
 
   await Promise.all(disconnections)
+
+  // whatever a test stated is not carried into the next one
+  map(undefined)
 
   state.reset()
 }

@@ -1,4 +1,5 @@
 export { manifest } from './manifest.js'
+export { map } from './map.js'
 export { component } from './component.js'
 export { composition, composition as compose } from './composition.js'
 export { workload } from './workload.js'

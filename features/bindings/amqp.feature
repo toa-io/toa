@@ -11,6 +11,7 @@ Feature: AMQP binding
           external: amqp://localhost:31010
       """
     When I run `toa env`
+    And I run `toa map`
     And I update an environment with:
       """
       TOA_AMQP_CONTEXT__USERNAME=developer

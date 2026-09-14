@@ -11,7 +11,8 @@ import * as boot from './index.js'
  * @returns {import('@toa.io/core/types').extensions.Host}
  */
 export const host = (workload) => ({
-  remote: boot.remote,
+  // an extension knows a version only where something told it one; see `Remotes` in exposition
+  remote: (locator, source, version) => boot.remote(locator, source, { version }),
   broadcast: boot.bindings.broadcast,
   composition: boot.composition,
   receive: boot.receive,

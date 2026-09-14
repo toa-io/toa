@@ -62,6 +62,7 @@ Feature: toa compose
               key: $IDENTITY_TOKENS_ENCRYPTION_KEY0
       """
     When I run `toa env --dev`
+    And I run `toa map`
     And I update an environment with:
       """
       TOA_EXPOSITION_PROPERTIES={"authorities":{"local":"localhost"},"port":31000,"probe":31004}
@@ -86,6 +87,7 @@ Feature: toa compose
               key: $IDENTITY_TOKENS_ENCRYPTION_KEY0
       """
     When I run `toa env --dev`
+    And I run `toa map`
     And I update an environment with:
       """
       TOA_EXPOSITION_PROPERTIES={"authorities":{"local":"localhost"},"port":31000,"probe":31004}

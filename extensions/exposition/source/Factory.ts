@@ -14,9 +14,13 @@ export class Factory implements extensions.Factory {
     this.host = host
   }
 
-  public async tenant(locator: Locator, node: syntax.Node): Promise<Connector> {
+  public async tenant(
+    locator: Locator,
+    node: syntax.Node,
+    manifest: Manifest
+  ): Promise<Connector> {
     const broadcast: Broadcast = await this.host.broadcast(CHANNEL, locator.id)
-    const hash = createHash('sha256').update(JSON.stringify(node)).digest('hex')
+    const routes = createHash('sha256').update(JSON.stringify(node)).digest('hex')
 
     // no timestamp: the tenant stamps each announcement with its own start time
     const branch: Omit<Branch, 'timestamp'> = {
@@ -25,7 +29,8 @@ export class Factory implements extensions.Factory {
       component: locator.name,
       isolated: locator.namespace === 'identity',
       node,
-      version: hash
+      version: manifest.version,
+      routes
     }
 
     return new Tenant(broadcast, branch)
@@ -40,3 +45,8 @@ export class Factory implements extensions.Factory {
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
 export type Host = extensions.Host
+
+/** What a tenant reads of the component it announces. */
+interface Manifest {
+  version: string
+}

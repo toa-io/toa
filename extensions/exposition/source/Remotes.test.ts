@@ -29,7 +29,6 @@ it('should create remote', async () => {
   assert.ok(
     host.remote.mock.calls.some(
       (call: any) =>
-        call.arguments.length === 2 &&
         isPartial(call.arguments[0], { namespace, name }) &&
         call.arguments[1] !== null &&
         call.arguments[1] !== undefined
@@ -60,7 +59,6 @@ it('should attribute calls to the gateway', async () => {
   assert.ok(
     host.remote.mock.calls.some(
       (call: any) =>
-        call.arguments.length === 2 &&
         call.arguments[0] !== null &&
         call.arguments[0] !== undefined &&
         isDeepStrictEqual(call.arguments[1], { service: 'exposition' })
@@ -77,3 +75,31 @@ function isPartial(actual, expected) {
     return false
   }
 }
+
+it('should ask the version the branch names', async () => {
+  const version = generate()
+
+  await remotes.discover(namespace, name, version)
+
+  assert.ok(
+    host.remote.mock.calls.some((call: any) => call.arguments[2] === version),
+    'the version was not passed to the lookup'
+  )
+})
+
+it('should ask no version where there is none', async () => {
+  await remotes.discover(namespace, name)
+
+  assert.ok(
+    host.remote.mock.calls.some((call: any) => call.arguments[2] === undefined),
+    'a version was passed where there is none'
+  )
+})
+
+it('should hold one remote per version', async () => {
+  const one = await remotes.discover(namespace, name, 'a')
+  const other = await remotes.discover(namespace, name, 'b')
+
+  assert.notDeepStrictEqual(one, other)
+  assert.deepStrictEqual(one, await remotes.discover(namespace, name, 'a'))
+})

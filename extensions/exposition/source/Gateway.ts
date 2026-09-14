@@ -371,7 +371,12 @@ export class Gateway extends Connector {
       return
     }
 
-    this.branches.set(id, { version: branch.version, timestamp: branch.timestamp, nodes })
+    this.branches.set(id, {
+      version: branch.version,
+      routes: branch.routes,
+      timestamp: branch.timestamp,
+      nodes
+    })
 
     if (this.lastMerge !== 0)
       this.widestGap = Math.max(this.widestGap, Date.now() - this.lastMerge)

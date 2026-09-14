@@ -17,7 +17,11 @@ import type { Destination } from './outbox.ts'
  */
 export interface Host {
   /** a component of the context, by locator */
-  remote(locator: Locator, source?: Source): Promise<Remote>
+  /**
+   * @param version which version of the component answers what it provides; absent, what the
+   *   process's map says, and absent that, whichever version answers.
+   */
+  remote(locator: Locator, source?: Source, version?: string): Promise<Remote>
 
   /** a channel of the messaging binding */
   broadcast<L extends string = string>(

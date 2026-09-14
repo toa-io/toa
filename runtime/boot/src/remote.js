@@ -7,16 +7,22 @@ import * as boot from './index.js'
 /**
  * @param {import('@toa.io/core').Locator} locator
  * @param {import('@toa.io/core/types').Source} [source] the origin stamped on every call made through this remote
- * @param {toa.norm.Component} [manifest] skips discovery when the manifest is already known
+ * @param {{ manifest?: toa.norm.Component, version?: string }} [options]
+ *   `manifest` skips discovery where it is already known; `version` is which version of the
+ *   component answers, where the caller knows one — the gateway, from the branch it merged.
+ *   Absent, the map this process was given says, and absent that too, whichever version answers.
  */
-export const remote = async (locator, source, manifest) => {
+export const remote = async (locator, source, options = {}) => {
+  let { manifest } = options
   let discovery
 
   if (manifest === undefined) {
-    console.debug('Lookup', { locator: locator.id })
+    const version = options.version ?? (await boot.map.version(locator.id))
 
-    discovery = await boot.discovery.discovery(locator)
-    manifest = await discovery.lookup(locator)
+    console.debug('Lookup', { locator: locator.id, version })
+
+    discovery = await boot.discovery.discovery()
+    manifest = await discovery.lookup(locator, version)
   }
 
   // a call binds its consumers, which are loaded rather than required

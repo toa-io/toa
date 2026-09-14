@@ -3,6 +3,7 @@ import { Connector } from '@toa.io/core'
 import * as boot from '@toa.io/boot'
 import { version } from '@toa.io/definitions'
 
+import { map } from '../util/map.js'
 import { graceful } from './lib/graceful.js'
 import { discover } from './lib/services.js'
 import { components as find } from '../util/find.js'
@@ -16,6 +17,8 @@ export async function mono(argv) {
   console.log('Runtime', version)
 
   const paths = find(argv.paths)
+
+  boot.map.use(map(argv))
 
   // inside the workload, so that the boot span covers it, which it did not before
   const workload = new boot.Workload(async (workload) => {

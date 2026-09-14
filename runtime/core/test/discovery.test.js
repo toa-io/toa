@@ -69,3 +69,40 @@ it('should keep warning while a lookup is unanswered', async () => {
     )
   )
 })
+
+it('should name the version it waits for', async () => {
+  lookup.invoke.mock.mockImplementation(() => new Promise(() => undefined))
+
+  void discovery.lookup(locator, 'a1b2c3d4')
+
+  await new Promise((resolve) => process.nextTick(resolve))
+
+  mock.timers.tick(5_000)
+
+  assert.ok(
+    ((call) =>
+      isDeepStrictEqual(call.arguments[1], {
+        component: locator.id,
+        version: 'a1b2c3d4',
+        waiting: 5
+      }))(warn.mock.calls.at(-1) ?? { arguments: [] })
+  )
+})
+
+it('should hold one lookup per version', async () => {
+  const made = []
+
+  discovery = new Discovery(async (_, version) => {
+    made.push(version)
+
+    return lookup
+  })
+
+  await discovery.connect()
+
+  await discovery.lookup(locator, 'one')
+  await discovery.lookup(locator, 'one')
+  await discovery.lookup(locator, 'other')
+
+  assert.deepStrictEqual(made, ['one', 'other'])
+})
