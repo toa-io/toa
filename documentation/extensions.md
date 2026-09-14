@@ -44,9 +44,7 @@ process is doing:
 
 ```ts
 interface Resident extends Connector {
-  complete?(): Promise<void>   // everything the process was built with has connected
-  halted?(seconds: number): void   // it is halted, and for how long
-  resumed?(): void                 // it is back
+  complete?(): Promise<void> // everything the process was built with has connected
 }
 ```
 

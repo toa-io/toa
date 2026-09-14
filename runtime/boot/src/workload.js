@@ -165,8 +165,6 @@ export class Workload extends Connector {
 
     console.warn('Halting', { seconds })
 
-    for (const resident of this.#residents) resident.halted?.(seconds)
-
     this.#quiesced = true
 
     /*
@@ -250,8 +248,6 @@ export class Workload extends Connector {
     this.#halting = false
 
     halting.end()
-
-    for (const resident of this.#residents) resident.resumed?.()
 
     console.info('Resumed')
   }

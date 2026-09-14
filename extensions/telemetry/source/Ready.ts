@@ -18,9 +18,6 @@ export class Ready extends Connector {
   private listening = false
   private skipped = false
 
-  /** While halted, when the process comes back — and `0` where it is not halted. */
-  private resumesAt = 0
-
   public constructor(options: ReadyOptions) {
     super()
 
@@ -89,19 +86,6 @@ export class Ready extends Connector {
     process.send?.('ready')
   }
 
-  /**
-   * A halted process is a well process that is doing nothing, and this says the first of those:
-   * whoever watches it must not replace it, because there is nothing wrong with it and a
-   * replacement would come up running. What it is doing is said in the header.
-   */
-  public halted(seconds: number): void {
-    this.resumesAt = Date.now() + seconds * 1000
-  }
-
-  public resumed(): void {
-    this.resumesAt = 0
-  }
-
   protected override async open(): Promise<void> {
     await this.listen()
   }
@@ -127,15 +111,12 @@ export class Ready extends Connector {
     }
 
     if (this.ready) {
-      const headers: http.OutgoingHttpHeaders = { 'cache-control': 'no-store' }
-
-      if (this.resumesAt > 0)
-        headers['x-toa-halted'] = Math.max(
-          0,
-          Math.ceil((this.resumesAt - Date.now()) / 1000)
-        ).toString()
-
-      response.writeHead(200, headers).end()
+      /*
+       * A halted process answers this as a working one does, and says nothing about the halt:
+       * there is nothing wrong with it, and whoever watches it must not replace it — one that
+       * came up in its place would come up running.
+       */
+      response.writeHead(200, { 'cache-control': 'no-store' }).end()
     } else {
       const remaining = Math.ceil((Date.now() - this.startedAt) / 1000).toString()
 

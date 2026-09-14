@@ -129,12 +129,6 @@ export interface Factory<Manifest = unknown> {
 export interface Resident extends Connector {
   /** Everything the process was built with has connected. */
   complete?: () => Promise<void>
-
-  /** It is halted, and for how long. */
-  halted?: (seconds: number) => void
-
-  /** It is back. */
-  resumed?: () => void
 }
 
 export interface Aspect extends Connector {
