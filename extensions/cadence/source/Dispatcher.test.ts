@@ -50,7 +50,9 @@ const connector = (properties: object): any => ({
   ...properties,
   link: mock.fn(),
   connect: async () => {},
-  disconnect: async () => {}
+  disconnect: async () => {},
+  halt: async () => {},
+  restore: async () => {}
 })
 
 const advance = async (ms: number): Promise<void> => {
@@ -458,6 +460,36 @@ it('should settle a row the target will never accept', async () => {
     ['a'],
     'a request its schema no longer fits never becomes one it does'
   )
+})
+
+it('should dispatch nothing while the process is quiet', async () => {
+  rows = [row('a', 60)]
+
+  const dispatcher = create()
+
+  await dispatcher.connect()
+  await advance(1)
+  await dispatcher.halt()
+  await advance(10_000)
+
+  assert.strictEqual(target.invoke.mock.callCount(), 0, 'what was armed was disarmed')
+})
+
+it('should scan again once the process is working', async () => {
+  const dispatcher = create()
+
+  await dispatcher.connect()
+  await dispatcher.halt()
+  await advance(10_000)
+  await dispatcher.restore()
+
+  // written while the process was quiet, so only a scan of its own finds it
+  rows = [row('a', 60)]
+
+  // a scan comes round on its own period, and what it arms is called on the next
+  for (let pass = 0; pass < 3; pass++) await advance(INTERVAL)
+
+  assert.strictEqual(target.invoke.mock.callCount(), 1)
 })
 
 it('should drop timers for lanes it no longer owns', async () => {
