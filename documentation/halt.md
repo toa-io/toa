@@ -73,9 +73,10 @@ a halt of a busy deployment is refused rather than half-performed.
 **A halted process stays up.** It is not restarted, evicted or replaced, and it stays a member of
 its service.
 
-**It answers on every port it was listening on.** The readiness probe answers `200` and carries
-`x-toa-halted` with the seconds left, so nothing watching it replaces it. The gateway answers
-`503`, and carries `retry-after` once the deployment is down and there are seconds to state.
+**It answers on every port it was listening on.** The readiness probe answers `200`, so nothing
+watching it replaces it, and the telemetry one carries `x-toa-halted` with the seconds left. The
+gateway answers `503`, with `retry-after` once the deployment is down and there are seconds to
+state.
 
 **Nothing is left connected.** No process holds a socket against the broker, the database or the
 cache, so they can be stopped, replaced or failed over while the deployment is down.
