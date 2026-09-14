@@ -5,6 +5,33 @@
 Abstractions extending Connector **must not** interact with the environment before `.open()` is
 called.
 
+## Going quiet
+
+A [halt](/documentation/halt.md) begins by taking a process quiet: it holds open everything it
+has, and stops everything it does of its own accord. A connector says what that means for it by
+overriding `pause`, and takes it up again in `unpause`:
+
+```ts
+class Pulse extends Connector {
+  protected override pause(): void {
+    clearTimeout(this.timer)
+  }
+
+  protected override unpause(): void {
+    this.arm()
+  }
+}
+```
+
+Both are walks of the whole tree — `pause` from the top down, so a source stops before whatever
+it feeds, and `unpause` from the bottom up, so nothing works before what it works through. A
+connector that fails to pause is reported and the walk carries on: one that will not stop is no
+reason to leave the rest working.
+
+**What makes a call on its own timing belongs in `pause`**, because what a quiet is for is that
+the deployment can be observed to have gone still. What a connector holds open it keeps, and a
+quiet is undone by `unpause` alone, with nothing rebuilt.
+
 ## Resident
 
 `Factory.resident(host)` is what an extension keeps in a process, whatever that process runs —
