@@ -54,6 +54,15 @@ export interface Host {
    */
   gate(build: () => Promise<Connector>): Gate
 
+  /**
+   * Stops what this process does of its own accord — its gateway, its clocks, its run
+   * commands — and holds open everything it has. Nothing closes, so this is reversible.
+   */
+  quiesce(): Promise<void>
+
+  /** Undoes a quiesce: the process works again, having been rebuilt by nothing. */
+  cancel(): Promise<void>
+
   /** Stops this process for `seconds`, then builds it again. */
   stop(seconds: number): void
 }

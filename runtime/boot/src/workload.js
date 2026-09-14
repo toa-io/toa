@@ -1,5 +1,5 @@
 import { console } from 'openspan'
-import { Connector, Gate, halting } from '@toa.io/core'
+import { Connector, Gate, deliveries, halting } from '@toa.io/core'
 import { PREDEFINED } from '@toa.io/definitions'
 
 import { resolve } from './extensions/resolve.js'
@@ -30,6 +30,8 @@ export class Workload extends Connector {
   #timer = null
 
   #halting = false
+
+  #quiesced = false
 
   /**
    * @param {(workload: Workload) => Promise<import('@toa.io/core').Connector>} build
@@ -62,6 +64,39 @@ export class Workload extends Connector {
    */
   running() {
     return !this.#halting && this.#gates.every((gate) => gate.holding())
+  }
+
+  /**
+   * Whether this process is quiet: it does nothing of its own accord, and holds everything it
+   * had open. What a halt does before it decides whether to go down.
+   */
+  quiescent() {
+    return this.#quiesced
+  }
+
+  /**
+   * Stops what this process does of its own accord and holds open everything it has: the
+   * gateway answers `503`, the clocks stop, and each component gets its `pause`. Nothing
+   * closes, so nothing has to be built again to undo it.
+   *
+   * Awaited, unlike `stop`: whoever asks for this goes on to watch what the deployment does
+   * next, and that is only worth watching once this process has gone quiet.
+   */
+  async quiesce() {
+    if (this.#halting || this.#quiesced || !this.connected) return
+
+    this.#quiesced = true
+
+    await this.halt()
+  }
+
+  /** Undoes a quiesce. Nothing was taken down, so nothing is built again. */
+  async cancel() {
+    if (this.#halting || !this.#quiesced) return
+
+    this.#quiesced = false
+
+    await this.restore()
   }
 
   /**
@@ -132,6 +167,8 @@ export class Workload extends Connector {
 
     for (const resident of this.#residents) resident.halted?.(seconds)
 
+    this.#quiesced = true
+
     /*
      * Quiet first, then down. A source stopped before the drain begins is work that never
      * starts, so what the teardown waits for is only what was already in hand — and a component
@@ -139,6 +176,16 @@ export class Workload extends Connector {
      * runtime cannot see.
      */
     await this.halt()
+
+    /*
+     * Whoever called this stop saw the deployment still, and this process was not: what it is
+     * handling has written no edge yet. Nothing is abandoned — the teardown waits for every
+     * one of these — but it is the one thing that makes a halt take longer than it says, so
+     * it is said out loud.
+     */
+    const inflight = deliveries.inflight()
+
+    if (inflight > 0) console.warn('Halting with deliveries in flight', { inflight })
 
     await this.#down(seconds)
 
@@ -193,6 +240,7 @@ export class Workload extends Connector {
 
     await this.restore()
 
+    this.#quiesced = false
     this.#halting = false
 
     halting.end()

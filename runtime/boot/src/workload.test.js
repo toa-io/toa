@@ -43,6 +43,24 @@ class TestConnector extends Connector {
   }
 }
 
+/** One that has something to stop doing, which most connectors have not. */
+class QuietConnector extends Connector {
+  #label
+
+  constructor(label) {
+    super()
+    this.#label = label
+  }
+
+  async pause() {
+    sequence.push(`~${this.#label}`)
+  }
+
+  async unpause() {
+    sequence.push(`^${this.#label}`)
+  }
+}
+
 /** Waits for a condition the halt reaches on its own timers. */
 async function until(condition, limit = 2000) {
   const deadline = Date.now() + limit
@@ -177,6 +195,96 @@ describe('Workload', () => {
     await timeout(30)
 
     assert.deepStrictEqual(sequence, [])
+  })
+
+  it('should quiesce what it holds, closing nothing', async () => {
+    const workload = new Workload(async (workload) =>
+      workload.gate(async () => new QuietConnector('a'))
+    )
+
+    await workload.connect()
+
+    sequence = []
+
+    await workload.quiesce()
+
+    assert.deepStrictEqual(sequence, ['~a'])
+    assert.equal(workload.quiescent(), true)
+
+    // nothing was taken down, so the process is still working as far as anyone watching it
+    assert.equal(workload.running(), true)
+
+    await workload.disconnect()
+  })
+
+  it('should undo a quiesce without building anything', async () => {
+    let built = 0
+
+    const workload = new Workload(async (workload) =>
+      workload.gate(async () => {
+        built++
+
+        return new QuietConnector('a')
+      })
+    )
+
+    await workload.connect()
+    await workload.quiesce()
+
+    sequence = []
+
+    await workload.cancel()
+
+    assert.deepStrictEqual(sequence, ['^a'])
+    assert.equal(workload.quiescent(), false)
+    assert.equal(built, 1)
+
+    await workload.disconnect()
+  })
+
+  it('should take down a process that is already quiet', async () => {
+    const workload = new Workload(async (workload) =>
+      workload.gate(async () => {
+        const root = new Connector()
+
+        root.depends([new QuietConnector('q'), new TestConnector('a')])
+
+        return root
+      })
+    )
+
+    await workload.connect()
+    await workload.quiesce()
+
+    sequence = []
+    workload.stop(0.01)
+
+    await until(() => sequence.includes('+a'))
+
+    // quieted once, on the quiesce, and not again on the way down
+    assert.deepStrictEqual(sequence, ['-a', '*a', '+a'])
+
+    await workload.disconnect()
+  })
+
+  it('should not let a cancel undo a stop', async () => {
+    const workload = new Workload(async (workload) =>
+      workload.gate(async () => new TestConnector('a'))
+    )
+
+    await workload.connect()
+
+    sequence = []
+    workload.stop(0.01)
+
+    await workload.cancel()
+
+    // it goes down and comes back: a cancel is for a quiesce, and this is past one
+    await until(() => sequence.includes('+a'))
+
+    assert.deepStrictEqual(sequence, ['-a', '*a', '+a'])
+
+    await workload.disconnect()
   })
 
   it('should take the gates down on its own disconnection', async () => {
