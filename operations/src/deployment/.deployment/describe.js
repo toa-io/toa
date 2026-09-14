@@ -1,3 +1,6 @@
+import { map } from '@toa.io/norm'
+import { MAP_DIRECTORY, MAP_FILE } from '@toa.io/definitions'
+
 import * as desc from './.describe/index.js'
 import { addVariables } from './.describe/variables.js'
 import { addMounts } from './.describe/mounts.js'
@@ -92,6 +95,7 @@ export const describe = (context, compositions, dependency, image) => {
       components: mono.components,
       services: [],
       credentials,
+      map: versions(context),
       mono
     }
 
@@ -109,7 +113,8 @@ export const describe = (context, compositions, dependency, image) => {
     compositions,
     components,
     services,
-    credentials
+    credentials,
+    map: versions(context)
   }
 
   resources(context, values)
@@ -159,4 +164,14 @@ function unit(context, dependency) {
   }
 
   return mono
+}
+
+/**
+ * The component map every workload mounts: which version of a component a process asks what that
+ * component provides. Named rather than found, because a ConfigMap mounts as a directory.
+ *
+ * @param {toa.norm.Context} context
+ */
+function versions(context) {
+  return { directory: MAP_DIRECTORY, file: MAP_FILE, components: map(context) }
 }

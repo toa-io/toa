@@ -51,9 +51,10 @@ The map is found the way `.env` is: walked up to from where the command runs, or
 $ toa compose ./components/* --env application/.env --map application/components.json
 ```
 
-`toa compose`, `toa serve` and `toa mono` are refused where neither finds one: a process with no map
-asks whichever replica of a component answers first, and during a deployment that is not
-necessarily the one it is meant to talk to.
+`toa compose`, `toa serve` and `toa mono` are refused where a Context is there and its map is not:
+a process with no map asks whichever replica of a component answers first, and during a deployment
+that is not necessarily the one it is meant to talk to. A component run outside a Context has no
+peers a map could name, and needs none.
 
 Every component of the context is in it, including one it
 [evicts](/documentation/compositions.md#evicted) — an evicted component is called like any other, so

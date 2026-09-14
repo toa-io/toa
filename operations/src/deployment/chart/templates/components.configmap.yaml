@@ -1,0 +1,12 @@
+{{- if .Values.map }}
+# Which version of each component a process asks what that component provides. Mounted rather
+# than rendered into a workload's environment: a variable would replace every pod of the context
+# on every deployment, and a pod that came up between two of them could not be told.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: components
+data:
+  {{ .Values.map.file }}: |
+{{ .Values.map.components | toPrettyJson | indent 4 }}
+{{- end }}

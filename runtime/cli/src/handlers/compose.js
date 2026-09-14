@@ -2,8 +2,9 @@ import { console as output } from 'openspan'
 import { environment, pick } from '@toa.io/generic'
 import { Connector } from '@toa.io/core'
 import * as boot from '@toa.io/boot'
-import { version } from '@toa.io/definitions'
+import { MAP, version } from '@toa.io/definitions'
 
+import { map } from '../util/map.js'
 import { graceful } from './lib/graceful.js'
 import { create } from './lib/services.js'
 import { components as find } from '../util/find.js'
@@ -17,6 +18,8 @@ export async function compose(argv) {
   console.log('Runtime', version)
 
   if (argv.dock === true) return dock(argv)
+
+  boot.map.use(map(argv))
 
   const paths = find(argv.paths)
   const references = services(argv)
@@ -76,7 +79,11 @@ async function dock(argv) {
   )
   const repository = await docker.build(argv.context, argv.paths)
   const args = pick(argv, ['kill', 'service'])
-  const command = docker.command('toa compose *', args)
+  const file = map(argv)
 
-  await docker.run(repository, command, argv.env)
+  // the container is given its own command, so the image's — which names the map — is not used
+  const command =
+    docker.command('toa compose *', args) + (file === undefined ? '' : ` --map ${MAP}`)
+
+  await docker.run(repository, command, argv.env, file)
 }

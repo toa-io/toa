@@ -80,11 +80,16 @@ spec:
             timeoutSeconds: 3
             failureThreshold: 5
           {{- end }}
-          {{- if .mounts }}
+          {{- if or .mounts $.Values.map }}
           volumeMounts:
             {{- range .mounts }}
             - name: {{ .name }}
               mountPath: {{ .path }}
+            {{- end }}
+            {{- if $.Values.map }}
+            - name: components
+              mountPath: {{ $.Values.map.directory }}
+              readOnly: true
             {{- end }}
           {{- end }}
           lifecycle:
@@ -96,12 +101,17 @@ spec:
       imagePullSecrets:
         - name: {{ $.Values.credentials }}
       {{- end }}
-      {{- if .mounts }}
+      {{- if or .mounts $.Values.map }}
       volumes:
         {{- range .mounts }}
         - name: {{ .name }}
           persistentVolumeClaim:
             claimName: {{ .claim }}
+        {{- end }}
+        {{- if $.Values.map }}
+        - name: components
+          configMap:
+            name: components
         {{- end }}
       {{- end }}
       topologySpreadConstraints:

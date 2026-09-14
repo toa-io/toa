@@ -3,6 +3,7 @@ import { Connector } from '@toa.io/core'
 import * as boot from '@toa.io/boot'
 import { version } from '@toa.io/definitions'
 
+import { map } from '../util/map.js'
 import { graceful } from './lib/graceful.js'
 import { create } from './lib/services.js'
 import { environment } from '@toa.io/generic'
@@ -11,6 +12,8 @@ export const serve = async (argv) => {
   console.log('Runtime', version)
 
   const paths = Array.isArray(argv.paths) ? argv.paths : [argv.paths]
+
+  boot.map.use(map(argv))
 
   const workload = new boot.Workload(async (workload) => {
     // the list is exact: what it names runs, or nothing does

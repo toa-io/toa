@@ -41,7 +41,10 @@ replicas already running and is answered by them.
    the component *(today)*.
 8. An event the named version does not declare fails the boot, naming the component, the event and
    the version. Today it is a `TypeError`.
-9. A `compose`, a `serve` or a `mono` that finds no map is refused, and says what makes one.
+9. A `compose`, a `serve` or a `mono` that finds no map where a context is there is refused, and
+   says what makes one. A component run outside a context has no peers a map could name and needs
+   none, and neither does a composition staged by a test or reached by `toa call`: a lookup with
+   no version goes to the name every version answers on.
 
 **What is read**
 
@@ -117,8 +120,9 @@ A run from a context root finds the map by itself and needs neither flag, exactl
    like everything else.
 8. **The receiver.** `boot.receivers.resolveBinding` asserts where the answer declares no such
    event, rather than reading a property of `undefined`.
-9. **The stage.** `@toa.io/userland/stage` derives the map from the context it already loads, so a
-   scenario — this repository's or an application's — carries no file.
+9. **The stage.** `@toa.io/userland/stage` states one where a test needs one, and none otherwise —
+   the refusal is the command's, not the boot's, so the suite of this repository and of an
+   application goes on composing what it composes.
 10. **The image and the chart.** The `CMD` of each image names the map, at a path
     `@toa.io/definitions` holds beside the ports table. The chart renders a ConfigMap and mounts it
     there on every composition, service and mono workload, and `toa compose --dock` mounts the same
@@ -139,7 +143,9 @@ A run from a context root finds the map by itself and needs neither flag, exactl
    wherever it is put.
 2. **Found like `.env`, required unlike it.** An absent `.env` is a run with no variables, which is
    a thing someone may mean. An absent map is a run that asks whichever replica answers first,
-   which is the defect this removes, so it is refused and says what makes one.
+   which is the defect this removes, so it is refused and says what makes one — where a context is
+   there. Outside one there are no peers a map could name, and a component composed on its own is
+   a thing someone means too.
 3. **Uniform across `compose`, `serve` and `mono`**, though `mono` is given a context and could
    read the versions out of it. One rule, and the map is then the same artifact in every run.
 4. **Both queues served, always.** A process of an older runtime asks the shared name and is
@@ -234,8 +240,9 @@ by design and is not changed here.
 1. The versioned queue name, and `expose` serving it beside the shared one. Additive: nothing asks
    for it yet.
 2. `toa map`; finding and demanding the map; the stage deriving one.
-3. The version as a parameter of a lookup: reading the map at the lookup, asking the versioned
-   name, keying the cache by version, and the warning that names it.
+3. The version as a parameter of a lookup: `toa map`, finding and demanding the map, reading it at
+   the lookup, asking the versioned name, keying the cache by version, and the warning that names
+   it.
 4. The gateway's branch carrying the component version, and asking by it.
 5. The receiver's assertion.
 6. The image `CMD`, the ConfigMap and its mount, and `--dock`.
@@ -246,38 +253,35 @@ queue nothing serves.
 
 ## Verification
 
-A rollout cannot be staged in one process: `boot.bindings.produce` and `consume` put
-`@toa.io/bindings.loop` first, so a peer in the same process short-circuits the broker and the
-queue is never shared. These run `toa compose` as a child process, the way
-`features/cli/compose.feature` already does, twice over one broker.
+A rollout is staged in one process, with the loop binding off so that a peer composed beside the
+caller is still reached over the broker: two compositions of one locator, from two directories whose
+sources differ, are two versions of one component serving at once.
 
 1. `features/runtime/discovery.feature`:
-   - _Two versions, and the new one is read_: two components in a workspace, composed; both sources
-     changed so that each declares an event the other receives and an operation the other calls;
-     `toa map` again; the new pair composed while the old pair still serves. The new composition
-     boots, its receiver consumes the event, and its call reaches the new operation.
-   - _An unchanged peer answers_: only one of the two changed. The new process asks the other at
-     its unchanged version and is answered by the replicas already running.
-   - _A version that is not up yet_: the map names a version nothing serves, then it is started.
-     The lookup is answered when it comes up, with nothing logged as an error in between.
-   - _A map that moved on_: a peer is replaced at a new version and the map rewritten, and the
-     first call to it made afterwards reaches the new version — the map was read at the lookup.
-   - _An event no version declares_: the boot fails naming the component, the event and the
-     version.
+   - _A lookup is answered by the version the map names_: both versions serving, and a call reaches
+     an operation only the newer one provides.
+   - _A version the map does not name does not answer_: the same two, with the map naming the older
+     one, and the call refused for an endpoint it does not have.
+   - _A version that is not up yet is waited for_: the map names one nothing serves; the call is
+     made and is not answered, and is answered once that version is composed.
+   - _A receiver is bound at the version the map names_: the component whose receiver is on an event
+     only the newer version declares boots, with both versions serving.
+   - _A receiver on an event the named version does not declare_: the boot fails, naming the
+     component, the event and the version — where it read a property of `undefined` before.
 2. `features/cli/map.feature`:
-   - _What it writes_: every component of the context with its version, its own and what its
-     extensions bring and what it evicts.
-   - _It is found_: `toa compose` from a context root, with no `--map`.
-   - _It is required_: `toa compose` where none is found and none is named, refused, naming
-     `toa map`.
-3. `extensions/exposition/features`: a route reaches the version that announced it. Two versions
-   of one component announce, and the gateway forwards under the contract of the one whose branch
-   it merged, whatever the map says — and a directive that calls a component on its own behalf
-   still reaches the version the map names.
-4. `features/deployment`: the ConfigMap is rendered and mounted on every composition, service and
-   mono workload, and each `CMD` names the path it is mounted at.
-5. `npm run features` whole, including what is tagged slow: every scenario that boots a composition
-   goes through the stage's derived map, so the suite is the coverage of that path.
+   - _Writing the map of a Context_, and _an evicted component is in it_.
+   - _A composition is refused where a Context has no map_, naming `toa map`.
+   - _A component outside a Context needs none_.
+3. `extensions/exposition/features/versions.feature`: an operation's input changes while its routes
+   do not, and the gateway holds a caller to the contract of the version that is running. It fails
+   before this change, which is the defect the branch's version fixes.
+4. `features/deployment/map.feature`: the map is exported with the directory and the file, the
+   ConfigMap is rendered, and every workload mounts it. `features/deployment/build.feature` and
+   `services.feature` read the `CMD` that names it.
+5. `runtime/core/test/discovery.test.js`: a wait names the version, and one lookup is held per
+   version. `extensions/exposition/source/{Branch,Remotes}.test.js`: what is the same thing
+   exposed, and the version a remote is asked for and keyed by.
+6. `npm run features` whole, `npm run test:unit`, `npm run typecheck` and `npm run lint`.
 
 ## Compatibility
 

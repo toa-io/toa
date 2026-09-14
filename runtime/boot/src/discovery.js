@@ -31,17 +31,34 @@ export const discovery = async () => {
   }
 }
 
-const lookup = async (locator) => {
-  const call = await boot.call(locator, ENDPOINT, { bindings: BINDINGS })
+const lookup = async (locator, version) => {
+  const call = await boot.call(locator, endpoint(version), { bindings: BINDINGS })
 
   await call.connect()
 
   return call
 }
 
+/**
+ * Where a lookup of a named version of a component is answered. Absent a version, the name every
+ * version of it answers on, which is what a caller with no map asks.
+ *
+ * @param {string} [version]
+ * @returns {string}
+ */
+export const endpoint = (version) => (version === undefined ? ENDPOINT : ENDPOINT + SEPARATOR + version)
+
+/**
+ * Both names, always: the versioned one is what a caller that knows which version it wants asks,
+ * and the shared one is what everything else asks — a caller outside the deployment, a process of
+ * a runtime that has never heard of this.
+ */
 export const expose = async (manifest) => {
   const exposition = new Exposition(manifest.locator, manifest)
-  const operations = { [ENDPOINT]: { bindings: BINDINGS } }
+  const operations = {
+    [ENDPOINT]: { bindings: BINDINGS },
+    [endpoint(manifest.version)]: { bindings: BINDINGS }
+  }
   const { local, other } = await boot.bindings.produce(exposition, operations)
   const producers = local.concat(other)
 
@@ -52,3 +69,6 @@ export const expose = async (manifest) => {
 
 const BINDINGS = ['@toa.io/bindings.amqp']
 const ENDPOINT = '.lookup'
+
+/** the runtime's own, as `..tasks` and `..instances` are */
+const SEPARATOR = '..'

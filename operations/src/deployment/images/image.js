@@ -3,6 +3,7 @@ import { readFile as read, writeFile as write } from 'node:fs/promises'
 import { createHash } from 'node:crypto'
 
 import { overwrite } from '@toa.io/generic'
+import { MAP } from '@toa.io/definitions'
 import { mkdir } from 'node:fs/promises'
 
 /**
@@ -104,6 +105,7 @@ export class Image {
   }
 
   #setValues() {
+    this.#values.map = { file: MAP }
     this.#values.runtime = this.#runtime
     this.#values.build = overwrite(
       {

@@ -145,6 +145,28 @@ Then(
   }
 )
 
+Then(
+  'I compose {component} component and it fails with a message containing:',
+  /**
+   * The version a message names is a hash of sources a scenario may edit, so what is asserted
+   * is the sentence rather than the whole of it.
+   *
+   * @param {string} reference
+   * @param {string} text
+   * @this {toa.features.Context}
+   */
+  async function (reference, text) {
+    await assert.rejects(stage.composition([reference], {}), (error) => {
+      assert.ok(
+        error.message.includes(text),
+        `'${error.message}' does not contain '${text}'`
+      )
+
+      return true
+    })
+  }
+)
+
 When(
   'I stage {component} component',
   /**

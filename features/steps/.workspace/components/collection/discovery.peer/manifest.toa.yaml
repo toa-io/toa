@@ -1,0 +1,16 @@
+# The version of `discovery.peer` that is already running. `discovery.next` is the same
+# component after a change: one more operation, and an event nothing declared before.
+name: peer
+namespace: discovery
+
+entity:
+  storage: ~
+  properties:
+    foo:
+      type: integer
+  blank:
+    foo: 0
+
+operations:
+  serves:
+    type: computation
