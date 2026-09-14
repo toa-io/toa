@@ -27,4 +27,5 @@ environment.set(
   })
 )
 
-setDefaultTimeout(60 * 1000)
+// a halt is at least thirty seconds, and the scenario that waits one out waits for the rebuild
+setDefaultTimeout(120 * 1000)

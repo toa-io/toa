@@ -1,0 +1,13 @@
+namespace: probe
+name: busy
+
+# where the interval is kept between the phases
+state: ~
+
+# A component that keeps its own time. It declares no `pause`, so nothing clears the interval
+# it started and it goes on calling through a quiesce — which is what a halt has to notice.
+
+operations:
+  ping:
+    output:
+      type: number
