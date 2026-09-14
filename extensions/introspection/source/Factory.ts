@@ -9,6 +9,7 @@ import { NAMESPACE, uiPort } from '@toa.io/definitions/extensions.introspection'
 import { describe } from './describe.ts'
 import { Reporter } from './Reporter.ts'
 import { Tenant } from './Tenant.ts'
+import { Halt } from './Halt.ts'
 import { Composition } from './Composition.ts'
 import { Explorer } from './Explorer.ts'
 import { UI } from './UI.ts'
@@ -95,17 +96,31 @@ export class Factory implements extensions.Factory {
     return component
   }
 
+  /**
+   * What this extension keeps in every process of a deployment, whatever that process runs:
+   * the ear a halt arrives at. Behind a gate, so that a halted process holds nothing — the
+   * subscription included — and hears the next signal only once it is back.
+   */
+  public resident(host: Host): Connector | null {
+    if (this.options?.halt !== true) return null
+
+    return host.gate(async () => new Halt(host, this.options!))
+  }
+
+  // a halt takes the whole of it, the UI with it: a map nobody is reporting to is stale
   public service(): Connector | null {
     if (this.options === null) return null
 
-    const composition = new Composition(this.host)
-    const explorer = new Explorer()
+    return this.host.gate(async () => {
+      const composition = new Composition(this.host)
+      const explorer = new Explorer()
 
-    explorer.depends(composition)
+      explorer.depends(composition)
 
-    if (this.options.ui) explorer.depends(new UI(uiPort()))
+      if (this.options?.ui === true) explorer.depends(new UI(uiPort()))
 
-    return explorer
+      return explorer
+    })
   }
 
   /**

@@ -45,6 +45,9 @@ export class Pulse extends Connector {
 
   private closing = false
 
+  /** Whether the process has been told to go quiet, see `stop`. */
+  private quiesced = false
+
   public constructor(definition: Definition, local: Local, atom: atomicity.Atom) {
     super()
 
@@ -115,6 +118,28 @@ export class Pulse extends Connector {
     if (this.firing !== undefined) await Promise.race([this.firing, delay(DRAIN)])
   }
 
+  /**
+   * Stops firing. An interval that falls while the process is quiet is not made up: the pulse
+   * comes back to the interval it comes back in, which is what it does after a restart too.
+   */
+  protected override async pause(): Promise<void> {
+    this.quiesced = true
+
+    clearTimeout(this.timer)
+
+    if (this.firing !== undefined) await Promise.race([this.firing, delay(DRAIN)])
+  }
+
+  protected override unpause(): void {
+    this.quiesced = false
+
+    // as on open: this replica was not firing when the current interval began, so the
+    // first call is at the next boundary rather than at once
+    this.fired = this.ordinal(Date.now())
+
+    this.arm()
+  }
+
   private arm(): void {
     const now = Date.now()
 
@@ -127,7 +152,7 @@ export class Pulse extends Connector {
   }
 
   private tick(): void {
-    if (this.closing) return
+    if (this.closing || this.quiesced) return
 
     const ordinal = this.ordinal(Date.now())
 

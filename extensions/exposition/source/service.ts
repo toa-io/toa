@@ -38,27 +38,39 @@ export async function service(host: Host): Promise<Connector | null> {
   configureLogs()
 
   const options = JSON.parse(properties) as http.Options
-  const broadcast: Broadcast = await host.broadcast(CHANNEL)
   const server = http.Server.create({ ...options })
-  const remotes = new Remotes(host)
-  const node = root.resolve()
-  const methods = new EndpointsFactory(remotes)
-  const directives = new DirectivesFactory(families, remotes, host, options)
-  const interception = new Interception(interceptors, options)
-  const tree = new Tree(node, methods, directives)
 
-  const composition = new Composition(host)
-  const dispatcher = options.rpc === undefined ? null : new Dispatcher(options.rpc)
-  const mcp = options.mcp === undefined ? null : new Model(options.mcp, tree)
-  const gateway = new Gateway(broadcast, tree, interception, directives, dispatcher, mcp)
+  /*
+   * The server keeps its port through a halt and answers `503` on it; everything it serves
+   * with is behind the gate, taken down and built again. A refused connection is not an
+   * answer, and the answer has to be the application's.
+   */
+  const gate = host.gate(async () => {
+    const broadcast: Broadcast = await host.broadcast(CHANNEL)
+    const remotes = new Remotes(host)
+    const node = root.resolve()
+    const methods = new EndpointsFactory(remotes)
+    const directives = new DirectivesFactory(families, remotes, host, options)
+    const interception = new Interception(interceptors, options)
+    const tree = new Tree(node, methods, directives)
 
-  gateway.depends(remotes)
-  gateway.depends(composition)
-  // what the directives meter through; one atom per process, connected once
-  gateway.depends(host.atom(ATOM_GROUP))
+    const composition = new Composition(host)
+    const dispatcher = options.rpc === undefined ? null : new Dispatcher(options.rpc)
+    const mcp = options.mcp === undefined ? null : new Model(options.mcp, tree)
+    const gateway = new Gateway(broadcast, tree, interception, directives, dispatcher, mcp)
 
-  server.attach(gateway.process.bind(gateway))
-  server.depends(gateway)
+    gateway.depends(remotes)
+    gateway.depends(composition)
+    // what the directives meter through; one atom per process, connected once
+    gateway.depends(host.atom(ATOM_GROUP))
+
+    server.attach(gateway.process.bind(gateway))
+
+    return gateway
+  })
+
+  server.gated(gate)
+  server.depends(gate)
 
   return server
 }

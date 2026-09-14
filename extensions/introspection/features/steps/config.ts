@@ -1,5 +1,6 @@
 import { setDefaultTimeout } from '@cucumber/cucumber'
 import { environment } from '@toa.io/generic'
+import { options } from '@toa.io/definitions/extensions.introspection'
 
 environment.set('TOA_DEV', '1')
 
@@ -14,14 +15,22 @@ if (!environment.has('TOA_ENV')) environment.set('TOA_ENV', 'local')
  */
 environment.set(
   'TOA_INTROSPECTION',
-  JSON.stringify({
-    samples: environment.get('TOA_INTROSPECTION_SAMPLES') === '1',
-    interval: Number(environment.get('TOA_INTROSPECTION_INTERVAL') ?? 1),
-    threshold: 64,
+  // through `options`, because what a process reads is what a deployment writes
+  JSON.stringify(
+    options({
+      samples: environment.get('TOA_INTROSPECTION_SAMPLES') === '1',
+      interval: Number(environment.get('TOA_INTROSPECTION_INTERVAL') ?? 1),
+      threshold: 64,
 
-    // `ui.feature` starts its own server; the explorer must not take the port first
-    ui: false
-  })
+      // `ui.feature` starts its own server; the explorer must not take the port first
+      ui: false,
+
+      // only `halt.feature` boots a process to halt; elsewhere nothing asks for one. The
+      // bounds are narrower than the runtime's, so what reaches a process is what this says
+      halt: { duration: [30, 600], quiescence: [30, 300] }
+    })
+  )
 )
 
-setDefaultTimeout(60 * 1000)
+// a halt is at least thirty seconds, and the scenario that waits one out waits for the rebuild
+setDefaultTimeout(120 * 1000)

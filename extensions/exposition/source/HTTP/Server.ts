@@ -12,6 +12,7 @@ import { ClientError, Exception } from './exceptions.ts'
 import { Context } from './Context.ts'
 import { Probe } from './Probe.ts'
 import { PORT, PROBE } from '@toa.io/definitions/extensions.exposition'
+import type { Gate } from '@toa.io/core'
 import type { IncomingMessage, Protocol, ServerResponse } from './types.ts'
 import type {
   Bouncer,
@@ -32,6 +33,21 @@ export class Server extends Connector {
 
   /** Every request not yet answered in full, by what it is answered on. */
   private readonly inflight = new Map<ServerResponse, AbortController>()
+
+  /** Whether the process has been told to go quiet, see `stop`. */
+  private quiesced = false
+
+  /**
+   * The gate that holds the gateway, where there is one. While it is down the port stays bound
+   * and every request is answered `503`: a client is owed an answer, and a closed port is not
+   * one — nor is one that whatever fronts the deployment invents on its behalf.
+   */
+  private gate?: Gate
+
+  /** What a halt takes the gateway down by, so that this can say when it is back. */
+  public gated(gate: Gate): void {
+    this.gate = gate
+  }
 
   /** Resolves the wait for the last of them, while the stop is waiting. */
   private drained: (() => void) | null = null
@@ -173,7 +189,31 @@ export class Server extends Connector {
     })
   }
 
+  /**
+   * While the process is quiesced the port stays bound and every request is answered `503`: a
+   * refused connection is not an answer, and the answer has to be the application's.
+   */
+  protected override pause(): void {
+    this.quiesced = true
+  }
+
+  protected override unpause(): void {
+    this.quiesced = false
+  }
+
   private listener(request: IncomingMessage, response: ServerResponse): void {
+    // answered before anything is parsed: a gateway that is not working does no work, it says so
+    if (this.quiesced || this.gate?.holding() === false) {
+      const headers: Record<string, string> = { 'cache-control': 'no-store' }
+      const remaining = this.gate?.remaining() ?? 0
+
+      if (remaining > 0) headers['retry-after'] = remaining.toString()
+
+      response.writeHead(503, headers).end()
+
+      return
+    }
+
     request.once('error', (error) => {
       console.warn('Request error', errorAttributes(request, error))
 

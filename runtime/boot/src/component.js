@@ -74,6 +74,9 @@ const create = async (manifest, locator) => {
   // when the RC releases what it opened
   if (phases?.dispose !== undefined) decorated.depends(phases.dispose)
 
+  // a dependency of the component, so the walk that stops a tree reaches it there
+  if (phases?.quiescence !== undefined) decorated.depends(phases.quiescence)
+
   return decorated
 }
 

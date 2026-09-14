@@ -2,7 +2,7 @@ import assert from 'node:assert'
 import { Given, When, Then } from '@cucumber/cucumber'
 import { diff } from 'jest-diff'
 import { exceptions, instance } from '@toa.io/core'
-import { transpose, match } from '@toa.io/generic'
+import { transpose, match, timeout } from '@toa.io/generic'
 import { load as parse } from 'js-yaml'
 
 import { cli } from './.connectors/cli.js'
@@ -54,6 +54,66 @@ Given(
    */
   function () {
     globalThis.TOA_INTEGRATION_BINDINGS_LOOP_DISABLED = true
+  }
+)
+
+Given(
+  'I run components:',
+  /**
+   * @param {import('@cucumber/cucumber').DataTable} data
+   * @this {toa.features.Context}
+   */
+  async function (data) {
+    const references = transpose(data.raw())[0]
+
+    this.workload = await stage.workload(references, {})
+  }
+)
+
+Given(
+  'I run {token} service with components:',
+  /**
+   * A service staged apart is a process of its own, which is not the one being halted — so a
+   * service whose own clock is what a scenario is about is run inside this one.
+   *
+   * @param {string} service
+   * @param {import('@cucumber/cucumber').DataTable} data
+   * @this {toa.features.Context}
+   */
+  async function (service, data) {
+    const references = transpose(data.raw())[0]
+
+    this.workload = await stage.workload(references, {}, [service])
+  }
+)
+
+When(
+  'the process is halted for {int} seconds',
+  /**
+   * Returns once it is down rather than once it is asked, so what follows is asserted of a
+   * halted process and not of one on its way there.
+   *
+   * @param {number} seconds
+   * @this {toa.features.Context}
+   */
+  async function (seconds) {
+    assert.ok(this.workload !== undefined, 'No process is running')
+
+    this.workload.stop(seconds)
+
+    await until(() => !this.workload.running(), 'the process did not halt')
+  }
+)
+
+Then(
+  'the process is running again',
+  /**
+   * @this {toa.features.Context}
+   */
+  async function () {
+    assert.ok(this.workload !== undefined, 'No process is running')
+
+    await until(() => this.workload.running(), 'the process did not come back')
   }
 )
 
@@ -458,3 +518,23 @@ async function call(endpoint, request) {
 
   await remote.disconnect()
 }
+
+/**
+ * @param {() => boolean} condition
+ * @param {string} failure
+ */
+async function until(condition, failure) {
+  const deadline = Date.now() + LIMIT
+
+  while (Date.now() < deadline) {
+    if (condition()) return
+
+    await timeout(POLL)
+  }
+
+  assert.fail(failure)
+}
+
+/** A halt is at least thirty seconds, and the teardown and the rebuild are either side of it. */
+const LIMIT = 90_000
+const POLL = 250

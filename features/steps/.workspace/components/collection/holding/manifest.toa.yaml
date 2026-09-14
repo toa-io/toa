@@ -1,0 +1,9 @@
+name: holding
+
+operations:
+  hold:
+    type: computation
+    input:
+      type: integer
+    output:
+      type: string

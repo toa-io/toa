@@ -26,7 +26,9 @@ const connector = (properties: object): any => ({
   ...properties,
   link: mock.fn(),
   connect: async () => {},
-  disconnect: async () => {}
+  disconnect: async () => {},
+  halt: async () => {},
+  restore: async () => {}
 })
 
 const create = (cycle: number, intervals: number): Pulse =>
@@ -290,6 +292,60 @@ it('should wait for a call in flight before closing', async () => {
   await closing
 
   assert.strictEqual(closed, true)
+})
+
+it('should not call while the process is quiet', async () => {
+  const pulse = create(DAY, 24)
+
+  await pulse.connect()
+  await pulse.halt()
+  await advance(3 * HOUR * SECOND)
+
+  assert.strictEqual(local.invoke.mock.callCount(), 0)
+})
+
+it('should wait for a call in flight before going quiet', async () => {
+  let release: () => void = () => {}
+  let quiet = false
+
+  local.invoke.mock.mockImplementation(
+    async () =>
+      await new Promise<void>((resolve) => {
+        release = resolve
+      })
+  )
+
+  const pulse = create(DAY, 24)
+
+  await pulse.connect()
+  await advance(HOUR * SECOND)
+
+  const quieting = pulse.halt().then(() => {
+    quiet = true
+  })
+
+  await advance(0)
+  assert.strictEqual(quiet, false, 'the call is still running')
+
+  release()
+  await advance(0)
+  await quieting
+
+  assert.strictEqual(quiet, true)
+})
+
+it('should call again at the next boundary once the process is working', async () => {
+  const pulse = create(DAY, 24)
+
+  await pulse.connect()
+  await pulse.halt()
+  await advance(3 * HOUR * SECOND)
+  await pulse.restore()
+
+  // the interval it came back in is not made up, the next one is called
+  await advance(HOUR * SECOND)
+
+  assert.deepStrictEqual(intervals(), [4])
 })
 
 it('should stop calling once closed', async () => {

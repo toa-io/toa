@@ -75,6 +75,8 @@ Non-scattered documentation is coming some time later.
   - Distributed tracing
   - [Metrics](/documentation/metrics.md): unsampled, and what the runtime records by zone
 - [Introspection](/extensions/introspection): product topology collection and visualization
+  - [Halt](/documentation/halt.md): a deployment stops, holds nothing open, and comes back on its
+    own — and is taken down only once the map says nothing was running
 - [Realtime events](/extensions/realtime)
 - [BLOB storage](/extensions/storages)
   - MIME type detection and validation

@@ -1,4 +1,4 @@
-import { Connector } from '@toa.io/core'
+import { Connector, deliveries } from '@toa.io/core'
 import { console } from 'openspan'
 
 import { refuse } from './verdict.js'
@@ -72,6 +72,7 @@ export class Receiver extends Connector {
     const promise = this.#receiver.receive(message)
 
     this.#pending.add(promise)
+    deliveries.taken()
 
     try {
       await promise
@@ -79,6 +80,7 @@ export class Receiver extends Connector {
       refuse(exception)
     } finally {
       this.#pending.delete(promise)
+      deliveries.done()
     }
   }
 }

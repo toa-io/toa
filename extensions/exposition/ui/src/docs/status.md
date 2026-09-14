@@ -25,5 +25,5 @@ defines.
 - `451 Unavailable For Legal Reasons`
 - `500 Internal Server Error`
 - `501 Not Implemented`
-- `503 Service Unavailable`
+- `503 Service Unavailable`<span class="note">The deployment is not working: it is halted, or on its way there. `retry-after` says when it is back, where that is known.</span>
 - `504 Gateway Timeout`<span class="note">The process a route named did not answer in time.</span>

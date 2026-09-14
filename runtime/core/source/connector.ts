@@ -10,6 +10,9 @@ export class Connector {
   #disconnecting: Promise<void> | undefined
   #discarded: boolean = false
 
+  /** Whether this has been told to stop what it does of its own accord, see `halt`. */
+  #halted: boolean = false
+
   public readonly id: string
   public connected: boolean = false
 
@@ -52,6 +55,10 @@ export class Connector {
 
     // See .#discard()
     if (this.#disconnecting !== undefined) next.#discard()
+
+    // and the same for a quiescence the walk has gone past already: one taken on after it
+    // would otherwise be the one thing in the tree still working
+    if (this.#halted) void next.halt()
 
     return next
   }
@@ -214,6 +221,61 @@ export class Connector {
   }
 
   /** Called on connection */
+  /**
+   * Stops what this tree does of its own accord, holding every connection open.
+   *
+   * The walk is what reaches a connector; what the connector does about it is `stop`. Top down,
+   * so a source is stopped before whatever it feeds, and a failure is reported rather than
+   * raised — one connector that will not stop is no reason to leave the rest working.
+   */
+  public async halt(visited: Set<Connector> = new Set()): Promise<void> {
+    // the walk is governed by where it has been, and the flag only by whether this one has
+    // already stopped: a connector that has, with a subtree that has not, is still walked through
+    if (visited.has(this)) return
+
+    visited.add(this)
+
+    if (!this.#halted) {
+      this.#halted = true
+
+      try {
+        await this.pause()
+      } catch (error) {
+        console.error('Connector failed to pause', { id: this.id, error })
+      }
+    }
+
+    for (const dependency of this.#dependencies) await dependency.halt(visited)
+  }
+
+  /**
+   * Starts again what `halt` stopped, bottom up, so nothing works before what it works through.
+   * Runs wherever the halt went, including where it failed.
+   */
+  public async restore(visited: Set<Connector> = new Set()): Promise<void> {
+    if (visited.has(this)) return
+
+    visited.add(this)
+
+    for (const dependency of this.#dependencies) await dependency.restore(visited)
+
+    if (!this.#halted) return
+
+    this.#halted = false
+
+    try {
+      await this.unpause()
+    } catch (error) {
+      console.error('Connector failed to unpause', { id: this.id, error })
+    }
+  }
+
+  /** What this stops doing of its own accord while the tree is halted. See `halt`. */
+  protected pause(): Promise<void> | void {}
+
+  /** What it starts doing again. See `restore`. */
+  protected unpause(): Promise<void> | void {}
+
   protected open(): Promise<void> | void {}
 
   /** Called on disconnection */

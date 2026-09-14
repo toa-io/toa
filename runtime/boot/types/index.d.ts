@@ -32,4 +32,22 @@ export function host(): types.extensions.Host
 /** A process, as a connector: what the command built, and what the extensions keep in one. */
 export class Workload extends core.Connector {
   constructor(build: (workload: Workload) => Promise<core.Connector>)
+
+  /** A part of this process a halt takes down and builds again. */
+  gate(build: () => Promise<core.Connector>): core.Gate
+
+  /** Whether what a halt takes down is up. */
+  running(): boolean
+
+  /** Whether this process is quiet: it does nothing of its own accord and holds everything. */
+  quiescent(): boolean
+
+  /** Stops what this process does of its own accord, holding open everything it has. */
+  quiesce(): Promise<void>
+
+  /** Undoes a quiesce. */
+  cancel(): Promise<void>
+
+  /** Stops this process for `seconds`, then builds it again. */
+  stop(seconds: number): void
 }

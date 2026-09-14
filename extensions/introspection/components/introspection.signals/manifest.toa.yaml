@@ -1,0 +1,109 @@
+namespace: introspection
+name: signals
+
+# What an operator tells every process of the deployment at once. A signal is a record and
+# nothing more: creating one publishes the prototype's `created` event, which every process
+# is subscribed to, and carrying it out is theirs. Nothing here knows anyone is listening.
+#
+# The records stay, because they are how a halt is legible after the fact: `CREATED` says
+# when it was asked for and `seconds` how long it was for, so whether one is on is read off
+# the record and never has to be retracted — which matters, because the write that would
+# retract it is the one thing a halted deployment cannot do.
+
+entity:
+  properties:
+    type:
+      description: What the processes are being told to do
+      type: string
+      enum: [halt, stop]
+    # what a halt may ask for is the deployment's own say, read off `bounds` and applied by
+    # every process that hears the signal, so what is stated here is only what a number is
+    seconds:
+      description: How long every process stays disconnected before it builds itself again
+      type: integer
+      minimum: 0
+    quiescence:
+      description: How long the deployment is given to go quiet before the map is read
+      type: integer
+      minimum: 0
+    grace:
+      description: How long a process that has found the deployment busy waits before it leaves
+      type: integer
+      minimum: 2
+      maximum: 120
+    signal:
+      description: The halt a stop answers
+      type: string
+  required:
+    - type
+    - seconds
+    - quiescence
+
+operations:
+  # `query: false` is what makes this a new signal rather than a change to one. What a signal
+  # may say is the entity's own say on itself, so the bounds are stated once: a value that
+  # breaks them is refused by the record and not by the route.
+  create:
+    description: Tell every process of this deployment to do something.
+    query: false
+    forward: transit
+    input: &signal
+      type: object
+      properties:
+        type:
+          type: string
+        seconds:
+          type: integer
+        quiescence:
+          type: integer
+        grace:
+          type: integer
+        signal:
+          type: string
+      required:
+        - type
+        - seconds
+        - quiescence
+  transit:
+    concurrency: retry
+    input: *signal
+  # what the deployment is configured to accept, by signal — `halt` is the only one there is,
+  # and it is absent where the deployment does not take halts
+  configuration:
+    description: What a signal of this deployment may ask for, in seconds.
+    output:
+      type: object
+      properties:
+        halt:
+          type: object
+          properties:
+            duration: &range
+              type: array
+              items:
+                type: integer
+              minItems: 2
+              maxItems: 2
+            quiescence: *range
+          required:
+            - duration
+            - quiescence
+
+# the map must not describe itself
+introspection: false
+
+exposition:
+  isolated: true
+  /:
+    # not `system:introspection`: reading the map and stopping the product are not one
+    # authority, and the map's role is already held by whoever draws it
+    auth:role: system:halt
+    io:output: true
+
+    # what a signal may ask for, so that whoever writes one asks for something that will be
+    # carried out as written rather than clamped on arrival. The records themselves are not
+    # read: a process is told by the event, and during a halt the gateway answers 503 anyway
+    GET: configuration
+
+    # the records are kept all the same — a halt needs no retraction, because `CREATED` and
+    # `seconds` answer whether one is on
+    POST: create

@@ -92,7 +92,7 @@ implement [Algorithm Factory interface](#).
 ## Run Commands
 
 Modules in the `rc` directory of the component root run once per component lifetime, outside any
-operation. A module must export at least one of four phases, and may export several.
+operation. A module must export at least one of the commands below, and may export several.
 
 ```javascript
 // rc/providers.js
@@ -112,6 +112,8 @@ export async function dispose(context) {
 | `settle`    | on connection, once the component can call its own operations (`context.local`)          |
 | `ready`     | on connection, once the component serves every operation and its receivers are consuming |
 | `dispose`   | on disconnection, after the component has stopped serving                                |
+| `pause`     | when the process is told to go quiet, while the component is whole and still serving     |
+| `resume`    | when it is working again, having gone quiet and not been taken down                      |
 
 `ready` is where a process hands out its name. A caller given `context.instance` calls the
 process's [stateful](/documentation/stateful.md) operations by it, and a call made before `ready` —
@@ -126,6 +128,45 @@ export async function ready(context) {
 ```
 
 `settle` and `ready` have no counterpart: nothing runs for them on disconnection.
+
+`pause` and `resume` are not a lifecycle moment. The component is not taken down and nothing it
+holds is closed: the process has been told to stop doing anything of its own accord, and this is
+where a component does the same with whatever the runtime cannot see — an interval, a watcher, a
+subscription to something outside.
+
+```javascript
+// rc/poller.js
+
+export function preflight(context) {
+  context.state.poller = setInterval(() => poll(context), 1000)
+}
+
+export function pause(context) {
+  clearInterval(context.state.poller)
+}
+
+export const resume = preflight
+```
+
+`context.state` is a component's own, kept between phases and calls, and a component has it by
+declaring [`state: ~`](/extensions/state/readme.md).
+
+**What `pause` released, something has to take again, and there are two places that happens.**
+Where the process goes on to be taken down and built again, the component that comes back is a new
+one and `preflight` runs on it. Where the [halt](/documentation/halt.md) is called off — the
+deployment did not go quiet, so nothing was closed — it is the same component, with the same
+`context.state` and what it opened in `preflight` still open, and `resume` is the only thing that
+runs.
+
+So `resume` is not the counterpart of `pause` — `preflight` usually is — but the second case is one
+nothing else covers, and a component that has a `pause` and no `resume` comes back from it without
+what it paused. **That is refused**: a component whose run commands export `pause` and no `resume`
+does not start, and says so.
+
+A component that keeps its own time and does not release it goes on calling while the process is
+quiet, and that is what calls the halt off: what a halt is decided by is whether anything was
+called. Once a process is taken down such a call is refused, and a rejection nobody catches ends
+the process.
 
 `dispose` is the counterpart of `preflight`: what a component opened there is released here. It runs
 before the context it is given is disconnected, so a component can still reach its remotes while

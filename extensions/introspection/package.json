@@ -35,7 +35,7 @@
     "openspan": "1.0.0-alpha.305"
   },
   "scripts": {
-    "transpile": "npx tsc && npx tsc -p ./components/introspection.nodes && npx tsc -p ./components/introspection.edges",
+    "transpile": "npx tsc && npx tsc -p ./components/introspection.nodes && npx tsc -p ./components/introspection.edges && npx tsc -p ./components/introspection.signals",
     "build:ui": "npm --prefix ui ci && npm --prefix ui run build",
     "prepack": "npm run build:ui",
     "features": "TSX_TSCONFIG_PATH=features/steps/tsconfig.json NODE_OPTIONS=--import=tsx cucumber-js --tags 'not @skip and not @samples and not @shutdown' && TOA_INTROSPECTION_SAMPLES=1 TSX_TSCONFIG_PATH=features/steps/tsconfig.json NODE_OPTIONS=--import=tsx cucumber-js --tags 'not @skip and @samples' && TOA_INTROSPECTION_INTERVAL=3600 TSX_TSCONFIG_PATH=features/steps/tsconfig.json NODE_OPTIONS=--import=tsx cucumber-js --tags 'not @skip and @shutdown'"
