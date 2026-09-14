@@ -27,6 +27,11 @@ timer.unref()
 
 process.send?.({ up: true })
 
+// a suite that died is not one that will ask for this process back
+process.on('disconnect', () => {
+  process.exit(0)
+})
+
 process.on('message', (message) => {
   if (message !== 'stop') return
 
