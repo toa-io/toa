@@ -16,10 +16,12 @@ export const dictionaries = {
     "halt": {
       "title": "Suspend operations",
       "description": "All systems will be inoperative for the interval you give, then resume automatically.",
-      "interval": "Seconds",
+      "interval": "Duration",
       "cancel": "Cancel",
       "hold": "Hold to halt",
-      "bounds": "Up to an hour"
+      "bounds": "Up to an hour",
+      "quiescence": "Quiescence",
+      "quiescenceBounds": "Up to 30 minutes"
     }
   }
 };

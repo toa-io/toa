@@ -27,8 +27,7 @@ inputs:
     description:
       input: All systems will be inoperative for the interval you give, then resume automatically.
     interval:
-      input: Seconds
-      context: label of the number field for how long the halt lasts
+      input: Duration
     cancel:
       input: Cancel
       context: button that closes the halt dialog without doing anything
@@ -36,6 +35,10 @@ inputs:
       input: Hold to halt
     bounds:
       input: Up to an hour
+    quiescence:
+      input: Quiescence
+    quiescenceBounds:
+      input: Up to 30 minutes
 mounts:
   iam: ../../@/iam/ui/intl
   introspection: ../../@/introspection/ui/intl

@@ -21,8 +21,8 @@
   /** What an account needs to read the map. `auth:role` in both component manifests. */
   const ROLE = 'system:introspection'
 
-  /** What an account needs to halt a process. */
-  const OPERATIONS = 'system:operations'
+  /** What an account needs to halt a process. `auth:role` on introspection.signals. */
+  const HALT = 'system:halt'
 
   let filter = $state<HTMLInputElement | null>(null)
 
@@ -114,7 +114,7 @@
       <!-- no `min-w-0` either: the buttons hold their ground and the filter gives way -->
       <div class="flex flex-1 justify-end gap-1">
         <!-- a gate over a control, not over a screen: no role, no button -->
-        <Authorized role={OPERATIONS}>
+        <Authorized role={HALT}>
           <Halt />
           {#snippet denied()}{/snippet}
         </Authorized>

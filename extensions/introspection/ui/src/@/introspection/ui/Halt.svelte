@@ -6,14 +6,27 @@
   import * as Dialog from '$ui/alert-dialog'
   import { dict } from '$lib/intl'
   import { Hold } from '$com/hold'
-  import { DEFAULT, DURATION, MAXIMUM, MINIMUM } from './Halt'
+  import {
+    DEFAULT,
+    DURATION,
+    MAXIMUM,
+    MINIMUM,
+    QUIESCENCE_DEFAULT,
+    QUIESCENCE_MAXIMUM,
+    QUIESCENCE_MINIMUM,
+  } from './Halt'
 
   let open = $state(false)
   let seconds = $state(DEFAULT)
+  let quiescence = $state(QUIESCENCE_DEFAULT)
 
-  const ready = $derived(
-    Number.isInteger(seconds) && seconds >= MINIMUM && seconds <= MAXIMUM,
-  )
+  const interval = $derived(integer(seconds, MINIMUM, MAXIMUM))
+  const quiet = $derived(integer(quiescence, QUIESCENCE_MINIMUM, QUIESCENCE_MAXIMUM))
+  const ready = $derived(interval && quiet)
+
+  function integer(value: number, min: number, max: number): boolean {
+    return Number.isInteger(value) && value >= min && value <= max
+  }
 
   function close(): void {
     open = false
@@ -38,25 +51,48 @@
       <Dialog.Description>{$dict.halt.description}</Dialog.Description>
     </Dialog.Header>
 
-    <div class="flex flex-col gap-1.5">
-      <Label for="introspection-halt-input">{$dict.halt.interval}</Label>
-      <Input
-        id="introspection-halt-input"
-        type="number"
-        inputmode="numeric"
-        min={MINIMUM}
-        max={MAXIMUM}
-        step="1"
-        bind:value={seconds}
-        aria-invalid={!ready}
-        aria-describedby="introspection-halt-hint"
-      />
-      <p
-        id="introspection-halt-hint"
-        class={['text-xs', ready ? 'text-muted-foreground' : 'text-destructive']}
-      >
-        {$dict.halt.bounds}
-      </p>
+    <div class="grid grid-cols-2 gap-4">
+      <div class="flex flex-col gap-1.5">
+        <Label for="introspection-halt-input">{$dict.halt.interval}</Label>
+        <Input
+          id="introspection-halt-input"
+          type="number"
+          inputmode="numeric"
+          min={MINIMUM}
+          max={MAXIMUM}
+          step="1"
+          bind:value={seconds}
+          aria-invalid={!interval}
+          aria-describedby="introspection-halt-hint"
+        />
+        <p
+          id="introspection-halt-hint"
+          class={['text-xs', interval ? 'text-muted-foreground' : 'text-destructive']}
+        >
+          {$dict.halt.bounds}
+        </p>
+      </div>
+
+      <div class="flex flex-col gap-1.5">
+        <Label for="introspection-halt-quiescence-input">{$dict.halt.quiescence}</Label>
+        <Input
+          id="introspection-halt-quiescence-input"
+          type="number"
+          inputmode="numeric"
+          min={QUIESCENCE_MINIMUM}
+          max={QUIESCENCE_MAXIMUM}
+          step="1"
+          bind:value={quiescence}
+          aria-invalid={!quiet}
+          aria-describedby="introspection-halt-quiescence-hint"
+        />
+        <p
+          id="introspection-halt-quiescence-hint"
+          class={['text-xs', quiet ? 'text-muted-foreground' : 'text-destructive']}
+        >
+          {$dict.halt.quiescenceBounds}
+        </p>
+      </div>
     </div>
 
     <Dialog.Footer>
