@@ -59,6 +59,30 @@ export class Halt {
   }
 
   /** The first member of every deployment here is the one holding the map. */
+  /** What the annotation says, read where whoever writes a halt reads it. */
+  @then('a halt may ask to stay down for {int} to {int} seconds, and to go quiet for {int} to {int}')
+  public async bounds(
+    duration: number,
+    until: number,
+    quiescence: number,
+    quiet: number
+  ): Promise<void> {
+    this.signals ??= await boot.remote(new Locator('signals', 'introspection'))
+
+    await this.signals.connect()
+
+    const reply = await this.signals.invoke('bounds', {})
+
+    await this.signals.disconnect()
+
+    this.signals = null
+
+    assert.deepEqual(reply.output ?? reply, {
+      duration: [duration, until],
+      quiescence: [quiescence, quiet]
+    })
+  }
+
   @when('the explorer is killed')
   public async kill(): Promise<void> {
     const explorer = this.fleet[0]

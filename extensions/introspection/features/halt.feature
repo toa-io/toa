@@ -10,6 +10,10 @@ Feature: Halt
   own view. Where anything was still working, or where the map could not be read, the halt is
   called off and every process carries on with what it never let go of.
 
+  Scenario: What a halt may ask for is the deployment's own
+    Given a running deployment
+    Then a halt may ask to stay down for 30 to 600 seconds, and to go quiet for 30 to 300
+
   Scenario: A quiet deployment stops
     Given a running deployment
     When a halt of 30 seconds is signalled
