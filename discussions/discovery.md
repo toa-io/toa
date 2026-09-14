@@ -104,8 +104,9 @@ A run from a context root finds the map by itself and needs neither flag, exactl
    the branch a tenant announces carries `manifest.version` beside its routes, and
    `Remotes.discover` takes it as both the cache key it already is and the version to ask for. The
    hash of the route tree keeps its own name, `routes`, and goes on deciding refresh from merge;
-   `version` becomes the component's, which is what the remote cache meant by it all along. A directive that calls a
-   component on its own behalf has no branch, and falls back to the map like everything else.
+   `version` becomes the component's, which is what the remote cache meant by it all along. A
+   directive that calls a component on its own behalf has no branch, and falls back to the map
+   like everything else.
 8. **The receiver.** `boot.receivers.resolveBinding` asserts where the answer declares no such
    event, rather than reading a property of `undefined`.
 9. **The stage.** `@toa.io/userland/stage` derives the map from the context it already loads, so a
