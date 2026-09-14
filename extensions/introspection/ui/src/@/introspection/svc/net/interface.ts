@@ -5,7 +5,7 @@ import type { Edge } from './Edge'
 
 const nodes = origin.resource<Node[]>('/introspection/nodes/')
 const edges = origin.resource<Edge[]>('/introspection/edges/')
-const halt = origin.resource<Bounds>('/introspection/signals/bounds')
+const signals = origin.resource('/introspection/signals/', { credentials: 'include' })
 
 const MINUTE = 60 * 1000
 const DAY = 24 * 60 * MINUTE
@@ -22,7 +22,20 @@ export async function list(): Promise<Edge[] | Error> {
 
 /** What a halt may ask for: the deployment's own, and what every process holds a signal to. */
 export async function bounds(): Promise<Bounds | Error> {
-  return await halt.json({ credentials: 'include' })
+  return await signals.json<Bounds>('bounds')
+}
+
+/**
+ * Writes a halt, which every process of the deployment hears. What answers is the record
+ * having been written; what it does happens to this page too.
+ */
+export async function halt(seconds: number, quiescence: number): Promise<void | Error> {
+  const written = await signals.json({
+    method: 'POST',
+    body: { type: 'halt', seconds, quiescence },
+  })
+
+  return written instanceof Error ? written : undefined
 }
 
 function updatedSince(maxAge: number): string {

@@ -36,3 +36,4 @@ export type Event = origin.Event
 export type Receiver = origin.Receiver
 export type Bounds = origin.Bounds
 export type Range = origin.Range
+export type Signal = origin.Signal

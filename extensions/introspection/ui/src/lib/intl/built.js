@@ -21,7 +21,9 @@ export const dictionaries = {
       "hold": "Hold to halt",
       "bounds": (min, max) => `${min}–${max} s`,
       "quiescence": "Quiescence",
-      "unknown": "What a halt may ask for is not known yet."
+      "unknown": "What a halt may ask for is not known yet.",
+      "counting": "Halting when this reaches zero. Cancel to call it off.",
+      "failed": "The halt was not accepted. Try again."
     }
   }
 };

@@ -16,3 +16,5 @@ halt:
   bounds: "!js (min, max) => `${min}–${max} s`"
   quiescence: Quiescence
   unknown: What a halt may ask for is not known yet.
+  counting: Halting when this reaches zero. Cancel to call it off.
+  failed: The halt was not accepted. Try again.

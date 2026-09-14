@@ -28,5 +28,7 @@ export type Dictionary = {
         bounds: (...args: [any, any]) => string
         quiescence: string
         unknown: string
+        counting: string
+        failed: string
       }
     }

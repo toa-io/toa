@@ -39,6 +39,10 @@ inputs:
       input: Quiescence
     unknown:
       input: What a halt may ask for is not known yet.
+    counting:
+      input: Halting when this reaches zero. Cancel to call it off.
+    failed:
+      input: The halt was not accepted. Try again.
 mounts:
   iam: ../../@/iam/ui/intl
   introspection: ../../@/introspection/ui/intl

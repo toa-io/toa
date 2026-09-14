@@ -6,3 +6,10 @@ export interface Bounds {
 
 /** `[min, max]`. */
 export type Range = [number, number]
+
+/** What a halt asks of the deployment. */
+export interface Signal {
+  type: 'halt'
+  seconds: number
+  quiescence: number
+}
