@@ -4,11 +4,14 @@
 
 A lookup names the version of the component it asks, and only replicas of that version answer it.
 
-Which version of each component is running is known to whoever starts the processes, and is written
-down: `toa map` reads a context and writes every component of it with its version, and every
-`toa compose`, `toa serve` and `toa mono` is given one, the way each is already given an
-environment. A component serves `.lookup` under its own version beside the shared name; a caller
-asks the name the map gives.
+A component serves `.lookup` under its own version beside the shared name, and a lookup names the
+version it is for. Where the asker knows which version is serving what it is about to use, it names
+that one; otherwise it names what the map says. `toa map` reads a context and writes every
+component of it with its version, and every `toa compose`, `toa serve` and `toa mono` is given one,
+the way each is already given an environment.
+
+The exposition gateway is the asker that knows: it forwards a request to the routes a tenant
+announced, so the contract it reads is that tenant's version, carried on the branch beside them.
 
 A version is the content hash `manifest.version` already holds — the one an image is tagged with —
 so a component whose sources did not change keeps it, and a process of a new release asks the
@@ -18,7 +21,7 @@ replicas already running and is answered by them.
 
 **What answers**
 
-1. A lookup is answered by the version the map names, or it is not answered.
+1. A lookup is answered by the version it names, or it is not answered.
 2. A lookup for a version that is not up yet waits on its queue and is answered when it comes up.
    The queue is durable and the caller asserts it, so the request outlives the gap: there is no
    retry, no interval and no attempt limit in this path.
@@ -29,30 +32,32 @@ replicas already running and is answered by them.
    names it.
 5. A lookup of a component composed in the same process is answered in memory and reaches no
    broker, as it is today, and so are the calls built from it.
+6. The exposition gateway reads the contract of the version that announced the route it matched,
+   whatever the map says, so what it forwards and what it validates against are one version's.
 
 **What is said**
 
-6. A wait names the component and the version it waits for, every five seconds, as it already names
+7. A wait names the component and the version it waits for, every five seconds, as it already names
    the component *(today)*.
-7. An event the named version does not declare fails the boot, naming the component, the event and
+8. An event the named version does not declare fails the boot, naming the component, the event and
    the version. Today it is a `TypeError`.
-8. A `compose`, a `serve` or a `mono` that finds no map is refused, and says what makes one.
+9. A `compose`, a `serve` or a `mono` that finds no map is refused, and says what makes one.
 
 **What is read**
 
-9. The map is read when a lookup is made, not once at a boot, so a process that outlives another
-   component's deployment asks for what is running rather than for what was.
-10. The map is found the way `.env` is: walked up to from where the command runs, or named with
+10. The map is read when a lookup is made, not once at a boot, so a process that outlives another
+    component's deployment asks for what is running rather than for what was.
+11. The map is found the way `.env` is: walked up to from where the command runs, or named with
     `--map`.
 
 **What is not promised**
 
-11. That a call reaches the version whose contract was read. A call goes to the endpoint's queue,
+12. That a call reaches the version whose contract was read. A call goes to the endpoint's queue,
     which every version serves. The caller validates against the contract it discovered and sets
     `authentic`, so the callee does not validate again, and an endpoint two versions both declare
     with different input schemas is the author's to keep compatible — the rule a rolling update
     already holds them to for the State.
-12. That an evicted component is running the version the context states. Something else deploys
+13. That an evicted component is running the version the context states. Something else deploys
     it, and the map says what the context holds, which is the only version anything here could
     mean.
 
@@ -83,25 +88,32 @@ A run from a context root finds the map by itself and needs neither flag, exactl
    has — its own, the ones its extensions bring, and the ones it evicts.
 3. **Finding it.** `runtime/cli/src/program.js` walks up for `components.json` as it already walks
    up for `.env`, with a `--map` option beside `--env`, and `compose`, `serve` and `mono` demand
-   one. It
-   is an option rather than a positional because all three are `<cmd> [paths...]`, and nothing
-   follows a variadic positional.
+   one. It is an option rather than a positional because all three are `<cmd> [paths...]`, and
+   nothing follows a variadic positional.
 4. **The queue.** `connectors/bindings.amqp/source/queues.js` gains the versioned lookup name,
    `<namespace>.<name>..lookup..<version>`, beside the `..tasks` and `..instances` it already
    composes.
 5. **Serving.** `boot.discovery.expose` produces `.lookup` and `.lookup..<version>`, always both.
    One extra queue and one extra consumer per component.
-6. **Asking.** `boot.discovery.lookup` reads the map and asks the name it gives; `core.Discovery`
-   keys its cache by component and version rather than by component; the warning carries the
-   version.
-7. **The receiver.** `boot.receivers.resolveBinding` asserts where the answer declares no such
+6. **Asking.** `core.Discovery.lookup` takes the version it is for, keys its cache by component and
+   version rather than by component, and names the version in its warning. `boot.remote` takes one
+   too, and falls back to what the map says — so nothing but the gateway has to know a map exists.
+   `boot.remote`'s third argument becomes `{ manifest, version }`; `host.remote` keeps the shape an
+   extension sees, `(locator, source, version)`, which is what `host.js` is for.
+7. **The gateway's branch carries the version.** `Factory.tenant` is already handed the manifest, so
+   the branch a tenant announces carries `manifest.version` beside its routes, and
+   `Remotes.discover` takes it as both the cache key it already is and the version to ask for. The
+   hash of the route tree keeps its own name, `routes`, and goes on deciding refresh from merge;
+   `version` becomes the component's, which is what the remote cache meant by it all along. A directive that calls a
+   component on its own behalf has no branch, and falls back to the map like everything else.
+8. **The receiver.** `boot.receivers.resolveBinding` asserts where the answer declares no such
    event, rather than reading a property of `undefined`.
-8. **The stage.** `@toa.io/userland/stage` derives the map from the context it already loads, so a
+9. **The stage.** `@toa.io/userland/stage` derives the map from the context it already loads, so a
    scenario — this repository's or an application's — carries no file.
-9. **The image and the chart.** The `CMD` of each image names the map, at a path
-   `@toa.io/definitions` holds beside the ports table. The chart renders a ConfigMap and mounts it
-   there on every composition, service and mono workload, and `toa compose --dock` mounts the same
-   file into the container it runs.
+10. **The image and the chart.** The `CMD` of each image names the map, at a path
+    `@toa.io/definitions` holds beside the ports table. The chart renders a ConfigMap and mounts it
+    there on every composition, service and mono workload, and `toa compose --dock` mounts the same
+    file into the container it runs.
 
 ## Decisions
 
@@ -135,10 +147,16 @@ A run from a context root finds the map by itself and needs neither flag, exactl
    manifests. What it obliges is that an evicted component is deployed from the sources the context
    was, which evicting already implies: the context declares it, writes its types and publishes
    what it receives. Where it is not, its callers wait and the wait names the version.
-7. **The content hash, not a release identity.** `manifest.version` is already computed, already
+7. **The gateway asks by the branch, not by the map.** Its route discovery is there so that a
+   component's routes reach it without it being deployed again, and reading a map would put its
+   answer back under the context's deployment. It is also the only asker that can be more exact
+   than a map: it forwards to the routes a tenant announced, so the version that announced them is
+   the one whose contract those routes are. A map would let it read one version's contract while
+   serving another's routes, which is the defect this change is about, one layer up.
+8. **The content hash, not a release identity.** `manifest.version` is already computed, already
    the image tag, and already changes exactly when the sources do. Nothing new is derived and
    nothing new has to agree on it. It is opaque and unordered, which is all this asks of it.
-8. **No `x-expires`, in comq or here; a policy instead.** Declaring every RPC queue with one is not
+9. **No `x-expires`, in comq or here; a policy instead.** Declaring every RPC queue with one is not
    available: an existing durable queue cannot be redeclared with new arguments, so the assert
    would answer `PRECONDITION_FAILED` against every queue of every running deployment and the
    upgrade would mean emptying the broker. It is also the wrong semantics for an endpoint queue,
@@ -147,11 +165,11 @@ A run from a context root finds the map by itself and needs neither flag, exactl
    hundred empty queues a year and cost a way to discard a lookup waiting on a version that is
    still starting. The documentation recommends an `expires` policy, where the TTL is set by
    someone who can see the broker.
-9. **The version is not in the endpoint queue's name.** Routing calls by version would end
-   load balancing across a rollout and make a deployment an ordering problem. Both versions serving
-   one queue is what a rolling update is; what was wrong is only that a caller could not tell which
-   one described itself to it.
-10. **Asked, rather than announced.** A component could broadcast what it provides — the exposition
+10. **The version is not in the endpoint queue's name.** Routing calls by version would end
+    load balancing across a rollout and make a deployment an ordering problem. Both versions serving
+    one queue is what a rolling update is; what was wrong is only that a caller could not tell which
+    one described itself to it.
+11. **Asked, rather than announced.** A component could broadcast what it provides — the exposition
     gateway already does this for routes, with a knock, a periodic re-announcement and a
     supersession rule over the announcer's start time. It would answer the same question and one
     more, telling a component that is running without an endpoint from one that is not running. It
@@ -206,10 +224,11 @@ by design and is not changed here.
 1. The versioned queue name, and `expose` serving it beside the shared one. Additive: nothing asks
    for it yet.
 2. `toa map`; finding and demanding the map; the stage deriving one.
-3. Reading the map at the lookup, asking the versioned name, keying the cache by version, and the
-   warning that names it.
-4. The receiver's assertion.
-5. The image `CMD`, the ConfigMap and its mount, and `--dock`.
+3. The version as a parameter of a lookup: reading the map at the lookup, asking the versioned
+   name, keying the cache by version, and the warning that names it.
+4. The gateway's branch carrying the component version, and asking by it.
+5. The receiver's assertion.
+6. The image `CMD`, the ConfigMap and its mount, and `--dock`.
 
 They ship in one release. The release changes every workload's command and adds a mount, so every
 pod of a context is replaced by the upgrade and none is left running a runtime that asks for a
@@ -241,9 +260,13 @@ queue is never shared. These run `toa compose` as a child process, the way
    - _It is found_: `toa compose` from a context root, with no `--map`.
    - _It is required_: `toa compose` where none is found and none is named, refused, naming
      `toa map`.
-3. `features/deployment`: the ConfigMap is rendered and mounted on every composition, service and
+3. `extensions/exposition/features`: a route reaches the version that announced it. Two versions
+   of one component announce, and the gateway forwards under the contract of the one whose branch
+   it merged, whatever the map says — and a directive that calls a component on its own behalf
+   still reaches the version the map names.
+4. `features/deployment`: the ConfigMap is rendered and mounted on every composition, service and
    mono workload, and each `CMD` names the path it is mounted at.
-4. `npm run features` whole, including what is tagged slow: every scenario that boots a composition
+5. `npm run features` whole, including what is tagged slow: every scenario that boots a composition
    goes through the stage's derived map, so the suite is the coverage of that path.
 
 ## Compatibility

@@ -68,6 +68,9 @@ message.
 A component whose sources did not change keeps its version, so a process of a new release asks the
 replicas already running and is answered by them. Nothing has to be deployed in an order.
 
+The gateway reads the contract of the version that announced the route it matched, so a request it
+forwards is described by the same version that offered it the route.
+
 A call is not routed by version: it goes to the endpoint's queue, which every version serves, so
 one two versions both declare is served by either. The caller validates against the contract it
 read and the callee does not validate again, so **an endpoint's input schema is yours to keep
