@@ -169,9 +169,10 @@ would say what became of it is the one thing a halted deployment cannot do.
 the halt it is quiesced for, so pressing twice changes nothing.
 
 **A halt reaches what is connected when it is posted.** The signal travels over the broker, and a
-process that is not there to receive it is never told afterwards: it goes on working while the rest
-go down. So a halt is for a deployment that is healthy, and not a way to bring a broken one to
-rest.
+process that is not there to receive it is never told afterwards. One that is idle is silent in
+exactly the way one that obeyed is, so the deployment is stopped around it and it is left working
+alone; one that is doing anything writes to the map, and the halt is called off. Either way, a
+halt is for a deployment that is healthy, and not a way to bring a broken one to rest.
 
 **If this is your big red button, press it on a schedule.** One nobody has pressed is one nobody
 knows works, and the day you need it is the wrong day to learn otherwise.
