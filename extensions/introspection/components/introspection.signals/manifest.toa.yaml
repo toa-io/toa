@@ -16,16 +16,16 @@ entity:
       description: What the processes are being told to do
       type: string
       enum: [halt, stop]
+    # what a halt may ask for is the deployment's own say, read off `bounds` and applied by
+    # every process that hears the signal, so what is stated here is only what a number is
     seconds:
       description: How long every process stays disconnected before it builds itself again
       type: integer
-      minimum: 30
-      maximum: 3600
+      minimum: 0
     quiescence:
       description: How long the deployment is given to go quiet before the map is read
       type: integer
-      minimum: 30
-      maximum: 1800
+      minimum: 0
     grace:
       description: How long a process that has found the deployment busy waits before it leaves
       type: integer
@@ -37,6 +37,7 @@ entity:
   required:
     - type
     - seconds
+    - quiescence
 
 operations:
   # `query: false` is what makes this a new signal rather than a change to one. What a signal
@@ -61,9 +62,26 @@ operations:
           type: string
       required:
         - type
+        - seconds
+        - quiescence
   transit:
     concurrency: retry
     input: *signal
+  bounds:
+    description: What a halt of this deployment may ask for, in seconds.
+    output:
+      type: object
+      properties:
+        duration: &range
+          type: array
+          items:
+            type: integer
+          minItems: 2
+          maxItems: 2
+        quiescence: *range
+      required:
+        - duration
+        - quiescence
 
 # the map must not describe itself
 introspection: false
@@ -80,3 +98,8 @@ exposition:
     # `seconds` answer whether one is on — but nothing reads them over HTTP: a process is told
     # by the event, and during a halt the gateway answers 503 to whoever would ask
     POST: create
+
+    # what a halt may ask for, so that whoever writes one asks for something that will be
+    # carried out as written rather than clamped on arrival
+    /bounds:
+      GET: bounds

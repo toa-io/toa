@@ -22,6 +22,19 @@ introspection:
 
 Off by default: with it off there is nothing deployed to post to and nothing listening.
 
+What a halt of your deployment may ask for is yours to say, because how long it takes to drain
+and how long it can afford to be down are:
+
+```yaml
+introspection:
+  halt:
+    duration: [30, 3600] # how long it may stay down, seconds
+    quiescence: [30, 1800] # how long it may be given to go quiet before it is checked
+```
+
+Those are the defaults. A pair is `[min, max]`, in seconds, and `halt: true` takes both as they
+stand.
+
 With it on, every application component has to be on the map: one declaring
 `introspection: false` fails the build, because the map is what a halt is decided by. The
 narrower opt-out, `introspection.samples: false`, is untouched — it suppresses the payload of a
@@ -36,13 +49,22 @@ seconds: 300
 quiescence: 60
 ```
 
-- `seconds` — how long every process stays down. Between `30` and `3600`.
-- `quiescence` — how long the deployment is given to go quiet before it is checked. Between `30`
-  and `1800`, `60` by default.
-- `grace` — how long a process that found the deployment working waits for another process to
-  call the stop before it leaves the halt. Between `2` and `120`, `10` by default.
+- `seconds` — how long every process stays down.
+- `quiescence` — how long the deployment is given to go quiet before it is checked.
 
-The route takes the `system:halt` role.
+Both are required, and both are held to what the deployment allows: a halt asking for more than
+that is carried out as the nearest thing that is allowed, because a signal crosses the wire and
+outlives the release that wrote it.
+
+- `grace` — how long a process that found the deployment working waits for another process to
+  call the stop before it leaves the halt. Optional: between `2` and `120`, `10` by default.
+
+```http
+GET /introspection/signals/bounds HTTP/1.1
+```
+
+answers `{ duration: [min, max], quiescence: [min, max] }`, which is what a form that posts a
+halt asks for within. Both routes take the `system:halt` role.
 
 ## What happens
 

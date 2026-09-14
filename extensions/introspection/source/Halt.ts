@@ -4,19 +4,14 @@ import { environment, timeout } from '@toa.io/generic'
 import {
   CHECK_TIMEOUT,
   DEFAULT_GRACE,
-  DEFAULT_QUIESCENCE,
   EDGES,
+  GRACE,
   HALT_GAP,
-  MAX_GRACE,
-  MAX_HALT,
-  MAX_QUIESCENCE,
-  MIN_GRACE,
-  MIN_HALT,
-  MIN_QUIESCENCE,
   NAMESPACE,
   SIGNAL,
   SIGNALS
 } from '@toa.io/definitions/extensions.introspection'
+import type { Bounds, Options } from '@toa.io/definitions/extensions.introspection'
 import type { Host } from './Factory.ts'
 import type { Remote } from '@toa.io/core'
 import type { Message } from '@toa.io/core/types'
@@ -43,6 +38,7 @@ import type { Message } from '@toa.io/core/types'
  */
 export class Halt extends Connector {
   private readonly host: Host
+  private readonly options: Options
   private readonly remotes: Record<string, Remote> = {}
 
   /** The halt this process is quiesced for, while it is. */
@@ -50,10 +46,11 @@ export class Halt extends Connector {
 
   private timer: NodeJS.Timeout | null = null
 
-  public constructor(host: Host) {
+  public constructor(host: Host, options: Options) {
     super()
 
     this.host = host
+    this.options = options
   }
 
   protected override async open(): Promise<void> {
@@ -99,13 +96,9 @@ export class Halt extends Connector {
     // one at a time: a process quiesced for a halt is deaf to another, and to a redelivery
     if (this.pending !== null || typeof signal.id !== 'string') return
 
-    const seconds = bound(signal.seconds, [MIN_HALT, MAX_HALT])
-    const quiescence = bound(
-      signal.quiescence,
-      [MIN_QUIESCENCE, MAX_QUIESCENCE],
-      DEFAULT_QUIESCENCE
-    )
-    const grace = bound(signal.grace, [MIN_GRACE, MAX_GRACE], DEFAULT_GRACE)
+    const seconds = bound(signal.seconds, this.options.duration)
+    const quiescence = bound(signal.quiescence, this.options.quiescence)
+    const grace = bound(signal.grace, GRACE, DEFAULT_GRACE)
 
     if (seconds === null || quiescence === null || grace === null) return
 
@@ -117,7 +110,7 @@ export class Halt extends Connector {
      */
     const since = typeof signal.CREATED === 'number' ? signal.CREATED : Date.now()
 
-    this.pending = { id: signal.id, seconds, grace, since }
+    this.pending = { id: signal.id, seconds, quiescence, grace, since }
 
     console.warn('Halt signalled, going quiet', { seconds, quiescence })
 
@@ -253,7 +246,13 @@ export class Halt extends Connector {
     try {
       const reply = await race(
         signals.invoke('create', {
-          input: { type: 'stop', seconds: pending.seconds, signal: pending.id }
+          input: {
+            type: 'stop',
+            seconds: pending.seconds,
+            // what the halt asked for, because a record says what it was answering
+            quiescence: pending.quiescence,
+            signal: pending.id
+          }
         })
       )
 
@@ -327,11 +326,7 @@ class Subscription extends Connector {
 }
 
 /** A number as it came, within what this release accepts, or `null` where it is not one. */
-function bound(
-  value: unknown,
-  [min, max]: [number, number],
-  fallback?: number
-): number | null {
+function bound(value: unknown, [min, max]: Bounds, fallback?: number): number | null {
   if (value === undefined && fallback !== undefined) return fallback
 
   if (typeof value !== 'number' || !Number.isFinite(value)) return null
@@ -363,6 +358,7 @@ const UNANSWERED = Symbol('unanswered')
 interface Pending {
   id: string
   seconds: number
+  quiescence: number
   grace: number
   since: number
 }

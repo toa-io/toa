@@ -5,6 +5,7 @@ import { CHECK_TIMEOUT, HALT_GAP } from '@toa.io/definitions/extensions.introspe
 
 import { Halt } from './Halt.ts'
 import type { Host } from './Factory.ts'
+import type { Options } from '@toa.io/definitions/extensions.introspection'
 import type { Receiver } from '@toa.io/core/types'
 
 /**
@@ -17,6 +18,17 @@ const QUIESCENCE = 30
 const GRACE = 2
 const SECONDS = 30
 const SIGNAL = 'a3f1'
+
+/** What this deployment lets a halt ask for. */
+const OPTIONS = {
+  samples: false,
+  interval: 1,
+  threshold: 64,
+  ui: false,
+  halt: true,
+  duration: [30, 600],
+  quiescence: [30, 300]
+} as Options
 
 class Remote extends Connector {
   public readonly calls: Array<{ endpoint: string; request: any }> = []
@@ -66,7 +78,7 @@ beforeEach(async () => {
     }
   } as unknown as Host
 
-  halt = new Halt(host)
+  halt = new Halt(host, OPTIONS)
 
   await halt.connect()
   await settled()
@@ -88,8 +100,35 @@ it('should stop the deployment where nothing has been called', async () => {
   const [call] = signals.calls
 
   assert.equal(call.endpoint, 'create')
-  assert.deepEqual(call.request.input, { type: 'stop', seconds: SECONDS, signal: SIGNAL })
+  assert.deepEqual(call.request.input, {
+    type: 'stop',
+    seconds: SECONDS,
+    quiescence: QUIESCENCE,
+    signal: SIGNAL
+  })
   assert.equal(stopped, SECONDS)
+})
+
+it('should hold a halt to what the deployment allows', async () => {
+  await signalled({ seconds: 5000, quiescence: 1 })
+  await decided()
+
+  const [call] = signals.calls
+
+  // asked for more than this deployment allows, and stopped for what it does
+  assert.equal(call.request.input.seconds, OPTIONS.duration[1])
+  assert.equal(call.request.input.quiescence, OPTIONS.quiescence[0])
+})
+
+it('should ignore a halt that does not say how long to go quiet for', async () => {
+  await received({ type: 'halt', id: SIGNAL, seconds: SECONDS, CREATED: Date.now() })
+
+  assert.equal(quiesced, false)
+
+  await decided()
+
+  assert.equal(stopped, null)
+  assert.equal(signals.calls.length, 0)
 })
 
 it('should read the map for this region, since the signal was written', async () => {

@@ -11,7 +11,18 @@ properties:
   ui:
     type: boolean
   halt:
-    type: boolean
+    # `true` takes what the runtime holds a halt to; a pair of seconds narrows it
+    type: [boolean, object]
+    properties:
+      duration: &bounds
+        type: array
+        items:
+          type: integer
+          minimum: 0
+        minItems: 2
+        maxItems: 2
+      quiescence: *bounds
+    additionalProperties: false
   resources:
     # `null` deploys the service without any, which every deployment has to state one way
     # or the other — see `migrations/262.md`.

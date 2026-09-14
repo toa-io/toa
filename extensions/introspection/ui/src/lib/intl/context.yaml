@@ -34,11 +34,11 @@ inputs:
     hold:
       input: Hold to halt
     bounds:
-      input: Up to an hour
+      input: "!js (min, max) => `${min}–${max} s`"
     quiescence:
       input: Quiescence
-    quiescenceBounds:
-      input: Up to 30 minutes
+    unknown:
+      input: What a halt may ask for is not known yet.
 mounts:
   iam: ../../@/iam/ui/intl
   introspection: ../../@/introspection/ui/intl

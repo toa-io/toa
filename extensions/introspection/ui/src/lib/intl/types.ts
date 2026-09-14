@@ -25,8 +25,8 @@ export type Dictionary = {
         interval: string
         cancel: string
         hold: string
-        bounds: string
+        bounds: (...args: [any, any]) => string
         quiescence: string
-        quiescenceBounds: string
+        unknown: string
       }
     }

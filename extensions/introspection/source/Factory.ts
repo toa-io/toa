@@ -104,7 +104,7 @@ export class Factory implements extensions.Factory {
   public resident(host: Host): Connector | null {
     if (this.options?.halt !== true) return null
 
-    return host.gate(async () => new Halt(host))
+    return host.gate(async () => new Halt(host, this.options!))
   }
 
   // a halt takes the whole of it, the UI with it: a map nobody is reporting to is stale

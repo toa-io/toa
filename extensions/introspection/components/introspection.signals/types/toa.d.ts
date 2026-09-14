@@ -10,7 +10,7 @@ export interface Entity {
   /** How long every process stays disconnected before it builds itself again */
   seconds: number
   /** How long the deployment is given to go quiet before the map is read */
-  quiescence?: number
+  quiescence: number
   /** How long a process that has found the deployment busy waits before it leaves */
   grace?: number
   /** The halt a stop answers */
@@ -25,24 +25,31 @@ export interface Entity {
 
 export type CreateInput = {
   type: string
-  seconds?: number
-  quiescence?: number
+  seconds: number
+  quiescence: number
   grace?: number
   signal?: string
 }
 
 export type TransitInput = {
   type: string
-  seconds?: number
-  quiescence?: number
+  seconds: number
+  quiescence: number
   grace?: number
   signal?: string
+}
+
+export type BoundsOutput = {
+  duration: number[]
+  quiescence: number[]
 }
 
 export interface Component {
   /** Tell every process of this deployment to do something. */
   create: (request: { input: CreateInput, task?: boolean }, options?: Options) => Promise<unknown>
   transit: (request: { input: TransitInput, query?: Query<Entity>, task?: boolean }, options?: Options) => Promise<Entity>
+  /** What a halt of this deployment may ask for, in seconds. */
+  bounds: (request: { input?: null, task?: boolean }, options?: Options) => Promise<BoundsOutput>
   assign: (request: { input?: null, query?: Query<Entity>, task?: boolean }, options?: Options) => Promise<Entity>
   ensure: (request: { input?: null, query?: Query<Entity>, task?: boolean }, options?: Options) => Promise<Entity>
   enumerate: (request: { input?: null, query?: Query<Entity>, task?: boolean }, options?: Options) => Promise<Entity[]>

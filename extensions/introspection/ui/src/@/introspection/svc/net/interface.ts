@@ -1,9 +1,11 @@
 import { origin } from '@/net'
 import type { Node } from './Node'
+import type { Bounds } from './Halt'
 import type { Edge } from './Edge'
 
 const nodes = origin.resource<Node[]>('/introspection/nodes/')
 const edges = origin.resource<Edge[]>('/introspection/edges/')
+const halt = origin.resource<Bounds>('/introspection/signals/bounds')
 
 const MINUTE = 60 * 1000
 const DAY = 24 * 60 * MINUTE
@@ -16,6 +18,11 @@ export async function get(): Promise<Node[] | Error> {
 
 export async function list(): Promise<Edge[] | Error> {
   return await edges.json(updatedSince(EDGES_MAX_AGE), { credentials: 'include' })
+}
+
+/** What a halt may ask for: the deployment's own, and what every process holds a signal to. */
+export async function bounds(): Promise<Bounds | Error> {
+  return await halt.json({ credentials: 'include' })
 }
 
 function updatedSince(maxAge: number): string {

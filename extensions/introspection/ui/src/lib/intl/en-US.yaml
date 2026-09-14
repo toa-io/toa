@@ -13,6 +13,6 @@ halt:
   interval: Duration
   cancel: Cancel
   hold: Hold to halt
-  bounds: Up to an hour
+  bounds: "!js (min, max) => `${min}–${max} s`"
   quiescence: Quiescence
-  quiescenceBounds: Up to 30 minutes
+  unknown: What a halt may ask for is not known yet.

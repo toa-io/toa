@@ -50,26 +50,27 @@ export const SIGNALS = 'signals'
 export const SIGNAL = `${NAMESPACE}.${SIGNALS}.created`
 
 /**
- * How long a halt may be asked for.
+ * How long a halt may be asked to stay down for, seconds, where the deployment says nothing.
  *
  * The floor is what a teardown costs — a gateway drains for ten seconds and the broker shuts
  * down over about five — so below it a halt is mostly the halting. The ceiling is because a
  * halted deployment looks well to everything watching it, so one that overran would be an
- * outage with nothing reporting one.
+ * outage with nothing reporting one. A deployment that knows better says so in its annotation.
  */
-export const MIN_HALT = 30
-export const MAX_HALT = 3600
+export const DURATION: Bounds = [30, 3600]
 
 /**
- * How long the deployment is given to go quiet before the map is read.
+ * How long the deployment may be given to go quiet before the map is read, seconds, where the
+ * deployment says nothing.
  *
  * It is what a drain costs and nothing else: nothing is being added to the queues, so what is
  * in them is the backlog of the moment the signal landed. A deployment given less than it
  * needs is not stopped — it is found busy and the halt is called off.
  */
-export const MIN_QUIESCENCE = 30
-export const MAX_QUIESCENCE = 1800
-export const DEFAULT_QUIESCENCE = 60
+export const QUIESCENCE: Bounds = [30, 1800]
+
+/** What a halt may ask for: `[min, max]`, seconds. */
+export type Bounds = [number, number]
 
 /**
  * How long a process that has found the deployment busy waits before it leaves the halt.
@@ -79,8 +80,7 @@ export const DEFAULT_QUIESCENCE = 60
  * would end half down. So it waits this out first, listening, and leaves only if no stop
  * arrived.
  */
-export const MIN_GRACE = 2
-export const MAX_GRACE = 120
+export const GRACE: Bounds = [2, 120]
 export const DEFAULT_GRACE = 10
 
 /**
