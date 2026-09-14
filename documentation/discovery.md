@@ -26,6 +26,11 @@ receiver's target are read from what the process already has.
 A component in the same [composition](/documentation/compositions.md) is asked in memory, and so is
 called in memory. Nothing of either reaches the broker.
 
+A component is asked **once per process**, at the first call to it, and what it answered is held
+for as long as the process runs. So a caller keeps the contract of the version it first met, which
+is what its own code was written against — see [while two versions serve](#while-two-versions-serve)
+for what that obliges.
+
 ## The map
 
 `toa map` reads the context and writes every component of it with the version it runs:

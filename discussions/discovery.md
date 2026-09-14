@@ -57,7 +57,15 @@ replicas already running and is answered by them.
     `authentic`, so the callee does not validate again, and an endpoint two versions both declare
     with different input schemas is the author's to keep compatible — the rule a rolling update
     already holds them to for the State.
-13. That an evicted component is running the version the context states. Something else deploys
+13. That a caller's view of a peer is refreshed when that peer is redeployed. A remote is built at
+    the first call to a component and held for the life of the process, so what a caller reads is
+    the contract of the version it first met, and it reads the map once per peer rather than once
+    per call. It cannot be wrong for that caller: its own sources only ever make the calls that
+    release knew how to make, and a contract that changes while two versions serve is additive by
+    the rule above. The gateway is the exception — it forwards what a client sends rather than
+    what its own sources knew — which is why it, and only it, follows the version that announced
+    a route.
+14. That an evicted component is running the version the context states. Something else deploys
     it, and the map says what the context holds, which is the only version anything here could
     mean.
 
@@ -139,8 +147,9 @@ A run from a context root finds the map by itself and needs neither flag, exactl
    is asking. The cost is one queue and one consumer per component.
 5. **Read at the lookup, not at the boot.** A process may first call a peer long after that peer
    was redeployed; a map read once at a boot would name a version that is gone, and the lookup for
-   it would wait for something that is never coming. A lookup happens once per peer per process,
-   so the read is off every hot path.
+   it would wait for something that is never coming. A lookup happens once per peer per process —
+   `Context` holds one remote per component for the life of the composition — so this is a read per
+   peer, not a read per call, and nothing on a hot path does it.
 6. **Evicted components are in the map.** `toa env` leaves them out because variables are rendered
    into a workload, and a deployment creates none for one it does not deploy. A map is not per
    workload: it is one table everyone reads, and an evicted component is called like any other, by
