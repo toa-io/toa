@@ -102,10 +102,16 @@ A run from a context root finds the map by itself and needs neither flag, exactl
 ## Decisions
 
 1. **A file, not a variable.** The runtime reads a path it is given, which is Node.js and nothing
-   else, so *Kubernetes is not a requirement* holds. A variable would have to be rendered into
-   every workload's environment, and the map changes whenever any component does — so every pod in
-   the context would be replaced on every deployment, and a pod that came up between two of them
-   could not be told.
+   else, so *Kubernetes is not a requirement* holds. A variable rendered into every workload's
+   environment would change whenever any component does, so every pod of a context would be
+   replaced by every deployment; one read from a `configMapKeyRef` instead would not, but it is
+   resolved when a container starts and frozen after that, so a composition a deployment does not
+   replace would keep a map naming the version of a peer it did. A mounted file is the one form
+   that neither churns nor goes stale, and it is what decision 5 rests on.
+
+   Handing one to a process that something else starts — a container an application runs of its
+   own — is that application's, like the environment it already hands over. `--map` names it
+   wherever it is put.
 2. **Found like `.env`, required unlike it.** An absent `.env` is a run with no variables, which is
    a thing someone may mean. An absent map is a run that asks whichever replica answers first,
    which is the defect this removes, so it is refused and says what makes one.
