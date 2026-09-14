@@ -61,8 +61,8 @@ Nothing in a component: no declaration changes, no call changes, no manifest key
 What changes is how a process is started.
 
 ```shell
-$ toa map -p application                 # writes application/.map.json
-$ toa compose ./application/components/* --env application/.env --map application/.map.json
+$ toa map -p application                 # writes application/components.json
+$ toa compose ./application/components/* --env application/.env --map application/components.json
 ```
 
 A run from a context root finds the map by itself and needs neither flag, exactly as it needs no
@@ -78,7 +78,7 @@ A run from a context root finds the map by itself and needs neither flag, exactl
    `[environment]` positional. It reads the context with `@toa.io/norm`, which the CLI already
    depends on, and writes `{ "<namespace>.<name>": "<version>" }` for every component the context
    has — its own and the ones its extensions bring — leaving out what it evicts.
-3. **Finding it.** `runtime/cli/src/program.js` walks up for `.map.json` as it already walks up for
+3. **Finding it.** `runtime/cli/src/program.js` walks up for `components.json` as it already walks up for
    `.env`, with a `--map` option beside `--env`, and `compose`, `serve` and `mono` demand one. It
    is an option rather than a positional because all three are `<cmd> [paths...]`, and nothing
    follows a variadic positional.

@@ -6,7 +6,7 @@ A component is never told what another one provides. It asks, and a process is s
 that says which version of each component it asks:
 
 ```shell
-$ toa map                      # writes .map.json beside the context
+$ toa map                      # writes components.json beside the context
 $ toa compose ./components/*   # finds it, the way it finds .env
 ```
 
@@ -43,7 +43,7 @@ when its sources change and not otherwise.
 The map is found the way `.env` is: walked up to from where the command runs, or named.
 
 ```shell
-$ toa compose ./components/* --env application/.env --map application/.map.json
+$ toa compose ./components/* --env application/.env --map application/components.json
 ```
 
 `toa compose`, `toa serve` and `toa mono` are refused where neither finds one: a process with no map
