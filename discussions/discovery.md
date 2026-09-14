@@ -24,8 +24,9 @@ replicas already running and is answered by them.
    retry, no interval and no attempt limit in this path.
 3. A component whose sources did not change keeps its version, so nothing has to be deployed in an
    order for a new process to be answered.
-4. A component the context evicts is not in the map, and a lookup of one is answered by whatever
-   is running — as every lookup is today.
+4. Every component of the context is in the map, including one it evicts. A component deployed
+   from other sources than the context was is not reachable by a lookup until it is, and the wait
+   names it.
 5. A lookup of a component composed in the same process is answered in memory and reaches no
    broker, as it is today, and so are the calls built from it.
 
@@ -51,8 +52,9 @@ replicas already running and is answered by them.
     `authentic`, so the callee does not validate again, and an endpoint two versions both declare
     with different input schemas is the author's to keep compatible — the rule a rolling update
     already holds them to for the State.
-12. Nothing about a component deployed outside this context. Its version is not the context's to
-    know, which is why an evicted one is left out rather than guessed at.
+12. That an evicted component is running the version the context states. Something else deploys
+    it, and the map says what the context holds, which is the only version anything here could
+    mean.
 
 ### What a component author does differently
 
@@ -73,13 +75,15 @@ A run from a context root finds the map by itself and needs neither flag, exactl
 1. **Documentation, first.** There is no page for this area: `documentation/communication/ucp.md`
    has a `## Discovery` heading with nothing under it, and `documentation/component/receiver.md`
    links the word "discovered" to `href="#"`. `documentation/discovery.md` is the area as it
-   stands and the version rule on top, and both dangling references point at it.
+   stands and the version rule on top, and both dangling references point at it. `toa map` and
+   `--map` go into the CLI readme, and the map into `documentation/deployment.md`.
 2. **`toa map`.** A command beside `toa env`: `-p` for the context, `--as` for the output,
    `[environment]` positional. It reads the context with `@toa.io/norm`, which the CLI already
    depends on, and writes `{ "<namespace>.<name>": "<version>" }` for every component the context
-   has — its own and the ones its extensions bring — leaving out what it evicts.
-3. **Finding it.** `runtime/cli/src/program.js` walks up for `components.json` as it already walks up for
-   `.env`, with a `--map` option beside `--env`, and `compose`, `serve` and `mono` demand one. It
+   has — its own, the ones its extensions bring, and the ones it evicts.
+3. **Finding it.** `runtime/cli/src/program.js` walks up for `components.json` as it already walks
+   up for `.env`, with a `--map` option beside `--env`, and `compose`, `serve` and `mono` demand
+   one. It
    is an option rather than a positional because all three are `<cmd> [paths...]`, and nothing
    follows a variadic positional.
 4. **The queue.** `connectors/bindings.amqp/source/queues.js` gains the versioned lookup name,
@@ -117,17 +121,24 @@ A run from a context root finds the map by itself and needs neither flag, exactl
    which is the defect this removes, so it is refused and says what makes one.
 3. **Uniform across `compose`, `serve` and `mono`**, though `mono` is given a context and could
    read the versions out of it. One rule, and the map is then the same artifact in every run.
-4. **Both queues served, always.** A caller outside the deployment, a service on an older runtime
-   and an evicted component are all answered without anything having to know which is which. The
-   cost is one queue and one consumer per component.
+4. **Both queues served, always.** A process of an older runtime asks the shared name and is
+   answered, and so is anything else built against it, without a component having to know which
+   is asking. The cost is one queue and one consumer per component.
 5. **Read at the lookup, not at the boot.** A process may first call a peer long after that peer
    was redeployed; a map read once at a boot would name a version that is gone, and the lookup for
    it would wait for something that is never coming. A lookup happens once per peer per process,
    so the read is off every hot path.
-6. **The content hash, not a release identity.** `manifest.version` is already computed, already
+6. **Evicted components are in the map.** `toa env` leaves them out because variables are rendered
+   into a workload, and a deployment creates none for one it does not deploy. A map is not per
+   workload: it is one table everyone reads, and an evicted component is called like any other, by
+   callers with the same exposure — several instances on two images answer one queue with two
+   manifests. What it obliges is that an evicted component is deployed from the sources the context
+   was, which evicting already implies: the context declares it, writes its types and publishes
+   what it receives. Where it is not, its callers wait and the wait names the version.
+7. **The content hash, not a release identity.** `manifest.version` is already computed, already
    the image tag, and already changes exactly when the sources do. Nothing new is derived and
    nothing new has to agree on it. It is opaque and unordered, which is all this asks of it.
-7. **No `x-expires`, in comq or here; a policy instead.** Declaring every RPC queue with one is not
+8. **No `x-expires`, in comq or here; a policy instead.** Declaring every RPC queue with one is not
    available: an existing durable queue cannot be redeclared with new arguments, so the assert
    would answer `PRECONDITION_FAILED` against every queue of every running deployment and the
    upgrade would mean emptying the broker. It is also the wrong semantics for an endpoint queue,
@@ -136,20 +147,20 @@ A run from a context root finds the map by itself and needs neither flag, exactl
    hundred empty queues a year and cost a way to discard a lookup waiting on a version that is
    still starting. The documentation recommends an `expires` policy, where the TTL is set by
    someone who can see the broker.
-8. **The version is not in the endpoint queue's name.** Routing calls by version would end
+9. **The version is not in the endpoint queue's name.** Routing calls by version would end
    load balancing across a rollout and make a deployment an ordering problem. Both versions serving
    one queue is what a rolling update is; what was wrong is only that a caller could not tell which
    one described itself to it.
-9. **Asked, rather than announced.** A component could broadcast what it provides — the exposition
-   gateway already does this for routes, with a knock, a periodic re-announcement and a
-   supersession rule over the announcer's start time. It would answer the same question and one
-   more, telling a component that is running without an endpoint from one that is not running. It
-   is not taken: it chooses between two announcements by which replica started later, which is a
-   guess, where the map is a fact stated by whoever deployed them — and it costs a channel, a
-   registry in every process and traffic that never stops. Asking also keeps a lookup a call like
-   any other, so the loop binding answers one for a component composed in the same process without
-   the broker hearing of it; a registry would be a second way to find a peer, beside the one every
-   call already takes.
+10. **Asked, rather than announced.** A component could broadcast what it provides — the exposition
+    gateway already does this for routes, with a knock, a periodic re-announcement and a
+    supersession rule over the announcer's start time. It would answer the same question and one
+    more, telling a component that is running without an endpoint from one that is not running. It
+    is not taken: it chooses between two announcements by which replica started later, which is a
+    guess, where the map is a fact stated by whoever deployed them — and it costs a channel, a
+    registry in every process and traffic that never stops. Asking also keeps a lookup a call like
+    any other, so the loop binding answers one for a component composed in the same process without
+    the broker hearing of it; a registry would be a second way to find a peer, beside the one every
+    call already takes.
 
 ## Context
 
@@ -226,7 +237,7 @@ queue is never shared. These run `toa compose` as a child process, the way
      version.
 2. `features/cli/map.feature`:
    - _What it writes_: every component of the context with its version, its own and what its
-     extensions bring, and nothing the context evicts.
+     extensions bring and what it evicts.
    - _It is found_: `toa compose` from a context root, with no `--map`.
    - _It is required_: `toa compose` where none is found and none is named, refused, naming
      `toa map`.

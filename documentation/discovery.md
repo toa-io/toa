@@ -50,8 +50,10 @@ $ toa compose ./components/* --env application/.env --map application/components
 asks whichever replica of a component answers first, and during a deployment that is not
 necessarily the one it is meant to talk to.
 
-A component the context [evicts](/documentation/compositions.md#evicted) is left out. This context
-does not decide what version of it is running, so a lookup of one is answered by whatever is.
+Every component of the context is in it, including one it
+[evicts](/documentation/compositions.md#evicted) — an evicted component is called like any other, so
+it is looked up like any other. **Deploy one from the sources the context was deployed from**, or
+what calls it waits, naming the version it waits for.
 
 `toa deploy` writes the map it deploys. Everywhere else, **run `toa map` again when a component's
 sources change** — a map naming a version nothing runs is a lookup that waits.
