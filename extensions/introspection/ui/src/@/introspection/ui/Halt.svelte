@@ -192,7 +192,15 @@
             onclick={release}
           >
             {$dict.halt.cancel}
-            <Badge id="introspection-halt-countdown" variant="destructive">{left}</Badge>
+            <!-- tabular figures: the count is one digit changing, and it must not shift what
+                 is around it -->
+            <Badge
+              id="introspection-halt-countdown"
+              variant="destructive"
+              class="tabular-nums"
+            >
+              {left}
+            </Badge>
           </Button>
         {:else}
           <Dialog.Cancel id="introspection-halt-cancel-button">
