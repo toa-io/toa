@@ -1,10 +1,10 @@
 namespace: introspection
 name: edges
 
-# One document per edge of the map: a call one component made to another, with `src`
-# saying what caused it — another operation, an event, or a service. What the
-# application declares is described by `introspection.nodes`; an edge is what
-# actually happened.
+# One document per edge of the map: that a call one component made to another was made,
+# with `src` saying what caused it — another operation, an event, or a service. What the
+# call carried is not recorded. What the application declares is described by
+# `introspection.nodes`; an edge is what actually happened.
 #
 # Every replica of a component derives the same id for the same edge, so `merge` is
 # an upsert and `UPDATED` shows when the edge was last observed.
@@ -29,14 +29,6 @@ entity:
         namespace: { type: string }
         component: { type: string }
         operation: { type: string }
-    sample:
-      description: The last call observed on this edge
-      type: object
-      required: [at, outcome]
-      properties:
-        at: { type: integer }
-        input: {}
-        outcome: { type: string }
   required: [src, dst]
 
 operations:

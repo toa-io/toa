@@ -36,15 +36,6 @@ export const ANNOUNCE_INTERVAL = 1_800_000
  */
 export const MAX_EDGES = 4096
 
-/** Never capture samples for these namespaces, whatever the annotation says. */
-export const DENIED = new Set(['identity', 'introspection'])
-
-/** Keys never stored in a sample, even when sampling is on. */
-export const REDACTED = /^(password|secret|token|credentials?|key|authorization|cookie)$/i
-
-/** Serialized size cap of a single sample. */
-export const SAMPLE_LIMIT = 4096
-
 /** The signals component, and the event a process halts on. */
 export const SIGNALS = 'signals'
 export const SIGNAL = `${NAMESPACE}.${SIGNALS}.created`

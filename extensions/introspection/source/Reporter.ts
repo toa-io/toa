@@ -53,9 +53,8 @@ export class Reporter extends Connector {
   /** A call between two components. */
   public observe(observed: Edge): void {
     const id = keys.edge(observed.src, observed.dst)
-    const edge = this.edges.get(id)
 
-    if (edge === undefined) {
+    if (!this.edges.has(id)) {
       /*
        * `source` arrives over the wire, so the number of distinct edges a process
        * can hold has to be bounded regardless of what peers send — and of whether
@@ -68,7 +67,7 @@ export class Reporter extends Connector {
       }
 
       this.edges.set(id, observed)
-    } else if (observed.sample !== undefined) edge.sample = observed.sample
+    }
 
     if (this.edges.size >= this.options.threshold) void this.flush()
   }

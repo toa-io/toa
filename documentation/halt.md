@@ -42,9 +42,7 @@ Those are the defaults. A pair is `[min, max]`, in seconds, and `halt: true` tak
 stand.
 
 With it on, every application component has to be on the map: one declaring
-`introspection: false` fails the build, because the map is what a halt is decided by. The
-narrower opt-out, `introspection.samples: false`, is untouched — it suppresses the payload of a
-call, not the record that one was made.
+`introspection: false` fails the build, because the map is what a halt is decided by.
 
 ```http
 POST /introspection/signals/ HTTP/1.1

@@ -21,7 +21,6 @@ const SIGNAL = 'a3f1'
 
 /** What this deployment lets a halt ask for. */
 const OPTIONS = {
-  samples: false,
   interval: 1,
   threshold: 64,
   ui: false,

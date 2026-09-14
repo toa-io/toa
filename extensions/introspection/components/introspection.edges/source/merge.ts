@@ -15,9 +15,6 @@ export function transition(input: MergeInput, objects: Entity[]): Entity[] {
 
     edge.src = observed.src
     edge.dst = observed.dst
-
-    // absent when sampling is off, and the last one wins otherwise
-    if (observed.sample !== undefined) edge.sample = observed.sample
   }
 
   return objects

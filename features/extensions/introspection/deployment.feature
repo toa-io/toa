@@ -46,22 +46,7 @@ Feature: Introspection deployment
       compositions:
         - variables:
           - name: TOA_INTROSPECTION
-            value: '{"samples":false,"interval":300,"threshold":1024,"ui":true}'
-      """
-
-  Scenario: Enabling samples
-    Given I have a context with:
-      """yaml
-      introspection:
-        samples: true
-      """
-    When I export deployment
-    Then exported values should contain:
-      """yaml
-      compositions:
-        - variables:
-          - name: TOA_INTROSPECTION
-            value: '{"samples":true,"interval":300,"threshold":1024,"ui":true}'
+            value: '{"interval":300,"threshold":1024,"ui":true,"halt":false,"duration":[30,3600],"quiescence":[30,1800]}'
       """
 
   Scenario: Disabling introspection
