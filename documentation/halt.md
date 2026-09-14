@@ -37,8 +37,8 @@ quiescence: 60
 ```
 
 - `seconds` — how long every process stays down. Between `30` and `3600`.
-- `quiescence` — how long the deployment is given to go quiet before it is checked. Between `5`
-  and `600`, `60` by default.
+- `quiescence` — how long the deployment is given to go quiet before it is checked. Between `30`
+  and `1800`, `60` by default.
 - `grace` — how long a process that found the deployment working waits for another process to
   call the stop before it leaves the halt. Between `2` and `120`, `10` by default.
 

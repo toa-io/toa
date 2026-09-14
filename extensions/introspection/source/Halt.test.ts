@@ -13,7 +13,7 @@ import type { Receiver } from '@toa.io/core/types'
  * That it asks the right question of a real map is what the scenarios are for.
  */
 
-const QUIESCENCE = 5
+const QUIESCENCE = 30
 const GRACE = 2
 const SECONDS = 30
 const SIGNAL = 'a3f1'

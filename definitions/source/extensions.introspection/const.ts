@@ -67,8 +67,8 @@ export const MAX_HALT = 3600
  * in them is the backlog of the moment the signal landed. A deployment given less than it
  * needs is not stopped — it is found busy and the halt is called off.
  */
-export const MIN_QUIESCENCE = 5
-export const MAX_QUIESCENCE = 600
+export const MIN_QUIESCENCE = 30
+export const MAX_QUIESCENCE = 1800
 export const DEFAULT_QUIESCENCE = 60
 
 /**

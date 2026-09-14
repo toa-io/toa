@@ -283,19 +283,22 @@ const EXPLORER = find()
 const PORTS = [31010, 31020, 31040]
 
 /**
- * The shortest window worth having, so that a suite that waits one out per scenario is worth
- * running. What it costs a deployment that needs longer is a cancelled halt, not a wrong one.
+ * The shortest window a halt may ask for, so that a suite waiting one out per scenario waits
+ * as little as it can. What a window too short costs a deployment is a cancelled halt rather
+ * than a wrong one.
  */
-const QUIESCENCE = 5
+const QUIESCENCE = 30
 const GRACE = 2
 
 const BOOT = 30_000
 const SHUTDOWN = 15_000
-const DEADLINE = 20_000
 const POLL = 250
 
-/** A cancel is the quiescence, the gap, the check and the grace, and a little over. */
-const CANCEL = 30_000
+/** A decision is the quiescence, the gap and the check, and a little over. */
+const DEADLINE = 60_000
+
+/** A cancel is all of that, the deadline on a check that goes unanswered, and the grace. */
+const CANCEL = 90_000
 
 /** A halt is at least thirty seconds, and the rebuild is spread over a little more. */
 const RESUME = 60_000

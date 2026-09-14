@@ -24,8 +24,8 @@ entity:
     quiescence:
       description: How long the deployment is given to go quiet before the map is read
       type: integer
-      minimum: 5
-      maximum: 600
+      minimum: 30
+      maximum: 1800
     grace:
       description: How long a process that has found the deployment busy waits before it leaves
       type: integer
