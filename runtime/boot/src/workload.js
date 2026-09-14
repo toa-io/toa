@@ -203,8 +203,14 @@ export class Workload extends Connector {
 
     console.warn('Halted', { seconds })
 
+    /*
+     * Referenced, unlike every other timer the runtime keeps: a halted process holds nothing
+     * at all — no connection, no listening socket that is not unreferenced — so this is the
+     * only thing left to keep it alive. Unreferenced, the process would exit here rather than
+     * come back, and whatever restarts it would bring up a process that never heard of the
+     * halt. `close` clears it, so it holds nothing open against a shutdown.
+     */
     this.#timer = setTimeout(() => void this.#resume(), remaining)
-    this.#timer.unref()
   }
 
   /**
