@@ -1,7 +1,7 @@
 import assert from 'node:assert'
 import { type ChildProcess, execFileSync, fork } from 'node:child_process'
 import { resolve } from 'node:path'
-import { setTimeout } from 'node:timers/promises'
+import { setTimeout as delay } from 'node:timers/promises'
 import { after, binding, given, then, when } from 'specumber'
 import { environment } from '@toa.io/generic'
 
@@ -63,8 +63,8 @@ export class Halt {
   public async kill(): Promise<void> {
     const explorer = this.fleet[0]
 
+    explorer.killed = true
     explorer.child.kill('SIGKILL')
-    explorer.dead = true
   }
 
   @then('every process holds no connection')
@@ -79,7 +79,11 @@ export class Halt {
   @then('every process holds connections again')
   public async again(): Promise<void> {
     for (const member of this.live())
-      await eventually(() => held(member.child.pid!) > 0, 'a process holds no connection', RESUME)
+      await eventually(
+        () => held(member.child.pid!) > 0,
+        () => `a process holds no connection: ${describe(member)}`,
+        RESUME
+      )
   }
 
   @then('every process goes quiet')
@@ -133,39 +137,55 @@ export class Halt {
     for (const paths of processes) this.fleet.push(await member(paths))
   }
 
+  /**
+   * The members a scenario is about, and an assertion on the way: a process that exited is a
+   * failed halt rather than one less thing to check — a halted process holds nothing, so what
+   * keeps it alive is the runtime's to hold.
+   */
   private live(): Member[] {
-    return this.fleet.filter((member) => !member.dead)
+    const live = this.fleet.filter((member) => !member.killed)
+
+    for (const member of live) assert.ok(!member.dead, 'a process exited')
+
+    return live
   }
 }
 
 async function member(paths: string[]): Promise<Member> {
   const child = fork(MEMBER, [JSON.stringify(paths)], {
     env: environment.entries(),
-    // what a member says of itself comes over the channel; its output is the run's
-    stdio: ['ignore', 'ignore', 'inherit', 'ipc']
+    // what a member says of itself comes over the channel; what it logs is the run's, so
+    // that a scenario that fails is one somebody can read afterwards
+    stdio: ['ignore', 'inherit', 'inherit', 'ipc']
   })
 
-  const state: State = { running: false, quiescent: false }
-  const instance: Member = { child, state, dead: false }
+  const state: State = { running: false, quiescent: false, at: 0 }
+  const instance: Member = { child, state, dead: false, killed: false }
 
   child.on('exit', () => {
     instance.dead = true
   })
 
   await new Promise<void>((resolve, reject) => {
+    // cleared once it is up: a deadline left running would kill the process it waited for
+    const deadline = globalThis.setTimeout(() => {
+      child.kill('SIGKILL')
+      reject(new Error('a process did not come up'))
+    }, BOOT)
+
     child.on('message', (message: Report | string) => {
       // the readiness probe of a process says `ready` over the same channel
       if (typeof message !== 'object') return
 
-      if ('up' in message) resolve()
-      else Object.assign(state, message)
+      if ('up' in message) {
+        clearTimeout(deadline)
+        resolve()
+      } else Object.assign(state, message)
     })
 
-    child.on('error', reject)
-
-    void setTimeout(BOOT).then(() => {
-      child.kill('SIGKILL')
-      reject(new Error('a process did not come up'))
+    child.on('error', (error) => {
+      clearTimeout(deadline)
+      reject(error)
     })
   })
 
@@ -176,12 +196,13 @@ async function ended(member: Member): Promise<void> {
   if (member.dead) return
 
   await new Promise<void>((resolve) => {
-    member.child.on('exit', () => {
-      resolve()
-    })
-
-    void setTimeout(SHUTDOWN).then(() => {
+    const deadline = globalThis.setTimeout(() => {
       member.child.kill('SIGKILL')
+      resolve()
+    }, SHUTDOWN)
+
+    member.child.on('exit', () => {
+      clearTimeout(deadline)
       resolve()
     })
   })
@@ -199,7 +220,7 @@ function held(pid: number): number {
 
 async function eventually(
   condition: () => boolean,
-  failure: string,
+  failure: string | (() => string),
   limit = DEADLINE
 ): Promise<void> {
   const deadline = Date.now() + limit
@@ -207,10 +228,19 @@ async function eventually(
   while (Date.now() < deadline) {
     if (condition()) return
 
-    await setTimeout(POLL)
+    await delay(POLL)
   }
 
-  assert.fail(failure)
+  assert.fail(typeof failure === 'function' ? failure() : failure)
+}
+
+/** What a member was doing when it last said, for a failure to name. */
+function describe(member: Member): string {
+  if (member.dead) return 'it exited'
+
+  const age = Date.now() - member.state.at
+
+  return `running: ${member.state.running}, quiet: ${member.state.quiescent}, said ${age}ms ago`
 }
 
 function component(name: string): string {
@@ -229,12 +259,17 @@ function fleet(name: string): string {
 interface Member {
   child: ChildProcess
   state: State
+  /** it has exited, whoever ended it */
   dead: boolean
+  /** a scenario killed it on purpose */
+  killed: boolean
 }
 
 interface State {
   running: boolean
   quiescent: boolean
+  /** when the process last said so */
+  at: number
 }
 
 type Report = State | { up: true }

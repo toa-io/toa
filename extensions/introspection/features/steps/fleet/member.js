@@ -19,8 +19,9 @@ const workload = new boot.Workload(
 
 await workload.connect()
 
+// `at` so that a state read afterwards says when it was true
 const timer = setInterval(() => {
-  process.send?.({ running: workload.running(), quiescent: workload.quiescent() })
+  process.send?.({ running: workload.running(), quiescent: workload.quiescent(), at: Date.now() })
 }, 200)
 
 timer.unref()
