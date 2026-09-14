@@ -75,7 +75,7 @@ its service.
 
 **It answers on every port it was listening on.** The readiness probe answers `200` and carries
 `x-toa-halted` with the seconds left, so nothing watching it replaces it. The gateway answers
-`503` with `retry-after`.
+`503`, and carries `retry-after` once the deployment is down and there are seconds to state.
 
 **Nothing is left connected.** No process holds a socket against the broker, the database or the
 cache, so they can be stopped, replaced or failed over while the deployment is down.
@@ -92,7 +92,7 @@ so the interval is what brings the deployment back. Ask for one you can afford t
 
 **A deployment that does not go quiet is not stopped.** A component that keeps its own time, a
 queue that never empties, work that outlasts the window — any of them and the halt is called off.
-What to do about it is to ask for a longer `quiescence`, or to find what did not stop.
+Ask for a longer `quiescence`, or find what did not stop.
 
 **It holds only over the processes that were there when it began.** One that starts during a halt
 comes up running, because nothing is there to tell it otherwise. During the quiet it is what calls
@@ -158,12 +158,15 @@ it ends the process, because a stale context in a live process is a defect.
 
 **The window is for work on what the deployment runs on** — upgrading the broker, failing the
 database over, moving a cluster, taking a backup with nothing writing across it. Ask for the
-interval that work needs, and for the one you can afford to be down: the deployment comes back
-when it is up, whether or not the work is finished.
+interval the work needs, and one you can afford to be down for: the deployment comes back when it
+is up, whether or not the work is finished.
 
 **What a halt did is in the records.** A `stop` record names the halt it answers, so a halt with
 no stop beside it is one that was called off. Nothing is written back to a halt: the write that
 would say what became of it is the one thing a halted deployment cannot do.
+
+**A second halt posted while one is under way is ignored.** A process is deaf to everything but
+the halt it is quiesced for, so pressing twice changes nothing.
 
 **A halt reaches what is connected when it is posted.** The signal travels over the broker, and a
 process that is not there to receive it is never told afterwards: it goes on working while the rest
