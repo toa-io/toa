@@ -287,6 +287,27 @@ describe('Workload', () => {
     await workload.disconnect()
   })
 
+  it('should keep the process alive while it is halted', async () => {
+    const workload = new Workload(async (workload) =>
+      workload.gate(async () => new TestConnector('a'))
+    )
+
+    await workload.connect()
+
+    // long enough that the process would have to be held open for it
+    workload.stop(10)
+
+    await until(() => sequence.includes('*a'))
+
+    // a halted process holds nothing else: unreferenced, this timer would let it exit
+    assert.ok(
+      process.getActiveResourcesInfo().includes('Timeout'),
+      'nothing keeps the process alive until the rebuild'
+    )
+
+    await workload.disconnect()
+  })
+
   it('should take the gates down on its own disconnection', async () => {
     const workload = new Workload(async (workload) =>
       workload.gate(async () => new TestConnector('a'))
