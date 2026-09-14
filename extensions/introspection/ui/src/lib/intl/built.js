@@ -2,18 +2,30 @@
 
 /** @type {Record<import('./types').Locale, import('./types').Dictionary>} */
 export const dictionaries = {
-  'en-US': {
-    native: 'English',
-    locale: 'en-US',
-    dir: 'ltr',
-    nav: {
-      list: 'List',
-      map: 'Map',
-      signout: 'Sign out',
-      filter: 'Filter components'
+  "en-US": {
+    "native": "English",
+    "locale": "en-US",
+    "dir": "ltr",
+    "nav": {
+      "list": "List",
+      "map": "Map",
+      "signout": "Sign out",
+      "filter": "Filter components",
+      "halt": "HALT"
+    },
+    "halt": {
+      "title": "Suspend operations",
+      "description": "All systems will be inoperative for the interval you give, then resume automatically.",
+      "interval": "Duration",
+      "cancel": "Cancel",
+      "hold": "Hold to halt",
+      "bounds": "Up to an hour",
+      "quiescence": "Quiescence",
+      "quiescenceBounds": "Up to 30 minutes"
     }
   }
-}
+};
 
 /** @type {import('./types').Locale[]} */
-export const locales = ['en-US']
+export const locales = ["en-US"];
+
