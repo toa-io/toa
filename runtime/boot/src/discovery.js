@@ -46,7 +46,8 @@ const lookup = async (locator, version) => {
  * @param {string} [version]
  * @returns {string}
  */
-export const endpoint = (version) => (version === undefined ? ENDPOINT : ENDPOINT + SEPARATOR + version)
+export const endpoint = (version) =>
+  version === undefined ? ENDPOINT : ENDPOINT + SEPARATOR + version
 
 /**
  * Both names, always: the versioned one is what a caller that knows which version it wants asks,
