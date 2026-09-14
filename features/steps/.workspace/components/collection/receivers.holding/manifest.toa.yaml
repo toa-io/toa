@@ -1,0 +1,11 @@
+namespace: receivers
+name: holding
+
+receivers:
+  mongo.one.created:
+    operation: hold
+
+operations:
+  hold:
+    input:
+      type: integer

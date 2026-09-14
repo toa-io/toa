@@ -1,3 +1,4 @@
+import assert from 'node:assert'
 import { Receiver, Locator } from '@toa.io/core'
 
 import * as boot from './index.js'
@@ -7,7 +8,7 @@ export const receivers = async (manifest, component) => {
   if (manifest.receivers === undefined) return []
 
   const receivers = []
-  const local = await boot.remote(manifest.locator, undefined, manifest)
+  const local = await boot.remote(manifest.locator, undefined, { manifest })
 
   for (const [label, definition] of Object.entries(manifest.receivers)) {
     const locator = Locator.parse(label)
@@ -58,14 +59,23 @@ export async function receive(label, group, callback) {
 }
 
 /**
+ * Which transport carries an event, as the component whose event it is declares it.
+ *
  * @param {import('@toa.io/core').Locator} locator
  * @param {string} label
  * @return {Promise<string>}
  */
 async function resolveBinding(locator, label) {
   const event = label.split('.').pop()
+  const version = await boot.map.version(locator.id)
   const discovery = await boot.discovery.discovery()
-  const { events } = await discovery.lookup(locator)
+  const { events } = await discovery.lookup(locator, version)
+
+  assert.ok(
+    events?.[event] !== undefined,
+    `'${locator.id}'${version === undefined ? '' : ` at version ${version}`} declares no ` +
+      `event '${event}', which is what '${label}' receives`
+  )
 
   return events[event].binding
 }

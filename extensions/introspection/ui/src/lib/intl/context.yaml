@@ -19,6 +19,28 @@ inputs:
     filter:
       input: Filter components
       context: placeholder of the search box in the header
+    halt:
+      input: HALT
+  halt:
+    title:
+      input: Suspend operations
+    description:
+      input: All systems will be inoperative for the interval you give, then resume automatically.
+    interval:
+      input: Duration
+    cancel:
+      input: Cancel
+      context: button that closes the halt dialog without doing anything
+    hold:
+      input: Hold to halt
+    bounds:
+      input: "!js (min, max) => `${min}–${max} seconds`"
+      context: hint under a number field, saying the range it accepts
+    quiescence:
+      input: Quiescence
+    failed:
+      input: The halt was not accepted. Try again.
+      context: error under the halt dialog when the request is refused
 mounts:
   iam: ../../@/iam/ui/intl
   introspection: ../../@/introspection/ui/intl

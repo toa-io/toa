@@ -1,4 +1,5 @@
 import type { Connector } from '../connector.ts'
+import type { Gate } from '../gate.ts'
 import type { Locator } from '../locator.ts'
 import type { Component } from '../component.ts'
 import type { Remote } from '../remote.ts'
@@ -16,7 +17,11 @@ import type { Destination } from './outbox.ts'
  */
 export interface Host {
   /** a component of the context, by locator */
-  remote(locator: Locator, source?: Source): Promise<Remote>
+  /**
+   * @param version which version of the component answers what it provides; absent, what the
+   *   process's map says, and absent that, whichever version answers.
+   */
+  remote(locator: Locator, source?: Source, version?: string): Promise<Remote>
 
   /** a channel of the messaging binding */
   broadcast<L extends string = string>(
@@ -45,6 +50,25 @@ export interface Host {
     label: string,
     sink: Inbound
   ): Promise<Connector>
+
+  /**
+   * A part of this tree a halt takes down and builds again. What is not behind one of these
+   * outlives a halt: the readiness probe does, and so does whatever answers on a port the
+   * process was already listening on.
+   */
+  gate(build: () => Promise<Connector>): Gate
+
+  /**
+   * Stops what this process does of its own accord — its gateway, its clocks, its run
+   * commands — and holds open everything it has. Nothing closes, so this is reversible.
+   */
+  quiesce(): Promise<void>
+
+  /** Undoes a quiesce: the process works again, having been rebuilt by nothing. */
+  cancel(): Promise<void>
+
+  /** Stops this process for `seconds`, then builds it again. */
+  stop(seconds: number): void
 }
 
 /**
@@ -102,6 +126,9 @@ export interface Factory<Manifest = unknown> {
  * It connects before what the process was built with and goes after it, which is what makes it
  * the place for something that answers for the process rather than for anything in it — the
  * readiness probe is the one this was written for.
+ *
+ * It outlives a halt. One that must not says so by being a `Host.gate`, which is a connector
+ * like any other: the gate stays, what it holds does not.
  */
 export interface Resident extends Connector {
   /** Everything the process was built with has connected. */

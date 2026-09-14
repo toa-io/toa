@@ -8,4 +8,4 @@ COPY --link . /composition
 
 # no USER: the runtime drops to `node` itself, and only a process that started as root can
 # close its environment under /proc — see runtime/runtime/bin/toa
-CMD toa mono *
+CMD toa mono * --map {{map.file}}

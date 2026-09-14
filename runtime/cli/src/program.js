@@ -7,6 +7,7 @@ import { shutdown } from 'openspan'
 
 import { environment, findUp } from '@toa.io/generic'
 import { version } from '@toa.io/definitions'
+import { exceptions, halting } from '@toa.io/core'
 
 /*
  * A local run reads what `toa env` wrote, the way a booting process does (`@toa.io/boot`,
@@ -47,6 +48,10 @@ yargs(process.argv.slice(2))
     type: 'string',
     describe: 'Path to environment variables file (.env format)'
   })
+  .option('map', {
+    type: 'string',
+    describe: 'Path to the component versions file (components.json)'
+  })
   .commandDir('./commands')
   .demandCommand(
     1,
@@ -67,6 +72,19 @@ yargs(process.argv.slice(2))
  * request timeout and never rejects, so it cannot keep a broken process alive.
  */
 process.on('unhandledRejection', async (e) => {
+  /*
+   * Except while this process is halting, where it is in exactly the state the runtime put it
+   * in and knows why the call was refused: something the component started and did not stop
+   * called through a tree that has been taken down. Reported and survived, because one careless
+   * component would otherwise defeat every halt of its deployment. Once the process is working
+   * again the same call is fatal, as it is here.
+   */
+  if (e?.code === exceptions.codes.Disposed && halting.underway()) {
+    console.warn('A call was refused by a tree that has been taken down', { message: e.message })
+
+    return
+  }
+
   console.error(e)
 
   await shutdown()

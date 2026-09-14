@@ -23,7 +23,8 @@ Non-scattered documentation is coming some time later.
       reaches an operation that may change state, however far down the chain
     - [Distributed exception handling](/documentation/exceptions.md#where-nobody-is-waiting): a
       failure reaches whoever is waiting, or is tried again and then kept
-  - Transparent service discovery
+  - [Transparent service discovery](/documentation/discovery.md): a component asks another what
+    it provides, at the version its deployment names
   - Multi-protocol transmission
     - built-in support for AMQP and HTTP
   - In-memory communications
@@ -75,6 +76,8 @@ Non-scattered documentation is coming some time later.
   - Distributed tracing
   - [Metrics](/documentation/metrics.md): unsampled, and what the runtime records by zone
 - [Introspection](/extensions/introspection): product topology collection and visualization
+  - [Halt](/documentation/halt.md): a deployment stops, holds nothing open, and comes back on its
+    own — and is taken down only once the map says nothing was running
 - [Realtime events](/extensions/realtime)
 - [BLOB storage](/extensions/storages)
   - MIME type detection and validation

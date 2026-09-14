@@ -13,9 +13,10 @@ const require = createRequire(import.meta.url)
  * wait for the values service — so what a running service hosts is looked into as well.
  *
  * @param {string[]} paths
+ * @param {import('@toa.io/boot').Workload} [workload] the process, so a service can say what a halt takes of it
  * @return {Promise<import('@toa.io/core').Connector[]>}
  */
-export async function discover(paths) {
+export async function discover(paths, workload) {
   const references = new Set()
   const services = []
   const pending = [...paths]
@@ -34,7 +35,7 @@ export async function discover(paths) {
 
       if (typeof Factory?.prototype.service !== 'function') continue
 
-      const service = await new Factory(boot.host()).service()
+      const service = await new Factory(boot.host(workload)).service()
 
       // an extension that is off in this environment hosts nothing here either
       if (service === null) continue
@@ -61,7 +62,7 @@ export async function discover(paths) {
  * @param {boolean} [exact]
  * @return {Promise<import('@toa.io/core').Connector[]>}
  */
-export async function create(references, exact = false) {
+export async function create(references, exact = false, workload = undefined) {
   const services = []
   const off = []
 
@@ -74,7 +75,7 @@ export async function create(references, exact = false) {
     if (typeof Factory?.prototype.service !== 'function')
       throw new Error(`Service is not implemented by '${reference}'`)
 
-    const service = await new Factory(boot.host()).service()
+    const service = await new Factory(boot.host(workload)).service()
 
     if (service === null) off.push(name)
     else services.push(service)

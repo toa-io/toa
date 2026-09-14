@@ -110,8 +110,14 @@ export class Ready extends Connector {
       return
     }
 
-    if (this.ready) response.writeHead(200, { 'cache-control': 'no-store' }).end()
-    else {
+    if (this.ready) {
+      /*
+       * A halted process answers this as a working one does, and says nothing about the halt:
+       * there is nothing wrong with it, and whoever watches it must not replace it — one that
+       * came up in its place would come up running.
+       */
+      response.writeHead(200, { 'cache-control': 'no-store' }).end()
+    } else {
       const remaining = Math.ceil((Date.now() - this.startedAt) / 1000).toString()
 
       response.writeHead(503, { 'retry-after': remaining }).end()

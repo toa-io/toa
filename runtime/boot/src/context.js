@@ -3,7 +3,7 @@ import { Context, Locator } from '@toa.io/core'
 import * as boot from './index.js'
 
 export const context = async (manifest) => {
-  const local = await boot.remote(manifest.locator, undefined, manifest)
+  const local = await boot.remote(manifest.locator, undefined, { manifest })
   const aspects = boot.extensions.aspects(manifest)
 
   // a system aspect: it is there in every component, declared by none of them

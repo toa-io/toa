@@ -73,10 +73,22 @@ spec:
             timeoutSeconds: 3
             failureThreshold: 5
           {{- end }}
+          {{- if $.Values.map }}
+          volumeMounts:
+            - name: components
+              mountPath: {{ $.Values.map.directory }}
+              readOnly: true
+          {{- end }}
           lifecycle:
             preStop:
               exec:
                 command: [sleep, "5"]
+      {{- if $.Values.map }}
+      volumes:
+        - name: components
+          configMap:
+            name: components
+      {{- end }}
       terminationGracePeriodSeconds: 45
       topologySpreadConstraints:
         - maxSkew: 1

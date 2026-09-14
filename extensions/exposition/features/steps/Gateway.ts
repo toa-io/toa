@@ -14,6 +14,7 @@ import type * as http from '../../source/HTTP/index.ts'
 
 let instance: Connector | null = null
 let deployment: string | null = null
+let quiesced = false
 
 @binding()
 export class Gateway {
@@ -161,8 +162,27 @@ export class Gateway {
     ])
   }
 
+  /** What a halt does to the process the gateway runs in, before anything is closed. */
+  @when('the Gateway goes quiet')
+  public async quiet(): Promise<void> {
+    quiesced = true
+
+    await instance?.halt()
+  }
+
+  @when('the Gateway is working again')
+  public async working(): Promise<void> {
+    quiesced = false
+
+    await instance?.restore()
+  }
+
   @after()
   public async cleanup(): Promise<void> {
+    // the instance is shared by the scenarios that follow, and a scenario may have failed
+    // while it was quiet
+    if (quiesced) await this.working()
+
     delete process.env.__TESTING_EXPOSITION_BRANCH_TTL
 
     for (const key of this.written) environment.delete(key)

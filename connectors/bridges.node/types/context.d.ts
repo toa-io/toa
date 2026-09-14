@@ -57,11 +57,11 @@ declare namespace toa.node {
 
     /**
      * Runs `routine` while no other replica holds `keys`. The signal aborts when the lease
-     * could not be extended.
+     * could not be extended, and `error` is why.
      */
     lock: <T>(
       keys: string | string[],
-      routine: (signal: AbortSignal, context: unknown) => Promise<T>
+      routine: (signal: AbortSignal & { error: Error }, context: unknown) => Promise<T>
     ) => Promise<T>
   }
 
@@ -69,3 +69,4 @@ declare namespace toa.node {
 }
 
 export type Context = toa.node.Context
+export type Atom = toa.node.Atom

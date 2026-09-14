@@ -4,7 +4,8 @@ import {
   EDGES,
   MAX_EDGES,
   NAMESPACE,
-  NODES
+  NODES,
+  QUIESCE_INTERVAL
 } from '@toa.io/definitions/extensions.introspection'
 import * as keys from './keys.ts'
 import type { Host } from './Factory.ts'
@@ -52,9 +53,8 @@ export class Reporter extends Connector {
   /** A call between two components. */
   public observe(observed: Edge): void {
     const id = keys.edge(observed.src, observed.dst)
-    const edge = this.edges.get(id)
 
-    if (edge === undefined) {
+    if (!this.edges.has(id)) {
       /*
        * `source` arrives over the wire, so the number of distinct edges a process
        * can hold has to be bounded regardless of what peers send — and of whether
@@ -67,7 +67,7 @@ export class Reporter extends Connector {
       }
 
       this.edges.set(id, observed)
-    } else if (observed.sample !== undefined) edge.sample = observed.sample
+    }
 
     if (this.edges.size >= this.options.threshold) void this.flush()
   }
@@ -76,8 +76,24 @@ export class Reporter extends Connector {
     // deliberately not awaited: the explorer may not be there yet, or at all
     this.acquire()
 
-    this.timer = setInterval(() => void this.flush(), this.options.interval * 1000)
-    this.timer.unref()
+    this.every(this.options.interval)
+  }
+
+  /**
+   * A quiesced process flushes every second instead of on its configured period, because what
+   * it observed last is the evidence a halt is decided on and the decision is seconds away.
+   *
+   * It costs nothing: nothing is calling anything, so every flush but the first finds an empty
+   * buffer and returns without a call.
+   */
+  protected override pause(): void {
+    this.every(QUIESCE_INTERVAL)
+
+    void this.flush()
+  }
+
+  protected override unpause(): void {
+    this.every(this.options.interval)
   }
 
   protected override async close(): Promise<void> {
@@ -98,6 +114,13 @@ export class Reporter extends Connector {
     await this.dispatch().catch((error: Error) => {
       console.debug('Introspection final flush failed', { message: error.message })
     })
+  }
+
+  private every(seconds: number): void {
+    if (this.timer !== null) clearInterval(this.timer)
+
+    this.timer = setInterval(() => void this.flush(), seconds * 1000)
+    this.timer.unref()
   }
 
   private ready(): boolean {

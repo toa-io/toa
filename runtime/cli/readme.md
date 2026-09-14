@@ -5,6 +5,11 @@
 <dl>
 <dt><code>--env</code></dt>
 <dd>Path to the environment variables file (`.env` format)</dd>
+<dt><code>--map</code></dt>
+<dd>Path to the component versions file (<a href="#map"><code>components.json</code></a>). Absent,
+it is looked for from the working directory upwards, as <code>.env</code> is. Required by
+<a href="#compose"><code>compose</code></a>, <a href="#serve"><code>serve</code></a> and
+<a href="#mono"><code>mono</code></a>.</dd>
 </dl>
 
 ## Development
@@ -85,7 +90,9 @@ it — `@components/<directory>` for a component, the Context's own `name` for t
 
 What a manifest does not state is not generated. An operation declaring no `output` returns
 `unknown`, unless it is one Toa itself provides — the prototype's algorithms return the scope
-they are given. An alias for something a schema does describe belongs in a file of your own:
+they are given. The Context every component shares always has `env`, `name`, `instance`,
+`atom`, `local` and `remote`; what an extension puts on every component — telemetry, fetch — is
+there too. An alias for something a schema does describe belongs in a file of your own:
 
 ```typescript
 import type { Entity } from '@components/activities'
@@ -149,6 +156,39 @@ the running environment is <code>foo</code>. The chain is not stored.<br/>
 Credentials specified in the output file are preserved.
 
 > It is recommended to add `.env*` to `.gitignore`.
+
+### map
+
+Export the component versions of a Context to a `components.json` file.
+
+<dl>
+<dt><code>toa map [environment]</code></dt>
+<dd>
+<code>environment</code> deployment environment name (default <code>local</code>), as
+<a href="#env"><code>env</code></a> reads it.<br/>
+<code>--path</code> path to a Context (default <code>.</code>)<br/>
+<code>--as</code> output file path (default <code>components.json</code>)
+</dd>
+</dl>
+
+Every component of the Context — its own, the ones its extensions bring, and the ones it evicts —
+with the version it runs:
+
+```json
+{
+  "default.orders": "3f9a1c02",
+  "default.billing": "b7e4d510"
+}
+```
+
+A process is started with one, and asks a component what it provides at the version named here.
+See [service discovery](/documentation/discovery.md).
+
+Run it again when a component's sources change: a version is a hash of them, and a map naming one
+nothing runs is a lookup that waits.
+
+> It is generated, so add `components.json` to `.gitignore` beside `.env*`. A committed one is
+> true of the sources it was written from and of no others.
 
 ### export manifest
 

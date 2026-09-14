@@ -34,7 +34,7 @@ Feature: A call that may only read reaches nothing that writes
       """
     Then the following exception is thrown:
       """yaml
-      code: 700
+      code: 406
       """
     # nothing was sent, so nothing was written
     And the `mongo.one` collection holds:
@@ -53,7 +53,7 @@ Feature: A call that may only read reaches nothing that writes
       """
     Then the following exception is thrown:
       """yaml
-      code: 700
+      code: 406
       """
     And the `mongo.one` collection holds:
       | _id                              | foo |
@@ -69,7 +69,7 @@ Feature: A call that may only read reaches nothing that writes
       """
     Then the following exception is thrown:
       """yaml
-      code: 700
+      code: 406
       """
 
   Scenario: An unmanaged operation is refused
@@ -80,7 +80,7 @@ Feature: A call that may only read reaches nothing that writes
       """
     Then the following exception is thrown:
       """yaml
-      code: 700
+      code: 406
       """
 
   Scenario: The chain carries it
@@ -96,7 +96,7 @@ Feature: A call that may only read reaches nothing that writes
       """
     Then the following exception is thrown:
       """yaml
-      code: 700
+      code: 406
       """
     And the `mongo.one` collection holds:
       | _id                              | foo |
@@ -116,7 +116,7 @@ Feature: A call that may only read reaches nothing that writes
       """
     Then the following exception is thrown:
       """yaml
-      code: 700
+      code: 406
       """
     And the `mongo.one` collection holds:
       | _id                              | foo |
@@ -164,5 +164,5 @@ Feature: A call that may only read reaches nothing that writes
       """
     Then the following exception is thrown:
       """yaml
-      code: 700
+      code: 406
       """
