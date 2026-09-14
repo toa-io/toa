@@ -8,8 +8,9 @@ For the length of the interval the broker, the database and the cache have no cl
 is the window to restart, upgrade or fail over the things the deployment runs on.
 
 **A halt is only as complete as your components make it.** The runtime stops what it built. An
-interval, a watcher or a connection a component started itself it did not build and cannot stop,
-and a component that goes on working keeps its deployment working. Nothing checks that for you.
+interval, a watcher or a connection a component started itself it did not build and cannot stop —
+and a deployment that does not go quiet is not stopped, so what your components hold is what
+decides whether yours can be halted at all.
 
 ## Asking for it
 
@@ -21,27 +22,53 @@ introspection:
 
 Off by default: with it off there is nothing deployed to post to and nothing listening.
 
+With it on, every application component has to be on the map: one declaring
+`introspection: false` fails the build, because the map is what a halt is decided by. The
+narrower opt-out, `introspection.samples: false`, is untouched — it suppresses the payload of a
+call, not the record that one was made.
+
 ```http
 POST /introspection/signals/ HTTP/1.1
 content-type: application/yaml
 
 type: halt
 seconds: 300
+quiescence: 60
 ```
 
-`seconds` is between `30` and `3600`. The route takes the `system:halt` role.
+- `seconds` — how long every process stays down. Between `30` and `3600`.
+- `quiescence` — how long the deployment is given to go quiet before it is checked. Between `5`
+  and `600`, `60` by default.
+- `grace` — how long a process that found the deployment working waits for another process to
+  call the stop before it leaves the halt. Between `2` and `120`, `10` by default.
+
+The route takes the `system:halt` role.
 
 ## What happens
 
-1. Every process stops doing anything of its own accord: the gateway answers `503`, pulses stop
-   firing, delayed calls stop being dispatched, and each component's
-   [`pause`](/connectors/bridges.node/readme.md#run-commands) run command runs.
-2. What is already in flight finishes. A halt waits for it.
-3. Every connection closes — the broker, the database, the cache, and any stream still outbound.
+1. Every process goes quiet: the gateway answers `503`, pulses stop firing, delayed calls stop
+   being dispatched, and each component's
+   [`pause`](/connectors/bridges.node/readme.md#run-commands) run command runs. Nothing closes.
+2. For `quiescence` seconds the deployment finishes what it already had. Nothing is adding to
+   the queues, so what is in them is finite and drains.
+3. Every process then reads the map, which answers one question: was anything, anywhere in this
+   deployment, called since the signal. **Whichever process sees that nothing was calls the
+   stop, and the rest obey it** — the evidence is what the whole fleet wrote, so one process
+   reading it reads for all of them.
+4. Every connection closes — the broker, the database, the cache, and any stream still outbound.
    A halted process holds no socket, no channel and no session against anything it runs on.
-4. When the interval is up, each process builds itself again and carries on.
+5. When the interval is up, each process builds itself again and carries on.
+
+**Where anything was still working, the halt is called off.** Nothing had been closed, so every
+process simply starts working again and each component's
+[`resume`](/connectors/bridges.node/readme.md#run-commands) runs. So it goes where the map could
+not be read: a deployment is not stopped on a guess.
 
 ## What it gives
+
+**Nothing is running when the deployment goes down.** Every source of work is off, what was in
+flight has finished, and the map says nothing was called. That is what a stop rests on, and why
+a halt of a busy deployment is refused rather than half-performed.
 
 **A halted process stays up.** It is not restarted, evicted or replaced, and it stays a member of
 its service.
@@ -63,10 +90,15 @@ handled, and only then does anything close.
 **There is no undoing a halt from outside.** Nothing reaches a process that holds no connection,
 so the interval is what brings the deployment back. Ask for one you can afford to wait out.
 
+**A deployment that does not go quiet is not stopped.** A component that keeps its own time, a
+queue that never empties, work that outlasts the window — any of them and the halt is called off.
+What to do about it is to ask for a longer `quiescence`, or to find what did not stop.
+
 **It holds only over the processes that were there when it began.** One that starts during a halt
-comes up running, because nothing is there to tell it otherwise. Starting one is therefore the way
-to end a halt early — and the runtime starts nothing itself, so whether you have that depends on
-what supervises your processes.
+comes up running, because nothing is there to tell it otherwise. During the quiet it is what calls
+the halt off, since it starts working and the map shows it; once the deployment is down, starting a
+process is the way to end a halt early — and the runtime starts nothing itself, so whether you have
+that depends on what supervises your processes.
 
 **It reaches one deployment**, the one the signal was written in. Regions are separate deployments
 with brokers of their own, so halting another means posting to its address.
@@ -102,7 +134,8 @@ export const resume = preflight
 ```
 
 `pause` runs while the component is still whole and still serving, which is the one moment it can
-release what the runtime cannot see.
+release what the runtime cannot see. `context.state` is where a component keeps what outlives a
+call, and a component has it by declaring [`state: ~`](/extensions/state/readme.md).
 
 **What you had to do in `pause` you have to undo in one of two places**, because there are two ways
 a process comes back. Where it was taken down for the interval, the component that comes back is a
@@ -127,6 +160,10 @@ it ends the process, because a stale context in a live process is a defect.
 database over, moving a cluster, taking a backup with nothing writing across it. Ask for the
 interval that work needs, and for the one you can afford to be down: the deployment comes back
 when it is up, whether or not the work is finished.
+
+**What a halt did is in the records.** A `stop` record names the halt it answers, so a halt with
+no stop beside it is one that was called off. Nothing is written back to a halt: the write that
+would say what became of it is the one thing a halted deployment cannot do.
 
 **A halt reaches what is connected when it is posted.** The signal travels over the broker, and a
 process that is not there to receive it is never told afterwards: it goes on working while the rest
