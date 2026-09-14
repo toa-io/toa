@@ -10,6 +10,13 @@ builds itself again. Nothing has to reach it for that to happen, which is what m
 usable for work on the infrastructure itself — a broker restarted, a database failed over, a
 cluster moved.
 
+**What is hard is not the stopping but the moment.** A deployment that is killed is left owing
+itself work: a state change whose events have not been delivered, a call whose reply was lost, a
+task nobody ran — all of it correct in the end, because the runtime is built to converge, but only
+once it is back. A halt stops it at a point where nothing is owed: nothing is in flight, nothing is
+queued, nothing is waiting to catch up. Everything that follows — the quiet, the check, the
+unilateral stop — exists to find that moment and to prove it was found.
+
 A halt is three things rather than one.
 
 **Quiet.** The runtime turns off every source of work it owns: the gateway answers `503`, pulses

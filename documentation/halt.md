@@ -4,8 +4,14 @@ Every process of a deployment stops what it is doing, closes every connection it
 infrastructure, and comes back on its own when the interval it was given is over. The processes
 are not replaced, and the ports they listen on stay bound.
 
-For the length of the interval the broker, the database and the cache have no client left — which
-is the window to restart, upgrade or fail over the things the deployment runs on.
+**It stops a deployment without losing anything and without leaving anything half-done.** A call
+in flight is answered, an event that was owed is delivered, a task that was queued is run, and
+whatever was on its way to being consistent has got there — all of it before the first connection
+closes. Anything can be stopped by killing it; what is hard, and what this is, is stopping it at a
+moment when nothing is owed.
+
+For the length of the interval the broker, the database and the cache then have no client left —
+which is the window to restart, upgrade or fail over the things the deployment runs on.
 
 **A halt is only as complete as your components make it.** The runtime stops what it built. An
 interval, a watcher or a connection a component started itself it did not build and cannot stop —
