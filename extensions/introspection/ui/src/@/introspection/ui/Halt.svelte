@@ -8,7 +8,7 @@
   import * as Dialog from '$ui/alert-dialog'
   import { dict } from '$lib/intl'
   import { Hold } from '$com/hold'
-  import { COUNTDOWN, DEFAULT, DURATION } from './Halt'
+  import { COUNTDOWN, DURATION, HOLD, QUIESCENCE } from './Halt'
 
   /** What this deployment lets a halt ask for. Read once, when the header mounts. */
   const limits = $derived(ok($bounds) ? $bounds : null)
@@ -26,19 +26,18 @@
 
   /** The form opens on something that can be pressed: a field nobody has touched is not wrong. */
   const seconds = $derived(
-    stated.duration ?? (limits === null ? undefined : clamp(DEFAULT, limits.duration)),
+    stated.duration ?? (limits === null ? undefined : clamp(DURATION, limits.duration)),
   )
 
-  const quiescence = $derived(stated.quiescence ?? limits?.quiescence[0])
+  const quiescence = $derived(
+    stated.quiescence ?? (limits === null ? undefined : clamp(QUIESCENCE, limits.quiescence)),
+  )
 
   const interval = $derived(limits !== null && within(seconds, limits.duration))
   const quiet = $derived(limits !== null && within(quiescence, limits.quiescence))
   const ready = $derived(interval && quiet)
 
-  /**
-   * Every opening starts over: the duration on what a halt is usually for, the quiet on the
-   * least this deployment will take, both within what it allows.
-   */
+  /** Every opening starts over, on what a halt is usually asked for within what is allowed. */
   function onOpenChange(_: boolean): void {
     forget()
 
@@ -192,7 +191,7 @@
           variant="destructive"
           portal={false}
           position="top"
-          duration={DURATION}
+          duration={HOLD}
           label={$dict.halt.hold}
           disabled={!ready}
           onclick={held}
