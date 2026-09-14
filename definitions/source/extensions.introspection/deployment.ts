@@ -57,9 +57,6 @@ export function deployment(
  * called while the deployment is being declared still. With halts on, a component may be in
  * the map or opted out of it, and not both — it is told to choose rather than left with a
  * guarantee that quietly does not hold.
- *
- * The narrower opt-out is untouched: `introspection.samples: false` suppresses the payload,
- * not the edge.
  */
 function described(instances: Instances<Declaration>): void {
   const opted = instances

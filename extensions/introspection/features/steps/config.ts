@@ -18,7 +18,6 @@ environment.set(
   // through `options`, because what a process reads is what a deployment writes
   JSON.stringify(
     options({
-      samples: environment.get('TOA_INTROSPECTION_SAMPLES') === '1',
       interval: Number(environment.get('TOA_INTROSPECTION_INTERVAL') ?? 1),
       threshold: 64,
 

@@ -19,12 +19,6 @@ export interface Entity {
     component: string
     operation: string
   }
-  /** The last call observed on this edge */
-  sample?: {
-    at: number
-    input?: unknown
-    outcome: string
-  }
   id: string
   VERSION: number
   CREATED: number
@@ -49,12 +43,6 @@ export type MergeInput = {
       namespace: string
       component: string
       operation: string
-    }
-    /** The last call observed on this edge */
-    sample?: {
-      at: number
-      input?: unknown
-      outcome: string
     }
   }>
 }

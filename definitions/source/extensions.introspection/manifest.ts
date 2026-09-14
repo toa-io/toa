@@ -1,18 +1,13 @@
-import { component } from './annotation.ts'
-import * as schemas from './schemas.ts'
 import type { Declaration } from './annotation.ts'
 
 /**
- * The component level of the annotation.
+ * The component level of the annotation. A component is on the map, or it says
+ * `introspection: false`, and there is nothing else for it to declare.
  *
  * The extension is predefined, so most components say nothing and the
  * declaration arrives as `null` — which still has to produce a value,
  * or norm rejects the extension.
  */
 export function manifest(declaration: Declaration | null | undefined): Declaration {
-  const normalized = component(declaration)
-
-  if (normalized !== false) schemas.declaration.validate(normalized)
-
-  return normalized
+  return declaration === false ? false : {}
 }

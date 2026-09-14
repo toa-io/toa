@@ -1,7 +1,5 @@
 # context.toa.yaml introspection annotation
 properties:
-  samples:
-    type: boolean
   interval:
     type: integer
     minimum: 1

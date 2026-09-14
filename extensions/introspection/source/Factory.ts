@@ -1,10 +1,5 @@
 import { Connector } from '@toa.io/core'
-import {
-  DISABLED,
-  environment,
-  component as declaration,
-  settings
-} from '@toa.io/definitions/extensions.introspection'
+import { environment } from '@toa.io/definitions/extensions.introspection'
 import { NAMESPACE, uiPort } from '@toa.io/definitions/extensions.introspection'
 import { describe } from './describe.ts'
 import { Reporter } from './Reporter.ts'
@@ -13,21 +8,16 @@ import { Halt } from './Halt.ts'
 import { Composition } from './Composition.ts'
 import { Explorer } from './Explorer.ts'
 import { UI } from './UI.ts'
-import { capture, samplable } from './sample.ts'
-import type {
-  Declaration,
-  Options,
-  Settings
-} from '@toa.io/definitions/extensions.introspection'
-import type { Origin, Outcome, Target } from './model.ts'
+import type { Declaration, Options } from '@toa.io/definitions/extensions.introspection'
+import type { Origin, Target } from './model.ts'
 import type { Manifest } from '@toa.io/norm'
 import type { Component, Locator } from '@toa.io/core'
-import type { Reply, Request, extensions } from '@toa.io/core/types'
+import type { Request, extensions } from '@toa.io/core/types'
 
 export class Factory implements extensions.Factory {
   private readonly host: Host
   private readonly options: Options | null
-  private readonly settings: Record<string, Settings> = {}
+  private readonly mapped: Record<string, boolean> = {}
   private reporter: Reporter | null = null
 
   public constructor(host: Host) {
@@ -40,39 +30,26 @@ export class Factory implements extensions.Factory {
     decl: Declaration | null,
     manifest: Manifest
   ): Connector {
-    const resolved = settings(locator.namespace!, declaration(decl), this.options)
+    const mapped = this.options !== null && decl !== false
 
-    this.settings[locator.id] = resolved
+    this.mapped[locator.id] = mapped
 
-    if (!resolved.enabled || locator.namespace === NAMESPACE) return new Connector()
+    if (!mapped || locator.namespace === NAMESPACE) return new Connector()
 
     return new Tenant(this.collector(), describe(manifest))
   }
 
   public component(component: Component): Component {
     const locator = component.locator
-    const resolved = this.resolve(locator)
 
-    if (!resolved.enabled) return component
+    if (!this.observed(locator)) return component
 
     const reporter = this.collector()
     const invoke = component.invoke.bind(component)
 
     component.invoke = async (endpoint: string, request: Request): Promise<any> => {
-      let outcome: Outcome = 'ok'
-      let reply: Reply | undefined
-
       try {
-        reply = await invoke(endpoint, request)
-
-        if (reply?.exception !== undefined) outcome = 'exception'
-        else if (reply?.error !== undefined) outcome = 'error'
-
-        return reply
-      } catch (error) {
-        outcome = 'exception'
-
-        throw error
+        return await invoke(endpoint, request)
       } finally {
         // a call that failed is still a connection between two components
         const src: Origin = origin(request?.source)
@@ -82,12 +59,7 @@ export class Factory implements extensions.Factory {
           operation: endpoint
         }
 
-        const sample =
-          resolved.samples && samplable(request?.input)
-            ? capture(request?.input, outcome)
-            : undefined
-
-        reporter.observe({ src, dst, sample })
+        reporter.observe({ src, dst })
       }
     }
 
@@ -124,21 +96,14 @@ export class Factory implements extensions.Factory {
   }
 
   /**
-   * `tenant()` runs before any component is created, so settings are warm.
-   * A component booted on its own (without a composition) falls back to
-   * the environment, with sampling off.
+   * `tenant()` runs before any component is created, so what it decided is warm.
+   * A component booted on its own (without a composition) falls back to the
+   * environment: it is on the map wherever collection is configured at all.
    */
-  private resolve(locator: Locator): Settings {
-    if (locator.namespace === NAMESPACE) return DISABLED
+  private observed(locator: Locator): boolean {
+    if (locator.namespace === NAMESPACE) return false
 
-    return (
-      this.settings[locator.id] ??
-      settings(
-        locator.namespace!,
-        {},
-        this.options === null ? null : { ...this.options, samples: false }
-      )
-    )
+    return this.mapped[locator.id] ?? this.options !== null
   }
 
   /**

@@ -60,23 +60,14 @@ export interface Node {
   extensions: string[]
 }
 
-export interface Sample {
-  at: number
-  input?: unknown
-  outcome: Outcome
-}
-
-export type Outcome = 'ok' | 'error' | 'exception'
-
 /**
- * A call observed in a process between flushes. What the application declares —
- * which events exist, and which receiver takes which — is a node's business;
- * an edge is what actually happened.
+ * A call observed in a process between flushes: that it was made, and between whom —
+ * never what it carried. What the application declares — which events exist, and which
+ * receiver takes which — is a node's business; an edge is what actually happened.
  *
  * Sent to `introspection.edges`.
  */
 export interface Edge {
   src: Origin
   dst: Target
-  sample?: Sample
 }

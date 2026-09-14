@@ -3,7 +3,6 @@ export interface Edge {
   id: string
   src: Origin
   dst: Target
-  sample?: Sample
   CREATED: number
   UPDATED: number
   VERSION: number
@@ -21,11 +20,3 @@ export interface Target {
   component: string
   operation: string
 }
-
-export interface Sample {
-  at: number
-  input?: unknown
-  outcome: Outcome
-}
-
-export type Outcome = 'ok' | 'error' | 'exception'

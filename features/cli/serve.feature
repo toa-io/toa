@@ -73,7 +73,7 @@ Feature: toa serve
       TOA_CONFIGURATION_IDENTITY_TOKENS={"keys":[{"id":"key0","key":"$IDENTITY_TOKENS_KEY0"}]}
       TOA_CONFIGURATION__IDENTITY_TOKENS_KEY0=sTxL6qVOadKkUJwh3FveU53XgTEo3Sdfg7k2FfiIKfs
       TOA_EXPOSITION_PROPERTIES={"authorities":{"default":"localhost"},"port":31000,"probe":31004}
-      TOA_INTROSPECTION={"samples":false,"interval":300,"threshold":1024,"ui":true}
+      TOA_INTROSPECTION={"interval":300,"threshold":1024,"ui":true,"halt":false,"duration":[30,3600],"quiescence":[30,1800]}
       TOA_AMQP_CONTEXT={".":["amqp://localhost:31010"]}
       TOA_AMQP_CONTEXT__USERNAME=developer
       TOA_AMQP_CONTEXT__PASSWORD=secret

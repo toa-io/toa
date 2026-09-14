@@ -52,7 +52,6 @@ export interface Component {
   transit: (request: { input: TransitInput, query?: Query<Entity>, task?: boolean }, options?: Options) => Promise<Entity>
   /** What a signal of this deployment may ask for, in seconds. */
   configuration: (request: { input?: null, task?: boolean }, options?: Options) => Promise<ConfigurationOutput>
-  bounds: (request: { input?: null, task?: boolean }, options?: Options) => Promise<unknown>
   assign: (request: { input?: null, query?: Query<Entity>, task?: boolean }, options?: Options) => Promise<Entity>
   ensure: (request: { input?: null, query?: Query<Entity>, task?: boolean }, options?: Options) => Promise<Entity>
   enumerate: (request: { input?: null, query?: Query<Entity>, task?: boolean }, options?: Options) => Promise<Entity[]>
