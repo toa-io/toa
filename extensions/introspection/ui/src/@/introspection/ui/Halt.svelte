@@ -14,8 +14,9 @@
   const limits = $derived(ok($bounds) ? $bounds : null)
 
   let open = $state(false)
-  let seconds = $state<number | undefined>(undefined)
-  let quiescence = $state<number | undefined>(undefined)
+
+  /** What the operator typed, where they have typed anything. */
+  let stated = $state<Stated>({})
 
   /** Seconds left before the halt is written, and `null` while nothing has been asked for. */
   let left = $state<number | null>(null)
@@ -23,24 +24,26 @@
 
   let timer: ReturnType<typeof setInterval> | null = null
 
+  /** The form opens on something that can be pressed: a field nobody has touched is not wrong. */
+  const seconds = $derived(
+    stated.duration ?? (limits === null ? undefined : clamp(DEFAULT, limits.duration)),
+  )
+
+  const quiescence = $derived(stated.quiescence ?? limits?.quiescence[0])
+
   const interval = $derived(limits !== null && within(seconds, limits.duration))
   const quiet = $derived(limits !== null && within(quiescence, limits.quiescence))
   const ready = $derived(interval && quiet)
 
   /**
-   * The duration opens on what a halt is usually for, within what the deployment allows. How
-   * long to wait for it to go quiet is the operator's to state: what it should be is a
-   * property of the moment, and a number nobody chose is the wrong one to press a red button on.
+   * Every opening starts over: the duration on what a halt is usually for, the quiet on the
+   * least this deployment will take, both within what it allows.
    */
-  function onOpenChange(next: boolean): void {
+  function onOpenChange(_: boolean): void {
     forget()
 
     failed = false
-
-    if (!next || limits === null) return
-
-    seconds = clamp(DEFAULT, limits.duration)
-    quiescence = undefined
+    stated = {}
   }
 
   /** Held long enough. Nothing has been asked of the deployment yet — the count is the asking. */
@@ -88,11 +91,18 @@
   function clamp(value: number, [min, max]: Range): number {
     return Math.min(max, Math.max(min, value))
   }
+
+  interface Stated {
+    duration?: number
+    quiescence?: number
+  }
 </script>
 
 <Dialog.Root bind:open {onOpenChange}>
+  <!-- until the bounds are in there is nothing to ask for, and the form would open empty -->
   <Dialog.Trigger
     id="introspection-halt-button"
+    disabled={limits === null}
     class={[buttonVariants({ variant: 'ghost' }), 'text-destructive hover:text-destructive']}
   >
     <Pause />
@@ -128,7 +138,7 @@
             min={limits.duration[0]}
             max={limits.duration[1]}
             step="1"
-            bind:value={seconds}
+            bind:value={() => seconds, (value) => (stated.duration = value)}
             aria-invalid={!interval}
             aria-describedby="introspection-halt-hint"
           />
@@ -149,7 +159,7 @@
             min={limits.quiescence[0]}
             max={limits.quiescence[1]}
             step="1"
-            bind:value={quiescence}
+            bind:value={() => quiescence, (value) => (stated.quiescence = value)}
             aria-invalid={!quiet}
             aria-describedby="introspection-halt-quiescence-hint"
           />

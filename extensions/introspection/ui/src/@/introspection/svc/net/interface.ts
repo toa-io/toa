@@ -7,6 +7,11 @@ const nodes = origin.resource<Node[]>('/introspection/nodes/')
 const edges = origin.resource<Edge[]>('/introspection/edges/')
 const signals = origin.resource('/introspection/signals/', { credentials: 'include' })
 
+// a resource of its own rather than a path relative to the collection, which is what it is not
+const limits = origin.resource<Bounds>('/introspection/signals/bounds', {
+  credentials: 'include',
+})
+
 const MINUTE = 60 * 1000
 const DAY = 24 * 60 * MINUTE
 const NODES_MAX_AGE = 75 * MINUTE
@@ -22,7 +27,7 @@ export async function list(): Promise<Edge[] | Error> {
 
 /** What a halt may ask for: the deployment's own, and what every process holds a signal to. */
 export async function bounds(): Promise<Bounds | Error> {
-  return await signals.json<Bounds>('bounds')
+  return await limits.json()
 }
 
 /**
