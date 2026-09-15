@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/extensions.storages",
-  "version": "1.0.0-alpha.307",
+  "version": "1.0.0-alpha.308",
   "type": "module",
   "description": "Toa Storages",
   "author": "temich <tema.gurtovoy@gmail.com>",
@@ -51,8 +51,8 @@
     }
   },
   "dependencies": {
-    "@toa.io/core": "1.0.0-alpha.306",
-    "@toa.io/definitions": "1.0.0-alpha.307",
+    "@toa.io/core": "1.0.0-alpha.308",
+    "@toa.io/definitions": "1.0.0-alpha.308",
     "@toa.io/generic": "1.0.0-alpha.304",
     "@toa.io/schemas": "1.0.0-alpha.304",
     "negotiator": "1.1.0",
