@@ -69,6 +69,28 @@ map says what the context holds, which is what its callers are held to.
 sources change** — a composition whose component the map states another version of is refused at
 boot, and names it.
 
+## What a version is made of
+
+A version is the hash of a component's files, so two builds of one component agree only where
+both hash the same ones. What no build ships — `node_modules`, a lockfile, tests, type
+declarations, a `Dockerfile`, tool and editor output — is left out by the bridge. A component
+says the rest for itself:
+
+```yaml
+# manifest.toa.yaml
+files: [operations, events, receivers, lib, rc, package.json]
+ignore: ['lib/fixtures/**', '!Dockerfile']
+```
+
+`files` is what its version is made of, everything under it by default. `ignore` is added to what
+the bridge leaves out, and `!` puts one of those back. Its manifest is always one of them, because
+what it declares is what a caller is held to.
+
+**A component built somewhere else states this.** One an application builds with a `.dockerignore`
+of its own — a component the context [evicts](/documentation/compositions.md#evicted), say — hashes
+what that build copied; where that differs from what the map was written from, its processes are
+refused at boot.
+
 ## When a call has no contract
 
 A call to a component that the process neither composes nor finds in its map is refused, naming the

@@ -26,6 +26,18 @@ Given(
 )
 
 Given(
+  'the file {word} of {component} changes',
+  /**
+   * @param {string} file
+   * @param {string} component
+   * @this {toa.features.Context}
+   */
+  async function (file, component) {
+    await appendFile(join(this.cwd, 'components', component, file), '\n# changed\n', 'utf8')
+  }
+)
+
+Given(
   'the sources of {component} change',
   /**
    * A version is a hash of a component's sources, so whatever changes them changes it.

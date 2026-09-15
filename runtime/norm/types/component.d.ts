@@ -58,6 +58,10 @@ export type Entity = {
 
 type Declaration = {
   prototype?: string
+  /** what this component's version is made of; everything under it by default */
+  files?: string[]
+  /** what its version is not made of, beside what the bridge states */
+  ignore?: string[]
   namespace: string
   name: string
   version: string

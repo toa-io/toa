@@ -100,6 +100,22 @@ Feature: toa map
       'dummies.one' is composed at a version the component map does not state. Run `toa map`.
       """
 
+  Scenario: What a component ignores is not part of its version
+    Given I have a component `dummies.ignores`
+    And I have a context
+    When I run `toa map`
+    And the file notes.md of `dummies.ignores` changes
+    And I run `toa compose ./components/* --kill`
+    Then program should exit with code 0
+
+  Scenario: What `files` leaves out is not part of its version
+    Given I have a component `dummies.files`
+    And I have a context
+    When I run `toa map`
+    And the file notes.md of `dummies.files` changes
+    And I run `toa compose ./components/* --kill`
+    Then program should exit with code 0
+
   Scenario: A component outside a Context needs none
     Given I have a component `dummies.one`
     When I run `toa compose ./components/* --kill`

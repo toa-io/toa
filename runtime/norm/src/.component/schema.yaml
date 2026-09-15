@@ -34,6 +34,18 @@ properties:
   path:
     type: string
 
+  files:
+    # what this component's version is made of, where a build of it copies only some of it
+    type: array
+    items:
+      type: string
+
+  ignore:
+    # what its version is not made of, added to what the bridge states; `!` puts one of those back
+    type: array
+    items:
+      type: string
+
   locator:
     type: object
     properties:
