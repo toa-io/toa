@@ -52,7 +52,7 @@ name by the binding.
 <dt>binding</dt>
 <dd>
 <code>string</code> Binding name to consume events. <code>undefined</code> by default, that is being 
-<a href="/documentation/discovery.md">discovered</a>.
+<a href="/documentation/contracts.md">read from the map</a>.
 </dd>
 </dl>
 
