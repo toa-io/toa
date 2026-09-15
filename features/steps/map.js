@@ -1,6 +1,6 @@
 import assert from 'node:assert'
 import { join } from 'node:path'
-import { readFile } from 'node:fs/promises'
+import { readFile, writeFile } from 'node:fs/promises'
 import { load as parse } from 'js-yaml'
 import { match } from '@toa.io/generic'
 import { contract } from '@toa.io/core'
@@ -31,6 +31,29 @@ Given(
     }
 
     stage.map(contracts)
+  }
+)
+
+Given(
+  'I have a component map of:',
+  /**
+   * What a program run by a scenario is given about the components it calls, as `toa map`
+   * writes it: a `toa call` composes nothing, so what it is held to is stated here.
+   *
+   * @param {import('@cucumber/cucumber').DataTable} table
+   * @this {toa.features.Context}
+   */
+  async function (table) {
+    const references = table.transpose().raw()[0]
+    const contracts = {}
+
+    for (const reference of references) {
+      const manifest = await components.load(reference)
+
+      contracts[manifest.locator.id] = contract.component(manifest)
+    }
+
+    await writeFile(join(this.cwd, FILE), JSON.stringify(contracts, null, 2), 'utf8')
   }
 )
 
