@@ -30,4 +30,4 @@ export const handler = async (argv) => {
 
 export const command = 'map [environment]'
 
-export const describe = 'Export component versions to a components.json file'
+export const describe = 'Export component contracts to a components.json file'

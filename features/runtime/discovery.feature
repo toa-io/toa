@@ -7,7 +7,7 @@ Feature: Discovery asks for a named version
     Given calls within this process go through the broker
 
   Scenario: A lookup is answered by the version the map names
-    Given the component map names:
+    Given the component map states:
       | discovery.next |
     When I compose `discovery.peer` component
     And I compose `discovery.next` component
@@ -18,7 +18,7 @@ Feature: Discovery asks for a named version
       """
 
   Scenario: A version the map does not name does not answer
-    Given the component map names:
+    Given the component map states:
       | discovery.peer |
     When I compose `discovery.peer` component
     And I compose `discovery.next` component
@@ -29,7 +29,7 @@ Feature: Discovery asks for a named version
       """
 
   Scenario: A version that is not up yet is waited for
-    Given the component map names:
+    Given the component map states:
       | discovery.next |
     When I compose `discovery.peer` component
     And I call `discovery.peer.added` without waiting with:
@@ -41,7 +41,7 @@ Feature: Discovery asks for a named version
     Then the pending reply is received
 
   Scenario: A receiver is bound at the version the map names
-    Given the component map names:
+    Given the component map states:
       | discovery.next |
     When I compose `discovery.peer` component
     And I compose `discovery.next` component
@@ -53,7 +53,7 @@ Feature: Discovery asks for a named version
       """
 
   Scenario: A receiver on an event the named version does not declare
-    Given the component map names:
+    Given the component map states:
       | discovery.peer |
     When I compose `discovery.peer` component
     Then I compose `discovery.caller` component and it fails with a message containing:

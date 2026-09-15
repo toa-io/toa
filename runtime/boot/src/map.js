@@ -1,31 +1,32 @@
 import { readFile } from 'node:fs/promises'
 
 /**
- * Which version of a component this process asks what that component provides.
+ * What this process was given about the components it calls: the contract of the version each of
+ * them runs.
  *
- * Held as the file it was given rather than as what the file said, and read at every lookup: a
- * deployment rewrites it under a running process, and a process may first call a peer long after
- * that peer was replaced. A lookup happens once per peer, so this is a read per peer.
+ * Held as the file it was given rather than as what the file said, and read at every call for
+ * one: a deployment rewrites it under a running process, and a process may first call a peer
+ * long after that peer was replaced. A contract is read once per peer, so this is a read per
+ * peer.
  *
- * @type {string | Record<string, string> | undefined}
+ * @type {string | Record<string, toa.norm.Contract> | undefined}
  */
 let source
 
 /**
- * @param {string | Record<string, string> | undefined} value the file, or the map itself
+ * @param {string | Record<string, toa.norm.Contract> | undefined} value the file, or the map itself
  */
 export const use = (value) => {
   source = value
 }
 
 /**
- * The version of a component, where this process was given a map that names one. Absent, a
- * lookup goes to the name every version of that component serves.
+ * What a component provides, where this process was given a map that states it.
  *
  * @param {string} id
- * @returns {Promise<string | undefined>}
+ * @returns {Promise<toa.norm.Contract | undefined>}
  */
-export const version = async (id) => {
+export const contract = async (id) => {
   if (source === undefined) return undefined
   if (typeof source !== 'string') return source[id]
 
@@ -34,7 +35,7 @@ export const version = async (id) => {
 
 /**
  * @param {string} path
- * @returns {Promise<Record<string, string>>}
+ * @returns {Promise<Record<string, toa.norm.Contract>>}
  */
 async function read(path) {
   let contents

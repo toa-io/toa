@@ -1,14 +1,15 @@
 @cli
 Feature: toa map
 
-  Which version of a component a process asks what that component provides.
+  What a process is given about the components of a Context: the version each of them runs, and
+  what that version provides.
 
   Scenario: Show `toa map` help
     When I run `toa map --help`
     And stdout should contain lines:
       """
       toa map [environment]
-      Export component versions to a components.json file
+      Export component contracts to a components.json file
       """
 
   Scenario: Writing the map of a Context
@@ -20,6 +21,48 @@ Feature: toa map
     Then program should exit with code 0
     And the file ./components.json contains line starting with '  "dummies.one":'
     And the file ./components.json contains line starting with '  "dummies.two":'
+
+  Scenario: A contract is what a call is made from
+    Given I have a component `events.trailers`
+    And I have a context
+    When I run `toa map`
+    Then program should exit with code 0
+    And the map states for `events.trailers`:
+      """yaml
+      entity:
+        properties:
+          foo:
+            type: integer
+      operations:
+        transit:
+          type: transition
+          scope: object
+          bindings: ["@toa.io/bindings.amqp"]
+          input:
+            type: object
+            properties:
+              inc:
+                type: integer
+      events:
+        incremented:
+          binding: "@toa.io/bindings.amqp"
+      """
+
+  Scenario: How a component serves a call is its own
+    Given I have a component `events.trailers`
+    And I have a context
+    When I run `toa map`
+    Then program should exit with code 0
+    And the map states no `operations.transit.concurrency` of `events.trailers`
+    And the map states no `entity.storage` of `events.trailers`
+    And the map states no `entity.blank` of `events.trailers`
+
+  Scenario: Nothing of the machine it was written on is in it
+    Given I have a component `events.trailers`
+    And I have a context
+    When I run `toa map`
+    Then program should exit with code 0
+    And the map states no `events.incremented.path` of `events.trailers`
 
   Scenario: An evicted component is in it
     Given I have components:

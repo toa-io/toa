@@ -34,7 +34,7 @@ export interface Dependency<T = undefined> {
   component: Manifest
 }
 
-interface Context extends Declaration {
+export interface Context extends Declaration {
   runtime?: Runtime
   environment?: string
   registry?: Registry

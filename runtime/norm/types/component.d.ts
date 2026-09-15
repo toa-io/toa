@@ -77,3 +77,12 @@ export type Manifest = Declaration & {
   /** Toa deploys nothing for it: the context evicts it, or only evicted components require it */
   evicted?: boolean
 }
+
+/** What a caller is given in order to call a component: what a map states of it. */
+export type Contract = {
+  /** the version of the component this describes */
+  version: string
+  entity?: Pick<Entity, 'properties' | 'required'>
+  operations?: Operations
+  events?: Events
+}
