@@ -6,7 +6,7 @@ A component is given what another one provides, rather than asking for it. A pro
 with a map that holds the contract of every component of the context:
 
 ```shell
-$ toa map                      # writes components.json beside the context
+$ toa map                      # writes .map.json beside the context
 $ toa compose ./components/*   # finds it, the way it finds .env
 ```
 
@@ -53,7 +53,7 @@ is left out.
 The map is found the way `.env` is: walked up to from where the command runs, or named.
 
 ```shell
-$ toa compose ./components/* --env application/.env --map application/components.json
+$ toa compose ./components/* --env application/.env --map application/.map.json
 ```
 
 `toa compose`, `toa serve`, `toa mono` and `toa call` are refused where a Context is there and its
@@ -75,7 +75,7 @@ A call to a component that the process neither composes nor finds in its map is 
 component:
 
 ```
-Cannot call 'default.billing': the component map names no such component. Run `toa map`.
+Cannot call 'default.billing': the component map states nothing of it. Run `toa map`.
 ```
 
 ## While two versions serve

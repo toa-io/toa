@@ -6,7 +6,7 @@
 <dt><code>--env</code></dt>
 <dd>Path to the environment variables file (`.env` format)</dd>
 <dt><code>--map</code></dt>
-<dd>Path to the component map (<a href="#map"><code>components.json</code></a>). Absent,
+<dd>Path to the component map (<a href="#map"><code>.map.json</code></a>). Absent,
 it is looked for from the working directory upwards, as <code>.env</code> is. Required by
 <a href="#compose"><code>compose</code></a>, <a href="#serve"><code>serve</code></a>,
 <a href="#mono"><code>mono</code></a> and <a href="#call"><code>call</code></a>.</dd>
@@ -162,7 +162,7 @@ Credentials specified in the output file are preserved.
 
 ### map
 
-Export the components of a Context to a `components.json` file.
+Export the components of a Context to a `.map.json` file.
 
 <dl>
 <dt><code>toa map [environment]</code></dt>
@@ -170,7 +170,7 @@ Export the components of a Context to a `components.json` file.
 <code>environment</code> deployment environment name (default <code>local</code>), as
 <a href="#env"><code>env</code></a> reads it.<br/>
 <code>--path</code> path to a Context (default <code>.</code>)<br/>
-<code>--as</code> output file path (default <code>components.json</code>)
+<code>--as</code> output file path (default <code>.map.json</code>)
 </dd>
 </dl>
 
@@ -196,7 +196,7 @@ A process is started with one, and is held to what it states. See
 Run it again when a component's sources change: a version is a hash of them, and a composition whose
 component the map states another version of is refused at boot.
 
-> It is generated, so add `components.json` to `.gitignore` beside `.env*`. A committed one is
+> It is generated, so add `.map.json` to `.gitignore` beside `.env*`. A committed one is
 > true of the sources it was written from and of no others.
 
 ### export manifest

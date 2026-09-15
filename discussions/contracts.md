@@ -55,16 +55,17 @@ A component is asked nothing, and `.lookup` is retired with everything that serv
 
 ### What a component author does differently
 
-Nothing in a component, and nothing in how a process is started: `toa map` writes the same file to
-the same place, and `toa compose`, `toa serve` and `toa mono` are given it as they are today.
+Nothing in a component, and nothing in how a process is started: `toa map` writes one file where
+the context is, and `toa compose`, `toa serve` and `toa mono` are given it as they are today.
 
 ```shell
-$ toa map -p application                 # writes application/components.json
-$ toa compose ./application/components/* --env application/.env --map application/components.json
+$ toa map -p application                 # writes application/.map.json
+$ toa compose ./application/components/* --env application/.env --map application/.map.json
 ```
 
 What changes is that `toa call` is given one too, and is refused where a Context is there and its
-map is not, as the other three are.
+map is not, as the other three are, and that the file is named `.map.json` where it was
+`components.json`.
 
 ## The changes, by area
 
@@ -126,33 +127,37 @@ map is not, as the other three are.
 
 ## Decisions
 
-1. **The map, rather than an announcement everyone hears.** A map is a fact stated by whoever
+1. **`.map.json`, rather than `components.json`.** What it holds is no longer a list of the
+   components: it is what a process is given about them, and the name says so. It is generated and
+   gitignored, so the dot puts it with `.env` rather than with what someone wrote.
+2. **The map, rather than an announcement everyone hears.** A map is a fact stated by whoever
    deployed the Context, where an announcement is a claim by whoever is running, chosen between by
    how recently a replica started. The gateway takes the announcement because it is answering for
    routes that came the same way, and the two arrive together or not at all.
-2. **The same file, a richer shape.** One artifact, one flag, one mount, and one command to run
-   again when sources change. Nothing outside the runtime reads the map's shape.
-3. **A contract, rather than a manifest.** What a caller needs to make a call is a fifth of what a
+3. **One file, a richer shape**, rather than a second file beside it. One artifact, one flag, one
+   mount, and one command to run again when sources change. Nothing outside the runtime reads the
+   map's shape.
+4. **A contract, rather than a manifest.** What a caller needs to make a call is a fifth of what a
    manifest holds, and one field of the rest — an event's `path` — means nothing outside the
    process it was normalised in. Sending it was harmless while a lookup answered from memory;
    writing it into a ConfigMap is not.
-4. **The gateway reads the announcement, rather than the map.** A remote is built once and held for
+5. **The gateway reads the announcement, rather than the map.** A remote is built once and held for
    the life of the process. Every other caller may hold the contract it first read, because its own
    sources make only the calls its release knew how to make; the gateway forwards what a client
    sends to the routes a tenant announced, so its contract is replaced when those routes are. The
    announcement is what replaces them, and the only thing that holds the announcing version's
    contract at that moment: the map may still name the version before it, and reading the map again
    later is a poll.
-5. **`.lookup` goes, rather than staying for a caller with no map.** A caller that asks the shared
+6. **`.lookup` goes, rather than staying for a caller with no map.** A caller that asks the shared
    name is answered by whichever replica takes the message, which is what the version in the map
    was introduced to fix; keeping it would keep the queues, the wait and the code that makes them,
    as a second way to find a peer beside the one the map is.
-6. **Compact JSON in the ConfigMap.** A ConfigMap is capped at 1 MiB. A Context of 39 components,
+7. **Compact JSON in the ConfigMap.** A ConfigMap is capped at 1 MiB. A Context of 39 components,
    its extensions' components included, writes 110 KB compact and 248 KB indented; the deployed
    copy is read by a program, and the one `toa map` writes is read by whoever is debugging.
-7. **The version stays in the map.** It is what the contract belongs to, what the boot compares
+8. **The version stays in the map.** It is what the contract belongs to, what the boot compares
    against what it composes, and what an image is tagged with.
-8. **A request carries no contract version.** The callee trusts `authentic` as it does today. A
+9. **A request carries no contract version.** The callee trusts `authentic` as it does today. A
    caller already validates against a contract a differently versioned replica may serve — a call
    is addressed to an endpoint's queue, which every version consumes — and holding the callee to
    check would change the request envelope and the request path. It is its own change.

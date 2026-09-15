@@ -79,4 +79,4 @@ async function read(id) {
   return map[id]
 }
 
-const FILE = 'components.json'
+const FILE = '.map.json'

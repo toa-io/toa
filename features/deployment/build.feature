@@ -134,4 +134,4 @@ Feature: Container Building Options
     And the file ./images/dependencies/*dummies-one*/Dockerfile contains exact line 'WORKDIR /composition'
     And the file ./images/*dummies-one*/Dockerfile contains line starting with 'FROM registry.example.com/acme/collection/composition-dummies-one:deps-'
     And the file ./images/*dummies-one*/Dockerfile contains exact line 'COPY --link . /composition'
-    And the file ./images/*dummies-one*/Dockerfile contains exact line 'CMD toa compose * --map /etc/toa/components.json'
+    And the file ./images/*dummies-one*/Dockerfile contains exact line 'CMD toa compose * --map /etc/toa/.map.json'

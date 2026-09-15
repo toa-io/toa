@@ -50,7 +50,7 @@ yargs(process.argv.slice(2))
   })
   .option('map', {
     type: 'string',
-    describe: 'Path to the component versions file (components.json)'
+    describe: 'Path to the component map (.map.json)'
   })
   .commandDir('./commands')
   .demandCommand(
