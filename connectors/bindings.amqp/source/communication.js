@@ -13,6 +13,15 @@ export class Communication extends Connector {
   /** @type {comq.IO} */
   #io
 
+  /**
+   * What `open` is waiting for. A disposal reaches an interrupted connector before its
+   * connection has landed, and comq holds a connection until whoever asserted it closes
+   * it — so what is disposed of before it is open is closed when it lands.
+   *
+   * @type {Promise<comq.IO> | undefined}
+   */
+  #opening
+
   #sealed = false
 
   /**
@@ -32,7 +41,8 @@ export class Communication extends Connector {
   }
 
   async open() {
-    this.#io = await assert(...this.#references)
+    this.#opening = assert(...this.#references)
+    this.#io = await this.#opening
 
     // `assert` shares one connection per broker while handing out an IO of its own,
     // and a broker set is held by several communications, so diagnosing here
@@ -73,7 +83,9 @@ export class Communication extends Connector {
 
     if (diagnosed.get(key) === this) diagnosed.delete(key)
 
-    await this.#io?.close()
+    const io = this.#io ?? (await this.#opening?.catch(() => undefined))
+
+    await io?.close()
   }
 
   async reply(queue, process) {
