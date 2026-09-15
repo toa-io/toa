@@ -4,13 +4,14 @@ import { dirname, join } from 'node:path'
 import { after, binding, given } from 'specumber'
 
 import * as boot from '@toa.io/boot'
-import { contract, type Connector, type Contract } from '@toa.io/core'
+import { type Connector } from '@toa.io/core'
 import { environment } from '@toa.io/generic'
 
 import { load as parse } from 'js-yaml'
 import { Gateway } from './Gateway.ts'
 import { Workspace } from './Workspace.ts'
 import { components as map } from './map.ts'
+import { forget, state } from './contracts.ts'
 
 const require = createRequire(import.meta.url)
 
@@ -29,7 +30,6 @@ export class Components {
   private readonly gateway: Gateway
   private compositions: Record<string, Connector> = {}
   private readonly paths: Record<string, string> = {}
-  private readonly map: Record<string, Contract> = {}
 
   public constructor(workspace: Workspace, gateway: Gateway) {
     this.workspace = workspace
@@ -100,11 +100,7 @@ export class Components {
 
     assert.ok(path !== undefined, `Composition '${name}' is not running`)
 
-    const manifest = await boot.manifest(path)
-
-    this.map[manifest.locator.id] = contract.component(manifest)
-
-    boot.map.use(this.map)
+    state(await boot.manifest(path))
   }
 
   @given('the `{word}` is stopped')
@@ -123,7 +119,7 @@ export class Components {
 
     await Promise.all(promises)
 
-    boot.map.use(undefined)
+    forget()
 
     // see 'the components answer over the broker'
     delete globalThis.TOA_INTEGRATION_BINDINGS_LOOP_DISABLED
