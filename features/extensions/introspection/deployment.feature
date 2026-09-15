@@ -49,6 +49,42 @@ Feature: Introspection deployment
             value: '{"interval":300,"threshold":1024,"ui":true,"halt":false,"duration":[30,3600],"quiescence":[30,1800]}'
       """
 
+  Scenario: Deploying the signals component where halts are on
+    Given I have a context with:
+      """yaml
+      introspection:
+        halt: true
+      """
+    When I export deployment
+    Then exported values should contain:
+      """yaml
+      services:
+        - name: introspection-explorer
+          components:
+            - introspection-nodes
+            - introspection-edges
+            - introspection-signals
+      """
+    And exported values should contain:
+      """yaml
+      services:
+        - name: introspection-explorer
+          variables:
+          - name: TOA_MONGODB_INTROSPECTION_SIGNALS
+            value: mongodb://localhost:31020
+      """
+
+  Scenario: Leaving the signals component out where halts are off
+    Given I have a context
+    When I export deployment
+    Then exported values should not contain:
+      """yaml
+      services:
+        - name: introspection-explorer
+          variables:
+          - name: TOA_MONGODB_INTROSPECTION_SIGNALS
+      """
+
   Scenario: Disabling introspection
     Given I have a context with:
       """yaml
