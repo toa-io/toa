@@ -4,9 +4,8 @@ import type { Connector } from '@toa.io/core'
 import { type Host } from './Factory.ts'
 
 /**
- * The components the gateway runs itself. Composed before the tree is built rather than when
- * the gateway connects: what a component provides is what the process composing it knows, and
- * the tree's endpoints and directives are given it as they are made.
+ * The components the gateway runs itself, composed before its tree is built: what they provide
+ * is what the process composing them states, and a directive made with the tree is given it.
  */
 export async function composition(host: Host): Promise<Connector> {
   return await host.composition(find())
