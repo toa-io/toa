@@ -36,7 +36,7 @@ export function deployment(
     name: 'explorer',
     image,
     version,
-    components: components().labels,
+    components: components(annotation).labels,
     resources: annotation?.resources,
     variables: []
   }

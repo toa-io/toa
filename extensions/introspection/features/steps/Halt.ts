@@ -26,14 +26,14 @@ export class Halt {
 
   @given('a running deployment')
   public async quiet(): Promise<void> {
-    await this.run(EXPLORER, [component('probe.source'), component('probe.target')])
+    await this.run(explorer(), [component('probe.source'), component('probe.target')])
   }
 
   @given('a running deployment with a component that keeps its own time')
   public async busy(): Promise<void> {
     // `probe.source` because `probe.target` receives its event, and a receiver looks its
     // source up before the process is up
-    await this.run(EXPLORER, [
+    await this.run(explorer(), [
       fleet('probe.busy'),
       component('probe.source'),
       component('probe.target')
@@ -299,8 +299,14 @@ type Report = State | { up: true }
 
 const MEMBER = resolve(import.meta.dirname, 'fleet', 'member.js')
 
-/** The explorer, as a deployment runs it: the components this extension ships. */
-const EXPLORER = find()
+/**
+ * The explorer, as a deployment runs it: the components this extension ships, which depend on
+ * what the deployment asked for. Read when a scenario runs rather than when this is loaded,
+ * because what says so is the environment `config.ts` writes.
+ */
+function explorer(): string[] {
+  return find()
+}
 
 /** The broker, the database and the cache, on the ports a checkout binds them to. */
 const PORTS = [31010, 31020, 31040]
