@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.307](https://github.com/toa-io/toa/compare/v1.0.0-alpha.306...v1.0.0-alpha.307) (2026-09-15)
+
+**Note:** Version bump only for package @toa.io/cli
+
+
+
+
+
 # [1.0.0-alpha.306](https://github.com/toa-io/toa/compare/v1.0.0-alpha.305...v1.0.0-alpha.306) (2026-09-14)
 
 * feat(boot)!: a process can be halted and come back ([7196fa5](https://github.com/toa-io/toa/commit/7196fa51a9c882e84c3767a4fdd329fd2df319f5))

@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.307](https://github.com/toa-io/toa/compare/v1.0.0-alpha.306...v1.0.0-alpha.307) (2026-09-15)
+
+### Bug Fixes
+
+* **introspection:** host the components the deployment provisioned ([b36d80b](https://github.com/toa-io/toa/commit/b36d80b154e40275c610b021cfb2c9628cac7cab))
+
+
 # [1.0.0-alpha.306](https://github.com/toa-io/toa/compare/v1.0.0-alpha.305...v1.0.0-alpha.306) (2026-09-14)
 
 * feat(introspection)!: remove payload samples ([934db2a](https://github.com/toa-io/toa/commit/934db2a2f617833cae37501c6ea8957f3d0a4c7d))

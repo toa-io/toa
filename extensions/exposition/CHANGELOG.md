@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.307](https://github.com/toa-io/toa/compare/v1.0.0-alpha.306...v1.0.0-alpha.307) (2026-09-15)
+
+**Note:** Version bump only for package @toa.io/extensions.exposition
+
+
+
+
+
 # [1.0.0-alpha.306](https://github.com/toa-io/toa/compare/v1.0.0-alpha.305...v1.0.0-alpha.306) (2026-09-14)
 
 * refactor(core)!: name the quiesce hooks pause and unpause ([6e4e5f5](https://github.com/toa-io/toa/commit/6e4e5f55d43f03ea95ca8bbdaae57b949564dfa2))
