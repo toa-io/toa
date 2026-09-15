@@ -24,8 +24,8 @@ export async function composition(paths, options) {
       components: manifests.map((manifest) => manifest.locator.id)
     })
 
-    // what this process composes it knows, whatever the map it was given states
-    boot.map.compose(manifests)
+    // what this process composes it knows, and the map it was given says the same
+    await boot.map.compose(manifests)
 
     const tenants = await span(
       'create tenants',

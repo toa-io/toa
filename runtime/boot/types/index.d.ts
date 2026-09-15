@@ -16,7 +16,10 @@ export namespace map {
   function use(value: string | Record<string, core.Contract> | undefined): void
 
   /** what this process composes, stated by the boot that composes it */
-  function compose(manifests: norm.Manifest[]): void
+  function compose(manifests: norm.Manifest[]): Promise<void>
+
+  /** forgets what this process composed */
+  function forget(): void
 
   function contract(id: string): Promise<core.Contract | undefined>
 }

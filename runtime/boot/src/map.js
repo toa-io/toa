@@ -1,3 +1,4 @@
+import assert from 'node:assert'
 import { readFile } from 'node:fs/promises'
 import * as core from '@toa.io/core'
 
@@ -28,17 +29,39 @@ let composed = {}
  */
 export const use = (value) => {
   source = value
+}
+
+/**
+ * Forgets what this process composed, which is what a test does between one composition and
+ * the next: a component that is no longer composed is one nothing states.
+ */
+export const forget = () => {
   composed = {}
 }
 
 /**
- * What this process composes, stated by the boot that composes it.
+ * What this process composes, stated by the boot that composes it — and held to the map it was
+ * given a file of, which one `toa deploy` writes with the images it deploys: the two differ only
+ * where the map was not written again. What a test states instead is what that test means, and
+ * is not checked.
  *
  * @param {toa.norm.Component[]} manifests
+ * @returns {Promise<void>}
  */
-export const compose = (manifests) => {
-  for (const manifest of manifests)
+export const compose = async (manifests) => {
+  const file = typeof source === 'string' ? await read(source) : undefined
+
+  for (const manifest of manifests) {
+    const stated = file?.[manifest.locator.id]
+
+    assert.ok(
+      stated === undefined || stated.version === manifest.version,
+      `'${manifest.locator.id}' is composed at a version the component map does not state. ` +
+        'Run `toa map`.'
+    )
+
     composed[manifest.locator.id] = core.contract.component(manifest)
+  }
 }
 
 /**

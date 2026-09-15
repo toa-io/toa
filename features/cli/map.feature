@@ -9,7 +9,7 @@ Feature: toa map
     And stdout should contain lines:
       """
       toa map [environment]
-      Export component contracts to a components.json file
+      Export component contracts to a .map.json file
       """
 
   Scenario: Writing the map of a Context
@@ -19,8 +19,8 @@ Feature: toa map
     And I have a context
     When I run `toa map`
     Then program should exit with code 0
-    And the file ./components.json contains line starting with '  "dummies.one":'
-    And the file ./components.json contains line starting with '  "dummies.two":'
+    And the file ./.map.json contains line starting with '  "dummies.one":'
+    And the file ./.map.json contains line starting with '  "dummies.two":'
 
   Scenario: A contract is what a call is made from
     Given I have a component `events.trailers`
@@ -76,7 +76,7 @@ Feature: toa map
       """
     When I run `toa map`
     Then program should exit with code 0
-    And the file ./components.json contains line starting with '  "dummies.two":'
+    And the file ./.map.json contains line starting with '  "dummies.two":'
 
   Scenario: A composition is refused where a Context has no map
     Given I have a component `dummies.one`
@@ -86,6 +86,18 @@ Feature: toa map
     And stderr should contain lines:
       """
       Run `toa map` to write one, or name one with `--map`.
+      """
+
+  Scenario: A composition the map states another version of is refused
+    Given I have a component `dummies.one`
+    And I have a context
+    When I run `toa map`
+    And the sources of `dummies.one` change
+    And I run `toa compose ./components/* --kill`
+    Then program should exit with code 1
+    And stderr should contain lines:
+      """
+      'dummies.one' is composed at a version the component map does not state. Run `toa map`.
       """
 
   Scenario: A component outside a Context needs none
