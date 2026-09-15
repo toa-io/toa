@@ -3,7 +3,7 @@ import { join } from 'node:path'
 import { readFile } from 'node:fs/promises'
 import { load as parse } from 'js-yaml'
 import { match } from '@toa.io/generic'
-import { contract } from '@toa.io/norm'
+import { contract } from '@toa.io/core'
 import { Given, Then } from '@cucumber/cucumber'
 
 import * as stage from '@toa.io/userland/stage'
@@ -27,7 +27,7 @@ Given(
 
       assert.ok(manifest.version !== undefined, `'${reference}' has no version`)
 
-      contracts[manifest.locator.id] = contract(manifest)
+      contracts[manifest.locator.id] = contract.component(manifest)
     }
 
     stage.map(contracts)
@@ -68,7 +68,7 @@ Then(
 /**
  * @param {string} id
  * @this {toa.features.Context}
- * @returns {Promise<toa.norm.Contract>}
+ * @returns {Promise<import('@toa.io/core').Contract>}
  */
 async function read(id) {
   const contents = await readFile(join(this.cwd, FILE), 'utf8')

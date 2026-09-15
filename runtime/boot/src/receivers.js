@@ -81,7 +81,7 @@ async function resolveBinding(locator, label) {
 
 /**
  * @param {import('@toa.io/core').Locator} locator
- * @return {Promise<toa.norm.Contract>}
+ * @return {Promise<import('@toa.io/core').Contract>}
  */
 async function lookup(locator) {
   const discovery = await boot.discovery.discovery()

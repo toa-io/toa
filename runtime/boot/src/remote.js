@@ -7,7 +7,7 @@ import * as boot from './index.js'
 /**
  * @param {import('@toa.io/core').Locator} locator
  * @param {import('@toa.io/core/types').Source} [source] the origin stamped on every call made through this remote
- * @param {{ contract?: toa.norm.Contract, version?: string }} [options]
+ * @param {{ contract?: import('@toa.io/core').Contract, version?: string }} [options]
  *   `contract` is what the caller already has — a manifest of its own is one — and absent it,
  *   what the map this process was given states. `version` is which version of the component
  *   answers a lookup, where the caller knows one and the map does not state it.

@@ -9,12 +9,12 @@ import { readFile } from 'node:fs/promises'
  * long after that peer was replaced. A contract is read once per peer, so this is a read per
  * peer.
  *
- * @type {string | Record<string, toa.norm.Contract> | undefined}
+ * @type {string | Record<string, import('@toa.io/core').Contract> | undefined}
  */
 let source
 
 /**
- * @param {string | Record<string, toa.norm.Contract> | undefined} value the file, or the map itself
+ * @param {string | Record<string, import('@toa.io/core').Contract> | undefined} value the file, or the map itself
  */
 export const use = (value) => {
   source = value
@@ -24,7 +24,7 @@ export const use = (value) => {
  * What a component provides, where this process was given a map that states it.
  *
  * @param {string} id
- * @returns {Promise<toa.norm.Contract | undefined>}
+ * @returns {Promise<import('@toa.io/core').Contract | undefined>}
  */
 export const contract = async (id) => {
   if (source === undefined) return undefined
@@ -35,7 +35,7 @@ export const contract = async (id) => {
 
 /**
  * @param {string} path
- * @returns {Promise<Record<string, toa.norm.Contract>>}
+ * @returns {Promise<Record<string, import('@toa.io/core').Contract>>}
  */
 async function read(path) {
   let contents
