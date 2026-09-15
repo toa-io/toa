@@ -2,6 +2,7 @@ import type { Connector } from '../connector.ts'
 import type { Gate } from '../gate.ts'
 import type { Locator } from '../locator.ts'
 import type { Component } from '../component.ts'
+import type { Contract } from '../contract/component.ts'
 import type { Remote } from '../remote.ts'
 import type { Receiver } from './receiver.ts'
 import type { Context } from '../context.ts'
@@ -18,10 +19,10 @@ import type { Destination } from './outbox.ts'
 export interface Host {
   /** a component of the context, by locator */
   /**
-   * @param version which version of the component answers what it provides; absent, what the
-   *   process's map says, and absent that, whichever version answers.
+   * @param contract what the component provides, where the caller has it; absent, what the
+   *   process's map states.
    */
-  remote(locator: Locator, source?: Source, version?: string): Promise<Remote>
+  remote(locator: Locator, source?: Source, contract?: Contract): Promise<Remote>
 
   /** a channel of the messaging binding */
   broadcast<L extends string = string>(

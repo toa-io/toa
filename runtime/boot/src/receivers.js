@@ -8,7 +8,7 @@ export const receivers = async (manifest, component) => {
   if (manifest.receivers === undefined) return []
 
   const receivers = []
-  const local = await boot.remote(manifest.locator, undefined, { manifest })
+  const local = await boot.remote(manifest.locator, undefined, { contract: manifest })
 
   for (const [label, definition] of Object.entries(manifest.receivers)) {
     const locator = Locator.parse(label)
@@ -67,9 +67,15 @@ export async function receive(label, group, callback) {
  */
 async function resolveBinding(locator, label) {
   const event = label.split('.').pop()
-  const version = await boot.map.version(locator.id)
-  const discovery = await boot.discovery.discovery()
-  const { events } = await discovery.lookup(locator, version)
+  const contract = await boot.map.contract(locator.id)
+
+  assert.ok(
+    contract !== undefined,
+    `The component map states nothing of '${locator.id}', whose event '${label}' receives. ` +
+      'Run `toa map`.'
+  )
+
+  const { events, version } = contract
 
   assert.ok(
     events?.[event] !== undefined,

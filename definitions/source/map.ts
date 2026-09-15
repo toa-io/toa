@@ -6,6 +6,6 @@
  */
 export const MAP_DIRECTORY = '/etc/toa'
 
-export const MAP_FILE = 'components.json'
+export const MAP_FILE = '.map.json'
 
 export const MAP = MAP_DIRECTORY + '/' + MAP_FILE

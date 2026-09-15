@@ -16,7 +16,7 @@ export const builder = (yargs) => {
       group: 'Command options:',
       describe: 'Output file path',
       type: 'string',
-      default: 'components.json'
+      default: '.map.json'
     })
     .example([['$0 map'], ['$0 map -p application'], ['$0 map production']])
 }
@@ -30,4 +30,4 @@ export const handler = async (argv) => {
 
 export const command = 'map [environment]'
 
-export const describe = 'Export component versions to a components.json file'
+export const describe = 'Export component contracts to a .map.json file'

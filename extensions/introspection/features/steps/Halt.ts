@@ -6,9 +6,10 @@ import { after, binding, given, then, when } from 'specumber'
 import { environment } from '@toa.io/generic'
 
 import * as boot from '@toa.io/boot'
-import { Locator } from '@toa.io/core'
+import { contract, Locator } from '@toa.io/core'
 import { find } from '../../source/Composition.ts'
-import type { Component } from '@toa.io/core'
+import type { Component, Contract } from '@toa.io/core'
+import type { Manifest } from '@toa.io/norm'
 
 /**
  * A halt is a thing a deployment does, so this runs one: a process per member, forked, each
@@ -23,6 +24,7 @@ import type { Component } from '@toa.io/core'
 export class Halt {
   private readonly fleet: Member[] = []
   private signals: Component | null = null
+  private map: Record<string, Contract> = {}
 
   @given('a running deployment')
   public async quiet(): Promise<void> {
@@ -154,10 +156,35 @@ export class Halt {
     await Promise.all(this.fleet.map(async (member) => await ended(member)))
 
     this.fleet.length = 0
+
+    boot.map.use(undefined)
+
+    this.map = {}
   }
 
   private async run(...processes: string[][]): Promise<void> {
-    for (const paths of processes) this.fleet.push(await member(paths))
+    await this.state(processes.flat())
+
+    for (const paths of processes) this.fleet.push(await member(paths, this.map))
+  }
+
+  /**
+   * What this process is given about the fleet. A member runs in a process of its own, so
+   * nothing here composes what a scenario calls, and a deployment states this in its map.
+   */
+  private async state(paths: string[]): Promise<void> {
+    const manifests = await Promise.all(
+      paths.map(async (path) => await boot.manifest(path))
+    )
+
+    this.map = Object.fromEntries(
+      manifests.map((manifest: Manifest) => [
+        manifest.locator.id,
+        contract.component(manifest)
+      ])
+    )
+
+    boot.map.use(this.map)
   }
 
   /**
@@ -174,8 +201,8 @@ export class Halt {
   }
 }
 
-async function member(paths: string[]): Promise<Member> {
-  const child = fork(MEMBER, [JSON.stringify(paths)], {
+async function member(paths: string[], map: Record<string, Contract>): Promise<Member> {
+  const child = fork(MEMBER, [JSON.stringify(paths), JSON.stringify(map)], {
     env: environment.entries(),
     // what a member says of itself comes over the channel; what it logs is the run's, so
     // that a scenario that fails is one somebody can read afterwards

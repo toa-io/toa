@@ -29,5 +29,5 @@ export function map(argv) {
   )
 }
 
-const FILE = 'components.json'
+const FILE = '.map.json'
 const CONTEXT = 'context.toa.yaml'

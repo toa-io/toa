@@ -1,0 +1,24 @@
+# What this component's version leaves out: a build that drops the notes computes the same one
+# as a checkout that holds them.
+name: ignores
+namespace: dummies
+
+ignore:
+  - notes.md
+
+entity:
+  storage: ~
+  properties:
+    foo:
+      type: integer
+  blank:
+    foo: 0
+
+operations:
+  transit:
+    concurrency: retry
+    input:
+      type: object
+      properties:
+        foo:
+          type: integer

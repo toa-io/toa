@@ -1,0 +1,24 @@
+# What this component's version is made of: a build that copies only `operations` computes the
+# same one as a checkout that holds the notes beside them.
+name: files
+namespace: dummies
+
+files:
+  - operations/**
+
+entity:
+  storage: ~
+  properties:
+    foo:
+      type: integer
+  blank:
+    foo: 0
+
+operations:
+  transit:
+    concurrency: retry
+    input:
+      type: object
+      properties:
+        foo:
+          type: integer

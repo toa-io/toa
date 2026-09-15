@@ -10,7 +10,7 @@ Feature: Introspection deployment
   Scenario: The explorer image is built
     Given I have a context
     When I export images
-    Then the file ./images/extension-introspection-explorer.*/Dockerfile contains exact line 'CMD toa serve . --map /etc/toa/components.json'
+    Then the file ./images/extension-introspection-explorer.*/Dockerfile contains exact line 'CMD toa serve . --map /etc/toa/.map.json'
 
   Scenario: Deploying the explorer
     Given I have a context

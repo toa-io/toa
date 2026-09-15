@@ -13,6 +13,9 @@ import * as boot from '@toa.io/boot'
 
 const paths = JSON.parse(process.argv[2])
 
+// what the fleet runs, as a deployment's map states it: a member calls what another holds
+boot.map.use(JSON.parse(process.argv[3] ?? '{}'))
+
 const workload = new boot.Workload(
   async (workload) => await workload.gate(async () => await boot.composition(paths))
 )

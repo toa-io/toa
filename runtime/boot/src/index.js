@@ -4,7 +4,6 @@ export { load as env } from './env.js'
 export * as bindings from './bindings/index.js'
 export * as bridge from './bridge.js'
 export * as contract from './contract.js'
-export * as discovery from './discovery.js'
 export * as extensions from './extensions/index.js'
 
 export { call } from './call.js'

@@ -11,6 +11,7 @@ import { load as parse } from 'js-yaml'
 import { Gateway } from './Gateway.ts'
 import { Workspace } from './Workspace.ts'
 import { components as map } from './map.ts'
+import { forget, state } from './contracts.ts'
 
 const require = createRequire(import.meta.url)
 
@@ -28,6 +29,7 @@ export class Components {
   private readonly workspace: Workspace
   private readonly gateway: Gateway
   private compositions: Record<string, Connector> = {}
+  private readonly paths: Record<string, string> = {}
 
   public constructor(workspace: Workspace, gateway: Gateway) {
     this.workspace = workspace
@@ -87,6 +89,20 @@ export class Components {
     globalThis.TOA_INTEGRATION_BINDINGS_LOOP_DISABLED = true
   }
 
+  /**
+   * What this process is given about a component, taken from the sources it is running now. A
+   * scenario states it before replacing that component, so that the map holds the version before
+   * the one announcing.
+   */
+  @given('the component map states the `{word}` that is running')
+  public async state(name: string): Promise<void> {
+    const path = this.paths[name]
+
+    assert.ok(path !== undefined, `Composition '${name}' is not running`)
+
+    state(await boot.manifest(path))
+  }
+
   @given('the `{word}` is stopped')
   public async stop(name: string): Promise<void> {
     assert.ok(name in this.compositions, `Composition '${name}' is not running`)
@@ -102,6 +118,8 @@ export class Components {
     )
 
     await Promise.all(promises)
+
+    forget()
 
     // see 'the components answer over the broker'
     delete globalThis.TOA_INTEGRATION_BINDINGS_LOOP_DISABLED
@@ -119,6 +137,7 @@ export class Components {
 
     const path = await this.workspace.addComponent(name, manifest)
 
+    this.paths[name] = path
     this.compositions[name] = await boot.composition([path])
 
     await this.compositions[name].connect()

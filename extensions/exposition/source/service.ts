@@ -14,7 +14,7 @@ import { Tree } from './RTD/index.ts'
 import { EndpointsFactory } from './Endpoint.ts'
 import { families, interceptors } from './directives/index.ts'
 import { DirectivesFactory } from './Directive.ts'
-import { Composition } from './Composition.ts'
+import { composition as compose } from './Composition.ts'
 import * as root from './root.ts'
 import { ATOM_GROUP, CHANNEL } from '@toa.io/definitions/extensions.exposition'
 import { Interception } from './Interception.ts'
@@ -47,6 +47,7 @@ export async function service(host: Host): Promise<Connector | null> {
    */
   const gate = host.gate(async () => {
     const broadcast: Broadcast = await host.broadcast(CHANNEL)
+    const composition = await compose(host)
     const remotes = new Remotes(host)
     const node = root.resolve()
     const methods = new EndpointsFactory(remotes)
@@ -54,7 +55,6 @@ export async function service(host: Host): Promise<Connector | null> {
     const interception = new Interception(interceptors, options)
     const tree = new Tree(node, methods, directives)
 
-    const composition = new Composition(host)
     const dispatcher = options.rpc === undefined ? null : new Dispatcher(options.rpc)
     const mcp = options.mcp === undefined ? null : new Model(options.mcp, tree)
     const gateway = new Gateway(broadcast, tree, interception, directives, dispatcher, mcp)

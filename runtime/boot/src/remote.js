@@ -1,5 +1,4 @@
-import { console } from 'openspan'
-import { Remote } from '@toa.io/core'
+import { Remote, exceptions } from '@toa.io/core'
 import { remap } from '@toa.io/generic'
 
 import * as boot from './index.js'
@@ -7,40 +6,29 @@ import * as boot from './index.js'
 /**
  * @param {import('@toa.io/core').Locator} locator
  * @param {import('@toa.io/core/types').Source} [source] the origin stamped on every call made through this remote
- * @param {{ manifest?: toa.norm.Component, version?: string }} [options]
- *   `manifest` skips discovery where it is already known; `version` is which version of the
- *   component answers, where the caller knows one — the gateway, from the branch it merged.
- *   Absent, the map this process was given says, and absent that too, whichever version answers.
+ * @param {{ contract?: import('@toa.io/core').Contract }} [options]
+ *   `contract` is what the caller already has — a manifest of its own is one, and so is what a
+ *   tenant announced — and absent it, what the map this process was given states.
  */
 export const remote = async (locator, source, options = {}) => {
-  let { manifest } = options
-  let discovery
+  const contract = options.contract ?? (await boot.map.contract(locator.id))
 
-  if (manifest === undefined) {
-    const version = options.version ?? (await boot.map.version(locator.id))
-
-    console.debug('Lookup', { locator: locator.id, version })
-
-    discovery = await boot.discovery.discovery()
-    manifest = await discovery.lookup(locator, version)
-  }
+  if (contract === undefined)
+    throw new exceptions.UnstatedException(
+      `Cannot call '${locator.id}': the component map states nothing of it. Run \`toa map\`.`
+    )
 
   // a call binds its consumers, which are loaded rather than required
   const calls =
-    manifest.operations === undefined
+    contract.operations === undefined
       ? {}
       : await settle(
-          remap(manifest.operations, (definition, endpoint) =>
-            boot.call(locator, endpoint, definition, manifest.entity, source)
+          remap(contract.operations, (definition, endpoint) =>
+            boot.call(locator, endpoint, definition, contract.entity, source)
           )
         )
 
-  const remote = new Remote(locator, calls)
-
-  // ensure discovery shutdown
-  if (discovery !== undefined) remote.depends(discovery)
-
-  return remote
+  return new Remote(locator, calls)
 }
 
 /** An object whose values are promises, as an object of what they resolve to. */

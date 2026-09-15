@@ -76,30 +76,30 @@ function isPartial(actual, expected) {
   }
 }
 
-it('should ask the version the branch names', async () => {
-  const version = generate()
+it('should build from the contract the branch carries', async () => {
+  const contract = { version: generate() }
 
-  await remotes.discover(namespace, name, version)
+  await remotes.discover(namespace, name, contract)
 
   assert.ok(
-    host.remote.mock.calls.some((call: any) => call.arguments[2] === version),
-    'the version was not passed to the lookup'
+    host.remote.mock.calls.some((call: any) => call.arguments[2] === contract),
+    'the contract was not passed'
   )
 })
 
-it('should ask no version where there is none', async () => {
+it('should pass no contract where the branch carries none', async () => {
   await remotes.discover(namespace, name)
 
   assert.ok(
     host.remote.mock.calls.some((call: any) => call.arguments[2] === undefined),
-    'a version was passed where there is none'
+    'a contract was passed where there is none'
   )
 })
 
 it('should hold one remote per version', async () => {
-  const one = await remotes.discover(namespace, name, 'a')
-  const other = await remotes.discover(namespace, name, 'b')
+  const one = await remotes.discover(namespace, name, { version: 'a' })
+  const other = await remotes.discover(namespace, name, { version: 'b' })
 
   assert.notDeepStrictEqual(one, other)
-  assert.deepStrictEqual(one, await remotes.discover(namespace, name, 'a'))
+  assert.deepStrictEqual(one, await remotes.discover(namespace, name, { version: 'a' }))
 })

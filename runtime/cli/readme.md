@@ -6,10 +6,10 @@
 <dt><code>--env</code></dt>
 <dd>Path to the environment variables file (`.env` format)</dd>
 <dt><code>--map</code></dt>
-<dd>Path to the component versions file (<a href="#map"><code>components.json</code></a>). Absent,
+<dd>Path to the component map (<a href="#map"><code>.map.json</code></a>). Absent,
 it is looked for from the working directory upwards, as <code>.env</code> is. Required by
-<a href="#compose"><code>compose</code></a>, <a href="#serve"><code>serve</code></a> and
-<a href="#mono"><code>mono</code></a>.</dd>
+<a href="#compose"><code>compose</code></a>, <a href="#serve"><code>serve</code></a>,
+<a href="#mono"><code>mono</code></a> and <a href="#call"><code>call</code></a>.</dd>
 </dl>
 
 ## Development
@@ -134,6 +134,9 @@ Call endpoint.
 $ toa call dummies.dummy.create "{ input: { name: 'foo' } }"
 ```
 
+The endpoint is called as the map describes it, so a
+[map](#map) is read the way `compose` reads one.
+
 ### env
 
 Export environment to a `.env` file.
@@ -159,7 +162,7 @@ Credentials specified in the output file are preserved.
 
 ### map
 
-Export the component versions of a Context to a `components.json` file.
+Export the components of a Context to a `.map.json` file.
 
 <dl>
 <dt><code>toa map [environment]</code></dt>
@@ -167,27 +170,33 @@ Export the component versions of a Context to a `components.json` file.
 <code>environment</code> deployment environment name (default <code>local</code>), as
 <a href="#env"><code>env</code></a> reads it.<br/>
 <code>--path</code> path to a Context (default <code>.</code>)<br/>
-<code>--as</code> output file path (default <code>components.json</code>)
+<code>--as</code> output file path (default <code>.map.json</code>)
 </dd>
 </dl>
 
 Every component of the Context — its own, the ones its extensions bring, and the ones it evicts —
-with the version it runs:
+with the version it runs and what that version provides:
 
 ```json
 {
-  "default.orders": "3f9a1c02",
-  "default.billing": "b7e4d510"
+  "default.orders": {
+    "version": "3f9a1c02",
+    "entity": { "properties": { "sum": { "type": "number" } }, "required": ["sum"] },
+    "operations": {
+      "transit": { "type": "transition", "scope": "object", "bindings": ["@toa.io/bindings.amqp"] }
+    },
+    "events": { "created": { "binding": "@toa.io/bindings.amqp" } }
+  }
 }
 ```
 
-A process is started with one, and asks a component what it provides at the version named here.
-See [service discovery](/documentation/discovery.md).
+A process is started with one, and is held to what it states. See
+[contracts](/documentation/contracts.md).
 
-Run it again when a component's sources change: a version is a hash of them, and a map naming one
-nothing runs is a lookup that waits.
+Run it again when a component's sources change: a version is a hash of them, and a composition whose
+component the map states another version of is refused at boot.
 
-> It is generated, so add `components.json` to `.gitignore` beside `.env*`. A committed one is
+> It is generated, so add `.map.json` to `.gitignore` beside `.env*`. A committed one is
 > true of the sources it was written from and of no others.
 
 ### export manifest

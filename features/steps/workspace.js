@@ -3,7 +3,7 @@ import { join } from 'node:path'
 import dotenv from 'dotenv'
 import { diff } from 'jest-diff'
 import { environment, subtract } from '@toa.io/generic'
-import { readFile, writeFile } from 'node:fs/promises'
+import { appendFile, readFile, writeFile } from 'node:fs/promises'
 import * as components from './.workspace/components/index.js'
 import * as context from './.workspace/context.js'
 
@@ -22,6 +22,33 @@ Given(
     const list = table.transpose().raw()[0]
 
     await components.copy(list, this.cwd)
+  }
+)
+
+Given(
+  'the file {word} of {component} changes',
+  /**
+   * @param {string} file
+   * @param {string} component
+   * @this {toa.features.Context}
+   */
+  async function (file, component) {
+    await appendFile(join(this.cwd, 'components', component, file), '\n# changed\n', 'utf8')
+  }
+)
+
+Given(
+  'the sources of {component} change',
+  /**
+   * A version is a hash of a component's sources, so whatever changes them changes it.
+   *
+   * @param {string} component
+   * @this {toa.features.Context}
+   */
+  async function (component) {
+    const path = join(this.cwd, 'components', component, 'manifest.toa.yaml')
+
+    await appendFile(path, '\n# changed\n', 'utf8')
   }
 )
 
