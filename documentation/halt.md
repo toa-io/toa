@@ -189,6 +189,13 @@ database over, moving a cluster, taking a backup with nothing writing across it.
 interval the work needs, and one you can afford to be down for: the deployment comes back when it
 is up, whether or not the work is finished.
 
+**It is how a release nothing can roll into is taken.** A rolling update has two releases
+serving at once, which a breaking change in the runtime itself does not survive — a queue the
+release before it does not consume, a contract it cannot read. Halt the deployment first, roll the
+upgrade while it is down, and what comes up is the one release: a process that starts during a
+halt comes up working, and the processes it replaces never serve beside it. Ask for an interval
+the rollout fits into.
+
 **What a halt did is in the records.** A `stop` record names the halt it answers, so a halt with
 no stop beside it is one that was called off. Nothing is written back to a halt: the write that
 would say what became of it is the one thing a halted deployment cannot do.

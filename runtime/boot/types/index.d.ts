@@ -1,8 +1,25 @@
 import type * as core from '@toa.io/core'
 import type * as types from '@toa.io/core/types'
+import type * as norm from '@toa.io/norm/types'
 import * as composition from './composition.d.ts'
 
 export * as bindings from './bindings.d.ts'
+
+export async function manifest(
+  path: string,
+  options?: composition.Options
+): Promise<norm.Manifest>
+
+/** What this process was given about the components it calls. */
+export namespace map {
+  /** the file to read it from, or the map itself */
+  function use(value: string | Record<string, core.Contract> | undefined): void
+
+  /** what this process composes, stated by the boot that composes it */
+  function compose(manifests: norm.Manifest[]): void
+
+  function contract(id: string): Promise<core.Contract | undefined>
+}
 
 export async function composition(
   paths: string[],

@@ -1,3 +1,4 @@
+import type { Contract } from '@toa.io/core'
 import type * as RTD from './RTD/syntax/index.ts'
 import type { Node } from './RTD/index.ts'
 
@@ -13,6 +14,13 @@ export interface Branch {
    * is still a different thing to expose.
    */
   version: string
+
+  /**
+   * What the component whose routes these are provides. It travels with them because what the
+   * gateway forwards is described by the version that offered the route, and the map this
+   * process reads may name the version before it.
+   */
+  contract: Contract
 
   /** What the routes are, so that a tree changed by something other than the sources is one too. */
   routes: string

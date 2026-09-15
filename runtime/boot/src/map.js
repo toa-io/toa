@@ -1,4 +1,5 @@
 import { readFile } from 'node:fs/promises'
+import * as core from '@toa.io/core'
 
 /**
  * What this process was given about the components it calls: the contract of the version each of
@@ -14,23 +15,43 @@ import { readFile } from 'node:fs/promises'
 let source
 
 /**
+ * What this process composes, which it knows from the sources it booted from. What the map
+ * states wins: two compositions of one locator run in one process while a rollout is staged,
+ * and the map is what says which of them a caller is held to.
+ *
+ * @type {Record<string, import('@toa.io/core').Contract>}
+ */
+let composed = {}
+
+/**
  * @param {string | Record<string, import('@toa.io/core').Contract> | undefined} value the file, or the map itself
  */
 export const use = (value) => {
   source = value
+  composed = {}
 }
 
 /**
- * What a component provides, where this process was given a map that states it.
+ * What this process composes, stated by the boot that composes it.
+ *
+ * @param {toa.norm.Component[]} manifests
+ */
+export const compose = (manifests) => {
+  for (const manifest of manifests)
+    composed[manifest.locator.id] = core.contract.component(manifest)
+}
+
+/**
+ * What a component provides: what the map states of it, or what this process composes.
  *
  * @param {string} id
  * @returns {Promise<import('@toa.io/core').Contract | undefined>}
  */
 export const contract = async (id) => {
-  if (source === undefined) return undefined
-  if (typeof source !== 'string') return source[id]
+  if (source === undefined) return composed[id]
+  if (typeof source !== 'string') return source[id] ?? composed[id]
 
-  return (await read(source))[id]
+  return (await read(source))[id] ?? composed[id]
 }
 
 /**

@@ -67,7 +67,14 @@ export async function receive(label, group, callback) {
  */
 async function resolveBinding(locator, label) {
   const event = label.split('.').pop()
-  const contract = (await boot.map.contract(locator.id)) ?? (await lookup(locator))
+  const contract = await boot.map.contract(locator.id)
+
+  assert.ok(
+    contract !== undefined,
+    `The component map states nothing of '${locator.id}', whose event '${label}' receives. ` +
+      'Run `toa map`.'
+  )
+
   const { events, version } = contract
 
   assert.ok(
@@ -77,14 +84,4 @@ async function resolveBinding(locator, label) {
   )
 
   return events[event].binding
-}
-
-/**
- * @param {import('@toa.io/core').Locator} locator
- * @return {Promise<import('@toa.io/core').Contract>}
- */
-async function lookup(locator) {
-  const discovery = await boot.discovery.discovery()
-
-  return discovery.lookup(locator)
 }

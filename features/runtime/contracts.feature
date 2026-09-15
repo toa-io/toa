@@ -86,5 +86,5 @@ Feature: A contract is what a caller is given
     When I call `contracts.peer.added`
     Then the following exception is thrown:
       """yaml
-      message: "Cannot call 'contracts.peer': the component map states nothing of it. Run `toa map`."
+      message: "UnstatedException: Cannot call 'contracts.peer': the component map states nothing of it. Run `toa map`."
       """

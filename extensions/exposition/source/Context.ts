@@ -1,3 +1,4 @@
+import type { Contract } from '@toa.io/core'
 import type * as RTD from './RTD/index.ts'
 
 // the trunk is built from the context annotation and belongs to no branch,
@@ -8,4 +9,5 @@ interface Extension {
   namespace: string
   component: string
   version: string
+  contract: Contract
 }

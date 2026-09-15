@@ -1,24 +1,15 @@
 import { readdirSync, type Dirent } from 'node:fs'
 import { resolve } from 'node:path'
-import { Connector } from '@toa.io/core'
+import type { Connector } from '@toa.io/core'
 import { type Host } from './Factory.ts'
 
-export class Composition extends Connector {
-  private readonly host: Host
-
-  public constructor(host: Host) {
-    super()
-    this.host = host
-  }
-
-  protected override async open(): Promise<void> {
-    const paths = find()
-    const composition = await this.host.composition(paths)
-
-    await composition.connect()
-
-    this.depends(composition)
-  }
+/**
+ * The components the gateway runs itself. Composed before the tree is built rather than when
+ * the gateway connects: what a component provides is what the process composing it knows, and
+ * the tree's endpoints and directives are given it as they are made.
+ */
+export async function composition(host: Host): Promise<Connector> {
+  return await host.composition(find())
 }
 
 function find(): string[] {

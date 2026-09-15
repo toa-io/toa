@@ -3,7 +3,11 @@ import * as boot from '@toa.io/boot'
 import { yaml as jsyaml } from '@toa.io/generic'
 import { Locator } from '@toa.io/core'
 
+import { map } from '../util/map.js'
+
 export async function call(argv) {
+  boot.map.use(map(argv))
+
   const [operation, component, namespace = 'default'] = argv.endpoint.split('.').reverse()
   const locator = new Locator(component, namespace)
   const request = argv.request ? jsyaml.load(argv.request) : {}

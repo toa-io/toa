@@ -64,3 +64,50 @@ Feature: A component's contract comes from the version that is running
 
       Hello worldwide
       """
+
+  Scenario: The contract is the announcing version's, whatever the map states
+    Given the components answer over the broker
+    And the `echo` is running with the following manifest:
+      """yaml
+      exposition:
+        /:
+          io:output: true
+          POST: compute
+      operations:
+        compute:
+          input:
+            properties:
+              name:
+                maxLength: 5
+      """
+    And the component map states the `echo` that is running
+    And the `echo` is stopped
+    # the same routes, from a version the map does not state
+    And the `echo` is running with the following manifest:
+      """yaml
+      exposition:
+        /:
+          io:output: true
+          POST: compute
+      operations:
+        compute:
+          input:
+            properties:
+              name:
+                maxLength: 50
+      """
+    When the following request is received:
+      """
+      POST /echo/ HTTP/1.1
+      host: nex.toa.io
+      accept: text/plain
+      content-type: application/json
+
+      { "name": "worldwide" }
+      """
+    Then the following reply is sent:
+      """
+      201 Created
+
+      Hello worldwide
+      """
