@@ -1,7 +1,7 @@
-# The version of `discovery.peer` that is already running. `discovery.next` is the same
+# The version of `contracts.peer` that is already running. `contracts.next` is the same
 # component after a change: one more operation, and an event nothing declared before.
 name: peer
-namespace: discovery
+namespace: contracts
 
 entity:
   storage: ~

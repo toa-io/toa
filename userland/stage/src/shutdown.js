@@ -1,3 +1,5 @@
+import * as boot from '@toa.io/boot'
+
 import { state } from './state.js'
 import { map } from './map.js'
 
@@ -18,8 +20,9 @@ export const shutdown = async () => {
 
   await Promise.all(disconnections)
 
-  // whatever a test stated is not carried into the next one
+  // whatever a test stated is not carried into the next one, and what it composed is gone
   map(undefined)
+  boot.map.forget()
 
   state.reset()
 }

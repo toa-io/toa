@@ -1,10 +1,11 @@
 import { createHash } from 'node:crypto'
+import { contract } from '@toa.io/core'
 import { Tenant } from './Tenant.ts'
 import { CHANNEL } from '@toa.io/definitions/extensions.exposition'
 import type { Branch } from './Branch.ts'
 import type { syntax } from './RTD/index.ts'
 import type { Broadcast } from './Gateway.ts'
-import type { Connector, Locator } from '@toa.io/core'
+import type { Connector, Contract, Locator } from '@toa.io/core'
 import type { extensions } from '@toa.io/core/types'
 
 export class Factory implements extensions.Factory {
@@ -30,6 +31,7 @@ export class Factory implements extensions.Factory {
       isolated: locator.namespace === 'identity',
       node,
       version: manifest.version,
+      contract: contract.component(manifest),
       routes
     }
 
@@ -46,7 +48,5 @@ export class Factory implements extensions.Factory {
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
 export type Host = extensions.Host
 
-/** What a tenant reads of the component it announces. */
-interface Manifest {
-  version: string
-}
+/** What a tenant reads of the component it announces: what it provides, and which version. */
+type Manifest = Contract & { version: string }

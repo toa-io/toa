@@ -1,5 +1,5 @@
 import { execFileSync, spawn } from 'node:child_process'
-import { cpSync, openSync, readFileSync } from 'node:fs'
+import { cpSync, existsSync, openSync, readFileSync } from 'node:fs'
 import { mkdir, rm } from 'node:fs/promises'
 import { join } from 'node:path'
 import { setTimeout as sleep } from 'node:timers/promises'
@@ -176,7 +176,45 @@ export function install(tree: Tree, fixtures: string): string {
 
   cpSync(fixtures, target, { recursive: true, force: true })
 
+  write(tree, target)
+
   return target
+}
+
+/**
+ * What each process is given about the component the other holds: `bench` calls `peer` and `peer`
+ * receives what `bench` emits. The fixtures are two loose components rather than a Context, so
+ * this is what `toa map` writes, written with the tree's own runtime — what a map holds is that
+ * release's, and a revision from before contracts holds versions.
+ */
+function write(tree: Tree, components: string): void {
+  const norm = join(tree.root, 'runtime/norm/src/index.js')
+  const core = join(tree.root, 'runtime/core/transpiled/index.js')
+  const paths = COMPONENTS.map((name) => join(components, name))
+
+  const script = `
+    const { component } = await import(${quote(norm)})
+    const { contract } = await import(${quote(core)})
+    const { writeFileSync } = await import('node:fs')
+
+    const map = {}
+
+    for (const path of ${quote(paths)}) {
+      const manifest = await component(path)
+
+      map[manifest.locator.id] =
+        contract?.component === undefined ? manifest.version : contract.component(manifest)
+    }
+
+    writeFileSync(${quote(join(components, MAP))}, JSON.stringify(map))
+  `
+
+  execFileSync(process.execPath, ['--input-type=module', '-e', script], { stdio: 'inherit' })
+}
+
+/** A value as the literal a script reads it as. */
+function quote(value: unknown): string {
+  return JSON.stringify(value)
 }
 
 export async function boot(side: Side, components: string, options: Options): Promise<Running> {
@@ -193,16 +231,21 @@ export async function boot(side: Side, components: string, options: Options): Pr
     })
   }
 
+  // a release that reads no map is given none, and its `--map` would be an unknown option
+  const map = existsSync(join(side.tree.root, 'runtime/boot/src/map.js'))
+    ? ['--map', join(components, MAP)]
+    : []
+
   const peer = start({
     name: 'peer',
-    args: ['compose', join(components, 'peer')],
+    args: ['compose', join(components, 'peer'), ...map],
     cpus: options.placement.components,
     environment: { TOA_TELEMETRY_READY: JSON.stringify({ port: side.ports.ready[1] }) }
   })
 
   const bench = start({
     name: 'bench',
-    args: ['compose', join(components, 'bench')],
+    args: ['compose', join(components, 'bench'), ...map],
     cpus: options.placement.components,
     environment: { TOA_TELEMETRY_READY: JSON.stringify({ port: side.ports.ready[0] }) }
   })
@@ -214,7 +257,7 @@ export async function boot(side: Side, components: string, options: Options): Pr
 
     const gateway = start({
       name: 'gateway',
-      args: ['serve', 'exposition'],
+      args: ['serve', 'exposition', ...map],
       cpus: options.placement.gateway,
       environment: {
         ...configuration(side, options),
@@ -326,3 +369,7 @@ const GRACE = 15_000
 
 /** what `/proc` counts CPU time in, per second */
 export const TICKS = Number(execFileSync('getconf', ['CLK_TCK'], { encoding: 'utf8' }))
+
+/** What the fixtures hold, and what the map they are given is named. */
+const COMPONENTS = ['bench', 'peer']
+const MAP = '.map.json'

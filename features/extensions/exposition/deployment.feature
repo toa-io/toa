@@ -12,7 +12,7 @@ Feature: Exposition deployment
           key0: secret.key
       """
     When I export images
-    Then the file ./images/extension-exposition-gateway.*/Dockerfile contains exact line 'CMD toa serve . --map /etc/toa/components.json'
+    Then the file ./images/extension-exposition-gateway.*/Dockerfile contains exact line 'CMD toa serve . --map /etc/toa/.map.json'
 
   Scenario: Deploying component configuration
     Given I have a context with:

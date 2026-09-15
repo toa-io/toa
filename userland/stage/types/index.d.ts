@@ -5,8 +5,8 @@ import type * as _boot from '@toa.io/boot'
 
 export function manifest(path: string): Promise<_norm.Component>
 
-/** which version of each component a lookup made in this process asks for */
-export function map(versions: Record<string, string> | undefined): void
+/** what this process is given about the components it calls */
+export function map(contracts: Record<string, _norm.Contract> | undefined): void
 
 export function component(path: string): Promise<_core.Component>
 

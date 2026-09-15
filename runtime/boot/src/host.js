@@ -12,7 +12,7 @@ import * as boot from './index.js'
  */
 export const host = (workload) => ({
   // an extension knows a version only where something told it one; see `Remotes` in exposition
-  remote: (locator, source, version) => boot.remote(locator, source, { version }),
+  remote: (locator, source, contract) => boot.remote(locator, source, { contract }),
   broadcast: boot.bindings.broadcast,
   composition: boot.composition,
   receive: boot.receive,

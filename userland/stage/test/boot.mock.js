@@ -8,7 +8,7 @@ const connector = () => ({
   link: mock.fn()
 })
 
-export const map = { use: mock.fn() }
+export const map = { use: mock.fn(), forget: mock.fn() }
 export const manifest = mock.fn(async () => generate())
 export const component = mock.fn(async () => connector())
 export const composition = mock.fn(async () => connector())

@@ -1,11 +1,12 @@
 @deployment
 Feature: Export the component map
 
-  Which version of a component a process asks what that component provides. Mounted rather than
-  rendered into a workload's environment: a variable would replace every pod of the context on
-  every deployment, and a pod that came up between two of them could not be told.
+  What every component of the context provides, by the version this deployment runs of it.
+  Mounted rather than rendered into a workload's environment: a variable would replace every pod
+  of the context on every deployment, and a pod that came up between two of them could not be
+  told.
 
-  Scenario: The map is exported with the versions of every component
+  Scenario: The map is exported with the contract of every component
     Given I have components:
       | dummies.one |
       | dummies.two |
@@ -15,7 +16,17 @@ Feature: Export the component map
       """yaml
       map:
         directory: /etc/toa
-        file: components.json
+        file: .map.json
+        components:
+          dummies.one:
+            operations:
+              transit:
+                type: transition
+                scope: object
+          dummies.two:
+            operations:
+              transit:
+                type: transition
       """
 
   @helm

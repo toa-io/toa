@@ -1,5 +1,6 @@
 import { EventEmitter, once } from 'node:events'
 import { randomBytes } from 'node:crypto'
+import { join } from 'node:path'
 import * as assert from 'node:assert'
 import { after, afterAll, binding, given, then } from 'specumber'
 
@@ -11,6 +12,7 @@ import { Agent } from '@toa.io/agent'
 import { Parameters } from './Parameters.ts'
 import { Gateway } from './Gateway.ts'
 import { Captures } from './Captures.ts'
+import { state } from './contracts.ts'
 import type { Connector } from '@toa.io/core'
 
 @binding([Gateway, Parameters, Captures])
@@ -36,6 +38,10 @@ export class Realtime {
 
     for (const [event, property] of Object.entries(annotation))
       routes.push({ event, properties: [property] })
+
+    // a route is bound at the contract the map states, and this scenario starts the producer
+    // after the service: what a deployment states in its map, this states before it
+    await Promise.all(Object.keys(annotation).map(async (label) => await produces(label)))
 
     environment.set('TOA_REALTIME', JSON.stringify(routes))
 
@@ -172,3 +178,11 @@ export class Realtime {
 /** How long the route is waited for, and how often it is asked for. */
 const DISCOVERY = 5000
 const POLL = 50
+
+/** What produces an event a route carries, as its sources state it. */
+async function produces(label: string): Promise<void> {
+  const [namespace, name] = label.split('.')
+  const path = join(import.meta.dirname, 'components', `${namespace}.${name}`)
+
+  state(await boot.manifest(path))
+}

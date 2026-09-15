@@ -1,7 +1,7 @@
-# `discovery.peer` after a change. Its locator is the same and its version is not: one more
+# `contracts.peer` after a change. Its locator is the same and its version is not: one more
 # operation, and `appeared`, which the version before it does not declare.
 name: peer
-namespace: discovery
+namespace: contracts
 
 entity:
   storage: ~

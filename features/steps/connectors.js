@@ -529,16 +529,19 @@ async function call(endpoint, request) {
   this.reply = undefined
 
   const [operation, component, namespace = 'default'] = endpoint.split('.').reverse()
-  const remote = await stage.remote(`${namespace}.${component}`)
+
+  let remote
 
   try {
+    // building the remote is part of making the call: what nothing states cannot be called
+    remote = await stage.remote(`${namespace}.${component}`)
     this.pendingReply = remote.invoke(operation, request)
     this.reply = await this.pendingReply
   } catch (exception) {
     this.exception = exception
   }
 
-  await remote.disconnect()
+  await remote?.disconnect()
 }
 
 /**

@@ -174,7 +174,7 @@ export class EndpointsFactory implements RTD.EndpointsFactory {
     if (namespace === undefined || component === undefined)
       throw new Error('Annotation endpoints must be fully qualified')
 
-    const discovery = this.remotes.discover(namespace, component, branch?.version)
+    const discovery = this.remotes.discover(namespace, component, branch?.contract)
 
     return new Endpoint(method.mapping.endpoint, mapping, discovery, SAFE.has(method.verb))
   }

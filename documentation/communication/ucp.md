@@ -29,6 +29,6 @@ type Event<Payload> = {
 
 ## Event
 
-## Discovery
+## Contracts
 
-See [service discovery](/documentation/discovery.md).
+See [contracts](/documentation/contracts.md).
