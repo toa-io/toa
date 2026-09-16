@@ -6,11 +6,13 @@ export const produce = async (component, operations) => {
   const local = []
   const other = []
   const stateful = addressed(operations)
+  const streams = streamed(operations)
 
   for (const [binding, endpoints] of await group(operations)) {
     const made = await factory(binding)
     const carried = stateful.filter((endpoint) => endpoints.includes(endpoint))
-    const producer = made.producer(component.locator, endpoints, component, carried)
+    const carries = streams.filter((endpoint) => endpoints.includes(endpoint))
+    const producer = made.producer(component.locator, endpoints, component, carried, carries)
     const { properties } = (await definition(binding)).module
 
     if (properties.local === true) local.push(producer)
@@ -19,6 +21,14 @@ export const produce = async (component, operations) => {
 
   return { local, other }
 }
+
+/** The endpoints that take one of their input properties as a stream. */
+const streamed = (operations) =>
+  operations === undefined
+    ? []
+    : Object.entries(operations)
+        .filter(([, operation]) => operation.stream !== undefined)
+        .map(([endpoint]) => endpoint)
 
 /** The endpoints that take addressed calls only. */
 const addressed = (operations) =>
