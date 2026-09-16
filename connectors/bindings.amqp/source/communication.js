@@ -134,8 +134,8 @@ export class Communication extends Connector {
     await this.#io.process(queue, consumer)
   }
 
-  async enqueue(queue, message) {
-    await this.#io.enqueue(queue, message)
+  async enqueue(queue, message, properties) {
+    await this.#io.enqueue(queue, message, properties)
   }
 
   /**

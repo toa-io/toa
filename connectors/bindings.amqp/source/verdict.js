@@ -24,3 +24,15 @@ export function refuse(exception) {
 
   throw new Park(`${name}: ${exception.message}`, { cause: exception })
 }
+
+/**
+ * Refuses a task naming an operation this process does not serve. Another attempt reaches the
+ * same process set and the same answer, so it is kept on the first delivery, saying what it
+ * named — which is the whole of what a person reading it has to go on.
+ *
+ * @param {string | undefined} endpoint
+ * @returns {never}
+ */
+export function unserved(endpoint) {
+  throw new Park(`No operation '${endpoint ?? ''}' takes tasks here`)
+}
