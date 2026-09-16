@@ -38,6 +38,7 @@ export const recognize = (shortcuts, object, group) => {
 
 export const SHORTCUTS = {
   amqp: '@toa.io/bindings.amqp',
+  http: '@toa.io/bindings.http',
   node: '@toa.io/bridges.node',
   bash: '@toa.io/bridges.bash',
   mongodb: '@toa.io/storages.mongodb',
