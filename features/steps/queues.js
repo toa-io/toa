@@ -19,23 +19,15 @@ Given(
   }
 )
 
-// what comq parks a message in, once it is one nothing will process
-const PARKED = 'comq.parked.'
+// what comq parks a message in, once it is one nothing will process. One queue takes what
+// every source parked, and a message names the queue it came from in `x-comq-queue`
+const PARKED = 'comq.parked'
 
-Given(
-  'the {component} parked queues are empty',
-  /**
-   * @param {string} id
-   */
-  async function (id) {
-    const queues = await request('/queues')
-    const suffix = '..' + id
-
-    for (const { name } of queues)
-      if (name.startsWith(PARKED) && name.endsWith(suffix))
-        await request(`/queues/%2F/${encodeURIComponent(name)}/contents`, 'DELETE')
-  }
-)
+Given('the parked queue is empty', async function () {
+  await request(`/queues/%2F/${PARKED}/contents`, 'DELETE').catch(() => {
+    // nothing has been parked on this broker yet, so comq has not declared it
+  })
+})
 
 Then(
   '{component} parks {int} message(s) on the first delivery',
@@ -54,20 +46,15 @@ Then(
     let parked = []
 
     do {
-      const queues = (await request('/queues')).filter(
-        ({ name }) => name.startsWith(PARKED) && name.endsWith(suffix)
+      const messages = await request(`/queues/%2F/${PARKED}/get`, 'POST', {
+        count: 100,
+        ackmode: 'ack_requeue_true',
+        encoding: 'auto'
+      }).catch(() => [])
+
+      parked = messages.filter(({ properties }) =>
+        properties.headers?.['x-comq-queue']?.endsWith(suffix) === true
       )
-
-      parked = []
-
-      for (const { name } of queues)
-        parked.push(
-          ...(await request(`/queues/%2F/${encodeURIComponent(name)}/get`, 'POST', {
-            count: 10,
-            ackmode: 'ack_requeue_true',
-            encoding: 'auto'
-          }))
-        )
 
       if (parked.length === expected) break
 

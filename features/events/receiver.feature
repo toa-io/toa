@@ -76,7 +76,7 @@ Feature: Work with nobody waiting for it
 
   Scenario: A message the receiver can never accept is kept at once
     Given the `mongo.refused` event queues are empty
-    And the `mongo.refused` parked queues are empty
+    And the parked queue is empty
     And the `mongo.refused` database contains:
       | _id                              | count | VERSION |
       | 5d2f9c1b7e0a4d3c8f6b2a1e9c4d7b30 | 0     | 1       |
