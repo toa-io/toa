@@ -16,6 +16,7 @@ export const validate = async (manifest) => {
   if (error) throw error
 
   if (manifest.entity !== undefined) entity(manifest)
+  if (manifest.operations !== undefined) await streams(manifest)
   if (manifest.events !== undefined) await events(manifest)
   if (manifest.receivers !== undefined) receivers(manifest)
 }
@@ -31,6 +32,27 @@ const entity = (manifest) => {
   for (const name of Object.keys(blank ?? {}))
     if (properties[name] === undefined)
       throw new Error(`Entity blank names property '${name}', which is not defined`)
+}
+
+/**
+ * An operation that takes a stream is reachable over a binding that carries one. A binding that
+ * declares none is served in this process alone, which is a component saying so.
+ */
+const streams = async (manifest) => {
+  for (const [endpoint, operation] of Object.entries(manifest.operations)) {
+    if (operation.stream === undefined || operation.bindings.length === 0) continue
+    if (await carried(operation.bindings)) continue
+
+    throw new Error(`Operation '${endpoint}' takes a stream, which none of its bindings carries`)
+  }
+}
+
+/** Whether any of these bindings carries a call whose input holds a stream. */
+const carried = async (bindings) => {
+  for (const binding of bindings)
+    if ((await definition(binding)).module.properties.streams === true) return true
+
+  return false
 }
 
 const events = async (manifest) => {
