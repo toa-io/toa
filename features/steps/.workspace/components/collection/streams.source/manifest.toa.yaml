@@ -1,0 +1,27 @@
+namespace: streams
+name: source
+
+operations:
+  send:
+    type: computation
+    input:
+      type: object
+      properties:
+        label:
+          type: string
+        chunks:
+          type: number
+  enqueue:
+    type: computation
+    input:
+      type: object
+      properties:
+        chunks:
+          type: number
+  omit:
+    type: computation
+    input:
+      type: object
+      properties:
+        label:
+          type: string
