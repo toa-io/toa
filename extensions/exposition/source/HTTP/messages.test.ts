@@ -195,14 +195,30 @@ describe('read', () => {
     )
   })
 
-  it('should fail with the body', async () => {
+  it('should end with FIN when the body fails', async () => {
+    const warn = mock.method(console, 'warn', () => undefined)
     const body = new Readable({ objectMode: true, read: () => {} })
     const framed = frame(body)
     const text = streamConsumers.text(framed)
 
+    body.push('Hello')
+    await setTimeout(10)
     body.destroy(new Error('boom'))
 
-    await assert.rejects(text, { message: 'boom' })
+    const result = await text
+
+    warn.mock.restore()
+
+    assert.strictEqual(
+      result,
+      ['--cut', '', 'ACK', '--cut', '', 'Hello', '--cut', '', 'FIN', '--cut--'].join(
+        '\r\n'
+      )
+    )
+
+    const messages = warn.mock.calls.map((call) => call.arguments[0])
+
+    assert.ok(messages.includes('Message stream error'))
   })
 })
 
