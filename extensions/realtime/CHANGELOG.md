@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.310](https://github.com/toa-io/toa/compare/v1.0.0-alpha.309...v1.0.0-alpha.310) (2026-09-16)
+
+### Bug Fixes
+
+* **realtime:** open a stream per consumer of a key ([daa5aa8](https://github.com/toa-io/toa/commit/daa5aa8a80ffd310b47144f2371994fb34ff40b2))
+
+
 # [1.0.0-alpha.309](https://github.com/toa-io/toa/compare/v1.0.0-alpha.308...v1.0.0-alpha.309) (2026-09-16)
 
 **Note:** Version bump only for package @toa.io/extensions.realtime
