@@ -33,6 +33,8 @@ export const codes = {
   Disposed: 405,
   /** a call to an operation that may change state, made under a request that may only read */
   Safety: 406,
+  /** nothing answered at the address of the component a streamed call was made to */
+  Unreachable: 407,
 
   /** a chain that came back to where it had been, or went further than a chain goes */
   Loop: 500,
@@ -176,6 +178,7 @@ export const AddresseeException = derive('Addressee')
 export const AbandonedException = derive('Abandoned')
 export const DisposedException = derive('Disposed')
 export const SafetyException = derive('Safety')
+export const UnreachableException = derive('Unreachable')
 export const MisuseException = derive('Misuse')
 export const IrresumableException = derive('Irresumable')
 export const UnstatedException = derive('Unstated')
@@ -232,6 +235,8 @@ const OUTCOME: Record<keyof typeof codes, 'permanent' | 'transient'> = {
   Disposed: 'permanent',
   // a transition does not become an observation, and the request goes on saying it only reads
   Safety: 'permanent',
+  // a replica that is starting, restarting or being deployed is one that answers in a moment
+  Unreachable: 'transient',
 
   // the chain is deterministic, so another attempt walks it again: a retry is another cycle
   Loop: 'permanent',
