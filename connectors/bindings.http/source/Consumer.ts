@@ -68,23 +68,43 @@ export class Consumer extends Connector {
       throw unreachable(url, error)
     })
 
+    // nothing at that address serves this endpoint: a replica of another version, or another
+    // process that has taken the address since
     if (message.statusCode === 404)
       throw new exceptions.UnreachableException(
         `Nothing at '${url.host}' serves '${this.locator.id}.${this.endpoint}'`
+      )
+
+    if (message.statusCode !== 200)
+      throw new exceptions.SystemException(
+        new Error(`'${url.host}' answered ${message.statusCode} to a streamed call`)
       )
 
     return read(message)
   }
 }
 
-/** A replica that is starting, restarting or being deployed is one that answers in a moment. */
+/**
+ * A replica that is starting, restarting or being deployed is one that answers in a moment. What
+ * failed for any other reason — a caller that stopped waiting, a stream of its own that broke — is
+ * its own failure, and is handed on as it is.
+ */
 function unreachable(url: URL, error: unknown): unknown {
   const code = (error as { code?: string }).code
 
-  if (code === undefined) return error
+  if (code === undefined || !DIAL.has(code)) return error
 
   return new exceptions.UnreachableException(
     `Nothing answered at '${url.host}' (${code})`,
     error
   )
 }
+
+const DIAL = new Set([
+  'ECONNREFUSED',
+  'ENOTFOUND',
+  'EHOSTUNREACH',
+  'ENETUNREACH',
+  'ETIMEDOUT',
+  'EAI_AGAIN'
+])
