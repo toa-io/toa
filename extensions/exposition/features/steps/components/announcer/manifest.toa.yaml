@@ -1,0 +1,5 @@
+name: announcer
+
+exposition:
+  /:
+    GET: greet

@@ -1,30 +1,33 @@
 import { setTimeout } from 'node:timers/promises'
 import { Connector } from '@toa.io/core'
 import { BRANCH_TTL } from '@toa.io/definitions/extensions.exposition'
-import type { bindings } from '@toa.io/core/types'
-import type { Label } from './discovery.ts'
+import type { Announcements } from './Announcements.ts'
 import type { Branch } from './Branch.ts'
 
 export class Tenant extends Connector {
-  private readonly broadcast: Broadcast
+  private readonly announcements: Announcements
   private readonly branch: Omit<Branch, 'timestamp'>
   private started = 0
   private stopped = false
+  private withdraw: (() => void) | undefined
 
-  public constructor(broadcast: Broadcast, branch: Omit<Branch, 'timestamp'>) {
+  public constructor(announcements: Announcements, branch: Omit<Branch, 'timestamp'>) {
     super()
 
-    this.broadcast = broadcast
+    this.announcements = announcements
     this.branch = branch
 
-    this.depends(broadcast)
+    this.depends(announcements)
   }
 
   public override async open(): Promise<void> {
     this.started = Date.now()
 
+    // counted in before the first announcement: what answers an ask made in between is the
+    // announcement itself, and one made twice is the same announcement
+    this.withdraw = this.announcements.register(this.expose.bind(this))
+
     await this.expose()
-    await this.broadcast.receive('ping', this.expose.bind(this))
 
     void this.announce()
   }
@@ -37,6 +40,8 @@ export class Tenant extends Connector {
    */
   protected override async close(): Promise<void> {
     this.stopped = true
+
+    this.withdraw?.()
   }
 
   private async announce(): Promise<void> {
@@ -56,7 +61,7 @@ export class Tenant extends Connector {
     // is the same announcement by another route
     if (this.stopped) return
 
-    await this.broadcast.transmit('expose', { ...this.branch, timestamp: this.started })
+    await this.announcements.transmit({ ...this.branch, timestamp: this.started })
   }
 }
 
@@ -69,5 +74,3 @@ function exposeInterval(uptime: number): number {
 const EXPOSE_MIN = 5_000
 const EXPOSE_MAX = Math.round(BRANCH_TTL / 2.1)
 const EXPOSE_TAU = 900_000
-
-type Broadcast = bindings.Broadcast<Label>
