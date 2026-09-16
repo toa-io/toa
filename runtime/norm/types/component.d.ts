@@ -16,6 +16,8 @@ export type Operation = {
   query?: boolean
   /** served by every process under an address of its own, which a call to it names */
   stateful?: boolean
+  /** the input property that carries a stream, read as its caller writes it */
+  stream?: string
 }
 
 export type Operations = Record<string, Operation>
