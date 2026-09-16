@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.309](https://github.com/toa-io/toa/compare/v1.0.0-alpha.308...v1.0.0-alpha.309) (2026-09-16)
+
+### Bug Fixes
+
+* **exposition:** destroy a reply stream the client left before it was written ([69351e5](https://github.com/toa-io/toa/commit/69351e553011c1e2e186dcf9dd8c3cb43cae9f16))
+
+
 # [1.0.0-alpha.308](https://github.com/toa-io/toa/compare/v1.0.0-alpha.307...v1.0.0-alpha.308) (2026-09-15)
 
 ### Bug Fixes
