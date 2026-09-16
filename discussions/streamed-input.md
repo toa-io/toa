@@ -185,9 +185,12 @@ A route maps a request body onto the property, and states what it takes and what
 12. **The reply.** A byte stream is answered under the resolved type rather than framed as parts,
     which is the branch a reply with a `content-type` already takes. A value answered by a route that
     produces media types is `422`.
-13. **Refusals.** A route that maps a stream to an operation declaring none, and the reverse, are
-    refused where a page and a projection are decided against the operation's manifest today.
-    `map:stream` beside `map:buffer` on one method is refused: both take the request.
+13. **Refusals.** A route that maps a stream to an operation declaring none is refused where a page
+    and a projection are decided against the operation's manifest today, and `map:stream` beside
+    `map:buffer` on one method with it: each of them takes the request. The other way round — an
+    operation that takes a stream behind a route that maps none — is refused when the call is made,
+    by the contract that requires the property, which is where every other missing property is
+    refused.
 
 ## Decisions
 
