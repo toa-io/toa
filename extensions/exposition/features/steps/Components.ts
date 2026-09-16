@@ -48,6 +48,17 @@ export class Components {
     await this.runComponent(name, manifest)
   }
 
+  /**
+   * The order a deployment comes up in, where the gateway is not already listening: what a
+   * component announces as it opens reaches nobody, and the gateway asks once it is up.
+   */
+  @given('the `{word}` is running before the Gateway with the following manifest:')
+  public async runBeforeGateway(name: string, yaml: string): Promise<void> {
+    const manifest = parse(yaml) as object
+
+    await this.runComponent(name, manifest, false)
+  }
+
   /** One composition, as the explorer hosts them. */
   @given('the introspection components are running')
   public async runMap(): Promise<void> {
@@ -127,13 +138,17 @@ export class Components {
     environment.delete('TOA_CONFIGURATION_VALUES')
   }
 
-  private async runComponent(name: string, manifest?: object): Promise<void> {
+  private async runComponent(
+    name: string,
+    manifest?: object,
+    gatewayFirst = true
+  ): Promise<void> {
     assert.ok(!(name in this.compositions), `Composition '${name}' is already running`)
 
     // the gateway first: a component announces itself when it opens, and that only
     // reaches a gateway that is already listening. Started the other way round, the
     // component waits for a knock, which the request that follows does not.
-    await this.gateway.start()
+    if (gatewayFirst) await this.gateway.start()
 
     const path = await this.workspace.addComponent(name, manifest)
 

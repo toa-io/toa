@@ -32,7 +32,7 @@
     "@toa.io/definitions": "1.0.0-alpha.309",
     "@toa.io/generic": "1.0.0-alpha.304",
     "@toa.io/schemas": "1.0.0-alpha.304",
-    "content-type": "3.0.0",
+    "content-type": "3.1.0",
     "matchacho": "0.6.1",
     "minimatch": "10.2.6",
     "msgpackr": "2.1.0",
@@ -61,14 +61,14 @@
     "features:octets": "TSX_TSCONFIG_PATH=features/steps/tsconfig.json NODE_OPTIONS=--import=tsx cucumber-js features/octets.*"
   },
   "devDependencies": {
-    "@node-rs/bcrypt": "1.10.8",
-    "@simplewebauthn/server": "14.0.1",
+    "@node-rs/bcrypt": "1.10.9",
+    "@simplewebauthn/server": "14.0.2",
     "@toa.io/agent": "*",
     "@toa.io/extensions.storages": "*",
     "@types/cors": "2.8.19",
     "@types/negotiator": "0.6.5",
     "jose": "6.2.12",
-    "js-yaml": "5.4.1",
+    "js-yaml": "5.4.2",
     "lru-cache": "11.5.2",
     "paseto": "4.0.1"
   },

@@ -23,6 +23,8 @@ Non-scattered documentation is coming some time later.
       reaches an operation that may change state, however far down the chain
     - [Distributed exception handling](/documentation/exceptions.md#where-nobody-is-waiting): a
       failure reaches whoever is waiting, or is tried again and then kept
+    - [Tasks](/documentation/tasks.md): a call nobody waits for — accepted, kept, and run later
+      by whichever process is free to take it
   - [Contracts](/documentation/contracts.md): a component is given what another one provides, at
     the version its deployment names
   - Multi-protocol transmission

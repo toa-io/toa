@@ -9,3 +9,6 @@ exposition:
   /tokens:
     anonymous: true
     GET: tokens
+  /failing:
+    anonymous: true
+    GET: failing

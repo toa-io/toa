@@ -1,7 +1,8 @@
 import { Unroutable } from 'comq'
 import { Connector, Encoded, exceptions } from '@toa.io/core'
 import { publish } from './measurements.js'
-import { instances, name } from './queues.js'
+import { ENDPOINT } from './constants.js'
+import { instances, name, tasks } from './queues.js'
 
 /**
  * @implements {import('@toa.io/core/types').bindings.Consumer}
@@ -14,6 +15,9 @@ export class Consumer extends Connector {
   #tasksQueue
 
   /** @type {string} */
+  #endpoint
+
+  /** @type {string} */
   #exchange
 
   /** @type {toa.amqp.Communication} */
@@ -23,7 +27,8 @@ export class Consumer extends Connector {
     super()
 
     this.#queue = name(locator, endpoint)
-    this.#tasksQueue = this.#queue + '..tasks'
+    this.#tasksQueue = tasks(locator)
+    this.#endpoint = endpoint
     this.#exchange = instances(locator, endpoint)
     this.#comm = comm
 
@@ -66,7 +71,9 @@ export class Consumer extends Connector {
   async task(request) {
     publish('task')
 
-    await this.#comm.enqueue(this.#tasksQueue, request)
+    await this.#comm.enqueue(this.#tasksQueue, request, {
+      headers: { [ENDPOINT]: this.#endpoint }
+    })
   }
 }
 

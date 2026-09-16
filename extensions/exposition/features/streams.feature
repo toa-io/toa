@@ -34,6 +34,16 @@ Feature: Reply streams
       --cut--
       """
 
+  Scenario: A reply stream that fails ends with FIN
+    Given the `sequences` is running
+    When the following stream is received:
+      """
+      GET /sequences/failing/ HTTP/1.1
+      host: nex.toa.io
+      accept: text/plain
+      """
+    Then the stream ends with `FIN`
+
   Scenario: Stopping the Gateway while a reply streams
     Given the annotation:
       """yaml

@@ -153,3 +153,20 @@ Feature: Stateful operations
       """yaml
       count: 2
       """
+
+  Scenario: A stateful operation takes no task
+
+    A task is taken by whichever process is free, and a stateful operation is served under
+    the name of one — so a call that is both is refused where it is made.
+
+    Given I compose `stateful.counter` component
+    When I call `stateful.counter.increment` with:
+      """yaml
+      input: tasked
+      instance: whoever
+      task: true
+      """
+    Then the following exception is thrown:
+      """yaml
+      code: 202
+      """

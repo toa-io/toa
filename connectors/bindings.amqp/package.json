@@ -30,7 +30,7 @@
     "@toa.io/definitions": "1.0.0-alpha.309",
     "@toa.io/generic": "1.0.0-alpha.304",
     "@toa.io/pointer": "1.0.0-alpha.304",
-    "comq": "0.21.0",
+    "comq": "0.23.0",
     "openspan": "1.0.0-alpha.305"
   },
   "scripts": {
