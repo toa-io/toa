@@ -12,7 +12,7 @@ import type { Stash } from '../source/lib/Stash.ts'
 export interface Context {
   stash: Redis
   state: {
-    streams: Map<string, Stream>
+    streams: Map<string, Set<Stream>>
     stash: Stash
   }
   logs: Logs
