@@ -10,29 +10,51 @@ await context.call('todos.tasks.archive', {
 })
 ```
 
-The call answers `null` as soon as the broker has the message. What the operation returns goes
-nowhere, and neither does what it refuses — see [errors and exceptions](/documentation/exceptions.md).
+**A task that was accepted will run.** The call answers `null` once the task is safely queued, and
+from then on it is the runtime's: it outlives the caller, it outlives a restart of anything it is
+waiting for, and a failure has it tried again rather than dropped.
 
-## What a task is for
+## What you can count on
 
-Work the caller's answer does not depend on: an export to build, a mailbox to sweep, a projection
-to rebuild. A caller that needs the result asks for it, and a caller that needs to know it happened
-reads the state the operation left.
+**It is kept before the call answers.** The call does not answer until the task is stored, so a
+caller that crashes the instant after has nothing left to do. A call that raised is a task that
+may or may not have been taken, like any other message whose acknowledgement went missing — which
+is the same thing that makes a task run more than once.
 
-## What it costs to get wrong
+**It survives what it is queued against.** A component that is down, redeploying or not yet
+started is given its tasks when it comes back. Nothing expires while it waits, and nothing
+gives up on it.
 
-**It runs again if it fails.** An exception is retried, after a wait that grows with each attempt,
-and a task that keeps failing is kept where an operator can find it. So an operation a task reaches
-may run more than once for one message, and nothing deduplicates it for you — write it so that
-handling the same message twice leaves the same state. See
+**A failure does not lose it.** An exception has the task tried again, after a wait that grows with
+each attempt. One that keeps failing is kept where an operator can find it and put it back, with
+what it was and why it stopped, and you hear about it. See
 [where nobody is waiting](/documentation/exceptions.md#where-nobody-is-waiting).
 
-**A refusal is silent.** An error is an answer, and nobody is reading this one. If a refusal has to
-be visible, the operation writes it: an event, a record, a state the caller can read.
+## What that asks of you
+
+**It may run more than once.** What is guaranteed is that a task runs, not that it runs once: a
+process that dies mid-task hands it back, and a retry starts the operation again. Nothing
+deduplicates it for you — write it so that handling the same task twice leaves the same state.
+
+```javascript
+// runs twice, debits twice
+entity.balance -= input.amount
+
+// runs twice, ends the same
+entity.balance = input.balance
+```
+
+And an effect that leaves the system — an email, a payment, a call to a third party — is repeated
+in full on every attempt. Either make it safe to repeat, or write down that you did it in the same
+state change that does it, and read that first.
+
+**A refusal ends it, and nobody reads it.** An error is an answer, and this one is answered to
+nobody: it stops the task, and it is not tried again. If a refusal has to be visible, the operation
+writes it — an event, a record, a state the caller can read.
 
 **It has no deadline.** A task names no `timeout` and no `signal`; the call is refused if it does.
-Nothing ends a task early, and a task queued against a component that is down waits for it to come
-back.
+Nothing ends a task early, so work that stops being worth doing has to be written so that it can
+tell — the state it reads says so, or it does nothing.
 
 ## What takes no task
 
