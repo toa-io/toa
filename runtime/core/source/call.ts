@@ -26,6 +26,9 @@ export class Call extends Connector {
   /** whether what it calls is incapable of changing the State; see `safety.ts` */
   readonly #safe: boolean
 
+  /** whether what it calls takes one of its input properties as a stream */
+  readonly #streamed: boolean
+
   // eslint-disable-next-line max-params
   public constructor(
     transmitter: Transmission,
@@ -33,7 +36,8 @@ export class Call extends Connector {
     target: string,
     source?: Source,
     stateful: boolean = false,
-    safe: boolean = false
+    safe: boolean = false,
+    streamed: boolean = false
   ) {
     super()
 
@@ -43,6 +47,7 @@ export class Call extends Connector {
     this.#source = source
     this.#stateful = stateful
     this.#safe = safe
+    this.#streamed = streamed
 
     this.depends(transmitter)
   }
@@ -150,6 +155,12 @@ export class Call extends Connector {
     // nobody waits for a task, and it is made from wherever the queue is consumed
     if (task === true && (timeout !== undefined || signal !== undefined))
       throw new RequestContractException('A task names no `timeout` and no `signal`')
+
+    // a task is taken later, by a process whose caller is no longer holding a stream
+    if (task === true && this.#streamed)
+      throw new RequestContractException(
+        `'${this.#target}' takes a stream, and a task carries none`
+      )
 
     if (timeout !== undefined && !(Number.isFinite(timeout) && timeout > 0))
       throw new RequestContractException('`timeout` is a positive number of milliseconds')

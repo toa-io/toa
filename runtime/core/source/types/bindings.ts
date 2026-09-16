@@ -12,6 +12,8 @@ export interface Properties {
   async?: boolean
   /** in-process: its producers are connected first and torn down last */
   local?: boolean
+  /** carries a call whose input holds a stream; an endpoint that takes one is offered to no other */
+  streams?: boolean
 }
 
 /**
