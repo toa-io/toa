@@ -48,6 +48,12 @@ chunk `FIN`.
 A response still streaming when the gateway stops is finished with `FIN` as well, so a client that
 wants to go on reconnects on `FIN`. One that has not read `FIN` by the end of the drain is cut.
 
+So is a response whose stream fails once it has started — an operation that throws, or a stream
+that stops arriving from the component. What was received before `FIN` is then only the beginning
+of what would have been sent, and a client that wants the rest reconnects, as it would after the
+gateway stopped. The failure is logged by the gateway and not sent to the client: once the status
+is written, `FIN` is all a response can still say.
+
 Example:
 
 ```

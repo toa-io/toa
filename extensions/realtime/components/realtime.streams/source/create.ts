@@ -3,8 +3,15 @@ import { type Operation } from '@toa.io/bridges.node'
 import type { Context } from '../types/index.d.ts'
 import { Stream, Stash } from './lib/index.ts'
 
+/**
+ * A stream is opened per call, and a key has as many of them as it has consumers: one stream read
+ * by several would hand each of its values to one of them only, and a consumer leaving would
+ * destroy it under the others. What arrives under a key is pushed to every stream of it; what
+ * belongs to a connection — the welcome, the token, the events missed since a token — to that
+ * connection's stream alone.
+ */
 export class Effect implements Operation {
-  private readonly streams = new Map<string, Stream>()
+  private readonly streams = new Map<string, Set<Stream>>()
   private stash!: Stash
   private logs: any
 
@@ -17,32 +24,28 @@ export class Effect implements Operation {
   }
 
   public unmount(): void {
-    this.logs.info('Destroying streams', { count: this.streams.size })
+    const streams = [...this.streams.values()].flatMap((set) => [...set])
+
+    this.logs.info('Destroying streams', { count: streams.length })
 
     // closed, not destroyed: destroying a stream that is still piped to a response
     // makes end-of-stream report a premature close, which reaches no one and takes
     // the process down.
-    for (const stream of this.streams.values()) stream.close()
+    for (const stream of streams) stream.close()
   }
 
   public async execute(input: Input): Promise<Readable> {
     const key = input.key
-
-    if (!this.streams.has(key)) {
-      const stream = this.createStream(key)
-
-      this.streams.set(key, stream)
-      this.logs.debug('Stream created', { key })
-    }
+    const stream = this.createStream(key)
 
     // welcome
-    setTimeout(() => this.streams.get(key)?.heartbeat(), 1000)
+    setTimeout(() => stream.heartbeat(), 1000)
 
     if (input.token === undefined)
       void this.stash.connect(key).then((token) => {
         if (token instanceof Error)
           this.logs.error('Failed to connect to stash', { key, error: token })
-        else this.streams.get(key)?.push({ event: 'token', data: token })
+        else stream.push({ event: 'token', data: token })
       })
     else
       void this.stash.pop(key, input.token).then((result) => {
@@ -56,9 +59,7 @@ export class Effect implements Operation {
           return
         }
 
-        const stream = this.streams.get(key)
-
-        if (stream === undefined) return
+        if (stream.destroyed) return
 
         const [token, events] = result
 
@@ -68,15 +69,27 @@ export class Effect implements Operation {
         stream.push({ event: 'token', data: token })
       })
 
-    return this.streams.get(key)!
+    return stream
   }
 
   private createStream(key: string): Stream {
     const stream = new Stream()
+    let set = this.streams.get(key)
+
+    if (set === undefined) {
+      set = new Set()
+      this.streams.set(key, set)
+    }
+
+    set.add(stream)
+    this.logs.debug('Stream created', { key, count: set.size })
 
     stream.events.once('destroy', () => {
-      this.logs.debug('Stream destroyed', { key })
-      this.streams.delete(key)
+      set.delete(stream)
+
+      if (set.size === 0) this.streams.delete(key)
+
+      this.logs.debug('Stream destroyed', { key, count: set.size })
     })
 
     return stream
