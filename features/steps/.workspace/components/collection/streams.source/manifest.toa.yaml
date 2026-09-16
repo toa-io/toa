@@ -55,6 +55,13 @@ operations:
       properties:
         chunks:
           type: number
+  mistake:
+    type: computation
+    input:
+      type: object
+      properties:
+        label:
+          type: string
   omit:
     type: computation
     input:

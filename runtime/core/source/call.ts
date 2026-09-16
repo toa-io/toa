@@ -26,8 +26,8 @@ export class Call extends Connector {
   /** whether what it calls is incapable of changing the State; see `safety.ts` */
   readonly #safe: boolean
 
-  /** whether what it calls takes one of its input properties as a stream */
-  readonly #streamed: boolean
+  /** the input property a stream is carried in, where what it calls takes one */
+  readonly #streamed: string | undefined
 
   // eslint-disable-next-line max-params
   public constructor(
@@ -37,7 +37,7 @@ export class Call extends Connector {
     source?: Source,
     stateful: boolean = false,
     safe: boolean = false,
-    streamed: boolean = false
+    streamed?: string
   ) {
     super()
 
@@ -156,11 +156,19 @@ export class Call extends Connector {
     if (task === true && (timeout !== undefined || signal !== undefined))
       throw new RequestContractException('A task names no `timeout` and no `signal`')
 
-    // a task is taken later, by a process whose caller is no longer holding a stream
-    if (task === true && this.#streamed)
-      throw new RequestContractException(
-        `'${this.#target}' takes a stream, and a task carries none`
-      )
+    if (this.#streamed !== undefined) {
+      // a task is taken later, by a process whose caller is no longer holding a stream
+      if (task === true)
+        throw new RequestContractException(
+          `'${this.#target}' takes a stream, and a task carries none`
+        )
+
+      // the contract has the property, and only what is made here can say what is in it
+      if (!carries(request.input, this.#streamed))
+        throw new RequestContractException(
+          `'${this.#target}' takes a stream at '${this.#streamed}', which this call carries none of`
+        )
+    }
 
     if (timeout !== undefined && !(Number.isFinite(timeout) && timeout > 0))
       throw new RequestContractException('`timeout` is a positive number of milliseconds')
@@ -202,6 +210,21 @@ export class Call extends Connector {
 
     return await waiting(this.#transmitter.request(envelope, terms), signal, this.#target)
   }
+}
+
+/**
+ * Whether the input carries a stream where the operation takes one: the property itself where its
+ * caller said nothing about it, and the property's `stream` where a route filled one.
+ */
+function carries(input: unknown, property: string): boolean {
+  if (input === null || typeof input !== 'object') return false
+
+  const carried: unknown = (input as Record<string, unknown>)[property]
+
+  if (carried instanceof Readable) return true
+  if (carried === null || typeof carried !== 'object') return false
+
+  return (carried as { stream?: unknown }).stream instanceof Readable
 }
 
 /** Where a service calls from no invocation, the chain starts under the service's own name. */

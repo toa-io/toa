@@ -29,6 +29,6 @@ export const call = async (locator, endpoint, definition, entity, source) => {
     source,
     stateful,
     readable,
-    definition.stream !== undefined
+    definition.stream
   )
 }

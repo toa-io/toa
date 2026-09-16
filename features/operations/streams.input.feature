@@ -46,3 +46,15 @@ Feature: Streamed input
       code: 202
       """
     And I disconnect
+
+  Scenario: A value where a stream goes is refused
+    When I call `streams.source.mistake` with:
+      """yaml
+      input:
+        label: pot
+      """
+    Then the following exception is thrown:
+      """yaml
+      code: 202
+      """
+    And I disconnect
