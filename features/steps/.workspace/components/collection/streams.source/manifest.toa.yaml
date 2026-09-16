@@ -2,6 +2,43 @@ namespace: streams
 name: source
 
 operations:
+  collect:
+    type: computation
+    input:
+      type: object
+      properties:
+        chunks:
+          type: number
+  bytes:
+    type: computation
+    input:
+      type: object
+      properties:
+        chunks:
+          type: number
+  broken:
+    type: computation
+    input:
+      type: object
+      properties:
+        chunks:
+          type: number
+  spread:
+    type: computation
+    input:
+      type: object
+      properties:
+        chunks:
+          type: number
+  dispatch:
+    type: computation
+    input:
+      type: object
+      properties:
+        label:
+          type: string
+        chunks:
+          type: number
   send:
     type: computation
     input:

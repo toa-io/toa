@@ -1,0 +1,37 @@
+namespace: streams
+name: remote
+version: 0.1.0
+
+operations:
+  accept:
+    bindings: [http]
+    type: computation
+    stream: content
+    input:
+      type: object
+      properties:
+        label:
+          type: string
+  count:
+    type: computation
+    input:
+      type: object
+      properties:
+        of:
+          type: number
+  timed:
+    bindings: [http]
+    type: computation
+    stream: content
+  echo:
+    bindings: [http]
+    type: computation
+    stream: content
+  relay:
+    bindings: [http]
+    type: computation
+    stream: content
+  fails:
+    bindings: [http]
+    type: computation
+    stream: content
