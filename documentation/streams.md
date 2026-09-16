@@ -1,0 +1,148 @@
+# Streamed input
+
+An operation may take a stream. It names the input property that carries one, and is called with a
+`Readable` there: it reads what its caller writes while the caller is writing it, and nothing in
+between holds the payload — it is not buffered whole and not stored on the way.
+
+**A streamed call is made once and is not repeated for you.** An ordinary call waits in a queue for
+a replica, is redelivered when one fails, and may be sent as a task or delayed. None of that is
+possible while a caller is holding a stream: the call reaches a replica that is running or it fails,
+and what fails is repeated by whoever still has the payload, or not at all.
+
+## TL;DR
+
+```yaml
+# manifest.toa.yaml
+bindings: [amqp, http]
+
+operations:
+  checksum:
+    type: computation
+    stream: content
+```
+
+```typescript
+// the operation reads it
+export async function computation (input: ChecksumInput): Promise<string> {
+  return await digest(input.content)
+}
+
+// a caller writes it
+await context.remote.media.files.checksum({ input: { content } })
+```
+
+## Declaring
+
+`stream` names an input property. The rest of `input` is declared and validated as any other, so a
+call carries what it carried before beside the stream; the named property is not validated, a stream
+being no value with a schema, and a call that omits it is refused.
+
+```yaml
+operations:
+  transcode:
+    type: effect
+    stream: source
+    input:
+      type: object
+      properties:
+        id: { type: string }
+      required: [id]
+```
+
+It may be declared on an `effect`, a `computation` and an `unmanaged` operation. A transition may be
+run twice over one call, and a stream cannot be read twice.
+
+An operation that declares a stream declares a binding that carries one — `http`, beside whatever
+else it declares — or the component does not start:
+
+```
+Operation 'transcode' takes a stream, which none of its bindings carries
+```
+
+An operation of a component composed in the same process needs none: a stream is passed as it is
+where there is nothing between the two.
+
+## Calling
+
+The property holds the stream, or an object whose `stream` member holds it:
+
+```typescript
+await context.remote.media.videos.transcode({ input: { id, source } })
+
+await context.remote.media.videos.transcode({
+  input: { id, source: { type: 'video/quicktime', accept: 'video/mp4', stream } }
+})
+```
+
+The second is what a [route](#over-http) hands over, so an operation behind one reads what arrived
+and what to answer with. These are refused with `RequestContract` before anything is sent:
+
+- a call to an operation that takes a stream and carries none, and the reverse;
+- a task, or a delayed call, that carries one.
+
+## What an operation answers
+
+A value, or a stream — call by call, whichever the work came to. A stream it answers reaches its
+caller as a `Readable` of what it yielded: bytes where it yielded Buffers, and values otherwise.
+
+**A reply stream that fails is a failure.** Where the operation throws after its first value, the
+exception is raised on the caller's stream; where the process serving it goes away mid-reply, the
+caller's stream is destroyed. A reply stream that ends is one that was written to its end.
+
+## What a call ends in
+
+| outcome       | what it means for the caller                                      |
+| ------------- | ----------------------------------------------------------------- |
+| the reply     | the operation answered                                            |
+| `Unreachable` | no replica took it: none is running, or none can be dialled       |
+| an exception  | the operation raised one, as it does for any call                 |
+
+`Unreachable` is transient, and a call that ends in it did not run. Repeating it means writing the
+payload again, which is the caller's to do or to decline.
+
+## Over HTTP
+
+`map:stream` hands a request body to the operation instead of reading it, so an upload reaches a
+component as it arrives:
+
+```yaml
+/videos/:id:
+  POST:
+    map:segments:
+      id: id
+    map:stream:
+      property: source
+      accept: [video/quicktime, video/mp4]
+      produces: [video/mp4, image/jpeg]
+      limit: 4GiB
+    endpoint: transcode
+```
+
+- `property` is the input property the operation named. `map:stream: source` is the whole directive
+  where nothing else is stated.
+- `accept` is what a client may send; anything else answers `415`. Absent, anything is accepted.
+- `produces` is what this route may answer. The client's `accept` is resolved against it before the
+  call and the operation is handed that one media type at `source.accept`; a client asking for
+  something else answers `406`, and nothing runs. A request that asks for nothing in particular is
+  answered `application/octet-stream`.
+- `limit` is the largest body this route takes; past it, `413`. The default is `64MiB`.
+
+The operation answers in the type it was handed, and a byte stream it answers is served under that
+type. **A route that states `produces` answers bytes**: a value answered there is `422`.
+
+A route may not carry `map:stream` and `map:buffer` at once — each of them takes the request.
+
+## Limits
+
+- **A streamed call reaches a replica that is running, or fails.** Nothing queues it, and a component
+  that is scaled to zero or is between deployments answers `Unreachable` where an ordinary call would
+  have waited.
+- **Replicas do not take an even share of streamed calls.** Each call is routed on its own, at
+  random.
+- **Declaring a stream on an operation that was ordinary** stops the queue it was served on being
+  consumed, so every caller runs a runtime that knows the key before it is declared.
+- **A component is reachable at one address.** One that runs in a network of its own is called over
+  the broker as before, and a streamed call to it fails.
+- **A reply is a value or a stream**, never a value with a stream in it.
+- **What a streamed reply carries at the gateway** is what any streamed reply carries: no `etag` and
+  no `304`, no `content-length`, and no `io:output` list applies to it.
