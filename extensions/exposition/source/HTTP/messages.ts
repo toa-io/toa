@@ -49,6 +49,9 @@ export async function write(
   if (response.destroyed) {
     console.warn('Request destroyed prematurely', { path: context.url.pathname })
 
+    // nobody reads it now, and its `error` — a reply stream's idle timeout — would be uncaught
+    if (message.body instanceof Readable) message.body.destroy()
+
     return
   }
 

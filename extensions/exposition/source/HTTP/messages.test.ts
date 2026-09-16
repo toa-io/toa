@@ -231,6 +231,26 @@ describe('write', () => {
     assert.equal(warn.mock.callCount(), 0)
   })
 
+  it('should destroy a stream the client left before it was written', async () => {
+    const body = new Readable({ read: () => {} })
+    const response = new PassThrough()
+
+    Object.assign(response, { setHeader: () => response })
+    response.destroy() // the client went away
+
+    const context = {
+      ...createContext(generate()),
+      pipelines: { response: [] }
+    } as unknown as Context
+
+    await write(context, response as unknown as http.ServerResponse, {
+      headers: new Headers({ 'content-type': 'text/plain' }),
+      body
+    })
+
+    assert.ok(body.destroyed)
+  })
+
   it('should warn on a stream error', async () => {
     const body = new Readable({ read: () => {} })
 
