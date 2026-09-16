@@ -116,6 +116,11 @@ What a route takes and what it answers are stated beside it:
 A byte stream the operation answers is served under the media type it was handed. **A route that
 states `produces` answers bytes**: a value answered there is `422`.
 
+A streamed call takes a connection of its own and is neither queued, retried nor balanced, so map a
+stream only where a body has to flow through an operation. A body that is to be kept is stored by
+[`octets:put`](octets.md), which calls components afterwards with a reference to it; a body small
+enough to be a value is a value. See [what it costs](/documentation/streams.md#what-it-costs).
+
 ## Route parameters
 
 The `map:segments` directive maps the values of route parameters to operation call input properties.

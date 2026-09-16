@@ -9,6 +9,36 @@ a replica, is redelivered when one fails, and may be sent as a task or delayed. 
 possible while a caller is holding a stream: the call reaches a replica that is running or it fails,
 and what fails is repeated by whoever still has the payload, or not at all.
 
+## What it costs
+
+It is built for a payload that is large and long — a file a client is uploading, a transcode, a
+render, an export — and it pays for that with everything an ordinary call is given:
+
+- **A call takes a connection of its own**, opened when it is made and closed when it ends. A
+  hundred calls in flight are a hundred sockets at each end, and calls made one after another share
+  none of them: nothing is pooled, because a connection kept for a second call sends it to the same
+  replica as the first, and so does every call after that.
+- **Nothing queues it.** A component with no replica running answers `Unreachable`, where an
+  ordinary call would have waited for one to come back.
+- **Nothing retries it.** A redelivery would carry an empty body.
+- **Nothing balances it.** Each call is routed on its own, at random, so a few calls in flight land
+  where they land.
+
+So call it with a stream only where something has to flow through an operation. Three things it is
+not for:
+
+- **An input that is a value** is an ordinary call, however large the value is.
+- **An answer that arrives in pieces** is a reply stream — an operation returning a `Readable` — which
+  any binding carries, over the broker included.
+- **An upload that is to be kept** is [`octets:put`](/extensions/exposition/documentation/octets.md),
+  which stores the body as it arrives and calls components afterwards with a reference to it. A
+  streamed call is for bytes an operation reads and does not keep: a checksum, a transcode, a parse,
+  a forward. Where they are to be stored *and* processed, store them and run the processing from the
+  workflow.
+
+Used for any of those, a streamed call costs a connection, gives up the queue and the retry, and
+buys nothing.
+
 ## TL;DR
 
 ```yaml

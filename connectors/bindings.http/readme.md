@@ -5,7 +5,10 @@ other binding can carry. It declines everything else, so ordinary calls, tasks, 
 calls go over the binding beside it.
 
 A call is made to a component, not to a process: whichever replica answers at the component's
-address takes it.
+address takes it, over a connection opened for that call and closed when it ends. A connection kept
+for the next call would send it to the same replica, so none is kept: a call in flight costs a
+socket at each end, and a call that is neither large nor long costs more than it saves. See
+[what it costs](/documentation/streams.md#what-it-costs).
 
 ## Annotation
 

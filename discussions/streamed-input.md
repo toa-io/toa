@@ -191,6 +191,14 @@ A route maps a request body onto the property, and states what it takes and what
 
 ## Decisions
 
+**What it is for is said in the documentation, not implied by its existence.** A streamed call
+gives up the queue, the retry and an even share of replicas, and takes a connection of its own for
+as long as it runs — priced for a payload that is large and long, and a bad trade for anything else.
+So the documentation opens with what it costs and names the three things that already serve the
+cases it does not: an ordinary call for an input that is a value, a reply stream for an answer that
+arrives in pieces, and `octets:put` for a body that is to be kept. A capability whose costs are
+written only where its mechanism is gets used for what it is not for.
+
 **A binding says what it carries, and nothing knows about a binding.** A streamed endpoint is
 routed by a property of the binding's module, the way an event is routed to one that delivers
 asynchronously — so the AMQP binding needs no clause about streams, and a binding written later says
