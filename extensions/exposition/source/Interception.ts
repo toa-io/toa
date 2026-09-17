@@ -17,7 +17,10 @@ export class Interception implements Interceptor {
 
   public async intercept(input: Input): Promise<Output> {
     for (const interceptor of this.interceptors) {
-      const output = await interceptor.intercept(input)
+      let output = interceptor.intercept(input)
+
+      // most answer at once, and awaiting a value that is not a promise still makes one
+      if (output instanceof Promise) output = await output
 
       if (output !== null) return output
     }

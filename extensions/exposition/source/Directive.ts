@@ -36,12 +36,15 @@ export class Directives implements RTD.Directives {
       if (set.family.precall === undefined) continue
 
       // the span's closure and frames are all an unsampled trace would pay for; see `sampled`
-      const out = sampled()
+      let out = sampled()
         ? await console.span(
             this.spans[i].precall,
             async () => await set.family.precall!(set.directives, context, parameters)
           )
-        : await set.family.precall(set.directives, context, parameters)
+        : set.family.precall(set.directives, context, parameters)
+
+      // a family that answers at once is not awaited: see `Interception`
+      if (out instanceof Promise) out = await out
 
       if (out === null) continue
 
@@ -110,7 +113,12 @@ export class Directives implements RTD.Directives {
           this.spans[i].settle,
           async () => await set.family.settle!(set.directives, context, response)
         )
-      else await set.family.settle(set.directives, context, response)
+      else {
+        const pending = set.family.settle(set.directives, context, response)
+
+        // a family that answers at once is not awaited: see `Interception`
+        if (pending instanceof Promise) await pending
+      }
     }
   }
 
@@ -163,7 +171,11 @@ export class DirectivesFactory implements RTD.DirectiveFactory {
         await console.span(stage.preflight, async () => {
           await stage.family.preflight!(context)
         })
-      else await stage.family.preflight(context)
+      else {
+        const pending = stage.family.preflight(context)
+
+        if (pending instanceof Promise) await pending
+      }
     }
   }
 
@@ -176,7 +188,11 @@ export class DirectivesFactory implements RTD.DirectiveFactory {
         await console.span(stage.depart, async () => {
           await stage.family.depart!(context, response)
         })
-      else await stage.family.depart(context, response)
+      else {
+        const pending = stage.family.depart(context, response)
+
+        if (pending instanceof Promise) await pending
+      }
     }
   }
 
