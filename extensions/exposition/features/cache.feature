@@ -282,6 +282,68 @@ Feature: Caching
       vary: authorization
       """
 
+  Scenario: Anonymous and authenticated requests to one route
+    Given the annotation:
+      """yaml
+      /:
+        io:output: true
+        anonymous: true
+        auth:role: developer
+        cache:control: max-age=60000
+        GET:
+          dev:stub: hello
+      """
+    When the following request is received:
+      """
+      GET /identity/ HTTP/1.1
+      host: nex.toa.io
+      authorization: Basic ZGV2ZWxvcGVyOnNlY3JldA==
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      authorization: Token ${{ token }}
+      """
+    When the following request is received:
+      """
+      GET / HTTP/1.1
+      host: nex.toa.io
+      accept: text/plain
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      cache-control: max-age=60000
+      """
+    When the following request is received:
+      """
+      GET / HTTP/1.1
+      host: nex.toa.io
+      accept: text/plain
+      authorization: Token ${{ token }}
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      cache-control: private, max-age=60000
+      vary: authorization
+      """
+    When the following request is received:
+      """
+      GET / HTTP/1.1
+      host: nex.toa.io
+      accept: text/plain
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      cache-control: max-age=60000
+      """
+    And the reply does not contain:
+      """
+      vary: authorization
+      """
+
   Scenario: Authenticated `no-cache` responses
     Given the `identity.basic` database contains:
       | _id                              | authority | username  | password                                                     |
