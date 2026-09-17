@@ -132,6 +132,112 @@ describe('entries', () => {
   })
 })
 
+describe('scope', () => {
+  const names = ['TOA_CONTEXT', 'TOA_SUFFIX', 'TOA_DEV']
+
+  /** @type {Array<[string, string | undefined]>} */
+  let saved
+
+  before(() => {
+    saved = names.map((name) => [name, environment.get(name)])
+
+    for (const name of names) environment.delete(name)
+  })
+
+  after(() => {
+    for (const [name, value] of saved)
+      if (value === undefined) environment.delete(name)
+      else environment.set(name, value)
+  })
+
+  it('should be the context without a suffix', () => {
+    environment.set('TOA_CONTEXT', 'app')
+
+    assert.equal(environment.suffix(), undefined)
+    assert.equal(environment.scope(), 'app')
+
+    environment.delete('TOA_CONTEXT')
+  })
+
+  it('should be the context followed by the suffix', () => {
+    environment.set('TOA_CONTEXT', 'app')
+    environment.set('TOA_SUFFIX', 'agent-0a1b2c3d4e5f')
+
+    assert.equal(environment.suffix(), 'agent-0a1b2c3d4e5f')
+    assert.equal(environment.scope(), 'appagent-0a1b2c3d4e5f')
+
+    environment.delete('TOA_CONTEXT')
+    environment.delete('TOA_SUFFIX')
+  })
+
+  it('should be toa-dev under TOA_DEV without a context', () => {
+    environment.set('TOA_DEV', '1')
+    environment.set('TOA_SUFFIX', '-copy')
+
+    assert.equal(environment.scope(), 'toa-dev-copy')
+
+    environment.delete('TOA_DEV')
+    environment.delete('TOA_SUFFIX')
+  })
+
+  it('should throw without a context', () => {
+    assert.throws(() => environment.scope(), /TOA_CONTEXT/)
+  })
+
+  it('should keep the suffix it read', () => {
+    environment.set('TOA_CONTEXT', 'app')
+    environment.set('TOA_SUFFIX', '-boot')
+
+    assert.equal(environment.scope(), 'app-boot')
+
+    // what a process sets for the processes it starts
+    process.env.TOA_SUFFIX = '-later'
+
+    assert.equal(environment.scope(), 'app-boot')
+
+    environment.absorb()
+
+    assert.equal(environment.get('TOA_SUFFIX'), '-later')
+    assert.equal(environment.scope(), 'app-boot')
+
+    environment.delete('TOA_CONTEXT')
+    environment.delete('TOA_SUFFIX')
+  })
+
+  it('should read the suffix again once it is set or deleted', () => {
+    environment.set('TOA_SUFFIX', '-one')
+
+    assert.equal(environment.suffix(), '-one')
+
+    environment.set('TOA_SUFFIX', '-two')
+
+    assert.equal(environment.suffix(), '-two')
+
+    environment.delete('TOA_SUFFIX')
+
+    assert.equal(environment.suffix(), undefined)
+  })
+
+  it('should read a suffix a .env gives', () => {
+    assert.equal(environment.suffix(), undefined)
+
+    environment.absorbEntries({ TOA_SUFFIX: '-file' })
+
+    assert.equal(environment.suffix(), '-file')
+
+    environment.delete('TOA_SUFFIX')
+  })
+
+  for (const value of ['', 'copy/1', 'a.b', 'a:b', 'a b', 'ä'])
+    it(`should refuse '${value}'`, () => {
+      environment.set('TOA_SUFFIX', value)
+
+      assert.throws(() => environment.suffix(), /TOA_SUFFIX/)
+
+      environment.delete('TOA_SUFFIX')
+    })
+})
+
 it('should hold one store for every copy of this package', async () => {
   // a service image installs the extension beside the runtime, so both are loaded: what
   // one absorbed out of `process.env` is what the other has to be able to read

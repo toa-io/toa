@@ -17,6 +17,10 @@ const create = async (manifest, locator) => {
   // component is imported: nothing of it is left in `process.env` for that module to read
   environment.absorb()
 
+  // the suffix is what it is now, `.env` having been read: whatever this process sets for the
+  // processes it starts later does not rename what it has
+  environment.suffix()
+
   await boot.extensions.load(manifest)
 
   // the storage is told whether there will be an outbox, so what it publishes to comes first:
