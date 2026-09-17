@@ -136,7 +136,9 @@ export class Endpoint implements RTD.Endpoint {
   }
 
   private query(context: http.Context): http.Query {
-    const query: http.Query = Object.fromEntries(context.url.searchParams)
+    // a URL without a query builds no parameters to read nothing out of
+    const query: http.Query =
+      context.url.search === '' ? {} : Object.fromEntries(context.url.searchParams)
     const etag = context.request.headers['if-match']
 
     if (etag !== undefined && this.mapping.queryable) query.version = this.version(etag)
