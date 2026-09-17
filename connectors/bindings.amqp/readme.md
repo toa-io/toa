@@ -24,3 +24,7 @@ A process given `TOA_SUFFIX` declares every exchange and queue under `<context><
 processes of one context with different suffixes share a virtual host without seeing each other's
 messages. Without one, names are unchanged. See
 [deployment](/documentation/deployment.md#several-processes-of-one-context-on-shared-infrastructure).
+
+The exchange a receiver with a `source` consumes is under the scope as every other name is, while
+whoever publishes those events names it without one, so a process under a suffix receives no
+foreign event.

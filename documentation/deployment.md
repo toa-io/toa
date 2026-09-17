@@ -39,3 +39,6 @@ $ TOA_SUFFIX=-agent-0a1b2c3d4e5f toa compose ./components/*
   `convergence` — is named as it is configured.
 - **A copy starts empty.** Its database, its queues and its keys are its own, so it has none of the
   data of the processes it runs beside.
+- **No foreign events arrive.** A receiver declaring a `source` consumes an exchange under the
+  scope, and whoever publishes those events names it without one, so a process under a suffix
+  receives none of them. A flow that depends on them is exercised by a process without a suffix.

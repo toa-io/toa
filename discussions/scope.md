@@ -49,7 +49,9 @@ contexts sharing a Redis no longer share its keys.
 12. A suffix is not a separator. `app` with `1a` and `app1` with `a` are one scope, and share
     everything.
 13. Two processes with one scope share everything, as two replicas of a deployment do *(today)*.
-14. What an extension keeps elsewhere — the files `storages` writes, what a federation upstream
+14. A receiver declaring a `source` consumes its exchange under the scope, while the system whose
+    events they are names it without one, so a process under a suffix receives no foreign event.
+15. What an extension keeps elsewhere — the files `storages` writes, what a federation upstream
     names — is not scoped. An operator federating a channel under a suffix names the suffixed
     exchange.
 
@@ -110,7 +112,12 @@ $ TOA_SUFFIX=-agent-0a1b2c3d4e5f toa compose ./components/*
 7. **Receivers are scoped in the binding.** Every label a receiver consumes reaches the broker
    through `Receiver`, whoever declared it. Scoping it there covers what a manifest declares and
    what an extension asks for, and leaves the label a component reads as it wrote it.
-8. **Convergence is left alone.** Its channels are named through `queues.js`, so they are scoped
+8. **A foreign source is scoped like everything else.** Its exchange is named by whoever publishes
+   to it, so nothing a suffixed process declares can meet it. Consuming it unscoped, under a group
+   of its own per copy, would put a durable queue per copy on a broker this deployment does not
+   own, and a copy that goes away leaves it there. So a suffix is for what a context holds itself,
+   and a flow fed from outside is exercised without one.
+9. **Convergence is left alone.** Its channels are named through `queues.js`, so they are scoped
    like everything else; what crosses between regions is the operator's federation, which names
    exchanges and is written by hand.
 
