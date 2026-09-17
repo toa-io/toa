@@ -28,8 +28,9 @@ export class Route {
   ): Match | null {
     if (Date.now() >= this.node.expiration) return null
 
-    // what a request matched is a template, and the pieces of it are these
-    segments.push(...this.segments)
+    // what a request matched is a template, and the pieces of it are these; pushed one by
+    // one, since a spread builds the arguments first
+    for (const segment of this.segments) segments.push(segment)
 
     for (let i = 0; i < this.segments.length; i++) {
       const segment = this.segments[i]

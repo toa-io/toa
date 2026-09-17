@@ -30,7 +30,12 @@ const exposition =
  * written: one call of several produces a value the reply is assembled from.
  */
 export async function shape(context: Context, message: OutgoingMessage): Promise<void> {
-  for (const transform of context.pipelines.response) await transform(message)
+  for (const transform of context.pipelines.response) {
+    const pending = transform(message)
+
+    // the transforms are synchronous as a rule, and awaiting one that is not still makes a promise
+    if (pending instanceof Promise) await pending
+  }
 }
 
 export async function write(
