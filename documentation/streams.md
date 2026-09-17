@@ -4,10 +4,10 @@ An operation may take a stream. It names the input property that carries one, an
 `Readable` there: it reads what its caller writes while the caller is writing it, and nothing in
 between holds the payload — it is not buffered whole and not stored on the way.
 
-**A streamed call is made once and is not repeated for you.** An ordinary call waits in a queue for
-a replica, is redelivered when one fails, and may be sent as a task or delayed. None of that is
-possible while a caller is holding a stream: the call reaches a replica that is running or it fails,
-and what fails is repeated by whoever still has the payload, or not at all.
+**A streamed call that fails is not retried.** An ordinary call waits in a queue for a replica, is
+redelivered when the one that took it fails, and may be sent as a task or delayed; none of that is
+possible while its caller is holding a stream. What a failed one leads to is the caller's to decide,
+and nothing beneath it will have tried again.
 
 ## What it costs
 
@@ -19,8 +19,7 @@ render, an export — and it pays for that with everything an ordinary call is g
   none of them: nothing is pooled, because a connection kept for a second call sends it to the same
   replica as the first, and so does every call after that.
 - **Nothing queues it.** A call to a component with no replica running fails, where an ordinary
-  call would have waited for one to come back. A call that fails this way did not run, and is made
-  again only by whoever still has the payload to write.
+  call would have waited for one to come back.
 - **Nothing retries it.** A redelivery would carry an empty body.
 - **Nothing balances it.** Each call is routed on its own, at random, so a few calls in flight land
   where they land.
@@ -156,9 +155,8 @@ A route may not carry `map:stream` and `map:buffer` at once — each of them tak
 
 ## Limits
 
-- **A streamed call reaches a replica that is running, or fails.** Nothing queues it, so a component
-  that is scaled to zero or is between deployments fails the call where an ordinary call would have
-  waited.
+- **A streamed call reaches a replica that is running, or fails.** A component that is scaled to zero
+  or is between deployments fails the call where an ordinary call would have waited for it.
 - **Replicas do not take an even share of streamed calls.** Each call is routed on its own, at
   random.
 - **Declaring a stream on an operation that was ordinary** stops the queue it was served on being
