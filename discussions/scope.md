@@ -71,8 +71,9 @@ $ TOA_SUFFIX=-agent-0a1b2c3d4e5f toa compose ./components/*
 3. **`storages.mongodb`.** `resolveDB` answers the scope, and asserts its length.
 4. **`extensions.stash`.** The connection's `keyPrefix` begins with the scope.
 5. **`atomicity`.** The keys an atom makes and the prefix it hands n-and-i begin with the scope,
-   taken once when the atom is made. n-and-i puts `{group}` after the prefix it is given and needs
-   no change.
+   taken when the atom opens with a Redis to write to — an atom is one per group for the life of a
+   process, and one without a Redis has no keys to name. n-and-i puts `{group}` after the prefix
+   it is given and needs no change.
 6. **`bindings.amqp`.** `queues.js` puts `<scope>.` in front of every name it makes where a suffix
    is given, and `Receiver` does the same for the label it consumes, which arrives as it was
    declared rather than through `queues.js`. The labels a component's receivers declare and the

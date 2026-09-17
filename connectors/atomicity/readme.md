@@ -85,6 +85,9 @@ const atom = new Factory().atom('mail.sender')
 await atom.connect()
 ```
 
+The group is the context's, so a process with Redis configured has `TOA_CONTEXT` — or `TOA_DEV=1`
+— and an atom connecting without either throws.
+
 ## Configuration
 
 Requires Redis.
