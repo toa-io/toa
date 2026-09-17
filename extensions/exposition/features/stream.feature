@@ -215,7 +215,7 @@ Feature: Streamed request body
       hello
       """
 
-  Scenario: A refusal says what the limit is, whatever the client accepts
+  Scenario: A body past the limit is refused with the status alone
     Given the `streams` is running with the following manifest:
       """yaml
       exposition:
@@ -239,7 +239,5 @@ Feature: Streamed request body
     Then the following reply is sent:
       """
       413 Request Entity Too Large
-      content-type: text/plain
-
-      Size limit is 2b
+      content-length: 0
       """

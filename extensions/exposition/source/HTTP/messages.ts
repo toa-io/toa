@@ -30,7 +30,12 @@ const exposition =
  * written: one call of several produces a value the reply is assembled from.
  */
 export async function shape(context: Context, message: OutgoingMessage): Promise<void> {
-  for (const transform of context.pipelines.response) await transform(message)
+  for (const transform of context.pipelines.response) {
+    const pending = transform(message)
+
+    // the transforms are synchronous as a rule, and awaiting one that is not still makes a promise
+    if (pending instanceof Promise) await pending
+  }
 }
 
 export async function write(
@@ -48,6 +53,9 @@ export async function write(
 
   if (response.destroyed) {
     console.warn('Request destroyed prematurely', { path: context.url.pathname })
+
+    // nobody reads it now, and its `error` — a reply stream's idle timeout — would be uncaught
+    if (message.body instanceof Readable) message.body.destroy()
 
     return
   }
@@ -99,13 +107,11 @@ function send(
     return
   }
 
+  if (context.encoder === null) throw new NotAcceptable()
+
   const encoded = Encoded.is(message.body)
-
-  // what is already bytes carries the type it is in, and needs nothing negotiated to write it
-  if (!encoded && context.encoder === null) throw new NotAcceptable()
-
-  const buf = encoded ? message.body.bytes : context.encoder!.encode(message.body)
-  const type = encoded ? message.body.type : context.encoder!.type
+  const buf = encoded ? message.body.bytes : context.encoder.encode(message.body)
+  const type = encoded ? message.body.type : context.encoder.type
 
   const validation = message.validate?.(buf)
 
@@ -163,7 +169,7 @@ export function multipart(
 
   response.setHeader('content-type', `${encoder.multipart}; boundary=${BOUNDARY}`)
 
-  return new Framing(message.body as Readable, encoder, context.signal)
+  return new Framing(message.body as Readable, encoder, context)
 }
 
 /**
@@ -175,28 +181,36 @@ export function multipart(
  *
  * Aborted, it ends with `FIN` instead of being cut: the gateway is stopping, and the reader is
  * told the stream is over rather than left to find out.
+ *
+ * A body that fails ends with `FIN` as well. The parts already written are a prefix of what the
+ * body would have yielded, which is what `FIN` promises a reader of a stream anyway, and a reply
+ * cut instead reaches the reader as a broken connection — through a proxy, a protocol error
+ * that the reader cannot tell from a network failure.
  */
 class Framing extends Readable {
   private readonly body: Readable
   private readonly parts: AsyncIterator<unknown>
   private readonly encoder: Format
   private readonly signal: AbortSignal
+  private readonly path: string | undefined
   private pulling = false
   private stopping = false
   private finished = false
 
-  public constructor(body: Readable, encoder: Format, signal: AbortSignal) {
+  public constructor(body: Readable, encoder: Format, context: Context) {
     super()
 
     this.body = body
     this.encoder = encoder
-    this.signal = signal
+    this.signal = context.signal
+    // a request without a URL is one a test made up
+    this.path = context.url?.pathname
     this.parts = body[Symbol.asyncIterator]()
 
     this.push(Buffer.concat([CUT, CRLF, encoder.encode('ACK'), CRLF, CUT]))
 
-    if (signal.aborted) this.stop()
-    else signal.addEventListener('abort', this.stop, { once: true })
+    if (this.signal.aborted) this.stop()
+    else this.signal.addEventListener('abort', this.stop, { once: true })
   }
 
   public override _read(): void {
@@ -222,15 +236,14 @@ class Framing extends Readable {
 
     try {
       result = await this.parts.next()
-    } catch (error) {
+    } catch (exception) {
       // the body was destroyed by `stop`, and that is not an error of the stream
-      if (this.stopping) {
-        this.finish()
+      if (!this.stopping)
+        console.warn('Message stream error', { path: this.path, exception })
 
-        return
-      }
+      this.finish()
 
-      throw error
+      return
     } finally {
       this.pulling = false
     }

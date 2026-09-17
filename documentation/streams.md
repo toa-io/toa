@@ -125,7 +125,6 @@ caller's stream is destroyed. A reply stream that ends is one that was written t
 | ------------- | ----------------------------------------------------------------- |
 | the reply     | the operation answered                                            |
 | `Unreachable` | no replica took it: none is running, or none can be dialled       |
-| an exception  | the operation raised one, as it does for any call                 |
 
 `Unreachable` is transient, and a call that ends in it did not run. Repeating it means writing the
 payload again, which is the caller's to do or to decline.

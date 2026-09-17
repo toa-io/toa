@@ -5,7 +5,7 @@ import * as http2 from 'node:http2'
 import { once } from 'node:events'
 import { setTimeout } from 'node:timers/promises'
 import { console, current, decide, decode, run, type SpanContext } from 'openspan'
-import { Connector, Encoded } from '@toa.io/core'
+import { Connector } from '@toa.io/core'
 import * as measurements from '../measurements.ts'
 import { type OutgoingMessage, write } from './messages.ts'
 import { ClientError, Exception } from './exceptions.ts'
@@ -301,105 +301,96 @@ export class Server extends Connector {
         // the span carries this object, and the tree fills its route in once it has matched
         context.labels = measure.labels
 
-        await this.process!(context)
-          .then(this.success(context, response))
-          .catch(this.fail(context, response))
-          .finally(() => request.removeAllListeners('error'))
+        // a failure to write the answer is answered as a failure to produce it
+        try {
+          await this.success(context, response, await this.process!(context))
+        } catch (exception) {
+          await this.fail(context, response, exception as Error)
+        } finally {
+          request.removeAllListeners('error')
+        }
       }
     )
   }
 
-  private success(context: Context, response: ServerResponse) {
-    return async (message: OutgoingMessage) => {
-      let status = message.status
+  private async success(
+    context: Context,
+    response: ServerResponse,
+    message: OutgoingMessage
+  ): Promise<void> {
+    let status = message.status
 
-      if (status === undefined)
-        if (message.body === null) status = 404
-        else if (context.request.method === 'POST') status = 201
-        else if (message.body === undefined && context.request.method !== 'HEAD')
-          status = 204
-        else status = 200
+    if (status === undefined)
+      if (message.body === null) status = 404
+      else if (context.request.method === 'POST') status = 201
+      else if (message.body === undefined && context.request.method !== 'HEAD')
+        status = 204
+      else status = 200
 
-      message.status = status
+    message.status = status
+
+    measurements.answered(context.labels, status)
+
+    await write(context, response, message)
+  }
+
+  private async fail(
+    context: Context,
+    response: ServerResponse,
+    exception: Error
+  ): Promise<void> {
+    // nobody is waiting for the answer: the connection is gone, or the gateway is stopping
+    if (context.signal.aborted) {
+      console.debug('Request aborted', { path: context.url.pathname })
+
+      return
+    }
+
+    try {
+      // Over HTTP/2 the reply is followed by RST_STREAM(NO_ERROR), which tells the client
+      // to stop sending without discarding the response — so the body is never read.
+      if (!context.request.complete && this.properties.protocol === 'h1')
+        await adam(context.request)
+
+      const status = exception instanceof Exception ? exception.status : 500
+      const span = current()
 
       measurements.answered(context.labels, status)
 
-      await write(context, response, message)
-    }
-  }
+      // https://opentelemetry.io/docs/specs/semconv/http/http-spans/#status
+      if (status >= 500 && span !== undefined) span.status = 'error'
 
-  private fail(context: Context, response: ServerResponse) {
-    return async (exception: Error) => {
-      // nobody is waiting for the answer: the connection is gone, or the gateway is stopping
-      if (context.signal.aborted) {
-        console.debug('Request aborted', { path: context.url.pathname })
+      if (!response.writableEnded) {
+        response.statusCode = status
 
-        return
+        const message: OutgoingMessage = { status: response.statusCode }
+
+        // eslint-disable-next-line max-depth
+        if (exception instanceof Exception && exception.headers !== undefined)
+          message.headers = exception.headers
+
+        // eslint-disable-next-line max-depth
+        if (context.encoder === null) message.body = undefined
+        else if (exception instanceof ClientError || this.properties.debug)
+          message.body =
+            exception instanceof Exception
+              ? exception.body
+              : ((this.properties.debug && exception.stack) ?? exception.message)
+
+        await write(context, response, message)
       }
+    } catch (final) {
+      console.error('Error in error handler', final)
 
-      try {
-        // Over HTTP/2 the reply is followed by RST_STREAM(NO_ERROR), which tells the client
-        // to stop sending without discarding the response — so the body is never read.
-        if (!context.request.complete && this.properties.protocol === 'h1')
-          await adam(context.request)
-
-        const status = exception instanceof Exception ? exception.status : 500
-        const span = current()
-
-        measurements.answered(context.labels, status)
-
-        // https://opentelemetry.io/docs/specs/semconv/http/http-spans/#status
-        if (status >= 500 && span !== undefined) span.status = 'error'
-
-        if (!response.writableEnded) {
-          response.statusCode = status
-
-          const message: OutgoingMessage = { status: response.statusCode }
-
-          // eslint-disable-next-line max-depth
-          if (exception instanceof Exception && exception.headers !== undefined)
-            message.headers = exception.headers
-
-          // eslint-disable-next-line max-depth
-          if (context.encoder === null) message.body = plain(exception)
-          else if (exception instanceof ClientError || this.properties.debug)
-            message.body =
-              exception instanceof Exception
-                ? exception.body
-                : ((this.properties.debug && exception.stack) ?? exception.message)
-
-          await write(context, response, message)
+      if (!response.writableEnded)
+        try {
+          response.writeHead(500).end()
+        } catch {
+          // Nothing more we can do
         }
-      } catch (final) {
-        console.error('Error in error handler', final)
-
-        if (!response.writableEnded)
-          try {
-            response.writeHead(500).end()
-          } catch {
-            // Nothing more we can do
-          }
-      }
     }
   }
 }
-
-/**
- * What a client is told where nothing it accepts is a format the gateway writes — a route that
- * answers bytes has an encoder for none of them. A refusal that names a limit is worth more than
- * the status on its own, and text is what is left to say it in.
- */
-function plain(exception: unknown): Encoded | undefined {
-  if (!(exception instanceof ClientError)) return undefined
-
-  const body: unknown = exception.body
-
-  if (typeof body !== 'string') return undefined
-
-  return new Encoded(Buffer.from(body), TEXT)
-}
-
-const TEXT = 'text/plain; charset=utf-8'
 
 function instantiate(protocol: Protocol): http.Server | http2.Http2Server {
   if (protocol === 'h1') return http.createServer()
