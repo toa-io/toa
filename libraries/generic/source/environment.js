@@ -42,6 +42,8 @@ export const environment = {
    * @param {string} value
    */
   set(name, value) {
+    if (name === SUFFIX) forget()
+
     if (!own(name)) {
       process.env[name] = value
 
@@ -58,6 +60,8 @@ export const environment = {
    * @param {string} name
    */
   delete(name) {
+    if (name === SUFFIX) forget()
+
     delete store[name]
     delete process.env[name]
   },
@@ -84,9 +88,41 @@ export const environment = {
     for (const [name, value] of Object.entries(record)) {
       if (environment.has(name)) continue
 
+      // a `.env` is read as the process boots, so what it says is the suffix the process has
+      if (name === SUFFIX) forget()
+
       if (own(name)) store[name] = value
       else process.env[name] = value
     }
+  },
+
+  /**
+   * `TOA_SUFFIX`, as it was the first time it was asked for.
+   *
+   * A process names what it keeps on shared infrastructure at different moments — a connector
+   * when it is made, a broadcast when it is sent — so a suffix that changed while it ran would
+   * split it across two scopes. And a process that starts others sets `process.env.TOA_SUFFIX`
+   * for them, which must not move it. The boot asks for it once `.env` is loaded, and it is read
+   * again only where it is `set` or deleted here — which is how a test changes it.
+   *
+   * @returns {string | undefined}
+   */
+  suffix() {
+    if (!(SUFFIX in taken)) taken[SUFFIX] = read()
+
+    return taken[SUFFIX]
+  },
+
+  /**
+   * What this process names its database, its keys and — under a suffix — its exchanges and
+   * queues after: the context, followed by the suffix with nothing between them.
+   *
+   * @returns {string}
+   */
+  scope() {
+    const context = environment.get('TOA_CONTEXT') ?? development()
+
+    return context + (environment.suffix() ?? '')
   }
 }
 
@@ -98,7 +134,38 @@ const own = (name) => name.startsWith(PREFIX)
 
 const PREFIX = 'TOA_'
 
+const SUFFIX = 'TOA_SUFFIX'
+
+/** what a suffix may hold: it is a part of a database name, of an exchange's and of a key */
+const NAME = /^[a-zA-Z0-9-]+$/
+
+/**
+ * @returns {string | undefined}
+ */
+function read() {
+  const value = environment.get(SUFFIX)
+
+  if (value !== undefined && !NAME.test(value))
+    throw new Error(
+      `Environment variable ${SUFFIX} may hold letters, digits and hyphens, '${value}' given`
+    )
+
+  return value
+}
+
+function forget() {
+  delete taken[SUFFIX]
+}
+
+/** @returns {string} */
+function development() {
+  if (environment.get('TOA_DEV') === '1') return 'toa-dev'
+
+  throw new Error('Environment variable TOA_CONTEXT is not defined')
+}
+
 const SHARED = Symbol.for('toa.environment')
+const TAKEN = Symbol.for('toa.environment.taken')
 
 /**
  * One store for the process, whatever copy of this package reads it. A service image
@@ -113,5 +180,13 @@ const SHARED = Symbol.for('toa.environment')
  * @type {Record<string, string>}
  */
 const store = (globalThis[SHARED] ??= {})
+
+/**
+ * What has been read once and is kept, shared by every copy of this package for the reason the
+ * store is.
+ *
+ * @type {Record<string, string | undefined>}
+ */
+const taken = (globalThis[TAKEN] ??= {})
 
 environment.absorb()

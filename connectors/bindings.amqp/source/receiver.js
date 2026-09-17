@@ -1,6 +1,7 @@
 import { Connector, deliveries } from '@toa.io/core'
 import { console } from 'openspan'
 
+import { scoped } from './queues.js'
 import { refuse } from './verdict.js'
 
 export class Receiver extends Connector {
@@ -25,7 +26,11 @@ export class Receiver extends Connector {
   constructor(comm, label, group, receiver) {
     super()
 
-    const [name, type] = label.split(':').reverse()
+    const [declared, type] = label.split(':').reverse()
+
+    // a label arrives as it was declared — by a manifest, or by an extension — and not through
+    // the names the rest of this binding makes, so it is scoped here
+    const name = scoped(declared)
 
     if (type === 'queue') this.#queue = name
     else this.#exchange = name

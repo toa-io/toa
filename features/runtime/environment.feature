@@ -84,3 +84,37 @@ Feature: The runtime's environment is not a component's
       """yaml
       (unset)
       """
+
+  # A process sets what the processes it starts are given; its own names stay what it booted with.
+  Scenario: The suffix is read as the process boots
+    Given an environment variable `TOA_SUFFIX` is set to "-boot"
+    And the `mongo.one` database in "toa-dev-boot" is empty
+    And the `mongo.once` database in "toa-dev-boot" is empty
+    And I compose `mongo.one` component
+    And `TOA_SUFFIX` is set to "-later" in `process.env`
+    And I compose `mongo.once` component
+    When I call `mongo.one.transit` with:
+      """yaml
+      input:
+        foo: 1
+        bar: boot
+      """
+    And I call `mongo.once.plain` with:
+      """yaml
+      input:
+        foo: 2
+        bar: later
+      """
+    Then the `mongo.one` collection in "toa-dev-boot" holds:
+      | foo | bar  |
+      | 1   | boot |
+    And the `mongo.once` collection in "toa-dev-boot" holds:
+      | foo | bar   |
+      | 2   | later |
+
+  Scenario: A suffix that is not a name is refused
+    Given an environment variable `TOA_SUFFIX` is set to "copy/1"
+    Then I compose `echo.beacon` component and it fails with a message containing:
+      """
+      TOA_SUFFIX
+      """

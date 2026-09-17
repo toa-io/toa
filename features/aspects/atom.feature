@@ -81,3 +81,13 @@ Feature: Atom aspect
       """
       Atomicity takes an odd number of addresses, 2 given.
       """
+
+  # A replica registers under its group once an interval, so the key is there while it runs.
+  Scenario: Keys begin with the context
+    Given I boot `atom` component
+    Then Redis holds a key matching "toa-dev:atom:default.atom:slots:*"
+
+  Scenario: Keys begin with the context and the suffix
+    Given an environment variable `TOA_SUFFIX` is set to "-copy"
+    And I boot `atom` component
+    Then Redis holds a key matching "toa-dev-copy:atom:default.atom:slots:*"
