@@ -5,7 +5,7 @@ import * as http2 from 'node:http2'
 import { once } from 'node:events'
 import { setTimeout } from 'node:timers/promises'
 import { console, current, decide, decode, run, type SpanContext } from 'openspan'
-import { Connector } from '@toa.io/core'
+import { Connector, Encoded } from '@toa.io/core'
 import * as measurements from '../measurements.ts'
 import { type OutgoingMessage, write } from './messages.ts'
 import { ClientError, Exception } from './exceptions.ts'
@@ -361,7 +361,7 @@ export class Server extends Connector {
             message.headers = exception.headers
 
           // eslint-disable-next-line max-depth
-          if (context.encoder === null) message.body = undefined
+          if (context.encoder === null) message.body = plain(exception)
           else if (exception instanceof ClientError || this.properties.debug)
             message.body =
               exception instanceof Exception
@@ -383,6 +383,23 @@ export class Server extends Connector {
     }
   }
 }
+
+/**
+ * What a client is told where nothing it accepts is a format the gateway writes — a route that
+ * answers bytes has an encoder for none of them. A refusal that names a limit is worth more than
+ * the status on its own, and text is what is left to say it in.
+ */
+function plain(exception: unknown): Encoded | undefined {
+  if (!(exception instanceof ClientError)) return undefined
+
+  const body: unknown = exception.body
+
+  if (typeof body !== 'string') return undefined
+
+  return new Encoded(Buffer.from(body), TEXT)
+}
+
+const TEXT = 'text/plain; charset=utf-8'
 
 function instantiate(protocol: Protocol): http.Server | http2.Http2Server {
   if (protocol === 'h1') return http.createServer()

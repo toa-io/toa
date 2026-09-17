@@ -99,11 +99,13 @@ function send(
     return
   }
 
-  if (context.encoder === null) throw new NotAcceptable()
-
   const encoded = Encoded.is(message.body)
-  const buf = encoded ? message.body.bytes : context.encoder.encode(message.body)
-  const type = encoded ? message.body.type : context.encoder.type
+
+  // what is already bytes carries the type it is in, and needs nothing negotiated to write it
+  if (!encoded && context.encoder === null) throw new NotAcceptable()
+
+  const buf = encoded ? message.body.bytes : context.encoder!.encode(message.body)
+  const type = encoded ? message.body.type : context.encoder!.type
 
   const validation = message.validate?.(buf)
 

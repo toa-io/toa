@@ -157,3 +157,89 @@ Feature: Streamed request body
       """
       422 Unprocessable Entity
       """
+
+  Scenario: A request that states no media type is answered in the first the route produces
+    Given the `streams` is running with the following manifest:
+      """yaml
+      exposition:
+        /:
+          io:output: true
+          POST:
+            map:stream:
+              property: content
+              produces: [video/mp4, image/jpeg]
+            endpoint: answer
+      """
+    When the following request is received:
+      """
+      POST /streams/ HTTP/1.1
+      host: nex.toa.io
+      content-type: application/octet-stream
+
+      hello
+      """
+    Then the following reply is sent:
+      """
+      201 Created
+      content-type: video/mp4
+
+      hello
+      """
+
+  Scenario: A client that takes either is answered in the one it asked for first
+    Given the `streams` is running with the following manifest:
+      """yaml
+      exposition:
+        /:
+          io:output: true
+          POST:
+            map:stream:
+              property: content
+              produces: [video/mp4, image/jpeg]
+            endpoint: answer
+      """
+    When the following request is received:
+      """
+      POST /streams/ HTTP/1.1
+      host: nex.toa.io
+      content-type: application/octet-stream
+      accept: image/jpeg, video/mp4
+
+      hello
+      """
+    Then the following reply is sent:
+      """
+      201 Created
+      content-type: image/jpeg
+
+      hello
+      """
+
+  Scenario: A refusal says what the limit is, whatever the client accepts
+    Given the `streams` is running with the following manifest:
+      """yaml
+      exposition:
+        /:
+          POST:
+            map:stream:
+              property: content
+              produces: [video/mp4]
+              limit: 2b
+            endpoint: answer
+      """
+    When the following request is received:
+      """
+      POST /streams/ HTTP/1.1
+      host: nex.toa.io
+      content-type: application/octet-stream
+      accept: video/mp4
+
+      hello
+      """
+    Then the following reply is sent:
+      """
+      413 Request Entity Too Large
+      content-type: text/plain
+
+      Size limit is 2b
+      """

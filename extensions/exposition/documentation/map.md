@@ -108,8 +108,15 @@ What a route takes and what it answers are stated beside it:
   Absent, any media type is accepted.
 - `produces` is what this route may answer. The request's `accept` is resolved against it before the
   call, and the operation is handed that one media type as `accept`; a client asking for anything
-  else is answered `406`, and the operation does not run. A request that asks for nothing in
-  particular is answered `application/octet-stream`.
+  else is answered `406`, and the operation does not run.
+
+  **Everything it names is one answer in another encoding** — a picture as `image/webp` or
+  `image/jpeg`, a render as `application/pdf` or `image/png` — because what a client accepts chooses
+  an encoding and not an operation. A route that would answer two different things answers them at
+  two paths.
+
+  Where a client names several of them, the order it named them in decides; where it names none, or
+  takes anything, the route's own order does.
 - `limit` is the largest body the route takes, as a number of bytes or with a unit — see
   [stream size limit](octets.md#stream-size-limit). Past it, `413`. The default is `64MiB`.
 

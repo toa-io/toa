@@ -7,7 +7,6 @@ import type { Readable } from 'node:stream'
 import type { Input } from '../../io.ts'
 
 const LIMIT = '64MiB'
-const BYTES = 'application/octet-stream'
 
 /**
  * Hands the request body to the operation as the stream it takes, instead of reading it.
@@ -57,19 +56,15 @@ export class StreamMapping extends Mapping<Options> {
   /**
    * One media type, or none: a client's `accept` is a list with quality values, and what an
    * operation can answer in is one of them. What is resolved here is what the response carries.
+   *
+   * A client that states nothing, or takes anything, takes what this route answers best, which is
+   * the first it states; where a client names several of them, the order it named them in decides.
    */
   private resolve(context: Input): string | undefined {
     if (this.produces === undefined) return undefined
 
-    const header = context.request.headers.accept
-
-    if (header === undefined || header === '*/*') {
-      context.answers = BYTES
-
-      return BYTES
-    }
-
-    const negotiator = new Negotiator({ headers: { accept: header } })
+    const accept = context.request.headers.accept
+    const negotiator = new Negotiator({ headers: { accept } })
     const [answer] = negotiator.mediaTypes(this.produces)
 
     if (answer === undefined) throw new http.NotAcceptable()

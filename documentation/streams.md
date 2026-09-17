@@ -151,10 +151,12 @@ component as it arrives:
 - `property` is the input property the operation named. `map:stream: source` is the whole directive
   where nothing else is stated.
 - `accept` is what a client may send; anything else answers `415`. Absent, anything is accepted.
-- `produces` is what this route may answer. The client's `accept` is resolved against it before the
-  call and the operation is handed that one media type at `source.accept`; a client asking for
-  something else answers `406`, and nothing runs. A request that asks for nothing in particular is
-  answered `application/octet-stream`.
+- `produces` is what this route may answer, each entry one answer in another encoding: what a client
+  accepts chooses an encoding, not an operation, so a route that would answer two different things
+  answers them at two paths. The client's `accept` is resolved against the list before the call and
+  the operation is handed that one media type at `source.accept`; a client asking for something else
+  answers `406`, and nothing runs. Where a client names several, the order it named them in decides;
+  where it names none, the route's own order does.
 - `limit` is the largest body this route takes; past it, `413`. The default is `64MiB`.
 
 The operation answers in the type it was handed, and a byte stream it answers is served under that
