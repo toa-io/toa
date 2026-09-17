@@ -1,7 +1,7 @@
-import { Control } from './Control.ts'
+import { Control, type Resolution } from './Control.ts'
 
 export class Exact extends Control {
-  protected override resolve(): string {
-    return this.value
+  protected override resolve(): Resolution {
+    return { control: this.value, vary: false }
   }
 }
