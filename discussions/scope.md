@@ -116,8 +116,8 @@ AI agents working on an application each run a copy of it locally, and each copy
 processes of the same context. Giving every copy a database, a pair of brokers and a Redis of its own
 is what a suffix makes unnecessary.
 
-Production had the Redis half of this already: every application of a cluster is given the same
-Redis address, and its stash and atomicity keys carried nothing of the application.
+The Redis half of it was a defect already: applications deployed side by side are commonly given one
+Redis address, and their stash and atomicity keys carried nothing of the context they belonged to.
 
 ## What happens today
 
