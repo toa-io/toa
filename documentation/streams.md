@@ -18,8 +18,9 @@ render, an export — and it pays for that with everything an ordinary call is g
   hundred calls in flight are a hundred sockets at each end, and calls made one after another share
   none of them: nothing is pooled, because a connection kept for a second call sends it to the same
   replica as the first, and so does every call after that.
-- **Nothing queues it.** A component with no replica running answers `Unreachable`, where an
-  ordinary call would have waited for one to come back.
+- **Nothing queues it.** A call to a component with no replica running fails, where an ordinary
+  call would have waited for one to come back. A call that fails this way did not run, and is made
+  again only by whoever still has the payload to write.
 - **Nothing retries it.** A redelivery would carry an empty body.
 - **Nothing balances it.** Each call is routed on its own, at random, so a few calls in flight land
   where they land.
@@ -119,16 +120,6 @@ caller as a `Readable` of what it yielded: bytes where it yielded Buffers, and v
 exception is raised on the caller's stream; where the process serving it goes away mid-reply, the
 caller's stream is destroyed. A reply stream that ends is one that was written to its end.
 
-## What a call ends in
-
-| outcome       | what it means for the caller                                      |
-| ------------- | ----------------------------------------------------------------- |
-| the reply     | the operation answered                                            |
-| `Unreachable` | no replica took it: none is running, or none can be dialled       |
-
-`Unreachable` is transient, and a call that ends in it did not run. Repeating it means writing the
-payload again, which is the caller's to do or to decline.
-
 ## Over HTTP
 
 `map:stream` hands a request body to the operation instead of reading it, so an upload reaches a
@@ -165,9 +156,9 @@ A route may not carry `map:stream` and `map:buffer` at once — each of them tak
 
 ## Limits
 
-- **A streamed call reaches a replica that is running, or fails.** Nothing queues it, and a component
-  that is scaled to zero or is between deployments answers `Unreachable` where an ordinary call would
-  have waited.
+- **A streamed call reaches a replica that is running, or fails.** Nothing queues it, so a component
+  that is scaled to zero or is between deployments fails the call where an ordinary call would have
+  waited.
 - **Replicas do not take an even share of streamed calls.** Each call is routed on its own, at
   random.
 - **Declaring a stream on an operation that was ordinary** stops the queue it was served on being
