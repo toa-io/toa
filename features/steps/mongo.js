@@ -3,6 +3,79 @@ import { Given, Then, When } from '@cucumber/cucumber'
 import { MongoClient } from 'mongodb'
 
 Given(
+  'the {component} database in {string} is empty',
+  /**
+   * The database a scope names, where the one a step does not name is `toa-dev`.
+   *
+   * @param {string} id
+   * @param {string} database
+   */
+  async function (id, database) {
+    await using(
+      id,
+      async (collection, outbox, db, inbox) => {
+        await collection.deleteMany({})
+        await outbox.drop().catch(() => undefined)
+        await inbox.drop().catch(() => undefined)
+        await forget(db, collection)
+      },
+      database
+    )
+  }
+)
+
+Given(
+  'the {component} database in {string} contains:',
+  /**
+   * @param {string} id
+   * @param {string} database
+   * @param {import('@cucumber/cucumber').DataTable} table
+   */
+  async function (id, database, table) {
+    const documents = parse(table)
+
+    await using(
+      id,
+      async (collection, outbox, db, inbox) => {
+        await collection.deleteMany({})
+        await outbox.drop().catch(() => undefined)
+        await inbox.drop().catch(() => undefined)
+        await forget(db, collection)
+
+        if (documents.length > 0) await collection.insertMany(documents)
+      },
+      database
+    )
+  }
+)
+
+Then(
+  'the {component} collection in {string} holds:',
+  /**
+   * @param {string} id
+   * @param {string} database
+   * @param {import('@cucumber/cucumber').DataTable} table
+   */
+  async function (id, database, table) {
+    await using(
+      id,
+      async (collection) => {
+        for (const document of parse(table)) {
+          const found = await collection.findOne(document)
+
+          assert.ok(
+            found !== null,
+            `no record matching ${JSON.stringify(document)} in '${database}', there is ` +
+              JSON.stringify(await collection.find().toArray())
+          )
+        }
+      },
+      database
+    )
+  }
+)
+
+Given(
   'the {component} database contains:',
   /**
    * @param {string} id
@@ -343,14 +416,14 @@ const TIMESTAMPS = ['CREATED', 'UPDATED', 'DELETED']
 /** a moment written as ISO 8601 is stored as the date it names */
 const ISO = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?Z$/
 
-async function using(id, fn) {
+async function using(id, fn, database = DATABASE) {
   const client = new MongoClient(URL)
 
   await client.connect()
 
   const [name, namespace = 'default'] = id.split('.').reverse()
   const collname = `${namespace}_${name}`.toLowerCase()
-  const db = client.db('toa-dev')
+  const db = client.db(database)
 
   try {
     await fn(
@@ -365,3 +438,6 @@ async function using(id, fn) {
 }
 
 const URL = 'mongodb://developer:secret@localhost:31020'
+
+/** what a process under `TOA_DEV=1` with no context and no suffix writes to */
+const DATABASE = 'toa-dev'

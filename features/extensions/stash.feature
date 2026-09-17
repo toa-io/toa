@@ -52,6 +52,23 @@ Feature: Stash extension
       1
       """
 
+  Scenario: Keys begin with the context
+    Given I boot `stash` component
+    When I invoke `set` with:
+      """yaml
+      input: scoped
+      """
+    Then Redis holds "scoped" under "toa-dev:default:stash:key"
+
+  Scenario: Keys begin with the context and the suffix
+    Given an environment variable `TOA_SUFFIX` is set to "-copy"
+    And I boot `stash` component
+    When I invoke `set` with:
+      """yaml
+      input: copied
+      """
+    Then Redis holds "copied" under "toa-dev-copy:default:stash:key"
+
   Scenario: Deployment
     Given I have a component `stash`
     And I have a context with:
