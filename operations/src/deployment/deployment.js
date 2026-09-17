@@ -24,6 +24,17 @@ export class Deployment {
   }
 
   async export(target) {
+    // a context is read for a local run as well — `toa env` builds one of these and asks it
+    // for variables — and such a context needs no chart and states no version. So this is
+    // asked for where a chart is written, and not where a context is read. Without it Helm
+    // answers `chart.metadata.version is required`, naming nothing, by which point a deploy
+    // has built and pushed every image.
+    if (this.#chart.version === undefined)
+      throw new Error(
+        `Context '${this.#chart.name}' declares no version, which is what its chart is ` +
+          'versioned by. Declare it in context.toa.yaml.'
+      )
+
     const chart = dump(this.#chart)
     const values = dump(this.#values)
 

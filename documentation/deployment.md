@@ -50,8 +50,15 @@ $ toa deploy production --wait
 ## What has to be installed
 
 `toa deploy`, `toa build`, `toa push`, `toa env`, `toa export` and `toa conceal` need
-`@toa.io/operations` beside the CLI; a container that runs a composition cannot deploy one. A
-machine that only deploys needs no runtime and no extension:
+`@toa.io/operations` beside the CLI. The runtime does not depend on it, so an application that
+deploys lists it itself:
+
+```shell
+$ npm i -D @toa.io/runtime @toa.io/operations
+```
+
+A machine that only deploys needs neither the runtime nor an extension — what they declare is read
+from `@toa.io/definitions`, which the CLI brings:
 
 ```shell
 $ npm i @toa.io/cli @toa.io/operations
@@ -112,9 +119,14 @@ evicted@production:
     - todos.stats
 ```
 
-The name may be a chain, `primary:fallback:…`. Each key takes the first of those that has an `@`
-suffix, and the unsuffixed key if none of them does; the running environment is the first name, and
-the chain itself is not stored. `toa env staging:production` writes `TOA_ENV=staging`.
+```shell
+$ toa deploy production
+```
+
+**The name a command is given may be a chain.** It is written `staging:production` on the command
+line, and never in the file: each key takes the first of those names it carries an `@` suffix for,
+and the unsuffixed key where it carries none of them. What the processes run as is the first name,
+so `toa env staging:production` writes `TOA_ENV=staging`. The chain itself is not stored.
 
 `toa deploy` defaults to `default`, and `toa env` to `local`. An environment is named the same way
 to every command, so the one a deploy read is the one `toa export secrets` reads.
@@ -129,7 +141,7 @@ such a tag as content and deletes it.
 | key               | what it sets                                                  |
 | ----------------- | ------------------------------------------------------------- |
 | `name`            | the release, the image repository, and the infrastructure scope |
-| `version`         | the chart's version; a chart without one is refused by Helm    |
+| `version`         | the chart's version; a deploy without one is refused           |
 | `description`     | the chart's description                                        |
 | `runtime`         | the version deployed, and the npm registry a build reads       |
 | `registry`        | where images go, and how they are built                        |
@@ -141,7 +153,14 @@ such a tag as content and deletes it.
 | `annotations`     | what the extensions and connectors are given, or a shortcut of one |
 | `atomicity`, `outbox`, `inbox`, `addressed`, `events` | runtime settings, carried as variables |
 
-`name` and `registry` are required, and an unknown key is refused.
+`name` and `registry` are required, and an unknown key is refused. `version` is required of a
+context that is deployed and of no other — the same file is read for a local run, which needs no
+chart:
+
+```
+Context 'todos' declares no version, which is what its chart is versioned by. Declare it in
+context.toa.yaml.
+```
 
 ### Compositions
 
@@ -471,7 +490,7 @@ exposition:
     example: api.example.com
 ```
 
-| shortcut         | what it configures                                         |
+| shortcut         | what it configures                                          |
 | ---------------- | ---------------------------------------------------------- |
 | `amqp`           | [the broker](/connectors/bindings.amqp)                    |
 | `mongodb`        | [the database](/connectors/storages.mongodb)               |
@@ -485,9 +504,83 @@ exposition:
 | `cadence`        | [calls on their own time](/extensions/cadence)             |
 | `convergence`    | [regions converging on one state](/extensions/convergence) |
 
-An address is written without credentials, and resolves by the deepest match — a component, then
-its namespace, then the default `.` key. A storage that mounts a volume names the claim, and the
-pods of the components that declare that storage mount it.
+A storage that mounts a volume names the claim, and the pods of the components that declare that
+storage mount it.
+
+### Addresses
+
+An address is given for everything, for a namespace, or for one component. The keys are read as
+component ids, `<namespace>.<name>`, and **a component takes the longest key that matches it**:
+
+```yaml
+# context.toa.yaml
+
+mongodb:
+  .: mongodb://mongo.example.com                # everything
+  todos: mongodb://todos.mongo.example.com      # every component of `todos`
+  todos.stats: mongodb://analytics.example.com  # `todos.stats` alone
+```
+
+| the component      | takes                     |
+| ------------------ | ------------------------- |
+| `todos.stats`      | `analytics.example.com`   |
+| `todos.tasks`      | `todos.mongo.example.com` |
+| `billing.invoices` | `mongo.example.com`       |
+
+`.` is the default, and a declaration that is nothing else is written as the address alone:
+`mongodb: mongodb://mongo.example.com` is that same map with one key. A component that matches no
+key where there is no `.` is refused, naming the component.
+
+**A component of no namespace is in `default`.** Its id is `default.<name>`, so that is what a key
+has to name it by — `default` for all of them, `default.tasks` for one.
+
+**A key may hold several addresses**, as a list or as a
+[shard range](/libraries/generic/readme.md#shards), and every component that resolves to it is
+given all of them:
+
+```yaml
+stash:
+  .:
+    - redis://redis0.example.com
+    - redis://redis{1-3}.example.com
+```
+
+Each component is given what it resolved to as a variable of its own —
+`TOA_MONGODB_TODOS_STATS` — so a pod carries the addresses its components use and no others.
+
+Some packages read more than one pointer, and each is a section: `amqp.context` is the broker
+this context runs on, and `amqp.sources` are the brokers its foreign events come from, keyed by
+source rather than by component. `amqp: <address>` is `amqp.context` written short.
+
+### Credentials
+
+**An address carries no credentials**, and one that carries them is refused:
+
+```
+Pointer URI 'mongodb://user:pass@mongo.example.com' must not contain credentials.
+```
+
+They are a secret instead, one per key and not per component: every component that resolved to a
+key shares it, and so does every address under that key. The name is the pointer's, then the key,
+with dots turned into dashes:
+
+| the key       | the secret                |
+| ------------- | ------------------------- |
+| `.`           | `toa-mongodb.default`     |
+| `todos`       | `toa-mongodb-todos`       |
+| `todos.stats` | `toa-mongodb-todos-stats` |
+
+```shell
+$ toa conceal mongodb-todos-stats username=todos password=secret
+```
+
+There is no need to work a name out: `toa export secrets` prints every one a context needs. An
+address on a protocol that carries no credentials — `redis`, `http`, `https` — has no secret at
+all.
+
+See [pointer](/libraries/pointer/readme.md) for the rest of it.
+
+### Runtime settings
 
 Beside them the context sets what the runtime itself does, all of it carried to every workload as
 variables: [`atomicity`](/connectors/atomicity), [`outbox`](outbox.md), [`inbox`](inbox.md),
@@ -520,22 +613,23 @@ evicted component is run nowhere, as everywhere else.
 ## Several processes of one context on shared infrastructure
 
 Every process of a context names what it keeps after its scope: the context's name, followed by
-`TOA_SUFFIX` where one is given. Processes given different suffixes run beside each other against one
-MongoDB, one pair of brokers on one virtual host and one Redis, and see nothing of each other — a
-local copy of an application started next to another one, say.
+`TOA_SUFFIX` where one is given. Processes given different suffixes run beside each other against
+one MongoDB, one pair of brokers on one virtual host and one Redis, and see nothing of each
+other — a second copy of a deployment started next to the first, say.
 
 ```shell
-$ TOA_SUFFIX=-agent-0a1b2c3d4e5f toa compose ./components/*
+$ TOA_SUFFIX=-2 toa compose ./components/*
 ```
 
-| where    | without a suffix                         | with one                                          |
-| -------- | ---------------------------------------- | ------------------------------------------------- |
-| MongoDB  | the database `app`                       | the database `app-agent-0a1b2c3d4e5f`             |
-| AMQP     | `<namespace>.<component>.<endpoint>`, …  | `app-agent-0a1b2c3d4e5f.<namespace>.<component>.<endpoint>`, … |
-| Redis    | `app:<namespace>:<component>:<key>`, …   | `app-agent-0a1b2c3d4e5f:<namespace>:<component>:<key>`, … |
+| where   | without a suffix                             | with one                                                  |
+| ------- | -------------------------------------------- | --------------------------------------------------------- |
+| MongoDB | the database `<context>`                     | the database `<context><suffix>`                          |
+| AMQP    | `<namespace>.<component>.<endpoint>`, …      | `<context><suffix>.<namespace>.<component>.<endpoint>`, … |
+| Redis   | `<context>:<namespace>:<component>:<key>`, … | `<context><suffix>:<namespace>:<component>:<key>`, …      |
 
 - **Nothing is put between the context and the suffix**, so a suffix begins with whatever separator
-  you want. `app` with `1a` and `app1` with `a` are one scope and share everything.
+  you want. A context and a suffix that concatenate to the same string are one scope and share
+  everything, whichever of the two each character came from.
 - **Letters, digits and hyphens.** A suffix holding anything else, or nothing, fails the boot.
 - **63 bytes in all.** A MongoDB database name is no longer than that, so a context and suffix that
   add up to more fail the boot of a component with storage.

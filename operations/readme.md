@@ -3,8 +3,8 @@
 ## Installing
 
 `toa deploy`, `toa build`, `toa push`, `toa env`, `toa export` and `toa conceal` need this package
-beside the CLI; the runtime does not carry it, and a container that runs a composition cannot
-deploy one. An application that deploys lists it with the runtime:
+beside the CLI. The runtime does not depend on it, so an application that deploys lists it with the
+runtime:
 
 ```shell
 $ npm i -D @toa.io/runtime @toa.io/operations
