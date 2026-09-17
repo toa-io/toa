@@ -58,6 +58,17 @@ Given(
 )
 
 Given(
+  'calls within this process go through a binding',
+  /**
+   * The loop answers a call to a component composed here before any binding is asked, so a
+   * scenario about what a binding carries takes it out of the way. Reset after the scenario.
+   */
+  function () {
+    globalThis.TOA_INTEGRATION_BINDINGS_LOOP_DISABLED = true
+  }
+)
+
+Given(
   'I run components:',
   /**
    * @param {import('@cucumber/cucumber').DataTable} data

@@ -18,6 +18,11 @@ export interface Explanation {
    * has to name one, and a call that names none is refused.
    */
   stateful?: boolean
+  /**
+   * The input property that carries a stream, where the operation takes one. Said, because a
+   * caller has to put one there, and a call that carries none is refused.
+   */
+  stream?: string
   input?: JSONSchema | null
   output?: JSONSchema | null
   errors?: Array<string | number>
@@ -44,7 +49,15 @@ export class Request extends Contract {
   public constructor(schema: Schema, definition: Definition, entity?: Entity) {
     super(schema)
 
-    for (const key of ['description', 'once', 'stateful', 'input', 'output', 'errors'] as const)
+    for (const key of [
+      'description',
+      'once',
+      'stateful',
+      'stream',
+      'input',
+      'output',
+      'errors'
+    ] as const)
       if (definition[key] !== undefined)
         (this.discovery as Record<string, unknown>)[key] = definition[key]
 
@@ -91,7 +104,10 @@ export class Request extends Contract {
 
     const required: string[] = []
 
-    if (definition.input !== undefined) {
+    if (definition.stream !== undefined) {
+      schema.properties.input = streamed(definition.input ?? { type: 'object' }, definition.stream)
+      required.push('input')
+    } else if (definition.input !== undefined) {
       schema.properties.input = definition.input
       required.push('input')
     } else schema.properties.input = { type: 'null' }
@@ -123,6 +139,19 @@ export class Request extends Contract {
 
     return schema
   }
+}
+
+/**
+ * The input of an operation that takes a stream: the input it declared, with the property that
+ * carries one admitted and required. What that property holds is described by nothing — a stream
+ * is no value with a schema — so what a caller is held to is that it is there.
+ */
+function streamed(input: JSONSchema, property: string): JSONSchema {
+  const properties = { ...input.properties, [property]: {} }
+  const required =
+    input.required === undefined ? [property] : [...(input.required as string[]), property]
+
+  return { ...input, properties, required }
 }
 
 /**

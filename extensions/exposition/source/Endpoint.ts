@@ -1,3 +1,4 @@
+import { Readable } from 'node:stream'
 import { entities } from '@toa.io/core'
 import { Mapping } from './Mapping.ts'
 import { take } from './Introspection.ts'
@@ -70,9 +71,18 @@ export class Endpoint implements RTD.Endpoint {
 
     const reply = await this.remote.invoke(this.endpoint, request)
 
+    // a body that outgrew what the route takes was cut, whatever the operation made of that
+    if (context.exceeded === true) throw new http.RequestEntityTooLarge()
+
     if (reply instanceof Error) throw new http.UnprocessableEntity(reply)
 
-    return { body: reply }
+    if (context.answers === undefined) return { body: reply }
+
+    // a route that states what it produces answers bytes, and a value is not one of those
+    if (!(reply instanceof Readable) || reply.readableObjectMode)
+      throw new http.UnprocessableEntity()
+
+    return { body: reply, headers: new Headers({ 'content-type': context.answers }) }
   }
 
   public selection(): Record<string, Schema> | null {

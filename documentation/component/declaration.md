@@ -187,6 +187,9 @@ An operation declared `stateful: true` is served by every process under an addre
 a call to it names the process it goes to. See
 [stateful operations](/documentation/stateful.md).
 
+An operation that declares `stream` takes one of its input properties as a stream, and reads it as
+its caller writes it. See [streamed input](/documentation/streams.md).
+
 ## Events
 
 An event is published where something consumes it: a receiver of another component of the context,

@@ -22,6 +22,7 @@
   "dependencies": {
     "@toa.io/atomicity": "1.0.0-alpha.311",
     "@toa.io/bindings.amqp": "1.0.0-alpha.311",
+    "@toa.io/bindings.http": "1.0.0-alpha.311",
     "@toa.io/bindings.loop": "1.0.0-alpha.311",
     "@toa.io/boot": "1.0.0-alpha.311",
     "@toa.io/bridges.bash": "1.0.0-alpha.311",

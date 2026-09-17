@@ -21,6 +21,7 @@ const SCOPE = '@toa.io/'
 /** Every package defined here, by its directory, which is its name within the scope. */
 export const DEFINED: ReadonlySet<string> = new Set([
   'bindings.amqp',
+  'bindings.http',
   'bindings.loop',
   'bridges.bash',
   'bridges.node',

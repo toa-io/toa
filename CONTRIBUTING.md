@@ -124,6 +124,8 @@ what a Toa checkout binds is conventional: the whole of it sits in `31000`-`3109
 | `31003` | configuration UI                              | `8003`         |
 | `31004` | exposition readiness probe                    | `8004`         |
 | `31005` | the mock IdP of the exposition suite          | —              |
+| `31006` | streamed calls to a component                 | `8005`         |
+| `31007` | streamed calls to a second component          | —              |
 | `31010` | RabbitMQ                                      | `5672`         |
 | `31011` | RabbitMQ management                           | `15672`        |
 | `31012` | RabbitMQ, the second broker a scenario starts | —              |

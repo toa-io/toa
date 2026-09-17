@@ -94,3 +94,27 @@ it('should set namespace and component', async () => {
   assert.strictEqual(GET.mapping?.namespace, namespace)
   assert.strictEqual(GET.mapping?.component, name)
 })
+
+it('should throw where a method maps a stream to an operation that takes none', async () => {
+  assert.throws(
+    () => manifest({ '/': { POST: { 'map:stream': 'content', endpoint: 'observe' } } }, mf),
+    /maps a stream, which the operation does not take/
+  )
+})
+
+it('should throw where a method maps both a stream and a buffer', async () => {
+  mf.operations.observe.stream = 'content'
+
+  assert.throws(
+    () =>
+      manifest(
+        {
+          '/': {
+            POST: { 'map:stream': 'content', 'map:buffer': 'body', endpoint: 'observe' }
+          }
+        },
+        mf
+      ),
+    /maps both a stream and a buffer/
+  )
+})
