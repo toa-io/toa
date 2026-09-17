@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/definitions",
-  "version": "1.0.0-alpha.308",
+  "version": "1.0.0-alpha.311",
   "type": "module",
   "description": "What Toa packages declare, read without running them",
   "author": "temich <tema.gurtovoy@gmail.com>",
@@ -30,9 +30,9 @@
     "!**/.env*"
   ],
   "dependencies": {
-    "@toa.io/generic": "1.0.0-alpha.304",
-    "@toa.io/pointer": "1.0.0-alpha.304",
-    "@toa.io/schemas": "1.0.0-alpha.304"
+    "@toa.io/generic": "1.0.0-alpha.311",
+    "@toa.io/pointer": "1.0.0-alpha.311",
+    "@toa.io/schemas": "1.0.0-alpha.311"
   },
   "scripts": {
     "transpile": "tsc",
@@ -44,7 +44,7 @@
     "./*": "./transpiled/*/index.js"
   },
   "devDependencies": {
-    "@toa.io/core": "1.0.0-alpha.308",
+    "@toa.io/core": "1.0.0-alpha.311",
     "openspan": "1.0.0-alpha.305",
     "oxc-parser": "0.149.0"
   },

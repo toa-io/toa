@@ -43,6 +43,9 @@ export class Gateway extends Connector {
   private stopped = false
   private resolveFirstMerge: (() => void) | null = null
 
+  /** How a call of several a request carries is routed, made once rather than for every request. */
+  private readonly routing: http.Processor = async (call) => await this.route(call)
+
   // eslint-disable-next-line max-params
   public constructor(
     broadcast: Broadcast,
@@ -86,13 +89,11 @@ export class Gateway extends Connector {
    * the path names.
    */
   private async endpoint(context: http.Context): Promise<http.OutgoingMessage> {
-    const route: http.Processor = async (call) => await this.route(call)
-
     if (this.dispatcher !== null && context.url.pathname === RPC)
-      return await this.dispatcher.dispatch(context, route)
+      return await this.dispatcher.dispatch(context, this.routing)
 
     if (this.mcp !== null && context.url.pathname === MCP)
-      return await this.mcp.process(context, route)
+      return await this.mcp.process(context, this.routing)
 
     // the page under this prefix is an interceptor's, and has already answered
     if (context.url.pathname === DISCOVERY || context.url.pathname === DISCOVERY + '/')

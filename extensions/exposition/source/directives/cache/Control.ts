@@ -3,8 +3,11 @@ import type { AuthenticatedContext, Directive } from './types.ts'
 
 export class Control implements Directive {
   protected readonly value: string
-  private control: string | null = null
-  private vary: boolean = false
+
+  // a route serves anonymous and authenticated requests alike, and what is set differs
+  // between the two, so each is resolved once and kept apart
+  private anonymous: Resolution | null = null
+  private authenticated: Resolution | null = null
 
   public constructor(value: string) {
     this.value = value
@@ -21,32 +24,37 @@ export class Control implements Directive {
   }
 
   public set(context: AuthenticatedContext, headers: Headers): void {
-    this.control ??= this.resolve(context)
-
     if (Control.disabled(headers)) return
 
-    headers.set('cache-control', this.control)
+    const resolution =
+      context.identity === null
+        ? (this.anonymous ??= this.resolve(context))
+        : (this.authenticated ??= this.resolve(context))
 
-    if (this.vary) headers.append('vary', 'authorization')
+    headers.set('cache-control', resolution.control)
+
+    if (resolution.vary) headers.append('vary', 'authorization')
   }
 
-  protected resolve(request: AuthenticatedContext): string {
-    if (request.identity === null) return this.value
+  protected resolve(request: AuthenticatedContext): Resolution {
+    if (request.identity === null) return { control: this.value, vary: false }
 
     const directives = mask(this.value)
+    const vary = (directives & PRIVATE) === PRIVATE
 
-    if ((directives & PRIVATE) === PRIVATE) this.vary = true
+    if ((directives & (PUBLIC | NO_CACHE)) === PUBLIC)
+      return { control: 'no-cache, ' + this.value, vary }
 
-    if ((directives & (PUBLIC | NO_CACHE)) === PUBLIC) return 'no-cache, ' + this.value
+    if ((directives & (PUBLIC | PRIVATE)) === 0)
+      return { control: 'private, ' + this.value, vary: true }
 
-    if ((directives & (PUBLIC | PRIVATE)) === 0) {
-      this.vary = true
-
-      return 'private, ' + this.value
-    }
-
-    return this.value
+    return { control: this.value, vary }
   }
+}
+
+export interface Resolution {
+  control: string
+  vary: boolean
 }
 
 function mask(value: string): number {

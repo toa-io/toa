@@ -10,6 +10,23 @@ Given('an environment variable {token} is set to:', function (name, yaml) {
   setEnv.call(this, name, JSON.stringify(value))
 })
 
+Given(
+  '{token} is set to {string} in `process.env`',
+  /**
+   * What a process does for the processes it starts, rather than what it was started with: the
+   * store is left alone, and restored after the scenario along with `process.env`.
+   *
+   * @param {string} name
+   * @param {string} value
+   * @this {toa.features.Context}
+   */
+  function (name, value) {
+    this.env.push([name, environment.get(name)])
+
+    process.env[name] = value
+  }
+)
+
 function setEnv(name, value) {
   // what it was, not that it was set: a scenario overriding one the suite relies on
   // must leave it as it found it

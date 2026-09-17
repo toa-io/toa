@@ -3,6 +3,28 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.311](https://github.com/toa-io/toa/compare/v1.0.0-alpha.310...v1.0.0-alpha.311) (2026-09-17)
+
+### Features
+
+* begin exchange and queue names with the scope under a suffix ([af3752d](https://github.com/toa-io/toa/commit/af3752d1fcb8a3b42d9071dfbdb3c4800590d3d5))
+
+
+# [1.0.0-alpha.310](https://github.com/toa-io/toa/compare/v1.0.0-alpha.309...v1.0.0-alpha.310) (2026-09-16)
+
+### Features
+
+* give a component one task queue ([4abb6b2](https://github.com/toa-io/toa/commit/4abb6b2eee253a3b4dc31d001bb05521d83fdf9d))
+
+
+# [1.0.0-alpha.309](https://github.com/toa-io/toa/compare/v1.0.0-alpha.308...v1.0.0-alpha.309) (2026-09-16)
+
+**Note:** Version bump only for package @toa.io/bindings.amqp
+
+
+
+
+
 # [1.0.0-alpha.308](https://github.com/toa-io/toa/compare/v1.0.0-alpha.307...v1.0.0-alpha.308) (2026-09-15)
 
 ### Bug Fixes

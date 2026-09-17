@@ -172,15 +172,17 @@ A run from a context root finds the map by itself and needs neither flag, exactl
 8. **The content hash, not a release identity.** `manifest.version` is already computed, already
    the image tag, and already changes exactly when the sources do. Nothing new is derived and
    nothing new has to agree on it. It is opaque and unordered, which is all this asks of it.
-9. **No `x-expires`, in comq or here; a policy instead.** Declaring every RPC queue with one is not
+9. **No `x-expires`, in comq or here.** Declaring every RPC queue with one is not
    available: an existing durable queue cannot be redeclared with new arguments, so the assert
    would answer `PRECONDITION_FAILED` against every queue of every running deployment and the
    upgrade would mean emptying the broker. It is also the wrong semantics for an endpoint queue,
    where expiry would discard requests waiting while every replica is down, and tasks waiting to be
    run. The versioned lookup queues are new names and could carry it safely, but it would buy a few
    hundred empty queues a year and cost a way to discard a lookup waiting on a version that is
-   still starting. The documentation recommends an `expires` policy, where the TTL is set by
-   someone who can see the broker.
+   still starting.
+
+   *This said an `expires` policy was recommended instead, and named documentation that was never
+   written. No policy is recommended: see [what removes a queue](./queues.md#what-removes-a-queue).*
 10. **The version is not in the endpoint queue's name.** Routing calls by version would end
     load balancing across a rollout and make a deployment an ordering problem. Both versions serving
     one queue is what a rolling update is; what was wrong is only that a caller could not tell which

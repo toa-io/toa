@@ -95,25 +95,26 @@ it('should bind endpoints', async () => {
   })
 })
 
-it('should bind the tasks queue', async () => {
+it('should bind one tasks queue for the component', async () => {
   await producer.connect()
 
-  await each(endpoints, async (endpoint, i) => {
-    const queue = mock.queues.name.mock.calls[i].result
+  assert.strictEqual(comm.process.mock.callCount(), 1)
 
-    assert.ok(
-      ((call) =>
-        call.arguments.length === 2 &&
-        isDeepStrictEqual(call.arguments[0], queue + '..tasks') &&
-        typeof call.arguments[1] === 'function')(
-        comm.process.mock.calls[i + 1 - 1] ?? { arguments: [] }
-      )
-    )
+  const call = mock.queues.tasks.mock.calls[0]
 
-    const process = comm.process.mock.calls[i].arguments[1]
+  assert.ok(call.arguments.length === 1 && isDeepStrictEqual(call.arguments[0], locator))
+  assert.ok(isDeepStrictEqual(comm.process.mock.calls[0].arguments[0], call.result))
+})
+
+it('should invoke the endpoint a task names', async () => {
+  await producer.connect()
+
+  const process = comm.process.mock.calls[0].arguments[1]
+
+  await each(endpoints, async (endpoint) => {
     const request = generate()
 
-    await process(request)
+    await process(request, { headers: { 'toa.io/endpoint': endpoint } })
 
     assert.ok(
       component.invoke.mock.calls.some(
@@ -124,6 +125,20 @@ it('should bind the tasks queue', async () => {
       )
     )
   })
+})
+
+it('should park a task naming an endpoint it does not serve', async () => {
+  await producer.connect()
+
+  const process = comm.process.mock.calls[0].arguments[1]
+  const absent = generate()
+
+  await assert.rejects(
+    async () => await process(generate(), { headers: { 'toa.io/endpoint': absent } }),
+    (error) => error.message.includes(absent)
+  )
+
+  assert.strictEqual(component.invoke.mock.callCount(), 0)
 })
 
 describe('closing', () => {

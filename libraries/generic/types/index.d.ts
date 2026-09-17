@@ -28,6 +28,10 @@ export const environment: {
   delete(name: string): void
   absorb(): void
   absorbEntries(record: Record<string, string>): void
+  /** `TOA_SUFFIX`, as the process booted with it */
+  suffix(): string | undefined
+  /** `TOA_CONTEXT` followed by `TOA_SUFFIX` */
+  scope(): string
 }
 
 export function encode(input: any): string

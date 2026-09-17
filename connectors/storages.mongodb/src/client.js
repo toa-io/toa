@@ -239,15 +239,22 @@ export class Client extends Connector {
    * @return {string}
    */
   resolveDB() {
-    const context = environment.get('TOA_CONTEXT')
+    const scope = environment.scope()
+    const length = Buffer.byteLength(scope)
 
-    if (context !== undefined) return context
+    // MongoDB refuses the name only when something is first written, far from what caused it
+    if (length > MAX_DB_LENGTH)
+      throw new Error(
+        `Database name '${scope}' is ${length} bytes, and MongoDB takes no more than ` +
+          `${MAX_DB_LENGTH}: shorten TOA_CONTEXT or TOA_SUFFIX`
+      )
 
-    if (environment.get('TOA_DEV') === '1') return 'toa-dev'
-
-    throw new Error('Environment variable TOA_CONTEXT is not defined')
+    return scope
   }
 }
+
+/** what MongoDB takes for a database name, in bytes */
+const MAX_DB_LENGTH = 63
 
 function getKey(db, urls) {
   return db + ':' + urls.sort().join(' ')

@@ -152,6 +152,13 @@ export class Call extends Connector {
         `'${this.#target}' is stateless, and a call to it names no \`instance\``
       )
 
+    // a task is taken by whichever process is free, and a stateful operation is served
+    // under the name of one
+    if (this.#stateful && task === true)
+      throw new RequestContractException(
+        `'${this.#target}' is stateful, and a call to it is no task`
+      )
+
     // nobody waits for a task, and it is made from wherever the queue is consumed
     if (task === true && (timeout !== undefined || signal !== undefined))
       throw new RequestContractException('A task names no `timeout` and no `signal`')

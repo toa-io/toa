@@ -1,8 +1,9 @@
 import { Connector, deliveries, instance } from '@toa.io/core'
 import { console } from 'openspan'
 
-import { instances, name } from './queues.js'
-import { refuse } from './verdict.js'
+import { ENDPOINT } from './constants.js'
+import { instances, name, tasks } from './queues.js'
+import { refuse, unserved } from './verdict.js'
 
 export class Producer extends Connector {
   /** @type {toa.amqp.Communication} */
@@ -22,6 +23,14 @@ export class Producer extends Connector {
 
   /** @type {Set<Promise<any>>} */
   #pending = new Set()
+
+  /**
+   * The endpoints a task may name. A stateful one is absent: it is served under this process's
+   * name, and a task is taken by whichever process is free.
+   *
+   * @type {Set<string>}
+   */
+  #served = new Set()
 
   // eslint-disable-next-line max-params
   constructor(comm, locator, endpoints, component, stateful = []) {
@@ -46,7 +55,13 @@ export class Producer extends Connector {
 
     const shared = this.#endpoints.filter((endpoint) => !this.#stateful.includes(endpoint))
 
+    // an endpoint the runtime reserves for itself is served and takes no task, as it did
+    // when the queue a task arrived on was named after the endpoint
+    this.#served = new Set(shared.filter((endpoint) => endpoint[0] !== '.'))
+
     await Promise.all(shared.map((endpoint) => this.#endpoint(endpoint)))
+
+    if (this.#served.size > 0) await this.#tasks()
   }
 
   /**
@@ -78,35 +93,43 @@ export class Producer extends Connector {
 
   async #endpoint(endpoint) {
     const queue = name(this.#locator, endpoint)
-    const promises = [
-      this.#comm.reply(queue, (request) => {
-        console.debug('AMQP request received', { label: queue, request })
 
-        return this.#invoke(endpoint, request)
-      })
-    ]
+    await this.#comm.reply(queue, (request) => {
+      console.debug('AMQP request received', { label: queue, request })
 
-    if (endpoint[0] !== '.')
-      promises.push(
-        this.#comm.process(queue + '..tasks', async (request) => {
-          console.debug('AMQP task received', { label: queue, request })
+      return this.#invoke(endpoint, request)
+    })
+  }
 
-          const reply = await this.#invoke(endpoint, request)
+  /**
+   * One queue for every task this component is given: the message names the operation, so the
+   * queue does not have to, and the broker holds one of them rather than one per operation.
+   */
+  async #tasks() {
+    const queue = tasks(this.#locator)
 
-          /*
-           * A task is a call with nobody waiting for it, so the runtime reads the reply that
-           * caller would have read. An exception is not an answer: raising it here is what
-           * brings the message back, where acknowledging it would end the work silently.
-           *
-           * A declared error is an answer, and is acknowledged like any other.
-           */
-          if (reply?.exception !== undefined) refuse(reply.exception)
+    await this.#comm.process(queue, async (request, properties) => {
+      const endpoint = properties?.headers?.[ENDPOINT]
 
-          return reply
-        })
-      )
+      console.debug('AMQP task received', { label: queue, endpoint, request })
 
-    await Promise.all(promises)
+      // a caller running ahead of this process names an operation it does not serve, and
+      // trying the message again cannot make it known
+      if (!this.#served.has(endpoint)) unserved(endpoint)
+
+      const reply = await this.#invoke(endpoint, request)
+
+      /*
+       * A task is a call with nobody waiting for it, so the runtime reads the reply that
+       * caller would have read. An exception is not an answer: raising it here is what
+       * brings the message back, where acknowledging it would end the work silently.
+       *
+       * A declared error is an answer, and is acknowledged like any other.
+       */
+      if (reply?.exception !== undefined) refuse(reply.exception)
+
+      return reply
+    })
   }
 
   /**

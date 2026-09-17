@@ -109,6 +109,10 @@ the [`auth:id: key`](/extensions/exposition/documentation/access.md#id) authoriz
 Opening a stream is not a read, and `GET` is the method a client opens one with, so the route
 declares [`io:readonly: false`](/extensions/exposition/documentation/io.md#readonly).
 
+A key may be consumed by several clients at once — the same user on two devices, or in two
+tabs. Each of them receives every event routed to the key, and one of them disconnecting leaves
+the others connected.
+
 Refer to the [Exposition extension](/extensions/exposition) for more details:
 
 - [Multipart responses](/extensions/exposition/documentation/protocol.md#multipart-types)

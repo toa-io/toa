@@ -13,7 +13,10 @@ async function computation(input, context) {
 }
 ```
 
-Keys are component-scoped, meaning that the underlying Redis keys are `namespace:name:key`.
+Keys are component-scoped, meaning that the underlying Redis keys are
+`<scope>:<namespace>:<name>:<key>`, where the scope is the context's name followed by `TOA_SUFFIX`
+(see [deployment](/documentation/deployment.md#several-processes-of-one-context-on-shared-infrastructure)).
+Contexts sharing a Redis do not share keys.
 
 ### Storing objects
 

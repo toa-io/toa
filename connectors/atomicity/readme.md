@@ -85,6 +85,9 @@ const atom = new Factory().atom('mail.sender')
 await atom.connect()
 ```
 
+The group is the context's, so a process with Redis configured has `TOA_CONTEXT` — or `TOA_DEV=1`
+— and an atom connecting without either throws.
+
 ## Configuration
 
 Requires Redis.
@@ -106,5 +109,8 @@ and two tolerate none at all.
 One set of clients per process, shared by every atom in it, and an unreachable Redis does not fail
 a start.
 
-Keys nest by whose they are, then by what they are for: `atom:<group>:slots:{group}…`,
-`atom:<group>:meter:<key>`, `atom:<group>:lock:<key>`.
+Keys nest by whose they are, then by what they are for: `<scope>:atom:<group>:slots:{group}…`,
+`<scope>:atom:<group>:meter:<key>`, `<scope>:atom:<group>:lock:<key>`. The scope is the context's
+name followed by `TOA_SUFFIX` (see
+[deployment](/documentation/deployment.md#several-processes-of-one-context-on-shared-infrastructure)),
+so contexts sharing a Redis do not share a group.

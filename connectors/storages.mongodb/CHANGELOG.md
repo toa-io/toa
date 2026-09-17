@@ -3,6 +3,29 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.311](https://github.com/toa-io/toa/compare/v1.0.0-alpha.310...v1.0.0-alpha.311) (2026-09-17)
+
+### Features
+
+* name the database after the scope ([4d7203f](https://github.com/toa-io/toa/commit/4d7203fd18828895272a9dae76e351d92b49277f))
+
+
+# [1.0.0-alpha.310](https://github.com/toa-io/toa/compare/v1.0.0-alpha.309...v1.0.0-alpha.310) (2026-09-16)
+
+**Note:** Version bump only for package @toa.io/storages.mongodb
+
+
+
+
+
+# [1.0.0-alpha.309](https://github.com/toa-io/toa/compare/v1.0.0-alpha.308...v1.0.0-alpha.309) (2026-09-16)
+
+**Note:** Version bump only for package @toa.io/storages.mongodb
+
+
+
+
+
 # [1.0.0-alpha.308](https://github.com/toa-io/toa/compare/v1.0.0-alpha.307...v1.0.0-alpha.308) (2026-09-15)
 
 **Note:** Version bump only for package @toa.io/storages.mongodb

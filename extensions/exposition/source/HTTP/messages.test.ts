@@ -195,14 +195,30 @@ describe('read', () => {
     )
   })
 
-  it('should fail with the body', async () => {
+  it('should end with FIN when the body fails', async () => {
+    const warn = mock.method(console, 'warn', () => undefined)
     const body = new Readable({ objectMode: true, read: () => {} })
     const framed = frame(body)
     const text = streamConsumers.text(framed)
 
+    body.push('Hello')
+    await setTimeout(10)
     body.destroy(new Error('boom'))
 
-    await assert.rejects(text, { message: 'boom' })
+    const result = await text
+
+    warn.mock.restore()
+
+    assert.strictEqual(
+      result,
+      ['--cut', '', 'ACK', '--cut', '', 'Hello', '--cut', '', 'FIN', '--cut--'].join(
+        '\r\n'
+      )
+    )
+
+    const messages = warn.mock.calls.map((call) => call.arguments[0])
+
+    assert.ok(messages.includes('Message stream error'))
   })
 })
 
@@ -229,6 +245,26 @@ describe('write', () => {
     await setTimeout(10)
 
     assert.equal(warn.mock.callCount(), 0)
+  })
+
+  it('should destroy a stream the client left before it was written', async () => {
+    const body = new Readable({ read: () => {} })
+    const response = new PassThrough()
+
+    Object.assign(response, { setHeader: () => response })
+    response.destroy() // the client went away
+
+    const context = {
+      ...createContext(generate()),
+      pipelines: { response: [] }
+    } as unknown as Context
+
+    await write(context, response as unknown as http.ServerResponse, {
+      headers: new Headers({ 'content-type': 'text/plain' }),
+      body
+    })
+
+    assert.ok(body.destroyed)
   })
 
   it('should warn on a stream error', async () => {

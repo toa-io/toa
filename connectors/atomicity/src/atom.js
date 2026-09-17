@@ -14,6 +14,9 @@ export class Atom extends Connector {
   #name
   #interval
 
+  /** what every key of this atom begins with, once it has a Redis to write them to */
+  #prefix
+
   /** @type {{ i: number, n: number } | null} */
   #assignment = null
 
@@ -145,14 +148,15 @@ export class Atom extends Connector {
   /**
    * A key names whose it is and then what it is for, under the one namespace every atom
    * shares, so that a name used for a lock and for a meter is two keys, and two groups using
-   * the same name do not meet either.
+   * the same name do not meet either. All of it is under the scope, because contexts share a
+   * Redis, and so do the processes of one context given different suffixes.
    *
    * @private
    */
   #keys(kind, keys) {
     if (typeof keys === 'string') keys = [keys]
 
-    return keys.map((key) => `${ATOM}:${this.#name}:${kind}:${key}`)
+    return keys.map((key) => `${this.#prefix}${kind}:${key}`)
   }
 
   async open() {
@@ -160,6 +164,11 @@ export class Atom extends Connector {
 
     // without a Redis nothing can be owned exclusively, so nothing is claimed at all
     if (redis === undefined) return
+
+    // read as it opens rather than when it is made: an atom is one per group for the life of
+    // the process, and a process without a Redis — one run outside a context — has no scope
+    // to ask for
+    this.#prefix = `${environment.scope()}:${ATOM}:${this.#name}:`
 
     this.#abort = new AbortController()
     this.#discovering = this.#discover(redis)
@@ -186,7 +195,7 @@ export class Atom extends Connector {
 
     const loop = discover({
       redis,
-      prefix: `${ATOM}:${this.#name}:${SLOTS}:`,
+      prefix: `${this.#prefix}${SLOTS}:`,
       name: this.#name,
       interval: this.#interval,
       signal: this.#abort.signal,

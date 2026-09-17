@@ -150,3 +150,53 @@ Feature: Static routes
       """yaml
       event: token
       """
+
+  Scenario: Consuming a stream twice
+    Given the `messages` component is running with routes:
+      """yaml
+      created: [sender, recipient]
+      """
+    And the stream `004e02a959c04cecaf111827f91caa36` is consumed by `phone`
+    And the stream `004e02a959c04cecaf111827f91caa36` is consumed by `laptop`
+    When the `messages.create` is called with:
+      """yaml
+      input:
+        sender: 96db5a47a8244eb3b21820781b7d596e
+        recipient: 004e02a959c04cecaf111827f91caa36
+        text: Hello!
+      """
+    Then an event is received by `phone`:
+      """yaml
+      event: default.messages.created
+      data:
+        text: Hello!
+      """
+    And an event is received by `laptop`:
+      """yaml
+      event: default.messages.created
+      data:
+        text: Hello!
+      """
+
+  Scenario: Disconnecting one of the consumers of a stream
+    Given the `messages` component is running with routes:
+      """yaml
+      created: [sender, recipient]
+      """
+    And the stream `004e02a959c04cecaf111827f91caa36` is consumed by `phone`
+    And the stream `004e02a959c04cecaf111827f91caa36` is consumed by `laptop`
+    When the consumer `phone` is disconnected
+    Then the consumer `laptop` is connected
+    When the `messages.create` is called with:
+      """yaml
+      input:
+        sender: 96db5a47a8244eb3b21820781b7d596e
+        recipient: 004e02a959c04cecaf111827f91caa36
+        text: Hello!
+      """
+    Then an event is received by `laptop`:
+      """yaml
+      event: default.messages.created
+      data:
+        text: Hello!
+      """
