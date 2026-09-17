@@ -55,6 +55,32 @@ it('should depend on communication', async () => {
   )
 })
 
+it('should scope the exchange it consumes', async () => {
+  mock.queues.scoped.mock.mockImplementationOnce((name) => 'scope.' + name)
+
+  const scoped = new Receiver(comm, exchange, group, processor)
+
+  await scoped.open()
+
+  assert.ok(
+    comm.consume.mock.calls.some((call) => call.arguments[0] === 'scope.' + exchange),
+    'the exchange is not scoped'
+  )
+})
+
+it('should scope the queue it processes', async () => {
+  mock.queues.scoped.mock.mockImplementationOnce((name) => 'scope.' + name)
+
+  const scoped = new Receiver(comm, 'queue:' + exchange, group, processor)
+
+  await scoped.open()
+
+  assert.ok(
+    comm.process.mock.calls.some((call) => call.arguments[0] === 'scope.' + exchange),
+    'the queue is not scoped'
+  )
+})
+
 it('should consume events', async () => {
   await receiver.open()
 
