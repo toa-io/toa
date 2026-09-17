@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.311](https://github.com/toa-io/toa/compare/v1.0.0-alpha.310...v1.0.0-alpha.311) (2026-09-17)
+
+### Features
+
+* read the scope of a process once, as it boots ([0d65de5](https://github.com/toa-io/toa/commit/0d65de58ffc655ff872b8e66f95c5609ada3370a))
+
+
 # [1.0.0-alpha.310](https://github.com/toa-io/toa/compare/v1.0.0-alpha.309...v1.0.0-alpha.310) (2026-09-16)
 
 **Note:** Version bump only for package @toa.io/boot

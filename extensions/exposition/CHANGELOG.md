@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.311](https://github.com/toa-io/toa/compare/v1.0.0-alpha.310...v1.0.0-alpha.311) (2026-09-17)
+
+### Bug Fixes
+
+* **exposition:** resolve cache-control apart for anonymous and authenticated requests ([cee1ae5](https://github.com/toa-io/toa/commit/cee1ae5c6b660a235f36aca0fe81841cc4a1b509))
+
+### Performance Improvements
+
+* **exposition:** answer a request without the closures and promises of a chain ([e4ba55d](https://github.com/toa-io/toa/commit/e4ba55dbf827699229ca0142fb766d5cc5f1a20a))
+* **exposition:** await an interceptor, a directive stage and a transform only where it is pending ([ffa3dee](https://github.com/toa-io/toa/commit/ffa3deec8c2d893bf7815b2d9f2f2993f77b4e28))
+* **exposition:** make no headers and no promises a request without them does not need ([5d6cb93](https://github.com/toa-io/toa/commit/5d6cb93d822af396895407b291f9b4c68af11337))
+* **exposition:** match a route and read a query without building what is not read ([299bbf2](https://github.com/toa-io/toa/commit/299bbf2be1293dad25ef73e6fb2344624b46c019))
+
+
 # [1.0.0-alpha.310](https://github.com/toa-io/toa/compare/v1.0.0-alpha.309...v1.0.0-alpha.310) (2026-09-16)
 
 ### Bug Fixes
