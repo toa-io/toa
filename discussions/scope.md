@@ -34,8 +34,8 @@ contexts sharing a Redis no longer share its keys.
 **AMQP**
 
 8. With a suffix, every exchange and queue a process declares begins with `<scope>.` — those of its
-   requests, tasks, events, receivers, broadcasts and channels, and the queues the broker derives
-   from them.
+   requests, tasks, events, receivers, broadcasts and channels, and the queues derived from them —
+   but the queue its replies arrive on.
 9. Two processes with different suffixes on one virtual host send each other nothing: a request, a
    task or an event of one is not delivered to the other.
 10. Without a suffix every name is what it is *(today)*.
@@ -43,7 +43,9 @@ contexts sharing a Redis no longer share its keys.
 **What is not promised**
 
 11. `comq.retry.*` and `comq.parked` are shared by every process on a broker. A parked message says
-    which queue it came from, and that name carries the scope.
+    which queue it came from, and that name carries the scope. The queue a process's replies arrive
+    on is `comq.reply..<id>`, its own by a random id and gone with it, and it carries no scope: a
+    permission granted by prefix grants `comq.` too.
 12. A suffix is not a separator. `app` with `1a` and `app1` with `a` are one scope, and share
     everything.
 13. Two processes with one scope share everything, as two replicas of a deployment do *(today)*.
@@ -97,9 +99,11 @@ $ TOA_SUFFIX=-agent-0a1b2c3d4e5f toa compose ./components/*
 4. **AMQP is scoped only under a suffix.** A deployment is kept apart on a broker by its virtual
    host already. Renaming every exchange and queue of a running deployment would strand what its
    durable queues hold, to buy nothing it does not have.
-5. **The scope comes first.** comq appends to the names it is given — `..tasks`, `..instances`,
-   `..<group>`, `.<instance>`, the id of a reply queue — so what one process holds on a broker is
-   everything that begins with `<scope>.`, one prefix for a policy, a permission or a clean-up.
+5. **The scope comes first.** comq appends to the names it is given — `..<group>`, `.<instance>` —
+   and so does this binding — `..tasks`, `..instances` — so what one process holds on a broker is
+   everything that begins with `<scope>.`, one prefix for a policy or a clean-up. The reply queue is
+   named by comq alone, at random, and is left as it is rather than changing comq for a name no two
+   processes can share.
 6. **Read once.** Names are taken at different moments — when a connector is made, when it opens,
    when a message is broadcast — so a suffix that changed while a process ran would split it across
    two scopes. A process that starts others sets what they are given, and that must not move it.

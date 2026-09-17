@@ -34,7 +34,8 @@ $ TOA_SUFFIX=-agent-0a1b2c3d4e5f toa compose ./components/*
 - **Read as the process boots**, from its environment or its `.env`. Setting `process.env.TOA_SUFFIX`
   afterwards changes what the processes it starts are given, and nothing of its own.
 - **Not everything is scoped.** `comq.retry.*` and `comq.parked` are shared by every process on a
-  broker, and what an extension keeps elsewhere — the files of `storages`, a federation upstream of
+  broker, the queue a process's replies arrive on is `comq.reply..<random id>`, and what an extension
+  keeps elsewhere — the files of `storages`, a federation upstream of
   `convergence` — is named as it is configured.
 - **A copy starts empty.** Its database, its queues and its keys are its own, so it has none of the
   data of the processes it runs beside.
