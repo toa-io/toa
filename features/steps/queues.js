@@ -176,6 +176,55 @@ Then(
   }
 )
 
+Then(
+  'the queue {string} is consumed',
+  /**
+   * @param {string} name
+   */
+  async function (name) {
+    await consumers(name, (count) => count > 0, `'${name}' is not consumed`)
+  }
+)
+
+Then(
+  'the queue {string} is not consumed',
+  /**
+   * A queue an earlier run declared is left on the broker, so what is asserted is that nothing
+   * consumes it, not that it is absent.
+   *
+   * @param {string} name
+   */
+  async function (name) {
+    await consumers(name, (count) => count === 0, `'${name}' is consumed`)
+  }
+)
+
+/**
+ * Waits for the number of consumers of a queue to satisfy `condition`, reading an absent queue as
+ * one nobody consumes.
+ *
+ * @param {string} name
+ * @param {(count: number) => boolean} condition
+ * @param {string} failure
+ */
+async function consumers(name, condition, failure) {
+  const deadline = Date.now() + COUNTING
+
+  let count = 0
+
+  do {
+    const queue = await request(`/queues/%2F/${encodeURIComponent(name)}`).catch(() => undefined)
+
+    count = queue?.consumers ?? 0
+
+    if (condition(count)) return
+
+    await new Promise((resolve) => setTimeout(resolve, 200))
+  } while (Date.now() < deadline)
+
+  assert.fail(`${failure}: ${count} consumer(s)`)
+}
+
 /** @param {string} id */
 const tasksQueueOf = (id) => id + '..tasks'
 

@@ -106,6 +106,38 @@ caller knows and this process does not.
 gateway merges branches by component. A fanout exchange costs no queue, so there is nothing to
 collapse.
 
+## What removes a queue
+
+Nothing accumulates on its own any more. What a deployment holds is one queue per thing it
+declares — an operation, a component's tasks, a receiver's binding, a channel's label — and what a
+connection holds for as long as it lives, which the broker removes with the connection. A restart,
+a rollout, another replica and another process leave nothing behind.
+
+So a queue that is left over is one whose declaration was removed, and removing it is the same act:
+
+| what was removed | what to remove with it |
+| --- | --- |
+| an operation | `<ns>.<component>.<operation>` |
+| a component | its operation queues, `<ns>.<component>..tasks`, and the event queues its receivers were bound by |
+| a receiver | `<srcNs>.<srcComponent>.<event>..<ns>.<component>` |
+| a deployment, or a tenant of a multi-tenant one | its vhost |
+
+A retired `delay` leaves a `comq.retry.<value>` behind, which comq records as a housekeeping item
+rather than a hazard.
+
+**No `expires` policy, anywhere.** The policy deletes a queue that has been unused — no consumer,
+no `get`, no redeclare — together with what is in it, and there is nowhere here that is safe:
+
+- `comq.parked` and `comq.retry.*` never have a consumer, so unused is their permanent state and
+  the timer would fire on a healthy queue and take the messages waiting in it. `comq.parked` gets a
+  `max-length` and an alert on its depth instead.
+- An operation or task queue that is momentarily unused is one whose component is halted, scaled to
+  zero or redeploying, and it is holding the calls that [halt](../documentation/halt.md) promises
+  will be served when the component comes back.
+
+What a timer would have swept up was the topology that grew by itself, and that is what this
+removes rather than schedules a cleanup for.
+
 ## Context
 
 Both brokers of a production deployment blocked every publisher on a memory alarm. The memory was

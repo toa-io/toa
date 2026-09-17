@@ -21,7 +21,7 @@ Feature: Reading the introspection map
   Scenario: Reading the nodes
     Given the `introspection.nodes` database contains:
       | _id                              | namespace | component | version  | VERSION | DELETED |
-      | 70e1a6551346c6932657cdb2526df0fa | pots      | tea       | 7bb04bba | 1       | null    |
+      | f5f5f72d2495c71128a41f810a199452 | pots      | tea       | 7bb04bba | 1       | null    |
     When the following request is received:
       """
       GET /introspection/nodes/ HTTP/1.1
@@ -35,7 +35,7 @@ Feature: Reading the introspection map
       content-type: application/yaml
 
       - namespace: pots
-        id: 70e1a6551346c6932657cdb2526df0fa
+        id: f5f5f72d2495c71128a41f810a199452
         component: tea
         version: 7bb04bba
       """
@@ -43,10 +43,10 @@ Feature: Reading the introspection map
   Scenario: Reading one node
     Given the `introspection.nodes` database contains:
       | _id                              | namespace | component | version  | VERSION | DELETED |
-      | 70e1a6551346c6932657cdb2526df0fa | pots      | tea       | 7bb04bba | 1       | null    |
+      | f5f5f72d2495c71128a41f810a199452 | pots      | tea       | 7bb04bba | 1       | null    |
     When the following request is received:
       """
-      GET /introspection/nodes/70e1a6551346c6932657cdb2526df0fa/ HTTP/1.1
+      GET /introspection/nodes/f5f5f72d2495c71128a41f810a199452/ HTTP/1.1
       host: nex.toa.io
       authorization: Basic ZGV2ZWxvcGVyOnNlY3JldA==
       accept: application/yaml

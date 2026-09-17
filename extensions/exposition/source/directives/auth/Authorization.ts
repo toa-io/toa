@@ -110,7 +110,18 @@ export class Authorization implements DirectiveFamily<Directive, Extension> {
    * Authentication: who the credential names, if one is presented. A credential belongs to
    * the request, so it is read once however many calls the request carries.
    */
-  public async preflight(context: Context): Promise<void> {
+  public preflight(context: Context): void | Promise<void> {
+    // a request without a credential is anonymous, and answered without waiting for anything
+    if (context.request.headers.authorization === undefined) {
+      context.identity = null
+
+      return
+    }
+
+    return this.authenticate(context)
+  }
+
+  private async authenticate(context: Context): Promise<void> {
     context.identity = await this.resolve(context)
 
     // the outer request, not a procedure it forks: `aud` is where this credential may
@@ -183,14 +194,21 @@ export class Authorization implements DirectiveFamily<Directive, Extension> {
     return introspection
   }
 
-  public async settle(
+  /** Only what a directive leaves pending is waited for, and most routes have none that settle. */
+  public settle(
     directives: Directive[],
     context: Context,
     response: http.OutgoingMessage
-  ): Promise<void> {
-    await Promise.all(
-      directives.map(async (directive) => directive.settle?.(context, response))
-    )
+  ): void | Promise<void> {
+    let pending: Array<Promise<void>> | null = null
+
+    for (const directive of directives) {
+      const settling = directive.settle?.(context, response)
+
+      if (settling instanceof Promise) (pending ??= []).push(settling)
+    }
+
+    if (pending !== null) return all(pending)
   }
 
   /**
@@ -423,3 +441,7 @@ const constructors: Record<string, new (value: any, argument?: any) => Directive
 }
 
 const REMOTES: Remote[] = ['basic', 'federation', 'tokens', 'roles', 'bans', 'otp']
+
+async function all(pending: Array<Promise<void>>): Promise<void> {
+  await Promise.all(pending)
+}

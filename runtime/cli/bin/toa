@@ -3,6 +3,10 @@
 // the file has no extension, so its format is the package's: a module
 
 import { userInfo } from 'node:os'
+import { account } from '../src/heap.js'
+
+// before anything is loaded, so that no limit is computed the other way first
+account()
 
 /*
  * A process that changes its uid is non-dumpable: its environment and its memory under /proc

@@ -23,34 +23,37 @@ export class Cache implements DirectiveFamily<Directive> {
     return null
   }
 
-  public async settle(
+  public settle(
     directives: Directive[],
     context: AuthenticatedContext,
     response: http.OutgoingMessage
-  ): Promise<void> {
+  ): void {
     const directive = directives[0]
     const method = context.request.method
     const safe = method === 'GET' || method === 'HEAD'
-
-    response.headers ??= new Headers()
 
     // `cache:exact` sets what it is given, whatever the method: whether a reply may be
     // stored at all is not a question about the method's cacheability, and a token
     // endpoint answers a POST it must not have kept
     if (directive instanceof Exact) {
-      directive.set(context, response.headers)
+      directive.set(context, (response.headers ??= new Headers()))
 
       return
     }
 
     if (!safe) return
 
+    // headers are made only for a reply that gets one: most of those that pass here do not
     if (directive === undefined) {
-      if (context.identity !== null && !Control.disabled(response.headers)) {
+      if (
+        context.identity !== null &&
+        (response.headers === undefined || !Control.disabled(response.headers))
+      ) {
+        response.headers ??= new Headers()
         response.headers.set('cache-control', 'private')
         response.headers.append('vary', 'authorization')
       }
-    } else directive.set(context, response.headers)
+    } else directive.set(context, (response.headers ??= new Headers()))
   }
 
   /**
