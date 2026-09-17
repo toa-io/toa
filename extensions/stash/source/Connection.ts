@@ -16,7 +16,8 @@ export class Connection extends Connector {
   }
 
   protected override async open(): Promise<void> {
-    const keyPrefix = `${this.locator.namespace}:${this.locator.name}:`
+    // contexts share a Redis, and so do the processes of one context given different suffixes
+    const keyPrefix = `${environment.scope()}:${this.locator.namespace}:${this.locator.name}:`
 
     const options: RedisOptions = {
       keyPrefix,
