@@ -9,5 +9,8 @@ const object = yaml.load(readFileSync(path, 'utf8'))
 const schema = schemas.schema(object)
 
 export const validate = (context) => {
-  schema.validate(context)
+  schema.validate(context, CONTEXT)
 }
+
+/** The file a reader has to edit, since nothing else in the message names it. */
+const CONTEXT = 'context.toa.yaml'
