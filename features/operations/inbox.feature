@@ -241,3 +241,62 @@ Feature: Transactional inbox
     Then the reply is received
     And the `mongo.once` inbox holds 1 record
     And the `mongo.caller` inbox holds 1 record
+
+  Scenario: A call is remembered for the window its operation states
+    Given I compose `mongo.once` component
+    When I call `mongo.once.long` with:
+      """yaml
+      id: aa11e57cc0e14fce95c4496c21086781
+      input:
+        foo: 1
+      query:
+        id: 6b93e57cc0e14fce95c4496c21086781
+      """
+    Then the reply is received
+    And the `mongo.once` inbox record `aa11e57cc0e14fce95c4496c21086781` expires 86400 seconds after it was made
+
+  Scenario: An assignment is remembered for the window it states
+    Given I compose `mongo.once` component
+    When I call `mongo.once.settle` with:
+      """yaml
+      id: aa11e57cc0e14fce95c4496c21086781
+      input:
+        foo: 3
+      query:
+        id: 6b93e57cc0e14fce95c4496c21086781
+      """
+    Then the reply is received
+    And the `mongo.once` inbox record `aa11e57cc0e14fce95c4496c21086781` expires 86400 seconds after it was made
+
+  Scenario: A call is remembered for the deployment's window where its operation states none
+    Given I compose `mongo.once` component
+    When I call `mongo.once.transit` with:
+      """yaml
+      id: aa11e57cc0e14fce95c4496c21086781
+      input:
+        foo: 1
+      query:
+        id: 6b93e57cc0e14fce95c4496c21086781
+      """
+    Then the reply is received
+    And the `mongo.once` inbox record `aa11e57cc0e14fce95c4496c21086781` expires 3600 seconds after it was made
+
+  Scenario: A record past its expiry is removed
+    Given MongoDB reaps expired documents every second
+    And I compose `mongo.once` component
+    And the `mongo.once` inbox contains:
+      | _id                              | reply                | expires                  |
+      | aa11e57cc0e14fce95c4496c21086781 | {"output":{"foo":7}} | 2000-01-01T00:00:00.000Z |
+      | bb22e57cc0e14fce95c4496c21086781 | {"output":{"foo":8}} | 2999-01-01T00:00:00.000Z |
+    Then the `mongo.once` inbox holds 1 record within 10 seconds
+
+  Scenario: A record written before retention was per operation expires when it would have
+    # the inbox as the previous release left it: records with no expiry, reaped by an index on
+    # when they were written
+    Given the `mongo.once` inbox contains:
+      | _id                              | reply                |
+      | aa11e57cc0e14fce95c4496c21086781 | {"output":{"foo":7}} |
+    And the `mongo.once` inbox is indexed with `inbox_at` on `at` expiring after 3600 seconds
+    When I compose `mongo.once` component
+    Then the `mongo.once` inbox record `aa11e57cc0e14fce95c4496c21086781` expires 3600 seconds after it was made
+    And the `mongo.once` inbox is indexed with `inbox_expires` alone

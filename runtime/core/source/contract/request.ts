@@ -61,6 +61,9 @@ export class Request extends Contract {
       if (definition[key] !== undefined)
         (this.discovery as Record<string, unknown>)[key] = definition[key]
 
+    // how long a call is remembered is the operation's to keep, not the caller's to plan by
+    if (this.discovery.once !== undefined) this.discovery.once = this.discovery.once !== false
+
     /*
      * An operation that states no output states an empty schema, which every reply fits —
      * and which says nothing to whoever reads it. What its type answers does, so that is
