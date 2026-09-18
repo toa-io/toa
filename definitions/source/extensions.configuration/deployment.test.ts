@@ -8,8 +8,8 @@ import {
   deployment,
   describe as map
 } from './deployment.ts'
-import { epoch } from './epoch.ts'
-import { EVENT, VALUES } from './const.ts'
+import { epoch, revision } from './epoch.ts'
+import { EVENT, REVISION, VALUES } from './const.ts'
 
 const schema = {
   type: 'object',
@@ -80,12 +80,48 @@ it('should prefer the context over the manifest defaults', async () => {
   assert.deepStrictEqual(values['configuration.base'].defaults, { foo: 'bye' })
 })
 
-it('should not map values to the component', async () => {
+it('should give the component the revision of its values, not the values', async () => {
   const dependency = deployment([instance('base')], {
     'configuration.base': { foo: 'set' }
   })
 
-  assert.deepStrictEqual(dependency.variables, {})
+  assert.deepStrictEqual(dependency.variables, {
+    'configuration-base': [
+      { name: REVISION + 'CONFIGURATION_BASE', value: revision({ foo: 'set' }) }
+    ]
+  })
+})
+
+it('should give the revision of the defaults the values service is given', async () => {
+  const instances = [instance('base', { foo: 'hello', key: 'k' })]
+  const annotation = { 'configuration.base': { foo: 'bye' } }
+
+  const dependency = deployment(instances, annotation)
+  const served = map(instances, annotation)['configuration.base'].defaults
+
+  assert.deepStrictEqual(dependency.variables!['configuration-base'], [
+    { name: 'TOA_CONFIGURATION_REVISION_CONFIGURATION_BASE', value: revision(served) }
+  ])
+})
+
+it('should give a component with no defaults the revision of none', async () => {
+  const dependency = deployment([instance('base')])
+
+  assert.deepStrictEqual(dependency.variables!['configuration-base'], [
+    { name: REVISION + 'CONFIGURATION_BASE', value: revision({}) }
+  ])
+})
+
+it('should give each component the revision of its own values', async () => {
+  const dependency = deployment([instance('one'), instance('two')], {
+    'configuration.one': { foo: 'a' },
+    'configuration.two': { foo: 'b' }
+  })
+
+  assert.notDeepStrictEqual(
+    dependency.variables!['configuration-one'][0].value,
+    dependency.variables!['configuration-two'][0].value
+  )
 })
 
 it('should map secrets to the component', async () => {
@@ -98,7 +134,8 @@ it('should map secrets to the component', async () => {
       {
         name: 'TOA_CONFIGURATION__KEY',
         secret: { name: 'toa-configuration', key: 'KEY' }
-      }
+      },
+      { name: REVISION + 'CONFIGURATION_BASE', value: revision({ key: '$KEY' }) }
     ]
   })
 
