@@ -176,8 +176,8 @@ cache-control: no-store
 
 ### Custom tokens
 
-Custom tokens can be issued with a specific set of permissions and scopes for the own Identity or by
-an Identity with the `system:identity:tokens` role.
+Custom tokens can be issued restricted to a set of scopes and permissions, for the own Identity or
+by an Identity with the `system:identity:tokens` role.
 
 Tokens are issued with custom secret keys and are not subject to [token rotation](#token-rotation).
 To invalidate a custom token, its secret key must be deleted.
@@ -213,14 +213,15 @@ token: <token>
   The value of `0` means the token will not expire, which is supported, but
   **strongly not recommended** for production environments.
 - `label`: Required human-readable name used when listing and revoking issued tokens.
-- `scopes`: Issued token will assume only specified [role scopes](access.md#roles).
+- `scopes`: Issued token will act as an Identity with the specified [roles](access.md#roles) in
+  place of its own. Each must be a scope a role of the Identity covers, or the token is not issued.
 - `permissions`: Issued token will have permissions to access only specified resources and methods.
   Supports [glob patterns](https://www.gnu.org/software/bash/manual/html_node/Pattern-Matching.html)
   and a wildcard method.
   Patterns are matched against the request path as it is routed: normalized, without the query
   string.
 
-> `roles` and `permissions` are additional restrictions applied on top of the Identity’s inherent
+> `scopes` and `permissions` are additional restrictions applied on top of the Identity’s inherent
 > privileges. An OAuth access token is bound to an entry as `aud` instead, see
 > [Audience](oauth.md#audience).
 
@@ -229,7 +230,7 @@ token: <token>
 A custom token is invalidated through its secret key. The key is revoked, and every token issued
 with it is refused, when the Identity is [banned](#banned-identities), its
 [Basic credentials](#basic-credentials) are modified, or one of its [roles](#roles) is revoked.
-The key can also be deleted by the Identity that issued the token or by an Identity with the
+The key can also be deleted by the Identity the token is issued for or by an Identity with the
 `system:identity:keys` role.
 
 ```
@@ -409,9 +410,9 @@ role: string
 
 To assign arbitrary roles, the `system:identity:roles` role is required.
 
-An Identity having `system:identity:roles:delegation` role can delegate roles within its own
-Role Scopes (see [Role Hierarchies](access.md#hierarchies)), except roles within the
-`system:identity:roles` scope: the right to delegate is not delegated.
+An Identity having `system:identity:roles:delegation` role can delegate roles its own roles cover
+(see [Role Hierarchies](access.md#hierarchies)), except roles within the `system:identity:roles`
+scope: the right to delegate is not delegated.
 
 ### `/identity/roles/:id/:role/`
 

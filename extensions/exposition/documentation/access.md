@@ -63,14 +63,15 @@ is `87480f2bd88048518c529d7957475ecd`.
 
 ### `role`
 
-Grants access if resolved Identity has a role matching the directive's value or one of its values.
+Grants access if resolved Identity has a role covering the scope the directive's value names, or
+one of the scopes where the value is a list.
 
 ```yaml
 /code:
   role: [developer, reviewer]
 ```
 
-Access will be granted if the resolved Identity has a role that matches `developer` or `reviewer`.
+Access will be granted if the resolved Identity has a role that covers `developer` or `reviewer`.
 
 Read [Roles](#roles) section for more details.
 
@@ -139,7 +140,8 @@ directives grant access. The value of the `rule` directive can be a single Rule 
     role: developer
 ```
 
-Access will be granted if an Identity matches a `user-id` placeholder and has a Role of `developer`.
+Access will be granted if an Identity matches a `user-id` placeholder and has a role covering
+`developer`.
 
 ### `input`
 
@@ -173,15 +175,15 @@ The request body must be an object.
 
 ## Roles
 
-Role values are strings that can be assigned to an Identity and used for matching with values of
-the [`role` directive](#role).
+A role is a value assigned to an Identity, managed by the
+[`identity.roles` component](components.md#roles). A scope is an area of access, named by a value
+of the same form, which the [`role` directive](#role) requires and a token can be restricted to.
 
 ### Hierarchies
 
-Role values are alphanumeric tokens separated by a colon (`:`).
-Each token defines a Role Scope, forming a hierarchy.
-A Role matches the value of the `rule` directive if that Role has the specified Scope in a
-directive.
+Role and scope values are alphanumeric tokens separated by a colon (`:`), and form a hierarchy:
+`developer:senior` lies within `developer`, as does `developer` itself.
+A role covers every scope within it, and grants access to each.
 
 #### Example
 
@@ -190,10 +192,10 @@ directive.
   role: developer:senior
 ```
 
-The example above defines a `role` directive with the specified `developer:senior` Role Scope.
-This directive matches the roles `developer:senior` and `developer`,
-but it **does not** match the Role `developer:senior:javascript`.
-In other words, the Identity must have a specified or more general Role.
+The directive above requires the `developer:senior` scope.
+It is covered by the roles `developer:senior` and `developer`,
+but it **is not** covered by the role `developer:senior:javascript`.
+In other words, the Identity must have the specified or a more general role.
 
 <a href="https://miro.com/app/board/uXjVOoy0ImU=/?moveToWidget=3458764556008550471&cot=14">
   <picture>
@@ -202,7 +204,8 @@ In other words, the Identity must have a specified or more general Role.
   </picture>
 </a>
 
-> The root-level Role Scope `system` is preserved and cannot be used with the `role` directives.
+> The root-level scope `system` holds the scopes Toa's own resources require, such as
+> `system:identity:roles`. The `system` role covers every one of them.
 
 See also [role management resources](components.md#roles).
 
@@ -253,18 +256,19 @@ exposition:
         role: app:posts:editor
 ```
 
-Policy values as well as [Role](#roles) values define hierarchical Policy Scopes.
+Policy values form a hierarchy the way [role and scope](#hierarchies) values do: an Attachment
+applies to every Policy within it.
 
 In the example above:
 
 - an Attachment `read` attaches Directive `anonymous: true` to both `read:list` and `read:post`
-  Policy Scopes.
+  Policies.
   This means that a list of posts and each post can be accessed without authorization.
-- an Attachment `post` attaches Directive `id: user-id` to both `post:submit` and `post:edit` Policy
-  Scopes.
+- an Attachment `post` attaches Directive `id: user-id` to both `post:submit` and `post:edit`
+  Policies.
   This means that an Identity can submit and edit their own posts.
-- an Attachment `post:edit` attaches Directive `role: app:posts:editor` to `post:edit` Policy Scope.
-  This means that an identity with the role scope `app:posts:editor` can edit posts by any author,
+- an Attachment `post:edit` attaches Directive `role: app:posts:editor` to `post:edit` Policy.
+  This means that an identity with a role covering `app:posts:editor` can edit posts by any author,
   in addition to the fact that the author themselves can do this thanks to the previous Attachment.
 
 ### Nesting
@@ -331,7 +335,7 @@ may reach none. So does [discovery](discovery.md), which omits a resource they m
 of, and so does MCP's `tools/list`: all three read the same description.
 
 What is decided from the identity decides here — `anonymous`, `anyone`, `role`, `delegate`. `id`
-and `federation` decide from one too: *which* identity needs the request, and a description has no
+and `federation` decide from one too: _which_ identity needs the request, and a description has no
 route variable to read, but a caller with no identity at all is refused whatever the value would
 have been — and is not shown it. `assert` and `input` admit nobody: they require a credential and
 constrain a body, and whoever is admitted is admitted by something else.
@@ -341,7 +345,8 @@ hold, so a route it admits is described whatever the request presented.
 
 What guards a method is said in the description as well: `authenticated` where reaching it takes
 being someone and no more — `anyone`, `delegate`, `claims` — `private` where `id` decides it,
-`protected` where `role` does, and `system` besides where that role is one of the `system` scope.
+`protected` where `role` does, and `system` besides where the scope `role` requires lies
+within `system`.
 `rule` says whatever each directive it composes says. A resource carries whichever of the four any
 of its methods does.
 
