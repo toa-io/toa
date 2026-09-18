@@ -33,8 +33,8 @@ export function component(manifest, module, contributed = { types: {}, imports: 
   )
 
   for (const { operation, name, output } of endpoints) {
-    if (stated(operation.input))
-      blocks.push(`export type ${name}Input = ${emit(operation.input)}`)
+    if (takes(operation))
+      blocks.push(`export type ${name}Input = ${input(operation, importing)}`)
     if (output.declared) blocks.push(`export type ${name}Output = ${output.type}`)
   }
 
@@ -51,12 +51,32 @@ export function component(manifest, module, contributed = { types: {}, imports: 
   return BANNER + imports(required) + '\n' + blocks.join('\n\n') + '\n'
 }
 
+/** Whether a call to this operation carries an input: a declared one, or a stream. */
+function takes(operation) {
+  return stated(operation.input) || operation.stream !== undefined
+}
+
+/**
+ * What a call carries: what the operation declared, and the property that holds a stream, which
+ * is the stream itself or the stream beside what a route says about it.
+ */
+function input(operation, importing) {
+  if (operation.stream === undefined) return emit(operation.input)
+
+  importing('node:stream', 'Readable')
+
+  const carried = 'Readable | { type?: string | null, accept?: string | null, stream: Readable }'
+  const property = `{ ${operation.stream}: ${carried} }`
+
+  return stated(operation.input) ? `${emit(operation.input)} & ${property}` : property
+}
+
 /** One call signature per endpoint, as the call actually resolves. */
 function calls(endpoints, entity, importing) {
   const lines = []
 
   for (const { endpoint, operation, name, output } of endpoints) {
-    const request = [stated(operation.input) ? `input: ${name}Input` : 'input?: null']
+    const request = [takes(operation) ? `input: ${name}Input` : 'input?: null']
 
     if (operation.query !== false) {
       importing('@toa.io/core/types', 'Query')
@@ -69,8 +89,9 @@ function calls(endpoints, entity, importing) {
     // the process a call to a stateful operation goes to
     if (operation.stateful === true) request.push('instance: string')
 
-    // whether the call is awaited or left to run
-    request.push('task?: boolean')
+    // whether the call is awaited or left to run; a stream is held by its caller, and a task
+    // is taken by whoever consumes the queue later
+    if (operation.stream === undefined) request.push('task?: boolean')
 
     importing('@toa.io/core/types', 'Options')
 

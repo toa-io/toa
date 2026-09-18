@@ -1,7 +1,7 @@
 import { parse, type Node, type Method, type Query } from './syntax/index.ts'
 import { shortcuts } from './shortcuts.ts'
 import * as schemas from './schemas.ts'
-import type { Manifest } from '@toa.io/norm'
+import type { component, Manifest } from '@toa.io/norm'
 
 export function manifest(declaration: object, manifest: Manifest): Node {
   if (!(typeof declaration === 'object' && declaration !== null))
@@ -50,9 +50,38 @@ function specifyMethod(method: Method, manifest: Manifest): void {
   method.mapping.paged = operation.type === 'observation' && operation.scope === 'objects'
 
   projects(method, operation.type)
+  streams(method, operation)
 
   method.mapping.namespace = manifest.namespace
   method.mapping.component = manifest.name
+}
+
+/**
+ * A method that maps a stream maps it onto an operation that takes one, and takes the request
+ * once: `map:buffer` reads the same body this hands over.
+ */
+function streams(method: Method, operation: component.Operation): void {
+  const mapped = method.directives.find(
+    (directive) => directive.family === 'map' && directive.name === 'stream'
+  )
+
+  if (mapped === undefined) return
+
+  const endpoint = method.mapping?.endpoint
+
+  if (operation.stream === undefined)
+    throw new Error(
+      `Method of '${endpoint}' maps a stream, which the operation does not take`
+    )
+
+  const buffered = method.directives.some(
+    (directive) => directive.family === 'map' && directive.name === 'buffer'
+  )
+
+  if (buffered)
+    throw new Error(
+      `Method of '${endpoint}' maps both a stream and a buffer, and each takes the request`
+    )
 }
 
 /**

@@ -161,6 +161,9 @@ properties:
           stateful:
             # served by every process under an address of its own, which a call names; see documentation/stateful.md
             type: boolean
+          stream:
+            # the input property that carries a stream, read as its caller writes it; see documentation/streams.md
+            $ref: "#/definitions/name"
           forward:
             $ref: "#/definitions/name"
           bridge:
@@ -280,6 +283,13 @@ properties:
               properties:
                 scope:
                   enum: [object, objects, stream, none]
+          - if: # takes a stream
+              required: [stream]
+            then:
+              properties:
+                type:
+                  # a transition may run its algorithm twice over one call, and a stream is read once
+                  enum: [effect, computation, unmanaged]
         additionalProperties: false
     additionalProperties: false
 

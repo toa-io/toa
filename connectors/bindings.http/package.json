@@ -1,0 +1,35 @@
+{
+  "name": "@toa.io/bindings.http",
+  "version": "1.0.0-alpha.311",
+  "type": "module",
+  "description": "Toa HTTP Binding",
+  "author": "temich <tema.gurtovoy@gmail.com>",
+  "homepage": "https://github.com/toa-io/toa#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/toa-io/toa.git"
+  },
+  "bugs": {
+    "url": "https://github.com/toa-io/toa/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "transpiled",
+    "readme.md",
+    "!**/tsconfig.tsbuildinfo",
+    "!**/*.test.*"
+  ],
+  "main": "transpiled/index.js",
+  "types": "transpiled/index.d.ts",
+  "dependencies": {
+    "@toa.io/core": "1.0.0-alpha.311",
+    "@toa.io/definitions": "1.0.0-alpha.311",
+    "@toa.io/generic": "1.0.0-alpha.311",
+    "openspan": "1.0.0-alpha.305"
+  },
+  "scripts": {
+    "transpile": "tsc"
+  }
+}

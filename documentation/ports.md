@@ -17,6 +17,7 @@ nothing, and two compositions may each bind the same port.
 | `8002` | Introspection UI           |
 | `8003` | Configuration UI           |
 | `8004` | Exposition readiness probe |
+| `8005` | Streamed calls to a component |
 
 The Exposition gateway answers its own probe, rather than the Telemetry one, because that probe
 tracks the composition nested in the gateway process, which connects before route discovery has

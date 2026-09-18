@@ -17,6 +17,8 @@ export class Client extends Connector {
   private readonly options: Options
   private readonly pending = new Map<string, Pending>()
   private readonly listeners = new Map<string, Set<Listener>>()
+  /** How many times in a row each pending component and epoch was refused. */
+  private readonly refusals = new Map<string, number>()
   private remote: Remote | null = null
   private timer: NodeJS.Timeout | null = null
   private flushing = false
@@ -30,14 +32,21 @@ export class Client extends Connector {
     this.options = { ...DEFAULTS, ...options }
   }
 
-  /** The configuration of a component for an epoch, once the service has one. */
-  public async fetch(component: string, epoch: string): Promise<Value> {
+  /**
+   * The configuration of a component for an epoch, once the service has one. Given the
+   * revision the component was deployed with, deployed defaults of another are not taken.
+   */
+  public async fetch(
+    component: string,
+    epoch: string,
+    revision?: string
+  ): Promise<Value> {
     const key = id(component, epoch)
 
     let entry = this.pending.get(key)
 
     if (entry === undefined) {
-      entry = { component, epoch, waiters: [] }
+      entry = { component, epoch, revision, waiters: [] }
       this.pending.set(key, entry)
     }
 
@@ -105,20 +114,21 @@ export class Client extends Connector {
 
     const batch = [...this.pending.values()]
     const input = batch.map(({ component, epoch }) => ({ component, epoch }))
+    let refused: Refusal[] = []
 
     try {
       const output = await this.remote!.invoke<Fetched[] | Error>('fetch', { input })
 
       if (output instanceof Error) throw output
 
-      this.settle(output)
+      refused = this.settle(output)
     } catch (error) {
       console.warn('Configuration fetch failed', { error })
     } finally {
       this.flushing = false
     }
 
-    this.report(batch)
+    this.report(batch, refused)
 
     if (this.pending.size === 0) return
 
@@ -126,9 +136,16 @@ export class Client extends Connector {
     else this.schedule(this.backoff())
   }
 
-  /** Those the service has served are told; the rest stay for the next round. */
-  private settle(output: Fetched[]): void {
-    for (const { component, epoch, configuration, created } of output) {
+  /**
+   * Those the service has served are told; the rest stay for the next round. Deployed
+   * defaults of another revision than the one asked for stay as well, and are returned: a
+   * values service of another deployment answered, and the next round may reach one of this.
+   * One that answers no revision predates them, which makes it another deployment too.
+   */
+  private settle(output: Fetched[]): Refusal[] {
+    const refused: Refusal[] = []
+
+    for (const { component, epoch, configuration, created, revision } of output) {
       if (configuration === null) continue
 
       const key = id(component, epoch)
@@ -136,16 +153,44 @@ export class Client extends Connector {
 
       if (entry === undefined) continue
 
+      const received = revision ?? null
+
+      if (entry.revision !== undefined && created === 0 && received !== entry.revision) {
+        refused.push({ component, epoch, expected: entry.revision, received })
+
+        continue
+      }
+
       this.pending.delete(key)
 
       for (const resolve of entry.waiters) resolve({ configuration, created })
     }
+
+    return refused
   }
 
-  private report(batch: Pending[]): void {
+  /**
+   * A component that was refused is said to be, on its first refusal and every n-th after,
+   * rather than to be waiting.
+   */
+  private report(batch: Pending[], refused: Refusal[]): void {
+    for (const refusal of refused) {
+      const key = id(refusal.component, refusal.epoch)
+      const count = (this.refusals.get(key) ?? 0) + 1
+
+      this.refusals.set(key, count)
+
+      if (count % this.options.warn === 1)
+        console.warn('Configuration of another revision refused', { ...refusal })
+    }
+
     const waiting = batch
       .filter(({ component, epoch }) => this.pending.has(id(component, epoch)))
+      .filter(({ component, epoch }) => !this.refusals.has(id(component, epoch)))
       .map(({ component }) => component)
+
+    for (const key of this.refusals.keys())
+      if (!this.pending.has(key)) this.refusals.delete(key)
 
     if (waiting.length === 0) {
       this.round = 0
@@ -227,6 +272,15 @@ export interface Fetched {
   epoch: string
   configuration: object | null
   created: number
+  /** Of the deployed defaults; `null` for a created object, absent from an older service. */
+  revision?: string | null
+}
+
+interface Refusal {
+  component: string
+  epoch: string
+  expected: string
+  received: string | null
 }
 
 /** The `configuration.values.created` payload: the object as stored. */
@@ -242,5 +296,6 @@ export type Listener = (value: Value) => void
 interface Pending {
   component: string
   epoch: string
+  revision: string | undefined
   waiters: Array<(value: Value) => void>
 }

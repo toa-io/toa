@@ -4,6 +4,13 @@ import type { Source } from '@toa.io/core/types'
 /** Per-component variables: the local override and the secrets. */
 export const PREFIX = 'TOA_CONFIGURATION_'
 
+/**
+ * Followed by a component's uppercase locator: the revision of the defaults it is deployed
+ * with. A name and a namespace are alphanumeric, so this is never a local override, which is
+ * two segments past `PREFIX` where this is three, nor a secret, which begins with `__`.
+ */
+export const REVISION = PREFIX + 'REVISION_'
+
 /** The map of every configured component, on the values service. */
 export const VALUES = 'TOA_CONFIGURATION_VALUES'
 

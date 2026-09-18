@@ -71,6 +71,16 @@ export class Context {
    */
   public reads?: boolean
 
+  /**
+   * The media type this request is answered in, where the route states what it produces: resolved
+   * against the request's `accept` before the call, handed to the operation, and what a stream it
+   * answers is served under.
+   */
+  public answers?: string
+
+  /** Whether the body outgrew what the route takes, which is answered rather than served. */
+  public exceeded?: boolean
+
   public readonly pipelines: Pipelines = {
     body: [],
     response: []
@@ -118,6 +128,13 @@ export class Context {
     this.consumed = true
 
     return await buffer(this.request)
+  }
+
+  /** The body as it arrives, for whoever hands it over rather than reads it. */
+  public stream(): IncomingMessage {
+    this.consumed = true
+
+    return this.request
   }
 
   public async body<T>(): Promise<T> {

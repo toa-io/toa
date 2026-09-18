@@ -3,6 +3,7 @@ import { add, environment } from '@toa.io/generic'
 import * as schemas from '@toa.io/schemas'
 import {
   PREFIX,
+  REVISION,
   SECRET_RX,
   assertSecrets
 } from '@toa.io/definitions/extensions.configuration'
@@ -13,6 +14,11 @@ import type { Manifest } from '@toa.io/definitions/extensions.configuration'
 /** The variable is set, so the values service is not consulted. */
 export function overridden(locator: Locator): boolean {
   return environment.get(PREFIX + locator.uppercase) !== undefined
+}
+
+/** The revision of the defaults the component was deployed with; none where it was not. */
+export function revision(locator: Locator): string | undefined {
+  return environment.get(REVISION + locator.uppercase)
 }
 
 /** The variable, the manifest defaults, then the schema. */

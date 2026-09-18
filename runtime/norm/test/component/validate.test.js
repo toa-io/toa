@@ -330,3 +330,42 @@ describe('stateful', () => {
     await assert.rejects(validate(manifest), (error) => /must be boolean/.test(error.message))
   })
 })
+
+describe('stream', () => {
+  beforeEach(() => {
+    manifest.operations.read = {
+      type: 'computation',
+      scope: 'none',
+      query: false,
+      bridge: 'whatever',
+      bindings: ['@toa.io/bindings.amqp'],
+      stream: 'content'
+    }
+  })
+
+  it('should reject an operation whose bindings carry no stream', async () => {
+    await assert.rejects(validate(manifest), (error) =>
+      /takes a stream, which none of its bindings carries/.test(error.message)
+    )
+  })
+
+  it('should accept an operation served where it is composed', async () => {
+    manifest.operations.read.bindings = []
+
+    await assert.doesNotReject(validate(manifest))
+  })
+
+  it('should accept an operation bound to a binding that carries a stream', async () => {
+    manifest.operations.read.bindings = ['@toa.io/bindings.http']
+
+    await assert.doesNotReject(validate(manifest))
+  })
+
+  it('should reject a transition that takes a stream', async () => {
+    manifest.operations.add.stream = 'content'
+
+    await assert.rejects(validate(manifest), (error) =>
+      /must be equal to one of the allowed values/.test(error.message)
+    )
+  })
+})

@@ -8,8 +8,8 @@ import {
 import { add } from '@toa.io/generic'
 import { components } from './components.ts'
 import { version } from '../version.ts'
-import { EVENT, PREFIX, SECRET_RX, UI_PATH, UI_PORT, VALUES } from './const.ts'
-import { epoch } from './epoch.ts'
+import { EVENT, PREFIX, REVISION, SECRET_RX, UI_PATH, UI_PORT, VALUES } from './const.ts'
+import { epoch, revision } from './epoch.ts'
 import { assertSecrets } from './secrets.ts'
 import * as validators from './schemas.ts'
 import type { Manifest } from './manifest.ts'
@@ -34,16 +34,21 @@ export function deployment(
 
   annotation = prepare(values, instances)
 
+  const described = describe(instances, annotation)
   const variables: Variables = {}
 
   for (const instance of managed) {
     const values = annotation[instance.locator.id]
+    const secrets = values === undefined ? [] : createSecrets(values)
 
-    if (values === undefined) continue
-
-    const secrets = createSecrets(values)
-
-    if (secrets.length > 0) variables[instance.locator.label] = secrets
+    // a variable of the component's own, so a change of its defaults replaces its processes
+    variables[instance.locator.label] = [
+      ...secrets,
+      {
+        name: REVISION + instance.locator.uppercase,
+        value: revision(described[instance.locator.id].defaults)
+      }
+    ]
   }
 
   const service: Service = {
@@ -59,7 +64,7 @@ export function deployment(
     variables: [
       {
         name: VALUES,
-        value: JSON.stringify(describe(instances, annotation))
+        value: JSON.stringify(described)
       }
     ]
   }

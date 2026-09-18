@@ -75,6 +75,59 @@ The body is read from the request stream as raw bytes and delivered as a UTF-8 s
 
 Body parsing is bypassed, so the route does not depend on a supported `Content-Type` or format decoding. The request stream is consumed; a route with `map:buffer` cannot also receive a parsed body from the same request.
 
+## Stream
+
+The `map:stream` directive hands the request body to the operation as a stream, instead of reading
+it. The operation names the input property that carries one — see
+[streamed input](/documentation/streams.md) — and the directive names the same property:
+
+```yaml
+/videos/:id:
+  POST:
+    map:segments:
+      id: id
+    map:stream: source
+    endpoint: transcode
+```
+
+The property is filled with `{ type, accept, stream }`: the request's content type, the media type
+to answer with, and the body. Body parsing is bypassed and the request stream is consumed, so a
+route with `map:stream` cannot also receive a parsed body, and cannot carry `map:buffer`.
+
+What a route takes and what it answers are stated beside it:
+
+```yaml
+    map:stream:
+      property: source
+      accept: [video/quicktime, video/mp4]
+      produces: [video/mp4, image/jpeg]
+      limit: 4GiB
+```
+
+- `accept` is what a client may send. A request of another media type is rejected with `415`.
+  Absent, any media type is accepted.
+- `produces` is what this route may answer. The request's `accept` is resolved against it before the
+  call, and the operation is handed that one media type as `accept`; a client asking for anything
+  else is answered `406`, and the operation does not run.
+
+  **Everything it names is one answer in another encoding** — a picture as `image/webp` or
+  `image/jpeg`, a render as `application/pdf` or `image/png` — because what a client accepts chooses
+  an encoding and not an operation. A route that would answer two different things answers them at
+  two paths.
+
+  Where a client names several of them, the order it named them in decides; where it names none, or
+  takes anything, the route's own order does.
+- `limit` is the largest body the route takes, as a number of bytes or with a unit — see
+  [stream size limit](octets.md#stream-size-limit). Past it, `413`. The default is `64MiB`.
+
+A byte stream the operation answers is served under the media type it was handed. **A route that
+states `produces` answers bytes**: a value answered there is `422`.
+
+A streamed call takes a connection of its own and is neither queued, retried nor balanced, so map a
+stream only where a body has to flow through an operation. A body that is to be kept is stored by
+[`octets:put`](octets.md), which calls components afterwards with a reference to it; a body small
+enough to be a value is a value. See [what it costs](/documentation/streams.md#what-it-costs).
+
 ## Route parameters
 
 The `map:segments` directive maps the values of route parameters to operation call input properties.

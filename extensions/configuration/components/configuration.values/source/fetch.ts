@@ -9,7 +9,8 @@ export async function computation(input: Pair[], context: Context): Promise<Fetc
         component,
         epoch,
         configuration: value === null ? null : value.configuration,
-        created: value === null ? 0 : value.created
+        created: value === null ? 0 : value.created,
+        revision: value === null ? null : value.revision
       }
     })
   )
@@ -23,4 +24,5 @@ interface Pair {
 interface Fetched extends Pair {
   configuration: object | null
   created: number
+  revision: string | null
 }

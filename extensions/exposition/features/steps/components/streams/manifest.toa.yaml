@@ -1,0 +1,13 @@
+name: streams
+
+operations:
+  take:
+    # the gateway composes it beside itself, and a stream is passed as it is where there is
+    # nothing in between
+    bindings: ~
+    type: computation
+    stream: content
+  answer:
+    bindings: ~
+    type: computation
+    stream: content

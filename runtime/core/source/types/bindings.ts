@@ -12,6 +12,8 @@ export interface Properties {
   async?: boolean
   /** in-process: its producers are connected first and torn down last */
   local?: boolean
+  /** carries a call whose input holds a stream; an endpoint that takes one is offered to no other */
+  streams?: boolean
 }
 
 /**
@@ -52,13 +54,17 @@ export interface Broadcast<L extends string = string> extends Connector {
 }
 
 export interface Factory {
-  /** `stateful` are the endpoints among `endpoints` that take addressed calls only */
+  /**
+   * `stateful` are the endpoints among `endpoints` that take addressed calls only, and
+   * `streamed` those that take one of their input properties as a stream.
+   */
   // eslint-disable-next-line max-params
   producer(
     locator: Locator,
     endpoints: string[],
     component: Component,
-    stateful?: string[]
+    stateful?: string[],
+    streamed?: string[]
   ): Connector
 
   consumer(locator: Locator, endpoint: string): Consumer

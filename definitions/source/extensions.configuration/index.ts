@@ -1,7 +1,7 @@
 export { manifest } from './manifest.ts'
 export { components } from './components.ts'
 export { deployment, describe, image } from './deployment.ts'
-export { epoch } from './epoch.ts'
+export { epoch, revision } from './epoch.ts'
 export { context } from './context.ts'
 export { assertSecrets } from './secrets.ts'
 export * from './const.ts'

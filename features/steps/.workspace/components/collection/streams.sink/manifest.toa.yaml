@@ -1,0 +1,14 @@
+namespace: streams
+name: sink
+
+operations:
+  accept:
+    # stage one: nothing carries a stream between processes yet, so this one is served here
+    bindings: ~
+    type: computation
+    stream: content
+    input:
+      type: object
+      properties:
+        label:
+          type: string

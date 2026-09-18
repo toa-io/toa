@@ -38,6 +38,7 @@ export type FetchOutput = Array<{
   epoch: string
   configuration: Record<string, unknown> | null
   created: number
+  revision?: string | null
 }>
 
 export type ListOutput = Array<{

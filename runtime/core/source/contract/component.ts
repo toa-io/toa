@@ -67,6 +67,7 @@ const KEYS = [
   'query',
   'once',
   'stateful',
+  'stream',
   'bindings',
   'description',
   'input',

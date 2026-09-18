@@ -28,6 +28,9 @@ export function rethrow(exception: Exception | HTTPException): void {
     // the process holding it did not answer in time
     CORE_EXCEPTIONS.Abandoned,
     GATEWAY_TIMEOUT,
+    // nothing answered at the address of the component a streamed call was made to
+    CORE_EXCEPTIONS.Unreachable,
+    SERVICE_UNAVAILABLE,
     () => {
       console.error('Request processing exception', exception)
 
@@ -44,6 +47,7 @@ const NOT_FOUND = new http.NotFound()
 const PRECONDITION_FAILED = new http.PreconditionFailed()
 const CONFLICT = new http.Conflict()
 const GATEWAY_TIMEOUT = new http.GatewayTimeout()
+const SERVICE_UNAVAILABLE = new http.ServiceUnavailable()
 
 const CORE_EXCEPTIONS = {
   StateNotFound: 302,
@@ -52,5 +56,6 @@ const CORE_EXCEPTIONS = {
   EntityGuard: 213,
   Duplicate: 306,
   Addressee: 403,
-  Abandoned: 404
+  Abandoned: 404,
+  Unreachable: 407
 }

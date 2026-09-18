@@ -4,7 +4,12 @@ import * as boot from './index.js'
 
 // eslint-disable-next-line max-params
 export const call = async (locator, endpoint, definition, entity, source) => {
-  const consumers = await boot.bindings.consume(locator, endpoint, definition.bindings)
+  const consumers = await boot.bindings.consume(
+    locator,
+    endpoint,
+    definition.bindings,
+    definition.stream !== undefined
+  )
   const transmission = new Transmission(consumers)
   const contract = boot.contract.request(definition, entity)
 
@@ -23,6 +28,7 @@ export const call = async (locator, endpoint, definition, entity, source) => {
     `${locator.id}.${endpoint}`,
     source,
     stateful,
-    readable
+    readable,
+    definition.stream
   )
 }

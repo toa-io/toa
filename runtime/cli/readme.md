@@ -322,7 +322,8 @@ mono:
     memory: [256Mi, 2Gi]
 ```
 
-Without `mono:`, `--mono` defaults to 2 replicas and no resource requests or limits.
+Without `mono:`, `--mono` deploys 2 replicas and takes the Context's `resources`, which it has
+to declare like every other deployment — see [resources](/documentation/deployment.md#resources).
 
 ### conceal
 

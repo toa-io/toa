@@ -79,6 +79,10 @@ operations:
             nullable: true
           created:
             type: integer
+          # of the deployed defaults, which a component takes only of its own deployment
+          revision:
+            type: string
+            nullable: true
         required:
           - component
           - epoch

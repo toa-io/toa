@@ -36,6 +36,58 @@ When(
 )
 
 When(
+  'I boot {component} component without waiting',
+  /**
+   * A boot that may be held back by what it depends on, asserted by the steps below.
+   *
+   * @param {string} reference
+   * @this {toa.features.Context}
+   */
+  function (reference) {
+    const boot = stage.component(reference)
+
+    this.booting = { settled: false, boot }
+
+    boot.then(
+      () => (this.booting.settled = true),
+      () => (this.booting.settled = true)
+    )
+  }
+)
+
+Then(
+  'the component is not booted within {int} second(s)',
+  /**
+   * @param {number} seconds
+   * @this {toa.features.Context}
+   */
+  async function (seconds) {
+    assert.ok(this.booting !== undefined, 'No component is booting')
+
+    await timeout(seconds * 1000)
+
+    assert.equal(this.booting.settled, false, 'The component has booted')
+  }
+)
+
+Then(
+  'the component boots within {int} second(s)',
+  /**
+   * @param {number} seconds
+   * @this {toa.features.Context}
+   */
+  async function (seconds) {
+    assert.ok(this.booting !== undefined, 'No component is booting')
+
+    const expired = timeout(seconds * 1000).then(() => {
+      throw new Error(`The component has not booted within ${seconds} seconds`)
+    })
+
+    this.connector = await Promise.race([this.booting.boot, expired])
+  }
+)
+
+When(
   'I compose {component} component',
   /**
    * @param {string} reference
@@ -51,6 +103,17 @@ Given(
   /**
    * A call that names this process is otherwise served without leaving it, so whether the
    * broker has the process's name is never asked. Reset after the scenario.
+   */
+  function () {
+    globalThis.TOA_INTEGRATION_BINDINGS_LOOP_DISABLED = true
+  }
+)
+
+Given(
+  'calls within this process go through a binding',
+  /**
+   * The loop answers a call to a component composed here before any binding is asked, so a
+   * scenario about what a binding carries takes it out of the way. Reset after the scenario.
    */
   function () {
     globalThis.TOA_INTEGRATION_BINDINGS_LOOP_DISABLED = true
@@ -130,7 +193,6 @@ Given(
     this.workload = await stage.workload([reference], {})
   }
 )
-
 
 Then(
   'I compose {component} component and it fails with:',
