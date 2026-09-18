@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.313](https://github.com/toa-io/toa/compare/v1.0.0-alpha.312...v1.0.0-alpha.313) (2026-09-18)
+
+### Bug Fixes
+
+* **exposition:** declare the identity packages at the versions Toa declares ([6ffbe25](https://github.com/toa-io/toa/commit/6ffbe25fbad456c874b88f9e2385d2afed64c92a))
+
+
 # [1.0.0-alpha.312](https://github.com/toa-io/toa/compare/v1.0.0-alpha.311...v1.0.0-alpha.312) (2026-09-18)
 
 ### Bug Fixes
