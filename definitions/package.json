@@ -46,10 +46,10 @@
   "devDependencies": {
     "@toa.io/core": "1.0.0-alpha.312",
     "openspan": "1.0.0-alpha.305",
-    "oxc-parser": "0.149.0"
+    "oxc-parser": "0.150.0"
   },
   "peerDependencies": {
-    "oxc-parser": "0.149.0"
+    "oxc-parser": "0.150.0"
   },
   "peerDependenciesMeta": {
     "oxc-parser": {
