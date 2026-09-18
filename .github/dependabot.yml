@@ -1,5 +1,5 @@
 # Keeps the commit pins of the actions and the dependencies moving without hand work.
-# Every update is a pull request into `dev` and waits for the `Test` check like any other.
+# Every update is a pull request into `dev`, which the `Test` workflow merges once it passes.
 version: 2
 updates:
   - package-ecosystem: github-actions

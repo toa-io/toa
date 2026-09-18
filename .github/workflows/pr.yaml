@@ -54,3 +54,19 @@ jobs:
       - name: Run unit tests
         if: steps.changes.outputs.changed == 'true'
         run: npm run test:unit
+
+  # What Dependabot opens and pushes is merged once the tests above pass. A commit anyone else
+  # pushes to its branch makes the pull request theirs to merge.
+  merge:
+    needs: unit
+    if: github.event.pull_request.user.login == 'dependabot[bot]' && github.actor == 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Merge the pull request
+        run: gh pr merge "$PR" --merge --repo "$GITHUB_REPOSITORY"
+        env:
+          PR: ${{ github.event.pull_request.number }}
+          GH_TOKEN: ${{ github.token }}
