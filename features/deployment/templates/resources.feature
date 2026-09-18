@@ -120,11 +120,11 @@ Feature: Resource management
       """
 
   @helm
-  Scenario: Deploy Realtime with resource constraints
+  Scenario: Deploy introspection with resource constraints
     Given I have a component `exposed.one`
     And I have a context with:
       """yaml
-      realtime:
+      introspection:
         resources:
           cpu: [100m, 200m]
           memory: [100Mi, 1Gi]
@@ -132,7 +132,7 @@ Feature: Resource management
     When I export deployment for dev
     And I run `helm template deployment`
     Then program should exit
-    And extension-realtime-streams Deployment container spec should contain:
+    And extension-introspection-explorer Deployment container spec should contain:
       """
       resources:
         requests:

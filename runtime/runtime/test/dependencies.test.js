@@ -17,7 +17,7 @@ existed: a workspace resolves it by symlink, so every suite passed, and an appli
 declared `cadence:` failed to boot on an image that never had it.
 */
 it('installs every package the definitions define', () => {
-  const missing = [...DEFINED].filter(
+  const missing = [...packages()].filter(
     (suffix) => !(`@toa.io/${suffix}` in manifest.dependencies)
   )
 
@@ -29,10 +29,15 @@ Not at the runtime's own version: `lerna` bumps what changed and what depends on
 package nothing touched stays where the release before left it.
 */
 it('installs them at a version', () => {
-  for (const suffix of DEFINED)
+  for (const suffix of packages())
     assert.match(
       manifest.dependencies[`@toa.io/${suffix}`],
       /^\d+\.\d+\.\d+/,
       `@toa.io/${suffix}`
     )
 })
+
+/** A definition of a module within a package, `extensions.exposition/realtime`, is its package's. */
+function packages() {
+  return new Set([...DEFINED].map((suffix) => suffix.split('/')[0]))
+}

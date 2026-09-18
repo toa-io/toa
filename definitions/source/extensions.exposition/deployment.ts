@@ -6,12 +6,21 @@ import { components } from './components.ts'
 import { parse } from './syntax/index.ts'
 import { DELAY, PORT, PROBE } from './const.ts'
 import { version } from '../version.ts'
+import { STREAMS } from './realtime/const.ts'
+import { createVariables, type URIMap } from '@toa.io/pointer'
 
 /** Where Toa's release publishes this service's image. An application takes it
  *  instead of building one when its context says `registry.services: published`. */
 export const image = 'ghcr.io/toa-io/extension-exposition-gateway'
 
-export function deployment(_: unknown, annotation?: Annotation): Dependency {
+// the arguments every definition's deployment is called with
+// eslint-disable-next-line max-params
+export function deployment(
+  _: unknown,
+  annotation?: Annotation,
+  __?: unknown,
+  annotations?: Record<string, unknown>
+): Dependency {
   if (annotation === undefined)
     throw new Error('Exposition context annotation is required')
   schemas.annotation.validate(annotation)
@@ -75,6 +84,21 @@ export function deployment(_: unknown, annotation?: Annotation): Dependency {
 
   if (annotation.mcp !== undefined) properties.mcp = annotation.mcp
 
+  if (annotation.realtime?.expire !== undefined)
+    service.variables!.push({
+      name: 'TOA_REALTIME_EXPIRE',
+      value: String(annotation.realtime.expire)
+    })
+
+  // the Redis the realtime streams are in, where the context names one
+  const stash = annotations?.['@toa.io/extensions.stash'] as URIMap | undefined
+
+  if (stash !== undefined) {
+    const request = { group: service.group, selectors: [STREAMS] }
+
+    service.variables!.push(...createVariables('stash', stash, [request])[service.group])
+  }
+
   service.variables!.push({
     name: 'TOA_EXPOSITION_PROPERTIES',
     value: JSON.stringify(properties)
@@ -93,5 +117,13 @@ export function deployment(_: unknown, annotation?: Annotation): Dependency {
 
 type Properties = Pick<
   Annotation,
-  'authorities' | 'debug' | 'protocol' | 'bouncer' | 'censor' | 'ip' | 'oauth' | 'rpc' | 'mcp'
+  | 'authorities'
+  | 'debug'
+  | 'protocol'
+  | 'bouncer'
+  | 'censor'
+  | 'ip'
+  | 'oauth'
+  | 'rpc'
+  | 'mcp'
 >

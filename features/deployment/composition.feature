@@ -146,7 +146,7 @@ Feature: Export Compositions Deployment
           components:
             - dummies.one
           services:
-            - realtime
+            - cadence
       """
     When I export deployment
     Then exported values should contain:
@@ -154,13 +154,13 @@ Feature: Export Compositions Deployment
     compositions:
       - name: edge
         hosted:
-          - realtime-streams
+          - cadence-metronome
     """
     And I run `helm template deployment`
     Then program should exit
     And stdout should not contain lines:
       """
-      toa/service: extension-realtime-streams
+      toa/service: extension-cadence-metronome
       """
 
   Scenario: An unknown component

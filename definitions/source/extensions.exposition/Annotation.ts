@@ -20,6 +20,9 @@ export interface Annotation {
 
   debug?: boolean
 
+  /** Realtime streams, which the gateway serves. See `realtime.md`. */
+  realtime?: { expire?: number }
+
   /** The header the client address is read from; the connection's without one. See `ip.md`. */
   ip?: string
 

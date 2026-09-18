@@ -6,9 +6,13 @@
  * component is written expecting. Per process, because two of them contribute to the process
  * rather than to anything in it: the readiness probe answers for the process, and the halt
  * listener stops it. A process that runs no component of its own has both regardless.
+ *
+ * Realtime is every component's because the context may route the events of any of them, and a
+ * component writes what it routes itself.
  */
 export const PREDEFINED: Record<string, null> = {
   '@toa.io/extensions.telemetry': null,
   '@toa.io/extensions.fetch': null,
-  '@toa.io/extensions.introspection': null
+  '@toa.io/extensions.introspection': null,
+  '@toa.io/extensions.exposition/realtime': null
 }

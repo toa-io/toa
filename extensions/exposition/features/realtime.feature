@@ -1,14 +1,15 @@
-Feature: Realtime events
+Feature: Realtime streams
 
-  Background:
+  A route with `realtime:stream` answers with the stream of the key a route variable names. Who may
+  read it is what the route's own directives say.
+
+  Scenario: Getting realtime events
     Given the Realtime is running with the following annotation:
       """yaml
       users.properties.sync: id
       """
     And the identity Bob is consuming realtime events
-
-  Scenario: Getting realtime events
-    Given the `users.properties` is running with the following manifest:
+    And the `users.properties` is running with the following manifest:
       """yaml
       exposition:
         /:id:
@@ -32,3 +33,474 @@ Feature: Realtime events
       """yaml
       newbie: false
       """
+
+  Scenario: Streaming a resource of the application
+    Given the realtime routes:
+      """yaml
+      chat.messages.sync:
+        key: room
+        expose: [room, text]
+      """
+    And the `chat.messages` is running with the following manifest:
+      """yaml
+      exposition:
+        /:
+          anonymous: true
+          io:output: false
+          POST: post
+        /rooms/:room/stream:
+          GET:
+            realtime:stream: room
+      """
+    When Alice is consuming:
+      """
+      GET /chat/messages/rooms/general/stream/ HTTP/1.1
+      host: nex.toa.io
+      accept: application/json
+      """
+    And the following request is received:
+      """
+      POST /chat/messages/ HTTP/1.1
+      host: nex.toa.io
+      content-type: application/yaml
+
+      room: general
+      text: Hello!
+      author: Bob
+      """
+    Then Alice receives exactly:
+      """yaml
+      - event: chat.messages.sync
+        data:
+          room: general
+          text: Hello!
+      """
+
+  Scenario: Streaming what an event of another key does not reach
+    Given the realtime routes:
+      """yaml
+      chat.messages.sync: room
+      """
+    And the `chat.messages` is running with the following manifest:
+      """yaml
+      exposition:
+        /:
+          anonymous: true
+          io:output: false
+          POST: post
+        /rooms/:room/stream:
+          anonymous: true
+          GET:
+            realtime:stream: room
+      """
+    When Alice is consuming:
+      """
+      GET /chat/messages/rooms/general/stream/ HTTP/1.1
+      host: nex.toa.io
+      accept: application/json
+      """
+    And the following request is received:
+      """
+      POST /chat/messages/ HTTP/1.1
+      host: nex.toa.io
+      content-type: application/yaml
+
+      room: random
+      text: Elsewhere
+      """
+    Then Alice receives no event `chat.messages.sync`
+    And the stream of `random` does not exist
+
+  Scenario: Writing an event once, whoever reads it
+    Given the realtime routes:
+      """yaml
+      chat.messages.sync: room
+      """
+    And the `chat.messages` is running with the following manifest:
+      """yaml
+      exposition:
+        /:
+          anonymous: true
+          io:output: false
+          POST: post
+        /rooms/:room/stream:
+          anonymous: true
+          GET:
+            realtime:stream: room
+      """
+    When Alice is consuming:
+      """
+      GET /chat/messages/rooms/general/stream/ HTTP/1.1
+      host: nex.toa.io
+      accept: application/json
+      """
+    And Bob is consuming:
+      """
+      GET /chat/messages/rooms/general/stream/ HTTP/1.1
+      host: nex.toa.io
+      accept: application/json
+      """
+    And the following request is received:
+      """
+      POST /chat/messages/ HTTP/1.1
+      host: nex.toa.io
+      content-type: application/yaml
+
+      room: general
+      text: Hello!
+      """
+    Then Alice receives the event `chat.messages.sync`:
+      """yaml
+      text: Hello!
+      """
+    And Bob receives the event `chat.messages.sync`:
+      """yaml
+      text: Hello!
+      """
+    And the stream of `general` holds 1 event
+
+  Scenario: Replaying what was missed on another gateway
+    Given the realtime routes:
+      """yaml
+      chat.messages.sync: room
+      """
+    And the `chat.messages` is running with the following manifest:
+      """yaml
+      exposition:
+        /:
+          anonymous: true
+          io:output: false
+          POST: post
+        /rooms/:room/stream:
+          anonymous: true
+          GET:
+            realtime:stream: room
+      """
+    And Alice is consuming:
+      """
+      GET /chat/messages/rooms/general/stream/ HTTP/1.1
+      host: nex.toa.io
+      accept: application/json
+      """
+    When Alice disconnects
+    And the following request is received:
+      """
+      POST /chat/messages/ HTTP/1.1
+      host: nex.toa.io
+      content-type: application/yaml
+
+      room: general
+      text: Missed
+      """
+    And the Gateway is stopped
+    And the Gateway is running
+    And Alice reconnects
+    Then Alice receives the event `chat.messages.sync`:
+      """yaml
+      text: Missed
+      """
+
+  Scenario: Opening a stream as the effect of an operation
+    Given the realtime routes:
+      """yaml
+      chat.messages.sync: room
+      """
+    And the `chat.messages` is running with the following manifest:
+      """yaml
+      exposition:
+        /:
+          anonymous: true
+          io:output: false
+          POST: post
+        /rooms/:room/join:
+          anonymous: true
+          POST:
+            endpoint: join
+            realtime:stream: room
+      """
+    When Alice is consuming:
+      """
+      POST /chat/messages/rooms/general/join/ HTTP/1.1
+      host: nex.toa.io
+      accept: application/json
+      content-type: application/yaml
+
+      room: general
+      """
+    And the following request is received:
+      """
+      POST /chat/messages/ HTTP/1.1
+      host: nex.toa.io
+      content-type: application/yaml
+
+      room: general
+      text: Welcome
+      """
+    Then Alice receives the event `chat.messages.sync`:
+      """yaml
+      text: Welcome
+      """
+
+  Scenario: Opening no stream where the operation fails
+    Given the realtime routes:
+      """yaml
+      chat.messages.sync: room
+      """
+    And the `chat.messages` is running with the following manifest:
+      """yaml
+      exposition:
+        /rooms/:room/join:
+          anonymous: true
+          POST:
+            endpoint: join
+            realtime:stream: room
+      """
+    When the following request is received:
+      """
+      POST /chat/messages/rooms/closed/join/ HTTP/1.1
+      host: nex.toa.io
+      accept: application/yaml
+      content-type: application/yaml
+
+      room: closed
+      """
+    Then the following reply is sent:
+      """
+      422 Unprocessable Entity
+
+      code: CLOSED
+      """
+    And the stream of `closed` does not exist
+
+  @timing
+  Scenario: Keeping a stream while it is read
+    Given the realtime streams expire in 2 seconds
+    And the realtime routes:
+      """yaml
+      chat.messages.sync: room
+      """
+    And the `chat.messages` is running with the following manifest:
+      """yaml
+      exposition:
+        /:
+          anonymous: true
+          io:output: false
+          POST: post
+        /rooms/:room/stream:
+          anonymous: true
+          GET:
+            realtime:stream: room
+      """
+    And Alice is consuming:
+      """
+      GET /chat/messages/rooms/general/stream/ HTTP/1.1
+      host: nex.toa.io
+      accept: application/json
+      """
+    When after 4 seconds
+    And the following request is received:
+      """
+      POST /chat/messages/ HTTP/1.1
+      host: nex.toa.io
+      content-type: application/yaml
+
+      room: general
+      text: Still here
+      """
+    Then Alice receives the event `chat.messages.sync`:
+      """yaml
+      text: Still here
+      """
+
+  @timing
+  Scenario: Letting a stream go once nobody reads it
+    Given the realtime streams expire in 2 seconds
+    And the realtime routes:
+      """yaml
+      chat.messages.sync: room
+      """
+    And the `chat.messages` is running with the following manifest:
+      """yaml
+      exposition:
+        /:
+          anonymous: true
+          io:output: false
+          POST: post
+        /rooms/:room/stream:
+          anonymous: true
+          GET:
+            realtime:stream: room
+      """
+    And Alice is consuming:
+      """
+      GET /chat/messages/rooms/general/stream/ HTTP/1.1
+      host: nex.toa.io
+      accept: application/json
+      """
+    When Alice disconnects
+    And after 4 seconds
+    And the following request is received:
+      """
+      POST /chat/messages/ HTTP/1.1
+      host: nex.toa.io
+      content-type: application/yaml
+
+      room: general
+      text: Nobody
+      """
+    Then the stream of `general` does not exist
+
+  @timing
+  Scenario: Reconnecting after the stream expired
+    Given the realtime streams expire in 2 seconds
+    And the realtime routes:
+      """yaml
+      chat.messages.sync: room
+      """
+    And the `chat.messages` is running with the following manifest:
+      """yaml
+      exposition:
+        /:
+          anonymous: true
+          io:output: false
+          POST: post
+        /rooms/:room/stream:
+          anonymous: true
+          GET:
+            realtime:stream: room
+      """
+    And Alice is consuming:
+      """
+      GET /chat/messages/rooms/general/stream/ HTTP/1.1
+      host: nex.toa.io
+      accept: application/json
+      """
+    When Alice disconnects
+    And after 4 seconds
+    And Alice reconnects
+    And the following request is received:
+      """
+      POST /chat/messages/ HTTP/1.1
+      host: nex.toa.io
+      content-type: application/yaml
+
+      room: general
+      text: Late
+      """
+    Then Alice receives the event `chat.messages.sync`:
+      """yaml
+      text: Late
+      """
+
+  @containers
+  Scenario: Delivering after the realtime Redis restarted
+    Given the realtime routes:
+      """yaml
+      chat.messages.sync: room
+      """
+    And the `chat.messages` is running with the following manifest:
+      """yaml
+      exposition:
+        /:
+          anonymous: true
+          io:output: false
+          POST: post
+        /rooms/:room/stream:
+          anonymous: true
+          GET:
+            realtime:stream: room
+      """
+    And Alice is consuming:
+      """
+      GET /chat/messages/rooms/general/stream/ HTTP/1.1
+      host: nex.toa.io
+      accept: application/json
+      """
+    When the realtime Redis is stopped
+    And the realtime Redis is started
+    And the following request is received:
+      """
+      POST /chat/messages/ HTTP/1.1
+      host: nex.toa.io
+      content-type: application/yaml
+
+      room: general
+      text: Back
+      """
+    Then Alice receives the event `chat.messages.sync`:
+      """yaml
+      text: Back
+      """
+
+  @containers
+  Scenario: Writing what was routed while the realtime Redis was down
+    Given the realtime routes:
+      """yaml
+      chat.messages.sync: room
+      """
+    And the `chat.messages` is running with the following manifest:
+      """yaml
+      exposition:
+        /:
+          anonymous: true
+          io:output: false
+          POST: post
+        /rooms/:room/stream:
+          anonymous: true
+          GET:
+            realtime:stream: room
+      """
+    And Alice is consuming:
+      """
+      GET /chat/messages/rooms/general/stream/ HTTP/1.1
+      host: nex.toa.io
+      accept: application/json
+      """
+    When the realtime Redis is stopped
+    And the following request is received:
+      """
+      POST /chat/messages/ HTTP/1.1
+      host: nex.toa.io
+      content-type: application/yaml
+
+      room: general
+      text: While away
+      """
+    Then the following reply is sent:
+      """
+      201 Created
+      """
+    When the realtime Redis is started
+    Then Alice receives the event `chat.messages.sync`:
+      """yaml
+      text: While away
+      """
+
+  Scenario: Refusing a stream the route does not authorise
+    Given the `identity.basic` database contains:
+      | _id                              | authority | username | password                                                     |
+      | 4344518184ad44228baffce7a44fd0b1 | nex       | user     | $2b$10$JoiAQUS7tzobDAFIDBWhWeEIJv933dQetyjRzSmfQGaJE5ZlJbmYy |
+    And the realtime routes:
+      """yaml
+      chat.messages.sync: room
+      """
+    And the `chat.messages` is running with the following manifest:
+      """yaml
+      exposition:
+        /rooms/:room/stream:
+          auth:role: chat:moderator
+          GET:
+            realtime:stream: room
+      """
+    When the following request is received:
+      """
+      GET /chat/messages/rooms/general/stream/ HTTP/1.1
+      host: nex.toa.io
+      authorization: Basic dXNlcjpwYXNz
+      accept: application/json
+      """
+    Then the following reply is sent:
+      """
+      403 Forbidden
+      """
+    And the stream of `general` does not exist

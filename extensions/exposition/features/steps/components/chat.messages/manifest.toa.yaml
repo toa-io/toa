@@ -1,0 +1,39 @@
+namespace: chat
+name: messages
+
+entity:
+  properties:
+    room: &room
+      type: string
+    text: &text
+      type: string
+    # what a route does not expose
+    author:
+      type: string
+  required:
+    - room
+    - text
+
+operations:
+  post:
+    concurrency: retry
+    query: false
+    input:
+      properties:
+        room: *room
+        text: *text
+        author:
+          type: string
+      type: object
+      required:
+        - room
+        - text
+  # joins a room: refused where the room is closed
+  join:
+    errors: [CLOSED]
+    input:
+      properties:
+        room: *room
+      type: object
+      required:
+        - room

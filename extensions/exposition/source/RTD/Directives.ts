@@ -34,7 +34,8 @@ export interface Directives {
 }
 
 export interface DirectiveFactory {
-  create: (directives: syntax.Directive[], route: string) => Directives
+  /** `called` where the method calls an endpoint, which a directive may answer after */
+  create: (directives: syntax.Directive[], route: string, called?: boolean) => Directives
 
   /** Whether this declaration is carried into the nodes below the one it is on. */
   inheritable: (directive: syntax.Directive) => boolean

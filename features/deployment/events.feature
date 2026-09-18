@@ -49,7 +49,11 @@ Feature: Events deployment
             - name: TOA_EVENTS_EXTERNAL_CONSUMER
       """
 
-  Scenario: A realtime route makes an event consumed
+  Scenario: A realtime route does not make an event consumed
+
+  The component writes what it routes to the streams itself, so nothing consumes the event from
+  the broker for it.
+
     Given I have a component `mongo.one`
     And I have a context with:
       """yaml
@@ -63,7 +67,7 @@ Feature: Events deployment
         - name: mongo-one
           variables:
             - name: TOA_EVENTS_MONGO_ONE
-              value: created
+              value: ''
       """
 
   @helm

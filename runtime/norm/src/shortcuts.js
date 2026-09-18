@@ -43,7 +43,7 @@ export const SHORTCUTS = {
   bash: '@toa.io/bridges.bash',
   mongodb: '@toa.io/storages.mongodb',
   exposition: '@toa.io/extensions.exposition',
-  realtime: '@toa.io/extensions.realtime',
+  realtime: '@toa.io/extensions.exposition/realtime',
   configuration: '@toa.io/extensions.configuration',
   stash: '@toa.io/extensions.stash',
   storages: '@toa.io/extensions.storages',

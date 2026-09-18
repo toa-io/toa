@@ -70,7 +70,8 @@ function join(base: string, path: string): string {
 
 function createMethod(method: syntax.Method, context: Context): Method {
   const stack = method.directives.concat(context.directives.stack)
-  const directives = context.directives.factory.create(stack, context.path)
+  const called = method.mapping?.endpoint !== undefined
+  const directives = context.directives.factory.create(stack, context.path, called)
 
   const endpoint =
     method.mapping?.endpoint === undefined

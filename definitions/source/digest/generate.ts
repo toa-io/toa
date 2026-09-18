@@ -21,8 +21,7 @@ const DIGESTED = [
   'extensions.cadence',
   'extensions.configuration',
   'extensions.exposition',
-  'extensions.introspection',
-  'extensions.realtime'
+  'extensions.introspection'
 ]
 
 const OUT = resolve(import.meta.dirname, '../../digest')

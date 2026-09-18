@@ -101,7 +101,8 @@ describe('extensions', () => {
     assert.deepStrictEqual(manifest.extensions, {
       '@toa.io/extensions.telemetry': {},
       '@toa.io/extensions.fetch': null,
-      '@toa.io/extensions.introspection': {}
+      '@toa.io/extensions.introspection': {},
+      '@toa.io/extensions.exposition/realtime': null
     })
   })
 })

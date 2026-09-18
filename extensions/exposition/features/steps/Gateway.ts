@@ -260,7 +260,6 @@ const DEFAULT_PROPERTIES: Partial<http.Options> = {
 const DEFAULT_CONFIGURATION: Record<string, object> = {
   // a component declaring configuration waits for `configuration.values`, which these
   // features do not run; the variable is the local override that stands in for it
-  'realtime.streams': {},
   'identity.basic': {},
   'identity.clients': {},
   'identity.grants': {},

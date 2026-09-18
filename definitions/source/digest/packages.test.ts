@@ -19,8 +19,7 @@ const EXTENSIONS = [
   'extensions.cadence',
   'extensions.configuration',
   'extensions.exposition',
-  'extensions.introspection',
-  'extensions.realtime'
+  'extensions.introspection'
 ]
 
 const IMPORT = /(?:from|import|require)\s*\(?\s*['"]([^'"]+)['"]/g
