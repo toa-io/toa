@@ -6,6 +6,10 @@ name: values
 # What every component's epoch, schema and defaults are, the service is told on
 # deployment (`TOA_CONFIGURATION_VALUES`). A created object is published as the
 # prototype's `created` event.
+#
+# A reset is an object too: it holds the deployed defaults and their revision, so the event
+# carries the value a running component is to take. While it is the latest, what is served is
+# the defaults deployed now, which a later deployment may have changed.
 
 entity:
   properties:
@@ -17,6 +21,10 @@ entity:
       type: object
     originator:
       type: string
+    # of the defaults a reset holds; a created object has none
+    revision:
+      type: string
+      nullable: true
   required:
     - component
     - epoch
@@ -132,6 +140,26 @@ operations:
     errors:
       - UNKNOWN_COMPONENT
       - INVALID_CONFIGURATION
+  # back to the deployed defaults, as a new object like any created one
+  reset:
+    query: false
+    input:
+      type: object
+      properties:
+        component:
+          type: string
+        originator:
+          type: object
+          properties:
+            id:
+              type: string
+          required:
+            - id
+      required:
+        - component
+        - originator
+    errors:
+      - UNKNOWN_COMPONENT
 
 exposition:
   isolated: true
@@ -153,3 +181,8 @@ exposition:
         role: system:configuration:create
         delegate: originator
       endpoint: create
+    DELETE:
+      auth:rule:
+        role: system:configuration:create
+        delegate: originator
+      endpoint: reset

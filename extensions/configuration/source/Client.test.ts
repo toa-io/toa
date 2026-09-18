@@ -79,8 +79,8 @@ it('should send the requests of one tick as one call', async () => {
     client.fetch('a.two', 'e2')
   ])
 
-  assert.deepStrictEqual(one, { configuration: { foo: 1 }, created: 7 })
-  assert.deepStrictEqual(two, { configuration: { foo: 2 }, created: 7 })
+  assert.deepStrictEqual(one, { configuration: { foo: 1 }, created: 7, revision: null })
+  assert.deepStrictEqual(two, { configuration: { foo: 2 }, created: 7, revision: null })
   assert.strictEqual(remote.invoke.mock.callCount(), 1)
   assert.deepStrictEqual(remote.invoke.mock.calls[0].arguments[1], {
     input: [
@@ -122,19 +122,40 @@ it('should hand a created object to its subscribers', async () => {
     listener.mock.calls.some(
       (call: any) =>
         call.arguments.length === 1 &&
-        isDeepStrictEqual(call.arguments[0], { configuration: { foo: 2 }, created: 12 })
+        isDeepStrictEqual(call.arguments[0], {
+          configuration: { foo: 2 },
+          created: 12,
+          revision: null
+        })
     )
   )
   assert.strictEqual(other.mock.callCount(), 0)
   assert.strictEqual(remote.invoke.mock.callCount(), 0)
 
+  // a reset holds deployed defaults, and says of which revision
+  await receiver!.receive({
+    payload: {
+      component: 'a.one',
+      epoch: 'e1',
+      configuration: { foo: 'deployed' },
+      revision: 'r1',
+      CREATED: 13
+    }
+  } satisfies Message)
+
+  assert.deepStrictEqual(listener.mock.calls.at(-1)?.arguments[0], {
+    configuration: { foo: 'deployed' },
+    created: 13,
+    revision: 'r1'
+  })
+
   client.unsubscribe('a.one', 'e1', listener)
 
   await receiver!.receive({
-    payload: { component: 'a.one', epoch: 'e1', configuration: { foo: 3 }, CREATED: 13 }
+    payload: { component: 'a.one', epoch: 'e1', configuration: { foo: 3 }, CREATED: 14 }
   } satisfies Message)
 
-  assert.strictEqual(listener.mock.callCount(), 1)
+  assert.strictEqual(listener.mock.callCount(), 2)
 })
 
 it('should refuse deployed defaults of another revision until served its own', async () => {
@@ -156,7 +177,8 @@ it('should refuse deployed defaults of another revision until served its own', a
 
     assert.deepStrictEqual(await fetching, {
       configuration: { foo: 'deployed' },
-      created: 0
+      created: 0,
+      revision: 'r1'
     })
 
     const refusals = warn.mock.calls.filter(
@@ -253,8 +275,42 @@ it('should take a created object whatever the revision', async () => {
 
   assert.deepStrictEqual(await client.fetch('a.one', 'e1', 'r1'), {
     configuration: { foo: 'created' },
-    created: 7
+    created: 7,
+    revision: null
   })
+})
+
+it('should refuse deployed defaults a reset brought back of another revision', async () => {
+  const warn = mock.method(console, 'warn', () => undefined)
+
+  try {
+    remote.values = { 'a.one': { foo: 'previous' } }
+    remote.created = { 'a.one': 9 }
+    remote.revisions = { 'a.one': 'r0' }
+
+    await client.connect()
+
+    const fetching = client.fetch('a.one', 'e1', 'r1')
+
+    await rounds(2)
+
+    assert.ok(
+      warn.mock.calls.some(
+        (call) => call.arguments[0] === 'Configuration of another revision refused'
+      )
+    )
+
+    remote.values = { 'a.one': { foo: 'deployed' } }
+    remote.revisions = { 'a.one': 'r1' }
+
+    assert.deepStrictEqual(await fetching, {
+      configuration: { foo: 'deployed' },
+      created: 9,
+      revision: 'r1'
+    })
+  } finally {
+    warn.mock.restore()
+  }
 })
 
 it('should take deployed defaults of any revision when asked without one', async () => {
@@ -266,7 +322,8 @@ it('should take deployed defaults of any revision when asked without one', async
 
   assert.deepStrictEqual(await client.fetch('a.one', 'e1'), {
     configuration: { foo: 'served' },
-    created: 0
+    created: 0,
+    revision: 'r0'
   })
 })
 

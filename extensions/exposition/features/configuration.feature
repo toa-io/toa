@@ -2,8 +2,8 @@
 Feature: Configuration values
 
   The values component declares how it is exposed in its own manifest, and that manifest
-  is what this mounts. Reading takes `system:configuration:get`, creating takes
-  `system:configuration:create`, and the one who creates is recorded as the originator.
+  is what this mounts. Reading takes `system:configuration:get`, creating and resetting take
+  `system:configuration:create`, and the one who creates or resets is recorded as the originator.
 
   Background:
     # developer:secret, user:12345
@@ -199,6 +199,69 @@ Feature: Configuration values
       content-type: application/yaml
 
       configuration: {}
+      """
+    Then the following reply is sent:
+      """
+      422 Unprocessable Entity
+      """
+
+  Scenario: Resetting configuration
+    Given the following request is received:
+      """
+      POST /configuration/values/dummies.dummy/ HTTP/1.1
+      host: nex.toa.io
+      authorization: Basic ZGV2ZWxvcGVyOnNlY3JldA==
+      content-type: application/yaml
+
+      configuration:
+        foo: created
+      """
+    When the following request is received:
+      """
+      DELETE /configuration/values/dummies.dummy/ HTTP/1.1
+      host: nex.toa.io
+      authorization: Basic ZGV2ZWxvcGVyOnNlY3JldA==
+      """
+    Then the following reply is sent:
+      """
+      204 No Content
+      """
+    When the following request is received:
+      """
+      GET /configuration/values/dummies.dummy/ HTTP/1.1
+      host: nex.toa.io
+      authorization: Basic dXNlcjoxMjM0NQ==
+      accept: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      content-type: application/yaml
+
+      configuration:
+        foo: deployed
+        bar: world
+      epoch: e1
+      """
+
+  Scenario: Resetting configuration without the role
+    When the following request is received:
+      """
+      DELETE /configuration/values/dummies.dummy/ HTTP/1.1
+      host: nex.toa.io
+      authorization: Basic dXNlcjoxMjM0NQ==
+      """
+    Then the following reply is sent:
+      """
+      403 Forbidden
+      """
+
+  Scenario: Resetting configuration of an unknown component
+    When the following request is received:
+      """
+      DELETE /configuration/values/dummies.unknown/ HTTP/1.1
+      host: nex.toa.io
+      authorization: Basic ZGV2ZWxvcGVyOnNlY3JldA==
       """
     Then the following reply is sent:
       """

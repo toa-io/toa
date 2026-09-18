@@ -155,7 +155,10 @@ export class Client extends Connector {
 
       const received = revision ?? null
 
-      if (entry.revision !== undefined && created === 0 && received !== entry.revision) {
+      // deployed defaults are served with a revision, or, by a service that predates them, at `0`
+      const defaults = created === 0 || received !== null
+
+      if (entry.revision !== undefined && defaults && received !== entry.revision) {
         refused.push({ component, epoch, expected: entry.revision, received })
 
         continue
@@ -163,7 +166,8 @@ export class Client extends Connector {
 
       this.pending.delete(key)
 
-      for (const resolve of entry.waiters) resolve({ configuration, created })
+      for (const resolve of entry.waiters)
+        resolve({ configuration, created, revision: received })
     }
 
     return refused
@@ -211,7 +215,10 @@ export class Client extends Connector {
     return Math.min(this.options.base * Math.pow(FACTOR, this.round), this.options.max)
   }
 
-  /** A created object goes to the subscribers of its component and epoch, as it is. */
+  /**
+   * A created object goes to the subscribers of its component and epoch, as it is. One a reset
+   * created holds deployed defaults, and says of which revision.
+   */
   private deliver(created: Created): void {
     const listeners = this.listeners.get(id(created.component, created.epoch))
 
@@ -219,7 +226,8 @@ export class Client extends Connector {
 
     const value: Value = {
       configuration: created.configuration,
-      created: created.CREATED
+      created: created.CREATED,
+      revision: created.revision ?? null
     }
 
     for (const listener of listeners) listener(value)
@@ -261,10 +269,15 @@ export interface Options {
   warn: number
 }
 
-/** A configuration and when it was created; `0` for the deployed defaults. */
+/**
+ * A configuration and when it was created; `0` for the deployed defaults, unless a reset
+ * brought them back. Deployed defaults say of which revision they are; a created configuration
+ * has none.
+ */
 export interface Value {
   configuration: object
   created: number
+  revision: string | null
 }
 
 export interface Fetched {
@@ -288,6 +301,8 @@ export interface Created {
   component: string
   epoch: string
   configuration: object
+  /** Of the deployed defaults a reset holds; absent from a created object. */
+  revision?: string | null
   CREATED: number
 }
 

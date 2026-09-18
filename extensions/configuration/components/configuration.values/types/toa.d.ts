@@ -9,6 +9,7 @@ export interface Entity {
   epoch: string
   configuration: Record<string, unknown>
   originator: string
+  revision?: string | null
   id: string
   VERSION: number
   CREATED: number
@@ -56,11 +57,19 @@ export type CreateInput = {
   }
 }
 
+export type ResetInput = {
+  component: string
+  originator: {
+    id: string
+  }
+}
+
 export interface Component {
   get: (request: { input: GetInput, task?: boolean }, options?: Options) => Promise<GetOutput>
   fetch: (request: { input: FetchInput, task?: boolean }, options?: Options) => Promise<FetchOutput>
   list: (request: { input?: null, task?: boolean }, options?: Options) => Promise<ListOutput>
   create: (request: { input: CreateInput, task?: boolean }, options?: Options) => Promise<unknown | RemoteError<"UNKNOWN_COMPONENT" | "INVALID_CONFIGURATION">>
+  reset: (request: { input: ResetInput, task?: boolean }, options?: Options) => Promise<unknown | RemoteError<"UNKNOWN_COMPONENT">>
   assign: (request: { input?: null, query?: Query<Entity>, task?: boolean }, options?: Options) => Promise<Entity>
   ensure: (request: { input?: null, query?: Query<Entity>, task?: boolean }, options?: Options) => Promise<Entity>
   enumerate: (request: { input?: null, query?: Query<Entity>, task?: boolean }, options?: Options) => Promise<Entity[]>

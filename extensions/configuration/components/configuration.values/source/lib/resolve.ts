@@ -3,7 +3,8 @@ import { entry } from './map.ts'
 
 /**
  * The latest configuration created for the component and the epoch; the deployed
- * defaults when none was; `null` when the epoch is not the one deployed.
+ * defaults when none was, or when the latest is a reset; `null` when the epoch is not the one
+ * deployed.
  */
 export async function resolve(
   context: Context,
@@ -24,19 +25,21 @@ export async function resolve(
   }
 
   const objects = await context.local.enumerate({ query })
+  const latest = objects[0]
 
-  if (objects.length > 0)
+  if (latest !== undefined && (latest.revision ?? null) === null)
     return {
-      configuration: objects[0].configuration,
-      created: objects[0].CREATED,
+      configuration: latest.configuration,
+      created: latest.CREATED,
       revision: null
     }
 
-  // what a component was deployed with tells this deployment's defaults from another's
+  // a reset stored the defaults of its deployment; those of this one are what it means
   if (known !== undefined && known.epoch === epoch)
     return {
       configuration: known.defaults ?? {},
-      created: 0,
+      created: latest === undefined ? 0 : latest.CREATED,
+      // what a component was deployed with tells this deployment's defaults from another's
       revision: revision(known.defaults)
     }
 
@@ -44,8 +47,8 @@ export async function resolve(
 }
 
 /**
- * A configuration and when it was created; `0` for the deployed defaults, which alone have a
- * revision.
+ * A configuration and when it was created: `0` for the deployed defaults, unless a reset
+ * brought them back. The defaults alone have a revision.
  */
 export interface Value {
   configuration: object
@@ -67,5 +70,6 @@ interface Query {
 
 interface Stored {
   configuration: object
+  revision?: string | null
   CREATED: number
 }
