@@ -77,5 +77,7 @@ it('should take the deployed defaults as not a value', () => {
 })
 
 it('should take a reset as the defaults, even though it was created', () => {
-  expect(valued({ revision: 'abc' })).toBe(false)
+  const reset = { created: 1_700_000_000_000, revision: 'abc' }
+
+  expect(valued(reset)).toBe(false)
 })
