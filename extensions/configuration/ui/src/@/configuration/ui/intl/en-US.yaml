@@ -19,3 +19,7 @@ create:
 space:
   user: Userspace
   system: System
+reset:
+  action: Reset
+  hold: Hold to reset to the deployed defaults
+  failed: The configuration could not be reset.
