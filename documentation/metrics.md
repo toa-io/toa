@@ -316,12 +316,14 @@ which is therefore a measure of the skew itself.
 
 ### Realtime
 
-| metric                  | type    | labels  |
-| ----------------------- | ------- | ------- |
-| `toa.realtime.pushed`   | counter | `event` |
-| `toa.realtime.failures` | counter | `event` |
+| metric                   | type    | labels  |
+| ------------------------ | ------- | ------- |
+| `toa.realtime.routed`    | counter | `event` |
+| `toa.realtime.delivered` | counter | `event` |
 
-`pushed` is events handed to the streams component, not events delivered to clients.
+`routed` is counted by the component that writes an event to the streams of its keys, whether or
+not any of them is read. `delivered` is counted by the gateway, once per event it pushes to the
+readers of a key it serves.
 
 ### Process
 

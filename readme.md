@@ -80,7 +80,7 @@ Non-scattered documentation is coming some time later.
 - [Introspection](/extensions/introspection): product topology collection and visualization
   - [Halt](/documentation/halt.md): a deployment stops, holds nothing open, and comes back on its
     own — and is taken down only once the map says nothing was running
-- [Realtime events](/extensions/realtime)
+- [Realtime streams](/extensions/exposition/documentation/realtime.md)
 - [BLOB storage](/extensions/storages)
   - MIME type detection and validation
   - Providers: file system, Amazon S3, Cloudinary

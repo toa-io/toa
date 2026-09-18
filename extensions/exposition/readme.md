@@ -143,6 +143,7 @@ exposition:
 | `protocol`    | `h1` or `h2c`. See [Protocol](documentation/protocol.md).                                                                     |
 | `rpc`         | JSON-RPC at `/.rpc`; none is served without it. See [JSON-RPC](documentation/rpc.md).                                         |
 | `mcp`         | MCP at `/.mcp`; none is served without it. See [MCP](documentation/mcp.md).                                                   |
+| `realtime`    | How long a stream is kept for a reader to reconnect. See [Realtime streams](documentation/realtime.md#deployment).            |
 
 ### Observability
 
@@ -219,6 +220,7 @@ See also [telemetry ready probe](../telemetry/readme.md#ready-probe) and
 - [OAuth authorization server](documentation/oauth.md)
 - [Consent](documentation/consent.md)
 - [BLOBs](documentation/octets.md)
+- [Realtime streams](documentation/realtime.md)
 - [Components and resources](documentation/components.md)
 - [Caching](documentation/cache.md)
 - [Features](features)

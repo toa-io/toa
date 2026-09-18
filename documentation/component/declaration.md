@@ -201,7 +201,8 @@ its caller writes it. See [streamed input](/documentation/streams.md).
 ## Events
 
 An event is published where something consumes it: a receiver of another component of the context,
-a [realtime](/extensions/realtime) route, or an entry in the context's `events`.
+or an entry in the context's `events`. A [realtime route](/extensions/exposition/documentation/realtime.md)
+is not a consumer: the component writes what it routes to the streams itself.
 
 ```yaml
 # context.toa.yaml

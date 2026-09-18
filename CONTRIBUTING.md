@@ -217,7 +217,7 @@ $ TOA_FEATURES=nightly npx cucumber-js features/cli/call.feature
 ```
 
 From a workspace that has a `features` script (`extensions/configuration`,
-`extensions/exposition`, `extensions/introspection`, `extensions/realtime`):
+`extensions/exposition`, `extensions/introspection`):
 
 ```shell
 $ npm run features                                  # all scenarios in that workspace
