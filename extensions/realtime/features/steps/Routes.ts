@@ -19,6 +19,8 @@ export class Routes {
   private replica: ChildProcess | null = null
   private outcome: { reply?: unknown; exception?: unknown } | null = null
   private stopped = false
+  private reported: string[] = []
+  private error: typeof console.error | null = null
 
   public constructor(realtime: Realtime) {
     this.realtime = realtime
@@ -99,6 +101,7 @@ export class Routes {
 
   @when('the stash is restarted', { timeout: 60_000 })
   public async restartStash(): Promise<void> {
+    this.listen()
     compose('restart', 'redis0')
 
     // what reconnects does so on its own schedule, and reads the routes again once it has
@@ -108,8 +111,17 @@ export class Routes {
   @when('the stash is stopped', { timeout: 60_000 })
   public stopStash(): void {
     this.stopped = true
+    this.listen()
 
     compose('stop', 'redis0')
+  }
+
+  // a client with nothing listening for its errors prints them to the console, past the logs
+  @then('nothing is reported as unhandled')
+  public unhandled(): void {
+    const reported = this.reported.filter((line) => line.includes('Unhandled'))
+
+    assert.equal(reported.length, 0, reported[0])
   }
 
   @when('{int} second(s) has/have passed', { timeout: 60_000 })
@@ -125,6 +137,12 @@ export class Routes {
 
   @after()
   public async shutdown(): Promise<void> {
+    if (this.error !== null) {
+      console.error = this.error
+      this.error = null
+    }
+
+    this.reported = []
     this.remote = null
     this.outcome = null
 
@@ -146,6 +164,20 @@ export class Routes {
     }
 
     await forget()
+  }
+
+  /** What is printed to the console from now on, and printed still. */
+  private listen(): void {
+    if (this.error !== null) return
+
+    const error = console.error
+
+    this.error = error
+
+    console.error = (...args: unknown[]) => {
+      this.reported.push(args.map(String).join(' '))
+      error(...args)
+    }
   }
 
   private async call(operation: string, yaml: string): Promise<void> {

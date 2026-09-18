@@ -431,6 +431,7 @@ Feature: Dynamic routes
       data:
         text: Hello!
       """
+    And nothing is reported as unhandled
 
   @containers
   Scenario: Creating a route while the stash is down
@@ -447,6 +448,7 @@ Feature: Dynamic routes
       stream: a4b8e7e8a4b8e7e8a4b8e7e8a4b8e7e8
       """
     Then the route is refused with a system exception
+    And nothing is reported as unhandled
 
   @timing
   Scenario: Outliving the consumer for its expiry
