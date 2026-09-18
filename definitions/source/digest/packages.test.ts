@@ -1,8 +1,9 @@
 import { describe, it } from 'node:test'
 import assert from 'node:assert/strict'
 import { createRequire } from 'node:module'
-import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs'
+import { existsSync, globSync, readdirSync, readFileSync, statSync } from 'node:fs'
 import { dirname, join } from 'node:path'
+import { load } from 'js-yaml'
 
 /*
 A component an extension ships runs where the extension's own dependencies are not beside it —
@@ -46,13 +47,81 @@ for (const suffix of EXTENSIONS)
         ])
 
         for (const [name, file] of imported(component))
-          assert.ok(declared.has(name), `'${name}' is imported by ${file} and declared nowhere`)
+          assert.ok(
+            declared.has(name),
+            `'${name}' is imported by ${file} and declared nowhere`
+          )
+      })
+
+      // `toa npm` and a deploy install exactly what a component declares, beside Toa's packages,
+      // so a version the workspace declares differently is one npm has to reconcile in the
+      // application: against a peer of `@toa.io/cli` it nests the CLI and `toa` is gone from
+      // `node_modules/.bin`
+      it(`${label} declares its packages at the versions Toa's packages do`, () => {
+        const own = manifest(join(component, 'package.json'))
+
+        for (const [name, version] of Object.entries(own.dependencies ?? {}))
+          for (const [path, declared] of declarations(name))
+            assert.equal(
+              version,
+              declared,
+              `'${name}' is ${version} here and ${declared} in ${path}`
+            )
+      })
+
+      it(`${label} has its packages bumped with the workspace's`, () => {
+        const own = manifest(join(component, 'package.json'))
+
+        for (const name of Object.keys(own.dependencies ?? {}))
+          assert.ok(
+            BUMPED.has(name),
+            `'${name}' is missing from the 'components' group of ${DEPENDABOT}`
+          )
       })
     }
   })
 
-function manifest(path: string): { dependencies?: Record<string, string> } {
+type Manifest = Partial<Record<(typeof SECTIONS)[number], Record<string, string>>>
+
+function manifest(path: string): Manifest {
   return existsSync(path) ? JSON.parse(readFileSync(path, 'utf8')) : {}
+}
+
+const SECTIONS = [
+  'dependencies',
+  'devDependencies',
+  'peerDependencies',
+  'optionalDependencies'
+] as const
+
+const ROOT = join(import.meta.dirname, '../../..')
+
+/** Every package of the workspace, by the path of its manifest. */
+const WORKSPACE = (
+  manifest(join(ROOT, 'package.json')) as { workspaces: string[] }
+).workspaces
+  .flatMap((pattern) => globSync(join(pattern, 'package.json'), { cwd: ROOT }))
+  .map((path) => [path, manifest(join(ROOT, path))] as const)
+
+const DEPENDABOT = '.github/dependabot.yml'
+
+/** What Dependabot bumps in one pull request across the workspace and the components. */
+const BUMPED = new Set<string>(
+  (
+    load(readFileSync(join(ROOT, DEPENDABOT), 'utf8')) as {
+      updates: Array<{ groups?: Record<string, { patterns?: string[] }> }>
+    }
+  ).updates.flatMap((update) => update.groups?.components?.patterns ?? [])
+)
+
+/** The versions the packages of the workspace declare a package at, in any section. */
+function* declarations(name: string): Generator<[string, string]> {
+  for (const [path, manifest] of WORKSPACE)
+    for (const section of SECTIONS) {
+      const version = manifest[section]?.[name]
+
+      if (version !== undefined) yield [`${section} of ${path}`, version]
+    }
 }
 
 /**

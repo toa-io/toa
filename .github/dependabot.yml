@@ -14,8 +14,14 @@ updates:
     commit-message:
       prefix: ci
 
+  # The components the extensions ship are not workspaces, yet they declare the packages they import
+  # at the versions the workspace does (`definitions/source/digest/packages.test.ts`). A package one
+  # of them declares is listed in `components`, so that one pull request bumps it in every manifest
+  # at once; bumped per directory, each half fails that test.
   - package-ecosystem: npm
-    directory: /
+    directories:
+      - /
+      - /extensions/*/components/*
     schedule:
       interval: weekly
       day: monday
@@ -25,6 +31,17 @@ updates:
     commit-message:
       prefix: build
     groups:
+      components:
+        group-by: dependency-name
+        patterns:
+          - '@aws-sdk/client-s3'
+          - '@aws-sdk/lib-storage'
+          - '@node-rs/bcrypt'
+          - '@simplewebauthn/server'
+          - cloudinary
+          - jose
+          - lru-cache
+          - paseto
       minor-and-patch:
         update-types:
           - minor
