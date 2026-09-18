@@ -257,6 +257,37 @@ describe('operations', () => {
     })
   })
 
+  describe('once', () => {
+    it('should be true, false or a number of seconds', async () => {
+      for (const once of [true, false, 600, 86400]) {
+        manifest.operations.add.once = once
+        await assert.doesNotReject(validate(manifest), `once: ${once}`)
+      }
+    })
+
+    it('should stay true rather than be coerced into a number', async () => {
+      manifest.operations.add.once = true
+      await validate(manifest)
+
+      assert.strictEqual(manifest.operations.add.once, true)
+    })
+
+    it('should not be a window shorter than ten minutes', async () => {
+      manifest.operations.add.once = 599
+      await assert.rejects(validate(manifest), (error) => /must be >= 600/.test(error.message))
+    })
+
+    it('should not be a fraction of a second', async () => {
+      manifest.operations.add.once = 600.5
+      await assert.rejects(validate(manifest))
+    })
+
+    it('should throw for an operation that takes none', async () => {
+      manifest.operations.get.once = 600
+      await assert.rejects(validate(manifest))
+    })
+  })
+
   describe('concurrency', () => {
     it('should be required for transitions', async () => {
       delete manifest.operations.add.concurrency

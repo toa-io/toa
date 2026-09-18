@@ -22,6 +22,16 @@ operations:
         bar: *bar
       type: object
 
+  # the same, remembered for a window of its own rather than the deployment's
+  long:
+    concurrency: retry
+    once: 86400
+    input:
+      properties:
+        foo: *foo
+        bar: *bar
+      type: object
+
   # the control: the same thing without the declaration
   plain:
     concurrency: retry
@@ -47,6 +57,15 @@ operations:
   # an assignment: it writes through a changeset, and answers the post-image
   assign:
     once: true
+    input:
+      properties:
+        foo: *foo
+        bar: *bar
+      type: object
+
+  # an assignment remembered for a window of its own
+  settle:
+    once: 86400
     input:
       properties:
         foo: *foo

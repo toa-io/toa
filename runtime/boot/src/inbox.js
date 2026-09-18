@@ -7,4 +7,6 @@
  * @returns {boolean}
  */
 export const inbox = (manifest) =>
-  Object.values(manifest.operations ?? {}).some((definition) => definition.once === true)
+  Object.values(manifest.operations ?? {}).some(
+    (definition) => definition.once === true || typeof definition.once === 'number'
+  )

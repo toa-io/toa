@@ -1,5 +1,5 @@
 import assert from 'node:assert'
-import { Given, Then, When } from '@cucumber/cucumber'
+import { After, Given, Then, When } from '@cucumber/cucumber'
 import { MongoClient } from 'mongodb'
 
 Given(
@@ -198,6 +198,97 @@ Then('the {component} inbox holds {int} record(s)', async function (id, count) {
     assert.strictEqual(await inbox.countDocuments({}), count)
   )
 })
+
+Then(
+  'the {component} inbox holds {int} record(s) within {int} second(s)',
+  /**
+   * For what MongoDB does on its own schedule rather than in answer to a call — a TTL pass.
+   */
+  async function (id, count, seconds) {
+    const deadline = Date.now() + seconds * 1000
+    let held
+
+    while (Date.now() < deadline) {
+      await using(
+        id,
+        async (_, __, ___, inbox) => (held = await inbox.countDocuments({}))
+      )
+
+      if (held === count) return
+
+      await new Promise((resolve) => setTimeout(resolve, 250))
+    }
+
+    assert.strictEqual(held, count)
+  }
+)
+
+Then(
+  'the {component} inbox record {token} expires {int} seconds after it was made',
+  async function (id, key, seconds) {
+    await using(id, async (_, __, ___, inbox) => {
+      const record = await inbox.findOne({ _id: key })
+
+      assert.ok(record !== null, `no inbox record '${key}'`)
+      assert.ok(record.expires instanceof Date, `inbox record '${key}' has no expiry`)
+      assert.strictEqual(record.expires.getTime() - record.at.getTime(), seconds * 1000)
+    })
+  }
+)
+
+Given(
+  'the {component} inbox is indexed with {token} on {token} expiring after {int} seconds',
+  /** an index of the shape an earlier release made, which a boot is to replace */
+  async function (id, name, field, seconds) {
+    await using(id, async (_, __, ___, inbox) => {
+      await inbox.createIndex({ [field]: 1 }, { name, expireAfterSeconds: seconds })
+    })
+  }
+)
+
+Then('the {component} inbox is indexed with {token} alone', async function (id, name) {
+  await using(id, async (_, __, ___, inbox) => {
+    const names = (await inbox.listIndexes().toArray()).map((index) => index.name)
+
+    assert.deepStrictEqual(
+      names.filter((n) => n !== '_id_'),
+      [name]
+    )
+  })
+})
+
+Given(
+  'MongoDB reaps expired documents every second',
+  /**
+   * The TTL pass runs every sixty seconds unless told otherwise; this tells it otherwise for the
+   * scenario, and the hook below puts it back.
+   */
+  async function () {
+    await ttl(1)
+    reaping = true
+  }
+)
+
+After(async function () {
+  if (!reaping) return
+
+  reaping = false
+  await ttl(60)
+})
+
+let reaping = false
+
+async function ttl(seconds) {
+  const client = new MongoClient(URL)
+
+  await client.connect()
+
+  try {
+    await client.db('admin').command({ setParameter: 1, ttlMonitorSleepSecs: seconds })
+  } finally {
+    await client.close()
+  }
+}
 
 Then(
   'the {component} inbox collection does not exist',

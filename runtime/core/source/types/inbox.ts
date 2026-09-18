@@ -12,6 +12,12 @@ export interface Call {
 
   /** what the call answered, so that a duplicate of it is answered rather than refused */
   reply: object
+
+  /**
+   * Seconds the call is remembered, where its operation states them. Absent, the storage keeps
+   * it for the deployment's window.
+   */
+  retention?: number
 }
 
 /**
