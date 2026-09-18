@@ -43,6 +43,21 @@ export interface Destination extends Connector {
 
   /** the row, not its event: what goes on the wire is the chain it carries too */
   emit(row: Row): Promise<void>
+
+  /**
+   * The events of the component this renders a row into, by their labels. A destination that
+   * names them is given a `Rendering` of them before it connects: the payload each would be
+   * published with, by the component's own condition and payload.
+   */
+  readonly renders?: string[]
+
+  rendering?: Rendering
+}
+
+/** What a row makes of the component's events: the payload of each that it raises. */
+export interface Rendering {
+  /** `null` where the event's condition does not hold for the row */
+  render(label: string, row: Row): Promise<{ payload: unknown } | null>
 }
 
 /**
