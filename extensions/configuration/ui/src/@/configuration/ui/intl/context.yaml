@@ -53,6 +53,6 @@ inputs:
     action:
       input: Reset
     hold:
-      input: Hold to reset to the deployed defaults
+      input: Hold to reset
     failed:
       input: The configuration could not be reset.

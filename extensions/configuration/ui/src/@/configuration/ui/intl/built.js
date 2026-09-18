@@ -36,7 +36,7 @@ export const dictionaries = {
     },
     "reset": {
       "action": "Reset",
-      "hold": "Hold to reset to the deployed defaults",
+      "hold": "Hold to reset",
       "failed": "The configuration could not be reset."
     }
   }
