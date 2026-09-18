@@ -411,7 +411,7 @@ export class Storage extends Connector {
           call.reply?.output === undefined ? { ...call.reply, output: state } : call.reply
 
         try {
-          await this.#inbox.insert({ id: call.id, reply }, session)
+          await this.#inbox.insert({ ...call, reply }, session)
         } catch (error) {
           if (error?.code !== ERR_DUPLICATE_KEY) throw error
 

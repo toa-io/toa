@@ -194,3 +194,15 @@ function resetCalls(target = [assert, clone, fixtures, dummy], seen = new Set())
     if (typeof value === 'function' && value.mock !== undefined) value.mock.resetCalls()
     else resetCalls(value, seen)
 }
+
+describe('discovery', () => {
+  it('should say an operation that states its window is safe to retry', () => {
+    assert.strictEqual(new Request(fixtures.schema, { once: 86400 }).discovery.once, true)
+    assert.strictEqual(new Request(fixtures.schema, { once: true }).discovery.once, true)
+    assert.strictEqual(
+      new Request(fixtures.schema, { once: false }).discovery.once,
+      false
+    )
+    assert.strictEqual(new Request(fixtures.schema, {}).discovery.once, undefined)
+  })
+})

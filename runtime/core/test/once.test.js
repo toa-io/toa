@@ -80,6 +80,16 @@ describe('once', () => {
     assert.deepStrictEqual(call, { id: ID, reply: { output: 'made' } })
   })
 
+  it('should record the window its operation states', async () => {
+    const operation = transition({ once: 86400 })
+
+    await operation.invoke(request())
+
+    const [, , call] = operation.scope.commit.mock.calls[0].arguments
+
+    assert.deepStrictEqual(call, { id: ID, reply: { output: 'made' }, retention: 86400 })
+  })
+
   it('should record nothing where the operation was not declared once', async () => {
     const operation = transition({ once: false })
 

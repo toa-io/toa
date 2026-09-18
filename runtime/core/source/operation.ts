@@ -34,8 +34,12 @@ export interface Contracts {
 export interface Definition {
   scope: Scope
   concurrency?: string
-  /** whether the same call arriving twice changes state once; see `documentation/inbox.md` */
-  once?: boolean
+  /**
+   * Whether the same call arriving twice changes state once; see `documentation/inbox.md`. A
+   * number is how many seconds a call is remembered, where the deployment's window is not the
+   * one its callers retry within.
+   */
+  once?: boolean | number
 }
 
 export class Operation extends Connector {
@@ -59,6 +63,9 @@ export class Operation extends Connector {
   readonly #scope: Scope
   readonly #once: boolean
 
+  /** what this operation states of how long a call is remembered; the deployment's where absent */
+  readonly #retention: number | undefined
+
   /** a reply is validated only on local environments, which are set before an operation is built */
   readonly #local: boolean
 
@@ -78,7 +85,8 @@ export class Operation extends Connector {
     this.#contracts = contracts
     this.#query = query
     this.#scope = definition.scope
-    this.#once = definition.once === true
+    this.#once = definition.once === true || typeof definition.once === 'number'
+    this.#retention = typeof definition.once === 'number' ? definition.once : undefined
     this.#local = environment.get('TOA_ENV') === 'local'
 
     this.depends(cascade)
@@ -164,7 +172,11 @@ export class Operation extends Connector {
      * what is recorded must be what was known when the record was made rather than whatever the
      * reply became afterwards.
      */
-    return { id: store.request.id, reply: { ...store.reply } }
+    const call: Call = { id: store.request.id, reply: { ...store.reply } }
+
+    if (this.#retention !== undefined) call.retention = this.#retention
+
+    return call
   }
 
   protected async process(store: Store): Promise<any> {

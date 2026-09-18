@@ -39,12 +39,18 @@ export class Inbox {
    * whole mechanism: the call has been made, this transaction changes nothing, and the caller
    * is answered from what is already there.
    *
-   * @param {{ id: string, reply: object }} call
+   * The record carries the moment it expires rather than leaving that to the index, because the
+   * window is the operation's where it states one, and an index has one window for all of them.
+   *
+   * @param {{ id: string, reply: object, retention?: number }} call
    * @param {import('mongodb').ClientSession} session
    */
   async insert(call, session) {
+    const at = new Date()
+    const expires = new Date(at.getTime() + (call.retention ?? this.#retention) * 1000)
+
     await this.#collection.insertOne(
-      { _id: call.id, reply: call.reply ?? {}, at: new Date() },
+      { _id: call.id, reply: call.reply ?? {}, at, expires },
       { session }
     )
   }
@@ -56,17 +62,43 @@ export class Inbox {
    */
   async index() {
     const desired = {
-      // how long a call is remembered is how long a duplicate of it is caught
-      inbox_at: {
-        fields: { at: 1 },
-        options: { name: 'inbox_at', expireAfterSeconds: this.#retention }
+      // a record is reaped at the moment it names, which is how each keeps a window of its own
+      inbox_expires: {
+        fields: { expires: 1 },
+        options: { name: 'inbox_expires', expireAfterSeconds: 0 }
       }
     }
+
+    await this.#backfill()
 
     for (const { fields, options } of Object.values(desired))
       await index(this.#collection, fields, options)
 
     await prune(this.#collection, Object.keys(desired))
+  }
+
+  /**
+   * A record written before a record named its own expiry was reaped by an index on `at`, which
+   * this replaces. One with no `expires` would be kept forever under the new index, so it is
+   * given the one it had: the deployment's window after it was written. Done before the old
+   * index is pruned, so that nothing is left unreaped in between, and on every boot, because a
+   * process of the previous release may still be writing them during a rolling deploy. After
+   * that it finds nothing.
+   */
+  async #backfill() {
+    await this.#collection.updateMany({ expires: { $exists: false } }, [
+      {
+        $set: {
+          expires: {
+            $dateAdd: {
+              startDate: { $ifNull: ['$at', '$$NOW'] },
+              unit: 'second',
+              amount: this.#retention
+            }
+          }
+        }
+      }
+    ])
   }
 }
 
@@ -77,7 +109,7 @@ function retention() {
 }
 
 /**
- * Seconds a call is remembered. An hour, and not the outbox's day: what a duplicate arrives
+ * Seconds a call of an operation that states no window of its own is remembered. An hour, and not the outbox's day: what a duplicate arrives
  * within is the broker's redelivery, the five attempts `comq` makes of a message, and whatever
  * a client retries on — minutes. Every call of an operation that declares `once` is a document
  * here for this long.
