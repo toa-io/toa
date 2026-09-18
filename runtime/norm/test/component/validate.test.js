@@ -115,6 +115,13 @@ describe('entity', () => {
       }
       await assert.doesNotReject(validate(manifest))
     })
+
+    it('should not declare TRAILERS', async () => {
+      manifest.entity.properties.TRAILERS = { type: 'object' }
+      await assert.rejects(validate(manifest), (error) =>
+        /System property 'TRAILERS' cannot be declared/.test(error.message)
+      )
+    })
   })
 
   describe('required', () => {
@@ -142,6 +149,13 @@ describe('entity', () => {
 
     it('should not name a system property', async () => {
       manifest.entity.blank = { VERSION: 1 }
+      await assert.rejects(validate(manifest), (error) =>
+        /must NOT be valid/.test(error.message)
+      )
+    })
+
+    it('should not name TRAILERS', async () => {
+      manifest.entity.blank = { TRAILERS: {} }
       await assert.rejects(validate(manifest), (error) =>
         /must NOT be valid/.test(error.message)
       )
