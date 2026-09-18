@@ -6,12 +6,14 @@ import { Connector, Locator } from '@toa.io/core'
 import { generate } from 'randomstring'
 import { Aspect } from './Aspect.ts'
 import type { Client, Listener } from './Client.ts'
+import { REVISION } from '@toa.io/definitions/extensions.configuration'
 import type { Manifest } from '@toa.io/definitions/extensions.configuration'
 
 class Fake extends Connector {
   public readonly fetch = mock.fn(async () => ({
     configuration: { foo: 'served' },
-    created: 5
+    created: 5,
+    revision: null as string | null
   }))
   public readonly subscribe = mock.fn()
   public readonly unsubscribe = mock.fn()
@@ -36,6 +38,7 @@ beforeEach(() => {
 
 afterEach(() => {
   delete process.env['TOA_CONFIGURATION_' + locator.uppercase]
+  delete process.env[REVISION + locator.uppercase]
 })
 
 it('should be named', async () => {
@@ -85,23 +88,23 @@ it('should fetch from the client and follow it', async () => {
 
   const listener = client.subscribe.mock.calls[0].arguments[2] as Listener
 
-  listener({ configuration: { foo: 'updated' }, created: 6 })
+  listener({ configuration: { foo: 'updated' }, created: 6, revision: null })
 
   assert.deepStrictEqual(aspect.invoke(['foo']), 'updated')
 
   // what is not newer than the held value is left alone
-  listener({ configuration: { foo: 'stale' }, created: 6 })
-  listener({ configuration: { foo: 'older' }, created: 4 })
+  listener({ configuration: { foo: 'stale' }, created: 6, revision: null })
+  listener({ configuration: { foo: 'older' }, created: 4, revision: null })
 
   assert.deepStrictEqual(aspect.invoke(['foo']), 'updated')
 
   // a value that does not fit keeps the previous one
-  listener({ configuration: { foo: { nested: true } }, created: 7 })
+  listener({ configuration: { foo: { nested: true } }, created: 7, revision: null })
 
   assert.deepStrictEqual(aspect.invoke(['foo']), 'updated')
 
   // and the one after it still applies
-  listener({ configuration: { foo: 'latest' }, created: 8 })
+  listener({ configuration: { foo: 'latest' }, created: 8, revision: null })
 
   assert.deepStrictEqual(aspect.invoke(['foo']), 'latest')
 
@@ -116,4 +119,60 @@ it('should fetch from the client and follow it', async () => {
         isDeepStrictEqual(call.arguments[2], listener)
     )
   )
+})
+
+it('should take the defaults a reset brings back only of its own revision', async () => {
+  process.env[REVISION + locator.uppercase] = 'r1'
+
+  const client = new Fake()
+  const aspect = new Aspect(locator, manifest, client as unknown as Client)
+
+  await aspect.connect()
+
+  const listener = client.subscribe.mock.calls[0].arguments[2] as Listener
+
+  // of its own revision, a reset is taken as it comes
+  listener({ configuration: { foo: 'deployed' }, created: 6, revision: 'r1' })
+
+  assert.deepStrictEqual(aspect.invoke(['foo']), 'deployed')
+  assert.strictEqual(client.fetch.mock.callCount(), 1)
+
+  // of another, it is asked for again, with the revision the component was deployed with
+  client.fetch.mock.mockImplementation(async () => ({
+    configuration: { foo: 'own' },
+    created: 7,
+    revision: 'r1'
+  }))
+
+  listener({ configuration: { foo: 'previous' }, created: 7, revision: 'r0' })
+
+  assert.deepStrictEqual(aspect.invoke(['foo']), 'deployed')
+  assert.strictEqual(client.fetch.mock.callCount(), 2)
+  assert.deepStrictEqual(client.fetch.mock.calls[1].arguments, [
+    locator.id,
+    client.fetch.mock.calls[0].arguments[1],
+    'r1'
+  ] as any)
+
+  await client.fetch.mock.calls[1].result
+
+  assert.deepStrictEqual(aspect.invoke(['foo']), 'own')
+
+  await aspect.disconnect()
+})
+
+it('should take a reset of any revision when deployed without one', async () => {
+  const client = new Fake()
+  const aspect = new Aspect(locator, manifest, client as unknown as Client)
+
+  await aspect.connect()
+
+  const listener = client.subscribe.mock.calls[0].arguments[2] as Listener
+
+  listener({ configuration: { foo: 'deployed' }, created: 6, revision: 'r0' })
+
+  assert.deepStrictEqual(aspect.invoke(['foo']), 'deployed')
+  assert.strictEqual(client.fetch.mock.callCount(), 1)
+
+  await aspect.disconnect()
 })

@@ -13,6 +13,7 @@ export class Aspect extends Connector implements extensions.Aspect {
   private readonly manifest: Manifest
   private readonly client: Client | null
   private readonly epoch: string
+  private readonly revision: string | undefined
   private value: Node = {}
   private created = 0
 
@@ -27,6 +28,7 @@ export class Aspect extends Connector implements extensions.Aspect {
     this.manifest = manifest
     this.client = client
     this.epoch = epoch(manifest.schema)
+    this.revision = revision(locator)
 
     if (client !== null) this.depends(client)
   }
@@ -49,7 +51,7 @@ export class Aspect extends Connector implements extensions.Aspect {
     const { configuration, created } = await this.client.fetch(
       this.locator.id,
       this.epoch,
-      revision(this.locator)
+      this.revision
     )
 
     this.value = fit(configuration, this.manifest)
@@ -67,9 +69,25 @@ export class Aspect extends Connector implements extensions.Aspect {
     this.client?.unsubscribe(this.locator.id, this.epoch, this.listener)
   }
 
-  private readonly listener = ({ configuration, created }: Value): void => {
+  private readonly listener = (value: Value): void => {
     // deliveries may repeat or cross: only what is newer than the held value replaces it
-    if (created <= this.created) return
+    if (value.created <= this.created) return
+
+    // a reset made by a values service of another deployment holds that deployment's defaults,
+    // so they are asked for as on start, where a refusal is reported
+    if (
+      this.revision !== undefined &&
+      value.revision !== null &&
+      value.revision !== this.revision
+    ) {
+      void this.client!.fetch(this.locator.id, this.epoch, this.revision).then(
+        this.listener
+      )
+
+      return
+    }
+
+    const { configuration, created } = value
 
     try {
       this.value = fit(configuration, this.manifest)

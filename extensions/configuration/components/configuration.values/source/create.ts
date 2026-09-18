@@ -1,6 +1,7 @@
 import * as schemas from '@toa.io/schemas'
 import { assertSecrets } from '@toa.io/definitions/extensions.configuration'
 import { entry } from './lib/map.ts'
+import { UnknownComponentError } from './lib/errors.ts'
 import type { Schema } from '@toa.io/schemas'
 
 export async function transition(input: Input, object: Entity): Promise<Entity | Error> {
@@ -25,14 +26,6 @@ export async function transition(input: Input, object: Entity): Promise<Entity |
   object.originator = input.originator.id
 
   return object
-}
-
-class UnknownComponentError extends Error {
-  public readonly code = 'UNKNOWN_COMPONENT'
-
-  public constructor(component: string) {
-    super(`Component '${component}' is not configured`)
-  }
 }
 
 class InvalidConfigurationError extends Error {
