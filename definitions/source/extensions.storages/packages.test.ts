@@ -13,6 +13,10 @@ const manifest = JSON.parse(
   readFileSync(require.resolve('@toa.io/extensions.storages/package.json'), 'utf8')
 ) as { peerDependencies?: Record<string, string> }
 
+const own = JSON.parse(
+  readFileSync(new URL('../../package.json', import.meta.url), 'utf8')
+) as { peerDependencies: Record<string, string> }
+
 const instance = (manifest: string[]): Instance => ({ manifest }) as Instance
 
 describe('the table', () => {
@@ -31,6 +35,12 @@ describe('the table', () => {
     for (const entry of Object.values(packages)) Object.assign(stated, entry)
 
     assert.deepEqual(stated, peers)
+  })
+
+  it('states the versions this package declares', () => {
+    for (const entry of Object.values(packages))
+      for (const [name, version] of Object.entries(entry))
+        assert.equal(version, own.peerDependencies[name], name)
   })
 })
 
