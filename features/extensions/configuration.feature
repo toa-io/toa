@@ -67,6 +67,88 @@ Feature: Configuration Extension
       """
     And I disconnect
 
+  # the values service of the previous deployment is still serving while it is replaced
+  Scenario: Defaults of another deployment are refused
+    Given the configuration of `configuration.base` is deployed with:
+      """yaml
+      foo: deployed
+      """
+    And the values service holds the configuration of `configuration.base` deployed with:
+      """yaml
+      foo: previous
+      """
+    And the `configuration` service is staged
+    And the `configuration.values` database is empty
+    And logs are exported to Loki
+    When I boot `configuration.base` component without waiting
+    Then the component is not booted within 3 seconds
+    And the log record "Configuration of another revision refused" is stored with:
+      """yaml
+      severity_text: WARN
+      component: configuration.base
+      epoch: ea4ecd26b67e0a21391e198d990f3fc0c9c93f0d04ba1b0b8a43b0fcc3f27f22
+      expected: 44b267babfd1cb9970b656bb5c1ebb3eb05676e6342011b2e3ebf3bc5b2c85f0
+      received: 45c64860c39b4f42a59abdd447ddc7cd757208c810da72a4942aeff5d3da7477
+      """
+    # the values service of the component's own deployment has replaced it
+    When the values service holds the configuration of `configuration.base` deployed with:
+      """yaml
+      foo: deployed
+      """
+    Then the component boots within 15 seconds
+    When I invoke `echo`
+    Then the reply is received:
+      """yaml
+      foo: deployed
+      bar: world
+      """
+    And I disconnect
+
+  Scenario: A created configuration is taken whatever the deployment
+    Given the configuration of `configuration.base` is deployed with:
+      """yaml
+      foo: deployed
+      """
+    And the values service holds the configuration of `configuration.base` deployed with:
+      """yaml
+      foo: previous
+      """
+    And the `configuration` service is staged
+    And the `configuration.values` database is empty
+    When I call `configuration.values.create` with:
+      """yaml
+      input:
+        component: configuration.base
+        configuration:
+          foo: created
+        originator:
+          id: tester
+      """
+    And I boot `configuration.base` component
+    And I invoke `echo`
+    Then the reply is received:
+      """yaml
+      foo: created
+      """
+    And I disconnect
+
+  # a component started by other means than a deployment is given no revision
+  Scenario: A component deployed without a revision takes what it is served
+    Given the values service holds the configuration of `configuration.base` deployed with:
+      """yaml
+      foo: served
+      """
+    And the `configuration` service is staged
+    And the `configuration.values` database is empty
+    When I boot `configuration.base` component
+    And I invoke `echo`
+    Then the reply is received:
+      """yaml
+      foo: served
+      bar: world
+      """
+    And I disconnect
+
   Scenario: Creating configuration
     Given the configuration of `configuration.base` is deployed
     And the `configuration` service is staged
