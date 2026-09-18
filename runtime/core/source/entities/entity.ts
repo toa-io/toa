@@ -61,7 +61,7 @@ export class Entity {
     return {
       origin: this.#origin,
       state: this.#state,
-      trailers: this.#state._trailers,
+      trailers: this.#state.TRAILERS,
       input
     }
   }
@@ -121,8 +121,8 @@ export class Entity {
   }
 
   #write(value: Record): void {
-    if (!('_trailers' in value))
-      Object.defineProperty(value, '_trailers', {
+    if (!('TRAILERS' in value))
+      Object.defineProperty(value, 'TRAILERS', {
         writable: false,
         configurable: false,
         enumerable: false,

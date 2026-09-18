@@ -101,7 +101,7 @@ properties:
         type: object
         propertyNames:
           not:
-            enum: [id, VERSION, CREATED, UPDATED, DELETED, REGION]
+            enum: [id, VERSION, CREATED, UPDATED, DELETED, REGION, TRAILERS]
       migrations:
         type: array
         items:

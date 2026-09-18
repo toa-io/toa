@@ -29,6 +29,14 @@ are the runtime's to write, and a component that states one is refused:
 System property 'DELETED' cannot be overridden
 ```
 
+`TRAILERS` is a system property as well, one that is never stored: what a transition writes into
+`state.TRAILERS` is carried by the event of its commit as
+[`trailers`](/documentation/outbox.md#the-event). It may not be declared, nor named in `blank`:
+
+```
+System property 'TRAILERS' cannot be declared
+```
+
 `REGION` is which region wrote the record, as the rank that region was declared with. An
 application deployed in one place has one region, so every record holds `0` and nothing reads it.
 Where a context declares more, it is what decides between two regions that wrote the same version

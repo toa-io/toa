@@ -126,6 +126,24 @@ it('should provide event', () => {
   assert.notStrictEqual(event.origin.foo, 'new value')
 })
 
+describe('trailers', () => {
+  it('should carry what the algorithm wrote into TRAILERS', () => {
+    const entity = new Entity(fixtures.schema, BLANK, fixtures.state())
+    const state = entity.get()
+
+    state.TRAILERS.inc = 5
+    entity.set(state)
+
+    assert.deepStrictEqual(entity.event().trailers, { inc: 5 })
+  })
+
+  it('should not enumerate TRAILERS', () => {
+    const entity = new Entity(fixtures.schema, BLANK, fixtures.state())
+
+    assert.strictEqual(Object.keys(entity.get()).includes('TRAILERS'), false)
+  })
+})
+
 function resetCalls(target = [assert, fixtures], seen = new Set()) {
   if (target === null || typeof target !== 'object' || seen.has(target)) return
 
