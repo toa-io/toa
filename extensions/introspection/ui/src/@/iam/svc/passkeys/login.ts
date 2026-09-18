@@ -1,7 +1,7 @@
 import { request } from '@/passkeys'
+import { challenge } from '../store'
 import * as net from '../net'
 import { authenticated } from '../authenticated'
-import { challenge } from '../store'
 import type { Echo } from '../net'
 
 export async function login(id?: string): Promise<Echo | Error> {

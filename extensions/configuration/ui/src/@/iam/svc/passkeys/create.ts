@@ -1,7 +1,7 @@
 import * as passkeys from '@/passkeys'
+import { challenge } from '../store'
 import * as origin from '../net'
 import { authenticated } from '../authenticated'
-import { challenge } from '../store'
 
 export async function create(
   name: string,
