@@ -2,6 +2,7 @@ import { it, beforeEach, afterEach, mock } from 'node:test'
 import assert from 'node:assert/strict'
 import { isDeepStrictEqual } from 'node:util'
 
+import { console } from 'openspan'
 import { Connector, type Locator, type Receiver } from '@toa.io/core'
 import type { Message } from '@toa.io/core/types'
 import { timeout } from '@toa.io/generic'
@@ -15,14 +16,25 @@ class Remote extends Connector {
       _endpoint: string,
       request: { input: Array<{ component: string; epoch: string }> }
     ) =>
-      request.input.map((pair): Fetched => ({
-        ...pair,
-        configuration: this.values[pair.component] ?? null,
-        created: this.values[pair.component] === undefined ? 0 : 7
-      }))
+      request.input.map((pair): Fetched => {
+        const configuration = this.values[pair.component] ?? null
+        const fetched: Fetched = {
+          ...pair,
+          configuration,
+          created: configuration === null ? 0 : (this.created[pair.component] ?? 7)
+        }
+
+        if (pair.component in this.revisions) fetched.revision = this.revisions[pair.component]
+
+        return fetched
+      })
   )
 
   public values: Record<string, object | null> = {}
+  /** `0` serves the values as deployed defaults. */
+  public created: Record<string, number> = {}
+  /** Absent for a component, the answer carries no revision, as an older service's does not. */
+  public revisions: Record<string, string | null> = {}
 }
 
 let remote: Remote
@@ -123,3 +135,141 @@ it('should hand a created object to its subscribers', async () => {
 
   assert.strictEqual(listener.mock.callCount(), 1)
 })
+
+it('should refuse deployed defaults of another revision until served its own', async () => {
+  const warn = mock.method(console, 'warn', () => undefined)
+
+  try {
+    remote.values = { 'a.one': { foo: 'previous' } }
+    remote.created = { 'a.one': 0 }
+    remote.revisions = { 'a.one': 'r0' }
+
+    await client.connect()
+
+    const fetching = client.fetch('a.one', 'e1', 'r1')
+
+    await rounds(3)
+
+    remote.values = { 'a.one': { foo: 'deployed' } }
+    remote.revisions = { 'a.one': 'r1' }
+
+    assert.deepStrictEqual(await fetching, { configuration: { foo: 'deployed' }, created: 0 })
+
+    const refusals = warn.mock.calls.filter(
+      (call) => call.arguments[0] === 'Configuration of another revision refused'
+    )
+
+    assert.ok(refusals.length >= 1)
+    assert.deepStrictEqual(refusals[0].arguments[1], {
+      component: 'a.one',
+      epoch: 'e1',
+      expected: 'r1',
+      received: 'r0'
+    })
+    assert.ok(
+      !warn.mock.calls.some((call) => call.arguments[0] === 'Waiting for configuration'),
+      'a refused component is reported as refused, not as waiting'
+    )
+  } finally {
+    warn.mock.restore()
+  }
+})
+
+it('should report a refusal on the first and every n-th time', async () => {
+  const warn = mock.method(console, 'warn', () => undefined)
+
+  try {
+    remote.values = { 'a.one': { foo: 'previous' } }
+    remote.created = { 'a.one': 0 }
+    remote.revisions = { 'a.one': 'r0' }
+
+    await client.connect()
+
+    const fetching = client.fetch('a.one', 'e1', 'r1')
+
+    await rounds(5)
+
+    const answered = remote.invoke.mock.callCount()
+
+    remote.revisions = { 'a.one': 'r1' }
+
+    await fetching
+
+    const refused = warn.mock.calls.filter(
+      (call) => call.arguments[0] === 'Configuration of another revision refused'
+    ).length
+
+    // warn is 2 here: the first, the third, the fifth...
+    assert.ok(answered >= 5)
+    assert.ok(refused >= Math.floor(answered / 2) && refused <= Math.ceil(answered / 2) + 1)
+  } finally {
+    warn.mock.restore()
+  }
+})
+
+it('should refuse deployed defaults an older service answers without a revision', async () => {
+  const warn = mock.method(console, 'warn', () => undefined)
+
+  try {
+    remote.values = { 'a.one': { foo: 'previous' } }
+    remote.created = { 'a.one': 0 }
+
+    await client.connect()
+
+    const fetching = client.fetch('a.one', 'e1', 'r1')
+
+    await rounds(2)
+
+    const refusal = warn.mock.calls.find(
+      (call) => call.arguments[0] === 'Configuration of another revision refused'
+    )
+
+    assert.deepStrictEqual(refusal?.arguments[1], {
+      component: 'a.one',
+      epoch: 'e1',
+      expected: 'r1',
+      received: null
+    })
+
+    remote.revisions = { 'a.one': 'r1' }
+
+    await fetching
+  } finally {
+    warn.mock.restore()
+  }
+})
+
+it('should take a created object whatever the revision', async () => {
+  remote.values = { 'a.one': { foo: 'created' } }
+  remote.revisions = { 'a.one': null }
+
+  await client.connect()
+
+  assert.deepStrictEqual(await client.fetch('a.one', 'e1', 'r1'), {
+    configuration: { foo: 'created' },
+    created: 7
+  })
+})
+
+it('should take deployed defaults of any revision when asked without one', async () => {
+  remote.values = { 'a.one': { foo: 'served' } }
+  remote.created = { 'a.one': 0 }
+  remote.revisions = { 'a.one': 'r0' }
+
+  await client.connect()
+
+  assert.deepStrictEqual(await client.fetch('a.one', 'e1'), {
+    configuration: { foo: 'served' },
+    created: 0
+  })
+})
+
+/** Until the remote has been asked as many times more. */
+async function rounds(count: number): Promise<void> {
+  const target = remote.invoke.mock.callCount() + count
+  const deadline = Date.now() + 2000
+
+  while (remote.invoke.mock.callCount() < target && Date.now() < deadline) await timeout(5)
+
+  assert.ok(remote.invoke.mock.callCount() >= target, `not asked ${count} more times`)
+}
