@@ -58,6 +58,7 @@ Feature: Configuration values
           bar:
             type: string
       epoch: e1
+      created: 0
       """
 
   Scenario: Listing the configurations
@@ -85,6 +86,7 @@ Feature: Configuration values
         configuration:
           foo: deployed
           bar: world
+        created: 0
       """
 
   Scenario: Listing without the role
@@ -155,6 +157,7 @@ Feature: Configuration values
       configuration:
         foo: created
       epoch: e1
+      revision: null
       """
 
   Scenario: Creating configuration without the role

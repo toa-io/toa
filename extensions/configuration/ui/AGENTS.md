@@ -28,8 +28,9 @@ repository around it.
 - The values are one ordinary component, `extensions/configuration/components/configuration.values`;
   its `manifest.toa.yaml` declares the entity, the operations and the endpoints they are exposed
   at. `GET /configuration/values/` lists every configured component, `GET /configuration/values/:component/`
-  answers `{ configuration, schema, epoch }`, `POST` to the same address creates a new one, and
-  `DELETE` resets it to the deployed defaults, answering `204` with no body.
+  answers `{ configuration, schema, epoch, created, revision }`, `POST` to the same address creates a new one, and
+  `DELETE` resets it to the deployed defaults, answering `204` with no body. `revision` is
+  `null` for a created object; the deployed defaults (and a reset) carry theirs.
 - Reading needs the `system:configuration:get` role; creating and resetting need `system:configuration:create`.
 - A configuration is immutable: creating one replaces the whole of it. A secret is held as a
   `$NAME` reference and is never shown — see `src/@/configuration/ui/read.ts`.

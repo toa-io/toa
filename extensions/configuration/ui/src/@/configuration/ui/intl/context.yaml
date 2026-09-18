@@ -20,6 +20,9 @@ inputs:
     title:
       input: Configuration
       context: heading over the component's current configuration
+    custom:
+      input: Custom
+      context: mark on a row whose configuration is a created object rather than the deployed defaults
   create:
     action:
       input: Edit

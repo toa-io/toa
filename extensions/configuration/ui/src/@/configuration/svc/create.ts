@@ -28,5 +28,7 @@ export async function create(
     ...current,
     configuration,
     epoch: created.epoch,
+    // a created object, not the defaults a reset would bring back
+    revision: null,
   }))
 }

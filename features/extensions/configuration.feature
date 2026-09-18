@@ -550,9 +550,39 @@ Feature: Configuration Extension
       """yaml
       - component: configuration.array
         configuration: {}
+        created: 0
       - component: configuration.base
         configuration:
           foo: deployed
+        created: 0
+      """
+
+  Scenario: Listing tells a created configuration from the defaults
+    Given the configuration of `configuration.base` is deployed with:
+      """yaml
+      foo: deployed
+      """
+    And the configuration of `configuration.array` is deployed
+    And the `configuration` service is staged
+    And the `configuration.values` database is empty
+    When I call `configuration.values.create` with:
+      """yaml
+      input:
+        component: configuration.base
+        configuration:
+          foo: created
+        originator:
+          id: tester
+      """
+    And I call `configuration.values.list`
+    Then the reply is received:
+      """yaml
+      - component: configuration.array
+        created: 0
+      - component: configuration.base
+        configuration:
+          foo: created
+        revision: null
       """
 
   Scenario: Local override

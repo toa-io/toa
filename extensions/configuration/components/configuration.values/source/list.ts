@@ -8,7 +8,14 @@ export async function computation(_: null, context: Context): Promise<Item[]> {
       const { epoch, schema } = entry(component)!
       const value = await resolve(context, component, epoch)
 
-      return { component, epoch, schema, configuration: value!.configuration }
+      return {
+        component,
+        epoch,
+        schema,
+        configuration: value!.configuration,
+        created: value!.created,
+        revision: value!.revision
+      }
     })
   )
 }
@@ -18,4 +25,6 @@ interface Item {
   epoch: string
   schema: object
   configuration: object
+  created: number
+  revision: string | null
 }

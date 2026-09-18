@@ -3,7 +3,7 @@
   import { ChevronLeft } from '@lucide/svelte'
   import { Authorized } from '@/iam/ui'
   import { dict } from '@/configuration/ui/intl'
-  import { Create, DEFAULT, Reset, Value, split } from '@/configuration/ui'
+  import { Create, DEFAULT, Reset, Value, split, valued } from '@/configuration/ui'
   import { configurations } from '@/configuration'
   import { page } from '$app/state'
   import { base } from '$app/paths'
@@ -47,7 +47,9 @@
       <Async store={entry} silent>
         {#snippet awaited(configuration)}
           <Authorized role={ROLE}>
-            <Reset component={configuration.component} />
+            {#if valued(configuration)}
+              <Reset component={configuration.component} />
+            {/if}
             <Create {configuration} />
             {#snippet denied()}{/snippet}
           </Authorized>
