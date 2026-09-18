@@ -8,24 +8,28 @@ export class Receiver extends Connector {
   private readonly event: string
   private readonly properties: string[]
   private readonly expose?: string[]
+  private readonly dynamic: boolean
   private readonly stream: Readable
 
   public constructor({
     event,
     properties,
     stream,
-    expose
+    expose,
+    dynamic = false
   }: {
     event: string
     properties: string[]
     stream: Readable
     expose?: string[]
+    dynamic?: boolean
   }) {
     super()
 
     this.event = event
     this.properties = properties
     this.expose = expose
+    this.dynamic = dynamic
     this.stream = stream
   }
 
@@ -60,6 +64,15 @@ export class Receiver extends Connector {
         for (const k of key as string[]) this.push(k, data, telemetry)
       else this.push(key, data, telemetry)
     }
+
+    // whole: what each dynamic route exposes of it is the route's own
+    if (this.dynamic)
+      this.stream.push({
+        key: null,
+        event: this.event,
+        data: message.payload,
+        telemetry
+      } satisfies Push)
   }
 
   private fit(payload: Record<string, string>): Record<string, string> {
@@ -87,8 +100,9 @@ export class Receiver extends Connector {
   }
 }
 
+/** An event for one stream, or, with no `key`, for whichever dynamic routes match it. */
 export interface Push {
-  key: string
+  key: string | null
   event: string
   data: Record<string, string>
   telemetry: SpanContext | null

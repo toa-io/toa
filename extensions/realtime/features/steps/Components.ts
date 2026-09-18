@@ -31,7 +31,7 @@ export class Components {
     for (const route of routes) {
       const label = `${namespace}.${name}.${route.event}`
 
-      this.realtime.declare(label, route.properties, route.expose)
+      this.realtime.declare(label, route.properties, route.expose, route.dynamic)
     }
   }
 

@@ -15,6 +15,9 @@ entity:
       maxLength: 32
     text: &text
       type: string
+    room: &room
+      type: string
+      maxLength: 32
   required:
     - sender
     - recipient
@@ -30,6 +33,7 @@ operations:
         sender: *sender
         recipient: *recipient
         text: *text
+        room: *room
       type: object
       required:
         - sender

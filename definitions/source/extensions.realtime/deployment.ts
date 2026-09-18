@@ -53,9 +53,14 @@ export function parse(declaration: Declaration): Route[] {
 
   for (const [event, value] of Object.entries(declaration))
     if (isObject(value)) {
-      const properties = Array.isArray(value.key) ? value.key : [value.key]
+      const properties =
+        value.key === undefined ? [] : Array.isArray(value.key) ? value.key : [value.key]
+      const route: Route = { event, properties, expose: value.expose }
 
-      routes.push({ event, properties, expose: value.expose })
+      if (value.dynamic !== undefined && value.dynamic !== false)
+        route.dynamic = value.dynamic === true ? {} : { expose: value.dynamic.expose }
+
+      routes.push(route)
     } else {
       const properties = Array.isArray(value) ? value : [value]
 
@@ -74,13 +79,22 @@ export type Entry = string | string[] | RouteDeclaration
 export type Declaration = Record<string, Entry>
 
 export interface RouteDeclaration {
-  key: string | string[]
+  /** Optional where the event is `dynamic`: it is then routed by dynamic routes only. */
+  key?: string | string[]
   expose?: string[]
+  /** Open to the routes an application creates at runtime, with the most they may expose. */
+  dynamic?: boolean | { expose?: string[] }
 }
 
 export interface Route {
   event: string
   properties: string[]
+  expose?: string[]
+  dynamic?: Dynamic
+}
+
+export interface Dynamic {
+  /** What a dynamic route of the event may expose at most; the whole payload where absent. */
   expose?: string[]
 }
 

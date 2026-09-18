@@ -69,7 +69,11 @@ export class Realtime extends Connector {
       delivery,
       async () =>
         await console.span(options, async () => {
-          await this.streams?.invoke('push', { input: event })
+          if (event.key === null)
+            await this.streams?.invoke('dispatch', {
+              input: { event: event.event, data: event.data }
+            })
+          else await this.streams?.invoke('push', { input: event })
 
           measure.delivered(event.event)
         })

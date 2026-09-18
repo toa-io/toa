@@ -24,6 +24,44 @@ operations:
       required:
         - key
         - event
+  # an event, where one of its properties has a value, goes to a stream
+  route:
+    output: { type: 'null' }
+    errors: [NOT_DYNAMIC, EXPOSE]
+    input: &route
+      properties:
+        event:
+          type: string
+        # every event of its kind where absent
+        property:
+          type: string
+        value:
+          type: string
+        stream:
+          type: string
+        expose:
+          type: array
+          items:
+            type: string
+      type: object
+      required:
+        - event
+        - stream
+  unroute:
+    output: { type: 'null' }
+    input: *route
+  # an event to whichever routes match it
+  dispatch:
+    output: { type: 'null' }
+    bindings: ~ # only for internal use
+    input:
+      properties:
+        data: {}
+        event:
+          type: string
+      type: object
+      required:
+        - event
 
 configuration:
   schema:

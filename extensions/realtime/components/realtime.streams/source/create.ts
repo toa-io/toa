@@ -1,7 +1,9 @@
 import { type Readable } from 'node:stream'
 import { type Operation } from '@toa.io/bridges.node'
 import type { Context } from '../types/index.d.ts'
-import { Stream, Stash } from './lib/index.ts'
+import { environment } from '@toa.io/generic'
+import { Stream, Stash, Routes, type Declaration } from './lib/index.ts'
+import type { Route } from '@toa.io/definitions/extensions.realtime'
 
 /**
  * A stream is opened per call, and a key has as many of them as it has consumers: one stream read
@@ -12,18 +14,32 @@ import { Stream, Stash } from './lib/index.ts'
  */
 export class Effect implements Operation {
   private readonly streams = new Map<string, Set<Stream>>()
+  // the routes to a key are renewed while it has consumers, a timer per key
+  private readonly renewals = new Map<string, NodeJS.Timeout>()
   private stash!: Stash
+  private routes!: Routes
+  private expire = 0
   private logs: any
 
-  public mount(context: Context): void {
+  public async mount(context: Context): Promise<void> {
     context.state.streams = this.streams
     context.state.stash = new Stash(context.stash, context.configuration, context.logs)
+    context.state.routes = new Routes(context, declarations())
 
     this.logs = context.logs
     this.stash = context.state.stash
+    this.routes = context.state.routes
+    this.expire = context.configuration.expire * 1000
+
+    await this.routes.open()
   }
 
   public unmount(): void {
+    for (const timer of this.renewals.values()) clearInterval(timer)
+
+    this.renewals.clear()
+    this.routes.close()
+
     const streams = [...this.streams.values()].flatMap((set) => [...set])
 
     this.logs.info('Destroying streams', { count: streams.length })
@@ -79,6 +95,7 @@ export class Effect implements Operation {
     if (set === undefined) {
       set = new Set()
       this.streams.set(key, set)
+      this.consumed(key)
     }
 
     set.add(stream)
@@ -87,13 +104,51 @@ export class Effect implements Operation {
     stream.events.once('destroy', () => {
       set.delete(stream)
 
-      if (set.size === 0) this.streams.delete(key)
+      if (set.size === 0) {
+        this.streams.delete(key)
+        this.abandoned(key)
+      }
 
       this.logs.debug('Stream destroyed', { key, count: set.size })
     })
 
     return stream
   }
+
+  /** The key has a consumer: its routes live on while it does. */
+  private consumed(key: string): void {
+    this.renew(key)
+    this.renewals.set(
+      key,
+      setInterval(() => this.renew(key), this.expire / 3)
+    )
+  }
+
+  /** The last consumer left: the routes live `expire` from now, the window it reconnects in. */
+  private abandoned(key: string): void {
+    clearInterval(this.renewals.get(key))
+    this.renewals.delete(key)
+    this.renew(key)
+  }
+
+  private renew(key: string): void {
+    this.routes.renew(key).catch((error: unknown) => {
+      // the next renewal tries again, well within the expiry
+      this.logs.warn('Routes not renewed', { key, error })
+    })
+  }
+}
+
+/** The events declared dynamic, and what their routes may expose. */
+function declarations(): Map<string, Declaration> {
+  const value = environment.get('TOA_REALTIME')
+  const routes = value === undefined ? [] : (JSON.parse(value) as Route[])
+  const map = new Map<string, Declaration>()
+
+  for (const { event, dynamic } of routes)
+    if (dynamic !== undefined) map.set(event, dynamic)
+
+  return map
 }
 
 interface Input {
