@@ -7,13 +7,15 @@ import type { Stash as Redis } from '@toa.io/extensions.stash'
 import type { Configuration } from './toa.d.ts'
 import type { Stream } from '../source/lib/Stream.ts'
 import type { Stash } from '../source/lib/Stash.ts'
+import type { Routes } from '../source/lib/Routes.ts'
 
-/** What this component keeps between calls: the streams it serves, and what backs them. */
+/** What this component keeps between calls: the streams it serves, the routes to them, and what backs them. */
 export interface Context {
   stash: Redis
   state: {
     streams: Map<string, Set<Stream>>
     stash: Stash
+    routes: Routes
   }
   logs: Logs
   configuration: Configuration

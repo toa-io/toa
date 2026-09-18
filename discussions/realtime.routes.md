@@ -42,7 +42,10 @@ stays readable by its own identity only; what the application authorises is the 
 
 **Failures**
 
-10. A route that cannot be stored is refused with an exception, not accepted and lost.
+10. A route that cannot be stored is refused with an exception, not accepted and lost. The refusal
+    comes when the stash gives up on the command, which is over a minute after it became
+    unreachable; a caller that stops waiting sooner may find the route created once the stash is
+    back.
 11. A route changed while the stash was unreachable reaches every replica once it is back.
 
 **What is not promised**
@@ -77,13 +80,15 @@ exposition:
 
 ```js
 // rooms/operations/watch.js
-export async function effect (input, context) {
-  await context.remote.realtime.streams.route({ input: {
-    event: 'default.messages.created',
-    property: 'room',
-    value: input.room,
-    stream: input.identity
-  } })
+export async function effect(input, context) {
+  await context.remote.realtime.streams.route({
+    input: {
+      event: 'default.messages.created',
+      property: 'room',
+      value: input.room,
+      stream: input.identity
+    }
+  })
 }
 ```
 
@@ -105,8 +110,8 @@ receives the room's messages on it.
    no I/O. Routes are stored in the stash, a hash of the route to the moment it expires; a change is
    published on a channel every replica subscribes to. The index is read whole when the component
    mounts, when the stash reconnects, and every `expire / 2` seconds, which drops what expired.
-5. **Renewal.** Opening a stream and each of its heartbeats push the expiry of the routes to it
-   `expire` seconds on.
+5. **Renewal.** While a key has a consumer, the expiry of the routes to it is pushed `expire`
+   seconds on every third of `expire`, and once more when its last consumer leaves.
 6. **Documentation.** The _Dynamic routes_ section of the realtime readme.
 
 ## Decisions

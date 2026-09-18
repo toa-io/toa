@@ -30,10 +30,16 @@ export class Routes extends Connector {
     const routes = Routes.read()
     const creating = []
 
-    for (const { event, properties, expose } of routes) {
+    for (const { event, properties, expose, dynamic } of routes) {
       const consumer = this.host.receive(
         event,
-        new Receiver({ event, properties, stream: this.events, expose })
+        new Receiver({
+          event,
+          properties,
+          stream: this.events,
+          expose,
+          dynamic: dynamic !== undefined
+        })
       )
 
       creating.push(consumer)

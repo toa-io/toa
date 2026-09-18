@@ -143,7 +143,7 @@ exposition:
 
 ```javascript
 // rooms/operations/watch.js
-export async function effect (input, context) {
+export async function effect(input, context) {
   await context.remote.realtime.streams.route({
     input: {
       event: 'default.messages.created',

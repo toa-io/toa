@@ -54,6 +54,42 @@ export class Streams {
     throw new Error(`No matching event received by '${name}'`)
   }
 
+  @then('no event is received from the stream `{word}`:')
+  public async notReceived(key: string, yaml: string): Promise<void> {
+    await setTimeout(500)
+
+    const expected = parse(yaml) as object
+
+    for (const event of this.consumers[key].events)
+      assert.ok(!match(event, expected), `An event received by '${key}' matches`)
+  }
+
+  @then('exactly this event is received from the stream `{word}`:')
+  public async receivedExactly(key: string, yaml: string): Promise<void> {
+    await setTimeout(100)
+
+    const expected = parse(yaml) as Event
+    const events = this.consumers[key].events.filter(
+      ({ event }) => event === expected.event
+    )
+
+    assert.equal(
+      events.length,
+      1,
+      `Expected one '${expected.event}' received by '${key}'`
+    )
+    assert.deepStrictEqual(events[0].data, expected.data)
+  }
+
+  @then('{int} event(s) `{word}` is/are received from the stream `{word}`')
+  public async count(count: number, name: string, key: string): Promise<void> {
+    await setTimeout(500)
+
+    const events = this.consumers[key].events.filter(({ event }) => event === name)
+
+    assert.equal(events.length, count, `'${key}' received ${events.length} of '${name}'`)
+  }
+
   @then('the consumer `{word}` is connected')
   public async connected(name: string): Promise<void> {
     await setTimeout(100)
@@ -86,7 +122,9 @@ export class Streams {
   }
 
   private async connect(name: string, key: string, token?: string): Promise<void> {
-    const stream: Readable = await this.remote!.invoke('create', { input: { key, token } })
+    const stream: Readable = await this.remote!.invoke('create', {
+      input: { key, token }
+    })
     const events = this.consumers[name]?.events ?? []
     const consumer: Consumer = { key, stream, events, ended: false }
 
