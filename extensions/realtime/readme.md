@@ -70,34 +70,97 @@ amount: 100
 
 ## Dynamic routes
 
-![Not implemented](https://img.shields.io/badge/Not%20implemented-red)
+A dynamic route is created at runtime: _this_ event, where _this_ property has _this_ value, goes to
+_that_ stream. It delivers an event to an identity the event does not name — a moderator watching a
+room, an operator watching any record.
 
-Dynamic routes address the cases when a stream key is not a property of an event.
+### Declaring
 
-Among with an `event` and a `stream` key, a dynamic route has `property` and `value` properties,
-which define a condition that should be met for an event to be combined into a stream with the
-specified key.
-
-### Dynamic route example
-
-For instance, when there are chat rooms with a list of users, and a user joins or leaves the room.
-When a message is sent to a room, an event will have a `room_id` property, but not a `user_id`.
-In this case, when the user `a4b8e7e8` enters the room with id `general`,
-a dynamic route may be created as follows:
+An event is routed dynamically only where it is declared so, with the most a dynamic route of it
+may expose. A route of an event not declared is refused.
 
 ```yaml
-event: message.sent
-property: room_id
-value: general
-stream: a4b8e7e8
+# manifest.toa.yaml
+name: messages
+
+realtime:
+  created:
+    key: [sender, recipient] # optional: a dynamic event needs no static key
+    dynamic:
+      expose: [id, room, text, sender]
 ```
 
-Each time the message is sent to the room with id `general`, the event will be routed into a
-stream with `a4b8e7e8` key.
+`dynamic: true` allows a route to expose the whole payload.
 
-### Managing dynamic routes
+### Creating a route
 
-Dynamic routes are managed by the `realtime.routes` component, running in the Realtime extension.
+`realtime.streams.route` creates a route, and `realtime.streams.unroute` removes it.
+
+```javascript
+await context.remote.realtime.streams.route({
+  input: {
+    event: 'default.messages.created',
+    property: 'room', // optional: without it, every event of its kind
+    value: 'general',
+    stream: 'a4b8e7e8',
+    expose: ['id', 'text'] // optional, within the declaration
+  }
+})
+```
+
+An event matches where its `property` equals `value`, or is an array that contains it. A route is its
+`event`, `property`, `value` and `stream`: creating it again changes nothing.
+
+`route` is refused with:
+
+- `NOT_DYNAMIC` — the event is not declared dynamic;
+- `EXPOSE` — `expose` names a property the declaration does not allow.
+
+> :warning:<br/>
+> A route is not an authorisation: it routes any declared event to any stream. Call `route` behind
+> a route of your own that decides who may watch what.
+
+### Lifetime
+
+A route lives while its stream is consumed, and `expire` seconds after the last consumer left — the
+window in which a consumer reconnects with its token. A client that goes away without removing its
+routes leaves nothing behind, so a client creates them again whenever it opens its stream without a
+token.
+
+### Example
+
+A moderator watches a room. The stream is their own, and the application decides who may route a
+room onto it:
+
+```yaml
+# rooms/manifest.toa.yaml
+exposition:
+  /:room/watchers/:identity:
+    auth:rule: { id: identity, role: moderator }
+    PUT: watch
+    DELETE: unwatch
+```
+
+```javascript
+// rooms/operations/watch.js
+export async function effect (input, context) {
+  await context.remote.realtime.streams.route({
+    input: {
+      event: 'default.messages.created',
+      property: 'room',
+      value: input.room,
+      stream: input.identity
+    }
+  })
+}
+```
+
+The client:
+
+1. opens its stream, `GET /realtime/streams/a4b8e7e8/`;
+2. watches the room, `PUT /rooms/general/watchers/a4b8e7e8/`;
+3. receives every message created in `general` on its stream;
+4. stops watching with `DELETE /rooms/general/watchers/a4b8e7e8/`, or by going away.
 
 ## Exposition
 
