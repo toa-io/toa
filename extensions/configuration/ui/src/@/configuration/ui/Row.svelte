@@ -2,7 +2,7 @@
   import { ChevronRight, KeyRound } from '@lucide/svelte'
   import * as Item from '$ui/item'
   import { base } from '$app/paths'
-  import { DEFAULT, split } from './ui'
+  import { DEFAULT, split, valued } from './ui'
   import { holds } from './read'
   import { dict } from './intl'
   import type { Props } from './Row'
@@ -11,6 +11,7 @@
 
   const name = $derived(split(configuration.component))
   const secret = $derived(holds(configuration.configuration))
+  const custom = $derived(valued(configuration))
 </script>
 
 <!-- the row is the link, which is what the item's own `[a]:hover` styling expects -->
@@ -21,6 +22,16 @@
         <!-- the name is one string; the component spaces its children by default, and a
              name too long for its column ends in an ellipsis rather than wrapping -->
         <Item.Title class="w-full min-w-0 gap-0" title={configuration.component}>
+          <!-- a created object, not the deployed defaults; the same signal reset needs -->
+          {#if custom}
+            <span
+              id="configurations-{configuration.id}-value-indicator"
+              class="me-1.5 size-2 shrink-0 rounded-full bg-blue-500"
+              role="img"
+              aria-label={$dict.value.custom}
+            ></span>
+          {/if}
+
           <span class="truncate">
             {#if name.namespace !== DEFAULT}<span class="text-muted-foreground"
                 >{name.namespace}.</span

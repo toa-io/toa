@@ -243,13 +243,15 @@ deployment that changes the defaults changes what is served after a reset.
 ### Operations
 
 - `get({ component, epoch? })`: the configuration with the schema it is checked against, as
-  `{ configuration, schema, epoch }`, or `null` when there is none. The epoch is the deployed
-  one when omitted; an epoch the deployment does not know has no `schema`.
+  `{ configuration, schema, epoch, created, revision }`, or `null` when there is none. The
+  epoch is the deployed one when omitted; an epoch the deployment does not know has no
+  `schema`. `created` is `0` for the deployed defaults, unless a reset brought them back.
+  `revision` is that of the deployed defaults when they are what is served, and `null` for a
+  created object.
 - `fetch([{ component, epoch }])`: the same for several pairs at once, as
-  `[{ component, epoch, configuration, created, revision }]`. `revision` is that of the deployed
-  defaults when they are what is served, and `null` for a created object.
+  `[{ component, epoch, configuration, created, revision }]`.
 - `list()`: every component's configuration for its deployed epoch, by component name, as
-  `[{ component, epoch, schema, configuration }]`.
+  `[{ component, epoch, schema, configuration, created, revision }]`.
 - `create({ component, configuration, originator })`: a new object for the component's
   deployed epoch. The configuration must satisfy the schema. Errors: `UNKNOWN_COMPONENT`,
   `INVALID_CONFIGURATION`.
@@ -269,10 +271,11 @@ stored. The object of a reset carries a `revision`; a created one does not.
 | `DELETE` | `/configuration/values/:component/` | `system:configuration:create` |
 
 `GET /configuration/values/` lists every component's configuration for its deployed epoch, by
-component name, as `[{ component, epoch, schema, configuration }]`.
+component name, as `[{ component, epoch, schema, configuration, created, revision }]`.
 
-`GET /configuration/values/:component/` returns `{ configuration, schema, epoch }` for the
-deployed epoch, `404` when there is none.
+`GET /configuration/values/:component/` returns
+`{ configuration, schema, epoch, created, revision }` for the deployed epoch, `404` when
+there is none.
 
 `POST` takes `{ configuration }`, records the Identity as the `originator`, and returns
 `{ id, epoch }`. A configuration not satisfying the schema, or an unknown component, is
@@ -286,6 +289,8 @@ the `originator`, and answers `204`. An unknown component is `422`.
 The values service serves a page listing the configured components, creating configurations and
 resetting them, mounted at `/.configuration` on port `8003`. Reading it needs the
 `system:configuration:get` role, creating and resetting need `system:configuration:create`.
+A created configuration is marked on the list. Reset is offered only for those: the deployed
+defaults have nothing to bring back.
 
 The page is always published: unlike the introspection annotation, the configuration
 annotation is the per-component values map and has nowhere to carry a switch.

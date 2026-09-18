@@ -55,9 +55,17 @@ operations:
           type: object
         epoch:
           type: string
+        created:
+          type: integer
+        # of the deployed defaults when they are what is served; null for a created object
+        revision:
+          type: string
+          nullable: true
       required:
         - configuration
         - epoch
+        - created
+        - revision
   # the same for many at once, as the aspects of one process ask
   fetch:
     query: false
@@ -112,11 +120,18 @@ operations:
             type: object
           configuration:
             type: object
+          created:
+            type: integer
+          revision:
+            type: string
+            nullable: true
         required:
           - component
           - epoch
           - schema
           - configuration
+          - created
+          - revision
   create:
     query: false
     input:

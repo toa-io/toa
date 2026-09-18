@@ -8,6 +8,7 @@ value:
     - one: "{n} value"
       other: "{n} values"
   title: Configuration
+  custom: Custom
 create:
   action: Edit
   title: Edit configuration

@@ -4,10 +4,6 @@
  * @author copilot
  */
 
-export type Locale = 'en-US'
-
-export type Grammar = string
-
 export type Dictionary = {
       values: {
         empty: string
@@ -18,6 +14,7 @@ export type Dictionary = {
         secret: string
         count: (value: number) => string
         title: string
+        custom: string
       }
       create: {
         action: string

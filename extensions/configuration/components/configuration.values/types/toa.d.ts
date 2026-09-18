@@ -27,6 +27,8 @@ export type GetOutput = {
   configuration: Record<string, unknown>
   schema?: Record<string, unknown>
   epoch: string
+  created: number
+  revision: string | null
 } | null
 
 export type FetchInput = Array<{
@@ -47,6 +49,8 @@ export type ListOutput = Array<{
   epoch: string
   schema: Record<string, unknown>
   configuration: Record<string, unknown>
+  created: number
+  revision: string | null
 }>
 
 export type CreateInput = {

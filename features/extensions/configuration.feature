@@ -245,6 +245,7 @@ Feature: Configuration Extension
       bar: world
       """
     And I disconnect
+    # served as the defaults, so it is not told from them
     When I call `configuration.values.get` with:
       """yaml
       input:
@@ -254,6 +255,15 @@ Feature: Configuration Extension
       """yaml
       configuration:
         foo: deployed
+      revision: 44b267babfd1cb9970b656bb5c1ebb3eb05676e6342011b2e3ebf3bc5b2c85f0
+      """
+    When I call `configuration.values.list`
+    Then the reply is received:
+      """yaml
+      - component: configuration.base
+        configuration:
+          foo: deployed
+        revision: 44b267babfd1cb9970b656bb5c1ebb3eb05676e6342011b2e3ebf3bc5b2c85f0
       """
 
   # a reset is to the defaults, not to what they were when it was made
@@ -550,9 +560,39 @@ Feature: Configuration Extension
       """yaml
       - component: configuration.array
         configuration: {}
+        created: 0
       - component: configuration.base
         configuration:
           foo: deployed
+        created: 0
+      """
+
+  Scenario: Listing tells a created configuration from the defaults
+    Given the configuration of `configuration.base` is deployed with:
+      """yaml
+      foo: deployed
+      """
+    And the configuration of `configuration.array` is deployed
+    And the `configuration` service is staged
+    And the `configuration.values` database is empty
+    When I call `configuration.values.create` with:
+      """yaml
+      input:
+        component: configuration.base
+        configuration:
+          foo: created
+        originator:
+          id: tester
+      """
+    And I call `configuration.values.list`
+    Then the reply is received:
+      """yaml
+      - component: configuration.array
+        created: 0
+      - component: configuration.base
+        configuration:
+          foo: created
+        revision: null
       """
 
   Scenario: Local override
