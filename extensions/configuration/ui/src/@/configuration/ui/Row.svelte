@@ -27,6 +27,7 @@
             <span
               id="configurations-{configuration.id}-value-indicator"
               class="me-1.5 size-2 shrink-0 rounded-full bg-blue-500"
+              role="img"
               aria-label={$dict.value.custom}
             ></span>
           {/if}
