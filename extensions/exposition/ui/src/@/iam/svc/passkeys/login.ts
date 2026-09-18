@@ -1,6 +1,7 @@
 import { request } from '@/passkeys'
-import { passkeys } from '../net'
+import * as net from '../net'
 import { authenticated } from '../authenticated'
+import { challenge } from '../store'
 import type { Echo } from '../net'
 
 export async function login(id?: string): Promise<Echo | Error> {
@@ -12,9 +13,17 @@ export async function login(id?: string): Promise<Echo | Error> {
     return response
   }
 
-  const echo = await passkeys.post(response)
+  const used = await net.passkeys.post(response)
 
-  if (echo instanceof Error) console.error('Credential verification failed', echo)
+  if (used instanceof Error) {
+    console.error('Credential verification failed', used)
 
-  return authenticated(echo, 'passkey')
+    return used
+  }
+
+  const credentials = challenge.extract()
+
+  if (credentials === null) return new Error('Unauthenticated')
+
+  return authenticated(await net.get(credentials), 'passkey')
 }

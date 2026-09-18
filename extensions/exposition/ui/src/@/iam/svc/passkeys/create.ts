@@ -1,6 +1,7 @@
 import * as passkeys from '@/passkeys'
 import * as origin from '../net'
 import { authenticated } from '../authenticated'
+import { challenge } from '../store'
 
 export async function create(
   name: string,
@@ -14,9 +15,17 @@ export async function create(
     return response
   }
 
-  const echo = await origin.passkeys.post(response.identity, response.key)
+  const created = await origin.passkeys.post(response.identity, response.key)
 
-  if (echo instanceof Error) console.error('Credential registration failed', echo)
+  if (created instanceof Error) {
+    console.error('Credential registration failed', created)
 
-  return authenticated(echo, 'passkey')
+    return created
+  }
+
+  const credentials = challenge.extract()
+
+  if (credentials === null) return new Error('Unauthenticated')
+
+  return authenticated(await origin.get(credentials), 'passkey')
 }
