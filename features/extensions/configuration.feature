@@ -245,6 +245,7 @@ Feature: Configuration Extension
       bar: world
       """
     And I disconnect
+    # served as the defaults, so it is not told from them
     When I call `configuration.values.get` with:
       """yaml
       input:
@@ -254,6 +255,15 @@ Feature: Configuration Extension
       """yaml
       configuration:
         foo: deployed
+      revision: 44b267babfd1cb9970b656bb5c1ebb3eb05676e6342011b2e3ebf3bc5b2c85f0
+      """
+    When I call `configuration.values.list`
+    Then the reply is received:
+      """yaml
+      - component: configuration.base
+        configuration:
+          foo: deployed
+        revision: 44b267babfd1cb9970b656bb5c1ebb3eb05676e6342011b2e3ebf3bc5b2c85f0
       """
 
   # a reset is to the defaults, not to what they were when it was made
