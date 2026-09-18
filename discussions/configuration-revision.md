@@ -20,11 +20,11 @@ defaults and nothing else replaces its processes as well.
 **What a component takes**
 
 1. A configuration created for the component's epoch is taken from whichever values service
-   answers, whatever its revision *(today)*.
+   answers, whatever its revision _(today)_.
 2. Deployed defaults are taken only from a values service that holds the revision the component
    was deployed with.
 3. An answer of another revision is refused, and the component asks again, the way it asks while
-   nothing is there *(today, for none)*. A values service older than this change answers no
+   nothing is there _(today, for none)_. A values service older than this change answers no
    revision, which is another one.
 4. A refusal is logged as `Configuration of another revision refused`, naming the component, the
    epoch, the revision expected and the revision received — the first and every fifth, as waiting

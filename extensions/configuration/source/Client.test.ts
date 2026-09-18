@@ -24,7 +24,8 @@ class Remote extends Connector {
           created: configuration === null ? 0 : (this.created[pair.component] ?? 7)
         }
 
-        if (pair.component in this.revisions) fetched.revision = this.revisions[pair.component]
+        if (pair.component in this.revisions)
+          fetched.revision = this.revisions[pair.component]
 
         return fetched
       })
@@ -153,7 +154,10 @@ it('should refuse deployed defaults of another revision until served its own', a
     remote.values = { 'a.one': { foo: 'deployed' } }
     remote.revisions = { 'a.one': 'r1' }
 
-    assert.deepStrictEqual(await fetching, { configuration: { foo: 'deployed' }, created: 0 })
+    assert.deepStrictEqual(await fetching, {
+      configuration: { foo: 'deployed' },
+      created: 0
+    })
 
     const refusals = warn.mock.calls.filter(
       (call) => call.arguments[0] === 'Configuration of another revision refused'
@@ -201,7 +205,9 @@ it('should report a refusal on the first and every n-th time', async () => {
 
     // warn is 2 here: the first, the third, the fifth...
     assert.ok(answered >= 5)
-    assert.ok(refused >= Math.floor(answered / 2) && refused <= Math.ceil(answered / 2) + 1)
+    assert.ok(
+      refused >= Math.floor(answered / 2) && refused <= Math.ceil(answered / 2) + 1
+    )
   } finally {
     warn.mock.restore()
   }
@@ -269,7 +275,8 @@ async function rounds(count: number): Promise<void> {
   const target = remote.invoke.mock.callCount() + count
   const deadline = Date.now() + 2000
 
-  while (remote.invoke.mock.callCount() < target && Date.now() < deadline) await timeout(5)
+  while (remote.invoke.mock.callCount() < target && Date.now() < deadline)
+    await timeout(5)
 
   assert.ok(remote.invoke.mock.callCount() >= target, `not asked ${count} more times`)
 }

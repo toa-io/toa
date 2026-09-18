@@ -36,7 +36,11 @@ export class Client extends Connector {
    * The configuration of a component for an epoch, once the service has one. Given the
    * revision the component was deployed with, deployed defaults of another are not taken.
    */
-  public async fetch(component: string, epoch: string, revision?: string): Promise<Value> {
+  public async fetch(
+    component: string,
+    epoch: string,
+    revision?: string
+  ): Promise<Value> {
     const key = id(component, epoch)
 
     let entry = this.pending.get(key)
@@ -185,7 +189,8 @@ export class Client extends Connector {
       .filter(({ component, epoch }) => !this.refusals.has(id(component, epoch)))
       .map(({ component }) => component)
 
-    for (const key of this.refusals.keys()) if (!this.pending.has(key)) this.refusals.delete(key)
+    for (const key of this.refusals.keys())
+      if (!this.pending.has(key)) this.refusals.delete(key)
 
     if (waiting.length === 0) {
       this.round = 0

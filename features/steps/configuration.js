@@ -56,7 +56,8 @@ Given(
 async function deploy(reference, values) {
   const deployed = await instance(reference)
   const annotation = values === undefined ? {} : { [deployed.locator.id]: values }
-  const variables = deployment([deployed], annotation).variables[deployed.locator.label] ?? []
+  const variables =
+    deployment([deployed], annotation).variables[deployed.locator.label] ?? []
 
   await hold.call(this, deployed, values)
 

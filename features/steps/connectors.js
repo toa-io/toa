@@ -194,7 +194,6 @@ Given(
   }
 )
 
-
 Then(
   'I compose {component} component and it fails with:',
   /**
