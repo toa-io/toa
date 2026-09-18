@@ -122,6 +122,16 @@ The configuration epoch of a component is the SHA-256 of its configuration schem
 canonical JSON. A configuration object belongs to the epoch of the schema it was validated
 against. A schema change is a new epoch.
 
+### Revision
+
+The configuration revision of a component is the SHA-256 of the defaults it is deployed with — the
+[annotation](#annotation) over the manifest `defaults` — as canonical JSON. Within one epoch, every
+deployment that changes the defaults is a new revision.
+
+[`toa deploy`](/runtime/cli/readme.md#deploy) gives every component it deploys the revision of its
+configuration as `TOA_CONFIGURATION_REVISION_<NAMESPACE>_<NAME>`. A deployment that changes a
+component's defaults and nothing else replaces its processes, as a change to its sources does.
+
 ## Annotation
 
 A component's configuration can be overridden using the configuration context annotation.
@@ -233,7 +243,8 @@ The configuration of a component for an epoch is:
   `{ configuration, schema, epoch }`, or `null` when there is none. The epoch is the deployed
   one when omitted; an epoch the deployment does not know has no `schema`.
 - `fetch([{ component, epoch }])`: the same for several pairs at once, as
-  `[{ component, epoch, configuration }]`.
+  `[{ component, epoch, configuration, created, revision }]`. `revision` is that of the deployed
+  defaults when they are what is served, and `null` for a created object.
 - `list()`: every component's configuration for its deployed epoch, by component name, as
   `[{ component, epoch, schema, configuration }]`.
 - `create({ component, configuration, originator })`: a new object for the component's
@@ -285,8 +296,17 @@ function transition(input, entity, context) {
 On start, a component requests its configuration for its epoch from the values service and
 waits until there is one, reporting every fifth attempt. The schema is applied, and secrets
 are substituted. What is served is what was stored, whole: a `default` written into the schema
-fills nothing, so a value every component is to have is declared in `defaults`. After a configuration is created, the running component receives the new
-object and takes it when its `CREATED` is later than that of the value it holds.
+fills nothing, so a value every component is to have is declared in `defaults`. After a
+configuration is created, the running component receives the new object and takes it when its
+`CREATED` is later than that of the value it holds.
+
+Deployed defaults are taken only from a values service of the component's own
+[revision](#revision). One of another — a values service of the previous deployment, still serving
+while it is replaced — is refused and asked again, and the refusal is logged as
+`Configuration of another revision refused` with the `component`, its `epoch`, the `expected`
+revision and the `received` one, on the first refusal and every fifth. A created configuration is
+taken from any. A component deployed without a revision, one started by `toa compose` or evicted
+from the Context, takes what it is served.
 
 ### Local override
 
