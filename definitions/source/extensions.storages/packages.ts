@@ -1,17 +1,24 @@
+import { readFileSync } from 'node:fs'
+import { join } from 'node:path'
 import type { Provider } from './secrets.ts'
 import type { Annotation } from './Annotation.ts'
 import type { Instance } from './deployment.ts'
 
+const peers: Record<string, string> = JSON.parse(
+  readFileSync(join(import.meta.dirname, '../../package.json'), 'utf8')
+).peerDependencies
+
 /**
  * What each provider is written against, stated apart from the provider for the reason its
  * secrets are: so that a deploy installs the SDK without loading it, and an image carries no
- * SDK a declaration does not name. These are the extension's optional peers at the versions it
+ * SDK a declaration does not name. The versions are this package's optional peers, so a bump
+ * is a change to its manifest alone. They are the extension's optional peers at the versions it
  * declares them — `packages.test.ts` is what keeps the two the same.
  */
 export const packages: Record<Provider, Readonly<Record<string, string>>> = {
-  s3: { '@aws-sdk/client-s3': '3.1133.0', '@aws-sdk/lib-storage': '3.1133.0' },
-  spaces: { '@aws-sdk/client-s3': '3.1133.0', '@aws-sdk/lib-storage': '3.1133.0' },
-  cloudinary: { cloudinary: '2.11.0' },
+  s3: pin('@aws-sdk/client-s3', '@aws-sdk/lib-storage'),
+  spaces: pin('@aws-sdk/client-s3', '@aws-sdk/lib-storage'),
+  cloudinary: pin('cloudinary'),
   fs: {},
   tmp: {},
   test: {}
@@ -49,4 +56,12 @@ export function installs(
 
 function isAnnotation(value: unknown): value is Annotation {
   return typeof value === 'object' && value !== null
+}
+
+function pin(...names: string[]): Record<string, string> {
+  const pinned: Record<string, string> = {}
+
+  for (const name of names) pinned[name] = peers[name]
+
+  return pinned
 }
