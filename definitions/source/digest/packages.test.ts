@@ -3,6 +3,7 @@ import assert from 'node:assert/strict'
 import { createRequire } from 'node:module'
 import { existsSync, globSync, readdirSync, readFileSync, statSync } from 'node:fs'
 import { dirname, join } from 'node:path'
+import { load } from 'js-yaml'
 
 /*
 A component an extension ships runs where the extension's own dependencies are not beside it —
@@ -67,6 +68,16 @@ for (const suffix of EXTENSIONS)
               `'${name}' is ${version} here and ${declared} in ${path}`
             )
       })
+
+      it(`${label} has its packages bumped with the workspace's`, () => {
+        const own = manifest(join(component, 'package.json'))
+
+        for (const name of Object.keys(own.dependencies ?? {}))
+          assert.ok(
+            BUMPED.has(name),
+            `'${name}' is missing from the 'components' group of ${DEPENDABOT}`
+          )
+      })
     }
   })
 
@@ -91,6 +102,17 @@ const WORKSPACE = (
 ).workspaces
   .flatMap((pattern) => globSync(join(pattern, 'package.json'), { cwd: ROOT }))
   .map((path) => [path, manifest(join(ROOT, path))] as const)
+
+const DEPENDABOT = '.github/dependabot.yml'
+
+/** What Dependabot bumps in one pull request across the workspace and the components. */
+const BUMPED = new Set<string>(
+  (
+    load(readFileSync(join(ROOT, DEPENDABOT), 'utf8')) as {
+      updates: Array<{ groups?: Record<string, { patterns?: string[] }> }>
+    }
+  ).updates.flatMap((update) => update.groups?.components?.patterns ?? [])
+)
 
 /** The versions the packages of the workspace declare a package at, in any section. */
 function* declarations(name: string): Generator<[string, string]> {
