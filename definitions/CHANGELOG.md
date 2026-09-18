@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.312](https://github.com/toa-io/toa/compare/v1.0.0-alpha.311...v1.0.0-alpha.312) (2026-09-18)
+
+### Features
+
+* **bindings.http:** carry a call that holds a stream ([c571793](https://github.com/toa-io/toa/commit/c571793b617e3d5ae1dce5b98b64d67d7d8224f6))
+* **boot:** offer a streamed endpoint to the bindings that carry a stream ([0099b4e](https://github.com/toa-io/toa/commit/0099b4e12bff4ce5dba2d0098f0b8c6a18fff2c5))
+* **configuration:** give a deployed component the revision of its defaults ([6a54fc6](https://github.com/toa-io/toa/commit/6a54fc6f0f640f79316c383aa8448a7f28a79276))
+* **exposition:** refuse a route that maps a stream onto an operation that takes none ([e679fba](https://github.com/toa-io/toa/commit/e679fbacff289791d5b909bcc0e6c9b806fd52be))
+
+
 # [1.0.0-alpha.311](https://github.com/toa-io/toa/compare/v1.0.0-alpha.310...v1.0.0-alpha.311) (2026-09-17)
 
 **Note:** Version bump only for package @toa.io/definitions

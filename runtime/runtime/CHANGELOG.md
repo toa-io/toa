@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.312](https://github.com/toa-io/toa/compare/v1.0.0-alpha.311...v1.0.0-alpha.312) (2026-09-18)
+
+### Features
+
+* **runtime:** install the binding that carries a stream ([ea9150c](https://github.com/toa-io/toa/commit/ea9150c5efcee636a0fa55e9a0c3af9f01c20a62))
+
+
 # [1.0.0-alpha.311](https://github.com/toa-io/toa/compare/v1.0.0-alpha.310...v1.0.0-alpha.311) (2026-09-17)
 
 **Note:** Version bump only for package @toa.io/runtime

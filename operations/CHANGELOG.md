@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.312](https://github.com/toa-io/toa/compare/v1.0.0-alpha.311...v1.0.0-alpha.312) (2026-09-18)
+
+### Features
+
+* **operations:** point a component's service at the port a streamed call is served on ([dbad630](https://github.com/toa-io/toa/commit/dbad630f765d5c1d50b3eda65768352905149c0c))
+* **operations:** refuse to render a chart for a context with no version ([d6cd083](https://github.com/toa-io/toa/commit/d6cd083bfe8d7da9f3d451c2c25d821eb41ce958))
+
+
 # [1.0.0-alpha.311](https://github.com/toa-io/toa/compare/v1.0.0-alpha.310...v1.0.0-alpha.311) (2026-09-17)
 
 **Note:** Version bump only for package @toa.io/operations

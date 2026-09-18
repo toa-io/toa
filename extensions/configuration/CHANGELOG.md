@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.312](https://github.com/toa-io/toa/compare/v1.0.0-alpha.311...v1.0.0-alpha.312) (2026-09-18)
+
+### Features
+
+* **configuration:** give a deployed component the revision of its defaults ([6a54fc6](https://github.com/toa-io/toa/commit/6a54fc6f0f640f79316c383aa8448a7f28a79276))
+* **configuration:** refuse deployed defaults of another revision, and say so ([1fa8d3e](https://github.com/toa-io/toa/commit/1fa8d3eba9ec30b5d53958e588399c3bf0d12d59))
+
+
 # [1.0.0-alpha.311](https://github.com/toa-io/toa/compare/v1.0.0-alpha.310...v1.0.0-alpha.311) (2026-09-17)
 
 **Note:** Version bump only for package @toa.io/extensions.configuration

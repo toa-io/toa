@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.312](https://github.com/toa-io/toa/compare/v1.0.0-alpha.311...v1.0.0-alpha.312) (2026-09-18)
+
+### Features
+
+* **bindings.http:** carry a call that holds a stream ([c571793](https://github.com/toa-io/toa/commit/c571793b617e3d5ae1dce5b98b64d67d7d8224f6))
+* **cli:** write the property that carries a stream into a component's types ([8eae8ce](https://github.com/toa-io/toa/commit/8eae8cea011c0be78b27ed1380a1a6f17c9479f8))
+* **norm:** let an operation declare the input property that carries a stream ([85a8f1f](https://github.com/toa-io/toa/commit/85a8f1ff5b62f658e0527dcce7230d8388d28fe0))
+* **operations:** refuse to render a chart for a context with no version ([d6cd083](https://github.com/toa-io/toa/commit/d6cd083bfe8d7da9f3d451c2c25d821eb41ce958))
+
+
 # [1.0.0-alpha.311](https://github.com/toa-io/toa/compare/v1.0.0-alpha.310...v1.0.0-alpha.311) (2026-09-17)
 
 **Note:** Version bump only for package @toa.io/norm

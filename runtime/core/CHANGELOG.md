@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.312](https://github.com/toa-io/toa/compare/v1.0.0-alpha.311...v1.0.0-alpha.312) (2026-09-18)
+
+### Features
+
+* **boot:** tell a producer which of its endpoints take a stream ([6383adc](https://github.com/toa-io/toa/commit/6383adcebf38d889db80d8cbd19fe38f3ba4eb2e))
+* **core:** raise an exception where nothing answers for a component ([ec072e0](https://github.com/toa-io/toa/commit/ec072e019c0ca595e264d67a191f7e762dff025d))
+* **core:** refuse a call that carries no stream where the operation takes one ([fb78e02](https://github.com/toa-io/toa/commit/fb78e02fa620b15f6aa7bac184dd8a6ede923150))
+* **core:** require the property that carries a stream, and refuse a task that carries one ([fdc7e6b](https://github.com/toa-io/toa/commit/fdc7e6b345ee22b030a52f1fda0e91e6bf63a392))
+
+
 # [1.0.0-alpha.311](https://github.com/toa-io/toa/compare/v1.0.0-alpha.310...v1.0.0-alpha.311) (2026-09-17)
 
 **Note:** Version bump only for package @toa.io/core

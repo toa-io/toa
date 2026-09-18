@@ -3,6 +3,34 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.312](https://github.com/toa-io/toa/compare/v1.0.0-alpha.311...v1.0.0-alpha.312) (2026-09-18)
+
+### Bug Fixes
+
+* **bindings.http:** tell a dial that found nothing from a call that failed for its own reason ([82c4e09](https://github.com/toa-io/toa/commit/82c4e09de184d44f1b15c3d9d9fe6be5ea75346a))
+* **exposition:** refuse a body past the limit with the status alone ([0fd5c57](https://github.com/toa-io/toa/commit/0fd5c57d2cff15103981916c53708975c5dc95fb))
+* **exposition:** resolve every accept against what a route produces, and say why a refusal refused ([0e5cab9](https://github.com/toa-io/toa/commit/0e5cab9b2ae832c2d8d8d23359de31ed8a02614e))
+
+### Features
+
+* **bindings.http:** carry a call that holds a stream ([c571793](https://github.com/toa-io/toa/commit/c571793b617e3d5ae1dce5b98b64d67d7d8224f6))
+* **boot:** offer a streamed endpoint to the bindings that carry a stream ([0099b4e](https://github.com/toa-io/toa/commit/0099b4e12bff4ce5dba2d0098f0b8c6a18fff2c5))
+* **boot:** tell a producer which of its endpoints take a stream ([6383adc](https://github.com/toa-io/toa/commit/6383adcebf38d889db80d8cbd19fe38f3ba4eb2e))
+* **cli:** write the property that carries a stream into a component's types ([8eae8ce](https://github.com/toa-io/toa/commit/8eae8cea011c0be78b27ed1380a1a6f17c9479f8))
+* **configuration:** give a deployed component the revision of its defaults ([6a54fc6](https://github.com/toa-io/toa/commit/6a54fc6f0f640f79316c383aa8448a7f28a79276))
+* **configuration:** refuse deployed defaults of another revision, and say so ([1fa8d3e](https://github.com/toa-io/toa/commit/1fa8d3eba9ec30b5d53958e588399c3bf0d12d59))
+* **core:** raise an exception where nothing answers for a component ([ec072e0](https://github.com/toa-io/toa/commit/ec072e019c0ca595e264d67a191f7e762dff025d))
+* **core:** refuse a call that carries no stream where the operation takes one ([fb78e02](https://github.com/toa-io/toa/commit/fb78e02fa620b15f6aa7bac184dd8a6ede923150))
+* **core:** require the property that carries a stream, and refuse a task that carries one ([fdc7e6b](https://github.com/toa-io/toa/commit/fdc7e6b345ee22b030a52f1fda0e91e6bf63a392))
+* **exposition:** answer a component that cannot be reached with 503 ([dff650f](https://github.com/toa-io/toa/commit/dff650f03deda291466f8b08d266f3cac113f709))
+* **exposition:** hand a request body to an operation as the stream it takes ([8c9061d](https://github.com/toa-io/toa/commit/8c9061dff624e9cab26bb0e1f6732304f1f36493))
+* **exposition:** refuse a route that maps a stream onto an operation that takes none ([e679fba](https://github.com/toa-io/toa/commit/e679fbacff289791d5b909bcc0e6c9b806fd52be))
+* **norm:** let an operation declare the input property that carries a stream ([85a8f1f](https://github.com/toa-io/toa/commit/85a8f1ff5b62f658e0527dcce7230d8388d28fe0))
+* **operations:** point a component's service at the port a streamed call is served on ([dbad630](https://github.com/toa-io/toa/commit/dbad630f765d5c1d50b3eda65768352905149c0c))
+* **operations:** refuse to render a chart for a context with no version ([d6cd083](https://github.com/toa-io/toa/commit/d6cd083bfe8d7da9f3d451c2c25d821eb41ce958))
+* **runtime:** install the binding that carries a stream ([ea9150c](https://github.com/toa-io/toa/commit/ea9150c5efcee636a0fa55e9a0c3af9f01c20a62))
+
+
 # [1.0.0-alpha.311](https://github.com/toa-io/toa/compare/v1.0.0-alpha.310...v1.0.0-alpha.311) (2026-09-17)
 
 ### Bug Fixes

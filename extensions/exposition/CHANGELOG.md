@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.312](https://github.com/toa-io/toa/compare/v1.0.0-alpha.311...v1.0.0-alpha.312) (2026-09-18)
+
+### Bug Fixes
+
+* **exposition:** refuse a body past the limit with the status alone ([0fd5c57](https://github.com/toa-io/toa/commit/0fd5c57d2cff15103981916c53708975c5dc95fb))
+* **exposition:** resolve every accept against what a route produces, and say why a refusal refused ([0e5cab9](https://github.com/toa-io/toa/commit/0e5cab9b2ae832c2d8d8d23359de31ed8a02614e))
+
+### Features
+
+* **exposition:** answer a component that cannot be reached with 503 ([dff650f](https://github.com/toa-io/toa/commit/dff650f03deda291466f8b08d266f3cac113f709))
+* **exposition:** hand a request body to an operation as the stream it takes ([8c9061d](https://github.com/toa-io/toa/commit/8c9061dff624e9cab26bb0e1f6732304f1f36493))
+
+
 # [1.0.0-alpha.311](https://github.com/toa-io/toa/compare/v1.0.0-alpha.310...v1.0.0-alpha.311) (2026-09-17)
 
 ### Bug Fixes
