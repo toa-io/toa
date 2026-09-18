@@ -1,3 +1,4 @@
+import { revision } from '@toa.io/definitions/extensions.configuration'
 import { entry } from './map.ts'
 
 /**
@@ -25,18 +26,31 @@ export async function resolve(
   const objects = await context.local.enumerate({ query })
 
   if (objects.length > 0)
-    return { configuration: objects[0].configuration, created: objects[0].CREATED }
+    return {
+      configuration: objects[0].configuration,
+      created: objects[0].CREATED,
+      revision: null
+    }
 
+  // what a component was deployed with tells this deployment's defaults from another's
   if (known !== undefined && known.epoch === epoch)
-    return { configuration: known.defaults ?? {}, created: 0 }
+    return {
+      configuration: known.defaults ?? {},
+      created: 0,
+      revision: revision(known.defaults)
+    }
 
   return null
 }
 
-/** A configuration and when it was created; `0` for the deployed defaults. */
+/**
+ * A configuration and when it was created; `0` for the deployed defaults, which alone have a
+ * revision.
+ */
 export interface Value {
   configuration: object
   created: number
+  revision: string | null
 }
 
 export interface Context {

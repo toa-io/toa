@@ -1,7 +1,7 @@
 import { console } from 'openspan'
 import { Connector, type Locator } from '@toa.io/core'
 import type { extensions } from '@toa.io/core/types'
-import { fit, local, type Node } from './configuration.ts'
+import { fit, local, revision, type Node } from './configuration.ts'
 import { epoch } from '@toa.io/definitions/extensions.configuration'
 import type { Client, Value } from './Client.ts'
 import type { Manifest } from '@toa.io/definitions/extensions.configuration'
@@ -48,7 +48,8 @@ export class Aspect extends Connector implements extensions.Aspect {
 
     const { configuration, created } = await this.client.fetch(
       this.locator.id,
-      this.epoch
+      this.epoch,
+      revision(this.locator)
     )
 
     this.value = fit(configuration, this.manifest)

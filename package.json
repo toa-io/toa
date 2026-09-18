@@ -100,5 +100,13 @@
     "format:check": "oxfmt --check",
     "features:nightly": "TOA_FEATURES=nightly npm run features",
     "digest": "node definitions/transpiled/digest/generate.js"
+  },
+  "allowScripts": {
+    "esbuild@0.28.2": true,
+    "msgpackr-extract@3.0.4": true,
+    "nx": false,
+    "ssh2": false,
+    "cpu-features": false,
+    "protobufjs": false
   }
 }
