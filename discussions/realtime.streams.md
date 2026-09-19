@@ -75,29 +75,20 @@ a watch list — and the group is the key.
 
 ## The changes, by area
 
-1. **Exposition: the destination.** `@toa.io/extensions.exposition/realtime` — what the `realtime`
-   manifest key names — is an extension every component has, as telemetry is, since the context may
-   route the events of any component. It contributes an outbox destination to a component that has
-   routes, and nothing to one that has none, which then gets no outbox for it. Its `emit(row)` renders each routed event through the component's
-   own event bridges — its condition and payload, as the emission does — works out the keys of each
-   route, applies its `expose`, and runs one script for the row:
-
-   ```lua
-   for _, key in ipairs(KEYS) do
-     if redis.call('EXISTS', key) == 1 then
-       local id = redis.call('XADD', key, 'MAXLEN', '~', maxlen, '*', 'type', event, 'data', data)
-       redis.call('SPUBLISH', key, id .. ' ' .. event .. ' ' .. data)
-     end
-   end
-   ```
-
+1. **Exposition: the destination.** `realtime` in a manifest resolves to
+   `@toa.io/extensions.exposition#realtime`: a declaration the exposition package claims beside
+   `exposition`, answered by `keys.realtime` of its factory. It is an extension every component has,
+   as telemetry is, since the context may route the events of any component. It contributes an
+   outbox destination to a component that has routes, and nothing to one that has none, which then
+   gets no outbox for it.
 2. **Core and boot.** A destination may name the events it renders (`renders`). Once the
    component's context exists, boot gives it a `Rendering` of them: each event's condition and
    payload, by the component's own bridges — what `Event` does before it publishes, now a method of
    its own. An event nothing consumes is rendered all the same: it is not published, and a
    destination writes somewhere of its own.
-3. **Exposition: `realtime:stream`.** A directive naming the route variable that is the key. For
-   a stream of a key, one gateway replica:
+3. **Exposition: `realtime:stream`.** A directive naming the route variable that is the key. The
+   gateway reads the streams itself, with connections of its own; there is no component to call.
+   For a key that has readers, one gateway replica:
    - subscribes to the key's channel (`SSUBSCRIBE`) with the first stream of it, and unsubscribes
      with the last;
    - then writes the `connect` marker, on every connection, which creates the stream where it was
@@ -108,24 +99,36 @@ a watch list — and the group is the key.
    - pushes what the channel brings to the streams of the key, and the entry id as the next token;
    - renews the stream's `EXPIRE` once per key every `min(heartbeat, expire / 3)`, and once more
      when the last stream of the key closes;
-   - reads the stream from the last id it delivered on every subscribe and every reconnect to
-     Redis, since a channel keeps nothing for a subscriber that was away, and pushes what it has not
-     delivered.
-     A directive family is told whether its method calls an endpoint. On one that does,
-     `realtime:stream` opens the stream once the call has succeeded, and the stream is the reply; a
-     call that fails is answered as it is, and opens nothing.
+   - reads the stream from the last id it delivered on every reconnect of its subscriber, since a
+     channel keeps nothing for a subscriber that was away, and pushes what it has not delivered.
+
+   A directive family is told whether its method calls an endpoint. On one that does,
+   `realtime:stream` opens the stream once the call has succeeded, and the stream is the reply; a
+   call that fails is answered as it is, and opens nothing.
+
 4. **Exposition: `/realtime/streams/:key`.** Declared by exposition itself with `auth:id: key` and
    `realtime:stream: key`, so a client of today is served as it is.
 5. **The realtime extension** is removed: its service, `realtime.streams`, its deployment, its
    package, and dynamic routes with them. The `realtime` manifest key and the `realtime` context
    annotation stay, and declare routes as they did.
-6. **The deployment.** A component with realtime routes gets its routes — its manifest's, and the
-   context's for its events, which take precedence — and the Redis the `stash` annotation names for
-   `realtime.streams`, which the gateway gets too; a context that routes events and names none is
-   refused. `exposition.realtime.expire` sets the window. An event consumed by realtime alone is no
-   longer published to the broker, and `realtime.resources` is refused: there is nothing to size.
-   Every definition's `deployment` is given every annotation, since this one reaches what `stash`
-   provisions.
+6. **The deployment.** The `realtime` annotation names the Redis the streams are kept in, beside
+   the routes it declares:
+
+   ```yaml
+   # context.toa.yaml
+   realtime:
+     streams: redis://realtime.example.com # or a list of them
+     users.profiles.updated: id
+   ```
+
+   `streams` is required where anything is routed. It is an address, or a list of addresses, and
+   not a pointer. The `#realtime` deployment gives it to every process, since both the components
+   that write and the gateway that reads reach it, and gives each component with routes its own —
+   its manifest's, and the context's for its events, which take precedence. An event consumed by
+   realtime alone is no longer published to the broker, and `realtime.resources` is refused: there
+   is nothing to size. The window a stream outlives its last reader in, `expire`, is a property of
+   the same annotation.
+
 7. **`CONTRIBUTING.md`.** _Zero per-request I/O_ allows the interaction that produces the requested
    response, of which an operation call is one kind and a stream another.
 8. **Metrics.** `toa.realtime.routed`, where a component writes an event, and
@@ -133,6 +136,10 @@ a watch list — and the group is the key.
 9. **Documentation.** `realtime:stream` in exposition's documentation, with routes, keys, grouping,
    the stream an operation opens, and the guarantees above; the realtime readme goes, and the
    migration note says what a deployment changes.
+10. **A package may claim several keys.** A reference is a package, or `package#key`: a declaration
+    of its own, with its own definition (`keys` of the package's) and its own factory (`keys` of the
+    package's factory). norm and boot read a keyed reference as the package where they load it, and
+    as the key where they ask it anything; a key runs no service.
 
 ## Decisions
 
@@ -143,9 +150,11 @@ a watch list — and the group is the key.
 2. **Realtime belongs to exposition.** A stream has no reader but a gateway, and the realtime
    extension carried a copy of exposition's access in `auth:id: key`. Where the stream is served
    and where it is authorised are one place.
-3. **The gateway reads the stream.** A stream is the response the request is for, as an operation's
-   reply is. Reading it through a component would add a leg per event and a process to scale for
-   nothing a component decides.
+3. **The gateway reads the stream, and nothing else does.** A stream is the response the request
+   is for, as an operation's reply is, and reading it through a component would add a leg per event
+   and a process to scale. No component serves streams: nothing inside the system reads a client's
+   stream, and what a component used to call `realtime.streams.create` for — handing its caller a
+   stream — is `realtime:stream` on its route, after its operation.
 4. **The destination writes, once.** A reader that wrote what it received would write it once per
    replica that received it, and a key whose client is away has no reader, so nothing would be kept
    for its replay.
@@ -171,9 +180,23 @@ a watch list — and the group is the key.
 11. **Every component has realtime.** A route of the context may name any component's event, and a
     component writes what it routes itself, so a component whose manifest says nothing of realtime
     has to be able to. One that routes nothing gets nothing from it.
-12. **The Redis of `realtime.streams`.** The streams keep the address and the key prefix they had,
-    so a deployment that gave realtime a Redis keeps it, and a stream written before the release is
-    read after it.
+12. **A key of exposition, not a package of its own.** `realtime` is a declaration that belongs to
+    exposition, and two manifest keys naming one package would overwrite each other: a reference
+    names the key within the package instead.
+13. **An annotation of its own, not a pointer.** The streams are realtime's infrastructure, written
+    by the components that route events and read by the gateway, and no extension of a component
+    owns them. Their Redis is stated where realtime is declared, as addresses, and is given to the
+    processes that reach it by the deployment of realtime itself; no deployment reads another's
+    annotation.
+14. **Several Redis, sharded by the client.** Where `streams` is a list of `n` addresses, every
+    process that reaches the streams holds `n` connections, and a key is kept by the one its
+    number falls to: `hash(key) % n === i`. The components that write and the gateway that reads
+    shard alike, so a key's stream, its channel and its replay are on one Redis. Changing `n` moves
+    keys: a stream a reader is on is found anew when it reconnects, and what it was sent before is
+    not replayed.
+15. **No Redis Cluster.** Scale is `n` independent Redis, and availability is each of them —
+    a replicated primary behind one address. A script writes to one key at a time, so nothing
+    depends on keys being together.
 
 ## What happens today
 
@@ -224,10 +247,10 @@ published.
 - **Clients:** unchanged — `/realtime/streams/:key`, the `token` event, reconnecting with a token.
 - **Declarations:** unchanged — the `realtime` manifest key and context annotation.
 - **Deployment:** the realtime service and its queues go, and `realtime.resources` is refused. A
-  component with realtime routes reaches the Redis of `realtime.streams`; `expire` moves to
-  `exposition.realtime.expire`. See `migrations/313.md`.
-- **Userspace:** an operation that returned `realtime.streams.create` declares `realtime:stream` on
-  its route instead.
+  context that routes events states `realtime.streams`, which is not the `stash` annotation, and
+  `expire` moves beside it. See `migrations/313.md`.
+- **Userspace:** `realtime.streams.create` is gone; an operation that returned it declares
+  `realtime:stream` on its route instead.
 - **Dynamic routes** go before they were released.
 - **Rollout:** a service of before and a gateway of after both write streams during a rollout, so an
   event may be replayed twice across it.
