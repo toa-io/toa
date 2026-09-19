@@ -62,9 +62,23 @@ it('should refuse a task that waits', async () => {
   )
 })
 
+// an ordinary call is answered eventually
+it('should refuse an ordinary call that waits', async () => {
+  await assert.rejects(ordinary().invoke({}, { timeout: 1000 }), refused(/stateless/))
+  await assert.rejects(
+    ordinary().invoke({}, { signal: new AbortController().signal }),
+    refused(/stateless/)
+  )
+
+  assert.equal(transmission.request.mock.callCount(), 0)
+})
+
 it('should refuse a timeout that is no positive number of milliseconds', async () => {
   for (const timeout of [0, -1, Infinity, Number.NaN])
-    await assert.rejects(ordinary().invoke({}, { timeout }), refused(/`timeout`/))
+    await assert.rejects(
+      stateful().invoke({ instance: 'a' }, { timeout }),
+      refused(/`timeout`/)
+    )
 })
 
 it('should send neither the name nor the wait', async () => {
@@ -113,7 +127,7 @@ it('should abandon a call its signal ends, with the reason as the cause', async 
 
   const controller = new AbortController()
   const reason = new Error('client gone')
-  const promise = ordinary().invoke({}, { signal: controller.signal })
+  const promise = stateful().invoke({ instance: 'a' }, { signal: controller.signal })
 
   controller.abort(reason)
 

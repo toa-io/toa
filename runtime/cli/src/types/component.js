@@ -93,7 +93,11 @@ function calls(endpoints, entity, importing) {
     // is taken by whoever consumes the queue later
     if (operation.stream === undefined) request.push('task?: boolean')
 
-    importing('@toa.io/core/types', 'Options')
+    // how long the caller waits, which only an addressed call is given; an ordinary call waits
+    // for its reply
+    const options = operation.stateful === true ? ', options?: Options' : ''
+
+    if (operation.stateful === true) importing('@toa.io/core/types', 'Options')
 
     const type = output.declared ? `${name}Output` : output.type
     const described = comment(operation.description, '  ')
@@ -101,7 +105,7 @@ function calls(endpoints, entity, importing) {
     if (described !== null) lines.push(described)
 
     lines.push(
-      `  ${endpoint}: (request: { ${request.join(', ')} }, options?: Options) => ` +
+      `  ${endpoint}: (request: { ${request.join(', ')} }${options}) => ` +
         `Promise<${resolves(type, operation, importing)}>`
     )
   }

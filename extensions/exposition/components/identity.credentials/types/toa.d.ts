@@ -1,7 +1,6 @@
 // Written by `toa types`. Every run rewrites it.
 // What a manifest does not state belongs in a file of your own.
 
-import type { Options } from '@toa.io/core/types'
 
 export type ListInput = {
   authority: string
@@ -27,5 +26,5 @@ export type ListOutput = {
 }
 
 export interface Component {
-  list: (request: { input: ListInput, task?: boolean }, options?: Options) => Promise<ListOutput>
+  list: (request: { input: ListInput, task?: boolean }) => Promise<ListOutput>
 }

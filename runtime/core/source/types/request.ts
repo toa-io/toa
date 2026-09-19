@@ -75,14 +75,12 @@ export interface Request<Input = any, Entity = any> {
 }
 
 /**
- * How a caller waits for a call, given beside the request: neither is part of what the call asks,
- * and neither is sent with it.
+ * How a caller waits for an addressed call, given beside the request: neither is part of what the
+ * call asks, and neither is sent with it. An ordinary call waits for as long as its reply takes, and
+ * is refused if it names either.
  */
 export interface Options {
-  /**
-   * Milliseconds the caller waits for the reply. An addressed call waits the context's default
-   * without one; an ordinary call waits for as long as it takes.
-   */
+  /** Milliseconds the caller waits for the reply. Without one, the context's default. */
   timeout?: number
   /** Ends the wait when it aborts, within the timeout. */
   signal?: AbortSignal
