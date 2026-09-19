@@ -57,8 +57,8 @@ once, by the process that committed the change.
 
 ### What a component author does differently
 
-Routes are declared as they are — `key` and `expose`, in the manifest or in the context
-annotation:
+Routes are declared in the component's manifest, and only there — `key` and `expose`, as they
+were:
 
 ```yaml
 # messages/manifest.toa.yaml
@@ -77,10 +77,8 @@ a watch list — and the group is the key.
 
 1. **Exposition: the destination.** `realtime` in a manifest resolves to
    `@toa.io/extensions.exposition#realtime`: a declaration the exposition package claims beside
-   `exposition`, answered by `keys.realtime` of its factory. It is an extension every component has,
-   as telemetry is, since the context may route the events of any component. It contributes an
-   outbox destination to a component that has routes, and nothing to one that has none, which then
-   gets no outbox for it.
+   `exposition`, answered by `keys.realtime` of its factory. A component that declares routes has
+   it, and it contributes that component's outbox destination.
 2. **Core and boot.** A destination may name the events it renders (`renders`). Once the
    component's context exists, boot gives it a `Rendering` of them: each event's condition and
    payload, by the component's own bridges — what `Event` does before it publishes, now a method of
@@ -109,25 +107,22 @@ a watch list — and the group is the key.
 4. **Exposition: `/realtime/streams/:key`.** Declared by exposition itself with `auth:id: key` and
    `realtime:stream: key`, so a client of today is served as it is.
 5. **The realtime extension** is removed: its service, `realtime.streams`, its deployment, its
-   package, and dynamic routes with them. The `realtime` manifest key and the `realtime` context
-   annotation stay, and declare routes as they did.
-6. **The deployment.** The `realtime` annotation names the Redis the streams are kept in, beside
-   the routes it declares:
+   package, and dynamic routes with them. The `realtime` manifest key stays, and declares routes as
+   it did. The `realtime` context annotation declares no routes any more.
+6. **The deployment.** The `realtime` annotation is realtime's infrastructure, and nothing else:
 
    ```yaml
    # context.toa.yaml
    realtime:
      streams: redis://realtime.example.com # or a list of them
-     users.profiles.updated: id
+     expire: 300 # seconds a stream outlives its last reader: the window it reconnects in
    ```
 
-   `streams` is required where anything is routed. It is an address, or a list of addresses, and
-   not a pointer. The `#realtime` deployment gives it to every process, since both the components
-   that write and the gateway that reads reach it, and gives each component with routes its own —
-   its manifest's, and the context's for its events, which take precedence. An event consumed by
-   realtime alone is no longer published to the broker, and `realtime.resources` is refused: there
-   is nothing to size. The window a stream outlives its last reader in, `expire`, is a property of
-   the same annotation.
+   Its schema requires `streams`: an address, or a list of addresses, not a pointer. It is asked
+   for as any annotation is — where the dependency is declared, which is where a component declares
+   routes. The `#realtime` deployment gives it to every process, since both the components that
+   write and the gateway that reads reach it. A component reads its routes from its own manifest.
+   An event consumed by realtime alone is no longer published to the broker.
 
 7. **`CONTRIBUTING.md`.** _Zero per-request I/O_ allows the interaction that produces the requested
    response, of which an operation call is one kind and a stream another.
@@ -177,9 +172,11 @@ a watch list — and the group is the key.
     by the application rather than by the client. A stream opened after an operation is where the
     application decides what a reader follows — a reader's rooms, recorded as it connects, route
     their events to its one stream.
-11. **Every component has realtime.** A route of the context may name any component's event, and a
-    component writes what it routes itself, so a component whose manifest says nothing of realtime
-    has to be able to. One that routes nothing gets nothing from it.
+11. **Routes are the component's.** A route is a statement about the component's own events and
+    who reads them, as its exposition is about its operations, so it is declared beside them and
+    nowhere else. The context states where the streams are kept, not what goes into them — which is
+    also what lets the annotation be asked for only where realtime is declared, by the mechanism
+    that asks for any other.
 12. **A key of exposition, not a package of its own.** `realtime` is a declaration that belongs to
     exposition, and two manifest keys naming one package would overwrite each other: a reference
     names the key within the package instead.
@@ -245,10 +242,11 @@ published.
 ## Compatibility
 
 - **Clients:** unchanged — `/realtime/streams/:key`, the `token` event, reconnecting with a token.
-- **Declarations:** unchanged — the `realtime` manifest key and context annotation.
-- **Deployment:** the realtime service and its queues go, and `realtime.resources` is refused. A
-  context that routes events states `realtime.streams`, which is not the `stash` annotation, and
-  `expire` moves beside it. See `migrations/313.md`.
+- **Declarations:** the `realtime` manifest key is unchanged. A route declared in the context
+  annotation moves into the manifest of its component.
+- **Deployment:** the realtime service and its queues go. The `realtime` annotation states
+  `streams`, which is not the `stash` annotation, and `expire`; `resources` and routes are refused
+  by its schema. See `migrations/313.md`.
 - **Userspace:** `realtime.streams.create` is gone; an operation that returned it declares
   `realtime:stream` on its route instead.
 - **Dynamic routes** go before they were released.
