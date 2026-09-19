@@ -188,6 +188,247 @@ Feature: Configuration Extension
       """
     And I disconnect
 
+  Scenario: Resetting configuration
+    Given the configuration of `configuration.base` is deployed with:
+      """yaml
+      foo: deployed
+      """
+    And the `configuration` service is staged
+    And the `configuration.values` database is empty
+    And I boot `configuration.base` component
+    When I call `configuration.values.create` with:
+      """yaml
+      input:
+        component: configuration.base
+        configuration:
+          foo: created
+        originator:
+          id: tester
+      """
+    And I wait 1 second
+    And I invoke `echo`
+    Then the reply is received:
+      """yaml
+      foo: created
+      """
+    When I call `configuration.values.reset` with:
+      """yaml
+      input:
+        component: configuration.base
+        originator:
+          id: tester
+      """
+    # what is stored is the deployed defaults, with the revision a component tells them by
+    Then the reply is received:
+      """yaml
+      component: configuration.base
+      originator: tester
+      configuration:
+        foo: deployed
+      revision: 44b267babfd1cb9970b656bb5c1ebb3eb05676e6342011b2e3ebf3bc5b2c85f0
+      """
+    # the running component follows the service
+    When I wait 1 second
+    And I invoke `echo`
+    Then the reply is received:
+      """yaml
+      foo: deployed
+      bar: world
+      """
+    And I disconnect
+    # and one that starts later gets the defaults
+    When I boot `configuration.base` component
+    And I invoke `echo`
+    Then the reply is received:
+      """yaml
+      foo: deployed
+      bar: world
+      """
+    And I disconnect
+    # served as the defaults, so it is not told from them
+    When I call `configuration.values.get` with:
+      """yaml
+      input:
+        component: configuration.base
+      """
+    Then the reply is received:
+      """yaml
+      configuration:
+        foo: deployed
+      revision: 44b267babfd1cb9970b656bb5c1ebb3eb05676e6342011b2e3ebf3bc5b2c85f0
+      """
+    When I call `configuration.values.list`
+    Then the reply is received:
+      """yaml
+      - component: configuration.base
+        configuration:
+          foo: deployed
+        revision: 44b267babfd1cb9970b656bb5c1ebb3eb05676e6342011b2e3ebf3bc5b2c85f0
+      """
+
+  # a reset is to the defaults, not to what they were when it was made
+  Scenario: A reset follows the defaults of a later deployment
+    Given the configuration of `configuration.base` is deployed with:
+      """yaml
+      foo: deployed
+      """
+    And the `configuration` service is staged
+    And the `configuration.values` database is empty
+    When I call `configuration.values.create` with:
+      """yaml
+      input:
+        component: configuration.base
+        configuration:
+          foo: created
+        originator:
+          id: tester
+      """
+    And I call `configuration.values.reset` with:
+      """yaml
+      input:
+        component: configuration.base
+        originator:
+          id: tester
+      """
+    Then the reply is received:
+      """yaml
+      configuration:
+        foo: deployed
+      """
+    When the configuration of `configuration.base` is deployed with:
+      """yaml
+      foo: redeployed
+      """
+    And I call `configuration.values.get` with:
+      """yaml
+      input:
+        component: configuration.base
+      """
+    Then the reply is received:
+      """yaml
+      configuration:
+        foo: redeployed
+      """
+    When I boot `configuration.base` component
+    And I invoke `echo`
+    Then the reply is received:
+      """yaml
+      foo: redeployed
+      bar: world
+      """
+    And I disconnect
+
+  Scenario: Creating configuration after a reset
+    Given the configuration of `configuration.base` is deployed with:
+      """yaml
+      foo: deployed
+      """
+    And the `configuration` service is staged
+    And the `configuration.values` database is empty
+    And I boot `configuration.base` component
+    When I call `configuration.values.reset` with:
+      """yaml
+      input:
+        component: configuration.base
+        originator:
+          id: tester
+      """
+    Then the reply is received:
+      """yaml
+      configuration:
+        foo: deployed
+      """
+    When I call `configuration.values.create` with:
+      """yaml
+      input:
+        component: configuration.base
+        configuration:
+          foo: created
+        originator:
+          id: tester
+      """
+    And I wait 1 second
+    And I invoke `echo`
+    Then the reply is received:
+      """yaml
+      foo: created
+      """
+    And I disconnect
+
+  Scenario: Resetting configuration of an unknown component
+    Given the configuration of `configuration.base` is deployed
+    And the `configuration` service is staged
+    When I call `configuration.values.reset` with:
+      """yaml
+      input:
+        component: configuration.nope
+        originator:
+          id: tester
+      """
+    Then the error is received:
+      """yaml
+      code: UNKNOWN_COMPONENT
+      """
+
+  # a reset made by the values service of the previous deployment, still serving while it is
+  # replaced, carries the defaults of that deployment
+  Scenario: A reset of another deployment is refused and asked again
+    Given the configuration of `configuration.base` is deployed with:
+      """yaml
+      foo: deployed
+      """
+    And the `configuration` service is staged
+    And the `configuration.values` database is empty
+    And logs are exported to Loki
+    And I boot `configuration.base` component
+    When I call `configuration.values.create` with:
+      """yaml
+      input:
+        component: configuration.base
+        configuration:
+          foo: created
+        originator:
+          id: tester
+      """
+    And the values service holds the configuration of `configuration.base` deployed with:
+      """yaml
+      foo: previous
+      """
+    And I call `configuration.values.reset` with:
+      """yaml
+      input:
+        component: configuration.base
+        originator:
+          id: tester
+      """
+    And I wait 1 second
+    And I invoke `echo`
+    Then the reply is received:
+      """yaml
+      foo: created
+      """
+    And the log record "Configuration of another revision refused" is stored with:
+      """yaml
+      severity_text: WARN
+      component: configuration.base
+      epoch: ea4ecd26b67e0a21391e198d990f3fc0c9c93f0d04ba1b0b8a43b0fcc3f27f22
+      expected: 44b267babfd1cb9970b656bb5c1ebb3eb05676e6342011b2e3ebf3bc5b2c85f0
+      received: 45c64860c39b4f42a59abdd447ddc7cd757208c810da72a4942aeff5d3da7477
+      """
+    # the values service of the component's own deployment has replaced it
+    When the values service holds the configuration of `configuration.base` deployed with:
+      """yaml
+      foo: deployed
+      """
+    And I wait 3 seconds
+    And I invoke `echo`
+    Then the reply is received:
+      """yaml
+      foo: deployed
+      bar: world
+      """
+    And I disconnect
+
   Scenario: Creating configuration for an unknown component
     Given the configuration of `configuration.base` is deployed
     And the `configuration` service is staged
@@ -319,9 +560,39 @@ Feature: Configuration Extension
       """yaml
       - component: configuration.array
         configuration: {}
+        created: 0
       - component: configuration.base
         configuration:
           foo: deployed
+        created: 0
+      """
+
+  Scenario: Listing tells a created configuration from the defaults
+    Given the configuration of `configuration.base` is deployed with:
+      """yaml
+      foo: deployed
+      """
+    And the configuration of `configuration.array` is deployed
+    And the `configuration` service is staged
+    And the `configuration.values` database is empty
+    When I call `configuration.values.create` with:
+      """yaml
+      input:
+        component: configuration.base
+        configuration:
+          foo: created
+        originator:
+          id: tester
+      """
+    And I call `configuration.values.list`
+    Then the reply is received:
+      """yaml
+      - component: configuration.array
+        created: 0
+      - component: configuration.base
+        configuration:
+          foo: created
+        revision: null
       """
 
   Scenario: Local override

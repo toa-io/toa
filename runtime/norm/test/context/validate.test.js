@@ -84,6 +84,21 @@ it('should require registry url', () => {
   )
 })
 
+describe('inbox', () => {
+  it('should allow a retention of ten minutes or more', () => {
+    context.inbox = { retention: 600 }
+    assert.doesNotThrow(() => validate(context))
+  })
+
+  it('should refuse a retention shorter than ten minutes', () => {
+    context.inbox = { retention: 599 }
+    assert.throws(
+      () => validate(context),
+      (error) => /must be >= 600/.test(error.message)
+    )
+  })
+})
+
 it('should allow mono replicas and resources', () => {
   context.mono = {
     replicas: 2,

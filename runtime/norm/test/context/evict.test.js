@@ -25,7 +25,10 @@ it('should mark an evicted component and keep it', () => {
   evict(context)
 
   assert.deepStrictEqual(
-    context.components.map((component) => [component.locator.id, component.evicted === true]),
+    context.components.map((component) => [
+      component.locator.id,
+      component.evicted === true
+    ]),
     [
       ['a.b', true],
       ['b.a', false],
@@ -56,14 +59,12 @@ it('should drop an evicted service from a composition that runs it', () => {
 
   evict(context)
 
-  assert.deepStrictEqual(context.compositions[0].services, [
-    '@toa.io/extensions.realtime'
-  ])
+  assert.deepStrictEqual(context.compositions[0].services, ['@toa.io/extensions.cadence'])
 })
 
 it('should leave no services where every one is evicted', () => {
   context.evicted = {
-    services: ['@toa.io/extensions.exposition', '@toa.io/extensions.realtime']
+    services: ['@toa.io/extensions.exposition', '@toa.io/extensions.cadence']
   }
 
   evict(context)

@@ -26,8 +26,7 @@ challenge a request to it is refused with. <code>/.mcp</code> is where
 <a href="mcp.md">MCP</a> is served. A token the client asked for with <code>resource</code>
 is bound to that entry, see <a href="#audience">Audience</a>.</dd>
 <dt><code>scopes</code></dt>
-<dd>Advertised as what a client may ask for. Each is a <a href="access.md#roles">role</a>, or a
-scope within one.</dd>
+<dd>Advertised as what a client may ask for. Each is a <a href="access.md#roles">scope</a>.</dd>
 <dt><code>registration</code></dt>
 <dd><code>open</code> advertises the registration endpoint, <code>closed</code> does not.
 Defaults to <code>closed</code>.</dd>
@@ -153,13 +152,13 @@ which disables the key its token was issued under: the token stops being one wit
 ## Tokens
 
 An access token is a token of the identity that consented, carrying the
-[roles](access.md#roles) that identity holds, or the subset the client asked for as `scope`. It is
-presented as `Bearer`, which `identity.federation` also answers to — see
+[roles](access.md#roles) that identity holds, or, in their place, the scopes the client asked for
+as `scope`. It is presented as `Bearer`, which `identity.federation` also answers to — see
 [Bearer scheme](identity.md#bearer-scheme).
 
-A `scope` a client asks for is not checked against `scopes_supported`: it is granted if the
-consenting identity holds it, and refused as `invalid_scope` otherwise. What is advertised says
-what an application means to offer, not what the server will refuse.
+A `scope` a client asks for is not checked against `scopes_supported`: it is granted if a role
+of the consenting identity covers it, and refused as `invalid_scope` otherwise. What is advertised
+says what an application means to offer, not what the server will refuse.
 
 ## Audience
 

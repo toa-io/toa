@@ -45,7 +45,6 @@
           "_destroy",
           "_transform",
           "_readableState",
-          "_trailers",
           "__TESTING_EXPOSITION_BRANCH_TTL",
           "__TESTING_EXPOSITION_DISCOVERY_ROOT"
         ]

@@ -27,11 +27,43 @@ export class Connection extends Connector {
       replyMapping: 'resp3'
     }
 
-    this.redis = new Redis(await this.resolveURL(), options)
+    const redis = new Redis(await this.resolveURL(), options)
 
-    await this.redis.connect()
+    this.redis = redis
+    this.watch(redis)
+
+    await redis.connect()
 
     console.info('Stash connected to redis', { host: this.redis.options.host })
+  }
+
+  /**
+   * The client reconnects on its own and reports every attempt that fails, so an outage is said
+   * once, and so is its end. A client with nothing listening for its errors prints each of them
+   * past the logs, as unhandled.
+   */
+  private watch(redis: Redis): void {
+    let lost = false
+
+    // ioredis leaves `message` empty on a refused connection, where the code is the whole story
+    redis.on('error', (error: NodeJS.ErrnoException) => {
+      if (lost) return
+
+      lost = true
+
+      console.warn('Stash is unreachable', {
+        host: redis.options.host,
+        error: error.code ?? error.message
+      })
+    })
+
+    redis.on('ready', () => {
+      if (!lost) return
+
+      lost = false
+
+      console.info('Stash reconnected', { host: redis.options.host })
+    })
   }
 
   protected override async close(): Promise<void> {

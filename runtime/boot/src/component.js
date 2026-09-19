@@ -34,6 +34,10 @@ const create = async (manifest, locator) => {
   )
   const context = await boot.context(manifest)
   const emission = await boot.emission(events, locator, context)
+
+  // a destination that renders the component's events renders them with its context
+  await boot.rendering(manifest, destinations, context)
+
   const outbox = boot.outbox(manifest, storage, emission, destinations)
 
   let state

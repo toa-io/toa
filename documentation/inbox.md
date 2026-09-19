@@ -22,16 +22,34 @@ what a duplicate is given back.
 An effect takes it neither way, and does not need to: its write is get-or-create, so a second
 arrival of one writes nothing already.
 
+How long a call is remembered is the window a duplicate of it is caught in. Budget it for how late
+one can arrive — a redelivery, the attempts the broker makes of a message, whatever a client retries
+on — rather than for how long the change matters. Every call of an operation that declares `once`
+is a document in `{collection}_inbox` for this long.
+
+An operation whose callers retry later than the rest states its own, in seconds:
+
+```yaml
+# manifest.toa.yaml
+operations:
+  charge:
+    type: transition
+    scope: object
+    concurrency: retry
+    once: 86400 # a client may retry a charge for a day
+```
+
+`once: true` is remembered for as long as the deployment says, an hour where it says nothing:
+
 ```yaml
 # context.toa.yaml
 inbox:
-  retention: 3600 # seconds a call is remembered
+  retention: 3600 # seconds a call of an operation declaring `once: true` is remembered
 ```
 
-Retention is the window a duplicate is caught in. Budget it for how late one can arrive — a
-redelivery, the attempts the broker makes of a message, whatever a client retries on — rather than
-for how long the change matters. Every call of an operation that declares `once` is a document in
-`{collection}_inbox` for this long.
+What an operation states wins over what the deployment states. Neither may be under `600`: the
+broker alone repeats a call for up to about ten minutes, and a manifest or a context that states
+less is refused.
 
 ## What it gives
 
@@ -83,7 +101,8 @@ db.tea_pots_inbox.countDocuments() // calls remembered right now
 db.tea_pots_inbox.findOne({ _id: '<the request id>' }) // what that call answered
 ```
 
-A record expires by TTL on `at`. There is nothing to clean up and nothing to replay.
+A record expires by TTL on `expires`, and may be recalled for up to a minute after. There is
+nothing to clean up and nothing to replay.
 
 ## Over HTTP
 

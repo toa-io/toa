@@ -42,6 +42,14 @@ export function system(component: string): boolean {
   return SYSTEM.has(split(component).namespace)
 }
 
+/**
+ * A created object rather than the deployed defaults. A reset brings the defaults back,
+ * so it is not this — even though it records when it was created.
+ */
+export function valued(item: { revision: string | null }): boolean {
+  return item.revision === null
+}
+
 /** A name match outranks a match on something the configuration merely holds. */
 const NAME = 2
 const MEMBER = 1

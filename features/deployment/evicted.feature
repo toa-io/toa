@@ -94,7 +94,7 @@ Feature: Evicted components and services
           components:
             - dummies.one
           services:
-            - realtime
+            - cadence
       evicted:
         components:
           - dummies.one
@@ -104,7 +104,7 @@ Feature: Evicted components and services
     Then program should exit
     And stdout should contain lines:
       """
-      toa/service: extension-realtime-streams
+      toa/service: extension-cadence-metronome
       """
     And stdout should not contain lines:
       """
@@ -121,17 +121,17 @@ Feature: Evicted components and services
           components:
             - dummies.one
           services:
-            - realtime
+            - cadence
       evicted:
         services:
-          - realtime
+          - cadence
       """
     When I export deployment
     Then exported values should not contain:
       """yaml
       compositions:
         - name: edge
-          hosted: [realtime-streams]
+          hosted: [cadence-metronome]
       """
     And I run `helm template deployment`
     Then program should exit
@@ -141,7 +141,7 @@ Feature: Evicted components and services
       """
     And stdout should not contain lines:
       """
-      name: extension-realtime-streams
+      name: extension-cadence-metronome
       """
 
   @helm
@@ -149,18 +149,18 @@ Feature: Evicted components and services
     Given I have a component `mongo.one`
     And I have a context with:
       """yaml
-      realtime:
-        mongo.one.created: id
+      cadence:
+        discreteness: 1
       evicted:
         services:
-          - realtime
+          - cadence
       """
     When I export deployment
     And I run `helm template deployment`
     Then program should exit
     And stdout should not contain lines:
       """
-      name: extension-realtime-streams
+      name: extension-cadence-metronome
       """
 
   Scenario: An evicted service is built into nothing
@@ -201,26 +201,26 @@ Feature: Evicted components and services
   Scenario: An extension only an evicted component declares is not deployed
     Given I have components:
       | dummies.one       |
-      | realtime.streamer |
+      | delaying          |
     And I have a context with:
       """yaml
       evicted:
         components:
-          - realtime.streamer
+          - default.delaying
       """
     When I export deployment
     And I run `helm template deployment`
     Then program should exit
     And stdout should not contain lines:
       """
-      name: extension-realtime-streams
+      name: extension-cadence-metronome
       """
 
   @helm
   Scenario: And one a deployed component declares is
     Given I have components:
       | dummies.one       |
-      | realtime.streamer |
+      | delaying          |
     And I have a context with:
       """yaml
       evicted:
@@ -232,7 +232,7 @@ Feature: Evicted components and services
     Then program should exit
     And stdout should contain lines:
       """
-      name: extension-realtime-streams
+      name: extension-cadence-metronome
       """
 
   Scenario: Evicting a service nothing would have deployed changes nothing
@@ -241,7 +241,7 @@ Feature: Evicted components and services
       """yaml
       evicted:
         services:
-          - realtime
+          - cadence
       """
     When I export deployment
     Then exported values should contain:

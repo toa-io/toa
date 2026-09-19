@@ -20,12 +20,12 @@ const loading = {}
  * @returns {Promise<import('@toa.io/core/types').extensions.Factory>}
  */
 export const resolve = async (reference, base = process.cwd()) => {
-  const path = find(reference, base)
+  const path = find(pack(reference), base)
 
   loading[path] ??= create(path)
   instances[path] = await loading[path]
 
-  return instances[path]
+  return keyed(instances[path], reference)
 }
 
 /**
@@ -38,12 +38,36 @@ export const resolve = async (reference, base = process.cwd()) => {
  * @returns {import('@toa.io/core/types').extensions.Factory}
  */
 export const instance = (reference, base = process.cwd()) => {
-  const factory = instances[find(reference, base)]
+  const factory = instances[find(pack(reference), base)]
 
   if (factory === undefined) throw new Error(`Extension '${reference}' is not loaded`)
 
-  return factory
+  return keyed(factory, reference)
 }
+
+/**
+ * `package#key` is a declaration a package claims beside its main one, and what the package's
+ * factory offers for that key answers for it — so a key is never taken for the package itself.
+ *
+ * @param {import('@toa.io/core/types').extensions.Factory} factory
+ * @param {string} reference
+ * @returns {import('@toa.io/core/types').extensions.Factory}
+ */
+const keyed = (factory, reference) => {
+  const key = reference.split('#')[1]
+
+  if (key === undefined) return factory
+
+  const claimed = factory.keys?.[key]
+
+  if (claimed === undefined)
+    throw new Error(`'${reference}' names a key its package does not claim`)
+
+  return claimed
+}
+
+/** The package a reference is of. */
+const pack = (reference) => reference.split('#')[0]
 
 const create = async (path) => {
   const { Factory } = await import(pathToFileURL(require.resolve(path)).href)

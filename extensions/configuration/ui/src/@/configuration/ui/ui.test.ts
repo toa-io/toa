@@ -1,5 +1,5 @@
 import { it, expect } from 'vitest'
-import { matches, rank, split } from './ui'
+import { matches, rank, split, valued } from './ui'
 
 it('should split a namespaced name', () => {
   expect(split('identity.tokens')).toEqual({ namespace: 'identity', component: 'tokens' })
@@ -66,4 +66,18 @@ it('should not match across two unrelated values', () => {
 
 it('should keep every component on an empty query', () => {
   expect(rank(dummy, '')).toBe(2)
+})
+
+it('should take a created object as a value', () => {
+  expect(valued({ revision: null })).toBe(true)
+})
+
+it('should take the deployed defaults as not a value', () => {
+  expect(valued({ revision: 'abc' })).toBe(false)
+})
+
+it('should take a reset as the defaults, even though it was created', () => {
+  const reset = { created: 1_700_000_000_000, revision: 'abc' }
+
+  expect(valued(reset)).toBe(false)
 })

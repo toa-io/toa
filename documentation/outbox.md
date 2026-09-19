@@ -129,7 +129,7 @@ again. Every row of a batch is attempted; there is no attempt counter and no bac
 | ---------- | --------------------------------------------------- |
 | `origin`   | the pre-image; `null` when the entity did not exist |
 | `state`    | the new record                                      |
-| `trailers` | what the algorithm wrote into `state._trailers`     |
+| `trailers` | what the algorithm wrote into `state.TRAILERS`      |
 | `input`    | the operation's input                               |
 
 An assignment carries `origin` too, and no `trailers` — there is no entity object to hold them.

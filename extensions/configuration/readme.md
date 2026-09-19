@@ -233,50 +233,64 @@ created one. Each object records its `originator`.
 
 The configuration of a component for an epoch is:
 
-1. The latest object created for the component and the epoch;
+1. The latest object created for the component and the epoch, unless it is a reset;
 2. Otherwise, the deployed defaults, if the epoch is the deployed one;
 3. Otherwise, none.
+
+A reset brings a component back to its deployed defaults and keeps it following them: a later
+deployment that changes the defaults changes what is served after a reset.
 
 ### Operations
 
 - `get({ component, epoch? })`: the configuration with the schema it is checked against, as
-  `{ configuration, schema, epoch }`, or `null` when there is none. The epoch is the deployed
-  one when omitted; an epoch the deployment does not know has no `schema`.
+  `{ configuration, schema, epoch, created, revision }`, or `null` when there is none. The
+  epoch is the deployed one when omitted; an epoch the deployment does not know has no
+  `schema`. `created` is `0` for the deployed defaults, unless a reset brought them back.
+  `revision` is that of the deployed defaults when they are what is served, and `null` for a
+  created object.
 - `fetch([{ component, epoch }])`: the same for several pairs at once, as
-  `[{ component, epoch, configuration, created, revision }]`. `revision` is that of the deployed
-  defaults when they are what is served, and `null` for a created object.
+  `[{ component, epoch, configuration, created, revision }]`.
 - `list()`: every component's configuration for its deployed epoch, by component name, as
-  `[{ component, epoch, schema, configuration }]`.
+  `[{ component, epoch, schema, configuration, created, revision }]`.
 - `create({ component, configuration, originator })`: a new object for the component's
   deployed epoch. The configuration must satisfy the schema. Errors: `UNKNOWN_COMPONENT`,
   `INVALID_CONFIGURATION`.
+- `reset({ component, originator })`: a new object for the component's deployed epoch, holding
+  its deployed defaults and their `revision`. Errors: `UNKNOWN_COMPONENT`.
 
-Creating a configuration publishes the `configuration.values.created` event with the
-object as stored.
+Creating and resetting publish the `configuration.values.created` event with the object as
+stored. The object of a reset carries a `revision`; a created one does not.
 
 ### Resources
 
-| Method | Path                                | Role                          |
-| ------ | ----------------------------------- | ----------------------------- |
-| `GET`  | `/configuration/values/`            | `system:configuration:get`    |
-| `GET`  | `/configuration/values/:component/` | `system:configuration:get`    |
-| `POST` | `/configuration/values/:component/` | `system:configuration:create` |
+| Method   | Path                                | Role                          |
+| -------- | ----------------------------------- | ----------------------------- |
+| `GET`    | `/configuration/values/`            | `system:configuration:get`    |
+| `GET`    | `/configuration/values/:component/` | `system:configuration:get`    |
+| `POST`   | `/configuration/values/:component/` | `system:configuration:create` |
+| `DELETE` | `/configuration/values/:component/` | `system:configuration:create` |
 
 `GET /configuration/values/` lists every component's configuration for its deployed epoch, by
-component name, as `[{ component, epoch, schema, configuration }]`.
+component name, as `[{ component, epoch, schema, configuration, created, revision }]`.
 
-`GET /configuration/values/:component/` returns `{ configuration, schema, epoch }` for the
-deployed epoch, `404` when there is none.
+`GET /configuration/values/:component/` returns
+`{ configuration, schema, epoch, created, revision }` for the deployed epoch, `404` when
+there is none.
 
 `POST` takes `{ configuration }`, records the Identity as the `originator`, and returns
 `{ id, epoch }`. A configuration not satisfying the schema, or an unknown component, is
 `422`.
 
+`DELETE` resets the component's configuration to its deployed defaults, records the Identity as
+the `originator`, and answers `204`. An unknown component is `422`.
+
 ## UI
 
-The values service serves a page listing the configured components and creating
-configurations, mounted at `/.configuration` on port `8003`. Reading it needs the
-`system:configuration:get` role, creating needs `system:configuration:create`.
+The values service serves a page listing the configured components, creating configurations and
+resetting them, mounted at `/.configuration` on port `8003`. Reading it needs the
+`system:configuration:get` role, creating and resetting need `system:configuration:create`.
+A created configuration is marked on the list. Reset is offered only for those: the deployed
+defaults have nothing to bring back.
 
 The page is always published: unlike the introspection annotation, the configuration
 annotation is the per-component values map and has nowhere to carry a switch.
@@ -297,12 +311,13 @@ On start, a component requests its configuration for its epoch from the values s
 waits until there is one, reporting every fifth attempt. The schema is applied, and secrets
 are substituted. What is served is what was stored, whole: a `default` written into the schema
 fills nothing, so a value every component is to have is declared in `defaults`. After a
-configuration is created, the running component receives the new object and takes it when its
-`CREATED` is later than that of the value it holds.
+configuration is created or reset, the running component receives the new object and takes it
+when its `CREATED` is later than that of the value it holds.
 
 Deployed defaults are taken only from a values service of the component's own
 [revision](#revision). One of another — a values service of the previous deployment, still serving
-while it is replaced — is refused and asked again, and the refusal is logged as
+while it is replaced — is refused and asked again, at start and when a running component
+receives a reset, and the refusal is logged as
 `Configuration of another revision refused` with the `component`, its `epoch`, the `expected`
 revision and the `received` one, on the first refusal and every fifth. A created configuration is
 taken from any. A component deployed without a revision, one started by `toa compose` or evicted

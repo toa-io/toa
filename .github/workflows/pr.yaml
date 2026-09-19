@@ -54,3 +54,29 @@ jobs:
       - name: Run unit tests
         if: steps.changes.outputs.changed == 'true'
         run: npm run test:unit
+
+  # What Dependabot opens and pushes is merged once the tests above pass, unless it takes a major
+  # version: the metadata Dependabot writes into the commit names each update's type. A commit
+  # anyone else pushes to its branch makes the pull request theirs to merge.
+  merge:
+    needs: unit
+    if: github.event.pull_request.user.login == 'dependabot[bot]' && github.actor == 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Merge the pull request
+        run: |
+          types=$(gh api "repos/$GITHUB_REPOSITORY/commits/$SHA" --jq .commit.message | grep 'update-type:' || true)
+
+          if [ -z "$types" ] || grep -qvE 'update-type: version-update:semver-(minor|patch)$' <<< "$types"; then
+            echo "a major or unknown update, left for review"
+            exit 0
+          fi
+
+          gh pr merge "$PR" --merge --match-head-commit "$SHA" --repo "$GITHUB_REPOSITORY"
+        env:
+          PR: ${{ github.event.pull_request.number }}
+          SHA: ${{ github.event.pull_request.head.sha }}
+          GH_TOKEN: ${{ github.token }}

@@ -32,6 +32,13 @@ export async function create(
   })
 }
 
+/** Back to the deployed defaults. The service answers with no body. */
+export async function reset(component: string): Promise<void | Error> {
+  const result = await values.json<string>(component + '/', { method: 'DELETE' })
+
+  if (result instanceof Error) return result
+}
+
 /** A configuration is its component's, so the component is what identifies it. */
 function identify(item: Item): Configuration {
   return { ...item, id: item.component }

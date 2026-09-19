@@ -101,7 +101,7 @@ properties:
         type: object
         propertyNames:
           not:
-            enum: [id, VERSION, CREATED, UPDATED, DELETED, REGION]
+            enum: [id, VERSION, CREATED, UPDATED, DELETED, REGION, TRAILERS]
       migrations:
         type: array
         items:
@@ -157,7 +157,12 @@ properties:
             enum: [none, retry]
           once:
             # the same call arriving twice changes state once; see documentation/inbox.md
-            type: boolean
+            # a number is how many seconds a call is remembered, which a deployment's
+            # `inbox.retention` is the default for; ten minutes at least, because the broker
+            # alone repeats a call for about that long. One type list rather than `oneOf`: the
+            # manifest is validated with coercion, and a branch would coerce `true` into `1`
+            type: [boolean, integer]
+            minimum: 600
           stateful:
             # served by every process under an address of its own, which a call names; see documentation/stateful.md
             type: boolean

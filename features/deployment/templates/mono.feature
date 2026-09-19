@@ -155,7 +155,6 @@ Feature: Mono deployment
   Scenario: Include pointer variables of extension components
     Given I have components:
       | exposed.one |
-      | realtime.streamer |
     And I have a context with:
       """yaml
       configuration:
@@ -167,8 +166,6 @@ Feature: Mono deployment
       """yaml
       mono:
         variables:
-          - name: TOA_STASH_REALTIME_STREAMS
-            value: redis://localhost:31040
           - name: TOA_STASH_IDENTITY_OTP
             value: redis://localhost:31040
           - name: TOA_MONGODB_IDENTITY_TOKENS

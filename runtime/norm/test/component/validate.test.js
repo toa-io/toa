@@ -115,6 +115,13 @@ describe('entity', () => {
       }
       await assert.doesNotReject(validate(manifest))
     })
+
+    it('should not declare TRAILERS', async () => {
+      manifest.entity.properties.TRAILERS = { type: 'object' }
+      await assert.rejects(validate(manifest), (error) =>
+        /System property 'TRAILERS' cannot be declared/.test(error.message)
+      )
+    })
   })
 
   describe('required', () => {
@@ -142,6 +149,13 @@ describe('entity', () => {
 
     it('should not name a system property', async () => {
       manifest.entity.blank = { VERSION: 1 }
+      await assert.rejects(validate(manifest), (error) =>
+        /must NOT be valid/.test(error.message)
+      )
+    })
+
+    it('should not name TRAILERS', async () => {
+      manifest.entity.blank = { TRAILERS: {} }
       await assert.rejects(validate(manifest), (error) =>
         /must NOT be valid/.test(error.message)
       )
@@ -254,6 +268,37 @@ describe('operations', () => {
       await assert.rejects(validate(manifest), (error) =>
         /allowed values/.test(error.message)
       )
+    })
+  })
+
+  describe('once', () => {
+    it('should be true, false or a number of seconds', async () => {
+      for (const once of [true, false, 600, 86400]) {
+        manifest.operations.add.once = once
+        await assert.doesNotReject(validate(manifest), `once: ${once}`)
+      }
+    })
+
+    it('should stay true rather than be coerced into a number', async () => {
+      manifest.operations.add.once = true
+      await validate(manifest)
+
+      assert.strictEqual(manifest.operations.add.once, true)
+    })
+
+    it('should not be a window shorter than ten minutes', async () => {
+      manifest.operations.add.once = 599
+      await assert.rejects(validate(manifest), (error) => /must be >= 600/.test(error.message))
+    })
+
+    it('should not be a fraction of a second', async () => {
+      manifest.operations.add.once = 600.5
+      await assert.rejects(validate(manifest))
+    })
+
+    it('should throw for an operation that takes none', async () => {
+      manifest.operations.get.once = 600
+      await assert.rejects(validate(manifest))
     })
   })
 

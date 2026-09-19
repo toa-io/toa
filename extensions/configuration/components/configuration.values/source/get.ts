@@ -16,7 +16,9 @@ export async function computation(input: Input, context: Context): Promise<Item 
   return {
     configuration: value.configuration,
     schema: known?.schema,
-    epoch: input.epoch ?? known!.epoch
+    epoch: input.epoch ?? known!.epoch,
+    created: value.created,
+    revision: value.revision
   }
 }
 
@@ -29,4 +31,6 @@ interface Item {
   configuration: object
   schema?: object
   epoch: string
+  created: number
+  revision: string | null
 }

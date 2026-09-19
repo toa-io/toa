@@ -5,13 +5,23 @@
 export async function definition(reference: string): Promise<object | undefined> {
   if (!reference.startsWith(SCOPE)) return undefined
 
-  const suffix = reference.slice(SCOPE.length)
+  // `package#key` is a declaration of its own that a package claims beside its main one
+  const [suffix, key] = reference.slice(SCOPE.length).split('#')
 
   if (!DEFINED.has(suffix)) return undefined
 
   cache[suffix] ??= import(`./${suffix}/index.ts`)
 
-  return cache[suffix]
+  const module = await cache[suffix]
+
+  if (key === undefined) return module
+
+  const keyed = (module as { keys?: Record<string, object> }).keys?.[key]
+
+  if (keyed === undefined)
+    throw new Error(`'${reference}' names a key that '${SCOPE}${suffix}' does not claim`)
+
+  return keyed
 }
 
 const cache: Record<string, Promise<object>> = {}
@@ -31,7 +41,6 @@ export const DEFINED: ReadonlySet<string> = new Set([
   'extensions.exposition',
   'extensions.fetch',
   'extensions.introspection',
-  'extensions.realtime',
   'extensions.stash',
   'extensions.state',
   'extensions.storages',

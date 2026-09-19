@@ -5,27 +5,33 @@
  */
 
 export type Dictionary = {
-  values: {
-    empty: string
-    nomatch: string
-  }
-  value: {
-    none: string
-    secret: string
-    count: (value: number) => string
-    title: string
-  }
-  create: {
-    action: string
-    title: string
-    editor: string
-    submit: string
-    cancel: string
-    malformed: string
-    failed: string
-  }
-  space: {
-    user: string
-    system: string
-  }
-}
+      values: {
+        empty: string
+        nomatch: string
+      }
+      value: {
+        none: string
+        secret: string
+        count: (value: number) => string
+        title: string
+        custom: string
+      }
+      create: {
+        action: string
+        title: string
+        editor: string
+        submit: string
+        cancel: string
+        malformed: string
+        failed: string
+      }
+      space: {
+        user: string
+        system: string
+      }
+      reset: {
+        action: string
+        hold: string
+        failed: string
+      }
+    }

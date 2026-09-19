@@ -29,7 +29,7 @@ export const context = {
     {
       name: 'foo',
       components: ['a.b', 'b.a'],
-      services: ['@toa.io/extensions.exposition', '@toa.io/extensions.realtime']
+      services: ['@toa.io/extensions.exposition', '@toa.io/extensions.cadence']
     },
     {
       name: 'bar',

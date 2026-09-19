@@ -164,9 +164,11 @@ properties:
           Seconds a call is remembered, which is the window a duplicate of it is caught in. Budget
           it for how late a duplicate can arrive — a redelivery, the attempts the broker library
           makes of a message, whatever a client retries on — rather than for how long the change
-          matters. Every call of an operation that declares `once` is a record for this long.
+          matters. Every call of an operation that declares `once: true` is a record for this
+          long; an operation that states a number of its own is kept for that instead. Ten minutes
+          at least, because the broker alone repeats a call for about that long.
         type: integer
-        minimum: 1
+        minimum: 600
   addressed:
     type: object
     additionalProperties: false

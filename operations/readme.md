@@ -139,7 +139,6 @@ The images are tagged with the runtime version:
 
 ```
 ghcr.io/toa-io/extension-exposition-gateway:1.0.0-alpha.285
-ghcr.io/toa-io/extension-realtime-streams:1.0.0-alpha.285
 ghcr.io/toa-io/extension-introspection-explorer:1.0.0-alpha.285
 ghcr.io/toa-io/extension-configuration-values:1.0.0-alpha.285
 ```
@@ -206,7 +205,6 @@ The extension services share that version:
 
 ```
 ghcr.io/toa-io/extension-exposition-gateway:1.0.0-alpha.285
-ghcr.io/toa-io/extension-realtime-streams:1.0.0-alpha.285
 ghcr.io/toa-io/extension-introspection-explorer:1.0.0-alpha.285
 ghcr.io/toa-io/extension-configuration-values:1.0.0-alpha.285
 ```

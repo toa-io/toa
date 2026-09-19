@@ -3,12 +3,12 @@
   import { ChevronLeft } from '@lucide/svelte'
   import { Authorized } from '@/iam/ui'
   import { dict } from '@/configuration/ui/intl'
-  import { Create, DEFAULT, Value, split } from '@/configuration/ui'
+  import { Create, DEFAULT, Reset, Value, split, valued } from '@/configuration/ui'
   import { configurations } from '@/configuration'
   import { page } from '$app/state'
   import { base } from '$app/paths'
 
-  /** What an account needs to create one. `auth:rule` in the component's manifest. */
+  /** What an account needs to create or reset one. `auth:rule` in the component's manifest. */
   const ROLE = 'system:configuration:create'
 
   /** The service answers this when it holds no configuration for the component. */
@@ -43,10 +43,13 @@
 
     <!-- a gate over a control, not over a screen: an account that may only read sees the
          configuration and simply no action -->
-    <div class="ms-auto">
+    <div class="ms-auto flex items-center gap-2">
       <Async store={entry} silent>
         {#snippet awaited(configuration)}
           <Authorized role={ROLE}>
+            {#if valued(configuration)}
+              <Reset component={configuration.component} />
+            {/if}
             <Create {configuration} />
             {#snippet denied()}{/snippet}
           </Authorized>

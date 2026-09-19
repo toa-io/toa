@@ -8,6 +8,7 @@ value:
     - one: "{n} value"
       other: "{n} values"
   title: Configuration
+  custom: Custom
 create:
   action: Edit
   title: Edit configuration
@@ -19,3 +20,7 @@ create:
 space:
   user: Userspace
   system: System
+reset:
+  action: Reset
+  hold: Hold to reset
+  failed: The configuration could not be reset.

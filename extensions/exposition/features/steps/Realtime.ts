@@ -1,127 +1,258 @@
 import { EventEmitter, once } from 'node:events'
 import { randomBytes } from 'node:crypto'
-import { join } from 'node:path'
+import { execFileSync } from 'node:child_process'
+import { resolve } from 'node:path'
 import * as assert from 'node:assert'
-import { after, afterAll, binding, given, then } from 'specumber'
+import { setTimeout as delay } from 'node:timers/promises'
+import { after, binding, given, then, when } from 'specumber'
 
-import { Factory } from '@toa.io/extensions.realtime'
-import * as boot from '@toa.io/boot'
-import { environment, match, timeout } from '@toa.io/generic'
+import { Redis } from 'ioredis'
+import { environment, match } from '@toa.io/generic'
 import { load as parse } from 'js-yaml'
 import { Agent } from '@toa.io/agent'
+import { EXPIRE, STREAMS } from '@toa.io/definitions/extensions.exposition/realtime'
 import { Parameters } from './Parameters.ts'
 import { Gateway } from './Gateway.ts'
 import { Captures } from './Captures.ts'
-import { state } from './contracts.ts'
-import type { Connector } from '@toa.io/core'
 
+/**
+ * Realtime as a client sees it: a stream opened over HTTP, read part by part. A consumer is named;
+ * the identity scenarios name one after the identity it is.
+ */
 @binding([Gateway, Parameters, Captures])
 export class Realtime {
-  private static instance: Connector | null = null
   private readonly gateway: Gateway
   private readonly agent: Agent
-  private readonly events = new EventEmitter()
-  private log: Record<string, unknown[]> = {}
-  private aborted = false
+  private readonly origin: string
+  private readonly captures: Captures
+  private consumers: Record<string, Consumer> = {}
+  private variables: string[] = []
+  private stopped = false
 
   public constructor(gateway: Gateway, parameters: Parameters, captures: Captures) {
     this.gateway = gateway
+    this.origin = parameters.origin
+    this.captures = captures
     this.agent = new Agent(parameters.origin, captures)
   }
 
-  @given('the Realtime is running with the following annotation:')
-  public async start(yaml: string): Promise<void> {
-    await Realtime.stop()
+  /** What the `realtime` annotation gives the gateway. */
+  @given('the realtime streams expire in {int} seconds')
+  public expire(seconds: number): void {
+    environment.set(EXPIRE, String(seconds))
+    this.variables.push(EXPIRE)
+  }
 
-    const annotation = parse(yaml) as Record<string, string>
-    const routes = []
+  /** What the `realtime` annotation gives every process: the components and the gateway. */
+  @given('the realtime streams are kept in:')
+  public shards(yaml: string): void {
+    const addresses = parse(yaml) as string[]
 
-    for (const [event, property] of Object.entries(annotation))
-      routes.push({ event, properties: [property] })
+    environment.set(STREAMS, addresses.join(' '))
+    this.variables.push(STREAMS)
+  }
 
-    // a route is bound at the contract the map states, and this scenario starts the producer
-    // after the service: what a deployment states in its map, this states before it
-    await Promise.all(Object.keys(annotation).map(async (label) => await produces(label)))
-
-    environment.set('TOA_REALTIME', JSON.stringify(routes))
-
-    const factory = new Factory(boot.host())
-
-    Realtime.instance = await factory.service()
-
-    // not awaited: the routes connect to the components that produce the events, and this
-    // scenario starts the producer after the service, so the connection settles later
-    void Realtime.instance.connect()
+  @then('the stream of `{}` is kept in `{}`')
+  public async kept(key: string, address: string): Promise<void> {
+    await this.redis(async (redis) => {
+      assert.equal(await redis.exists(prefix() + key), 1, `'${key}' is not in ${address}`)
+    }, address)
   }
 
   @given('the identity {word} is consuming realtime events')
-  public async connect(name: string): Promise<void> {
+  public async identity(name: string): Promise<void> {
     await this.gateway.start()
 
     const id = await this.createIdentity(name)
 
-    const parts = await this.open(name)
+    await this.open(
+      name,
+      `
+      GET /realtime/${id}/ HTTP/1.1
+      authorization: Token \${{ ${name}.token }}
+      accept: application/json
+      `,
+      name
+    )
+  }
 
-    void this.consume(id, parts).catch((e) => {
-      if (!this.aborted) console.debug('Consumption interrupted', e)
-    })
+  @when('{word} is consuming:')
+  public async consuming(name: string, request: string): Promise<void> {
+    await this.gateway.start()
+    await this.open(name, request)
+  }
+
+  @when('{word} reconnects')
+  public async reconnect(name: string): Promise<void> {
+    const consumer = this.consumers[name]
+    const token = consumer.tokens.at(-1)
+
+    assert.ok(token !== undefined, `${name} was given no token`)
+
+    consumer.agent.abort()
+
+    const [line, ...rest] = consumer.request.trim().split('\n')
+    const [verb, path, protocol] = line.trim().split(' ')
+    const separator = path.includes('?') ? '&' : '?'
+    const request = [
+      `${verb} ${path}${separator}token=${token} ${protocol}`,
+      ...rest
+    ].join('\n')
+
+    await this.open(name, request, consumer.identity, consumer)
+  }
+
+  @when('{word} disconnects')
+  public disconnect(name: string): void {
+    this.consumers[name].agent.abort()
   }
 
   @then('the following event `{word}` is received by {word}:')
-  public async received(label: string, name: string, yaml: string): Promise<void> {
-    const id = this.agent.captures.get(`${name}.id`)
-    const tag = `${id}:${label}`
+  @then('{word} receives the event `{word}`:')
+  public async received(a: string, b: string, yaml: string): Promise<void> {
+    // the first phrasing names the event first
+    const [label, name] = a in this.consumers ? [b, a] : [a, b]
+    const consumer = this.consumers[name]
     const expected = parse(yaml)
 
-    if (this.log[tag] !== undefined)
-      for (const data of this.log[tag])
-        // eslint-disable-next-line max-depth
-        if (match(data, expected)) return
+    for (;;) {
+      for (const event of consumer.events)
+        if (event.event === label && match(event.data, expected)) return
 
-    const [event] = await once(this.events, tag)
+      await once(consumer.arrivals, 'event', { signal: AbortSignal.timeout(WAIT) }).catch(
+        () => {
+          throw new Error(`${name} has not received a matching '${label}'`)
+        }
+      )
+    }
+  }
 
-    assert.ok(match(event, expected), 'Event does not match')
+  @then('{word} receives exactly:')
+  public async exactly(name: string, yaml: string): Promise<void> {
+    const expected = parse(yaml) as Array<{ event: string; data: unknown }>
+
+    await delay(SETTLE)
+
+    const events = this.consumers[name].events
+
+    assert.deepStrictEqual(events, expected)
+  }
+
+  @then('{word} receives no event `{word}`')
+  public async none(name: string, label: string): Promise<void> {
+    await delay(SETTLE)
+
+    const events = this.consumers[name].events.filter(({ event }) => event === label)
+
+    assert.equal(events.length, 0, `${name} received ${events.length} of '${label}'`)
+  }
+
+  @then('the stream of `{}` does not exist')
+  public async absent(key: string): Promise<void> {
+    await this.redis(async (redis) => {
+      assert.equal(await redis.exists(prefix() + this.captures.substitute(key)), 0)
+    })
+  }
+
+  @then('the stream of `{}` holds {int} event(s)')
+  public async holds(key: string, count: number): Promise<void> {
+    await this.redis(async (redis) => {
+      const entries = await redis.xrange(
+        prefix() + this.captures.substitute(key),
+        '-',
+        '+'
+      )
+      const events = entries.filter(([, fields]) => fields[1] !== 'connect')
+
+      assert.equal(events.length, count)
+    })
+  }
+
+  @when('the realtime Redis is stopped')
+  public stop(): void {
+    this.stopped = true
+    compose('stop')
+  }
+
+  @when('the realtime Redis is started')
+  public async start(): Promise<void> {
+    compose('start')
+    this.stopped = false
+
+    // what reconnects does so on its own schedule
+    await delay(3000)
   }
 
   @after()
-  public abort(): void {
-    this.aborted = true
-    this.agent.abort()
-    this.log = {}
-    this.events.removeAllListeners()
+  public async cleanup(): Promise<void> {
+    for (const consumer of Object.values(this.consumers)) consumer.agent.abort()
+
+    this.consumers = {}
+
+    for (const variable of this.variables) environment.delete(variable)
+
+    this.variables = []
+
+    if (this.stopped) {
+      compose('start')
+      this.stopped = false
+    }
+
+    // the streams a scenario left would be found by the next one
+    for (const address of REDISES)
+      await this.redis(async (redis) => {
+        const keys = await redis.keys(prefix() + '*')
+
+        if (keys.length > 0) await redis.del(...keys)
+      }, address)
   }
 
-  @afterAll()
-  public static async stop(): Promise<void> {
-    if (this.instance === null) return
+  private async open(
+    name: string,
+    request: string,
+    identity?: string,
+    previous?: Consumer
+  ): Promise<void> {
+    // an agent of its own, so ending this stream ends no other
+    const agent = new Agent(this.origin, this.captures)
+    const parts = (await agent.parts(request)) as unknown as AsyncIterable<{
+      body: Uint8Array
+    }>
 
-    await this.instance.disconnect()
+    const consumer: Consumer = previous ?? {
+      events: [],
+      tokens: [],
+      arrivals: new EventEmitter(),
+      agent,
+      request,
+      identity
+    }
 
-    this.instance = null
-    environment.delete('TOA_REALTIME')
+    consumer.agent = agent
+    this.consumers[name] = consumer
+
+    void this.consume(consumer, parts).catch(() => undefined)
+
+    // the stream is ready once it gave its first token
+    const first = consumer.tokens.length
+
+    for (let i = 0; i < 100 && consumer.tokens.length === first; i++) await delay(20)
   }
 
-  /**
-   * The stream is asked for until the gateway has the route, not once. The realtime service
-   * is started by the step before this one and its `connect` is not awaited there — so the
-   * branch that carries `/realtime/streams` is still being announced while this runs, and
-   * asking too early reads the 404 that precedes the route.
-   */
-  private async open(name: string): Promise<AsyncIterable<Uint8Array>> {
-    const deadline = Date.now() + DISCOVERY
+  private async consume(
+    consumer: Consumer,
+    parts: AsyncIterable<{ body: Uint8Array }>
+  ): Promise<void> {
+    for await (const part of parts) {
+      const event = JSON.parse(Buffer.from(part.body).toString('utf8'))
 
-    for (;;)
-      try {
-        return (await this.agent.parts(`
-          GET /realtime/streams/\${{ ${name}.id }}/ HTTP/1.1
-          authorization: Token \${{ ${name}.token }}
-          accept: application/json
-        `)) as AsyncIterable<Uint8Array>
-      } catch (error) {
-        if (Date.now() > deadline) throw error
+      if (typeof event === 'string') continue
 
-        await timeout(POLL)
-      }
+      if (event.event === 'token') consumer.tokens.push(event.data)
+      else consumer.events.push(event)
+
+      consumer.arrivals.emit('event')
+    }
   }
 
   private async createIdentity(name: string): Promise<string> {
@@ -159,30 +290,43 @@ export class Realtime {
     return this.agent.captures.get(`${name}.id`) as string
   }
 
-  private async consume(id: string, parts: any): Promise<void> {
-    for await (const part of parts) {
-      const text = Buffer.from(part.body).toString('utf8')
-      const event = JSON.parse(text)
+  private async redis(
+    action: (redis: Redis) => Promise<void>,
+    address = REDIS
+  ): Promise<void> {
+    const redis = new Redis(address, { lazyConnect: true })
 
-      if (typeof event === 'string') continue
+    await redis.connect()
 
-      const tag = `${id}:${event.event}`
-
-      this.events.emit(tag, event.data)
-      this.log[tag] ??= []
-      this.log[tag].push(event.data)
+    try {
+      await action(redis)
+    } finally {
+      redis.disconnect()
     }
   }
 }
 
-/** How long the route is waited for, and how often it is asked for. */
-const DISCOVERY = 5000
-const POLL = 50
-
-/** What produces an event a route carries, as its sources state it. */
-async function produces(label: string): Promise<void> {
-  const [namespace, name] = label.split('.')
-  const path = join(import.meta.dirname, 'components', `${namespace}.${name}`)
-
-  state(await boot.manifest(path))
+interface Consumer {
+  events: Array<{ event: string; data: unknown }>
+  tokens: string[]
+  arrivals: EventEmitter
+  agent: Agent
+  request: string
+  identity?: string
 }
+
+function prefix(): string {
+  return `${environment.scope()}:realtime:`
+}
+
+function compose(command: string): void {
+  execFileSync('docker', ['compose', '-f', COMPOSE, command, 'redis0'], {
+    stdio: 'ignore'
+  })
+}
+
+const COMPOSE = resolve(import.meta.dirname, '../../../../docker-compose.yaml')
+const REDIS = 'redis://localhost:31040'
+const REDISES = [REDIS, 'redis://localhost:31041']
+const WAIT = 5000
+const SETTLE = 500

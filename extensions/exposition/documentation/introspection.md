@@ -29,8 +29,8 @@ Introspection properties:
   `auth:delegate` and `auth:claims`
 - `private` reaching it is being the identity it is about — [`auth:id`](access.md#id)
 - `protected` reaching it takes a role — [`auth:role`](access.md#role)
-- `system` and that role is one of the `system` scope, which guards what an application runs
-  on rather than what it serves
+- `system` and the scope `auth:role` requires lies within `system`, which guards what an
+  application runs on rather than what it serves
 - `once` making this call twice changes state once, because the operation it reaches declares
   [`once`](/documentation/inbox.md). What it means for a client is that a retry it is unsure
   about is safe to make, under an `idempotency-key` it repeats. Read off the operation and not

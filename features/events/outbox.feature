@@ -112,7 +112,7 @@ Feature: Transactional outbox
     And the `mongo.outbox` outbox holds 1 published row
 
   Scenario: Trailers survive the row
-    # `_trailers` is non-enumerable on the state object, but `Entity.event` copies it onto the
+    # `TRAILERS` is non-enumerable on the state object, but `Entity.event` copies it onto the
     # event as an ordinary field — which is the assumption the whole design rests on, and this
     # is the only scenario that puts it through the database
     Given an environment variable `TOA_OUTBOX_DEFER` is set to "1"

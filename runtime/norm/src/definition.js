@@ -31,10 +31,17 @@ async function load(reference) {
 
   if (known !== undefined) return { name: reference, module: known }
 
-  const name = metadata(reference)?.name ?? reference
-  const module = await import(pathToFileURL(resolve(reference)).href)
+  // `package#key` is a declaration of its own that a package claims beside its main one
+  const [path, key] = reference.split('#')
+  const name = (metadata(path)?.name ?? path) + (key === undefined ? '' : '#' + key)
+  const module = await import(pathToFileURL(resolve(path)).href)
 
-  return { name, module }
+  if (key === undefined) return { name, module }
+
+  if (module.keys?.[key] === undefined)
+    throw new Error(`'${reference}' names a key that '${path}' does not claim`)
+
+  return { name, module: module.keys[key] }
 }
 
 function resolve(reference) {
