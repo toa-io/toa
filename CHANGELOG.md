@@ -3,6 +3,35 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.314](https://github.com/toa-io/toa/compare/v1.0.0-alpha.313...v1.0.0-alpha.314) (2026-09-19)
+
+* feat(core)!: let an operation state how long its calls are remembered ([af177c2](https://github.com/toa-io/toa/commit/af177c2ab3d00d475840b5ef9e612f04e82b72bd))
+* feat(core)!: rename trailers to the TRAILERS system property ([8d59ef9](https://github.com/toa-io/toa/commit/8d59ef90d04b7329578203fe10bd21fe41dfe2f5))
+
+### Bug Fixes
+
+* authenticate runtime UIs against identity resources ([e1bb414](https://github.com/toa-io/toa/commit/e1bb414fa0cf010afba3193df79ea1f52c5987c1))
+* **configuration:** announce the created mark as an image ([4594e83](https://github.com/toa-io/toa/commit/4594e832cfa8748939e38d498b9f63818f00f2dc))
+* **configuration:** generate revision as required on list and get ([b18f085](https://github.com/toa-io/toa/commit/b18f0852d3acfba2d99b6eeef4eb0405a4add098))
+* **configuration:** shorten the reset hint to "Hold to reset" ([3ca94d8](https://github.com/toa-io/toa/commit/3ca94d84e15e03efad73c82f4c600f753b9e6a29))
+* **stash:** report an unreachable Redis instead of leaving its errors unhandled ([b4ac0ee](https://github.com/toa-io/toa/commit/b4ac0ee7d7679b8e878821cfeeb2998495c6ad41))
+
+### Features
+
+* **configuration:** hold to reset a configuration from its screen ([baccc85](https://github.com/toa-io/toa/commit/baccc85614e25bb9b4643cda958b13f0f8f35e04))
+* **configuration:** reset a configuration to its deployed defaults ([0ca8c24](https://github.com/toa-io/toa/commit/0ca8c24c521d8de624dad9f468196f9e537f4783))
+* **configuration:** tell a created configuration from the defaults ([f83a532](https://github.com/toa-io/toa/commit/f83a5327855e90fa9ba6327c923bbec3d77b5d27))
+* **core:** a destination renders the component's events ([2f93b28](https://github.com/toa-io/toa/commit/2f93b28bed61a0afe99cb8cfa646ed7815467497))
+* **core:** a reference may name a declaration its package claims ([8040f60](https://github.com/toa-io/toa/commit/8040f60976549ab90497675bb54e664261f5b6bb))
+* **realtime:** route events by dynamic routes ([37d136d](https://github.com/toa-io/toa/commit/37d136dd9883192c17118b797e4619a3b2b305f7))
+
+### BREAKING CHANGES
+
+* `inbox.retention` under 600 is refused. See
+  migrations/313.md.
+* `state._trailers` is `state.TRAILERS`; see migrations/313.md.
+
+
 # [1.0.0-alpha.313](https://github.com/toa-io/toa/compare/v1.0.0-alpha.312...v1.0.0-alpha.313) (2026-09-18)
 
 ### Bug Fixes

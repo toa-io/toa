@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.314](https://github.com/toa-io/toa/compare/v1.0.0-alpha.313...v1.0.0-alpha.314) (2026-09-19)
+
+* feat(core)!: let an operation state how long its calls are remembered ([af177c2](https://github.com/toa-io/toa/commit/af177c2ab3d00d475840b5ef9e612f04e82b72bd))
+
+### BREAKING CHANGES
+
+* `inbox.retention` under 600 is refused. See
+  migrations/313.md.
+
+
 # [1.0.0-alpha.313](https://github.com/toa-io/toa/compare/v1.0.0-alpha.312...v1.0.0-alpha.313) (2026-09-18)
 
 **Note:** Version bump only for package @toa.io/storages.mongodb

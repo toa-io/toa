@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.314](https://github.com/toa-io/toa/compare/v1.0.0-alpha.313...v1.0.0-alpha.314) (2026-09-19)
+
+### Bug Fixes
+
+* authenticate runtime UIs against identity resources ([e1bb414](https://github.com/toa-io/toa/commit/e1bb414fa0cf010afba3193df79ea1f52c5987c1))
+
+
 # [1.0.0-alpha.313](https://github.com/toa-io/toa/compare/v1.0.0-alpha.312...v1.0.0-alpha.313) (2026-09-18)
 
 **Note:** Version bump only for package @toa.io/extensions.introspection

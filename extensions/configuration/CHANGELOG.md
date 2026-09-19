@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.314](https://github.com/toa-io/toa/compare/v1.0.0-alpha.313...v1.0.0-alpha.314) (2026-09-19)
+
+### Bug Fixes
+
+* authenticate runtime UIs against identity resources ([e1bb414](https://github.com/toa-io/toa/commit/e1bb414fa0cf010afba3193df79ea1f52c5987c1))
+* **configuration:** announce the created mark as an image ([4594e83](https://github.com/toa-io/toa/commit/4594e832cfa8748939e38d498b9f63818f00f2dc))
+* **configuration:** generate revision as required on list and get ([b18f085](https://github.com/toa-io/toa/commit/b18f0852d3acfba2d99b6eeef4eb0405a4add098))
+* **configuration:** shorten the reset hint to "Hold to reset" ([3ca94d8](https://github.com/toa-io/toa/commit/3ca94d84e15e03efad73c82f4c600f753b9e6a29))
+
+### Features
+
+* **configuration:** hold to reset a configuration from its screen ([baccc85](https://github.com/toa-io/toa/commit/baccc85614e25bb9b4643cda958b13f0f8f35e04))
+* **configuration:** reset a configuration to its deployed defaults ([0ca8c24](https://github.com/toa-io/toa/commit/0ca8c24c521d8de624dad9f468196f9e537f4783))
+* **configuration:** tell a created configuration from the defaults ([f83a532](https://github.com/toa-io/toa/commit/f83a5327855e90fa9ba6327c923bbec3d77b5d27))
+
+
 # [1.0.0-alpha.313](https://github.com/toa-io/toa/compare/v1.0.0-alpha.312...v1.0.0-alpha.313) (2026-09-18)
 
 **Note:** Version bump only for package @toa.io/extensions.configuration

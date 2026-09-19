@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.314](https://github.com/toa-io/toa/compare/v1.0.0-alpha.313...v1.0.0-alpha.314) (2026-09-19)
+
+### Features
+
+* **core:** a destination renders the component's events ([2f93b28](https://github.com/toa-io/toa/commit/2f93b28bed61a0afe99cb8cfa646ed7815467497))
+* **core:** a reference may name a declaration its package claims ([8040f60](https://github.com/toa-io/toa/commit/8040f60976549ab90497675bb54e664261f5b6bb))
+* **realtime:** route events by dynamic routes ([37d136d](https://github.com/toa-io/toa/commit/37d136dd9883192c17118b797e4619a3b2b305f7))
+
+
 # [1.0.0-alpha.313](https://github.com/toa-io/toa/compare/v1.0.0-alpha.312...v1.0.0-alpha.313) (2026-09-18)
 
 **Note:** Version bump only for package @toa.io/definitions
