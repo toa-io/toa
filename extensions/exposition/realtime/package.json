@@ -1,8 +1,0 @@
-{
-  "name": "@toa.io/extensions.exposition-realtime",
-  "private": true,
-  "type": "module",
-  "description": "The realtime half of exposition that a component loads: what writes its routed events",
-  "main": "../transpiled/realtime/index.js",
-  "types": "../transpiled/realtime/index.d.ts"
-}

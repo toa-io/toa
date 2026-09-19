@@ -27,6 +27,9 @@ export async function discover(paths, workload) {
     const manifest = await boot.manifest(pending.shift())
 
     for (const reference of Object.keys(manifest.extensions ?? {})) {
+      // a declaration a package claims beside its main one runs no service of its own
+      if (reference.includes('#')) continue
+
       if (references.has(reference)) continue
 
       references.add(reference)
@@ -67,7 +70,9 @@ export async function create(references, exact = false, workload = undefined) {
   const off = []
 
   // by what it resolves to, keeping the name it was given
-  const named = new Map(references.map((reference) => [shortcuts.resolve(reference), reference]))
+  const named = new Map(
+    references.map((reference) => [shortcuts.resolve(reference), reference])
+  )
 
   for (const [reference, name] of named) {
     const { Factory } = await load(reference)

@@ -34,14 +34,6 @@ properties:
             type: string
   debug:
     type: boolean
-  realtime:
-    type: object
-    properties:
-      expire:
-        description: Seconds a stream outlives its last reader, the window a client reconnects in
-        type: integer
-        minimum: 1
-    additionalProperties: false
   ip:
     type: string
     minLength: 1

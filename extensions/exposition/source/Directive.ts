@@ -196,11 +196,7 @@ export class DirectivesFactory implements RTD.DirectiveFactory {
     }
   }
 
-  public create(
-    declarations: RTD.syntax.Directive[],
-    route: string = '',
-    called: boolean = false
-  ): Directives {
+  public create(declarations: RTD.syntax.Directive[], route: string = ''): Directives {
     const groups: Record<string, any> = {}
     const mandatory = new Set(this.mandatory)
 
@@ -216,8 +212,7 @@ export class DirectivesFactory implements RTD.DirectiveFactory {
         declaration.name,
         declaration.value,
         this.remotes,
-        route,
-        called
+        route
       )
 
       groups[family.name] ??= []
@@ -298,3 +293,4 @@ interface Stage {
   preflight: SpanOptions
   depart: SpanOptions
 }
+

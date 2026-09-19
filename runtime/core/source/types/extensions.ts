@@ -77,6 +77,12 @@ export interface Host {
  * core cannot name its types.
  */
 export interface Factory<Manifest = unknown> {
+  /**
+   * What the package offers for each declaration it claims beside its main one: a manifest key
+   * that resolves to `package#key` is answered by `keys[key]`, and never by this.
+   */
+  keys?: Record<string, Factory<Manifest>>
+
   tenant?(
     locator: Locator,
     declaration: any,

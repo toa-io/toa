@@ -58,9 +58,7 @@ export class Factory {
         packages: context.packages
       })
     else
-      this.#compositions = compositions.map((composition) =>
-        this.#composition(composition)
-      )
+      this.#compositions = compositions.map((composition) => this.#composition(composition))
   }
 
   async operator() {
@@ -126,21 +124,14 @@ export class Factory {
     // components require; a service a composition lists is deployed for being listed
     const managed = instances.filter(({ component }) => component.evicted !== true)
 
-    if (managed.length === 0 && instances.length > 0 && !this.#listed.has(reference))
-      return
+    if (managed.length === 0 && instances.length > 0 && !this.#listed.has(reference)) return
 
     const annotation = this.#context.annotations?.[name]
 
     // every instance as well: what a definition keeps for all of its components, such as the
     // configuration the values service serves, holds for an evicted one too
     /** @type {toa.deployment.dependency.Declaration} */
-    // and every annotation, for a dependency that reaches what another one provisions
-    const dependency = module.deployment(
-      managed,
-      annotation,
-      instances,
-      this.#context.annotations
-    )
+    const dependency = module.deployment(managed, annotation, instances)
 
     // mono claims every service, including one an extension added since this context was
     // written, so its claim is the wildcard rather than a list
