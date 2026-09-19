@@ -6,14 +6,17 @@ stream.
 
 ## Routes
 
-A route says which events go to which keys: a property of the event is the key, or a list of them.
+A route says which events go to which keys, and what of them: `key` is the property of the event
+that is the key, or a list of them, and `expose` is what the event is streamed with.
 
 ```yaml
 # manifest.toa.yaml
 name: messages
 
 realtime:
-  created: [sender, recipient]
+  created:
+    key: [sender, recipient]
+    expose: [id, sender, text]
   updated:
     key: room
     expose: [id, room, text]
@@ -23,32 +26,56 @@ The event is what the component publishes for its entity — its payload, or `st
 that declares none. A key is any value: an identity, a record, a group the application makes up.
 Where the property holds a list, the event goes to every key in it.
 
-`expose` is what the event is streamed with. Without it, the whole payload goes to every stream it
-is routed to.
-
-> :warning:<br/>
-> `expose` is the only thing standing between an event and whoever reads the streams it is routed
-> to. State it wherever the payload holds anything a reader of the key may not see.
+`expose` is required, and a stream is given nothing it does not name: it is what stands between an
+event and whoever reads the streams it is routed to. A route without it is refused when the
+manifest is read.
 
 Routes are declared by the component, and only there.
 
 ## Serving a stream
 
-`realtime:stream` names the route variable that is the key:
+`realtime:stream` answers with the stream of a key, which a route variable names. Where the key
+comes from is the component's route: below, a message is routed to the stream of its room, and a
+room's stream is served at the room's route.
 
 ```yaml
-# rooms/manifest.toa.yaml
+# manifest.toa.yaml
+namespace: chat
+name: messages
+
+entity:
+  properties:
+    room:
+      type: string
+    sender:
+      type: string
+    text:
+      type: string
+
+# every message, as it is created, goes to the stream of its room
+realtime:
+  created:
+    key: room
+    expose: [id, sender, text]
+
 exposition:
-  /:room/stream:
+  /rooms/:room/stream:
     auth:role: moderator
     GET:
-      realtime:stream: room
+      realtime:stream: room # the value of :room is the key
 ```
 
+A message created with `room: general` goes to the stream of the key `general`, which a moderator
+reads at:
+
 ```http
-GET /rooms/general/stream/ HTTP/1.1
+GET /chat/messages/rooms/general/stream/ HTTP/1.1
 authorization: Token ...
 accept: application/json
+```
+
+```
+{"event":"chat.messages.created","data":{"id":"…","sender":"…","text":"Hello!"}}
 ```
 
 Who may read the stream is decided by the route's directives, as for anything else it serves: an
