@@ -8,7 +8,9 @@ Feature: Realtime streams
     And the `users.properties` is running with the following manifest:
       """yaml
       realtime:
-        sync: id
+        sync:
+          key: id
+          expose: [newbie]
       exposition:
         /:id:
           anonymous: true
@@ -76,7 +78,9 @@ Feature: Realtime streams
     Given the `chat.messages` is running with the following manifest:
       """yaml
       realtime:
-        sync: room
+        sync:
+          key: room
+          expose: [room, text]
       exposition:
         /:
           anonymous: true
@@ -109,7 +113,9 @@ Feature: Realtime streams
     Given the `chat.messages` is running with the following manifest:
       """yaml
       realtime:
-        sync: room
+        sync:
+          key: room
+          expose: [room, text]
       exposition:
         /:
           anonymous: true
@@ -155,7 +161,9 @@ Feature: Realtime streams
     Given the `chat.messages` is running with the following manifest:
       """yaml
       realtime:
-        sync: room
+        sync:
+          key: room
+          expose: [room, text]
       exposition:
         /:
           anonymous: true
@@ -199,7 +207,9 @@ Feature: Realtime streams
     And the `chat.messages` is running with the following manifest:
       """yaml
       realtime:
-        sync: room
+        sync:
+          key: room
+          expose: [room, text]
       exposition:
         /:
           anonymous: true
@@ -257,7 +267,9 @@ Feature: Realtime streams
     And the `chat.messages` is running with the following manifest:
       """yaml
       realtime:
-        sync: room
+        sync:
+          key: room
+          expose: [room, text]
       exposition:
         /:
           anonymous: true
@@ -295,7 +307,9 @@ Feature: Realtime streams
     And the `chat.messages` is running with the following manifest:
       """yaml
       realtime:
-        sync: room
+        sync:
+          key: room
+          expose: [room, text]
       exposition:
         /:
           anonymous: true
@@ -331,7 +345,9 @@ Feature: Realtime streams
     And the `chat.messages` is running with the following manifest:
       """yaml
       realtime:
-        sync: room
+        sync:
+          key: room
+          expose: [room, text]
       exposition:
         /:
           anonymous: true
@@ -370,7 +386,9 @@ Feature: Realtime streams
     Given the `chat.messages` is running with the following manifest:
       """yaml
       realtime:
-        sync: room
+        sync:
+          key: room
+          expose: [room, text]
       exposition:
         /:
           anonymous: true
@@ -408,7 +426,9 @@ Feature: Realtime streams
     Given the `chat.messages` is running with the following manifest:
       """yaml
       realtime:
-        sync: room
+        sync:
+          key: room
+          expose: [room, text]
       exposition:
         /:
           anonymous: true
@@ -452,7 +472,9 @@ Feature: Realtime streams
     And the `chat.messages` is running with the following manifest:
       """yaml
       realtime:
-        sync: room
+        sync:
+          key: room
+          expose: [room, text]
       exposition:
         /rooms/:room/stream:
           auth:role: chat:moderator

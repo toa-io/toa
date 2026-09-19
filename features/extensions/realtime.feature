@@ -70,3 +70,15 @@ Feature: Realtime
       """
       Invalid realtime annotation: must NOT have additional properties
       """
+
+  Scenario: A route that does not say what it exposes
+    Given I have a component `realtime.bare`
+    And I have a context with:
+      """
+      realtime:
+        streams: redis://realtime.example.com
+      """
+    Then exporting deployment fails with:
+      """
+      Realtime routes of 'realtime.bare' are invalid: must have required property 'expose'
+      """

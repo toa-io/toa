@@ -113,9 +113,8 @@ function keysOf(payload: Record<string, unknown>, properties: string[]): string[
   return [...keys]
 }
 
-function fit(payload: Record<string, unknown>, expose?: string[]): unknown {
-  if (expose === undefined) return payload
-
+/** What the route names of the payload, and nothing else. */
+function fit(payload: Record<string, unknown>, expose: string[]): unknown {
   return Object.fromEntries(
     Object.entries(payload).filter(([key]) => expose.includes(key))
   )

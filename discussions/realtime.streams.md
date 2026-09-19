@@ -57,8 +57,8 @@ once, by the process that committed the change.
 
 ### What a component author does differently
 
-Routes are declared in the component's manifest, and only there — `key` and `expose`, as they
-were:
+Routes are declared in the component's manifest, and only there — `key` and `expose`, where
+`expose` is required:
 
 ```yaml
 # messages/manifest.toa.yaml
@@ -197,6 +197,10 @@ a watch list — and the group is the key.
     a replicated primary behind one address. A script writes to one key at a time, so nothing
     depends on keys being together.
 
+16. **`expose` is required.** A route without it gave its streams the whole payload, which is what
+    an application gets without asking — the opposite of secure by default. A route names what its
+    streams may be given, and is refused when the manifest is read where it does not.
+
 ## What happens today
 
 1. A component publishes an event to the broker.
@@ -246,8 +250,9 @@ realtime alone routes not being published.
 
 - **Clients:** an identity's stream moves to `/realtime/:id`; the `token` event and reconnecting
   with a token are unchanged.
-- **Declarations:** the `realtime` manifest key is unchanged. A route declared in the context
-  annotation moves into the manifest of its component.
+- **Declarations:** a route states `expose`, and one that does not — the shorthand of keys alone
+  included — is refused. A route declared in the context annotation moves into the manifest of its
+  component.
 - **Deployment:** the realtime service and its queues go. The `realtime` annotation states
   `streams`, which is not the `stash` annotation, and `expire`; `resources` and routes are refused
   by its schema. See `migrations/313.md`.

@@ -1,5 +1,5 @@
 namespace: realtime
-name: routed
+name: bare
 
 entity:
   storage: mongodb
@@ -7,7 +7,7 @@ entity:
     room:
       type: string
 
+# a route that does not say what it exposes
 realtime:
   created:
     key: room
-    expose: [id, room]
