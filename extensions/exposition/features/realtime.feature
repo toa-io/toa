@@ -445,7 +445,7 @@ Feature: Realtime streams
       text: While away
       """
 
-  Scenario: Refusing a stream the route does not authorise
+  Scenario: Refusing a stream the route does not authorize
     Given the `identity.basic` database contains:
       | _id                              | authority | username | password                                                     |
       | 4344518184ad44228baffce7a44fd0b1 | nex       | user     | $2b$10$JoiAQUS7tzobDAFIDBWhWeEIJv933dQetyjRzSmfQGaJE5ZlJbmYy |

@@ -1,7 +1,7 @@
 # Realtime streams
 
 A realtime stream carries the events routed to one key, to whoever reads it. A route of a
-component's tree says which key it serves, and whatever authorises the route authorises the
+component's tree says which key it serves, and whatever authorizes the route authorizes the
 stream.
 
 ## Routes

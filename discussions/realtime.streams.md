@@ -3,7 +3,7 @@
 ## Design concept
 
 A realtime stream is a resource. A route of the application's own tree declares that it serves
-the stream of a key, and whatever authorises the route authorises the stream:
+the stream of a key, and whatever authorizes the route authorizes the stream:
 
 ```yaml
 # rooms/manifest.toa.yaml
@@ -42,7 +42,7 @@ once, by the process that committed the change.
    closed — the window a client reconnects with its token in.
 4. What was written to a key while its client was away is replayed when it reconnects with a token
    inside that window, once per event, whichever replica it reconnects to.
-5. A stream is authorised when it is opened, by the directives of the route that serves it.
+5. A stream is authorized when it is opened, by the directives of the route that serves it.
 
 **What is not promised**
 
@@ -147,7 +147,7 @@ a watch list — and the group is the key.
    have added — a second way of saying who receives what — is a route and a directive.
 2. **Realtime belongs to exposition.** A stream has no reader but a gateway, and the realtime
    extension carried a copy of exposition's access in `auth:id: key`. Where the stream is served
-   and where it is authorised are one place.
+   and where it is authorized are one place.
 3. **The gateway reads the stream, and nothing else does.** A stream is the response the request
    is for, as an operation's reply is, and reading it through a component would add a leg per event
    and a process to scale. No component serves streams: nothing inside the system reads a client's
@@ -227,7 +227,7 @@ a watch list — and the group is the key.
 
 - an identity reads its own stream at `/realtime/:id`;
 - a stream served by the application's own route carries what its route exposes, and one the route
-  does not authorise is refused without a stream being created;
+  does not authorize is refused without a stream being created;
 - an event of another key does not reach a stream, and creates none;
 - an event is written once however many streams of its key are open;
 - what was written while the reader was away is replayed on a gateway started since;
