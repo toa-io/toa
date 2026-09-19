@@ -86,15 +86,28 @@ all of them to the one stream the identity reads.
 
 ### An identity's own stream
 
-Every identity reads its own stream, whatever the application declares:
+An identity's id is a key like any other. An event goes to an identity's stream where a route takes
+its key from a property that holds identity ids:
+
+```yaml
+# messages/manifest.toa.yaml
+realtime:
+  created:
+    key: [sender, recipient] # both hold identity ids
+    expose: [id, sender, recipient, text]
+```
+
+A message created with `recipient: 4c4759e6f9c14f3b8b2cc6e6f4c5b3a0` goes to the stream of that
+identity, which reads it at:
 
 ```http
-GET /realtime/streams/{identity}/ HTTP/1.1
+GET /realtime/streams/4c4759e6f9c14f3b8b2cc6e6f4c5b3a0/ HTTP/1.1
 authorization: Token ...
 accept: application/json
 ```
 
-It is the route below, which the gateway declares itself:
+Every event routed to the identity's id comes to this one stream, whichever component routes it.
+The application declares nothing to serve it: the gateway declares the route itself.
 
 ```yaml
 /realtime/streams/:key:
@@ -105,13 +118,29 @@ It is the route below, which the gateway declares itself:
 
 ## Reading a stream
 
-A stream is a [multipart response](protocol.md#multipart-types). After `ACK`, each part is one of:
+A stream is a [multipart response](protocol.md#multipart-types). After `ACK`, a part is one of
+three:
 
-| part               | what it is                                                                 |
-| ------------------ | -------------------------------------------------------------------------- |
-| `{ event, data }`  | an event routed to the key: its full name, and what it was exposed with    |
-| `{ event: token }` | where the reader is: after each event, and once when it connects           |
-| `heartbeat <time>` | sent every 16 seconds, so a reader can tell a quiet stream from a lost one |
+- **An event** routed to the key: an object whose `event` is the event's full name and whose `data`
+  is what the route exposes of it.
+- **A token**: an object of the same shape, whose `event` is the word `token` and whose `data` is
+  the token. It follows every event, and is sent once when the stream opens. Keep the last one: it
+  is what a reader [reconnects](#reconnecting) with.
+- **A heartbeat**: a string, `heartbeat <time>`, sent every 16 seconds so that a reader can tell a
+  quiet stream from a lost one.
+
+```
+--cut
+ACK
+--cut
+{"event":"token","data":"MTcyNjY4OTc0MjAwMC0w"}
+--cut
+{"event":"default.messages.created","data":{"id":"…","sender":"…","recipient":"…","text":"Hi!"}}
+--cut
+{"event":"token","data":"MTcyNjY4OTc0NTUxMi0w"}
+--cut
+"heartbeat 1726689758512"
+```
 
 ### Reconnecting
 
