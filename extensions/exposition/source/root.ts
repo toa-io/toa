@@ -52,6 +52,21 @@ const PREDEFINED: syntax.Node = {
         ],
         directives: []
       }
+    },
+    {
+      // an identity's own stream, which it reads whatever the application declares
+      path: '/realtime/:id',
+      node: {
+        isolated: true,
+        routes: [],
+        methods: [
+          {
+            verb: 'GET',
+            directives: [{ family: 'realtime', name: 'stream', value: 'id' }]
+          }
+        ],
+        directives: [{ family: 'auth', name: 'id', value: 'id' }]
+      }
     }
   ],
   methods: [],

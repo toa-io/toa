@@ -36,7 +36,6 @@
     "@toa.io/extensions.exposition": "1.0.0-alpha.313",
     "@toa.io/extensions.fetch": "1.0.0-alpha.312",
     "@toa.io/extensions.introspection": "1.0.0-alpha.313",
-    "@toa.io/extensions.realtime": "1.0.0-alpha.313",
     "@toa.io/extensions.stash": "1.0.0-alpha.313",
     "@toa.io/extensions.state": "1.0.0-alpha.311",
     "@toa.io/extensions.storages": "1.0.0-alpha.313",

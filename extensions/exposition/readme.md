@@ -219,6 +219,7 @@ See also [telemetry ready probe](../telemetry/readme.md#ready-probe) and
 - [OAuth authorization server](documentation/oauth.md)
 - [Consent](documentation/consent.md)
 - [BLOBs](documentation/octets.md)
+- [Realtime streams](documentation/realtime.md)
 - [Components and resources](documentation/components.md)
 - [Caching](documentation/cache.md)
 - [Features](features)

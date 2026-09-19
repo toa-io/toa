@@ -1,0 +1,13 @@
+namespace: realtime
+name: routed
+
+entity:
+  storage: mongodb
+  properties:
+    room:
+      type: string
+
+realtime:
+  created:
+    key: room
+    expose: [id, room]

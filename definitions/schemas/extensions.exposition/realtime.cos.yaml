@@ -1,0 +1,19 @@
+type: object
+properties:
+  streams:
+    description: The Redis the streams are kept in; several are shards, a key kept by one of them
+    oneOf:
+      - type: string
+        minLength: 1
+      - type: array
+        items:
+          type: string
+          minLength: 1
+        minItems: 1
+  expire:
+    description: Seconds a stream outlives its last reader, the window a client reconnects in
+    type: integer
+    minimum: 1
+required:
+  - streams
+additionalProperties: false

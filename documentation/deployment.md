@@ -71,17 +71,17 @@ installed as well — see [extension service images](#extension-service-images).
 
 ## The commands
 
-| command                        | what it does                                    |
-| ------------------------------ | ----------------------------------------------- |
-| `toa deploy [environment]`     | builds, pushes, renders and applies             |
-| `toa build`                    | builds every image on the local daemon          |
-| `toa push [environment]`       | builds every image and pushes it                |
-| `toa export deployment`        | writes the chart without applying it            |
-| `toa export images`            | writes the build contexts without building them |
-| `toa export secrets`           | lists the secrets the cluster has to hold       |
-| `toa export tags`              | prints the image reference of every workload    |
-| `toa conceal`, `toa reveal`    | writes and reads a secret                       |
-| `toa env [environment]`        | writes what a workload is given to a `.env` file |
+| command                     | what it does                                     |
+| --------------------------- | ------------------------------------------------ |
+| `toa deploy [environment]`  | builds, pushes, renders and applies              |
+| `toa build`                 | builds every image on the local daemon           |
+| `toa push [environment]`    | builds every image and pushes it                 |
+| `toa export deployment`     | writes the chart without applying it             |
+| `toa export images`         | writes the build contexts without building them  |
+| `toa export secrets`        | lists the secrets the cluster has to hold        |
+| `toa export tags`           | prints the image reference of every workload     |
+| `toa conceal`, `toa reveal` | writes and reads a secret                        |
+| `toa env [environment]`     | writes what a workload is given to a `.env` file |
 
 Every option each of them takes is in the [CLI readme](/runtime/cli/readme.md#operations).
 
@@ -138,20 +138,20 @@ such a tag as content and deletes it.
 
 ## What a context declares
 
-| key               | what it sets                                                  |
-| ----------------- | ------------------------------------------------------------- |
-| `name`            | the release, the image repository, and the infrastructure scope |
-| `version`         | the chart's version; a deploy without one is refused           |
-| `description`     | the chart's description                                        |
-| `runtime`         | the version deployed, and the npm registry a build reads       |
-| `registry`        | where images go, and how they are built                        |
-| `compositions`    | what is deployed as one pod, and how much of it                |
-| `evicted`         | what this context does not deploy, whatever else names it      |
-| `resources`       | what a workload may take, where it states nothing of its own   |
-| `mono`            | the replicas and resources of a `--mono` deployment            |
-| `ingress`         | where the services that declare an ingress land                |
-| `annotations`     | what the extensions and connectors are given, or a shortcut of one |
-| `atomicity`, `outbox`, `inbox`, `addressed`, `events` | runtime settings, carried as variables |
+| key                                                   | what it sets                                                       |
+| ----------------------------------------------------- | ------------------------------------------------------------------ |
+| `name`                                                | the release, the image repository, and the infrastructure scope    |
+| `version`                                             | the chart's version; a deploy without one is refused               |
+| `description`                                         | the chart's description                                            |
+| `runtime`                                             | the version deployed, and the npm registry a build reads           |
+| `registry`                                            | where images go, and how they are built                            |
+| `compositions`                                        | what is deployed as one pod, and how much of it                    |
+| `evicted`                                             | what this context does not deploy, whatever else names it          |
+| `resources`                                           | what a workload may take, where it states nothing of its own       |
+| `mono`                                                | the replicas and resources of a `--mono` deployment                |
+| `ingress`                                             | where the services that declare an ingress land                    |
+| `annotations`                                         | what the extensions and connectors are given, or a shortcut of one |
+| `atomicity`, `outbox`, `inbox`, `addressed`, `events` | runtime settings, carried as variables                             |
 
 `name` and `registry` are required, and an unknown key is refused. `version` is required of a
 context that is deployed and of no other — the same file is read for a local run, which needs no
@@ -390,7 +390,6 @@ so every Toa release rebuilds them all.
 
 ```
 ghcr.io/toa-io/extension-exposition-gateway:1.0.0-alpha.311
-ghcr.io/toa-io/extension-realtime-streams:1.0.0-alpha.311
 ghcr.io/toa-io/extension-introspection-explorer:1.0.0-alpha.311
 ghcr.io/toa-io/extension-configuration-values:1.0.0-alpha.311
 ```
@@ -490,19 +489,19 @@ exposition:
     example: api.example.com
 ```
 
-| shortcut         | what it configures                                          |
-| ---------------- | ---------------------------------------------------------- |
-| `amqp`           | [the broker](/connectors/bindings.amqp)                    |
-| `mongodb`        | [the database](/connectors/storages.mongodb)               |
-| `stash`          | [transient state](/extensions/stash)                       |
-| `storages`       | [BLOB storage](/extensions/storages)                       |
-| `exposition`     | [the API gateway](/extensions/exposition)                  |
-| `realtime`       | [realtime events](/extensions/realtime)                    |
-| `configuration`  | [configuration](/extensions/configuration)                 |
-| `telemetry`      | [logs, traces, metrics](/extensions/telemetry)             |
-| `introspection`  | [the topology map and halt](/extensions/introspection)     |
-| `cadence`        | [calls on their own time](/extensions/cadence)             |
-| `convergence`    | [regions converging on one state](/extensions/convergence) |
+| shortcut        | what it configures                                                  |
+| --------------- | ------------------------------------------------------------------- |
+| `amqp`          | [the broker](/connectors/bindings.amqp)                             |
+| `mongodb`       | [the database](/connectors/storages.mongodb)                        |
+| `stash`         | [transient state](/extensions/stash)                                |
+| `storages`      | [BLOB storage](/extensions/storages)                                |
+| `exposition`    | [the API gateway](/extensions/exposition)                           |
+| `realtime`      | [realtime routes](/extensions/exposition/documentation/realtime.md) |
+| `configuration` | [configuration](/extensions/configuration)                          |
+| `telemetry`     | [logs, traces, metrics](/extensions/telemetry)                      |
+| `introspection` | [the topology map and halt](/extensions/introspection)              |
+| `cadence`       | [calls on their own time](/extensions/cadence)                      |
+| `convergence`   | [regions converging on one state](/extensions/convergence)          |
 
 A storage that mounts a volume names the claim, and the pods of the components that declare that
 storage mount it.
@@ -516,9 +515,9 @@ component ids, `<namespace>.<name>`, and **a component takes the longest key tha
 # context.toa.yaml
 
 mongodb:
-  .: mongodb://mongo.example.com                # everything
-  todos: mongodb://todos.mongo.example.com      # every component of `todos`
-  todos.stats: mongodb://analytics.example.com  # `todos.stats` alone
+  .: mongodb://mongo.example.com # everything
+  todos: mongodb://todos.mongo.example.com # every component of `todos`
+  todos.stats: mongodb://analytics.example.com # `todos.stats` alone
 ```
 
 | the component      | takes                     |

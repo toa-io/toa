@@ -1,0 +1,13 @@
+namespace: realtime
+name: bare
+
+entity:
+  storage: mongodb
+  properties:
+    room:
+      type: string
+
+# a route that does not say what it exposes
+realtime:
+  created:
+    key: room

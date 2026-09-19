@@ -2,5 +2,9 @@ namespace: realtime
 name: streamer
 
 realtime:
-  created: streamer
-  deleted: [id, streamer]
+  created:
+    key: streamer
+    expose: [id, streamer]
+  deleted:
+    key: [id, streamer]
+    expose: [id]

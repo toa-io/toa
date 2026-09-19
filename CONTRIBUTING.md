@@ -217,7 +217,7 @@ $ TOA_FEATURES=nightly npx cucumber-js features/cli/call.feature
 ```
 
 From a workspace that has a `features` script (`extensions/configuration`,
-`extensions/exposition`, `extensions/introspection`, `extensions/realtime`):
+`extensions/exposition`, `extensions/introspection`):
 
 ```shell
 $ npm run features                                  # all scenarios in that workspace
@@ -350,8 +350,10 @@ so the two carry one number.
 - **Secure by default.** What the runtime fetches, accepts or trusts is enumerated in
   configuration, and an empty enumeration admits nothing. A capability that widens what is
   reachable is off until an application turns it on.
-- **Zero per-request I/O.** The gateway does no I/O to serve a request, other than an
-  operation call.
+- **Zero per-request I/O.** The gateway does no I/O to serve a request, other than the
+  interaction that produces the response the request is for: an operation call, or the stream a
+  request opens. What a request costs besides is decided without asking anything outside the
+  process.
 - **Independent userspace.** An application's component depends on no `@toa.io/*` package, other
   than types imported with `import type`.
 - **Userspace agnostic.** A particular application may be development input — something to build

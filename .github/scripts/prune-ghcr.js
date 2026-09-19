@@ -5,6 +5,7 @@ const ORG = 'toa-io'
 const PACKAGES = [
   'runtime',
   'extension-exposition-gateway',
+  // no longer published: realtime is served by the gateway, and what was published is pruned
   'extension-realtime-streams',
   'extension-introspection-explorer',
   'extension-configuration-values'

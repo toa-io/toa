@@ -1,36 +1,84 @@
-Feature: Realtime extension
+Feature: Realtime
 
-  Scenario: Deployment with realtime annotation
-    Given I have a context with:
-      """yaml
+  Realtime streams are served by the exposition gateway, and the events they carry are written by
+  the components that route them. The `realtime` annotation says where the streams are kept, and a
+  deployment gives it to every process; nothing is deployed for realtime of its own.
+
+  Scenario: Deployment of a component that routes events
+    Given I have a component `realtime.streamer`
+    And I have a context with:
+      """
       realtime:
-        mongo.one.created: id
+        streams: redis://realtime.example.com
+        expire: 60
       """
     When I export deployment
     Then exported values should contain:
       """yaml
-      services:
-        - name: realtime-streams
+      compositions:
+        - name: realtime-streamer
           variables:
-          - name: TOA_REALTIME
-            value: '[{"event":"mongo.one.created","properties":["id"]}]'
-          components:
-            - realtime-streams
+            - name: TOA_REALTIME_STREAMS
+              value: redis://realtime.example.com
+            - name: TOA_REALTIME_EXPIRE
+              value: '60'
+      services:
+        - name: exposition-gateway
+          variables:
+            - name: TOA_REALTIME_STREAMS
+              value: redis://realtime.example.com
+            - name: TOA_REALTIME_EXPIRE
+              value: '60'
       """
 
-  Scenario: Deployment with realtime manifest
+  Scenario: Deployment of streams kept in several Redis
+    Given I have a component `realtime.streamer`
+    And I have a context with:
+      """
+      realtime:
+        streams:
+          - redis://one.example.com
+          - redis://two.example.com
+      """
+    When I export deployment
+    Then exported values should contain:
+      """yaml
+      compositions:
+        - name: realtime-streamer
+          variables:
+            - name: TOA_REALTIME_STREAMS
+              value: redis://one.example.com redis://two.example.com
+      """
+
+  Scenario: Deployment of routes without the realtime annotation
     Given I have a component `realtime.streamer`
     And I have a context
-    When I export deployment
-    Then exported values should contain:
-      """yaml
-      services:
-        - name: realtime-streams
-          variables:
-          - name: TOA_REALTIME
-            value: '[{"event":"realtime.streamer.created","properties":["streamer"]},{"event":"realtime.streamer.deleted","properties":["id","streamer"]}]'
-          - name: TOA_STASH_REALTIME_STREAMS
-            value: redis://localhost:31040
-          components:
-            - realtime-streams
+    Then exporting deployment fails with:
+      """
+      Invalid realtime annotation: must be object
+      """
+
+  Scenario: Deployment of routes declared in the context
+    Given I have a component `realtime.streamer`
+    And I have a context with:
+      """
+      realtime:
+        streams: redis://realtime.example.com
+        realtime.streamer.created: id
+      """
+    Then exporting deployment fails with:
+      """
+      Invalid realtime annotation: must NOT have additional properties
+      """
+
+  Scenario: A route that does not say what it exposes
+    Given I have a component `realtime.bare`
+    And I have a context with:
+      """
+      realtime:
+        streams: redis://realtime.example.com
+      """
+    Then exporting deployment fails with:
+      """
+      Realtime routes of 'realtime.bare' are invalid: must have required property 'expose'
       """

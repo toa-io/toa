@@ -9,6 +9,7 @@ import { map } from './map/index.ts'
 import { mcp } from './mcp/index.ts'
 import { req } from './require/index.ts'
 import { flow } from './flow/index.ts'
+import { realtime } from './realtime/index.ts'
 import { help } from './help/index.ts'
 import { discovery } from './oauth/index.ts'
 import { Site } from '../Discovery/index.ts'
@@ -25,6 +26,7 @@ export const families: DirectiveFamily[] = [
   req,
   flow,
   octets,
+  realtime,
   dev
 ]
 /**

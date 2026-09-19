@@ -13,14 +13,19 @@ export interface Definition {
   label?: string
 }
 
+export interface Raised {
+  payload: unknown
+}
+
 export class Event extends Connector {
-  readonly #emitter: Emitter
+  readonly #emitter: Emitter | null
   readonly #bridge: Bridge | undefined
   readonly #conditioned: boolean | undefined
   readonly #subjective: boolean | undefined
   readonly #label: string
 
-  public constructor(definition: Definition, emitter: Emitter, bridge?: Bridge) {
+  /** `emitter` is `null` for an event that is rendered and never published: see `Rendering` */
+  public constructor(definition: Definition, emitter: Emitter | null, bridge?: Bridge) {
     super()
 
     this.#conditioned = definition.conditioned
@@ -29,17 +34,29 @@ export class Event extends Connector {
     this.#emitter = emitter
     this.#bridge = bridge
 
-    this.depends(emitter)
+    if (emitter !== null) this.depends(emitter)
 
     if (bridge !== undefined) this.depends(bridge)
   }
 
-  public async emit(row: Row): Promise<void> {
+  /** What the row raises this event with, or `null` where its condition does not hold. */
+  public async render(row: Row): Promise<Raised | null> {
     const event = row.event
 
-    if (this.#conditioned === false || (await this.#bridge?.condition(event)) === true) {
-      const payload =
-        this.#subjective === true ? await this.#bridge?.payload(event) : event.state
+    if (this.#conditioned !== false && (await this.#bridge?.condition(event)) !== true)
+      return null
+
+    const payload =
+      this.#subjective === true ? await this.#bridge?.payload(event) : event.state
+
+    return { payload }
+  }
+
+  public async emit(row: Row): Promise<void> {
+    const raised = await this.render(row)
+
+    if (raised !== null) {
+      const { payload } = raised
 
       /*
        * The row is committed once, so its id is what makes every publication of it one message:
@@ -65,6 +82,9 @@ export class Event extends Connector {
         const context = current()
 
         if (context !== undefined) message.telemetry = encode(context)
+
+        if (this.#emitter === null)
+          throw new Error(`Event '${this.#label}' is not published`)
 
         await this.#emitter.emit(message)
       })
