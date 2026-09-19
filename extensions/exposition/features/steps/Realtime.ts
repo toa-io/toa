@@ -10,13 +10,7 @@ import { Redis } from 'ioredis'
 import { environment, match } from '@toa.io/generic'
 import { load as parse } from 'js-yaml'
 import { Agent } from '@toa.io/agent'
-import { Locator } from '@toa.io/core'
-import {
-  parse as parseRoutes,
-  ROUTES,
-  type Declaration,
-  type Route
-} from '@toa.io/definitions/extensions.exposition/realtime'
+import { EXPIRE, STREAMS } from '@toa.io/definitions/extensions.exposition/realtime'
 import { Parameters } from './Parameters.ts'
 import { Gateway } from './Gateway.ts'
 import { Captures } from './Captures.ts'
@@ -42,37 +36,27 @@ export class Realtime {
     this.agent = new Agent(parameters.origin, captures)
   }
 
-  /** What a deployment gives each component of the context's routes: its own, before it starts. */
-  @given('the realtime routes:')
-  public routes(yaml: string): void {
-    const byComponent = new Map<string, Route[]>()
-
-    for (const route of parseRoutes(parse(yaml) as Declaration)) {
-      const at = route.event.lastIndexOf('.')
-      const [namespace, name] = route.event.slice(0, at).split('.')
-      const variable = ROUTES + new Locator(name, namespace).uppercase
-      const routes = byComponent.get(variable) ?? []
-
-      routes.push({ ...route, event: route.event.slice(at + 1) })
-      byComponent.set(variable, routes)
-    }
-
-    for (const [variable, routes] of byComponent) {
-      environment.set(variable, JSON.stringify(routes))
-      this.variables.push(variable)
-    }
-  }
-
-  /** Kept for the scenarios written before routes had a step of their own. */
-  @given('the Realtime is running with the following annotation:')
-  public annotated(yaml: string): void {
-    this.routes(yaml)
-  }
-
+  /** What the `realtime` annotation gives the gateway. */
   @given('the realtime streams expire in {int} seconds')
   public expire(seconds: number): void {
-    environment.set('TOA_REALTIME_EXPIRE', String(seconds))
-    this.variables.push('TOA_REALTIME_EXPIRE')
+    environment.set(EXPIRE, String(seconds))
+    this.variables.push(EXPIRE)
+  }
+
+  /** What the `realtime` annotation gives every process: the components and the gateway. */
+  @given('the realtime streams are kept in:')
+  public shards(yaml: string): void {
+    const addresses = parse(yaml) as string[]
+
+    environment.set(STREAMS, addresses.join(' '))
+    this.variables.push(STREAMS)
+  }
+
+  @then('the stream of `{}` is kept in `{}`')
+  public async kept(key: string, address: string): Promise<void> {
+    await this.redis(async (redis) => {
+      assert.equal(await redis.exists(prefix() + key), 1, `'${key}' is not in ${address}`)
+    }, address)
   }
 
   @given('the identity {word} is consuming realtime events')
@@ -84,7 +68,7 @@ export class Realtime {
     await this.open(
       name,
       `
-      GET /realtime/streams/${id}/ HTTP/1.1
+      GET /realtime/${id}/ HTTP/1.1
       authorization: Token \${{ ${name}.token }}
       accept: application/json
       `,
@@ -215,11 +199,12 @@ export class Realtime {
     }
 
     // the streams a scenario left would be found by the next one
-    await this.redis(async (redis) => {
-      const keys = await redis.keys(prefix() + '*')
+    for (const address of REDISES)
+      await this.redis(async (redis) => {
+        const keys = await redis.keys(prefix() + '*')
 
-      if (keys.length > 0) await redis.del(...keys)
-    })
+        if (keys.length > 0) await redis.del(...keys)
+      }, address)
   }
 
   private async open(
@@ -305,8 +290,11 @@ export class Realtime {
     return this.agent.captures.get(`${name}.id`) as string
   }
 
-  private async redis(action: (redis: Redis) => Promise<void>): Promise<void> {
-    const redis = new Redis(REDIS, { lazyConnect: true })
+  private async redis(
+    action: (redis: Redis) => Promise<void>,
+    address = REDIS
+  ): Promise<void> {
+    const redis = new Redis(address, { lazyConnect: true })
 
     await redis.connect()
 
@@ -328,7 +316,7 @@ interface Consumer {
 }
 
 function prefix(): string {
-  return `${environment.scope()}:realtime:streams:`
+  return `${environment.scope()}:realtime:`
 }
 
 function compose(command: string): void {
@@ -339,5 +327,6 @@ function compose(command: string): void {
 
 const COMPOSE = resolve(import.meta.dirname, '../../../../docker-compose.yaml')
 const REDIS = 'redis://localhost:31040'
+const REDISES = [REDIS, 'redis://localhost:31041']
 const WAIT = 5000
 const SETTLE = 500

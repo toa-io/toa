@@ -153,12 +153,14 @@ export class Gateway {
   /** What the running gateway was built from: a different value is a different deployment. */
   private static signature(): string {
     const configuration = Object.entries(environment.entries('TOA_CONFIGURATION_')).sort()
+    const realtime = Object.entries(environment.entries('TOA_REALTIME_')).sort()
 
     return JSON.stringify([
       environment.get('TOA_EXPOSITION'),
       environment.get('TOA_EXPOSITION_PROPERTIES'),
       process.env.__TESTING_EXPOSITION_BRANCH_TTL,
-      configuration
+      configuration,
+      realtime
     ])
   }
 

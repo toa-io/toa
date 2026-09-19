@@ -1,88 +1,25 @@
-import { createVariables, type URIMap } from '@toa.io/pointer'
-import { parse, type Declaration, type Route } from './routes.ts'
-import { ROUTES, STREAMS } from './const.ts'
-import type { Dependency, Instances, Variables } from '@toa.io/operations'
+import * as schemas from '../schemas.ts'
+import { EXPIRE, STREAMS } from './const.ts'
+import type { Dependency } from '@toa.io/operations'
 
 /**
- * Every component has realtime, so a route the context declares may be any component's. The
- * routes of each — its manifest's, and the context's for its events — are given to that component
- * alone, with the address of the Redis it writes them to.
+ * Where the streams are kept, given to every process: the components that route events write them,
+ * and the gateway reads them. Asked for where a component declares routes, as any annotation is
+ * where its extension is declared.
  */
-// the arguments every definition's deployment is called with
-// eslint-disable-next-line max-params
-export function deployment(
-  instances: Instances<Declaration | null>,
-  annotation?: Annotation,
-  _?: unknown,
-  annotations?: Record<string, unknown>
-): Dependency {
-  const declared = annotated(annotation)
-  const variables: Variables = {}
+export function deployment(_: unknown, annotation?: Annotation): Dependency {
+  schemas.realtime.validate(annotation ?? null, 'Invalid realtime annotation')
 
-  for (const { locator, manifest } of instances) {
-    const routes = manifest === null || manifest === undefined ? [] : parse(manifest)
-    const context = declared.get(locator.id) ?? []
+  const { streams, expire } = annotation!
+  const addresses = Array.isArray(streams) ? streams : [streams]
+  const global = [{ name: STREAMS, value: addresses.join(' ') }]
 
-    declared.delete(locator.id)
+  if (expire !== undefined) global.push({ name: EXPIRE, value: String(expire) })
 
-    // the context annotation takes precedence over the manifest
-    for (const route of context) {
-      const at = routes.findIndex(({ event }) => event === route.event)
-
-      if (at === -1) routes.push(route)
-      else routes[at] = route
-    }
-
-    if (routes.length === 0) continue
-
-    const stash = annotations?.[STASH] as URIMap | undefined
-
-    if (stash === undefined || stash === null)
-      throw new Error(
-        `Component '${locator.id}' routes events to realtime streams, which are kept in the ` +
-          'Redis the `stash` annotation names, and the context has none'
-      )
-
-    const request = { group: locator.label, selectors: [STREAMS] }
-    const redis = createVariables('stash', stash, [request])[locator.label]
-
-    variables[locator.label] = [
-      { name: ROUTES + locator.uppercase, value: JSON.stringify(routes) },
-      ...redis
-    ]
-  }
-
-  for (const component of declared.keys())
-    throw new Error(
-      `The realtime annotation routes events of '${component}', which is not deployed`
-    )
-
-  return { variables }
+  return { variables: { global } }
 }
 
-/** The context's routes, by the component whose events they are. */
-function annotated(annotation?: Annotation): Map<string, Route[]> {
-  const routes = new Map<string, Route[]>()
-
-  if (annotation === undefined) return routes
-
-  if ('resources' in annotation)
-    throw new Error(
-      '`realtime.resources` sizes nothing: realtime streams are served by the exposition gateway'
-    )
-
-  for (const route of parse(annotation as Declaration)) {
-    const at = route.event.lastIndexOf('.')
-    const component = route.event.slice(0, at)
-    const list = routes.get(component) ?? []
-
-    list.push({ ...route, event: route.event.slice(at + 1) })
-    routes.set(component, list)
-  }
-
-  return routes
+export interface Annotation {
+  streams: string | string[]
+  expire?: number
 }
-
-type Annotation = Declaration & { resources?: unknown }
-
-const STASH = '@toa.io/extensions.stash'

@@ -4,13 +4,11 @@ Feature: Realtime streams
   read it is what the route's own directives say.
 
   Scenario: Getting realtime events
-    Given the Realtime is running with the following annotation:
-      """yaml
-      users.properties.sync: id
-      """
-    And the identity Bob is consuming realtime events
+    Given the identity Bob is consuming realtime events
     And the `users.properties` is running with the following manifest:
       """yaml
+      realtime:
+        sync: id
       exposition:
         /:id:
           anonymous: true
@@ -35,14 +33,12 @@ Feature: Realtime streams
       """
 
   Scenario: Streaming a resource of the application
-    Given the realtime routes:
+    Given the `chat.messages` is running with the following manifest:
       """yaml
-      chat.messages.sync:
-        key: room
-        expose: [room, text]
-      """
-    And the `chat.messages` is running with the following manifest:
-      """yaml
+      realtime:
+        sync:
+          key: room
+          expose: [room, text]
       exposition:
         /:
           anonymous: true
@@ -77,12 +73,10 @@ Feature: Realtime streams
       """
 
   Scenario: Streaming what an event of another key does not reach
-    Given the realtime routes:
+    Given the `chat.messages` is running with the following manifest:
       """yaml
-      chat.messages.sync: room
-      """
-    And the `chat.messages` is running with the following manifest:
-      """yaml
+      realtime:
+        sync: room
       exposition:
         /:
           anonymous: true
@@ -112,12 +106,10 @@ Feature: Realtime streams
     And the stream of `random` does not exist
 
   Scenario: Writing an event once, whoever reads it
-    Given the realtime routes:
+    Given the `chat.messages` is running with the following manifest:
       """yaml
-      chat.messages.sync: room
-      """
-    And the `chat.messages` is running with the following manifest:
-      """yaml
+      realtime:
+        sync: room
       exposition:
         /:
           anonymous: true
@@ -160,12 +152,10 @@ Feature: Realtime streams
     And the stream of `general` holds 1 event
 
   Scenario: Replaying what was missed on another gateway
-    Given the realtime routes:
+    Given the `chat.messages` is running with the following manifest:
       """yaml
-      chat.messages.sync: room
-      """
-    And the `chat.messages` is running with the following manifest:
-      """yaml
+      realtime:
+        sync: room
       exposition:
         /:
           anonymous: true
@@ -200,32 +190,37 @@ Feature: Realtime streams
       text: Missed
       """
 
-  Scenario: Opening a stream as the effect of an operation
-    Given the realtime routes:
+  Scenario: Keeping the streams in several Redis
+    Given the realtime streams are kept in:
       """yaml
-      chat.messages.sync: room
+      - redis://localhost:31040
+      - redis://localhost:31041
       """
     And the `chat.messages` is running with the following manifest:
       """yaml
+      realtime:
+        sync: room
       exposition:
         /:
           anonymous: true
           io:output: false
           POST: post
-        /rooms/:room/join:
+        /rooms/:room/stream:
           anonymous: true
-          POST:
-            endpoint: join
+          GET:
             realtime:stream: room
       """
     When Alice is consuming:
       """
-      POST /chat/messages/rooms/general/join/ HTTP/1.1
+      GET /chat/messages/rooms/general/stream/ HTTP/1.1
       host: nex.toa.io
       accept: application/json
-      content-type: application/yaml
-
-      room: general
+      """
+    And Bob is consuming:
+      """
+      GET /chat/messages/rooms/random/stream/ HTTP/1.1
+      host: nex.toa.io
+      accept: application/json
       """
     And the following request is received:
       """
@@ -234,53 +229,35 @@ Feature: Realtime streams
       content-type: application/yaml
 
       room: general
-      text: Welcome
+      text: One
+      """
+    And the following request is received:
+      """
+      POST /chat/messages/ HTTP/1.1
+      host: nex.toa.io
+      content-type: application/yaml
+
+      room: random
+      text: Two
       """
     Then Alice receives the event `chat.messages.sync`:
       """yaml
-      text: Welcome
+      text: One
       """
-
-  Scenario: Opening no stream where the operation fails
-    Given the realtime routes:
+    And Bob receives the event `chat.messages.sync`:
       """yaml
-      chat.messages.sync: room
+      text: Two
       """
-    And the `chat.messages` is running with the following manifest:
-      """yaml
-      exposition:
-        /rooms/:room/join:
-          anonymous: true
-          POST:
-            endpoint: join
-            realtime:stream: room
-      """
-    When the following request is received:
-      """
-      POST /chat/messages/rooms/closed/join/ HTTP/1.1
-      host: nex.toa.io
-      accept: application/yaml
-      content-type: application/yaml
-
-      room: closed
-      """
-    Then the following reply is sent:
-      """
-      422 Unprocessable Entity
-
-      code: CLOSED
-      """
-    And the stream of `closed` does not exist
+    And the stream of `general` is kept in `redis://localhost:31041`
+    And the stream of `random` is kept in `redis://localhost:31040`
 
   @timing
   Scenario: Keeping a stream while it is read
     Given the realtime streams expire in 2 seconds
-    And the realtime routes:
-      """yaml
-      chat.messages.sync: room
-      """
     And the `chat.messages` is running with the following manifest:
       """yaml
+      realtime:
+        sync: room
       exposition:
         /:
           anonymous: true
@@ -315,12 +292,10 @@ Feature: Realtime streams
   @timing
   Scenario: Letting a stream go once nobody reads it
     Given the realtime streams expire in 2 seconds
-    And the realtime routes:
-      """yaml
-      chat.messages.sync: room
-      """
     And the `chat.messages` is running with the following manifest:
       """yaml
+      realtime:
+        sync: room
       exposition:
         /:
           anonymous: true
@@ -353,12 +328,10 @@ Feature: Realtime streams
   @timing
   Scenario: Reconnecting after the stream expired
     Given the realtime streams expire in 2 seconds
-    And the realtime routes:
-      """yaml
-      chat.messages.sync: room
-      """
     And the `chat.messages` is running with the following manifest:
       """yaml
+      realtime:
+        sync: room
       exposition:
         /:
           anonymous: true
@@ -394,12 +367,10 @@ Feature: Realtime streams
 
   @containers
   Scenario: Delivering after the realtime Redis restarted
-    Given the realtime routes:
+    Given the `chat.messages` is running with the following manifest:
       """yaml
-      chat.messages.sync: room
-      """
-    And the `chat.messages` is running with the following manifest:
-      """yaml
+      realtime:
+        sync: room
       exposition:
         /:
           anonymous: true
@@ -434,12 +405,10 @@ Feature: Realtime streams
 
   @containers
   Scenario: Writing what was routed while the realtime Redis was down
-    Given the realtime routes:
+    Given the `chat.messages` is running with the following manifest:
       """yaml
-      chat.messages.sync: room
-      """
-    And the `chat.messages` is running with the following manifest:
-      """yaml
+      realtime:
+        sync: room
       exposition:
         /:
           anonymous: true
@@ -480,12 +449,10 @@ Feature: Realtime streams
     Given the `identity.basic` database contains:
       | _id                              | authority | username | password                                                     |
       | 4344518184ad44228baffce7a44fd0b1 | nex       | user     | $2b$10$JoiAQUS7tzobDAFIDBWhWeEIJv933dQetyjRzSmfQGaJE5ZlJbmYy |
-    And the realtime routes:
-      """yaml
-      chat.messages.sync: room
-      """
     And the `chat.messages` is running with the following manifest:
       """yaml
+      realtime:
+        sync: room
       exposition:
         /rooms/:room/stream:
           auth:role: chat:moderator

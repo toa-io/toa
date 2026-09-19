@@ -1,16 +1,15 @@
 import { console } from 'openspan'
 import { Connector, type Locator } from '@toa.io/core'
-import { APPEND, MAXLEN, connect, prefix } from './redis.ts'
+import { APPEND, MAXLEN, Shards, shard } from './redis.ts'
 import * as measure from './measurements.ts'
-import type { Redis } from 'ioredis'
 import type { Route } from '@toa.io/definitions/extensions.exposition/realtime'
 import type { outbox } from '@toa.io/core/types'
 
 /**
  * Where a component's routed events go: the stream of each of their keys, and its channel. Each
  * event of a row is rendered by the component's own condition and payload, fitted to what its
- * route exposes, and written in one call — to the streams of its keys that exist, which are the
- * ones that are consumed.
+ * route exposes, and written in one call per Redis its keys are kept on — to the streams of them
+ * that exist, which are the ones that are consumed.
  *
  * At least once: a row written again by the pump is written to the streams again.
  */
@@ -21,7 +20,7 @@ export class Destination extends Connector implements outbox.Destination {
 
   private readonly locator: Locator
   private readonly routes: Route[]
-  private redis: Redis | null = null
+  private shards: Shards | null = null
 
   public constructor(locator: Locator, routes: Route[]) {
     super()
@@ -38,25 +37,27 @@ export class Destination extends Connector implements outbox.Destination {
   }
 
   protected override async open(): Promise<void> {
-    const redis = connect({ keyPrefix: prefix() })
+    const shards = new Shards()
 
-    // it reconnects on its own; a write while it is away fails, and the outbox writes it again
-    redis.on('error', (error: NodeJS.ErrnoException) =>
-      console.debug('Realtime streams unreachable', {
-        error: error.code ?? error.message
-      })
-    )
+    for (const redis of shards.connections) {
+      // it reconnects on its own; a write while it is away fails, and the outbox writes it again
+      redis.on('error', (error: NodeJS.ErrnoException) =>
+        console.debug('Realtime streams unreachable', {
+          error: error.code ?? error.message
+        })
+      )
 
-    redis.defineCommand('append', { lua: APPEND })
+      redis.defineCommand('append', { lua: APPEND })
+    }
 
-    this.redis = redis
+    this.shards = shards
 
-    await redis.connect()
+    await shards.connect()
   }
 
   protected override async close(): Promise<void> {
-    this.redis?.disconnect()
-    this.redis = null
+    this.shards?.disconnect()
+    this.shards = null
   }
 
   private async route(route: Route, row: outbox.Row): Promise<void> {
@@ -72,13 +73,27 @@ export class Destination extends Connector implements outbox.Destination {
     const event = `${this.locator.id}.${route.event}`
     const data = JSON.stringify(fit(payload, route.expose))
 
-    await (this.redis as unknown as Append).append(
-      keys.length,
-      ...keys,
-      event,
-      data,
-      MAXLEN
+    const connections = this.shards!.connections
+    const byShard = new Map<number, string[]>()
+
+    for (const key of keys) {
+      const i = shard(key, connections.length)
+
+      byShard.set(i, [...(byShard.get(i) ?? []), key])
+    }
+
+    const writes = [...byShard].map(
+      async ([i, keys]) =>
+        await (connections[i] as unknown as Append).append(
+          keys.length,
+          ...keys,
+          event,
+          data,
+          MAXLEN
+        )
     )
+
+    await Promise.all(writes)
 
     measure.route(event)
   }

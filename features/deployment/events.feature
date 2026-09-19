@@ -54,19 +54,19 @@ Feature: Events deployment
   The component writes what it routes to the streams itself, so nothing consumes the event from
   the broker for it.
 
-    Given I have a component `mongo.one`
+    Given I have a component `realtime.routed`
     And I have a context with:
       """yaml
       realtime:
-        mongo.one.created: id
+        streams: redis://realtime.example.com
       """
     When I export deployment
     Then exported values should contain:
       """yaml
       compositions:
-        - name: mongo-one
+        - name: realtime-routed
           variables:
-            - name: TOA_EVENTS_MONGO_ONE
+            - name: TOA_EVENTS_REALTIME_ROUTED
               value: ''
       """
 

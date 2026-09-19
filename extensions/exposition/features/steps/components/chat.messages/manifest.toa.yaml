@@ -28,12 +28,3 @@ operations:
       required:
         - room
         - text
-  # joins a room: refused where the room is closed
-  join:
-    errors: [CLOSED]
-    input:
-      properties:
-        room: *room
-      type: object
-      required:
-        - room

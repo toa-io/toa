@@ -30,17 +30,7 @@ is routed to.
 > `expose` is the only thing standing between an event and whoever reads the streams it is routed
 > to. State it wherever the payload holds anything a reader of the key may not see.
 
-Routes may also be declared in the context, by the full name of the event. A route of the context
-takes precedence over the component's own for the same event.
-
-```yaml
-# context.toa.yaml
-realtime:
-  users.profiles.updated: id
-  orders.orders.created:
-    key: customer
-    expose: [id, status]
-```
+Routes are declared by the component, and only there.
 
 ## Serving a stream
 
@@ -64,26 +54,6 @@ accept: application/json
 Who may read the stream is decided by the route's directives, as for anything else it serves: an
 identity without the `moderator` role is refused, and nothing is opened.
 
-### After an operation
-
-On a method that calls an endpoint, the operation runs first. Where it succeeds, the reply is the
-stream instead of what the operation answered; where it fails, the failure is the reply, and no
-stream is opened.
-
-```yaml
-# presence/manifest.toa.yaml
-exposition:
-  /:identity:
-    auth:id: identity
-    POST:
-      endpoint: connect
-      realtime:stream: identity
-```
-
-The operation is where the application decides what a reader follows. Recording the rooms an
-identity joined, and routing the events of those rooms to their watchers (`key: watchers`), brings
-all of them to the one stream the identity reads.
-
 ### An identity's own stream
 
 An identity's id is a key like any other. An event goes to an identity's stream where a route takes
@@ -101,7 +71,7 @@ A message created with `recipient: 4c4759e6f9c14f3b8b2cc6e6f4c5b3a0` goes to the
 identity, which reads it at:
 
 ```http
-GET /realtime/streams/4c4759e6f9c14f3b8b2cc6e6f4c5b3a0/ HTTP/1.1
+GET /realtime/4c4759e6f9c14f3b8b2cc6e6f4c5b3a0/ HTTP/1.1
 authorization: Token ...
 accept: application/json
 ```
@@ -110,10 +80,10 @@ Every event routed to the identity's id comes to this one stream, whichever comp
 The application declares nothing to serve it: the gateway declares the route itself.
 
 ```yaml
-/realtime/streams/:key:
-  auth:id: key
+/realtime/:id:
+  auth:id: id
   GET:
-    realtime:stream: key
+    realtime:stream: id
 ```
 
 ## Reading a stream
@@ -172,20 +142,29 @@ what is left, which may be nothing.
 
 A client opens one stream per key it is interested in. Where it would be interested in many, the
 application gives them one key: an event carries the group it belongs to — a board, a project, a
-watch list — and the group is the key. An [operation](#after-an-operation) that opens the stream is
-where a reader's groups are decided.
+watch list — and the group is the key.
 
 ## Deployment
 
-Realtime streams are kept in Redis: the address the [`stash`](/extensions/stash) annotation gives
-`realtime.streams`. A context whose components route events has to name one.
+The streams are kept in Redis, which the `realtime` annotation names. It is required where a
+component declares routes.
 
 ```yaml
 # context.toa.yaml
-stash: redis://redis.example.com
-exposition:
-  realtime:
-    expire: 300 # seconds a key's events are kept after its last reader left
+realtime:
+  streams: redis://realtime.example.com
+  expire: 300 # seconds a key's events are kept after its last reader left; 300 by default
+```
+
+`streams` may be a list. Each key is then kept by one of them, the same one for every process, so
+the streams are spread over them; changing the list moves keys, and a reader whose key moved is not
+sent what it missed. Keys are prefixed with the context, so contexts may share a Redis.
+
+```yaml
+realtime:
+  streams:
+    - redis://realtime-0.example.com
+    - redis://realtime-1.example.com
 ```
 
 The components that route events write them to the streams themselves, and the gateway reads them;

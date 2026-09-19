@@ -100,12 +100,15 @@ a watch list — and the group is the key.
    - reads the stream from the last id it delivered on every reconnect of its subscriber, since a
      channel keeps nothing for a subscriber that was away, and pushes what it has not delivered.
 
-   A directive family is told whether its method calls an endpoint. On one that does,
-   `realtime:stream` opens the stream once the call has succeeded, and the stream is the reply; a
-   call that fails is answered as it is, and opens nothing.
+   Where `streams` names several Redis, a key is kept by the one `fnv1a(key) % n` falls to — the
+   same function for the components that write and the gateway that reads — and its stream, its
+   channel and its replay are all there. A key is stored and published under
+   `${scope}:realtime:`, the scope being the context and its suffix, as for any other key a
+   process keeps on shared infrastructure.
 
-4. **Exposition: `/realtime/streams/:key`.** Declared by exposition itself with `auth:id: key` and
-   `realtime:stream: key`, so a client of today is served as it is.
+4. **Exposition: `/realtime/:id`.** Declared by the gateway itself, as `/identity` is, with
+   `auth:id: id` and `realtime:stream: id`: an identity's own stream, which no application has to
+   declare. It was `/realtime/streams/:key`.
 5. **The realtime extension** is removed: its service, `realtime.streams`, its deployment, its
    package, and dynamic routes with them. The `realtime` manifest key stays, and declares routes as
    it did. The `realtime` context annotation declares no routes any more.
@@ -129,7 +132,7 @@ a watch list — and the group is the key.
 8. **Metrics.** `toa.realtime.routed`, where a component writes an event, and
    `toa.realtime.delivered`, where a gateway pushes one, replace what the service counted.
 9. **Documentation.** `realtime:stream` in exposition's documentation, with routes, keys, grouping,
-   the stream an operation opens, and the guarantees above; the realtime readme goes, and the
+   and the guarantees above; the realtime readme goes, and the
    migration note says what a deployment changes.
 10. **A package may claim several keys.** A reference is a package, or `package#key`: a declaration
     of its own, with its own definition (`keys` of the package's) and its own factory (`keys` of the
@@ -148,8 +151,9 @@ a watch list — and the group is the key.
 3. **The gateway reads the stream, and nothing else does.** A stream is the response the request
    is for, as an operation's reply is, and reading it through a component would add a leg per event
    and a process to scale. No component serves streams: nothing inside the system reads a client's
-   stream, and what a component used to call `realtime.streams.create` for — handing its caller a
-   stream — is `realtime:stream` on its route, after its operation.
+   stream. What a component used to call `realtime.streams.create` for — answering its caller with
+   a stream — is not replaced here: whether a route that calls an operation should answer with a
+   stream is a question of its own.
 4. **The destination writes, once.** A reader that wrote what it received would write it once per
    replica that received it, and a key whose client is away has no reader, so nothing would be kept
    for its replay.
@@ -169,9 +173,7 @@ a watch list — and the group is the key.
    on the node that owns its name. On a single node they are the same.
 10. **Groups, not subscriptions.** A client that would open many streams is served by a key the
     application groups them under, which costs nothing new and keeps what a stream carries decided
-    by the application rather than by the client. A stream opened after an operation is where the
-    application decides what a reader follows — a reader's rooms, recorded as it connects, route
-    their events to its one stream.
+    by the application rather than by the client.
 11. **Routes are the component's.** A route is a statement about the component's own events and
     who reads them, as its exposition is about its operations, so it is declared beside them and
     nowhere else. The context states where the streams are kept, not what goes into them — which is
@@ -213,42 +215,43 @@ a watch list — and the group is the key.
 ## Stages
 
 1. Boot hands a destination the component's event bridges.
-2. The destination, with the deployment giving a component its routes and its Redis.
-3. `realtime:stream`, and `/realtime/streams/:key` declared by exposition.
-4. The realtime extension removed; events consumed by realtime alone no longer published.
-5. Documentation, and `CONTRIBUTING.md`.
+2. `package#key` references, and `realtime` as a key of exposition.
+3. The destination, and the `realtime` annotation given to every process.
+4. `realtime:stream`, and `/realtime/:id` declared by the gateway.
+5. The realtime extension removed; events consumed by realtime alone no longer published.
+6. Documentation, and `CONTRIBUTING.md`.
 
 ## Verification
 
 `extensions/exposition/features/realtime.feature`, through HTTP:
 
-- an identity reads its own stream at `/realtime/streams/:key` as before;
+- an identity reads its own stream at `/realtime/:id`;
 - a stream served by the application's own route carries what its route exposes, and one the route
   does not authorise is refused without a stream being created;
 - an event of another key does not reach a stream, and creates none;
 - an event is written once however many streams of its key are open;
 - what was written while the reader was away is replayed on a gateway started since;
-- a stream opens after an operation that succeeded, and not after one that failed;
+- streams kept in two Redis are each on the one their key falls to, and each reaches its reader;
 - a stream that receives nothing for longer than `expire` keeps receiving, and one nobody reads is
   let go after it (`@timing`);
 - a reader that reconnects after its stream expired receives what is written next (`@timing`);
 - a gateway whose Redis restarted delivers what is written after, and what was routed while it was
   down arrives once it is back (`@containers`).
 
-`features/extensions/realtime.feature` and `features/deployment`: the routes and the Redis a
-component is given, the gateway's, the refusals, and an event realtime alone routes not being
-published.
+`features/extensions/realtime.feature` and `features/deployment`: the Redis every process is given,
+one or several, the annotation refused where it is missing or declares routes, and an event
+realtime alone routes not being published.
 
 ## Compatibility
 
-- **Clients:** unchanged — `/realtime/streams/:key`, the `token` event, reconnecting with a token.
+- **Clients:** an identity's stream moves to `/realtime/:id`; the `token` event and reconnecting
+  with a token are unchanged.
 - **Declarations:** the `realtime` manifest key is unchanged. A route declared in the context
   annotation moves into the manifest of its component.
 - **Deployment:** the realtime service and its queues go. The `realtime` annotation states
   `streams`, which is not the `stash` annotation, and `expire`; `resources` and routes are refused
   by its schema. See `migrations/313.md`.
-- **Userspace:** `realtime.streams.create` is gone; an operation that returned it declares
-  `realtime:stream` on its route instead.
+- **Userspace:** `realtime.streams.create` is gone, with no replacement in this change.
 - **Dynamic routes** go before they were released.
 - **Rollout:** a service of before and a gateway of after both write streams during a rollout, so an
   event may be replayed twice across it.

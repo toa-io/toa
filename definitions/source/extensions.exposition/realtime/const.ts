@@ -1,8 +1,5 @@
-/**
- * Whose stash the streams are: the gateway reads them and a component writes them under this
- * locator, so both resolve one address from the `stash` annotation and one key prefix.
- */
-export const STREAMS = 'realtime.streams'
+/** The addresses of the Redis the streams are kept in, space-separated. */
+export const STREAMS = 'TOA_REALTIME_STREAMS'
 
-/** A component's routes, as the deployment resolved them from its manifest and the context. */
-export const ROUTES = 'TOA_REALTIME_'
+/** Seconds a stream outlives its last reader. */
+export const EXPIRE = 'TOA_REALTIME_EXPIRE'

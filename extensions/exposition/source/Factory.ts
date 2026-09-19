@@ -2,6 +2,7 @@ import { createHash } from 'node:crypto'
 import { contract } from '@toa.io/core'
 import { Announcements } from './Announcements.ts'
 import { Tenant } from './Tenant.ts'
+import { Realtime } from './realtime/Factory.ts'
 import { CHANNEL } from '@toa.io/definitions/extensions.exposition'
 import type { Branch } from './Branch.ts'
 import type { syntax } from './RTD/index.ts'
@@ -9,6 +10,9 @@ import type { Connector, Contract, Locator } from '@toa.io/core'
 import type { extensions } from '@toa.io/core/types'
 
 export class Factory implements extensions.Factory {
+  /** `realtime`, declared beside `exposition`: the routes of a component's events to streams */
+  public readonly keys = { realtime: new Realtime() }
+
   private readonly host: Host
   private announcing: Promise<Announcements> | undefined
   private announcements: Announcements | undefined

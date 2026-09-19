@@ -14,3 +14,4 @@ export const call: Schema<Record<string, unknown>> = namespace.schema('call')
 
 export const annotation: Schema<Annotation> = namespace.schema('annotation')
 export const node: Schema<Node> = namespace.schema('node')
+export const realtime: Schema<unknown> = namespace.schema('realtime')
