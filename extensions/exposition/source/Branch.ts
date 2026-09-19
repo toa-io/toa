@@ -51,15 +51,26 @@ export interface Exposed {
  *
  * - `refresh`: the same component and the same routes, so its expiration is extended and its
  *   endpoints left alone
- * - `superseded`: it came from a tenant that started before the one exposed now
+ * - `superseded`: it came from a tenant that started before the one exposed now, while the
+ *   exposed branch is still served
  * - `merge`: everything else
  */
 export function decide(exposed: Exposed, branch: Branch): Decision {
   if (exposed.version === branch.version && exposed.routes === branch.routes) return 'refresh'
 
-  if (branch.timestamp < exposed.timestamp) return 'superseded'
+  if (branch.timestamp < exposed.timestamp && !expired(exposed)) return 'superseded'
 
   return 'merge'
+}
+
+/**
+ * A tenant that has gone without saying so stops refreshing its branch, and once the branch
+ * expires, nothing it held off is served. What started before it is all there is left to expose.
+ */
+function expired(exposed: Exposed): boolean {
+  const now = Date.now()
+
+  return exposed.nodes.length > 0 && exposed.nodes.every((node) => now >= node.expiration)
 }
 
 export type Decision = 'merge' | 'refresh' | 'superseded'
