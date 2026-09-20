@@ -78,7 +78,9 @@ Then(
   async function (text) {
     const path = join(this.cwd, 'deployment', 'values.yaml')
     const values = parse(await readFile(path, 'utf8'))
-    const contracts = JSON.parse(gunzipSync(Buffer.from(values.map.gzip, 'base64')).toString())
+    const contracts = JSON.parse(
+      gunzipSync(Buffer.from(values.map.gzip, 'base64')).toString()
+    )
     const expected = parse(text)
 
     assert.equal(match(contracts, expected), true, diff(expected, contracts))

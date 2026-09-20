@@ -111,12 +111,19 @@ Feature: toa map
     And the map states no `operations.transit.bindings` of `events.trailers`
 
   Scenario: What an operation does not declare is not in it
-    Given I have a component `math.calculations`
+    Given I have a component `contracts.peer`
     And I have a context
     When I run `toa map`
     Then program should exit with code 0
-    And the map states no `operations.sum.output` of `math.calculations`
-    And the map states no `operations.sum.query` of `math.calculations`
+    And the map states for `contracts.peer`:
+      """yaml
+      operations:
+        serves:
+          type: computation
+          scope: none
+      """
+    And the map states no `operations.serves.output` of `contracts.peer`
+    And the map states no `operations.serves.query` of `contracts.peer`
 
   Scenario: How a component serves a call is its own
     Given I have a component `events.trailers`
