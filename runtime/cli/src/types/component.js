@@ -89,9 +89,11 @@ function calls(endpoints, entity, importing) {
     // the process a call to a stateful operation goes to
     if (operation.stateful === true) request.push('instance: string')
 
-    // whether the call is awaited or left to run; a stream is held by its caller, and a task
-    // is taken by whoever consumes the queue later
-    if (operation.stream === undefined) request.push('task?: boolean')
+    // whether the call is awaited or left to run; a stream is held by its caller, a task is
+    // taken by whoever consumes the queue later, and a stateful operation is served under the
+    // name of one process rather than by whoever is free
+    if (operation.stream === undefined && operation.stateful !== true)
+      request.push('task?: boolean')
 
     // how long the caller waits, which only an addressed call is given; an ordinary call waits
     // for its reply
