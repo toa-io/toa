@@ -47,7 +47,9 @@ A call to a stateful operation names the process in `instance`. These are refuse
 
 - a call to a stateful operation that names no process;
 - a call to an ordinary operation that names one;
-- a task, or a delayed call, that names one — both are made later, by whichever process takes them.
+- a task, or a delayed call, that names one — both are made later, by whichever process takes them;
+- a call to an ordinary operation that names a `timeout` or a `signal` — it waits for as long as its
+  reply takes.
 
 A receiver may be bound to a stateful operation. Its adaptation names the process in the request it
 returns, and the call reaches that process from whichever replica took the event.
@@ -64,8 +66,8 @@ await context.remote.media.streams.watch({ input: { id }, instance }, { timeout:
 - `signal`, an `AbortSignal`, ends the wait when it aborts, within the timeout — also while the
   component is still being looked up, in which case the call is made nowhere.
 
-Every remote call and local call takes both. An ordinary call given neither waits for as long as its
-reply takes. For a streamed reply, the wait covers the start of the stream.
+Only an addressed call takes them, whether it is remote or local; an ordinary call waits for as long
+as its reply takes. For a streamed reply, the wait covers the start of the stream.
 
 The default for addressed calls is set per context:
 

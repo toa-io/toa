@@ -163,6 +163,13 @@ export class Call extends Connector {
     if (task === true && (timeout !== undefined || signal !== undefined))
       throw new RequestContractException('A task names no `timeout` and no `signal`')
 
+    // an ordinary call is answered eventually, and what nobody could answer is parked with who
+    // asked — which only means something to a caller still waiting
+    if (!this.#stateful && (timeout !== undefined || signal !== undefined))
+      throw new RequestContractException(
+        `'${this.#target}' is stateless, and a call to it names no \`timeout\` and no \`signal\``
+      )
+
     if (this.#streamed !== undefined) {
       // a task is taken later, by a process whose caller is no longer holding a stream
       if (task === true)
@@ -184,28 +191,19 @@ export class Call extends Connector {
   /**
    * What the transmission is handed beside the envelope. An addressed call always waits for a set
    * time — its caller's, or the context's — because nothing else ends a call to a process that has
-   * gone; an ordinary call waits for one only where its caller set it.
+   * gone; an ordinary call waits for as long as it takes, and is handed nothing.
    */
   #terms(instance?: string, timeout?: number, signal?: AbortSignal): Terms | undefined {
-    const deadline = timeout ?? (this.#stateful ? addressed.timeout() : undefined)
+    if (instance === undefined) return undefined
 
-    if (instance === undefined && deadline === undefined && signal === undefined)
-      return undefined
+    const deadline = timeout ?? addressed.timeout()
+    const expiry = AbortSignal.timeout(deadline)
 
-    const signals: AbortSignal[] = []
-
-    if (signal !== undefined) signals.push(signal)
-    if (deadline !== undefined) signals.push(AbortSignal.timeout(deadline))
-
-    const terms: Terms = {}
-
-    if (instance !== undefined) terms.instance = instance
-    if (deadline !== undefined) terms.timeout = deadline
-
-    if (signals.length > 0)
-      terms.signal = signals.length === 1 ? signals[0] : AbortSignal.any(signals)
-
-    return terms
+    return {
+      instance,
+      timeout: deadline,
+      signal: signal === undefined ? expiry : AbortSignal.any([signal, expiry])
+    }
   }
 
   /** The reply, or *abandoned* once the caller has stopped waiting, however the wait ended. */

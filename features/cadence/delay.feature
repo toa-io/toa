@@ -96,8 +96,8 @@ Feature: Delayed calls
     Given the `cadence.metronome` database contains:
       | _id                              | lane | due | expires | endpoint              | VERSION |
       | 01a06fa7e5e676b3aefdad34be3d184a | 0    | 1   | 2       | default.delaying.pong | 1       |
-    And the `cadence` service is staged
     And I compose `delaying` component
+    And the `cadence` service is staged
     When I wait 1 second
     And I call `default.delaying.marks`
     Then the reply is received:

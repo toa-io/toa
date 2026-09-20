@@ -23,7 +23,7 @@ export interface Properties {
 export interface Terms {
   /** the process an addressed call goes to */
   instance?: string
-  /** milliseconds the caller waits, where it waits for a set time */
+  /** milliseconds the caller of an addressed call waits */
   timeout?: number
   /** aborts when the caller stops waiting */
   signal?: AbortSignal

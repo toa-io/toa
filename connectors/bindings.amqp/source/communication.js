@@ -94,8 +94,8 @@ export class Communication extends Connector {
     await this.#io.reply(queue, process)
   }
 
-  async request(queue, request, options) {
-    return this.#io.request(queue, request, options)
+  async request(queue, request) {
+    return this.#io.request(queue, request)
   }
 
   async call(exchange, key, request, options) {

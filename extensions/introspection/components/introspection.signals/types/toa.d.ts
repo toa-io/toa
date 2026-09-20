@@ -1,7 +1,7 @@
 // Written by `toa types`. Every run rewrites it.
 // What a manifest does not state belongs in a file of your own.
 
-import type { Options, Query } from '@toa.io/core/types'
+import type { Query } from '@toa.io/core/types'
 import type { Readable } from 'node:stream'
 
 export interface Entity {
@@ -48,14 +48,14 @@ export type ConfigurationOutput = {
 
 export interface Component {
   /** Tell every process of this deployment to do something. */
-  create: (request: { input: CreateInput, task?: boolean }, options?: Options) => Promise<unknown>
-  transit: (request: { input: TransitInput, query?: Query<Entity>, task?: boolean }, options?: Options) => Promise<Entity>
+  create: (request: { input: CreateInput, task?: boolean }) => Promise<unknown>
+  transit: (request: { input: TransitInput, query?: Query<Entity>, task?: boolean }) => Promise<Entity>
   /** What a signal of this deployment may ask for, in seconds. */
-  configuration: (request: { input?: null, task?: boolean }, options?: Options) => Promise<ConfigurationOutput>
-  assign: (request: { input?: null, query?: Query<Entity>, task?: boolean }, options?: Options) => Promise<Entity>
-  ensure: (request: { input?: null, query?: Query<Entity>, task?: boolean }, options?: Options) => Promise<Entity>
-  enumerate: (request: { input?: null, query?: Query<Entity>, task?: boolean }, options?: Options) => Promise<Entity[]>
-  observe: (request: { input?: null, query?: Query<Entity>, task?: boolean }, options?: Options) => Promise<Entity | null>
-  stream: (request: { input?: null, query?: Query<Entity>, task?: boolean }, options?: Options) => Promise<Readable>
-  terminate: (request: { input?: null, query?: Query<Entity>, task?: boolean }, options?: Options) => Promise<Entity>
+  configuration: (request: { input?: null, task?: boolean }) => Promise<ConfigurationOutput>
+  assign: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Entity>
+  ensure: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Entity>
+  enumerate: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Entity[]>
+  observe: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Entity | null>
+  stream: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Readable>
+  terminate: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Entity>
 }
