@@ -11,10 +11,6 @@
   process.
 - **Independent userspace.** An application's component depends on no `@toa.io/*` package, other
   than types imported with `import type`.
-- **Userspace agnostic.** A particular application may be development input — something to build
-  against, something to verify with — but nothing the runtime produces depends on one or refers to
-  one. The runtime is built for products it will never see and carries no knowledge of any of them.
-  This holds for documentation, comments, commit messages and pull requests as much as for code.
 - **Kubernetes is not a requirement.** The runtime ships opinionated deployment tooling — a chart,
   an image, a CLI — and reaching for it is the application's choice. Nothing in the runtime depends
   on an application having been published in any particular way, or assumes that it was: what a
@@ -28,6 +24,10 @@
   and what one copy made is no instance of the other copy's class. Nothing that runs a single
   copy notices, which is every unit test and every scenario; a released image does. See
   `Encoded.is` in `@toa.io/core`.
+- **Userspace agnostic.** A particular application may be development input — something to build
+  against, something to verify with — but nothing the runtime produces depends on one or refers to
+  one. The runtime is built for products it will never see and carries no knowledge of any of them.
+  This holds for documentation, comments, commit messages and pull requests as much as for code.
 
 ## Cycle of Change
 
