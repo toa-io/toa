@@ -181,17 +181,20 @@ with the version it runs and what that version provides:
 {
   "default.orders": {
     "version": "3f9a1c02",
-    "entity": { "properties": { "sum": { "type": "number" } }, "required": ["sum"] },
-    "operations": {
-      "transit": { "type": "transition", "scope": "object", "bindings": ["@toa.io/bindings.amqp"] }
-    },
+    "bindings": ["@toa.io/bindings.amqp"],
+    "entity": { "properties": { "sum": { "type": "number" } }, "required": ["sum"], "system": true },
+    "operations": { "transit": { "type": "transition", "scope": "object" } },
     "events": { "created": { "binding": "@toa.io/bindings.amqp" } }
   }
 }
 ```
 
-A process is started with one, and is held to what it states. See
-[contracts](/documentation/contracts.md).
+One component per line, so one is found with `grep` and read by eye. What the runtime gives every
+component — an entity's system properties, an operation's binding where it is the component's — is
+left out and put back by the process that reads it; see
+[contracts](/documentation/contracts.md#the-map).
+
+A process is started with one, and is held to what it states.
 
 Run it again when a component's sources change: a version is a hash of them, and a composition whose
 component the map states another version of is refused at boot.
