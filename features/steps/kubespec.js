@@ -1,4 +1,5 @@
 import assert from 'node:assert'
+import { gunzipSync } from 'node:zlib'
 import { load as parse, loadAll as split } from 'js-yaml'
 import { match } from '@toa.io/generic'
 
@@ -56,3 +57,30 @@ const extract = (spec, node) => {
 
   throw new Error(`Unknown node '${node}'`)
 }
+
+Then(
+  'the rendered component map states:',
+  /**
+   * What a process mounting the ConfigMap reads, read the way it reads it: rendered by Helm,
+   * decoded and inflated. Nothing else says that what the chart carries survives being a value.
+   *
+   * @param {string} yaml
+   * @this {toa.features.Context}
+   */
+  async function (yaml) {
+    const specs = split(this.stdout)
+    const spec = specs.find(
+      (spec) => spec.kind === 'ConfigMap' && spec.metadata.name === 'components'
+    )
+
+    assert.ok(spec !== undefined, 'No `components` ConfigMap is rendered')
+
+    const [name, value] = Object.entries(spec.binaryData)[0]
+
+    assert.equal(name, '.map.json.gz')
+
+    const contracts = JSON.parse(gunzipSync(Buffer.from(value, 'base64')).toString())
+
+    assert.equal(match(contracts, parse(yaml)), true)
+  }
+)

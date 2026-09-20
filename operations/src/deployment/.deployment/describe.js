@@ -1,3 +1,4 @@
+import { gzipSync } from 'node:zlib'
 import { map } from '@toa.io/norm'
 import { MAP_DIRECTORY, MAP_FILE } from '@toa.io/definitions'
 
@@ -170,8 +171,14 @@ function unit(context, dependency) {
  * The component map every workload mounts: which version of a component a process asks what that
  * component provides. Named rather than found, because a ConfigMap mounts as a directory.
  *
+ * Compressed here rather than in the chart, which renders no gzip, and carried as the bytes it is:
+ * a ConfigMap is capped at a megabyte, and this copy is read by a program. `gzipSync` writes a zero
+ * timestamp, so a deploy that changed nothing renders the same object.
+ *
  * @param {toa.norm.Context} context
  */
 function versions(context) {
-  return { directory: MAP_DIRECTORY, file: MAP_FILE, components: map(context) }
+  const gzip = gzipSync(Buffer.from(JSON.stringify(map(context)))).toString('base64')
+
+  return { directory: MAP_DIRECTORY, file: MAP_FILE, gzip }
 }

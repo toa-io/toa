@@ -400,13 +400,13 @@ runs is in that composition's image either way, and neither setting applies to i
 
 ## What a deploy renders
 
-| object                                | for                                           |
-| ------------------------------------- | --------------------------------------------- |
-| `Deployment composition-<name>`       | a composition                                 |
-| `Deployment extension-<group>-<name>` | an extension service no composition runs      |
-| `Service extension-<group>-<name>`    | an extension service that binds a port        |
-| `Ingress extension-<group>-<name>`    | an extension service that declares an ingress |
-| `ConfigMap components`                | the [component map](contracts.md#the-map)     |
+| object                                | for                                                |
+| ------------------------------------- | -------------------------------------------------- |
+| `Deployment composition-<name>`       | a composition                                      |
+| `Deployment extension-<group>-<name>` | an extension service no composition runs           |
+| `Service extension-<group>-<name>`    | an extension service that binds a port             |
+| `Ingress extension-<group>-<name>`    | an extension service that declares an ingress      |
+| `ConfigMap components`                | the [component map](contracts.md#the-map), gzipped |
 
 The pods carry `toa/composition: <name>`, `toa/component-<namespace>-<name>: "1"` for each member,
 and `toa/service-<group>-<name>: "1"` for each service they run — which is what that service's own

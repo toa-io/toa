@@ -1,4 +1,5 @@
 import { findUp } from '@toa.io/generic'
+import { MAP_LOCAL_FILE } from '@toa.io/definitions'
 
 /**
  * The file this process reads the version of a component from, as the command was given it or as
@@ -17,17 +18,16 @@ import { findUp } from '@toa.io/generic'
 export function map(argv) {
   if (typeof argv.map === 'string') return argv.map
 
-  const found = findUp(FILE)
+  const found = findUp(MAP_LOCAL_FILE)
 
   if (found !== undefined) return found
 
   if (findUp(CONTEXT) === undefined) return undefined
 
   throw new Error(
-    `Cannot find '${FILE}' from '${process.cwd()}'. ` +
+    `Cannot find '${MAP_LOCAL_FILE}' from '${process.cwd()}'. ` +
       'Run `toa map` to write one, or name one with `--map`.'
   )
 }
 
-const FILE = '.map.json'
 const CONTEXT = 'context.toa.yaml'

@@ -1,4 +1,4 @@
-import { Remote, exceptions } from '@toa.io/core'
+import { Remote, contract as coreContract, exceptions } from '@toa.io/core'
 import { remap } from '@toa.io/generic'
 
 import * as boot from './index.js'
@@ -11,12 +11,16 @@ import * as boot from './index.js'
  *   tenant announced — and absent it, what the map this process was given states.
  */
 export const remote = async (locator, source, options = {}) => {
-  const contract = options.contract ?? (await boot.map.contract(locator.id))
+  const stated = options.contract ?? (await boot.map.contract(locator.id))
 
-  if (contract === undefined)
+  if (stated === undefined)
     throw new exceptions.UnstatedException(
       `Cannot call '${locator.id}': the component map states nothing of it. Run \`toa map\`.`
     )
+
+  // a contract states once, or not at all, what the runtime gives every component; the calls
+  // are made from the whole of it
+  const contract = coreContract.restore(stated)
 
   // a call binds its consumers, which are loaded rather than required
   const calls =

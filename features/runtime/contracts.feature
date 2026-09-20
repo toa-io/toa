@@ -82,6 +82,22 @@ Feature: A contract is what a caller is given
       next
       """
 
+  Scenario: A query is held to the `id` the map leaves out
+    Given the component map states:
+      | dummies.one |
+    When I compose `dummies.one` component
+    And I call `dummies.one.transit` with:
+      """yaml
+      input:
+        foo: 1
+      query:
+        id: not-an-id
+      """
+    Then the following exception is thrown:
+      """yaml
+      code: 202
+      """
+
   Scenario: A call to a component nothing states is refused
     When I call `contracts.peer.added`
     Then the following exception is thrown:

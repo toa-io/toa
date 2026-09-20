@@ -20,7 +20,7 @@ Feature: Extension service images
           key0: secret.key
       """
     When I export images
-    Then the file ./images/extension-exposition-gateway.*/Dockerfile contains exact line 'CMD toa serve . --map /etc/toa/.map.json'
+    Then the file ./images/extension-exposition-gateway.*/Dockerfile contains exact line 'CMD toa serve . --map /etc/toa/.map.json.gz'
 
   Scenario: Taking the published image
     Given I have a context with:
@@ -75,4 +75,4 @@ Feature: Extension service images
       """
     When I export images
     Then there is no file ./images/extension-exposition-gateway.*/Dockerfile
-    And the file ./images/composition-edge.*/Dockerfile contains exact line 'CMD toa compose * --map /etc/toa/.map.json'
+    And the file ./images/composition-edge.*/Dockerfile contains exact line 'CMD toa compose * --map /etc/toa/.map.json.gz'
