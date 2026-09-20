@@ -1,4 +1,5 @@
 import assert from 'node:assert'
+import { gunzipSync } from 'node:zlib'
 import { join } from 'node:path'
 import { diff } from 'jest-diff'
 
@@ -62,6 +63,25 @@ Then(
    */
   async function (artifact, text) {
     await contains(this.cwd, artifact, text, false)
+  }
+)
+
+Then(
+  'the exported map states:',
+  /**
+   * What the ConfigMap carries, which is the map compressed: a value read by a program rather
+   * than by eye is read here the way that program reads it.
+   *
+   * @param {string} text
+   * @this {toa.features.Context}
+   */
+  async function (text) {
+    const path = join(this.cwd, 'deployment', 'values.yaml')
+    const values = parse(await readFile(path, 'utf8'))
+    const contracts = JSON.parse(gunzipSync(Buffer.from(values.map.gzip, 'base64')).toString())
+    const expected = parse(text)
+
+    assert.equal(match(contracts, expected), true, diff(expected, contracts))
   }
 )
 

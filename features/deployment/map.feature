@@ -6,7 +6,7 @@ Feature: Export the component map
   of the context on every deployment, and a pod that came up between two of them could not be
   told.
 
-  Scenario: The map is exported with the contract of every component
+  Scenario: The map is exported gzipped, with the contract of every component
     Given I have components:
       | dummies.one |
       | dummies.two |
@@ -16,17 +16,35 @@ Feature: Export the component map
       """yaml
       map:
         directory: /etc/toa
-        file: .map.json
-        components:
-          dummies.one:
-            operations:
-              transit:
-                type: transition
-                scope: object
-          dummies.two:
-            operations:
-              transit:
-                type: transition
+        file: .map.json.gz
+      """
+    And the exported map states:
+      """yaml
+      dummies.one:
+        operations:
+          transit:
+            type: transition
+            scope: object
+      dummies.two:
+        operations:
+          transit:
+            type: transition
+      """
+
+  @helm
+  Scenario: The ConfigMap carries it as bytes
+    Given I have a component `dummies.one`
+    And I have a context
+    When I export deployment
+    And I run `helm template deployment`
+    Then program should exit
+    And stdout should contain lines:
+      """
+      kind: ConfigMap
+      """
+    And stdout should contain lines:
+      """
+      binaryData:
       """
 
   @helm

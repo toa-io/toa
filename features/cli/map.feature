@@ -19,8 +19,8 @@ Feature: toa map
     And I have a context
     When I run `toa map`
     Then program should exit with code 0
-    And the file ./.map.json contains line starting with '  "dummies.one":'
-    And the file ./.map.json contains line starting with '  "dummies.two":'
+    And the file ./.map.json contains line starting with '"dummies.one":'
+    And the file ./.map.json contains line starting with '"dummies.two":'
 
   Scenario: A contract is what a call is made from
     Given I have a component `events.trailers`
@@ -29,6 +29,7 @@ Feature: toa map
     Then program should exit with code 0
     And the map states for `events.trailers`:
       """yaml
+      bindings: ["@toa.io/bindings.amqp"]
       entity:
         properties:
           foo:
@@ -37,7 +38,6 @@ Feature: toa map
         transit:
           type: transition
           scope: object
-          bindings: ["@toa.io/bindings.amqp"]
           input:
             type: object
             properties:
@@ -47,6 +47,76 @@ Feature: toa map
         incremented:
           binding: "@toa.io/bindings.amqp"
       """
+
+  Scenario: What the runtime gives every entity is not in it
+    Given I have a component `events.trailers`
+    And I have a context
+    When I run `toa map`
+    Then program should exit with code 0
+    And the map states for `events.trailers`:
+      """yaml
+      entity:
+        system: true
+      """
+    And the map states no `entity.properties.id` of `events.trailers`
+    And the map states no `entity.properties.VERSION` of `events.trailers`
+    And the map states no `entity.properties.CREATED` of `events.trailers`
+    And the map states no `entity.properties.UPDATED` of `events.trailers`
+    And the map states no `entity.properties.DELETED` of `events.trailers`
+    And the map states no `entity.properties.REGION` of `events.trailers`
+    And the map states no `entity.required` of `events.trailers`
+
+  Scenario: A component that declares its entity itself keeps it
+    Given I have a component `proto.plain`
+    And I have a context
+    When I run `toa map`
+    Then program should exit with code 0
+    And the map states for `proto.plain`:
+      """yaml
+      entity:
+        properties:
+          VERSION:
+            type: integer
+            minimum: 0
+          CREATED:
+            type: integer
+        required: [id]
+      """
+    And the map states no `entity.system` of `proto.plain`
+
+  Scenario: A component that names `id` itself keeps it
+    Given I have a component `custom.id`
+    And I have a context
+    When I run `toa map`
+    Then program should exit with code 0
+    And the map states for `custom.id`:
+      """yaml
+      entity:
+        properties:
+          id:
+            type: number
+        system: true
+      """
+    And the map states no `entity.properties.VERSION` of `custom.id`
+
+  Scenario: An operation states its bindings only where they are its own
+    Given I have a component `events.trailers`
+    And I have a context
+    When I run `toa map`
+    Then program should exit with code 0
+    And the map states for `events.trailers`:
+      """yaml
+      bindings: ["@toa.io/bindings.amqp"]
+      """
+    And the map states no `operations.transit.bindings` of `events.trailers`
+
+  Scenario: What an operation does not declare is not in it
+    Given I have a component `math.calculations`
+    And I have a context
+    When I run `toa map`
+    Then program should exit with code 0
+    And the map states no `operations.sum.output` of `math.calculations`
+    And the map states no `operations.sum.query` of `math.calculations`
 
   Scenario: How a component serves a call is its own
     Given I have a component `events.trailers`
@@ -76,7 +146,7 @@ Feature: toa map
       """
     When I run `toa map`
     Then program should exit with code 0
-    And the file ./.map.json contains line starting with '  "dummies.two":'
+    And the file ./.map.json contains line starting with '"dummies.two":'
 
   Scenario: A composition is refused where a Context has no map
     Given I have a component `dummies.one`
