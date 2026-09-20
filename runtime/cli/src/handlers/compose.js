@@ -2,7 +2,7 @@ import { console as output } from 'openspan'
 import { environment, pick } from '@toa.io/generic'
 import { Connector } from '@toa.io/core'
 import * as boot from '@toa.io/boot'
-import { MAP, version } from '@toa.io/definitions'
+import { MAP_LOCAL, version } from '@toa.io/definitions'
 
 import { map } from '../util/map.js'
 import { graceful } from './lib/graceful.js'
@@ -81,9 +81,10 @@ async function dock(argv) {
   const args = pick(argv, ['kill', 'service'])
   const file = map(argv)
 
-  // the container is given its own command, so the image's — which names the map — is not used
+  // the container is given its own command, so the image's — which names the map — is not used.
+  // What is mounted is what this checkout wrote, which is plain, so it is named as one.
   const command =
-    docker.command('toa compose *', args) + (file === undefined ? '' : ` --map ${MAP}`)
+    docker.command('toa compose *', args) + (file === undefined ? '' : ` --map ${MAP_LOCAL}`)
 
   await docker.run(repository, command, argv.env, file)
 }

@@ -46,6 +46,13 @@ Feature: Export the component map
       """
       binaryData:
       """
+    And the rendered component map states:
+      """yaml
+      dummies.one:
+        operations:
+          transit:
+            type: transition
+      """
 
   @helm
   Scenario: Every workload mounts it

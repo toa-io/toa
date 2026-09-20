@@ -55,7 +55,13 @@ export function pack(entity: Entity): Entity {
   }
 }
 
-/** The entity as the component declared it, which is what anything reading one is given. */
+/**
+ * The entity as the component declared it, which is what anything reading one is given.
+ *
+ * What is put back is a copy of it. An entity's schemas were its own before a contract left any
+ * of them out, and whoever holds one edits it — a route takes a property out of what it
+ * describes — so two components sharing one object is not a thing to start doing here.
+ */
 export function unpack(entity: Entity): Entity {
   if (entity.system !== true) return entity
 
@@ -63,8 +69,8 @@ export function unpack(entity: Entity): Entity {
     ...entity,
     properties: {
       ...entity.properties,
-      ...(entity.properties.id === undefined ? { id: ID } : {}),
-      ...SYSTEM
+      ...(entity.properties.id === undefined ? { id: structuredClone(ID) } : {}),
+      ...structuredClone(SYSTEM)
     },
     required: [...(entity.required ?? []), ...REQUIRED]
   }

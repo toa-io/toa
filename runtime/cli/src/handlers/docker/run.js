@@ -5,7 +5,7 @@ import { resolve } from 'node:path'
 
 import { promex } from '@toa.io/generic'
 import { findUp } from '@toa.io/generic'
-import { MAP } from '@toa.io/definitions'
+import { MAP_LOCAL } from '@toa.io/definitions'
 
 const execute = promisify(exec)
 
@@ -21,7 +21,8 @@ export async function run(repository, command, envFile, mapFile) {
   if (envFile === undefined) envFile = findUp('.env')
 
   const envArgs = envFile === undefined ? [] : ['--env-file', envFile]
-  const mapArgs = mapFile === undefined ? [] : ['-v', `${resolve(mapFile)}:${MAP}:ro`]
+  const mapArgs =
+    mapFile === undefined ? [] : ['-v', `${resolve(mapFile)}:${MAP_LOCAL}:ro`]
 
   const found =
     /** @type {{ stdout: string }} */
