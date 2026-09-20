@@ -1,4 +1,4 @@
-import * as amqp from 'amqplib'
+import * as amqp from '@toa.io/amqplib'
 
 import type { Connector, Exception } from '@toa.io/core'
 import type { Reply } from '@toa.io/core/types'
