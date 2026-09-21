@@ -3,6 +3,11 @@
 # version once it passes.
 version: 2
 updates:
+  # `codeql-action/init` and `codeql-action/analyze` are one release in one file, and ungrouped
+  # they arrive as two pull requests. Whichever merges first leaves the other holding an older
+  # copy of that file, and merging that one writes `.github/workflows` — which the token the
+  # `Test` workflow runs under may not do. GitHub reports such a pull request as blocked, so it
+  # sits open until Dependabot rebases it. One pull request per run leaves no older copy behind.
   - package-ecosystem: github-actions
     directories:
       - /
@@ -14,6 +19,11 @@ updates:
     target-branch: dev
     commit-message:
       prefix: ci
+    groups:
+      minor-and-patch:
+        update-types:
+          - minor
+          - patch
 
   # The components the extensions ship are not workspaces, yet they declare the packages they import
   # at the versions the workspace does (`definitions/source/digest/packages.test.ts`). A package one
