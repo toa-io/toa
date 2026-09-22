@@ -56,10 +56,10 @@ exposition:
   mcp:
     name: Teapots
     hosts:
-      nex: mcp.nex.toa.io
+      nex: mcp.toa.io
 ```
 
-A model is then pointed at `https://mcp.nex.toa.io`, discovers the authorization server from the
+A model is then pointed at `https://mcp.toa.io`, discovers the authorization server from the
 document at that origin, and comes back with a token bound to it.
 
 ## The changes, by area

@@ -16,7 +16,7 @@ Feature: MCP on a host of its own
         name: Teapots
         anonymous: true
         hosts:
-          nex: mcp.nex.toa.io
+          nex: mcp.toa.io
       /:
         io:output: true
         /pots:
@@ -32,7 +32,7 @@ Feature: MCP on a host of its own
     When the following request is received:
       """
       POST / HTTP/1.1
-      host: mcp.nex.toa.io
+      host: mcp.toa.io
       accept: application/yaml
       content-type: application/json
 
@@ -53,7 +53,7 @@ Feature: MCP on a host of its own
     When the following request is received:
       """
       POST / HTTP/1.1
-      host: mcp.nex.toa.io
+      host: mcp.toa.io
       accept: application/yaml
       content-type: application/json
 
@@ -90,7 +90,7 @@ Feature: MCP on a host of its own
     When the following request is received:
       """
       GET /pots/ HTTP/1.1
-      host: mcp.nex.toa.io
+      host: mcp.toa.io
       accept: application/yaml
       """
     Then the following reply is sent:
@@ -100,7 +100,7 @@ Feature: MCP on a host of its own
     When the following request is received:
       """
       POST /.mcp HTTP/1.1
-      host: mcp.nex.toa.io
+      host: mcp.toa.io
       accept: application/yaml
       content-type: application/json
 
@@ -113,7 +113,7 @@ Feature: MCP on a host of its own
     When the following request is received:
       """
       GET /.discovery/ HTTP/1.1
-      host: mcp.nex.toa.io
+      host: mcp.toa.io
       """
     Then the following reply is sent:
       """
@@ -124,7 +124,7 @@ Feature: MCP on a host of its own
     When the following request is received:
       """
       GET / HTTP/1.1
-      host: mcp.nex.toa.io
+      host: mcp.toa.io
       accept: application/yaml
       """
     Then the following reply is sent:
@@ -164,14 +164,14 @@ Feature: MCP on a host of its own
     When the following request is received:
       """
       GET /.well-known/oauth-protected-resource HTTP/1.1
-      host: mcp.nex.toa.io
+      host: mcp.toa.io
       accept: application/yaml
       """
     Then the following reply is sent:
       """
       200 OK
 
-      resource: https://mcp.nex.toa.io
+      resource: https://mcp.toa.io
       authorization_servers:
         - https://nex.toa.io
       bearer_methods_supported:
@@ -182,7 +182,7 @@ Feature: MCP on a host of its own
     When the following request is received:
       """
       GET /.well-known/oauth-authorization-server HTTP/1.1
-      host: mcp.nex.toa.io
+      host: mcp.toa.io
       accept: application/yaml
       """
     Then the following reply is sent:
@@ -192,7 +192,7 @@ Feature: MCP on a host of its own
     When the following request is received:
       """
       GET /.well-known/openid-configuration HTTP/1.1
-      host: mcp.nex.toa.io
+      host: mcp.toa.io
       accept: application/yaml
       """
     Then the following reply is sent:
@@ -211,12 +211,12 @@ Feature: MCP on a host of its own
       mcp:
         name: Teapots
         hosts:
-          nex: mcp.nex.toa.io
+          nex: mcp.toa.io
       """
     When the following request is received:
       """
       POST / HTTP/1.1
-      host: mcp.nex.toa.io
+      host: mcp.toa.io
       accept: text/plain
       content-type: application/json
 
@@ -225,7 +225,7 @@ Feature: MCP on a host of its own
     Then the following reply is sent:
       """
       401 Unauthorized
-      www-authenticate: Bearer resource_metadata="https://mcp.nex.toa.io/.well-known/oauth-protected-resource", scope="app:pots"
+      www-authenticate: Bearer resource_metadata="https://mcp.toa.io/.well-known/oauth-protected-resource", scope="app:pots"
       """
 
   Scenario: An identity is one identity on the MCP host
@@ -236,7 +236,7 @@ Feature: MCP on a host of its own
       mcp:
         name: Teapots
         hosts:
-          nex: mcp.nex.toa.io
+          nex: mcp.toa.io
       /:
         /pots:
           anyone: true
@@ -275,7 +275,7 @@ Feature: MCP on a host of its own
     When the following request is received:
       """
       POST / HTTP/1.1
-      host: mcp.nex.toa.io
+      host: mcp.toa.io
       accept: application/yaml
       content-type: application/json
       authorization: Token ${{ nex.token }}
@@ -306,7 +306,7 @@ Feature: MCP on a host of its own
       mcp:
         name: Teapots
         hosts:
-          nex: mcp.nex.toa.io
+          nex: mcp.toa.io
       /:
         io:output: true
         /pots:
@@ -347,7 +347,7 @@ Feature: MCP on a host of its own
       challenge: E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM
       method: S256
       resource:
-        - https://mcp.nex.toa.io
+        - https://mcp.toa.io
       """
     Then the following reply is sent:
       """
@@ -373,7 +373,7 @@ Feature: MCP on a host of its own
     When the following request is received:
       """
       POST / HTTP/1.1
-      host: mcp.nex.toa.io
+      host: mcp.toa.io
       authorization: Bearer ${{ access_token }}
       accept: application/yaml
       content-type: application/json

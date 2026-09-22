@@ -39,7 +39,7 @@ exposition:
   mcp:
     name: Teapots
     hosts:
-      nex: mcp.nex.toa.io
+      nex: mcp.toa.io
 ```
 
 `POST /` of that host is the endpoint, and answers what `POST /.mcp` answers to the same caller;
