@@ -46,7 +46,7 @@ export function deployment(_: unknown, annotation?: Annotation): Dependency {
 
   const { debug, authorities } = annotation
 
-  service.ingress!.hosts = Object.values(authorities)
+  service.ingress!.hosts = Object.values(authorities).concat(mcp(annotation))
 
   // leaving these undefined lets the context's own ingress section supply them
   if (annotation.class !== undefined) service.ingress!.class = annotation.class
@@ -89,6 +89,22 @@ export function deployment(_: unknown, annotation?: Annotation): Dependency {
   })
 
   return { services: [service] }
+}
+
+/**
+ * The hosts MCP is served at the root of. Each is declared under the authority it belongs
+ * to, and one under a key naming no authority would be a host nothing resolves.
+ */
+function mcp(annotation: Annotation): string[] {
+  const hosts = annotation.mcp?.hosts
+
+  if (hosts === undefined) return []
+
+  for (const authority of Object.keys(hosts))
+    if (!(authority in annotation.authorities))
+      throw new Error(`MCP host names an undeclared authority '${authority}'`)
+
+  return Object.values(hosts)
 }
 
 type Properties = Pick<

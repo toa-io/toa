@@ -89,6 +89,13 @@ export class Gateway extends Connector {
    * the path names.
    */
   private async endpoint(context: http.Context): Promise<http.OutgoingMessage> {
+    // a host given to a model is an address with one meaning: the endpoint, and nothing else
+    if (this.mcp !== null && this.mcp.hosted(context.url.host)) {
+      if (context.url.pathname !== '/') throw new http.NotFound('Route not found')
+
+      return await this.mcp.process(context, this.routing)
+    }
+
     if (this.dispatcher !== null && context.url.pathname === RPC)
       return await this.dispatcher.dispatch(context, this.routing)
 

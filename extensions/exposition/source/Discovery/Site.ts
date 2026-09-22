@@ -30,6 +30,9 @@ export class Site implements Interceptor {
   private readonly override: string | undefined
   private root: string
 
+  /** Hosts MCP is served at the root of, where this page is not served. */
+  private roots = new Set<string>()
+
   public constructor(root?: string) {
     this.override = root
     this.root = root ?? site()
@@ -40,8 +43,11 @@ export class Site implements Interceptor {
    * when the module loads and before anything has said where the page is. Said once, too,
    * because a page that is not built is otherwise a `503` per request and nothing else.
    */
-  public mount(): void {
+  public mount(options: http.Options): void {
     this.root = this.override ?? site()
+    this.roots = new Set(
+      Object.values(options.mcp?.hosts ?? {}).map((host) => host.toLowerCase())
+    )
 
     if (!isFile(path.join(this.root, 'index.html')))
       console.warn('Discovery UI is not built', { root: this.root })
@@ -51,6 +57,9 @@ export class Site implements Interceptor {
     const { pathname } = input.url
 
     if (pathname !== DISCOVERY && !pathname.startsWith(DISCOVERY + '/')) return null
+
+    // the gateway answers for such a host, and what it answers there is `404`
+    if (this.roots.has(input.url.host)) return null
 
     // the prefix itself, as opposed to something under it
     const bare = pathname === DISCOVERY || pathname === DISCOVERY + '/'

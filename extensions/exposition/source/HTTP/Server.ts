@@ -60,9 +60,7 @@ export class Server extends Connector {
     super()
 
     this.properties = properties
-    this.authorities = new Map(
-      Object.entries(properties.authorities).map(([key, value]) => [value, key])
-    )
+    this.authorities = resolution(properties)
     this.server = instantiate(properties.protocol)
     this.probe = new Probe(properties.probe)
 
@@ -478,6 +476,22 @@ function trace(headers: IncomingMessage['headers']): SpanContext | null {
 }
 
 /**
+ * Host to authority identifier: the host an authority is declared under, and the host MCP
+ * is served at the root of, which is a host of the authority its key names.
+ */
+function resolution(properties: Properties): Map<string, string> {
+  const map = new Map<string, string>()
+
+  for (const [authority, host] of Object.entries(properties.authorities))
+    map.set(host.toLowerCase(), authority)
+
+  for (const [authority, host] of Object.entries(properties.mcp?.hosts ?? {}))
+    map.set(host.toLowerCase(), authority)
+
+  return map
+}
+
+/**
  * A host name with an optional port, or a bracketed IPv6 literal. The URL parser admits
  * `,` `;` `=` `(` `)` and quotes in a host, and the authority is written into criteria.
  */
@@ -531,7 +545,7 @@ interface Properties {
   /** JSON-RPC at `/.rpc`; none is served without it. */
   rpc?: RPC
 
-  /** MCP at `/.mcp`; none is served without it. */
+  /** MCP at `/.mcp`, and on a host of its own where one is named; none without it. */
   mcp?: MCP
 }
 

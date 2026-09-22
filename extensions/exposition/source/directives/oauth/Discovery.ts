@@ -1,4 +1,4 @@
-import { documents, type Documents } from './documents.ts'
+import { alias, documents, type Documents } from './documents.ts'
 import type * as http from '../../HTTP/index.ts'
 import type { Input, Output } from '../../io.ts'
 import type { Interceptor } from '../../Interception.ts'
@@ -20,8 +20,11 @@ export class Discovery implements Interceptor {
    */
   private readonly authorities = new Map<string, Documents>()
 
+  /** Hosts that are one resource of their own, by the host itself: an MCP host. */
+  private readonly aliases = new Map<string, Documents>()
+
   public mount(options: http.Options): void {
-    this.authorities.clear()
+    this.reset()
 
     if (options.oauth === undefined) return
 
@@ -34,16 +37,36 @@ export class Discovery implements Interceptor {
      * The host is the configured one, not the request's, which is the client's to write: a
      * forged one would have these documents name someone else's token endpoint.
      */
-    for (const [authority, host] of Object.entries(options.authorities))
-      this.authorities.set(authority, documents(`https://${host}`, options.oauth))
+    const issuers = new Map<string, string>()
+
+    for (const [authority, host] of Object.entries(options.authorities)) {
+      const issuer = `https://${host}`
+
+      issuers.set(authority, issuer)
+      this.authorities.set(authority, documents(issuer, options.oauth))
+    }
+
+    for (const [authority, host] of Object.entries(options.mcp?.hosts ?? {})) {
+      const issuer = issuers.get(authority)
+
+      if (issuer === undefined) continue
+
+      this.aliases.set(
+        host.toLowerCase(),
+        alias(`https://${host.toLowerCase()}`, issuer, options.oauth)
+      )
+    }
   }
 
   public reset(): void {
     this.authorities.clear()
+    this.aliases.clear()
   }
 
   public intercept(input: Input): Output {
-    const known = this.authorities.get(input.authority)
+    // a host of its own is a resource of its own, whatever authority it belongs to
+    const known =
+      this.aliases.get(input.url.host) ?? this.authorities.get(input.authority)
 
     if (known === undefined) return null
 
