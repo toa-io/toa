@@ -122,6 +122,15 @@ $ node --import tsx --test 'runtime/core/test/**/*.test.js'
 A suite that replaces a module needs `--experimental-test-module-mocks`, which `test:unit`
 passes.
 
+Each UI under `extensions/*/ui` is an npm project of its own, with its own lockfile, and its
+unit tests run on vitest. The root install does not reach one, so a suite runs against what
+`npm ci` inside that UI put there:
+
+```shell
+$ npm run test:ui                   # every UI's suite
+$ npm test --prefix extensions/introspection/ui
+```
+
 ## Running Features
 
 Cucumber scenarios boot a composition in the test process, so the runtime needs the same
