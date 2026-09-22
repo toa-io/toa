@@ -110,7 +110,7 @@ function held(schema: Schema): string[] {
 }
 
 /** What the runtime writes on every record, whatever the component declares. */
-const SYSTEM = new Set(['VERSION', 'CREATED', 'UPDATED', 'DELETED'])
+const SYSTEM = new Set(['VERSION', 'CREATED', 'UPDATED', 'DELETED', 'REGION'])
 
 /** How the type is written: `string`, `number | null`, `string[]`, `(string | number)[]`. */
 function name(schema: Schema | null): string {
