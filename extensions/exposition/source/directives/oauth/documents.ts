@@ -12,7 +12,7 @@ export interface Documents {
 export function documents(issuer: string, oauth: OAuth): Documents {
   const server = authorizationServer(issuer, oauth)
   const resources = protectedResources(issuer, oauth)
-  const scope = oauth.scopes === undefined ? '' : `, scope="${oauth.scopes.join(' ')}"`
+  const scope = scoped(oauth)
 
   function read(pathname: string): object | undefined {
     if (pathname === AUTHORIZATION_SERVER || pathname === OPENID_CONFIGURATION)
@@ -29,6 +29,27 @@ export function documents(issuer: string, oauth: OAuth): Documents {
   }
 
   return { read, challenge }
+}
+
+/**
+ * A host that is one resource and nothing else: MCP served at its root. The resource is the
+ * origin, and the authorization server is the authority's issuer — which is not this origin,
+ * so no authorization server metadata is served here: a client that compares an issuer to
+ * where it read it is right to refuse a document naming someone else.
+ */
+export function alias(origin: string, issuer: string, oauth: OAuth): Documents {
+  const document = resource(origin, issuer, oauth)
+  const metadata = `${origin}${PROTECTED_RESOURCE}`
+  const scope = scoped(oauth)
+
+  return {
+    read: (pathname: string) => (pathname === PROTECTED_RESOURCE ? document : undefined),
+    challenge: () => `Bearer resource_metadata="${metadata}"${scope}`
+  }
+}
+
+function scoped(oauth: OAuth): string {
+  return oauth.scopes === undefined ? '' : `, scope="${oauth.scopes.join(' ')}"`
 }
 
 /**
@@ -66,16 +87,17 @@ function protectedResources(issuer: string, oauth: OAuth): Map<string, object> {
   const map = new Map<string, object>()
 
   for (const path of oauth.resources ?? [])
-    map.set(canonical(path), resource(issuer, canonical(path), oauth))
+    map.set(canonical(path), resource(issuer + canonical(path), issuer, oauth))
 
-  map.set('', resource(issuer, '', oauth))
+  map.set('', resource(issuer, issuer, oauth))
 
   return map
 }
 
-function resource(issuer: string, path: string, oauth: OAuth): object {
+/** The URI the resource is identified by, and the issuer that authorizes it. */
+function resource(uri: string, issuer: string, oauth: OAuth): object {
   const metadata: Record<string, unknown> = {
-    resource: issuer + path,
+    resource: uri,
     authorization_servers: [issuer],
     bearer_methods_supported: ['header']
   }

@@ -42,11 +42,22 @@ export class Server {
   private readonly discovery: Discovery
   private readonly origins: Set<string>
 
+  /** The hosts this is served at the root of, lowercased as a request's host is. */
+  private readonly roots: Set<string>
+
   public constructor(options: MCP, tree: Tree) {
     this.options = options
     this.tree = tree
     this.discovery = discovery(options)
     this.origins = new Set(options.origins ?? [])
+    this.roots = new Set(
+      Object.values(options.hosts ?? {}).map((host) => host.toLowerCase())
+    )
+  }
+
+  /** Whether the host is one this endpoint is the root of. */
+  public hosted(host: string): boolean {
+    return this.roots.has(host)
   }
 
   public async process(
