@@ -55,6 +55,16 @@ jobs:
         if: steps.changes.outputs.changed == 'true'
         run: npm run test:unit
 
+      # each UI is an npm project of its own, with its own lockfile, so the root install
+      # reaches none of them and the suites they carry run nowhere until they are installed
+      - name: Run the UI unit tests
+        if: steps.changes.outputs.changed == 'true'
+        run: |
+          for ui in extensions/*/ui; do
+            npm ci --prefix "$ui"
+            npm test --prefix "$ui"
+          done
+
   # What Dependabot opens and pushes is merged once the tests above pass, unless it takes a major
   # version: the metadata Dependabot writes into the commit names each update's type. A commit
   # anyone else pushes to its branch makes the pull request theirs to merge.
