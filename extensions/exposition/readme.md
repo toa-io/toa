@@ -142,7 +142,7 @@ exposition:
 | `oauth`       | Authorization server exposed to OAuth clients. See [OAuth](documentation/oauth.md).                                           |
 | `protocol`    | `h1` or `h2c`. See [Protocol](documentation/protocol.md).                                                                     |
 | `rpc`         | JSON-RPC at `/.rpc`; none is served without it. See [JSON-RPC](documentation/rpc.md).                                         |
-| `mcp`         | MCP at `/.mcp`; none is served without it. See [MCP](documentation/mcp.md).                                                   |
+| `mcp`         | MCP at `/.mcp`, and on a host of its own where one is named; none is served without it. See [MCP](documentation/mcp.md).      |
 
 ### Observability
 

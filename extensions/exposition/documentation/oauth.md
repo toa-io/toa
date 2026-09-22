@@ -68,6 +68,18 @@ bearer_methods_supported: [header]
 `/.well-known/openid-configuration` answers with the authorization server metadata, for a client
 that reads only that.
 
+The host [MCP](mcp.md#a-host-of-its-own) is served on has a protected resource document of its own,
+at `/.well-known/oauth-protected-resource` of that host, naming the host's origin as the resource
+and the authority's issuer as the authorization server:
+
+```yaml
+resource: https://mcp.example.com
+authorization_servers: [https://api.example.com]
+bearer_methods_supported: [header]
+```
+
+Authorization server metadata is not served there: it is read from the issuer this document names.
+
 A reply of `401` carries the challenge that names the document:
 
 ```http
@@ -175,6 +187,9 @@ restricts paths as [permissions](components.md#custom-tokens) on the call itself
 OAuth client's entry.
 
 A request to the wrong entry is `401`, with the challenge that names the resource it failed at.
+
+An entry is a host and a path, so a token bound to `https://mcp.example.com` is admitted there and
+refused at `https://api.example.com`.
 
 ## References
 
