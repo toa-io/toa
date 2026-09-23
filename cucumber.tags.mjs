@@ -10,10 +10,19 @@ const REQUIRED =
 
 /*
  * And what runs nightly, where a failure costs a report rather than a merge. `@manual` is
- * not in it either: those scenarios need a secret someone put in place by hand, and where it
- * is missing they skip rather than fail, so nothing is gained by asking for them.
+ * not in it either: what decides those is not the code, and what they need is not there.
  */
 const NIGHTLY = 'not @skip and not @manual'
 
-/** Which of the two a run selects. Every suite reads this, so they cannot disagree. */
-export const TAGS = process.env.TOA_FEATURES === 'nightly' ? NIGHTLY : REQUIRED
+/*
+ * And what is run by hand, where what decides the outcome is something a person put in place:
+ * an account that holds a secret, a cluster `kubectl` points at. `--tags` on the command line
+ * is conjoined with the selected set rather than replacing it, so a set that excludes
+ * `@manual` cannot be talked into running one — asking for these is asking for this set.
+ */
+const MANUAL = '@manual and not @skip'
+
+const SETS = { nightly: NIGHTLY, manual: MANUAL }
+
+/** Which set a run selects. Every suite reads this, so they cannot disagree. */
+export const TAGS = SETS[process.env.TOA_FEATURES ?? ''] ?? REQUIRED

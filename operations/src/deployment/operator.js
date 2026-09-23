@@ -40,6 +40,9 @@ export class Operator {
   async install(options = {}) {
     options = Object.assign({}, OPTIONS, options)
 
+    // nothing is built, pushed or applied where the cluster cannot run what this deploys
+    await this.#deployment.verify(options)
+
     await Promise.all([this.export(), this.push()])
     await this.#registry.alias(this.#environment)
     await this.#deployment.install(options)

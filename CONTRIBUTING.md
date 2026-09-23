@@ -210,9 +210,17 @@ $ npm run compose                   # recreates the stack, volumes and all
 The deployment scenarios render a chart, so `helm` has to be on the `PATH`; without it the
 command produces nothing and the scenario reads an empty `stdout`.
 
-The Cloudinary scenarios upload to a real account, which no compose file can stand up. They are
-tagged `@manual` and run in neither group; to run them, name an account in
-`features/steps/.env` — see `.env.example` beside it — and select them by tag.
+A `@manual` scenario needs something no compose file can stand up, and runs in neither group. A
+`--tags` on the command line is conjoined with the group's expression rather than replacing it, so
+one is selected by asking for the set it is in:
+
+```shell
+$ TOA_FEATURES=manual npx cucumber-js features/deployment/secrets.feature
+```
+
+The Cloudinary scenarios upload to a real account: name one in `features/steps/.env` — see
+`.env.example` beside it. The deployment secrets scenarios run `toa deploy` against the cluster
+`kubectl` points at, and write secrets into a namespace of their own.
 
 ### Transpiling
 
@@ -296,11 +304,12 @@ A scenario it leaves out says why by its tag: `@network` reaches a host on the i
 `@containers` pulls an image and boots a broker or a database of its own, `@timing` waits out a
 lifetime, a budget or an interval, `@helm` renders a chart with the binary of that name, `@cli`
 runs the `toa` program as a program, `@deployment` writes what a deployment carries, `@manual`
-needs a secret and skips where it is absent, and `@skip` is held back and runs nowhere. Write one
-of these on a scenario only where it is true of it.
+needs what a person put in place — an account holding a secret, a cluster — and `@skip` is held
+back and runs nowhere. Write one of these on a scenario only where it is true of it.
 
-`npm run features:nightly` adds all of them back but `@manual` and `@skip`. Both sets are stated
-once, in `cucumber.tags.mjs`; `TOA_FEATURES=nightly` selects between them.
+`npm run features:nightly` adds all of them back but `@manual` and `@skip`, and
+`TOA_FEATURES=manual` selects the `@manual` ones alone. The sets are stated once, in
+`cucumber.tags.mjs`; `TOA_FEATURES` selects between them.
 
 ## Performance
 
