@@ -38,6 +38,12 @@ export interface Definition extends Explanation {
 export interface Entity {
   properties: Record<string, JSONSchema>
   required?: string[]
+
+  /**
+   * Whether its system properties are the ones the runtime gives every entity, in which case a
+   * contract leaves them out and whoever reads one puts them back.
+   */
+  system?: boolean
 }
 
 export class Request extends Contract {

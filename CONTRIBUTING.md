@@ -1,6 +1,35 @@
 # Contributing
 
-## Making a Change
+## Constraints
+
+- **Secure by default.** What the runtime fetches, accepts or trusts is enumerated in
+  configuration, and an empty enumeration admits nothing. A capability that widens what is
+  reachable is off until an application turns it on.
+- **Zero per-request I/O.** The gateway does no I/O to serve a request, other than the
+  interaction that produces the response the request is for: an operation call, or the stream a
+  request opens. What a request costs besides is decided without asking anything outside the
+  process.
+- **Independent userspace.** An application's component depends on no `@toa.io/*` package, other
+  than types imported with `import type`.
+- **Kubernetes is not a requirement.** The runtime ships opinionated deployment tooling — a chart,
+  an image, a CLI — and reaching for it is the application's choice. Nothing in the runtime depends
+  on an application having been published in any particular way, or assumes that it was: what a
+  process needs is Node.js and the infrastructure it connects to. A change that would make anything
+  else true belongs in the tooling rather than in the runtime.
+- **Coded exceptions.** Startup code — a boot, a manifest being read, a deploy — may assert.
+  Runtime code throws a coded exception from `@toa.io/core`.
+- **Symbols, not classes, across packages.** A value one package makes and another recognises is
+  told by a key made with `Symbol.for`, not by `instanceof`. A process may load a package more
+  than once — an image installs `@toa.io/core` beside the runtime and again beside an extension —
+  and what one copy made is no instance of the other copy's class. Nothing that runs a single
+  copy notices, which is every unit test and every scenario; a released image does. See
+  `Encoded.is` in `@toa.io/core`.
+- **Userspace agnostic.** A particular application may be development input — something to build
+  against, something to verify with — but nothing the runtime produces depends on one or refers to
+  one. The runtime is built for products it will never see and carries no knowledge of any of them.
+  This holds for documentation, comments, commit messages and pull requests as much as for code.
+
+## Cycle of Change
 
 The goal of the process is to help teams produce _simple[^1] non-broken[^2] software_ in a fast and
 predictable way.
@@ -92,6 +121,15 @@ $ node --import tsx --test 'runtime/core/test/**/*.test.js'
 
 A suite that replaces a module needs `--experimental-test-module-mocks`, which `test:unit`
 passes.
+
+Each UI under `extensions/*/ui` is an npm project of its own, with its own lockfile, and its
+unit tests run on vitest. The root install does not reach one, so a suite runs against what
+`npm ci` inside that UI put there:
+
+```shell
+$ npm run test:ui                   # every UI's suite
+$ npm test --prefix extensions/introspection/ui
+```
 
 ## Running Features
 
@@ -344,32 +382,3 @@ tree has it.
 not anything in it changed: its version is what a context that states no `runtime.version` is
 deployed on, and its digest is what the extensions ship at that version. The runtime depends on it,
 so the two carry one number.
-
-## Constraints
-
-- **Secure by default.** What the runtime fetches, accepts or trusts is enumerated in
-  configuration, and an empty enumeration admits nothing. A capability that widens what is
-  reachable is off until an application turns it on.
-- **Zero per-request I/O.** The gateway does no I/O to serve a request, other than the
-  interaction that produces the response the request is for: an operation call, or the stream a
-  request opens. What a request costs besides is decided without asking anything outside the
-  process.
-- **Independent userspace.** An application's component depends on no `@toa.io/*` package, other
-  than types imported with `import type`.
-- **Userspace agnostic.** A particular application may be development input — something to build
-  against, something to verify with — but nothing the runtime produces depends on one or refers to
-  one. The runtime is built for products it will never see and carries no knowledge of any of them.
-  This holds for documentation, comments, commit messages and pull requests as much as for code.
-- **Kubernetes is not a requirement.** The runtime ships opinionated deployment tooling — a chart,
-  an image, a CLI — and reaching for it is the application's choice. Nothing in the runtime depends
-  on an application having been published in any particular way, or assumes that it was: what a
-  process needs is Node.js and the infrastructure it connects to. A change that would make anything
-  else true belongs in the tooling rather than in the runtime.
-- **Coded exceptions.** Startup code — a boot, a manifest being read, a deploy — may assert.
-  Runtime code throws a coded exception from `@toa.io/core`.
-- **Symbols, not classes, across packages.** A value one package makes and another recognises is
-  told by a key made with `Symbol.for`, not by `instanceof`. A process may load a package more
-  than once — an image installs `@toa.io/core` beside the runtime and again beside an extension —
-  and what one copy made is no instance of the other copy's class. Nothing that runs a single
-  copy notices, which is every unit test and every scenario; a released image does. See
-  `Encoded.is` in `@toa.io/core`.

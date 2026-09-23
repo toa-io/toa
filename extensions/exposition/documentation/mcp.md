@@ -20,10 +20,36 @@ exposition:
 listed is <code>403</code>, and an empty list admits none; a request carrying none is unaffected.</dd>
 <dt><code>anonymous</code></dt>
 <dd>Whether the endpoint answers without a credential. It does not unless it says so.</dd>
+<dt><code>hosts</code></dt>
+<dd>A host of its own per authority, where the endpoint is served at the root. See
+<a href="#a-host-of-its-own">A host of its own</a>.</dd>
 </dl>
 
 Without the annotation `/.mcp` is a path like any other, and nothing answers there. The path is
 fixed: one an application could choose is one it could collide with a route of its own.
+
+## A host of its own
+
+`hosts` names a host per [authority](authorities.md):
+
+```yaml
+exposition:
+  authorities:
+    nex: nex.toa.io
+  mcp:
+    name: Teapots
+    hosts:
+      nex: mcp.toa.io
+```
+
+`POST /` of that host is the endpoint, and answers what `POST /.mcp` answers to the same caller;
+`/.mcp` keeps answering on the authority's own host. Nothing else is served there: an
+application's routes, `/.rpc`, `/.mcp` and `/.discovery` are `404`, and `GET /` is `405`.
+
+The host is a host of the authority its key names, so a credential issued there is the one issued
+on the authority's own host, and `map:authority` writes the identifier that key is. A key naming no
+declared authority fails the deploy. The host is an ingress host of the gateway, as an authority's
+own is.
 
 ## What a tool is
 
@@ -148,6 +174,13 @@ exposition:
 
 Its RFC 9728 document is then read at `/.well-known/oauth-protected-resource/.mcp`, and the
 canonical URI of the resource is `https://api.example.com/.mcp`. See [OAuth](oauth.md).
+
+A [host of its own](#a-host-of-its-own) is a resource without being named in `resources`: its
+document is read at `/.well-known/oauth-protected-resource` of that host, the canonical URI is the
+host's origin, and the authorization server it names is the authority's issuer. The host serves no
+authorization server metadata — that is read from the issuer it names. A token the client asked for
+with `resource` of that origin is admitted there and refused at every other host, see
+[Audience](oauth.md#audience).
 
 A request without a credential is `401`, carrying the challenge that names that document — which is
 where the flow starts. A token the client asked for with that `resource` is admitted here and

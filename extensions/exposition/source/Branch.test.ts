@@ -3,6 +3,7 @@ import assert from 'node:assert/strict'
 
 import { decide } from './Branch.ts'
 import type { Branch, Exposed } from './Branch.ts'
+import type { Node } from './RTD/index.ts'
 
 function branch(version: string, timestamp: number, routes: string = 'r'): Branch {
   return {
@@ -16,8 +17,15 @@ function branch(version: string, timestamp: number, routes: string = 'r'): Branc
   }
 }
 
-function exposed(version: string, timestamp: number, routes: string = 'r'): Exposed {
-  return { version, routes, timestamp, nodes: [] }
+function exposed(
+  version: string,
+  timestamp: number,
+  routes: string = 'r',
+  expirations: number[] = []
+): Exposed {
+  const nodes = expirations.map((expiration) => ({ expiration }) as Node)
+
+  return { version, routes, timestamp, nodes }
 }
 
 it('should refresh the same version', () => {
@@ -34,6 +42,19 @@ it('should merge a newer tenant', () => {
 
 it('should not merge a tenant that started earlier', () => {
   assert.deepStrictEqual(decide(exposed('b', 2), branch('a', 1)), 'superseded')
+})
+
+it('should not merge a tenant that started earlier while the exposed branch is live', () => {
+  const live = Date.now() + 60_000
+  const expired = Date.now() - 1
+
+  assert.deepStrictEqual(decide(exposed('b', 2, 'r', [expired, live]), branch('a', 1)), 'superseded')
+})
+
+it('should merge a tenant that started earlier once the exposed branch has expired', () => {
+  const expired = Date.now() - 1
+
+  assert.deepStrictEqual(decide(exposed('b', 2, 'r', [expired, expired]), branch('a', 1)), 'merge')
 })
 
 it('should merge when tenants started at the same time', () => {

@@ -42,3 +42,24 @@ it('should require a header and a value in censor', () => {
     schemas.annotation.validate({ authorities, censor: { header, values: [] } })
   )
 })
+
+it('should take an MCP host per authority', () => {
+  assert.doesNotThrow(() =>
+    schemas.annotation.validate({
+      authorities,
+      mcp: { name: 'Teapots', hosts: { nex: 'mcp.nex.toa.io' } }
+    })
+  )
+  assert.throws(() =>
+    schemas.annotation.validate({
+      authorities,
+      mcp: { name: 'Teapots', hosts: { nex: ['mcp.nex.toa.io'] } }
+    })
+  )
+  assert.throws(() =>
+    schemas.annotation.validate({
+      authorities,
+      mcp: { name: 'Teapots', host: 'mcp.nex.toa.io' }
+    })
+  )
+})

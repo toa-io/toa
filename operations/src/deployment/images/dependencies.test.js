@@ -213,7 +213,7 @@ describe('prepare', () => {
     assert.deepStrictEqual(lines, [
       `FROM ${image.dependencies.reference}`,
       'COPY --link . /composition',
-      'CMD toa compose * --map /etc/toa/.map.json'
+      'CMD toa compose * --map /etc/toa/.map.json.gz'
     ])
 
     const entries = (await readdir(context, { recursive: true })).sort()

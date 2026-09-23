@@ -35,7 +35,7 @@ export interface Annotation {
   /** JSON-RPC at `/.rpc`; none is served without it. See `documentation/rpc.md`. */
   rpc?: RPC
 
-  /** MCP at `/.mcp`; none is served without it. See `documentation/mcp.md`. */
+  /** MCP at `/.mcp`, and on a host of its own where one is named; none without it. */
   mcp?: MCP
   '/'?: object // parsed and validated by RTD.syntax.parse
 }
@@ -86,6 +86,12 @@ export interface MCP {
 
   /** Whether the endpoint answers without a credential. It does not unless it says so. */
   anonymous?: boolean
+
+  /**
+   * A host of its own per authority, where the endpoint is served at the root and nothing
+   * else is. See `documentation/mcp.md`.
+   */
+  hosts?: Record<string, string>
 }
 
 export interface Bouncer {

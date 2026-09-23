@@ -34,6 +34,10 @@ const connector = (properties: object): any => ({
 const create = (cycle: number, intervals: number): Pulse =>
   new Pulse({ locator, endpoint: 'sweep', cycle, intervals }, local, atom)
 
+/** one every replica makes: nothing says which intervals are this one's, because all are */
+const replica = (cycle: number, intervals: number): Pulse =>
+  new Pulse({ locator, endpoint: 'sweep', cycle, intervals }, local)
+
 /** the timers the tick arms are the only ones, so a tick is a jump and its microtasks */
 const advance = async (ms: number): Promise<void> => {
   mock.timers.tick(ms)
@@ -350,6 +354,76 @@ it('should call again at the next boundary once the process is working', async (
 
 it('should stop calling once closed', async () => {
   const pulse = create(DAY, 24)
+
+  await pulse.connect()
+  await pulse.disconnect()
+  await advance(HOUR * SECOND)
+
+  assert.strictEqual(local.invoke.mock.callCount(), 0)
+})
+
+it('should call in every replica where nothing says whose interval it is', async () => {
+  atom.slots.mock.mockImplementation(() => null)
+
+  const pulse = replica(DAY, 1)
+
+  await pulse.connect()
+  await advance(DAY * SECOND)
+
+  assert.strictEqual(local.invoke.mock.callCount(), 1)
+  assert.strictEqual(atom.slots.mock.callCount(), 0, 'nothing was asked')
+})
+
+it('should call an interval another replica owns', async () => {
+  atom.slots.mock.mockImplementation(() => [])
+
+  const pulse = replica(DAY, 24)
+
+  await pulse.connect()
+
+  for (let hour = 0; hour < 24; hour++) await advance(HOUR * SECOND)
+
+  assert.deepStrictEqual(intervals(), range(24).map((i) => (i + 1) % 24))
+})
+
+it('should not start a call in every replica while the one before has not returned', async () => {
+  let release: () => void = () => {}
+
+  local.invoke.mock.mockImplementation(
+    async () =>
+      await new Promise<void>((resolve) => {
+        release = resolve
+      })
+  )
+
+  const pulse = replica(DAY, 24)
+
+  await pulse.connect()
+
+  await advance(HOUR * SECOND)
+  await advance(HOUR * SECOND)
+
+  assert.strictEqual(local.invoke.mock.callCount(), 1)
+
+  release()
+  await advance(0)
+  await advance(HOUR * SECOND)
+
+  assert.strictEqual(local.invoke.mock.callCount(), 2)
+})
+
+it('should not call in every replica while the process is quiet', async () => {
+  const pulse = replica(DAY, 24)
+
+  await pulse.connect()
+  await pulse.halt()
+  await advance(3 * HOUR * SECOND)
+
+  assert.strictEqual(local.invoke.mock.callCount(), 0)
+})
+
+it('should stop calling in every replica once closed', async () => {
+  const pulse = replica(DAY, 24)
 
   await pulse.connect()
   await pulse.disconnect()

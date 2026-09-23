@@ -66,13 +66,13 @@ it('should send request', async () => {
 
   const queue = mock.queues.name.mock.calls[0].result
 
-  // a call that names no time to wait gives comq no options to wait by
+  // an ordinary call waits for its reply, and gives comq nothing to wait by
   assert.ok(
     comm.request.mock.calls.some(
       (call) =>
+        call.arguments.length === 2 &&
         isDeepStrictEqual(call.arguments[0], queue) &&
-        isDeepStrictEqual(call.arguments[1], request) &&
-        call.arguments[2] === undefined
+        isDeepStrictEqual(call.arguments[1], request)
     )
   )
   assert.deepStrictEqual(reply, await comm.request.mock.calls[0].result)

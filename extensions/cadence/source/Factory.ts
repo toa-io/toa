@@ -40,10 +40,22 @@ export class Factory implements extensions.Factory {
     if (pulses === null) return tenant
 
     const local = this.local(locator)
-    const atom = this.host.atom(locator.id)
+    const entries = Object.entries(pulses)
 
-    for (const [endpoint, { cycle, intervals }] of Object.entries(pulses))
-      tenant.depends(new Pulse({ locator, endpoint, cycle, intervals }, local, atom))
+    // a pulse every replica makes asks nobody whether it may, so a component whose pulses are
+    // all of that kind decides nothing with its replicas and needs no atom at all
+    const atom = entries.some(([, pulse]) => pulse.scope === 'group')
+      ? this.host.atom(locator.id)
+      : undefined
+
+    for (const [endpoint, { cycle, intervals, scope }] of entries)
+      tenant.depends(
+        new Pulse(
+          { locator, endpoint, cycle, intervals },
+          local,
+          scope === 'group' ? atom : undefined
+        )
+      )
 
     return tenant
   }

@@ -46,8 +46,8 @@ export class Consumer extends Connector {
   }
 
   async #send(request, terms) {
-    if (terms?.instance === undefined)
-      return await this.#comm.request(this.#queue, request, options(terms))
+    // an ordinary call waits for its reply, and is handed no terms
+    if (terms?.instance === undefined) return await this.#comm.request(this.#queue, request)
 
     try {
       return await this.#comm.call(
@@ -81,10 +81,10 @@ export class Consumer extends Connector {
  * What comq is given of the terms. The name is the key a call is published under, and is no
  * option of it.
  *
- * @param {import('@toa.io/core/types').bindings.Terms} [terms]
+ * @param {import('@toa.io/core/types').bindings.Terms} terms
  */
 function options(terms) {
-  if (terms?.timeout === undefined && terms?.signal === undefined) return undefined
+  if (terms.timeout === undefined && terms.signal === undefined) return undefined
 
   return { timeout: terms.timeout, signal: terms.signal }
 }

@@ -36,3 +36,5 @@ content-type: multipart/json; boundary=cut
 
 A streamed response starts with `ACK` and ends with `FIN`. The boundary is
 always `cut`.
+
+Some streams send `heartbeat <time>` to tell a quiet stream from a lost one.

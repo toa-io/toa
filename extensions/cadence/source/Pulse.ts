@@ -14,6 +14,10 @@ import type { atomicity } from '@toa.io/core/types'
  * owns `i` is the one that calls. An interval no replica was alive for is not made up
  * afterwards — the operation is expected to select by what is still due rather than by where
  * the cycle has reached.
+ *
+ * Who owns an interval is what an `atom` says, and a pulse built with none is one every replica
+ * makes: work that lives inside a process — a cache, a buffer, a file it wrote — is each
+ * process's own, and there is nothing there for two replicas to divide.
  */
 export class Pulse extends Connector {
   private readonly endpoint: string
@@ -26,7 +30,9 @@ export class Pulse extends Connector {
   private readonly n: number
 
   private readonly local: Local
-  private readonly atom: atomicity.Atom
+
+  /** what says which intervals are this replica's; absent where every replica makes the call */
+  private readonly atom?: atomicity.Atom
 
   /** span options, built once */
   private readonly options: SpanOptions
@@ -48,7 +54,7 @@ export class Pulse extends Connector {
   /** Whether the process has been told to go quiet, see `stop`. */
   private quiesced = false
 
-  public constructor(definition: Definition, local: Local, atom: atomicity.Atom) {
+  public constructor(definition: Definition, local: Local, atom?: atomicity.Atom) {
     super()
 
     const { locator, endpoint, cycle, intervals } = definition
@@ -62,7 +68,8 @@ export class Pulse extends Connector {
     this.atom = atom
 
     this.depends(local)
-    this.depends(atom)
+
+    if (atom !== undefined) this.depends(atom)
 
     this.options = {
       name: `${this.label} pulse`,
@@ -183,20 +190,23 @@ export class Pulse extends Connector {
       return
     }
 
-    const owned = this.atom.slots(this.n)
+    // with nobody to ask, every interval is this replica's own
+    if (this.atom !== undefined) {
+      const owned = this.atom.slots(this.n)
 
-    if (owned === null) {
-      measure.missed(this.label, 'unowned')
+      if (owned === null) {
+        measure.missed(this.label, 'unowned')
 
-      console.warn('Pulse skipped: this replica owns nothing', {
-        pulse: this.label,
-        interval: i
-      })
+        console.warn('Pulse skipped: this replica owns nothing', {
+          pulse: this.label,
+          interval: i
+        })
 
-      return
+        return
+      }
+
+      if (!owned.includes(i)) return
     }
-
-    if (!owned.includes(i)) return
 
     measure.fired(this.label)
 

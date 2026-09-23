@@ -50,19 +50,26 @@ Feature: toa types
     Then the file ./components/reply.contract/types/toa.d.ts contains line starting with '  declared: '
     And the file ./components/reply.contract/types/toa.d.ts contains exact line 'export type SilentOutput = Record<string, unknown>'
 
-  Scenario: A call to a stateful operation names the process it goes to
+  Scenario: A call to a stateful operation names the process it goes to, and is no task
     Given I have a component `stateful.counter`
     And I have a context
     And my working directory is ./
     When I run `toa types`
-    Then the file ./components/stateful.counter/types/toa.d.ts contains exact line '  increment: (request: { input: IncrementInput, instance: string, task?: boolean }, options?: Options) => Promise<IncrementOutput>'
+    Then the file ./components/stateful.counter/types/toa.d.ts contains exact line '  increment: (request: { input: IncrementInput, instance: string }, options?: Options) => Promise<IncrementOutput>'
+
+  Scenario: A call to an ordinary operation takes no wait
+    Given I have a component `stateful.counter`
+    And I have a context
+    And my working directory is ./
+    When I run `toa types`
+    Then the file ./components/stateful.counter/types/toa.d.ts contains line starting with '  open: (request: { input?: null, task?: boolean }) => '
 
   Scenario: An operation declaring no errors returns none
     Given I have a component `reply.contract`
     And I have a context
     And my working directory is ./
     When I run `toa types`
-    Then the file ./components/reply.contract/types/toa.d.ts contains exact line '  silent: (request: { input?: null, task?: boolean }, options?: Options) => Promise<SilentOutput>'
+    Then the file ./components/reply.contract/types/toa.d.ts contains exact line '  silent: (request: { input?: null, task?: boolean }) => Promise<SilentOutput>'
 
   Scenario: An operation says what it is
     Given I have a component `reply.contract`
@@ -76,7 +83,7 @@ Feature: toa types
     And I have a context
     And my working directory is ./
     When I run `toa types`
-    Then the file ./components/reply.contract/types/toa.d.ts contains exact line '  declared: (request: { input?: null, task?: boolean }, options?: Options) => Promise<DeclaredOutput | RemoteError<"KNOWN">>'
+    Then the file ./components/reply.contract/types/toa.d.ts contains exact line '  declared: (request: { input?: null, task?: boolean }) => Promise<DeclaredOutput | RemoteError<"KNOWN">>'
 
   Scenario: Components that belong to no Context
     Given I have a component `dummies.one`

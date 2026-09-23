@@ -17,6 +17,9 @@ exposition:
     two: the.two.com
 ```
 
+The host [MCP](mcp.md#a-host-of-its-own) is served on is a host of the authority it is declared
+under: a request to it is that authority's.
+
 ## Mappings
 
 To pass the requested authority to the operation call, [`map:authority` directive](map.md#authority)

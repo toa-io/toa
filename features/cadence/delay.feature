@@ -75,13 +75,14 @@ Feature: Delayed calls
       """
 
   # A call whose time passed while nothing was running to make it. Seeding the row directly is
-  # that state: the next scan reads it along with what is coming, and makes it at once.
+  # that state: the next scan reads it along with what is coming, and makes it at once. The
+  # component it calls is composed first, as a deployment's map would state it.
   Scenario: Calling one that is already overdue
     Given the `cadence.metronome` database contains:
       | _id                              | lane | due | expires          | endpoint              | VERSION |
       | 01a06fa7e5e676b3aefdad34be3d184a | 0    | 1   | 9007199254740991 | default.delaying.pong | 1       |
-    And the `cadence` service is staged
     And I compose `delaying` component
+    And the `cadence` service is staged
     When I wait 1 second
     And I call `default.delaying.marks`
     Then the reply is received:
@@ -95,8 +96,8 @@ Feature: Delayed calls
     Given the `cadence.metronome` database contains:
       | _id                              | lane | due | expires | endpoint              | VERSION |
       | 01a06fa7e5e676b3aefdad34be3d184a | 0    | 1   | 2       | default.delaying.pong | 1       |
-    And the `cadence` service is staged
     And I compose `delaying` component
+    And the `cadence` service is staged
     When I wait 1 second
     And I call `default.delaying.marks`
     Then the reply is received:

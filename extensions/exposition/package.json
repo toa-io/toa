@@ -33,7 +33,7 @@
     "@toa.io/generic": "1.0.0-alpha.311",
     "@toa.io/pointer": "1.0.0-alpha.311",
     "@toa.io/schemas": "1.0.0-alpha.311",
-    "content-type": "3.1.0",
+    "content-type": "3.1.1",
     "ioredis": "6.0.0",
     "matchacho": "0.6.1",
     "minimatch": "10.2.6",

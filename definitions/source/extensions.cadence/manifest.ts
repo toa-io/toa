@@ -1,5 +1,5 @@
 import * as schemas from './schemas.ts'
-import type { Declaration } from './types.ts'
+import type { Declaration, Declared } from './types.ts'
 import type { Manifest } from '@toa.io/norm'
 
 /**
@@ -11,7 +11,7 @@ import type { Manifest } from '@toa.io/norm'
  * delays calls says so, and it has to produce a value or norm rejects the extension.
  */
 export function manifest(
-  declaration: Declaration | null | undefined,
+  declaration: Declared | null | undefined,
   component: Manifest
 ): Declaration {
   const normalized: Record<string, unknown> = expand(declaration)
@@ -41,7 +41,7 @@ export function manifest(
 }
 
 /** A pulse whose cycle is not split has nothing to state but the cycle. */
-function expand(declaration: Declaration | null | undefined): Record<string, unknown> {
+function expand(declaration: Declared | null | undefined): Record<string, unknown> {
   if (declaration === null || declaration === undefined) return {}
 
   // a cycle nothing splits is one interval, which is what the shorthand declares
@@ -51,6 +51,9 @@ function expand(declaration: Declaration | null | undefined): Record<string, unk
         typeof pulse === 'number' ? { cycle: pulse } : { ...pulse }
 
       declared.intervals ??= 1
+
+      // a pulse that does not say whose work it is is the component's, as every pulse was
+      declared.scope ??= 'group'
 
       return [endpoint, declared]
     })

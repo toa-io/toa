@@ -15,19 +15,21 @@ const component = {
 it('should normalize a declaration', () => {
   const declaration = manifest({ sweep: { cycle: 86400, intervals: 24 } }, component)
 
-  assert.deepStrictEqual(declaration, { sweep: { cycle: 86400, intervals: 24 } })
+  assert.deepStrictEqual(declaration, {
+    sweep: { cycle: 86400, intervals: 24, scope: 'group' }
+  })
 })
 
 it('should split a cycle into one interval by default', () => {
-  const declaration = manifest({ sweep: { cycle: 3600 } } as any, component)
+  const declaration = manifest({ sweep: { cycle: 3600 } }, component)
 
-  assert.deepStrictEqual(declaration, { sweep: { cycle: 3600, intervals: 1 } })
+  assert.deepStrictEqual(declaration, { sweep: { cycle: 3600, intervals: 1, scope: 'group' } })
 })
 
 it('should expand the shorthand', () => {
-  const declaration = manifest({ sweep: 3600 } as any, component)
+  const declaration = manifest({ sweep: 3600 }, component)
 
-  assert.deepStrictEqual(declaration, { sweep: { cycle: 3600, intervals: 1 } })
+  assert.deepStrictEqual(declaration, { sweep: { cycle: 3600, intervals: 1, scope: 'group' } })
 })
 
 it('should answer a component that only delays calls', () => {
@@ -36,13 +38,36 @@ it('should answer a component that only delays calls', () => {
 
 it('should refuse an undefined operation', () => {
   assert.throws(
-    () => manifest({ nothing: 3600 } as any, component),
+    () => manifest({ nothing: 3600 }, component),
     /refers to undefined operation 'nothing'/
   )
 })
 
 it('should refuse an operation that produces no side effects', () => {
-  assert.throws(() => manifest({ peek: 3600 } as any, component), /of the allowed types/)
+  assert.throws(() => manifest({ peek: 3600 }, component), /of the allowed types/)
+})
+
+it('should keep a pulse every replica makes', () => {
+  const declaration = manifest({ sweep: { cycle: 3600, scope: 'replica' } }, component)
+
+  assert.deepStrictEqual(declaration, {
+    sweep: { cycle: 3600, intervals: 1, scope: 'replica' }
+  })
+})
+
+it('should split a cycle a pulse every replica makes', () => {
+  const declaration = manifest(
+    { sweep: { cycle: 86400, intervals: 24, scope: 'replica' } },
+    component
+  )
+
+  assert.deepStrictEqual(declaration, {
+    sweep: { cycle: 86400, intervals: 24, scope: 'replica' }
+  })
+})
+
+it('should refuse a scope that is neither', () => {
+  assert.throws(() => manifest({ sweep: { cycle: 60, scope: 'process' } } as any, component))
 })
 
 it('should refuse an interval shorter than a second', () => {

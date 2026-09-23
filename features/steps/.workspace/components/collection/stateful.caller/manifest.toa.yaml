@@ -16,5 +16,7 @@ operations:
           type: integer
         aborted:
           type: boolean
+        ordinary:
+          type: boolean
       required: [endpoint]
     output: {}

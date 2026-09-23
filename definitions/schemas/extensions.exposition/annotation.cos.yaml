@@ -126,6 +126,14 @@ properties:
       anonymous:
         description: Whether the endpoint answers without a credential
         type: boolean
+      hosts:
+        description: A host of its own per authority, where the endpoint is the root
+        type: object
+        patternProperties:
+          ^.+$:
+            type: string
+            minLength: 1
+        additionalProperties: false
     required:
       - name
     additionalProperties: false

@@ -1,4 +1,5 @@
 import assert from 'node:assert'
+import { gunzipSync } from 'node:zlib'
 import { readFile } from 'node:fs/promises'
 import * as core from '@toa.io/core'
 
@@ -78,6 +79,9 @@ export const contract = async (id) => {
 }
 
 /**
+ * A map is read gzipped where it is deployed and plain where it is not, so what it is is told by
+ * its first two bytes rather than by its name.
+ *
  * @param {string} path
  * @returns {Promise<Record<string, import('@toa.io/core').Contract>>}
  */
@@ -85,13 +89,19 @@ async function read(path) {
   let contents
 
   try {
-    contents = await readFile(path, 'utf8')
+    contents = await readFile(path)
   } catch (cause) {
     throw new Error(`Cannot read the component map '${path}'`, { cause })
   }
 
   try {
-    return JSON.parse(contents)
+    if (contents[0] === 0x1f && contents[1] === 0x8b) contents = gunzipSync(contents)
+  } catch (cause) {
+    throw new Error(`The component map '${path}' is not readable gzip`, { cause })
+  }
+
+  try {
+    return JSON.parse(contents.toString('utf8'))
   } catch (cause) {
     throw new Error(`The component map '${path}' is not JSON`, { cause })
   }

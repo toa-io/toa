@@ -1,3 +1,5 @@
+import { MAP_LOCAL_FILE } from '@toa.io/definitions'
+
 export const builder = (yargs) => {
   yargs
     .positional('environment', {
@@ -16,7 +18,7 @@ export const builder = (yargs) => {
       group: 'Command options:',
       describe: 'Output file path',
       type: 'string',
-      default: '.map.json'
+      default: MAP_LOCAL_FILE
     })
     .example([['$0 map'], ['$0 map -p application'], ['$0 map production']])
 }

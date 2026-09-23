@@ -29,6 +29,26 @@ Feature: Stateful operations
       code: 202
       """
 
+  Scenario: An ordinary call names no timeout
+
+    An ordinary call waits for as long as its reply takes, so one that asks for a deadline is
+    refused where it is made, and runs nowhere.
+
+    Given I compose components:
+      | stateful.counter |
+      | stateful.caller  |
+    When I call `stateful.caller.relay` with:
+      """yaml
+      input:
+        endpoint: open
+        ordinary: true
+        timeout: 1000
+      """
+    Then the following exception is thrown:
+      """yaml
+      code: 202
+      """
+
   Scenario: A call to a name nobody holds is refused
     Given I compose `stateful.counter` component
     When I call `stateful.counter.increment` with:

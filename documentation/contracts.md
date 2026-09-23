@@ -36,19 +36,32 @@ contract of that version:
 {
   "default.orders": {
     "version": "3f9a1c02",
-    "entity": { "properties": { "sum": { "type": "number" } }, "required": ["sum"] },
-    "operations": {
-      "transit": { "type": "transition", "scope": "object", "bindings": ["@toa.io/bindings.amqp"] }
-    },
+    "bindings": ["@toa.io/bindings.amqp"],
+    "entity": { "properties": { "sum": { "type": "number" } }, "required": ["sum"], "system": true },
+    "operations": { "transit": { "type": "transition", "scope": "object" } },
     "events": { "created": { "binding": "@toa.io/bindings.amqp" } }
   }
 }
 ```
 
+It is written one component per line, so a component is found with `grep` and read by eye.
+
 A version is the component's content hash — the same one its image is tagged with — so it changes
 when its sources change and not otherwise. What a component states about serving a call rather than
 about making one — an operation's concurrency and bridge, the entity's storage and its migrations —
 is left out.
+
+**What the runtime gives every component is left out too**, and put back by the process that reads
+the map — so a caller is held to what the component declared, whatever the file says:
+
+- an entity's system properties — `id`, `VERSION`, `CREATED`, `UPDATED`, `DELETED` and `REGION` —
+  and their place in `required`, where they are the ones every entity has. `system: true` is what
+  says so; a component that declares its entity itself, with `prototype: null`, states them as it
+  wrote them and says nothing.
+- an operation's `bindings`, where they are the component's, which the entry states once.
+- an `output` that describes nothing, which is what an operation declaring none normalizes to.
+- a `query` of `false` on an operation whose scope is `none`, where it is the only thing it could
+  be.
 
 The map is found the way `.env` is: walked up to from where the command runs, or named.
 
@@ -68,6 +81,13 @@ map says what the context holds, which is what its callers are held to.
 `toa deploy` writes the map it deploys. Everywhere else, **run `toa map` again when a component's
 sources change** — a composition whose component the map states another version of is refused at
 boot, and names it.
+
+A deployed map is mounted gzipped, as `/etc/toa/.map.json.gz`, because a ConfigMap is capped at a
+megabyte and nothing reads that copy by eye. Read one where it is:
+
+```shell
+$ kubectl exec <pod> -- zcat /etc/toa/.map.json.gz
+```
 
 ## What a version is made of
 
