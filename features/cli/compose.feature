@@ -108,3 +108,50 @@ Feature: toa compose
       """
       Service is not implemented by '@toa.io/extensions.telemetry'
       """
+
+  @containers @network
+  Scenario: Run a composition in a container
+
+  The image installs what the extensions need for what its components declare, as a deploy
+  does: a storage named with the `cloudinary` provider takes the SDK with it.
+
+    Given I have a component `storage`
+    And I have a context with:
+      """yaml
+      runtime: {}
+      storages:
+        tmp:
+          provider: cloudinary
+          environment: demo
+          type: image
+      """
+    And environment variables:
+      """
+      API_KEY=cloud-key
+      API_SECRET=cloud-secret
+      """
+    When I run `toa env docker --dev`
+    And I run `toa map`
+    And I run `toa compose ./components/* --dock --kill`
+    Then program should exit with code 0
+    And stdout should contain lines:
+      """
+      Composition complete
+      Composition shutdown complete
+      """
+
+  @containers @network
+  Scenario: Fail a composition in a container that fails to start
+    Given I have a component `dummies.one`
+    And I have a context with:
+      """yaml
+      runtime: {}
+      """
+    When I run `toa env docker --dev`
+    And I run `toa map`
+    And I run `toa compose ./components/* --dock --kill --service telemetry`
+    Then program should exit with code 1
+    And stderr should contain lines:
+      """
+      Service is not implemented by '@toa.io/extensions.telemetry'
+      """
