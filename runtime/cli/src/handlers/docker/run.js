@@ -37,7 +37,20 @@ export async function run(repository, command, envFile, mapFile) {
   // newest first, so the first is what was built last: the one laid over the others
   const ids = found.stdout.split('\n').filter((id) => id !== '')
 
-  const args = ['run', '--rm', ...envArgs, ...mapArgs, ids[0], 'sh', '-c', command]
+  // what the environment names on this machine is `host.docker.internal` to the container,
+  // which Docker Desktop resolves on its own and a Linux daemon only when told to
+  const hostArgs = ['--add-host', 'host.docker.internal:host-gateway']
+  const args = [
+    'run',
+    '--rm',
+    ...hostArgs,
+    ...envArgs,
+    ...mapArgs,
+    ids[0],
+    'sh',
+    '-c',
+    command
+  ]
 
   try {
     await container(args)
