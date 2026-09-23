@@ -75,8 +75,9 @@ export class Bundle extends Image {
     for (const component of this.components) {
       const target = join(context, component.locator.label)
 
-      // what was installed in the workspace is not what the image installs
-      await cp(component.path, target, { recursive: true, filter: sources })
+      // what was installed in the workspace is not what the image installs; a link is copied as
+      // the files it points to, which is the only way what it points to reaches the image at all
+      await cp(component.path, target, { recursive: true, filter: sources, dereference: true })
       await declare(component.path, target, component.locator.label)
       await normalized(component, target)
     }
