@@ -1,6 +1,6 @@
 import assert from 'node:assert'
-import { resolve } from 'node:path'
-import { readFile } from 'node:fs/promises'
+import { relative, resolve } from 'node:path'
+import { readdir, readFile } from 'node:fs/promises'
 import glob from 'fast-glob'
 import { Given, Then } from '@cucumber/cucumber'
 
@@ -84,6 +84,27 @@ Then(
       count,
       `'${relative}' holds ${distinct.size} distinct line(s): ${[...distinct].join(', ')}`
     )
+  }
+)
+
+Then(
+  'nothing under {path} is a link',
+  /**
+   * What a build context holds is files: a link in one points out of the directory it was
+   * copied from, and the image it is built into has nothing where it points.
+   *
+   * @param {string} target
+   * @this {toa.features.Context}
+   */
+  async function (target) {
+    const root = await pattern(this.cwd, target)
+    const entries = await readdir(root, { recursive: true, withFileTypes: true })
+
+    const links = entries
+      .filter((entry) => entry.isSymbolicLink())
+      .map((entry) => relative(root, resolve(entry.parentPath, entry.name)))
+
+    assert.deepEqual(links, [], `'${target}' holds ${links.length} link(s)`)
   }
 )
 

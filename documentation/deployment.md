@@ -341,6 +341,11 @@ A composition is two images in one repository:
 | `deps-<hash>` | what its components depend on, installed on the base image |
 | `<hash>`      | the sources, laid over that as a single linked layer       |
 
+The sources are copied as files: a component that links a directory in — sources it shares with
+another component — carries what the link points to, and a link the build cannot read fails it.
+What is linked is source alone, since the dependencies image installs each component's own
+`package.json` in its own directory.
+
 `deps-<hash>` is tagged by everything the install reads — the runtime version, the base image, the
 build options, each component's `package.json` and `package-lock.json`, and what the extensions
 install for what the components declare — so it is rebuilt only when one of those changes. A
@@ -462,6 +467,10 @@ $ toa env local --dev                     # writes .env, secrets filled with dev
 $ toa env production --interactive        # prompts for each secret
 $ toa env -c todos.tasks                  # only what this component needs
 ```
+
+`--dev` fills what it knows — the credentials of the local infrastructure, and a secret the process
+environment names — and writes the rest empty, for you to fill in. `--interactive` asks for each of
+those instead. A value already in the file is kept by either.
 
 Run it again after changing what the context deploys — an [evicted](compositions.md#evicted)
 component still needs its variables, and `-c` writes them whether or not Toa deploys it.

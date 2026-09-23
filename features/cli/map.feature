@@ -185,6 +185,19 @@ Feature: toa map
     And I run `toa compose ./components/* --kill`
     Then program should exit with code 0
 
+  Scenario: What a component links is part of its version
+    Given I have a component `dummies.one`
+    And `dummies.one` links sources of the workspace
+    And I have a context
+    When I run `toa map`
+    And the file shared/linked.js of `dummies.one` changes
+    And I run `toa compose ./components/* --kill`
+    Then program should exit with code 1
+    And stderr should contain lines:
+      """
+      'dummies.one' is composed at a version the component map does not state. Run `toa map`.
+      """
+
   Scenario: What `files` leaves out is not part of its version
     Given I have a component `dummies.files`
     And I have a context

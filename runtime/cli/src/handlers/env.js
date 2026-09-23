@@ -34,11 +34,13 @@ export async function env(argv) {
     mergeSecrets(result, secrets)
   }
 
+  // asked for, where the caller asks to be asked; otherwise what nothing resolved is written
+  // empty, and the file says what is missing where a refusal would only say that something is
   if (argv.interactive) {
     const secrets = await promptSecrets(result)
 
     mergeSecrets(result, secrets)
-  } else if (argv.dev) assertNoPendingSecrets(result)
+  }
 
   await write(filepath, result)
 }
@@ -156,25 +158,6 @@ async function resolveDevSecret(key) {
     )
 
   throw new Error(`Unknown dev secret source for ${key}`)
-}
-
-/**
- * @param {toa.deployment.dependency.Variable[]} variables
- */
-function assertNoPendingSecrets(variables) {
-  const pending = []
-
-  for (const variable of variables) {
-    if (variable.secret === undefined) continue
-
-    const key = getKey(variable.secret)
-
-    if (!pending.includes(key)) pending.push(key)
-  }
-
-  if (pending.length === 0) return
-
-  throw new Error(`${pending.join(', ')} is not set (pass --interactive to prompt)`)
 }
 
 /**
