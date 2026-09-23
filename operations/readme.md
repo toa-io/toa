@@ -96,6 +96,11 @@ for what the components declare — and is built only when one of those changes.
 layer, so a deploy that changes code alone builds and pushes that layer, and neither
 downloads nor uploads the dependencies again. The same holds for `mono`.
 
+The sources are copied as files, so a component that links a directory in — sources it shares with
+another component — carries what the link points to, and a link the build cannot read fails the
+build. What is linked is source alone: dependencies are installed per component, from its own
+`package.json`.
+
 Beside each component's sources the layer carries `manifest.toa.json`, the manifest as this
 build normalised it. A composition reads it instead of normalising again, so it loads no
 bridge to read what a module declares; a workspace has no such file and is read as it always
