@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.315](https://github.com/toa-io/toa/compare/v1.0.0-alpha.314...v1.0.0-alpha.315) (2026-09-23)
+
+* feat(map)!: leave out of a contract what the runtime gives every component ([b81837a](https://github.com/toa-io/toa/commit/b81837a3bc4771d7ee1c10fe613c9a1d7501bf1a))
+* feat(core)!: refuse a timeout or a signal on an ordinary call ([600b392](https://github.com/toa-io/toa/commit/600b392abfd8b24df1a151c26fb31a6f0c7ccd41))
+
+### Bug Fixes
+
+* **cli:** write no task on the type of a stateful operation ([e62faeb](https://github.com/toa-io/toa/commit/e62faeb5fe54fd169c445e48c1c09eff01dcbdd2))
+* **map:** name a map mounted from a checkout for what it is ([e274a21](https://github.com/toa-io/toa/commit/e274a218875963bc7df26ea112c580bdab83531a))
+
+### BREAKING CHANGES
+
+* a call to a stateless operation that names a `timeout` or a
+  `signal` is refused, where it used to be abandoned at its deadline.
+* the deployed component map is `/etc/toa/.map.json.gz`.
+
+
 # [1.0.0-alpha.314](https://github.com/toa-io/toa/compare/v1.0.0-alpha.313...v1.0.0-alpha.314) (2026-09-19)
 
 ### Features

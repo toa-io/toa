@@ -3,6 +3,32 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.315](https://github.com/toa-io/toa/compare/v1.0.0-alpha.314...v1.0.0-alpha.315) (2026-09-23)
+
+* feat(map)!: leave out of a contract what the runtime gives every component ([b81837a](https://github.com/toa-io/toa/commit/b81837a3bc4771d7ee1c10fe613c9a1d7501bf1a))
+* feat(core)!: refuse a timeout or a signal on an ordinary call ([600b392](https://github.com/toa-io/toa/commit/600b392abfd8b24df1a151c26fb31a6f0c7ccd41))
+
+### Bug Fixes
+
+* **cli:** write no task on the type of a stateful operation ([e62faeb](https://github.com/toa-io/toa/commit/e62faeb5fe54fd169c445e48c1c09eff01dcbdd2))
+* **exposition:** expose a branch whose newer tenant has expired ([2925589](https://github.com/toa-io/toa/commit/292558917382c865c9c9fd8d67ef49363d39b5b9))
+* **features:** say that the external consumer fixture is a module ([3f76146](https://github.com/toa-io/toa/commit/3f761460fa54f004995f3c7fbceda56e83f1efdf))
+* **features:** say that the stateful counter fixture is a module ([07624c3](https://github.com/toa-io/toa/commit/07624c333f84c73814d6d4dd12778a4357dd608e))
+* **map:** name a map mounted from a checkout for what it is ([e274a21](https://github.com/toa-io/toa/commit/e274a218875963bc7df26ea112c580bdab83531a))
+* **ui:** leave every system property out of a schema read as a shape ([f8c2e60](https://github.com/toa-io/toa/commit/f8c2e6091eb08213637043ffb1b29f7edf5c3323))
+
+### Features
+
+* **cadence:** make a pulse declared `scope: replica` fire in every replica ([405a319](https://github.com/toa-io/toa/commit/405a319c3dc89889e6dac28ce3894bf59ea7836b))
+* **exposition:** serve MCP on a host of its own ([f861b91](https://github.com/toa-io/toa/commit/f861b91d9fac0c6f12d374c2a4a144a2e07880a9))
+
+### BREAKING CHANGES
+
+* a call to a stateless operation that names a `timeout` or a
+  `signal` is refused, where it used to be abandoned at its deadline.
+* the deployed component map is `/etc/toa/.map.json.gz`.
+
+
 # [1.0.0-alpha.314](https://github.com/toa-io/toa/compare/v1.0.0-alpha.313...v1.0.0-alpha.314) (2026-09-19)
 
 * feat(core)!: let an operation state how long its calls are remembered ([af177c2](https://github.com/toa-io/toa/commit/af177c2ab3d00d475840b5ef9e612f04e82b72bd))

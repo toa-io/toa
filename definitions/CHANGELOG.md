@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.315](https://github.com/toa-io/toa/compare/v1.0.0-alpha.314...v1.0.0-alpha.315) (2026-09-23)
+
+* feat(map)!: leave out of a contract what the runtime gives every component ([b81837a](https://github.com/toa-io/toa/commit/b81837a3bc4771d7ee1c10fe613c9a1d7501bf1a))
+
+### Bug Fixes
+
+* **map:** name a map mounted from a checkout for what it is ([e274a21](https://github.com/toa-io/toa/commit/e274a218875963bc7df26ea112c580bdab83531a))
+
+### Features
+
+* **cadence:** make a pulse declared `scope: replica` fire in every replica ([405a319](https://github.com/toa-io/toa/commit/405a319c3dc89889e6dac28ce3894bf59ea7836b))
+* **exposition:** serve MCP on a host of its own ([f861b91](https://github.com/toa-io/toa/commit/f861b91d9fac0c6f12d374c2a4a144a2e07880a9))
+
+### BREAKING CHANGES
+
+* the deployed component map is `/etc/toa/.map.json.gz`.
+
+
 # [1.0.0-alpha.314](https://github.com/toa-io/toa/compare/v1.0.0-alpha.313...v1.0.0-alpha.314) (2026-09-19)
 
 ### Features

@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/definitions",
-  "version": "1.0.0-alpha.314",
+  "version": "1.0.0-alpha.315",
   "type": "module",
   "description": "What Toa packages declare, read without running them",
   "author": "temich <tema.gurtovoy@gmail.com>",
@@ -46,7 +46,7 @@
   "devDependencies": {
     "@aws-sdk/client-s3": "3.1135.0",
     "@aws-sdk/lib-storage": "3.1135.0",
-    "@toa.io/core": "1.0.0-alpha.314",
+    "@toa.io/core": "1.0.0-alpha.315",
     "cloudinary": "2.11.0",
     "openspan": "1.0.0-alpha.305",
     "oxc-parser": "0.150.0"

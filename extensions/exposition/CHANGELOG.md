@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.315](https://github.com/toa-io/toa/compare/v1.0.0-alpha.314...v1.0.0-alpha.315) (2026-09-23)
+
+* feat(core)!: refuse a timeout or a signal on an ordinary call ([600b392](https://github.com/toa-io/toa/commit/600b392abfd8b24df1a151c26fb31a6f0c7ccd41))
+
+### Bug Fixes
+
+* **exposition:** expose a branch whose newer tenant has expired ([2925589](https://github.com/toa-io/toa/commit/292558917382c865c9c9fd8d67ef49363d39b5b9))
+* **ui:** leave every system property out of a schema read as a shape ([f8c2e60](https://github.com/toa-io/toa/commit/f8c2e6091eb08213637043ffb1b29f7edf5c3323))
+
+### Features
+
+* **exposition:** serve MCP on a host of its own ([f861b91](https://github.com/toa-io/toa/commit/f861b91d9fac0c6f12d374c2a4a144a2e07880a9))
+
+### BREAKING CHANGES
+
+* a call to a stateless operation that names a `timeout` or a
+  `signal` is refused, where it used to be abandoned at its deadline.
+
+
 # [1.0.0-alpha.314](https://github.com/toa-io/toa/compare/v1.0.0-alpha.313...v1.0.0-alpha.314) (2026-09-19)
 
 ### Bug Fixes
