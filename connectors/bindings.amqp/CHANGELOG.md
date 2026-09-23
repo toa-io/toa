@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.316](https://github.com/toa-io/toa/compare/v1.0.0-alpha.315...v1.0.0-alpha.316) (2026-09-23)
+
+### Bug Fixes
+
+* **bindings.amqp:** comq 0.24.1 ([720da0c](https://github.com/toa-io/toa/commit/720da0c3a4cddacd95bec8ace71008101d36a314)), closes [toa-io/comq#305](https://github.com/toa-io/comq/issues/305)
+
+
 # [1.0.0-alpha.315](https://github.com/toa-io/toa/compare/v1.0.0-alpha.314...v1.0.0-alpha.315) (2026-09-23)
 
 * feat(core)!: refuse a timeout or a signal on an ordinary call ([600b392](https://github.com/toa-io/toa/commit/600b392abfd8b24df1a151c26fb31a6f0c7ccd41))
