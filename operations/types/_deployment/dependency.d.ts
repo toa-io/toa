@@ -44,6 +44,8 @@ declare namespace toa.deployment {
       secret?: {
         name: string
         key: string
+        /** The workload starts without it, so the cluster need not hold it. */
+        optional?: boolean
       }
     }
 
