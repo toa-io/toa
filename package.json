@@ -108,6 +108,7 @@
     "nx": false,
     "ssh2": false,
     "cpu-features": false,
-    "protobufjs": false
+    "protobufjs": false,
+    "fsevents": false
   }
 }
