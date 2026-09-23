@@ -19,7 +19,7 @@ mock.module('@toa.io/operations', {
         }
 
         registry() {
-          return { build: async () => undefined }
+          return { build: async () => undefined, tags: () => ['composition'] }
         }
       }
     }
@@ -56,6 +56,12 @@ before(async () => {
       '    services: [exposition]'
     ].join('\n')
   )
+})
+
+describe('the image', () => {
+  it('should be the composition’s', async () => {
+    assert.equal(await build(root, [one]), 'composition')
+  })
 })
 
 describe('the composition built', () => {

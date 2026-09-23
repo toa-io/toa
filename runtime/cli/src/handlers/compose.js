@@ -81,7 +81,7 @@ async function dock(argv) {
   const file = map(argv)
 
   // read as the container reads them, so that the image installs what they bring
-  const repository = await docker.build(argv.context, argv.paths, services(argv))
+  const image = await docker.build(argv.context, argv.paths, services(argv))
   const args = pick(argv, ['kill', 'service'])
 
   // the container is given its own command, so the image's — which names the map — is not used.
@@ -89,5 +89,5 @@ async function dock(argv) {
   const command =
     docker.command('toa compose *', args) + (file === undefined ? '' : ` --map ${MAP_LOCAL}`)
 
-  await docker.run(repository, command, argv.env, file)
+  await docker.run(image, command, argv.env, file)
 }

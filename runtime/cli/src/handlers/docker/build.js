@@ -12,7 +12,7 @@ const { Factory } = deployment
  * @param {string} contextPath
  * @param {string[]} componentPatterns
  * @param {string[]} [services] what the composition runs beside its components
- * @return {Promise<string>}
+ * @return {Promise<string>} the reference of the image built
  */
 export async function build(contextPath, componentPatterns, services = []) {
   const context = await createContext(contextPath, componentPatterns, services)
@@ -21,10 +21,8 @@ export async function build(contextPath, componentPatterns, services = []) {
 
   await registry.build()
 
-  const composition = context.compositions[0].name
-  const base = context.registry.base === undefined ? '' : context.registry.base + '/'
-
-  return `${base}${context.name}/composition-${composition}`
+  // the composition's own image, rather than the dependencies it is laid over
+  return registry.tags()[0]
 }
 
 async function createContext(contextPath, componentPatterns, services) {

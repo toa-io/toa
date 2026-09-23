@@ -37,7 +37,10 @@ mock.module('node:child_process', {
 
 const { run } = await import('../src/handlers/docker/run.js')
 
-/** the bundle, and the dependencies it is laid over, newest first */
+/** the image built, on a registry with a port */
+const IMAGE = 'localhost:5000/dock-a1b2c3/composition-temp-a1b2c3:0f1e2d3c'
+
+/** its repository's images: it, and the dependencies it is laid over */
 const IMAGES = 'bundle\ndeps\n'
 
 beforeEach(() => {
@@ -48,7 +51,7 @@ describe('a container that exits', () => {
   it('should resolve where it exits with 0', async () => {
     exit = [0, null]
 
-    await run('repository', 'toa compose *', '.env')
+    await run(IMAGE, 'toa compose *', '.env')
 
     assert.ok(commands.some((command) => command.startsWith('docker run')))
   })
@@ -56,7 +59,7 @@ describe('a container that exits', () => {
   it('should reject with its code where it exits with another', async () => {
     exit = [3, null]
 
-    await assert.rejects(run('repository', 'toa compose *', '.env'), (error) => {
+    await assert.rejects(run(IMAGE, 'toa compose *', '.env'), (error) => {
       assert.equal(error.exitCode, 3)
 
       return true
@@ -66,7 +69,7 @@ describe('a container that exits', () => {
   it('should reject where it is killed', async () => {
     exit = [null, 'SIGKILL']
 
-    await assert.rejects(run('repository', 'toa compose *', '.env'), (error) => {
+    await assert.rejects(run(IMAGE, 'toa compose *', '.env'), (error) => {
       assert.ok(error.exitCode > 0)
       assert.match(error.message, /SIGKILL/)
 
@@ -77,7 +80,7 @@ describe('a container that exits', () => {
   it('should reject where it does not start', async () => {
     exit = new Error('spawn docker ENOENT')
 
-    await assert.rejects(run('repository', 'toa compose *', '.env'), /ENOENT/)
+    await assert.rejects(run(IMAGE, 'toa compose *', '.env'), /ENOENT/)
   })
 })
 
@@ -85,7 +88,7 @@ describe('the container', () => {
   it('should reach this machine as `host.docker.internal` wherever the daemon is', async () => {
     exit = [0, null]
 
-    await run('repository', 'toa compose *', '.env')
+    await run(IMAGE, 'toa compose *', '.env')
 
     assert.ok(
       commands.some((command) =>
@@ -96,12 +99,24 @@ describe('the container', () => {
 })
 
 describe('the images', () => {
-  it('should run the newest', async () => {
+  it('should run the one built, whichever of them is newer', async () => {
     exit = [0, null]
 
-    await run('repository', 'toa compose *', '.env')
+    await run(IMAGE, 'toa compose *', '.env')
 
-    assert.ok(commands.some((command) => /^docker run .* bundle sh -c/.test(command)))
+    assert.ok(commands.some((command) => command.includes(` ${IMAGE} sh -c`)))
+  })
+
+  it('should be found by the repository of the one built', async () => {
+    exit = [0, null]
+
+    await run(IMAGE, 'toa compose *', '.env')
+
+    assert.ok(
+      commands.includes(
+        'docker images -q localhost:5000/dock-a1b2c3/composition-temp-a1b2c3'
+      )
+    )
   })
 
   for (const [outcome, code] of [
@@ -112,7 +127,7 @@ describe('the images', () => {
     it(`should be removed, all of them, where the run ${outcome}`, async () => {
       exit = code
 
-      await run('repository', 'toa compose *', '.env').catch(() => undefined)
+      await run(IMAGE, 'toa compose *', '.env').catch(() => undefined)
 
       assert.equal(commands.at(-1), 'docker rmi --force bundle deps')
     })
