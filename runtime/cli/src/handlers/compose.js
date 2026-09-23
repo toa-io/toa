@@ -77,7 +77,8 @@ async function dock(argv) {
     () => import('./docker/index.js'),
     OPERATIONS
   )
-  const repository = await docker.build(argv.context, argv.paths)
+  // read as the container reads them, so that the image installs what they bring
+  const repository = await docker.build(argv.context, argv.paths, services(argv))
   const args = pick(argv, ['kill', 'service'])
   const file = map(argv)
 
