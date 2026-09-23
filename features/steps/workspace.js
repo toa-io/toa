@@ -3,7 +3,7 @@ import { join } from 'node:path'
 import dotenv from 'dotenv'
 import { diff } from 'jest-diff'
 import { environment, subtract } from '@toa.io/generic'
-import { appendFile, readFile, writeFile } from 'node:fs/promises'
+import { appendFile, mkdir, readFile, symlink, writeFile } from 'node:fs/promises'
 import * as components from './.workspace/components/index.js'
 import * as context from './.workspace/context.js'
 
@@ -34,6 +34,30 @@ Given(
    */
   async function (file, component) {
     await appendFile(join(this.cwd, 'components', component, file), '\n# changed\n', 'utf8')
+  }
+)
+
+/** What a linked directory of the workspace holds, as the component's own sources. */
+const LINKED = "export const linked = 'the linked source'\n"
+
+Given(
+  '{component} links sources of the workspace',
+  /**
+   * Sources a component keeps outside its own directory: a directory of the workspace, linked in
+   * at `shared`, as two components sharing code keep it.
+   *
+   * @param {string} component
+   * @this {toa.features.Context}
+   */
+  async function (component) {
+    const shared = join(this.cwd, 'shared')
+
+    await mkdir(shared, { recursive: true })
+    await writeFile(join(shared, 'linked.js'), LINKED, 'utf8')
+
+    // as it is written, not as it resolves: the link is the component's, and a copy of the
+    // component is expected to carry it
+    await symlink(join('..', '..', 'shared'), join(this.cwd, 'components', component, 'shared'))
   }
 )
 
