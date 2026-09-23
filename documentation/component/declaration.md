@@ -293,6 +293,17 @@ cadence:
   sweep: 3600 # once an hour
 ```
 
+One replica of the component makes each call. A pulse that looks after what its own process holds
+— a cache, a buffer, a file it wrote — says so, and then every replica makes it:
+
+```yaml
+# manifest.toa.yaml
+cadence:
+  trim:
+    cycle: 60
+    scope: replica # every replica, for what lives in a process
+```
+
 `context.delay`, which hands one call over to be made later, comes with the extension. A
 component that only delays calls names it and states nothing:
 
