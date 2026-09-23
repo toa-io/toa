@@ -77,14 +77,17 @@ async function dock(argv) {
     () => import('./docker/index.js'),
     OPERATIONS
   )
-  const repository = await docker.build(argv.context, argv.paths)
-  const args = pick(argv, ['kill', 'service'])
+  // before the build, so that nothing is built for a run that cannot start
   const file = map(argv)
+
+  // read as the container reads them, so that the image installs what they bring
+  const image = await docker.build(argv.context, argv.paths, services(argv))
+  const args = pick(argv, ['kill', 'service'])
 
   // the container is given its own command, so the image's — which names the map — is not used.
   // What is mounted is what this checkout wrote, which is plain, so it is named as one.
   const command =
     docker.command('toa compose *', args) + (file === undefined ? '' : ` --map ${MAP_LOCAL}`)
 
-  await docker.run(repository, command, argv.env, file)
+  await docker.run(image, command, argv.env, file)
 }
