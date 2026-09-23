@@ -6,8 +6,37 @@ cadence:
   tick:
     cycle: 4
     intervals: 4
+  sweep:
+    cycle: 2
+    scope: replica
 
 operations:
+  sweep:
+    input:
+      type: object
+      properties:
+        n:
+          type: number
+        i:
+          type: number
+      required:
+        - n
+        - i
+  sweeps:
+    input:
+      type: object
+      properties:
+        least:
+          type: number
+      required:
+        - least
+    output:
+      type: object
+      properties:
+        sweeps:
+          type: number
+        enough:
+          type: boolean
   tick:
     input:
       type: object

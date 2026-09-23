@@ -65,6 +65,28 @@ Then(
   }
 )
 
+Then(
+  'the file {path} contains {int} distinct line(s)',
+  /**
+   * What wrote the file is more than one of something — a process, a replica — and the lines
+   * say which; how many times each wrote is not the point.
+   *
+   * @param {string} relative
+   * @param {number} count
+   * @this {toa.features.Context}
+   */
+  async function (relative, count) {
+    const lines = await read.call(this, relative)
+    const distinct = new Set(lines.filter((line) => line !== ''))
+
+    assert.equal(
+      distinct.size,
+      count,
+      `'${relative}' holds ${distinct.size} distinct line(s): ${[...distinct].join(', ')}`
+    )
+  }
+)
+
 /**
  * @param {string} relative
  * @this {toa.features.Context}
