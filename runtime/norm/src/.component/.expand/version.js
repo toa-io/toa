@@ -39,7 +39,9 @@ async function list(manifest) {
     cwd: manifest.path,
     dot: true,
     onlyFiles: true,
-    followSymbolicLinks: false,
+    // sources a component keeps outside its own directory are its own: what a link points to is
+    // hashed as the file it stands for, so changing it changes the version
+    followSymbolicLinks: true,
     ignore: await ignore(manifest)
   })
 
