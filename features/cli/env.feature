@@ -144,7 +144,7 @@ Feature: Export local deployment environment variables
       TOA_STORAGES_ASSETS_API_SECRET=cloud-secret
       """
 
-  Scenario: Throw when secret key environment variables are missing with `--dev`
+  Scenario: Leave a secret the process environment does not name empty with `--dev`
     Given I have a component `storage`
     And I have a context with:
       """yaml
@@ -160,10 +160,11 @@ Feature: Export local deployment environment variables
           type: image
       """
     When I run `toa env --dev`
-    Then program should exit with code 1
-    And stderr should contain lines:
+    Then program should exit with code 0
+    And the environment contains:
       """
-      toa-storages-assets/API_KEY, toa-storages-assets/API_SECRET is not set
+      TOA_STORAGES_ASSETS_API_KEY=
+      TOA_STORAGES_ASSETS_API_SECRET=
       """
 
   Scenario: Fill configuration secret from process environment with `--dev`
@@ -186,7 +187,7 @@ Feature: Export local deployment environment variables
       TOA_CONFIGURATION__FOO_VALUE=bar
       """
 
-  Scenario: Throw when secret key is missing from process environment with `--dev`
+  Scenario: Leave a configuration secret the process environment does not name empty with `--dev`
     Given I have a component `configuration.base`
     And I have a context with:
       """yaml
@@ -197,10 +198,34 @@ Feature: Export local deployment environment variables
           foo: $FOO_VALUE
       """
     When I run `toa env --dev`
-    Then program should exit with code 1
-    And stderr should contain lines:
+    Then program should exit with code 0
+    And the environment contains:
       """
-      toa-configuration/FOO_VALUE is not set
+      TOA_CONFIGURATION__FOO_VALUE=
+      """
+
+  Scenario: Keep a secret filled in by hand with `--dev`
+
+    What `--dev` leaves empty is filled in by whoever runs it, and a run after that keeps it.
+
+    Given I have a component `configuration.base`
+    And I have a context with:
+      """yaml
+      amqp:
+        context: amqp://whatever
+      configuration:
+        configuration.base:
+          foo: $FOO_VALUE
+      """
+    When I run `toa env --dev`
+    And I update an environment with:
+      """
+      TOA_CONFIGURATION__FOO_VALUE=filled
+      """
+    And I run `toa env --dev`
+    Then the environment contains:
+      """
+      TOA_CONFIGURATION__FOO_VALUE=filled
       """
 
   Scenario: Export environment for a listed component
