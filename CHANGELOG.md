@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.318](https://github.com/toa-io/toa/compare/v1.0.0-alpha.317...v1.0.0-alpha.318) (2026-09-23)
+
+### Features
+
+* **cli:** write a secret `env --dev` cannot resolve as an empty value ([33a64b2](https://github.com/toa-io/toa/commit/33a64b22ba76b0499d86db6005798a906af6194e))
+* **deployment:** copy a component's linked sources as files ([1a1a8c1](https://github.com/toa-io/toa/commit/1a1a8c10684348dba02b475ab809a4083f86a601))
+* **norm:** hash what a component links into its version ([c01db29](https://github.com/toa-io/toa/commit/c01db29954efbda1a1787abaf20b727f2cbbe7e2))
+
+
 # [1.0.0-alpha.317](https://github.com/toa-io/toa/compare/v1.0.0-alpha.316...v1.0.0-alpha.317) (2026-09-23)
 
 ### Bug Fixes

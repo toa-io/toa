@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.318](https://github.com/toa-io/toa/compare/v1.0.0-alpha.317...v1.0.0-alpha.318) (2026-09-23)
+
+### Features
+
+* **deployment:** copy a component's linked sources as files ([1a1a8c1](https://github.com/toa-io/toa/commit/1a1a8c10684348dba02b475ab809a4083f86a601))
+
+
 # [1.0.0-alpha.317](https://github.com/toa-io/toa/compare/v1.0.0-alpha.316...v1.0.0-alpha.317) (2026-09-23)
 
 **Note:** Version bump only for package @toa.io/operations

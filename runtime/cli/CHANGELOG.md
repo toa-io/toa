@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.318](https://github.com/toa-io/toa/compare/v1.0.0-alpha.317...v1.0.0-alpha.318) (2026-09-23)
+
+### Features
+
+* **cli:** write a secret `env --dev` cannot resolve as an empty value ([33a64b2](https://github.com/toa-io/toa/commit/33a64b22ba76b0499d86db6005798a906af6194e))
+
+
 # [1.0.0-alpha.317](https://github.com/toa-io/toa/compare/v1.0.0-alpha.316...v1.0.0-alpha.317) (2026-09-23)
 
 ### Bug Fixes
