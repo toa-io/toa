@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.317](https://github.com/toa-io/toa/compare/v1.0.0-alpha.316...v1.0.0-alpha.317) (2026-09-23)
+
+### Bug Fixes
+
+* **cli:** build the image of `compose --dock` of the context's components ([25e9365](https://github.com/toa-io/toa/commit/25e9365a0a3d9c65d2b80728b5b489315e3b7ac4))
+* **cli:** exit `compose --dock` with the code of the composition ([2480812](https://github.com/toa-io/toa/commit/24808129a2e99bac835b2c8978216fdb7d4cef83))
+* **cli:** reach this machine from a `compose --dock` container on Linux ([b2ab14b](https://github.com/toa-io/toa/commit/b2ab14b462b695a342dd97947f9403e290740c4b))
+* **cli:** run the image `compose --dock` built, not the newest of its repository ([d80f0c7](https://github.com/toa-io/toa/commit/d80f0c79938aa5ca1c526b5ddf2324db7e4c1c21))
+
+
 # [1.0.0-alpha.316](https://github.com/toa-io/toa/compare/v1.0.0-alpha.315...v1.0.0-alpha.316) (2026-09-23)
 
 ### Bug Fixes
