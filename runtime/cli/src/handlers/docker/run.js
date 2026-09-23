@@ -1,15 +1,21 @@
 import { spawn, exec } from 'node:child_process'
 import { promisify } from 'node:util'
+import { constants } from 'node:os'
 
 import { resolve } from 'node:path'
 
-import { promex } from '@toa.io/generic'
 import { findUp } from '@toa.io/generic'
 import { MAP_LOCAL } from '@toa.io/definitions'
 
 const execute = promisify(exec)
 
 /**
+ * Runs the newest image of the repository, and removes every image of it once the container
+ * has exited: the one it ran, and the dependencies that one is laid over.
+ *
+ * A container that exits with anything but 0 rejects with its code as `exitCode`, which the
+ * program exits with, so a failed composition fails the command that ran it.
+ *
  * @param {string} repository
  * @param {string} command
  * @param {string} [envFile]
@@ -26,17 +32,41 @@ export async function run(repository, command, envFile, mapFile) {
 
   const found =
     /** @type {{ stdout: string }} */
-    await execute(`docker images -q ${repository} | head -n 1`)
+    await execute(`docker images -q ${repository}`)
 
-  const id = found.stdout.trim()
-  const args = ['run', '--rm', ...envArgs, ...mapArgs, id, 'sh', '-c', command]
-  const done = promex()
+  // newest first, so the first is what was built last: the one laid over the others
+  const ids = found.stdout.split('\n').filter((id) => id !== '')
 
-  const running = spawn('docker', args, { stdio: 'inherit' })
+  const args = ['run', '--rm', ...envArgs, ...mapArgs, ids[0], 'sh', '-c', command]
 
-  running.on('exit', done.resolve)
+  try {
+    await container(args)
+  } finally {
+    await execute(`docker rmi --force ${ids.join(' ')}`)
+  }
+}
 
-  await done
+/**
+ * @param {string[]} args
+ * @return {Promise<void>}
+ */
+function container(args) {
+  return new Promise((resolve, reject) => {
+    const running = spawn('docker', args, { stdio: 'inherit' })
 
-  await execute(`docker rmi --force ${id}`)
+    running.once('error', reject)
+
+    running.once('close', (code, signal) => {
+      if (code === 0) return resolve()
+
+      const reason = signal === null ? `code ${code}` : signal
+
+      reject(
+        new (class extends Error {
+          // as a shell reports a process a signal ended
+          exitCode = code ?? 128 + constants.signals[signal]
+        })(`The composition exited with ${reason}`)
+      )
+    })
+  })
 }
