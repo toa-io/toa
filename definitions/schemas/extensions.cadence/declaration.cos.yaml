@@ -16,5 +16,10 @@ patternProperties:
           and the operation is told which interval it is running for.
         type: integer
         minimum: 1
+      scope:
+        description: >
+          Whose work this is: the component's, which one replica makes each call of, or every
+          replica's, for what lives inside a process.
+        enum: [group, replica]
     required: [cycle]
     additionalProperties: false
