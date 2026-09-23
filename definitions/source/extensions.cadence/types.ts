@@ -1,13 +1,27 @@
 /** What one component declares under `cadence:`, by the operation each one calls. */
 export type Declaration = Record<string, Pulse>
 
+/**
+ * What a manifest may state: a whole pulse, one with what it leaves to the default left out,
+ * or the cycle alone.
+ */
+export type Declared = Record<string, number | (Partial<Pulse> & { cycle: number })>
+
 export interface Pulse {
   /** seconds one whole cycle takes */
   cycle: number
 
   /** intervals the cycle is split into; the gap between calls is `cycle / intervals` */
   intervals: number
+
+  /**
+   * Whose work this is: `group` is the component's, and one replica makes each call; `replica`
+   * is every replica's own, for what lives inside a process.
+   */
+  scope: Scope
 }
+
+export type Scope = 'group' | 'replica'
 
 /** `context.delay` — a call to be made later, answering the id that cancels it. */
 export interface Delay {

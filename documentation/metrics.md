@@ -251,7 +251,9 @@ A lock is waited for as long as it takes to acquire, inside the operation that a
 | `toa.cadence.scans`      | counter | `outcome` (`done`, `skipped`, `failed`)  |
 
 The rate a pulse should keep is `cycle / intervals` from its manifest; `toa.cadence.pulses` is what
-it kept. An interval is not made up, so what is below that rate is gone.
+it kept. An interval is not made up, so what is below that rate is gone. A pulse declared
+`scope: replica` keeps that rate in every replica, so summed over a deployment it is that rate
+times the replicas — and briefly more while a rollout has two sets of them up.
 
 `delayed` is calls handed over to be made later, `dispatched` is those made, `expired` is those
 dropped for passing their `overdue`. What is still waiting is the residue of the three.

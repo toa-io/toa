@@ -5,9 +5,11 @@ Calls a component makes to itself, and calls it puts off.
 A **pulse** calls an operation of its own component on a cadence its manifest states. A **delay**
 hands one call over to be made later.
 
-Both rest on [`atomicity`](/connectors/atomicity), which is what keeps two replicas from making
-one call and where that promise is written down. Where it is not configured, nothing is called
-at all.
+A delay, and a pulse that is the component's rather than each replica's, rest on
+[`atomicity`](/connectors/atomicity), which is what keeps two replicas from making one call and
+where that promise is written down. Where it is not configured, neither is made at all. A pulse
+declared [`scope: replica`](#in-one-replica-or-in-every-one) asks nothing of it and is made
+either way.
 
 ## Pulse
 
@@ -49,6 +51,32 @@ midnight and `3600` the top of the hour. A cycle that is not a divisor of a day 
 boundary that is not any particular time of day. Time zones and calendar months are not
 supported.
 
+### In one replica, or in every one
+
+```yaml
+# manifest.toa.yaml
+cadence:
+  trim:
+    cycle: 60
+    scope: replica # every replica, for what lives in a process
+```
+
+`scope` says whose work this is. It defaults to `group`: the work is the component's, the replicas
+agree on which of them makes each call, and one of them does. That is what work over shared state
+wants — a collection to sweep, a reconciliation, a report — and the whole of it is done once
+however many replicas are running.
+
+`scope: replica` makes the call in every replica. A cache, a buffer, a pool, a file a process
+wrote in its own container: each replica holds its own and has to look after its own, and nothing
+else can do it for it. Such a pulse asks nothing of `atomicity`, so it is made where a `group`
+pulse would make no call at all.
+
+`intervals` means the same under both: the cycle is split over _time_. Under `replica` every
+replica walks the whole of the split, so `intervals: 24` with a daily cycle is each replica doing
+a twenty-fourth of its own work every hour.
+
+An operation called this way runs in the replica that called it.
+
 ### What to expect
 
 **An interval may not be called.** A rollout, a crash, or an operation that raised or ran past
@@ -65,7 +93,13 @@ schedule: [`delay`](#delay) is one.
 
 **An interval is called once.** Two calls for one interval need the clocks of two machines to
 disagree and the work to change hands in the same moment, which is a window the width of that
-disagreement.
+disagreement. Under `scope: replica` it is called once _per replica_, and while a rollout has the
+old replicas and the new ones up together, that is more calls than either count.
+
+**Nothing spaces out what `scope: replica` makes.** Every replica calls at the same boundary, by
+the same clock, and nothing arranges them — so an operation that reaches past its own process, to
+a database or an API, reaches it as many times at once as there are replicas. Work that is
+anything but the process's own belongs in a `group` pulse.
 
 **A call is never made while the one before it is still running.** If the work does not fit the
 gap the interval is skipped and says so; where that is logged, the cycle is too short or has too
@@ -78,7 +112,8 @@ picking one.
 
 `intervals` is not a replica count. With `intervals: 24` and three replicas each makes eight of
 the day's calls: the cycle is spread over _time_, not over the fleet. Replicas beyond `intervals`
-make none.
+make none. How much of the fleet calls is what [`scope`](#in-one-replica-or-in-every-one) says,
+and it is the only thing that says it.
 
 ## Delay
 
