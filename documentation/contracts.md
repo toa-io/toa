@@ -106,6 +106,10 @@ ignore: ['lib/fixtures/**', '!Dockerfile']
 the bridge leaves out, and `!` puts one of those back. Its manifest is always one of them, because
 what it declares is what a caller is held to.
 
+**A symbolic link is read as what it points to**, so sources a component keeps outside its own
+directory — shared with another component, linked in — are hashed as its own, and changing them
+changes its version. `files` and `ignore` select them under the path the link is written at.
+
 **A component built somewhere else states this.** One an application builds with a `.dockerignore`
 of its own — a component the context [evicts](/documentation/compositions.md#evicted), say — hashes
 what that build copied; where that differs from what the map was written from, its processes are
