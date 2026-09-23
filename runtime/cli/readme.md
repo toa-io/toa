@@ -35,6 +35,12 @@ reference. Repeat for several.<br/>
 
 > Note that your `localhost` it is accessible from a container as `host.docker.internal`.
 
+`--dock` builds the image a deploy would build for a composition of these components and
+services — with what the extensions install for what they declare — runs it, and removes it.
+The components are the Context's, and one that is not is refused. The command exits with the
+code the composition exits with, so `toa compose ./components/* --dock --kill` fails where the
+composition does not start in its image.
+
 `--service` starts the named extension services in the composition process, beside its
 components:
 
