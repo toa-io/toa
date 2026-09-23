@@ -156,7 +156,7 @@ the running environment is <code>foo</code>. The chain is not stored.<br/>
 <code>--path</code> path to a Context (default <code>.</code>)<br/>
 <code>--as</code> output file path (default <code>.env</code>)<br/>
 <code>--interactive</code> prompt for secret values<br/>
-<code>--dev</code> / <code>-d</code> fill secrets with local/dev defaults; unresolved secrets throw unless <code>--interactive</code> is also set<br/>
+<code>--dev</code> / <code>-d</code> fill secrets with local/dev defaults; a secret neither a default nor the process environment resolves is written empty, unless <code>--interactive</code> is also set, which asks for it<br/>
 <code>--component</code> / <code>-c</code> generate variables only for this component, everything needed to run it, including when it is evicted. Repeat for several<br/>
 <code>--service</code> / <code>-s</code> generate variables only for this service, by shortcut or package reference. Repeat for several
 </dd>

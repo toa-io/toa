@@ -463,6 +463,10 @@ $ toa env production --interactive        # prompts for each secret
 $ toa env -c todos.tasks                  # only what this component needs
 ```
 
+`--dev` fills what it knows — the credentials of the local infrastructure, and a secret the process
+environment names — and writes the rest empty, for you to fill in. `--interactive` asks for each of
+those instead. A value already in the file is kept by either.
+
 Run it again after changing what the context deploys — an [evicted](compositions.md#evicted)
 component still needs its variables, and `-c` writes them whether or not Toa deploys it.
 
