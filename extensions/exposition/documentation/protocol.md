@@ -126,4 +126,12 @@ The following response headers are exposed:
 - `authorization`
 - `content-type`
 - `content-length`
+- `date`
 - `etag`
+- `exposition`
+- `retry-after`
+
+A reply that carries `exposition` is the gateway's own, so a page can tell a `503` of the
+application from a `503` of a proxy in front of it. The `503` of a [halted](../../../documentation/halt.md)
+deployment is the exception: it carries neither `exposition` nor the CORS headers, so a page on
+another origin sees a failed request instead of a reply.
