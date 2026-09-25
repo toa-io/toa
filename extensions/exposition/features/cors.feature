@@ -39,7 +39,7 @@ Feature: CORS Support
       200 OK
       access-control-allow-credentials: true
       access-control-allow-origin: https://hello.world
-      access-control-expose-headers: authorization, content-type, content-length, date, etag
+      access-control-expose-headers: authorization, content-type, content-length, date, etag, exposition, retry-after
       vary: origin
       """
 
@@ -109,7 +109,7 @@ Feature: CORS Support
       """
       404 Not Found
       access-control-allow-origin: https://hello.world
-      access-control-expose-headers: authorization, content-type, content-length, date, etag
+      access-control-expose-headers: authorization, content-type, content-length, date, etag, exposition, retry-after
       vary: origin
       """
     When the following request is received:
@@ -122,6 +122,6 @@ Feature: CORS Support
       """
       401 Unauthorized
       access-control-allow-origin: https://hello.world
-      access-control-expose-headers: authorization, content-type, content-length, date, etag
+      access-control-expose-headers: authorization, content-type, content-length, date, etag, exposition, retry-after
       vary: origin
       """
