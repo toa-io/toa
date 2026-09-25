@@ -134,4 +134,5 @@ Every reply of the gateway carries the CORS headers, the `503` of a
 [halted](../../../documentation/halt.md) deployment included, which exposes `retry-after` alone.
 So a reply a page on another origin can read is the application's. A request that fails without
 one was answered by something in front of the gateway, or by nothing, and whether it reached the
-application is not known.
+application is not known. A halted deployment answers a preflight `503` as well, so a request that
+needs one fails there, unless the browser holds a preflight of it from before the halt.
