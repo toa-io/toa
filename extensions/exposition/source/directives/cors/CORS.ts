@@ -16,7 +16,6 @@ const EXPOSED_HEADERS = [
   'content-length',
   'date',
   'etag',
-  'exposition',
   'retry-after'
 ].join(', ')
 
