@@ -60,4 +60,7 @@ export type Resource = Described & Record<string, unknown>
 /** What `OPTIONS /.discovery` answers. */
 export interface Discovered {
   routes: Record<string, Resource>
+
+  /** where MCP is served for this authority, where that is a host of its own */
+  mcp?: string
 }

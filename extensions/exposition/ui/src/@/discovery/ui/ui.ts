@@ -92,6 +92,14 @@ export function published(tree: Discovered | null): boolean {
 }
 
 /**
+ * Where a model is pointed: the host of its own the tree names, or `/.mcp` beside the tree
+ * where it names none.
+ */
+export function endpoint(tree: Discovered | null, origin: string): string {
+  return discovered(tree)?.mcp ?? `${origin}/.mcp`
+}
+
+/**
  * What guards it, strictest first — which is the one icon a reader is shown. `system` is
  * what an application runs on rather than what it serves, so it outranks the rest.
  *

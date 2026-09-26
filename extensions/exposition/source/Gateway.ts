@@ -63,7 +63,7 @@ export class Gateway extends Connector {
     this.directives = directives
     this.dispatcher = dispatcher
     this.mcp = mcp
-    this.explorer = new Explorer(tree)
+    this.explorer = new Explorer(tree, mcp)
 
     this.depends(broadcast)
   }

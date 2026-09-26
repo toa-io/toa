@@ -10,6 +10,7 @@ export {
   CONSOLES,
   carries,
   discovered,
+  endpoint,
   guard,
   matches,
   method,
