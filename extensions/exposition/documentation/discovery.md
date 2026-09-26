@@ -51,6 +51,10 @@ A key carries no trailing slash, and a request needs one: `OPTIONS /pots/:id` an
 `OPTIONS /pots/:id/` both answer, but `GET /pots/:id` is `404` and `GET /pots/:id/` is the call.
 Append it.
 
+`mcp` is where [MCP](mcp.md) is served for the authority asked, where that is a
+[host of its own](mcp.md#a-host-of-its-own) — `mcp: https://mcp.toa.io`. Where it is absent, MCP
+is at `/.mcp` of the origin the tree was read from.
+
 Held for half an hour, and `private`: what is in it is what the identity that asked may reach.
 
 ## The page
@@ -58,6 +62,9 @@ Held for half an hour, and `private`: what is in it is what the identity that as
 `GET /.discovery/` is a page that reads the tree, served from the same origin the API is. It
 answers before a credential is read, so it opens for a client whose token has expired — which is
 the client most likely to be looking.
+
+Where anything is published to a model, the page offers the address to point one at: the `mcp`
+of the tree, or `/.mcp` of its own origin.
 
 A method is called from it: the verb is a button, what the method takes is a form, and what came
 back is shown where the form was. The call is made as whoever is reading — the same request they
