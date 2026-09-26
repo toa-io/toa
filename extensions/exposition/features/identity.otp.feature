@@ -141,3 +141,15 @@ Feature: OTP authentication
       """
       401 Unauthorized
       """
+
+  Scenario: A username authenticated from several devices at once is one identity
+    Given the `identity.otp` configuration:
+      """yaml
+      lifetime: 60
+      attempts: 10
+      """
+    And the Gateway is running
+    And the `identity.otp` database is empty
+    And 8 OTPs for `dave` in `nex` authority are issued
+    When the OTPs of `dave` are presented at once
+    Then each resolves to the same identity
