@@ -178,6 +178,22 @@ Feature: MCP on a host of its own
         - header
       """
 
+  Scenario: Discovery names the MCP host of the authority it is asked on
+    The page offers the address a model is pointed at, and the one to offer is this host.
+
+    When the following request is received:
+      """
+      OPTIONS /.discovery HTTP/1.1
+      host: nex.toa.io
+      accept: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+
+      mcp: https://mcp.toa.io
+      """
+
   Scenario: The MCP host names no authorization server of its own
     When the following request is received:
       """
