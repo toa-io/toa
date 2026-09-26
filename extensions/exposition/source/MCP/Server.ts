@@ -60,6 +60,16 @@ export class Server {
     return this.roots.has(host)
   }
 
+  /**
+   * Where a model is pointed on behalf of the authority, where that is a host of its own —
+   * the origin its protected resource document names.
+   */
+  public address(authority: string): string | null {
+    const host = this.options.hosts?.[authority]
+
+    return host === undefined ? null : `https://${host.toLowerCase()}`
+  }
+
   public async process(
     context: http.Context,
     route: http.Processor

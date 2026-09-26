@@ -63,6 +63,9 @@ export async function describe(tree: Tree, request: http.Context): Promise<Disco
 /** What the tree answers. An object, so that what is said of the whole of it has somewhere to go. */
 export interface Discovered {
   routes: Record<string, Resource>
+
+  /** Where MCP is served for the authority asked, where that is a host of its own. */
+  mcp?: string
 }
 
 /** What one resource is, and what it serves; a verb is upper case, and nothing else here is. */

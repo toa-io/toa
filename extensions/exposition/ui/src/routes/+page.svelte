@@ -11,6 +11,7 @@
     Signature,
     addressed,
     carries,
+    endpoint,
     markdown,
     only,
     published,
@@ -134,7 +135,7 @@
         {#if mcp}
           <Clipboard
             id="discovery-mcp-button"
-            text={`${origin}/.mcp`}
+            text={endpoint($tree, origin)}
             variant="ghost"
             size="icon"
             aria-label={$dict.nav.mcp}
