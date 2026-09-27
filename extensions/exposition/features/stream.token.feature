@@ -20,7 +20,7 @@ Feature: A stream route ends with a token
               limit: { value: 2, range: [1, 100] }
       """
 
-  Scenario: Reading a set a page at a time, then what changed
+  Scenario: Reading a collection a page at a time, then what changed
     When the following request is received:
       """
       GET /todos/ HTTP/1.1

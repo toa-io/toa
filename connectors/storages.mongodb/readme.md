@@ -16,11 +16,11 @@ adds no waiting to the query path: exporting is buffered and happens in the back
 
 ## Stream tokens
 
-A [stream](/documentation/sets.md) ends with a token of changes where two things hold:
+A [stream](/documentation/collections.md) ends with a token of changes where two things hold:
 
 - **MongoDB runs as a replica set**, which it does wherever there is an outbox.
 - **The collection keeps images** of what a record was before each change, which is how a change
-  that takes an entry out of the set is told from a change outside it. They cost a copy of every
+  that takes an entry out of the collection is told from a change outside it. They cost a copy of every
   changed record for as long as the oplog holds it, so a collection keeps them only by a
   [migration](/documentation/component/declaration.md#migrations):
 

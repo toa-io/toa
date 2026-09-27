@@ -5,7 +5,7 @@ import { exceptions, parts } from '@toa.io/core'
 import { match } from './match.js'
 
 /**
- * A set read as a stream, and what changed in it since a token.
+ * A collection read as a stream, and what changed in it since a token.
  *
  * A token is a position in the history MongoDB keeps of the writes committed to the collection —
  * a change stream's resume token — so what it continues from is the order writes committed in.
@@ -18,7 +18,7 @@ import { match } from './match.js'
  * of a record before a change — pages are still read, and a complete read ends with a `null`
  * token: there is nothing to continue from.
  */
-export class Sets {
+export class Streams {
   /** @type {import('mongodb').Collection} */
   #collection
 
@@ -114,7 +114,7 @@ export class Sets {
   }
 
   /**
-   * The set, or a page of it. A read that pages is ordered by `_id` and continues after the
+   * The collection, or a page of it. A read that pages is ordered by `_id` and continues after the
    * last one; one that does not is read in the order the query states.
    */
   async #read(criteria, options, hash, session, position, after) {
@@ -157,7 +157,7 @@ export class Sets {
   }
 
   /**
-   * What committed after the token that concerns the set: a change whose image after it matches
+   * What committed after the token that concerns the collection: a change whose image after it matches
    * the criteria is an entry, and one whose image before it alone does is a removal. A change
    * that concerns neither is left out by the pipeline, so a reader learns no id it cannot read.
    */
@@ -249,7 +249,7 @@ function prefix(filter, path) {
   for (const [key, value] of Object.entries(filter))
     if (LOGICAL.includes(key)) result[key] = value.map((filter) => prefix(filter, path))
     else if (key.startsWith('$'))
-      throw new exceptions.QuerySyntaxException(`What changed in a set cannot be read by '${key}'`)
+      throw new exceptions.QuerySyntaxException(`What changed in a collection cannot be read by '${key}'`)
     else result[path + key] = value
 
   return result
@@ -268,7 +268,7 @@ function lost() {
 
 /**
  * The criteria a token was issued for: a read that continues from it under other criteria would
- * answer the changes to one set as if they were those of another.
+ * answer the changes to one collection as if they were those of another.
  */
 function digest(criteria) {
   return createHash('sha1').update(JSON.stringify(criteria)).digest('base64url').slice(0, 16)

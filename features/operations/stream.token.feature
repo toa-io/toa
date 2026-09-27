@@ -1,6 +1,6 @@
 Feature: A stream ends with a token
 
-  A reader keeping a copy of a set reads it once, and from then on only what changed in it.
+  A reader keeping a copy of a collection reads it once, and from then on only what changed in it.
 
   Background:
     Given the `streams.tokens` database contains:
@@ -11,7 +11,7 @@ Feature: A stream ends with a token
       | b0000000000000000000000000000001 | bob   | tea   | 1       | null    |
     And I compose `streams.tokens` component
 
-  Scenario: Reading a set
+  Scenario: Reading a collection
     When I read `streams.tokens.stream` with:
       """yaml
       query:
@@ -143,7 +143,7 @@ Feature: A stream ends with a token
           VERSION: 5
       """
 
-  Scenario: Entries that leave the set are removed
+  Scenario: Entries that leave the collection are removed
     When I read `streams.tokens.stream` with:
       """yaml
       query:
@@ -182,7 +182,7 @@ Feature: A stream ends with a token
       """
     And the copy holds 0 entries
 
-  Scenario: An entry that enters the set is read
+  Scenario: An entry that enters the collection is read
     When I read `streams.tokens.stream` with:
       """yaml
       query:
@@ -207,7 +207,7 @@ Feature: A stream ends with a token
           owner: alice
       """
 
-  Scenario: Reading a set in pages
+  Scenario: Reading a collection in pages
     Given the `streams.tokens` database contains:
       | _id                              | owner | title | VERSION | DELETED |
       | a0000000000000000000000000000001 | alice | a     | 1       | null    |
@@ -223,7 +223,7 @@ Feature: A stream ends with a token
       """
     Then the copy holds 5 entries
 
-  Scenario: A page ends with a token that continues the set
+  Scenario: A page ends with a token that continues the collection
     When I read `streams.tokens.stream` with:
       """yaml
       query:

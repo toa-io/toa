@@ -67,7 +67,7 @@ export interface Storage extends Connector {
   find(query: Query): Promise<Record[]>
 
   /**
-   * scope `stream`: the parts of the set the query selects, or of what changed in it since
+   * scope `stream`: the parts of the collection the query selects, or of what changed in it since
    * `options.token` — see `parts.ts`. The last part is the token; a stream that ends without it
    * was cut.
    */

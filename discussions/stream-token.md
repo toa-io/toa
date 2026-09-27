@@ -2,8 +2,8 @@
 
 ## Design concept
 
-A client that keeps a copy of a set — every entry a route's criteria select — reads the set once and
-from then on only what changed in it. The `stream` scope answers both: a read of the set, and a read
+A client that keeps a copy of a collection — every entry a route's criteria select — reads the collection once and
+from then on only what changed in it. The `stream` scope answers both: a read of the collection, and a read
 of its changes, each ending with a **token** that the next read starts from.
 
 A token is a position in the storage's own history of committed writes. The storage forms it, and
@@ -20,32 +20,32 @@ A stream yields **parts**:
 { "token": "eyJ2IjoxLCJwIjoi..." }
 ```
 
-- `entry` is an entry of the set: one it has, or one that changed in it.
-- `removed` is the id of an entry that left the set: it was deleted, or it stopped matching the
+- `entry` is an entry of the collection: one it has, or one that changed in it.
+- `removed` is the id of an entry that left the collection: it was deleted, or it stopped matching the
   criteria.
 - `token` is the last part, and the only one that carries neither.
 
-A read without a token takes the position first, and reads the set after. Everything committed
+A read without a token takes the position first, and reads the collection after. Everything committed
 before the position is in what the read finds; everything committed after it is in the next read.
 An entry committed in between is found by both, and the reader keeps the version it holds or the
 later one, as it does with every entry.
 
-A read with a token answers the writes committed after its position that touch the set, in the
+A read with a token answers the writes committed after its position that touch the collection, in the
 order they committed, then a new token.
 
 `limit` splits either read into pages. A page that comes back full ends with a token that continues
 the same read; a page that comes back short has reached the end. So one token means one thing to a
 reader — what it has read so far — and asking again with it answers what is left to read: the rest
-of the set while the first read is still paging, the changes once the set has been read.
+of the collection while the first read is still paging, the changes once the collection has been read.
 
 A stream that ends with a token is complete. One that ends without it — `FIN` with no token before
 it — was cut, and the reader asks again with the token it had.
 
 ### Guarantees
 
-**Reading the set**
+**Reading the collection**
 
-1. A reader that has read up to a token holds every entry of the set as committed up to that
+1. A reader that has read up to a token holds every entry of the collection as committed up to that
    position.
 2. An entry may arrive twice, and arrives with the version it had when it was read. A reader keeps
    the higher `VERSION`.
@@ -63,10 +63,10 @@ it — was cut, and the reader asks again with the token it had.
 7. A write arrives once it is committed, in the order writes committed. That holds for a
    transaction that committed after a later write began, for a write converged from another region,
    and for a write a primary made before it stepped down.
-8. An entry that leaves the set arrives as `removed`: one deleted — by `terminate`, or taken out of
+8. An entry that leaves the collection arrives as `removed`: one deleted — by `terminate`, or taken out of
    the collection — and one that stopped matching the criteria.
-9. A change to an entry outside the set sends nothing: a reader learns only ids it can read.
-10. A route that declares `deleted: true` has its tombstones in the set, and a deletion arrives as
+9. A change to an entry outside the collection sends nothing: a reader learns only ids it can read.
+10. A route that declares `deleted: true` has its tombstones in the collection, and a deletion arrives as
     the `entry` with `DELETED` set.
 
 **What is refused**
@@ -74,7 +74,7 @@ it — was cut, and the reader asks again with the token it had.
 11. A token the storage cannot continue from is answered `410` before any part: one older than the
     history the storage keeps, one of a format the storage no longer reads, and one presented where
     the collection keeps no record of what an entry was before a change. The reader drops its copy
-    and reads the set again.
+    and reads the collection again.
 12. A token presented with criteria other than those it was issued for is answered `400`.
 13. `sort` is refused together with `token` or `limit`: a page is ordered by `id`, and changes by
     when they committed.
@@ -84,14 +84,14 @@ it — was cut, and the reader asks again with the token it had.
 - How long a token lasts. It lasts as long as the storage keeps the history it names — the oplog
   window of the replica set.
 - A token of changes from a storage that keeps no history. On a standalone MongoDB and over a
-  collection that keeps no images a page still ends with a token that continues the set, and a
+  collection that keeps no images a page still ends with a token that continues the collection, and a
   complete stream ends with `{ "token": null }`: the read is complete, and there is nothing to
   continue from.
-- An order of the set. A reader that wants one sorts what it holds.
+- An order of the collection. A reader that wants one sorts what it holds.
 
 ### What a component author does differently
 
-A route that answers a set to be kept in sync:
+A route that answers a collection to be kept in sync:
 
 ```yaml
 # manifest.toa.yaml
@@ -106,7 +106,7 @@ exposition:
 ```
 
 A migration that keeps what an entry was before each change, which is what tells `removed` from a
-change outside the set:
+change outside the collection:
 
 ```yaml
 # migrations/0003-images.yaml
@@ -118,7 +118,7 @@ A client reads:
 ```http
 GET /pots/green/?limit=100            100 entries, then {"token":"T1"}
 GET /pots/green/?token=T1&limit=100   the next 100, then {"token":"T2"}
-GET /pots/green/?token=T2&limit=100   42 entries: a short page, the set is read, then {"token":"T3"}
+GET /pots/green/?token=T2&limit=100   42 entries: a short page, the collection is read, then {"token":"T3"}
 
 GET /pots/green/?token=T3&limit=100   later: what changed since, then {"token":"T4"}
 ```
@@ -138,7 +138,7 @@ export const observation = (_, stream) => stream
 | 3   | A migration step keeps images                                       | one step in `migrations.js`                                | low    | 1     |
 | 4   | The request contract admits `token`, and `limit` on a stream        | `contract/request.ts`, the query schema                   | low    | 1     |
 | 5   | The gateway reads `token`, admits `limit` on a stream, answers `410` | `Query.ts`, the querystring schema, `exceptions.ts`       | medium | 2     |
-| 6   | Documentation                                                       | `documentation/sets.md`, `query.md`, the status list      | low    | 1     |
+| 6   | Documentation                                                       | `documentation/collections.md`, `query.md`, the status list      | low    | 1     |
 
 ### 1. A storage's `stream` yields parts
 
@@ -157,7 +157,7 @@ export const observation = (_, stream) => stream
   read until a batch comes back empty or `limit` parts are read. A change whose after-image matches
   is an `entry`; one whose before-image alone matches is `removed`; a deletion is `removed`.
 - **The token** is `base64url(JSON.stringify({ v, p, id?, h }))`: the format version, the position
-  as MongoDB wrote it, the last `_id` while the set pages, and a hash of the translated criteria.
+  as MongoDB wrote it, the last `_id` while the collection pages, and a hash of the translated criteria.
 - **Whether a collection keeps images** the storage reads when it connects. Where it keeps none, or
   MongoDB runs standalone, a page token carries no position, a complete read ends with
   `{ token: null }`, and a token that carries a position is answered as one the storage cannot
@@ -184,7 +184,7 @@ leave out. `sort` beside either is refused as a request contract exception.
 
 ### 6. Documentation
 
-- `documentation/sets.md`: reading a set and its changes — the parts, the token, the guarantees, the
+- `documentation/collections.md`: reading a collection and its changes — the parts, the token, the guarantees, the
   requirements.
 - `extensions/exposition/documentation/query.md`: `token`, and `limit` on a stream.
 - `extensions/exposition/ui/src/docs/status.md`: `410`.
@@ -192,14 +192,14 @@ leave out. `sort` beside either is refused as a request contract exception.
 
 ## Decisions
 
-**One token.** A token says what a reader holds. Paging the set and reading its changes are the same
+**One token.** A token says what a reader holds. Paging the collection and reading its changes are the same
 question — what is left to read — so a second token would give a reader a choice it never makes: a
-change token taken while paging skips the rest of the set, and a page token once the set is read
+change token taken while paging skips the rest of the collection, and a page token once the collection is read
 is the change token.
 
 **The token is the last part.** Its presence is what tells a complete stream from a cut one. `FIN`
 ends a stream that failed as well as one that completed (#1183), and a part the storage writes
-after the set is the one signal a proxy cannot fake.
+after the collection is the one signal a proxy cannot fake.
 
 **Pages are ordered by `id`.** An `id` never changes, so an entry is on one side of a page boundary
 for the whole read. An order by a property that changes can move an entry from the unread part to
@@ -210,7 +210,7 @@ read or answered by the next one; a position taken after it leaves the writes co
 read to neither.
 
 **Images tell `removed`.** A change is matched against the criteria before and after it. Without the
-image before, a change that moves an entry out of the set is indistinguishable from a change to an
+image before, a change that moves an entry out of the collection is indistinguishable from a change to an
 entry that was never in it, and sending `removed` for both would hand a reader the ids of entries it
 cannot read.
 
@@ -218,7 +218,7 @@ cannot read.
 forged token reaches only what its bearer can read.
 
 **`410` for every token that cannot be continued.** The reader does one thing about all of them —
-reads the set again — so they share a status.
+reads the collection again — so they share a status.
 
 ## Context
 
@@ -230,7 +230,7 @@ reads the set again — so they share a status.
 ## What happens today
 
 A `stream` is a live cursor over the collection. It yields entries, has no `limit`, and ends the
-same way whether it completed or failed. A reader that keeps a copy reads the whole set again to
+same way whether it completed or failed. A reader that keeps a copy reads the whole collection again to
 learn what changed.
 
 ## Stages
@@ -245,15 +245,15 @@ Features against the replica set:
 1. **A late commit.** A transaction is held open, a later write commits, and a read takes a token
    between them. The next read answers both.
 2. **A converged write** arrives in the next read.
-3. **Leaving the set.** A reassignment, a `terminate` and a `deleteOne` each arrive as `removed`, and
+3. **Leaving the collection.** A reassignment, a `terminate` and a `deleteOne` each arrive as `removed`, and
    a change to another owner's entry sends nothing.
 4. **A cut stream.** The component stops mid-stream. The stream ends without a token, and asking
-   again with the token that was held completes the set.
+   again with the token that was held completes the collection.
 5. **Pages.** Pages with `limit` yield every entry, each once or twice with the same `VERSION`,
    while writes run.
 6. **Refusals.** A token past the oplog is answered `410` before any part; a token under other
    criteria `400`; `sort` beside `token` `400`.
-7. **Without history.** A standalone MongoDB and a collection without images page the set, and end
+7. **Without history.** A standalone MongoDB and a collection without images page the collection, and end
    it with `{ token: null }`.
 
 ## Compatibility

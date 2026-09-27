@@ -8,7 +8,7 @@ import { MongoClient } from 'mongodb'
 import * as stage from './.workspace/components/index.js'
 
 /*
- * A reader keeping a copy of a set: what it read is applied to the copy the way a client applies
+ * A reader keeping a copy of a collection: what it read is applied to the copy the way a client applies
  * it — the higher `VERSION` kept, a removed entry dropped — and the token it ended with is kept for
  * the next read.
  */
@@ -21,7 +21,7 @@ When(
    * @this {toa.features.Context}
    */
   async function (endpoint, yaml) {
-    this.set = { copy: new Map(), token: undefined, parts: [] }
+    this.reading = { copy: new Map(), token: undefined, parts: [] }
 
     await read.call(this, endpoint, parse(yaml) ?? {})
   }
@@ -35,11 +35,11 @@ When(
    * @this {toa.features.Context}
    */
   async function (endpoint, yaml) {
-    assert.ok(typeof this.set?.token === 'string', 'No token was read before')
+    assert.ok(typeof this.reading?.token === 'string', 'No token was read before')
 
     const request = parse(yaml) ?? {}
 
-    request.query = { ...request.query, token: this.set.token }
+    request.query = { ...request.query, token: this.reading.token }
 
     await read.call(this, endpoint, request)
   }
@@ -54,7 +54,7 @@ When(
    * @this {toa.features.Context}
    */
   async function (endpoint, limit, yaml) {
-    this.set = { copy: new Map(), token: undefined, parts: [] }
+    this.reading = { copy: new Map(), token: undefined, parts: [] }
 
     const request = parse(yaml) ?? {}
 
@@ -63,12 +63,12 @@ When(
 
       const query = { ...request.query, limit }
 
-      if (this.set.token !== undefined) query.token = this.set.token
+      if (this.reading.token !== undefined) query.token = this.reading.token
 
       const read = await readOnce.call(this, endpoint, { ...request, query })
 
       assert.ok(this.exception === undefined, this.exception?.message)
-      assert.ok(this.set.ended, `Page ${page} ended without a token`)
+      assert.ok(this.reading.ended, `Page ${page} ended without a token`)
 
       if (read < limit) break
     }
@@ -81,8 +81,8 @@ Then(
   function () {
     if (this.exception !== undefined) throw this.exception
 
-    assert.ok(this.set.ended, 'The stream ended without a token')
-    assert.equal(typeof this.set.token, 'string', `The token is ${this.set.token}`)
+    assert.ok(this.reading.ended, 'The stream ended without a token')
+    assert.equal(typeof this.reading.token, 'string', `The token is ${this.reading.token}`)
   }
 )
 
@@ -92,8 +92,8 @@ Then(
   function () {
     if (this.exception !== undefined) throw this.exception
 
-    assert.ok(this.set.ended, 'The stream ended without a token')
-    assert.strictEqual(this.set.token, null)
+    assert.ok(this.reading.ended, 'The stream ended without a token')
+    assert.strictEqual(this.reading.token, null)
   }
 )
 
@@ -103,7 +103,7 @@ Then(
   function () {
     if (this.exception !== undefined) throw this.exception
 
-    assert.ok(!this.set.ended, 'The stream ended with a token')
+    assert.ok(!this.reading.ended, 'The stream ended with a token')
   }
 )
 
@@ -119,12 +119,12 @@ Then(
     if (this.exception !== undefined) throw this.exception
 
     const expected = table.hashes().map(typed)
-    const held = [...this.set.copy.values()]
+    const held = [...this.reading.copy.values()]
 
     assert.equal(held.length, expected.length, diff(expected, held))
 
     for (const entry of expected) {
-      const found = this.set.copy.get(entry.id)
+      const found = this.reading.copy.get(entry.id)
 
       assert.ok(found !== undefined && match(found, entry), diff(entry, found))
     }
@@ -140,7 +140,7 @@ Then(
   function (count) {
     if (this.exception !== undefined) throw this.exception
 
-    assert.equal(this.set.copy.size, count)
+    assert.equal(this.reading.copy.size, count)
   }
 )
 
@@ -156,7 +156,7 @@ Then(
     if (this.exception !== undefined) throw this.exception
 
     const expected = parse(yaml) ?? []
-    const read = this.set.parts
+    const read = this.reading.parts
 
     assert.equal(read.length, expected.length, diff(expected, read))
     assert.ok(match(read, expected), diff(expected, read))
@@ -260,8 +260,8 @@ async function read(endpoint, request) {
  */
 async function readOnce(endpoint, request) {
   this.exception = undefined
-  this.set.parts = []
-  this.set.ended = false
+  this.reading.parts = []
+  this.reading.ended = false
 
   const [operation, component, namespace = 'default'] = endpoint.split('.').reverse()
 
@@ -273,14 +273,14 @@ async function readOnce(endpoint, request) {
     const reply = await remote.invoke(operation, request)
 
     for await (const part of reply) {
-      assert.ok(!this.set.ended, `A part arrived after the token: ${JSON.stringify(part)}`)
+      assert.ok(!this.reading.ended, `A part arrived after the token: ${JSON.stringify(part)}`)
 
       if ('token' in part) {
-        this.set.token = part.token
-        this.set.ended = true
+        this.reading.token = part.token
+        this.reading.ended = true
       } else {
-        this.set.parts.push(part)
-        apply(this.set.copy, part)
+        this.reading.parts.push(part)
+        apply(this.reading.copy, part)
       }
     }
   } catch (exception) {
@@ -289,7 +289,7 @@ async function readOnce(endpoint, request) {
 
   await remote?.disconnect()
 
-  return this.set.parts.length
+  return this.reading.parts.length
 }
 
 function apply(copy, part) {

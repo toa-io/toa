@@ -24,7 +24,7 @@ additional `criteria` or `sort`, and bound `omit` and `limit`.
 
 ## Streams
 
-A [stream](/.discovery/multipart) yields `{"entry":…}` and
+A stream yields `{"entry":…}` and
 `{"removed":"<id>"}` parts, and ends with `{"token":…}`. No token means it
 was cut.
 
@@ -32,7 +32,7 @@ was cut.
 GET /pots/?limit=100&token=eyJ2Ijox...
 ```
 
-`limit` is a page. The last token continues the read: the next page, then
+The last token continues the read: the rest of the collection, then
 what changed. `omit`, and `sort` beside `limit` or `token`, are refused.
 
 `410` means the token has expired: read again without it.

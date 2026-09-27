@@ -5,7 +5,7 @@ import { codec } from './record.js'
 import { Inbox } from './inbox.js'
 import { Outbox } from './outbox.js'
 import { Migrations } from './migrations.js'
-import { Sets } from './sets.js'
+import { Streams } from './streams.js'
 import { conflicted, query } from './measurements.js'
 import { ReturnDocument } from 'mongodb'
 
@@ -35,8 +35,8 @@ export class Storage extends Connector {
   /** @type {Map<string, object>} span options per driver method */
   #spans = new Map()
 
-  /** @type {Sets | undefined} what a stream reads, and where it continues from */
-  #sets
+  /** @type {Streams | undefined} what a stream reads, and where it continues from */
+  #streams
 
   /** how a record is written and read back, which depends on what the entity declares */
   #to
@@ -113,7 +113,7 @@ export class Storage extends Connector {
     await this.#outbox?.index()
     await this.#inbox?.index()
 
-    this.#sets = new Sets(
+    this.#streams = new Streams(
       this.#collection,
       () => this.#client.instance.client,
       this.#from,
@@ -180,7 +180,7 @@ export class Storage extends Connector {
 
     this.debug('find (stream)', { criteria, options })
 
-    return this.#sets.stream({ criteria, options }, query?.options?.token)
+    return this.#streams.stream({ criteria, options }, query?.options?.token)
   }
 
   async add(entity, session = undefined) {

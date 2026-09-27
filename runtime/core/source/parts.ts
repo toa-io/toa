@@ -4,7 +4,7 @@ import type { Record } from './types/storages.ts'
 const KEY = Symbol.for('toa.core.part')
 
 /**
- * What a stream yields: an entry of the set, the id of one that left it, or — last — the token
+ * What a stream yields: an entry of the collection, the id of one that left it, or — last — the token
  * the next read starts from. `null` where the storage keeps no history to continue from.
  */
 export type Part = { entry: Record } | { removed: string } | { token: string | null }
