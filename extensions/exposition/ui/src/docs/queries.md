@@ -34,5 +34,3 @@ GET /pots/?limit=100&token=eyJ2Ijox...
 
 The last token continues the read: the rest of the collection, then
 what changed. `omit`, and `sort` beside `limit` or `token`, are refused.
-
-`410` means the token has expired: read again without it.
