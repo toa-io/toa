@@ -90,24 +90,15 @@ beside `token` or `limit`; sort what the copy holds.
 
 ## What a token requires
 
-A token is issued where the storage remembers the order its writes committed in:
+A token of changes is issued by a storage that remembers the order its writes committed in. What
+that takes of a deployment is the storage's to say, in its own documentation.
 
-- **MongoDB running as a replica set**, which it is wherever there is an outbox.
-- **A collection that keeps images** of what an entry was before each change. They cost a copy of
-  every changed entry for as long as MongoDB keeps its history, so a collection keeps them only by a
-  [migration](/documentation/component/declaration.md#migrations):
+A storage that remembers no such order still ends a page with a token that continues the set, and
+ends a complete stream with `{ "token": null }`: the set is whole, and there is nothing to continue
+from. What changed in it is learned by reading it again.
 
-  ```yaml
-  # migrations/0003-images.yaml
-  - images: true
-  ```
-
-Anywhere else a page still ends with a token that continues the set, and a complete stream ends
-with `{ "token": null }`: the set is whole, and there is nothing to continue from. What changed in
-it is learned by reading it again.
-
-**How long a token lasts** is how long MongoDB keeps its history: the oplog window of the replica
-set.
+**How long a token lasts** is how long the storage keeps that history. A token past it is refused
+with `410`.
 
 ## Over HTTP
 
