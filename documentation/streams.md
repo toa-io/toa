@@ -165,4 +165,5 @@ A route may not carry `map:stream` and `map:buffer` at once — each of them tak
   the broker as before, and a streamed call to it fails.
 - **A reply is a value or a stream**, never a value with a stream in it.
 - **What a streamed reply carries at the gateway** is what any streamed reply carries: no `etag` and
-  no `304`, no `content-length`, and no `io:output` list applies to it.
+  no `304`, and no `content-length`. An `io:output` list restricts each object it yields, as it
+  does any other reply.
