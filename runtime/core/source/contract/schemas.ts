@@ -24,7 +24,8 @@ export const query: JSONSchema = {
       minItems: 1,
       items: { type: 'string', not: { const: 'id' } }
     },
-    deleted: { type: 'boolean' }
+    deleted: { type: 'boolean' },
+    token: { type: 'string', minLength: 1 }
   },
   additionalProperties: false
 }

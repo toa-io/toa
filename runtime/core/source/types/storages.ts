@@ -39,6 +39,8 @@ export interface Options {
   sample?: number
   /** include tombstones; without it an observation answers `null` over one */
   deleted?: boolean
+  /** where a stream continues from: the token the one before it ended with */
+  token?: string
 }
 
 /** What core hands a storage, written by `Query.parse`. */
@@ -64,7 +66,11 @@ export interface Storage extends Connector {
   /** scope `entries` */
   find(query: Query): Promise<Record[]>
 
-  /** scope `stream` */
+  /**
+   * scope `stream`: the parts of the set the query selects, or of what changed in it since
+   * `options.token` — see `parts.ts`. The last part is the token; a stream that ends without it
+   * was cut.
+   */
   stream(query?: Query): Promise<Readable>
 
   /**

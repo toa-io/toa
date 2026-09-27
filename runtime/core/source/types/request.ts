@@ -16,6 +16,7 @@ export interface Query<Entity = any> {
   projection?: Array<string & keyof Entity>
   version?: number
   deleted?: boolean
+  token?: string
 }
 
 /** Origin of a call. Stamped by the framework; whoever reads it takes the keys it knows. */

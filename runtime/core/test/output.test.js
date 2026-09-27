@@ -4,6 +4,7 @@ import { Readable } from 'node:stream'
 import { finished } from 'node:stream/promises'
 
 import { Observation } from '../source/observation.js'
+import * as parts from '../source/parts.ts'
 
 const entity = {
   deleted: false,
@@ -134,6 +135,29 @@ describe('output', () => {
     const reply = await observation(answered).invoke(request(['id']))
 
     await assert.rejects(reply.output.toArray(), { message: 'broken' })
+  })
+
+  it('should answer of each part a storage made the properties the request asks for of its entry', async () => {
+    const answered = Readable.from([
+      parts.entry({ id: 'x', title: 'First pot', volume: 100 }),
+      parts.removed('y'),
+      parts.token('t')
+    ])
+
+    const reply = await observation(answered).invoke(request(['id', 'title']))
+
+    assert.deepStrictEqual(await reply.output.toArray(), [
+      { entry: { id: 'x', title: 'First pot' } },
+      { removed: 'y' },
+      { token: 't' }
+    ])
+  })
+
+  it('should answer an object an operation built in the shape of a part as any object', async () => {
+    const answered = Readable.from([{ entry: { id: 'x', volume: 100 } }])
+    const reply = await observation(answered).invoke(request(['id']))
+
+    assert.deepStrictEqual(await reply.output.toArray(), [{}])
   })
 
   it('should answer a stream of bytes as it is', async () => {

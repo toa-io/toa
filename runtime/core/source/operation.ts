@@ -1,6 +1,7 @@
 import { Readable, Transform, pipeline } from 'node:stream'
 import { Connector } from './connector.ts'
 import { codes, SystemException, RequestContractException } from './exceptions.ts'
+import * as parts from './parts.ts'
 import { environment } from '@toa.io/generic'
 import type { Cascade } from './cascade.ts'
 import type { State } from './state.ts'
@@ -278,6 +279,9 @@ function restricted(source: Readable, allowed: Set<string>): Readable {
 }
 
 function fitted(value: unknown, allowed: Set<string>): unknown {
+  // what a part carries of the set is its entry; a removal and a token are not the entity's
+  if (parts.is(value)) return 'entry' in value ? { entry: fit(value.entry, allowed) } : value
+
   return value !== null && typeof value === 'object' && !ArrayBuffer.isView(value)
     ? fit(value as Record<string, any>, allowed)
     : value
