@@ -126,6 +126,7 @@ What a step may say, for MongoDB:
 | `dropIndex` | `name`                                                                                                           |
 | `update`    | `filter`, and `update` as an object or as a list to run as an aggregation pipeline                               |
 | `delete`    | `filter`, where `{}` means every record                                                                          |
+| `images`    | `true` to keep what a record was before each change, which a [stream token](/documentation/sets.md) needs; `false` to stop |
 
 An index whose name is already taken by one of another shape is dropped and made again, so
 changing what an index is made of is an edit to its declaration.
