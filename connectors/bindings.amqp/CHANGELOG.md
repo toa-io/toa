@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.319](https://github.com/toa-io/toa/compare/v1.0.0-alpha.318...v1.0.0-alpha.319) (2026-09-27)
+
+### Performance Improvements
+
+* carry the values of a stream to the gateway as the bytes it writes ([56ab3c5](https://github.com/toa-io/toa/commit/56ab3c5f50c65f55cde11733c8ac667a768b31ec))
+
+
 # [1.0.0-alpha.318](https://github.com/toa-io/toa/compare/v1.0.0-alpha.317...v1.0.0-alpha.318) (2026-09-23)
 
 **Note:** Version bump only for package @toa.io/bindings.amqp

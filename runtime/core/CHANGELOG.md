@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.319](https://github.com/toa-io/toa/compare/v1.0.0-alpha.318...v1.0.0-alpha.319) (2026-09-27)
+
+### Bug Fixes
+
+* **core:** restrict each object a stream yields to what the request asks for ([7a40e5c](https://github.com/toa-io/toa/commit/7a40e5c3f049c60e6c2ab7eb38f86917f79a81ac))
+
+
 # [1.0.0-alpha.315](https://github.com/toa-io/toa/compare/v1.0.0-alpha.314...v1.0.0-alpha.315) (2026-09-23)
 
 * feat(map)!: leave out of a contract what the runtime gives every component ([b81837a](https://github.com/toa-io/toa/commit/b81837a3bc4771d7ee1c10fe613c9a1d7501bf1a))

@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.319](https://github.com/toa-io/toa/compare/v1.0.0-alpha.318...v1.0.0-alpha.319) (2026-09-27)
+
+### Features
+
+* **storages.mongodb:** read a set and its changes from a token ([d0a8955](https://github.com/toa-io/toa/commit/d0a8955683b7566e704f7e9cde69f67272c7be1b))
+
+
 # [1.0.0-alpha.318](https://github.com/toa-io/toa/compare/v1.0.0-alpha.317...v1.0.0-alpha.318) (2026-09-23)
 
 **Note:** Version bump only for package @toa.io/storages.mongodb

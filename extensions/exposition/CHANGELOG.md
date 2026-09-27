@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.319](https://github.com/toa-io/toa/compare/v1.0.0-alpha.318...v1.0.0-alpha.319) (2026-09-27)
+
+### Bug Fixes
+
+* **exposition:** make an OTP username resolve to one identity ([2fc8ad8](https://github.com/toa-io/toa/commit/2fc8ad81193296ffffbddb25a25de90c994bed89))
+* **exposition:** offer the MCP host on the discovery page ([dd50083](https://github.com/toa-io/toa/commit/dd500830b72ec8d06f2a65a08b6ae8b5178049aa))
+
+### Features
+
+* **exposition:** expose exposition and retry-after cross-origin ([8f0fd11](https://github.com/toa-io/toa/commit/8f0fd11ab6cb3198be648f1fffaeb2a336f6ab1b))
+* **exposition:** let a page on another origin read a halted gateway's 503 ([d986af9](https://github.com/toa-io/toa/commit/d986af91fef4eafedd4529efcbc8378c741f0c6b))
+* **exposition:** page a stream by limit and continue it from a token ([d012757](https://github.com/toa-io/toa/commit/d0127576489d838a261c4448989b0c799c499f26))
+
+### Performance Improvements
+
+* carry the values of a stream to the gateway as the bytes it writes ([56ab3c5](https://github.com/toa-io/toa/commit/56ab3c5f50c65f55cde11733c8ac667a768b31ec))
+
+
 # [1.0.0-alpha.318](https://github.com/toa-io/toa/compare/v1.0.0-alpha.317...v1.0.0-alpha.318) (2026-09-23)
 
 **Note:** Version bump only for package @toa.io/extensions.exposition

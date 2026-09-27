@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.319](https://github.com/toa-io/toa/compare/v1.0.0-alpha.318...v1.0.0-alpha.319) (2026-09-27)
+
+### Features
+
+* **operations:** refuse a deploy where the cluster does not hold a secret ([beb7ccf](https://github.com/toa-io/toa/commit/beb7ccf35619494ab9ad6659963969bb4f9603c8))
+
+
 # [1.0.0-alpha.318](https://github.com/toa-io/toa/compare/v1.0.0-alpha.317...v1.0.0-alpha.318) (2026-09-23)
 
 ### Features
