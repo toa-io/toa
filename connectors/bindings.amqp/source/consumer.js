@@ -1,3 +1,4 @@
+import { Readable, Transform, pipeline } from 'node:stream'
 import { Unroutable } from 'comq'
 import { Connector, Encoded, exceptions } from '@toa.io/core'
 import { publish } from './measurements.js'
@@ -42,7 +43,12 @@ export class Consumer extends Connector {
 
     // an octet-stream reply is the bytes comq hands over, which is an output whoever answered
     // encoded for this caller to pass on
-    return Buffer.isBuffer(reply) ? { output: new Encoded(reply) } : reply
+    if (Buffer.isBuffer(reply)) return { output: new Encoded(reply) }
+
+    // and so is each value of a stream that answers a request asking for the bytes of them
+    if (reply instanceof Readable && request?.encoded === true) return encodings(reply)
+
+    return reply
   }
 
   async #send(request, terms) {
@@ -88,3 +94,23 @@ function options(terms) {
 
   return { timeout: terms.timeout, signal: terms.signal }
 }
+
+/**
+ * The values of a stream, each the bytes whoever answered encoded it into.
+ *
+ * @param {Readable} source
+ * @returns {Readable}
+ */
+function encodings(source) {
+  const wrapping = new Transform({
+    objectMode: true,
+    transform(value, _, callback) {
+      callback(null, Buffer.isBuffer(value) ? new Encoded(value) : value)
+    }
+  })
+
+  return pipeline(source, wrapping, noop)
+}
+
+// what `pipeline` reports is what each stream already carries to its reader
+function noop() {}

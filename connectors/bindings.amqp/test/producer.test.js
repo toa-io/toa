@@ -1,6 +1,7 @@
 import { describe, it, beforeEach, mock as mocking } from 'node:test'
 import assert from 'node:assert/strict'
 import { isDeepStrictEqual } from 'node:util'
+import { Readable } from 'node:stream'
 
 import { generate } from 'randomstring'
 import { each } from '@toa.io/generic'
@@ -261,5 +262,43 @@ describe('stateful', () => {
     await connecting
 
     assert.equal(comm.reply.mock.callCount(), endpoints.length - 1)
+  })
+})
+
+describe('encoded', () => {
+  const serve = async () => {
+    await producer.connect()
+
+    return comm.reply.mock.calls[0].arguments[1]
+  }
+
+  it('should answer each value of a stream as the bytes of it, where the request asks', async () => {
+    component.invoke.mock.mockImplementationOnce(async () => Readable.from([{ entry: 1 }, 'two']))
+
+    const process = await serve()
+    const reply = await process({ encoded: true })
+    const values = await reply.toArray()
+
+    assert.deepStrictEqual(values, [Buffer.from('{"entry":1}'), Buffer.from('"two"')])
+  })
+
+  it('should answer a stream as it is, where the request does not ask', async () => {
+    const stream = Readable.from([{ entry: 1 }])
+
+    component.invoke.mock.mockImplementationOnce(async () => stream)
+
+    const process = await serve()
+
+    assert.strictEqual(await process({}), stream)
+  })
+
+  it('should answer a stream of bytes as it is', async () => {
+    const stream = Readable.from([Buffer.from('ab')], { objectMode: false })
+
+    component.invoke.mock.mockImplementationOnce(async () => stream)
+
+    const process = await serve()
+
+    assert.strictEqual(await process({ encoded: true }), stream)
   })
 })
