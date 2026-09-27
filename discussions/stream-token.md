@@ -116,9 +116,11 @@ change outside the set:
 A client reads:
 
 ```http
-GET /pots/green/?limit=100              the first page, ending with {"token":"T1"}
-GET /pots/green/?token=T1&limit=100     the next one, while pages come back full
-GET /pots/green/?token=T9&limit=100     later: what changed since
+GET /pots/green/?limit=100            100 entries, then {"token":"T1"}
+GET /pots/green/?token=T1&limit=100   the next 100, then {"token":"T2"}
+GET /pots/green/?token=T2&limit=100   42 entries: a short page, the set is read, then {"token":"T3"}
+
+GET /pots/green/?token=T3&limit=100   later: what changed since, then {"token":"T4"}
 ```
 
 An operation of scope `stream` is handed the parts, and answers what it makes of them:

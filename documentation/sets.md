@@ -20,10 +20,14 @@ exposition:
 ```
 
 ```http
-GET /pots/green/?limit=100              the first 100 entries, then {"token":"T1"}
-GET /pots/green/?token=T1&limit=100     the next 100, while pages come back full
-GET /pots/green/?token=T9&limit=100     later: what changed since T9, then a new token
+GET /pots/green/?limit=100            100 entries, then {"token":"T1"}
+GET /pots/green/?token=T1&limit=100   the next 100, then {"token":"T2"}
+GET /pots/green/?token=T2&limit=100   42 entries: a short page, the set is read, then {"token":"T3"}
+
+GET /pots/green/?token=T3&limit=100   later: what changed since, then {"token":"T4"}
 ```
+
+Every response ends with a token, and the next request carries the last one received.
 
 The set is what the path and the route select together: `GET /pots/green/` reads
 `(type=="green");(archived==false)`, and a token it ends with belongs to that set.
