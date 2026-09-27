@@ -211,7 +211,7 @@ GET /dummies/?omit=100&limit=10
 
 ## Sort
 
-The `sort` query property defines the result order of Observations within an `objects` scope
+The `sort` query property defines the result order of Observations within an `entries` scope
 (enumeration).
 It comprises an ordered set of sorting statements delimited by semicolons.
 Each statement consists of an entity property name with an optional sorting direction suffix:

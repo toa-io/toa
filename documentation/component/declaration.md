@@ -184,7 +184,7 @@ operations:
   enumerate:
     description: Every pot that is brewing, newest first.
     type: observation
-    scope: objects
+    scope: entries
 ```
 
 It is written above the endpoint in the component's generated types, answered by the exposition's

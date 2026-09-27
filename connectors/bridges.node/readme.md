@@ -17,7 +17,7 @@ Factory. Module file name without extension is an operation name (endpoint).
 ```javascript
 // operations/create.js
 
-export function transition(input, object, context) {
+export function transition(input, entry, context) {
   // ...
 
   return { foo: 'bar' }
@@ -25,15 +25,15 @@ export function transition(input, object, context) {
 ```
 
 Exported function's name defines operation `type` property, thus must be one of:
-`transition`, `observation`, or `assignment`. Second (state) argument name must be `object`,
-`objects`, or `changeset` as it defines operation's `scope`.
+`transition`, `observation`, or `assignment`. Second (state) argument name must be `entry`,
+`entries`, or `changeset` as it defines operation's `scope`.
 
-Following function signature defines operation of `observation` type with `objects` scope.
+Following function signature defines operation of `observation` type with `entries` scope.
 
 ```javascript
 // operations/set.js
 
-export function observation(input, objects) {
+export function observation(input, entries) {
   // ...
 }
 ```
@@ -54,7 +54,7 @@ export class Transition {
     this.#context = context
   }
 
-  execute(input, object) {
+  execute(input, entry) {
     // ...
 
     return { foo: 'bar' }
@@ -64,13 +64,13 @@ export class Transition {
 
 Exported class name must be one of: `Transition`, `Observation`, or `Assignment`, as it defines
 operation's `type`. Class must implement [Algorithm interface](./types/operations.d.ts).
-Second (state) argument name of the `execute` method must be `object`, `objects`, or `changeset` as
+Second (state) argument name of the `execute` method must be `entry`, `entries`, or `changeset` as
 it defines operation's `scope`.
 
 ### Factory
 
 ```javascript
-export class ObjectTransitionFactory {
+export class EntryTransitionFactory {
   async create() {
     // ...
   }
@@ -81,7 +81,7 @@ Exported class name must follow the pattern: `{Subject}{Type}Factory`, where `Su
 defines operation's `scope` and `type` respectively. Class must
 implement [Algorithm Factory interface](#).
 
-> Factory class name examples: `ObjectTransitionFactory`, `ObjectsObservationFactory`,
+> Factory class name examples: `EntryTransitionFactory`, `EntriesObservationFactory`,
 > `ChangesetAssignmentFactory`.
 
 ### Storing Context
@@ -195,7 +195,7 @@ rather than written says its type by its name and nothing more:
 ```javascript
 // operations/create.js
 
-export const transition = withRetries(async (input, object) => {
+export const transition = withRetries(async (input, entry) => {
   // ...
 })
 ```
@@ -208,7 +208,7 @@ scope:
 
 operations:
   create:
-    scope: object
+    scope: entry
 ```
 
 A `computation` and an `unmanaged` have no scope to declare, and an `effect` defaults to none.
@@ -224,7 +224,7 @@ beside the manifest is the file that runs.
 
 import type { Context, CreateInput } from '../types/index.d.ts'
 
-export function transition(input: CreateInput, object: Entity, context: Context) {
+export function transition(input: CreateInput, entry: Entity, context: Context) {
   // ...
 
   return { foo: 'bar' }
