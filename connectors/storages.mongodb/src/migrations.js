@@ -301,7 +301,21 @@ async function remove(collection, { filter }, id) {
   })
 }
 
-const STEPS = { index, dropIndex, update, delete: remove }
+/**
+ * Keeps, or stops keeping, what a record was before each change and after it, which a stream
+ * reads to tell an entry that left a set from a change outside it.
+ */
+async function images(collection, enabled, id) {
+  if (typeof enabled !== 'boolean')
+    throw new Error(`Migration '${id}' declares images that are neither true nor false`)
+
+  await collection.s.db.command({
+    collMod: collection.collectionName,
+    changeStreamPreAndPostImages: { enabled }
+  })
+}
+
+const STEPS = { index, dropIndex, update, delete: remove, images }
 
 const DIRECTIONS = { asc: 1, desc: -1, hash: 'hashed' }
 

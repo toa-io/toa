@@ -12,19 +12,29 @@ beforeEach(async () => {
   collection = {
     collectionName: 'test',
     findOne: mock.fn(async () => null),
-    find: mock.fn(() => ({ stream: () => null })),
+    find: mock.fn(() => cursor()),
     updateMany: mock.fn(async () => ({ modifiedCount: 0 })),
     updateOne: mock.fn(async () => ({ upsertedCount: 0, modifiedCount: 0 }))
   }
 
   db = { collection: mock.fn(() => null) }
 
-  const client = { collection, db, link: () => null }
+  const session = { endSession: async () => undefined }
+  const instance = { client: { startSession: () => session } }
+  const client = { collection, db, instance, link: () => null }
 
   storage = new Storage(client, { schema: { properties: {} } })
 
   await storage.open()
 })
+
+function cursor() {
+  return {
+    hasNext: async () => false,
+    close: async () => undefined,
+    async *[Symbol.asyncIterator]() {}
+  }
+}
 
 describe('open', () => {
   it('should not touch the migrations record where the entity declares none', () => {
@@ -89,43 +99,45 @@ describe('get', () => {
 })
 
 describe('stream', () => {
+  const read = () => collection.find.mock.calls[0].arguments
+
   it('should filter deleted', async () => {
     await storage.stream()
 
-    assert.ok(
-      collection.find.mock.calls.some(
-        (call) =>
-          call.arguments.length === 2 &&
-          isDeepStrictEqual(call.arguments[0], { DELETED: null }) &&
-          isDeepStrictEqual(call.arguments[1], {})
-      )
-    )
+    assert.deepStrictEqual(read()[0], { DELETED: null })
   })
 
   it('should filter deleted with sort', async () => {
     await storage.stream({ options: { sort: [['CREATED', 'desc']] } })
 
-    assert.ok(
-      collection.find.mock.calls.some(
-        (call) =>
-          call.arguments.length === 2 &&
-          isDeepStrictEqual(call.arguments[0], { DELETED: null }) &&
-          isDeepStrictEqual(call.arguments[1], { sort: [['CREATED', -1]] })
-      )
-    )
+    assert.deepStrictEqual(read()[0], { DELETED: null })
+    assert.deepStrictEqual(read()[1].sort, [['CREATED', -1]])
   })
 
   it('should not filter deleted if requested', async () => {
     await storage.stream({ options: { deleted: true } })
 
-    assert.ok(
-      collection.find.mock.calls.some(
-        (call) =>
-          call.arguments.length === 2 &&
-          isDeepStrictEqual(call.arguments[0], {}) &&
-          isDeepStrictEqual(call.arguments[1], {})
-      )
-    )
+    assert.deepStrictEqual(read()[0], {})
+  })
+
+  it('should read what the majority of the replica set holds', async () => {
+    await storage.stream()
+
+    assert.deepStrictEqual(read()[1].readConcern, { level: 'majority' })
+  })
+
+  it('should end the set with no position where the storage keeps no history', async () => {
+    const stream = await storage.stream()
+    const parts = await stream.toArray()
+
+    assert.deepStrictEqual(parts, [{ token: null }])
+  })
+
+  it('should read a page ordered by id', async () => {
+    await storage.stream({ options: { limit: 2 } })
+
+    assert.deepStrictEqual(read()[1].sort, { _id: 1 })
+    assert.equal(read()[1].limit, 2)
   })
 })
 
