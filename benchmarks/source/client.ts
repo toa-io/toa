@@ -129,7 +129,7 @@ export class Client {
 }
 
 function decode(buffer: Buffer, type: string | string[] | undefined): unknown {
-  if (typeof type === 'string' && type.includes('json'))
+  if (typeof type === 'string' && type.includes('json') && !type.startsWith('multipart/'))
     return buffer.length === 0 ? null : JSON.parse(buffer.toString('utf8'))
 
   return buffer
