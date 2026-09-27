@@ -96,12 +96,12 @@ A route that answers a set to be kept in sync:
 ```yaml
 # manifest.toa.yaml
 exposition:
-  /todos:
+  /:type:
     GET:
       endpoint: stream
       io:output: [id, title, VERSION]
       query:
-        criteria: owner==${auth}
+        criteria: archived==false
         limit: { value: 100, range: [1, 1000] }
 ```
 
@@ -116,9 +116,9 @@ change outside the set:
 A client reads:
 
 ```http
-GET /todos/?limit=100              the first page, ending with {"token":"T1"}
-GET /todos/?token=T1&limit=100     the next one, while pages come back full
-GET /todos/?token=T9&limit=100     later: what changed since
+GET /pots/green/?limit=100              the first page, ending with {"token":"T1"}
+GET /pots/green/?token=T1&limit=100     the next one, while pages come back full
+GET /pots/green/?token=T9&limit=100     later: what changed since
 ```
 
 An operation of scope `stream` is handed the parts, and answers what it makes of them:

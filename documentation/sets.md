@@ -10,20 +10,23 @@ stream ends with a **token**, and a read that starts from the token answers what
 ```yaml
 # manifest.toa.yaml
 exposition:
-  /todos:
+  /:type:
     GET:
       endpoint: stream
       io:output: [id, title, VERSION]
       query:
-        criteria: owner==${auth}
+        criteria: archived==false
         limit: { value: 100, range: [1, 1000] }
 ```
 
 ```http
-GET /todos/?limit=100              the first 100 entries, then {"token":"T1"}
-GET /todos/?token=T1&limit=100     the next 100, while pages come back full
-GET /todos/?token=T9&limit=100     later: what changed since T9, then a new token
+GET /pots/green/?limit=100              the first 100 entries, then {"token":"T1"}
+GET /pots/green/?token=T1&limit=100     the next 100, while pages come back full
+GET /pots/green/?token=T9&limit=100     later: what changed since T9, then a new token
 ```
+
+The set is what the path and the route select together: `GET /pots/green/` reads
+`(type=="green");(archived==false)`, and a token it ends with belongs to that set.
 
 ## Parts
 
