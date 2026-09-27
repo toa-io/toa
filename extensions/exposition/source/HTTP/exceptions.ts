@@ -57,6 +57,12 @@ export class Conflict extends ClientError {
   }
 }
 
+export class Gone extends ClientError {
+  public constructor(message?: string) {
+    super(410, message)
+  }
+}
+
 export class PreconditionFailed extends ClientError {
   public constructor() {
     super(412)

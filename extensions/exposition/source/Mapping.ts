@@ -14,8 +14,12 @@ export abstract class Mapping {
     this.query = query
   }
 
-  public static create(query?: syntax.Query | null, paged?: boolean): Mapping {
-    const q = new Query(query!, paged)
+  public static create(
+    query?: syntax.Query | null,
+    paged?: boolean,
+    streamed?: boolean
+  ): Mapping {
+    const q = new Query(query!, paged, streamed)
 
     return queryable(query) ? new QueryableMapping(q) : new InputMapping(q)
   }

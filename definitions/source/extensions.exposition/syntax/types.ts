@@ -36,6 +36,12 @@ export interface Mapping {
    * beside `namespace` and `component`, and not declared.
    */
   paged?: boolean
+
+  /**
+   * Whether the operation answers a stream of a set, and so takes the `limit` of a page of it
+   * and the `token` it continues from. Written beside `paged`, and not declared.
+   */
+  streamed?: boolean
 }
 
 export interface Query {

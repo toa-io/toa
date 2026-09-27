@@ -15,5 +15,7 @@ properties:
     type: number
   version:
     type: number
+  token:
+    type: string
 additionalProperties: false
 type: object

@@ -95,8 +95,9 @@ A token is issued where the storage remembers the order its writes committed in:
   - images: true
   ```
 
-Anywhere else a complete stream ends with `{ "token": null }` — the set is whole, and there is
-nothing to continue from — and a read with a token is refused with `410`.
+Anywhere else a page still ends with a token that continues the set, and a complete stream ends
+with `{ "token": null }`: the set is whole, and there is nothing to continue from. What changed in
+it is learned by reading it again.
 
 **How long a token lasts** is how long MongoDB keeps its history: the oplog window of the replica
 set.

@@ -83,9 +83,10 @@ it — was cut, and the reader asks again with the token it had.
 
 - How long a token lasts. It lasts as long as the storage keeps the history it names — the oplog
   window of the replica set.
-- A token from a storage that keeps no history. A standalone MongoDB, a collection that keeps no
-  images, and a storage other than MongoDB end a complete stream with `{ "token": null }`: the read
-  is complete, and there is nothing to continue from.
+- A token of changes from a storage that keeps no history. On a standalone MongoDB and over a
+  collection that keeps no images a page still ends with a token that continues the set, and a
+  complete stream ends with `{ "token": null }`: the read is complete, and there is nothing to
+  continue from.
 - An order of the set. A reader that wants one sorts what it holds.
 
 ### What a component author does differently
@@ -156,8 +157,9 @@ export const observation = (_, stream) => stream
 - **The token** is `base64url(JSON.stringify({ v, p, id?, h }))`: the format version, the position
   as MongoDB wrote it, the last `_id` while the set pages, and a hash of the translated criteria.
 - **Whether a collection keeps images** the storage reads when it connects. Where it keeps none, or
-  MongoDB runs standalone, a complete read ends with `{ token: null }` and a read
-  with a token is answered as a token the storage cannot continue from.
+  MongoDB runs standalone, a page token carries no position, a complete read ends with
+  `{ token: null }`, and a token that carries a position is answered as one the storage cannot
+  continue from.
 - `ChangeStreamHistoryLost`, a missing image, and a token of another version are a new core
   exception, `StateHistory`.
 
@@ -249,8 +251,8 @@ Features against the replica set:
    while writes run.
 6. **Refusals.** A token past the oplog is answered `410` before any part; a token under other
    criteria `400`; `sort` beside `token` `400`.
-7. **Without history.** A standalone MongoDB and a collection without images end with
-   `{ token: null }`, and answer a token `410`.
+7. **Without history.** A standalone MongoDB and a collection without images page the set, and end
+   it with `{ token: null }`.
 
 ## Compatibility
 
