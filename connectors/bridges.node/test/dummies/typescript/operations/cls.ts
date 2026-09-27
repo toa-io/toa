@@ -8,7 +8,7 @@ export class Transition {
     this.#context = context
   }
 
-  async execute(input: string, object: string): Promise<Reply> {
-    return reply(input, object, this.#context)
+  async execute(input: string, entry: string): Promise<Reply> {
+    return reply(input, entry, this.#context)
   }
 }

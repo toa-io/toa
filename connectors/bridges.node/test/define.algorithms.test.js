@@ -40,13 +40,13 @@ describe('syntaxes read from the source', () => {
     const operations = await define.operations(find('commonjs'))
 
     assert.deepStrictEqual(operations.compute, { type: 'computation', scope: 'none' })
-    assert.deepStrictEqual(operations.transit, { type: 'transition', scope: 'object' })
+    assert.deepStrictEqual(operations.transit, { type: 'transition', scope: 'entry' })
   })
 
   it('should define a default export by the name it declares', async () => {
     const operations = await define.operations(find('default'))
 
-    assert.deepStrictEqual(operations.transit, { type: 'transition', scope: 'object' })
+    assert.deepStrictEqual(operations.transit, { type: 'transition', scope: 'entry' })
   })
 
   it('should define an aliased export by the name it is exported as', async () => {

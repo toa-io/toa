@@ -126,6 +126,7 @@ What a step may say, for MongoDB:
 | `dropIndex` | `name`                                                                                                           |
 | `update`    | `filter`, and `update` as an object or as a list to run as an aggregation pipeline                               |
 | `delete`    | `filter`, where `{}` means every record                                                                          |
+| `images`    | `true` to keep what a record was before each change, which a [stream token](/connectors/storages.mongodb/readme.md#stream-tokens) needs; `false` to stop |
 
 An index whose name is already taken by one of another shape is dropped and made again, so
 changing what an index is made of is an edit to its declaration.
@@ -184,7 +185,7 @@ operations:
   enumerate:
     description: Every pot that is brewing, newest first.
     type: observation
-    scope: objects
+    scope: entries
 ```
 
 It is written above the endpoint in the component's generated types, answered by the exposition's

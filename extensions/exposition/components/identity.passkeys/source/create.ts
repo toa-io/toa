@@ -22,7 +22,7 @@ export class Transition implements Operation {
     this.logs = context.logs
   }
 
-  public async execute(input: Input, object: Passkey): Promise<Passkey | Error> {
+  public async execute(input: Input, entry: Passkey): Promise<Passkey | Error> {
     const { authority, identity, label, ...response } = input
 
     // rawId is not sent from the client
@@ -48,16 +48,16 @@ export class Transition implements Operation {
 
     const reg = verified.registrationInfo
 
-    object.authority = authority
-    object.identity = identity
-    object.kid = reg.credential.id
-    object.aid = reg.aaguid
-    object.synced = reg.credentialBackedUp
-    object.key = Buffer.from(reg.credential.publicKey).toString('base64url')
-    object.transports = reg.credential.transports
-    object.label = label
+    entry.authority = authority
+    entry.identity = identity
+    entry.kid = reg.credential.id
+    entry.aid = reg.aaguid
+    entry.synced = reg.credentialBackedUp
+    entry.key = Buffer.from(reg.credential.publicKey).toString('base64url')
+    entry.transports = reg.credential.transports
+    entry.label = label
 
-    return object
+    return entry
   }
 
   private async verifyChallenge(authority: string, challenge: string): Promise<boolean> {

@@ -21,6 +21,8 @@ export const codes = {
   Duplicate: 306,
   /** this call has been made, and what it changed is changed */
   DuplicateCall: 307,
+  /** a stream token names a point of the storage's history it no longer holds */
+  StateHistory: 308,
 
   Communication: 400,
   Transmission: 401,
@@ -171,6 +173,7 @@ export const StateConcurrencyException = derive('StateConcurrency')
 export const StateInitializationException = derive('StateInitialization')
 export const DuplicateException = derive('Duplicate')
 export const DuplicateCallException = derive('DuplicateCall')
+export const StateHistoryException = derive('StateHistory')
 export const CommunicationException = derive('Communication')
 export const TransmissionException = derive('Transmission')
 export const EndpointException = derive('Endpoint')
@@ -219,6 +222,8 @@ const OUTCOME: Record<keyof typeof codes, 'permanent' | 'transient'> = {
   Duplicate: 'permanent',
   // a call that has been made stays made: another attempt is refused by the same record
   DuplicateCall: 'permanent',
+  // history a storage has let go of does not come back
+  StateHistory: 'permanent',
 
   Communication: 'transient',
   // nothing is listening on that queue yet — a deployment in progress, most of the time

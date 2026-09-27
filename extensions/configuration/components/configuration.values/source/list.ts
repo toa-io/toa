@@ -1,11 +1,11 @@
-import { components, entry } from './lib/map.ts'
+import { components, configured } from './lib/map.ts'
 import { resolve, type Context } from './lib/resolve.ts'
 
 /** The configuration of every component for its deployed epoch, by component name. */
 export async function computation(_: null, context: Context): Promise<Item[]> {
   return await Promise.all(
     components().map(async (component) => {
-      const { epoch, schema } = entry(component)!
+      const { epoch, schema } = configured(component)!
       const value = await resolve(context, component, epoch)
 
       return {

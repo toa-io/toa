@@ -1,6 +1,6 @@
-export function transition(input, object) {
-  object.foo += input.inc
-  object.TRAILERS.inc = input.inc
+export function transition(input, entry) {
+  entry.foo += input.inc
+  entry.TRAILERS.inc = input.inc
 
-  return object
+  return entry
 }

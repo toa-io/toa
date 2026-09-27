@@ -3,12 +3,12 @@ import type { Entity, MergeInput } from '../types/index.d.ts'
 /**
  * Records the calls observed by a collector since its last flush.
  *
- * The scope is `objects`, so the caller passes every affected id in `query.ids`
+ * The scope is `entries`, so the caller passes every affected id in `query.ids`
  * and the matching edge under `edges[id]`. Unknown edges are initialized by the
  * runtime, since the entity is `associated`.
  */
-export function transition(input: MergeInput, objects: Entity[]): Entity[] {
-  for (const edge of objects) {
+export function transition(input: MergeInput, entries: Entity[]): Entity[] {
+  for (const edge of entries) {
     const observed = input.edges[edge.id]
 
     if (observed === undefined) continue
@@ -17,5 +17,5 @@ export function transition(input: MergeInput, objects: Entity[]): Entity[] {
     edge.dst = observed.dst
   }
 
-  return objects
+  return entries
 }

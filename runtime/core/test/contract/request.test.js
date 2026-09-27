@@ -124,7 +124,7 @@ describe('schema', () => {
     const object = Request.schema(
       {
         type: 'observation',
-        scope: 'object'
+        scope: 'entry'
       },
       dummy
     ).properties.query.properties
@@ -135,7 +135,7 @@ describe('schema', () => {
     const objects = Request.schema(
       {
         type: 'observation',
-        scope: 'objects'
+        scope: 'entries'
       },
       dummy
     ).properties.query.properties

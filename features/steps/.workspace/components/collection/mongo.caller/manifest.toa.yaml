@@ -12,7 +12,7 @@ entity:
 operations:
   # calls `mongo.once` on its way, so that a duplicate of this call is a duplicate of that one
   relay:
-    scope: object
+    scope: entry
     concurrency: retry
     once: true
     input:

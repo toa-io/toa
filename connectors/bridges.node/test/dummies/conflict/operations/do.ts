@@ -1,3 +1,3 @@
-export async function transition(input, object) {
-  return { input, state: object }
+export async function transition(input, entry) {
+  return { input, state: entry }
 }

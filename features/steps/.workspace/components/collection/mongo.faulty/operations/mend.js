@@ -1,5 +1,5 @@
-export const transition = (_, object) => {
-  object.failing = false
+export const transition = (_, entry) => {
+  entry.failing = false
 
-  return object
+  return entry
 }

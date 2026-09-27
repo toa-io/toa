@@ -16,6 +16,9 @@ export function rethrow(exception: Exception | HTTPException): void {
     NOT_FOUND,
     CORE_EXCEPTIONS.StatePrecondition,
     PRECONDITION_FAILED,
+    // a stream token names a point the storage no longer holds
+    CORE_EXCEPTIONS.StateHistory,
+    GONE,
     CORE_EXCEPTIONS.Duplicate,
     CONFLICT,
     CORE_EXCEPTIONS.StateConcurrency,
@@ -45,6 +48,7 @@ function badRequest(code: number): boolean {
 
 const NOT_FOUND = new http.NotFound()
 const PRECONDITION_FAILED = new http.PreconditionFailed()
+const GONE = new http.Gone()
 const CONFLICT = new http.Conflict()
 const GATEWAY_TIMEOUT = new http.GatewayTimeout()
 const SERVICE_UNAVAILABLE = new http.ServiceUnavailable()
@@ -52,6 +56,7 @@ const SERVICE_UNAVAILABLE = new http.ServiceUnavailable()
 const CORE_EXCEPTIONS = {
   StateNotFound: 302,
   StatePrecondition: 303,
+  StateHistory: 308,
   StateConcurrency: 304,
   EntityGuard: 213,
   Duplicate: 306,

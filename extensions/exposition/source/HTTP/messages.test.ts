@@ -8,6 +8,7 @@ import * as streamConsumers from 'node:stream/consumers'
 import { console } from 'openspan'
 import { generate } from 'randomstring'
 import * as msgpack from 'msgpackr'
+import { Encoded } from '@toa.io/core'
 import { multipart, read, write, type OutgoingMessage } from './messages.ts'
 import { BadRequest, UnsupportedMediaType } from './exceptions.ts'
 import { formats, types } from './formats/index.ts'
@@ -156,6 +157,18 @@ describe('read', () => {
         'FIN',
         '--cut--'
       ].join('\r\n')
+    )
+  })
+
+  it('should write a value the component encoded as it is', async () => {
+    const body = Readable.from([new Encoded(Buffer.from('{"entry":1}')), 'Plain'])
+    const result = await streamConsumers.text(frame(body))
+
+    assert.strictEqual(
+      result,
+      ['--cut', '', 'ACK', '--cut', '', '{"entry":1}', '--cut', '', 'Plain', '--cut', '', 'FIN', '--cut--'].join(
+        '\r\n'
+      )
     )
   })
 

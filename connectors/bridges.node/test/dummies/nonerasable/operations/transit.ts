@@ -3,6 +3,6 @@ enum Kind {
   two
 }
 
-export async function transition(input: string, object: string): Promise<{ kind: Kind }> {
-  return { kind: input === object ? Kind.one : Kind.two }
+export async function transition(input: string, entry: string): Promise<{ kind: Kind }> {
+  return { kind: input === entry ? Kind.one : Kind.two }
 }

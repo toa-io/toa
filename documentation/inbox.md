@@ -10,13 +10,13 @@ first one answered.
 operations:
   charge:
     type: transition
-    scope: object
+    scope: entry
     concurrency: retry
     once: true
 ```
 
-Per operation, on a transition over `scope: object` or an assignment. An operation that writes
-nothing has nothing to record; a transition over `objects` answers a whole set, and the answer is
+Per operation, on a transition over `scope: entry` or an assignment. An operation that writes
+nothing has nothing to record; a transition over `entries` answers a whole set, and the answer is
 what a duplicate is given back.
 
 An effect takes it neither way, and does not need to: its write is get-or-create, so a second
@@ -34,7 +34,7 @@ An operation whose callers retry later than the rest states its own, in seconds:
 operations:
   charge:
     type: transition
-    scope: object
+    scope: entry
     concurrency: retry
     once: 86400 # a client may retry a charge for a day
 ```

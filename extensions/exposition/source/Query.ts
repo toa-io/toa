@@ -20,11 +20,15 @@ export class Query {
   /** whether a page is taken of what this answers, and so whether `omit` and `limit` apply */
   private readonly paged: boolean
 
-  public constructor(query: syntax.Query, paged = true) {
+  /** whether this answers a stream of a set, which pages by `limit` and continues by `token` */
+  private readonly streamed: boolean
+
+  public constructor(query: syntax.Query, paged = true, streamed = false) {
     this.parameterized = query?.parameters !== undefined
     this.queryable = queryable(query)
     this.searchable = query?.search === true
-    this.paged = paged
+    this.streamed = streamed
+    this.paged = paged && !streamed
 
     if (this.queryable) {
       if (this.paged) {
@@ -60,7 +64,11 @@ export class Query {
       this.fitCriteria(qs.query, parameters)
 
       if (this.paged) this.fitRanges(qs.query)
+      else if (this.streamed) this.fitPage(qs.query)
       else this.refuseRanges(qs.query)
+
+      if (qs.query.token !== undefined && !this.streamed)
+        throw new http.BadRequest('Query token is not allowed')
 
       this.fitSort(qs.query)
 
@@ -121,6 +129,13 @@ export class Query {
     if (this.paged) {
       query.limit = bounded('How many at once.', this.query.limit!)
       query.omit = bounded('How many to skip.', this.query.omit!)
+    }
+
+    if (this.streamed) {
+      if (this.query.limit !== undefined)
+        query.limit = bounded('How many in a page.', this.query.limit)
+
+      query.token = keyword('string', 'Where the stream continues from: the token it ended with.')
     }
 
     if (this.searchable)
@@ -202,6 +217,26 @@ export class Query {
     for (const name of ['omit', 'limit'] as const)
       if (qs[name] !== undefined)
         throw new http.BadRequest(`Query ${name} is not allowed`)
+  }
+
+  /**
+   * A stream of a set is read a page after the one before it, which the token says, so it
+   * takes a `limit` where the route declares one and never an `omit`. One that declares no
+   * `limit` answers the whole set at once.
+   */
+  private fitPage(qs: http.Query): void {
+    const query = qs as core.Query
+
+    if (qs.omit !== undefined) throw new http.BadRequest('Query omit is not allowed')
+
+    if (this.query.limit === undefined) {
+      if (qs.limit !== undefined) throw new http.BadRequest('Query limit is not allowed')
+
+      return
+    }
+
+    if (qs.limit !== undefined) query.limit = fit(qs.limit, this.query.limit.range, 'limit')
+    else query.limit = this.query.limit.value ?? this.query.limit.range[0]
   }
 
   private fitRanges(qs: http.Query): void {

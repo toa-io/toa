@@ -1,6 +1,7 @@
-import { Readable } from 'node:stream'
+import { Readable, Transform, pipeline } from 'node:stream'
 import { Connector } from './connector.ts'
 import { codes, SystemException, RequestContractException } from './exceptions.ts'
+import * as parts from './parts.ts'
 import { environment } from '@toa.io/generic'
 import type { Cascade } from './cascade.ts'
 import type { State } from './state.ts'
@@ -225,38 +226,69 @@ export class Operation extends Connector {
 /**
  * What a caller receives of the output it asked for: each object of it keeps the properties the
  * request named, in the order the object holds them, and an empty list leaves no output at all.
- * A system property is one of them: a caller that reads `VERSION` asks for it. A stream, an error,
- * an exception and a value that is not an object are answered as they are.
+ * A system property is one of them: a caller that reads `VERSION` asks for it. An object is one
+ * the output is, one of an array it is, or one a stream it is yields. An error, an exception and
+ * a value that is not an object are answered as they are.
  */
 function restrict(reply: any, output?: string[]): any {
   if (output === undefined || reply === null || typeof reply !== 'object') return reply
 
+  // a stream is answered bare, where anything else is answered in `output`
+  if (reply instanceof Readable) return restrict({ output: reply }, output).output ?? {}
+
   const answered = reply.output
 
-  if (answered === undefined || answered === null || answered instanceof Readable) return reply
-
-  if (typeof answered !== 'object') {
-    if (output.length === 0) delete reply.output
-
-    return reply
-  }
+  if (answered === undefined || answered === null) return reply
 
   if (output.length === 0) {
+    // nobody reads it, and what it holds open — a cursor, a reply pipe — is let go now
+    if (answered instanceof Readable) answered.destroy()
+
     delete reply.output
 
     return reply
   }
 
+  if (typeof answered !== 'object') return reply
+
   const allowed = new Set(output)
 
-  reply.output = Array.isArray(answered)
-    ? answered.map((entity) =>
-        entity !== null && typeof entity === 'object' ? fit(entity, allowed) : entity
-      )
-    : fit(answered, allowed)
+  // a stream of bytes is a value, as a primitive is: there is no property of it to leave out
+  if (answered instanceof Readable)
+    reply.output = answered.readableObjectMode ? restricted(answered, allowed) : answered
+  else if (Array.isArray(answered)) reply.output = answered.map((value) => fitted(value, allowed))
+  else reply.output = fit(answered, allowed)
 
   return reply
 }
+
+/**
+ * A stream of what `fitted` makes of each value. Joined by `pipeline`, so that a failure of
+ * either side reaches the other: the source's error is the reader's, and a reader that stops
+ * reading closes the source.
+ */
+function restricted(source: Readable, allowed: Set<string>): Readable {
+  const transform = new Transform({
+    objectMode: true,
+    transform(value, _, callback) {
+      callback(null, fitted(value, allowed))
+    }
+  })
+
+  return pipeline(source, transform, noop)
+}
+
+function fitted(value: unknown, allowed: Set<string>): unknown {
+  // what a part carries of the set is its entry; a removal and a token are not the entity's
+  if (parts.is(value)) return 'entry' in value ? { entry: fit(value.entry, allowed) } : value
+
+  return value !== null && typeof value === 'object' && !ArrayBuffer.isView(value)
+    ? fit(value as Record<string, any>, allowed)
+    : value
+}
+
+// what `pipeline` reports is what each stream already carries to its reader
+function noop(): void {}
 
 /** Runs per entity of a collection, hence the set and the absence of intermediates. */
 function fit(entity: Record<string, any>, allowed: Set<string>): Record<string, any> {

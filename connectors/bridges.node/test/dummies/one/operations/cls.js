@@ -8,7 +8,7 @@ export class Transition {
     this.#context = context
   }
 
-  async execute(input, object) {
-    return { input, state: object, context: this.#context !== undefined }
+  async execute(input, entry) {
+    return { input, state: entry, context: this.#context !== undefined }
   }
 }

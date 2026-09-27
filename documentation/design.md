@@ -87,7 +87,7 @@ async function unmanaged(input, collection, context) {
 write depends on, so a write made here is a write without a version to guard it, without the
 timestamps the rest of the system reads, without an identifier the runtime issued, and without
 the event that tells anything it happened — which is also what would have carried it to another
-region. Use a Transition for one object, a Transition over `objects` for many, and an Assignment
+region. Use a Transition for one entry, a Transition over `entries` for many, and an Assignment
 for a changeset.
 
 **Nothing removes a record.** Deletion is a `DELETED` timestamp, which every query filters on,

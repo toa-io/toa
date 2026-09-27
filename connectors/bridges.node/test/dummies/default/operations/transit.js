@@ -1,3 +1,3 @@
-export default function transition(input, object) {
-  return { input, object }
+export default function transition(input, entry) {
+  return { input, entry }
 }

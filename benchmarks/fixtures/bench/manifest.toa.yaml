@@ -99,6 +99,15 @@ exposition:
     /chain:
       anonymous: true
       GET: chain
+    # a page of the collection as a stream of parts: the page, since `create` grows the collection
+    /stream:
+      anonymous: true
+      GET:
+        endpoint: stream
+        query:
+          limit:
+            value: 1000
+            range: [1, 1000]
     # what a route leaves out of what it reads, and out of what it answers
     /projected:
       anonymous: true

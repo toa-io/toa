@@ -2,14 +2,14 @@ import { randomBytes } from 'node:crypto'
 import type { Operation } from '@toa.io/bridges.node'
 
 export class Transition implements Operation {
-  public async execute(input: Input, object: Key): Promise<Output> {
-    object.key = randomBytes(32).toString('base64url')
-    object.identity = input.identity
-    object.label = input.label
+  public async execute(input: Input, entry: Key): Promise<Output> {
+    entry.key = randomBytes(32).toString('base64url')
+    entry.identity = input.identity
+    entry.label = input.label
 
-    if (input.expires !== undefined) object.expires = input.expires
+    if (input.expires !== undefined) entry.expires = input.expires
 
-    return { id: object.id, label: object.label, key: object.key }
+    return { id: entry.id, label: entry.label, key: entry.key }
   }
 }
 

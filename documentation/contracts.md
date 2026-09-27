@@ -38,7 +38,7 @@ contract of that version:
     "version": "3f9a1c02",
     "bindings": ["@toa.io/bindings.amqp"],
     "entity": { "properties": { "sum": { "type": "number" } }, "required": ["sum"], "system": true },
-    "operations": { "transit": { "type": "transition", "scope": "object" } },
+    "operations": { "transit": { "type": "transition", "scope": "entry" } },
     "events": { "created": { "binding": "@toa.io/bindings.amqp" } }
   }
 }

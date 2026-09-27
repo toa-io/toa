@@ -8,7 +8,11 @@ operations:
 exposition:
   /tokens:
     anonymous: true
-    GET: tokens
+    GET:
+      endpoint: tokens
+      io:output: true
   /failing:
     anonymous: true
-    GET: failing
+    GET:
+      endpoint: failing
+      io:output: true

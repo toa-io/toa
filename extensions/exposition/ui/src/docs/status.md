@@ -17,6 +17,7 @@ defines.
 - `405 Method Not Allowed`
 - `406 Not Acceptable`
 - `409 Conflict`
+- `410 Gone`<span class="note">A stream token names a point the storage no longer remembers: read the set again, without it.</span>
 - `412 Precondition Failed`
 - `413 Content Too Large`
 - `415 Unsupported Media Type`

@@ -1,0 +1,23 @@
+name: todos
+
+# A set a client keeps in sync: the collection keeps images, so a stream ends with a token.
+
+entity:
+  properties:
+    owner:
+      type: string
+    title:
+      type: string
+  required:
+    - owner
+
+operations:
+  transit:
+    concurrency: retry
+    input:
+      type: object
+      properties:
+        owner:
+          type: string
+        title:
+          type: string

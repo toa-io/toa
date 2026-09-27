@@ -173,6 +173,7 @@ what a Toa checkout binds is conventional: the whole of it sits in `31000`-`3109
 | `31016` | its management                                | —              |
 | `31020` | MongoDB                                       | `27017`        |
 | `31021` | MongoDB, the standalone a scenario starts     | —              |
+| `31022` | MongoDB, the replica set a scenario starts    | —              |
 | `31040` | Redis                                         | `6379`         |
 | `31041` | Redis, the second                             | `6378`         |
 | `31042` | Redis, the third                              | `6377`         |

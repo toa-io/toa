@@ -1,4 +1,4 @@
-export function transition(input, object) {
+export function transition(input, entry) {
   if (input.name === 'return_error') {
     const e = new Error()
 
@@ -7,5 +7,5 @@ export function transition(input, object) {
     return e
   }
 
-  return Object.assign(object, input)
+  return Object.assign(entry, input)
 }

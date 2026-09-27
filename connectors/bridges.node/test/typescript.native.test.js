@@ -43,7 +43,7 @@ describe('node reads TypeScript', () => {
     const operations = JSON.parse(printed)
 
     for (const name of ['fn', 'cls', 'fct'])
-      assert.deepStrictEqual(operations[name], { type: 'transition', scope: 'object' })
+      assert.deepStrictEqual(operations[name], { type: 'transition', scope: 'entry' })
   })
 
   it('should say which file is not erasable, and why', async () => {

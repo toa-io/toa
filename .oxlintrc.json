@@ -41,6 +41,7 @@
       {
         "allow": [
           "_id",
+          "_data",
           "_meta",
           "_destroy",
           "_transform",

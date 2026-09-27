@@ -5,7 +5,7 @@ export class Observation {
     this.#foo = context.configuration.foo
   }
 
-  async execute(input, object) {
+  async execute(input, entry) {
     return this.#foo
   }
 }

@@ -1,3 +1,3 @@
-export function transition(input, object) {
-  object.count++
+export function transition(input, entry) {
+  entry.count++
 }

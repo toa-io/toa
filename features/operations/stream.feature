@@ -13,15 +13,17 @@ Feature: Stream scope
         foo: 3
         bar: hello
       """
-    And I call `operations.streams.extract` with:
+    And I read `operations.streams.extract` with:
       """yaml
       query:
         sort: [CREATED:desc]
       """
-    Then the stream of 2000 items is received
-    When I call `operations.streams.stream` with:
+    Then the stream ended with no position to continue from
+    And the copy holds 2000 entries
+    When I read `operations.streams.stream` with:
       """yaml
       query:
         sort: [CREATED:desc]
       """
-    Then the stream of 2000 items is received
+    Then the stream ended with no position to continue from
+    And the copy holds 2000 entries

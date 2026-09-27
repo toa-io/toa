@@ -15,7 +15,7 @@ function scope() {
     recall: mock.fn(async (id) => recall(id)),
     commit: mock.fn(async (state, input, call) => commit(state, input, call)),
     init: () => entity,
-    object: async () => entity,
+    entry: async () => entity,
     fit: () => undefined
   }
 }
@@ -31,7 +31,7 @@ function transition(definition = {}) {
     scope(),
     { request: { fit: () => null }, reply: { fit: () => null } },
     { parse: (query) => query },
-    { scope: 'object', once: true, ...definition }
+    { scope: 'entry', once: true, ...definition }
   )
 }
 
