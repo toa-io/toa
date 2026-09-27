@@ -62,7 +62,9 @@ Feature: Request flow
               - $[2]
               - $[0] + $[1] + $[2]
             copy: $
-          POST: numbers
+          POST:
+            endpoint: numbers
+            io:output: true
       """
     When the following request is received:
       """
@@ -103,7 +105,9 @@ Feature: Request flow
           flow:compose:
             - a: $[0].b.c
             - b: $[0]
-          POST: numbers
+          POST:
+            endpoint: numbers
+            io:output: true
       """
     When the following request is received:
       """
@@ -128,7 +132,9 @@ Feature: Request flow
       exposition:
         /:
           flow:compose: $[1]
-          POST: numbers
+          POST:
+            endpoint: numbers
+            io:output: true
       """
     When the following request is received:
       """
