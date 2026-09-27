@@ -142,6 +142,19 @@ export const scenarios: Scenario[] = [
     optional: true
   },
   {
+    // a thousand items as a stream: a part each, framed one at a time
+    id: 'stream.1000',
+    protocol: 'h1',
+    method: 'GET',
+    path: () => '/bench/stream/',
+    status: 200,
+    check: (reply) => expect(parts(reply) >= 1000, reply),
+    processes: ['gateway', 'bench'],
+    requires: 'a stream that pages',
+    seeded: true,
+    optional: true
+  },
+  {
     ...list('list.1000.msgpack', 'h1'),
     headers: () => ({ accept: 'application/msgpack' }),
     check: (reply) =>
@@ -183,6 +196,13 @@ function list(id: string, protocol: Protocol): Scenario {
     processes: ['gateway', 'bench'],
     seeded: true
   }
+}
+
+/** The parts of a multipart reply, `ACK` and `FIN` among them. */
+function parts(reply: Reply): number {
+  const body = Buffer.isBuffer(reply.body) ? reply.body.toString('utf8') : ''
+
+  return body.split('\r\n--cut').length - 3
 }
 
 /** The thousand items seeded, whatever of each of them a route answers. */

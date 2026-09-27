@@ -5,6 +5,7 @@ import { codec } from './record.js'
 import { Inbox } from './inbox.js'
 import { Outbox } from './outbox.js'
 import { Migrations } from './migrations.js'
+import { Streams } from './streams.js'
 import { conflicted, query } from './measurements.js'
 import { ReturnDocument } from 'mongodb'
 
@@ -33,6 +34,9 @@ export class Storage extends Connector {
 
   /** @type {Map<string, object>} span options per driver method */
   #spans = new Map()
+
+  /** @type {Streams | undefined} what a stream reads, and where it continues from */
+  #streams
 
   /** how a record is written and read back, which depends on what the entity declares */
   #to
@@ -108,6 +112,22 @@ export class Storage extends Connector {
 
     await this.#outbox?.index()
     await this.#inbox?.index()
+
+    this.#streams = new Streams(
+      this.#collection,
+      () => this.#client.instance.client,
+      this.#from,
+      this.#client.transactional === true && (await this.#images())
+    )
+  }
+
+  /** Whether the collection keeps what a record was before a change, which a migration says. */
+  async #images() {
+    const collection = await this.#client.db
+      .listCollections({ name: this.#collection.collectionName })
+      .next()
+
+    return collection?.options?.changeStreamPreAndPostImages?.enabled === true
   }
 
   async get(query) {
@@ -160,7 +180,7 @@ export class Storage extends Connector {
 
     this.debug('find (stream)', { criteria, options })
 
-    return this.#collection.find(criteria, options).stream({ transform: this.#from })
+    return this.#streams.stream({ criteria, options }, query?.options?.token)
   }
 
   async add(entity, session = undefined) {

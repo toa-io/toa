@@ -1,5 +1,5 @@
 import { revision } from '@toa.io/definitions/extensions.configuration'
-import { entry } from './map.ts'
+import { configured } from './map.ts'
 
 /**
  * The latest configuration created for the component and the epoch; the deployed
@@ -11,7 +11,7 @@ export async function resolve(
   component: string,
   epoch?: string
 ): Promise<Value | null> {
-  const known = entry(component)
+  const known = configured(component)
 
   epoch ??= known?.epoch
 

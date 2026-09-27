@@ -6,8 +6,8 @@
  * `DELETED` is also what the retention index reaps by, so that the record outlives the call
  * without outliving the deployment.
  */
-export function transition(_, objects) {
+export function transition(_, entries) {
   const now = Date.now()
 
-  for (const object of objects) object.DELETED = now
+  for (const entry of entries) entry.DELETED = now
 }

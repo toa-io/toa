@@ -1,3 +1,4 @@
+import { Readable, Transform, pipeline } from 'node:stream'
 import { Connector, deliveries, instance } from '@toa.io/core'
 import { console } from 'openspan'
 
@@ -158,14 +159,16 @@ export class Producer extends Connector {
 
 /**
  * An output its caller reads as bytes: comq sends a Buffer as it is, so what the caller writes on
- * — a response body — is encoded once, here, and read by nobody in between. Everything else
- * travels as the reply it is: an error and an exception are read, a stream is framed, and an
+ * — a response body — is encoded once, here, and read by nobody in between. A stream of values is
+ * encoded value by value, and its caller frames each as it is. Everything else travels as the
+ * reply it is: an error and an exception are read, a stream of bytes is bytes already, and an
  * absent output is what a caller answers nothing for.
  *
  * @param {any} reply
  * @returns {any}
  */
 function encoded(reply) {
+  if (reply instanceof Readable) return reply.readableObjectMode ? values(reply) : reply
   if (reply === null || typeof reply !== 'object' || Buffer.isBuffer(reply)) return reply
   if (reply.error !== undefined || reply.exception !== undefined) return reply
 
@@ -175,3 +178,24 @@ function encoded(reply) {
 
   return Buffer.from(JSON.stringify(output))
 }
+
+/**
+ * Each value of a stream as the bytes of it. Joined by `pipeline`, so that a failure of either
+ * side reaches the other.
+ *
+ * @param {Readable} source
+ * @returns {Readable}
+ */
+function values(source) {
+  const encoding = new Transform({
+    objectMode: true,
+    transform(value, _, callback) {
+      callback(null, Buffer.from(JSON.stringify(value)))
+    }
+  })
+
+  return pipeline(source, encoding, noop)
+}
+
+// what `pipeline` reports is what each stream already carries to its reader
+function noop() {}

@@ -60,6 +60,23 @@ declared. `evicted@production` states it for one environment.
 
 See [compositions](../documentation/compositions.md#evicted).
 
+## Secrets
+
+A value that must not be in the chart is rendered as a reference to a Kubernetes secret, and the
+secret is the application's to deploy. A deploy reads the namespace it deploys into before it builds
+anything, and refuses where a key a workload would read is not there:
+
+```
+$ toa deploy production
+Secrets are not deployed: toa-mongodb.default/username, toa-mongodb.default/password
+```
+
+Required is what `toa export secrets` lists, less the keys it marks `(optional)`, plus the
+`registry.credentials` secret where a context names one. `toa deploy --dry` reads no cluster, and
+neither does anything else that reads a context: `toa env`, `toa export`, `toa build` and `toa push`.
+
+See [variables and secrets](../documentation/deployment.md#variables-and-secrets).
+
 ## Context
 
 ### Container Registry
@@ -202,6 +219,9 @@ a secret containing required credentials can be specified using `registry.creden
 registry:
   credentials: docker-credentials-secret-name
 ```
+
+The secret itself is not Toa's to create, and a deploy that does not find it in the cluster is
+[refused](#secrets).
 
 #### Toa images
 

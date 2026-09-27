@@ -189,7 +189,7 @@ with the version it runs and what that version provides:
     "version": "3f9a1c02",
     "bindings": ["@toa.io/bindings.amqp"],
     "entity": { "properties": { "sum": { "type": "number" } }, "required": ["sum"], "system": true },
-    "operations": { "transit": { "type": "transition", "scope": "object" } },
+    "operations": { "transit": { "type": "transition", "scope": "entry" } },
     "events": { "created": { "binding": "@toa.io/bindings.amqp" } }
   }
 }
@@ -300,10 +300,21 @@ made of leaves that release nothing to build.
 
 Deploy a Context.
 
+- Refuse where the cluster does not hold a secret the workloads read.
 - Build Docker images.
 - Push Docker images to the registry.
 - Build a Helm chart.
 - Apply the Helm chart to the current Kubernetes context.
+
+The refusal names every missing key and comes before anything is built, so a deploy that is refused
+leaves the registry and the cluster as they were:
+
+<pre>$ toa deploy production
+Secrets are not deployed: toa-mongodb.default/username, toa-mongodb.default/password</pre>
+
+What is required is what <a href="#export-secrets"><code>toa export secrets</code></a> lists, less
+the keys it marks <code>(optional)</code>, plus the <code>registry.credentials</code> secret where a
+context names one. <code>--dry</code> reads no cluster.
 
 <dl>
 <dt><code>toa deploy [environment]</code></dt>

@@ -4,7 +4,8 @@ import { isDeepStrictEqual } from 'node:util'
 
 import { generate } from 'randomstring'
 import { Unroutable } from 'comq'
-import { Connector, exceptions } from '@toa.io/core'
+import { Readable } from 'node:stream'
+import { Connector, Encoded, exceptions } from '@toa.io/core'
 import * as _communication from './communication.mock.js'
 import * as _queues from './queues.mock.js'
 
@@ -124,4 +125,25 @@ it('should answer an addressed call nobody holds as addressee', async () => {
   const reply = await consumer.request(generate(), { instance: generate() })
 
   assert.equal(reply.exception.code, exceptions.codes.Addressee)
+})
+
+it('should hand over each value of a stream answering an encoded request as the bytes it is', async () => {
+  comm.request.mock.mockImplementationOnce(async () =>
+    Readable.from([Buffer.from('{"entry":1}'), { plain: true }])
+  )
+
+  const reply = await consumer.request({ encoded: true })
+  const values = await reply.toArray()
+
+  assert.ok(Encoded.is(values[0]))
+  assert.deepStrictEqual(values[0].bytes, Buffer.from('{"entry":1}'))
+  assert.deepStrictEqual(values[1], { plain: true })
+})
+
+it('should hand over a stream answering a request that asks for values as it is', async () => {
+  const stream = Readable.from([Buffer.from('ab')])
+
+  comm.request.mock.mockImplementationOnce(async () => stream)
+
+  assert.strictEqual(await consumer.request({}), stream)
 })

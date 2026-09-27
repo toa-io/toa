@@ -1,3 +1,3 @@
-exports.transition = function (input, object) {
-  return { input, object }
+exports.transition = function (input, entry) {
+  return { input, entry }
 }

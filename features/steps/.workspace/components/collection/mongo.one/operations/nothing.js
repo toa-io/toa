@@ -1,4 +1,4 @@
-export const transition = (input, object, context) => {
+export const transition = (input, entry, context) => {
   context.logs.debug('Executing nothing')
 
   return null

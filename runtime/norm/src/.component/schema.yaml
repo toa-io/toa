@@ -152,7 +152,7 @@ properties:
                 unmanaged,
               ]
           scope:
-            enum: [object, objects, changeset, stream, none]
+            enum: [entry, entries, changeset, stream, none]
           concurrency:
             enum: [none, retry]
           once:
@@ -198,7 +198,7 @@ properties:
             then:
               properties:
                 scope:
-                  enum: [object, objects]
+                  enum: [entry, entries]
               if: # not query: false
                 not:
                   properties:
@@ -207,12 +207,12 @@ properties:
                   required: [query]
               then:
                 required: [concurrency]
-          - if: # transition and scope=objects
+          - if: # transition and scope=entries
               properties:
                 type:
                   const: transition
                 scope:
-                  const: objects
+                  const: entries
             then:
               properties:
                 query:
@@ -245,7 +245,7 @@ properties:
                 type:
                   const: transition
                 scope:
-                  const: objects
+                  const: entries
             then:
               properties:
                 # the reply is recorded, and over a set it is unbounded
@@ -258,7 +258,7 @@ properties:
             then:
               properties:
                 scope:
-                  enum: [object, objects, stream, none]
+                  enum: [entry, entries, stream, none]
                 query:
                   not:
                     const: false
@@ -287,7 +287,7 @@ properties:
             then:
               properties:
                 scope:
-                  enum: [object, objects, stream, none]
+                  enum: [entry, entries, stream, none]
           - if: # takes a stream
               required: [stream]
             then:

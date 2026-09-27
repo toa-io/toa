@@ -1,9 +1,9 @@
-export function transition(input: Input, object: Entity): Entity {
-  object.banned = input.banned
-  object.originator = input.originator.id
-  object.comment = input.comment
+export function transition(input: Input, entry: Entity): Entity {
+  entry.banned = input.banned
+  entry.originator = input.originator.id
+  entry.comment = input.comment
 
-  return object
+  return entry
 }
 
 interface Entity {

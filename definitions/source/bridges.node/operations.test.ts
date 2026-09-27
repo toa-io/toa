@@ -28,12 +28,12 @@ it('refuses two algorithms', () => {
 
 describe('function', () => {
   const cases: Array<[string, object]> = [
-    ['function transition(input, object) {}', { type: 'transition', scope: 'object' }],
-    ['function observation(input, object) {}', { type: 'observation', scope: 'object' }],
+    ['function transition(input, entry) {}', { type: 'transition', scope: 'entry' }],
+    ['function observation(input, entry) {}', { type: 'observation', scope: 'entry' }],
     ['function assignment(input, changeset) {}', { type: 'assignment', scope: 'changeset' }],
     ['function computation(input, context) {}', { type: 'computation', scope: 'none' }],
     ['function effect(input, context) {}', { type: 'effect', scope: 'none' }],
-    ['const observation = (input, objects) => null', { type: 'observation', scope: 'objects' }],
+    ['const observation = (input, entries) => null', { type: 'observation', scope: 'entries' }],
     ['const effect = (_, stream) => stream', { type: 'effect', scope: 'stream' }]
   ]
 
@@ -55,9 +55,9 @@ describe('function', () => {
   })
 
   it('defines a default export by its declared name', () => {
-    assert.deepStrictEqual(define('export default function transition(input, object) {}'), {
+    assert.deepStrictEqual(define('export default function transition(input, entry) {}'), {
       type: 'transition',
-      scope: 'object'
+      scope: 'entry'
     })
   })
 
@@ -83,16 +83,16 @@ describe('function', () => {
 
 describe('class', () => {
   it('defines type and scope by the execute method', () => {
-    assert.deepStrictEqual(define('export class Transition { execute(input, object) {} }'), {
+    assert.deepStrictEqual(define('export class Transition { execute(input, entry) {} }'), {
       type: 'transition',
-      scope: 'object'
+      scope: 'entry'
     })
   })
 
   it('finds execute among other methods', () => {
     assert.deepStrictEqual(
-      define('export class Assignment { execute(input, object) {}\n run(input, objects) {} }'),
-      { type: 'assignment', scope: 'object' }
+      define('export class Assignment { execute(input, entry) {}\n run(input, entries) {} }'),
+      { type: 'assignment', scope: 'entry' }
     )
   })
 
@@ -120,9 +120,9 @@ describe('class', () => {
 
 describe('factory', () => {
   it('defines type and scope by the name', () => {
-    assert.deepStrictEqual(define('export class ObjectTransitionFactory { create() {} }'), {
+    assert.deepStrictEqual(define('export class EntryTransitionFactory { create() {} }'), {
       type: 'transition',
-      scope: 'object'
+      scope: 'entry'
     })
   })
 

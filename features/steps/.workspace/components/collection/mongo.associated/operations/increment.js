@@ -1,9 +1,9 @@
-export function transition(input, objects) {
+export function transition(input, entries) {
   let total = 0
 
-  for (const object of objects) {
-    object.foo += input.foo
-    total += object.foo
+  for (const entry of entries) {
+    entry.foo += input.foo
+    total += entry.foo
   }
 
   return { total }

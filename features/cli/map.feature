@@ -37,7 +37,7 @@ Feature: toa map
       operations:
         transit:
           type: transition
-          scope: object
+          scope: entry
           input:
             type: object
             properties:

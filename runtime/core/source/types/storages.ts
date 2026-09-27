@@ -39,12 +39,14 @@ export interface Options {
   sample?: number
   /** include tombstones; without it an observation answers `null` over one */
   deleted?: boolean
+  /** where a stream continues from: the token the one before it ended with */
+  token?: string
 }
 
 /** What core hands a storage, written by `Query.parse`. */
 export interface Query {
   id?: string
-  /** many identities at once; `State.objects` inits whichever of them are missing */
+  /** many identities at once; `State.entries` inits whichever of them are missing */
   ids?: string[]
   version?: number
   criteria?: Node
@@ -58,13 +60,17 @@ export interface Query {
  * only some scopes, and says so by failing rather than by declaring less.
  */
 export interface Storage extends Connector {
-  /** scope `object` */
+  /** scope `entry` */
   get(query: Query): Promise<Record | null>
 
-  /** scope `objects` */
+  /** scope `entries` */
   find(query: Query): Promise<Record[]>
 
-  /** scope `stream` */
+  /**
+   * scope `stream`: the parts of the collection the query selects, or of what changed in it since
+   * `options.token` — see `parts.ts`. The last part is the token; a stream that ends without it
+   * was cut.
+   */
   stream(query?: Query): Promise<Readable>
 
   /**

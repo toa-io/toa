@@ -3,8 +3,8 @@ import type { Reply } from '../lib/state.ts'
 
 export async function transition(
   input: string,
-  object: string,
+  entry: string,
   context: unknown
 ): Promise<Reply> {
-  return reply(input, object, context)
+  return reply(input, entry, context)
 }

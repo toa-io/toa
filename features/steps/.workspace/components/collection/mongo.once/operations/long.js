@@ -1,3 +1,3 @@
-export function transition(input, object) {
-  return Object.assign(object, input)
+export function transition(input, entry) {
+  return Object.assign(entry, input)
 }

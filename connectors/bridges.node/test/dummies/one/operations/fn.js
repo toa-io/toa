@@ -1,3 +1,3 @@
-export async function transition(input, object, context) {
-  return { input, state: object, context: context !== undefined }
+export async function transition(input, entry, context) {
+  return { input, state: entry, context: context !== undefined }
 }

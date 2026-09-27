@@ -204,8 +204,16 @@ export class Server extends Connector {
     if (this.quiesced || this.gate?.holding() === false) {
       const headers: Record<string, string> = { 'cache-control': 'no-store' }
       const remaining = this.gate?.remaining() ?? 0
+      const origin = request.headers.origin
 
       if (remaining > 0) headers['retry-after'] = remaining.toString()
+
+      // without these a browser hides the reply, and a page cannot tell it from a failed request
+      if (origin !== undefined) {
+        headers['access-control-allow-origin'] = origin
+        headers['access-control-allow-credentials'] = 'true'
+        headers['access-control-expose-headers'] = 'retry-after'
+      }
 
       response.writeHead(503, headers).end()
 

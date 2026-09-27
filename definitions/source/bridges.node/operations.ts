@@ -117,11 +117,11 @@ export const TYPES: ReadonlySet<string> = new Set([
   'unmanaged'
 ])
 
-const SCOPES: ReadonlySet<string> = new Set(['object', 'objects', 'changeset', 'stream'])
+const SCOPES: ReadonlySet<string> = new Set(['entry', 'entries', 'changeset', 'stream'])
 
 const CLASSES: ReadonlySet<string> = new Set(
   [...TYPES].map((type) => type[0].toUpperCase() + type.slice(1))
 )
 
 const FACTORY =
-  /^(?<scope>Objects?|Changeset)?(?<type>Transition|Observation|Assignment|Computation|Effect)Factory$/
+  /^(?<scope>Entry|Entries|Changeset)?(?<type>Transition|Observation|Assignment|Computation|Effect)Factory$/

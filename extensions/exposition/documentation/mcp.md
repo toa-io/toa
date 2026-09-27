@@ -46,6 +46,9 @@ exposition:
 `/.mcp` keeps answering on the authority's own host. Nothing else is served there: an
 application's routes, `/.rpc`, `/.mcp` and `/.discovery` are `404`, and `GET /` is `405`.
 
+[Discovery](discovery.md) names the host of the authority it is asked on, which is the address its
+page offers.
+
 The host is a host of the authority its key names, so a credential issued there is the one issued
 on the authority's own host, and `map:authority` writes the identifier that key is. A key naming no
 declared authority fails the deploy. The host is an ingress host of the gateway, as an authority's

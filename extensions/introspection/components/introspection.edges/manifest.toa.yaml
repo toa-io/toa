@@ -32,7 +32,7 @@ entity:
   required: [src, dst]
 
 operations:
-  # a mass transition: the scope is inferred from the algorithm's `objects` parameter
+  # a mass transition: the scope is inferred from the algorithm's `entries` parameter
   merge:
     concurrency: retry
     input:

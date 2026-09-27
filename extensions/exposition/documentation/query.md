@@ -8,6 +8,7 @@ criteria?: string
 sort?: string
 omit?: integer
 limit?: integer
+token?: string
 selectors?: string[]
 projection?: string[]
 ```
@@ -209,9 +210,13 @@ limit: 10
 GET /dummies/?omit=100&limit=10
 ```
 
+A route to an operation of scope `stream` takes `limit` as the size of a page, and refuses `omit`:
+the next page is read with the [token](#token) the page ends with. A stream route that declares no
+`limit` answers the whole collection in one reply.
+
 ## Sort
 
-The `sort` query property defines the result order of Observations within an `objects` scope
+The `sort` query property defines the result order of Observations within an `entries` scope
 (enumeration).
 It comprises an ordered set of sorting statements delimited by semicolons.
 Each statement consists of an entity property name with an optional sorting direction suffix:
@@ -242,6 +247,23 @@ with `rank:desc;timestamp:asc` sort:
 ```http
 GET /dummies/?sort=timestamp:asc
 ```
+
+A stream route refuses `sort` beside `limit` or `token`: pages come ordered by `id`, and changes in
+the order they happened.
+
+## Token
+
+A stream ends with a token, and a request that carries it is answered what is left to read: the
+rest of the collection while it is being read a page at a time, and what changed in it since, once it has
+been read. See [streaming a collection](/documentation/collections.md).
+
+```http
+GET /todos/?limit=100
+GET /todos/?token=eyJ2IjoxLCJwIjoi...&limit=100
+```
+
+A token the storage cannot continue from is answered `410 Gone`, and the client reads the collection again
+without one. A token presented under criteria other than its own is answered `400`.
 
 ## Selectors
 

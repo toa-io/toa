@@ -1,7 +1,7 @@
-export function transition(_: unknown, object: Key): Key {
-  object.revokedAt ??= Date.now()
+export function transition(_: unknown, entry: Key): Key {
+  entry.revokedAt ??= Date.now()
 
-  return object
+  return entry
 }
 
 interface Key {

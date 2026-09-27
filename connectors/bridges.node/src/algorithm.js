@@ -52,4 +52,4 @@ function isClass(func) {
 }
 
 const FACTORY =
-  /^(?:Objects?|Changeset)?(?:Transition|Observation|Assignment|Computation|Effect)Factory$/
+  /^(?:Entry|Entries|Changeset)?(?:Transition|Observation|Assignment|Computation|Effect)Factory$/

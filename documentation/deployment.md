@@ -87,19 +87,23 @@ Every option each of them takes is in the [CLI readme](/runtime/cli/readme.md#op
 
 `toa deploy` does, in order:
 
-1. **Builds and pushes** every image the registry does not already have. An image it has is
+1. **Reads the secrets** the cluster holds, and refuses where one a workload would read is not
+   there — see [variables and secrets](#variables-and-secrets). Nothing is built or pushed when it
+   refuses.
+2. **Builds and pushes** every image the registry does not already have. An image it has is
    skipped, so deploying sources that were pushed builds nothing.
-2. **Writes the chart** — `Chart.yaml`, `values.yaml` and the templates — into a temporary
+3. **Writes the chart** — `Chart.yaml`, `values.yaml` and the templates — into a temporary
    directory.
-3. **Moves `<image>:<environment>`** onto what it pushed, so a reader of the registry can see what
+4. **Moves `<image>:<environment>`** onto what it pushed, so a reader of the registry can see what
    an environment is running.
-4. **Applies it**: `helm upgrade -i <context name>`, into `--namespace` where one is given.
+5. **Applies it**: `helm upgrade -i <context name>`, into `--namespace` where one is given.
 
-`--dry` stops after rendering and prints what would be applied. `--wait` waits for the rollout and
-then for the replicas it replaced to finish terminating — Helm answers once the replacements are
-ready, while the old ones are still draining, and a request made in that window lands on either.
-`--timeout` is how long both are given, Helm's `5m` by default; a rollout that has made no progress
-for 15 minutes is failed whatever it says.
+`--dry` renders and prints what would be applied, and reads no cluster at all — it applies nothing,
+so nothing has to be there. `--wait` waits for the rollout and then for the replicas it replaced to
+finish terminating — Helm answers once the replacements are ready, while the old ones are still
+draining, and a request made in that window lands on either. `--timeout` is how long both are given,
+Helm's `5m` by default; a rollout that has made no progress for 15 minutes is failed whatever it
+says.
 
 ## Environments
 
@@ -377,7 +381,8 @@ registry:
   by default. `platforms: ~` builds for the machine that builds, which is faster and is what a
   local registry usually wants.
 - **`credentials`** is the name of a Kubernetes secret holding registry credentials; it is
-  rendered as the pods' `imagePullSecrets`. The secret itself is not Toa's to create.
+  rendered as the pods' `imagePullSecrets`. The secret itself is not Toa's to create, and a deploy
+  that cannot find it in the cluster is [refused](#variables-and-secrets).
 
 `toa deploy` writes two tags on every workload image: `<name>:<hash>`, which the chart pins, and
 `<name>:<environment>`, moved onto it. `toa push` writes the content tag alone. `deps-<hash>`
@@ -459,6 +464,21 @@ $ toa conceal amqp-context.default username=todos password=secret
 `(optional)` may be absent, and the workload starts without it. See
 [pointer](/libraries/pointer/readme.md#credentials) for how a name follows from what the context
 declares.
+
+**A deploy the cluster is not ready for is refused before it builds anything.** `toa deploy` reads
+the secrets of the namespace it deploys into and stops where a key a workload would read is not
+there, naming every one of them:
+
+```shell
+$ toa deploy production
+Secrets are not deployed: toa-mongodb.default/username, toa-mongodb.default/password
+```
+
+Required is what `toa export secrets` lists, less the keys marked `(optional)`, plus the image pull
+secret named by [`registry.credentials`](#where-images-go) where a context names one. A secret that
+exists with some of its keys is refused by the keys it lacks. Nothing is asked of a value — an empty
+one is a value — and a secret put in place by something other than `toa conceal` has to be there
+before the deploy is run.
 
 The same set of variables is what a local run needs, and `toa env` writes it:
 

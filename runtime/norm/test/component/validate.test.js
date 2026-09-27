@@ -260,6 +260,13 @@ describe('operations', () => {
       )
     })
 
+    it('should refuse the names the scopes had before `entry` and `entries`', async () => {
+      for (const scope of ['object', 'objects']) {
+        manifest.operations.get.scope = scope
+        await assert.rejects(validate(manifest), (error) => /allowed values/.test(error.message))
+      }
+    })
+
     it('should allow only changeset for assignments', async () => {
       manifest.operations.set.scope = 'changeset'
       await assert.doesNotReject(validate(manifest))

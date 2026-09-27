@@ -1,3 +1,3 @@
-export const transition = (_, object) => {
-  object.deleted = true
+export const transition = (_, entry) => {
+  entry.deleted = true
 }

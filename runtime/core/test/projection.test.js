@@ -15,7 +15,7 @@ const entity = {
 function scope() {
   return {
     init: () => entity,
-    object: async () => entity,
+    entry: async () => entity,
     commit: mock.fn(async () => true),
     fit: () => undefined
   }
@@ -29,7 +29,7 @@ function operation(Type) {
     scope(),
     { request: { fit: () => null }, reply: { fit: () => null } },
     { parse: (query) => query },
-    { scope: 'object' }
+    { scope: 'entry' }
   )
 }
 

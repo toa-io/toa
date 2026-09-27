@@ -1,5 +1,5 @@
 import { it, expect } from 'vitest'
-import { CONSOLES, carries, published, refuses } from './ui'
+import { CONSOLES, carries, endpoint, published, refuses } from './ui'
 import type { Discovered } from '@/discovery'
 
 const tree: Discovered = {
@@ -19,6 +19,14 @@ it('should tell whether anything is published to a model', () => {
   expect(published(tree)).toBe(false)
   expect(published({ routes: { '/pots': { GET: { mcp: true } } } })).toBe(true)
   expect(published(null)).toBe(false)
+})
+
+it('should address MCP where the tree names it, and beside the tree otherwise', () => {
+  const origin = 'https://nex.toa.io'
+
+  expect(endpoint({ ...tree, mcp: 'https://mcp.toa.io' }, origin)).toBe('https://mcp.toa.io')
+  expect(endpoint(tree, origin)).toBe('https://nex.toa.io/.mcp')
+  expect(endpoint(null, origin)).toBe('https://nex.toa.io/.mcp')
 })
 
 it('should tell whether a method refuses a credential', () => {

@@ -45,6 +45,9 @@ declare namespace toa.deployment {
   interface Deployment {
     export(target: string): Promise<void>
 
+    /** Raises where the cluster does not hold a secret the workloads read. */
+    verify(options: installation.Options): Promise<void>
+
     install(options: installation.Options): Promise<void>
 
     template(options: template.Options): Promise<string>

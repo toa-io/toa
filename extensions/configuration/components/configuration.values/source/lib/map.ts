@@ -1,7 +1,7 @@
 import { environment } from '@toa.io/generic'
 
 /** What the deployment told the service about every configured component. */
-export function entry(component: string): Entry | undefined {
+export function configured(component: string): Entry | undefined {
   return read()[component]
 }
 

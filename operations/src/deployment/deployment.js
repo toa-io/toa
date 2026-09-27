@@ -6,6 +6,7 @@ import { shortcuts } from '@toa.io/norm'
 
 import { merge, declare, describe } from './.deployment/index.js'
 import { drain } from './drain.js'
+import * as secrets from './secrets.js'
 
 export class Deployment {
   #chart
@@ -45,6 +46,19 @@ export class Deployment {
     ])
 
     this.#target = target
+  }
+
+  /**
+   * Refuses a deploy the cluster is not ready for: a secret a workload reads that is not there
+   * leaves its pod uncreated, which is seen only once every image has been built and pushed.
+   *
+   * @param {toa.deployment.installation.Options} options
+   * @returns {Promise<void>}
+   */
+  async verify(options) {
+    const references = secrets.references(this.variables(), this.#values.credentials)
+
+    await secrets.verify(this.#process, references, options)
   }
 
   async install(options) {

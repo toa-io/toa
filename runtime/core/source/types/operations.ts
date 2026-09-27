@@ -8,7 +8,7 @@ export type type =
   | 'effect'
   | 'unmanaged'
 
-export type scope = 'object' | 'objects' | 'changeset' | 'stream' | 'none'
+export type scope = 'entry' | 'entries' | 'changeset' | 'stream' | 'none'
 
 /**
  * How an endpoint is called. What it resolves to is what the operation declares — `toa types`

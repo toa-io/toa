@@ -10,6 +10,15 @@ const REQUEST_HEADERS = [
   'if-none-match'
 ]
 
+const EXPOSED_HEADERS = [
+  'authorization',
+  'content-type',
+  'content-length',
+  'date',
+  'etag',
+  'retry-after'
+].join(', ')
+
 export class CORS implements Interceptor {
   public readonly name = 'cors'
 
@@ -43,10 +52,7 @@ export class CORS implements Interceptor {
       if (origin !== undefined) {
         output.headers.set('access-control-allow-origin', origin)
         output.headers.set('access-control-allow-credentials', 'true')
-        output.headers.set(
-          'access-control-expose-headers',
-          'authorization, content-type, content-length, date, etag'
-        )
+        output.headers.set('access-control-expose-headers', EXPOSED_HEADERS)
       }
 
       const method = input.request.method

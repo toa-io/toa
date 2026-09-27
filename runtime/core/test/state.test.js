@@ -14,7 +14,7 @@ beforeEach(() => {
 })
 
 it('should provide object', async () => {
-  const entity = await state.object(fixtures.query)
+  const entity = await state.entry(fixtures.query)
 
   assert.ok(
     fixtures.storage.get.mock.calls.some(
@@ -35,7 +35,7 @@ it('should provide object', async () => {
 })
 
 it('should provide read-only object', async () => {
-  await state.object(fixtures.query, false)
+  await state.entry(fixtures.query, false)
 
   assert.ok(
     fixtures.factory.object.mock.calls.some(
@@ -48,7 +48,7 @@ it('should provide read-only object', async () => {
 })
 
 it('should provide read-only objects', async () => {
-  await state.objects(fixtures.query, false)
+  await state.entries(fixtures.query, false)
 
   assert.ok(
     fixtures.factory.objects.mock.calls.some(

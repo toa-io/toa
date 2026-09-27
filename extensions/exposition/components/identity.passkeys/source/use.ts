@@ -19,10 +19,10 @@ export class Transition implements Operation {
     this.presence = context.configuration.residence === 'required'
   }
 
-  public async execute(input: Input, object: Passkey): Promise<Output> {
+  public async execute(input: Input, entry: Passkey): Promise<Output> {
     const { origin, ...rest } = input
     const response: AuthenticationResponseJSON = { ...rest, rawId: input.id }
-    const credential = toCredential(object)
+    const credential = toCredential(entry)
 
     const verified = await verifyAuthenticationResponse({
       response,
@@ -30,7 +30,7 @@ export class Transition implements Operation {
       expectedOrigin: origin,
       expectedRPID: new URL(origin).hostname,
       expectedChallenge: async (challenge) =>
-        this.verifyChallenge(object.authority, challenge),
+        this.verifyChallenge(entry.authority, challenge),
       requireUserVerification: this.verification
     }).catch((e) => {
       this.logs.info('Failed to verify authentication response', { message: e.message })
@@ -42,9 +42,9 @@ export class Transition implements Operation {
 
     if (!verified.verified) return ERR_INVALID
 
-    object.counter = verified.authenticationInfo.newCounter
+    entry.counter = verified.authenticationInfo.newCounter
 
-    return object.identity
+    return entry.identity
   }
 
   private async verifyChallenge(authority: string, challenge: string): Promise<boolean> {

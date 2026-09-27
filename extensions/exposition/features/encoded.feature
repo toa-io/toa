@@ -131,3 +131,38 @@ Feature: A reply the component encoded
       """
       304 Not Modified
       """
+
+  Scenario: A stream in JSON is answered part by part as the component encoded each
+    Given the `pots` is running with the following manifest:
+      """yaml
+      exposition:
+        /:
+          io:output: [id, title]
+          GET: stream
+      """
+    When the following request is received:
+      """
+      GET /pots/ HTTP/1.1
+      host: nex.toa.io
+      accept: application/json
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      content-type: multipart/json; boundary=cut
+
+      --cut
+      "ACK"
+      --cut
+      {"entry":{"title":"First pot","id":"4c4759e6f9c74da989d64511df42d6f4"}}
+      --cut
+      {"entry":{"title":"Second pot","id":"99988d785d7d445cad45dbf8531f560b"}}
+      --cut
+      {"token":${{ token }}}
+      --cut
+      "FIN"
+      """
+    And the reply does not contain:
+      """
+      volume
+      """

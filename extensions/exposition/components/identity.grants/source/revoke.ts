@@ -14,19 +14,19 @@ export class Transition implements Operation {
     this.keys = context.remote.identity.keys
   }
 
-  public async execute(input: Input, object: Entity): Promise<Maybe<void>> {
+  public async execute(input: Input, entry: Entity): Promise<Maybe<void>> {
     // the id is a route parameter, so a grant of another identity is asked for by anyone
     // who guesses one; the authority and the identity are what say it is theirs
     if (
-      object.VERSION === 0 ||
-      object.authority !== input.authority ||
-      object.identity !== input.identity
+      entry.VERSION === 0 ||
+      entry.authority !== input.authority ||
+      entry.identity !== input.identity
     )
       return ERR_NOT_FOUND
 
-    if (object.kid !== undefined) await this.keys.disable({ query: { id: object.kid } })
+    if (entry.kid !== undefined) await this.keys.disable({ query: { id: entry.kid } })
 
-    object.revokedAt = Date.now()
+    entry.revokedAt = Date.now()
   }
 }
 

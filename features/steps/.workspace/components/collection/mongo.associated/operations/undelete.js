@@ -1,6 +1,6 @@
-export function transition(input, object) {
-  Object.assign(object, input)
-  object.DELETED = null
+export function transition(input, entry) {
+  Object.assign(entry, input)
+  entry.DELETED = null
 
-  return object
+  return entry
 }

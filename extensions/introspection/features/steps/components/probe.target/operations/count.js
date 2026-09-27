@@ -1,5 +1,5 @@
-export function transition(input, object) {
-  object.counted++
+export function transition(input, entry) {
+  entry.counted++
 
-  return object
+  return entry
 }

@@ -35,9 +35,9 @@ GET:
   io:output: [name, location]
 ```
 
-When an operation does not return an object (e.g., a primitive or a stream), or an object is dynamic
-and its properties are not known in advance, `io:output` may have a value of `true`, which asks for
-the reply whole.
+When an operation does not return an object (e.g., a primitive, a stream of them, or a stream of
+bytes), or an object is dynamic and its properties are not known in advance, `io:output` may have a
+value of `true`, which asks for the reply whole.
 
 ```yaml
 GET:
@@ -47,7 +47,7 @@ GET:
 
 A method that declares no `io:output`, or declares `false`, asks for none of the reply: it has no
 body, and takes the status an absent body takes — `204`, `201` to a `POST`, and `404` where the
-operation found nothing.
+operation found nothing. A stream the operation answers is closed unread.
 
 ```yaml
 GET:
@@ -66,10 +66,10 @@ POST:
   io:output: [client_id, status]
 ```
 
-A list restricts each object of the reply, and each object of an array it answers; a value that is
-not an object is answered as it is. A stream, and a reply the gateway built out of an exception —
-an operation that returns an error is answered with a code and a message of the gateway's own —
-carry no restriction. A reply the operation returned is restricted whatever status it carries, see
+A list restricts each object of the reply, each object of an array it answers, and each object a
+stream it answers yields; a value that is not an object is answered as it is. A reply the gateway
+built out of an exception — an operation that returns an error is answered with a code and a
+message of the gateway's own — carries no restriction. A reply the operation returned is restricted whatever status it carries, see
 [Status](#status).
 
 ## Status

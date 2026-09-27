@@ -1,0 +1,34 @@
+# A username is one identity.
+#
+# `authenticate` finds the record of a username or makes it, and two of them arriving together
+# for a username not yet seen would each make one — two identities behind one username, and
+# which one a later authentication resolves to is whichever the query meets first. With the key
+# unique, the second insert collides and the server retries it as the match it now is.
+#
+# The name is the one 0002 gave it, deliberately: an index whose declaration changed is dropped
+# and made again.
+#
+# A database that already holds a username twice does not take the index, and the component
+# does not start:
+#
+#   E11000 duplicate key error collection: <db>.identity_otp index: index_username
+#
+# Which record a username keeps is the deployment's to decide, so this migration leaves the
+# records alone. The one `authenticate` has been resolving to is the oldest. To keep it and
+# tombstone the rest, in mongosh, before deploying:
+#
+#   db.identity_otp.aggregate([
+#     { $match: { DELETED: null } },
+#     { $sort: { CREATED: 1, _id: 1 } },
+#     { $group: { _id: { authority: '$authority', username: '$username' }, ids: { $push: '$_id' } } },
+#     { $match: { 'ids.1': { $exists: true } } }
+#   ]).forEach(({ ids: [, ...rest] }) =>
+#     db.identity_otp.updateMany({ _id: { $in: rest } }, { $set: { DELETED: new Date() } }))
+- index:
+    name: index_username
+    keys:
+      authority: asc
+      username: asc
+    unique: true
+    partial:
+      DELETED: null

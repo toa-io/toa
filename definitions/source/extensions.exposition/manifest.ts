@@ -47,7 +47,8 @@ function specifyMethod(method: Method, manifest: Manifest): void {
 
   // a page is taken of a collection, and of nothing else: an operation that answers one object
   // takes no `omit` and no `limit`, and refuses a request that carries them
-  method.mapping.paged = operation.type === 'observation' && operation.scope === 'objects'
+  method.mapping.paged = operation.type === 'observation' && operation.scope === 'entries'
+  method.mapping.streamed = operation.scope === 'stream'
 
   projects(method, operation.type)
   streams(method, operation)

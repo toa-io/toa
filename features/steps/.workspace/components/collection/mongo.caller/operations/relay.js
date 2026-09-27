@@ -1,10 +1,10 @@
-export async function transition(input, object, context) {
+export async function transition(input, entry, context) {
   await context.remote.mongo.once.transit({
     input: { foo: input.foo },
     query: { id: input.target }
   })
 
-  object.foo = input.foo
+  entry.foo = input.foo
 
-  return object
+  return entry
 }

@@ -45,7 +45,7 @@ operations:
       type: object
   # safe itself, and what it calls is not: see `features/readonly.feature`
   purge:
-    scope: object
+    scope: entry
     output:
       type: object
   observe:
