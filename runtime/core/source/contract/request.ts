@@ -135,7 +135,7 @@ export class Request extends Contract {
       if (definition.type === 'observation') delete query.properties.version
       else delete query.properties.projection
 
-      if (definition.type !== 'observation' || definition.scope !== 'objects') {
+      if (definition.type !== 'observation' || definition.scope !== 'entries') {
         delete query.properties.omit
         delete query.properties.limit
       } else if (query.required === undefined) query.required = ['limit']
@@ -184,10 +184,10 @@ function answers(definition: Definition, entity?: Entity): JSONSchema | undefine
     ...(entity.required === undefined ? {} : { required: entity.required })
   }
 
-  if (definition.scope === 'objects')
+  if (definition.scope === 'entries')
     return { type: 'array', items: object } as JSONSchema
 
-  return definition.scope === 'object' || definition.scope === 'changeset'
+  return definition.scope === 'entry' || definition.scope === 'changeset'
     ? object
     : undefined
 }

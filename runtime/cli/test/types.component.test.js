@@ -10,7 +10,7 @@ describe('description', () => {
       operations: {
         enumerate: {
           type: 'observation',
-          scope: 'objects',
+          scope: 'entries',
           description: 'Every pot that is brewing, newest first.'
         }
       }
@@ -24,7 +24,7 @@ describe('description', () => {
 
   it('should write none where the operation states none', () => {
     const emitted = component({
-      operations: { enumerate: { type: 'observation', scope: 'objects' } }
+      operations: { enumerate: { type: 'observation', scope: 'entries' } }
     })
 
     doesNotMatch(emitted, /\/\*\*/)

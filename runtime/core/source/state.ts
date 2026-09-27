@@ -44,8 +44,8 @@ export class State {
     this.#entities.fit(values)
   }
 
-  /** scope `object` */
-  public async object(query: Query, mutable = true): Promise<Entity | null> {
+  /** scope `entry` */
+  public async entry(query: Query, mutable = true): Promise<Entity | null> {
     const record = await this.storage.get(query)
 
     if (record !== null) return this.#entities.object(record, mutable)
@@ -65,8 +65,8 @@ export class State {
     return null
   }
 
-  /** scope `objects` */
-  public async objects(query: Query, mutable = true): Promise<EntitySet> {
+  /** scope `entries` */
+  public async entries(query: Query, mutable = true): Promise<EntitySet> {
     const recordset = await this.storage.find(query)
     const ids = query.ids
 

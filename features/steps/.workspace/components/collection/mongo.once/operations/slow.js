@@ -1,7 +1,7 @@
-export async function transition(input, object) {
+export async function transition(input, entry) {
   await new Promise((resolve) => setTimeout(resolve, 300))
 
-  object.foo = input.foo
+  entry.foo = input.foo
 
-  return object
+  return entry
 }

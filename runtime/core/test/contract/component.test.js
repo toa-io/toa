@@ -21,7 +21,7 @@ const manifest = () => ({
   operations: {
     transit: {
       type: 'transition',
-      scope: 'object',
+      scope: 'entry',
       concurrency: 'retry',
       bindings: AMQP,
       input: { type: 'object' },

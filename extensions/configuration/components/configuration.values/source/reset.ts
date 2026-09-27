@@ -1,5 +1,5 @@
 import { revision } from '@toa.io/definitions/extensions.configuration'
-import { entry } from './lib/map.ts'
+import { configured } from './lib/map.ts'
 import { UnknownComponentError } from './lib/errors.ts'
 
 /**
@@ -7,18 +7,18 @@ import { UnknownComponentError } from './lib/errors.ts'
  * what a component checks the defaults against, and what makes `resolve` serve the defaults
  * deployed now rather than those stored.
  */
-export async function transition(input: Input, object: Entity): Promise<Entity | Error> {
-  const known = entry(input.component)
+export async function transition(input: Input, entry: Entity): Promise<Entity | Error> {
+  const known = configured(input.component)
 
   if (known === undefined) return new UnknownComponentError(input.component)
 
-  object.component = input.component
-  object.epoch = known.epoch
-  object.configuration = structuredClone(known.defaults ?? {})
-  object.revision = revision(known.defaults)
-  object.originator = input.originator.id
+  entry.component = input.component
+  entry.epoch = known.epoch
+  entry.configuration = structuredClone(known.defaults ?? {})
+  entry.revision = revision(known.defaults)
+  entry.originator = input.originator.id
 
-  return object
+  return entry
 }
 
 interface Input {

@@ -44,12 +44,12 @@ describe('operations', () => {
 
   it('should scope an effect to none unless it says otherwise', async () => {
     manifest.operations.affect = { type: 'effect' }
-    manifest.operations.reach = { type: 'effect', scope: 'objects' }
+    manifest.operations.reach = { type: 'effect', scope: 'entries' }
 
     await normalize(manifest)
 
     assert.deepStrictEqual(manifest.operations.affect.scope, 'none')
-    assert.deepStrictEqual(manifest.operations.reach.scope, 'objects')
+    assert.deepStrictEqual(manifest.operations.reach.scope, 'entries')
   })
 })
 

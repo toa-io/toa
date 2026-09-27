@@ -24,7 +24,7 @@ Feature: Export the component map
         operations:
           transit:
             type: transition
-            scope: object
+            scope: entry
       dummies.two:
         operations:
           transit:

@@ -16,14 +16,14 @@ export const ok = {
   operations: {
     get: {
       type: 'observation',
-      scope: 'objects',
+      scope: 'entries',
       bridge: 'whatever',
       bindings: ['@toa.io/bindings.amqp']
     },
     add: {
       type: 'transition',
       concurrency: 'none',
-      scope: 'object',
+      scope: 'entry',
       bridge: 'whatever',
       bindings: ['@toa.io/bindings.amqp']
     },

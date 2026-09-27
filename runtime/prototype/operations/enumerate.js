@@ -1,3 +1,3 @@
-export function observation(_, objects) {
-  return objects
+export function observation(_, entries) {
+  return entries
 }

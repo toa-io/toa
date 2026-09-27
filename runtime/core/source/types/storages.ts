@@ -44,7 +44,7 @@ export interface Options {
 /** What core hands a storage, written by `Query.parse`. */
 export interface Query {
   id?: string
-  /** many identities at once; `State.objects` inits whichever of them are missing */
+  /** many identities at once; `State.entries` inits whichever of them are missing */
   ids?: string[]
   version?: number
   criteria?: Node
@@ -58,10 +58,10 @@ export interface Query {
  * only some scopes, and says so by failing rather than by declaring less.
  */
 export interface Storage extends Connector {
-  /** scope `object` */
+  /** scope `entry` */
   get(query: Query): Promise<Record | null>
 
-  /** scope `objects` */
+  /** scope `entries` */
   find(query: Query): Promise<Record[]>
 
   /** scope `stream` */

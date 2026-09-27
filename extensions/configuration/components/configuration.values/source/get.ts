@@ -1,4 +1,4 @@
-import { entry } from './lib/map.ts'
+import { configured } from './lib/map.ts'
 import { resolve, type Context } from './lib/resolve.ts'
 
 /**
@@ -11,7 +11,7 @@ export async function computation(input: Input, context: Context): Promise<Item 
 
   if (value === null) return null
 
-  const known = entry(input.component)
+  const known = configured(input.component)
 
   return {
     configuration: value.configuration,

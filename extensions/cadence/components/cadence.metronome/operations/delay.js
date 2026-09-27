@@ -8,24 +8,24 @@ import { LANES } from '@toa.io/extensions.cadence'
  * row has no immediate path to settle, so nothing is gained, and an even spread is what the
  * dispatchers want.
  */
-export function transition(input, object) {
+export function transition(input, entry) {
   const due = Date.now() + input.interval
 
-  object.lane = Math.floor(Math.random() * LANES)
-  object.due = due
-  object.endpoint = input.endpoint
+  entry.lane = Math.floor(Math.random() * LANES)
+  entry.due = due
+  entry.endpoint = input.endpoint
 
   // absolute, because the bound is the caller's and a scan reads rows of many callers at once.
   // No bound is the end of representable time rather than an absent field, so that one
   // comparison answers for every row
-  object.expires = input.overdue === null ? Number.MAX_SAFE_INTEGER : due + input.overdue
+  entry.expires = input.overdue === null ? Number.MAX_SAFE_INTEGER : due + input.overdue
 
   // a call that takes no request has none: the entity's `request` is an object where it is
   // there at all, and a null would not fit it
-  if (input.request !== undefined) object.request = input.request
+  if (input.request !== undefined) entry.request = input.request
 
   // the chain that asked for the call, absent where the caller detached it
-  if (input.trail !== undefined) object.trail = input.trail
+  if (input.trail !== undefined) entry.trail = input.trail
 
-  return object.id
+  return entry.id
 }

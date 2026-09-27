@@ -1,5 +1,5 @@
-export const transition = (input, object) => {
-  object.count += input.amount
+export const transition = (input, entry) => {
+  entry.count += input.amount
 
-  return object
+  return entry
 }

@@ -3,7 +3,7 @@ import { Observation } from './observationClass.js'
 /**
  * @implements {toa.node.algorithms.Factory}
  */
-export class ObjectObservationFactory {
+export class EntryObservationFactory {
   #context
 
   constructor(context) {

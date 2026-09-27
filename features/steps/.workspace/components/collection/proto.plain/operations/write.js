@@ -1,5 +1,5 @@
-export function transition(input, object) {
-  object.foo = input.foo
+export function transition(input, entry) {
+  entry.foo = input.foo
 
-  return object
+  return entry
 }

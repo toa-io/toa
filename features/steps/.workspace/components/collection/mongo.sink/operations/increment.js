@@ -1,3 +1,3 @@
-export const transition = (_, object) => {
-  object.count++
+export const transition = (_, entry) => {
+  entry.count++
 }

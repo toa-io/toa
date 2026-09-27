@@ -168,9 +168,9 @@ function returns(endpoint, operation, manifest, importing) {
   const entity = manifest.entity === undefined ? 'unknown' : 'Entity'
 
   switch (operation.scope) {
-    case 'object':
+    case 'entry':
       return { declared: false, type: entity }
-    case 'objects':
+    case 'entries':
       return { declared: false, type: `${entity}[]` }
     // an assignment hands back the new state unless the algorithm returned one
     case 'changeset':
@@ -190,9 +190,9 @@ function returns(endpoint, operation, manifest, importing) {
  * so it is in no return type either way.
  */
 function resolves(type, operation, importing) {
-  // an observation of one object finds nothing as often as it finds something
+  // an observation of one entry finds nothing as often as it finds something
   const empty =
-    operation.type === 'observation' && operation.scope === 'object' ? ' | null' : ''
+    operation.type === 'observation' && operation.scope === 'entry' ? ' | null' : ''
 
   if (operation.errors === undefined) return `${type}${empty}`
 

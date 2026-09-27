@@ -19,10 +19,10 @@ function observation(answered, bare = false) {
 
   return new Observation(
     cascade,
-    { object: async () => entity, fit: () => undefined },
+    { entry: async () => entity, fit: () => undefined },
     { request: { fit: () => null }, reply: { fit: () => null } },
     { parse: (query) => query },
-    { scope: 'object' }
+    { scope: 'entry' }
   )
 }
 

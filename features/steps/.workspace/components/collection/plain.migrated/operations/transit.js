@@ -1,5 +1,5 @@
-export const transition = (input, object) => {
-  Object.assign(object, input)
+export const transition = (input, entry) => {
+  Object.assign(entry, input)
 
   return null
 }

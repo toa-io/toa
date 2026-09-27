@@ -1,3 +1,3 @@
-export const transition = (input, object) => {
-  object.inc = input.inc
+export const transition = (input, entry) => {
+  entry.inc = input.inc
 }

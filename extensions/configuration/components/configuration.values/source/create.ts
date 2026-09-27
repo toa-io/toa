@@ -1,11 +1,11 @@
 import * as schemas from '@toa.io/schemas'
 import { assertSecrets } from '@toa.io/definitions/extensions.configuration'
-import { entry } from './lib/map.ts'
+import { configured } from './lib/map.ts'
 import { UnknownComponentError } from './lib/errors.ts'
 import type { Schema } from '@toa.io/schemas'
 
-export async function transition(input: Input, object: Entity): Promise<Entity | Error> {
-  const known = entry(input.component)
+export async function transition(input: Input, entry: Entity): Promise<Entity | Error> {
+  const known = configured(input.component)
 
   if (known === undefined) return new UnknownComponentError(input.component)
 
@@ -20,12 +20,12 @@ export async function transition(input: Input, object: Entity): Promise<Entity |
     return new InvalidConfigurationError((error as Error).message)
   }
 
-  object.component = input.component
-  object.epoch = known.epoch
-  object.configuration = configuration
-  object.originator = input.originator.id
+  entry.component = input.component
+  entry.epoch = known.epoch
+  entry.configuration = configuration
+  entry.originator = input.originator.id
 
-  return object
+  return entry
 }
 
 class InvalidConfigurationError extends Error {

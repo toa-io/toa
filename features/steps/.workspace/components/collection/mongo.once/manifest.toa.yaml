@@ -43,14 +43,14 @@ operations:
 
   # refuses by returning a declared error, so it changes nothing and is not remembered
   refuse:
-    scope: object
+    scope: entry
     concurrency: retry
     once: true
     errors: [REFUSED]
 
   # raises, so it changes nothing and is not remembered
   raise:
-    scope: object
+    scope: entry
     concurrency: retry
     once: true
 

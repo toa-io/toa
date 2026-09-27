@@ -1,3 +1,3 @@
-export function effect(_, object) {
-  return object
+export function effect(_, entry) {
+  return entry
 }
