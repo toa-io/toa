@@ -24,12 +24,12 @@ additional `criteria` or `sort`, and bound `omit` and `limit`.
 
 ## Streams
 
-A stream yields `{"entry":…}` and
-`{"removed":"<id>"}` parts, and ends with `{"token":…}`. No token means it
-was cut.
+Resources that respond with a stream yield `{"entry":…}` and
+`{"removed":"<id>"}` parts, and end with `{"token":…}`. No token means the
+stream was cut.
 
 ```http
-GET /pots/?limit=100&token=eyJ2Ijox...
+GET /pots/stream/?limit=100&token=eyJ2Ijox...
 ```
 
 The last token continues the read: the rest of the collection, then
