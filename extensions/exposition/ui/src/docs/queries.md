@@ -25,8 +25,9 @@ additional `criteria` or `sort`, and bound `omit` and `limit`.
 ## Streams
 
 Resources that respond with a stream yield `{"entry":…}` and
-`{"removed":"<id>"}` parts, and end with `{"token":…}`. No token means the
-stream was cut.
+`{"removed":"<id>"}` parts, and end with `{"token":…}`. A stream that ends
+without a token was cut: send the same request again, with the token it
+carried.
 
 ```http
 GET /pots/stream/?limit=100&token=eyJ2Ijox...
