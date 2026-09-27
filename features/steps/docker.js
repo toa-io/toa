@@ -76,5 +76,33 @@ const containersUpStrategies = {
       })
       .withWaitStrategy(Wait.forLogMessage('Waiting for connections'))
       .start()
+  },
+  // a replica set of its own, with the least history MongoDB keeps, so that a scenario can
+  // outlast it without doing that to the stack every other scenario reads
+  'mongodb-rs': async function () {
+    const container = await new GenericContainer('mongo:8.0.16')
+      .withExposedPorts({
+        container: 31022,
+        host: 31022
+      })
+      .withCommand(['--replSet', 'rs', '--port', '31022', '--bind_ip_all', '--oplogSize', '990'])
+      .withWaitStrategy(Wait.forLogMessage('Waiting for connections'))
+      .start()
+
+    const initiate = 'rs.initiate({ _id: "rs", members: [{ _id: 0, host: "localhost:31022" }] })'
+
+    await container.exec(['mongosh', '--port', '31022', '--quiet', '--eval', initiate])
+
+    for (let attempt = 0; attempt < 100; attempt++) {
+      const { output } = await container.exec([
+        'mongosh', '--port', '31022', '--quiet', '--eval', 'db.hello().isWritablePrimary'
+      ])
+
+      if (output.trim() === 'true') return container
+
+      await setTimeout(200)
+    }
+
+    throw new Error('The replica set elected no primary')
   }
 }

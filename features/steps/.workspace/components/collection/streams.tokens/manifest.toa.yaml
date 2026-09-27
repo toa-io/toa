@@ -1,0 +1,24 @@
+namespace: streams
+name: tokens
+
+# A set kept in sync: the collection keeps images, so its streams end with tokens.
+
+entity:
+  properties:
+    owner:
+      type: string
+    title:
+      type: string
+  required:
+    - owner
+
+operations:
+  transit:
+    concurrency: retry
+    input:
+      type: object
+      properties:
+        owner:
+          type: string
+        title:
+          type: string
