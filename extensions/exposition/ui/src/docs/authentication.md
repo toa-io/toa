@@ -37,4 +37,4 @@ stateless, as
 [REST](https://roy.gbiv.com/pubs/dissertation/rest_arch_style.htm#sec_5_1_3)
 has it.
 
-<footer class="text-muted-foreground mt-12 text-sm">There are no cookies.</footer>
+<footer class="text-muted-foreground mt-12 text-sm">There are <a href="https://www-test.ics.uci.edu/~fielding/pubs/dissertation/evaluation.htm#sec_6_3_4_2">no cookies</a>.</footer>
