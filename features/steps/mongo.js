@@ -561,3 +561,18 @@ const URL = 'mongodb://developer:secret@localhost:31020'
 
 /** what a process under `TOA_DEV=1` with no context and no suffix writes to */
 const DATABASE = 'toa-dev'
+
+Then(
+  'the {component} collection holds {int} record(s)',
+  /**
+   * What `collection holds` cannot say: that nothing else is there.
+   *
+   * @param {string} id
+   * @param {number} count
+   */
+  async function (id, count) {
+    await using(id, async (collection) =>
+      assert.strictEqual(await collection.countDocuments({}), count)
+    )
+  }
+)

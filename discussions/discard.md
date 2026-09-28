@@ -2,15 +2,15 @@
 
 ## Design concept
 
-A transition's state carries a system property, `IGNORED`, which is `false` when the algorithm
+A transition's state carries a system property, `DISCARD`, which is `false` when the algorithm
 receives it. It lives on the state for as long as the operation runs, as `TRAILERS` does, and is
 never stored, validated, answered or emitted.
 
-An algorithm that sets `state.IGNORED = true` has its transition end where one that answered with
+An algorithm that sets `state.DISCARD = true` has its transition end where one that answered with
 an error ends: before the commit. Nothing is written, nothing enters the outbox, no event is
 emitted, and the inbox records nothing. The caller receives what the algorithm returned.
 
-Over `entries`, `IGNORED` is per entity: the flagged ones leave the commit, and the rest are
+Over `entries`, `DISCARD` is per entity: the flagged ones leave the commit, and the rest are
 committed all or nothing.
 
 ### Guarantees
@@ -35,7 +35,7 @@ committed all or nothing.
 
 **What is not promised**
 
-8. An assignment has no `IGNORED`: its changeset is written by an upsert and is no record.
+8. An assignment has no `DISCARD`: its changeset is written by an upsert and is no record.
 
 ### What a component author does differently
 
@@ -44,7 +44,7 @@ Nothing, unless a transition answers without changing state:
 ```javascript
 export function transition(input, entry) {
   if (entry.balance < input.amount) {
-    entry.IGNORED = true
+    entry.DISCARD = true
 
     return { balance: entry.balance, charged: false }
   }
@@ -61,22 +61,22 @@ A TypeScript transition types its state as `State`, which `toa types` writes bes
 import type { State } from '../types/index.d.ts'
 
 export function transition(input: ChargeInput, entry: State) {
-  entry.IGNORED = true
+  entry.DISCARD = true
 }
 ```
 
 ## The changes, by area
 
-1. **Entity** (`runtime/core`). `Entity` defines `IGNORED` on the record it holds, beside
+1. **Entity** (`runtime/core`). `Entity` defines `DISCARD` on the record it holds, beside
    `TRAILERS`: writable, non-enumerable, `false`.
 2. **Transition.** `Transition.commit` returns before the entity is set when the state is flagged.
 3. **Entity set.** `EntitySet.set` keeps the entities whose value is unflagged, and what it commits
    and emits is those. `State.massCommit` hands the storage an empty set where every one is flagged,
    which `massStore` answers `true` without writing.
-4. **Manifest** (`runtime/norm`). A component that declares an entity property `IGNORED`, or names
+4. **Manifest** (`runtime/norm`). A component that declares an entity property `DISCARD`, or names
    it in `blank`, is refused.
 5. **Types** (`runtime/cli`). `toa types` writes
-   `State = Entity & { IGNORED: boolean, TRAILERS: Record<string, unknown> }`.
+   `State = Entity & { DISCARD: boolean, TRAILERS: Record<string, unknown> }`.
 6. **Documentation.** `documentation/component/declaration.md`, `documentation/design.md`,
    `documentation/inbox.md`, the Node bridge readme, and the note for the version this breaks.
 
@@ -86,7 +86,7 @@ export function transition(input: ChargeInput, entry: State) {
    a flag there needs no new return shape, and works per entity over `entries`.
 2. **Non-enumerable.** The schema, the storage, a reply and an event read enumerable properties
    alone, so the flag reaches none of them without a line of filtering.
-3. **The error's path.** An ignored transition is a refusal that answers with a value, so it skips
+3. **The error's path.** A discarded transition is a refusal that answers with a value, so it skips
    what an error skips, the inbox included.
 4. **Transitions alone.** A transition is the operation that holds a record it may leave as it is.
 5. **`State` carries `TRAILERS` too.** Both are what a transition's state has beyond the record,
@@ -115,6 +115,6 @@ emits an event, or returns an error and loses its reply.
 
 ## Compatibility
 
-- **Manifest.** An entity property named `IGNORED` is refused.
-- **Storage.** A collection holding a field named `IGNORED` renames it with a migration.
+- **Manifest.** An entity property named `DISCARD` is refused.
+- **Storage.** A collection holding a field named `DISCARD` renames it with a migration.
 - **Types.** `State` is new.

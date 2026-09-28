@@ -67,7 +67,7 @@ that.
 ## What it does not give
 
 **A call that changed nothing is not remembered.** An operation that refused with a declared
-`error`, that raised, or a transition that set [`IGNORED`](/documentation/design.md#transition)
+`error`, that raised, or a transition that set [`DISCARD`](/documentation/design.md#transition)
 leaves no record; the same call made again runs again and answers the same way. Nothing changed
 either time.
 
