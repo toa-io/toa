@@ -4,7 +4,7 @@
   "type": "module",
   "dependencies": {
     "jose": "6.2.12",
-    "lru-cache": "11.5.2",
+    "lru-cache": "11.5.3",
     "paseto": "4.0.1"
   }
 }
