@@ -131,3 +131,74 @@ Feature: Convergence
       VERSION: 2
       REGION: 0
       """
+
+  Scenario: The same call twice changes state once
+    Given I compose converging components:
+      | mongo.converging |
+    When I call `mongo.converging.record` with:
+      """yaml
+      id: aa11e57cc0e14fce95c4496c21086781
+      input:
+        foo: 1
+      query:
+        id: 72cf9b0ab0ac4ab2b8036e4e940ddcae
+      """
+    Then the reply is received:
+      """yaml
+      foo: 1
+      VERSION: 4
+      """
+    When I call `mongo.converging.record` with:
+      """yaml
+      id: aa11e57cc0e14fce95c4496c21086781
+      input:
+        foo: 9
+      query:
+        id: 72cf9b0ab0ac4ab2b8036e4e940ddcae
+      """
+    # the second call is answered with what the first one answered, and changed nothing
+    Then the reply is received:
+      """yaml
+      foo: 1
+      VERSION: 4
+      """
+    And the `mongo.converging` database holds:
+      | _id                              | foo | VERSION | REGION |
+      | 72cf9b0ab0ac4ab2b8036e4e940ddcae | 1   | 4       | 0      |
+    And the `mongo.converging` outbox holds 1 row
+    And the `mongo.converging` inbox holds 1 record
+
+  Scenario: An assignment is made once
+    Given I compose converging components:
+      | mongo.converging |
+    When I call `mongo.converging.assign` with:
+      """yaml
+      id: aa11e57cc0e14fce95c4496c21086781
+      input:
+        foo: 3
+      query:
+        id: 72cf9b0ab0ac4ab2b8036e4e940ddcae
+      """
+    Then the reply is received:
+      """yaml
+      foo: 3
+      VERSION: 4
+      """
+    When I call `mongo.converging.assign` with:
+      """yaml
+      id: aa11e57cc0e14fce95c4496c21086781
+      input:
+        foo: 8
+      query:
+        id: 72cf9b0ab0ac4ab2b8036e4e940ddcae
+      """
+    Then the reply is received:
+      """yaml
+      foo: 3
+      VERSION: 4
+      """
+    And the `mongo.converging` database holds:
+      | _id                              | foo | VERSION | REGION |
+      | 72cf9b0ab0ac4ab2b8036e4e940ddcae | 3   | 4       | 0      |
+    And the `mongo.converging` outbox holds 1 row
+    And the `mongo.converging` inbox holds 1 record

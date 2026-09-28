@@ -16,3 +16,20 @@ operations:
       properties:
         foo: *foo
       type: object
+
+  # the same call arriving twice changes state once, on a storage convergence decorates
+  record:
+    concurrency: retry
+    once: true
+    input:
+      properties:
+        foo: *foo
+      type: object
+
+  # the same, through a changeset
+  assign:
+    once: true
+    input:
+      properties:
+        foo: *foo
+      type: object
