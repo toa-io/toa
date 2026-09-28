@@ -142,7 +142,29 @@ Feature: Delayed calls
       - round
       """
 
-  Scenario: A detached call starts a chain of its own
+  Scenario: An unchained call starts a chain of its own
+    Given the `cadence.metronome` database is empty
+    And the `cadence` service is staged
+    And I compose `delaying` component
+    When I call `default.delaying.rearm` with:
+      """yaml
+      input:
+        delay: 300
+        rounds: 4
+        unchained: true
+      """
+    And I wait 3 seconds
+    And I call `default.delaying.marks`
+    Then the reply is received:
+      """yaml
+      - round
+      - round
+      - round
+      - round
+      - round
+      """
+
+  Scenario: A call that says `detached` continues the chain
     Given the `cadence.metronome` database is empty
     And the `cadence` service is staged
     And I compose `delaying` component
@@ -152,6 +174,24 @@ Feature: Delayed calls
         delay: 300
         rounds: 4
         detached: true
+      """
+    And I wait 3 seconds
+    And I call `default.delaying.marks`
+    Then the reply is received:
+      """yaml
+      - round
+      - round
+      """
+
+  Scenario: An unchained operation re-arms itself without saying so
+    Given the `cadence.metronome` database is empty
+    And the `cadence` service is staged
+    And I compose `delaying` component
+    When I call `default.delaying.recur` with:
+      """yaml
+      input:
+        delay: 300
+        rounds: 4
       """
     And I wait 3 seconds
     And I call `default.delaying.marks`

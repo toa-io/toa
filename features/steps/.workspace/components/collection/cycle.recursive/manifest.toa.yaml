@@ -9,6 +9,18 @@ operations:
     output:
       type: object
 
+  # calls itself as many times as it is told, which is meant: every call begins a chain of its own
+  descend:
+    unchained: true
+    input:
+      type: object
+      properties:
+        depth:
+          type: integer
+      required: [depth]
+    output:
+      type: integer
+
   # three concurrent calls handed one request object, which is not a cycle: they are
   # siblings, and the chain is a path down the call tree rather than a log of what happened
   fan:

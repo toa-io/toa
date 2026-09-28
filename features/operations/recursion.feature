@@ -23,6 +23,18 @@ Feature: A call that has gone round in a circle is refused
         - cycle.recursive.spin
       """
 
+  Scenario: An operation declared unchained calls itself
+    Given I compose `cycle.recursive` component
+    When I call `cycle.recursive.descend` with:
+      """yaml
+      input:
+        depth: 5
+      """
+    Then the reply is received:
+      """yaml
+      5
+      """
+
   Scenario: A chain that repeats nothing is made
     Given I compose components:
       | math.proxy        |

@@ -1,0 +1,26 @@
+namespace: mongo
+name: entries
+
+entity:
+  associated: true
+  properties:
+    count:
+      type: integer
+  blank:
+    count: 0
+
+operations:
+  # adds one to every entry of its set, and where it is told to, has one of them touched by
+  # another call after it has read the set and before it commits it
+  bump:
+    concurrency: none
+    input:
+      type: object
+      properties:
+        touch:
+          type: string
+  # adds ten to one entry, or creates it with ten
+  touch:
+    concurrency: none
+    input:
+      type: object

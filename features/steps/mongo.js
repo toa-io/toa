@@ -143,6 +143,10 @@ Then('the {component} outbox is empty', async function (id) {
   )
 })
 
+Then('the {component} outbox holds {int} row(s)', async function (id, count) {
+  await using(id, async (_, outbox) => assert.strictEqual(await outbox.countDocuments({}), count))
+})
+
 Then('the {component} outbox holds {int} published row(s)', async function (id, count) {
   await using(id, async (_, outbox) =>
     assert.strictEqual(await outbox.countDocuments({ published: true }), count)
