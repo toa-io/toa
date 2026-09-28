@@ -57,7 +57,7 @@ export interface Options {
    * It does not make the call repeat: a delayed call is made once either way. What repeats is
    * the operation arming the next one as it runs, and this is what keeps that from counting.
    */
-  detached?: boolean
+  unchained?: boolean
 }
 
 /** What an application states under `cadence:` in its context. */
