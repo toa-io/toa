@@ -117,6 +117,18 @@ elsewhere.
 **Nothing is dropped.** A failed publication leaves the row as it is and a later cycle sends it
 again. Every row of a batch is attempted; there is no attempt counter and no backoff.
 
+## Regional destinations
+
+A destination may write to something each region keeps for itself — realtime's streams are — and
+that nothing converges. Such a destination is regional: where the component
+[converges](/extensions/convergence/readme.md), what it writes for a change is carried to the other
+regions with the record, and written there too.
+
+What arrives is written whether the record it came with is applied or older than the one stored,
+and written again where writing it failed. A regional destination that fails to say what it would
+write for a change has nothing carried for it: the record converges all the same, and the other
+regions do not get what it would have written.
+
 ## The event
 
 ```js
