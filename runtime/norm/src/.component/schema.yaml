@@ -166,6 +166,9 @@ properties:
           stateful:
             # served by every process under an address of its own, which a call names; see documentation/stateful.md
             type: boolean
+          unchained:
+            # every call begins a chain of its own, so a circle through it is refused by neither rule; see documentation/cycles.md
+            type: boolean
           stream:
             # the input property that carries a stream, read as its caller writes it; see documentation/streams.md
             $ref: "#/definitions/name"
