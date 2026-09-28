@@ -71,8 +71,8 @@ export function transition(input: ChargeInput, entry: State) {
    `TRAILERS`: writable, non-enumerable, `false`.
 2. **Transition.** `Transition.commit` returns before the entity is set when the state is flagged.
 3. **Entity set.** `EntitySet.set` keeps the entities whose value is unflagged, and what it commits
-   and emits is those. `State.massCommit` hands the storage an empty set where every one is flagged,
-   which `massStore` answers `true` without writing.
+   and emits is those. `State.massCommit` answers `true` without a write where every one is
+   flagged.
 4. **Manifest** (`runtime/norm`). A component that declares an entity property `DISCARD`, or names
    it in `blank`, is refused.
 5. **Types** (`runtime/cli`). `toa types` writes
