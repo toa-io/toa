@@ -6,6 +6,7 @@ import { Storage } from '../src/storage.js'
 
 let collection
 let db
+let session
 let storage
 
 beforeEach(async () => {
@@ -19,9 +20,14 @@ beforeEach(async () => {
 
   db = { collection: mock.fn(() => null) }
 
-  const session = { endSession: async () => undefined }
+  session = {
+    endSession: async () => undefined,
+    abortTransaction: mock.fn(async () => undefined)
+  }
+
   const instance = { client: { startSession: () => session } }
-  const client = { collection, db, instance, link: () => null }
+  const transaction = async (fn) => fn(session)
+  const client = { collection, db, instance, transaction, link: () => null }
 
   storage = new Storage(client, { schema: { properties: {} } })
 
@@ -254,5 +260,57 @@ describe('converge', () => {
 
   it('should answer false where it changed nothing, and not throw', async () => {
     assert.equal(await storage.converge(record), false)
+  })
+})
+
+describe('massStore', () => {
+  const stored = { id: 'a1', VERSION: 3, foo: 1 }
+  const created = { id: 'b2', VERSION: 1, foo: 1 }
+
+  const operations = () => collection.bulkWrite.mock.calls[0].arguments[0]
+
+  beforeEach(() => {
+    collection.bulkWrite = mock.fn(async (operations) => ({
+      matchedCount: operations.length,
+      upsertedCount: 0
+    }))
+  })
+
+  it('should replace a record only at the version it was read at', async () => {
+    await storage.massStore([stored])
+
+    assert.deepEqual(operations()[0].replaceOne.filter, { _id: 'a1', VERSION: 2 })
+  })
+
+  it('should create a record only where none but a deleted one holds its id', async () => {
+    await storage.massStore([created])
+
+    const { filter, upsert } = operations()[0].updateOne
+
+    assert.deepEqual(filter, { _id: 'b2', DELETED: { $ne: null } })
+    assert.equal(upsert, true)
+  })
+
+  it('should answer true where every record was written', async () => {
+    assert.equal(await storage.massStore([stored, created]), true)
+    assert.equal(session.abortTransaction.mock.callCount(), 0)
+  })
+
+  it('should abort and answer false where a record was not matched', async () => {
+    collection.bulkWrite = mock.fn(async () => ({ matchedCount: 1, upsertedCount: 0 }))
+
+    assert.equal(await storage.massStore([stored, { ...stored, id: 'c3' }]), false)
+    assert.equal(session.abortTransaction.mock.callCount(), 1)
+  })
+
+  it('should abort and answer false where a record being created exists', async () => {
+    collection.bulkWrite = mock.fn(async () => {
+      throw Object.assign(new Error('E11000 duplicate key error index: _id_ dup key'), {
+        code: 11000
+      })
+    })
+
+    assert.equal(await storage.massStore([created]), false)
+    assert.equal(session.abortTransaction.mock.callCount(), 1)
   })
 })

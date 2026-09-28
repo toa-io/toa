@@ -278,6 +278,10 @@ export class Storage extends Connector {
     return committed === true
   }
 
+  /**
+   * A transition over a set, committed as one compare-and-swap: every record is written at the
+   * version it was read at, and its rows with it, or nothing is and the answer is `false`.
+   */
   async massStore(entities, rows = undefined, attempt = 0) {
     if (entities.length === 0) return true
 
@@ -288,9 +292,10 @@ export class Storage extends Connector {
         const { VERSION, ...rest } = record
 
         return {
-          // upsert in required when document is deleted
+          // one the read did not find: absent, and inserted, or deleted, and revived — a live
+          // one makes the upsert collide on `_id`, which is the swap lost
           updateOne: {
-            filter: { _id: entity.id },
+            filter: { _id: entity.id, DELETED: { $ne: null } },
             update: {
               $set: {
                 ...rest,
@@ -310,19 +315,39 @@ export class Storage extends Connector {
         }
     })
 
+    let committed
+
     try {
-      await this.#client.transaction(async (session) => {
-        await this.command(
-          'bulkWrite',
-          { operations: operations.length },
-          async () => await this.#collection.bulkWrite(operations, { session })
-        )
+      committed = await this.#client.transaction(async (session) => {
+        let result
+
+        try {
+          result = await this.command(
+            'bulkWrite',
+            { operations: operations.length },
+            async () => await this.#collection.bulkWrite(operations, { session })
+          )
+        } catch (error) {
+          if (!collidedOnId(error)) throw error
+
+          await session.abortTransaction()
+
+          return false
+        }
+
+        // a replacement whose version moved matches nothing, which is no error to a bulk
+        // write: without this the rest of the set would be committed around it
+        if (result.matchedCount + result.upsertedCount < operations.length) {
+          await session.abortTransaction()
+
+          return false
+        }
 
         if (rows !== undefined && this.#outbox !== undefined)
           await this.#outbox.insertMany(rows, session)
-      })
 
-      return true
+        return true
+      })
     } catch (error) {
       console.error('MongoDB error', error)
 
@@ -331,6 +356,11 @@ export class Storage extends Connector {
       if (retry) return await this.massStore(entities, rows, attempt + 1)
       else return false
     }
+
+    // counted once per set: one commit lost, and one retry
+    if (committed !== true) conflicted(this.#collection.collectionName)
+
+    return committed === true
   }
 
   /**
@@ -574,14 +604,18 @@ const ERR_DUPLICATE_KEY = 11000
 /** what the transaction answers where the call it carries has already been made */
 const MADE = Symbol('made')
 
+/** whether the key a write collided on is `_id` */
+function collidedOnId(error) {
+  if (error?.code !== ERR_DUPLICATE_KEY) return false
+
+  return error.keyPattern === undefined
+    ? error.message.includes(' index: _id_ ') // AWS DocumentDB, and a bulk write
+    : error.keyPattern._id === 1
+}
+
 async function retriable(error, attempt) {
   if (error.code === ERR_DUPLICATE_KEY) {
-    const id =
-      error.keyPattern === undefined
-        ? error.message.includes(' index: _id_ ') // AWS DocumentDB
-        : error.keyPattern._id === 1
-
-    if (id) return false
+    if (collidedOnId(error)) return false
     else throw new exceptions.DuplicateException()
   } else if (error.cause?.code === 'ECONNREFUSED') {
     if (attempt === LAST_ATTEMPT) throw error
