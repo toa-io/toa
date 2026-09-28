@@ -55,9 +55,13 @@ beforeEach(() => {
   storage = connector({
     converges: true,
     outbox: { collection: 'outbox' },
+    inbox: { recall: mock.fn(async () => null) },
+    claims: true,
     converge: mock.fn<Converge>(async () => true),
     get: mock.fn(async () => null),
-    store: mock.fn(async () => true)
+    store: mock.fn(async () => true),
+    upsert: mock.fn(async () => null),
+    ensure: mock.fn(async () => record())
   })
 
   inbound = connector({})
@@ -165,4 +169,25 @@ it('should delegate what it does not do', async () => {
 
   assert.equal(converging.converges, true)
   assert.deepEqual(converging.outbox, storage.outbox)
+})
+
+it('should pass the call on with every write that records one', async () => {
+  const converging = create()
+  const written = record()
+  const call = { id: 'aa11e57cc0e14fce95c4496c21086781', reply: { output: {} } }
+
+  await converging.store(written, undefined, call)
+  await converging.upsert({ id: written.id }, { foo: 1 }, undefined, call)
+  await converging.ensure(undefined, {}, written, undefined, call)
+
+  assert.equal(storage.store.mock.calls[0].arguments[2], call)
+  assert.equal(storage.upsert.mock.calls[0].arguments[3], call)
+  assert.equal(storage.ensure.mock.calls[0].arguments[4], call)
+})
+
+it('should expose the inbox of what it decorates', () => {
+  const converging = create()
+
+  assert.equal(converging.inbox, storage.inbox)
+  assert.equal(converging.claims, true)
 })

@@ -79,6 +79,9 @@ So **what an operation does outside its own state is still yours to make safe**:
 a charge to a third party, anything through `context.fetch` or `context.stash` happens once per
 run, not once per call. `once` is about what is written.
 
+**A duplicate that arrives in another [region](/extensions/convergence) is made again.** A call is
+remembered where it was made, so it changes state once in every region it reaches.
+
 **An operation that calls out should make the same calls in the same order given the same input.**
 That is what lines a re-run's calls up with the first run's, and it is what idempotence assumes in
 any case. One that branches on something that moved between the two runs lines them up

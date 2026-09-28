@@ -133,6 +133,10 @@ go is logged rather than dropped in silence.
 value, and the record that arrives second cannot be stored at all. It is logged and dropped;
 redelivery would not help.
 
+**[`once`](/documentation/inbox.md) holds within a region.** A duplicate is answered with the
+first reply where it arrives in the region that made the call, and made again where it arrives in
+another, so a caller that retries against a different region is not deduplicated.
+
 ## What a record carries
 
 [`REGION`](/documentation/component/declaration.md#entity) is which region wrote a record, as

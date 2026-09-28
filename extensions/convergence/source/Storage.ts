@@ -4,9 +4,17 @@ import { Connector } from '@toa.io/core'
 import { CHANNEL } from '@toa.io/definitions/extensions.convergence'
 import type { Readable } from 'node:stream'
 import type { Connector as Link, Locator } from '@toa.io/core'
-import type { bindings, outbox, storages } from '@toa.io/core/types'
+import type { bindings, inbox, outbox, storages } from '@toa.io/core/types'
 import type { Message } from './Destination.ts'
 import { merged } from './measurements.ts'
+
+/**
+ * Every member of `T`, the optional ones included, each as `T` types it. A member of the storage
+ * this does not delegate is lost to every component that converges, and nothing says so — an
+ * optional one is not required by `implements storages.Storage`, and the inbox went missing that
+ * way.
+ */
+type Whole<T> = { [K in keyof Required<T>]: T[K] }
 
 /**
  * A record from another region is written as it stands: its version, its timestamps, its
@@ -17,7 +25,7 @@ import { merged } from './measurements.ts'
  * Everything else it delegates. It decorates the storage because that is where a handle to one
  * is, not because it changes anything a component reads or writes.
  */
-export class Converging extends Connector implements storages.Storage, bindings.Inbound {
+export class Converging extends Connector implements Whole<storages.Storage>, bindings.Inbound {
   private readonly storage: storages.Storage
   private readonly locator: Locator
   private readonly subscribe: (sink: bindings.Inbound) => Promise<Link>
@@ -137,6 +145,14 @@ export class Converging extends Connector implements storages.Storage, bindings.
     return this.storage.outbox
   }
 
+  public get inbox(): storages.Storage['inbox'] {
+    return this.storage.inbox
+  }
+
+  public get claims(): boolean | undefined {
+    return this.storage.claims
+  }
+
   public get migrates(): boolean | undefined {
     return this.storage.migrates
   }
@@ -157,8 +173,12 @@ export class Converging extends Connector implements storages.Storage, bindings.
     return this.storage.stream(query)
   }
 
-  public async store(record: storages.Record, row?: outbox.Row): Promise<boolean> {
-    return this.storage.store(record, row)
+  public async store(
+    record: storages.Record,
+    row?: outbox.Row,
+    call?: inbox.Call
+  ): Promise<boolean> {
+    return this.storage.store(record, row, call)
   }
 
   public async massStore(
@@ -168,12 +188,14 @@ export class Converging extends Connector implements storages.Storage, bindings.
     return this.storage.massStore(records, rows)
   }
 
+  // eslint-disable-next-line max-params
   public async upsert(
     query: storages.Query,
     changeset: object,
-    row?: outbox.Row
+    row?: outbox.Row,
+    call?: inbox.Call
   ): Promise<storages.Record | null> {
-    return this.storage.upsert(query, changeset, row)
+    return this.storage.upsert(query, changeset, row, call)
   }
 
   // eslint-disable-next-line max-params
@@ -181,9 +203,10 @@ export class Converging extends Connector implements storages.Storage, bindings.
     query: storages.Query | undefined,
     properties: object,
     record: storages.Record,
-    row?: outbox.Row
+    row?: outbox.Row,
+    call?: inbox.Call
   ): Promise<storages.Record> {
-    return this.storage.ensure(query, properties, record, row)
+    return this.storage.ensure(query, properties, record, row, call)
   }
 
   public async converge(record: storages.Record): Promise<boolean> {
