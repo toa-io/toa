@@ -203,10 +203,14 @@ Feature: Query
       """
       - foo: 3
       """
-    When I invoke `enumerate` with:
+
+  Scenario: No value is refused by an operator that orders
+    Given I compose `mongo.one` component
+    When I call `mongo.one.enumerate` with:
       """yaml
       query:
         criteria: bar>null
+        limit: 10
       """
     Then the following exception is thrown:
       """yaml
