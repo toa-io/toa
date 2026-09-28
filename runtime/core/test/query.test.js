@@ -154,7 +154,10 @@ describe('criteria', () => {
         criteria
       )
 
-    assert.throws(() => strict.parse({ criteria: 'count=="null"' }), /takes an integer/)
+    assert.throws(
+      () => strict.parse({ criteria: 'count=="null"' }),
+      (error) => /takes an integer/.test(error.message)
+    )
   })
 
   it('should throw on unknown properties', () => {
