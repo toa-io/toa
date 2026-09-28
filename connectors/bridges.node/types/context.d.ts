@@ -27,6 +27,9 @@ declare namespace toa.node {
      */
     instance: string
 
+    /** A new id, made as an entity's is. */
+    id: () => string
+
     // system aspects
     atom: Atom
 

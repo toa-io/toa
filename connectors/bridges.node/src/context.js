@@ -1,4 +1,4 @@
-import { Connector } from '@toa.io/core'
+import { Connector, entities } from '@toa.io/core'
 import { underlay } from '@toa.io/generic'
 
 import * as shortcuts from './shortcuts/index.js'
@@ -8,6 +8,7 @@ export class Context extends Connector {
   name
   region
   instance
+  id = entities.newid
   aspects
   operation
 

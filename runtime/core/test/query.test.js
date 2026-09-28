@@ -103,6 +103,63 @@ describe('criteria', () => {
       )
   })
 
+  it('should read an unquoted null or undefined as no value', () => {
+    const strict = new Query({ count: { type: 'integer' }, title: { type: 'string' } })
+
+    const read = [
+      ['count==null', null],
+      ['count!=undefined', null],
+      ['title==null', null],
+      ['title==undefined', null],
+      ['count=in=(1,null)', [1, null]],
+      ['title=out=("null",undefined)', ['null', null]],
+      ['title=="null"', 'null'],
+      ["title=='undefined'", 'undefined'],
+      ['title==nullish', 'nullish']
+    ]
+
+    for (const [criteria, value] of read)
+      assert.deepStrictEqual(
+        strict.parse({ criteria }).criteria.right.value,
+        value,
+        criteria
+      )
+  })
+
+  it('should tell a quoted null from an unquoted one wherever it is', () => {
+    const strict = new Query({ count: { type: 'integer' }, title: { type: 'string' } })
+
+    const { criteria } = strict.parse({
+      criteria: `(title=="a\\"null\\"",title==null) and count==null;title=in=('null' , "x")`
+    })
+
+    const values = []
+    const collect = (node) =>
+      node.type === 'COMPARISON'
+        ? values.push(node.right.value)
+        : (collect(node.left), collect(node.right))
+
+    collect(criteria)
+
+    assert.deepStrictEqual(values, ['a"null"', null, null, ['null', 'x']])
+  })
+
+  it('should refuse no value to an operator that orders', () => {
+    const strict = new Query({ count: { type: 'integer' }, title: { type: 'string' } })
+
+    for (const criteria of ['count>null', 'count<=undefined', 'title=gt=null'])
+      assert.throws(
+        () => strict.parse({ criteria }),
+        (error) => /no value/.test(error.message),
+        criteria
+      )
+
+    assert.throws(
+      () => strict.parse({ criteria: 'count=="null"' }),
+      (error) => /takes an integer/.test(error.message)
+    )
+  })
+
   it('should throw on unknown properties', () => {
     const instance = new Query(fixtures.samples.simple.properties)
 
