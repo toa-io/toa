@@ -50,6 +50,27 @@ not at all: where any of them has been changed since it was read, or one it crea
 created meanwhile, nothing of the set is written, and the Transition is retried or refused as its
 `concurrency` says.
 
+A Transition that sets `IGNORED` on its state commits nothing: no write, no event, and its caller
+receives what the algorithm returned. Over `entries`, an entry flagged so is left out of the set,
+and the rest is committed.
+
+```javascript
+export function transition(input, entry) {
+  if (entry.balance < input.amount) {
+    entry.IGNORED = true
+
+    return { balance: entry.balance, charged: false }
+  }
+
+  entry.balance -= input.amount
+
+  return { balance: entry.balance, charged: true }
+}
+```
+
+What the algorithm changed on a flagged state is discarded, unvalidated. `IGNORED` is `false` when
+the algorithm receives the state, and is never stored, answered or emitted.
+
 #### Observation
 
 Operates on the current state of the Entity Object without allowing any modifications.

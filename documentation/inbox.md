@@ -67,8 +67,9 @@ that.
 ## What it does not give
 
 **A call that changed nothing is not remembered.** An operation that refused with a declared
-`error`, or that raised, leaves no record; the same call made again runs again and answers the
-same way. Nothing changed either time.
+`error`, that raised, or a transition that set [`IGNORED`](/documentation/design.md#transition)
+leaves no record; the same call made again runs again and answers the same way. Nothing changed
+either time.
 
 **The algorithm may run more than once for one call.** A duplicate arriving while the first is
 still in flight runs to completion before its write is refused, and a transition declared
