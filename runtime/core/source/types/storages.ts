@@ -83,7 +83,11 @@ export interface Storage extends Connector {
    */
   store(record: Record, row?: Row, call?: Call): Promise<boolean>
 
-  /** a transition over `objects` */
+  /**
+   * A transition's commit over `entries`, one compare-and-swap for the whole set: every record is
+   * written, with every row, or none is. `false` is the swap lost — a record changed since it was
+   * read, or one being created that exists already — and not an error.
+   */
   massStore(records: Record[], rows?: Row[]): Promise<boolean>
 
   /** an assignment; `null` where the query matched nothing */

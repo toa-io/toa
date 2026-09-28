@@ -103,6 +103,10 @@ Nothing is transactional across regions.
 convergence and nothing else: the region's own events are unaffected, and neither is republished
 because of the other.
 
+**What the other destinations write, where each region keeps its own.** A component's
+[regional destinations](/documentation/outbox.md#regional-destinations) — realtime's streams — are
+written in every region a change reaches, whether its record is applied there or not.
+
 **Changes only.** Convergence carries what happens after it is on. Seeding a new region is a
 database copy, made before it serves.
 

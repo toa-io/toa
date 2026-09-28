@@ -16,6 +16,7 @@ import { forget, state } from './contracts.ts'
 const require = createRequire(import.meta.url)
 
 const MAP = 'introspection'
+const CONVERGENCE = '@toa.io/extensions.convergence'
 const VALUES = 'configuration'
 
 declare global {
@@ -46,6 +47,14 @@ export class Components {
     const manifest = parse(yaml) as object
 
     await this.runComponent(name, manifest)
+  }
+
+  /** A component of a region that converges; see `Regions`. */
+  @given('the `{word}` is converging with the following manifest:')
+  public async converging(name: string, yaml: string): Promise<void> {
+    const manifest = parse(yaml) as object
+
+    await this.runComponent(name, manifest, true, [CONVERGENCE])
   }
 
   /**
@@ -141,7 +150,8 @@ export class Components {
   private async runComponent(
     name: string,
     manifest?: object,
-    gatewayFirst = true
+    gatewayFirst = true,
+    extensions?: string[]
   ): Promise<void> {
     assert.ok(!(name in this.compositions), `Composition '${name}' is already running`)
 
@@ -153,7 +163,7 @@ export class Components {
     const path = await this.workspace.addComponent(name, manifest)
 
     this.paths[name] = path
-    this.compositions[name] = await boot.composition([path])
+    this.compositions[name] = await boot.composition([path], { extensions })
 
     await this.compositions[name].connect()
   }

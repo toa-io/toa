@@ -1,4 +1,5 @@
-import { afterAll, beforeAll, binding, given } from 'specumber'
+import * as assert from 'node:assert'
+import { afterAll, beforeAll, binding, given, then } from 'specumber'
 
 import { MongoClient } from 'mongodb'
 import type { Collection } from 'mongodb'
@@ -76,6 +77,13 @@ export class Database {
   @given('the `{word}` database is empty')
   public async truncate(id: string): Promise<void> {
     await this.collection(id).deleteMany({})
+  }
+
+  @then('the `{word}` record `{word}` is of version {int}')
+  public async version(id: string, record: string, version: number): Promise<void> {
+    const document = await this.collection(id).findOne({ _id: record })
+
+    assert.equal(document?.VERSION, version, `'${record}' of '${id}' is of another version`)
   }
 
   @beforeAll()

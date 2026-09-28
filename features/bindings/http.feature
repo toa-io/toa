@@ -27,6 +27,30 @@ Feature: Streamed calls over HTTP
       """
     And I disconnect
 
+  Scenario: A request that is not a call is refused, and the process serves on
+    Given I compose components:
+      | streams.source |
+      | streams.remote |
+    When a request to "/streams/remote/accept" on the streamed calls port carries "{not a call" at "content"
+    Then it is answered 400
+    When a request to "/streams/remote/accept" on the streamed calls port carries "{\"input\":\"text\"}" at "content"
+    Then it is answered 400
+    When a request to "/streams/remote/accept" on the streamed calls port carries "{\"input\":{}}" at "__proto__.stream"
+    Then it is answered 400
+    And no object of the process has a "stream"
+    When I call `streams.source.dispatch` with:
+      """yaml
+      input:
+        label: pot
+        chunks: 1
+      """
+    Then the reply is received:
+      """yaml
+      label: pot
+      size: 1024
+      """
+    And I disconnect
+
   Scenario: The bytes flow rather than land
     Given I compose components:
       | streams.source |

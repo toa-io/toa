@@ -21,19 +21,23 @@ export class Converging extends Connector implements storages.Storage, bindings.
   private readonly storage: storages.Storage
   private readonly locator: Locator
   private readonly subscribe: (sink: bindings.Inbound) => Promise<Link>
+  private readonly regional: () => outbox.Regional | undefined
   private readonly delivery: SpanOptions
   private readonly processing: SpanOptions
 
+  // eslint-disable-next-line max-params
   public constructor(
     storage: storages.Storage,
     locator: Locator,
-    connect: (sink: bindings.Inbound) => Promise<Link>
+    connect: (sink: bindings.Inbound) => Promise<Link>,
+    regional: () => outbox.Regional | undefined = () => undefined
   ) {
     super()
 
     this.storage = storage
     this.locator = locator
     this.subscribe = connect
+    this.regional = regional
 
     // what it decorates opens before it and closes after it, so the storage is whole while a
     // delivery is still draining
@@ -59,7 +63,7 @@ export class Converging extends Connector implements storages.Storage, bindings.
    * convergence dropping a duplicate and convergence dropping everything look exactly alike.
    */
   public async accept(message: object): Promise<void> {
-    const { record, trace } = message as Message
+    const { record, trace, carried } = message as Message
 
     /*
      * A record carrying this region's own rank cannot have come from anywhere: a region is
@@ -91,6 +95,13 @@ export class Converging extends Connector implements storages.Storage, bindings.
             component: this.locator.id,
             outcome: applied ? 'applied' : 'stale'
           })
+
+          /*
+           * Whatever became of the record: what the change wrote beside it happened where it
+           * was committed, whichever record wins. What fails here fails the delivery, which
+           * converges the record again to no effect and imports again.
+           */
+          if (carried !== undefined) await this.regional()?.import(carried)
         })
       )
 

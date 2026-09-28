@@ -34,9 +34,9 @@ it('should store the chain that asked for the call', async () => {
   assert.deepStrictEqual(stored().trail, hops)
 })
 
-it('should store none where the caller detached the call', async () => {
+it('should store none where the caller unchained the call', async () => {
   await trail.follow({ hops: ['default.orders.place'], calls: new Map() }, async () =>
-    aspect.invoke('delay', 'a.b.c', null, { ...options, detached: true })
+    aspect.invoke('delay', 'a.b.c', null, { ...options, unchained: true })
   )
 
   assert.ok(!('trail' in stored()))

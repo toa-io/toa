@@ -129,7 +129,7 @@ it('should make the call by the chain that asked for it', async () => {
   assert.deepStrictEqual(request.trail, hops)
 })
 
-it('should start none where the caller detached the call', async () => {
+it('should start none where the caller unchained the call', async () => {
   rows = [row('a', 0)]
 
   const dispatcher = create()

@@ -41,10 +41,15 @@ export interface Definition {
    * one its callers retry within.
    */
   once?: boolean | number
+  /** every call begins a chain of its own; see `documentation/cycles.md` */
+  unchained?: boolean
 }
 
 export class Operation extends Connector {
   public scope: State
+
+  /** whether every call begins a chain of its own, which `Component.invoke` reads */
+  public readonly unchained: boolean
 
   /**
    * Whether what this operation acquires may be modified and committed. Only a
@@ -81,6 +86,7 @@ export class Operation extends Connector {
     super()
 
     this.scope = scope
+    this.unchained = definition.unchained === true
 
     this.#cascade = cascade
     this.#contracts = contracts

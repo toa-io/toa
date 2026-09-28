@@ -9,6 +9,9 @@ import type { Envelope, Options, Request } from './types/request.ts'
 /** What a component holds one of per endpoint: an operation, or the call that stands for it. */
 export interface Invocable extends Connector {
   invoke: (request: Envelope, options?: Options) => Promise<any>
+
+  /** whether every call begins a chain of its own */
+  unchained?: boolean
 }
 
 /** The code a declared error refuses with, which its manifest bounds. */
@@ -76,11 +79,16 @@ export class Component<O extends Invocable = Invocable> extends Connector {
      * delayed one. An endpoint beginning with `.` is the runtime's own and is no hop at all.
      */
     if (this.kind === 'server' && endpoint[0] !== '.') {
+      // an operation declared `unchained` drops the chain the call arrived with, so its own
+      // hop begins a new one; the identity and `readonly` are the request's, and stay
+      const inbound =
+        this.operations[endpoint].unchained === true ? undefined : request?.trail
+
       let hops: string[]
 
       try {
         // the span's name is the hop's, and it is already built once per endpoint
-        hops = trail.extend(request?.trail, this.#span(endpoint).name, this.#limits)
+        hops = trail.extend(inbound, this.#span(endpoint).name, this.#limits)
       } catch (exception) {
         console.error('Call chain refused', {
           endpoint: `${this.locator.id}.${endpoint}`,

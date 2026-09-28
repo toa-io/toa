@@ -210,6 +210,7 @@ export class Server extends Connector {
 
       // without these a browser hides the reply, and a page cannot tell it from a failed request
       if (origin !== undefined) {
+        // There are no cookies.
         headers['access-control-allow-origin'] = origin
         headers['access-control-allow-credentials'] = 'true'
         headers['access-control-expose-headers'] = 'retry-after'

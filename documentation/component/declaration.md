@@ -199,6 +199,9 @@ a call to it names the process it goes to. See
 An operation that declares `stream` takes one of its input properties as a stream, and reads it as
 its caller writes it. See [streamed input](/documentation/streams.md).
 
+An operation declared `unchained: true` begins a chain of its own on every call, so a circle that
+runs through it is not refused. See [call cycles](/documentation/cycles.md#an-operation-meant-to-be-re-entered).
+
 ## Events
 
 An event is published where something consumes it: a receiver of another component of the context,

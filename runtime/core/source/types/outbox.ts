@@ -52,6 +52,37 @@ export interface Destination extends Connector {
   readonly renders?: string[]
 
   rendering?: Rendering
+
+  /**
+   * What this would write for the row, where what it writes to is kept by each region for
+   * itself and converges nowhere: serializable, and needing nothing of this region to be
+   * written in another. `undefined` where it would write nothing. A destination that has this
+   * and `import` is regional.
+   */
+  export?(row: Row): Promise<unknown>
+
+  /** Writes what the destination of the same name exported in another region. */
+  import?(portable: unknown): Promise<void>
+
+  /**
+   * Whether this carries a change to other regions. A destination that does is given
+   * `regional` before it connects: what the component's regional destinations export.
+   */
+  readonly carries?: boolean
+
+  regional?: Regional
+}
+
+/**
+ * The component's regional destinations, as a carrier sees them: what they export for a row,
+ * by their names, and the import of what arrives, without knowing what any of them is.
+ */
+export interface Regional {
+  /** `undefined` where none of them exported anything */
+  export(row: Row): Promise<Record<string, unknown> | undefined>
+
+  /** each part to the destination of its name; a name this component has none of is dropped */
+  import(carried: Record<string, unknown>): Promise<void>
 }
 
 /** What a row makes of the component's events: the payload of each that it raises. */

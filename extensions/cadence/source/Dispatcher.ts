@@ -335,7 +335,7 @@ export class Dispatcher extends Connector {
     /*
      * Set after the stored request is spread, so a stored field of that name cannot stand in
      * for it: the row's chain is the one that was in scope when the call was asked for. Absent
-     * — the caller detached the call — `Call` starts one under cadence's own name.
+     * — the caller unchained the call — `Call` starts one under cadence's own name.
      */
     if (row.trail !== undefined) request.trail = row.trail
 

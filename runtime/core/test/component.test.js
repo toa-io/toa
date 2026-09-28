@@ -113,6 +113,37 @@ describe('The chain', () => {
     assert.equal(operations.foo.invoke.mock.callCount(), 0)
   })
 
+  it('should begin a chain of its own where the operation is unchained', async () => {
+    const operations = invocations()
+    const hop = 'default.orders.foo'
+
+    operations.foo.unchained = true
+
+    const seen = await chain(new Component(locator, operations), 'foo', {
+      trail: ['exposition', hop, hop]
+    })
+
+    assert.deepEqual(seen, [hop])
+  })
+
+  it('should keep the identity and readonly where the operation is unchained', async () => {
+    const operations = invocations()
+    const component = new Component(locator, operations)
+    let seen
+
+    operations.foo.unchained = true
+    operations.foo.invoke = () => {
+      seen = trail.current()
+
+      return null
+    }
+
+    await component.invoke('foo', { trail: ['exposition'], id: 'abc', readonly: true })
+
+    assert.equal(seen.id, 'abc')
+    assert.equal(seen.readonly, true)
+  })
+
   /** What the endpoint saw as its chain, or `undefined` where it was given none. */
   async function chain(component, endpoint, request) {
     let seen

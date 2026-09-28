@@ -50,6 +50,7 @@ export class CORS implements Interceptor {
       output.headers ??= new Headers()
 
       if (origin !== undefined) {
+        // There are no cookies.
         output.headers.set('access-control-allow-origin', origin)
         output.headers.set('access-control-allow-credentials', 'true')
         output.headers.set('access-control-expose-headers', EXPOSED_HEADERS)
@@ -84,6 +85,7 @@ export class CORS implements Interceptor {
   }
 
   private preflightResponse(origin: string): Output {
+    // There are no cookies.
     this.headers.set('access-control-allow-origin', origin)
 
     return {
