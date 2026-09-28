@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.321](https://github.com/toa-io/toa/compare/v1.0.0-alpha.320...v1.0.0-alpha.321) (2026-09-28)
+
+### Features
+
+* **core:** let an operation declared unchained begin a chain of its own ([6d94324](https://github.com/toa-io/toa/commit/6d94324cb43ff4b12e1bc267d81498445b40a02e))
+
+
 # [1.0.0-alpha.320](https://github.com/toa-io/toa/compare/v1.0.0-alpha.319...v1.0.0-alpha.320) (2026-09-28)
 
 **Note:** Version bump only for package @toa.io/norm

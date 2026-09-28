@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.321](https://github.com/toa-io/toa/compare/v1.0.0-alpha.320...v1.0.0-alpha.321) (2026-09-28)
+
+### Features
+
+* **exposition:** export and import what realtime writes to the streams ([ccceb81](https://github.com/toa-io/toa/commit/ccceb81d0e61d6f604078ba338fa59eddbb72f5e))
+
+
 # [1.0.0-alpha.320](https://github.com/toa-io/toa/compare/v1.0.0-alpha.319...v1.0.0-alpha.320) (2026-09-28)
 
 ### Features

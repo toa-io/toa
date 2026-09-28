@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.321](https://github.com/toa-io/toa/compare/v1.0.0-alpha.320...v1.0.0-alpha.321) (2026-09-28)
+
+* feat(cadence)!: rename the delay option detached to unchained ([37f45b5](https://github.com/toa-io/toa/commit/37f45b5ff3a37cca7d27b4701d8e8d3023cb562b))
+
+### BREAKING CHANGES
+
+* context.delay reads `unchained`, and a call that passes
+  `detached` continues the chain that armed it.
+
+
 # [1.0.0-alpha.320](https://github.com/toa-io/toa/compare/v1.0.0-alpha.319...v1.0.0-alpha.320) (2026-09-28)
 
 ### Features

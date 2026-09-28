@@ -3,6 +3,28 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.321](https://github.com/toa-io/toa/compare/v1.0.0-alpha.320...v1.0.0-alpha.321) (2026-09-28)
+
+* feat(cadence)!: rename the delay option detached to unchained ([37f45b5](https://github.com/toa-io/toa/commit/37f45b5ff3a37cca7d27b4701d8e8d3023cb562b))
+
+### Bug Fixes
+
+* **bindings.http:** refuse a request that is not a call rather than crash on it ([108a35f](https://github.com/toa-io/toa/commit/108a35f8ff76c682bbbffb81cbab67bdf61beccf))
+* **storages.mongodb:** commit a set of entries all or nothing ([dafecf0](https://github.com/toa-io/toa/commit/dafecf096bac99c4aca5b697a0d7d9f6f6d82daf))
+
+### Features
+
+* **convergence:** carry what regional destinations export, and import it where it arrives ([179e1c0](https://github.com/toa-io/toa/commit/179e1c0cd62d8cc82366fbd2d66eb6a90e32b220))
+* **core:** give a destination that carries changes to other regions what the regional ones write ([a7d2fd1](https://github.com/toa-io/toa/commit/a7d2fd1eecd50645d14f7cb5c588069c3073ba72))
+* **core:** let an operation declared unchained begin a chain of its own ([6d94324](https://github.com/toa-io/toa/commit/6d94324cb43ff4b12e1bc267d81498445b40a02e))
+* **exposition:** export and import what realtime writes to the streams ([ccceb81](https://github.com/toa-io/toa/commit/ccceb81d0e61d6f604078ba338fa59eddbb72f5e))
+
+### BREAKING CHANGES
+
+* context.delay reads `unchained`, and a call that passes
+  `detached` continues the chain that armed it.
+
+
 # [1.0.0-alpha.320](https://github.com/toa-io/toa/compare/v1.0.0-alpha.319...v1.0.0-alpha.320) (2026-09-28)
 
 ### Features

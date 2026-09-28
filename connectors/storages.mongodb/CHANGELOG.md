@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.321](https://github.com/toa-io/toa/compare/v1.0.0-alpha.320...v1.0.0-alpha.321) (2026-09-28)
+
+### Bug Fixes
+
+* **storages.mongodb:** commit a set of entries all or nothing ([dafecf0](https://github.com/toa-io/toa/commit/dafecf096bac99c4aca5b697a0d7d9f6f6d82daf))
+
+
 # [1.0.0-alpha.320](https://github.com/toa-io/toa/compare/v1.0.0-alpha.319...v1.0.0-alpha.320) (2026-09-28)
 
 ### Features

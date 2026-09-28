@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.321](https://github.com/toa-io/toa/compare/v1.0.0-alpha.320...v1.0.0-alpha.321) (2026-09-28)
+
+### Bug Fixes
+
+* **storages.mongodb:** commit a set of entries all or nothing ([dafecf0](https://github.com/toa-io/toa/commit/dafecf096bac99c4aca5b697a0d7d9f6f6d82daf))
+
+### Features
+
+* **core:** give a destination that carries changes to other regions what the regional ones write ([a7d2fd1](https://github.com/toa-io/toa/commit/a7d2fd1eecd50645d14f7cb5c588069c3073ba72))
+* **core:** let an operation declared unchained begin a chain of its own ([6d94324](https://github.com/toa-io/toa/commit/6d94324cb43ff4b12e1bc267d81498445b40a02e))
+
+
 # [1.0.0-alpha.320](https://github.com/toa-io/toa/compare/v1.0.0-alpha.319...v1.0.0-alpha.320) (2026-09-28)
 
 ### Features

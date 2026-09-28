@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.321](https://github.com/toa-io/toa/compare/v1.0.0-alpha.320...v1.0.0-alpha.321) (2026-09-28)
+
+### Features
+
+* **convergence:** carry what regional destinations export, and import it where it arrives ([179e1c0](https://github.com/toa-io/toa/commit/179e1c0cd62d8cc82366fbd2d66eb6a90e32b220))
+
+
 # [1.0.0-alpha.320](https://github.com/toa-io/toa/compare/v1.0.0-alpha.319...v1.0.0-alpha.320) (2026-09-28)
 
 **Note:** Version bump only for package @toa.io/extensions.convergence

@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.321](https://github.com/toa-io/toa/compare/v1.0.0-alpha.320...v1.0.0-alpha.321) (2026-09-28)
+
+### Features
+
+* **core:** give a destination that carries changes to other regions what the regional ones write ([a7d2fd1](https://github.com/toa-io/toa/commit/a7d2fd1eecd50645d14f7cb5c588069c3073ba72))
+
+
 # [1.0.0-alpha.320](https://github.com/toa-io/toa/compare/v1.0.0-alpha.319...v1.0.0-alpha.320) (2026-09-28)
 
 **Note:** Version bump only for package @toa.io/boot

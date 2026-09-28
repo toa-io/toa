@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.321](https://github.com/toa-io/toa/compare/v1.0.0-alpha.320...v1.0.0-alpha.321) (2026-09-28)
+
+### Bug Fixes
+
+* **bindings.http:** refuse a request that is not a call rather than crash on it ([108a35f](https://github.com/toa-io/toa/commit/108a35f8ff76c682bbbffb81cbab67bdf61beccf))
+
+
 # [1.0.0-alpha.320](https://github.com/toa-io/toa/compare/v1.0.0-alpha.319...v1.0.0-alpha.320) (2026-09-28)
 
 **Note:** Version bump only for package @toa.io/bindings.http
