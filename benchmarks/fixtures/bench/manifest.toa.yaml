@@ -99,7 +99,7 @@ exposition:
     /chain:
       anonymous: true
       GET: chain
-    # a page of the collection as a stream of parts: the page, since `create` grows the collection
+    # a window of the collection as a stream of parts: the window, since `create` grows the collection
     /stream:
       anonymous: true
       GET:

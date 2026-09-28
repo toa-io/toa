@@ -41,6 +41,8 @@ export interface Options {
   deleted?: boolean
   /** where a stream continues from: the token the one before it ended with */
   token?: string
+  /** a stream read in windows ends its first window with where changes continue from, not deeper */
+  stop?: boolean
 }
 
 /** What core hands a storage, written by `Query.parse`. */

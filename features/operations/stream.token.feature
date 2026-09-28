@@ -207,7 +207,7 @@ Feature: A stream ends with a token
           owner: alice
       """
 
-  Scenario: Reading a collection in pages
+  Scenario: Reading a collection in windows
     Given the `streams.tokens` database contains:
       | _id                              | owner | title | VERSION | DELETED |
       | a0000000000000000000000000000001 | alice | a     | 1       | null    |
@@ -216,14 +216,14 @@ Feature: A stream ends with a token
       | a0000000000000000000000000000004 | alice | d     | 1       | null    |
       | a0000000000000000000000000000005 | alice | e     | 1       | null    |
       | b0000000000000000000000000000001 | bob   | f     | 1       | null    |
-    When I read the whole of `streams.tokens.stream` in pages of 2 with:
+    When I read the whole of `streams.tokens.stream` in windows of 2 with:
       """yaml
       query:
         criteria: owner==alice
       """
     Then the copy holds 5 entries
 
-  Scenario: A page ends with a token that continues the collection
+  Scenario: A window ends with a token that continues the collection
     When I read `streams.tokens.stream` with:
       """yaml
       query:
@@ -250,7 +250,7 @@ Feature: A stream ends with a token
           id: a0000000000000000000000000000003
       """
 
-  Scenario: An entry created behind the page boundary arrives with the changes
+  Scenario: An entry created behind the window boundary arrives with the changes
     When I read `streams.tokens.stream` with:
       """yaml
       query:
@@ -274,6 +274,142 @@ Feature: A stream ends with a token
         limit: 2
       """
     Then the copy holds 4 entries
+
+  Scenario: Reading a collection newest first, a window at a time
+    Given the `streams.tokens` database contains:
+      | _id                              | owner | title | VERSION | DELETED | CREATED |
+      | a0000000000000000000000000000001 | alice | milk  | 1       | null    | 3000    |
+      | a0000000000000000000000000000002 | alice | bread | 1       | null    | 1000    |
+      | a0000000000000000000000000000003 | alice | eggs  | 1       | null    | 2000    |
+      | b0000000000000000000000000000001 | bob   | tea   | 1       | null    | 4000    |
+    When I read `streams.tokens.stream` with:
+      """yaml
+      query:
+        criteria: owner==alice
+        sort: [CREATED:desc]
+        limit: 2
+      """
+    Then the stream ended with a token
+    And the parts read are:
+      """yaml
+      - entry:
+          id: a0000000000000000000000000000001
+      - entry:
+          id: a0000000000000000000000000000003
+      """
+    When I read `streams.tokens.stream` from the token with:
+      """yaml
+      query:
+        criteria: owner==alice
+        sort: [CREATED:desc]
+        limit: 2
+      """
+    Then the parts read are:
+      """yaml
+      - entry:
+          id: a0000000000000000000000000000002
+      """
+
+  Scenario: An entry created during a read newest first arrives with the changes
+    Given the `streams.tokens` database contains:
+      | _id                              | owner | title | VERSION | DELETED | CREATED |
+      | a0000000000000000000000000000001 | alice | milk  | 1       | null    | 3000    |
+      | a0000000000000000000000000000002 | alice | bread | 1       | null    | 1000    |
+      | a0000000000000000000000000000003 | alice | eggs  | 1       | null    | 2000    |
+    When I read `streams.tokens.stream` with:
+      """yaml
+      query:
+        criteria: owner==alice
+        sort: [CREATED:desc]
+        limit: 2
+      """
+    And a transaction writes to the `streams.tokens` collection, and is held open:
+      | id                               | owner | title |
+      | a0000000000000000000000000000004 | alice | salt  |
+    And the transaction commits
+    And I read `streams.tokens.stream` from the token with:
+      """yaml
+      query:
+        criteria: owner==alice
+        sort: [CREATED:desc]
+        limit: 2
+      """
+    And I read `streams.tokens.stream` from the token with:
+      """yaml
+      query:
+        criteria: owner==alice
+        sort: [CREATED:desc]
+        limit: 2
+      """
+    Then the copy holds 4 entries
+
+  Scenario: Reading the newest window, then only what changed
+    Given the `streams.tokens` database contains:
+      | _id                              | owner | title | VERSION | DELETED | CREATED |
+      | a0000000000000000000000000000001 | alice | milk  | 1       | null    | 3000    |
+      | a0000000000000000000000000000002 | alice | bread | 1       | null    | 1000    |
+      | a0000000000000000000000000000003 | alice | eggs  | 1       | null    | 2000    |
+    When I read `streams.tokens.stream` with:
+      """yaml
+      query:
+        criteria: owner==alice
+        sort: [CREATED:desc]
+        limit: 2
+        stop: true
+      """
+    Then the stream ended with a token
+    And the copy holds 2 entries
+    When I read `streams.tokens.stream` from the token with:
+      """yaml
+      query:
+        criteria: owner==alice
+        sort: [CREATED:desc]
+        limit: 2
+      """
+    Then the parts read are:
+      """yaml
+      []
+      """
+    When I call `streams.tokens.transit` with:
+      """yaml
+      input:
+        title: butter
+      query:
+        id: a0000000000000000000000000000002
+      """
+    And I read `streams.tokens.stream` from the token with:
+      """yaml
+      query:
+        criteria: owner==alice
+        sort: [CREATED:desc]
+        limit: 2
+      """
+    Then the parts read are:
+      """yaml
+      - entry:
+          id: a0000000000000000000000000000002
+          title: butter
+      """
+
+  Scenario: A token read in another order
+    When I read `streams.tokens.stream` with:
+      """yaml
+      query:
+        criteria: owner==alice
+        sort: [CREATED:desc]
+        limit: 2
+      """
+    And I read `streams.tokens.stream` from the token with:
+      """yaml
+      query:
+        criteria: owner==alice
+        sort: [CREATED:asc]
+        limit: 2
+      """
+    Then the following exception is thrown:
+      """yaml
+      code: 221
+      """
 
   Scenario: A token read under other criteria
     When I read `streams.tokens.stream` with:
@@ -302,7 +438,7 @@ Feature: A stream ends with a token
       code: 308
       """
 
-  Scenario: Sorting a read that pages
+  Scenario: Sorting a read in windows by a property that changes
     When I call `streams.tokens.stream` with:
       """yaml
       query:
