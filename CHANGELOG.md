@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.320](https://github.com/toa-io/toa/compare/v1.0.0-alpha.319...v1.0.0-alpha.320) (2026-09-28)
+
+### Features
+
+* **bridges.node:** make a new id with context.id ([b86943e](https://github.com/toa-io/toa/commit/b86943e023fb942285c9ce629ee26fa276292abb))
+* **core:** read an unquoted null or undefined in criteria as no value ([929f692](https://github.com/toa-io/toa/commit/929f6927b291a281c5ded5735a90aff7a7c7015e))
+* page a stream by CREATED, and stop it after its first page ([038dc52](https://github.com/toa-io/toa/commit/038dc52f2db1a4dd58c6ec58a00de8914b3d38a3))
+
+
 # [1.0.0-alpha.319](https://github.com/toa-io/toa/compare/v1.0.0-alpha.318...v1.0.0-alpha.319) (2026-09-27)
 
 ### Bug Fixes

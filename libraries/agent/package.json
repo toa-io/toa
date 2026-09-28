@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/agent",
-  "version": "1.0.0-alpha.311",
+  "version": "1.0.0-alpha.320",
   "type": "module",
   "description": "Text-based HTTP client",
   "homepage": "https://toa.io",

@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.320](https://github.com/toa-io/toa/compare/v1.0.0-alpha.319...v1.0.0-alpha.320) (2026-09-28)
+
+### Features
+
+* **bridges.node:** make a new id with context.id ([b86943e](https://github.com/toa-io/toa/commit/b86943e023fb942285c9ce629ee26fa276292abb))
+
+
 # [1.0.0-alpha.319](https://github.com/toa-io/toa/compare/v1.0.0-alpha.318...v1.0.0-alpha.319) (2026-09-27)
 
 **Note:** Version bump only for package @toa.io/bridges.node
