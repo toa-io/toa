@@ -28,3 +28,12 @@ Feature: Context
       """yaml
       region: 0
       """
+
+  Scenario: id
+    Given I compose `context.one` component
+    When I call `context.one.id`
+    Then the reply is received:
+      """yaml
+      id: true
+      distinct: true
+      """
