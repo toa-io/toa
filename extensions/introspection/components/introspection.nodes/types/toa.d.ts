@@ -21,6 +21,8 @@ export interface Entity {
   REGION: number
 }
 
+export type State = Entity & { DISCARD: boolean, TRAILERS: Record<string, unknown> }
+
 export type MergeInput = {
   /** What each announced component describes of itself, by its id */
   nodes: Record<string, {

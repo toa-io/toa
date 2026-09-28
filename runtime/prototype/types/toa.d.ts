@@ -12,6 +12,8 @@ export interface Entity {
   REGION: number
 }
 
+export type State = Entity & { DISCARD: boolean, TRAILERS: Record<string, unknown> }
+
 export interface Component {
   assign: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<unknown>
   ensure: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<unknown>
