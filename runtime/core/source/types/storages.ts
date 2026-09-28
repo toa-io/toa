@@ -181,6 +181,9 @@ export interface Migration {
 export interface StorageOptions {
   /** whether the component publishes anything, and so needs a place to commit a row */
   outbox?: boolean
+
+  /** whether any of its operations declares `once`, and so needs a place to record a call */
+  inbox?: boolean
 }
 
 export interface Factory {
