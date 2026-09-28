@@ -112,7 +112,7 @@ Feature: Transactional inbox
       foo: 7
       """
     # nothing ran, so the entity is as the background left it
-    And the `mongo.once` database contains:
+    And the `mongo.once` database holds:
       | _id                              | foo | bar   | VERSION |
       | 6b93e57cc0e14fce95c4496c21086781 | 0   | hello | 1       |
 

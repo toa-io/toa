@@ -51,7 +51,7 @@ Feature: Convergence
       REGION: 1
       """
     When convergence has settled
-    Then the `mongo.converging` database contains:
+    Then the `mongo.converging` database holds:
       | _id                              | foo | VERSION | REGION |
       | 72cf9b0ab0ac4ab2b8036e4e940ddcae | 7   | 9       | 1      |
 
@@ -69,7 +69,7 @@ Feature: Convergence
       REGION: 1
       """
     When convergence has settled
-    Then the `mongo.converging` database contains:
+    Then the `mongo.converging` database holds:
       | _id                              | foo | VERSION | REGION |
       | 72cf9b0ab0ac4ab2b8036e4e940ddcae | 0   | 3       | 0      |
 
@@ -87,7 +87,7 @@ Feature: Convergence
       REGION: 1
       """
     When convergence has settled
-    Then the `mongo.converging` database contains:
+    Then the `mongo.converging` database holds:
       | _id                              | foo | VERSION | REGION |
       | 72cf9b0ab0ac4ab2b8036e4e940ddcae | 0   | 3       | 0      |
 
