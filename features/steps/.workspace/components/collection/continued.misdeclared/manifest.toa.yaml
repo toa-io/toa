@@ -1,0 +1,14 @@
+namespace: continued
+name: misdeclared
+
+entity:
+  properties:
+    n:
+      type: integer
+
+operations:
+  transit:
+    concurrency: retry
+
+continuity:
+  transit: 600
