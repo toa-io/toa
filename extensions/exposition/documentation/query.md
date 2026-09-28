@@ -248,8 +248,8 @@ with `rank:desc;timestamp:asc` sort:
 GET /dummies/?sort=timestamp:asc
 ```
 
-A stream route refuses `sort` beside `limit` or `token`: pages come ordered by `id`, and changes in
-the order they happened.
+A stream route takes `sort` beside `limit` or `token` by `id` and `CREATED` alone, what an entry
+never changes: pages come ordered by it, and changes in the order they happened.
 
 ## Token
 
@@ -262,8 +262,15 @@ GET /todos/?limit=100
 GET /todos/?token=eyJ2IjoxLCJwIjoi...&limit=100
 ```
 
+`stop` ends the read after its first page: its token continues with what changed, and nothing
+deeper is read.
+
+```http
+GET /todos/?sort=CREATED:desc&stop
+```
+
 A token the storage cannot continue from is answered `410 Gone`, and the client reads the collection again
-without one. A token presented under criteria other than its own is answered `400`.
+without one. A token presented under criteria or an order other than its own is answered `400`.
 
 ## Selectors
 

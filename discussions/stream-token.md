@@ -51,9 +51,9 @@ it — was cut, and the reader asks again with the token it had.
    the higher `VERSION`.
 3. The last part of a complete stream is `{ token }`. A stream that ends without one was cut, and
    what was read before is kept: asking again with the token that was held loses nothing.
-4. A page is ordered by `id`, so a page boundary stays where it is while entries change. An entry
-   created behind the boundary during paging arrives with the changes, because it committed after
-   the position the read took first.
+4. A page is ordered by `id`, or by `CREATED` and `id`, which never change, so a page boundary stays
+   where it is while entries change. An entry created behind the boundary during paging arrives
+   with the changes, because it committed after the position the read took first.
 5. Every page is read from a member that holds the position, whichever member of the replica set
    serves it.
 6. An `entry` is restricted by `io:output` as any object of a reply is *(today)*.
@@ -76,8 +76,8 @@ it — was cut, and the reader asks again with the token it had.
     the collection keeps no record of what an entry was before a change. The reader drops its copy
     and reads the collection again.
 12. A token presented with criteria other than those it was issued for is answered `400`.
-13. `sort` is refused together with `token` or `limit`: a page is ordered by `id`, and changes by
-    when they committed.
+13. `sort` beside `token` or `limit` takes `id` and `CREATED` alone: a page is ordered by what never
+    changes, and changes by when they committed.
 
 **What is not promised**
 
@@ -208,6 +208,16 @@ the read part mid-read.
 **The position comes first.** A position taken before the read makes every write either found by the
 read or answered by the next one; a position taken after it leaves the writes committed during the
 read to neither.
+
+**Pages ordered by what never changes.** `CREATED` never changes either, so a page may be ordered
+by it — `id` after it, where entries share a time — in either direction, and a token holds the last
+pair. An order by a property that changes stays refused beside `limit` and `token`. The token's hash
+covers the order as well as the criteria.
+
+**`stop`: the first page, then changes.** A read with `stop` ends its first page with the position
+the read took first, where the rest of the collection would have been. What changed after it —
+deeper entries included — arrives with the changes; ordered by `CREATED`, an entry older than the
+page's last one is one of those deeper entries.
 
 **Images tell `removed`.** A change is matched against the criteria before and after it. Without the
 image before, a change that moves an entry out of the collection is indistinguishable from a change to an

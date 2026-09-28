@@ -76,7 +76,13 @@ nothing read before it is lost.
 **A token that is refused with `410`** names a point the storage no longer remembers. Drop the copy
 and read the collection again, without a token.
 
-**A token belongs to its query.** Presented with other criteria it is refused with `400`.
+**A token belongs to its query.** Presented with other criteria, or another order, it is refused
+with `400`.
+
+**`stop` reads the first page and no deeper.** Its token continues with what changed, and nothing
+further of the collection is read. A change arrives for any entry of the collection, including
+those deeper than the page; ordered by `CREATED`, an entry older than the last one the page held is
+one of those.
 
 ## The query
 
@@ -85,8 +91,10 @@ what the criteria select, a page at a time where `limit` is given. A tombstone i
 the route declares `deleted: true`: then it is part of the collection, and a deletion arrives as the
 `entry` with `DELETED` set.
 
-**Order.** Pages come ordered by `id`, and changes in the order they happened. `sort` is refused
-beside `token` or `limit`; sort what the copy holds.
+**Order.** Pages come ordered by `id` ascending, or by `CREATED` — and `id` where entries share a
+time — in either direction: what an entry never changes, so an entry stays on one side of a page
+boundary for the whole read. `sort` by any other property is refused beside `token` or `limit`.
+Changes come in the order they happened.
 
 ## What a token requires
 
