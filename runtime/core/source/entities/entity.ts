@@ -129,6 +129,16 @@ export class Entity {
         value: {}
       })
 
+    // what the algorithm sets to have nothing of the state committed; writable, and still
+    // unenumerated once written, so no schema, storage, reply or event ever reads it
+    if (!('DISCARD' in value))
+      Object.defineProperty(value, 'DISCARD', {
+        writable: true,
+        configurable: false,
+        enumerable: false,
+        value: false
+      })
+
     /*
      * The system properties are the runtime's to write, and a record does not always come from
      * a storage that wrote them: a component may bring its own, and one that answers with an

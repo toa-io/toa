@@ -4,7 +4,8 @@ import type { Record } from '../types/storages.ts'
 import type { Event } from '../types/state.ts'
 
 export class EntitySet {
-  readonly #set: Entity[]
+  /** what the algorithm receives, and once it has run, what of it is committed */
+  #set: Entity[]
 
   public constructor(set: Entity[]) {
     this.#set = set
@@ -18,7 +19,16 @@ export class EntitySet {
     if (values.length !== this.#set.length)
       throw new SystemException('Objects array must not be modified')
 
-    values.forEach((value, index) => this.#set[index].set(value))
+    // a discarded entity is left as it was read, and out of the commit
+    this.#set = this.#set.filter((entity, index) => {
+      const value = values[index]
+
+      if (value.DISCARD === true) return false
+
+      entity.set(value)
+
+      return true
+    })
   }
 
   public events(input?: object): Event[] {
