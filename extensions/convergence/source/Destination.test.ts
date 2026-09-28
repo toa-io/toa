@@ -89,3 +89,33 @@ it('should connect what it resolves', async () => {
   assert.equal(resolve.mock.callCount(), 1)
   assert.equal(outbound.connect.mock.callCount(), 1)
 })
+
+it('should carry what the regional destinations exported', async () => {
+  const committed = row()
+  const destination = create()
+  const exported = { realtime: [{ event: 'mongo.converging.transited', keys: ['k'] }] }
+  const exports = mock.fn(async () => exported)
+
+  destination.regional = { export: exports, import: mock.fn() }
+
+  await destination.connect()
+  await destination.emit(committed)
+
+  const [, message] = outbound.send.mock.calls[0].arguments
+
+  assert.equal(exports.mock.calls[0].arguments[0], committed)
+  assert.deepEqual(message.carried, exported)
+})
+
+it('should carry nothing where no regional destination exported anything', async () => {
+  const destination = create()
+
+  destination.regional = { export: mock.fn(async () => undefined), import: mock.fn() }
+
+  await destination.connect()
+  await destination.emit(row())
+
+  const [, message] = outbound.send.mock.calls[0].arguments
+
+  assert.equal('carried' in message, false)
+})

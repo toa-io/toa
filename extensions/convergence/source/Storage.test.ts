@@ -4,7 +4,7 @@ import { console } from 'openspan'
 import { Locator } from '@toa.io/core'
 
 import { Converging } from './Storage.ts'
-import type { bindings, storages } from '@toa.io/core/types'
+import type { bindings, outbox, storages } from '@toa.io/core/types'
 
 type Converge = (record: storages.Record) => Promise<boolean>
 
@@ -38,6 +38,14 @@ const record = (properties: object = {}): storages.Record =>
 
 const create = (): Converging =>
   new Converging(storage, locator, subscribe as unknown as (sink: bindings.Inbound) => any)
+
+const regional = (destinations: Partial<outbox.Regional>): Converging =>
+  new Converging(
+    storage,
+    locator,
+    subscribe as unknown as (sink: bindings.Inbound) => any,
+    () => destinations as outbox.Regional
+  )
 
 beforeEach(() => {
   mock.restoreAll()
@@ -80,6 +88,54 @@ it('should converge what arrives, as it stands', async () => {
 
   assert.equal(storage.converge.mock.callCount(), 1)
   assert.deepEqual(storage.converge.mock.calls[0].arguments[0], arrived)
+})
+
+it('should import what the change carried, once the record is converged', async () => {
+  const order: string[] = []
+  const carried = { realtime: [] }
+  const imports = mock.fn(async () => {
+    order.push('import')
+  })
+
+  storage.converge = mock.fn<Converge>(async () => {
+    order.push('converge')
+
+    return true
+  })
+
+  await regional({ import: imports }).accept({ record: record(), carried })
+
+  assert.deepEqual(order, ['converge', 'import'])
+  assert.equal(imports.mock.calls[0].arguments[0], carried)
+})
+
+it('should import what a stale record carried', async () => {
+  const imports = mock.fn(async () => undefined)
+
+  storage.converge = mock.fn<Converge>(async () => false)
+
+  await regional({ import: imports }).accept({ record: record(), carried: { realtime: [] } })
+
+  assert.equal(imports.mock.callCount(), 1)
+})
+
+it('should fail the delivery where the import fails', async () => {
+  const imports = mock.fn(async () => {
+    throw new Error('Redis is away')
+  })
+
+  await assert.rejects(
+    regional({ import: imports }).accept({ record: record(), carried: { realtime: [] } }),
+    /Redis is away/
+  )
+})
+
+it('should import nothing where nothing was carried', async () => {
+  const imports = mock.fn(async () => undefined)
+
+  await regional({ import: imports }).accept({ record: record() })
+
+  assert.equal(imports.mock.callCount(), 0)
 })
 
 it('should report a record carrying this region\'s own rank', async () => {
