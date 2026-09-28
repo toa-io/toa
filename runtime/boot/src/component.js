@@ -38,6 +38,9 @@ const create = async (manifest, locator) => {
   // a destination that renders the component's events renders them with its context
   await boot.rendering(manifest, destinations, context)
 
+  // and one that carries a change to other regions carries what the regional ones write
+  boot.regional(destinations)
+
   const outbox = boot.outbox(manifest, storage, emission, destinations)
 
   let state
