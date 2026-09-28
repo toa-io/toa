@@ -11,6 +11,10 @@ GET /pots/?criteria=volume<300&sort=volume:desc&limit=10
 Each term names a property of the entity whose collection this resource
 represents.
 
+An unquoted `null` or `undefined` is no value: `rank==null` matches what
+holds no `rank`, and `rank!=null` what holds one. Quote it to mean the
+text: `title=="null"`.
+
 `sort` lists sort criteria, separated by `;`. Each is an entity property
 with an optional `:asc` or `:desc` suffix.
 
