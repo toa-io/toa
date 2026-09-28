@@ -43,9 +43,14 @@ export class Regions {
   public async consuming(_: string, id: string): Promise<void> {
     this.io ??= await connect(FAR)
 
-    await this.io.subscribe(`${CHANNEL}.in`, `${CHANNEL}.test.${id}`, id, (message: Message) => {
-      this.received.push({ id, message })
-    })
+    await this.io.subscribe(
+      `${CHANNEL}.in`,
+      `${CHANNEL}.test.${id}`,
+      id,
+      (message: Message) => {
+        this.received.push({ id, message })
+      }
+    )
   }
 
   @when('the region `{word}` writes to `{word}`:')
