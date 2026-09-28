@@ -57,7 +57,7 @@ export class Server extends Connector {
   private listener(request: http.IncomingMessage, response: http.ServerResponse): void {
     const invoke = request.method === 'POST' ? this.routes.get(request.url ?? '') : undefined
 
-    if (invoke === undefined) {
+    if (typeof invoke !== 'function') {
       response.writeHead(404)
       response.end()
 
@@ -67,16 +67,17 @@ export class Server extends Connector {
     const header = request.headers[HEADER]
     const path = request.headers[PATH]
 
-    if (typeof header !== 'string' || typeof path !== 'string') {
+    const envelope = placed(path) ? parse(header) : null
+
+    // thrown from here, a request that is not a call would take the process down with it
+    if (envelope === null) {
       response.writeHead(400)
       response.end()
 
       return
     }
 
-    const envelope = JSON.parse(header) as Request
-
-    attach(envelope, path, request)
+    attach(envelope, path as string, request)
 
     invoke(envelope)
       .then(async (reply) => await write(response, reply))
@@ -88,4 +89,46 @@ export class Server extends Connector {
         response.end()
       })
   }
+}
+
+/**
+ * Where a caller took the stream from, as `detach` names it: a property, or its `stream`. Any
+ * other path is not one a caller makes, and one through `__proto__` would write the stream into
+ * every object of the process.
+ */
+function placed(path: unknown): path is string {
+  if (typeof path !== 'string') return false
+
+  const [key, nested, ...rest] = path.split('.')
+
+  return (
+    key !== '' &&
+    !FORBIDDEN.has(key) &&
+    (nested === undefined || nested === 'stream') &&
+    rest.length === 0
+  )
+}
+
+const FORBIDDEN = new Set(['__proto__', 'constructor', 'prototype'])
+
+/** The call a header carries, or `null` where it carries none: what `attach` can put a stream in. */
+function parse(header: unknown): Request | null {
+  if (typeof header !== 'string') return null
+
+  let envelope: unknown
+
+  try {
+    envelope = JSON.parse(header)
+  } catch {
+    return null
+  }
+
+  if (envelope === null || typeof envelope !== 'object' || Array.isArray(envelope)) return null
+
+  const input = (envelope as Request).input
+
+  if (input !== undefined && input !== null && (typeof input !== 'object' || Array.isArray(input)))
+    return null
+
+  return envelope as Request
 }

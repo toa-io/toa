@@ -164,9 +164,11 @@ what is left, which may be nothing.
   the state it updates.
 - Access is checked when a stream is opened. A stream that is open stays open when its reader loses
   access.
-- An event is what an operation publishes. A record written otherwise — by a migration, converged
-  from another region, or taken out by a TTL — sends none. A [stream](/documentation/collections.md)
-  read from its token finds those too.
+- An event of a component that [converges](/extensions/convergence/readme.md) reaches the streams
+  of its key in every region, as late as the record it came with.
+- An event is what an operation publishes. A record written otherwise — by a migration, or taken
+  out by a TTL — sends none. A [stream](/documentation/collections.md) read from its token finds
+  those too.
 
 ## A stream per key
 

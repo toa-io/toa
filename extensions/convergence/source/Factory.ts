@@ -77,8 +77,11 @@ export class Factory implements extensions.Factory {
       return storage
     }
 
-    return new Converging(storage, locator, async (sink) =>
-      this.host.inbound(this.binding(), CHANNEL, this.uris(), locator.id, sink)
+    return new Converging(
+      storage,
+      locator,
+      async (sink) => this.host.inbound(this.binding(), CHANNEL, this.uris(), locator.id, sink),
+      () => destination.regional
     )
   }
 

@@ -11,6 +11,8 @@ import type { bindings, outbox } from '@toa.io/core/types'
  */
 export class Destination extends Connector implements outbox.Destination {
   public readonly name = CHANNEL
+  public readonly carries = true
+  public regional?: outbox.Regional
 
   private readonly label: string
   private readonly resolve: () => Promise<bindings.Outbound>
@@ -57,10 +59,17 @@ export class Destination extends Connector implements outbox.Destination {
        * `row.trail` is deliberately not carried. The far side writes the record through the
        * storage rather than through an operation, so it makes no call and publishes no event —
        * there is no chain there to continue, and nothing to refuse.
+       *
+       * What the regional destinations would write is carried as they exported it: the far side
+       * hands it back to theirs, and nothing here reads it.
        */
       const message: Message = { record: row.event.state }
 
       if (context !== undefined) message.trace = encode(context)
+
+      const carried = await this.regional?.export(row)
+
+      if (carried !== undefined) message.carried = carried
 
       await this.outbound.send(this.label, message)
     })
@@ -84,4 +93,7 @@ export interface Message {
 
   /** W3C traceparent, so the far side continues the trace of the write that caused it */
   trace?: string
+
+  /** what the regional destinations of the component exported for the change, by their names */
+  carried?: Record<string, unknown>
 }

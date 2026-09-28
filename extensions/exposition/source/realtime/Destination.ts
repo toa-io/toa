@@ -31,9 +31,40 @@ export class Destination extends Connector implements outbox.Destination {
   }
 
   public async emit(row: outbox.Row): Promise<void> {
-    const writes = this.routes.map(async (route) => await this.route(route, row))
+    const routed = await this.export(row)
 
-    await Promise.all(writes)
+    if (routed !== undefined) await this.write(routed)
+  }
+
+  /**
+   * What the row is written to the streams as: each routed event with its keys and what its
+   * route exposes of it. Another region writes it to its own streams as it stands, rendering
+   * nothing, so a reader there is given what a reader here is.
+   */
+  public async export(row: outbox.Row): Promise<Routed[] | undefined> {
+    const routed = await Promise.all(
+      this.routes.map(async (route) => await this.route(route, row))
+    )
+
+    const events = routed.filter((one) => one !== null)
+
+    return events.length === 0 ? undefined : events
+  }
+
+  /**
+   * What another region's component exported, written to the streams of this one. What is not
+   * the shape an export has would be refused however often it came again, so it is not written.
+   */
+  public async import(portable: unknown): Promise<void> {
+    if (!Array.isArray(portable) || !portable.every(routed)) {
+      console.error('Realtime import is not what an export is', {
+        component: this.locator.id
+      })
+
+      return
+    }
+
+    await this.write(portable)
   }
 
   protected override async open(): Promise<void> {
@@ -60,19 +91,29 @@ export class Destination extends Connector implements outbox.Destination {
     this.shards = null
   }
 
-  private async route(route: Route, row: outbox.Row): Promise<void> {
+  private async route(route: Route, row: outbox.Row): Promise<Routed | null> {
     const raised = await this.rendering!.render(route.event, row)
 
-    if (raised === null) return
+    if (raised === null) return null
 
     const payload = raised.payload as Record<string, unknown>
     const keys = keysOf(payload, route.properties)
 
-    if (keys.length === 0) return
+    if (keys.length === 0) return null
 
-    const event = `${this.locator.id}.${route.event}`
-    const data = JSON.stringify(fit(payload, route.expose))
+    return {
+      event: `${this.locator.id}.${route.event}`,
+      keys,
+      data: fit(payload, route.expose)
+    }
+  }
 
+  private async write(routed: Routed[]): Promise<void> {
+    await Promise.all(routed.map(async (one) => await this.append(one)))
+  }
+
+  private async append({ event, keys, data }: Routed): Promise<void> {
+    const serialized = JSON.stringify(data)
     const connections = this.shards!.connections
     const byShard = new Map<number, string[]>()
 
@@ -88,7 +129,7 @@ export class Destination extends Connector implements outbox.Destination {
           keys.length,
           ...keys,
           event,
-          data,
+          serialized,
           MAXLEN
         )
     )
@@ -97,6 +138,23 @@ export class Destination extends Connector implements outbox.Destination {
 
     measure.route(event)
   }
+}
+
+/** A routed event as it is written: to the streams of its keys, under its name. */
+interface Routed {
+  event: string
+  keys: string[]
+  data: unknown
+}
+
+function routed(value: unknown): value is Routed {
+  const { event, keys } = (value ?? {}) as Partial<Routed>
+
+  return (
+    typeof event === 'string' &&
+    Array.isArray(keys) &&
+    keys.every((key) => typeof key === 'string')
+  )
 }
 
 /** The values of the key properties: each a key, or a list of them. */
