@@ -67,8 +67,12 @@ export class Query {
       else if (this.streamed) this.fitPage(qs.query)
       else this.refuseRanges(qs.query)
 
-      if (qs.query.token !== undefined && !this.streamed)
-        throw new http.BadRequest('Query token is not allowed')
+      for (const name of STREAMED)
+        if (qs.query[name] !== undefined && !this.streamed)
+          throw new http.BadRequest(`Query ${name} is not allowed`)
+
+      // present, the page is the last one read: `?stop`
+      if (qs.query.stop !== undefined) (qs.query as core.Query).stop = qs.query.stop !== 'false'
 
       this.fitSort(qs.query)
 
@@ -136,6 +140,9 @@ export class Query {
         query.limit = bounded('How many in a page.', this.query.limit)
 
       query.token = keyword('string', 'Where the stream continues from: the token it ended with.')
+
+      if (this.query.limit !== undefined)
+        query.stop = keyword('boolean', 'The page is the last one read: its token continues with changes.')
     }
 
     if (this.searchable)
@@ -276,6 +283,9 @@ function fit(string: string, range: [number, number], name: string): number {
 }
 
 const WHATEVER = ';'
+
+/** what only a stream takes */
+const STREAMED = ['token', 'stop'] as const
 
 interface CriteriaGroup {
   criteria: string

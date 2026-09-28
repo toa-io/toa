@@ -138,9 +138,11 @@ export class Request extends Contract {
       if (definition.scope === 'stream') {
         // a page of a stream is read after the one before it, and ordered by what never moves
         delete query.properties.omit
-        query.not = { anyOf: [{ required: ['sort', 'limit'] }, { required: ['sort', 'token'] }] }
+        query.if = { anyOf: [{ required: ['limit'] }, { required: ['token'] }] }
+        query.then = { properties: { sort: { items: { pattern: UNMOVING } } } }
       } else {
         delete query.properties.token
+        delete query.properties.stop
 
         if (definition.type !== 'observation' || definition.scope !== 'entries') {
           delete query.properties.omit
@@ -207,3 +209,6 @@ const ENTITY = new Set(['transition', 'observation', 'assignment'])
 function empty(schema: JSONSchema | null | undefined): boolean {
   return schema === undefined || schema === null || Object.keys(schema).length === 0
 }
+
+/** What a page of a stream may be ordered by: what an entry never changes. */
+const UNMOVING = '^(?:id|CREATED)(?::(?:asc|desc))?$'

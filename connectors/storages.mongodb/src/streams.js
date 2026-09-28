@@ -45,14 +45,14 @@ export class Streams {
    */
   async stream(translated, given) {
     const { criteria, options } = translated
-    const hash = digest(criteria)
+    const hash = digest(criteria, options.sort)
 
     if (given === undefined) return await this.#first(criteria, options, hash)
 
     const token = decode(given)
 
     if (token.h !== hash)
-      throw new exceptions.QuerySyntaxException('The token was issued for other criteria')
+      throw new exceptions.QuerySyntaxException('The token was issued for other criteria or order')
 
     if (token.id !== undefined) return await this.#page(criteria, options, hash, token)
     if (token.p === null || !this.#history) throw lost()
@@ -84,7 +84,7 @@ export class Streams {
     const position = token.p === null ? null : { p: token.p, t: token.t }
 
     try {
-      return await this.#read(criteria, options, hash, session, position, token.id)
+      return await this.#read(criteria, options, hash, session, position, { id: token.id, c: token.c })
     } catch (exception) {
       await session.endSession()
 
@@ -114,16 +114,21 @@ export class Streams {
   }
 
   /**
-   * The collection, or a page of it. A read that pages is ordered by `_id` and continues after the
-   * last one; one that does not is read in the order the query states.
+   * The collection, or a page of it. A read that pages is ordered by what an entry never changes —
+   * `_id`, or `CREATED` and then `_id` — and continues after the last entry it read; one that does
+   * not is read in the order the query states. A read told to stop ends its page with the position
+   * changes continue from.
    */
   async #read(criteria, options, hash, session, position, after) {
     const limit = options.limit
-    const filter = after === undefined ? criteria : { $and: [criteria, { _id: { $gt: after } }] }
+    const order = limit === undefined && after === undefined ? null : ordered(options.sort)
+    const filter = after === undefined ? criteria : { $and: [criteria, beyond(order, after)] }
 
     const read = { ...options, session, readConcern: { level: 'majority' } }
 
-    if (limit !== undefined) read.sort = { _id: 1 }
+    delete read.stop
+
+    if (order !== null) read.sort = order
 
     const cursor = this.#collection.find(filter, read)
 
@@ -139,14 +144,18 @@ export class Streams {
       try {
         for await (const record of cursor) {
           count++
-          last = record._id
+          last = { id: record._id, c: record.CREATED instanceof Date ? record.CREATED.getTime() : undefined }
 
           yield parts.entry(from(record))
         }
 
-        if (limit !== undefined && count === limit)
-          yield parts.token(encode({ v: VERSION, p: position?.p ?? null, t: position?.t ?? null, id: last, h: hash }))
-        else yield parts.token(position === null ? null : encode({ v: VERSION, p: position.p, h: hash }))
+        if (limit !== undefined && count === limit && options.stop !== true) {
+          const page = { v: VERSION, p: position?.p ?? null, t: position?.t ?? null, id: last.id, h: hash }
+
+          if (order?.[0]?.[0] === 'CREATED') page.c = last.c
+
+          yield parts.token(encode(page))
+        } else yield parts.token(position === null ? null : encode({ v: VERSION, p: position.p, h: hash }))
       } finally {
         await cursor.close()
         await session.endSession()
@@ -267,11 +276,44 @@ function lost() {
 }
 
 /**
- * The criteria a token was issued for: a read that continues from it under other criteria would
- * answer the changes to one collection as if they were those of another.
+ * The criteria and the order a token was issued for: a read that continues from it under other
+ * criteria would answer the changes to one collection as if they were those of another, and one in
+ * another order would page from a place that order does not have.
  */
-function digest(criteria) {
-  return createHash('sha1').update(JSON.stringify(criteria)).digest('base64url').slice(0, 16)
+function digest(criteria, sort) {
+  return createHash('sha1')
+    .update(JSON.stringify([criteria, sort ?? null]))
+    .digest('base64url')
+    .slice(0, 16)
+}
+
+/**
+ * The order of a read that pages: `_id` ascending unless the query orders by `_id` or `CREATED`,
+ * which an entry never changes, and `_id` after `CREATED`, which entries may share. An order by
+ * anything else could move an entry across a page boundary mid-read, and is refused.
+ */
+function ordered(sort) {
+  if (sort === undefined || sort.length === 0) return [['_id', 1]]
+
+  for (const [property] of sort)
+    if (!UNMOVING.includes(property))
+      throw new exceptions.QuerySyntaxException(`A stream that pages is not ordered by '${property}', which changes`)
+
+  const [[first, direction]] = sort
+
+  return first === '_id' ? [['_id', direction]] : [['CREATED', direction], ['_id', direction]]
+}
+
+/** What comes after the last entry a page read, in its order. */
+function beyond(order, after) {
+  const [[first, direction]] = order
+  const past = direction === 1 ? '$gt' : '$lt'
+
+  if (first === '_id') return { _id: { [past]: after.id } }
+
+  const c = new Date(after.c)
+
+  return { $or: [{ CREATED: { [past]: c } }, { CREATED: c, _id: { [past]: after.id } }] }
 }
 
 function encode(token) {
@@ -295,6 +337,7 @@ function decode(given) {
     typeof token.h === 'string' &&
     (typeof token.p === 'string' || token.p === null) &&
     (token.id === undefined || typeof token.id === 'string') &&
+    (token.c === undefined || typeof token.c === 'number') &&
     (token.id === undefined || token.t === null || typeof token.t === 'string')
 
   if (!valid) throw lost()
@@ -306,6 +349,9 @@ function decode(given) {
 const VERSION = 1
 
 const LOGICAL = ['$and', '$or', '$nor']
+
+/** what an entry never changes, and so what a read that pages may be ordered by */
+const UNMOVING = ['_id', 'CREATED']
 
 /** what ends a change stream: the collection it follows is gone or renamed */
 const ENDINGS = ['drop', 'rename', 'dropDatabase', 'invalidate']
