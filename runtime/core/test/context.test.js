@@ -96,3 +96,27 @@ describe('region', () => {
     }
   })
 })
+
+// what differs between two runs of one operation by nature, which is why a context answers it
+describe('values', () => {
+  it('should answer a new id as an entity is given one', () => {
+    const one = context.newid()
+    const two = context.newid()
+
+    assert.match(one, /^[0-9a-f]{32}$/)
+    assert.notStrictEqual(one, two)
+  })
+
+  it('should answer the time', () => {
+    const before = Date.now()
+    const now = context.now()
+
+    assert.ok(now >= before && now <= Date.now())
+  })
+
+  it('should answer a random number in [0, 1)', () => {
+    const random = context.random()
+
+    assert.ok(random >= 0 && random < 1)
+  })
+})

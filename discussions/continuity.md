@@ -116,8 +116,8 @@ And takes time, randomness and new ids from the context — `context.now()`, `co
 
 ## The changes, by area
 
-1. **Core** (`runtime/core`). The component context answers `id()`, `now()` and `random()`: a new
-   id as an entity's is made, `Date.now()`, `Math.random()`. A code, `Unrecordable`, permanent, for
+1. **Core** (`runtime/core`). The component context answers `newid()`, `now()` and `random()`: a
+   new id as an entity's is made, `Date.now()`, `Math.random()`. A code, `Unrecordable`, permanent, for
    a step whose answer cannot be recorded.
 2. **Node bridge** (`connectors/bridges.node`). `context.now()` and `context.random()`, and
    `context.id()` taken from the component context rather than from core's `newid` directly — so a
