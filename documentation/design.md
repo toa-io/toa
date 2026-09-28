@@ -45,6 +45,11 @@ Entity Objects, or a stream of Entity Objects.
 Operates on the current state of the Entity Object, allowing for modifications to be made. Once the
 Transition algorithm is completed, the new modified state is persisted to the Storage.
 
+A Transition over `entries` operates on a set of Entity Objects, and the set is persisted whole or
+not at all: where any of them has been changed since it was read, or one it creates has been
+created meanwhile, nothing of the set is written, and the Transition is retried or refused as its
+`concurrency` says.
+
 #### Observation
 
 Operates on the current state of the Entity Object without allowing any modifications.

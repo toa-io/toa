@@ -65,15 +65,33 @@ its own chain.
 **A delay is a hop.** `context.delay` makes the call by the chain that asked for it, so an
 operation that re-arms itself — delaying a call to its own endpoint — is a circle, and a slow
 circle is still one. A delayed call is made once either way; what says the next one is a fresh
-start rather than another lap is `detached`:
+start rather than another lap is `unchained`:
 
 ```javascript
 // in the operation that arms its own next run
-await context.delay(endpoint, request, { interval, overdue: null, detached: true })
+await context.delay(endpoint, request, { interval, overdue: null, unchained: true })
 ```
 
 **It is not a security boundary.** It stops a context wired into a circle by accident. It is not
 a defence against a peer that sends whatever it likes, any more than `source` is.
+
+## An operation meant to be re-entered
+
+An operation that calls itself on purpose — a walk over a tree, a handshake — says so:
+
+```yaml
+# manifest.toa.yaml
+operations:
+  walk:
+    type: effect
+    scope: none
+    unchained: true
+```
+
+Every call to it begins a chain of its own: the chain it arrives with is dropped, and the one it
+passes on begins with it. Neither limit applies to a circle that runs through it, so it goes round
+for as long as its own algorithm keeps calling — the stop is yours to write. A circle elsewhere in
+the chain is refused as before.
 
 ## Settings
 
@@ -85,4 +103,4 @@ a defence against a peer that sends whatever it likes, any more than `source` is
 `TOA_TRAIL_REPEATS=0` is the way out if a deployment starts refusing calls it has always made.
 Chains are still carried and still bounded, so read the one it refused before you leave it off: a
 handshake that goes `a > b > a > b > a` is three visits to `a`, and it will keep being refused
-until it is written another way.
+until it is written another way or `a` is declared [`unchained`](#an-operation-meant-to-be-re-entered).
