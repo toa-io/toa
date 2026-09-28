@@ -34,8 +34,8 @@ GET /pots/stream/?limit=100&token=eyJ2Ijox...
 ```
 
 The last token continues the read: the rest of the collection, then
-what changed. With `stop`, it continues from the first page straight to
-what changed.
+what changed. With `stop`, the first `limit` entries are followed straight
+by what changed.
 
 `sort` beside `limit` or `token` takes `id` and `CREATED` only. `omit` is
 refused.

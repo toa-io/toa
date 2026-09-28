@@ -41,7 +41,7 @@ export interface Options {
   deleted?: boolean
   /** where a stream continues from: the token the one before it ended with */
   token?: string
-  /** a stream that pages ends its first page with where changes continue from, not deeper */
+  /** a stream read in windows ends its first window with where changes continue from, not deeper */
   stop?: boolean
 }
 

@@ -10,12 +10,12 @@ import { match } from './match.js'
  * A token is a position in the history MongoDB keeps of the writes committed to the collection —
  * a change stream's resume token — so what it continues from is the order writes committed in.
  * A first read takes the position before it reads anything: what committed before it is in what
- * the read finds, and what committed after it is in the next read. A page is read after the last
+ * the read finds, and what committed after it is in the next read. A window is read after the last
  * `_id` of the one before it, ordered by `_id`, which never changes, so an entry stays on one side
- * of a page boundary for the whole read.
+ * of a window boundary for the whole read.
  *
  * Where MongoDB keeps no such history — a standalone server, or a collection that keeps no images
- * of a record before a change — pages are still read, and a complete read ends with a `null`
+ * of a record before a change — windows are still read, and a complete read ends with a `null`
  * token: there is nothing to continue from.
  */
 export class Streams {
@@ -54,7 +54,7 @@ export class Streams {
     if (token.h !== hash)
       throw new exceptions.QuerySyntaxException('The token was issued for other criteria or order')
 
-    if (token.id !== undefined) return await this.#page(criteria, options, hash, token)
+    if (token.id !== undefined) return await this.#window(criteria, options, hash, token)
     if (token.p === null || !this.#history) throw lost()
 
     return await this.#changes(criteria, options, hash, token)
@@ -74,7 +74,7 @@ export class Streams {
     }
   }
 
-  async #page(criteria, options, hash, token) {
+  async #window(criteria, options, hash, token) {
     if (token.p !== null && !this.#history) throw lost()
 
     const session = this.#client().startSession({ causalConsistency: true })
@@ -94,7 +94,7 @@ export class Streams {
 
   /**
    * The position: the resume token of a change stream opened with a batch of none. Its
-   * operation time is where a page is read at, so that a member of the replica set behind it
+   * operation time is where a window is read at, so that a member of the replica set behind it
    * waits until it has replicated it.
    */
   async #position(session) {
@@ -114,9 +114,9 @@ export class Streams {
   }
 
   /**
-   * The collection, or a page of it. A read that pages is ordered by what an entry never changes —
+   * The collection, or a window of it. A read in windows is ordered by what an entry never changes —
    * `_id`, or `CREATED` and then `_id` — and continues after the last entry it read; one that does
-   * not is read in the order the query states. A read told to stop ends its page with the position
+   * not is read in the order the query states. A read told to stop ends its window with the position
    * changes continue from.
    */
   async #read(criteria, options, hash, session, position, after) {
@@ -150,11 +150,11 @@ export class Streams {
         }
 
         if (limit !== undefined && count === limit && options.stop !== true) {
-          const page = { v: VERSION, p: position?.p ?? null, t: position?.t ?? null, id: last.id, h: hash }
+          const window = { v: VERSION, p: position?.p ?? null, t: position?.t ?? null, id: last.id, h: hash }
 
-          if (order?.[0]?.[0] === 'CREATED') page.c = last.c
+          if (order?.[0]?.[0] === 'CREATED') window.c = last.c
 
-          yield parts.token(encode(page))
+          yield parts.token(encode(window))
         } else yield parts.token(position === null ? null : encode({ v: VERSION, p: position.p, h: hash }))
       } finally {
         await cursor.close()
@@ -278,7 +278,7 @@ function lost() {
 /**
  * The criteria and the order a token was issued for: a read that continues from it under other
  * criteria would answer the changes to one collection as if they were those of another, and one in
- * another order would page from a place that order does not have.
+ * another order would window from a place that order does not have.
  */
 function digest(criteria, sort) {
   return createHash('sha1')
@@ -288,23 +288,23 @@ function digest(criteria, sort) {
 }
 
 /**
- * The order of a read that pages: `_id` ascending unless the query orders by `_id` or `CREATED`,
+ * The order of a read in windows: `_id` ascending unless the query orders by `_id` or `CREATED`,
  * which an entry never changes, and `_id` after `CREATED`, which entries may share. An order by
- * anything else could move an entry across a page boundary mid-read, and is refused.
+ * anything else could move an entry across a window boundary mid-read, and is refused.
  */
 function ordered(sort) {
   if (sort === undefined || sort.length === 0) return [['_id', 1]]
 
   for (const [property] of sort)
     if (!UNMOVING.includes(property))
-      throw new exceptions.QuerySyntaxException(`A stream that pages is not ordered by '${property}', which changes`)
+      throw new exceptions.QuerySyntaxException(`A stream read in windows is not ordered by '${property}', which changes`)
 
   const [[first, direction]] = sort
 
   return first === '_id' ? [['_id', direction]] : [['CREATED', direction], ['_id', direction]]
 }
 
-/** What comes after the last entry a page read, in its order. */
+/** What comes after the last entry a window read, in its order. */
 function beyond(order, after) {
   const [[first, direction]] = order
   const past = direction === 1 ? '$gt' : '$lt'
@@ -350,7 +350,7 @@ const VERSION = 1
 
 const LOGICAL = ['$and', '$or', '$nor']
 
-/** what an entry never changes, and so what a read that pages may be ordered by */
+/** what an entry never changes, and so what a read in windows may be ordered by */
 const UNMOVING = ['_id', 'CREATED']
 
 /** what ends a change stream: the collection it follows is gone or renamed */

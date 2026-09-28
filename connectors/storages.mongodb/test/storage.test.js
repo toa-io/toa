@@ -135,27 +135,27 @@ describe('stream', () => {
     assert.deepStrictEqual(parts, [{ token: null }])
   })
 
-  it('should read a page ordered by id', async () => {
+  it('should read a window ordered by id', async () => {
     await storage.stream({ options: { limit: 2 } })
 
     assert.deepStrictEqual(read()[1].sort, [['_id', 1]])
     assert.equal(read()[1].limit, 2)
   })
 
-  it('should read a page newest first, and by id where entries share a time', async () => {
+  it('should read a window newest first, and by id where entries share a time', async () => {
     await storage.stream({ options: { limit: 2, sort: [['CREATED', 'desc']] } })
 
     assert.deepStrictEqual(read()[1].sort, [['CREATED', -1], ['_id', -1]])
   })
 
-  it('should refuse a page ordered by what an entry changes', async () => {
+  it('should refuse a window ordered by what an entry changes', async () => {
     await assert.rejects(
       storage.stream({ options: { limit: 2, sort: [['title', 'asc']] } }),
       (error) => error.code === 221
     )
   })
 
-  it('should end a page it was told to stop at with no page token', async () => {
+  it('should end a window it was told to stop at with no window token', async () => {
     const found = [
       { _id: 'a', CREATED: new Date(2), VERSION: 1 },
       { _id: 'b', CREATED: new Date(1), VERSION: 1 }

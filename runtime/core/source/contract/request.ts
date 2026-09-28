@@ -136,7 +136,7 @@ export class Request extends Contract {
       else delete query.properties.projection
 
       if (definition.scope === 'stream') {
-        // a page of a stream is read after the one before it, and ordered by what never moves
+        // a window of a stream is read after the one before it, and ordered by what never moves
         delete query.properties.omit
         query.if = { anyOf: [{ required: ['limit'] }, { required: ['token'] }] }
         query.then = { properties: { sort: { items: { pattern: UNMOVING } } } }
@@ -210,5 +210,5 @@ function empty(schema: JSONSchema | null | undefined): boolean {
   return schema === undefined || schema === null || Object.keys(schema).length === 0
 }
 
-/** What a page of a stream may be ordered by: what an entry never changes. */
+/** What a window of a stream may be ordered by: what an entry never changes. */
 const UNMOVING = '^(?:id|CREATED)(?::(?:asc|desc))?$'

@@ -33,10 +33,10 @@ later one, as it does with every entry.
 A read with a token answers the writes committed after its position that touch the collection, in the
 order they committed, then a new token.
 
-`limit` splits either read into pages. A page that comes back full ends with a token that continues
-the same read; a page that comes back short has reached the end. So one token means one thing to a
+`limit` splits either read into windows. A window that comes back full ends with a token that continues
+the same read; a window that comes back short has reached the end. So one token means one thing to a
 reader — what it has read so far — and asking again with it answers what is left to read: the rest
-of the collection while the first read is still paging, the changes once the collection has been read.
+of the collection while the first read is still reading in windows, the changes once the collection has been read.
 
 A stream that ends with a token is complete. One that ends without it — `FIN` with no token before
 it — was cut, and the reader asks again with the token it had.
@@ -51,10 +51,10 @@ it — was cut, and the reader asks again with the token it had.
    the higher `VERSION`.
 3. The last part of a complete stream is `{ token }`. A stream that ends without one was cut, and
    what was read before is kept: asking again with the token that was held loses nothing.
-4. A page is ordered by `id`, or by `CREATED` and `id`, which never change, so a page boundary stays
-   where it is while entries change. An entry created behind the boundary during paging arrives
+4. A window is ordered by `id`, or by `CREATED` and `id`, which never change, so a window boundary stays
+   where it is while entries change. An entry created behind the boundary during reading in windows arrives
    with the changes, because it committed after the position the read took first.
-5. Every page is read from a member that holds the position, whichever member of the replica set
+5. Every window is read from a member that holds the position, whichever member of the replica set
    serves it.
 6. An `entry` is restricted by `io:output` as any object of a reply is *(today)*.
 
@@ -76,7 +76,7 @@ it — was cut, and the reader asks again with the token it had.
     the collection keeps no record of what an entry was before a change. The reader drops its copy
     and reads the collection again.
 12. A token presented with criteria other than those it was issued for is answered `400`.
-13. `sort` beside `token` or `limit` takes `id` and `CREATED` alone: a page is ordered by what never
+13. `sort` beside `token` or `limit` takes `id` and `CREATED` alone: a window is ordered by what never
     changes, and changes by when they committed.
 
 **What is not promised**
@@ -84,7 +84,7 @@ it — was cut, and the reader asks again with the token it had.
 - How long a token lasts. It lasts as long as the storage keeps the history it names — the oplog
   window of the replica set.
 - A token of changes from a storage that keeps no history. On a standalone MongoDB and over a
-  collection that keeps no images a page still ends with a token that continues the collection, and a
+  collection that keeps no images a window still ends with a token that continues the collection, and a
   complete stream ends with `{ "token": null }`: the read is complete, and there is nothing to
   continue from.
 - An order of the collection. A reader that wants one sorts what it holds.
@@ -118,7 +118,7 @@ A client reads:
 ```http
 GET /pots/green/?limit=100            100 entries, then {"token":"T1"}
 GET /pots/green/?token=T1&limit=100   the next 100, then {"token":"T2"}
-GET /pots/green/?token=T2&limit=100   42 entries: a short page, the collection is read, then {"token":"T3"}
+GET /pots/green/?token=T2&limit=100   42 entries: a short window, the collection is read, then {"token":"T3"}
 
 GET /pots/green/?token=T3&limit=100   later: what changed since, then {"token":"T4"}
 ```
@@ -134,7 +134,7 @@ export const observation = (_, stream) => stream
 | #   | Change                                                              | Effort                                                    | Risk   | Stage |
 | --- | ------------------------------------------------------------------- | --------------------------------------------------------- | ------ | ----- |
 | 1   | A storage's `stream` yields parts                                   | the storage interface, `State.stream`                     | low    | 1     |
-| 2   | The MongoDB storage reads a position, pages and changes             | a module of about 250 lines beside `storage.js`           | high   | 1     |
+| 2   | The MongoDB storage reads a position, windows and changes             | a module of about 250 lines beside `storage.js`           | high   | 1     |
 | 3   | A migration step keeps images                                       | one step in `migrations.js`                                | low    | 1     |
 | 4   | The request contract admits `token`, and `limit` on a stream        | `contract/request.ts`, the query schema                   | low    | 1     |
 | 5   | The gateway reads `token`, admits `limit` on a stream, answers `410` | `Query.ts`, the querystring schema, `exceptions.ts`       | medium | 2     |
@@ -149,7 +149,7 @@ export const observation = (_, stream) => stream
 
 - **The position** is the `postBatchResumeToken` of a change stream opened with a batch of none and
   closed at once. The pipeline is the read's own, so the position is the collection's.
-- **A page** is a `find` ordered by `_id`, after the last `_id` of the page before, with
+- **A window** is a `find` ordered by `_id`, after the last `_id` of the window before, with
   `readConcern: majority` and `afterClusterTime` of the position. A member behind the position waits
   until it has replicated it, and answers then.
 - **Changes** are a change stream opened `startAfter` the token, with `fullDocument: required` and
@@ -157,9 +157,9 @@ export const observation = (_, stream) => stream
   read until a batch comes back empty or `limit` parts are read. A change whose after-image matches
   is an `entry`; one whose before-image alone matches is `removed`; a deletion is `removed`.
 - **The token** is `base64url(JSON.stringify({ v, p, id?, h }))`: the format version, the position
-  as MongoDB wrote it, the last `_id` while the collection pages, and a hash of the translated criteria.
+  as MongoDB wrote it, the last `_id` while the collection is read in windows, and a hash of the translated criteria.
 - **Whether a collection keeps images** the storage reads when it connects. Where it keeps none, or
-  MongoDB runs standalone, a page token carries no position, a complete read ends with
+  MongoDB runs standalone, a window token carries no position, a complete read ends with
   `{ token: null }`, and a token that carries a position is answered as one the storage cannot
   continue from.
 - `ChangeStreamHistoryLost`, a missing image, and a token of another version are a new core
@@ -192,16 +192,16 @@ leave out. `sort` beside either is refused as a request contract exception.
 
 ## Decisions
 
-**One token.** A token says what a reader holds. Paging the collection and reading its changes are the same
+**One token.** A token says what a reader holds. Reading the collection in windows and reading its changes are the same
 question — what is left to read — so a second token would give a reader a choice it never makes: a
-change token taken while paging skips the rest of the collection, and a page token once the collection is read
+change token taken while reading in windows skips the rest of the collection, and a window token once the collection is read
 is the change token.
 
 **The token is the last part.** Its presence is what tells a complete stream from a cut one. `FIN`
 ends a stream that failed as well as one that completed (#1183), and a part the storage writes
 after the collection is the one signal a proxy cannot fake.
 
-**Pages are ordered by `id`.** An `id` never changes, so an entry is on one side of a page boundary
+**Windows are ordered by `id`.** An `id` never changes, so an entry is on one side of a window boundary
 for the whole read. An order by a property that changes can move an entry from the unread part to
 the read part mid-read.
 
@@ -209,15 +209,15 @@ the read part mid-read.
 read or answered by the next one; a position taken after it leaves the writes committed during the
 read to neither.
 
-**Pages ordered by what never changes.** `CREATED` never changes either, so a page may be ordered
+**Windows ordered by what never changes.** `CREATED` never changes either, so a window may be ordered
 by it — `id` after it, where entries share a time — in either direction, and a token holds the last
 pair. An order by a property that changes stays refused beside `limit` and `token`. The token's hash
 covers the order as well as the criteria.
 
-**`stop`: the first page, then changes.** A read with `stop` ends its first page with the position
+**`stop`: the first window, then changes.** A read with `stop` ends its first window with the position
 the read took first, where the rest of the collection would have been. What changed after it —
 deeper entries included — arrives with the changes; ordered by `CREATED`, an entry older than the
-page's last one is one of those deeper entries.
+window's last one is one of those deeper entries.
 
 **Images tell `removed`.** A change is matched against the criteria before and after it. Without the
 image before, a change that moves an entry out of the collection is indistinguishable from a change to an
@@ -259,11 +259,11 @@ Features against the replica set:
    a change to another owner's entry sends nothing.
 4. **A cut stream.** The component stops mid-stream. The stream ends without a token, and asking
    again with the token that was held completes the collection.
-5. **Pages.** Pages with `limit` yield every entry, each once or twice with the same `VERSION`,
+5. **Windows.** Windows with `limit` yield every entry, each once or twice with the same `VERSION`,
    while writes run.
 6. **Refusals.** A token past the oplog is answered `410` before any part; a token under other
    criteria `400`; `sort` beside `token` `400`.
-7. **Without history.** A standalone MongoDB and a collection without images page the collection, and end
+7. **Without history.** A standalone MongoDB and a collection without images read the collection in windows, and end
    it with `{ token: null }`.
 
 ## Compatibility

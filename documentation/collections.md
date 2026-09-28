@@ -22,7 +22,7 @@ exposition:
 ```http
 GET /pots/green/?limit=100            100 entries, then {"token":"T1"}
 GET /pots/green/?token=T1&limit=100   the next 100, then {"token":"T2"}
-GET /pots/green/?token=T2&limit=100   42 entries: a short page, the collection is read, then {"token":"T3"}
+GET /pots/green/?token=T2&limit=100   42 entries: a short window, the collection is read, then {"token":"T3"}
 
 GET /pots/green/?token=T3&limit=100   later: what changed since, then {"token":"T4"}
 ```
@@ -61,12 +61,12 @@ export async function* effect(input, stream) {
 
 A token is what a reader holds: ask again with it, and the answer is what is left to read.
 
-- **While the collection is being read**, that is the rest of the collection. A page that comes back with `limit`
-  entries ends with a token that continues it; a page that comes back short has reached the end of
+- **While the collection is being read**, that is the rest of the collection. A window that comes back with `limit`
+  entries ends with a token that continues it; a window that comes back short has reached the end of
   the collection.
 - **Once the collection has been read**, that is what changed in it since the token, and a new token.
 
-**A reader keeps the higher `VERSION`.** An entry may arrive twice — once in a page and once as a
+**A reader keeps the higher `VERSION`.** An entry may arrive twice — once in a window and once as a
 change — and a reader holding a version keeps the later one.
 
 **A stream that ends without a token was cut.** `FIN` ends a stream that failed as well as one that
@@ -79,20 +79,20 @@ and read the collection again, without a token.
 **A token belongs to its query.** Presented with other criteria, or another order, it is refused
 with `400`.
 
-**`stop` reads the first page and no deeper.** Its token continues with what changed, and nothing
+**`stop` reads the first window and no deeper.** Its token continues with what changed, and nothing
 further of the collection is read. A change arrives for any entry of the collection, including
-those deeper than the page; ordered by `CREATED`, an entry older than the last one the page held is
+those deeper than the window; ordered by `CREATED`, an entry older than the last one the window held is
 one of those.
 
 ## The query
 
 A stream reads what an `entries` observation reads — `criteria`, `projection` — and the whole of
-what the criteria select, a page at a time where `limit` is given. A tombstone is left out, unless
+what the criteria select, a window at a time where `limit` is given. A tombstone is left out, unless
 the route declares `deleted: true`: then it is part of the collection, and a deletion arrives as the
 `entry` with `DELETED` set.
 
-**Order.** Pages come ordered by `id` ascending, or by `CREATED` — and `id` where entries share a
-time — in either direction: what an entry never changes, so an entry stays on one side of a page
+**Order.** Windows come ordered by `id` ascending, or by `CREATED` — and `id` where entries share a
+time — in either direction: what an entry never changes, so an entry stays on one side of a window
 boundary for the whole read. `sort` by any other property is refused beside `token` or `limit`.
 Changes come in the order they happened.
 
@@ -101,7 +101,7 @@ Changes come in the order they happened.
 A token of changes is issued by a storage that remembers the order its writes committed in. What
 that takes of a deployment is the storage's to say, in its own documentation.
 
-A storage that remembers no such order still ends a page with a token that continues the collection, and
+A storage that remembers no such order still ends a window with a token that continues the collection, and
 ends a complete stream with `{ "token": null }`: the collection is whole, and there is nothing to continue
 from. What changed in it is learned by reading it again.
 

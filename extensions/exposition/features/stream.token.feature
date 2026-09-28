@@ -20,7 +20,7 @@ Feature: A stream route ends with a token
               limit: { value: 2, range: [1, 100] }
       """
 
-  Scenario: Reading a collection a page at a time, then what changed
+  Scenario: Reading a collection a window at a time, then what changed
     When the following request is received:
       """
       GET /todos/ HTTP/1.1
@@ -97,7 +97,7 @@ Feature: A stream route ends with a token
       entry:
       """
 
-  Scenario: Reading the newest page, then what changed
+  Scenario: Reading the newest window, then what changed
     When the following request is received:
       """
       GET /todos/?sort=CREATED:desc&stop HTTP/1.1
@@ -145,7 +145,7 @@ Feature: A stream route ends with a token
       entry:
       """
 
-  Scenario: Sorting a stream that pages by a property that changes
+  Scenario: Sorting a stream read in windows by a property that changes
     When the following request is received:
       """
       GET /todos/?sort=title:desc HTTP/1.1
@@ -169,7 +169,7 @@ Feature: A stream route ends with a token
       410 Gone
       """
 
-  Scenario: Omitting a page of a stream
+  Scenario: Omitting a window of a stream
     When the following request is received:
       """
       GET /todos/?omit=2 HTTP/1.1
