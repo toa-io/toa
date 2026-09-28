@@ -46,6 +46,8 @@ Non-scattered documentation is coming some time later.
 - [Cadence](/extensions/cadence): calls that happen on their own time
   - a _pulse_ calls a component's own operation on a cadence, with no schedule stored anywhere
   - a _delay_ hands one call over to be made later, and answers the id that cancels it
+- [Continuity](/extensions/continuity): a task that raised picks up where it failed, rather than
+  making again what had already answered
 - [Configuration](/extensions/configuration) with secrets
 - [API Gateway](/extensions/exposition)
   - [Resource discovery](/extensions/exposition/documentation/discovery.md): every route an

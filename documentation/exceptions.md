@@ -129,7 +129,9 @@ async function transition(input, entity) {
 
 And an effect that leaves the system — an email, a payment, a call to a third party — is repeated
 in full on every attempt. Either make it safe to repeat, or write down that you did it in the same
-state change that does it, and read that first.
+state change that does it, and read that first. An effect declared under
+[`continuity`](/extensions/continuity) is given back what already answered, and makes again only
+what had not.
 
 ## What not to do
 

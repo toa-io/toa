@@ -89,6 +89,26 @@ implement [Algorithm Factory interface](#).
 > Algorithm definition should store reference to the `context` object without copying its value
 > type variables as they may change over operation lifetime.
 
+## Context
+
+What an algorithm is given as `context`, besides what its component's extensions put there:
+
+|                                                 |                                                                |
+| ----------------------------------------------- | -------------------------------------------------------------- |
+| `local.<endpoint>(request)`                     | a call to an operation of the same component                   |
+| `remote.<namespace>.<name>.<endpoint>(request)` | a call to an operation of another component                    |
+| `id()`                                          | a new id, made as an entity's is                               |
+| `now()`                                         | milliseconds since the epoch, as `Date.now()`                  |
+| `random()`                                      | a number in `[0, 1)`, as `Math.random()`                       |
+| `env`, `name`                                   | the environment and the name of the deployed context           |
+| `region`                                        | the rank of the region this deployment is, `0` where it is one |
+| `instance`                                      | the name this process answers addressed calls under            |
+
+`id()`, `now()` and `random()` answer what their counterparts do. Take them from the context rather
+than from `Date` or `Math`: an operation [continued](/extensions/continuity) is given back on a
+later attempt what they answered on an earlier one, and a value taken elsewhere differs between the
+two.
+
 ## Run Commands
 
 Modules in the `rc` directory of the component root run once per component lifetime, outside any
