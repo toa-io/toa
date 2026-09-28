@@ -50,6 +50,9 @@ opened in `us`.
    the arriving region's component does not have is dropped.
 10. **What a destination failed to say.** A change a regional destination could not export for
     reaches the other regions without it, and nothing makes it up there — 4 is what it costs.
+11. **A destination away for longer than a delivery is retried.** A change is delivered again
+    for as long as the channel's attempts last, and then kept for a person, as a record the
+    storage refused is _(today)_.
 
 ### What a component author does differently
 

@@ -125,7 +125,8 @@ that nothing converges. Such a destination is regional: where the component
 regions with the record, and written there too.
 
 What arrives is written whether the record it came with is applied or older than the one stored,
-and written again where writing it failed. A regional destination that fails to say what it would
+and written again where writing it failed — for as long as a delivery is retried, after which it is
+kept with the change for a person, as a record the storage refused is. A regional destination that fails to say what it would
 write for a change has nothing carried for it: the record converges all the same, and the other
 regions do not get what it would have written.
 
