@@ -33,7 +33,7 @@ export function post(repository: string, pull: Pull, body: string): void {
 }
 
 export function failure(pull: Pull, message: string): string {
-  return `# Benchmark\n\nThe run of \`${pull.head.slice(0, 7)}\` against \`${pull.base.slice(0, 7)}\` failed:\n\n\`\`\`\n${message}\n\`\`\`\n`
+  return `# Benchmark\n\nThe run of \`${pull.head.slice(0, 7)}\` failed:\n\n\`\`\`\n${message.trim()}\n\`\`\`\n`
 }
 
 function gh(repository: string, args: string[], input?: string): string {
