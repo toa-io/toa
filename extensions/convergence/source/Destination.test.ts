@@ -94,7 +94,7 @@ it('should carry what the regional destinations exported', async () => {
   const committed = row()
   const destination = create()
   const exported = { realtime: [{ event: 'mongo.converging.transited', keys: ['k'] }] }
-  const exports = mock.fn(async () => exported)
+  const exports = mock.fn(async (_: outbox.Row) => exported)
 
   destination.regional = { export: exports, import: mock.fn() }
 

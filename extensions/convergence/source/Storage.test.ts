@@ -93,7 +93,7 @@ it('should converge what arrives, as it stands', async () => {
 it('should import what the change carried, once the record is converged', async () => {
   const order: string[] = []
   const carried = { realtime: [] }
-  const imports = mock.fn(async () => {
+  const imports = mock.fn(async (_: Record<string, unknown>) => {
     order.push('import')
   })
 
