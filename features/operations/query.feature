@@ -131,3 +131,84 @@ Feature: Query
       """
     Then the reply is received
     # see logs
+
+  Scenario: Querying for no value
+    Given the `mongo.one` database contains:
+      | _id                              | foo | bar   | VERSION |
+      | 72cf9b0ab0ac4ab2b8036e4e940ddcae | 0   | hello | 1       |
+      | 8754448197e64403878fb16d06020f0c | 1   | null  | 1       |
+    And I boot `mongo.one` component
+    When I invoke `transit` with:
+      """yaml
+      input:
+        foo: 2
+      """
+    And I invoke `transit` with:
+      """yaml
+      input:
+        foo: 3
+        bar: "null"
+      """
+    When I invoke `enumerate` with:
+      """yaml
+      query:
+        criteria: bar==null
+        sort: [foo]
+      """
+    Then the reply is received:
+      """
+      - foo: 1
+      - foo: 2
+      """
+    When I invoke `enumerate` with:
+      """yaml
+      query:
+        criteria: bar==undefined
+        sort: [foo]
+      """
+    Then the reply is received:
+      """
+      - foo: 1
+      - foo: 2
+      """
+    When I invoke `enumerate` with:
+      """yaml
+      query:
+        criteria: bar!=null
+        sort: [foo]
+      """
+    Then the reply is received:
+      """
+      - foo: 0
+      - foo: 3
+      """
+    When I invoke `enumerate` with:
+      """yaml
+      query:
+        criteria: bar=in=(hello,null)
+        sort: [foo]
+      """
+    Then the reply is received:
+      """
+      - foo: 0
+      - foo: 1
+      - foo: 2
+      """
+    When I invoke `enumerate` with:
+      """yaml
+      query:
+        criteria: bar=="null"
+      """
+    Then the reply is received:
+      """
+      - foo: 3
+      """
+    When I invoke `enumerate` with:
+      """yaml
+      query:
+        criteria: bar>null
+      """
+    Then the following exception is thrown:
+      """yaml
+      code: 221
+      """
