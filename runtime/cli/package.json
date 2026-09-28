@@ -43,9 +43,9 @@
     "@toa.io/definitions": "1.0.0-alpha.319",
     "@toa.io/generic": "1.0.0-alpha.311",
     "@toa.io/norm": "1.0.0-alpha.319",
-    "dotenv": "18.0.0",
+    "dotenv": "18.0.3",
     "openspan": "1.0.0-alpha.305",
-    "yargs": "18.1.0"
+    "yargs": "18.2.0"
   },
   "devDependencies": {
     "wtfnode": "0.10.1"

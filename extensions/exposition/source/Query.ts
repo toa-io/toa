@@ -20,7 +20,7 @@ export class Query {
   /** whether a page is taken of what this answers, and so whether `omit` and `limit` apply */
   private readonly paged: boolean
 
-  /** whether this answers a stream of a set, which pages by `limit` and continues by `token` */
+  /** whether this answers a stream of a collection, read in windows of `limit` and continued by `token` */
   private readonly streamed: boolean
 
   public constructor(query: syntax.Query, paged = true, streamed = false) {
@@ -64,11 +64,15 @@ export class Query {
       this.fitCriteria(qs.query, parameters)
 
       if (this.paged) this.fitRanges(qs.query)
-      else if (this.streamed) this.fitPage(qs.query)
+      else if (this.streamed) this.fitWindow(qs.query)
       else this.refuseRanges(qs.query)
 
-      if (qs.query.token !== undefined && !this.streamed)
-        throw new http.BadRequest('Query token is not allowed')
+      for (const name of STREAMED)
+        if (qs.query[name] !== undefined && !this.streamed)
+          throw new http.BadRequest(`Query ${name} is not allowed`)
+
+      // present, the window is the last one read: `?stop`
+      if (qs.query.stop !== undefined) (qs.query as core.Query).stop = qs.query.stop !== 'false'
 
       this.fitSort(qs.query)
 
@@ -133,9 +137,12 @@ export class Query {
 
     if (this.streamed) {
       if (this.query.limit !== undefined)
-        query.limit = bounded('How many in a page.', this.query.limit)
+        query.limit = bounded('How many in a window.', this.query.limit)
 
       query.token = keyword('string', 'Where the stream continues from: the token it ended with.')
+
+      if (this.query.limit !== undefined)
+        query.stop = keyword('boolean', 'The window is the last one read: its token continues with changes.')
     }
 
     if (this.searchable)
@@ -220,11 +227,11 @@ export class Query {
   }
 
   /**
-   * A stream of a set is read a page after the one before it, which the token says, so it
-   * takes a `limit` where the route declares one and never an `omit`. One that declares no
-   * `limit` answers the whole set at once.
+   * A stream of a collection is read a window after the one before it, which the token says, so
+   * it takes a `limit` where the route declares one and never an `omit`. One that declares no
+   * `limit` answers the whole collection at once.
    */
-  private fitPage(qs: http.Query): void {
+  private fitWindow(qs: http.Query): void {
     const query = qs as core.Query
 
     if (qs.omit !== undefined) throw new http.BadRequest('Query omit is not allowed')
@@ -276,6 +283,9 @@ function fit(string: string, range: [number, number], name: string): number {
 }
 
 const WHATEVER = ';'
+
+/** what only a stream takes */
+const STREAMED = ['token', 'stop'] as const
 
 interface CriteriaGroup {
   criteria: string

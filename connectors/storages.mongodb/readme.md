@@ -33,3 +33,6 @@ A [stream](/documentation/collections.md) ends with a token of changes where two
 
 A token lasts as long as the oplog of the replica set holds the point it names — its window, which
 the size of the oplog and the rate of writes decide.
+
+A read from a token scans the oplog from the point it names: it costs what the whole replica set
+wrote since, whatever of it concerns the collection.

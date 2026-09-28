@@ -150,7 +150,7 @@ export const scenarios: Scenario[] = [
     status: 200,
     check: (reply) => expect(parts(reply) >= 1000, reply),
     processes: ['gateway', 'bench'],
-    requires: 'a stream that pages',
+    requires: 'a stream read in windows',
     seeded: true,
     optional: true
   },

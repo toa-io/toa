@@ -46,7 +46,7 @@ When(
 )
 
 When(
-  'I read the whole of {endpoint} in pages of {int} with:',
+  'I read the whole of {endpoint} in windows of {int} with:',
   /**
    * @param {string} endpoint
    * @param {number} limit
@@ -58,8 +58,8 @@ When(
 
     const request = parse(yaml) ?? {}
 
-    for (let page = 0; ; page++) {
-      assert.ok(page < 10_000, 'The pages never ran short')
+    for (let window = 0; ; window++) {
+      assert.ok(window < 10_000, 'The windows never ran short')
 
       const query = { ...request.query, limit }
 
@@ -68,7 +68,7 @@ When(
       const read = await readOnce.call(this, endpoint, { ...request, query })
 
       assert.ok(this.exception === undefined, this.exception?.message)
-      assert.ok(this.reading.ended, `Page ${page} ended without a token`)
+      assert.ok(this.reading.ended, `Window ${window} ended without a token`)
 
       if (read < limit) break
     }

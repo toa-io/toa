@@ -15,6 +15,9 @@ export const options = (options) => {
   if (options.projection) {
     result.projection = projection(options.projection)
   }
+  if (options.stop) {
+    result.stop = true
+  }
 
   return result
 }

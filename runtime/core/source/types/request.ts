@@ -17,6 +17,7 @@ export interface Query<Entity = any> {
   version?: number
   deleted?: boolean
   token?: string
+  stop?: boolean
 }
 
 /** Origin of a call. Stamped by the framework; whoever reads it takes the keys it knows. */
