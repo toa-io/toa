@@ -45,13 +45,12 @@ predictable way.
    for the reason expected.**
 4. **Change.** The code does what the draft documents, made in [units of work](#unit-of-work). See
    [Constraints](#constraints).
-5. **Test.** The scenarios written before the change pass, and so does `npm run features`. See
-   [Tests](#tests) and [Running Features](#running-features).
-6. **Measurement.** A change on a hot code path is compared against its base with `npm run bench`
-   before the pull request is opened, and the verdict is reported in it. See
-   [Performance](#performance).
-7. **Pull request.** The draft is marked ready for review, which the developer does once they
+5. **Test.** The scenarios written before the change pass, and so do `npm test` and
+   `npm run features`. See [What runs when](#what-runs-when).
+6. **Pull request.** The draft is marked ready for review, which the developer does once they
    consider every task done and the change fit to be read.
+7. **Measurement.** A change on a hot code path is compared against its base with `npm run bench`
+   once its pull request is open, and the verdict is posted to it. See [Performance](#performance).
 
 [^1]: Meeting common sense expectations.
 
@@ -130,6 +129,31 @@ unit tests run on vitest. The root install does not reach one, so a suite runs a
 $ npm run test:ui                   # every UI's suite
 $ npm test --prefix extensions/introspection/ui
 ```
+
+### What runs when
+
+An iteration waits for what it runs, so a suite runs where what it covers can have changed, and
+the whole of it runs once: before the pull request.
+
+| when                          | what runs                                                                                       |
+| ----------------------------- | ----------------------------------------------------------------------------------------------- |
+| a unit of work                | the scenarios and unit tests it writes, and the feature files and unit tests of what it changes |
+| a change to an area           | the suite of that area                                                                          |
+| before the pull request       | `npm test` and `npm run features`                                                               |
+| once the pull request is open | `npm run bench -- --pr <number>`, for a change on a [hot path](#performance)                    |
+| nightly, in CI                | `npm run features:nightly`, whose failure opens an issue                                        |
+
+| a change under                                         | the suite of its area                                           |
+| ------------------------------------------------------ | --------------------------------------------------------------- |
+| `extensions/exposition`                                | `npm run features` and `npm run features:h2c` in that workspace |
+| `extensions/configuration`, `extensions/introspection` | `npm run features` in that workspace                            |
+| `extensions/*/ui`                                      | `npm test` in that UI                                           |
+| `benchmarks`                                           | its unit tests                                                  |
+| anything else                                          | the root suite, `npx cucumber-js`                               |
+
+The nightly set is not run locally, unless the task asks for it. A scenario the change writes runs
+whatever its tag, selected by its file with `TOA_FEATURES=nightly`: a change that adds a scenario
+which boots a broker of its own runs that scenario, and not the set it belongs to.
 
 ## Running Features
 
@@ -318,11 +342,19 @@ back and runs nowhere. Write one of these on a scenario only where it is true of
 spends per request, and the messages and database operations a request costs. `--profile` records
 where a revision spends it. See [benchmarks](./benchmarks/readme.md).
 
-**A change that touches a hot code path is measured before the pull request is opened**, and the
+**A change that touches a hot code path is measured once its pull request is open**, and the
 run's verdict — for every scenario, not the ones that moved — goes into the pull request. A hot
 path is one a request crosses: the gateway, an operation, a call, a span, a log entry, a metric,
 the broker and storage drivers, and whatever they call in turn. Measurement is what makes a
-regression somebody's, while it is still one commit and not a release.
+regression somebody's: the verdict names the pull request that brought it.
+
+```shell
+$ npm run bench -- --pr <number> --quick
+```
+
+The run takes the head of the pull request from the remote, so the checkout moves on while it
+runs, and it posts the report to the pull request when it ends. Neither the merge nor a release
+waits for it.
 
 `--quick` is enough for a verdict on a change that is not about performance. Nothing is proven by
 a run on a busy machine: the report names what else the CPU was doing, and a row marked so is a

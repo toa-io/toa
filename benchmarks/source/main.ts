@@ -2,11 +2,14 @@ import { parseArgs } from 'node:util'
 import { Comparison } from './comparison.ts'
 import { available } from './oha.ts'
 import { profile } from './profiling.ts'
+import { failure, post, pull } from './pull.ts'
 import { CACHE, open, REPOSITORY } from './run.ts'
 import { select } from './scenarios.ts'
 import { SLOTS } from './slots.ts'
 import { Stack } from './stack.ts'
 import { base, resolve, stale } from './trees.ts'
+import type { Pull } from './pull.ts'
+import type { Scenario } from './scenarios.ts'
 import type { Tree } from './trees.ts'
 
 const { values } = parseArgs({
@@ -19,6 +22,7 @@ const { values } = parseArgs({
     window: { type: 'string' },
     threshold: { type: 'string' },
     quick: { type: 'boolean', default: false },
+    pr: { type: 'string' },
     profile: { type: 'boolean', default: false },
     clean: { type: 'boolean', default: false }
   }
@@ -46,21 +50,47 @@ async function comparison(): Promise<void> {
 
   await available()
 
+  const pr = values.pr === undefined ? null : pull(REPOSITORY, values.pr)
+
+  try {
+    const report = await compare(scenarios, pr)
+
+    console.log('\n' + report)
+
+    if (pr !== null) post(REPOSITORY, pr, report)
+  } catch (error) {
+    if (pr !== null)
+      post(
+        REPOSITORY,
+        pr,
+        failure(pr, error instanceof Error ? error.message : String(error))
+      )
+
+    throw error
+  }
+}
+
+async function compare(scenarios: Scenario[], pr: Pull | null): Promise<string> {
   const trees = {
-    base: await resolve(REPOSITORY, values.base ?? base(REPOSITORY), CACHE),
-    head: await resolve(REPOSITORY, values.head, CACHE)
+    base: await resolve(REPOSITORY, values.base ?? pr?.base ?? base(REPOSITORY), CACHE),
+    head: await resolve(REPOSITORY, values.head ?? pr?.head, CACHE)
   }
 
-  if (values.base === undefined) trees.base.ref = 'merge base with origin/dev'
+  if (values.base === undefined)
+    trees.base.ref = `merge base with origin/${pr?.into ?? 'dev'}`
+  if (values.head === undefined && pr !== null) trees.head.ref = `#${pr.number}`
 
   warn(trees.head)
 
   const run = await open(timing)
 
   try {
-    const comparison = new Comparison(run, trees, { scenarios, threshold: Number(values.threshold ?? 0.05) })
+    const comparison = new Comparison(run, trees, {
+      scenarios,
+      threshold: Number(values.threshold ?? 0.05)
+    })
 
-    console.log('\n' + (await comparison.execute()))
+    return await comparison.execute()
   } finally {
     await run.stack.close()
   }
@@ -104,5 +134,7 @@ function warn(tree: Tree): void {
   const found = stale(tree.root)
 
   if (found.length > 0)
-    console.warn(`Sources are newer than their build in ${found.join(', ')}; the run uses the build (npm run transpile)`)
+    console.warn(
+      `Sources are newer than their build in ${found.join(', ')}; the run uses the build (npm run transpile)`
+    )
 }
