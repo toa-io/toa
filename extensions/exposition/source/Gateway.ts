@@ -6,6 +6,7 @@ import * as http from './HTTP/index.ts'
 import { DISCOVERY, MCP, RPC } from '@toa.io/definitions/extensions.exposition'
 import { rethrow } from './exceptions.ts'
 import { decide } from './Branch.ts'
+import { decided } from './diagnostics.ts'
 import { describing } from './Introspection.ts'
 import { Explorer, looking } from './Discovery/index.ts'
 import type { Interception } from './Interception.ts'
@@ -342,6 +343,14 @@ export class Gateway extends Connector {
   private merge(branch: Branch): void {
     const id = branch.namespace + '.' + branch.component
 
+    try {
+      this.expose(id, branch)
+    } finally {
+      if (decided.hasSubscribers) decided.publish({ id, timestamp: branch.timestamp })
+    }
+  }
+
+  private expose(id: string, branch: Branch): void {
     const attributes = {
       namespace: branch.namespace,
       component: branch.component,
