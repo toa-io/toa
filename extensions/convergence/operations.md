@@ -129,6 +129,12 @@ far side — a component deployed in one region and not the other.
 one rank. Fix the declaration and redeploy; records already written with the wrong rank keep it
 until they are next written.
 
+**A change delivered again and again.** What a change carries for the far side's other destinations
+— realtime's streams — is written there after the record, and a write that fails fails the delivery.
+The record has converged by then, so each further attempt repeats only that write, and a change still
+failing when the attempts run out is parked with the rest. Look at what the far side writes to,
+usually its realtime Redis.
+
 ## Adding a converging component
 
 A component added to a context that already runs in several regions has the same problem in

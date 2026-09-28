@@ -82,7 +82,9 @@ Nothing. A component that routes realtime events and converges delivers them in 
    the same way. A key nobody reads in the arriving region is written nowhere there either.
 5. **Documentation.**
    - [outbox](/documentation/outbox.md): regional destinations, and what a carrier does with them.
-   - [convergence](/extensions/convergence/readme.md): what it carries besides the record.
+   - [convergence](/extensions/convergence/readme.md): what it carries besides the record, and
+     in its [operations](/extensions/convergence/operations.md), a change delivered again because
+     what it carries cannot be written.
    - [realtime](/extensions/exposition/documentation/realtime.md): an event reaches the streams of
      its key in every region.
 
