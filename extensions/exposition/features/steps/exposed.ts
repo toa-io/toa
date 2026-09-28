@@ -1,5 +1,5 @@
 import { subscribe, unsubscribe } from 'node:diagnostics_channel'
-import { announced, decided } from '../../source/diagnostics.ts'
+import { ANNOUNCED, DECIDED } from '../../source/diagnostics.ts'
 import type { Announcement } from '../../source/diagnostics.ts'
 
 /**
@@ -23,8 +23,8 @@ export async function exposed(connect: () => Promise<void>): Promise<void> {
     wake?.()
   }
 
-  subscribe(announced.name, onAnnounced)
-  subscribe(decided.name, onDecided)
+  subscribe(ANNOUNCED, onAnnounced)
+  subscribe(DECIDED, onDecided)
 
   try {
     await connect()
@@ -32,8 +32,8 @@ export async function exposed(connect: () => Promise<void>): Promise<void> {
     while (Array.from(pending).some((announcement) => !done.has(announcement)))
       await new Promise<void>((resolve) => (wake = resolve))
   } finally {
-    unsubscribe(announced.name, onAnnounced)
-    unsubscribe(decided.name, onDecided)
+    unsubscribe(ANNOUNCED, onAnnounced)
+    unsubscribe(DECIDED, onDecided)
   }
 }
 
