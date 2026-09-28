@@ -75,8 +75,28 @@ operations:
           type: integer
         rounds:
           type: integer
+        unchained:
+          type: boolean
+        # the name `unchained` had before, which nothing reads any more
         detached:
           type: boolean
+      required:
+        - delay
+        - rounds
+    output:
+      type: string
+
+  # delays a call to itself and says nothing about it, which it need not: it is declared
+  # to begin a chain of its own on every call
+  recur:
+    unchained: true
+    input:
+      type: object
+      properties:
+        delay:
+          type: integer
+        rounds:
+          type: integer
       required:
         - delay
         - rounds

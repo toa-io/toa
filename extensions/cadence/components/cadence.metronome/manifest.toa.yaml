@@ -27,7 +27,7 @@ entity:
       description: >
         The chain of hops that asked for the call, which the call is then made by. A delay is a
         hop like any other, so a circle routed through one is still a circle. Absent where the
-        caller detached the call, and on a row written before this existed.
+        caller unchained the call, and on a row written before this existed.
       type: array
       items:
         type: string
