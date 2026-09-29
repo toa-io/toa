@@ -73,6 +73,23 @@ attempt, so a callee that declares [`once`](/documentation/inbox.md) refuses a r
 
 ## What that asks of you
 
+**The next attempt may run somewhere else.** A task or an event that is tried again is taken by
+whichever replica is free, and after a restart or a redeploy by a process that has never seen the run.
+What the context answered is given back wherever that is; what the operation kept in its own process
+is not. `context.state`, a variable of the module, a cache in memory, a file on the local disk — on the
+next attempt each of them is whatever that process holds, which is not what the earlier attempt left:
+
+```javascript
+// counts in whichever process the attempt runs in, and not across attempts
+context.state.sent = (context.state.sent ?? 0) + 1
+
+// kept with the run, and given back wherever the next attempt runs
+const sent = await context.remote.mail.messages.send({ input })
+```
+
+So nothing a later attempt depends on is carried in the process: take it from a step, or from what
+the operation writes and reads back.
+
 **Take time, randomness and new ids from the context.** A step is recognized by its arguments, so an
 argument that differs between attempts makes a new step, and the step is made again:
 
@@ -113,7 +130,8 @@ put back within its window; after that, it starts from the beginning.
 ## Not steps
 
 `logs`, `span`, `metrics`, `configuration`, `state` and `atom` are what they are on every attempt,
-and nothing of them is kept.
+and nothing of them is kept. `state` in particular belongs to one process, and the next attempt may
+run in another.
 
 ## Deployment
 
