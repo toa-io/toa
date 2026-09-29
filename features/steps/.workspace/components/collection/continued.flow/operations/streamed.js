@@ -3,5 +3,5 @@ export async function effect(input, context) {
 
   for await (const _ of numbers);
 
-  await context.remote.continued.tally.bump({ query: { id: input.b } })
+  await context.remote.continued.tally.bump({ query: { id: input.b }, input: {} })
 }

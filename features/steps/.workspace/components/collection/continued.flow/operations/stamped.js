@@ -9,5 +9,5 @@ export async function effect(input, context) {
 
   if (attempt('stamped', input) <= input.fail) throw new Error('Failing on purpose')
 
-  await context.remote.continued.tally.bump({ query: { id: input.b } })
+  await context.remote.continued.tally.bump({ query: { id: input.b }, input: {} })
 }

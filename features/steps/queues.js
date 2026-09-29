@@ -19,6 +19,23 @@ Given(
   }
 )
 
+// a task a scenario before left behind — one that raised is tried again for minutes — is taken by
+// the next scenario to compose the component, as a task of its own
+Given(
+  'the {component} task queue is empty',
+  /**
+   * @param {string} id
+   */
+  async function (id) {
+    await request(
+      `/queues/%2F/${encodeURIComponent(tasksQueueOf(id))}/contents`,
+      'DELETE'
+    ).catch(() => {
+      // never composed on this broker, so nothing declared it
+    })
+  }
+)
+
 // what comq parks a message in, once it is one nothing will process. One queue takes what
 // every source parked, and a message names the queue it came from in `x-comq-queue`
 const PARKED = 'comq.parked'

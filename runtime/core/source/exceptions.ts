@@ -46,7 +46,9 @@ export const codes = {
   /** a run command pauses what nothing takes again: `pause` with no `resume` */
   Irresumable: 601,
   /** a call to a component nothing this process was given states */
-  Unstated: 602
+  Unstated: 602,
+  /** what an operation continued by an extension was answered cannot be kept: a stream */
+  Unrecordable: 603
 }
 
 export class Exception {
@@ -185,6 +187,7 @@ export const UnreachableException = derive('Unreachable')
 export const MisuseException = derive('Misuse')
 export const IrresumableException = derive('Irresumable')
 export const UnstatedException = derive('Unstated')
+export const UnrecordableException = derive('Unrecordable')
 
 export const names = swap(codes)
 // #endregion
@@ -250,7 +253,9 @@ const OUTCOME: Record<keyof typeof codes, 'permanent' | 'transient'> = {
   // the component is refused at start, so nothing reaches it to be attempted twice
   Irresumable: 'permanent',
   // a remote is built once and held, so what this process was not given, it is not given later
-  Unstated: 'permanent'
+  Unstated: 'permanent',
+  // the same step answers with the same kind of thing on the next attempt, and is refused again
+  Unrecordable: 'permanent'
 }
 
 const PERMANENT = new Set<number>(

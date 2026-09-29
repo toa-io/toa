@@ -1,0 +1,26 @@
+namespace: continued
+name: reactor
+
+operations:
+  # bumps `a`, raises on its first `fail` attempts, then bumps `b`, for an event
+  react:
+    type: effect
+    input:
+      type: object
+      properties:
+        a:
+          type: string
+        b:
+          type: string
+        fail:
+          type: integer
+      required:
+        - a
+        - b
+        - fail
+
+receivers:
+  continued.source.created: react
+
+continuity:
+  react: 600

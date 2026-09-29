@@ -1,0 +1,11 @@
+# A run is read whole, once per attempt.
+- index:
+    name: index_run
+    keys:
+      run: asc
+# A run is kept until the window its first step fixed has passed, and then reaped whole.
+- index:
+    name: index_expires
+    keys:
+      expires: asc
+    ttl: 0

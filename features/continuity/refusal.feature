@@ -1,7 +1,8 @@
 Feature: What continuity refuses
 
   Background:
-    Given the `continuity.journal` database is empty
+    Given the `continued.flow` task queue is empty
+    And the `continuity.journal` database is empty
     And the `continuity` service is staged
 
   Scenario: A call that waits for a continued operation is refused

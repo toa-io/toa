@@ -1,0 +1,47 @@
+namespace: continuity
+name: journal
+
+# One record per step of a run, under an id derived from the run and the step, so that a step is
+# written once whoever writes it first.
+entity:
+  associated: true
+  properties:
+    run:
+      description: The identity of the task or the event the step was made for
+      type: string
+    answer:
+      description: What the step answered, encoded by the extension
+      type: object
+    expires:
+      description: >
+        When the run can no longer be picked up. Every step of a run carries the moment its
+        first step fixed, so a run is reaped whole.
+      type: integer
+      format: epoch-millis
+
+operations:
+  # keeps an answer unless one is kept already, and answers what is kept
+  record:
+    type: transition
+    # two copies of a run writing one step race to create it, and the loser reads the winner's
+    concurrency: retry
+    input:
+      type: object
+      properties:
+        run:
+          type: string
+        answer:
+          type: object
+        expires:
+          type: integer
+      required:
+        - run
+        - answer
+        - expires
+    output:
+      type: object
+  # what a run has kept
+  recall:
+    type: observation
+    scope: entries
+    query: true

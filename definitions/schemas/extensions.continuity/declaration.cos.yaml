@@ -1,0 +1,10 @@
+# manifest.toa.yaml continuity declaration: the effects continued, by how long a run is kept
+type: object
+minProperties: 1
+propertyNames:
+  pattern: ^[a-zA-Z]+([_a-zA-Z0-9]*[a-zA-Z0-9]+)?$
+patternProperties:
+  ".*":
+    description: Seconds a run that has not finished can still be picked up
+    type: integer
+    minimum: 600

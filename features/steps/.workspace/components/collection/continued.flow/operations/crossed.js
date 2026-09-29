@@ -18,13 +18,13 @@ export async function effect(input, context) {
 
   if (n <= input.fail) throw new Error('Failing on purpose')
 
-  await context.remote.continued.tally.bump({ query: { id: input.c } })
+  await context.remote.continued.tally.bump({ query: { id: input.c }, input: {} })
 }
 
 async function branch(context, id, delay) {
   await setTimeout(delay)
 
-  const reply = await context.remote.continued.tally.bump({ query: { id } })
+  const reply = await context.remote.continued.tally.bump({ query: { id }, input: {} })
 
   if (reply.id !== id) throw new Error(`Asked about ${id}, answered about ${reply.id}`)
 }

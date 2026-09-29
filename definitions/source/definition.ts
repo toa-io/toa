@@ -37,6 +37,7 @@ export const DEFINED: ReadonlySet<string> = new Set([
   'bridges.node',
   'extensions.cadence',
   'extensions.configuration',
+  'extensions.continuity',
   'extensions.convergence',
   'extensions.exposition',
   'extensions.fetch',

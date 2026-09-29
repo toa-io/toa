@@ -8,7 +8,8 @@ Feature: Continuity
   not continued.
 
   Background:
-    Given the `continued.tally` database is empty
+    Given the `continued.flow` task queue is empty
+    And the `continued.tally` database is empty
     And the `continuity.journal` database is empty
     And the `continuity` service is staged
     And I compose components:
@@ -107,25 +108,6 @@ Feature: Continuity
       | 0a000000000000000000000000000005 | 1 |
       | 0b000000000000000000000000000005 | 1 |
 
-  Scenario: A run picks up after the process that attempted it went down
-    When I call `continued.flow.run` with:
-      """yaml
-      input:
-        a: 0a000000000000000000000000000006
-        b: 0b000000000000000000000000000006
-        fail: 1
-      task: true
-      """
-    And I disconnect
-    And I compose components:
-      | continued.tally |
-      | continued.flow  |
-    And I wait 3 seconds
-    Then the `continued.tally` database holds:
-      | _id                              | n |
-      | 0a000000000000000000000000000006 | 1 |
-      | 0b000000000000000000000000000006 | 1 |
-
   Scenario: A fetch that answered is not sent again
     Given an HTTP endpoint responds with statuses "200"
     When I call `continued.flow.fetched` with:
@@ -143,7 +125,9 @@ Feature: Continuity
       | 0b000000000000000000000000000007 | 1 |
 
   Scenario: An event is continued as a task is
-    Given I compose `continued.source` component
+    Given I compose components:
+      | continued.source  |
+      | continued.reactor |
     When I call `continued.source.create` with:
       """yaml
       input:

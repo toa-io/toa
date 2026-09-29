@@ -33,10 +33,6 @@ operations:
   stamped:
     type: effect
     input: *steps
-  # what `run` does, for an event
-  react:
-    type: effect
-    input: *steps
   # makes a step answering with a stream, which cannot be kept
   streamed:
     type: effect
@@ -46,13 +42,9 @@ operations:
     type: effect
     input: *steps
 
-receivers:
-  continued.source.created: react
-
 continuity:
   run: 600
   crossed: 600
   fetched: 600
   stamped: 600
-  react: 600
   streamed: 600
