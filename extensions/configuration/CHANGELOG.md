@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.322](https://github.com/toa-io/toa/compare/v1.0.0-alpha.321...v1.0.0-alpha.322) (2026-09-29)
+
+### Features
+
+* **cli:** write the State a transition receives into the types ([0c8d0f7](https://github.com/toa-io/toa/commit/0c8d0f7a802df1f01ed16f120f75b5d791e5c8b4))
+* **ui:** group continuity's journal with the components the runtime ships ([29d36ee](https://github.com/toa-io/toa/commit/29d36ee90ee8cbbc79231b3dee87993f81d53221))
+
+
 # [1.0.0-alpha.321](https://github.com/toa-io/toa/compare/v1.0.0-alpha.320...v1.0.0-alpha.321) (2026-09-28)
 
 **Note:** Version bump only for package @toa.io/extensions.configuration

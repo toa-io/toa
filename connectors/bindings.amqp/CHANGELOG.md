@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.322](https://github.com/toa-io/toa/compare/v1.0.0-alpha.321...v1.0.0-alpha.322) (2026-09-29)
+
+### Bug Fixes
+
+* **bindings.amqp:** serve calls until nothing in the process is in flight before sealing ([ff803ef](https://github.com/toa-io/toa/commit/ff803ef6e64e8ccf4c60c3381ab7b14806cc957c))
+
+
 # [1.0.0-alpha.321](https://github.com/toa-io/toa/compare/v1.0.0-alpha.320...v1.0.0-alpha.321) (2026-09-28)
 
 **Note:** Version bump only for package @toa.io/bindings.amqp

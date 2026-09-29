@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.322](https://github.com/toa-io/toa/compare/v1.0.0-alpha.321...v1.0.0-alpha.322) (2026-09-29)
+
+### Bug Fixes
+
+* **benchmarks:** name only the head in the report of a failed run ([505afb9](https://github.com/toa-io/toa/commit/505afb9a462fa1e5a4239df287893f3c1422c6b2))
+* **bindings.amqp:** serve calls until nothing in the process is in flight before sealing ([ff803ef](https://github.com/toa-io/toa/commit/ff803ef6e64e8ccf4c60c3381ab7b14806cc957c))
+* **convergence:** pass the call and the inbox through to the storage ([e98c2c1](https://github.com/toa-io/toa/commit/e98c2c11a632304ab9929fe558f34be9cb363b03)), closes [#1245](https://github.com/toa-io/toa/issues/1245)
+* **exposition:** publish what is announced and decided only under TOA_DEV ([632c6b4](https://github.com/toa-io/toa/commit/632c6b404d5738f6404f2930274dc9f58ae49daf))
+
+### Features
+
+* **benchmarks:** compare a pull request and post the report to it ([3a1bb6a](https://github.com/toa-io/toa/commit/3a1bb6a9ac7b92ef63c4623a3c3f2a3dae6da89d))
+* **cli:** write the State a transition receives into the types ([0c8d0f7](https://github.com/toa-io/toa/commit/0c8d0f7a802df1f01ed16f120f75b5d791e5c8b4))
+* **continuity:** give back what a continued effect was answered on an earlier attempt ([507145b](https://github.com/toa-io/toa/commit/507145beb635dad3d948b74630e34858537bf8ef))
+* **core:** answer a new id, the time and a random number from the context ([b28db00](https://github.com/toa-io/toa/commit/b28db004bf171ba1b1b7a6f1611a0fe09c7202ae))
+* **core:** commit nothing of a state the algorithm sets DISCARD on ([df6697c](https://github.com/toa-io/toa/commit/df6697c8ce970c78d2b0474528a30700dbbfd7fc))
+* **ui:** group continuity's journal with the components the runtime ships ([29d36ee](https://github.com/toa-io/toa/commit/29d36ee90ee8cbbc79231b3dee87993f81d53221))
+
+
 # [1.0.0-alpha.321](https://github.com/toa-io/toa/compare/v1.0.0-alpha.320...v1.0.0-alpha.321) (2026-09-28)
 
 * feat(cadence)!: rename the delay option detached to unchained ([37f45b5](https://github.com/toa-io/toa/commit/37f45b5ff3a37cca7d27b4701d8e8d3023cb562b))
