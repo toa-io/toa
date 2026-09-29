@@ -35,6 +35,7 @@ const SYSTEM = new Set([
   'introspection',
   'configuration',
   'cadence',
+  'continuity',
 ])
 
 /** Whether a component came with the runtime rather than with the application. */

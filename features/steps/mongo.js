@@ -57,21 +57,21 @@ Then(
    * @param {import('@cucumber/cucumber').DataTable} table
    */
   async function (id, database, table) {
-    await using(
-      id,
-      async (collection) => {
-        for (const document of parse(table)) {
-          const found = await collection.findOne(document)
+    await holds(id, table, database)
+  }
+)
 
-          assert.ok(
-            found !== null,
-            `no record matching ${JSON.stringify(document)} in '${database}', there is ` +
-              JSON.stringify(await collection.find().toArray())
-          )
-        }
-      },
-      database
-    )
+Then(
+  'the {component} database holds:',
+  /**
+   * What a scenario reads back. Not `database contains`, which is what a scenario writes: it
+   * seeds whatever keyword it is given, so as an outcome it replaces what it was meant to read.
+   *
+   * @param {string} id
+   * @param {import('@cucumber/cucumber').DataTable} table
+   */
+  async function (id, table) {
+    await holds(id, table)
   }
 )
 
@@ -513,6 +513,29 @@ const TIMESTAMPS = ['CREATED', 'UPDATED', 'DELETED']
 /** a moment written as ISO 8601 is stored as the date it names */
 const ISO = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?Z$/
 
+/**
+ * @param {string} id
+ * @param {import('@cucumber/cucumber').DataTable} table
+ * @param {string} [database]
+ */
+async function holds(id, table, database = DATABASE) {
+  await using(
+    id,
+    async (collection) => {
+      for (const document of parse(table)) {
+        const found = await collection.findOne(document)
+
+        assert.ok(
+          found !== null,
+          `no record matching ${JSON.stringify(document)} in '${database}', there is ` +
+            JSON.stringify(await collection.find().toArray())
+        )
+      }
+    },
+    database
+  )
+}
+
 async function using(id, fn, database = DATABASE) {
   const client = new MongoClient(URL)
 
@@ -538,3 +561,18 @@ const URL = 'mongodb://developer:secret@localhost:31020'
 
 /** what a process under `TOA_DEV=1` with no context and no suffix writes to */
 const DATABASE = 'toa-dev'
+
+Then(
+  'the {component} collection holds {int} record(s)',
+  /**
+   * What `collection holds` cannot say: that nothing else is there.
+   *
+   * @param {string} id
+   * @param {number} count
+   */
+  async function (id, count) {
+    await using(id, async (collection) =>
+      assert.strictEqual(await collection.countDocuments({}), count)
+    )
+  }
+)

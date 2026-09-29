@@ -16,6 +16,8 @@ export interface Entity {
   REGION: number
 }
 
+export type State = Entity & { DISCARD: boolean, TRAILERS: Record<string, unknown> }
+
 export type GrantInput = {
   grantor?: {
     id?: string

@@ -50,7 +50,8 @@ export class Transition extends Operation {
   protected override async commit(store: Store): Promise<void> {
     const { scope, state, reply, retry } = store
 
-    if (reply.error !== undefined) return
+    // a discarded state ends where an error does, and its reply is what is answered
+    if (reply.error !== undefined || state.DISCARD === true) return
 
     const entity = scope as Entity
 

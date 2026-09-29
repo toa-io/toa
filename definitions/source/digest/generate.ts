@@ -20,6 +20,7 @@ const { component } = (await import('@toa.io/norm')) as unknown as {
 const DIGESTED = [
   'extensions.cadence',
   'extensions.configuration',
+  'extensions.continuity',
   'extensions.exposition',
   'extensions.introspection'
 ]

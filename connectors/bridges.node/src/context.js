@@ -1,4 +1,4 @@
-import { Connector, entities } from '@toa.io/core'
+import { Connector } from '@toa.io/core'
 import { underlay } from '@toa.io/generic'
 
 import * as shortcuts from './shortcuts/index.js'
@@ -8,7 +8,6 @@ export class Context extends Connector {
   name
   region
   instance
-  id = entities.newid
   aspects
   operation
 
@@ -32,6 +31,15 @@ export class Context extends Connector {
   async open() {
     this.aspects = this.#aspects(this.#context.aspects)
   }
+
+  /** a new id, made as an entity's is */
+  id = () => this.#context.newid()
+
+  /** milliseconds since the epoch */
+  now = () => this.#context.now()
+
+  /** a number in `[0, 1)` */
+  random = () => this.#context.random()
 
   local = underlay(async ([endpoint], [request, options]) => {
     return this.#context.apply(endpoint, this.#attribute(request), options)

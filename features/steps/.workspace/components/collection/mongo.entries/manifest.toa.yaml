@@ -11,7 +11,8 @@ entity:
 
 operations:
   # adds one to every entry of its set, and where it is told to, has one of them touched by
-  # another call after it has read the set and before it commits it
+  # another call after it has read the set and before it commits it, and flags the ones it names
+  # as discarded
   bump:
     concurrency: none
     input:
@@ -19,8 +20,15 @@ operations:
       properties:
         touch:
           type: string
+        discard:
+          type: array
+          items:
+            type: string
   # adds ten to one entry, or creates it with ten
   touch:
     concurrency: none
     input:
       type: object
+  # adds one to an entry, and commits none of it
+  skip:
+    concurrency: none

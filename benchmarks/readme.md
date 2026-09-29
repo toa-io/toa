@@ -7,6 +7,7 @@ the broker and the database, as an application is deployed.
 $ npm run bench                                   # the working tree against its merge base with origin/dev
 $ npm run bench -- --base alpha --head HEAD       # two revisions
 $ npm run bench -- --scenarios token.id,list.1000 --quick
+$ npm run bench -- --pr 1234 --quick              # a pull request, with the report posted to it
 $ npm run bench -- --profile                      # profiles of the working tree
 $ npm run bench -- --clean                        # removes what runs leave in the stack
 ```
@@ -18,6 +19,7 @@ $ npm run bench -- --clean                        # removes what runs leave in t
   [Running Features](../CONTRIBUTING.md#prerequisites).
 - [`oha`](https://github.com/hatoo/oha) 1.16 or later on the `PATH`.
 - Ports `31090`–`31099` free.
+- For `--pr`, `gh` signed in to an account that may comment on the pull request.
 
 ## Options
 
@@ -30,9 +32,14 @@ $ npm run bench -- --clean                        # removes what runs leave in t
 | `--window <seconds>` | 10, or 5 with `--quick` | the length of a measured window |
 | `--threshold <ratio>` | 0.05 | the change a verdict names |
 | `--quick` | | shorter windows and fewer blocks |
+| `--pr <number>` | | compares the head of that pull request with its merge base, and posts the report to it |
 | `--profile` | | profiles instead of a comparison |
 | `--ref <ref>` | the working tree | the revision `--profile` runs |
 | `--clean` | | removes the vhosts and databases of both sides |
+
+`--pr` runs commits fetched from the remote, not the working tree, so the checkout may move on
+while it runs. A run that fails posts why instead of a report. `--base` and `--head` given with it
+take precedence.
 
 A revision other than the working tree is unpacked and installed under `~/.cache/toa-bench/trees`,
 once per commit; the three most recent are kept. `TOA_BENCH_CACHE` names another directory. The

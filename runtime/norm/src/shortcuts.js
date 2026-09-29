@@ -49,6 +49,7 @@ export const SHORTCUTS = {
   storages: '@toa.io/extensions.storages',
   telemetry: '@toa.io/extensions.telemetry',
   cadence: '@toa.io/extensions.cadence',
+  continuity: '@toa.io/extensions.continuity',
   convergence: '@toa.io/extensions.convergence',
   introspection: '@toa.io/extensions.introspection'
 }

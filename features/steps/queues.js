@@ -19,6 +19,23 @@ Given(
   }
 )
 
+// a task a scenario before left behind — one that raised is tried again for minutes — is taken by
+// the next scenario to compose the component, as a task of its own
+Given(
+  'the {component} task queue is empty',
+  /**
+   * @param {string} id
+   */
+  async function (id) {
+    await request(
+      `/queues/%2F/${encodeURIComponent(tasksQueueOf(id))}/contents`,
+      'DELETE'
+    ).catch(() => {
+      // never composed on this broker, so nothing declared it
+    })
+  }
+)
+
 // what comq parks a message in, once it is one nothing will process. One queue takes what
 // every source parked, and a message names the queue it came from in `x-comq-queue`
 const PARKED = 'comq.parked'
@@ -52,8 +69,9 @@ Then(
         encoding: 'auto'
       }).catch(() => [])
 
-      parked = messages.filter(({ properties }) =>
-        properties.headers?.['x-comq-queue']?.endsWith(suffix) === true
+      parked = messages.filter(
+        ({ properties }) =>
+          properties.headers?.['x-comq-queue']?.endsWith(suffix) === true
       )
 
       if (parked.length === expected) break
@@ -138,41 +156,18 @@ Then(
    * @param {string} endpoint
    */
   async function (id, endpoint) {
-    const queue = tasksQueueOf(id)
-    const deadline = Date.now() + PARKING
+    await kept(id, endpoint)
+  }
+)
 
-    let kept
-
-    do {
-      const messages = await request(`/queues/%2F/${PARKED}/get`, 'POST', {
-        count: 100,
-        ackmode: 'ack_requeue_true',
-        encoding: 'auto'
-      }).catch(() => [])
-
-      kept = messages.find(
-        ({ properties }) => properties.headers?.['x-comq-queue'] === queue
-      )
-
-      if (kept !== undefined) break
-
-      await new Promise((resolve) => setTimeout(resolve, 100))
-    } while (Date.now() < deadline)
-
-    assert.notEqual(kept, undefined, `Nothing from '${queue}' is in '${PARKED}'`)
-
-    const headers = kept.properties.headers
-
-    assert.equal(
-      headers['x-comq-attempt'],
-      undefined,
-      'the task was tried again before it was kept'
-    )
-
-    assert.ok(
-      headers['x-comq-reason']?.includes(endpoint) === true,
-      `the kept task says '${headers['x-comq-reason']}'`
-    )
+Then(
+  '{component} keeps the task at once, saying {token}',
+  /**
+   * @param {string} id
+   * @param {string} reason what the reason it was kept for names
+   */
+  async function (id, reason) {
+    await kept(id, reason)
   }
 )
 
@@ -213,7 +208,9 @@ async function consumers(name, condition, failure) {
   let count = 0
 
   do {
-    const queue = await request(`/queues/%2F/${encodeURIComponent(name)}`).catch(() => undefined)
+    const queue = await request(`/queues/%2F/${encodeURIComponent(name)}`).catch(
+      () => undefined
+    )
 
     count = queue?.consumers ?? 0
 
@@ -265,3 +262,47 @@ async function request(path, method = 'GET', body) {
 
 const MANAGEMENT = 'http://localhost:31011/api'
 const AUTHORIZATION = 'Basic ' + Buffer.from('developer:secret').toString('base64')
+
+/**
+ * A task of `id` in the parked queue, kept on its first delivery for a reason that names `named`.
+ *
+ * @param {string} id
+ * @param {string} named
+ */
+async function kept(id, named) {
+  const queue = tasksQueueOf(id)
+  const deadline = Date.now() + PARKING
+
+  let kept
+
+  do {
+    const messages = await request(`/queues/%2F/${PARKED}/get`, 'POST', {
+      count: 100,
+      ackmode: 'ack_requeue_true',
+      encoding: 'auto'
+    }).catch(() => [])
+
+    kept = messages.find(
+      ({ properties }) => properties.headers?.['x-comq-queue'] === queue
+    )
+
+    if (kept !== undefined) break
+
+    await new Promise((resolve) => setTimeout(resolve, 100))
+  } while (Date.now() < deadline)
+
+  assert.notEqual(kept, undefined, `Nothing from '${queue}' is in '${PARKED}'`)
+
+  const headers = kept.properties.headers
+
+  assert.equal(
+    headers['x-comq-attempt'],
+    undefined,
+    'the task was tried again before it was kept'
+  )
+
+  assert.ok(
+    headers['x-comq-reason']?.includes(named) === true,
+    `the kept task says '${headers['x-comq-reason']}'`
+  )
+}

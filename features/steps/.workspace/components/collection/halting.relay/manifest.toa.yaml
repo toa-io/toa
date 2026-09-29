@@ -1,0 +1,14 @@
+namespace: halting
+name: relay
+
+operations:
+  # still working when the process is halted, and calling a component the process also serves
+  pass:
+    type: effect
+    input:
+      type: object
+      properties:
+        id:
+          type: string
+      required:
+        - id

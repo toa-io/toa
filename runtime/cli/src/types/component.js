@@ -20,8 +20,14 @@ export function component(manifest, module, contributed = { types: {}, imports: 
   const entity = manifest.entity === undefined ? 'unknown' : 'Entity'
 
   // the prototype's own fields are merged into the schema by then, so it stands alone
-  if (manifest.entity !== undefined)
+  if (manifest.entity !== undefined) {
     blocks.push(`export interface Entity ${emit(declaration.schema(manifest.entity))}`)
+
+    // what a transition receives: the record, and what lives on it only while the operation runs
+    blocks.push(
+      'export type State = Entity & { DISCARD: boolean, TRAILERS: Record<string, unknown> }'
+    )
+  }
 
   const endpoints = Object.entries(manifest.operations ?? {}).map(
     ([endpoint, operation]) => ({

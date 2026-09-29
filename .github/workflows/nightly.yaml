@@ -2,7 +2,7 @@ name: Nightly
 
 # What a pull request does not wait for: the scenarios whose outcome something other than the
 # code decides — a host on the internet, an image they boot, a lifetime they sit through. A
-# failure here costs a report rather than a merge.
+# failure here costs a report rather than a merge, and the report is an issue.
 on:
   schedule:
     - cron: "0 2 * * *" # 02:00 UTC
@@ -37,3 +37,27 @@ jobs:
 
       - name: Run every scenario
         run: npm run features:nightly
+
+  # One issue stands for every failure until it is closed: a failure while it is open is a
+  # comment on it.
+  report:
+    needs: features
+    if: failure()
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - name: Open an issue, or comment on the one open
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RUN: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          title="Nightly scenarios fail"
+          open=$(gh issue list --state open --author app/github-actions --search "in:title \"$title\"" --json number --jq '.[0].number // empty')
+
+          if [ -n "$open" ]; then
+            gh issue comment "$open" --body "Failed again: $RUN"
+          else
+            gh issue create --title "$title" --body "The nightly scenarios failed on \`dev\`: $RUN"
+          fi

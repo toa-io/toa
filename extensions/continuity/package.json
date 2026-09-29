@@ -1,0 +1,35 @@
+{
+  "name": "@toa.io/extensions.continuity",
+  "version": "1.0.0-alpha.321",
+  "type": "module",
+  "description": "Toa Continuity",
+  "author": "temich <tema.gurtovoy@gmail.com>",
+  "homepage": "https://github.com/toa-io/toa#readme",
+  "main": "transpiled/index.js",
+  "types": "transpiled/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/toa-io/toa.git"
+  },
+  "bugs": {
+    "url": "https://github.com/toa-io/toa/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "transpiled",
+    "components",
+    "readme.md",
+    "!**/tsconfig.tsbuildinfo",
+    "!**/*.test.*",
+    "!**/.env*"
+  ],
+  "dependencies": {
+    "@toa.io/core": "1.0.0-alpha.321",
+    "@toa.io/definitions": "1.0.0-alpha.321"
+  },
+  "scripts": {
+    "transpile": "tsc"
+  }
+}

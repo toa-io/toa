@@ -48,6 +48,9 @@ And an effect that leaves the system — an email, a payment, a call to a third 
 in full on every attempt. Either make it safe to repeat, or write down that you did it in the same
 state change that does it, and read that first.
 
+An effect declared under [`continuity`](/extensions/continuity) does not start over: a later attempt
+is given back what its context answered on an earlier one, and makes only what had not answered yet.
+
 **A refusal ends it, and nobody reads it.** An error is an answer, and this one is answered to
 nobody: it stops the task, and it is not tried again. If a refusal has to be visible, the operation
 writes it — an event, a record, a state the caller can read.

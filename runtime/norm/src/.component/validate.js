@@ -25,9 +25,11 @@ export const validate = async (manifest) => {
 const entity = (manifest) => {
   const { properties, required, blank } = manifest.entity
 
-  // what an algorithm writes beside the record for the event of its commit; never stored
-  if (properties.TRAILERS !== undefined)
-    throw new Error("System property 'TRAILERS' cannot be declared")
+  // what an algorithm writes beside the record: for the event of its commit, and to have
+  // nothing of it committed; neither is ever stored
+  for (const name of ['TRAILERS', 'DISCARD'])
+    if (properties[name] !== undefined)
+      throw new Error(`System property '${name}' cannot be declared`)
 
   for (const name of required ?? [])
     if (properties[name] === undefined)

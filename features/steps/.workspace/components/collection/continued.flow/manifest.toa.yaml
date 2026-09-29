@@ -1,0 +1,50 @@
+namespace: continued
+name: flow
+
+operations:
+  # bumps `a`, raises on its first `fail` attempts, then bumps `b`
+  run:
+    type: effect
+    input: &steps
+      type: object
+      properties:
+        a:
+          type: string
+        b:
+          type: string
+        # what `crossed` bumps once both branches were given their own answers
+        c:
+          type: string
+        fail:
+          type: integer
+      required:
+        - a
+        - b
+        - fail
+  # bumps `a` and `b` from two branches, asking in the other order on every other attempt, then `c`
+  crossed:
+    type: effect
+    input: *steps
+  # fetches, raises on its first `fail` attempts, then bumps `b`
+  fetched:
+    type: effect
+    input: *steps
+  # bumps `a` with time, randomness and an id among its arguments
+  stamped:
+    type: effect
+    input: *steps
+  # makes a step answering with a stream, which cannot be kept
+  streamed:
+    type: effect
+    input: *steps
+  # not continued: what `run` does, with nothing kept
+  plain:
+    type: effect
+    input: *steps
+
+continuity:
+  run: 600
+  crossed: 600
+  fetched: 600
+  stamped: 600
+  streamed: 600

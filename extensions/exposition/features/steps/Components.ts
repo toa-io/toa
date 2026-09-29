@@ -12,6 +12,7 @@ import { Gateway } from './Gateway.ts'
 import { Workspace } from './Workspace.ts'
 import { components as map } from './map.ts'
 import { forget, state } from './contracts.ts'
+import { exposed } from './exposed.ts'
 
 const require = createRequire(import.meta.url)
 
@@ -88,9 +89,11 @@ export class Components {
 
     await this.gateway.start()
 
-    this.compositions[VALUES] = await boot.composition([values()])
+    const composition = await boot.composition([values()])
 
-    await this.compositions[VALUES].connect()
+    this.compositions[VALUES] = composition
+
+    await exposed(async () => await composition.connect())
   }
 
   /** What the deployment would tell the values service, as the scenario needs it. */
@@ -163,9 +166,14 @@ export class Components {
     const path = await this.workspace.addComponent(name, manifest)
 
     this.paths[name] = path
-    this.compositions[name] = await boot.composition([path], { extensions })
 
-    await this.compositions[name].connect()
+    const composition = await boot.composition([path], { extensions })
+
+    this.compositions[name] = composition
+
+    // a gateway that starts after the component asks for what it missed, and settles on it
+    if (gatewayFirst) await exposed(async () => await composition.connect())
+    else await composition.connect()
   }
 }
 

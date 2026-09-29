@@ -37,6 +37,14 @@ System property 'DELETED' cannot be overridden
 System property 'TRAILERS' cannot be declared
 ```
 
+`DISCARD` is one too, and is never stored either: a transition that sets `state.DISCARD` commits
+nothing — see [Transition](/documentation/design.md#transition). It may not be declared, nor named
+in `blank`:
+
+```
+System property 'DISCARD' cannot be declared
+```
+
 `REGION` is which region wrote the record, as the rank that region was declared with. An
 application deployed in one place has one region, so every record holds `0` and nothing reads it.
 Where a context declares more, it is what decides between two regions that wrote the same version
@@ -120,12 +128,12 @@ A file is a list of steps, applied in the order they are written:
 
 What a step may say, for MongoDB:
 
-| Step        | Fields                                                                                                           |
-| ----------- | ---------------------------------------------------------------------------------------------------------------- |
-| `index`     | `name`, `keys` — a property to `asc`, `desc`, `hash` or `text` — and any of `unique`, `sparse`, `partial`, `ttl` |
-| `dropIndex` | `name`                                                                                                           |
-| `update`    | `filter`, and `update` as an object or as a list to run as an aggregation pipeline                               |
-| `delete`    | `filter`, where `{}` means every record                                                                          |
+| Step        | Fields                                                                                                                                                   |
+| ----------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `index`     | `name`, `keys` — a property to `asc`, `desc`, `hash` or `text` — and any of `unique`, `sparse`, `partial`, `ttl`                                         |
+| `dropIndex` | `name`                                                                                                                                                   |
+| `update`    | `filter`, and `update` as an object or as a list to run as an aggregation pipeline                                                                       |
+| `delete`    | `filter`, where `{}` means every record                                                                                                                  |
 | `images`    | `true` to keep what a record was before each change, which a [stream token](/connectors/storages.mongodb/readme.md#stream-tokens) needs; `false` to stop |
 
 An index whose name is already taken by one of another shape is dropped and made again, so
@@ -317,3 +325,16 @@ cadence: ~
 ```
 
 See [Cadence](/extensions/cadence) for what is and is not guaranteed.
+
+## Continuity
+
+An effect run as a task, or by a receiver, picks up where it failed: a later attempt is given back
+what the context answered on an earlier one, instead of asking again.
+
+```yaml
+# manifest.toa.yaml
+continuity:
+  onboard: 604800 # seconds an unfinished run can still be resumed
+```
+
+See [Continuity](/extensions/continuity) for what that asks of the operation.

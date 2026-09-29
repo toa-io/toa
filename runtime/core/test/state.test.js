@@ -3,6 +3,7 @@ import assert from 'node:assert/strict'
 import { isDeepStrictEqual } from 'node:util'
 
 import { State } from '../source/state.js'
+import { EntitySet } from '../source/entities/set.js'
 import * as fixtures from './state.fixtures.js'
 
 let state
@@ -153,6 +154,24 @@ describe('assignment', () => {
 
     assert.deepStrictEqual(row.event.state, fixtures.storage.upsert.mock.calls[0].result)
     assert.deepStrictEqual(row.event.input, { foo: 1 })
+  })
+})
+
+describe('entries', () => {
+  it('should write nothing where every entity is discarded', async () => {
+    const value = { id: 'x' }
+
+    Object.defineProperty(value, 'DISCARD', { writable: true, enumerable: false, value: true })
+
+    const set = new EntitySet([{ get: () => value, set: () => undefined, event: () => ({}) }])
+
+    set.set(set.get())
+
+    const ok = await state.commit(set)
+
+    assert.strictEqual(ok, true)
+    assert.strictEqual(fixtures.storage.massStore.mock.callCount(), 0)
+    assert.strictEqual(fixtures.outbox.row.mock.callCount(), 0)
   })
 })
 

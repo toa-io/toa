@@ -18,6 +18,7 @@ const require = createRequire(import.meta.url)
 const EXTENSIONS = [
   'extensions.cadence',
   'extensions.configuration',
+  'extensions.continuity',
   'extensions.exposition',
   'extensions.introspection'
 ]

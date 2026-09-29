@@ -1,0 +1,29 @@
+namespace: continued
+name: source
+
+entity:
+  properties:
+    a:
+      type: string
+    b:
+      type: string
+    fail:
+      type: integer
+
+operations:
+  create:
+    type: transition
+    query: false
+    input:
+      type: object
+      properties:
+        a:
+          type: string
+        b:
+          type: string
+        fail:
+          type: integer
+      required:
+        - a
+        - b
+        - fail

@@ -144,6 +144,39 @@ describe('trailers', () => {
   })
 })
 
+describe('discard', () => {
+  it('should hand the algorithm DISCARD as false', () => {
+    const entity = new Entity(fixtures.schema, BLANK, fixtures.state())
+
+    assert.strictEqual(entity.get().DISCARD, false)
+  })
+
+  it('should let the algorithm set DISCARD', () => {
+    const entity = new Entity(fixtures.schema, BLANK, fixtures.state())
+    const state = entity.get()
+
+    state.DISCARD = true
+
+    assert.strictEqual(state.DISCARD, true)
+  })
+
+  it('should not enumerate DISCARD, even once set', () => {
+    const entity = new Entity(fixtures.schema, BLANK, fixtures.state())
+    const state = entity.get()
+
+    state.DISCARD = true
+
+    assert.strictEqual(Object.keys(state).includes('DISCARD'), false)
+    assert.strictEqual('DISCARD' in structuredClone(state), false)
+  })
+
+  it('should define DISCARD on a blank', () => {
+    const entity = new Entity(fixtures.schema, BLANK)
+
+    assert.strictEqual(entity.get().DISCARD, false)
+  })
+})
+
 function resetCalls(target = [assert, fixtures], seen = new Set()) {
   if (target === null || typeof target !== 'object' || seen.has(target)) return
 

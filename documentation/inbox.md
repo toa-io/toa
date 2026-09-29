@@ -67,8 +67,9 @@ that.
 ## What it does not give
 
 **A call that changed nothing is not remembered.** An operation that refused with a declared
-`error`, or that raised, leaves no record; the same call made again runs again and answers the
-same way. Nothing changed either time.
+`error`, that raised, or a transition that set [`DISCARD`](/documentation/design.md#transition)
+leaves no record; the same call made again runs again and answers the same way. Nothing changed
+either time.
 
 **The algorithm may run more than once for one call.** A duplicate arriving while the first is
 still in flight runs to completion before its write is refused, and a transition declared
@@ -77,7 +78,11 @@ of them.
 
 So **what an operation does outside its own state is still yours to make safe**: an email,
 a charge to a third party, anything through `context.fetch` or `context.stash` happens once per
-run, not once per call. `once` is about what is written.
+run, not once per call. `once` is about what is written. Where the calls arrive as tasks or
+events, [`continuity`](/extensions/continuity) keeps a re-run from making them again.
+
+**A duplicate that arrives in another [region](/extensions/convergence) is made again.** A call is
+remembered where it was made, so it changes state once in every region it reaches.
 
 **An operation that calls out should make the same calls in the same order given the same input.**
 That is what lines a re-run's calls up with the first run's, and it is what idempotence assumes in

@@ -27,6 +27,8 @@ export interface Entity {
   REGION: number
 }
 
+export type State = Entity & { DISCARD: boolean, TRAILERS: Record<string, unknown> }
+
 export type MergeInput = {
   /** What each replica observed since its last flush, by edge id */
   edges: Record<string, {

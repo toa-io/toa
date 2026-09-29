@@ -1,6 +1,7 @@
 import { setTimeout } from 'node:timers/promises'
 import { Connector } from '@toa.io/core'
 import { BRANCH_TTL } from '@toa.io/definitions/extensions.exposition'
+import { ANNOUNCED, publish } from './diagnostics.ts'
 import type { Announcements } from './Announcements.ts'
 import type { Branch } from './Branch.ts'
 
@@ -62,6 +63,11 @@ export class Tenant extends Connector {
     if (this.stopped) return
 
     await this.announcements.transmit({ ...this.branch, timestamp: this.started })
+
+    publish(ANNOUNCED, {
+      id: this.branch.namespace + '.' + this.branch.component,
+      timestamp: this.started
+    })
   }
 }
 

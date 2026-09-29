@@ -1,0 +1,32 @@
+namespace: continued
+name: tally
+
+# how many times a step was made, per id: a record comes from the blank on its first bump
+entity:
+  associated: true
+  properties:
+    n:
+      type: integer
+  blank:
+    n: 0
+
+operations:
+  bump:
+    concurrency: retry
+    input:
+      type: object
+      properties:
+        # what a caller passes to make its arguments its own, which the transition ignores
+        at:
+          type: number
+        r:
+          type: number
+        ref:
+          type: string
+    output:
+      type: object
+      properties:
+        id:
+          type: string
+        n:
+          type: integer
