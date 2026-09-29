@@ -77,6 +77,8 @@ export class Producer extends Connector {
    * which is what a durable queue is for.
    */
   async close() {
+    // what is still running in this process may be waiting on a call this communication serves
+    await deliveries.settled()
     await this.#comm.seal()
     await Promise.allSettled(this.#pending)
   }
