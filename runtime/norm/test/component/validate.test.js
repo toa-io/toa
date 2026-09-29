@@ -122,6 +122,13 @@ describe('entity', () => {
         /System property 'TRAILERS' cannot be declared/.test(error.message)
       )
     })
+
+    it('should not declare DISCARD', async () => {
+      manifest.entity.properties.DISCARD = { type: 'boolean' }
+      await assert.rejects(validate(manifest), (error) =>
+        /System property 'DISCARD' cannot be declared/.test(error.message)
+      )
+    })
   })
 
   describe('required', () => {
@@ -156,6 +163,13 @@ describe('entity', () => {
 
     it('should not name TRAILERS', async () => {
       manifest.entity.blank = { TRAILERS: {} }
+      await assert.rejects(validate(manifest), (error) =>
+        /must NOT be valid/.test(error.message)
+      )
+    })
+
+    it('should not name DISCARD', async () => {
+      manifest.entity.blank = { DISCARD: true }
       await assert.rejects(validate(manifest), (error) =>
         /must NOT be valid/.test(error.message)
       )

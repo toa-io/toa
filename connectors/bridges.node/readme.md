@@ -222,14 +222,17 @@ beside the manifest is the file that runs.
 ```typescript
 // operations/create.ts
 
-import type { Context, CreateInput } from '../types/index.d.ts'
+import type { Context, CreateInput, State } from '../types/index.d.ts'
 
-export function transition(input: CreateInput, entry: Entity, context: Context) {
+export function transition(input: CreateInput, entry: State, context: Context) {
   // ...
 
   return { foo: 'bar' }
 }
 ```
+
+`State` is the `Entity` a transition receives: the record, and the system properties that live on
+it while the operation runs, `DISCARD` and `TRAILERS`.
 
 The name a module exports still says what it is, and the second parameter still says the scope;
 both are read through the annotations. What Node refuses to erase — an enum, a namespace, a

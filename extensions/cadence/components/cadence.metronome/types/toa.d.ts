@@ -25,6 +25,8 @@ export interface Entity {
   REGION: number
 }
 
+export type State = Entity & { DISCARD: boolean, TRAILERS: Record<string, unknown> }
+
 export type DelayInput = {
   endpoint: string
   request?: Record<string, unknown>

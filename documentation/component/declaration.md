@@ -37,6 +37,14 @@ System property 'DELETED' cannot be overridden
 System property 'TRAILERS' cannot be declared
 ```
 
+`DISCARD` is one too, and is never stored either: a transition that sets `state.DISCARD` commits
+nothing — see [Transition](/documentation/design.md#transition). It may not be declared, nor named
+in `blank`:
+
+```
+System property 'DISCARD' cannot be declared
+```
+
 `REGION` is which region wrote the record, as the rank that region was declared with. An
 application deployed in one place has one region, so every record holds `0` and nothing reads it.
 Where a context declares more, it is what decides between two regions that wrote the same version

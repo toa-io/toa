@@ -142,6 +142,9 @@ export class State {
   }
 
   public async massCommit(state: EntitySet, input?: object): Promise<boolean> {
+    // every entity discarded: a commit of nothing, which nothing can lose
+    if (state.get().length === 0) return true
+
     const outbox = this.#outbox
 
     const rows =

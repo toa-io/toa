@@ -18,6 +18,8 @@ export interface Entity {
   REGION: number
 }
 
+export type State = Entity & { DISCARD: boolean, TRAILERS: Record<string, unknown> }
+
 export type GetInput = {
   component: string
   epoch?: string

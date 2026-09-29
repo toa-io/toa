@@ -39,3 +39,20 @@ describe('description', () => {
     equal(comment(undefined), null)
   })
 })
+
+describe('state', () => {
+  const entity = { properties: { count: { type: 'integer' } } }
+
+  it('should write what a transition receives beside the entity', () => {
+    const emitted = component({ entity })
+
+    match(
+      emitted,
+      /export type State = Entity & \{ DISCARD: boolean, TRAILERS: Record<string, unknown> \}/
+    )
+  })
+
+  it('should write none for a component without an entity', () => {
+    doesNotMatch(component({}), /export type State/)
+  })
+})

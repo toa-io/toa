@@ -48,6 +48,15 @@ operations:
     once: true
     errors: [REFUSED]
 
+  # commits nothing of what it changed, so it is not remembered
+  hold:
+    concurrency: retry
+    once: true
+    input:
+      properties:
+        foo: *foo
+      type: object
+
   # raises, so it changes nothing and is not remembered
   raise:
     scope: entry
