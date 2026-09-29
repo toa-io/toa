@@ -78,7 +78,8 @@ of them.
 
 So **what an operation does outside its own state is still yours to make safe**: an email,
 a charge to a third party, anything through `context.fetch` or `context.stash` happens once per
-run, not once per call. `once` is about what is written.
+run, not once per call. `once` is about what is written. Where the calls arrive as tasks or
+events, [`continuity`](/extensions/continuity) keeps a re-run from making them again.
 
 **A duplicate that arrives in another [region](/extensions/convergence) is made again.** A call is
 remembered where it was made, so it changes state once in every region it reaches.

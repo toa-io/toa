@@ -1,6 +1,7 @@
 import { Connector } from './connector.ts'
 import { waiting } from './abandon.ts'
 import { instance } from './instance.ts'
+import { newid } from './entities/newid.ts'
 import { environment } from '@toa.io/generic'
 import type { Locator } from './locator.ts'
 import type { Component } from './component.ts'
@@ -46,6 +47,24 @@ export class Context extends Connector {
     this.depends(local)
 
     if (aspects.length > 0) this.depends(aspects)
+  }
+
+  /**
+   * What differs between two runs of an operation by nature: a new id, the time, a random
+   * number. Answered here rather than taken from `Date` and `Math` where they are used, so that
+   * whatever wraps a context sees them as it sees a call. Not `id`, which a connector already
+   * is known by.
+   */
+  public newid(): string {
+    return newid()
+  }
+
+  public now(): number {
+    return Date.now()
+  }
+
+  public random(): number {
+    return Math.random()
   }
 
   public async apply(endpoint: string, request: Request, options?: Options): Promise<any> {

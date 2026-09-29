@@ -14,10 +14,12 @@ Given(
     const statuses = declaration.split(',').map((value) => Number(value.trim()))
     let attempt = 0
 
+    this.fetchAsked = 0
     this.fetchServer = http.createServer((_, response) => {
       const status = statuses[Math.min(attempt, statuses.length - 1)]
 
       attempt++
+      this.fetchAsked = attempt
       response.writeHead(status, { 'content-type': 'application/json' })
       response.end(JSON.stringify({ attempt }))
     })
@@ -31,6 +33,17 @@ Given(
 
     this.fetchOrigin = `http://127.0.0.1:${address.port}`
     process.env.FEATURES_FETCH_URL = this.fetchOrigin
+  }
+)
+
+Then(
+  'the HTTP endpoint has been asked {int} time(s)',
+  /**
+   * @param {number} expected
+   * @this {toa.features.Context}
+   */
+  function (expected) {
+    assert.equal(this.fetchAsked, expected)
   }
 )
 

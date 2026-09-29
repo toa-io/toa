@@ -111,3 +111,23 @@ Feature: Halt
         delay: 300
       """
     Then the `delaying` eventually marks `armed`
+
+  # What was in flight is finished before anything closes, and what it calls in this same process
+  # is served until it is: a component that stopped taking calls first would leave its caller
+  # waiting on it for good, and the process would never come back.
+  Scenario: A task in flight that calls a component of the same process is finished first
+    Given the `continued.tally` database is empty
+    And I run components:
+      | continued.tally |
+      | halting.relay   |
+    When I call `halting.relay.pass` with:
+      """yaml
+      input:
+        id: 0d000000000000000000000000000001
+      task: true
+      """
+    And the process is halted for 30 seconds
+    Then the process is running again
+    And the `continued.tally` database holds:
+      | _id                              | n |
+      | 0d000000000000000000000000000001 | 1 |

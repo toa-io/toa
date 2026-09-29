@@ -30,6 +30,12 @@ declare namespace toa.node {
     /** A new id, made as an entity's is. */
     id: () => string
 
+    /** Milliseconds since the epoch, as `Date.now()`. */
+    now: () => number
+
+    /** A number in `[0, 1)`, as `Math.random()`. */
+    random: () => number
+
     // system aspects
     atom: Atom
 
