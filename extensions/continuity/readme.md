@@ -63,8 +63,10 @@ await Promise.all([a().then(b), c().then(b)])
 
 Each `b` is given its own answer however `a` and `c` complete on the next attempt.
 
-**Two copies of a run agree.** A run delivered twice at once makes each step at most once per copy,
-and both copies go on with the answer recorded first.
+**Two copies of a run agree.** Where a run is delivered twice at once, both copies go on with the
+answer the first of them kept. A value taken at once — `context.id()`, `context.now()`,
+`context.random()` — is the exception: each copy has its own until it is kept, so a step one copy
+builds from it may be made by the other as well.
 
 **A call keeps its identity.** A call made from the operation carries the same identity on every
 attempt, so a callee that declares [`once`](/documentation/inbox.md) refuses a repeat of it.
@@ -98,7 +100,12 @@ arguments, and is made again. `context.id()` twice in two branches is the common
 
 **What cannot be kept is refused.** A step that answers with a stream raises `Unrecordable`, and
 the run is parked. A `fetch` is kept whole — its status, its headers and its body — and given back
-as a `Response`.
+as a `Response`. An answer is kept as one MongoDB document, so one past its 16 MB fails to be kept,
+and the step raises.
+
+**An answer is given as it is kept, the first time too.** What a step answers is given back as the
+broker carries it, on the attempt that made it as on any later one, so the operation reads the same
+thing every time.
 
 **A run that used up its attempts is parked**, as any task is. It picks up where it stopped if it is
 put back within its window; after that, it starts from the beginning.

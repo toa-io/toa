@@ -55,7 +55,8 @@ every context.
    they complete in.
 3. A run delivered again after it finished, within the window, makes no step.
 4. Two copies of one run in flight at once share their answers: the one recorded first is the one
-   both go on with.
+   both go on with. A value taken at once — an id, the time, a random number — is each copy's own
+   until it is recorded.
 5. A call made as a step carries the same identity on every attempt, so a callee that declares
    `once` refuses a repeat of it.
 
@@ -212,21 +213,20 @@ or to write down that they were made in the same state change that makes them, a
 ## Verification
 
 1. A task whose operation raised after a call answered does not make that call again on the next
-   attempt, and finishes.
-2. The same, across a restart of the process between the attempts.
+   attempt, and finishes; the same operation not continued makes it again.
+2. The same, across a halt of the process between the attempts.
 3. The same, for a `fetch` against a local server that counts what it is asked.
-4. Two branches of a `Promise.all` that complete in the other order on the second attempt are each
-   given their own answers.
-5. A task delivered again after it finished makes no step.
-6. An event a receiver hands to a declared operation is replayed as a task is.
-7. A call that waits for a declared operation is refused, and so is a pulse.
-8. A step that answers with a stream raises `Unrecordable`, and the run is parked.
-9. A step whose answer cannot be recorded because the journal's database is down raises, and the
-   run goes on once the database is back, without having made the step twice from what it
-   recorded.
-10. A manifest naming a transition, an operation that does not exist, or a window under `600` is
-    refused.
-11. `context.now()`, `context.random()` and `context.id()` answer outside a declared operation.
+4. Two branches of a `Promise.all` that ask in the other order on the second attempt are each given
+   their own answers.
+5. Time, randomness and an id taken from the context, among a call's arguments, do not make the call
+   again.
+6. A task delivered again after it finished makes no step.
+7. An event a receiver hands to a declared operation is continued as a task is.
+8. A call that waits for a declared operation is refused.
+9. A step that answers with a stream raises `Unrecordable`, and the run is parked at once.
+10. A run whose journal's database is down waits for it, and goes on once it is back, having made
+    each step once.
+11. A manifest naming what is not an effect is refused.
 
 ## Compatibility
 
