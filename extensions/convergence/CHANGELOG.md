@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.322](https://github.com/toa-io/toa/compare/v1.0.0-alpha.321...v1.0.0-alpha.322) (2026-09-29)
+
+### Bug Fixes
+
+* **convergence:** pass the call and the inbox through to the storage ([e98c2c1](https://github.com/toa-io/toa/commit/e98c2c11a632304ab9929fe558f34be9cb363b03)), closes [#1245](https://github.com/toa-io/toa/issues/1245)
+
+
 # [1.0.0-alpha.321](https://github.com/toa-io/toa/compare/v1.0.0-alpha.320...v1.0.0-alpha.321) (2026-09-28)
 
 ### Features

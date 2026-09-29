@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.322](https://github.com/toa-io/toa/compare/v1.0.0-alpha.321...v1.0.0-alpha.322) (2026-09-29)
+
+### Features
+
+* **core:** answer a new id, the time and a random number from the context ([b28db00](https://github.com/toa-io/toa/commit/b28db004bf171ba1b1b7a6f1611a0fe09c7202ae))
+
+
 # [1.0.0-alpha.321](https://github.com/toa-io/toa/compare/v1.0.0-alpha.320...v1.0.0-alpha.321) (2026-09-28)
 
 **Note:** Version bump only for package @toa.io/bridges.node

@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.322](https://github.com/toa-io/toa/compare/v1.0.0-alpha.321...v1.0.0-alpha.322) (2026-09-29)
+
+### Features
+
+* **cli:** write the State a transition receives into the types ([0c8d0f7](https://github.com/toa-io/toa/commit/0c8d0f7a802df1f01ed16f120f75b5d791e5c8b4))
+
+
 # [1.0.0-alpha.319](https://github.com/toa-io/toa/compare/v1.0.0-alpha.318...v1.0.0-alpha.319) (2026-09-27)
 
 **Note:** Version bump only for package @toa.io/prototype

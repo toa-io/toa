@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.322](https://github.com/toa-io/toa/compare/v1.0.0-alpha.321...v1.0.0-alpha.322) (2026-09-29)
+
+### Bug Fixes
+
+* **bindings.amqp:** serve calls until nothing in the process is in flight before sealing ([ff803ef](https://github.com/toa-io/toa/commit/ff803ef6e64e8ccf4c60c3381ab7b14806cc957c))
+* **convergence:** pass the call and the inbox through to the storage ([e98c2c1](https://github.com/toa-io/toa/commit/e98c2c11a632304ab9929fe558f34be9cb363b03)), closes [#1245](https://github.com/toa-io/toa/issues/1245)
+
+### Features
+
+* **continuity:** give back what a continued effect was answered on an earlier attempt ([507145b](https://github.com/toa-io/toa/commit/507145beb635dad3d948b74630e34858537bf8ef))
+* **core:** answer a new id, the time and a random number from the context ([b28db00](https://github.com/toa-io/toa/commit/b28db004bf171ba1b1b7a6f1611a0fe09c7202ae))
+* **core:** commit nothing of a state the algorithm sets DISCARD on ([df6697c](https://github.com/toa-io/toa/commit/df6697c8ce970c78d2b0474528a30700dbbfd7fc))
+
+
 # [1.0.0-alpha.321](https://github.com/toa-io/toa/compare/v1.0.0-alpha.320...v1.0.0-alpha.321) (2026-09-28)
 
 ### Bug Fixes
