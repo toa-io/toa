@@ -1,5 +1,5 @@
 import { it, expect } from 'vitest'
-import { matches, rank, split, valued } from './ui'
+import { matches, rank, split, system, valued } from './ui'
 
 it('should split a namespaced name', () => {
   expect(split('identity.tokens')).toEqual({ namespace: 'identity', component: 'tokens' })
@@ -11,6 +11,12 @@ it('should read an unqualified name as the default namespace', () => {
 
 it('should split on the first dot only', () => {
   expect(split('a.b.c')).toEqual({ namespace: 'a', component: 'b.c' })
+})
+
+it('should read what the runtime ships as a system component', () => {
+  expect(system('cadence.metronome')).toBe(true)
+  expect(system('continuity.journal')).toBe(true)
+  expect(system('dummies.dummy')).toBe(false)
 })
 
 it('should match a subsequence', () => {
