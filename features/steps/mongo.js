@@ -364,6 +364,10 @@ Then(
 
       const { _id, ...rest } = stored
 
+      // the timestamps are stored as dates and answered as the milliseconds the entity carries
+      for (const name of TIMESTAMPS)
+        if (rest[name] instanceof Date) rest[name] = rest[name].getTime()
+
       assert.deepStrictEqual({ id: _id, ...rest }, reply)
     })
   }
