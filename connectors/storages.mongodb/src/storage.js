@@ -41,6 +41,7 @@ export class Storage extends Connector {
   /** how a record is written and read back, which depends on what the entity declares */
   #to
   #from
+  #changes
 
   /** properties held as BSON dates, so that a criterion against one is one too */
   #dates
@@ -51,10 +52,11 @@ export class Storage extends Connector {
     this.#client = client
     this.#entity = entity
 
-    const { to, from, dates } = codec(entity?.properties)
+    const { to, from, changes, dates } = codec(entity?.properties)
 
     this.#to = to
     this.#from = from
+    this.#changes = changes
     this.#dates = dates
 
     this.depends(client)
@@ -419,7 +421,7 @@ export class Storage extends Connector {
     }
 
     const update = {
-      $set: { ...changeset },
+      $set: this.#changes(changeset),
       $inc: { VERSION: 1 }
     }
 

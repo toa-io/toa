@@ -135,4 +135,27 @@ describe('codec, epoch-millis', () => {
   it('should read a record written before the property was a date', () => {
     assert.strictEqual(codec(properties).from({ _id: '1', DELETED: millis }).DELETED, millis)
   })
+
+  it('should write the moments of a changeset as dates', () => {
+    const changes = codec(properties).changes({ DELETED: millis, VERSION: 2 })
+
+    assert.ok(changes.DELETED instanceof Date)
+    assert.strictEqual(changes.DELETED.getTime(), millis)
+    assert.strictEqual(changes.VERSION, 2, 'and leaves a plain integer alone')
+    assert.ok(!('_id' in changes), 'and names no record')
+  })
+
+  it('should not modify the changeset', () => {
+    const changeset = { DELETED: millis }
+
+    codec(properties).changes(changeset)
+
+    assert.strictEqual(changeset.DELETED, millis)
+  })
+
+  it('should leave a changeset of an entity that declares no moment as it is', () => {
+    const changeset = { VERSION: 2 }
+
+    assert.strictEqual(codec({ VERSION: { type: 'integer' } }).changes(changeset), changeset)
+  })
 })
