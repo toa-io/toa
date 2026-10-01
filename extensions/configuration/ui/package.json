@@ -70,5 +70,8 @@
   "description": "Toa Configuration UI",
   "overrides": {
     "cookie": "^0.7.2"
+  },
+  "allowScripts": {
+    "fsevents": false
   }
 }
