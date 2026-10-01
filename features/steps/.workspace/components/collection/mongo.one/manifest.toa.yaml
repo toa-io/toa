@@ -10,6 +10,9 @@ entity:
       type: string
     baz: &baz
       type: boolean
+    due: &due
+      type: integer
+      format: epoch-millis
   blank:
     foo: 0
 
@@ -28,6 +31,7 @@ operations:
         foo: *foo
         bar: *bar
         baz: *baz
+        due: *due
       type: object
   nothing:
     concurrency: retry

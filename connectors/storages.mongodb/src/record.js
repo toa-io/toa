@@ -49,13 +49,18 @@ export function codec(properties) {
 
   const dates = read.map(([name]) => name)
 
-  if (dates.length === 0) return { to, from, dates }
+  if (dates.length === 0) return { to, from, changes, dates }
+
+  const write = dates.map((name) => [name, date])
 
   return {
     dates,
 
     // one way in for both: `Date` takes the milliseconds and the ISO string alike
-    to: (entity) => convert(to(entity), dates.map((name) => [name, date])),
+    to: (entity) => convert(to(entity), write),
+
+    // what an assignment sets, which is the same properties with no record around them
+    changes: (changeset) => convert({ ...changeset }, write),
 
     from: (record) => {
       const state = from(record)
@@ -66,7 +71,7 @@ export function codec(properties) {
 }
 
 /**
- * Writes into an object either `to` or `from` has just made, so nothing the caller holds is
+ * Writes into an object `to`, `from` or `changes` has just made, so nothing the caller holds is
  * touched.
  *
  * @private
@@ -85,6 +90,9 @@ function convert(record, casts) {
 }
 
 const date = (value) => new Date(value)
+
+/** A changeset of an entity that declares no moment is set as it is. */
+const changes = (changeset) => changeset
 
 /*
  * What a record written before the property was declared a moment holds is what it was given,

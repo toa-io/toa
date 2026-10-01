@@ -138,3 +138,17 @@ Feature: MongoDB migrations
       Component 'plain.migrated' declares migrations, which storage '@toa.io/storages.null' does not apply
       """
 
+  Scenario: The times an assignment wrote as numbers are stored as dates
+
+  Up to 1.0.0-alpha.322 an assignment wrote `UPDATED` and `DELETED` as the milliseconds it was
+  given, where every other write stored a date.
+
+    Given the `mongo.migrated` database contains, with its timestamps as numbers:
+      | _id                              | a | runs | VERSION | CREATED                  | UPDATED       | DELETED       |
+      | 82cf9b0ab0ac4ab2b8036e4e940ddcae | x | 0    | 2       | 2024-03-03T06:21:47.166Z | 1709446907167 | null          |
+      | 82cf9b0ab0ac4ab2b8036e4e940ddcaf | y | 0    | 2       | 2024-03-03T06:21:47.166Z | 1709446907168 | 1709446907168 |
+    When I compose `mongo.migrated` component
+    Then the `mongo.migrated` collection holds:
+      | _id                              | UPDATED                  | DELETED                  |
+      | 82cf9b0ab0ac4ab2b8036e4e940ddcae | 2024-03-03T06:21:47.167Z | null                     |
+      | 82cf9b0ab0ac4ab2b8036e4e940ddcaf | 2024-03-03T06:21:47.168Z | 2024-03-03T06:21:47.168Z |

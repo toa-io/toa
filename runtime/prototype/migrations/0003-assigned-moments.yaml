@@ -1,0 +1,16 @@
+# Up to 1.0.0-alpha.322 an assignment wrote `UPDATED` and `DELETED` as the milliseconds it was
+# given, where every other write stored a date. Such a record sorts ahead of every date, is
+# matched by no criterion by time, and is skipped by a `ttl` index.
+#
+# Each separately, because an assignment that deleted nothing left `DELETED` null, and one
+# written before the timestamps became dates was converted by `0001-epoch-millis` already.
+- update:
+    filter: { UPDATED: { $type: number } }
+    update:
+      - $set:
+          UPDATED: { $toDate: { $toLong: '$UPDATED' } }
+- update:
+    filter: { DELETED: { $type: number } }
+    update:
+      - $set:
+          DELETED: { $toDate: { $toLong: '$DELETED' } }
