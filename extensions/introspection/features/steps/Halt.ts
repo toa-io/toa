@@ -62,7 +62,9 @@ export class Halt {
 
   /** The first member of every deployment here is the one holding the map. */
   /** What the annotation says, read where whoever writes a halt reads it. */
-  @then('a halt may ask to stay down for {int} to {int} seconds, and to go quiet for {int} to {int}')
+  @then(
+    'a halt may ask to stay down for {int} to {int} seconds, and to go quiet for {int} to {int}'
+  )
   public async bounds(
     duration: number,
     until: number,
@@ -260,12 +262,38 @@ async function ended(member: Member): Promise<void> {
 
 /** Every socket a process holds to the database, the broker and the cache. */
 function held(pid: number): number {
+  if (process.platform === 'darwin') return opened(pid)
+
   const out = execFileSync('ss', ['-tnp'], { encoding: 'utf8' })
 
   return out
     .split('\n')
     .filter((line) => line.includes(`pid=${pid},`))
     .filter((line) => PORTS.some((port) => line.includes(`:${port} `))).length
+}
+
+/**
+ * What `held` counts, on macOS, which has no `ss`: the connections `lsof` lists for the process,
+ * by the port at their other end. It exits with 1 where it lists none.
+ */
+function opened(pid: number): number {
+  const args = ['-a', '-nP', '-iTCP', '-sTCP:ESTABLISHED', '-p', String(pid), '-Fn']
+  let out: string
+
+  try {
+    out = execFileSync('lsof', args, { encoding: 'utf8' })
+  } catch (exception) {
+    const { status, stdout } = exception as { status?: number; stdout?: string }
+
+    if (status !== 1) throw exception
+
+    out = stdout ?? ''
+  }
+
+  return out
+    .split('\n')
+    .filter((line) => line.startsWith('n') && line.includes('->'))
+    .filter((line) => PORTS.some((port) => line.endsWith(`:${port}`))).length
 }
 
 async function eventually(
