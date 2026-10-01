@@ -205,7 +205,7 @@ export class Console {
     }
 
     if (attributes instanceof Error) entry.attributes = serialize(attributes)
-    else if (attributes !== undefined) entry.attributes = attributes
+    else if (attributes !== undefined) entry.attributes = serialized(attributes)
 
     if (this.context !== undefined) entry.context = this.context
 
@@ -221,6 +221,25 @@ export class Console {
     // an exporter must not throw; one that does takes the log of the process with it
     for (const sink of sinks()) sink.export(entry, this)
   }
+}
+
+/**
+ * The attributes with an `Error` among them serialized, which `JSON.stringify` writes as `{}`. A
+ * copy is made only where there is one: the attributes passed are the caller's.
+ */
+function serialized(attributes: any): any {
+  if (typeof attributes !== 'object' || attributes === null) return attributes
+
+  let copied: Record<string, any> | undefined
+
+  for (const key in attributes)
+    if (attributes[key] instanceof Error) {
+      const copy = (copied ??= { ...attributes })
+
+      copy[key] = serialize(attributes[key])
+    }
+
+  return copied ?? attributes
 }
 
 function serialize(error: Error): Record<string, any> {

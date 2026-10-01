@@ -43,6 +43,16 @@ operations:
         attributes:
           type: object
           additionalProperties: true
+        # an error written among the attributes, as `error`
+        error:
+          type: object
+          properties:
+            message:
+              type: string
+            code:
+              type: string
+          required:
+            - message
       required:
         - level
         - message

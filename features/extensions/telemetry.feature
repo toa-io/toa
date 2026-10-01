@@ -89,6 +89,32 @@ Feature: Telemetry
       foo: bar
       """
 
+  # requires loki (docker compose up loki)
+  Scenario: An error among the attributes is exported with its message
+    Given I boot `telemetry` component
+    And logs are exported to Loki
+    When I invoke `log` with:
+      """yaml
+      input:
+        level: error
+        message: "Hello, error!"
+        attributes:
+          foo: bar
+        error:
+          message: Out of quota
+          code: QUOTA
+      """
+    Then the log record "Hello, error!" is stored with:
+      """yaml
+      severity_text: ERROR
+      foo: bar
+      """
+    And the log record "Hello, error!" has `error` with:
+      """yaml
+      message: Out of quota
+      code: QUOTA
+      """
+
   Scenario: A metric is recorded on an unsampled trace
     Given an environment variable `TOA_TELEMETRY_TRACES` is set to:
       """yaml
