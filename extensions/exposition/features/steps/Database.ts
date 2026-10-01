@@ -21,6 +21,11 @@ export class Database {
 
       for (let c = 0; c < columns.length; c++) {
         const str = rows[r][c]
+
+        // a cell left empty is a property the record does not have, as a record written
+        // before the property was declared has none
+        if (str === '') continue
+
         const int = parseInt(str)
 
         document[columns[c]] =
@@ -79,11 +84,82 @@ export class Database {
     await this.collection(id).deleteMany({})
   }
 
+  /**
+   * What a database written before its component's migrations looks like: no index but the
+   * one on `_id`, and nothing recorded as applied, so the next start applies all of them.
+   */
+  @given('the `{word}` database has not been migrated')
+  public async unmigrated(id: string): Promise<void> {
+    const collection = this.collection(id)
+
+    await collection.deleteMany({})
+
+    try {
+      await collection.dropIndexes()
+    } catch (error) {
+      // a collection nothing has written to yet has no indexes to drop
+      if ((error as { code?: number }).code !== ERR_NAMESPACE_NOT_FOUND) throw error
+    }
+
+    await this.migrations().deleteMany({
+      _id: { $regex: `^${collection.collectionName}:` }
+    })
+  }
+
+  /** The next start applies it, whatever was applied before it. */
+  @given('the `{word}` migration `{word}` is not recorded')
+  public async forget(id: string, migration: string): Promise<void> {
+    const collection = this.collection(id)
+
+    await this.migrations().deleteOne({
+      _id: `${collection.collectionName}:${migration}`
+    })
+  }
+
+  @then('the `{word}` migrations are recorded:')
+  public async recorded(id: string, table: DataTable): Promise<void> {
+    const collection = this.collection(id)
+
+    for (const { migration, state } of table.hashes()) {
+      const row = await this.migrations().findOne({
+        _id: `${collection.collectionName}:${migration}`
+      })
+
+      assert.equal(
+        row?.state,
+        state,
+        `migration '${migration}' of '${id}' is not ${state}`
+      )
+    }
+  }
+
+  /** The `keys` column is the index specification as the driver reports it. */
+  @then('the `{word}` collection has indexes:')
+  public async indexes(id: string, table: DataTable): Promise<void> {
+    const indexes = await this.collection(id).listIndexes().toArray()
+
+    for (const { name, keys, unique } of table.hashes()) {
+      const index = indexes.find((candidate) => candidate.name === name)
+
+      assert.ok(
+        index !== undefined,
+        `index '${name}' not found, there is ${indexes.map((i) => i.name).join(', ')}`
+      )
+
+      if (keys !== undefined) assert.deepStrictEqual(index.key, JSON.parse(keys))
+      if (unique !== undefined) assert.equal(index.unique === true, unique === 'true')
+    }
+  }
+
   @then('the `{word}` record `{word}` is of version {int}')
   public async version(id: string, record: string, version: number): Promise<void> {
     const document = await this.collection(id).findOne({ _id: record })
 
-    assert.equal(document?.VERSION, version, `'${record}' of '${id}' is of another version`)
+    assert.equal(
+      document?.VERSION,
+      version,
+      `'${record}' of '${id}' is of another version`
+    )
   }
 
   @beforeAll()
@@ -104,9 +180,22 @@ export class Database {
 
     return Database.client.db('toa-dev').collection(collection)
   }
+
+  /** Where the storage records what it applied, as `<collection>:<migration>`. */
+  private migrations(): Collection<Migration> {
+    return Database.client.db('toa-dev').collection(MIGRATIONS)
+  }
 }
 
+const MIGRATIONS = 'system_migrations'
+const ERR_NAMESPACE_NOT_FOUND = 26
+
 const TIMESTAMPS = ['CREATED', 'UPDATED', 'DELETED']
+
+interface Migration {
+  _id: string
+  state: string
+}
 
 /** Every fixture table names an `_id`, which is what a row is replaced by. */
 type Document = Record<string, string | number | boolean | Date | null> & { _id: string }

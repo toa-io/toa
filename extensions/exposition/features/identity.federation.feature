@@ -394,3 +394,105 @@ Feature: Identity Federation
 
       id: ${{ Bob.id }}
       """
+
+  Scenario: A credential written before 1.0.0-alpha.257 authenticates as its Identity
+
+  Up to 1.0.0-alpha.256 a credential's id was the id of its Identity, and the record held no
+  `identity`. Under one issuer, two such credentials are the same key of the index that keeps an
+  Identity to one credential per issuer, until each is given the Identity it stands for.
+
+    Given the `identity.federation` database has not been migrated
+    And the `identity.federation` database contains:
+      | _id                              | authority | iss                    | sub     | identity                         |
+      | 5ca1ab1e0000400080000000000000a1 | nex       | http://localhost:31005 | Legacy  |                                  |
+      | 5ca1ab1e0000400080000000000000a2 | nex       | http://localhost:31005 | Former  |                                  |
+      | fed00000000040008000000000000c01 | nex       | http://localhost:31005 | Current | 1d000000000040008000000000000c01 |
+    And the `identity.federation` configuration:
+      """yaml
+      trust:
+        - iss: http://localhost:31005
+          aud: test
+      """
+    And the Gateway is stopped
+    And the IDP token for Legacy is issued
+    And the IDP token for Former is issued
+    And the IDP token for Current is issued
+    When the following request is received:
+      """
+      GET /identity/ HTTP/1.1
+      host: nex.toa.io
+      authorization: Bearer ${{ Legacy.id_token }}
+      accept: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+
+      id: 5ca1ab1e0000400080000000000000a1
+      """
+    When the following request is received:
+      """
+      GET /identity/ HTTP/1.1
+      host: nex.toa.io
+      authorization: Bearer ${{ Former.id_token }}
+      accept: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+
+      id: 5ca1ab1e0000400080000000000000a2
+      """
+    When the following request is received:
+      """
+      GET /identity/ HTTP/1.1
+      host: nex.toa.io
+      authorization: Bearer ${{ Current.id_token }}
+      accept: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+
+      id: 1d000000000040008000000000000c01
+      """
+    And the `identity.federation` collection has indexes:
+      | name            | keys                                 | unique |
+      | unique_identity | {"authority":1,"iss":1,"identity":1} | true   |
+
+  Scenario: A credential written before 1.0.0-alpha.257 authenticates where the indexes were made
+
+  A release from 1.0.0-alpha.257 on made the indexes over a database that held one such
+  credential under an issuer, and recorded that it had. What gives the credential its Identity is
+  applied all the same.
+
+    Given the `identity.federation` configuration:
+      """yaml
+      trust:
+        - iss: http://localhost:31005
+          aud: test
+      """
+    And the Gateway is running
+    And the `identity.federation` migration `0001-identity` is not recorded
+    And the `identity.federation` database contains:
+      | _id                              | authority | iss                    | sub    |
+      | 5ca1ab1e0000400080000000000000a1 | nex       | http://localhost:31005 | Legacy |
+    And the Gateway is stopped
+    And the IDP token for Legacy is issued
+    When the following request is received:
+      """
+      GET /identity/ HTTP/1.1
+      host: nex.toa.io
+      authorization: Bearer ${{ Legacy.id_token }}
+      accept: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+
+      id: 5ca1ab1e0000400080000000000000a1
+      """
+    And the `identity.federation` migrations are recorded:
+      | migration     | state |
+      | 0001-identity | done  |
+      | 0002-indexes  | done  |
