@@ -48,7 +48,8 @@
     },
     "pacote": "22.0.0",
     "smol-toml": "1.8.0",
-    "uuid": "14.0.2"
+    "uuid": "14.0.2",
+    "axios": "1.20.0"
   },
   "bin": {
     "toa": "runtime/cli/bin/toa"
