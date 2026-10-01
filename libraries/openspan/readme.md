@@ -8,7 +8,8 @@ to stdout (stderr for `error`) as JSON lines.
 `(message: string, attributes?: object | Error) => void`
 
 When an `Error` is passed as attributes, it is serialized with its `message`, `code`, `stack`,
-and `cause` chain.
+and `cause` chain. So is an `Error` that is one of the attributes: `{ id, error }` is written with
+the error's message, not as `{}`.
 
 Log entry format:
 

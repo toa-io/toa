@@ -184,6 +184,31 @@ it('should serialize Error cause chain', () => {
   assert.ok(entry.attributes.cause.stack.includes('Error: root'))
 })
 
+it('should serialize Error among attributes', () => {
+  const error = Object.assign(new Error('oops'), { code: 'E_TEST' })
+  const attributes = { id: 42, error }
+
+  instance.error('Failed', attributes)
+
+  const entry = pop(streams.stderr)
+
+  assert.partialDeepStrictEqual(entry.attributes, {
+    id: 42,
+    error: { message: 'oops', code: 'E_TEST' }
+  })
+
+  assert.ok(entry.attributes.error.stack.includes('Error: oops'))
+  assert.strictEqual(attributes.error, error, 'the attributes passed are changed')
+})
+
+it('should pass attributes without Error as they are', () => {
+  const attributes = { id: 42 }
+
+  instance.error('Failed', attributes)
+
+  assert.strictEqual(pop(streams.stderr).attributes.id, 42)
+})
+
 it('should serialize non-Error cause', () => {
   const error = new Error('wrapper', { cause: 'just a string' })
 
@@ -448,8 +473,9 @@ describe('measure', () => {
   })
 
   it('should record seconds where a span reports milliseconds', async () => {
-    await console.span({ name: 'measured', measure: { histogram: duration } }, () =>
-      new Promise((resolve) => setTimeout(resolve, 20))
+    await console.span(
+      { name: 'measured', measure: { histogram: duration } },
+      () => new Promise((resolve) => setTimeout(resolve, 20))
     )
 
     const [series] = registry.collect()

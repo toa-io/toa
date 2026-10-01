@@ -67,6 +67,50 @@ Then(
   }
 )
 
+Then(
+  'the log record {string} has `{word}` with:',
+  /**
+   * An attribute that is an object is stored as its JSON: what it holds is read out of that.
+   *
+   * @param {string} message
+   * @param {string} key
+   * @param {string} yaml
+   * @this {toa.features.Context}
+   */
+  async function (message, key, yaml) {
+    const expected = parse(yaml)
+
+    await flushLogs()
+
+    const { streams, status } = await query(this.logsService, message)
+
+    assert.notEqual(
+      streams.length,
+      0,
+      `Log record '${message}' of '${this.logsService}' is not stored ` +
+        `(Loki last answered ${status})`
+    )
+
+    const values = streams.map(({ stream }) => stream[key])
+
+    const found = values.some((value) => {
+      try {
+        assert.partialDeepStrictEqual(JSON.parse(value), expected)
+
+        return true
+      } catch {
+        return false
+      }
+    })
+
+    assert.ok(
+      found,
+      `Log record '${message}' has no \`${key}\` with ${JSON.stringify(expected)}, ` +
+        `but ${JSON.stringify(values)}`
+    )
+  }
+)
+
 After(
   /**
    * @this {toa.features.Context}
