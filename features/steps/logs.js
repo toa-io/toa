@@ -3,8 +3,10 @@ import { randomUUID } from 'node:crypto'
 import { After, Given, Then } from '@cucumber/cucumber'
 import { load as parse } from 'js-yaml'
 import { flushLogs, logging, logs } from 'openspan'
+import { environment } from '@toa.io/generic'
 
 const LOKI = 'http://localhost:31065'
+const LOGS_ENV = 'TOA_TELEMETRY_LOGS'
 
 /**
  * Configures the OTLP log exporter of this process, rather than the environment the telemetry
@@ -31,6 +33,35 @@ Given(
         }
       }
     })
+  }
+)
+
+Given(
+  'the program exports its logs to Loki',
+  /**
+   * Configures a program the scenario runs, rather than this process: its telemetry reads
+   * `TOA_TELEMETRY_LOGS` when it starts. Its console is off, as a deployment that exports its
+   * logs may have it.
+   *
+   * @this {toa.features.Context}
+   */
+  function () {
+    this.logsService = `features-${randomUUID()}`
+
+    this.env.push([LOGS_ENV, environment.get(LOGS_ENV)])
+
+    environment.set(
+      LOGS_ENV,
+      JSON.stringify({
+        exporters: {
+          console: false,
+          otlp: {
+            endpoint: LOKI + '/otlp',
+            resource: { 'service.name': this.logsService }
+          }
+        }
+      })
+    )
   }
 )
 

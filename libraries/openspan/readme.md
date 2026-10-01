@@ -219,6 +219,9 @@ every entry, with the console that wrote it, and must not throw. `logging(export
 set; `logging(null)` restores the default, which is the console — an empty set means silence, and
 the two are different answers. Optional `flush()` is awaited by `flushLogs()`.
 
+`printing(exporter)` says whether an exporter is the console, which writes the JSON line,
+whichever copy of the package made it.
+
 ## Shutdown
 
 `shutdown()` sends what all three signals hold — spans, records and series — for a process leaving

@@ -3,11 +3,11 @@
 import { readFileSync } from 'node:fs'
 import dotenv from 'dotenv'
 import yargs from 'yargs/yargs'
-import { shutdown } from 'openspan'
 
 import { environment, findUp } from '@toa.io/generic'
 import { version } from '@toa.io/definitions'
 import { exceptions, halting } from '@toa.io/core'
+import { fatal } from './fatal.js'
 
 /*
  * A local run reads what `toa env` wrote, the way a booting process does (`@toa.io/boot`,
@@ -31,12 +31,15 @@ yargs(process.argv.slice(2))
 
     load(/** @type {string} */ argv.env)
   })
-  .fail((msg, err) => {
-    const actual = err || new Error(msg)
+  .fail(async (msg, err) => {
+    // a command that was given wrong is told so, and nothing failed that a log should know of
+    if (err === undefined || err === null) {
+      console.error(new Error(msg))
 
-    console.error(actual)
+      process.exit(1)
+    }
 
-    process.exit(actual.exitCode > 0 ? actual.exitCode : 1)
+    await fatal('command failed', err)
   })
   .option('log', {
     describe: 'Log level'
@@ -85,11 +88,15 @@ process.on('unhandledRejection', async (e) => {
     return
   }
 
-  console.error(e)
+  await fatal('unhandled rejection', e)
+})
 
-  await shutdown()
-
-  process.exit(1)
+/*
+ * The same for an exception nobody caught. Listening for it turns off Node's own exit, and
+ * `fatal` is what exits instead.
+ */
+process.on('uncaughtException', async (e) => {
+  await fatal('uncaught exception', e)
 })
 
 function load(path) {

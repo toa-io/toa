@@ -1,7 +1,7 @@
 import { it, beforeEach, afterEach, mock } from 'node:test'
 import assert from 'node:assert/strict'
 
-import { Console, consoleLogs, logging, logs, OtlpLogs, sinks } from './index.ts'
+import { Console, consoleLogs, logging, logs, OtlpLogs, printing, sinks } from './index.ts'
 import type { Entry } from './Console.ts'
 
 afterEach(() => {
@@ -51,6 +51,24 @@ it('should export nowhere when the console is turned off alone', () => {
   logs({ exporters: { console: false } })
 
   assert.deepStrictEqual(sinks(), [])
+})
+
+it('should tell the console exporter', () => {
+  assert.strictEqual(printing(consoleLogs), true)
+})
+
+it('should tell the otlp exporter from the console', () => {
+  logs({ exporters: { otlp: { endpoint: 'http://localhost:1' } } })
+
+  assert.deepStrictEqual(
+    sinks().map((sink) => printing(sink)),
+    [true, false]
+  )
+})
+
+it('should tell a console exporter of another copy of the package', () => {
+  // what another copy made is no object of this one, and carries the same mark
+  assert.strictEqual(printing({ ...consoleLogs }), true)
 })
 
 it('should restore the default', () => {

@@ -2,6 +2,12 @@ import { state } from './state.ts'
 import type { Console, Entry } from './Console.ts'
 
 /**
+ * What marks the exporter that writes the JSON line. A process may load this package more than
+ * once, and the exporter one copy configured is no object of another copy's.
+ */
+const PRINTS = Symbol.for('openspan.logs.console')
+
+/**
  * Writes the entry as a JSON line to the streams of the console that emitted it.
  *
  * This is what a console did on its own until there was more than one place for an entry to go.
@@ -10,7 +16,8 @@ import type { Console, Entry } from './Console.ts'
 export const consoleLogs: LogExporter = {
   export(entry: Entry, output: Console): void {
     output.print(entry)
-  }
+  },
+  [PRINTS]: true
 }
 
 /**
@@ -23,6 +30,13 @@ export function logging(sinks: LogExporter[] | null): void {
 
 export function sinks(): LogExporter[] {
   return state.sinks ?? DEFAULT
+}
+
+/**
+ * Whether the exporter is the one that writes the JSON line, whichever copy of the package made it.
+ */
+export function printing(sink: LogExporter): boolean {
+  return sink[PRINTS] === true
 }
 
 /** Flushes all log exporters, e.g. before `process.exit()`, which does not emit `beforeExit`. */
@@ -43,4 +57,6 @@ export interface LogExporter {
   export: (entry: Entry, output: Console) => void
 
   flush?: () => Promise<void>
+
+  [PRINTS]?: true
 }
