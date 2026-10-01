@@ -15,7 +15,9 @@ new PerformanceObserver((list) => {
 
 const kept = Array.from({ length: 300_000 }, (_, i) => ({ i }))
 
-for (let i = 0; i < 2000; i++) {
+// long enough that a run sharing the CPU with the rest of the suite still starts well over the
+// mark-compacts the test needs to tell one run from the other
+for (let i = 0; i < 6000; i++) {
   Buffer.alloc(512 * 1024)
 
   if (i % 10 === 0) await new Promise((resolve) => setImmediate(resolve))

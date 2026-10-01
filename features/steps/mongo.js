@@ -83,21 +83,40 @@ Given(
    * @this {toa.features.Context}
    */
   async function (id, table) {
-    const documents = parse(table)
-
-    await using(id, async (collection, outbox, db, inbox) => {
-      await collection.deleteMany({})
-
-      // dropped, not emptied: the collection is created at boot, and one left behind by an
-      // earlier scenario would read as one this scenario's boot created
-      await outbox.drop().catch(() => undefined)
-      await inbox.drop().catch(() => undefined)
-      await forget(db, collection)
-
-      if (documents.length > 0) await collection.insertMany(documents)
-    })
+    await seed(id, parse(table))
   }
 )
+
+Given(
+  'the {component} database contains, with its timestamps as numbers:',
+  /**
+   * What a release that did not write them as dates left behind.
+   *
+   * @param {string} id
+   * @param {import('@cucumber/cucumber').DataTable} table
+   */
+  async function (id, table) {
+    await seed(id, parse(table, false))
+  }
+)
+
+/**
+ * @param {string} id
+ * @param {object[]} documents
+ */
+async function seed(id, documents) {
+  await using(id, async (collection, outbox, db, inbox) => {
+    await collection.deleteMany({})
+
+    // dropped, not emptied: the collection is created at boot, and one left behind by an
+    // earlier scenario would read as one this scenario's boot created
+    await outbox.drop().catch(() => undefined)
+    await inbox.drop().catch(() => undefined)
+    await forget(db, collection)
+
+    if (documents.length > 0) await collection.insertMany(documents)
+  })
+}
 
 Given(
   'the {component} database is empty',
@@ -345,6 +364,10 @@ Then(
 
       const { _id, ...rest } = stored
 
+      // the timestamps are stored as dates and answered as the milliseconds the entity carries
+      for (const name of TIMESTAMPS)
+        if (rest[name] instanceof Date) rest[name] = rest[name].getTime()
+
       assert.deepStrictEqual({ id: _id, ...rest }, reply)
     })
   }
@@ -475,8 +498,9 @@ async function forget(db, collection) {
 
 /**
  * @param {import('@cucumber/cucumber').DataTable} table
+ * @param {boolean} [moments] whether a timestamp is stored as the date the runtime writes
  */
-function parse(table) {
+function parse(table, moments = true) {
   const columns = table.raw()[0]
   const rows = table.rows()
   const documents = []
@@ -499,8 +523,9 @@ function parse(table) {
     }
 
     // a table states a timestamp as the entity carries it; the storage holds it as a date
-    for (const name of TIMESTAMPS)
-      if (typeof document[name] === 'number') document[name] = new Date(document[name])
+    if (moments)
+      for (const name of TIMESTAMPS)
+        if (typeof document[name] === 'number') document[name] = new Date(document[name])
 
     documents.push(document)
   }
@@ -561,6 +586,30 @@ const URL = 'mongodb://developer:secret@localhost:31020'
 
 /** what a process under `TOA_DEV=1` with no context and no suffix writes to */
 const DATABASE = 'toa-dev'
+
+Then(
+  'the {component} collection holds {token} as dates',
+  /**
+   * What `collection holds` cannot say where the value is not known: that the property is
+   * stored as a date in every record, rather than as the number it was given.
+   *
+   * @param {string} id
+   * @param {string} property
+   */
+  async function (id, property) {
+    await using(id, async (collection) => {
+      const records = await collection.find().toArray()
+
+      assert.ok(records.length > 0, 'the collection holds no records')
+
+      for (const record of records)
+        assert.ok(
+          record[property] instanceof Date,
+          `${property} of ${record._id} is ${JSON.stringify(record[property])}, not a date`
+        )
+    })
+  }
+)
 
 Then(
   'the {component} collection holds {int} record(s)',

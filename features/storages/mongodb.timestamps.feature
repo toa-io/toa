@@ -62,3 +62,33 @@ Feature: MongoDB Timestamps
       foo: 5
       VERSION: 2
       """
+
+  Scenario: An assignment is stored with the time it was made as a date
+    When I call `mongo.one.assign` with:
+      """yaml
+      query:
+        id: 72cf9b0ab0ac4ab2b8036e4e940ddcae
+      input:
+        foo: 5
+      """
+    Then the `mongo.one` collection holds `UPDATED` as dates
+
+  Scenario: A terminated record is stored with the time it was deleted as a date
+    When I call `mongo.one.terminate` with:
+      """yaml
+      query:
+        id: 72cf9b0ab0ac4ab2b8036e4e940ddcae
+      """
+    Then the `mongo.one` collection holds `DELETED` as dates
+
+  Scenario: An assignment stores a moment it is given as a date
+    When I call `mongo.one.assign` with:
+      """yaml
+      query:
+        id: 72cf9b0ab0ac4ab2b8036e4e940ddcae
+      input:
+        due: 1709781946176
+      """
+    Then the `mongo.one` collection holds:
+      | _id                              | due                      |
+      | 72cf9b0ab0ac4ab2b8036e4e940ddcae | 2024-03-07T03:25:46.176Z |

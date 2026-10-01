@@ -70,6 +70,23 @@ Two identical messages written within the same millisecond, from the same proces
 backend as one: an entry's time is millisecond-resolution, and a backend is free to read a
 repeated timestamp and line as a duplicate.
 
+## A process that fails
+
+A process started by `toa` that fails on an exception nobody caught, a rejection nobody handled,
+or a command that throws — a composition that fails to start among them — prints the error to
+stderr and exits with code `1`. Before it exits, it sends one record to every log exporter but the
+console, which has the error printed already:
+
+| field    | value                                                           |
+| -------- | --------------------------------------------------------------- |
+| message  | `Process failed`                                                |
+| severity | `ERROR`                                                         |
+| `reason` | `uncaught exception`, `unhandled rejection` or `command failed` |
+| `error`  | the error: its message, code and stack                          |
+
+So a deployment that turns the console off still has why a process ended, in its backend, and one
+that keeps only the streams of a process has it there.
+
 ## What is not a log
 
 The `toa` CLI writes to stdout for whoever is running it. That output is not telemetry, carries no

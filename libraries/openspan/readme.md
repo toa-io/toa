@@ -8,7 +8,8 @@ to stdout (stderr for `error`) as JSON lines.
 `(message: string, attributes?: object | Error) => void`
 
 When an `Error` is passed as attributes, it is serialized with its `message`, `code`, `stack`,
-and `cause` chain.
+and `cause` chain. So is an `Error` that is one of the attributes: `{ id, error }` is written with
+the error's message, not as `{}`.
 
 Log entry format:
 
@@ -217,6 +218,9 @@ Custom exporters implement the `LogExporter` interface: `export(entry, output)` 
 every entry, with the console that wrote it, and must not throw. `logging(exporters)` replaces the
 set; `logging(null)` restores the default, which is the console — an empty set means silence, and
 the two are different answers. Optional `flush()` is awaited by `flushLogs()`.
+
+`printing(exporter)` says whether an exporter is the console, which writes the JSON line,
+whichever copy of the package made it.
 
 ## Shutdown
 

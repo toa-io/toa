@@ -109,6 +109,39 @@ Feature: toa compose
       Service is not implemented by '@toa.io/extensions.telemetry'
       """
 
+  # requires loki (docker compose up loki)
+  Scenario Outline: A composition that fails on <failure> says why before it exits
+
+  What a process that fails writes to its streams is lost with them where nothing collects them,
+  so it is a log record too. The error is still printed where the console is off.
+
+    Given I have a component `fatal`
+    And environment variables:
+      """
+      FATAL=<failure>
+      """
+    And the program exports its logs to Loki
+    When I run `toa compose ./components/fatal`
+    Then program should exit with code 1
+    And the log record "Process failed" is stored with:
+      """yaml
+      severity_text: ERROR
+      reason: <reason>
+      """
+    And the log record "Process failed" has `error` with:
+      """yaml
+      message: <message>
+      """
+    And stderr should contain lines:
+      """
+      <message>
+      """
+    Examples:
+      | failure   | reason              | message                |
+      | exception | uncaught exception  | Fatal as asked         |
+      | rejection | unhandled rejection | Fatal as asked         |
+      | boot      | command failed      | Fatal at boot as asked |
+
   @containers @network
   Scenario: Run a composition in a container
 
