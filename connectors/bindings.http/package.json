@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/bindings.http",
-  "version": "1.0.0-alpha.322",
+  "version": "1.0.0-alpha.323",
   "type": "module",
   "description": "Toa HTTP Binding",
   "author": "temich <tema.gurtovoy@gmail.com>",
@@ -24,10 +24,10 @@
   "main": "transpiled/index.js",
   "types": "transpiled/index.d.ts",
   "dependencies": {
-    "@toa.io/core": "1.0.0-alpha.322",
-    "@toa.io/definitions": "1.0.0-alpha.322",
+    "@toa.io/core": "1.0.0-alpha.323",
+    "@toa.io/definitions": "1.0.0-alpha.323",
     "@toa.io/generic": "1.0.0-alpha.311",
-    "openspan": "1.0.0-alpha.305"
+    "openspan": "1.0.0-alpha.323"
   },
   "scripts": {
     "transpile": "tsc"

@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.323](https://github.com/toa-io/toa/compare/v1.0.0-alpha.322...v1.0.0-alpha.323) (2026-10-01)
+
+**Note:** Version bump only for package @toa.io/extensions.convergence
+
+
+
+
+
 # [1.0.0-alpha.322](https://github.com/toa-io/toa/compare/v1.0.0-alpha.321...v1.0.0-alpha.322) (2026-09-29)
 
 ### Bug Fixes

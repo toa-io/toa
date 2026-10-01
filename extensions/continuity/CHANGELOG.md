@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.323](https://github.com/toa-io/toa/compare/v1.0.0-alpha.322...v1.0.0-alpha.323) (2026-10-01)
+
+### Bug Fixes
+
+* **continuity:** the journal's types say the State a transition receives ([ef65352](https://github.com/toa-io/toa/commit/ef65352a8bd7bc0ef400fcc8cde0e19a3bb92199))
+
+
 # [1.0.0-alpha.322](https://github.com/toa-io/toa/compare/v1.0.0-alpha.321...v1.0.0-alpha.322) (2026-09-29)
 
 ### Features

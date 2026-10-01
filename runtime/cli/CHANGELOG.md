@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.323](https://github.com/toa-io/toa/compare/v1.0.0-alpha.322...v1.0.0-alpha.323) (2026-10-01)
+
+### Bug Fixes
+
+* **cli:** a process that fails says why in its log, not only on stderr ([3f28282](https://github.com/toa-io/toa/commit/3f28282ef8d1f31bfcf09c0667af1c10cf8d0df4))
+
+
 # [1.0.0-alpha.322](https://github.com/toa-io/toa/compare/v1.0.0-alpha.321...v1.0.0-alpha.322) (2026-09-29)
 
 ### Features

@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.323](https://github.com/toa-io/toa/compare/v1.0.0-alpha.322...v1.0.0-alpha.323) (2026-10-01)
+
+### Bug Fixes
+
+* **openspan:** serialize an Error among the attributes of a log entry ([f205c33](https://github.com/toa-io/toa/commit/f205c33a797cd16e3915e4f54f81e39722d1e562))
+
+### Features
+
+* **openspan:** tell the console exporter, whichever copy of the package made it ([a505fc3](https://github.com/toa-io/toa/commit/a505fc31ba6da58034082864c206d9d09d7404d1))
+
+
 # [1.0.0-alpha.305](https://github.com/toa-io/toa/compare/v1.0.0-alpha.304...v1.0.0-alpha.305) (2026-09-13)
 
 ### Bug Fixes

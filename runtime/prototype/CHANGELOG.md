@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.323](https://github.com/toa-io/toa/compare/v1.0.0-alpha.322...v1.0.0-alpha.323) (2026-10-01)
+
+### Bug Fixes
+
+* **prototype:** convert the timestamps an assignment wrote as numbers ([1b0f3d6](https://github.com/toa-io/toa/commit/1b0f3d62c05ee8f621247cefcd6b56b358019470))
+
+
 # [1.0.0-alpha.322](https://github.com/toa-io/toa/compare/v1.0.0-alpha.321...v1.0.0-alpha.322) (2026-09-29)
 
 ### Features
