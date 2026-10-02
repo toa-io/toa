@@ -22,12 +22,14 @@ serves that stream at a route that has no variable for it.
    it, and it is never a value an ordinary property holds.
 5. A property whose value begins with `~` does not route the event to that value: a value someone
    writes — a room's name — cannot reach a literal's stream.
-6. A literal is a key of the context, as every key is: two components that route to `~room` write
+6. A route variable whose value begins with `~` serves no stream: the route is answered with
+   `404`, so a literal's stream is read only at a route that names it.
+7. A literal is a key of the context, as every key is: two components that route to `~room` write
    to one stream.
 
 **What is not promised**
 
-7. A literal is not tied to the component that declares it. Who may read its stream is what the route
+8. A literal is not tied to the component that declares it. Who may read its stream is what the route
    serving it says, as for any key.
 
 ### What a component author does differently
@@ -52,7 +54,8 @@ exposition:
    its `literals` beside its `properties`.
 2. **The destination.** An event is written to its route's literals and to the values of its
    properties, a value that begins with `~` left out.
-3. **`realtime:stream`.** A literal names the key; anything else names a route variable, as today.
+3. **`realtime:stream`.** A literal names the key; anything else names a route variable, as today,
+   whose value is never taken for a literal.
 4. **Documentation.** _Routes_ and _Serving a stream_ of exposition's realtime documentation.
 
 ## Decisions
@@ -62,7 +65,8 @@ exposition:
 2. **The `~` is kept in the key.** A literal stripped of it would be the same key as a property's
    value — a room named `room` — and anyone who names a room would write to the literal's stream.
 3. **A value that begins with `~` is not a key.** Kept as one, it would be the same key as a literal
-   for the same reason. Refusing such a value is left to the application; the route ignores it.
+   for the same reason — written by an event, or read through a route variable. Refusing such a
+   value is left to the application; the route ignores it, and a stream's route answers `404`.
 4. **Context-wide, not per component.** Every key is; a literal scoped to its component would be the
    only key that is not, and two components could not share one.
 
@@ -76,9 +80,12 @@ A stream every event of a kind goes to needs a property that holds the same valu
 `extensions/exposition/features/realtime.feature`:
 
 - a stream of a literal, served at a route without variables, receives every event routed to it;
-- an event whose property holds a value that begins with `~` reaches the literal's stream once;
-- a `realtime:stream` naming neither a route variable nor a literal is refused.
+- an event whose property holds a value that begins with `~` does not reach the literal's stream;
+- a literal's stream is not served by a route variable that holds it.
+
+A `realtime:stream` naming neither a route variable nor a literal is refused, by unit tests.
 
 ## Compatibility
 
-Additive, except that a property value beginning with `~` no longer routes an event.
+Additive, except that a value beginning with `~` no longer routes an event, nor is served by a route
+variable.

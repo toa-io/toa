@@ -146,8 +146,9 @@ authorization: Token ...
 accept: application/json
 ```
 
-The key is `~room`, with its `~`. A property's value is never a literal, so whoever writes the
-value of a property — a room's name — cannot route an event to a literal's stream. A literal is a
+The key is `~room`, with its `~`. A value is never a literal, so whoever writes the value of a
+property — a room's name — cannot route an event to a literal's stream, and a route variable that
+holds one is answered with `404`: a literal's stream is read only at a route that names it. A literal is a
 key of the context, as every key is: another component that routes to `~room` writes to the same
 stream. A list of keys may mix literals and properties: `key: [~room, sender]`.
 
