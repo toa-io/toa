@@ -1,6 +1,6 @@
 export { deployment } from './deployment.ts'
 export { manifest } from './manifest.ts'
-export { parse } from './routes.ts'
+export { literal, parse } from './routes.ts'
 export { EXPIRE, STREAMS } from './const.ts'
 
 export type { Annotation } from './deployment.ts'

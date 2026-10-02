@@ -109,6 +109,106 @@ Feature: Realtime streams
     Then Alice receives no event `chat.messages.sync`
     And the stream of `random` does not exist
 
+  Scenario: Streaming a literal key
+    Given the `chat.messages` is running with the following manifest:
+      """yaml
+      realtime:
+        sync:
+          key: ~room
+          expose: [room, text]
+      exposition:
+        /:
+          anonymous: true
+          io:output: false
+          POST: post
+        /rooms/stream:
+          anonymous: true
+          GET:
+            realtime:stream: ~room
+      """
+    When Alice is consuming:
+      """
+      GET /chat/messages/rooms/stream/ HTTP/1.1
+      host: nex.toa.io
+      accept: application/json
+      """
+    And the following request is received:
+      """
+      POST /chat/messages/ HTTP/1.1
+      host: nex.toa.io
+      content-type: application/yaml
+
+      room: general
+      text: Hello!
+      """
+    Then Alice receives exactly:
+      """yaml
+      - event: chat.messages.sync
+        data:
+          room: general
+          text: Hello!
+      """
+    And the stream of `~room` holds 1 event
+
+  Scenario: Not routing to a value that looks like a literal
+    Given the `chat.messages` is running with the following manifest:
+      """yaml
+      realtime:
+        sync:
+          key: room
+          expose: [room, text]
+      exposition:
+        /:
+          anonymous: true
+          io:output: false
+          POST: post
+        /rooms/stream:
+          anonymous: true
+          GET:
+            realtime:stream: ~room
+      """
+    When Alice is consuming:
+      """
+      GET /chat/messages/rooms/stream/ HTTP/1.1
+      host: nex.toa.io
+      accept: application/json
+      """
+    And the following request is received:
+      """
+      POST /chat/messages/ HTTP/1.1
+      host: nex.toa.io
+      content-type: application/yaml
+
+      room: ~room
+      text: Intruder
+      """
+    Then Alice receives no event `chat.messages.sync`
+    And the stream of `~room` holds 0 events
+
+  Scenario: Not serving a literal key by a route variable
+    Given the `chat.messages` is running with the following manifest:
+      """yaml
+      realtime:
+        sync:
+          key: ~room
+          expose: [room, text]
+      exposition:
+        /rooms/:room/stream:
+          anonymous: true
+          GET:
+            realtime:stream: room
+      """
+    When the following request is received:
+      """
+      GET /chat/messages/rooms/~room/stream/ HTTP/1.1
+      host: nex.toa.io
+      accept: application/json
+      """
+    Then the following reply is sent:
+      """
+      404 Not Found
+      """
+
   Scenario: Writing an event once, whoever reads it
     Given the `chat.messages` is running with the following manifest:
       """yaml

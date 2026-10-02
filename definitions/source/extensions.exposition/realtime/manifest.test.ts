@@ -34,3 +34,15 @@ it('should refuse a route that exposes nothing', () => {
       "Realtime routes of 'chat.messages' are invalid: must NOT have fewer than 1 items"
   })
 })
+
+it('should take a literal among the keys', () => {
+  const declaration = { created: { key: ['~room', 'sender'], expose: ['id'] } }
+
+  assert.deepEqual(manifest(declaration, component), declaration)
+})
+
+it('should refuse a literal that names no key', () => {
+  assert.throws(() => manifest({ created: { key: '~', expose: ['id'] } }, component), {
+    message: /Realtime routes of 'chat.messages' are invalid/
+  })
+})

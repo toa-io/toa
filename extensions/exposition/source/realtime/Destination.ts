@@ -2,7 +2,10 @@ import { console } from 'openspan'
 import { Connector, type Locator } from '@toa.io/core'
 import { APPEND, MAXLEN, Shards, shard } from './redis.ts'
 import * as measure from './measurements.ts'
-import type { Route } from '@toa.io/definitions/extensions.exposition/realtime'
+import {
+  literal,
+  type Route
+} from '@toa.io/definitions/extensions.exposition/realtime'
 import type { outbox } from '@toa.io/core/types'
 
 /**
@@ -97,7 +100,7 @@ export class Destination extends Connector implements outbox.Destination {
     if (raised === null) return null
 
     const payload = raised.payload as Record<string, unknown>
-    const keys = keysOf(payload, route.properties)
+    const keys = keysOf(payload, route)
 
     if (keys.length === 0) return null
 
@@ -157,16 +160,22 @@ function routed(value: unknown): value is Routed {
   )
 }
 
-/** The values of the key properties: each a key, or a list of them. */
-function keysOf(payload: Record<string, unknown>, properties: string[]): string[] {
+/**
+ * The values of the key properties, each a key or a list of them, and the literals. A value that
+ * reads as a literal is not a key: whoever writes it does not reach a literal's stream.
+ */
+function keysOf(payload: Record<string, unknown>, route: Route): string[] {
   const keys = new Set<string>()
 
-  for (const property of properties) {
+  for (const property of route.properties) {
     const value = payload?.[property]
     const values = Array.isArray(value) ? value : [value]
 
-    for (const key of values) if (typeof key === 'string') keys.add(key)
+    for (const key of values)
+      if (typeof key === 'string' && !literal(key)) keys.add(key)
   }
+
+  for (const key of route.literals) keys.add(key)
 
   return [...keys]
 }
