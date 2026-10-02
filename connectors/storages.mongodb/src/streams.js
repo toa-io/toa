@@ -1,6 +1,6 @@
 import { createHash } from 'node:crypto'
 import { Readable } from 'node:stream'
-import { Timestamp } from 'mongodb'
+import { Long, Timestamp } from 'mongodb'
 import { exceptions, parts } from '@toa.io/core'
 import { match } from './match.js'
 
@@ -106,7 +106,10 @@ export class Streams {
       { session }
     )
 
-    const { id, postBatchResumeToken } = reply.cursor
+    const { postBatchResumeToken } = reply.cursor
+
+    // the driver gives an id that fits a number as a number, and `killCursors` takes a long
+    const id = Long.fromValue(reply.cursor.id)
 
     if (!id.isZero()) await db.command({ killCursors: name, cursors: [id] }, { session })
 
