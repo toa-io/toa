@@ -2,6 +2,7 @@ import { console } from 'openspan'
 import { BRANCH_TTL } from '@toa.io/definitions/extensions.exposition'
 import * as http from '../HTTP/index.ts'
 import { discovery, type Discovery } from './discover.ts'
+import { Manifest } from './manifest.ts'
 import { call, list, type Scope } from './tools.ts'
 import {
   HEADER_MISMATCH,
@@ -39,8 +40,16 @@ import type { MCPAnnotation as MCP } from '@toa.io/definitions/extensions.exposi
 export class Server {
   private readonly options: MCP
   private readonly tree: Tree
-  private readonly discovery: Discovery
   private readonly origins: Set<string>
+
+  /** Built again when the icons of the manifest change; a request reads what it is then. */
+  private discovery: Discovery
+
+  /**
+   * The reader of the application's web manifest, which the gateway connects: none without
+   * one named.
+   */
+  public readonly manifest: Manifest | null
 
   /** The hosts this is served at the root of, lowercased as a request's host is. */
   private readonly roots: Set<string>
@@ -50,6 +59,13 @@ export class Server {
     this.tree = tree
     this.discovery = discovery(options)
     this.origins = new Set(options.origins ?? [])
+
+    this.manifest =
+      options.manifest === undefined
+        ? null
+        : new Manifest(options.manifest, (icons) => {
+            this.discovery = discovery(options, icons)
+          })
     this.roots = new Set(
       Object.values(options.hosts ?? {}).map((host) => host.toLowerCase())
     )

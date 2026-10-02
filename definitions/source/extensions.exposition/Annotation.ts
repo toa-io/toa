@@ -92,6 +92,12 @@ export interface MCP {
    * else is. See `documentation/mcp.md`.
    */
   hosts?: Record<string, string>
+
+  /**
+   * The application's web manifest, whose icons the server shows itself by: `https`, or
+   * `http` on a loopback host. See `documentation/mcp.md`.
+   */
+  manifest?: string
 }
 
 export interface Bouncer {

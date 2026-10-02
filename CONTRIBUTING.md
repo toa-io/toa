@@ -188,6 +188,7 @@ what a Toa checkout binds is conventional: the whole of it sits in `31000`-`3109
 | `31005` | the mock IdP of the exposition suite          | —              |
 | `31006` | streamed calls to a component                 | `8005`         |
 | `31007` | streamed calls to a second component          | —              |
+| `31008` | the web manifest stub of the exposition suite | —              |
 | `31010` | RabbitMQ                                      | `5672`         |
 | `31011` | RabbitMQ management                           | `15672`        |
 | `31012` | RabbitMQ, the second broker a scenario starts | —              |

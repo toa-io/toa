@@ -1,5 +1,6 @@
 import { readFileSync } from 'node:fs'
 import { LEGACY, MODERN, SERVER_INFO, VERSIONS } from './types.ts'
+import type { Icon } from './manifest.ts'
 import type { MCPAnnotation as MCP } from '@toa.io/definitions/extensions.exposition'
 
 /**
@@ -15,8 +16,11 @@ export interface Discovery {
   legacy: (offered: string | undefined) => object
 }
 
-export function discovery(options: MCP): Discovery {
-  const info = { name: options.name, version: VERSION }
+export function discovery(options: MCP, icons: Icon[] = []): Discovery {
+  const info: Record<string, unknown> = { name: options.name, version: VERSION }
+
+  // the application's own, where its manifest has been read and lists any
+  if (icons.length > 0) info.icons = icons
 
   // `listChanged` is a stream a client holds open, and this endpoint holds none
   const capabilities = { tools: {} }
