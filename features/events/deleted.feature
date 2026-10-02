@@ -18,13 +18,12 @@ Feature: Deleted event
       query:
         id: 72cf9b0ab0ac4ab2b8036e4e940ddcae
       """
-    And I wait 0.1 second
     And I call `mongo.receiver.observe` with:
       """yaml
       query:
         id: 72cf9b0ab0ac4ab2b8036e4e940ddcae
       """
-    Then the reply is received:
+    Then the reply is received within 5 seconds:
       """yaml
       count: 1
       deleted: true
