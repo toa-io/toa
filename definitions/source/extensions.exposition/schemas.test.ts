@@ -63,3 +63,28 @@ it('should take an MCP host per authority', () => {
     })
   )
 })
+
+it('should take a web manifest over https, or http on a loopback host', () => {
+  for (const manifest of [
+    'https://teapots.example/manifest.json',
+    'http://localhost:8000/manifest.json',
+    'http://127.0.0.1/manifest.json',
+    'http://[::1]:8000/manifest.json'
+  ])
+    assert.doesNotThrow(
+      () => schemas.annotation.validate({ authorities, mcp: { name: 'Teapots', manifest } }),
+      manifest
+    )
+
+  for (const manifest of [
+    'http://teapots.example/manifest.json',
+    'http://localhost.teapots.example/manifest.json',
+    'ftp://teapots.example/manifest.json',
+    '/manifest.json',
+    ''
+  ])
+    assert.throws(
+      () => schemas.annotation.validate({ authorities, mcp: { name: 'Teapots', manifest } }),
+      manifest
+    )
+})

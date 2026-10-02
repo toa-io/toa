@@ -61,6 +61,9 @@ export async function service(host: Host): Promise<Connector | null> {
 
     gateway.depends(remotes)
     gateway.depends(composition)
+
+    // read in the background, and stopped with the gateway
+    if (mcp?.manifest != null) gateway.depends(mcp.manifest)
     // what the directives meter through; one atom per process, connected once
     gateway.depends(host.atom(ATOM_GROUP))
 

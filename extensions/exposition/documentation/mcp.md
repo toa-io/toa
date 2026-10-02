@@ -23,6 +23,9 @@ listed is <code>403</code>, and an empty list admits none; a request carrying no
 <dt><code>hosts</code></dt>
 <dd>A host of its own per authority, where the endpoint is served at the root. See
 <a href="#a-host-of-its-own">A host of its own</a>.</dd>
+<dt><code>manifest</code></dt>
+<dd>The URL of the application's web manifest, whose icons the server shows itself by. See
+<a href="#icons">Icons</a>.</dd>
 </dl>
 
 Without the annotation `/.mcp` is a path like any other, and nothing answers there. The path is
@@ -53,6 +56,52 @@ The host is a host of the authority its key names, so a credential issued there 
 on the authority's own host, and `map:authority` writes the identifier that key is. A key naming no
 declared authority fails the deploy. The host is an ingress host of the gateway, as an authority's
 own is.
+
+## Icons
+
+A client that renders a server's icon is given the icons of the application's
+[web manifest](https://www.w3.org/TR/appmanifest/#icons-member):
+
+```yaml
+exposition:
+  mcp:
+    name: Teapots
+    manifest: https://teapots.example/manifest.json
+```
+
+```yaml
+# initialize
+serverInfo:
+  name: Teapots
+  version: 1.0.0-alpha.324
+  icons:
+    - src: https://teapots.example/icon-512.png
+      mimeType: image/png
+      sizes: [512x512]
+```
+
+They are in `serverInfo` of `initialize`, and in `_meta['io.modelcontextprotocol/serverInfo']` of
+`server/discover` and of every result of the modern revision. Nothing else is taken from the
+manifest: the server is named by `name`, and `instructions` say what it is.
+
+| manifest | icon       |                                                                   |
+| -------- | ---------- | ----------------------------------------------------------------- |
+| `src`    | `src`      | resolved against the manifest's URL                               |
+| `type`   | `mimeType` |                                                                   |
+| `sizes`  | `sizes`    | split on whitespace; a size other than `WxH` or `any` is left out |
+| —        | `theme`    | never stated: a manifest says nothing of one                      |
+
+An icon is shown only where a client can render it with no further trust: it is served from the
+manifest's own origin, its `purpose` is absent or includes `any` — a `maskable` or `monochrome`
+icon is not one to show as it is — and its `type`, where it states one, is an image.
+
+The manifest's URL is `https`, or `http` on a loopback host. It is read when the gateway starts and
+every half hour after — the time a client may hold `server/discover` — so a changed icon reaches a
+client within an hour. A redirect is not followed, and a manifest over 16 KiB is not read.
+
+Until the manifest is read, the server has no icons; a read that fails leaves those of the last
+one that did not, and is retried. No request waits for a read, and the endpoint answers whatever
+becomes of one.
 
 ## What a tool is
 
