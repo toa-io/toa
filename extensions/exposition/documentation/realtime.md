@@ -7,7 +7,8 @@ stream.
 ## Routes
 
 A route says which events go to which keys, and what of them: `key` is the property of the event
-that is the key, or a list of them, and `expose` is what the event is streamed with.
+that is the key, a [literal](#a-literal-key), or a list of them, and `expose` is what the event is
+streamed with.
 
 ```yaml
 # manifest.toa.yaml
@@ -24,7 +25,8 @@ realtime:
 
 The event is what the component publishes for its entity — its payload, or `state` for an event
 that declares none. A key is any value: an identity, a record, a group the application makes up.
-Where the property holds a list, the event goes to every key in it.
+Where the property holds a list, the event goes to every key in it. A value that begins with `~`
+is not a key, and the event does not go to it.
 
 `expose` is required, and a stream is given nothing it does not name: it is what stands between an
 event and whoever reads the streams it is routed to. A route without it is refused when the
@@ -34,7 +36,8 @@ Routes are declared by the component, and only there.
 
 ## Serving a stream
 
-`realtime:stream` answers with the stream of a key, which a route variable names. Where the key
+`realtime:stream` answers with the stream of a key, which a route variable or a
+[literal](#a-literal-key) names. Where the key
 comes from is the component's route: below, a message is routed to the stream of its room, and a
 room's stream is served at the room's route.
 
@@ -112,6 +115,41 @@ The application declares nothing to serve it: the gateway declares the route its
   GET:
     realtime:stream: id
 ```
+
+### A literal key
+
+A key that begins with `~` is a literal: the key itself, the same for every event it routes, rather
+than a property of the event. `realtime:stream` names it the same way, so its stream is served at a
+route that has no variable for it.
+
+```yaml
+# manifest.toa.yaml
+namespace: chat
+name: messages
+
+# every message, as it is created, goes to the stream of `~room`
+realtime:
+  created:
+    key: ~room
+    expose: [id, sender, text]
+
+exposition:
+  /rooms/stream:
+    auth:role: moderator
+    GET:
+      realtime:stream: ~room
+```
+
+```http
+GET /chat/messages/rooms/stream/ HTTP/1.1
+authorization: Token ...
+accept: application/json
+```
+
+The key is `~room`, with its `~`. A property's value is never a literal, so whoever writes the
+value of a property — a room's name — cannot route an event to a literal's stream. A literal is a
+key of the context, as every key is: another component that routes to `~room` writes to the same
+stream. A list of keys may mix literals and properties: `key: [~room, sender]`.
 
 ## Reading a stream
 
