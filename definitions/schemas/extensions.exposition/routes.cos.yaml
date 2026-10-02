@@ -5,14 +5,17 @@ additionalProperties:
   type: object
   properties:
     key:
-      description: The properties of the event that are the keys of the streams it goes to
+      description: >-
+        The properties of the event that are the keys of the streams it goes to, or literal keys:
+        `~` and the key
+      # a property, or `~` and at least one character of a literal
       oneOf:
         - type: string
-          minLength: 1
+          pattern: ^(?:[^~]|~.)
         - type: array
           items:
             type: string
-            minLength: 1
+            pattern: ^(?:[^~]|~.)
           minItems: 1
     expose:
       description: What of the event its streams are given; nothing is given that is not named

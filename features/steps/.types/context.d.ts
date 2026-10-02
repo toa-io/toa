@@ -1,7 +1,7 @@
 import * as amqp from '@toa.io/amqplib'
 
 import type { Connector, Exception } from '@toa.io/core'
-import type { Reply } from '@toa.io/core/types'
+import type { Reply, Request } from '@toa.io/core/types'
 import type { StartedTestContainer } from 'testcontainers'
 
 declare namespace toa.features {
@@ -29,6 +29,8 @@ declare namespace toa.features {
     aborted?: boolean
     connector?: Connector
     amqp?: context.AMQP
+    /** The last call made, made again by a step that waits for its reply to change. */
+    called?: { endpoint: string; request: Request }
     reply?: Reply
     pendingReply?: Promise<Reply>
     exception?: Exception

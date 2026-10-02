@@ -430,11 +430,32 @@ Then(
       assert.equal(this.reply.length, expected.length, diff(expected, this.reply))
     }
 
-    // a call within the process hands the reply over as it is, while one across a
-    // process boundary gets it encoded — a secret, for one, is `<REDACTED>` there
-    const matches = match(this.reply, expected) || match(encoded(this.reply), expected)
+    assert.equal(received(this.reply, expected), true, diff(expected, this.reply))
+  }
+)
 
-    assert.equal(matches, true, diff(expected, this.reply))
+Then(
+  'the reply is received within {int} second(s):',
+  /**
+   * What an event does is done after the call that emits it has replied, so the last call
+   * is made again until its reply is the one expected.
+   *
+   * @param {number} seconds
+   * @param {string} yaml
+   * @this {toa.features.Context}
+   */
+  async function (seconds, yaml) {
+    const expected = parse(yaml)
+    const deadline = Date.now() + seconds * 1000
+
+    while (!received(this.reply, expected) && Date.now() < deadline) {
+      await timeout(POLL)
+      await call.call(this, this.called.endpoint, this.called.request)
+    }
+
+    if (this.exception !== undefined) throw this.exception
+
+    assert.equal(received(this.reply, expected), true, diff(expected, this.reply))
   }
 )
 
@@ -547,6 +568,14 @@ Then(
   }
 )
 
+/**
+ * A call within the process hands the reply over as it is, while one across a process boundary
+ * gets it encoded — a secret, for one, is `<REDACTED>` there.
+ */
+function received(reply, expected) {
+  return match(reply, expected) || match(encoded(reply), expected)
+}
+
 /** The reply as a caller across a process boundary receives it. */
 function encoded(reply) {
   return reply !== null && typeof reply === 'object' && !(reply instanceof Error)
@@ -587,6 +616,7 @@ async function invoke(endpoint, request = {}) {
  * @return {Promise<void>}
  */
 async function call(endpoint, request) {
+  this.called = { endpoint, request }
   this.exception = undefined
   this.reply = undefined
 
