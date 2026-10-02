@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.324](https://github.com/toa-io/toa/compare/v1.0.0-alpha.323...v1.0.0-alpha.324) (2026-10-02)
+
+### Bug Fixes
+
+* **ui:** take devalue 5.9.4, out of a high-severity advisory ([af58da5](https://github.com/toa-io/toa/commit/af58da58663da45684ebd597b0547ad0a9b33e98)), closes [high-severity](https://github.com/hi/issues/severity)
+
+
 # [1.0.0-alpha.323](https://github.com/toa-io/toa/compare/v1.0.0-alpha.322...v1.0.0-alpha.323) (2026-10-01)
 
 **Note:** Version bump only for package @toa.io/extensions.introspection
