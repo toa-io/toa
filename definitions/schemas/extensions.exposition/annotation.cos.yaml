@@ -134,6 +134,11 @@ properties:
             type: string
             minLength: 1
         additionalProperties: false
+      manifest:
+        description: The web manifest whose icons the server shows itself by
+        type: string
+        maxLength: 2048
+        pattern: ^(https://[^/]|http://(localhost|127\.0\.0\.1|\[::1\])(:\d+)?/)
     required:
       - name
     additionalProperties: false
