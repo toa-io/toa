@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.325](https://github.com/toa-io/toa/compare/v1.0.0-alpha.324...v1.0.0-alpha.325) (2026-10-02)
+
+### Features
+
+* **exposition:** route events to a literal realtime key ([d6c4feb](https://github.com/toa-io/toa/commit/d6c4feb448dfdad6235edbc36991c57f7adfa58f))
+
+
 # [1.0.0-alpha.324](https://github.com/toa-io/toa/compare/v1.0.0-alpha.323...v1.0.0-alpha.324) (2026-10-02)
 
 ### Features
