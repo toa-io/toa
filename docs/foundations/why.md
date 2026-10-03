@@ -1,5 +1,5 @@
 # Why Toa
-
+<ok>
 ## The problem
 
 Consider a service that approves an order. The business logic is one line:
@@ -25,9 +25,10 @@ machinery. The machinery is not unique to the order service — every service in
 reimplements the same patterns, each with its own subtle bugs. Worse, the machinery and the logic
 are entangled: the business rule "an order becomes approved" cannot be read, tested, or changed
 without touching transport, storage, and serialization code.
+</ok>
 
 ## The Toa answer
-
+<ok>
 Toa splits a service into two parts:
 
 **Logic** — functions written by the application developer. In Toa they are called *operations*.
@@ -65,33 +66,19 @@ events when the state changes.
 This is what *low-code* means in Toa. Not visual programming, and not "less capable" — it means
 the code that remains is almost entirely business logic, while the mechanics are declared and
 outsourced to the runtime.
+</ok>
 
-## Logic stays pure
+<ok>Notice what the `approve` function above does *not* contain: no database client, no message
+broker, no HTTP. It receives plain values and returns a plain value.</ok>
 
-Notice what the `approve` function above does *not* contain: no database client, no message
-broker, no HTTP. It receives plain values and returns a plain value. Toa requires operations to be
-*genuine*:
+Business logic stays within the boundaries set by the runtime: state and external interactions
+pass through the interfaces it provides.
 
-- **Stateless** — no memory between calls; running N instances once each equals running one
-  instance N times.
-- **Deterministic** — same input, same output.
-- **Autonomous** — no assumptions about the execution environment, such as network access.
-- **Pure** — no side effects other than interactions with the provided state and context.
-- **Non-exceptional** — errors are returned as values, not thrown for control flow:
-
-```javascript
-async function transition (input, order, context) {
-  if (order.status !== 'pending')
-    return new Error('ORDER_NOT_PENDING')
-
-  order.status = 'approved'
-}
-```
-
-These constraints are what make the mechanics *possible to outsource*. Because an operation is
-pure and deterministic, the runtime is free to decide where it runs, how many instances run, when
-a call is retried, and how state and messages move around — without changing the observable
-result.
+<ok>These constraints are what make the mechanics *possible to outsource*.</ok>
+This is what makes Toa *opinionated*: it establishes a common model for application logic,
+state, and communication. Applications follow that model so the runtime can take responsibility
+for their execution. The trade-off is freedom in how the application is structured in exchange
+for less machinery to build and maintain.
 
 ## Eventual consistency as a first-class citizen
 
