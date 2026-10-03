@@ -286,7 +286,7 @@ value corresponding to the Pointer group that must be defined in the Context.
 
 ## Cadence
 
-An operation of the component is called on a cadence, with no schedule stored anywhere:
+An operation of the component is called on a cadence, with nothing stored anywhere:
 
 ```yaml
 # manifest.toa.yaml
@@ -314,6 +314,34 @@ cadence:
   trim:
     cycle: 60
     scope: replica # every replica, for what lives in a process
+```
+
+An operation is called at the moments of a calendar by a schedule, which is a cron expression:
+
+```yaml
+# manifest.toa.yaml
+cadence:
+  report: 0 12 * * 1-5 # noon UTC on weekdays
+  digest:
+    schedule: 0 9 * * 1
+    zone: Europe/Berlin
+```
+
+The operation receives `{ at }` — the moment the call was scheduled for, in milliseconds since the
+epoch. Unlike a pulse, an occurrence is stored, so one that came due while nothing was running is
+made late rather than lost.
+
+An entry of either kind names the region that makes it, where the application is deployed as
+several and the work is one for all of them, and an operation takes a list where it has more than
+one entry:
+
+```yaml
+# manifest.toa.yaml
+cadence:
+  sweep:
+    - cycle: 3600
+    - schedule: 0 3 1 * *
+      region: 0
 ```
 
 `context.delay`, which hands one call over to be made later, comes with the extension. A

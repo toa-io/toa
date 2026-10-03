@@ -2,12 +2,13 @@
 
 Calls a component makes to itself, and calls it puts off.
 
-A **pulse** calls an operation of its own component on a cadence its manifest states. A **delay**
-hands one call over to be made later.
+A **pulse** calls an operation of its own component on a cadence its manifest states. A
+**schedule** calls one at the moments of a calendar. A **delay** hands one call over to be made
+later.
 
-A delay, and a pulse that is the component's rather than each replica's, rest on
+A delay, a schedule, and a pulse that is the component's rather than each replica's, rest on
 [`atomicity`](/connectors/atomicity), which is what keeps two replicas from making one call and
-where that promise is written down. Where it is not configured, neither is made at all. A pulse
+where that promise is written down. Where it is not configured, none of them is made at all. A pulse
 declared [`scope: replica`](#in-one-replica-or-in-every-one) asks nothing of it and is made
 either way.
 
@@ -48,8 +49,8 @@ for.
 
 A cycle is measured from the Unix epoch rather than from a calendar, so `86400` means UTC
 midnight and `3600` the top of the hour. A cycle that is not a divisor of a day lands on a
-boundary that is not any particular time of day. Time zones and calendar months are not
-supported.
+boundary that is not any particular time of day. A time of day in a time zone, a day of the week
+or of the month is what a [schedule](#schedule) states.
 
 ### In one replica, or in every one
 
@@ -88,8 +89,8 @@ what in its share is still due, rather than everything in its share, and a misse
 a delay instead of a day. An operation written the other way loses a day's work to a
 thirty-second rollout.
 
-Where a call has to happen even if nothing was running when it came due, it needs a stored
-schedule: [`delay`](#delay) is one.
+Where a call has to happen even if nothing was running when it came due, it has to be stored: a
+[schedule](#schedule) is, and so is a [`delay`](#delay).
 
 **An interval is called once.** Two calls for one interval need the clocks of two machines to
 disagree and the work to change hands in the same moment, which is a window the width of that
@@ -114,6 +115,115 @@ picking one.
 the day's calls: the cycle is spread over _time_, not over the fleet. Replicas beyond `intervals`
 make none. How much of the fleet calls is what [`scope`](#in-one-replica-or-in-every-one) says,
 and it is the only thing that says it.
+
+## Schedule
+
+```yaml
+# manifest.toa.yaml
+cadence:
+  report: 0 12 * * 1-5 # noon UTC on weekdays
+  digest:
+    schedule: 0 9 * * 1 # nine on Monday morning
+    zone: Europe/Berlin # in Berlin
+    overdue: 3600 # seconds it may be late and still be made
+```
+
+A string is a schedule, where a number is a [pulse](#pulse). It is a cron expression of five
+fields — minute, hour, day of the month, month, day of the week — or of six, where the first is
+seconds.
+
+|            |                                                                               |
+| ---------- | ----------------------------------------------------------------------------- |
+| `schedule` | the cron expression                                                           |
+| `zone`     | the [time zone](https://www.iana.org/time-zones) it is read in, `UTC` by default |
+| `overdue`  | seconds a call may be late and still be made; until the next one by default   |
+| `region`   | the region that makes it; see [Regions](#in-one-region-or-in-every-one)       |
+
+The operation is called with the moment the call was scheduled for:
+
+```javascript
+async function report({ at }, context) {}
+```
+
+`at` is milliseconds since the epoch, and it is the moment of the schedule rather than of the
+call: a report made twenty minutes late is still the report for noon. Compute the period from it
+and not from the clock.
+
+A schedule may name any operation a pulse may.
+
+### What to expect
+
+Each occurrence is a [delayed call](#delay), handed over ahead of its moment, and what a delayed
+call [may and may not do](#what-to-expect-2) holds for it.
+
+**A call is made late rather than lost.** An occurrence is stored as soon as the one before it
+comes due, so a component that is down at noon is called when it is back, with the `at` of noon.
+
+**It is not made once the next one is due.** At most one occurrence is ever owed: a component
+that was away from Friday to Monday is called for Monday and not for Friday, and an outage of a
+month does not come back as thirty calls. `overdue` states a tighter bound, in seconds, and is
+subject to [`discreteness`](#discreteness) as a delay's is.
+
+**An occurrence is lost where the component did not run at all** between the one before it and
+its own moment. Nothing was there to store it.
+
+**A call may be made more than once**, so where a second one would cost something the operation
+refuses it by `at`.
+
+**Nothing keeps a call from being made while the one before it is running.** A pulse skips an
+interval its work did not fit in; a schedule does not.
+
+**A schedule changed or removed may be called once more**, at the moment it had already been
+stored for.
+
+**Seconds are served as coarsely as delays are.** An occurrence closer than `discreteness` to the
+one before it is made at the next pass rather than at its moment.
+
+## Several entries
+
+An operation takes a list where it has more than one entry, of either kind:
+
+```yaml
+# manifest.toa.yaml
+cadence:
+  sweep:
+    - cycle: 3600 # what is due, every hour
+    - schedule: 0 3 1 * * # and everything, on the first of the month
+```
+
+The entries are independent of one another, and nothing keeps their calls apart. An operation
+given both kinds is called with `{ n, i }` by one and `{ at }` by the other. Two schedules of one
+operation that fall on the same moment are one call.
+
+## In one region, or in every one
+
+An application deployed as [several regions](/extensions/convergence) has every region make every
+pulse and every schedule, each for itself. An entry that is work for the whole application names
+the region that makes it, by rank:
+
+```yaml
+# manifest.toa.yaml
+cadence:
+  invoice:
+    schedule: 0 6 1 * *
+    region: 0 # once, however many regions there are
+  digest:
+    - schedule: 0 9 * * 1
+      zone: Europe/Berlin
+      region: 0
+    - schedule: 0 9 * * 1
+      zone: America/New_York
+      region: 1
+```
+
+**An entry that names a rank no region has is never made**, and nothing says so: a deployment
+reads only its own declaration. An application that is one place is rank `0`.
+
+A region that is gone has its entries made by the one that
+[takes its delayed calls over](#regions), by the same setting.
+
+`region` is not stated beside `scope: replica`: what lives in a process is that process's own in
+every region.
 
 ## Delay
 
@@ -288,7 +398,8 @@ for the call, and a deployment makes the calls of the region it is. So there is 
 for this to be right, and a single-region application never meets it.
 
 **`regions` is how a region that is gone is taken over.** Redeploy a surviving region naming the
-lost one's rank beside its own, and it makes both:
+lost one's rank beside its own, and it makes both — the delayed calls of the lost region, and the
+pulses and schedules [declared for it](#in-one-region-or-in-every-one):
 
 ```yaml
 cadence:

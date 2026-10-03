@@ -258,6 +258,10 @@ times the replicas — and briefly more while a rollout has two sets of them up.
 `delayed` is calls handed over to be made later, `dispatched` is those made, `expired` is those
 dropped for passing their `overdue`. What is still waiting is the residue of the three.
 
+An occurrence of a schedule is a delayed call and is counted as one, under the component that
+declares it: `dispatched` where it was made, `expired` where the next one came due first. It is
+not counted in `delayed`, which is what `context.delay` was called for.
+
 `toa.cadence.scans` is the pass over delayed calls. A pass that outlives its interval takes every
 pass after it, and nothing is dispatched while that lasts.
 
