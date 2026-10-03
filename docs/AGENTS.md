@@ -15,3 +15,9 @@ immutable and must not be edited or deleted. Preserve the tags and their content
 
 Text enclosed in `((...))` is an editorial remark to address. Make the necessary changes,
 then remove the remark once it has been addressed. Approved content remains immutable.
+
+## Deferred notes
+
+Text enclosed in `<todo>...</todo>` contains notes or guidance for future work. Leave these
+notes and their contents unchanged, and do not act on them unless the user explicitly asks.
+Routine requests to process files do not activate these notes.
