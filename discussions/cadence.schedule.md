@@ -124,8 +124,9 @@ cadence:
 4. **The extension.** A tenant per schedule entry, in every replica of the component that declares
    it, which keeps the next occurrence stored. An entry whose `region` is not one of the ranks this
    deployment makes builds nothing, pulse or schedule.
-5. **Documentation.** The cadence readme gains the schedule, the region and the list; the component
-   declaration reference gains the three; the convergence readme points to `region`.
+5. **Documentation.** The cadence readme gains the schedule, the region and the list, and the
+   convergence readme points to `region`. The component declaration reference loses what it
+   said of cadence and of continuity: what an extension declares is in its own readme.
 
 ## Decisions
 

@@ -1,0 +1,26 @@
+# an entry of a cadence declaration that states a cycle
+type: object
+properties:
+  cycle:
+    description: Seconds one whole cycle takes
+    type: integer
+    minimum: 1
+  intervals:
+    description: >
+      Intervals the cycle is split into. The gap between calls is `cycle / intervals`,
+      and the operation is told which interval it is running for.
+    type: integer
+    minimum: 1
+  scope:
+    description: >
+      Whose work this is: the component's, which one replica makes each call of, or every
+      replica's, for what lives inside a process.
+    enum: [group, replica]
+  region:
+    description: >
+      The rank of the region that makes the calls, where the work is one for an application
+      deployed as several. Every region makes them where none is stated.
+    type: integer
+    minimum: 0
+required: [cycle, intervals, scope]
+additionalProperties: false

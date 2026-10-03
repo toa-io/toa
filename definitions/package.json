@@ -32,7 +32,8 @@
   "dependencies": {
     "@toa.io/generic": "1.0.0-alpha.311",
     "@toa.io/pointer": "1.0.0-alpha.311",
-    "@toa.io/schemas": "1.0.0-alpha.311"
+    "@toa.io/schemas": "1.0.0-alpha.311",
+    "croner": "10.0.1"
   },
   "scripts": {
     "transpile": "tsc",

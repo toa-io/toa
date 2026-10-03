@@ -1,25 +1,12 @@
-# manifest.toa.yaml cadence declaration: the operations called on a cadence
+# manifest.toa.yaml cadence declaration: the operations called on a cadence or at the moments
+# of a calendar, each by the entries it was given. What an entry may state is its kind's own
+# schema, `pulse` or `schedule`.
 type: object
 propertyNames:
   pattern: ^[a-zA-Z]+([_a-zA-Z0-9]*[a-zA-Z0-9]+)?$
 patternProperties:
   ".*":
-    type: object
-    properties:
-      cycle:
-        description: Seconds one whole cycle takes
-        type: integer
-        minimum: 1
-      intervals:
-        description: >
-          Intervals the cycle is split into. The gap between calls is `cycle / intervals`,
-          and the operation is told which interval it is running for.
-        type: integer
-        minimum: 1
-      scope:
-        description: >
-          Whose work this is: the component's, which one replica makes each call of, or every
-          replica's, for what lives inside a process.
-        enum: [group, replica]
-    required: [cycle]
-    additionalProperties: false
+    type: array
+    minItems: 1
+    items:
+      type: object

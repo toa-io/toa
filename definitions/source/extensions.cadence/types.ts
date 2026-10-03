@@ -1,11 +1,20 @@
-/** What one component declares under `cadence:`, by the operation each one calls. */
-export type Declaration = Record<string, Pulse>
+/** What one component declares under `cadence:`, by the operation each entry calls. */
+export type Declaration = Record<string, Entry[]>
+
+/** One way an operation is called: on a cadence, or at the moments of a calendar. */
+export type Entry = Pulse | Schedule
 
 /**
- * What a manifest may state: a whole pulse, one with what it leaves to the default left out,
- * or the cycle alone.
+ * What a manifest may state for an operation: one entry or a list of them, each a whole entry,
+ * one with what it leaves to the default left out, or its cycle or its expression alone.
  */
-export type Declared = Record<string, number | (Partial<Pulse> & { cycle: number })>
+export type Declared = Record<string, Stated | Stated[]>
+
+export type Stated =
+  | number
+  | string
+  | (Partial<Pulse> & { cycle: number })
+  | (Partial<Schedule> & { schedule: string })
 
 export interface Pulse {
   /** seconds one whole cycle takes */
@@ -19,6 +28,26 @@ export interface Pulse {
    * is every replica's own, for what lives inside a process.
    */
   scope: Scope
+
+  /** the rank of the region that makes the calls; every region makes them where absent */
+  region?: number
+}
+
+export interface Schedule {
+  /** a cron expression of five fields, or of six where the first is seconds */
+  schedule: string
+
+  /** the time zone the expression is read in */
+  zone: string
+
+  /**
+   * Seconds a call may be late and still be made. Absent, it is made until the next one comes
+   * due, so that at most one occurrence is ever owed.
+   */
+  overdue?: number
+
+  /** the rank of the region that makes the calls; every region makes them where absent */
+  region?: number
 }
 
 export type Scope = 'group' | 'replica'
