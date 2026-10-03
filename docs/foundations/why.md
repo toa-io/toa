@@ -8,12 +8,12 @@ Consider a service that approves an order. The business logic is one line:
 order.status = 'approved'
 ```
 
-Now consider what it takes to run that line in a real distributed system:
+Running that line in a real system also requires the service to:
 
 - receive the request over some transport and deserialize it,
 - validate the request against a schema,
 - load the current state of the order from a database,
-- handle the case where another process modified the order concurrently,
+- handle concurrent modifications to the order,
 - persist the new state, with versioning and timestamps,
 - publish an "order approved" event so other services can react,
 - reply to the caller — or report a failure in a way the caller can handle,

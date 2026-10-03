@@ -2,7 +2,7 @@
 
 Work in this directory develops documentation that explains what Toa is: the runtime's
 foundational concepts, its main mechanisms, and how they fit together. The goal is conceptual
-understanding, not teaching readers how to use Toa.
+understanding, not teaching readers how to use it.
 
 # Routines
 
@@ -21,3 +21,7 @@ then remove the remark once it has been addressed. Approved content remains immu
 Text enclosed in `<todo>...</todo>` contains notes or guidance for future work. Leave these
 notes and their contents unchanged, and do not act on them unless the user explicitly asks.
 Routine requests to process files do not activate these notes.
+
+# Process
+
+Commit or push changes only when the user explicitly requests it.
