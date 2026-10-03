@@ -132,6 +132,14 @@ A string is a schedule, where a number is a [pulse](#pulse). It is a cron expres
 fields — minute, hour, day of the month, month, day of the week — or of six, where the first is
 seconds.
 
+An expression that begins with `*` is quoted, because YAML reads a leading `*` as its own:
+
+```yaml
+# manifest.toa.yaml
+cadence:
+  poll: '*/5 * * * *' # every five minutes
+```
+
 |            |                                                                               |
 | ---------- | ----------------------------------------------------------------------------- |
 | `schedule` | the cron expression                                                           |

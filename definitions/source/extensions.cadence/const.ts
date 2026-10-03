@@ -48,7 +48,12 @@ export const REGIONS = 'TOA_CADENCE_REGIONS'
 export function regions(): number[] {
   const declared = environment.get(REGIONS)
 
-  if (declared === undefined) return [Number(environment.get(REGION) ?? 0)]
+  if (declared === undefined) return [rank()]
 
   return declared.split(' ').map(Number)
+}
+
+/** The rank of the region this deployment is, which is zero where it is no region at all. */
+export function rank(): number {
+  return Number(environment.get(REGION) ?? 0)
 }

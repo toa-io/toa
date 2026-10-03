@@ -119,12 +119,13 @@ cadence:
    read.
 2. **Deployment.** `cadence.regions` is given to every composition, and not to the metronome alone,
    so that what a deployment makes of other regions' work is one setting.
-3. **The metronome.** An operation that stores a call under an id its caller derived, at a moment
-   its caller states, and leaves a row already there as it is. `delay` is unchanged.
+3. **The metronome.** Nothing. An occurrence is stored by the operation every component has for
+   finding a record or making it, under an id its caller derived; `delay` is unchanged.
 4. **The extension.** A tenant per schedule entry, in every replica of the component that declares
    it, which keeps the next occurrence stored. An entry whose `region` is not one of the ranks this
    deployment makes builds nothing, pulse or schedule.
-5. **Documentation.** The cadence readme gains the schedule, the region and the list, and the
+5. **Boot.** A tenant is torn down before the producers of its own component, as a receiver is.
+6. **Documentation.** The cadence readme gains the schedule, the region and the list, and the
    convergence readme points to `region`. The component declaration reference loses what it
    said of cadence and of continuity: what an extension declares is in its own readme.
 
@@ -173,6 +174,14 @@ component write one row between them without agreeing on who does. Asking an `at
 writes that find the row there, and would make a schedule depend on the component's replicas
 agreeing, which a delayed call does not.
 
+**A tenant closes before its component stops serving.** A tenant and the producers of its
+component were siblings under the composition, torn down together. The dispatcher writes down the
+calls it has made as it closes, through the component it runs beside, and where that component had
+already gone the write waited for a reply nothing was left to send: a shutdown that never ended,
+within a pass of any call being made. Delayed calls are rare enough against a pass for it to have
+gone unseen; a schedule of every second meets it at every shutdown. A receiver already waits for
+its producers for the same reason, and a tenant now does.
+
 **Late until the next occurrence, where nothing is stated.** A delay has no default for `overdue`
 because nothing knows whether a late call is still the right call. A schedule knows one thing a
 delay does not: when the next call is. So an occurrence is owed until the next one comes due and
@@ -220,8 +229,7 @@ the work done once reads `context.region` in the operation and returns.
 1. The discussion and the documentation.
 2. The scenarios.
 3. The declaration: the two shapes, the list, `region`, and what is refused.
-4. The metronome's operation.
-5. The tenant, and `region` for a pulse.
+4. The tenant, `region` for a pulse, and the order a composition is torn down in.
 
 ## Verification
 
@@ -242,10 +250,8 @@ behaves as it does today. The declaration the extension is given changes shape â
 operation â€” which nothing outside the runtime reads.
 
 A row of a schedule is a row of a delayed call: nothing is added to what is stored, and a
-metronome of the release before dispatches one as it does any other. A component of this release
-against a metronome of the one before has no operation to hand an occurrence over to; the handing
-over is retried until there is one, so a rollout of the two in either order loses nothing that was
-further out than the rollout took.
+metronome of the release before dispatches one as it does any other. So a
+rollout of the two in either order loses nothing.
 
 `TOA_CADENCE_REGIONS` reaching a composition changes nothing for one that states no `region`.
 

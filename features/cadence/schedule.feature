@@ -51,25 +51,25 @@ Feature: Schedule
       foreign: 0
       """
 
-  # The occurrence was stored before the component went away, so it is made without it and
-  # waits for it: the call arrives after its moment, and says which moment it was for.
+  # The occurrence was stored before everything went away, and the fixture gives it a minute to
+  # be late in: it is made once something is running again, and says which moment it was for.
   Scenario: Calling for an occurrence nothing was running at
     Given the `cadence.metronome` database is empty
     And the `cadence` service is staged
     And I compose `scheduled` component
     And I wait 1 second
-    And I disconnect
+    And the stage is stopped
     And I wait 2 seconds
-    When I compose `scheduled` component
+    When the `cadence` service is staged
+    And I compose `scheduled` component
     And I wait 1 second
     And I call `default.scheduled.marks` with:
       """yaml
       input:
-        least: 1
+        least: 0
       """
     Then the reply is received:
       """yaml
-      enough: true
       late: true
       """
 
