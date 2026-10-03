@@ -69,10 +69,11 @@ outsourced to the runtime.
 </ok>
 
 <ok>Notice what the `approve` function above does *not* contain: no database client, no message
-broker, no HTTP. It receives plain values and returns a plain value.</ok>
+broker, no HTTP. It receives plain values and returns a plain value.
 
 Business logic stays within the boundaries set by the runtime: state and external interactions
 pass through the interfaces it provides.
+</ok>
 
 <ok>These constraints are what make the mechanics *possible to outsource*.</ok>
 This is what makes Toa *opinionated*: it establishes a common model for application logic,
@@ -85,57 +86,3 @@ for less machinery to build and maintain.
 Distributed systems are eventually consistent by nature: independent services with independent
 storage cannot share a global transaction without giving up the very properties — autonomy,
 availability, scalability — that made them separate services in the first place.
-
-Most frameworks treat this as an unfortunate detail the developer must paper over. Toa instead
-builds on it:
-
-- Each component owns its state exclusively; no other component can touch it.
-- Components integrate through *events*: when a component's state changes, the runtime emits an
-  event; other components declare *receivers* to react to it.
-
-```yaml
-# the workspaces component reacts to an event of the epics component
-receivers:
-  epics.closed: destroy
-```
-
-- Communication is asynchronous and reliable: messages are acknowledged and redelivered, and
-  operations are constrained so that redelivery is safe.
-
-The system as a whole converges: every state change eventually propagates to everyone who
-declared an interest in it, and the developer writes no coordination code along the way.
-
-## Design principles
-
-The rest of the documentation repeatedly returns to a few principles, so they are worth naming
-up front:
-
-1. **Declarations over code.** If something can be expressed as data — schemas, endpoints,
-   access policies, event bindings — it is declared in YAML, validated at startup, and used by
-   the runtime, tooling, and documentation alike.
-2. **The runtime owns the mechanics.** State persistence, concurrency, transport, validation,
-   discovery, deployment: all replaceable implementations of runtime abstractions, invisible
-   to the logic.
-3. **Uniform interfaces.** Every operation, local or remote, is called the same way; every
-   message has the same shape (see [Communication](../concepts/communication.md)). Uniformity is
-   what makes transparent discovery, in-memory shortcuts, and multi-protocol transmission
-   possible.
-4. **Everything is replaceable.** Storages, protocols, languages ("bridges"), and even core
-   behaviors are connectors and extensions behind contracts. Built-in implementations are just
-   defaults.
-
-## Trade-offs
-
-Toa is opinionated, and the opinions have a price:
-
-- **No shared transactions across components.** If two components must change together
-  atomically, they are probably one component.
-- **Operations are constrained.** Code that wants to open sockets, keep in-process caches, or
-  throw exceptions across boundaries is fighting the model. Escape hatches exist (unmanaged
-  operations, origins), but they are explicit and visible.
-- **Strong conventions.** File layout, naming, and manifests follow the runtime's rules; the
-  payoff is that every Toa component looks familiar, and tooling works everywhere.
-
----
-
-Next: [The Big Picture](overview.md) — the shape of a whole Toa application.
