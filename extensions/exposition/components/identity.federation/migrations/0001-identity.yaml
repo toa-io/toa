@@ -1,0 +1,13 @@
+# Up to 1.0.0-alpha.256 a credential's id was the id of its Identity, and the record held no
+# `identity`. 1.0.0-alpha.257 reads the Identity from `identity` alone, so such a credential
+# authenticates as nobody, and two of them under one issuer are the same key of
+# `unique_identity`, which `0002-indexes` then fails to make.
+#
+# First, for that reason. A database `0002-indexes` was applied to already, which held at most one
+# such credential under an issuer, has this applied at its next start all the same: each migration
+# is recorded on its own. A record written since 1.0.0-alpha.257 holds `identity`, and is left as
+# it is.
+- update:
+    filter: { identity: { $exists: false } }
+    update:
+      - $set: { identity: '$_id' }
