@@ -8,8 +8,9 @@ understanding, not teaching readers how to use it.
 
 ## Approved content
 
-The user marks approved content with `<ok>...</ok>`. Everything enclosed by these tags is
-immutable and must not be edited or deleted. Preserve the tags and their contents exactly.
+The user marks approved content with `<!--ok-->...<!--/ok-->`. Everything enclosed by these
+comment markers is immutable and must not be edited or deleted. Preserve the markers and their
+contents exactly.
 
 ## Editorial remarks
 
@@ -18,7 +19,7 @@ then remove the remark once it has been addressed. Approved content remains immu
 
 ## Deferred notes
 
-Text enclosed in `<todo>...</todo>` contains notes or guidance for future work. Leave these
+Text enclosed in `<!--todo-->...<!--/todo-->` contains notes or guidance for future work. Leave these
 notes and their contents unchanged, and do not act on them unless the user explicitly asks.
 Routine requests to process files do not activate these notes.
 
