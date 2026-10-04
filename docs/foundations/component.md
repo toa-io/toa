@@ -278,8 +278,3 @@ A component knows nothing about:
 This ignorance is not a limitation; it is the entire point. It is what lets the runtime scale,
 regroup, redeploy, and upgrade the mechanics of the system while the business logic — the part
 that is expensive to get right — stays untouched.
-
----
-
-Next: [Chapter II. Core Concepts](../concepts/operations.md), starting with operations in full
-detail.
