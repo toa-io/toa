@@ -88,6 +88,24 @@ Then(
 )
 
 Then(
+  'the file {path} contains no repeated lines',
+  /**
+   * What wrote the file is more than one of something, and each line is a thing only one of
+   * them should have done.
+   *
+   * @param {string} relative
+   * @this {toa.features.Context}
+   */
+  async function (relative) {
+    const lines = (await read.call(this, relative)).filter((line) => line !== '')
+    const repeated = lines.filter((line, index) => lines.indexOf(line) !== index)
+
+    assert.ok(lines.length > 0, `'${relative}' holds no lines`)
+    assert.deepEqual(repeated, [], `'${relative}' repeats: ${repeated.join(', ')}`)
+  }
+)
+
+Then(
   'nothing under {path} is a link',
   /**
    * What a build context holds is files: a link in one points out of the directory it was

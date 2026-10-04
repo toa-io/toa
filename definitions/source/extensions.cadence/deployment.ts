@@ -22,11 +22,6 @@ export function deployment(_: unknown, annotation?: Annotation | null): Dependen
     { name: 'TOA_CADENCE_DISCRETENESS', value: String(discreteness) }
   ]
 
-  // absent, the metronome makes the calls of the region it is deployed as, which is what a
-  // deployment that has never heard of regions does anyway
-  if (annotation?.regions !== undefined)
-    variables.push({ name: REGIONS, value: annotation.regions.join(' ') })
-
   const service: Service = {
     group: NAMESPACE,
     name: 'metronome',
@@ -35,7 +30,20 @@ export function deployment(_: unknown, annotation?: Annotation | null): Dependen
     variables
   }
 
-  return { services: [service] }
+  // absent, a deployment makes the calls of the region it is deployed as, which is what one
+  // that has never heard of regions does anyway
+  if (annotation?.regions === undefined) return { services: [service] }
+
+  const regions: Variable = { name: REGIONS, value: annotation.regions.join(' ') }
+
+  variables.push(regions)
+
+  /*
+   * Every composition is given it as well as the metronome: a pulse and a schedule that name a
+   * region are made by the components that declare them, and the region that takes over the
+   * delayed calls of one that is gone has to take those over with them.
+   */
+  return { services: [service], variables: { global: [regions] } }
 }
 
 /** The extension is deployed for the sake of `delay`, which nothing has to declare to use. */

@@ -23,7 +23,13 @@ export class Local extends Connector {
   }
 
   public async invoke(endpoint: string, request: Request): Promise<Reply> {
-    this.remote ??= this.locate()
+    // one that could not be found is looked for again by the next call, rather than kept as
+    // the answer: what hands a schedule over calls as it boots, and goes on calling
+    this.remote ??= this.locate().catch((error: unknown) => {
+      this.remote = undefined
+
+      throw error
+    })
 
     return await (await this.remote).invoke(endpoint, request)
   }

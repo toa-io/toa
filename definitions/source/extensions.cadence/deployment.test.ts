@@ -35,3 +35,11 @@ it('should refuse a rank that is not one', () => {
     /Invalid cadence annotation/
   )
 })
+
+it('should give every composition the regions the metronome is given', () => {
+  assert.deepEqual(deployment(null, { regions: [0, 1] }).variables, {
+    global: [{ name: REGIONS, value: '0 1' }]
+  })
+
+  assert.equal(deployment(null, null).variables, undefined)
+})

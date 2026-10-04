@@ -1,31 +1,13 @@
-import { LANES } from '@toa.io/extensions.cadence'
+import { row } from '@toa.io/extensions.cadence'
 
 /**
  * A call to make later. The request carries no query, so the transition is handed a new object.
- *
- * The lane is random, not one this replica owns. An outbox row is written into an owned lane so
- * that in steady state a replica settles its own rows before it ever reads them — but a delayed
- * row has no immediate path to settle, so nothing is gained, and an even spread is what the
- * dispatchers want.
+ * What is stored of it is what `row` says, which a schedule stores as well.
  */
 export function transition(input, entry) {
-  const due = Date.now() + input.interval
+  const { endpoint, interval, overdue, request, trail } = input
 
-  entry.lane = Math.floor(Math.random() * LANES)
-  entry.due = due
-  entry.endpoint = input.endpoint
-
-  // absolute, because the bound is the caller's and a scan reads rows of many callers at once.
-  // No bound is the end of representable time rather than an absent field, so that one
-  // comparison answers for every row
-  entry.expires = input.overdue === null ? Number.MAX_SAFE_INTEGER : due + input.overdue
-
-  // a call that takes no request has none: the entity's `request` is an object where it is
-  // there at all, and a null would not fit it
-  if (input.request !== undefined) entry.request = input.request
-
-  // the chain that asked for the call, absent where the caller unchained it
-  if (input.trail !== undefined) entry.trail = input.trail
+  Object.assign(entry, row({ endpoint, due: Date.now() + interval, overdue, request, trail }))
 
   return entry.id
 }

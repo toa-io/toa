@@ -1,0 +1,25 @@
+# an entry of a cadence declaration that states a schedule
+type: object
+properties:
+  schedule:
+    description: >
+      A cron expression of five fields, or of six where the first is seconds. The operation is
+      told the moment each call was scheduled for.
+    type: string
+  zone:
+    description: The time zone the expression is read in, as the IANA database names it
+    type: string
+  overdue:
+    description: >
+      Seconds a call may be late and still be made. Where none is stated it is made until the
+      next one comes due.
+    type: integer
+    minimum: 0
+  region:
+    description: >
+      The rank of the region that makes the calls, where the work is one for an application
+      deployed as several. Every region makes them where none is stated.
+    type: integer
+    minimum: 0
+required: [schedule, zone]
+additionalProperties: false
