@@ -1,6 +1,7 @@
 import { console } from 'openspan'
 import { Connector, entities } from '@toa.io/core'
-import { LANES, occurrences, rank } from '@toa.io/definitions/extensions.cadence'
+import { occurrences, rank } from '@toa.io/definitions/extensions.cadence'
+import { row } from './row.ts'
 import type { Local } from './Local.ts'
 import type { Locator } from '@toa.io/core'
 import type { Request } from '@toa.io/core/types'
@@ -133,11 +134,12 @@ export class Schedule extends Connector {
 
     const entity = {
       id,
-      lane: Math.floor(Math.random() * LANES),
-      due: at,
-      expires: this.expires(at),
-      endpoint: this.endpoint,
-      request: { input: { at } }
+      ...row({
+        endpoint: this.endpoint,
+        due: at,
+        overdue: this.late(at),
+        request: { input: { at } }
+      })
     }
 
     try {
@@ -162,13 +164,16 @@ export class Schedule extends Connector {
   }
 
   /**
-   * Owed until the next occurrence is due where nothing states a bound, so at most one is ever
-   * waiting and an outage does not come back as every call it covered.
+   * How late the call may be. Owed until the next occurrence is due where nothing states a
+   * bound, so at most one is ever waiting and an outage does not come back as every call it
+   * covered; with no bound only where nothing ever comes after it.
    */
-  private expires(at: number): number {
-    if (this.overdue !== undefined) return at + this.overdue
+  private late(at: number): number | null {
+    if (this.overdue !== undefined) return this.overdue
 
-    return this.next(at) ?? Number.MAX_SAFE_INTEGER
+    const next = this.next(at)
+
+    return next === null ? null : next - at
   }
 }
 
