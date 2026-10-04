@@ -206,15 +206,18 @@ operation that fall on the same moment are one call.
 ## In one region, or in every one
 
 An application deployed as [several regions](/extensions/convergence) has every region make every
-pulse and every schedule, each for itself. An entry that is work for the whole application names
-the region that makes it, by rank:
+pulse and every schedule, each for itself. An entry of either kind that is work for the whole
+application names the region that makes it, by rank:
 
 ```yaml
 # manifest.toa.yaml
 cadence:
+  sweep:
+    cycle: 3600
+    region: 0 # a pulse only region 0 makes
   invoice:
     schedule: 0 6 1 * *
-    region: 0 # once, however many regions there are
+    region: 0 # a schedule made once, however many regions there are
   digest:
     - schedule: 0 9 * * 1
       zone: Europe/Berlin
