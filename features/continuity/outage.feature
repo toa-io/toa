@@ -34,8 +34,7 @@ Feature: Continuity through an outage of what keeps the runs
       """
     And I wait 3 seconds
     And I start docker container `mongodb`
-    And I wait 5 seconds
-    Then the `continued.tally` database holds:
+    Then the `continued.tally` database holds within 30 seconds:
       | _id                              | n |
       | 0a000000000000000000000000000021 | 1 |
       | 0b000000000000000000000000000021 | 1 |
