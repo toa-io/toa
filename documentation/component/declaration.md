@@ -158,6 +158,9 @@ the index holds rather than of what the component can do.
 **A migration is applied once for the database** — not once per replica, not once per start —
 and never again. An index dropped by hand is not made again; write another migration.
 
+A migration added under an id that sorts ahead of one applied already is applied all the same, at
+the next start. Where the database has those already, it runs after them, over what they left.
+
 **A migration must be idempotent.** A replica that dies while applying one has it applied again
 from its first step by whichever replica takes it over.
 
