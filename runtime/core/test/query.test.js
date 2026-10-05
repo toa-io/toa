@@ -160,6 +160,17 @@ describe('criteria', () => {
     )
   })
 
+  it('should throw on a selector that is a property of every object', () => {
+    const instance = new Query(fixtures.samples.simple.properties)
+
+    for (const selector of ['constructor', 'toString', '__proto__'])
+      assert.throws(
+        () => instance.parse({ criteria: `${selector}==1` }),
+        (error) => /not defined/.test(error.message),
+        selector
+      )
+  })
+
   it('should throw on unknown properties', () => {
     const instance = new Query(fixtures.samples.simple.properties)
 

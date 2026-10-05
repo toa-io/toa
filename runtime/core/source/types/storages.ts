@@ -4,7 +4,7 @@ import type { Locator } from '../locator.ts'
 import type { Call, Inbox } from './inbox.ts'
 import type { Row, Storage as Outbox } from './outbox.ts'
 
-/** the RSQL tree `@rsql/parser` produces; a storage translates it into its own dialect */
+/** the RSQL tree `@toa.io/rsql` produces; a storage translates it into its own dialect */
 export interface Node {
   type: 'LOGIC' | 'COMPARISON' | 'SELECTOR' | 'VALUE'
   left?: Node
