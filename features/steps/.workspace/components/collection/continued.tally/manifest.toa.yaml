@@ -30,3 +30,7 @@ operations:
           type: string
         n:
           type: integer
+  # refuses, saying how many times it was asked
+  refuse:
+    errors:
+      - REFUSED

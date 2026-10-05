@@ -74,7 +74,8 @@ Feature: Response
       content-type: application/yaml
 
       code: CODE
-      message: message
+      cause:
+        reason: because
       """
 
   Scenario: Error as MessagePack
@@ -99,5 +100,6 @@ Feature: Response
     And response body contains MessagePack-encoded value:
       """yaml
       code: CODE
-      message: message
+      cause:
+        reason: because
       """

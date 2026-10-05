@@ -1,3 +1,3 @@
 export async function computation() {
-  return new Error('OTHER')
+  return new Error()
 }

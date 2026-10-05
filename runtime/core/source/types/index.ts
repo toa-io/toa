@@ -18,7 +18,7 @@ export type {
   Options,
   Query,
   Reply,
-  RemoteError,
+  CodedError,
   Request,
   Source
 } from './request.ts'

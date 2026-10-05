@@ -37,21 +37,8 @@ describe('of', () => {
     })
   })
 
-  it('should carry the code an operation refused with', () => {
-    const error = Object.assign(new Error(), {
-      code: 'WONT_CREATE',
-      message: 'Volume is out of range'
-    })
-
-    assert.deepEqual(of(new http.UnprocessableEntity(error)), {
-      code: REFUSED,
-      message: 'Volume is out of range',
-      data: { code: 'WONT_CREATE' }
-    })
-  })
-
-  it('should stand the code in for a message the operation did not declare', () => {
-    const error = Object.assign(new Error(), { code: 'WONT_CREATE' })
+  it('should answer with the code an operation refused with', () => {
+    const error = Object.assign(new Error('WONT_CREATE'), { code: 'WONT_CREATE' })
 
     assert.deepEqual(of(new http.UnprocessableEntity(error)), {
       code: REFUSED,

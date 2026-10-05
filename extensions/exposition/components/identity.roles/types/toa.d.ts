@@ -1,7 +1,7 @@
 // Written by `toa types`. Every run rewrites it.
 // What a manifest does not state belongs in a file of your own.
 
-import type { Query, RemoteError } from '@toa.io/core/types'
+import type { CodedError, Query } from '@toa.io/core/types'
 import type { Readable } from 'node:stream'
 
 export interface Entity {
@@ -34,7 +34,7 @@ export type PrincipalInput = {
 }
 
 export interface Component {
-  grant: (request: { input: GrantInput, task?: boolean }) => Promise<unknown | RemoteError<"INACCESSIBLE_SCOPE">>
+  grant: (request: { input: GrantInput, task?: boolean }) => Promise<unknown | CodedError<"INACCESSIBLE_SCOPE">>
   list: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<ListOutput>
   principal: (request: { input: PrincipalInput, task?: boolean }) => Promise<unknown>
   assign: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Entity>

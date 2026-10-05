@@ -12,6 +12,7 @@ import type { Unit, Location } from './workflows/index.ts'
 import type { Entry } from '@toa.io/extensions.storages'
 import type { Remotes } from '../../Remotes.ts'
 import type { Component } from '@toa.io/core'
+import type { CodedError } from '@toa.io/core/types'
 import type { Introspection } from '../../Introspection.ts'
 import type { Output } from '../../io.ts'
 import type { Input } from './types.ts'
@@ -151,13 +152,13 @@ export class Put extends Directive {
       'LIMIT_EXCEEDED',
       () => new http.RequestEntityTooLarge(`Size limit is ${this.limitString}`),
       'LOCATION_UNTRUSTED',
-      () => new http.Forbidden(error.message),
+      () => new http.Forbidden(error.code),
       'LOCATION_LENGTH',
-      () => new http.BadRequest(error.message),
+      () => new http.BadRequest(error.code),
       'LOCATION_UNAVAILABLE',
-      () => new http.NotFound(error.message),
+      () => new http.NotFound(error.code),
       'INVALID_ID',
-      () => new http.BadRequest(error.message),
+      () => new http.BadRequest(error.code),
       error
     )
   }
@@ -181,8 +182,4 @@ interface StoreRequest {
     trust?: Array<string | RegExp>
     attributes?: Record<string, string>
   }
-}
-
-interface CodedError extends Error {
-  code: string
 }

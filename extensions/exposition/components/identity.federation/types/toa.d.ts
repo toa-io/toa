@@ -1,7 +1,7 @@
 // Written by `toa types`. Every run rewrites it.
 // What a manifest does not state belongs in a file of your own.
 
-import type { Query, RemoteError } from '@toa.io/core/types'
+import type { CodedError, Query } from '@toa.io/core/types'
 import type { Secret } from '@toa.io/extensions.configuration'
 import type { FetchInit } from '@toa.io/extensions.fetch'
 import type { Logs, Metrics, Span } from '@toa.io/extensions.telemetry'
@@ -91,9 +91,9 @@ export type DeleteInput = {
 
 export interface Component {
   transit: (request: { input: TransitInput, query?: Query<Entity>, task?: boolean }) => Promise<Entity>
-  create: (request: { input: CreateInput, task?: boolean }) => Promise<unknown | RemoteError<"EXISTS" | "TOKEN" | "TRUST" | "RESPONSE" | "CONFIG" | "NO_TOKEN" | "ISS" | "SUB" | "EXP" | "REPLAY" | "CODE_NOT_ENABLED" | "CODE_SCHEMA">>
-  incept: (request: { input: InceptInput, task?: boolean }) => Promise<InceptOutput | RemoteError<"EXISTS" | "TOKEN" | "TRUST" | "RESPONSE" | "CONFIG" | "NO_TOKEN" | "ISS" | "SUB" | "EXP" | "REPLAY" | "CODE_NOT_ENABLED" | "CODE_SCHEMA">>
-  authenticate: (request: { input: AuthenticateInput, task?: boolean }) => Promise<AuthenticateOutput | RemoteError<"NOT_FOUND" | "TOKEN" | "TRUST" | "RESPONSE" | "CONFIG" | "NO_TOKEN" | "ISS" | "SUB" | "EXP" | "REPLAY" | "CODE_NOT_ENABLED" | "CODE_SCHEMA">>
+  create: (request: { input: CreateInput, task?: boolean }) => Promise<unknown | CodedError<"EXISTS" | "TOKEN" | "TRUST" | "RESPONSE" | "CONFIG" | "NO_TOKEN" | "ISS" | "SUB" | "EXP" | "REPLAY" | "CODE_NOT_ENABLED" | "CODE_SCHEMA">>
+  incept: (request: { input: InceptInput, task?: boolean }) => Promise<InceptOutput | CodedError<"EXISTS" | "TOKEN" | "TRUST" | "RESPONSE" | "CONFIG" | "NO_TOKEN" | "ISS" | "SUB" | "EXP" | "REPLAY" | "CODE_NOT_ENABLED" | "CODE_SCHEMA">>
+  authenticate: (request: { input: AuthenticateInput, task?: boolean }) => Promise<AuthenticateOutput | CodedError<"NOT_FOUND" | "TOKEN" | "TRUST" | "RESPONSE" | "CONFIG" | "NO_TOKEN" | "ISS" | "SUB" | "EXP" | "REPLAY" | "CODE_NOT_ENABLED" | "CODE_SCHEMA">>
   decode: (request: { input: DecodeInput, task?: boolean }) => Promise<DecodeOutput>
   list: (request: { input: ListInput, task?: boolean }) => Promise<unknown>
   delete: (request: { input: DeleteInput, task?: boolean }) => Promise<unknown>

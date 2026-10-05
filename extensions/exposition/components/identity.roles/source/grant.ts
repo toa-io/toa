@@ -24,9 +24,7 @@ function within(role: string, scopes: string[]): boolean {
 
 const MANAGEMENT = 'system:identity:roles'
 
-const ERR_INACCESSIBLE_SCOPE = new (class InaccessibleScopeError extends Error {
-  public readonly code = 'INACCESSIBLE_SCOPE'
-})()
+const ERR_INACCESSIBLE_SCOPE = new Error('INACCESSIBLE_SCOPE')
 
 export interface Input {
   identity: string

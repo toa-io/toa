@@ -82,6 +82,21 @@ Feature: Continuity
       | 0a000000000000000000000000000004 | 1 |
       | 0b000000000000000000000000000004 | 1 |
 
+  Scenario: A refusal is given back with its code and its cause
+    When I call `continued.flow.refused` with:
+      """yaml
+      input:
+        a: 0a000000000000000000000000000009
+        b: 0b000000000000000000000000000009
+        fail: 1
+        made: 1
+      task: true
+      """
+    And I wait 3 seconds
+    Then the `continued.tally` database holds:
+      | _id                              | n |
+      | 0a000000000000000000000000000009 | 1 |
+
   Scenario: A run delivered again after it finished makes nothing
     When I call `continued.flow.run` with:
       """yaml

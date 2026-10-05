@@ -186,10 +186,10 @@ properties:
           output:
             $ref: https://json-schema.org/draft/2019-09/schema
           errors:
-            # what a reply may carry as a code: the error schema allows either
+            # what a reply may carry as a code: the message of the error returned
             type: array
             items:
-              type: [string, integer]
+              type: string
           query:
             type: boolean
         required: [type, scope, bindings]

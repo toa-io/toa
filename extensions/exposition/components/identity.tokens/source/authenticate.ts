@@ -53,14 +53,8 @@ function list(aud: string | unknown[]): string[] {
   return aud.filter((value): value is string => typeof value === 'string')
 }
 
-const ERR_UNRECOGNIZED = new (class UnrecognizedError extends Error {
-  public readonly code = 'UNRECOGNIZED'
-})()
+const ERR_UNRECOGNIZED = new Error('UNRECOGNIZED')
 
-const ERR_AUTHORITY = new (class AuthorityMismatchError extends Error {
-  public readonly code = 'AUTHORITY_MISMATCH'
-})()
+const ERR_AUTHORITY = new Error('AUTHORITY_MISMATCH')
 
-const ERR_TOKEN_REVOKED = new (class TokenRevokedError extends Error {
-  public readonly code = 'TOKEN_REVOKED'
-})()
+const ERR_TOKEN_REVOKED = new Error('TOKEN_REVOKED')

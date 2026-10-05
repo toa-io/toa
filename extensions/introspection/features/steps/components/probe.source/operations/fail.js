@@ -1,8 +1,3 @@
 export function computation(input) {
-  return NOPE
+  return new Error('NOPE')
 }
-
-const NOPE = Object.create(Error.prototype, {
-  code: { value: 'NOPE' },
-  message: { value: 'declined on purpose', enumerable: true }
-})

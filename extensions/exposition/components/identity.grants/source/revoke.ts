@@ -30,9 +30,7 @@ export class Transition implements Operation {
   }
 }
 
-const ERR_NOT_FOUND = new (class NotFoundError extends Error {
-  public readonly code = 'NOT_FOUND'
-})()
+const ERR_NOT_FOUND = new Error('NOT_FOUND')
 
 interface Input {
   authority: string

@@ -25,7 +25,7 @@ export interface Explanation {
   stream?: string
   input?: JSONSchema | null
   output?: JSONSchema | null
-  errors?: Array<string | number>
+  errors?: string[]
 }
 
 export interface Definition extends Explanation {

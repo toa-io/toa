@@ -482,6 +482,22 @@ Then(
 )
 
 Then(
+  'the error carries nothing but:',
+  /**
+   * What a caller reads from an error by copying it: its own enumerable properties.
+   *
+   * @param {string} yaml
+   * @this {toa.features.Context}
+   */
+  function (yaml) {
+    if (this.exception !== undefined) throw this.exception
+
+    assert.equal(this.reply instanceof Error, true, 'Reply is not an error')
+    assert.deepEqual({ ...this.reply }, parse(yaml))
+  }
+)
+
+Then(
   'the reply stream is received:',
   /**
    * @param {string} yaml

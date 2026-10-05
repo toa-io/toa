@@ -116,7 +116,7 @@ it('should check revocation of an aged custom token', async () => {
 
   const result: any = await authenticate.execute({ authority, credentials })
 
-  assert.deepStrictEqual(result.code, 'TOKEN_REVOKED')
+  assert.deepStrictEqual(result.message, 'TOKEN_REVOKED')
 })
 
 function secret(value: string): Secret {

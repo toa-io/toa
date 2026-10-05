@@ -1,11 +1,5 @@
 export function transition(input, entry) {
-  if (input.name === 'return_error') {
-    const e = new Error()
-
-    e.code = 0
-
-    return e
-  }
+  if (input.name === 'return_error') return new Error('0')
 
   return Object.assign(entry, input)
 }

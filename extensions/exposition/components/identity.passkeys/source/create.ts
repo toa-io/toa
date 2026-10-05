@@ -67,13 +67,9 @@ export class Transition implements Operation {
   }
 }
 
-const ERR_FAILED = new (class FailedError extends Error {
-  public readonly code = 'FAILED'
-})()
+const ERR_FAILED = new Error('FAILED')
 
-const ERR_INVALID = new (class InvalidError extends Error {
-  public readonly code = 'INVALID'
-})()
+const ERR_INVALID = new Error('INVALID')
 
 export interface Input extends RegistrationResponseJSON {
   authority: string

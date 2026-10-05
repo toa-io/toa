@@ -1,13 +1,13 @@
 import * as schemas from '@toa.io/schemas'
 import { assertSecrets } from '@toa.io/definitions/extensions.configuration'
 import { configured } from './lib/map.ts'
-import { UnknownComponentError } from './lib/errors.ts'
+import { ERR_UNKNOWN_COMPONENT } from './lib/errors.ts'
 import type { Schema } from '@toa.io/schemas'
 
 export async function transition(input: Input, entry: Entity): Promise<Entity | Error> {
   const known = configured(input.component)
 
-  if (known === undefined) return new UnknownComponentError(input.component)
+  if (known === undefined) return ERR_UNKNOWN_COMPONENT
 
   const configuration = structuredClone(input.configuration)
 
@@ -17,7 +17,8 @@ export async function transition(input: Input, entry: Entity): Promise<Entity | 
     schema.validate(configuration)
     assertSecrets(known.schema, configuration)
   } catch (error) {
-    return new InvalidConfigurationError((error as Error).message)
+    // what the schema said of it is what whoever wrote the configuration has to read
+    return new Error('INVALID_CONFIGURATION', { cause: (error as Error).message })
   }
 
   entry.component = input.component
@@ -26,10 +27,6 @@ export async function transition(input: Input, entry: Entity): Promise<Entity | 
   entry.originator = input.originator.id
 
   return entry
-}
-
-class InvalidConfigurationError extends Error {
-  public readonly code = 'INVALID_CONFIGURATION'
 }
 
 interface Input {

@@ -37,9 +37,7 @@ export class Effect implements Operation {
   }
 }
 
-const ERR_MISS = new (class MissError extends Error {
-  public readonly code = 'MISS'
-})()
+const ERR_MISS = new Error('MISS')
 
 export interface Input extends Omit<AuthenticationResponseJSON, 'rawId'> {
   authority: string
