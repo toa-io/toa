@@ -4,16 +4,12 @@
 
 ```javascript
 async function transition(input, entity, context) {
-  if (entity.balance < input.amount) return ERR_INSUFFICIENT_FUNDS // an answer
+  if (entity.balance < input.amount) return new Error('INSUFFICIENT_FUNDS') // an answer
 
   entity.balance -= input.amount
 
   return entity
 }
-
-const ERR_INSUFFICIENT_FUNDS = new (class extends Error {
-  code = 'INSUFFICIENT_FUNDS'
-})()
 ```
 
 ```yaml
@@ -27,8 +23,8 @@ Return an error for an outcome you expect. Never throw for one.
 
 ## An error is an answer
 
-An operation that refuses says so by returning an `Error` with a `code`, and by declaring that
-code in `errors`. Refusing is the operation working, so an error is a value like any other reply:
+An operation that refuses says so by returning an `Error` whose message is the code, and by
+declaring that code in `errors`. Refusing is the operation working, so an error is a value like any other reply:
 it is not logged as a failure, nothing is retried because of it, and nothing is alarmed by it.
 
 A code you have not declared is not an answer your operation makes, and the runtime refuses the
@@ -38,10 +34,7 @@ the code, or return something else.
 Errors are ordinary objects. Anything else enumerable on the error reaches the caller with it:
 
 ```javascript
-const ERR_LOCKED = new (class extends Error {
-  code = 'LOCKED'
-  until = '2026-01-01'
-})()
+return Object.assign(new Error('LOCKED'), { until: '2026-01-01' })
 ```
 
 ## An exception is not
@@ -61,7 +54,7 @@ A call answers with the operation's output, or with the error it returned:
 const reply = await context.remote.accounts.debit({ input, query })
 
 if (reply instanceof Error) {
-  if (reply.code === 'INSUFFICIENT_FUNDS') return ERR_DECLINED
+  if (reply.code === 'INSUFFICIENT_FUNDS') return new Error('DECLINED')
   else return reply // pass it on
 }
 ```
