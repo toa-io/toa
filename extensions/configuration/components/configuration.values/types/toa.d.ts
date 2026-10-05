@@ -74,8 +74,8 @@ export interface Component {
   get: (request: { input: GetInput, task?: boolean }) => Promise<GetOutput>
   fetch: (request: { input: FetchInput, task?: boolean }) => Promise<FetchOutput>
   list: (request: { input?: null, task?: boolean }) => Promise<ListOutput>
-  create: (request: { input: CreateInput, task?: boolean }) => Promise<unknown | CodedError<"UNKNOWN_COMPONENT" | "INVALID_CONFIGURATION">>
-  reset: (request: { input: ResetInput, task?: boolean }) => Promise<unknown | CodedError<"UNKNOWN_COMPONENT">>
+  create: (request: { input: CreateInput, task?: boolean }) => Promise<{} | null | undefined | CodedError<"UNKNOWN_COMPONENT" | "INVALID_CONFIGURATION">>
+  reset: (request: { input: ResetInput, task?: boolean }) => Promise<{} | null | undefined | CodedError<"UNKNOWN_COMPONENT">>
   assign: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Entity>
   ensure: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Entity>
   enumerate: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Entity[]>

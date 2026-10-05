@@ -206,5 +206,9 @@ function resolves(type, operation, importing) {
 
   const codes = operation.errors.map((code) => JSON.stringify(code))
 
-  return `${type}${empty} | CodedError<${codes.join(' | ')}>`
+  // `unknown` takes in every member of a union it is in, the errors among them, so an output
+  // nobody declared is written as what `unknown` is made of, which takes in none
+  const output = type === 'unknown' ? '{} | null | undefined' : type
+
+  return `${output}${empty} | CodedError<${codes.join(' | ')}>`
 }

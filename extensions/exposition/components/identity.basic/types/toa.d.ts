@@ -96,7 +96,7 @@ export type DeleteInput = {
 export interface Component {
   transit: (request: { input: TransitInput, query?: Query<Entity>, task?: boolean }) => Promise<TransitOutput | CodedError<"PRINCIPAL_LOCKED" | "INVALID_USERNAME" | "INVALID_PASSWORD" | "EXISTS">>
   create: (request: { input: CreateInput, task?: boolean }) => Promise<CreateOutput | CodedError<"PRINCIPAL_LOCKED" | "INVALID_USERNAME" | "INVALID_PASSWORD" | "EXISTS">>
-  add: (request: { input: AddInput, task?: boolean }) => Promise<unknown | CodedError<"PRINCIPAL_LOCKED" | "INVALID_USERNAME" | "INVALID_PASSWORD" | "EXISTS">>
+  add: (request: { input: AddInput, task?: boolean }) => Promise<{} | null | undefined | CodedError<"PRINCIPAL_LOCKED" | "INVALID_USERNAME" | "INVALID_PASSWORD" | "EXISTS">>
   incept: (request: { input: InceptInput, task?: boolean }) => Promise<InceptOutput | CodedError<"INVALID_CREDENTIALS">>
   authenticate: (request: { input: AuthenticateInput, task?: boolean }) => Promise<AuthenticateOutput | CodedError<"NOT_FOUND" | "PASSWORD_MISMATCH">>
   check: (request: { input: CheckInput, task?: boolean }) => Promise<CheckOutput>
