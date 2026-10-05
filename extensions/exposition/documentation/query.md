@@ -49,6 +49,17 @@ Undefined `query` denies any query arguments in requests.
 
 Search criteria in [RSQL](https://github.com/jirutka/rsql-parser) format.
 
+| operator                                          | takes                             |
+| ------------------------------------------------- | --------------------------------- |
+| `==` `!=`                                         | one value                         |
+| `<` `<=` `>` `>=`, or `=lt=` `=le=` `=gt=` `=ge=` | one value                         |
+| `=in=` `=out=`                                    | a list: `state=in=(hot,cold)`     |
+| `;` or `and`, `,` or `or`                         | two criteria, `;` binding tighter |
+
+Parentheses group. A value with whitespace or any of `"'();,=!~<>` in it is quoted, and a quote
+inside it is escaped with a backslash: `title=="hot \"tea\""`. Criteria that cannot be read are
+refused with `400 Bad Request`.
+
 A value is read as what the property it selects on holds, and one that cannot be read as that is
 refused with `400 Bad Request` — `volume>abc` where `volume` is a number, or `booked==yes` where
 `booked` is a boolean. A string property takes whatever is written.

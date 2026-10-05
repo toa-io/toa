@@ -14,9 +14,7 @@ export const criteria = (node, dates = NONE) => {
 
 const OPERATORS = {
   LOGIC: {
-    and: '$and',
     ';': '$and',
-    or: '$or',
     ',': '$or'
   },
   COMPARISON: {

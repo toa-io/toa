@@ -39,7 +39,7 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@rsql/parser": "1.6.0",
+    "@toa.io/rsql": "1.0.0",
     "@toa.io/generic": "1.0.0-alpha.311",
     "@toa.io/schemas": "1.0.0-alpha.311",
     "openspan": "1.0.0-alpha.323",
