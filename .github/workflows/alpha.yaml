@@ -4,6 +4,8 @@ name: Publication
 # `dev` one runs, and then the scenarios, against the infrastructure a deployment connects to.
 on:
   pull_request:
+    # a draft is not tested: marking it ready is what starts the run
+    types: [opened, synchronize, reopened, ready_for_review]
     branches:
       - alpha
       - release
@@ -13,6 +15,7 @@ permissions:
 
 jobs:
   unit:
+    if: github.event.pull_request.draft == false
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -38,6 +41,7 @@ jobs:
         run: npm run test:stage
 
   features:
+    if: github.event.pull_request.draft == false
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
