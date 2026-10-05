@@ -75,6 +75,33 @@ Then(
   }
 )
 
+Then(
+  'the {component} database holds within {int} second(s):',
+  /**
+   * For what arrives on a schedule the scenario does not keep — a redelivery after an outage,
+   * which is as far away as whatever went down takes to come back.
+   *
+   * @param {string} id
+   * @param {number} seconds
+   * @param {import('@cucumber/cucumber').DataTable} table
+   */
+  async function (id, seconds, table) {
+    const deadline = Date.now() + seconds * 1000
+
+    while (Date.now() < deadline) {
+      try {
+        return await holds(id, table)
+      } catch (error) {
+        if (!(error instanceof assert.AssertionError)) throw error
+      }
+
+      await new Promise((resolve) => setTimeout(resolve, 250))
+    }
+
+    await holds(id, table)
+  }
+)
+
 Given(
   'the {component} database contains:',
   /**
