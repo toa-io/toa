@@ -180,7 +180,7 @@ itself. A reply of nothing is an empty `content`.
 optional and normalizes to `{}`, which describes nothing, and none is stated for it — an
 application that wants the schema declares the operation's `output`.
 
-An operation that refuses answers a result with `isError: true` carrying its message, not an error
+An operation that refuses answers a result with `isError: true` carrying its code, not an error
 of the protocol: it is something a model reads and may correct itself by.
 
 ## Two revisions

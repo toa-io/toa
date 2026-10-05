@@ -30,13 +30,9 @@ export async function computation(
   else return ERR_PASSWORD_MISMATCH
 }
 
-const ERR_NOT_FOUND = new (class NotFoundError extends Error {
-  public readonly code = 'NOT_FOUND'
-})()
+const ERR_NOT_FOUND = new Error('NOT_FOUND')
 
-const ERR_PASSWORD_MISMATCH = new (class PasswordMismatchError extends Error {
-  public readonly code = 'PASSWORD_MISMATCH'
-})()
+const ERR_PASSWORD_MISMATCH = new Error('PASSWORD_MISMATCH')
 
 interface Input {
   authority: string

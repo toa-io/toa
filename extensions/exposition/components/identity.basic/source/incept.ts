@@ -50,9 +50,7 @@ async function principal(
   await context.remote.identity.roles.principal({ input: { id } })
 }
 
-const INVALID_CREDENTIALS = new (class InvalidCredentialsError extends Error {
-  public readonly code = 'INVALID_CREDENTIALS'
-})()
+const INVALID_CREDENTIALS = new Error('INVALID_CREDENTIALS')
 
 interface Credentials {
   authority: string

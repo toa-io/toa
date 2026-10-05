@@ -86,7 +86,7 @@ it('should encrypt with configured lifetime by default', async () => {
   await timeout(context.configuration.lifetime * 1000)
 
   const thrown: any = await decrypt.execute(encrypted)
-  assert.deepStrictEqual(thrown.code, 'INVALID_TOKEN')
+  assert.deepStrictEqual(thrown.message, 'INVALID_TOKEN')
 })
 
 it('should encrypt with given lifetime', async () => {
@@ -109,7 +109,7 @@ it('should encrypt with given lifetime', async () => {
   await timeout(lifetime * 1000)
 
   const thrown: any = await decrypt.execute(encrypted)
-  assert.deepStrictEqual(thrown.code, 'INVALID_TOKEN')
+  assert.deepStrictEqual(thrown.message, 'INVALID_TOKEN')
 })
 
 it('should encrypt without lifetime INSECURE', async () => {

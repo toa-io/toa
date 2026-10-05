@@ -83,25 +83,13 @@ function invalid(value: string, expressions: RegExp[]): boolean {
   return expressions.some((expression) => !expression.test(value))
 }
 
-const ERR_PRINCIPAL_LOCKED = new (class PrincipalLockedError extends Error {
-  public readonly code = 'PRINCIPAL_LOCKED'
-  public override readonly message = 'Principal username cannot be changed'
-})()
+const ERR_PRINCIPAL_LOCKED = new Error('PRINCIPAL_LOCKED')
 
-const ERR_INVALID_USERNAME = new (class InvalidUsernameError extends Error {
-  public readonly code = 'INVALID_USERNAME'
-  public override readonly message = 'Username is not meeting the requirements'
-})()
+const ERR_INVALID_USERNAME = new Error('INVALID_USERNAME')
 
-const ERR_INVALID_PASSWORD = new (class InvalidPasswordError extends Error {
-  public readonly code = 'INVALID_PASSWORD'
-  public override readonly message = 'Password is not meeting the requirements'
-})()
+const ERR_INVALID_PASSWORD = new Error('INVALID_PASSWORD')
 
-const ERR_EXISTS = new (class ExistsError extends Error {
-  public readonly code = 'EXISTS'
-  public override readonly message = 'Basic credentials already exist'
-})()
+const ERR_EXISTS = new Error('EXISTS')
 
 type Tokens = Context['remote']['identity']['tokens']
 type Keys = Context['remote']['identity']['keys']

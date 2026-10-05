@@ -58,9 +58,9 @@ export function of(exception: unknown): Failure {
 }
 
 /**
- * An operation that declares its errors answers with one rather than throwing, and the
- * reply contract states `{ code, message? }` — the message optional. The number says the
- * operation refused; `data.code` says what it refused with, and is what a caller branches on.
+ * An operation that declares its errors answers with one rather than throwing, and what it
+ * answers with is its code. The number says the operation refused; `data.code` says what it
+ * refused with, and is what a caller branches on.
  */
 function refusal(exception: http.UnprocessableEntity): Failure {
   const body = exception.body
@@ -69,10 +69,8 @@ function refusal(exception: http.UnprocessableEntity): Failure {
     return failure(REFUSED, text(exception, 'Refused'))
 
   const code = body.code as string
-  const message =
-    typeof body.message === 'string' && body.message !== '' ? body.message : code
 
-  return failure(REFUSED, message, { code })
+  return failure(REFUSED, code, { code })
 }
 
 function text(exception: http.Exception, fallback: string): string {

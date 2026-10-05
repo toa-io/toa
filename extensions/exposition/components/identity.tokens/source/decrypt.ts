@@ -249,18 +249,10 @@ interface KeyEntry {
   value: Key | null
 }
 
-const ERR_INVALID_TOKEN = new (class InvalidTokenError extends Error {
-  public readonly code = 'INVALID_TOKEN'
-})()
+const ERR_INVALID_TOKEN = new Error('INVALID_TOKEN')
 
-const ERR_INVALID_KEY = new (class InvalidKeyError extends Error {
-  public readonly code = 'INVALID_KEY'
-})()
+const ERR_INVALID_KEY = new Error('INVALID_KEY')
 
-const ERR_FORGED_KEY = new (class ForgedKeyError extends Error {
-  public readonly code = 'FORGED_KEY'
-})()
+const ERR_FORGED_KEY = new Error('FORGED_KEY')
 
-const ERR_REVOKED_KEY = new (class RevokedKeyError extends Error {
-  public readonly code = 'REVOKED_KEY'
-})()
+const ERR_REVOKED_KEY = new Error('REVOKED_KEY')
