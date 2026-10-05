@@ -29,14 +29,14 @@
     "transpile": "npx tsc"
   },
   "devDependencies": {
-    "@aws-sdk/client-s3": "3.1140.0",
-    "@aws-sdk/lib-storage": "3.1140.0",
+    "@aws-sdk/client-s3": "3.1145.0",
+    "@aws-sdk/lib-storage": "3.1145.0",
     "cloudinary": "2.11.0",
-    "dotenv": "18.0.3"
+    "dotenv": "18.0.5"
   },
   "peerDependencies": {
-    "@aws-sdk/client-s3": "3.1140.0",
-    "@aws-sdk/lib-storage": "3.1140.0",
+    "@aws-sdk/client-s3": "3.1145.0",
+    "@aws-sdk/lib-storage": "3.1145.0",
     "cloudinary": "2.11.0"
   },
   "peerDependenciesMeta": {

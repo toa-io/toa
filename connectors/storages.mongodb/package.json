@@ -25,7 +25,7 @@
     "@toa.io/definitions": "1.0.0-alpha.325",
     "@toa.io/generic": "1.0.0-alpha.311",
     "@toa.io/pointer": "1.0.0-alpha.311",
-    "mongodb": "7.6.0",
+    "mongodb": "7.7.0",
     "openspan": "1.0.0-alpha.323"
   },
   "gitHead": "61c8e74a336385265767e9fd37d49128cb51b17f"

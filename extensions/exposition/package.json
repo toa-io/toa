@@ -64,7 +64,7 @@
   },
   "devDependencies": {
     "@node-rs/bcrypt": "1.10.9",
-    "@simplewebauthn/server": "14.0.2",
+    "@simplewebauthn/server": "14.0.3",
     "@toa.io/agent": "*",
     "@toa.io/extensions.storages": "*",
     "@types/cors": "2.8.19",
