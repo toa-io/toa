@@ -49,7 +49,9 @@ export async function encode(answer: unknown): Promise<Kept> {
 export function decode(kept: Kept): unknown {
   if ('none' in kept) return undefined
   if ('bytes' in kept) return Buffer.from(kept.bytes, 'base64')
-  if ('error' in kept) return Object.assign(new Error(), kept.error)
+  // the code is the message of the error a call answers with, which no copy of it carries
+  if ('error' in kept)
+    return Object.assign(new Error(kept.error.code as string), kept.error)
   if ('response' in kept) return revive(kept.response)
 
   return kept.value
