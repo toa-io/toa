@@ -1,7 +1,7 @@
 // Written by `toa types`. Every run rewrites it.
 // What a manifest does not state belongs in a file of your own.
 
-import type { Query, RemoteError } from '@toa.io/core/types'
+import type { CodedError, Query } from '@toa.io/core/types'
 import type { FetchInit } from '@toa.io/extensions.fetch'
 import type { Stash } from '@toa.io/extensions.stash'
 import type { Logs, Metrics, Span } from '@toa.io/extensions.telemetry'
@@ -89,7 +89,7 @@ export type DescribeOutput = {
 export interface Component {
   transit: (request: { input: TransitInput, query?: Query<Entity>, task?: boolean }) => Promise<Entity>
   register: (request: { input: RegisterInput, task?: boolean }) => Promise<RegisterOutput>
-  describe: (request: { input: DescribeInput, task?: boolean }) => Promise<DescribeOutput | RemoteError<"UNKNOWN_CLIENT">>
+  describe: (request: { input: DescribeInput, task?: boolean }) => Promise<DescribeOutput | CodedError<"UNKNOWN_CLIENT">>
   assign: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Entity>
   ensure: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Entity>
   enumerate: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Entity[]>

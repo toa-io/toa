@@ -106,7 +106,7 @@ export interface Envelope<Input = any, Entity = any> extends Request<Input, Enti
  * An error an operation declares and returns. A call resolves to it rather than throwing:
  * only an exception is thrown.
  */
-export interface RemoteError<Code extends string = string> extends Error {
+export interface CodedError<Code extends string = string> extends Error {
   code: Code
 }
 
@@ -115,6 +115,7 @@ export type Maybe<T> = T | Error
 
 export interface Reply {
   output?: any
-  error?: object
+  /** What travels of an error: the code it was returned with as its message, and its cause. */
+  error?: { code: string; cause?: unknown }
   exception?: Exception
 }

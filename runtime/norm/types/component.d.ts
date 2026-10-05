@@ -12,7 +12,7 @@ export type Operation = {
   description?: string
   input?: any
   output?: any
-  error?: any
+  errors?: string[]
   query?: boolean
   /** served by every process under an address of its own, which a call to it names */
   stateful?: boolean

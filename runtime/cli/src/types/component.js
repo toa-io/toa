@@ -202,9 +202,9 @@ function resolves(type, operation, importing) {
 
   if (operation.errors === undefined) return `${type}${empty}`
 
-  importing('@toa.io/core/types', 'RemoteError')
+  importing('@toa.io/core/types', 'CodedError')
 
   const codes = operation.errors.map((code) => JSON.stringify(code))
 
-  return `${type}${empty} | RemoteError<${codes.join(' | ')}>`
+  return `${type}${empty} | CodedError<${codes.join(' | ')}>`
 }

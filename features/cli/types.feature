@@ -83,7 +83,7 @@ Feature: toa types
     And I have a context
     And my working directory is ./
     When I run `toa types`
-    Then the file ./components/reply.contract/types/toa.d.ts contains exact line '  declared: (request: { input?: null, task?: boolean }) => Promise<DeclaredOutput | RemoteError<"KNOWN">>'
+    Then the file ./components/reply.contract/types/toa.d.ts contains exact line '  declared: (request: { input?: null, task?: boolean }) => Promise<DeclaredOutput | CodedError<"KNOWN">>'
 
   Scenario: Components that belong to no Context
     Given I have a component `dummies.one`

@@ -1,7 +1,7 @@
 // Written by `toa types`. Every run rewrites it.
 // What a manifest does not state belongs in a file of your own.
 
-import type { Query, RemoteError } from '@toa.io/core/types'
+import type { CodedError, Query } from '@toa.io/core/types'
 import type { Secret } from '@toa.io/extensions.configuration'
 import type { FetchInit } from '@toa.io/extensions.fetch'
 import type { Logs, Metrics, Span } from '@toa.io/extensions.telemetry'
@@ -91,10 +91,10 @@ export type IssueOutput = {
 export type RevokeOutput = null
 
 export interface Component {
-  encrypt: (request: { input: EncryptInput, task?: boolean }) => Promise<EncryptOutput | RemoteError<"INACCESSIBLE_SCOPE">>
-  decrypt: (request: { input: DecryptInput, task?: boolean }) => Promise<DecryptOutput | RemoteError<"INVALID_TOKEN" | "INVALID_KEY" | "FORGED_KEY" | "REVOKED_KEY">>
-  authenticate: (request: { input: AuthenticateInput, task?: boolean }) => Promise<AuthenticateOutput | RemoteError<"UNRECOGNIZED" | "AUTHORITY_MISMATCH" | "TOKEN_REVOKED" | "INVALID_TOKEN" | "INVALID_KEY" | "FORGED_KEY" | "REVOKED_KEY">>
-  issue: (request: { input: IssueInput, task?: boolean }) => Promise<IssueOutput | RemoteError<"INACCESSIBLE_SCOPE">>
+  encrypt: (request: { input: EncryptInput, task?: boolean }) => Promise<EncryptOutput | CodedError<"INACCESSIBLE_SCOPE">>
+  decrypt: (request: { input: DecryptInput, task?: boolean }) => Promise<DecryptOutput | CodedError<"INVALID_TOKEN" | "INVALID_KEY" | "FORGED_KEY" | "REVOKED_KEY">>
+  authenticate: (request: { input: AuthenticateInput, task?: boolean }) => Promise<AuthenticateOutput | CodedError<"UNRECOGNIZED" | "AUTHORITY_MISMATCH" | "TOKEN_REVOKED" | "INVALID_TOKEN" | "INVALID_KEY" | "FORGED_KEY" | "REVOKED_KEY">>
+  issue: (request: { input: IssueInput, task?: boolean }) => Promise<IssueOutput | CodedError<"INACCESSIBLE_SCOPE">>
   revoke: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<RevokeOutput>
   assign: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Entity>
   ensure: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Entity>

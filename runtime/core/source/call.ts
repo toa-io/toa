@@ -9,7 +9,7 @@ import * as trail from './trail.ts'
 import type { Transmission } from './transmission.ts'
 import type { Request as Contract } from './contract/request.ts'
 import type { Terms } from './types/bindings.ts'
-import type { Envelope, Options, Request, Source } from './types/request.ts'
+import type { Envelope, Options, Reply, Request, Source } from './types/request.ts'
 
 export class Call extends Connector {
   readonly #transmitter: Transmission
@@ -114,7 +114,7 @@ export class Call extends Connector {
     else {
       if (reply.exception !== undefined) throw reply.exception
 
-      if (reply.error !== undefined) return new RemoteError(reply.error)
+      if (reply.error !== undefined) return new CodedError(reply.error)
       else return reply.output
     }
   }
@@ -237,11 +237,18 @@ function service(source: Source | undefined): string[] | undefined {
   return source !== undefined && 'service' in source ? [source.service] : undefined
 }
 
-// the remote error as a value: every property it carries, and nothing else enumerable
-class RemoteError extends Error {
-  public constructor(error: object) {
-    super()
+/*
+ * The error as a value. `code` and `cause` are its own enumerable properties, so whatever copies
+ * or serialises it — a response body, an answer kept — yields the two and nothing else.
+ */
+class CodedError extends Error {
+  public readonly code: string
 
-    Object.assign(this, error)
+  public constructor(error: NonNullable<Reply['error']>) {
+    super(error.code)
+
+    this.code = error.code
+
+    if (error.cause !== undefined) this.cause = error.cause
   }
 }
