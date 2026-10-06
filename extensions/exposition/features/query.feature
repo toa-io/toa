@@ -95,7 +95,10 @@ Feature: Queries
       exposition:
         /:
           io:output: true
-          GET: enumerate
+          GET:
+            endpoint: enumerate
+            query:
+              sort: volume:asc
       """
     When the following request is received:
       """
@@ -114,6 +117,78 @@ Feature: Queries
       - title: Third pot
         id: a7edded6b2ab47a0aca9508cc4da4138
         volume: 300
+      """
+
+  Scenario: Request with `omit` to a route with no order
+    Given the `pots` is running with the following manifest:
+      """yaml
+      exposition:
+        /:
+          io:output: true
+          GET: enumerate
+      """
+    When the following request is received:
+      """
+      GET /pots/?omit=1&limit=2 HTTP/1.1
+      host: nex.toa.io
+      accept: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      400 Bad Request
+      """
+
+  Scenario: A route to a transition over entries is paged
+    Given the `pots` database contains:
+      | _id                              | title      | volume | VERSION |
+      | 4c4759e6f9c74da989d64511df42d6f4 | First pot  | 100    | 1       |
+      | 99988d785d7d445cad45dbf8531f560b | Second pot | 200    | 1       |
+      | a7edded6b2ab47a0aca9508cc4da4138 | Third pot  | 300    | 1       |
+      | bc6913d317334d76acd07d9f25f73535 | Fourth pot | 400    | 1       |
+    And the `pots` is running with the following manifest:
+      """yaml
+      exposition:
+        /:
+          io:output: true
+          PATCH:
+            endpoint: warm
+            query:
+              criteria: volume>0
+              limit:
+                value: 3
+                range: [1, 3]
+      """
+    When the following request is received:
+      """
+      PATCH /pots/ HTTP/1.1
+      host: nex.toa.io
+      accept: application/yaml
+      content-type: application/yaml
+
+      temperature: 60
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      content-type: application/yaml
+
+      warmed: 3
+      """
+    When the following request is received:
+      """
+      PATCH /pots/?limit=1 HTTP/1.1
+      host: nex.toa.io
+      accept: application/yaml
+      content-type: application/yaml
+
+      temperature: 60
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      content-type: application/yaml
+
+      warmed: 1
       """
 
   Scenario: Request with sorting
