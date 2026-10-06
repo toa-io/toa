@@ -11,7 +11,8 @@ export const query: JSONSchema = {
     search: { type: 'string' },
     sample: { type: 'number' },
     omit: { type: 'integer', minimum: 0 },
-    limit: { type: 'integer', minimum: 0 },
+    // zero is no limit to a storage, which is what a limit is there to rule out
+    limit: { type: 'integer', minimum: 1 },
     sort: {
       type: 'array',
       uniqueItems: true,

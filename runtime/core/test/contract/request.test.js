@@ -114,35 +114,43 @@ describe('schema', () => {
     )
   })
 
-  it('should allow omit, limit only for set observations', () => {
-    const schema = Request.schema({ type: 'transition' }, dummy)
-    const transition = schema.properties.query.properties
+  it('should allow omit, limit only for sets', () => {
+    const query = (type, scope) =>
+      Request.schema({ type, scope }, dummy).properties.query.properties
 
-    assert.strictEqual(transition.omit, undefined)
-    assert.strictEqual(transition.limit, undefined)
+    for (const [type, scope] of [
+      ['transition', 'entry'],
+      ['observation', 'entry'],
+      ['assignment', 'changeset']
+    ]) {
+      assert.strictEqual(query(type, scope).omit, undefined)
+      assert.strictEqual(query(type, scope).limit, undefined)
+    }
 
-    const object = Request.schema(
-      {
-        type: 'observation',
-        scope: 'entry'
-      },
-      dummy
-    ).properties.query.properties
-
-    assert.strictEqual(object.omit, undefined)
-    assert.strictEqual(object.limit, undefined)
-
-    const objects = Request.schema(
-      {
-        type: 'observation',
-        scope: 'entries'
-      },
-      dummy
-    ).properties.query.properties
-
-    assert.notStrictEqual(objects.omit, undefined)
-    assert.notStrictEqual(objects.limit, undefined)
+    for (const type of ['observation', 'transition', 'effect']) {
+      assert.notStrictEqual(query(type, 'entries').omit, undefined)
+      assert.notStrictEqual(query(type, 'entries').limit, undefined)
+    }
   })
+
+  for (const type of ['observation', 'transition', 'effect']) {
+    const fits = (query) =>
+      schemas
+        .schema(Request.schema({ type, scope: 'entries' }, { properties: { id: { type: 'string' } } }))
+        .fit({ input: null, query }) === null
+
+    it(`should bound the set of ${type}`, () => {
+      assert.ok(!fits({ criteria: 'a==1' }))
+      assert.ok(fits({ criteria: 'a==1', limit: 1 }))
+      assert.ok(fits({ ids: ['a'] }))
+      assert.ok(!fits({ criteria: 'a==1', limit: 0 }))
+    })
+
+    it(`should order what ${type} omits`, () => {
+      assert.ok(!fits({ omit: 1, limit: 1 }))
+      assert.ok(fits({ omit: 1, limit: 1, sort: ['a'] }))
+    })
+  }
 })
 
 describe('source', () => {
