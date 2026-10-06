@@ -27,7 +27,7 @@ export class Journal extends Connector {
 
     for (let omit = 0; ; omit += PAGE) {
       const page = (await this.invoke('recall', {
-        query: { criteria: `run=="${run}"`, limit: PAGE, omit }
+        query: { criteria: `run=="${run}"`, sort: ['id'], limit: PAGE, omit }
       })) as Record[]
 
       for (const record of page) {
