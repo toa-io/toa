@@ -1,7 +1,7 @@
 import assert from 'node:assert'
 import { relative, resolve } from 'node:path'
 import { readdir, readFile } from 'node:fs/promises'
-import glob from 'fast-glob'
+import { glob } from 'tinyglobby'
 import { Given, Then } from '@cucumber/cucumber'
 
 Given(
@@ -151,7 +151,8 @@ async function pattern(cwd, path) {
 
   check(paths)
 
-  return paths[0]
+  // a directory is answered with the separator that ends it
+  return paths[0].slice(0, -1)
 }
 
 /**
@@ -174,5 +175,5 @@ const toa = (path) => {
 
 const ROOT = resolve(import.meta.dirname, '../../')
 
-const FILES = { onlyFiles: true, absolute: true }
-const DIRECTORIES = { onlyDirectories: true, absolute: true }
+const FILES = { onlyFiles: true, absolute: true, expandDirectories: false }
+const DIRECTORIES = { onlyDirectories: true, absolute: true, expandDirectories: false }

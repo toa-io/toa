@@ -1,7 +1,7 @@
 import { join } from 'node:path'
 import { createHash } from 'node:crypto'
 import fs from 'node:fs/promises'
-import glob from 'fast-glob'
+import { glob } from 'tinyglobby'
 
 import { definition } from '../../definition.js'
 
@@ -39,6 +39,7 @@ async function list(manifest) {
     cwd: manifest.path,
     dot: true,
     onlyFiles: true,
+    expandDirectories: false,
     // sources a component keeps outside its own directory are its own: what a link points to is
     // hashed as the file it stands for, so changing it changes the version
     followSymbolicLinks: true,

@@ -1,6 +1,6 @@
 import { basename, extname, resolve } from 'node:path'
 import { pathToFileURL } from 'node:url'
-import glob from 'fast-glob'
+import { glob } from 'tinyglobby'
 
 export const operation = (root, name) => load(root, OPERATIONS_DIRECTORY, name)
 export const event = (root, name) => load(root, EVENTS_DIRECTORY, name)
@@ -108,7 +108,7 @@ const OPERATIONS_DIRECTORY = 'operations'
 const GUARDS_DIRECTORY = 'guards'
 const RC_DIRECTORY = 'rc'
 
-const GLOB = { onlyFiles: true, absolute: true }
+const GLOB = { onlyFiles: true, absolute: true, expandDirectories: false }
 
 export const operations = scan(OPERATIONS_DIRECTORY)
 export const events = scan(EVENTS_DIRECTORY)
