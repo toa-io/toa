@@ -213,7 +213,7 @@ omit:
   range: [0, 1000]
 limit:
   value: 10
-  range: [1, 1000]
+  range: [1, 100]
 ```
 
 Constant values can be declared using the shortcut:
@@ -226,14 +226,19 @@ limit: 10
 GET /dummies/?omit=100&limit=10
 ```
 
+A route to any operation of scope `entries` is paged — an Observation, a Transition or an Effect —
+so a request that carries no `limit` reads the route's default, and never the whole collection.
+
+`omit` skips entries of an ordered set: a request that carries it to a route with no [`sort`](#sort),
+declared or sent, is answered `400`.
+
 A route to an operation of scope `stream` takes `limit` as the size of a window, and refuses `omit`:
 the next window is read with the [token](#token) the window ends with. A stream route that declares no
 `limit` answers the whole collection in one reply.
 
 ## Sort
 
-The `sort` query property defines the result order of Observations within an `entries` scope
-(enumeration).
+The `sort` query property defines the order of what an operation of scope `entries` reads.
 It comprises an ordered set of sorting statements delimited by semicolons.
 Each statement consists of an entity property name with an optional sorting direction suffix:
 `:asc`for ascending or `:desc` for descending.
