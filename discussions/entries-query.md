@@ -14,23 +14,24 @@ order.
 2. A transition and an effect over `entries` take them too.
 3. A query over `entries` names its set by `ids`, or bounds it by `limit`. One that does neither is
    refused with `RequestContractException`, whatever the type of the operation.
-4. A transition over `entries` commits the entries its query selected, and no other: a `limit` of
+4. A `limit` is at least one: zero is refused, where a storage would read it as no limit.
+5. A transition over `entries` commits the entries its query selected, and no other: a `limit` of
    two changes two.
 
 **The order of a page**
 
-5. A query that carries `omit` carries `sort`, or is refused with `RequestContractException`.
+6. A query that carries `omit` carries `sort`, or is refused with `RequestContractException`.
 
 **Over HTTP**
 
-6. A route to any operation over `entries` is paged: it takes `omit` and `limit` within the ranges
+7. A route to any operation over `entries` is paged: it takes `omit` and `limit` within the ranges
    it declares, and calls with its default `limit` where a request has none.
-7. A request with `omit` to a route that neither declares nor receives a `sort` is answered `400`.
+8. A request with `omit` to a route that neither declares nor receives a `sort` is answered `400`.
 
 **What is not promised**
 
-8. A `limit` without `sort` selects any entries the criteria match, not the same ones twice.
-9. An assignment has no set: its changeset is written to whatever its query matches, unbounded.
+9. A `limit` without `sort` selects any entries the criteria match, not the same ones twice.
+10. An assignment has no set: its changeset is written to whatever its query matches, unbounded.
 
 ### What a component author does differently
 
@@ -53,7 +54,7 @@ A set named by `ids` needs no `limit`.
 1. **Request contract** (`runtime/core`). The query of an operation whose scope is `entries` keeps
    `omit` and `limit`, requires `limit` or `ids`, and requires `sort` beside `omit`.
 2. **Exposition** (`definitions`). A method is `paged` where its operation's scope is `entries`.
-3. **Components Toa ships.** Whatever calls an operation over `entries` without a bound gets one.
+3. **Continuity.** The journal pages what a run has kept in the order of `id`.
 4. **Documentation.** `documentation/design.md`, the exposition's `query.md`, and the note for the
    version this breaks.
 
@@ -92,6 +93,6 @@ reads.
 ## Compatibility
 
 - **Behaviour.** A call to a transition or an effect over `entries` without `limit` or `ids` is
-  refused. A call with `omit` and no `sort` is refused.
+  refused. A call with `omit` and no `sort` is refused. A `limit` of zero is refused.
 - **HTTP.** A route to a transition or an effect over `entries` reads its default `limit` of
   entries, ten unless declared, where it read every match.

@@ -144,11 +144,15 @@ export class Request extends Contract {
         delete query.properties.token
         delete query.properties.stop
 
-        if (definition.type !== 'observation' || definition.scope !== 'entries') {
+        if (definition.scope !== 'entries') {
           delete query.properties.omit
           delete query.properties.limit
-        } else if (query.required === undefined) query.required = ['limit']
-        else query.required.push('limit')
+        } else {
+          // a set is loaded whole, so its query says how large it may be: by listing it or by a limit
+          query.anyOf = [{ required: ['limit'] }, { required: ['ids'] }]
+          // pages of an unordered set repeat and miss entries
+          query.dependentRequired = { omit: ['sort'] }
+        }
       }
 
       schema.properties.query = query
