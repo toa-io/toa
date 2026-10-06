@@ -37,6 +37,22 @@ operations:
   streamed:
     type: effect
     input: *steps
+  # is refused, raises on its first `fail` attempts, then bumps `a` where the refusal it was
+  # given back is the one it was answered with first, and `b` where it is not
+  refused:
+    type: effect
+    input:
+      type: object
+      properties:
+        a:
+          type: string
+        b:
+          type: string
+        fail:
+          type: integer
+        # which refusal of the tally's it is answered with first
+        made:
+          type: integer
   # not continued: what `run` does, with nothing kept
   plain:
     type: effect
@@ -47,4 +63,5 @@ continuity:
   crossed: 600
   fetched: 600
   stamped: 600
+  refused: 600
   streamed: 600

@@ -81,7 +81,7 @@ Feature: Download external resources
       """
       403 Forbidden
 
-      Location is not trusted
+      LOCATION_UNTRUSTED
       """
 
     # content-length must be 0
@@ -99,7 +99,7 @@ Feature: Download external resources
       """
       400 Bad Request
 
-      Content-Length must be 0 when Content-Location is used
+      LOCATION_LENGTH
       """
 
     # invalid content-location
@@ -115,7 +115,7 @@ Feature: Download external resources
       """
       403 Forbidden
 
-      Location is not trusted
+      LOCATION_UNTRUSTED
       """
 
     # unavailable location
@@ -131,7 +131,7 @@ Feature: Download external resources
       """
       404 Not Found
 
-      Location is not available
+      LOCATION_UNAVAILABLE
       """
 
     Examples:

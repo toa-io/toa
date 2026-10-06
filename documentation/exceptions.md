@@ -4,16 +4,12 @@
 
 ```javascript
 async function transition(input, entity, context) {
-  if (entity.balance < input.amount) return ERR_INSUFFICIENT_FUNDS // an answer
+  if (entity.balance < input.amount) return new Error('INSUFFICIENT_FUNDS') // an answer
 
   entity.balance -= input.amount
 
   return entity
 }
-
-const ERR_INSUFFICIENT_FUNDS = new (class extends Error {
-  code = 'INSUFFICIENT_FUNDS'
-})()
 ```
 
 ```yaml
@@ -27,21 +23,21 @@ Return an error for an outcome you expect. Never throw for one.
 
 ## An error is an answer
 
-An operation that refuses says so by returning an `Error` with a `code`, and by declaring that
-code in `errors`. Refusing is the operation working, so an error is a value like any other reply:
-it is not logged as a failure, nothing is retried because of it, and nothing is alarmed by it.
+An operation that refuses says so by returning an `Error` whose message is the code, and by
+declaring that code in `errors`. Refusing is the operation working, so an error is a value like
+any other reply: it is not logged as a failure, nothing is retried because of it, and nothing is
+alarmed by it.
 
 A code you have not declared is not an answer your operation makes, and the runtime refuses the
 reply rather than passing an unknown code to whoever called. On a local run it says so; declare
-the code, or return something else.
+the code, or return something else. An error with no message has no code at all, and returning
+one is an exception wherever it runs.
 
-Errors are ordinary objects. Anything else enumerable on the error reaches the caller with it:
+What a caller needs besides the code goes in `cause`, and it is the only other thing that reaches
+them — nothing else on the error does. It travels as JSON, so it is a value JSON can hold:
 
 ```javascript
-const ERR_LOCKED = new (class extends Error {
-  code = 'LOCKED'
-  until = '2026-01-01'
-})()
+return new Error('LOCKED', { cause: { until: '2026-01-01' } })
 ```
 
 ## An exception is not
@@ -61,9 +57,19 @@ A call answers with the operation's output, or with the error it returned:
 const reply = await context.remote.accounts.debit({ input, query })
 
 if (reply instanceof Error) {
-  if (reply.code === 'INSUFFICIENT_FUNDS') return ERR_DECLINED
+  if (reply.code === 'INSUFFICIENT_FUNDS') return new Error('DECLINED')
   else return reply // pass it on
 }
+```
+
+The error has a `code`, the `cause` it was returned with, and a `message` that repeats the code.
+In TypeScript it is a `CodedError` of the codes the operation declares:
+
+```typescript
+import type { CodedError } from '@toa.io/core/types'
+
+const reply: Receipt | CodedError<'INSUFFICIENT_FUNDS'> =
+  await context.remote.accounts.debit(request)
 ```
 
 An exception is not a value: it is thrown where the call was made. Catching it is rarely what you
@@ -72,17 +78,17 @@ right.
 
 ## Over HTTP
 
-| what the operation did                             | status                       |
-| -------------------------------------------------- | ---------------------------- |
-| returned an error                                  | `422`, the error as the body |
-| was given a request that does not fit its contract | `400`                        |
-| worked on an entity that is not there              | `404`                        |
-| was given a version that has passed                | `412`                        |
-| lost a race, or refused a duplicate                | `409`                        |
-| was called on a process that holds no such name    | `404`                        |
-| went unanswered before its caller stopped waiting  | `504`                        |
-| could not be reached to take a streamed call       | `503`                        |
-| anything else                                      | `500`                        |
+| what the operation did                             | status                   |
+| -------------------------------------------------- | ------------------------ |
+| returned an error                                  | `422`, `{ code, cause }` |
+| was given a request that does not fit its contract | `400`                    |
+| worked on an entity that is not there              | `404`                    |
+| was given a version that has passed                | `412`                    |
+| lost a race, or refused a duplicate                | `409`                    |
+| was called on a process that holds no such name    | `404`                    |
+| went unanswered before its caller stopped waiting  | `504`                    |
+| could not be reached to take a streamed call       | `503`                    |
+| anything else                                      | `500`                    |
 
 `500` is the answer to a failure nobody described, which includes an operation whose _reply_ does
 not fit what it declares. That is the component's mistake rather than the caller's, so it is not

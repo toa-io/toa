@@ -56,3 +56,22 @@ describe('state', () => {
     doesNotMatch(component({}), /export type State/)
   })
 })
+
+describe('errors', () => {
+  it('should keep the errors of an operation that declares no output', () => {
+    const emitted = component({
+      operations: { refuse: { type: 'computation', errors: ['NOPE'] } }
+    })
+
+    match(
+      emitted,
+      /refuse: \(.*\) => Promise<\{\} \| null \| undefined \| CodedError<"NOPE">>/
+    )
+  })
+
+  it('should leave an undeclared output unknown where no errors are declared', () => {
+    const emitted = component({ operations: { compute: { type: 'computation' } } })
+
+    match(emitted, /compute: \(.*\) => Promise<unknown>/)
+  })
+})

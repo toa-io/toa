@@ -46,8 +46,8 @@ export function of(exception: unknown): Failure {
 }
 
 /**
- * What the call was refused with, which a model reads and may correct itself by: what the
- * operation said, where it said anything, and otherwise what the status means here.
+ * What the call was refused with, which a model reads and may correct itself by: the code the
+ * operation refused with, where it did, and otherwise what the status means here.
  */
 export function refusal(exception: http.ClientError): string {
   const body = exception.body
@@ -55,9 +55,7 @@ export function refusal(exception: http.ClientError): string {
   if (typeof body !== 'object' || body === null || typeof body.code !== 'string')
     return text(exception, REFUSALS[exception.status] ?? 'Refused')
 
-  const message = body.message as unknown
-
-  return typeof message === 'string' && message !== '' ? message : (body.code as string)
+  return body.code as string
 }
 
 /**

@@ -28,7 +28,7 @@
     "@toa.io/generic": "1.0.0-alpha.311",
     "ajv": "8.20.0",
     "ajv-formats": "3.0.1",
-    "fast-glob": "3.3.3"
+    "tinyglobby": "0.2.17"
   },
   "gitHead": "61c8e74a336385265767e9fd37d49128cb51b17f"
 }

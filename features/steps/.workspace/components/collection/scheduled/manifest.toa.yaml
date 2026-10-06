@@ -1,0 +1,67 @@
+name: scheduled
+
+state: ~
+
+cadence:
+  # every second, which is as often as a schedule can say
+  mark: '* * * * * *'
+  # nothing is deployed as rank 7, so neither of these is made
+  foreign:
+    - schedule: '* * * * * *'
+      region: 7
+    - cycle: 1
+      region: 7
+  # owed for a minute, so one that came due while nothing ran is still made
+  overdue:
+    schedule: '* * * * * *'
+    overdue: 60
+  # far enough out to be stored and never made
+  yearly: 0 0 1 1 *
+
+operations:
+  mark:
+    input:
+      type: object
+      properties:
+        at:
+          type: number
+      required:
+        - at
+  overdue:
+    input:
+      type: object
+      properties:
+        at:
+          type: number
+      required:
+        - at
+  foreign:
+    input:
+      type: object
+  yearly:
+    input:
+      type: object
+      properties:
+        at:
+          type: number
+      required:
+        - at
+  marks:
+    input:
+      type: object
+      properties:
+        least:
+          type: number
+      required:
+        - least
+    output:
+      type: object
+      properties:
+        enough:
+          type: boolean
+        consecutive:
+          type: boolean
+        late:
+          type: boolean
+        foreign:
+          type: number

@@ -43,8 +43,9 @@
     "@toa.io/definitions": "1.0.0-alpha.325",
     "@toa.io/generic": "1.0.0-alpha.311",
     "@toa.io/norm": "1.0.0-alpha.325",
-    "dotenv": "18.0.3",
+    "dotenv": "18.0.5",
     "openspan": "1.0.0-alpha.323",
+    "tinyglobby": "0.2.17",
     "yargs": "18.2.0"
   },
   "devDependencies": {

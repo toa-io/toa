@@ -37,3 +37,31 @@ operations:
     description: What it answers where it has nothing to say.
     output:
       type: object
+  caused:
+    output:
+      type: object
+    errors:
+      - KNOWN
+  passed:
+    output:
+      type: object
+    errors:
+      - KNOWN
+  blank:
+    output:
+      type: object
+    errors:
+      - KNOWN
+  fielded:
+    output:
+      type: object
+    errors:
+      - KNOWN
+  extra:
+    output:
+      type: object
+    errors:
+      - KNOWN
+  bare:
+    errors:
+      - KNOWN

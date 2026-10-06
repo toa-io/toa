@@ -7,7 +7,7 @@ export class Reply extends Contract {
   public static override Exception: Refusal =
     ResponseContractException as unknown as Refusal
 
-  public static schema(output?: JSONSchema, errors?: Array<string | number>): JSONSchema {
+  public static schema(output?: JSONSchema, errors?: string[]): JSONSchema {
     const schema: JSONSchema = {
       type: 'object',
       properties: {},
@@ -44,11 +44,10 @@ export class Reply extends Contract {
               code: {
                 enum: errors
               },
-              message: {
-                type: 'string'
-              }
+              cause: {}
             },
-            required: ['code']
+            required: ['code'],
+            additionalProperties: false
           }
 
     return schema

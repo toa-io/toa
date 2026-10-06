@@ -41,7 +41,7 @@ Feature: Octets metadata
       """
       400 Bad Request
 
-      Invalid Content-ID
+      INVALID_ID
       """
 
   Scenario: Content-Attributes

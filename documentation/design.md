@@ -50,6 +50,18 @@ not at all: where any of them has been changed since it was read, or one it crea
 created meanwhile, nothing of the set is written, and the Transition is retried or refused as its
 `concurrency` says.
 
+A set is bounded. An operation over `entries` — a Transition, an Observation or an Effect — is
+called with the `ids` of its set, or with a `limit` on what its `criteria` select; a call with
+neither is refused. `omit` skips entries of an ordered set, so it is refused without `sort`:
+
+```javascript
+await context.local.expire({ query: { criteria: 'due<1700000000000', limit: 256 } })
+await context.local.enumerate({ query: { sort: ['title:asc'], omit: 20, limit: 10 } })
+```
+
+A `limit` without `sort` takes any entries the criteria match. Call again for the rest: a
+Transition that changes what the criteria read finds fewer each time.
+
 A Transition that sets `DISCARD` on its state commits nothing: no write, no event, and its caller
 receives what the algorithm returned. Over `entries`, an entry flagged so is left out of the set,
 and the rest is committed.

@@ -1,6 +1,11 @@
 import { Readable, Transform, pipeline } from 'node:stream'
 import { Connector } from './connector.ts'
-import { codes, SystemException, RequestContractException } from './exceptions.ts'
+import {
+  codes,
+  SystemException,
+  RequestContractException,
+  ResponseContractException
+} from './exceptions.ts'
 import * as parts from './parts.ts'
 import { environment } from '@toa.io/generic'
 import type { Cascade } from './cascade.ts'
@@ -12,7 +17,7 @@ import type { EntitySet } from './entities/set.ts'
 import type { Changeset } from './entities/changeset.ts'
 import type { scope as Scope } from './types/operations.ts'
 import type { Call } from './types/inbox.ts'
-import type { Envelope, Query } from './types/request.ts'
+import type { Envelope, Query, Reply } from './types/request.ts'
 
 /** What an operation acquires for the algorithm to run against. */
 export type Scoped = Entity | EntitySet | Changeset | Readable | null
@@ -208,6 +213,8 @@ export class Operation extends Connector {
     const { request, state } = store
     const reply = await this.#cascade.run(request.input, state)
 
+    if (reply?.error instanceof Error) reply.error = refusal(reply.error)
+
     if (this.#local && !(reply instanceof Readable))
       this.#contracts.reply.fit(reply)
 
@@ -227,6 +234,22 @@ export class Operation extends Connector {
 
     return acquire.call(this.scope, query, this.mutable)
   }
+}
+
+/**
+ * What travels of an error an algorithm returned: its message as the code, and its cause. Made
+ * here rather than where it is sent, because a reply handed over in process is not serialised,
+ * and a caller would read a different error from the same operation.
+ */
+function refusal(error: Error): NonNullable<Reply['error']> {
+  if (error.message === '')
+    throw new ResponseContractException(
+      'an error is returned with its code as the message'
+    )
+
+  return error.cause === undefined
+    ? { code: error.message }
+    : { code: error.message, cause: error.cause }
 }
 
 /**

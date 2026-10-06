@@ -1,7 +1,7 @@
 // Written by `toa types`. Every run rewrites it.
 // What a manifest does not state belongs in a file of your own.
 
-import type { Query, RemoteError } from '@toa.io/core/types'
+import type { CodedError, Query } from '@toa.io/core/types'
 import type { Secret } from '@toa.io/extensions.configuration'
 import type { FetchInit } from '@toa.io/extensions.fetch'
 import type { Logs, Metrics, Span } from '@toa.io/extensions.telemetry'
@@ -94,11 +94,11 @@ export type DeleteInput = {
 }
 
 export interface Component {
-  transit: (request: { input: TransitInput, query?: Query<Entity>, task?: boolean }) => Promise<TransitOutput | RemoteError<"PRINCIPAL_LOCKED" | "INVALID_USERNAME" | "INVALID_PASSWORD" | "EXISTS">>
-  create: (request: { input: CreateInput, task?: boolean }) => Promise<CreateOutput | RemoteError<"PRINCIPAL_LOCKED" | "INVALID_USERNAME" | "INVALID_PASSWORD" | "EXISTS">>
-  add: (request: { input: AddInput, task?: boolean }) => Promise<unknown | RemoteError<"PRINCIPAL_LOCKED" | "INVALID_USERNAME" | "INVALID_PASSWORD" | "EXISTS">>
-  incept: (request: { input: InceptInput, task?: boolean }) => Promise<InceptOutput | RemoteError<"INVALID_CREDENTIALS">>
-  authenticate: (request: { input: AuthenticateInput, task?: boolean }) => Promise<AuthenticateOutput | RemoteError<"NOT_FOUND" | "PASSWORD_MISMATCH">>
+  transit: (request: { input: TransitInput, query?: Query<Entity>, task?: boolean }) => Promise<TransitOutput | CodedError<"PRINCIPAL_LOCKED" | "INVALID_USERNAME" | "INVALID_PASSWORD" | "EXISTS">>
+  create: (request: { input: CreateInput, task?: boolean }) => Promise<CreateOutput | CodedError<"PRINCIPAL_LOCKED" | "INVALID_USERNAME" | "INVALID_PASSWORD" | "EXISTS">>
+  add: (request: { input: AddInput, task?: boolean }) => Promise<{} | null | undefined | CodedError<"PRINCIPAL_LOCKED" | "INVALID_USERNAME" | "INVALID_PASSWORD" | "EXISTS">>
+  incept: (request: { input: InceptInput, task?: boolean }) => Promise<InceptOutput | CodedError<"INVALID_CREDENTIALS">>
+  authenticate: (request: { input: AuthenticateInput, task?: boolean }) => Promise<AuthenticateOutput | CodedError<"NOT_FOUND" | "PASSWORD_MISMATCH">>
   check: (request: { input: CheckInput, task?: boolean }) => Promise<CheckOutput>
   info: (request: { input: InfoInput, task?: boolean }) => Promise<InfoOutput>
   delete: (request: { input: DeleteInput, task?: boolean }) => Promise<unknown>

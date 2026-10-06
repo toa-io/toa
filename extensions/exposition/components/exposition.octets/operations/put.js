@@ -114,25 +114,13 @@ function toURL(location) {
   }
 }
 
-const ERR_UNTRUSTED = new (class LocationUntrustedError extends Error {
-  code = 'LOCATION_UNTRUSTED'
-  message = 'Location is not trusted'
-})()
+const ERR_UNTRUSTED = new Error('LOCATION_UNTRUSTED')
 
-const ERR_LENGTH = new (class LocationLengthError extends Error {
-  code = 'LOCATION_LENGTH'
-  message = 'Content-Length must be 0 when Content-Location is used'
-})()
+const ERR_LENGTH = new Error('LOCATION_LENGTH')
 
-const ERR_UNAVAILABLE = new (class LocationUnavailableError extends Error {
-  code = 'LOCATION_UNAVAILABLE'
-  message = 'Location is not available'
-})()
+const ERR_UNAVAILABLE = new Error('LOCATION_UNAVAILABLE')
 
-const ERR_INVALID_ID = new (class InvalidIdError extends Error {
-  code = 'INVALID_ID'
-  message = 'Invalid Content-ID'
-})()
+const ERR_INVALID_ID = new Error('INVALID_ID')
 
 const ID_RX = /^[a-zA-Z0-9-_]{1,32}$/
 

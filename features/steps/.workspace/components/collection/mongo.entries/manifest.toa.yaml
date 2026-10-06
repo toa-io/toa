@@ -32,3 +32,7 @@ operations:
   # adds one to an entry, and commits none of it
   skip:
     concurrency: none
+  # counts the entries of its set
+  tally:
+    output:
+      type: object

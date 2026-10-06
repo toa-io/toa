@@ -91,3 +91,51 @@ Feature: Reply contract
       """yaml
       code: SILENT
       """
+
+  Scenario: An error is received with its code, its message and its cause
+    Given an environment variable `TOA_ENV` is set to "local"
+    And I compose `reply.contract` component
+    When I call `reply.contract.caused`
+    Then the error is received:
+      """yaml
+      code: KNOWN
+      message: KNOWN
+      cause:
+        until: '2026-01-01'
+      """
+
+  Scenario: An error passed on arrives as it was
+    Given an environment variable `TOA_ENV` is set to "local"
+    And I compose `reply.contract` component
+    When I call `reply.contract.passed`
+    Then the error is received:
+      """yaml
+      code: KNOWN
+      message: KNOWN
+      cause:
+        until: '2026-01-01'
+      """
+
+  Scenario: Nothing but the cause travels with an error
+    Given an environment variable `TOA_ENV` is set to "local"
+    And I compose `reply.contract` component
+    When I call `reply.contract.extra`
+    Then the error carries nothing but:
+      """yaml
+      code: KNOWN
+      """
+
+  Scenario Outline: An error with no message is an exception on a <environment> environment
+    Given an environment variable `TOA_ENV` is set to "<environment>"
+    And I compose `reply.contract` component
+    When I call `reply.contract.<operation>`
+    Then the following exception is thrown:
+      """yaml
+      code: 211
+      """
+
+    Examples:
+      | environment | operation |
+      | local       | blank     |
+      | production  | blank     |
+      | production  | fielded   |

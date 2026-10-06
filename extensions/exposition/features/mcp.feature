@@ -650,7 +650,7 @@ Feature: Model Context Protocol
       result:
         content:
           - type: text
-            text: message
+            text: CODE
         isError: true
         resultType: complete
       """

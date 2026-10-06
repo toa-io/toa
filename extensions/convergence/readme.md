@@ -125,6 +125,9 @@ pump says so, every ten cycles it has owned none.
 convergence: every region holds every region's rows, and each makes the calls of the region it
 is. See [cadence](/extensions/cadence#regions).
 
+**Every region makes every pulse and every schedule**, each for itself, unless the entry
+[names the region](/extensions/cadence#in-one-region-or-in-every-one) that makes it.
+
 **The same components in every region.** A component deployed in one and not another has no
 queue there, so its records cannot be routed; publishing is `mandatory`, so what had nowhere to
 go is logged rather than dropped in silence.

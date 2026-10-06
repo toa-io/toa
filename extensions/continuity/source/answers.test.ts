@@ -21,12 +21,17 @@ it('should give back bytes', async () => {
 })
 
 it('should give back a declared error', async () => {
-  const error = Object.assign(new Error(), { code: 'NOT_FOUND', message: 'none' })
+  const error = Object.assign(new Error('NOT_FOUND'), {
+    code: 'NOT_FOUND',
+    cause: { id: 1 }
+  })
+
   const back = (await kept(error)) as Error & { code: string }
 
   assert.ok(back instanceof Error)
   assert.equal(back.code, 'NOT_FOUND')
-  assert.equal(back.message, 'none')
+  assert.equal(back.message, 'NOT_FOUND')
+  assert.deepEqual(back.cause, { id: 1 })
 })
 
 it('should give back a response whole', async () => {

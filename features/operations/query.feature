@@ -71,6 +71,46 @@ Feature: Query
       - id: 8754448197e64403878fb16d06020f0c
       """
 
+  Scenario: Querying with `=in=` operator and one value
+    Given the `mongo.one` database contains:
+      | _id                              | foo | bar   | VERSION |
+      | 72cf9b0ab0ac4ab2b8036e4e940ddcae | 0   | hello | 1       |
+      | 8754448197e64403878fb16d06020f0c | 0   | world | 1       |
+    And I boot `mongo.one` component
+    When I invoke `enumerate` with:
+      """yaml
+      query:
+        criteria: bar=in=world
+      """
+    Then the reply is received:
+      """
+      - id: 8754448197e64403878fb16d06020f0c
+      """
+
+  Scenario Outline: Querying with `<operator>` operator
+    Given the `mongo.one` database contains:
+      | _id                              | foo | bar   | VERSION |
+      | 72cf9b0ab0ac4ab2b8036e4e940ddcae | 1   | hello | 1       |
+      | 8754448197e64403878fb16d06020f0c | 2   | world | 1       |
+      | 3cfc3860cccf4ab8a806a05548a49c95 | 3   | bye   | 1       |
+    And I boot `mongo.one` component
+    When I invoke `enumerate` with:
+      """yaml
+      query:
+        criteria: foo<operator><bound>
+      """
+    Then the reply is received:
+      """
+      - id: <id>
+      """
+
+    Examples:
+      | operator | bound | id                               |
+      | =lt=     | 2     | 72cf9b0ab0ac4ab2b8036e4e940ddcae |
+      | =le=     | 1     | 72cf9b0ab0ac4ab2b8036e4e940ddcae |
+      | =gt=     | 2     | 3cfc3860cccf4ab8a806a05548a49c95 |
+      | =ge=     | 3     | 3cfc3860cccf4ab8a806a05548a49c95 |
+
   Scenario: Querying with text search
     Given the `mongo.search` database contains:
       | _id                              | foo   | bar   | VERSION |

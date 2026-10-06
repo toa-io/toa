@@ -53,6 +53,8 @@ async function effect(_, context) {
 
 > `Maybe<T> = T | Error`
 
+An error has a `code`, and an operation that returns it refuses with that code.
+
 #### `async put(path: string, stream: Readable, options?: Options): Maybe<Entry>`
 
 ```ts

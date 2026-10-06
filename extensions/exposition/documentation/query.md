@@ -49,6 +49,17 @@ Undefined `query` denies any query arguments in requests.
 
 Search criteria in [RSQL](https://github.com/jirutka/rsql-parser) format.
 
+| operator                                          | takes                             |
+| ------------------------------------------------- | --------------------------------- |
+| `==` `!=`                                         | one value                         |
+| `<` `<=` `>` `>=`, or `=lt=` `=le=` `=gt=` `=ge=` | one value                         |
+| `=in=` `=out=`                                    | a list: `state=in=(hot,cold)`     |
+| `;` or `and`, `,` or `or`                         | two criteria, `;` binding tighter |
+
+Parentheses group. A value with whitespace or any of `"'();,=!~<>` in it is quoted, and a quote
+inside it is escaped with a backslash: `title=="hot \"tea\""`. Criteria that cannot be read are
+refused with `400 Bad Request`.
+
 A value is read as what the property it selects on holds, and one that cannot be read as that is
 refused with `400 Bad Request` — `volume>abc` where `volume` is a number, or `booked==yes` where
 `booked` is a boolean. A string property takes whatever is written.
@@ -202,7 +213,7 @@ omit:
   range: [0, 1000]
 limit:
   value: 10
-  range: [1, 1000]
+  range: [1, 100]
 ```
 
 Constant values can be declared using the shortcut:
@@ -215,14 +226,19 @@ limit: 10
 GET /dummies/?omit=100&limit=10
 ```
 
+A route to any operation of scope `entries` is paged — an Observation, a Transition or an Effect —
+so a request that carries no `limit` reads the route's default, and never the whole collection.
+
+`omit` skips entries of an ordered set: a request that carries it to a route with no [`sort`](#sort),
+declared or sent, is answered `400`.
+
 A route to an operation of scope `stream` takes `limit` as the size of a window, and refuses `omit`:
 the next window is read with the [token](#token) the window ends with. A stream route that declares no
 `limit` answers the whole collection in one reply.
 
 ## Sort
 
-The `sort` query property defines the result order of Observations within an `entries` scope
-(enumeration).
+The `sort` query property defines the order of what an operation of scope `entries` reads.
 It comprises an ordered set of sorting statements delimited by semicolons.
 Each statement consists of an entity property name with an optional sorting direction suffix:
 `:asc`for ascending or `:desc` for descending.

@@ -1,9 +1,11 @@
 name: Test
 
-# Every pull request into `dev` reports, so that the check can be required. One that touches
-# no source finishes at the first step; the rest is what a merge waits for.
+# Every pull request into `dev` that is not a draft reports, so that the check can be required.
+# One that touches no source finishes at the first step; the rest is what a merge waits for.
 on:
   pull_request:
+    # a draft is not tested: marking it ready is what starts the run
+    types: [opened, synchronize, reopened, ready_for_review]
     branches:
       - dev
 
@@ -12,6 +14,7 @@ permissions:
 
 jobs:
   unit:
+    if: github.event.pull_request.draft == false
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1

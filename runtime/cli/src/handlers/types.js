@@ -1,4 +1,4 @@
-import glob from 'fast-glob'
+import { glob } from 'tinyglobby'
 import { dirname, resolve } from 'node:path'
 
 import { components as generate, types as context } from '../types/index.js'
@@ -30,7 +30,7 @@ async function whole(argv) {
 async function parts(patterns) {
   const manifests = await glob(
     patterns.map((pattern) => resolve(pattern, 'manifest.toa.yaml')),
-    { onlyFiles: true, absolute: true }
+    { onlyFiles: true, absolute: true, expandDirectories: false }
   )
 
   if (manifests.length === 0)

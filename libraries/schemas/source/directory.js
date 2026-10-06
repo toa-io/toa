@@ -1,5 +1,5 @@
 import { join, relative } from 'node:path'
-import glob from 'fast-glob'
+import { globSync } from 'tinyglobby'
 import { readFileSync } from 'node:fs'
 import { yaml as jsyaml } from '@toa.io/generic'
 
@@ -9,7 +9,7 @@ import { yaml as jsyaml } from '@toa.io/generic'
  */
 export const readDirectory = (path) => {
   const pattern = join(path, '**', '*' + EXTENSION)
-  const files = glob.sync(pattern, GLOB)
+  const files = globSync(pattern, GLOB)
 
   return files.map(load(path))
 }
@@ -38,4 +38,4 @@ const calculateID = (root, path) => {
 
 const EXTENSION = '.cos.yaml'
 
-const GLOB = { onlyFiles: true, absolute: true }
+const GLOB = { onlyFiles: true, absolute: true, expandDirectories: false }

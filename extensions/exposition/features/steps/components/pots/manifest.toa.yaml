@@ -43,6 +43,15 @@ operations:
         volume: *volume
         temperature: *temperature
       type: object
+  # sets the temperature of every pot of its set
+  warm:
+    concurrency: none
+    input:
+      properties:
+        temperature: *temperature
+      type: object
+    output:
+      type: object
   # safe itself, and what it calls is not: see `features/readonly.feature`
   purge:
     scope: entry

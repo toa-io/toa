@@ -64,10 +64,9 @@ constraints, and principal configuration.
 
 If the credentials are already associated with the Identity, the existing credential is returned.
 
-An Identity can have credentials from multiple issuers and can have multiple subjects from the
-same issuer. The `:credential` segment is the `id` returned by any of these resources. Federation
-resources are provider-independent; issuer-specific authorization flows remain the responsibility
-of the application.
+An Identity can have credentials from multiple issuers, one from each. The `:credential` segment
+is the `id` returned by any of these resources. Federation resources are provider-independent;
+issuer-specific authorization flows remain the responsibility of the application.
 
 ## Passkeys
 

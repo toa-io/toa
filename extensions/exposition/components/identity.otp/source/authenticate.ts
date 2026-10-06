@@ -42,21 +42,13 @@ export async function effect(input: Input, context: Context): Promise<Output | E
   return { identity: { id } }
 }
 
-const ERR_INVALID_CREDENTIALS = new (class InvalidCredentialsError extends Error {
-  public readonly code = 'INVALID_CREDENTIALS'
-})()
+const ERR_INVALID_CREDENTIALS = new Error('INVALID_CREDENTIALS')
 
-const ERR_EXPIRED = new (class ExpiredError extends Error {
-  public readonly code = 'EXPIRED'
-})()
+const ERR_EXPIRED = new Error('EXPIRED')
 
-const ERR_TOO_MANY_ATTEMPTS = new (class TooManyAttemptsError extends Error {
-  public readonly code = 'TOO_MANY_ATTEMPTS'
-})()
+const ERR_TOO_MANY_ATTEMPTS = new Error('TOO_MANY_ATTEMPTS')
 
-const ERR_NOT_FOUND = new (class NotFoundError extends Error {
-  public readonly code = 'NOT_FOUND'
-})()
+const ERR_NOT_FOUND = new Error('NOT_FOUND')
 
 interface Input {
   authority: string

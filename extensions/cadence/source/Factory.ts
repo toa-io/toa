@@ -1,10 +1,11 @@
 import { Connector, Locator } from '@toa.io/core'
 import { Composition } from './Composition.ts'
-import { COMPONENT, NAMESPACE } from '@toa.io/definitions/extensions.cadence'
+import { COMPONENT, NAMESPACE, regions } from '@toa.io/definitions/extensions.cadence'
 import { Aspect } from './Aspect.ts'
 import { Dispatcher } from './Dispatcher.ts'
 import { Local } from './Local.ts'
 import { Pulse } from './Pulse.ts'
+import { Schedule } from './Schedule.ts'
 import type { Declaration } from '@toa.io/definitions/extensions.cadence'
 import type { extensions } from '@toa.io/core/types'
 
@@ -20,7 +21,7 @@ export class Factory implements extensions.Factory {
 
   /**
    * What runs beside a component. Its own component gets the dispatcher; everyone else gets a
-   * timer per operation they declared a cadence for.
+   * timer per entry they declared.
    *
    * A tenant is created before the components of its composition are, which is why nothing here
    * reaches for one.
@@ -34,28 +35,45 @@ export class Factory implements extensions.Factory {
       )
 
     const tenant = new Connector()
-    const pulses = declaration as Declaration | null
+    const declared = declaration as Declaration | null
 
     // `cadence: ~` is a component that only delays calls
-    if (pulses === null) return tenant
+    if (declared === null) return tenant
+
+    /*
+     * An entry that names a region is made by the deployment of that rank and by no other —
+     * and by one that was told to make the work of a region that is gone. One that names none
+     * is every region's own.
+     */
+    const ranks = regions()
+
+    const entries = Object.entries(declared).flatMap(([endpoint, list]) =>
+      list
+        .filter((entry) => entry.region === undefined || ranks.includes(entry.region))
+        .map((entry) => ({ endpoint, entry }))
+    )
+
+    if (entries.length === 0) return tenant
 
     const local = this.local(locator)
-    const entries = Object.entries(pulses)
 
     // a pulse every replica makes asks nobody whether it may, so a component whose pulses are
     // all of that kind decides nothing with its replicas and needs no atom at all
-    const atom = entries.some(([, pulse]) => pulse.scope === 'group')
+    const atom = entries.some(({ entry }) => 'cycle' in entry && entry.scope === 'group')
       ? this.host.atom(locator.id)
       : undefined
 
-    for (const [endpoint, { cycle, intervals, scope }] of entries)
-      tenant.depends(
-        new Pulse(
-          { locator, endpoint, cycle, intervals },
-          local,
-          scope === 'group' ? atom : undefined
+    for (const { endpoint, entry } of entries)
+      if ('schedule' in entry)
+        tenant.depends(new Schedule({ locator, endpoint, ...entry }, this.metronome()))
+      else
+        tenant.depends(
+          new Pulse(
+            { locator, endpoint, cycle: entry.cycle, intervals: entry.intervals },
+            local,
+            entry.scope === 'group' ? atom : undefined
+          )
         )
-      )
 
     return tenant
   }

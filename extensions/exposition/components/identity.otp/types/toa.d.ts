@@ -1,7 +1,7 @@
 // Written by `toa types`. Every run rewrites it.
 // What a manifest does not state belongs in a file of your own.
 
-import type { Query, RemoteError } from '@toa.io/core/types'
+import type { CodedError, Query } from '@toa.io/core/types'
 import type { FetchInit } from '@toa.io/extensions.fetch'
 import type { Stash } from '@toa.io/extensions.stash'
 import type { Logs, Metrics, Span } from '@toa.io/extensions.telemetry'
@@ -42,7 +42,7 @@ export type AuthenticateOutput = {
 
 export interface Component {
   issue: (request: { input: IssueInput, task?: boolean }) => Promise<unknown>
-  authenticate: (request: { input: AuthenticateInput, task?: boolean }) => Promise<AuthenticateOutput | RemoteError<"INVALID_CREDENTIALS" | "EXPIRED" | "TOO_MANY_ATTEMPTS" | "NOT_FOUND">>
+  authenticate: (request: { input: AuthenticateInput, task?: boolean }) => Promise<AuthenticateOutput | CodedError<"INVALID_CREDENTIALS" | "EXPIRED" | "TOO_MANY_ATTEMPTS" | "NOT_FOUND">>
   assign: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Entity>
   ensure: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Entity>
   enumerate: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Entity[]>

@@ -152,7 +152,6 @@ Feature: Octets storage workflows
       status: completed
       error:
         code: ERROR
-        message: Something went wrong
       --cut--
       """
 
@@ -264,7 +263,6 @@ Feature: Octets storage workflows
       status: completed
       error:
         code: ERROR
-        message: Something went wrong
       --cut--
       """
     When the following request is received:

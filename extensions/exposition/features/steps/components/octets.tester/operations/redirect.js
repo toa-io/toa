@@ -5,9 +5,7 @@ export function computation(input) {
 }
 
 // an error a caller is meant to see carries a code, always
-const ERR_UNKNOWN = new (class UnknownError extends Error {
-  code = 'ERROR'
-})()
+const ERR_UNKNOWN = new Error('ERROR')
 
 const urls = {
   rfc: 'https://www.rfc-editor.org/rfc/rfc9564.txt',

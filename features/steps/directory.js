@@ -1,7 +1,7 @@
 import assert from 'node:assert'
 import { relative, resolve } from 'node:path'
 import { readdir, readFile } from 'node:fs/promises'
-import glob from 'fast-glob'
+import { glob } from 'tinyglobby'
 import { Given, Then } from '@cucumber/cucumber'
 
 Given(
@@ -88,6 +88,24 @@ Then(
 )
 
 Then(
+  'the file {path} contains no repeated lines',
+  /**
+   * What wrote the file is more than one of something, and each line is a thing only one of
+   * them should have done.
+   *
+   * @param {string} relative
+   * @this {toa.features.Context}
+   */
+  async function (relative) {
+    const lines = (await read.call(this, relative)).filter((line) => line !== '')
+    const repeated = lines.filter((line, index) => lines.indexOf(line) !== index)
+
+    assert.ok(lines.length > 0, `'${relative}' holds no lines`)
+    assert.deepEqual(repeated, [], `'${relative}' repeats: ${repeated.join(', ')}`)
+  }
+)
+
+Then(
   'nothing under {path} is a link',
   /**
    * What a build context holds is files: a link in one points out of the directory it was
@@ -133,7 +151,8 @@ async function pattern(cwd, path) {
 
   check(paths)
 
-  return paths[0]
+  // a directory is answered with the separator that ends it
+  return paths[0].slice(0, -1)
 }
 
 /**
@@ -156,5 +175,5 @@ const toa = (path) => {
 
 const ROOT = resolve(import.meta.dirname, '../../')
 
-const FILES = { onlyFiles: true, absolute: true }
-const DIRECTORIES = { onlyDirectories: true, absolute: true }
+const FILES = { onlyFiles: true, absolute: true, expandDirectories: false }
+const DIRECTORIES = { onlyDirectories: true, absolute: true, expandDirectories: false }

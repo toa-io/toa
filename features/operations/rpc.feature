@@ -17,7 +17,7 @@ Feature: RPC
     When I call `default.nope.nope`
     Then the error is received:
       """yaml
-      message: ERR
+      code: SOMETHING
       """
     And I disconnect
 

@@ -81,6 +81,15 @@ export async function composition(paths, options) {
         for (const producer of serving) receiver.depends(producer)
 
       /*
+       * A tenant calls its own component as well — a pulse calls an operation, the dispatcher of
+       * delayed calls writes the rows it has made the calls of — and what it has in hand when it
+       * closes it finishes through these. A sibling, it would be left waiting for a reply from
+       * something torn down beside it, which is a shutdown that never ends.
+       */
+      for (const tenant of tenants[i])
+        for (const producer of serving) tenant.depends(producer)
+
+      /*
        * The broker producers serve the stateful endpoints under the process's name, and the
        * name is held once they are open — before then a call to it is refused. `ready` is where
        * a component hands the name out, so it waits for every producer and receiver of its own.

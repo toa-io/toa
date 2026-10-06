@@ -140,6 +140,7 @@ the whole of it runs once: before the pull request.
 | a unit of work                | the scenarios and unit tests it writes, and the feature files and unit tests of what it changes |
 | a change to an area           | the suite of that area                                                                          |
 | before the pull request       | `npm test` and `npm run features`                                                               |
+| the pull request marked ready | the checks in CI, which a draft does not run                                                    |
 | once the pull request is open | `npm run bench -- --pr <number>`, for a change on a [hot path](#performance)                    |
 | nightly, in CI                | `npm run features:nightly`, whose failure opens an issue                                        |
 

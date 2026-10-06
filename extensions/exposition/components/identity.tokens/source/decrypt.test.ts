@@ -170,7 +170,7 @@ it('should reject a token under a revoked key', async () => {
 
   const thrown: any = await decrypt.execute(encrypted)
 
-  assert.deepStrictEqual(thrown.code, 'REVOKED_KEY')
+  assert.deepStrictEqual(thrown.message, 'REVOKED_KEY')
 })
 
 it('should reject a tampered JWE', async () => {
@@ -188,7 +188,7 @@ it('should reject a tampered JWE', async () => {
   const tampered = parts.join('.')
 
   const thrown: any = await decrypt.execute(tampered)
-  assert.deepStrictEqual(thrown.code, 'INVALID_TOKEN')
+  assert.deepStrictEqual(thrown.message, 'INVALID_TOKEN')
 })
 
 it('should reject JWE with an unknown key', async () => {
@@ -201,7 +201,7 @@ it('should reject JWE with an unknown key', async () => {
   if (token instanceof Error) throw token
 
   const thrown: any = await decrypt.execute(token)
-  assert.deepStrictEqual(thrown.code, 'INVALID_KEY')
+  assert.deepStrictEqual(thrown.message, 'INVALID_KEY')
 })
 
 // what a token is made of, written here so that what opens it is read against the standard
@@ -229,7 +229,7 @@ for (const [what, replacement] of [
     const token = jwe(configuration.keys[0].key.unwrap(), { ...header(), ...replacement }, claims())
     const thrown: any = await decrypt.execute(token)
 
-    assert.deepStrictEqual(thrown.code, 'INVALID_TOKEN')
+    assert.deepStrictEqual(thrown.message, 'INVALID_TOKEN')
   })
 
 it('should reject a token that carries an encrypted key', async () => {
@@ -239,7 +239,7 @@ it('should reject a token that carries an encrypted key', async () => {
 
   const thrown: any = await decrypt.execute(parts.join('.'))
 
-  assert.deepStrictEqual(thrown.code, 'INVALID_TOKEN')
+  assert.deepStrictEqual(thrown.message, 'INVALID_TOKEN')
 })
 
 for (const [what, parts] of [
@@ -251,7 +251,7 @@ for (const [what, parts] of [
     const changed = parts === 4 ? token.slice(0, 4) : token.concat('')
     const thrown: any = await decrypt.execute(changed.join('.'))
 
-    assert.deepStrictEqual(thrown.code, 'INVALID_TOKEN')
+    assert.deepStrictEqual(thrown.message, 'INVALID_TOKEN')
   })
 
 it('should reject a token whose initialization vector was changed', async () => {
@@ -263,7 +263,7 @@ it('should reject a token whose initialization vector was changed', async () => 
 
   const thrown: any = await decrypt.execute(parts.join('.'))
 
-  assert.deepStrictEqual(thrown.code, 'INVALID_TOKEN')
+  assert.deepStrictEqual(thrown.message, 'INVALID_TOKEN')
 })
 
 it('should reject a token whose expiry has passed', async () => {
@@ -273,7 +273,7 @@ it('should reject a token whose expiry has passed', async () => {
   })
   const thrown: any = await decrypt.execute(token)
 
-  assert.deepStrictEqual(thrown.code, 'INVALID_TOKEN')
+  assert.deepStrictEqual(thrown.message, 'INVALID_TOKEN')
 })
 
 it('should reject a token that is not valid yet', async () => {
@@ -283,7 +283,7 @@ it('should reject a token that is not valid yet', async () => {
   })
   const thrown: any = await decrypt.execute(token)
 
-  assert.deepStrictEqual(thrown.code, 'INVALID_TOKEN')
+  assert.deepStrictEqual(thrown.message, 'INVALID_TOKEN')
 })
 
 function secret(value: string): Secret {

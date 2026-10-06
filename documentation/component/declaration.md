@@ -158,6 +158,9 @@ the index holds rather than of what the component can do.
 **A migration is applied once for the database** — not once per replica, not once per start —
 and never again. An index dropped by hand is not made again; write another migration.
 
+A migration added under an id that sorts ahead of one applied already is applied all the same, at
+the next start. Where the database has those already, it runs after them, over what they left.
+
 **A migration must be idempotent.** A replica that dies while applying one has it applied again
 from its first step by whichever replica takes it over.
 
@@ -283,58 +286,3 @@ value corresponding to the Pointer group that must be defined in the Context.
 
 > Declarations conforming the standard event label format implicitly define `source`
 > as `{namespace}.{name}`.
-
-## Cadence
-
-An operation of the component is called on a cadence, with no schedule stored anywhere:
-
-```yaml
-# manifest.toa.yaml
-cadence:
-  sweep:
-    cycle: 86400 # seconds one whole cycle takes
-    intervals: 24 # what it is split into, so one call an hour
-```
-
-The operation receives `{ n, i }` — the number of intervals in the cycle, and which of them this
-call is for. `intervals` defaults to `1`, which is also what the shorthand declares:
-
-```yaml
-# manifest.toa.yaml
-cadence:
-  sweep: 3600 # once an hour
-```
-
-One replica of the component makes each call. A pulse that looks after what its own process holds
-— a cache, a buffer, a file it wrote — says so, and then every replica makes it:
-
-```yaml
-# manifest.toa.yaml
-cadence:
-  trim:
-    cycle: 60
-    scope: replica # every replica, for what lives in a process
-```
-
-`context.delay`, which hands one call over to be made later, comes with the extension. A
-component that only delays calls names it and states nothing:
-
-```yaml
-# manifest.toa.yaml
-cadence: ~
-```
-
-See [Cadence](/extensions/cadence) for what is and is not guaranteed.
-
-## Continuity
-
-An effect run as a task, or by a receiver, picks up where it failed: a later attempt is given back
-what the context answered on an earlier one, instead of asking again.
-
-```yaml
-# manifest.toa.yaml
-continuity:
-  onboard: 604800 # seconds an unfinished run can still be resumed
-```
-
-See [Continuity](/extensions/continuity) for what that asks of the operation.
