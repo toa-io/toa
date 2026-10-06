@@ -85,6 +85,13 @@ Feature: toa types
     When I run `toa types`
     Then the file ./components/reply.contract/types/toa.d.ts contains exact line '  declared: (request: { input?: null, task?: boolean }) => Promise<DeclaredOutput | CodedError<"KNOWN">>'
 
+  Scenario: An operation that declares no output returns the errors it declares
+    Given I have a component `reply.contract`
+    And I have a context
+    And my working directory is ./
+    When I run `toa types`
+    Then the file ./components/reply.contract/types/toa.d.ts contains exact line '  bare: (request: { input?: null, task?: boolean }) => Promise<{} | null | undefined | CodedError<"KNOWN">>'
+
   Scenario: Components that belong to no Context
     Given I have a component `dummies.one`
     And my working directory is ./

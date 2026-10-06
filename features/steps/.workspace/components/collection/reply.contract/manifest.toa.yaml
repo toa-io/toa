@@ -62,3 +62,6 @@ operations:
       type: object
     errors:
       - KNOWN
+  bare:
+    errors:
+      - KNOWN
