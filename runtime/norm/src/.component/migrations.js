@@ -1,7 +1,7 @@
 import { basename, extname, resolve } from 'node:path'
 import { readFile } from 'node:fs/promises'
 
-import glob from 'fast-glob'
+import { glob } from 'tinyglobby'
 import { yaml } from '@toa.io/generic'
 
 /**
@@ -54,4 +54,4 @@ async function read(path) {
 
 const DIRECTORY = 'migrations'
 const EXTENSIONS = '.{yaml,yml,json}'
-const GLOB = { onlyFiles: true, absolute: true }
+const GLOB = { onlyFiles: true, absolute: true, expandDirectories: false }

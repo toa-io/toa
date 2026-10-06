@@ -1,6 +1,6 @@
 import { resolve } from 'node:path'
 import { convolve, environment as variables } from '@toa.io/generic'
-import glob from 'fast-glob'
+import { glob } from 'tinyglobby'
 import { readFile } from 'node:fs/promises'
 import { yaml as jsyaml } from '@toa.io/generic'
 
@@ -37,7 +37,8 @@ export const context = async (
 
   validate(context)
 
-  const paths = await glob(resolve(root, COMPONENTS), GLOB)
+  // a directory is answered with the separator that ends it, and a component's path has none
+  const paths = (await glob(resolve(root, COMPONENTS), GLOB)).map((path) => path.slice(0, -1))
 
   context.components = await Promise.all(paths.map(component))
 
@@ -58,7 +59,7 @@ export const context = async (
 const CONTEXT = 'context.toa.yaml'
 const COMPONENTS = 'components/*'
 
-const GLOB = { onlyDirectories: true, absolute: true }
+const GLOB = { onlyDirectories: true, absolute: true, expandDirectories: false }
 
 /**
  * Reads a YAML file, resolving anchors into distinct objects so that
