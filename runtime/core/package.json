@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/core",
-  "version": "1.0.0-alpha.323",
+  "version": "1.0.0-alpha.326",
   "type": "module",
   "description": "Toa Core",
   "author": "temich <tema.gurtovoy@gmail.com>",
@@ -39,9 +39,9 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@toa.io/rsql": "1.0.0",
     "@toa.io/generic": "1.0.0-alpha.311",
-    "@toa.io/schemas": "1.0.0-alpha.311",
+    "@toa.io/rsql": "1.0.0",
+    "@toa.io/schemas": "1.0.0-alpha.326",
     "openspan": "1.0.0-alpha.323",
     "uuid": "14.0.2"
   },

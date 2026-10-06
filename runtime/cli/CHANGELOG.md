@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.326](https://github.com/toa-io/toa/compare/v1.0.0-alpha.325...v1.0.0-alpha.326) (2026-10-06)
+
+* feat(core)!: deliver an operation's error as its code and its cause ([18d303b](https://github.com/toa-io/toa/commit/18d303b9143930735e4b093345db1dbf37f90052))
+
+### Bug Fixes
+
+* **cli:** keep the declared errors of an operation that declares no output ([f533f78](https://github.com/toa-io/toa/commit/f533f7874172e0b74695e0080caf0dc503842c04))
+* **deps:** find files with tinyglobby, which carries no braces ([ef951af](https://github.com/toa-io/toa/commit/ef951af26b5f93fec567033520c62ca01f397355))
+
+### BREAKING CHANGES
+
+* an error returned with a `code` field and no message is an exception,
+  and a property of an error other than `cause` no longer reaches the caller.
+
+
 # [1.0.0-alpha.325](https://github.com/toa-io/toa/compare/v1.0.0-alpha.324...v1.0.0-alpha.325) (2026-10-02)
 
 **Note:** Version bump only for package @toa.io/cli

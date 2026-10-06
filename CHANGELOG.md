@@ -3,6 +3,35 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.326](https://github.com/toa-io/toa/compare/v1.0.0-alpha.325...v1.0.0-alpha.326) (2026-10-06)
+
+* feat(exposition)!: answer a refusal with its code and its cause ([d1f6a95](https://github.com/toa-io/toa/commit/d1f6a9593712c8b7f1d7e1ab299dbe379a7753c0))
+* feat(core)!: deliver an operation's error as its code and its cause ([18d303b](https://github.com/toa-io/toa/commit/18d303b9143930735e4b093345db1dbf37f90052))
+
+### Bug Fixes
+
+* **boot:** close a tenant before its component stops serving ([c327a12](https://github.com/toa-io/toa/commit/c327a1291032c3d2a66488d1d5b75770f0211a40))
+* **cli:** keep the declared errors of an operation that declares no output ([f533f78](https://github.com/toa-io/toa/commit/f533f7874172e0b74695e0080caf0dc503842c04))
+* **continuity:** give a kept refusal back with its message and its cause ([e0234ba](https://github.com/toa-io/toa/commit/e0234ba88808085966e896549c6691f1b380aff4))
+* **continuity:** page what a run has kept in the order of id ([10223c3](https://github.com/toa-io/toa/commit/10223c3e041ded0250a62b19887091f873342a64))
+* **deps:** find files with tinyglobby, which carries no braces ([ef951af](https://github.com/toa-io/toa/commit/ef951af26b5f93fec567033520c62ca01f397355))
+* **exposition:** give a federated credential written before 1.0.0-alpha.257 its Identity ([ccb7e80](https://github.com/toa-io/toa/commit/ccb7e8041bc6ad489bcafb48b295f53edeb2a27a))
+
+### Features
+
+* **cadence:** call an operation at the moments of a schedule ([c4d7288](https://github.com/toa-io/toa/commit/c4d7288e4388b07930dfa38bf7cd1608edf22800))
+* **cadence:** declare a schedule, a region and a list of entries ([81b8f56](https://github.com/toa-io/toa/commit/81b8f56a0345c613daafba8a28b03b14e5ac3c57))
+* **core:** parse criteria with [@toa](https://github.com/toa).io/rsql ([c4dc9f4](https://github.com/toa-io/toa/commit/c4dc9f41ca2719ac66607c5b14e9ead678baa740))
+
+### BREAKING CHANGES
+
+* a 422 body is `{ code, cause }`, the errors of the identity and octets
+  components carry no text, and an octets upload, a JSON-RPC call and an MCP tool call
+  answer a refusal with its code.
+* an error returned with a `code` field and no message is an exception,
+  and a property of an error other than `cause` no longer reaches the caller.
+
+
 # [1.0.0-alpha.325](https://github.com/toa-io/toa/compare/v1.0.0-alpha.324...v1.0.0-alpha.325) (2026-10-02)
 
 ### Bug Fixes

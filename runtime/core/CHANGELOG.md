@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.326](https://github.com/toa-io/toa/compare/v1.0.0-alpha.325...v1.0.0-alpha.326) (2026-10-06)
+
+* feat(core)!: deliver an operation's error as its code and its cause ([18d303b](https://github.com/toa-io/toa/commit/18d303b9143930735e4b093345db1dbf37f90052))
+
+### Features
+
+* **core:** parse criteria with [@toa](https://github.com/toa).io/rsql ([c4dc9f4](https://github.com/toa-io/toa/commit/c4dc9f41ca2719ac66607c5b14e9ead678baa740))
+
+### BREAKING CHANGES
+
+* an error returned with a `code` field and no message is an exception,
+  and a property of an error other than `cause` no longer reaches the caller.
+
+
 # [1.0.0-alpha.323](https://github.com/toa-io/toa/compare/v1.0.0-alpha.322...v1.0.0-alpha.323) (2026-10-01)
 
 **Note:** Version bump only for package @toa.io/core

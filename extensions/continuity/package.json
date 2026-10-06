@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/extensions.continuity",
-  "version": "1.0.0-alpha.325",
+  "version": "1.0.0-alpha.326",
   "type": "module",
   "description": "Toa Continuity",
   "author": "temich <tema.gurtovoy@gmail.com>",
@@ -26,8 +26,8 @@
     "!**/.env*"
   ],
   "dependencies": {
-    "@toa.io/core": "1.0.0-alpha.323",
-    "@toa.io/definitions": "1.0.0-alpha.325"
+    "@toa.io/core": "1.0.0-alpha.326",
+    "@toa.io/definitions": "1.0.0-alpha.326"
   },
   "scripts": {
     "transpile": "tsc"

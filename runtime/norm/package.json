@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/norm",
-  "version": "1.0.0-alpha.325",
+  "version": "1.0.0-alpha.326",
   "type": "module",
   "description": "Toa declarations normalization and validation",
   "author": "temich <tema.gurtovoy@gmail.com>",
@@ -21,11 +21,11 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@toa.io/core": "1.0.0-alpha.323",
-    "@toa.io/definitions": "1.0.0-alpha.325",
+    "@toa.io/core": "1.0.0-alpha.326",
+    "@toa.io/definitions": "1.0.0-alpha.326",
     "@toa.io/generic": "1.0.0-alpha.311",
     "@toa.io/prototype": "1.0.0-alpha.323",
-    "@toa.io/schemas": "1.0.0-alpha.311",
+    "@toa.io/schemas": "1.0.0-alpha.326",
     "tinyglobby": "0.2.17"
   },
   "gitHead": "61c8e74a336385265767e9fd37d49128cb51b17f"

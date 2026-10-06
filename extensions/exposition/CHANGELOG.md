@@ -3,6 +3,29 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.326](https://github.com/toa-io/toa/compare/v1.0.0-alpha.325...v1.0.0-alpha.326) (2026-10-06)
+
+* feat(exposition)!: answer a refusal with its code and its cause ([d1f6a95](https://github.com/toa-io/toa/commit/d1f6a9593712c8b7f1d7e1ab299dbe379a7753c0))
+* feat(core)!: deliver an operation's error as its code and its cause ([18d303b](https://github.com/toa-io/toa/commit/18d303b9143930735e4b093345db1dbf37f90052))
+
+### Bug Fixes
+
+* **cli:** keep the declared errors of an operation that declares no output ([f533f78](https://github.com/toa-io/toa/commit/f533f7874172e0b74695e0080caf0dc503842c04))
+* **exposition:** give a federated credential written before 1.0.0-alpha.257 its Identity ([ccb7e80](https://github.com/toa-io/toa/commit/ccb7e8041bc6ad489bcafb48b295f53edeb2a27a))
+
+### Features
+
+* **core:** parse criteria with [@toa](https://github.com/toa).io/rsql ([c4dc9f4](https://github.com/toa-io/toa/commit/c4dc9f41ca2719ac66607c5b14e9ead678baa740))
+
+### BREAKING CHANGES
+
+* a 422 body is `{ code, cause }`, the errors of the identity and octets
+  components carry no text, and an octets upload, a JSON-RPC call and an MCP tool call
+  answer a refusal with its code.
+* an error returned with a `code` field and no message is an exception,
+  and a property of an error other than `cause` no longer reaches the caller.
+
+
 # [1.0.0-alpha.325](https://github.com/toa-io/toa/compare/v1.0.0-alpha.324...v1.0.0-alpha.325) (2026-10-02)
 
 ### Features

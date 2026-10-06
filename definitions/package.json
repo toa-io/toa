@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/definitions",
-  "version": "1.0.0-alpha.325",
+  "version": "1.0.0-alpha.326",
   "type": "module",
   "description": "What Toa packages declare, read without running them",
   "author": "temich <tema.gurtovoy@gmail.com>",
@@ -31,8 +31,8 @@
   ],
   "dependencies": {
     "@toa.io/generic": "1.0.0-alpha.311",
-    "@toa.io/pointer": "1.0.0-alpha.311",
-    "@toa.io/schemas": "1.0.0-alpha.311",
+    "@toa.io/pointer": "1.0.0-alpha.326",
+    "@toa.io/schemas": "1.0.0-alpha.326",
     "croner": "10.0.1"
   },
   "scripts": {
@@ -47,7 +47,7 @@
   "devDependencies": {
     "@aws-sdk/client-s3": "3.1145.0",
     "@aws-sdk/lib-storage": "3.1145.0",
-    "@toa.io/core": "1.0.0-alpha.323",
+    "@toa.io/core": "1.0.0-alpha.326",
     "cloudinary": "2.11.0",
     "openspan": "1.0.0-alpha.323",
     "oxc-parser": "0.152.0"

@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.326](https://github.com/toa-io/toa/compare/v1.0.0-alpha.325...v1.0.0-alpha.326) (2026-10-06)
+
+### Features
+
+* **core:** parse criteria with [@toa](https://github.com/toa).io/rsql ([c4dc9f4](https://github.com/toa-io/toa/commit/c4dc9f41ca2719ac66607c5b14e9ead678baa740))
+
+
 # [1.0.0-alpha.325](https://github.com/toa-io/toa/compare/v1.0.0-alpha.324...v1.0.0-alpha.325) (2026-10-02)
 
 ### Bug Fixes

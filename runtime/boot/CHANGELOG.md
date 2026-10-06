@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.326](https://github.com/toa-io/toa/compare/v1.0.0-alpha.325...v1.0.0-alpha.326) (2026-10-06)
+
+### Bug Fixes
+
+* **boot:** close a tenant before its component stops serving ([c327a12](https://github.com/toa-io/toa/commit/c327a1291032c3d2a66488d1d5b75770f0211a40))
+
+
 # [1.0.0-alpha.325](https://github.com/toa-io/toa/compare/v1.0.0-alpha.324...v1.0.0-alpha.325) (2026-10-02)
 
 **Note:** Version bump only for package @toa.io/boot

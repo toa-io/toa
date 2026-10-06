@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.326](https://github.com/toa-io/toa/compare/v1.0.0-alpha.325...v1.0.0-alpha.326) (2026-10-06)
+
+### Bug Fixes
+
+* **deps:** find files with tinyglobby, which carries no braces ([ef951af](https://github.com/toa-io/toa/commit/ef951af26b5f93fec567033520c62ca01f397355))
+
+
 # [1.0.0-alpha.325](https://github.com/toa-io/toa/compare/v1.0.0-alpha.324...v1.0.0-alpha.325) (2026-10-02)
 
 **Note:** Version bump only for package @toa.io/bridges.node

@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.326](https://github.com/toa-io/toa/compare/v1.0.0-alpha.325...v1.0.0-alpha.326) (2026-10-06)
+
+### Features
+
+* **cadence:** call an operation at the moments of a schedule ([c4d7288](https://github.com/toa-io/toa/commit/c4d7288e4388b07930dfa38bf7cd1608edf22800))
+* **cadence:** declare a schedule, a region and a list of entries ([81b8f56](https://github.com/toa-io/toa/commit/81b8f56a0345c613daafba8a28b03b14e5ac3c57))
+
+
 # [1.0.0-alpha.325](https://github.com/toa-io/toa/compare/v1.0.0-alpha.324...v1.0.0-alpha.325) (2026-10-02)
 
 ### Features

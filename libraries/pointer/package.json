@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/pointer",
-  "version": "1.0.0-alpha.311",
+  "version": "1.0.0-alpha.326",
   "type": "module",
   "description": "Toa Pointer",
   "homepage": "https://toa.io",
@@ -34,7 +34,7 @@
   "types": "transpiled/index.d.ts",
   "dependencies": {
     "@toa.io/generic": "1.0.0-alpha.311",
-    "@toa.io/schemas": "1.0.0-alpha.311"
+    "@toa.io/schemas": "1.0.0-alpha.326"
   },
   "scripts": {
     "transpile": "tsc"

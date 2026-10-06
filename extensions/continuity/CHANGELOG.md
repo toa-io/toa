@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.326](https://github.com/toa-io/toa/compare/v1.0.0-alpha.325...v1.0.0-alpha.326) (2026-10-06)
+
+### Bug Fixes
+
+* **continuity:** give a kept refusal back with its message and its cause ([e0234ba](https://github.com/toa-io/toa/commit/e0234ba88808085966e896549c6691f1b380aff4))
+* **continuity:** page what a run has kept in the order of id ([10223c3](https://github.com/toa-io/toa/commit/10223c3e041ded0250a62b19887091f873342a64))
+
+
 # [1.0.0-alpha.325](https://github.com/toa-io/toa/compare/v1.0.0-alpha.324...v1.0.0-alpha.325) (2026-10-02)
 
 **Note:** Version bump only for package @toa.io/extensions.continuity
