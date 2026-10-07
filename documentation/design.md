@@ -89,6 +89,9 @@ await context.local.expire({ query: { criteria: 'due<1700000000000', limit: 256 
 await context.local.enumerate({ query: { sort: ['title:asc'], omit: 20, limit: 10 } })
 ```
 
+A criteria, a `sort` and a `projection` name a property inside an object by the path to it:
+`size.volume>2`, `size.volume:desc`. A path that names nothing the entity declares is refused.
+
 A `limit` without `sort` takes any entries the criteria match. Call again for the rest: a
 Transition that changes what the criteria read finds fewer each time.
 
