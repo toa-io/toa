@@ -15,7 +15,41 @@ it is looked for from the working directory upwards, as <code>.env</code> is. Re
 ## Development
 
 > These commands run a composition, so they need `@toa.io/runtime` installed beside the CLI, which
-> an application lists in its `devDependencies`. `types` and `export manifest` read manifests only.
+> an application lists in its `devDependencies`. `create`, `types` and `export manifest` do not.
+
+### create
+
+Create an application in the working directory.
+
+<dl>
+<dt><code>toa create &lt;name&gt;</code></dt>
+<dd>
+<code>name</code> the application's name: what its Context is called.
+</dd>
+</dl>
+
+```shell
+$ mkdir store && cd store
+$ npx @toa.io/cli create store
+```
+
+Written is the least an application is, and all of it runs as it is: a Context, two components,
+the services a local run connects to and a scenario for each component. See
+[what the template holds](/userland/readme.md#template).
+
+The directory is empty. One that holds anything but `.git` is refused, and so is a name a Context
+cannot have; nothing is written then.
+
+Nothing is installed or started. The command prints what to run next:
+
+```shell
+$ npm install       # the packages
+$ npx toa npm       # what the declarations require beyond them
+$ npm run dock      # the broker, the database and Redis, in Docker
+$ npm run env       # types, .env and .map.json
+$ npm run features  # the scenarios
+$ npm start         # the application, on http://localhost:8000
+```
 
 ### compose
 
