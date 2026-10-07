@@ -50,6 +50,36 @@ not at all: where any of them has been changed since it was read, or one it crea
 created meanwhile, nothing of the set is written, and the Transition is retried or refused as its
 `concurrency` says.
 
+##### Concurrency
+
+A Transition over an entry that exists reads it, runs, and writes it back — and another writer may
+have changed the entry in between. `concurrency` says what happens to the write that lost:
+
+| `concurrency` | a lost write                                                              |
+| ------------- | ------------------------------------------------------------------------- |
+| `none`        | is refused: the call raises `StateConcurrency`, and nothing is written    |
+| `retry`       | is made again: the entry is read anew and the algorithm runs from the top |
+
+A Transition that may be called with a `query` declares one of the two.
+
+The algorithm of a Transition declared `retry` runs once per attempt, and only what it did to its
+entry is discarded with a lost write. A call it made to another operation is made again by the
+next attempt, as is whatever it reached through an Aspect — `fetch`, `context.stash`. Both are
+yours to make safe to repeat.
+
+**A Transition declared `retry` does not call an operation that declares
+[`once`](/documentation/inbox.md).** The second attempt's call would be applied again, which is
+what `once` says does not happen, so the call is refused where it is made, on the first attempt as
+on any other:
+
+```
+UnrepeatableException: 'default.wallets.charge' is made once, and a transition retried on a lost write would make it again
+```
+
+Declare the Transition `concurrency: none`, make the call from a
+[receiver](/documentation/component/receiver.md) of the event its change publishes, or call both
+from an Effect.
+
 A set is bounded. An operation over `entries` — a Transition, an Observation or an Effect — is
 called with the `ids` of its set, or with a `limit` on what its `criteria` select; a call with
 neither is refused. `omit` skips entries of an ordered set, so it is refused without `sort`:
