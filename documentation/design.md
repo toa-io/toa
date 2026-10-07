@@ -180,8 +180,10 @@ Safe operations cannot modify the State; unsafe operations may, whether or not a
 An Unmanaged operation is given the driver's own handle, so the rule it is held to above is the
 author's to keep rather than the runtime's to enforce, and the runtime does not vouch for it.
 
-A request may state that it only reads, and a call to an unsafe operation made under one is refused.
-See [readonly chains](/documentation/readonly.md).
+A safe operation reaches nothing unsafe: a call it makes to an unsafe operation is refused, and so
+is every such call below it. An operation that calls what may modify the State is an Effect. A
+request may state that it only reads, and what it reaches is held to the same. See
+[readonly chains](/documentation/readonly.md).
 
 ### Genuine Operations
 
