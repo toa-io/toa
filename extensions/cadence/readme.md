@@ -254,6 +254,9 @@ await context.delay.cancel(id)
 | `overdue`   | milliseconds the call may be late and still be made, or `null` for no bound |
 | `unchained` | whether the call begins a chain of its own; see below                       |
 
+The endpoint is `namespace.component.operation`, or `component.operation` for a component that
+declares no namespace.
+
 The call is made once the delay has passed, and waits for the target where it is not there to
 take it. The id it answers cancels it, and `cancel` raises where the id was never issued.
 

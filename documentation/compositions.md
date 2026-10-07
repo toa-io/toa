@@ -13,7 +13,8 @@ compositions:
       - todos.stats
 ```
 
-A component is referenced as `namespace.name`. A composition name is 1 to 32 letters and
+A component is referenced as `namespace.name`, and one that declares no namespace by its
+`name`, here and in `evicted`. A composition name is 1 to 32 letters and
 digits, starting with a letter.
 
 A component no composition lists gets one of its own, named after the component's label:
