@@ -137,11 +137,44 @@ Feature: A call that may only read reaches nothing that writes
       1
       """
 
-  Scenario: The same chain writes without it
+  Scenario: A safe operation reaches nothing that writes
     Given I compose components:
       | safety.proxy |
       | mongo.one    |
+    # the request says nothing of reading: the computation it reaches is what does
     When I call `safety.proxy.write` with:
+      """yaml
+      input:
+        id: 5ba4a9e1cba943a3b39a0e44ad2cbe11
+        foo: 2
+      """
+    Then the following exception is thrown:
+      """yaml
+      code: 406
+      """
+    And the `mongo.one` collection holds:
+      | _id                              | foo |
+      | 5ba4a9e1cba943a3b39a0e44ad2cbe11 | 1   |
+
+  Scenario: A safe operation reads
+    Given I compose components:
+      | safety.proxy |
+      | mongo.one    |
+    When I call `safety.proxy.read` with:
+      """yaml
+      input:
+        id: 5ba4a9e1cba943a3b39a0e44ad2cbe11
+      """
+    Then the reply is received:
+      """yaml
+      1
+      """
+
+  Scenario: An effect writes through another component
+    Given I compose components:
+      | safety.proxy |
+      | mongo.one    |
+    When I call `safety.proxy.relay` with:
       """yaml
       input:
         id: 5ba4a9e1cba943a3b39a0e44ad2cbe11
