@@ -98,6 +98,24 @@ Given(
 )
 
 Given(
+  'the application connects to the infrastructure of this repository',
+  /**
+   * An application is written for the conventional ports, which this repository leaves to the
+   * applications developed beside it; see CONTRIBUTING.md.
+   *
+   * @this {toa.features.Context}
+   */
+  async function () {
+    await context.assign(this.cwd, {
+      amqp: 'amqp://localhost:31010',
+      mongodb: 'mongodb://localhost:31020',
+      stash: 'redis://localhost:31040',
+      atomicity: { redis: 'redis://localhost:31040' }
+    })
+  }
+)
+
+Given(
   'the context has no {token} annotation',
   /**
    * @param {string} key
