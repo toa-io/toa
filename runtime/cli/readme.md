@@ -33,16 +33,6 @@ $ mkdir store && cd store
 $ npx -p @toa.io/cli -p @toa.io/userland toa create store
 ```
 
-The template is in `@toa.io/userland`, which the CLI does not bring with it: the command is
-refused where that package is not installed beside it.
-
-Written is the least an application is, and all of it runs as it is: a Context, two components,
-the services a local run connects to and a scenario for each component. See
-[what the template holds](/userland/readme.md#template).
-
-The directory is empty. One that holds anything but `.git` is refused, and so is a name a Context
-cannot have; nothing is written then.
-
 Nothing is installed or started. The command prints what to run next:
 
 ```shell
