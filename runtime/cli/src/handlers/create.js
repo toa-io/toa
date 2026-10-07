@@ -70,11 +70,12 @@ const IGNORED = ['.git']
 /** `{{name}}`: a value the template leaves to whoever creates the application. */
 const VALUE = /\{\{(\w+)}}/g
 
-const NEXT = `Created. Next:
+const NEXT = `Created. With Docker and PM2 installed, next:
 
   npm install       # the packages, and what the declarations require beyond them
   npm run dock      # the broker, the database and Redis, in Docker
   npm run env       # types, .env and .map.json
+  npm run sys       # the gateway and the services of Toa, under PM2
   npm run features  # the scenarios
-  npm start         # the application, on http://localhost:8000
+  npm start         # the application as well, on http://localhost:8000
 `

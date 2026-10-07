@@ -33,14 +33,16 @@ $ mkdir store && cd store
 $ npx -p @toa.io/cli -p @toa.io/userland toa create store
 ```
 
-Nothing is installed or started. The command prints what to run next:
+Nothing is installed or started. With [Docker](https://docs.docker.com/get-docker/) and
+[PM2](https://pm2.keymetrics.io) on the machine, the command prints what to run next:
 
 ```shell
 $ npm install       # the packages, and what the declarations require beyond them
 $ npm run dock      # the broker, the database and Redis, in Docker
 $ npm run env       # types, .env and .map.json
+$ npm run sys       # the gateway and the services of Toa, under PM2
 $ npm run features  # the scenarios
-$ npm start         # the application, on http://localhost:8000
+$ npm start         # the application as well, on http://localhost:8000
 ```
 
 ### compose

@@ -14,8 +14,9 @@ connects to, and a scenario that tests what was written. What it writes runs as 
    naming the application `<name>` wherever the template names one: the Context, the package, the
    registry, the compose project.
 2. The packages of Toa are listed at the versions of the Toa that created the application.
-3. What is written is complete: after `npm install` and the services of its
-   `docker-compose.yaml`, the application starts and its scenarios pass, with no file edited.
+3. What is written is complete: after `npm install`, with the services of its
+   `docker-compose.yaml` and its `sys` process running, the application starts and its
+   scenarios pass, with no file edited.
    Installing it installs what its declarations require as well.
 
 **Where it is written**
@@ -46,6 +47,7 @@ $ npx -p @toa.io/cli -p @toa.io/userland toa create store
 $ npm install
 $ npm run dock
 $ npm run env
+$ npm run sys
 $ npm run features
 ```
 
@@ -83,6 +85,11 @@ $ npm run features
    require is known to Toa and not to npm, and a second command is one a newcomer does not run
    before the gateway fails to start. The command finds nothing to install the second time, so
    the install it starts ends there.
+9. **Two processes under PM2, `sys` and `app`.** What Toa serves beside an application and the
+   application's components are separate processes in a deployment, and an application
+   developed as one process meets the difference there. A scenario starts the components in its
+   own process, so that it runs the sources as they are, and needs `sys` alone. Docker and PM2
+   are what the machine has to have.
 
 ## What happens today
 

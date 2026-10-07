@@ -23,6 +23,7 @@ Feature: toa create
     And the file ./components/hello/operations/greet.ts contains line starting with 'export async function computation'
     And the file ./components/notes/manifest.toa.yaml contains exact line 'name: notes'
     And the file ./features/steps/application.ts contains line starting with 'BeforeAll('
+    And the file ./ecosystem.config.js contains line starting with 'export const apps = ['
     And there is no file ./_gitignore
 
   Scenario: The packages of Toa are listed at the version that creates the application
@@ -33,6 +34,7 @@ Feature: toa create
     And the file ./package.json contains line starting with '    "@toa.io/userland": "1.'
     And the file ./package.json contains line starting with '    "@toa.io/agent": "1.'
     And the file ./package.json contains exact line '    "postinstall": "toa npm",'
+    And the file ./package.json contains exact line '    "start": "pm2 start ecosystem.config.js",'
     And no file under ./ contains '{{name}}'
     And no file under ./ contains '{{version}}'
     And no file under ./ contains '{{agent}}'
@@ -45,7 +47,9 @@ Feature: toa create
       npm install
       npm run dock
       npm run env
+      npm run sys
       npm run features
+      npm start
       """
 
   Scenario: A directory that holds something is refused

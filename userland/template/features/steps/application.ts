@@ -13,10 +13,8 @@ BeforeAll({ timeout: 60_000 }, async function () {
 
   stage.map(JSON.parse(map))
 
-  await stage.serve('configuration')
-  await stage.serve('introspection')
+  // the components run in this process; what serves them is started with `npm run sys`
   await stage.compose(paths)
-  await stage.serve('exposition')
 })
 
 AfterAll(async function () {

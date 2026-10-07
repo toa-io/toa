@@ -6,7 +6,10 @@
     "postinstall": "toa npm",
     "dock": "docker compose up -d --wait",
     "env": "toa types --quiet && toa env --dev && toa map",
-    "start": "toa mono ./components/*",
+    "start": "pm2 start ecosystem.config.js",
+    "restart": "npm run env && pm2 restart ecosystem.config.js",
+    "stop": "pm2 delete ecosystem.config.js",
+    "sys": "pm2 start ecosystem.config.js --only sys",
     "features": "cucumber-js",
     "typecheck": "tsc"
   },
