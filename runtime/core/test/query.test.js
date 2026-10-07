@@ -331,8 +331,12 @@ describe('a property inside an object', () => {
   })
 
   it('should refuse what is a property of every object in a sort and in a projection', () => {
-    assert.throws(() => instance.parse({ sort: ['constructor'] }), { message: /is not defined/ })
-    assert.throws(() => instance.parse({ projection: ['toString'] }), { message: /is not defined/ })
+    assert.throws(() => instance.parse({ sort: ['constructor'] }), {
+      message: /is not defined/
+    })
+    assert.throws(() => instance.parse({ projection: ['toString'] }), {
+      message: /is not defined/
+    })
   })
 })
 

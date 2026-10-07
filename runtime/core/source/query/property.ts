@@ -35,7 +35,8 @@ export function property(properties: Properties, path: string): Property | undef
 }
 
 function held(property: Property | undefined): Property | undefined {
-  while (property?.type === 'array' && property.items !== undefined) property = property.items
+  while (property?.type === 'array' && property.items !== undefined)
+    property = property.items
 
   return property
 }

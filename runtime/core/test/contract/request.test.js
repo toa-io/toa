@@ -136,7 +136,12 @@ describe('schema', () => {
   for (const type of ['observation', 'transition', 'effect']) {
     const fits = (query) =>
       schemas
-        .schema(Request.schema({ type, scope: 'entries' }, { properties: { id: { type: 'string' } } }))
+        .schema(
+          Request.schema(
+            { type, scope: 'entries' },
+            { properties: { id: { type: 'string' } } }
+          )
+        )
         .fit({ input: null, query }) === null
 
     it(`should bound the set of ${type}`, () => {
