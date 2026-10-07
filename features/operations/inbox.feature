@@ -242,6 +242,60 @@ Feature: Transactional inbox
     And the `mongo.once` inbox holds 1 record
     And the `mongo.caller` inbox holds 1 record
 
+  Scenario: A retried transition does not call an operation that declares it
+    # every attempt of `mongo.caller.retried` would make the call to `mongo.once.transit` again,
+    # and the two are not one call to it — so the call is refused, on the first attempt as on any
+    Given the `mongo.caller` database contains:
+      | _id                              | foo | VERSION |
+      | cc33e57cc0e14fce95c4496c21086781 | 0   | 1       |
+    And I compose components:
+      | mongo.caller |
+      | mongo.once   |
+    When I call `mongo.caller.retried` with:
+      """yaml
+      id: aa11e57cc0e14fce95c4496c21086781
+      input:
+        foo: 4
+        target: 6b93e57cc0e14fce95c4496c21086781
+      query:
+        id: cc33e57cc0e14fce95c4496c21086781
+      """
+    Then the following exception is thrown:
+      """yaml
+      code: 604
+      """
+    # nothing was sent, and the transition that made the call committed nothing
+    And the `mongo.once` collection holds:
+      | _id                              | foo |
+      | 6b93e57cc0e14fce95c4496c21086781 | 0   |
+    And the `mongo.once` inbox holds 0 records
+    And the `mongo.caller` collection holds:
+      | _id                              | foo |
+      | cc33e57cc0e14fce95c4496c21086781 | 0   |
+
+  Scenario: A retried transition calls an operation that declares none
+    Given the `mongo.caller` database contains:
+      | _id                              | foo | VERSION |
+      | cc33e57cc0e14fce95c4496c21086781 | 0   | 1       |
+    And I compose components:
+      | mongo.caller |
+      | mongo.once   |
+    When I call `mongo.caller.plain` with:
+      """yaml
+      input:
+        foo: 4
+        target: 6b93e57cc0e14fce95c4496c21086781
+      query:
+        id: cc33e57cc0e14fce95c4496c21086781
+      """
+    Then the reply is received
+    And the `mongo.once` collection holds:
+      | _id                              | foo |
+      | 6b93e57cc0e14fce95c4496c21086781 | 4   |
+    And the `mongo.caller` collection holds:
+      | _id                              | foo |
+      | cc33e57cc0e14fce95c4496c21086781 | 4   |
+
   Scenario: A call is remembered for the window its operation states
     Given I compose `mongo.once` component
     When I call `mongo.once.long` with:

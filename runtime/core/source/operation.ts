@@ -57,6 +57,12 @@ export class Operation extends Connector {
   public readonly unchained: boolean
 
   /**
+   * Whether the algorithm runs again where its write is lost, which `Component.invoke` reads.
+   * Only a transition commits, so only a transition is.
+   */
+  public retried: boolean = false
+
+  /**
    * Whether what this operation acquires may be modified and committed. Only a
    * transition commits, and only a commit needs the pre-image an entity keeps
    * to diff the new state against.

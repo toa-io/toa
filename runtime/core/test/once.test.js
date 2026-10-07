@@ -192,3 +192,14 @@ describe('once', () => {
     assert.strictEqual(operation.scope.commit.mock.callCount(), 0)
   })
 })
+
+describe('retried', () => {
+  it('should be what a transition declared to retry is', () => {
+    assert.equal(transition({ concurrency: 'retry' }).retried, true)
+  })
+
+  it('should not be what any other transition is', () => {
+    assert.equal(transition({ concurrency: 'none' }).retried, false)
+    assert.equal(transition().retried, false)
+  })
+})

@@ -29,6 +29,7 @@ export const call = async (locator, endpoint, definition, entity, source) => {
     source,
     stateful,
     readable,
-    definition.stream
+    definition.stream,
+    definition.once === true || typeof definition.once === 'number'
   )
 }

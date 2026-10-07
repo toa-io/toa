@@ -64,6 +64,11 @@ identity from the call it is serving, so a duplicate that re-runs an algorithm m
 calls again and each is refused where it lands. A hop that does not declare `once` is a break in
 that.
 
+A hop is not made by a transition declared `concurrency: retry`. One that is retried makes its
+calls again on every attempt, and they are not the same calls to whatever they reach, so a call
+it makes to an operation that declares `once` is
+[refused before it is sent](/documentation/design.md#concurrency).
+
 ## What it does not give
 
 **A call that changed nothing is not remembered.** An operation that refused with a declared
