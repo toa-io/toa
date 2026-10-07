@@ -11,9 +11,10 @@ entity:
 
 operations:
   # calls `mongo.once` on its way, so that a duplicate of this call is a duplicate of that one
-  relay:
+  # not retried: a transition that is does not call what declares `once`
+  relay: &relay
     scope: entry
-    concurrency: retry
+    concurrency: none
     once: true
     input:
       properties:
@@ -22,3 +23,11 @@ operations:
         target:
           type: string
       type: object
+  # the same call, made by a transition that is retried
+  retried:
+    <<: *relay
+    concurrency: retry
+  # a retried transition calling what declares nothing
+  plain:
+    <<: *relay
+    concurrency: retry

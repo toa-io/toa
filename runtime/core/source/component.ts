@@ -12,6 +12,9 @@ export interface Invocable extends Connector {
 
   /** whether every call begins a chain of its own */
   unchained?: boolean
+
+  /** whether its algorithm runs again where its write is lost */
+  retried?: boolean
 }
 
 /** The code a declared error refuses with, which its manifest bounds. */
@@ -109,6 +112,10 @@ export class Component<O extends Invocable = Invocable> extends Connector {
       const scope: trail.Invocation = { hops, id: request?.id }
 
       if (request?.readonly === true) scope.readonly = true
+
+      // said of every attempt, the first included: a refusal that waited for a lost write would
+      // be one nobody meets before production
+      if (this.operations[endpoint].retried === true) scope.retried = true
 
       task = async (): Promise<any> => trail.follow(scope, invocation)
     }

@@ -46,6 +46,13 @@ export interface Invocation {
   readonly?: boolean
 
   /**
+   * Whether the operation it runs is a transition retried on a lost write, whose algorithm makes
+   * its calls again on every attempt. Not carried anywhere: it is what a call made here is
+   * refused by, where what it calls is made once.
+   */
+  retried?: boolean
+
+  /**
    * How many calls this invocation has already made to each endpoint. Two calls to one endpoint
    * are two calls, and their identities have to say so — without this an operation looping over
    * five items would make one identity five times and have four of them refused.
