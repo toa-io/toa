@@ -15,6 +15,9 @@ export interface Invocable extends Connector {
 
   /** whether its algorithm runs again where its write is lost */
   retried?: boolean
+
+  /** whether it is incapable of changing the State, and so is what it calls; see `safety.ts` */
+  safe?: boolean
 }
 
 /** The code a declared error refuses with, which its manifest bounds. */
@@ -111,7 +114,12 @@ export class Component<O extends Invocable = Invocable> extends Connector {
        */
       const scope: trail.Invocation = { hops, id: request?.id }
 
-      if (request?.readonly === true) scope.readonly = true
+      /*
+       * A safe operation says of itself what a readonly request says of a chain, so it begins
+       * one: what cannot change the State reaches nothing that can.
+       */
+      if (request?.readonly === true || this.operations[endpoint].safe === true)
+        scope.readonly = true
 
       // said of every attempt, the first included: a refusal that waited for a lost write would
       // be one nobody meets before production

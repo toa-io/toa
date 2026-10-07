@@ -7,6 +7,7 @@ import {
   ResponseContractException
 } from './exceptions.ts'
 import * as parts from './parts.ts'
+import { safe } from './safety.ts'
 import { environment } from '@toa.io/generic'
 import type { Cascade } from './cascade.ts'
 import type { State } from './state.ts'
@@ -48,6 +49,8 @@ export interface Definition {
   once?: boolean | number
   /** every call begins a chain of its own; see `documentation/cycles.md` */
   unchained?: boolean
+  /** what the operation is declared as, which says whether it is safe */
+  type?: string
 }
 
 export class Operation extends Connector {
@@ -55,6 +58,9 @@ export class Operation extends Connector {
 
   /** whether every call begins a chain of its own, which `Component.invoke` reads */
   public readonly unchained: boolean
+
+  /** whether the calls it makes may only read, which `Component.invoke` reads; see `safety.ts` */
+  public readonly safe: boolean
 
   /**
    * Whether the algorithm runs again where its write is lost, which `Component.invoke` reads.
@@ -98,6 +104,7 @@ export class Operation extends Connector {
 
     this.scope = scope
     this.unchained = definition.unchained === true
+    this.safe = definition.type !== undefined && safe(definition.type)
 
     this.#cascade = cascade
     this.#contracts = contracts

@@ -203,3 +203,20 @@ describe('retried', () => {
     assert.equal(transition().retried, false)
   })
 })
+
+describe('safe', () => {
+  // read off the declared type, whatever class carries the operation
+  it('should be what an observation and a computation are', () => {
+    assert.equal(transition({ type: 'observation' }).safe, true)
+    assert.equal(transition({ type: 'computation' }).safe, true)
+  })
+
+  it('should not be what a transition is', () => {
+    assert.equal(transition({ type: 'transition' }).safe, false)
+  })
+
+  // a manifest the runtime cannot classify is one it does not vouch for
+  it('should not be what an operation of no stated type is', () => {
+    assert.equal(transition().safe, false)
+  })
+})

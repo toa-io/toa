@@ -2,7 +2,7 @@ name: proxy
 namespace: safety
 
 operations:
-  # a computation that writes through another component: safe itself, and the chain is not
+  # a computation that writes through another component, which a safe operation is refused
   write: &target
     input:
       properties:
@@ -13,6 +13,11 @@ operations:
       type: object
   # the same, stating `readonly: false` on the call it makes
   insist: *target
+  # an effect doing the same, which is what an operation that writes through another is
+  relay:
+    <<: *target
+    type: effect
+    scope: none
   read:
     input:
       properties:
