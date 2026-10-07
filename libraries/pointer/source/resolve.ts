@@ -14,19 +14,29 @@ export function resolve(id: string, selector: string): string[] {
 }
 
 export function resolveRecord(uris: URIMap, selector: string): AnnotationRecord {
-  if (selector in uris) return getRecord(uris, selector)
-
   const segments = selector.split('.')
 
-  while (segments.pop() !== undefined) {
+  do {
     const current = segments.join('.')
 
     if (current in uris) return getRecord(uris, current)
-  }
+
+    // a component that declares no namespace is keyed by its name as well
+    const bare = unqualified(current)
+
+    if (bare !== undefined && bare in uris) return getRecord(uris, bare)
+  } while (segments.pop() !== undefined && segments.length > 0)
 
   if ('.' in uris) return getRecord(uris, '.')
   else throw new Error(`Selector '${selector}' cannot be resolved.`)
 }
+
+/** What follows the namespace of a selector in `default`, where anything does. */
+function unqualified(selector: string): string | undefined {
+  return selector.startsWith(DEFAULT) ? selector.slice(DEFAULT.length) : undefined
+}
+
+const DEFAULT = 'default.'
 
 function withCredentials(variable: string, urls: string[]): string[] {
   const username = environment.get(variable + '_USERNAME') ?? ''

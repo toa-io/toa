@@ -358,3 +358,23 @@ Feature: Evicted components and services
       """
       'evicted' names an unknown component 'dummies.three'.
       """
+
+  Scenario: A component without a namespace is evicted by its name
+    Given I have components:
+      | dummies.one |
+      | nope        |
+    And I have a context with:
+      """yaml
+      evicted:
+        components:
+          - nope
+      """
+    When I export deployment
+    Then exported values should contain:
+      """yaml
+      components: [dummies-one]
+      """
+    And exported values should not contain:
+      """yaml
+      components: [default-nope]
+      """
