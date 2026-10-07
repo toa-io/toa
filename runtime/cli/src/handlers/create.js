@@ -19,8 +19,9 @@ export async function create(argv) {
   if (present.length > 0)
     throw new Error(`The directory is not empty: it holds ${present.slice(0, 3).join(', ')}`)
 
-  const userland = require('@toa.io/userland/package.json')
-  const source = join(dirname(require.resolve('@toa.io/userland/package.json')), 'template')
+  const manifest = locate()
+  const userland = require(manifest)
+  const source = join(dirname(manifest), 'template')
 
   const values = {
     name,
@@ -47,6 +48,18 @@ export async function create(argv) {
 }
 
 const require = createRequire(import.meta.url)
+
+/** The template is the development kit's, which the CLI does not bring with it. */
+function locate() {
+  try {
+    return require.resolve('@toa.io/userland/package.json')
+  } catch {
+    throw new Error(
+      '`toa create` needs @toa.io/userland beside the CLI: ' +
+        'npx -p @toa.io/cli -p @toa.io/userland toa create <name>'
+    )
+  }
+}
 
 /** What a Context may be called, as its schema has it. */
 const NAME = /^([a-zA-Z]+([_a-zA-Z0-9]*[a-zA-Z0-9]+)?)(-([a-zA-Z]+([_a-zA-Z0-9]*[a-zA-Z0-9]+)?))*$/

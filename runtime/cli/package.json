@@ -25,6 +25,7 @@
   "peerDependencies": {
     "@toa.io/boot": "*",
     "@toa.io/operations": "*",
+    "@toa.io/userland": "*",
     "paseto": "4.0.1"
   },
   "peerDependenciesMeta": {
@@ -32,6 +33,9 @@
       "optional": true
     },
     "@toa.io/operations": {
+      "optional": true
+    },
+    "@toa.io/userland": {
       "optional": true
     },
     "paseto": {
@@ -43,7 +47,6 @@
     "@toa.io/definitions": "1.0.0-alpha.326",
     "@toa.io/generic": "1.0.0-alpha.311",
     "@toa.io/norm": "1.0.0-alpha.326",
-    "@toa.io/userland": "1.0.0-alpha.326",
     "dotenv": "18.0.5",
     "openspan": "1.0.0-alpha.323",
     "tinyglobby": "0.2.17",

@@ -23,11 +23,16 @@ connects to, and a scenario that tests what was written. What it writes runs as 
    and nothing is written.
 5. A name a Context cannot have is refused, and nothing is written.
 
+**What it needs**
+
+6. Without `@toa.io/userland` installed beside the CLI the command is refused, and says what to
+   install.
+
 **What is not promised**
 
-6. Nothing is installed and nothing is started: the command writes files, and says what to run.
-7. An application that exists is not updated by running the command again.
-8. Nothing of a deployment beyond what a Context requires: no registry that exists, no cluster,
+7. Nothing is installed and nothing is started: the command writes files, and says what to run.
+8. An application that exists is not updated by running the command again.
+9. Nothing of a deployment beyond what a Context requires: no registry that exists, no cluster,
    no CI.
 
 ### What a component author does differently
@@ -36,7 +41,7 @@ Starts with the command instead of writing the first files by hand:
 
 ```shell
 $ mkdir store && cd store
-$ npx @toa.io/cli create store
+$ npx -p @toa.io/cli -p @toa.io/userland toa create store
 $ npm install
 $ npx toa npm
 $ npm run dock
@@ -49,7 +54,8 @@ $ npm run features
 1. **Template** (`userland/template`). The files of the application, with `{{name}}`,
    `{{version}}` and `{{agent}}` where the command writes a value.
 2. **Userland** (`userland`). Depends on `@toa.io/agent`, whose version the template lists.
-3. **CLI** (`runtime/cli`). The `create` command; `@toa.io/userland` among its dependencies.
+3. **CLI** (`runtime/cli`). The `create` command; `@toa.io/userland` is a peer it may be
+   installed without.
 4. **Documentation.** The CLI readme, and the readme of userland, which says what the template
    holds.
 
@@ -58,9 +64,10 @@ $ npm run features
 1. **The template is files, not a generator.** What an application starts from is read by
    whoever starts one, so it is kept as the files themselves, which run and are tested as they
    are. Three values are written into them, by name.
-2. **In `@toa.io/userland`, which the CLI depends on.** The development kit is where what an
-   application is developed with lives. A peer the CLI would look for is not there in the one
-   case the command is for — a directory with nothing in it.
+2. **In `@toa.io/userland`, which the CLI does not depend on.** The development kit is where
+   what an application is developed with lives, and a process that runs an application has no
+   use for it. So it is a peer the command looks for, installed beside the CLI by whoever
+   creates an application, and the command says so where it is not there.
 3. **The working directory, and no other.** A path to create is one more thing to get wrong, and
    `mkdir` is not what the command saves.
 4. **`.git` is not something in the directory.** A repository cloned before its first commit is
