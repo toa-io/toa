@@ -48,7 +48,9 @@ predictable way.
 5. **Test.** The scenarios written before the change pass, and so do `npm test` and
    `npm run features`. See [What runs when](#what-runs-when).
 6. **Pull request.** The draft is marked ready for review, which the developer does once they
-   consider every task done and the change fit to be read.
+   consider every task done and the change fit to be read. A change an application meets has a
+   pull request in the published documentation as well, linked from this one. See
+   [Published documentation](#published-documentation).
 7. **Measurement.** A change on a hot code path is compared against its base with `npm run bench`
    once its pull request is open, and the verdict is posted to it. See [Performance](#performance).
 
@@ -72,6 +74,29 @@ they choose, a failure they will see and have to answer for.
 
 A change that touches an undocumented area writes that area first, as it stands, and the change
 after it.
+
+### Published documentation
+
+What an application developer reads is published from its own repository,
+[toa-io/docs](https://github.com/toa-io/docs). Before a pull request here is marked ready, decide
+whether the change needs one there.
+
+It does where the change adds or changes something an application meets:
+
+- what is declared: a key of a manifest or of a Context, its values, its default;
+- what is written: the signature of an operation, an event, a receiver or a guard, what the
+  context gives them, the types `toa types` generates;
+- what is run: a command of the CLI, its arguments, what it writes or prints, what
+  `toa create` writes;
+- what is observed: a reply, an error or an exception, a status or a header of the gateway, a
+  log record, a metric, a limit, a guarantee;
+- what is required: of the infrastructure, of the machine, of a deployment.
+
+It does not where an application cannot tell the difference: a refactoring, a test, a fix that
+restores what the documentation already says, the tooling of this repository.
+
+The pull request there is opened before this one is marked ready, and this one links to it. One
+that needs none says so, in a line.
 
 ## Unit of Work
 

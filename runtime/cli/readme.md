@@ -15,7 +15,35 @@ it is looked for from the working directory upwards, as <code>.env</code> is. Re
 ## Development
 
 > These commands run a composition, so they need `@toa.io/runtime` installed beside the CLI, which
-> an application lists in its `devDependencies`. `types` and `export manifest` read manifests only.
+> an application lists in its `devDependencies`. `create`, `types` and `export manifest` do not.
+
+### create
+
+Create an application in the working directory.
+
+<dl>
+<dt><code>toa create &lt;name&gt;</code></dt>
+<dd>
+<code>name</code> the application's name: what its Context is called.
+</dd>
+</dl>
+
+```shell
+$ mkdir store && cd store
+$ npx -p @toa.io/cli -p @toa.io/userland toa create store
+```
+
+Nothing is installed or started. With [Docker](https://docs.docker.com/get-docker/) and
+[PM2](https://pm2.keymetrics.io) on the machine, the command prints what to run next:
+
+```shell
+$ npm install       # the packages, and what the declarations require beyond them
+$ npm run dock      # the broker, the database and Redis, in Docker
+$ npm run env       # types, .env and .map.json
+$ npm run sys       # the gateway and the services of Toa, under PM2
+$ npm run features  # the scenarios
+$ npm start         # the application as well, on http://localhost:8000
+```
 
 ### compose
 

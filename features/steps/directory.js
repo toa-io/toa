@@ -1,6 +1,6 @@
 import assert from 'node:assert'
 import { relative, resolve } from 'node:path'
-import { readdir, readFile } from 'node:fs/promises'
+import { mkdir, readdir, readFile } from 'node:fs/promises'
 import { glob } from 'tinyglobby'
 import { Given, Then } from '@cucumber/cucumber'
 
@@ -19,6 +19,42 @@ Given(
     process.chdir(target)
 
     this.cwd = target
+  }
+)
+
+Given(
+  'I have a directory {path}',
+  /**
+   * @param {string} path
+   * @this {toa.features.Context}
+   */
+  async function (path) {
+    await mkdir(resolve(this.cwd, path), { recursive: true })
+  }
+)
+
+Then(
+  'no file under {path} contains {string}',
+  /**
+   * What is written from a template has every value it was to be given.
+   *
+   * @param {string} target
+   * @param {string} text
+   * @this {toa.features.Context}
+   */
+  async function (target, text) {
+    const root = resolve(this.cwd, target)
+    const entries = await readdir(root, { recursive: true, withFileTypes: true })
+    const files = entries.filter((entry) => entry.isFile())
+
+    assert.ok(files.length > 0, `'${target}' holds no files`)
+
+    for (const entry of files) {
+      const path = resolve(entry.parentPath, entry.name)
+      const contents = await readFile(path, 'utf8')
+
+      assert.equal(contents.includes(text), false, `'${relative(root, path)}' contains '${text}'`)
+    }
   }
 )
 

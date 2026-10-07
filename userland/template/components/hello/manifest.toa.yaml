@@ -1,0 +1,22 @@
+name: hello
+
+operations:
+  greet:
+    input:
+      type: object
+      properties:
+        name: { type: string, maxLength: 64 }
+    output:
+      type: object
+      properties:
+        greeting: { type: string }
+      required: [greeting]
+
+exposition:
+  /:
+    anonymous: true
+    io:output: true
+    GET:
+      endpoint: greet
+      query:
+        parameters: [name]
