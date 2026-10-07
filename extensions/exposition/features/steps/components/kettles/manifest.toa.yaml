@@ -1,0 +1,15 @@
+name: kettles
+
+# What holds an object, so a query has a property inside one to name.
+
+entity:
+  properties:
+    title:
+      type: string
+    size:
+      type: object
+      properties:
+        volume:
+          type: number
+        unit:
+          type: string

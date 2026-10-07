@@ -149,6 +149,8 @@ describe('schema', () => {
     it(`should order what ${type} omits`, () => {
       assert.ok(!fits({ omit: 1, limit: 1 }))
       assert.ok(fits({ omit: 1, limit: 1, sort: ['a'] }))
+      assert.ok(fits({ omit: 1, limit: 1, sort: ['a.b:desc'] }))
+      assert.ok(!fits({ omit: 1, limit: 1, sort: ['a..b'] }))
     })
   }
 })

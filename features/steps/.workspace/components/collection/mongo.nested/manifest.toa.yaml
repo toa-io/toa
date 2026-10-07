@@ -1,0 +1,27 @@
+namespace: mongo
+name: nested
+
+entity:
+  properties:
+    title:
+      type: string
+    size:
+      type: object
+      properties:
+        volume:
+          type: number
+        unit:
+          type: string
+    leaves:
+      type: array
+      items:
+        type: object
+        properties:
+          origin:
+            type: string
+          grams:
+            type: integer
+    ranks:
+      type: array
+      items:
+        type: integer
