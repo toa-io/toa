@@ -13,24 +13,24 @@ entity declares as a top-level name is.
 1. A path is property names joined by `.`, each naming a property the one before it declares:
    `size.volume` where `size` is an object that declares `volume`.
 2. A path that names no declared property is refused with `QuerySyntax`, as a name that is not
-   declared is *(today)*. That includes a path into a string, into an object that declares no
+   declared is _(today)_. That includes a path into a string, into an object that declares no
    properties, and a name every object carries, such as `constructor`.
 3. A name with a dot in it that the entity declares as it is written is that property.
 
 **In a criteria**
 
 4. A value is read as what the property at the end of the path holds, and one that cannot be
-   read as that is refused, as it is for a top-level property *(today)*.
+   read as that is refused, as it is for a top-level property _(today)_.
 
 **In a sort and in a projection**
 
 5. A sort takes a path wherever it takes a name. A stream takes `id` and `CREATED` beside
-   `limit` or `token`, as before *(today)*.
+   `limit` or `token`, as before _(today)_.
 6. A projection that names a path reads that property and nothing else of the object it is in.
 
 **In a storage**
 
-7. An index is declared on a path as on a name: `keys: { size.volume: asc }` *(today)*.
+7. An index is declared on a path as on a name: `keys: { size.volume: asc }` _(today)_.
 
 **Through an array**
 
