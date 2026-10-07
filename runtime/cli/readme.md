@@ -46,8 +46,7 @@ cannot have; nothing is written then.
 Nothing is installed or started. The command prints what to run next:
 
 ```shell
-$ npm install       # the packages
-$ npx toa npm       # what the declarations require beyond them
+$ npm install       # the packages, and what the declarations require beyond them
 $ npm run dock      # the broker, the database and Redis, in Docker
 $ npm run env       # types, .env and .map.json
 $ npm run features  # the scenarios

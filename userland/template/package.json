@@ -3,6 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "postinstall": "toa npm",
     "dock": "docker compose up -d --wait",
     "env": "toa types --quiet && toa env --dev && toa map",
     "start": "toa mono ./components/*",

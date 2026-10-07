@@ -32,6 +32,7 @@ Feature: toa create
     And the file ./package.json contains line starting with '    "@toa.io/runtime": "1.'
     And the file ./package.json contains line starting with '    "@toa.io/userland": "1.'
     And the file ./package.json contains line starting with '    "@toa.io/agent": "1.'
+    And the file ./package.json contains exact line '    "postinstall": "toa npm",'
     And no file under ./ contains '{{name}}'
     And no file under ./ contains '{{version}}'
     And no file under ./ contains '{{agent}}'
@@ -42,7 +43,6 @@ Feature: toa create
     Then stdout should contain lines:
       """
       npm install
-      npx toa npm
       npm run dock
       npm run env
       npm run features

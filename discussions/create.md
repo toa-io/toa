@@ -14,8 +14,9 @@ connects to, and a scenario that tests what was written. What it writes runs as 
    naming the application `<name>` wherever the template names one: the Context, the package, the
    registry, the compose project.
 2. The packages of Toa are listed at the versions of the Toa that created the application.
-3. What is written is complete: after `npm install`, `toa npm`, and the services of its
+3. What is written is complete: after `npm install` and the services of its
    `docker-compose.yaml`, the application starts and its scenarios pass, with no file edited.
+   Installing it installs what its declarations require as well.
 
 **Where it is written**
 
@@ -43,7 +44,6 @@ Starts with the command instead of writing the first files by hand:
 $ mkdir store && cd store
 $ npx -p @toa.io/cli -p @toa.io/userland toa create store
 $ npm install
-$ npx toa npm
 $ npm run dock
 $ npm run env
 $ npm run features
@@ -79,6 +79,10 @@ $ npm run features
    exposition — and neither is more than a reader takes in at a glance.
 7. **Conventional ports.** The application is developed on a machine of its own, where `5672`,
    `27017` and `6379` say what they are.
+8. **`toa npm` runs after `npm install`, as the package's `postinstall`.** What the declarations
+   require is known to Toa and not to npm, and a second command is one a newcomer does not run
+   before the gateway fails to start. The command finds nothing to install the second time, so
+   the install it starts ends there.
 
 ## What happens today
 

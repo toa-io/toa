@@ -42,6 +42,7 @@ features/
 
 | Script | Runs |
 | --- | --- |
+| `npm install` | Installs the packages, then [`toa npm`](/runtime/cli/readme.md), which adds what the declarations require beyond them. |
 | `npm run dock` | The services, and waits until they are ready. |
 | `npm run env` | `toa types`, `toa env --dev` and `toa map`. Run it again when a manifest or a component's source changes. |
 | `npm start` | The application in one process, with its gateway on `http://localhost:8000`. |
