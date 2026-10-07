@@ -55,8 +55,9 @@ Feature: Pointer
       """
     Examples:
       | type      | key           |
-      | component | default.stash |
-      | namespace | default       |
+      | component              | default.stash |
+      | component, by its name | stash         |
+      | namespace              | default       |
 
   Scenario: Deploy credentials
     Given I have a component `mongo.one`

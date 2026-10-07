@@ -146,3 +146,20 @@ Feature: Events deployment
             - name: TOA_EVENTS_MONGO_ONE
               value: deleted
       """
+
+  Scenario: An event of a component without a namespace is named without one
+    Given I have a component `bare`
+    And I have a context with:
+      """yaml
+      events:
+        - bare.deleted
+      """
+    When I export deployment
+    Then exported values should contain:
+      """yaml
+      compositions:
+        - name: default-bare
+          variables:
+            - name: TOA_EVENTS_DEFAULT_BARE
+              value: deleted
+      """
