@@ -1,0 +1,62 @@
+# What a local run connects to. `developer` and `secret` are what `toa env --dev` writes.
+name: {{name}}
+volumes:
+  mongo-data:
+  mongo-key:
+services:
+  rabbitmq:
+    image: rabbitmq:4.2.4-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: developer
+      RABBITMQ_DEFAULT_PASS: secret
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+  # a replica set of one member: transactions and change streams need one
+  mongodb:
+    image: mongo:8.0.16
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: developer
+      MONGO_INITDB_ROOT_PASSWORD: secret
+    volumes:
+      - mongo-data:/data/db
+      - mongo-key:/etc/mongo-keyfile
+    entrypoint: >
+      bash -c '
+        set -e
+
+        if [ ! -f /etc/mongo-keyfile/keyfile ]; then
+          umask 077
+          openssl rand -base64 756 > /etc/mongo-keyfile/keyfile
+          chown mongodb:mongodb /etc/mongo-keyfile/keyfile
+        fi
+
+        exec docker-entrypoint.sh mongod --replSet rs0 --bind_ip_all --keyFile /etc/mongo-keyfile/keyfile
+      '
+    healthcheck:
+      test: >
+        mongosh "mongodb://developer:secret@localhost:27017/admin?directConnection=true" --quiet --eval '
+          try { rs.status() } catch (e) { rs.initiate({ _id: "rs0", members: [{ _id: 0, host: "localhost:27017" }] }) }
+          if (!db.hello().isWritablePrimary) quit(1)
+        '
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+  redis:
+    image: redis:8.6.1
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: redis-cli ping
+      interval: 5s
+      timeout: 5s
+      retries: 30

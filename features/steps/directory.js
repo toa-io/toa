@@ -43,7 +43,7 @@ Then(
    * @this {toa.features.Context}
    */
   async function (target, text) {
-    const root = await pattern(this.cwd, target)
+    const root = resolve(this.cwd, target)
     const entries = await readdir(root, { recursive: true, withFileTypes: true })
     const files = entries.filter((entry) => entry.isFile())
 

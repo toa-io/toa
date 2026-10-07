@@ -1,0 +1,29 @@
+name: {{name}}
+registry: registry.example.com/{{name}}
+
+amqp: amqp://localhost
+mongodb: mongodb://localhost
+stash: redis://localhost
+
+atomicity:
+  redis: redis://localhost
+
+storages:
+  tmp:
+    provider: tmp
+    directory: {{name}}
+
+exposition:
+  authorities:
+    local: localhost:8000
+
+configuration:
+  identity.tokens:
+    keys:
+      - id: key0
+        key: $IDENTITY_TOKENS_ENCRYPTION_KEY0
+
+ingress:
+  hosts: [localhost]
+
+resources: ~

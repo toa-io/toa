@@ -1,0 +1,24 @@
+{
+  "name": "{{name}}",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dock": "docker compose up -d --wait",
+    "env": "toa types --quiet && toa env --dev && toa map",
+    "start": "toa mono ./components/*",
+    "features": "cucumber-js",
+    "typecheck": "tsc"
+  },
+  "workspaces": [
+    "components/*"
+  ],
+  "devDependencies": {
+    "@cucumber/cucumber": "13.2.1",
+    "@toa.io/agent": "{{agent}}",
+    "@toa.io/operations": "{{version}}",
+    "@toa.io/runtime": "{{version}}",
+    "@toa.io/userland": "{{version}}",
+    "@types/node": "26.6.4",
+    "typescript": "7.0.2"
+  }
+}

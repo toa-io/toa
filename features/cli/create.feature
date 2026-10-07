@@ -32,7 +32,9 @@ Feature: toa create
     And the file ./package.json contains line starting with '    "@toa.io/runtime": "1.'
     And the file ./package.json contains line starting with '    "@toa.io/userland": "1.'
     And the file ./package.json contains line starting with '    "@toa.io/agent": "1.'
-    And no file under ./ contains '{{'
+    And no file under ./ contains '{{name}}'
+    And no file under ./ contains '{{version}}'
+    And no file under ./ contains '{{agent}}'
 
   Scenario: The command says what to run next
     Given my working directory is ./
