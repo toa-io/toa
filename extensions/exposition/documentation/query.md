@@ -82,25 +82,17 @@ entity:
       type: object
       properties:
         volume: { type: number }
-    leaves:
-      type: array
-      items:
-        type: object
-        properties:
-          origin: { type: string }
-          grams: { type: integer }
+        unit: { type: string }
 ```
 
 ```http
-GET /pots/?criteria=size.volume>2
+GET /pots/?criteria=size.volume>2;size.unit==cup
 ```
 
 A path that names nothing the entity declares is refused with `400 Bad Request`.
 
-An array is compared by what it holds: `leaves.grams>2` selects what has a leaf of more than two
-grams. Each comparison is met by any element, so `leaves.origin==uji;leaves.grams==2` also selects
-an entry where one leaf is from `uji` and another weighs two grams. Nothing selects the element
-that meets both.
+A path through an array of objects is compared with each of them, and each comparison on its
+own: `leaves.grams>2` selects what has such a leaf.
 
 Queries on a path are served by an index declared on it in a
 [migration](/documentation/component/declaration.md#migrations): `keys: { size.volume: asc }`.

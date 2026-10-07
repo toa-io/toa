@@ -12,33 +12,35 @@ entity declares as a top-level name is.
 
 1. A path is property names joined by `.`, each naming a property the one before it declares:
    `size.volume` where `size` is an object that declares `volume`.
-2. An array is read as what it holds, on the way and at the end of a path: `leaves.grams` is
-   `grams` of the objects in `leaves`, and `ranks` is compared as one of its elements.
-3. A path that names no declared property is refused with `QuerySyntax`, as a name that is not
+2. A path that names no declared property is refused with `QuerySyntax`, as a name that is not
    declared is *(today)*. That includes a path into a string, into an object that declares no
    properties, and a name every object carries, such as `constructor`.
-4. A name with a dot in it that the entity declares as it is written is that property.
+3. A name with a dot in it that the entity declares as it is written is that property.
 
 **In a criteria**
 
-5. A value is read as what the property at the end of the path holds, and one that cannot be
+4. A value is read as what the property at the end of the path holds, and one that cannot be
    read as that is refused, as it is for a top-level property *(today)*.
-6. A comparison on an array is met by any element of it. Two comparisons on one array are met
-   by any two elements, and not by one element for both.
 
 **In a sort and in a projection**
 
-7. A sort takes a path wherever it takes a name. A stream takes `id` and `CREATED` beside
+5. A sort takes a path wherever it takes a name. A stream takes `id` and `CREATED` beside
    `limit` or `token`, as before *(today)*.
-8. A projection that names a path reads that property and nothing else of the object it is in.
+6. A projection that names a path reads that property and nothing else of the object it is in.
 
 **In a storage**
 
-9. An index is declared on a path as on a name: `keys: { size.volume: asc }` *(today)*.
+7. An index is declared on a path as on a name: `keys: { size.volume: asc }` *(today)*.
+
+**Through an array**
+
+8. An array is read as what it holds, on the way and at the end of a path: `leaves.grams` is
+   `grams` of the objects in `leaves`, and `ranks` is compared as one of its elements.
+9. A comparison on an array is met by any element of it, and each comparison on its own.
 
 **What is not promised**
 
-10. Nothing selects the element of an array that meets several comparisons at once.
+10. Nothing selects the one element of an array that meets several comparisons at once.
 11. A path does not reach into what a schema does not declare by name: `additionalProperties`,
     `patternProperties`, `oneOf`, `anyOf`, a `$ref` left unresolved.
 12. A property inside an object that declares `format: date-time` or `epoch-millis` is stored as
