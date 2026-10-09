@@ -14,7 +14,9 @@ describe('octets:delete with a workflow', () => {
     const output = await apply(storage, remotes)
     const reports = await (output.body as Readable).toArray()
 
-    assert.deepStrictEqual(reports, [{ step: 'step', status: 'completed', output: { done: true } }])
+    assert.deepStrictEqual(reports, [
+      { step: 'step', status: 'completed', output: { done: true } }
+    ])
     assert.deepStrictEqual(deleted, ['/file'])
   })
 
@@ -50,7 +52,11 @@ describe('octets:delete with a workflow', () => {
 })
 
 async function apply(storage: Component, remotes: Remotes): Promise<{ body?: unknown }> {
-  const directive = new Delete({ workflow: { step: 'tester.step' } }, Promise.resolve(storage), remotes)
+  const directive = new Delete(
+    { workflow: { step: 'tester.step' } },
+    Promise.resolve(storage),
+    remotes
+  )
 
   const input = {
     authority: 'nex.toa.io',

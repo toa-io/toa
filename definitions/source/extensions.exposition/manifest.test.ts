@@ -46,7 +46,10 @@ it('should throw on invalid declaration type', async () => {
 
 // a projection is what a storage reads, and a read an operation writes back reads the record whole
 it('should refuse a projection declared for an operation that is not an observation', async () => {
-  mf.operations = { observe: { type: 'observation' }, transit: { type: 'transition' } } as any
+  mf.operations = {
+    observe: { type: 'observation' },
+    transit: { type: 'transition' }
+  } as any
 
   const projecting = {
     '/': { POST: { endpoint: 'transit', query: { projection: ['title'] } } }
@@ -54,7 +57,8 @@ it('should refuse a projection declared for an operation that is not an observat
 
   assert.throws(
     () => manifest(projecting, mf),
-    (error: any) => /declares a projection, which an operation of type 'transition'/.test(error.message)
+    (error: any) =>
+      /declares a projection, which an operation of type 'transition'/.test(error.message)
   )
 })
 
@@ -97,7 +101,8 @@ it('should set namespace and component', async () => {
 
 it('should throw where a method maps a stream to an operation that takes none', async () => {
   assert.throws(
-    () => manifest({ '/': { POST: { 'map:stream': 'content', endpoint: 'observe' } } }, mf),
+    () =>
+      manifest({ '/': { POST: { 'map:stream': 'content', endpoint: 'observe' } } }, mf),
     /maps a stream, which the operation does not take/
   )
 })

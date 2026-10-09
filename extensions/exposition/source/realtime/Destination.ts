@@ -2,10 +2,7 @@ import { console } from 'openspan'
 import { Connector, type Locator } from '@toa.io/core'
 import { APPEND, MAXLEN, Shards, shard } from './redis.ts'
 import * as measure from './measurements.ts'
-import {
-  literal,
-  type Route
-} from '@toa.io/definitions/extensions.exposition/realtime'
+import { literal, type Route } from '@toa.io/definitions/extensions.exposition/realtime'
 import type { outbox } from '@toa.io/core/types'
 
 /**
@@ -171,8 +168,7 @@ function keysOf(payload: Record<string, unknown>, route: Route): string[] {
     const value = payload?.[property]
     const values = Array.isArray(value) ? value : [value]
 
-    for (const key of values)
-      if (typeof key === 'string' && !literal(key)) keys.add(key)
+    for (const key of values) if (typeof key === 'string' && !literal(key)) keys.add(key)
   }
 
   for (const key of route.literals) keys.add(key)

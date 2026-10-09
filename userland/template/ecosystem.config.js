@@ -5,7 +5,9 @@ import { join } from 'node:path'
 // shell that starts it, which has `node_modules/.bin` only under `npm run`
 const toa = join(import.meta.dirname, 'node_modules/.bin/toa')
 
-const components = readdirSync(join(import.meta.dirname, 'components'), { withFileTypes: true })
+const components = readdirSync(join(import.meta.dirname, 'components'), {
+  withFileTypes: true
+})
   .filter((entry) => entry.isDirectory())
   .map((entry) => join('components', entry.name))
 

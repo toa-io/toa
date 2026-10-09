@@ -41,7 +41,8 @@ export class Computation implements Operation {
     const refresh = (aged && !claims.custom) || claims.refresh
 
     return {
-      identity: claims.aud === undefined ? identity : { ...identity, aud: list(claims.aud) },
+      identity:
+        claims.aud === undefined ? identity : { ...identity, aud: list(claims.aud) },
       refresh
     }
   }

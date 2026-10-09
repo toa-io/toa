@@ -13,7 +13,10 @@ export interface Target {
 
 export async function send(options: LoadOptions, target: Target): Promise<LoadResult> {
   const argv = args(options)
-  const [command, list] = target.cpus === null ? ['oha', argv] : ['taskset', ['-c', target.cpus, 'oha', ...argv]]
+  const [command, list] =
+    target.cpus === null
+      ? ['oha', argv]
+      : ['taskset', ['-c', target.cpus, 'oha', ...argv]]
   const { code, stdout, stderr } = await execute(command, list, target.signal)
 
   if (code !== 0) throw new Error(`oha exited with ${code}: ${stderr.slice(0, 500)}`)
@@ -21,9 +24,12 @@ export async function send(options: LoadOptions, target: Target): Promise<LoadRe
   try {
     return read(JSON.parse(stdout), target.status)
   } catch (error) {
-    throw new Error(`${options.method} ${options.url}: ${error instanceof Error ? error.message : String(error)}`, {
-      cause: error
-    })
+    throw new Error(
+      `${options.method} ${options.url}: ${error instanceof Error ? error.message : String(error)}`,
+      {
+        cause: error
+      }
+    )
   }
 }
 

@@ -34,7 +34,7 @@ chain, a `Headers` for a reply that gets none. Those that cost nothing to leave 
 **Answers**
 
 4. Every request is answered as it is today: the same status, headers, body and failures, under
-   HTTP/1.1 and h2c *(today)*.
+   HTTP/1.1 and h2c _(today)_.
 
 **What is left out**
 
@@ -96,17 +96,17 @@ of `list.1000` in the gateway is the bytes passing through, and this is what the
 Profiled on `dev` at `551ae5ca3` with `npm run bench -- --profile`, on an AMD Ryzen 7 7800X3D,
 Node 24.21 (V8 13.6), RabbitMQ 3.10 and MongoDB 8.0.16 from the compose stack:
 
-| scenario | gateway µs per request | garbage collector |
-| --- | ---: | ---: |
-| `small` | 69 | 7.6% |
-| `small.h2c` | 94 | 7.2% |
-| `observe` | 101 | 5.3% |
-| `list.1000` | 2,563 | 65.6% |
-| `list.1000.h2c` | 3,778 | 76.2% |
-| `create` | 164 | 7.8% |
-| `chain` | 80 | 7.8% |
-| `token.id` | 164 | 4.6% |
-| `mcp.tools.list` | 108 | 6.3% |
+| scenario         | gateway µs per request | garbage collector |
+| ---------------- | ---------------------: | ----------------: |
+| `small`          |                     69 |              7.6% |
+| `small.h2c`      |                     94 |              7.2% |
+| `observe`        |                    101 |              5.3% |
+| `list.1000`      |                  2,563 |             65.6% |
+| `list.1000.h2c`  |                  3,778 |             76.2% |
+| `create`         |                    164 |              7.8% |
+| `chain`          |                     80 |              7.8% |
+| `token.id`       |                    164 |              4.6% |
+| `mcp.tools.list` |                    108 |              6.3% |
 
 On `list.1000`, `--trace-gc` shows a mark-compact of a 45 MB heap every 150–350 ms, each started
 while the old generation was at 45 MB of a 117 MB limit. Allocation sampling of the same window
@@ -116,10 +116,10 @@ into the message.
 
 The gateway with the flag set on the command line, one boot per scenario, two runs each, in turns:
 
-| scenario | without, µs | with, µs |
-| --- | ---: | ---: |
-| `small` | 69, 72 | 69, 72 |
-| `list.1000` | 3,120, 2,929 | 1,506, 1,439 |
+| scenario        |  without, µs |     with, µs |
+| --------------- | -----------: | -----------: |
+| `small`         |       69, 72 |       69, 72 |
+| `list.1000`     | 3,120, 2,929 | 1,506, 1,439 |
 | `list.1000.h2c` | 3,735, 4,225 | 1,823, 1,397 |
 
 ## Stages
@@ -145,6 +145,6 @@ guarantee 6 states.
 
 ## References
 
-- V8 `513bb22991`, *[heap] Enable external_memory_accounted_in_global_limit by default*, relanded as
+- V8 `513bb22991`, _[heap] Enable external_memory_accounted_in_global_limit by default_, relanded as
   `6a5039d9db`, and `cf511a65ad`, which removes the flag. Bug
   [361124432](https://issues.chromium.org/issues/361124432).

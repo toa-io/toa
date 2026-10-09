@@ -66,8 +66,10 @@ describe('call waited for', () => {
 
     controller.abort()
 
-    await assert.rejects(context.call('a', 'b', 'c', {}, { signal: controller.signal }), (exception) =>
-      exception.code === codes.Abandoned)
+    await assert.rejects(
+      context.call('a', 'b', 'c', {}, { signal: controller.signal }),
+      (exception) => exception.code === codes.Abandoned
+    )
   })
 })
 

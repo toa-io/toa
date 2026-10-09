@@ -11,9 +11,26 @@ const profile: CpuProfile = {
     { id: 1, callFrame: frame('(root)', ''), children: [2, 3, 4, 5, 6, 7] },
     { id: 2, callFrame: frame('(idle)', '') },
     { id: 3, callFrame: frame('(garbage collector)', '') },
-    { id: 4, callFrame: frame('validate', 'file:///work/toa/node_modules/ajv/dist/core.js', 10) },
-    { id: 5, callFrame: frame('match', 'file:///work/toa/extensions/exposition/transpiled/RTD/Node.js', 20) },
-    { id: 6, callFrame: frame('match', 'file:///work/toa/extensions/exposition/transpiled/RTD/Route.js', 5) },
+    {
+      id: 4,
+      callFrame: frame('validate', 'file:///work/toa/node_modules/ajv/dist/core.js', 10)
+    },
+    {
+      id: 5,
+      callFrame: frame(
+        'match',
+        'file:///work/toa/extensions/exposition/transpiled/RTD/Node.js',
+        20
+      )
+    },
+    {
+      id: 6,
+      callFrame: frame(
+        'match',
+        'file:///work/toa/extensions/exposition/transpiled/RTD/Route.js',
+        5
+      )
+    },
     { id: 7, callFrame: frame('parse', 'node:internal/url', 1) }
   ],
   startTime: 0,
@@ -44,7 +61,9 @@ describe('summarize', () => {
   })
 
   it('should attribute a module to its package or workspace', () => {
-    const packages = Object.fromEntries(summary.packages.map(({ name, self }) => [name, self]))
+    const packages = Object.fromEntries(
+      summary.packages.map(({ name, self }) => [name, self])
+    )
 
     assert.deepEqual(packages, {
       'extensions/exposition': 20,
@@ -63,6 +82,10 @@ describe('summarize', () => {
   })
 })
 
-function frame(functionName: string, url: string, lineNumber = -1): CpuProfile['nodes'][number]['callFrame'] {
+function frame(
+  functionName: string,
+  url: string,
+  lineNumber = -1
+): CpuProfile['nodes'][number]['callFrame'] {
   return { functionName, url, lineNumber, columnNumber: 0, scriptId: '0' }
 }

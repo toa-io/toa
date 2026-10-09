@@ -55,7 +55,9 @@ export function commands(labels: string[], vhost = DEFAULT): string[] {
   const lines: string[] = []
 
   for (const exchange of [INBOUND, OUTBOUND])
-    lines.push(`rabbitmqadmin${at} declare exchange name=${exchange} type=direct durable=true`)
+    lines.push(
+      `rabbitmqadmin${at} declare exchange name=${exchange} type=direct durable=true`
+    )
 
   for (const label of labels) {
     lines.push(`rabbitmqadmin${at} declare queue name=${queue(label)} durable=true`)

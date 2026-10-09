@@ -86,7 +86,15 @@ it('should put the audience on the identity the gateway sees', async () => {
   const exp = new Date(Date.now() + 1000).toISOString()
   const aud = ['https://nex.toa.io/.mcp']
 
-  output = { iss: authority, identity, exp, iat, aud: aud[0], refresh: false, custom: true }
+  output = {
+    iss: authority,
+    identity,
+    exp,
+    iat,
+    aud: aud[0],
+    refresh: false,
+    custom: true
+  }
 
   const result = await authenticate.execute({ authority, credentials })
 

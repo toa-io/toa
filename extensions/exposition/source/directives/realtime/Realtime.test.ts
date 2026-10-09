@@ -24,7 +24,10 @@ describe('realtime:stream', () => {
   })
 
   it('should refuse what is neither a route variable nor a literal', () => {
-    assert.throws(() => realtime.create('stream', 'room', null, '/rooms/stream'), /'room'/)
+    assert.throws(
+      () => realtime.create('stream', 'room', null, '/rooms/stream'),
+      /'room'/
+    )
   })
 
   it('should not serve a literal key by a route variable', async () => {

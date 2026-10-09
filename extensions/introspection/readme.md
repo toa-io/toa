@@ -31,13 +31,13 @@ introspection:
 
 All properties are optional.
 
-| Property    | Default | Description                                                                                   |
-| ----------- | ------- | --------------------------------------------------------------------------------------------- |
-| `interval`  | `300`   | Interval between topology updates, in seconds.                                                |
-| `threshold` | `1024`  | Number of distinct observed interactions that triggers an update before the interval expires. |
-| `ui`        | `true`  | Publishes the web UI.                                                                         |
+| Property    | Default | Description                                                                                                                                                                                  |
+| ----------- | ------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `interval`  | `300`   | Interval between topology updates, in seconds.                                                                                                                                               |
+| `threshold` | `1024`  | Number of distinct observed interactions that triggers an update before the interval expires.                                                                                                |
+| `ui`        | `true`  | Publishes the web UI.                                                                                                                                                                        |
 | `halt`      | `false` | Accepts [halt](/documentation/halt.md) signals, which stop the whole deployment. `true`, or a pair of `[min, max]` bounds for what one may ask for: `duration` and `quiescence`, in seconds. |
-| `resources` | —       | Resource requirements for the Introspection deployment.                                       |
+| `resources` | —       | Resource requirements for the Introspection deployment.                                                                                                                                      |
 
 Resource requirements can be declared specifically for Introspection:
 

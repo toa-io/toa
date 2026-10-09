@@ -15,7 +15,7 @@ single-entity transition goes when it loses: retried under `concurrency: retry`,
    the outbox only with the write it describes.
 2. An entity changed since it was read is left as the other writer left it.
 3. An entity the transition creates — an associated one whose id the read did not find — is created
-   only where no live entity holds its id. A deleted one is revived. *(today, for the revival)*
+   only where no live entity holds its id. A deleted one is revived. _(today, for the revival)_
 4. A lost commit is counted in `toa.storage.conflicts`, as a single entity's is.
 
 ### What a component author does differently

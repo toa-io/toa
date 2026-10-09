@@ -112,7 +112,7 @@ where it reaches an operation that may change state. The `io:readonly` directive
 exposition:
   /:id:
     GET:
-      endpoint: confirm    # a transition
+      endpoint: confirm # a transition
       io:readonly: false
 ```
 

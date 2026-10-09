@@ -18,7 +18,7 @@ rather than whatever it finds for the domain.
 3. Only an icon a client may render with no further trust is shown: one served from the manifest's
    own origin, with no `purpose` or one that includes `any`, and a `type` of an image where it
    states one. A size other than `WxH` or `any` is left out of the icon.
-4. Without `mcp.manifest`, `serverInfo` is what it is *(today)*.
+4. Without `mcp.manifest`, `serverInfo` is what it is _(today)_.
 5. `name`, `version`, `instructions` and the tools do not change: the manifest gives icons and
    nothing else.
 

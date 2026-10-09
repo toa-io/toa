@@ -170,6 +170,9 @@ suite('discovery tree', () => {
       directives
     )
 
-    assert.deepEqual(Object.keys((await describe(tree, request)).routes), ['/alpha', '/zed'])
+    assert.deepEqual(Object.keys((await describe(tree, request)).routes), [
+      '/alpha',
+      '/zed'
+    ])
   })
 })

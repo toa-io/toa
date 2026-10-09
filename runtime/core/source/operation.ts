@@ -125,7 +125,10 @@ export class Operation extends Connector {
        * it changed, and an effect reads for what it does next. Refused here rather than by the
        * contract alone, because an authentic request skips the contract.
        */
-      if (!this.projects && (request.query as Query | undefined)?.projection !== undefined)
+      if (
+        !this.projects &&
+        (request.query as Query | undefined)?.projection !== undefined
+      )
         throw new RequestContractException('`projection` is read by an observation alone')
 
       if (request.authentic !== true) this.#contracts.request.fit(request)
@@ -228,8 +231,7 @@ export class Operation extends Connector {
 
     if (reply?.error instanceof Error) reply.error = refusal(reply.error)
 
-    if (this.#local && !(reply instanceof Readable))
-      this.#contracts.reply.fit(reply)
+    if (this.#local && !(reply instanceof Readable)) this.#contracts.reply.fit(reply)
 
     store.reply = reply
   }
@@ -298,7 +300,8 @@ function restrict(reply: any, output?: string[]): any {
   // a stream of bytes is a value, as a primitive is: there is no property of it to leave out
   if (answered instanceof Readable)
     reply.output = answered.readableObjectMode ? restricted(answered, allowed) : answered
-  else if (Array.isArray(answered)) reply.output = answered.map((value) => fitted(value, allowed))
+  else if (Array.isArray(answered))
+    reply.output = answered.map((value) => fitted(value, allowed))
   else reply.output = fit(answered, allowed)
 
   return reply
@@ -322,7 +325,8 @@ function restricted(source: Readable, allowed: Set<string>): Readable {
 
 function fitted(value: unknown, allowed: Set<string>): unknown {
   // what a part carries of the set is its entry; a removal and a token are not the entity's
-  if (parts.is(value)) return 'entry' in value ? { entry: fit(value.entry, allowed) } : value
+  if (parts.is(value))
+    return 'entry' in value ? { entry: fit(value.entry, allowed) } : value
 
   return value !== null && typeof value === 'object' && !ArrayBuffer.isView(value)
     ? fit(value as Record<string, any>, allowed)
@@ -341,4 +345,3 @@ function fit(entity: Record<string, any>, allowed: Set<string>): Record<string, 
 
   return output
 }
-

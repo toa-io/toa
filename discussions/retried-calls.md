@@ -24,9 +24,9 @@ operation that declares `once`: the call is refused where it is made.
 
 4. A retried transition calls an operation that does not declare `once` as it does today: once per
    attempt. Nothing was promised of that call, and making it safe to repeat is the author's.
-   *(today)*
+   _(today)_
 5. A transition declared `concurrency: none` calls what it likes, and a chain of `once` holds
-   through it. *(today)*
+   through it. _(today)_
 
 **What is not promised**
 

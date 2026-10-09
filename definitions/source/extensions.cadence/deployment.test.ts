@@ -9,8 +9,10 @@ import type { Variable } from '@toa.io/operations'
 const variables = (annotation?: Annotation | null): Variable[] =>
   deployment(null, annotation).services![0].variables ?? []
 
-const value = (annotation: Annotation | null | undefined, name: string): string | undefined =>
-  variables(annotation).find((one) => one.name === name)?.value
+const value = (
+  annotation: Annotation | null | undefined,
+  name: string
+): string | undefined => variables(annotation).find((one) => one.name === name)?.value
 
 it('should carry the interval in milliseconds', () => {
   assert.equal(value(null, 'TOA_CADENCE_DISCRETENESS'), String(DISCRETENESS * 1000))
@@ -28,8 +30,14 @@ it('should carry the regions whose calls this deployment makes', () => {
 })
 
 it('should refuse a rank that is not one', () => {
-  assert.throws(() => variables({ regions: [-1] } as Annotation), /Invalid cadence annotation/)
-  assert.throws(() => variables({ regions: [] } as Annotation), /Invalid cadence annotation/)
+  assert.throws(
+    () => variables({ regions: [-1] } as Annotation),
+    /Invalid cadence annotation/
+  )
+  assert.throws(
+    () => variables({ regions: [] } as Annotation),
+    /Invalid cadence annotation/
+  )
   assert.throws(
     () => variables({ regions: [0, 0] } as Annotation),
     /Invalid cadence annotation/

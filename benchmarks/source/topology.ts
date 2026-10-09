@@ -24,7 +24,9 @@ export function cores(siblings: readonly string[]): number[][] {
 export function read(): number[][] {
   const lists = readdirSync(ROOT)
     .filter((name) => /^cpu\d+$/.test(name))
-    .map((name) => readFileSync(join(ROOT, name, 'topology/thread_siblings_list'), 'utf8').trim())
+    .map((name) =>
+      readFileSync(join(ROOT, name, 'topology/thread_siblings_list'), 'utf8').trim()
+    )
 
   return cores(lists)
 }

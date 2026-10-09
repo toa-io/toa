@@ -56,7 +56,8 @@ export interface Options {
 
 export function options(annotation?: Annotation): Options {
   const declaration = annotation === undefined || annotation === false ? {} : annotation
-  const halt = declaration.halt === undefined || declaration.halt === false ? {} : declaration.halt
+  const halt =
+    declaration.halt === undefined || declaration.halt === false ? {} : declaration.halt
 
   return {
     interval: declaration.interval ?? DEFAULT_INTERVAL,
@@ -64,7 +65,11 @@ export function options(annotation?: Annotation): Options {
     ui: declaration.ui !== false,
     halt: declaration.halt !== undefined && declaration.halt !== false,
     duration: bounds(halt === true ? undefined : halt.duration, DURATION, 'duration'),
-    quiescence: bounds(halt === true ? undefined : halt.quiescence, QUIESCENCE, 'quiescence')
+    quiescence: bounds(
+      halt === true ? undefined : halt.quiescence,
+      QUIESCENCE,
+      'quiescence'
+    )
   }
 }
 
@@ -79,8 +84,10 @@ function bounds(declared: Bounds | undefined, fallback: Bounds, name: string): B
   const [min, max] = declared
 
   if (min >= max)
-    throw new Error(`Invalid introspection annotation: 'halt.${name}' is [${min}, ${max}], ` +
-      'and the first of a pair is the smaller')
+    throw new Error(
+      `Invalid introspection annotation: 'halt.${name}' is [${min}, ${max}], ` +
+        'and the first of a pair is the smaller'
+    )
 
   return [min, max]
 }

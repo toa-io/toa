@@ -96,7 +96,7 @@ carried down, this one would say of every resource below that it is the one it w
 
 ```yaml
 /pots:
-  help:node: Pots      # `/pots`, and not `/pots/:id`
+  help:node: Pots # `/pots`, and not `/pots/:id`
   GET: enumerate
   /:id:
     GET: observe
@@ -106,7 +106,7 @@ A node whose `/` answers in its place is the exception, because the two are one 
 
 ```yaml
 /pots:
-  help:node: Pots      # `/pots/` is what answers, and it is described
+  help:node: Pots # `/pots/` is what answers, and it is described
   /:
     GET: enumerate
 ```

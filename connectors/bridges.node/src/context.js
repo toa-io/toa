@@ -50,7 +50,13 @@ export class Context extends Connector {
 
     const [namespace, name, endpoint] = segments
 
-    return this.#context.call(namespace, name, endpoint, this.#attribute(request), options)
+    return this.#context.call(
+      namespace,
+      name,
+      endpoint,
+      this.#attribute(request),
+      options
+    )
   })
 
   /**

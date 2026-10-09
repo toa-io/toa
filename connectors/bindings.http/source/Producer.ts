@@ -43,7 +43,8 @@ export class Producer extends Connector {
    * holds: the component is a dependency, and is disconnected only once this has returned.
    */
   protected override async close(): Promise<void> {
-    for (const endpoint of this.endpoints) this.server.unroute(path(this.locator, endpoint))
+    for (const endpoint of this.endpoints)
+      this.server.unroute(path(this.locator, endpoint))
 
     await Promise.allSettled(this.pending)
   }

@@ -26,7 +26,7 @@ adding to the queues, so what is in them is finite and drains. A quiesced deploy
 deployment, still connected, with nothing new entering it.
 
 **The check.** Every process already tells the explorer what called what, and a process that
-observed nothing writes nothing. So the question *did anything happen anywhere* is one read of
+observed nothing writes nothing. So the question _did anything happen anywhere_ is one read of
 `introspection.edges`: was any edge written in this region since the signal. If none was, nothing
 was called, anywhere.
 
@@ -123,6 +123,7 @@ covers.
    deployment allows is carried out as the nearest thing it does. How long a deployment takes to
    drain and how long it can afford to be down are not the runtime's to know; what the runtime
    holds is where an application says nothing.
+
 6. **The check.** A quiesced process puts its `Reporter` on a one-second flush period, waits the
    quiescence out plus a gap for a flush to be published and merged, and reads
    `introspection.edges` with `UPDATED > CREATED` in this region. Every call the decision rests on
@@ -156,7 +157,7 @@ nothing to produce.
 
 **The decision is unilateral, over a closed interval agreed by everyone.** Agreement was tried and
 cannot be had: `UPDATED` is one field overwritten in place, so an edge flushed inside a window and
-again after it *leaves* that window, and a later reader sees fewer rows than an earlier one. The
+again after it _leaves_ that window, and a later reader sees fewer rows than an earlier one. The
 [peers](https://temich.net/notes/peers/) pattern, which cadence and the outbox are built on, hangs
 agreement on an atomic read point, and this has none. So the design stops needing one.
 

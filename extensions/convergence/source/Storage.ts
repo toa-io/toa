@@ -25,7 +25,10 @@ type Whole<T> = { [K in keyof Required<T>]: T[K] }
  * Everything else it delegates. It decorates the storage because that is where a handle to one
  * is, not because it changes anything a component reads or writes.
  */
-export class Converging extends Connector implements Whole<storages.Storage>, bindings.Inbound {
+export class Converging
+  extends Connector
+  implements Whole<storages.Storage>, bindings.Inbound
+{
   private readonly storage: storages.Storage
   private readonly locator: Locator
   private readonly subscribe: (sink: bindings.Inbound) => Promise<Link>

@@ -62,11 +62,11 @@ keep away from the brokers an application depends on to serve a request.
 
 Each region's broker holds two exchanges, the same two names everywhere:
 
-| | |
-| --- | --- |
-| `convergence.out` | what this deployment publishes to. Nothing local binds to it, so a region is never delivered its own writes. |
-| `convergence.in` | **federated** from every other region's `convergence.out`. |
-| `convergence.<namespace>.<name>` | a durable queue per component, bound to `convergence.in` under that component's key. |
+|                                  |                                                                                                              |
+| -------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| `convergence.out`                | what this deployment publishes to. Nothing local binds to it, so a region is never delivered its own writes. |
+| `convergence.in`                 | **federated** from every other region's `convergence.out`.                                                   |
+| `convergence.<namespace>.<name>` | a durable queue per component, bound to `convergence.in` under that component's key.                         |
 
 Nothing declares those queues for a region that is not running yet, which is what makes adding
 one an order that matters, and adding a converging component to a running pair the same:

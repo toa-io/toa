@@ -21,31 +21,37 @@ describe('buffers nothing keeps', () => {
   const churn = fileURLToPath(new URL('./heap/churn.js', import.meta.url))
 
   function run(...args) {
-    return JSON.parse(execFileSync(process.execPath, [churn, ...args], { encoding: 'utf8' }))
+    return JSON.parse(
+      execFileSync(process.execPath, [churn, ...args], { encoding: 'utf8' })
+    )
   }
 
   // a V8 that counts them by itself has nothing to compare against
-  it('start a quarter of the mark-compacts once they are counted', { skip: !accounts() }, () => {
-    const stock = run()
+  it(
+    'start a quarter of the mark-compacts once they are counted',
+    { skip: !accounts() },
+    () => {
+      const stock = run()
 
-    // what is compared has to have happened: a run too short to start any proves nothing
-    assert.ok(stock.major >= 8, JSON.stringify({ stock }))
+      // what is compared has to have happened: a run too short to start any proves nothing
+      assert.ok(stock.major >= 8, JSON.stringify({ stock }))
 
-    /*
-     * A machine short of memory or CPU starts mark-compacts of its own, whatever the flag: beside
-     * the rest of the suite an accounted run has counted nine where it counts one alone. Those
-     * only ever add, so the fewest of a few runs is what the flag does.
-     */
-    const runs = []
+      /*
+       * A machine short of memory or CPU starts mark-compacts of its own, whatever the flag: beside
+       * the rest of the suite an accounted run has counted nine where it counts one alone. Those
+       * only ever add, so the fewest of a few runs is what the flag does.
+       */
+      const runs = []
 
-    for (let attempt = 0; attempt < ATTEMPTS; attempt++) {
-      runs.push(run('accounted'))
+      for (let attempt = 0; attempt < ATTEMPTS; attempt++) {
+        runs.push(run('accounted'))
 
-      if (runs.at(-1).major * 4 <= stock.major) return
+        if (runs.at(-1).major * 4 <= stock.major) return
+      }
+
+      assert.fail(JSON.stringify({ stock, accounted: runs }))
     }
-
-    assert.fail(JSON.stringify({ stock, accounted: runs }))
-  })
+  )
 })
 
 /** How many accounted runs are made before the busiest of machines is taken at its word. */

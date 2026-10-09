@@ -63,7 +63,11 @@ describe('codec', () => {
 
   it('should write a date-time property as a date', () => {
     const { to: write } = codec(properties)
-    const record = write({ id: '1', settled: '2026-09-05T10:00:00.000Z', endpoint: 'a.b.c' })
+    const record = write({
+      id: '1',
+      settled: '2026-09-05T10:00:00.000Z',
+      endpoint: 'a.b.c'
+    })
 
     assert.ok(record.settled instanceof Date)
     assert.strictEqual(record.settled.toISOString(), '2026-09-05T10:00:00.000Z')
@@ -100,8 +104,14 @@ describe('codec', () => {
   })
 
   it('should ignore a format said of the wrong type', () => {
-    assert.deepStrictEqual(codec({ at: { type: 'string', format: 'epoch-millis' } }).dates, [])
-    assert.deepStrictEqual(codec({ at: { type: 'integer', format: 'date-time' } }).dates, [])
+    assert.deepStrictEqual(
+      codec({ at: { type: 'string', format: 'epoch-millis' } }).dates,
+      []
+    )
+    assert.deepStrictEqual(
+      codec({ at: { type: 'integer', format: 'date-time' } }).dates,
+      []
+    )
   })
 })
 
@@ -133,7 +143,10 @@ describe('codec, epoch-millis', () => {
   })
 
   it('should read a record written before the property was a date', () => {
-    assert.strictEqual(codec(properties).from({ _id: '1', DELETED: millis }).DELETED, millis)
+    assert.strictEqual(
+      codec(properties).from({ _id: '1', DELETED: millis }).DELETED,
+      millis
+    )
   })
 
   it('should write the moments of a changeset as dates', () => {
@@ -156,6 +169,9 @@ describe('codec, epoch-millis', () => {
   it('should leave a changeset of an entity that declares no moment as it is', () => {
     const changeset = { VERSION: 2 }
 
-    assert.strictEqual(codec({ VERSION: { type: 'integer' } }).changes(changeset), changeset)
+    assert.strictEqual(
+      codec({ VERSION: { type: 'integer' } }).changes(changeset),
+      changeset
+    )
   })
 })

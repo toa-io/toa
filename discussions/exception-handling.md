@@ -10,7 +10,7 @@ anyone wrote that failure down anywhere changes nothing about it.
 So an exception is worth trying again, because what is wrong may be gone in a minute, and it must
 never be quietly dropped, because nobody chose it. Where there is a caller waiting, it is theirs to
 decide, and the runtime hands it over. Where there is no caller — an event, a task — the runtime
-decides, and the only question is *will it ever succeed?* If it might, the message is kept and tried
+decides, and the only question is _will it ever succeed?_ If it might, the message is kept and tried
 again later, with the wait growing each time, out of the way of everything else. If it never will —
 the runtime itself refused the message, and its refusal will not change — trying again is only a way
 of failing again, and the message is set aside at once.
@@ -28,15 +28,15 @@ A failure belongs to one message. Not to the process, and not to the other messa
 
 ### Guarantees
 
-What the finished system promises. Those marked *(today)* already hold, and are listed so the whole
+What the finished system promises. Those marked _(today)_ already hold, and are listed so the whole
 is readable at once.
 
 **A call**
 
 1. A failure of an operation reaches whoever called it, as an exception, and the caller decides what
-   to do about it. *(today)*
+   to do about it. _(today)_
 2. An outcome the business logic chose is an `error` — a value the caller reads, not a failure.
-   *(today)*
+   _(today)_
 
 **A message**
 
@@ -52,8 +52,8 @@ is readable at once.
 **Publication and delivery**
 
 8. A state change and the intent to publish commit together; publication is at-least-once and
-   nothing is lost to a crash. *(today)*
-9. Nothing is promised about order. *(today)*
+   nothing is lost to a crash. _(today)_
+9. Nothing is promised about order. _(today)_
 10. Delivery is at-least-once, and a receiver's state change happens once however many times its
     message arrives.
 
@@ -61,7 +61,7 @@ is readable at once.
 
 11. A failure is visible: what is parked accumulates where its depth can be watched, and every retry
     and every parking is in the log.
-12. A replica that is alive but no longer consuming is noticed. *(open — see the changes, area 6)*
+12. A replica that is alive but no longer consuming is noticed. _(open — see the changes, area 6)_
 
 ### What a component author does differently
 
@@ -85,7 +85,7 @@ Nothing, to keep working. What changes is what they can rely on:
 
 2. **Consumption with nobody waiting.** An event and a task are one thing — work carried on the
    event topology with no caller to answer to — and they get one rule. The failure is caught by the
-   runtime and answered as a verdict, *try again* or *park*, instead of escaping into the broker
+   runtime and answered as a verdict, _try again_ or _park_, instead of escaping into the broker
    library. Nothing stops a channel, nothing re-delivers to consumers that succeeded, and nothing
    ends the process.
 
@@ -125,7 +125,7 @@ carrying the exception is never read, the message is acknowledged, and the work 
 
 The producer half of the same story is finished and documented: a state change and the intent to
 publish commit together, the pump recovers what was not published, and the guarantee is written down
-— *nothing is dropped*. The consumer half contradicts it, and the readme no longer hedges: `bcc91a8f9`
+— _nothing is dropped_. The consumer half contradicts it, and the readme no longer hedges: `bcc91a8f9`
 struck "(not yet)" from the eventual consistency guarantee on the grounds that the outbox "was the
 last way for a committed change to be lost between a component and whatever consumes it". It is not
 the last one. The change is published, delivered, fails five times, and the broker deletes it.
@@ -148,7 +148,7 @@ not changed by this work.
 
 ### An event — the process pays for the message
 
-The receiver calls its own operation *as a call* (`boot.remote(...)`,
+The receiver calls its own operation _as a call_ (`boot.remote(...)`,
 `runtime/boot/src/receivers.js:10`), so the exception is rethrown by `Call.invoke` — and this time
 nobody is waiting. It propagates out of `Receiver.#process` (`runtime/core/source/receiver.ts:100`),
 out of the AMQP receiver (`connectors/bindings.amqp/source/receiver.js:75`), and into the broker
@@ -163,7 +163,7 @@ What that costs, most expensive first:
   work. The replica stops answering calls. Under fanout every consumer group of that event fails at
   once, so a context goes down together.
 - **The cancelled channel is shared.** One communication per component
-  (`connectors/bindings.amqp/source/factory.js:73`) carries every receiver of that component *and*
+  (`connectors/bindings.amqp/source/factory.js:73`) carries every receiver of that component _and_
   its task queue on one events channel. Cancelling stops all of them; the process survives that only
   because it is about to die.
 - **The retry re-fans the event out.** The republication goes to the exchange the message arrived
@@ -199,7 +199,7 @@ accepts the enqueue.
 
 Cadence's delayed calls go this way, and inherit it: what the operation does with a delayed call
 happens in the target's process and never comes back. Its own ordering was already right — the
-call goes out before the row is settled — but a *failed* dispatch settled the row too, so a broker
+call goes out before the row is settled — but a _failed_ dispatch settled the row too, so a broker
 that briefly refused the enqueue dropped a call somebody had asked for. **Fixed**: a row is settled
 by its outcome now, and what failed on the way out is called again on the next scan, until the
 `overdue` its caller gave it. It was the first caller of the classification below.
@@ -226,12 +226,12 @@ concurrency (`VERSION`, `concurrency: retry`), which is about concurrent writers
 ### 1. The runtime classifies; the broker library carries
 
 The exception stops escaping. `connectors/bindings.amqp/source/receiver.js` catches it, asks core
-whether it could ever pass, and answers the broker library with a verdict — *try this again* or
-*park it* — rather than letting a rejection run into it. Where the message then waits, and how the
+whether it could ever pass, and answers the broker library with a verdict — _try this again_ or
+_park it_ — rather than letting a rejection run into it. Where the message then waits, and how the
 attempts are counted, is the library's business and Toa declares nothing.
 
-The split is the point: the runtime knows what a failure *means* and nothing else can, because a
-code like `202` or `304` is core's vocabulary; the library knows what a broker can *do* with a
+The split is the point: the runtime knows what a failure _means_ and nothing else can, because a
+code like `202` or `304` is core's vocabulary; the library knows what a broker can _do_ with a
 message and owns the topology for it, which is what keeps a queue argument out of Toa. It also puts
 the waiting where the user wants it — in the broker, so a message that failed on one replica may be
 tried on another, and so nothing is held in a process's memory.
@@ -239,7 +239,7 @@ tried on another, and so nothing is held in a process's memory.
 `Producer`'s task processor does the same, and the only difference is where it looks. A receiver
 invokes through a call, so the exception is thrown at it; a task processor invokes the component, so
 the exception comes back in the reply, the way `Call` reads one. Both then answer the same verdict.
-The RPC processor beside it is untouched: there the exception *is* the reply, and a caller is
+The RPC processor beside it is untouched: there the exception _is_ the reply, and a caller is
 waiting for it.
 
 **Landed, on comq 0.19.0.** The waiting, the ladder and the parking queue came with 0.18.0, and a
@@ -250,8 +250,8 @@ ladder. §5 was independent of all of it and landed first.
 
 ### 2. Classification
 
-*Landed, ahead of the rest: cadence needed it to tell a broker that was briefly away from a request
-a target will never accept.*
+_Landed, ahead of the rest: cadence needed it to tell a broker that was briefly away from a request
+a target will never accept._
 
 Core already declares every exception it raises deliberately, in the `codes` table of
 `runtime/core/source/exceptions.ts`. That enumeration is the answer: **a failure core named is one
@@ -277,7 +277,7 @@ export function permanent(exception: unknown): boolean {
 
 `Record<keyof typeof codes, …>` refuses to compile until a code added later says which it is, so
 the sentence above is enforced rather than hoped for. Two things that shape avoids, both of which
-an earlier draft of this note got wrong: nothing is decided by a code's *absence* from a list of
+an earlier draft of this note got wrong: nothing is decided by a code's _absence_ from a list of
 exceptions, which put `System` — a code like any other, and the one that wraps everything core did
 not name — on the wrong side by omission; and the parameter is `unknown`, because a caller has
 caught something rather than been handed an `Exception`, so `permanent(undefined)` answers rather
@@ -289,23 +289,23 @@ The answer lives beside the enumeration, so a code added later cannot avoid the 
 
 | code                      | raised                                                     | verdict        |
 | ------------------------- | ---------------------------------------------------------- | -------------- |
-| `0` System                | anything the algorithm or a connector threw                 | transient      |
-| `200` Contract            | base of the family                                          | permanent      |
-| `201` RequestSyntax       | declared, never raised                                      | permanent      |
-| `202` RequestContract     | the request does not fit the schema; a query is required    | permanent      |
-| `203` RequestConflict     | declared, never raised                                      | permanent      |
-| `211` ResponseContract    | the reply does not fit; raised on `local` only              | permanent      |
-| `212` EntityContract      | the new state does not fit the entity schema                | permanent      |
-| `213` EntityGuard         | a guard refused the transition                              | permanent¹     |
-| `221` QuerySyntax         | the query names what is not defined                         | permanent      |
-| `300` State               | base of the family                                          | permanent      |
-| `302` StateNotFound       | the entity is absent or deleted                             | **transient²** |
-| `303` StatePrecondition   | the version named does not match                            | permanent³     |
-| `304` StateConcurrency    | the compare-and-swap lost and `concurrency` is not `retry`  | **transient**  |
-| `305` StateInitialization | declared, never raised                                      | permanent      |
-| `306` Duplicate           | a unique index other than `_id` refused the write           | permanent      |
-| `400` Communication       | base of the family, never raised                            | **transient**  |
-| `401` Transmission        | every binding rejected — nothing is listening yet           | **transient**  |
+| `0` System                | anything the algorithm or a connector threw                | transient      |
+| `200` Contract            | base of the family                                         | permanent      |
+| `201` RequestSyntax       | declared, never raised                                     | permanent      |
+| `202` RequestContract     | the request does not fit the schema; a query is required   | permanent      |
+| `203` RequestConflict     | declared, never raised                                     | permanent      |
+| `211` ResponseContract    | the reply does not fit; raised on `local` only             | permanent      |
+| `212` EntityContract      | the new state does not fit the entity schema               | permanent      |
+| `213` EntityGuard         | a guard refused the transition                             | permanent¹     |
+| `221` QuerySyntax         | the query names what is not defined                        | permanent      |
+| `300` State               | base of the family                                         | permanent      |
+| `302` StateNotFound       | the entity is absent or deleted                            | **transient²** |
+| `303` StatePrecondition   | the version named does not match                           | permanent³     |
+| `304` StateConcurrency    | the compare-and-swap lost and `concurrency` is not `retry` | **transient**  |
+| `305` StateInitialization | declared, never raised                                     | permanent      |
+| `306` Duplicate           | a unique index other than `_id` refused the write          | permanent      |
+| `400` Communication       | base of the family, never raised                           | **transient**  |
+| `401` Transmission        | every binding rejected — nothing is listening yet          | **transient**  |
 | `402` Endpoint            | the component provides no operation by that name           | permanent      |
 
 The rule holds for the whole contract family and most of the state family. Five codes answer
@@ -315,7 +315,7 @@ newest code and the clearest illustration of why the answer sits beside the enum
 there is nothing to carry it to — and they fall on opposite sides.
 
 - ¹ **EntityGuard** — a guard reads the entity, and the entity can change, so a later attempt could
-  pass. Called permanent because the guard refused *this* transition against state that already
+  pass. Called permanent because the guard refused _this_ transition against state that already
   exists; if that proves wrong in practice it moves, and this review is where the choice is
   recorded.
 - ² **StateNotFound** — the one place a retry rescues an ordering race. Nothing promises order, so an
@@ -333,8 +333,8 @@ A receiver may narrow the policy in its manifest later (`retries`, `backoff`); n
 
 ### 3. What the runtime answers
 
-Two verdicts, and nothing else to choose. A transient exception is answered *retry*; a permanent one,
-and a transient one the library says has run out of attempts, is answered *park*. Toa neither counts
+Two verdicts, and nothing else to choose. A transient exception is answered _retry_; a permanent one,
+and a transient one the library says has run out of attempts, is answered _park_. Toa neither counts
 attempts nor picks a delay — one policy in one place, and no second opinion about how long to wait.
 
 What Toa does add is the reason, so a parked message can be read without guessing: the exception's
@@ -392,14 +392,14 @@ queues, which the broker reports, and the log. Failure text and levels to be agr
 ## Stages
 
 1. **The process, and what needs no broker.** §5, §2, and the delayed calls that were dropped on a
-   failed dispatch. Independent of everything else, so it goes first rather than waiting. *Done.*
-2. **Stop the crash.** §1–§3 — guarantees 3, 4, 6 and 7, on comq 0.18.0. *Done.*
+   failed dispatch. Independent of everything else, so it goes first rather than waiting. _Done._
+2. **Stop the crash.** §1–§3 — guarantees 3, 4, 6 and 7, on comq 0.18.0. _Done._
 3. **The verdict.** Guarantee 5, on comq 0.19.0: one function that asks the classification and
-   raises `Park` or the exception itself, called from both paths. *Done.*
+   raises `Park` or the exception itself, called from both paths. _Done._
 4. **Idempotency.** §4 — guarantee 10, its own change. Needs nothing from a broker. Designed and
    built as [the transactional inbox](/discussions/transactional-inbox.md), which carries it to the
-   call path as well, and makes guarantee 10 conditional on the operation declaring `once`. *Done,
-   for a transition and an assignment; an effect needs none, and that document says why.*
+   call path as well, and makes guarantee 10 conditional on the operation declaring `once`. _Done,
+   for a transition and an assignment; an effect needs none, and that document says why._
 
 ## Verification
 
@@ -420,9 +420,9 @@ Each states a requirement someone depends on, not the mechanism.
 
 The pieces are all standard, and naming them is how the documentation should explain them:
 
-- *Dead Letter Channel* and *Invalid Message Channel* (Hohpe & Woolf) — the two destinations, and why
+- _Dead Letter Channel_ and _Invalid Message Channel_ (Hohpe & Woolf) — the two destinations, and why
   they are two: undeliverable is not the same as unprocessable.
-- *Transactional outbox* and *idempotent consumer* (Richardson) — the pair Toa is half of.
+- _Transactional outbox_ and _idempotent consumer_ (Richardson) — the pair Toa is half of.
 - Exponential backoff with jitter — the growing wait between attempts.
 - RabbitMQ dead-letter exchanges with per-queue TTL, the usual way to make a message wait; quorum
   queues' `delivery-limit` as the broker-native alternative, which counts deliveries but offers no
@@ -430,5 +430,5 @@ The pieces are all standard, and naming them is how the documentation should exp
 - Azure Service Bus `MaxDeliveryCount` and its DLQ, SQS redrive policy and the redrive API, Spring
   Kafka's `DefaultErrorHandler` with `DeadLetterPublishingRecoverer` — the same shape everywhere:
   count, park, never crash, offer replay.
-- *Crash-only software* (Candea & Fox) — why the current behaviour looks principled and is not:
+- _Crash-only software_ (Candea & Fox) — why the current behaviour looks principled and is not:
   crashing is for a process whose state is unknown, and a rejected message says nothing about it.

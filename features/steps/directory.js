@@ -53,7 +53,11 @@ Then(
       const path = resolve(entry.parentPath, entry.name)
       const contents = await readFile(path, 'utf8')
 
-      assert.equal(contents.includes(text), false, `'${relative(root, path)}' contains '${text}'`)
+      assert.equal(
+        contents.includes(text),
+        false,
+        `'${relative(root, path)}' contains '${text}'`
+      )
     }
   }
 )

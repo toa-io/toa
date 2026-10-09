@@ -57,7 +57,8 @@ export class Stack {
     let pending = 0
 
     for (const { name } of collections)
-      if (name.endsWith('_outbox')) pending += await database.collection(name).countDocuments({ published: false })
+      if (name.endsWith('_outbox'))
+        pending += await database.collection(name).countDocuments({ published: false })
 
     return pending
   }
@@ -78,7 +79,9 @@ export async function free(ports: number[]): Promise<void> {
 
       server.once('error', (error: NodeJS.ErrnoException) =>
         reject(
-          error.code === 'EADDRINUSE' ? new Error(`Port ${port} is already in use`) : error
+          error.code === 'EADDRINUSE'
+            ? new Error(`Port ${port} is already in use`)
+            : error
         )
       )
       server.listen(port, () => server.close(() => resolve()))

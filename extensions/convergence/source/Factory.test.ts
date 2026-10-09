@@ -23,7 +23,11 @@ const connector = (properties: object): any => ({
 })
 
 const storage = (converges?: boolean): storages.Storage =>
-  connector({ converges, outbox: { collection: 'outbox' }, converge: mock.fn(async () => true) })
+  connector({
+    converges,
+    outbox: { collection: 'outbox' },
+    converge: mock.fn(async () => true)
+  })
 
 beforeEach(() => {
   mock.restoreAll()

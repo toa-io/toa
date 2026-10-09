@@ -58,7 +58,11 @@ function walk(manifest, rewrite) {
     for (const item of Object.values(manifest[property] ?? {}))
       if (item.path !== undefined) rewrite(item)
 
-  for (let prototype = manifest.prototype; prototype != null; prototype = prototype.prototype)
+  for (
+    let prototype = manifest.prototype;
+    prototype != null;
+    prototype = prototype.prototype
+  )
     if (prototype.path !== undefined) rewrite(prototype)
 }
 
@@ -73,7 +77,8 @@ const SELF = '.'
 
 function carried(path, root) {
   if (path === root) return SELF
-  if (path.startsWith(root + sep)) return SELF + '/' + relative(root, path).split(sep).join('/')
+  if (path.startsWith(root + sep))
+    return SELF + '/' + relative(root, path).split(sep).join('/')
 
   return specifier(path)
 }

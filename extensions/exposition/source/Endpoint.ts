@@ -61,7 +61,11 @@ export class Endpoint implements RTD.Endpoint {
      * reads the body, and this is a request to a resource rather than a procedure of one, whose
      * reply is wrapped in an envelope of its own.
      */
-    if (context.encoder?.type === JSON_TYPE && context.reads !== true && !context.procedural)
+    if (
+      context.encoder?.type === JSON_TYPE &&
+      context.reads !== true &&
+      !context.procedural
+    )
       request.encoded = true
 
     // what the method means, unless a route said otherwise; see `documentation/readonly.md`
@@ -176,7 +180,11 @@ export class EndpointsFactory implements RTD.EndpointsFactory {
     if (method.mapping === undefined)
       throw new Error('Cannot create Endpoint without mapping')
 
-    const mapping = Mapping.create(method.mapping.query, method.mapping.paged, method.mapping.streamed)
+    const mapping = Mapping.create(
+      method.mapping.query,
+      method.mapping.paged,
+      method.mapping.streamed
+    )
 
     const branch = context.extension
 
@@ -188,7 +196,12 @@ export class EndpointsFactory implements RTD.EndpointsFactory {
 
     const discovery = this.remotes.discover(namespace, component, branch?.contract)
 
-    return new Endpoint(method.mapping.endpoint, mapping, discovery, SAFE.has(method.verb))
+    return new Endpoint(
+      method.mapping.endpoint,
+      mapping,
+      discovery,
+      SAFE.has(method.verb)
+    )
   }
 }
 

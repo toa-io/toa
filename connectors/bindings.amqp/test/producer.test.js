@@ -273,7 +273,9 @@ describe('encoded', () => {
   }
 
   it('should answer each value of a stream as the bytes of it, where the request asks', async () => {
-    component.invoke.mock.mockImplementationOnce(async () => Readable.from([{ entry: 1 }, 'two']))
+    component.invoke.mock.mockImplementationOnce(async () =>
+      Readable.from([{ entry: 1 }, 'two'])
+    )
 
     const process = await serve()
     const reply = await process({ encoded: true })

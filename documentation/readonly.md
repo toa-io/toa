@@ -91,7 +91,7 @@ would under `POST`:
 exposition:
   /:id:
     GET:
-      endpoint: confirm    # a transition
+      endpoint: confirm # a transition
       io:readonly: false
 ```
 

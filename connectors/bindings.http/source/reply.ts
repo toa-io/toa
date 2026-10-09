@@ -17,7 +17,10 @@ const OK = 'ok'
  * and how the stream ended is a trailer, so a body that stops without one is a stream that was
  * cut rather than one that finished.
  */
-export async function write(response: ServerResponse, reply: Reply | Readable): Promise<void> {
+export async function write(
+  response: ServerResponse,
+  reply: Reply | Readable
+): Promise<void> {
   if (!(reply instanceof Readable)) {
     const body = JSON.stringify(reply ?? null)
 
@@ -74,7 +77,7 @@ async function* frames(
 
 /** What a caller is told of a stream that failed after it had started. */
 function reason(error: unknown): unknown {
-  const carried = error as { exception?: unknown, message?: string } | undefined
+  const carried = error as { exception?: unknown; message?: string } | undefined
 
   return carried?.exception ?? carried?.message ?? null
 }
@@ -143,7 +146,10 @@ function checked(message: IncomingMessage, source: Readable): Readable {
   return Readable.from(pull(message, source), { objectMode: source.readableObjectMode })
 }
 
-async function* pull(message: IncomingMessage, source: Readable): AsyncGenerator<unknown> {
+async function* pull(
+  message: IncomingMessage,
+  source: Readable
+): AsyncGenerator<unknown> {
   for await (const chunk of source) yield chunk
 
   const status = message.trailers[STATUS]

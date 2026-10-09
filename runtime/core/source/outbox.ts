@@ -408,13 +408,13 @@ export class Outbox extends Connector {
 
     if (lanes === null || lanes.length === 0) return []
 
-    return this.#storage!.outbox!.pending(lanes, Date.now(), this.#batch, after).catch(
-      (error) => {
+    return this.#storage!
+      .outbox!.pending(lanes, Date.now(), this.#batch, after)
+      .catch((error) => {
         console.warn('Outbox read failed', { error })
 
         return []
-      }
-    )
+      })
   }
 
   /**

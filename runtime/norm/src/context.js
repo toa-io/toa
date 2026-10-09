@@ -38,7 +38,9 @@ export const context = async (
   validate(context)
 
   // a directory is answered with the separator that ends it, and a component's path has none
-  const paths = (await glob(resolve(root, COMPONENTS), GLOB)).map((path) => path.slice(0, -1))
+  const paths = (await glob(resolve(root, COMPONENTS), GLOB)).map((path) =>
+    path.slice(0, -1)
+  )
 
   context.components = await Promise.all(paths.map(component))
 

@@ -9,8 +9,14 @@ export interface Slot {
 
 /** Two slots that differ in names only: contexts of one length, ports of one block. */
 export const SLOTS: { a: Slot; b: Slot } = {
-  a: { context: 'toa-bench-a', ports: { gateway: 31090, probe: 31092, ready: [31094, 31095, 31098] } },
-  b: { context: 'toa-bench-b', ports: { gateway: 31091, probe: 31093, ready: [31096, 31097, 31099] } }
+  a: {
+    context: 'toa-bench-a',
+    ports: { gateway: 31090, probe: 31092, ready: [31094, 31095, 31098] }
+  },
+  b: {
+    context: 'toa-bench-b',
+    ports: { gateway: 31091, probe: 31093, ready: [31096, 31097, 31099] }
+  }
 }
 
 /**
@@ -19,5 +25,7 @@ export const SLOTS: { a: Slot; b: Slot } = {
  * and whatever a slot costs falls on each of them equally.
  */
 export function assign(block: number): Pair<Slot> {
-  return block % 2 === 0 ? { base: SLOTS.a, head: SLOTS.b } : { base: SLOTS.b, head: SLOTS.a }
+  return block % 2 === 0
+    ? { base: SLOTS.a, head: SLOTS.b }
+    : { base: SLOTS.b, head: SLOTS.a }
 }

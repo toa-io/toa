@@ -33,7 +33,11 @@ Given(
    * @this {toa.features.Context}
    */
   async function (file, component) {
-    await appendFile(join(this.cwd, 'components', component, file), '\n# changed\n', 'utf8')
+    await appendFile(
+      join(this.cwd, 'components', component, file),
+      '\n# changed\n',
+      'utf8'
+    )
   }
 )
 
@@ -57,7 +61,10 @@ Given(
 
     // as it is written, not as it resolves: the link is the component's, and a copy of the
     // component is expected to carry it
-    await symlink(join('..', '..', 'shared'), join(this.cwd, 'components', component, 'shared'))
+    await symlink(
+      join('..', '..', 'shared'),
+      join(this.cwd, 'components', component, 'shared')
+    )
   }
 )
 

@@ -1,12 +1,7 @@
 import { console } from 'openspan'
 import { environment } from '@toa.io/generic'
 import { resolve } from '@toa.io/pointer'
-import {
-  BINDING,
-  BROKERS,
-  CHANNEL,
-  ID
-} from '@toa.io/definitions/extensions.convergence'
+import { BINDING, BROKERS, CHANNEL, ID } from '@toa.io/definitions/extensions.convergence'
 import { Destination } from './Destination.ts'
 import { Converging } from './Storage.ts'
 import type { Locator } from '@toa.io/core'
@@ -80,7 +75,8 @@ export class Factory implements extensions.Factory {
     return new Converging(
       storage,
       locator,
-      async (sink) => this.host.inbound(this.binding(), CHANNEL, this.uris(), locator.id, sink),
+      async (sink) =>
+        this.host.inbound(this.binding(), CHANNEL, this.uris(), locator.id, sink),
       () => destination.regional
     )
   }

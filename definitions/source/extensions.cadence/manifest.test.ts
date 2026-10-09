@@ -71,7 +71,9 @@ it('should split a cycle a pulse every replica makes', () => {
 })
 
 it('should refuse a scope that is neither', () => {
-  assert.throws(() => manifest({ sweep: { cycle: 60, scope: 'process' } } as any, component))
+  assert.throws(() =>
+    manifest({ sweep: { cycle: 60, scope: 'process' } } as any, component)
+  )
 })
 
 it('should refuse an interval shorter than a second', () => {
@@ -92,11 +94,18 @@ it('should refuse what the declaration does not describe', () => {
 it('should read a string as a schedule, in UTC', () => {
   const declaration = manifest({ sweep: '0 12 * * 1-5' }, component)
 
-  assert.deepStrictEqual(declaration, { sweep: [{ schedule: '0 12 * * 1-5', zone: 'UTC' }] })
+  assert.deepStrictEqual(declaration, {
+    sweep: [{ schedule: '0 12 * * 1-5', zone: 'UTC' }]
+  })
 })
 
 it('should keep what a schedule states', () => {
-  const stated = { schedule: '0 9 * * 1', zone: 'Europe/Berlin', overdue: 3600, region: 1 }
+  const stated = {
+    schedule: '0 9 * * 1',
+    zone: 'Europe/Berlin',
+    overdue: 3600,
+    region: 1
+  }
 
   assert.deepStrictEqual(manifest({ sweep: stated }, component), { sweep: [stated] })
 })
@@ -161,8 +170,17 @@ it('should refuse a schedule with no bound on lateness, or a negative one', () =
 })
 
 it('should refuse an expression that does not parse', () => {
-  for (const expression of ['nope', '61 * * * *', '* * * *', '@daily', '0 0 12 * * * 2040'])
-    assert.throws(() => manifest({ sweep: expression }, component), /Invalid schedule 'sweep'/)
+  for (const expression of [
+    'nope',
+    '61 * * * *',
+    '* * * *',
+    '@daily',
+    '0 0 12 * * * 2040'
+  ])
+    assert.throws(
+      () => manifest({ sweep: expression }, component),
+      /Invalid schedule 'sweep'/
+    )
 })
 
 it('should refuse an expression that never comes due', () => {

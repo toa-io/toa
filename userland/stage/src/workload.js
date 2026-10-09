@@ -34,9 +34,7 @@ const create = async (references, workload) => {
  */
 export const workload = async (paths, options, services = []) => {
   const workload = new boot.Workload(async (workload) => {
-    const composition = workload.gate(
-      async () => await boot.composition(paths, options)
-    )
+    const composition = workload.gate(async () => await boot.composition(paths, options))
 
     if (services.length === 0) return composition
 

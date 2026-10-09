@@ -9,7 +9,11 @@ import type { Remotes } from '../../../Remotes.ts'
 describe('Execution', () => {
   it('should report every step', async () => {
     const { remotes } = stub({ first: () => ({ a: 1 }), second: () => null })
-    const execution = new Execution(context(), [{ first: 'tester.first' }, { second: 'tester.second' }], remotes)
+    const execution = new Execution(
+      context(),
+      [{ first: 'tester.first' }, { second: 'tester.second' }],
+      remotes
+    )
 
     const reports = await execution.toArray()
 
@@ -20,8 +24,15 @@ describe('Execution', () => {
   })
 
   it('should start no further unit once destroyed', async () => {
-    const { remotes, calls } = stub({ first: async () => await setTimeout(20), second: () => null })
-    const execution = new Execution(context(), [{ first: 'tester.first' }, { second: 'tester.second' }], remotes)
+    const { remotes, calls } = stub({
+      first: async () => await setTimeout(20),
+      second: () => null
+    })
+    const execution = new Execution(
+      context(),
+      [{ first: 'tester.first' }, { second: 'tester.second' }],
+      remotes
+    )
 
     execution.resume()
     await setTimeout(5)
@@ -41,11 +52,17 @@ describe('Execution', () => {
     await setTimeout(5)
     execution.destroy()
 
-    await Promise.race([closed, setTimeout(100).then(() => assert.fail('stream not destroyed'))])
+    await Promise.race([
+      closed,
+      setTimeout(100).then(() => assert.fail('stream not destroyed'))
+    ])
   })
 })
 
-function stub(operations: Record<string, () => unknown>): { remotes: Remotes; calls: string[] } {
+function stub(operations: Record<string, () => unknown>): {
+  remotes: Remotes
+  calls: string[]
+} {
   const calls: string[] = []
 
   const component = {

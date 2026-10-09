@@ -38,13 +38,13 @@ each change is measured before and after with the benchmarks.
 **What is read and what is answered**
 
 3. An observation reads what its route's `projection` lists, with `id` and the system properties,
-   and its algorithm receives those. A route without `projection` reads the whole entity *(today)*.
+   and its algorithm receives those. A route without `projection` reads the whole entity _(today)_.
 4. An operation of every other type answers a request whose query carries a projection with a
    request contract exception and changes nothing, whether or not the request is marked authentic. A
    route that declares a projection for such an operation fails to boot.
 5. A request that carries `output` receives, of each object of the output, the properties it lists,
    in the order the object holds them; with an empty list it receives no output. A request without
-   `output` receives the whole output *(today)*.
+   `output` receives the whole output _(today)_.
 6. What a route's requests carry as `output` is what its `io:output` lists: the properties common to
    the lists a method declares and inherits, all of them for `true`, and an empty list for a method
    that declares none or `false`.
@@ -96,24 +96,26 @@ A route may state what an observation reads, and lists in `io:output` the proper
 A component may ask for part of what another operation answers:
 
 ```javascript
-const items = await context.local.enumerate({ query: { limit: 10 }, output: ['id', 'title'] })
+const items = await context.local.enumerate({
+  query: { limit: 10 },
+  output: ['id', 'title']
+})
 ```
 
 ## The changes, by area
 
-| # | change | measured today | expected | effort | risk | stage |
-| --- | --- | --- | --- | --- | --- | ---: |
-| 1 | `noDelay` on comq's sockets | `small` p50 at 100 rps 10.36 ms; `observe` saturates at 3,781 rps with its processes under 40% of a core | `small` p50 at 100 rps 0.68 ms; `observe` saturates at 9,170 rps | comq 0.20.1; the dependency in `bindings.amqp` | low | 0 |
-| 2a | A route's projection reaches an observation's storage | `Query.fit` drops a declared `projection`; `record.js` `from` and BSON decoding are 61% of the component on `list.1000` | a share of those in proportion to what a route leaves unread | `Query.fit`, the definitions' check, the refusal by type, a copy in `query/options.ts`, the callee's contract; `query` scenarios | low | 3 |
-| 2b | The reply restricted in the component | the `io:output` fit of 1,000 entities 369 µs in the gateway | the fit in the component, on the reply the operation built; what a route leaves out crosses no process | `Request.output`, `Operation.invoke`, `io:output`, `Endpoint`; `io`, `cache`, `rpc`, `mcp` scenarios | medium: what a client receives changes as Compatibility states | 4 |
-| 2c | A JSON reply forwarded as bytes | `list.1000` gateway 10,629 µs; forwarding costs 1,780 µs by hand | about 8 ms less per 1,000-entity list in the gateway | the mark on the request; both sides of `bindings.amqp`; `Endpoint`, `send` and the tag it writes; scenarios across formats and protocols | medium | 5 |
-| 3 | Records renamed in place | `record.js` `from` 26% of the component on `list.1000`: a rest spread costs 2.68 µs a decoded record | about 2 ms less per 1,000-entity list in the component: the rename costs 0.26 µs a record, and encoding the renamed record 0.43 µs more | `from`, two lines; `record.test.js` | low | 1 |
-| 4 | `track()` aborts a request's controller only when its reply is unfinished | the `DOMException` of the abort is 7.4% of the gateway on `small` | about 5–7 µs less per request in the gateway | one condition on `writableFinished`; `interruptions.feature` in HTTP/1.1 and h2c | low | 1 |
-| 5 | `identity.tokens` imports `jose` once | importing and resolving `jose` on every decrypt is 4.2% of the gateway on `token.id` | about 8 µs less per authenticated request | the import's promise held in `lib/jose.js`, two lines; `decrypt.test.ts` | low | 1 |
-| 6 | An operation reads `TOA_ENV` when it is created | `environment.get` is 1.6–3.6% of a component | about 0.4–1.8 µs less per operation | a field of `Operation`; the feature suites, whose steps set `TOA_ENV` before they boot | low | 1 |
-| 7 | `derive` parses its namespace once and hashes the name directly | the `uuid` package is 6% of `bench` on `chain`: 3.07 µs a call | about 1.6 µs less per call a component makes while serving one | about 12 lines; `newid.test.js` against the package's bytes | low | 1 |
-| 8 | Tokens opened with `node:crypto` | jose `jwtDecrypt` 40 µs; `node:crypto` 10.9 µs | about 30 µs less per authenticated request | about 50 lines in place of `jwtDecrypt` and `decodeProtectedHeader`; `decrypt.test.ts` with a jose-issued token and a changed tag, IV, header and ciphertext | medium: every token the gateway accepts passes through it | 2 |
-
+| #   | change                                                                    | measured today                                                                                                          | expected                                                                                                                                | effort                                                                                                                                                       | risk                                                           | stage |
+| --- | ------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------- | ----: |
+| 1   | `noDelay` on comq's sockets                                               | `small` p50 at 100 rps 10.36 ms; `observe` saturates at 3,781 rps with its processes under 40% of a core                | `small` p50 at 100 rps 0.68 ms; `observe` saturates at 9,170 rps                                                                        | comq 0.20.1; the dependency in `bindings.amqp`                                                                                                               | low                                                            |     0 |
+| 2a  | A route's projection reaches an observation's storage                     | `Query.fit` drops a declared `projection`; `record.js` `from` and BSON decoding are 61% of the component on `list.1000` | a share of those in proportion to what a route leaves unread                                                                            | `Query.fit`, the definitions' check, the refusal by type, a copy in `query/options.ts`, the callee's contract; `query` scenarios                             | low                                                            |     3 |
+| 2b  | The reply restricted in the component                                     | the `io:output` fit of 1,000 entities 369 µs in the gateway                                                             | the fit in the component, on the reply the operation built; what a route leaves out crosses no process                                  | `Request.output`, `Operation.invoke`, `io:output`, `Endpoint`; `io`, `cache`, `rpc`, `mcp` scenarios                                                         | medium: what a client receives changes as Compatibility states |     4 |
+| 2c  | A JSON reply forwarded as bytes                                           | `list.1000` gateway 10,629 µs; forwarding costs 1,780 µs by hand                                                        | about 8 ms less per 1,000-entity list in the gateway                                                                                    | the mark on the request; both sides of `bindings.amqp`; `Endpoint`, `send` and the tag it writes; scenarios across formats and protocols                     | medium                                                         |     5 |
+| 3   | Records renamed in place                                                  | `record.js` `from` 26% of the component on `list.1000`: a rest spread costs 2.68 µs a decoded record                    | about 2 ms less per 1,000-entity list in the component: the rename costs 0.26 µs a record, and encoding the renamed record 0.43 µs more | `from`, two lines; `record.test.js`                                                                                                                          | low                                                            |     1 |
+| 4   | `track()` aborts a request's controller only when its reply is unfinished | the `DOMException` of the abort is 7.4% of the gateway on `small`                                                       | about 5–7 µs less per request in the gateway                                                                                            | one condition on `writableFinished`; `interruptions.feature` in HTTP/1.1 and h2c                                                                             | low                                                            |     1 |
+| 5   | `identity.tokens` imports `jose` once                                     | importing and resolving `jose` on every decrypt is 4.2% of the gateway on `token.id`                                    | about 8 µs less per authenticated request                                                                                               | the import's promise held in `lib/jose.js`, two lines; `decrypt.test.ts`                                                                                     | low                                                            |     1 |
+| 6   | An operation reads `TOA_ENV` when it is created                           | `environment.get` is 1.6–3.6% of a component                                                                            | about 0.4–1.8 µs less per operation                                                                                                     | a field of `Operation`; the feature suites, whose steps set `TOA_ENV` before they boot                                                                       | low                                                            |     1 |
+| 7   | `derive` parses its namespace once and hashes the name directly           | the `uuid` package is 6% of `bench` on `chain`: 3.07 µs a call                                                          | about 1.6 µs less per call a component makes while serving one                                                                          | about 12 lines; `newid.test.js` against the package's bytes                                                                                                  | low                                                            |     1 |
+| 8   | Tokens opened with `node:crypto`                                          | jose `jwtDecrypt` 40 µs; `node:crypto` 10.9 µs                                                                          | about 30 µs less per authenticated request                                                                                              | about 50 lines in place of `jwtDecrypt` and `decodeProtectedHeader`; `decrypt.test.ts` with a jose-issued token and a changed tag, IV, header and ciphertext | medium: every token the gateway accepts passes through it      |     2 |
 
 1. **The broker's sockets.** comq connects with `noDelay: true` beside `keepAlive` in
    `SOCKET_OPTIONS`; without it amqplib calls `setNoDelay(false)`. comq 0.20.1 carries it, and
@@ -245,16 +247,16 @@ at half of saturation, less what the process spends at rest.
 
 **What a request costs.**
 
-| scenario | saturation, rps | gateway µs | component µs | p50 at half load | bounded by |
-| --- | ---: | ---: | ---: | ---: | --- |
-| `small` | 13,574 | 91 | 24 | 1.45 ms | gateway CPU |
-| `small.h2c` | 10,454 | 124 | 26 | 1.58 ms | gateway CPU |
-| `observe` | 3,162 | 130 | 142 | 21.6 ms | Nagle |
-| `list.1000` | 94 | 10,629 | 9,154 | 12.7 ms | gateway CPU |
-| `create` | 2,530 | 215 | 454, and 51 in `peer` | 4.0 ms | component CPU and MongoDB |
-| `chain` | 11,486 | 106 | 67, and 32 in `peer` | 2.0 ms | gateway CPU |
-| `token.id` | 5,870 | 242 | 31 | 1.7 ms | gateway CPU |
-| `mcp.tools.list` | 3,572 | 317 | — | 0.6 ms | gateway CPU |
+| scenario         | saturation, rps | gateway µs |          component µs | p50 at half load | bounded by                |
+| ---------------- | --------------: | ---------: | --------------------: | ---------------: | ------------------------- |
+| `small`          |          13,574 |         91 |                    24 |          1.45 ms | gateway CPU               |
+| `small.h2c`      |          10,454 |        124 |                    26 |          1.58 ms | gateway CPU               |
+| `observe`        |           3,162 |        130 |                   142 |          21.6 ms | Nagle                     |
+| `list.1000`      |              94 |     10,629 |                 9,154 |          12.7 ms | gateway CPU               |
+| `create`         |           2,530 |        215 | 454, and 51 in `peer` |           4.0 ms | component CPU and MongoDB |
+| `chain`          |          11,486 |        106 |  67, and 32 in `peer` |           2.0 ms | gateway CPU               |
+| `token.id`       |           5,870 |        242 |                    31 |           1.7 ms | gateway CPU               |
+| `mcp.tools.list` |           3,572 |        317 |                     — |           0.6 ms | gateway CPU               |
 
 A request of `small` publishes 2 messages; `observe` 2 messages and 1 database operation; `create` 4
 messages and 2 operations. Re-issuing an aged token costs 810 µs in the gateway and 3 operations,
@@ -262,25 +264,25 @@ once per client per `refresh`.
 
 **Against the same work written by hand.**
 
-| scenario | saturation, Toa / by hand | gateway µs, Toa / by hand | component µs, Toa / by hand |
-| --- | --- | --- | --- |
-| `small` | 13,574 / 29,397 | 91 / 34 | 24 / 13 |
-| `observe` | 3,162 / 9,559 | 130 / 46 | 142 / 89 |
-| `list.1000` | 94 / 174 | 10,629 / 1,780 | 9,154 / 4,620 |
+| scenario    | saturation, Toa / by hand | gateway µs, Toa / by hand | component µs, Toa / by hand |
+| ----------- | ------------------------- | ------------------------- | --------------------------- |
+| `small`     | 13,574 / 29,397           | 91 / 34                   | 24 / 13                     |
+| `observe`   | 3,162 / 9,559             | 130 / 46                  | 142 / 89                    |
+| `list.1000` | 94 / 174                  | 10,629 / 1,780            | 9,154 / 4,620               |
 
 The hand-written gateway forwards a reply's bytes.
 
 **Nagle.** p50 of `small` against load, and of `observe`, with the sockets as they are and with
 `noDelay`:
 
-| rate, rps | `small` | `small`, `noDelay` | `observe` | `observe`, `noDelay` |
-| ---: | ---: | ---: | ---: | ---: |
-| 100 | 10.36 ms | 0.68 ms | 10.36 ms | 0.94 ms |
-| 400 | 2.83 ms | 0.45 ms | 2.86 ms | 0.71 ms |
-| 800 | 1.70 ms | 0.38 ms | 1.75 ms | 0.65 ms |
-| 1,890 | — | — | 25.29 ms | — |
-| 4,585 | — | — | — | 1.15 ms |
-| saturation | 13,271 rps | 14,587 rps | 3,781 rps | 9,170 rps |
+|  rate, rps |    `small` | `small`, `noDelay` | `observe` | `observe`, `noDelay` |
+| ---------: | ---------: | -----------------: | --------: | -------------------: |
+|        100 |   10.36 ms |            0.68 ms |  10.36 ms |              0.94 ms |
+|        400 |    2.83 ms |            0.45 ms |   2.86 ms |              0.71 ms |
+|        800 |    1.70 ms |            0.38 ms |   1.75 ms |              0.65 ms |
+|      1,890 |          — |                  — |  25.29 ms |                    — |
+|      4,585 |          — |                  — |         — |              1.15 ms |
+| saturation | 13,271 rps |         14,587 rps | 3,781 rps |            9,170 rps |
 
 At 3,024 requests per second with Nagle, `observe` is at a p50 of 64 ms while its gateway and
 component use a third of a core each and MongoDB answers each read in 0.055 ms.
@@ -298,27 +300,27 @@ to rename it to `id`.
 
 **Single operations.**
 
-| operation | µs |
-| --- | ---: |
-| jose `jwtDecrypt`, `dir` + `A256GCM` | 40 |
-| the same token opened with `node:crypto` AES-256-GCM, claims parsed | 10.9 |
-| jose `jwtVerify`, HS256 | 32.7 |
-| HMAC-SHA256 verified with `node:crypto`, claims parsed | 8.9 |
-| `JSON.parse` of 1000 entities (446 KiB) | 974 |
-| `JSON.stringify` of 1000 entities | 884 |
-| the `io:output` fit of 1000 entities | 369 |
-| Ajv's shape check in `io:output`, 1000 entities | 2.2 |
-| `structuredClone` of 1000 entities | 1,484 |
-| `record.js` `from` of a record the driver decoded, rest spread | 2.68 |
-| the same, a copy by a loop over its keys | 1.04 |
-| the same, renamed in place | 0.26 |
-| `JSON.stringify` of 1000 entities built by the rest spread | 1,206 |
-| `JSON.stringify` of 1000 entities built by the loop | 1,620 |
-| `JSON.stringify` of 1000 records renamed in place | 1,635 |
-| `derive` through `uuid.v5` | 3.07 |
-| `derive` with `node:crypto` and a parsed namespace | 1.42 |
-| a traceparent matched by the expression | 0.164 |
-| a traceparent read by position | 0.106 |
+| operation                                                           |    µs |
+| ------------------------------------------------------------------- | ----: |
+| jose `jwtDecrypt`, `dir` + `A256GCM`                                |    40 |
+| the same token opened with `node:crypto` AES-256-GCM, claims parsed |  10.9 |
+| jose `jwtVerify`, HS256                                             |  32.7 |
+| HMAC-SHA256 verified with `node:crypto`, claims parsed              |   8.9 |
+| `JSON.parse` of 1000 entities (446 KiB)                             |   974 |
+| `JSON.stringify` of 1000 entities                                   |   884 |
+| the `io:output` fit of 1000 entities                                |   369 |
+| Ajv's shape check in `io:output`, 1000 entities                     |   2.2 |
+| `structuredClone` of 1000 entities                                  | 1,484 |
+| `record.js` `from` of a record the driver decoded, rest spread      |  2.68 |
+| the same, a copy by a loop over its keys                            |  1.04 |
+| the same, renamed in place                                          |  0.26 |
+| `JSON.stringify` of 1000 entities built by the rest spread          | 1,206 |
+| `JSON.stringify` of 1000 entities built by the loop                 | 1,620 |
+| `JSON.stringify` of 1000 records renamed in place                   | 1,635 |
+| `derive` through `uuid.v5`                                          |  3.07 |
+| `derive` with `node:crypto` and a parsed namespace                  |  1.42 |
+| a traceparent matched by the expression                             | 0.164 |
+| a traceparent read by position                                      | 0.106 |
 
 **Where the time goes.** Shares of the main thread in the measured window:
 
@@ -395,16 +397,16 @@ from before it sends neither.
 
 **In behaviour.**
 
-| before | after |
-| --- | --- |
-| a method without `io:output`, or with `false`, answers 200 with an empty body | 204, 201 to `POST`, 404 where nothing is found |
-| a string or a number under an `io:output` list is omitted with a warning | answered as it is |
-| an array holding a value other than an object under a list answers 500 | its objects are restricted and the rest answered as it is |
-| `io:status` and `auth:incept` read a property `io:output` leaves out | they read what `io:output` lists |
-| a projection reaches a transition's read through an authentic request | refused |
-| `etag` is the entity's `VERSION`, on a reply that carries one | a hash of the body, on every reply to a safe request |
-| `last-modified` carries `UPDATED` or `CREATED` | gone |
-| an entity's properties come with `id` first | with `id` last |
+| before                                                                        | after                                                     |
+| ----------------------------------------------------------------------------- | --------------------------------------------------------- |
+| a method without `io:output`, or with `false`, answers 200 with an empty body | 204, 201 to `POST`, 404 where nothing is found            |
+| a string or a number under an `io:output` list is omitted with a warning      | answered as it is                                         |
+| an array holding a value other than an object under a list answers 500        | its objects are restricted and the rest answered as it is |
+| `io:status` and `auth:incept` read a property `io:output` leaves out          | they read what `io:output` lists                          |
+| a projection reaches a transition's read through an authentic request         | refused                                                   |
+| `etag` is the entity's `VERSION`, on a reply that carries one                 | a hash of the body, on every reply to a safe request      |
+| `last-modified` carries `UPDATED` or `CREATED`                                | gone                                                      |
+| an entity's properties come with `id` first                                   | with `id` last                                            |
 
 ## What the measurements leave open
 
@@ -445,8 +447,8 @@ what holds once it is done.
 
 ## References
 
-- J. Nagle, [RFC 896](https://www.rfc-editor.org/rfc/rfc896), *Congestion Control in IP/TCP
-  Internetworks* — the algorithm `noDelay` switches off.
+- J. Nagle, [RFC 896](https://www.rfc-editor.org/rfc/rfc896), _Congestion Control in IP/TCP
+  Internetworks_ — the algorithm `noDelay` switches off.
 - [RFC 7516](https://www.rfc-editor.org/rfc/rfc7516), JSON Web Encryption — the compact serialization
   opened by hand.
 - [RFC 9562](https://www.rfc-editor.org/rfc/rfc9562), UUIDs — the name-based version 5 `derive`

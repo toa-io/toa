@@ -94,9 +94,7 @@ describe('normalized', () => {
 
     await normalized(component, target)
 
-    const carried = JSON.parse(
-      await readFile(join(target, 'manifest.toa.json'), 'utf8')
-    )
+    const carried = JSON.parse(await readFile(join(target, 'manifest.toa.json'), 'utf8'))
 
     // where the manifest is, and what only a deploy reads, are not what it declares
     assert.ok(!('path' in carried))
@@ -120,7 +118,10 @@ describe('a service image', () => {
     const component = join(path, 'components', 'octets')
 
     await mkdir(component, { recursive: true })
-    await writeFile(join(path, 'package.json'), JSON.stringify({ name: 'ext', version: '1' }))
+    await writeFile(
+      join(path, 'package.json'),
+      JSON.stringify({ name: 'ext', version: '1' })
+    )
     await writeFile(
       join(component, 'package.json'),
       JSON.stringify({ dependencies: { cloudinary: '2.11.0', jose: '6.2.10' } })

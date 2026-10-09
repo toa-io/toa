@@ -27,7 +27,10 @@ describe('cors', () => {
     )
 
     assert.equal(output?.status, 204)
-    assert.equal(output?.headers?.get('access-control-allow-origin'), 'https://hello.world')
+    assert.equal(
+      output?.headers?.get('access-control-allow-origin'),
+      'https://hello.world'
+    )
   })
 
   it('should allow OPTIONS, so that one can be preflighted at all', () => {
@@ -38,7 +41,10 @@ describe('cors', () => {
       })
     )
 
-    assert.match(output?.headers?.get('access-control-allow-methods') ?? '', /\bOPTIONS\b/)
+    assert.match(
+      output?.headers?.get('access-control-allow-methods') ?? '',
+      /\bOPTIONS\b/
+    )
   })
 
   it('should pass an OPTIONS that is not a preflight through', () => {

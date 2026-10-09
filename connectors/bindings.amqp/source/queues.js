@@ -28,7 +28,8 @@ export const name = (locator, endpoint) =>
  * where every task a component is given arrives, whichever of its operations it names: the
  * message says which, so the queue holds one per component rather than one per operation
  */
-export const tasks = (locator) => scoped(locator.namespace + '.' + locator.name + '..tasks')
+export const tasks = (locator) =>
+  scoped(locator.namespace + '.' + locator.name + '..tasks')
 
 /** the exchange the processes serving a stateful endpoint are bound to, each under its name */
 export const instances = (locator, endpoint) => name(locator, endpoint) + '..instances'

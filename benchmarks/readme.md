@@ -23,19 +23,19 @@ $ npm run bench -- --clean                        # removes what runs leave in t
 
 ## Options
 
-| option | default | |
-| --- | --- | --- |
-| `--base <ref>` | merge base of `HEAD` and `origin/dev` | the revision compared against |
-| `--head <ref>` | the working tree | the revision compared |
-| `--scenarios <ids>` | all but the optional | comma-separated |
-| `--blocks <n>` | 4, or 3 with `--quick` | at least 2 |
-| `--window <seconds>` | 10, or 5 with `--quick` | the length of a measured window |
-| `--threshold <ratio>` | 0.05 | the change a verdict names |
-| `--quick` | | shorter windows and fewer blocks |
-| `--pr <number>` | | compares the head of that pull request with its merge base, and posts the report to it |
-| `--profile` | | profiles instead of a comparison |
-| `--ref <ref>` | the working tree | the revision `--profile` runs |
-| `--clean` | | removes the vhosts and databases of both sides |
+| option                | default                               |                                                                                        |
+| --------------------- | ------------------------------------- | -------------------------------------------------------------------------------------- |
+| `--base <ref>`        | merge base of `HEAD` and `origin/dev` | the revision compared against                                                          |
+| `--head <ref>`        | the working tree                      | the revision compared                                                                  |
+| `--scenarios <ids>`   | all but the optional                  | comma-separated                                                                        |
+| `--blocks <n>`        | 4, or 3 with `--quick`                | at least 2                                                                             |
+| `--window <seconds>`  | 10, or 5 with `--quick`               | the length of a measured window                                                        |
+| `--threshold <ratio>` | 0.05                                  | the change a verdict names                                                             |
+| `--quick`             |                                       | shorter windows and fewer blocks                                                       |
+| `--pr <number>`       |                                       | compares the head of that pull request with its merge base, and posts the report to it |
+| `--profile`           |                                       | profiles instead of a comparison                                                       |
+| `--ref <ref>`         | the working tree                      | the revision `--profile` runs                                                          |
+| `--clean`             |                                       | removes the vhosts and databases of both sides                                         |
 
 `--pr` runs commits fetched from the remote, not the working tree, so the checkout may move on
 while it runs. A run that fails posts why instead of a report. `--base` and `--head` given with it
@@ -62,23 +62,23 @@ A run of the default scenarios took 61 minutes on an 8-core machine; `--quick` h
 
 ## Scenarios
 
-| id | request |
-| --- | --- |
-| `small` | `GET` of a reply computed without storage |
-| `small.h2c` | the same over cleartext HTTP/2 |
-| `observe` | `GET` of one item from MongoDB |
-| `list.1000` | `GET` of a thousand items |
-| `list.1000.h2c` | the same over cleartext HTTP/2 |
-| `create` | `POST` of an item of fifteen fields, which emits an event `peer` receives |
-| `chain` | `GET` of an operation that calls `peer` |
-| `token.id` | `GET` under `auth:id`, with a `Token` |
-| `token.role` | `GET` under `auth:role`, with a `Token` |
-| `mcp.tools.list` | `tools/list` over MCP, on a tree of 22 tools |
-| `list.1000.msgpack` | optional: `list.1000` encoded as MessagePack |
-| `stream.1000` | optional: a window of a thousand items as a stream, a part each |
-| `list.1000.projected` | optional: `list.1000` on a route whose query names three properties |
-| `list.1000.restricted` | optional: `list.1000` on a route whose `io:output` names four properties |
-| `token.reissue` | optional: `GET` under `auth:id` with a `Token` older than `refresh`, sent again after the reply re-issues it, so every request pays for a re-issue — the cost of one re-issue |
+| id                     | request                                                                                                                                                                       |
+| ---------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `small`                | `GET` of a reply computed without storage                                                                                                                                     |
+| `small.h2c`            | the same over cleartext HTTP/2                                                                                                                                                |
+| `observe`              | `GET` of one item from MongoDB                                                                                                                                                |
+| `list.1000`            | `GET` of a thousand items                                                                                                                                                     |
+| `list.1000.h2c`        | the same over cleartext HTTP/2                                                                                                                                                |
+| `create`               | `POST` of an item of fifteen fields, which emits an event `peer` receives                                                                                                     |
+| `chain`                | `GET` of an operation that calls `peer`                                                                                                                                       |
+| `token.id`             | `GET` under `auth:id`, with a `Token`                                                                                                                                         |
+| `token.role`           | `GET` under `auth:role`, with a `Token`                                                                                                                                       |
+| `mcp.tools.list`       | `tools/list` over MCP, on a tree of 22 tools                                                                                                                                  |
+| `list.1000.msgpack`    | optional: `list.1000` encoded as MessagePack                                                                                                                                  |
+| `stream.1000`          | optional: a window of a thousand items as a stream, a part each                                                                                                               |
+| `list.1000.projected`  | optional: `list.1000` on a route whose query names three properties                                                                                                           |
+| `list.1000.restricted` | optional: `list.1000` on a route whose `io:output` names four properties                                                                                                      |
+| `token.reissue`        | optional: `GET` under `auth:id` with a `Token` older than `refresh`, sent again after the reply re-issues it, so every request pays for a re-issue — the cost of one re-issue |
 
 Tokens are issued by the run and the gateway is configured with a `refresh` of a day, so no token
 ages during a run.
@@ -91,12 +91,12 @@ ages during a run.
 at rest, the ratio head/base, and its 95% interval. Each block counts once: the fewer the blocks,
 the wider the interval. The verdict is:
 
-| verdict | the interval |
-| --- | --- |
-| **slower** | lies wholly above `1 + threshold` |
-| **faster** | lies wholly below `1 − threshold` |
-| unchanged | lies within `[1 − threshold, 1 + threshold]` |
-| inconclusive | crosses a bound |
+| verdict      | the interval                                 |
+| ------------ | -------------------------------------------- |
+| **slower**   | lies wholly above `1 + threshold`            |
+| **faster**   | lies wholly below `1 − threshold`            |
+| unchanged    | lies within `[1 − threshold, 1 + threshold]` |
+| inconclusive | crosses a bound                              |
 
 An interval is of the machine it was measured on, and so is a verdict. Comparing a revision with
 itself shows how wide the intervals of a machine are.

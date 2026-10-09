@@ -10,5 +10,9 @@ export async function effect(input, context) {
   context.state.sweeps.push(input)
 
   if (process.env.SWEEPS !== undefined)
-    await appendFile(resolve(process.cwd(), process.env.SWEEPS), `${process.pid}\n`, 'utf8')
+    await appendFile(
+      resolve(process.cwd(), process.env.SWEEPS),
+      `${process.pid}\n`,
+      'utf8'
+    )
 }

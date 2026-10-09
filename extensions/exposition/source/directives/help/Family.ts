@@ -42,7 +42,10 @@ export class Family implements DirectiveFamily<Directive> {
   }
 
   /** What the route states this method and its parameters are. */
-  public explain(directives: Directive[], introspection: Introspection): Introspection | null {
+  public explain(
+    directives: Directive[],
+    introspection: Introspection
+  ): Introspection | null {
     const help = Family.method(directives)
 
     // what is hidden is hidden from every answer at once, this being the one place they

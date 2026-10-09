@@ -48,13 +48,19 @@ it('should not merge a tenant that started earlier while the exposed branch is l
   const live = Date.now() + 60_000
   const expired = Date.now() - 1
 
-  assert.deepStrictEqual(decide(exposed('b', 2, 'r', [expired, live]), branch('a', 1)), 'superseded')
+  assert.deepStrictEqual(
+    decide(exposed('b', 2, 'r', [expired, live]), branch('a', 1)),
+    'superseded'
+  )
 })
 
 it('should merge a tenant that started earlier once the exposed branch has expired', () => {
   const expired = Date.now() - 1
 
-  assert.deepStrictEqual(decide(exposed('b', 2, 'r', [expired, expired]), branch('a', 1)), 'merge')
+  assert.deepStrictEqual(
+    decide(exposed('b', 2, 'r', [expired, expired]), branch('a', 1)),
+    'merge'
+  )
 })
 
 it('should merge when tenants started at the same time', () => {

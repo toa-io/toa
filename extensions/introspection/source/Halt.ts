@@ -342,10 +342,7 @@ function bound(value: unknown, [min, max]: Bounds, fallback?: number): number | 
  * may never have been written, and a process that took it for one would go down alone.
  */
 async function race(call: Promise<any>): Promise<any> {
-  const reply = await Promise.race([
-    call,
-    timeout(CHECK_TIMEOUT).then(() => UNANSWERED)
-  ])
+  const reply = await Promise.race([call, timeout(CHECK_TIMEOUT).then(() => UNANSWERED)])
 
   if (reply === UNANSWERED)
     throw new Error(`it was not answered within ${CHECK_TIMEOUT}ms`)

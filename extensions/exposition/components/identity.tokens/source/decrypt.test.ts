@@ -214,7 +214,10 @@ it('should open a token assembled by hand', async () => {
     identity
   })
 
-  assert.partialDeepStrictEqual(await decrypt.execute(token), { iss: authority, identity })
+  assert.partialDeepStrictEqual(await decrypt.execute(token), {
+    iss: authority,
+    identity
+  })
 })
 
 for (const [what, replacement] of [
@@ -226,7 +229,11 @@ for (const [what, replacement] of [
   ['compression', { zip: 'DEF' }]
 ] as Array<[string, Record<string, unknown>]>)
   it(`should reject a token with ${what}`, async () => {
-    const token = jwe(configuration.keys[0].key.unwrap(), { ...header(), ...replacement }, claims())
+    const token = jwe(
+      configuration.keys[0].key.unwrap(),
+      { ...header(), ...replacement },
+      claims()
+    )
     const thrown: any = await decrypt.execute(token)
 
     assert.deepStrictEqual(thrown.message, 'INVALID_TOKEN')
@@ -305,7 +312,9 @@ function claims(): Record<string, unknown> {
 /** A compact JWE, `dir` and `A256GCM`, as RFC 7516 states it. */
 function jwe(key: string, header: Record<string, unknown>, claims: object): string {
   const head = Buffer.from(
-    JSON.stringify(Object.fromEntries(Object.entries(header).filter(([, v]) => v !== undefined)))
+    JSON.stringify(
+      Object.fromEntries(Object.entries(header).filter(([, v]) => v !== undefined))
+    )
   ).toString('base64url')
 
   const iv = randomBytes(12)

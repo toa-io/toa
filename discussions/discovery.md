@@ -38,7 +38,7 @@ replicas already running and is answered by them.
 **What is said**
 
 7. A wait names the component and the version it waits for, every five seconds, as it already names
-   the component *(today)*.
+   the component _(today)_.
 8. An event the named version does not declare fails the boot, naming the component, the event and
    the version. Today it is a `TypeError`.
 9. A `compose`, a `serve` or a `mono` that finds no map where a context is there is refused, and
@@ -131,7 +131,7 @@ A run from a context root finds the map by itself and needs neither flag, exactl
 ## Decisions
 
 1. **A file, not a variable.** The runtime reads a path it is given, which is Node.js and nothing
-   else, so *Kubernetes is not a requirement* holds. A variable rendered into every workload's
+   else, so _Kubernetes is not a requirement_ holds. A variable rendered into every workload's
    environment would change whenever any component does, so every pod of a context would be
    replaced by every deployment; one read from a `configMapKeyRef` instead would not, but it is
    resolved when a container starts and frozen after that, so a composition a deployment does not
@@ -141,6 +141,7 @@ A run from a context root finds the map by itself and needs neither flag, exactl
    Handing one to a process that something else starts — a container an application runs of its
    own — is that application's, like the environment it already hands over. `--map` names it
    wherever it is put.
+
 2. **Found like `.env`, required unlike it.** An absent `.env` is a run with no variables, which is
    a thing someone may mean. An absent map is a run that asks whichever replica answers first,
    which is the defect this removes, so it is refused and says what makes one — where a context is
@@ -181,8 +182,9 @@ A run from a context root finds the map by itself and needs neither flag, exactl
    hundred empty queues a year and cost a way to discard a lookup waiting on a version that is
    still starting.
 
-   *This said an `expires` policy was recommended instead, and named documentation that was never
-   written. No policy is recommended: see [what removes a queue](./queues.md#what-removes-a-queue).*
+   _This said an `expires` policy was recommended instead, and named documentation that was never
+   written. No policy is recommended: see [what removes a queue](./queues.md#what-removes-a-queue)._
+
 10. **The version is not in the endpoint queue's name.** Routing calls by version would end
     load balancing across a rollout and make a deployment an ordering problem. Both versions serving
     one queue is what a rolling update is; what was wrong is only that a caller could not tell which

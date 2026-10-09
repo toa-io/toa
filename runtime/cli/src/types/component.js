@@ -71,7 +71,8 @@ function input(operation, importing) {
 
   importing('node:stream', 'Readable')
 
-  const carried = 'Readable | { type?: string | null, accept?: string | null, stream: Readable }'
+  const carried =
+    'Readable | { type?: string | null, accept?: string | null, stream: Readable }'
   const property = `{ ${operation.stream}: ${carried} }`
 
   return stated(operation.input) ? `${emit(operation.input)} & ${property}` : property

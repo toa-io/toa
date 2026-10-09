@@ -109,5 +109,13 @@ function mcp(annotation: Annotation): string[] {
 
 type Properties = Pick<
   Annotation,
-  'authorities' | 'debug' | 'protocol' | 'bouncer' | 'censor' | 'ip' | 'oauth' | 'rpc' | 'mcp'
+  | 'authorities'
+  | 'debug'
+  | 'protocol'
+  | 'bouncer'
+  | 'censor'
+  | 'ip'
+  | 'oauth'
+  | 'rpc'
+  | 'mcp'
 >

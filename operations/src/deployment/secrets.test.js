@@ -29,9 +29,13 @@ describe('references', () => {
   it('should reference a key read by two workloads once', () => {
     const secret = { name: 'toa-mongodb.default', key: 'username' }
 
-    assert.deepStrictEqual(references([{ name: 'A', secret }, { name: 'B', secret }]), [
-      'toa-mongodb.default/username'
-    ])
+    assert.deepStrictEqual(
+      references([
+        { name: 'A', secret },
+        { name: 'B', secret }
+      ]),
+      ['toa-mongodb.default/username']
+    )
   })
 
   it('should reference the image pull secret by name', () => {
@@ -120,7 +124,11 @@ describe('verify', () => {
     secrets = 'toa-mongodb.default username'
 
     await assert.rejects(
-      verify(process, ['toa-mongodb.default/username', 'toa-mongodb.default/password'], {}),
+      verify(
+        process,
+        ['toa-mongodb.default/username', 'toa-mongodb.default/password'],
+        {}
+      ),
       { message: 'Secrets are not deployed: toa-mongodb.default/password' }
     )
   })

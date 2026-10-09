@@ -65,7 +65,8 @@ beforeEach(async () => {
 
       return new Connector()
     },
-    remote: async (locator: { name: string }) => (locator.name === 'edges' ? edges : signals),
+    remote: async (locator: { name: string }) =>
+      locator.name === 'edges' ? edges : signals,
     quiesce: async () => {
       quiesced = true
     },

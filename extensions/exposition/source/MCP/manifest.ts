@@ -77,7 +77,8 @@ export class Manifest extends Connector {
         headers: { accept: 'application/manifest+json, application/json' }
       })
 
-      if (!response.ok) return new Error(`The manifest is answered with ${response.status}`)
+      if (!response.ok)
+        return new Error(`The manifest is answered with ${response.status}`)
 
       return JSON.parse(await capped(response))
     } catch (error) {
@@ -86,7 +87,8 @@ export class Manifest extends Connector {
   }
 
   private succeeded(found: Icon[]): void {
-    if (this.failures > 0) console.info('The web manifest is read again', { url: this.url })
+    if (this.failures > 0)
+      console.info('The web manifest is read again', { url: this.url })
 
     this.failures = 0
 
@@ -94,7 +96,8 @@ export class Manifest extends Connector {
 
     if (value === this.current) return
 
-    if (found.length === 0) console.warn('The web manifest lists no icon to show', { url: this.url })
+    if (found.length === 0)
+      console.warn('The web manifest lists no icon to show', { url: this.url })
 
     this.current = value
     this.shown(found)
@@ -145,10 +148,14 @@ export function icons(document: unknown, url: string): Icon[] {
 
     if (resolved === null || resolved.origin !== origin) continue
 
-    if (purpose !== undefined && !(typeof purpose === 'string' && words(purpose).includes('any')))
+    if (
+      purpose !== undefined &&
+      !(typeof purpose === 'string' && words(purpose).includes('any'))
+    )
       continue
 
-    if (type !== undefined && !(typeof type === 'string' && type.startsWith('image/'))) continue
+    if (type !== undefined && !(typeof type === 'string' && type.startsWith('image/')))
+      continue
 
     const icon: Icon = { src: resolved.href }
 

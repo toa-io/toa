@@ -52,7 +52,9 @@ export class Streams {
     const token = decode(given)
 
     if (token.h !== hash)
-      throw new exceptions.QuerySyntaxException('The token was issued for other criteria or order')
+      throw new exceptions.QuerySyntaxException(
+        'The token was issued for other criteria or order'
+      )
 
     if (token.id !== undefined) return await this.#window(criteria, options, hash, token)
     if (token.p === null || !this.#history) throw lost()
@@ -84,7 +86,10 @@ export class Streams {
     const position = token.p === null ? null : { p: token.p, t: token.t }
 
     try {
-      return await this.#read(criteria, options, hash, session, position, { id: token.id, c: token.c })
+      return await this.#read(criteria, options, hash, session, position, {
+        id: token.id,
+        c: token.c
+      })
     } catch (exception) {
       await session.endSession()
 
@@ -124,8 +129,10 @@ export class Streams {
    */
   async #read(criteria, options, hash, session, position, after) {
     const limit = options.limit
-    const order = limit === undefined && after === undefined ? null : ordered(options.sort)
-    const filter = after === undefined ? criteria : { $and: [criteria, beyond(order, after)] }
+    const order =
+      limit === undefined && after === undefined ? null : ordered(options.sort)
+    const filter =
+      after === undefined ? criteria : { $and: [criteria, beyond(order, after)] }
 
     const read = { ...options, session, readConcern: { level: 'majority' } }
 
@@ -147,18 +154,30 @@ export class Streams {
       try {
         for await (const record of cursor) {
           count++
-          last = { id: record._id, c: record.CREATED instanceof Date ? record.CREATED.getTime() : undefined }
+          last = {
+            id: record._id,
+            c: record.CREATED instanceof Date ? record.CREATED.getTime() : undefined
+          }
 
           yield parts.entry(from(record))
         }
 
         if (limit !== undefined && count === limit && options.stop !== true) {
-          const window = { v: VERSION, p: position?.p ?? null, t: position?.t ?? null, id: last.id, h: hash }
+          const window = {
+            v: VERSION,
+            p: position?.p ?? null,
+            t: position?.t ?? null,
+            id: last.id,
+            h: hash
+          }
 
           if (order?.[0]?.[0] === 'CREATED') window.c = last.c
 
           yield parts.token(encode(window))
-        } else yield parts.token(position === null ? null : encode({ v: VERSION, p: position.p, h: hash }))
+        } else
+          yield parts.token(
+            position === null ? null : encode({ v: VERSION, p: position.p, h: hash })
+          )
       } finally {
         await cursor.close()
         await session.endSession()
@@ -243,7 +262,8 @@ function classify(event, criteria, from) {
   const after = event.fullDocument
   const before = event.fullDocumentBeforeChange
 
-  if (after !== undefined && after !== null && match(after, criteria)) return parts.entry(from(after))
+  if (after !== undefined && after !== null && match(after, criteria))
+    return parts.entry(from(after))
 
   if (before !== undefined && before !== null && match(before, criteria))
     return parts.removed(String(event.documentKey._id))
@@ -261,21 +281,28 @@ function prefix(filter, path) {
   for (const [key, value] of Object.entries(filter))
     if (LOGICAL.includes(key)) result[key] = value.map((filter) => prefix(filter, path))
     else if (key.startsWith('$'))
-      throw new exceptions.QuerySyntaxException(`What changed in a collection cannot be read by '${key}'`)
+      throw new exceptions.QuerySyntaxException(
+        `What changed in a collection cannot be read by '${key}'`
+      )
     else result[path + key] = value
 
   return result
 }
 
 function refusal(exception) {
-  if (LOST.includes(exception?.code) || exception?.hasErrorLabel?.('NonResumableChangeStreamError'))
+  if (
+    LOST.includes(exception?.code) ||
+    exception?.hasErrorLabel?.('NonResumableChangeStreamError')
+  )
     return lost()
 
   return exception
 }
 
 function lost() {
-  return new exceptions.StateHistoryException('The token names a point the storage no longer holds')
+  return new exceptions.StateHistoryException(
+    'The token names a point the storage no longer holds'
+  )
 }
 
 /**
@@ -300,11 +327,18 @@ function ordered(sort) {
 
   for (const [property] of sort)
     if (!UNMOVING.includes(property))
-      throw new exceptions.QuerySyntaxException(`A stream read in windows is not ordered by '${property}', which changes`)
+      throw new exceptions.QuerySyntaxException(
+        `A stream read in windows is not ordered by '${property}', which changes`
+      )
 
   const [[first, direction]] = sort
 
-  return first === '_id' ? [['_id', direction]] : [['CREATED', direction], ['_id', direction]]
+  return first === '_id'
+    ? [['_id', direction]]
+    : [
+        ['CREATED', direction],
+        ['_id', direction]
+      ]
 }
 
 /** What comes after the last entry a window read, in its order. */

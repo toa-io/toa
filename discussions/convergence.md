@@ -124,7 +124,7 @@ compare-and-swap in `Storage.set` prevents two writes at one version — so the 
 and there is no residual case.
 
 **The rank is on the record because the tie is not about this deployment.** At an equal version
-the question is whether the sender outranks *whoever wrote the record being replaced*, and after
+the question is whether the sender outranks _whoever wrote the record being replaced_, and after
 any merge that is not this region. A deployment that only knew its own rank would compare the
 wrong pair: with `eu`, `us` and `ap`, both `eu` and `us` outrank `ap`, so `ap` could not tell
 their two concurrent writes apart and would keep whichever arrived second. The two questions
@@ -236,7 +236,10 @@ the storage is made and the order in `runtime/boot/src/component.js` does not ch
 ```js
 const events = boot.events(manifest)
 const destinations = await boot.extensions.destinations(manifest)
-const storage = await boot.storage(manifest, events !== undefined || destinations.length > 0)
+const storage = await boot.storage(
+  manifest,
+  events !== undefined || destinations.length > 0
+)
 // …
 const outbox = boot.outbox(manifest, storage, emission, destinations)
 ```
@@ -647,17 +650,17 @@ thing for comq to have. Everything below depends on the version that carries it.
 2. `runtime/core/source/types/extensions.ts` — the locator and manifest on `storage`;
    `Host.outbound`, `Host.inbound`.
 3. `runtime/boot/src/storage.js`, `extensions/storage.js` — forward the locator and the manifest.
-5. `runtime/boot/src/bindings/outbound.js`, `inbound.js`, `index.js`, `host.js` — resolve the
+4. `runtime/boot/src/bindings/outbound.js`, `inbound.js`, `index.js`, `host.js` — resolve the
    named binding, and say so where it implements neither.
-6. `connectors/bindings.amqp/source/outbound.js` — publishes to `<channel>.out` with the label as
+5. `connectors/bindings.amqp/source/outbound.js` — publishes to `<channel>.out` with the label as
    the routing key, persistent and mandatory.
-7. `connectors/bindings.amqp/source/inbound.js` — asserts queue `<channel>.<label>`, durable,
+6. `connectors/bindings.amqp/source/inbound.js` — asserts queue `<channel>.<label>`, durable,
    binds it to `<channel>.in` under the label, consumes, calls `accept`. Over a `Communication` of
    its own, pooled under a convergence owner, so it shares no connection with the context's.
-8. `connectors/bindings.amqp/source/queues.js`, `factory.js`, `index.js` — the three names,
+7. `connectors/bindings.amqp/source/queues.js`, `factory.js`, `index.js` — the three names,
    derived from the channel and the label and from nothing else. `uris.ts` is untouched: the
    broker set arrives as an argument.
-9. `runtime/core/source/types/storages.ts` — `merge` and `merges` on `Storage`.
+8. `runtime/core/source/types/storages.ts` — `merge` and `merges` on `Storage`.
 
 ### 4. `REGION`, a system property
 

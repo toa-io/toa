@@ -69,6 +69,7 @@ Nothing. A component that routes realtime events and converges delivers them in 
    what the component's regional destinations export for a row, by their names, and the import of
    what arrives. One destination's export failing is logged and leaves it out; an import failing
    fails the import.
+
 2. **Boot.** Once the destinations are made, a destination that `carries` is given the `Regional` of
    the others, as a destination that `renders` is given its `Rendering`.
 3. **Convergence.**

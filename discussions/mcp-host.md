@@ -19,10 +19,10 @@ value `map:authority` writes.
    identity it names is one identity.
 4. Nothing else on an MCP host answers: an application's routes, `/.rpc`, `/.mcp` and `/.discovery`
    are `404` there, and `GET /` is `405`.
-5. `/.mcp` answers on the authority's own host, whether or not an MCP host is declared *(today)*.
-6. An MCP host is an ingress host of the gateway, as an authority's host is *(today)*.
+5. `/.mcp` answers on the authority's own host, whether or not an MCP host is declared _(today)_.
+6. An MCP host is an ingress host of the gateway, as an authority's host is _(today)_.
 7. An MCP host under a key that names no declared authority fails the deploy.
-8. A host no annotation names is an authority of its own name *(today)*.
+8. A host no annotation names is an authority of its own name _(today)_.
 
 **Authorization**
 
@@ -33,13 +33,13 @@ value `map:authority` writes.
 11. An MCP host serves no authorization-server metadata: `/.well-known/oauth-authorization-server`
     and `/.well-known/openid-configuration` are `404` there.
 12. A token asked for with the MCP host's origin as its `resource` is admitted on that host, and
-    refused on every other host *(today: an audience is covered by hostname and path)*.
+    refused on every other host _(today: an audience is covered by hostname and path)_.
 
 **What is not promised**
 
 13. An MCP host is not an issuer. What a client authorizes against is the authority's host, which
     the protected-resource document names.
-14. An authority is one host, as it is *(today)*. An MCP host is not a second name for the
+14. An authority is one host, as it is _(today)_. An MCP host is not a second name for the
     application: it serves the endpoint alone.
 
 ### What a component author does differently

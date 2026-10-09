@@ -29,7 +29,9 @@ const create = (payloads: Record<string, object | null>): Destination => {
 
   destination.rendering = {
     render: async (label: string) =>
-      payloads[label] === undefined || payloads[label] === null ? null : { payload: payloads[label] }
+      payloads[label] === undefined || payloads[label] === null
+        ? null
+        : { payload: payloads[label] }
   }
 
   return destination

@@ -35,7 +35,12 @@ describe('a manifest carried through a file', () => {
     })
 
   it('does not carry a key with no value', () => {
-    const carried = plain({ name: 'a', namespace: 'b', path: '/x', operations: { echo: { input: undefined } } })
+    const carried = plain({
+      name: 'a',
+      namespace: 'b',
+      path: '/x',
+      operations: { echo: { input: undefined } }
+    })
 
     assert.deepStrictEqual(carried.operations.echo, {})
   })
@@ -64,7 +69,10 @@ describe('a manifest carried through a file', () => {
 
   it('reads what is inherited where the prototype is', async () => {
     const prototype = (await component(COMPONENT)).prototype.path
-    const revived = revive(carry(await component(COMPONENT)), '/composition/external-consumer')
+    const revived = revive(
+      carry(await component(COMPONENT)),
+      '/composition/external-consumer'
+    )
 
     // an event of the prototype's is in the prototype, wherever the component is
     assert.strictEqual(revived.events.created.path, prototype)
@@ -95,7 +103,10 @@ describe('what cannot be carried', () => {
   it('refuses a prototype an image would not have', async () => {
     const manifest = await component(EXTENDED)
 
-    assert.throws(() => plain(manifest), /is in no package, so an image cannot carry what is in it/)
+    assert.throws(
+      () => plain(manifest),
+      /is in no package, so an image cannot carry what is in it/
+    )
   })
 
   it('refuses a path inside the component it does not know about', () => {
@@ -113,7 +124,7 @@ describe('what cannot be carried', () => {
     assert.throws(() => plain(manifest), /carries a path of the machine that read it/)
   })
 
-  it('leaves a value of the application\'s own alone', () => {
+  it("leaves a value of the application's own alone", () => {
     const carried = plain({
       name: 'a',
       namespace: 'b',

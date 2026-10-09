@@ -27,7 +27,8 @@ function matches(record, key, condition) {
     case '$nor':
       return !condition.some((filter) => match(record, filter))
     default:
-      if (key.startsWith('$')) throw new Error(`A change cannot be matched against '${key}'`)
+      if (key.startsWith('$'))
+        throw new Error(`A change cannot be matched against '${key}'`)
 
       return field(read(record, key), condition)
   }
@@ -39,7 +40,8 @@ function field(value, condition) {
   for (const [operator, operand] of Object.entries(condition)) {
     const test = OPERATORS[operator]
 
-    if (test === undefined) throw new Error(`A change cannot be matched against '${operator}'`)
+    if (test === undefined)
+      throw new Error(`A change cannot be matched against '${operator}'`)
     if (!test(value, operand)) return false
   }
 
@@ -65,14 +67,16 @@ function some(value, test) {
 /** `null` is equal to a field that is not there, and a date to a date of the same instant. */
 function equal(value, operand) {
   if (operand === null) return value === null || value === undefined
-  if (operand instanceof Date) return value instanceof Date && value.getTime() === operand.getTime()
+  if (operand instanceof Date)
+    return value instanceof Date && value.getTime() === operand.getTime()
 
   return value === operand
 }
 
 /** Values of one type compare, and values of two types are neither greater nor less. */
 function compare(value, operand) {
-  if (value instanceof Date && operand instanceof Date) return value.getTime() - operand.getTime()
+  if (value instanceof Date && operand instanceof Date)
+    return value.getTime() - operand.getTime()
   if (typeof value === 'number' && typeof operand === 'number') return value - operand
 
   if (typeof value === 'string' && typeof operand === 'string')
@@ -82,7 +86,8 @@ function compare(value, operand) {
 }
 
 function operators(condition) {
-  if (condition === null || typeof condition !== 'object' || condition instanceof Date) return false
+  if (condition === null || typeof condition !== 'object' || condition instanceof Date)
+    return false
   if (Array.isArray(condition)) return false
 
   const keys = Object.keys(condition)

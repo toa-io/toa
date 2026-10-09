@@ -11,10 +11,7 @@ export async function effect(input, context) {
   // the first branch to ask on one attempt is the last on the next
   const [early, late] = n % 2 === 1 ? [0, 100] : [100, 0]
 
-  await Promise.all([
-    branch(context, input.a, early),
-    branch(context, input.b, late)
-  ])
+  await Promise.all([branch(context, input.a, early), branch(context, input.b, late)])
 
   if (n <= input.fail) throw new Error('Failing on purpose')
 

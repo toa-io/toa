@@ -62,11 +62,7 @@ export class Computation implements Operation {
 
     if (claims instanceof Error) return claims
 
-    return this.answer(
-      claims,
-      key,
-      jwe.kid !== this.latest && key.identity === undefined
-    )
+    return this.answer(claims, key, jwe.kid !== this.latest && key.identity === undefined)
   }
 
   private pasetoKid(token: string): Maybe<string> {

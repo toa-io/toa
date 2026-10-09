@@ -32,7 +32,8 @@ export interface Definition {
  */
 function find(exported: Exports, path: string): [string, Binding] | null {
   const candidates = [...exported].filter(
-    ([name, bound]) => name !== '__esModule' && (bound.kind !== 'other' || conventional(name))
+    ([name, bound]) =>
+      name !== '__esModule' && (bound.kind !== 'other' || conventional(name))
   )
 
   if (candidates.length === 0) return null
@@ -71,17 +72,20 @@ function func(type: string, bound: Binding): Definition {
 }
 
 function klass(name: string, bound: Binding, path: string): Definition {
-  if (bound.kind !== 'class') throw new Error(`${path}: '${name}' does not match conventions`)
+  if (bound.kind !== 'class')
+    throw new Error(`${path}: '${name}' does not match conventions`)
 
   const params = bound.methods?.execute
 
-  if (params === undefined) throw new Error(`${path}: Method 'execute' not found in '${name}'`)
+  if (params === undefined)
+    throw new Error(`${path}: Method 'execute' not found in '${name}'`)
 
   return signature({ type: name.toLowerCase() }, params)
 }
 
 function factory(name: string, bound: Binding, path: string): Definition {
-  if (bound.kind !== 'class') throw new Error(`${path}: '${name}' does not match conventions`)
+  if (bound.kind !== 'class')
+    throw new Error(`${path}: '${name}' does not match conventions`)
 
   const match = name.match(FACTORY)!
   const definition: Definition = { type: match.groups!.type.toLowerCase() }
@@ -92,7 +96,10 @@ function factory(name: string, bound: Binding, path: string): Definition {
   return definition
 }
 
-function signature(definition: Definition, params: Array<string | undefined>): Definition {
+function signature(
+  definition: Definition,
+  params: Array<string | undefined>
+): Definition {
   definition.scope = params.length > 1 ? scope(params[1]) : 'none'
 
   if (params.length === 0) definition.input = null
