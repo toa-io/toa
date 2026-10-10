@@ -3,7 +3,7 @@ import { Unroutable } from 'comq'
 import { Connector, Encoded, exceptions } from '@toa.io/core'
 import { publish } from './measurements.js'
 import { ENDPOINT } from './constants.js'
-import { instances, name, tasks } from './queues.js'
+import { instances, requests, tasks } from './queues.js'
 
 /**
  * @implements {import('@toa.io/core/types').bindings.Consumer}
@@ -27,7 +27,7 @@ export class Consumer extends Connector {
   constructor(comm, locator, endpoint) {
     super()
 
-    this.#queue = name(locator, endpoint)
+    this.#queue = requests(locator)
     this.#tasksQueue = tasks(locator)
     this.#endpoint = endpoint
     this.#exchange = instances(locator, endpoint)
@@ -54,7 +54,9 @@ export class Consumer extends Connector {
   async #send(request, terms) {
     // an ordinary call waits for its reply, and is handed no terms
     if (terms?.instance === undefined)
-      return await this.#comm.request(this.#queue, request)
+      return await this.#comm.request(this.#queue, request, {
+        headers: { [ENDPOINT]: this.#endpoint }
+      })
 
     try {
       return await this.#comm.call(

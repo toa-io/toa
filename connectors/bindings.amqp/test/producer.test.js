@@ -5,7 +5,7 @@ import { Readable } from 'node:stream'
 
 import { generate } from 'randomstring'
 import { each } from '@toa.io/generic'
-import { instance } from '@toa.io/core'
+import { exceptions, instance } from '@toa.io/core'
 import * as _communication from './communication.mock.js'
 import * as _queues from './queues.mock.js'
 
@@ -53,47 +53,63 @@ it('should depend onComponent', async () => {
   assert.ok(component.link.mock.callCount() > 0)
 })
 
-it('should bind endpoints', async () => {
+it('should bind one requests queue for the component', async () => {
   await producer.connect()
 
-  await each(endpoints, async (endpoint, i) => {
-    const n = i + 1
+  assert.strictEqual(comm.reply.mock.callCount(), 1)
 
-    assert.ok(
-      ((call) =>
-        call.arguments.length === 2 &&
-        isDeepStrictEqual(call.arguments[0], locator) &&
-        isDeepStrictEqual(call.arguments[1], endpoint))(
-        mock.queues.name.mock.calls[n - 1] ?? { arguments: [] }
-      )
-    )
+  const call = mock.queues.requests.mock.calls[0]
 
-    const queue = mock.queues.name.mock.calls[i].result
+  assert.ok(call.arguments.length === 1 && isDeepStrictEqual(call.arguments[0], locator))
+  assert.ok(isDeepStrictEqual(comm.reply.mock.calls[0].arguments[0], call.result))
+})
 
-    assert.ok(
-      ((call) =>
-        call.arguments.length === 2 &&
-        isDeepStrictEqual(call.arguments[0], queue) &&
-        typeof call.arguments[1] === 'function')(
-        comm.reply.mock.calls[n - 1] ?? { arguments: [] }
-      )
-    )
+it('should invoke the endpoint a request names', async () => {
+  await producer.connect()
 
-    const process = comm.reply.mock.calls[i].arguments[1]
+  const process = comm.reply.mock.calls[0].arguments[1]
 
+  await each(endpoints, async (endpoint) => {
     const request = generate()
 
-    await process(request)
+    await process(request, { headers: { 'toa.io/endpoint': endpoint } })
 
     assert.ok(
-      ((call) =>
-        call.arguments.length === 2 &&
-        isDeepStrictEqual(call.arguments[0], endpoint) &&
-        isDeepStrictEqual(call.arguments[1], request))(
-        component.invoke.mock.calls[n - 1] ?? { arguments: [] }
+      component.invoke.mock.calls.some(
+        (call) =>
+          call.arguments.length === 2 &&
+          isDeepStrictEqual(call.arguments[0], endpoint) &&
+          isDeepStrictEqual(call.arguments[1], request)
       )
     )
   })
+})
+
+it('should answer a request naming an endpoint it does not serve', async () => {
+  await producer.connect()
+
+  const process = comm.reply.mock.calls[0].arguments[1]
+  const absent = generate()
+
+  for (const properties of [{ headers: { 'toa.io/endpoint': absent } }, {}, undefined]) {
+    const reply = await process(generate(), properties)
+
+    assert.strictEqual(reply.exception.code, exceptions.codes.Endpoint)
+  }
+
+  const reply = await process(generate(), { headers: { 'toa.io/endpoint': absent } })
+
+  assert.ok(reply.exception.message.includes(absent))
+  assert.strictEqual(component.invoke.mock.callCount(), 0)
+})
+
+it('should bind no requests queue for a component with no shared endpoint', async () => {
+  const producer = new Producer(comm, locator, endpoints, component, endpoints)
+
+  await producer.connect()
+
+  assert.strictEqual(comm.reply.mock.callCount(), 0)
+  assert.strictEqual(comm.process.mock.callCount(), 0)
 })
 
 it('should bind one tasks queue for the component', async () => {
@@ -166,7 +182,7 @@ describe('closing', () => {
     await producer.connect()
 
     const process = comm.reply.mock.calls[0].arguments[1]
-    const invocation = process(generate())
+    const invocation = process(generate(), served())
     const closing = producer.disconnect().then(() => {
       closed = true
     })
@@ -192,12 +208,17 @@ describe('closing', () => {
 
     const process = comm.reply.mock.calls[0].arguments[1]
 
-    await assert.rejects(process(generate()), (error) => /nope/.test(error.message))
+    await assert.rejects(process(generate(), served()), (error) =>
+      /nope/.test(error.message)
+    )
     await assert.doesNotReject(producer.disconnect())
   })
 })
 
 const sleep = async () => await new Promise((resolve) => setImmediate(resolve))
+
+/** the properties of a request naming an endpoint the producer serves */
+const served = () => ({ headers: { 'toa.io/endpoint': endpoints[1] } })
 
 function resetCalls(
   target = [assert, mock, locator, endpoints, component, sleep],
@@ -236,10 +257,16 @@ describe('stateful', () => {
 
     await producer.connect()
 
-    // the shared endpoint alone is replied to and processed
-    assert.equal(comm.reply.mock.callCount(), endpoints.length - 1)
-    assert.equal(comm.process.mock.callCount(), endpoints.length - 1)
-    assert.ok(!mock.queues.name.mock.calls.some((call) => call.arguments[1] === stateful))
+    assert.equal(comm.reply.mock.callCount(), 1)
+    assert.equal(comm.process.mock.callCount(), 1)
+
+    // neither queue takes what names it
+    const properties = { headers: { 'toa.io/endpoint': stateful } }
+    const reply = await comm.reply.mock.calls[0].arguments[1](generate(), properties)
+
+    assert.strictEqual(reply.exception.code, exceptions.codes.Endpoint)
+    await assert.rejects(comm.process.mock.calls[0].arguments[1](generate(), properties))
+    assert.strictEqual(component.invoke.mock.callCount(), 0)
   })
 
   it('should hold the name before it serves any shared endpoint', async () => {
@@ -261,7 +288,7 @@ describe('stateful', () => {
     release()
     await connecting
 
-    assert.equal(comm.reply.mock.callCount(), endpoints.length - 1)
+    assert.equal(comm.reply.mock.callCount(), 1)
   })
 })
 
@@ -269,7 +296,9 @@ describe('encoded', () => {
   const serve = async () => {
     await producer.connect()
 
-    return comm.reply.mock.calls[0].arguments[1]
+    const process = comm.reply.mock.calls[0].arguments[1]
+
+    return (request) => process(request, served())
   }
 
   it('should answer each value of a stream as the bytes of it, where the request asks', async () => {

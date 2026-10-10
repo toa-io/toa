@@ -57,23 +57,23 @@ it('should send request', async () => {
   const reply = await consumer.request(request)
 
   assert.ok(
-    mock.queues.name.mock.calls.some(
+    mock.queues.requests.mock.calls.some(
       (call) =>
-        call.arguments.length === 2 &&
-        isDeepStrictEqual(call.arguments[0], locator) &&
-        isDeepStrictEqual(call.arguments[1], endpoint)
+        call.arguments.length === 1 && isDeepStrictEqual(call.arguments[0], locator)
     )
   )
 
-  const queue = mock.queues.name.mock.calls[0].result
+  const queue = mock.queues.requests.mock.calls[0].result
 
-  // an ordinary call waits for its reply, and gives comq nothing to wait by
+  // an ordinary call waits for its reply, and gives comq nothing to wait by: the queue is the
+  // component's, so what says which operation is the message
   assert.ok(
     comm.request.mock.calls.some(
       (call) =>
-        call.arguments.length === 2 &&
+        call.arguments.length === 3 &&
         isDeepStrictEqual(call.arguments[0], queue) &&
-        isDeepStrictEqual(call.arguments[1], request)
+        isDeepStrictEqual(call.arguments[1], request) &&
+        isDeepStrictEqual(call.arguments[2], { headers: { 'toa.io/endpoint': endpoint } })
     )
   )
   assert.deepStrictEqual(reply, await comm.request.mock.calls[0].result)

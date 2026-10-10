@@ -1,9 +1,9 @@
 import { Readable, Transform, pipeline } from 'node:stream'
-import { Connector, deliveries, instance } from '@toa.io/core'
+import { Connector, deliveries, exceptions, instance } from '@toa.io/core'
 import { console } from 'openspan'
 
 import { ENDPOINT } from './constants.js'
-import { instances, name, tasks } from './queues.js'
+import { instances, requests, tasks } from './queues.js'
 import { refuse, unserved } from './verdict.js'
 
 export class Producer extends Connector {
@@ -26,8 +26,16 @@ export class Producer extends Connector {
   #pending = new Set()
 
   /**
-   * The endpoints a task may name. A stateful one is absent: it is served under this process's
-   * name, and a task is taken by whichever process is free.
+   * The endpoints an ordinary call may name. A stateful one is absent: it is served under this
+   * process's name, and an ordinary call is taken by whichever process is free.
+   *
+   * @type {Set<string>}
+   */
+  #shared = new Set()
+
+  /**
+   * The endpoints a task may name: those an ordinary call may, less what the runtime reserves
+   * for itself.
    *
    * @type {Set<string>}
    */
@@ -58,12 +66,13 @@ export class Producer extends Connector {
       (endpoint) => !this.#stateful.includes(endpoint)
     )
 
+    this.#shared = new Set(shared)
+
     // an endpoint the runtime reserves for itself is served and takes no task, as it did
     // when the queue a task arrived on was named after the endpoint
     this.#served = new Set(shared.filter((endpoint) => endpoint[0] !== '.'))
 
-    await Promise.all(shared.map((endpoint) => this.#endpoint(endpoint)))
-
+    if (this.#shared.size > 0) await this.#requests()
     if (this.#served.size > 0) await this.#tasks()
   }
 
@@ -96,11 +105,27 @@ export class Producer extends Connector {
     })
   }
 
-  async #endpoint(endpoint) {
-    const queue = name(this.#locator, endpoint)
+  /**
+   * One queue for every ordinary call this component is given: the message names the operation,
+   * so the queue does not have to, and the broker holds one of them rather than one per operation.
+   */
+  async #requests() {
+    const queue = requests(this.#locator)
 
-    await this.#comm.reply(queue, (request) => {
-      console.debug('AMQP request received', { label: queue, request })
+    await this.#comm.reply(queue, (request, properties) => {
+      const endpoint = properties?.headers?.[ENDPOINT]
+
+      console.debug('AMQP request received', { label: queue, endpoint, request })
+
+      // a caller running ahead of this process names an operation it does not serve. Somebody
+      // is waiting, and trying the message again cannot make the operation known, so it is
+      // answered rather than raised
+      if (!this.#shared.has(endpoint))
+        return {
+          exception: new exceptions.EndpointException(
+            `'${endpoint ?? ''}' is not served by '${this.#locator.id}'`
+          )
+        }
 
       return this.#invoke(endpoint, request)
     })

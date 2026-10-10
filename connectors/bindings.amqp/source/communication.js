@@ -1,6 +1,7 @@
 import { assert } from 'comq'
 import { Connector } from '@toa.io/core'
 import { console } from 'openspan'
+import { ENDPOINT } from './constants.js'
 import { reported } from './measurements.js'
 
 export class Communication extends Connector {
@@ -94,8 +95,8 @@ export class Communication extends Connector {
     await this.#io.reply(queue, process)
   }
 
-  async request(queue, request) {
-    return this.#io.request(queue, request)
+  async request(queue, request, properties) {
+    return this.#io.request(queue, request, properties)
   }
 
   async call(exchange, key, request, options) {
@@ -173,6 +174,8 @@ export class Communication extends Connector {
       console.error('AMQP message discarded', {
         type,
         queue: message.fields?.routingKey,
+        // a queue is a component's, so this is what says which operation the message was for
+        endpoint: message.properties?.headers?.[ENDPOINT],
         message: exception?.message,
         shard
       })
