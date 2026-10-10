@@ -144,7 +144,7 @@ declares may be taken by the older, and is answered with an `EndpointException`*
 is called once the deployment that adds it is complete. The caller validates against the contract it read and
 the callee does not validate again, so **an endpoint's input schema is yours to keep compatible
 while two versions of it serve** — the same rule a deployment holds you to for the State. An
-endpoint or an event only the newer version declares is not affected: the older one serves neither.
+event only the newer version declares is not affected: the older one does not emit it.
 
 The gateway is described by the version that announced the route it matched, whatever the map says,
 so a request it forwards is described by the same version that offered it the route — it forwards

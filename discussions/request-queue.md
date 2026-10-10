@@ -49,7 +49,8 @@ Nothing. A call is made the same way; what changes is the queue that carries it.
    stand and then changed. `contracts.md`, `stateful.md` and `streams.md` say what a call that
    names an operation a process does not serve is answered.
 4. **Scenarios.** `features/bindings/requests.feature`, and the names in
-   `features/bindings/scope.feature`.
+   `features/bindings/scope.feature`. `features/runtime/contracts.feature` states (10) where it
+   stated the opposite, and waits for a component rather than for a version of one.
 5. **Migration.** `migrations/327.md`: the release is taken through a halt, and the queues it
    leaves are deleted.
 
@@ -72,12 +73,22 @@ is the header a task already carries.
 under the same rule: a name with `..` in it is never a name from before, so nothing a previous
 release declared is redeclared, and what is left over is told apart by its name alone.
 
-**A call nobody here serves is answered, over tried again.** A task for an operation that is not
-served is kept at once, because trying it again reaches the same processes. A call has somebody
-waiting, and a kept request is never answered — so it is answered, with the exception a call to an
-operation that does not exist has always been. The cost is (10): for as long as two releases serve,
-a call for an operation only the newer one has can be refused by the older. Trying it again for
-that long would cover a rollout and hold every call to a misnamed operation for as long.
+**A call this process does not serve is answered, over given back and over tried again.** A
+queue per operation gave a rollout something for nothing: an operation only the new release
+declares had a queue only the new release consumed, so a call to it reached the new release and
+waited for it. On one queue a process of the old release takes such a call, and that is given up:
+(10), and `features/runtime/contracts.feature` now states it.
+
+Giving the call back to the queue for another process keeps nothing certain — whether it lands on
+the release that serves it next is the broker's turn, not a guarantee — and a call to an operation
+a release has _removed_ has no process to land on, so it goes round for good, taken and given back,
+where it lay still in a queue nothing consumed. Bounding that by the age of the call compares the
+clock of the process that made it with the clock of the one that took it, and nothing says they
+agree. Raising it has it tried again and then kept, where a request is never answered. An answer
+is the one outcome that is the same every time: the caller is told, and the call is gone.
+
+A task is still kept at once, as [queues](./queues.md) decided, for the same reason turned
+round: nobody waits for it.
 
 **One prefetch for the component, as it is.** comq's prefetch is per consumer, so a queue per
 operation was a window per operation, and a component of thirty operations could hold thirty times
@@ -128,4 +139,6 @@ see `migrations/327.md`. `toa.io/endpoint` on a request is new.
 name. Neither is published.
 
 **In behaviour, two changes.** Calls of one component share a prefetch. And a call for an operation
-a process does not serve is answered with an `EndpointException`, where it waited.
+a process does not serve is answered with an `EndpointException`, where it waited. So an operation
+is called once the deployment that adds it is complete: the component is released first, and what
+calls the operation after it — where one release did both.
