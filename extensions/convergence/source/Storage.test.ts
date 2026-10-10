@@ -37,7 +37,11 @@ const record = (properties: object = {}): storages.Record =>
   }) as unknown as storages.Record
 
 const create = (): Converging =>
-  new Converging(storage, locator, subscribe as unknown as (sink: bindings.Inbound) => any)
+  new Converging(
+    storage,
+    locator,
+    subscribe as unknown as (sink: bindings.Inbound) => any
+  )
 
 const regional = (destinations: Partial<outbox.Regional>): Converging =>
   new Converging(
@@ -118,7 +122,10 @@ it('should import what a stale record carried', async () => {
 
   storage.converge = mock.fn<Converge>(async () => false)
 
-  await regional({ import: imports }).accept({ record: record(), carried: { realtime: [] } })
+  await regional({ import: imports }).accept({
+    record: record(),
+    carried: { realtime: [] }
+  })
 
   assert.equal(imports.mock.callCount(), 1)
 })
@@ -142,7 +149,7 @@ it('should import nothing where nothing was carried', async () => {
   assert.equal(imports.mock.callCount(), 0)
 })
 
-it('should report a record carrying this region\'s own rank', async () => {
+it("should report a record carrying this region's own rank", async () => {
   await create().accept({ record: record({ REGION }) })
 
   assert.equal(error.mock.callCount(), 1)
@@ -152,7 +159,7 @@ it('should report a record carrying this region\'s own rank', async () => {
   assert.equal(storage.converge.mock.callCount(), 1)
 })
 
-it('should report nothing where the rank is another region\'s', async () => {
+it("should report nothing where the rank is another region's", async () => {
   await create().accept({ record: record({ REGION: REGION + 1 }) })
 
   assert.equal(error.mock.callCount(), 0)

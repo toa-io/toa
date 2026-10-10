@@ -435,6 +435,23 @@ Then(
 )
 
 Then(
+  'the reply holds {token} as nothing but:',
+  /**
+   * What a reply leaves out of a property is told by nothing else: `the reply is received` asks
+   * for what is expected to be among what came.
+   *
+   * @param {string} property
+   * @param {string} yaml
+   * @this {toa.features.Context}
+   */
+  function (property, yaml) {
+    if (this.exception !== undefined) throw this.exception
+
+    assert.deepStrictEqual(this.reply[property], parse(yaml))
+  }
+)
+
+Then(
   'the reply is received within {int} second(s):',
   /**
    * What an event does is done after the call that emits it has replied, so the last call

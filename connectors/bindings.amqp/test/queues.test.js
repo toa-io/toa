@@ -5,7 +5,15 @@ import { generate } from 'randomstring'
 
 import { environment } from '@toa.io/generic'
 
-import { bound, inbound, instances, name, outbound, scoped, tasks } from '../source/queues.js'
+import {
+  bound,
+  inbound,
+  instances,
+  name,
+  outbound,
+  scoped,
+  tasks
+} from '../source/queues.js'
 import {
   queue,
   CHANNEL,
@@ -72,7 +80,10 @@ describe('under a suffix', () => {
   it('should begin every name with the scope', () => {
     const { namespace, name: component } = locator
 
-    assert.equal(name(locator, endpoint), `app-copy.${namespace}.${component}.${endpoint}`)
+    assert.equal(
+      name(locator, endpoint),
+      `app-copy.${namespace}.${component}.${endpoint}`
+    )
     assert.equal(tasks(locator), `app-copy.${namespace}.${component}..tasks`)
     assert.equal(
       instances(locator, endpoint),

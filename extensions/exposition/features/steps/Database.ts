@@ -37,7 +37,9 @@ export class Database {
                 ? true
                 : str === 'false'
                   ? false
-                  : str
+                  : str.startsWith('{')
+                    ? JSON.parse(str)
+                    : str
       }
 
       /*

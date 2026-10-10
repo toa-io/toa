@@ -7,7 +7,12 @@ import type { Report } from './report.ts'
 const report: Report = {
   base: { ref: 'dev', sha: 'dc40febc1aa5b935510b885f1a34a00f3def25e6' },
   head: { ref: 'HEAD', sha: '0123456789abcdef0123456789abcdef01234567' },
-  machine: { model: 'AMD Ryzen 7 7800X3D', cpus: 16, governor: 'powersave', pinned: true },
+  machine: {
+    model: 'AMD Ryzen 7 7800X3D',
+    cpus: 16,
+    governor: 'powersave',
+    pinned: true
+  },
   blocks: 4,
   threshold: 0.05,
   scenarios: [
@@ -31,7 +36,10 @@ const report: Report = {
         }
       ],
       // what subtracting the background leaves of nothing
-      counts: { base: { publish: 2, operations: -0.001 }, head: { publish: 2, operations: 0 } },
+      counts: {
+        base: { publish: 2, operations: -0.001 },
+        head: { publish: 2, operations: 0 }
+      },
       latency: { base: { p50: 1.2, p99: 4.5 }, head: { p50: 1.3, p99: 4.9 } },
       busy: 0.02
     },
@@ -39,7 +47,10 @@ const report: Report = {
       id: 'create',
       rate: 2000,
       processes: [],
-      counts: { base: { publish: 3, operations: 2 }, head: { publish: 3, operations: 3.01 } },
+      counts: {
+        base: { publish: 3, operations: 2 },
+        head: { publish: 3, operations: 3.01 }
+      },
       latency: { base: { p50: 2, p99: 8 }, head: { p50: 2.1, p99: 8.2 } },
       busy: 0.31
     },
@@ -55,17 +66,29 @@ describe('markdown', () => {
   })
 
   it('should state a verdict per process', () => {
-    assert.match(text, /\| small \| gateway \| 812 \| 871 \| 1\.071 \| 1\.050 – 1\.093 \| \*\*slower\*\* \|/)
-    assert.match(text, /\| small \| bench \| 300 \| 301 \| 1\.003 \| 0\.980 – 1\.020 \| unchanged \|/)
+    assert.match(
+      text,
+      /\| small \| gateway \| 812 \| 871 \| 1\.071 \| 1\.050 – 1\.093 \| \*\*slower\*\* \|/
+    )
+    assert.match(
+      text,
+      /\| small \| bench \| 300 \| 301 \| 1\.003 \| 0\.980 – 1\.020 \| unchanged \|/
+    )
   })
 
   it('should mark a changed count', () => {
-    assert.match(text, /\| create \| 3\.00 \| 3\.00 \| 2\.00 \| 3\.01 \| \*\*changed\*\* \|/)
+    assert.match(
+      text,
+      /\| create \| 3\.00 \| 3\.00 \| 2\.00 \| 3\.01 \| \*\*changed\*\* \|/
+    )
     assert.match(text, /\| small \| 2\.00 \| 2\.00 \| 0\.00 \| 0\.00 \| {2}\|/)
   })
 
   it('should flag a window the host was busy in', () => {
-    assert.match(text, /\| create \| 2000 \| 2\.00 \| 2\.10 \| 8\.00 \| 8\.20 \| 31% ⚠ \|/)
+    assert.match(
+      text,
+      /\| create \| 2000 \| 2\.00 \| 2\.10 \| 8\.00 \| 8\.20 \| 31% ⚠ \|/
+    )
   })
 
   it('should list what the base cannot serve', () => {

@@ -39,7 +39,11 @@ export interface Run {
   stack: Stack
 }
 
-export const REPOSITORY = git(dirname(fileURLToPath(import.meta.url)), 'rev-parse', '--show-toplevel')
+export const REPOSITORY = git(
+  dirname(fileURLToPath(import.meta.url)),
+  'rev-parse',
+  '--show-toplevel'
+)
 export const CACHE = process.env.TOA_BENCH_CACHE ?? join(homedir(), '.cache/toa-bench')
 
 export async function open(timing: Timing): Promise<Run> {
@@ -47,7 +51,13 @@ export async function open(timing: Timing): Promise<Run> {
   const results = join(REPOSITORY, 'benchmarks/results', stamp)
   const directory = join(CACHE, 'runs', stamp)
 
-  await free(Object.values(SLOTS).flatMap(({ ports }) => [ports.gateway, ports.probe, ...ports.ready]))
+  await free(
+    Object.values(SLOTS).flatMap(({ ports }) => [
+      ports.gateway,
+      ports.probe,
+      ...ports.ready
+    ])
+  )
   await mkdir(results, { recursive: true })
   await mkdir(directory, { recursive: true })
 

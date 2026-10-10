@@ -19,7 +19,8 @@ export function exports(path: string, text: string): Exports {
     if (node.type === 'ExportNamedDeclaration') named(node, locals, exported)
     else if (node.type === 'ExportDefaultDeclaration')
       exported.set('default', binding(node.declaration, locals))
-    else if (node.type === 'ExpressionStatement') assigned(node.expression, locals, exported)
+    else if (node.type === 'ExpressionStatement')
+      assigned(node.expression, locals, exported)
   }
 
   return exported
@@ -101,7 +102,10 @@ function assigned(expression: any, locals: Locals, exported: Exports): void {
 
   const object = target.object
 
-  if (isModuleExports(object) || (object.type === 'Identifier' && object.name === 'exports'))
+  if (
+    isModuleExports(object) ||
+    (object.type === 'Identifier' && object.name === 'exports')
+  )
     exported.set(name(target.property), binding(expression.right, locals))
 }
 
@@ -128,8 +132,7 @@ function declarations(body: any[]): Locals {
   const locals: Locals = new Map()
 
   for (const node of body) {
-    const declaration =
-      node.type === 'ExportNamedDeclaration' ? node.declaration : node
+    const declaration = node.type === 'ExportNamedDeclaration' ? node.declaration : node
 
     if (declaration === null || declaration === undefined) continue
 
@@ -161,7 +164,11 @@ function binding(node: any, locals?: Locals): Binding {
     case 'FunctionDeclaration':
     case 'FunctionExpression':
     case 'ArrowFunctionExpression':
-      return { kind: 'function', declared: node.id?.name, params: parameters(node.params) }
+      return {
+        kind: 'function',
+        declared: node.id?.name,
+        params: parameters(node.params)
+      }
     case 'ClassDeclaration':
     case 'ClassExpression':
       return { kind: 'class', declared: node.id?.name, methods: methods(node.body.body) }
@@ -178,7 +185,8 @@ function methods(body: any[]): Record<string, Array<string | undefined>> {
   for (const member of body) {
     if (member.key === undefined || member.key.type === 'PrivateIdentifier') continue
 
-    if (member.type === 'MethodDefinition') methods[name(member.key)] = parameters(member.value.params)
+    if (member.type === 'MethodDefinition')
+      methods[name(member.key)] = parameters(member.value.params)
     else if (
       member.type === 'PropertyDefinition' &&
       member.value !== null &&

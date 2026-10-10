@@ -69,7 +69,9 @@ export class HTTP extends http.Agent {
   public async open(input: string): Promise<void> {
     await this.gateway.start()
 
-    this.opened = (await this.parts(input)) as AsyncIterable<{ body: Uint8Array | string }>
+    this.opened = (await this.parts(input)) as AsyncIterable<{
+      body: Uint8Array | string
+    }>
   }
 
   @then('the stream ends with `{word}`')

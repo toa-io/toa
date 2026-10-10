@@ -18,9 +18,11 @@ export function deployment(_: context.Dependency[], annotation: Declaration): De
     { name: BINDING, value: provider(region) }
   ]
 
-  const variables = createVariables(ID, normalize({ [BROKERS]: region.binding.pointer }), [
-    { group: GLOBAL, selectors: [BROKERS] }
-  ])
+  const variables = createVariables(
+    ID,
+    normalize({ [BROKERS]: region.binding.pointer }),
+    [{ group: GLOBAL, selectors: [BROKERS] }]
+  )
 
   variables[GLOBAL] = (variables[GLOBAL] ?? []).concat(global)
 
@@ -30,7 +32,7 @@ export function deployment(_: context.Dependency[], annotation: Declaration): De
 function read(annotation: Declaration): Declaration {
   if (!Number.isInteger(annotation?.priority) || annotation.priority < 0)
     throw new Error(
-      'Convergence declares a priority, which is this region\'s rank: a whole number where ' +
+      "Convergence declares a priority, which is this region's rank: a whole number where " +
         'zero outranks one, and the same in every region.'
     )
 

@@ -56,7 +56,8 @@ export interface Exposed {
  * - `merge`: everything else
  */
 export function decide(exposed: Exposed, branch: Branch): Decision {
-  if (exposed.version === branch.version && exposed.routes === branch.routes) return 'refresh'
+  if (exposed.version === branch.version && exposed.routes === branch.routes)
+    return 'refresh'
 
   if (branch.timestamp < exposed.timestamp && !expired(exposed)) return 'superseded'
 

@@ -170,7 +170,7 @@ Given(
     const rows = parse(table).map(({ event, ...rest }) => ({
       published: false,
       ...rest,
-      event: JSON.parse(event)
+      event: json(event)
     }))
 
     await using(id, async (_, outbox) => {
@@ -236,7 +236,7 @@ Given(
     const records = parse(table).map(({ reply, ...rest }) => ({
       at: new Date(),
       ...rest,
-      reply: JSON.parse(reply)
+      reply: json(reply)
     }))
 
     await using(id, async (_, __, ___, inbox) => {
@@ -546,7 +546,9 @@ function parse(table, moments = true) {
             ? null
             : ISO.test(str)
               ? new Date(str)
-              : str
+              : NESTED.test(str)
+                ? JSON.parse(str)
+                : str
     }
 
     // a table states a timestamp as the entity carries it; the storage holds it as a date
@@ -561,6 +563,12 @@ function parse(table, moments = true) {
 }
 
 const TIMESTAMPS = ['CREATED', 'UPDATED', 'DELETED']
+
+/** what a cell is read as, where `parse` has not read it already: an object comes read */
+const json = (cell) => (typeof cell === 'string' ? JSON.parse(cell) : cell)
+
+/** an object or an array a property holds is written as JSON */
+const NESTED = /^[{[]/
 
 /** a moment written as ISO 8601 is stored as the date it names */
 const ISO = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?Z$/

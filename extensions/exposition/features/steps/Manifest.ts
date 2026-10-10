@@ -39,7 +39,9 @@ export class Manifest {
       }
 
       response.on('finish', () => Manifest.resolve?.())
-      response.writeHead(200, { 'content-type': 'application/manifest+json' }).end(Manifest.body)
+      response
+        .writeHead(200, { 'content-type': 'application/manifest+json' })
+        .end(Manifest.body)
     })
 
     // in Toa's own block, beside the mock IdP of this suite

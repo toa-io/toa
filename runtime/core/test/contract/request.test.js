@@ -136,7 +136,12 @@ describe('schema', () => {
   for (const type of ['observation', 'transition', 'effect']) {
     const fits = (query) =>
       schemas
-        .schema(Request.schema({ type, scope: 'entries' }, { properties: { id: { type: 'string' } } }))
+        .schema(
+          Request.schema(
+            { type, scope: 'entries' },
+            { properties: { id: { type: 'string' } } }
+          )
+        )
         .fit({ input: null, query }) === null
 
     it(`should bound the set of ${type}`, () => {
@@ -149,6 +154,8 @@ describe('schema', () => {
     it(`should order what ${type} omits`, () => {
       assert.ok(!fits({ omit: 1, limit: 1 }))
       assert.ok(fits({ omit: 1, limit: 1, sort: ['a'] }))
+      assert.ok(fits({ omit: 1, limit: 1, sort: ['a.b:desc'] }))
+      assert.ok(!fits({ omit: 1, limit: 1, sort: ['a..b'] }))
     })
   }
 })

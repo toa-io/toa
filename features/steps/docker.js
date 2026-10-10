@@ -85,17 +85,31 @@ const containersUpStrategies = {
         container: 31022,
         host: 31022
       })
-      .withCommand(['--replSet', 'rs', '--port', '31022', '--bind_ip_all', '--oplogSize', '990'])
+      .withCommand([
+        '--replSet',
+        'rs',
+        '--port',
+        '31022',
+        '--bind_ip_all',
+        '--oplogSize',
+        '990'
+      ])
       .withWaitStrategy(Wait.forLogMessage('Waiting for connections'))
       .start()
 
-    const initiate = 'rs.initiate({ _id: "rs", members: [{ _id: 0, host: "localhost:31022" }] })'
+    const initiate =
+      'rs.initiate({ _id: "rs", members: [{ _id: 0, host: "localhost:31022" }] })'
 
     await container.exec(['mongosh', '--port', '31022', '--quiet', '--eval', initiate])
 
     for (let attempt = 0; attempt < 100; attempt++) {
       const { output } = await container.exec([
-        'mongosh', '--port', '31022', '--quiet', '--eval', 'db.hello().isWritablePrimary'
+        'mongosh',
+        '--port',
+        '31022',
+        '--quiet',
+        '--eval',
+        'db.hello().isWritablePrimary'
       ])
 
       if (output.trim() === 'true') return container

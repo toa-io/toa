@@ -126,7 +126,10 @@ export class Call extends Connector {
 
     if (context !== undefined) envelope.telemetry = encode(context)
 
-    const reply = await this.#transmit(envelope, this.#terms(instance, options.timeout, options.signal))
+    const reply = await this.#transmit(
+      envelope,
+      this.#terms(instance, options.timeout, options.signal)
+    )
 
     if (reply === null) return null
     else if (reply instanceof Readable) return reply
@@ -159,7 +162,9 @@ export class Call extends Connector {
     const { timeout, signal } = options
 
     if (readonly && !this.#safe)
-      throw new SafetyException(`'${this.#target}' may change state, and this call may only read`)
+      throw new SafetyException(
+        `'${this.#target}' may change state, and this call may only read`
+      )
 
     if (this.#stateful && instance === undefined)
       throw new RequestContractException(

@@ -83,7 +83,9 @@ process.on('unhandledRejection', async (e) => {
    * again the same call is fatal, as it is here.
    */
   if (e?.code === exceptions.codes.Disposed && halting.underway()) {
-    console.warn('A call was refused by a tree that has been taken down', { message: e.message })
+    console.warn('A call was refused by a tree that has been taken down', {
+      message: e.message
+    })
 
     return
   }

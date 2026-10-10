@@ -70,7 +70,10 @@ Then(
 
       const first = await calls()
 
-      await until(async () => (await calls()) > first, `${id} was called once and no more`)
+      await until(
+        async () => (await calls()) > first,
+        `${id} was called once and no more`
+      )
     } finally {
       await remote.disconnect()
     }
@@ -96,7 +99,7 @@ Then(
       await until(async () => {
         const reply = await remote.invoke('marks', {})
 
-        return ((reply?.output ?? reply) ?? []).includes(note)
+        return (reply?.output ?? reply ?? []).includes(note)
       }, `${id} never marked '${note}'`)
     } finally {
       await remote.disconnect()

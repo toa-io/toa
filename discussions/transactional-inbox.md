@@ -37,7 +37,7 @@ is not what makes the guarantee hold.
 
 ### Guarantees
 
-What the finished feature promises. Those marked *(today)* already hold, and are listed so the whole
+What the finished feature promises. Those marked _(today)_ already hold, and are listed so the whole
 is readable at once.
 
 **A call to an operation that declares `once`**
@@ -65,7 +65,7 @@ is readable at once.
    call.
 8. What an operation does outside the system — `context.fetch`, `context.stash`, a third party —
    happens once per run, not once per call. Those remain the author's to make safe.
-9. Publication stays at-least-once, and nothing is promised about order. *(today)*
+9. Publication stays at-least-once, and nothing is promised about order. _(today)_
 
 ### What a component author does differently
 
@@ -161,16 +161,16 @@ Then:
    opposite of what was asked for.
 
 8. **Documentation.** A page beside the outbox page: what `once` gives, what a duplicate gets back,
-   the window retention sets, and the three things under *what is not promised* that a reader will
+   the window retention sets, and the three things under _what is not promised_ that a reader will
    otherwise assume away.
 
 ## Context
 
 This is the fourth and last stage of
 [distributed exception handling](/discussions/exception-handling.md), whose area 4 states it:
-*a message carries the identity of the outbox row it came from, and a receiver's state change
+_a message carries the identity of the outbox row it came from, and a receiver's state change
 records that identity in the same transaction as the entity, so a message delivered twice is written
-once.* Stages 1 to 3 are done.
+once._ Stages 1 to 3 are done.
 
 That document scopes the stage to messages and leaves the call path as it is. This one does not. A
 call is duplicated by the same library, in the same way, and the record that catches a duplicated
@@ -182,7 +182,7 @@ transaction where a component that publishes nothing has none today, and a write
 every call, so it is asked for rather than assumed.
 
 The producer half of this story has been finished for some time: a state change and the intent to
-publish commit together, the pump recovers what was not published, and *nothing is dropped* is
+publish commit together, the pump recovers what was not published, and _nothing is dropped_ is
 written down. The consumer half now keeps a failing message and tries it again. What is left is that
 trying it again is what produces the duplicate, and nothing yet catches one.
 
@@ -267,9 +267,9 @@ Only code that relied on undocumented mutation can tell.
 
 The pieces are standard, and naming them is how the documentation should explain them:
 
-- *Idempotent receiver* (Hohpe & Woolf) — the pattern, and the other half of the transactional outbox
+- _Idempotent receiver_ (Hohpe & Woolf) — the pattern, and the other half of the transactional outbox
   Toa already has.
 - [The Idempotency-Key HTTP Header Field](https://datatracker.ietf.org/doc/draft-ietf-httpapi-idempotency-key-header/)
   — Standards Track in the IETF HTTPAPI working group, and what the gateway would honour in stage 4.
-  Its *idempotency fingerprint* is the same guard from the other side: a key sent with a different
+  Its _idempotency fingerprint_ is the same guard from the other side: a key sent with a different
   request is refused rather than answered from the first one.

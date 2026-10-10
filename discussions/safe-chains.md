@@ -13,17 +13,17 @@ as a call made under [a request that may only read](./readonly.md) may.
 
 1. A call to a `transition`, an `assignment`, an `effect` or an `unmanaged` operation, made by an
    `observation` or a `computation`, is refused. The refusal is on the caller's side and before
-   anything is sent, and it is a `Safety` exception. *(today, under a readonly request)*
+   anything is sent, and it is a `Safety` exception. _(today, under a readonly request)_
 2. It is refused whatever the request the safe operation is serving says: one that arrived by a
    `POST`, as a task or by an event is held to it as one that arrived by a `GET` is.
-3. `context.delay` is refused on the same terms: arming a delay is a write. *(today, under a
-   readonly request)*
+3. `context.delay` is refused on the same terms: arming a delay is a write. _(today, under a
+   readonly request)_
 4. A call to an `observation` or a `computation` is made as it would be otherwise.
 
 **What carries it**
 
-5. A call a safe operation makes is readonly, and so is every call below it. *(today, for a request
-   that states it)*
+5. A call a safe operation makes is readonly, and so is every call below it. _(today, for a request
+   that states it)_
 
 **What follows**
 
@@ -34,9 +34,9 @@ as a call made under [a request that may only read](./readonly.md) may.
 **What is not promised**
 
 7. An aspect is outside it, as it is outside a readonly request: a request made through `fetch`, a
-   lock taken through `context.atom`. *(today)*
+   lock taken through `context.atom`. _(today)_
 8. An effect that only reads is not safe. It is the type for what reaches outside, and what it
-   reaches is not the runtime's to read. *(today)*
+   reaches is not the runtime's to read. _(today)_
 
 ### What a component author does differently
 

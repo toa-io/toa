@@ -1,7 +1,16 @@
 import { describe, it, beforeEach, afterEach } from 'node:test'
 import assert from 'node:assert/strict'
 
-import { create, current, decide, decode, encode, run, sampled, sampling } from './tracing.ts'
+import {
+  create,
+  current,
+  decide,
+  decode,
+  encode,
+  run,
+  sampled,
+  sampling
+} from './tracing.ts'
 import { exporting } from './exporters.ts'
 import type * as tracing from './tracing.ts'
 

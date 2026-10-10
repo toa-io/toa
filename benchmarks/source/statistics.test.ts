@@ -50,7 +50,9 @@ describe('estimate', () => {
   it('should count blocks, not pairs', () => {
     // pairs of one block share a boot: eight of them are no more evidence than one
     const ratios = [1.0, 1.02, 1.04, 1.06, 1.08, 1.1]
-    const few = ratios.flatMap((ratio, block) => [{ block, base: 100, head: 100 * ratio }])
+    const few = ratios.flatMap((ratio, block) => [
+      { block, base: 100, head: 100 * ratio }
+    ])
     const many = ratios.flatMap((ratio, block) =>
       Array.from({ length: 8 }, () => ({ block, base: 100, head: 100 * ratio }))
     )
@@ -58,7 +60,10 @@ describe('estimate', () => {
     const a = estimate(few)
     const b = estimate(many)
 
-    assert.ok(Math.abs(a.low - b.low) < 1e-9 && Math.abs(a.high - b.high) < 1e-9, JSON.stringify({ a, b }))
+    assert.ok(
+      Math.abs(a.low - b.low) < 1e-9 && Math.abs(a.high - b.high) < 1e-9,
+      JSON.stringify({ a, b })
+    )
   })
 
   it('should leave two blocks that differ by 2% inconclusive', () => {
@@ -83,27 +88,46 @@ describe('verdict', () => {
   const t = 0.05
 
   it('should call an interval wholly above the threshold slower', () => {
-    assert.equal(verdict({ ratio: 1.1, low: 1.051, high: 1.2, difference: 1 }, t), 'slower')
+    assert.equal(
+      verdict({ ratio: 1.1, low: 1.051, high: 1.2, difference: 1 }, t),
+      'slower'
+    )
   })
 
   it('should call an interval wholly below the threshold faster', () => {
-    assert.equal(verdict({ ratio: 0.9, low: 0.8, high: 0.949, difference: -1 }, t), 'faster')
+    assert.equal(
+      verdict({ ratio: 0.9, low: 0.8, high: 0.949, difference: -1 }, t),
+      'faster'
+    )
   })
 
   it('should call an interval wholly within the threshold unchanged', () => {
-    assert.equal(verdict({ ratio: 1, low: 0.95, high: 1.05, difference: 0 }, t), 'unchanged')
+    assert.equal(
+      verdict({ ratio: 1, low: 0.95, high: 1.05, difference: 0 }, t),
+      'unchanged'
+    )
   })
 
   it('should call an interval touching the bound from outside inconclusive', () => {
-    assert.equal(verdict({ ratio: 1.05, low: 1.05, high: 1.1, difference: 1 }, t), 'inconclusive')
+    assert.equal(
+      verdict({ ratio: 1.05, low: 1.05, high: 1.1, difference: 1 }, t),
+      'inconclusive'
+    )
   })
 
   it('should call an interval straddling a bound inconclusive', () => {
-    assert.equal(verdict({ ratio: 1.03, low: 0.99, high: 1.08, difference: 1 }, t), 'inconclusive')
+    assert.equal(
+      verdict({ ratio: 1.03, low: 0.99, high: 1.08, difference: 1 }, t),
+      'inconclusive'
+    )
   })
 })
 
-function blocks(count: number, size: number, pair: () => { base: number; head: number }): Pair[] {
+function blocks(
+  count: number,
+  size: number,
+  pair: () => { base: number; head: number }
+): Pair[] {
   const pairs: Pair[] = []
 
   for (let block = 0; block < count; block++)

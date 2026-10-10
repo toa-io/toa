@@ -104,8 +104,8 @@ Then:
   `op({ input, instance }, { timeout: 60_000 })`. A `signal` given there ends the wait when it
   aborts, within whatever deadline applies, and leaves the call queued until that deadline passes —
   or, for an ordinary call with no deadline, until it is taken.
-- Two exceptions are new, both transient. *Addressee*: nothing at that name took the call, and a
-  process may yet hold the name. *Abandoned*: the caller stopped waiting, and the call may still run.
+- Two exceptions are new, both transient. _Addressee_: nothing at that name took the call, and a
+  process may yet hold the name. _Abandoned_: the caller stopped waiting, and the call may still run.
 - The default is set in the context manifest:
 
   ```yaml
@@ -124,7 +124,7 @@ Then:
   ```
 
   A route to a stateful operation without `map:instance` is refused as any call without a name is.
-  Over HTTP, *addressee* answers `404 Not Found` and *abandoned* answers `504 Gateway Timeout`.
+  Over HTTP, _addressee_ answers `404 Not Found` and _abandoned_ answers `504 Gateway Timeout`.
 
 ## Decisions
 
@@ -167,7 +167,7 @@ off the envelope it sends, since a `signal` has no form on the wire and neither 
 wait is what the call asks. `Envelope` still extends `Request`.
 
 **The deadline is kept in `Call`, and comq keeps its own.** Every call is waited for in `Call.invoke`,
-which is where an aborted wait becomes *abandoned*, whichever binding carries the call — a call to a
+which is where an aborted wait becomes _abandoned_, whichever binding carries the call — a call to a
 component composed in the same process never reaches comq. comq sets the message's expiry from the
 same timeout and bounds its own wait with it, which on the broker's path ends at the same moment and
 changes nothing.
@@ -226,7 +226,7 @@ crash without a timer, and is enabled on few brokers and on almost no managed on
    argument `context.remote` and `context.local` take and `Call.invoke` receives. `Call.invoke`
    refuses a mismatch with `RequestContract`; takes `timeout`, or `TIMEOUT` for an addressed call
    without one, and refuses a non-positive one there; combines it with `signal`; hands the name and
-   the wait down the transmission to the binding as `Terms`; and throws *abandoned*, with the
+   the wait down the transmission to the binding as `Terms`; and throws _abandoned_, with the
    abort's reason as its cause, when the deadline wins.
 5. **Exceptions.** `Addressee: 403` and `Abandoned: 404`, both transient.
 6. **Loop binding.** Serves an addressed call when its `instance` is this process's name and hands any
@@ -234,16 +234,16 @@ crash without a timer, and is enabled on few brokers and on almost no managed on
 7. **AMQP binding.** A stateful endpoint is served by `back` on the exchange
    `<namespace>.<name>.<endpoint>..instances` under the process's name, with no shared queue and no
    tasks queue, bound before any shared endpoint starts consuming. An addressed call goes out through
-   `call`; `Unroutable` becomes *addressee*. A name taken on a broker is logged as a warning, with
+   `call`; `Unroutable` becomes _addressee_. A name taken on a broker is logged as a warning, with
    the queue and the broker it is taken on; Toa adds nothing to comq's claim.
 8. **Exposition.** `map:instance` names the route parameter that carries the name. It takes the
    parameter out of the input and the criteria, and the endpoint sets `request.instance` from it beside
-   `request.id`. Introspection lists it under `route`. *Addressee* maps to `404`, *abandoned* to a new
+   `request.id`. Introspection lists it under `route`. _Addressee_ maps to `404`, _abandoned_ to a new
    `504`.
 9. **Cadence.** A delayed call that names `instance` is refused: it goes out as a task, which a
    stateful operation takes none of.
 10. **Documentation.** A page on stateful operations and addressed calls, the component and context
-    manifests, exceptions, the Node bridge, `map`; the *Stateless* principle in the design notes, and
+    manifests, exceptions, the Node bridge, `map`; the _Stateless_ principle in the design notes, and
     the absence of deadlines stated in [exception handling](/discussions/exception-handling.md).
 
 ## Context

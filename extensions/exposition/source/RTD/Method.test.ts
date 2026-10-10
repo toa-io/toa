@@ -30,7 +30,10 @@ it('should describe the method once, for every caller', async () => {
   // the same object: what is described is the route's and not the caller's, and whoever
   // reads it leaves it as it is
   assert.strictEqual(one, other)
-  assert.strictEqual((described.explain as ReturnType<typeof mock.fn>).mock.calls.length, 1)
+  assert.strictEqual(
+    (described.explain as ReturnType<typeof mock.fn>).mock.calls.length,
+    1
+  )
 })
 
 it('should answer nothing where the directives refuse the caller', async () => {
@@ -40,5 +43,8 @@ it('should answer nothing where the directives refuse the caller', async () => {
   assert.strictEqual(await method.explain(context, []), null)
 
   // a method this caller is not told of is not described at all
-  assert.strictEqual((described.explain as ReturnType<typeof mock.fn>).mock.calls.length, 0)
+  assert.strictEqual(
+    (described.explain as ReturnType<typeof mock.fn>).mock.calls.length,
+    0
+  )
 })

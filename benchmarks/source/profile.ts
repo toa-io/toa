@@ -61,7 +61,11 @@ export function summarize(profile: CpuProfile, options: SummaryOptions): Summary
     add(packages, owner(frame, root), self)
   }
 
-  return { total, functions: rank(functions, total, top), packages: rank(packages, total, top) }
+  return {
+    total,
+    functions: rank(functions, total, top),
+    packages: rank(packages, total, top)
+  }
 }
 
 function name(frame: CallFrame, root: string): string {

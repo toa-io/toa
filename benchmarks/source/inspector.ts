@@ -8,14 +8,21 @@ import type { CpuProfile } from './profile.ts'
  */
 export class Profiler {
   private readonly socket: WebSocket
-  private readonly pending = new Map<number, { resolve: (result: any) => void; reject: (error: Error) => void }>()
+  private readonly pending = new Map<
+    number,
+    { resolve: (result: any) => void; reject: (error: Error) => void }
+  >()
   private next = 1
 
   private constructor(socket: WebSocket) {
     this.socket = socket
 
     socket.addEventListener('message', (event) => {
-      const message = JSON.parse(String(event.data)) as { id?: number; result?: unknown; error?: { message: string } }
+      const message = JSON.parse(String(event.data)) as {
+        id?: number
+        result?: unknown
+        error?: { message: string }
+      }
 
       if (message.id === undefined) return
 
@@ -35,7 +42,11 @@ export class Profiler {
 
     await new Promise((resolve, reject) => {
       socket.addEventListener('open', resolve, { once: true })
-      socket.addEventListener('error', () => reject(new Error(`Inspector at ${address} refused`)), { once: true })
+      socket.addEventListener(
+        'error',
+        () => reject(new Error(`Inspector at ${address} refused`)),
+        { once: true }
+      )
     })
 
     return new Profiler(socket)
@@ -69,7 +80,9 @@ export class Profiler {
 async function announced(log: string): Promise<string> {
   for (let attempt = 0; attempt < 100; attempt++) {
     // a log is appended to by every boot of its process, so the address is the latest one
-    const match = [...readFileSync(log, 'utf8').matchAll(/Debugger listening on (ws:\/\/\S+)/g)].at(-1)
+    const match = [
+      ...readFileSync(log, 'utf8').matchAll(/Debugger listening on (ws:\/\/\S+)/g)
+    ].at(-1)
 
     if (match !== undefined) return match[1]
 

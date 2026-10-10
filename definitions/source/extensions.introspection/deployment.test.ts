@@ -26,7 +26,10 @@ it('should deploy a component that is on the map', () => {
  * be called while the deployment is being declared still.
  */
 it('should refuse a component that is not on the map where halts are on', () => {
-  const instances = [instance('billing.invoices', false), instance('billing.ledger', false)]
+  const instances = [
+    instance('billing.invoices', false),
+    instance('billing.ledger', false)
+  ]
 
   assert.throws(
     () => deployment(instances, { halt: true }),

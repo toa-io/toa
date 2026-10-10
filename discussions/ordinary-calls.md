@@ -10,12 +10,12 @@ good.
 ### Guarantees
 
 1. A call to an ordinary operation that names a `timeout` or a `signal` is refused with
-   `RequestContract`, and nothing is sent. So is a task *(today)*.
+   `RequestContract`, and nothing is sent. So is a task _(today)_.
 2. An ordinary call is answered, or fails with what its operation answered. Nothing on the caller's
    side ends it.
-3. An addressed call takes both, and waits the context's default without a `timeout` *(today)*.
+3. An addressed call takes both, and waits the context's default without a `timeout` _(today)_.
 4. The types `toa types` writes take `Options` for a call to a stateful operation only, and offer
-   `task` on an ordinary one only — a task to a stateful operation is refused *(today)*.
+   `task` on an ordinary one only — a task to a stateful operation is refused _(today)_.
 
 **What is not promised**
 
@@ -65,7 +65,7 @@ with who asked — only means something to a caller that is still waiting.
 
 ## What happens today
 
-An ordinary call given a `timeout` is published with that much expiry, and is *abandoned* when it
+An ordinary call given a `timeout` is published with that much expiry, and is _abandoned_ when it
 passes or when its `signal` aborts. A call already taken runs to its end, and its reply is discarded.
 
 ## Verification

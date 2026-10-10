@@ -54,7 +54,9 @@ export class Producer extends Connector {
   async open() {
     await Promise.all(this.#stateful.map((endpoint) => this.#addressed(endpoint)))
 
-    const shared = this.#endpoints.filter((endpoint) => !this.#stateful.includes(endpoint))
+    const shared = this.#endpoints.filter(
+      (endpoint) => !this.#stateful.includes(endpoint)
+    )
 
     // an endpoint the runtime reserves for itself is served and takes no task, as it did
     // when the queue a task arrived on was named after the endpoint

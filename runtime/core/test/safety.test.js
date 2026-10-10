@@ -61,7 +61,14 @@ describe('an unsafe endpoint', () => {
   let call
 
   beforeEach(() => {
-    call = new Call(fixtures.transmission, fixtures.contract, TARGET, undefined, false, false)
+    call = new Call(
+      fixtures.transmission,
+      fixtures.contract,
+      TARGET,
+      undefined,
+      false,
+      false
+    )
   })
 
   it('should be called where nothing says otherwise', async () => {
@@ -110,7 +117,14 @@ describe('a safe endpoint', () => {
   let call
 
   beforeEach(() => {
-    call = new Call(fixtures.transmission, fixtures.contract, TARGET, undefined, false, true)
+    call = new Call(
+      fixtures.transmission,
+      fixtures.contract,
+      TARGET,
+      undefined,
+      false,
+      true
+    )
   })
 
   it('should be called under a readonly invocation', async () => {

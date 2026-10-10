@@ -5,4 +5,10 @@ export { components } from './Composition.ts'
 export { LANES } from '@toa.io/definitions/extensions.cadence'
 export { row } from './row.ts'
 
-export type { Declaration, Delay, Entry, Pulse, Schedule } from '@toa.io/definitions/extensions.cadence'
+export type {
+  Declaration,
+  Delay,
+  Entry,
+  Pulse,
+  Schedule
+} from '@toa.io/definitions/extensions.cadence'

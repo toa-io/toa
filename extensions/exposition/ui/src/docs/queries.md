@@ -9,14 +9,15 @@ GET /pots/?criteria=volume<300&sort=volume:desc&limit=10
 
 `criteria` is an [RSQL](https://github.com/jirutka/rsql-parser) expression.
 Each term names a property of the entity whose collection this resource
-represents.
+represents, or a property inside an object by the path to it:
+`size.volume>2`.
 
 An unquoted `null` or `undefined` is no value: `rank==null` matches what
 holds no `rank`, and `rank!=null` what holds one. Quote it to mean the
 text: `title=="null"`.
 
-`sort` lists sort criteria, separated by `;`. Each is an entity property
-with an optional `:asc` or `:desc` suffix.
+`sort` lists sort criteria, separated by `;`. Each is an entity property,
+or the path to one, with an optional `:asc` or `:desc` suffix.
 
 `omit` skips that many. `limit` caps how many come back.
 

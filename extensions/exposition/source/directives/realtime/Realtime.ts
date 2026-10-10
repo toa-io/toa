@@ -24,7 +24,9 @@ export class Realtime implements DirectiveFamily<Directive> {
 
     if (typeof value === 'string' && literal(value)) {
       if (value.length === 1)
-        throw new Error(`'realtime:stream' literal '${value}' names no key, at '${route}'`)
+        throw new Error(
+          `'realtime:stream' literal '${value}' names no key, at '${route}'`
+        )
 
       return { key: value }
     }

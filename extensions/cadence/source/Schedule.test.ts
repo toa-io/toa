@@ -237,7 +237,11 @@ it('should try again where the occurrence could not be stored', async () => {
 
   await advance(5000)
 
-  assert.equal(local.invoke.mock.callCount(), 2, 'one that was stored is not stored again')
+  assert.equal(
+    local.invoke.mock.callCount(),
+    2,
+    'one that was stored is not stored again'
+  )
 
   await schedule.disconnect()
 })

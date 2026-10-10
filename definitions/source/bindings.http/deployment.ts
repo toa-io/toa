@@ -10,5 +10,7 @@ import { VARIABLE } from './const.ts'
 export function deployment(_: unknown, declaration?: Declaration): Dependency {
   const annotation = declaration === undefined ? {} : normalize(declaration)
 
-  return { variables: { global: [{ name: VARIABLE, value: JSON.stringify(annotation) }] } }
+  return {
+    variables: { global: [{ name: VARIABLE, value: JSON.stringify(annotation) }] }
+  }
 }

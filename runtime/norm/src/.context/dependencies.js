@@ -46,5 +46,6 @@ function unmanaged(context, contributed) {
   }
 
   for (const brought of contributed.values())
-    for (const component of brought) if (!required.has(component)) component.evicted = true
+    for (const component of brought)
+      if (!required.has(component)) component.evicted = true
 }

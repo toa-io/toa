@@ -23,7 +23,8 @@ export interface LoadResult {
 }
 
 export function args(options: LoadOptions): string[] {
-  const { url, method, headers, connect, body, duration, connections, rate, http2 } = options
+  const { url, method, headers, connect, body, duration, connections, rate, http2 } =
+    options
 
   const result = ['--no-tui', '--output-format', 'json']
 
@@ -35,7 +36,8 @@ export function args(options: LoadOptions): string[] {
 
   result.push('-c', String(connections), '-m', method)
 
-  for (const [name, value] of Object.entries(headers)) result.push('-H', `${name}: ${value}`)
+  for (const [name, value] of Object.entries(headers))
+    result.push('-H', `${name}: ${value}`)
 
   // over HTTP/2 the authority is the URL's, so the URL names it and the address is given here
   if (connect !== undefined) result.push('--connect-to', connect)
@@ -60,10 +62,13 @@ export function read(output: unknown, expected: number): LoadResult {
     ...Object.entries(output.statusCodeDistribution)
       .filter(([status]) => Number(status) !== expected)
       .map(([status, count]) => `${status} × ${count}`),
-    ...Object.entries(output.errorDistribution).map(([error, count]) => `${error} × ${count}`)
+    ...Object.entries(output.errorDistribution).map(
+      ([error, count]) => `${error} × ${count}`
+    )
   ]
 
-  if (unexpected.length > 0) throw new Error(`Unexpected answers: ${unexpected.join(', ')}`)
+  if (unexpected.length > 0)
+    throw new Error(`Unexpected answers: ${unexpected.join(', ')}`)
 
   const requests = output.statusCodeDistribution[String(expected)] ?? 0
 

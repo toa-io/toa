@@ -81,7 +81,10 @@ export class Comparison {
     this.trees = trees
     this.scenarios = options.scenarios
     this.threshold = options.threshold
-    this.components = { base: install(trees.base, run.fixtures), head: install(trees.head, run.fixtures) }
+    this.components = {
+      base: install(trees.base, run.fixtures),
+      head: install(trees.head, run.fixtures)
+    }
   }
 
   /** Runs every block and answers the report as markdown. */
@@ -92,13 +95,19 @@ export class Comparison {
       for (let block = 0; block < this.run.timing.blocks; block++)
         for (const protocol of PROTOCOLS) await this.block(block, protocol)
     } finally {
-      await writeFile(join(this.run.results, 'windows.json'), JSON.stringify(this.windows, null, 2))
+      await writeFile(
+        join(this.run.results, 'windows.json'),
+        JSON.stringify(this.windows, null, 2)
+      )
     }
 
     const report = this.report()
     const text = markdown(report)
 
-    await writeFile(join(this.run.results, 'report.json'), JSON.stringify(report, null, 2))
+    await writeFile(
+      join(this.run.results, 'report.json'),
+      JSON.stringify(report, null, 2)
+    )
     await writeFile(join(this.run.results, 'report.md'), text)
 
     return text
@@ -124,7 +133,10 @@ export class Comparison {
       for (const side of [running.base, running.head]) {
         const killed = await side.stop()
 
-        if (killed.length > 0) console.warn(`  ${side.side.name}: killed after the grace period: ${killed.join(', ')}`)
+        if (killed.length > 0)
+          console.warn(
+            `  ${side.side.name}: killed after the grace period: ${killed.join(', ')}`
+          )
       }
     }
   }
@@ -140,14 +152,21 @@ export class Comparison {
 
   /** Boots the side in the first slot first, so booting first falls on each revision equally. */
   private async boot(sides: Pair<Side>, protocol: Protocol): Promise<Pair<Running>> {
-    const options = { protocol, placement: this.run.placement, key: this.run.secret, directory: this.run.directory }
+    const options = {
+      protocol,
+      placement: this.run.placement,
+      key: this.run.secret,
+      directory: this.run.directory
+    }
     const [first, second] = order(sides)
     const started = await boot(sides[first], this.components[first], options)
 
     try {
       const other = await boot(sides[second], this.components[second], options)
 
-      return first === 'base' ? { base: started, head: other } : { base: other, head: started }
+      return first === 'base'
+        ? { base: started, head: other }
+        : { base: other, head: started }
     } catch (error) {
       await started.stop()
 
@@ -155,9 +174,15 @@ export class Comparison {
     }
   }
 
-  private async group(place: { block: number; order: SideName[] }, scenarios: Scenario[], running: Pair<Running>): Promise<void> {
+  private async group(
+    place: { block: number; order: SideName[] },
+    scenarios: Scenario[],
+    running: Pair<Running>
+  ): Promise<void> {
     const [first, second] = place.order
-    const prepared = { [first]: await Driver.prepare(this.run, running[first], true) } as Partial<Pair<Driver>>
+    const prepared = {
+      [first]: await Driver.prepare(this.run, running[first], true)
+    } as Partial<Pair<Driver>>
 
     prepared[second] = await Driver.prepare(this.run, running[second], true)
 
@@ -187,7 +212,10 @@ export class Comparison {
       const refusal = await drivers.base.check(scenario)
 
       if (refusal !== null && scenario.requires !== undefined) {
-        this.unsupported.set(scenario.id, `${refusal}, where the scenario requires ${scenario.requires}`)
+        this.unsupported.set(
+          scenario.id,
+          `${refusal}, where the scenario requires ${scenario.requires}`
+        )
         continue
       }
 
@@ -241,8 +269,14 @@ export class Comparison {
     const after = await this.snapshot(drivers)
 
     return {
-      counts: { base: rate(before.counts.base, after.counts.base, seconds), head: rate(before.counts.head, after.counts.head, seconds) },
-      cpu: { base: perSecond(before.cpu.base, after.cpu.base, seconds), head: perSecond(before.cpu.head, after.cpu.head, seconds) }
+      counts: {
+        base: rate(before.counts.base, after.counts.base, seconds),
+        head: rate(before.counts.head, after.counts.head, seconds)
+      },
+      cpu: {
+        base: perSecond(before.cpu.base, after.cpu.base, seconds),
+        head: perSecond(before.cpu.head, after.cpu.head, seconds)
+      }
     }
   }
 
@@ -256,17 +290,22 @@ export class Comparison {
       // what an exited process committed is never published
       if (failure !== null) throw new Error(failure)
 
-      const pending = (await this.run.stack.pending(SLOTS.a.context)) + (await this.run.stack.pending(SLOTS.b.context))
+      const pending =
+        (await this.run.stack.pending(SLOTS.a.context)) +
+        (await this.run.stack.pending(SLOTS.b.context))
 
       if (pending === 0) return
 
-      if (Date.now() > deadline) throw new Error(`${pending} events are still unpublished after ${DRAIN} s`)
+      if (Date.now() > deadline)
+        throw new Error(`${pending} events are still unpublished after ${DRAIN} s`)
 
       await sleep(500)
     }
   }
 
-  private async snapshot(drivers: Pair<Driver>): Promise<{ counts: Pair<Counts>; cpu: Snapshot }> {
+  private async snapshot(
+    drivers: Pair<Driver>
+  ): Promise<{ counts: Pair<Counts>; cpu: Snapshot }> {
     return {
       counts: {
         base: await this.counters(drivers.base.running.side.context),
@@ -277,11 +316,18 @@ export class Comparison {
   }
 
   private async counters(context: string): Promise<Counts> {
-    return { publish: await this.run.stack.published(context), operations: await this.run.stack.operations(context) }
+    return {
+      publish: await this.run.stack.published(context),
+      operations: await this.run.stack.operations(context)
+    }
   }
 
   /** Messages and operations per request, around a short load, with the statistics settled. */
-  private async count(driver: Driver, scenario: Scenario, background: Counts): Promise<Counts> {
+  private async count(
+    driver: Driver,
+    scenario: Scenario,
+    background: Counts
+  ): Promise<Counts> {
     const { context } = driver.running.side
     const rate = this.rates.get(scenario.id)!
 
@@ -289,7 +335,10 @@ export class Comparison {
 
     const start = Date.now()
     const before = await this.counters(context)
-    const result = await this.send(driver, scenario, { duration: this.duration(COUNTED, rate), rate })
+    const result = await this.send(driver, scenario, {
+      duration: this.duration(COUNTED, rate),
+      rate
+    })
 
     // what the requests commit to publish is theirs, however late the outbox sends it
     await this.drain()
@@ -297,7 +346,13 @@ export class Comparison {
 
     const after = await this.counters(context)
 
-    return perRequest({ before, after, seconds: (Date.now() - start) / 1000, requests: result.requests, background })
+    return perRequest({
+      before,
+      after,
+      seconds: (Date.now() - start) / 1000,
+      requests: result.requests,
+      background
+    })
   }
 
   private async scenario(block: number, scenario: Scenario, group: Group): Promise<void> {
@@ -306,14 +361,27 @@ export class Comparison {
     for (const [index, name] of order.entries()) {
       const measurement = await this.window(scenario, name, group)
 
-      this.windows.push({ block, scenario: scenario.id, side: name, index, ...measurement })
+      this.windows.push({
+        block,
+        scenario: scenario.id,
+        side: name,
+        index,
+        ...measurement
+      })
     }
 
     if (block === this.run.timing.blocks - 1)
-      this.memory.set(scenario.id, { base: peaks(group.drivers.base.running), head: peaks(group.drivers.head.running) })
+      this.memory.set(scenario.id, {
+        base: peaks(group.drivers.base.running),
+        head: peaks(group.drivers.head.running)
+      })
   }
 
-  private async window(scenario: Scenario, name: SideName, group: Group): Promise<Measurement> {
+  private async window(
+    scenario: Scenario,
+    name: SideName,
+    group: Group
+  ): Promise<Measurement> {
     const { drivers, idle } = group
     const driver = drivers[name]
     const rate = this.rates.get(scenario.id)!
@@ -325,7 +393,10 @@ export class Comparison {
     const host = cores === null ? null : times(cores)
     const before = { base: drivers.base.running.cpu(), head: drivers.head.running.cpu() }
     const start = Date.now()
-    const result = await this.send(driver, scenario, { duration: this.duration(this.run.timing.window, rate), rate })
+    const result = await this.send(driver, scenario, {
+      duration: this.duration(this.run.timing.window, rate),
+      rate
+    })
 
     // the outbox publishes what the window committed after the window: that work is the window's
     await this.drain()
@@ -334,7 +405,10 @@ export class Comparison {
     const after = { base: drivers.base.running.cpu(), head: drivers.head.running.cpu() }
 
     return {
-      cpu: perRequestCpu({ before: before[name], after: after[name], idle: idle.cpu[name], seconds }, result.requests),
+      cpu: perRequestCpu(
+        { before: before[name], after: after[name], idle: idle.cpu[name], seconds },
+        result.requests
+      ),
       requests: result.requests,
       p50: result.p50,
       p99: result.p99,
@@ -347,7 +421,11 @@ export class Comparison {
     return Math.max(seconds, MINIMUM / rate)
   }
 
-  private async send(driver: Driver, scenario: Scenario, load: Load): Promise<LoadResult> {
+  private async send(
+    driver: Driver,
+    scenario: Scenario,
+    load: Load
+  ): Promise<LoadResult> {
     return await this.guard(
       { scenario, side: driver.running.side.name },
       async (signal) => await driver.load(scenario, { ...load, signal })
@@ -359,7 +437,10 @@ export class Comparison {
    * component that is gone is never answered, so the load would wait for it for good. What
    * fails is named by the process that exited, where one did.
    */
-  private async guard<T>(label: { scenario: Scenario; side: SideName }, work: (signal: AbortSignal) => Promise<T>): Promise<T> {
+  private async guard<T>(
+    label: { scenario: Scenario; side: SideName },
+    work: (signal: AbortSignal) => Promise<T>
+  ): Promise<T> {
     const abort = new AbortController()
     const lost = this.lost()
 
@@ -368,9 +449,12 @@ export class Comparison {
     } catch (error) {
       await sleep(EXIT)
 
-      const reason = this.failure() ?? (error instanceof Error ? error.message : String(error))
+      const reason =
+        this.failure() ?? (error instanceof Error ? error.message : String(error))
 
-      throw new Error(`${label.scenario.id} on ${label.side}: ${reason}`, { cause: error })
+      throw new Error(`${label.scenario.id} on ${label.side}: ${reason}`, {
+        cause: error
+      })
     } finally {
       abort.abort()
     }
@@ -382,8 +466,8 @@ export class Comparison {
     const lost = new Promise<never>((_, reject) => {
       if (current === null) return
 
-      void Promise.race([current.base.running.lost(), current.head.running.lost()]).then((failure) =>
-        reject(new Error(failure))
+      void Promise.race([current.base.running.lost(), current.head.running.lost()]).then(
+        (failure) => reject(new Error(failure))
       )
     })
 
@@ -394,7 +478,9 @@ export class Comparison {
   }
 
   private failure(): string | null {
-    return this.current === null ? null : (this.current.base.running.failure() ?? this.current.head.running.failure())
+    return this.current === null
+      ? null
+      : (this.current.base.running.failure() ?? this.current.head.running.failure())
   }
 
   private report(): Report {
@@ -407,7 +493,9 @@ export class Comparison {
       scenarios: this.scenarios.map((scenario) => {
         const reason = this.unsupported.get(scenario.id)
 
-        return reason === undefined ? this.aggregate(scenario) : { id: scenario.id, unsupported: reason }
+        return reason === undefined
+          ? this.aggregate(scenario)
+          : { id: scenario.id, unsupported: reason }
       })
     }
   }
@@ -421,7 +509,11 @@ export class Comparison {
       id: scenario.id,
       rate: this.rates.get(scenario.id)!,
       processes: scenario.processes.map((name) => {
-        const values = pairs.map(({ block, base, head }) => ({ block, base: base.cpu[name], head: head.cpu[name] }))
+        const values = pairs.map(({ block, base, head }) => ({
+          block,
+          base: base.cpu[name],
+          head: head.cpu[name]
+        }))
         const result = estimate(values)
 
         return {
@@ -450,12 +542,18 @@ function pair(windows: Window[]): Array<Pair<Window> & { block: number }> {
   const pairs: Array<Pair<Window> & { block: number }> = []
 
   for (const block of new Set(windows.map((window) => window.block))) {
-    const sequence = windows.filter((window) => window.block === block).sort((a, b) => a.index - b.index)
+    const sequence = windows
+      .filter((window) => window.block === block)
+      .sort((a, b) => a.index - b.index)
 
     for (let i = 0; i + 1 < sequence.length; i += 2) {
       const [first, second] = [sequence[i], sequence[i + 1]]
 
-      pairs.push(first.side === 'base' ? { block, base: first, head: second } : { block, base: second, head: first })
+      pairs.push(
+        first.side === 'base'
+          ? { block, base: first, head: second }
+          : { block, base: second, head: first }
+      )
     }
   }
 
@@ -467,7 +565,10 @@ function of(windows: Window[], side: SideName): Window[] {
 }
 
 function latency(windows: Window[]): { p50: number; p99: number } {
-  return { p50: median(windows.map(({ p50 }) => p50)), p99: median(windows.map(({ p99 }) => p99)) }
+  return {
+    p50: median(windows.map(({ p50 }) => p50)),
+    p99: median(windows.map(({ p99 }) => p99))
+  }
 }
 
 function rate(before: Counts, after: Counts, seconds: number): Counts {
@@ -478,21 +579,30 @@ function rate(before: Counts, after: Counts, seconds: number): Counts {
 }
 
 function perSecond(before: Cpu, after: Cpu, seconds: number): Cpu {
-  return Object.fromEntries(PROCESSES.map((name) => [name, (after[name] - before[name]) / seconds])) as Cpu
+  return Object.fromEntries(
+    PROCESSES.map((name) => [name, (after[name] - before[name]) / seconds])
+  ) as Cpu
 }
 
-function perRequestCpu(span: { before: Cpu; after: Cpu; idle: Cpu; seconds: number }, requests: number): Cpu {
+function perRequestCpu(
+  span: { before: Cpu; after: Cpu; idle: Cpu; seconds: number },
+  requests: number
+): Cpu {
   const { before, after, idle, seconds } = span
 
   return Object.fromEntries(
-    PROCESSES.map((name) => [name, ((after[name] - before[name] - idle[name] * seconds) / requests) * 1e6])
+    PROCESSES.map((name) => [
+      name,
+      ((after[name] - before[name] - idle[name] * seconds) / requests) * 1e6
+    ])
   ) as Cpu
 }
 
 /** Seconds of CPU both sides' processes spent in a window. */
 function consumed(before: Snapshot, after: Snapshot): number {
   return PROCESSES.reduce(
-    (sum, name) => sum + after.base[name] - before.base[name] + after.head[name] - before.head[name],
+    (sum, name) =>
+      sum + after.base[name] - before.base[name] + after.head[name] - before.head[name],
     0
   )
 }
@@ -505,7 +615,9 @@ function busy(before: HostTimes, after: HostTimes, ours: number): number {
 }
 
 function peaks(running: Running): Record<string, number> {
-  return Object.fromEntries(PROCESSES.map((name) => [name, Math.round(running.processes[name].memory().peak)]))
+  return Object.fromEntries(
+    PROCESSES.map((name) => [name, Math.round(running.processes[name].memory().peak)])
+  )
 }
 
 const PROTOCOLS: Protocol[] = ['h1', 'h2c']

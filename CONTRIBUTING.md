@@ -136,6 +136,9 @@ Style is checked by `npm run lint`, which reports nothing. Fix what it finds by 
 `oxlint --fix` rewrites `if (a) { if (b) c } else d` into an `else` that binds to the inner
 `if`, which no test of ours would have caught.
 
+Format is checked by `npm run format:check`, which `npm test` runs, and written by
+`npm run format`.
+
 Unit tests run on `node:test`, through `tsx`:
 
 ```shell

@@ -6,7 +6,10 @@ import { resolve } from 'node:path'
  * package was built. A deploy reads them from here, because the extension is not installed
  * beside it; a running service reads them from the extension, where their code is.
  */
-export function components(suffix: string, filter?: (label: string) => boolean): Components {
+export function components(
+  suffix: string,
+  filter?: (label: string) => boolean
+): Components {
   const manifests = digest(suffix).filter((manifest) => filter?.(manifest.label) ?? true)
 
   return {

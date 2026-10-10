@@ -63,7 +63,10 @@ describe('anonymous', () => {
       true
     )
     assert.equal(
-      directive.admits(null, context({ authorization: 'Token x' }, { exploratory: true })),
+      directive.admits(
+        null,
+        context({ authorization: 'Token x' }, { exploratory: true })
+      ),
       true
     )
   })

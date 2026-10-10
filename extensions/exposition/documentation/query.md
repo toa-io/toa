@@ -69,6 +69,36 @@ holds no `rank` — never set, or set to `null` — and `rank!=null` what holds 
 with `==`, `!=`, `=in=` and `=out=`, and refused with `400 Bad Request` by any other operator. A
 quoted one is text: `title=="null"`.
 
+### Properties inside an object
+
+A selector names a property inside an object by the path to it, and the value is read as what
+that property holds:
+
+```yaml
+# manifest.toa.yaml
+entity:
+  properties:
+    size:
+      type: object
+      properties:
+        volume: { type: number }
+        unit: { type: string }
+```
+
+```http
+GET /pots/?criteria=size.volume>2;size.unit==cup
+```
+
+A path that names nothing the entity declares is refused with `400 Bad Request`.
+
+A path through an array of objects is compared with each of them, and each comparison on its
+own: `leaves.grams>2` selects what has such a leaf.
+
+Queries on a path are served by an index declared on it in a
+[migration](/documentation/component/declaration.md#migrations): `keys: { size.volume: asc }`.
+
+### Open criteria
+
 The `criteria` property is considered as _open_ when it ends with a `;`, allowing the combination of
 request query criteria using `and` logic.
 Otherwise, criteria property is _closed_, that is, doesn't allow `criteria` in a request query.
@@ -240,8 +270,9 @@ the next window is read with the [token](#token) the window ends with. A stream 
 
 The `sort` query property defines the order of what an operation of scope `entries` reads.
 It comprises an ordered set of sorting statements delimited by semicolons.
-Each statement consists of an entity property name with an optional sorting direction suffix:
-`:asc`for ascending or `:desc` for descending.
+Each statement consists of an entity property name, or the path to a
+[property inside an object](#properties-inside-an-object), with an optional sorting direction
+suffix: `:asc`for ascending or `:desc` for descending.
 
 ```yaml
 sort: rank # ascending by default
@@ -315,6 +346,13 @@ projection: [title, timestamp]
 ```
 
 `id` is always read, and a projection that names it is refused.
+
+A path reads one [property inside an object](#properties-inside-an-object), and nothing else
+of that object:
+
+```yaml
+projection: [title, size.volume]
+```
 
 Only a Method mapped to an Observation declares a projection: an operation of any other type
 answers a request whose query carries one with an exception, and a composition whose Method

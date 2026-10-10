@@ -30,16 +30,19 @@ export function operations(totals: Record<string, unknown>, database: string): n
   let sum = 0
 
   for (const [namespace, counts] of Object.entries(totals)) {
-    if (!namespace.startsWith(prefix) || typeof counts !== 'object' || counts === null) continue
+    if (!namespace.startsWith(prefix) || typeof counts !== 'object' || counts === null)
+      continue
 
-    for (const kind of KINDS) sum += (counts as Record<string, { count: number }>)[kind]?.count ?? 0
+    for (const kind of KINDS)
+      sum += (counts as Record<string, { count: number }>)[kind]?.count ?? 0
   }
 
   return sum
 }
 
 export function perRequest(window: Window): Counts {
-  if (window.requests <= 0) throw new RangeError('A window with no requests has no rate per request')
+  if (window.requests <= 0)
+    throw new RangeError('A window with no requests has no rate per request')
 
   return { publish: per(window, 'publish'), operations: per(window, 'operations') }
 }

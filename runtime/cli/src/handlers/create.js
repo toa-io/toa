@@ -17,7 +17,9 @@ export async function create(argv) {
   const present = (await readdir(target)).filter((entry) => !IGNORED.includes(entry))
 
   if (present.length > 0)
-    throw new Error(`The directory is not empty: it holds ${present.slice(0, 3).join(', ')}`)
+    throw new Error(
+      `The directory is not empty: it holds ${present.slice(0, 3).join(', ')}`
+    )
 
   const manifest = locate()
   const userland = require(manifest)
@@ -62,7 +64,8 @@ function locate() {
 }
 
 /** What a Context may be called, as its schema has it. */
-const NAME = /^([a-zA-Z]+([_a-zA-Z0-9]*[a-zA-Z0-9]+)?)(-([a-zA-Z]+([_a-zA-Z0-9]*[a-zA-Z0-9]+)?))*$/
+const NAME =
+  /^([a-zA-Z]+([_a-zA-Z0-9]*[a-zA-Z0-9]+)?)(-([a-zA-Z]+([_a-zA-Z0-9]*[a-zA-Z0-9]+)?))*$/
 
 /** A repository cloned before its first commit is an empty directory. */
 const IGNORED = ['.git']

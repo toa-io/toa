@@ -8,7 +8,7 @@ a _strict_ problem definition.
 
 1. **Design concept.** What changes, stated as what holds once it is done.
    - **Guarantees.** Numbered, grouped by what they are about, and ending with what is not promised.
-     A guarantee that already holds is marked *(today)*.
+     A guarantee that already holds is marked _(today)_.
    - **What a component author does differently.** What they declare and call, with an example.
 2. **The changes, by area.** Numbered, one area each, documentation included.
 3. **Decisions.** Each choice made, and what it was chosen over.

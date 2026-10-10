@@ -5,7 +5,9 @@ export async function effect(input, context) {
   const body = await response.json()
 
   if (response.status !== 200 || body.attempt !== 1)
-    throw new Error(`Answered ${response.status} on the endpoint's attempt ${body.attempt}`)
+    throw new Error(
+      `Answered ${response.status} on the endpoint's attempt ${body.attempt}`
+    )
 
   if (attempt('fetched', input) <= input.fail) throw new Error('Failing on purpose')
 

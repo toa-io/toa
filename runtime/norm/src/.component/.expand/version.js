@@ -21,7 +21,9 @@ export async function version(manifest) {
  */
 async function hash(manifest) {
   const files = (await list(manifest)).sort()
-  const digests = await Promise.all(files.map((file) => digest(join(manifest.path, file))))
+  const digests = await Promise.all(
+    files.map((file) => digest(join(manifest.path, file)))
+  )
   const total = createHash('sha256')
 
   // the path is part of it: moving a file changes the build even if no content did

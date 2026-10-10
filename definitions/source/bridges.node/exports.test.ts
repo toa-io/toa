@@ -3,7 +3,8 @@ import assert from 'node:assert/strict'
 
 import { exports } from './exports.ts'
 
-const read = (text: string, file = 'module.js'): ReturnType<typeof exports> => exports(file, text)
+const read = (text: string, file = 'module.js'): ReturnType<typeof exports> =>
+  exports(file, text)
 
 describe('ES modules', () => {
   it('reads a declaration exported where it is written', () => {
@@ -37,7 +38,9 @@ describe('ES modules', () => {
   })
 
   it('reads a class with its methods', () => {
-    const bound = read('export class Transition {\n  execute(input, object) {}\n  run() {}\n}')
+    const bound = read(
+      'export class Transition {\n  execute(input, object) {}\n  run() {}\n}'
+    )
 
     assert.deepStrictEqual(bound.get('Transition'), {
       kind: 'class',
@@ -111,7 +114,11 @@ describe('CommonJS', () => {
       declared: 'computation',
       params: ['input']
     })
-    assert.deepStrictEqual(bound.get('other'), { kind: 'function', declared: undefined, params: [] })
+    assert.deepStrictEqual(bound.get('other'), {
+      kind: 'function',
+      declared: undefined,
+      params: []
+    })
   })
 
   it('reads exports.name and module.exports.name', () => {

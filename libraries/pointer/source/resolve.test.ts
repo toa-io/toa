@@ -41,6 +41,8 @@ describe('a key of a map of addresses', () => {
   })
 
   it('is refused where nothing matches at all', () => {
-    assert.throws(() => resolveRecord({ dummies: references('amqp://dummies') }, 'what.ever'))
+    assert.throws(() =>
+      resolveRecord({ dummies: references('amqp://dummies') }, 'what.ever')
+    )
   })
 })

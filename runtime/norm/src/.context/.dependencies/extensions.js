@@ -65,7 +65,12 @@ async function extractDeclaredServices(context, extensions, contributed) {
   return extracted
 }
 
-async function extractExtensionComponents(components, extensions, contributed, annotations) {
+async function extractExtensionComponents(
+  components,
+  extensions,
+  contributed,
+  annotations
+) {
   const extracted = []
 
   for (const component of components) {

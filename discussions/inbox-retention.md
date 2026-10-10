@@ -17,7 +17,7 @@ An operation says how long its own calls are kept, as the value of `once`.
 1. A call of an operation that declares `once: <seconds>` is remembered for that many seconds, and
    a duplicate of it arriving within them is answered with what the first one answered.
 2. A call of an operation that declares `once: true` is remembered for as long as the deployment
-   says (`inbox.retention`), and an hour where it says nothing. *(today)*
+   says (`inbox.retention`), and an hour where it says nothing. _(today)_
 3. What the manifest states wins over what the deployment states: the deployment's value is the
    default for an operation that states none, not a bound on one that does.
 4. No window is shorter than ten minutes. A manifest or a context that states one is refused where
@@ -31,7 +31,7 @@ An operation says how long its own calls are kept, as the value of `once`.
 **Not promised**
 
 6. A record is not gone the moment its window closes. MongoDB reaps expired documents in a pass
-   that runs every minute, so one may be recalled for up to a minute after. *(today)*
+   that runs every minute, so one may be recalled for up to a minute after. _(today)_
 7. The window is not exposed to a caller. What an operation says about itself is that it is safe to
    retry, not for how long.
 

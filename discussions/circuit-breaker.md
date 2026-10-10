@@ -87,11 +87,11 @@ export interface Request<Input = any, Entity = any> {
 
 A hop is a string, and its shape is `source` flattened — the same three cases:
 
-| hop          | written                                | example                  |
-| ------------ | -------------------------------------- | ------------------------ |
-| an operation | `<namespace>.<component>.<operation>`   | `default.orders.place`   |
-| an event     | `~<namespace>.<component>.<event>`      | `~default.orders.placed` |
-| a service    | `<service>`                            | `exposition`             |
+| hop          | written                               | example                  |
+| ------------ | ------------------------------------- | ------------------------ |
+| an operation | `<namespace>.<component>.<operation>` | `default.orders.place`   |
+| an event     | `~<namespace>.<component>.<event>`    | `~default.orders.placed` |
+| a service    | `<service>`                           | `exposition`             |
 
 Neither dotted form is built on the hot path: the event form is already a receiver's `destination`
 (`runtime/boot/src/receivers.js:16`), and the operation form is already the span name,
@@ -147,7 +147,7 @@ component for both an RPC and a task, the loop binding calls it directly, and a 
 own operation through a `Remote`, a `Call` and a binding.
 
 Two things it must get right. **Only the server side counts** — `Remote` is a `Component` too, with
-`kind = 'client'` and the *callee's* locator (`runtime/core/source/remote.ts:11`), so counting there
+`kind = 'client'` and the _callee's_ locator (`runtime/core/source/remote.ts:11`), so counting there
 as well would make the threshold depend on how many clients a call happened to cross, which is a
 different number for a local call, an HTTP one and a delayed one. And **it never writes the trail
 back onto the request**: the loop binding passes the caller's object by reference
@@ -180,7 +180,7 @@ Leaving it to `add` would be quietly wrong. `add` is `merge(…, { ignore: true 
 — so where an adaptive bridge's `request()` has already put something there the message's trail is
 silently dropped, and where it has not, the deserialized array is shared by reference.
 
-Whatever comes off the wire is taken *as* a trail and nothing else: non-strings dropped, length
+Whatever comes off the wire is taken _as_ a trail and nothing else: non-strings dropped, length
 clipped one past the cap, which is enough to be refused. Without that guard a malformed field
 becomes a `TypeError` on the hot path where a named exception was contracted for. The same guard
 covers `request.trail`, since the request contract is `additionalProperties: true`, validates neither
@@ -221,10 +221,10 @@ transitioned and publishes nothing.
 
 Two numbers, read the way the outbox reads its own (`runtime/core/source/outbox.ts:456-465`):
 
-| variable             | default | what it does                                                  |
-| -------------------- | ------- | ------------------------------------------------------------- |
-| `TOA_TRAIL_REPEATS`  | `3`     | how many times one hop may appear before the call is refused   |
-| `TOA_TRAIL_DEPTH`    | `32`    | how long a chain may grow at all                               |
+| variable            | default | what it does                                                 |
+| ------------------- | ------- | ------------------------------------------------------------ |
+| `TOA_TRAIL_REPEATS` | `3`     | how many times one hop may appear before the call is refused |
+| `TOA_TRAIL_DEPTH`   | `32`    | how long a chain may grow at all                             |
 
 Repetition is the signal and names the cycle; depth is the backstop for a chain that grows without
 repeating a hop, and it is what bounds the array on the wire. No manifest surface in the first pass,
@@ -384,10 +384,10 @@ of YAML, and a shape that exists nowhere in the repository today:
 
 ## References
 
-- *Time to live* and hop counts in IP and DNS — the same mechanism, and the reason it is a count
+- _Time to live_ and hop counts in IP and DNS — the same mechanism, and the reason it is a count
   rather than a graph: no participant has to know the topology.
 - SIP `Max-Forwards`, SMTP `Received:` and HTTP's `Via` — a chain each hop appends itself to, which
   is what makes a loop legible after the fact rather than only detectable.
 - `508 Loop Detected`, RFC 5842 §7.2 — and why it is the wrong code here.
-- *Circuit breaker* (Nygard, *Release It!*) — the name, though not the shape: that one trips on a
+- _Circuit breaker_ (Nygard, _Release It!_) — the name, though not the shape: that one trips on a
   failure rate against a dependency, this one on the path a single call has taken.

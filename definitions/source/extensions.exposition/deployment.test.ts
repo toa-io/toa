@@ -12,7 +12,11 @@ const annotation: Annotation = {
 it('should render every host into the ingress', () => {
   const { services } = deployment(null, annotation)
 
-  assert.deepEqual(services![0].ingress!.hosts, ['nex.toa.io', 'nex.eu', 'mcp.nex.toa.io'])
+  assert.deepEqual(services![0].ingress!.hosts, [
+    'nex.toa.io',
+    'nex.eu',
+    'mcp.nex.toa.io'
+  ])
 })
 
 it('should refuse an MCP host of an undeclared authority', () => {

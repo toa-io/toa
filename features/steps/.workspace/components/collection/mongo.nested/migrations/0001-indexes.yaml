@@ -1,0 +1,4 @@
+- index:
+    name: volume
+    keys:
+      size.volume: asc

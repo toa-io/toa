@@ -20,5 +20,7 @@ export const map = (context) => {
     for (const { component } of instances)
       components.set(component.locator.id, contract.component(component))
 
-  return Object.fromEntries([...components].sort(([one], [other]) => one.localeCompare(other)))
+  return Object.fromEntries(
+    [...components].sort(([one], [other]) => one.localeCompare(other))
+  )
 }

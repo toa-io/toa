@@ -12,7 +12,13 @@ export const produce = async (component, operations) => {
     const made = await factory(binding)
     const carried = stateful.filter((endpoint) => endpoints.includes(endpoint))
     const carries = streams.filter((endpoint) => endpoints.includes(endpoint))
-    const producer = made.producer(component.locator, endpoints, component, carried, carries)
+    const producer = made.producer(
+      component.locator,
+      endpoints,
+      component,
+      carried,
+      carries
+    )
     const { properties } = (await definition(binding)).module
 
     if (properties.local === true) local.push(producer)

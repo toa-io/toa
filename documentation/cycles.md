@@ -15,10 +15,10 @@ repeated hop is the circle, and the `~` names the event that closed it.
 
 A call that has already passed through the same place, or one that has gone too far:
 
-| what                                      | default |
-| ----------------------------------------- | ------- |
-| one hop entered this many times           | `3`     |
-| a chain grown to this many hops           | `32`    |
+| what                            | default |
+| ------------------------------- | ------- |
+| one hop entered this many times | `3`     |
+| a chain grown to this many hops | `32`    |
 
 Both count one path, not one moment. An operation that calls the same endpoint fifty times over
 has made fifty chains of one hop, and none of them is a circle.
@@ -30,11 +30,11 @@ nothing is published by the call that was refused.
 
 A hop is written as it is addressed:
 
-| hop          | written                        |
-| ------------ | ------------------------------ |
-| an operation | `default.orders.place`         |
-| an event     | `~default.orders.placed`       |
-| a service    | `exposition`                   |
+| hop          | written                  |
+| ------------ | ------------------------ |
+| an operation | `default.orders.place`   |
+| an event     | `~default.orders.placed` |
+| a service    | `exposition`             |
 
 What you change is almost never the operation. A circle is closed by a **subscription** — a
 receiver that writes back to the component whose event it is on — and the `~` hops are where to
@@ -95,10 +95,10 @@ the chain is refused as before.
 
 ## Settings
 
-|                       |                                                                                    |
-| --------------------- | ---------------------------------------------------------------------------------- |
-| `TOA_TRAIL_REPEATS`   | Times one hop may be entered before the call is refused. `3`. `0` refuses nothing.  |
-| `TOA_TRAIL_DEPTH`     | Hops a chain may grow to. `32`.                                                    |
+|                     |                                                                                    |
+| ------------------- | ---------------------------------------------------------------------------------- |
+| `TOA_TRAIL_REPEATS` | Times one hop may be entered before the call is refused. `3`. `0` refuses nothing. |
+| `TOA_TRAIL_DEPTH`   | Hops a chain may grow to. `32`.                                                    |
 
 `TOA_TRAIL_REPEATS=0` is the way out if a deployment starts refusing calls it has always made.
 Chains are still carried and still bounded, so read the one it refused before you leave it off: a

@@ -49,7 +49,9 @@ const streams = async (manifest) => {
     if (operation.stream === undefined || operation.bindings.length === 0) continue
     if (await carried(operation.bindings)) continue
 
-    throw new Error(`Operation '${endpoint}' takes a stream, which none of its bindings carries`)
+    throw new Error(
+      `Operation '${endpoint}' takes a stream, which none of its bindings carries`
+    )
   }
 }
 

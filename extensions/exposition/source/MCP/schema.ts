@@ -86,7 +86,8 @@ export function annotations(
 ): Annotations | undefined {
   const value: Annotations = {}
 
-  if (introspection.readonly ?? (verb === 'GET' || verb === 'HEAD')) value.readOnlyHint = true
+  if (introspection.readonly ?? (verb === 'GET' || verb === 'HEAD'))
+    value.readOnlyHint = true
 
   if (verb === 'DELETE') value.destructiveHint = true
 

@@ -55,8 +55,12 @@ export interface Unsupported {
 
 export function markdown(report: Report): string {
   const { base, head, machine, blocks, threshold } = report
-  const measured = report.scenarios.filter((scenario): scenario is ScenarioReport => !('unsupported' in scenario))
-  const unsupported = report.scenarios.filter((scenario): scenario is Unsupported => 'unsupported' in scenario)
+  const measured = report.scenarios.filter(
+    (scenario): scenario is ScenarioReport => !('unsupported' in scenario)
+  )
+  const unsupported = report.scenarios.filter(
+    (scenario): scenario is Unsupported => 'unsupported' in scenario
+  )
 
   const lines = [
     `# ${head.ref} (${head.sha.slice(0, 7)}) against ${base.ref} (${base.sha.slice(0, 7)})`,
@@ -73,7 +77,10 @@ export function markdown(report: Report): string {
   for (const scenario of measured)
     for (const process of scenario.processes) {
       const { estimate } = process
-      const verdict = process.verdict === 'slower' || process.verdict === 'faster' ? `**${process.verdict}**` : process.verdict
+      const verdict =
+        process.verdict === 'slower' || process.verdict === 'faster'
+          ? `**${process.verdict}**`
+          : process.verdict
 
       lines.push(
         row([
@@ -137,7 +144,8 @@ export function markdown(report: Report): string {
   if (unsupported.length > 0) {
     lines.push('', '## Unsupported by the base revision', '')
 
-    for (const { id, unsupported: reason } of unsupported) lines.push(`- ${id}: ${reason}`)
+    for (const { id, unsupported: reason } of unsupported)
+      lines.push(`- ${id}: ${reason}`)
   }
 
   return lines.join('\n') + '\n'

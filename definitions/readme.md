@@ -12,18 +12,18 @@ is `@toa.io/operations` beside `@toa.io/cli`, with no extension installed at all
 
 ## What is here
 
-| export        | of                     | read by                                  |
-| ------------- | ---------------------- | ---------------------------------------- |
-| `manifest`    | an extension           | norm, normalising the `extensions` block |
-| `components`  | an extension           | norm, for the components it contributes  |
-| `annotation`  | an extension           | norm, normalising the context's block    |
-| `standalone`  | an extension           | norm, deploying it whether or not named  |
-| `deployment`  | an extension, a connector | operations, rendering the chart       |
-| `installs`    | an extension, a connector | norm, what a deploy installs — for a component's declaration, and, called with no instance, for the workload that runs its service |
-| `image`       | an extension           | operations, taking a published image     |
-| `context`     | an extension           | `toa types`, what a component's context has |
-| `properties`  | a binding              | norm and boot, whether it is asynchronous |
-| `define`      | a bridge               | norm, what a component's modules declare |
+| export       | of                        | read by                                                                                                                            |
+| ------------ | ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| `manifest`   | an extension              | norm, normalising the `extensions` block                                                                                           |
+| `components` | an extension              | norm, for the components it contributes                                                                                            |
+| `annotation` | an extension              | norm, normalising the context's block                                                                                              |
+| `standalone` | an extension              | norm, deploying it whether or not named                                                                                            |
+| `deployment` | an extension, a connector | operations, rendering the chart                                                                                                    |
+| `installs`   | an extension, a connector | norm, what a deploy installs — for a component's declaration, and, called with no instance, for the workload that runs its service |
+| `image`      | an extension              | operations, taking a published image                                                                                               |
+| `context`    | an extension              | `toa types`, what a component's context has                                                                                        |
+| `properties` | a binding                 | norm and boot, whether it is asynchronous                                                                                          |
+| `define`     | a bridge                  | norm, what a component's modules declare                                                                                           |
 
 A package is looked up by the reference a manifest or a context names it by:
 

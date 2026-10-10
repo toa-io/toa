@@ -44,7 +44,12 @@ describe('output of a stream answered bare', () => {
   })
 
   it('should answer no output where the request asks for none of it, and close the stream', async () => {
-    const answered = new Readable({ objectMode: true, read() { this.push({ id: 'x' }) } })
+    const answered = new Readable({
+      objectMode: true,
+      read() {
+        this.push({ id: 'x' })
+      }
+    })
     const reply = await observation(answered, true).invoke(request([]))
 
     assert.deepStrictEqual(reply, {})
@@ -121,7 +126,12 @@ describe('output', () => {
   })
 
   it('should close the stream it answered from when its reader closes the restricted one', async () => {
-    const answered = new Readable({ objectMode: true, read() { this.push({ id: 'x', volume: 1 }) } })
+    const answered = new Readable({
+      objectMode: true,
+      read() {
+        this.push({ id: 'x', volume: 1 })
+      }
+    })
     const reply = await observation(answered).invoke(request(['id']))
 
     for await (const _ of reply.output) break
@@ -131,7 +141,12 @@ describe('output', () => {
   })
 
   it('should fail the restricted stream where the stream it answered from fails', async () => {
-    const answered = new Readable({ objectMode: true, read() { this.destroy(new Error('broken')) } })
+    const answered = new Readable({
+      objectMode: true,
+      read() {
+        this.destroy(new Error('broken'))
+      }
+    })
     const reply = await observation(answered).invoke(request(['id']))
 
     await assert.rejects(reply.output.toArray(), { message: 'broken' })

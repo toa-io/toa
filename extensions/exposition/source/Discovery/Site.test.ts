@@ -72,7 +72,10 @@ describe('discovery site', () => {
 
   it('should hold a hashed asset forever and an icon for a day', () => {
     assert.equal(
-      header(site.intercept(input('/.discovery/_app/immutable/asset.js')), 'cache-control'),
+      header(
+        site.intercept(input('/.discovery/_app/immutable/asset.js')),
+        'cache-control'
+      ),
       'public, max-age=31536000, immutable'
     )
     assert.equal(
@@ -130,7 +133,10 @@ describe('discovery site', () => {
   })
 
   it('should refuse every other method', () => {
-    assert.throws(() => site.intercept(input('/.discovery/', 'POST')), http.MethodNotAllowed)
+    assert.throws(
+      () => site.intercept(input('/.discovery/', 'POST')),
+      http.MethodNotAllowed
+    )
     assert.throws(
       () => site.intercept(input('/.discovery/favicon.ico', 'OPTIONS')),
       http.MethodNotAllowed

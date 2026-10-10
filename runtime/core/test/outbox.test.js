@@ -292,7 +292,9 @@ it('should keep pumping while one destination never answers', async () => {
   outbox = new Outbox([emission, stuck], storage, atom, { interval: 1000, batch: BATCH })
 
   storage.outbox.pending.mock.mockImplementation(async () =>
-    storage.outbox.pending.mock.callCount() > 4 ? [] : page(0, 2, ['events', 'convergence'])
+    storage.outbox.pending.mock.callCount() > 4
+      ? []
+      : page(0, 2, ['events', 'convergence'])
   )
 
   await outbox.open()
@@ -305,7 +307,7 @@ it('should keep pumping while one destination never answers', async () => {
   assert.deepStrictEqual(storage.outbox.settle.mock.calls[0].arguments[1], ['events'])
 })
 
-function destination (name) {
+function destination(name) {
   return { name, emit: mock.fn(async () => undefined), link: mock.fn() }
 }
 

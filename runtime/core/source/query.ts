@@ -1,7 +1,7 @@
 import { empty } from '@toa.io/generic'
 import * as criteria from './query/criteria.ts'
 import * as options from './query/options.ts'
-import type { Properties } from './query/criteria.ts'
+import type { Properties } from './query/property.ts'
 import type { Node, Options, Query as Parsed } from './types/storages.ts'
 import type { Query as Requested } from './types/request.ts'
 
