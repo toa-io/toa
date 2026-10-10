@@ -1,9 +1,10 @@
 import { Readable, Transform, pipeline } from 'node:stream'
-import { Connector, deliveries, instance } from '@toa.io/core'
+import { Connector, deliveries, exceptions, instance } from '@toa.io/core'
 import { console } from 'openspan'
 
 import { ENDPOINT } from './constants.js'
-import { instances, name, tasks } from './queues.js'
+import * as stopping from './stopping.js'
+import { instances, requests, tasks } from './queues.js'
 import { refuse, unserved } from './verdict.js'
 
 export class Producer extends Connector {
@@ -26,8 +27,16 @@ export class Producer extends Connector {
   #pending = new Set()
 
   /**
-   * The endpoints a task may name. A stateful one is absent: it is served under this process's
-   * name, and a task is taken by whichever process is free.
+   * The endpoints an ordinary call may name. A stateful one is absent: it is served under this
+   * process's name, and an ordinary call is taken by whichever process is free.
+   *
+   * @type {Set<string>}
+   */
+  #shared = new Set()
+
+  /**
+   * The endpoints a task may name: those an ordinary call may, less what the runtime reserves
+   * for itself.
    *
    * @type {Set<string>}
    */
@@ -52,18 +61,21 @@ export class Producer extends Connector {
    * so that a name this process hands out in a reply is reachable by the time it arrives.
    */
   async open() {
+    stopping.reset()
+
     await Promise.all(this.#stateful.map((endpoint) => this.#addressed(endpoint)))
 
     const shared = this.#endpoints.filter(
       (endpoint) => !this.#stateful.includes(endpoint)
     )
 
+    this.#shared = new Set(shared)
+
     // an endpoint the runtime reserves for itself is served and takes no task, as it did
     // when the queue a task arrived on was named after the endpoint
     this.#served = new Set(shared.filter((endpoint) => endpoint[0] !== '.'))
 
-    await Promise.all(shared.map((endpoint) => this.#endpoint(endpoint)))
-
+    if (this.#shared.size > 0) await this.#requests()
     if (this.#served.size > 0) await this.#tasks()
   }
 
@@ -79,6 +91,9 @@ export class Producer extends Connector {
    * which is what a durable queue is for.
    */
   async close() {
+    // a call that is waiting to be sent again is answered now, or what is running would wait on it
+    stopping.begin()
+
     // what is still running in this process may be waiting on a call this communication serves
     await deliveries.settled()
     await this.#comm.seal()
@@ -96,11 +111,28 @@ export class Producer extends Connector {
     })
   }
 
-  async #endpoint(endpoint) {
-    const queue = name(this.#locator, endpoint)
+  /**
+   * One queue for every ordinary call this component is given: the message names the operation,
+   * so the queue does not have to, and the broker holds one of them rather than one per operation.
+   */
+  async #requests() {
+    const queue = requests(this.#locator)
 
-    await this.#comm.reply(queue, (request) => {
-      console.debug('AMQP request received', { label: queue, request })
+    await this.#comm.reply(queue, (request, properties) => {
+      const endpoint = properties?.headers?.[ENDPOINT]
+
+      console.debug('AMQP request received', { label: queue, endpoint, request })
+
+      // a caller running ahead of this process names an operation it does not serve. Somebody
+      // is waiting, and trying the message again here cannot make the operation known, so it is
+      // answered rather than raised — with what tells whoever called to send it again, for a
+      // process of the release that has the operation
+      if (!this.#shared.has(endpoint))
+        return {
+          exception: new exceptions.UnservedException(
+            `'${endpoint ?? ''}' is not served by this process of '${this.#locator.id}'`
+          )
+        }
 
       return this.#invoke(endpoint, request)
     })

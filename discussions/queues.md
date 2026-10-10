@@ -109,18 +109,17 @@ collapse.
 ## What removes a queue
 
 Nothing accumulates on its own any more. What a deployment holds is one queue per thing it
-declares — an operation, a component's tasks, a receiver's binding, a channel's label — and what a
+declares — a component's calls, its tasks, a receiver's binding, a channel's label — and what a
 connection holds for as long as it lives, which the broker removes with the connection. A restart,
 a rollout, another replica and another process leave nothing behind.
 
 So a queue that is left over is one whose declaration was removed, and removing it is the same act:
 
-| what was removed                                | what to remove with it                                                                            |
-| ----------------------------------------------- | ------------------------------------------------------------------------------------------------- |
-| an operation                                    | `<ns>.<component>.<operation>`                                                                    |
-| a component                                     | its operation queues, `<ns>.<component>..tasks`, and the event queues its receivers were bound by |
-| a receiver                                      | `<srcNs>.<srcComponent>.<event>..<ns>.<component>`                                                |
-| a deployment, or a tenant of a multi-tenant one | its vhost                                                                                         |
+| what was removed                                | what to remove with it                                                                                    |
+| ----------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| a component                                     | `<ns>.<component>..requests`, `<ns>.<component>..tasks`, and the event queues its receivers were bound by |
+| a receiver                                      | `<srcNs>.<srcComponent>.<event>..<ns>.<component>`                                                        |
+| a deployment, or a tenant of a multi-tenant one | its vhost                                                                                                 |
 
 A retired `delay` leaves a `comq.retry.<value>` behind, which comq records as a housekeeping item
 rather than a hazard.
@@ -131,7 +130,7 @@ no `get`, no redeclare — together with what is in it, and there is nowhere her
 - `comq.parked` and `comq.retry.*` never have a consumer, so unused is their permanent state and
   the timer would fire on a healthy queue and take the messages waiting in it. `comq.parked` gets a
   `max-length` and an alert on its depth instead.
-- An operation or task queue that is momentarily unused is one whose component is halted, scaled to
+- A request or task queue that is momentarily unused is one whose component is halted, scaled to
   zero or redeploying, and it is holding the calls that [halt](../documentation/halt.md) promises
   will be served when the component comes back.
 
@@ -151,6 +150,8 @@ application on its own was 673 queues of which 483 had never held a message.
 
 comq 0.23.0 answered its half: one `comq.parked` rather than one per consumed queue, and one reply
 queue per connection rather than one per request target. This is toa's half.
+
+Calls followed tasks onto one queue per component: see [request queue](./request-queue.md).
 
 Related: [halt](./halt.md) on what a parked backlog costs, [discovery](./discovery.md) on why the
 component map replaced a broadcast registry and why an `x-expires` belongs in a policy rather than

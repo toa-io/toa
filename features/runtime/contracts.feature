@@ -40,6 +40,21 @@ Feature: A contract is what a caller is given
     When I compose `contracts.next` component
     Then the pending reply is received
 
+  @timing
+  Scenario: A call to an operation no process comes to serve is refused in the end
+
+    A process of the version before is asked for what only the next one declares, says so, and
+    the call is sent again for a process that has it. None comes, and the caller is told.
+
+    Given the component map states:
+      | contracts.next |
+    When I compose `contracts.peer` component
+    And I call `contracts.peer.added`
+    Then the following exception is thrown:
+      """yaml
+      message: "EndpointException: 'added' is not served by 'contracts.peer'"
+      """
+
   Scenario: A receiver is bound at the version the map states
     Given the component map states:
       | contracts.next |

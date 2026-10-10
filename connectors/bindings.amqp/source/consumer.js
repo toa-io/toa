@@ -1,9 +1,11 @@
 import { Readable, Transform, pipeline } from 'node:stream'
+import timers from 'node:timers/promises'
 import { Unroutable } from 'comq'
 import { Connector, Encoded, exceptions } from '@toa.io/core'
 import { publish } from './measurements.js'
-import { ENDPOINT } from './constants.js'
-import { instances, name, tasks } from './queues.js'
+import { ENDPOINT, resending } from './constants.js'
+import * as stopping from './stopping.js'
+import { instances, requests, tasks } from './queues.js'
 
 /**
  * @implements {import('@toa.io/core/types').bindings.Consumer}
@@ -21,15 +23,19 @@ export class Consumer extends Connector {
   /** @type {string} */
   #exchange
 
+  /** @type {string} */
+  #id
+
   /** @type {toa.amqp.Communication} */
   #comm
 
   constructor(comm, locator, endpoint) {
     super()
 
-    this.#queue = name(locator, endpoint)
+    this.#queue = requests(locator)
     this.#tasksQueue = tasks(locator)
     this.#endpoint = endpoint
+    this.#id = locator.id
     this.#exchange = instances(locator, endpoint)
     this.#comm = comm
 
@@ -53,8 +59,7 @@ export class Consumer extends Connector {
 
   async #send(request, terms) {
     // an ordinary call waits for its reply, and is handed no terms
-    if (terms?.instance === undefined)
-      return await this.#comm.request(this.#queue, request)
+    if (terms?.instance === undefined) return await this.#ordinary(request)
 
     try {
       return await this.#comm.call(
@@ -75,12 +80,59 @@ export class Consumer extends Connector {
     }
   }
 
+  /**
+   * Every call to a component arrives on one queue, so while a component is being replaced a
+   * call to an operation only one of its two releases has may be taken by a process of the
+   * other, which answers that it does not serve it. The call is sent again for whichever takes
+   * it next, after a pause that grows. Once the pauses run out, or this process begins to stop,
+   * no process has the operation as far as anybody can tell, and that is what its caller is told.
+   */
+  async #ordinary(request) {
+    const properties = { headers: { [ENDPOINT]: this.#endpoint } }
+
+    for (let attempt = 0; ; attempt++) {
+      const reply = await this.#comm.request(this.#queue, request, properties)
+
+      if (reply?.exception?.code !== exceptions.codes.Unserved) return reply
+
+      const delay = resending(attempt)
+
+      if (delay !== undefined && (await wait(delay))) continue
+
+      return {
+        exception: new exceptions.EndpointException(
+          `'${this.#endpoint}' is not served by '${this.#id}'`
+        )
+      }
+    }
+  }
+
   async task(request) {
     publish('task')
 
     await this.#comm.enqueue(this.#tasksQueue, request, {
       headers: { [ENDPOINT]: this.#endpoint }
     })
+  }
+}
+
+/**
+ * Waits unless the process has begun to stop, and says whether it waited the whole of it.
+ *
+ * @param {number} delay
+ * @returns {Promise<boolean>}
+ */
+async function wait(delay) {
+  const signal = stopping.signal()
+
+  if (signal.aborted) return false
+
+  try {
+    await timers.setTimeout(delay, undefined, { signal })
+
+    return true
+  } catch {
+    return false
   }
 }
 

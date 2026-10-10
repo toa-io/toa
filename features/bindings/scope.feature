@@ -61,9 +61,9 @@ Feature: Processes of one context on one broker
   Scenario: Names begin with the scope
     Given an environment variable `TOA_SUFFIX` is set to "-one"
     When I compose `echo.beacon` component
-    Then the queue "toa-dev-one.echo.beacon.echo" is consumed
-    And the queue "echo.beacon.echo" is not consumed
+    Then the queue "toa-dev-one.echo.beacon..requests" is consumed
+    And the queue "echo.beacon..requests" is not consumed
 
   Scenario: Names are unchanged without a suffix
     When I compose `echo.beacon` component
-    Then the queue "echo.beacon.echo" is consumed
+    Then the queue "echo.beacon..requests" is consumed

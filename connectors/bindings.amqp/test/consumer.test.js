@@ -1,4 +1,4 @@
-import { it, beforeEach, mock as mocking } from 'node:test'
+import { describe, it, beforeEach, afterEach, mock as mocking } from 'node:test'
 import assert from 'node:assert/strict'
 import { isDeepStrictEqual } from 'node:util'
 
@@ -17,6 +17,7 @@ const mock = {
 mocking.module('../source/queues', { namedExports: mock.queues })
 
 const { Consumer } = await import('../source/consumer.js')
+const stopping = await import('../source/stopping.js')
 
 it('should be', async () => {
   assert.notStrictEqual(Consumer, undefined)
@@ -57,26 +58,104 @@ it('should send request', async () => {
   const reply = await consumer.request(request)
 
   assert.ok(
-    mock.queues.name.mock.calls.some(
+    mock.queues.requests.mock.calls.some(
       (call) =>
-        call.arguments.length === 2 &&
-        isDeepStrictEqual(call.arguments[0], locator) &&
-        isDeepStrictEqual(call.arguments[1], endpoint)
+        call.arguments.length === 1 && isDeepStrictEqual(call.arguments[0], locator)
     )
   )
 
-  const queue = mock.queues.name.mock.calls[0].result
+  const queue = mock.queues.requests.mock.calls[0].result
 
-  // an ordinary call waits for its reply, and gives comq nothing to wait by
+  // an ordinary call waits for its reply, and gives comq nothing to wait by: the queue is the
+  // component's, so what says which operation is the message
   assert.ok(
     comm.request.mock.calls.some(
       (call) =>
-        call.arguments.length === 2 &&
+        call.arguments.length === 3 &&
         isDeepStrictEqual(call.arguments[0], queue) &&
-        isDeepStrictEqual(call.arguments[1], request)
+        isDeepStrictEqual(call.arguments[1], request) &&
+        isDeepStrictEqual(call.arguments[2], { headers: { 'toa.io/endpoint': endpoint } })
     )
   )
   assert.deepStrictEqual(reply, await comm.request.mock.calls[0].result)
+})
+
+describe('a call answered by a process that does not serve its operation', () => {
+  const unserved = () => ({
+    exception: { code: exceptions.codes.Unserved, message: generate() }
+  })
+  const ENDPOINT = exceptions.codes.Endpoint
+
+  afterEach(() => {
+    stopping.reset()
+    mocking.timers.reset()
+  })
+
+  it('should be sent again, and answered by whichever serves it', async () => {
+    const served = generate()
+
+    comm.request.mock.mockImplementationOnce(async () => unserved(), 0)
+    comm.request.mock.mockImplementationOnce(async () => unserved(), 1)
+    comm.request.mock.mockImplementationOnce(async () => served, 2)
+
+    const request = generate()
+    const reply = await consumer.request(request)
+
+    assert.strictEqual(reply, served)
+    assert.strictEqual(comm.request.mock.callCount(), 3)
+
+    for (const call of comm.request.mock.calls)
+      assert.deepStrictEqual(call.arguments.slice(1), [
+        request,
+        { headers: { 'toa.io/endpoint': endpoint } }
+      ])
+  })
+
+  it('should be answered with the exception once it has been sent again often enough', async () => {
+    mocking.timers.enable({ apis: ['setTimeout'] })
+    comm.request.mock.mockImplementation(async () => unserved())
+
+    const replying = consumer.request(generate())
+
+    // longer than every pause there is, one pause at a time, and more pauses than there are
+    for (let i = 0; i < 20; i++) {
+      await new Promise((resolve) => setImmediate(resolve))
+      mocking.timers.tick(5 * 60 * 1000)
+    }
+
+    const reply = await replying
+
+    comm.request.mock.mockImplementation(async () => generate())
+
+    assert.strictEqual(reply.exception.code, ENDPOINT)
+    assert.ok(reply.exception.message.includes(endpoint))
+    assert.strictEqual(comm.request.mock.callCount(), 12)
+  })
+
+  it('should be answered with the exception at once where the process is stopping', async () => {
+    comm.request.mock.mockImplementationOnce(async () => unserved(), 0)
+    stopping.begin()
+
+    const reply = await consumer.request(generate())
+
+    assert.strictEqual(reply.exception.code, ENDPOINT)
+    assert.strictEqual(comm.request.mock.callCount(), 1)
+  })
+
+  it('should stop waiting where the process begins to stop', async () => {
+    comm.request.mock.mockImplementation(async () => unserved())
+
+    const replying = consumer.request(generate())
+
+    await new Promise((resolve) => setTimeout(resolve, 150))
+    stopping.begin()
+
+    const reply = await replying
+
+    comm.request.mock.mockImplementation(async () => generate())
+
+    assert.strictEqual(reply.exception.code, ENDPOINT)
+  })
 })
 
 function resetCalls(target = [assert, mock, comm, locator, endpoint], seen = new Set()) {

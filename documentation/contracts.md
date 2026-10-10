@@ -131,15 +131,17 @@ Cannot call 'default.billing': the component map states nothing of it. Run `toa 
 ## While two versions serve
 
 Two versions of a component serve at once for as long as a deployment takes to replace it, and both
-take calls from the same queues. What a caller is held to is the version the map names, which is
+take calls from the same queue. What a caller is held to is the version the map names, which is
 what the deployment that wrote the map intends.
 
 A component is described **once per process**, at the first call to it, and what was read is held
 for as long as the process runs. So a caller keeps the contract it first read, which is what its own
 code was written against.
 
-A call is not routed by version: it goes to the endpoint's queue, which every version serves, so one
-two versions both declare is served by either. The caller validates against the contract it read and
+A call is not routed by version: it goes to the component's queue, which every version serves, so
+an endpoint two versions both declare is served by either. One that only the newer version
+declares is served by the newer: a process of the older that is handed the call says it does not
+serve it, and the call is sent again until a process that does takes it. The caller validates against the contract it read and
 the callee does not validate again, so **an endpoint's input schema is yours to keep compatible
 while two versions of it serve** — the same rule a deployment holds you to for the State. An
 endpoint or an event only the newer version declares is not affected: the older one serves neither.
