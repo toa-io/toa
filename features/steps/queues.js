@@ -1,5 +1,9 @@
 import assert from 'node:assert'
+import { randomUUID } from 'node:crypto'
 import { Given, Then, When } from '@cucumber/cucumber'
+import { diff } from 'jest-diff'
+import { match } from '@toa.io/generic'
+import { load as parse } from 'js-yaml'
 
 // events emitted while a receiver isn't composed pile up in its durable queue and are
 // delivered in a burst the next time it starts, so a scenario asserting on what the
@@ -149,6 +153,74 @@ When(
   }
 )
 
+When(
+  'a request naming {token} is published to {component}',
+  /**
+   * What a caller running ahead of this component sends: a request for an operation it has
+   * and this one does not. It is answered on a queue of this scenario's own.
+   *
+   * @param {string} endpoint
+   * @param {string} id
+   * @this {toa.features.Context}
+   */
+  async function (endpoint, id) {
+    this.answers = 'features.answers.' + randomUUID()
+
+    await request(`/queues/%2F/${this.answers}`, 'PUT', {
+      durable: false,
+      arguments: { 'x-expires': ANSWERING * 2 }
+    })
+
+    const published = await request('/exchanges/%2F/amq.default/publish', 'POST', {
+      properties: {
+        content_type: 'application/json',
+        correlation_id: randomUUID(),
+        reply_to: this.answers,
+        headers: { 'toa.io/endpoint': endpoint }
+      },
+      routing_key: requestsQueueOf(id),
+      payload: JSON.stringify({ input: null, query: {} }),
+      payload_encoding: 'string'
+    })
+
+    assert.equal(published.routed, true, `Nothing is bound to '${requestsQueueOf(id)}'`)
+  }
+)
+
+Then(
+  'the request is answered with the exception:',
+  /**
+   * @param {string} yaml
+   * @this {toa.features.Context}
+   */
+  async function (yaml) {
+    const expected = parse(yaml)
+    const deadline = Date.now() + ANSWERING
+
+    let answer
+
+    do {
+      const messages = await request(`/queues/%2F/${this.answers}/get`, 'POST', {
+        count: 1,
+        ackmode: 'ack_requeue_false',
+        encoding: 'auto'
+      })
+
+      answer = messages[0]
+
+      if (answer !== undefined) break
+
+      await new Promise((resolve) => setTimeout(resolve, 100))
+    } while (Date.now() < deadline)
+
+    assert.notEqual(answer, undefined, 'The request is not answered')
+
+    const reply = JSON.parse(answer.payload)
+
+    assert.equal(match(reply.exception, expected), true, diff(expected, reply.exception))
+  }
+)
+
 Then(
   '{component} keeps the task at once, saying it named {token}',
   /**
@@ -225,6 +297,9 @@ async function consumers(name, condition, failure) {
 /** @param {string} id */
 const tasksQueueOf = (id) => id + '..tasks'
 
+/** @param {string} id */
+const requestsQueueOf = (id) => id + '..requests'
+
 /**
  * @param {string} name
  * @param {string} id
@@ -233,6 +308,9 @@ const isTaskQueueOf = (name, id) => name.startsWith(id + '.') && name.endsWith('
 
 /** how long a message may take to reach the queue it is kept in */
 const PARKING = 5000
+
+/** how long an answer may take to arrive */
+const ANSWERING = 5000
 
 /** how long a consumer may take to appear in the statistics the management API reads */
 const COUNTING = 10000
@@ -257,7 +335,10 @@ async function request(path, method = 'GET', body) {
       `RabbitMQ management ${method} ${path} responded with ${response.status}`
     )
 
-  if (method !== 'DELETE') return response.json()
+  // a declaration and a deletion are answered with nothing
+  const text = await response.text()
+
+  if (text !== '') return JSON.parse(text)
 }
 
 const MANAGEMENT = 'http://localhost:31011/api'
