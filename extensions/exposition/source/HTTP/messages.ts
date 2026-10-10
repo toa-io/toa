@@ -254,7 +254,9 @@ class Framing extends Readable {
         Buffer.concat([
           CRLF /* indicates no boundary headers */,
           // a value the component encoded for this reply is written as it is
-          Encoded.is(result.value) ? result.value.bytes : this.encoder.encode(result.value),
+          Encoded.is(result.value)
+            ? result.value.bytes
+            : this.encoder.encode(result.value),
           CRLF,
           CUT
         ])

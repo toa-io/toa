@@ -67,7 +67,11 @@ export class Context extends Connector {
     return Math.random()
   }
 
-  public async apply(endpoint: string, request: Request, options?: Options): Promise<any> {
+  public async apply(
+    endpoint: string,
+    request: Request,
+    options?: Options
+  ): Promise<any> {
     return this.#local.invoke(endpoint, request, options)
   }
 

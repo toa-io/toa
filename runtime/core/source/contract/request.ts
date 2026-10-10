@@ -68,7 +68,8 @@ export class Request extends Contract {
         (this.discovery as Record<string, unknown>)[key] = definition[key]
 
     // how long a call is remembered is the operation's to keep, not the caller's to plan by
-    if (this.discovery.once !== undefined) this.discovery.once = this.discovery.once !== false
+    if (this.discovery.once !== undefined)
+      this.discovery.once = this.discovery.once !== false
 
     /*
      * An operation that states no output states an empty schema, which every reply fits —
@@ -114,7 +115,10 @@ export class Request extends Contract {
     const required: string[] = []
 
     if (definition.stream !== undefined) {
-      schema.properties.input = streamed(definition.input ?? { type: 'object' }, definition.stream)
+      schema.properties.input = streamed(
+        definition.input ?? { type: 'object' },
+        definition.stream
+      )
       required.push('input')
     } else if (definition.input !== undefined) {
       schema.properties.input = definition.input
@@ -172,7 +176,9 @@ export class Request extends Contract {
 function streamed(input: JSONSchema, property: string): JSONSchema {
   const properties = { ...input.properties, [property]: {} }
   const required =
-    input.required === undefined ? [property] : [...(input.required as string[]), property]
+    input.required === undefined
+      ? [property]
+      : [...(input.required as string[]), property]
 
   return { ...input, properties, required }
 }

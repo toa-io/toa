@@ -1,7 +1,11 @@
 import { readdirSync, type Dirent } from 'node:fs'
 import { resolve } from 'node:path'
 import { Connector } from '@toa.io/core'
-import { environment, NAMESPACE, SIGNALS } from '@toa.io/definitions/extensions.introspection'
+import {
+  environment,
+  NAMESPACE,
+  SIGNALS
+} from '@toa.io/definitions/extensions.introspection'
 import { type Host } from './Factory.ts'
 
 /** Hosts the introspection components in the explorer process. */

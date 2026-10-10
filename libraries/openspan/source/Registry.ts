@@ -72,7 +72,8 @@ abstract class Instrument {
   protected key(labels: Record<string, unknown> = {}): string {
     let key = ''
 
-    for (let i = 0; i < this.#keys.length; i++) key += this.#value(i, labels[this.#keys[i]]) + ' '
+    for (let i = 0; i < this.#keys.length; i++)
+      key += this.#value(i, labels[this.#keys[i]]) + ' '
 
     return key
   }
@@ -150,7 +151,8 @@ export class Gauge extends Instrument {
     const key = this.key(labels)
     const point = this.#points.get(key)
 
-    if (point === undefined) this.#points.set(key, { labels: this.labels(labels), value: delta })
+    if (point === undefined)
+      this.#points.set(key, { labels: this.labels(labels), value: delta })
     else point.value += delta
   }
 

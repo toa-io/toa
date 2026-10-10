@@ -20,16 +20,16 @@ delayed call, which is `detached` today.
    one.
 2. What the operation calls, emits or delays carries the new chain, which begins with that hop.
 3. The request's identity and its `readonly` travel on as they do for any other call: they belong
-   to the request, and the chain is the only thing dropped. *(today, for every call)*
+   to the request, and the chain is the only thing dropped. _(today, for every call)_
 4. A circle that passes through an unchained operation is refused by neither rule, because every
    lap begins at the operation again. Depth included: a chain grows from the operation onwards and
    is bounded from there.
-5. A circle that does not pass through it is refused as before. *(today)*
+5. A circle that does not pass through it is refused as before. _(today)_
 
 **A delayed call**
 
 6. `context.delay(endpoint, request, { unchained: true })` makes the call by a chain that begins
-   with the delayed call itself. *(today, as `detached`)*
+   with the delayed call itself. _(today, as `detached`)_
 7. `detached` is not read any more. A call that passes it continues the chain that armed it.
 
 ### What a component author does differently
@@ -75,7 +75,7 @@ made by a chain of its own with `detached: true`. Nothing lets one operation be 
 
 1. An unchained operation that calls itself runs past the third round, and ends where its own
    algorithm stops.
-2. An operation that calls itself without the flag is refused on its third round. *(today)*
+2. An operation that calls itself without the flag is refused on its third round. _(today)_
 3. A delayed call armed with `unchained: true` begins a chain of its own, and an operation re-arming
    itself so runs every round.
 4. A delayed call armed with `detached: true` continues the chain, and is refused on its third round.

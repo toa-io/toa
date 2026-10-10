@@ -65,12 +65,9 @@ Given(
   }
 )
 
-When(
-  'convergence has settled',
-  async function () {
-    await delay(500)
-  }
-)
+When('convergence has settled', async function () {
+  await delay(500)
+})
 
 Given(
   'the region {string} is consuming {component}',

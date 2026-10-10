@@ -383,7 +383,10 @@ it('should call an interval another replica owns', async () => {
 
   for (let hour = 0; hour < 24; hour++) await advance(HOUR * SECOND)
 
-  assert.deepStrictEqual(intervals(), range(24).map((i) => (i + 1) % 24))
+  assert.deepStrictEqual(
+    intervals(),
+    range(24).map((i) => (i + 1) % 24)
+  )
 })
 
 it('should not start a call in every replica while the one before has not returned', async () => {

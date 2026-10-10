@@ -10,7 +10,10 @@ const NORMALIZED = 'manifest.toa.json'
 
 let normalised = 0
 
-const digest = { labels: ['identity-basic'], manifests: [{ name: 'basic', namespace: 'identity' }] }
+const digest = {
+  labels: ['identity-basic'],
+  manifests: [{ name: 'basic', namespace: 'identity' }]
+}
 
 mock.module('@toa.io/norm', {
   namedExports: {
@@ -20,7 +23,8 @@ mock.module('@toa.io/norm', {
       return mockComponent()
     },
     definition: async (reference) => ({
-      module: reference === '@toa.io/extensions.exposition' ? { components: () => digest } : {}
+      module:
+        reference === '@toa.io/extensions.exposition' ? { components: () => digest } : {}
     }),
     revive: (declared, path) => ({ ...declared, path }),
     NORMALIZED

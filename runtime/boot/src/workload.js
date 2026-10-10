@@ -236,7 +236,9 @@ export class Workload extends Connector {
       console.error('Resume failed', { message: error?.message })
 
       await this.disconnect().catch((failure) => {
-        console.error('Shutdown after a failed resume failed', { message: failure?.message })
+        console.error('Shutdown after a failed resume failed', {
+          message: failure?.message
+        })
       })
 
       process.exit(1)

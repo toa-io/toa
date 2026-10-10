@@ -277,7 +277,9 @@ describe('operations', () => {
     it('should refuse the names the scopes had before `entry` and `entries`', async () => {
       for (const scope of ['object', 'objects']) {
         manifest.operations.get.scope = scope
-        await assert.rejects(validate(manifest), (error) => /allowed values/.test(error.message))
+        await assert.rejects(validate(manifest), (error) =>
+          /allowed values/.test(error.message)
+        )
       }
     })
 
@@ -309,7 +311,9 @@ describe('operations', () => {
 
     it('should not be a window shorter than ten minutes', async () => {
       manifest.operations.add.once = 599
-      await assert.rejects(validate(manifest), (error) => /must be >= 600/.test(error.message))
+      await assert.rejects(validate(manifest), (error) =>
+        /must be >= 600/.test(error.message)
+      )
     })
 
     it('should not be a fraction of a second', async () => {
@@ -393,7 +397,9 @@ describe('stateful', () => {
 
     operation.stateful = 'yes'
 
-    await assert.rejects(validate(manifest), (error) => /must be boolean/.test(error.message))
+    await assert.rejects(validate(manifest), (error) =>
+      /must be boolean/.test(error.message)
+    )
   })
 })
 
@@ -411,7 +417,9 @@ describe('unchained', () => {
 
     operation.unchained = 'yes'
 
-    await assert.rejects(validate(manifest), (error) => /must be boolean/.test(error.message))
+    await assert.rejects(validate(manifest), (error) =>
+      /must be boolean/.test(error.message)
+    )
   })
 })
 

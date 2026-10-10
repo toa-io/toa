@@ -14,7 +14,7 @@ components declare and how many components it has ever had.
 1. A task for any operation of a component arrives on `<namespace>.<component>..tasks`. Which
    operation it is for travels with the message.
 2. Any process serving the component takes any of its tasks, and which operation a task is for
-   does not change who may take it *(today)*.
+   does not change who may take it _(today)_.
 3. A task for an operation the component does not serve is set aside on its first delivery, saying
    which operation it named.
 4. A task for a stateful operation is refused where it is made, before anything is sent. A stateful
@@ -22,14 +22,14 @@ components declare and how many components it has ever had.
 5. Tasks of one component share a queue and its prefetch, so a backlog of one operation's tasks
    delays another's.
 6. What a task does, how often it is tried, where it is kept when it runs out of attempts, and what
-   the kept message carries are unchanged *(today)*.
+   the kept message carries are unchanged _(today)_.
 
 **Discovery**
 
 7. A process answers a ping once, and every component it hosts announces itself.
 8. The queue it answers on goes when the process does, so a component a deployment no longer has
    leaves nothing on the broker.
-9. A component still connecting when a ping arrives announces itself when it opens *(today)*.
+9. A component still connecting when a ping arrives announces itself when it opens _(today)_.
 
 **What is not promised**
 
@@ -115,12 +115,12 @@ a rollout, another replica and another process leave nothing behind.
 
 So a queue that is left over is one whose declaration was removed, and removing it is the same act:
 
-| what was removed | what to remove with it |
-| --- | --- |
-| an operation | `<ns>.<component>.<operation>` |
-| a component | its operation queues, `<ns>.<component>..tasks`, and the event queues its receivers were bound by |
-| a receiver | `<srcNs>.<srcComponent>.<event>..<ns>.<component>` |
-| a deployment, or a tenant of a multi-tenant one | its vhost |
+| what was removed                                | what to remove with it                                                                            |
+| ----------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| an operation                                    | `<ns>.<component>.<operation>`                                                                    |
+| a component                                     | its operation queues, `<ns>.<component>..tasks`, and the event queues its receivers were bound by |
+| a receiver                                      | `<srcNs>.<srcComponent>.<event>..<ns>.<component>`                                                |
+| a deployment, or a tenant of a multi-tenant one | its vhost                                                                                         |
 
 A retired `delay` leaves a `comq.retry.<value>` behind, which comq records as a housekeeping item
 rather than a hazard.

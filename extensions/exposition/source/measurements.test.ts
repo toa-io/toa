@@ -13,7 +13,10 @@ it('should count an answer by the method, the route and the status', () => {
 
   const series = registry()
     .collect()
-    .find(({ name, labels }) => name === 'toa.exposition.responses' && labels.route === '/items/')
+    .find(
+      ({ name, labels }) =>
+        name === 'toa.exposition.responses' && labels.route === '/items/'
+    )
 
   assert.deepEqual(series?.labels, { method: 'POST', route: '/items/', status: '201' })
   assert.equal(series?.value, 1)

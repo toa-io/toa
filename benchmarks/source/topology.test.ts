@@ -47,7 +47,11 @@ describe('place', () => {
   it('should give each one core on 8 CPUs without siblings', () => {
     const topology = Array.from({ length: 8 }, (_, core) => [core])
 
-    assert.deepEqual(place(topology), { gateway: '1', components: '2', load: '3,4,5,6,7' })
+    assert.deepEqual(place(topology), {
+      gateway: '1',
+      components: '2',
+      load: '3,4,5,6,7'
+    })
   })
 
   it('should pin nothing below 8 CPUs', () => {

@@ -15,8 +15,17 @@ describe('icons', () => {
 
   it('should take the type as the MIME type, and split the sizes', () => {
     assert.deepEqual(
-      icons({ icons: [{ src: '/a.png', type: 'image/png', sizes: ' 48x48  96X96 any ' }] }, URL),
-      [{ src: 'https://teapots.example/a.png', mimeType: 'image/png', sizes: ['48x48', '96x96', 'any'] }]
+      icons(
+        { icons: [{ src: '/a.png', type: 'image/png', sizes: ' 48x48  96X96 any ' }] },
+        URL
+      ),
+      [
+        {
+          src: 'https://teapots.example/a.png',
+          mimeType: 'image/png',
+          sizes: ['48x48', '96x96', 'any']
+        }
+      ]
     )
   })
 
@@ -47,7 +56,7 @@ describe('icons', () => {
     ])
   })
 
-  it('should show only an icon of the manifest\'s origin', () => {
+  it("should show only an icon of the manifest's origin", () => {
     const shown = icons(
       {
         icons: [
@@ -82,13 +91,23 @@ describe('icons', () => {
 
   it('should leave out what is not an icon', () => {
     assert.deepEqual(
-      icons({ icons: [null, 'icon.png', {}, { src: 1 }, { src: '' }, { src: 'http://[' }] }, URL),
+      icons(
+        { icons: [null, 'icon.png', {}, { src: 1 }, { src: '' }, { src: 'http://[' }] },
+        URL
+      ),
       []
     )
   })
 
   it('should find none in what lists none', () => {
-    for (const document of [{}, { icons: {} }, { icons: 'icon.png' }, [], null, 'manifest'])
+    for (const document of [
+      {},
+      { icons: {} },
+      { icons: 'icon.png' },
+      [],
+      null,
+      'manifest'
+    ])
       assert.deepEqual(icons(document, URL), [], JSON.stringify(document))
   })
 })
@@ -119,7 +138,11 @@ describe('Manifest', () => {
       return reply.clone()
     })
 
-    manifest = new Manifest(URL, (icons) => shown.push(icons), fetch as unknown as typeof globalThis.fetch)
+    manifest = new Manifest(
+      URL,
+      (icons) => shown.push(icons),
+      fetch as unknown as typeof globalThis.fetch
+    )
 
     return manifest.connect()
   }
@@ -133,16 +156,25 @@ describe('Manifest', () => {
   }
 
   const ICON = { src: '/icon.png', type: 'image/png', sizes: '512x512' }
-  const SHOWN = [{ src: 'https://teapots.example/icon.png', mimeType: 'image/png', sizes: ['512x512'] }]
+  const SHOWN = [
+    { src: 'https://teapots.example/icon.png', mimeType: 'image/png', sizes: ['512x512'] }
+  ]
 
   it('should not wait for the first read', async () => {
     let release!: () => void
 
     fetch = mock.fn(
-      () => new Promise<Response>((resolve) => (release = () => resolve(json({ icons: [ICON] }))))
+      () =>
+        new Promise<Response>(
+          (resolve) => (release = () => resolve(json({ icons: [ICON] })))
+        )
     )
 
-    manifest = new Manifest(URL, (icons) => shown.push(icons), fetch as unknown as typeof globalThis.fetch)
+    manifest = new Manifest(
+      URL,
+      (icons) => shown.push(icons),
+      fetch as unknown as typeof globalThis.fetch
+    )
 
     await manifest.connect()
 
@@ -163,7 +195,10 @@ describe('Manifest', () => {
 
     assert.equal(url, URL)
     assert.equal(init.redirect, 'error')
-    assert.match(new Headers(init.headers).get('accept') ?? '', /application\/manifest\+json/)
+    assert.match(
+      new Headers(init.headers).get('accept') ?? '',
+      /application\/manifest\+json/
+    )
     assert.ok(init.signal instanceof AbortSignal)
   })
 
@@ -193,7 +228,11 @@ describe('Manifest', () => {
   })
 
   it('should retry sooner until it reads one', async () => {
-    await start(new Error('refused'), new Response('', { status: 503 }), json({ icons: [ICON] }))
+    await start(
+      new Error('refused'),
+      new Response('', { status: 503 }),
+      json({ icons: [ICON] })
+    )
     await settle()
 
     mock.timers.tick(MINUTE)
@@ -228,7 +267,11 @@ describe('Manifest', () => {
   })
 
   it('should keep the icons of the last read that did not fail', async () => {
-    await start(json({ icons: [ICON] }), new Error('refused'), new Response('{', { status: 200 }))
+    await start(
+      json({ icons: [ICON] }),
+      new Error('refused'),
+      new Response('{', { status: 200 })
+    )
     await settle()
 
     mock.timers.tick(30 * MINUTE)

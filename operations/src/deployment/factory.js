@@ -58,7 +58,9 @@ export class Factory {
         packages: context.packages
       })
     else
-      this.#compositions = compositions.map((composition) => this.#composition(composition))
+      this.#compositions = compositions.map((composition) =>
+        this.#composition(composition)
+      )
   }
 
   async operator() {
@@ -124,7 +126,8 @@ export class Factory {
     // components require; a service a composition lists is deployed for being listed
     const managed = instances.filter(({ component }) => component.evicted !== true)
 
-    if (managed.length === 0 && instances.length > 0 && !this.#listed.has(reference)) return
+    if (managed.length === 0 && instances.length > 0 && !this.#listed.has(reference))
+      return
 
     const annotation = this.#context.annotations?.[name]
 

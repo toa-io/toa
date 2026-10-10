@@ -82,7 +82,11 @@ Then(
     if (this.exception !== undefined) throw this.exception
 
     assert.ok(this.reading.ended, 'The stream ended without a token')
-    assert.equal(typeof this.reading.token, 'string', `The token is ${this.reading.token}`)
+    assert.equal(
+      typeof this.reading.token,
+      'string',
+      `The token is ${this.reading.token}`
+    )
   }
 )
 
@@ -273,7 +277,10 @@ async function readOnce(endpoint, request) {
     const reply = await remote.invoke(operation, request)
 
     for await (const part of reply) {
-      assert.ok(!this.reading.ended, `A part arrived after the token: ${JSON.stringify(part)}`)
+      assert.ok(
+        !this.reading.ended,
+        `A part arrived after the token: ${JSON.stringify(part)}`
+      )
 
       if ('token' in part) {
         this.reading.token = part.token
@@ -301,7 +308,8 @@ function apply(copy, part) {
 
   const held = copy.get(part.entry.id)
 
-  if (held === undefined || held.VERSION < part.entry.VERSION) copy.set(part.entry.id, part.entry)
+  if (held === undefined || held.VERSION < part.entry.VERSION)
+    copy.set(part.entry.id, part.entry)
 }
 
 async function release(context) {
@@ -404,7 +412,10 @@ When(
 
       throw new Error('MongoDB kept its history for five minutes past its size')
     } finally {
-      await client.db('filler').dropDatabase().catch(() => undefined)
+      await client
+        .db('filler')
+        .dropDatabase()
+        .catch(() => undefined)
       await client.close()
     }
   }

@@ -24,6 +24,7 @@ export class Transition extends Operation {
     super(cascade, scope, contract, query, definition)
 
     this.#concurrency = definition.concurrency
+    this.retried = definition.concurrency === 'retry'
   }
 
   protected override async process(store: Store): Promise<any> {

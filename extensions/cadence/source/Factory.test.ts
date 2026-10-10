@@ -19,7 +19,9 @@ const host = (): Host & { atom: ReturnType<typeof mock.fn> } =>
 it('should coordinate a pulse the component makes as a whole', () => {
   const home = host()
 
-  new Factory(home).tenant(locator, { sweep: [{ cycle: 60, intervals: 1, scope: 'group' }] })
+  new Factory(home).tenant(locator, {
+    sweep: [{ cycle: 60, intervals: 1, scope: 'group' }]
+  })
 
   assert.strictEqual(home.atom.mock.callCount(), 1)
 })
@@ -27,7 +29,9 @@ it('should coordinate a pulse the component makes as a whole', () => {
 it('should coordinate nothing where every pulse is made in every replica', () => {
   const home = host()
 
-  new Factory(home).tenant(locator, { trim: [{ cycle: 60, intervals: 1, scope: 'replica' }] })
+  new Factory(home).tenant(locator, {
+    trim: [{ cycle: 60, intervals: 1, scope: 'replica' }]
+  })
 
   assert.strictEqual(
     home.atom.mock.callCount(),

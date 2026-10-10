@@ -23,9 +23,16 @@ describe('SLOTS', () => {
   })
 
   it('should bind ports of the block Toa reserves for them', () => {
-    const ports = Object.values(SLOTS).flatMap(({ ports }) => [ports.gateway, ports.probe, ...ports.ready])
+    const ports = Object.values(SLOTS).flatMap(({ ports }) => [
+      ports.gateway,
+      ports.probe,
+      ...ports.ready
+    ])
 
     assert.equal(new Set(ports).size, ports.length)
-    assert.ok(ports.every((port) => port >= 31090 && port <= 31099), JSON.stringify(ports))
+    assert.ok(
+      ports.every((port) => port >= 31090 && port <= 31099),
+      JSON.stringify(ports)
+    )
   })
 })

@@ -29,8 +29,8 @@ packages the time went to.
 **A comparison**
 
 1. Each process in each scenario gets one verdict on its CPU time per request, from a 95% interval
-   of the ratio head/base: *slower* where the whole interval is above `1 + t`, *faster* where
-   it is below `1 − t`, *unchanged* where it lies within `[1 − t, 1 + t]`, and *inconclusive*
+   of the ratio head/base: _slower_ where the whole interval is above `1 + t`, _faster_ where
+   it is below `1 − t`, _unchanged_ where it lies within `[1 − t, 1 + t]`, and _inconclusive_
    otherwise, with the interval's width. `t` is 5% unless stated.
 2. The interval is recomputed to the same bounds from the same measurements.
 3. A difference in broker messages or database operations per request larger than 0.05 is reported
@@ -50,7 +50,7 @@ packages the time went to.
 8. Absolute CPU time and latency describe the machine they were measured on and carry to no other.
 9. Code that no scenario reaches is outside every verdict.
 10. A verdict describes the machine it was reached on. A difference smaller than that machine's noise
-    comes out *inconclusive*, and the noise is measured by comparing a revision with itself.
+    comes out _inconclusive_, and the noise is measured by comparing a revision with itself.
 
 ### What a contributor does differently
 
@@ -184,12 +184,12 @@ What stands in the way of measuring it by hand:
 
 ## Verification
 
-- A revision compared with itself comes out *unchanged* in every process and scenario, with identical
+- A revision compared with itself comes out _unchanged_ in every process and scenario, with identical
   counts.
-- CPU work of a known cost added per request to the gateway comes out *slower* in the gateway, with an
-  interval that contains the expected ratio, and *unchanged* in the components; the same work added
+- CPU work of a known cost added per request to the gateway comes out _slower_ in the gateway, with an
+  interval that contains the expected ratio, and _unchanged_ in the components; the same work added
   to operation handling comes out the other way round.
-- Work of 2% is never reported *slower*.
+- Work of 2% is never reported _slower_.
 - One more database read in `create` shows as exactly one more operation per request in `create`, and
   in no other scenario.
 - A route that answers `401`, a component killed within a window, and a port already bound each fail

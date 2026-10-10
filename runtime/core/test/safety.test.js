@@ -61,7 +61,14 @@ describe('an unsafe endpoint', () => {
   let call
 
   beforeEach(() => {
-    call = new Call(fixtures.transmission, fixtures.contract, TARGET, undefined, false, false)
+    call = new Call(
+      fixtures.transmission,
+      fixtures.contract,
+      TARGET,
+      undefined,
+      false,
+      false
+    )
   })
 
   it('should be called where nothing says otherwise', async () => {
@@ -110,7 +117,14 @@ describe('a safe endpoint', () => {
   let call
 
   beforeEach(() => {
-    call = new Call(fixtures.transmission, fixtures.contract, TARGET, undefined, false, true)
+    call = new Call(
+      fixtures.transmission,
+      fixtures.contract,
+      TARGET,
+      undefined,
+      false,
+      true
+    )
   })
 
   it('should be called under a readonly invocation', async () => {
@@ -136,5 +150,63 @@ describe('a safe endpoint', () => {
     await call.invoke({ ...fixtures.request().ok, readonly: false })
 
     assert.ok(!('readonly' in sent()))
+  })
+})
+
+describe('an endpoint that is made once', () => {
+  let call
+
+  beforeEach(() => {
+    call = new Call(
+      fixtures.transmission,
+      fixtures.contract,
+      TARGET,
+      undefined,
+      false,
+      false,
+      undefined,
+      true
+    )
+  })
+
+  /** as `Component.invoke` enters a transition declared `concurrency: retry` */
+  const retried = () => ({ hops: [TARGET], retried: true })
+
+  // every attempt would make the call under an identity of its own
+  it('should refuse a call made by a retried transition', async () => {
+    await assert.rejects(
+      trail.follow(retried(), async () => call.invoke(fixtures.request().ok)),
+      { code: codes.Unrepeatable, message: /is made once/ }
+    )
+  })
+
+  it('should be refused before anything is sent', async () => {
+    await trail
+      .follow(retried(), async () => call.invoke(fixtures.request().ok))
+      .catch(() => undefined)
+
+    assert.strictEqual(sent(), undefined)
+  })
+
+  it('should be called by anything else', async () => {
+    await trail.follow(serving(undefined), async () => call.invoke(fixtures.request().ok))
+
+    assert.notStrictEqual(sent(), undefined)
+  })
+
+  it('should be permanent', () => {
+    assert.strictEqual(permanent({ code: codes.Unrepeatable }), true)
+  })
+})
+
+describe('an endpoint that declares nothing', () => {
+  it('should be called by a retried transition', async () => {
+    const call = new Call(fixtures.transmission, fixtures.contract, TARGET)
+
+    await trail.follow({ hops: [TARGET], retried: true }, async () =>
+      call.invoke(fixtures.request().ok)
+    )
+
+    assert.notStrictEqual(sent(), undefined)
   })
 })

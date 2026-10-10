@@ -73,7 +73,9 @@ function scheduled(endpoint: string, schedule: Schedule): void {
   // is what a delay may state and a schedule may not, because nothing would then keep the
   // occurrences of an outage from all being owed at once
   if ((schedule as { overdue?: unknown }).overdue === null)
-    throw new Error(`Invalid schedule '${endpoint}': a schedule states a bound or none, not null`)
+    throw new Error(
+      `Invalid schedule '${endpoint}': a schedule states a bound or none, not null`
+    )
 
   schemas.schedule.validate<Schedule>(schedule, `Invalid schedule '${endpoint}'`)
 

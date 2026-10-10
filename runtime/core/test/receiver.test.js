@@ -141,7 +141,11 @@ describe('the chain', () => {
   const request = () => fixtures.local.invoke.mock.calls.at(-1).arguments[1]
 
   it('should continue what the message carries', async () => {
-    const hops = ['default.orders.place', '~default.orders.sync', 'default.billing.charge']
+    const hops = [
+      'default.orders.place',
+      '~default.orders.sync',
+      'default.billing.charge'
+    ]
 
     await receiver.receive({ payload: { foo: 'bar' }, trail: hops })
 

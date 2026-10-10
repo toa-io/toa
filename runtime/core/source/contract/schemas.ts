@@ -17,7 +17,11 @@ export const query: JSONSchema = {
       type: 'array',
       uniqueItems: true,
       minItems: 1,
-      items: { type: 'string', pattern: '^\\w{1,32}(?::(?:asc|desc))?$' }
+      // a property, or the path to one inside an object: `size.volume:desc`
+      items: {
+        type: 'string',
+        pattern: '^\\w{1,32}(?:\\.\\w{1,32}){0,7}(?::(?:asc|desc))?$'
+      }
     },
     projection: {
       type: 'array',

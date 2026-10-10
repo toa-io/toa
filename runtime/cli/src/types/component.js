@@ -71,7 +71,8 @@ function input(operation, importing) {
 
   importing('node:stream', 'Readable')
 
-  const carried = 'Readable | { type?: string | null, accept?: string | null, stream: Readable }'
+  const carried =
+    'Readable | { type?: string | null, accept?: string | null, stream: Readable }'
   const property = `{ ${operation.stream}: ${carried} }`
 
   return stated(operation.input) ? `${emit(operation.input)} & ${property}` : property
@@ -91,6 +92,10 @@ function calls(endpoints, entity, importing) {
       // when `query: true`, and otherwise takes it or does without
       request.push(`query${operation.query === true ? '' : '?'}: Query<${entity}>`)
     }
+
+    // what an effect gets or creates, where the caller names it
+    if (operation.type === 'effect' && entity !== 'unknown')
+      request.push(`entity?: Partial<${entity}>`)
 
     // the process a call to a stateful operation goes to
     if (operation.stateful === true) request.push('instance: string')

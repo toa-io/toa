@@ -166,9 +166,21 @@ describe('read', () => {
 
     assert.strictEqual(
       result,
-      ['--cut', '', 'ACK', '--cut', '', '{"entry":1}', '--cut', '', 'Plain', '--cut', '', 'FIN', '--cut--'].join(
-        '\r\n'
-      )
+      [
+        '--cut',
+        '',
+        'ACK',
+        '--cut',
+        '',
+        '{"entry":1}',
+        '--cut',
+        '',
+        'Plain',
+        '--cut',
+        '',
+        'FIN',
+        '--cut--'
+      ].join('\r\n')
     )
   })
 

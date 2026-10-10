@@ -55,7 +55,8 @@ export class Server extends Connector {
   }
 
   private listener(request: http.IncomingMessage, response: http.ServerResponse): void {
-    const invoke = request.method === 'POST' ? this.routes.get(request.url ?? '') : undefined
+    const invoke =
+      request.method === 'POST' ? this.routes.get(request.url ?? '') : undefined
 
     if (typeof invoke !== 'function') {
       response.writeHead(404)
@@ -123,11 +124,16 @@ function parse(header: unknown): Request | null {
     return null
   }
 
-  if (envelope === null || typeof envelope !== 'object' || Array.isArray(envelope)) return null
+  if (envelope === null || typeof envelope !== 'object' || Array.isArray(envelope))
+    return null
 
   const input = (envelope as Request).input
 
-  if (input !== undefined && input !== null && (typeof input !== 'object' || Array.isArray(input)))
+  if (
+    input !== undefined &&
+    input !== null &&
+    (typeof input !== 'object' || Array.isArray(input))
+  )
     return null
 
   return envelope as Request

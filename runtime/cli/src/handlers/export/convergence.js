@@ -30,7 +30,8 @@ export const convergence = async (argv) => {
 
   const host = vhost(annotation.binding.pointer)
 
-  if (argv.format === COMMANDS) for (const line of commands(labels, host)) console.log(line)
+  if (argv.format === COMMANDS)
+    for (const line of commands(labels, host)) console.log(line)
   else console.log(JSON.stringify(topology(labels, host), null, 2))
 
   hint(argv, labels)
@@ -49,10 +50,10 @@ function hint(argv, labels) {
   if (argv.format === COMMANDS) return
 
   console.error(
-    '# Declare them on that region\'s convergence broker, before its data is copied and\n' +
+    "# Declare them on that region's convergence broker, before its data is copied and\n" +
       '# before anything is deployed there:\n#\n' +
       `#   toa export convergence ${argv.environment} | curl -u <user>:<password> \\\n` +
-      '#     -H \'content-type: application/json\' -X POST --data @- \\\n' +
+      "#     -H 'content-type: application/json' -X POST --data @- \\\n" +
       '#     http://<broker>:15672/api/definitions\n#\n' +
       '# The import adds and removes nothing, so it is safe to run again.'
   )

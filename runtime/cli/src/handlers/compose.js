@@ -87,7 +87,8 @@ async function dock(argv) {
   // the container is given its own command, so the image's — which names the map — is not used.
   // What is mounted is what this checkout wrote, which is plain, so it is named as one.
   const command =
-    docker.command('toa compose *', args) + (file === undefined ? '' : ` --map ${MAP_LOCAL}`)
+    docker.command('toa compose *', args) +
+    (file === undefined ? '' : ` --map ${MAP_LOCAL}`)
 
   await docker.run(image, command, argv.env, file)
 }

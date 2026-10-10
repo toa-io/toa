@@ -53,7 +53,9 @@ it('should carry a channel over every broker it is given', async () => {
 })
 
 it('should consume a channel over every broker it is given', async () => {
-  const inbound = factory.inbound('convergence', uris, 'store.orders', { accept: mock.fn() })
+  const inbound = factory.inbound('convergence', uris, 'store.orders', {
+    accept: mock.fn()
+  })
 
   await inbound.connect()
 

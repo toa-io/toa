@@ -31,7 +31,9 @@ export const evict = (context) => {
   for (const composition of context.compositions) {
     if (composition.services === undefined) continue
 
-    composition.services = composition.services.filter((reference) => !services.has(reference))
+    composition.services = composition.services.filter(
+      (reference) => !services.has(reference)
+    )
 
     if (composition.services.length === 0) delete composition.services
   }

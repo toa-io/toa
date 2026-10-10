@@ -50,6 +50,36 @@ not at all: where any of them has been changed since it was read, or one it crea
 created meanwhile, nothing of the set is written, and the Transition is retried or refused as its
 `concurrency` says.
 
+##### Concurrency
+
+A Transition over an entry that exists reads it, runs, and writes it back — and another writer may
+have changed the entry in between. `concurrency` says what happens to the write that lost:
+
+| `concurrency` | a lost write                                                              |
+| ------------- | ------------------------------------------------------------------------- |
+| `none`        | is refused: the call raises `StateConcurrency`, and nothing is written    |
+| `retry`       | is made again: the entry is read anew and the algorithm runs from the top |
+
+A Transition that may be called with a `query` declares one of the two.
+
+The algorithm of a Transition declared `retry` runs once per attempt, and only what it did to its
+entry is discarded with a lost write. A call it made to another operation is made again by the
+next attempt, as is whatever it reached through an Aspect — `fetch`, `context.stash`. Both are
+yours to make safe to repeat.
+
+**A Transition declared `retry` does not call an operation that declares
+[`once`](/documentation/inbox.md).** The second attempt's call would be applied again, which is
+what `once` says does not happen, so the call is refused where it is made, on the first attempt as
+on any other:
+
+```
+UnrepeatableException: 'default.wallets.charge' is made once, and a transition retried on a lost write would make it again
+```
+
+Declare the Transition `concurrency: none`, make the call from a
+[receiver](/documentation/component/receiver.md) of the event its change publishes, or call both
+from an Effect.
+
 A set is bounded. An operation over `entries` — a Transition, an Observation or an Effect — is
 called with the `ids` of its set, or with a `limit` on what its `criteria` select; a call with
 neither is refused. `omit` skips entries of an ordered set, so it is refused without `sort`:
@@ -58,6 +88,9 @@ neither is refused. `omit` skips entries of an ordered set, so it is refused wit
 await context.local.expire({ query: { criteria: 'due<1700000000000', limit: 256 } })
 await context.local.enumerate({ query: { sort: ['title:asc'], omit: 20, limit: 10 } })
 ```
+
+A criteria, a `sort` and a `projection` name a property inside an object by the path to it:
+`size.volume>2`, `size.volume:desc`. A path that names nothing the entity declares is refused.
 
 A `limit` without `sort` takes any entries the criteria match. Call again for the rest: a
 Transition that changes what the criteria read finds fewer each time.
@@ -104,7 +137,8 @@ Special case of the Observation (unsafe Observation) that optionally uses the Sc
 side effects.
 
 If the Effect is called with `entity` property of the Request, the current state will be acquired
-using atomic "get or create."
+using atomic "get or create." A deleted entity is not one to get: a new one is created beside it,
+unless the query asks for the deleted with `deleted: true`.
 
 #### Unmanaged
 
@@ -150,8 +184,10 @@ Safe operations cannot modify the State; unsafe operations may, whether or not a
 An Unmanaged operation is given the driver's own handle, so the rule it is held to above is the
 author's to keep rather than the runtime's to enforce, and the runtime does not vouch for it.
 
-A request may state that it only reads, and a call to an unsafe operation made under one is refused.
-See [readonly chains](/documentation/readonly.md).
+A safe operation reaches nothing unsafe: a call it makes to an unsafe operation is refused, and so
+is every such call below it. An operation that calls what may modify the State is an Effect. A
+request may state that it only reads, and what it reaches is held to the same. See
+[readonly chains](/documentation/readonly.md).
 
 ### Genuine Operations
 

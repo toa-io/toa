@@ -7,7 +7,10 @@ import { row } from '@toa.io/extensions.cadence'
 export function transition(input, entry) {
   const { endpoint, interval, overdue, request, trail } = input
 
-  Object.assign(entry, row({ endpoint, due: Date.now() + interval, overdue, request, trail }))
+  Object.assign(
+    entry,
+    row({ endpoint, due: Date.now() + interval, overdue, request, trail })
+  )
 
   return entry.id
 }

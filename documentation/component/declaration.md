@@ -130,7 +130,7 @@ What a step may say, for MongoDB:
 
 | Step        | Fields                                                                                                                                                   |
 | ----------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `index`     | `name`, `keys` — a property to `asc`, `desc`, `hash` or `text` — and any of `unique`, `sparse`, `partial`, `ttl`                                         |
+| `index`     | `name`, `keys` — a property, or the path to one inside an object, to `asc`, `desc`, `hash` or `text` — and any of `unique`, `sparse`, `partial`, `ttl`   |
 | `dropIndex` | `name`                                                                                                                                                   |
 | `update`    | `filter`, and `update` as an object or as a list to run as an aggregation pipeline                                                                       |
 | `delete`    | `filter`, where `{}` means every record                                                                                                                  |

@@ -48,7 +48,9 @@ export const codes = {
   /** a call to a component nothing this process was given states */
   Unstated: 602,
   /** what an operation continued by an extension was answered cannot be kept: a stream */
-  Unrecordable: 603
+  Unrecordable: 603,
+  /** a call to an operation that is made once, made by a transition that is retried */
+  Unrepeatable: 604
 }
 
 export class Exception {
@@ -188,6 +190,7 @@ export const MisuseException = derive('Misuse')
 export const IrresumableException = derive('Irresumable')
 export const UnstatedException = derive('Unstated')
 export const UnrecordableException = derive('Unrecordable')
+export const UnrepeatableException = derive('Unrepeatable')
 
 export const names = swap(codes)
 // #endregion
@@ -255,7 +258,9 @@ const OUTCOME: Record<keyof typeof codes, 'permanent' | 'transient'> = {
   // a remote is built once and held, so what this process was not given, it is not given later
   Unstated: 'permanent',
   // the same step answers with the same kind of thing on the next attempt, and is refused again
-  Unrecordable: 'permanent'
+  Unrecordable: 'permanent',
+  // a transition that is retried is retried on the next attempt too, and makes the same call
+  Unrepeatable: 'permanent'
 }
 
 const PERMANENT = new Set<number>(

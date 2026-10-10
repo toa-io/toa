@@ -192,3 +192,23 @@ Feature: Export Compositions Deployment
       """
       Composition 'edge' lists '@toa.io/extensions.telemetry', which contributes no service.
       """
+
+  Scenario: A component without a namespace is listed by its name
+    Given I have components:
+      | dummies.one |
+      | nope        |
+    And I have a context with:
+      """yaml
+      compositions:
+        - name: edge
+          components:
+            - dummies.one
+            - nope
+      """
+    When I export deployment
+    Then exported values should contain:
+      """yaml
+      compositions:
+        - name: edge
+          components: [dummies-one, default-nope]
+      """

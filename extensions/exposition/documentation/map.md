@@ -97,11 +97,11 @@ route with `map:stream` cannot also receive a parsed body, and cannot carry `map
 What a route takes and what it answers are stated beside it:
 
 ```yaml
-    map:stream:
-      property: source
-      accept: [video/quicktime, video/mp4]
-      produces: [video/mp4, image/jpeg]
-      limit: 4GiB
+map:stream:
+  property: source
+  accept: [video/quicktime, video/mp4]
+  produces: [video/mp4, image/jpeg]
+  limit: 4GiB
 ```
 
 - `accept` is what a client may send. A request of another media type is rejected with `415`.
@@ -117,6 +117,7 @@ What a route takes and what it answers are stated beside it:
 
   Where a client names several of them, the order it named them in decides; where it names none, or
   takes anything, the route's own order does.
+
 - `limit` is the largest body the route takes, as a number of bytes or with a unit — see
   [stream size limit](octets.md#stream-size-limit). Past it, `413`. The default is `64MiB`.
 

@@ -21,7 +21,7 @@ A pulse says which of the two it is, as `scope`.
 1. A pulse declares `scope: replica` or `scope: group`, and `group` is what one that declares
    neither is.
 2. `scope: group` is what a pulse does today: the replicas agree on which of them owns an interval,
-   and one of them calls. *(today)*
+   and one of them calls. _(today)_
 3. `scope: replica` makes the call in every replica of the component: each one calls every interval
    of the cycle it is up for.
 4. A component whose pulses are all `replica` asks nothing of `atomicity`, so its pulses are made
@@ -36,9 +36,9 @@ A pulse says which of the two it is, as `scope`.
 
 **What is unchanged**
 
-7. An interval that no process was up for is not made up afterwards, under either scope. *(today)*
-8. A call is never made while the one before it, in the same replica, is still running. *(today)*
-9. An operation that raises loses its interval, and nothing is retried. *(today)*
+7. An interval that no process was up for is not made up afterwards, under either scope. _(today)_
+8. A call is never made while the one before it, in the same replica, is still running. _(today)_
+9. An operation that raises loses its interval, and nothing is retried. _(today)_
 
 **Not promised**
 
@@ -61,7 +61,7 @@ cadence:
 
 ```javascript
 // operations/trim.js — called in every replica, once a minute
-export function unmanaged (input, context) {
+export function unmanaged(input, context) {
   cache.evict()
 }
 ```

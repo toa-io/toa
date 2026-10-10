@@ -1,10 +1,9 @@
 import { parse } from '@toa.io/rsql'
 import { QuerySyntaxException } from '../exceptions.ts'
+import { property as find } from './property.ts'
 import type { Literal } from '@toa.io/rsql'
 import type { Node } from '../types/storages.ts'
-
-/** What a component declares about the properties a criteria may select on. */
-export type Properties = Record<string, { type: string }>
+import type { Properties } from './property.ts'
 
 export function criteria(expression: string, properties?: Properties): Node {
   try {
@@ -21,11 +20,7 @@ function read(
   { text, quoted, selector, operator }: Literal,
   properties?: Properties
 ): unknown {
-  // a selector is a client's to write, and `constructor` is no property of any entity
-  const property =
-    properties !== undefined && Object.hasOwn(properties, selector)
-      ? properties[selector]
-      : undefined
+  const property = properties === undefined ? undefined : find(properties, selector)
 
   if (properties !== undefined && property === undefined)
     throw new QuerySyntaxException(`Criteria selector '${selector}' is not defined`)
@@ -43,7 +38,7 @@ function read(
     return null
   }
 
-  const cast = property === undefined ? undefined : CAST[property.type]
+  const cast = property?.type === undefined ? undefined : CAST[property.type]
 
   return cast === undefined ? text : cast(text, selector)
 }

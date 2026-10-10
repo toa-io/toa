@@ -35,17 +35,18 @@ something:
 
 ### `default` namespace
 
-When the Pointer is used for component-specific URLs and the component is in the `default`
-namespace (that is, no `namepsace` is specified in its manifest), the annotation value must
-explicitly contain the `default` namespace.
+A component that declares no namespace is in `default`. It is keyed by its name; `default`
+keys all of them.
 
 ```yaml
 amqp:
-  # value for the `default` namespace
+  # every component without a namespace
   default: amqp://default-ns.rmq.example.com
-  # value for `teapots` component of the `default` namespace
-  default.teapots: amqp://default-dummy.rmq.example.com
+  # the `teapots` component, which declares none
+  teapots: amqp://default-dummy.rmq.example.com
 ```
+
+`default.teapots` names the same component, and is the key taken where both are written.
 
 ## Resolution
 

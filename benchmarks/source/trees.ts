@@ -24,9 +24,18 @@ export function base(repository: string): string {
  * The working tree where no ref is given; otherwise the revision unpacked and installed in the
  * cache, once per commit.
  */
-export async function resolve(repository: string, ref: string | undefined, cache: string): Promise<Tree> {
+export async function resolve(
+  repository: string,
+  ref: string | undefined,
+  cache: string
+): Promise<Tree> {
   if (ref === undefined)
-    return { ref: 'working tree', sha: git(repository, 'rev-parse', 'HEAD'), root: repository, working: true }
+    return {
+      ref: 'working tree',
+      sha: git(repository, 'rev-parse', 'HEAD'),
+      root: repository,
+      working: true
+    }
 
   const sha = git(repository, 'rev-parse', '--verify', `${ref}^{commit}`)
   const trees = join(cache, 'trees')
@@ -42,10 +51,20 @@ export async function resolve(repository: string, ref: string | undefined, cache
     await mkdir(join(cache, 'logs'), { recursive: true })
     console.log(`Installing ${ref} (${sha.slice(0, 7)}) into ${root}; log: ${log}`)
 
-    await run(['sh', '-c', `git -C "${repository}" archive ${sha} | tar -x -C "${root}"`], { cwd: root, log })
+    await run(
+      ['sh', '-c', `git -C "${repository}" archive ${sha} | tar -x -C "${root}"`],
+      { cwd: root, log }
+    )
 
     // `.gitattributes` keeps the lockfile out of an archive, and `npm ci` installs from nothing else
-    await run(['sh', '-c', `git -C "${repository}" show ${sha}:package-lock.json > package-lock.json`], { cwd: root, log })
+    await run(
+      [
+        'sh',
+        '-c',
+        `git -C "${repository}" show ${sha}:package-lock.json > package-lock.json`
+      ],
+      { cwd: root, log }
+    )
     await run(['npm', 'ci'], { cwd: root, log })
     await writeFile(ready, new Date().toISOString())
   } else {
@@ -114,11 +133,16 @@ async function run(argv: string[], where: { cwd: string; log: string }): Promise
 
   try {
     await new Promise<void>((resolve, reject) => {
-      const child = spawn(command, args, { cwd: where.cwd, stdio: ['ignore', output, output] })
+      const child = spawn(command, args, {
+        cwd: where.cwd,
+        stdio: ['ignore', output, output]
+      })
 
       child.on('error', reject)
       child.on('exit', (code) =>
-        code === 0 ? resolve() : reject(new Error(`${argv.join(' ')} exited with ${code}; see ${where.log}`))
+        code === 0
+          ? resolve()
+          : reject(new Error(`${argv.join(' ')} exited with ${code}; see ${where.log}`))
       )
     })
   } finally {

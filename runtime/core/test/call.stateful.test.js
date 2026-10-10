@@ -55,7 +55,10 @@ it('should refuse a call to an ordinary operation that names a process', async (
 
 // nobody waits for a task
 it('should refuse a task that waits', async () => {
-  await assert.rejects(ordinary().invoke({ task: true }, { timeout: 1000 }), refused(/task/))
+  await assert.rejects(
+    ordinary().invoke({ task: true }, { timeout: 1000 }),
+    refused(/task/)
+  )
   await assert.rejects(
     ordinary().invoke({ task: true }, { signal: new AbortController().signal }),
     refused(/task/)
@@ -86,7 +89,8 @@ it('should send neither the name nor the wait', async () => {
 
   await stateful().invoke({ input: 1, instance: 'a' }, { timeout: 1000, signal })
 
-  for (const key of ['instance', 'timeout', 'signal']) assert.ok(!(key in envelope()), key)
+  for (const key of ['instance', 'timeout', 'signal'])
+    assert.ok(!(key in envelope()), key)
 })
 
 it('should hand the transmission the process a call goes to', async () => {
@@ -169,12 +173,15 @@ it('should make a call its signal aborted before it was made nowhere', async () 
 
   controller.abort(reason)
 
-  await assert.rejects(stateful().invoke({ instance: 'a' }, { signal: controller.signal }), (exception) => {
-    assert.equal(exception.code, codes.Abandoned)
-    assert.equal(exception.cause, reason)
+  await assert.rejects(
+    stateful().invoke({ instance: 'a' }, { signal: controller.signal }),
+    (exception) => {
+      assert.equal(exception.code, codes.Abandoned)
+      assert.equal(exception.cause, reason)
 
-    return true
-  })
+      return true
+    }
+  )
 
   assert.equal(transmission.request.mock.callCount(), 0)
 })

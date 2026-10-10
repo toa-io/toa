@@ -72,7 +72,8 @@ export class Query {
           throw new http.BadRequest(`Query ${name} is not allowed`)
 
       // present, the window is the last one read: `?stop`
-      if (qs.query.stop !== undefined) (qs.query as core.Query).stop = qs.query.stop !== 'false'
+      if (qs.query.stop !== undefined)
+        (qs.query as core.Query).stop = qs.query.stop !== 'false'
 
       this.fitSort(qs.query)
 
@@ -80,7 +81,8 @@ export class Query {
         (qs.query as core.Query).deleted = this.query.deleted
 
       if (this.query.projection !== undefined)
-        (qs.query as core.Query).projection = this.query.projection as core.Query['projection']
+        (qs.query as core.Query).projection = this.query
+          .projection as core.Query['projection']
     }
 
     return {
@@ -139,10 +141,16 @@ export class Query {
       if (this.query.limit !== undefined)
         query.limit = bounded('How many in a window.', this.query.limit)
 
-      query.token = keyword('string', 'Where the stream continues from: the token it ended with.')
+      query.token = keyword(
+        'string',
+        'Where the stream continues from: the token it ended with.'
+      )
 
       if (this.query.limit !== undefined)
-        query.stop = keyword('boolean', 'The window is the last one read: its token continues with changes.')
+        query.stop = keyword(
+          'boolean',
+          'The window is the last one read: its token continues with changes.'
+        )
     }
 
     if (this.searchable)
@@ -242,7 +250,8 @@ export class Query {
       return
     }
 
-    if (qs.limit !== undefined) query.limit = fit(qs.limit, this.query.limit.range, 'limit')
+    if (qs.limit !== undefined)
+      query.limit = fit(qs.limit, this.query.limit.range, 'limit')
     else query.limit = this.query.limit.value ?? this.query.limit.range[0]
   }
 

@@ -2,7 +2,11 @@ import { Readable } from 'node:stream'
 import { current, encode } from 'openspan'
 import { Connector } from './connector.ts'
 import { derive, newid } from './entities/newid.ts'
-import { RequestContractException, SafetyException } from './exceptions.ts'
+import {
+  RequestContractException,
+  SafetyException,
+  UnrepeatableException
+} from './exceptions.ts'
 import { abandoned, waiting } from './abandon.ts'
 import * as addressed from './instance.ts'
 import * as trail from './trail.ts'
@@ -29,6 +33,9 @@ export class Call extends Connector {
   /** the input property a stream is carried in, where what it calls takes one */
   readonly #streamed: string | undefined
 
+  /** whether what it calls declares `once`; see `documentation/inbox.md` */
+  readonly #once: boolean
+
   // eslint-disable-next-line max-params
   public constructor(
     transmitter: Transmission,
@@ -37,7 +44,8 @@ export class Call extends Connector {
     source?: Source,
     stateful: boolean = false,
     safe: boolean = false,
-    streamed?: string
+    streamed?: string,
+    once: boolean = false
   ) {
     super()
 
@@ -48,6 +56,7 @@ export class Call extends Connector {
     this.#stateful = stateful
     this.#safe = safe
     this.#streamed = streamed
+    this.#once = once
 
     this.depends(transmitter)
   }
@@ -66,6 +75,16 @@ export class Call extends Connector {
      * readonly invocation cannot clear it for a call of its own.
      */
     const readonly = stated === true || invocation?.readonly === true
+
+    /*
+     * A retried transition makes this call again on every attempt, and under an identity of its
+     * own each time, so what is made once would be made once per attempt. Refused on the first
+     * as on any other.
+     */
+    if (this.#once && invocation?.retried === true)
+      throw new UnrepeatableException(
+        `'${this.#target}' is made once, and a transition retried on a lost write would make it again`
+      )
 
     this.#refuse(request, options, readonly)
 
@@ -107,7 +126,10 @@ export class Call extends Connector {
 
     if (context !== undefined) envelope.telemetry = encode(context)
 
-    const reply = await this.#transmit(envelope, this.#terms(instance, options.timeout, options.signal))
+    const reply = await this.#transmit(
+      envelope,
+      this.#terms(instance, options.timeout, options.signal)
+    )
 
     if (reply === null) return null
     else if (reply instanceof Readable) return reply
@@ -140,7 +162,9 @@ export class Call extends Connector {
     const { timeout, signal } = options
 
     if (readonly && !this.#safe)
-      throw new SafetyException(`'${this.#target}' may change state, and this call may only read`)
+      throw new SafetyException(
+        `'${this.#target}' may change state, and this call may only read`
+      )
 
     if (this.#stateful && instance === undefined)
       throw new RequestContractException(

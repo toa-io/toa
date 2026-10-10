@@ -559,8 +559,8 @@ mongodb:
 `mongodb: mongodb://mongo.example.com` is that same map with one key. A component that matches no
 key where there is no `.` is refused, naming the component.
 
-**A component of no namespace is in `default`.** Its id is `default.<name>`, so that is what a key
-has to name it by — `default` for all of them, `default.tasks` for one.
+**A component of no namespace is keyed by its name**: `tasks` for one, `default` for all of
+them. `default.tasks` names the same component, and wins where both are written.
 
 **A key may hold several addresses**, as a list or as a
 [shard range](/libraries/generic/readme.md#shards), and every component that resolves to it is

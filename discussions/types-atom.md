@@ -9,7 +9,7 @@ already writes `env`, `name` and `instance`.
 
 1. After `toa types`, `context.atom` typechecks: `slots`, `meter` and `lock` are on the Context
    every component of the application shares, and a lock routine may read `signal.error`.
-   *(runtime — today)*
+   _(runtime — today)_
 2. Nothing is declared for it. It is not an extension, and a component that names none still
    has it.
 

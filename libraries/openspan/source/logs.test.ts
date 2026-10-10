@@ -1,7 +1,15 @@
 import { it, beforeEach, afterEach, mock } from 'node:test'
 import assert from 'node:assert/strict'
 
-import { Console, consoleLogs, logging, logs, OtlpLogs, printing, sinks } from './index.ts'
+import {
+  Console,
+  consoleLogs,
+  logging,
+  logs,
+  OtlpLogs,
+  printing,
+  sinks
+} from './index.ts'
 import type { Entry } from './Console.ts'
 
 afterEach(() => {

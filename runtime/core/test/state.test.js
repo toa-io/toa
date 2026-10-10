@@ -161,9 +161,15 @@ describe('entries', () => {
   it('should write nothing where every entity is discarded', async () => {
     const value = { id: 'x' }
 
-    Object.defineProperty(value, 'DISCARD', { writable: true, enumerable: false, value: true })
+    Object.defineProperty(value, 'DISCARD', {
+      writable: true,
+      enumerable: false,
+      value: true
+    })
 
-    const set = new EntitySet([{ get: () => value, set: () => undefined, event: () => ({}) }])
+    const set = new EntitySet([
+      { get: () => value, set: () => undefined, event: () => ({}) }
+    ])
 
     set.set(set.get())
 

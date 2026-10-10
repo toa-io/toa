@@ -16,13 +16,20 @@ describe('read', () => {
 
   it('should refuse transport errors', () => {
     assert.throws(
-      () => read(output({ '200': 10 }, { 'connection closed before message completed': 2 }), 200),
+      () =>
+        read(
+          output({ '200': 10 }, { 'connection closed before message completed': 2 }),
+          200
+        ),
       /connection closed before message completed × 2/
     )
   })
 
   it('should refuse a window with no answers', () => {
-    assert.throws(() => read({ ...output({}), statusCodeDistribution: {} }, 200), /no requests/i)
+    assert.throws(
+      () => read({ ...output({}), statusCodeDistribution: {} }, 200),
+      /no requests/i
+    )
   })
 
   it('should refuse what is not oha output', () => {
@@ -96,7 +103,10 @@ describe('args', () => {
   })
 })
 
-function output(statuses: Record<string, number>, errors: Record<string, number> = {}): object {
+function output(
+  statuses: Record<string, number>,
+  errors: Record<string, number> = {}
+): object {
   return {
     summary: { successRate: 1, total: 10, requestsPerSec: 498, average: 0.002 },
     latencyPercentiles: { p50: 0.0015, p90: 0.004, p99: 0.012 },

@@ -7,7 +7,10 @@ import { basename, extname, join } from 'node:path'
  * Two files that resolve to one name are a conflict rather than a race: which of them a scan
  * reached first is not something a component may depend on.
  */
-export async function sources(root: string, directory: string): Promise<Map<string, string>> {
+export async function sources(
+  root: string,
+  directory: string
+): Promise<Map<string, string>> {
   const path = join(root, directory)
   const files = (await list(path)).filter((file) => EXTENSIONS.has(extname(file))).sort()
   const modules = new Map<string, string>()

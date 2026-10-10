@@ -24,7 +24,10 @@ export async function events(root: string): Promise<Record<string, Event>> {
   const events: Record<string, Event> = {}
 
   for (const [name, exported] of await read(root, 'events'))
-    events[name] = { conditioned: exported.has('condition'), subjective: exported.has('payload') }
+    events[name] = {
+      conditioned: exported.has('condition'),
+      subjective: exported.has('payload')
+    }
 
   return events
 }
@@ -33,7 +36,10 @@ export async function receivers(root: string): Promise<Record<string, Receiver>>
   const receivers: Record<string, Receiver> = {}
 
   for (const [name, exported] of await read(root, 'receivers'))
-    receivers[name] = { conditioned: exported.has('condition'), adaptive: exported.has('request') }
+    receivers[name] = {
+      conditioned: exported.has('condition'),
+      adaptive: exported.has('request')
+    }
 
   return receivers
 }
@@ -41,12 +47,16 @@ export async function receivers(root: string): Promise<Record<string, Receiver>>
 export async function guards(root: string): Promise<Record<string, object>> {
   const guards: Record<string, object> = {}
 
-  for (const [name, exported] of await read(root, 'guards')) if (exported.has('guard')) guards[name] = {}
+  for (const [name, exported] of await read(root, 'guards'))
+    if (exported.has('guard')) guards[name] = {}
 
   return guards
 }
 
-async function read(root: string, directory: string): Promise<Array<[string, Exports, string]>> {
+async function read(
+  root: string,
+  directory: string
+): Promise<Array<[string, Exports, string]>> {
   const modules = await sources(root, directory)
 
   return Promise.all(

@@ -33,7 +33,7 @@ not for:
 - **An upload that is to be kept** is [`octets:put`](/extensions/exposition/documentation/octets.md),
   which stores the body as it arrives and calls components afterwards with a reference to it. A
   streamed call is for bytes an operation reads and does not keep: a checksum, a transcode, a parse,
-  a forward. Where they are to be stored *and* processed, store them and run the processing from the
+  a forward. Where they are to be stored _and_ processed, store them and run the processing from the
   workflow.
 
 Used for any of those, a streamed call costs a connection, gives up the queue and the retry, and
@@ -53,7 +53,7 @@ operations:
 
 ```typescript
 // the operation reads it
-export async function computation (input: ChecksumInput): Promise<string> {
+export async function computation(input: ChecksumInput): Promise<string> {
   return await digest(input.content)
 }
 

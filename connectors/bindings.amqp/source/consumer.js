@@ -53,7 +53,8 @@ export class Consumer extends Connector {
 
   async #send(request, terms) {
     // an ordinary call waits for its reply, and is handed no terms
-    if (terms?.instance === undefined) return await this.#comm.request(this.#queue, request)
+    if (terms?.instance === undefined)
+      return await this.#comm.request(this.#queue, request)
 
     try {
       return await this.#comm.call(

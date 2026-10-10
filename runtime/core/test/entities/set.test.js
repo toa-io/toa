@@ -17,9 +17,17 @@ describe('discard', () => {
   const entity = (DISCARD = false) => {
     const value = { id: generate() }
 
-    Object.defineProperty(value, 'DISCARD', { writable: true, enumerable: false, value: DISCARD })
+    Object.defineProperty(value, 'DISCARD', {
+      writable: true,
+      enumerable: false,
+      value: DISCARD
+    })
 
-    return { get: mock.fn(() => value), set: mock.fn(), event: mock.fn(() => ({ state: value })) }
+    return {
+      get: mock.fn(() => value),
+      set: mock.fn(),
+      event: mock.fn(() => ({ state: value }))
+    }
   }
 
   it('should set the entities that are not discarded', () => {

@@ -1,0 +1,16 @@
+# a component that declares no namespace, and keeps state
+name: bare
+
+entity:
+  properties:
+    foo:
+      type: integer
+
+operations:
+  transit:
+    concurrency: retry
+    input:
+      type: object
+      properties:
+        foo:
+          type: integer

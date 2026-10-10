@@ -17,7 +17,14 @@ describe('operations', () => {
   it('should sum what was sent to the collections of one database', () => {
     const totals = {
       note: 'all times in microseconds',
-      'toa-bench-a.default_bench': counts({ queries: 3, insert: 2, update: 1, getmore: 1, remove: 1, commands: 2 }),
+      'toa-bench-a.default_bench': counts({
+        queries: 3,
+        insert: 2,
+        update: 1,
+        getmore: 1,
+        remove: 1,
+        commands: 2
+      }),
       'toa-bench-a.default_bench_outbox': counts({ queries: 40 }),
       'toa-bench-b.default_bench': counts({ queries: 1000 }),
       'toa-bench-ab.default_bench': counts({ queries: 1000 })
@@ -53,8 +60,22 @@ describe('perRequest', () => {
   })
 })
 
-function counts(values: Partial<Record<string, number>>): Record<string, { time: number; count: number }> {
-  const names = ['total', 'readLock', 'writeLock', 'queries', 'getmore', 'insert', 'update', 'remove', 'commands']
+function counts(
+  values: Partial<Record<string, number>>
+): Record<string, { time: number; count: number }> {
+  const names = [
+    'total',
+    'readLock',
+    'writeLock',
+    'queries',
+    'getmore',
+    'insert',
+    'update',
+    'remove',
+    'commands'
+  ]
 
-  return Object.fromEntries(names.map((name) => [name, { time: 0, count: values[name] ?? 0 }]))
+  return Object.fromEntries(
+    names.map((name) => [name, { time: 0, count: values[name] ?? 0 }])
+  )
 }

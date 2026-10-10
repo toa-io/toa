@@ -35,7 +35,10 @@ export function times(cpus: number[]): HostTimes {
 
     if (match === null || !cpus.includes(Number(match[1]))) continue
 
-    const [user, nice, system, idle, iowait, irq, softirq, steal] = match[2].trim().split(/\s+/).map(Number)
+    const [user, nice, system, idle, iowait, irq, softirq, steal] = match[2]
+      .trim()
+      .split(/\s+/)
+      .map(Number)
     const all = user + nice + system + idle + iowait + irq + softirq + steal
 
     total += all

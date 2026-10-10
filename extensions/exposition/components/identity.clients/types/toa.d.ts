@@ -88,10 +88,10 @@ export type DescribeOutput = {
 
 export interface Component {
   transit: (request: { input: TransitInput, query?: Query<Entity>, task?: boolean }) => Promise<Entity>
-  register: (request: { input: RegisterInput, task?: boolean }) => Promise<RegisterOutput>
+  register: (request: { input: RegisterInput, entity?: Partial<Entity>, task?: boolean }) => Promise<RegisterOutput>
   describe: (request: { input: DescribeInput, task?: boolean }) => Promise<DescribeOutput | CodedError<"UNKNOWN_CLIENT">>
   assign: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Entity>
-  ensure: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Entity>
+  ensure: (request: { input?: null, query?: Query<Entity>, entity?: Partial<Entity>, task?: boolean }) => Promise<Entity>
   enumerate: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Entity[]>
   observe: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Entity | null>
   stream: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Readable>

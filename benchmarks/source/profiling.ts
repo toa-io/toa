@@ -23,8 +23,15 @@ interface Recording {
 }
 
 /** Profiles of one revision, every process under every scenario; answers the summary's path. */
-export async function profile(run: Run, tree: Tree, scenarios: Scenario[]): Promise<string> {
-  const target: Target = { side: { ...SLOTS.a, name: 'head', tree }, components: install(tree, run.fixtures) }
+export async function profile(
+  run: Run,
+  tree: Tree,
+  scenarios: Scenario[]
+): Promise<string> {
+  const target: Target = {
+    side: { ...SLOTS.a, name: 'head', tree },
+    components: install(tree, run.fixtures)
+  }
   const summary = [`# Profiles of ${tree.ref} (${tree.sha.slice(0, 7)})`, '']
 
   await run.stack.drop(target.side.context)
@@ -56,7 +63,8 @@ async function one(run: Run, target: Target, scenario: Scenario): Promise<string
   } finally {
     const killed = await running.stop()
 
-    if (killed.length > 0) console.warn(`  killed after the grace period: ${killed.join(', ')}`)
+    if (killed.length > 0)
+      console.warn(`  killed after the grace period: ${killed.join(', ')}`)
   }
 }
 
@@ -73,17 +81,30 @@ async function record(run: Run, running: Running, scenario: Scenario): Promise<s
 
     await driver.load(scenario, { duration: run.timing.warmup, rate })
 
-    for (const name of PROCESSES) profilers.push([name, await Profiler.attach(running.processes[name].log)])
+    for (const name of PROCESSES)
+      profilers.push([name, await Profiler.attach(running.processes[name].log)])
     for (const [, profiler] of profilers) await profiler.start()
 
     const result = await driver.load(scenario, { duration: run.timing.window, rate })
     const directory = join(run.results, 'profiles', scenario.id)
-    const lines = [`## ${scenario.id}`, '', `${result.requests} requests at ${rate} per second`, '']
+    const lines = [
+      `## ${scenario.id}`,
+      '',
+      `${result.requests} requests at ${rate} per second`,
+      ''
+    ]
 
     await mkdir(directory, { recursive: true })
 
     for (const [name, profiler] of profilers)
-      lines.push(...(await write(profiler, { name, directory, root: running.side.tree.root, requests: result.requests })))
+      lines.push(
+        ...(await write(profiler, {
+          name,
+          directory,
+          root: running.side.tree.root,
+          requests: result.requests
+        }))
+      )
 
     return lines
   } finally {
@@ -97,18 +118,25 @@ async function write(profiler: Profiler, recording: Recording): Promise<string[]
   const recorded = await profiler.stop()
   const { total, functions, packages } = summarize(recorded, { root: recording.root })
 
-  await writeFile(join(recording.directory, `${recording.name}.cpuprofile`), JSON.stringify(recorded))
+  await writeFile(
+    join(recording.directory, `${recording.name}.cpuprofile`),
+    JSON.stringify(recorded)
+  )
 
   return [
     `### ${recording.name}: ${((total * 1000) / recording.requests).toFixed(0)} µs per request`,
     '',
     '| package | share |',
     '| --- | ---: |',
-    ...packages.slice(0, 10).map(({ name, share }) => `| ${name} | ${(share * 100).toFixed(1)}% |`),
+    ...packages
+      .slice(0, 10)
+      .map(({ name, share }) => `| ${name} | ${(share * 100).toFixed(1)}% |`),
     '',
     '| function | share |',
     '| --- | ---: |',
-    ...functions.map(({ name, share }) => `| \`${name}\` | ${(share * 100).toFixed(1)}% |`),
+    ...functions.map(
+      ({ name, share }) => `| \`${name}\` | ${(share * 100).toFixed(1)}% |`
+    ),
     ''
   ]
 }

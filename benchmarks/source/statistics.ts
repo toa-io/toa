@@ -25,7 +25,9 @@ export function median(values: readonly number[]): number {
   const sorted = [...values].sort((a, b) => a - b)
   const middle = sorted.length >> 1
 
-  return sorted.length % 2 === 1 ? sorted[middle] : (sorted[middle - 1] + sorted[middle]) / 2
+  return sorted.length % 2 === 1
+    ? sorted[middle]
+    : (sorted[middle - 1] + sorted[middle]) / 2
 }
 
 /**
@@ -41,7 +43,9 @@ export function estimate(pairs: readonly Pair[]): Estimate {
   const means = blocks.map(mean)
   const center = mean(means)
   const n = means.length
-  const deviation = Math.sqrt(means.reduce((sum, value) => sum + (value - center) ** 2, 0) / (n - 1))
+  const deviation = Math.sqrt(
+    means.reduce((sum, value) => sum + (value - center) ** 2, 0) / (n - 1)
+  )
   const half = (student(n - 1) * deviation) / Math.sqrt(n)
 
   return {
@@ -106,6 +110,7 @@ function student(freedom: number): number {
 }
 
 const T = [
-  12.706, 4.303, 3.182, 2.776, 2.571, 2.447, 2.365, 2.306, 2.262, 2.228, 2.201, 2.179, 2.16, 2.145, 2.131, 2.12,
-  2.11, 2.101, 2.093, 2.086, 2.08, 2.074, 2.069, 2.064, 2.06, 2.056, 2.052, 2.048, 2.045, 2.042
+  12.706, 4.303, 3.182, 2.776, 2.571, 2.447, 2.365, 2.306, 2.262, 2.228, 2.201, 2.179,
+  2.16, 2.145, 2.131, 2.12, 2.11, 2.101, 2.093, 2.086, 2.08, 2.074, 2.069, 2.064, 2.06,
+  2.056, 2.052, 2.048, 2.045, 2.042
 ]

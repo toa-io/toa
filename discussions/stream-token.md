@@ -56,7 +56,7 @@ it — was cut, and the reader asks again with the token it had.
    with the changes, because it committed after the position the read took first.
 5. Every window is read from a member that holds the position, whichever member of the replica set
    serves it.
-6. An `entry` is restricted by `io:output` as any object of a reply is *(today)*.
+6. An `entry` is restricted by `io:output` as any object of a reply is _(today)_.
 
 **Reading the changes**
 
@@ -131,14 +131,14 @@ export const observation = (_, stream) => stream
 
 ## The changes, by area
 
-| #   | Change                                                              | Effort                                                    | Risk   | Stage |
-| --- | ------------------------------------------------------------------- | --------------------------------------------------------- | ------ | ----- |
-| 1   | A storage's `stream` yields parts                                   | the storage interface, `State.stream`                     | low    | 1     |
-| 2   | The MongoDB storage reads a position, windows and changes             | a module of about 250 lines beside `storage.js`           | high   | 1     |
-| 3   | A migration step keeps images                                       | one step in `migrations.js`                                | low    | 1     |
-| 4   | The request contract admits `token`, and `limit` on a stream        | `contract/request.ts`, the query schema                   | low    | 1     |
-| 5   | The gateway reads `token`, admits `limit` on a stream, answers `410` | `Query.ts`, the querystring schema, `exceptions.ts`       | medium | 2     |
-| 6   | Documentation                                                       | `documentation/collections.md`, `query.md`, the status list      | low    | 1     |
+| #   | Change                                                               | Effort                                                      | Risk   | Stage |
+| --- | -------------------------------------------------------------------- | ----------------------------------------------------------- | ------ | ----- |
+| 1   | A storage's `stream` yields parts                                    | the storage interface, `State.stream`                       | low    | 1     |
+| 2   | The MongoDB storage reads a position, windows and changes            | a module of about 250 lines beside `storage.js`             | high   | 1     |
+| 3   | A migration step keeps images                                        | one step in `migrations.js`                                 | low    | 1     |
+| 4   | The request contract admits `token`, and `limit` on a stream         | `contract/request.ts`, the query schema                     | low    | 1     |
+| 5   | The gateway reads `token`, admits `limit` on a stream, answers `410` | `Query.ts`, the querystring schema, `exceptions.ts`         | medium | 2     |
+| 6   | Documentation                                                        | `documentation/collections.md`, `query.md`, the status list | low    | 1     |
 
 ### 1. A storage's `stream` yields parts
 

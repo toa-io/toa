@@ -1,6 +1,7 @@
 import { QuerySyntaxException } from '../exceptions.ts'
+import { property as find } from './property.ts'
 import type { Options } from '../types/storages.ts'
-import type { Properties } from './criteria.ts'
+import type { Properties } from './property.ts'
 
 export function options(given: Record<string, any>, properties: Properties): Options {
   if (given.sort !== undefined) given.sort = sort(given.sort, properties)
@@ -17,7 +18,7 @@ function sort(sort: string[], properties: Properties): Array<[string, string]> {
   for (const sorting of sort) {
     const [property, direction] = sorting.split(':')
 
-    if (properties[property] === undefined)
+    if (find(properties, property) === undefined)
       throw new QuerySyntaxException(`Sort property '${property}' is not defined`)
 
     result.push([property, direction ?? 'asc'])
@@ -32,7 +33,7 @@ function sort(sort: string[], properties: Properties): Array<[string, string]> {
  */
 function projection(declared: string[], properties: Properties): string[] {
   for (const property of declared)
-    if (properties[property] === undefined)
+    if (find(properties, property) === undefined)
       throw new QuerySyntaxException(`Projection property '${property}' is not defined`)
 
   const projection = declared.slice()

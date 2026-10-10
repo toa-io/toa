@@ -129,7 +129,7 @@ Feature: A safe method writes nothing
       """
       500 Internal Server Error
       """
-    # the same chain, asked for by a method that may write
+    # the same chain, asked for by a method that may write: the observation is what may not
     When the following request is received:
       """
       POST /pots/4c4759e6f9c74da989d64511df42d6f4/ HTTP/1.1
@@ -138,9 +138,7 @@ Feature: A safe method writes nothing
       """
     Then the following reply is sent:
       """
-      201 Created
-
-      id: 4c4759e6f9c74da989d64511df42d6f4
+      500 Internal Server Error
       """
 
   # a procedure is the method it names, so it may only read for the same reason

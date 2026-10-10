@@ -101,7 +101,10 @@ describe('reference', () => {
 
     composition.packages = { 'lru-cache': '11.5.2' }
 
-    assert.notStrictEqual(create().dependencies.reference, component.dependencies.reference)
+    assert.notStrictEqual(
+      create().dependencies.reference,
+      component.dependencies.reference
+    )
   })
 
   it('should change with the registry build settings', () => {

@@ -42,7 +42,13 @@ it('should not let one part read as another', () => {
 it('should derive the bytes of a version 5 uuid in its namespace', () => {
   const namespace = '26bd9bc6-675c-4465-9b42-9e008b20befe'
 
-  for (const parts of [[], [''], ['a1', 'default.stock.reserve', 0], ['ключ', '🙂', 7], ['x'.repeat(5000)]]) {
+  for (const parts of [
+    [],
+    [''],
+    ['a1', 'default.stock.reserve', 0],
+    ['ключ', '🙂', 7],
+    ['x'.repeat(5000)]
+  ]) {
     const name = parts.map((part) => String(part).length + ':' + String(part)).join('')
     const buf = Buffer.alloc(16)
 

@@ -257,6 +257,89 @@ describe('options', () => {
   })
 })
 
+describe('a property inside an object', () => {
+  const properties = {
+    title: { type: 'string' },
+    size: {
+      type: 'object',
+      properties: { volume: { type: 'number' }, unit: { type: 'string' } }
+    },
+    leaves: {
+      type: 'array',
+      items: { type: 'object', properties: { grams: { type: 'integer' } } }
+    },
+    ranks: { type: 'array', items: { type: 'integer' } },
+    'a.b': { type: 'boolean' }
+  }
+
+  const instance = new Query(properties)
+  const value = (criteria) => instance.parse({ criteria }).criteria.right.value
+
+  it('should read a value as what the property a path names holds', () => {
+    assert.strictEqual(value('size.volume>2.5'), 2.5)
+    assert.strictEqual(value('size.unit==2.5'), '2.5')
+  })
+
+  it('should leave the selector as it is written', () => {
+    const { left } = instance.parse({ criteria: 'size.volume>2' }).criteria
+
+    assert.deepStrictEqual(left, { type: 'SELECTOR', selector: 'size.volume' })
+  })
+
+  it('should read an array as what it holds', () => {
+    assert.strictEqual(value('leaves.grams>2'), 2)
+    assert.strictEqual(value('ranks==5'), 5)
+    assert.throws(() => value('ranks==five'), { message: /takes an integer/ })
+  })
+
+  it('should take a name with a dot in it as the property declared under that name', () => {
+    assert.strictEqual(value('a.b==true'), true)
+  })
+
+  it('should refuse a path that names no property', () => {
+    for (const path of [
+      'size.weight',
+      'size.volume.litres',
+      'title.length',
+      'leaves.length',
+      'size.constructor',
+      'size.',
+      '.size',
+      'size..volume'
+    ])
+      assert.throws(() => value(`${path}==1`), { message: /is not defined/ }, path)
+  })
+
+  it('should take a path in a sort and in a projection', () => {
+    const { options } = instance.parse({
+      sort: ['size.volume:desc'],
+      projection: ['size.unit']
+    })
+
+    assert.deepStrictEqual(options.sort, [['size.volume', 'desc']])
+    assert.strictEqual(options.projection[0], 'size.unit')
+  })
+
+  it('should refuse a path that names no property in a sort and in a projection', () => {
+    assert.throws(() => instance.parse({ sort: ['size.weight'] }), {
+      message: /Sort property 'size.weight' is not defined/
+    })
+
+    assert.throws(() => instance.parse({ projection: ['size.weight'] }), {
+      message: /Projection property 'size.weight' is not defined/
+    })
+  })
+
+  it('should refuse what is a property of every object in a sort and in a projection', () => {
+    assert.throws(() => instance.parse({ sort: ['constructor'] }), {
+      message: /is not defined/
+    })
+    assert.throws(() => instance.parse({ projection: ['toString'] }), {
+      message: /is not defined/
+    })
+  })
+})
+
 function resetCalls(target = [assert, fixtures], seen = new Set()) {
   if (target === null || typeof target !== 'object' || seen.has(target)) return
 

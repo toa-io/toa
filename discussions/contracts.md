@@ -17,12 +17,12 @@ A component is asked nothing, and `.lookup` is retired with everything that serv
 **What a contract is read from**
 
 1. A component's own contract, and that of every component composed in the same process, is what
-   the process read from its sources *(today, by a lookup answered in memory)*.
+   the process read from its sources _(today, by a lookup answered in memory)_.
 2. Every other component's is the map's entry for it, which is the contract of the version the map
    names.
 3. The exposition gateway reads the contract a tenant announced beside the routes it merged, so
-   what it forwards and what it validates against are one version's *(today, by a lookup for the
-   version the branch carries)*.
+   what it forwards and what it validates against are one version's _(today, by a lookup for the
+   version the branch carries)_.
 4. A call to a component that neither the process composes nor the map names is refused, and says
    what writes a map.
 
@@ -31,7 +31,7 @@ A component is asked nothing, and `.lookup` is retired with everything that serv
 5. A boot makes no call to another component. A composition is ready when its own bindings are up,
    whatever else is running or is not.
 6. An event the contract does not declare fails the boot, naming the component, the event and the
-   version *(today)*.
+   version _(today)_.
 7. A composition whose component's version differs from what the map states for it is refused, and
    names the component.
 
@@ -78,7 +78,12 @@ map is not, as the other three are, and that the file is named `.map.json` where
        "version": "3f9a1c02",
        "entity": { "properties": {}, "required": [] },
        "operations": {
-         "transit": { "type": "transition", "scope": "object", "bindings": [], "input": {} }
+         "transit": {
+           "type": "transition",
+           "scope": "object",
+           "bindings": [],
+           "input": {}
+         }
        },
        "events": { "created": { "binding": "@toa.io/bindings.amqp" } }
      }

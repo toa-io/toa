@@ -293,4 +293,3 @@ interface Stage {
   preflight: SpanOptions
   depart: SpanOptions
 }
-

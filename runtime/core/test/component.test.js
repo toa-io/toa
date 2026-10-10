@@ -144,6 +144,75 @@ describe('The chain', () => {
     assert.equal(seen.readonly, true)
   })
 
+  // its algorithm runs again where its write is lost, which what it calls is refused by
+  it('should say of an invocation that its operation is retried', async () => {
+    const operations = invocations()
+    const component = new Component(locator, operations)
+    let seen
+
+    operations.foo.retried = true
+    operations.foo.invoke = () => {
+      seen = trail.current()
+
+      return null
+    }
+
+    await component.invoke('foo', { trail: ['exposition'] })
+
+    assert.equal(seen.retried, true)
+    assert.equal(seen.readonly, undefined)
+  })
+
+  it('should say nothing of the kind of any other', async () => {
+    const operations = invocations()
+    const component = new Component(locator, operations)
+    let seen
+
+    operations.foo.invoke = () => {
+      seen = trail.current()
+
+      return null
+    }
+
+    await component.invoke('foo', { trail: ['exposition'] })
+
+    assert.equal(seen.retried, undefined)
+  })
+
+  // what cannot change the State reaches nothing that can
+  it('should hold what a safe operation calls to reading', async () => {
+    const operations = invocations()
+    const component = new Component(locator, operations)
+    let seen
+
+    operations.foo.safe = true
+    operations.foo.invoke = () => {
+      seen = trail.current()
+
+      return null
+    }
+
+    await component.invoke('foo', { trail: ['exposition'] })
+
+    assert.equal(seen.readonly, true)
+  })
+
+  it('should not hold what an unsafe operation calls to reading', async () => {
+    const operations = invocations()
+    const component = new Component(locator, operations)
+    let seen
+
+    operations.foo.invoke = () => {
+      seen = trail.current()
+
+      return null
+    }
+
+    await component.invoke('foo', { trail: ['exposition'] })
+
+    assert.equal(seen.readonly, undefined)
+  })
+
   /** What the endpoint saw as its chain, or `undefined` where it was given none. */
   async function chain(component, endpoint, request) {
     let seen

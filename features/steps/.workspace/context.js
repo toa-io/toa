@@ -36,6 +36,19 @@ export const remove = async (directory, key) => {
   await save(context, path)
 }
 
+/**
+ * Sets top-level annotations of an already written context.
+ *
+ * @param {string} directory
+ * @param {object} annotations
+ */
+export const assign = async (directory, annotations) => {
+  const path = join(directory, FILENAME)
+  const context = parse(await readFile(path, 'utf8'))
+
+  await save(Object.assign(context, annotations), path)
+}
+
 const FILENAME = 'context.toa.yaml'
 const TEMPLATE = parse(readFileSync(join(import.meta.dirname, FILENAME), 'utf8'))
 

@@ -59,6 +59,9 @@ export class Aspect extends Connector {
     if (request !== null && request !== undefined && 'instance' in request)
       throw new exceptions.RequestContractException('A delayed call names no `instance`')
 
+    // a component that declares no namespace is named by its name, and called by its id
+    if (endpoint.split('.').length === 2) endpoint = `default.${endpoint}`
+
     const input: Input = {
       endpoint,
       interval: options.interval,

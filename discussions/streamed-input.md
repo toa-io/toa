@@ -53,7 +53,7 @@ has to have them stored first in order to be given them.
 **What is refused**
 
 12. A call carrying a stream to an operation that declares none, and a call carrying none to one
-    that does, are refused with *request contract* before anything is sent.
+    that does, are refused with _request contract_ before anything is sent.
 13. A streamed call is neither a task nor a delayed call. Both are taken later, by a process whose
     caller is no longer holding a stream.
 14. A streamed call is not retried. A transport that replays a request replays nothing of its
@@ -106,7 +106,7 @@ The property is the stream itself, or an object whose `stream` member is it — 
 hands over, so that an operation behind one is told what arrived and what to answer with:
 
 ```typescript
-export async function effect (input: TranscodeInput): Promise<Readable> {
+export async function effect(input: TranscodeInput): Promise<Readable> {
   const { type, accept, stream } = input.source
 
   return transcode(stream, { from: type, to: accept })
@@ -177,8 +177,8 @@ A route maps a request body onto the property, and states what it takes and what
 ### Exposition
 
 10. **`map:stream`.** The streaming sibling of `map:buffer`: it marks the request consumed and puts
-   `{ type, accept, stream }` at the property the route names, instead of reading the body. It
-   states `accept` — what a client may send — `produces`, and `limit`.
+    `{ type, accept, stream }` at the property the route names, instead of reading the body. It
+    states `accept` — what a client may send — `produces`, and `limit`.
 11. **Negotiation.** `produces` is what the request's `accept` is resolved against, before the call:
     one media type, or `406`. It is also what tells the gateway that this route may answer something
     its own formats do not cover, which is otherwise `406` before the operation runs.

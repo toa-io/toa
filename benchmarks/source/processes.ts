@@ -95,7 +95,10 @@ export class Process {
   public async ready(): Promise<void> {
     await new Promise<void>((resolve, reject) => {
       const timer = setTimeout(
-        () => reject(new Error(`${this.name} not ready within ${READY / 1000} s; see ${this.log}`)),
+        () =>
+          reject(
+            new Error(`${this.name} not ready within ${READY / 1000} s; see ${this.log}`)
+          ),
         READY
       )
 
@@ -120,7 +123,10 @@ export class Process {
     this.stopping = true
     this.child.kill('SIGTERM')
 
-    const done = await Promise.race([this.exited.then(() => true), sleep(GRACE).then(() => false)])
+    const done = await Promise.race([
+      this.exited.then(() => true),
+      sleep(GRACE).then(() => false)
+    ])
 
     if (done) return
 
@@ -135,7 +141,11 @@ export class Running {
   public readonly protocol: Protocol
   public readonly processes: Record<ProcessName, Process>
 
-  public constructor(side: Side, protocol: Protocol, processes: Record<ProcessName, Process>) {
+  public constructor(
+    side: Side,
+    protocol: Protocol,
+    processes: Record<ProcessName, Process>
+  ) {
     this.side = side
     this.protocol = protocol
     this.processes = processes
@@ -152,12 +162,17 @@ export class Running {
   }
 
   public failure(): string | null {
-    return Object.values(this.processes).find((process) => process.failure !== null)?.failure ?? null
+    return (
+      Object.values(this.processes).find((process) => process.failure !== null)
+        ?.failure ?? null
+    )
   }
 
   /** Settles once any process of the side exits without being stopped. */
   public async lost(): Promise<string> {
-    return await Promise.race(Object.values(this.processes).map(async (process) => await process.lost))
+    return await Promise.race(
+      Object.values(this.processes).map(async (process) => await process.lost)
+    )
   }
 
   /** Stops every process and answers the names of those that had to be killed. */
@@ -209,7 +224,9 @@ function write(tree: Tree, components: string): void {
     writeFileSync(${quote(join(components, MAP))}, JSON.stringify(map))
   `
 
-  execFileSync(process.execPath, ['--input-type=module', '-e', script], { stdio: 'inherit' })
+  execFileSync(process.execPath, ['--input-type=module', '-e', script], {
+    stdio: 'inherit'
+  })
 }
 
 /** A value as the literal a script reads it as. */
@@ -217,7 +234,11 @@ function quote(value: unknown): string {
   return JSON.stringify(value)
 }
 
-export async function boot(side: Side, components: string, options: Options): Promise<Running> {
+export async function boot(
+  side: Side,
+  components: string,
+  options: Options
+): Promise<Running> {
   const temporary = join(options.directory, 'tmp', side.context)
 
   await mkdir(join(options.directory, 'logs'), { recursive: true })
@@ -277,14 +298,24 @@ export async function boot(side: Side, components: string, options: Options): Pr
 }
 
 function spawnProcess(side: Side, options: Options, launch: Launch): Process {
-  const log = join(options.directory, 'logs', `${side.context}.${options.protocol}.${launch.name}.log`)
+  const log = join(
+    options.directory,
+    'logs',
+    `${side.context}.${options.protocol}.${launch.name}.log`
+  )
   const output = openSync(log, 'a')
   const cli = join(side.tree.root, 'runtime/cli/bin/toa')
 
   // a port of the system's choosing, announced on stderr, so no inspector collides with anything
-  const node = [...(options.inspect === true ? ['--inspect=127.0.0.1:0'] : []), cli, ...launch.args]
+  const node = [
+    ...(options.inspect === true ? ['--inspect=127.0.0.1:0'] : []),
+    cli,
+    ...launch.args
+  ]
   const [command, argv] =
-    launch.cpus === null ? [process.execPath, node] : ['taskset', ['-c', launch.cpus, process.execPath, ...node]]
+    launch.cpus === null
+      ? [process.execPath, node]
+      : ['taskset', ['-c', launch.cpus, process.execPath, ...node]]
 
   const child = spawn(command, argv, {
     cwd: side.tree.root,
@@ -302,7 +333,9 @@ function spawnProcess(side: Side, options: Options, launch: Launch): Process {
  */
 function environment(side: Side, temporary: string): Record<string, string> {
   const inherited = Object.fromEntries(
-    Object.entries(process.env).filter(([name]) => !name.startsWith('TOA_') && name !== 'NODE_OPTIONS')
+    Object.entries(process.env).filter(
+      ([name]) => !name.startsWith('TOA_') && name !== 'NODE_OPTIONS'
+    )
   ) as Record<string, string>
 
   return {
@@ -322,9 +355,14 @@ function configuration(side: Side, options: Options): Record<string, string> {
   const empty = ['BASIC', 'CLIENTS', 'GRANTS', 'FEDERATION', 'OTP', 'PASSKEYS']
 
   return {
-    ...Object.fromEntries(empty.map((name) => [`TOA_CONFIGURATION_IDENTITY_${name}`, '{}'])),
+    ...Object.fromEntries(
+      empty.map((name) => [`TOA_CONFIGURATION_IDENTITY_${name}`, '{}'])
+    ),
     // a day, so the fresh token stays fresh for a run
-    TOA_CONFIGURATION_IDENTITY_TOKENS: JSON.stringify({ keys: [{ id: 'key0', key: '$IDENTITY_TOKENS_KEY0' }], refresh: 86_400 }),
+    TOA_CONFIGURATION_IDENTITY_TOKENS: JSON.stringify({
+      keys: [{ id: 'key0', key: '$IDENTITY_TOKENS_KEY0' }],
+      refresh: 86_400
+    }),
     TOA_CONFIGURATION__IDENTITY_TOKENS_KEY0: options.key,
     TOA_EXPOSITION_PROPERTIES: JSON.stringify({
       // the host a request names carries the port, and an authority is looked up by all of it:

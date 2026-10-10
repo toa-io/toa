@@ -41,7 +41,8 @@ export const scenarios: Scenario[] = [
     method: 'GET',
     path: ({ item }) => `/bench/items/${item}/`,
     status: 200,
-    check: (reply, { item }) => expect((reply.body as { id?: string })?.id === item, reply),
+    check: (reply, { item }) =>
+      expect((reply.body as { id?: string })?.id === item, reply),
     processes: ['gateway', 'bench'],
     seeded: true
   },
@@ -55,7 +56,8 @@ export const scenarios: Scenario[] = [
     headers: () => ({ 'content-type': 'application/json' }),
     body: ({ files }) => files.item,
     status: 201,
-    check: (reply) => expect(typeof (reply.body as { id?: string })?.id === 'string', reply),
+    check: (reply) =>
+      expect(typeof (reply.body as { id?: string })?.id === 'string', reply),
     processes: ['gateway', 'bench', 'peer']
   },
   {
@@ -76,7 +78,8 @@ export const scenarios: Scenario[] = [
     status: 200,
     check: (reply) =>
       expect(
-        (reply.body as { id?: string })?.id === USER && reply.headers.authorization === undefined,
+        (reply.body as { id?: string })?.id === USER &&
+          reply.headers.authorization === undefined,
         reply
       ),
     processes: ['gateway', 'bench']
@@ -116,7 +119,8 @@ export const scenarios: Scenario[] = [
     status: 200,
     check: (reply) =>
       expect(
-        ((reply.body as { result?: { tools?: unknown[] } })?.result?.tools?.length ?? 0) >= 22,
+        ((reply.body as { result?: { tools?: unknown[] } })?.result?.tools?.length ??
+          0) >= 22,
         reply
       ),
     processes: ['gateway'],
@@ -158,7 +162,10 @@ export const scenarios: Scenario[] = [
     ...list('list.1000.msgpack', 'h1'),
     headers: () => ({ accept: 'application/msgpack' }),
     check: (reply) =>
-      expect(String(reply.headers['content-type']).startsWith('application/msgpack'), reply),
+      expect(
+        String(reply.headers['content-type']).startsWith('application/msgpack'),
+        reply
+      ),
     optional: true
   }
 ]
@@ -207,7 +214,10 @@ function parts(reply: Reply): number {
 
 /** The thousand items seeded, whatever of each of them a route answers. */
 function thousand(reply: Reply): string | null {
-  return expect(Array.isArray(reply.body) && (reply.body as unknown[]).length === 1000, reply)
+  return expect(
+    Array.isArray(reply.body) && (reply.body as unknown[]).length === 1000,
+    reply
+  )
 }
 
 function expect(ok: boolean, reply: Reply): string | null {

@@ -39,10 +39,10 @@ export type RevokeOutput = null
 
 export interface Component {
   create: (request: { input: CreateInput, task?: boolean }) => Promise<CreateOutput>
-  revoke: (request: { input: RevokeInput, task?: boolean }) => Promise<RevokeOutput>
+  revoke: (request: { input: RevokeInput, entity?: Partial<Entity>, task?: boolean }) => Promise<RevokeOutput>
   disable: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<unknown>
   assign: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Entity>
-  ensure: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Entity>
+  ensure: (request: { input?: null, query?: Query<Entity>, entity?: Partial<Entity>, task?: boolean }) => Promise<Entity>
   enumerate: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Entity[]>
   observe: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Entity | null>
   stream: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Readable>

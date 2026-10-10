@@ -55,7 +55,10 @@ describe('match', () => {
   })
 
   it('should combine filters', () => {
-    assert.equal(match(record, { $and: [{ owner: 'alice' }, { rank: { $gt: 1 } }] }), true)
+    assert.equal(
+      match(record, { $and: [{ owner: 'alice' }, { rank: { $gt: 1 } }] }),
+      true
+    )
     assert.equal(match(record, { $or: [{ owner: 'bob' }, { rank: { $gt: 1 } }] }), true)
     assert.equal(match(record, { $or: [{ owner: 'bob' }, { rank: { $gt: 9 } }] }), false)
     assert.equal(match(record, { owner: 'alice', DELETED: null, _id: 'a1' }), true)

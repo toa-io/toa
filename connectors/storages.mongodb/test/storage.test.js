@@ -151,7 +151,10 @@ describe('stream', () => {
   it('should read a window newest first, and by id where entries share a time', async () => {
     await storage.stream({ options: { limit: 2, sort: [['CREATED', 'desc']] } })
 
-    assert.deepStrictEqual(read()[1].sort, [['CREATED', -1], ['_id', -1]])
+    assert.deepStrictEqual(read()[1].sort, [
+      ['CREATED', -1],
+      ['_id', -1]
+    ])
   })
 
   it('should refuse a window ordered by what an entry changes', async () => {

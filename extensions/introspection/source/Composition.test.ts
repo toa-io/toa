@@ -7,7 +7,7 @@ import { components } from './Composition.ts'
 
 const SIGNALS = 'introspection-signals'
 
-function options (halt: boolean): string {
+function options(halt: boolean): string {
   return JSON.stringify({
     interval: 300,
     threshold: 1024,

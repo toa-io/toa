@@ -44,7 +44,8 @@ export function codec(properties) {
   for (const [name, schema] of Object.entries(properties ?? {})) {
     const cast = READ[schema?.format]
 
-    if (cast !== undefined && schema.type === TYPES[schema.format]) read.push([name, cast])
+    if (cast !== undefined && schema.type === TYPES[schema.format])
+      read.push([name, cast])
   }
 
   const dates = read.map(([name]) => name)

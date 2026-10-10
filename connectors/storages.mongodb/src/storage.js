@@ -492,7 +492,10 @@ export class Storage extends Connector {
   async ensure(query, properties, state, row = undefined) {
     let { criteria, options } = translate(query, this.#dates)
 
-    if (query === undefined) criteria = properties
+    if (query === undefined) criteria = { ...properties }
+
+    // a deleted record is not one to get: the upsert passes it by and creates
+    if (query?.options?.deleted !== true) criteria.DELETED = null
 
     const update = { $setOnInsert: this.#to(state) }
 
@@ -523,8 +526,7 @@ export class Storage extends Connector {
               return found
             })
 
-      if (result.DELETED !== undefined && result.DELETED !== null) return null
-      else return this.#from(result)
+      return this.#from(result)
     } catch (error) {
       if (error.code === ERR_DUPLICATE_KEY)
         throw new exceptions.DuplicateException(this.#client.name)

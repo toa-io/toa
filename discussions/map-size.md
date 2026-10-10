@@ -24,7 +24,7 @@ twice the size for nobody.
 
 1. What a component declares is in the map: its entity's own properties and what of them it
    requires, its operations with what they take, answer and refuse with, and the binding of each
-   event *(today)*.
+   event _(today)_.
 2. What the runtime gives every component is not: an entity's system properties, an operation's
    binding where it is the component's, an output that describes nothing, and a `query` that
    follows from the scope.

@@ -57,7 +57,14 @@ export async function service(host: Host): Promise<Connector | null> {
 
     const dispatcher = options.rpc === undefined ? null : new Dispatcher(options.rpc)
     const mcp = options.mcp === undefined ? null : new Model(options.mcp, tree)
-    const gateway = new Gateway(broadcast, tree, interception, directives, dispatcher, mcp)
+    const gateway = new Gateway(
+      broadcast,
+      tree,
+      interception,
+      directives,
+      dispatcher,
+      mcp
+    )
 
     gateway.depends(remotes)
     gateway.depends(composition)

@@ -15,6 +15,7 @@
     "*.yaml",
     "*.yml",
     "*.json",
+    "CHANGELOG.md",
     "**/types/toa.d.ts",
     "extensions/introspection/ui",
     "extensions/configuration/ui",

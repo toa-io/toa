@@ -22,7 +22,7 @@ contexts sharing a Redis no longer share its keys.
 
 **MongoDB**
 
-4. The database is the scope. Without a suffix it is the context, as it is *(today)*.
+4. The database is the scope. Without a suffix it is the context, as it is _(today)_.
 5. A scope longer than MongoDB takes for a database name — 63 bytes — fails the boot, naming it.
 
 **Redis**
@@ -38,7 +38,7 @@ contexts sharing a Redis no longer share its keys.
    but the queue its replies arrive on.
 9. Two processes with different suffixes on one virtual host send each other nothing: a request, a
    task or an event of one is not delivered to the other.
-10. Without a suffix every name is what it is *(today)*.
+10. Without a suffix every name is what it is _(today)_.
 
 **What is not promised**
 
@@ -48,7 +48,7 @@ contexts sharing a Redis no longer share its keys.
     permission granted by prefix grants `comq.` too.
 12. A suffix is not a separator. `app` with `1a` and `app1` with `a` are one scope, and share
     everything.
-13. Two processes with one scope share everything, as two replicas of a deployment do *(today)*.
+13. Two processes with one scope share everything, as two replicas of a deployment do _(today)_.
 14. A receiver declaring a `source` consumes its exchange under the scope, while the system whose
     events they are names it without one, so a process under a suffix receives no foreign event.
 15. What an extension keeps elsewhere — the files `storages` writes, what a federation upstream
@@ -69,7 +69,7 @@ $ TOA_SUFFIX=-agent-0a1b2c3d4e5f toa compose ./components/*
    suffix or `undefined`. The suffix is validated and kept on first read, in the store every copy
    of the package shares; `set` and `delete` of `TOA_SUFFIX` forget it, and so does a `.env` that
    gives one. Without `TOA_CONTEXT` the scope is `toa-dev` under `TOA_DEV=1`, as the database is
-   *(today)*, and a boot failure otherwise.
+   _(today)_, and a boot failure otherwise.
 2. **`@toa.io/boot`.** `composition` and `component` read the suffix right after absorbing the
    environment, which is after `.env` is loaded and before anything is named.
 3. **`storages.mongodb`.** `resolveDB` answers the scope, and asserts its length.

@@ -1,0 +1,25 @@
+name: notes
+
+entity:
+  properties:
+    text: { type: string, maxLength: 1024 }
+  required: [text]
+
+operations:
+  create:
+    forward: transit
+    query: false
+    input:
+      type: object
+      properties:
+        text: { type: string, maxLength: 1024 }
+      required: [text]
+
+exposition:
+  /:
+    anonymous: true
+    io:output: [id, text]
+    GET: enumerate
+    POST: create
+    /:id:
+      GET: observe

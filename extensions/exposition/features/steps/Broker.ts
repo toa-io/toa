@@ -39,7 +39,9 @@ async function request(path: string, method = 'GET'): Promise<unknown> {
   })
 
   if (!response.ok)
-    throw new Error(`RabbitMQ management ${method} ${path} responded with ${response.status}`)
+    throw new Error(
+      `RabbitMQ management ${method} ${path} responded with ${response.status}`
+    )
 
   if (method !== 'DELETE') return await response.json()
 }

@@ -144,7 +144,7 @@ compare by eye against `toa reveal`, one secret at a time.
    secret absent is refused by its name.
 7. **A dry run reads no cluster.** `toa deploy --dry` renders with the cluster holding nothing.
 8. **What reads a context reads no cluster.** `toa env`, `toa export secrets` and `toa export
-   deployment` ask one for nothing, as they do today.
+deployment` ask one for nothing, as they do today.
 
 1, 2, 3, 5, 6 and 7 run `toa deploy` against a cluster, which no compose file stands up, so they
 are `@manual`. 4 and 8 hold by where the read is made rather than by what it answers, and the unit

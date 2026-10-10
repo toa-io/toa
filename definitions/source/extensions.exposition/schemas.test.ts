@@ -36,7 +36,9 @@ it('should require a header and a value in censor', () => {
   assert.doesNotThrow(() =>
     schemas.annotation.validate({ authorities, censor: { header, values: ['RU'] } })
   )
-  assert.throws(() => schemas.annotation.validate({ authorities, censor: { values: ['RU'] } }))
+  assert.throws(() =>
+    schemas.annotation.validate({ authorities, censor: { values: ['RU'] } })
+  )
   assert.throws(() => schemas.annotation.validate({ authorities, censor: { header } }))
   assert.throws(() =>
     schemas.annotation.validate({ authorities, censor: { header, values: [] } })
@@ -72,7 +74,8 @@ it('should take a web manifest over https, or http on a loopback host', () => {
     'http://[::1]:8000/manifest.json'
   ])
     assert.doesNotThrow(
-      () => schemas.annotation.validate({ authorities, mcp: { name: 'Teapots', manifest } }),
+      () =>
+        schemas.annotation.validate({ authorities, mcp: { name: 'Teapots', manifest } }),
       manifest
     )
 
@@ -84,7 +87,8 @@ it('should take a web manifest over https, or http on a loopback host', () => {
     ''
   ])
     assert.throws(
-      () => schemas.annotation.validate({ authorities, mcp: { name: 'Teapots', manifest } }),
+      () =>
+        schemas.annotation.validate({ authorities, mcp: { name: 'Teapots', manifest } }),
       manifest
     )
 })

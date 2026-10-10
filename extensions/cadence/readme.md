@@ -140,12 +140,12 @@ cadence:
   poll: '*/5 * * * *' # every five minutes
 ```
 
-|            |                                                                               |
-| ---------- | ----------------------------------------------------------------------------- |
-| `schedule` | the cron expression                                                           |
+|            |                                                                                  |
+| ---------- | -------------------------------------------------------------------------------- |
+| `schedule` | the cron expression                                                              |
 | `zone`     | the [time zone](https://www.iana.org/time-zones) it is read in, `UTC` by default |
-| `overdue`  | seconds a call may be late and still be made; until the next one by default   |
-| `region`   | the region that makes it; see [Regions](#in-one-region-or-in-every-one)       |
+| `overdue`  | seconds a call may be late and still be made; until the next one by default      |
+| `region`   | the region that makes it; see [Regions](#in-one-region-or-in-every-one)          |
 
 The operation is called with the moment the call was scheduled for:
 
@@ -254,6 +254,9 @@ await context.delay.cancel(id)
 | `overdue`   | milliseconds the call may be late and still be made, or `null` for no bound |
 | `unchained` | whether the call begins a chain of its own; see below                       |
 
+The endpoint is `namespace.component.operation`, or `component.operation` for a component that
+declares no namespace.
+
 The call is made once the delay has passed, and waits for the target where it is not there to
 take it. The id it answers cancels it, and `cancel` raises where the id was never issued.
 
@@ -277,7 +280,7 @@ is running in:
 
 ```javascript
 // billing.dunning.chase — arms the next chase as it finishes this one
-export async function effect (input, context) {
+export async function effect(input, context) {
   await chase(input.invoice)
 
   await context.delay(
@@ -427,4 +430,3 @@ once and deployed everywhere.
 **A cancellation crosses regions.** `cancel` is a write like any other, so it reaches the region
 that owns the call by convergence — bounded by the link, on top of the `discreteness` race that
 is there anyway.
-

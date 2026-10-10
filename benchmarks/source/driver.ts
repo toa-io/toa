@@ -26,12 +26,24 @@ export class Driver {
     this.running = running
     this.fixtures = fixtures
     // the host with its port, as the load names it and as the gateway's authorities map it
-    this.client = new Client(running.origin, `${HOST}:${running.side.ports.gateway}`, running.protocol)
+    this.client = new Client(
+      running.origin,
+      `${HOST}:${running.side.ports.gateway}`,
+      running.protocol
+    )
   }
 
   /** A side with the items seeded, where the scenarios read them. */
-  public static async prepare(run: Run, running: Running, seeded: boolean): Promise<Driver> {
-    const driver = new Driver(run, running, { tokens: run.tokens, files: run.files, item: '' })
+  public static async prepare(
+    run: Run,
+    running: Running,
+    seeded: boolean
+  ): Promise<Driver> {
+    const driver = new Driver(run, running, {
+      tokens: run.tokens,
+      files: run.files,
+      item: ''
+    })
 
     if (seeded) driver.fixtures.item = await fixtures.seed(driver.client, ITEMS)
 
@@ -44,7 +56,10 @@ export class Driver {
       method: scenario.method,
       path: scenario.path(this.fixtures),
       headers: scenario.headers?.(this.fixtures),
-      body: scenario.body === undefined ? undefined : readFileSync(scenario.body(this.fixtures), 'utf8')
+      body:
+        scenario.body === undefined
+          ? undefined
+          : readFileSync(scenario.body(this.fixtures), 'utf8')
     })
 
     if (reply.status !== scenario.status)

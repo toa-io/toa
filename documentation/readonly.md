@@ -2,7 +2,8 @@
 
 ## TL;DR
 
-A `GET` or a `HEAD` may only read, and so may every call made under it, however far down:
+A `GET` or a `HEAD` may only read, and so may an Observation or a Computation, and so may every
+call made under any of them, however far down:
 
 ```
 SafetyException: 'default.orders.place' may change state, and this call may only read
@@ -10,7 +11,13 @@ SafetyException: 'default.orders.place' may change state, and this call may only
 
 ## Where a chain begins
 
-Over HTTP, and nowhere else. `GET` and `HEAD` begin one; `POST`, `PUT`, `PATCH`, `DELETE`, `LOCK`
+Over HTTP, and at a safe operation.
+
+An [Observation or a Computation](/documentation/design.md#safety) begins one for the calls it
+makes, however it was called itself — by a `POST`, as a task, by an event. An operation that
+calls what may change the State is an Effect, and is declared one.
+
+Over HTTP, `GET` and `HEAD` begin one; `POST`, `PUT`, `PATCH`, `DELETE`, `LOCK`
 and `UNLOCK` do not, and neither does an event, a task, a
 [pulse](/extensions/cadence#pulse) or a delayed call. A
 [procedure](/extensions/exposition/documentation/rpc.md) or a
@@ -84,7 +91,7 @@ would under `POST`:
 exposition:
   /:id:
     GET:
-      endpoint: confirm    # a transition
+      endpoint: confirm # a transition
       io:readonly: false
 ```
 
