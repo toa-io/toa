@@ -77,7 +77,7 @@ export interface Component {
   create: (request: { input: CreateInput, task?: boolean }) => Promise<{} | null | undefined | CodedError<"UNKNOWN_COMPONENT" | "INVALID_CONFIGURATION">>
   reset: (request: { input: ResetInput, task?: boolean }) => Promise<{} | null | undefined | CodedError<"UNKNOWN_COMPONENT">>
   assign: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Entity>
-  ensure: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Entity>
+  ensure: (request: { input?: null, query?: Query<Entity>, entity?: Partial<Entity>, task?: boolean }) => Promise<Entity>
   enumerate: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Entity[]>
   observe: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Entity | null>
   stream: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Readable>

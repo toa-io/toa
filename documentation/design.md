@@ -137,7 +137,8 @@ Special case of the Observation (unsafe Observation) that optionally uses the Sc
 side effects.
 
 If the Effect is called with `entity` property of the Request, the current state will be acquired
-using atomic "get or create."
+using atomic "get or create." A deleted entity is not one to get: a new one is created beside it,
+unless the query asks for the deleted with `deleted: true`.
 
 #### Unmanaged
 

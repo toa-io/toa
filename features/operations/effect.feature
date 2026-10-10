@@ -36,3 +36,53 @@ Feature: Effect
       bar: world
       VERSION: 1
       """
+
+  Scenario: A deleted entry is not the one an effect gets
+    Given the `mongo.one` database contains:
+      | _id                              | foo | bar  | VERSION | CREATED       | DELETED       |
+      | bcb6780f50e243348cad40ed6b5ef575 | 5   | gone | 1       | 1716043244316 | 1722011755487 |
+    And I compose `mongo.one` component
+    When I call `mongo.one.ensure` with:
+      """yaml
+      entity:
+        foo: 5
+        bar: gone
+      """
+    Then the reply is received:
+      """yaml
+      foo: 5
+      bar: gone
+      VERSION: 1
+      """
+    When I call `mongo.one.observe` with:
+      """yaml
+      query:
+        criteria: bar==gone
+      """
+    Then the reply is received:
+      """yaml
+      foo: 5
+      bar: gone
+      DELETED: null
+      """
+
+  Scenario: A deleted entry is the one an effect gets where the query asks for the deleted
+    Given the `mongo.one` database contains:
+      | _id                              | foo | bar  | VERSION | CREATED       | DELETED       |
+      | bcb6780f50e243348cad40ed6b5ef575 | 5   | gone | 1       | 1716043244316 | 1722011755487 |
+    And I compose `mongo.one` component
+    When I call `mongo.one.ensure` with:
+      """yaml
+      query:
+        criteria: bar==gone
+        deleted: true
+      entity:
+        foo: 5
+        bar: gone
+      """
+    Then the reply is received:
+      """yaml
+      id: bcb6780f50e243348cad40ed6b5ef575
+      foo: 5
+      bar: gone
+      """

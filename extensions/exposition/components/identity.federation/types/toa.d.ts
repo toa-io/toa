@@ -91,14 +91,14 @@ export type DeleteInput = {
 
 export interface Component {
   transit: (request: { input: TransitInput, query?: Query<Entity>, task?: boolean }) => Promise<Entity>
-  create: (request: { input: CreateInput, task?: boolean }) => Promise<{} | null | undefined | CodedError<"EXISTS" | "TOKEN" | "TRUST" | "RESPONSE" | "CONFIG" | "NO_TOKEN" | "ISS" | "SUB" | "EXP" | "REPLAY" | "CODE_NOT_ENABLED" | "CODE_SCHEMA">>
-  incept: (request: { input: InceptInput, task?: boolean }) => Promise<InceptOutput | CodedError<"EXISTS" | "TOKEN" | "TRUST" | "RESPONSE" | "CONFIG" | "NO_TOKEN" | "ISS" | "SUB" | "EXP" | "REPLAY" | "CODE_NOT_ENABLED" | "CODE_SCHEMA">>
-  authenticate: (request: { input: AuthenticateInput, task?: boolean }) => Promise<AuthenticateOutput | CodedError<"NOT_FOUND" | "TOKEN" | "TRUST" | "RESPONSE" | "CONFIG" | "NO_TOKEN" | "ISS" | "SUB" | "EXP" | "REPLAY" | "CODE_NOT_ENABLED" | "CODE_SCHEMA">>
-  decode: (request: { input: DecodeInput, task?: boolean }) => Promise<DecodeOutput>
+  create: (request: { input: CreateInput, entity?: Partial<Entity>, task?: boolean }) => Promise<{} | null | undefined | CodedError<"EXISTS" | "TOKEN" | "TRUST" | "RESPONSE" | "CONFIG" | "NO_TOKEN" | "ISS" | "SUB" | "EXP" | "REPLAY" | "CODE_NOT_ENABLED" | "CODE_SCHEMA">>
+  incept: (request: { input: InceptInput, entity?: Partial<Entity>, task?: boolean }) => Promise<InceptOutput | CodedError<"EXISTS" | "TOKEN" | "TRUST" | "RESPONSE" | "CONFIG" | "NO_TOKEN" | "ISS" | "SUB" | "EXP" | "REPLAY" | "CODE_NOT_ENABLED" | "CODE_SCHEMA">>
+  authenticate: (request: { input: AuthenticateInput, entity?: Partial<Entity>, task?: boolean }) => Promise<AuthenticateOutput | CodedError<"NOT_FOUND" | "TOKEN" | "TRUST" | "RESPONSE" | "CONFIG" | "NO_TOKEN" | "ISS" | "SUB" | "EXP" | "REPLAY" | "CODE_NOT_ENABLED" | "CODE_SCHEMA">>
+  decode: (request: { input: DecodeInput, entity?: Partial<Entity>, task?: boolean }) => Promise<DecodeOutput>
   list: (request: { input: ListInput, task?: boolean }) => Promise<unknown>
-  delete: (request: { input: DeleteInput, task?: boolean }) => Promise<unknown>
+  delete: (request: { input: DeleteInput, entity?: Partial<Entity>, task?: boolean }) => Promise<unknown>
   assign: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Entity>
-  ensure: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Entity>
+  ensure: (request: { input?: null, query?: Query<Entity>, entity?: Partial<Entity>, task?: boolean }) => Promise<Entity>
   enumerate: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Entity[]>
   observe: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Entity | null>
   stream: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Readable>
