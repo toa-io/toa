@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.328](https://github.com/toa-io/toa/compare/v1.0.0-alpha.327...v1.0.0-alpha.328) (2026-10-10)
+
+### Features
+
+* send a call again that a process does not serve ([881315e](https://github.com/toa-io/toa/commit/881315e65c43d04f9ad9eefc7acb78cd419d65bf))
+
+
 # [1.0.0-alpha.327](https://github.com/toa-io/toa/compare/v1.0.0-alpha.326...v1.0.0-alpha.327) (2026-10-10)
 
 * feat(core)!: name a property inside an object in a query ([aa11074](https://github.com/toa-io/toa/commit/aa110745695a6954a623d95ea7d694c7301fd683))

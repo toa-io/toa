@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.328](https://github.com/toa-io/toa/compare/v1.0.0-alpha.327...v1.0.0-alpha.328) (2026-10-10)
+
+* feat!: take the calls of a component from one queue ([09bfc10](https://github.com/toa-io/toa/commit/09bfc108b19d8bc2e52f155123bfdf8e0143e49b))
+
+### Bug Fixes
+
+* **deps:** take comq 0.26.0, which sends a Request with properties ([0fe3dc5](https://github.com/toa-io/toa/commit/0fe3dc58c2ea553049ee7eedef793ba9a867c24f))
+
+### Features
+
+* send a call again that a process does not serve ([881315e](https://github.com/toa-io/toa/commit/881315e65c43d04f9ad9eefc7acb78cd419d65bf))
+
+### BREAKING CHANGES
+
+* a process of this release and one of the release before do
+  not reach each other. See migrations/327.md.
+
+
 # [1.0.0-alpha.327](https://github.com/toa-io/toa/compare/v1.0.0-alpha.326...v1.0.0-alpha.327) (2026-10-10)
 
 **Note:** Version bump only for package @toa.io/bindings.amqp
