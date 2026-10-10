@@ -11,6 +11,7 @@ import {
   instances,
   name,
   outbound,
+  requests,
   scoped,
   tasks
 } from '../source/queues.js'
@@ -51,6 +52,10 @@ it('should name a queue with nameless locator', async () => {
   assert.deepStrictEqual(queue, `${locator.namespace}.${endpoint}`)
 })
 
+it('should name one queue for the requests of a component', () => {
+  assert.equal(requests(locator), `${locator.namespace}.${locator.name}..requests`)
+})
+
 it('should name what an operator is told to declare', () => {
   // a region's queues are declared before it runs anything, from `toa export convergence`,
   // and what it prints is asserted here: one that exists under another name is one the
@@ -84,6 +89,7 @@ describe('under a suffix', () => {
       name(locator, endpoint),
       `app-copy.${namespace}.${component}.${endpoint}`
     )
+    assert.equal(requests(locator), `app-copy.${namespace}.${component}..requests`)
     assert.equal(tasks(locator), `app-copy.${namespace}.${component}..tasks`)
     assert.equal(
       instances(locator, endpoint),

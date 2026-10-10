@@ -37,6 +37,8 @@ export const codes = {
   Safety: 406,
   /** nothing answered at the address of the component a streamed call was made to */
   Unreachable: 407,
+  /** the process that took a call does not serve the operation it names; another may */
+  Unserved: 408,
 
   /** a chain that came back to where it had been, or went further than a chain goes */
   Loop: 500,
@@ -186,6 +188,7 @@ export const AbandonedException = derive('Abandoned')
 export const DisposedException = derive('Disposed')
 export const SafetyException = derive('Safety')
 export const UnreachableException = derive('Unreachable')
+export const UnservedException = derive('Unserved')
 export const MisuseException = derive('Misuse')
 export const IrresumableException = derive('Irresumable')
 export const UnstatedException = derive('Unstated')
@@ -248,6 +251,8 @@ const OUTCOME: Record<keyof typeof codes, 'permanent' | 'transient'> = {
   Safety: 'permanent',
   // a replica that is starting, restarting or being deployed is one that answers in a moment
   Unreachable: 'transient',
+  // a component is replaced a process at a time, and a process of its other release may serve it
+  Unserved: 'transient',
 
   // the chain is deterministic, so another attempt walks it again: a retry is another cycle
   Loop: 'permanent',

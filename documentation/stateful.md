@@ -117,5 +117,6 @@ A route reaches a stateful operation with the name in a route parameter:
   until then.
 - **The first call to a component looks the component up**, and the lookup waits for as long as the
   component takes to appear. The timeout counts from when it is found.
-- **Declaring `stateful` on an operation that was ordinary** stops its shared queue being consumed, so
-  every caller runs a runtime that knows the flag before it is declared.
+- **Declaring `stateful` on an operation that was ordinary** stops ordinary calls to it being
+  served: one is answered with an `EndpointException`. So every caller runs a runtime that knows
+  the flag before it is declared.

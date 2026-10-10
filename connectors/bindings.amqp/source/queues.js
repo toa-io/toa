@@ -25,6 +25,13 @@ export const name = (locator, endpoint) =>
   scoped(locator.namespace + '.' + concat(locator.name, '.') + endpoint)
 
 /**
+ * where every ordinary call to a component arrives, whichever of its operations it names: the
+ * message says which, so the broker holds one queue per component rather than one per operation
+ */
+export const requests = (locator) =>
+  scoped(locator.namespace + '.' + locator.name + '..requests')
+
+/**
  * where every task a component is given arrives, whichever of its operations it names: the
  * message says which, so the queue holds one per component rather than one per operation
  */

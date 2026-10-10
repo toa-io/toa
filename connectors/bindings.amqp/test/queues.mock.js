@@ -4,6 +4,8 @@ import { generate } from 'randomstring'
 
 export const name = mock.fn(() => generate())
 
+export const requests = mock.fn(() => generate())
+
 export const tasks = mock.fn(() => generate())
 
 export const instances = mock.fn(() => generate())

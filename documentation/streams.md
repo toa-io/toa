@@ -159,8 +159,9 @@ A route may not carry `map:stream` and `map:buffer` at once — each of them tak
   or is between deployments fails the call where an ordinary call would have waited for it.
 - **Replicas do not take an even share of streamed calls.** Each call is routed on its own, at
   random.
-- **Declaring a stream on an operation that was ordinary** stops the queue it was served on being
-  consumed, so every caller runs a runtime that knows the key before it is declared.
+- **Declaring a stream on an operation that was ordinary** stops ordinary calls to it being
+  served: one is answered with an `EndpointException`. So every caller runs a runtime that knows
+  the key before it is declared.
 - **A component is reachable at one address.** One that runs in a network of its own is called over
   the broker as before, and a streamed call to it fails.
 - **A reply is a value or a stream**, never a value with a stream in it.
