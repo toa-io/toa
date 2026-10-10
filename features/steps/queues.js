@@ -312,8 +312,13 @@ const PARKING = 5000
 /** how long an answer may take to arrive */
 const ANSWERING = 5000
 
-/** how long a consumer may take to appear in the statistics the management API reads */
-const COUNTING = 10000
+/**
+ * How long a consumer may take to appear in the statistics the management API reads. A queue
+ * reports its statistics every five seconds and the management database takes them in on an
+ * interval of its own, so a consumer that has just arrived is counted up to ten seconds later —
+ * and a wait of exactly that long loses to it about every other time.
+ */
+const COUNTING = 20000
 
 /**
  * @param {string} path
