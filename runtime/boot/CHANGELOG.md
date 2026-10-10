@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.327](https://github.com/toa-io/toa/compare/v1.0.0-alpha.326...v1.0.0-alpha.327) (2026-10-10)
+
+* feat(core)!: refuse a call to an operation declaring once made by a retried transition ([71db669](https://github.com/toa-io/toa/commit/71db6697d06f9854910ec6785733f4e896cbe756))
+
+### BREAKING CHANGES
+
+* a transition declared `concurrency: retry` that calls an
+  operation declaring `once` raises an Unrepeatable exception (604) on that
+  call. Declare it `concurrency: none`, make the call from a receiver of the
+  event the change publishes, or call both from an effect.
+
+
 # [1.0.0-alpha.326](https://github.com/toa-io/toa/compare/v1.0.0-alpha.325...v1.0.0-alpha.326) (2026-10-06)
 
 ### Bug Fixes

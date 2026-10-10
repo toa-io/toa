@@ -3,6 +3,26 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.327](https://github.com/toa-io/toa/compare/v1.0.0-alpha.326...v1.0.0-alpha.327) (2026-10-10)
+
+* feat(core)!: name a property inside an object in a query ([aa11074](https://github.com/toa-io/toa/commit/aa110745695a6954a623d95ea7d694c7301fd683))
+* feat(core)!: hold what a safe operation calls to reading ([b8bbc8e](https://github.com/toa-io/toa/commit/b8bbc8e33b6d0eea461df448dde7ea85c9d7c382))
+* feat(core)!: refuse a call to an operation declaring once made by a retried transition ([71db669](https://github.com/toa-io/toa/commit/71db6697d06f9854910ec6785733f4e896cbe756))
+
+### BREAKING CHANGES
+
+* a transition declared `concurrency: retry` that calls an
+  operation declaring `once` raises an Unrepeatable exception (604) on that
+  call. Declare it `concurrency: none`, make the call from a receiver of the
+  event the change publishes, or call both from an effect.
+* a value compared with an array of numbers, integers or
+  booleans is read as one and refused where it is none, and a sort or a
+  projection naming what every object carries is refused.
+* an observation or a computation that calls a transition, an
+  assignment, an effect or an unmanaged operation, or arms a delay, raises a
+  Safety exception on that call. Declare it an effect.
+
+
 # [1.0.0-alpha.326](https://github.com/toa-io/toa/compare/v1.0.0-alpha.325...v1.0.0-alpha.326) (2026-10-06)
 
 * feat(core)!: deliver an operation's error as its code and its cause ([18d303b](https://github.com/toa-io/toa/commit/18d303b9143930735e4b093345db1dbf37f90052))

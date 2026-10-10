@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.327](https://github.com/toa-io/toa/compare/v1.0.0-alpha.326...v1.0.0-alpha.327) (2026-10-10)
+
+### Bug Fixes
+
+* **cli:** type the entity of a request to an effect ([6fa08d4](https://github.com/toa-io/toa/commit/6fa08d4ba407711a1d5fe6ed5921e485741e98f1))
+
+
 # [1.0.0-alpha.326](https://github.com/toa-io/toa/compare/v1.0.0-alpha.325...v1.0.0-alpha.326) (2026-10-06)
 
 * feat(exposition)!: answer a refusal with its code and its cause ([d1f6a95](https://github.com/toa-io/toa/commit/d1f6a9593712c8b7f1d7e1ab299dbe379a7753c0))

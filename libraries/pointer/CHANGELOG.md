@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.327](https://github.com/toa-io/toa/compare/v1.0.0-alpha.326...v1.0.0-alpha.327) (2026-10-10)
+
+### Features
+
+* name a component without a namespace by its name ([abcdd9c](https://github.com/toa-io/toa/commit/abcdd9c9a3d3c5c1c68b74544791848e59a7e158))
+
+
 # [1.0.0-alpha.326](https://github.com/toa-io/toa/compare/v1.0.0-alpha.325...v1.0.0-alpha.326) (2026-10-06)
 
 **Note:** Version bump only for package @toa.io/pointer

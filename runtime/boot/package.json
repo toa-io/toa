@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/boot",
-  "version": "1.0.0-alpha.326",
+  "version": "1.0.0-alpha.327",
   "type": "module",
   "description": "Toa Boot",
   "author": "temich <tema.gurtovoy@gmail.com>",
@@ -21,15 +21,15 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@toa.io/atomicity": "1.0.0-alpha.326",
-    "@toa.io/core": "1.0.0-alpha.326",
-    "@toa.io/definitions": "1.0.0-alpha.326",
+    "@toa.io/atomicity": "1.0.0-alpha.327",
+    "@toa.io/core": "1.0.0-alpha.327",
+    "@toa.io/definitions": "1.0.0-alpha.327",
     "@toa.io/generic": "1.0.0-alpha.311",
-    "@toa.io/norm": "1.0.0-alpha.326",
+    "@toa.io/norm": "1.0.0-alpha.327",
     "@toa.io/schemas": "1.0.0-alpha.326",
     "clone-deep": "4.0.1",
     "dotenv": "18.0.5",
-    "openspan": "1.0.0-alpha.323"
+    "openspan": "1.0.0-alpha.327"
   },
   "gitHead": "61c8e74a336385265767e9fd37d49128cb51b17f"
 }

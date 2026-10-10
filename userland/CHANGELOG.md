@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.327](https://github.com/toa-io/toa/compare/v1.0.0-alpha.326...v1.0.0-alpha.327) (2026-10-10)
+
+### Features
+
+* **cli:** create an application in the working directory ([6d44704](https://github.com/toa-io/toa/commit/6d44704ce27e12e796448d9db9b55390ef0a6196))
+* **userland:** install what the declarations require with the packages ([52a99da](https://github.com/toa-io/toa/commit/52a99da800e37117250377ae87245634cfba4a85))
+* **userland:** run what is created as two processes under PM2 ([fe37a05](https://github.com/toa-io/toa/commit/fe37a0583cdccb0f4fdcaf5ae9f73bb1cc10e843))
+
+
 # [1.0.0-alpha.326](https://github.com/toa-io/toa/compare/v1.0.0-alpha.325...v1.0.0-alpha.326) (2026-10-06)
 
 **Note:** Version bump only for package @toa.io/userland

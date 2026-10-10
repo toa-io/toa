@@ -3,6 +3,41 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.327](https://github.com/toa-io/toa/compare/v1.0.0-alpha.326...v1.0.0-alpha.327) (2026-10-10)
+
+* feat(core)!: name a property inside an object in a query ([aa11074](https://github.com/toa-io/toa/commit/aa110745695a6954a623d95ea7d694c7301fd683))
+* feat(core)!: hold what a safe operation calls to reading ([b8bbc8e](https://github.com/toa-io/toa/commit/b8bbc8e33b6d0eea461df448dde7ea85c9d7c382))
+* feat(core)!: refuse a call to an operation declaring once made by a retried transition ([71db669](https://github.com/toa-io/toa/commit/71db6697d06f9854910ec6785733f4e896cbe756))
+
+### Bug Fixes
+
+* **cli:** look for the template beside the CLI instead of depending on it ([aa2565d](https://github.com/toa-io/toa/commit/aa2565d7b7d528266ece229b89194bd9a504156a))
+* **cli:** type the entity of a request to an effect ([6fa08d4](https://github.com/toa-io/toa/commit/6fa08d4ba407711a1d5fe6ed5921e485741e98f1))
+* **deps:** take handlebars past its advisories ([abaecf6](https://github.com/toa-io/toa/commit/abaecf6b6f100e036b17271e6d1b7c3ea8ee9012))
+* **deps:** take nx and smol-toml past their advisories ([c9fa5f6](https://github.com/toa-io/toa/commit/c9fa5f61f1b28b46588eb05d0061c44b051189b6))
+* **storages.mongodb:** pass a deleted record by when an effect gets or creates ([0cea640](https://github.com/toa-io/toa/commit/0cea6405021c8230e9b68a0f3086ff610332b34d))
+
+### Features
+
+* **cli:** create an application in the working directory ([6d44704](https://github.com/toa-io/toa/commit/6d44704ce27e12e796448d9db9b55390ef0a6196))
+* name a component without a namespace by its name ([abcdd9c](https://github.com/toa-io/toa/commit/abcdd9c9a3d3c5c1c68b74544791848e59a7e158))
+* **userland:** install what the declarations require with the packages ([52a99da](https://github.com/toa-io/toa/commit/52a99da800e37117250377ae87245634cfba4a85))
+* **userland:** run what is created as two processes under PM2 ([fe37a05](https://github.com/toa-io/toa/commit/fe37a0583cdccb0f4fdcaf5ae9f73bb1cc10e843))
+
+### BREAKING CHANGES
+
+* a transition declared `concurrency: retry` that calls an
+  operation declaring `once` raises an Unrepeatable exception (604) on that
+  call. Declare it `concurrency: none`, make the call from a receiver of the
+  event the change publishes, or call both from an effect.
+* a value compared with an array of numbers, integers or
+  booleans is read as one and refused where it is none, and a sort or a
+  projection naming what every object carries is refused.
+* an observation or a computation that calls a transition, an
+  assignment, an effect or an unmanaged operation, or arms a delay, raises a
+  Safety exception on that call. Declare it an effect.
+
+
 # [1.0.0-alpha.326](https://github.com/toa-io/toa/compare/v1.0.0-alpha.325...v1.0.0-alpha.326) (2026-10-06)
 
 * feat(exposition)!: answer a refusal with its code and its cause ([d1f6a95](https://github.com/toa-io/toa/commit/d1f6a9593712c8b7f1d7e1ab299dbe379a7753c0))
