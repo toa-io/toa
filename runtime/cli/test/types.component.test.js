@@ -75,3 +75,31 @@ describe('errors', () => {
     match(emitted, /compute: \(.*\) => Promise<unknown>/)
   })
 })
+
+describe('entity of a request', () => {
+  const entity = { properties: { count: { type: 'integer' } } }
+
+  it('should write what an effect gets or creates', () => {
+    const emitted = component({
+      entity,
+      operations: { ensure: { type: 'effect', scope: 'entry' } }
+    })
+
+    match(emitted, /ensure: \(request: \{ .*entity\?: Partial<Entity>.* \}\)/)
+  })
+
+  it('should write none for an operation that is not an effect', () => {
+    const emitted = component({
+      entity,
+      operations: { observe: { type: 'observation', scope: 'entry' } }
+    })
+
+    doesNotMatch(emitted, /entity\?:/)
+  })
+
+  it('should write none for a component without an entity', () => {
+    const emitted = component({ operations: { ensure: { type: 'effect' } } })
+
+    doesNotMatch(emitted, /entity\?:/)
+  })
+})

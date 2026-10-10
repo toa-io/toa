@@ -91,13 +91,13 @@ export type IssueOutput = {
 export type RevokeOutput = null
 
 export interface Component {
-  encrypt: (request: { input: EncryptInput, task?: boolean }) => Promise<EncryptOutput | CodedError<"INACCESSIBLE_SCOPE">>
+  encrypt: (request: { input: EncryptInput, entity?: Partial<Entity>, task?: boolean }) => Promise<EncryptOutput | CodedError<"INACCESSIBLE_SCOPE">>
   decrypt: (request: { input: DecryptInput, task?: boolean }) => Promise<DecryptOutput | CodedError<"INVALID_TOKEN" | "INVALID_KEY" | "FORGED_KEY" | "REVOKED_KEY">>
   authenticate: (request: { input: AuthenticateInput, task?: boolean }) => Promise<AuthenticateOutput | CodedError<"UNRECOGNIZED" | "AUTHORITY_MISMATCH" | "TOKEN_REVOKED" | "INVALID_TOKEN" | "INVALID_KEY" | "FORGED_KEY" | "REVOKED_KEY">>
-  issue: (request: { input: IssueInput, task?: boolean }) => Promise<IssueOutput | CodedError<"INACCESSIBLE_SCOPE">>
+  issue: (request: { input: IssueInput, entity?: Partial<Entity>, task?: boolean }) => Promise<IssueOutput | CodedError<"INACCESSIBLE_SCOPE">>
   revoke: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<RevokeOutput>
   assign: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Entity>
-  ensure: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Entity>
+  ensure: (request: { input?: null, query?: Query<Entity>, entity?: Partial<Entity>, task?: boolean }) => Promise<Entity>
   enumerate: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Entity[]>
   observe: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Entity | null>
   stream: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Readable>

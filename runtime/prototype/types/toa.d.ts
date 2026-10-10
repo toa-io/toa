@@ -16,7 +16,7 @@ export type State = Entity & { DISCARD: boolean, TRAILERS: Record<string, unknow
 
 export interface Component {
   assign: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<unknown>
-  ensure: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<unknown>
+  ensure: (request: { input?: null, query?: Query<Entity>, entity?: Partial<Entity>, task?: boolean }) => Promise<unknown>
   enumerate: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<unknown>
   observe: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<unknown | null>
   stream: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<unknown>

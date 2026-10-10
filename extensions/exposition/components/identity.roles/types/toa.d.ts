@@ -36,9 +36,9 @@ export type PrincipalInput = {
 export interface Component {
   grant: (request: { input: GrantInput, task?: boolean }) => Promise<{} | null | undefined | CodedError<"INACCESSIBLE_SCOPE">>
   list: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<ListOutput>
-  principal: (request: { input: PrincipalInput, task?: boolean }) => Promise<unknown>
+  principal: (request: { input: PrincipalInput, entity?: Partial<Entity>, task?: boolean }) => Promise<unknown>
   assign: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Entity>
-  ensure: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Entity>
+  ensure: (request: { input?: null, query?: Query<Entity>, entity?: Partial<Entity>, task?: boolean }) => Promise<Entity>
   enumerate: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Entity[]>
   observe: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Entity | null>
   stream: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Readable>

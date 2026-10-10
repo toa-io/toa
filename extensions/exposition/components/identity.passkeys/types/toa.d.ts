@@ -99,14 +99,14 @@ export type DeleteInput = {
 }
 
 export interface Component {
-  challenge: (request: { input: ChallengeInput, task?: boolean }) => Promise<unknown>
+  challenge: (request: { input: ChallengeInput, entity?: Partial<Entity>, task?: boolean }) => Promise<unknown>
   create: (request: { input: CreateInput, task?: boolean }) => Promise<{} | null | undefined | CodedError<"FAILED" | "INVALID">>
   use: (request: { input: UseInput, query: Query<Entity>, task?: boolean }) => Promise<{} | null | undefined | CodedError<"FAILED" | "INVALID">>
-  authenticate: (request: { input: AuthenticateInput, task?: boolean }) => Promise<{} | null | undefined | CodedError<"MISS" | "FAILED" | "INVALID">>
+  authenticate: (request: { input: AuthenticateInput, entity?: Partial<Entity>, task?: boolean }) => Promise<{} | null | undefined | CodedError<"MISS" | "FAILED" | "INVALID">>
   list: (request: { input: ListInput, task?: boolean }) => Promise<unknown>
-  delete: (request: { input: DeleteInput, task?: boolean }) => Promise<unknown>
+  delete: (request: { input: DeleteInput, entity?: Partial<Entity>, task?: boolean }) => Promise<unknown>
   assign: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Entity>
-  ensure: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Entity>
+  ensure: (request: { input?: null, query?: Query<Entity>, entity?: Partial<Entity>, task?: boolean }) => Promise<Entity>
   enumerate: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Entity[]>
   observe: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Entity | null>
   stream: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Readable>
