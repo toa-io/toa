@@ -139,12 +139,12 @@ for as long as the process runs. So a caller keeps the contract it first read, w
 code was written against.
 
 A call is not routed by version: it goes to the component's queue, which every version serves, so
-an endpoint two versions both declare is served by either. **One that only the newer version
-declares may be taken by the older, and is answered with an `EndpointException`** — so an endpoint
-is called once the deployment that adds it is complete. The caller validates against the contract it read and
+an endpoint two versions both declare is served by either. One that only the newer version
+declares is served by the newer: a process of the older that is handed the call says it does not
+serve it, and the call is sent again until a process that does takes it. The caller validates against the contract it read and
 the callee does not validate again, so **an endpoint's input schema is yours to keep compatible
 while two versions of it serve** — the same rule a deployment holds you to for the State. An
-event only the newer version declares is not affected: the older one does not emit it.
+endpoint or an event only the newer version declares is not affected: the older one serves neither.
 
 The gateway is described by the version that announced the route it matched, whatever the map says,
 so a request it forwards is described by the same version that offered it the route — it forwards

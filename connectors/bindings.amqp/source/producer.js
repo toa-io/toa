@@ -3,6 +3,7 @@ import { Connector, deliveries, exceptions, instance } from '@toa.io/core'
 import { console } from 'openspan'
 
 import { ENDPOINT } from './constants.js'
+import * as stopping from './stopping.js'
 import { instances, requests, tasks } from './queues.js'
 import { refuse, unserved } from './verdict.js'
 
@@ -60,6 +61,8 @@ export class Producer extends Connector {
    * so that a name this process hands out in a reply is reachable by the time it arrives.
    */
   async open() {
+    stopping.reset()
+
     await Promise.all(this.#stateful.map((endpoint) => this.#addressed(endpoint)))
 
     const shared = this.#endpoints.filter(
@@ -88,6 +91,9 @@ export class Producer extends Connector {
    * which is what a durable queue is for.
    */
   async close() {
+    // a call that is waiting to be sent again is answered now, or what is running would wait on it
+    stopping.begin()
+
     // what is still running in this process may be waiting on a call this communication serves
     await deliveries.settled()
     await this.#comm.seal()
@@ -118,12 +124,13 @@ export class Producer extends Connector {
       console.debug('AMQP request received', { label: queue, endpoint, request })
 
       // a caller running ahead of this process names an operation it does not serve. Somebody
-      // is waiting, and trying the message again cannot make the operation known, so it is
-      // answered rather than raised
+      // is waiting, and trying the message again here cannot make the operation known, so it is
+      // answered rather than raised — with what tells whoever called to send it again, for a
+      // process of the release that has the operation
       if (!this.#shared.has(endpoint))
         return {
-          exception: new exceptions.EndpointException(
-            `'${endpoint ?? ''}' is not served by '${this.#locator.id}'`
+          exception: new exceptions.UnservedException(
+            `'${endpoint ?? ''}' is not served by this process of '${this.#locator.id}'`
           )
         }
 

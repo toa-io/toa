@@ -17,6 +17,7 @@ const mock = {
 mocking.module('../source/queues', { namedExports: mock.queues })
 
 const { Producer } = await import('../source/producer.js')
+const stopping = await import('../source/stopping.js')
 
 it('should be', async () => {
   assert.notStrictEqual(Producer, undefined)
@@ -94,7 +95,8 @@ it('should answer a request naming an endpoint it does not serve', async () => {
   for (const properties of [{ headers: { 'toa.io/endpoint': absent } }, {}, undefined]) {
     const reply = await process(generate(), properties)
 
-    assert.strictEqual(reply.exception.code, exceptions.codes.Endpoint)
+    // what tells whoever called to send the call again, for another process
+    assert.strictEqual(reply.exception.code, exceptions.codes.Unserved)
   }
 
   const reply = await process(generate(), { headers: { 'toa.io/endpoint': absent } })
@@ -159,6 +161,20 @@ it('should park a task naming an endpoint it does not serve', async () => {
 })
 
 describe('closing', () => {
+  it('should say the process is stopping, until it serves again', async () => {
+    await producer.connect()
+
+    assert.strictEqual(stopping.signal().aborted, false)
+
+    await producer.disconnect()
+
+    assert.strictEqual(stopping.signal().aborted, true)
+
+    await new Producer(mock.communication(), locator, endpoints, component).connect()
+
+    assert.strictEqual(stopping.signal().aborted, false)
+  })
+
   it('should stop consuming', async () => {
     await producer.connect()
     await producer.disconnect()
@@ -264,7 +280,7 @@ describe('stateful', () => {
     const properties = { headers: { 'toa.io/endpoint': stateful } }
     const reply = await comm.reply.mock.calls[0].arguments[1](generate(), properties)
 
-    assert.strictEqual(reply.exception.code, exceptions.codes.Endpoint)
+    assert.strictEqual(reply.exception.code, exceptions.codes.Unserved)
     await assert.rejects(comm.process.mock.calls[0].arguments[1](generate(), properties))
     assert.strictEqual(component.invoke.mock.callCount(), 0)
   })

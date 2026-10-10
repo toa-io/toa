@@ -42,11 +42,12 @@ Feature: Requests of a component on one queue
   Scenario: A request for an operation the component does not serve is answered at once
 
     A caller upgraded ahead of this component names an operation it does not have. Somebody
-    is waiting for the answer, and trying the request again cannot make the operation known.
+    is waiting for the answer, so the process says at once that it does not serve it, which is
+    what has the caller send the request again for a process that does.
 
     Given I compose `echo.beacon` component
     When a request naming `absent` is published to `echo.beacon`
     Then the request is answered with the exception:
       """yaml
-      code: 402
+      code: 408
       """

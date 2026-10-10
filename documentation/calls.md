@@ -19,10 +19,16 @@ What a call answers, and what an error and an exception are, is in
 the call when it comes back, and the caller waits until then. An ordinary call names no `timeout`
 and no `signal`; it is refused if it does.
 
-**An operation the component does not have is refused.** A call naming one is answered with an
-`EndpointException`, by a component that is running. This is what a call gets while a deployment
-is adding the operation and a process of the release before takes it — see
-[contracts](/documentation/contracts.md#while-two-versions-serve).
+**It reaches a process that has the operation.** While a deployment replaces a component, a call
+to an operation only one of its two releases has may be handed to a process of the other. That
+process says it does not serve it, and the call is sent again, after a pause that doubles from a
+tenth of a second, until a process that serves it takes it. So such a call can be answered late,
+by seconds, and nothing else changes: an operation is added, and called, in one release.
+
+**An operation no process has is refused, after about three and a half minutes.** Once a call has
+been sent again eleven times, or the process that made it begins to stop, it throws an
+`EndpointException`. This is what a call to an operation a release removed ends with, and a call
+to one whose release never came up.
 
 ## What calls share
 

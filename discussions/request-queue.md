@@ -13,25 +13,33 @@ operations its components declare.
 2. Any process serving the component takes any of its calls, and which operation a call is for
    does not change who may take it _(today)_.
 3. A call for an operation the process that took it does not serve is answered at once with an
-   `EndpointException`, saying which operation it named.
-4. Calls of one component share a queue and its prefetch, so a process holds no more of them
+   `UnservedException`, and the process that made the call sends it again: after a tenth of a
+   second, then twice as long each time, eleven times, which is some three and a half minutes.
+   So a call to an operation only the newer of two releases declares is answered by the newer,
+   as it is _(today)_, once a process of it takes the call.
+4. A call that has been sent again that often, or whose caller's process begins to stop, throws an
+   `EndpointException`. A call to an operation a release removed ends, where it waited for good.
+5. Calls of one component share a queue and its prefetch, so a process holds no more of them
    unanswered than it held of one operation's before, and one operation's calls in flight count
    against another's.
-5. A component with no operation an ordinary call may reach — every one of them stateful, or bound
+6. A component with no operation an ordinary call may reach — every one of them stateful, or bound
    elsewhere — declares no request queue.
-6. What a call is given, what it answers, how a failure of it is tried again and what a reply
+7. What a call is given, what it answers, how a failure of it is tried again and what a reply
    stream is are unchanged _(today)_.
-7. A task, an addressed call to a stateful operation, an event and a streamed call go where they
+8. A task, an addressed call to a stateful operation, an event and a streamed call go where they
    went _(today)_.
 
 **What is not promised**
 
-8. A call made by a caller running an older runtime is not taken. It waits in the per-operation
+9. A call made by a caller running an older runtime is not taken. It waits in the per-operation
    queue it was published to, and its caller waits with it.
-9. Nothing removes a queue from before this change. `<ns>.<component>.<operation>` keeps whatever
-   it holds until it is deleted.
-10. A call for an operation only the newer of two releases declares may be taken by a process of
-    the older one, and answered as (3) says.
+10. Nothing removes a queue from before this change. `<ns>.<component>.<operation>` keeps whatever
+    it holds until it is deleted.
+11. Which process takes a call that is sent again. It is the broker's turn, so a call to an
+    operation one of two releases has may be sent more than once before the release that has it
+    takes it, and is answered late by as long.
+12. That a call waits longer than (3) for a release that is not up yet. One that is still not
+    served by then is refused, where it waited for as long as the release took.
 
 ### What a component author does differently
 
@@ -41,17 +49,19 @@ Nothing. A call is made the same way; what changes is the queue that carries it.
 
 1. **comq.** A Request is sent with properties, as an Event is, and a producer is given the
    properties of the Request it answers.
-2. **`connectors/bindings.amqp`.** `queues.js` gains `requests(locator)`. `Consumer` publishes to
-   it with the operation in `toa.io/endpoint` rather than to a queue named after the operation.
-   `Producer` registers one request consumer for the component instead of one per operation, reads
-   the operation off the message, and answers what it does not serve.
-3. **Documentation.** `documentation/calls.md`, which does not exist, is written as ordinary calls
-   stand and then changed. `contracts.md`, `stateful.md` and `streams.md` say what a call that
-   names an operation a process does not serve is answered.
-4. **Scenarios.** `features/bindings/requests.feature`, and the names in
-   `features/bindings/scope.feature`. `features/runtime/contracts.feature` states (10) where it
-   stated the opposite, and waits for a component rather than for a version of one.
-5. **Migration.** `migrations/327.md`: the release is taken through a halt, and the queues it
+2. **`runtime/core`.** `UnservedException`, code 408, transient: the process that took a call does
+   not serve the operation it names, and another may.
+3. **`connectors/bindings.amqp`.** `queues.js` gains `requests(locator)`. `Consumer` publishes to
+   it with the operation in `toa.io/endpoint` rather than to a queue named after the operation,
+   and sends a call again that was answered `Unserved`. `Producer` registers one request consumer
+   for the component instead of one per operation, reads the operation off the message, and
+   answers `Unserved` for what it does not serve.
+4. **Documentation.** `documentation/calls.md`, which does not exist, is written as ordinary calls
+   stand and then changed. `contracts.md` says a component's calls share a queue.
+5. **Scenarios.** `features/bindings/requests.feature`, and the names in
+   `features/bindings/scope.feature`. What two releases serving together promise is held by
+   `features/runtime/contracts.feature` as it stands, which gains the call nobody comes to serve.
+6. **Migration.** `migrations/327.md`: the release is taken through a halt, and the queues it
    leaves are deleted.
 
 ## Decisions
@@ -73,22 +83,44 @@ is the header a task already carries.
 under the same rule: a name with `..` in it is never a name from before, so nothing a previous
 release declared is redeclared, and what is left over is told apart by its name alone.
 
-**A call this process does not serve is answered, over given back and over tried again.** A
-queue per operation gave a rollout something for nothing: an operation only the new release
-declares had a queue only the new release consumed, so a call to it reached the new release and
-waited for it. On one queue a process of the old release takes such a call, and that is given up:
-(10), and `features/runtime/contracts.feature` now states it.
+**A call this process does not serve is answered, and its caller sends it again.** A queue per
+operation gave a rollout something for nothing: an operation only the new release declares had a
+queue only the new release consumed, so a call to it reached the new release and waited for it.
+`features/runtime/contracts.feature` holds that, and a release that adds an operation and calls
+it is rolled in one step because of it. On one queue a process of the old release takes such a
+call, and what happens to it then decides whether that still holds.
 
-Giving the call back to the queue for another process keeps nothing certain — whether it lands on
-the release that serves it next is the broker's turn, not a guarantee — and a call to an operation
-a release has _removed_ has no process to land on, so it goes round for good, taken and given back,
-where it lay still in a queue nothing consumed. Bounding that by the age of the call compares the
-clock of the process that made it with the clock of the one that took it, and nothing says they
-agree. Raising it has it tried again and then kept, where a request is never answered. An answer
-is the one outcome that is the same every time: the caller is told, and the call is gone.
+- _Answered and left at that_, every call that lands on the old release fails for as long as the
+  rollout takes, and an operation has to be released before what calls it.
+- _Given back to the queue_ by the process that took it, a call to an operation a release
+  _removed_ has no process to land on and goes round for good, taken and given back, where it lay
+  still in a queue nothing consumed. Bounding that by the age of the call compares the clock of
+  the process that made it with the clock of the one that took it, and nothing says they agree.
+- _Raised_, it is tried again on comq's ladder and then kept, where a request is never answered.
+- _Forwarded to a queue of the version it was made for_, it needs a second queue per component
+  and a way to tell that no process of a version is left, which the last one to go cannot say.
 
-A task is still kept at once, as [queues](./queues.md) decided, for the same reason turned
-round: nobody waits for it.
+Sent again by whoever made it, the call is never in the broker without somebody waiting for it:
+each time it is answered, and it is the caller, alive and counting on one clock, that decides to
+ask again. It stops when the caller does. Which process takes it next is still the broker's turn,
+so this is a call that is asked until it is served rather than one that is routed — which costs a
+tenth of a second, then two, then four, where a queue of its own cost nothing, and ends in an
+answer where a queue of its own held the call for good.
+
+**An exception of its own, over `Endpoint` with something beside it.** `Endpoint` is permanent:
+there is no such operation. What a process says here is narrower and passes — _this_ process does
+not serve it — which is what `transient` is for, and what the binding reads to send the call
+again. What its caller is told in the end is `Endpoint`, because by then that is what is known.
+
+**A doubling pause, over a list of them.** The first is short enough that a rollout with both
+releases up costs a call next to nothing, and the last long enough that eleven of them outlast a
+release coming up. Nothing is configured.
+
+**The pauses end when the process begins to stop.** A call an operation makes while it handles a
+delivery holds the teardown open until it is answered, so a call waiting to be sent again is
+answered `Endpoint` as soon as a producer of the process starts closing.
+
+A task is still kept at once, as [queues](./queues.md) decided: nobody waits for it.
 
 **One prefetch for the component, as it is.** comq's prefetch is per consumer, so a queue per
 operation was a window per operation, and a component of thirty operations could hold thirty times
@@ -125,9 +157,13 @@ component does not have yet, waits in a queue nothing consumes.
    with more than one operation — the queue no longer says which.
 2. **A component consumes one request queue, and none named after an operation.** Breaks: the
    broker, which is what this is for.
-3. **A request for an operation the component does not serve is answered at once.** Breaks:
-   whoever made it, who would otherwise wait for a reply that never comes.
-4. **Names begin with the scope.** Breaks: processes of one context sharing a virtual host.
+3. **A request for an operation the component does not serve is answered at once**, with what
+   has its caller send it again. Breaks: whoever made it, who would otherwise wait for good.
+4. **A call to an operation only the newer release declares reaches it, and waits for it.**
+   Breaks: a release that adds an operation and calls it, which is rolled in one step.
+5. **A call to an operation no process comes to serve is refused in the end.** Breaks: whoever
+   calls what a release removed, and the process that cannot stop while it waits.
+6. **Names begin with the scope.** Breaks: processes of one context sharing a virtual host.
 
 ## Compatibility
 
@@ -138,7 +174,9 @@ see `migrations/327.md`. `toa.io/endpoint` on a request is new.
 **In types, additive.** `Communication.request` takes properties, and `queues.js` exports one more
 name. Neither is published.
 
-**In behaviour, two changes.** Calls of one component share a prefetch. And a call for an operation
-a process does not serve is answered with an `EndpointException`, where it waited. So an operation
-is called once the deployment that adds it is complete: the component is released first, and what
-calls the operation after it — where one release did both.
+**In types, additive.** `exceptions.codes.Unserved` and `UnservedException`.
+
+**In behaviour, three changes.** Calls of one component share a prefetch. A call to an operation
+one of two releases has may be answered late, by the pauses it was sent again after. And a call to
+an operation no process serves throws an `EndpointException` after some three and a half minutes,
+where it waited for good.
