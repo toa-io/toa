@@ -25,15 +25,15 @@ See [tests](test/range.test.js).
 
 `shards(input: string): string[]`
 
-Transforms `amqp://shard[0..3].domain.com` into:
+Transforms `amqp://shard[0..2].domain.com` into:
 
 ```javascript
 ;['amqp://shard0.domain.com', 'amqp://shard1.domain.com', 'amqp://shard2.domain.com']
 ```
 
-The end of a range is exclusive, so one that starts at zero names as many hosts as its end says.
-A start written with leading zeros pads every number to its width: `[00..32]` is `00` … `31`.
-Only the host of a URL is read for ranges, and it may hold several.
+Both ends of a range are included. A start written with leading zeros pads every number to its
+width: `[00..31]` is `00` … `31`. Only the host of a URL is read for ranges, and it may hold
+several.
 
 See [tests](source/shards.test.js).
 

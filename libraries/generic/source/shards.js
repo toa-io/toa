@@ -1,9 +1,8 @@
 /**
- * Expands the ranges in the host of a URL into a URL per number: `amqp://rmq[0..3].example.com`
- * is `rmq0`, `rmq1` and `rmq2`. The end is exclusive, so a range starting at zero names as many
- * hosts as its end says. A start written with leading zeros pads every number to its width.
+ * Expands the ranges in the host of a URL into a URL per number: `amqp://rmq[0..2].example.com`
+ * is `rmq0`, `rmq1` and `rmq2`. Both ends are included, as brackets say of an interval. A start
+ * written with leading zeros pads every number to its width.
  *
- * It is the range comq reads, so that an address is written one way wherever it is written.
  * Only the host is looked at: credentials, a path and a query are free to contain anything, and
  * an IPv6 literal, which is bracketed as well, has no `..` in it.
  *
@@ -33,15 +32,15 @@ function hosts(host) {
   const start = Number(from)
   const end = Number(to)
 
-  if (end <= start)
-    throw new RangeError(`Range ${expression} names no hosts: its end is exclusive`)
+  if (end < start)
+    throw new RangeError(`Range ${expression} names no hosts: it ends before it starts`)
 
   const width = from.length > 1 && from.startsWith('0') ? from.length : 0
   const before = host.slice(0, range.index)
   const after = host.slice(range.index + expression.length)
   const expanded = []
 
-  for (let n = start; n < end; n++)
+  for (let n = start; n <= end; n++)
     // whatever follows may hold a range of its own
     for (const rest of hosts(after))
       expanded.push(before + String(n).padStart(width, '0') + rest)

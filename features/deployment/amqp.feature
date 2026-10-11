@@ -32,13 +32,13 @@ Feature: AMQP deployment
 
   Scenario: Deploy a context whose brokers are a range of names
 
-    A range is written in the host, in brackets, with an end that is exclusive — as comq
-    reads it — and a component is given a URL for each name.
+    A range is written in the host, in brackets, with both ends included, and a component is
+    given a URL for each name.
 
     Given I have a context with:
       """yaml
       amqp:
-        context: amqp://rmq[00..03].example.com
+        context: amqp://rmq[00..02].example.com
         sources:
           external: amqp://external.example.com
       """

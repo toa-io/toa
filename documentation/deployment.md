@@ -564,14 +564,14 @@ them. `default.tasks` names the same component, and wins where both are written.
 
 **A key may hold several addresses**, as a list or as a
 [shard range](/libraries/generic/readme.md#shards), and every component that resolves to it is
-given all of them. A range is written in the host, in brackets, and its end is exclusive:
-`redis[1..4]` is `redis1`, `redis2` and `redis3`, and `redis[01..04]` is `redis01` to `redis03`.
+given all of them. A range is written in the host, in brackets, with both ends included:
+`redis[1..3]` is `redis1`, `redis2` and `redis3`, and `redis[01..03]` is `redis01` to `redis03`.
 
 ```yaml
 stash:
   .:
     - redis://redis0.example.com
-    - redis://redis[1..4].example.com
+    - redis://redis[1..3].example.com
 ```
 
 Each component is given what it resolved to as a variable of its own —
