@@ -25,15 +25,20 @@ See [tests](test/range.test.js).
 
 `shards(input: string): string[]`
 
-Transforms `amqp://shard{0-2}.domain.com` into:
+Transforms `amqp://shard[0..31].domain.com` into:
 
 ```javascript
-;['amqp://shard0.domain.com', 'amqp://shard1.domain.com', 'amqp://shard2.domain.com']
+;[
+  'amqp://shard00.domain.com',
+  'amqp://shard01.domain.com',
+  /* … */ 'amqp://shard31.domain.com'
+]
 ```
 
-Uses [`range`](#range).
+Every number is written as wide as the end of the range. Only the host of a URL is read for
+ranges, and it may hold several. A range that does not end above where it starts is refused.
 
-See [tests](test/shards.test.js).
+See [tests](source/shards.test.js).
 
 ## Entries
 
