@@ -30,6 +30,28 @@ Feature: AMQP deployment
                 key: password
         """
 
+  Scenario: Deploy a context whose brokers are a range of names
+
+    A range is written in the host, in brackets, with an end that is exclusive — as comq
+    reads it — and a component is given a URL for each name.
+
+    Given I have a context with:
+      """yaml
+      amqp:
+        context: amqp://rmq[00..03].example.com
+        sources:
+          external: amqp://external.example.com
+      """
+    When I export deployment
+    Then exported values should contain:
+      """yaml
+      compositions:
+        - name: external-consumer
+          variables:
+            - name: TOA_AMQP_CONTEXT
+              value: '{".":["amqp://rmq00.example.com","amqp://rmq01.example.com","amqp://rmq02.example.com"]}'
+        """
+
   Scenario: Deploy a context with namespace-specific cluster
     Given I have a context with:
       """yaml
