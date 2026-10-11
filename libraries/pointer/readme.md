@@ -30,7 +30,7 @@ Pointer values can contain [shards](/libraries/generic/readme.md#shards) syntax.
 
 ```yaml
 something:
-  one: redis://redis[0..2].example.com
+  one: redis://redis[0..31].example.com
 ```
 
 ### `default` namespace

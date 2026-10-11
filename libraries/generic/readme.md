@@ -25,10 +25,14 @@ See [tests](test/range.test.js).
 
 `shards(input: string): string[]`
 
-Transforms `amqp://shard[0..2].domain.com` into:
+Transforms `amqp://shard[0..31].domain.com` into:
 
 ```javascript
-;['amqp://shard0.domain.com', 'amqp://shard1.domain.com', 'amqp://shard2.domain.com']
+;[
+  'amqp://shard0.domain.com',
+  'amqp://shard1.domain.com',
+  /* … */ 'amqp://shard31.domain.com'
+]
 ```
 
 A start written with leading zeros pads every number to its width: `[00..31]` is `00` … `31`.
