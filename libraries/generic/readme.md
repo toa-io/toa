@@ -31,9 +31,8 @@ Transforms `amqp://shard[0..2].domain.com` into:
 ;['amqp://shard0.domain.com', 'amqp://shard1.domain.com', 'amqp://shard2.domain.com']
 ```
 
-Both ends of a range are included. A start written with leading zeros pads every number to its
-width: `[00..31]` is `00` … `31`. Only the host of a URL is read for ranges, and it may hold
-several.
+A start written with leading zeros pads every number to its width: `[00..31]` is `00` … `31`.
+Only the host of a URL is read for ranges, and it may hold several.
 
 See [tests](source/shards.test.js).
 

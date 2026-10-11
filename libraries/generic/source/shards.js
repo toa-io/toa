@@ -1,7 +1,7 @@
 /**
  * Expands the ranges in the host of a URL into a URL per number: `amqp://rmq[0..2].example.com`
- * is `rmq0`, `rmq1` and `rmq2`. Both ends are included, as brackets say of an interval. A start
- * written with leading zeros pads every number to its width.
+ * is `rmq0`, `rmq1` and `rmq2`. A start written with leading zeros pads every number to its
+ * width.
  *
  * Only the host is looked at: credentials, a path and a query are free to contain anything, and
  * an IPv6 literal, which is bracketed as well, has no `..` in it.

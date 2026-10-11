@@ -7,7 +7,7 @@ it('should be', async () => {
   assert.ok(shards instanceof Function)
 })
 
-it('should expand a range into a URL per number, both ends included', async () => {
+it('should expand a range into a URL per number', async () => {
   assert.deepStrictEqual(shards('amqp://host[0..2].domain.com:5672/vhost?test=1'), [
     'amqp://host0.domain.com:5672/vhost?test=1',
     'amqp://host1.domain.com:5672/vhost?test=1',
