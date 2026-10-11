@@ -5,7 +5,7 @@ import { normalize } from './annotation.ts'
 
 describe('normalize', () => {
   it('should expand default shards', async () => {
-    const declaration = 'amqp://rmq{0-2}.example.com'
+    const declaration = 'amqp://rmq[0..2].example.com'
     const annotation = normalize(declaration)
 
     assert.deepStrictEqual(annotation, {
@@ -19,7 +19,7 @@ describe('normalize', () => {
 
   it('should expand shards within array', async () => {
     const declaration = {
-      foo: ['amqp://rmq.example.com', 'amqp://rmq{0-2}.example.com']
+      foo: ['amqp://rmq.example.com', 'amqp://rmq[0..2].example.com']
     }
 
     const annotation = normalize(declaration)
