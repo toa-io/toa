@@ -15,11 +15,18 @@ it('should expand a range into a URL per number', async () => {
   ])
 })
 
-it('should pad every number to the width of a start with leading zeros', async () => {
-  assert.deepStrictEqual(shards('amqp://rmq[08..10].example.com'), [
-    'amqp://rmq08.example.com',
-    'amqp://rmq09.example.com',
-    'amqp://rmq10.example.com'
+it('should write every number as wide as the end of the range', async () => {
+  const urls = shards('amqp://rmq[0..31].example.com')
+
+  assert.equal(urls.length, 32)
+  assert.equal(urls[0], 'amqp://rmq00.example.com')
+  assert.equal(urls[9], 'amqp://rmq09.example.com')
+  assert.equal(urls[31], 'amqp://rmq31.example.com')
+
+  assert.deepStrictEqual(shards('amqp://rmq[8..010]'), [
+    'amqp://rmq008',
+    'amqp://rmq009',
+    'amqp://rmq010'
   ])
 })
 
@@ -44,12 +51,7 @@ it('should look at the host alone', async () => {
   for (const url of urls) assert.deepStrictEqual(shards(url), [url])
 })
 
-it('should name one host where a range starts and ends at one number', async () => {
-  assert.deepStrictEqual(shards('amqp://rmq[3..3].example.com'), [
-    'amqp://rmq3.example.com'
-  ])
-})
-
-it('should refuse a range that ends before it starts', async () => {
+it('should refuse a range that does not end above where it starts', async () => {
+  assert.throws(() => shards('amqp://rmq[3..3].example.com'), RangeError)
   assert.throws(() => shards('amqp://rmq[3..1].example.com'), RangeError)
 })

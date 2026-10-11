@@ -29,14 +29,14 @@ Transforms `amqp://shard[0..31].domain.com` into:
 
 ```javascript
 ;[
-  'amqp://shard0.domain.com',
-  'amqp://shard1.domain.com',
+  'amqp://shard00.domain.com',
+  'amqp://shard01.domain.com',
   /* … */ 'amqp://shard31.domain.com'
 ]
 ```
 
-A start written with leading zeros pads every number to its width: `[00..31]` is `00` … `31`.
-Only the host of a URL is read for ranges, and it may hold several.
+Every number is written as wide as the end of the range. Only the host of a URL is read for
+ranges, and it may hold several. A range that does not end above where it starts is refused.
 
 See [tests](source/shards.test.js).
 

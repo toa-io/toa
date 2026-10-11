@@ -565,7 +565,7 @@ them. `default.tasks` names the same component, and wins where both are written.
 **A key may hold several addresses**, as a list or as a
 [shard range](/libraries/generic/readme.md#shards), and every component that resolves to it is
 given all of them. A range is written in the host, in brackets:
-`redis[0..31]` is `redis0` to `redis31`, and `redis[00..31]` is `redis00` to `redis31`.
+`redis[0..31]` is `redis00` to `redis31`, every number as wide as the end of the range.
 
 ```yaml
 stash:

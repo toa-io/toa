@@ -1,7 +1,7 @@
 /**
- * Expands the ranges in the host of a URL into a URL per number: `amqp://rmq[0..2].example.com`
- * is `rmq0`, `rmq1` and `rmq2`. A start written with leading zeros pads every number to its
- * width.
+ * Expands the ranges in the host of a URL into a URL per number: `amqp://rmq[0..31].example.com`
+ * is `rmq00` to `rmq31`. Every number is as wide as the end of the range is written, so the names
+ * of a range sort as they count.
  *
  * Only the host is looked at: credentials, a path and a query are free to contain anything, and
  * an IPv6 literal, which is bracketed as well, has no `..` in it.
@@ -32,10 +32,10 @@ function hosts(host) {
   const start = Number(from)
   const end = Number(to)
 
-  if (end < start)
-    throw new RangeError(`Range ${expression} names no hosts: it ends before it starts`)
+  if (end <= start)
+    throw new RangeError(`Range ${expression} must end above where it starts`)
 
-  const width = from.length > 1 && from.startsWith('0') ? from.length : 0
+  const width = to.length
   const before = host.slice(0, range.index)
   const after = host.slice(range.index + expression.length)
   const expanded = []

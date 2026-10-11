@@ -37,7 +37,7 @@ Feature: AMQP deployment
     Given I have a context with:
       """yaml
       amqp:
-        context: amqp://rmq[00..02].example.com
+        context: amqp://rmq[8..10].example.com
         sources:
           external: amqp://external.example.com
       """
@@ -48,7 +48,7 @@ Feature: AMQP deployment
         - name: external-consumer
           variables:
             - name: TOA_AMQP_CONTEXT
-              value: '{".":["amqp://rmq00.example.com","amqp://rmq01.example.com","amqp://rmq02.example.com"]}'
+              value: '{".":["amqp://rmq08.example.com","amqp://rmq09.example.com","amqp://rmq10.example.com"]}'
         """
 
   Scenario: Deploy a context with namespace-specific cluster
