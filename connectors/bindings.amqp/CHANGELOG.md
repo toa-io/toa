@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.329](https://github.com/toa-io/toa/compare/v1.0.0-alpha.328...v1.0.0-alpha.329) (2026-10-11)
+
+### Bug Fixes
+
+* **deps:** take comq 0.27.0, which takes the URLs of a connection as they are ([dad5558](https://github.com/toa-io/toa/commit/dad555800a8fb41b43ec25dee71339cf89c91876))
+
+
 # [1.0.0-alpha.328](https://github.com/toa-io/toa/compare/v1.0.0-alpha.327...v1.0.0-alpha.328) (2026-10-10)
 
 * feat!: take the calls of a component from one queue ([09bfc10](https://github.com/toa-io/toa/commit/09bfc108b19d8bc2e52f155123bfdf8e0143e49b))

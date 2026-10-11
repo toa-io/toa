@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.329](https://github.com/toa-io/toa/compare/v1.0.0-alpha.328...v1.0.0-alpha.329) (2026-10-11)
+
+* feat!: write a range of addresses as comq reads it ([b753690](https://github.com/toa-io/toa/commit/b75369061dee7e077b55190955d8cb358917a275))
+
+### Bug Fixes
+
+* include both ends of a range of addresses ([3be1f8a](https://github.com/toa-io/toa/commit/3be1f8a7a5c7e8e09d5fd3918c117876c56e7ec6))
+
+### BREAKING CHANGES
+
+* `{0-2}` is no longer a range. See migrations/328.md.
+
+
 # [1.0.0-alpha.327](https://github.com/toa-io/toa/compare/v1.0.0-alpha.326...v1.0.0-alpha.327) (2026-10-10)
 
 ### Features
