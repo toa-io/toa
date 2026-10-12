@@ -1,6 +1,5 @@
 import { setTimeout } from 'node:timers/promises'
 import { console } from 'openspan'
-import { cors } from '../cors/index.ts'
 import { BadRequest } from '../../HTTP/index.ts'
 import type { Directive } from './types.ts'
 import type { Input, Output } from '../../io.ts'
@@ -18,7 +17,6 @@ export class Sleep implements Directive {
       Sleep.warned = true
     }
 
-    cors.allow('sleep')
     this.maximum = value
   }
 

@@ -30,8 +30,7 @@ export const families: DirectiveFamily[] = [
   dev
 ]
 /**
- * `cors` first, so a preflight is answered before anything reads the request; `censor` next,
- * so a refusal carries the CORS headers a page needs to read it; the page is last, and claims
- * its own prefix.
+ * `cors` first, so a preflight is answered before anything reads the request, one `censor`
+ * would refuse included; the page is last, and claims its own prefix.
  */
 export const interceptors: Interceptor[] = [cors, censor, discovery, new Site()]

@@ -93,25 +93,3 @@ Feature: Octets metadata
         bar: baz=1
         baz: '1'
       """
-
-  Scenario: CORS allows `content-attributes` header
-    Given the annotation:
-      """yaml
-      /:
-        octets:context: octets
-        POST:
-          octets:put: ~
-      """
-    When the following request is received:
-      """
-      OPTIONS / HTTP/1.1
-      access-control-request-method: GET
-      host: nex.toa.io
-      origin: https://example.com
-      """
-    Then the following reply is sent:
-      """
-      204 No Content
-      access-control-allow-headers: accept, authorization, content-attributes, content-location, content-type, if-match, if-none-match
-      access-control-allow-origin: https://example.com
-      """

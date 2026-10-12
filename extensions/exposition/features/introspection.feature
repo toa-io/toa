@@ -466,7 +466,7 @@ Feature: Introspection
       """
     And the reply does not contain:
       """
-      headers
+      email
       """
 
   Scenario: Two routes on one endpoint

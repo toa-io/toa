@@ -1,5 +1,4 @@
 import Negotiator from 'negotiator'
-import { cors } from '../cors/index.ts'
 import { Mapping } from './Mapping.ts'
 import { Languages } from './Languages.ts'
 import type { Input } from '../../io.ts'
@@ -12,7 +11,6 @@ export class Language extends Mapping<string> {
   public constructor(property: string) {
     if (typeof property !== 'string') throw new Error('`map:language` must be a string')
 
-    cors.allow('accept-language')
     super(property)
   }
 

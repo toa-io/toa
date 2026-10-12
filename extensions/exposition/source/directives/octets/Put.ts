@@ -1,7 +1,6 @@
 import { PassThrough, pipeline } from 'node:stream'
 import { match } from 'matchacho'
 import * as http from '../../HTTP/index.ts'
-import { cors } from '../cors/index.ts'
 import * as schemas from './schemas.ts'
 import { Workflow } from './workflows/index.ts'
 import { Directive } from './Directive.ts'
@@ -60,9 +59,6 @@ export class Put extends Directive {
     this.limitString = options?.limit ?? '64MiB'
     this.limit = toBytes(this.limitString)
     this.discovery.storage = discovery
-
-    cors.allow('content-attributes')
-    cors.allow('content-location')
   }
 
   /** What sending a file here takes: what may be sent, how much of it, and what comes back. */

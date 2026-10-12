@@ -1,15 +1,13 @@
-import { cors } from '../cors/index.ts'
 import { Mapping } from './Mapping.ts'
 import { take } from '../../Introspection.ts'
 import type { Input } from '../../io.ts'
 import type { Introspection } from '../../Introspection.ts'
 
 /**
- * Forbidden request header names: the browser sets them itself and a script cannot
- * list them in `Access-Control-Request-Headers`, so there is nothing to advertise
- * or vary on. The value is still read, it just never reaches CORS.
+ * A cache keys a reply by its URL, the host in it, so there is nothing to vary on. The value
+ * is still read.
  */
-const FORBIDDEN = new Set(['host', 'origin'])
+const KEYED = new Set(['host'])
 
 export class Headers extends Mapping<Record<string, string>> {
   private readonly headers: string[]
@@ -22,8 +20,7 @@ export class Headers extends Mapping<Record<string, string>> {
 
     super(map)
 
-    this.headers = Object.values(map).filter((header) => !FORBIDDEN.has(header))
-    this.headers.forEach((header) => cors.allow(header))
+    this.headers = Object.values(map).filter((header) => !KEYED.has(header))
   }
 
   /**

@@ -50,9 +50,8 @@ properties.
 The value of the directive is a map where keys are the names of the input properties and values are
 the names of the HTTP request headers.
 
-The names of these headers are then included in the `Vary` HTTP response header
-and [Access-Control-Allow-Headers](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Access-Control-Allow-Headers)
-of the [CORS](protocol.md#cors).
+The names of these headers are then included in the `Vary` HTTP response header. A page on
+another origin may send any of them ([CORS](protocol.md#cors)).
 
 [Multiple header fields](https://www.w3.org/Protocols/rfc2616/rfc2616-sec4.html#sec4.2) are combined
 as a comma-separated list.

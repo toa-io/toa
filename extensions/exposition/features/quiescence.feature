@@ -65,8 +65,7 @@ Feature: A gateway going quiet
     Then the following reply is sent:
       """
       503 Service Unavailable
-      access-control-allow-origin: https://hello.world
-      access-control-allow-credentials: true
-      access-control-expose-headers: retry-after
+      access-control-allow-origin: *
+      access-control-expose-headers: *
       """
     When the Gateway is working again

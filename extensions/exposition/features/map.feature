@@ -22,7 +22,7 @@ Feature: HTTP context mapping
       """
       200 OK
       content-language: <result>
-      vary: origin, accept-language, accept
+      vary: accept-language, accept
       content-type: application/yaml
 
       Hello <result>
@@ -62,32 +62,6 @@ Feature: HTTP context mapping
       content-language: fr
       """
 
-  Scenario: Headers used by mappings are added to CORS permissions
-    Given the `echo` is running with the following manifest:
-      """yaml
-      exposition:
-        /:
-          io:output: true
-          map:languages: [en, fr]
-          GET:
-            map:language: name
-            map:headers:
-              name: foo
-            endpoint: compute
-      """
-    When the following request is received:
-      """
-      OPTIONS / HTTP/1.1
-      access-control-request-method: GET
-      host: nex.toa.io
-      origin: https://example.com
-      """
-    Then the following reply is sent:
-      """
-      204 No Content
-      access-control-allow-headers: accept, accept-language, authorization, content-type, foo, if-match, if-none-match
-      """
-
   Scenario: Mapping the value of an arbitrary header
     Given the `echo` is running with the following manifest:
       """yaml
@@ -109,7 +83,7 @@ Feature: HTTP context mapping
     Then the following reply is sent:
       """
       200 OK
-      vary: origin, foo, accept
+      vary: foo, accept
       content-type: application/yaml
 
       Hello bar
@@ -136,10 +110,40 @@ Feature: HTTP context mapping
     Then the following reply is sent:
       """
       200 OK
-      vary: origin, accept
+      vary: accept
       content-type: application/yaml
 
       Hello nex.toa.io
+      """
+
+  Scenario: Mapping the `origin` header value
+    A reply is the same for every origin unless the application reads it, and then a cache
+    has to keep a copy for each.
+
+    Given the `echo` is running with the following manifest:
+      """yaml
+      exposition:
+        /:
+          io:output: true
+          GET:
+            map:headers:
+              name: origin
+            endpoint: compute
+      """
+    When the following request is received:
+      """
+      GET /echo/ HTTP/1.1
+      host: nex.toa.io
+      origin: https://hello.world
+      accept: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      vary: origin, accept
+      content-type: application/yaml
+
+      Hello https://hello.world
       """
 
   Scenario: Mapping a route parameter

@@ -1,5 +1,4 @@
 import { ServiceUnavailable } from '../../HTTP/index.ts'
-import { cors } from '../cors/index.ts'
 import type { Output } from '../../io.ts'
 import type { Directive } from './types.ts'
 
@@ -14,8 +13,6 @@ export class Faulty implements Directive {
       throw new Error('`dev:faulty` directive value must be in the range (0, 1]')
 
     this.probability = probability
-
-    cors.allow('faulty')
   }
 
   public async apply(): Promise<Output> {
