@@ -70,7 +70,7 @@
     "@types/cors": "2.8.19",
     "@types/negotiator": "0.6.5",
     "jose": "6.2.12",
-    "js-yaml": "5.4.2",
+    "js-yaml": "5.4.3",
     "lru-cache": "11.5.3",
     "paseto": "4.0.1"
   },
