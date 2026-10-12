@@ -1,4 +1,4 @@
-import { describe, it, beforeEach } from 'node:test'
+import { describe, it } from 'node:test'
 import assert from 'node:assert/strict'
 
 import { CORS } from './CORS.ts'
@@ -10,41 +10,39 @@ const input = (method: string, headers: Record<string, string>): Input =>
     pipelines: { body: [], response: [] }
   }) as unknown as Input
 
-describe('cors', () => {
-  let cors: CORS
-
-  beforeEach(() => {
-    cors = new CORS()
-    cors.reset()
+const preflight = (method: string): Input =>
+  input('OPTIONS', {
+    origin: 'https://hello.world',
+    'access-control-request-method': method
   })
 
+describe('cors', () => {
+  const cors = new CORS()
+
   it('should answer a preflight', () => {
-    const output = cors.intercept(
-      input('OPTIONS', {
-        origin: 'https://hello.world',
-        'access-control-request-method': 'GET'
-      })
-    )
+    const output = cors.intercept(preflight('GET'))
 
     assert.equal(output?.status, 204)
-    assert.equal(
-      output?.headers?.get('access-control-allow-origin'),
-      'https://hello.world'
-    )
+    assert.equal(output?.headers?.get('access-control-allow-headers'), '*, authorization')
+    assert.equal(output?.headers?.get('access-control-max-age'), '86400')
   })
 
   it('should allow OPTIONS, so that one can be preflighted at all', () => {
-    const output = cors.intercept(
-      input('OPTIONS', {
-        origin: 'https://hello.world',
-        'access-control-request-method': 'OPTIONS'
-      })
-    )
+    const output = cors.intercept(preflight('OPTIONS'))
 
     assert.match(
       output?.headers?.get('access-control-allow-methods') ?? '',
       /\bOPTIONS\b/
     )
+  })
+
+  it('should answer each preflight with headers of its own', () => {
+    const one = cors.intercept(preflight('GET'))
+    const another = cors.intercept(preflight('GET'))
+
+    one?.headers?.set('access-control-max-age', '0')
+
+    assert.equal(another?.headers?.get('access-control-max-age'), '86400')
   })
 
   it('should pass an OPTIONS that is not a preflight through', () => {
@@ -53,25 +51,9 @@ describe('cors', () => {
      * `OPTIONS` included — so answering this one here would put introspection out of reach
      * of any page. Do not restore the `Origin`-only test.
      */
-    const output = cors.intercept(input('OPTIONS', { origin: 'https://hello.world' }))
-
-    assert.equal(output, null)
-  })
-
-  it('should decorate a reply that is not a preflight', () => {
     const request = input('OPTIONS', { origin: 'https://hello.world' })
 
-    cors.intercept(request)
-
-    const message = {}
-
-    for (const transform of request.pipelines.response) transform(message)
-
-    const headers = (message as { headers?: Headers }).headers
-
-    assert.equal(headers?.get('access-control-allow-origin'), 'https://hello.world')
-    assert.equal(headers?.get('access-control-allow-credentials'), 'true')
-    assert.equal(headers?.get('vary'), 'origin')
+    assert.equal(cors.intercept(request), null)
   })
 
   it('should pass a request carrying no origin through', () => {

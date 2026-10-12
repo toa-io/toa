@@ -50,7 +50,7 @@ Feature: Octets with Cloudinary storage
     Then the stream equals to `lenna.png` is sent with the following headers:
       """
       200 OK
-      access-control-allow-origin: https://toa.io
+      access-control-allow-origin: *
       content-length: 473831
       content-type: image/png
       """

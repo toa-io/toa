@@ -108,31 +108,40 @@ request rejecting because no reply came. A buffered body is unaffected.
 
 ## CORS
 
-[CORS](https://www.w3.org/TR/2020/SPSD-cors-20200602/) is supported,
-credentials, any `origin`, and any request header fields are allowed.
+[CORS](https://fetch.spec.whatwg.org/#http-cors-protocol) is supported: a page on any origin may
+send any request, with any header fields, and read every header of the reply.
 
-The following request headers are allowed:
+```http
+OPTIONS /pots/ HTTP/1.1
+origin: https://store.example
+access-control-request-method: POST
+```
 
-- `accept`
-- `authorization`
-- `content-type`
-- `etag`
-- `if-match`
-- `if-none-match`
-- headers used by the [`map` directive family](map.md)
+```http
+HTTP/1.1 204 No Content
+access-control-allow-origin: *
+access-control-allow-methods: GET, POST, PUT, PATCH, DELETE, LOCK, UNLOCK, OPTIONS
+access-control-allow-headers: *, authorization
+access-control-max-age: 86400
+```
 
-The following response headers are exposed:
+A preflight permits everything, not what it asked about, so a browser sends one per URL and
+reuses it for whatever method and headers the page sends there next, for as long as the browser
+keeps it. A browser keeps a preflight per URL, the query included, so a request to another URL is
+preflighted again.
 
-- `authorization`
-- `content-type`
-- `content-length`
-- `date`
-- `etag`
-- `retry-after`
+The permissions are wildcards, and a browser honours a wildcard for a request sent without
+credentials only. Send `authorization` as a header and leave the credentials mode of `fetch` at
+its default: a request sent with `credentials: 'include'`, or an `XMLHttpRequest` with
+`withCredentials`, is refused by the browser. The gateway sets no cookies, so there is nothing
+that mode would carry.
 
-Every reply of the gateway carries the CORS headers, the `503` of a
-[halted](../../../documentation/halt.md) deployment included, which exposes `retry-after` alone.
-So a reply a page on another origin can read is the application's. A request that fails without
+A reply does not depend on the `origin` of its request, so a cache keeps one copy of it for all
+of them.
+
+Every reply of the gateway carries the CORS headers, whatever its status: the `503` of a
+[halted](../../../documentation/halt.md) deployment, and the `400` and `501` of a request that is
+not routed at all. So a reply a page on another origin can read is the application's. A request that fails without
 one was answered by something in front of the gateway, or by nothing, and whether it reached the
 application is not known. A halted deployment answers a preflight `503` as well, so a request that
 needs one fails there, unless the browser holds a preflight of it from before the halt.

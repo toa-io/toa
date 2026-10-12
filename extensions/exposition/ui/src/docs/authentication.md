@@ -18,7 +18,7 @@ authorization: Basic ...
 200 OK
 authorization: Token ...
 cache-control: no-store
-access-control-expose-headers: authorization
+access-control-expose-headers: *
 ```
 
 The client **MUST** discard the previous credentials and use the new ones for

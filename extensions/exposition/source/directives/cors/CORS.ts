@@ -1,43 +1,26 @@
 import type { Input, Output } from '../../io.ts'
 import type { Interceptor } from '../../Interception.ts'
 
-/** What is allowed before any directive asks for more. */
-const REQUEST_HEADERS = [
-  'accept',
-  'authorization',
-  'content-type',
-  'if-match',
-  'if-none-match'
+/**
+ * Everything a request to the same URL may ask for later, so one preflight covers them all.
+ * Wildcards hold for a request sent without credentials, and there are no cookies to send;
+ * `authorization` is the one header `*` does not stand for. The origin is allowed by the
+ * server, on every reply it writes.
+ */
+const PERMISSIONS: Array<[string, string]> = [
+  [
+    'access-control-allow-methods',
+    'GET, POST, PUT, PATCH, DELETE, LOCK, UNLOCK, OPTIONS'
+  ],
+  ['access-control-allow-headers', '*, authorization'],
+  // a browser cuts it to its own limit, and this is the longest any of them keeps
+  ['access-control-max-age', '86400']
 ]
-
-const EXPOSED_HEADERS = [
-  'authorization',
-  'content-type',
-  'content-length',
-  'date',
-  'etag',
-  'retry-after'
-].join(', ')
 
 export class CORS implements Interceptor {
   public readonly name = 'cors'
 
-  private requestHeaders = new Set<string>(REQUEST_HEADERS)
-
-  private readonly headers = new Headers({
-    'access-control-allow-methods':
-      'GET, POST, PUT, PATCH, DELETE, LOCK, UNLOCK, OPTIONS',
-    'access-control-allow-credentials': 'true',
-    'access-control-allow-headers': this.allowedHeaders(),
-    'access-control-max-age': '3600',
-    'cache-control': 'max-age=3600',
-    vary: 'origin'
-  })
-
   public intercept(input: Input): Output {
-    const origin = input.request.headers.origin
-    const requested = input.request.headers['access-control-request-method']
-
     /*
      * A preflight is `OPTIONS` carrying `Access-Control-Request-Method`, and only that. A
      * browser puts `Origin` on every request whose method is not `GET` or `HEAD` — its own
@@ -45,57 +28,13 @@ export class CORS implements Interceptor {
      * introspection out of reach of any page.
      */
     if (
-      origin !== undefined &&
-      requested !== undefined &&
-      input.request.method === 'OPTIONS'
+      input.request.method !== 'OPTIONS' ||
+      input.request.headers.origin === undefined ||
+      input.request.headers['access-control-request-method'] === undefined
     )
-      return this.preflightResponse(origin)
+      return null
 
-    input.pipelines.response.push((output) => {
-      output.headers ??= new Headers()
-
-      if (origin !== undefined) {
-        // There are no cookies.
-        output.headers.set('access-control-allow-origin', origin)
-        output.headers.set('access-control-allow-credentials', 'true')
-        output.headers.set('access-control-expose-headers', EXPOSED_HEADERS)
-      }
-
-      const method = input.request.method
-
-      if (method === 'GET' || method === 'HEAD' || method === 'OPTIONS')
-        output.headers.append('vary', 'origin')
-    })
-
-    return null
-  }
-
-  public reset(): void {
-    this.requestHeaders = new Set(REQUEST_HEADERS)
-    this.headers.set('access-control-allow-headers', this.allowedHeaders())
-  }
-
-  public allow(header: string): void {
-    this.requestHeaders.add(header.toLowerCase())
-    this.headers.set('access-control-allow-headers', this.allowedHeaders())
-  }
-
-  /**
-   * Sorted, because the set is filled as branches merge and their order is not
-   * fixed — an unsorted value would differ between otherwise identical processes,
-   * and between one restart and the next.
-   */
-  private allowedHeaders(): string {
-    return Array.from(this.requestHeaders).sort().join(', ')
-  }
-
-  private preflightResponse(origin: string): Output {
-    // There are no cookies.
-    this.headers.set('access-control-allow-origin', origin)
-
-    return {
-      status: 204,
-      headers: this.headers
-    }
+    // the reply is handed to whatever shapes it, so each one is its own
+    return { status: 204, headers: new Headers(PERMISSIONS) }
   }
 }

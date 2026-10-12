@@ -166,29 +166,3 @@ Feature: Download external resources
 
       Size limit is 1kb
       """
-
-  Scenario: Allow `content-location` request header
-    Given the annotation:
-      """yaml
-      /:
-        io:output: true
-        auth:anonymous: true
-        octets:context: octets
-        POST:
-          octets:put:
-            limit: 1kb
-            trust:
-              - https://avatars.githubusercontent.com
-      """
-    When the following request is received:
-      """
-      OPTIONS / HTTP/1.1
-      access-control-request-method: GET
-      host: nex.toa.io
-      origin: https://hello.world
-      """
-    Then the following reply is sent:
-      """
-      204 No Content
-      access-control-allow-headers: accept, authorization, content-attributes, content-location, content-type, if-match, if-none-match
-      """
