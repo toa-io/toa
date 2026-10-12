@@ -1,4 +1,5 @@
 import { console } from './Console.ts'
+import { exiting } from './exit.ts'
 import { Transport } from './Transport.ts'
 import type { Kind } from './Console.ts'
 import type { Exporter, Span } from './exporters.ts'
@@ -29,7 +30,7 @@ export class Otlp implements Exporter {
 
     this.service = options.service ?? process.env.TOA_CONTEXT ?? 'toa'
 
-    process.once('beforeExit', () => void this.flush())
+    exiting(this)
   }
 
   public export(span: Span): void {
