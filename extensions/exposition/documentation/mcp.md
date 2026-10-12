@@ -159,7 +159,7 @@ only the latter as `query`.
 ```yaml
 type: object
 properties:
-  id: { type: string, pattern: ^[a-fA-F0-9]{32}$ }
+  id: { type: string, pattern: '^[a-fA-F0-9]{32}$' }
   query:
     type: object
     properties:
