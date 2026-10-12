@@ -1,5 +1,6 @@
 import { hostname } from 'node:os'
 import { console } from './Console.ts'
+import { exiting } from './exit.ts'
 import { Transport } from './Transport.ts'
 import { attributes } from './Otlp.ts'
 import type { Meter } from './meters.ts'
@@ -39,7 +40,7 @@ export class OtlpMetrics implements Meter {
       ...options.resource
     })
 
-    process.once('beforeExit', () => void this.flush())
+    exiting(this)
   }
 
   public export(series: Series[]): void {
