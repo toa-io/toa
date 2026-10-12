@@ -200,21 +200,21 @@ export class Server extends Connector {
   }
 
   private listener(request: IncomingMessage, response: ServerResponse): void {
+    /*
+     * Without these a browser hides the reply, and a page cannot tell it from a failed request —
+     * so they are on every reply, whatever answers it and however early. They do not depend on
+     * the request, its `Origin` included: a cache holds one copy of a reply for every origin.
+     * There are no cookies, so a wildcard gives away nothing a named origin would not.
+     */
+    response.setHeader('access-control-allow-origin', '*')
+    response.setHeader('access-control-expose-headers', '*')
+
     // answered before anything is parsed: a gateway that is not working does no work, it says so
     if (this.quiesced || this.gate?.holding() === false) {
       const headers: Record<string, string> = { 'cache-control': 'no-store' }
       const remaining = this.gate?.remaining() ?? 0
-      const origin = request.headers.origin
 
       if (remaining > 0) headers['retry-after'] = remaining.toString()
-
-      // without these a browser hides the reply, and a page cannot tell it from a failed request
-      if (origin !== undefined) {
-        // There are no cookies.
-        headers['access-control-allow-origin'] = origin
-        headers['access-control-allow-credentials'] = 'true'
-        headers['access-control-expose-headers'] = 'retry-after'
-      }
 
       response.writeHead(503, headers).end()
 

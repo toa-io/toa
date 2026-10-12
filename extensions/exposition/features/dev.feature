@@ -14,18 +14,6 @@ Feature: Dev
           GET:
             dev:stub: world
       """
-    # CORS permission
-    When the following request is received:
-      """
-      OPTIONS / HTTP/1.1
-      access-control-request-method: GET
-      origin: http://example.com
-      """
-    Then the following reply is sent:
-      """
-      204 No Content
-      access-control-allow-headers: accept, authorization, content-type, if-match, if-none-match, sleep
-      """
     When the following request is received:
       """
       GET / HTTP/1.1
@@ -66,18 +54,6 @@ Feature: Dev
         dev:faulty: 1
         GET:
           dev:stub: hello
-      """
-    # CORS permission
-    When the following request is received:
-      """
-      OPTIONS / HTTP/1.1
-      access-control-request-method: GET
-      origin: http://example.com
-      """
-    Then the following reply is sent:
-      """
-      204 No Content
-      access-control-allow-headers: accept, authorization, content-type, faulty, if-match, if-none-match
       """
     When the following request is received:
       """

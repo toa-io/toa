@@ -92,7 +92,7 @@ Feature: Censor
     Then the following reply is sent:
       """
       204 No Content
-      access-control-allow-origin: https://hello.world
+      access-control-allow-origin: *
       """
     When the following request is received:
       """
@@ -104,5 +104,5 @@ Feature: Censor
     Then the following reply is sent:
       """
       451 Unavailable For Legal Reasons
-      access-control-allow-origin: https://hello.world
+      access-control-allow-origin: *
       """
