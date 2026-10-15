@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.330](https://github.com/toa-io/toa/compare/v1.0.0-alpha.329...v1.0.0-alpha.330) (2026-10-15)
+
+**Note:** Version bump only for package @toa.io/generic
+
+
+
+
+
 # [1.0.0-alpha.329](https://github.com/toa-io/toa/compare/v1.0.0-alpha.328...v1.0.0-alpha.329) (2026-10-11)
 
 * feat!: write a range of addresses as comq reads it ([b753690](https://github.com/toa-io/toa/commit/b75369061dee7e077b55190955d8cb358917a275))

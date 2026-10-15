@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.330](https://github.com/toa-io/toa/compare/v1.0.0-alpha.329...v1.0.0-alpha.330) (2026-10-15)
+
+### Bug Fixes
+
+* **deps:** take comq 0.28.0, which resolves a name once per process ([7420b8d](https://github.com/toa-io/toa/commit/7420b8df57a3b524b6f88875134440a808809639))
+* **openspan:** flush exporters at exit through one listener ([7d021e1](https://github.com/toa-io/toa/commit/7d021e1ad9d2ac013aee1947b71c5ea26d2e0275))
+
+### Features
+
+* **exposition:** answer CORS with wildcards ([2738ae4](https://github.com/toa-io/toa/commit/2738ae46e95bf93ffa24b0845ccd16350af344b7))
+
+### BREAKING CHANGES
+
+* **exposition:** a request sent with credentials mode `include` is refused
+  by the browser, and no reply carries `access-control-allow-credentials`.
+
+
 # [1.0.0-alpha.329](https://github.com/toa-io/toa/compare/v1.0.0-alpha.328...v1.0.0-alpha.329) (2026-10-11)
 
 * feat!: write a range of addresses as comq reads it ([b753690](https://github.com/toa-io/toa/commit/b75369061dee7e077b55190955d8cb358917a275))
