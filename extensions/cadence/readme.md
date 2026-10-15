@@ -403,8 +403,8 @@ const id = await context.schedule(
 await context.schedule.cancel(id)
 ```
 
-A schedule of an item's own: the target is called at every occurrence until the schedule is
-cancelled. The third argument is a cron expression, as a manifest's [schedule](#schedule) states
+A schedule of an item's own: the target is called at every occurrence until the schedule expires
+or is cancelled. The third argument is a cron expression, as a manifest's [schedule](#schedule) states
 one, or an object:
 
 |            |                                                                                  |
@@ -412,14 +412,15 @@ one, or an object:
 | `schedule` | the cron expression, of five fields or of six where the first is seconds         |
 | `zone`     | the [time zone](https://www.iana.org/time-zones) it is read in, `UTC` by default |
 | `overdue`  | milliseconds a call may be late and still be made; until the next one by default |
+| `expires`  | milliseconds since the epoch after which nothing is called; no end by default    |
 
 The endpoint is named as a [delay](#delay) names it. The id answered is what cancels the
 schedule, and `cancel` raises where the id was never issued. Keep it beside the item the schedule
 is for: nothing lists schedules, and nothing changes one — a schedule is changed by cancelling it
 and handing the new one over.
 
-**The same schedule handed over twice is one.** The same endpoint, request, expression and zone
-answer the same id and store nothing more, so an operation that runs twice for one call does not
+**The same schedule handed over twice is one.** The same endpoint, request, expression, zone and
+`expires` answer the same id and store nothing more, so an operation that runs twice for one call does not
 make every occurrence twice.
 
 The target is called with the input that was handed over and the moment of the occurrence beside
@@ -429,8 +430,8 @@ it, in milliseconds since the epoch, so its contract states `at` as well:
 async function send({ account, at }, context) {}
 ```
 
-An expression or a zone that does not parse, a request that names an `instance`, and an input that
-is not an object or already states `at` are refused where `context.schedule` is called, and nothing
+An expression or a zone that does not parse, an `expires` already past, a request that names an
+`instance`, and an input that is not an object or already states `at` are refused where `context.schedule` is called, and nothing
 is stored. Storing a schedule is a write, so it is refused from a chain that
 [may only read](/documentation/readonly.md), as a delay is.
 

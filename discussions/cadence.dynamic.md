@@ -17,7 +17,8 @@ const id = await context.schedule('mail.digest.send', { input: { account } }, '0
 await context.schedule.cancel(id)
 ```
 
-The schedule is stored, and its target is called at every occurrence until it is cancelled. What
+The schedule is stored, and its target is called at every occurrence until it ends or is
+cancelled. What
 makes the calls is what makes every delayed call, so each occurrence is late rather than lost where
 nothing was running at its moment, and nothing a call does or fails to do ends the ones after it.
 
@@ -27,14 +28,15 @@ nothing was running at its moment, and nothing a call does or fails to do ends t
 
 1. `context.schedule(endpoint, request, schedule)` stores a schedule and answers its id.
    `context.schedule.cancel(id)` ends it, and raises where the id was never issued.
-2. `schedule` is a cron expression, or `{ schedule, zone, overdue }`. The expression has five
-   fields, or six where the first is seconds; `zone` is UTC where none is stated; `overdue` is in
-   milliseconds, as a delay's is.
-3. An expression or a zone that does not parse, a request that names an `instance`, and an input
-   that is not an object or that states `at` are refused with a `RequestContractException`, and
-   nothing is stored.
-4. The same endpoint, request, expression and zone handed over again is the same schedule: the same
-   id is answered and nothing is added.
+2. `schedule` is a cron expression, or `{ schedule, zone, overdue, expires }`. The expression has
+   five fields, or six where the first is seconds; `zone` is UTC where none is stated; `overdue` is
+   in milliseconds, as a delay's is; `expires` is the moment, in milliseconds since the epoch, after
+   which no occurrence is made, and there is none where it is not stated.
+3. An expression or a zone that does not parse, an `expires` already past, a request that names an
+   `instance`, and an input that is not an object or that states `at` are refused with a
+   `RequestContractException`, and nothing is stored.
+4. The same endpoint, request, expression, zone and `expires` handed over again is the same
+   schedule: the same id is answered and nothing is added.
 5. Storing it is a write, so it raises from a chain that
    [may only read](/documentation/readonly.md). _(today, of `delay`)_
 
@@ -50,9 +52,9 @@ nothing was running at its moment, and nothing a call does or fails to do ends t
 9. An occurrence that was not made is not made up, and changes nothing about the next one: the
    schedule goes on from the next occurrence after now.
 10. Each call begins a chain of its own, as a call made from the clock does.
-11. A schedule goes on until it is cancelled, or until its target refuses a call in a way that
-    will not change — an endpoint it no longer has, a request its contract no longer fits — which
-    ends it and says so.
+11. A schedule goes on until it is cancelled, until `expires`, or until its target refuses a call
+    in a way that will not change — an endpoint it no longer has, a request its contract no longer
+    fits — which ends it and says so.
 
 **Regions**
 
@@ -112,20 +114,23 @@ where a link was lost, are no longer written.
 1. **The aspect.** `context.schedule` is a second aspect of the extension beside `delay`. It parses
    the expression and the zone with the `occurrences` a manifest's schedule is read by, refuses
    what guarantee 3 lists, and stores a row whose `due` is the first occurrence after now, under an
-   id derived from the endpoint, the canonical form of the request, the expression and the zone.
+   id derived from the endpoint, the canonical form of the request, the expression, the zone and
+   `expires`.
    It is stored by `ensure`, as a manifest's schedule stores an occurrence, and carries no trail.
 2. **The row.** A row may carry `schedule`, `zone` and `overdue` — what it recurs by, and the bound
-   it was given. `expires` is derived for every occurrence as it is for one: `due + overdue`, or
-   the next occurrence where no bound was stated.
+   each occurrence was given. `expires` keeps its meaning, the moment after which the row is not
+   made at all: for a schedule, the one handed over, or the end of representable time.
 3. **The metronome.** `settle` moves a recurring row to its next occurrence after now rather than
    tombstoning it, and only where the row is still at the occurrence the dispatcher made — so a
    settle that arrives twice, or after the row has moved, moves nothing. It tombstones the rows it
-   is told have ended. The index and the retention are unchanged: a live schedule is a live row.
+   is told have ended, and a row whose next occurrence falls after its `expires`. The index and the
+   retention are unchanged: a live schedule is a live row.
 4. **The dispatcher.** A recurring row is called with `at` added to its input and with an id
    derived from the row and the occurrence, so a second call of one occurrence is that call again
-   and the next occurrence is another. A permanent refusal of a recurring row's call is reported
-   to `settle` as an end rather than as made. An expired occurrence is settled as it is today, which
-   moves a recurring row on.
+   and the next occurrence is another. An occurrence is lapsed past `due + overdue`, or past the
+   next occurrence where no bound was stated — computed from the row, not stored — and is settled
+   without the call, which moves the row on. A row past its `expires`, and a permanent refusal of
+   a recurring row's call, are reported to `settle` as an end.
 5. **Types.** The `Schedule` aspect in the cadence definitions, and in what `toa types` generates
    for a component that declares `cadence`.
 6. **Documentation.** The cadence readme gains the schedule an operation hands over, beside the
@@ -176,6 +181,14 @@ every caller, or leave the two named two ways.
 the expression alone, or with a zone and a bound. `overdue` is in milliseconds, as everything
 `context` is given is; a manifest states seconds.
 
+**`expires` is the schedule's end, and the bound of an occurrence is computed.** `expires` is what
+every row has, and means that nothing of the row is made after it; for a delay that is one call,
+for a schedule the whole of it. Given to the bound of each occurrence instead, it would change
+meaning by the kind of row, and a schedule would have no end but a cancellation. The bound of an
+occurrence follows from the row — `due`, `overdue`, the expression — so it is derived where it is
+read, rather than stored and moved with every occurrence. Named `expires` where it is handed over
+as well, because it is the same thing.
+
 **No default `overdue` refused, unlike `delay`.** A delay states it on every call because nothing
 knows when the next call is. A schedule does, so it has the default a manifest's schedule has.
 
@@ -225,11 +238,13 @@ twice at every occurrence after it.
    composed again; the call arrives with the `at` of that occurrence, and the schedule goes on.
 6. **A schedule outlives a failure.** A call that lapsed past its `overdue` is not made, and the
    next occurrence is.
-7. **A target that refuses for good ends it.** The target's contract no longer fits the request;
+7. **A schedule ends at `expires`.** A schedule of every other second expiring a few seconds out
+   is called for no occurrence after it, and its row is tombstoned.
+8. **A target that refuses for good ends it.** The target's contract no longer fits the request;
    it is called once, the refusal is logged, and the schedule is called no more.
-8. **What does not parse is refused.** An expression, a zone, an `instance`, and an input stating
-   `at` each raise, and nothing is stored.
-9. **A delay is what it was.** The existing cadence scenarios pass unchanged.
+9. **What does not parse is refused.** An expression, a zone, an `expires` already past, an
+   `instance`, and an input stating `at` each raise, and nothing is stored.
+10. **A delay is what it was.** The existing cadence scenarios pass unchanged.
 
 ## Compatibility
 
