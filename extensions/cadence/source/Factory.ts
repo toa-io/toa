@@ -6,6 +6,7 @@ import { Dispatcher } from './Dispatcher.ts'
 import { Local } from './Local.ts'
 import { Pulse } from './Pulse.ts'
 import { Schedule } from './Schedule.ts'
+import { Scheduler } from './Scheduler.ts'
 import type { Declaration } from '@toa.io/definitions/extensions.cadence'
 import type { extensions } from '@toa.io/core/types'
 
@@ -78,11 +79,11 @@ export class Factory implements extensions.Factory {
     return tenant
   }
 
-  /** `context.delay` — for every component but the one that keeps the calls. */
+  /** `context.delay` and `context.schedule` — for every component but the one that keeps the calls. */
   public aspect(locator: Locator): extensions.Aspect | extensions.Aspect[] {
     if (mine(locator)) return []
 
-    return new Aspect(this.metronome())
+    return [new Aspect(this.metronome()), new Scheduler(this.metronome())]
   }
 
   // nothing connects to this, so a halt takes the whole of it
