@@ -51,6 +51,16 @@ declare namespace toa.node {
       ): Promise<string>
       cancel: (id: string) => Promise<void>
     }
+    schedule?: {
+      (
+        endpoint: string,
+        request: object | null,
+        schedule:
+          | string
+          | { schedule: string; zone?: string; overdue?: number; expires?: number }
+      ): Promise<string>
+      cancel: (id: string) => Promise<void>
+    }
     state?: object
   }
 

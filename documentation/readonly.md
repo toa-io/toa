@@ -67,7 +67,8 @@ A route that serves a safe method with an unsafe operation [says otherwise](#say
   right: your operation answers with a failure of its own, and whoever called you sees it.
 - **`context.delay`.** Handing a call over is a write, so [arming a
   delay](/extensions/cadence#arming-is-a-write) in a readonly chain is refused whatever the delayed
-  call would have been. Nothing is stored and no id is answered.
+  call would have been. Nothing is stored and no id is answered. Handing a
+  [schedule](/extensions/cadence#handed-over) over with `context.schedule` is refused the same way.
 - **A task.** A chain may hand one to a safe operation, and that operation is in the chain too, with
   nobody waiting for it. A refusal there is permanent, so the message is **kept at once** rather than
   tried again — the same call refuses the same way on the next attempt. See

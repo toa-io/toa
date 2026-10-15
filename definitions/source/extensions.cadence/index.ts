@@ -14,7 +14,9 @@ export type {
   Entry,
   Options,
   Pulse,
+  Recurrence,
   Schedule,
+  Scheduler,
   Scope,
   Stated
 } from './types.ts'

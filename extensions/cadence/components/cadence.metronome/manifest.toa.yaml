@@ -31,6 +31,20 @@ entity:
       type: array
       items:
         type: string
+    schedule:
+      description: >
+        The cron expression of a schedule an operation handed over. Present, the row is the whole
+        of the schedule: settling it moves `due` to the next occurrence rather than disposing of it.
+      type: string
+    zone:
+      description: The time zone `schedule` is read in
+      type: string
+    overdue:
+      description: >
+        Milliseconds an occurrence of a schedule may be late and still be made. Absent, it is owed
+        until the next occurrence comes due.
+      type: integer
+      minimum: 0
   required:
     - lane
     - due
@@ -76,3 +90,34 @@ operations:
     query: true
     # a row may be cancelled while a page of them is being settled
     concurrency: retry
+    input:
+      type: object
+      nullable: true
+      properties:
+        made:
+          description: >
+            The occurrence each recurring row was disposed of at, by id. A row that has moved
+            past it since is left where it is.
+          type: object
+          additionalProperties:
+            type: integer
+        ended:
+          description: Recurring rows that are over, which are disposed of rather than moved on
+          type: array
+          items:
+            type: string
+
+  # a schedule handed over again after it was cancelled or had ended, which holds its id
+  resume:
+    query: true
+    concurrency: retry
+    input:
+      type: object
+      properties:
+        due:
+          type: integer
+        lane:
+          type: integer
+      required:
+        - due
+        - lane

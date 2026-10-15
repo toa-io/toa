@@ -117,6 +117,9 @@ where a link was lost, are no longer written.
    id derived from the endpoint, the canonical form of the request, the expression, the zone and
    `expires`.
    It is stored by `ensure`, as a manifest's schedule stores an occurrence, and carries no trail.
+   A schedule handed over again after it was cancelled or had ended finds its id held by a
+   tombstone, and revives it with the metronome's `resume`. The Node bridge puts the aspect on the
+   context as `context.schedule`, as it puts `delay`.
 2. **The row.** A row may carry `schedule`, `zone` and `overdue` — what it recurs by, and the bound
    each occurrence was given. `expires` keeps its meaning, the moment after which the row is not
    made at all: for a schedule, the one handed over, or the end of representable time.

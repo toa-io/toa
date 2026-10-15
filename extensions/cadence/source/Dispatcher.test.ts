@@ -29,6 +29,9 @@ interface Row {
   endpoint: string
   request: object | null
   trail?: string[]
+  schedule?: string
+  zone?: string
+  overdue?: number
 }
 
 /** `expires` defaults to no bound at all, which is what `overdue: null` writes */
@@ -631,4 +634,159 @@ it('should make the calls of every region it is given', async () => {
   await advance(INTERVAL)
 
   assert.match(reads()[0].criteria, /REGION=in=\(0,1\)/)
+})
+
+/** a schedule of every second, as `context.schedule` stores one */
+const recurring = (id: string, due: number, rest: object = {}): Row => ({
+  ...row(id, due),
+  schedule: '* * * * * *',
+  zone: 'UTC',
+  ...rest
+})
+
+/** what one settle was given */
+const settles = (): any[] =>
+  metronome.invoke.mock.calls
+    .filter((call) => call.arguments[0] === 'settle')
+    .map((call) => call.arguments[1].input)
+
+it('should call a schedule with the occurrence it is made for', async () => {
+  rows = [recurring('a', 0)]
+
+  const dispatcher = create()
+
+  await dispatcher.connect()
+  await advance(INTERVAL)
+
+  const [endpoint, request] = target.invoke.mock.calls[0].arguments
+
+  assert.equal(endpoint, 'transit')
+  assert.deepStrictEqual(request.input, { id: 'a', at: 0 })
+})
+
+it('should give each occurrence of a schedule an identity of its own', async () => {
+  rows = [recurring('a', 0)]
+
+  // the store moves the row on as it is settled, as `settle` does
+  metronome.invoke.mock.mockImplementation(async (endpoint: string, request: any) => {
+    if (endpoint === 'enumerate') return rows
+
+    if (endpoint === 'settle')
+      rows = rows.map((one) =>
+        request.input.made[one.id] === one.due ? { ...one, due: one.due + 1000 } : one
+      )
+
+    return null
+  })
+
+  const dispatcher = create()
+
+  await dispatcher.connect()
+
+  for (let i = 0; i < 12; i++) await advance(INTERVAL)
+
+  const calls = target.invoke.mock.calls.map((call) => call.arguments[1])
+
+  assert.deepStrictEqual(
+    calls.map((request) => request.input.at),
+    [0, 1000]
+  )
+  assert.notEqual(calls[0].id, calls[1].id)
+  assert.ok(
+    !calls.some((request) => request.id === 'a'),
+    'the row is the schedule, not a call'
+  )
+})
+
+it('should settle a schedule with the occurrence it was made at', async () => {
+  rows = [recurring('a', 0)]
+
+  const dispatcher = create()
+
+  await dispatcher.connect()
+  await advance(INTERVAL)
+  await advance(INTERVAL)
+
+  assert.ok(settles().some((input) => input.made.a === 0 && input.ended.length === 0))
+})
+
+it('should settle an occurrence past its bound without making it', async () => {
+  mock.timers.setTime(10_000)
+
+  rows = [recurring('a', 0, { overdue: 1000 })]
+
+  const dispatcher = create()
+
+  await dispatcher.connect()
+  await advance(INTERVAL)
+  await advance(INTERVAL)
+
+  assert.equal(target.invoke.mock.callCount(), 0)
+  assert.ok(
+    settles().some((input) => input.made.a === 0),
+    'moved on rather than ended'
+  )
+})
+
+it('should end a schedule past its expiry', async () => {
+  mock.timers.setTime(10_000)
+
+  rows = [recurring('a', 9_000, { expires: 9_500 })]
+
+  const dispatcher = create()
+
+  await dispatcher.connect()
+  await advance(INTERVAL)
+  await advance(INTERVAL)
+
+  assert.equal(target.invoke.mock.callCount(), 0)
+  assert.ok(settles().some((input) => input.ended.includes('a')))
+})
+
+it('should end a schedule its target will never take', async () => {
+  const error = mock.method(console, 'error', () => undefined)
+
+  target.invoke.mock.mockImplementation(async () => {
+    throw new exceptions.RequestContractException(
+      'input must NOT have additional properties'
+    )
+  })
+
+  rows = [recurring('a', 0)]
+
+  const dispatcher = create()
+
+  await dispatcher.connect()
+  await advance(INTERVAL)
+  await advance(INTERVAL)
+
+  error.mock.restore()
+
+  assert.ok(settles().some((input) => input.ended.includes('a') && !('a' in input.made)))
+})
+
+it('should leave a schedule whose call could not go out to be called again', async () => {
+  const error = mock.method(console, 'error', () => undefined)
+
+  target.invoke.mock.mockImplementation(async () => {
+    throw new Error('broker away')
+  })
+
+  rows = [recurring('a', 0)]
+
+  const dispatcher = create()
+
+  await dispatcher.connect()
+  await advance(INTERVAL)
+  await advance(INTERVAL)
+  await advance(INTERVAL)
+
+  error.mock.restore()
+
+  assert.ok(target.invoke.mock.callCount() >= 2, 'called again by the next scan')
+  assert.ok(
+    !settles().some(
+      (input) => input !== null && ('a' in input.made || input.ended.includes('a'))
+    )
+  )
 })

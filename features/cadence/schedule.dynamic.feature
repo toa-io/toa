@@ -79,6 +79,25 @@ Feature: Schedules handed over
       | endpoint                | DELETED            |
       | default.scheduling.mark | {"$type": "date"} |
 
+  # Its id is what it is, so the one handed over again is the row that was cancelled, revived.
+  Scenario: Handing a cancelled schedule over again
+    Given the `cadence.metronome` database is empty
+    And the `cadence` service is staged
+    And I compose `scheduling` component
+    When I call `default.scheduling.again` with:
+      """yaml
+      input:
+        schedule: 0 0 1 1 *
+      """
+    Then the reply is received:
+      """yaml
+      same: true
+      """
+    And the `cadence.metronome` database holds:
+      | endpoint                | DELETED |
+      | default.scheduling.mark | null    |
+
+  # Two seconds from now holds two occurrences of every second, whatever part of a second now is.
   Scenario: Ending at `expires`
     Given the `cadence.metronome` database is empty
     And the `cadence` service is staged
@@ -87,7 +106,7 @@ Feature: Schedules handed over
       """yaml
       input:
         schedule: '* * * * * *'
-        expires: 2500
+        expires: 2000
       """
     And I wait 5 seconds
     And I call `default.scheduling.marks`

@@ -57,6 +57,20 @@ operations:
         - schedule
     output:
       type: string
+  # hands one over, cancels it, and hands it over again
+  again:
+    input:
+      type: object
+      properties:
+        schedule:
+          type: string
+      required:
+        - schedule
+    output:
+      type: object
+      properties:
+        same:
+          type: boolean
   # a read-only chain, which may not store one
   peek:
     input:
@@ -91,6 +105,7 @@ operations:
   marks:
     input:
       type: object
+      nullable: true
       properties:
         least:
           type: number
