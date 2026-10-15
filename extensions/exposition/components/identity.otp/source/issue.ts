@@ -1,4 +1,5 @@
 import { randomInt } from 'node:crypto'
+import { SIGN_IN } from './lib/index.ts'
 import type { Context } from './lib/index.ts'
 
 export async function effect(input: Input, context: Context): Promise<Output> {
@@ -7,18 +8,10 @@ export async function effect(input: Input, context: Context): Promise<Output> {
   const key = `${authority}:${username}:${code}`
   const lifetime = input.lifetime ?? context.configuration.lifetime
 
-  if (identity !== undefined)
-    await context.local.ensure({
-      entity: {
-        authority,
-        username,
-        identity
-      }
-    })
-
   context.logs.debug('Issue OTP', { authority, username, identity, lifetime })
 
-  await context.stash.set(key, 1, 'EX', lifetime)
+  // the username is tied to the identity once `confirm` is given the code, not before
+  await context.stash.set(key, identity ?? SIGN_IN, 'EX', lifetime)
 
   return { code }
 }

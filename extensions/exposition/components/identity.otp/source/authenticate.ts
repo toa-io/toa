@@ -1,3 +1,4 @@
+import { redeem, SIGN_IN } from './lib/index.ts'
 import type { Context } from './lib/index.ts'
 
 export async function effect(input: Input, context: Context): Promise<Output | Error> {
@@ -6,27 +7,21 @@ export async function effect(input: Input, context: Context): Promise<Output | E
 
   if (code === undefined) return ERR_INVALID_CREDENTIALS
 
-  const attempts = `${authority}:${username}:attempts`
-  const attempt = await context.stash.incr(attempts)
+  // a code issued with an identity signs in only where the username is that identity's own id:
+  // any other is for `confirm`, and would tie the username to an identity of someone else's choosing
+  const issued = await redeem(
+    {
+      authority,
+      username,
+      code,
+      accepts: (value) => value === SIGN_IN || value === username
+    },
+    context
+  )
 
-  if (attempt === 1) await context.stash.expire(attempts, context.configuration.lifetime)
+  if (issued instanceof Error) return issued
 
-  if (attempt > context.configuration.attempts) {
-    context.logs.debug('OTP attempts exceeded', { authority, username, attempt })
-
-    return ERR_TOO_MANY_ATTEMPTS
-  }
-
-  const key = `${authority}:${username}:${code}`
-  const n = await context.stash.del(key)
-
-  if (n === 0) {
-    context.logs.debug('OTP code not found', { authority, username, attempt })
-
-    return ERR_EXPIRED
-  }
-
-  await context.stash.del(attempts)
+  if (issued === username) return { identity: { id: issued } }
 
   const entry = await context.local.ensure({
     entity: {
@@ -43,10 +38,6 @@ export async function effect(input: Input, context: Context): Promise<Output | E
 }
 
 const ERR_INVALID_CREDENTIALS = new Error('INVALID_CREDENTIALS')
-
-const ERR_EXPIRED = new Error('EXPIRED')
-
-const ERR_TOO_MANY_ATTEMPTS = new Error('TOO_MANY_ATTEMPTS')
 
 const ERR_NOT_FOUND = new Error('NOT_FOUND')
 
