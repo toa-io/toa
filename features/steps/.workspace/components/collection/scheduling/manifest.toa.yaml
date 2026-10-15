@@ -1,0 +1,113 @@
+name: scheduling
+
+# nothing to declare beyond naming it: `context.schedule` comes with the extension
+cadence: ~
+
+state: ~
+
+operations:
+  # hands a schedule of `mark` over, `expires` stated in milliseconds from now
+  plan:
+    input:
+      type: object
+      properties:
+        schedule:
+          type: string
+        zone:
+          type: string
+        overdue:
+          type: integer
+        expires:
+          type: integer
+        note:
+          type: string
+        input:
+          description: what is handed over as the input, where it is not `{ note }`
+        target:
+          type: string
+      required:
+        - schedule
+    output:
+      type: string
+  # the same schedule handed over twice
+  twice:
+    input:
+      type: object
+      properties:
+        schedule:
+          type: string
+        note:
+          type: string
+      required:
+        - schedule
+        - note
+    output:
+      type: object
+      properties:
+        same:
+          type: boolean
+  # hands one over and cancels it
+  vanish:
+    input:
+      type: object
+      properties:
+        schedule:
+          type: string
+      required:
+        - schedule
+    output:
+      type: string
+  # a read-only chain, which may not store one
+  peek:
+    input:
+      type: object
+      properties:
+        schedule:
+          type: string
+      required:
+        - schedule
+    output:
+      type: string
+  mark:
+    input:
+      type: object
+      properties:
+        note:
+          type: string
+        at:
+          type: number
+      required:
+        - at
+  # takes no `note`, so a schedule handed over with one is a request it will never take
+  strict:
+    input:
+      type: object
+      properties:
+        at:
+          type: number
+      required:
+        - at
+      additionalProperties: false
+  marks:
+    input:
+      type: object
+      properties:
+        least:
+          type: number
+    output:
+      type: object
+      properties:
+        count:
+          type: number
+        enough:
+          type: boolean
+        consecutive:
+          type: boolean
+        notes:
+          type: array
+          items:
+            type: string
+        repeated:
+          type: boolean
+        late:
+          type: boolean
