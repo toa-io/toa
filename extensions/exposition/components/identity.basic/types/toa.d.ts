@@ -111,6 +111,7 @@ export interface Component {
 }
 
 export interface Configuration {
+  /** bcrypt cost */
   rounds: number
   /** Hashing pepper, a secret */
   pepper?: Secret

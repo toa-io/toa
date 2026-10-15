@@ -165,8 +165,10 @@ configuration:
     type: object
     properties:
       rounds:
+        description: bcrypt cost
         type: integer
-        minimum: 1
+        minimum: 4
+        maximum: 31
       pepper:
         description: Hashing pepper, a secret
         type: string
