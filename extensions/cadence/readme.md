@@ -4,7 +4,7 @@ Calls a component makes to itself, and calls it puts off.
 
 A **pulse** calls an operation of its own component on a cadence its manifest states. A
 **schedule** calls one at the moments of a calendar. A **delay** hands one call over to be made
-later.
+later, and an operation may [hand a schedule over](#handed-over) the same way.
 
 A delay, a schedule, and a pulse that is the component's rather than each replica's, rest on
 [`atomicity`](/connectors/atomicity), which is what keeps two replicas from making one call and
@@ -299,8 +299,9 @@ begins a chain of its own on every call, delayed or not, and needs no option her
 
 A [pulse](#pulse) is the other way to write recurring work, and where it fits it is the simpler
 one: one timer for the component rather than a row per item, and no chain to break, because it
-is called from the clock. Reach for a delay instead when each item has its own schedule — this
-invoice a day from now, that one in a week.
+is called from the clock. Reach for a delay instead when each item has its own moment — this
+invoice a day from now, that one in a week — and for a [schedule handed over](#handed-over) when
+each item has its own calendar.
 
 Nothing is declared for it beyond naming the extension. A component that only delays calls says
 so with an empty declaration:
@@ -389,6 +390,73 @@ and a second call is the expensive failure.
 A horizon of years costs nothing, and a call put off that long is worth no more than the target
 that will be there to take it: the target may be gone by the time it comes due, and its input
 may no longer be one it accepts. Either way the attempt is spent.
+
+## Handed over
+
+```javascript
+const id = await context.schedule(
+  'mail.digest.send',
+  { input: { account } },
+  { schedule: '0 9 * * 1', zone: 'Europe/Berlin' }
+)
+
+await context.schedule.cancel(id)
+```
+
+A schedule of an item's own: the target is called at every occurrence until the schedule is
+cancelled. The third argument is a cron expression, as a manifest's [schedule](#schedule) states
+one, or an object:
+
+|            |                                                                                  |
+| ---------- | -------------------------------------------------------------------------------- |
+| `schedule` | the cron expression, of five fields or of six where the first is seconds         |
+| `zone`     | the [time zone](https://www.iana.org/time-zones) it is read in, `UTC` by default |
+| `overdue`  | milliseconds a call may be late and still be made; until the next one by default |
+
+The endpoint is named as a [delay](#delay) names it. The id answered is what cancels the
+schedule, and `cancel` raises where the id was never issued. Keep it beside the item the schedule
+is for: nothing lists schedules, and nothing changes one — a schedule is changed by cancelling it
+and handing the new one over.
+
+**The same schedule handed over twice is one.** The same endpoint, request, expression and zone
+answer the same id and store nothing more, so an operation that runs twice for one call does not
+make every occurrence twice.
+
+The target is called with the input that was handed over and the moment of the occurrence beside
+it, in milliseconds since the epoch, so its contract states `at` as well:
+
+```javascript
+async function send({ account, at }, context) {}
+```
+
+An expression or a zone that does not parse, a request that names an `instance`, and an input that
+is not an object or already states `at` are refused where `context.schedule` is called, and nothing
+is stored. Storing a schedule is a write, so it is refused from a chain that
+[may only read](/documentation/readonly.md), as a delay is.
+
+### What to expect
+
+What a manifest's [schedule](#what-to-expect-1) does, it does: a call is late rather than lost, an
+occurrence is not made once the next one is due, `at` is the moment of the occurrence and not of
+the call, and nothing keeps a call from running while the one before it is.
+
+**A call may be made more than once**, and a second call of one occurrence is the same call, so an
+operation that declares [`once`](/documentation/inbox.md) changes state once per occurrence.
+
+**A call that was not made ends nothing.** An occurrence that expired, was refused on the way out,
+or fell while nothing was running is not made up, and the next one is made.
+
+**A target that will never take the call ends the schedule** — an endpoint it no longer has, or a
+request its contract no longer fits. That is logged, and nothing is called again.
+
+**Each call begins a chain of its own**, whatever chain handed the schedule over.
+
+**Occurrences closer together than [`discreteness`](#discreteness) are made at most once a
+pass**, and the ones in between are not made. A cancellation is reliable as a delay's is: while
+the next occurrence is further out than `discreteness`.
+
+A schedule is made by the region that handed it over, and is [taken over](#regions) with that
+region's delayed calls.
 
 ## Configuration
 
