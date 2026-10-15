@@ -18,9 +18,18 @@ export class OTP {
 
   @given('OTP for `{word}` in `{word}` authority is issued')
   public async issue(username: string, authority: string): Promise<void> {
-    const credentials = await this.code(username, authority)
+    const code = await this.code(username, authority)
 
-    this.captures.set(`${username}.otp`, credentials)
+    this.captures.set(`${username}.otp`, btoa(`${username}:${code}`))
+  }
+
+  @given('OTP for `{word}` in `{word}` authority is issued for {word}')
+  public async issueFor(username: string, authority: string, as: string): Promise<void> {
+    const identity = this.captures.get(`${as}.id`)
+    const code = await this.code(username, authority, identity)
+
+    this.captures.set(`${username}.otp`, btoa(`${username}:${code}`))
+    this.captures.set(`${username}.code`, code)
   }
 
   @given('{int} OTPs for `{word}` in `{word}` authority are issued')
@@ -32,7 +41,10 @@ export class OTP {
     const issued = this.issued.get(username) ?? []
 
     for (let i = 0; i < count; i++)
-      issued.push({ authority, credentials: await this.code(username, authority) })
+      issued.push({
+        authority,
+        credentials: btoa(`${username}:${await this.code(username, authority)}`)
+      })
 
     this.issued.set(username, issued)
   }
@@ -58,13 +70,17 @@ export class OTP {
     )
   }
 
-  private async code(username: string, authority: string): Promise<string> {
+  private async code(
+    username: string,
+    authority: string,
+    identity?: string
+  ): Promise<string> {
     const otp = await this.remote()
-    const reply = await otp.invoke('issue', { input: { username, authority } })
+    const reply = await otp.invoke('issue', { input: { username, authority, identity } })
 
     assert.ok(typeof reply.code === 'string')
 
-    return btoa(`${username}:${reply.code}`)
+    return reply.code
   }
 
   private async remote(): Promise<Remote> {
