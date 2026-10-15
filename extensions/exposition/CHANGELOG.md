@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.330](https://github.com/toa-io/toa/compare/v1.0.0-alpha.329...v1.0.0-alpha.330) (2026-10-15)
+
+### Features
+
+* **exposition:** answer CORS with wildcards ([2738ae4](https://github.com/toa-io/toa/commit/2738ae46e95bf93ffa24b0845ccd16350af344b7))
+
+### BREAKING CHANGES
+
+* **exposition:** a request sent with credentials mode `include` is refused
+  by the browser, and no reply carries `access-control-allow-credentials`.
+
+
 # [1.0.0-alpha.329](https://github.com/toa-io/toa/compare/v1.0.0-alpha.328...v1.0.0-alpha.329) (2026-10-11)
 
 **Note:** Version bump only for package @toa.io/extensions.exposition

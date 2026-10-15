@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.330](https://github.com/toa-io/toa/compare/v1.0.0-alpha.329...v1.0.0-alpha.330) (2026-10-15)
+
+### Bug Fixes
+
+* **openspan:** flush exporters at exit through one listener ([7d021e1](https://github.com/toa-io/toa/commit/7d021e1ad9d2ac013aee1947b71c5ea26d2e0275))
+
+
 # [1.0.0-alpha.327](https://github.com/toa-io/toa/compare/v1.0.0-alpha.326...v1.0.0-alpha.327) (2026-10-10)
 
 **Note:** Version bump only for package openspan
