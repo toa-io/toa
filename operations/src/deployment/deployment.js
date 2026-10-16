@@ -68,7 +68,9 @@ export class Deployment {
     const args = []
 
     if (options.namespace !== undefined) args.push('-n', options.namespace)
-    if (options.wait === true) args.push('--wait')
+    // an upgrade waited for and failed — or timed out — is rolled back, rather than left pending:
+    // a pending release refuses every upgrade after it
+    if (options.wait === true) args.push('--wait', '--atomic')
     if (options.timeout !== undefined) args.push('--timeout', options.timeout)
 
     await this.#update()
