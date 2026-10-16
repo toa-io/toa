@@ -38,6 +38,30 @@ operations:
         - authority
         - username
       type: object
+  confirm:
+    input:
+      properties:
+        authority:
+          type: string
+        username:
+          type: string
+          minLength: 1
+          maxLength: 256
+        code:
+          type: string
+        identity:
+          type: string
+          pattern: ^[0-9a-f]{32}$
+      required:
+        - authority
+        - username
+        - code
+        - identity
+      type: object
+    errors:
+      - EXPIRED
+      - TOO_MANY_ATTEMPTS
+      - EXISTS
   authenticate:
     input:
       properties:
@@ -86,11 +110,16 @@ stash: ~
 exposition:
   /:identity:
     auth:id: identity
-    auth:role: system:identity:otp
     POST:
+      auth:role: system:identity:otp
       io:input: []
       io:output: [code]
       map:authority: authority
       map:segments:
         username: identity
       endpoint: issue
+    PUT:
+      io:input: [username, code]
+      io:output: false
+      map:authority: authority
+      endpoint: confirm

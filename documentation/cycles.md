@@ -60,7 +60,8 @@ Three things to know:
 
 **It counts nesting, not repetition in time.** Work that runs again and again on a schedule is
 not a circle, and a [pulse](/extensions/cadence#pulse) is how you write it — every firing starts
-its own chain.
+its own chain. So does every call of a schedule an operation
+[hands over](/extensions/cadence#handed-over).
 
 **A delay is a hop.** `context.delay` makes the call by the chain that asked for it, so an
 operation that re-arms itself — delaying a call to its own endpoint — is a circle, and a slow

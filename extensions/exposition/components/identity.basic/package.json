@@ -3,6 +3,6 @@
   "private": true,
   "type": "module",
   "dependencies": {
-    "@node-rs/bcrypt": "1.10.9"
+    "@node-rs/bcrypt": "2.0.0"
   }
 }

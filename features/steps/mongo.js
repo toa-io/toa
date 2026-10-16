@@ -102,6 +102,22 @@ Then(
   }
 )
 
+Then(
+  'the {component} database holds nothing',
+  /**
+   * What a refusal leaves behind: not a row, live or settled.
+   *
+   * @param {string} id
+   */
+  async function (id) {
+    await using(id, async (collection) => {
+      const documents = await collection.find().toArray()
+
+      assert.equal(documents.length, 0, `there is ${JSON.stringify(documents)}`)
+    })
+  }
+)
+
 Given(
   'the {component} database contains:',
   /**

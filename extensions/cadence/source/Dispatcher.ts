@@ -1,6 +1,7 @@
 import { console } from 'openspan'
-import { Connector, Locator, exceptions } from '@toa.io/core'
+import { Connector, Locator, entities, exceptions } from '@toa.io/core'
 import * as measure from './measurements.ts'
+import { bound } from './row.ts'
 import {
   BATCH,
   DISCRETENESS,
@@ -38,8 +39,14 @@ export class Dispatcher extends Connector {
   /** rows in this replica's hands — a timer set for them, or a call of theirs on its way */
   private readonly armed = new Map<string, Armed>()
 
-  /** ids called and not yet removed, held until a scan settles them */
-  private called = new Set<string>()
+  /**
+   * Ids called and not yet settled, held until a scan settles them, with the occurrence each was
+   * at: a recurring row is moved on from that one, and from no other.
+   */
+  private called = new Map<string, number>()
+
+  /** recurring rows that are over — expired, or refused for good — held as `called` is */
+  private ended = new Set<string>()
 
   /** what it has called through, so that each is torn down with it */
   private readonly targets = new Set<Local>()
@@ -287,9 +294,30 @@ export class Dispatcher extends Connector {
    * until its call has been made.
    */
   private arm(row: Row): void {
-    if (this.armed.has(row.id) || this.called.has(row.id)) return
+    if (this.armed.has(row.id) || this.called.has(row.id) || this.ended.has(row.id))
+      return
 
     const now = Date.now()
+
+    /*
+     * A recurring row is one schedule, and `expires` is its end: past it the row is disposed of
+     * rather than moved on. Short of it, the occurrence it waits for has a bound of its own, and
+     * one past that is not made and is moved on from, as a delayed call past its bound is settled.
+     */
+    if (row.schedule !== undefined) {
+      if (row.expires <= now) {
+        this.ended.add(row.id)
+
+        return
+      }
+
+      if (bound(row) <= now) {
+        measure.lapsed(component(row.endpoint))
+        this.called.set(row.id, row.due)
+
+        return
+      }
+    }
 
     /*
      * Past the bound its caller gave it, so the call is not made — and the row is settled all
@@ -299,7 +327,7 @@ export class Dispatcher extends Connector {
      */
     if (row.expires <= now) {
       measure.lapsed(component(row.endpoint))
-      this.called.add(row.id)
+      this.called.set(row.id, row.due)
 
       return
     }
@@ -348,6 +376,19 @@ export class Dispatcher extends Connector {
     request.id = row.id
 
     /*
+     * A recurring row is many calls, one an occurrence: each is told which by `at`, and is a call
+     * of its own identity, so a second call of one occurrence is that call again and the next
+     * occurrence is another.
+     */
+    if (row.schedule !== undefined) {
+      request.input = {
+        ...(row.request as { input?: object } | undefined)?.input,
+        at: row.due
+      }
+      request.id = entities.derive(row.id, row.due)
+    }
+
+    /*
      * The call travels as a task, so what raises here is this side of it: a stored request the
      * target's contract no longer fits, an endpoint it no longer has, a broker that refused the
      * enqueue. What the operation itself does with it happens in the target's own process and
@@ -363,15 +404,21 @@ export class Dispatcher extends Connector {
       .invoke(endpoint, request)
       .then(() => {
         measure.made(component(row.endpoint))
-        this.called.add(row.id)
+        this.called.set(row.id, row.due)
       })
       .catch((error: unknown) => {
-        if (exceptions.permanent(error)) this.called.add(row.id)
+        // a schedule whose call the target will never take is over, rather than refused again
+        // at every occurrence for as long as the application runs
+        if (exceptions.permanent(error))
+          if (row.schedule === undefined) this.called.set(row.id, row.due)
+          else this.ended.add(row.id)
 
         console.error('Delayed call failed', {
           endpoint: row.endpoint,
           id: row.id,
           permanent: exceptions.permanent(error),
+          // a schedule refused for good is over, and this is the only place that says so
+          ...(row.schedule !== undefined && { ended: exceptions.permanent(error) }),
           error
         })
       })
@@ -399,14 +446,17 @@ export class Dispatcher extends Connector {
 
   /** One write for many rows, which is why the ids are held rather than settled one by one. */
   private async settle(): Promise<void> {
-    if (this.called.size === 0) return
+    if (this.called.size === 0 && this.ended.size === 0) return
 
-    const ids = [...this.called]
+    const made = Object.fromEntries(this.called)
+    const ended = [...this.ended]
+    const ids = [...Object.keys(made), ...ended]
 
-    await this.metronome.invoke('settle', { query: { ids }, input: null })
+    await this.metronome.invoke('settle', { query: { ids }, input: { made, ended } })
 
     // held until the write comes back, so that one which does not leaves them to a later scan
-    for (const id of ids) this.called.delete(id)
+    for (const id of Object.keys(made)) this.called.delete(id)
+    for (const id of ended) this.ended.delete(id)
   }
 }
 
@@ -428,6 +478,11 @@ interface Row {
 
   /** the chain that asked for the call, which the call is made by */
   trail?: string[]
+
+  /** what a recurring row recurs by, absent on a row that is made once */
+  schedule?: string
+  zone?: string
+  overdue?: number
 }
 
 /** intervals a scan may run for before it is a stuck pass rather than a slow one */

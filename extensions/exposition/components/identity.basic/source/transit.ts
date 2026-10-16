@@ -68,7 +68,7 @@ export class Transition implements Operation {
 
       const spicy = input.password + this.pepper
 
-      object.password = await hash(spicy, this.rounds)
+      object.password = await hash(spicy, { cost: this.rounds })
     }
 
     return { id: object.id }

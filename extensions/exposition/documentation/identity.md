@@ -186,6 +186,21 @@ GET /identity/ HTTP/1.1
 authentication: OTP dXNlcm5hbWU6MTIzNDU2
 ```
 
+A code issued with `identity` ties the username to that identity once the identity confirms it,
+and does not sign in:
+
+```
+PUT /identity/otp/:identity/ HTTP/1.1
+authorization: Token ...
+content-type: application/yaml
+
+username: string
+code: string
+```
+
+A username already tied to another identity is refused with `EXISTS`. A code issued with an
+identity for the username that is that identity's own id signs in as it.
+
 OTP expiration time and the number of failed attempts a username is allowed within it can be
 configured using the `identity.otp` configuration.
 

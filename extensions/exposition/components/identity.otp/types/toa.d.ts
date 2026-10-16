@@ -29,6 +29,13 @@ export type IssueInput = {
   lifetime?: number
 }
 
+export type ConfirmInput = {
+  authority: string
+  username: string
+  code: string
+  identity: string
+}
+
 export type AuthenticateInput = {
   authority: string
   credentials: string
@@ -42,6 +49,7 @@ export type AuthenticateOutput = {
 
 export interface Component {
   issue: (request: { input: IssueInput, entity?: Partial<Entity>, task?: boolean }) => Promise<unknown>
+  confirm: (request: { input: ConfirmInput, entity?: Partial<Entity>, task?: boolean }) => Promise<{} | null | undefined | CodedError<"EXPIRED" | "TOO_MANY_ATTEMPTS" | "EXISTS">>
   authenticate: (request: { input: AuthenticateInput, entity?: Partial<Entity>, task?: boolean }) => Promise<AuthenticateOutput | CodedError<"INVALID_CREDENTIALS" | "EXPIRED" | "TOO_MANY_ATTEMPTS" | "NOT_FOUND">>
   assign: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Entity>
   ensure: (request: { input?: null, query?: Query<Entity>, entity?: Partial<Entity>, task?: boolean }) => Promise<Entity>

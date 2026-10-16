@@ -89,6 +89,35 @@ export interface Options {
   unchained?: boolean
 }
 
+/**
+ * `context.schedule` — a call made at every occurrence of a calendar, until the schedule expires or
+ * is cancelled, answering the id that cancels it. The same schedule handed over twice is one.
+ */
+export interface Scheduler {
+  (
+    endpoint: string,
+    request: object | null,
+    schedule: string | Recurrence
+  ): Promise<string>
+
+  /** Raises where the id was never issued. */
+  cancel: (id: string) => Promise<void>
+}
+
+export interface Recurrence {
+  /** a cron expression of five fields, or of six where the first is seconds */
+  schedule: string
+
+  /** the time zone the expression is read in, `UTC` where absent */
+  zone?: string
+
+  /** milliseconds an occurrence may be late and still be made; until the next one where absent */
+  overdue?: number
+
+  /** milliseconds since the epoch after which nothing is made; never where absent */
+  expires?: number
+}
+
 /** What an application states under `cadence:` in its context. */
 export interface Annotation {
   /** seconds between passes over the calls waiting to be made */
