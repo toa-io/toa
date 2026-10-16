@@ -103,7 +103,9 @@ so nothing has to be there. `--wait` waits for the rollout and then for the repl
 finish terminating — Helm answers once the replacements are ready, while the old ones are still
 draining, and a request made in that window lands on either. `--timeout` is how long both are given,
 Helm's `5m` by default; a rollout that has made no progress for 15 minutes is failed whatever it
-says.
+says. A deploy waited for is atomic: one that fails or runs out of time is rolled back — a first
+install is removed — rather than left pending, which would refuse every deploy after it with
+`another operation (install/upgrade/rollback) is in progress`.
 
 ## Environments
 
