@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.331](https://github.com/toa-io/toa/compare/v1.0.0-alpha.330...v1.0.0-alpha.331) (2026-10-16)
+
+### Bug Fixes
+
+* **deps:** take comq 0.28.0, which resolves a name once per process ([2a79140](https://github.com/toa-io/toa/commit/2a791405c5452f78ecfe84d9fea66c1adb4d3827))
+* **openspan:** flush exporters at exit through one listener ([35f486f](https://github.com/toa-io/toa/commit/35f486f723dc75d546d3d2b86c89f6d1d54c56dd))
+* **operations:** a deploy waited for is rolled back where it fails ([41ce1c5](https://github.com/toa-io/toa/commit/41ce1c5f462c5dcd78e138dba7c7cc4300e8e9fb))
+
+### Features
+
+* **cadence:** let an operation hand a schedule over ([f920542](https://github.com/toa-io/toa/commit/f9205422133f490a0e624cbf37bfda3b9010c20c))
+* **exposition:** answer CORS with wildcards ([e796f99](https://github.com/toa-io/toa/commit/e796f9980c96d6b9c049065723168d0ebec679fc))
+
+### BREAKING CHANGES
+
+* **exposition:** a request sent with credentials mode `include` is refused
+  by the browser, and no reply carries `access-control-allow-credentials`.
+
+
 # [1.0.0-alpha.330](https://github.com/toa-io/toa/compare/v1.0.0-alpha.329...v1.0.0-alpha.330) (2026-10-15)
 
 ### Bug Fixes

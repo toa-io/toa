@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.331](https://github.com/toa-io/toa/compare/v1.0.0-alpha.330...v1.0.0-alpha.331) (2026-10-16)
+
+### Features
+
+* **cadence:** let an operation hand a schedule over ([f920542](https://github.com/toa-io/toa/commit/f9205422133f490a0e624cbf37bfda3b9010c20c))
+
+
 # [1.0.0-alpha.330](https://github.com/toa-io/toa/compare/v1.0.0-alpha.329...v1.0.0-alpha.330) (2026-10-15)
 
 **Note:** Version bump only for package @toa.io/bridges.node

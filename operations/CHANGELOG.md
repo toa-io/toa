@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.331](https://github.com/toa-io/toa/compare/v1.0.0-alpha.330...v1.0.0-alpha.331) (2026-10-16)
+
+### Bug Fixes
+
+* **operations:** a deploy waited for is rolled back where it fails ([41ce1c5](https://github.com/toa-io/toa/commit/41ce1c5f462c5dcd78e138dba7c7cc4300e8e9fb))
+
+
 # [1.0.0-alpha.330](https://github.com/toa-io/toa/compare/v1.0.0-alpha.329...v1.0.0-alpha.330) (2026-10-15)
 
 **Note:** Version bump only for package @toa.io/operations
