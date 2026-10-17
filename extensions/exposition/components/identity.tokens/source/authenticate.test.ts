@@ -127,6 +127,57 @@ it('should check revocation of an aged custom token', async () => {
   assert.deepStrictEqual(result.message, 'TOKEN_REVOKED')
 })
 
+it('should refresh a fresh token when forced', async () => {
+  const iat = new Date().toISOString()
+  const exp = new Date(Date.now() + 1000).toISOString()
+
+  output = { iss: authority, identity, exp, iat, refresh: false, custom: false }
+
+  const result = await authenticate.execute({ authority, credentials, force: true })
+
+  assert.deepStrictEqual(result, { identity, refresh: true })
+})
+
+it('should check revocation of a fresh token when forced', async () => {
+  const iat = new Date(Date.now() - 50).toISOString()
+  const exp = new Date(Date.now() + 1000).toISOString()
+
+  output = { iss: authority, identity, exp, iat, refresh: false, custom: false }
+  context.local.observe = mock.fn(async () => ({
+    revokedAt: Date.now()
+  })) as unknown as Context['local']['observe']
+  authenticate.mount(context)
+
+  const result: any = await authenticate.execute({ authority, credentials, force: true })
+
+  assert.deepStrictEqual(result.message, 'TOKEN_REVOKED')
+})
+
+it('should check revocation of a token without expiration when forced', async () => {
+  const iat = new Date(Date.now() - 50).toISOString()
+
+  output = { iss: authority, identity, iat, refresh: false, custom: false }
+  context.local.observe = mock.fn(async () => ({
+    revokedAt: Date.now()
+  })) as unknown as Context['local']['observe']
+  authenticate.mount(context)
+
+  const result: any = await authenticate.execute({ authority, credentials, force: true })
+
+  assert.deepStrictEqual(result.message, 'TOKEN_REVOKED')
+})
+
+it('should refuse to refresh a custom token', async () => {
+  const iat = new Date().toISOString()
+  const exp = new Date(Date.now() + 1000).toISOString()
+
+  output = { iss: authority, identity, exp, iat, refresh: false, custom: true }
+
+  const result: any = await authenticate.execute({ authority, credentials, force: true })
+
+  assert.deepStrictEqual(result.message, 'UNREFRESHABLE')
+})
+
 function secret(value: string): Secret {
   return { unwrap: () => value }
 }

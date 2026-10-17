@@ -54,6 +54,32 @@ const PREDEFINED: syntax.Node = {
       }
     },
     {
+      // a path of its own, so that it is matched before the `/:identity` of `identity.tokens`
+      path: '/identity/tokens/refresh',
+      node: {
+        isolated: true,
+        routes: [],
+        methods: [
+          {
+            verb: 'POST',
+            directives: [
+              {
+                family: 'io',
+                name: 'output',
+                value: ['id', 'roles']
+              },
+              {
+                family: 'auth',
+                name: 'refresh',
+                value: null
+              }
+            ]
+          }
+        ],
+        directives: []
+      }
+    },
+    {
       // an identity's own stream, which it reads whatever the application declares
       path: '/realtime/:id',
       node: {
