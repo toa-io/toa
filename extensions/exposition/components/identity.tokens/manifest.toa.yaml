@@ -105,6 +105,9 @@ operations:
           type: string
         credentials:
           type: string
+        force:
+          description: Refresh a token whatever its age, and refuse one that cannot be
+          type: boolean
       type: object
       required:
         - authority
@@ -130,6 +133,8 @@ operations:
       - UNRECOGNIZED
       - AUTHORITY_MISMATCH
       - TOKEN_REVOKED
+      # a custom token asked to be refreshed
+      - UNREFRESHABLE
       # what `decrypt` refuses with, passed on
       - INVALID_TOKEN
       - INVALID_KEY
