@@ -297,6 +297,8 @@ This essentially means that if the client uses the token at least once every `li
 will always have a valid token to authenticate with.
 Also, token revocation or changing roles of an Identity will take effect once the `refresh` period
 of the currently issued tokens has expired.
+A client that should not wait for it, one told a role was granted, asks for a new token at
+[`/identity/tokens/refresh/`](#token-resources).
 
 A change of what an Identity may do reaches every credential it holds: a token issued by the
 gateway within `refresh`, a [custom token](#custom-tokens) within `cache.ttl`.
@@ -390,6 +392,36 @@ lifetime?: number # seconds
 Providing a value of `0` will result in the token being issued with no expiration.
 However, it will still become invalid once the encryption key used is out
 of [rotation](#secret-rotation).
+
+`/identity/tokens/refresh/`
+
+`POST` Replace the presented token with a new one, whatever its age. The reply carries the new
+token in the `authorization` header, with roles as the Identity holds them now, and its body is the
+Identity as `GET /identity/` answers it.
+
+```http
+POST /identity/tokens/refresh/
+authorization: Token ...
+accept: application/yaml
+```
+
+```http
+200 OK
+authorization: Token ...
+cache-control: no-store
+
+id: 2428c31ecb6e4a51a24ef52f0c4181b9
+roles: [app:editor]
+```
+
+Credentials of other schemes are answered with a new token as any request carrying them is.
+
+| Presented                                                                                  | Reply              |
+| ------------------------------------------------------------------------------------------ | ------------------ |
+| No credentials                                                                             | `401 Unauthorized` |
+| A token issued before its Identity's [revocation](#token-revocation), within `refresh` too | `401 Unauthorized` |
+| Credentials of a [banned](#banned-identities) Identity                                     | `401 Unauthorized` |
+| A [custom token](#custom-tokens), an OAuth access token included                           | `403 Forbidden`    |
 
 ## Roles
 
