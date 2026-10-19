@@ -43,7 +43,7 @@
     "@toa.io/rsql": "1.0.0",
     "@toa.io/schemas": "1.0.0-alpha.330",
     "openspan": "1.0.0-alpha.330",
-    "uuid": "14.0.2"
+    "uuid": "14.0.3"
   },
   "gitHead": "61c8e74a336385265767e9fd37d49128cb51b17f"
 }
