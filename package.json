@@ -50,7 +50,8 @@
     "smol-toml": "1.9.0",
     "uuid": "14.0.2",
     "axios": "1.20.0",
-    "handlebars": "4.7.10"
+    "handlebars": "4.7.10",
+    "follow-redirects": "1.16.1"
   },
   "bin": {
     "toa": "runtime/cli/bin/toa"
