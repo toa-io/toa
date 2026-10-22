@@ -287,33 +287,35 @@ export class Storage extends Connector {
   async massStore(entities, rows = undefined, attempt = 0) {
     if (entities.length === 0) return true
 
+    const namespace = this.#collection.namespace
+
     const operations = entities.map((entity) => {
       const record = this.#to(entity)
 
       if (entity.VERSION === 1) {
         const { VERSION, ...rest } = record
 
+        // one the read did not find: absent, and inserted, or deleted, and revived — a live
+        // one makes the upsert collide on `_id`, which is the swap lost
         return {
-          // one the read did not find: absent, and inserted, or deleted, and revived — a live
-          // one makes the upsert collide on `_id`, which is the swap lost
-          updateOne: {
-            filter: { _id: entity.id, DELETED: { $ne: null } },
-            update: {
-              $set: {
-                ...rest,
-                DELETED: null
-              },
-              $inc: { VERSION: 1 }
+          name: 'updateOne',
+          namespace,
+          filter: { _id: entity.id, DELETED: { $ne: null } },
+          update: {
+            $set: {
+              ...rest,
+              DELETED: null
             },
-            upsert: true
-          }
+            $inc: { VERSION: 1 }
+          },
+          upsert: true
         }
       } else
         return {
-          replaceOne: {
-            filter: { _id: entity.id, VERSION: entity.VERSION - 1 },
-            replacement: record
-          }
+          name: 'replaceOne',
+          namespace,
+          filter: { _id: entity.id, VERSION: entity.VERSION - 1 },
+          replacement: record
         }
     })
 
@@ -327,10 +329,13 @@ export class Storage extends Connector {
           result = await this.command(
             'bulkWrite',
             { operations: operations.length },
-            async () => await this.#collection.bulkWrite(operations, { session })
+            // the client's bulk write, not the collection's: the latter takes a `timeoutMS` the
+            // URL sets for one the call passed, and refuses it inside a transaction that has
+            // its own
+            async () => await this.#collection.client.bulkWrite(operations, { session })
           )
         } catch (error) {
-          if (!collidedOnId(error)) throw error
+          if (!collidedOnId(firstWriteError(error))) throw error
 
           await session.abortTransaction()
 
@@ -353,7 +358,7 @@ export class Storage extends Connector {
     } catch (error) {
       console.error('MongoDB error', error)
 
-      const retry = await retriable(error, attempt)
+      const retry = await retriable(firstWriteError(error), attempt)
 
       if (retry) return await this.massStore(entities, rows, attempt + 1)
       else return false
@@ -607,6 +612,13 @@ const ERR_DUPLICATE_KEY = 11000
 
 /** what the transaction answers where the call it carries has already been made */
 const MADE = Symbol('made')
+
+/** What an ordered bulk write stopped at, or the error itself where no write failed. */
+function firstWriteError(error) {
+  return error?.writeErrors instanceof Map && error.writeErrors.size > 0
+    ? error.writeErrors.values().next().value
+    : error
+}
 
 /** whether the key a write collided on is `_id` */
 function collidedOnId(error) {

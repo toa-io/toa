@@ -1,5 +1,10 @@
 # MongoDB Storage
 
+## Server
+
+MongoDB 8.0 or later. An earlier server refuses a `transition` of scope `entries`
+([Operations](/documentation/component/declaration.md#operations)).
+
 ## Tracing
 
 Commands are recorded as `client` spans within the trace of the current invocation.
