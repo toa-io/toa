@@ -73,3 +73,66 @@ Feature: A transition over entries commits all or nothing
       | a1c0a0c1a2d34e8f9b7c6d5e4f3a2b10 | 0     | 1       |
       | c3c0a0c1a2d34e8f9b7c6d5e4f3a2b30 | 10    | 1       |
     And the `mongo.entries` outbox holds 1 row
+
+  Scenario: A set is written whole where the URL bounds every operation in time
+    Given environment variables:
+      """
+      TOA_DEV=0
+      TOA_MONGODB_MONGO_ENTRIES=mongodb://localhost:31020/?timeoutMS=2000
+      TOA_MONGODB_MONGO_ENTRIES_USERNAME=developer
+      TOA_MONGODB_MONGO_ENTRIES_PASSWORD=secret
+      TOA_CONTEXT=toa-dev
+      TOA_AMQP_CONTEXT={".":["amqp://localhost:31010"]}
+      TOA_AMQP_CONTEXT__USERNAME=developer
+      TOA_AMQP_CONTEXT__PASSWORD=secret
+      """
+    And I compose `mongo.entries` component
+    When I call `mongo.entries.bump` with:
+      """yaml
+      input: {}
+      query:
+        ids:
+          - a1c0a0c1a2d34e8f9b7c6d5e4f3a2b10
+          - b2c0a0c1a2d34e8f9b7c6d5e4f3a2b20
+      """
+    Then the reply is received:
+      """yaml
+      bumped: 2
+      """
+    And the `mongo.entries` collection holds:
+      | _id                              | count | VERSION |
+      | a1c0a0c1a2d34e8f9b7c6d5e4f3a2b10 | 1     | 2       |
+      | b2c0a0c1a2d34e8f9b7c6d5e4f3a2b20 | 1     | 2       |
+    And the `mongo.entries` outbox holds 2 rows
+
+  Scenario: A set one of whose new entries was created under it writes nothing where the URL bounds every operation in time
+    Given environment variables:
+      """
+      TOA_DEV=0
+      TOA_MONGODB_MONGO_ENTRIES=mongodb://localhost:31020/?timeoutMS=2000
+      TOA_MONGODB_MONGO_ENTRIES_USERNAME=developer
+      TOA_MONGODB_MONGO_ENTRIES_PASSWORD=secret
+      TOA_CONTEXT=toa-dev
+      TOA_AMQP_CONTEXT={".":["amqp://localhost:31010"]}
+      TOA_AMQP_CONTEXT__USERNAME=developer
+      TOA_AMQP_CONTEXT__PASSWORD=secret
+      """
+    And I compose `mongo.entries` component
+    When I call `mongo.entries.bump` with:
+      """yaml
+      input:
+        touch: c3c0a0c1a2d34e8f9b7c6d5e4f3a2b30
+      query:
+        ids:
+          - a1c0a0c1a2d34e8f9b7c6d5e4f3a2b10
+          - c3c0a0c1a2d34e8f9b7c6d5e4f3a2b30
+      """
+    Then the following exception is thrown:
+      """yaml
+      code: 304
+      """
+    And the `mongo.entries` collection holds:
+      | _id                              | count | VERSION |
+      | a1c0a0c1a2d34e8f9b7c6d5e4f3a2b10 | 0     | 1       |
+      | c3c0a0c1a2d34e8f9b7c6d5e4f3a2b30 | 10    | 1       |
+    And the `mongo.entries` outbox holds 1 row
