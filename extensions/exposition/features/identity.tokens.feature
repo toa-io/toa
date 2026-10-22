@@ -227,6 +227,8 @@ Feature: Tokens lifecycle
       """
       200 OK
       """
+    # the tokens are revoked eventually
+    Then after 1 second
     When the following request is received:
       """
       POST /identity/tokens/refresh/ HTTP/1.1
