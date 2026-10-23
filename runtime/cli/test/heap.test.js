@@ -15,6 +15,11 @@ describe('whether buffer memory is to be counted in the heap limit', () => {
     it(`is not, on V8 ${version}, which has no such flag and does it anyway`, () => {
       assert.ok(!accounts(version))
     })
+
+  for (const version of ['12.4.254.21-node.33', '12.9.202.28-node.13'])
+    it(`is not, on V8 ${version}, which has no such flag`, () => {
+      assert.ok(!accounts(version))
+    })
 })
 
 describe('buffers nothing keeps', () => {

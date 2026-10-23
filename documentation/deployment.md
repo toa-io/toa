@@ -270,7 +270,7 @@ A base image of your own is named for the whole context, for one composition, or
 
 registry:
   build:
-    image: node:24.14.0-alpine3.22
+    image: node:24.22.1-alpine3.24
     run: |
       npm i --prefix /toa @toa.io/runtime --omit=dev
       ln -s /toa/node_modules/.bin/toa /usr/local/bin/toa
@@ -294,7 +294,7 @@ composition says which:
 ```yaml
 compositions:
   - name: edge
-    image: node:24.14.0-alpine3.22
+    image: node:24.22.1-alpine3.24
     components: [todos.tasks, todos.stats]
 ```
 

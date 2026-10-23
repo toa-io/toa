@@ -27,7 +27,13 @@ export class Outbox {
   async insertMany(rows, session) {
     if (rows.length === 0) return
 
-    await this.#collection.insertMany(rows.map(to), { session })
+    const namespace = this.#collection.namespace
+
+    // the client's bulk write, not `insertMany`: see `massStore` in ./storage.js
+    await this.#collection.client.bulkWrite(
+      rows.map((row) => ({ name: 'insertOne', namespace, document: to(row) })),
+      { session }
+    )
   }
 
   /**

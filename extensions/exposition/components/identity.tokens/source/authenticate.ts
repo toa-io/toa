@@ -25,12 +25,19 @@ export class Computation implements Operation {
 
     if (claims.iss !== input.authority) return ERR_AUTHORITY
 
+    const force = input.force === true
+
+    // re-issued as a session token, it would lose what restricts it and outlive its key
+    if (force && claims.custom) return ERR_UNREFRESHABLE
+
     const identity = claims.identity
     const iat = new Date(claims.iat).getTime()
     const transient = claims.exp !== undefined
     const aged = transient && iat + this.refresh < Date.now()
 
-    if (aged) {
+    // a forced refresh checks whatever the age, or it would exchange a revoked token for one
+    // issued after the revocation
+    if (aged || force) {
       const revocation = await this.observe({ query: { id: identity.id } })
 
       if (revocation?.revokedAt !== undefined && iat < revocation.revokedAt)
@@ -38,7 +45,7 @@ export class Computation implements Operation {
     }
 
     // a custom token is invalidated by deleting its key, not replaced
-    const refresh = (aged && !claims.custom) || claims.refresh
+    const refresh = force || (aged && !claims.custom) || claims.refresh
 
     return {
       identity:
@@ -59,3 +66,5 @@ const ERR_UNRECOGNIZED = new Error('UNRECOGNIZED')
 const ERR_AUTHORITY = new Error('AUTHORITY_MISMATCH')
 
 const ERR_TOKEN_REVOKED = new Error('TOKEN_REVOKED')
+
+const ERR_UNREFRESHABLE = new Error('UNREFRESHABLE')

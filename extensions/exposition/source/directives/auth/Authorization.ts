@@ -9,6 +9,7 @@ import { Rule } from './Rule.ts'
 import { Incept } from './Incept.ts'
 import { Assert } from './Assert.ts'
 import { Echo } from './Echo.ts'
+import { Refresh } from './Refresh.ts'
 import { Scheme } from './Scheme.ts'
 import { Delegate } from './Delegate.ts'
 import { Federation } from './Federation.ts'
@@ -98,6 +99,8 @@ export class Authorization implements DirectiveFamily<Directive, Extension> {
       () => new Incept(value as string, this.discovery),
       Delegate,
       () => new Delegate(value as string, this.discovery.roles),
+      Refresh,
+      () => new Refresh(this.discovery),
       () => new Class(value)
     )
   }
@@ -435,6 +438,7 @@ const constructors: Record<string, new (value: any, argument?: any) => Directive
   assert: Assert,
   scheme: Scheme,
   echo: Echo,
+  refresh: Refresh,
   delegate: Delegate,
   claims: Federation,
   input: Input
