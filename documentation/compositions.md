@@ -187,7 +187,7 @@ composition states which:
 ```yaml
 compositions:
   - name: edge
-    image: node:24.14.0-alpine3.22
+    image: node:24.22.1-alpine3.24
     components:
       - todos.tasks
       - todos.stats

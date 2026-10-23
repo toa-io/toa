@@ -69,13 +69,13 @@ describe('runtime base image', () => {
 
   it('should allow registry.build.image override', async () => {
     const runtime = { version: '1.0.0-alpha.232' }
-    const registry = { build: { image: 'node:24.14.0-alpine3.22' } }
+    const registry = { build: { image: 'node:24.22.1-alpine3.24' } }
     const image = new TestImage(runtime, registry, dependenciesDockerfile)
 
     const path = await image.prepare(root)
     const dockerfile = await readFile(join(path, 'Dockerfile'), 'utf8')
 
-    assert.ok(dockerfile.includes('FROM node:24.14.0-alpine3.22'))
+    assert.ok(dockerfile.includes('FROM node:24.22.1-alpine3.24'))
     assert.ok(!dockerfile.includes(RUNTIME_IMAGE))
   })
 
