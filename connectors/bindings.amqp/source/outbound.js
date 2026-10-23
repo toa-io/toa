@@ -1,7 +1,7 @@
 import { Connector } from '@toa.io/core'
 import { console } from 'openspan'
 
-import { outbound } from './queues.js'
+import { outbound, scoped } from './queues.js'
 
 /**
  * Publishes to a channel, addressed by label. What it is handed is what it publishes: the body
@@ -30,6 +30,27 @@ export class Outbound extends Connector {
     console.debug('Sending AMQP message', { exchange: this.#exchange, label, message })
 
     await this.#comm.route(this.#exchange, label, message, PROPERTIES)
+  }
+
+  /**
+   * Declares a durable `queue` bound to the channel under `label`, so that what is sent under it
+   * before anything consumes the queue is held there rather than returned. Whatever consumes it
+   * may be something other than Toa, and the queue is the producer's for that reason.
+   *
+   * With `dead`, what the queue's consumer rejects is routed back to the channel under that label
+   * instead of being dropped, where a queue retained under it keeps it.
+   *
+   * @param {string} queue
+   * @param {string} label
+   * @param {string} [dead]
+   */
+  async retain(queue, label, dead) {
+    const args =
+      dead === undefined
+        ? undefined
+        : { 'x-dead-letter-exchange': this.#exchange, 'x-dead-letter-routing-key': dead }
+
+    await this.#comm.retain(this.#exchange, scoped(queue), label, args)
   }
 }
 

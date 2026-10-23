@@ -23,6 +23,12 @@ export declare class Communication extends Connector {
   request(queue: any, request: any): Promise<any>
   emit(exchange: any, message: any, properties: any): Promise<void>
   consume(exchange: any, group: any, consumer: any): Promise<void>
+  retain(
+    exchange: string,
+    queue: string,
+    key: string,
+    args?: Record<string, unknown>
+  ): Promise<void>
   process(queue: any, consumer: any): Promise<void>
   enqueue(queue: any, message: any, properties?: any): Promise<void>
 }

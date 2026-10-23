@@ -104,6 +104,14 @@ export interface Factory {
  */
 export interface Outbound extends Connector {
   send(label: string, message: object): Promise<void>
+
+  /**
+   * Declares a durable `queue` bound to the channel under `label`, so that what is sent under it
+   * before anything consumes it is held rather than returned; with `dead`, what its consumer
+   * rejects is routed back to the channel under that label. Optional: a binding without it
+   * carries nothing to a consumer outside Toa.
+   */
+  retain?(queue: string, label: string, dead?: string): Promise<void>
 }
 
 /** What a binding hands a message to. */

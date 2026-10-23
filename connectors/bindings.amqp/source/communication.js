@@ -123,6 +123,11 @@ export class Communication extends Connector {
     await this.#io.route(exchange, key, message, properties)
   }
 
+  /** declares a durable `queue` bound to a routed `exchange` under `key`, and consumes nothing */
+  async retain(exchange, queue, key, args) {
+    await this.#io.retain(exchange, queue, key, args)
+  }
+
   async subscribe(exchange, queue, key, consumer) {
     this.#consumable('subscribe to')
 
