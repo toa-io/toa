@@ -169,12 +169,14 @@ channel's `chronicles.out`; the label is in the body.
 Declared by the binding wherever it publishes to the channel, and by the service when it starts,
 the same way each time:
 
-| name              | kind             | bound to                         | arguments                                 |
-| ----------------- | ---------------- | -------------------------------- | ----------------------------------------- |
-| `chronicles.out`  | exchange, direct |                                  |                                           |
-| `chronicles`      | queue, durable   | `chronicles.out` under `events`  | `x-dead-letter-exchange: chronicles.dead` |
-| `chronicles.dead` | exchange, direct |                                  |                                           |
-| `chronicles.dead` | queue, durable   | `chronicles.dead` under `events` |                                           |
+| name              | kind             | bound to                        | arguments                                      |
+| ----------------- | ---------------- | ------------------------------- | ---------------------------------------------- |
+| `chronicles.out`  | exchange, direct |                                 |                                                |
+| `chronicles`      | queue, durable   | `chronicles.out` under `events` | dead-lettered to `chronicles.out` under `dead` |
+| `chronicles.dead` | queue, durable   | `chronicles.out` under `dead`   |                                                |
+
+What ClickHouse rejects goes back to the channel's own exchange under another key, so the binding
+names nothing of the broker's for the extension to know.
 
 The queue is Toa's rather than ClickHouse's. `outbound` publishes with `mandatory`, so a message
 routed to no queue comes back — and its row is marked published all the same, because the broker
@@ -218,7 +220,7 @@ CREATE MATERIALIZED VIEW current TO states AS SELECT … FROM events WHERE entit
 CREATE MATERIALIZED VIEW refuse TO refused AS SELECT _raw_message AS message FROM queue
   WHERE _error IS NOT NULL
 
-CREATE SETTINGS PROFILE <database>_reader SETTINGS readonly = 1 CONST,
+CREATE SETTINGS PROFILE <database>_reader SETTINGS readonly = 2 CONST,
   max_execution_time = 30 CONST, max_result_rows = 10000 CONST, result_overflow_mode = 'break' CONST
 CREATE USER <database>_reader IDENTIFIED BY '<reader>' SETTINGS PROFILE '<database>_reader'
 GRANT SELECT ON <database>.* TO <database>_reader
@@ -239,10 +241,10 @@ context publishes MCP:
 | `PUT /chronicles/query/views/:name`    | `chronicles.query.views._name.PUT`    | `define`   | `system:chronicles:views` |
 | `DELETE /chronicles/query/views/:name` | `chronicles.query.views._name.DELETE` | `drop`     | `system:chronicles:views` |
 
-- `describe` answers the labels with their counts and first and last `time`, the paths their
-  payloads have (`JSONAllPaths`), the views with their definitions, and how many messages wait in
-  `chronicles.dead`.
-- `query` takes `{ sql }`, one statement, and answers `{ columns, rows, truncated }`.
+- `describe` answers the labels with their counts and first and last `time`, the paths of their
+  latest payloads (`JSONAllPaths`), and the views with their definitions.
+- `query` takes `{ sql }`, one statement, and answers `{ columns, rows, truncated }`, with
+  `201 Created` as every `POST` with an output is answered.
 - `define` takes `{ sql, refresh? }`. Without `refresh` it is a view, `SQL SECURITY INVOKER`, read
   with the reader's rights; with `refresh`, in seconds and no less than 3600, a refreshable
   materialized view. A name is `^[a-z][a-z0-9_]{0,62}$` and none of the tables above; a context
@@ -259,10 +261,13 @@ content-type: application/json
 
 ```http
 202 Accepted
+
+accepted: 1
 ```
 
 At most 100 events, each at most 16 KiB of JSON; `id` at most 64 characters; `name` dotted
-lowercase segments. `text/plain` is read as JSON too, so `navigator.sendBeacon` can send it. The
+lowercase segments; a batch that breaks any of it is refused whole, `INVALID` or `OVERSIZED`, with
+the index of the event in `cause`. `text/plain` is read as JSON too, so `navigator.sendBeacon` can send it. The
 route is anonymous and throttled by address, 60 requests a minute, which needs
 [`exposition.ip`](/extensions/exposition/documentation/ip.md) to mean anything.
 
@@ -270,15 +275,15 @@ route is anonymous and throttled by address, 60 requests a minute, which needs
 
 ### 1. `comq`: a queue declared and not consumed
 
-`IO.retain(exchange, queue, key, arguments?)` asserts the direct `exchange`, the durable `queue`
-with `arguments`, and the binding under `key`, on every shard, and consumes nothing. `subscribe`
+`IO.retain(exchange, queue, key, args?)` asserts the direct `exchange`, the durable `queue` with
+the queue arguments `args`, and the binding under `key`, on every shard, and consumes nothing. `subscribe`
 does the first three and then consumes; this is the half of it a producer needs to guarantee the
 queue it publishes to. Released before anything below.
 
 ### 2. `bindings.amqp`: an outbound that retains
 
-`Outbound.retain(queue, label, arguments?)` calls `comm.retain` with the channel's `out` exchange
-and the scoped `queue`. `bindings.Outbound` in `runtime/core/source/types/bindings.ts` gains it,
+`Outbound.retain(queue, label, dead?)` calls `comm.retain` with the channel's `out` exchange and
+the scoped `queue`; with `dead`, the queue dead-letters to the same exchange under that label. `bindings.Outbound` in `runtime/core/source/types/bindings.ts` gains it,
 optional. `bindings.amqp` takes the released `comq`.
 
 ### 3. Definitions
@@ -289,13 +294,13 @@ optional. `bindings.amqp` takes the released `comq`.
 - `manifest(declaration, manifest)`: an array of labels, each an event of the component; `null`
   is `[]`.
 - `deployment(instances, annotation)`: validates the annotation; `TOA_CHRONICLES` (the annotation,
-  normalised, as JSON) and the broker pointer to every composition; the service `chronicles`, with
+  normalised, as JSON) and the broker pointer to every composition; the service `chronicles-scribe`, with
   `chronicles-query`, `chronicles-ingest` where `ingest` is true, and the ClickHouse credentials,
   which nothing else is given.
 - `components()`: the digest. `standalone = true`, so an annotation with no component that declares
   `chronicles` still deploys the service.
 - `context()`: the type of `context.chronicles`.
-- Schemas: `definitions/schemas/extensions.chronicles/{annotation,manifest}.cos.yaml`.
+- Schemas: `definitions/schemas/extensions.chronicles/{annotation,declaration}.cos.yaml`.
 
 ### 4. `extensions/chronicles`
 
@@ -304,12 +309,17 @@ Shaped like `extensions/cadence`, with the destination of `extensions/convergenc
 - `Destination` renders each declared label for a row and sends what renders with
   `outbound.send('events', message)`, the messages of one row together. `open()` resolves the
   process's one outbound and retains both queues.
-- `Aspect` is `send(name, payload)`, over the same outbound. The ingest component is given it too,
-  to publish under `client.`; the query component is given the ClickHouse client instead.
+- `Sender` is `send(name, payload)`, over the same outbound. The ingest component is given a
+  `Client` instead, which checks a batch and publishes it under `client.`; the query component, a
+  `Reader` over ClickHouse.
 - `Provisioning` runs the statements above, in order, before the service's composition starts.
-- `ClickHouse` is an HTTP client over `fetch` — no SDK — that speaks `FORMAT JSON` and sends
-  `X-ClickHouse-User` and `X-ClickHouse-Key`.
-- `components/chronicles.ingest` and `components/chronicles.query`.
+  The consumer — the named collection, the engine table, the views that read it — is replaced only
+  where its fingerprint, the comment on `queue`, says the broker changed.
+- `ClickHouse` is an HTTP client over `fetch` — no SDK — that asks for JSON by `default_format`,
+  since `EXPLAIN` would take a `FORMAT` clause as its own, and sends `X-ClickHouse-User` and
+  `X-ClickHouse-Key`.
+- `components/chronicles.ingest` and `components/chronicles.query`, and a `chronicles` shortcut in
+  the Node bridge, which puts `context.chronicles.send` on an operation's context.
 
 ### 5. The dev stack
 

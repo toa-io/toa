@@ -1,0 +1,111 @@
+namespace: chronicles
+name: query
+
+# The extension puts the log's reader on this component.
+chronicles: ~
+
+operations:
+  describe:
+    type: computation
+    output:
+      type: object
+      properties:
+        labels:
+          type: array
+        views:
+          type: array
+        dead:
+          description: Messages ClickHouse failed to write, waiting in `chronicles.dead`
+          type: integer
+  query:
+    type: computation
+    input:
+      type: object
+      properties:
+        sql:
+          description: One SELECT over the log
+          type: string
+          minLength: 1
+          maxLength: 65536
+      required: [sql]
+    output:
+      type: object
+      properties:
+        columns:
+          type: array
+        rows:
+          type: array
+        truncated:
+          type: boolean
+    errors: [REFUSED]
+  define:
+    type: effect
+    input:
+      type: object
+      properties:
+        name: &name
+          description: The view's name, which is what a query reads it by
+          type: string
+          pattern: ^[a-z][a-z0-9_]{0,62}$
+        sql:
+          description: The SELECT the view is
+          type: string
+          minLength: 1
+          maxLength: 65536
+        refresh:
+          description: Seconds between computations of a materialized view; absent, a plain view
+          type: integer
+          minimum: 3600
+      required: [name, sql]
+    errors: [REFUSED, RESERVED, EXHAUSTED]
+  drop:
+    type: effect
+    input:
+      type: object
+      properties:
+        name: *name
+      required: [name]
+    errors: [NOT_FOUND]
+
+exposition:
+  isolated: true
+  /:
+    auth:role: system:chronicles:query
+    mcp:tool: true
+    GET:
+      help:method:
+        title: What the log holds
+        description: >
+          The labels of the log with how many rows each has and the first and last time of
+          them, the paths their payloads have, the views defined over the log, and how many
+          messages ClickHouse failed to write.
+      io:output: true
+      endpoint: describe
+    POST:
+      help:method:
+        title: Query the log
+        description: >
+          One SELECT over the context's database: `events` (id, label, component, time,
+          received, entity, version, trace, payload JSON), `states` (the latest payload of each
+          entity under each label) and the views. Read `events` and `states` with FINAL. At
+          most 30 seconds and 10000 rows; past the rows, `truncated` is true.
+      io:output: true
+      endpoint: query
+  /views/:name:
+    auth:role: system:chronicles:views
+    mcp:tool: true
+    PUT:
+      help:method:
+        title: Define a view
+        description: >
+          A view over the log, by a SELECT a query could run. Without `refresh` it is computed
+          when it is read; with `refresh`, in seconds and at least 3600, it is computed on that
+          cycle and read as a table. Defining a name again replaces the view.
+      help:route:
+        name: The view's name
+      endpoint: define
+    DELETE:
+      help:method: Drop a view
+      help:route:
+        name: The view's name
+      endpoint: drop

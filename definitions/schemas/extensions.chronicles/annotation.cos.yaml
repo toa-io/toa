@@ -1,0 +1,31 @@
+# context.toa.yaml chronicles annotation
+type: object
+properties:
+  broker:
+    description: The broker components publish to and ClickHouse consumes from
+    type: string
+    format: uri
+  clickhouse:
+    oneOf:
+      - type: string
+        format: uri
+      - type: object
+        properties:
+          url:
+            type: string
+            format: uri
+          broker:
+            description: The broker as ClickHouse reaches it, where that is another address
+            type: string
+            format: uri
+        required: [url]
+        additionalProperties: false
+  retention:
+    description: Days a row of the log is kept; absent, kept
+    type: integer
+    minimum: 1
+  ingest:
+    description: Whether the client route is served
+    type: boolean
+required: [broker, clickhouse]
+additionalProperties: false

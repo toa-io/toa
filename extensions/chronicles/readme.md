@@ -70,6 +70,8 @@ content-type: application/json
 
 ```http
 202 Accepted
+
+accepted: 1
 ```
 
 | property  |                                                                     |
@@ -79,8 +81,10 @@ content-type: application/json
 | `time`    | when it happened, in milliseconds, by the client's clock            |
 | `payload` | an object, at most 16 KiB of JSON                                   |
 
-A request carries at most 100 events and is answered `400` otherwise. `text/plain` is read as
-JSON, so `navigator.sendBeacon` can send a batch. The route is anonymous and throttled to 60
+A request carries at most 100 events. A batch one event of which breaks any of this is written
+not at all, and answered with the code `INVALID`, or `OVERSIZED` for a payload too large, and the
+`index` of the event in `cause`. `text/plain` is read as JSON, so `navigator.sendBeacon` can send a
+batch. The route is anonymous and throttled to 60
 requests a minute per address, which takes [`exposition.ip`](/extensions/exposition/documentation/ip.md)
 to name the address. Events are written under `client.<name>`.
 
@@ -124,7 +128,9 @@ Where the context publishes [MCP](/extensions/exposition/documentation/mcp.md), 
 `system:chronicles` grants all four.
 
 A query reads the context's database and nothing else, for at most 30 seconds and 10,000 rows;
-past the rows, it answers what it has and `truncated: true`. A view is a `SELECT` a query could
+at the rows, it answers what it has and `truncated: true`. It leaves `FORMAT` out: the answer is
+JSON. One ClickHouse refuses is answered with the code `REFUSED` and ClickHouse's own words in
+`cause.message`. A view is a `SELECT` a query could
 run. Without `refresh` it is computed when it is read; with `refresh`, in seconds and at least
 `3600`, it is computed on that cycle and read as a table. A name is lowercase letters, digits and
 underscores, and a context has at most 50 views.
@@ -143,7 +149,7 @@ chronicles:
 |              |                                                                       |
 | ------------ | --------------------------------------------------------------------- |
 | `broker`     | one RabbitMQ broker, where components publish and ClickHouse consumes |
-| `clickhouse` | its HTTP address; the path names the database, which must exist       |
+| `clickhouse` | its HTTP address; the path names the database                         |
 | `retention`  | days a row of `events` is kept; absent, kept                          |
 | `ingest`     | the browser route; absent, there is none                              |
 
@@ -152,8 +158,9 @@ $ toa conceal chronicles-broker username=… password=…
 $ toa conceal chronicles-clickhouse username=… password=… reader=…
 ```
 
-The ClickHouse user provisions the database when the `chronicles` service starts, so it needs
-`CREATE`, `access_management` and `named_collection_control`. It creates `<database>_reader`, the
+The ClickHouse user provisions the database when the service `chronicles-scribe` starts, so it
+needs `CREATE`, `access_management` and `named_collection_control`; a database that does not exist
+is created. It creates `<database>_reader`, the
 user queries run as, with `reader` as its password.
 
 Where ClickHouse reaches the broker at another address than the components do:
@@ -168,7 +175,7 @@ chronicles:
 
 ### What ClickHouse could not write
 
-A message ClickHouse fails to write is kept on the broker, in the queue `chronicles.dead`, and
-`chronicles.query.GET` says how many wait there. Once the cause is fixed, move them back to the
+A message ClickHouse fails to write is kept on the broker, in the queue `chronicles.dead`, rather
+than dropped. Once the cause is fixed, move them back to the
 queue `chronicles` — with a [shovel](https://www.rabbitmq.com/docs/shovel), or the management UI's
 _Move messages_.

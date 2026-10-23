@@ -1,0 +1,13 @@
+name: facts
+namespace: chronicled
+
+operations:
+  search:
+    input:
+      properties:
+        query:
+          type: string
+      type: object
+
+# sends, and declares no change of its own
+chronicles: []

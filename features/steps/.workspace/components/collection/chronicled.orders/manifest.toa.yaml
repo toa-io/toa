@@ -1,0 +1,27 @@
+name: orders
+namespace: chronicled
+
+entity:
+  storage: mongodb
+  associated: true
+  properties:
+    total:
+      type: integer
+    email:
+      type: string
+  blank:
+    total: 0
+
+operations:
+  transit:
+    concurrency: retry
+    input:
+      properties:
+        total:
+          type: integer
+        email:
+          type: string
+      type: object
+
+# a label of its own, and one of the prototype's
+chronicles: [snapshot, created]

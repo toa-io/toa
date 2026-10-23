@@ -1,0 +1,12 @@
+<!-- what provisioning needs of the user it runs as: creating the reader, its profile, and the
+     named collection the RabbitMQ engine reads its broker from -->
+<clickhouse>
+  <users>
+    <developer>
+      <access_management>1</access_management>
+      <named_collection_control>1</named_collection_control>
+      <show_named_collections>1</show_named_collections>
+      <show_named_collections_secrets>1</show_named_collections_secrets>
+    </developer>
+  </users>
+</clickhouse>

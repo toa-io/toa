@@ -106,6 +106,28 @@ services:
       interval: 5s
       timeout: 5s
       retries: 30
+  # Chronicles: ClickHouse reads the `chronicles` queue of `rabbitmq` over the compose network,
+  # which is why the broker it is given is `rabbitmq:5672` rather than the published port.
+  clickhouse:
+    image: clickhouse/clickhouse-server:26.8.34.13
+    ports:
+      - "31030:8123"
+      - "31031:9000"
+    ulimits:
+      nofile:
+        soft: 262144
+        hard: 262144
+    environment:
+      CLICKHOUSE_USER: developer
+      CLICKHOUSE_PASSWORD: secret
+      CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT: 1
+    volumes:
+      - ./.clickhouse/developer.xml:/etc/clickhouse-server/users.d/developer.xml:ro
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8123/ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
   redis0:
     image: redis:7.0.11
     ports:
