@@ -9,8 +9,9 @@ Wherever the storage can commit a row atomically with the entity: MongoDB on a r
 sharded cluster. A standalone `mongod` publishes inline and says so at startup.
 
 Only for a component that has somewhere to publish to. Its own events are one such place, and an
-extension may add others; a component with none takes no transaction, and its
-`{collection}_outbox` is never created. See
+extension may add others — [realtime](/extensions/exposition/documentation/realtime.md) routes,
+[convergence](/extensions/convergence/readme.md), [chronicles](/extensions/chronicles/readme.md);
+a component with none takes no transaction, and its `{collection}_outbox` is never created. See
 [events](/documentation/component/declaration.md#events).
 
 ```yaml
