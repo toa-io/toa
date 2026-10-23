@@ -94,7 +94,7 @@ That image must provide the `toa` CLI, or install it via `registry.build.run`. T
 
 registry:
   build:
-    image: node:24.14.0-alpine3.22
+    image: node:24.22.1-alpine3.24
     run: |
       npm i --prefix /toa @toa.io/runtime --omit=dev
       ln -s /toa/node_modules/.bin/toa /usr/local/bin/toa
