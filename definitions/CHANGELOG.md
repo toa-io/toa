@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.332](https://github.com/toa-io/toa/compare/v1.0.0-alpha.331...v1.0.0-alpha.332) (2026-10-23)
+
+**Note:** Version bump only for package @toa.io/definitions
+
+
+
+
+
 # [1.0.0-alpha.331](https://github.com/toa-io/toa/compare/v1.0.0-alpha.330...v1.0.0-alpha.331) (2026-10-16)
 
 ### Features

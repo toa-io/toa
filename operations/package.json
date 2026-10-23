@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/operations",
-  "version": "1.0.0-alpha.331",
+  "version": "1.0.0-alpha.332",
   "type": "module",
   "description": "Toa Deployment",
   "homepage": "https://toa.io",
@@ -28,9 +28,9 @@
     "test": "echo \"Error: run tests from root\" && exit 1"
   },
   "dependencies": {
-    "@toa.io/generic": "1.0.0-alpha.330",
+    "@toa.io/generic": "1.0.0-alpha.332",
     "@toa.io/kubernetes": "1.0.0-alpha.301",
-    "@toa.io/norm": "1.0.0-alpha.331",
+    "@toa.io/norm": "1.0.0-alpha.332",
     "oxc-parser": "0.154.0",
     "paseto": "4.0.1"
   },

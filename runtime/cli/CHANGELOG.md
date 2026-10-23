@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.332](https://github.com/toa-io/toa/compare/v1.0.0-alpha.331...v1.0.0-alpha.332) (2026-10-23)
+
+### Bug Fixes
+
+* **cli:** set the buffer accounting flag only on a V8 that has it ([34c904e](https://github.com/toa-io/toa/commit/34c904e05008b39e5c650832acc2a18cfee8d361))
+
+
 # [1.0.0-alpha.331](https://github.com/toa-io/toa/compare/v1.0.0-alpha.330...v1.0.0-alpha.331) (2026-10-16)
 
 **Note:** Version bump only for package @toa.io/cli

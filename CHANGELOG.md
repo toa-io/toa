@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.332](https://github.com/toa-io/toa/compare/v1.0.0-alpha.331...v1.0.0-alpha.332) (2026-10-23)
+
+### Bug Fixes
+
+* **cli:** set the buffer accounting flag only on a V8 that has it ([34c904e](https://github.com/toa-io/toa/commit/34c904e05008b39e5c650832acc2a18cfee8d361))
+* **storages.mongodb:** commit a set where the URL sets timeoutMS ([0b51f02](https://github.com/toa-io/toa/commit/0b51f0281de218dbcb677b75d6dd58685c4e2958))
+
+### Features
+
+* **exposition:** refresh a token when the client asks ([82a08e0](https://github.com/toa-io/toa/commit/82a08e058b9b2b46dbcb5ae85a8f650b748d2c04))
+
+
 # [1.0.0-alpha.331](https://github.com/toa-io/toa/compare/v1.0.0-alpha.330...v1.0.0-alpha.331) (2026-10-16)
 
 ### Bug Fixes

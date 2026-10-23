@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.332](https://github.com/toa-io/toa/compare/v1.0.0-alpha.331...v1.0.0-alpha.332) (2026-10-23)
+
+### Features
+
+* **exposition:** refresh a token when the client asks ([82a08e0](https://github.com/toa-io/toa/commit/82a08e058b9b2b46dbcb5ae85a8f650b748d2c04))
+
+
 # [1.0.0-alpha.331](https://github.com/toa-io/toa/compare/v1.0.0-alpha.330...v1.0.0-alpha.331) (2026-10-16)
 
 **Note:** Version bump only for package @toa.io/extensions.exposition

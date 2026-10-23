@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.332](https://github.com/toa-io/toa/compare/v1.0.0-alpha.331...v1.0.0-alpha.332) (2026-10-23)
+
+### Bug Fixes
+
+* **storages.mongodb:** commit a set where the URL sets timeoutMS ([0b51f02](https://github.com/toa-io/toa/commit/0b51f0281de218dbcb677b75d6dd58685c4e2958))
+
+
 # [1.0.0-alpha.331](https://github.com/toa-io/toa/compare/v1.0.0-alpha.330...v1.0.0-alpha.331) (2026-10-16)
 
 **Note:** Version bump only for package @toa.io/storages.mongodb
