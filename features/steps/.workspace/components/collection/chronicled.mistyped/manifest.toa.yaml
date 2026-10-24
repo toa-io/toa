@@ -1,0 +1,30 @@
+name: mistyped
+namespace: chronicled
+
+entity:
+  storage: mongodb
+  properties:
+    total:
+      type: integer
+  blank:
+    total: 0
+
+operations:
+  transit:
+    concurrency: retry
+    input:
+      properties:
+        total:
+          type: integer
+      type: object
+
+# declares as a string what the entity holds as a number
+chronicles:
+  identity: ~
+  events:
+    created:
+      description: An order was placed
+      properties:
+        total:
+          type: string
+          description: The amount of the order

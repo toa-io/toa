@@ -1,7 +1,7 @@
 @deployment
 Feature: Chronicles deployment
 
-  The events the components name are consumed, so they are published; the service that keeps the
+  The events the components declare are consumed, so they are published; the service that keeps the
   log consumes them, over the brokers the context's `amqp` names, and is the only process given
   the store.
 
@@ -30,7 +30,7 @@ Feature: Chronicles deployment
             - chronicles-queries
           variables:
             - name: TOA_CHRONICLES
-              value: '{"store":{"provider":"clickhouse","url":"https://ch.example.com:8443/shop"},"retention":730,"ingest":false,"ip":"truncated","events":["chronicled.orders.created"],"states":["chronicled.orders.snapshot"],"identities":{"chronicled.orders":"customer"}}'
+              value: '{"store":{"provider":"clickhouse","url":"https://ch.example.com:8443/shop"},"retention":730,"encounters":false,"ip":"truncated","events":{"chronicled.orders.created":{"description":"An order was placed","properties":{"total":{"type":"integer","description":"The amount of the order, in cents"},"shipping":{"type":"object","description":"Where the order goes","properties":{"country":{"type":"string","description":"ISO 3166 alpha-2 code of the country"}}},"items":{"type":"array","description":"What was ordered","items":{"type":"object","properties":{"sku":{"type":"string","description":"The code of the product"},"quantity":{"type":"integer","description":"Units of the product"}}}}}}},"states":{"chronicled.orders.snapshot":{"description":"An order as it stands","properties":{"total":{"type":"integer","description":"The amount of the order, in cents"}}}},"facts":{},"identities":{"chronicled.orders":"customer"}}'
             - name: TOA_CHRONICLES_STORE_USERNAME
               secret:
                 name: toa-chronicles-store
@@ -52,7 +52,7 @@ Feature: Chronicles deployment
             - name: TOA_CHRONICLES_STORE_PASSWORD
       """
 
-  Scenario: Serving the client route
+  Scenario: Serving the routes of encounters
     Given I have a component `chronicled.orders`
     And I have a context with:
       """yaml
@@ -60,7 +60,7 @@ Feature: Chronicles deployment
         store:
           provider: clickhouse
           url: https://ch.example.com:8443/shop
-        ingest: true
+        encounters: true
       """
     When I export deployment
     Then exported values should contain:
@@ -68,8 +68,8 @@ Feature: Chronicles deployment
       services:
         - name: chronicles-scribe
           components:
+            - chronicles-encounters
             - chronicles-facts
-            - chronicles-ingestion
             - chronicles-queries
       """
 

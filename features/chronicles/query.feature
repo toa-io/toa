@@ -2,8 +2,16 @@ Feature: Reading the log
 
   Background:
     Given the chronicles are empty
+    And the chronicles of `chronicled.orders` are deployed
+    And the encounters are documented:
+      """yaml
+      page_viewed:
+        description: A page was shown
+        fields:
+          path: The URL path, without the query
+      """
     And the chronicles scribe is running
-    And I call `chronicles.ingestion.anonymous` with:
+    And I call `chronicles.encounters.anonymous` with:
       """yaml
       input:
         events:
@@ -17,8 +25,9 @@ Feature: Reading the log
             time: 1761200001000
             payload:
               path: /about
+              utm: 7
       """
-    And the chronicles answer "SELECT count() AS n FROM events" within 30 seconds:
+    And the chronicles answer "SELECT count() AS n FROM encounters" within 30 seconds:
       """yaml
       - n: 2
       """
@@ -27,15 +36,15 @@ Feature: Reading the log
     When I call `chronicles.queries.query` with:
       """yaml
       input:
-        sql: SELECT label, count() AS n FROM events FINAL GROUP BY label;
+        sql: SELECT name, count() AS n FROM encounters FINAL GROUP BY name;
       """
     Then the reply is received:
       """yaml
       columns:
-        - name: label
+        - name: name
         - name: n
       rows:
-        - [agent.page_viewed, 2]
+        - [page_viewed, 2]
       truncated: false
       """
 
@@ -43,14 +52,63 @@ Feature: Reading the log
     When I call `chronicles.queries.describe`
     Then the reply is received:
       """yaml
-      dialect: ClickHouse SQL; read `events` and `states` with FINAL
+      dialect: ClickHouse SQL; read `events`, `states` and `encounters` with FINAL
       labels:
-        - label: agent.page_viewed
+        - label: chronicled.orders.created
+          description: An order was placed
+          view: chronicled_orders_created
+          rows: 0
+          fields:
+            - path: total
+              type: Int64
+              description: The amount of the order, in cents
+            - path: shipping
+              type: Tuple(country String)
+              description: Where the order goes
+            - path: shipping.country
+              type: String
+              description: ISO 3166 alpha-2 code of the country
+            - path: items
+              type: Array(Tuple(sku String, quantity Int64))
+              description: What was ordered
+            - path: items.sku
+              type: String
+              description: The code of the product
+            - path: items.quantity
+              type: Int64
+              description: Units of the product
+      states:
+        - component: chronicled.orders
+          description: An order as it stands
+          view: chronicled_orders
+          entities: 0
+          fields:
+            - path: total
+              type: Int64
+              description: The amount of the order, in cents
+      encounters:
+        - name: page_viewed
+          description: A page was shown
           rows: 2
-          paths: [path]
-      states: []
+          fields:
+            - path: path
+              types: [String]
+              description: The URL path, without the query
+            - path: utm
+              types: [Int64]
       views: []
       """
+
+  Scenario: When the log was last written
+    When I call `chronicles.queries.describe`
+    Then the reply is received:
+      """yaml
+      encounters:
+        - name: page_viewed
+          first: '2025-10-23 06:13:20.000'
+          last: '2025-10-23 06:13:21.000'
+      """
+    And the reply's `encounters[0].received` is a time within the last minute
 
   Scenario Outline: A query that is refused
     When I call `chronicles.queries.query` with:
@@ -77,7 +135,9 @@ Feature: Reading the log
       """yaml
       input:
         name: paths
-        sql: SELECT toString(payload.path) AS path FROM events FINAL
+        title: Paths viewed
+        description: Every path a page was viewed at, a row each
+        sql: SELECT toString(payload.path) AS path FROM encounters FINAL
       """
     And I call `chronicles.queries.query` with:
       """yaml
@@ -95,6 +155,8 @@ Feature: Reading the log
       """yaml
       views:
         - name: paths
+          title: Paths viewed
+          description: Every path a page was viewed at, a row each
       """
 
   Scenario: A materialized view
@@ -102,7 +164,7 @@ Feature: Reading the log
       """yaml
       input:
         name: daily
-        sql: SELECT toDate(time) AS day, count() AS n FROM events FINAL GROUP BY day
+        sql: SELECT toDate(time) AS day, count() AS n FROM encounters FINAL GROUP BY day
         refresh: 3600
       """
     Then the chronicles answer "SELECT toString(day) AS day, n FROM daily" within 30 seconds:
@@ -117,6 +179,7 @@ Feature: Reading the log
         - name: daily
           refresh: 3600
       """
+    And the reply's `views[0].refreshed` is a time within the last minute
 
   Scenario: A view is replaced and dropped
     When I call `chronicles.queries.define` with:
@@ -173,6 +236,8 @@ Feature: Reading the log
       | users  | SELECT name FROM system.users   | REFUSED  |
       | writes | INSERT INTO events (id) VALUES ('x') | REFUSED  |
       | events | SELECT 1                        | RESERVED |
+      | encounters | SELECT 1                    | RESERVED |
+      | chronicled_orders_created | SELECT 1     | RESERVED |
 
   Scenario: A query past the rows answers what it has
     When I call `chronicles.queries.query` with:

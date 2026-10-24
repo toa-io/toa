@@ -21,4 +21,11 @@ operations:
 
 # a state whose payload does not say which entity it is
 chronicles:
-  state: summary
+  state:
+    event: summary
+    description: The total of an entity, which does not say which it is
+    properties:
+      total:
+        type: integer
+        description: The total
+

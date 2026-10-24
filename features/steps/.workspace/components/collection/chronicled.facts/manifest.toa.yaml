@@ -11,5 +11,20 @@ operations:
           type: string
       type: object
 
+  whisper:
+    input:
+      properties:
+        query:
+          type: string
+      type: object
+
 # sends, and declares no change of its own
-chronicles: []
+chronicles:
+  facts:
+    searched:
+      description: Someone searched the catalogue
+      properties:
+        query:
+          type: string
+          description: What was typed
+
