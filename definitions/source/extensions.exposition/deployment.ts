@@ -14,6 +14,17 @@ export const image = 'ghcr.io/toa-io/extension-exposition-gateway'
 export function deployment(_: unknown, annotation?: Annotation): Dependency {
   if (annotation === undefined)
     throw new Error('Exposition context annotation is required')
+
+  // what `censor` was before the country was the gateway's to read, said in so many words rather
+  // than as a schema's
+  const censor = (annotation as { censor?: unknown }).censor
+
+  if (typeof censor === 'object' && censor !== null && !Array.isArray(censor))
+    throw new Error(
+      '`exposition.censor` is the list of countries, and `exposition.country` names the header ' +
+        'they are read from. See migrations/332.md.'
+    )
+
   schemas.annotation.validate(annotation)
 
   const labels = components().labels
@@ -65,6 +76,8 @@ export function deployment(_: unknown, annotation?: Annotation): Dependency {
 
   if (annotation.ip !== undefined) properties.ip = annotation.ip
 
+  if (annotation.country !== undefined) properties.country = annotation.country
+
   if (annotation.bouncer !== undefined) properties.bouncer = annotation.bouncer
 
   if (annotation.censor !== undefined) properties.censor = annotation.censor
@@ -115,6 +128,7 @@ type Properties = Pick<
   | 'bouncer'
   | 'censor'
   | 'ip'
+  | 'country'
   | 'oauth'
   | 'rpc'
   | 'mcp'

@@ -27,3 +27,12 @@ it('should refuse an MCP host of an undeclared authority', () => {
 
   assert.throws(() => deployment(null, foreign), /undeclared authority 'eu'/)
 })
+
+it('should refuse censor as it was, a header and its values', () => {
+  const old = { ...annotation, censor: { header: 'cf-ipcountry', values: ['RU'] } }
+
+  assert.throws(
+    () => deployment(null, old as any),
+    /`exposition.censor` is the list of countries, and `exposition.country` names the header/
+  )
+})

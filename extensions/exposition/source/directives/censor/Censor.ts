@@ -5,21 +5,15 @@ import type { Interceptor } from '../../Interception.ts'
 export class Censor implements Interceptor {
   public readonly name = 'censor'
 
-  private header: string | null = null
-  private values = new Set<string>()
+  private countries = new Set<string>()
 
   public mount(options: http.Options): void {
-    // header names arrive lower-cased, so one declared in any other case would never match
-    this.header = options.censor?.header.toLowerCase() ?? null
-    this.values = new Set(options.censor?.values)
+    this.countries = new Set(options.censor)
   }
 
+  /** The country is the request's, as `exposition.country` reads it; a request of none is served. */
   public intercept(input: Input): Output {
-    if (this.header === null) return null
-
-    const value = input.request.headers[this.header]
-
-    if (typeof value === 'string' && this.values.has(value))
+    if (input.country !== undefined && this.countries.has(input.country))
       throw new http.UnavailableForLegalReasons()
 
     return null

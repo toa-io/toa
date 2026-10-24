@@ -33,8 +33,14 @@ export interface Host {
   /** components to run inside the extension's own process */
   composition(paths: string[]): Promise<Connector>
 
-  /** a consumer of an event of the context, `namespace.component.event` */
+  /**
+   * A consumer of an event of the context, `namespace.component.event`. Without a `group` the
+   * process consumes a queue of its own, which goes with it; with one, every process of the group
+   * shares a durable queue, so each event is taken once and what arrives while none is there is
+   * held.
+   */
   receive(label: string, receiver: Receiver): Promise<Connector>
+  receive(label: string, group: string, receiver: Receiver): Promise<Connector>
 
   /** what the replicas of one group decide together */
   atom(group: string): Atom

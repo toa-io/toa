@@ -30,19 +30,12 @@ it('should default nothing in bouncer', () => {
   )
 })
 
-it('should require a header and a value in censor', () => {
-  const header = 'cf-ipcountry'
-
+it('should take censor as the countries, and the country as a header', () => {
   assert.doesNotThrow(() =>
-    schemas.annotation.validate({ authorities, censor: { header, values: ['RU'] } })
+    schemas.annotation.validate({ authorities, country: 'cf-ipcountry', censor: ['RU'] })
   )
-  assert.throws(() =>
-    schemas.annotation.validate({ authorities, censor: { values: ['RU'] } })
-  )
-  assert.throws(() => schemas.annotation.validate({ authorities, censor: { header } }))
-  assert.throws(() =>
-    schemas.annotation.validate({ authorities, censor: { header, values: [] } })
-  )
+  assert.throws(() => schemas.annotation.validate({ authorities, censor: [] }))
+  assert.throws(() => schemas.annotation.validate({ authorities, country: '' }))
 })
 
 it('should take an MCP host per authority', () => {

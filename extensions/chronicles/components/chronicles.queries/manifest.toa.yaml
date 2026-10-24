@@ -1,0 +1,115 @@
+namespace: chronicles
+name: queries
+
+# The extension puts the log's reader on this component.
+chronicles: ~
+
+operations:
+  describe:
+    type: computation
+    output:
+      type: object
+      properties:
+        dialect:
+          description: What a query is written in
+          type: string
+        labels:
+          type: array
+        states:
+          type: array
+        views:
+          type: array
+  query:
+    type: computation
+    input:
+      type: object
+      properties:
+        sql:
+          description: One statement over the log, in the dialect `describe` names
+          type: string
+          minLength: 1
+          maxLength: 65536
+      required: [sql]
+    output:
+      type: object
+      properties:
+        columns:
+          type: array
+        rows:
+          type: array
+        truncated:
+          type: boolean
+    errors: [REFUSED]
+  define:
+    type: effect
+    input:
+      type: object
+      properties:
+        name: &name
+          description: The view's name, which is what a query reads it by
+          type: string
+          pattern: ^[a-z][a-z0-9_]{0,62}$
+        sql:
+          description: The statement the view is, one a query could run
+          type: string
+          minLength: 1
+          maxLength: 65536
+        refresh:
+          description: Seconds between computations of a materialized view; absent, a plain view
+          type: integer
+          minimum: 3600
+      required: [name, sql]
+    errors: [REFUSED, RESERVED, EXHAUSTED]
+  drop:
+    type: effect
+    input:
+      type: object
+      properties:
+        name: *name
+      required: [name]
+    errors: [NOT_FOUND]
+
+exposition:
+  isolated: true
+  /:
+    auth:role: system:chronicles:query
+    mcp:tool: true
+    GET:
+      help:method:
+        title: What the log holds
+        description: >
+          The dialect queries are written in; the labels of `events`, with how many rows each
+          has, the first and last time of them and the fields their payloads have; the
+          components with a state in `states`, with how many entities each has and the fields
+          of the state; and the views defined over the log.
+      io:output: true
+      endpoint: describe
+    POST:
+      help:method:
+        title: Query the log
+        description: >
+          One statement, in the dialect `chronicles.queries.GET` names, over `events`, a row
+          for everything that happened (id, label, component, time, received, entity, version,
+          trace, payload), `states`, each entity as it stands (component, entity, version, time,
+          received, payload), and the views. At most 30 seconds and 10000 rows; at the rows,
+          `truncated` is true.
+      io:output: true
+      endpoint: query
+  /views/:name:
+    auth:role: system:chronicles:views
+    mcp:tool: true
+    PUT:
+      help:method:
+        title: Define a view
+        description: >
+          A view over the log, by a statement a query could run. Without `refresh` it is computed
+          when it is read; with `refresh`, in seconds and at least 3600, it is computed on that
+          cycle and read as a table. Defining a name again replaces the view.
+      help:route:
+        name: The view's name
+      endpoint: define
+    DELETE:
+      help:method: Drop a view
+      help:route:
+        name: The view's name
+      endpoint: drop

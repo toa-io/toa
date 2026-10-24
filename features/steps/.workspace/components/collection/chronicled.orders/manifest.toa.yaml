@@ -1,0 +1,34 @@
+name: orders
+namespace: chronicled
+
+entity:
+  storage: mongodb
+  associated: true
+  properties:
+    total:
+      type: integer
+    email:
+      type: string
+    customer:
+      type: string
+  blank:
+    total: 0
+
+operations:
+  transit:
+    concurrency: retry
+    input:
+      properties:
+        total:
+          type: integer
+        email:
+          type: string
+        customer:
+          type: string
+      type: object
+
+# an event of the prototype, and the state as an event of its own
+chronicles:
+  events: [created]
+  state: snapshot
+  identity: customer

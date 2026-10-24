@@ -7,6 +7,7 @@ import { Language } from './Language.ts'
 import { Segments } from './Segments.ts'
 import { Instance } from './Instance.ts'
 import { Authority } from './Authority.ts'
+import { Country, IP } from './Client.ts'
 import { BufferMapping } from './Buffer.ts'
 import { StreamMapping } from './Stream.ts'
 import { Claims } from './Claims.ts'
@@ -83,6 +84,8 @@ type PV = Properties[PN]
 
 const mappings: Record<string, new (value: any, remotes: Remotes) => Directive> = {
   authority: Authority,
+  ip: IP,
+  country: Country,
   buffer: BufferMapping,
   stream: StreamMapping,
   headers: Headers,

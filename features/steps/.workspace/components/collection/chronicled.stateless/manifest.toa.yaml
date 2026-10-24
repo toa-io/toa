@@ -1,0 +1,24 @@
+name: stateless
+namespace: chronicled
+
+entity:
+  storage: mongodb
+  associated: true
+  properties:
+    total:
+      type: integer
+  blank:
+    total: 0
+
+operations:
+  transit:
+    concurrency: retry
+    input:
+      properties:
+        total:
+          type: integer
+      type: object
+
+# a state whose payload does not say which entity it is
+chronicles:
+  state: summary

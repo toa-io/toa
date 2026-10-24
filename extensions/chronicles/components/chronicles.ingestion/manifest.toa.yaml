@@ -1,0 +1,60 @@
+namespace: chronicles
+name: ingestion
+
+# The extension writes what this component is sent to the log, under `agent.`
+chronicles: ~
+
+operations:
+  anonymous:
+    type: effect
+    input: &batch
+      description: >
+        `{ events }`, at most 100 of them, each `{ id, name, time, payload? }`, and the client's
+        `ip` and `country`, which the gateway puts in; as JSON, or as the form
+        `navigator.sendBeacon` sends, whose `events` is their JSON, which the extension parses
+        and checks
+      type: object
+    output: &accepted
+      type: object
+      properties:
+        status:
+          type: integer
+        accepted:
+          type: integer
+    errors: &errors [INVALID, OVERSIZED]
+  identified:
+    type: effect
+    input: *batch
+    output: *accepted
+    errors: *errors
+
+exposition:
+  isolated: true
+  /:
+    POST:
+      anonymous: true
+      map:ip: ip
+      map:country: country
+      io:throttle:
+        key: [ip]
+        requests: 60
+        interval: 60
+      io:status: status
+      io:output: [status, accepted]
+      help:method: null
+      endpoint: anonymous
+  /:identity:
+    POST:
+      auth:id: identity
+      map:segments:
+        identity: identity
+      map:ip: ip
+      map:country: country
+      io:throttle:
+        key: [identity]
+        requests: 60
+        interval: 60
+      io:status: status
+      io:output: [status, accepted]
+      help:method: null
+      endpoint: identified
