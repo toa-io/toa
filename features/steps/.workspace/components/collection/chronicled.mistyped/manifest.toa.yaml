@@ -3,6 +3,7 @@ namespace: chronicled
 
 entity:
   storage: mongodb
+  associated: true
   properties:
     total:
       type: integer
