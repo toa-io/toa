@@ -6,7 +6,7 @@ import type { Remote } from '@toa.io/core'
 import type { extensions } from '@toa.io/core/types'
 
 /**
- * `context.chronicles.send(name, payload)` — a fact that changes no state, written under
+ * `context.chronicles.send(name, payload, { identity })` — a fact that changes no state, written under
  * `<component>.<name>`. It is a task to the component that writes facts, so it resolves once the
  * broker has it, and is kept until that component takes it.
  */
@@ -30,10 +30,10 @@ export class Sender extends Connector {
     if (method !== 'send')
       throw new exceptions.MisuseException(`Chronicles have no '${method}'`)
 
-    await this.send(args[0], args[1])
+    await this.send(args[0], args[1], args[2])
   }
 
-  private async send(name: unknown, payload: unknown): Promise<void> {
+  private async send(name: unknown, payload: unknown, options?: Options): Promise<void> {
     if (typeof name !== 'string' || !NAME.test(name))
       throw new exceptions.MisuseException(
         `A chronicle is named by segments of letters and digits separated by dots, not '${String(name)}'`
@@ -54,6 +54,7 @@ export class Sender extends Connector {
       time: Date.now(),
       entity: null,
       version: null,
+      identity: typeof options?.identity === 'string' ? options.identity : null,
       trace: context === undefined ? null : encode(context),
       payload: payload ?? {}
     }
@@ -83,6 +84,11 @@ export class Sender extends Connector {
 
     return await this.remote
   }
+}
+
+/** What a fact is said to be of: the operation knows whose it is, the extension does not. */
+interface Options {
+  identity?: string
 }
 
 const LOCATOR = new Locator(FACTS, NAMESPACE)

@@ -13,25 +13,39 @@ export class Recorder extends Connector {
   private readonly label: string
   private readonly component: string
   private readonly kind: Kind
+  private readonly identity: string | null
   private readonly writer: Writer
 
-  public constructor(label: string, kind: Kind, writer: Writer) {
+  /** `identity` is the property of the payload that names whose a row is, where the component has one */
+  // eslint-disable-next-line max-params
+  public constructor(label: string, kind: Kind, identity: string | null, writer: Writer) {
     super()
 
     this.label = label
     this.component = label.slice(0, label.lastIndexOf('.'))
     this.kind = kind
+    this.identity = identity
     this.writer = writer
   }
 
   public async receive(message: Message): Promise<void> {
     if (this.kind === 'state')
-      await this.writer.write([], [state(this.label, this.component, message)])
-    else await this.writer.write([row(this.label, this.component, message)])
+      await this.writer.write(
+        [],
+        [state(this.label, this.component, message, this.identity)]
+      )
+    else
+      await this.writer.write([row(this.label, this.component, message, this.identity)])
   }
 }
 
-export function row(label: string, component: string, message: Message): Row {
+// eslint-disable-next-line max-params
+export function row(
+  label: string,
+  component: string,
+  message: Message,
+  identity: string | null = null
+): Row {
   const payload = object(message.payload)
   const { id, VERSION, UPDATED } = payload as Record<string, unknown>
 
@@ -43,6 +57,7 @@ export function row(label: string, component: string, message: Message): Row {
     time: typeof UPDATED === 'number' ? UPDATED : Date.now(),
     entity: typeof id === 'string' ? id : null,
     version: typeof VERSION === 'number' ? VERSION : null,
+    identity: whose(payload, identity),
     trace: message.telemetry ?? null,
     payload
   }
@@ -53,7 +68,13 @@ export function row(label: string, component: string, message: Message): Row {
  * version, cannot be kept, and no delivery of it will say otherwise: refused as a contract the
  * component broke, so it is parked on its first delivery rather than retried.
  */
-export function state(label: string, component: string, message: Message): State {
+// eslint-disable-next-line max-params
+export function state(
+  label: string,
+  component: string,
+  message: Message,
+  identity: string | null = null
+): State {
   const payload = object(message.payload)
   const { id, VERSION, UPDATED } = payload as Record<string, unknown>
 
@@ -66,12 +87,22 @@ export function state(label: string, component: string, message: Message): State
     component,
     entity: id,
     version: VERSION,
+    identity: whose(payload, identity),
     time: typeof UPDATED === 'number' ? UPDATED : Date.now(),
     payload
   }
 }
 
 export type Kind = 'event' | 'state'
+
+/** The identity a payload names in the property the component declares, where it is one. */
+function whose(payload: object, property: string | null): string | null {
+  if (property === null) return null
+
+  const value = (payload as Record<string, unknown>)[property]
+
+  return typeof value === 'string' ? value : null
+}
 
 function object(payload: unknown): object {
   return typeof payload === 'object' && payload !== null && !Array.isArray(payload)

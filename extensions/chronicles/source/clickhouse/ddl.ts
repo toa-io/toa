@@ -20,6 +20,7 @@ export function tables(retention: number | undefined): string[] {
       received DateTime64(3, 'UTC') DEFAULT now64(3),
       entity Nullable(String),
       version Nullable(UInt64),
+      identity Nullable(String),
       trace Nullable(String),
       payload JSON
     ) ENGINE = ReplacingMergeTree
@@ -31,6 +32,7 @@ export function tables(retention: number | undefined): string[] {
       component LowCardinality(String),
       entity String,
       version UInt64,
+      identity Nullable(String),
       time DateTime64(3, 'UTC'),
       received DateTime64(3, 'UTC') DEFAULT now64(3),
       payload JSON

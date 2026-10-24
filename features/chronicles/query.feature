@@ -3,19 +3,20 @@ Feature: Reading the log
   Background:
     Given the chronicles are empty
     And the chronicles scribe is running
-    And I call `chronicles.ingestion.ingest` with:
+    And I call `chronicles.ingestion.anonymous` with:
       """yaml
       input:
-        - id: q1
-          name: page.viewed
-          time: 1761200000000
-          payload:
-            path: /pricing
-        - id: q2
-          name: page.viewed
-          time: 1761200001000
-          payload:
-            path: /about
+        events:
+          - id: q1
+            name: page.viewed
+            time: 1761200000000
+            payload:
+              path: /pricing
+          - id: q2
+            name: page.viewed
+            time: 1761200001000
+            payload:
+              path: /about
       """
     And the chronicles answer "SELECT count() AS n FROM events" within 30 seconds:
       """yaml

@@ -48,8 +48,9 @@ browser's batch is a request to another. The service is the one writer to the st
 **Not promised**
 
 10. No order. `time` and `version` order what a query has to order; delivery does not.
-11. No identity on what a browser sends: the route is anonymous, so a `user` in a payload is a
-    claim, not a fact.
+11. No identity but a verified one on what a browser sends: the route of an identity takes it from
+    the path the gateway authorised, and the anonymous route refuses a body that names one. A
+    `user` in a payload is a claim, not a fact.
 12. No tenancy within one context: one log, read whole by whoever holds the role.
 13. No erasure. What must be erasable is kept out of the payload.
 14. No portable dialect. A query is written in the store's own, which `describe` names.
@@ -64,6 +65,7 @@ them:
 chronicles:
   events: [created, paid] # what happened: rows of `events`
   state: snapshot # the entity as it stands: its row of `states`
+  identity: customer # the property of the payloads that names whose a row is; `identity` if absent
 ```
 
 Each label is one of the component's events, its own or the prototype's; a list is the `events`
@@ -103,6 +105,9 @@ export async function computation(input: SearchInput, context: Context) {
 }
 ```
 
+An operation that knows whose the fact is passes it — `send(name, payload, { identity })` — since
+the gateway gives an operation no caller.
+
 `context.chronicles` is given to a component that declares `chronicles`, which a component that
 only sends declares empty: `chronicles: []`.
 
@@ -136,6 +141,7 @@ $ toa conceal chronicles-store username=writer password=... reader=...
 | `time`      | milliseconds: the payload's `UPDATED`, or when the service took it; the call's; the client's |
 | `entity`    | the payload's `id`; `null` for the other two                                                 |
 | `version`   | the payload's `VERSION`; `null` for the other two                                            |
+| `identity`  | the payload's property the component names; the `send` option; the path of the route         |
 | `trace`     | the W3C traceparent of the call that caused it, where there was one                          |
 | `payload`   | what the event rendered, what was sent                                                       |
 
@@ -172,12 +178,13 @@ the table states and changed only where it differs.
 CREATE TABLE events (
   id String, label LowCardinality(String), component LowCardinality(String),
   time DateTime64(3, 'UTC'), received DateTime64(3, 'UTC') DEFAULT now64(3),
-  entity Nullable(String), version Nullable(UInt64), trace Nullable(String), payload JSON
+  entity Nullable(String), version Nullable(UInt64), identity Nullable(String),
+  trace Nullable(String), payload JSON
 ) ENGINE = ReplacingMergeTree PARTITION BY toYYYYMM(time) ORDER BY (label, toDate(time), id)
   [TTL toDateTime(time) + INTERVAL <retention> DAY]
 
 CREATE TABLE states (
-  component LowCardinality(String), entity String, version UInt64,
+  component LowCardinality(String), entity String, version UInt64, identity Nullable(String),
   time DateTime64(3, 'UTC'), received DateTime64(3, 'UTC') DEFAULT now64(3), payload JSON
 ) ENGINE = ReplacingMergeTree(version) ORDER BY (component, entity)
 
@@ -215,10 +222,11 @@ MCP:
 ### From a browser
 
 ```http
-POST /chronicles/ingestion/ HTTP/1.1
+POST /chronicles/ingestion/9c1f0a6d5b7e4f3a8d2c1b0a9e8f7d6c/ HTTP/1.1
+authorization: Token …
 content-type: application/json
 
-[{ "id": "0192…", "name": "page.viewed", "time": 1761200000000, "payload": { "path": "/pricing" } }]
+{ "events": [{ "id": "0192…", "name": "page.viewed", "time": 1761200000000, "payload": { "path": "/pricing" } }] }
 ```
 
 ```http
@@ -229,8 +237,15 @@ accepted: 1
 
 At most 100 events, each at most 16 KiB of JSON; `id` at most 64 characters; `name` dotted
 lowercase segments; a batch that breaks any of it is refused whole, `INVALID` or `OVERSIZED`, with
-the index of the event in `cause`. `text/plain` is read as JSON too, so `navigator.sendBeacon` can
-send it. The route is anonymous and throttled by address, 60 requests a minute.
+the index of the event in `cause`.
+
+Two routes, two operations: `POST /chronicles/ingestion/:identity/` takes `auth:id: identity` and
+maps the path's identity into the input, which the operation `identified` writes; `POST
+/chronicles/ingestion/` is anonymous, and the operation `anonymous` refuses a body that names an
+identity, so the one it writes has none. The body is an object rather than the array of events,
+because a route variable reaches an operation as a property of its input. `text/plain` is read as
+JSON too, so `navigator.sendBeacon` — which sends no `authorization` — can send to the anonymous
+route. Each is throttled to 60 requests a minute, by address and by identity.
 
 ## The changes, by area
 
@@ -331,6 +346,8 @@ its own and writes them somewhere.
 - A manifest that declares `chronicles` in a context without the annotation fails the deploy.
 - `send` is in `events` with `entity` `null`.
 - `POST /chronicles/ingestion/` is `202` with `ingest`, and its events are under `client.`.
+- `POST /chronicles/ingestion/:identity/` is `202` to the identity's token and `403` to another's,
+  and its rows are the identity's.
 - `chronicles.queries.POST` answers rows to the role, `403` without it, and `REFUSED` for an
   `INSERT` and for a `SETTINGS max_execution_time` above the limit.
 - A view defined over `system.users` is refused; one over `events` is read by `query`.

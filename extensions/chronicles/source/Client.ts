@@ -23,11 +23,18 @@ export class Client extends Connector {
     if (method !== 'ingest')
       throw new exceptions.MisuseException(`Chronicles have no '${method}'`)
 
-    return await this.ingest(args[0])
+    return await this.ingest(args[0], args[1] ?? null)
   }
 
-  private async ingest(input: unknown): Promise<Accepted | Error> {
-    const events = parse(input)
+  /**
+   * `identity` is the one the gateway verified the caller to be, from the path; `null` for the
+   * route anyone may call, whose body is then refused where it says whose it is.
+   */
+  private async ingest(
+    input: unknown,
+    identity: string | null
+  ): Promise<Accepted | Error> {
+    const events = parse(input, identity !== null)
 
     if (events instanceof Error) return events
 
@@ -41,6 +48,7 @@ export class Client extends Connector {
       time: event.time,
       entity: null,
       version: null,
+      identity,
       trace,
       payload: event.payload ?? {}
     }))
@@ -52,20 +60,36 @@ export class Client extends Connector {
 }
 
 /**
- * A batch, from JSON or from the text `navigator.sendBeacon` sends, which the gateway hands over
- * as a string. Checked here rather than by the operation's schema, which cannot read a string.
+ * A batch, `{ events }`, from JSON or from the text `navigator.sendBeacon` sends, which the gateway
+ * hands over as a string. Checked here rather than by the operation's schema, which cannot read a
+ * string. `identified` is whether the gateway put the identity in, which is then the one key
+ * beside `events` the body may have.
  */
-function parse(input: unknown): Event[] | Error {
-  let events = input
+function parse(input: unknown, identified: boolean): Event[] | Error {
+  let body = input
 
-  if (typeof events === 'string')
+  if (typeof body === 'string')
     try {
-      events = JSON.parse(events)
+      body = JSON.parse(body)
     } catch {
       return invalid('The body is not JSON')
     }
 
-  if (!Array.isArray(events)) return invalid('The body is an array of events')
+  if (typeof body !== 'object' || body === null || Array.isArray(body))
+    return invalid('The body is `{ events }`')
+
+  const { events, identity, ...rest } = body as Record<string, unknown>
+  const extra = Object.keys(rest)
+
+  if (extra.length > 0) return invalid(`The body has no '${extra[0]}'`)
+
+  // the identity is the path's, never the body's
+  if (!identified && identity !== undefined)
+    return invalid(
+      'The body names no identity: a client that has one sends it in the path'
+    )
+
+  if (!Array.isArray(events)) return invalid('`events` is an array of events')
 
   if (events.length > MAX_EVENTS)
     return invalid(`A request carries at most ${MAX_EVENTS} events`)

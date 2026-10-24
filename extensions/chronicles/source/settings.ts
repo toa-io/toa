@@ -47,5 +47,6 @@ const DEV: Settings = {
   store: { provider: 'clickhouse', url: 'http://localhost:31030/chronicles' },
   ingest: true,
   events: [],
-  states: []
+  states: [],
+  identities: {}
 }

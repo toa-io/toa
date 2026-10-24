@@ -59,6 +59,9 @@ export interface Row {
   /** its `VERSION`, likewise */
   version: number | null
 
+  /** the identity it is of, where something says so */
+  identity: string | null
+
   /** the W3C traceparent of the call that caused it */
   trace: string | null
 
@@ -70,6 +73,7 @@ export interface State {
   component: string
   entity: string
   version: number
+  identity: string | null
   time: number
   payload: object
 }

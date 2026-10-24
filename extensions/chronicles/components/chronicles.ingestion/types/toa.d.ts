@@ -3,13 +3,21 @@
 
 import type { CodedError } from '@toa.io/core/types'
 
-export type IngestInput = unknown[] | string
+export type AnonymousInput = Record<string, unknown> | string
 
-export type IngestOutput = {
+export type AnonymousOutput = {
+  status?: number
+  accepted?: number
+}
+
+export type IdentifiedInput = Record<string, unknown> | string
+
+export type IdentifiedOutput = {
   status?: number
   accepted?: number
 }
 
 export interface Component {
-  ingest: (request: { input: IngestInput, task?: boolean }) => Promise<IngestOutput | CodedError<"INVALID" | "OVERSIZED">>
+  anonymous: (request: { input: AnonymousInput, task?: boolean }) => Promise<AnonymousOutput | CodedError<"INVALID" | "OVERSIZED">>
+  identified: (request: { input: IdentifiedInput, task?: boolean }) => Promise<IdentifiedOutput | CodedError<"INVALID" | "OVERSIZED">>
 }

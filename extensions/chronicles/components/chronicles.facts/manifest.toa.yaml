@@ -23,6 +23,8 @@ operations:
           type: "null"
         version:
           type: "null"
+        identity:
+          type: [string, "null"]
         trace:
           type: [string, "null"]
         payload:

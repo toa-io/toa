@@ -58,3 +58,25 @@ it('should refuse a state that does not say which entity and version it is, as p
       error.code === exceptions.codes.EntityContract && exceptions.permanent(error)
   )
 })
+
+it('should say whose a row is by the property the component names', () => {
+  const written = row(
+    'store.orders.created',
+    'store.orders',
+    { id: 'e5', payload: { id: 'b5c8', customer: 'a1b2' } },
+    'customer'
+  )
+
+  assert.equal(written.identity, 'a1b2')
+})
+
+it('should say whose a row is of nobody where the payload does not name one', () => {
+  const written = row(
+    'store.orders.created',
+    'store.orders',
+    { id: 'e6', payload: {} },
+    'customer'
+  )
+
+  assert.equal(written.identity, null)
+})

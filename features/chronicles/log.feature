@@ -16,6 +16,8 @@ Feature: Chronicles
         - chronicled.orders.created
       states:
         - chronicled.orders.snapshot
+      identities:
+        chronicled.orders: customer
       """
 
   Scenario: A change is a row under each event the component names, and its state is kept
@@ -28,20 +30,23 @@ Feature: Chronicles
       input:
         total: 120
         email: bob@example.com
+        customer: 9c1f0a6d5b7e4f3a8d2c1b0a9e8f7d6c
       """
-    Then the chronicles answer "SELECT label, component, entity, version, toString(payload.email) AS email FROM events FINAL" within 30 seconds:
+    Then the chronicles answer "SELECT label, component, entity, version, identity, toString(payload.email) AS email FROM events FINAL" within 30 seconds:
       """yaml
       - label: chronicled.orders.created
         component: chronicled.orders
         entity: 72cf9b0ab0ac4ab2b8036e4e940ddcae
         version: 1
+        identity: 9c1f0a6d5b7e4f3a8d2c1b0a9e8f7d6c
         email: bob@example.com
       """
-    And the chronicles answer "SELECT component, entity, version, toString(payload.total) AS total, toString(payload.email) AS email FROM states FINAL" within 30 seconds:
+    And the chronicles answer "SELECT component, entity, version, identity, toString(payload.total) AS total, toString(payload.email) AS email FROM states FINAL" within 30 seconds:
       """yaml
       - component: chronicled.orders
         entity: 72cf9b0ab0ac4ab2b8036e4e940ddcae
         version: 1
+        identity: 9c1f0a6d5b7e4f3a8d2c1b0a9e8f7d6c
         total: '120'
         email: ''
       """
@@ -77,6 +82,7 @@ Feature: Chronicles
         url: http://localhost:31030/chronicles
       events: []
       states: []
+      identities: {}
       """
     And I compose `chronicled.facts` component
     And the chronicles scribe is running
@@ -84,11 +90,13 @@ Feature: Chronicles
       """yaml
       input:
         query: teapot
+        identity: 9c1f0a6d5b7e4f3a8d2c1b0a9e8f7d6c
       """
-    Then the chronicles answer "SELECT label, isNull(entity) AS unentitled, toString(payload.query) AS query FROM events" within 30 seconds:
+    Then the chronicles answer "SELECT label, isNull(entity) AS unentitled, identity, toString(payload.query) AS query FROM events" within 30 seconds:
       """yaml
       - label: chronicled.facts.searched
         unentitled: 1
+        identity: 9c1f0a6d5b7e4f3a8d2c1b0a9e8f7d6c
         query: teapot
       """
 
@@ -124,6 +132,7 @@ Feature: Chronicles
         - chronicled.orders.created
       states:
         - chronicled.stateless.summary
+      identities: {}
       """
     And the `chronicled.stateless` database is empty
     And I compose components:

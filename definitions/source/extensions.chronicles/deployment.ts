@@ -30,19 +30,24 @@ export function deployment(
 
   const events: string[] = []
   const states: string[] = []
+  const identities: Record<string, string> = {}
 
   for (const instance of declaring) {
-    const declaration = (instance.manifest as unknown as Declaration | undefined) ?? {
-      events: []
-    }
+    const declaration = (instance.manifest as unknown as Declaration | undefined) ?? NONE
+    const id = instance.locator.id
 
-    for (const label of declaration.events) events.push(`${instance.locator.id}.${label}`)
+    for (const label of declaration.events) events.push(`${id}.${label}`)
 
-    if (declaration.state !== undefined)
-      states.push(`${instance.locator.id}.${declaration.state}`)
+    if (declaration.state !== undefined) states.push(`${id}.${declaration.state}`)
+    if (declaration.identity !== null) identities[id] = declaration.identity
   }
 
-  const settings = read(annotation, events, states)
+  const settings: Settings = {
+    ...read(annotation),
+    events,
+    states,
+    identities
+  }
 
   const labels = components().labels.filter(
     (label) => settings.ingest || label !== `${NAMESPACE}-${INGESTION}`
@@ -63,7 +68,7 @@ export function deployment(
 /** The extension is deployed for the sake of the annotation, which a component need not name. */
 export const standalone = true
 
-function read(annotation: Annotation, events: string[], states: string[]): Settings {
+function read(annotation: Annotation): Pick<Settings, 'store' | 'retention' | 'ingest'> {
   if (new URL(annotation.store.url).pathname.replace(/\//g, '') === '')
     throw new Error(
       'The store of chronicles names no database: the path of its address is the database.'
@@ -72,9 +77,7 @@ function read(annotation: Annotation, events: string[], states: string[]): Setti
   return {
     store: annotation.store,
     retention: annotation.retention,
-    ingest: annotation.ingest === true,
-    events,
-    states
+    ingest: annotation.ingest === true
   }
 }
 
@@ -87,3 +90,4 @@ function credentials(): Variable[] {
 }
 
 const KEYS = ['username', 'password', 'reader']
+const NONE: Declaration = { events: [], identity: null }

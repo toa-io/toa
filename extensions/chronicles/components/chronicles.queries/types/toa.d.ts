@@ -7,6 +7,7 @@ export type DescribeOutput = {
   /** What a query is written in */
   dialect?: string
   labels?: unknown[]
+  states?: unknown[]
   views?: unknown[]
 }
 

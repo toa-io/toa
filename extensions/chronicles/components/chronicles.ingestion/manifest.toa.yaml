@@ -5,23 +5,27 @@ name: ingestion
 chronicles: ~
 
 operations:
-  ingest:
+  anonymous:
     type: effect
-    input:
+    input: &batch
       description: >
-        At most 100 events, each `{ id, name, time, payload? }`; as JSON, or as the text
-        `navigator.sendBeacon` sends, which the extension parses and checks
-      type: [array, string]
-      maxItems: 100
+        `{ events }`, at most 100 of them, each `{ id, name, time, payload? }`; as JSON, or as
+        the text `navigator.sendBeacon` sends, which the extension parses and checks
+      type: [object, string]
       maxLength: 2097152
-    output:
+    output: &accepted
       type: object
       properties:
         status:
           type: integer
         accepted:
           type: integer
-    errors: [INVALID, OVERSIZED]
+    errors: &errors [INVALID, OVERSIZED]
+  identified:
+    type: effect
+    input: *batch
+    output: *accepted
+    errors: *errors
 
 exposition:
   isolated: true
@@ -35,4 +39,17 @@ exposition:
       io:status: status
       io:output: [status, accepted]
       help:method: null
-      endpoint: ingest
+      endpoint: anonymous
+  /:identity:
+    POST:
+      auth:id: identity
+      map:segments:
+        identity: identity
+      io:throttle:
+        key: [identity]
+        requests: 60
+        interval: 60
+      io:status: status
+      io:output: [status, accepted]
+      help:method: null
+      endpoint: identified

@@ -30,6 +30,9 @@ export interface Settings {
 
   /** the events whose payloads are the states of entities, one per component */
   states: string[]
+
+  /** the property of its payloads that names the identity a row is of, by component */
+  identities: Record<string, string>
 }
 
 /** The `chronicles` declaration of a component, normalised. */
@@ -39,7 +42,13 @@ export interface Declaration {
 
   /** the label of the event whose payload is the entity as it stands */
   state?: string
+
+  /** the property of the payloads that names the identity a row is of; `null` where none does */
+  identity: string | null
 }
 
 /** What a component writes: the declaration, the list of its `events`, or nothing. */
-export type Declared = Declaration | string[] | null
+export type Declared =
+  | (Omit<Declaration, 'identity'> & { identity?: string | null })
+  | string[]
+  | null

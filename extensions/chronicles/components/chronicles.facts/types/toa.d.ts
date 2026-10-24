@@ -9,6 +9,7 @@ export type RecordInput = {
   time: number
   entity?: null
   version?: null
+  identity?: string | null
   trace?: string | null
   payload: Record<string, unknown>
 }

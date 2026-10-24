@@ -7,25 +7,28 @@ import type { Manifest } from '@toa.io/norm'
 const component = {
   name: 'orders',
   namespace: 'store',
+  entity: { properties: { customer: {}, total: {} } },
   events: { created: {}, sync: {}, snapshot: {} }
 } as unknown as Manifest
 
 it('should be the events a component names, from a list of them', () => {
   assert.deepEqual(manifest(['created', 'snapshot'], component), {
-    events: ['created', 'snapshot']
+    events: ['created', 'snapshot'],
+    identity: 'identity'
   })
 })
 
 it('should be the events and the state a component names', () => {
   assert.deepEqual(manifest({ events: ['created'], state: 'sync' }, component), {
     events: ['created'],
-    state: 'sync'
+    state: 'sync',
+    identity: 'identity'
   })
 })
 
 it('should be none for a component that only sends', () => {
-  assert.deepEqual(manifest(null, component), { events: [] })
-  assert.deepEqual(manifest([], component), { events: [] })
+  assert.deepEqual(manifest(null, component), { events: [], identity: 'identity' })
+  assert.deepEqual(manifest([], component), { events: [], identity: 'identity' })
 })
 
 it('should refuse a state that is not an event of the component', () => {
@@ -46,5 +49,20 @@ it('should refuse a label twice', () => {
   assert.throws(
     () => manifest(['created', 'created'], component),
     /Invalid chronicles declaration/
+  )
+})
+
+it('should take the identity from the property a component names, or none', () => {
+  assert.equal(
+    manifest({ events: [], identity: 'customer' }, component).identity,
+    'customer'
+  )
+  assert.equal(manifest({ events: [], identity: null }, component).identity, null)
+})
+
+it('should refuse an identity that is not a property of the entity', () => {
+  assert.throws(
+    () => manifest({ events: [], identity: 'buyer' }, component),
+    /name the identity 'buyer', which is not a property of the entity/
   )
 })

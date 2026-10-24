@@ -14,6 +14,7 @@ const row = (id: string): Row => ({
   time: 0,
   entity: null,
   version: null,
+  identity: null,
   trace: null,
   payload: {}
 })
@@ -71,6 +72,7 @@ it('should write rows and states of one moment together', async () => {
     component: 'store.orders',
     entity: 'b5c8',
     version: 1,
+    identity: null,
     time: 0,
     payload: {}
   }

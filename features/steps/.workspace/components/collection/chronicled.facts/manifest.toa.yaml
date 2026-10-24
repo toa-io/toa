@@ -7,6 +7,8 @@ operations:
       properties:
         query:
           type: string
+        identity:
+          type: string
       type: object
 
 # sends, and declares no change of its own

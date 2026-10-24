@@ -170,7 +170,7 @@ Feature: Chronicles through the gateway
       accept: application/yaml
       content-type: application/json
 
-      [{"id": "g1", "name": "page.viewed", "time": 1761200000000, "payload": {"path": "/"}}]
+      {"events": [{"id": "g1", "name": "page.viewed", "time": 1761200000000, "payload": {"path": "/"}}]}
       """
     Then the following reply is sent:
       """
@@ -185,11 +185,42 @@ Feature: Chronicles through the gateway
       accept: application/yaml
       content-type: text/plain
 
-      [{"id": "g2", "name": "page.left", "time": 1761200000000}]
+      {"events": [{"id": "g2", "name": "page.left", "time": 1761200000000}]}
       """
     Then the following reply is sent:
       """
       202 Accepted
 
       accepted: 1
+      """
+
+  Scenario: What a browser sends as an identity it is
+    When the following request is received:
+      """
+      POST /chronicles/ingestion/4344518184ad44228baffce7a44fd0b1/ HTTP/1.1
+      host: nex.toa.io
+      authorization: Basic YW5hbHlzdDpwYXNz
+      accept: application/yaml
+      content-type: application/json
+
+      {"events": [{"id": "g3", "name": "page.viewed", "time": 1761200000000}]}
+      """
+    Then the following reply is sent:
+      """
+      202 Accepted
+
+      accepted: 1
+      """
+    When the following request is received:
+      """
+      POST /chronicles/ingestion/72cf9b0ab0ac4ab2b8036e4e940ddcae/ HTTP/1.1
+      host: nex.toa.io
+      authorization: Basic YW5hbHlzdDpwYXNz
+      content-type: application/json
+
+      {"events": [{"id": "g4", "name": "page.viewed", "time": 1761200000000}]}
+      """
+    Then the following reply is sent:
+      """
+      403 Forbidden
       """

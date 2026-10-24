@@ -26,13 +26,13 @@ An order placed, a search made and a page left are three rows:
 | `store.search.searched` | `store.search`         | `NULL`   | `NULL`    | `{ query: "teapot", results: 3 }` |
 | `client.page.left`      | `chronicles.ingestion` | `NULL`   | `NULL`    | `{ path: "/pricing" }`            |
 
-Every row also has `id`, the same however often it is delivered, so a row is kept once; `time`,
-when it happened; `received`, when the store wrote it; and `trace`, the traceparent of the call
-that caused it.
+Every row also has `id`, the same however often it is delivered, so a row is kept once;
+`identity`, whose it is, where something [says so](#identity); `time`, when it happened;
+`received`, when the store wrote it; and `trace`, the traceparent of the call that caused it.
 
 **`states`** holds each entity as it stands: for every component that names a
-[state](#events-and-states), a row per entity — `component`, `entity`, `version`, `time`,
-`received` and `payload` — which a higher version replaces.
+[state](#events-and-states), a row per entity — `component`, `entity`, `version`, `identity`,
+`time`, `received` and `payload` — which a higher version replaces.
 
 Nothing is ordered: order by `time`, or by `version` within one entity.
 
@@ -76,6 +76,22 @@ does not. An event that is both is named in both.
 A committed change is written however long the scribe is away, and once however often it is
 delivered. One committed before the scribe first ran in a deployment is not.
 
+### Identity
+
+`identity` is the payload's `identity`, where it is a string:
+
+```yaml
+# manifest.toa.yaml
+chronicles:
+  events: [created, paid]
+  state: snapshot
+  identity: customer # the property of the payloads that names whose a row is
+```
+
+A component names another property, or none with `identity: ~`. One property serves every event of
+the component and its state, and a payload that leaves it out is a row of no identity. A property
+the component names is one of its entity.
+
 ## Facts
 
 ```typescript
@@ -84,6 +100,16 @@ await context.chronicles.send('searched', { query: input.query, results: results
 
 The fact is a row of `events` under `<component>.searched`, with what was sent as its payload.
 `send` resolves once the broker has it, and it then waits for the scribe as an event does.
+
+An operation that knows whose the fact is says so; the extension does not know who called it:
+
+```typescript
+await context.chronicles.send(
+  'searched',
+  { query: input.query },
+  { identity: input.customer }
+)
+```
 
 `context.chronicles` is given to a component that declares `chronicles`. One that only sends
 declares it empty:
@@ -95,15 +121,18 @@ chronicles: []
 
 ## From a browser
 
-Served where the context says `ingest: true`.
+Served where the context says `ingest: true`, at two routes: one of an identity, and one of no one.
 
-### `POST /chronicles/ingestion/`
+### `POST /chronicles/ingestion/:identity/`
+
+What a signed-in client sends, as the identity it is.
 
 ```http
-POST /chronicles/ingestion/ HTTP/1.1
+POST /chronicles/ingestion/9c1f0a6d5b7e4f3a8d2c1b0a9e8f7d6c/ HTTP/1.1
+authorization: Token …
 content-type: application/json
 
-[{ "id": "0192f3a1-…", "name": "page.viewed", "time": 1761200000000, "payload": { "path": "/pricing" } }]
+{ "events": [{ "id": "0192f3a1-…", "name": "page.viewed", "time": 1761200000000, "payload": { "path": "/pricing" } }] }
 ```
 
 ```http
@@ -112,6 +141,31 @@ content-type: application/json
 accepted: 1
 ```
 
+The token is the identity's, or the request is answered `403`: the rows are that identity's,
+whatever the body says. Throttled to 60 requests a minute per identity.
+
+### `POST /chronicles/ingestion/`
+
+What anyone sends, before signing in or without it. The same body, and rows of no identity; a body
+that names one is refused.
+
+```http
+POST /chronicles/ingestion/ HTTP/1.1
+content-type: application/json
+
+{ "events": [{ "id": "0192f3a2-…", "name": "page.left", "time": 1761200000000 }] }
+```
+
+It takes no credentials, and is throttled to 60 requests a minute per address, which takes
+[`exposition.ip`](/extensions/exposition/documentation/ip.md) to name the address. `text/plain` is
+read as JSON, so `navigator.sendBeacon`, which sends no `authorization`, can send a batch here; a
+signed-in client sends with `fetch(…, { keepalive: true })` instead. Anyone can send anything: a
+`user` in a payload is what the client said.
+
+### The body
+
+`{ events }`, at most 100 of them, each a row of `events` under `client.<name>`:
+
 | property  |                                                                     |
 | --------- | ------------------------------------------------------------------- |
 | `id`      | the client's own, at most 64 characters; a retry sends the same one |
@@ -119,15 +173,9 @@ accepted: 1
 | `time`    | when it happened, in milliseconds, by the client's clock            |
 | `payload` | an object, at most 16 KiB of JSON                                   |
 
-A request carries at most 100 events, which are rows of `events` under `client.<name>`, and is
-answered once they are written. A batch one event of which breaks any of the above is written not
-at all, and answered `422` with the code `INVALID`, or `OVERSIZED` for a payload too large, and the
-`index` of the event in `cause`. `text/plain` is read as JSON, so `navigator.sendBeacon` can send a
-batch.
-
-The route takes no credentials, and is throttled to 60 requests a minute per address, which takes
-[`exposition.ip`](/extensions/exposition/documentation/ip.md) to name the address. Anyone can send
-anything: a `user` in a payload is what the client said.
+A request is answered once its events are written. A batch one event of which breaks any of the
+above is written not at all, and answered `422` with the code `INVALID`, or `OVERSIZED` for a
+payload too large, and the `index` of the event in `cause`.
 
 ## Reading the log
 
