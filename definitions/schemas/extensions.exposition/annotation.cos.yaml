@@ -47,24 +47,17 @@ properties:
         type: integer
         minimum: 1
     additionalProperties: false
+  country:
+    description: The header the client's country is read from, which the edge in front writes
+    type: string
+    minLength: 1
   censor:
-    description: Header values a request is answered 451 for
-    type: object
-    properties:
-      header:
-        description: The request header the values are read from, in any case
-        type: string
-        minLength: 1
-      values:
-        description: What the header holds for a request to be refused, compared exactly
-        type: array
-        items:
-          type: string
-        minItems: 1
-    required:
-      - header
-      - values
-    additionalProperties: false
+    description: The countries a request is answered 451 from, as the header `country` names holds them
+    type: array
+    items:
+      type: string
+      minLength: 1
+    minItems: 1
   protocol:
     type: string
     enum: [h1, h2c]

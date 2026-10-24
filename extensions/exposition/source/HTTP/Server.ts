@@ -542,10 +542,13 @@ interface Properties {
   /** The header the client address is read from; the connection's address without one. */
   ip?: string
 
+  /** The header the client's country is read from; none without one. */
+  country?: string
+
   /** Failed authentications an address may make; none are metered unless set. */
   bouncer?: Bouncer
 
-  /** Header values a request is answered 451 for; none is refused without it. */
+  /** The countries a request is answered 451 from; none is refused without it. */
   censor?: Censor
 
   /** The authorization server this context exposes; none is exposed without it. */

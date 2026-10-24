@@ -23,10 +23,13 @@ export interface Annotation {
   /** The header the client address is read from; the connection's without one. See `ip.md`. */
   ip?: string
 
+  /** The header the client's country is read from; none without one. See `ip.md`. */
+  country?: string
+
   /** Failed authentications an address may make; none are metered unless set. See `identity.md`. */
   bouncer?: Bouncer
 
-  /** Header values a request is answered 451 for; none is refused without it. See `censor.md`. */
+  /** The countries a request is answered 451 from; none is refused without it. See `censor.md`. */
   censor?: Censor
 
   /** The authorization server this context exposes; none is exposed without it. */
@@ -108,10 +111,5 @@ export interface Bouncer {
   interval?: number
 }
 
-export interface Censor {
-  /** The request header the values are read from, in any case. */
-  header: string
-
-  /** What the header holds for a request to be answered 451, compared exactly. */
-  values: string[]
-}
+/** The countries, as the header `country` names holds them, compared exactly. */
+export type Censor = string[]

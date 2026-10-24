@@ -4,7 +4,7 @@ import { console } from 'openspan'
 import { Timing } from './Timing.ts'
 import { type Format, formats, types } from './formats/index.ts'
 import { read } from './messages.ts'
-import { address } from './address.ts'
+import { address, country } from './address.ts'
 import type { OutgoingMessage } from './messages.ts'
 import { NONE as UNMATCHED, type Labels } from '../measurements.ts'
 import type { IncomingMessage } from './types.ts'
@@ -15,6 +15,9 @@ export class Context {
 
   /** the client address, read as the deployment says; none otherwise, see `documentation/ip.md` */
   public readonly ip: string | undefined
+
+  /** the client's country, read as the deployment says; none otherwise, see `documentation/ip.md` */
+  public readonly country: string | undefined
   public readonly url: URL
   public readonly subtype: string | null = null
   public readonly encoder: Format | null = null
@@ -100,6 +103,7 @@ export class Context {
     this.request = request
     this.signal = signal
     this.ip = address(request, properties.ip)
+    this.country = country(request, properties.country)
 
     // parsed by the server, which had to parse it anyway to know the request is valid
     this.url = url
@@ -169,6 +173,9 @@ interface Pipelines {
 interface Properties {
   /** the header the client address is read from; the connection's without one */
   ip?: string
+
+  /** the header the client's country is read from */
+  country?: string
 }
 
 /**
