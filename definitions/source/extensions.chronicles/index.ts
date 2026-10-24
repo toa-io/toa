@@ -5,4 +5,4 @@ export { context } from './context.ts'
 export * from './const.ts'
 export * as schemas from './schemas.ts'
 
-export type { Annotation, Declaration, Declared, Settings } from './types.ts'
+export type { Annotation, Declaration, Declared, Settings, Store } from './types.ts'

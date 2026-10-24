@@ -1,9 +1,7 @@
 import { it } from 'node:test'
 import assert from 'node:assert/strict'
 
-import { consumer, id, literal, retention } from './ddl.ts'
-
-const names = { exchange: 'chronicles.out', queue: 'chronicles', dead: 'chronicles.dead' }
+import { id, literal, retention } from './ddl.ts'
 
 it('should leave a retention that agrees with the table', () => {
   const engine =
@@ -31,23 +29,6 @@ it('should remove a retention no longer declared', () => {
 
   assert.deepEqual(retention(undefined, engine), ['ALTER TABLE events REMOVE TTL'])
   assert.deepEqual(retention(undefined, 'ReplacingMergeTree ORDER BY id'), [])
-})
-
-it('should tell one broker from another by the fingerprint of the consumer', () => {
-  const one = consumer('shop', 'amqp://a:b@one:5672/', names)
-  const same = consumer('shop', 'amqp://a:b@one:5672/', names)
-  const other = consumer('shop', 'amqp://a:c@one:5672/', names)
-
-  assert.equal(one.fingerprint, same.fingerprint)
-  assert.notEqual(one.fingerprint, other.fingerprint)
-})
-
-it('should consume the queue the binding retains, and nothing it declares itself', () => {
-  const [collection] = consumer('shop', 'amqp://one:5672/', names).create
-
-  assert.match(collection, /rabbitmq_queue_consume = 1/)
-  assert.match(collection, /rabbitmq_queue_base = 'chronicles'/)
-  assert.match(collection, /rabbitmq_exchange_name = 'chronicles.out'/)
 })
 
 it('should refuse an identifier it would have to quote', () => {

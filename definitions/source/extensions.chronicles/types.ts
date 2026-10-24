@@ -1,10 +1,7 @@
-/** The `chronicles` annotation of a context, as it is written. */
+/** The `chronicles` annotation of a context. */
 export interface Annotation {
-  /** the broker components publish to and ClickHouse consumes from */
-  broker: string
-
-  /** its HTTP address, whose path names the database; or that and the broker as it sees it */
-  clickhouse: string | { url: string; broker?: string }
+  /** where the log is kept, by the provider that keeps it */
+  store: Store
 
   /** days a row of the log is kept; absent, kept */
   retention?: number
@@ -13,18 +10,23 @@ export interface Annotation {
   ingest?: boolean
 }
 
+export interface Store {
+  provider: 'clickhouse'
+
+  /** the provider's own address of it */
+  url: string
+}
+
 /** What the service is given of the annotation, its credentials aside. */
 export interface Settings {
-  clickhouse: {
-    url: string
-
-    /** the broker as ClickHouse reaches it */
-    broker: string
-  }
+  store: Store
 
   retention?: number
 
   ingest: boolean
+
+  /** the events the log is kept of, `namespace.component.event` */
+  events: string[]
 }
 
 /** The `chronicles` declaration of a component: the labels of the events that carry its changes. */

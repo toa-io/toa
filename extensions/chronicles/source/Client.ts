@@ -1,24 +1,22 @@
 import { current, encode } from 'openspan'
 import { Connector, exceptions } from '@toa.io/core'
 import { CLIENT, INGEST, NAMESPACE } from '@toa.io/definitions/extensions.chronicles'
-import type { Channel } from './Channel.ts'
-import type { Message } from './Message.ts'
-import type { bindings } from '@toa.io/core/types'
+import type { Row } from './Provider.ts'
+import type { Writer } from './Writer.ts'
 
 /**
  * What `chronicles.ingest` writes what browsers send through: each event under `client.<name>`,
- * with the client's own id and time, all of a batch together.
+ * with the client's own id and time, all of a batch in one write, and answered once it is.
  */
 export class Client extends Connector {
   public readonly name = 'chronicles'
 
-  private readonly channel: Channel
-  private outbound!: bindings.Outbound
+  private readonly writer: () => Writer
 
-  public constructor(channel: Channel) {
+  public constructor(writer: () => Writer) {
     super()
 
-    this.channel = channel
+    this.writer = writer
   }
 
   public async invoke(method: string, ...args: any[]): Promise<unknown> {
@@ -26,12 +24,6 @@ export class Client extends Connector {
       throw new exceptions.MisuseException(`Chronicles have no '${method}'`)
 
     return await this.ingest(args[0])
-  }
-
-  protected override async open(): Promise<void> {
-    this.outbound = await this.channel.open()
-
-    this.depends(this.outbound)
   }
 
   private async ingest(input: unknown): Promise<Accepted | Error> {
@@ -42,7 +34,7 @@ export class Client extends Connector {
     const context = current()
     const trace = context === undefined ? null : encode(context)
 
-    const messages = events.map((event): Message => ({
+    const rows = events.map((event): Row => ({
       id: event.id,
       label: `${CLIENT}.${event.name}`,
       component: COMPONENT,
@@ -50,14 +42,12 @@ export class Client extends Connector {
       entity: null,
       version: null,
       trace,
-      payload: event.payload ?? null
+      payload: event.payload ?? {}
     }))
 
-    await Promise.all(
-      messages.map(async (message) => await this.channel.send(this.outbound, message))
-    )
+    await this.writer().write(rows)
 
-    return { status: 202, accepted: messages.length }
+    return { status: 202, accepted: rows.length }
   }
 }
 

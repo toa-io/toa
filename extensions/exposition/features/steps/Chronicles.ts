@@ -21,7 +21,6 @@ export class Chronicles {
   public async empty(): Promise<void> {
     for (const statement of [
       `DROP DATABASE IF EXISTS ${DATABASE} SYNC`,
-      `DROP NAMED COLLECTION IF EXISTS chronicles_${DATABASE}`,
       `DROP USER IF EXISTS ${DATABASE}_reader`,
       `DROP SETTINGS PROFILE IF EXISTS ${DATABASE}_reader`
     ])

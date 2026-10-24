@@ -1,68 +1,67 @@
-import { INGEST, NAMESPACE, QUERY } from '@toa.io/definitions/extensions.chronicles'
-import { Channel } from './Channel.ts'
-import { ClickHouse } from './ClickHouse.ts'
+import {
+  FACTS,
+  INGEST,
+  NAMESPACE,
+  QUERY
+} from '@toa.io/definitions/extensions.chronicles'
 import { Client } from './Client.ts'
-import { Destination } from './Destination.ts'
+import { Facts } from './Facts.ts'
 import { Reader } from './Reader.ts'
 import { Scribe } from './Scribe.ts'
 import { Sender } from './Sender.ts'
+import { Writer } from './Writer.ts'
 import { credentials, settings } from './settings.ts'
+import { provider } from './store.ts'
+import type { Provider } from './Provider.ts'
 import type { Connector, Locator } from '@toa.io/core'
-import type { Declaration } from '@toa.io/definitions/extensions.chronicles'
 import type { extensions } from '@toa.io/core/types'
 
 /**
- * A component's changes go to the log through the outbox, as another of its destinations; what
- * it sends, it sends through the same channel. The components this extension ships are given
- * what they serve instead: the query, the log's reader; the client route, a sender of what
- * browsers send.
+ * A component sends facts through its context; the events it names reach the log as events of
+ * the context, which the service consumes. The components this extension ships are given what
+ * they serve instead: the query, the provider; the facts and the client route, the writer.
  */
 export class Factory implements extensions.Factory {
   private readonly host: extensions.Host
 
-  /** one publisher for the process, however many components send through it */
-  private readonly channel: Channel
+  /** one store and one writer for the process, made where the process is one that keeps the log */
+  private store: { provider: Provider; writer: Writer } | undefined
 
   public constructor(host: extensions.Host) {
     this.host = host
-    this.channel = new Channel(host)
-  }
-
-  public destination(
-    locator: Locator,
-    labels: Declaration | null
-  ): Destination | undefined {
-    if (mine(locator) || labels === null || labels.length === 0) return undefined
-
-    return new Destination(locator, labels, this.channel)
   }
 
   public aspect(locator: Locator): extensions.Aspect {
-    if (mine(locator) && locator.name === QUERY) {
-      const { clickhouse } = settings()
-      const { username, password, reader } = credentials()
-      const writer = new ClickHouse(clickhouse.url, username, password)
+    if (mine(locator))
+      switch (locator.name) {
+        case QUERY:
+          return new Reader(() => this.keep().provider)
+        case FACTS:
+          return new Facts(() => this.keep().writer)
+        case INGEST:
+          return new Client(() => this.keep().writer)
+      }
 
-      return new Reader(
-        writer,
-        new ClickHouse(clickhouse.url, `${writer.database}_reader`, reader)
-      )
-    }
-
-    if (mine(locator) && locator.name === INGEST) return new Client(this.channel)
-
-    return new Sender(locator, this.channel)
+    return new Sender(this.host, locator)
   }
 
   // nothing connects to this, so a halt takes the whole of it
   public service(): Connector {
     return this.host.gate(async () => {
-      const declared = settings()
-      const { username, password, reader } = credentials()
-      const writer = new ClickHouse(declared.clickhouse.url, username, password)
+      const { provider, writer } = this.keep()
 
-      return new Scribe(this.host, this.channel, writer, declared, reader)
+      return new Scribe(this.host, settings(), provider, writer)
     })
+  }
+
+  private keep(): { provider: Provider; writer: Writer } {
+    if (this.store === undefined) {
+      const store = provider(settings(), credentials())
+
+      this.store = { provider: store, writer: new Writer(store) }
+    }
+
+    return this.store
   }
 }
 

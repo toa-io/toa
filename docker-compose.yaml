@@ -106,8 +106,7 @@ services:
       interval: 5s
       timeout: 5s
       retries: 30
-  # Chronicles: ClickHouse reads the `chronicles` queue of `rabbitmq` over the compose network,
-  # which is why the broker it is given is `rabbitmq:5672` rather than the published port.
+  # the store of chronicles
   clickhouse:
     image: clickhouse/clickhouse-server:26.8.34.13
     ports:

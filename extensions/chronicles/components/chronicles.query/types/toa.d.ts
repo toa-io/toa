@@ -4,14 +4,14 @@
 import type { CodedError } from '@toa.io/core/types'
 
 export type DescribeOutput = {
+  /** What a query is written in */
+  dialect?: string
   labels?: unknown[]
   views?: unknown[]
-  /** Messages ClickHouse failed to write, waiting in `chronicles.dead` */
-  dead?: number
 }
 
 export type QueryInput = {
-  /** One SELECT over the log */
+  /** One statement over the log, in the dialect `describe` names */
   sql: string
 }
 
@@ -24,7 +24,7 @@ export type QueryOutput = {
 export type DefineInput = {
   /** The view's name, which is what a query reads it by */
   name: string
-  /** The SELECT the view is */
+  /** The statement the view is, one a query could run */
   sql: string
   /** Seconds between computations of a materialized view; absent, a plain view */
   refresh?: number

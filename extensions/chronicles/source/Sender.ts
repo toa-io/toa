@@ -1,27 +1,27 @@
 import { current, encode } from 'openspan'
-import { Connector, entities, exceptions } from '@toa.io/core'
-import type { Channel } from './Channel.ts'
-import type { Message } from './Message.ts'
-import type { Locator } from '@toa.io/core'
-import type { bindings } from '@toa.io/core/types'
+import { Connector, Locator, entities, exceptions } from '@toa.io/core'
+import { FACTS, NAMESPACE } from '@toa.io/definitions/extensions.chronicles'
+import type { Row } from './Provider.ts'
+import type { Remote } from '@toa.io/core'
+import type { extensions } from '@toa.io/core/types'
 
 /**
- * `context.chronicles.send(name, payload)` — a fact that changes no state, written to the log
- * under `<component>.<name>`. It goes straight to the broker and resolves once the broker has
- * confirmed it; nothing retries it.
+ * `context.chronicles.send(name, payload)` — a fact that changes no state, written under
+ * `<component>.<name>`. It is a task to the component that writes facts, so it resolves once the
+ * broker has it, and is kept until that component takes it.
  */
 export class Sender extends Connector {
   public readonly name = 'chronicles'
 
+  private readonly host: extensions.Host
   private readonly locator: Locator
-  private readonly channel: Channel
-  private outbound!: bindings.Outbound
+  private remote?: Promise<Remote>
 
-  public constructor(locator: Locator, channel: Channel) {
+  public constructor(host: extensions.Host, locator: Locator) {
     super()
 
+    this.host = host
     this.locator = locator
-    this.channel = channel
   }
 
   // named rather than forwarded, so that the connector's lifecycle is not reachable from an
@@ -33,24 +33,21 @@ export class Sender extends Connector {
     await this.send(args[0], args[1])
   }
 
-  protected override async open(): Promise<void> {
-    this.outbound = await this.channel.open()
-
-    this.depends(this.outbound)
-  }
-
   private async send(name: unknown, payload: unknown): Promise<void> {
     if (typeof name !== 'string' || !NAME.test(name))
       throw new exceptions.MisuseException(
         `A chronicle is named by segments of letters and digits separated by dots, not '${String(name)}'`
       )
 
-    if (payload !== undefined && (typeof payload !== 'object' || Array.isArray(payload)))
+    if (
+      payload !== undefined &&
+      (typeof payload !== 'object' || payload === null || Array.isArray(payload))
+    )
       throw new exceptions.MisuseException('The payload of a chronicle is an object')
 
     const context = current()
 
-    const message: Message = {
+    const row: Row = {
       id: entities.newid(),
       label: `${this.locator.id}.${name}`,
       component: this.locator.id,
@@ -58,11 +55,36 @@ export class Sender extends Connector {
       entity: null,
       version: null,
       trace: context === undefined ? null : encode(context),
-      payload: payload ?? null
+      payload: payload ?? {}
     }
 
-    await this.channel.send(this.outbound, message)
+    const remote = await this.facts()
+
+    await remote.invoke('record', { input: row, task: true })
+  }
+
+  /**
+   * Resolved on the first fact and not before: an aspect is made ahead of the components of its
+   * composition, and one that could not be found is looked for again by the next fact.
+   */
+  private async facts(): Promise<Remote> {
+    this.remote ??= (async () => {
+      const remote = await this.host.remote(LOCATOR, SOURCE)
+
+      this.depends(remote)
+      await remote.connect()
+
+      return remote
+    })().catch((error: unknown) => {
+      this.remote = undefined
+
+      throw error
+    })
+
+    return await this.remote
   }
 }
 
+const LOCATOR = new Locator(FACTS, NAMESPACE)
+const SOURCE = { service: 'chronicles' }
 const NAME = /^[a-zA-Z][a-zA-Z0-9]*(\.[a-zA-Z][a-zA-Z0-9]*)*$/

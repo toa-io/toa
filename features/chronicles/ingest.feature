@@ -2,7 +2,7 @@ Feature: What browsers send to the log
 
   Background:
     Given the chronicles are empty
-    And the `chronicles` service is staged
+    And the chronicles scribe is running
 
   Scenario: A batch is written under `client.`
     When I call `chronicles.ingest.ingest` with:

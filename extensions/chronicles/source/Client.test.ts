@@ -2,23 +2,21 @@ import { it, beforeEach, mock } from 'node:test'
 import assert from 'node:assert/strict'
 
 import { Client } from './Client.ts'
-import type { Channel } from './Channel.ts'
+import type { Writer } from './Writer.ts'
 
-let channel: { open: ReturnType<typeof mock.fn>; send: ReturnType<typeof mock.fn> }
+let writer: { write: ReturnType<typeof mock.fn> }
 let client: Client
 
 beforeEach(async () => {
-  const outbound = {
-    link: mock.fn(),
-    connect: mock.fn(async () => undefined),
-    disconnect: mock.fn(async () => undefined)
-  }
-
-  channel = { open: mock.fn(async () => outbound), send: mock.fn(async () => undefined) }
-  client = new Client(channel as unknown as Channel)
+  writer = { write: mock.fn(async () => undefined) }
+  client = new Client(() => writer as unknown as Writer)
 
   await client.connect()
 })
+
+/** what the batch written held, one row at a time */
+const rows = (): any[] =>
+  writer.write.mock.calls.flatMap((call) => call.arguments[0] as any[])
 
 const event = {
   id: 'c1',
@@ -32,7 +30,7 @@ it('should write each event under client, with its own id and time', async () =>
 
   assert.deepEqual(reply, { status: 202, accepted: 1 })
 
-  const message = channel.send.mock.calls[0].arguments[1] as any
+  const [message] = rows()
 
   assert.equal(message.id, 'c1')
   assert.equal(message.label, 'client.page.viewed')
@@ -56,7 +54,7 @@ it('should refuse more than 100 events', async () => {
   const reply = (await client.invoke('ingest', batch)) as Error
 
   assert.equal(reply.message, 'INVALID')
-  assert.equal(channel.send.mock.callCount(), 0)
+  assert.equal(writer.write.mock.callCount(), 0)
 })
 
 it('should refuse a payload over 16 KiB, and say which', async () => {
@@ -65,7 +63,7 @@ it('should refuse a payload over 16 KiB, and say which', async () => {
 
   assert.equal(reply.message, 'OVERSIZED')
   assert.equal((reply.cause as any).index, 1)
-  assert.equal(channel.send.mock.callCount(), 0)
+  assert.equal(writer.write.mock.callCount(), 0)
 })
 
 it('should write nothing of a batch one event of which is not one', async () => {
@@ -76,5 +74,5 @@ it('should write nothing of a batch one event of which is not one', async () => 
 
   assert.equal(reply.message, 'INVALID')
   assert.equal((reply.cause as any).index, 1)
-  assert.equal(channel.send.mock.callCount(), 0)
+  assert.equal(writer.write.mock.callCount(), 0)
 })

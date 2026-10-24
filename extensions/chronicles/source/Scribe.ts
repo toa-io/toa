@@ -1,47 +1,57 @@
 import { readdirSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { Connector } from '@toa.io/core'
-import { INGEST, NAMESPACE } from '@toa.io/definitions/extensions.chronicles'
-import { Provisioning } from './Provisioning.ts'
-import type { Channel } from './Channel.ts'
-import type { ClickHouse } from './ClickHouse.ts'
+import { INGEST, NAMESPACE, SERVICE } from '@toa.io/definitions/extensions.chronicles'
+import { Recorder } from './Recorder.ts'
+import type { Provider } from './Provider.ts'
+import type { Writer } from './Writer.ts'
 import type { Settings } from '@toa.io/definitions/extensions.chronicles'
 import type { extensions } from '@toa.io/core/types'
 
 /**
- * The extension's own service: ClickHouse provisioned, then the components it ships — the
- * query, and the client route where the annotation asks for it.
+ * The extension's own service: the store provisioned, then a consumer of every event the log is
+ * kept of — one group for every replica, so each event is written once — and the components it
+ * ships: the query, the facts, and the client route where the annotation asks for it.
  */
 export class Scribe extends Connector {
   private readonly host: extensions.Host
-  private readonly provisioning: Provisioning
   private readonly settings: Settings
+  private readonly provider: Provider
+  private readonly writer: Writer
 
   // eslint-disable-next-line max-params
   public constructor(
     host: extensions.Host,
-    channel: Channel,
-    writer: ClickHouse,
     settings: Settings,
-    password: string
+    provider: Provider,
+    writer: Writer
   ) {
     super()
 
     this.host = host
     this.settings = settings
-    this.provisioning = new Provisioning(channel, writer, settings, password)
+    this.provider = provider
+    this.writer = writer
   }
 
   protected override async open(): Promise<void> {
-    await this.provisioning.connect()
+    await this.provider.provision()
 
-    this.depends(this.provisioning)
+    for (const label of this.settings.events) {
+      const consumer = await this.host.receive(
+        label,
+        GROUP,
+        new Recorder(label, this.writer)
+      )
+
+      this.depends(consumer)
+      await consumer.connect()
+    }
 
     const composition = await this.host.composition(paths(this.settings))
 
-    await composition.connect()
-
     this.depends(composition)
+    await composition.connect()
   }
 }
 
@@ -71,3 +81,4 @@ interface Components {
 }
 
 const ROOT = resolve(import.meta.dirname, '../components/')
+const GROUP = `${NAMESPACE}.${SERVICE}`

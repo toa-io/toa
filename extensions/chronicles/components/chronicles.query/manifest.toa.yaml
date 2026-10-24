@@ -10,20 +10,20 @@ operations:
     output:
       type: object
       properties:
+        dialect:
+          description: What a query is written in
+          type: string
         labels:
           type: array
         views:
           type: array
-        dead:
-          description: Messages ClickHouse failed to write, waiting in `chronicles.dead`
-          type: integer
   query:
     type: computation
     input:
       type: object
       properties:
         sql:
-          description: One SELECT over the log
+          description: One statement over the log, in the dialect `describe` names
           type: string
           minLength: 1
           maxLength: 65536
@@ -48,7 +48,7 @@ operations:
           type: string
           pattern: ^[a-z][a-z0-9_]{0,62}$
         sql:
-          description: The SELECT the view is
+          description: The statement the view is, one a query could run
           type: string
           minLength: 1
           maxLength: 65536
@@ -76,19 +76,19 @@ exposition:
       help:method:
         title: What the log holds
         description: >
-          The labels of the log with how many rows each has and the first and last time of
-          them, the paths their payloads have, the views defined over the log, and how many
-          messages ClickHouse failed to write.
+          The dialect queries are written in; the labels of the log, with how many rows each
+          has, the first and last time of them and the fields their payloads have; and the
+          views defined over the log.
       io:output: true
       endpoint: describe
     POST:
       help:method:
         title: Query the log
         description: >
-          One SELECT over the context's database: `events` (id, label, component, time,
-          received, entity, version, trace, payload JSON), `states` (the latest payload of each
-          entity under each label) and the views. Read `events` and `states` with FINAL. At
-          most 30 seconds and 10000 rows; past the rows, `truncated` is true.
+          One statement, in the dialect `chronicles.query.GET` names, over `events` (id, label,
+          component, time, received, entity, version, trace, payload), `states` (the latest
+          payload of each entity under each label) and the views. At most 30 seconds and 10000
+          rows; at the rows, `truncated` is true.
       io:output: true
       endpoint: query
   /views/:name:
@@ -98,7 +98,7 @@ exposition:
       help:method:
         title: Define a view
         description: >
-          A view over the log, by a SELECT a query could run. Without `refresh` it is computed
+          A view over the log, by a statement a query could run. Without `refresh` it is computed
           when it is read; with `refresh`, in seconds and at least 3600, it is computed on that
           cycle and read as a table. Defining a name again replaces the view.
       help:route:

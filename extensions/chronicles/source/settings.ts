@@ -1,9 +1,8 @@
 import { environment } from '@toa.io/generic'
-import { resolve } from '@toa.io/pointer'
-import { BROKER, ID, SETTINGS } from '@toa.io/definitions/extensions.chronicles'
+import { SETTINGS } from '@toa.io/definitions/extensions.chronicles'
 import type { Settings } from '@toa.io/definitions/extensions.chronicles'
 
-/** Where the log is kept, as the service is deployed with it. */
+/** Where the log is kept and what it is kept of, as the service is deployed with them. */
 export function settings(): Settings {
   const value = environment.get(SETTINGS)
 
@@ -14,10 +13,10 @@ export function settings(): Settings {
   throw new Error(`${SETTINGS} is not set, so nothing says where the log is kept.`)
 }
 
-/** The writer ClickHouse is provisioned as, and the password of the reader it creates. */
+/** The user the store is provisioned as, and the password of the reader it creates. */
 export function credentials(): Credentials {
   const [username, password, reader] = KEYS.map((key) =>
-    environment.get(`${SETTINGS}_CLICKHOUSE_${key}`)
+    environment.get(`${SETTINGS}_STORE_${key}`)
   )
 
   if (username !== undefined && password !== undefined && reader !== undefined)
@@ -25,35 +24,7 @@ export function credentials(): Credentials {
 
   if (dev()) return { username: 'developer', password: 'secret', reader: 'secret' }
 
-  throw new Error(`${SETTINGS}_CLICKHOUSE_{USERNAME,PASSWORD,READER} are not all set.`)
-}
-
-/** The broker every component publishes to, with its credentials. */
-export function broker(): string {
-  if (
-    environment.get(`TOA_${ID.toUpperCase()}_${BROKER.toUpperCase()}`) === undefined &&
-    dev()
-  )
-    return DEV_BROKER
-
-  return resolve(ID, BROKER)[0]
-}
-
-/**
- * The broker as ClickHouse reaches it, with the credentials the components publish with unless
- * its address carries some of its own.
- */
-export function relay(settings: Settings): string {
-  const url = new URL(settings.clickhouse.broker)
-
-  if (url.username !== '') return url.href
-
-  const { username, password } = new URL(broker())
-
-  url.username = username
-  url.password = password
-
-  return url.href
+  throw new Error(`${SETTINGS}_STORE_{USERNAME,PASSWORD,READER} are not all set.`)
 }
 
 export interface Credentials {
@@ -70,16 +41,10 @@ function dev(): boolean {
 
 const KEYS = ['USERNAME', 'PASSWORD', 'READER']
 
-/*
- * Toa's own development stack is not on the conventional ports, which the applications built on
- * Toa are on, and ClickHouse reaches RabbitMQ over the compose network. See CONTRIBUTING.md.
- */
-const DEV_BROKER = 'amqp://developer:secret@localhost:31010'
-
+// Toa's own development stack is not on the conventional ports, which the applications built on
+// Toa are on. See CONTRIBUTING.md.
 const DEV: Settings = {
-  clickhouse: {
-    url: 'http://localhost:31030/chronicles',
-    broker: 'amqp://developer:secret@rabbitmq:5672'
-  },
-  ingest: true
+  store: { provider: 'clickhouse', url: 'http://localhost:31030/chronicles' },
+  ingest: true,
+  events: []
 }

@@ -2,7 +2,7 @@ Feature: Reading the log
 
   Background:
     Given the chronicles are empty
-    And the `chronicles` service is staged
+    And the chronicles scribe is running
     And I call `chronicles.ingest.ingest` with:
       """yaml
       input:
@@ -42,6 +42,7 @@ Feature: Reading the log
     When I call `chronicles.query.describe`
     Then the reply is received:
       """yaml
+      dialect: ClickHouse SQL; read `events` and `states` with FINAL
       labels:
         - label: client.page.viewed
           rows: 2
