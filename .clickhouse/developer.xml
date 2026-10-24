@@ -1,0 +1,8 @@
+<!-- what provisioning needs of the user it runs as: creating the reader and its profile -->
+<clickhouse>
+  <users>
+    <developer>
+      <access_management>1</access_management>
+    </developer>
+  </users>
+</clickhouse>

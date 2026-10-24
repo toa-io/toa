@@ -1,0 +1,19 @@
+name: misdeclared
+namespace: chronicled
+
+entity:
+  storage: mongodb
+  properties:
+    total:
+      type: integer
+
+operations:
+  transit:
+    concurrency: retry
+    input:
+      properties:
+        total:
+          type: integer
+      type: object
+
+chronicles: [shipped]

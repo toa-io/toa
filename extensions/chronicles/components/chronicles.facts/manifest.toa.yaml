@@ -1,0 +1,30 @@
+namespace: chronicles
+name: facts
+
+# The extension writes what this component is sent to the log.
+chronicles: ~
+
+operations:
+  record:
+    type: effect
+    input:
+      description: A fact a component sent, as the row it is written as
+      type: object
+      properties:
+        id:
+          type: string
+        label:
+          type: string
+        component:
+          type: string
+        time:
+          type: integer
+        entity:
+          type: "null"
+        version:
+          type: "null"
+        trace:
+          type: [string, "null"]
+        payload:
+          type: object
+      required: [id, label, component, time, payload]

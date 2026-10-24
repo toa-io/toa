@@ -1,0 +1,7 @@
+# manifest.toa.yaml chronicles declaration: the labels of the events that carry the component's
+# changes to the log
+type: array
+uniqueItems: true
+items:
+  type: string
+  pattern: ^[a-zA-Z][a-zA-Z0-9]*$

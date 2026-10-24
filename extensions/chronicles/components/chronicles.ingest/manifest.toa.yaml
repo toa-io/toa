@@ -1,0 +1,38 @@
+namespace: chronicles
+name: ingest
+
+# The extension writes what this component is sent to the log, under `client.`
+chronicles: ~
+
+operations:
+  ingest:
+    type: effect
+    input:
+      description: >
+        At most 100 events, each `{ id, name, time, payload? }`; as JSON, or as the text
+        `navigator.sendBeacon` sends, which the extension parses and checks
+      type: [array, string]
+      maxItems: 100
+      maxLength: 2097152
+    output:
+      type: object
+      properties:
+        status:
+          type: integer
+        accepted:
+          type: integer
+    errors: [INVALID, OVERSIZED]
+
+exposition:
+  isolated: true
+  /:
+    POST:
+      anonymous: true
+      io:throttle:
+        key: [ip]
+        requests: 60
+        interval: 60
+      io:status: status
+      io:output: [status, accepted]
+      help:method: null
+      endpoint: ingest

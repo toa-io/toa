@@ -36,6 +36,7 @@ export const DEFINED: ReadonlySet<string> = new Set([
   'bridges.bash',
   'bridges.node',
   'extensions.cadence',
+  'extensions.chronicles',
   'extensions.configuration',
   'extensions.continuity',
   'extensions.convergence',
