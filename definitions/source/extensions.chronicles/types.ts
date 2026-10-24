@@ -8,7 +8,12 @@ export interface Annotation {
 
   /** whether the client route is served */
   ingest?: boolean
+
+  /** how much of a browser's address the log keeps; `truncated` unless it says `full` */
+  ip?: Address
 }
+
+export type Address = 'truncated' | 'full'
 
 export interface Store {
   provider: 'clickhouse'
@@ -24,6 +29,8 @@ export interface Settings {
   retention?: number
 
   ingest: boolean
+
+  ip: Address
 
   /** the events whose renderings are rows of `events`, `namespace.component.event` */
   events: string[]

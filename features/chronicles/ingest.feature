@@ -54,10 +54,28 @@ Feature: What browsers send to the log
       - identity: 9c1f0a6d5b7e4f3a8d2c1b0a9e8f7d6c
       """
 
-  Scenario: A batch sent as text, as `navigator.sendBeacon` sends it
+  Scenario: The network of the client's address, and its country
     When I call `chronicles.ingestion.anonymous` with:
       """yaml
-      input: '{"events":[{"id":"b1","name":"page_left","time":1761200000000}]}'
+      input:
+        ip: 203.0.113.7
+        country: DE
+        events:
+          - id: n1
+            name: page_viewed
+            time: 1761200000000
+      """
+    Then the chronicles answer "SELECT ip, country FROM events" within 30 seconds:
+      """yaml
+      - ip: 203.0.113.0
+        country: DE
+      """
+
+  Scenario: A batch sent as a form, as `navigator.sendBeacon` sends it
+    When I call `chronicles.ingestion.anonymous` with:
+      """yaml
+      input:
+        events: '[{"id":"b1","name":"page_left","time":1761200000000}]'
       """
     Then the reply is received:
       """yaml
@@ -94,7 +112,7 @@ Feature: What browsers send to the log
 
     Examples:
       | input                                                                   |
-      | 'not json'                                                              |
+      | { events: 'not json' }                                                  |
       | { events: [{ id: a, name: Page, time: 1 }] }                            |
       | { events: [{ id: a, name: page.viewed, time: 1 }] }                     |
       | { events: [{ id: a, name: page, time: -1 }] }                           |

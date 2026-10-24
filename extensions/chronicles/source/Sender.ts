@@ -55,6 +55,8 @@ export class Sender extends Connector {
       entity: null,
       version: null,
       identity: typeof options?.identity === 'string' ? options.identity : null,
+      ip: null,
+      country: null,
       trace: context === undefined ? null : encode(context),
       payload: payload ?? {}
     }

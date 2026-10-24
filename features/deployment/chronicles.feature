@@ -30,7 +30,7 @@ Feature: Chronicles deployment
             - chronicles-queries
           variables:
             - name: TOA_CHRONICLES
-              value: '{"store":{"provider":"clickhouse","url":"https://ch.example.com:8443/shop"},"retention":730,"ingest":false,"events":["chronicled.orders.created"],"states":["chronicled.orders.snapshot"],"identities":{"chronicled.orders":"customer"}}'
+              value: '{"store":{"provider":"clickhouse","url":"https://ch.example.com:8443/shop"},"retention":730,"ingest":false,"ip":"truncated","events":["chronicled.orders.created"],"states":["chronicled.orders.snapshot"],"identities":{"chronicled.orders":"customer"}}'
             - name: TOA_CHRONICLES_STORE_USERNAME
               secret:
                 name: toa-chronicles-store

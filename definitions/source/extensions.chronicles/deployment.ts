@@ -68,7 +68,9 @@ export function deployment(
 /** The extension is deployed for the sake of the annotation, which a component need not name. */
 export const standalone = true
 
-function read(annotation: Annotation): Pick<Settings, 'store' | 'retention' | 'ingest'> {
+function read(
+  annotation: Annotation
+): Pick<Settings, 'store' | 'retention' | 'ingest' | 'ip'> {
   if (new URL(annotation.store.url).pathname.replace(/\//g, '') === '')
     throw new Error(
       'The store of chronicles names no database: the path of its address is the database.'
@@ -77,7 +79,8 @@ function read(annotation: Annotation): Pick<Settings, 'store' | 'retention' | 'i
   return {
     store: annotation.store,
     retention: annotation.retention,
-    ingest: annotation.ingest === true
+    ingest: annotation.ingest === true,
+    ip: annotation.ip ?? 'truncated'
   }
 }
 

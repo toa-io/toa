@@ -27,8 +27,9 @@ An order placed, a search made and a page left are three rows:
 | `agent.page_left`       | `chronicles.ingestion` | `NULL`   | `NULL`    | `{ path: "/pricing" }`            |
 
 Every row also has `id`, the same however often it is delivered, so a row is kept once;
-`identity`, whose it is, where something [says so](#identity); `time`, when it happened;
-`received`, when the store wrote it; and `trace`, the traceparent of the call that caused it.
+`identity`, whose it is, where something [says so](#identity); `ip` and `country`, of the
+browser that [sent it](#from-a-browser); `time`, when it happened; `received`, when the store wrote
+it; and `trace`, the traceparent of the call that caused it.
 
 **`states`** holds each entity as it stands: for every component that names a
 [state](#events-and-states), a row per entity — `component`, `entity`, `version`, `identity`,
@@ -156,10 +157,18 @@ content-type: application/json
 { "events": [{ "id": "0192f3a2-…", "name": "page_left", "time": 1761200000000 }] }
 ```
 
-It takes no credentials, and is throttled to 60 requests a minute per address, which takes
-[`exposition.ip`](/extensions/exposition/documentation/ip.md) to name the address. `text/plain` is
-read as JSON, so `navigator.sendBeacon`, which sends no `authorization`, can send a batch here; a
-signed-in client sends with `fetch(…, { keepalive: true })` instead. Anyone can send anything: a
+It takes no credentials, and is throttled to 60 requests a minute per address. A form whose
+`events` is their JSON is read as the JSON body, so `navigator.sendBeacon`, which sends no
+`authorization`, can send a batch here as the page closes:
+
+```javascript
+navigator.sendBeacon(
+  '/chronicles/ingestion/',
+  new URLSearchParams({ events: JSON.stringify(events) })
+)
+```
+
+A signed-in client sends with `fetch(…, { keepalive: true })` instead. Anyone can send anything: a
 `user` in a payload is what the client said.
 
 ### The body
@@ -176,6 +185,14 @@ signed-in client sends with `fetch(…, { keepalive: true })` instead. Anyone ca
 A request is answered once its events are written. A batch one event of which breaks any of the
 above is written not at all, and answered `422` with the code `INVALID`, or `OVERSIZED` for a
 payload too large, and the `index` of the event in `cause`.
+
+### Address and country
+
+Every row a browser sent has the `ip` and the `country` of the request, as the gateway reads them
+from the headers [`exposition.ip` and `exposition.country`](/extensions/exposition/documentation/ip.md)
+name, and `NULL` where it has none; a body that names either is overwritten. An address is
+personal data, and the log erases nothing, so of an address the log keeps its network — a `/24` of
+IPv4, a `/48` of IPv6 — unless the annotation says `ip: full`.
 
 ## Reading the log
 
@@ -319,11 +336,12 @@ chronicles:
   ingest: true
 ```
 
-|             |                                                  |
-| ----------- | ------------------------------------------------ |
-| `store`     | the provider that keeps the log, and its address |
-| `retention` | days a row of `events` is kept; absent, kept     |
-| `ingest`    | the browser route; absent, there is none         |
+|             |                                                             |
+| ----------- | ----------------------------------------------------------- |
+| `store`     | the provider that keeps the log, and its address            |
+| `retention` | days a row of `events` is kept; absent, kept                |
+| `ingest`    | the browser route; absent, there is none                    |
+| `ip`        | `full` keeps a browser's whole address; absent, its network |
 
 ```shell
 $ toa conceal chronicles-store username=… password=… reader=…

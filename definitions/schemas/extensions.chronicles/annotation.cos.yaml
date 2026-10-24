@@ -21,5 +21,10 @@ properties:
   ingest:
     description: Whether the client route is served
     type: boolean
+  ip:
+    description: >
+      How much of a browser's address the log keeps: its network, truncated to /24 of IPv4 and /48
+      of IPv6, or all of it
+    enum: [truncated, full]
 required: [store]
 additionalProperties: false

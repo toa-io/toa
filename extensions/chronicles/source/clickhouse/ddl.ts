@@ -21,6 +21,8 @@ export function tables(retention: number | undefined): string[] {
       entity Nullable(String),
       version Nullable(UInt64),
       identity Nullable(String),
+      ip Nullable(String),
+      country LowCardinality(Nullable(String)),
       trace Nullable(String),
       payload JSON
     ) ENGINE = ReplacingMergeTree

@@ -39,7 +39,10 @@ export class Factory implements extensions.Factory {
         case FACTS:
           return new Facts(() => this.keep().writer)
         case INGESTION:
-          return new Client(() => this.keep().writer)
+          return new Client(
+            () => this.keep().writer,
+            () => settings().ip
+          )
       }
 
     return new Sender(this.host, locator)

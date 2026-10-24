@@ -9,10 +9,11 @@ operations:
     type: effect
     input: &batch
       description: >
-        `{ events }`, at most 100 of them, each `{ id, name, time, payload? }`; as JSON, or as
-        the text `navigator.sendBeacon` sends, which the extension parses and checks
-      type: [object, string]
-      maxLength: 2097152
+        `{ events }`, at most 100 of them, each `{ id, name, time, payload? }`, and the client's
+        `ip` and `country`, which the gateway puts in; as JSON, or as the form
+        `navigator.sendBeacon` sends, whose `events` is their JSON, which the extension parses
+        and checks
+      type: object
     output: &accepted
       type: object
       properties:
@@ -32,6 +33,8 @@ exposition:
   /:
     POST:
       anonymous: true
+      map:ip: ip
+      map:country: country
       io:throttle:
         key: [ip]
         requests: 60
@@ -45,6 +48,8 @@ exposition:
       auth:id: identity
       map:segments:
         identity: identity
+      map:ip: ip
+      map:country: country
       io:throttle:
         key: [identity]
         requests: 60

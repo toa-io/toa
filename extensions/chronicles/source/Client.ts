@@ -1,7 +1,9 @@
 import { current, encode } from 'openspan'
 import { Connector, exceptions } from '@toa.io/core'
 import { AGENT, INGESTION, NAMESPACE } from '@toa.io/definitions/extensions.chronicles'
+import { keep } from './address.ts'
 import type { Row } from './Provider.ts'
+import type { Address } from '@toa.io/definitions/extensions.chronicles'
 import type { Writer } from './Writer.ts'
 
 /**
@@ -12,11 +14,13 @@ export class Client extends Connector {
   public readonly name = 'chronicles'
 
   private readonly writer: () => Writer
+  private readonly address: () => Address
 
-  public constructor(writer: () => Writer) {
+  public constructor(writer: () => Writer, address: () => Address) {
     super()
 
     this.writer = writer
+    this.address = address
   }
 
   public async invoke(method: string, ...args: any[]): Promise<unknown> {
@@ -41,6 +45,11 @@ export class Client extends Connector {
     const context = current()
     const trace = context === undefined ? null : encode(context)
 
+    // put in by the gateway, which overwrites whatever the body says of them
+    const { ip, country } = input as { ip?: unknown; country?: unknown }
+    const address = keep(ip, this.address())
+    const from = typeof country === 'string' ? country : null
+
     const rows = events.map((event): Row => ({
       id: event.id,
       label: `${AGENT}.${event.name}`,
@@ -49,6 +58,8 @@ export class Client extends Connector {
       entity: null,
       version: null,
       identity,
+      ip: address,
+      country: from,
       trace,
       payload: event.payload ?? {}
     }))
@@ -60,25 +71,24 @@ export class Client extends Connector {
 }
 
 /**
- * A batch, `{ events }`, from JSON or from the text `navigator.sendBeacon` sends, which the gateway
- * hands over as a string. Checked here rather than by the operation's schema, which cannot read a
- * string. `identified` is whether the gateway put the identity in, which is then the one key
- * beside `events` the body may have.
+ * A batch, `{ events }`: as JSON, or as the form `navigator.sendBeacon` sends, whose `events` is
+ * the JSON of them. Checked here rather than by the operation's schema, which cannot read the
+ * form's. `identified` is whether the gateway put the identity in, which is then a key the body
+ * may have beside `events`.
  */
 function parse(input: unknown, identified: boolean): Event[] | Error {
-  let body = input
-
-  if (typeof body === 'string')
-    try {
-      body = JSON.parse(body)
-    } catch {
-      return invalid('The body is not JSON')
-    }
-
-  if (typeof body !== 'object' || body === null || Array.isArray(body))
+  if (typeof input !== 'object' || input === null || Array.isArray(input))
     return invalid('The body is `{ events }`')
 
-  const { events, identity, ...rest } = body as Record<string, unknown>
+  // `ip` and `country` are the gateway's, which sets them on every request it makes
+  const {
+    events: given,
+    identity,
+    ip: _ip,
+    country: _country,
+    ...rest
+  } = input as Record<string, unknown>
+
   const extra = Object.keys(rest)
 
   if (extra.length > 0) return invalid(`The body has no '${extra[0]}'`)
@@ -88,6 +98,15 @@ function parse(input: unknown, identified: boolean): Event[] | Error {
     return invalid(
       'The body names no identity: a client that has one sends it in the path'
     )
+
+  let events = given
+
+  if (typeof events === 'string')
+    try {
+      events = JSON.parse(events)
+    } catch {
+      return invalid('`events` is not JSON')
+    }
 
   if (!Array.isArray(events)) return invalid('`events` is an array of events')
 

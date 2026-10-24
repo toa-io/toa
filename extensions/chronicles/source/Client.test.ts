@@ -9,7 +9,10 @@ let client: Client
 
 beforeEach(async () => {
   writer = { write: mock.fn(async () => undefined) }
-  client = new Client(() => writer as unknown as Writer)
+  client = new Client(
+    () => writer as unknown as Writer,
+    () => 'truncated'
+  )
 
   await client.connect()
 })
@@ -58,10 +61,10 @@ it('should refuse a body that says whose it is, where the path does not', async 
   assert.equal(writer.write.mock.callCount(), 0)
 })
 
-it('should read a batch sent as text, in one write', async () => {
+it('should read a batch sent as a form, whose events are their JSON, in one write', async () => {
   const reply = await client.invoke(
     'ingest',
-    JSON.stringify({ events: [event, { ...event, id: 'c2' }] }),
+    { events: JSON.stringify([event, { ...event, id: 'c2' }]) },
     null
   )
 
@@ -112,4 +115,28 @@ it('should refuse a name with a dot, which a label would read as two', async () 
   )) as Error
 
   assert.equal(reply.message, 'INVALID')
+})
+
+it('should keep the network of the address, and the country, the gateway put in', async () => {
+  await client.invoke(
+    'ingest',
+    { events: [event], ip: '203.0.113.7', country: 'DE' },
+    null
+  )
+
+  assert.equal(rows()[0].ip, '203.0.113.0')
+  assert.equal(rows()[0].country, 'DE')
+})
+
+it('should keep the whole address where the annotation says so', async () => {
+  const full = new Client(
+    () => writer as unknown as Writer,
+    () => 'full'
+  )
+
+  await full.connect()
+  await full.invoke('ingest', { events: [event], ip: '203.0.113.7', country: null }, null)
+
+  assert.equal(rows()[0].ip, '203.0.113.7')
+  assert.equal(rows()[0].country, null)
 })

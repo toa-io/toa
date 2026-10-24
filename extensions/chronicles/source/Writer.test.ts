@@ -15,6 +15,8 @@ const row = (id: string): Row => ({
   entity: null,
   version: null,
   identity: null,
+  ip: null,
+  country: null,
   trace: null,
   payload: {}
 })

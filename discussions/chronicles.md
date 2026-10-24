@@ -179,6 +179,7 @@ CREATE TABLE events (
   id String, label LowCardinality(String), component LowCardinality(String),
   time DateTime64(3, 'UTC'), received DateTime64(3, 'UTC') DEFAULT now64(3),
   entity Nullable(String), version Nullable(UInt64), identity Nullable(String),
+  ip Nullable(String), country LowCardinality(Nullable(String)),
   trace Nullable(String), payload JSON
 ) ENGINE = ReplacingMergeTree PARTITION BY toYYYYMM(time) ORDER BY (label, toDate(time), id)
   [TTL toDateTime(time) + INTERVAL <retention> DAY]
@@ -243,9 +244,26 @@ Two routes, two operations: `POST /chronicles/ingestion/:identity/` takes `auth:
 maps the path's identity into the input, which the operation `identified` writes; `POST
 /chronicles/ingestion/` is anonymous, and the operation `anonymous` refuses a body that names an
 identity, so the one it writes has none. The body is an object rather than the array of events,
-because a route variable reaches an operation as a property of its input. `text/plain` is read as
-JSON too, so `navigator.sendBeacon` — which sends no `authorization` — can send to the anonymous
-route. Each is throttled to 60 requests a minute, by address and by identity.
+because a route variable reaches an operation as a property of its input. A form whose `events`
+is their JSON is read as the JSON body, so `navigator.sendBeacon` — which sends no
+`authorization`, and sends a form without a preflight — can send to the anonymous route. Each is
+throttled to 60 requests a minute, by address and by identity.
+
+Both routes map the client's `ip` and `country` into the input, with `map:ip` and `map:country`,
+which the gateway resolves once per request from the headers `exposition.ip` and
+`exposition.country` name. Of an address, the row keeps its network — `/24` of IPv4, `/48` of
+IPv6 — unless the annotation says `ip: full`: an address is personal data, and the log erases
+nothing.
+
+### In the gateway
+
+- `exposition.country` names the header the client's country is read from, resolved into the
+  request context as `exposition.ip` is.
+- `censor` is the list of countries it answers `451`, read from that context; it no longer names a
+  header of its own. A context that still declares `censor: { header, values }` fails the deploy,
+  and `migrations/332.md` says what to write instead.
+- `map:ip` and `map:country` put the resolved address and country into an operation's input, as
+  `null` where the request has none, so a body cannot say them for the client.
 
 ## The changes, by area
 

@@ -19,6 +19,8 @@ Feature: Chronicles through the gateway
       | 30c969e05ff6437097ed5f07fc52358e | 4344518184ad44228baffce7a44fd0b1 | system:chronicles:query |
     And the annotation:
       """yaml
+      ip: x-forwarded-for
+      country: cf-ipcountry
       mcp:
         name: Shop
       """
@@ -169,8 +171,10 @@ Feature: Chronicles through the gateway
       host: nex.toa.io
       accept: application/yaml
       content-type: application/json
+      x-forwarded-for: 203.0.113.7
+      cf-ipcountry: DE
 
-      {"events": [{"id": "g1", "name": "page_viewed", "time": 1761200000000, "payload": {"path": "/"}}]}
+      {"events": [{"id": "g1", "name": "page_viewed", "time": 1761200000000, "payload": {"path": "/"}}], "ip": "198.51.100.1"}
       """
     Then the following reply is sent:
       """
@@ -178,14 +182,19 @@ Feature: Chronicles through the gateway
 
       accepted: 1
       """
+    And the chronicles answer "SELECT ip, country FROM events WHERE id = 'g1'" within 30 seconds:
+      """yaml
+      - ip: 203.0.113.0
+        country: DE
+      """
     When the following request is received:
       """
       POST /chronicles/ingestion/ HTTP/1.1
       host: nex.toa.io
       accept: application/yaml
-      content-type: text/plain
+      content-type: application/x-www-form-urlencoded
 
-      {"events": [{"id": "g2", "name": "page_left", "time": 1761200000000}]}
+      events=%5B%7B%22id%22%3A%22g2%22%2C%22name%22%3A%22page_left%22%2C%22time%22%3A1761200000000%7D%5D
       """
     Then the following reply is sent:
       """

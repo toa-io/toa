@@ -58,6 +58,8 @@ export function row(
     entity: typeof id === 'string' ? id : null,
     version: typeof VERSION === 'number' ? VERSION : null,
     identity: whose(payload, identity),
+    ip: null,
+    country: null,
     trace: message.telemetry ?? null,
     payload
   }

@@ -188,7 +188,8 @@ interface Table {
   create_table_query: string
 }
 
-const EVENTS = 'id, label, component, time, entity, version, identity, trace, payload'
+const EVENTS =
+  'id, label, component, time, entity, version, identity, ip, country, trace, payload'
 const STATES = 'component, entity, version, identity, time, payload'
 
 const UNITS: Record<string, number> = {

@@ -62,6 +62,10 @@ export interface Row {
   /** the identity it is of, where something says so */
   identity: string | null
 
+  /** the address and the country of the browser that sent it, where one did */
+  ip: string | null
+  country: string | null
+
   /** the W3C traceparent of the call that caused it */
   trace: string | null
 
