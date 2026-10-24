@@ -39,3 +39,15 @@ it('should refuse an identifier it would have to quote', () => {
 it('should escape a literal', () => {
   assert.equal(literal("it's \\ fine"), "'it\\'s \\\\ fine'")
 })
+
+it('should change the retention of the table it is given, by its column', () => {
+  assert.deepEqual(
+    retention(30, 'ReplacingMergeTree ORDER BY id', 'encounters', 'received'),
+    ['ALTER TABLE encounters MODIFY TTL toDateTime(received) + INTERVAL 30 DAY']
+  )
+
+  const engine =
+    'ReplacingMergeTree TTL toDateTime(received) + toIntervalDay(30) SETTINGS a = 1'
+
+  assert.deepEqual(retention(30, engine, 'encounters', 'received'), [])
+})

@@ -3,13 +3,17 @@
  * replicas starting together collide on nothing; the retention, which would change, is compared
  * with what is there and changed only where it differs.
  */
-export const TABLES = ['events', 'states']
+export const TABLES = ['events', 'states', 'encounters']
 
 export function database(name: string): string[] {
   return [`CREATE DATABASE IF NOT EXISTS ${id(name)}`]
 }
 
-/** What is kept: a row for everything that happened, and each entity as it stands. */
+/**
+ * What is kept: a row for everything a component did, each entity as it stands, and what clients
+ * sent. An encounter is kept and expires by when it was received: its `time` is the client's
+ * clock, which decides nothing of where a row is.
+ */
 export function tables(retention: number | undefined): string[] {
   return [
     `CREATE TABLE IF NOT EXISTS events (
@@ -21,14 +25,12 @@ export function tables(retention: number | undefined): string[] {
       entity Nullable(String),
       version Nullable(UInt64),
       identity Nullable(String),
-      ip Nullable(String),
-      country LowCardinality(Nullable(String)),
       trace Nullable(String),
       payload JSON
     ) ENGINE = ReplacingMergeTree
     PARTITION BY toYYYYMM(time)
     ORDER BY (label, toDate(time), id)
-    ${retention === undefined ? '' : ttl(retention)}`,
+    ${retention === undefined ? '' : ttl(retention, 'time')}`,
 
     `CREATE TABLE IF NOT EXISTS states (
       component LowCardinality(String),
@@ -39,22 +41,56 @@ export function tables(retention: number | undefined): string[] {
       received DateTime64(3, 'UTC') DEFAULT now64(3),
       payload JSON
     ) ENGINE = ReplacingMergeTree(version)
-    ORDER BY (component, entity)`
+    ORDER BY (component, entity)`,
+
+    `CREATE TABLE IF NOT EXISTS encounters (
+      id String,
+      name LowCardinality(String),
+      time DateTime64(3, 'UTC'),
+      received DateTime64(3, 'UTC') DEFAULT now64(3),
+      visitor Nullable(String),
+      session Nullable(String),
+      identity Nullable(String),
+      ip Nullable(String),
+      country LowCardinality(Nullable(String)),
+      payload JSON
+    ) ENGINE = ReplacingMergeTree
+    PARTITION BY toYYYYMM(received)
+    ORDER BY (name, toDate(time), id)
+    ${retention === undefined ? '' : ttl(retention, 'received')}`
   ]
 }
 
-/** `ALTER TABLE` for the retention declared, given what the table states now; none if it agrees. */
-export function retention(declared: number | undefined, engine: string): string[] {
-  const stated = /TTL toDateTime\(time\) \+ toIntervalDay\((\d+)\)/.exec(engine)?.[1]
+/** The tables a retention applies to, and the column each expires by. */
+export const EXPIRING: Array<[table: string, column: string]> = [
+  ['events', 'time'],
+  ['encounters', 'received']
+]
+
+/**
+ * `ALTER TABLE` for the retention declared, given what the table states now; none if it agrees.
+ * `column` is the one the table expires by.
+ */
+// eslint-disable-next-line max-params
+export function retention(
+  declared: number | undefined,
+  engine: string,
+  table = 'events',
+  column = 'time'
+): string[] {
+  const pattern = new RegExp(
+    `TTL toDateTime\\(${column}\\) \\+ toIntervalDay\\((\\d+)\\)`
+  )
+  const stated = pattern.exec(engine)?.[1]
 
   if (declared === undefined)
     return stated === undefined && !engine.includes(' TTL ')
       ? []
-      : ['ALTER TABLE events REMOVE TTL']
+      : [`ALTER TABLE ${table} REMOVE TTL`]
 
   if (stated === String(declared)) return []
 
-  return [`ALTER TABLE events MODIFY ${ttl(declared)}`]
+  return [`ALTER TABLE ${table} MODIFY ${ttl(declared, column)}`]
 }
 
 /**
@@ -62,6 +98,7 @@ export function retention(declared: number | undefined, engine: string): string[
  * lift, because they are constraints of its profile rather than settings a request passes. Past
  * the rows a query is refused, which is the overflow a client's query cache allows; a query of
  * the provider's own asks for one row more than it answers, to tell a full answer from a cut one.
+ * Past the bytes, or the queries one reader runs at once, a query is refused.
  */
 export function reader(database: string, password: string): string[] {
   const name = id(`${database}_reader`)
@@ -72,7 +109,9 @@ export function reader(database: string, password: string): string[] {
       readonly = 2 CONST,
       max_execution_time = ${LIMITS.seconds} CONST,
       max_result_rows = ${LIMITS.rows + 1} CONST,
-      max_memory_usage = ${LIMITS.memory} CONST`,
+      max_result_bytes = ${LIMITS.bytes} CONST,
+      max_memory_usage = ${LIMITS.memory} CONST,
+      max_concurrent_queries_for_user = ${LIMITS.concurrent} CONST`,
     `CREATE USER IF NOT EXISTS ${name} IDENTIFIED WITH sha256_password BY ${literal(password)}`,
     `ALTER USER ${name} IDENTIFIED WITH sha256_password BY ${literal(password)}
       SETTINGS PROFILE ${literal(`${database}_reader`)}`,
@@ -80,7 +119,13 @@ export function reader(database: string, password: string): string[] {
   ]
 }
 
-export const LIMITS = { seconds: 30, rows: 10_000, memory: 4_000_000_000 }
+export const LIMITS = {
+  seconds: 30,
+  rows: 10_000,
+  bytes: 64 * 1024 * 1024,
+  memory: 4_000_000_000,
+  concurrent: 4
+}
 
 /** An identifier, which the annotation and the schema have already held to this. */
 export function id(name: string): string {
@@ -94,8 +139,8 @@ export function literal(value: string): string {
   return "'" + value.replace(/\\/g, '\\\\').replace(/'/g, "\\'") + "'"
 }
 
-function ttl(days: number): string {
-  return `TTL toDateTime(time) + INTERVAL ${days} DAY`
+function ttl(days: number, column: string): string {
+  return `TTL toDateTime(${column}) + INTERVAL ${days} DAY`
 }
 
 const IDENTIFIER = /^[a-zA-Z_][a-zA-Z0-9_]*$/

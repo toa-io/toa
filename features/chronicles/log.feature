@@ -62,7 +62,7 @@ Feature: Chronicles
       """yaml
       - paths: [items, shipping.country, total]
       """
-    And the chronicles answer "SELECT toString(payload.items) AS items FROM events FINAL":
+    And the chronicles answer "SELECT toJSONString(payload.items) AS items FROM events FINAL":
       """yaml
       - items: '[{"quantity":2,"sku":"T-1"}]'
       """
@@ -88,13 +88,19 @@ Feature: Chronicles
           - sku: T-2
             quantity: 1
       """
-    Then the chronicles answer "SELECT entity, total, toTypeName(total) AS type, shipping.country AS country, arraySum(arrayMap(item -> item.quantity, items)) AS units FROM chronicled_orders_created" within 30 seconds:
+    Then the chronicles answer "SELECT entity, total, toTypeName(total) AS type, shipping.country AS country FROM chronicled_orders_created" within 30 seconds:
       """yaml
       - entity: 72cf9b0ab0ac4ab2b8036e4e940ddcae
         total: 120
         type: Nullable(Int64)
         country: DE
-        units: 3
+      """
+    And the chronicles answer "SELECT item.sku AS sku, sum(item.quantity) AS units FROM chronicled_orders_created ARRAY JOIN items AS item GROUP BY sku ORDER BY sku":
+      """yaml
+      - sku: T-1
+        units: 2
+      - sku: T-2
+        units: 1
       """
     And the chronicles answer "SELECT entity, version, total FROM chronicled_orders" within 30 seconds:
       """yaml
@@ -112,6 +118,7 @@ Feature: Chronicles
       """
     When the chronicles scribe stops
     And the chronicles of `chronicled.orders` are deployed
+    And I compose `chronicled.orders` component
     And the chronicles scribe is running
     Then the chronicles answer "SELECT name FROM system.tables WHERE database = 'chronicles' AND startsWith(name, 'chronicled_') ORDER BY name":
       """yaml
@@ -171,7 +178,7 @@ Feature: Chronicles
     Then the following exception is thrown:
       """yaml
       code: 600
-      message: "'chronicled.facts' declares no fact 'whispered'"
+      message: "MisuseException: 'chronicled.facts' declares no fact 'whispered'"
       """
 
   Scenario: What is committed while the scribe is away is written once it is back

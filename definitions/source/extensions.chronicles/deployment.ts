@@ -1,14 +1,15 @@
 import { components } from './components.ts'
 import { version } from '../version.ts'
-import { INGESTION, NAMESPACE, SECRET, SERVICE, SETTINGS } from './const.ts'
+import { ENCOUNTERS, NAMESPACE, SECRET, SERVICE, SETTINGS, view } from './const.ts'
 import * as schemas from './schemas.ts'
-import type { Annotation, Declaration, Settings } from './types.ts'
+import type { Annotation, Contract, Declaration, Settings } from './types.ts'
 import type { context } from '@toa.io/norm'
 import type { Dependency, Service, Variable } from '@toa.io/operations'
 
 /**
- * The events the components name are consumed, so they are published, and the service consumes
- * them: it is given which they are, the store, and the store's credentials, which nothing else is.
+ * The events the components declare are consumed, so they are published, and the service consumes
+ * them: it is given which they are and their contracts, the contracts of the facts, the store, and
+ * the store's credentials, which nothing else is.
  * Where the events travel is the context's `amqp`, as it is for any receiver.
  */
 export function deployment(
@@ -28,29 +29,42 @@ export function deployment(
 
   schemas.annotation.validate<Annotation>(annotation, 'Invalid chronicles annotation')
 
-  const events: string[] = []
-  const states: string[] = []
+  const events: Record<string, Contract> = {}
+  const states: Record<string, Contract> = {}
+  const facts: Record<string, Contract> = {}
   const identities: Record<string, string> = {}
 
   for (const instance of declaring) {
     const declaration = (instance.manifest as unknown as Declaration | undefined) ?? NONE
     const id = instance.locator.id
 
-    for (const label of declaration.events) events.push(`${id}.${label}`)
+    for (const [event, contract] of Object.entries(declaration.events))
+      events[`${id}.${event}`] = contract
 
-    if (declaration.state !== undefined) states.push(`${id}.${declaration.state}`)
+    if (declaration.state !== undefined) {
+      const { event, ...contract } = declaration.state
+
+      states[`${id}.${event}`] = contract
+    }
+
+    for (const [fact, contract] of Object.entries(declaration.facts))
+      facts[`${id}.${fact}`] = contract
+
     if (declaration.identity !== null) identities[id] = declaration.identity
   }
+
+  distinct(events, states, facts)
 
   const settings: Settings = {
     ...read(annotation),
     events,
     states,
+    facts,
     identities
   }
 
   const labels = components().labels.filter(
-    (label) => settings.ingest || label !== `${NAMESPACE}-${INGESTION}`
+    (label) => settings.encounters || label !== `${NAMESPACE}-${ENCOUNTERS}`
   )
 
   const service: Service = {
@@ -62,7 +76,10 @@ export function deployment(
   }
 
   // a state's event is consumed as an event's is
-  return { services: [service], events: [...new Set([...events, ...states])] }
+  return {
+    services: [service],
+    events: [...new Set([...Object.keys(events), ...Object.keys(states)])]
+  }
 }
 
 /** The extension is deployed for the sake of the annotation, which a component need not name. */
@@ -70,7 +87,7 @@ export const standalone = true
 
 function read(
   annotation: Annotation
-): Pick<Settings, 'store' | 'retention' | 'ingest' | 'ip'> {
+): Pick<Settings, 'store' | 'retention' | 'encounters' | 'ip'> {
   if (new URL(annotation.store.url).pathname.replace(/\//g, '') === '')
     throw new Error(
       'The store of chronicles names no database: the path of its address is the database.'
@@ -79,8 +96,35 @@ function read(
   return {
     store: annotation.store,
     retention: annotation.retention,
-    ingest: annotation.ingest === true,
+    encounters: annotation.encounters === true,
     ip: annotation.ip ?? 'truncated'
+  }
+}
+
+/**
+ * A label is a view by its name with its dots as underscores, and a state by its component's, so
+ * two that read as one view are refused here rather than left to replace each other in the store.
+ */
+function distinct(
+  events: Record<string, Contract>,
+  states: Record<string, Contract>,
+  facts: Record<string, Contract>
+): void {
+  const seen = new Map<string, string>()
+  const components = Object.keys(states).map((label) =>
+    label.slice(0, label.lastIndexOf('.'))
+  )
+
+  for (const label of [...Object.keys(events), ...Object.keys(facts), ...components]) {
+    const name = view(label)
+    const other = seen.get(name)
+
+    if (other !== undefined && other !== label)
+      throw new Error(
+        `Chronicles of '${other}' and '${label}' would both be the view '${name}'.`
+      )
+
+    seen.set(name, label)
   }
 }
 
@@ -93,4 +137,4 @@ function credentials(): Variable[] {
 }
 
 const KEYS = ['username', 'password', 'reader']
-const NONE: Declaration = { events: [], identity: null }
+const NONE: Declaration = { events: {}, facts: {}, identity: null }

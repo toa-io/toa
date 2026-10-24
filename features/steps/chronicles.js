@@ -44,7 +44,10 @@ Given(
    * @this {toa.features.Context}
    */
   async function (table) {
-    await deploy.call(this, table.raw().map(([reference]) => reference))
+    await deploy.call(
+      this,
+      table.raw().map(([reference]) => reference)
+    )
   }
 )
 
@@ -133,7 +136,10 @@ Then(
     const time = Date.parse(value.replace(' ', 'T') + 'Z')
     const age = Date.now() - time
 
-    assert.ok(age >= -5000 && age < 60000, `'${value}' at '${path}' is not within the last minute`)
+    assert.ok(
+      age >= -5000 && age < 60000,
+      `'${value}' at '${path}' is not within the last minute`
+    )
   }
 )
 

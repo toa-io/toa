@@ -8,6 +8,7 @@ export type DescribeOutput = {
   dialect?: string
   labels?: unknown[]
   states?: unknown[]
+  encounters?: unknown[]
   views?: unknown[]
 }
 
@@ -29,6 +30,10 @@ export type DefineInput = {
   sql: string
   /** Seconds between computations of a materialized view; absent, a plain view */
   refresh?: number
+  /** What the view is, in a few words */
+  title?: string
+  /** What a row of the view is, and what each of its columns counts */
+  description?: string
 }
 
 export type DropInput = {

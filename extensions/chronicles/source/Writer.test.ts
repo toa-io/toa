@@ -15,8 +15,6 @@ const row = (id: string): Row => ({
   entity: null,
   version: null,
   identity: null,
-  ip: null,
-  country: null,
   trace: null,
   payload: {}
 })
@@ -83,4 +81,23 @@ it('should write rows and states of one moment together', async () => {
 
   assert.equal(provider.write.mock.callCount(), 1)
   assert.deepEqual(provider.write.mock.calls[0].arguments[1], [kept])
+})
+
+it('should write encounters with the rows of the same moment', async () => {
+  const sent = {
+    id: 'c1',
+    name: 'page_viewed',
+    time: 0,
+    visitor: 'v1',
+    session: null,
+    identity: null,
+    ip: null,
+    country: null,
+    payload: {}
+  }
+
+  await Promise.all([writer.write([row('a')]), writer.write([], [], [sent])])
+
+  assert.equal(provider.write.mock.callCount(), 1)
+  assert.deepEqual(provider.write.mock.calls[0].arguments[2], [sent])
 })

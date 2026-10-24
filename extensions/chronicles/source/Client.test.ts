@@ -17,9 +17,9 @@ beforeEach(async () => {
   await client.connect()
 })
 
-/** what the batch written held, one row at a time */
+/** what the batch written held, one encounter at a time */
 const rows = (): any[] =>
-  writer.write.mock.calls.flatMap((call) => call.arguments[0] as any[])
+  writer.write.mock.calls.flatMap((call) => call.arguments[2] as any[])
 
 const event = {
   id: 'c1',
@@ -28,31 +28,31 @@ const event = {
   payload: { path: '/' }
 }
 
-it('should write each event under client, with its own id and time', async () => {
-  const reply = await client.invoke('ingest', { events: [event] }, null)
+it('should write each event as an encounter, with its own id and time', async () => {
+  const reply = await client.invoke('write', { events: [event] }, null)
 
   assert.deepEqual(reply, { status: 202, accepted: 1 })
 
   const [written] = rows()
 
   assert.equal(written.id, 'c1')
-  assert.equal(written.label, 'agent.page_viewed')
-  assert.equal(written.component, 'chronicles.ingestion')
+  assert.equal(written.name, 'page_viewed')
   assert.equal(written.time, 1761200000000)
-  assert.equal(written.entity, null)
+  assert.equal(written.visitor, null)
+  assert.equal(written.session, null)
   assert.equal(written.identity, null)
   assert.deepEqual(written.payload, { path: '/' })
 })
 
 it('should write the identity the gateway verified', async () => {
-  await client.invoke('ingest', { events: [event], identity: 'a1b2' }, 'a1b2')
+  await client.invoke('write', { events: [event], identity: 'a1b2' }, 'a1b2')
 
   assert.equal(rows()[0].identity, 'a1b2')
 })
 
 it('should refuse a body that says whose it is, where the path does not', async () => {
   const reply = (await client.invoke(
-    'ingest',
+    'write',
     { events: [event], identity: 'a1b2' },
     null
   )) as Error
@@ -63,7 +63,7 @@ it('should refuse a body that says whose it is, where the path does not', async 
 
 it('should read a batch sent as a form, whose events are their JSON, in one write', async () => {
   const reply = await client.invoke(
-    'ingest',
+    'write',
     { events: JSON.stringify([event, { ...event, id: 'c2' }]) },
     null
   )
@@ -73,14 +73,14 @@ it('should read a batch sent as a form, whose events are their JSON, in one writ
 })
 
 it('should refuse an array, which is not the body', async () => {
-  const reply = (await client.invoke('ingest', [event], null)) as Error
+  const reply = (await client.invoke('write', [event], null)) as Error
 
   assert.equal(reply.message, 'INVALID')
 })
 
 it('should refuse more than 100 events', async () => {
   const events = Array.from({ length: 101 }, (_, i) => ({ ...event, id: `c${i}` }))
-  const reply = (await client.invoke('ingest', { events }, null)) as Error
+  const reply = (await client.invoke('write', { events }, null)) as Error
 
   assert.equal(reply.message, 'INVALID')
   assert.equal(writer.write.mock.callCount(), 0)
@@ -88,7 +88,7 @@ it('should refuse more than 100 events', async () => {
 
 it('should refuse a payload over 16 KiB, and say which', async () => {
   const large = { ...event, id: 'c2', payload: { blob: 'x'.repeat(17_000) } }
-  const reply = (await client.invoke('ingest', { events: [event, large] }, null)) as Error
+  const reply = (await client.invoke('write', { events: [event, large] }, null)) as Error
 
   assert.equal(reply.message, 'OVERSIZED')
   assert.equal((reply.cause as any).index, 1)
@@ -97,7 +97,7 @@ it('should refuse a payload over 16 KiB, and say which', async () => {
 
 it('should write nothing of a batch one event of which is not one', async () => {
   const reply = (await client.invoke(
-    'ingest',
+    'write',
     { events: [event, { ...event, name: 'Page' }] },
     null
   )) as Error
@@ -107,9 +107,9 @@ it('should write nothing of a batch one event of which is not one', async () => 
   assert.equal(writer.write.mock.callCount(), 0)
 })
 
-it('should refuse a name with a dot, which a label would read as two', async () => {
+it('should refuse a name with a dot', async () => {
   const reply = (await client.invoke(
-    'ingest',
+    'write',
     { events: [{ ...event, name: 'page.viewed' }] },
     null
   )) as Error
@@ -119,7 +119,7 @@ it('should refuse a name with a dot, which a label would read as two', async () 
 
 it('should keep the network of the address, and the country, the gateway put in', async () => {
   await client.invoke(
-    'ingest',
+    'write',
     { events: [event], ip: '203.0.113.7', country: 'DE' },
     null
   )
@@ -135,8 +135,41 @@ it('should keep the whole address where the annotation says so', async () => {
   )
 
   await full.connect()
-  await full.invoke('ingest', { events: [event], ip: '203.0.113.7', country: null }, null)
+  await full.invoke('write', { events: [event], ip: '203.0.113.7', country: null }, null)
 
   assert.equal(rows()[0].ip, '203.0.113.7')
   assert.equal(rows()[0].country, null)
+})
+
+it('should write the visitor and the session of the batch', async () => {
+  await client.invoke('write', { visitor: 'v1', session: 's1', events: [event] }, null)
+
+  assert.equal(rows()[0].visitor, 'v1')
+  assert.equal(rows()[0].session, 's1')
+})
+
+it('should refuse a visitor or a session that is not an id', async () => {
+  for (const body of [
+    { visitor: '', events: [event] },
+    { session: 7, events: [event] },
+    { visitor: 'v'.repeat(65), events: [event] }
+  ]) {
+    const reply = (await client.invoke('write', body, null)) as Error
+
+    assert.equal(reply.message, 'INVALID')
+  }
+})
+
+it('should keep a time as the client said, within what the store has dates for', async () => {
+  await client.invoke('write', { events: [{ ...event, time: 0 }] }, null)
+
+  assert.equal(rows()[0].time, 0)
+
+  const reply = (await client.invoke(
+    'write',
+    { events: [{ ...event, time: Date.UTC(2300, 0, 1) }] },
+    null
+  )) as Error
+
+  assert.equal(reply.message, 'INVALID')
 })

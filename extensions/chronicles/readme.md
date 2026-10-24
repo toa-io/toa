@@ -94,22 +94,22 @@ delivered. One committed before the scribe first ran in a deployment is not.
 
 ### Types
 
-| declared                                      | read as                                     |
-| --------------------------------------------- | ------------------------------------------- |
-| `string`                                      | `String`                                    |
-| `string` with `enum`                          | `LowCardinality(String)`                    |
-| `integer`                                     | `Int64`                                     |
-| `number`                                      | `Float64`                                   |
-| `boolean`                                     | `Bool`                                      |
-| `string`, `format: date-time`                 | `DateTime64(3, 'UTC')`                      |
-| `string`, `format: date`                      | `Date32`                                    |
-| `string`, `format: time`                      | `Time64(3)`                                 |
-| `string`, `format: uuid`, `ipv4`, `ipv6`      | `UUID`, `IPv4`, `IPv6`                      |
-| `integer`, `format: int32`                    | `Int32`                                     |
-| `number`, `format: float`                     | `Float32`                                   |
-| any other `format`                            | as its `type`                               |
-| `object` with `properties`                    | `Tuple` of them, by name                    |
-| `array` with `items` of any of these          | `Array` of it                               |
+| declared                                 | read as                  |
+| ---------------------------------------- | ------------------------ |
+| `string`                                 | `String`                 |
+| `string` with `enum`                     | `LowCardinality(String)` |
+| `integer`                                | `Int64`                  |
+| `number`                                 | `Float64`                |
+| `boolean`                                | `Bool`                   |
+| `string`, `format: date-time`            | `DateTime64(3, 'UTC')`   |
+| `string`, `format: date`                 | `Date32`                 |
+| `string`, `format: time`                 | `Time64(3)`              |
+| `string`, `format: uuid`, `ipv4`, `ipv6` | `UUID`, `IPv4`, `IPv6`   |
+| `integer`, `format: int32`               | `Int32`                  |
+| `number`, `format: float`                | `Float32`                |
+| any other `format`                       | as its `type`            |
+| `object` with `properties`               | `Tuple` of them, by name |
+| `array` with `items` of any of these     | `Array` of it            |
 
 ### Views of the declared
 
@@ -232,11 +232,11 @@ A signed-in client sends with `fetch(…, { keepalive: true })` instead. Anyone 
 
 `{ visitor?, session?, events }`:
 
-| property  |                                                                             |
-| --------- | --------------------------------------------------------------------------- |
-| `visitor` | the client's own id of itself, kept across sessions; at most 64 characters  |
-| `session` | the id of one period of the client's activity; at most 64 characters        |
-| `events`  | at most 100 of them                                                         |
+| property  |                                                                            |
+| --------- | -------------------------------------------------------------------------- |
+| `visitor` | the client's own id of itself, kept across sessions; at most 64 characters |
+| `session` | the id of one period of the client's activity; at most 64 characters       |
+| `events`  | at most 100 of them                                                        |
 
 Each event:
 
@@ -496,12 +496,12 @@ chronicles:
   encounters: true
 ```
 
-|              |                                                                        |
-| ------------ | ---------------------------------------------------------------------- |
-| `store`      | the provider that keeps the log, and its address                       |
-| `retention`  | days a row of `events` and of `encounters` is kept; absent, kept       |
-| `encounters` | the routes clients send to; absent, there are none                     |
-| `ip`         | `full` keeps a client's whole address; absent, its network             |
+|              |                                                                  |
+| ------------ | ---------------------------------------------------------------- |
+| `store`      | the provider that keeps the log, and its address                 |
+| `retention`  | days a row of `events` and of `encounters` is kept; absent, kept |
+| `encounters` | the routes clients send to; absent, there are none               |
+| `ip`         | `full` keeps a client's whole address; absent, its network       |
 
 ```shell
 $ toa conceal chronicles-store username=… password=… reader=…

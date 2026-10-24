@@ -1,17 +1,19 @@
 import { readdirSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { Connector } from '@toa.io/core'
-import { INGESTION, NAMESPACE, SERVICE } from '@toa.io/definitions/extensions.chronicles'
+import { ENCOUNTERS, NAMESPACE, SERVICE } from '@toa.io/definitions/extensions.chronicles'
 import { Recorder, type Kind } from './Recorder.ts'
-import type { Provider } from './Provider.ts'
+import type { Declared, Provider } from './Provider.ts'
+import type { Contract } from '@toa.io/definitions/extensions.chronicles'
 import type { Writer } from './Writer.ts'
 import type { Settings } from '@toa.io/definitions/extensions.chronicles'
 import type { extensions } from '@toa.io/core/types'
 
 /**
- * The extension's own service: the store provisioned, then a consumer of every event the log is
- * kept of — one group for every replica, so each event is written once — and the components it
- * ships: the queries, the facts, and the client route where the annotation asks for it.
+ * The extension's own service: the store provisioned and its views of what is declared made, then a
+ * consumer of every event the log is kept of — one group for every replica, so each event is written
+ * once — and the components it ships: the queries, the facts, and the encounters where the
+ * annotation asks for them.
  */
 export class Scribe extends Connector {
   private readonly host: extensions.Host
@@ -36,18 +38,22 @@ export class Scribe extends Connector {
 
   protected override async open(): Promise<void> {
     await this.provider.provision()
+    await this.provider.declare(declared(this.settings))
 
-    const consumed: Array<[string, Kind]> = [
-      ...this.settings.events.map((label): [string, Kind] => [label, 'event']),
-      ...this.settings.states.map((label): [string, Kind] => [label, 'state'])
+    const consumed: Array<[string, Kind, Contract]> = [
+      ...Object.entries(this.settings.events).map(
+        ([label, contract]): [string, Kind, Contract] => [label, 'event', contract]
+      ),
+      ...Object.entries(this.settings.states).map(
+        ([label, contract]): [string, Kind, Contract] => [label, 'state', contract]
+      )
     ]
 
-    for (const [label, kind] of consumed) {
+    for (const [label, kind, contract] of consumed) {
       // an event that is both a row and a state is two consumers, each of a group of its own
       const group = kind === 'state' ? `${GROUP}.states` : GROUP
-      const component = label.slice(0, label.lastIndexOf('.'))
-      const identity = this.settings.identities[component] ?? null
-      const recorder = new Recorder(label, kind, identity, this.writer)
+      const identity = this.settings.identities[component(label)] ?? null
+      const recorder = new Recorder(label, kind, identity, contract, this.writer)
       const consumer = await this.host.receive(label, group, recorder)
 
       this.depends(consumer)
@@ -75,9 +81,34 @@ export function components(): Components {
   return { labels, paths }
 }
 
+/** What the components declare, each a view of the log. */
+export function declared(settings: Settings): Declared[] {
+  return [
+    ...Object.entries(settings.events).map(([label, contract]): Declared => ({
+      kind: 'event',
+      label,
+      contract
+    })),
+    ...Object.entries(settings.facts).map(([label, contract]): Declared => ({
+      kind: 'fact',
+      label,
+      contract
+    })),
+    ...Object.entries(settings.states).map(([label, contract]): Declared => ({
+      kind: 'state',
+      component: component(label),
+      contract
+    }))
+  ]
+}
+
+function component(label: string): string {
+  return label.slice(0, label.lastIndexOf('.'))
+}
+
 function paths(settings: Settings): string[] {
   return components().paths.filter(
-    (path) => settings.ingest || !path.endsWith(`${NAMESPACE}.${INGESTION}`)
+    (path) => settings.encounters || !path.endsWith(`${NAMESPACE}.${ENCOUNTERS}`)
   )
 }
 

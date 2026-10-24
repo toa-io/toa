@@ -8,8 +8,11 @@ export * as schemas from './schemas.ts'
 export type {
   Address,
   Annotation,
+  Contract,
   Declaration,
   Declared,
+  Property,
   Settings,
+  State,
   Store
 } from './types.ts'

@@ -1,6 +1,6 @@
 import {
+  ENCOUNTERS,
   FACTS,
-  INGESTION,
   NAMESPACE,
   QUERIES
 } from '@toa.io/definitions/extensions.chronicles'
@@ -15,11 +15,13 @@ import { provider } from './store.ts'
 import type { Provider } from './Provider.ts'
 import type { Connector, Locator } from '@toa.io/core'
 import type { extensions } from '@toa.io/core/types'
+import type { Declaration } from '@toa.io/definitions/extensions.chronicles'
 
 /**
- * A component sends facts through its context; the events it names reach the log as events of
+ * A component sends facts through its context; the events it declares reach the log as events of
  * the context, which the service consumes. The components this extension ships are given what
- * they serve instead: the queries, the provider; the facts and the client route, the writer.
+ * they serve instead: the queries, the provider and what is declared; the facts and the
+ * encounters, the writer.
  */
 export class Factory implements extensions.Factory {
   private readonly host: extensions.Host
@@ -31,21 +33,21 @@ export class Factory implements extensions.Factory {
     this.host = host
   }
 
-  public aspect(locator: Locator): extensions.Aspect {
+  public aspect(locator: Locator, declaration?: Declaration): extensions.Aspect {
     if (mine(locator))
       switch (locator.name) {
         case QUERIES:
-          return new Reader(() => this.keep().provider)
+          return new Reader(this.host, () => this.keep().provider, settings)
         case FACTS:
           return new Facts(() => this.keep().writer)
-        case INGESTION:
+        case ENCOUNTERS:
           return new Client(
             () => this.keep().writer,
             () => settings().ip
           )
       }
 
-    return new Sender(this.host, locator)
+    return new Sender(this.host, locator, declaration?.facts ?? {})
   }
 
   // nothing connects to this, so a halt takes the whole of it

@@ -1,30 +1,41 @@
 import { Connector, entities, exceptions } from '@toa.io/core'
+import { Mismatch, project } from './contract.ts'
 import type { Writer } from './Writer.ts'
 import type { Row, State } from './Provider.ts'
+import type { Contract } from '@toa.io/definitions/extensions.chronicles'
 import type { Message } from '@toa.io/core/types'
 
 /**
- * The consumer of one event the log is kept of: a row of `events` for an event a component names
- * under `events`, and a state for the one it names its `state`. A message carries what the event
+ * The consumer of one event the log is kept of: a row of `events` for an event a component declares
+ * under `events`, and a state for the one it declares its `state`. A message carries what the event
  * rendered and its id, so what is said of the entity — which, its version, when — is read from
- * the payload, where the entity as it stands carries `id`, `VERSION` and `UPDATED`.
+ * the payload, where the entity as it stands carries `id`, `VERSION` and `UPDATED`; what is written
+ * of the payload is what the contract declares.
  */
 export class Recorder extends Connector {
   private readonly label: string
   private readonly component: string
   private readonly kind: Kind
   private readonly identity: string | null
+  private readonly contract: Contract
   private readonly writer: Writer
 
   /** `identity` is the property of the payload that names whose a row is, where the component has one */
   // eslint-disable-next-line max-params
-  public constructor(label: string, kind: Kind, identity: string | null, writer: Writer) {
+  public constructor(
+    label: string,
+    kind: Kind,
+    identity: string | null,
+    contract: Contract,
+    writer: Writer
+  ) {
     super()
 
     this.label = label
     this.component = label.slice(0, label.lastIndexOf('.'))
     this.kind = kind
     this.identity = identity
+    this.contract = contract
     this.writer = writer
   }
 
@@ -32,10 +43,12 @@ export class Recorder extends Connector {
     if (this.kind === 'state')
       await this.writer.write(
         [],
-        [state(this.label, this.component, message, this.identity)]
+        [state(this.label, this.component, message, this.contract, this.identity)]
       )
     else
-      await this.writer.write([row(this.label, this.component, message, this.identity)])
+      await this.writer.write([
+        row(this.label, this.component, message, this.contract, this.identity)
+      ])
   }
 }
 
@@ -44,6 +57,7 @@ export function row(
   label: string,
   component: string,
   message: Message,
+  contract: Contract,
   identity: string | null = null
 ): Row {
   const payload = object(message.payload)
@@ -58,10 +72,8 @@ export function row(
     entity: typeof id === 'string' ? id : null,
     version: typeof VERSION === 'number' ? VERSION : null,
     identity: whose(payload, identity),
-    ip: null,
-    country: null,
     trace: message.telemetry ?? null,
-    payload
+    payload: declared(label, payload, contract)
   }
 }
 
@@ -75,6 +87,7 @@ export function state(
   label: string,
   component: string,
   message: Message,
+  contract: Contract,
   identity: string | null = null
 ): State {
   const payload = object(message.payload)
@@ -91,7 +104,24 @@ export function state(
     version: VERSION,
     identity: whose(payload, identity),
     time: typeof UPDATED === 'number' ? UPDATED : Date.now(),
-    payload
+    payload: declared(label, payload, contract)
+  }
+}
+
+/**
+ * What the contract declares of a payload. One it does not admit is a contract the component broke,
+ * which no delivery will mend: refused, so it is parked on its first delivery.
+ */
+function declared(label: string, payload: object, contract: Contract): object {
+  try {
+    return project(payload, contract.properties)
+  } catch (exception) {
+    if (exception instanceof Mismatch)
+      throw new exceptions.EntityContractException(
+        `The payload of '${label}' is not what its chronicles declare: ${exception.message}`
+      )
+
+    throw exception
   }
 }
 

@@ -3,13 +3,13 @@ export interface Annotation {
   /** where the log is kept, by the provider that keeps it */
   store: Store
 
-  /** days a row of the log is kept; absent, kept */
+  /** days a row of `events` and of `encounters` is kept; absent, kept */
   retention?: number
 
-  /** whether the client route is served */
-  ingest?: boolean
+  /** whether the routes clients send encounters to are served */
+  encounters?: boolean
 
-  /** how much of a browser's address the log keeps; `truncated` unless it says `full` */
+  /** how much of a client's address the log keeps; `truncated` unless it says `full` */
   ip?: Address
 }
 
@@ -25,37 +25,62 @@ export interface Store {
 /** What the service is given of the annotation, its credentials aside. */
 export interface Settings {
   store: Store
-
   retention?: number
-
-  ingest: boolean
-
+  encounters: boolean
   ip: Address
 
-  /** the events whose renderings are rows of `events`, `namespace.component.event` */
-  events: string[]
+  /** the contracts of the events whose renderings are rows of `events`, by label */
+  events: Record<string, Contract>
 
-  /** the events whose payloads are the states of entities, one per component */
-  states: string[]
+  /** the contracts of the events whose payloads are the states of entities, one per component */
+  states: Record<string, Contract>
+
+  /** the contracts of the facts the components send, by label */
+  facts: Record<string, Contract>
 
   /** the property of its payloads that names the identity a row is of, by component */
   identities: Record<string, string>
 }
 
+/** What a label of the log means, and what of its payload is written. */
+export interface Contract {
+  description: string
+  properties: Record<string, Property>
+}
+
+/**
+ * A property of a payload, as JSON Schema of the types the log has: every one described, and
+ * nothing a store could not read as a type of its own.
+ */
+export interface Property {
+  type: 'string' | 'integer' | 'number' | 'boolean' | 'object' | 'array'
+  description?: string
+  enum?: string[]
+  format?: string
+  properties?: Record<string, Property>
+  items?: Property
+}
+
 /** The `chronicles` declaration of a component, normalised. */
 export interface Declaration {
-  /** the labels of the events whose renderings are rows of `events` */
-  events: string[]
+  /** the contracts of the events whose renderings are rows of `events`, by event */
+  events: Record<string, Contract>
 
-  /** the label of the event whose payload is the entity as it stands */
-  state?: string
+  /** the contract of the event whose payload is the entity as it stands, and which event it is */
+  state?: State
+
+  /** the contracts of the facts the component sends, by name */
+  facts: Record<string, Contract>
 
   /** the property of the payloads that names the identity a row is of; `null` where none does */
   identity: string | null
 }
 
-/** What a component writes: the declaration, the list of its `events`, or nothing. */
+export interface State extends Contract {
+  event: string
+}
+
+/** What a component writes: the declaration, or nothing. */
 export type Declared =
-  | (Omit<Declaration, 'identity'> & { identity?: string | null })
-  | string[]
+  | (Partial<Omit<Declaration, 'identity'>> & { identity?: string | null })
   | null

@@ -13,12 +13,16 @@ export const SERVICE = 'scribe'
 /** The component `send` writes through. */
 export const FACTS = 'facts'
 
-/** The component browsers write through, and the prefix of what they write. */
-export const INGESTION = 'ingestion'
-export const AGENT = 'agent'
+/** The component clients send encounters through, which documents them. */
+export const ENCOUNTERS = 'encounters'
 
 /** The component the log is read through. */
 export const QUERIES = 'queries'
 
 /** The stores Toa provides. */
 export const PROVIDERS = ['clickhouse'] as const
+
+/** The view of a declared label, or of a component's state: the label with its dots as underscores. */
+export function view(label: string): string {
+  return label.replace(/\./g, '_')
+}

@@ -3,6 +3,7 @@ Feature: Reading the log
   Background:
     Given the chronicles are empty
     And the chronicles of `chronicled.orders` are deployed
+    And I compose `chronicled.orders` component
     And the encounters are documented:
       """yaml
       page_viewed:
