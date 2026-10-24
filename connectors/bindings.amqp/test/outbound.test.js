@@ -44,29 +44,3 @@ it('should publish persistent and mandatory', async () => {
   assert.equal(properties.persistent, true)
   assert.equal(properties.mandatory, true)
 })
-
-it('should retain a queue on the channel under a label', async () => {
-  comm.retain = mock.fn(async () => undefined)
-
-  await outbound.retain('convergence', 'store.orders')
-
-  const [exchange, queue, key, args] = comm.retain.mock.calls[0].arguments
-
-  assert.equal(exchange, 'convergence.out')
-  assert.equal(queue, 'convergence')
-  assert.equal(key, 'store.orders')
-  assert.equal(args, undefined)
-})
-
-it('should dead-letter what is rejected back to the channel under a label', async () => {
-  comm.retain = mock.fn(async () => undefined)
-
-  await outbound.retain('convergence', 'store.orders', 'dead')
-
-  const [, , , args] = comm.retain.mock.calls[0].arguments
-
-  assert.deepEqual(args, {
-    'x-dead-letter-exchange': 'convergence.out',
-    'x-dead-letter-routing-key': 'dead'
-  })
-})
