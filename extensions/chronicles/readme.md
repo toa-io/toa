@@ -1,12 +1,40 @@
 # Toa Chronicles
 
 A log of what happens in a context, kept in a store the context names, and read over the gateway's
-[MCP](/extensions/exposition/documentation/mcp.md).
+[MCP](/extensions/exposition/documentation/mcp.md). The service `chronicles-scribe` writes it, and
+is what the store is provisioned by and read through.
 
-Three things write to it: the committed changes of a component, as the events it names render
-them; facts an operation sends; and what browsers send to the ingestion route. Each is a row of
-one table, `events`. The service `chronicles-scribe` writes them, and is what the store is
-provisioned by and read through.
+## The log
+
+Two tables.
+
+**`events`** holds a row for everything that happened, from three sources:
+
+| source                                      | `label`               | `entity`, `version`                      | `payload`              |
+| ------------------------------------------- | --------------------- | ---------------------------------------- | ---------------------- |
+| a [change](#changes) of a component         | `<component>.<event>` | the record that changed, and its version | what the event renders |
+| a [fact](#facts) an operation sends         | `<component>.<name>`  | `NULL`                                   | what was sent          |
+| an event a [browser](#from-a-browser) sends | `client.<name>`       | `NULL`                                   | what the browser sent  |
+
+An order placed, a search made and a page left are three rows:
+
+| `label`                 | `component`         | `entity` | `version` | `payload`                         |
+| ----------------------- | ------------------- | -------- | --------- | --------------------------------- |
+| `store.orders.created`  | `store.orders`      | `9c1f…`  | `0`       | `{ total: 120, status: "new" }`   |
+| `store.search.searched` | `store.search`      | `NULL`   | `NULL`    | `{ query: "teapot", results: 3 }` |
+| `client.page.left`      | `chronicles.ingest` | `NULL`   | `NULL`    | `{ path: "/pricing" }`            |
+
+Every row also has `id`, the same however often it is delivered, so a row is kept once; `time`,
+when it happened; `received`, when the store wrote it; and `trace`, the traceparent of the call
+that caused it.
+
+**`states`** holds, for each record under each label, the payload of its latest version. A row of
+`events` that names a record is one of `states` as well, and replaces the one of a lower version:
+the history of an order is in `events`, and under a label whose payload is the record — like
+`snapshot` below — the order as it stands is in `states`. Facts and what browsers send name no
+record and are not in `states`.
+
+Nothing is ordered: order by `time`, or by `version` within one record.
 
 ## Changes
 
@@ -36,7 +64,8 @@ The row says which record changed, its version and when, by the payload's `id`, 
 `UPDATED`: a payload that leaves them out is written without them, at the time it was taken. `sync`
 is the record as it stands, every field of it.
 
-A committed change is written however long the scribe is away, and once however often it is
+Each change is a row of `events` under `<component>.<event>` for every event it renders. A
+committed change is written however long the scribe is away, and once however often it is
 delivered. One committed before the scribe first ran in a deployment is not.
 
 ## Facts
@@ -45,7 +74,8 @@ delivered. One committed before the scribe first ran in a deployment is not.
 await context.chronicles.send('searched', { query: input.query, results: results.length })
 ```
 
-`send` resolves once the broker has the fact, which then waits for the scribe as an event does.
+The fact is a row of `events` under `<component>.searched`, with what was sent as its payload.
+`send` resolves once the broker has it, and it then waits for the scribe as an event does.
 
 `context.chronicles` is given to a component that declares `chronicles`. One that only sends
 declares it empty:
@@ -91,24 +121,6 @@ batch. The route is anonymous and throttled to 60 requests a minute per address,
 written under `client.<name>`.
 
 Anyone can send anything: a `user` in a payload is what the client said.
-
-## The log
-
-| column      |                                                                         |
-| ----------- | ----------------------------------------------------------------------- |
-| `id`        | the same however often a message is delivered                           |
-| `label`     | `<component>.<event>`, `<component>.<name>` for a fact, `client.<name>` |
-| `component` | the component it is of; `chronicles.ingest` for a browser               |
-| `time`      | when it happened                                                        |
-| `received`  | when the store wrote it                                                 |
-| `entity`    | the payload's `id`; `NULL` where it has none                            |
-| `version`   | the payload's `VERSION`; likewise                                       |
-| `trace`     | the traceparent of the call that caused it                              |
-| `payload`   | what was written                                                        |
-
-`states` holds the latest `payload` of each record under each label, by `version`: under a label
-like `snapshot`, the record as it stands. Nothing is ordered: order by `time`, or by `version`
-within one record.
 
 ## Over MCP
 
