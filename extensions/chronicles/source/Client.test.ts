@@ -34,7 +34,7 @@ it('should write each event under client, with its own id and time', async () =>
 
   assert.equal(message.id, 'c1')
   assert.equal(message.label, 'client.page.viewed')
-  assert.equal(message.component, 'chronicles.ingest')
+  assert.equal(message.component, 'chronicles.ingestion')
   assert.equal(message.time, 1761200000000)
   assert.equal(message.entity, null)
   assert.deepEqual(message.payload, { path: '/' })

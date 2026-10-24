@@ -23,5 +23,7 @@ operations:
           type: string
       type: object
 
-# a label of its own, and one of the prototype's
-chronicles: [snapshot, created]
+# an event of the prototype, and the state as an event of its own
+chronicles:
+  events: [created]
+  state: snapshot

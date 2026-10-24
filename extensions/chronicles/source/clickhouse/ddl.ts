@@ -3,13 +3,13 @@
  * replicas starting together collide on nothing; the retention, which would change, is compared
  * with what is there and changed only where it differs.
  */
-export const TABLES = ['events', 'states', 'current']
+export const TABLES = ['events', 'states']
 
 export function database(name: string): string[] {
   return [`CREATE DATABASE IF NOT EXISTS ${id(name)}`]
 }
 
-/** What is kept: the log, and the latest payload of each record under each label. */
+/** What is kept: a row for everything that happened, and each entity as it stands. */
 export function tables(retention: number | undefined): string[] {
   return [
     `CREATE TABLE IF NOT EXISTS events (
@@ -28,20 +28,14 @@ export function tables(retention: number | undefined): string[] {
     ${retention === undefined ? '' : ttl(retention)}`,
 
     `CREATE TABLE IF NOT EXISTS states (
-      label LowCardinality(String),
       component LowCardinality(String),
       entity String,
       version UInt64,
       time DateTime64(3, 'UTC'),
+      received DateTime64(3, 'UTC') DEFAULT now64(3),
       payload JSON
     ) ENGINE = ReplacingMergeTree(version)
-    ORDER BY (label, entity)`,
-
-    `CREATE MATERIALIZED VIEW IF NOT EXISTS current TO states AS
-    SELECT label, component, assumeNotNull(entity) AS entity, assumeNotNull(version) AS version,
-      time, payload
-    FROM events
-    WHERE entity IS NOT NULL AND version IS NOT NULL`
+    ORDER BY (component, entity)`
   ]
 }
 

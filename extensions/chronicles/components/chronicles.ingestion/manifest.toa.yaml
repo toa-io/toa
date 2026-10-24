@@ -1,5 +1,5 @@
 namespace: chronicles
-name: ingest
+name: ingestion
 
 # The extension writes what this component is sent to the log, under `client.`
 chronicles: ~

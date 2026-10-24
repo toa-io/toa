@@ -13,11 +13,12 @@ Feature: Chronicles
         url: http://localhost:31030/chronicles
       ingest: true
       events:
-        - chronicled.orders.snapshot
         - chronicled.orders.created
+      states:
+        - chronicled.orders.snapshot
       """
 
-  Scenario: A change is written under each event the component names
+  Scenario: A change is a row under each event the component names, and its state is kept
     Given I compose `chronicled.orders` component
     And the chronicles scribe is running
     When I call `chronicled.orders.transit` with:
@@ -28,23 +29,24 @@ Feature: Chronicles
         total: 120
         email: bob@example.com
       """
-    Then the chronicles answer "SELECT label, component, entity, version, toString(payload.total) AS total, toString(payload.email) AS email FROM events FINAL ORDER BY label" within 30 seconds:
+    Then the chronicles answer "SELECT label, component, entity, version, toString(payload.email) AS email FROM events FINAL" within 30 seconds:
       """yaml
       - label: chronicled.orders.created
         component: chronicled.orders
         entity: 72cf9b0ab0ac4ab2b8036e4e940ddcae
         version: 1
-        total: '120'
         email: bob@example.com
-      - label: chronicled.orders.snapshot
-        component: chronicled.orders
+      """
+    And the chronicles answer "SELECT component, entity, version, toString(payload.total) AS total, toString(payload.email) AS email FROM states FINAL" within 30 seconds:
+      """yaml
+      - component: chronicled.orders
         entity: 72cf9b0ab0ac4ab2b8036e4e940ddcae
         version: 1
         total: '120'
         email: ''
       """
 
-  Scenario: The latest payload of each record under each label
+  Scenario: The state of an entity is its latest version
     Given I compose `chronicled.orders` component
     And the chronicles scribe is running
     When I call `chronicled.orders.transit` with:
@@ -61,7 +63,7 @@ Feature: Chronicles
       input:
         total: 140
       """
-    Then the chronicles answer "SELECT version, toString(payload.total) AS total FROM states FINAL WHERE label = 'chronicled.orders.snapshot'" within 30 seconds:
+    Then the chronicles answer "SELECT version, toString(payload.total) AS total FROM states FINAL WHERE component = 'chronicled.orders'" within 30 seconds:
       """yaml
       - version: 2
         total: '140'
@@ -74,6 +76,7 @@ Feature: Chronicles
         provider: clickhouse
         url: http://localhost:31030/chronicles
       events: []
+      states: []
       """
     And I compose `chronicled.facts` component
     And the chronicles scribe is running
@@ -102,8 +105,50 @@ Feature: Chronicles
       """
     And I wait 2 seconds
     And the chronicles scribe is running
-    Then the chronicles answer "SELECT label FROM events FINAL ORDER BY label" within 30 seconds:
+    Then the chronicles answer "SELECT label FROM events FINAL" within 30 seconds:
       """yaml
       - label: chronicled.orders.created
-      - label: chronicled.orders.snapshot
+      """
+    And the chronicles answer "SELECT version FROM states FINAL" within 30 seconds:
+      """yaml
+      - version: 1
+      """
+
+  Scenario: A state that does not say which entity it is, is refused and holds up nothing
+    Given an environment variable `TOA_CHRONICLES` is set to:
+      """yaml
+      store:
+        provider: clickhouse
+        url: http://localhost:31030/chronicles
+      events:
+        - chronicled.orders.created
+      states:
+        - chronicled.stateless.summary
+      """
+    And the `chronicled.stateless` database is empty
+    And I compose components:
+      | chronicled.orders    |
+      | chronicled.stateless |
+    And the chronicles scribe is running
+    When I call `chronicled.stateless.transit` with:
+      """yaml
+      query:
+        id: 72cf9b0ab0ac4ab2b8036e4e940ddcae
+      input:
+        total: 3
+      """
+    And I call `chronicled.orders.transit` with:
+      """yaml
+      query:
+        id: 72cf9b0ab0ac4ab2b8036e4e940ddcae
+      input:
+        total: 5
+      """
+    Then the chronicles answer "SELECT label FROM events FINAL" within 30 seconds:
+      """yaml
+      - label: chronicled.orders.created
+      """
+    And the chronicles answer "SELECT count() AS n FROM states":
+      """yaml
+      - n: 0
       """

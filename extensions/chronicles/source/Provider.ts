@@ -1,7 +1,7 @@
 /**
- * Where the log is kept. A provider holds the log's two tables — every row, and the latest
- * payload of each record under each label — and reads them in a dialect of its own, which is
- * what an agent writes its queries in.
+ * Where the log is kept. A provider holds the log's two tables — `events`, a row for everything
+ * that happened, and `states`, each entity as it stands — and reads them in a dialect of its own,
+ * which is what an agent writes its queries in.
  */
 export interface Provider {
   /** what a query is written in, which `describe` tells whoever writes one */
@@ -13,11 +13,17 @@ export interface Provider {
   /** the tables, and the reader queries run as, made what the settings say */
   provision(): Promise<void>
 
-  /** written once however often a row of one `id` is written */
-  write(rows: Row[]): Promise<void>
+  /**
+   * Rows of `events`, written once however often a row of one `id` is written; and states, each
+   * kept where it is of a higher version than the one there.
+   */
+  write(rows: Row[], states: State[]): Promise<void>
 
   /** the labels, with their counts, their times and the fields of their payloads */
   labels(): Promise<Label[]>
+
+  /** the components with a state, with how many entities each has and the fields of the state */
+  states(): Promise<Summary[]>
 
   /** a statement of the dialect, run as a reader that can read the log and nothing else */
   query(sql: string): Promise<Result>
@@ -57,6 +63,21 @@ export interface Row {
   trace: string | null
 
   payload: object
+}
+
+/** An entity as it stands, as the event a component names its `state` renders it. */
+export interface State {
+  component: string
+  entity: string
+  version: number
+  time: number
+  payload: object
+}
+
+export interface Summary {
+  component: string
+  entities: number
+  paths: string[]
 }
 
 export interface Label {

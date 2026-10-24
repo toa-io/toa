@@ -1,6 +1,6 @@
 import { components } from './components.ts'
 import { version } from '../version.ts'
-import { INGEST, NAMESPACE, SECRET, SERVICE, SETTINGS } from './const.ts'
+import { INGESTION, NAMESPACE, SECRET, SERVICE, SETTINGS } from './const.ts'
 import * as schemas from './schemas.ts'
 import type { Annotation, Declaration, Settings } from './types.ts'
 import type { context } from '@toa.io/norm'
@@ -28,16 +28,24 @@ export function deployment(
 
   schemas.annotation.validate<Annotation>(annotation, 'Invalid chronicles annotation')
 
-  const events = declaring.flatMap((instance) =>
-    ((instance.manifest as Declaration | undefined) ?? []).map(
-      (label) => `${instance.locator.id}.${label}`
-    )
-  )
+  const events: string[] = []
+  const states: string[] = []
 
-  const settings = read(annotation, events)
+  for (const instance of declaring) {
+    const declaration = (instance.manifest as unknown as Declaration | undefined) ?? {
+      events: []
+    }
+
+    for (const label of declaration.events) events.push(`${instance.locator.id}.${label}`)
+
+    if (declaration.state !== undefined)
+      states.push(`${instance.locator.id}.${declaration.state}`)
+  }
+
+  const settings = read(annotation, events, states)
 
   const labels = components().labels.filter(
-    (label) => settings.ingest || label !== `${NAMESPACE}-${INGEST}`
+    (label) => settings.ingest || label !== `${NAMESPACE}-${INGESTION}`
   )
 
   const service: Service = {
@@ -48,13 +56,14 @@ export function deployment(
     variables: [{ name: SETTINGS, value: JSON.stringify(settings) }, ...credentials()]
   }
 
-  return { services: [service], events }
+  // a state's event is consumed as an event's is
+  return { services: [service], events: [...new Set([...events, ...states])] }
 }
 
 /** The extension is deployed for the sake of the annotation, which a component need not name. */
 export const standalone = true
 
-function read(annotation: Annotation, events: string[]): Settings {
+function read(annotation: Annotation, events: string[], states: string[]): Settings {
   if (new URL(annotation.store.url).pathname.replace(/\//g, '') === '')
     throw new Error(
       'The store of chronicles names no database: the path of its address is the database.'
@@ -64,7 +73,8 @@ function read(annotation: Annotation, events: string[]): Settings {
     store: annotation.store,
     retention: annotation.retention,
     ingest: annotation.ingest === true,
-    events
+    events,
+    states
   }
 }
 

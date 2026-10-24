@@ -1,7 +1,8 @@
 import { it } from 'node:test'
 import assert from 'node:assert/strict'
 
-import { row } from './Recorder.ts'
+import { exceptions } from '@toa.io/core'
+import { row, state } from './Recorder.ts'
 
 it('should say which record changed, its version and when, as the payload says', () => {
   const written = row('store.orders.snapshot', 'store.orders', {
@@ -35,4 +36,25 @@ it('should name a message from outside Toa by what it says', () => {
   const same = row('store.orders.paid', 'store.orders', { payload: { total: 1 } })
 
   assert.equal(one.id, same.id)
+})
+
+it('should keep an entity as its state renders it', () => {
+  const kept = state('store.orders.sync', 'store.orders', {
+    id: 'e3',
+    payload: { id: 'b5c8', VERSION: 4, UPDATED: 1761200000000, total: 140 }
+  })
+
+  assert.equal(kept.component, 'store.orders')
+  assert.equal(kept.entity, 'b5c8')
+  assert.equal(kept.version, 4)
+  assert.equal(kept.time, 1761200000000)
+})
+
+it('should refuse a state that does not say which entity and version it is, as permanent', () => {
+  assert.throws(
+    () =>
+      state('store.orders.snapshot', 'store.orders', { id: 'e4', payload: { total: 1 } }),
+    (error: any) =>
+      error.code === exceptions.codes.EntityContract && exceptions.permanent(error)
+  )
 })

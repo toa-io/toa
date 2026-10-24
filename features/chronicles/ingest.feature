@@ -5,7 +5,7 @@ Feature: What browsers send to the log
     And the chronicles scribe is running
 
   Scenario: A batch is written under `client.`
-    When I call `chronicles.ingest.ingest` with:
+    When I call `chronicles.ingestion.ingest` with:
       """yaml
       input:
         - id: c1
@@ -26,18 +26,18 @@ Feature: What browsers send to the log
       """yaml
       - id: c1
         label: client.page.viewed
-        component: chronicles.ingest
+        component: chronicles.ingestion
         time: 1761200000000
         path: /pricing
       - id: c2
         label: client.button.clicked
-        component: chronicles.ingest
+        component: chronicles.ingestion
         time: 1761200001000
         path: ''
       """
 
   Scenario: A batch sent as text, as `navigator.sendBeacon` sends it
-    When I call `chronicles.ingest.ingest` with:
+    When I call `chronicles.ingestion.ingest` with:
       """yaml
       input: '[{"id":"b1","name":"page.left","time":1761200000000}]'
       """
@@ -51,7 +51,7 @@ Feature: What browsers send to the log
       """
 
   Scenario: An event sent again is one row
-    When I call `chronicles.ingest.ingest` 2 times with:
+    When I call `chronicles.ingestion.ingest` 2 times with:
       """yaml
       input:
         - id: r1
@@ -64,7 +64,7 @@ Feature: What browsers send to the log
       """
 
   Scenario Outline: A batch that is not events
-    When I call `chronicles.ingest.ingest` with:
+    When I call `chronicles.ingestion.ingest` with:
       """yaml
       input: <input>
       """

@@ -65,3 +65,18 @@ it('should fail every caller of a batch that failed, and write the next one', as
 
   assert.equal(provider.write.mock.callCount(), 2)
 })
+
+it('should write rows and states of one moment together', async () => {
+  const kept = {
+    component: 'store.orders',
+    entity: 'b5c8',
+    version: 1,
+    time: 0,
+    payload: {}
+  }
+
+  await Promise.all([writer.write([row('a')]), writer.write([], [kept])])
+
+  assert.equal(provider.write.mock.callCount(), 1)
+  assert.deepEqual(provider.write.mock.calls[0].arguments[1], [kept])
+})

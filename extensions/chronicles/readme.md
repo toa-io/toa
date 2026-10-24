@@ -1,8 +1,10 @@
 # Toa Chronicles
 
-A log of what happens in a context, kept in a store the context names, and read over the gateway's
-[MCP](/extensions/exposition/documentation/mcp.md). The service `chronicles-scribe` writes it, and
-is what the store is provisioned by and read through.
+A log of what happens in a context, kept in a store the context names. Components write to it by
+the events they name and the facts they send, browsers by a route of the gateway, and it is read
+by an [HTTP API](#reading-the-log) — which the gateway also publishes as [MCP](#over-mcp) tools.
+The service `chronicles-scribe` writes the log, and is what the store is provisioned by and read
+through.
 
 ## The log
 
@@ -10,46 +12,51 @@ Two tables.
 
 **`events`** holds a row for everything that happened, from three sources:
 
-| source                                      | `label`               | `entity`, `version`                      | `payload`              |
-| ------------------------------------------- | --------------------- | ---------------------------------------- | ---------------------- |
-| a [change](#changes) of a component         | `<component>.<event>` | the entity that changed, and its version | what the event renders |
-| a [fact](#facts) an operation sends         | `<component>.<name>`  | `NULL`                                   | what was sent          |
-| an event a [browser](#from-a-browser) sends | `client.<name>`       | `NULL`                                   | what the browser sent  |
+| source                                           | `label`               | `entity`, `version`                      | `payload`              |
+| ------------------------------------------------ | --------------------- | ---------------------------------------- | ---------------------- |
+| an [event](#events-and-states) a component names | `<component>.<event>` | the entity that changed, and its version | what the event renders |
+| a [fact](#facts) an operation sends              | `<component>.<name>`  | `NULL`                                   | what was sent          |
+| an event a [browser](#from-a-browser) sends      | `client.<name>`       | `NULL`                                   | what the browser sent  |
 
 An order placed, a search made and a page left are three rows:
 
-| `label`                 | `component`         | `entity` | `version` | `payload`                         |
-| ----------------------- | ------------------- | -------- | --------- | --------------------------------- |
-| `store.orders.created`  | `store.orders`      | `9c1f…`  | `0`       | `{ total: 120, status: "new" }`   |
-| `store.search.searched` | `store.search`      | `NULL`   | `NULL`    | `{ query: "teapot", results: 3 }` |
-| `client.page.left`      | `chronicles.ingest` | `NULL`   | `NULL`    | `{ path: "/pricing" }`            |
+| `label`                 | `component`            | `entity` | `version` | `payload`                         |
+| ----------------------- | ---------------------- | -------- | --------- | --------------------------------- |
+| `store.orders.created`  | `store.orders`         | `9c1f…`  | `0`       | `{ total: 120, status: "new" }`   |
+| `store.search.searched` | `store.search`         | `NULL`   | `NULL`    | `{ query: "teapot", results: 3 }` |
+| `client.page.left`      | `chronicles.ingestion` | `NULL`   | `NULL`    | `{ path: "/pricing" }`            |
 
 Every row also has `id`, the same however often it is delivered, so a row is kept once; `time`,
 when it happened; `received`, when the store wrote it; and `trace`, the traceparent of the call
 that caused it.
 
-**`states`** holds, for each entity under each label, the payload of its latest version. A row of
-`events` that names an entity is one of `states` as well, and replaces the one of a lower version:
-the history of an order is in `events`, and under a label whose payload is the entity — like
-`snapshot` below — the order as it stands is in `states`. Facts and what browsers send name no
-entity and are not in `states`.
+**`states`** holds each entity as it stands: for every component that names a
+[state](#events-and-states), a row per entity — `component`, `entity`, `version`, `time`,
+`received` and `payload` — which a higher version replaces.
 
 Nothing is ordered: order by `time`, or by `version` within one entity.
 
-## Changes
+## Events and states
 
 ```yaml
 # manifest.toa.yaml
-chronicles: [created, snapshot]
+chronicles:
+  events: [created, paid] # what happened: rows of `events`
+  state: snapshot # the entity as it stands: its row of `states`
 ```
 
 Each label is an event of the component — its own, or the prototype's `created`, `updated`,
-`deleted` and `sync`. A change is written as the event renders it: where the event's `condition`
-does not hold, nothing is written for it; where it has a `payload`, what the payload returns is
-what is written. A field a payload leaves out does not reach the store.
+`deleted` and `sync`. An event is written as it renders: where its `condition` does not hold,
+nothing is written; where it has a `payload`, what the payload returns is what is written. A field
+a payload leaves out does not reach the store. A list is the `events` alone:
 
-An event that exists for the log alone is an event file like any other, and nothing else has to
-consume it:
+```yaml
+# manifest.toa.yaml
+chronicles: [created, paid]
+```
+
+The state is any event whose payload is the entity, `sync` among them. An event that exists for
+the log alone is an event file like any other, and nothing else has to consume it:
 
 ```typescript
 // events/snapshot.ts
@@ -60,12 +67,13 @@ export function payload(event: Event) {
 }
 ```
 
-The row says which entity changed, its version and when, by the payload's `id`, `VERSION` and
-`UPDATED`: a payload that leaves them out is written without them, at the time it was taken. `sync`
-is the entity as it stands, every field of it.
+A state's payload carries `id` and `VERSION`, which say which entity it is and which version: one
+that does not is refused, and kept in the parking queue of its consumer rather than written. A row
+of `events` takes its `entity`, `version` and `time` from the payload's `id`, `VERSION` and
+`UPDATED` where it carries them, and is written without them, at the time it was taken, where it
+does not. An event that is both is named in both.
 
-Each change is a row of `events` under `<component>.<event>` for every event it renders. A
-committed change is written however long the scribe is away, and once however often it is
+A committed change is written however long the scribe is away, and once however often it is
 delivered. One committed before the scribe first ran in a deployment is not.
 
 ## Facts
@@ -87,14 +95,12 @@ chronicles: []
 
 ## From a browser
 
-```yaml
-# context.toa.yaml
-chronicles:
-  ingest: true
-```
+Served where the context says `ingest: true`.
+
+### `POST /chronicles/ingestion/`
 
 ```http
-POST /chronicles/ingest/ HTTP/1.1
+POST /chronicles/ingestion/ HTTP/1.1
 content-type: application/json
 
 [{ "id": "0192f3a1-…", "name": "page.viewed", "time": 1761200000000, "payload": { "path": "/pricing" } }]
@@ -113,35 +119,145 @@ accepted: 1
 | `time`    | when it happened, in milliseconds, by the client's clock            |
 | `payload` | an object, at most 16 KiB of JSON                                   |
 
-A request carries at most 100 events. A batch one event of which breaks any of this is written
-not at all, and answered with the code `INVALID`, or `OVERSIZED` for a payload too large, and the
+A request carries at most 100 events, which are rows of `events` under `client.<name>`, and is
+answered once they are written. A batch one event of which breaks any of the above is written not
+at all, and answered `422` with the code `INVALID`, or `OVERSIZED` for a payload too large, and the
 `index` of the event in `cause`. `text/plain` is read as JSON, so `navigator.sendBeacon` can send a
-batch. The route is anonymous and throttled to 60 requests a minute per address, which takes
-[`exposition.ip`](/extensions/exposition/documentation/ip.md) to name the address. Events are
-written under `client.<name>`.
+batch.
 
-Anyone can send anything: a `user` in a payload is what the client said.
+The route takes no credentials, and is throttled to 60 requests a minute per address, which takes
+[`exposition.ip`](/extensions/exposition/documentation/ip.md) to name the address. Anyone can send
+anything: a `user` in a payload is what the client said.
 
-## Over MCP
+## Reading the log
 
-Where the context publishes [MCP](/extensions/exposition/documentation/mcp.md), these are tools:
+Reading takes the role `system:chronicles:query`, and views take `system:chronicles:views`;
+`system:chronicles` grants both. A refusal is answered `422` with `{ code, cause }`.
 
-| tool                                  |                                                                        | role                      |
-| ------------------------------------- | ---------------------------------------------------------------------- | ------------------------- |
-| `chronicles.query.GET`                | the dialect, the labels with their counts, times and fields, the views | `system:chronicles:query` |
-| `chronicles.query.POST`               | one statement: `{ sql }` → `{ columns, rows, truncated }`              | `system:chronicles:query` |
-| `chronicles.query.views._name.PUT`    | defines a view: `{ sql, refresh? }`                                    | `system:chronicles:views` |
-| `chronicles.query.views._name.DELETE` | drops a view                                                           | `system:chronicles:views` |
+### `GET /chronicles/queries/`
 
-`system:chronicles` grants all four.
+What the log holds: the dialect queries are written in, the labels of `events`, the components
+with a state, and the views.
 
-A query is written in the store's dialect, which `chronicles.query.GET` names. It reads the log and
-nothing else, for at most 30 seconds and 10,000 rows; at the rows, it answers what it has and
-`truncated: true`. One the store refuses is answered with the code `REFUSED` and the store's own
-words in `cause.message`. A view is a statement a query could run. Without `refresh` it is computed
-when it is read; with `refresh`, in seconds and at least `3600`, it is computed on that cycle and
-read as a table. A name is lowercase letters, digits and underscores, and a context has at most 50
-views.
+```http
+GET /chronicles/queries/ HTTP/1.1
+authorization: Token …
+accept: application/yaml
+```
+
+```http
+200 OK
+
+dialect: ClickHouse SQL; read `events` and `states` with FINAL
+labels:
+  - label: store.orders.created
+    rows: 1204
+    first: 2026-10-01 08:12:03.000
+    last: 2026-10-24 17:40:51.000
+    paths: [VERSION, id, status, total]
+states:
+  - component: store.orders
+    entities: 1180
+    paths: [VERSION, id, status, total]
+views:
+  - name: daily
+    sql: SELECT toDate(time) AS day, count() AS orders FROM events FINAL GROUP BY day
+    refresh: 3600
+```
+
+`rows` counts what the store holds, a row delivered twice possibly twice; `paths` are the fields of
+the latest payloads.
+
+### `POST /chronicles/queries/`
+
+One statement, in the dialect.
+
+```http
+POST /chronicles/queries/ HTTP/1.1
+authorization: Token …
+accept: application/yaml
+content-type: application/yaml
+
+sql: SELECT payload.status AS status, count() AS n FROM states FINAL GROUP BY status
+```
+
+```http
+201 Created
+
+columns:
+  - name: status
+    type: Dynamic
+  - name: n
+    type: UInt64
+rows:
+  - [new, 31]
+  - [paid, 1149]
+truncated: false
+```
+
+A query reads the log and nothing else, and cannot write. It runs for at most 30 seconds and
+answers at most 10,000 rows: at the rows it answers what it has, with `truncated: true`. It leaves
+`FORMAT` out.
+
+| code      | when                                                                    |
+| --------- | ----------------------------------------------------------------------- |
+| `REFUSED` | the store refused the statement; `cause.message` is what the store said |
+
+### `PUT /chronicles/queries/views/:name`
+
+A view over the log, by a statement a query could run. Defining a name again replaces the view.
+
+```http
+PUT /chronicles/queries/views/daily/ HTTP/1.1
+authorization: Token …
+content-type: application/yaml
+
+sql: SELECT toDate(time) AS day, count() AS orders FROM events FINAL GROUP BY day
+refresh: 3600
+```
+
+```http
+204 No Content
+```
+
+Without `refresh`, a view is computed when it is read. With `refresh`, in seconds and at least
+`3600`, it is computed on that cycle and read as a table. A name is lowercase letters, digits and
+underscores, and a context has at most 50 views. A query reads a view by its name.
+
+| code        | when                                                                 |
+| ----------- | -------------------------------------------------------------------- |
+| `REFUSED`   | the statement is not one a query could run; `cause.message` says why |
+| `RESERVED`  | the name is one of the log's tables                                  |
+| `EXHAUSTED` | the context has 50 views, and this is not one of them                |
+
+### `DELETE /chronicles/queries/views/:name`
+
+```http
+DELETE /chronicles/queries/views/daily/ HTTP/1.1
+authorization: Token …
+```
+
+```http
+204 No Content
+```
+
+| code        | when                  |
+| ----------- | --------------------- |
+| `NOT_FOUND` | there is no such view |
+
+### Over MCP
+
+Where the context publishes [MCP](/extensions/exposition/documentation/mcp.md), each of these
+routes is a tool, under the name the gateway gives a route, and taking what the route takes:
+
+| tool                                    | route                                    |
+| --------------------------------------- | ---------------------------------------- |
+| `chronicles.queries.GET`                | `GET /chronicles/queries/`               |
+| `chronicles.queries.POST`               | `POST /chronicles/queries/`              |
+| `chronicles.queries.views._name.PUT`    | `PUT /chronicles/queries/views/:name`    |
+| `chronicles.queries.views._name.DELETE` | `DELETE /chronicles/queries/views/:name` |
+
+A tool is listed to a caller that holds its role, and a refusal is a tool result with `isError`.
 
 ## Deployment
 
@@ -180,8 +296,8 @@ not exist. The user needs `CREATE`, `INSERT` and `access_management`; the reader
 which collapses what was delivered twice:
 
 ```sql
-SELECT payload.total, count() FROM events FINAL WHERE label = 'store.orders.paid' GROUP BY 1
-SELECT entity, payload FROM states FINAL WHERE label = 'store.orders.snapshot'
+SELECT payload.total::Float64, count() FROM events FINAL WHERE label = 'store.orders.paid' GROUP BY 1
+SELECT entity, payload FROM states FINAL WHERE component = 'store.orders'
 ```
 
 A view with `refresh` is a refreshable materialized view.

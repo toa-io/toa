@@ -1,9 +1,9 @@
 @security
 Feature: Chronicles through the gateway
 
-  The log is read through `chronicles.query`, whose routes are tools where the context publishes
+  The log is read through `chronicles.queries`, whose routes are tools where the context publishes
   MCP. Reading takes `system:chronicles:query`, and views take `system:chronicles:views`;
-  `system:chronicles` grants both. What browsers send arrives at `chronicles.ingest`, which
+  `system:chronicles` grants both. What browsers send arrives at `chronicles.ingestion`, which
   anyone may reach.
 
   Background:
@@ -28,7 +28,7 @@ Feature: Chronicles through the gateway
   Scenario: A query takes the role
     When the following request is received:
       """
-      POST /chronicles/query/ HTTP/1.1
+      POST /chronicles/queries/ HTTP/1.1
       host: nex.toa.io
       authorization: Basic Z3Vlc3Q6c2VjcmV0
       accept: application/yaml
@@ -42,7 +42,7 @@ Feature: Chronicles through the gateway
       """
     When the following request is received:
       """
-      POST /chronicles/query/ HTTP/1.1
+      POST /chronicles/queries/ HTTP/1.1
       host: nex.toa.io
       authorization: Basic YW5hbHlzdDpwYXNz
       accept: application/yaml
@@ -64,7 +64,7 @@ Feature: Chronicles through the gateway
   Scenario: A view takes its own role
     When the following request is received:
       """
-      PUT /chronicles/query/views/ones/ HTTP/1.1
+      PUT /chronicles/queries/views/ones/ HTTP/1.1
       host: nex.toa.io
       authorization: Basic YW5hbHlzdDpwYXNz
       content-type: application/yaml
@@ -77,7 +77,7 @@ Feature: Chronicles through the gateway
       """
     When the following request is received:
       """
-      PUT /chronicles/query/views/ones/ HTTP/1.1
+      PUT /chronicles/queries/views/ones/ HTTP/1.1
       host: nex.toa.io
       authorization: Basic YWRtaW46c2VjcmV0
       content-type: application/yaml
@@ -90,7 +90,7 @@ Feature: Chronicles through the gateway
       """
     When the following request is received:
       """
-      POST /chronicles/query/ HTTP/1.1
+      POST /chronicles/queries/ HTTP/1.1
       host: nex.toa.io
       authorization: Basic YW5hbHlzdDpwYXNz
       accept: application/yaml
@@ -127,14 +127,14 @@ Feature: Chronicles through the gateway
 
       result:
         tools:
-          - name: chronicles.query.GET
+          - name: chronicles.queries.GET
             title: What the log holds
-          - name: chronicles.query.POST
+          - name: chronicles.queries.POST
             title: Query the log
       """
     And the reply does not contain:
       """
-      chronicles.query.views._name.PUT
+      chronicles.queries.views._name.PUT
       """
 
   Scenario: A query over MCP
@@ -147,10 +147,10 @@ Feature: Chronicles through the gateway
       content-type: application/json
       mcp-protocol-version: 2026-07-28
       mcp-method: tools/call
-      mcp-name: chronicles.query.POST
+      mcp-name: chronicles.queries.POST
 
       {"jsonrpc": "2.0", "id": 2, "method": "tools/call",
-       "params": {"name": "chronicles.query.POST", "arguments": {"sql": "INSERT INTO events (id) VALUES ('x')"},
+       "params": {"name": "chronicles.queries.POST", "arguments": {"sql": "INSERT INTO events (id) VALUES ('x')"},
                   "_meta": {"io.modelcontextprotocol/protocolVersion": "2026-07-28",
                             "io.modelcontextprotocol/clientCapabilities": {}}}}
       """
@@ -165,7 +165,7 @@ Feature: Chronicles through the gateway
   Scenario: What a browser sends
     When the following request is received:
       """
-      POST /chronicles/ingest/ HTTP/1.1
+      POST /chronicles/ingestion/ HTTP/1.1
       host: nex.toa.io
       accept: application/yaml
       content-type: application/json
@@ -180,7 +180,7 @@ Feature: Chronicles through the gateway
       """
     When the following request is received:
       """
-      POST /chronicles/ingest/ HTTP/1.1
+      POST /chronicles/ingestion/ HTTP/1.1
       host: nex.toa.io
       accept: application/yaml
       content-type: text/plain

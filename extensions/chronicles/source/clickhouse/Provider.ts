@@ -2,11 +2,11 @@ import { console } from 'openspan'
 import { ClickHouse, ClickHouseError } from './Client.ts'
 import * as ddl from './ddl.ts'
 import { Refusal } from '../Provider.ts'
-import type { Label, Provider, Result, Row, View } from '../Provider.ts'
+import type { Label, Provider, Result, Row, State, Summary, View } from '../Provider.ts'
 import type { Credentials } from '../settings.ts'
 
 /**
- * The log in ClickHouse: `events`, replaced by `id`, and `states`, replaced by `version`, both
+ * The log in ClickHouse: `events`, replaced by `id`, and `states`, by the `version` of an entity, both
  * read with `FINAL`. Queries run as `<database>_reader`, which provisioning creates with limits it
  * cannot lift; views are made by the writer from what the reader was let plan.
  */
@@ -43,11 +43,16 @@ export class ClickHouseProvider implements Provider {
     console.info('Chronicles provisioned', { database })
   }
 
-  public async write(rows: Row[]): Promise<void> {
-    const lines = rows.map((row) => JSON.stringify({ ...row, time: timestamp(row.time) }))
+  public async write(rows: Row[], states: State[]): Promise<void> {
+    if (rows.length > 0) await this.insert('events', EVENTS, rows)
+    if (states.length > 0) await this.insert('states', STATES, states)
+  }
 
-    await this.writer.run(
-      `INSERT INTO events (${COLUMNS}) FORMAT JSONEachRow\n${lines.join('\n')}`
+  public async states(): Promise<Summary[]> {
+    return await this.writer.rows<Summary>(
+      `SELECT component, uniqExact(entity) AS entities,
+        arraySort(groupUniqArrayArray(JSONAllPaths(payload))) AS paths
+      FROM states GROUP BY component ORDER BY component`
     )
   }
 
@@ -135,6 +140,18 @@ export class ClickHouseProvider implements Provider {
     await this.writer.run(`DROP TABLE IF EXISTS ${ddl.id(name)} SYNC`)
   }
 
+  private async insert(
+    table: string,
+    columns: string,
+    rows: Array<Row | State>
+  ): Promise<void> {
+    const lines = rows.map((row) => JSON.stringify({ ...row, time: timestamp(row.time) }))
+
+    await this.writer.run(
+      `INSERT INTO ${table} (${columns}) FORMAT JSONEachRow\n${lines.join('\n')}`
+    )
+  }
+
   /** In order, each awaited: a view is made after the table it reads. */
   private async run(statements: string[]): Promise<void> {
     for (const statement of statements) await this.writer.run(statement)
@@ -171,7 +188,8 @@ interface Table {
   create_table_query: string
 }
 
-const COLUMNS = 'id, label, component, time, entity, version, trace, payload'
+const EVENTS = 'id, label, component, time, entity, version, trace, payload'
+const STATES = 'component, entity, version, time, payload'
 
 const UNITS: Record<string, number> = {
   SECOND: 1,

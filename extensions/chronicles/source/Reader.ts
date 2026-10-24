@@ -1,9 +1,9 @@
 import { Connector, exceptions } from '@toa.io/core'
 import { Refusal } from './Provider.ts'
-import type { Label, Provider, Result, View } from './Provider.ts'
+import type { Label, Provider, Result, Summary, View } from './Provider.ts'
 
 /**
- * What `chronicles.query` reads the log through: queries in the provider's dialect, and views
+ * What `chronicles.queries` reads the log through: queries in the provider's dialect, and views
  * made from a statement the provider let a query run.
  */
 export class Reader extends Connector {
@@ -38,6 +38,7 @@ export class Reader extends Connector {
     return {
       dialect: provider.dialect,
       labels: await provider.labels(),
+      states: await provider.states(),
       views: await provider.views()
     }
   }
@@ -108,6 +109,7 @@ async function refused<T>(fn: () => Promise<T>): Promise<T | Error> {
 interface Description {
   dialect: string
   labels: Label[]
+  states: Summary[]
   views: View[]
 }
 

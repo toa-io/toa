@@ -1,8 +1,8 @@
 import { readdirSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { Connector } from '@toa.io/core'
-import { INGEST, NAMESPACE, SERVICE } from '@toa.io/definitions/extensions.chronicles'
-import { Recorder } from './Recorder.ts'
+import { INGESTION, NAMESPACE, SERVICE } from '@toa.io/definitions/extensions.chronicles'
+import { Recorder, type Kind } from './Recorder.ts'
 import type { Provider } from './Provider.ts'
 import type { Writer } from './Writer.ts'
 import type { Settings } from '@toa.io/definitions/extensions.chronicles'
@@ -11,7 +11,7 @@ import type { extensions } from '@toa.io/core/types'
 /**
  * The extension's own service: the store provisioned, then a consumer of every event the log is
  * kept of — one group for every replica, so each event is written once — and the components it
- * ships: the query, the facts, and the client route where the annotation asks for it.
+ * ships: the queries, the facts, and the client route where the annotation asks for it.
  */
 export class Scribe extends Connector {
   private readonly host: extensions.Host
@@ -37,11 +37,18 @@ export class Scribe extends Connector {
   protected override async open(): Promise<void> {
     await this.provider.provision()
 
-    for (const label of this.settings.events) {
+    const consumed: Array<[string, Kind]> = [
+      ...this.settings.events.map((label): [string, Kind] => [label, 'event']),
+      ...this.settings.states.map((label): [string, Kind] => [label, 'state'])
+    ]
+
+    for (const [label, kind] of consumed) {
+      // an event that is both a row and a state is two consumers, each of a group of its own
+      const group = kind === 'state' ? `${GROUP}.states` : GROUP
       const consumer = await this.host.receive(
         label,
-        GROUP,
-        new Recorder(label, this.writer)
+        group,
+        new Recorder(label, kind, this.writer)
       )
 
       this.depends(consumer)
@@ -71,7 +78,7 @@ export function components(): Components {
 
 function paths(settings: Settings): string[] {
   return components().paths.filter(
-    (path) => settings.ingest || !path.endsWith(`${NAMESPACE}.${INGEST}`)
+    (path) => settings.ingest || !path.endsWith(`${NAMESPACE}.${INGESTION}`)
   )
 }
 

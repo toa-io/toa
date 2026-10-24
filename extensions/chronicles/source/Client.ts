@@ -1,11 +1,11 @@
 import { current, encode } from 'openspan'
 import { Connector, exceptions } from '@toa.io/core'
-import { CLIENT, INGEST, NAMESPACE } from '@toa.io/definitions/extensions.chronicles'
+import { CLIENT, INGESTION, NAMESPACE } from '@toa.io/definitions/extensions.chronicles'
 import type { Row } from './Provider.ts'
 import type { Writer } from './Writer.ts'
 
 /**
- * What `chronicles.ingest` writes what browsers send through: each event under `client.<name>`,
+ * What `chronicles.ingestion` writes what browsers send through: each event under `client.<name>`,
  * with the client's own id and time, all of a batch in one write, and answered once it is.
  */
 export class Client extends Connector {
@@ -128,7 +128,7 @@ interface Accepted {
   accepted: number
 }
 
-const COMPONENT = `${NAMESPACE}.${INGEST}`
+const COMPONENT = `${NAMESPACE}.${INGESTION}`
 const MAX_EVENTS = 100
 const MAX_PAYLOAD = 16 * 1024
 const NAME = /^[a-z][a-z0-9]*(\.[a-z][a-z0-9]*)*$/

@@ -1,8 +1,8 @@
 import {
   FACTS,
-  INGEST,
+  INGESTION,
   NAMESPACE,
-  QUERY
+  QUERIES
 } from '@toa.io/definitions/extensions.chronicles'
 import { Client } from './Client.ts'
 import { Facts } from './Facts.ts'
@@ -19,7 +19,7 @@ import type { extensions } from '@toa.io/core/types'
 /**
  * A component sends facts through its context; the events it names reach the log as events of
  * the context, which the service consumes. The components this extension ships are given what
- * they serve instead: the query, the provider; the facts and the client route, the writer.
+ * they serve instead: the queries, the provider; the facts and the client route, the writer.
  */
 export class Factory implements extensions.Factory {
   private readonly host: extensions.Host
@@ -34,11 +34,11 @@ export class Factory implements extensions.Factory {
   public aspect(locator: Locator): extensions.Aspect {
     if (mine(locator))
       switch (locator.name) {
-        case QUERY:
+        case QUERIES:
           return new Reader(() => this.keep().provider)
         case FACTS:
           return new Facts(() => this.keep().writer)
-        case INGEST:
+        case INGESTION:
           return new Client(() => this.keep().writer)
       }
 

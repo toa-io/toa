@@ -1,7 +1,15 @@
-# manifest.toa.yaml chronicles declaration: the labels of the events that carry the component's
-# changes to the log
-type: array
-uniqueItems: true
-items:
-  type: string
-  pattern: ^[a-zA-Z][a-zA-Z0-9]*$
+# manifest.toa.yaml chronicles declaration, normalised: the events whose renderings are rows of
+# the log, and the event whose payload is the entity as it stands
+type: object
+properties:
+  events:
+    type: array
+    uniqueItems: true
+    items:
+      type: string
+      pattern: ^[a-zA-Z][a-zA-Z0-9]*$
+  state:
+    type: string
+    pattern: ^[a-zA-Z][a-zA-Z0-9]*$
+required: [events]
+additionalProperties: false

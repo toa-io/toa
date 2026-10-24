@@ -3,20 +3,25 @@ import type { Declaration, Declared } from './types.ts'
 import type { Manifest } from '@toa.io/norm'
 
 /**
- * The `chronicles:` block of a component manifest: the events whose renderings are the log's
- * record of the component's changes. Norm hands over the whole manifest, prototype events
- * included, so a label is checked here rather than left to fail at boot.
+ * The `chronicles:` block of a component manifest: the events whose renderings are rows of the
+ * log, and the one whose payload is the entity as it stands. Norm hands over the whole manifest,
+ * prototype events included, so a label is checked here rather than left to fail at boot.
  *
- * `chronicles: ~` and `chronicles: []` are a component that only sends; it has to produce a
- * value or norm rejects the extension.
+ * A list is the `events` alone, and `chronicles: ~` and `chronicles: []` a component that only
+ * sends; it has to produce a value or norm rejects the extension.
  */
 export function manifest(
-  declaration: Declared | undefined,
+  declared: Declared | undefined,
   component: Manifest
 ): Declaration {
-  const labels = declaration ?? []
+  const declaration = normalize(declared)
 
-  schemas.declaration.validate<Declaration>(labels, 'Invalid chronicles declaration')
+  schemas.declaration.validate<Declaration>(declaration, 'Invalid chronicles declaration')
+
+  const labels =
+    declaration.state === undefined
+      ? declaration.events
+      : [...declaration.events, declaration.state]
 
   for (const label of labels)
     if (component.events?.[label] === undefined)
@@ -24,7 +29,14 @@ export function manifest(
         `Chronicles of '${id(component)}' name '${label}', which is not an event of the component.`
       )
 
-  return labels
+  return declaration
+}
+
+function normalize(declared: Declared | undefined): Declaration {
+  if (declared === null || declared === undefined) return { events: [] }
+  if (Array.isArray(declared)) return { events: declared }
+
+  return { ...declared, events: declared.events ?? [] }
 }
 
 function id(component: Manifest): string {

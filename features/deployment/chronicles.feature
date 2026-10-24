@@ -27,10 +27,10 @@ Feature: Chronicles deployment
         - name: chronicles-scribe
           components:
             - chronicles-facts
-            - chronicles-query
+            - chronicles-queries
           variables:
             - name: TOA_CHRONICLES
-              value: '{"store":{"provider":"clickhouse","url":"https://ch.example.com:8443/shop"},"retention":730,"ingest":false,"events":["chronicled.orders.snapshot","chronicled.orders.created"]}'
+              value: '{"store":{"provider":"clickhouse","url":"https://ch.example.com:8443/shop"},"retention":730,"ingest":false,"events":["chronicled.orders.created"],"states":["chronicled.orders.snapshot"]}'
             - name: TOA_CHRONICLES_STORE_USERNAME
               secret:
                 name: toa-chronicles-store
@@ -69,8 +69,8 @@ Feature: Chronicles deployment
         - name: chronicles-scribe
           components:
             - chronicles-facts
-            - chronicles-ingest
-            - chronicles-query
+            - chronicles-ingestion
+            - chronicles-queries
       """
 
   Scenario: The service without a component that declares chronicles

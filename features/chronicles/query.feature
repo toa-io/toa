@@ -3,7 +3,7 @@ Feature: Reading the log
   Background:
     Given the chronicles are empty
     And the chronicles scribe is running
-    And I call `chronicles.ingest.ingest` with:
+    And I call `chronicles.ingestion.ingest` with:
       """yaml
       input:
         - id: q1
@@ -23,7 +23,7 @@ Feature: Reading the log
       """
 
   Scenario: A query
-    When I call `chronicles.query.query` with:
+    When I call `chronicles.queries.query` with:
       """yaml
       input:
         sql: SELECT label, count() AS n FROM events FINAL GROUP BY label;
@@ -39,7 +39,7 @@ Feature: Reading the log
       """
 
   Scenario: What the log holds
-    When I call `chronicles.query.describe`
+    When I call `chronicles.queries.describe`
     Then the reply is received:
       """yaml
       dialect: ClickHouse SQL; read `events` and `states` with FINAL
@@ -47,11 +47,12 @@ Feature: Reading the log
         - label: client.page.viewed
           rows: 2
           paths: [path]
+      states: []
       views: []
       """
 
   Scenario Outline: A query that is refused
-    When I call `chronicles.query.query` with:
+    When I call `chronicles.queries.query` with:
       """yaml
       input:
         sql: <sql>
@@ -71,13 +72,13 @@ Feature: Reading the log
       | SELECT nonsense FROM                                   |
 
   Scenario: A view, read by a query
-    When I call `chronicles.query.define` with:
+    When I call `chronicles.queries.define` with:
       """yaml
       input:
         name: paths
         sql: SELECT toString(payload.path) AS path FROM events FINAL
       """
-    And I call `chronicles.query.query` with:
+    And I call `chronicles.queries.query` with:
       """yaml
       input:
         sql: SELECT path FROM paths ORDER BY path
@@ -88,7 +89,7 @@ Feature: Reading the log
         - [/about]
         - [/pricing]
       """
-    When I call `chronicles.query.describe`
+    When I call `chronicles.queries.describe`
     Then the reply is received:
       """yaml
       views:
@@ -96,7 +97,7 @@ Feature: Reading the log
       """
 
   Scenario: A materialized view
-    When I call `chronicles.query.define` with:
+    When I call `chronicles.queries.define` with:
       """yaml
       input:
         name: daily
@@ -108,7 +109,7 @@ Feature: Reading the log
       - day: '2025-10-23'
         n: 2
       """
-    When I call `chronicles.query.describe`
+    When I call `chronicles.queries.describe`
     Then the reply is received:
       """yaml
       views:
@@ -117,19 +118,19 @@ Feature: Reading the log
       """
 
   Scenario: A view is replaced and dropped
-    When I call `chronicles.query.define` with:
+    When I call `chronicles.queries.define` with:
       """yaml
       input:
         name: paths
         sql: SELECT 1 AS one
       """
-    And I call `chronicles.query.define` with:
+    And I call `chronicles.queries.define` with:
       """yaml
       input:
         name: paths
         sql: SELECT 2 AS two
       """
-    And I call `chronicles.query.query` with:
+    And I call `chronicles.queries.query` with:
       """yaml
       input:
         sql: SELECT * FROM paths
@@ -139,12 +140,12 @@ Feature: Reading the log
       rows:
         - [2]
       """
-    When I call `chronicles.query.drop` with:
+    When I call `chronicles.queries.drop` with:
       """yaml
       input:
         name: paths
       """
-    And I call `chronicles.query.drop` with:
+    And I call `chronicles.queries.drop` with:
       """yaml
       input:
         name: paths
@@ -155,7 +156,7 @@ Feature: Reading the log
       """
 
   Scenario Outline: A view that is refused
-    When I call `chronicles.query.define` with:
+    When I call `chronicles.queries.define` with:
       """yaml
       input:
         name: <name>

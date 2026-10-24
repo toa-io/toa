@@ -1,5 +1,5 @@
 namespace: chronicles
-name: query
+name: queries
 
 # The extension puts the log's reader on this component.
 chronicles: ~
@@ -14,6 +14,8 @@ operations:
           description: What a query is written in
           type: string
         labels:
+          type: array
+        states:
           type: array
         views:
           type: array
@@ -76,19 +78,21 @@ exposition:
       help:method:
         title: What the log holds
         description: >
-          The dialect queries are written in; the labels of the log, with how many rows each
-          has, the first and last time of them and the fields their payloads have; and the
-          views defined over the log.
+          The dialect queries are written in; the labels of `events`, with how many rows each
+          has, the first and last time of them and the fields their payloads have; the
+          components with a state in `states`, with how many entities each has and the fields
+          of the state; and the views defined over the log.
       io:output: true
       endpoint: describe
     POST:
       help:method:
         title: Query the log
         description: >
-          One statement, in the dialect `chronicles.query.GET` names, over `events` (id, label,
-          component, time, received, entity, version, trace, payload), `states` (the latest
-          payload of each entity under each label) and the views. At most 30 seconds and 10000
-          rows; at the rows, `truncated` is true.
+          One statement, in the dialect `chronicles.queries.GET` names, over `events`, a row
+          for everything that happened (id, label, component, time, received, entity, version,
+          trace, payload), `states`, each entity as it stands (component, entity, version, time,
+          received, payload), and the views. At most 30 seconds and 10000 rows; at the rows,
+          `truncated` is true.
       io:output: true
       endpoint: query
   /views/:name:

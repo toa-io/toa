@@ -14,11 +14,11 @@ export const SERVICE = 'scribe'
 export const FACTS = 'facts'
 
 /** The component browsers write through, and the prefix of what they write. */
-export const INGEST = 'ingest'
+export const INGESTION = 'ingestion'
 export const CLIENT = 'client'
 
 /** The component the log is read through. */
-export const QUERY = 'query'
+export const QUERIES = 'queries'
 
 /** The stores Toa provides. */
 export const PROVIDERS = ['clickhouse'] as const

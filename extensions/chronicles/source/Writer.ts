@@ -1,5 +1,5 @@
 import { console } from 'openspan'
-import type { Provider, Row } from './Provider.ts'
+import type { Provider, Row, State } from './Provider.ts'
 
 /**
  * Rows to the provider in batches: what arrives within a moment, or until a batch is full, is
@@ -14,12 +14,13 @@ export class Writer {
     this.provider = provider
   }
 
-  public async write(rows: Row[]): Promise<void> {
+  public async write(rows: Row[], states: State[] = []): Promise<void> {
     const batch = (this.pending ??= this.open())
 
     batch.rows.push(...rows)
+    batch.states.push(...states)
 
-    if (batch.rows.length >= SIZE) this.flush(batch)
+    if (batch.rows.length + batch.states.length >= SIZE) this.flush(batch)
 
     await batch.written
   }
@@ -31,7 +32,7 @@ export class Writer {
       settle = (error) => (error === undefined ? resolve() : reject(error))
     })
 
-    const batch: Batch = { rows: [], written, settle, timer: null }
+    const batch: Batch = { rows: [], states: [], written, settle, timer: null }
 
     batch.timer = setTimeout(() => this.flush(batch), WAIT)
 
@@ -46,11 +47,12 @@ export class Writer {
     clearTimeout(batch.timer)
     batch.timer = null
 
-    this.provider.write(batch.rows).then(
+    this.provider.write(batch.rows, batch.states).then(
       () => batch.settle(),
       (error: unknown) => {
         console.warn('Chronicles failed to write', {
           rows: batch.rows.length,
+          states: batch.states.length,
           error: error instanceof Error ? error.message : String(error)
         })
 
@@ -62,6 +64,7 @@ export class Writer {
 
 interface Batch {
   rows: Row[]
+  states: State[]
   written: Promise<void>
   settle: (error?: unknown) => void
   timer: NodeJS.Timeout | null

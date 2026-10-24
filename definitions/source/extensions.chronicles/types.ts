@@ -25,12 +25,21 @@ export interface Settings {
 
   ingest: boolean
 
-  /** the events the log is kept of, `namespace.component.event` */
+  /** the events whose renderings are rows of `events`, `namespace.component.event` */
   events: string[]
+
+  /** the events whose payloads are the states of entities, one per component */
+  states: string[]
 }
 
-/** The `chronicles` declaration of a component: the labels of the events that carry its changes. */
-export type Declaration = string[]
+/** The `chronicles` declaration of a component, normalised. */
+export interface Declaration {
+  /** the labels of the events whose renderings are rows of `events` */
+  events: string[]
 
-/** What a component writes, before it is normalised. */
-export type Declared = Declaration | null
+  /** the label of the event whose payload is the entity as it stands */
+  state?: string
+}
+
+/** What a component writes: the declaration, the list of its `events`, or nothing. */
+export type Declared = Declaration | string[] | null
