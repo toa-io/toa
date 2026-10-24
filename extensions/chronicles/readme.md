@@ -12,7 +12,7 @@ Two tables.
 
 | source                                      | `label`               | `entity`, `version`                      | `payload`              |
 | ------------------------------------------- | --------------------- | ---------------------------------------- | ---------------------- |
-| a [change](#changes) of a component         | `<component>.<event>` | the record that changed, and its version | what the event renders |
+| a [change](#changes) of a component         | `<component>.<event>` | the entity that changed, and its version | what the event renders |
 | a [fact](#facts) an operation sends         | `<component>.<name>`  | `NULL`                                   | what was sent          |
 | an event a [browser](#from-a-browser) sends | `client.<name>`       | `NULL`                                   | what the browser sent  |
 
@@ -28,13 +28,13 @@ Every row also has `id`, the same however often it is delivered, so a row is kep
 when it happened; `received`, when the store wrote it; and `trace`, the traceparent of the call
 that caused it.
 
-**`states`** holds, for each record under each label, the payload of its latest version. A row of
-`events` that names a record is one of `states` as well, and replaces the one of a lower version:
-the history of an order is in `events`, and under a label whose payload is the record — like
+**`states`** holds, for each entity under each label, the payload of its latest version. A row of
+`events` that names an entity is one of `states` as well, and replaces the one of a lower version:
+the history of an order is in `events`, and under a label whose payload is the entity — like
 `snapshot` below — the order as it stands is in `states`. Facts and what browsers send name no
-record and are not in `states`.
+entity and are not in `states`.
 
-Nothing is ordered: order by `time`, or by `version` within one record.
+Nothing is ordered: order by `time`, or by `version` within one entity.
 
 ## Changes
 
@@ -60,9 +60,9 @@ export function payload(event: Event) {
 }
 ```
 
-The row says which record changed, its version and when, by the payload's `id`, `VERSION` and
+The row says which entity changed, its version and when, by the payload's `id`, `VERSION` and
 `UPDATED`: a payload that leaves them out is written without them, at the time it was taken. `sync`
-is the record as it stands, every field of it.
+is the entity as it stands, every field of it.
 
 Each change is a row of `events` under `<component>.<event>` for every event it renders. A
 committed change is written however long the scribe is away, and once however often it is
