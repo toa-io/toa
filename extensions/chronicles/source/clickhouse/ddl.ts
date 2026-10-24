@@ -59,7 +59,9 @@ export function retention(declared: number | undefined, engine: string): string[
 
 /**
  * The user queries run as: it reads the database and nothing else, under limits a query cannot
- * lift, because they are constraints of its profile rather than settings a request passes.
+ * lift, because they are constraints of its profile rather than settings a request passes. Past
+ * the rows a query is refused, which is the overflow a client's query cache allows; a query of
+ * the provider's own asks for one row more than it answers, to tell a full answer from a cut one.
  */
 export function reader(database: string, password: string): string[] {
   const name = id(`${database}_reader`)
@@ -69,8 +71,7 @@ export function reader(database: string, password: string): string[] {
     `ALTER SETTINGS PROFILE ${name} SETTINGS
       readonly = 2 CONST,
       max_execution_time = ${LIMITS.seconds} CONST,
-      max_result_rows = ${LIMITS.rows} CONST,
-      result_overflow_mode = 'break' CONST,
+      max_result_rows = ${LIMITS.rows + 1} CONST,
       max_memory_usage = ${LIMITS.memory} CONST`,
     `CREATE USER IF NOT EXISTS ${name} IDENTIFIED WITH sha256_password BY ${literal(password)}`,
     `ALTER USER ${name} IDENTIFIED WITH sha256_password BY ${literal(password)}

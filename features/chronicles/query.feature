@@ -173,3 +173,23 @@ Feature: Reading the log
       | users  | SELECT name FROM system.users   | REFUSED  |
       | writes | INSERT INTO events (id) VALUES ('x') | REFUSED  |
       | events | SELECT 1                        | RESERVED |
+
+  Scenario: A query past the rows answers what it has
+    When I call `chronicles.queries.query` with:
+      """yaml
+      input:
+        sql: SELECT number FROM numbers(20000)
+      """
+    Then the reply is received:
+      """yaml
+      truncated: true
+      """
+    When I call `chronicles.queries.query` with:
+      """yaml
+      input:
+        sql: SELECT number FROM numbers(10000)
+      """
+    Then the reply is received:
+      """yaml
+      truncated: false
+      """

@@ -190,7 +190,7 @@ CREATE TABLE states (
 ) ENGINE = ReplacingMergeTree(version) ORDER BY (component, entity)
 
 CREATE SETTINGS PROFILE <database>_reader SETTINGS readonly = 2 CONST,
-  max_execution_time = 30 CONST, max_result_rows = 10000 CONST, result_overflow_mode = 'break' CONST
+  max_execution_time = 30 CONST, max_result_rows = 10001 CONST
 CREATE USER <database>_reader IDENTIFIED BY '<reader>' SETTINGS PROFILE '<database>_reader'
 GRANT SELECT ON <database>.* TO <database>_reader
 ```
@@ -215,7 +215,10 @@ MCP:
 - `describe` answers the dialect, the labels with their counts, first and last `time` and the
   fields of their latest payloads, the components with a state with how many entities each has and
   the fields of the state, and the views with their definitions.
-- `query` takes `{ sql }`, one statement, and answers `{ columns, rows, truncated }`, with
+- `query` takes `{ sql }`, one statement, and answers `{ columns, rows, truncated }`: it asks
+  for one row past 10,000 with the `limit` setting, which cuts the result outside the statement,
+  and a reader that asks for more is refused rather than cut — the overflow a client's query cache
+  allows. It is answered with
   `201 Created` as every `POST` with an output is answered.
 - `define` takes `{ sql, refresh? }`, `refresh` in seconds and no less than 3600. A name is
   `^[a-z][a-z0-9_]{0,62}$` and none of the provider's tables; a context has at most 50.

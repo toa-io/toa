@@ -3,14 +3,14 @@
 
 import type { CodedError } from '@toa.io/core/types'
 
-export type AnonymousInput = Record<string, unknown> | string
+export type AnonymousInput = Record<string, unknown>
 
 export type AnonymousOutput = {
   status?: number
   accepted?: number
 }
 
-export type IdentifiedInput = Record<string, unknown> | string
+export type IdentifiedInput = Record<string, unknown>
 
 export type IdentifiedOutput = {
   status?: number

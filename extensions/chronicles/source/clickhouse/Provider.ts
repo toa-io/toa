@@ -74,13 +74,18 @@ export class ClickHouseProvider implements Provider {
     return labels.map((label) => ({ ...label, paths: byLabel.get(label.label) ?? [] }))
   }
 
+  /**
+   * One row more than is answered, cut by the `limit` setting — the result's own, outside whatever
+   * the statement says — so a result of the limit exactly reads as whole, and one past it as cut.
+   */
   public async query(sql: string): Promise<Result> {
-    const answer = await refusing(async () => await this.reader.select(sql, NUMBERS))
+    const settings = { ...NUMBERS, limit: String(ddl.LIMITS.rows + 1) }
+    const answer = await refusing(async () => await this.reader.select(sql, settings))
 
     return {
       columns: answer.meta,
       rows: answer.data.slice(0, ddl.LIMITS.rows),
-      truncated: answer.data.length >= ddl.LIMITS.rows
+      truncated: answer.data.length > ddl.LIMITS.rows
     }
   }
 
