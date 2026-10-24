@@ -1,7 +1,7 @@
 namespace: chronicles
 name: ingestion
 
-# The extension writes what this component is sent to the log, under `client.`
+# The extension writes what this component is sent to the log, under `agent.`
 chronicles: ~
 
 operations:

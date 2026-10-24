@@ -8,12 +8,12 @@ Feature: Reading the log
       input:
         events:
           - id: q1
-            name: page.viewed
+            name: page_viewed
             time: 1761200000000
             payload:
               path: /pricing
           - id: q2
-            name: page.viewed
+            name: page_viewed
             time: 1761200001000
             payload:
               path: /about
@@ -35,7 +35,7 @@ Feature: Reading the log
         - name: label
         - name: n
       rows:
-        - [client.page.viewed, 2]
+        - [agent.page_viewed, 2]
       truncated: false
       """
 
@@ -45,7 +45,7 @@ Feature: Reading the log
       """yaml
       dialect: ClickHouse SQL; read `events` and `states` with FINAL
       labels:
-        - label: client.page.viewed
+        - label: agent.page_viewed
           rows: 2
           paths: [path]
       states: []

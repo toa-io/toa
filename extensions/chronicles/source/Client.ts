@@ -1,11 +1,11 @@
 import { current, encode } from 'openspan'
 import { Connector, exceptions } from '@toa.io/core'
-import { CLIENT, INGESTION, NAMESPACE } from '@toa.io/definitions/extensions.chronicles'
+import { AGENT, INGESTION, NAMESPACE } from '@toa.io/definitions/extensions.chronicles'
 import type { Row } from './Provider.ts'
 import type { Writer } from './Writer.ts'
 
 /**
- * What `chronicles.ingestion` writes what browsers send through: each event under `client.<name>`,
+ * What `chronicles.ingestion` writes what browsers send through: each event under `agent.<name>`,
  * with the client's own id and time, all of a batch in one write, and answered once it is.
  */
 export class Client extends Connector {
@@ -43,7 +43,7 @@ export class Client extends Connector {
 
     const rows = events.map((event): Row => ({
       id: event.id,
-      label: `${CLIENT}.${event.name}`,
+      label: `${AGENT}.${event.name}`,
       component: COMPONENT,
       time: event.time,
       entity: null,
@@ -120,7 +120,7 @@ function check(event: unknown): string | null {
     return '`id` is a string of 1 to 64 characters'
 
   if (typeof name !== 'string' || name.length > 64 || !NAME.test(name))
-    return '`name` is lowercase segments separated by dots, at most 64 characters'
+    return '`name` is lowercase letters, digits and underscores from a letter, at most 64 characters'
 
   if (!Number.isInteger(time) || (time as number) < 0)
     return '`time` is milliseconds since the epoch'
@@ -155,4 +155,5 @@ interface Accepted {
 const COMPONENT = `${NAMESPACE}.${INGESTION}`
 const MAX_EVENTS = 100
 const MAX_PAYLOAD = 16 * 1024
-const NAME = /^[a-z][a-z0-9]*(\.[a-z][a-z0-9]*)*$/
+// no dot: a label is `agent.<name>`, and what follows the prefix is one name
+const NAME = /^[a-z][a-z0-9_]*$/

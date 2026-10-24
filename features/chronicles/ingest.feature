@@ -4,18 +4,18 @@ Feature: What browsers send to the log
     Given the chronicles are empty
     And the chronicles scribe is running
 
-  Scenario: A batch is written under `client.`
+  Scenario: A batch is written under `agent.`
     When I call `chronicles.ingestion.anonymous` with:
       """yaml
       input:
         events:
           - id: c1
-            name: page.viewed
+            name: page_viewed
             time: 1761200000000
             payload:
               path: /pricing
           - id: c2
-            name: button.clicked
+            name: button_clicked
             time: 1761200001000
       """
     Then the reply is received:
@@ -26,13 +26,13 @@ Feature: What browsers send to the log
     And the chronicles answer "SELECT id, label, component, identity, toUnixTimestamp64Milli(time) AS time, toString(payload.path) AS path FROM events FINAL ORDER BY id" within 30 seconds:
       """yaml
       - id: c1
-        label: client.page.viewed
+        label: agent.page_viewed
         component: chronicles.ingestion
         identity: null
         time: 1761200000000
         path: /pricing
       - id: c2
-        label: client.button.clicked
+        label: agent.button_clicked
         component: chronicles.ingestion
         identity: null
         time: 1761200001000
@@ -46,7 +46,7 @@ Feature: What browsers send to the log
         identity: 9c1f0a6d5b7e4f3a8d2c1b0a9e8f7d6c
         events:
           - id: i1
-            name: page.viewed
+            name: page_viewed
             time: 1761200000000
       """
     Then the chronicles answer "SELECT identity FROM events" within 30 seconds:
@@ -57,7 +57,7 @@ Feature: What browsers send to the log
   Scenario: A batch sent as text, as `navigator.sendBeacon` sends it
     When I call `chronicles.ingestion.anonymous` with:
       """yaml
-      input: '{"events":[{"id":"b1","name":"page.left","time":1761200000000}]}'
+      input: '{"events":[{"id":"b1","name":"page_left","time":1761200000000}]}'
       """
     Then the reply is received:
       """yaml
@@ -65,7 +65,7 @@ Feature: What browsers send to the log
       """
     And the chronicles answer "SELECT label FROM events" within 30 seconds:
       """yaml
-      - label: client.page.left
+      - label: agent.page_left
       """
 
   Scenario: An event sent again is one row
@@ -74,7 +74,7 @@ Feature: What browsers send to the log
       input:
         events:
           - id: r1
-            name: page.viewed
+            name: page_viewed
             time: 1761200000000
       """
     Then the chronicles answer "SELECT count() AS n FROM events FINAL" within 30 seconds:
@@ -96,6 +96,7 @@ Feature: What browsers send to the log
       | input                                                                   |
       | 'not json'                                                              |
       | { events: [{ id: a, name: Page, time: 1 }] }                            |
+      | { events: [{ id: a, name: page.viewed, time: 1 }] }                     |
       | { events: [{ id: a, name: page, time: -1 }] }                           |
       | { events: [{ id: a, name: page, time: 1, user: bob }] }                 |
       | { events: [{ id: '', name: page, time: 1 }] }                           |

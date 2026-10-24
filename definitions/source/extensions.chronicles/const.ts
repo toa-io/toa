@@ -15,7 +15,7 @@ export const FACTS = 'facts'
 
 /** The component browsers write through, and the prefix of what they write. */
 export const INGESTION = 'ingestion'
-export const CLIENT = 'client'
+export const AGENT = 'agent'
 
 /** The component the log is read through. */
 export const QUERIES = 'queries'

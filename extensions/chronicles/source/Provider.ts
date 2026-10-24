@@ -44,7 +44,7 @@ export interface Row {
   /** the same however many times it is delivered */
   id: string
 
-  /** `<component>.<event>`, `<component>.<name>` for a fact, `client.<name>` for a browser */
+  /** `<component>.<event>`, `<component>.<name>` for a fact, `agent.<name>` for a browser */
   label: string
 
   /** the component it is of */

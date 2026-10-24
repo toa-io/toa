@@ -16,7 +16,7 @@ Two tables.
 | ------------------------------------------------ | --------------------- | ---------------------------------------- | ---------------------- |
 | an [event](#events-and-states) a component names | `<component>.<event>` | the entity that changed, and its version | what the event renders |
 | a [fact](#facts) an operation sends              | `<component>.<name>`  | `NULL`                                   | what was sent          |
-| an event a [browser](#from-a-browser) sends      | `client.<name>`       | `NULL`                                   | what the browser sent  |
+| an event a [browser](#from-a-browser) sends      | `agent.<name>`        | `NULL`                                   | what the browser sent  |
 
 An order placed, a search made and a page left are three rows:
 
@@ -24,7 +24,7 @@ An order placed, a search made and a page left are three rows:
 | ----------------------- | ---------------------- | -------- | --------- | --------------------------------- |
 | `store.orders.created`  | `store.orders`         | `9c1f…`  | `0`       | `{ total: 120, status: "new" }`   |
 | `store.search.searched` | `store.search`         | `NULL`   | `NULL`    | `{ query: "teapot", results: 3 }` |
-| `client.page.left`      | `chronicles.ingestion` | `NULL`   | `NULL`    | `{ path: "/pricing" }`            |
+| `agent.page_left`       | `chronicles.ingestion` | `NULL`   | `NULL`    | `{ path: "/pricing" }`            |
 
 Every row also has `id`, the same however often it is delivered, so a row is kept once;
 `identity`, whose it is, where something [says so](#identity); `time`, when it happened;
@@ -132,7 +132,7 @@ POST /chronicles/ingestion/9c1f0a6d5b7e4f3a8d2c1b0a9e8f7d6c/ HTTP/1.1
 authorization: Token …
 content-type: application/json
 
-{ "events": [{ "id": "0192f3a1-…", "name": "page.viewed", "time": 1761200000000, "payload": { "path": "/pricing" } }] }
+{ "events": [{ "id": "0192f3a1-…", "name": "page_viewed", "time": 1761200000000, "payload": { "path": "/pricing" } }] }
 ```
 
 ```http
@@ -153,7 +153,7 @@ that names one is refused.
 POST /chronicles/ingestion/ HTTP/1.1
 content-type: application/json
 
-{ "events": [{ "id": "0192f3a2-…", "name": "page.left", "time": 1761200000000 }] }
+{ "events": [{ "id": "0192f3a2-…", "name": "page_left", "time": 1761200000000 }] }
 ```
 
 It takes no credentials, and is throttled to 60 requests a minute per address, which takes
@@ -164,12 +164,12 @@ signed-in client sends with `fetch(…, { keepalive: true })` instead. Anyone ca
 
 ### The body
 
-`{ events }`, at most 100 of them, each a row of `events` under `client.<name>`:
+`{ events }`, at most 100 of them, each a row of `events` under `agent.<name>`:
 
 | property  |                                                                     |
 | --------- | ------------------------------------------------------------------- |
 | `id`      | the client's own, at most 64 characters; a retry sends the same one |
-| `name`    | lowercase segments separated by dots, at most 64 characters         |
+| `name`    | lowercase letters, digits and underscores from a letter, at most 64 |
 | `time`    | when it happened, in milliseconds, by the client's clock            |
 | `payload` | an object, at most 16 KiB of JSON                                   |
 

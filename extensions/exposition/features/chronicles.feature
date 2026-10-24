@@ -170,7 +170,7 @@ Feature: Chronicles through the gateway
       accept: application/yaml
       content-type: application/json
 
-      {"events": [{"id": "g1", "name": "page.viewed", "time": 1761200000000, "payload": {"path": "/"}}]}
+      {"events": [{"id": "g1", "name": "page_viewed", "time": 1761200000000, "payload": {"path": "/"}}]}
       """
     Then the following reply is sent:
       """
@@ -185,7 +185,7 @@ Feature: Chronicles through the gateway
       accept: application/yaml
       content-type: text/plain
 
-      {"events": [{"id": "g2", "name": "page.left", "time": 1761200000000}]}
+      {"events": [{"id": "g2", "name": "page_left", "time": 1761200000000}]}
       """
     Then the following reply is sent:
       """
@@ -203,7 +203,7 @@ Feature: Chronicles through the gateway
       accept: application/yaml
       content-type: application/json
 
-      {"events": [{"id": "g3", "name": "page.viewed", "time": 1761200000000}]}
+      {"events": [{"id": "g3", "name": "page_viewed", "time": 1761200000000}]}
       """
     Then the following reply is sent:
       """
@@ -218,7 +218,7 @@ Feature: Chronicles through the gateway
       authorization: Basic YW5hbHlzdDpwYXNz
       content-type: application/json
 
-      {"events": [{"id": "g4", "name": "page.viewed", "time": 1761200000000}]}
+      {"events": [{"id": "g4", "name": "page_viewed", "time": 1761200000000}]}
       """
     Then the following reply is sent:
       """

@@ -20,7 +20,7 @@ const rows = (): any[] =>
 
 const event = {
   id: 'c1',
-  name: 'page.viewed',
+  name: 'page_viewed',
   time: 1761200000000,
   payload: { path: '/' }
 }
@@ -33,7 +33,7 @@ it('should write each event under client, with its own id and time', async () =>
   const [written] = rows()
 
   assert.equal(written.id, 'c1')
-  assert.equal(written.label, 'client.page.viewed')
+  assert.equal(written.label, 'agent.page_viewed')
   assert.equal(written.component, 'chronicles.ingestion')
   assert.equal(written.time, 1761200000000)
   assert.equal(written.entity, null)
@@ -102,4 +102,14 @@ it('should write nothing of a batch one event of which is not one', async () => 
   assert.equal(reply.message, 'INVALID')
   assert.equal((reply.cause as any).index, 1)
   assert.equal(writer.write.mock.callCount(), 0)
+})
+
+it('should refuse a name with a dot, which a label would read as two', async () => {
+  const reply = (await client.invoke(
+    'ingest',
+    { events: [{ ...event, name: 'page.viewed' }] },
+    null
+  )) as Error
+
+  assert.equal(reply.message, 'INVALID')
 })

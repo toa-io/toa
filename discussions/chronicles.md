@@ -136,7 +136,7 @@ $ toa conceal chronicles-store username=writer password=... reader=...
 |             |                                                                                              |
 | ----------- | -------------------------------------------------------------------------------------------- |
 | `id`        | the event's id; a fresh one per `send`; the client's own                                     |
-| `label`     | `<component>.<event>`, `<component>.<name>` for a `send`, `client.<name>` for a browser      |
+| `label`     | `<component>.<event>`, `<component>.<name>` for a `send`, `agent.<name>` for a browser       |
 | `component` | the component it is of; `chronicles.ingestion` for a browser                                 |
 | `time`      | milliseconds: the payload's `UPDATED`, or when the service took it; the call's; the client's |
 | `entity`    | the payload's `id`; `null` for the other two                                                 |
@@ -226,7 +226,7 @@ POST /chronicles/ingestion/9c1f0a6d5b7e4f3a8d2c1b0a9e8f7d6c/ HTTP/1.1
 authorization: Token …
 content-type: application/json
 
-{ "events": [{ "id": "0192…", "name": "page.viewed", "time": 1761200000000, "payload": { "path": "/pricing" } }] }
+{ "events": [{ "id": "0192…", "name": "page_viewed", "time": 1761200000000, "payload": { "path": "/pricing" } }] }
 ```
 
 ```http
@@ -235,8 +235,8 @@ content-type: application/json
 accepted: 1
 ```
 
-At most 100 events, each at most 16 KiB of JSON; `id` at most 64 characters; `name` dotted
-lowercase segments; a batch that breaks any of it is refused whole, `INVALID` or `OVERSIZED`, with
+At most 100 events, each at most 16 KiB of JSON; `id` at most 64 characters; `name` lowercase
+letters, digits and underscores, no dot; a batch that breaks any of it is refused whole, `INVALID` or `OVERSIZED`, with
 the index of the event in `cause`.
 
 Two routes, two operations: `POST /chronicles/ingestion/:identity/` takes `auth:id: identity` and
@@ -345,7 +345,7 @@ its own and writes them somewhere.
 - A label that is not an event of the component fails the deploy.
 - A manifest that declares `chronicles` in a context without the annotation fails the deploy.
 - `send` is in `events` with `entity` `null`.
-- `POST /chronicles/ingestion/` is `202` with `ingest`, and its events are under `client.`.
+- `POST /chronicles/ingestion/` is `202` with `ingest`, and its events are under `agent.`.
 - `POST /chronicles/ingestion/:identity/` is `202` to the identity's token and `403` to another's,
   and its rows are the identity's.
 - `chronicles.queries.POST` answers rows to the role, `403` without it, and `REFUSED` for an
