@@ -112,7 +112,7 @@ Feature: Chronicles
   Scenario: A view of a label no longer declared is gone once the scribe starts
     Given the chronicles of `chronicled.facts` are deployed
     And the chronicles scribe is running
-    And the chronicles answer "SELECT name FROM system.tables WHERE database = 'chronicles' AND startsWith(name, 'chronicled_') ORDER BY name":
+    And the chronicles answer "SELECT name FROM system.tables WHERE database = 'toa-dev' AND startsWith(name, 'chronicled_') ORDER BY name":
       """yaml
       - name: chronicled_facts_searched
       """
@@ -120,7 +120,7 @@ Feature: Chronicles
     And the chronicles of `chronicled.orders` are deployed
     And I compose `chronicled.orders` component
     And the chronicles scribe is running
-    Then the chronicles answer "SELECT name FROM system.tables WHERE database = 'chronicles' AND startsWith(name, 'chronicled_') ORDER BY name":
+    Then the chronicles answer "SELECT name FROM system.tables WHERE database = 'toa-dev' AND startsWith(name, 'chronicled_') ORDER BY name":
       """yaml
       - name: chronicled_orders
       - name: chronicled_orders_created

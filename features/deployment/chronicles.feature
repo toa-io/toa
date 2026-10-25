@@ -12,7 +12,7 @@ Feature: Chronicles deployment
       chronicles:
         store:
           provider: clickhouse
-          url: https://ch.example.com:8443/shop
+          url: https://ch.example.com:8443
         retention: 730
       """
     When I export deployment
@@ -30,7 +30,7 @@ Feature: Chronicles deployment
             - chronicles-queries
           variables:
             - name: TOA_CHRONICLES
-              value: '{"store":{"provider":"clickhouse","url":"https://ch.example.com:8443/shop"},"retention":730,"encounters":false,"ip":"truncated","events":{"chronicled.orders.created":{"description":"An order was placed","properties":{"total":{"type":"integer","description":"The amount of the order, in cents"},"shipping":{"type":"object","description":"Where the order goes","properties":{"country":{"type":"string","description":"ISO 3166 alpha-2 code of the country"}}},"items":{"type":"array","description":"What was ordered","items":{"type":"object","properties":{"sku":{"type":"string","description":"The code of the product"},"quantity":{"type":"integer","description":"Units of the product"}}}}}}},"states":{"chronicled.orders.snapshot":{"description":"An order as it stands","properties":{"total":{"type":"integer","description":"The amount of the order, in cents"}}}},"facts":{},"identities":{"chronicled.orders":"customer"}}'
+              value: '{"store":{"provider":"clickhouse","url":"https://ch.example.com:8443"},"retention":730,"encounters":false,"ip":"truncated","events":{"chronicled.orders.created":{"description":"An order was placed","properties":{"total":{"type":"integer","description":"The amount of the order, in cents"},"shipping":{"type":"object","description":"Where the order goes","properties":{"country":{"type":"string","description":"ISO 3166 alpha-2 code of the country"}}},"items":{"type":"array","description":"What was ordered","items":{"type":"object","properties":{"sku":{"type":"string","description":"The code of the product"},"quantity":{"type":"integer","description":"Units of the product"}}}}}}},"states":{"chronicled.orders.snapshot":{"description":"An order as it stands","properties":{"total":{"type":"integer","description":"The amount of the order, in cents"}}}},"facts":{},"identities":{"chronicled.orders":"customer"}}'
             - name: TOA_CHRONICLES_STORE_USERNAME
               secret:
                 name: toa-chronicles-store
@@ -59,7 +59,7 @@ Feature: Chronicles deployment
       chronicles:
         store:
           provider: clickhouse
-          url: https://ch.example.com:8443/shop
+          url: https://ch.example.com:8443
         encounters: true
       """
     When I export deployment
@@ -80,7 +80,7 @@ Feature: Chronicles deployment
       chronicles:
         store:
           provider: clickhouse
-          url: https://ch.example.com:8443/shop
+          url: https://ch.example.com:8443
       """
     When I export deployment
     Then exported values should contain:
@@ -114,7 +114,7 @@ Feature: Chronicles deployment
       chronicles:
         store:
           provider: clickhouse
-          url: https://ch.example.com:8443/shop
+          url: https://ch.example.com:8443
       """
     Then exporting deployment fails with:
       """
@@ -135,16 +135,16 @@ Feature: Chronicles deployment
       Invalid chronicles annotation: must be equal to constant
       """
 
-  Scenario: A database the address does not name
+  Scenario: An address that names a database
     Given I have a component `chronicled.orders`
     And I have a context with:
       """yaml
       chronicles:
         store:
           provider: clickhouse
-          url: https://ch.example.com:8443
+          url: https://ch.example.com:8443/shop
       """
     Then exporting deployment fails with:
       """
-      The store of chronicles names no database: the path of its address is the database.
+      The store of chronicles is the address of a server: the database is the context's scope.
       """

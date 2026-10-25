@@ -174,6 +174,13 @@ The readme of the extension, and the published documentation.
   repository at hand, and a skill installed apart from a deployment tells of another version.
   `describe` is what it calls first: how to read the log is the extension's text, how to read the
   store the provider's, and what is particular to the application is in its descriptions.
+- **The database is the scope.** Every other store a context shares — MongoDB, the brokers, Redis
+  — is named by `TOA_CONTEXT` and `TOA_SUFFIX`, and the store of the log is one more: its address
+  names a server, and the database is the scope. Two contexts cannot write to one database by
+  mistake, and the deployments of one context are told apart as they are everywhere else.
+- **No tenancy in Toa.** One context reading the logs of others — a platform and the applications
+  it runs — is a grant of the store's administrator, which provisioning leaves in place; Toa grants
+  a reader its own database and nothing more.
 - **No backlog in `describe`.** It would be a request to the broker on every call; the newest
   `received` tells whether the log is being written.
 

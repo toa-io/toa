@@ -44,7 +44,7 @@ const KEYS = ['USERNAME', 'PASSWORD', 'READER']
 // Toa's own development stack is not on the conventional ports, which the applications built on
 // Toa are on. See CONTRIBUTING.md.
 const DEV: Settings = {
-  store: { provider: 'clickhouse', url: 'http://localhost:31030/chronicles' },
+  store: { provider: 'clickhouse', url: 'http://localhost:31030' },
   encounters: true,
   ip: 'truncated',
   events: {},

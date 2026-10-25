@@ -263,3 +263,51 @@ Feature: Reading the log
       """yaml
       truncated: false
       """
+
+  Scenario: What the store's administrator grants the reader survives a start
+    Given the store runs:
+      """
+      DROP DATABASE IF EXISTS elsewhere SYNC;
+      CREATE DATABASE elsewhere;
+      CREATE TABLE elsewhere.numbers (n UInt8) ENGINE = Memory;
+      INSERT INTO elsewhere.numbers VALUES (7);
+      GRANT SELECT ON elsewhere.* TO `toa-dev_reader`
+      """
+    When the chronicles scribe stops
+    And the chronicles scribe is running
+    And I call `chronicles.queries.query` with:
+      """yaml
+      input:
+        sql: SELECT n FROM elsewhere.numbers
+      """
+    Then the reply is received:
+      """yaml
+      rows:
+        - [7]
+      """
+    And the store runs:
+      """
+      DROP DATABASE elsewhere SYNC
+      """
+
+  Scenario: Another database is not the reader's unless it is granted
+    Given the store runs:
+      """
+      DROP DATABASE IF EXISTS elsewhere SYNC;
+      CREATE DATABASE elsewhere;
+      CREATE TABLE elsewhere.numbers (n UInt8) ENGINE = Memory
+      """
+    When I call `chronicles.queries.query` with:
+      """yaml
+      input:
+        sql: SELECT n FROM elsewhere.numbers
+      """
+    Then the error is received:
+      """yaml
+      code: REFUSED
+      """
+    And the store runs:
+      """
+      DROP DATABASE elsewhere SYNC
+      """
+

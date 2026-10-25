@@ -132,7 +132,10 @@ export const LIMITS = {
   concurrent: 4
 }
 
-/** An identifier, which the annotation and the schema have already held to this. */
+/**
+ * An identifier, quoted: a scope, which may have hyphens, or a name the annotation and the schema
+ * have already held to letters, digits and underscores.
+ */
 export function id(name: string): string {
   if (!IDENTIFIER.test(name))
     throw new Error(`'${name}' is not a ClickHouse identifier chronicles accept`)
@@ -148,4 +151,4 @@ function ttl(days: number, column: string): string {
   return `TTL toDateTime(${column}) + INTERVAL ${days} DAY`
 }
 
-const IDENTIFIER = /^[a-zA-Z_][a-zA-Z0-9_]*$/
+const IDENTIFIER = /^[a-zA-Z0-9_][a-zA-Z0-9_-]*$/

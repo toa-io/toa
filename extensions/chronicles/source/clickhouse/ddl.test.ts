@@ -31,9 +31,11 @@ it('should remove a retention no longer declared', () => {
   assert.deepEqual(retention(undefined, 'ReplacingMergeTree ORDER BY id'), [])
 })
 
-it('should refuse an identifier it would have to quote', () => {
+it('should refuse an identifier that is neither a scope nor a name', () => {
   assert.throws(() => id('shop; DROP DATABASE x'))
+  assert.throws(() => id('shop`x'))
   assert.equal(id('shop_1'), '`shop_1`')
+  assert.equal(id('app-agent-0a1b2c'), '`app-agent-0a1b2c`')
 })
 
 it('should escape a literal', () => {

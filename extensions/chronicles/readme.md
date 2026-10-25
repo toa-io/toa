@@ -548,9 +548,10 @@ there is not a user — so a question that depends on who sent an encounter asks
 
 ### The reader
 
-A query runs as a user of the store that reads the log's database and nothing else: it cannot
-write, read another database or the store's users, or lift its limits — 30 seconds, 10,000 rows,
-64 MiB and 4 queries at once. A view is defined only of a statement that user could run, so a view
+A query runs as a user of the store that reads the log's database and nothing else — unless the
+store's administrator grants it more, which [Toa never does](#clickhouse): it cannot write, read
+another database or the store's users, or lift its limits — 30 seconds, 10,000 rows, 64 MiB and 4
+queries at once. A view is defined only of a statement that user could run, so a view
 reaches no further than a query.
 
 ## Deployment
@@ -560,14 +561,14 @@ reaches no further than a query.
 chronicles:
   store:
     provider: clickhouse
-    url: https://ch.example.com:8443/shop
+    url: https://ch.example.com:8443
   retention: 730
   encounters: true
 ```
 
 |              |                                                                  |
 | ------------ | ---------------------------------------------------------------- |
-| `store`      | the provider that keeps the log, and its address                 |
+| `store`      | the provider that keeps the log, and the address of its server   |
 | `retention`  | days a row of `events` and of `encounters` is kept; absent, kept |
 | `encounters` | the routes clients send to; absent, there are none               |
 | `ip`         | `full` keeps a client's whole address; absent, its network       |
@@ -576,16 +577,35 @@ chronicles:
 $ toa conceal chronicles-store username=… password=… reader=…
 ```
 
-The user provisions the store when the service starts. It creates the reader, the user queries run
-as, with `reader` as its password.
+The log is kept in a database of the store named after the context's
+[scope](/discussions/scope.md): the context, followed by `TOA_SUFFIX` where one is given. So
+contexts share a store without meeting in it, and so do the deployments of one context told apart
+by a suffix. An address that names a database is refused.
+
+The user provisions the store when the service starts: the database, the tables, and the reader,
+the user queries run as, with `reader` as its password.
 
 The events the components declare travel where the context's `amqp` says, as every event does.
 
 ## ClickHouse
 
-`url` is ClickHouse's HTTP address, and its path names the database, which is created where it does
-not exist. The user needs `CREATE`, `INSERT` and `access_management`; the reader is
-`<database>_reader`.
+`url` is ClickHouse's HTTP address. The database is the scope, created where it does not exist. The
+user needs `CREATE`, `INSERT` and `access_management`; the reader is `<scope>_reader`.
+
+Provisioning grants the reader its own database and changes nothing else of it, so what the store's
+administrator grants it beyond survives every start. That is how one context reads the logs of
+others — a platform reading the applications it runs, each of which reads only its own:
+
+```sql
+GRANT SELECT ON `shop`.* TO `platform_reader`
+```
+
+```sql
+SELECT count() FROM shop.encounters FINAL
+SELECT _database AS application, count() FROM merge(REGEXP('^app_'), '^encounters$') GROUP BY 1
+```
+
+Nothing in Toa grants a reader more than its own database.
 
 `events`, `states` and `encounters` are replaced by key in the background, so a query reads them
 with `FINAL`, which collapses what was delivered twice. The views of the declared read with

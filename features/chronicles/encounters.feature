@@ -93,7 +93,7 @@ Feature: What clients send to the log
         time: 0
         recent: 1
       """
-    And the chronicles answer "SELECT count() AS n FROM system.parts WHERE database = 'chronicles' AND table = 'encounters' AND active AND partition != toString(toYYYYMM(now()))":
+    And the chronicles answer "SELECT count() AS n FROM system.parts WHERE database = 'toa-dev' AND table = 'encounters' AND active AND partition != toString(toYYYYMM(now()))":
       """yaml
       - n: 0
       """

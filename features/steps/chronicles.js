@@ -13,9 +13,9 @@ import { load } from './.workspace/components/index.js'
 // into it
 Given('the chronicles are empty', async function () {
   for (const statement of [
-    `DROP DATABASE IF EXISTS ${DATABASE} SYNC`,
-    `DROP USER IF EXISTS ${DATABASE}_reader`,
-    `DROP SETTINGS PROFILE IF EXISTS ${DATABASE}_reader`
+    `DROP DATABASE IF EXISTS \`${DATABASE}\` SYNC`,
+    `DROP USER IF EXISTS \`${DATABASE}_reader\``,
+    `DROP SETTINGS PROFILE IF EXISTS \`${DATABASE}_reader\``
   ])
     await clickhouse(statement)
 
@@ -143,6 +143,19 @@ Then(
   }
 )
 
+Given(
+  'the store runs:',
+  /**
+   * Statements of the store's administrator, as the developer user: what Toa does not do itself.
+   *
+   * @param {string} sql
+   */
+  async function (sql) {
+    for (const statement of sql.split(';').map((part) => part.trim()))
+      if (statement !== '') await clickhouse(statement)
+  }
+)
+
 Then(
   "the reply's `{word}` mentions {string}",
   /**
@@ -243,11 +256,11 @@ const REFERENCE = '@toa.io/extensions.chronicles'
 const ENCOUNTERS = 'TOA_CONFIGURATION_CHRONICLES_ENCOUNTERS'
 
 const ANNOTATION = {
-  store: { provider: 'clickhouse', url: 'http://localhost:31030/chronicles' },
+  store: { provider: 'clickhouse', url: 'http://localhost:31030' },
   encounters: true
 }
 
-/** What the extension falls back to under `TOA_DEV`. */
-const DATABASE = 'chronicles'
+/** The scope of a process under `TOA_DEV`, which the database of the log is named after. */
+const DATABASE = 'toa-dev'
 const CLICKHOUSE = 'http://localhost:31030'
 const MANAGEMENT = 'http://localhost:31011/api'

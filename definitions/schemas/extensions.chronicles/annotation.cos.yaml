@@ -9,7 +9,7 @@ properties:
           provider:
             const: clickhouse
           url:
-            description: The HTTP address of ClickHouse, whose path names the database
+            description: The HTTP address of ClickHouse; the database is the context's scope
             type: string
             format: uri
         required: [provider, url]

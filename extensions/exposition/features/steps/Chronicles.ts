@@ -22,9 +22,9 @@ export class Chronicles {
   @given('the chronicles are empty')
   public async empty(): Promise<void> {
     for (const statement of [
-      `DROP DATABASE IF EXISTS ${DATABASE} SYNC`,
-      `DROP USER IF EXISTS ${DATABASE}_reader`,
-      `DROP SETTINGS PROFILE IF EXISTS ${DATABASE}_reader`
+      `DROP DATABASE IF EXISTS \`${DATABASE}\` SYNC`,
+      `DROP USER IF EXISTS \`${DATABASE}_reader\``,
+      `DROP SETTINGS PROFILE IF EXISTS \`${DATABASE}_reader\``
     ])
       await clickhouse(statement)
   }
@@ -92,5 +92,6 @@ async function query(sql: string): Promise<unknown> {
   return (JSON.parse(text) as { data: unknown }).data
 }
 
-const DATABASE = 'chronicles'
+// the scope of a process under `TOA_DEV`, which the database of the log is named after
+const DATABASE = 'toa-dev'
 const CLICKHOUSE = 'http://localhost:31030/'

@@ -41,13 +41,21 @@ export class ClickHouseProvider implements Provider {
   private readonly password: string
   private readonly retention: number | undefined
 
-  public constructor(url: string, credentials: Credentials, retention?: number) {
-    this.writer = new ClickHouse(url, credentials.username, credentials.password)
-    this.reader = new ClickHouse(
+  /** `database` is the context's scope, which the log is kept under */
+  // eslint-disable-next-line max-params
+  public constructor(
+    url: string,
+    database: string,
+    credentials: Credentials,
+    retention?: number
+  ) {
+    this.writer = new ClickHouse(
       url,
-      `${this.writer.database}_reader`,
-      credentials.reader
+      database,
+      credentials.username,
+      credentials.password
     )
+    this.reader = new ClickHouse(url, database, `${database}_reader`, credentials.reader)
     this.password = credentials.reader
     this.retention = retention
   }

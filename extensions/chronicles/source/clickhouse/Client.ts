@@ -8,10 +8,11 @@ export class ClickHouse {
   private readonly endpoint: string
   private readonly headers: Record<string, string>
 
-  public constructor(address: string, user: string, key: string) {
+  // eslint-disable-next-line max-params
+  public constructor(address: string, database: string, user: string, key: string) {
     const url = new URL(address)
 
-    this.database = decodeURIComponent(url.pathname.replace(/^\/+|\/+$/g, ''))
+    this.database = database
     this.endpoint = `${url.protocol}//${url.host}/`
     this.headers = { 'x-clickhouse-user': user, 'x-clickhouse-key': key }
   }

@@ -88,9 +88,10 @@ export const standalone = true
 function read(
   annotation: Annotation
 ): Pick<Settings, 'store' | 'retention' | 'encounters' | 'ip'> {
-  if (new URL(annotation.store.url).pathname.replace(/\//g, '') === '')
+  // the database is the scope, as it is of every store a context shares
+  if (new URL(annotation.store.url).pathname.replace(/\//g, '') !== '')
     throw new Error(
-      'The store of chronicles names no database: the path of its address is the database.'
+      "The store of chronicles is the address of a server: the database is the context's scope."
     )
 
   return {
