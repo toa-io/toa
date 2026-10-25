@@ -13,12 +13,27 @@ The log is three tables, and a view for each label and state the components decl
   sent it. `ip` is the client's network, `country` its country, `origin` the site it was sent from,
   `agent` its `user-agent`, and `browser`, `os` and `device` what the agent says it is.
 
-Every row has `time`, when it happened, by its source and never by the store: a change is when
-the component made it, a fact when it was sent, an encounter when the gateway received it less
-how long before sending the client says it happened. An encounter also has `received`, when the
-gateway received its batch: a `received` far behind now means clients stopped sending. Rows can
-arrive late — after the service that writes them was away — and are written at their own time, so
-a count of the last hours may still grow.
+## Time
+
+Every row has `time`, when it happened, on the server's clock. No column is when the store wrote a
+row.
+
+- A change, in `events` and `states`: when the component made it — the entity's `UPDATED`, or the
+  property the component names, or else the moment of the change.
+- A fact: when the operation sent it.
+- An encounter: when the gateway received its batch, less how long before sending the batch the
+  client says the event happened. A client's clock may be off by minutes or years; what it
+  measures between two of its own moments is not. So `time` is the gateway's clock at the
+  distance the client measured: the order and the intervals of one client's encounters are exact,
+  and so is when they happened, to the time a request takes to arrive. A batch a client held
+  while offline is written at when its events happened.
+
+An encounter also has `received`, when the gateway received its batch: one `received` is shared by
+every encounter of a batch, and a `received` far behind now means clients stopped sending.
+
+Rows can arrive late — after the service that writes them was away — and are written at their own
+time, so a count of the last hours may still grow. Compare `time` of encounters and of events
+directly: both are the server's.
 
 Read a declared label through its view, named after the label with its dots as underscores
 (`store.orders.paid` is `store_orders_paid`, the state of `store.orders` is `store_orders`): its
