@@ -192,6 +192,9 @@ const DEV_SECRETS = {
   'toa-mongodb.default/password': { value: 'secret' },
   'toa-amqp-context.default/username': { value: 'developer' },
   'toa-amqp-context.default/password': { value: 'secret' },
+  'toa-chronicles-store/username': { value: 'developer' },
+  'toa-chronicles-store/password': { value: 'secret' },
+  'toa-chronicles-store/reader': { value: 'secret' },
   'toa-configuration/IDENTITY_TOKENS_KEY0': { generate: 'paseto' },
   'toa-configuration/IDENTITY_TOKENS_ENCRYPTION_KEY0': { generate: 'jwe' }
 }

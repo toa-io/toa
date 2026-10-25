@@ -84,6 +84,26 @@ Feature: Export local deployment environment variables
       TOA_AMQP_CONTEXT__PASSWORD=secret
       """
 
+  Scenario: Fill the store of chronicles with `--dev`
+    Given I have a component `dummies.one`
+    And I have a context with:
+      """yaml
+      amqp:
+        context: amqp://whatever
+      chronicles:
+        store:
+          provider: clickhouse
+          url: http://localhost:8123
+        resources: ~
+      """
+    When I run `toa env --dev`
+    Then the environment contains:
+      """
+      TOA_CHRONICLES_STORE_USERNAME=developer
+      TOA_CHRONICLES_STORE_PASSWORD=secret
+      TOA_CHRONICLES_STORE_READER=secret
+      """
+
   Scenario: Keeping secret values with `--dev`
     Given I have a component `dummies.one`
     And I have a context with:
