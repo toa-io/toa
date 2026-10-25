@@ -183,7 +183,8 @@ await context.chronicles.send(
 ## Encounters
 
 What clients send: pages viewed, buttons pressed, anything a client tells of itself. Served where
-the context says `encounters: true`, at two routes: one of an identity, and one of no one.
+the context says `encounters: true`, at two routes: one of an identity, and one of no one. Who may
+send to which is in [Access](#access).
 
 ### `POST /chronicles/encounters/:identity/`
 
@@ -207,16 +208,14 @@ content-type: application/json
 accepted: 1
 ```
 
-The token is the identity's, or the request is answered `403`: the rows are that identity's,
-whatever the body says. Throttled to 60 requests a minute per identity.
+The rows are that identity's, whatever the body says.
 
 ### `POST /chronicles/encounters/`
 
 What anyone sends, before signing in or without it. The same body, and rows of no identity; a body
 that names one is refused.
 
-It takes no credentials, and is throttled to 60 requests a minute per address. A form whose
-`events` is their JSON, beside `visitor` and `session`, is read as the JSON body, so
+A form whose `events` is their JSON, beside `visitor` and `session`, is read as the JSON body, so
 `navigator.sendBeacon`, which sends no `authorization`, can send a batch here as the page closes:
 
 ```javascript
@@ -226,8 +225,7 @@ navigator.sendBeacon(
 )
 ```
 
-A signed-in client sends with `fetch(…, { keepalive: true })` instead. Anyone can send anything: a
-`user` in a payload is what the client said.
+A signed-in client sends with `fetch(…, { keepalive: true })` instead.
 
 ### The body
 
@@ -327,14 +325,11 @@ page_viewed:
     referrer: The page the visitor came from
 ```
 
-It takes the role `system:chronicles:encounters`. It documents, and holds nothing back: a name it
-does not tell is written as any other.
+It documents, and holds nothing back: a name it does not tell is written as any other.
 
 ## Reading the log
 
-Reading takes the role `system:chronicles:query`, and views take `system:chronicles:views`;
-`system:chronicles` grants these and `system:chronicles:encounters`. A refusal is answered `422`
-with `{ code, cause }`.
+A refusal is answered `422` with `{ code, cause }`. Who may read is in [Access](#access).
 
 ### `GET /chronicles/queries/`
 
@@ -513,7 +508,50 @@ routes is a tool, under the name the gateway gives a route, and taking what the 
 | `chronicles.queries.views._name.DELETE` | `DELETE /chronicles/queries/views/:name/` |
 | `chronicles.encounters.GET`             | `GET /chronicles/encounters/`             |
 
-A tool is listed to a caller that holds its role, and a refusal is a tool result with `isError`.
+A refusal is a tool result with `isError`.
+
+## Access
+
+| route                                     | who may call                         | limit                       |
+| ----------------------------------------- | ------------------------------------ | --------------------------- |
+| `POST /chronicles/encounters/`            | anyone, with no credentials          | 60 a minute per address     |
+| `POST /chronicles/encounters/:identity/`  | the identity, by its own credentials | 60 a minute per identity    |
+| `GET /chronicles/encounters/`             | `system:chronicles:encounters`       |                             |
+| `GET /chronicles/queries/`                | `system:chronicles:query`            |                             |
+| `POST /chronicles/queries/`               | `system:chronicles:query`            | the [reader's](#the-reader) |
+| `PUT /chronicles/queries/views/:name/`    | `system:chronicles:views`            | 50 views                    |
+| `DELETE /chronicles/queries/views/:name/` | `system:chronicles:views`            |                             |
+
+A caller without what a route takes is answered `403`, and past its limit `429`. Over
+[MCP](#over-mcp), a tool is listed to a caller that holds its role, and to no one else.
+
+### Roles
+
+|                                |                                                                                             |
+| ------------------------------ | ------------------------------------------------------------------------------------------- |
+| `system:chronicles:query`      | reads every row of the log: the identities, the networks, the origins and agents of clients |
+| `system:chronicles:views`      | defines and drops the views every reader reads; a view can read only what a query can       |
+| `system:chronicles:encounters` | reads what the configuration documents of encounters, and no row                            |
+| `system:chronicles`            | all three                                                                                   |
+
+`query` is access to personal data, and is granted as that. `views` changes what other readers are
+told a view counts, and changes nothing of the log. `encounters` is for whoever writes a client.
+A role is granted as any [role](/extensions/exposition/documentation/access.md) is.
+
+### What a client cannot say
+
+A client sends events and nothing that says who or where it is: `identity` is the path's, which the
+credentials have to be the identity's; `ip`, `country`, `origin` and `agent` are what the gateway
+read off the request, and a body that names one is overwritten, or refused where it names
+`identity` on the route of no one. Anything else in a payload is what the client said — a `user`
+there is not a user — so a question that depends on who sent an encounter asks `identity`.
+
+### The reader
+
+A query runs as a user of the store that reads the log's database and nothing else: it cannot
+write, read another database or the store's users, or lift its limits — 30 seconds, 10,000 rows,
+64 MiB and 4 queries at once. A view is defined only of a statement that user could run, so a view
+reaches no further than a query.
 
 ## Deployment
 
