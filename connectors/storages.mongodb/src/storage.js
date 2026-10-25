@@ -4,6 +4,7 @@ import { translate } from './translate.js'
 import { codec } from './record.js'
 import { Inbox } from './inbox.js'
 import { Outbox } from './outbox.js'
+import { bulkWrite } from './bulk.js'
 import { Migrations } from './migrations.js'
 import { Streams } from './streams.js'
 import { conflicted, query } from './measurements.js'
@@ -332,7 +333,7 @@ export class Storage extends Connector {
             // the client's bulk write, not the collection's: the latter takes a `timeoutMS` the
             // URL sets for one the call passed, and refuses it inside a transaction that has
             // its own
-            async () => await this.#collection.client.bulkWrite(operations, { session })
+            async () => await bulkWrite(this.#collection.client, operations, { session })
           )
         } catch (error) {
           if (!collidedOnId(firstWriteError(error))) throw error
