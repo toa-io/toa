@@ -566,12 +566,13 @@ chronicles:
   encounters: true
 ```
 
-|              |                                                                  |
-| ------------ | ---------------------------------------------------------------- |
-| `store`      | the provider that keeps the log, and the address of its server   |
-| `retention`  | days a row of `events` and of `encounters` is kept; absent, kept |
-| `encounters` | the routes clients send to; absent, there are none               |
-| `ip`         | `full` keeps a client's whole address; absent, its network       |
+|              |                                                                                     |
+| ------------ | ----------------------------------------------------------------------------------- |
+| `store`      | the provider that keeps the log, and the address of its server                      |
+| `retention`  | days a row of `events` and of `encounters` is kept; absent, kept                    |
+| `encounters` | the routes clients send to; absent, there are none                                  |
+| `ip`         | `full` keeps a client's whole address; absent, its network                          |
+| `resources`  | what the service may take, as [`resources`](/migrations/262.md) is stated elsewhere |
 
 ```shell
 $ toa conceal chronicles-store username=… password=… reader=…

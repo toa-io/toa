@@ -73,6 +73,28 @@ Feature: Chronicles deployment
             - chronicles-queries
       """
 
+  Scenario: What the service may take
+    Given I have a component `chronicled.orders`
+    And I have a context with:
+      """yaml
+      chronicles:
+        store:
+          provider: clickhouse
+          url: https://ch.example.com:8443
+        resources:
+          cpu: [100m, 500m]
+          memory: [200Mi, 400Mi]
+      """
+    When I export deployment
+    Then exported values should contain:
+      """yaml
+      services:
+        - name: chronicles-scribe
+          resources:
+            cpu: [100m, 500m]
+            memory: [200Mi, 400Mi]
+      """
+
   Scenario: The service without a component that declares chronicles
     Given I have a component `dummies.one`
     And I have a context with:

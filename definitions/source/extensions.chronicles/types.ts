@@ -1,3 +1,5 @@
+import type { Resources } from '@toa.io/operations'
+
 /** The `chronicles` annotation of a context. */
 export interface Annotation {
   /** where the log is kept, by the provider that keeps it */
@@ -11,6 +13,9 @@ export interface Annotation {
 
   /** how much of a client's address the log keeps; `truncated` unless it says `full` */
   ip?: Address
+
+  /** what the service may take; `null`, which the schema admits, deploys it without any */
+  resources?: Resources
 }
 
 export type Address = 'truncated' | 'full'

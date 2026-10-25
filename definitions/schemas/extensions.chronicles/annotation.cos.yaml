@@ -26,5 +26,23 @@ properties:
       How much of a client's address the log keeps: its network, truncated to /24 of IPv4 and /48
       of IPv6, or all of it
     enum: [truncated, full]
+  resources:
+    # what the service may take; `null` deploys it without any, which every deployment has to
+    # state one way or the other — see `migrations/262.md`
+    type: object
+    nullable: true
+    properties:
+      cpu:
+        type: array
+        items:
+          type: string
+        minItems: 2
+        maxItems: 2
+      memory:
+        type: array
+        items:
+          type: string
+        minItems: 2
+        maxItems: 2
 required: [store]
 additionalProperties: false

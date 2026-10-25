@@ -75,6 +75,8 @@ export function deployment(
     variables: [{ name: SETTINGS, value: JSON.stringify(settings) }, ...credentials()]
   }
 
+  if (annotation.resources !== undefined) service.resources = annotation.resources
+
   // a state's event is consumed as an event's is
   return {
     services: [service],
