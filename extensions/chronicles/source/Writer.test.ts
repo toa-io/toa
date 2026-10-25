@@ -88,6 +88,7 @@ it('should write encounters with the rows of the same moment', async () => {
     id: 'c1',
     name: 'page_viewed',
     time: 0,
+    received: 0,
     visitor: 'v1',
     session: null,
     identity: null,
