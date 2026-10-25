@@ -6,8 +6,8 @@ import type { Contract, Property } from '@toa.io/definitions/extensions.chronicl
  * reads them in a dialect of its own, which is what an agent writes its queries in.
  */
 export interface Provider {
-  /** what a query is written in, which `describe` tells whoever writes one */
-  readonly dialect: string
+  /** how the store is read: its dialect and what is particular to it, for whoever writes a query */
+  readonly guide: string
 
   /** the names a view cannot take: the provider's own tables */
   readonly tables: string[]

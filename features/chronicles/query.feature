@@ -53,7 +53,6 @@ Feature: Reading the log
     When I call `chronicles.queries.describe`
     Then the reply is received:
       """yaml
-      dialect: ClickHouse SQL; read `events`, `states` and `encounters` with FINAL
       labels:
         - label: chronicled.orders.created
           description: An order was placed
@@ -99,6 +98,11 @@ Feature: Reading the log
               types: [Int64]
       views: []
       """
+
+  Scenario: How to read the log, and how its store is read
+    When I call `chronicles.queries.describe`
+    Then the reply's `guide` mentions "A visitor is not a person"
+    And the reply's `guide` mentions "FINAL"
 
   Scenario: When the log was last written
     When I call `chronicles.queries.describe`

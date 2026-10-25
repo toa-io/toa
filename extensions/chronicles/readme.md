@@ -338,7 +338,7 @@ with `{ code, cause }`.
 
 ### `GET /chronicles/queries/`
 
-What the log holds: the dialect queries are written in, the labels of `events`, the components
+What the log holds: a guide to reading it, the labels of `events`, the components
 with a state, the encounters, and the views.
 
 ```http
@@ -350,7 +350,11 @@ accept: application/yaml
 ```http
 200 OK
 
-dialect: ClickHouse SQL; read `events`, `states` and `encounters` with FINAL
+guide: |
+  # Reading the log
+
+  The log is three tables, and a view for each label and state the components declare.
+  …
 labels:
   - label: store.orders.paid
     description: An order's payment completed
@@ -401,6 +405,11 @@ views:
     refreshed: 2026-10-24 17:00:03
 ```
 
+`guide` is how to read the log — what its tables and columns mean, and what to be careful of —
+and how its store is read, in the store's dialect: what an agent reads before its first query.
+Toa writes it; what is particular to an application is in the descriptions of what it declares
+and documents, and in [`exposition.mcp.instructions`](/extensions/exposition/documentation/mcp.md).
+
 A label and a state are told by their declaration, with the type a [view](#views-of-the-declared)
 reads each field as. A label declared and not yet written is told with no rows. An encounter is
 told by what was sent: the fields of the latest payloads, the types they were sent as — two
@@ -412,7 +421,7 @@ by `time`; `received` is the newest row the store wrote, which tells whether row
 
 ### `POST /chronicles/queries/`
 
-One statement, in the dialect.
+One statement, in the store's dialect, as the `guide` says.
 
 ```http
 POST /chronicles/queries/ HTTP/1.1
@@ -445,7 +454,7 @@ answers what it has, with `truncated: true`; past the rest it is refused. It lea
 | --------- | ----------------------------------------------------------------------- |
 | `REFUSED` | the store refused the statement; `cause.message` is what the store said |
 
-### `PUT /chronicles/queries/views/:name`
+### `PUT /chronicles/queries/views/:name/`
 
 A view over the log, by a statement a query could run. Defining a name again replaces the view.
 
@@ -476,7 +485,7 @@ query reads a view by its name.
 | `RESERVED`  | the name is one of the log's tables, or the view of a declared label |
 | `EXHAUSTED` | the context has 50 views, and this is not one of them                |
 
-### `DELETE /chronicles/queries/views/:name`
+### `DELETE /chronicles/queries/views/:name/`
 
 ```http
 DELETE /chronicles/queries/views/paid_daily/ HTTP/1.1
@@ -496,13 +505,13 @@ authorization: Token …
 Where the context publishes [MCP](/extensions/exposition/documentation/mcp.md), each of these
 routes is a tool, under the name the gateway gives a route, and taking what the route takes:
 
-| tool                                    | route                                    |
-| --------------------------------------- | ---------------------------------------- |
-| `chronicles.queries.GET`                | `GET /chronicles/queries/`               |
-| `chronicles.queries.POST`               | `POST /chronicles/queries/`              |
-| `chronicles.queries.views._name.PUT`    | `PUT /chronicles/queries/views/:name`    |
-| `chronicles.queries.views._name.DELETE` | `DELETE /chronicles/queries/views/:name` |
-| `chronicles.encounters.GET`             | `GET /chronicles/encounters/`            |
+| tool                                    | route                                     |
+| --------------------------------------- | ----------------------------------------- |
+| `chronicles.queries.GET`                | `GET /chronicles/queries/`                |
+| `chronicles.queries.POST`               | `POST /chronicles/queries/`               |
+| `chronicles.queries.views._name.PUT`    | `PUT /chronicles/queries/views/:name/`    |
+| `chronicles.queries.views._name.DELETE` | `DELETE /chronicles/queries/views/:name/` |
+| `chronicles.encounters.GET`             | `GET /chronicles/encounters/`             |
 
 A tool is listed to a caller that holds its role, and a refusal is a tool result with `isError`.
 

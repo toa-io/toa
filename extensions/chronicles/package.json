@@ -20,6 +20,7 @@
   "files": [
     "transpiled",
     "components",
+    "guides",
     "readme.md",
     "!**/tsconfig.tsbuildinfo",
     "!**/*.test.*",

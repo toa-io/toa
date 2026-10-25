@@ -1,3 +1,5 @@
+import { readFileSync } from 'node:fs'
+import { resolve } from 'node:path'
 import { Connector, Locator, exceptions } from '@toa.io/core'
 import { ENCOUNTERS, NAMESPACE, view } from '@toa.io/definitions/extensions.chronicles'
 import { Refusal } from './Provider.ts'
@@ -8,7 +10,7 @@ import type { Contract, Settings } from '@toa.io/definitions/extensions.chronicl
 
 /**
  * What `chronicles.queries` reads the log through: queries in the provider's dialect, views made
- * from a statement the provider let a query run, and what the log holds — told by what the
+ * from a statement the provider let a query run, and what the log holds — how it is read, what the
  * components declare, what the context documents of encounters, and what the store has written.
  */
 export class Reader extends Connector {
@@ -103,7 +105,7 @@ export class Reader extends Connector {
       }
     })
 
-    return { dialect: provider.dialect, labels, states, encounters, views }
+    return { guide: `${GUIDE}\n${provider.guide}`, labels, states, encounters, views }
   }
 
   private async query(sql: string): Promise<Result | Error> {
@@ -244,7 +246,8 @@ type Documented = Record<
 >
 
 interface Description {
-  dialect: string
+  /** how to read the log, and how its store is read */
+  guide: string
   labels: object[]
   states: object[]
   encounters: object[]
@@ -254,3 +257,4 @@ interface Description {
 const LOCATOR = new Locator(ENCOUNTERS, NAMESPACE)
 const SOURCE = { service: 'chronicles' }
 const MAX_VIEWS = 50
+const GUIDE = readFileSync(resolve(import.meta.dirname, '../guides/log.md'), 'utf8')

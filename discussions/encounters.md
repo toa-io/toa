@@ -170,6 +170,10 @@ The readme of the extension, and the published documentation.
 - **No `Referer`.** A request from the storefront to the gateway's origin carries the storefront's
   origin and no more, and the page a visitor came from is `document.referrer`, which only the
   client reads.
+- **A guide in `describe`, not a skill.** An agent that reads the log does so over MCP, with no
+  repository at hand, and a skill installed apart from a deployment tells of another version.
+  `describe` is what it calls first: how to read the log is the extension's text, how to read the
+  store the provider's, and what is particular to the application is in its descriptions.
 - **No backlog in `describe`.** It would be a request to the broker on every call; the newest
   `received` tells whether the log is being written.
 

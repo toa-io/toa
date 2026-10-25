@@ -1,3 +1,5 @@
+import { readFileSync } from 'node:fs'
+import { resolve } from 'node:path'
 import { console } from 'openspan'
 import { ClickHouse, ClickHouseError } from './Client.ts'
 import { view } from '@toa.io/definitions/extensions.chronicles'
@@ -31,8 +33,7 @@ import type { Property } from '@toa.io/definitions/extensions.chronicles'
  * the rest.
  */
 export class ClickHouseProvider implements Provider {
-  public readonly dialect =
-    'ClickHouse SQL; read `events`, `states` and `encounters` with FINAL'
+  public readonly guide = GUIDE
   public readonly tables = ddl.TABLES
 
   private readonly writer: ClickHouse
@@ -334,4 +335,8 @@ const UNITS: Record<string, number> = {
 }
 
 const SAMPLE = 1000
+const GUIDE = readFileSync(
+  resolve(import.meta.dirname, '../../guides/clickhouse.md'),
+  'utf8'
+)
 const NUMBERS = { output_format_json_quote_64bit_integers: '0' }

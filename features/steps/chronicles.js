@@ -143,6 +143,21 @@ Then(
   }
 )
 
+Then(
+  "the reply's `{word}` mentions {string}",
+  /**
+   * @param {string} path
+   * @param {string} text
+   * @this {toa.features.Context}
+   */
+  function (path, text) {
+    const value = this.reply?.[path]
+
+    assert.equal(typeof value, 'string', `The reply has no text at '${path}'`)
+    assert.ok(value.includes(text), `'${path}' does not mention '${text}'`)
+  }
+)
+
 /**
  * What the deployment gives the scribe of the components, computed by the extension itself rather
  * than written down here.
