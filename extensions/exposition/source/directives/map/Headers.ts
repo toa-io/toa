@@ -32,7 +32,8 @@ export class Headers extends Mapping<Record<string, string>> {
     for (const property of Object.keys(this.value)) take(introspection, property)
   }
 
-  public properties(context: Input): Record<string, string> {
+  /** A header the request does not have is a property it has none of, whatever the body says. */
+  public properties(context: Input): Record<string, string | undefined> {
     context.pipelines.response.push((response) => {
       response.headers ??= new global.Headers()
 
@@ -40,11 +41,10 @@ export class Headers extends Mapping<Record<string, string>> {
     })
 
     return Object.entries(this.value).reduce(
-      (properties: Record<string, string>, [property, header]) => {
+      (properties: Record<string, string | undefined>, [property, header]) => {
         const value = context.request.headers[header]
 
-        if (value !== undefined)
-          properties[property] = Array.isArray(value) ? value.join(', ') : value
+        properties[property] = Array.isArray(value) ? value.join(', ') : value
 
         return properties
       },
