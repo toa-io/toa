@@ -59,20 +59,27 @@ export function manifest(
   return declaration
 }
 
-/** `identity` unless the component names another property, or none with `identity: ~`. */
+/**
+ * `identity` unless the component names another property, or none with `identity: ~`; `UPDATED`
+ * unless it names another of when a change was made, or none with `timestamp: ~`.
+ */
 function normalize(declared: Declared | undefined): Declaration {
   if (declared === null || declared === undefined)
-    return { events: {}, facts: {}, identity: IDENTITY }
+    return { events: {}, facts: {}, identity: IDENTITY, timestamp: TIMESTAMP }
 
   return {
     ...declared,
     events: declared.events ?? {},
     facts: declared.facts ?? {},
-    identity: declared.identity === undefined ? IDENTITY : declared.identity
+    identity: declared.identity === undefined ? IDENTITY : declared.identity,
+    timestamp: declared.timestamp === undefined ? TIMESTAMP : declared.timestamp
   }
 }
 
 const IDENTITY = 'identity'
+
+/** what an entity as it stands says of when it last changed */
+const TIMESTAMP = 'UPDATED'
 
 function id(component: Manifest): string {
   return component.namespace === undefined || component.namespace === 'default'

@@ -30,7 +30,7 @@ const contract: Contract = {
 it('should read each property in its type, or NULL', () => {
   const sql = select({ kind: 'event', label: 'store.orders.created', contract })
 
-  assert.match(sql, /^SELECT id, time, received, entity, version, identity, trace, /)
+  assert.match(sql, /^SELECT id, time, entity, version, identity, trace, /)
   assert.match(
     sql,
     /JSONExtract\(ifNull\(toJSONString\(payload\.`total`\), 'null'\), 'Nullable\(Int64\)'\) AS `total`/
@@ -49,7 +49,7 @@ it('should read each property in its type, or NULL', () => {
 it('should read a state of a component', () => {
   const sql = select({ kind: 'state', component: 'store.orders', contract })
 
-  assert.match(sql, /^SELECT entity, version, identity, time, received, /)
+  assert.match(sql, /^SELECT entity, version, identity, time, /)
   assert.match(sql, / FROM states FINAL WHERE component = 'store\.orders'$/)
 })
 

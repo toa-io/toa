@@ -13,9 +13,12 @@ The log is three tables, and a view for each label and state the components decl
   sent it. `ip` is the client's network, `country` its country, `origin` the site it was sent from,
   `agent` its `user-agent`, and `browser`, `os` and `device` what the agent says it is.
 
-Every row has `time`, when it happened, and `received`, when the store wrote it. An encounter's
-`time` is the client's clock, which may be wrong; `received` is not. A `received` far behind now
-means rows stopped arriving, not that nothing happened.
+Every row has `time`, when it happened, by its source and never by the store: a change is when
+the component made it, a fact when it was sent, an encounter when the gateway received it less
+how long before sending the client says it happened. An encounter also has `received`, when the
+gateway received its batch: a `received` far behind now means clients stopped sending. Rows can
+arrive late — after the service that writes them was away — and are written at their own time, so
+a count of the last hours may still grow.
 
 Read a declared label through its view, named after the label with its dots as underscores
 (`store.orders.paid` is `store_orders_paid`, the state of `store.orders` is `store_orders`): its

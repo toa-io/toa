@@ -33,7 +33,13 @@ properties:
     description: The property of the payloads that names the identity a row is of; null, none
     type: [string, "null"]
     pattern: ^[a-zA-Z_][a-zA-Z0-9_]*$
-required: [events, facts]
+  timestamp:
+    description: >
+      The property of the payloads that says when the change was made, in milliseconds; null, none,
+      and the time the message carries is when
+    type: [string, "null"]
+    pattern: ^[a-zA-Z_][a-zA-Z0-9_]*$
+required: [events, facts, timestamp]
 additionalProperties: false
 definitions:
   contract:

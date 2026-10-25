@@ -181,7 +181,7 @@ Feature: Chronicles through the gateway
       origin: https://store.example
       user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36 Edg/141.0.0.0
 
-      {"visitor": "v1", "events": [{"id": "g1", "name": "page_viewed", "time": 1761200000000, "payload": {"path": "/"}}], "ip": "198.51.100.1"}
+      {"sent": 1761200000000, "visitor": "v1", "events": [{"id": "g1", "name": "page_viewed", "time": 1761200000000, "payload": {"path": "/"}}], "ip": "198.51.100.1"}
       """
     Then the following reply is sent:
       """
@@ -206,7 +206,7 @@ Feature: Chronicles through the gateway
       accept: application/yaml
       content-type: application/x-www-form-urlencoded
 
-      origin=https%3A%2F%2Fforged.example&events=%5B%7B%22id%22%3A%22g2%22%2C%22name%22%3A%22page_left%22%2C%22time%22%3A1761200000000%7D%5D
+      sent=1761200000000&origin=https%3A%2F%2Fforged.example&events=%5B%7B%22id%22%3A%22g2%22%2C%22name%22%3A%22page_left%22%2C%22time%22%3A1761200000000%7D%5D
       """
     Then the following reply is sent:
       """
@@ -228,7 +228,7 @@ Feature: Chronicles through the gateway
       accept: application/yaml
       content-type: application/json
 
-      {"events": [{"id": "g3", "name": "page_viewed", "time": 1761200000000}]}
+      {"sent": 1761200000000, "events": [{"id": "g3", "name": "page_viewed", "time": 1761200000000}]}
       """
     Then the following reply is sent:
       """
@@ -243,7 +243,7 @@ Feature: Chronicles through the gateway
       authorization: Basic YW5hbHlzdDpwYXNz
       content-type: application/json
 
-      {"events": [{"id": "g4", "name": "page_viewed", "time": 1761200000000}]}
+      {"sent": 1761200000000, "events": [{"id": "g4", "name": "page_viewed", "time": 1761200000000}]}
       """
     Then the following reply is sent:
       """

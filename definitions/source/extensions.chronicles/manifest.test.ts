@@ -30,7 +30,8 @@ it('should be the events, the state and the facts a component declares', () => {
       events: { created: contract },
       state: { event: 'sync', ...contract },
       facts: { searched: contract },
-      identity: 'identity'
+      identity: 'identity',
+      timestamp: 'UPDATED'
     }
   )
 })
@@ -39,7 +40,8 @@ it('should be none for a component that declares nothing', () => {
   assert.deepEqual(manifest(null, component), {
     events: {},
     facts: {},
-    identity: 'identity'
+    identity: 'identity',
+    timestamp: 'UPDATED'
   })
 })
 
@@ -212,4 +214,9 @@ it('should refuse an identity that is not a property of the entity', () => {
     () => manifest({ identity: 'buyer' }, component),
     /name the identity 'buyer', which is not a property of the entity/
   )
+})
+
+it('should take when a change was made from the property a component names, or none', () => {
+  assert.equal(manifest({ timestamp: 'placed' }, component).timestamp, 'placed')
+  assert.equal(manifest({ timestamp: null }, component).timestamp, null)
 })

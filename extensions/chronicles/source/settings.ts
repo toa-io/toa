@@ -50,5 +50,6 @@ const DEV: Settings = {
   events: {},
   states: {},
   facts: {},
-  identities: {}
+  identities: {},
+  timestamps: {}
 }

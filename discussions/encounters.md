@@ -35,15 +35,16 @@ made to send a new shape.
 
 **What clients send**
 
-6. An encounter is a row of `encounters` under the name the client gave it, with the client's
-   `time` as it was sent, the `received` time of the store, and the `visitor` and `session` the
-   batch names.
+6. An encounter is a row of `encounters` under the name the client gave it, with the `visitor` and
+   `session` the batch names, `received` when the gateway received the batch, and `time` that
+   less how long before sending it the client says it happened.
 7. An encounter's payload is written as sent, within the limits of today; nothing is stripped or
    refused for its shape.
 8. A row of the route of an identity has both the `visitor` and the `identity`: the visitors of
    an identity are a query.
-9. What a client's clock says decides neither where a row is kept nor when it expires: both are
-   by `received`.
+9. What a client's clock says decides nothing: neither `time`, which is the gateway's clock at the
+   distance the client measured, nor where a row is kept and when it expires, which is by
+   `received`.
 10. An encounter has the `origin` and the `agent` of the request, and the `browser`, `os` and
     `device` the agent names; a body cannot say any of them for the request.
 11. The documentation of encounters is the configuration of `chronicles.encounters`, served to a
@@ -51,7 +52,8 @@ made to send a new shape.
 
 **Reading**
 
-12. `describe` tells, of every label, state and encounter, the newest `received`, and of every
+12. `describe` tells, of every label and state, the latest `time`, of every encounter the newest
+    `received`, and of every
     field its type and description: the declared ones for labels and states, the observed types
     and the documented description for encounters.
 13. A view has a `title` and a `description` where it was defined with them, and a view with
@@ -62,7 +64,8 @@ made to send a new shape.
 
 - That the visitor is a person: many visitors may be one identity, and one browser may clear its
   visitor.
-- That an encounter's `time` is true: it is the client's clock.
+- That a count of a recent period is final: a row the scribe takes late is written at its own
+  time.
 - That the encounters documented are the ones sent.
 
 ### What a component author does differently
@@ -136,7 +139,7 @@ configuration:
 - The recorder and the facts project a payload onto its contract and refuse what does not fit;
   the sender refuses a fact the component does not declare.
 - The provider: the table `encounters`, `events` without `ip` and `country`, the typed views, the
-  newest `received` in `describe`, the views' comments and refreshes, the reader's limits.
+  latest `time` in `describe`, the views' comments and refreshes, the reader's limits.
 
 ### 3. Documentation
 
@@ -181,8 +184,16 @@ The readme of the extension, and the published documentation.
 - **No tenancy in Toa.** One context reading the logs of others — a platform and the applications
   it runs — is a grant of the store's administrator, which provisioning leaves in place; Toa grants
   a reader its own database and nothing more.
+- **Every time is its source's, none the store's.** A change is when it was made: the payload's
+  timestamp, `UPDATED` by default, or else the moment the process made it, which every message
+  now carries, stamped on the operation's path so that the outbox publishing it later does not
+  move it. A store's clock tells when a row arrived, which is no answer to a question of when
+  anything happened, and moves with every outage of the scribe.
+- **An encounter is on the gateway's clock.** A client's clock is wrong by an unknown amount; the
+  distance it measures between its own moments is not. `sent` and `time` give that distance, and
+  the gateway's receipt the absolute time, as the analytics of browsers commonly do.
 - **No backlog in `describe`.** It would be a request to the broker on every call; the newest
-  `received` tells whether the log is being written.
+  latest `time` tells whether the log is being written.
 
 ## Context
 

@@ -15,6 +15,7 @@ Feature: What clients send to the log
     When I call `chronicles.encounters.anonymous` with:
       """yaml
       input:
+        sent: 1761200002000
         visitor: v1
         session: s1
         events:
@@ -32,21 +33,21 @@ Feature: What clients send to the log
       status: 202
       accepted: 2
       """
-    And the chronicles answer "SELECT id, name, visitor, session, identity, toUnixTimestamp64Milli(time) AS time, toString(payload.path) AS path FROM encounters FINAL ORDER BY id" within 30 seconds:
+    And the chronicles answer "SELECT id, name, visitor, session, identity, toUnixTimestamp64Milli(received) - toUnixTimestamp64Milli(time) AS before, toString(payload.path) AS path FROM encounters FINAL ORDER BY id" within 30 seconds:
       """yaml
       - id: c1
         name: page_viewed
         visitor: v1
         session: s1
         identity: null
-        time: 1761200000000
+        before: 2000
         path: /pricing
       - id: c2
         name: button_clicked
         visitor: v1
         session: s1
         identity: null
-        time: 1761200001000
+        before: 1000
         path: ''
       """
     And the chronicles answer "SELECT count() AS n FROM events":
@@ -58,6 +59,7 @@ Feature: What clients send to the log
     When I call `chronicles.encounters.identified` with:
       """yaml
       input:
+        sent: 1761200002000
         identity: 9c1f0a6d5b7e4f3a8d2c1b0a9e8f7d6c
         visitor: v1
         events:
@@ -72,36 +74,45 @@ Feature: What clients send to the log
         session: null
       """
 
-  Scenario: The client's clock is kept as it says, and the row by when it was received
+  Scenario: An event is when the gateway received it, less what the client measured before sending
+    The client's clock is off by however much it is; the distance it measures is not.
+
     When I call `chronicles.encounters.anonymous` with:
       """yaml
       input:
+        sent: 4102444800000
         events:
           - id: f1
             name: page_viewed
-            time: 4102444800000
-          - id: f2
-            name: page_viewed
-            time: 0
+            time: 4102444797000
       """
-    Then the chronicles answer "SELECT id, toUnixTimestamp64Milli(time) AS time, received > now64(3) - INTERVAL 1 MINUTE AS recent FROM encounters ORDER BY id" within 30 seconds:
+    Then the chronicles answer "SELECT toUnixTimestamp64Milli(received) - toUnixTimestamp64Milli(time) AS before, received > now64(3) - INTERVAL 1 MINUTE AND received <= now64(3) AS recent FROM encounters" within 30 seconds:
       """yaml
-      - id: f1
-        time: 4102444800000
-        recent: 1
-      - id: f2
-        time: 0
+      - before: 3000
         recent: 1
       """
-    And the chronicles answer "SELECT count() AS n FROM system.parts WHERE database = 'toa-dev' AND table = 'encounters' AND active AND partition != toString(toYYYYMM(now()))":
+
+  Scenario Outline: A batch that does not say when it was sent, or of an event after it
+    When I call `chronicles.encounters.anonymous` with:
       """yaml
-      - n: 0
+      input: <input>
       """
+    Then the error is received:
+      """yaml
+      code: INVALID
+      """
+
+    Examples:
+      | input                                                                 |
+      | { events: [{ id: a, name: page, time: 1 }] }                          |
+      | { sent: yesterday, events: [{ id: a, name: page, time: 1 }] }         |
+      | { sent: 1, events: [{ id: a, name: page, time: 2 }] }                 |
 
   Scenario: A payload is written as it was sent
     When I call `chronicles.encounters.anonymous` with:
       """yaml
       input:
+        sent: 1761200002000
         events:
           - id: p1
             name: page_viewed
@@ -120,6 +131,7 @@ Feature: What clients send to the log
     When I call `chronicles.encounters.anonymous` with:
       """yaml
       input:
+        sent: 1761200002000
         ip: 203.0.113.7
         country: DE
         events:
@@ -137,6 +149,7 @@ Feature: What clients send to the log
     When I call `chronicles.encounters.anonymous` with:
       """yaml
       input:
+        sent: 1761200002000
         origin: https://store.example
         agent: Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Mobile/15E148 Safari/604.1
         events:
@@ -157,6 +170,7 @@ Feature: What clients send to the log
     When I call `chronicles.encounters.anonymous` with:
       """yaml
       input:
+        sent: 1761200002000
         events:
           - id: o2
             name: page_viewed
@@ -175,6 +189,7 @@ Feature: What clients send to the log
     When I call `chronicles.encounters.anonymous` with:
       """yaml
       input:
+        sent: '1761200002000'
         visitor: v1
         events: '[{"id":"b1","name":"page_left","time":1761200000000}]'
       """
@@ -192,6 +207,7 @@ Feature: What clients send to the log
     When I call `chronicles.encounters.anonymous` 2 times with:
       """yaml
       input:
+        sent: 1761200002000
         events:
           - id: r1
             name: page_viewed
@@ -214,17 +230,17 @@ Feature: What clients send to the log
 
     Examples:
       | input                                                                   |
-      | { events: 'not json' }                                                  |
-      | { events: [{ id: a, name: Page, time: 1 }] }                            |
-      | { events: [{ id: a, name: page.viewed, time: 1 }] }                     |
-      | { events: [{ id: a, name: page, time: -1 }] }                           |
-      | { events: [{ id: a, name: page, time: 1, user: bob }] }                 |
-      | { events: [{ id: '', name: page, time: 1 }] }                           |
-      | { events: [{ id: a, name: page, time: 1, payload: [1] }] }              |
-      | { events: [{ id: a, name: page, time: 1 }], identity: 9c1f0a6d5b7e4f3a } |
-      | { events: [], visitor: '' }                                             |
-      | { events: [], session: 7 }                                              |
-      | { events: [], visitor: vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv } |
+      | { sent: 9999999999999, events: 'not json' }                                                  |
+      | { sent: 9999999999999, events: [{ id: a, name: Page, time: 1 }] }                            |
+      | { sent: 9999999999999, events: [{ id: a, name: page.viewed, time: 1 }] }                     |
+      | { sent: 9999999999999, events: [{ id: a, name: page, time: -1 }] }                           |
+      | { sent: 9999999999999, events: [{ id: a, name: page, time: 1, user: bob }] }                 |
+      | { sent: 9999999999999, events: [{ id: '', name: page, time: 1 }] }                           |
+      | { sent: 9999999999999, events: [{ id: a, name: page, time: 1, payload: [1] }] }              |
+      | { sent: 9999999999999, events: [{ id: a, name: page, time: 1 }], identity: 9c1f0a6d5b7e4f3a } |
+      | { sent: 9999999999999, events: [], visitor: '' }                                             |
+      | { sent: 9999999999999, events: [], session: 7 }                                              |
+      | { sent: 9999999999999, events: [], visitor: vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv } |
 
   Scenario: What the encounters are
     When I call `chronicles.encounters.describe`

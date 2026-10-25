@@ -52,8 +52,13 @@ export class Scribe extends Connector {
     for (const [label, kind, contract] of consumed) {
       // an event that is both a row and a state is two consumers, each of a group of its own
       const group = kind === 'state' ? `${GROUP}.states` : GROUP
-      const identity = this.settings.identities[component(label)] ?? null
-      const recorder = new Recorder(label, kind, identity, contract, this.writer)
+      const of = {
+        contract,
+        identity: this.settings.identities[component(label)] ?? null,
+        timestamp: this.settings.timestamps[component(label)] ?? null
+      }
+
+      const recorder = new Recorder(label, kind, of, this.writer)
       const consumer = await this.host.receive(label, group, recorder)
 
       this.depends(consumer)

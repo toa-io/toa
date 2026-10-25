@@ -262,3 +262,24 @@ Feature: Chronicles
       """yaml
       - label: chronicled.orders.created
       """
+
+  Scenario: A change is when it was made, however late the scribe takes it
+    Given the chronicles of `chronicled.stamped` are deployed
+    And the `chronicled.stamped` database is empty
+    And I compose `chronicled.stamped` component
+    And the chronicles scribe is running
+    When the chronicles scribe stops
+    And I call `chronicled.stamped.transit` with:
+      """yaml
+      query:
+        id: 72cf9b0ab0ac4ab2b8036e4e940ddcae
+      input:
+        total: 3
+      """
+    And I wait 3 seconds
+    And the chronicles scribe is running
+    Then the chronicles answer "SELECT abs(toUnixTimestamp64Milli(time) - payload.rendered::Int64) < 1000 AS made FROM events FINAL WHERE label = 'chronicled.stamped.placed'" within 30 seconds:
+      """yaml
+      - made: 1
+      """
+

@@ -7,8 +7,13 @@ import type { Writer } from './Writer.ts'
 
 /**
  * What `chronicles.encounters` writes what clients send through: each event a row of `encounters`,
- * with the client's own id and time and the visitor and the session the batch names, all of a batch
- * in one write, and answered once it is.
+ * with the client's own id and the visitor and the session the batch names, all of a batch in one
+ * write, and answered once it is.
+ *
+ * A client's clock is its own, and may be off by anything; what it measures between two of its
+ * moments is not. So an event is when the gateway received the batch, less how long before
+ * sending it the client says it happened: the time of the gateway, at the distance the client
+ * measured.
  */
 export class Client extends Connector {
   public readonly name = 'chronicles'
@@ -38,6 +43,7 @@ export class Client extends Connector {
     input: unknown,
     identity: string | null
   ): Promise<Accepted | Error> {
+    const received = Date.now()
     const batch = parse(input, identity !== null)
 
     if (batch instanceof Error) return batch
@@ -53,7 +59,8 @@ export class Client extends Connector {
     const encounters = batch.events.map((event): Encounter => ({
       id: event.id,
       name: event.name,
-      time: event.time,
+      time: received - (batch.sent - event.time),
+      received,
       visitor: batch.visitor,
       session: batch.session,
       identity,
@@ -74,19 +81,20 @@ export class Client extends Connector {
 }
 
 /**
- * A batch, `{ visitor?, session?, events }`: as JSON, or as the form `navigator.sendBeacon` sends,
- * whose `events` is the JSON of them. Checked here rather than by the operation's schema, which
+ * A batch, `{ sent, visitor?, session?, events }`: as JSON, or as the form `navigator.sendBeacon`
+ * sends, whose `events` is the JSON of them, and `sent` the digits of a number. Checked here rather than by the operation's schema, which
  * cannot read the form's. `identified` is whether the gateway put the identity in, which is then a
  * key the body may have beside `events`.
  */
 function parse(input: unknown, identified: boolean): Batch | Error {
   if (typeof input !== 'object' || input === null || Array.isArray(input))
-    return invalid('The body is `{ visitor?, session?, events }`')
+    return invalid('The body is `{ sent, visitor?, session?, events }`')
 
   // `ip`, `country`, `origin` and `agent` are the gateway's, which sets them on every request it
   // makes
   const {
     events: given,
+    sent: stated,
     visitor,
     session,
     identity,
@@ -117,6 +125,15 @@ function parse(input: unknown, identified: boolean): Batch | Error {
     )
       return invalid(`\`${key}\` is a string of 1 to 64 characters`)
 
+  // a form's every value is a string
+  const sent =
+    typeof stated === 'string' && /^\d{1,15}$/.test(stated) ? Number(stated) : stated
+
+  if (!Number.isInteger(sent) || (sent as number) < 0)
+    return invalid(
+      '`sent` is when the client sent the batch, in milliseconds by its clock'
+    )
+
   let events = given
 
   if (typeof events === 'string')
@@ -136,6 +153,9 @@ function parse(input: unknown, identified: boolean): Batch | Error {
 
     if (problem !== null) return invalid(problem, index)
 
+    if ((event as Event).time > (sent as number))
+      return invalid('An event happens before the batch that carries it is sent', index)
+
     if (JSON.stringify(event.payload ?? {}).length > MAX_PAYLOAD)
       return new Error('OVERSIZED', {
         cause: { index, message: `A payload is at most ${MAX_PAYLOAD} bytes of JSON` }
@@ -143,6 +163,7 @@ function parse(input: unknown, identified: boolean): Batch | Error {
   }
 
   return {
+    sent: sent as number,
     visitor: (visitor as string | undefined) ?? null,
     session: (session as string | undefined) ?? null,
     events: events as Event[]
@@ -163,9 +184,8 @@ function check(event: unknown): string | null {
   if (typeof name !== 'string' || name.length > 64 || !NAME.test(name))
     return '`name` is lowercase letters, digits and underscores from a letter, at most 64 characters'
 
-  // a time the store has no date for is no time; anything within it is kept as the client said
-  if (!Number.isInteger(time) || (time as number) < 0 || (time as number) >= LATEST)
-    return '`time` is milliseconds since the epoch, before the year 2300'
+  if (!Number.isInteger(time) || (time as number) < 0)
+    return "`time` is when it happened, in milliseconds by the client's clock"
 
   if (
     payload !== undefined &&
@@ -183,6 +203,8 @@ function invalid(message: string, index?: number): Error {
 }
 
 interface Batch {
+  /** when the client sent it, by its clock */
+  sent: number
   visitor: string | null
   session: string | null
   events: Event[]
@@ -203,4 +225,3 @@ interface Accepted {
 const MAX_EVENTS = 100
 const MAX_PAYLOAD = 16 * 1024
 const NAME = /^[a-z][a-z0-9_]*$/
-const LATEST = Date.UTC(2300, 0, 1)

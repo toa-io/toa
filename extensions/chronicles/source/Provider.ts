@@ -96,8 +96,11 @@ export interface Encounter {
   id: string
   name: string
 
-  /** when it happened, by the client's clock */
+  /** when it happened, by the gateway's clock, at the distance from sending the client measured */
   time: number
+
+  /** when the gateway received it */
+  received: number
 
   /** the client's id of itself, and of the period of its activity, where it gave them */
   visitor: string | null
@@ -132,15 +135,14 @@ export interface Label {
   rows: number
   first: string
   last: string
-
-  /** when the newest row was written */
-  received: string
 }
 
 export interface Summary {
   component: string
   entities: number
-  received: string
+
+  /** when the latest change of an entity was made */
+  last: string
 }
 
 export interface Encountered {

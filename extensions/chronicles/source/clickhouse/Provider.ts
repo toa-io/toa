@@ -115,15 +115,14 @@ export class ClickHouseProvider implements Provider {
 
   public async states(): Promise<Summary[]> {
     return await this.writer.rows<Summary>(
-      `SELECT component, uniqExact(entity) AS entities, toString(max(received)) AS received
+      `SELECT component, uniqExact(entity) AS entities, toString(max(time)) AS last
       FROM states GROUP BY component ORDER BY component`
     )
   }
 
   public async labels(): Promise<Label[]> {
     return await this.writer.rows<Label>(
-      `SELECT label, count() AS rows, toString(min(time)) AS first, toString(max(time)) AS last,
-        toString(max(received)) AS received
+      `SELECT label, count() AS rows, toString(min(time)) AS first, toString(max(time)) AS last
       FROM events GROUP BY label ORDER BY label`
     )
   }
@@ -256,7 +255,13 @@ export class ClickHouseProvider implements Provider {
     columns: string,
     rows: Array<Row | State | Encounter>
   ): Promise<void> {
-    const lines = rows.map((row) => JSON.stringify({ ...row, time: timestamp(row.time) }))
+    const lines = rows.map((row) =>
+      JSON.stringify({
+        ...row,
+        time: timestamp(row.time),
+        ...('received' in row ? { received: timestamp(row.received) } : {})
+      })
+    )
 
     await this.writer.run(
       `INSERT INTO ${table} (${columns}) FORMAT JSONEachRow\n${lines.join('\n')}`
@@ -332,7 +337,7 @@ interface Table {
 const EVENTS = 'id, label, component, time, entity, version, identity, trace, payload'
 const STATES = 'component, entity, version, identity, time, payload'
 const ENCOUNTERS =
-  'id, name, time, visitor, session, identity, ip, country, origin, agent, browser, os, device, payload'
+  'id, name, time, received, visitor, session, identity, ip, country, origin, agent, browser, os, device, payload'
 
 const UNITS: Record<string, number> = {
   SECOND: 1,

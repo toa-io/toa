@@ -45,6 +45,12 @@ export interface Settings {
 
   /** the property of its payloads that names the identity a row is of, by component */
   identities: Record<string, string>
+
+  /**
+   * the property of its payloads that says when a change was made, by component; `null` where
+   * the time a message carries is when, always
+   */
+  timestamps: Record<string, string | null>
 }
 
 /** What a label of the log means, and what of its payload is written. */
@@ -79,6 +85,9 @@ export interface Declaration {
 
   /** the property of the payloads that names the identity a row is of; `null` where none does */
   identity: string | null
+
+  /** the property of the payloads that says when the change was made; `null` where none does */
+  timestamp: string | null
 }
 
 export interface State extends Contract {
@@ -87,5 +96,8 @@ export interface State extends Contract {
 
 /** What a component writes: the declaration, or nothing. */
 export type Declared =
-  | (Partial<Omit<Declaration, 'identity'>> & { identity?: string | null })
+  | (Partial<Omit<Declaration, 'identity' | 'timestamp'>> & {
+      identity?: string | null
+      timestamp?: string | null
+    })
   | null

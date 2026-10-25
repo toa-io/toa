@@ -11,7 +11,7 @@ Queries are ClickHouse SQL, one statement, without `FORMAT`.
   objects is an `Array(Tuple(...))`, read with `ARRAY JOIN items AS item` and `item.sku`. Every
   declared field is `Nullable`, and `NULL` where a row's value was not of its type: `sum`, `avg`
   and `count(field)` skip `NULL`, `arraySum` refuses a `Nullable` array — use `ARRAY JOIN` instead.
-- `time` and `received` are `DateTime64(3, 'UTC')`: `toDate(time)`, `toStartOfHour(time)`,
+- `time`, and an encounter's `received`, are `DateTime64(3, 'UTC')`: `toDate(time)`, `toStartOfHour(time)`,
   `time >= now() - INTERVAL 7 DAY`.
 - A query runs at most 30 seconds and answers at most 10000 rows and 64 MiB; past the rows it is
   `truncated`. Aggregate rather than read rows.

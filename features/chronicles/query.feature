@@ -15,6 +15,7 @@ Feature: Reading the log
     And I call `chronicles.encounters.anonymous` with:
       """yaml
       input:
+        sent: 1761200001000
         events:
           - id: q1
             name: page_viewed
@@ -106,13 +107,8 @@ Feature: Reading the log
 
   Scenario: When the log was last written
     When I call `chronicles.queries.describe`
-    Then the reply is received:
-      """yaml
-      encounters:
-        - name: page_viewed
-          first: '2025-10-23 06:13:20.000'
-          last: '2025-10-23 06:13:21.000'
-      """
+    Then the reply's `encounters[0].first` is a time within the last minute
+    And the reply's `encounters[0].last` is a time within the last minute
     And the reply's `encounters[0].received` is a time within the last minute
 
   Scenario Outline: A query that is refused
@@ -172,9 +168,9 @@ Feature: Reading the log
         sql: SELECT toDate(time) AS day, count() AS n FROM encounters FINAL GROUP BY day
         refresh: 3600
       """
-    Then the chronicles answer "SELECT toString(day) AS day, n FROM daily" within 30 seconds:
+    Then the chronicles answer "SELECT day = toDate(now64(3)) AS today, n FROM daily" within 30 seconds:
       """yaml
-      - day: '2025-10-23'
+      - today: 1
         n: 2
       """
     When I call `chronicles.queries.describe`

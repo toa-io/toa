@@ -11,7 +11,8 @@ export function database(name: string): string[] {
 
 /**
  * What is kept: a row for everything a component did, each entity as it stands, and what clients
- * sent. An encounter is kept and expires by when it was received: its `time` is the client's
+ * sent. Every time is the one its source says — no column is the store's clock. An encounter is
+ * kept and expires by when the gateway received it: its `time` is reckoned from the client's
  * clock, which decides nothing of where a row is.
  */
 export function tables(retention: number | undefined): string[] {
@@ -21,7 +22,6 @@ export function tables(retention: number | undefined): string[] {
       label LowCardinality(String),
       component LowCardinality(String),
       time DateTime64(3, 'UTC'),
-      received DateTime64(3, 'UTC') DEFAULT now64(3),
       entity Nullable(String),
       version Nullable(UInt64),
       identity Nullable(String),
@@ -38,7 +38,6 @@ export function tables(retention: number | undefined): string[] {
       version UInt64,
       identity Nullable(String),
       time DateTime64(3, 'UTC'),
-      received DateTime64(3, 'UTC') DEFAULT now64(3),
       payload JSON
     ) ENGINE = ReplacingMergeTree(version)
     ORDER BY (component, entity)`,
@@ -47,7 +46,7 @@ export function tables(retention: number | undefined): string[] {
       id String,
       name LowCardinality(String),
       time DateTime64(3, 'UTC'),
-      received DateTime64(3, 'UTC') DEFAULT now64(3),
+      received DateTime64(3, 'UTC'),
       visitor Nullable(String),
       session Nullable(String),
       identity Nullable(String),

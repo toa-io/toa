@@ -20,20 +20,35 @@ declares, under `<component>.<event>`, with the entity that changed and its vers
 | `store.search.searched` | `store.search` | `NULL`   | `NULL`    | `{ query: "teapot", results: 3 }` |
 
 Every row also has `id`, the same however often it is delivered, so a row is kept once;
-`identity`, whose it is, where something [says so](#identity); `time`, when it happened;
-`received`, when the store wrote it; and `trace`, the traceparent of the call that caused it.
+`identity`, whose it is, where something [says so](#identity); `time`, when it
+[happened](#time); and `trace`, the traceparent of the call that caused it.
 
 **`states`** holds each entity as it stands: for every component that declares a
 [state](#events-and-states), a row per entity — `component`, `entity`, `version`, `identity`,
-`time`, `received` and `payload` — which a higher version replaces. It is the current state and
+`time` and `payload` — which a higher version replaces. It is the current state and
 nothing before it: what an entity was yesterday is read from its events, so an event a question
 of history depends on has to carry what that question asks.
 
-**`encounters`** holds what [clients send](#encounters): `id`, `name`, `time` by the client's
-clock, `received`, `visitor`, `session`, `identity`, `ip`, `country`, `origin`, `agent`, `browser`,
-`os`, `device` and `payload`.
+**`encounters`** holds what [clients send](#encounters): `id`, `name`, `time`, `received`,
+`visitor`, `session`, `identity`, `ip`, `country`, `origin`, `agent`, `browser`, `os`, `device` and
+`payload`.
 
 Nothing is ordered: order by `time`, or by `version` within one entity.
+
+### Time
+
+Every time is the one its source says — when it happened — and none is when the store wrote it:
+
+|           | `time`                                                                                    |
+| --------- | ----------------------------------------------------------------------------------------- |
+| an event  | the payload's [timestamp](#when-a-change-was-made), or when the component made the change |
+| a state   | likewise                                                                                  |
+| a fact    | when the operation sent it                                                                |
+| encounter | when the gateway received it, less how long before sending it the client says it happened |
+
+So a change the scribe takes an hour late is written at the time it was made, and the hours it
+was away fill in as it catches up: a count of a recent period may still grow. An encounter's
+`received` is when the gateway received its batch.
 
 ## Events and states
 
@@ -85,10 +100,10 @@ does not reach the store. A payload whose declared property is of another type i
 and is kept in the parking queue of its consumer.
 
 A state's payload carries `id` and `VERSION`, which say which entity it is and which version: one
-that does not is refused, and parked likewise. A row of `events` takes its `entity`, `version` and
-`time` from the payload's `id`, `VERSION` and `UPDATED` where it carries them, and is written
-without them, at the time it was taken, where it does not. These are read before the contract
-applies, and are not declared. An event that is both is named in both.
+that does not is refused, and parked likewise. A row of `events` takes its `entity` and `version`
+from the payload's `id` and `VERSION` where it carries them, and is written without them where it
+does not. These, the [timestamp](#when-a-change-was-made) and the [identity](#identity) are read
+before the contract applies, and are not declared. An event that is both is named in both.
 
 A committed change is written however long the scribe is away, and once however often it is
 delivered. One committed before the scribe first ran in a deployment is not.
@@ -126,6 +141,21 @@ SELECT item.sku, sum(item.quantity) FROM store_orders_paid ARRAY JOIN items AS i
 A value that is not of its type reads as `NULL` there; the row keeps it as it was written. A
 view follows its declaration once the scribe starts after a deploy, so a contract that changes
 changes the view, and the rows written before it are read by the new one.
+
+### When a change was made
+
+`time` is the payload's `UPDATED`, which the entity as it stands carries, where it is a number,
+and where it is not, the moment the component made the change, which every event carries:
+
+```yaml
+# manifest.toa.yaml
+chronicles:
+  timestamp: placed # the property of the payloads that says when, in milliseconds
+  events: …
+```
+
+A component names another property, or none with `timestamp: ~`, when the moment of the change
+is always the time. One property serves every event of the component and its state.
 
 ### Identity
 
@@ -196,6 +226,7 @@ authorization: Token …
 content-type: application/json
 
 {
+  "sent": 1761200004000,
   "visitor": "7f3a…",
   "session": "01c2…",
   "events": [{ "id": "0192f3a1-…", "name": "page_viewed", "time": 1761200000000, "payload": { "path": "/pricing" } }]
@@ -215,13 +246,19 @@ The rows are that identity's, whatever the body says.
 What anyone sends, before signing in or without it. The same body, and rows of no identity; a body
 that names one is refused.
 
-A form whose `events` is their JSON, beside `visitor` and `session`, is read as the JSON body, so
-`navigator.sendBeacon`, which sends no `authorization`, can send a batch here as the page closes:
+A form whose `events` is their JSON, beside `sent`, `visitor` and `session`, is read as the JSON
+body, so `navigator.sendBeacon`, which sends no `authorization`, can send a batch here as the page
+closes:
 
 ```javascript
 navigator.sendBeacon(
   '/chronicles/encounters/',
-  new URLSearchParams({ visitor, session, events: JSON.stringify(events) })
+  new URLSearchParams({
+    sent: Date.now(),
+    visitor,
+    session,
+    events: JSON.stringify(events)
+  })
 )
 ```
 
@@ -229,10 +266,11 @@ A signed-in client sends with `fetch(…, { keepalive: true })` instead.
 
 ### The body
 
-`{ visitor?, session?, events }`:
+`{ sent, visitor?, session?, events }`:
 
 | property  |                                                                            |
 | --------- | -------------------------------------------------------------------------- |
+| `sent`    | when the client sends the batch, in milliseconds, by its clock             |
 | `visitor` | the client's own id of itself, kept across sessions; at most 64 characters |
 | `session` | the id of one period of the client's activity; at most 64 characters       |
 | `events`  | at most 100 of them                                                        |
@@ -243,7 +281,7 @@ Each event:
 | --------- | ------------------------------------------------------------------- |
 | `id`      | the client's own, at most 64 characters; a retry sends the same one |
 | `name`    | lowercase letters, digits and underscores from a letter, at most 64 |
-| `time`    | when it happened, in milliseconds, by the client's clock            |
+| `time`    | when it happened, in milliseconds, by the client's clock, by `sent` |
 | `payload` | an object, at most 16 KiB of JSON                                   |
 
 The client keeps its `visitor` — in `localStorage`, say — and sends the same one before signing
@@ -259,8 +297,11 @@ A payload is written as it was sent, whatever its shape: a client is deployed on
 months, so a shape that changes is a new `name` — `checkout_started_v2` — and the old one stays as
 old clients send it.
 
-`time` is kept as the client said, and `received` is when the store wrote it: a row is kept and
-expires by `received`, so a clock that is wrong moves nothing but the `time` it reports.
+A client's clock is its own, and may be off by anything; what it measures between two of its
+moments is not. So an encounter's `time` is when the gateway received the batch, less `sent`
+minus its own `time`: the gateway's clock, at the distance the client measured. A clock that is
+wrong moves nothing, and a batch kept offline for an hour is written an hour back. A row is kept
+and expires by `received`.
 
 ### Address and country
 
@@ -357,7 +398,6 @@ labels:
     rows: 1204
     first: 2026-10-01 08:12:03.000
     last: 2026-10-24 17:40:51.000
-    received: 2026-10-24 17:40:52.113
     fields:
       - path: total
         type: Int64
@@ -373,7 +413,7 @@ states:
     description: An order as it stands
     view: store_orders
     entities: 1180
-    received: 2026-10-24 17:40:52.113
+    last: 2026-10-24 17:40:51.000
     fields:
       - path: status
         type: LowCardinality(String)
@@ -412,7 +452,8 @@ types of one field are two versions of a client — and the description the
 [configuration](#what-the-encounters-are) gives.
 
 `rows` counts what the store holds, a row delivered twice possibly twice. `first` and `last` are
-by `time`; `received` is the newest row the store wrote, which tells whether rows still arrive.
+by `time`, the latest change of a state too; an encounter's `received` is the newest batch the
+gateway received, which tells whether clients still send.
 
 ### `POST /chronicles/queries/`
 

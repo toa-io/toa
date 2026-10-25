@@ -130,6 +130,6 @@ const FORMATS: Record<string, { type: string; as: string }> = {
   double: { type: 'number', as: 'Float64' }
 }
 
-const EVENT = ['id', 'time', 'received', 'entity', 'version', 'identity', 'trace']
-const FACT = ['id', 'time', 'received', 'identity', 'trace']
-const STATE = ['entity', 'version', 'identity', 'time', 'received']
+const EVENT = ['id', 'time', 'entity', 'version', 'identity', 'trace']
+const FACT = ['id', 'time', 'identity', 'trace']
+const STATE = ['entity', 'version', 'identity', 'time']

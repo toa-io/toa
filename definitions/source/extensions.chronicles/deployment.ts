@@ -33,6 +33,7 @@ export function deployment(
   const states: Record<string, Contract> = {}
   const facts: Record<string, Contract> = {}
   const identities: Record<string, string> = {}
+  const timestamps: Record<string, string | null> = {}
 
   for (const instance of declaring) {
     const declaration = (instance.manifest as unknown as Declaration | undefined) ?? NONE
@@ -51,6 +52,8 @@ export function deployment(
       facts[`${id}.${fact}`] = contract
 
     if (declaration.identity !== null) identities[id] = declaration.identity
+
+    timestamps[id] = declaration.timestamp
   }
 
   distinct(events, states, facts)
@@ -60,7 +63,8 @@ export function deployment(
     events,
     states,
     facts,
-    identities
+    identities,
+    timestamps
   }
 
   const { labels } = components(annotation)
@@ -138,4 +142,4 @@ function credentials(): Variable[] {
 }
 
 const KEYS = ['username', 'password', 'reader']
-const NONE: Declaration = { events: {}, facts: {}, identity: null }
+const NONE: Declaration = { events: {}, facts: {}, identity: null, timestamp: null }
