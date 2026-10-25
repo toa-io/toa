@@ -30,7 +30,8 @@ nothing before it: what an entity was yesterday is read from its events, so an e
 of history depends on has to carry what that question asks.
 
 **`encounters`** holds what [clients send](#encounters): `id`, `name`, `time` by the client's
-clock, `received`, `visitor`, `session`, `identity`, `ip`, `country` and `payload`.
+clock, `received`, `visitor`, `session`, `identity`, `ip`, `country`, `origin`, `agent`, `browser`,
+`os`, `device` and `payload`.
 
 Nothing is ordered: order by `time`, or by `version` within one entity.
 
@@ -270,6 +271,27 @@ headers [`exposition.ip` and `exposition.country`](/extensions/exposition/docume
 name, and `NULL` where it has none; a body that names either is overwritten. An address is
 personal data, and the log erases nothing, so of an address the log keeps its network — a `/24`
 of IPv4, a `/48` of IPv6 — unless the annotation says `ip: full`.
+
+### Origin and agent
+
+Every encounter has the `origin` of the page that sent it and the client's `agent`, from the
+request's `Origin` and `User-Agent` headers, and `NULL` where it has none; a body that names either
+is overwritten, and a body cannot say one the request does not have. A browser sends `Origin` with
+a request to another origin, and with every `POST`, so it tells which of the context's sites a
+batch came from.
+
+What the agent says the client is, is three columns of its own, by name and without versions:
+
+|           |                                                                               |
+| --------- | ----------------------------------------------------------------------------- |
+| `browser` | `Edge`, `Opera`, `Samsung Internet`, `Firefox`, `Chrome`, `Safari`, or `NULL` |
+| `os`      | `Windows`, `iOS`, `macOS`, `Android`, `ChromeOS`, `Linux`, or `NULL`          |
+| `device`  | `bot`, `tablet`, `mobile` or `desktop`, and `NULL` where there is no agent    |
+
+`bot` is a crawler, a headless browser or a program — what a question of who visits leaves out.
+Safari on an iPad says it is a Mac, and is a `desktop` running `macOS` here. A version is read from
+`agent` where a question needs one, knowing that browsers freeze what they say of the system:
+Safari on iOS 26 says iOS 18, and Chrome on Android says Android 10.
 
 ### What the encounters are
 

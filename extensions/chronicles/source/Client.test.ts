@@ -173,3 +173,22 @@ it('should keep a time as the client said, within what the store has dates for',
 
   assert.equal(reply.message, 'INVALID')
 })
+
+it('should write the origin and the agent the gateway read, and what the agent is', async () => {
+  await client.invoke(
+    'write',
+    {
+      events: [event],
+      origin: 'https://store.example',
+      agent: 'Mozilla/5.0 (X11; Linux x86_64; rv:144.0) Gecko/20100101 Firefox/144.0'
+    },
+    null
+  )
+
+  const [written] = rows()
+
+  assert.equal(written.origin, 'https://store.example')
+  assert.equal(written.browser, 'Firefox')
+  assert.equal(written.os, 'Linux')
+  assert.equal(written.device, 'desktop')
+})

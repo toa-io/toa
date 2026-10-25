@@ -133,6 +133,44 @@ Feature: What clients send to the log
         country: DE
       """
 
+  Scenario: The origin and the agent of the client, and what the agent is
+    When I call `chronicles.encounters.anonymous` with:
+      """yaml
+      input:
+        origin: https://store.example
+        agent: Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Mobile/15E148 Safari/604.1
+        events:
+          - id: o1
+            name: page_viewed
+            time: 1761200000000
+      """
+    Then the chronicles answer "SELECT origin, startsWith(agent, 'Mozilla/5.0 (iPhone') AS kept, browser, os, device FROM encounters" within 30 seconds:
+      """yaml
+      - origin: https://store.example
+        kept: 1
+        browser: Safari
+        os: iOS
+        device: mobile
+      """
+
+  Scenario: A client that says nothing of itself
+    When I call `chronicles.encounters.anonymous` with:
+      """yaml
+      input:
+        events:
+          - id: o2
+            name: page_viewed
+            time: 1761200000000
+      """
+    Then the chronicles answer "SELECT origin, agent, browser, os, device FROM encounters" within 30 seconds:
+      """yaml
+      - origin: null
+        agent: null
+        browser: null
+        os: null
+        device: null
+      """
+
   Scenario: A batch sent as a form, as `navigator.sendBeacon` sends it
     When I call `chronicles.encounters.anonymous` with:
       """yaml

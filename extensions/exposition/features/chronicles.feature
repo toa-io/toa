@@ -178,6 +178,8 @@ Feature: Chronicles through the gateway
       content-type: application/json
       x-forwarded-for: 203.0.113.7
       cf-ipcountry: DE
+      origin: https://store.example
+      user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36 Edg/141.0.0.0
 
       {"visitor": "v1", "events": [{"id": "g1", "name": "page_viewed", "time": 1761200000000, "payload": {"path": "/"}}], "ip": "198.51.100.1"}
       """
@@ -187,11 +189,15 @@ Feature: Chronicles through the gateway
 
       accepted: 1
       """
-    And the chronicles answer "SELECT visitor, ip, country FROM encounters WHERE id = 'g1'" within 30 seconds:
+    And the chronicles answer "SELECT visitor, ip, country, origin, browser, os, device FROM encounters WHERE id = 'g1'" within 30 seconds:
       """yaml
       - visitor: v1
         ip: 203.0.113.0
         country: DE
+        origin: https://store.example
+        browser: Edge
+        os: Windows
+        device: desktop
       """
     When the following request is received:
       """
@@ -200,13 +206,17 @@ Feature: Chronicles through the gateway
       accept: application/yaml
       content-type: application/x-www-form-urlencoded
 
-      events=%5B%7B%22id%22%3A%22g2%22%2C%22name%22%3A%22page_left%22%2C%22time%22%3A1761200000000%7D%5D
+      origin=https%3A%2F%2Fforged.example&events=%5B%7B%22id%22%3A%22g2%22%2C%22name%22%3A%22page_left%22%2C%22time%22%3A1761200000000%7D%5D
       """
     Then the following reply is sent:
       """
       202 Accepted
 
       accepted: 1
+      """
+    And the chronicles answer "SELECT origin FROM encounters WHERE id = 'g2'" within 30 seconds:
+      """yaml
+      - origin: null
       """
 
   Scenario: What a client sends as an identity it is

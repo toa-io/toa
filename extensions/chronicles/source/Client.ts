@@ -1,5 +1,6 @@
 import { Connector, exceptions } from '@toa.io/core'
 import { keep } from './address.ts'
+import { classify } from './agent.ts'
 import type { Encounter } from './Provider.ts'
 import type { Address } from '@toa.io/definitions/extensions.chronicles'
 import type { Writer } from './Writer.ts'
@@ -42,9 +43,12 @@ export class Client extends Connector {
     if (batch instanceof Error) return batch
 
     // put in by the gateway, which overwrites whatever the body says of them
-    const { ip, country } = input as { ip?: unknown; country?: unknown }
+    const { ip, country, origin, agent } = input as Record<string, unknown>
     const address = keep(ip, this.address())
     const from = typeof country === 'string' ? country : null
+    const page = typeof origin === 'string' ? origin : null
+    const client = typeof agent === 'string' ? agent : null
+    const { browser, os, device } = classify(client)
 
     const encounters = batch.events.map((event): Encounter => ({
       id: event.id,
@@ -55,6 +59,11 @@ export class Client extends Connector {
       identity,
       ip: address,
       country: from,
+      origin: page,
+      agent: client,
+      browser,
+      os,
+      device,
       payload: event.payload ?? {}
     }))
 
@@ -74,7 +83,8 @@ function parse(input: unknown, identified: boolean): Batch | Error {
   if (typeof input !== 'object' || input === null || Array.isArray(input))
     return invalid('The body is `{ visitor?, session?, events }`')
 
-  // `ip` and `country` are the gateway's, which sets them on every request it makes
+  // `ip`, `country`, `origin` and `agent` are the gateway's, which sets them on every request it
+  // makes
   const {
     events: given,
     visitor,
@@ -82,6 +92,8 @@ function parse(input: unknown, identified: boolean): Batch | Error {
     identity,
     ip: _ip,
     country: _country,
+    origin: _origin,
+    agent: _agent,
     ...rest
   } = input as Record<string, unknown>
 

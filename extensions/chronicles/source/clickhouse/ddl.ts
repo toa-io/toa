@@ -53,6 +53,11 @@ export function tables(retention: number | undefined): string[] {
       identity Nullable(String),
       ip Nullable(String),
       country LowCardinality(Nullable(String)),
+      origin LowCardinality(Nullable(String)),
+      agent Nullable(String),
+      browser LowCardinality(Nullable(String)),
+      os LowCardinality(Nullable(String)),
+      device LowCardinality(Nullable(String)),
       payload JSON
     ) ENGINE = ReplacingMergeTree
     PARTITION BY toYYYYMM(received)

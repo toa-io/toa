@@ -110,6 +110,15 @@ export interface Encounter {
   ip: string | null
   country: string | null
 
+  /** the origin of the page that sent it, and the client's `user-agent` */
+  origin: string | null
+  agent: string | null
+
+  /** what the agent says the client is: its browser, its system, its kind of device */
+  browser: string | null
+  os: string | null
+  device: string | null
+
   payload: object
 }
 

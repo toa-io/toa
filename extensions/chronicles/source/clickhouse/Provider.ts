@@ -322,7 +322,8 @@ interface Table {
 
 const EVENTS = 'id, label, component, time, entity, version, identity, trace, payload'
 const STATES = 'component, entity, version, identity, time, payload'
-const ENCOUNTERS = 'id, name, time, visitor, session, identity, ip, country, payload'
+const ENCOUNTERS =
+  'id, name, time, visitor, session, identity, ip, country, origin, agent, browser, os, device, payload'
 
 const UNITS: Record<string, number> = {
   SECOND: 1,

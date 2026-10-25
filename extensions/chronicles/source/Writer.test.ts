@@ -93,6 +93,11 @@ it('should write encounters with the rows of the same moment', async () => {
     identity: null,
     ip: null,
     country: null,
+    origin: null,
+    agent: null,
+    browser: null,
+    os: null,
+    device: null,
     payload: {}
   }
 

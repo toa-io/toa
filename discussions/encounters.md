@@ -44,17 +44,19 @@ made to send a new shape.
    an identity are a query.
 9. What a client's clock says decides neither where a row is kept nor when it expires: both are
    by `received`.
-10. The documentation of encounters is the configuration of `chronicles.encounters`, served to a
+10. An encounter has the `origin` and the `agent` of the request, and the `browser`, `os` and
+    `device` the agent names; a body cannot say any of them for the request.
+11. The documentation of encounters is the configuration of `chronicles.encounters`, served to a
     holder of `system:chronicles:encounters`, and changed only as configuration is.
 
 **Reading**
 
-11. `describe` tells, of every label, state and encounter, the newest `received`, and of every
+12. `describe` tells, of every label, state and encounter, the newest `received`, and of every
     field its type and description: the declared ones for labels and states, the observed types
     and the documented description for encounters.
-12. A view has a `title` and a `description` where it was defined with them, and a view with
+13. A view has a `title` and a `description` where it was defined with them, and a view with
     `refresh` the time it was last refreshed.
-13. The reader runs at most a few queries at once, and answers at most a bounded number of bytes.
+14. The reader runs at most a few queries at once, and answers at most a bounded number of bytes.
 
 **Not promised**
 
@@ -162,6 +164,12 @@ The readme of the extension, and the published documentation.
 - **No `correlation`.** `entity`, `identity`, `trace` and declared fields join what belongs
   together; a column no producer fills by convention stays empty.
 - **No pagination.** A query that needs more than the rows answered is one to aggregate.
+- **The agent is classified by the extension, not by a library.** Three names from a short list
+  of patterns, without versions, which browsers freeze anyway: a dependency would track every
+  browser's every release for an answer a question of who visits does not ask.
+- **No `Referer`.** A request from the storefront to the gateway's origin carries the storefront's
+  origin and no more, and the page a visitor came from is `document.referrer`, which only the
+  client reads.
 - **No backlog in `describe`.** It would be a request to the broker on every call; the newest
   `received` tells whether the log is being written.
 

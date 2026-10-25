@@ -109,8 +109,9 @@ exposition:
           identity, trace, payload), `states`, each entity as it stands (component, entity,
           version, identity, time, received, payload), `encounters`, what clients sent (id, name,
           time by the client's clock, received, visitor, session, identity, ip, country,
-          payload), the view of each declared label and state, and the views. At most 30
-          seconds, 10000 rows and 64 MiB; at the rows, `truncated` is true.
+          origin, agent, browser, os, device, payload), the view of each declared label and
+          state, and the views. At most 30 seconds, 10000 rows and 64 MiB; at the rows,
+          `truncated` is true.
       io:output: true
       endpoint: query
   /views/:name:

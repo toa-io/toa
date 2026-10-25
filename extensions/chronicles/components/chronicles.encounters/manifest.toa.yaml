@@ -32,7 +32,8 @@ operations:
     input: &batch
       description: >
         `{ visitor?, session?, events }`, at most 100 events, each `{ id, name, time, payload? }`,
-        and the client's `ip` and `country`, which the gateway puts in; as JSON, or as the form
+        and the client's `ip`, `country`, `origin` and `agent`, which the gateway puts in; as
+        JSON, or as the form
         `navigator.sendBeacon` sends, whose `events` is their JSON, which the extension parses
         and checks
       type: object
@@ -62,6 +63,9 @@ exposition:
       anonymous: true
       map:ip: ip
       map:country: country
+      map:headers:
+        origin: origin
+        agent: user-agent
       io:throttle:
         key: [ip]
         requests: 60
@@ -88,6 +92,9 @@ exposition:
         identity: identity
       map:ip: ip
       map:country: country
+      map:headers:
+        origin: origin
+        agent: user-agent
       io:throttle:
         key: [identity]
         requests: 60
