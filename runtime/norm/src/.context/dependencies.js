@@ -1,9 +1,9 @@
 import { connectors, extensions, resolve } from './.dependencies/index.js'
 
 export const dependencies = async (context) => {
-  const { extensions: e, components, contributed } = await extensions(context)
+  const { extensions: e, components, contributed, annotated } = await extensions(context)
 
-  unmanaged(context, contributed)
+  unmanaged(context, contributed, annotated)
 
   const c = connectors(context, components)
   const references = { ...c, ...e }
@@ -19,9 +19,10 @@ export const dependencies = async (context) => {
  *
  * @param {toa.norm.Context} context
  * @param {Map<string, toa.norm.Component[]>} contributed
+ * @param {string[]} annotated the extensions deployed for their annotation
  * @returns {void}
  */
-function unmanaged(context, contributed) {
+function unmanaged(context, contributed, annotated) {
   const components = context.components ?? []
 
   if (!components.some((component) => component.evicted === true)) return
@@ -33,6 +34,9 @@ function unmanaged(context, contributed) {
   for (const composition of context.compositions ?? [])
     for (const reference of composition.services ?? [])
       pending.push(...(contributed.get(reference) ?? []))
+
+  // and so is what an extension deployed for its annotation ships
+  for (const reference of annotated) pending.push(...(contributed.get(reference) ?? []))
 
   while (pending.length > 0) {
     const component = pending.pop()

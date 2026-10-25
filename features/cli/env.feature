@@ -104,6 +104,43 @@ Feature: Export local deployment environment variables
       TOA_CHRONICLES_STORE_READER=secret
       """
 
+  Scenario: The configuration of what chronicles ship, for a context no component of which declares them
+    Given I have a component `dummies.one`
+    And I have a context with:
+      """yaml
+      amqp:
+        context: amqp://whatever
+      chronicles:
+        store:
+          provider: clickhouse
+          url: http://localhost:8123
+        encounters: true
+        resources: ~
+      configuration:
+        resources: ~
+      """
+    When I run `toa env --dev`
+    Then program should exit with code 0
+    And the environment variable TOA_CONFIGURATION_VALUES contains 'chronicles.encounters'
+
+  Scenario: No configuration of encounters where a context serves none
+    Given I have a component `configuration.base`
+    And I have a context with:
+      """yaml
+      amqp:
+        context: amqp://whatever
+      chronicles:
+        store:
+          provider: clickhouse
+          url: http://localhost:8123
+        resources: ~
+      configuration:
+        resources: ~
+      """
+    When I run `toa env --dev`
+    Then program should exit with code 0
+    And the environment variable TOA_CONFIGURATION_VALUES does not contain 'chronicles.encounters'
+
   Scenario: Keeping secret values with `--dev`
     Given I have a component `dummies.one`
     And I have a context with:

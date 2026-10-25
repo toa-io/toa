@@ -1,6 +1,6 @@
 import { components } from './components.ts'
 import { version } from '../version.ts'
-import { ENCOUNTERS, NAMESPACE, SECRET, SERVICE, SETTINGS, view } from './const.ts'
+import { NAMESPACE, SECRET, SERVICE, SETTINGS, view } from './const.ts'
 import * as schemas from './schemas.ts'
 import type { Annotation, Contract, Declaration, Settings } from './types.ts'
 import type { context } from '@toa.io/norm'
@@ -63,9 +63,7 @@ export function deployment(
     identities
   }
 
-  const labels = components().labels.filter(
-    (label) => settings.encounters || label !== `${NAMESPACE}-${ENCOUNTERS}`
-  )
+  const { labels } = components(annotation)
 
   const service: Service = {
     group: NAMESPACE,
