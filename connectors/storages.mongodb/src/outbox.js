@@ -1,5 +1,6 @@
 import { environment } from '@toa.io/generic'
 import { index, prune } from './indexes.js'
+import { bulkWrite } from './bulk.js'
 
 /**
  * The outbox rows of one component. Its lifecycle is the Client's, so it is not a Connector.
@@ -30,7 +31,8 @@ export class Outbox {
     const namespace = this.#collection.namespace
 
     // the client's bulk write, not `insertMany`: see `massStore` in ./storage.js
-    await this.#collection.client.bulkWrite(
+    await bulkWrite(
+      this.#collection.client,
       rows.map((row) => ({ name: 'insertOne', namespace, document: to(row) })),
       { session }
     )
