@@ -3,43 +3,39 @@ import { resolve } from 'node:path'
 import { Connector } from '@toa.io/core'
 import { ENCOUNTERS, NAMESPACE, SERVICE } from '@toa.io/definitions/extensions.chronicles'
 import { Recorder, type Kind } from './Recorder.ts'
-import type { Declared, Provider } from './Provider.ts'
 import type { Contract } from '@toa.io/definitions/extensions.chronicles'
-import type { Writer } from './Writer.ts'
+import type { Publisher } from './Publisher.ts'
 import type { Settings } from '@toa.io/definitions/extensions.chronicles'
 import type { extensions } from '@toa.io/core/types'
 
 /**
- * The extension's own service: the store provisioned and its views of what is declared made, then a
- * consumer of every event the log is kept of — one group for every replica, so each event is written
- * once — and the components it ships: the queries, the facts, and the encounters where the
- * annotation asks for them.
+ * The extension's own service: a consumer of every event the log is kept of — one group for every
+ * replica, so each event is published once — and the components it ships: the queries, the relay,
+ * and the encounters where the annotation asks for them. Nothing of it waits for the broker the
+ * rows are published to.
  */
-export class Scribe extends Connector {
+export class Service extends Connector {
   private readonly host: extensions.Host
   private readonly settings: Settings
-  private readonly provider: Provider
-  private readonly writer: Writer
+  private readonly publisher: Publisher
 
   // eslint-disable-next-line max-params
-  public constructor(
-    host: extensions.Host,
-    settings: Settings,
-    provider: Provider,
-    writer: Writer
-  ) {
+  public constructor(host: extensions.Host, settings: Settings, publisher: Publisher) {
     super()
 
     this.host = host
     this.settings = settings
-    this.provider = provider
-    this.writer = writer
+    this.publisher = publisher
+
+    this.depends(publisher)
+  }
+
+  /** first of all, so what waits for the broker of the log holds up none of what closes after */
+  protected override async close(): Promise<void> {
+    this.publisher.stop()
   }
 
   protected override async open(): Promise<void> {
-    await this.provider.provision()
-    await this.provider.declare(declared(this.settings))
-
     const consumed: Array<[string, Kind, Contract]> = [
       ...Object.entries(this.settings.events).map(
         ([label, contract]): [string, Kind, Contract] => [label, 'event', contract]
@@ -58,7 +54,7 @@ export class Scribe extends Connector {
         timestamp: this.settings.timestamps[component(label)] ?? null
       }
 
-      const recorder = new Recorder(label, kind, of, this.writer)
+      const recorder = new Recorder(label, kind, of, this.publisher)
       const consumer = await this.host.receive(label, group, recorder)
 
       this.depends(consumer)
@@ -84,27 +80,6 @@ export function components(): Components {
     }
 
   return { labels, paths }
-}
-
-/** What the components declare, each a view of the log. */
-export function declared(settings: Settings): Declared[] {
-  return [
-    ...Object.entries(settings.events).map(([label, contract]): Declared => ({
-      kind: 'event',
-      label,
-      contract
-    })),
-    ...Object.entries(settings.facts).map(([label, contract]): Declared => ({
-      kind: 'fact',
-      label,
-      contract
-    })),
-    ...Object.entries(settings.states).map(([label, contract]): Declared => ({
-      kind: 'state',
-      component: component(label),
-      contract
-    }))
-  ]
 }
 
 function component(label: string): string {

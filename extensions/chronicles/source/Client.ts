@@ -1,14 +1,17 @@
-import { Connector, exceptions } from '@toa.io/core'
+import { Connector, Locator, exceptions } from '@toa.io/core'
+import { NAMESPACE, RELAY } from '@toa.io/definitions/extensions.chronicles'
 import { keep } from './address.ts'
 import { classify } from './agent.ts'
 import type { Encounter } from './Provider.ts'
+import type { Remote } from '@toa.io/core'
+import type { extensions } from '@toa.io/core/types'
 import type { Address } from '@toa.io/definitions/extensions.chronicles'
-import type { Writer } from './Writer.ts'
 
 /**
- * What `chronicles.encounters` writes what clients send through: each event a row of `encounters`,
- * with the client's own id and the visitor and the session the batch names, all of a batch in one
- * write, and answered once it is.
+ * What `chronicles.encounters` takes what clients send through: each event a row of `encounters`,
+ * with the client's own id and the visitor and the session the batch names, all of a batch one
+ * task to the relay, and answered once the context's broker has it — the relay publishes it, then
+ * or once the broker of the log is back.
  *
  * A client's clock is its own, and may be off by anything; what it measures between two of its
  * moments is not. So an event is when the gateway received the batch, less how long before
@@ -18,13 +21,14 @@ import type { Writer } from './Writer.ts'
 export class Client extends Connector {
   public readonly name = 'chronicles'
 
-  private readonly writer: () => Writer
+  private readonly host: extensions.Host
   private readonly address: () => Address
+  private relay?: Promise<Remote>
 
-  public constructor(writer: () => Writer, address: () => Address) {
+  public constructor(host: extensions.Host, address: () => Address) {
     super()
 
-    this.writer = writer
+    this.host = host
     this.address = address
   }
 
@@ -74,9 +78,32 @@ export class Client extends Connector {
       payload: event.payload ?? {}
     }))
 
-    await this.writer().write([], [], encounters)
+    const relay = await this.relayed()
+
+    await relay.invoke('encounter', { input: { encounters }, task: true })
 
     return { status: 202, accepted: encounters.length }
+  }
+
+  /**
+   * Found on the first batch and not before: an aspect is made ahead of the components of its
+   * composition, and one that could not be found is looked for again by the next batch.
+   */
+  private async relayed(): Promise<Remote> {
+    this.relay ??= (async () => {
+      const remote = await this.host.remote(LOCATOR, SOURCE)
+
+      this.depends(remote)
+      await remote.connect()
+
+      return remote
+    })().catch((error: unknown) => {
+      this.relay = undefined
+
+      throw error
+    })
+
+    return await this.relay
   }
 }
 
@@ -225,3 +252,6 @@ interface Accepted {
 const MAX_EVENTS = 100
 const MAX_PAYLOAD = 16 * 1024
 const NAME = /^[a-z][a-z0-9_]*$/
+
+const LOCATOR = new Locator(RELAY, NAMESPACE)
+const SOURCE = { service: 'chronicles' }

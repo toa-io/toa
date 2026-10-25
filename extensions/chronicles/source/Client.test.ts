@@ -1,25 +1,38 @@
 import { it, beforeEach, mock } from 'node:test'
 import assert from 'node:assert/strict'
 
+import { Connector } from '@toa.io/core'
 import { Client } from './Client.ts'
-import type { Writer } from './Writer.ts'
+import type { extensions } from '@toa.io/core/types'
 
-let writer: { write: ReturnType<typeof mock.fn> }
+/** the relay, which a batch is a task to */
+class Relay extends Connector {
+  public readonly invoke = mock.fn(async (..._: unknown[]) => undefined)
+}
+
+let relay: Relay
 let client: Client
 
+const host = (): extensions.Host =>
+  ({ remote: async () => relay }) as unknown as extensions.Host
+
 beforeEach(async () => {
-  writer = { write: mock.fn(async () => undefined) }
-  client = new Client(
-    () => writer as unknown as Writer,
-    () => 'truncated'
-  )
+  relay = new Relay()
+  client = new Client(host(), () => 'truncated')
 
   await client.connect()
 })
 
-/** what the batch written held, one encounter at a time */
+/** what the tasks to the relay held, one encounter at a time */
 const rows = (): any[] =>
-  writer.write.mock.calls.flatMap((call) => call.arguments[2] as any[])
+  relay.invoke.mock.calls.flatMap((call) => {
+    const [method, request] = call.arguments as [string, any]
+
+    assert.equal(method, 'encounter')
+    assert.equal(request.task, true)
+
+    return request.input.encounters
+  })
 
 const sent = 1761200000000
 
@@ -61,7 +74,7 @@ it('should refuse a body that says whose it is, where the path does not', async 
   )) as Error
 
   assert.equal(reply.message, 'INVALID')
-  assert.equal(writer.write.mock.callCount(), 0)
+  assert.equal(relay.invoke.mock.callCount(), 0)
 })
 
 it('should read a batch sent as a form, whose events are their JSON, in one write', async () => {
@@ -72,7 +85,7 @@ it('should read a batch sent as a form, whose events are their JSON, in one writ
   )
 
   assert.deepEqual(reply, { status: 202, accepted: 2 })
-  assert.equal(writer.write.mock.callCount(), 1)
+  assert.equal(relay.invoke.mock.callCount(), 1)
 })
 
 it('should refuse an array, which is not the body', async () => {
@@ -86,7 +99,7 @@ it('should refuse more than 100 events', async () => {
   const reply = (await client.invoke('write', { sent, events }, null)) as Error
 
   assert.equal(reply.message, 'INVALID')
-  assert.equal(writer.write.mock.callCount(), 0)
+  assert.equal(relay.invoke.mock.callCount(), 0)
 })
 
 it('should refuse a payload over 16 KiB, and say which', async () => {
@@ -99,7 +112,7 @@ it('should refuse a payload over 16 KiB, and say which', async () => {
 
   assert.equal(reply.message, 'OVERSIZED')
   assert.equal((reply.cause as any).index, 1)
-  assert.equal(writer.write.mock.callCount(), 0)
+  assert.equal(relay.invoke.mock.callCount(), 0)
 })
 
 it('should write nothing of a batch one event of which is not one', async () => {
@@ -111,7 +124,7 @@ it('should write nothing of a batch one event of which is not one', async () => 
 
   assert.equal(reply.message, 'INVALID')
   assert.equal((reply.cause as any).index, 1)
-  assert.equal(writer.write.mock.callCount(), 0)
+  assert.equal(relay.invoke.mock.callCount(), 0)
 })
 
 it('should refuse a name with a dot', async () => {
@@ -136,10 +149,7 @@ it('should keep the network of the address, and the country, the gateway put in'
 })
 
 it('should keep the whole address where the annotation says so', async () => {
-  const full = new Client(
-    () => writer as unknown as Writer,
-    () => 'full'
-  )
+  const full = new Client(host(), () => 'full')
 
   await full.connect()
   await full.invoke(

@@ -1,6 +1,6 @@
 import { Connector, entities, exceptions } from '@toa.io/core'
 import { Mismatch, project } from './contract.ts'
-import type { Writer } from './Writer.ts'
+import type { Publisher } from './Publisher.ts'
 import type { Row, State } from './Provider.ts'
 import type { Contract } from '@toa.io/definitions/extensions.chronicles'
 import type { Message } from '@toa.io/core/types'
@@ -18,23 +18,26 @@ export class Recorder extends Connector {
   private readonly component: string
   private readonly kind: Kind
   private readonly of: Of
-  private readonly writer: Writer
+  private readonly publisher: Publisher
 
   // eslint-disable-next-line max-params
-  public constructor(label: string, kind: Kind, of: Of, writer: Writer) {
+  public constructor(label: string, kind: Kind, of: Of, publisher: Publisher) {
     super()
 
     this.label = label
     this.component = label.slice(0, label.lastIndexOf('.'))
     this.kind = kind
     this.of = of
-    this.writer = writer
+    this.publisher = publisher
   }
 
   public async receive(message: Message): Promise<void> {
     if (this.kind === 'state')
-      await this.writer.write([], [state(this.label, this.component, message, this.of)])
-    else await this.writer.write([row(this.label, this.component, message, this.of)])
+      await this.publisher.publish(
+        [],
+        [state(this.label, this.component, message, this.of)]
+      )
+    else await this.publisher.publish([row(this.label, this.component, message, this.of)])
   }
 }
 

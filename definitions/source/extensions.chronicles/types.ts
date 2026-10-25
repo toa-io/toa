@@ -2,7 +2,10 @@ import type { Resources } from '@toa.io/operations'
 
 /** The `chronicles` annotation of a context. */
 export interface Annotation {
-  /** where the log is kept, by the provider that keeps it */
+  /** the AMQP address of the broker the rows are published to */
+  broker: string
+
+  /** where the log is read, by the provider that keeps it */
   store: Store
 
   /** days a row of `events` and of `encounters` is kept; absent, kept */
@@ -29,6 +32,7 @@ export interface Store {
 
 /** What the service is given of the annotation, its credentials aside. */
 export interface Settings {
+  broker: string
   store: Store
   retention?: number
   encounters: boolean

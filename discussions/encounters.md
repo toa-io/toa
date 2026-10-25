@@ -192,6 +192,19 @@ The readme of the extension, and the published documentation.
 - **An encounter is on the gateway's clock.** A client's clock is wrong by an unknown amount; the
   distance it measures between its own moments is not. `sent` and `time` give that distance, and
   the gateway's receipt the absolute time, as the analytics of browsers commonly do.
+- **Toa publishes, and reads; the store is not Toa's.** A store each application's process writes
+  to needs its credentials and a route to it in every place an application runs, and Toa would
+  provision it. Instead the relay publishes each row, as JSON, to an analytics broker, and reads
+  through a provider: what takes the rows into the store — ClickHouse's RabbitMQ engine, in the
+  reference setup — and who may read what there is the store's setup, shipped as reference SQL.
+- **The relay writes the scope, the store confines the reader.** The broker tells ClickHouse
+  nothing of who published a row — through an exchange bound to another, the engine sees only the
+  last — so the scope is the relay's, the one process given the broker's credentials; a row policy
+  confines each context's user to its scope.
+- **Shared tables, not a database a context.** ClickHouse consumes a broker by a table each queue,
+  from a pool of sixteen: three tables for every context would run out of it.
+- **No views of the declared.** A view is DDL, which a reader does not run: `describe` tells how to
+  read each declared field instead.
 - **No backlog in `describe`.** It would be a request to the broker on every call; the newest
   latest `time` tells whether the log is being written.
 

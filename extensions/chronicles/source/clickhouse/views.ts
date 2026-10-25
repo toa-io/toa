@@ -1,29 +1,12 @@
 import { id, literal } from './ddl.ts'
 import type { Property } from '@toa.io/definitions/extensions.chronicles'
-import type { Declared, Field } from '../Provider.ts'
+import type { Field } from '../Provider.ts'
 
 /**
- * The views of what components declare: a row of a label, or a state, with each declared property
- * a column of its type. A property is read from the JSON it was written as by `JSONExtract`, which
- * reads what is not of the type as `NULL` rather than failing the view — a row written under an
- * earlier contract is read by the one there is now.
+ * How a declared property is read from the payload in its type, by `JSONExtract`, which reads what
+ * is not of the type as `NULL` rather than failing the query — a row written under an earlier
+ * contract is read by the one there is now.
  */
-
-/** The rows of a label, or the states of a component, with the columns of its contract. */
-export function select(declared: Declared): string {
-  const columns = Object.entries(declared.contract.properties)
-    .filter(([, property]) => !empty(property))
-    .map(([name, property]) => `${extract(name, property)} AS ${id(name)}`)
-
-  switch (declared.kind) {
-    case 'event':
-      return `SELECT ${[...EVENT, ...columns].join(', ')} FROM events FINAL WHERE label = ${literal(declared.label)}`
-    case 'fact':
-      return `SELECT ${[...FACT, ...columns].join(', ')} FROM events FINAL WHERE label = ${literal(declared.label)}`
-    case 'state':
-      return `SELECT ${[...STATE, ...columns].join(', ')} FROM states FINAL WHERE component = ${literal(declared.component)}`
-  }
-}
 
 /** The fields of a contract, at every depth, each with the type its column reads it as. */
 export function fields(properties: Record<string, Property>, prefix = ''): Field[] {
@@ -34,7 +17,12 @@ export function fields(properties: Record<string, Property>, prefix = ''): Field
 
     const path = prefix === '' ? name : `${prefix}.${name}`
 
-    found.push({ path, type: type(property), description: property.description })
+    const field: Field = { path, type: type(property), description: property.description }
+
+    // a property of a property is read inside the one that holds it
+    if (prefix === '') field.read = extract(name, property)
+
+    found.push(field)
 
     const nested = property.type === 'array' ? property.items! : property
 
@@ -129,7 +117,3 @@ const FORMATS: Record<string, { type: string; as: string }> = {
   float: { type: 'number', as: 'Float32' },
   double: { type: 'number', as: 'Float64' }
 }
-
-const EVENT = ['id', 'time', 'entity', 'version', 'identity', 'trace']
-const FACT = ['id', 'time', 'identity', 'trace']
-const STATE = ['entity', 'version', 'identity', 'time']

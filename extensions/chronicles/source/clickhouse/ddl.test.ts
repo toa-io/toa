@@ -1,35 +1,7 @@
 import { it } from 'node:test'
 import assert from 'node:assert/strict'
 
-import { id, literal, retention } from './ddl.ts'
-
-it('should leave a retention that agrees with the table', () => {
-  const engine =
-    'ReplacingMergeTree PARTITION BY toYYYYMM(time) ORDER BY (label, toDate(time), id) TTL toDateTime(time) + toIntervalDay(730) SETTINGS index_granularity = 8192'
-
-  assert.deepEqual(retention(730, engine), [])
-})
-
-it('should change a retention that differs', () => {
-  const engine =
-    'ReplacingMergeTree TTL toDateTime(time) + toIntervalDay(30) SETTINGS a = 1'
-
-  assert.deepEqual(retention(730, engine), [
-    'ALTER TABLE events MODIFY TTL toDateTime(time) + INTERVAL 730 DAY'
-  ])
-})
-
-it('should add a retention to a table that keeps everything', () => {
-  assert.equal(retention(7, 'ReplacingMergeTree ORDER BY id').length, 1)
-})
-
-it('should remove a retention no longer declared', () => {
-  const engine =
-    'ReplacingMergeTree TTL toDateTime(time) + toIntervalDay(30) SETTINGS a = 1'
-
-  assert.deepEqual(retention(undefined, engine), ['ALTER TABLE events REMOVE TTL'])
-  assert.deepEqual(retention(undefined, 'ReplacingMergeTree ORDER BY id'), [])
-})
+import { id, literal } from './ddl.ts'
 
 it('should refuse an identifier that is neither a scope nor a name', () => {
   assert.throws(() => id('shop; DROP DATABASE x'))
@@ -40,16 +12,4 @@ it('should refuse an identifier that is neither a scope nor a name', () => {
 
 it('should escape a literal', () => {
   assert.equal(literal("it's \\ fine"), "'it\\'s \\\\ fine'")
-})
-
-it('should change the retention of the table it is given, by its column', () => {
-  assert.deepEqual(
-    retention(30, 'ReplacingMergeTree ORDER BY id', 'encounters', 'received'),
-    ['ALTER TABLE encounters MODIFY TTL toDateTime(received) + INTERVAL 30 DAY']
-  )
-
-  const engine =
-    'ReplacingMergeTree TTL toDateTime(received) + toIntervalDay(30) SETTINGS a = 1'
-
-  assert.deepEqual(retention(30, engine, 'encounters', 'received'), [])
 })

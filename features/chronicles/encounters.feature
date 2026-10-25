@@ -9,7 +9,7 @@ Feature: What clients send to the log
         fields:
           path: The URL path, without the query
       """
-    And the chronicles scribe is running
+    And the chronicles relay is running
 
   Scenario: A batch is a row of `encounters` for each event, of the visitor and the session
     When I call `chronicles.encounters.anonymous` with:

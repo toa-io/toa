@@ -11,7 +11,7 @@ Feature: Chronicles
 
   Scenario: A change is a row under each event the component declares, and its state is kept
     Given I compose `chronicled.orders` component
-    And the chronicles scribe is running
+    And the chronicles relay is running
     When I call `chronicled.orders.transit` with:
       """yaml
       query:
@@ -41,7 +41,7 @@ Feature: Chronicles
 
   Scenario: What a payload holds beyond its declaration is not written, at any depth
     Given I compose `chronicled.orders` component
-    And the chronicles scribe is running
+    And the chronicles relay is running
     When I call `chronicled.orders.transit` with:
       """yaml
       query:
@@ -71,9 +71,30 @@ Feature: Chronicles
       - paths: [total]
       """
 
-  Scenario: A declared label is a view in the declared types
+  Scenario: Every row is of the scope of its context
     Given I compose `chronicled.orders` component
-    And the chronicles scribe is running
+    And the chronicles relay is running
+    When I call `chronicled.orders.transit` with:
+      """yaml
+      query:
+        id: 72cf9b0ab0ac4ab2b8036e4e940ddcae
+      input:
+        total: 120
+      """
+    Then the chronicles answer "SELECT scope, label FROM events FINAL" within 30 seconds:
+      """yaml
+      - scope: toa-dev
+        label: chronicled.orders.created
+      """
+    And the chronicles answer "SELECT scope, component FROM states FINAL" within 30 seconds:
+      """yaml
+      - scope: toa-dev
+        component: chronicled.orders
+      """
+
+  Scenario: A declared field is read in its type as describe says
+    Given I compose `chronicled.orders` component
+    And the chronicles relay is running
     When I call `chronicled.orders.transit` with:
       """yaml
       query:
@@ -88,47 +109,16 @@ Feature: Chronicles
           - sku: T-2
             quantity: 1
       """
-    Then the chronicles answer "SELECT entity, total, toTypeName(total) AS type, shipping.country AS country FROM chronicled_orders_created" within 30 seconds:
+    Then the chronicles answer "SELECT JSONExtract(ifNull(toJSONString(payload.`total`), 'null'), 'Nullable(Int64)') AS total, toTypeName(total) AS type, JSONExtract(toJSONString(payload.^`shipping`), 'Tuple(country Nullable(String))').country AS country FROM events FINAL" within 30 seconds:
       """yaml
-      - entity: 72cf9b0ab0ac4ab2b8036e4e940ddcae
-        total: 120
+      - total: 120
         type: Nullable(Int64)
         country: DE
-      """
-    And the chronicles answer "SELECT item.sku AS sku, sum(item.quantity) AS units FROM chronicled_orders_created ARRAY JOIN items AS item GROUP BY sku ORDER BY sku":
-      """yaml
-      - sku: T-1
-        units: 2
-      - sku: T-2
-        units: 1
-      """
-    And the chronicles answer "SELECT entity, version, total FROM chronicled_orders" within 30 seconds:
-      """yaml
-      - entity: 72cf9b0ab0ac4ab2b8036e4e940ddcae
-        version: 1
-        total: 120
-      """
-
-  Scenario: A view of a label no longer declared is gone once the scribe starts
-    Given the chronicles of `chronicled.facts` are deployed
-    And the chronicles scribe is running
-    And the chronicles answer "SELECT name FROM system.tables WHERE database = 'toa-dev' AND startsWith(name, 'chronicled_') ORDER BY name":
-      """yaml
-      - name: chronicled_facts_searched
-      """
-    When the chronicles scribe stops
-    And the chronicles of `chronicled.orders` are deployed
-    And I compose `chronicled.orders` component
-    And the chronicles scribe is running
-    Then the chronicles answer "SELECT name FROM system.tables WHERE database = 'toa-dev' AND startsWith(name, 'chronicled_') ORDER BY name":
-      """yaml
-      - name: chronicled_orders
-      - name: chronicled_orders_created
       """
 
   Scenario: The state of an entity is its latest version
     Given I compose `chronicled.orders` component
-    And the chronicles scribe is running
+    And the chronicles relay is running
     When I call `chronicled.orders.transit` with:
       """yaml
       query:
@@ -152,7 +142,7 @@ Feature: Chronicles
   Scenario: A fact a component sends
     Given the chronicles of `chronicled.facts` are deployed
     And I compose `chronicled.facts` component
-    And the chronicles scribe is running
+    And the chronicles relay is running
     When I call `chronicled.facts.search` with:
       """yaml
       input:
@@ -181,10 +171,10 @@ Feature: Chronicles
       message: "MisuseException: 'chronicled.facts' declares no fact 'whispered'"
       """
 
-  Scenario: What is committed while the scribe is away is written once it is back
+  Scenario: What is committed while the relay is away is written once it is back
     Given I compose `chronicled.orders` component
-    And the chronicles scribe is running
-    When the chronicles scribe stops
+    And the chronicles relay is running
+    When the chronicles relay stops
     And I call `chronicled.orders.transit` with:
       """yaml
       query:
@@ -193,7 +183,7 @@ Feature: Chronicles
         total: 7
       """
     And I wait 2 seconds
-    And the chronicles scribe is running
+    And the chronicles relay is running
     Then the chronicles answer "SELECT label FROM events FINAL" within 30 seconds:
       """yaml
       - label: chronicled.orders.created
@@ -211,7 +201,7 @@ Feature: Chronicles
     And I compose components:
       | chronicled.orders    |
       | chronicled.stateless |
-    And the chronicles scribe is running
+    And the chronicles relay is running
     When I call `chronicled.stateless.transit` with:
       """yaml
       query:
@@ -243,7 +233,7 @@ Feature: Chronicles
     And I compose components:
       | chronicled.orders   |
       | chronicled.mistyped |
-    And the chronicles scribe is running
+    And the chronicles relay is running
     When I call `chronicled.mistyped.transit` with:
       """yaml
       query:
@@ -263,12 +253,12 @@ Feature: Chronicles
       - label: chronicled.orders.created
       """
 
-  Scenario: A change is when it was made, however late the scribe takes it
+  Scenario: A change is when it was made, however late the relay takes it
     Given the chronicles of `chronicled.stamped` are deployed
     And the `chronicled.stamped` database is empty
     And I compose `chronicled.stamped` component
-    And the chronicles scribe is running
-    When the chronicles scribe stops
+    And the chronicles relay is running
+    When the chronicles relay stops
     And I call `chronicled.stamped.transit` with:
       """yaml
       query:
@@ -277,7 +267,7 @@ Feature: Chronicles
         total: 3
       """
     And I wait 3 seconds
-    And the chronicles scribe is running
+    And the chronicles relay is running
     Then the chronicles answer "SELECT abs(toUnixTimestamp64Milli(time) - payload.rendered::Int64) < 1000 AS made FROM events FINAL WHERE label = 'chronicled.stamped.placed'" within 30 seconds:
       """yaml
       - made: 1

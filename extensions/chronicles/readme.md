@@ -1,14 +1,17 @@
 # Toa Chronicles
 
-A log of what happens in a context, kept in a store the context names. Components write to it by
-the events they declare and the facts they send, clients by a route of the gateway, and it is
-read by an [HTTP API](#reading-the-log) — which the gateway also publishes as [MCP](#over-mcp)
-tools. The service `chronicles-scribe` writes the log, and is what the store is provisioned by and
-read through.
+A log of what happens in a context. Components write to it by the events they declare and the
+facts they send, clients by a route of the gateway; the service `chronicles-relay` publishes every
+row of it to an analytics broker, and reads it back from a store, by an
+[HTTP API](#reading-the-log) — which the gateway also publishes as [MCP](#over-mcp) tools.
+
+Writing and reading meet in nothing Toa does: what takes the rows off the broker into the store,
+and who may read what there, is the [store's](#the-store) own setup.
 
 ## The log
 
-Three tables.
+Three tables, each row of which has the `scope` of the context that wrote it — the context's name,
+followed by `TOA_SUFFIX` where one is given — and a reader sees the rows of its own scope.
 
 **`events`** holds a row for everything a component did: an [event](#events-and-states) it
 declares, under `<component>.<event>`, with the entity that changed and its version; and a
@@ -46,7 +49,7 @@ Every time is the one its source says — when it happened — and none is when 
 | a fact    | when the operation sent it                                                                |
 | encounter | when the gateway received it, less how long before sending it the client says it happened |
 
-So a change the scribe takes an hour late is written at the time it was made, and the hours it
+So a change the relay takes an hour late is written at the time it was made, and the hours it
 was away fill in as it catches up: a count of a recent period may still grow. An encounter's
 `received` is when the gateway received its batch.
 
@@ -105,8 +108,8 @@ from the payload's `id` and `VERSION` where it carries them, and is written with
 does not. These, the [timestamp](#when-a-change-was-made) and the [identity](#identity) are read
 before the contract applies, and are not declared. An event that is both is named in both.
 
-A committed change is written however long the scribe is away, and once however often it is
-delivered. One committed before the scribe first ran in a deployment is not.
+A committed change is written however long the relay or the broker is away, and once however often it is
+delivered. One committed before the relay first ran in a deployment is not.
 
 ### Types
 
@@ -127,20 +130,27 @@ delivered. One committed before the scribe first ran in a deployment is not.
 | `object` with `properties`               | `Tuple` of them, by name |
 | `array` with `items` of any of these     | `Array` of it            |
 
-### Views of the declared
+### Reading what is declared
 
-Every declared label, and every state, is a view of the log by the label with its dots as
-underscores — `store_orders_paid`, and `store_orders` for the state — whose columns are what a row
-says of itself and the declared properties in their types:
+`describe` tells, of every declared field of a label or a state, its type and how to read it from
+the table in that type:
 
-```sql
-SELECT shipping.country, sum(total) / 100 AS paid FROM store_orders_paid GROUP BY 1
-SELECT item.sku, sum(item.quantity) FROM store_orders_paid ARRAY JOIN items AS item GROUP BY 1
+```yaml
+- label: store.orders.paid
+  fields:
+    - path: total
+      type: Int64
+      description: The amount paid, in cents
+      read: JSONExtract(ifNull(toJSONString(payload.total), 'null'), 'Nullable(Int64)')
 ```
 
-A value that is not of its type reads as `NULL` there; the row keeps it as it was written. A
-view follows its declaration once the scribe starts after a deploy, so a contract that changes
-changes the view, and the rows written before it are read by the new one.
+```sql
+SELECT JSONExtract(ifNull(toJSONString(payload.total), 'null'), 'Nullable(Int64)') AS total, count()
+FROM events FINAL WHERE label = 'store.orders.paid' GROUP BY total
+```
+
+A value that is not of its type reads as `NULL`; the row keeps it as it was written. A contract
+that changes changes what `describe` tells, and the rows written before it are read the same way.
 
 ### When a change was made
 
@@ -196,7 +206,7 @@ await context.chronicles.send('searched', { query: input.query, results: results
 The fact is a row of `events` under `<component>.searched`, with what was sent of its contract as
 its payload. `send` throws for a name the component does not declare, or a payload a declared
 property of which is of another type; it resolves once the broker has it, and it then waits for
-the scribe as an event does.
+the relay as an event does.
 
 An operation that knows whose the fact is says so; the extension does not know who called it:
 
@@ -389,12 +399,11 @@ accept: application/yaml
 guide: |
   # Reading the log
 
-  The log is three tables, and a view for each label and state the components declare.
+  The log is three tables, read with `FINAL`.
   …
 labels:
   - label: store.orders.paid
     description: An order's payment completed
-    view: store_orders_paid
     rows: 1204
     first: 2026-10-01 08:12:03.000
     last: 2026-10-24 17:40:51.000
@@ -402,22 +411,24 @@ labels:
       - path: total
         type: Int64
         description: The amount paid, in cents
+        read: JSONExtract(ifNull(toJSONString(payload.total), 'null'), 'Nullable(Int64)')
       - path: shipping
         type: Tuple(country String)
         description: Where the order goes
+        read: JSONExtract(toJSONString(payload.^shipping), 'Tuple(country Nullable(String))')
       - path: shipping.country
         type: String
         description: ISO 3166 alpha-2
 states:
   - component: store.orders
     description: An order as it stands
-    view: store_orders
     entities: 1180
     last: 2026-10-24 17:40:51.000
     fields:
       - path: status
         type: LowCardinality(String)
         description: Where the order is in its life
+        read: JSONExtract(ifNull(toJSONString(payload.status), 'null'), 'LowCardinality(Nullable(String))')
 encounters:
   - name: page_viewed
     description: A page was shown
@@ -433,6 +444,7 @@ encounters:
         types: [Int64, String]
 views:
   - name: paid_daily
+    read: shop.paid_daily
     title: Orders paid per day
     description: Orders whose payment completed, counted by the day of `time`
     sql: SELECT toDate(time) AS day, count() AS paid FROM events FINAL WHERE label = 'store.orders.paid' GROUP BY day
@@ -445,8 +457,9 @@ and how its store is read, in the store's dialect: what an agent reads before it
 Toa writes it; what is particular to an application is in the descriptions of what it declares
 and documents, and in [`exposition.mcp.instructions`](/extensions/exposition/documentation/mcp.md).
 
-A label and a state are told by their declaration, with the type a [view](#views-of-the-declared)
-reads each field as. A label declared and not yet written is told with no rows. An encounter is
+A label and a state are told by their declaration, with each field's type and how to
+[read](#reading-what-is-declared) it in that type; a field of a field is read inside the one that
+holds it. A label declared and not yet written is told with no rows. An encounter is
 told by what was sent: the fields of the latest payloads, the types they were sent as — two
 types of one field are two versions of a client — and the description the
 [configuration](#what-the-encounters-are) gives.
@@ -513,12 +526,14 @@ refresh: 3600
 counts. Without `refresh`, a view is computed when it is read. With `refresh`, in seconds and at
 least `3600`, it is computed on that cycle and read as a table, and `describe` tells when it last
 was. A name is lowercase letters, digits and underscores, and a context has at most 50 views. A
-query reads a view by its name.
+view is kept in the database named after the context's scope, and a query reads it by that name:
+`shop.paid_daily`. Defining one takes a store whose user may create views there; one that may not
+is refused.
 
 | code        | when                                                                 |
 | ----------- | -------------------------------------------------------------------- |
 | `REFUSED`   | the statement is not one a query could run; `cause.message` says why |
-| `RESERVED`  | the name is one of the log's tables, or the view of a declared label |
+| `RESERVED`  | the name is one of the log's tables                                  |
 | `EXHAUSTED` | the context has 50 views, and this is not one of them                |
 
 ### `DELETE /chronicles/queries/views/:name/`
@@ -589,73 +604,83 @@ there is not a user — so a question that depends on who sent an encounter asks
 
 ### The reader
 
-A query runs as a user of the store that reads the log's database and nothing else — unless the
-store's administrator grants it more, which [Toa never does](#clickhouse): it cannot write, read
-another database or the store's users, or lift its limits — 30 seconds, 10,000 rows, 64 MiB and 4
-queries at once. A view is defined only of a statement that user could run, so a view
-reaches no further than a query.
+A query runs as the context's user of the store, which reads what the [store](#the-store) lets it
+— in the reference setup, the rows of its scope and the views of its database — and is never let
+lift its limits there. Toa asks a query to be read-only besides, so a query can change nothing even
+of what its user may: only `define` and `drop` create and remove views.
 
 ## Deployment
 
 ```yaml
 # context.toa.yaml
 chronicles:
+  broker: amqp://analytics.internal
   store:
     provider: clickhouse
-    url: https://ch.example.com:8443
+    url: http://analytics.internal:8123
   retention: 730
   encounters: true
 ```
 
 |              |                                                                                     |
 | ------------ | ----------------------------------------------------------------------------------- |
-| `store`      | the provider that keeps the log, and the address of its server                      |
+| `broker`     | where the rows are published                                                        |
+| `store`      | where they are read: the provider, and the address of its server                    |
 | `retention`  | days a row of `events` and of `encounters` is kept; absent, kept                    |
 | `encounters` | the routes clients send to; absent, there are none                                  |
 | `ip`         | `full` keeps a client's whole address; absent, its network                          |
 | `resources`  | what the service may take, as [`resources`](/migrations/262.md) is stated elsewhere |
 
 ```shell
-$ toa conceal chronicles-store username=… password=… reader=…
+$ toa conceal chronicles broker_username=… broker_password=… store_username=… store_password=…
 ```
 
-The log is kept in a database of the store named after the context's
-[scope](/discussions/scope.md): the context, followed by `TOA_SUFFIX` where one is given. So
-contexts share a store without meeting in it, and so do the deployments of one context told apart
-by a suffix. An address that names a database is refused.
+The service `chronicles-relay` alone is given the secret.
 
-The user provisions the store when the service starts: the database, the tables, and the reader,
-the user queries run as, with `reader` as its password.
+The events the components declare travel where the context's `amqp` says, as every event does, and
+the relay takes them from there. A fact and an encounter reach it as tasks. Each is acknowledged
+once the broker has confirmed its row, so while the broker is away they wait where they are, and
+are published once it is back; the relay starts and is ready without it.
 
-The events the components declare travel where the context's `amqp` says, as every event does.
+## The store
 
-## ClickHouse
+What Toa publishes and what it reads; what takes the one into the other is not Toa's.
 
-`url` is ClickHouse's HTTP address. The database is the scope, created where it does not exist. The
-user needs `CREATE`, `INSERT` and `access_management`; the reader is `<scope>_reader`.
+**Published:** one JSON row a message, persistent, to the exchange `chronicles` (`direct`) of the
+broker, under the key of its table — `events`, `states` or `encounters`. A row has the columns of
+its table:
 
-Provisioning grants the reader its own database and changes nothing else of it, so what the store's
-administrator grants it beyond survives every start. That is how one context reads the logs of
-others — a platform reading the applications it runs, each of which reads only its own:
+| table        | row                                                                                                                                                              |
+| ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `events`     | `scope`, `id`, `label`, `component`, `time`, `entity`, `version`, `identity`, `trace`, `payload`, `expires`                                                      |
+| `states`     | `scope`, `component`, `entity`, `version`, `identity`, `time`, `payload`                                                                                         |
+| `encounters` | `scope`, `id`, `name`, `time`, `received`, `visitor`, `session`, `identity`, `ip`, `country`, `origin`, `agent`, `browser`, `os`, `device`, `payload`, `expires` |
+
+A time is `YYYY-MM-DD hh:mm:ss.sss`, in UTC; `expires` is `time` — an encounter's `received` — and
+`retention` days, or `2106-01-01 00:00:00` where there is none. A row may be delivered more than
+once, with the same `id`. The broker's user needs to declare and to write the exchange `chronicles`,
+and nothing else.
+
+**Read:** `events`, `states` and `encounters`, with those columns, in the default database of the
+`store` user, and a database named after the scope for its views.
+
+The relay writes the scope of its context into every row, and nothing else does: the broker tells
+the store nothing of who published a row. What keeps a context from reading another's rows is the
+store's.
+
+### ClickHouse
+
+[`store/clickhouse.sql`](./store/clickhouse.sql) sets a store up: the database `chronicles` with the
+three tables, which are replaced by key in the background — so a query reads them with `FINAL`,
+which collapses what was delivered twice — and a RabbitMQ engine table and a view for each, which
+take the rows off the broker. [`store/clickhouse.scope.sql`](./store/clickhouse.scope.sql) adds the
+user of a context: its row policy, its limits and its database. A user with no row policy reads
+every scope, which is how a platform reads the contexts it runs:
 
 ```sql
-GRANT SELECT ON `shop`.* TO `platform_reader`
-```
-
-```sql
-SELECT count() FROM shop.encounters FINAL
-SELECT _database AS application, count() FROM merge(REGEXP('^app_'), '^encounters$') GROUP BY 1
-```
-
-Nothing in Toa grants a reader more than its own database.
-
-`events`, `states` and `encounters` are replaced by key in the background, so a query reads them
-with `FINAL`, which collapses what was delivered twice. The views of the declared read with
-`FINAL` themselves.
-
-```sql
-SELECT total, count() FROM store_orders_paid GROUP BY 1
+SELECT scope, count() FROM encounters FINAL GROUP BY scope
 SELECT visitor, groupUniqArray(identity) FROM encounters FINAL WHERE identity IS NOT NULL GROUP BY visitor
 ```
 
-A view with `refresh` is a refreshable materialized view.
+A view with `refresh` is a refreshable materialized view, computed as its definer — the context's
+user — and so of its scope.

@@ -1,6 +1,6 @@
 import { current, encode } from 'openspan'
 import { Connector, Locator, entities, exceptions } from '@toa.io/core'
-import { FACTS, NAMESPACE } from '@toa.io/definitions/extensions.chronicles'
+import { NAMESPACE, RELAY } from '@toa.io/definitions/extensions.chronicles'
 import { Mismatch, project } from './contract.ts'
 import type { Row } from './Provider.ts'
 import type { Contract } from '@toa.io/definitions/extensions.chronicles'
@@ -122,6 +122,6 @@ interface Options {
   identity?: string
 }
 
-const LOCATOR = new Locator(FACTS, NAMESPACE)
+const LOCATOR = new Locator(RELAY, NAMESPACE)
 const SOURCE = { service: 'chronicles' }
 const NAME = /^[a-zA-Z][a-zA-Z0-9]*(\.[a-zA-Z][a-zA-Z0-9]*)*$/

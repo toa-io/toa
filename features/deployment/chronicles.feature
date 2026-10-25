@@ -10,6 +10,7 @@ Feature: Chronicles deployment
     And I have a context with:
       """yaml
       chronicles:
+        broker: amqp://analytics.example.com
         store:
           provider: clickhouse
           url: https://ch.example.com:8443
@@ -24,25 +25,29 @@ Feature: Chronicles deployment
             - name: TOA_EVENTS_CHRONICLED_ORDERS
               value: snapshot created
       services:
-        - name: chronicles-scribe
+        - name: chronicles-relay
           components:
-            - chronicles-facts
             - chronicles-queries
+            - chronicles-relay
           variables:
             - name: TOA_CHRONICLES
-              value: '{"store":{"provider":"clickhouse","url":"https://ch.example.com:8443"},"retention":730,"encounters":false,"ip":"truncated","events":{"chronicled.orders.created":{"description":"An order was placed","properties":{"total":{"type":"integer","description":"The amount of the order, in cents"},"shipping":{"type":"object","description":"Where the order goes","properties":{"country":{"type":"string","description":"ISO 3166 alpha-2 code of the country"}}},"items":{"type":"array","description":"What was ordered","items":{"type":"object","properties":{"sku":{"type":"string","description":"The code of the product"},"quantity":{"type":"integer","description":"Units of the product"}}}}}}},"states":{"chronicled.orders.snapshot":{"description":"An order as it stands","properties":{"total":{"type":"integer","description":"The amount of the order, in cents"}}}},"facts":{},"identities":{"chronicled.orders":"customer"}}'
+              value: '{"broker":"amqp://analytics.example.com","store":{"provider":"clickhouse","url":"https://ch.example.com:8443"},"retention":730,"encounters":false,"ip":"truncated","events":{"chronicled.orders.created":{"description":"An order was placed","properties":{"total":{"type":"integer","description":"The amount of the order, in cents"},"shipping":{"type":"object","description":"Where the order goes","properties":{"country":{"type":"string","description":"ISO 3166 alpha-2 code of the country"}}},"items":{"type":"array","description":"What was ordered","items":{"type":"object","properties":{"sku":{"type":"string","description":"The code of the product"},"quantity":{"type":"integer","description":"Units of the product"}}}}}}},"states":{"chronicled.orders.snapshot":{"description":"An order as it stands","properties":{"total":{"type":"integer","description":"The amount of the order, in cents"}}}},"facts":{},"identities":{"chronicled.orders":"customer"},"timestamps":{"chronicled.orders":"UPDATED"}}'
+            - name: TOA_CHRONICLES_BROKER_USERNAME
+              secret:
+                name: toa-chronicles
+                key: broker_username
+            - name: TOA_CHRONICLES_BROKER_PASSWORD
+              secret:
+                name: toa-chronicles
+                key: broker_password
             - name: TOA_CHRONICLES_STORE_USERNAME
               secret:
-                name: toa-chronicles-store
-                key: username
+                name: toa-chronicles
+                key: store_username
             - name: TOA_CHRONICLES_STORE_PASSWORD
               secret:
-                name: toa-chronicles-store
-                key: password
-            - name: TOA_CHRONICLES_STORE_READER
-              secret:
-                name: toa-chronicles-store
-                key: reader
+                name: toa-chronicles
+                key: store_password
       """
     And exported values should not contain:
       """yaml
@@ -50,6 +55,7 @@ Feature: Chronicles deployment
         - name: chronicled-orders
           variables:
             - name: TOA_CHRONICLES_STORE_PASSWORD
+            - name: TOA_CHRONICLES_BROKER_PASSWORD
       """
 
   Scenario: Serving the routes of encounters
@@ -57,6 +63,7 @@ Feature: Chronicles deployment
     And I have a context with:
       """yaml
       chronicles:
+        broker: amqp://analytics.example.com
         store:
           provider: clickhouse
           url: https://ch.example.com:8443
@@ -66,11 +73,11 @@ Feature: Chronicles deployment
     Then exported values should contain:
       """yaml
       services:
-        - name: chronicles-scribe
+        - name: chronicles-relay
           components:
             - chronicles-encounters
-            - chronicles-facts
             - chronicles-queries
+            - chronicles-relay
       """
 
   Scenario: What the service may take
@@ -78,6 +85,7 @@ Feature: Chronicles deployment
     And I have a context with:
       """yaml
       chronicles:
+        broker: amqp://analytics.example.com
         store:
           provider: clickhouse
           url: https://ch.example.com:8443
@@ -89,7 +97,7 @@ Feature: Chronicles deployment
     Then exported values should contain:
       """yaml
       services:
-        - name: chronicles-scribe
+        - name: chronicles-relay
           resources:
             cpu: [100m, 500m]
             memory: [200Mi, 400Mi]
@@ -100,6 +108,7 @@ Feature: Chronicles deployment
     And I have a context with:
       """yaml
       chronicles:
+        broker: amqp://analytics.example.com
         store:
           provider: clickhouse
           url: https://ch.example.com:8443
@@ -108,7 +117,7 @@ Feature: Chronicles deployment
     Then exported values should contain:
       """yaml
       services:
-        - name: chronicles-scribe
+        - name: chronicles-relay
       """
 
   Scenario: No annotation, no service
@@ -118,7 +127,7 @@ Feature: Chronicles deployment
     Then exported values should not contain:
       """yaml
       services:
-        - name: chronicles-scribe
+        - name: chronicles-relay
       """
 
   Scenario: A component that declares chronicles in a context that keeps none
@@ -134,6 +143,7 @@ Feature: Chronicles deployment
     And I have a context with:
       """yaml
       chronicles:
+        broker: amqp://analytics.example.com
         store:
           provider: clickhouse
           url: https://ch.example.com:8443
@@ -148,6 +158,7 @@ Feature: Chronicles deployment
     And I have a context with:
       """yaml
       chronicles:
+        broker: amqp://analytics.example.com
         store:
           provider: bigquery
           url: https://bigquery.example.com/shop
@@ -162,11 +173,12 @@ Feature: Chronicles deployment
     And I have a context with:
       """yaml
       chronicles:
+        broker: amqp://analytics.example.com
         store:
           provider: clickhouse
           url: https://ch.example.com:8443/shop
       """
     Then exporting deployment fails with:
       """
-      The store of chronicles is the address of a server: the database is the context's scope.
+      The store of chronicles is the address of a server: what is read is its user's.
       """

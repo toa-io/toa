@@ -14,6 +14,11 @@ export type RecordInput = {
   payload: Record<string, unknown>
 }
 
+export type EncounterInput = {
+  encounters: Array<Record<string, unknown>>
+}
+
 export interface Component {
   record: (request: { input: RecordInput, task?: boolean }) => Promise<unknown>
+  encounter: (request: { input: EncounterInput, task?: boolean }) => Promise<unknown>
 }

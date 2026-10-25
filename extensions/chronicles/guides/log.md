@@ -1,6 +1,7 @@
 # Reading the log
 
-The log is three tables, and a view for each label and state the components declare.
+The log is three tables: `events`, `states` and `encounters`. Every row has `scope`, the
+application it is of; you read the rows of yours.
 
 - `events`: a row for everything a component did. `label` is `<component>.<event>` for a change,
   with the `entity` that changed and its `version`, or `<component>.<name>` for a fact, with
@@ -35,10 +36,9 @@ Rows can arrive late — after the service that writes them was away — and are
 time, so a count of the last hours may still grow. Compare `time` of encounters and of events
 directly: both are the server's.
 
-Read a declared label through its view, named after the label with its dots as underscores
-(`store.orders.paid` is `store_orders_paid`, the state of `store.orders` is `store_orders`): its
-columns are the declared fields in their types, and the description of each is in what
-`chronicles.queries.GET` answers. A label's payload holds only what is declared. An encounter's
+A declared label's payload holds only what is declared. `chronicles.queries.GET` tells each
+declared field's type, what it means, and `read`: the expression that selects it from the table
+in its type — use it rather than casting the payload yourself. An encounter's
 payload is what the client sent, and its fields differ between versions of a client: two types of
 one field are two versions.
 
@@ -48,4 +48,5 @@ storage is a new one. The visitors of an identity are the rows that have both. L
 
 Nothing arrives in order: order by `time`, or by `version` within one entity. A view another agent
 defined says what it counts in its title and description; read them before reusing one, and give
-your own views both.
+your own views both. A view is read by its name, which `chronicles.queries.GET` tells with its
+database.

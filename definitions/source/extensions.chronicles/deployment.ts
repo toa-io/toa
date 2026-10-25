@@ -1,6 +1,6 @@
 import { components } from './components.ts'
 import { version } from '../version.ts'
-import { NAMESPACE, SECRET, SERVICE, SETTINGS, view } from './const.ts'
+import { KEYS, NAMESPACE, SECRET, SERVICE, SETTINGS } from './const.ts'
 import * as schemas from './schemas.ts'
 import type { Annotation, Contract, Declaration, Settings } from './types.ts'
 import type { context } from '@toa.io/norm'
@@ -56,8 +56,6 @@ export function deployment(
     timestamps[id] = declaration.timestamp
   }
 
-  distinct(events, states, facts)
-
   const settings: Settings = {
     ...read(annotation),
     events,
@@ -91,14 +89,15 @@ export const standalone = true
 
 function read(
   annotation: Annotation
-): Pick<Settings, 'store' | 'retention' | 'encounters' | 'ip'> {
-  // the database is the scope, as it is of every store a context shares
+): Pick<Settings, 'broker' | 'store' | 'retention' | 'encounters' | 'ip'> {
+  // what is read is the user's own: the address names a server, and no database of it
   if (new URL(annotation.store.url).pathname.replace(/\//g, '') !== '')
     throw new Error(
-      "The store of chronicles is the address of a server: the database is the context's scope."
+      "The store of chronicles is the address of a server: what is read is its user's."
     )
 
   return {
+    broker: annotation.broker,
     store: annotation.store,
     retention: annotation.retention,
     encounters: annotation.encounters === true,
@@ -106,40 +105,12 @@ function read(
   }
 }
 
-/**
- * A label is a view by its name with its dots as underscores, and a state by its component's, so
- * two that read as one view are refused here rather than left to replace each other in the store.
- */
-function distinct(
-  events: Record<string, Contract>,
-  states: Record<string, Contract>,
-  facts: Record<string, Contract>
-): void {
-  const seen = new Map<string, string>()
-  const components = Object.keys(states).map((label) =>
-    label.slice(0, label.lastIndexOf('.'))
-  )
-
-  for (const label of [...Object.keys(events), ...Object.keys(facts), ...components]) {
-    const name = view(label)
-    const other = seen.get(name)
-
-    if (other !== undefined && other !== label)
-      throw new Error(
-        `Chronicles of '${other}' and '${label}' would both be the view '${name}'.`
-      )
-
-    seen.set(name, label)
-  }
-}
-
 /** The user the store is provisioned as, and the password of the reader it creates. */
 function credentials(): Variable[] {
   return KEYS.map((key) => ({
-    name: `${SETTINGS}_STORE_${key.toUpperCase()}`,
+    name: `${SETTINGS}_${key.toUpperCase()}`,
     secret: { name: SECRET, key }
   }))
 }
 
-const KEYS = ['username', 'password', 'reader']
 const NONE: Declaration = { events: {}, facts: {}, identity: null, timestamp: null }

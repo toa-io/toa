@@ -1,15 +1,19 @@
 # context.toa.yaml chronicles annotation
 type: object
 properties:
+  broker:
+    description: The AMQP address of the broker the rows are published to
+    type: string
+    pattern: ^amqps?://
   store:
-    description: Where the log is kept, by the provider that keeps it
+    description: Where the log is read, by the provider that keeps it
     oneOf:
       - type: object
         properties:
           provider:
             const: clickhouse
           url:
-            description: The HTTP address of ClickHouse; the database is the context's scope
+            description: The HTTP address of ClickHouse; what is read is the user's own
             type: string
             format: uri
         required: [provider, url]
@@ -44,5 +48,5 @@ properties:
           type: string
         minItems: 2
         maxItems: 2
-required: [store]
+required: [broker, store]
 additionalProperties: false

@@ -1,9 +1,10 @@
-import type { Contract, Property } from '@toa.io/definitions/extensions.chronicles'
+import type { Property } from '@toa.io/definitions/extensions.chronicles'
 
 /**
- * Where the log is kept. A provider holds the log's tables — `events`, a row for everything a
- * component did, `states`, each entity as it stands, and `encounters`, what clients sent — and
- * reads them in a dialect of its own, which is what an agent writes its queries in.
+ * Where the log is read. A provider reads the log's tables — `events`, a row for everything a
+ * component did, `states`, each entity as it stands, and `encounters`, what clients sent — in a
+ * dialect of its own, which is what an agent writes its queries in. What it reads is what the store
+ * lets the context's user read; it creates nothing there but the views it is asked to.
  */
 export interface Provider {
   /** how the store is read: its dialect and what is particular to it, for whoever writes a query */
@@ -11,18 +12,6 @@ export interface Provider {
 
   /** the names a view cannot take: the provider's own tables */
   readonly tables: string[]
-
-  /** the tables, and the reader queries run as, made what the settings say */
-  provision(): Promise<void>
-
-  /**
-   * Rows of `events` and of `encounters`, each written once however often a row of one `id` is
-   * written; and states, each kept where it is of a higher version than the one there.
-   */
-  write(rows: Row[], states: State[], encounters: Encounter[]): Promise<void>
-
-  /** the views of what is declared made what the declarations say, and none of what is not */
-  declare(declarations: Declared[]): Promise<void>
 
   /** the fields of declared properties, at every depth, each with the type its view reads it as */
   fields(properties: Record<string, Property>): Field[]
@@ -42,7 +31,7 @@ export interface Provider {
   /** refuses what a view could not be: anything but one statement a query could run */
   validate(sql: string): Promise<void>
 
-  /** the views defined over the log, the views of what is declared aside */
+  /** the views defined over the log */
   views(): Promise<View[]>
 
   /** a view of `name`, replacing one there is; with `refresh`, recomputed on that cycle */
@@ -125,11 +114,6 @@ export interface Encounter {
   payload: object
 }
 
-/** A label, or a state, as a component declares it. */
-export type Declared =
-  | { kind: 'event' | 'fact'; label: string; contract: Contract }
-  | { kind: 'state'; component: string; contract: Contract }
-
 export interface Label {
   label: string
   rows: number
@@ -161,6 +145,9 @@ export interface Field {
   path: string
   type: string
   description?: string
+
+  /** the expression that reads it from its table in its type, of a property of the payload */
+  read?: string
 }
 
 export interface Definition {
@@ -175,6 +162,9 @@ export interface Definition {
 }
 
 export interface View extends Definition {
+  /** what a query reads it by */
+  read: string
+
   /** when a view that is a table was last computed */
   refreshed?: string
 }

@@ -129,7 +129,7 @@ async function resolveDevSecrets(variables) {
     if (key in secrets) continue
 
     if (key in DEV_SECRETS) {
-      secrets[key] = await resolveDevSecret(key)
+      secrets[key] = await resolveDevSecret(key, variables)
       continue
     }
 
@@ -143,12 +143,17 @@ async function resolveDevSecrets(variables) {
 
 /**
  * @param {string} key
+ * @param {toa.deployment.dependency.Variable[]} variables
  * @return {Promise<string>}
  */
-async function resolveDevSecret(key) {
+async function resolveDevSecret(key, variables) {
   const source = DEV_SECRETS[key]
 
   if (source.value !== undefined) return source.value
+
+  // a user named after the context, as a store's reference setup names one
+  if (source.context === true)
+    return variables.find((variable) => variable.name === 'TOA_CONTEXT')?.value ?? ''
 
   if (source.generate === 'jwe') return randomBytes(32).toString('base64url')
 
@@ -192,9 +197,10 @@ const DEV_SECRETS = {
   'toa-mongodb.default/password': { value: 'secret' },
   'toa-amqp-context.default/username': { value: 'developer' },
   'toa-amqp-context.default/password': { value: 'secret' },
-  'toa-chronicles-store/username': { value: 'developer' },
-  'toa-chronicles-store/password': { value: 'secret' },
-  'toa-chronicles-store/reader': { value: 'secret' },
+  'toa-chronicles/broker_username': { value: 'developer' },
+  'toa-chronicles/broker_password': { value: 'secret' },
+  'toa-chronicles/store_username': { context: true },
+  'toa-chronicles/store_password': { value: 'secret' },
   'toa-configuration/IDENTITY_TOKENS_KEY0': { generate: 'paseto' },
   'toa-configuration/IDENTITY_TOKENS_ENCRYPTION_KEY0': { generate: 'jwe' }
 }

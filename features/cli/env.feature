@@ -91,6 +91,7 @@ Feature: Export local deployment environment variables
       amqp:
         context: amqp://whatever
       chronicles:
+        broker: amqp://localhost
         store:
           provider: clickhouse
           url: http://localhost:8123
@@ -99,9 +100,10 @@ Feature: Export local deployment environment variables
     When I run `toa env --dev`
     Then the environment contains:
       """
-      TOA_CHRONICLES_STORE_USERNAME=developer
+      TOA_CHRONICLES_BROKER_USERNAME=developer
+      TOA_CHRONICLES_BROKER_PASSWORD=secret
+      TOA_CHRONICLES_STORE_USERNAME=collection
       TOA_CHRONICLES_STORE_PASSWORD=secret
-      TOA_CHRONICLES_STORE_READER=secret
       """
 
   Scenario: The configuration of what chronicles ship, for a context no component of which declares them
@@ -111,6 +113,7 @@ Feature: Export local deployment environment variables
       amqp:
         context: amqp://whatever
       chronicles:
+        broker: amqp://localhost
         store:
           provider: clickhouse
           url: http://localhost:8123
@@ -130,6 +133,7 @@ Feature: Export local deployment environment variables
       amqp:
         context: amqp://whatever
       chronicles:
+        broker: amqp://localhost
         store:
           provider: clickhouse
           url: http://localhost:8123

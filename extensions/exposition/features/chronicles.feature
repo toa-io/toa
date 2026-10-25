@@ -103,7 +103,7 @@ Feature: Chronicles through the gateway
       accept: application/yaml
       content-type: application/yaml
 
-      sql: SELECT one FROM ones
+      sql: SELECT one FROM `toa-dev`.ones
       """
     Then the following reply is sent:
       """

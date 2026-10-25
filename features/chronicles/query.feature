@@ -11,7 +11,7 @@ Feature: Reading the log
         fields:
           path: The URL path, without the query
       """
-    And the chronicles scribe is running
+    And the chronicles relay is running
     And I call `chronicles.encounters.anonymous` with:
       """yaml
       input:
@@ -57,12 +57,12 @@ Feature: Reading the log
       labels:
         - label: chronicled.orders.created
           description: An order was placed
-          view: chronicled_orders_created
           rows: 0
           fields:
             - path: total
               type: Int64
               description: The amount of the order, in cents
+              read: JSONExtract(ifNull(toJSONString(payload.`total`), 'null'), 'Nullable(Int64)')
             - path: shipping
               type: Tuple(country String)
               description: Where the order goes
@@ -81,7 +81,6 @@ Feature: Reading the log
       states:
         - component: chronicled.orders
           description: An order as it stands
-          view: chronicled_orders
           entities: 0
           fields:
             - path: total
@@ -143,7 +142,7 @@ Feature: Reading the log
     And I call `chronicles.queries.query` with:
       """yaml
       input:
-        sql: SELECT path FROM paths ORDER BY path
+        sql: SELECT path FROM `toa-dev`.paths ORDER BY path
       """
     Then the reply is received:
       """yaml
@@ -156,6 +155,7 @@ Feature: Reading the log
       """yaml
       views:
         - name: paths
+          read: '`toa-dev`.`paths`'
           title: Paths viewed
           description: Every path a page was viewed at, a row each
       """
@@ -168,7 +168,7 @@ Feature: Reading the log
         sql: SELECT toDate(time) AS day, count() AS n FROM encounters FINAL GROUP BY day
         refresh: 3600
       """
-    Then the chronicles answer "SELECT day = toDate(now64(3)) AS today, n FROM daily" within 30 seconds:
+    Then the chronicles answer "SELECT day = toDate(now64(3)) AS today, n FROM `toa-dev`.daily" within 30 seconds:
       """yaml
       - today: 1
         n: 2
@@ -198,7 +198,7 @@ Feature: Reading the log
     And I call `chronicles.queries.query` with:
       """yaml
       input:
-        sql: SELECT * FROM paths
+        sql: SELECT * FROM `toa-dev`.paths
       """
     Then the reply is received:
       """yaml
@@ -238,7 +238,6 @@ Feature: Reading the log
       | writes | INSERT INTO events (id) VALUES ('x') | REFUSED  |
       | events | SELECT 1                        | RESERVED |
       | encounters | SELECT 1                    | RESERVED |
-      | chronicled_orders_created | SELECT 1     | RESERVED |
 
   Scenario: A query past the rows answers what it has
     When I call `chronicles.queries.query` with:
@@ -260,50 +259,23 @@ Feature: Reading the log
       truncated: false
       """
 
-  Scenario: What the store's administrator grants the reader survives a start
-    Given the store runs:
-      """
-      DROP DATABASE IF EXISTS elsewhere SYNC;
-      CREATE DATABASE elsewhere;
-      CREATE TABLE elsewhere.numbers (n UInt8) ENGINE = Memory;
-      INSERT INTO elsewhere.numbers VALUES (7);
-      GRANT SELECT ON elsewhere.* TO `toa-dev_reader`
-      """
-    When the chronicles scribe stops
-    And the chronicles scribe is running
-    And I call `chronicles.queries.query` with:
-      """yaml
-      input:
-        sql: SELECT n FROM elsewhere.numbers
-      """
-    Then the reply is received:
-      """yaml
-      rows:
-        - [7]
-      """
+  Scenario: A context's user of the store reads the rows of its scope and nothing else
+    Given the store has a user of the scope "toa-dev"
+    And the store has a user of the scope "elsewhere"
     And the store runs:
       """
-      DROP DATABASE elsewhere SYNC
+      INSERT INTO chronicles.encounters (scope, id, name, time, received, payload) VALUES ('elsewhere', 'x1', 'page_viewed', now64(3), now64(3), '{}')
       """
-
-  Scenario: Another database is not the reader's unless it is granted
-    Given the store runs:
-      """
-      DROP DATABASE IF EXISTS elsewhere SYNC;
-      CREATE DATABASE elsewhere;
-      CREATE TABLE elsewhere.numbers (n UInt8) ENGINE = Memory
-      """
-    When I call `chronicles.queries.query` with:
+    Then the store answers "SELECT scope, id FROM encounters FINAL ORDER BY id" as the user of "toa-dev":
       """yaml
-      input:
-        sql: SELECT n FROM elsewhere.numbers
+      - scope: toa-dev
+        id: q1
+      - scope: toa-dev
+        id: q2
       """
-    Then the error is received:
+    And the store answers "SELECT scope, id FROM encounters FINAL" as the user of "elsewhere":
       """yaml
-      code: REFUSED
-      """
-    And the store runs:
-      """
-      DROP DATABASE elsewhere SYNC
+      - scope: elsewhere
+        id: x1
       """
 

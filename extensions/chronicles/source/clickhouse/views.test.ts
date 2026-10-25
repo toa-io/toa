@@ -1,7 +1,7 @@
 import { it } from 'node:test'
 import assert from 'node:assert/strict'
 
-import { fields, select, type } from './views.ts'
+import { fields, type } from './views.ts'
 import type { Contract } from '@toa.io/definitions/extensions.chronicles'
 
 const contract: Contract = {
@@ -27,30 +27,26 @@ const contract: Contract = {
   }
 }
 
-it('should read each property in its type, or NULL', () => {
-  const sql = select({ kind: 'event', label: 'store.orders.created', contract })
-
-  assert.match(sql, /^SELECT id, time, entity, version, identity, trace, /)
-  assert.match(
-    sql,
-    /JSONExtract\(ifNull\(toJSONString\(payload\.`total`\), 'null'\), 'Nullable\(Int64\)'\) AS `total`/
+it('should tell how to read each property in its type, or NULL', () => {
+  const read: Record<string, string> = Object.fromEntries(
+    fields(contract.properties)
+      .filter((field) => field.read !== undefined)
+      .map((field) => [field.path, field.read!])
   )
-  assert.match(sql, /'LowCardinality\(Nullable\(String\)\)'\) AS `status`/)
-  assert.match(sql, /'Nullable\(DateTime64\(3, \\'UTC\\'\)\)'\) AS `placed`/)
-  assert.match(
-    sql,
-    /JSONExtract\(toJSONString\(payload\.\^`shipping`\), 'Tuple\(country Nullable\(String\)\)'\) AS `shipping`/
+
+  assert.equal(
+    read.total,
+    "JSONExtract(ifNull(toJSONString(payload.`total`), 'null'), 'Nullable(Int64)')"
   )
-  assert.match(sql, /'Array\(Tuple\(sku Nullable\(String\)\)\)'\) AS `items`/)
-  assert.doesNotMatch(sql, /nothing/)
-  assert.match(sql, / FROM events FINAL WHERE label = 'store\.orders\.created'$/)
-})
-
-it('should read a state of a component', () => {
-  const sql = select({ kind: 'state', component: 'store.orders', contract })
-
-  assert.match(sql, /^SELECT entity, version, identity, time, /)
-  assert.match(sql, / FROM states FINAL WHERE component = 'store\.orders'$/)
+  assert.match(read.status, /'LowCardinality\(Nullable\(String\)\)'\)$/)
+  assert.match(read.placed, /'Nullable\(DateTime64\(3, \\'UTC\\'\)\)'\)$/)
+  assert.equal(
+    read.shipping,
+    "JSONExtract(toJSONString(payload.^`shipping`), 'Tuple(country Nullable(String))')"
+  )
+  assert.match(read.items, /'Array\(Tuple\(sku Nullable\(String\)\)\)'\)$/)
+  assert.equal(read['shipping.country'], undefined)
+  assert.equal(read.nothing, undefined)
 })
 
 it('should tell the fields at every depth, in the types they read as', () => {

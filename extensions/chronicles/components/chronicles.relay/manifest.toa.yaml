@@ -1,14 +1,14 @@
 namespace: chronicles
-name: facts
+name: relay
 
-# The extension writes what this component is sent to the log.
+# The extension publishes what this component is tasked with to the broker of the log.
 chronicles: ~
 
 operations:
   record:
     type: effect
     input:
-      description: A fact a component sent, as the row it is written as
+      description: A fact a component sent, as the row it is published as
       type: object
       properties:
         id:
@@ -30,3 +30,14 @@ operations:
         payload:
           type: object
       required: [id, label, component, time, payload]
+  encounter:
+    type: effect
+    input:
+      description: The encounters of a batch a client sent, as the rows they are published as
+      type: object
+      properties:
+        encounters:
+          type: array
+          items:
+            type: object
+      required: [encounters]

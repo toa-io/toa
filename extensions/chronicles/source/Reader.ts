@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { Connector, Locator, exceptions } from '@toa.io/core'
-import { ENCOUNTERS, NAMESPACE, view } from '@toa.io/definitions/extensions.chronicles'
+import { ENCOUNTERS, NAMESPACE } from '@toa.io/definitions/extensions.chronicles'
 import { Refusal } from './Provider.ts'
 import type { Definition, Field, Provider, Result, View } from './Provider.ts'
 import type { Remote } from '@toa.io/core'
@@ -73,7 +73,7 @@ export class Reader extends Connector {
       Object.keys(declared)
     ).map(([label, stats]) => ({
       label,
-      ...about(declared[label], label, provider),
+      ...about(declared[label], provider),
       ...(stats ?? { rows: 0 })
     }))
 
@@ -82,7 +82,7 @@ export class Reader extends Connector {
       Object.keys(stated)
     ).map(([component, stats]) => ({
       component,
-      ...about(stated[component], component, provider),
+      ...about(stated[component], provider),
       ...(stats ?? { entities: 0 })
     }))
 
@@ -116,11 +116,9 @@ export class Reader extends Connector {
     const provider = this.provider()
     const { name } = definition
 
-    if (provider.tables.includes(name) || this.declared().has(name))
+    if (provider.tables.includes(name))
       return new Error('RESERVED', {
-        cause: {
-          message: `'${name}' is a table of the log, or the view of what is declared`
-        }
+        cause: { message: `'${name}' is a table of the log` }
       })
 
     const select = statement(definition.sql)
@@ -151,17 +149,6 @@ export class Reader extends Connector {
     await provider.drop(name)
 
     return undefined
-  }
-
-  /** The names of the views of what is declared. */
-  private declared(): Set<string> {
-    const settings = this.settings()
-
-    return new Set([
-      ...Object.keys(settings.events).map(view),
-      ...Object.keys(settings.facts).map(view),
-      ...Object.keys(settings.states).map((label) => view(component(label)))
-    ])
   }
 
   /**
@@ -205,17 +192,15 @@ function merge<T>(
   return keys.map((key) => [key, by.get(key)])
 }
 
-/** What a declaration says of a label or a state: its meaning, its view, its fields. */
+/** What a declaration says of a label or a state: its meaning, and its fields. */
 function about(
   contract: Contract | undefined,
-  of: string,
   provider: Provider
-): { description?: string; view?: string; fields?: Field[] } {
+): { description?: string; fields?: Field[] } {
   if (contract === undefined) return {}
 
   return {
     description: contract.description,
-    view: view(of),
     fields: provider.fields(contract.properties)
   }
 }

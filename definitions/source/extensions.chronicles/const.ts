@@ -1,17 +1,28 @@
 /** What the service is given of the annotation, as JSON, and what its secrets are named after. */
 export const SETTINGS = 'TOA_CHRONICLES'
 
-/** The secret of the store: the user it is provisioned as, and the password of its reader. */
-export const SECRET = 'toa-chronicles-store'
+/** The secret of the broker the rows are published to, and of the store they are read from. */
+export const SECRET = 'toa-chronicles'
+
+/** Its keys: the users of the broker and of the store. */
+export const KEYS = [
+  'broker_username',
+  'broker_password',
+  'store_username',
+  'store_password'
+]
 
 /** The namespace of the components this extension ships. */
 export const NAMESPACE = 'chronicles'
 
 /** The service they run in, which is also the one consumer of the events the log is kept of. */
-export const SERVICE = 'scribe'
+export const SERVICE = 'relay'
 
-/** The component `send` writes through. */
-export const FACTS = 'facts'
+/** The component that publishes the rows: of events, of facts `send` tasks it with, of encounters. */
+export const RELAY = 'relay'
+
+/** The exchange of the broker the rows are published to, under the key of their table. */
+export const EXCHANGE = 'chronicles'
 
 /** The component clients send encounters through, which documents them. */
 export const ENCOUNTERS = 'encounters'
@@ -21,8 +32,3 @@ export const QUERIES = 'queries'
 
 /** The stores Toa provides. */
 export const PROVIDERS = ['clickhouse'] as const
-
-/** The view of a declared label, or of a component's state: the label with its dots as underscores. */
-export function view(label: string): string {
-  return label.replace(/\./g, '_')
-}

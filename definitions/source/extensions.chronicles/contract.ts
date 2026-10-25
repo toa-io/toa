@@ -98,5 +98,5 @@ const TYPES = new Set([...SCALARS, 'object', 'array'])
 const KEYS = new Set(['type', 'description', 'enum', 'format', 'properties', 'items'])
 const NAME = /^[a-zA-Z_][a-zA-Z0-9_]*$/
 
-/** What a row of the log says of itself, which a view of a label has as columns of its own. */
+/** What a row of the log says of itself: columns of its own, beside the payload. */
 const OWN = new Set(['id', 'time', 'received', 'entity', 'version', 'identity', 'trace'])
