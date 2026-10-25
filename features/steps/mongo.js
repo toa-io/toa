@@ -676,3 +676,75 @@ Then(
     )
   }
 )
+
+Given(
+  'entry {token} of {component} is written by a transaction left open',
+  /**
+   * A commit in flight: the entry is written as `touch` writes it, ten added and its version
+   * moved, and nobody else sees it until the transaction ends. A transaction that writes the
+   * same entry meanwhile is refused as a write conflict, which the server counts.
+   *
+   * @param {string} entry
+   * @param {string} id
+   */
+  async function (entry, id) {
+    const client = new MongoClient(URL)
+
+    await client.connect()
+
+    const [name, namespace = 'default'] = id.split('.').reverse()
+    const collection = client
+      .db(DATABASE)
+      .collection(`${namespace}_${name}`.toLowerCase())
+    const session = client.startSession()
+
+    holding = { client, session, conflicts: await conflicts(client) }
+
+    session.startTransaction()
+
+    await collection.updateOne(
+      { _id: entry },
+      { $inc: { count: 10, VERSION: 1 } },
+      { session }
+    )
+  }
+)
+
+When('a write to the entry held open has been refused', async function () {
+  const deadline = Date.now() + 10_000
+
+  while ((await conflicts(holding.client)) === holding.conflicts) {
+    assert.ok(Date.now() < deadline, 'no write to the entry held open has been refused')
+
+    await new Promise((resolve) => setTimeout(resolve, 50))
+  }
+})
+
+When('the transaction holding the entry is {word}', async function (end) {
+  if (end === 'committed') await holding.session.commitTransaction()
+  else if (end === 'aborted') await holding.session.abortTransaction()
+  else throw new Error(`a transaction is committed or aborted, not ${end}`)
+})
+
+After(async function () {
+  if (holding === undefined) return
+
+  const { client, session } = holding
+
+  holding = undefined
+
+  if (session.inTransaction()) await session.abortTransaction()
+
+  await session.endSession()
+  await client.close()
+})
+
+/** @type {{ client: MongoClient, session: import('mongodb').ClientSession, conflicts: number } | undefined} */
+let holding
+
+/** the write conflicts the server has counted since it started */
+async function conflicts(client) {
+  const status = await client.db('admin').command({ serverStatus: 1 })
+
+  return status.metrics.operation.writeConflicts
+}

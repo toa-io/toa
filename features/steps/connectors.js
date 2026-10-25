@@ -375,7 +375,19 @@ When(
   async function (endpoint, yaml) {
     const request = parse(yaml)
 
-    void call.call(this, endpoint, request)
+    this.calling = call.call(this, endpoint, request)
+  }
+)
+
+When(
+  'the call made without waiting returns',
+  /**
+   * Its reply or its exception, kept where the steps that read either look for them.
+   *
+   * @this {toa.features.Context}
+   */
+  async function () {
+    await this.calling
   }
 )
 
