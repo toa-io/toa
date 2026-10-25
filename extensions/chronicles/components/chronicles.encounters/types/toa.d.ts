@@ -28,7 +28,7 @@ export interface Component {
   describe: (request: { input?: null, task?: boolean }) => Promise<DescribeOutput>
 }
 
-export interface Configuration Record<string, {
+export type Configuration = Record<string, {
   /** What the client tells by sending it */
   description: string
   /** What each field of its payload is, by path */

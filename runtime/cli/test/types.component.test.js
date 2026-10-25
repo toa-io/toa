@@ -103,3 +103,21 @@ describe('entity of a request', () => {
     doesNotMatch(emitted, /entity\?:/)
   })
 })
+
+describe('configuration', () => {
+  const contributed = (type) => ({ types: { configuration: type }, imports: {} })
+
+  it('should write a configuration of named properties as an interface', () => {
+    match(
+      component({}, undefined, contributed('{\n  foo: string\n}')),
+      /export interface Configuration \{\n {2}foo: string\n\}/
+    )
+  })
+
+  it('should write a configuration of any other shape as a type', () => {
+    const emitted = component({}, undefined, contributed('Record<string, { a: string }>'))
+
+    match(emitted, /export type Configuration = Record<string, \{ a: string \}>/)
+    doesNotMatch(emitted, /interface Configuration/)
+  })
+})

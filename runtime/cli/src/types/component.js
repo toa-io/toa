@@ -137,7 +137,13 @@ function context(contributed, module, importing) {
   if (types.configuration !== undefined) {
     for (const [from, names] of Object.entries(needed)) importing(from, ...names)
 
-    blocks.push(`export interface Configuration ${types.configuration}`)
+    // an interface only declares an object of named properties: a map, a union or an array of
+    // a configuration is a type of its own
+    blocks.push(
+      types.configuration.startsWith('{')
+        ? `export interface Configuration ${types.configuration}`
+        : `export type Configuration = ${types.configuration}`
+    )
     types.configuration = 'Configuration'
   }
 
