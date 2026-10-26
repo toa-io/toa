@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.334](https://github.com/toa-io/toa/compare/v1.0.0-alpha.333...v1.0.0-alpha.334) (2026-10-26)
+
+**Note:** Version bump only for package @toa.io/extensions.exposition
+
+
+
+
+
 # [1.0.0-alpha.333](https://github.com/toa-io/toa/compare/v1.0.0-alpha.332...v1.0.0-alpha.333) (2026-10-26)
 
 * feat(exposition)!: read the client's country as the address is read ([684468e](https://github.com/toa-io/toa/commit/684468e8cf166d9d94705379e8d0f4ab16e69d0d))
