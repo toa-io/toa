@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.336](https://github.com/toa-io/toa/compare/v1.0.0-alpha.335...v1.0.0-alpha.336) (2026-10-26)
+
+### Bug Fixes
+
+* **cli:** mono runs the services the context alone turns on ([8eba6e3](https://github.com/toa-io/toa/commit/8eba6e31befe467408a3f1d18f29dadb666c3f7a))
+
+
 # [1.0.0-alpha.335](https://github.com/toa-io/toa/compare/v1.0.0-alpha.334...v1.0.0-alpha.335) (2026-10-26)
 
 **Note:** Version bump only for package @toa.io/toa
