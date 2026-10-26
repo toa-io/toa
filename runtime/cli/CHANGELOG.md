@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.333](https://github.com/toa-io/toa/compare/v1.0.0-alpha.332...v1.0.0-alpha.333) (2026-10-26)
+
+### Bug Fixes
+
+* **cli:** a configuration that is not an object of named properties is a type ([0441db9](https://github.com/toa-io/toa/commit/0441db9ccfc90f50350b376b03a411259ad240be))
+* **cli:** fill the store of chronicles with --dev ([5ce321a](https://github.com/toa-io/toa/commit/5ce321afc9e2fa27e93b4ee9c6e3fa81c5ce8fac))
+* **cli:** write a .env value dotenv reads back whole ([c175c08](https://github.com/toa-io/toa/commit/c175c08f99739722d26172f526405b5055e03951))
+
+
 # [1.0.0-alpha.332](https://github.com/toa-io/toa/compare/v1.0.0-alpha.331...v1.0.0-alpha.332) (2026-10-23)
 
 ### Bug Fixes

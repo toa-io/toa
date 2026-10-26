@@ -3,6 +3,45 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.333](https://github.com/toa-io/toa/compare/v1.0.0-alpha.332...v1.0.0-alpha.333) (2026-10-26)
+
+* feat(exposition)!: read the client's country as the address is read ([684468e](https://github.com/toa-io/toa/commit/684468e8cf166d9d94705379e8d0f4ab16e69d0d))
+
+### Bug Fixes
+
+* **chronicles:** a visitor or a session of null is none ([e3a96f4](https://github.com/toa-io/toa/commit/e3a96f4217a8c1ab1de421af277cba45d8bd2338))
+* **chronicles:** cut a query's answer with the limit setting, not by breaking off ([29c64ce](https://github.com/toa-io/toa/commit/29c64ceb4f39a614e74215b6c3bcf722bb8038e8))
+* **chronicles:** send takes whose a fact is, as its type says ([9c9bf2a](https://github.com/toa-io/toa/commit/9c9bf2accbb3ad3c37da2bfac906a16f93070258))
+* **cli:** a configuration that is not an object of named properties is a type ([0441db9](https://github.com/toa-io/toa/commit/0441db9ccfc90f50350b376b03a411259ad240be))
+* **cli:** fill the store of chronicles with --dev ([5ce321a](https://github.com/toa-io/toa/commit/5ce321afc9e2fa27e93b4ee9c6e3fa81c5ce8fac))
+* **cli:** write a .env value dotenv reads back whole ([c175c08](https://github.com/toa-io/toa/commit/c175c08f99739722d26172f526405b5055e03951))
+* **exposition:** a header a request does not have is not the body's to say ([e529665](https://github.com/toa-io/toa/commit/e5296653899868a369de31c48ce9ad36f9a85b24))
+* **norm:** what an extension deployed for its annotation ships is the context's ([06432b7](https://github.com/toa-io/toa/commit/06432b7840cca907884c653ff580e27bcbc13786))
+* **storages.mongodb:** run a set again where it met a commit in flight ([2e293fe](https://github.com/toa-io/toa/commit/2e293fe1b72c3eac65f659f0061e312945829b6e))
+
+### Features
+
+* **bindings.amqp:** retain a queue on an outbound channel ([082d9ce](https://github.com/toa-io/toa/commit/082d9cebb531b8d08c2c5465abdb3f782325b8c7))
+* **chronicles:** a ClickHouse log of a context, read over MCP ([c94f693](https://github.com/toa-io/toa/commit/c94f693ad59d3156450a8041c101380ba1f42274))
+* **chronicles:** a guide to reading the log, from the extension and its provider ([7d237e8](https://github.com/toa-io/toa/commit/7d237e8246212aa8a27eeef7f8830861c9840663))
+* **chronicles:** events and a state, declared; queries and ingestion ([06af30e](https://github.com/toa-io/toa/commit/06af30eeea2ace1fdb7be690adda25e9da7a0a97))
+* **chronicles:** the address and the country of what a browser sends ([0a3e5b1](https://github.com/toa-io/toa/commit/0a3e5b1f4903eaffb6488f2a2260a504585f8108))
+* **chronicles:** the origin and the agent of an encounter, and what the agent is ([54849ce](https://github.com/toa-io/toa/commit/54849ce1148a76710ea9c050f44213a86c90dfe6))
+* **chronicles:** what a browser sends is under agent, by a name with no dot ([1dfac41](https://github.com/toa-io/toa/commit/1dfac41dc57e16db8beded5763165674b694c7d7))
+* **chronicles:** what the service may take ([763bee0](https://github.com/toa-io/toa/commit/763bee02104ba911d122ba730074ae23198275cc))
+* **chronicles:** whose a row is ([0e3e247](https://github.com/toa-io/toa/commit/0e3e247e19e2b959ec0a15b1f870313637ac73b0))
+* **core:** a message says when the change it tells of was made ([ea4183c](https://github.com/toa-io/toa/commit/ea4183c508590067664c986680e2144e57c502df))
+
+### Reverts
+
+* **bindings.amqp:** retain a queue on an outbound channel ([214c919](https://github.com/toa-io/toa/commit/214c919fcc36a8f854cf8fcad50368f455a9e75a))
+
+### BREAKING CHANGES
+
+* `censor: { header, values }` is `country: <header>` and `censor: [values]`,
+  see migrations/332.md.
+
+
 # [1.0.0-alpha.332](https://github.com/toa-io/toa/compare/v1.0.0-alpha.331...v1.0.0-alpha.332) (2026-10-23)
 
 ### Bug Fixes
