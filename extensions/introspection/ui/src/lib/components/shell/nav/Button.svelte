@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { Button } from '$ui/button'
-  import { Attention } from '$com/shell'
+  import { Button } from '#ui/button/index.js'
+  import { Attention } from '#com/shell/index.js'
   import type { Props } from './Button'
 
   const {

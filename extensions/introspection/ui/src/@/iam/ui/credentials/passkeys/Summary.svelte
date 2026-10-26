@@ -1,7 +1,7 @@
 <script lang="ts">
   import { FingerprintPattern } from '@lucide/svelte'
-  import * as Item from '$ui/item'
-  import { Button } from '$ui/button'
+  import * as Item from '#ui/item/index.js'
+  import { Button } from '#ui/button/index.js'
   import { dict } from '../../intl'
   import type { Props } from './Summary'
 

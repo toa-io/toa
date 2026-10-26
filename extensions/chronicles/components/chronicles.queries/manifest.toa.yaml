@@ -1,0 +1,139 @@
+namespace: chronicles
+name: queries
+
+# The extension puts the log's reader on this component.
+chronicles: ~
+
+operations:
+  describe:
+    type: computation
+    output:
+      type: object
+      properties:
+        guide:
+          description: How to read the log, and how its store is read
+          type: string
+        labels:
+          type: array
+        states:
+          type: array
+        encounters:
+          type: array
+        views:
+          type: array
+  query:
+    type: computation
+    input:
+      type: object
+      properties:
+        sql:
+          description: One statement over the log, as the guide `describe` answers says
+          type: string
+          minLength: 1
+          maxLength: 65536
+      required: [sql]
+    output:
+      type: object
+      properties:
+        columns:
+          type: array
+        rows:
+          type: array
+        truncated:
+          type: boolean
+    errors: [REFUSED]
+  define:
+    type: effect
+    input:
+      type: object
+      properties:
+        name: &name
+          description: The view's name, which is what a query reads it by
+          type: string
+          pattern: ^[a-z][a-z0-9_]{0,62}$
+        sql:
+          description: The statement the view is, one a query could run
+          type: string
+          minLength: 1
+          maxLength: 65536
+        refresh:
+          description: Seconds between computations of a materialized view; absent, a plain view
+          type: integer
+          minimum: 3600
+        title:
+          description: What the view is, in a few words
+          type: string
+          minLength: 1
+          maxLength: 100
+        description:
+          description: What a row of the view is, and what each of its columns counts
+          type: string
+          minLength: 1
+          maxLength: 4096
+      required: [name, sql]
+    errors: [REFUSED, RESERVED, EXHAUSTED]
+  drop:
+    type: effect
+    input:
+      type: object
+      properties:
+        name: *name
+      required: [name]
+    errors: [NOT_FOUND]
+
+exposition:
+  isolated: true
+  /:
+    auth:role: system:chronicles:query
+    mcp:tool: true
+    GET:
+      help:method:
+        title: What the log holds
+        description: >
+          A guide to reading the log and its store, to read before a query — what each table and
+          column means, and which time is which; the labels of `events` the components declare,
+          each with what it means, the view that reads it in types, how many rows it has, the
+          first and last time of them, and its fields with their types and what they mean; the
+          components with a state in `states`, likewise; the names of `encounters` clients sent,
+          with when the newest batch was received, the fields of their payloads as they were sent
+          and what the context documents of them; and the views defined over the log, with their
+          titles, descriptions and when a materialized one was last refreshed. `states` is each
+          entity as it stands now: what it was before is read from its events.
+      io:output: true
+      endpoint: describe
+    POST:
+      help:method:
+        title: Query the log
+        description: >
+          One statement, as the guide `chronicles.queries.GET` answers says, over `events`, a row
+          for everything a component did (id, label, component, time, entity, version, identity,
+          trace, payload), `states`, each entity as it stands (component, entity, version,
+          identity, time, payload), `encounters`, what clients sent (id, name, time, received,
+          visitor, session, identity, ip, country, origin, agent, browser, os, device, payload),
+          the view of each declared label and state, and the views. Every `time` is when it
+          happened, by the server: a change when the component made it, a fact when it was sent,
+          an encounter when the gateway received its batch less how long before sending the
+          client measured it happened — never the client's clock as it reads, nor when the store
+          wrote the row. An encounter's `received` is when the gateway received its batch. At
+          most 30 seconds, 10000 rows and 64 MiB; at the rows, `truncated` is true.
+      io:output: true
+      endpoint: query
+  /views/:name:
+    auth:role: system:chronicles:views
+    mcp:tool: true
+    PUT:
+      help:method:
+        title: Define a view
+        description: >
+          A view over the log, by a statement a query could run, with a title and a description
+          that tell whoever finds it what it counts. Without `refresh` it is computed when it is
+          read; with `refresh`, in seconds and at least 3600, it is computed on that cycle and
+          read as a table. Defining a name again replaces the view.
+      help:route:
+        name: The view's name
+      endpoint: define
+    DELETE:
+      help:method: Drop a view
+      help:route:
+        name: The view's name
+      endpoint: drop

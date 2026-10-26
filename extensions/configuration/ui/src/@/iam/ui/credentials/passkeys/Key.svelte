@@ -1,9 +1,9 @@
 <script lang="ts">
   import { FingerprintPattern, KeyRound, Trash2 } from '@lucide/svelte'
-  import { remove } from '@/passkeys'
-  import * as Item from '$ui/item'
-  import { date } from '$lib/tools'
-  import { Hold } from '$com/hold'
+  import * as Item from '#ui/item/index.js'
+  import { date } from '#lib/tools/index.js'
+  import { Hold } from '#com/hold/index.js'
+  import { remove } from '#/passkeys/index.js'
   import { dict, locale } from '../../intl'
   import { resolve, type Props } from './Key'
 

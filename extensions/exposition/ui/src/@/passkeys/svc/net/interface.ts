@@ -1,4 +1,4 @@
-import { origin } from '@/net'
+import { origin } from '#/net/index.js'
 import type { RequestResponse } from './RequestResponse'
 import type { Passkey } from './Passkey'
 import type { CreationResponse } from './CreationResponse'

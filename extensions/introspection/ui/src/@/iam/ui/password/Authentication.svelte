@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { dict } from '@/iam/ui/intl'
-  import * as Card from '$ui/card'
-  import { cn } from '$lib/utils'
+  import * as Card from '#ui/card/index.js'
+  import { cn } from '#lib/utils.js'
+  import { dict } from '#/iam/ui/intl/index.js'
   import Form from './Form.svelte'
   import type { Props } from './Authentication'
 

@@ -1,18 +1,18 @@
 <script lang="ts">
   import { onMount } from 'svelte'
-  import { call } from '@/discovery'
-  import { Spinner } from '$ui/spinner'
-  import { Button } from '$ui/button'
-  import * as Dialog from '$ui/alert-dialog'
-  import { Hold } from '$lib/components/hold'
+  import { Spinner } from '#ui/spinner/index.js'
+  import { Button } from '#ui/button/index.js'
+  import * as Dialog from '#ui/alert-dialog/index.js'
+  import { Hold } from '#lib/components/hold/index.js'
+  import { call } from '#/discovery/index.js'
   import { refuses } from './ui'
   import { address, blank, bodied, fields, skeleton, type Values } from './request'
   import { dict } from './intl'
   import Form from './Form.svelte'
   import { DESTRUCTIVELY } from './Call'
   import Answer from './Answer.svelte'
-  import type { Answer as Answered } from '@/discovery'
   import type { Props } from './Session'
+  import type { Answer as Answered } from '#/discovery/index.js'
 
   const { route, verb, of, onclose }: Props = $props()
 

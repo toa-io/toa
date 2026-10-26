@@ -1,14 +1,14 @@
 <script lang="ts">
   import { ok } from 'svas'
   import { Pause } from '@lucide/svelte'
-  import { configuration, halt, type Range } from '@/introspection'
-  import { Label } from '$ui/label'
-  import { Input } from '$ui/input'
-  import { Button, buttonVariants } from '$ui/button'
-  import { Badge } from '$ui/badge'
-  import * as Dialog from '$ui/alert-dialog'
-  import { dict } from '$lib/intl'
-  import { Hold } from '$com/hold'
+  import { Label } from '#ui/label/index.js'
+  import { Input } from '#ui/input/index.js'
+  import { Button, buttonVariants } from '#ui/button/index.js'
+  import { Badge } from '#ui/badge/index.js'
+  import * as Dialog from '#ui/alert-dialog/index.js'
+  import { dict } from '#lib/intl/index.js'
+  import { Hold } from '#com/hold/index.js'
+  import { configuration, halt, type Range } from '#/introspection/index.js'
   import { COUNTDOWN, DURATION, HOLD, QUIESCENCE } from './Halt'
 
   /** What this deployment lets a halt ask for, and `null` where it takes none. */

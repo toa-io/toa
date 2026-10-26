@@ -1,6 +1,6 @@
 import type { ClassValue } from 'svelte/elements'
-import type { Method } from '@/iam'
 import type { AccountLike } from './AccountLike'
+import type { Method } from '#/iam/index.js'
 
 export interface Props {
   account?: AccountLike

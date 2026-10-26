@@ -380,3 +380,9 @@ it('should say nothing while it owns a lane', async () => {
   warn.mock.restore()
   info.mock.restore()
 })
+
+it('should stamp a row with when the change is made, which publishing it later does not move', () => {
+  const row = outbox.row({ state: {} })
+
+  assert.equal(row.time, Date.now())
+})

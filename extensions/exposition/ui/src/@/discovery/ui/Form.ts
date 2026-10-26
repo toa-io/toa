@@ -1,5 +1,5 @@
-import type { Octets } from '@/discovery'
 import type { Field, Values } from './request'
+import type { Octets } from '#/discovery/index.js'
 
 export interface Props {
   fields: Field[]

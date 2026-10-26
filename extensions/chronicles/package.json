@@ -1,0 +1,40 @@
+{
+  "name": "@toa.io/extensions.chronicles",
+  "version": "1.0.0-alpha.332",
+  "type": "module",
+  "description": "Toa Chronicles: a log of a context, kept in ClickHouse",
+  "author": "temich <tema.gurtovoy@gmail.com>",
+  "homepage": "https://github.com/toa-io/toa#readme",
+  "main": "transpiled/index.js",
+  "types": "transpiled/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/toa-io/toa.git"
+  },
+  "bugs": {
+    "url": "https://github.com/toa-io/toa/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "transpiled",
+    "components",
+    "guides",
+    "store",
+    "readme.md",
+    "!**/tsconfig.tsbuildinfo",
+    "!**/*.test.*",
+    "!**/.env*"
+  ],
+  "scripts": {
+    "transpile": "tsc"
+  },
+  "dependencies": {
+    "@toa.io/core": "1.0.0-alpha.332",
+    "@toa.io/definitions": "1.0.0-alpha.332",
+    "@toa.io/generic": "1.0.0-alpha.332",
+    "comq": "0.28.0",
+    "openspan": "1.0.0-alpha.330"
+  }
+}

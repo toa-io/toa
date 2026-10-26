@@ -1,0 +1,108 @@
+namespace: chronicles
+name: encounters
+
+# The extension writes what this component is sent to `encounters`.
+chronicles: ~
+
+# What clients send, by name: documentation for whoever reads the log or writes a client, which
+# nothing sent is checked against.
+configuration:
+  schema:
+    type: object
+    propertyNames:
+      pattern: ^[a-z][a-z0-9_]{0,63}$
+    additionalProperties:
+      type: object
+      properties:
+        description:
+          description: What the client tells by sending it
+          type: string
+        fields:
+          description: What each field of its payload is, by path
+          type: object
+          additionalProperties:
+            type: string
+      required: [description]
+      additionalProperties: false
+  defaults: {}
+
+operations:
+  anonymous:
+    type: effect
+    input: &batch
+      description: >
+        `{ sent, visitor?, session?, events }` — `sent` when the client sends the batch, by its
+        clock — at most 100 events, each `{ id, name, time, payload? }`, `time` when it
+        happened, by the same clock; and the client's `ip`, `country`, `origin` and `agent`,
+        which the gateway puts in; as JSON, or as the form `navigator.sendBeacon` sends, whose
+        `events` is their JSON and `sent` its digits, which the extension parses and checks
+      type: object
+    output: &accepted
+      type: object
+      properties:
+        status:
+          type: integer
+        accepted:
+          type: integer
+    errors: &errors [INVALID, OVERSIZED]
+  identified:
+    type: effect
+    input: *batch
+    output: *accepted
+    errors: *errors
+  describe:
+    type: computation
+    output:
+      description: What clients send, by name, as the configuration documents it
+      type: object
+
+exposition:
+  isolated: true
+  /:
+    POST:
+      anonymous: true
+      map:ip: ip
+      map:country: country
+      map:headers:
+        origin: origin
+        agent: user-agent
+      io:throttle:
+        key: [ip]
+        requests: 60
+        interval: 60
+      io:status: status
+      io:output: [status, accepted]
+      help:method: null
+      endpoint: anonymous
+    GET:
+      auth:role: system:chronicles:encounters
+      mcp:tool: true
+      help:method:
+        title: What clients send
+        description: >
+          The encounters clients send, by name: what each tells, and what each field of its
+          payload is. It documents, and holds nothing back: a name it does not tell is written
+          as any other. A client sends a batch with `sent`, its clock as it sends, and each event
+          with `time`, its clock as the event happened — both read as they are, never corrected,
+          however wrong the clock is: what is kept is when the gateway received the batch, less
+          the distance between the two.
+      io:output: true
+      endpoint: describe
+  /:identity:
+    POST:
+      auth:id: identity
+      map:segments:
+        identity: identity
+      map:ip: ip
+      map:country: country
+      map:headers:
+        origin: origin
+        agent: user-agent
+      io:throttle:
+        key: [identity]
+        requests: 60
+        interval: 60
+      io:status: status
+      io:output: [status, accepted]
+      help:method: null
+      endpoint: identified

@@ -1,4 +1,4 @@
-import type { Configuration } from '@/configuration'
+import type { Configuration } from '#/configuration/index.js'
 
 export type ConfigurationLike = Pick<
   Configuration,

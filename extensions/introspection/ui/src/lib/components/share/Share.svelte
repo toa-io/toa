@@ -1,9 +1,9 @@
 <script lang="ts">
   import { Share2 } from '@lucide/svelte'
-  import { Spinner } from '$ui/spinner'
-  import { Button } from '$ui/button'
-  import { Clipboard } from '$com/clipboard'
-  import { browser } from '$app/environment'
+  import { browser } from '$app/env'
+  import { Spinner } from '#ui/spinner/index.js'
+  import { Button } from '#ui/button/index.js'
+  import { Clipboard } from '#com/clipboard/index.js'
   import type { Props, Retriever } from './Share'
 
   const { children, data, label, disabled, onshare, class: classes, ...rest }: Props = $props()

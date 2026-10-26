@@ -1,5 +1,5 @@
 import { collection, value, values } from 'svas'
-import { account } from '@/iam/svc/store'
+import { account } from '#/iam/svc/store.js'
 import * as origin from './net'
 
 export const nodes = collection<Node>({

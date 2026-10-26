@@ -1,6 +1,6 @@
 <script lang="ts">
   import { SvelteMap } from 'svelte/reactivity'
-  import { Separator } from '$ui/separator'
+  import { Separator } from '#ui/separator/index.js'
   import { only, query } from '../ui'
   import { dict } from '../intl'
   import { press } from './press'

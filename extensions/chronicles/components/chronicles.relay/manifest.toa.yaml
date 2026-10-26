@@ -1,0 +1,43 @@
+namespace: chronicles
+name: relay
+
+# The extension publishes what this component is tasked with to the broker of the log.
+chronicles: ~
+
+operations:
+  record:
+    type: effect
+    input:
+      description: A fact a component sent, as the row it is published as
+      type: object
+      properties:
+        id:
+          type: string
+        label:
+          type: string
+        component:
+          type: string
+        time:
+          type: integer
+        entity:
+          type: "null"
+        version:
+          type: "null"
+        identity:
+          type: [string, "null"]
+        trace:
+          type: [string, "null"]
+        payload:
+          type: object
+      required: [id, label, component, time, payload]
+  encounter:
+    type: effect
+    input:
+      description: The encounters of a batch a client sent, as the rows they are published as
+      type: object
+      properties:
+        encounters:
+          type: array
+          items:
+            type: object
+      required: [encounters]

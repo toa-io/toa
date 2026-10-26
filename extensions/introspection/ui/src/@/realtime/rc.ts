@@ -1,4 +1,4 @@
-import { account, authenticated } from '@/iam'
+import { account, authenticated } from '#/iam/index.js'
 import { disconnect, connect } from './svc/connect'
 
 export function rc() {

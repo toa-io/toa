@@ -152,6 +152,24 @@ describe('the chain', () => {
   })
 })
 
+describe('the time of the change', () => {
+  it('should carry when the row says the change was made', async () => {
+    await event.emit({ ...fixtures.row(), time: 1761200000000 })
+
+    const [message] = fixtures.binding.emit.mock.calls.at(-1).arguments
+
+    assert.equal(message.time, 1761200000000)
+  })
+
+  it('should carry none where the row has none', async () => {
+    await emit()
+
+    const [message] = fixtures.binding.emit.mock.calls.at(-1).arguments
+
+    assert.ok(!('time' in message))
+  })
+})
+
 function resetCalls(
   target = [assert, clone, fixtures, depends, dependencies],
   seen = new Set()

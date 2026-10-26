@@ -1,4 +1,4 @@
-import { origin, type RequestOptions } from '@/net'
+import { origin, type RequestOptions } from '#/net/index.js'
 import type { Message } from './Message'
 
 const streams = origin.resource<Message>('/presence/')

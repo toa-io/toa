@@ -1,8 +1,17 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import { ArrowBigDownDash, Bolt, LogOut, Search, UserKey, Waypoints, X } from '@lucide/svelte'
-  import { Authenticated } from '@/iam/ui'
-  import { account, authenticated, logout } from '@/iam'
+  import { goto } from '$app/navigation'
+  import { Kbd } from '#ui/kbd/index.js'
+  import { Input } from '#ui/input/index.js'
+  import { Button } from '#ui/button/index.js'
+  import { apple } from '#lib/tools/index.js'
+  import { dict } from '#lib/intl/index.js'
+  import { Screen } from '#lib/components/shell/index.js'
+  import { Clipboard } from '#lib/components/clipboard/index.js'
+  import { configuration, introspection, meta, origin } from '#config/index.js'
+  import { Authenticated } from '#/iam/ui/index.js'
+  import { account, authenticated, logout } from '#/iam/index.js'
   import {
     CONSOLES,
     Guides,
@@ -17,17 +26,8 @@
     published,
     query,
     stated,
-  } from '@/discovery/ui'
-  import { tree } from '@/discovery'
-  import { Kbd } from '$ui/kbd'
-  import { Input } from '$ui/input'
-  import { Button } from '$ui/button'
-  import { apple } from '$lib/tools'
-  import { dict } from '$lib/intl'
-  import { Screen } from '$lib/components/shell'
-  import { Clipboard } from '$lib/components/clipboard'
-  import { configuration, introspection, meta, origin } from '$config'
-  import { replaceState } from '$app/navigation'
+  } from '#/discovery/ui/index.js'
+  import { tree } from '#/discovery/index.js'
 
   /** How much of an identifier fits on a button, and is enough to tell one from another. */
   const IDENTITY = 8
@@ -68,7 +68,7 @@
     const address = addressed(location.hash, $query)
 
     if (address !== location.hash)
-      replaceState(address === '' ? location.pathname : address, {})
+      void goto(address === '' ? location.pathname : address, { shallow: true, replace: true })
   })
 
   /** Whether anything is published to a model, which is what the address is worth having. */

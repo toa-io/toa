@@ -15,9 +15,18 @@ export const extensions = async (context) => {
   // and its own components must be extracted all the same
   const declared = await extractDeclaredServices(context, extensions, contributed)
 
-  const extracted = declared.concat(
+  // and so may one deployed for its annotation alone
+  const { references: annotated, extracted: standing } = await extractAnnotatedServices(
+    context,
+    extensions,
+    contributed
+  )
+
+  const listed = declared.concat(standing)
+
+  const extracted = listed.concat(
     await extractExtensionComponents(
-      components.concat(declared),
+      components.concat(listed),
       extensions,
       contributed,
       context.annotations
@@ -39,7 +48,7 @@ export const extensions = async (context) => {
     }
   }
 
-  return { extensions, components: extracted, contributed }
+  return { extensions, components: extracted, contributed, annotated }
 }
 
 async function extractDeclaredServices(context, extensions, contributed) {
@@ -63,6 +72,40 @@ async function extractDeclaredServices(context, extensions, contributed) {
     }
 
   return extracted
+}
+
+/**
+ * The components of the extensions a context annotates that deploy for their annotation, which
+ * no component of the context need reference: what such an extension ships is the context's as
+ * much as what a composition runs is.
+ */
+async function extractAnnotatedServices(context, extensions, contributed) {
+  const references = []
+  const extracted = []
+
+  for (const reference of Object.keys(context.annotations ?? {})) {
+    if (reference in extensions) continue
+
+    const module = await optional(reference)
+
+    if (module?.standalone !== true) continue
+
+    references.push(reference)
+    extracted.push(
+      ...(await extract(reference, extensions, contributed, context.annotations))
+    )
+  }
+
+  return { references, extracted }
+}
+
+/** What a reference defines, or nothing where it names no package. */
+async function optional(reference) {
+  try {
+    return (await definition(reference)).module
+  } catch {
+    return null
+  }
 }
 
 async function extractExtensionComponents(

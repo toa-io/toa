@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { dict } from '@/discovery/ui/intl'
-  import { Document } from '@/discovery/ui'
+  import { dict } from '#/discovery/ui/intl/index.js'
+  import { Document } from '#/discovery/ui/index.js'
   import source from '../../docs/queries.md?raw'
 </script>
 

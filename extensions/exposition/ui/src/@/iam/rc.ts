@@ -1,4 +1,4 @@
-import { origin } from '@/net'
+import { origin } from '#/net/index.js'
 import { consume } from './svc/transfer'
 import { sync } from './svc/sync'
 import { challenge } from './svc/store'

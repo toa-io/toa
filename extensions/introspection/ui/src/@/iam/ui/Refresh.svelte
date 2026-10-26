@@ -1,9 +1,9 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import { LogOut } from '@lucide/svelte'
-  import { dict } from '@/iam/ui/intl'
-  import { logout, type Method } from '@/iam'
-  import { Button } from '$ui/button'
+  import { Button } from '#ui/button/index.js'
+  import { dict } from '#/iam/ui/intl/index.js'
+  import { logout, type Method } from '#/iam/index.js'
   import { Refresh as PasswordRefresh } from './password'
   import { Refresh as PasskeyRefresh } from './passkey'
   import { Refresh as OIDCRefresh } from './oidc'

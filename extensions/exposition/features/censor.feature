@@ -4,9 +4,8 @@ Feature: Censor
   Scenario: A censored request is refused before it is routed
     Given the annotation:
       """yaml
-      censor:
-        header: CF-IPCountry
-        values: [RU, IR]
+      country: CF-IPCountry
+      censor: [RU, IR]
       /:
         /foo:
           anonymous: true
@@ -40,9 +39,8 @@ Feature: Censor
   Scenario: Any other request is served
     Given the annotation:
       """yaml
-      censor:
-        header: cf-ipcountry
-        values: [RU, IR]
+      country: cf-ipcountry
+      censor: [RU, IR]
       /:
         anonymous: true
         /foo:
@@ -72,9 +70,8 @@ Feature: Censor
   Scenario: A page reads the refusal
     Given the annotation:
       """yaml
-      censor:
-        header: cf-ipcountry
-        values: [RU, IR]
+      country: cf-ipcountry
+      censor: [RU, IR]
       /:
         anonymous: true
         /foo:
@@ -105,4 +102,27 @@ Feature: Censor
       """
       451 Unavailable For Legal Reasons
       access-control-allow-origin: *
+      """
+
+  Scenario: Censoring with no country to read
+    The countries are read from the header `country` names, and without it no request has one.
+
+    Given the annotation:
+      """yaml
+      censor: [RU, IR]
+      /:
+        anonymous: true
+        /foo:
+          GET:
+            dev:stub: Hello
+      """
+    When the following request is received:
+      """
+      GET /foo/ HTTP/1.1
+      host: nex.toa.io
+      cf-ipcountry: RU
+      """
+    Then the following reply is sent:
+      """
+      200 OK
       """

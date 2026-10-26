@@ -1,8 +1,8 @@
 <script lang="ts">
   import { X } from '@lucide/svelte'
-  import { Button } from '$ui/button'
-  import { transit } from '$lib/tools'
-  import { Overlay } from '$com/fullscreen'
+  import { Button } from '#ui/button/index.js'
+  import { transit } from '#lib/tools/index.js'
+  import { Overlay } from '#com/fullscreen/index.js'
   import type { Props } from './Fullscreen'
 
   let {

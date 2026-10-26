@@ -7,6 +7,7 @@ import { Language } from './Language.ts'
 import { Segments } from './Segments.ts'
 import { Instance } from './Instance.ts'
 import { Authority } from './Authority.ts'
+import { Country, IP } from './Client.ts'
 import { BufferMapping } from './Buffer.ts'
 import { StreamMapping } from './Stream.ts'
 import { Claims } from './Claims.ts'
@@ -68,10 +69,19 @@ export class Map implements DirectiveFamily {
 
     if (!fills) return null
 
+    // a property a mapping has no value for is taken out of the body, rather than left as the
+    // caller said it
     context.pipelines.body.push((body: unknown) => {
-      if (body === undefined || body === null || typeof body !== 'object')
-        return properties
-      else return Object.assign(body, properties)
+      const input =
+        body === undefined || body === null || typeof body !== 'object'
+          ? {}
+          : (body as Record<string, unknown>)
+
+      for (const [property, value] of Object.entries(properties))
+        if (value === undefined) delete input[property]
+        else input[property] = value
+
+      return input
     })
 
     return null
@@ -83,6 +93,8 @@ type PV = Properties[PN]
 
 const mappings: Record<string, new (value: any, remotes: Remotes) => Directive> = {
   authority: Authority,
+  ip: IP,
+  country: Country,
   buffer: BufferMapping,
   stream: StreamMapping,
   headers: Headers,

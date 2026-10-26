@@ -37,7 +37,7 @@
     "ioredis": "6.0.0",
     "matchacho": "0.6.1",
     "minimatch": "10.2.6",
-    "msgpackr": "2.1.0",
+    "msgpackr": "2.1.2",
     "negotiator": "1.1.0",
     "openspan": "1.0.0-alpha.330"
   },
@@ -66,10 +66,11 @@
     "@node-rs/bcrypt": "2.0.0",
     "@simplewebauthn/server": "14.0.3",
     "@toa.io/agent": "*",
+    "@toa.io/extensions.chronicles": "*",
     "@toa.io/extensions.storages": "*",
     "@types/cors": "2.8.19",
     "@types/negotiator": "0.6.5",
-    "jose": "6.2.12",
+    "jose": "6.2.13",
     "js-yaml": "5.5.0",
     "lru-cache": "11.5.3",
     "paseto": "4.0.1"

@@ -1,6 +1,6 @@
 <script lang="ts">
   import { ChevronDown } from '@lucide/svelte'
-  import * as Collapsible from '$ui/collapsible'
+  import * as Collapsible from '#ui/collapsible/index.js'
   import type { Props } from './Section'
 
   const { title, collapsible = false, children, class: className }: Props = $props()

@@ -1,5 +1,5 @@
-import json from '@/passkeys/ui/aaguid.json'
-import type { Passkey } from '@/passkeys'
+import json from '#/passkeys/ui/aaguid.json'
+import type { Passkey } from '#/passkeys/index.js'
 
 export interface Props {
   passkey: Passkey

@@ -1,7 +1,7 @@
 <script lang="ts">
   import { X } from '@lucide/svelte'
-  import { badgeVariants } from '$ui/badge'
-  import * as Dialog from '$ui/alert-dialog'
+  import { badgeVariants } from '#ui/badge/index.js'
+  import * as Dialog from '#ui/alert-dialog/index.js'
   import { slashed } from './ui'
   import { slug } from './request'
   import { dict } from './intl'

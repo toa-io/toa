@@ -1,0 +1,49 @@
+// Written by `toa types`. Every run rewrites it.
+// What a manifest does not state belongs in a file of your own.
+
+import type { CodedError } from '@toa.io/core/types'
+
+export type DescribeOutput = {
+  /** How to read the log, and how its store is read */
+  guide?: string
+  labels?: unknown[]
+  states?: unknown[]
+  encounters?: unknown[]
+  views?: unknown[]
+}
+
+export type QueryInput = {
+  /** One statement over the log, as the guide `describe` answers says */
+  sql: string
+}
+
+export type QueryOutput = {
+  columns?: unknown[]
+  rows?: unknown[]
+  truncated?: boolean
+}
+
+export type DefineInput = {
+  /** The view's name, which is what a query reads it by */
+  name: string
+  /** The statement the view is, one a query could run */
+  sql: string
+  /** Seconds between computations of a materialized view; absent, a plain view */
+  refresh?: number
+  /** What the view is, in a few words */
+  title?: string
+  /** What a row of the view is, and what each of its columns counts */
+  description?: string
+}
+
+export type DropInput = {
+  /** The view's name, which is what a query reads it by */
+  name: string
+}
+
+export interface Component {
+  describe: (request: { input?: null, task?: boolean }) => Promise<DescribeOutput>
+  query: (request: { input: QueryInput, task?: boolean }) => Promise<QueryOutput | CodedError<"REFUSED">>
+  define: (request: { input: DefineInput, task?: boolean }) => Promise<{} | null | undefined | CodedError<"REFUSED" | "RESERVED" | "EXHAUSTED">>
+  drop: (request: { input: DropInput, task?: boolean }) => Promise<{} | null | undefined | CodedError<"NOT_FOUND">>
+}

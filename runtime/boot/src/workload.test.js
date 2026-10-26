@@ -110,10 +110,12 @@ describe('Workload', () => {
     // a hundredth of a second, so the window is over before the assertions are
     workload.stop(0.01)
 
-    // `-gated` and not `-above`: what a gate holds is closed, and nothing else is
+    // `-gated` and not `-above`: what a gate holds is closed, and nothing else is. The window is
+    // over by the time a poll sees it, and may be over by the time it is seen: what follows is
+    // the rebuild, asserted below
     await until(() => sequence.includes('*gated'))
 
-    assert.deepStrictEqual(sequence, ['-gated', '*gated'])
+    assert.deepStrictEqual(sequence.slice(0, 2), ['-gated', '*gated'])
 
     await until(() => built === 2)
 

@@ -1,8 +1,8 @@
 <script lang="ts">
-  import { authenticated, greeting, account as iam, method, processing } from '@/iam'
-  import { Spinner } from '$ui/spinner'
-  import { cn } from '$lib/utils'
-  import { browser } from '$app/environment'
+  import { browser } from '$app/env'
+  import { Spinner } from '#ui/spinner/index.js'
+  import { cn } from '#lib/utils.js'
+  import { authenticated, greeting, account as iam, method, processing } from '#/iam/index.js'
   import Refresh from './Refresh.svelte'
   import Authentication from './Authentication.svelte'
   import type { Props } from './Authenticated'

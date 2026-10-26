@@ -28,6 +28,12 @@ export interface Row {
    */
   trail?: string[]
 
+  /**
+   * When the change was made, in milliseconds: on the operation's path, as the trail is, because
+   * the pump may publish it an hour later. Absent on a row written before this existed.
+   */
+  time?: number
+
   /** an assignment's images are absent until the storage fills them in */
   event: Event
 }

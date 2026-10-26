@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onDestroy, onMount } from 'svelte'
-  import { transit } from '$lib/tools'
+  import { transit } from '#lib/tools/index.js'
   import { setContext, type Context } from './Context'
   import type { Props } from './Root'
 

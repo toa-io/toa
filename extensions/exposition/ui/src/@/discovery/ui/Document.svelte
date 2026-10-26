@@ -1,9 +1,9 @@
 <script lang="ts">
   import { ChevronLeft } from '@lucide/svelte'
-  import { Button } from '$ui/button'
-  import { dict as chrome } from '$lib/intl'
-  import { Screen } from '$lib/components/shell'
   import { resolve } from '$app/paths'
+  import { Button } from '#ui/button/index.js'
+  import { dict as chrome } from '#lib/intl/index.js'
+  import { Screen } from '#lib/components/shell/index.js'
   import { html, type Props } from './Document'
 
   const { source, title, class: className }: Props = $props()

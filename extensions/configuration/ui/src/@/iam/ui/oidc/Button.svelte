@@ -1,8 +1,8 @@
 <script lang="ts">
-  import { oidc } from '@/iam'
-  import { Spinner } from '$ui/spinner'
-  import { Button } from '$ui/button'
-  import { cn } from '$lib/utils'
+  import { Spinner } from '#ui/spinner/index.js'
+  import { Button } from '#ui/button/index.js'
+  import { cn } from '#lib/utils.js'
+  import { oidc } from '#/iam/index.js'
   import { icons } from './icons'
   import type { Props } from './Button'
 

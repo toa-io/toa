@@ -6,7 +6,7 @@ import {
   ShieldQuestionMark,
   ShieldUser,
 } from '@lucide/svelte'
-import type { Described, Discovered, Method, Resource } from '@/discovery'
+import type { Described, Discovered, Method, Resource } from '#/discovery/index.js'
 
 /** What the header's filter holds. Transient: not persisted, not in the URL. */
 export const query = writable('')

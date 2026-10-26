@@ -21,6 +21,8 @@ exposition:
       map:claims: # Bearer token claims
         address: email
         verified: email_verified
+      map:ip: ip # the client address
+      map:country: country # the client's country
       endpoint: observe
 ```
 
@@ -49,6 +51,9 @@ The `map:headers` directive maps the values of HTTP request headers to operation
 properties.
 The value of the directive is a map where keys are the names of the input properties and values are
 the names of the HTTP request headers.
+
+A header the request does not have is a property the input does not have, whatever the body
+says: what a mapping fills is not the caller's to send.
 
 The names of these headers are then included in the `Vary` HTTP response header. A page on
 another origin may send any of them ([CORS](protocol.md#cors)).
@@ -172,6 +177,21 @@ The `map:instance` directive names the route parameter that carries the process 
 The parameter is taken out of the input and out of the criteria. A stateful operation behind a
 route without `map:instance` answers `400`. A name no process holds answers `404`, and a call the
 process holding it leaves unanswered past its timeout answers `504`.
+
+## Client address and country
+
+The `map:ip` and `map:country` directives map the client address and country, as
+[`exposition.ip` and `exposition.country`](ip.md) read them, to an operation call input property.
+
+```yaml
+POST:
+  map:ip: address
+  map:country: country
+  endpoint: record
+```
+
+The property is set on every call, as `null` where the request has none, so a body that names it
+is overwritten rather than believed.
 
 ## Bearer token claims
 

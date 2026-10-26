@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { standalone, shell, ios, safari } from '$lib/tools'
+  import { standalone, shell, ios, safari } from '#lib/tools/index.js'
   import type { Props } from './Underlay'
 
   const { direction, class: classes, ...rest }: Props = $props()

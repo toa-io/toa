@@ -1,5 +1,5 @@
 import { read } from './shape'
-import type { Method, Schema } from '@/discovery'
+import type { Method, Schema } from '#/discovery/index.js'
 
 /**
  * One value a call takes from whoever makes it. A route variable and a querystring

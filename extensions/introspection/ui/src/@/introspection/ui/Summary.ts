@@ -1,5 +1,5 @@
 import type { ClassValue } from 'svelte/elements'
-import type { Node } from '@/introspection'
+import type { Node } from '#/introspection/index.js'
 
 export type Countable = Pick<Node, 'entity' | 'operations' | 'events' | 'receivers'>
 

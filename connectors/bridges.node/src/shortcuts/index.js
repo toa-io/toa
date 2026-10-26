@@ -1,4 +1,5 @@
 export { atom } from './atom.js'
+export { chronicles } from './chronicles.js'
 export { fetch } from './fetch.js'
 export { amqp } from './amqp.js'
 export { configuration } from './configuration.js'

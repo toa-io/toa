@@ -1,5 +1,5 @@
-import { origin } from '@/net'
-import { authenticated } from '@/iam'
+import { origin } from '#/net/index.js'
+import { authenticated } from '#/iam/index.js'
 import { server, tree } from './svc/store'
 import { read } from './svc/net'
 

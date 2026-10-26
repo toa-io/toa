@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { dict } from '@/iam/ui/intl'
+  import { dict } from '#/iam/ui/intl/index.js'
   import Button from './Button.svelte'
-  import type { oidc } from '@/iam'
+  import type { oidc } from '#/iam/index.js'
 
   const { idp }: { idp: oidc.IDP } = $props()
 

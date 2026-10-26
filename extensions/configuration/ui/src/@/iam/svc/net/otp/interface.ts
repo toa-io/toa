@@ -1,4 +1,4 @@
-import { origin } from '@/net'
+import { origin } from '#/net/index.js'
 
 const otp = origin.resource('/accounts/otp/')
 

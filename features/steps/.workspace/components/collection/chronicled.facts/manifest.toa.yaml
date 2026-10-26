@@ -1,0 +1,30 @@
+name: facts
+namespace: chronicled
+
+operations:
+  search:
+    input:
+      properties:
+        query:
+          type: string
+        identity:
+          type: string
+      type: object
+
+  whisper:
+    input:
+      properties:
+        query:
+          type: string
+      type: object
+
+# sends, and declares no change of its own
+chronicles:
+  facts:
+    searched:
+      description: Someone searched the catalogue
+      properties:
+        query:
+          type: string
+          description: What was typed
+

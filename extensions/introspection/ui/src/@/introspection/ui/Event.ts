@@ -1,5 +1,5 @@
 import type { ClassValue } from 'svelte/elements'
-import type { Event } from '@/introspection'
+import type { Event } from '#/introspection/index.js'
 
 export interface Props {
   event: Pick<Event, 'label' | 'binding'>

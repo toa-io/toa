@@ -1,7 +1,7 @@
 import Google from './Google.svelte'
 import Apple from './Apple.svelte'
 import type { Component } from 'svelte'
-import type { oidc } from '@/iam'
+import type { oidc } from '#/iam/index.js'
 
 export const icons: Record<oidc.IDP, Component> = {
   google: Google,

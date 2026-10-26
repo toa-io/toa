@@ -1,5 +1,5 @@
 import { ensure } from 'svas'
-import { account } from '@/iam/svc/store'
+import { account } from '#/iam/svc/store.js'
 import { configurations } from './store'
 import * as origin from './net'
 import type { Node } from './net'

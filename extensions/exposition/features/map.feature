@@ -89,6 +89,34 @@ Feature: HTTP context mapping
       Hello bar
       """
 
+  Scenario: A header a request does not have is not the body's to say
+    A property the gateway fills from a header is the header's: a request without the header
+    has none, whatever its body says.
+
+    Given the `echo` is running with the following manifest:
+      """yaml
+      exposition:
+        /:
+          io:output: true
+          POST:
+            map:headers:
+              name: foo
+            endpoint: compute
+      """
+    When the following request is received:
+      """
+      POST /echo/ HTTP/1.1
+      host: nex.toa.io
+      accept: application/yaml
+      content-type: application/yaml
+
+      name: forged
+      """
+    Then the following reply is sent:
+      """
+      400 Bad Request
+      """
+
   Scenario: Mapping the `host` header value
     Given the `echo` is running with the following manifest:
       """yaml
@@ -361,4 +389,51 @@ Feature: HTTP context mapping
       vary: accept
 
       {"foo":"bar"}
+      """
+
+  Scenario: Mapping the client's address and country
+    Given the annotation:
+      """yaml
+      ip: x-forwarded-for
+      country: cf-ipcountry
+      """
+    And the `echo` is running with the following manifest:
+      """yaml
+      exposition:
+        /:
+          io:output: true
+          /address:
+            GET:
+              map:ip: name
+              endpoint: compute
+          /country:
+            GET:
+              map:country: name
+              endpoint: compute
+      """
+    When the following request is received:
+      """
+      GET /echo/address/ HTTP/1.1
+      host: nex.toa.io
+      accept: text/plain
+      x-forwarded-for: 10.0.0.1, 203.0.113.7
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+
+      Hello 203.0.113.7
+      """
+    When the following request is received:
+      """
+      GET /echo/country/ HTTP/1.1
+      host: nex.toa.io
+      accept: text/plain
+      cf-ipcountry: DE
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+
+      Hello DE
       """
