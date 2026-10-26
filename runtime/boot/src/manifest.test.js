@@ -22,12 +22,14 @@ mock.module('@toa.io/norm', {
 
       return mockComponent()
     },
-    definition: async (reference) => ({
-      module:
-        reference === '@toa.io/extensions.exposition' ? { components: () => digest } : {}
-    }),
     revive: (declared, path) => ({ ...declared, path }),
     NORMALIZED
+  }
+})
+
+mock.module('@toa.io/definitions/digest', {
+  namedExports: {
+    shipped: (suffix) => (suffix === 'extensions.exposition' ? digest : undefined)
   }
 })
 
