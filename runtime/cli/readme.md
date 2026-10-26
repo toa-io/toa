@@ -139,7 +139,10 @@ type Plugin = Entity['plugins'][number]
 Run composition and extension services in one process.
 
 Application components are found by `manifest.toa.yaml`, same as <code>compose</code>.
-Extension services are started for each component extension whose `Factory` implements `service()`.
+Extension services are started for each component extension whose `Factory` implements `service()`,
+and for each extension `TOA_SERVICES` names, space-separated, whether a component references it or
+not. A `--mono` deployment names every service the context runs, so a service the context's
+annotation alone turns on runs there too.
 
 <dl>
 <dt><code>toa mono [paths...]</code></dt>
