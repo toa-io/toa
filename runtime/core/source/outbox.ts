@@ -107,6 +107,7 @@ export class Outbox extends Connector {
       published: false,
       pending: Date.now() + this.#gap,
       outstanding: this.#destinations.map((destination) => destination.name),
+      time: Date.now(),
       event: event as Event
     }
 

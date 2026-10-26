@@ -1,6 +1,2 @@
-// the record as it stands, without what identifies the customer
-export const payload = (event) => {
-  const { email, ...rest } = event.state
-
-  return rest
-}
+// the record as it stands, all of it: what the log keeps of it is what the state declares
+export const payload = (event) => event.state

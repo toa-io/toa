@@ -89,6 +89,34 @@ Feature: HTTP context mapping
       Hello bar
       """
 
+  Scenario: A header a request does not have is not the body's to say
+    A property the gateway fills from a header is the header's: a request without the header
+    has none, whatever its body says.
+
+    Given the `echo` is running with the following manifest:
+      """yaml
+      exposition:
+        /:
+          io:output: true
+          POST:
+            map:headers:
+              name: foo
+            endpoint: compute
+      """
+    When the following request is received:
+      """
+      POST /echo/ HTTP/1.1
+      host: nex.toa.io
+      accept: application/yaml
+      content-type: application/yaml
+
+      name: forged
+      """
+    Then the following reply is sent:
+      """
+      400 Bad Request
+      """
+
   Scenario: Mapping the `host` header value
     Given the `echo` is running with the following manifest:
       """yaml

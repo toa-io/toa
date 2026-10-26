@@ -13,4 +13,10 @@ export interface Message<T = any> {
    * chain rather than starting one. See `core/source/trail.ts`.
    */
   trail?: string[]
+  /**
+   * When the change it tells of was made, in milliseconds, by the clock of the process that made
+   * it — not when it was published, which the outbox may do much later. Absent on a message of
+   * a process from before this, and on one from outside Toa.
+   */
+  time?: number
 }

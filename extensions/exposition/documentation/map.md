@@ -52,6 +52,9 @@ properties.
 The value of the directive is a map where keys are the names of the input properties and values are
 the names of the HTTP request headers.
 
+A header the request does not have is a property the input does not have, whatever the body
+says: what a mapping fills is not the caller's to send.
+
 The names of these headers are then included in the `Vary` HTTP response header. A page on
 another origin may send any of them ([CORS](protocol.md#cors)).
 

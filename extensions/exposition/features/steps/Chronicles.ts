@@ -1,4 +1,7 @@
 import * as assert from 'node:assert'
+import { readFile } from 'node:fs/promises'
+import { createRequire } from 'node:module'
+import { dirname, join } from 'node:path'
 import { load as parse } from 'js-yaml'
 import { after, binding, given, then } from 'specumber'
 import * as boot from '@toa.io/boot'
@@ -17,15 +20,42 @@ export class Chronicles {
     this.gateway = gateway
   }
 
-  // what the extension falls back to under `TOA_DEV`, started from nothing: a row a scenario
-  // before wrote would be read by the next
+  // the store of the development stack, set up as the extension's reference says and started from
+  // nothing: a row a scenario before wrote would be read by the next
   @given('the chronicles are empty')
   public async empty(): Promise<void> {
-    for (const statement of [
-      `DROP DATABASE IF EXISTS ${DATABASE} SYNC`,
-      `DROP USER IF EXISTS ${DATABASE}_reader`,
-      `DROP SETTINGS PROFILE IF EXISTS ${DATABASE}_reader`
-    ])
+    await clickhouse('DROP DATABASE IF EXISTS chronicles SYNC')
+    await clickhouse(`DROP DATABASE IF EXISTS \`${SCOPE}\` SYNC`)
+    await clickhouse(`DROP USER IF EXISTS \`${SCOPE}\``)
+    await clickhouse(`DROP SETTINGS PROFILE IF EXISTS \`${SCOPE}\``)
+
+    let sql = await readFile(join(SETUP, 'clickhouse.sql'), 'utf8')
+
+    for (const [key, value] of Object.entries(BROKER))
+      sql = sql.replaceAll(`{${key}}`, value)
+
+    const statements = sql
+      .split('\n')
+      .filter((line) => !line.trimStart().startsWith('--'))
+      .join('\n')
+      .split(';')
+      .map((statement) => statement.trim())
+      .filter((statement) => statement !== '')
+
+    for (const statement of statements) await clickhouse(statement)
+
+    // the user of the process's scope, which it reads the log as
+    let user = await readFile(join(SETUP, 'clickhouse.scope.sql'), 'utf8')
+
+    user = user.replaceAll('{scope}', SCOPE).replaceAll('{password}', 'secret')
+
+    for (const statement of user
+      .split('\n')
+      .filter((line) => !line.trimStart().startsWith('--'))
+      .join('\n')
+      .split(';')
+      .map((statement) => statement.trim())
+      .filter((statement) => statement !== ''))
       await clickhouse(statement)
   }
 
@@ -92,5 +122,23 @@ async function query(sql: string): Promise<unknown> {
   return (JSON.parse(text) as { data: unknown }).data
 }
 
+// where the reference setup keeps the log
 const DATABASE = 'chronicles'
 const CLICKHOUSE = 'http://localhost:31030/'
+
+// the scope of a process under `TOA_DEV`, which its views are kept under
+const SCOPE = 'toa-dev'
+
+// the development broker, as the store reaches it
+const BROKER = {
+  broker: 'rabbitmq:5672',
+  broker_username: 'developer',
+  broker_password: 'secret'
+}
+
+const SETUP = join(
+  dirname(
+    createRequire(import.meta.url).resolve('@toa.io/extensions.chronicles/package.json')
+  ),
+  'store'
+)

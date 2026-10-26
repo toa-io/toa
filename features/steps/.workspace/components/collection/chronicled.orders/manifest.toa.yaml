@@ -11,6 +11,24 @@ entity:
       type: string
     customer:
       type: string
+    shipping:
+      type: object
+      properties:
+        country:
+          type: string
+        phone:
+          type: string
+    items:
+      type: array
+      items:
+        type: object
+        properties:
+          sku:
+            type: string
+          quantity:
+            type: integer
+          note:
+            type: string
   blank:
     total: 0
 
@@ -25,10 +43,60 @@ operations:
           type: string
         customer:
           type: string
+        shipping:
+          type: object
+          properties:
+            country:
+              type: string
+            phone:
+              type: string
+        items:
+          type: array
+          items:
+            type: object
+            properties:
+              sku:
+                type: string
+              quantity:
+                type: integer
+              note:
+                type: string
       type: object
 
-# an event of the prototype, and the state as an event of its own
+# an event of the prototype, and the state as an event of its own, each of which declares what
+# of the order the log keeps: the email is left out of both
 chronicles:
-  events: [created]
-  state: snapshot
   identity: customer
+  events:
+    created:
+      description: An order was placed
+      properties:
+        total:
+          type: integer
+          description: The amount of the order, in cents
+        shipping:
+          type: object
+          description: Where the order goes
+          properties:
+            country:
+              type: string
+              description: ISO 3166 alpha-2 code of the country
+        items:
+          type: array
+          description: What was ordered
+          items:
+            type: object
+            properties:
+              sku:
+                type: string
+                description: The code of the product
+              quantity:
+                type: integer
+                description: Units of the product
+  state:
+    event: snapshot
+    description: An order as it stands
+    properties:
+      total:
+        type: integer
+        description: The amount of the order, in cents

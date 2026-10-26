@@ -1,0 +1,34 @@
+name: stamped
+namespace: chronicled
+
+entity:
+  storage: mongodb
+  associated: true
+  properties:
+    total:
+      type: integer
+  blank:
+    total: 0
+
+operations:
+  transit:
+    concurrency: retry
+    input:
+      properties:
+        total:
+          type: integer
+      type: object
+
+# an event whose payload says nothing of when the change was made
+chronicles:
+  identity: ~
+  events:
+    placed:
+      description: An order was placed
+      properties:
+        total:
+          type: integer
+          description: The amount of the order
+        rendered:
+          type: integer
+          description: When the payload was rendered, in milliseconds

@@ -3,6 +3,7 @@ import { randomBytes } from 'node:crypto'
 import readline from 'node:readline/promises'
 import { stdin as input, stdout as output } from 'node:process'
 import dotenv from 'dotenv'
+import { line } from './line.js'
 import { ExportKeyFactory, GenerateKeyFactory } from 'paseto/v3/local'
 import { deployment } from '@toa.io/operations'
 import { readFile, writeFile } from 'node:fs/promises'
@@ -68,7 +69,7 @@ async function read(path) {
  */
 async function write(path, values) {
   const contents = values.reduce(
-    (lines, { name, value }) => lines + `${name}=${value ?? ''}\n`,
+    (lines, { name, value }) => lines + line(name, value ?? '') + '\n',
     ''
   )
 
@@ -129,7 +130,7 @@ async function resolveDevSecrets(variables) {
     if (key in secrets) continue
 
     if (key in DEV_SECRETS) {
-      secrets[key] = await resolveDevSecret(key)
+      secrets[key] = await resolveDevSecret(key, variables)
       continue
     }
 
@@ -143,12 +144,17 @@ async function resolveDevSecrets(variables) {
 
 /**
  * @param {string} key
+ * @param {toa.deployment.dependency.Variable[]} variables
  * @return {Promise<string>}
  */
-async function resolveDevSecret(key) {
+async function resolveDevSecret(key, variables) {
   const source = DEV_SECRETS[key]
 
   if (source.value !== undefined) return source.value
+
+  // a user named after the context, as a store's reference setup names one
+  if (source.context === true)
+    return variables.find((variable) => variable.name === 'TOA_CONTEXT')?.value ?? ''
 
   if (source.generate === 'jwe') return randomBytes(32).toString('base64url')
 
@@ -192,6 +198,10 @@ const DEV_SECRETS = {
   'toa-mongodb.default/password': { value: 'secret' },
   'toa-amqp-context.default/username': { value: 'developer' },
   'toa-amqp-context.default/password': { value: 'secret' },
+  'toa-chronicles/broker_username': { value: 'developer' },
+  'toa-chronicles/broker_password': { value: 'secret' },
+  'toa-chronicles/store_username': { context: true },
+  'toa-chronicles/store_password': { value: 'secret' },
   'toa-configuration/IDENTITY_TOKENS_KEY0': { generate: 'paseto' },
   'toa-configuration/IDENTITY_TOKENS_ENCRYPTION_KEY0': { generate: 'jwe' }
 }

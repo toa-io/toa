@@ -71,6 +71,9 @@ export class Event extends Connector {
       // starting one; read off the row, because the pump publishes off the operation's path
       if (row.trail !== undefined) message.trail = row.trail
 
+      // when the change was made, which the pump publishing it later does not move
+      if (row.time !== undefined) message.time = row.time
+
       const options: SpanOptions = {
         name: `${this.#label} publish`,
         kind: 'producer',

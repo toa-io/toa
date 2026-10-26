@@ -84,6 +84,67 @@ Feature: Export local deployment environment variables
       TOA_AMQP_CONTEXT__PASSWORD=secret
       """
 
+  Scenario: Fill the store of chronicles with `--dev`
+    Given I have a component `dummies.one`
+    And I have a context with:
+      """yaml
+      amqp:
+        context: amqp://whatever
+      chronicles:
+        broker: amqp://localhost
+        store:
+          provider: clickhouse
+          url: http://localhost:8123
+        resources: ~
+      """
+    When I run `toa env --dev`
+    Then the environment contains:
+      """
+      TOA_CHRONICLES_BROKER_USERNAME=developer
+      TOA_CHRONICLES_BROKER_PASSWORD=secret
+      TOA_CHRONICLES_STORE_USERNAME=collection
+      TOA_CHRONICLES_STORE_PASSWORD=secret
+      """
+
+  Scenario: The configuration of what chronicles ship, for a context no component of which declares them
+    Given I have a component `dummies.one`
+    And I have a context with:
+      """yaml
+      amqp:
+        context: amqp://whatever
+      chronicles:
+        broker: amqp://localhost
+        store:
+          provider: clickhouse
+          url: http://localhost:8123
+        encounters: true
+        resources: ~
+      configuration:
+        resources: ~
+      """
+    When I run `toa env --dev`
+    Then program should exit with code 0
+    And the environment variable TOA_CONFIGURATION_VALUES contains 'chronicles.encounters'
+
+  Scenario: No configuration of encounters where a context serves none
+    Given I have a component `configuration.base`
+    And I have a context with:
+      """yaml
+      amqp:
+        context: amqp://whatever
+      chronicles:
+        broker: amqp://localhost
+        store:
+          provider: clickhouse
+          url: http://localhost:8123
+        resources: ~
+      configuration:
+        resources: ~
+      """
+    When I run `toa env --dev`
+    Then program should exit with code 0
+    And the environment variable TOA_CONFIGURATION_VALUES does not contain 'chronicles.encounters'
+
   Scenario: Keeping secret values with `--dev`
     Given I have a component `dummies.one`
     And I have a context with:

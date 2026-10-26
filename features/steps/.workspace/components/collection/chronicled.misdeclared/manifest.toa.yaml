@@ -16,4 +16,9 @@ operations:
           type: integer
       type: object
 
-chronicles: [shipped]
+chronicles:
+  events:
+    shipped:
+      description: An order was shipped
+      properties: {}
+

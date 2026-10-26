@@ -3,29 +3,20 @@
  * needs of it is a statement and its answer.
  */
 export class ClickHouse {
-  public readonly database: string
-
   private readonly endpoint: string
   private readonly headers: Record<string, string>
 
+  /** The statements run in the user's default database, which is what the store gives it to read. */
   public constructor(address: string, user: string, key: string) {
     const url = new URL(address)
 
-    this.database = decodeURIComponent(url.pathname.replace(/^\/+|\/+$/g, ''))
     this.endpoint = `${url.protocol}//${url.host}/`
     this.headers = { 'x-clickhouse-user': user, 'x-clickhouse-key': key }
   }
 
-  /**
-   * A statement that answers nothing worth reading. `database` is the one it runs in, where that
-   * is not this client's: `''` for a statement that must run before the database exists.
-   */
-  public async run(
-    sql: string,
-    settings: Record<string, string> = {},
-    database = this.database
-  ): Promise<void> {
-    await this.request(sql, settings, database)
+  /** A statement that answers nothing worth reading. */
+  public async run(sql: string, settings: Record<string, string> = {}): Promise<void> {
+    await this.request(sql, settings)
   }
 
   /**
@@ -41,21 +32,22 @@ export class ClickHouse {
     return parse(text) as Answer
   }
 
-  /** Each row as an object, for what this extension reads of the database itself. */
-  public async rows<T = Record<string, unknown>>(sql: string): Promise<T[]> {
-    const text = await this.request(sql, { ...NUMBERS, default_format: 'JSON' })
+  /** Each row as an object, for what this extension reads of the store itself. */
+  public async rows<T = Record<string, unknown>>(
+    sql: string,
+    settings: Record<string, string> = {}
+  ): Promise<T[]> {
+    const text = await this.request(sql, {
+      ...settings,
+      ...NUMBERS,
+      default_format: 'JSON'
+    })
 
     return (parse(text) as { data: T[] }).data
   }
 
-  private async request(
-    sql: string,
-    settings: Record<string, string>,
-    database = this.database
-  ): Promise<string> {
+  private async request(sql: string, settings: Record<string, string>): Promise<string> {
     const search = new URLSearchParams(settings)
-
-    if (database !== '') search.set('database', database)
 
     const response = await fetch(`${this.endpoint}?${search.toString()}`, {
       method: 'POST',

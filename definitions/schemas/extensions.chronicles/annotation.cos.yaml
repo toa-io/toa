@@ -1,30 +1,52 @@
 # context.toa.yaml chronicles annotation
 type: object
 properties:
+  broker:
+    description: The AMQP address of the broker the rows are published to
+    type: string
+    pattern: ^amqps?://
   store:
-    description: Where the log is kept, by the provider that keeps it
+    description: Where the log is read, by the provider that keeps it
     oneOf:
       - type: object
         properties:
           provider:
             const: clickhouse
           url:
-            description: The HTTP address of ClickHouse, whose path names the database
+            description: The HTTP address of ClickHouse; what is read is the user's own
             type: string
             format: uri
         required: [provider, url]
         additionalProperties: false
   retention:
-    description: Days a row of the log is kept; absent, kept
+    description: Days a row of `events` and of `encounters` is kept; absent, kept
     type: integer
     minimum: 1
-  ingest:
-    description: Whether the client route is served
+  encounters:
+    description: Whether the routes clients send encounters to are served
     type: boolean
   ip:
     description: >
-      How much of a browser's address the log keeps: its network, truncated to /24 of IPv4 and /48
+      How much of a client's address the log keeps: its network, truncated to /24 of IPv4 and /48
       of IPv6, or all of it
     enum: [truncated, full]
-required: [store]
+  resources:
+    # what the service may take; `null` deploys it without any, which every deployment has to
+    # state one way or the other — see `migrations/262.md`
+    type: object
+    nullable: true
+    properties:
+      cpu:
+        type: array
+        items:
+          type: string
+        minItems: 2
+        maxItems: 2
+      memory:
+        type: array
+        items:
+          type: string
+        minItems: 2
+        maxItems: 2
+required: [broker, store]
 additionalProperties: false
