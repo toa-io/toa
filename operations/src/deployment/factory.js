@@ -148,8 +148,14 @@ export class Factory {
     const services = declared?.map((service) =>
       workload === undefined
         ? this.#service(reference, service) // its own deployment, its own image
-        : // named the way `Service` would name it, since it skips that wrapper
-          { ...service, name: `${service.group}-${service.name}`, workload }
+        : // named the way `Service` would name it, since it skips that wrapper; and by the
+          // extension it is of, which the workload names to its process to be run
+          {
+            ...service,
+            name: `${service.group}-${service.name}`,
+            workload,
+            extension: reference
+          }
     )
 
     return { ...dependency, services }

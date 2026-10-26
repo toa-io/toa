@@ -46,3 +46,34 @@ Feature: toa mono
       Gateway started
       Composition shutdown complete
       """
+
+  Scenario: Run a service the environment names, which no component declares
+    Given I have a component `dummies.one`
+    And I have a context with:
+      """yaml
+      chronicles:
+        broker: amqp://localhost:31010
+        store:
+          provider: clickhouse
+          url: http://localhost:31030
+        encounters: true
+      configuration:
+        identity.tokens:
+          keys:
+            - id: key0
+              key: $IDENTITY_TOKENS_ENCRYPTION_KEY0
+      """
+    When I run `toa env --dev`
+    And I run `toa map`
+    And I update an environment with:
+      """
+      TOA_EXPOSITION_PROPERTIES={"authorities":{"local":"localhost"},"port":31000,"probe":31004}
+      """
+    And an environment variable `TOA_SERVICES` is set to "@toa.io/extensions.chronicles"
+    And I run `toa mono ./components/* --kill`
+    Then program should exit with code 0
+    And stdout should contain lines:
+      """
+      chronicles.encounters
+      Composition shutdown complete
+      """
