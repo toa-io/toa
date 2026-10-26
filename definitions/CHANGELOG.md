@@ -3,6 +3,29 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.333](https://github.com/toa-io/toa/compare/v1.0.0-alpha.332...v1.0.0-alpha.333) (2026-10-26)
+
+* feat(exposition)!: read the client's country as the address is read ([684468e](https://github.com/toa-io/toa/commit/684468e8cf166d9d94705379e8d0f4ab16e69d0d))
+
+### Bug Fixes
+
+* **norm:** what an extension deployed for its annotation ships is the context's ([06432b7](https://github.com/toa-io/toa/commit/06432b7840cca907884c653ff580e27bcbc13786))
+
+### Features
+
+* **chronicles:** a ClickHouse log of a context, read over MCP ([c94f693](https://github.com/toa-io/toa/commit/c94f693ad59d3156450a8041c101380ba1f42274))
+* **chronicles:** events and a state, declared; queries and ingestion ([06af30e](https://github.com/toa-io/toa/commit/06af30eeea2ace1fdb7be690adda25e9da7a0a97))
+* **chronicles:** the address and the country of what a browser sends ([0a3e5b1](https://github.com/toa-io/toa/commit/0a3e5b1f4903eaffb6488f2a2260a504585f8108))
+* **chronicles:** what a browser sends is under agent, by a name with no dot ([1dfac41](https://github.com/toa-io/toa/commit/1dfac41dc57e16db8beded5763165674b694c7d7))
+* **chronicles:** what the service may take ([763bee0](https://github.com/toa-io/toa/commit/763bee02104ba911d122ba730074ae23198275cc))
+* **chronicles:** whose a row is ([0e3e247](https://github.com/toa-io/toa/commit/0e3e247e19e2b959ec0a15b1f870313637ac73b0))
+
+### BREAKING CHANGES
+
+* `censor: { header, values }` is `country: <header>` and `censor: [values]`,
+  see migrations/332.md.
+
+
 # [1.0.0-alpha.332](https://github.com/toa-io/toa/compare/v1.0.0-alpha.331...v1.0.0-alpha.332) (2026-10-23)
 
 **Note:** Version bump only for package @toa.io/definitions

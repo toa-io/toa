@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.333](https://github.com/toa-io/toa/compare/v1.0.0-alpha.332...v1.0.0-alpha.333) (2026-10-26)
+
+### Features
+
+* **bindings.amqp:** retain a queue on an outbound channel ([082d9ce](https://github.com/toa-io/toa/commit/082d9cebb531b8d08c2c5465abdb3f782325b8c7))
+* **core:** a message says when the change it tells of was made ([ea4183c](https://github.com/toa-io/toa/commit/ea4183c508590067664c986680e2144e57c502df))
+
+### Reverts
+
+* **bindings.amqp:** retain a queue on an outbound channel ([214c919](https://github.com/toa-io/toa/commit/214c919fcc36a8f854cf8fcad50368f455a9e75a))
+
+
 # [1.0.0-alpha.332](https://github.com/toa-io/toa/compare/v1.0.0-alpha.331...v1.0.0-alpha.332) (2026-10-23)
 
 **Note:** Version bump only for package @toa.io/core

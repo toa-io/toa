@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.333](https://github.com/toa-io/toa/compare/v1.0.0-alpha.332...v1.0.0-alpha.333) (2026-10-26)
+
+### Bug Fixes
+
+* **norm:** what an extension deployed for its annotation ships is the context's ([06432b7](https://github.com/toa-io/toa/commit/06432b7840cca907884c653ff580e27bcbc13786))
+
+### Features
+
+* **chronicles:** a ClickHouse log of a context, read over MCP ([c94f693](https://github.com/toa-io/toa/commit/c94f693ad59d3156450a8041c101380ba1f42274))
+
+
 # [1.0.0-alpha.332](https://github.com/toa-io/toa/compare/v1.0.0-alpha.331...v1.0.0-alpha.332) (2026-10-23)
 
 **Note:** Version bump only for package @toa.io/norm

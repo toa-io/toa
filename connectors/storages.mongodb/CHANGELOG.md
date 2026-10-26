@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.333](https://github.com/toa-io/toa/compare/v1.0.0-alpha.332...v1.0.0-alpha.333) (2026-10-26)
+
+### Bug Fixes
+
+* **storages.mongodb:** run a set again where it met a commit in flight ([2e293fe](https://github.com/toa-io/toa/commit/2e293fe1b72c3eac65f659f0061e312945829b6e))
+
+
 # [1.0.0-alpha.332](https://github.com/toa-io/toa/compare/v1.0.0-alpha.331...v1.0.0-alpha.332) (2026-10-23)
 
 ### Bug Fixes
