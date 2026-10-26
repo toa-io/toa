@@ -3,7 +3,8 @@ import { existsSync, readFileSync } from 'node:fs'
 import { readFile } from 'node:fs/promises'
 import { basename, dirname, join } from 'node:path'
 import { merge } from '@toa.io/generic'
-import { component as load, definition, revive, NORMALIZED } from '@toa.io/norm'
+import { component as load, revive, NORMALIZED } from '@toa.io/norm'
+import { shipped } from '@toa.io/definitions/digest'
 import { Locator } from '@toa.io/core'
 
 import { span } from './span.js'
@@ -78,8 +79,9 @@ async function digested(path) {
   // the digest is of what Toa ships, and a package it does not define has none
   if (name === undefined || !name.startsWith(SCOPE)) return undefined
 
-  const { module } = await definition(name)
-  const { labels, manifests } = module.components?.() ?? {}
+  // every component the extension ships, not those a definition deploys by default: what an
+  // annotation adds, such as the encounters of Chronicles, runs in the service all the same
+  const { labels, manifests } = shipped(name.slice(SCOPE.length)) ?? {}
 
   if (manifests === undefined) return undefined
 

@@ -1,4 +1,4 @@
-import { readFileSync } from 'node:fs'
+import { existsSync, readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 
 /**
@@ -16,6 +16,17 @@ export function components(
     labels: manifests.map((manifest) => manifest.label),
     manifests: manifests.map((manifest) => structuredClone(manifest.manifest))
   }
+}
+
+/**
+ * Every component an extension ships, whichever of them an annotation deploys: what a running
+ * service looks the one it runs up in. Nothing where Toa ships no such extension.
+ */
+export function shipped(suffix: string): Components | undefined {
+  if (cache[suffix] === undefined && !existsSync(resolve(ROOT, suffix + '.json')))
+    return undefined
+
+  return components(suffix)
 }
 
 function digest(suffix: string): Entry[] {

@@ -92,7 +92,25 @@ jobs:
             npx lerna version --conventional-prerelease --preid alpha --create-release github --no-commit-hooks --yes --message "ci: %s" --sign-git-commit
           fi
 
-          npx lerna publish from-package --dist-tag "$DIST_TAG" --no-ignore-scripts --yes
+          # Provenance goes through Rekor, whose client retries a write that timed out on its
+          # side but landed on the log's, and takes the log's 409 for that very entry as a
+          # failure (npm's sigstore leaves `fetchOnConflict` off). The package is then not
+          # published, and alpha.330 and alpha.333 each needed several dispatches. Publishing
+          # from the manifests skips what is already on npm, so running it again signs anew
+          # only what is left.
+          for attempt in 1 2 3 4 5; do
+            if npx lerna publish from-package --dist-tag "$DIST_TAG" --no-ignore-scripts --yes; then
+              break
+            fi
+
+            if [ "$attempt" = 5 ]; then
+              echo "::error::publishing failed five times"
+              exit 1
+            fi
+
+            echo "publishing failed, retrying in 30s ($attempt/5)"
+            sleep 30
+          done
 
       # the version bump is the source of truth for the next release, so it reaches
       # `dev` as soon as publishing succeeded — an image that fails to build must not
