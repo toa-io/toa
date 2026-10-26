@@ -142,12 +142,14 @@ function parse(input: unknown, identified: boolean): Batch | Error {
       'The body names no identity: a client that has one sends it in the path'
     )
 
+  // `null` is a client that has none, as absent is
   for (const [key, value] of [
     ['visitor', visitor],
     ['session', session]
   ] as const)
     if (
       value !== undefined &&
+      value !== null &&
       (typeof value !== 'string' || value === '' || value.length > 64)
     )
       return invalid(`\`${key}\` is a string of 1 to 64 characters`)
@@ -191,8 +193,8 @@ function parse(input: unknown, identified: boolean): Batch | Error {
 
   return {
     sent: sent as number,
-    visitor: (visitor as string | undefined) ?? null,
-    session: (session as string | undefined) ?? null,
+    visitor: (visitor as string | null | undefined) ?? null,
+    session: (session as string | null | undefined) ?? null,
     events: events as Event[]
   }
 }

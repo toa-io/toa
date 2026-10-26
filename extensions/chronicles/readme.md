@@ -278,12 +278,12 @@ A signed-in client sends with `fetch(…, { keepalive: true })` instead.
 
 `{ sent, visitor?, session?, events }`:
 
-| property  |                                                                            |
-| --------- | -------------------------------------------------------------------------- |
-| `sent`    | when the client sends the batch, in milliseconds, by its clock             |
-| `visitor` | the client's own id of itself, kept across sessions; at most 64 characters |
-| `session` | the id of one period of the client's activity; at most 64 characters       |
-| `events`  | at most 100 of them                                                        |
+| property  |                                                                                                |
+| --------- | ---------------------------------------------------------------------------------------------- |
+| `sent`    | when the client sends the batch, in milliseconds, by its clock                                 |
+| `visitor` | the client's own id of itself, kept across sessions; at most 64 characters, or `null` for none |
+| `session` | the id of one period of the client's activity; at most 64 characters, or `null` for none       |
+| `events`  | at most 100 of them                                                                            |
 
 Each event:
 

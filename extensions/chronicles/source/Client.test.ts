@@ -239,3 +239,14 @@ it('should write the origin and the agent the gateway read, and what the agent i
   assert.equal(written.os, 'Linux')
   assert.equal(written.device, 'desktop')
 })
+
+it('should read a visitor or a session of null as none', async () => {
+  await client.invoke(
+    'write',
+    { sent, visitor: null, session: null, events: [event] },
+    null
+  )
+
+  assert.equal(rows()[0].visitor, null)
+  assert.equal(rows()[0].session, null)
+})
