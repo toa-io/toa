@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { Textarea } from '$ui/textarea'
-  import { Label } from '$ui/label'
-  import { Input } from '$ui/input'
+  import { Textarea } from '#ui/textarea/index.js'
+  import { Label } from '#ui/label/index.js'
+  import { Input } from '#ui/input/index.js'
   import { hint } from './request'
   import { dict } from './intl'
   import { id, type Props } from './Form'

@@ -1,6 +1,6 @@
 <script lang="ts">
   import { Async, combined } from 'svas'
-  import { edges, nodes } from '@/introspection'
+  import { edges, nodes } from '#/introspection/index.js'
   import { dict } from '../intl'
   import { viewport, zoomIdentity, type Controls, type ZoomTransform } from './viewport'
   import { build } from './graph'

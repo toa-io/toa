@@ -1,6 +1,6 @@
 import { it, expect } from 'vitest'
 import { CONSOLES, carries, endpoint, published, refuses } from './ui'
-import type { Discovered } from '@/discovery'
+import type { Discovered } from '#/discovery/index.js'
 
 const tree: Discovered = {
   routes: {

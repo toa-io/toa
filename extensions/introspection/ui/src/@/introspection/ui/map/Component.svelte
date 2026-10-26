@@ -1,6 +1,6 @@
 <script lang="ts">
   import { ChevronDown } from '@lucide/svelte'
-  import * as Item from '$ui/item'
+  import * as Item from '#ui/item/index.js'
   import { DEFAULT } from '../ui'
   import { dict } from '../intl'
   import Summary from '../Summary.svelte'

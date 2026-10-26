@@ -1,8 +1,8 @@
 <script lang="ts">
   import { CheckCheck, ChevronRight, SearchCheck } from '@lucide/svelte'
-  import * as Tooltip from '$ui/tooltip'
-  import * as Item from '$ui/item'
-  import * as Collapsible from '$ui/collapsible'
+  import * as Tooltip from '#ui/tooltip/index.js'
+  import * as Item from '#ui/item/index.js'
+  import * as Collapsible from '#ui/collapsible/index.js'
   import { GUARDS, guard } from './ui'
   import { dict } from './intl'
   import Schema from './Schema.svelte'

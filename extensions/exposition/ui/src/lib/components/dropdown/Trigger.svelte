@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { Button } from '$ui/button'
-  import { buttonVariants } from '$ui/button'
   import { beforeNavigate } from '$app/navigation'
+  import { Button } from '#ui/button/index.js'
+  import { buttonVariants } from '#ui/button/index.js'
   import { getContext } from './Context'
   import type { Props } from './Trigger'
 

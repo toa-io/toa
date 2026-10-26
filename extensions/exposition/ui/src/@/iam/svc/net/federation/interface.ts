@@ -1,4 +1,4 @@
-import { origin } from '@/net'
+import { origin } from '#/net/index.js'
 
 const federation = origin.resource('/identity/federation/', { credentials: 'include' })
 

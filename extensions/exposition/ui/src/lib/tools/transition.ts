@@ -1,5 +1,5 @@
 import { derived, writable, type Readable } from 'svelte/store'
-import type { OnNavigate } from '@sveltejs/kit'
+import type { OnNavigate } from '$app/navigation'
 
 export function transit(fn?: (() => void) | (() => Promise<void>)): Promise<void> {
   if (document.startViewTransition === undefined) return Promise.resolve(fn?.())

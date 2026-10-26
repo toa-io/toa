@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import { page } from '$app/state'
+  import { match } from '$app/paths'
   import { goto, preloadCode } from '$app/navigation'
   import { faded } from './store'
   import { exact, nested, type Section } from './Nav'
@@ -15,10 +16,17 @@
 
   onMount(() => {
     for (const section of sections) {
-      preloadCode(section.href)
-      section.nested?.forEach((nested) => preloadCode(nested))
+      void preload(section.href)
+      section.nested?.forEach((nested) => void preload(nested))
     }
   })
+
+  // `preloadCode` takes a route, and a section is a path
+  async function preload(path: string) {
+    const route = await match(path)
+
+    if (route !== null) await preloadCode(route.id)
+  }
 
   function href(section: Section) {
     if (collapsed) return null

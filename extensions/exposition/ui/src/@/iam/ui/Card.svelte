@@ -1,5 +1,5 @@
 <script lang="ts">
-  import * as Card from '$ui/card'
+  import * as Card from '#ui/card/index.js'
   import type { Props } from './Card'
 
   const { title, description, action }: Props = $props()

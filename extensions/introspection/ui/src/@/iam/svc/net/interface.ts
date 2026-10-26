@@ -1,4 +1,4 @@
-import { origin, type RequestOptions } from '@/net'
+import { origin, type RequestOptions } from '#/net/index.js'
 import type { Echo } from './Echo'
 
 /** Exposition's authentication echo: the identity the credentials resolve to, and its roles. */

@@ -1,9 +1,9 @@
 <script lang="ts">
   import { Check, Copy } from '@lucide/svelte'
-  import { Spinner } from '$ui/spinner'
-  import { Button } from '$ui/button'
-  import { cn } from '$lib/utils'
-  import { browser } from '$app/environment'
+  import { browser } from '$app/env'
+  import { Spinner } from '#ui/spinner/index.js'
+  import { Button } from '#ui/button/index.js'
+  import { cn } from '#lib/utils.js'
   import type { Props, Retriever } from './Clipboard'
 
   const { text, label, disabled, oncopy, icon, class: classes, ...rest }: Props = $props()

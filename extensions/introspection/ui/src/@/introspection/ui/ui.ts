@@ -1,5 +1,5 @@
 import { writable } from 'svelte/store'
-import type { Node } from '@/introspection'
+import type { Node } from '#/introspection/index.js'
 
 /** What the header's filter holds. Transient: not persisted, not in the URL. */
 export const query = writable('')

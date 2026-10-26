@@ -1,6 +1,6 @@
-import { rc as realtime } from '@/realtime/rc'
-import { rc as iam } from '@/iam/rc'
-import { browser } from '$app/environment'
+import { browser } from '$app/env'
+import { rc as realtime } from '#/realtime/rc.js'
+import { rc as iam } from '#/iam/rc.js'
 
 if (browser) {
   iam()

@@ -1,7 +1,7 @@
 <script lang="ts">
   import { ChevronDown } from '@lucide/svelte'
-  import * as Collapsible from '$ui/collapsible'
-  import { Badge } from '$ui/badge'
+  import * as Collapsible from '#ui/collapsible/index.js'
+  import { Badge } from '#ui/badge/index.js'
   import { dict } from './intl'
   import Schema from './Schema.svelte'
   import type { Props } from './Operation'

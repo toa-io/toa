@@ -1,5 +1,5 @@
 import { having } from 'svas'
-import { account } from '@/iam'
+import { account } from '#/iam/index.js'
 import { passkeys } from './store'
 import * as origin from './net'
 

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import * as ButtonGroup from '$ui/button-group'
+  import * as ButtonGroup from '#ui/button-group/index.js'
   import { actions } from './store'
   import type { Props } from './Toolbar'
 

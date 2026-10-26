@@ -1,8 +1,8 @@
 <script lang="ts">
-  import { cn } from '$lib/utils'
-  import { ios, safari, shell, standalone } from '$lib/tools'
-  import { Underlay } from '$com/shell'
   import { page } from '$app/state'
+  import { cn } from '#lib/utils.js'
+  import { ios, safari, shell, standalone } from '#lib/tools/index.js'
+  import { Underlay } from '#com/shell/index.js'
   import { returns } from './store'
   import Toolbar from './Toolbar.svelte'
   import Sections from './Sections.svelte'

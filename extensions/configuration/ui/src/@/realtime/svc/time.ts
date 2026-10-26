@@ -1,5 +1,5 @@
 import { writable } from 'svelte/store'
-import { origin } from '@/net'
+import { origin } from '#/net/index.js'
 
 // initially use client time
 export const time = writable<number>(Date.now())

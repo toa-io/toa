@@ -1,6 +1,6 @@
 import { it, expect } from 'vitest'
 import { address, blank, bodied, fields, hint, skeleton, slug } from './request'
-import type { Method } from '@/discovery'
+import type { Method } from '#/discovery/index.js'
 
 it('should ask for what the template names', () => {
   const of: Method = { route: { id: { type: 'string', title: 'Which pot' } } }

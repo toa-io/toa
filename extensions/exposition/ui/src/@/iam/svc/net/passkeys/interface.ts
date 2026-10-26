@@ -1,5 +1,5 @@
-import { origin } from '@/net'
-import type { CreationResponse, RequestResponse } from '@/passkeys/svc/net'
+import { origin } from '#/net/index.js'
+import type { CreationResponse, RequestResponse } from '#/passkeys/svc/net/index.js'
 
 const passkeys = origin.resource('/identity/passkeys/')
 

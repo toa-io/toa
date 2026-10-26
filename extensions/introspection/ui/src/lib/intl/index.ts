@@ -1,7 +1,7 @@
 import { derived } from 'svelte/store'
 import { dictionaries, locales } from './built.js'
 export { dictionaries, locales } from './built.js'
-import { account } from '@/iam'
+import { account } from '#/iam/index.js'
 import { value } from 'svas'
 import { supported, resolveLocale } from './bcp'
 import Negotiator from 'negotiator'

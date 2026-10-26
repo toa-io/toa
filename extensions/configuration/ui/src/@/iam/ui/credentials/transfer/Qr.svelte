@@ -1,6 +1,6 @@
 <script lang="ts">
   import QRCode from 'qrcode'
-  import { Spinner } from '$ui/spinner'
+  import { Spinner } from '#ui/spinner/index.js'
   import type { Props } from './Qr'
 
   const { value }: Props = $props()

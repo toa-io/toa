@@ -1,4 +1,4 @@
-import { request } from '@/passkeys'
+import { request } from '#/passkeys/index.js'
 import { challenge } from '../store'
 import * as net from '../net'
 import { authenticated } from '../authenticated'

@@ -1,17 +1,17 @@
 <script lang="ts">
   import { List, LogOut, Search, Waypoints } from '@lucide/svelte'
-  import { Halt, only, query } from '@/introspection/ui'
-  import { Authenticated, Authorized } from '@/iam/ui'
-  import { logout } from '@/iam'
-  import { Kbd } from '$ui/kbd'
-  import { Input } from '$ui/input'
-  import { Button } from '$ui/button'
-  import { apple } from '$lib/tools'
-  import { dict } from '$lib/intl'
-  import { meta } from '$config'
   import { page } from '$app/state'
-  import { base } from '$app/paths'
+  import { resolve } from '$app/paths'
   import { onNavigate } from '$app/navigation'
+  import { Kbd } from '#ui/kbd/index.js'
+  import { Input } from '#ui/input/index.js'
+  import { Button } from '#ui/button/index.js'
+  import { apple } from '#lib/tools/index.js'
+  import { dict } from '#lib/intl/index.js'
+  import { meta } from '#config/index.js'
+  import { Halt, only, query } from '#/introspection/ui/index.js'
+  import { Authenticated, Authorized } from '#/iam/ui/index.js'
+  import { logout } from '#/iam/index.js'
 
   const { children } = $props()
 
@@ -43,8 +43,8 @@
   }
 
   const tabs = $derived([
-    { id: 'map', href: `${base}/`, label: $dict.nav.map, Icon: Waypoints },
-    { id: 'list', href: `${base}/list/`, label: $dict.nav.list, Icon: List },
+    { id: 'map', href: resolve('/(private)'), label: $dict.nav.map, Icon: Waypoints },
+    { id: 'list', href: resolve('list/'), label: $dict.nav.list, Icon: List },
   ])
 
   /**

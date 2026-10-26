@@ -1,5 +1,5 @@
 import type { ClassValue } from 'svelte/elements'
-import type { Node } from '@/introspection'
+import type { Node } from '#/introspection/index.js'
 
 /** Everything the card shows; the document's own bookkeeping is not part of it. */
 export type NodeLike = Omit<Node, 'id' | 'CREATED' | 'UPDATED' | 'VERSION' | 'DELETED'>

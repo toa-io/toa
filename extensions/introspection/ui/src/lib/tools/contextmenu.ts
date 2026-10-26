@@ -1,4 +1,4 @@
-import { dev } from '$app/environment'
+import { dev } from '$app/env'
 
 function allowEditable(e: MouseEvent) {
   for (const n of e.composedPath()) {

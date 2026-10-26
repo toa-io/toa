@@ -1,9 +1,9 @@
 <script lang="ts">
   import { readable, type Readable } from 'svelte/store'
-  import { Progress } from '$ui/progress'
-  import { Button } from '$ui/button'
-  import { cn } from '$lib/utils'
-  import { timeout } from '$lib/tools'
+  import { Progress } from '#ui/progress/index.js'
+  import { Button } from '#ui/button/index.js'
+  import { cn } from '#lib/utils.js'
+  import { timeout } from '#lib/tools/index.js'
   import type { Props } from './Hold'
 
   const {

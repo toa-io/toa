@@ -1,8 +1,8 @@
 <script lang="ts">
   import { untrack } from 'svelte'
-  import { Textarea } from '$ui/textarea'
-  import { Button } from '$ui/button'
-  import { onsubmit as handler } from '$lib/tools'
+  import { Textarea } from '#ui/textarea/index.js'
+  import { Button } from '#ui/button/index.js'
+  import { onsubmit as handler } from '#lib/tools/index.js'
   import { dict } from './intl'
   import { read, type Props } from './Form'
 

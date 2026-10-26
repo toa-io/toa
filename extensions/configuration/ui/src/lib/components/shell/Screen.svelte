@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { cn } from '$lib/utils'
-  import { standalone, safari, ios, shell } from '$lib/tools'
+  import { cn } from '#lib/utils.js'
+  import { standalone, safari, ios, shell } from '#lib/tools/index.js'
   import Underlay from './Underlay.svelte'
   import type { Props } from './Screen'
 

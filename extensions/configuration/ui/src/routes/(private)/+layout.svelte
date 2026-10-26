@@ -1,17 +1,17 @@
 <script lang="ts">
   import { LogOut, Search } from '@lucide/svelte'
-  import { Authenticated, Authorized } from '@/iam/ui'
-  import { logout } from '@/iam'
-  import { only, query } from '@/configuration/ui'
-  import { Kbd } from '$ui/kbd'
-  import { Input } from '$ui/input'
-  import { Button } from '$ui/button'
-  import { apple } from '$lib/tools'
-  import { dict } from '$lib/intl'
-  import { meta } from '$config'
   import { page } from '$app/state'
-  import { base } from '$app/paths'
+  import { resolve } from '$app/paths'
   import { onNavigate } from '$app/navigation'
+  import { Kbd } from '#ui/kbd/index.js'
+  import { Input } from '#ui/input/index.js'
+  import { Button } from '#ui/button/index.js'
+  import { apple } from '#lib/tools/index.js'
+  import { dict } from '#lib/intl/index.js'
+  import { meta } from '#config/index.js'
+  import { Authenticated, Authorized } from '#/iam/ui/index.js'
+  import { logout } from '#/iam/index.js'
+  import { only, query } from '#/configuration/ui/index.js'
 
   const { children } = $props()
 
@@ -19,7 +19,7 @@
    * The title leads back to the list. Every address ends in a slash, so the way up is the
    * address itself on the list and one level up on a component's screen.
    */
-  const home = $derived(page.url.pathname === base + '/' ? '.' : '..')
+  const home = $derived(page.url.pathname === resolve('/(private)') ? '.' : '..')
 
   // a filter is about the screen it was typed on, and the next screen is not that one
   onNavigate(() => query.set(''))
