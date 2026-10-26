@@ -110,6 +110,10 @@ jobs:
 
             echo "publishing failed, retrying in 30s ($attempt/5)"
             sleep 30
+
+            # what lerna wrote into the manifests for the attempt, which it puts back only after
+            # one that succeeded: left there, every attempt after refuses an uncommitted tree
+            git checkout -- .
           done
 
       # the version bump is the source of truth for the next release, so it reaches
