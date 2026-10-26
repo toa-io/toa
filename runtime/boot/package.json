@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/boot",
-  "version": "1.0.0-alpha.333",
+  "version": "1.0.0-alpha.335",
   "type": "module",
   "description": "Toa Boot",
   "author": "temich <tema.gurtovoy@gmail.com>",
@@ -23,9 +23,9 @@
   "dependencies": {
     "@toa.io/atomicity": "1.0.0-alpha.333",
     "@toa.io/core": "1.0.0-alpha.333",
-    "@toa.io/definitions": "1.0.0-alpha.333",
+    "@toa.io/definitions": "1.0.0-alpha.335",
     "@toa.io/generic": "1.0.0-alpha.332",
-    "@toa.io/norm": "1.0.0-alpha.333",
+    "@toa.io/norm": "1.0.0-alpha.335",
     "@toa.io/schemas": "1.0.0-alpha.332",
     "clone-deep": "4.0.1",
     "dotenv": "18.0.9",
