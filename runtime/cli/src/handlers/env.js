@@ -3,6 +3,7 @@ import { randomBytes } from 'node:crypto'
 import readline from 'node:readline/promises'
 import { stdin as input, stdout as output } from 'node:process'
 import dotenv from 'dotenv'
+import { line } from './line.js'
 import { ExportKeyFactory, GenerateKeyFactory } from 'paseto/v3/local'
 import { deployment } from '@toa.io/operations'
 import { readFile, writeFile } from 'node:fs/promises'
@@ -68,7 +69,7 @@ async function read(path) {
  */
 async function write(path, values) {
   const contents = values.reduce(
-    (lines, { name, value }) => lines + `${name}=${value ?? ''}\n`,
+    (lines, { name, value }) => lines + line(name, value ?? '') + '\n',
     ''
   )
 
