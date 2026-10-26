@@ -171,3 +171,25 @@ Feature: Mono deployment
           - name: TOA_MONGODB_IDENTITY_TOKENS
             value: mongodb://localhost:31020
       """
+
+  @helm
+  Scenario: A service the context alone turns on runs in mono
+    Given I have a component `dummies.one`
+    And I have a context with:
+      """yaml
+      chronicles:
+        broker: amqp://analytics.example.com
+        store:
+          provider: clickhouse
+          url: https://ch.example.com:8443
+        encounters: true
+      """
+    When I export a mono deployment
+    And I run `helm template deployment`
+    Then program should exit
+    And mono Deployment container spec should contain:
+      """
+      env:
+        - name: TOA_SERVICES
+          value: "@toa.io/extensions.chronicles @toa.io/extensions.introspection @toa.io/extensions.exposition @toa.io/extensions.configuration"
+      """

@@ -54,8 +54,12 @@ spec:
               {{- end }}
             {{- end }}
           {{- end }}
-          {{- if .variables }}
+          {{- if or .variables .services }}
           env:
+            {{- if .services }}
+            - name: TOA_SERVICES
+              value: {{ join " " .services | quote }}
+            {{- end }}
             {{- range .variables }}
             {{- include "env.var" . | indent 12 }}
             {{- end }}

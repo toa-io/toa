@@ -146,6 +146,14 @@ function unit(context, dependency) {
 
   fold(mono, dependency.services ?? [], dependency)
 
+  // the extensions whose services mono runs, as `TOA_SERVICES` for the process: what no component
+  // declares, such as a service the context's annotation alone turns on, is not found otherwise
+  const extensions = new Set(
+    (dependency.services ?? []).map((service) => service.extension)
+  )
+
+  if (extensions.size > 0) mono.services = [...extensions]
+
   // mono is the one workload that fronts every service it runs under a single name,
   // so it inherits how they are reached as well as what they run
   for (const service of dependency.services ?? []) {

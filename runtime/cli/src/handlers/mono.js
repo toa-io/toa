@@ -22,7 +22,7 @@ export async function mono(argv) {
 
   // inside the workload, so that the boot span covers it, which it did not before
   const workload = new boot.Workload(async (workload) => {
-    const services = await discover(paths, workload)
+    const services = await discover(paths, workload, named())
     const composition = workload.gate(async () => await boot.composition(paths, argv))
     const root = new Connector()
 
@@ -41,4 +41,16 @@ export async function mono(argv) {
   else await start()
 
   if (argv.kill === true) await workload.disconnect()
+}
+
+/**
+ * The extensions a deployment names to the process, whose services run though no component
+ * references them: what the context's annotations alone turn on.
+ *
+ * @return {string[]}
+ */
+function named() {
+  const variable = environment.get('TOA_SERVICES')?.trim()
+
+  return variable === undefined || variable === '' ? [] : variable.split(/\s+/)
 }

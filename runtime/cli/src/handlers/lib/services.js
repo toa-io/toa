@@ -8,45 +8,55 @@ import { find } from '@toa.io/generic'
 const require = createRequire(import.meta.url)
 
 /**
- * The services of the extensions the given components reference. A service hosts components
- * of its own, and those reference extensions too — the identity components inside the gateway
- * wait for the values service — so what a running service hosts is looked into as well.
+ * The services of the extensions the given components reference, and of the named ones. A
+ * service hosts components of its own, and those reference extensions too — the identity
+ * components inside the gateway wait for the values service — so what a running service hosts is
+ * looked into as well.
+ *
+ * An extension is named where no component references it: a service the context's annotation
+ * alone turns on, which a deployment names to the process (`TOA_SERVICES`).
  *
  * @param {string[]} paths
  * @param {import('@toa.io/boot').Workload} [workload] the process, so a service can say what a halt takes of it
+ * @param {string[]} [named] extensions whose services run whether a component references them or not
  * @return {Promise<import('@toa.io/core').Connector[]>}
  */
-export async function discover(paths, workload) {
+export async function discover(paths, workload, named = []) {
   const references = new Set()
   const services = []
   const pending = [...paths]
+
+  /** @param {string} reference */
+  const start = async (reference) => {
+    // a declaration a package claims beside its main one runs no service of its own
+    if (reference.includes('#')) return
+
+    if (references.has(reference)) return
+
+    references.add(reference)
+
+    const { Factory, components } = await load(reference)
+
+    if (typeof Factory?.prototype.service !== 'function') return
+
+    const service = await new Factory(boot.host(workload)).service()
+
+    // an extension that is off in this environment hosts nothing here either
+    if (service === null) return
+
+    services.push(service)
+
+    if (components !== undefined) pending.push(...components().paths)
+  }
+
+  for (const reference of named) await start(shortcuts.resolve(reference))
 
   while (pending.length > 0) {
     // read the way a booting process reads it: what a build normalised, or what the digest
     // holds for a component an extension ships, before the sources of either
     const manifest = await boot.manifest(pending.shift())
 
-    for (const reference of Object.keys(manifest.extensions ?? {})) {
-      // a declaration a package claims beside its main one runs no service of its own
-      if (reference.includes('#')) continue
-
-      if (references.has(reference)) continue
-
-      references.add(reference)
-
-      const { Factory, components } = await load(reference)
-
-      if (typeof Factory?.prototype.service !== 'function') continue
-
-      const service = await new Factory(boot.host(workload)).service()
-
-      // an extension that is off in this environment hosts nothing here either
-      if (service === null) continue
-
-      services.push(service)
-
-      if (components !== undefined) pending.push(...components().paths)
-    }
+    for (const reference of Object.keys(manifest.extensions ?? {})) await start(reference)
   }
 
   return services
