@@ -87,9 +87,8 @@ Feature: Exposition deployment
       exposition:
         authorities:
           a: api.a.dev
-        censor:
-          header: cf-ipcountry
-          values: [RU, IR]
+        country: cf-ipcountry
+        censor: [RU, IR]
       """
     When I export deployment
     Then exported values should contain:
@@ -98,5 +97,5 @@ Feature: Exposition deployment
         - name: exposition-gateway
           variables:
           - name: TOA_EXPOSITION_PROPERTIES
-            value: '{"authorities":{"a":"api.a.dev"},"censor":{"header":"cf-ipcountry","values":["RU","IR"]}}'
+            value: '{"authorities":{"a":"api.a.dev"},"country":"cf-ipcountry","censor":["RU","IR"]}'
       """
