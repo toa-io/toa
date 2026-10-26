@@ -10,7 +10,7 @@
     "bench": "node --import tsx source/main.ts"
   },
   "dependencies": {
-    "jose": "6.2.12",
+    "jose": "6.2.13",
     "mongodb": "7.7.0"
   }
 }
