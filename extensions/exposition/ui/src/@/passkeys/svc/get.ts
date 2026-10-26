@@ -1,5 +1,5 @@
 import { having } from 'svas'
-import { account } from '@/iam'
+import { account } from '#/iam/index.js'
 import * as origin from './net'
 import type { Passkey } from './store'
 

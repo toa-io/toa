@@ -1,8 +1,8 @@
 <script lang="ts">
   import { tick } from 'svelte'
   import { Async } from 'svas'
-  import { passkeys } from '@/passkeys'
-  import * as Item from '$ui/item'
+  import * as Item from '#ui/item/index.js'
+  import { passkeys } from '#/passkeys/index.js'
   import Summary from './Summary.svelte'
   import Manager from './Manager.svelte'
 

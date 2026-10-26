@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { account } from '@/iam'
-  import { Clipboard } from '$lib/components/clipboard'
+  import { Clipboard } from '#lib/components/clipboard/index.js'
+  import { account } from '#/iam/index.js'
   import { dict } from './intl'
   import { authorize, type Props } from './Authorized'
 

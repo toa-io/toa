@@ -14,7 +14,7 @@
 </script>
 
 <script lang="ts">
-  import { Button } from '$ui/button'
+  import { Button } from '#ui/button/index.js'
   import { getGroupContext } from './GroupContext'
   import { getContext } from './Context'
   import type { Props } from './Item'

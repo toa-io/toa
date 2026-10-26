@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Badge } from '$ui/badge'
+  import { Badge } from '#ui/badge/index.js'
   import { dict } from './intl'
   import Schema from './Schema.svelte'
   import type { Props } from './Answer'

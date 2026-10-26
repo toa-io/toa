@@ -1,7 +1,7 @@
 <script lang="ts">
   import { ChevronRight, KeyRound } from '@lucide/svelte'
-  import * as Item from '$ui/item'
-  import { base } from '$app/paths'
+  import { resolve } from '$app/paths'
+  import * as Item from '#ui/item/index.js'
   import { DEFAULT, split, valued } from './ui'
   import { holds } from './read'
   import { dict } from './intl'
@@ -17,7 +17,7 @@
 <!-- the row is the link, which is what the item's own `[a]:hover` styling expects -->
 <Item.Root variant="outline" size="sm" class={className}>
   {#snippet child({ props })}
-    <a {...props} id="configurations-{configuration.id}-link" href="{base}/{configuration.id}/">
+    <a {...props} id="configurations-{configuration.id}-link" href={resolve(`${configuration.id}/`)}>
       <Item.Content class="min-w-0">
         <!-- the name is one string; the component spaces its children by default, and a
              name too long for its column ends in an ellipsis rather than wrapping -->

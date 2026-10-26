@@ -1,7 +1,7 @@
 <script lang="ts">
   import { SvelteMap, SvelteSet } from 'svelte/reactivity'
-  import { Kbd } from '$ui/kbd'
-  import { transit, transition } from '$lib/tools'
+  import { Kbd } from '#ui/kbd/index.js'
+  import { transit, transition } from '#lib/tools/index.js'
   import { query } from '../ui'
   import { dict } from '../intl'
   import Node from '../Node.svelte'

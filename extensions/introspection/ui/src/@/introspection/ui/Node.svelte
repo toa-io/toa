@@ -1,7 +1,7 @@
 <script lang="ts">
   import { ChevronDown } from '@lucide/svelte'
-  import * as Item from '$ui/item'
-  import * as Collapsible from '$ui/collapsible'
+  import * as Item from '#ui/item/index.js'
+  import * as Collapsible from '#ui/collapsible/index.js'
   import { DEFAULT } from './ui'
   import Summary from './Summary.svelte'
   import Details from './Details.svelte'

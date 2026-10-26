@@ -1,6 +1,6 @@
 <script lang="ts">
   import { Bolt } from '@lucide/svelte'
-  import * as Item from '$ui/item'
+  import * as Item from '#ui/item/index.js'
   import { SERVICE } from './layout'
   import type { Props } from './Service'
 

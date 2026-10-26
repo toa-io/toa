@@ -1,7 +1,7 @@
 <script lang="ts">
   import { RotateCcw } from '@lucide/svelte'
-  import { reset } from '@/configuration'
-  import { Hold } from '$com/hold'
+  import { Hold } from '#com/hold/index.js'
+  import { reset } from '#/configuration/index.js'
   import { dict } from './intl'
   import type { Props } from './Reset'
 

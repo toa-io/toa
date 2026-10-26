@@ -1,4 +1,4 @@
-import { origin } from '@/net'
+import { origin } from '#/net/index.js'
 
 const basic = origin.resource('/identity/basic/', { credentials: 'include' })
 

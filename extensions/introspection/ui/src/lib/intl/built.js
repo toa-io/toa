@@ -19,7 +19,7 @@ export const dictionaries = {
       "interval": "Duration",
       "cancel": "Cancel",
       "hold": "Hold to halt",
-      "bounds": (min, max) => `${min}–${max} seconds`,
+      "bounds": /** @type {(...args: [any, any]) => string} */ ((min, max) => `${min}–${max} seconds`),
       "quiescence": "Quiescence",
       "failed": "The halt request wasn’t accepted. Try again."
     }

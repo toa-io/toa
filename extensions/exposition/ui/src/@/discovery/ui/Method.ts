@@ -1,5 +1,5 @@
 import type { ClassValue } from 'svelte/elements'
-import type { Method } from '@/discovery'
+import type { Method } from '#/discovery/index.js'
 
 export interface Props {
   /** The route template it is served at, which is what a call is made against. */

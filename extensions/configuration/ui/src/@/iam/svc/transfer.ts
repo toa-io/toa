@@ -1,4 +1,4 @@
-import { fragment, convert } from '$lib/tools'
+import { fragment, convert } from '#lib/tools/index.js'
 
 /**
  * Consume a session `challenge` passed via the URL fragment.

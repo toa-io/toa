@@ -1,13 +1,13 @@
 <script lang="ts">
   import { dump } from 'js-yaml'
   import { Pencil } from '@lucide/svelte'
-  import { create } from '@/configuration'
-  import { buttonVariants } from '$ui/button'
-  import * as Dialog from '$ui/alert-dialog'
+  import { buttonVariants } from '#ui/button/index.js'
+  import * as Dialog from '#ui/alert-dialog/index.js'
+  import { create } from '#/configuration/index.js'
   import { dict } from './intl'
   import Form from './Form.svelte'
-  import type { Node } from '@/configuration'
   import type { Props } from './Create'
+  import type { Node } from '#/configuration/index.js'
 
   const { configuration }: Props = $props()
 

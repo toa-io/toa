@@ -1,4 +1,4 @@
-import { origin } from '@/net'
+import { origin } from '#/net/index.js'
 import type { Configuration, Created, Node } from './Configuration'
 
 const values = origin.resource('/configuration/values/', { credentials: 'include' })

@@ -1,5 +1,5 @@
 import type { ClassValue } from 'svelte/elements'
-import type { Receiver } from '@/introspection'
+import type { Receiver } from '#/introspection/index.js'
 
 export interface Props {
   receiver: Pick<Receiver, 'source' | 'event' | 'operation' | 'conditioned' | 'adaptive'>

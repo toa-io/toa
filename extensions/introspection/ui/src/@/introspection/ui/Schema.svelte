@@ -1,7 +1,7 @@
 <script lang="ts">
   import { Braces, ChevronDown } from '@lucide/svelte'
-  import * as Collapsible from '$ui/collapsible'
-  import { Clipboard } from '$lib/components/clipboard'
+  import * as Collapsible from '#ui/collapsible/index.js'
+  import { Clipboard } from '#lib/components/clipboard/index.js'
   import { read } from './shape'
   import { dict } from './intl'
   import type { Props } from './Schema'

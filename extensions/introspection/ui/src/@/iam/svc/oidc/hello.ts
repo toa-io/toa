@@ -3,11 +3,11 @@
  * Currently unused as both apple and google use popups.
  */
 
-import * as accounts from '@/iam/svc/net'
-import { fragment, query, assert } from '$lib/tools'
-import { navigation } from '$config'
 import { resolve } from '$app/paths'
 import { goto } from '$app/navigation'
+import { fragment, query, assert } from '#lib/tools/index.js'
+import { navigation } from '#config/index.js'
+import * as accounts from '#/iam/svc/net/index.js'
 import { consume } from '../transfer'
 import { account, challenge, greeting } from '../store'
 import { logout } from '../logout'
@@ -33,7 +33,7 @@ export async function hello() {
     account.set(echo)
 
     if (navigation?.entry !== window.location.pathname)
-      await goto(resolve(navigation.entry), { replaceState: true })
+      await goto(resolve(navigation.entry), { replace: true })
   }
 
   greeting.set(false)

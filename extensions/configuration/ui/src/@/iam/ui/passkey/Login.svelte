@@ -1,9 +1,9 @@
 <script lang="ts">
   import { Fingerprint } from '@lucide/svelte'
-  import { dict } from '@/iam/ui/intl'
-  import { passkeys } from '@/iam'
-  import { Spinner } from '$ui/spinner'
-  import { Button } from '$ui/button'
+  import { Spinner } from '#ui/spinner/index.js'
+  import { Button } from '#ui/button/index.js'
+  import { dict } from '#/iam/ui/intl/index.js'
+  import { passkeys } from '#/iam/index.js'
 
   let busy = $state(false)
 

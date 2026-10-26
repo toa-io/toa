@@ -19,8 +19,8 @@
     "@faker-js/faker": "^10.6.0",
     "@internationalized/date": "^3.12.3",
     "@lucide/svelte": "^1.34.0",
-    "@sveltejs/adapter-static": "^3.0.10",
-    "@sveltejs/kit": "^2.70.3",
+    "@sveltejs/adapter-static": "^4.0.0",
+    "@sveltejs/kit": "^3.0.0",
     "@sveltejs/vite-plugin-svelte": "^7.3.0",
     "@tailwindcss/vite": "^4.3.3",
     "@toa.io/origin": "^1.18.2",
@@ -46,14 +46,14 @@
     "neostandard": "^0.13.0",
     "shadcn-svelte": "^1.5.1",
     "svas": "^2.0.1",
-    "svelte": "^5.56.10",
+    "svelte": "^5.57.1",
     "svelte-check": "^4.7.6",
-    "svintl": "^1.17.0",
+    "svintl": "^1.22.0",
     "tailwind-merge": "^3.6.0",
     "tailwind-variants": "^3.3.1",
     "tailwindcss": "^4.3.3",
     "tw-animate-css": "^1.4.0",
-    "typescript": "^5.9.3",
+    "typescript": "^6.0.0",
     "typescript-eslint": "^8.68.0",
     "vite": "^8.3.4",
     "vite-plugin-transform-lucide-imports": "^0.3.1",
@@ -68,10 +68,15 @@
     "qrcode": "^1.5.4"
   },
   "description": "Toa Configuration UI",
-  "overrides": {
-    "cookie": "^0.7.2"
-  },
   "allowScripts": {
     "fsevents": false
+  },
+  "imports": {
+    "#lib/*": "./src/lib/*",
+    "#ui/*": "./src/lib/components/ui/*",
+    "#com/*": "./src/lib/components/*",
+    "#config/*": "./src/config/*",
+    "#origin/*": "./src/origin/*",
+    "#/*": "./src/@/*"
   }
 }

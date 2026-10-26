@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { server } from '@/discovery'
+  import { server } from '#/discovery/index.js'
 </script>
 
 <!--

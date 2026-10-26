@@ -1,6 +1,6 @@
 import { DEFAULT, identify, matches, rank, shorten } from '../ui'
 
-import type { Edge, Node } from '@/introspection'
+import type { Edge, Node } from '#/introspection/index.js'
 
 /** A component of the application, as its manifest describes it. */
 export interface Component {

@@ -1,6 +1,6 @@
 <script lang="ts">
   import { ChevronRight } from '@lucide/svelte'
-  import { configuration } from '$config'
+  import { configuration } from '#config/index.js'
   import { identify } from './ui'
   import { dict } from './intl'
   import Section from './Section.svelte'

@@ -1,11 +1,11 @@
 <script lang="ts">
   import { ArrowRight } from '@lucide/svelte'
-  import { dict } from '@/iam/ui/intl'
-  import { passkeys } from '@/iam'
-  import { Spinner } from '$ui/spinner'
-  import { Input } from '$ui/input'
-  import { Button } from '$ui/button'
-  import { autofocus, onsubmit } from '$lib/tools'
+  import { Spinner } from '#ui/spinner/index.js'
+  import { Input } from '#ui/input/index.js'
+  import { Button } from '#ui/button/index.js'
+  import { autofocus, onsubmit } from '#lib/tools/index.js'
+  import { dict } from '#/iam/ui/intl/index.js'
+  import { passkeys } from '#/iam/index.js'
   import type { Props } from './Create'
 
   const { account, disabled, oncreate }: Props = $props()

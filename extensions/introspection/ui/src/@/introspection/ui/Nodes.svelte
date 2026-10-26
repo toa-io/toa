@@ -1,9 +1,9 @@
 <script lang="ts">
   import { SvelteSet } from 'svelte/reactivity'
   import { Async, ok } from 'svas'
-  import { nodes } from '@/introspection'
-  import { Separator } from '$ui/separator'
-  import * as Item from '$ui/item'
+  import { Separator } from '#ui/separator/index.js'
+  import * as Item from '#ui/item/index.js'
+  import { nodes } from '#/introspection/index.js'
   import { identify, only, query, rank, system } from './ui'
   import { dict } from './intl'
   import Node from './Node.svelte'

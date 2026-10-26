@@ -1,5 +1,5 @@
 import type { ClassValue } from 'svelte/elements'
-import type { Operation } from '@/introspection'
+import type { Operation } from '#/introspection/index.js'
 
 export type OperationLike = Pick<
   Operation,

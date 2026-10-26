@@ -47,7 +47,7 @@ Service methods that rely on the current identity must use `await having()` from
 **UI Layer (`ui/`)**:
 
 - Contains Svelte components that consume services
-- Components import domain services via `@/{domain}` alias
+- Components import domain services via the `#/{domain}` subpath import
 - **`index.ts`**: Exports reusable UI components
 - Transient UI state is managed in `ui.ts` file
 - Active elements must have an `id` attribute that follows the pattern `{domain-or-route}-{element}-{kind}` (e.g. `iam-email-tab`, `accounts-name-input`, `me-logout-button`)
@@ -161,7 +161,7 @@ Routes are grouped under `src/routes/` by access:
 
 ## Screens
 
-Shell `Header` (`$com/shell`) is owned by the **page** (`src/routes/**/+page.svelte`), never by domain or shared UI components. The page owns the title and explorer badges as `Header` children. Header utility buttons register via `<Utilities>` (stack; last wins), the same pattern as `<Actions>` for the bottom nav. Presentational components receive props and render body content only.
+Shell `Header` (`#com/shell`) is owned by the **page** (`src/routes/**/+page.svelte`), never by domain or shared UI components. The page owns the title and explorer badges as `Header` children. Header utility buttons register via `<Utilities>` (stack; last wins), the same pattern as `<Actions>` for the bottom nav. Presentational components receive props and render body content only.
 
 Card / Dialog `*.Header` parts are unrelated — they stay inside those compound components.
 
@@ -195,7 +195,7 @@ Bridge forms with domain services by implementing specific business operations (
 ```typescript
 // Create.svelte - connects Form to something.add service
 <script lang="ts">
-  import { add } from '@/something'
+  import { add } from '#/something/index.js'
   import { Form, type Value } from './form'
 
   let value: Value = $state({ title: '' })
@@ -209,6 +209,10 @@ Bridge forms with domain services by implementing specific business operations (
 ```
 
 ## Svelte
+
+### Imports
+
+- **Subpath imports, naming the file** - The app imports itself through the subpath imports of `package.json` — `#lib`, `#ui`, `#com`, `#config`, `#origin`, and `#/` for domains — and names the file: `#ui/button/index.js`, `#lib/utils.js`, `#/iam/index.js`.
 
 ### Reactivity
 
@@ -273,7 +277,7 @@ This project uses `svintl` (`/svintl`, `npx intl`) for all user-facing text.
 
 **svintl translates automatically** — author the source text once; every other locale is generated. Never supply per-locale translations or code a default-language fallback.
 
-Each domain carries its own `ui/intl/` mount whose dictionary derives from the host `$lib/intl` locale and uses **only its own** dictionary.
+Each domain carries its own `ui/intl/` mount whose dictionary derives from the host `#lib/intl` locale and uses **only its own** dictionary.
 
 ## Linked Entities Pattern
 
@@ -292,7 +296,7 @@ export interface Contact {
 
 // Linked entity (enriched domain model) - defined in svc/Contact.ts
 export interface Contact extends net.Contact {
-  account: Account // Linked entity from @/account domain
+  account: Account // Linked entity from the `account` domain
 }
 ```
 
@@ -308,7 +312,7 @@ The mapping function transforms network entities into linked entities by:
 
 ```typescript
 import { awaited } from 'svas'
-import { accounts } from '@/accounts'
+import { accounts } from '#/accounts/index.js'
 
 export async function map(entry: net.Contact): Promise<Contact | Error> {
   const account = await awaited(accounts.get(entry.identity)) // Fetch linked Account entity
@@ -317,7 +321,7 @@ export async function map(entry: net.Contact): Promise<Contact | Error> {
 
   return {
     ...entry,
-    account // Linked Account entity from @/account domain
+    account // Linked Account entity from the `account` domain
   }
 }
 ```

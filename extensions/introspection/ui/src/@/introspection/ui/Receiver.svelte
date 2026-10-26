@@ -1,6 +1,6 @@
 <script lang="ts">
   import { ArrowRight } from '@lucide/svelte'
-  import { Badge } from '$ui/badge'
+  import { Badge } from '#ui/badge/index.js'
   import { shorten } from './ui'
   import { dict } from './intl'
   import type { Props } from './Receiver'

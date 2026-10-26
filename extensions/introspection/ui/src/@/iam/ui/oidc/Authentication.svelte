@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { oidc } from '@/iam'
+  import { oidc } from '#/iam/index.js'
   import Button from './Button.svelte'
   import type { Props } from './Authentication'
 

@@ -1,4 +1,4 @@
-import { origin } from '@/net'
+import { origin } from '#/net/index.js'
 import type { CreationOptions, RequestOptions } from './Options'
 
 const challenges = origin.resource('/identity/passkeys/challenges/')

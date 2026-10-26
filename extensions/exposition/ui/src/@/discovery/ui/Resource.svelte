@@ -1,8 +1,8 @@
 <script lang="ts">
   import { ChevronRight } from '@lucide/svelte'
-  import * as Item from '$ui/item'
-  import * as Collapsible from '$ui/collapsible'
-  import { Badge } from '$ui/badge'
+  import * as Item from '#ui/item/index.js'
+  import * as Collapsible from '#ui/collapsible/index.js'
+  import { Badge } from '#ui/badge/index.js'
   import { method, slashed, verbs } from './ui'
   import { dict } from './intl'
   import Parameters from './Parameters.svelte'

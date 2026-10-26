@@ -1,14 +1,14 @@
 <script lang="ts">
   import { SvelteSet } from 'svelte/reactivity'
   import { Async } from 'svas'
-  import { tree } from '@/discovery'
-  import { Separator } from '$ui/separator'
-  import * as Item from '$ui/item'
+  import { Separator } from '#ui/separator/index.js'
+  import * as Item from '#ui/item/index.js'
+  import { tree } from '#/discovery/index.js'
   import { discovered, only, query, rank, system } from './ui'
   import { dict } from './intl'
   import Resource from './Resource.svelte'
-  import type { Resource as Described } from '@/discovery'
   import type { Props } from './Resources'
+  import type { Resource as Described } from '#/discovery/index.js'
 
   const { class: className, ...props }: Props = $props()
 

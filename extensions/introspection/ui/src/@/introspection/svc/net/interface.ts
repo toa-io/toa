@@ -1,4 +1,4 @@
-import { origin } from '@/net'
+import { origin } from '#/net/index.js'
 import type { Node } from './Node'
 import type { Configuration } from './Halt'
 import type { Edge } from './Edge'

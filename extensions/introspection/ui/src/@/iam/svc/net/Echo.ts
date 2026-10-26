@@ -1,4 +1,4 @@
-import type { Grammar } from '$lib/intl'
+import type { Grammar } from '#lib/intl/index.js'
 
 /** What `GET /identity/` answers: the identity the credentials resolved to. */
 export interface Echo {

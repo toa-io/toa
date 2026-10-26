@@ -1,5 +1,5 @@
 import { connect } from '@toa.io/origin'
-import * as config from '$config'
+import * as config from '#config/index.js'
 
 export const origin = connect({ origin: config.origin, sleep: config.sleep })
 

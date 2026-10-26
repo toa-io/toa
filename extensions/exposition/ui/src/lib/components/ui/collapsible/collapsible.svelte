@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Collapsible as CollapsiblePrimitive } from "bits-ui";
-	import { transit } from "$lib/tools";
+	import { transit } from "#lib/tools/index.js";
 
 	let {
 		ref = $bindable(null),

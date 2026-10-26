@@ -1,7 +1,7 @@
 import { load } from 'js-yaml'
 import Ajv, { type ErrorObject, type ValidateFunction } from 'ajv'
 import type { ClassValue } from 'svelte/elements'
-import type { Node } from '@/configuration'
+import type { Node } from '#/configuration/index.js'
 
 export interface Value {
   /** The configuration as the reader wrote it. */

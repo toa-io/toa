@@ -1,4 +1,4 @@
-import type { Method } from '@/discovery'
+import type { Method } from '#/discovery/index.js'
 
 export interface Props {
   route: string

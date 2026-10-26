@@ -1,6 +1,6 @@
 import { get } from 'svelte/store'
-import { meta, origin } from '@/net'
-import { challenge } from '@/iam/svc/store'
+import { meta, origin } from '#/net/index.js'
+import { challenge } from '#/iam/svc/store.js'
 import type { Discovered } from './Discovered'
 import type { Answer, Call } from './Answer'
 

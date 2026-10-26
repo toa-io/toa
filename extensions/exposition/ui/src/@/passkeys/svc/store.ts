@@ -1,5 +1,5 @@
 import { collection } from 'svas'
-import { account } from '@/iam/svc/store'
+import { account } from '#/iam/svc/store.js'
 import { get } from './get'
 import type * as origin from './net'
 

@@ -1,6 +1,6 @@
 <script lang="ts">
   import { ChevronRight, CircleQuestionMark } from '@lucide/svelte'
-  import * as Item from '$ui/item'
+  import * as Item from '#ui/item/index.js'
   import type { Props } from './Guide'
 
   const { href, title, id }: Props = $props()

@@ -1,10 +1,10 @@
 <script lang="ts">
   import './layout.css'
-  import { navigate } from '$lib/tools'
-  import { dict } from '$lib/intl'
-  import { meta } from '$config'
   import { page } from '$app/state'
   import { onNavigate } from '$app/navigation'
+  import { navigate } from '#lib/tools/index.js'
+  import { dict } from '#lib/intl/index.js'
+  import { meta } from '#config/index.js'
 
   const { children } = $props()
   const title = $derived(page.data.meta?.title ?? meta.title)

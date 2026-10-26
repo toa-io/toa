@@ -1,7 +1,7 @@
 <script lang="ts">
   import { Async } from 'svas'
-  import { account } from '@/iam'
-  import * as Item from '$ui/item'
+  import * as Item from '#ui/item/index.js'
+  import { account } from '#/iam/index.js'
   import { Transfer } from './transfer'
   import { providers } from './providers'
   import { Passkeys } from './passkeys'
