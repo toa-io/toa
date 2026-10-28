@@ -173,6 +173,28 @@ The request body must be an object.
 > The intended use case for this directive is audit.
 > **Using it to pass Identity to the application logic is strongly discouraged.**
 
+### `transfer`
+
+Gives the value of the `authorization` header to the operation as the property of the input
+named by the directive's value, and grants access. The input must be an object.
+
+```yaml
+/notifications:
+  POST:
+    auth:transfer: authorization
+    endpoint: ingest
+```
+
+For a caller that authenticates as itself, with a credential that is not the gateway's: a push of
+a message broker, a webhook signed by its sender. The operation verifies it:
+
+- the gateway does not read the header, so the call has no identity, and a credential of any
+  scheme reaches the operation as it was sent;
+- without the header, the property is absent;
+- the reply is never stored: `cache-control: no-store`;
+- a [procedure](rpc.md) does not reach the method;
+- no other `auth:` directive of its method is asked, whether declared on it or inherited.
+
 ## Roles
 
 A role is a value assigned to an Identity, managed by the
