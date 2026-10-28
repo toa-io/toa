@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.337](https://github.com/toa-io/toa/compare/v1.0.0-alpha.336...v1.0.0-alpha.337) (2026-10-28)
+
+### Features
+
+* **chronicles:** a context that names no store writes the log and does not read it ([9aa3a6a](https://github.com/toa-io/toa/commit/9aa3a6a8b00c713a6c711939af7431c3cd7456d5))
+
+
 # [1.0.0-alpha.336](https://github.com/toa-io/toa/compare/v1.0.0-alpha.335...v1.0.0-alpha.336) (2026-10-26)
 
 **Note:** Version bump only for package @toa.io/definitions
