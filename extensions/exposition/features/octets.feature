@@ -213,6 +213,21 @@ Feature: Octets directive family
       415 Unsupported Media Type
       """
 
+  # a body shorter than a signature is held to what it claims as any other is
+  Scenario: Rejection of a short body of a type not accepted
+    When the following request is received:
+      """
+      POST /media/images/ HTTP/1.1
+      host: nex.toa.io
+      content-type: application/pdf
+
+      %PDF-1.4
+      """
+    Then the following reply is sent:
+      """
+      415 Unsupported Media Type
+      """
+
   Scenario: Fetching non-existent BLOB
     When the following request is received:
       """
