@@ -622,20 +622,38 @@ chronicles:
   encounters: true
 ```
 
-|              |                                                                                     |
-| ------------ | ----------------------------------------------------------------------------------- |
-| `broker`     | where the rows are published                                                        |
-| `store`      | where they are read: the provider, and the address of its server                    |
-| `retention`  | days a row of `events` and of `encounters` is kept; absent, kept                    |
-| `encounters` | the routes clients send to; absent, there are none                                  |
-| `ip`         | `full` keeps a client's whole address; absent, its network                          |
-| `resources`  | what the service may take, as [`resources`](/migrations/262.md) is stated elsewhere |
+|              |                                                                                                  |
+| ------------ | ------------------------------------------------------------------------------------------------ |
+| `broker`     | where the rows are published                                                                     |
+| `store`      | where they are read: the provider, and the address of its server; absent, they are not read here |
+| `retention`  | days a row of `events` and of `encounters` is kept; absent, kept                                 |
+| `encounters` | the routes clients send to; absent, there are none                                               |
+| `ip`         | `full` keeps a client's whole address; absent, its network                                       |
+| `resources`  | what the service may take, as [`resources`](/migrations/262.md) is stated elsewhere              |
 
 ```shell
 $ toa conceal chronicles broker_username=… broker_password=… store_username=… store_password=…
 ```
 
 The service `chronicles-relay` alone is given the secret.
+
+### Writing without reading
+
+A context that names no `store` writes the log and does not read it: it has none of the routes of
+[Reading the log](#reading-the-log), nor their tools, and its secret holds the broker's user alone.
+Its rows are read where a store's user may read their scope — by a platform that reads the
+contexts it runs, say.
+
+```yaml
+# context.toa.yaml
+chronicles:
+  broker: amqp://analytics.internal
+  encounters: true
+```
+
+```shell
+$ toa conceal chronicles broker_username=… broker_password=…
+```
 
 The events the components declare travel where the context's `amqp` says, as every event does, and
 the relay takes them from there. A fact and an encounter reach it as tasks. Each is acknowledged

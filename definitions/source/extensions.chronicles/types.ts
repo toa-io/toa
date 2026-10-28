@@ -5,8 +5,8 @@ export interface Annotation {
   /** the AMQP address of the broker the rows are published to */
   broker: string
 
-  /** where the log is read, by the provider that keeps it */
-  store: Store
+  /** where the log is read, by the provider that keeps it; absent, it is written and not read */
+  store?: Store
 
   /** days a row of `events` and of `encounters` is kept; absent, kept */
   retention?: number
@@ -33,7 +33,7 @@ export interface Store {
 /** What the service is given of the annotation, its credentials aside. */
 export interface Settings {
   broker: string
-  store: Store
+  store?: Store
   retention?: number
   encounters: boolean
   ip: Address
