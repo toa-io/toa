@@ -379,6 +379,71 @@ Feature: Model Context Protocol
         resultType: complete
       """
 
+  Scenario: A list is answered as text alone
+    The revision has structured content be an object, and a list is not one: its JSON is the
+    text block, and the tool states no output schema.
+
+    When the following request is received:
+      """
+      POST /.mcp HTTP/1.1
+      host: nex.toa.io
+      accept: application/yaml
+      content-type: application/json
+      mcp-protocol-version: 2026-07-28
+      mcp-method: tools/call
+      mcp-name: pots.GET
+
+      {"jsonrpc": "2.0", "id": 5, "method": "tools/call",
+       "params": {"name": "pots.GET", "arguments": {},
+                  "_meta": {"io.modelcontextprotocol/protocolVersion": "2026-07-28",
+                            "io.modelcontextprotocol/clientCapabilities": {}}}}
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+
+      jsonrpc: '2.0'
+      id: 5
+      result:
+        content:
+          - type: text
+            text: '[{"title":"First pot","volume":100,"id":"4c4759e6f9c74da989d64511df42d6f4"}]'
+        resultType: complete
+      """
+    And the reply does not contain:
+      """
+      structuredContent
+      """
+    When the following request is received:
+      """
+      POST /.mcp HTTP/1.1
+      host: nex.toa.io
+      accept: application/yaml
+      content-type: application/json
+      mcp-protocol-version: 2026-07-28
+      mcp-method: tools/list
+
+      {"jsonrpc": "2.0", "id": 6, "method": "tools/list",
+       "params": {"_meta": {"io.modelcontextprotocol/protocolVersion": "2026-07-28",
+                            "io.modelcontextprotocol/clientCapabilities": {}}}}
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+
+      jsonrpc: '2.0'
+      id: 6
+      result:
+        tools:
+          - name: pots._id.GET
+            outputSchema:
+              type: object
+      """
+    And the reply does not contain:
+      """
+      type: array
+      """
+
   Scenario: What is left of the arguments is the input
     When the following request is received:
       """

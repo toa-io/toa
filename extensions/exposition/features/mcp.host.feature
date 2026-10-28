@@ -66,7 +66,13 @@ Feature: MCP on a host of its own
       jsonrpc: '2.0'
       id: 2
       result:
-        structuredContent: Kettles and teapots.
+        content:
+          - type: text
+            text: '"Kettles and teapots."'
+      """
+    And the reply does not contain:
+      """
+      structuredContent
       """
 
   Scenario: The path keeps answering on the authority's own host

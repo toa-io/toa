@@ -75,6 +75,14 @@ describe('output', () => {
     assert.equal(output({ output: schema({}) }), undefined)
     assert.equal(output({}), undefined)
   })
+
+  it('should state none for a reply that is not an object', () => {
+    // the revision has a tool's output schema describe an object, which a list is not
+    const list = schema({ type: 'array', items: { type: 'object' } })
+
+    assert.equal(output({ output: list }), undefined)
+    assert.equal(output({ output: schema({ type: 'string' }) }), undefined)
+  })
 })
 
 describe('annotations', () => {
