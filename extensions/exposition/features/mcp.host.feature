@@ -69,10 +69,8 @@ Feature: MCP on a host of its own
         content:
           - type: text
             text: '"Kettles and teapots."'
-      """
-    And the reply does not contain:
-      """
-      structuredContent
+        structuredContent:
+          result: Kettles and teapots.
       """
 
   Scenario: The path keeps answering on the authority's own host

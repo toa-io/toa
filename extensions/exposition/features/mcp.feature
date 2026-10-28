@@ -379,9 +379,9 @@ Feature: Model Context Protocol
         resultType: complete
       """
 
-  Scenario: A list is answered as text alone
-    The revision has structured content be an object, and a list is not one: its JSON is the
-    text block, and the tool states no output schema.
+  Scenario: A list is answered under `result`
+    Structured content is an object, and a list is not one: it is the `result` of one, and so is
+    the output schema a tool states for it. The text block is the reply's JSON as it is.
 
     When the following request is received:
       """
@@ -408,11 +408,12 @@ Feature: Model Context Protocol
         content:
           - type: text
             text: '[{"title":"First pot","volume":100,"id":"4c4759e6f9c74da989d64511df42d6f4"}]'
+        structuredContent:
+          result:
+            - title: First pot
+              volume: 100
+              id: 4c4759e6f9c74da989d64511df42d6f4
         resultType: complete
-      """
-    And the reply does not contain:
-      """
-      structuredContent
       """
     When the following request is received:
       """
@@ -435,13 +436,15 @@ Feature: Model Context Protocol
       id: 6
       result:
         tools:
-          - name: pots._id.GET
+          - name: pots.GET
+            description: All the pots, newest first.
             outputSchema:
               type: object
-      """
-    And the reply does not contain:
-      """
-      type: array
+              properties:
+                result:
+                  type: array
+              required:
+                - result
       """
 
   Scenario: What is left of the arguments is the input
