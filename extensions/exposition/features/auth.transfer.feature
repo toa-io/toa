@@ -128,6 +128,34 @@ Feature: Transferring a credential to the operation
       201 Created
       """
 
+  Scenario: The credential reaches an operation given the body as it arrived
+    Given the `echo` is running with the following manifest:
+      """yaml
+      exposition:
+        /:
+          io:output: true
+          auth:transfer: authorization
+          map:buffer: buf
+          POST: echo
+      """
+    When the following request is received:
+      """
+      POST /echo/ HTTP/1.1
+      host: nex.toa.io
+      authorization: Bearer token
+      accept: application/yaml
+      content-type: application/json
+
+      {"message":"hello"}
+      """
+    Then the following reply is sent:
+      """
+      201 Created
+
+      buf: '{"message":"hello"}'
+      authorization: Bearer token
+      """
+
   Scenario: A procedure does not reach a method that transfers
     Given the annotation:
       """yaml

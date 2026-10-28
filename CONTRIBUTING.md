@@ -407,6 +407,24 @@ package would publish is read before releasing it:
 $ npm pack --dry-run                # from the package directory
 ```
 
+### Tried in an application before it is released
+
+A scenario here runs a change against the components it was written for. An application that
+asked for the change runs it against its own, and that is where what no scenario here imagined
+shows: a directive among the others its routes declare, a body another directive consumed. So a
+change an application is waiting for is run there before it is released. Link the transpiled
+packages it changed into that application's `node_modules`, restart whatever of the application
+serves them — the gateway, for `extensions.exposition` — run the application's suites, and put
+its own copies back after:
+
+```shell
+$ npm run transpile
+$ mv <app>/node_modules/@toa.io/extensions.exposition /tmp/exposition
+$ ln -s "$PWD/extensions/exposition" <app>/node_modules/@toa.io/extensions.exposition
+```
+
+A failure there is a scenario missing here: it is written, and fixed, before the release.
+
 ### A package published for the first time
 
 The workflow authenticates to npm with a trusted publisher — OIDC, no token — and a trusted
