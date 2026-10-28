@@ -55,8 +55,9 @@ export class Transfer implements Directive {
     response.headers.set('cache-control', 'no-store')
   }
 
+  /** A body taken as it arrived (`map:buffer`, `map:stream`) is none here, as it is to `map`. */
   private embed(body: unknown, credential: string): Record<string, unknown> {
-    if (body === undefined) body = {}
+    if (body === undefined || body === null) body = {}
 
     if (typeof body !== 'object' || body === null)
       throw new BadRequest('Invalid request body')
