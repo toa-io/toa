@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.341](https://github.com/toa-io/toa/compare/v1.0.0-alpha.340...v1.0.0-alpha.341) (2026-10-28)
+
+### Features
+
+* **exposition:** auth:transfer, and a credential a method transfers is not authenticated ([b7270bb](https://github.com/toa-io/toa/commit/b7270bb6b6dafc9d960f9cb47a3b7847a0787046))
+
+
 # [1.0.0-alpha.340](https://github.com/toa-io/toa/compare/v1.0.0-alpha.339...v1.0.0-alpha.340) (2026-10-28)
 
 ### Bug Fixes
