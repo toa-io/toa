@@ -1,14 +1,14 @@
 import { ClickHouseProvider } from './clickhouse/Provider.ts'
 import type { Provider } from './Provider.ts'
 import type { User } from './settings.ts'
-import type { Settings } from '@toa.io/definitions/extensions.chronicles'
+import type { Store } from '@toa.io/definitions/extensions.chronicles'
 
 /** The provider the annotation names, read as the context's user of it. */
-export function provider(settings: Settings, user: User, scope: string): Provider {
-  switch (settings.store.provider) {
+export function provider(store: Store, user: User, scope: string): Provider {
+  switch (store.provider) {
     case 'clickhouse':
-      return new ClickHouseProvider(settings.store.url, user, scope)
+      return new ClickHouseProvider(store.url, user, scope)
     default:
-      throw new Error(`Chronicles have no store '${String(settings.store.provider)}'`)
+      throw new Error(`Chronicles have no store '${String(store.provider)}'`)
   }
 }
