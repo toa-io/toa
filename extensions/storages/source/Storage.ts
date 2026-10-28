@@ -89,6 +89,21 @@ export class Storage<T extends Provider = Provider> {
     })
   }
 
+  /**
+   * Where the file is read straight from the provider, by whoever is given the address and with
+   * no credentials of their own: a model, a browser, another service. A signed address is good for
+   * `expires` seconds, an hour unless asked otherwise and a week at most. `NOT_FOUND` is a file the
+   * storage does not have, where the provider can tell; `NO_URL` is a storage that serves no
+   * address of its own.
+   */
+  public async url(path: string, options?: UrlOptions): Maybe<string> {
+    return await console.span(this.span('url', dirname(path)), async () => {
+      const expires = Math.min(options?.expires ?? HOUR, WEEK)
+
+      return await this.provider.url(this.locate(path), expires)
+    })
+  }
+
   public path(): string | null {
     return this.provider.root ?? null
   }
@@ -111,6 +126,17 @@ export class Storage<T extends Provider = Provider> {
 }
 
 const ENTRIES = '/'
+
+/** How long a signed address is good for, unless asked otherwise, s. */
+const HOUR = 60 * 60
+
+/** The longest a signed address is good for: what S3 signs for, s. */
+const WEEK = 7 * 24 * HOUR
+
+export interface UrlOptions {
+  /** Seconds a signed address is good for: an hour by default, a week at most. */
+  expires?: number
+}
 
 interface Options extends ScanOptions {
   id?: string

@@ -16,8 +16,12 @@ const peers: Record<string, string> = JSON.parse(
  * declares them — `packages.test.ts` is what keeps the two the same.
  */
 export const packages: Record<Provider, Readonly<Record<string, string>>> = {
-  s3: pin('@aws-sdk/client-s3', '@aws-sdk/lib-storage'),
-  spaces: pin('@aws-sdk/client-s3', '@aws-sdk/lib-storage'),
+  s3: pin('@aws-sdk/client-s3', '@aws-sdk/lib-storage', '@aws-sdk/s3-request-presigner'),
+  spaces: pin(
+    '@aws-sdk/client-s3',
+    '@aws-sdk/lib-storage',
+    '@aws-sdk/s3-request-presigner'
+  ),
   cloudinary: pin('cloudinary'),
   fs: {},
   tmp: {},

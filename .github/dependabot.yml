@@ -47,6 +47,7 @@ updates:
         patterns:
           - '@aws-sdk/client-s3'
           - '@aws-sdk/lib-storage'
+          - '@aws-sdk/s3-request-presigner'
           - '@node-rs/bcrypt'
           - '@simplewebauthn/server'
           - cloudinary
