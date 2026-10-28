@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/extensions.chronicles",
-  "version": "1.0.0-alpha.338",
+  "version": "1.0.0-alpha.339",
   "type": "module",
   "description": "Toa Chronicles: a log of a context, kept in ClickHouse",
   "author": "temich <tema.gurtovoy@gmail.com>",
@@ -32,7 +32,7 @@
   },
   "dependencies": {
     "@toa.io/core": "1.0.0-alpha.333",
-    "@toa.io/definitions": "1.0.0-alpha.338",
+    "@toa.io/definitions": "1.0.0-alpha.339",
     "@toa.io/generic": "1.0.0-alpha.332",
     "comq": "0.28.0",
     "openspan": "1.0.0-alpha.330"
