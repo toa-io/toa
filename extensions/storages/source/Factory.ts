@@ -12,6 +12,9 @@ import type { Annotation } from '@toa.io/definitions/extensions.storages'
 export class Factory {
   private readonly annotation: Annotation
 
+  /** The storages made so far, by name: one for the process, whichever component declares it. */
+  private readonly made = new Map<string, Promise<Storage>>()
+
   public constructor() {
     const env = environment.get(ENV_PREFIX)
 
@@ -22,16 +25,40 @@ export class Factory {
     validateAnnotation(this.annotation)
   }
 
-  public aspect(): Aspect {
-    return new Aspect(() => this.createStorages())
+  /**
+   * The storages of a component: those it declares, and every storage there is where it names
+   * none (`storages: ~`). A deploy installs the SDKs of the providers a composition's components
+   * declare and no other, so a storage nobody in the process declares is not made: its provider
+   * may not be there.
+   */
+  public aspect(_: unknown, declaration?: string[] | null): Aspect {
+    const names =
+      declaration === undefined || declaration === null || declaration.length === 0
+        ? Object.keys(this.annotation)
+        : declaration
+
+    return new Aspect(() => this.createStorages(names))
   }
 
-  private async createStorages(): Promise<Storages> {
+  private async createStorages(names: string[]): Promise<Storages> {
     const storages: Storages = {}
 
-    for (const [name, declaration] of Object.entries(this.annotation))
-      // the annotation is validated above, so a declaration is its provider's
-      storages[name] = await this.createStorage(name, declaration as Declaration)
+    for (const name of names) {
+      const declaration = this.annotation[name]
+
+      // one the annotation does not declare is refused as it is used (`Aspect.invoke`)
+      if (declaration === undefined) continue
+
+      let storage = this.made.get(name)
+
+      if (storage === undefined) {
+        // the annotation is validated above, so a declaration is its provider's
+        storage = this.createStorage(name, declaration as Declaration)
+        this.made.set(name, storage)
+      }
+
+      storages[name] = await storage
+    }
 
     return storages
   }

@@ -3,7 +3,7 @@ Feature: Storages Extension
   Scenario: Adding a file
     Given an environment variable `TOA_STORAGES` is set to:
       """yaml
-      dummy:
+      tmp:
         provider: tmp
         directory: whatever
       """
@@ -11,7 +11,7 @@ Feature: Storages Extension
     When I call `default.storage.put` with:
       """yaml
       input:
-        storage: dummy
+        storage: tmp
         path: /lenna.ascii
       """
     Then the reply is received:
@@ -24,20 +24,20 @@ Feature: Storages Extension
   Scenario: Adding a file to S3
     Given an environment variable `TOA_STORAGES` is set to:
       """yaml
-      dummy:
+      tmp:
         provider: s3
         bucket: test-bucket
         endpoint: http://s3.localhost.localstack.cloud:31050
         region: us-west-1
       """
 
-    And an environment variable `TOA_STORAGES_DUMMY_ACCESS_KEY` is set to "accessKey"
-    And an environment variable `TOA_STORAGES_DUMMY_SECRET_ACCESS_KEY` is set to "secretAccessKey"
+    And an environment variable `TOA_STORAGES_TMP_ACCESS_KEY` is set to "accessKey"
+    And an environment variable `TOA_STORAGES_TMP_SECRET_ACCESS_KEY` is set to "secretAccessKey"
     And I compose `storage` component
     When I call `default.storage.put` with:
       """yaml
       input:
-        storage: dummy
+        storage: tmp
         path: /lenna.ascii
       """
     Then the reply is received:
@@ -50,7 +50,7 @@ Feature: Storages Extension
   Scenario: Accessing undefined storage
     Given an environment variable `TOA_STORAGES` is set to:
       """yaml
-      dummy:
+      tmp:
         provider: tmp
         directory: whatever
       """
@@ -64,6 +64,31 @@ Feature: Storages Extension
     Then the following exception is thrown:
       """yaml
       message: "Storage 'wrong' is not defined"
+      """
+
+  # a process makes the storages its components declare, and no other: a storage of a provider
+  # whose SDK the image does not carry is no reason for it not to start
+  Scenario: A storage the component does not declare is not made
+    Given an environment variable `TOA_STORAGES` is set to:
+      """yaml
+      tmp:
+        provider: tmp
+        directory: whatever
+      remote:
+        provider: spaces
+        space: remote
+        region: fra1
+      """
+    And I compose `storage` component
+    When I call `default.storage.get` with:
+      """yaml
+      input:
+        storage: remote
+        path: /lenna.ascii
+      """
+    Then the following exception is thrown:
+      """yaml
+      message: "Storage 'remote' is not defined"
       """
 
   Scenario: Deploying a storage
@@ -88,12 +113,12 @@ Feature: Storages Extension
   Scenario: Running 'test:' provider with secrets
     Given an environment variable `TOA_STORAGES` is set to:
       """yaml
-      dummy:
+      tmp:
         provider: test
         directory: whatever
       """
-    And an environment variable `TOA_STORAGES_DUMMY_USERNAME` is set to "developer"
-    And an environment variable `TOA_STORAGES_DUMMY_PASSWORD` is set to "secret"
+    And an environment variable `TOA_STORAGES_TMP_USERNAME` is set to "developer"
+    And an environment variable `TOA_STORAGES_TMP_PASSWORD` is set to "secret"
     And I compose `storage` component
 
   Scenario: Deploying a storage with secrets
