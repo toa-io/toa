@@ -66,13 +66,16 @@ export function input(
  * What a tool answers with, where that is worth stating. An operation's `output` is optional
  * and normalizes to `{}`, which describes nothing — and a schema the revision would have the
  * reply validated against is worse said emptily than left unsaid.
+ *
+ * The revision has it describe an object, which is all structured content may be: a reply of
+ * another type is answered as text alone, and has no schema stated either.
  */
 export function output(introspection: Introspection): object | undefined {
   const schema = introspection.output as Shape | null | undefined
 
   if (schema === undefined || schema === null) return undefined
 
-  return Object.keys(schema).length === 0 ? undefined : (schema as object)
+  return schema.type === 'object' ? (schema as object) : undefined
 }
 
 /**
@@ -97,6 +100,7 @@ export function annotations(
 }
 
 interface Shape {
+  type?: string
   properties?: Record<string, Schema>
   required?: string[]
 }

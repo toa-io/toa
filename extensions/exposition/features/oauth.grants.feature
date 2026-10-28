@@ -163,7 +163,13 @@ Feature: Authorization code flow
       jsonrpc: '2.0'
       id: 2
       result:
-        structuredContent: Kettles and teapots.
+        content:
+          - type: text
+            text: '"Kettles and teapots."'
+      """
+    And the reply does not contain:
+      """
+      structuredContent
       """
     When the following request is received:
       """

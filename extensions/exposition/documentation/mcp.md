@@ -174,11 +174,13 @@ additionalProperties: false
 ## What a tool answers
 
 `content` carries one `text` block holding the reply's JSON, and `structuredContent` the reply
-itself. A reply of nothing is an empty `content`.
+itself where it is an object. A list or a single value is the text block alone: MCP allows
+structured content to be an object only. A reply of nothing is an empty `content`.
 
-`outputSchema` is what the operation declares, restricted by `io:output`. An operation's `output` is
-optional and normalizes to `{}`, which describes nothing, and none is stated for it — an
-application that wants the schema declares the operation's `output`.
+`outputSchema` is what the operation declares, restricted by `io:output`, where it declares an
+object. An operation's `output` is optional and normalizes to `{}`, which describes nothing, and
+none is stated for it — an application that wants the schema declares the operation's `output`.
+None is stated for an `output` of another type either, such as the array an `enumerate` declares.
 
 An operation that refuses answers a result with `isError: true` carrying its code, not an error
 of the protocol: it is something a model reads and may correct itself by.
