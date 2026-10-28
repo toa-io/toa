@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/operations",
-  "version": "1.0.0-alpha.341",
+  "version": "1.0.0-alpha.342",
   "type": "module",
   "description": "Toa Deployment",
   "homepage": "https://toa.io",
@@ -30,7 +30,7 @@
   "dependencies": {
     "@toa.io/generic": "1.0.0-alpha.332",
     "@toa.io/kubernetes": "1.0.0-alpha.301",
-    "@toa.io/norm": "1.0.0-alpha.341",
+    "@toa.io/norm": "1.0.0-alpha.342",
     "oxc-parser": "0.155.0",
     "paseto": "4.0.1"
   },

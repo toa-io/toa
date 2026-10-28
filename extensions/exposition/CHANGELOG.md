@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.342](https://github.com/toa-io/toa/compare/v1.0.0-alpha.341...v1.0.0-alpha.342) (2026-10-28)
+
+### Bug Fixes
+
+* **exposition:** auth:transfer gives the credential to an operation given the body as it arrived ([6078cb1](https://github.com/toa-io/toa/commit/6078cb17db29391c1613fcaa46ff621a1a304dde))
+
+
 # [1.0.0-alpha.341](https://github.com/toa-io/toa/compare/v1.0.0-alpha.340...v1.0.0-alpha.341) (2026-10-28)
 
 ### Features
