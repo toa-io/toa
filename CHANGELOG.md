@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.338](https://github.com/toa-io/toa/compare/v1.0.0-alpha.337...v1.0.0-alpha.338) (2026-10-28)
+
+### Bug Fixes
+
+* **exposition:** answer structured content and an output schema only for an object ([5671d30](https://github.com/toa-io/toa/commit/5671d30376f006d509c19dad4ff7cc9f883600e1))
+
+
 # [1.0.0-alpha.337](https://github.com/toa-io/toa/compare/v1.0.0-alpha.336...v1.0.0-alpha.337) (2026-10-28)
 
 ### Features
