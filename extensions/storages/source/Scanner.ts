@@ -38,6 +38,16 @@ export class Scanner extends PassThrough {
     this.process(buffer)
   }
 
+  /**
+   * A body that ends before a signature could be read is checked as it is: the type it claims, and
+   * what is acceptable, are what any other body is held to.
+   */
+  public override _flush(callback: TransformCallback): void {
+    if (!this.completed) this.complete()
+
+    if (this.error === undefined) callback()
+  }
+
   private readonly process = (buffer: Buffer): void => {
     this.size += buffer.length
     this.hash.update(buffer)

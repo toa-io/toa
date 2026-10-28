@@ -4,6 +4,7 @@ import assert from 'node:assert/strict'
 import { randomUUID } from 'node:crypto'
 import { buffer } from 'node:stream/consumers'
 import { createReadStream } from 'node:fs'
+import { Readable } from 'node:stream'
 import path from 'node:path'
 import { Storage } from './Storage.ts'
 import { suites } from './test/util.ts'
@@ -264,6 +265,36 @@ it('should return error if type is not acceptable', async () => {
 
   assert.ok(result instanceof Error)
   assert.deepStrictEqual(result['code'], 'NOT_ACCEPTABLE')
+})
+
+it('should return error if a body shorter than a signature is not acceptable', async () => {
+  const stream = Readable.from([Buffer.from('%PDF-1.4')])
+
+  const result = await storage.put(dir, stream, {
+    claim: 'application/pdf',
+    accept: 'image/*'
+  })
+
+  assert.ok(result instanceof Error)
+  assert.deepStrictEqual(result['code'], 'NOT_ACCEPTABLE')
+})
+
+it('should return error if a body shorter than a signature contradicts its claim', async () => {
+  const stream = Readable.from([Buffer.from('GIF8')])
+
+  const result = await storage.put(dir, stream, { claim: 'image/png' })
+
+  assert.ok(result instanceof Error)
+  assert.deepStrictEqual(result['code'], 'TYPE_MISMATCH')
+})
+
+it('should store a body shorter than a signature as its claim', async () => {
+  const stream = Readable.from([Buffer.from('hello')])
+
+  const result = await storage.put(dir, stream, { claim: 'text/plain', accept: 'text/*' })
+
+  assert.ok(!(result instanceof Error))
+  assert.deepStrictEqual(result['type'], 'text/plain')
 })
 
 it('should accept wildcard types', async () => {

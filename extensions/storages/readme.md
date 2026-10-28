@@ -5,9 +5,10 @@ Shared BLOB storage.
 ## Installing a provider
 
 A provider's SDK is not installed with this extension: `s3` and `spaces` need
-`@aws-sdk/client-s3` and `@aws-sdk/lib-storage`, `cloudinary` needs `cloudinary`, and `fs`, `tmp`
-and `test` need nothing. A deploy installs what the components of each composition declare, so
-an image carries the SDK of a provider it uses and no other.
+`@aws-sdk/client-s3`, `@aws-sdk/lib-storage` and `@aws-sdk/s3-request-presigner`, `cloudinary`
+needs `cloudinary`, and `fs`, `tmp` and `test` need nothing. A deploy installs what the components
+of each composition declare, so an image carries the SDK of a provider it uses and no other, and a
+process makes the storages its components declare — every one, for a component that names none.
 
 A workspace installs the same set itself, once, and again when a storage is added:
 
@@ -98,6 +99,15 @@ Fetch the BLOB specified by `path`. If the path does not exist, a `NOT_FOUND` er
 - `eecd837c` - fetch the BLOB by `id`
 - `/path/to/eecd837c` - fetch the BLOB by path
 - `/path/to/eecd837c.thumbnail.jpeg` - fetch the `thumbnail.jpeg` variant of the BLOB
+
+#### `async url(path: string, options?: { expires?: number }): Maybe<string>`
+
+Where the file is read straight from the provider, by whoever is given the address and with no
+credentials of their own. `s3` and `spaces` sign it for `expires` seconds — an hour by default, a
+week at most — and serve the file as the type it was stored as; `cloudinary` gives where it
+delivers the file, or a variant of it by extension, unsigned and without asking whether the file
+is there. `NOT_FOUND` is a file an `s3` or `spaces` storage does not have; `NO_URL` is a storage
+that serves no address of its own: `fs`, `tmp` and `test`.
 
 #### `async delete(path: string): Maybe<void>`
 

@@ -3,6 +3,7 @@ import { Blob } from 'node:buffer'
 import { join } from 'node:path/posix'
 import { Upload } from '@aws-sdk/lib-storage'
 import * as s3 from '@aws-sdk/client-s3'
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
 import { console } from 'openspan'
 import { Provider } from '../Provider.ts'
 import { secrets } from '@toa.io/definitions/extensions.storages'
@@ -158,6 +159,24 @@ export class S3 extends Provider<S3Options> {
         new s3.DeleteObjectCommand({ Bucket: this.bucket, Key: from })
       )
     })
+  }
+
+  /**
+   * An address of the object signed for `expires` seconds, which serves it as the type it was
+   * stored as: an object is stored with none of its own (`put`), and would be served as bytes.
+   */
+  public override async url(Key: string, expires: number): Promise<Maybe<string>> {
+    const metadata = await this.head(Key)
+
+    if (metadata instanceof Error) return metadata
+
+    const command = new s3.GetObjectCommand({
+      Bucket: this.bucket,
+      Key,
+      ResponseContentType: metadata.type
+    })
+
+    return await getSignedUrl(this.client, command, { expiresIn: expires })
   }
 
   private async try<T = void>(action: () => Promise<T>): Promise<Maybe<T>> {

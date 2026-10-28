@@ -2,6 +2,7 @@ import type { Metadata, Stream } from './Entry.ts'
 import type { Readable } from 'node:stream'
 import type { Maybe } from '@toa.io/core/types'
 import type { Secret, Secrets } from './Secrets.ts'
+import { ERR_NO_URL } from './errors.ts'
 
 export abstract class Provider<Options = unknown> {
   public static readonly SECRETS?: readonly Secret[]
@@ -28,6 +29,15 @@ export abstract class Provider<Options = unknown> {
   public abstract delete(path: string): Promise<void>
 
   public abstract move(from: string, to: string): Promise<Maybe<void>>
+
+  /**
+   * Where whoever is given it reads the file straight from the provider, with no credentials of
+   * their own, for `expires` seconds where the address is signed. A provider that serves no
+   * address of its own answers `NO_URL`.
+   */
+  public async url(_path: string, _expires: number): Promise<Maybe<string>> {
+    return ERR_NO_URL
+  }
 }
 
 export interface Constructor<Options = any> {
