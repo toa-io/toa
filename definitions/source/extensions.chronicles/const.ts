@@ -4,13 +4,14 @@ export const SETTINGS = 'TOA_CHRONICLES'
 /** The secret of the broker the rows are published to, and of the store they are read from. */
 export const SECRET = 'toa-chronicles'
 
-/** Its keys: the users of the broker and of the store. */
-export const KEYS = [
-  'broker_username',
-  'broker_password',
-  'store_username',
-  'store_password'
-]
+/** Its keys: the user of the broker, which every context that keeps the log has. */
+export const BROKER_KEYS = ['broker_username', 'broker_password']
+
+/** And the user of the store, which only a context that reads the log has. */
+export const STORE_KEYS = ['store_username', 'store_password']
+
+/** All of them. */
+export const KEYS = [...BROKER_KEYS, ...STORE_KEYS]
 
 /** The namespace of the components this extension ships. */
 export const NAMESPACE = 'chronicles'

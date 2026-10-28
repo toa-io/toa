@@ -78,7 +78,18 @@ export class Factory implements extensions.Factory {
   }
 
   private read(): Provider {
-    this.store ??= provider(settings(), credentials().store, environment.scope())
+    if (this.store !== undefined) return this.store
+
+    const { store } = settings()
+    const user = credentials().store
+
+    // the queries are deployed only where the annotation names a store
+    if (store === undefined || user === undefined)
+      throw new Error(
+        'Chronicles are written here and not read: the annotation names no store.'
+      )
+
+    this.store = provider(store, user, environment.scope())
 
     return this.store
   }

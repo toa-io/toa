@@ -80,6 +80,55 @@ Feature: Chronicles deployment
             - chronicles-relay
       """
 
+  Scenario: A context that writes the log and does not read it
+    Given I have a component `chronicled.orders`
+    And I have a context with:
+      """yaml
+      chronicles:
+        broker: amqp://analytics.example.com
+        encounters: true
+      """
+    When I export deployment
+    Then exported values should contain:
+      """yaml
+      services:
+        - name: chronicles-relay
+          components:
+            - chronicles-encounters
+            - chronicles-relay
+          variables:
+            - name: TOA_CHRONICLES
+            - name: TOA_CHRONICLES_BROKER_USERNAME
+              secret:
+                name: toa-chronicles
+                key: broker_username
+            - name: TOA_CHRONICLES_BROKER_PASSWORD
+              secret:
+                name: toa-chronicles
+                key: broker_password
+      """
+    And exported values should not contain:
+      """yaml
+      services:
+        - name: chronicles-relay
+          components:
+            - chronicles-queries
+      """
+    And exported values should not contain:
+      """yaml
+      services:
+        - name: chronicles-relay
+          variables:
+            - name: TOA_CHRONICLES_STORE_USERNAME
+      """
+    And exported values should not contain:
+      """yaml
+      services:
+        - name: chronicles-relay
+          variables:
+            - name: TOA_CHRONICLES_STORE_PASSWORD
+      """
+
   Scenario: What the service may take
     Given I have a component `chronicled.orders`
     And I have a context with:

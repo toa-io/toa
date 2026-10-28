@@ -6,7 +6,9 @@ properties:
     type: string
     pattern: ^amqps?://
   store:
-    description: Where the log is read, by the provider that keeps it
+    description: >
+      Where the log is read, by the provider that keeps it; absent, the context writes the log and
+      does not read it
     oneOf:
       - type: object
         properties:
@@ -48,5 +50,5 @@ properties:
           type: string
         minItems: 2
         maxItems: 2
-required: [broker, store]
+required: [broker]
 additionalProperties: false

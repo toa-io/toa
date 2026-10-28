@@ -1,6 +1,6 @@
 import { components } from './components.ts'
 import { version } from '../version.ts'
-import { KEYS, NAMESPACE, SECRET, SERVICE, SETTINGS } from './const.ts'
+import { BROKER_KEYS, KEYS, NAMESPACE, SECRET, SERVICE, SETTINGS } from './const.ts'
 import * as schemas from './schemas.ts'
 import type { Annotation, Contract, Declaration, Settings } from './types.ts'
 import type { context } from '@toa.io/norm'
@@ -9,7 +9,8 @@ import type { Dependency, Service, Variable } from '@toa.io/operations'
 /**
  * The events the components declare are consumed, so they are published, and the service consumes
  * them: it is given which they are and their contracts, the contracts of the facts, the store, and
- * the store's credentials, which nothing else is.
+ * the credentials of the broker and of the store, which nothing else is. A context that names no
+ * store writes the log and does not read it: it has no queries, and no user of a store.
  * Where the events travel is the context's `amqp`, as it is for any receiver.
  */
 export function deployment(
@@ -72,7 +73,10 @@ export function deployment(
     name: SERVICE,
     version,
     components: labels,
-    variables: [{ name: SETTINGS, value: JSON.stringify(settings) }, ...credentials()]
+    variables: [
+      { name: SETTINGS, value: JSON.stringify(settings) },
+      ...credentials(annotation.store === undefined ? BROKER_KEYS : KEYS)
+    ]
   }
 
   if (annotation.resources !== undefined) service.resources = annotation.resources
@@ -91,7 +95,10 @@ function read(
   annotation: Annotation
 ): Pick<Settings, 'broker' | 'store' | 'retention' | 'encounters' | 'ip'> {
   // what is read is the user's own: the address names a server, and no database of it
-  if (new URL(annotation.store.url).pathname.replace(/\//g, '') !== '')
+  if (
+    annotation.store !== undefined &&
+    new URL(annotation.store.url).pathname.replace(/\//g, '') !== ''
+  )
     throw new Error(
       "The store of chronicles is the address of a server: what is read is its user's."
     )
@@ -105,9 +112,9 @@ function read(
   }
 }
 
-/** The user the store is provisioned as, and the password of the reader it creates. */
-function credentials(): Variable[] {
-  return KEYS.map((key) => ({
+/** The users of the broker and, where the log is read, of the store, from the secret. */
+function credentials(keys: string[]): Variable[] {
+  return keys.map((key) => ({
     name: `${SETTINGS}_${key.toUpperCase()}`,
     secret: { name: SECRET, key }
   }))
