@@ -160,19 +160,21 @@ export class DirectivesFactory implements RTD.DirectiveFactory {
   }
 
   /**
-   * Request-scoped, before anything is routed, so no directives are passed: a family
-   * answers here only for what it does on its own behalf.
+   * Request-scoped, before anything is called: a family answers here only for what it does
+   * on its own behalf, told what it declares on the method a plain request names.
    */
-  public async preflight(context: Context): Promise<void> {
+  public async preflight(context: Context, method?: RTD.Directives): Promise<void> {
     for (const stage of this.stages) {
       if (stage.family.preflight === undefined) continue
 
+      const declared = method?.declared(stage.family.name)
+
       if (sampled())
         await console.span(stage.preflight, async () => {
-          await stage.family.preflight!(context)
+          await stage.family.preflight!(context, declared)
         })
       else {
-        const pending = stage.family.preflight(context)
+        const pending = stage.family.preflight(context, declared)
 
         if (pending instanceof Promise) await pending
       }

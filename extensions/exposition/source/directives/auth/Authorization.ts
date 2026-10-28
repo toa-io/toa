@@ -15,6 +15,7 @@ import { Delegate } from './Delegate.ts'
 import { Federation } from './Federation.ts'
 import { Anyone } from './Anyone.ts'
 import { Input, type Declaration } from './Input.ts'
+import { Transfer } from './Transfer.ts'
 import { split } from './split.ts'
 import { PRIMARY, UNRECOGNIZED, providers as providersOf } from './schemes.ts'
 import { ATOM_GROUP } from '@toa.io/definitions/extensions.exposition'
@@ -106,6 +107,12 @@ export class Authorization implements DirectiveFamily<Directive, Extension> {
   }
 
   public arrange(directives: Directive[]): void {
+    // a method that admits whoever presents a credential not its own has nothing else of `auth`
+    // to decide, its own or inherited: what else is asked could admit a procedure it refuses
+    const transfer = directives.find((directive) => directive instanceof Transfer)
+
+    if (transfer !== undefined) directives.splice(0, directives.length, transfer)
+
     directives.sort((a, b) => (a.priority ?? 1) - (b.priority ?? 1))
   }
 
@@ -113,9 +120,17 @@ export class Authorization implements DirectiveFamily<Directive, Extension> {
    * Authentication: who the credential names, if one is presented. A credential belongs to
    * the request, so it is read once however many calls the request carries.
    */
-  public preflight(context: Context): void | Promise<void> {
+  public preflight(context: Context, directives?: Directive[]): void | Promise<void> {
     // a request without a credential is anonymous, and answered without waiting for anything
     if (context.request.headers.authorization === undefined) {
+      context.identity = null
+
+      return
+    }
+
+    // a credential the method transfers is not the gateway's: no provider is asked of it, and
+    // a rejection it would have earned is not counted against the address
+    if (directives?.some((directive) => directive instanceof Transfer) === true) {
       context.identity = null
 
       return
@@ -441,7 +456,8 @@ const constructors: Record<string, new (value: any, argument?: any) => Directive
   refresh: Refresh,
   delegate: Delegate,
   claims: Federation,
-  input: Input
+  input: Input,
+  transfer: Transfer
 }
 
 const REMOTES: Remote[] = ['basic', 'federation', 'tokens', 'roles', 'bans', 'otp']

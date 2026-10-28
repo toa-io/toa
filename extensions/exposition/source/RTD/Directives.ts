@@ -39,8 +39,11 @@ export interface DirectiveFactory {
   /** Whether this declaration is carried into the nodes below the one it is on. */
   inheritable: (directive: syntax.Directive) => boolean
 
-  /** Runs every family's `preflight`, which is request-scoped and needs no node. */
-  preflight: (context: Context) => Promise<void>
+  /**
+   * Runs every family's `preflight`, which is request-scoped and needs no node: given the
+   * method a plain request names where it was found, so a family may tell what it declares.
+   */
+  preflight: (context: Context, method?: Directives) => Promise<void>
 
   /** Runs every family's `depart`, the counterpart of `preflight`. */
   depart: (context: Context, response: OutgoingMessage) => Promise<void>
@@ -82,13 +85,18 @@ export interface DirectiveFamily<TDirective = any, TExtension = any> {
   arrange?: (directives: TDirective[]) => void
 
   /**
-   * Request-scoped, before anything is routed. It takes no directives: no node is known
-   * yet, and a request that carries several calls has no single node at all. What a
-   * directive declares is call-scoped by definition, so only what a family does on its
-   * own behalf — authenticating a credential — belongs here. It answers nothing: a stage
-   * that runs before a route is known has no reply to make, and refuses by throwing.
+   * Request-scoped, before anything is called. Only what a family does on its own behalf —
+   * authenticating a credential — belongs here. A request that carries several calls has
+   * no single node at all, so `directives` are given only for a plain request to a route
+   * that was found, and are this family's of the method it names: what a family declares
+   * can say how its own work is done, never what a call is allowed. It answers nothing:
+   * a stage that runs before anything is called has no reply to make, and refuses by
+   * throwing.
    */
-  preflight?: (request: Context & TExtension) => void | Promise<void>
+  preflight?: (
+    request: Context & TExtension,
+    directives?: TDirective[]
+  ) => void | Promise<void>
 
   /** Call-scoped, with what the node declares. Runs once per call. */
   precall?: (
