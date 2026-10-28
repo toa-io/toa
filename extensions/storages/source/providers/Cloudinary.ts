@@ -145,7 +145,7 @@ export class Cloudinary extends Provider<CloudinaryOptions> {
     path: string,
     options: RequestInit = { method: 'GET' }
   ): Promise<Maybe<Response>> {
-    const url = this.url(path)
+    const url = this.address(path)
 
     if (url === null) return ERR_NOT_FOUND
 
@@ -175,7 +175,15 @@ export class Cloudinary extends Provider<CloudinaryOptions> {
     return response
   }
 
-  private url(path: string): string | null {
+  /**
+   * Where Cloudinary delivers the file or a variant of it, by its extension as `get` reads one:
+   * an address of what may not be there, which costs no request to make.
+   */
+  public override async url(path: string): Promise<Maybe<string>> {
+    return this.address(path, true) ?? ERR_NOT_FOUND
+  }
+
+  private address(path: string, secure = false): string | null {
     const [base, transformation] = this.toTransformation(path)
 
     if (base === null) return null
@@ -185,7 +193,9 @@ export class Cloudinary extends Provider<CloudinaryOptions> {
     return this.cloudinary().url(id, {
       resource_type: this.type,
       transformation,
-      version: 2
+      version: 2,
+      secure,
+      urlAnalytics: false
     })
   }
 

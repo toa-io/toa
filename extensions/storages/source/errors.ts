@@ -8,3 +8,6 @@ export function coded(code: string): Error & { code: string } {
 }
 
 export const ERR_NOT_FOUND = coded('NOT_FOUND')
+
+/** The storage serves no address of its own: what it holds is reached through it alone. */
+export const ERR_NO_URL = coded('NO_URL')
