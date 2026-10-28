@@ -2,7 +2,7 @@ import * as http from '../HTTP/index.ts'
 import { fork } from '../RPC/Context.ts'
 import { address, name, split } from '../RPC/names.ts'
 import { METHOD_NOT_FOUND, failure, refusal, response } from './errors.ts'
-import { annotations, input, output } from './schema.ts'
+import { annotations, input, output, structured } from './schema.ts'
 import { FAMILY, MCP, type Tool as Declaration } from '../directives/mcp/index.ts'
 import { describing } from '../Introspection.ts'
 import { variables } from '../RTD/segment.ts'
@@ -182,18 +182,13 @@ function serves(tree: Tree, named: string): boolean {
   return node !== undefined && node !== null && Date.now() < node.expiration
 }
 
-/**
- * The revision has structured content be an object, and a client that holds it to that refuses
- * the whole result otherwise — so a list, or a value of its own, is its text alone.
- */
 function result(body: unknown): Result {
   if (body === undefined || body === null) return { content: [] }
 
-  const content = [{ type: 'text' as const, text: JSON.stringify(body) }]
-
-  return typeof body === 'object' && !Array.isArray(body)
-    ? { content, structuredContent: body }
-    : { content }
+  return {
+    content: [{ type: 'text', text: JSON.stringify(body) }],
+    structuredContent: structured(body)
+  }
 }
 
 const TOOLS = 'mcp:tools'

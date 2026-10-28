@@ -166,10 +166,8 @@ Feature: Authorization code flow
         content:
           - type: text
             text: '"Kettles and teapots."'
-      """
-    And the reply does not contain:
-      """
-      structuredContent
+        structuredContent:
+          result: Kettles and teapots.
       """
     When the following request is received:
       """

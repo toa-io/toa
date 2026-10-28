@@ -68,15 +68,28 @@ export function input(
  * reply validated against is worse said emptily than left unsaid.
  *
  * The revision has it describe an object, which is all structured content may be: a reply of
- * another type is answered as text alone, and has no schema stated either.
+ * another type is the `result` of one, as `structured` answers it.
  */
 export function output(introspection: Introspection): object | undefined {
   const schema = introspection.output as Shape | null | undefined
 
   if (schema === undefined || schema === null) return undefined
 
-  return schema.type === 'object' ? (schema as object) : undefined
+  if (Object.keys(schema).length === 0) return undefined
+
+  if (schema.type === 'object') return schema as object
+
+  return { type: 'object', properties: { [RESULT]: schema }, required: [RESULT] }
 }
+
+/** A reply as structured content, which is an object: one of another type is its `result`. */
+export function structured(body: unknown): Record<string, unknown> {
+  return typeof body === 'object' && body !== null && !Array.isArray(body)
+    ? (body as Record<string, unknown>)
+    : { [RESULT]: body }
+}
+
+const RESULT = 'result'
 
 /**
  * What the call is, which the revision has a client treat as a hint — and a client that reads
