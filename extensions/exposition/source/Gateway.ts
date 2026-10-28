@@ -74,10 +74,20 @@ export class Gateway extends Connector {
 
     if (interception !== null) return interception
 
-    // request-scoped, before anything is routed: this is where a credential is read
-    await this.directives.preflight(context).catch(rethrow)
+    // the route of a plain request that presents a credential is found first: what its
+    // method declares may say the credential is not the gateway's to read
+    const match =
+      context.request.headers.authorization !== undefined && this.plain(context)
+        ? this.find(context)
+        : null
 
-    const response = await this.endpoint(context)
+    const method =
+      match === null ? undefined : methodOf(match.node, context.request.method)
+
+    // request-scoped, before anything is called: this is where a credential is read
+    await this.directives.preflight(context, method?.directives).catch(rethrow)
+
+    const response = await this.endpoint(context, match)
 
     // request-scoped, on whatever is going back: this is where a credential is re-issued
     await this.directives.depart(context, response).catch(rethrow)
@@ -89,7 +99,10 @@ export class Gateway extends Connector {
    * What answers the request: a pinned endpoint that makes calls of its own, or the route
    * the path names.
    */
-  private async endpoint(context: http.Context): Promise<http.OutgoingMessage> {
+  private async endpoint(
+    context: http.Context,
+    match: Match | null = null
+  ): Promise<http.OutgoingMessage> {
     // a host given to a model is an address with one meaning: the endpoint, and nothing else
     if (this.mcp !== null && this.mcp.hosted(context.url.host)) {
       if (context.url.pathname !== '/') throw new http.NotFound('Route not found')
@@ -115,7 +128,20 @@ export class Gateway extends Connector {
       if (page !== null) return page
     }
 
-    return await this.route(context)
+    return await this.route(context, match)
+  }
+
+  /** Whether a request is to a route of the tree, rather than to an endpoint served beside it. */
+  private plain(context: http.Context): boolean {
+    const { pathname } = context.url
+
+    return (
+      !(this.mcp !== null && this.mcp.hosted(context.url.host)) &&
+      !(this.dispatcher !== null && pathname === RPC) &&
+      !(this.mcp !== null && pathname === MCP) &&
+      pathname !== DISCOVERY &&
+      pathname !== DISCOVERY + '/'
+    )
   }
 
   /** Whether the application serves the trunk with the verb the request was made with. */
@@ -129,19 +155,18 @@ export class Gateway extends Connector {
    * One call: everything that needs a node. A request makes one of these, and a request
    * that carries several calls makes one per call.
    */
-  private async route(context: http.Context): Promise<http.OutgoingMessage> {
-    const { node, parameters } = this.match(context)
+  private async route(
+    context: http.Context,
+    found: Match | null = null
+  ): Promise<http.OutgoingMessage> {
+    const { node, parameters } = found ?? this.match(context)
 
     if (context.request.method === 'OPTIONS')
       return await this.explain(context, node, parameters)
 
-    let verb = context.request.method
+    const method = methodOf(node, context.request.method)
 
-    if (!(verb in node.methods) && verb === 'HEAD' && 'GET' in node.methods) verb = 'GET'
-
-    if (!(verb in node.methods)) throw new http.MethodNotAllowed()
-
-    const method = node.methods[verb]
+    if (method === undefined) throw new http.MethodNotAllowed()
 
     const interruption = await method.directives
       .precall(context, parameters)
@@ -185,7 +210,7 @@ export class Gateway extends Connector {
   }
 
   private match(context: http.Context): Match {
-    const match = this.tree.match(context.url.pathname)
+    const match = this.find(context)
 
     if (match === null) {
       // the route may be missing because an expose has been lost
@@ -193,6 +218,15 @@ export class Gateway extends Connector {
 
       throw new http.NotFound('Route not found')
     }
+
+    return match
+  }
+
+  /** The route a request is served by, where the tree has one, forwarded where it says so. */
+  private find(context: http.Context): Match | null {
+    const match = this.tree.match(context.url.pathname)
+
+    if (match === null) return null
 
     // what the request is measured under, now that it is known to be a route and not a URL
     context.labels.route = match.route
@@ -417,3 +451,12 @@ const SETTLE_TIMEOUT = 30_000
 const SETTLE_POLL = 50
 const KNOCK_DELAYS = [0, 500, 1000, 1500]
 const PING_COOLDOWN = 5_000
+
+/** The method of a node a verb is served by: `HEAD` by `GET` where the node has no `HEAD`. */
+function methodOf(node: Node, verb: string): Method | undefined {
+  if (verb in node.methods) return node.methods[verb]
+
+  if (verb === 'HEAD') return node.methods.GET
+
+  return undefined
+}
