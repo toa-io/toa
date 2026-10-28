@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.340](https://github.com/toa-io/toa/compare/v1.0.0-alpha.339...v1.0.0-alpha.340) (2026-10-28)
+
+### Bug Fixes
+
+* **storages:** a body shorter than a signature is checked as any other ([7b6b147](https://github.com/toa-io/toa/commit/7b6b14721a995b6c6816980848d4fd7352d02ef8))
+* **storages:** a process makes the storages its components declare ([0e2d865](https://github.com/toa-io/toa/commit/0e2d8653edd3cd8211c0b22d27aea8ae3e3e21c4))
+
+### Features
+
+* **storages:** an address to read a file from ([3837458](https://github.com/toa-io/toa/commit/3837458318c29fb7ed176ef34b218d6a7bae255a))
+
+
 # [1.0.0-alpha.339](https://github.com/toa-io/toa/compare/v1.0.0-alpha.338...v1.0.0-alpha.339) (2026-10-28)
 
 **Note:** Version bump only for package @toa.io/extensions.storages
