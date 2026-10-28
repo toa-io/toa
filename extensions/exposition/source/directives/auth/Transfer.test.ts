@@ -23,6 +23,8 @@ describe('Transfer', () => {
 
     assert.deepEqual(embed({ a: 1 }), { a: 1, credential: 'Signature abc' })
     assert.deepEqual(embed(undefined), { credential: 'Signature abc' })
+    assert.deepEqual(embed(null), { credential: 'Signature abc' })
+    assert.throws(() => embed('text'))
   })
 
   it('should admit a request without the header, and give it nothing', () => {
