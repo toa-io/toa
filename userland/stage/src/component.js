@@ -6,9 +6,10 @@ export const component = async (path, options) => {
   const manifest = await boot.manifest(path, options)
   const component = await boot.component(manifest)
 
-  await component.connect()
-
+  // held before it connects: one that is still connecting when the stage stops is stopped too
   state.components.push(component)
+
+  await component.connect()
 
   return component
 }

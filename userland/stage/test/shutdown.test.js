@@ -44,6 +44,46 @@ it('should disconnect compositions', async () => {
   assert.ok(composition.disconnect.mock.callCount() > 0)
 })
 
+it('should disconnect a composition still connecting', async () => {
+  const paths = [generate(), generate()]
+  const connecting = {
+    connect: mocking.fn(() => new Promise(() => undefined)),
+    disconnect: mocking.fn(),
+    link: mocking.fn()
+  }
+
+  mock.boot.composition.mock.mockImplementationOnce(async () => connecting)
+
+  void stage.composition(paths)
+
+  // booted, and connecting
+  while (connecting.connect.mock.callCount() === 0)
+    await new Promise((resolve) => setImmediate(resolve))
+
+  await stage.shutdown()
+
+  assert.ok(connecting.disconnect.mock.callCount() > 0)
+})
+
+it('should disconnect a component still connecting', async () => {
+  const connecting = {
+    connect: mocking.fn(() => new Promise(() => undefined)),
+    disconnect: mocking.fn(),
+    link: mocking.fn()
+  }
+
+  mock.boot.component.mock.mockImplementationOnce(async () => connecting)
+
+  void stage.component(generate())
+
+  while (connecting.connect.mock.callCount() === 0)
+    await new Promise((resolve) => setImmediate(resolve))
+
+  await stage.shutdown()
+
+  assert.ok(connecting.disconnect.mock.callCount() > 0)
+})
+
 it('should disconnect remotes', async () => {
   const id = generate() + '.' + generate()
 

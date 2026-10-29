@@ -5,7 +5,8 @@ import { state } from './state.js'
 export const composition = async (paths, options) => {
   const composition = await boot.composition(paths, options)
 
-  await composition.connect()
-
+  // held before it connects: one that is still connecting when the stage stops is stopped too
   state.compositions.push(composition)
+
+  await composition.connect()
 }

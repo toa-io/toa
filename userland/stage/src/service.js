@@ -13,9 +13,10 @@ export const service = async (ref) => {
   const factory = new Factory(boot.host())
   const service = await factory.service()
 
-  await service.connect()
-
+  // held before it connects: one that is still connecting when the stage stops is stopped too
   state.services.push(service)
+
+  await service.connect()
 
   return service
 }
