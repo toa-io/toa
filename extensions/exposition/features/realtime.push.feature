@@ -12,7 +12,8 @@ Feature: Pushing to realtime streams
           key: room
           expose: [room, text]
       exposition:
-        /:
+        # not `/`, whose directives every route of the component inherits
+        /posts:
           anonymous: true
           io:output: false
           POST: post
@@ -46,6 +47,14 @@ Feature: Pushing to realtime streams
                 properties:
                   hand:
                     type: string
+        /rooms/:room/flags:
+          auth:role: chat:marshal
+          POST:
+            realtime:push:
+              key: room
+              event: flag
+              input:
+                type: object
         /lobby/stream:
           anonymous: true
           GET:
@@ -167,7 +176,7 @@ Feature: Pushing to realtime streams
       """
     And the following request is received:
       """
-      POST /chat/messages/ HTTP/1.1
+      POST /chat/messages/posts/ HTTP/1.1
       host: nex.toa.io
       content-type: application/yaml
 
@@ -208,6 +217,7 @@ Feature: Pushing to realtime streams
     And Alice receives no event `move`
 
   Scenario: Pushing nothing for a request the route refuses
+    Given transient identity Bob
     When Alice is consuming:
       """
       GET /chat/messages/rooms/general/stream/ HTTP/1.1
@@ -216,18 +226,18 @@ Feature: Pushing to realtime streams
       """
     And the following request is received:
       """
-      POST /chat/messages/rooms/general/moves/ HTTP/1.1
+      POST /chat/messages/rooms/general/flags/ HTTP/1.1
       host: nex.toa.io
+      authorization: Token ${{ Bob.token }}
       content-type: application/yaml
 
-      x: 1
-      y: 2
+      color: red
       """
     Then the following reply is sent:
       """
-      401 Unauthorized
+      403 Forbidden
       """
-    And Alice receives no event `move`
+    And Alice receives no event `flag`
 
   Scenario: Pushing to a literal key
     When Alice is consuming:

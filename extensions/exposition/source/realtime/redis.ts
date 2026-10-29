@@ -10,10 +10,8 @@ import { EXPIRE, STREAMS } from '@toa.io/definitions/extensions.exposition/realt
 export class Shards {
   public readonly connections: Redis[]
 
-  public constructor() {
-    // a key's, and its channel's: the prefix applies to a sharded channel as to a key
-    const keyPrefix = prefix()
-
+  /** `keyPrefix` is the key's, and its channel's: it applies to a sharded channel as to a key. */
+  public constructor(keyPrefix = prefix()) {
     this.connections = addresses().map(
       (address) => new Redis(address, { keyPrefix, lazyConnect: true })
     )
@@ -43,6 +41,14 @@ export function configured(): boolean {
 /** What a key is stored and published under: the scope, so contexts sharing a Redis do not meet. */
 export function prefix(): string {
   return `${environment.scope()}:realtime:`
+}
+
+/**
+ * What the channel of a key's pushed events is published under. It differs from `prefix` before
+ * either ends, so no key's channel of pushed events is another key's channel, whatever a key is.
+ */
+export function pushes(): string {
+  return `${environment.scope()}:realtime~:`
 }
 
 /** Seconds a stream outlives its last reader: the window a reader reconnects in. */

@@ -1,6 +1,6 @@
 import { console } from 'openspan'
-import { Stream, HEARTBEAT, decode, encode, type Entry } from './Stream.ts'
-import { MAXLEN, Shards, expire, prefix, shard } from '../../realtime/redis.ts'
+import { Stream, HEARTBEAT, decode, encode, type Entry, type Push } from './Stream.ts'
+import { MAXLEN, Shards, expire, prefix, pushes, shard } from '../../realtime/redis.ts'
 import * as measure from './measurements.ts'
 import type { Redis } from 'ioredis'
 
@@ -15,15 +15,23 @@ import type { Redis } from 'ioredis'
  * A channel keeps nothing for a subscriber that was away. Whenever the subscriber is back, what
  * each key was written meanwhile is read from its stream, from the last event this gateway
  * delivered of it; each reader skips what it was given already.
+ *
+ * A key has a second channel, of the events clients push to it, which are stored nowhere: what
+ * was pushed while the subscriber was away is gone.
  */
 export class Hub {
   private readonly keys = new Map<string, Key>()
   private shards: Shards | null = null
 
-  // a subscribing connection can do nothing else, so each Redis has one of its own
+  // a subscribing connection can do nothing else, so each Redis has one of its own; it
+  // subscribes to both channels of a key, so it names them in full
   private subscribers: Shards | null = null
+
+  // pushed events are published under a prefix of their own
+  private publishers: Shards | null = null
   private connecting: Promise<void> | null = null
   private prefix = ''
+  private pushes = ''
 
   /** Connects on the first stream it serves, not before: a gateway may serve none. */
   public async connect(): Promise<void> {
@@ -41,19 +49,29 @@ export class Hub {
 
     this.keys.clear()
     this.subscribers?.disconnect()
+    this.publishers?.disconnect()
     this.shards?.disconnect()
     this.subscribers = null
+    this.publishers = null
     this.shards = null
     this.connecting = null
   }
 
   private async start(): Promise<void> {
     this.prefix = prefix()
+    this.pushes = pushes()
 
     const shards = new Shards()
-    const subscribers = new Shards()
+    const subscribers = new Shards('')
 
-    for (const connection of [...shards.connections, ...subscribers.connections])
+    // connected by the first push, not before: a gateway may push nothing
+    const publishers = new Shards(this.pushes)
+
+    for (const connection of [
+      ...shards.connections,
+      ...subscribers.connections,
+      ...publishers.connections
+    ])
       connection.on('error', (error: NodeJS.ErrnoException) =>
         console.debug('Realtime streams unreachable', {
           error: error.code ?? error.message
@@ -61,11 +79,12 @@ export class Hub {
       )
 
     subscribers.connections.forEach((subscriber, i) => {
-      // a key's channel is subscribed to by the key, the prefix applying to it; what arrives is
-      // named in full
-      subscriber.on('smessage', (channel: string, message: string) =>
-        this.receive(channel.slice(this.prefix.length), message)
-      )
+      subscriber.on('smessage', (channel: string, message: string) => {
+        if (channel.startsWith(this.prefix))
+          this.receive(channel.slice(this.prefix.length), message)
+        else if (channel.startsWith(this.pushes))
+          this.pushed(channel.slice(this.pushes.length), message)
+      })
 
       // `ready` follows every reconnect too, and what was written meanwhile never arrives
       let connected = false
@@ -79,6 +98,7 @@ export class Hub {
 
     this.shards = shards
     this.subscribers = subscribers
+    this.publishers = publishers
 
     await Promise.all([shards.connect(), subscribers.connect()])
   }
@@ -113,6 +133,20 @@ export class Hub {
     return stream
   }
 
+  /**
+   * Publishes an event a client pushed to the readers of a key, wherever they are read. It is not
+   * delivered here but from the channel, as it is on every other gateway.
+   */
+  public async push(key: string, { event, sender, data }: Push): Promise<void> {
+    await this.connect()
+
+    const message = JSON.stringify([event, data, sender ?? null])
+
+    await this.publishers!.of(key).spublish(key, message)
+
+    measure.push(event)
+  }
+
   private async enter(key: string, stream: Stream): Promise<Key> {
     let entry = this.keys.get(key)
 
@@ -122,7 +156,7 @@ export class Hub {
         last: null,
         timer: setInterval(() => this.renew(key), this.renewal()),
         subscribed: this.subscriber(key)
-          .ssubscribe(key)
+          .ssubscribe(...this.channels(key))
           .then(() => undefined)
       }
 
@@ -153,7 +187,7 @@ export class Hub {
     this.renew(key)
 
     this.subscriber(key)
-      .sunsubscribe(key)
+      .sunsubscribe(...this.channels(key))
       .catch((error: Error) =>
         console.debug('Realtime key not unsubscribed', { key, error })
       )
@@ -198,6 +232,19 @@ export class Hub {
     this.broadcast(entry, { id, event, data: JSON.parse(data) })
   }
 
+  private pushed(key: string, message: string): void {
+    const entry = this.keys.get(key)
+
+    if (entry === undefined) return
+
+    const [event, data, sender] = JSON.parse(message) as [string, unknown, string | null]
+    const push: Push = sender === null ? { event, data } : { event, sender, data }
+
+    for (const stream of entry.streams) if (!stream.volatile(push)) measure.drop(event)
+
+    measure.deliver(event)
+  }
+
   private broadcast(entry: Key, event: Entry): void {
     entry.last = event.id
 
@@ -216,9 +263,11 @@ export class Hub {
     const keys = [...this.keys.keys()].filter((key) => shard(key, n) === i)
 
     if (keys.length > 0)
-      await this.subscribers?.connections[i].ssubscribe(...keys).catch((error: Error) => {
-        console.warn('Realtime keys not subscribed again', { error })
-      })
+      await this.subscribers?.connections[i]
+        .ssubscribe(...keys.flatMap((key) => this.channels(key)))
+        .catch((error: Error) => {
+          console.warn('Realtime keys not subscribed again', { error })
+        })
 
     for (const key of keys) {
       const entry = this.keys.get(key)
@@ -234,6 +283,11 @@ export class Hub {
         console.warn('Realtime key not recovered', { key, error })
       }
     }
+  }
+
+  /** The channel of a key's routed events, and the channel of its pushed events. */
+  private channels(key: string): [string, string] {
+    return [this.prefix + key, this.pushes + key]
   }
 
   /** The connection a key's stream is kept on. */
