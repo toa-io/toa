@@ -276,3 +276,24 @@ Feature: Pushing to realtime streams
       """
       404 Not Found
       """
+
+  Scenario: Refusing a body past the limit
+    When Alice is consuming:
+      """
+      GET /chat/messages/rooms/general/stream/ HTTP/1.1
+      host: nex.toa.io
+      accept: application/json
+      """
+    And the following request is received:
+      """
+      POST /chat/messages/rooms/general/waves/ HTTP/1.1
+      host: nex.toa.io
+      content-type: application/json
+
+      {"hand":"#{{ repeat 65536 }}"}
+      """
+    Then the following reply is sent:
+      """
+      413 Request Entity Too Large
+      """
+    And Alice receives no event `wave`

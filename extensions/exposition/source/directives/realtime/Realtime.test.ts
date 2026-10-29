@@ -84,6 +84,32 @@ describe('realtime:push', () => {
     )
   })
 
+  it('should refuse an event a reader would take for a token', () => {
+    assert.throws(
+      () =>
+        realtime.create(
+          'push',
+          { key: 'room', event: 'token', input },
+          null,
+          '/rooms/:room/moves'
+        ),
+      /token/
+    )
+  })
+
+  it('should refuse an event a reader would take for a routed one', () => {
+    assert.throws(
+      () =>
+        realtime.create(
+          'push',
+          { key: 'room', event: 'chat.messages.sync', input },
+          null,
+          '/rooms/:room/moves'
+        ),
+      /chat\.messages\.sync/
+    )
+  })
+
   it('should refuse a push that states no schema', () => {
     assert.throws(
       () =>

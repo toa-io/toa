@@ -204,8 +204,10 @@ Every reader of `/canvas/boards/42/stream/` is sent:
 ```
 
 `sender` is the id of the identity that pushed it, absent where the route admits an anonymous
-caller: a client cannot push as another identity. A body `input` refuses is answered `400`, and
-nothing is pushed for a request the route's directives refuse. Whatever `input` admits reaches
+caller: a client cannot push as another identity. A body `input` refuses is answered `400`, one
+past 64 KiB is answered `413`, and nothing is pushed for a request the route's directives refuse.
+`event` is neither `token` nor a name with a dot, so a reader never takes a pushed event for a
+token or for a routed event. Whatever `input` admits reaches
 every reader of the key, so state `additionalProperties: false` where a property the schema does not
 name should not.
 

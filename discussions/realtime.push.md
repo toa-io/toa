@@ -44,20 +44,22 @@ commits, routed to the same key by the component as it is today.
 3. A pushed event carries `sender`: the id of the identity that pushed it, or nothing where the
    route admits an anonymous caller. A client cannot push as another identity.
 4. What is pushed is what the route's `input` admits, and nothing else: a body the schema refuses is
-   answered `400` and pushed nowhere.
-5. Who may push is decided by the route's directives, as for anything else it serves. A request
+   answered `400` and pushed nowhere. A body past 64 KiB is answered `413`.
+5. A pushed event is never read as a token or as a routed event: its name is neither `token` nor
+   one with a dot, which a routed event's always has.
+6. Who may push is decided by the route's directives, as for anything else it serves. A request
    they refuse pushes nothing.
 
 **What is not promised**
 
-6. **Replay.** A pushed event is not stored. It is followed by no token, and a reader that
+7. **Replay.** A pushed event is not stored. It is followed by no token, and a reader that
    reconnects with a token is sent what was routed since, never what was pushed.
-7. **Delivery to a slow reader.** A reader whose connection does not keep up loses pushed events
+8. **Delivery to a slow reader.** A reader whose connection does not keep up loses pushed events
    rather than holding them; it never loses a routed one. Nor is a pushed event sent to a stream
    that is still being replayed to.
-8. **Order against routed events.** Pushed events of one sender reach a reader in the order they
+9. **Order against routed events.** Pushed events of one sender reach a reader in the order they
    were pushed; against routed events, in no promised order _(today, for routed events)_.
-9. **Other regions.** A pushed event reaches the readers of its region only.
+10. **Other regions.** A pushed event reaches the readers of its region only.
 
 ### What a component author does differently
 
@@ -75,7 +77,9 @@ as. A reader tells pushed events by their `sender`, and keeps the last one per s
    `toa.realtime.dropped` in `documentation/metrics.md`.
 2. **`realtime:push`.** A directive of the `realtime` family, beside `stream`: `key` is a route
    variable or a literal, resolved as `stream` resolves it; `event` is the name a reader is sent;
-   `input` is a JSON schema, required. Answered `204` once the event is handed to Redis. A method
+   `input` is a JSON schema, required. Answered `204` once the event is handed to Redis, `400`
+   where `input` refuses the body, and `413` past 64 KiB. An event named `token`, or with a dot,
+   is refused when the tree is built. A method
    declaring both `realtime:push` and `realtime:stream` is refused when the tree is built.
 3. **The channel.** A pushed event is published on a channel of its own per key, beside the channel
    routed events are published on, under `${scope}:realtime~:` rather than `${scope}:realtime:`. A
@@ -108,7 +112,11 @@ as. A reader tells pushed events by their `sender`, and keeps the last one per s
    an id a reader reconnects from; a gateway of before would read a pushed event there as one.
    Under a prefix of its own no key's channel can be another key's, whatever a key is.
 8. **The name a route declares.** A pushed event is the route's, not a component's event, so it is
-   sent under the name the route gives it rather than one qualified by a component.
+   sent under the name the route gives it rather than one qualified by a component. A name with a
+   dot is refused, so the two never meet, and so is `token`.
+9. **Bounded.** A pushed body is sent to every reader of its key, so it is refused past 64 KiB —
+   far above a position or a cursor, and far below what would make one client's push a burden on
+   everyone reading.
 
 ## Context
 
@@ -136,8 +144,8 @@ writes it to storage, at the cost of a broker round trip, a write, and a replay 
 - an anonymous route pushes an event without a `sender`;
 - a reader of another key is sent nothing, and no stream is created;
 - a reader that reconnects with its token is sent what was routed meanwhile and not what was pushed;
-- a body the schema refuses is answered `400`, and a request the route refuses is answered `403`,
-  each pushing nothing;
+- a body the schema refuses is answered `400`, one past the limit `413`, and a request the route
+  refuses `403`, each pushing nothing;
 - a literal key is pushed to by name, and a route variable holding a literal is answered `404`.
 
 Published on the channel and delivered from it by the gateway that subscribed, a pushed event takes

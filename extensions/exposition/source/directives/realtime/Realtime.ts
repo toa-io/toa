@@ -1,6 +1,6 @@
 import * as schemas from '@toa.io/schemas'
 import { literal } from '@toa.io/definitions/extensions.exposition/realtime'
-import { BadRequest, NotFound } from '../../HTTP/index.ts'
+import { BadRequest, NotFound, RequestEntityTooLarge } from '../../HTTP/index.ts'
 import { configured } from '../../realtime/redis.ts'
 import { Hub } from './Hub.ts'
 import type { Schema } from '@toa.io/schemas'
@@ -75,7 +75,17 @@ export class Realtime implements DirectiveFamily<Directive> {
     key: string,
     context: Authenticated
   ): Promise<Output> {
+    const length = Number(context.request.headers['content-length'])
+
+    // what is pushed is sent to every reader of the key, so how much may be is bounded
+    if (length > LIMIT) throw new RequestEntityTooLarge(`Size limit is ${LIMIT} bytes`)
+
     const body = await context.body()
+
+    // a body sent without its length is measured once it is read
+    if (Number.isNaN(length) && Buffer.byteLength(JSON.stringify(body) ?? '') > LIMIT)
+      throw new RequestEntityTooLarge(`Size limit is ${LIMIT} bytes`)
+
     const error = input.fit(body)
 
     if (error !== null) throw new BadRequest(error.message)
@@ -110,12 +120,21 @@ function push(value: unknown, route: string): Push {
   if (typeof event !== 'string' || event === '')
     throw new Error(`'realtime:push' names the event it is streamed as, at '${route}'`)
 
+  // a reader tells a token by its name, and a routed event by a name qualified by its component
+  if (event === 'token' || event.includes('.'))
+    throw new Error(
+      `'realtime:push' event '${event}' would be read as a token or a routed event, at '${route}'`
+    )
+
   // whatever is pushed reaches every reader of the key, so what may be is stated
   if (typeof input !== 'object' || input === null || Array.isArray(input))
     throw new Error(`'realtime:push' states the schema of what is pushed, at '${route}'`)
 
   return { ...key('push', name, route), push: { event, input: schemas.schema(input) } }
 }
+
+/** Bytes a pushed body may take. */
+const LIMIT = 65536
 
 export type Directive = Variable | Literal | Push
 

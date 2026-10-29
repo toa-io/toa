@@ -14,5 +14,9 @@ const functions: http.Functions = {
     const code = this.get(arg + '.code')
 
     return Buffer.from(`${identity}:${code}`).toString('base64')
+  },
+  /** A string of the given length, for a body past a limit. */
+  repeat: function (this: Captures, _: string, length: string): string {
+    return 'x'.repeat(Number(length))
   }
 }
