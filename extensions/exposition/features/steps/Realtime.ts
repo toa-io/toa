@@ -127,6 +127,33 @@ export class Realtime {
     }
   }
 
+  @then('{word} receives the event `{word}` pushed by {word}:')
+  public async pushed(
+    name: string,
+    label: string,
+    sender: string,
+    yaml: string
+  ): Promise<void> {
+    await this.arrives(
+      name,
+      label,
+      this.captures.get(`${sender}.id`) as string,
+      parse(yaml)
+    )
+  }
+
+  @then('{word} receives the event `{word}` pushed anonymously:')
+  public async anonymous(name: string, label: string, yaml: string): Promise<void> {
+    await this.arrives(name, label, undefined, parse(yaml))
+  }
+
+  @then('{word} has been given {int} token(s)')
+  public async tokens(name: string, count: number): Promise<void> {
+    await delay(SETTLE)
+
+    assert.equal(this.consumers[name].tokens.length, count)
+  }
+
   @then('{word} receives exactly:')
   public async exactly(name: string, yaml: string): Promise<void> {
     const expected = parse(yaml) as Array<{ event: string; data: unknown }>
@@ -255,6 +282,34 @@ export class Realtime {
     }
   }
 
+  /** A pushed event: its `sender` is the identity that pushed it, or absent. */
+  private async arrives(
+    name: string,
+    label: string,
+    sender: string | undefined,
+    expected: unknown
+  ): Promise<void> {
+    const consumer = this.consumers[name]
+
+    for (;;) {
+      for (const event of consumer.events)
+        if (
+          event.event === label &&
+          event.sender === sender &&
+          match(event.data, expected)
+        )
+          return
+
+      await once(consumer.arrivals, 'event', { signal: AbortSignal.timeout(WAIT) }).catch(
+        () => {
+          throw new Error(
+            `${name} has not received a matching '${label}' pushed by ${sender}`
+          )
+        }
+      )
+    }
+  }
+
   private async createIdentity(name: string): Promise<string> {
     const password = randomBytes(16).toString('hex')
     const username = name + randomBytes(8).toString('hex')
@@ -307,7 +362,7 @@ export class Realtime {
 }
 
 interface Consumer {
-  events: Array<{ event: string; data: unknown }>
+  events: Array<{ event: string; sender?: string; data: unknown }>
   tokens: string[]
   arrivals: EventEmitter
   agent: Agent
