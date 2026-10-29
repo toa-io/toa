@@ -8,31 +8,31 @@ schema the route declares, stamps it with the identity that sent it, and publish
 channel, from which every gateway serving a reader of the key delivers it.
 
 ```yaml
-# races/manifest.toa.yaml
+# boards/manifest.toa.yaml
 exposition:
   /:id/stream:
-    auth:role: racer:{id}
+    auth:role: editor:{id}
     GET:
       realtime:stream: id
-  /:id/cars:
-    auth:role: racer:{id}
+  /:id/cursors:
+    auth:role: editor:{id}
     POST:
       realtime:push:
         key: id
-        event: car
+        event: cursor
         input:
           type: object
           properties:
             x: { type: number }
             y: { type: number }
-            heading: { type: number }
-          required: [x, y, heading]
+            tool: { type: string }
+          required: [x, y]
           additionalProperties: false
 ```
 
 A pushed event is volatile: it is for whoever reads the key at the moment it is pushed. It is not
 followed by a token, a reader that reconnects is not sent it, and a reader that cannot keep up
-loses it. What has to survive — a lap, a finish, a score — is a change of state an operation
+loses it. What has to survive — a shape drawn, a comment — is a change of state an operation
 commits, routed to the same key by the component as it is today.
 
 ### Guarantees
@@ -65,7 +65,7 @@ Declares a route that pushes, with the schema of what may be pushed and the even
 as. A reader tells pushed events by their `sender`, and keeps the last one per sender.
 
 ```
-{"event":"car","sender":"4c4759e6f9c14f3b8b2cc6e6f4c5b3a0","data":{"x":10.5,"y":3,"heading":1.57}}
+{"event":"cursor","sender":"4c4759e6f9c14f3b8b2cc6e6f4c5b3a0","data":{"x":10.5,"y":3,"tool":"pen"}}
 ```
 
 ## The changes, by area
@@ -113,9 +113,9 @@ as. A reader tells pushed events by their `sender`, and keeps the last one per s
 ## Context
 
 A routed event is a change of state an operation committed, and is stored for a reader that
-reconnects. State that changes many times a second and is superseded each time — where something
-is, where it faces — has no operation to commit it and nothing worth replaying. Related:
-[realtime streams](/discussions/realtime.streams.md), [literal keys](/discussions/realtime.literal.md).
+reconnects. State that changes many times a second and is superseded each time — where a cursor
+is, where a shape is being dragged — has no operation to commit it and nothing worth replaying.
+Related: [realtime streams](/discussions/realtime.streams.md), [literal keys](/discussions/realtime.literal.md).
 
 ## What happens today
 
