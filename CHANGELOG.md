@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.343](https://github.com/toa-io/toa/compare/v1.0.0-alpha.342...v1.0.0-alpha.343) (2026-10-29)
+
+### Features
+
+* **exposition:** a pushed event is bounded, and never read as a token or a routed event ([9033553](https://github.com/toa-io/toa/commit/9033553804957e7ab10e81b3601b38ba4f55459b))
+* **exposition:** realtime:push sends a request body to the readers of a key ([444ef71](https://github.com/toa-io/toa/commit/444ef713a5c2acb0fa0ad13e4b7f24d143269b53))
+
+
 # [1.0.0-alpha.342](https://github.com/toa-io/toa/compare/v1.0.0-alpha.341...v1.0.0-alpha.342) (2026-10-28)
 
 ### Bug Fixes
