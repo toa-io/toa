@@ -152,15 +152,84 @@ holds one is answered with `404`: a literal's stream is read only at a route tha
 key of the context, as every key is: another component that routes to `~room` writes to the same
 stream. A list of keys may mix literals and properties: `key: [~room, sender]`.
 
+## Pushing to a stream
+
+`realtime:push` sends the request body to every reader of a key, as it arrives: nothing is stored
+and no operation is called. It is for state that changes many times a second and is superseded each
+time — where something is, where it faces — that a reader wants as it is now and never as it was.
+
+```yaml
+# manifest.toa.yaml
+namespace: games
+name: races
+
+exposition:
+  /:id/stream:
+    auth:role: racer:{id}
+    GET:
+      realtime:stream: id
+  /:id/cars:
+    auth:role: racer:{id}
+    POST:
+      realtime:push:
+        key: id # the route variable, or a literal, as `realtime:stream` names it
+        event: car # what a reader is sent it as
+        input: # a JSON schema of what may be pushed; required
+          type: object
+          properties:
+            x: { type: number }
+            y: { type: number }
+            heading: { type: number }
+          required: [x, y, heading]
+          additionalProperties: false
+```
+
+```http
+POST /games/races/42/cars/ HTTP/1.1
+authorization: Token ...
+content-type: application/json
+
+{"x":10.5,"y":3,"heading":1.57}
+```
+
+```
+204 No Content
+```
+
+Every reader of `/games/races/42/stream/` is sent:
+
+```
+{"event":"car","sender":"4c4759e6f9c14f3b8b2cc6e6f4c5b3a0","data":{"x":10.5,"y":3,"heading":1.57}}
+```
+
+`sender` is the id of the identity that pushed it, absent where the route admits an anonymous
+caller: a client cannot push as another identity. A body `input` refuses is answered `400`, and
+nothing is pushed for a request the route's directives refuse. Whatever `input` admits reaches
+every reader of the key, so state `additionalProperties: false` where a property the schema does not
+name should not.
+
+A pushed event is for whoever reads the key at the moment it is pushed:
+
+- it is not followed by a [token](#reading-a-stream), and a reader that
+  [reconnects](#reconnecting) is not sent it;
+- a reader whose connection does not keep up loses pushed events, and never a routed one;
+- it reaches the readers of its region only.
+
+So keep the last one per `sender`, and leave to an operation whatever has to survive — a lap, a
+finish, a score — routing the event it publishes to the same key. A reader that has just opened the
+stream reads that state, and is sent the next push.
+
 ## Reading a stream
 
 A stream is a [multipart response](protocol.md#multipart-types). After `ACK`, a part is one of
-three:
+four:
 
-- **An event** routed to the key: an object whose `event` is the event's full name and whose `data`
+- **A routed event**: an object whose `event` is the event's full name and whose `data`
   is what the route exposes of it.
+- **A pushed event**: an object whose `event` is the name the [pushing](#pushing-to-a-stream) route
+  gives it, whose `sender` is the identity that pushed it, and whose `data` is what was pushed.
 - **A token**: an object of the same shape, whose `event` is the word `token` and whose `data` is
-  the token. It follows every event, and is sent once when the stream opens. Keep the last one: it
+  the token. It follows every routed event, and is sent once when the stream opens. Keep the last one: it
   is what a reader [reconnects](#reconnecting) with.
 - **A heartbeat**: a string, `heartbeat <time>`, sent every 16 seconds so that a reader can tell a
   quiet stream from a lost one.

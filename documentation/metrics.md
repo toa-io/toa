@@ -327,11 +327,16 @@ which is therefore a measure of the skew itself.
 | metric                   | type    | labels  |
 | ------------------------ | ------- | ------- |
 | `toa.realtime.routed`    | counter | `event` |
+| `toa.realtime.pushed`    | counter | `event` |
 | `toa.realtime.delivered` | counter | `event` |
+| `toa.realtime.dropped`   | counter | `event` |
 
 `routed` is counted by the component that writes an event to the streams of its keys, whether or
-not any of them is read. `delivered` is counted by the gateway, once per event it pushes to the
-readers of a key it serves.
+not any of them is read. `pushed` is counted by the gateway that a client
+[pushes](/extensions/exposition/documentation/realtime.md#pushing-to-a-stream) an event to, whether
+or not anyone reads its key. `delivered` is counted by the gateway, once per event, routed or
+pushed, it sends to the readers of a key it serves, and `dropped` once per pushed event it does not
+send to a reader whose connection does not keep up.
 
 ### Process
 
