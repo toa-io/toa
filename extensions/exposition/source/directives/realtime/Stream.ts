@@ -6,6 +6,10 @@ import { Readable } from 'node:stream'
  * `cursor` is the id of the last event it was given. What arrives while it is being replayed to
  * is held until the replay is done, and whatever it was given already is not given again: a replay
  * and the channel may both carry the same event.
+ *
+ * A pushed event is stored nowhere and superseded by the next one, so it is neither held nor
+ * buffered: it is dropped while the replay is in flight, and where whoever reads this has not
+ * taken what it was sent already.
  */
 export class Stream extends Readable {
   public cursor: string | null = null
@@ -52,6 +56,16 @@ export class Stream extends Readable {
     for (const entry of held) this.write(entry)
   }
 
+  /** A pushed event: no token follows it, and it moves no cursor. Whether it was sent. */
+  public volatile(push: Push): boolean {
+    if (this.held !== null || this.readableLength >= this.readableHighWaterMark)
+      return false
+
+    this.send(push)
+
+    return true
+  }
+
   public token(token: string): void {
     this.send({ event: 'token', data: token })
   }
@@ -91,6 +105,12 @@ export class Stream extends Readable {
 export interface Entry {
   id: string
   event: string
+  data: unknown
+}
+
+export interface Push {
+  event: string
+  sender?: string
   data: unknown
 }
 
