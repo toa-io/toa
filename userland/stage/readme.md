@@ -36,6 +36,7 @@ Connect the remote.
 
 ## Shutdown
 
-`async sutdown(): void`
+`async shutdown(): void`
 
-Shutdown all components, compositions and services.
+Shutdown all components, compositions, workloads, services and remotes, those still connecting
+included.

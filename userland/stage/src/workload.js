@@ -45,9 +45,10 @@ export const workload = async (paths, options, services = []) => {
     return root
   })
 
-  await workload.connect()
-
+  // held before it connects: one that is still connecting when the stage stops is stopped too
   state.workloads.push(workload)
+
+  await workload.connect()
 
   return workload
 }

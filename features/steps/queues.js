@@ -222,6 +222,38 @@ Then(
 )
 
 Then(
+  'the request to {component} is not answered within {int} second(s)',
+  /**
+   * What nothing consumes stays where it was published, and is taken off, so that the next
+   * scenario to compose the component is not given it.
+   *
+   * @param {string} id
+   * @param {number} seconds
+   * @this {toa.features.Context}
+   */
+  async function (id, seconds) {
+    const deadline = Date.now() + seconds * 1000
+
+    do {
+      const messages = await request(`/queues/%2F/${this.answers}/get`, 'POST', {
+        count: 1,
+        ackmode: 'ack_requeue_false',
+        encoding: 'auto'
+      })
+
+      assert.equal(messages[0], undefined, 'The request is answered')
+
+      await new Promise((resolve) => setTimeout(resolve, 100))
+    } while (Date.now() < deadline)
+
+    await request(
+      `/queues/%2F/${encodeURIComponent(requestsQueueOf(id))}/contents`,
+      'DELETE'
+    )
+  }
+)
+
+Then(
   '{component} keeps the task at once, saying it named {token}',
   /**
    * @param {string} id
