@@ -2,6 +2,7 @@ Feature: Stopping the stage
 
   Scenario: A composition stopped while it connects answers nothing once it connects
     Given the configuration of `configuration.base` is deployed
+    And the requests queue of `configuration.base` is declared
     # nothing serves the values now, so a composition waits for its configuration
     And the stage is stopped
     And the component map states the components of the `configuration` extension
