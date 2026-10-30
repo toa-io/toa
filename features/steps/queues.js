@@ -153,6 +153,21 @@ When(
   }
 )
 
+Given(
+  'the requests queue of {component} is declared',
+  /**
+   * As a replica still serving the component would have declared it: a broker nothing has
+   * composed the component on yet holds no such queue, and a request published there is dropped.
+   *
+   * @param {string} id
+   */
+  async function (id) {
+    await request(`/queues/%2F/${encodeURIComponent(requestsQueueOf(id))}`, 'PUT', {
+      durable: true
+    })
+  }
+)
+
 When(
   'a request naming {token} is published to {component}',
   /**
