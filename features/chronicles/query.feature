@@ -182,6 +182,25 @@ Feature: Reading the log
       """
     And the reply's `views[0].refreshed` is a time within the last minute
 
+  Scenario: Internal refresh tables are not views
+    Given the store runs:
+      """sql
+      CREATE TABLE `toa-dev`.`.tmp.inner_id.7eb4ee0a-19dd-4c71-9608-639005bab98d` (n UInt64) ENGINE = Memory
+      """
+    When I call `chronicles.queries.define` with:
+      """yaml
+      input:
+        name: visible
+        sql: SELECT 1 AS one
+      """
+    And I call `chronicles.queries.describe`
+    Then the reply is received:
+      """yaml
+      views:
+        - name: visible
+          read: '`toa-dev`.`visible`'
+      """
+
   Scenario: A view is replaced and dropped
     When I call `chronicles.queries.define` with:
       """yaml
