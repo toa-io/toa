@@ -1,4 +1,4 @@
-import { version as ver } from '$app/environment'
+import { version as ver } from '$app/env'
 
 export const meta = {
   title: 'Introspection',
@@ -7,7 +7,7 @@ export const meta = {
 
 export const navigation = {
   /** Entry point for authenticated users. */
-  entry: '/',
+  entry: '/(private)',
 } as const
 
 /** Exposition's HTTP port. It is a constant of the runtime; this bundle cannot import it. */

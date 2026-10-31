@@ -1,4 +1,4 @@
-import { browser } from '$app/environment'
+import { browser } from '$app/env'
 
 export const windows = browser && navigator.userAgent.toLowerCase().includes('windows')
 

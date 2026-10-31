@@ -2,7 +2,7 @@
   import { authenticated, greeting, account as iam, method, processing } from '@/iam'
   import { Spinner } from '$ui/spinner'
   import { cn } from '$lib/utils'
-  import { browser } from '$app/environment'
+  import { browser } from '$app/env'
   import Refresh from './Refresh.svelte'
   import Authentication from './Authentication.svelte'
   import type { Props } from './Authenticated'

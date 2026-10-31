@@ -32,8 +32,10 @@ export async function hello() {
   } else {
     account.set(echo)
 
-    if (navigation?.entry !== window.location.pathname)
-      await goto(resolve(navigation.entry), { replaceState: true })
+    const entry = resolve(navigation.entry)
+
+    if (entry !== window.location.pathname)
+      await goto(entry, { replaceState: true })
   }
 
   greeting.set(false)

@@ -2,7 +2,7 @@
   import { Async, ok } from 'svas'
   import { configurations, type Configuration } from '@/configuration'
   import { Separator } from '$ui/separator'
-  import { base } from '$app/paths'
+  import { resolve } from '$app/paths'
   import { goto } from '$app/navigation'
   import { only, query, rank, system } from './ui'
   import { dict } from './intl'
@@ -46,7 +46,7 @@
   $effect(() => {
     const single = shown.length === 1 ? shown[0].id : null
 
-    only.set(single === null ? null : () => void goto(`${base}/${single}/`))
+    only.set(single === null ? null : () => void goto(resolve('/(private)/[component]', { component: single })))
 
     return () => only.set(null)
   })

@@ -6,7 +6,7 @@
   import { Create, DEFAULT, Reset, Value, split, valued } from '@/configuration/ui'
   import { configurations } from '@/configuration'
   import { page } from '$app/state'
-  import { base } from '$app/paths'
+  import { resolve } from '$app/paths'
 
   /** What an account needs to create or reset one. `auth:rule` in the component's manifest. */
   const ROLE = 'system:configuration:create'
@@ -28,7 +28,7 @@
   <div class="flex items-center gap-2 py-2">
     <a
       id="configuration-back-link"
-      href="{base}/"
+      href={resolve('/(private)')}
       aria-label={$dict.value.title}
       class="text-muted-foreground hover:text-foreground -ms-1 rounded-md p-1 transition-colors"
     >

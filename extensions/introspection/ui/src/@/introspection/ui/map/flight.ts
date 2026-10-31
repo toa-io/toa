@@ -1,6 +1,6 @@
 import { writable } from 'svelte/store'
 import { tick } from 'svelte'
-import { base } from '$app/paths'
+import { resolve } from '$app/paths'
 import { goto } from '$app/navigation'
 import { slug } from './graph'
 
@@ -32,7 +32,7 @@ export async function open(id: string): Promise<void> {
   // the name has to be on the element before the browser takes the leaving snapshot
   await tick()
 
-  await goto(`${base}/${slug(id)}/`)
+  await goto(resolve('/(private)/[id]', { id: slug(id) }))
 }
 
 /**
@@ -41,5 +41,5 @@ export async function open(id: string): Promise<void> {
  */
 export async function leave(): Promise<void> {
   if (window.navigation?.canGoBack === true) window.history.back()
-  else await goto(`${base}/`)
+  else await goto(resolve('/(private)'))
 }

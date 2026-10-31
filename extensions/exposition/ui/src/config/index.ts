@@ -1,4 +1,4 @@
-import { version as ver } from '$app/environment'
+import { version as ver } from '$app/env'
 
 export const meta = {
   title: 'Discovery',
