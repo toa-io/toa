@@ -10,7 +10,7 @@
   import { dict } from '$lib/intl'
   import { meta } from '$config'
   import { page } from '$app/state'
-  import { resolve } from '$app/paths'
+  import { base } from '$app/paths'
   import { onNavigate } from '$app/navigation'
 
   const { children } = $props()
@@ -43,8 +43,8 @@
   }
 
   const tabs = $derived([
-    { id: 'map', href: resolve('/(private)'), label: $dict.nav.map, Icon: Waypoints },
-    { id: 'list', href: resolve('/(private)/list'), label: $dict.nav.list, Icon: List },
+    { id: 'map', href: `${base}/`, label: $dict.nav.map, Icon: Waypoints },
+    { id: 'list', href: `${base}/list/`, label: $dict.nav.list, Icon: List },
   ])
 
   /**

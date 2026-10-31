@@ -15,25 +15,25 @@
   >
     <Guide
       id="discovery-authentication-link"
-      href={resolve('authentication/')}
+      href={resolve('/authentication/')}
       title={$dict.guide.authentication.title}
     />
 
     <Guide
       id="discovery-status-link"
-      href={resolve('status/')}
+      href={resolve('/status/')}
       title={$dict.guide.status.title}
     />
 
     <Guide
       id="discovery-queries-link"
-      href={resolve('queries/')}
+      href={resolve('/queries/')}
       title={$dict.guide.queries.title}
     />
 
     <Guide
       id="discovery-multipart-link"
-      href={resolve('multipart/')}
+      href={resolve('/multipart/')}
       title={$dict.guide.multipart.title}
     />
   </div>

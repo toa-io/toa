@@ -1,4 +1,4 @@
-import { dev } from '$app/env'
+import { dev } from '$app/environment'
 import type { Snippet } from 'svelte'
 import type { Echo } from '@/iam'
 

@@ -3,7 +3,6 @@ import transformLucideImports from 'vite-plugin-transform-lucide-imports'
 import { defineConfig, type Plugin } from 'vite'
 import tailwindcss from '@tailwindcss/vite'
 import { sveltekit } from '@sveltejs/kit/vite'
-import config from './kit.config.ts'
 import type { ServerResponse } from 'node:http'
 
 /*
@@ -40,5 +39,5 @@ function stamp(res: ServerResponse): void {
 }
 
 export default defineConfig({
-  plugins: [sign(), tailwindcss(), sveltekit(config), transformLucideImports()],
+  plugins: [sign(), tailwindcss(), sveltekit(), transformLucideImports()],
 })

@@ -1,4 +1,4 @@
-import * as env from '$app/env/public'
+import { env } from '$env/dynamic/public'
 
 export const providers = {
   apple: {

@@ -4,7 +4,7 @@
   import { buttonVariants } from '$ui/button'
   import * as AlertDialog from '$ui/alert-dialog'
   import { convert } from '$lib/tools'
-  import { browser, dev } from '$app/env'
+  import { browser, dev } from '$app/environment'
   import { dict } from '../../intl'
   import Qr from './Qr.svelte'
   import type { Props } from './Transfer'

@@ -1,6 +1,6 @@
 import { rc as iam } from '@/iam/rc'
 import { rc as discovery } from '@/discovery/rc'
-import { browser } from '$app/env'
+import { browser } from '$app/environment'
 
 if (browser) {
   iam()
