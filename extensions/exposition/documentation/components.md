@@ -254,16 +254,16 @@ id_token_signing_alg_values_supported: [ES256]
 Where the application is an [authorization server](oauth.md#discovery) as well, the same fields
 are added to its metadata.
 
-`GET /identity/federation/keys/` is the public part of every key, to anyone.
+`GET /identity/federation/keys/` is the public part of every key, to anyone, cacheable for 5
+minutes.
 
 #### Key rotation
 
 A token stays verifiable while the key it was signed with is listed. An application that trusts
-the issuer reads the keys again when it meets one it does not know, but not more often than every
-30 seconds, so a new key is listed before it signs:
+the issuer keeps the keys it read for up to 10 minutes, so a new key is listed before it signs:
 
 1. Add the new key after the current one, and deploy.
-2. Once the next 30 seconds are past, move it first, and deploy.
+2. Once 10 minutes are past, move it first, and deploy.
 3. Once the longest lifetime a token was issued with is past, remove the old one.
 
 ## Local tokens

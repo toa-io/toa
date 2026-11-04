@@ -125,11 +125,11 @@ exposition:
    of hosts in its configuration that could disagree with the first.
 5. **ES256, as the client assertion is signed.** One algorithm, which every verifier speaks.
 6. **First signs, all are published.** A key is rotated by listing the new one after the
-   current, deploying, and moving it first once verifiers had time to read it: a verifier
-   that meets a `kid` it does not know reads the set again, but not more often than every 30
-   seconds.
+   current, deploying, and moving it first once verifiers had time to read it: `jose`, which a
+   Toa verifier is, keeps a key set for 10 minutes, and the set is cacheable for 5.
 7. **`https` only.** The issuer is named as the authorization server is, and OpenID Connect
-   Discovery has it be `https` as RFC 8414 does.
+   Discovery has it be `https` as RFC 8414 does. A loopback host is no exception, as it is no
+   longer one for the authorization server.
 
 ## Context
 
