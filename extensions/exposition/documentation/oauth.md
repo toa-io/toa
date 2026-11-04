@@ -32,7 +32,7 @@ is bound to that entry, see <a href="#audience">Audience</a>.</dd>
 Defaults to <code>closed</code>.</dd>
 </dl>
 
-The issuer is the authority's configured host, over `https` unless the host is a loopback one.
+The issuer is the authority's configured host, over `https`.
 
 ## Discovery
 
@@ -66,7 +66,8 @@ bearer_methods_supported: [header]
 ```
 
 `/.well-known/openid-configuration` answers with the authorization server metadata, for a client
-that reads only that.
+that reads only that. Where `issuer` is annotated as well, both documents carry the fields of
+an [OpenID issuer](components.md#discovery).
 
 The host [MCP](mcp.md#a-host-of-its-own) is served on has a protected resource document of its own,
 at `/.well-known/oauth-protected-resource` of that host, naming the host's origin as the resource
