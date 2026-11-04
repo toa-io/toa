@@ -162,3 +162,49 @@ Feature: Authorization server discovery
       """
       404 Not Found
       """
+
+  Scenario: An authorization server that is an OpenID issuer names its keys
+    Given the annotation:
+      """yaml
+      authorities:
+        nex: nex.toa.io
+      oauth:
+        authorize: https://app.nex.toa.io/oauth/authorize
+      issuer: true
+      """
+    When the following request is received:
+      """
+      GET /.well-known/openid-configuration HTTP/1.1
+      host: nex.toa.io
+      accept: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+
+      issuer: https://nex.toa.io
+      authorization_endpoint: https://app.nex.toa.io/oauth/authorize
+      token_endpoint: https://nex.toa.io/identity/grants/
+      response_types_supported:
+        - code
+      """
+    And the reply does not contain:
+      """
+      - id_token
+      """
+    When the following request is received:
+      """
+      GET /.well-known/oauth-authorization-server HTTP/1.1
+      host: nex.toa.io
+      accept: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+
+      jwks_uri: https://nex.toa.io/identity/federation/keys/
+      subject_types_supported:
+        - public
+      id_token_signing_alg_values_supported:
+        - ES256
+      """

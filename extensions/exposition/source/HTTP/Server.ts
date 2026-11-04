@@ -554,6 +554,9 @@ interface Properties {
   /** The authorization server this context exposes; none is exposed without it. */
   oauth?: OAuth
 
+  /** Whether this context is an OpenID issuer; none is discovered without it. */
+  issuer?: boolean
+
   /** JSON-RPC at `/.rpc`; none is served without it. */
   rpc?: RPC
 
