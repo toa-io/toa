@@ -1,0 +1,26 @@
+name: workload
+
+operations:
+  token:
+    input:
+      type: object
+      properties:
+        authority:
+          type: string
+        sub:
+          type: string
+        audience:
+          type: string
+        lifetime:
+          type: number
+      required: [authority, sub, audience]
+    errors:
+      - NOT_ISSUER
+      - LIFETIME
+
+exposition:
+  /:
+    POST:
+      anonymous: true
+      io:output: true
+      endpoint: token
