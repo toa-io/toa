@@ -35,6 +35,9 @@ export interface Annotation {
   /** The authorization server this context exposes; none is exposed without it. */
   oauth?: OAuth
 
+  /** Whether this context is an OpenID issuer; none is discovered without it. See `components.md`. */
+  issuer?: boolean
+
   /** JSON-RPC at `/.rpc`; none is served without it. See `documentation/rpc.md`. */
   rpc?: RPC
 
