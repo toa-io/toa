@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.345](https://github.com/toa-io/toa/compare/v1.0.0-alpha.344...v1.0.0-alpha.345) (2026-11-04)
+
+### Features
+
+* **exposition:** an OpenID issuer is discovered at openid-configuration ([b2b5ba2](https://github.com/toa-io/toa/commit/b2b5ba2d96ca65415a9a5f1c92a60dd1b7f827b1))
+* **exposition:** identity.federation issues tokens signed by its keys ([cc84d4d](https://github.com/toa-io/toa/commit/cc84d4db65596c63a6a79c2a597da8a5c3e65ddf))
+
+
 # [1.0.0-alpha.344](https://github.com/toa-io/toa/compare/v1.0.0-alpha.343...v1.0.0-alpha.344) (2026-11-04)
 
 **Note:** Version bump only for package @toa.io/extensions.exposition

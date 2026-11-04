@@ -5,14 +5,41 @@ export interface Documents {
   /** The document a path names, or nothing when it names none. */
   read: (pathname: string) => object | undefined
 
-  /** `WWW-Authenticate` for a request to this path, which names the resource it failed at. */
-  challenge: (pathname: string) => string
+  /**
+   * `WWW-Authenticate` for a request to this path, which names the resource it failed at.
+   * None where there is no authorization server: an issuer protects no resource.
+   */
+  challenge?: (pathname: string) => string
 }
 
-export function documents(issuer: string, oauth: OAuth): Documents {
+/**
+ * The documents of an authorization server, of an OpenID issuer, or of both — which are then
+ * one document, served at both of its paths.
+ */
+export function documents(
+  issuer: string,
+  oauth: OAuth | undefined,
+  openid: boolean
+): Documents {
+  if (oauth === undefined) {
+    const document = provider(issuer)
+
+    return {
+      read: (pathname: string) =>
+        pathname === OPENID_CONFIGURATION ? document : undefined
+    }
+  }
+
   const server = authorizationServer(issuer, oauth)
   const resources = protectedResources(issuer, oauth)
   const scope = scoped(oauth)
+
+  // the authorization server's response types are the ones a client can ask for
+  if (openid) {
+    const { response_types_supported: _, ...fields } = provider(issuer)
+
+    Object.assign(server, fields)
+  }
 
   function read(pathname: string): object | undefined {
     if (pathname === AUTHORIZATION_SERVER || pathname === OPENID_CONFIGURATION)
@@ -25,7 +52,7 @@ export function documents(issuer: string, oauth: OAuth): Documents {
   }
 
   function challenge(pathname: string): string {
-    return `Bearer resource_metadata="${issuer}${PROTECTED_RESOURCE}${suffix(oauth, pathname)}"${scope}`
+    return `Bearer resource_metadata="${issuer}${PROTECTED_RESOURCE}${suffix(oauth!, pathname)}"${scope}`
   }
 
   return { read, challenge }
@@ -48,6 +75,21 @@ export function alias(origin: string, issuer: string, oauth: OAuth): Documents {
   }
 }
 
+/**
+ * OpenID Connect Discovery, of an issuer whose tokens a component asks for: no flow issues
+ * them, so the response type is the token itself, as a workload issuer names it. Its keys are
+ * `identity.federation`'s, which serves them, so nothing is read to build this either.
+ */
+function provider(issuer: string): Record<string, unknown> {
+  return {
+    issuer,
+    jwks_uri: `${issuer}${KEYS}`,
+    response_types_supported: ['id_token'],
+    subject_types_supported: ['public'],
+    id_token_signing_alg_values_supported: ['ES256']
+  }
+}
+
 function scoped(oauth: OAuth): string {
   return oauth.scopes === undefined ? '' : `, scope="${oauth.scopes.join(' ')}"`
 }
@@ -57,7 +99,7 @@ function scoped(oauth: OAuth): string {
  * everything else this extension serves. Both flags are load-bearing for a client that
  * prefers Client ID Metadata Documents: without either it falls back to registration.
  */
-function authorizationServer(issuer: string, oauth: OAuth): object {
+function authorizationServer(issuer: string, oauth: OAuth): Record<string, unknown> {
   const metadata: Record<string, unknown> = {
     issuer,
     authorization_endpoint: oauth.authorize,
@@ -130,3 +172,4 @@ const PROTECTED_RESOURCE = '/.well-known/oauth-protected-resource'
 const OPENID_CONFIGURATION = '/.well-known/openid-configuration'
 const TOKEN = '/identity/grants/'
 const REGISTRATION = '/identity/clients/'
+const KEYS = '/identity/federation/keys/'

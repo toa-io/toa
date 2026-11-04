@@ -2,6 +2,8 @@ import type { Secret } from '@toa.io/extensions.configuration'
 
 export interface Configuration {
   trust: Trust[]
+  keys: Key[]
+  lifetime: number
   principal?: Principal
   assert?: boolean
 }
@@ -21,4 +23,9 @@ interface Principal {
   authority: string
   iss: string
   sub: string
+}
+
+export interface Key {
+  kid: string
+  key: Secret
 }

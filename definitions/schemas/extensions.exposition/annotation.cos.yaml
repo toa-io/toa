@@ -90,6 +90,9 @@ properties:
     required:
       - authorize
     additionalProperties: false
+  issuer:
+    description: Whether this context is an OpenID issuer, which serves its discovery document
+    type: boolean
   rpc:
     description: JSON-RPC at `/.rpc`; writing it is what turns the endpoint on
     type: object
