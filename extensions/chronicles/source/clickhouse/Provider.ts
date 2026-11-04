@@ -117,7 +117,7 @@ export class ClickHouseProvider implements Provider {
   public async views(): Promise<View[]> {
     const tables = await this.read<Table>(
       `SELECT name, as_select, create_table_query, comment FROM system.tables
-      WHERE database = ${ddl.literal(this.scope)} AND NOT startsWith(name, '.inner')
+      WHERE database = ${ddl.literal(this.scope)} AND NOT startsWith(name, '.')
       ORDER BY name`
     )
 

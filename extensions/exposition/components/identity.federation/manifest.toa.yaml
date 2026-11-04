@@ -184,6 +184,53 @@ operations:
         - iss
         - sub
       type: object
+  issue:
+    input:
+      properties:
+        authority:
+          type: string
+        sub:
+          description: Who presents the token
+          type: string
+          minLength: 1
+          maxLength: 255
+        audience:
+          description: Whom the token is presented to
+          type: string
+          minLength: 1
+        lifetime:
+          description: Seconds the token is valid for
+          type: integer
+          minimum: 1
+      type: object
+      required:
+        - authority
+        - sub
+        - audience
+    output:
+      properties:
+        token:
+          type: string
+        exp:
+          description: When the token expires, in seconds
+          type: integer
+      type: object
+      required:
+        - token
+        - exp
+    errors:
+      - NOT_ISSUER
+      - LIFETIME
+  keys:
+    output:
+      properties:
+        keys:
+          type: array
+          items:
+            type: object
+      type: object
+      required:
+        - keys
   list:
     input:
       properties:
@@ -253,6 +300,28 @@ configuration:
           required:
             - iss
             - aud
+      keys:
+        title: Signing keys
+        description: The first signs the tokens this context issues; every one is published
+        type: array
+        items:
+          type: object
+          properties:
+            kid:
+              type: string
+              minLength: 1
+            key:
+              description: ES256 private key, PKCS8 in PEM form
+              type: string
+              format: secret
+          required:
+            - kid
+            - key
+          additionalProperties: false
+      lifetime:
+        description: The longest a token this context issues may be valid, in seconds
+        type: integer
+        minimum: 1
       principal:
         title: Principal
         description: Subject that will be assigned the `system` Role
@@ -277,10 +346,19 @@ configuration:
 
   defaults:
     trust: []
+    keys: []
+    lifetime: 3600
     assert: true
 
 exposition:
   /:
+    /keys:
+      isolated: true
+      GET:
+        anonymous: true
+        io:output: true
+        cache:control: public, max-age=300
+        endpoint: keys
     /:id:
       auth:id: id
       POST:

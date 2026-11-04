@@ -78,6 +78,26 @@ export type DecodeOutput = {
   [key: string]: unknown
 }
 
+export type IssueInput = {
+  authority: string
+  /** Who presents the token */
+  sub: string
+  /** Whom the token is presented to */
+  audience: string
+  /** Seconds the token is valid for */
+  lifetime?: number
+}
+
+export type IssueOutput = {
+  token: string
+  /** When the token expires, in seconds */
+  exp: number
+}
+
+export type KeysOutput = {
+  keys: Array<Record<string, unknown>>
+}
+
 export type ListInput = {
   authority: string
   identity: string
@@ -95,6 +115,8 @@ export interface Component {
   incept: (request: { input: InceptInput, entity?: Partial<Entity>, task?: boolean }) => Promise<InceptOutput | CodedError<"EXISTS" | "TOKEN" | "TRUST" | "RESPONSE" | "CONFIG" | "NO_TOKEN" | "ISS" | "SUB" | "EXP" | "REPLAY" | "CODE_NOT_ENABLED" | "CODE_SCHEMA">>
   authenticate: (request: { input: AuthenticateInput, entity?: Partial<Entity>, task?: boolean }) => Promise<AuthenticateOutput | CodedError<"NOT_FOUND" | "TOKEN" | "TRUST" | "RESPONSE" | "CONFIG" | "NO_TOKEN" | "ISS" | "SUB" | "EXP" | "REPLAY" | "CODE_NOT_ENABLED" | "CODE_SCHEMA">>
   decode: (request: { input: DecodeInput, entity?: Partial<Entity>, task?: boolean }) => Promise<DecodeOutput>
+  issue: (request: { input: IssueInput, task?: boolean }) => Promise<IssueOutput | CodedError<"NOT_ISSUER" | "LIFETIME">>
+  keys: (request: { input?: null, task?: boolean }) => Promise<KeysOutput>
   list: (request: { input: ListInput, task?: boolean }) => Promise<unknown>
   delete: (request: { input: DeleteInput, entity?: Partial<Entity>, task?: boolean }) => Promise<unknown>
   assign: (request: { input?: null, query?: Query<Entity>, task?: boolean }) => Promise<Entity>
@@ -120,6 +142,14 @@ export interface Configuration {
     /** Client secret for the Identity Provider. Required for Authorization Code Flow. */
     secret?: string
   }>
+  /** The first signs the tokens this context issues; every one is published */
+  keys?: Array<{
+    kid: string
+    /** ES256 private key, PKCS8 in PEM form */
+    key: Secret
+  }>
+  /** The longest a token this context issues may be valid, in seconds */
+  lifetime?: number
   /** Subject that will be assigned the `system` Role */
   principal?: {
     authority: string

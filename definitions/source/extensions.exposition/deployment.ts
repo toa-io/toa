@@ -84,6 +84,8 @@ export function deployment(_: unknown, annotation?: Annotation): Dependency {
 
   if (annotation.oauth !== undefined) properties.oauth = annotation.oauth
 
+  if (annotation.issuer !== undefined) properties.issuer = annotation.issuer
+
   if (annotation.rpc !== undefined) properties.rpc = annotation.rpc
 
   if (annotation.mcp !== undefined) properties.mcp = annotation.mcp
@@ -130,6 +132,7 @@ type Properties = Pick<
   | 'ip'
   | 'country'
   | 'oauth'
+  | 'issuer'
   | 'rpc'
   | 'mcp'
 >

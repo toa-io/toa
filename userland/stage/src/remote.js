@@ -13,9 +13,10 @@ export const remote = async (id) => {
   const locator = new Locator(name, namespace)
   const remote = await boot.remote(locator, SOURCE)
 
-  await remote.connect()
-
+  // held before it connects: one that is still connecting when the stage stops is stopped too
   state.remotes.push(remote)
+
+  await remote.connect()
 
   return remote
 }

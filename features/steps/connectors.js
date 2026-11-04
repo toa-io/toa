@@ -88,6 +88,42 @@ Then(
 )
 
 When(
+  'I compose {component} component without waiting',
+  /**
+   * A composition that may be held back by what it depends on, asserted by the step below.
+   *
+   * @param {string} reference
+   * @this {toa.features.Context}
+   */
+  function (reference) {
+    const composition = stage.composition([reference], {})
+
+    this.composing = composition.then(
+      () => undefined,
+      () => undefined
+    )
+  }
+)
+
+Then(
+  'the composition does not settle within {int} second(s)',
+  /**
+   * @param {number} seconds
+   * @this {toa.features.Context}
+   */
+  async function (seconds) {
+    assert.ok(this.composing !== undefined, 'No composition is under way')
+
+    const settled = await Promise.race([
+      this.composing.then(() => true),
+      timeout(seconds * 1000).then(() => false)
+    ])
+
+    assert.equal(settled, false, 'The composition has settled')
+  }
+)
+
+When(
   'I compose {component} component',
   /**
    * @param {string} reference

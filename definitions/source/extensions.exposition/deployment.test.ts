@@ -36,3 +36,12 @@ it('should refuse censor as it was, a header and its values', () => {
     /`exposition.censor` is the list of countries, and `exposition.country` names the header/
   )
 })
+
+it('should pass the issuer to the gateway', () => {
+  const { services } = deployment(null, { ...annotation, issuer: true })
+  const variable = services![0].variables!.find(
+    (variable) => variable.name === 'TOA_EXPOSITION_PROPERTIES'
+  )!
+
+  assert.equal(JSON.parse(variable.value as string).issuer, true)
+})

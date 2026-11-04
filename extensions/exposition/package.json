@@ -1,6 +1,6 @@
 {
   "name": "@toa.io/extensions.exposition",
-  "version": "1.0.0-alpha.343",
+  "version": "1.0.0-alpha.344",
   "type": "module",
   "description": "Toa Exposition",
   "author": "temich <tema.gurtovoy@gmail.com>",
@@ -29,7 +29,7 @@
   ],
   "dependencies": {
     "@toa.io/core": "1.0.0-alpha.333",
-    "@toa.io/definitions": "1.0.0-alpha.343",
+    "@toa.io/definitions": "1.0.0-alpha.344",
     "@toa.io/generic": "1.0.0-alpha.332",
     "@toa.io/pointer": "1.0.0-alpha.332",
     "@toa.io/schemas": "1.0.0-alpha.332",
@@ -37,7 +37,7 @@
     "ioredis": "6.0.0",
     "matchacho": "0.6.1",
     "minimatch": "10.2.6",
-    "msgpackr": "2.1.2",
+    "msgpackr": "2.1.3",
     "negotiator": "1.1.0",
     "openspan": "1.0.0-alpha.330"
   },
@@ -70,7 +70,7 @@
     "@toa.io/extensions.storages": "*",
     "@types/cors": "2.8.19",
     "@types/negotiator": "0.6.5",
-    "jose": "6.2.13",
+    "jose": "6.2.14",
     "js-yaml": "5.5.0",
     "lru-cache": "11.5.3",
     "paseto": "4.0.1"

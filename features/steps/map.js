@@ -1,6 +1,7 @@
 import assert from 'node:assert'
-import { join } from 'node:path'
-import { readFile, writeFile } from 'node:fs/promises'
+import { createRequire } from 'node:module'
+import { dirname, join } from 'node:path'
+import { readdir, readFile, writeFile } from 'node:fs/promises'
 import { load as parse } from 'js-yaml'
 import { match } from '@toa.io/generic'
 import { contract } from '@toa.io/core'
@@ -8,6 +9,8 @@ import { Given, Then } from '@cucumber/cucumber'
 
 import * as stage from '@toa.io/userland/stage'
 import * as components from './.workspace/components/index.js'
+
+const require = createRequire(import.meta.url)
 
 Given(
   'the component map states:',
@@ -26,6 +29,29 @@ Given(
       const manifest = await components.load(reference)
 
       assert.ok(manifest.version !== undefined, `'${reference}' has no version`)
+
+      contracts[manifest.locator.id] = contract.component(manifest)
+    }
+
+    stage.map(contracts)
+  }
+)
+
+Given(
+  'the component map states the components of the {token} extension',
+  /**
+   * What the components an extension ships provide, stated without running them: a call to
+   * one waits for a process that serves it.
+   *
+   * @param {string} name
+   */
+  async function (name) {
+    const root = dirname(require.resolve(`@toa.io/extensions.${name}/package.json`))
+    const directory = join(root, 'components')
+    const contracts = {}
+
+    for (const entry of await readdir(directory)) {
+      const manifest = await stage.manifest(join(directory, entry))
 
       contracts[manifest.locator.id] = contract.component(manifest)
     }

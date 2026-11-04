@@ -26,7 +26,7 @@ export class Discovery implements Interceptor {
   public mount(options: http.Options): void {
     this.reset()
 
-    if (options.oauth === undefined) return
+    if (options.oauth === undefined && options.issuer !== true) return
 
     /*
      * `https` always: RFC 8414 has an issuer be one, and OAuth 2.1 has every endpoint of an
@@ -43,8 +43,13 @@ export class Discovery implements Interceptor {
       const issuer = `https://${host}`
 
       issuers.set(authority, issuer)
-      this.authorities.set(authority, documents(issuer, options.oauth))
+      this.authorities.set(
+        authority,
+        documents(issuer, options.oauth, options.issuer === true)
+      )
     }
+
+    if (options.oauth === undefined) return
 
     for (const [authority, host] of Object.entries(options.mcp?.hosts ?? {})) {
       const issuer = issuers.get(authority)
@@ -70,13 +75,16 @@ export class Discovery implements Interceptor {
 
     if (known === undefined) return null
 
-    // every reply, not just a document's: the challenge is what points a client here
-    input.pipelines.response.push((response) => {
-      if (response.status !== UNAUTHORIZED) return
+    const challenge = known.challenge
 
-      response.headers ??= new Headers()
-      response.headers.set('www-authenticate', known.challenge(input.url.pathname))
-    })
+    // every reply, not just a document's: the challenge is what points a client here
+    if (challenge !== undefined)
+      input.pipelines.response.push((response) => {
+        if (response.status !== UNAUTHORIZED) return
+
+        response.headers ??= new Headers()
+        response.headers.set('www-authenticate', challenge(input.url.pathname))
+      })
 
     const body = known.read(input.url.pathname)
 

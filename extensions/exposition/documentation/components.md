@@ -153,6 +153,119 @@ configuration:
         aud: <GOOGLE_CLIENT_ID>
 ```
 
+### Issuing tokens
+
+An application is an OpenID issuer of its own once it has signing keys and annotates `issuer`.
+A component of it then asks for a token, and presents it to another application, which
+[trusts](#identity-federation-openid-connect) the issuer as it would any other provider.
+
+```yaml
+# context.toa.yaml
+
+exposition:
+  authorities:
+    nex: api.example.com
+  issuer: true
+
+configuration:
+  identity.federation:
+    keys:
+      - kid: k1
+        key: $ISSUER_K1
+    lifetime: 3600
+```
+
+- `keys`: ES256 private keys, PKCS8 in PEM form, given as [secrets](../../configuration/readme.md#secrets).
+  The first signs; every one is published.
+- `lifetime`: The longest a token may be valid, in seconds (default 3600).
+
+```shell
+$ openssl genpkey -algorithm EC -pkeyopt ec_paramgen_curve:P-256
+```
+
+```javascript
+const { token, exp } = await context.remote.identity.federation.issue({
+  input: {
+    authority: 'nex',
+    sub: 'billing',
+    audience: 'https://api.another.com',
+    lifetime: 300
+  }
+})
+
+await context.fetch('https://api.another.com/invoices/', {
+  headers: { authorization: `Bearer ${token}` }
+})
+```
+
+- `authority`: The authority the token is issued in. Its issuer is `https://` followed by the host
+  the annotation maps it to: `https://api.example.com`.
+- `sub`: Who presents the token. The issuer takes it as given, so it is the caller's to decide what
+  a subject is — a service, an Identity — and to keep one subject's name for that subject alone.
+- `audience`: Whom it is presented to, as the receiving application's `trust` names it in `aud`.
+- `lifetime`: Seconds the token is valid for (default 300), at most `identity.federation.lifetime`.
+
+The reply is the token and `exp`, the time it expires at, in seconds. The token is a JWS that carries
+`iss`, `sub`, `aud`, `iat`, `exp` and `jti`. It is valid until it expires, wherever it is presented
+to an application that trusts the issuer for that `aud`, so ask for one per call, or keep one for
+no longer than its lifetime.
+
+`issue` refuses with `NOT_ISSUER` without keys, or for an authority the annotation does not map,
+and with `LIFETIME` for a lifetime over the limit. It has no HTTP resource.
+
+The application the token is presented to trusts the issuer, and admits it by its claims:
+
+```yaml
+# context.toa.yaml
+
+configuration:
+  identity.federation:
+    trust:
+      - iss: https://api.example.com
+        aud: https://api.another.com
+```
+
+```yaml
+# manifest.toa.yaml
+
+exposition:
+  /:
+    GET:
+      auth:claims:
+        iss: https://api.example.com
+        sub: billing
+      endpoint: enumerate
+```
+
+See [`auth:claims`](access.md#claims).
+
+#### Discovery
+
+With `issuer: true`, `/.well-known/openid-configuration` is served at every authority, to anyone:
+
+```yaml
+issuer: https://api.example.com
+jwks_uri: https://api.example.com/identity/federation/keys/
+response_types_supported: [id_token]
+subject_types_supported: [public]
+id_token_signing_alg_values_supported: [ES256]
+```
+
+Where the application is an [authorization server](oauth.md#discovery) as well, the same fields
+are added to its metadata.
+
+`GET /identity/federation/keys/` is the public part of every key, to anyone, cacheable for 5
+minutes.
+
+#### Key rotation
+
+A token stays verifiable while the key it was signed with is listed. An application that trusts
+the issuer keeps the keys it read for up to 10 minutes, so a new key is listed before it signs:
+
+1. Add the new key after the current one, and deploy.
+2. Once 10 minutes are past, move it first, and deploy.
+3. Once the longest lifetime a token was issued with is past, remove the old one.
+
 ## Local tokens
 
 The `identity.tokens` component manages local authentication tokens.

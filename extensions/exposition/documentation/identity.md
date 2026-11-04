@@ -116,6 +116,9 @@ configuration:
     assert: true
 ```
 
+An application built on Toa can be such a provider, see
+[Issuing tokens](components.md#issuing-tokens).
+
 `principal` specifies the authority and the values of the `iss` and `sub` claims of an Identity
 that will be granted with a `system` role. The same subject in another authority is ordinary
 credentials.
