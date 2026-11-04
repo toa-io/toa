@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.345](https://github.com/toa-io/toa/compare/v1.0.0-alpha.344...v1.0.0-alpha.345) (2026-11-04)
+
+### Features
+
+* **definitions:** annotate a context as an OpenID issuer ([6e504e2](https://github.com/toa-io/toa/commit/6e504e24231e63bf0273154220aa729127191d02))
+
+
 # [1.0.0-alpha.344](https://github.com/toa-io/toa/compare/v1.0.0-alpha.343...v1.0.0-alpha.344) (2026-11-04)
 
 **Note:** Version bump only for package @toa.io/definitions
