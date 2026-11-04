@@ -197,6 +197,75 @@ Feature: An application issues OpenID tokens
       200 OK
       """
 
+  Scenario: An application grants a role to a user of another one
+    Given the `identity.roles` database is empty
+    And the annotation:
+      """yaml
+      authorities:
+        nex: nex.toa.io
+      issuer: true
+      """
+    # the application called makes the caller its principal: the role is its own to grant
+    And the `identity.federation` configuration:
+      """yaml
+      keys:
+        - kid: k1
+          key: $ISSUER_K1
+      trust:
+        - iss: https://nex.toa.io
+          aud: https://another.toa.io
+      principal:
+        authority: nex
+        iss: https://nex.toa.io
+        sub: control
+      """
+    And the `workload` is running
+    And transient identity Bob
+    When the following request is received:
+      """
+      POST /workload/ HTTP/1.1
+      host: nex.toa.io
+      accept: application/yaml
+      content-type: application/yaml
+
+      authority: nex
+      sub: control
+      audience: https://another.toa.io
+      """
+    Then the following reply is sent:
+      """
+      201 Created
+
+      token: ${{ token }}
+      """
+    When the following request is received:
+      """
+      POST /identity/roles/${{ Bob.id }}/ HTTP/1.1
+      host: nex.toa.io
+      authorization: Bearer ${{ token }}
+      accept: application/yaml
+      content-type: application/yaml
+
+      role: editor
+      """
+    Then the following reply is sent:
+      """
+      201 Created
+      """
+    When the following request is received:
+      """
+      GET /identity/roles/${{ Bob.id }}/ HTTP/1.1
+      host: nex.toa.io
+      authorization: Token ${{ Bob.token }}
+      accept: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+
+      - editor
+      """
+
   Scenario: A token for another audience is refused
     Given the annotation:
       """yaml
