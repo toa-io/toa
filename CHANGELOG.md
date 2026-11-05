@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.346](https://github.com/toa-io/toa/compare/v1.0.0-alpha.345...v1.0.0-alpha.346) (2026-11-05)
+
+### Bug Fixes
+
+* **exposition:** publish a signing key read as the signer reads it ([e9ebf7b](https://github.com/toa-io/toa/commit/e9ebf7ba9ccf743cd1a81c2b03b0851095aa04ca))
+
+
 # [1.0.0-alpha.345](https://github.com/toa-io/toa/compare/v1.0.0-alpha.344...v1.0.0-alpha.345) (2026-11-04)
 
 ### Features
