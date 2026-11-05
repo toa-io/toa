@@ -1,4 +1,3 @@
-import { createPrivateKey, createPublicKey } from 'node:crypto'
 import { load } from './jose.js'
 import type * as jose from 'jose'
 import type { Key } from '../types/index.ts'
@@ -20,11 +19,14 @@ async function importing(pem: string): Promise<jose.CryptoKey> {
   return await jose.importPKCS8(pem, ALG)
 }
 
-/** The public part of a key, which is all a verifier reads. */
-export function publish(key: Key): jose.JWK {
-  const { kty, crv, x, y } = createPublicKey(createPrivateKey(key.key.unwrap())).export({
-    format: 'jwk'
-  })
+/**
+ * The public part of a key, which is all a verifier reads. Read as the signer reads it, so a key
+ * that signs is one that is published: a PEM kept on one line included.
+ */
+export async function publish(key: Key): Promise<jose.JWK> {
+  const jose = await load()
+  const pair = await jose.importPKCS8(key.key.unwrap(), ALG, { extractable: true })
+  const { kty, crv, x, y } = await jose.exportJWK(pair)
 
   return { kty, crv, x, y, kid: key.kid, alg: ALG, use: 'sig' }
 }

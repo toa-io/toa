@@ -22,6 +22,8 @@ Feature: An application issues OpenID tokens
         WsPm95n1lPvHkIG5H1UHSothwqOhRANCAARJkbVfVM75CblR6VSDkjHGh8uAAvPG
         9ANv72EPUmRmXTDkOx02ZdeQayRlOYxDlAn3bBb/tiWKMKHFas7AsQGN
         -----END PRIVATE KEY-----
+      # K1 as a secret store may keep a PEM: on one line, its breaks turned into spaces
+      ISSUER_K1_LINE: -----BEGIN PRIVATE KEY----- MIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQgxm3BWG5aAV7OrSv3 TtAp1lLpFyEtbGIW+pQXhSdjchqhRANCAARI1gY46XmhY6ThpWt0+QR8W5/+n4Sz CTKvRi0ClfEbSqEFfbDwLGxCpmjFSbRwHRnEt/dl/AFk+qh6o+kbNao9 -----END PRIVATE KEY-----
       """
 
   Scenario: The issuer is discovered
@@ -143,6 +145,77 @@ Feature: An application issues OpenID tokens
     Then the reply does not contain:
       """
       "d":
+      """
+
+  Scenario: A key kept on one line is published, and admits what it signs
+    Given the annotation:
+      """yaml
+      authorities:
+        nex: nex.toa.io
+      issuer: true
+      /:
+        /invoices:
+          GET:
+            auth:claims:
+              iss: https://nex.toa.io
+              sub: billing
+            dev:stub: ok
+      """
+    And the `identity.federation` configuration:
+      """yaml
+      keys:
+        - kid: k1
+          key: $ISSUER_K1_LINE
+      trust:
+        - iss: https://nex.toa.io
+          aud: https://another.toa.io
+      """
+    And the `workload` is running
+    When the following request is received:
+      """
+      GET /identity/federation/keys/ HTTP/1.1
+      host: nex.toa.io
+      accept: application/yaml
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+
+      keys:
+        - kty: EC
+          crv: P-256
+          x: SNYGOOl5oWOk4aVrdPkEfFuf_p-Eswkyr0YtApXxG0o
+          'y': oQV9sPAsbEKmaMVJtHAdGcS392X8AWT6qHqj6Rs1qj0
+          kid: k1
+          alg: ES256
+          use: sig
+      """
+    When the following request is received:
+      """
+      POST /workload/ HTTP/1.1
+      host: nex.toa.io
+      accept: application/yaml
+      content-type: application/yaml
+
+      authority: nex
+      sub: billing
+      audience: https://another.toa.io
+      """
+    Then the following reply is sent:
+      """
+      201 Created
+
+      token: ${{ token }}
+      """
+    When the following request is received:
+      """
+      GET /invoices/ HTTP/1.1
+      host: nex.toa.io
+      authorization: Bearer ${{ token }}
+      """
+    Then the following reply is sent:
+      """
+      200 OK
       """
 
   Scenario: A token is admitted by an application that trusts its issuer
