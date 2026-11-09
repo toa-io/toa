@@ -3,6 +3,6 @@
   "private": true,
   "type": "module",
   "dependencies": {
-    "jose": "6.2.14"
+    "jose": "6.2.15"
   }
 }
