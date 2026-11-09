@@ -202,6 +202,11 @@ operations:
           description: Seconds the token is valid for
           type: integer
           minimum: 1
+        nonce:
+          description: Carried in the token as `nonce`, as given
+          type: string
+          minLength: 1
+          maxLength: 255
       type: object
       required:
         - authority

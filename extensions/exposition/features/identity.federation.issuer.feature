@@ -339,6 +339,113 @@ Feature: An application issues OpenID tokens
       - editor
       """
 
+  Scenario: A token carries the nonce it was asked with
+    Given the annotation:
+      """yaml
+      authorities:
+        nex: nex.toa.io
+      issuer: true
+      /:
+        /invoices:
+          GET:
+            auth:claims:
+              iss: https://nex.toa.io
+              sub: billing
+              nonce: n-0S6_WzA2Mj
+            dev:stub: ok
+      """
+    And the `identity.federation` configuration:
+      """yaml
+      keys:
+        - kid: k1
+          key: $ISSUER_K1
+      trust:
+        - iss: https://nex.toa.io
+          aud: https://another.toa.io
+      """
+    And the `workload` is running
+    When the following request is received:
+      """
+      POST /workload/ HTTP/1.1
+      host: nex.toa.io
+      accept: application/yaml
+      content-type: application/yaml
+
+      authority: nex
+      sub: billing
+      audience: https://another.toa.io
+      nonce: n-0S6_WzA2Mj
+      """
+    Then the following reply is sent:
+      """
+      201 Created
+
+      token: ${{ token }}
+      """
+    When the following request is received:
+      """
+      GET /invoices/ HTTP/1.1
+      host: nex.toa.io
+      authorization: Bearer ${{ token }}
+      """
+    Then the following reply is sent:
+      """
+      200 OK
+      """
+
+  Scenario: A token asked without a nonce carries none
+    Given the annotation:
+      """yaml
+      authorities:
+        nex: nex.toa.io
+      issuer: true
+      /:
+        /invoices:
+          GET:
+            auth:claims:
+              iss: https://nex.toa.io
+              sub: billing
+              nonce: n-0S6_WzA2Mj
+            dev:stub: ok
+      """
+    And the `identity.federation` configuration:
+      """yaml
+      keys:
+        - kid: k1
+          key: $ISSUER_K1
+      trust:
+        - iss: https://nex.toa.io
+          aud: https://another.toa.io
+      """
+    And the `workload` is running
+    When the following request is received:
+      """
+      POST /workload/ HTTP/1.1
+      host: nex.toa.io
+      accept: application/yaml
+      content-type: application/yaml
+
+      authority: nex
+      sub: billing
+      audience: https://another.toa.io
+      """
+    Then the following reply is sent:
+      """
+      201 Created
+
+      token: ${{ token }}
+      """
+    When the following request is received:
+      """
+      GET /invoices/ HTTP/1.1
+      host: nex.toa.io
+      authorization: Bearer ${{ token }}
+      """
+    Then the following reply is sent:
+      """
+      403 Forbidden
+      """
+
   Scenario: A token for another audience is refused
     Given the annotation:
       """yaml

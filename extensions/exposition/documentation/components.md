@@ -204,11 +204,13 @@ await context.fetch('https://api.another.com/invoices/', {
   a subject is — a service, an Identity — and to keep one subject's name for that subject alone.
 - `audience`: Whom it is presented to, as the receiving application's `trust` names it in `aud`.
 - `lifetime`: Seconds the token is valid for (default 300), at most `identity.federation.lifetime`.
+- `nonce`: Optional. Carried in the token as the `nonce` claim, as given. Pass the value the audience
+  handed you to bind the token to its challenge; checking that it is not replayed is the audience's.
 
 The reply is the token and `exp`, the time it expires at, in seconds. The token is a JWS that carries
-`iss`, `sub`, `aud`, `iat`, `exp` and `jti`. It is valid until it expires, wherever it is presented
-to an application that trusts the issuer for that `aud`, so ask for one per call, or keep one for
-no longer than its lifetime.
+`iss`, `sub`, `aud`, `iat`, `exp`, `jti`, and `nonce` if one was given. It is valid until it
+expires, wherever it is presented to an application that trusts the issuer for that `aud`, so ask
+for one per call, or keep one for no longer than its lifetime.
 
 `issue` refuses with `NOT_ISSUER` without keys, or for an authority the annotation does not map,
 and with `LIFETIME` for a lifetime over the limit. It has no HTTP resource.

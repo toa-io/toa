@@ -86,6 +86,8 @@ export type IssueInput = {
   audience: string
   /** Seconds the token is valid for */
   lifetime?: number
+  /** Carried in the token as `nonce`, as given */
+  nonce?: string
 }
 
 export type IssueOutput = {

@@ -51,6 +51,14 @@ it('signs with the first key, as the issuer of the authority', async () => {
   ])
 })
 
+it('carries the nonce asked with', async () => {
+  const jose = await load()
+  const reply = await issue({ ...input, nonce: 'n-0S6_WzA2Mj' }, context)
+
+  assert.ok(!(reply instanceof Error))
+  assert.equal(jose.decodeJwt(reply.token).nonce, 'n-0S6_WzA2Mj')
+})
+
 it('is valid for the lifetime asked for', async () => {
   const reply = await issue({ ...input, lifetime: 600 }, context)
 
