@@ -22,7 +22,9 @@ export async function computation(
   const now = Math.floor(Date.now() / 1000)
   const exp = now + lifetime
 
-  const token = await new jose.SignJWT({})
+  const claims = input.nonce === undefined ? {} : { nonce: input.nonce }
+
+  const token = await new jose.SignJWT(claims)
     .setProtectedHeader({ alg: ALG, kid: key.kid, typ: 'JWT' })
     .setIssuer(iss)
     .setSubject(input.sub)
@@ -48,6 +50,7 @@ interface Input {
   sub: string
   audience: string
   lifetime?: number
+  nonce?: string
 }
 
 interface Output {
