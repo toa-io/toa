@@ -13,12 +13,13 @@ with the keys it discovers at the issuer's `/.well-known/openid-configuration`.
 
 1. `identity.federation.issue` returns a compact JWS signed with ES256 by the first of
    `identity.federation.keys`, whose `kid` its header names.
-2. The token carries `iss`, `sub`, `aud`, `iat`, `exp` and `jti`, and no other claim. `iss` is
+2. The token carries `iss`, `sub`, `aud`, `iat`, `exp` and `jti`, `nonce` when the caller gives
+   one, and no other claim. `iss` is
    `https://` followed by the host the `authorities` of the exposition annotation map the given
    authority to — the issuer [the authorization server](../extensions/exposition/documentation/oauth.md)
    is named by _(today)_.
-3. `sub` and `aud` are the caller's: the issuer does not check that `sub` is an identity, or
-   that `aud` is anyone it knows.
+3. `sub`, `aud` and `nonce` are the caller's: the issuer does not check that `sub` is an
+   identity, that `aud` is anyone it knows, or that a `nonce` was never given before.
 4. A token is valid for the `lifetime` asked for, 300 seconds without one, and is not issued
    for longer than `identity.federation.lifetime`, 3600 seconds by default.
 5. Without keys, or for an authority the annotation does not map, nothing is issued:
@@ -42,7 +43,8 @@ with the keys it discovers at the issuer's `/.well-known/openid-configuration`.
 
 **What is not promised**
 
-11. That a token is spent once: it is valid until it expires.
+11. That a token is spent once: it is valid until it expires. An audience that sends the caller
+    a challenge has it back as `nonce`, and refusing a replay is its own to do.
 12. That a token stops being valid before it expires. Keys are rotated, not revoked.
 13. Claims other than those above, an allowlist of audiences, an HTTP endpoint that issues,
     and ID tokens issued to a person through an authorization flow.
@@ -127,7 +129,11 @@ exposition:
 6. **First signs, all are published.** A key is rotated by listing the new one after the
    current, deploying, and moving it first once verifiers had time to read it: `jose`, which a
    Toa verifier is, keeps a key set for 10 minutes, and the set is cacheable for 5.
-7. **`https` only.** The issuer is named as the authorization server is, and OpenID Connect
+7. **A nonce is the caller's.** An audience that needs a token bound to its own challenge — a
+   workload identity exchange, a login flow — hands the caller a value, and the caller passes it
+   to `issue`. The issuer carries it as given, up to 255 characters as `sub`, and keeps no record
+   of it: tracking it is what the audience does, not the issuer, which never sees the exchange.
+8. **`https` only.** The issuer is named as the authorization server is, and OpenID Connect
    Discovery has it be `https` as RFC 8414 does. A loopback host is no exception, as it is no
    longer one for the authorization server.
 
