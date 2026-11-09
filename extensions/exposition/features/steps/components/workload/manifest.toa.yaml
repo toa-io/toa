@@ -13,6 +13,8 @@ operations:
           type: string
         lifetime:
           type: number
+        nonce:
+          type: string
       required: [authority, sub, audience]
     errors:
       - NOT_ISSUER
