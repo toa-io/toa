@@ -73,7 +73,7 @@ export class Connection extends Connector {
      * registry and the meter cannot be held that way — their key is one key — so the addresses
      * past the first buy an uninterrupted lock and nothing else.
      */
-    this.redlock = new Redlock(this.#clients, { retryCount: -1 })
+    this.redlock = new Redlock(this.#clients)
 
     console.info('Atomicity connecting to redis', { nodes: this.#clients.length })
   }

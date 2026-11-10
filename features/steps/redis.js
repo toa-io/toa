@@ -1,5 +1,5 @@
 import assert from 'node:assert'
-import { Then } from '@cucumber/cucumber'
+import { Given, Then } from '@cucumber/cucumber'
 import { Redis } from 'ioredis'
 
 Then(
@@ -44,6 +44,22 @@ Then(
       } while (Date.now() < deadline)
 
       assert.fail(`no key matches '${pattern}'`)
+    })
+  }
+)
+
+Given(
+  'Redis holds {string} under {string} for {int} seconds',
+  /**
+   * Written with a client of its own and no prefix, as a process that is not under test would.
+   *
+   * @param {string} value
+   * @param {string} key
+   * @param {number} seconds
+   */
+  async function (value, key, seconds) {
+    await using(async (redis) => {
+      await redis.set(key, value, 'EX', seconds)
     })
   }
 )

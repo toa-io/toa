@@ -60,6 +60,23 @@ Feature: Atom aspect
       [1, 2]
       """
 
+  # Another replica holds the lock, so the call waits for it until the component disconnects, and
+  # the wait ends with it rather than keep the process running.
+  Scenario: Giving up a lock as the component disconnects
+    Given I boot `atom` component
+    And Redis holds "elsewhere" under "toa-dev:atom:default.atom:lock:taken" for 30 seconds
+    When I invoke `waits` without waiting with:
+      """yaml
+      input:
+        key: taken
+      """
+    And I disconnect
+    Then the invocation made without waiting ends within 3 seconds
+    And the following exception is thrown:
+      """yaml
+      code: 405
+      """
+
   # Independent servers, which is what the algorithm is written for: the lock is taken on two
   # of the three. The development stack runs exactly that.
   Scenario: Holding a lock on a quorum
