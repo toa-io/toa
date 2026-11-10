@@ -1,5 +1,7 @@
+import { setTimeout as sleep } from 'node:timers/promises'
+import { ExecutionError } from '@sesamecare-oss/redlock'
 import { console } from 'openspan'
-import { Connector } from '@toa.io/core'
+import { Connector, exceptions } from '@toa.io/core'
 import { environment } from '@toa.io/generic'
 import { holding, waited } from './measurements.js'
 
@@ -25,6 +27,9 @@ export class Atom extends Connector {
 
   /** @type {AbortController} */
   #abort
+
+  /** what a lock still waited for gives up on: the atom closing */
+  #closing = new AbortController()
 
   /** @type {Promise<void>} */
   #discovering
@@ -111,38 +116,59 @@ export class Atom extends Connector {
 
   /**
    * Runs `routine` holding `keys`, and while it holds them no other replica of the group does.
-   * Waits for as long as it takes to acquire them.
+   * Waits for as long as it takes to acquire them, until the atom closes.
    *
    * @param {string | string[]} keys
    * @param {() => Promise<any>} routine
    * @returns {Promise<any>}
    */
   async lock(keys, routine) {
-    const redlock = this.#connection.redlock
-
-    if (redlock === undefined)
+    if (this.#connection.redlock === undefined)
       throw new Error('Locking requires atomicity. Set TOA_ATOMICITY_REDIS.')
 
+    const resources = this.#keys(LOCK, keys)
+    const closing = this.#closing.signal
     const started = performance.now()
     let acquired = false
 
-    return redlock
-      .using(this.#keys(LOCK, keys), LEASE, async (signal) => {
-        // the wait is over once the routine is entered, and what follows it is the work
-        acquired = true
-        waited(this.#name, (performance.now() - started) / 1000)
-        holding(this.#name, 1)
+    const held = async (signal) => {
+      // the wait is over once the routine is entered, and what follows it is the work
+      acquired = true
+      waited(this.#name, (performance.now() - started) / 1000)
+      holding(this.#name, 1)
+
+      try {
+        return await routine(signal)
+      } finally {
+        holding(this.#name, -1)
+      }
+    }
+
+    try {
+      /*
+       * Each attempt is one, and the waiting between them is this loop's rather than redlock's:
+       * redlock's own waits forever on timers of its own, against clients that a closed
+       * connection has disconnected, and a process waiting on them never ends.
+       */
+      for (;;) {
+        const redlock = this.#connection.redlock
+
+        if (redlock === undefined || closing.aborted) throw given(this.#name)
 
         try {
-          return await routine(signal)
-        } finally {
-          holding(this.#name, -1)
+          return await redlock.using(resources, LEASE, ATTEMPTS, held)
+        } catch (error) {
+          if (acquired || !(error instanceof ExecutionError)) throw error
         }
-      })
-      .finally(() => {
-        // a lock never acquired waited for however long it was refused
-        if (!acquired) waited(this.#name, (performance.now() - started) / 1000)
-      })
+
+        await sleep(RETRY + Math.floor((Math.random() * 2 - 1) * JITTER), undefined, {
+          signal: closing
+        }).catch(() => undefined)
+      }
+    } finally {
+      // a lock never acquired waited for however long it was refused
+      if (!acquired) waited(this.#name, (performance.now() - started) / 1000)
+    }
   }
 
   /**
@@ -160,6 +186,8 @@ export class Atom extends Connector {
   }
 
   async open() {
+    if (this.#closing.signal.aborted) this.#closing = new AbortController()
+
     const redis = this.#connection.redis
 
     // without a Redis nothing can be owned exclusively, so nothing is claimed at all
@@ -178,6 +206,7 @@ export class Atom extends Connector {
     this.#assignment = null
 
     this.#abort?.abort()
+    this.#closing.abort()
 
     await this.#discovering
   }
@@ -231,6 +260,23 @@ const INTERVAL = 5000
 
 /** how long a lock is held before it has to be extended, in milliseconds */
 const LEASE = 5000
+
+/*
+ * What redlock retries itself: an acquisition, before `lock` waits on its own, and an extension,
+ * which has until the lease ends to succeed. One retry, at most `RETRY + JITTER` later, fits the
+ * time redlock leaves before a lease ends.
+ */
+const ATTEMPTS = { retryCount: 1 }
+
+/** how long `lock` waits between two attempts to acquire, and by how much more or less, in milliseconds */
+const RETRY = 200
+const JITTER = 100
+
+function given(group) {
+  return new exceptions.DisposedException(
+    `'${group}' has closed, and gives up the lock it waited for`
+  )
+}
 
 /*
  * What a key is for, ahead of whose it is. The three live in one Redis and are written by

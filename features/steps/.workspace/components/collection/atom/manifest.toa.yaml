@@ -35,6 +35,16 @@ operations:
         - key
     output:
       type: number
+  waits:
+    input:
+      properties:
+        key:
+          type: string
+      type: object
+      required:
+        - key
+    output:
+      type: string
   meter:
     input:
       properties:
