@@ -33,7 +33,7 @@
     "@toa.io/generic": "1.0.0-alpha.332",
     "@toa.io/pointer": "1.0.0-alpha.332",
     "@toa.io/schemas": "1.0.0-alpha.332",
-    "croner": "10.0.1"
+    "croner": "11.0.0"
   },
   "scripts": {
     "transpile": "tsc",
