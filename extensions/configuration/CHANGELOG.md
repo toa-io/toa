@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.348](https://github.com/toa-io/toa/compare/v1.0.0-alpha.347...v1.0.0-alpha.348) (2026-11-19)
+
+### Bug Fixes
+
+* **deps:** take minimatch 11.0.5, glob 14.0.4 and ip-address 10.7.6 ([211349d](https://github.com/toa-io/toa/commit/211349d9eac3f36a5af0f87bebf040981a58c2dc))
+
+
 # [1.0.0-alpha.347](https://github.com/toa-io/toa/compare/v1.0.0-alpha.346...v1.0.0-alpha.347) (2026-11-09)
 
 **Note:** Version bump only for package @toa.io/extensions.configuration

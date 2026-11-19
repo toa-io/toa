@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.348](https://github.com/toa-io/toa/compare/v1.0.0-alpha.347...v1.0.0-alpha.348) (2026-11-19)
+
+### Bug Fixes
+
+* **atomicity:** give up a lock still waited for as the component disconnects ([9a682df](https://github.com/toa-io/toa/commit/9a682df79e238a0110cea026a35e705b0bfb0140))
+
+
 # [1.0.0-alpha.333](https://github.com/toa-io/toa/compare/v1.0.0-alpha.332...v1.0.0-alpha.333) (2026-10-26)
 
 **Note:** Version bump only for package @toa.io/atomicity
