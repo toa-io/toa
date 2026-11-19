@@ -77,5 +77,8 @@
     "#config/*": "./src/config/*",
     "#origin/*": "./src/origin/*",
     "#/*": "./src/@/*"
+  },
+  "overrides": {
+    "minimatch@^10": "11.0.5"
   }
 }

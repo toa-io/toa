@@ -35,6 +35,8 @@ declare namespace toa.features {
     pendingReply?: Promise<Reply>
     /** The call made without waiting, settled once its reply or its exception is kept. */
     calling?: Promise<void>
+    /** The invocation made without waiting, settled once its reply or its exception is kept. */
+    invoking?: Promise<void>
     exception?: Exception
     env?: Array<[string, string | undefined]>
     containers?: Record<string, StartedTestContainer>

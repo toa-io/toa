@@ -54,6 +54,9 @@ Debt drains a millisecond a millisecond, on Redis' clock. Keys belong to the gro
 `routine` runs while no other replica of the group holds `keys`. Acquiring waits for as long as it
 takes, and a lease is extended for as long as the routine runs.
 
+A lock still waited for as the component disconnects is not acquired: `routine` does not run, and
+`lock` throws `Disposed` (405), so a process that stops is not held open by it.
+
 ```javascript
 await context.atom.lock('the ledger', async () => { … })
 ```

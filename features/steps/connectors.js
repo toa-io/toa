@@ -332,6 +332,38 @@ When(
 )
 
 When(
+  'I invoke {token} without waiting with:',
+  /**
+   * @param {string} endpoint
+   * @param {string} yaml
+   * @this {toa.features.Context}
+   */
+  async function (endpoint, yaml) {
+    const request = parse(yaml)
+
+    this.invoking = invoke.call(this, endpoint, request).catch((exception) => {
+      this.exception = exception
+    })
+  }
+)
+
+When(
+  'the invocation made without waiting ends within {int} second(s)',
+  /**
+   * @param {number} seconds
+   * @this {toa.features.Context}
+   */
+  async function (seconds) {
+    const ended = await Promise.race([
+      this.invoking.then(() => true),
+      timeout(seconds * 1000).then(() => false)
+    ])
+
+    assert.ok(ended, `The invocation has not ended within ${seconds} seconds`)
+  }
+)
+
+When(
   'I call {endpoint} with:',
   /**
    * @param {string} endpoint
