@@ -51,5 +51,5 @@ Feature: MongoDB storage
       """
     Then I compose `mongo.one` component and it fails with:
       """
-      option foo is not supported
+      connection string contains unsupported options, at position: 1
       """
